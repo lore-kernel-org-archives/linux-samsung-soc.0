@@ -2,129 +2,137 @@ Return-Path: <SRS0=5Eo2=74=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A317C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Jun 2020 15:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 496C2C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Jun 2020 16:15:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53D38206D7
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Jun 2020 15:39:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2839420663
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Jun 2020 16:15:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IUzfOVGo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728585AbgFOPjk (ORCPT
+        id S1730476AbgFOQPp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 15 Jun 2020 11:39:40 -0400
-Received: from foss.arm.com ([217.140.110.172]:50562 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728477AbgFOPjj (ORCPT
+        Mon, 15 Jun 2020 12:15:45 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:61754 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729792AbgFOQPo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 Jun 2020 11:39:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F55F1F1;
-        Mon, 15 Jun 2020 08:39:38 -0700 (PDT)
-Received: from [10.37.12.69] (unknown [10.37.12.69])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F26A3F6CF;
-        Mon, 15 Jun 2020 08:39:36 -0700 (PDT)
-Subject: Re: Question about Odroid XU4 cpuidle
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        "linux-samsung-soc@vger.kernel.org" 
+        Mon, 15 Jun 2020 12:15:44 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200615161541epoutp02406ffba00dc8e12254ca3afb78636fc5~Yw8pEH2mt0729707297epoutp02w
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2020 16:15:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200615161541epoutp02406ffba00dc8e12254ca3afb78636fc5~Yw8pEH2mt0729707297epoutp02w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1592237741;
+        bh=yn3ZGD3Sx3u9Xx0Gs4zDm9kZr9Wmnca8BtW7gNrs0f8=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=IUzfOVGo6yNO6b1tEEYeyqjPNpsYXTtZdOY2FjFOZ1scE5bh3S29H5gNQrEW4RNu2
+         apyQ0IfM2BVOvh4ypvUsO8ZMDJLE7U8DXObmAAs0uz9B6wadfFt10VGrA8m4tUrcTq
+         ho0m4749DnkcCfXqtmVxO7jClZWSSPK8GLbfNphg=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20200615161540epcas5p1f284bbb11bcb5d84ed0d6753d9f957ef~Yw8oM0xY_2011020110epcas5p1f;
+        Mon, 15 Jun 2020 16:15:40 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EE.85.09475.CAE97EE5; Tue, 16 Jun 2020 01:15:40 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200615161539epcas5p26241107c8eaabfae1edafc35256091e0~Yw8nBstNa1810518105epcas5p28;
+        Mon, 15 Jun 2020 16:15:39 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200615161539epsmtrp26cfc9488f423cfe861fe655a0ca4588c~Yw8nA3U8o0928009280epsmtrp2R;
+        Mon, 15 Jun 2020 16:15:39 +0000 (GMT)
+X-AuditID: b6c32a4b-389ff70000002503-18-5ee79eacead8
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F9.B0.08303.BAE97EE5; Tue, 16 Jun 2020 01:15:39 +0900 (KST)
+Received: from alimakhtar02 (unknown [107.108.234.165]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200615161536epsmtip1dffc161c3bdee0e92186109a3b7e45a6~Yw8kCavY91507915079epsmtip1I;
+        Mon, 15 Jun 2020 16:15:36 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzk@kernel.org>
+Cc:     <robh@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <avri.altman@wdc.com>,
+        <martin.petersen@oracle.com>, <kwmad.kim@samsung.com>,
+        <stanley.chu@mediatek.com>, <cang@codeaurora.org>,
         <linux-samsung-soc@vger.kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>, s.nawrocki@samsung.com
-References: <570c73f2-d9d8-4ae1-3caf-829547232e48@arm.com>
- <CGME20200610140246eucas1p2167e2d5f71a762b54d9c4d2db565bece@eucas1p2.samsung.com>
- <20200610140238.GA31473@kozik-lap>
- <5b6a4345-4df6-51b4-298d-6a4fc6935d89@samsung.com>
- <8c0a8cc6-9cc0-88b5-6614-67edb903d149@arm.com>
- <26daae4c-684a-7319-ae6c-f3319ba0406d@samsung.com>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <b3bbf82b-e990-3892-faab-257c928c1b97@arm.com>
-Date:   Mon, 15 Jun 2020 16:39:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kishon@ti.com>
+In-Reply-To: <20200614110202.GA9009@kozik-lap>
+Subject: RE: [RESEND PATCH v10 10/10] arm64: dts: Add node for ufs exynos7
+Date:   Mon, 15 Jun 2020 21:45:34 +0530
+Message-ID: <000001d64330$35947020$a0bd5060$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <26daae4c-684a-7319-ae6c-f3319ba0406d@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQG4t7PjQZEdjsbMgiywO+bF2ZMTLwIE8gPVATQJid0Cb/nUPqjnqNbQ
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPKsWRmVeSWpSXmKPExsWy7bCmpu6aec/jDF590bN4+fMqm8Wn9ctY
+        LeYfOcdqceFpD5vF+fMb2C1ubjnKYrHp8TVWi8u75rBZzDi/j8mi+/oONovlx/8xWfzfs4Pd
+        YunWm4wOvB6X+3qZPDat6mTz2Lyk3qPl5H4Wj49Pb7F49G1Zxehx/MZ2Jo/Pm+Q82g90MwVw
+        RnHZpKTmZJalFunbJXBl7N1zg7FgEnvFpcPrmBsYr7N1MXJySAiYSOxYeZ6xi5GLQ0hgN6PE
+        poc3GUESQgKfGCW6fjhAJD4zShzdcpcFpuP53XYmiKJdjBLzj5tBFL1hlJi4/irYWDYBXYkd
+        i9vAbBEge/ON5ewgRcwCt5gknl/5zAqS4BTQk7gy8QZYkbCAl8TiUxPBVrMIqEp8mHQZrIZX
+        wFLi4dPXULagxMmZT8CuYBbQlli28DUzxEUKEj+fLmOFWOYmMf3LPkaIGnGJoz97mEEWSwjc
+        4JDonrGNFaLBReLXsQdMELawxKvjW9ghbCmJz+/2Ah3EAWRnS/TsMoYI10gsnXcM6nt7iQNX
+        5rCAlDALaEqs36UPsYpPovf3EyaITl6JjjYhiGpVieZ3V6E6pSUmdndDHeAhcaB9H/sERsVZ
+        SB6bheSxWUgemIWwbAEjyypGydSC4tz01GLTAuO81HK94sTc4tK8dL3k/NxNjOA0p+W9g/HR
+        gw96hxiZOBgPMUpwMCuJ8B6Sfx4nxJuSWFmVWpQfX1Sak1p8iFGag0VJnFfpx5k4IYH0xJLU
+        7NTUgtQimCwTB6dUA5PPb4eG5lsJl+WeRRdM594+q2WdqM2bj7aG0hu3Llj7bmFHeovFuQId
+        ybu1epe+dYld0JD7fOpfz8rdH5uWZmSWrnlxLJO3zmzZwZbjIa7T+PzXnHu2LPlFp72rdOHK
+        B1n7tN9+CD7xJXHKM6a5yoG7hMp6CratvMp/cX7IE5+dzMo/75/Y3f8s3X1xnIy5T5TNoUMX
+        vnbfEiqWj4u6xfo+WsrCvfuOK9f2bdo62fEzOO98z+r47F0R+ttv1dTVHGLfu3U33dm+/vCT
+        2y/jFO5vkY17PSmEd/nJM6kZ+5LfhxooOH+Lush04883VhHv76d1hY8H3LLe61zw/Ia9sdDX
+        v836IVdNfh7fslPqXfgGJZbijERDLeai4kQALx9+vuIDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsWy7bCSnO7qec/jDBZdlrR4+fMqm8Wn9ctY
+        LeYfOcdqceFpD5vF+fMb2C1ubjnKYrHp8TVWi8u75rBZzDi/j8mi+/oONovlx/8xWfzfs4Pd
+        YunWm4wOvB6X+3qZPDat6mTz2Lyk3qPl5H4Wj49Pb7F49G1Zxehx/MZ2Jo/Pm+Q82g90MwVw
+        RnHZpKTmZJalFunbJXBlbFvXxFKwhbXizrNVLA2My1i6GDk5JARMJJ7fbWfqYuTiEBLYwShx
+        5m0LI0RCWuL6xgnsELawxMp/z9khil4xSizrbGUDSbAJ6ErsWNwGZosA2ZtvLAcrYhZ4xiSx
+        /tx/qI5HjBKXmqazglRxCuhJXJl4A6xDWMBLYvGpiWDrWARUJT5MugxWwytgKfHw6WsoW1Di
+        5MwnYLcyC2hLPL35FM5etvA1M8R5ChI/ny5jhbjCTWL6l32MEDXiEkd/9jBPYBSehWTULCSj
+        ZiEZNQtJywJGllWMkqkFxbnpucWGBUZ5qeV6xYm5xaV56XrJ+bmbGMFRq6W1g3HPqg96hxiZ
+        OBgPMUpwMCuJ8B6Sfx4nxJuSWFmVWpQfX1Sak1p8iFGag0VJnPfrrIVxQgLpiSWp2ampBalF
+        MFkmDk6pBqYZyWntagy+f8tqF37x2fzmlJrYzOg9bV83LBMRtKxsW7l5ZkfKuamR/9YpTe7U
+        aw2c4JIkxr3iRhxD0adLn01+TOs9lVgVsNmpKOxM1LHF7Hf76779u+c71XW+vNZz6+A3WzXP
+        L/x6MO5mX9rXzVo9AimeqlNCRFOSGS75nl5+RuLe9GnWzx5abZP4OH9q6ZKruzTWu5Tfm5BY
+        anG2UH7/sYmxp7xSO/lefGfiWzCh86/nwngN2ZLJc3YHiBqbXRLu8Hw3/77Vllm7+QPOb59i
+        sVj5anCjsHDkkX1y8w83W7ZGc104wqd8/TbL1lVzVKYfiVcu60r7Z712bq6qep/ZZP5Yw+16
+        RzauSzc2OiKhxFKckWioxVxUnAgAVKBKmkkDAAA=
+X-CMS-MailID: 20200615161539epcas5p26241107c8eaabfae1edafc35256091e0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200613030458epcas5p3f9667bab202d99fb332d5bf5aad63c85
+References: <20200613024706.27975-1-alim.akhtar@samsung.com>
+        <CGME20200613030458epcas5p3f9667bab202d99fb332d5bf5aad63c85@epcas5p3.samsung.com>
+        <20200613024706.27975-11-alim.akhtar@samsung.com>
+        <20200614110202.GA9009@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
-
-On 6/15/20 1:45 PM, Marek Szyprowski wrote:
-> Hi Lukasz
-> 
-> On 10.06.2020 16:30, Lukasz Luba wrote:
->> On 6/10/20 3:09 PM, Marek Szyprowski wrote:
->>> On 10.06.2020 16:02, Krzysztof Kozlowski wrote:
->>>> On Wed, Jun 10, 2020 at 02:18:12PM +0100, Lukasz Luba wrote:
->>>>> Hi Krzysztof, Bartek,
->>>>>
->>>>> I recall that you have been working on some cpuidle code for
->>>>> Exynos(4?).
->>>>>
->>>>> I have a question regarding CPUIdle driver for Odroid XU4.
->>>>> I use the board with LISA tests for EAS, but missing at
->>>>> least idle state 0 cause errors (please see the log below).
->>>>>
->>>>> Currently the system does not report any idle driver and the state 0
->>>>> is missing in: /sys/devices/system/cpu/cpu0/cpuidle/state0/
->>>> The state 0 long time ago was WFI. It was kind of meaningless so it it
->>>> was dropped.
->>>>
->>>>> I am using driver CONFIG_ARM_BIG_LITTLE_CPUIDLE but the
->>>>> boot stops silently while trying to init the cpu idle devices in
->>>>> there.
->>>>> I carry on with a workaround that just removes idle state[1] and set
->>>>> state_count=1 in the big and little structures.
->>>> Try earlyprintk.
->>>>
->>>> In general, the big-little cpuidle driver should work... or rather:
->>>> long
->>>> time ago it was working.  It requires proper support from early stages
->>>> (BL1, secure monitor) but this should be already in standard Odroid.
->>>>
->>>> I just saw there:
->>>>      /* Start at index 1, index 0 standard WFI */
->>>> so maybe it was not updated properly to removal of WFI?
->>>>
->>>> I think no one uses this driver so it might be not well tested and not
->>>> that useful.
->>>
->>> I think it never worked on Odroid XU3/XU4. Afair it was developed on
->>> PeachPi Chromebook, which use different bootloader (and doesn't use
->>> trustzone).
->>
->> That would explain the compatibility string in that driver. Good to
->> know. Thank you for your response.
->>
-> I've just digged a bit in the old kernels and indeed, the big-little
-> cpuidle driver worked only on Samsung Exynos 5420/5800 Chromebooks
-> (Peach Pit/Pi). The last release which worked fine (although it was
-> still not enabled in the exynos_defconfig) is v4.2. Then it got broken
-> by the commit 833b5794e330 ("ARM: EXYNOS: reset Little cores when cpu is
-> up"). It never worked on the Odroid XU3/XU4.
-
-Thank you Marek for your time to investigate it. In this case I think
-there is no way to fix idle state 1 for Odroid xu3/xu4. I don't have
-Peach Pit/Pi so I have to pass, but I can help you in reviewing
-if you or someone else have time (and board) to work on it.
-
-> 
-> Do you have any plans to fix it?
-
-I'm baking some patch internally which might help Odroid XU3/4 though.
-If that won't be killed, I'll post it soon.
-If failed internally, I will also let you know.
-
-Regards,
-Lukasz
-
-> 
-> Best regards
-> 
+> On Sat, Jun 13, 2020 at 08:17:06AM +0530, Alim Akhtar wrote:
+> > Adding dt node foe UFS and UFS-PHY for exynos7 SoC.
+> >
+> > Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
+> > Tested-by: Pawe=C5=82=20Chmiel=20<pawel.mikolaj.chmiel=40gmail.com>=0D=
+=0A>=20>=20---=0D=0A>=20>=20=20.../boot/dts/exynos/exynos7-espresso.dts=20=
+=20=20=20=20=20=7C=20=204=20++=0D=0A>=20>=20=20arch/arm64/boot/dts/exynos/e=
+xynos7.dtsi=20=20=20=20=20=20=20=7C=2043=20++++++++++++++++++-=0D=0A>=20>=
+=20=202=20files=20changed,=2045=20insertions(+),=202=20deletions(-)=0D=0A>=
+=20>=0D=0A>=20=0D=0A>=20This=20is=20already=20applied=20and=20in=20the=20li=
+nux-next.=20=20Don't=20resend=20applied=20patches.=0D=0A>=20=0D=0ASorry=20K=
+rzysztof,=20did=20not=20realized=20that=20this=20was=20already=20landed=20i=
+n=20Linux-next,=20=20your=20point=20taken.=0D=0A=0D=0A>=20Best=20regards,=
+=0D=0A>=20Krzysztof=0D=0A=0D=0A
