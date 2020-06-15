@@ -2,158 +2,191 @@ Return-Path: <SRS0=5Eo2=74=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E00C9C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Jun 2020 13:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD29C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Jun 2020 13:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5AAD2074D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Jun 2020 13:13:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6840F2076A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Jun 2020 13:19:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="N8PBRNBY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730240AbgFONNS (ORCPT
+        id S1730393AbgFONTV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 15 Jun 2020 09:13:18 -0400
-Received: from foss.arm.com ([217.140.110.172]:47528 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730213AbgFONNS (ORCPT
+        Mon, 15 Jun 2020 09:19:21 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:49302 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730241AbgFONTS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 Jun 2020 09:13:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 844A731B;
-        Mon, 15 Jun 2020 06:13:17 -0700 (PDT)
-Received: from [10.57.9.128] (unknown [10.57.9.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E73B93F6CF;
-        Mon, 15 Jun 2020 06:13:15 -0700 (PDT)
-Subject: Re: [RFC PATCH] serial: samsung: Re-factors UART IRQ resource for
- various Samsung SoC
-To:     Tamseel Shams <m.shams@samsung.com>, kgene@kernel.org,
-        krzk@kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com
-Cc:     linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
-        linux-arm-kernel@lists.infradead.org
-References: <CGME20200615124355epcas5p446ae2f1b63331ef87334cd7d696c3c43@epcas5p4.samsung.com>
- <20200615122609.71884-1-m.shams@samsung.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <027c0955-3246-8c1e-4d0d-053a2a177dc6@arm.com>
-Date:   Mon, 15 Jun 2020 14:13:09 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Mon, 15 Jun 2020 09:19:18 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200615131916euoutp011d38515942b39713ac1d2dc174e6aaed~YuimTRvJm1674416744euoutp01a;
+        Mon, 15 Jun 2020 13:19:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200615131916euoutp011d38515942b39713ac1d2dc174e6aaed~YuimTRvJm1674416744euoutp01a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1592227156;
+        bh=00ri6SjJ/Rg0Aq+3qPbzYS+SXvTUwFNZD2ZH7+gh94E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=N8PBRNBYjNMTegmSoc8kZy+p8dMQ83Y6g66tLj2fS+X3gd1QRzH//38ZCuyimf11y
+         9dnTdyMqImSGISkG3pNzkhAyvvdJJi4VsUJSjdbI7H2ZGnWxIztOuXdt84Gm0nfh+c
+         7UAYB9SGMpgBgIQwpDQSVLSdh6ENQpe65U/4S8tA=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200615131915eucas1p1796b65e90b8a159402861ec28b7337ab~YuimC0hnP3201032010eucas1p1K;
+        Mon, 15 Jun 2020 13:19:15 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 56.27.60679.35577EE5; Mon, 15
+        Jun 2020 14:19:15 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200615131915eucas1p2b8f3fa0ceb757e36aa888a4476de034f~YuilpaNVb1888918889eucas1p24;
+        Mon, 15 Jun 2020 13:19:15 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200615131915eusmtrp172486c8255f4901a8088cd62f8f10c53~YuilooOqc1483814838eusmtrp1-;
+        Mon, 15 Jun 2020 13:19:15 +0000 (GMT)
+X-AuditID: cbfec7f4-0cbff7000001ed07-f8-5ee77553f2b3
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D9.DE.07950.35577EE5; Mon, 15
+        Jun 2020 14:19:15 +0100 (BST)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200615131915eusmtip2d89aa304f9db47fdd67564bdbdeeea88~YuilfCWxZ0995509955eusmtip2L;
+        Mon, 15 Jun 2020 13:19:15 +0000 (GMT)
+From:   Lukasz Stelmach <l.stelmach@samsung.com>
+To:     wu000273@umn.edu, Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     kjlu@umn.edu, Matt Mackall <mpm@selenic.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] char: hw_random: Fix a reference count leak.
+Date:   Mon, 15 Jun 2020 15:18:54 +0200
+In-Reply-To: <20200613214128.32665-1-wu000273@umn.edu> (wu's message of
+        "Sat, 13 Jun 2020 16:41:28 -0500")
+Message-ID: <dleftjr1uglb5t.fsf%l.stelmach@samsung.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200615122609.71884-1-m.shams@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH/e3ebdfVjV/XpINFyHJRRlr2ulJKSsT9I8JeYFLWqotK25TN
+        WQahKWSaOlNCXQ8fhTPNaatGLbEwH5XoKlF7WFIa062HpVRqWc5r4H+fc873nPM9P34UwQyL
+        fag4TSKv1ShVcomMtLaMdazarXdEr7Z1L2f/5LdI2fSrtRL2nHMxa+h3EezjK+1S1m6vk7KW
+        /m4x2/duTMR22i5J2CJ7g4gtteYi9u9Eh5jNaT4t2UJzE+P5iLM+VHCWqkwJ9+DyDSl361oK
+        Z7q3jssdqkNcV1malBuxLInwjJJtPsqr4pJ4bWDoIVlsXnNEwmfmRLUhXZKKinAW8qQAr4Oh
+        zDQiC8koBlciqDUMiIRgFMHri4VICEYQFL8vkfxvMVkHkJsZbELw7MYpQeRAUFNfK85CFCXB
+        AVBTE+nWLMChYDFZp1cQ+BwBBdkOwl3wwmHw5OkX0s0kVkDf1Sapmz2xCsx1FSI303gjfP94
+        f3qZNw6G24N9UiE/H54UD0z3ElgNxfZP004Bn6cgp+oVEpxuBUPziEhgL3C23pYKvBjaCrJJ
+        t1HAKVCQv0HozUZgvfSLFDSboLdjfObiMCjpuSUW9PPg5ef5wt55kG8tJIQ0DWfPMILaD8yG
+        +pkpPpDjrJxxw8FP13NSeKtMBC/S2kV5yNc46xzjrHOMU2MJvAJqbYFCeiVUlLkIgUPAbP5K
+        liJxFVrI63XqGF4XpOGPB+iUap1eExNwJF5tQVN/r22ydfQusv0+3IgwheRz6chdjmhGrEzS
+        Jasbkd/UpA911c+QD6mJ1/DyBXR4e1s0Qx9VJp/ktfEHtXoVr2tEiyhSvpBeWz50gMExykT+
+        GM8n8Nr/VRHl6ZOKjgPNeIQEz9k219qT2rvHa9kbxU4Xk/foZcX9I7GqkPD23r101ElFbtDK
+        fREJ6RmjY+WTkya5Sz5Y8davadAY8620IepRZ9z4j0j/iO1v3jqMQRf879Qbu5PWd8l+NAx5
+        3PXdoUiyk5szCp1gLPJ+UZASsD+7a/fw0psdRu+wP9flpC5Wucaf0OqU/wAgRq1BgwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRmVeSWpSXmKPExsVy+t/xe7rBpc/jDI6t47f4O+kYu0Xz4vVs
+        Ft2vZCz6H79mtjgx7yy7xfnzG9gtNj2+xmpx/95PJovLu+awWcw4v4/JYsG2PkaL/7/PsVr0
+        Hm1kc+D1+P1rEqPHtgOqHptWdbJ57J+7ht1j85J6j+U7TTz6Xm5g9Li6sInd4/MmuQDOKD2b
+        ovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MCUcDCt4K
+        Vazub2ZrYJwh0MXIySEhYCKxfNsTxi5GLg4hgaWMEuvudbN3MXIAJaQkVs5Nh6gRlvhzrYsN
+        ouYpo8SU+3cYQWrYBPQk1q6NAKkREbCT2LR8GzNIDbNAI7PEwdl/WEASwgKOEidPvQOzhQRM
+        JVYf2sIEYrMIqErcX3yEHcTmFMiReDPvNSOIzStgLvHp6W4wW1TAUmLLi/vsEHFBiZMzn4DN
+        YRbIlvi6+jnzBEaBWUhSs5CkZgGdxyygKbF+lz5EWFti2cLXzBC2rcS6de9ZFjCyrmIUSS0t
+        zk3PLTbSK07MLS7NS9dLzs/dxAiM2W3Hfm7Zwdj1LvgQowAHoxIPb0TQ8zgh1sSy4srcQ4wq
+        QGMebVh9gVGKJS8/L1VJhNfp7Ok4Id6UxMqq1KL8+KLSnNTiQ4ymQH9OZJYSTc4Hppm8knhD
+        U0NzC0tDc2NzYzMLJXHeDoGDMUIC6YklqdmpqQWpRTB9TBycUg2MZXNEG6+FtO1yUr3qabvs
+        mEnuTZ/v53UqWKr6n1xdrlj36cjpZ0mrbVQ+2bpXvZ17aNp5OcNznYwelxZzfJvnnO4k/rZt
+        X1iXhYTR1tln80KDetc3LE8+P0F544qq89t3mYrN/+EaoSC+OMPzzuczx2JP60isrV50fbHk
+        JY/0l2kPlx9/9dhSTomlOCPRUIu5qDgRAAhbSw37AgAA
+X-CMS-MailID: 20200615131915eucas1p2b8f3fa0ceb757e36aa888a4476de034f
+X-Msg-Generator: CA
+X-RootMTR: 20200615131915eucas1p2b8f3fa0ceb757e36aa888a4476de034f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200615131915eucas1p2b8f3fa0ceb757e36aa888a4476de034f
+References: <20200613214128.32665-1-wu000273@umn.edu>
+        <CGME20200615131915eucas1p2b8f3fa0ceb757e36aa888a4476de034f@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020-06-15 13:26, Tamseel Shams wrote:
-> In few older Samsung SoCs like s3c2410, s3c2412
-> and s3c2440, UART IP is having 2 interrupt lines.
-> However, in other SoCs like s3c6400, s5pv210,
-> exynos5433, and exynos4210 UART is having only 1
-> interrupt line. Due to this, "platform_get_irq(platdev, 1)"
-> call in the driver gives the following warning:
-> "IRQ index 1 not found" on recent platforms.
-> 
-> This patch re-factors the IRQ resources handling for
-> each platform and hence fixing the above warnings seen
-> on some platforms.
-> 
-> Signed-off-by: Tamseel Shams <m.shams@samsung.com>
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+It was <2020-06-13 sob 16:41>, when wu000273@umn.edu wrote:
+> From: Qiushi Wu <wu000273@umn.edu>
+>
+> Calling pm_runtime_get_sync increments the counter even in case of
+> failure, causing incorrect ref count if pm_runtime_put_sync is not
+> called in error handling paths. Thus replace the jump target
+> "err_pm_get" by "err_clock".
+>
+> Fixes: 6cd225cc5d8a ("hwrng: exynos - add Samsung Exynos True RNG driver")
+> Signed-off-by: Qiushi Wu <wu000273@umn.edu>
 > ---
->   drivers/tty/serial/samsung_tty.c | 20 ++++++++++++++++----
->   1 file changed, 16 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> index 6ef614d8648c..078dcb3e316f 100644
-> --- a/drivers/tty/serial/samsung_tty.c
-> +++ b/drivers/tty/serial/samsung_tty.c
-> @@ -60,6 +60,7 @@ struct s3c24xx_uart_info {
->   	char			*name;
->   	unsigned int		type;
->   	unsigned int		fifosize;
-> +	unsigned int		irq_cnt;
->   	unsigned long		rx_fifomask;
->   	unsigned long		rx_fifoshift;
->   	unsigned long		rx_fifofull;
-> @@ -1908,12 +1909,17 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
->   	else {
->   		port->irq = ret;
->   		ourport->rx_irq = ret;
-> -		ourport->tx_irq = ret + 1;
-> +		if (ourport->info->irq_cnt == 1)
-> +			ourport->tx_irq = ret;
-> +		else
-> +			ourport->tx_irq = ret + 1;
->   	}
->   
-> -	ret = platform_get_irq(platdev, 1);
-> -	if (ret > 0)
-> -		ourport->tx_irq = ret;
-> +	if (ourport->info->irq_cnt != 1) {
-> +		ret = platform_get_irq(platdev, 1);
-> +		if (ret > 0)
-> +			ourport->tx_irq = ret;
+>  drivers/char/hw_random/exynos-trng.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_rando=
+m/exynos-trng.c
+> index 8e1fe3f8dd2d..ffa7e0f061f0 100644
+> --- a/drivers/char/hw_random/exynos-trng.c
+> +++ b/drivers/char/hw_random/exynos-trng.c
+> @@ -135,7 +135,7 @@ static int exynos_trng_probe(struct platform_device *=
+pdev)
+>  	ret =3D pm_runtime_get_sync(&pdev->dev);
+>  	if (ret < 0) {
+>  		dev_err(&pdev->dev, "Could not get runtime PM.\n");
+> -		goto err_pm_get;
+> +		goto err_clock;
+>  	}
+>=20=20
+>  	trng->clk =3D devm_clk_get(&pdev->dev, "secss");
+> @@ -166,8 +166,6 @@ static int exynos_trng_probe(struct platform_device *=
+pdev)
+>=20=20
+>  err_clock:
+>  	pm_runtime_put_sync(&pdev->dev);
+> -
+> -err_pm_get:
+>  	pm_runtime_disable(&pdev->dev);
+>=20=20
+>  	return ret;
 
-FWIW, if you're not going to do anything in the error case then you may 
-as well just call platform_get_irq_optional() unconditionally.
+I believe this fix has already been submitted
 
-Robin.
+    https://lore.kernel.org/linux-arm-kernel/20200522011659.26727-1-dinghao=
+.liu@zju.edu.cn/T/#u
 
-> +	}
->   	/*
->   	 * DMA is currently supported only on DT platforms, if DMA properties
->   	 * are specified.
-> @@ -2387,6 +2393,7 @@ static struct s3c24xx_serial_drv_data s3c2410_serial_drv_data = {
->   		.name		= "Samsung S3C2410 UART",
->   		.type		= PORT_S3C2410,
->   		.fifosize	= 16,
-> +		.irq_cnt	= 2,
->   		.rx_fifomask	= S3C2410_UFSTAT_RXMASK,
->   		.rx_fifoshift	= S3C2410_UFSTAT_RXSHIFT,
->   		.rx_fifofull	= S3C2410_UFSTAT_RXFULL,
-> @@ -2414,6 +2421,7 @@ static struct s3c24xx_serial_drv_data s3c2412_serial_drv_data = {
->   		.name		= "Samsung S3C2412 UART",
->   		.type		= PORT_S3C2412,
->   		.fifosize	= 64,
-> +		.irq_cnt	= 2,
->   		.has_divslot	= 1,
->   		.rx_fifomask	= S3C2440_UFSTAT_RXMASK,
->   		.rx_fifoshift	= S3C2440_UFSTAT_RXSHIFT,
-> @@ -2443,6 +2451,7 @@ static struct s3c24xx_serial_drv_data s3c2440_serial_drv_data = {
->   		.name		= "Samsung S3C2440 UART",
->   		.type		= PORT_S3C2440,
->   		.fifosize	= 64,
-> +		.irq_cnt	= 2,
->   		.has_divslot	= 1,
->   		.rx_fifomask	= S3C2440_UFSTAT_RXMASK,
->   		.rx_fifoshift	= S3C2440_UFSTAT_RXSHIFT,
-> @@ -2471,6 +2480,7 @@ static struct s3c24xx_serial_drv_data s3c6400_serial_drv_data = {
->   		.name		= "Samsung S3C6400 UART",
->   		.type		= PORT_S3C6400,
->   		.fifosize	= 64,
-> +		.irq_cnt	= 1,
->   		.has_divslot	= 1,
->   		.rx_fifomask	= S3C2440_UFSTAT_RXMASK,
->   		.rx_fifoshift	= S3C2440_UFSTAT_RXSHIFT,
-> @@ -2498,6 +2508,7 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
->   	.info = &(struct s3c24xx_uart_info) {
->   		.name		= "Samsung S5PV210 UART",
->   		.type		= PORT_S3C6400,
-> +		.irq_cnt	= 1,
->   		.has_divslot	= 1,
->   		.rx_fifomask	= S5PV210_UFSTAT_RXMASK,
->   		.rx_fifoshift	= S5PV210_UFSTAT_RXSHIFT,
-> @@ -2526,6 +2537,7 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
->   	.info = &(struct s3c24xx_uart_info) {			\
->   		.name		= "Samsung Exynos UART",	\
->   		.type		= PORT_S3C6400,			\
-> +		.irq_cnt	= 1,				\
->   		.has_divslot	= 1,				\
->   		.rx_fifomask	= S5PV210_UFSTAT_RXMASK,	\
->   		.rx_fifoshift	= S5PV210_UFSTAT_RXSHIFT,	\
-> 
+It hasn't been applied though. Anyway, thank you for your work.
+
+Herbert, could you take a look at the Dinghao's patch, please?
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl7ndT4ACgkQsK4enJil
+gBD/fgf+PrssB4H9APSVtgC1hd9Nwwi8U9rocQl1m7+V1pb7Vu9MFM4Hx1MRDHRr
+mJZ5eW5fOHRVsU2z6ryFP1b7SjzPOjzvP+hItfGjwcbKXtCwwanaGxnHAbLsgYya
+PS232AaRE6TShah294Y4LKyRK1b9rlebdrltcznt4ENzSPAadjOq/I1mqHBpz8My
+yI45lWlJ7tFOokRtfwEWvUka4T/omtUbH27m7a2yVwGjmF45OAcqnxtqKNFlRPrS
+j3+hIMwrNHq68s8o4YpPkj/K3OHFeFxgHLA+AUTvJrW3ZnKaPCstXoUCNMAPZJwV
+aoev1fOx6RaRfte97fSLbNIi2m3sFw==
+=UOtD
+-----END PGP SIGNATURE-----
+--=-=-=--
