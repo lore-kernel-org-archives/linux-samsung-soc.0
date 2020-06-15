@@ -2,99 +2,92 @@ Return-Path: <SRS0=5Eo2=74=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A272AC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Jun 2020 06:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11821C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Jun 2020 07:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 744F52067B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Jun 2020 06:58:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5C702068E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Jun 2020 07:01:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592204335;
-	bh=P2Ary7w7QLpxLwvvO6zF7cGZEv1dglEer1JOQDUDFW0=;
+	s=default; t=1592204483;
+	bh=x4Ev22nhPalVqenzG5qzq4QYBmgz0XdOBTrw7lUAUnU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1dq3Y5/j9v9YyC6thP1t+LomOhnsebChFkMCY8vfjRWgc28T2XWIhk+h8/rLUh6d6
-	 Ny5NfL/o7PcABR8eYiEhp9oY5JvaXsqmUJ8i0Gu4mt1v5JZ/pBTThbMwAgdrKQVj4n
-	 U2uX22RG2ohsjoa27qIF7lmZOC4cN7rPfQ8SWrT4=
+	b=QIbP6DLemq3/BAHKTwT6kwCRCjy6KvygIxfhse8H7dIzmsu0pqHfLpei755xCRLwx
+	 +XYp/EJl8BDxFvlkKP+Q7S1+7e9yrYqLX6eQTDoQJTkLzgU5bxMY5rQINWXNE9aO9d
+	 2W73FuL2R0wcjXBV9b5vjBvdrFj7I9Cz7uR88oJM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbgFOG6w (ORCPT
+        id S1728368AbgFOHBT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 15 Jun 2020 02:58:52 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34371 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728276AbgFOG6v (ORCPT
+        Mon, 15 Jun 2020 03:01:19 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52903 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728251AbgFOHBR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 Jun 2020 02:58:51 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r7so15863614wro.1;
-        Sun, 14 Jun 2020 23:58:50 -0700 (PDT)
+        Mon, 15 Jun 2020 03:01:17 -0400
+Received: by mail-wm1-f65.google.com with SMTP id r9so13460244wmh.2;
+        Mon, 15 Jun 2020 00:01:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=15pzvZ3HgzVpOIe1NSunNL4NazqLAoN4J8Q/f2NVLd8=;
-        b=kJO4LvBPRRxzDW+hruK9cyPECKVXeUaSwoFgi+rt2G6j+lvqMywBKgbouLf/Eo2fOy
-         NpyxzN1XfaIgdFRG5jULjxbGPCBbX4HODlf39u3MEvt14GwJ55uKeBypggTnNZ7vBCd0
-         HGPkDqMSgwZxG/6ZlDE+KOz5E3m957i07jdGGGyKgyjHdNHlsVAvNeqBgFujfsnJJQpb
-         ijW+HdEUM6Ys8hizKHPZhkPKBRO7NI348HpK8s/0W94RxXbmOXuQIP8N7zZI4I5sWSxD
-         xU3jbcyUWF4nBN4mhDKyeLdsSqswK3xq51Y9iPsRHZqTYMcFh0LJxR47A7uDRKdIAOGA
-         gGug==
-X-Gm-Message-State: AOAM530Ug/mBhDx99ZzCAvVdxySQtHBGrpPVy9akjY7ZLvcOEqATSO1d
-        3aL/+pj7KFtMQjX3lycC8ig=
-X-Google-Smtp-Source: ABdhPJxC3uTidSFQuPJd5N+ZIugAF5DjMqJZwBdBMRxo/CsJfJGnW54QJwO/PEzPpqMarcPL1KnxUw==
-X-Received: by 2002:a5d:5585:: with SMTP id i5mr26775604wrv.112.1592204329345;
-        Sun, 14 Jun 2020 23:58:49 -0700 (PDT)
+        bh=d+1OnnysUnKg4jMyBhqBvZrm+ah/+8kX402EPutOz1A=;
+        b=JllVhaL98mJL98nejei7nBR7DbW+qxA6Q+ui/GBWgSshE228pjitxB4n3k9mSWmXgf
+         KnsbB9CFsCz6BRiOUs4XDNefQcv+lEJHQxRjNnx8IskY/fCIe7riVVgHn8t+4zwBeHVB
+         ZuGFJ6Ye3axN/W46+PwWeSPXxQ1knA2/Ajv97XzU9rPmtTMIXV4bPuQvDnP7ufiOe/iK
+         YxH3Dmf3KlBE/Fg/qc8HIQVYukx4XYxpoqNYTJLSD6U5CkEbyvYpd5fbAlhUk2vV4fbn
+         yUp4oTKTQFd2LPkPe8L6olyPFWKjHK+tcSLZSrTI9MP8W4aOHkZR931ehgHDWTarvRua
+         pd6A==
+X-Gm-Message-State: AOAM532f7CoNUCYKDgfDW0VAam5U8NbTBzaUup4G0vRDuuGsCeHvx11I
+        Ecg9BtKOktvkFVofJB+ORrg=
+X-Google-Smtp-Source: ABdhPJyTeU+ed7tcTTzbrEUnEFBdJrmWBvV3QvLccvfrTwEv7TiwWhG5hsiP8890W2HDdEmMKLZVYA==
+X-Received: by 2002:a1c:9acf:: with SMTP id c198mr11474242wme.172.1592204475584;
+        Mon, 15 Jun 2020 00:01:15 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.184])
-        by smtp.googlemail.com with ESMTPSA id d63sm22195666wmc.22.2020.06.14.23.58.47
+        by smtp.googlemail.com with ESMTPSA id v27sm25361523wrv.81.2020.06.15.00.01.14
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 14 Jun 2020 23:58:48 -0700 (PDT)
-Date:   Mon, 15 Jun 2020 08:58:46 +0200
+        Mon, 15 Jun 2020 00:01:14 -0700 (PDT)
+Date:   Mon, 15 Jun 2020 09:01:12 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     wu000273@umn.edu
-Cc:     kjlu@umn.edu,
-        =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] char: hw_random: Fix a reference count leak.
-Message-ID: <20200615065846.GA5791@kozik-lap>
-References: <20200613214128.32665-1-wu000273@umn.edu>
+To:     Jonathan Bakker <xc-racer2@live.ca>
+Cc:     kgene@kernel.org, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] ARM: dts: s5pv210: Improvements for Aries boards
+Message-ID: <20200615070112.GA23304@kozik-lap>
+References: <BN6PR04MB0660787FD651F80CD0C22C2BA39E0@BN6PR04MB0660.namprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200613214128.32665-1-wu000273@umn.edu>
+In-Reply-To: <BN6PR04MB0660787FD651F80CD0C22C2BA39E0@BN6PR04MB0660.namprd04.prod.outlook.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Jun 13, 2020 at 04:41:28PM -0500, wu000273@umn.edu wrote:
-> From: Qiushi Wu <wu000273@umn.edu>
+On Sat, Jun 13, 2020 at 11:44:22AM -0700, Jonathan Bakker wrote:
+> A couple of new drivers have now been added, so we can add support for
+> them in the device tree for Aries.  These are the accelerometer (bma023)
+> and the light/proximity sensor (gp2a).
 > 
-> Calling pm_runtime_get_sync increments the counter even in case of
-> failure, causing incorrect ref count if pm_runtime_put_sync is not
-> called in error handling paths. Thus replace the jump target
-> "err_pm_get" by "err_clock".
+> Additionally, the fuelgauge definition was wrong as there is no interrupt
+> support on the galaxys.  The bluetooth definition also had some issues
+> with it.
 > 
-> Fixes: 6cd225cc5d8a ("hwrng: exynos - add Samsung Exynos True RNG driver")
-> Signed-off-by: Qiushi Wu <wu000273@umn.edu>
+> There is one change to the common s5pv210 dtsi and that is that the gph3
+> bank was missing the interrupt-controller property.
+> 
+> Jonathan Bakker (5):
+>   ARM: dts: s5pv210: Add interrupt-controller property to gph3
+>   ARM: dts: s5pv210: Correct fuelgauge definition on Aries
+>   ARM: dts: s5pv210: Add support for GP2A light sensor on Aries
+>   ARM: dts: s5pv210: Add BMA023 accelerometer support to Aries
 
-1. Cc: <stable@vger.kernel.org>
-2. Subject prefix:
-	hwrng: exynos - 
-3. Subject title: Fix PM runtime reference count leak
-   (no need for end stop)
-
-With these changes:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Thanks, applied entire set.
 
 Best regards,
 Krzysztof
