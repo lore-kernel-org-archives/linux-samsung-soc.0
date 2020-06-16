@@ -2,181 +2,131 @@ Return-Path: <SRS0=ffDA=75=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97261C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 17:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC45C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 20:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76ACE214DB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 17:39:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 394B32098B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 20:58:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B3neG+m2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sMF4Sz7i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730677AbgFPRjF (ORCPT
+        id S1728098AbgFPU6M (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 16 Jun 2020 13:39:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35646 "EHLO
+        Tue, 16 Jun 2020 16:58:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727819AbgFPRjF (ORCPT
+        with ESMTP id S1726428AbgFPU6M (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 16 Jun 2020 13:39:05 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21D3CC061573;
-        Tue, 16 Jun 2020 10:39:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=qjEmQC/q9jkbq0weF5raFJ+MekaRoErGgDZ2oBWSGlY=; b=B3neG+m2+S68Ce+3qE1cme/bDP
-        96XS9wANDMwKFaCFn39PMlkwWkaqsdYBucnzcMe/DgbmvgnLdNkjScpTdwHpQ2VQ9UEpyN1jBaig/
-        EcLqohthiqiT3/GEWW8VzXYijJTnimRSTWIOpimZowKjLG+HEaUGambpFxV0tKpGtTtc9QHjViyO/
-        tsMR7U10PzFUZVYgdD13m+8kDuuWQUvXlaXGfmMclzFuH2Lu9pOpOZP0go4opO2Wunly4vABMuTv5
-        BlR8w8Oot6blQQ/+HuMuLCC5yXOqbQegpqB0/kzIinBkn+zFrfaU762b8k+7pmJ5FHsE7asUCq31S
-        8nSvtAVw==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jlFXX-0005Ij-SD; Tue, 16 Jun 2020 17:38:27 +0000
-Subject: Re: [PATCH] Input: document inhibiting
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        kernel@collabora.com
-References: <40988408-8f36-3a52-6439-34084de6b129@redhat.com>
- <20200616172909.21625-1-andrzej.p@collabora.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d51a16b9-9ebd-1150-7d47-6296dcd2989b@infradead.org>
-Date:   Tue, 16 Jun 2020 10:38:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Tue, 16 Jun 2020 16:58:12 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AA5EC061573;
+        Tue, 16 Jun 2020 13:58:11 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id a13so3341511ilh.3;
+        Tue, 16 Jun 2020 13:58:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FYZcH9YCAV2D9xJRlKDws3xYJbeunSuHP5OJ4xopk5U=;
+        b=sMF4Sz7iAfVFIns3sFM03xAVLeLz7qz67oG6nGIOlyZZ3O/RM8u2Pn9IjPPyKjEhkz
+         rUVI5YzGAv9LDyXBpmtn6ltuOy+cEhjBA5e+dz5AjMAGLGNFZ9JpZk9Dc+RbOo9yGVkk
+         YKpLnn0Tt7F0qK+LyZWtmDVYLtg6hqJ778mTjGl5/YueUBiU8X3OJSpI9T2LWsi/dm1R
+         128cAkSgho2OWRjjKjr4ZwtJzNkxCliHWC4Rfr/6gThIGFsIevcMtr2vc1y2FJb4F9AT
+         2IG3BhZaAI5FJox/mINW4hJenvrhvylvAz7q8DisookNHWadKuEZfYFp7A5M9zpAnbn8
+         lI2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FYZcH9YCAV2D9xJRlKDws3xYJbeunSuHP5OJ4xopk5U=;
+        b=FdRdnmBkutc1uQaabq5NnCwesyheqbAyJQpJYHQTbwRjBct4oESiwh2DcKbm/ltTWw
+         1lyWffeWdPpKpUR1xJRmXq1Pf7xGO2ENUz/MO6SVivPy8W7TOJczoSUci6nkTdMkC4MO
+         MAqpKfk7VOogfgBWxgJlwGARZf4zG2pJ0A6BO5cPv3f0sMidoIAiv6E0pjPZ5stVrWFo
+         uNGdWOW7lo4ff85/mBhs1ErlWadciymjHToqYzKrch9v/zoQBjrWGApr7b/VD7bET2qG
+         8DGU5hq/JlUhvliOIair9LWJmWQcaeR2QaBW7FS2XHqXJd0dBMM6dYsa8NktQxgkM5x6
+         SiOQ==
+X-Gm-Message-State: AOAM530Z4F/NEaPoG8p7OLFjdKT2Nm0FqBof+KDLAptRaDuKUAPo68Yd
+        qEYsm8He9sN4K1yojVpAHkTiew0sQNEvNiDk7UM=
+X-Google-Smtp-Source: ABdhPJw7r9fTtiY0V63BhtDgkS/1VuVZSmoZam4NKdSyg6P5i4KlsKliKnLpusFiTessmcmOsEUwrNO8miMsJEyN4oY=
+X-Received: by 2002:a92:de10:: with SMTP id x16mr5352212ilm.6.1592341091058;
+ Tue, 16 Jun 2020 13:58:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200616172909.21625-1-andrzej.p@collabora.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CGME20200616081248eucas1p168faa343ce333a28c8fd3cf9a6a58b3c@eucas1p1.samsung.com>
+ <20200616081230.31198-1-m.szyprowski@samsung.com>
+In-Reply-To: <20200616081230.31198-1-m.szyprowski@samsung.com>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Wed, 17 Jun 2020 02:28:01 +0530
+Message-ID: <CANAwSgStsYP5fBB7z7-Reo2BP4ZQPT6RN4s8QdLGVGhKCDA_Ng@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Restore big.LITTLE cpuidle driver for Exynos
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Linux PM list <linux-pm@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Lukasz Luba <lukasz.luba@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 6/16/20 10:29 AM, Andrzej Pietrasiewicz wrote:
-> Document inhibiting input devices and its relation to being
-> a wakeup source.
-> 
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> ---
+Hi Marek,
 
-Hi,
-I have some editorial comments. Please see below.
+On Tue, 16 Jun 2020 at 13:44, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> The ARM big.LITTLE cpuidle driver has been enabled and tested on Samsung
+> Exynos 5420/5800 based Peach Pit/Pi Chromebooks and in fact it worked
+> only on those boards.
+>
+> However, support for it was broken by the commit 833b5794e330 ("ARM:
+> EXYNOS: reset Little cores when cpu is up") and then never enabled in the
+> exynos_defconfig. This patchset provides the needed fix to the common
+> code and restores support for it. Thanks to Lukasz Luba who motivated me
+> to take a look into this issue.
+>
+Thanks for this updates.
 
+But I feel some DTS changes are missing for example
+d2e5c871ed8a drivers: cpuidle: initialize big.LITTLE driver through DT
 
-> @Hans, @Dmitry,
-> 
-> My fist attempt at documenting inhibiting. Kindly look at it to see if I haven't got anything
-> wrong.
-> 
-> Andrzej
-> 
->  Documentation/input/input-programming.rst | 36 +++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
-> 
-> diff --git a/Documentation/input/input-programming.rst b/Documentation/input/input-programming.rst
-> index 45a4c6e05e39..0cd1ad4504fb 100644
-> --- a/Documentation/input/input-programming.rst
-> +++ b/Documentation/input/input-programming.rst
-> @@ -164,6 +164,42 @@ disconnects. Calls to both callbacks are serialized.
->  The open() callback should return a 0 in case of success or any nonzero value
->  in case of failure. The close() callback (which is void) must always succeed.
->  
-> +Inhibiting input devices
-> +~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +Inhibiting a device means ignoring input events from it. As such it is about maintaining
-> +relationships with input handlers - either an already existing relationships, or
-> +relationships to be established while the device is in inhibited state.
-> +
-> +If a device is inhibited, no input handler will receive events from it.
-> +
-> +The fact that nobody wants events from the device is exploited further, by calling device's
-> +close() (if there are users) and open() (if there are users) on inhibit and uninhibit
-> +operations, respectively. Indeed, the meaning of close() is to stop providing events
-> +to the input core and that of open() is to start providing events to the input core.
-> +
-> +Inhibiting and uninhibiting is orthogonal to opening and closing the device by input
+But I feel that this feature is not working as desired since
+still some missing code changes for cluster idle states are missing.
+like clock  PWR_CTR and PWR_CTRL2.
 
-                               are
+-Anand
 
-> +handlers. Userspace might want to inhibit a device in anticipation before any handler is
-> +positively matched against it.
-> +
-> +Inhibiting and uninhibiting is orthogonal to device's being a wakeup source, too. Being a
-
-                               are
-
-> +wakeup source plays a role when the system is sleeping, not when the system is operating.
-> +How drivers should program their interaction between inhibiting, sleeping and being a wakeup
-> +source is driver-specific.
-> +
-> +Taking the analogy with the network devices - bringing a network interface down doesn't mean
-> +that it should be impossible to be wake the system up on LAN through this interface. So, there
-> +may be input drivers which should be considered wakeup sources even when inhibited. Actually,
-> +in many i2c input devices their interrupt is declared a wakeup interrupt and its handling
-
-           I2C
-
-> +happens in driver's core, which is not aware of input-specific inhibit (nor should it be).
-> +Composite devices containing several interfaces can be inhibited on a per-interface basis and
-> +e.g. inhibiting one interface shouldn't affect the device's capability of being a wakeup source.
-> +
-> +If a device is to be considered a wakeup source while inhibited, special care must be taken when
-> +programming its suspend(), as it might need to call device's open(). Depending on what close()
-> +means for the device in question not opening() it before going to sleep might make it impossible
-
-                        in question, not
-
-> +to provide any wakeup events. The device is going to sleep anyway.
-> +
->  Basic event types
->  ~~~~~~~~~~~~~~~~~
->  
-> 
-
-thanks for documentation.
-
--- 
-~Randy
-
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+>
+>
+> Patch summary:
+>
+> Marek Szyprowski (4):
+>   ARM: exynos: Apply little core workaround only under secure firmware
+>   cpuidle: big.LITTLE: enable driver only on Peach-Pit/Pi Chromebooks
+>   ARM: exynos_defconfig: Enable big.LITTLE cpuidle driver
+>   ARM: multi_v7_defconfig: Enable big.LITTLE cpuidle driver
+>
+>  arch/arm/configs/exynos_defconfig    |  1 +
+>  arch/arm/configs/multi_v7_defconfig  |  1 +
+>  arch/arm/mach-exynos/mcpm-exynos.c   | 10 +++++++---
+>  drivers/cpuidle/cpuidle-big_little.c |  3 +--
+>  4 files changed, 10 insertions(+), 5 deletions(-)
+>
+> --
+> 2.17.1
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
