@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87637C433E4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 08:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3587DC433E7
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 08:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5989020767
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 08:12:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14B7220B1F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 08:12:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="i+jCOQIW"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RY3vHmS1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbgFPIM4 (ORCPT
+        id S1727085AbgFPIM5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 16 Jun 2020 04:12:56 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:42993 "EHLO
+        Tue, 16 Jun 2020 04:12:57 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:42974 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727091AbgFPIMx (ORCPT
+        with ESMTP id S1727083AbgFPIMw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 16 Jun 2020 04:12:53 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200616081251euoutp01e1104855722e6b0f6eba94cba8b008a7~Y_AWhFcLn1793317933euoutp01W
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Jun 2020 08:12:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200616081251euoutp01e1104855722e6b0f6eba94cba8b008a7~Y_AWhFcLn1793317933euoutp01W
+        Tue, 16 Jun 2020 04:12:52 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200616081250euoutp01c20f91d21073800905ce89fb72229b3d~Y_AVinbLN1721217212euoutp013
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Jun 2020 08:12:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200616081250euoutp01c20f91d21073800905ce89fb72229b3d~Y_AVinbLN1721217212euoutp013
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1592295171;
-        bh=t+LeSgDb8yZiggnUrlN5WU6K26V0DBW3GJJdVArjas0=;
+        s=mail20170921; t=1592295170;
+        bh=ady02UUfORwMfN1tf+OdaIb6FsoUsoLGlR6OWH++qxs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i+jCOQIWkDGe9XGLIqdRn3w3dPjQyrpSKh2T4lHysEkAI0fN6GtaoskT83MfGVXv+
-         gWeajrzI0vI/B/8AhaLm9bdPL6Tuu3vSGvUbT6I9J3dkep1w1JtfOQsjMdb8GBKzgQ
-         Jl1jzPiRNtruHSWgiMvwqzzutkHR0VngL6gAfYtY=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200616081250eucas1p2448a2a68035538b80b7a0ade6d623821~Y_AWLczxx2000720007eucas1p2F;
-        Tue, 16 Jun 2020 08:12:50 +0000 (GMT)
+        b=RY3vHmS1IjtoqnRC/Q+wgH77l3XbIPBPje06SoJd3XoeqovQAFmxJ0gn89Qlch5V7
+         l93S5PVwTFR79HJTVcNnzIExOB+f/GU9NdapHJ+Wyuk/ocXCvkbaWQhL3e3cWI52Y/
+         QN9BWW7Cz+nDKbZSA2IfSzNd0jAuxSuFDDSSQ1jA=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200616081249eucas1p1744d4db33ee08b7e9dcb42f388e25501~Y_AVMaevv2412324123eucas1p12;
+        Tue, 16 Jun 2020 08:12:49 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id B5.5E.60698.20F78EE5; Tue, 16
-        Jun 2020 09:12:50 +0100 (BST)
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 64.49.60679.10F78EE5; Tue, 16
+        Jun 2020 09:12:49 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200616081250eucas1p2a98f8810962ddc692fa5588a74f911b3~Y_AV5DEGu0048500485eucas1p2o;
-        Tue, 16 Jun 2020 08:12:50 +0000 (GMT)
+        20200616081249eucas1p2ad165b545f265bec88a06270d55fce76~Y_AU3Xf9_2000720007eucas1p2A;
+        Tue, 16 Jun 2020 08:12:49 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200616081250eusmtrp11e628046414c848eeef3b46c4e5d342c~Y_AV4dJ0E1314613146eusmtrp1s;
-        Tue, 16 Jun 2020 08:12:50 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-f8-5ee87f02c16d
+        20200616081249eusmtrp1076cd1eed5d122b714828fa3df942678~Y_AU2y82_1314613146eusmtrp1p;
+        Tue, 16 Jun 2020 08:12:49 +0000 (GMT)
+X-AuditID: cbfec7f4-516ed9c00001ed07-db-5ee87f013edc
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id A2.4A.07950.20F78EE5; Tue, 16
-        Jun 2020 09:12:50 +0100 (BST)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E0.4A.07950.10F78EE5; Tue, 16
+        Jun 2020 09:12:49 +0100 (BST)
 Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200616081250eusmtip269bdae8437e63967952de0a9644e93bb~Y_AVXwV1D0491904919eusmtip2j;
-        Tue, 16 Jun 2020 08:12:50 +0000 (GMT)
+        20200616081249eusmtip24bf183b14f354795f5efd0fe7bc5e7fe~Y_AUX27pf0162901629eusmtip2f;
+        Tue, 16 Jun 2020 08:12:48 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
@@ -66,72 +66,78 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Lukasz Luba <lukasz.luba@arm.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4/4] ARM: multi_v7_defconfig: Enable big.LITTLE cpuidle
- driver
-Date:   Tue, 16 Jun 2020 10:12:30 +0200
-Message-Id: <20200616081230.31198-5-m.szyprowski@samsung.com>
+Subject: [PATCH 2/4] cpuidle: big.LITTLE: enable driver only on Peach-Pit/Pi
+ Chromebooks
+Date:   Tue, 16 Jun 2020 10:12:28 +0200
+Message-Id: <20200616081230.31198-3-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200616081230.31198-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42LZduznOV2m+hdxBrN3WlhsnLGe1WLeZ1mL
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42LZduznOV3G+hdxBjcPGllsnLGe1WLeZ1mL
         8+c3sFtsenyN1eJz7xFGixnn9zFZvPn9gt1iYVMLu8XaI3fZHTg91sxbw+ixaVUnm8eda3vY
-        PDYvqffo27KK0ePzJrkAtigum5TUnMyy1CJ9uwSujFdHH7EWnGatOLt3MnsD4xeWLkZODgkB
-        E4m1/5aB2UICKxglOibadDFyAdlfGCXufrvNDuF8ZpS4P2sJM0zHnm1LoRLLGSXWfPvPDNdy
-        dd9bsCo2AUOJrrddbCC2iEC6xL2/S8A6mAUmMEm8ae5n7WLk4BAWCJCYe6AGpIZFQFVizbIW
-        sHpeAVuJY7v+s0Nsk5dYveEA2ExOATuJZZufM4HMkRBoZpc4unEmI0SRi8TTmXOZIGxhiVfH
-        t0A1y0icntzDAtXAKPHw3Fp2CKeHUeJy0wyobmuJO+d+sYFcxCygKbF+lz5E2FHi7dtuJpCw
-        hACfxI23giBhZiBz0rbpzBBhXomONiGIajWJWcfXwa09eOESNLQ8JGZc/MwKCaCJQCd8fcQ2
-        gVF+FsKyBYyMqxjFU0uLc9NTi43zUsv1ihNzi0vz0vWS83M3MQITyOl/x7/uYNz3J+kQowAH
-        oxIPL0PA8zgh1sSy4srcQ4wSHMxKIrxOZ0/HCfGmJFZWpRblxxeV5qQWH2KU5mBREuc1XvQy
-        VkggPbEkNTs1tSC1CCbLxMEp1cDYuFwpojD2gdyP3fkpvemnNW45KemL31j3b86SKVsyzK90
-        sm3glHpxosxUO156z36v06q9Rz9UTyj/u/GXvQij0d47586edyldki/WK3Myedet9Lk8seVd
-        Ag7vLv7o3lq3+qiY1VrHhu7p654eNbr8/nXvl1sTEs8ZipQ7L2L0MxLM4go9Ha+jxFKckWio
-        xVxUnAgAxvgoMhwDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsVy+t/xe7pM9S/iDJZMULXYOGM9q8W8z7IW
+        PDYvqffo27KK0ePzJrkAtigum5TUnMyy1CJ9uwSujEMLXzEVNHBWfG7mbmA8z97FyMkhIWAi
+        8X3nCtYuRi4OIYEVjBK9EzdAOV8YJbZvWsgM4XxmlDj5fR8TTMve6Z0sEInljBKTf31mgms5
+        9/8qM0gVm4ChRNfbLjYQW0QgXeLe3yXsIEXMAhOYJN4097OCJIQFoiROHZ4BZrMIqErM2XAY
+        rJlXwFZiaUsXM8Q6eYnVGw6A2ZwCdhLLNj8H2yYh8JtNYuG392wQRS4S/1e8grpPWOLV8S1Q
+        78lInJ7cwwLR0Mwo8fDcWnYIp4dR4nLTDEaIKmuJO+d+AU3iALpPU2L9Ln2IsKPE7C/TmEDC
+        EgJ8EjfeCoKEmYHMSdumM0OEeSU62oQgqtUkZh1fB7f24IVLUPd7SPRuuQINoYmMEt173rFM
+        YJSfhbBsASPjKkbx1NLi3PTUYqO81HK94sTc4tK8dL3k/NxNjMAUcvrf8S87GHf9STrEKMDB
+        qMTDGxH0PE6INbGsuDL3EKMEB7OSCK/T2dNxQrwpiZVVqUX58UWlOanFhxilOViUxHmNF72M
+        FRJITyxJzU5NLUgtgskycXBKNTBqdhYpaex7vuHqwjlJq1YXpJ8XdLEIT2hN/6NvVnjkw5Lq
+        e9PeWe2dG6rT7irNfkjP2+5Ymt31dcmTDftTaxXYRexL1bh9w/TMzx44Y+W00jcg1Wb6S/XJ
+        J6t49rR51m+cyfzdu3+d2kHJYK6EO7O0+j4UpXq7f+Fz2vm5luPljkuR3/LsXyixFGckGmox
+        FxUnAgDZ2r5dHQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsVy+t/xe7qM9S/iDA7cVrDYOGM9q8W8z7IW
         589vYLfY9Pgaq8Xn3iOMFjPO72OyePP7BbvFwqYWdou1R+6yO3B6rJm3htFj06pONo871/aw
         eWxeUu/Rt2UVo8fnTXIBbFF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2
-        NimpOZllqUX6dgl6Ga+OPmItOM1acXbvZPYGxi8sXYycHBICJhJ7ti1l72Lk4hASWMoosenk
-        dkaIhIzEyWkNrBC2sMSfa11sEEWfGCWOflwLlmATMJToeguS4OQQEciUWHjuJtgkZoEpTBI7
-        3u0ESwgL+Emc3TyRHcRmEVCVWLOsBSzOK2ArcWzXf3aIDfISqzccYAaxOQXsJJZtfs4EYgsB
-        1Sw7e5F5AiPfAkaGVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIEBve3Yzy07GLveBR9iFOBg
-        VOLhjQh6HifEmlhWXJl7iFGCg1lJhNfp7Ok4Id6UxMqq1KL8+KLSnNTiQ4ymQEdNZJYSTc4H
-        RlteSbyhqaG5haWhubG5sZmFkjhvh8DBGCGB9MSS1OzU1ILUIpg+Jg5OqQbGzPMiHCVJYq82
-        eG0TEbk96/Pe7yGnref2NJt8Vu/XPX0qMOnj3h8V7Wymt0QXHP8hVRDa94fvx4e7Ue/LZ3t8
-        ktMz9Cou2tRWWFPvE90y6aibVpP0w2NXz2+4uUB+rsO0OA45F5aLSmqWr9YpWpxYcHhNeF5v
-        4QZ7vqe3G3U33p+64s96zxfrlViKMxINtZiLihMBc07dp34CAAA=
-X-CMS-MailID: 20200616081250eucas1p2a98f8810962ddc692fa5588a74f911b3
+        NimpOZllqUX6dgl6GYcWvmIqaOCs+NzM3cB4nr2LkZNDQsBEYu/0ThYQW0hgKaPE6l08EHEZ
+        iZPTGlghbGGJP9e62CBqPjFKzH2sCmKzCRhKdL2FiIsIZEosPHcTaCYXB7PAFCaJHe92giWE
+        BSIk1p1fBjaIRUBVYs6Gw8wgNq+ArcTSli5miAXyEqs3HACzOQXsJJZtfs4EscxWYtnZi8wT
+        GPkWMDKsYhRJLS3OTc8tNtIrTswtLs1L10vOz93ECAzlbcd+btnB2PUu+BCjAAejEg9vRNDz
+        OCHWxLLiytxDjBIczEoivE5nT8cJ8aYkVlalFuXHF5XmpBYfYjQFOmois5Rocj4wzvJK4g1N
+        Dc0tLA3Njc2NzSyUxHk7BA7GCAmkJ5akZqemFqQWwfQxcXBKNTAerM/vmsn2lztp6eoOhzkM
+        TWEOsUW/5cz2zL/ZvXQdV/PsydWOyk/CrTKCijWrJrrYbjs3S5pv7Ya6PNPllzX3vJrivvaU
+        3IMWjgPRgvderHa0O3X0aEbHt/Rnb5iszf9aaux9NCF61t+uF01cC80d07se3BGVOmH3vObq
+        7SlblAIPiN661TFJiaU4I9FQi7moOBEA3JD7ZHsCAAA=
+X-CMS-MailID: 20200616081249eucas1p2ad165b545f265bec88a06270d55fce76
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200616081250eucas1p2a98f8810962ddc692fa5588a74f911b3
+X-RootMTR: 20200616081249eucas1p2ad165b545f265bec88a06270d55fce76
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200616081250eucas1p2a98f8810962ddc692fa5588a74f911b3
+X-CMS-RootMailID: 20200616081249eucas1p2ad165b545f265bec88a06270d55fce76
 References: <20200616081230.31198-1-m.szyprowski@samsung.com>
-        <CGME20200616081250eucas1p2a98f8810962ddc692fa5588a74f911b3@eucas1p2.samsung.com>
+        <CGME20200616081249eucas1p2ad165b545f265bec88a06270d55fce76@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Enable big.LITTLE cpuidle driver, which can be used on Exynos-based
-Peach Pit/Pi Chromebooks.
+This driver always worked properly only on the Exynos 5420/5800 based
+Chromebooks (Peach-Pit/Pi), so change the required compatible string to
+the 'google,peach', to avoid enabling it on the other Exynos 542x/5800
+boards, which hangs in such case. The main difference between Peach-Pit/Pi
+and other Exynos 542x/5800 boards is the firmware - Peach platform doesn't
+use secure firmware at all.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/cpuidle/cpuidle-big_little.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 95543914d3c7..6a922a8ef712 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -111,6 +111,7 @@ CONFIG_ARM_RASPBERRYPI_CPUFREQ=y
- CONFIG_QORIQ_CPUFREQ=y
- CONFIG_CPU_IDLE=y
- CONFIG_ARM_CPUIDLE=y
-+CONFIG_ARM_BIG_LITTLE_CPUIDLE=y
- CONFIG_ARM_ZYNQ_CPUIDLE=y
- CONFIG_ARM_EXYNOS_CPUIDLE=y
- CONFIG_ARM_TEGRA_CPUIDLE=y
+diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
+index 7f8ddc04342d..abe51185f243 100644
+--- a/drivers/cpuidle/cpuidle-big_little.c
++++ b/drivers/cpuidle/cpuidle-big_little.c
+@@ -155,8 +155,7 @@ static int __init bl_idle_driver_init(struct cpuidle_driver *drv, int part_id)
+ 
+ static const struct of_device_id compatible_machine_match[] = {
+ 	{ .compatible = "arm,vexpress,v2p-ca15_a7" },
+-	{ .compatible = "samsung,exynos5420" },
+-	{ .compatible = "samsung,exynos5800" },
++	{ .compatible = "google,peach" },
+ 	{},
+ };
+ 
 -- 
 2.17.1
 
