@@ -2,61 +2,61 @@ Return-Path: <SRS0=ffDA=75=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1ACC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 08:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F22FC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 08:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE52D20767
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 08:12:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A65820767
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 08:12:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aMLuh1Pl"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ht+bkG2q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbgFPIMy (ORCPT
+        id S1726099AbgFPIM4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 16 Jun 2020 04:12:54 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54709 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725979AbgFPIMv (ORCPT
+        Tue, 16 Jun 2020 04:12:56 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:42986 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727085AbgFPIMx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 16 Jun 2020 04:12:51 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200616081249euoutp02b77285b7e45b57f96d64b4277f887711~Y_AUywMkJ2346823468euoutp02g
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Jun 2020 08:12:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200616081249euoutp02b77285b7e45b57f96d64b4277f887711~Y_AUywMkJ2346823468euoutp02g
+        Tue, 16 Jun 2020 04:12:53 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200616081250euoutp011592fc1393127248dc1482793fcb6f5e~Y_AWLo2qA1721217212euoutp015
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Jun 2020 08:12:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200616081250euoutp011592fc1393127248dc1482793fcb6f5e~Y_AWLo2qA1721217212euoutp015
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1592295169;
-        bh=122xkcSZ6not3U6lZOAxMuLg/4SWMmRDS+BIqk4WVkU=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=aMLuh1PlElG4O57HP+AmjtNXbEuT/Yg1Oty2iTCbMifIThZiZWp+Yu1e3SnasrsPc
-         MgYp8WRjfffTQCWsH5BZ/iSc3fzlBBYk55km057a0cJ7PBLuN6Zs/dieSGdIuibL6a
-         y3r6gIs6emm93qWpj9K8ebbD+J9kkhmZ/P9OUfuY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200616081249eucas1p2735465f1130251edf898292439e100b9~Y_AUWrKJu0702807028eucas1p2B;
-        Tue, 16 Jun 2020 08:12:49 +0000 (GMT)
+        s=mail20170921; t=1592295171;
+        bh=AWAMWTUTIZzqNOG8Dq390F6D/G8wFyFWzK2NpqNDPCI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ht+bkG2qZ+OdHZWy9XAQH7cki5AfIkHJY7wUUVe05eA6b1kA5P4N5oohA/sdDlyA7
+         l7s0WSg6861ROmUE4ibkt9Q8iLJE37LPVECyR1xKW2s3e8yPISSUz6rZx+nLtzN+V6
+         1cGhqToESw0ytNrFLdxDrCrE29ulrvNsbMyy6pM0=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200616081250eucas1p155fffc189a23ff88a3ef5203276ad644~Y_AV30mTb2187921879eucas1p1P;
+        Tue, 16 Jun 2020 08:12:50 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id B2.49.60679.00F78EE5; Tue, 16
-        Jun 2020 09:12:48 +0100 (BST)
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 15.5E.60698.20F78EE5; Tue, 16
+        Jun 2020 09:12:50 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200616081248eucas1p168faa343ce333a28c8fd3cf9a6a58b3c~Y_AT6PS-s0901609016eucas1p1F;
-        Tue, 16 Jun 2020 08:12:48 +0000 (GMT)
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200616081250eucas1p2de7110898dad050866d78cb5d5120422~Y_AVbP8hL0677406774eucas1p2P;
+        Tue, 16 Jun 2020 08:12:50 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200616081248eusmtrp14438154dbfef14344d3542f669f9dc3b~Y_AT5n2LU1314613146eusmtrp1l;
-        Tue, 16 Jun 2020 08:12:48 +0000 (GMT)
-X-AuditID: cbfec7f4-0e5ff7000001ed07-d6-5ee87f0016ed
+        20200616081250eusmtrp1da8be45a72185c83dd86ddb56d9f3d18~Y_AVan3io1259512595eusmtrp1g;
+        Tue, 16 Jun 2020 08:12:50 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-f7-5ee87f02fbd9
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id EE.3A.07950.00F78EE5; Tue, 16
-        Jun 2020 09:12:48 +0100 (BST)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E1.4A.07950.20F78EE5; Tue, 16
+        Jun 2020 09:12:50 +0100 (BST)
 Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200616081248eusmtip21c0577272d923dad351f1aeab7877c04~Y_ATagn430387603876eusmtip22;
-        Tue, 16 Jun 2020 08:12:47 +0000 (GMT)
+        20200616081249eusmtip288f3c5634c8d95b3191234c8ab2da204~Y_AU3w65N0387603876eusmtip24;
+        Tue, 16 Jun 2020 08:12:49 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
@@ -66,78 +66,71 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Lukasz Luba <lukasz.luba@arm.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 0/4] Restore big.LITTLE cpuidle driver for Exynos
-Date:   Tue, 16 Jun 2020 10:12:26 +0200
-Message-Id: <20200616081230.31198-1-m.szyprowski@samsung.com>
+Subject: [PATCH 3/4] ARM: exynos_defconfig: Enable big.LITTLE cpuidle driver
+Date:   Tue, 16 Jun 2020 10:12:29 +0200
+Message-Id: <20200616081230.31198-4-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHIsWRmVeSWpSXmKPExsWy7djPc7oM9S/iDD5ONrfYOGM9q8W8z7IW
+In-Reply-To: <20200616081230.31198-1-m.szyprowski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgleLIzCtJLcpLzFFi42LZduznOV2m+hdxBp0PlC02zljPajHvs6zF
+        +fMb2C02Pb7GavG59wijxYzz+5gs3vx+wW6xsKmF3WLtkbvsDpwea+atYfTYtKqTzePOtT1s
+        HpuX1Hv0bVnF6PF5k1wAWxSXTUpqTmZZapG+XQJXxobnN9kK1rNWrH/F2sB4g6WLkZNDQsBE
+        4lT7dFYQW0hgBaNE2yr/LkYuIPsLo8T5oyeYIJzPjBKrP+1ghemY8bmXHSKxnFHixcm7jHAt
+        VyasYwSpYhMwlOh628UGYosIpEvc+7sErINZYAKTxJvmfrBRwgI+Es9vXWYCsVkEVCXOfv8J
+        dBQHB6+ArcTDabUQ2+QlVm84wAxicwrYSSzb/BzsJAmB/2wSL6d/YoQocpFo27oH6jxhiVfH
+        t7BD2DISpyf3sEA0NDNKPDy3lh3C6WGUuNw0A6rbWuLOuV9sIJuZBTQl1u/Shwg7SqzrvMcK
+        EpYQ4JO48VYQJMwMZE7aNp0ZIswr0dEmBFGtJjHr+Dq4tQcvXGKGsD0klm3/AA2tiYwSR04v
+        ZprAKD8LYdkCRsZVjOKppcW56anFxnmp5XrFibnFpXnpesn5uZsYgenj9L/jX3cw7vuTdIhR
+        gINRiYeXIeB5nBBrYllxZe4hRgkOZiURXqezp+OEeFMSK6tSi/Lji0pzUosPMUpzsCiJ8xov
+        ehkrJJCeWJKanZpakFoEk2Xi4JRqYGT6qbX0zaUdTya+yo1/E2K56ON8xvUr9YQ2PSp4xxOd
+        aLF9z0rxb09e5a3d5f1yfeshN/a42afzmdjnr+lvmfZv8r/JvWu35ttF+b5UdJS4OuFf0JvK
+        Ul7OBwKLp2ieS8+POn/q/4Vpz1ie+L0x6Bcs1qg7I/tltV8i++esRtfjds39kodCrkxVYinO
+        SDTUYi4qTgQAZqCw9hsDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsVy+t/xe7pM9S/iDK4fZLHYOGM9q8W8z7IW
         589vYLfY9Pgaq8Xn3iOMFjPO72OyePP7BbvFwqYWdou1R+6yO3B6rJm3htFj06pONo871/aw
-        eWxeUu/Rt2UVo8fnTXIBbFFcNimpOZllqUX6dglcGbt6LrMXvOaoWL/nLVMD4zT2LkZODgkB
-        E4k3/w+xdDFycQgJrGCU2PRlHyuE84VRou/4JCjnM6NET+tyFpiW78cnM0IkljNK7Nsygw2u
-        5fDCR4wgVWwChhJdb7vYQGwRgXSJe3+XsIMUMQtMYJJ409zPCpIQFnCUOPptFhOIzSKgKjH3
-        zQ+wFbwCthJPdt1mhlgnL7F6wwFmkGYJgddsEh2PZjJCJFwkNt7ezARhC0u8Or4F6iUZidOT
-        e1ggGpoZJR6eW8sO4fQwSlxumgHVbS1x59wvoPs4gG7SlFi/Sx8i7ChxsXEbC0hYQoBP4sZb
-        QZAwM5A5adt0Zogwr0RHmxBEtZrErOPr4NYevHAJ6mYPiWV/L4HFhQRiJdZt288+gVFuFsKu
-        BYyMqxjFU0uLc9NTi43yUsv1ihNzi0vz0vWS83M3MQJTxel/x7/sYNz1J+kQowAHoxIPb0TQ
-        8zgh1sSy4srcQ4wSHMxKIrxOZ0/HCfGmJFZWpRblxxeV5qQWH2KU5mBREuc1XvQyVkggPbEk
-        NTs1tSC1CCbLxMEp1cCoUfOlXNxA92k7r+nfd91rdDbfk1Hqv3LTwIevQHWJfoZcbeVLqVVn
-        jfiD1y91dQ70zv/GMetqydJbPhJFR+d9dhb7ZK4wS2GLDavYqUf6ujKqAYvCn19RqZGz2rFB
-        1pWfMfu52RSrkBfmJYaFijynjhqY6J1QuafpnD3haY9H7vH+De9PzlFiKc5INNRiLipOBABY
-        wv8kEQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMLMWRmVeSWpSXmKPExsVy+t/xe7oM9S/iDFb3y1tsnLGe1WLeZ1mL
-        8+c3sFtsenyN1eJz7xFGixnn9zFZvPn9gt1iYVMLu8XaI3fZHTg91sxbw+ixaVUnm8eda3vY
-        PDYvqffo27KK0ePzJrkAtig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07
-        m5TUnMyy1CJ9uwS9jF09l9kLXnNUrN/zlqmBcRp7FyMnh4SAicT345MZuxi5OIQEljJKdJ07
-        yQSRkJE4Oa2BFcIWlvhzrYsNougTo8ThSdtZQBJsAoYSXW9BEpwcIgKZEgvP3WQHKWIWmMIk
-        sePdTrCEsICjxNFvs8CmsgioSsx98wOsmVfAVuLJrtvMEBvkJVZvOMA8gZFnASPDKkaR1NLi
-        3PTcYiO94sTc4tK8dL3k/NxNjMAA3Xbs55YdjF3vgg8xCnAwKvHwRgQ9jxNiTSwrrsw9xCjB
-        wawkwut09nScEG9KYmVValF+fFFpTmrxIUZToOUTmaVEk/OB0ZNXEm9oamhuYWlobmxubGah
-        JM7bIXAwRkggPbEkNTs1tSC1CKaPiYNTqoHRdstpKX6Hit9ZZT7PE5ZzP1g9S9y3WNegqvWd
-        ouL0gh07/Go4tMUcBB/znJu+xHDztFNKOltVuZUVDMMmKNcpR349pXJFI+HI7WlrC+dMC5qe
-        43FN9XCj2pSZfr0vFV+oznz+7eOG4/cCd3MZ/SydXVr9sE5rX0+U8cnV6xk77l/uEPTrZ0xU
-        YinOSDTUYi4qTgQAZ8R2XmYCAAA=
-X-CMS-MailID: 20200616081248eucas1p168faa343ce333a28c8fd3cf9a6a58b3c
+        eWxeUu/Rt2UVo8fnTXIBbFF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2
+        NimpOZllqUX6dgl6GRue32QrWM9asf4VawPjDZYuRk4OCQETiRmfe9m7GLk4hASWMkqcebwF
+        KiEjcXJaAyuELSzx51oXG0TRJ0aJ9dvPgyXYBAwlut6CJDg5RAQyJRaeuwk2iVlgCpPEjnc7
+        wRLCAj4Sz29dZgKxWQRUJc5+/wm0gYODV8BW4uG0WogF8hKrNxxgBrE5Bewklm1+DlYuBFSy
+        7OxF5gmMfAsYGVYxiqSWFuem5xYb6RUn5haX5qXrJefnbmIEBvO2Yz+37GDsehd8iFGAg1GJ
+        hzci6HmcEGtiWXFl7iFGCQ5mJRFep7On44R4UxIrq1KL8uOLSnNSiw8xmgLdNJFZSjQ5Hxhp
+        eSXxhqaG5haWhubG5sZmFkrivB0CB2OEBNITS1KzU1MLUotg+pg4OKUaGAUMJRe6GcZEh9bl
+        Ha+5tnrCAps1Xl7772cvYN2ROMPS7WIYc7++1Hb92+ubFapTFPg6RWXVVTze7vn+bernBv+a
+        r2I7fvVc5158Ltz8zKEQVcP4u8zVypGHl/45fufH0//T52U0ce7r5Wxl9rUJTn9ZsfShQ5Sz
+        wII6MY5ophX3r0jzCdtOUmIpzkg01GIuKk4EABQx07p8AgAA
+X-CMS-MailID: 20200616081250eucas1p2de7110898dad050866d78cb5d5120422
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200616081248eucas1p168faa343ce333a28c8fd3cf9a6a58b3c
+X-RootMTR: 20200616081250eucas1p2de7110898dad050866d78cb5d5120422
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200616081248eucas1p168faa343ce333a28c8fd3cf9a6a58b3c
-References: <CGME20200616081248eucas1p168faa343ce333a28c8fd3cf9a6a58b3c@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20200616081250eucas1p2de7110898dad050866d78cb5d5120422
+References: <20200616081230.31198-1-m.szyprowski@samsung.com>
+        <CGME20200616081250eucas1p2de7110898dad050866d78cb5d5120422@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The ARM big.LITTLE cpuidle driver has been enabled and tested on Samsung
-Exynos 5420/5800 based Peach Pit/Pi Chromebooks and in fact it worked
-only on those boards.
+Enable big.LITTLE cpuidle driver, which can be used on Exynos-based
+Peach Pit/Pi Chromebooks.
 
-However, support for it was broken by the commit 833b5794e330 ("ARM:
-EXYNOS: reset Little cores when cpu is up") and then never enabled in the
-exynos_defconfig. This patchset provides the needed fix to the common
-code and restores support for it. Thanks to Lukasz Luba who motivated me
-to take a look into this issue.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Patch summary:
-
-Marek Szyprowski (4):
-  ARM: exynos: Apply little core workaround only under secure firmware
-  cpuidle: big.LITTLE: enable driver only on Peach-Pit/Pi Chromebooks
-  ARM: exynos_defconfig: Enable big.LITTLE cpuidle driver
-  ARM: multi_v7_defconfig: Enable big.LITTLE cpuidle driver
-
- arch/arm/configs/exynos_defconfig    |  1 +
- arch/arm/configs/multi_v7_defconfig  |  1 +
- arch/arm/mach-exynos/mcpm-exynos.c   | 10 +++++++---
- drivers/cpuidle/cpuidle-big_little.c |  3 +--
- 4 files changed, 10 insertions(+), 5 deletions(-)
-
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 374fbff8eaa6..c928bc710c48 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -28,6 +28,7 @@ CONFIG_CPU_FREQ_GOV_CONSERVATIVE=m
+ CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
+ CONFIG_CPUFREQ_DT=y
+ CONFIG_CPU_IDLE=y
++CONFIG_ARM_BIG_LITTLE_CPUIDLE=y
+ CONFIG_ARM_EXYNOS_CPUIDLE=y
+ CONFIG_VFP=y
+ CONFIG_NEON=y
 -- 
 2.17.1
 
