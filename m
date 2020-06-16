@@ -6,93 +6,92 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46779C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 07:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB633C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 07:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1732A20810
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 07:03:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 973E720776
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 07:18:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592290985;
-	bh=air/hKC0z5+Ttcp0buy/L1uE6RcyvZHYqvLAfZqOw5w=;
+	s=default; t=1592291922;
+	bh=kOvpVuEsvNl7dmJVGf0NZaeAcX1Rnm/xQA15PjcYbO8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Nqm+XD4X7k8cpepfqhKKxhfasRjxzkAg6PGPY6iVnbgzAHRrKUZopyflsZZIQ896Z
-	 1qTQlLeqzsZenoCrb/RokyiJoXrrNZoGtV9GRUPHVmH2/Henawam5LUGCx20ekF337
-	 xcfn5jQCKtALTtt4Hkny5L2W5a/jq33XbXT+d8Ng=
+	b=2DzLL2emDdGvSqRgbWJ33EayiJjI8URHRHqUwrEPheDwZD4eMi6MQqsCeKAgfJ+BO
+	 5ADRfE5O/jAWxNXKU4RNEFAi4/sbnJcjHp5Me4WKG+zwhfYqDXKflR6YAEYuHnzek0
+	 4ii2s23U5OKxnoxNxhWKs/dO0xMvBuL//XGFF/KE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbgFPHDE (ORCPT
+        id S1725911AbgFPHSm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 16 Jun 2020 03:03:04 -0400
-Received: from mail-ej1-f65.google.com ([209.85.218.65]:41125 "EHLO
-        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbgFPHDB (ORCPT
+        Tue, 16 Jun 2020 03:18:42 -0400
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:38163 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbgFPHSl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 16 Jun 2020 03:03:01 -0400
-Received: by mail-ej1-f65.google.com with SMTP id dp18so2100945ejc.8;
-        Tue, 16 Jun 2020 00:02:59 -0700 (PDT)
+        Tue, 16 Jun 2020 03:18:41 -0400
+Received: by mail-ej1-f66.google.com with SMTP id w16so19813543ejj.5;
+        Tue, 16 Jun 2020 00:18:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=W+RINVE0XAWlLx/NciRZL3CxZwQ8/XrClWGZWDn4nfE=;
-        b=SUl4rQGIHivhb71P38XTo3bb5chjpqgajocfue2hqT6SnY6ArjPxgQTExOnU4iZ5b6
-         QX2QjT8b6UOVGPN0ikVzyb93tmRiuHXZzz7iFdjSk2lJSp92QghQMckn5Bd0No/eaJ95
-         SqjC0vjQl/DkBkBv757gP3kgdLTTZux1+/M64fB4lQWS658ZsRs3+xG8wxCA5MDktY/3
-         tVDlK3IDx/bd1qtPARuNae+XlpV6SKp/ya4qsQpednwqot+T2QVWF9l/uzgr+VfOtomv
-         mCPTHv6kir7GauYdNwQeYztpU/s/gIzfFxULEc8WGhq6ofHH+ob5EXCWWqVY3kpCLoUS
-         pquA==
-X-Gm-Message-State: AOAM530yjinjsQU8j5BI9o7G+e3IqytlFNG5r/VtiltddsUbPEmNr+yr
-        eRShRpsoO62B1me90lHew6s=
-X-Google-Smtp-Source: ABdhPJxl4oyx9iQxhRGORq2pzdp+iXjssmPRevhLNp+7V95nN07E3myCv4N1zJvRvpw1FVDX/qymKQ==
-X-Received: by 2002:a17:906:4b50:: with SMTP id j16mr1504437ejv.415.1592290978329;
-        Tue, 16 Jun 2020 00:02:58 -0700 (PDT)
+        bh=tT4lPCOqC8m2jN6E8L7uFkNVDR9AvY5WZewZRGKHN3k=;
+        b=eNMAtj8JqGE+DAXcm+nxXOPyOQyvAunnTk1brzsxBrcw6NGuj/z6a0yUiPsqJqH3lC
+         xXdA2CmfxIxH0iDGAUSUWk1lM32F23unbpltsKO6aIuhcjnsUvgO6hUbNJlGeUyy+8gE
+         FkPn6UmP1KIqSnlAk/NI26Zfg5GQr4S4xJ6LTqbX0dmLIKfilBoEDYUdlcIDGnWO/irF
+         oFPIz/4Sl9Yx5TDtG+jGsS644lbWNEcti8Sg5Jx9SqYKYZkbyyAj0OV++yZpBqQxnguP
+         Y0vHOZAnna7biuE2ewRTN8JQa8E1eOQfkI3W8oCvuT8rtcBdh0IGVx4ON5nBLSAjUnRQ
+         046Q==
+X-Gm-Message-State: AOAM5339TTOStu08Fatz5a3of2/oWo897okS6EInSS4NSEEtCUw8zG6F
+        PbrHxthZ8jKGhojCqELha/E=
+X-Google-Smtp-Source: ABdhPJxDifyRwf13/EjaihQm5vJnlZB+OKK9ORGdXYCRlY5yhWD2VfzUsTFNIEnVJ1d/pJH4EtKjtQ==
+X-Received: by 2002:a17:906:fcae:: with SMTP id qw14mr1563379ejb.166.1592291919788;
+        Tue, 16 Jun 2020 00:18:39 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.184])
-        by smtp.googlemail.com with ESMTPSA id ce14sm10568034ejc.3.2020.06.16.00.02.56
+        by smtp.googlemail.com with ESMTPSA id js3sm10651179ejb.65.2020.06.16.00.18.38
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Jun 2020 00:02:57 -0700 (PDT)
-Date:   Tue, 16 Jun 2020 09:02:54 +0200
+        Tue, 16 Jun 2020 00:18:39 -0700 (PDT)
+Date:   Tue, 16 Jun 2020 09:18:37 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
+Cc:     linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>, peron.clem@gmail.com,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Saravana Kannan <saravanak@google.com>
-Subject: Re: [PATCH RESEND v4] soc: samsung: Add simple voltage coupler for
- Exynos5800
-Message-ID: <20200616070254.GA20282@kozik-lap>
-References: <CGME20200616065834eucas1p268ef16744422664c783b17f0a18c53e2@eucas1p2.samsung.com>
- <20200616065821.29616-1-m.szyprowski@samsung.com>
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3] pinctrl: samsung: Use bank name as irqchip name
+Message-ID: <20200616071837.GB20282@kozik-lap>
+References: <CGME20200610194107eucas1p1b22f0c8e3e13551940efd6093df505a3@eucas1p1.samsung.com>
+ <20200610194052.6434-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200616065821.29616-1-m.szyprowski@samsung.com>
+In-Reply-To: <20200610194052.6434-1-m.szyprowski@samsung.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 16, 2020 at 08:58:21AM +0200, Marek Szyprowski wrote:
-> Add a simple custom voltage regulator coupler for Exynos5800 SoCs, which
-> require coupling between "vdd_arm" and "vdd_int" regulators. This coupler
-> ensures that the voltage values don't go below the bootloader-selected
-> operation point during the boot process until a the clients sets their
-> constraints. It is achieved by assuming minimal voltage value equal to
-> the current value if no constraints are set. This also ensures proper
-> voltage balancing if any of the client driver is missing.
+On Wed, Jun 10, 2020 at 09:40:52PM +0200, Marek Szyprowski wrote:
+> Use the bank name as the irqchip name. This name is later visible in
+> /proc/interrupts, what makes it possible to easily identify each
+> GPIO interrupt.
 > 
-> The balancing code comes from the regulator/core.c with the additional
-> logic for handling regulators without client constraints applied added.
+> /proc/interrupts before this patch:
+> 143:    0     exynos4210_wkup_irq_chip   7 Edge      hdmi
+> 144:    0     exynos4210_wkup_irq_chip   6 Level     wm8994
+> 145:    1     exynos4210_wkup_irq_chip   7 Edge      max77686-pmic, max77686-rtc
+> 146:    1     exynos_gpio_irq_chip   3 Edge      3-0048
 > 
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> /proc/interrupts after this patch:
+> 143:    0     gpx3   7 Edge      hdmi
+> 144:    0     gpx3   6 Level     wm8994
+> 145:    1     gpx0   7 Edge      max77686-pmic, max77686-rtc
+> 146:    1     gpm2   3 Edge      3-0048
+> 
+> Handling of the eint_wake_mask_value has been reworked, because each bank
+> has now its own exynos_irq_chip structure allocated.
+> 
 
 Thanks, applied.
 
