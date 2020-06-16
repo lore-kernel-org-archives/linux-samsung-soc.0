@@ -2,141 +2,141 @@ Return-Path: <SRS0=ffDA=75=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3587DC433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 08:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDE0C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 17:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14B7220B1F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 08:12:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RY3vHmS1"
+	by mail.kernel.org (Postfix) with ESMTP id 7CF90208D5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 17:29:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbgFPIM5 (ORCPT
+        id S1731088AbgFPR3V (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 16 Jun 2020 04:12:57 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:42974 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727083AbgFPIMw (ORCPT
+        Tue, 16 Jun 2020 13:29:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34112 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729272AbgFPR3U (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 16 Jun 2020 04:12:52 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200616081250euoutp01c20f91d21073800905ce89fb72229b3d~Y_AVinbLN1721217212euoutp013
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Jun 2020 08:12:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200616081250euoutp01c20f91d21073800905ce89fb72229b3d~Y_AVinbLN1721217212euoutp013
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1592295170;
-        bh=ady02UUfORwMfN1tf+OdaIb6FsoUsoLGlR6OWH++qxs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RY3vHmS1IjtoqnRC/Q+wgH77l3XbIPBPje06SoJd3XoeqovQAFmxJ0gn89Qlch5V7
-         l93S5PVwTFR79HJTVcNnzIExOB+f/GU9NdapHJ+Wyuk/ocXCvkbaWQhL3e3cWI52Y/
-         QN9BWW7Cz+nDKbZSA2IfSzNd0jAuxSuFDDSSQ1jA=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200616081249eucas1p1744d4db33ee08b7e9dcb42f388e25501~Y_AVMaevv2412324123eucas1p12;
-        Tue, 16 Jun 2020 08:12:49 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 64.49.60679.10F78EE5; Tue, 16
-        Jun 2020 09:12:49 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200616081249eucas1p2ad165b545f265bec88a06270d55fce76~Y_AU3Xf9_2000720007eucas1p2A;
-        Tue, 16 Jun 2020 08:12:49 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200616081249eusmtrp1076cd1eed5d122b714828fa3df942678~Y_AU2y82_1314613146eusmtrp1p;
-        Tue, 16 Jun 2020 08:12:49 +0000 (GMT)
-X-AuditID: cbfec7f4-516ed9c00001ed07-db-5ee87f013edc
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E0.4A.07950.10F78EE5; Tue, 16
-        Jun 2020 09:12:49 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200616081249eusmtip24bf183b14f354795f5efd0fe7bc5e7fe~Y_AUX27pf0162901629eusmtip2f;
-        Tue, 16 Jun 2020 08:12:48 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Tue, 16 Jun 2020 13:29:20 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 421C4C061573;
+        Tue, 16 Jun 2020 10:29:20 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: andrzej.p)
+        with ESMTPSA id 4CE612A2C75
+From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+To:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 2/4] cpuidle: big.LITTLE: enable driver only on Peach-Pit/Pi
- Chromebooks
-Date:   Tue, 16 Jun 2020 10:12:28 +0200
-Message-Id: <20200616081230.31198-3-m.szyprowski@samsung.com>
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Barry Song <baohua@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Nick Dyer <nick@shmanahar.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sangwon Jee <jeesw@melfas.com>,
+        Peter Hutterer <peter.hutterer@redhat.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        kernel@collabora.com
+Subject: [PATCH] Input: document inhibiting
+Date:   Tue, 16 Jun 2020 19:29:09 +0200
+Message-Id: <20200616172909.21625-1-andrzej.p@collabora.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200616081230.31198-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42LZduznOV3G+hdxBjcPGllsnLGe1WLeZ1mL
-        8+c3sFtsenyN1eJz7xFGixnn9zFZvPn9gt1iYVMLu8XaI3fZHTg91sxbw+ixaVUnm8eda3vY
-        PDYvqffo27KK0ePzJrkAtigum5TUnMyy1CJ9uwSujEMLXzEVNHBWfG7mbmA8z97FyMkhIWAi
-        8X3nCtYuRi4OIYEVjBK9EzdAOV8YJbZvWsgM4XxmlDj5fR8TTMve6Z0sEInljBKTf31mgms5
-        9/8qM0gVm4ChRNfbLjYQW0QgXeLe3yXsIEXMAhOYJN4097OCJIQFoiROHZ4BZrMIqErM2XAY
-        rJlXwFZiaUsXM8Q6eYnVGw6A2ZwCdhLLNj8H2yYh8JtNYuG392wQRS4S/1e8grpPWOLV8S1Q
-        78lInJ7cwwLR0Mwo8fDcWnYIp4dR4nLTDEaIKmuJO+d+AU3iALpPU2L9Ln2IsKPE7C/TmEDC
-        EgJ8EjfeCoKEmYHMSdumM0OEeSU62oQgqtUkZh1fB7f24IVLUPd7SPRuuQINoYmMEt173rFM
-        YJSfhbBsASPjKkbx1NLi3PTUYqO81HK94sTc4tK8dL3k/NxNjMAUcvrf8S87GHf9STrEKMDB
-        qMTDGxH0PE6INbGsuDL3EKMEB7OSCK/T2dNxQrwpiZVVqUX58UWlOanFhxilOViUxHmNF72M
-        FRJITyxJzU5NLUgtgskycXBKNTBqdhYpaex7vuHqwjlJq1YXpJ8XdLEIT2hN/6NvVnjkw5Lq
-        e9PeWe2dG6rT7irNfkjP2+5Ymt31dcmTDftTaxXYRexL1bh9w/TMzx44Y+W00jcg1Wb6S/XJ
-        J6t49rR51m+cyfzdu3+d2kHJYK6EO7O0+j4UpXq7f+Fz2vm5luPljkuR3/LsXyixFGckGmox
-        FxUnAgDZ2r5dHQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsVy+t/xe7qM9S/iDA7cVrDYOGM9q8W8z7IW
-        589vYLfY9Pgaq8Xn3iOMFjPO72OyePP7BbvFwqYWdou1R+6yO3B6rJm3htFj06pONo871/aw
-        eWxeUu/Rt2UVo8fnTXIBbFF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2
-        NimpOZllqUX6dgl6GYcWvmIqaOCs+NzM3cB4nr2LkZNDQsBEYu/0ThYQW0hgKaPE6l08EHEZ
-        iZPTGlghbGGJP9e62CBqPjFKzH2sCmKzCRhKdL2FiIsIZEosPHcTaCYXB7PAFCaJHe92giWE
-        BSIk1p1fBjaIRUBVYs6Gw8wgNq+ArcTSli5miAXyEqs3HACzOQXsJJZtfs4EscxWYtnZi8wT
-        GPkWMDKsYhRJLS3OTc8tNtIrTswtLs1L10vOz93ECAzlbcd+btnB2PUu+BCjAAejEg9vRNDz
-        OCHWxLLiytxDjBIczEoivE5nT8cJ8aYkVlalFuXHF5XmpBYfYjQFOmois5Rocj4wzvJK4g1N
-        Dc0tLA3Njc2NzSyUxHk7BA7GCAmkJ5akZqemFqQWwfQxcXBKNTAerM/vmsn2lztp6eoOhzkM
-        TWEOsUW/5cz2zL/ZvXQdV/PsydWOyk/CrTKCijWrJrrYbjs3S5pv7Ya6PNPllzX3vJrivvaU
-        3IMWjgPRgvderHa0O3X0aEbHt/Rnb5iszf9aaux9NCF61t+uF01cC80d07se3BGVOmH3vObq
-        7SlblAIPiN661TFJiaU4I9FQi7moOBEA3JD7ZHsCAAA=
-X-CMS-MailID: 20200616081249eucas1p2ad165b545f265bec88a06270d55fce76
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200616081249eucas1p2ad165b545f265bec88a06270d55fce76
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200616081249eucas1p2ad165b545f265bec88a06270d55fce76
-References: <20200616081230.31198-1-m.szyprowski@samsung.com>
-        <CGME20200616081249eucas1p2ad165b545f265bec88a06270d55fce76@eucas1p2.samsung.com>
+In-Reply-To: <40988408-8f36-3a52-6439-34084de6b129@redhat.com>
+References: <40988408-8f36-3a52-6439-34084de6b129@redhat.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This driver always worked properly only on the Exynos 5420/5800 based
-Chromebooks (Peach-Pit/Pi), so change the required compatible string to
-the 'google,peach', to avoid enabling it on the other Exynos 542x/5800
-boards, which hangs in such case. The main difference between Peach-Pit/Pi
-and other Exynos 542x/5800 boards is the firmware - Peach platform doesn't
-use secure firmware at all.
+Document inhibiting input devices and its relation to being
+a wakeup source.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 ---
- drivers/cpuidle/cpuidle-big_little.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
-index 7f8ddc04342d..abe51185f243 100644
---- a/drivers/cpuidle/cpuidle-big_little.c
-+++ b/drivers/cpuidle/cpuidle-big_little.c
-@@ -155,8 +155,7 @@ static int __init bl_idle_driver_init(struct cpuidle_driver *drv, int part_id)
+@Hans, @Dmitry,
+
+My fist attempt at documenting inhibiting. Kindly look at it to see if I haven't got anything
+wrong.
+
+Andrzej
+
+ Documentation/input/input-programming.rst | 36 +++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+
+diff --git a/Documentation/input/input-programming.rst b/Documentation/input/input-programming.rst
+index 45a4c6e05e39..0cd1ad4504fb 100644
+--- a/Documentation/input/input-programming.rst
++++ b/Documentation/input/input-programming.rst
+@@ -164,6 +164,42 @@ disconnects. Calls to both callbacks are serialized.
+ The open() callback should return a 0 in case of success or any nonzero value
+ in case of failure. The close() callback (which is void) must always succeed.
  
- static const struct of_device_id compatible_machine_match[] = {
- 	{ .compatible = "arm,vexpress,v2p-ca15_a7" },
--	{ .compatible = "samsung,exynos5420" },
--	{ .compatible = "samsung,exynos5800" },
-+	{ .compatible = "google,peach" },
- 	{},
- };
++Inhibiting input devices
++~~~~~~~~~~~~~~~~~~~~~~~~
++
++Inhibiting a device means ignoring input events from it. As such it is about maintaining
++relationships with input handlers - either an already existing relationships, or
++relationships to be established while the device is in inhibited state.
++
++If a device is inhibited, no input handler will receive events from it.
++
++The fact that nobody wants events from the device is exploited further, by calling device's
++close() (if there are users) and open() (if there are users) on inhibit and uninhibit
++operations, respectively. Indeed, the meaning of close() is to stop providing events
++to the input core and that of open() is to start providing events to the input core.
++
++Inhibiting and uninhibiting is orthogonal to opening and closing the device by input
++handlers. Userspace might want to inhibit a device in anticipation before any handler is
++positively matched against it.
++
++Inhibiting and uninhibiting is orthogonal to device's being a wakeup source, too. Being a
++wakeup source plays a role when the system is sleeping, not when the system is operating.
++How drivers should program their interaction between inhibiting, sleeping and being a wakeup
++source is driver-specific.
++
++Taking the analogy with the network devices - bringing a network interface down doesn't mean
++that it should be impossible to be wake the system up on LAN through this interface. So, there
++may be input drivers which should be considered wakeup sources even when inhibited. Actually,
++in many i2c input devices their interrupt is declared a wakeup interrupt and its handling
++happens in driver's core, which is not aware of input-specific inhibit (nor should it be).
++Composite devices containing several interfaces can be inhibited on a per-interface basis and
++e.g. inhibiting one interface shouldn't affect the device's capability of being a wakeup source.
++
++If a device is to be considered a wakeup source while inhibited, special care must be taken when
++programming its suspend(), as it might need to call device's open(). Depending on what close()
++means for the device in question not opening() it before going to sleep might make it impossible
++to provide any wakeup events. The device is going to sleep anyway.
++
+ Basic event types
+ ~~~~~~~~~~~~~~~~~
  
 -- 
 2.17.1
