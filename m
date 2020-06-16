@@ -2,99 +2,73 @@ Return-Path: <SRS0=ffDA=75=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB633C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 07:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84889C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 07:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 973E720776
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 07:18:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592291922;
-	bh=kOvpVuEsvNl7dmJVGf0NZaeAcX1Rnm/xQA15PjcYbO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2DzLL2emDdGvSqRgbWJ33EayiJjI8URHRHqUwrEPheDwZD4eMi6MQqsCeKAgfJ+BO
-	 5ADRfE5O/jAWxNXKU4RNEFAi4/sbnJcjHp5Me4WKG+zwhfYqDXKflR6YAEYuHnzek0
-	 4ii2s23U5OKxnoxNxhWKs/dO0xMvBuL//XGFF/KE=
+	by mail.kernel.org (Postfix) with ESMTP id 6E88320B1F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Jun 2020 07:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725911AbgFPHSm (ORCPT
+        id S1726261AbgFPHck (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 16 Jun 2020 03:18:42 -0400
-Received: from mail-ej1-f66.google.com ([209.85.218.66]:38163 "EHLO
-        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbgFPHSl (ORCPT
+        Tue, 16 Jun 2020 03:32:40 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:52488 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725710AbgFPHck (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 16 Jun 2020 03:18:41 -0400
-Received: by mail-ej1-f66.google.com with SMTP id w16so19813543ejj.5;
-        Tue, 16 Jun 2020 00:18:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tT4lPCOqC8m2jN6E8L7uFkNVDR9AvY5WZewZRGKHN3k=;
-        b=eNMAtj8JqGE+DAXcm+nxXOPyOQyvAunnTk1brzsxBrcw6NGuj/z6a0yUiPsqJqH3lC
-         xXdA2CmfxIxH0iDGAUSUWk1lM32F23unbpltsKO6aIuhcjnsUvgO6hUbNJlGeUyy+8gE
-         FkPn6UmP1KIqSnlAk/NI26Zfg5GQr4S4xJ6LTqbX0dmLIKfilBoEDYUdlcIDGnWO/irF
-         oFPIz/4Sl9Yx5TDtG+jGsS644lbWNEcti8Sg5Jx9SqYKYZkbyyAj0OV++yZpBqQxnguP
-         Y0vHOZAnna7biuE2ewRTN8JQa8E1eOQfkI3W8oCvuT8rtcBdh0IGVx4ON5nBLSAjUnRQ
-         046Q==
-X-Gm-Message-State: AOAM5339TTOStu08Fatz5a3of2/oWo897okS6EInSS4NSEEtCUw8zG6F
-        PbrHxthZ8jKGhojCqELha/E=
-X-Google-Smtp-Source: ABdhPJxDifyRwf13/EjaihQm5vJnlZB+OKK9ORGdXYCRlY5yhWD2VfzUsTFNIEnVJ1d/pJH4EtKjtQ==
-X-Received: by 2002:a17:906:fcae:: with SMTP id qw14mr1563379ejb.166.1592291919788;
-        Tue, 16 Jun 2020 00:18:39 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.184])
-        by smtp.googlemail.com with ESMTPSA id js3sm10651179ejb.65.2020.06.16.00.18.38
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Jun 2020 00:18:39 -0700 (PDT)
-Date:   Tue, 16 Jun 2020 09:18:37 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3] pinctrl: samsung: Use bank name as irqchip name
-Message-ID: <20200616071837.GB20282@kozik-lap>
-References: <CGME20200610194107eucas1p1b22f0c8e3e13551940efd6093df505a3@eucas1p1.samsung.com>
- <20200610194052.6434-1-m.szyprowski@samsung.com>
+        Tue, 16 Jun 2020 03:32:40 -0400
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
+        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
+        id 1jl64M-0002Xj-Rn; Tue, 16 Jun 2020 17:31:43 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Tue, 16 Jun 2020 17:31:42 +1000
+Date:   Tue, 16 Jun 2020 17:31:42 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Lukasz Stelmach <l.stelmach@samsung.com>
+Cc:     wu000273@umn.edu, kjlu@umn.edu, Matt Mackall <mpm@selenic.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] char: hw_random: Fix a reference count leak.
+Message-ID: <20200616073142.GA30519@gondor.apana.org.au>
+References: <20200613214128.32665-1-wu000273@umn.edu>
+ <CGME20200615131915eucas1p2b8f3fa0ceb757e36aa888a4476de034f@eucas1p2.samsung.com>
+ <dleftjr1uglb5t.fsf%l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200610194052.6434-1-m.szyprowski@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <dleftjr1uglb5t.fsf%l.stelmach@samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 10, 2020 at 09:40:52PM +0200, Marek Szyprowski wrote:
-> Use the bank name as the irqchip name. This name is later visible in
-> /proc/interrupts, what makes it possible to easily identify each
-> GPIO interrupt.
+On Mon, Jun 15, 2020 at 03:18:54PM +0200, Lukasz Stelmach wrote:
+>
+> I believe this fix has already been submitted
 > 
-> /proc/interrupts before this patch:
-> 143:    0     exynos4210_wkup_irq_chip   7 Edge      hdmi
-> 144:    0     exynos4210_wkup_irq_chip   6 Level     wm8994
-> 145:    1     exynos4210_wkup_irq_chip   7 Edge      max77686-pmic, max77686-rtc
-> 146:    1     exynos_gpio_irq_chip   3 Edge      3-0048
+>     https://lore.kernel.org/linux-arm-kernel/20200522011659.26727-1-dinghao.liu@zju.edu.cn/T/#u
 > 
-> /proc/interrupts after this patch:
-> 143:    0     gpx3   7 Edge      hdmi
-> 144:    0     gpx3   6 Level     wm8994
-> 145:    1     gpx0   7 Edge      max77686-pmic, max77686-rtc
-> 146:    1     gpm2   3 Edge      3-0048
+> It hasn't been applied though. Anyway, thank you for your work.
 > 
-> Handling of the eint_wake_mask_value has been reworked, because each bank
-> has now its own exynos_irq_chip structure allocated.
-> 
+> Herbert, could you take a look at the Dinghao's patch, please?
 
-Thanks, applied.
+It was part of a number of patches that did similar things.  The
+general conclusion was that it should call put_noidle instead.
 
-Best regards,
-Krzysztof
+See
 
+	https://patchwork.kernel.org/patch/11574843/
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
