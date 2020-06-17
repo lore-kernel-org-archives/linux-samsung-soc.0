@@ -2,167 +2,182 @@ Return-Path: <SRS0=2S55=76=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E60C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Jun 2020 16:53:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 237B2C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Jun 2020 17:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FAF121527
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Jun 2020 16:53:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE94A20C09
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Jun 2020 17:08:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EjXQIdOb"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="g15sK8fO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbgFQQxF (ORCPT
+        id S1726883AbgFQRIR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 17 Jun 2020 12:53:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53444 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbgFQQxF (ORCPT
+        Wed, 17 Jun 2020 13:08:17 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:38773 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726540AbgFQRIQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 17 Jun 2020 12:53:05 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D49DDC06174E;
-        Wed, 17 Jun 2020 09:53:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=3aHDULVOAZalwQVfI9n5bUMyn1CLTGa3J/NFAT87OxI=; b=EjXQIdObgegi5j91EFEDjl6J4B
-        4PFr18Fmi9N2VNb1fcBGNkiLBXvVZ1htcGrseMu9kTS9bo9T44MNOJqZ007Xrbp4NGvwIhogVMROC
-        4xtL4tRjznzBTriAV5EjM3uTlwrvgQlihLewoVQE8JFYD41d85i4wnyyAiSwg0Ckhm1pLMAj99YQD
-        QdSXFKeUT+35nzi0FYZdeC1mkdJzl2xxgC10iJIbNe3MwEtwTXMWmltCGmq0CuBk8ERWPzwHQblLB
-        iJ6ysmGyfsUwrKbj3L5z7An9AM1KW4q34m1/jm2fcnd3SznIGzuPTxs7Gb+F0uIni5G6Tk/eu9I/E
-        MpsG7yaQ==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jlbIe-0002Zw-LA; Wed, 17 Jun 2020 16:52:32 +0000
-Subject: Re: [PATCH v2] Input: document inhibiting
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        kernel@collabora.com
-References: <f9007f37-c526-5fa4-3188-a554d2434177@redhat.com>
- <20200617101822.8558-1-andrzej.p@collabora.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <8ebf502e-855d-6a6b-9c7b-d96d5e519d82@infradead.org>
-Date:   Wed, 17 Jun 2020 09:52:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Wed, 17 Jun 2020 13:08:16 -0400
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200617170812epoutp0252a52a989e276e00ad5f92c0a0a251d9~ZY9D08KDP0756507565epoutp02X
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Jun 2020 17:08:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200617170812epoutp0252a52a989e276e00ad5f92c0a0a251d9~ZY9D08KDP0756507565epoutp02X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1592413692;
+        bh=8uegeGaZQaXzOszaS/XO+h1hPJdbqLK/6+7/IxX9QPk=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=g15sK8fOD3w4KJNmtjBxHErPstHjksqLtMEXx0r2rSgdTYAj8rmm03bkoBSsA7ulo
+         HAiwj6oJOtvxIz07Tdj766S7zvd4GyIPtd/uq5IeCAC3xJueu0owdtw//jlC+YZazr
+         F/msr4G6Cnw3lUr4H8pR8acd+X0+XCv9NMr/udac=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20200617170811epcas5p4b3769a525def33d34ae8e9fadcf56672~ZY9DUx7FO0730007300epcas5p41;
+        Wed, 17 Jun 2020 17:08:11 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D0.A0.09703.BFD4AEE5; Thu, 18 Jun 2020 02:08:11 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200617170810epcas5p3ea5ed916115df0f5e5908ad81b2b7b53~ZY9CPAygZ1441714417epcas5p3x;
+        Wed, 17 Jun 2020 17:08:10 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200617170810epsmtrp1f826008bae2346c4157b9e7fb37b1e40~ZY9COS6mE0839208392epsmtrp1k;
+        Wed, 17 Jun 2020 17:08:10 +0000 (GMT)
+X-AuditID: b6c32a4a-4cbff700000025e7-95-5eea4dfb862e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CA.9B.08382.AFD4AEE5; Thu, 18 Jun 2020 02:08:10 +0900 (KST)
+Received: from mshams01 (unknown [107.122.43.244]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200617170806epsmtip2e8aa64209a416af5b6427f0b90d27713~ZY8_eTan80225202252epsmtip29;
+        Wed, 17 Jun 2020 17:08:06 +0000 (GMT)
+From:   "M Tamseel Shams" <m.shams@samsung.com>
+To:     "'Robin Murphy'" <robin.murphy@arm.com>, <kgene@kernel.org>,
+        <krzk@kernel.org>, <gregkh@linuxfoundation.org>, <jslaby@suse.com>
+Cc:     <linux-samsung-soc@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <alim.akhtar@samsung.com>, <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <027c0955-3246-8c1e-4d0d-053a2a177dc6@arm.com>
+Subject: RE: [RFC PATCH] serial: samsung: Re-factors UART IRQ resource for
+ various Samsung SoC
+Date:   Wed, 17 Jun 2020 22:38:01 +0530
+Message-ID: <000101d644c9$e06bba40$a1432ec0$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20200617101822.8558-1-andrzej.p@collabora.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKFLyHxHkUNw6bP6pRUtYOiC7jR2QHTNgWiAZJI3VmnY///wA==
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7bCmpu5v31dxBgeu6Vo8mLeNzaJ58Xo2
+        iykbPjBZ9D9+zWxx/vwGdotNj6+xWlzeNYfNYsb5fUwWZxb3slsc/PCE1YHLY828NYwem1Z1
+        snnsn7uG3WPzknqPvi2rGD3Wb7nK4vF5k1wAexSXTUpqTmZZapG+XQJXxom7Z1kKTgtUPDum
+        2MDYytvFyMkhIWAi8bNtF0sXIxeHkMBuRolJS36xQzifGCVuP1/MCOF8Y5RYN+0bO0zLt/V7
+        mSESexkl7tz5ClX1nFHi/5ZmJpAqNgFdiUkH28CqRARaGSVaJ80ASzALrGOUaP8hAGJzClhL
+        PP+5hxHEFhZIkNi8ZwUziM0ioCrRsXsDWD2vgKXExbndbBC2oMTJmU9YIOZoSyxb+JoZ4iQF
+        iZ9Pl7GC2CICThJ7Dz5mhqgRl3h59AjU2Xs4JF7/r4SwXST2rJkOFReWeHV8C5QtJfGyvw3K
+        zpeYP28V1PwKiZUX3kDZ9hIHrswBuoEDaL6mxPpd+hCr+CR6fz9hAglLCPBKdLQJQVQrSvzf
+        3Q81UVzi3YoprBC2h0T7pamsExgVZyF5bBaSx2YheWAWwrIFjCyrGCVTC4pz01OLTQuM8lLL
+        9YoTc4tL89L1kvNzNzGC05aW1w7Ghw8+6B1iZOJgPMQowcGsJMLr/PtFnBBvSmJlVWpRfnxR
+        aU5q8SFGaQ4WJXFepR9n4oQE0hNLUrNTUwtSi2CyTBycUg1M2WmpGkJZx2QCOvMrNXO7kjyV
+        frR3H7uUdnaGSqQjWxELe97ndq1XKlsqOH/vUXi+9cKdgqSEr3ONNP97aa+7X1hU2+q9INVm
+        Qq+y0YPDHxL+aP+dIWe5t8DF0H+/mUh13qZv7SekfiqovXl+P6uQyej3l/9Bi6ZJ1D4wMKyY
+        nNbsuvbo19TvYb4bnJZwrndRj2Hi/npKoKXEOoHtm8Lz7x9eHSuwt5/CpZzymyOi26pnyeuZ
+        u471Lmaqv5MmxDmx5LbwAZO3KrMqD77k37LZY8b5yk8nJj+fFJTyeXKwTQqX5JfD/zcHb9vQ
+        scBF938y12Fh35XJ5TXxfIyhue/4XI8cjmjxjbkS/j301g0lluKMREMt5qLiRABPF+rlygMA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsWy7bCSvO4v31dxBocvylk8mLeNzaJ58Xo2
+        iykbPjBZ9D9+zWxx/vwGdotNj6+xWlzeNYfNYsb5fUwWZxb3slsc/PCE1YHLY828NYwem1Z1
+        snnsn7uG3WPzknqPvi2rGD3Wb7nK4vF5k1wAexSXTUpqTmZZapG+XQJXxsRt+1gKZgpUPJzy
+        nrmB8TJPFyMnh4SAicS39XuZuxi5OIQEdjNKLJ5ylQkiIS4x7dd+RghbWGLlv+fsILaQwFNG
+        iZOHxEFsNgFdiUkH28CaRQS6GSWe/tzNAuIwC2xilPjz7i4TxNidjBIPO5exgrRwClhLPP+5
+        B2yssECcxIWdfSwgNouAqkTH7g1gq3kFLCUuzu1mg7AFJU7OfAJWwyygLfH05lM4e9nC18wQ
+        5ylI/HwKMV9EwEli78HHzBA14hIvjx5hn8AoPAvJqFlIRs1CMmoWkpYFjCyrGCVTC4pz03OL
+        DQsM81LL9YoTc4tL89L1kvNzNzGCY1BLcwfj9lUf9A4xMnEwHmKU4GBWEuF1/v0iTog3JbGy
+        KrUoP76oNCe1+BCjNAeLkjjvjcKFcUIC6YklqdmpqQWpRTBZJg5OqQamap/gE6w8VVVHpeR9
+        xeaeve2+U/bRqdveAZ1fbz9ak8g4o1FWe/7vX9XsFwJjvEzmcHJ6qB6Y6CnydMWRztNMDzef
+        scg4KW0tZWarKdeQ9vVcx9+Db5ckfrfJneuxSrrXa9m7xXmxFj/9Q4I/Tf+VtsWoUpq99mvp
+        amlr42Dt/Ud/KOvorJj2+kvF6W61p618XBsTgoutX7ltuVm/1qXr8FaWgIwplyffKUy9ZKpi
+        7Vj33XntDM3Ll/Lzdh9wDvkgYLdVumxfmFaKDWP28vPSTazq4lO/3VRlq/zV/6t59ZXuTxYf
+        S9+c3KNSUyQm9OWx5bbXgkq8u+w/XTOLnXBe/Lalwr1Gt8vxB7tf7F6pxFKckWioxVxUnAgA
+        UA4NIjADAAA=
+X-CMS-MailID: 20200617170810epcas5p3ea5ed916115df0f5e5908ad81b2b7b53
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200615124355epcas5p446ae2f1b63331ef87334cd7d696c3c43
+References: <CGME20200615124355epcas5p446ae2f1b63331ef87334cd7d696c3c43@epcas5p4.samsung.com>
+        <20200615122609.71884-1-m.shams@samsung.com>
+        <027c0955-3246-8c1e-4d0d-053a2a177dc6@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 6/17/20 3:18 AM, Andrzej Pietrasiewicz wrote:
-> Document inhibiting input devices and its relation to being
-> a wakeup source.
-> 
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> ---
-> v1..v2:
-> 
-> - Addressed editorial comments from Randy
-> - Added a paragraph by Hans
-> 
->  Documentation/input/input-programming.rst | 40 +++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
-> 
-> diff --git a/Documentation/input/input-programming.rst b/Documentation/input/input-programming.rst
-> index 45a4c6e05e39..7432315cc829 100644
-> --- a/Documentation/input/input-programming.rst
-> +++ b/Documentation/input/input-programming.rst
-> @@ -164,6 +164,46 @@ disconnects. Calls to both callbacks are serialized.
->  The open() callback should return a 0 in case of success or any nonzero value
->  in case of failure. The close() callback (which is void) must always succeed.
->  
-> +Inhibiting input devices
-> +~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +Inhibiting a device means ignoring input events from it. As such it is about maintaining
-> +relationships with input handlers - either already existing relationships, or relationships
-> +to be established while the device is in inhibited state.
-> +
-> +If a device is inhibited, no input handler will receive events from it.
-> +
-> +The fact that nobody wants events from the device is exploited further, by calling device's
-> +close() (if there are users) and open() (if there are users) on inhibit and uninhibit
-> +operations, respectively. Indeed, the meaning of close() is to stop providing events
-> +to the input core and that of open() is to start providing events to the input core.
-> +
-> +Calling the device's close() method on inhibit (if there are users) allows the driver
-> +to save power. Either by directly powering down the device or by releasing the
-> +runtime-pm reference it got in open() when the driver is using runtime-pm.
-> +
-> +Inhibiting and uninhibiting are orthogonal to opening and closing the device by input
-> +handlers. Userspace might want to inhibit a device in anticipation before any handler is
-> +positively matched against it.
-> +
-> +Inhibiting and uninhibiting are orthogonal to device's being a wakeup source, too. Being a
-> +wakeup source plays a role when the system is sleeping, not when the system is operating.
-> +How drivers should program their interaction between inhibiting, sleeping and being a wakeup
-> +source is driver-specific.
-> +
-> +Taking the analogy with the network devices - bringing a network interface down doesn't mean
-> +that it should be impossible be wake the system up on LAN through this interface. So, there
-> +may be input drivers which should be considered wakeup sources even when inhibited. Actually,
-> +in many I2C input devices their interrupt is declared a wakeup interrupt and its handling
-> +happens in driver's core, which is not aware of input-specific inhibit (nor should it be).
-> +Composite devices containing several interfaces can be inhibited on a per-interface basis and
-> +e.g. inhibiting one interface shouldn't affect the device's capability of being a wakeup source.
-> +
-> +If a device is to be considered a wakeup source while inhibited, special care must be taken when
-> +programming its suspend(), as it might need to call device's open(). Depending on what close()
-> +means for the device in question, not opening() it before going to sleep might make it
-> +impossible to provide any wakeup events. The device is going to sleep anyway.
-> +
->  Basic event types
->  ~~~~~~~~~~~~~~~~~
->  
-> 
+Hi Robin,
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> -----Original Message-----
+> From: Robin Murphy <robin.murphy=40arm.com>
+> Sent: Monday, June 15, 2020 6:43 PM
+> To: Tamseel Shams <m.shams=40samsung.com>; kgene=40kernel.org;
+> krzk=40kernel.org; gregkh=40linuxfoundation.org; jslaby=40suse.com
+> Cc: linux-samsung-soc=40vger.kernel.org; linux-serial=40vger.kernel.org; =
+linux-
+> kernel=40vger.kernel.org; alim.akhtar=40samsung.com; linux-arm-
+> kernel=40lists.infradead.org
+> Subject: Re: =5BRFC PATCH=5D serial: samsung: Re-factors UART IRQ resourc=
+e for
+> various Samsung SoC
+>=20
+> On 2020-06-15 13:26, Tamseel Shams wrote:
+> >   	else =7B
+> >   		port->irq =3D ret;
+> >   		ourport->rx_irq =3D ret;
+> > -		ourport->tx_irq =3D ret + 1;
+> > +		if (ourport->info->irq_cnt =3D=3D 1)
+> > +			ourport->tx_irq =3D ret;
+> > +		else
+> > +			ourport->tx_irq =3D ret + 1;
+> >   	=7D
+> >
+> > -	ret =3D platform_get_irq(platdev, 1);
+> > -	if (ret > 0)
+> > -		ourport->tx_irq =3D ret;
+> > +	if (ourport->info->irq_cnt =21=3D 1) =7B
+> > +		ret =3D platform_get_irq(platdev, 1);
+> > +		if (ret > 0)
+> > +			ourport->tx_irq =3D ret;
+>=20
+> FWIW, if you're not going to do anything in the error case then you may a=
+s well
+> just call platform_get_irq_optional() unconditionally.
+>=20
+> Robin.
+>=20
+My intention behind not using 'platform_get_irq_optional' was that it does =
+not prints the error when the 2nd interrupt resource is missing for the old=
+er UART's. I am just using it to give information to the user in error case=
+. I can use 'platform_get_irq_optional' too.
 
-Thanks.
+Thanks & Regards
+Tamseel
 
--- 
-~Randy
+> > +	=7D
+> >   	/*
+> >   	 * DMA is currently supported only on DT platforms, if DMA propertie=
+s
+> >   	 * are specified.
+> > =40=40 -2387,6 +2393,7 =40=40 static struct s3c24xx_serial_drv_data
+> s3c2410_serial_drv_data =3D =7B
+> >   		.name		=3D =22Samsung S3C2410 UART=22,
+> >   		.type		=3D PORT_S3C2410,
+> >   		.fifosize	=3D 16,
+> > +		.irq_cnt	=3D 2,
+> >   		.rx_fifomask	=3D S3C2410_UFSTAT_RXMASK,
+> >   		.rx_fifoshift	=3D S3C2410_UFSTAT_RXSHIFT,
+> >   		.rx_fifofull	=3D S3C2410_UFSTAT_RXFULL,
+
