@@ -2,134 +2,132 @@ Return-Path: <SRS0=2S55=76=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70924C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Jun 2020 10:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF6FC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Jun 2020 11:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C88E208B3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Jun 2020 10:58:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 143F120734
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Jun 2020 11:17:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1VQaMVl"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MIEmoOwM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbgFQK6E (ORCPT
+        id S1725536AbgFQLRO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 17 Jun 2020 06:58:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54446 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725964AbgFQK6D (ORCPT
+        Wed, 17 Jun 2020 07:17:14 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:42996 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbgFQLRM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 17 Jun 2020 06:58:03 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A985C061573;
-        Wed, 17 Jun 2020 03:58:03 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id s18so2236467ioe.2;
-        Wed, 17 Jun 2020 03:58:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nMiSyPVInJQRoT6fLFwnryiJhqxToOM1NO8PNE6msJo=;
-        b=L1VQaMVlmrOZgULfTCWPMCYLpDDHM4ZSarJw84Oc8JwzTX9G9VTK3OQNwcJ6qL5a25
-         iKDU96CV1RiNVVrY/eVWJ8aztQi3GbN1rYSp9lmcyOML4OoslwIiKSiPITLADEZeq4Q8
-         gyFZR6rg+BA2owmtUg8x8cLa7N214bIbh6PQBh07BKmr3hNootriMqAGC7M/gtzLTOhS
-         88TO+hTbiRxomYMt+bi//CsaEShIPS+TI7cJDpjTrciI7t9U+irByTPc5ydBOIxjalWT
-         bha6cWFMSZrqnJ4krwTMXYR3QztRFqRhUX1iiJ7FtT6v7RC5H9MSqUUsf+QW6IuWcQhn
-         cZsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nMiSyPVInJQRoT6fLFwnryiJhqxToOM1NO8PNE6msJo=;
-        b=fdfG75t++ckz3BEDHAKLS91HUTkczAEJoxQSK+VS1AXSo8B8MGBMqfRIDGCEjzro/H
-         RXM/hZ0UCczGpK1aph+dgDsp8cTw+VkmC/mFZn3npm8AxXl7+Mz0wAWaoPH4hWngeoDO
-         oliFGWVEqCMluwrC3vUKeXrfmzsZQ7pFtRwsO1oZ8J7s79Og7914KroZzNS2gfevGS8d
-         qTxQaw55EtdUbnvkQNqL1nj4jfTyMwZCXxHVRuuHzgUIZeMc5gFPFCeLOiQJHb4apSTx
-         Hu87tC86ff3yqj2yAPpL4UyC77OOV6Rhl6JEH0RFGasLjHutY4WvjGXlVwiO3dl2Hk52
-         BHfg==
-X-Gm-Message-State: AOAM533BmCX51hx+QhwijO/OG00BpMiyfUM0faz5u/7Sj6l01CPWs4OU
-        GX4yG6iByTQbyMwLptYFnIVl51W53d834oTnTGo=
-X-Google-Smtp-Source: ABdhPJyq7fw2XXwLJfk3fsu0fT46sa8BXmL96PRwsE0LD1hGltiXnd+hLRjlWlDnkImUvYwybAHDQr8LCW67Ze4QoUQ=
-X-Received: by 2002:a05:6602:2dd5:: with SMTP id l21mr7612508iow.173.1592391482585;
- Wed, 17 Jun 2020 03:58:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20200616081248eucas1p168faa343ce333a28c8fd3cf9a6a58b3c@eucas1p1.samsung.com>
- <20200616081230.31198-1-m.szyprowski@samsung.com> <CANAwSgStsYP5fBB7z7-Reo2BP4ZQPT6RN4s8QdLGVGhKCDA_Ng@mail.gmail.com>
- <3e6b5dbb-a8a2-e3db-d740-53e13676455c@samsung.com>
-In-Reply-To: <3e6b5dbb-a8a2-e3db-d740-53e13676455c@samsung.com>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Wed, 17 Jun 2020 16:27:54 +0530
-Message-ID: <CANAwSgSgvOSMQbvZG0kFe3YHQh5ZeCbDjMHCRt-fb=dmTwA-EQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Restore big.LITTLE cpuidle driver for Exynos
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Linux PM list <linux-pm@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Lukasz Luba <lukasz.luba@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 17 Jun 2020 07:17:12 -0400
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200617111708epoutp03cc9a6b24ddf680b0c5c7883ee8e02c84~ZUKi9IrRR1252312523epoutp03X
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Jun 2020 11:17:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200617111708epoutp03cc9a6b24ddf680b0c5c7883ee8e02c84~ZUKi9IrRR1252312523epoutp03X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1592392628;
+        bh=De11PZoZWlcQRwwo0Y8/mr/Pxhnq+Txfs9hPs4x5UzQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=MIEmoOwMZwBbGlks8DVr4ZZ0gmwE19zwK6jWDXf8QbmZA2jxeJ48oPRPOEVKlIxYL
+         qruR5Ef8YTcNrq1kmbGvVum3ME5mVxxXE4gdNFLEqMnNddTSsL7/Hyqp7um7ojJt/C
+         ewYmDNfTiF1caAmFXhGyJPcWa2QIYyBfIgwVjNCk=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20200617111708epcas5p1c4e0e139b4bc55695b8bd93eea5fc4e9~ZUKiJfXDm1538915389epcas5p1N;
+        Wed, 17 Jun 2020 11:17:08 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DF.BD.09703.3BBF9EE5; Wed, 17 Jun 2020 20:17:07 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200617111707epcas5p3fcb86caeac4a852d44f37ae40759c8a1~ZUKhd7jLw3226032260epcas5p3F;
+        Wed, 17 Jun 2020 11:17:07 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200617111707epsmtrp2629be9449835228b4369f02e6d3e5021~ZUKhdPlaY3247232472epsmtrp2B;
+        Wed, 17 Jun 2020 11:17:07 +0000 (GMT)
+X-AuditID: b6c32a4a-4cbff700000025e7-45-5ee9fbb3f906
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        28.4E.08382.3BBF9EE5; Wed, 17 Jun 2020 20:17:07 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200617111705epsmtip28dc31d81babdd092756d80f3eeda4d79~ZUKf9xn730587705877epsmtip2h;
+        Wed, 17 Jun 2020 11:17:05 +0000 (GMT)
+From:   Tamseel Shams <m.shams@samsung.com>
+To:     kgene@kernel.org, krzk@kernel.org, gregkh@linuxfoundation.org,
+        jslaby@suse.com
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
+        Tamseel Shams <m.shams@samsung.com>
+Subject: [PATCH] serial: samsung: fix spelling mistake
+Date:   Wed, 17 Jun 2020 16:29:07 +0530
+Message-Id: <20200617105907.7143-1-m.shams@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNIsWRmVeSWpSXmKPExsWy7bCmhu7m3y/jDM4/sbF4MG8bm0Xz4vVs
+        FlM2fGCy6H/8mtni/PkN7BabHl9jtbi8aw6bxYzz+5gszizuZbe427qY3YHLY9OqTjaP/XPX
+        sHtsXlLv0bdlFaPH+i1XWTw+b5ILYIvisklJzcksSy3St0vgyuh69YO1YAdrxfSTy1gbGHex
+        dDFyckgImEhMvHyMuYuRi0NIYDejxPm/P9ggnE+MEqe7ZrFDON8YJZo2bgHKcIC1LL0YDhHf
+        yygx4+06RginhUni3/MdjCBFbAKaEsfPc4OsEBEIkXh3dgtYDbPASUaJvZsbwHYLC5hJrD3Q
+        wA5SzyKgKjFtqixImFfAXOLWqrnsEOfJS6zecIAZwj7HLtH3IQPiBheJi5fLIcLCEq+Ob4Eq
+        l5L4/G4vG4SdLzF/3iqo1gqJlRfeQNn2EgeuzGEBGcMMdOX6XfogYWYBPone30+YIKbzSnS0
+        CUFUK0r8390PNV1c4t2KKawQtofEv9vLwCYKCcRKvHx0n3kCo8wshKELGBlXMUqmFhTnpqcW
+        mxYY5aWW6xUn5haX5qXrJefnbmIEx7+W1w7Ghw8+6B1iZOJgPMQowcGsJMLr/PtFnBBvSmJl
+        VWpRfnxRaU5q8SFGaQ4WJXFepR9n4oQE0hNLUrNTUwtSi2CyTBycUg1MUx1U9k79cXn3jDiZ
+        v/NevD748dqKgAK1jdw8rafsG959vH173jN7Ru3l25LevjVi0iz46nrZylFlU9TvSS4Pjxbm
+        T9nBeT4/4Y7l/29er7fNsLxYv3bGdqaXNw0k6rx2KR39/3qG6MbcbaHbF/yIfdLhdGVxJI93
+        q77iUz6LHZ9zXHZuOq3wjT3U2jx9m9ULr2vvz+y6eiYwaumLa6f0UifceTKL5b/fFMZLj+aY
+        /FvU1yJ+8n7ue+mviyMrZV1O1CxblvmbT8pxssuK6W99Jj04ePjqPrad/+15971Z4vfzRHrO
+        zufi97TLdgger+juE7wxY7a7sd6slRahAn7/vti9Lnhpk5jQ66G5V6GPafMmJZbijERDLeai
+        4kQAIHwlMm4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnluLIzCtJLcpLzFFi42LZdlhJXnfz75dxBgu3c1k8mLeNzaJ58Xo2
+        iykbPjBZ9D9+zWxx/vwGdotNj6+xWlzeNYfNYsb5fUwWZxb3slvcbV3M7sDlsWlVJ5vH/rlr
+        2D02L6n36NuyitFj/ZarLB6fN8kFsEVx2aSk5mSWpRbp2yVwZXS9+sFasIO1YvrJZawNjLtY
+        uhg5OCQETCSWXgzvYuTiEBLYzSgxc8khxi5GTqC4uMS0X/uhbGGJlf+es0MUNTFJfLt/nBGk
+        mU1AU+L4eW4QU0QgQmLmxxqQEmaB84wSO4+vZgLpFRYwk1h7oIEdpIZFQFVi2lRZkDCvgLnE
+        rVVz2SHGy0us3nCAeQIjzwJGhlWMkqkFxbnpucWGBYZ5qeV6xYm5xaV56XrJ+bmbGMFhpqW5
+        g3H7qg96hxiZOBgPMUpwMCuJ8Dr/fhEnxJuSWFmVWpQfX1Sak1p8iFGag0VJnPdG4cI4IYH0
+        xJLU7NTUgtQimCwTB6dUA1OV3YnmfHbj1AV/b/De4vZeOJe9ie2xZ0hZYd7Dja+Uetjv79KV
+        k5m3sMs/6tGNvaG9J00FfnaFzJ/0P3lB6Q2tiKmTauLeBNkIn/Nclsq35kB38Jc7d93vnd/z
+        XuRs2o3uvPxN247uaTFp135z2fnH9qk30tgVHBtNnpfdPR986pvtE91pGc2HVGR3X+EVtLuv
+        aOT7cvOj6P3bpEyOXPbKK9z2UGHOpRlr7z9od5nd+HGpzMOArUeWvWHzmqr5b9L+/SrMj7bK
+        SbCefvC868/TTzfSszm95TS7fKqCuXr9gralvzo7gUPwyJvKure5KxbLul/LsL4mYr7MSEtv
+        p/v/Oxxzrs7ivHjad+ZZax0WJZbijERDLeai4kQAXXhHFaICAAA=
+X-CMS-MailID: 20200617111707epcas5p3fcb86caeac4a852d44f37ae40759c8a1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200617111707epcas5p3fcb86caeac4a852d44f37ae40759c8a1
+References: <CGME20200617111707epcas5p3fcb86caeac4a852d44f37ae40759c8a1@epcas5p3.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+There is a spelling mistake in a comment. Fix it.
 
-On Wed, 17 Jun 2020 at 15:18, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> Hi Anand,
->
-> On 16.06.2020 22:58, Anand Moon wrote:
-> > On Tue, 16 Jun 2020 at 13:44, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> >> The ARM big.LITTLE cpuidle driver has been enabled and tested on Samsung
-> >> Exynos 5420/5800 based Peach Pit/Pi Chromebooks and in fact it worked
-> >> only on those boards.
-> >>
-> >> However, support for it was broken by the commit 833b5794e330 ("ARM:
-> >> EXYNOS: reset Little cores when cpu is up") and then never enabled in the
-> >> exynos_defconfig. This patchset provides the needed fix to the common
-> >> code and restores support for it. Thanks to Lukasz Luba who motivated me
-> >> to take a look into this issue.
-> >>
-> > Thanks for this updates.
-> >
-> > But I feel some DTS changes are missing for example
-> > d2e5c871ed8a drivers: cpuidle: initialize big.LITTLE driver through DT
->
-> This is not strictly needed. The bl-cpuidle matches also to the A7/A15
-> CPU product ids and it is properly instantiated on the Peach Pit/Pi
-> Chromebooks. Those CPU DT properties were added as a future-proof
-> generic solution. I won't hurt to add them though.
->
-Ok Thanks.
+Signed-off-by: Tamseel Shams <m.shams@samsung.com>
+---
+ drivers/tty/serial/samsung_tty.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > But I feel that this feature is not working as desired since
-> > still some missing code changes for cluster idle states are missing.
-> > like clock  PWR_CTR and PWR_CTRL2.
->
-> I cannot judge now. All I can test now is a that the boards enters those
-> idle states and system works stable. I cannot measure power consumption,
-> because currently I have only remote access to the boards.
->
-Ok, Thanks.
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 6ef614d8648c..050a47fecdef 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -6,7 +6,7 @@
+  *	http://armlinux.simtec.co.uk/
+  */
+ 
+-/* Hote on 2410 error handling
++/* Note on 2410 error handling
+  *
+  * The s3c2410 manual has a love/hate affair with the contents of the
+  * UERSTAT register in the UART blocks, and keeps marking some of the
+-- 
+2.17.1
 
-What I meant was in order to cpu cluster to enter into IDLE states,
-it's controlled by the EXYNOS5422_PWR_CTRL and EXYNOS5422_PWR_CTRL2 clk fields
-See below example from the Exynos5422 cpu idle driver.
-
-[0] https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y/arch/arm/mach-exynos/cpuidle-exynos5422.c#L319-L379
-
-Just link Exynos5250 clk driver we need to Initialize PWR_CTRL and
-PWR_CTRL2 for Exynos542x clocks
-
-[1] https://github.com/torvalds/linux/blob/master/drivers/clk/samsung/clk-exynos5250.c#L828-L846
-
-which will help support cpu idle drivers.
-
--Anand
