@@ -7,53 +7,52 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28043C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Jun 2020 02:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A280C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Jun 2020 02:17:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06DF12071A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Jun 2020 02:05:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC1EC20885
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Jun 2020 02:17:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592445918;
-	bh=Y+FVK3XqVDpUBlVHDkpJylAgXIYqiz5DwJdh4HVr6Pg=;
+	s=default; t=1592446630;
+	bh=13GwXvTMOXsEYR0IfY7cgtgAMSISLoKBnsBmY4n0ne8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=15TewvXJQLtDx7/BvjC46EorPjYFqd6llQS5xefyzir7a5wrrBEsZP2E4u96/WrGU
-	 bokIR6TrbhUY63xhFVPtNxU/UEdreex+zTTga01x+h7Ap/pURuHTBrP1Sb4fe9F4r7
-	 NTcn41/VxGeYucU7xx9JPNDecBhfUSQgRLtxyrKk=
+	b=pr9PqgBp7jRxrLOwq6EZ7qwcP2mvQs14PguE90VafQIW26DOfeYbc8Gdjk1nTX0/+
+	 Gxo75AshTmY2C6766RMp33pufiGQ9Of4Nodyv3NG9euviYBGIaoFTCsxnwqHzIDDeE
+	 pgTP/Uv/Nfm3WupaJkDXGXhTh3Sc62itkPifVK/I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbgFRCFQ (ORCPT
+        id S1729879AbgFRBUE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 17 Jun 2020 22:05:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55944 "EHLO mail.kernel.org"
+        Wed, 17 Jun 2020 21:20:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730830AbgFRBWr (ORCPT
+        id S1730248AbgFRBUD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:22:47 -0400
+        Wed, 17 Jun 2020 21:20:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E063F20663;
-        Thu, 18 Jun 2020 01:22:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D5CF206F1;
+        Thu, 18 Jun 2020 01:20:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443366;
-        bh=Y+FVK3XqVDpUBlVHDkpJylAgXIYqiz5DwJdh4HVr6Pg=;
+        s=default; t=1592443203;
+        bh=13GwXvTMOXsEYR0IfY7cgtgAMSISLoKBnsBmY4n0ne8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=szqLUu2Rv6ZmJxy5pRh/1r16pFNG748aMENpMK+GBz4mQjWhP+4TM1zzHEWNs8bjL
-         xBYkc2UXNJZOGgXIEZOOo5XbcTDGPbtQ4LOvzYNpQtKZNCV6Gv3GNXs0zuaQ83rCuP
-         dZXn4fx0u4JNj1DbtmM1yGv8WwRsIR1HFxopuZ5Q=
+        b=p2jqQD+d6mF5VVKiIMTF6j1qZjzQzs/bFWLcwmOhLpTPg+Z+13ylOx3OhUt2Oh/5I
+         k22z1fPb4HGibsLp3uMcvWEOkLdqujPwE9iAV9WPvOka+MhoLdQbX+ZXduzvEGFxU2
+         3Sj1rfvoX5hn48abIbWSCe73H6vVAP4LVcd+6d6Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 022/172] clk: samsung: Mark top ISP and CAM clocks on Exynos542x as critical
-Date:   Wed, 17 Jun 2020 21:19:48 -0400
-Message-Id: <20200618012218.607130-22-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 161/266] clk: samsung: exynos5433: Add IGNORE_UNUSED flag to sclk_i2s1
+Date:   Wed, 17 Jun 2020 21:14:46 -0400
+Message-Id: <20200618011631.604574-161-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618012218.607130-1-sashal@kernel.org>
-References: <20200618012218.607130-1-sashal@kernel.org>
+In-Reply-To: <20200618011631.604574-1-sashal@kernel.org>
+References: <20200618011631.604574-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -65,88 +64,64 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit e47bd937e602bb4379546095d1bd0b9871fa60c2 ]
+[ Upstream commit 25bdae0f1c6609ceaf55fe6700654f0be2253d8e ]
 
-The TOP 'aclk*_isp', 'aclk550_cam', 'gscl_wa' and 'gscl_wb' clocks must
-be kept enabled all the time to allow proper access to power management
-control for the ISP and CAM power domains. The last two clocks, although
-related to GScaler device and GSCL power domain, provides also the
-I_WRAP_CLK signal to MIPI CSIS0/1 devices, which are a part of CAM power
-domain and are needed for proper power on/off sequence.
+Mark the SCLK clock for Exynos5433 I2S1 device with IGNORE_UNUSED flag to
+match its behaviour with SCLK clock for AUD_I2S (I2S0) device until
+a proper fix for Exynos I2S driver is ready.
 
-Currently there are no drivers for the devices, which are part of CAM and
-ISP power domains yet. This patch only fixes the race between disabling
-the unused power domains and disabling unused clocks, which randomly
-resulted in the following error during boot:
+This fixes the following synchronous abort issue revealed by the probe
+order change caused by the commit 93d2e4322aa7 ("of: platform: Batch
+fwnode parsing when adding all top level devices")
 
-Power domain CAM disable failed
-Power domain ISP disable failed
+Internal error: synchronous external abort: 96000210 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 50 Comm: kworker/0:1 Not tainted 5.7.0-rc5+ #701
+Hardware name: Samsung TM2E board (DT)
+Workqueue: events deferred_probe_work_func
+pstate: 60000005 (nZCv daif -PAN -UAO)
+pc : samsung_i2s_probe+0x768/0x8f0
+lr : samsung_i2s_probe+0x688/0x8f0
+...
+Call trace:
+ samsung_i2s_probe+0x768/0x8f0
+ platform_drv_probe+0x50/0xa8
+ really_probe+0x108/0x370
+ driver_probe_device+0x54/0xb8
+ __device_attach_driver+0x90/0xc0
+ bus_for_each_drv+0x70/0xc8
+ __device_attach+0xdc/0x140
+ device_initial_probe+0x10/0x18
+ bus_probe_device+0x94/0xa0
+ deferred_probe_work_func+0x70/0xa8
+ process_one_work+0x2a8/0x718
+ worker_thread+0x48/0x470
+ kthread+0x134/0x160
+ ret_from_fork+0x10/0x1c
+Code: 17ffffaf d503201f f94086c0 91003000 (88dffc00)
+---[ end trace ccf721c9400ddbd6 ]---
 
-Fixes: 318fa46cc60d ("clk/samsung: exynos542x: mark some clocks as critical")
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/clk/samsung/clk-exynos5433.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 6473af8903c5..662bb441f139 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -597,7 +597,7 @@ static const struct samsung_div_clock exynos5800_div_clks[] __initconst = {
- 
- static const struct samsung_gate_clock exynos5800_gate_clks[] __initconst = {
- 	GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
--				GATE_BUS_TOP, 24, 0, 0),
-+				GATE_BUS_TOP, 24, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
- 				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
-@@ -984,25 +984,25 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
- 	GATE(0, "aclk300_jpeg", "mout_user_aclk300_jpeg",
- 			GATE_BUS_TOP, 4, CLK_IGNORE_UNUSED, 0),
- 	GATE(0, "aclk333_432_isp0", "mout_user_aclk333_432_isp0",
--			GATE_BUS_TOP, 5, 0, 0),
-+			GATE_BUS_TOP, 5, CLK_IS_CRITICAL, 0),
- 	GATE(0, "aclk300_gscl", "mout_user_aclk300_gscl",
- 			GATE_BUS_TOP, 6, CLK_IS_CRITICAL, 0),
- 	GATE(0, "aclk333_432_gscl", "mout_user_aclk333_432_gscl",
- 			GATE_BUS_TOP, 7, CLK_IGNORE_UNUSED, 0),
- 	GATE(0, "aclk333_432_isp", "mout_user_aclk333_432_isp",
--			GATE_BUS_TOP, 8, 0, 0),
-+			GATE_BUS_TOP, 8, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_PCLK66_GPIO, "pclk66_gpio", "mout_user_pclk66_gpio",
- 			GATE_BUS_TOP, 9, CLK_IGNORE_UNUSED, 0),
- 	GATE(0, "aclk66_psgen", "mout_user_aclk66_psgen",
- 			GATE_BUS_TOP, 10, CLK_IGNORE_UNUSED, 0),
- 	GATE(0, "aclk266_isp", "mout_user_aclk266_isp",
--			GATE_BUS_TOP, 13, 0, 0),
-+			GATE_BUS_TOP, 13, CLK_IS_CRITICAL, 0),
- 	GATE(0, "aclk166", "mout_user_aclk166",
- 			GATE_BUS_TOP, 14, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK333, "aclk333", "mout_user_aclk333",
- 			GATE_BUS_TOP, 15, CLK_IS_CRITICAL, 0),
- 	GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
--			GATE_BUS_TOP, 16, 0, 0),
-+			GATE_BUS_TOP, 16, CLK_IS_CRITICAL, 0),
- 	GATE(0, "aclk400_mscl", "mout_user_aclk400_mscl",
- 			GATE_BUS_TOP, 17, CLK_IS_CRITICAL, 0),
- 	GATE(0, "aclk200_disp1", "mout_user_aclk200_disp1",
-@@ -1208,8 +1208,10 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
- 			GATE_IP_GSCL1, 3, 0, 0),
- 	GATE(CLK_SMMU_FIMCL1, "smmu_fimcl1", "dout_gscl_blk_333",
- 			GATE_IP_GSCL1, 4, 0, 0),
--	GATE(CLK_GSCL_WA, "gscl_wa", "sclk_gscl_wa", GATE_IP_GSCL1, 12, 0, 0),
--	GATE(CLK_GSCL_WB, "gscl_wb", "sclk_gscl_wb", GATE_IP_GSCL1, 13, 0, 0),
-+	GATE(CLK_GSCL_WA, "gscl_wa", "sclk_gscl_wa", GATE_IP_GSCL1, 12,
-+			CLK_IS_CRITICAL, 0),
-+	GATE(CLK_GSCL_WB, "gscl_wb", "sclk_gscl_wb", GATE_IP_GSCL1, 13,
-+			CLK_IS_CRITICAL, 0),
- 	GATE(CLK_SMMU_FIMCL3, "smmu_fimcl3,", "dout_gscl_blk_333",
- 			GATE_IP_GSCL1, 16, 0, 0),
- 	GATE(CLK_FIMC_LITE3, "fimc_lite3", "aclk333_432_gscl",
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 4b1aa9382ad2..6f29ecd0442e 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -1706,7 +1706,8 @@ static const struct samsung_gate_clock peric_gate_clks[] __initconst = {
+ 	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "sclk_pcm1_peric",
+ 			ENABLE_SCLK_PERIC, 7, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_I2S1, "sclk_i2s1", "sclk_i2s1_peric",
+-			ENABLE_SCLK_PERIC, 6, CLK_SET_RATE_PARENT, 0),
++			ENABLE_SCLK_PERIC, 6,
++			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
+ 			5, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
 -- 
 2.25.1
 
