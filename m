@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1B0C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Jun 2020 01:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8EBC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Jun 2020 01:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4BE8C221ED
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Jun 2020 01:36:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1B282220A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Jun 2020 01:42:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592444198;
-	bh=6s3vHhKdzSxYdpC216KdxNU5PsU0b4bUCKceqRfZc2M=;
+	s=default; t=1592444529;
+	bh=grTMoYmHUjnzVf/gn68pvoeTwzVuwA9jfHoZouBcFWo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jg2YAFVJBpCl4APgY1+voF71W0HAjwdQnaWMvBKBZOGfFVQ53WpBEnmcxLyHkYHBB
-	 al8PLEuIziI0HTyhPjGNqnMGQS6of23pYm+Ix00OGdvZXXf4Vj7h6t4AhodeOXycvW
-	 cYrNYVr6leMUqvo4DailzgGqAjL4GZhuSEwlL7YE=
+	b=urHilEKmkYtwPaQFwiW1kIUvgVl/c6/AQnuZLprHgZG7I2vqReujvyW1uC34MR+n3
+	 jbSiOMnObndNGD+P0849Ae/Vra2mD+MSmZVy6tVgry52AMO97b34P++0OrrVzTXVlf
+	 4vtRfKt8teS+dbfxreuKJ9N5HwuAiC180aIT2uE8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731996AbgFRBbE (ORCPT
+        id S1726920AbgFRBmE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:31:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41490 "EHLO mail.kernel.org"
+        Wed, 17 Jun 2020 21:42:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732687AbgFRBbD (ORCPT
+        id S1732305AbgFRB3a (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:31:03 -0400
+        Wed, 17 Jun 2020 21:29:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7725D221EC;
-        Thu, 18 Jun 2020 01:31:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BA0322229;
+        Thu, 18 Jun 2020 01:29:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443862;
-        bh=6s3vHhKdzSxYdpC216KdxNU5PsU0b4bUCKceqRfZc2M=;
+        s=default; t=1592443770;
+        bh=grTMoYmHUjnzVf/gn68pvoeTwzVuwA9jfHoZouBcFWo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NDUUBwmbF3hqlNuLw9eVP6DGOqg+QmX7qQVK76CGFNQ4gmup4GKCDyVyjZbbYDBXt
-         GyTnZ+d4/F/nq3CyNKRq0hfqHYI/RRM2MfGoZd1KO2VXSZBilQCv6smMsneIHLqy+J
-         vHm2xe4povK/aVSmyx4LmbizqwGdkXrHU9AWXqi8=
+        b=yRXkleAXMBoN67YTSAlQRVsigDnyZGfsaV3PQvzSmhUV8DcqQ5+2hiytPeCeoWFbH
+         6tFHF4cyEty3+ngcDVmTBh3XILFk6p+H9sQWL6z/0yqNO12h5bArqJRbCuJ42OPcow
+         rjCqOji+T00qn8UzYytzyD4mKwc7CuSxiapTbBas=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -47,12 +47,12 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.4 44/60] clk: samsung: exynos5433: Add IGNORE_UNUSED flag to sclk_i2s1
-Date:   Wed, 17 Jun 2020 21:29:48 -0400
-Message-Id: <20200618013004.610532-44-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 54/80] clk: samsung: exynos5433: Add IGNORE_UNUSED flag to sclk_i2s1
+Date:   Wed, 17 Jun 2020 21:27:53 -0400
+Message-Id: <20200618012819.609778-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618013004.610532-1-sashal@kernel.org>
-References: <20200618013004.610532-1-sashal@kernel.org>
+In-Reply-To: <20200618012819.609778-1-sashal@kernel.org>
+References: <20200618012819.609778-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -109,10 +109,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 91c89ac193b9..77ae2d21c488 100644
+index 09cdd35dc434..a082b026791a 100644
 --- a/drivers/clk/samsung/clk-exynos5433.c
 +++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1708,7 +1708,8 @@ static struct samsung_gate_clock peric_gate_clks[] __initdata = {
+@@ -1672,7 +1672,8 @@ static const struct samsung_gate_clock peric_gate_clks[] __initconst = {
  	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "sclk_pcm1_peric",
  			ENABLE_SCLK_PERIC, 7, CLK_SET_RATE_PARENT, 0),
  	GATE(CLK_SCLK_I2S1, "sclk_i2s1", "sclk_i2s1_peric",
