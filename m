@@ -2,106 +2,144 @@ Return-Path: <SRS0=H8Sj=AD=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 281A3C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Jun 2020 15:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0D1C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Jun 2020 17:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 072F120739
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Jun 2020 15:30:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.ca header.i=@yahoo.ca header.b="FMooE4Fd"
+	by mail.kernel.org (Postfix) with ESMTP id 6FF3020707
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Jun 2020 17:19:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592846351;
+	bh=coLnxIbPHis9UozjTCDeoKGoKjUuvJ/RfTCrQTxbc1Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=YRIXfUQgYd1iQkDd1zYbla7inVwdhcKfIIf/SEYlxuye1T1HlWB1ffEsp2EA8Drc+
+	 716u+Hm+J44rVAnDG69SFt++cGng5yTJj5S0njLV1TZj2de2dhS2WCrzmPfYbhEUuL
+	 aNhu1TP7qtPhX3hyK3d4cjFAVkjZmOFMYmvKa2qE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbgFVPaM (ORCPT
+        id S1729881AbgFVRTL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 22 Jun 2020 11:30:12 -0400
-Received: from sonic310-21.consmr.mail.gq1.yahoo.com ([98.137.69.147]:39016
-        "EHLO sonic310-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729311AbgFVPaM (ORCPT
+        Mon, 22 Jun 2020 13:19:11 -0400
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:33561 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729309AbgFVRTK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Jun 2020 11:30:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.ca; s=s2048; t=1592839811; bh=ZrqH4CkkktGM5U4f9eYdkRlGgwNo9TU/U6UyKhhS7Nk=; h=Date:From:Subject:To:Cc:References:In-Reply-To:From:Subject; b=FMooE4Fd+vL4bOCsF19oFQ+8koe0SIaIvvnGdNGfg2bY9knR5NmK7OICT9TR/C4FomIL9cKp+4yWwn+F6H2vlvCQsslSqNrU3R5XJIZ+X3cjerWqjIpY8zb9ydg7gue/6Xc4vqKJOS1EsEMOrpmE2Nv5tvLGQneg7LWwmDotsRzxkX1Wih8HHzws+RGqUypcRFtQLFLn1F+oLy+uSiVoNGeOSvWvy4dlO53/Cs55fitsnVg2Cl8z3JSvTv8QAJz7Fv2TewSJX57O433tT8/QBqo7Xuvbg6idLtQHo9zE9a2gE+v5/0hP+Z6L/rHNzJlToMcYh2Jh4sas0IgFWTyXnQ==
-X-YMail-OSG: Cr3SZHIVM1nhNBz0ZZsYMs_M_FiwKACLBt6kQJYR4K4mF8rlKRnT_f7fT.t2sCC
- DipgYeUhA4EqFw.SkQWXpFDSR9OEwLAwPhxJrNDrZntjEiUyBxrucSuQHm_QF14U8f.b2eKVT72N
- qLFP7qiHUNKXQ4SYEPcuZ_q_hvbnxXiCXViFhbZeefE03ucrFdRs4EM21.p1dmjv5xm1mLoCeWIN
- jkgvvhLmjrY8f5pm5D.I7cSGPM0XP4TaGG6w.i1Rm9gkDs8YL.9moWBhj1cX2qg6nJLn_YP9zuaP
- 0j4YBbovs_HxALABkTP.KUcbU5likQB6ekjU..0CB5QQqi81Q0Hy7bFSr7FHxVMM12ot7uWaEinI
- JzMYBL7BgegWMHyrDLq0BukuCBzZhQ7HtVDiFAb6SLzynuhFE2s0oduA4_8TuEHwugSN8ABWWMon
- VPs76OFaHB4AiH8rlzDNUDvCs7hdVL4wp9PFB6nn9gIroi814lkRYshQ4SiMu8.x1LxzVQKuj_1K
- AuI6G4xS5qHgGm9tql95oMLMkoCQ_OChr1GN3vdf3AkF.9X9Wc6QF3ClqlTETxkAJr74XyNRNefG
- KKhCUU2Mb6kqNBNzFDJhl1nBfl4J3BT0UE0D3HzQ.zUoHGifRb9ATfXlzwDHyItKsky9dMsmfqtp
- i6TMZweDPyfDW5BjQ.MZTGyShESLRfuuUEljOv8zB54h_Fy7RVp.TsJfycEpERk0eoEc8YtNTOHf
- CcMXxFXSBJJWfuCSoiKgkmgJ.tWI9GYciX5ptLM5SO5ucVKruIh5YWFPlCwnk7h.bBmMVMK6JbYY
- FIzEK18BG84ne8qJn5HcUc4YGExVQ_0VdZ68jSrZOOgnALE7w0Yh7P.5FEyFgcDv5CQRtTlDa9XV
- 332GOILLb4zJJheQ0JFSPElT9FH3CBrDs5LCQxJomwN4y7xwltOYhRMK83otrU_Fj_y_eHeotXp5
- XEoZNPauow06YAJ6iF5IF8YixALM0Q7iN05wMbk0d_uc0b55OOLVDb3x3VUYpis0YS82.POsP32I
- ulBQXux3NQlclxawhgWzTJz.jykMGFqABOqUbZETOIhVNH9HkQalW_F5SQXc82W2mLThpOJ_x082
- G.nYAFFP6Iozy3gvrmlA27ubLrteMzz7DLQIULn80k0_6JJr84FSeEkkQDHO2PSnfc8bmvPlGVvp
- 18BXWE0ViDKr5zEztaQIMuEjnaJYCCDIS0FBU4hrX67yVYFDBT0y6ZYXCS4tbw1UClE62qzLiBIP
- UN3eLZ.VIszJNb86Rf9A8WrGMP2tM7.UAiknCB.VtjckyXwujOVTk01wBBbAFbL0YYDxIOdYmGmw
- oInI7KsCeCE6pCvJGjT60utyj2RwD2L_Yt9unDDKpSoj3x.XhDmB.
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.gq1.yahoo.com with HTTP; Mon, 22 Jun 2020 15:30:11 +0000
-Received: by smtp418.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 402ae077068331dedde2e55d9ced12f3;
-          Mon, 22 Jun 2020 15:30:08 +0000 (UTC)
-Date:   Mon, 22 Jun 2020 11:30:04 -0400
-From:   "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Subject: Re: AMD IOMMU + SME + amdgpu regression
-To:     Joerg Roedel <jroedel@suse.de>
-Cc:     Andy Gross <agross@kernel.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Daniel Drake <drake@endlessm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        jonathan.derrick@intel.com, Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        David Rientjes <rientjes@google.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        virtualization@lists.linux-foundation.org,
-        Will Deacon <will@kernel.org>
-References: <1591915710.rakbpzst8h.none.ref@localhost>
-        <1591915710.rakbpzst8h.none@localhost> <20200622100257.GD31822@suse.de>
-In-Reply-To: <20200622100257.GD31822@suse.de>
+        Mon, 22 Jun 2020 13:19:10 -0400
+Received: by mail-ej1-f66.google.com with SMTP id n24so18829510ejd.0;
+        Mon, 22 Jun 2020 10:19:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ln85lt/Tkp1vKFWqTv00g+4W/YsS086NIYrAVE4JpT0=;
+        b=hIiFE6qtZzcpkqtZynPzaG+YpFGyXDX4bz4jwnWl6Wm2jqIc6wAGfwAWs4VgDAdQDW
+         5W6zVTF4teJzH7/grIz43MQA/BTRH+MBbAppSQ5+qf6nbJa9A7DwO+TK/Q0/ejrncItx
+         x4KOV2cPhdvw5i5w5aQFNhddZzcICsoEaliBer9RPmhgoj4KhhEtF/3XFDk2vyXdiEGM
+         RayYsTtW10B450veEHMOmEiI+F6UEmRfpoav02Ouaab8LOIyRlSXG7/6CN/iQUsocN3m
+         FUMn48SU7PftBYvBC+Ywr+6oVvAjIb55ULg+6aZf/K02n2hFGbUFOdZsNQ2Y0ehqRaLx
+         qs+A==
+X-Gm-Message-State: AOAM532xxhb5x06oZQ7z+KVku9/WI5cPaL7uqDtFKKPLZvbRXfXtP0ft
+        i3oL+OCbS8pFaF+LfpNbbxw=
+X-Google-Smtp-Source: ABdhPJyKgq8iRpzKLQo5IV3+fqcBuikBkINfz718scwpI9EXxdN7s66bem51nkTf+pp3l+ytbFDS5A==
+X-Received: by 2002:a17:906:1c4b:: with SMTP id l11mr6340914ejg.307.1592846348168;
+        Mon, 22 Jun 2020 10:19:08 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.235])
+        by smtp.googlemail.com with ESMTPSA id y2sm12128925ejj.103.2020.06.22.10.19.06
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Jun 2020 10:19:07 -0700 (PDT)
+Date:   Mon, 22 Jun 2020 19:19:04 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lukasz Luba <lukasz.luba@arm.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/4] ARM: exynos: Apply little core workaround only under
+ secure firmware
+Message-ID: <20200622171904.GA4174@kozik-lap>
+References: <20200616081230.31198-1-m.szyprowski@samsung.com>
+ <CGME20200616081249eucas1p151a8892ca0abfa3108955e1fc5054fc3@eucas1p1.samsung.com>
+ <20200616081230.31198-2-m.szyprowski@samsung.com>
+ <1f59ab26-94e8-6ee8-48f9-568cf1a0edfa@arm.com>
 MIME-Version: 1.0
-Message-Id: <1592839701.mxvvths2x9.none@localhost>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: WebService/1.1.16138 hermes_yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
+Content-Disposition: inline
+In-Reply-To: <1f59ab26-94e8-6ee8-48f9-568cf1a0edfa@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Excerpts from Joerg Roedel's message of June 22, 2020 6:02 am:
-> Hi Alex,
->=20
-> On Thu, Jun 11, 2020 at 07:05:21PM -0400, Alex Xu (Hello71) wrote:
->> I am using an ASRock B450 Pro4 with Ryzen 1600 and ASUS RX 480. I don't=20
->> understand this code at all, but let me know what I can do to=20
->> troubleshoot.
->=20
-> Does it boot without SME enabled?
->=20
->=20
-> Regards,
->=20
-> 	Joerg
->=20
+On Wed, Jun 17, 2020 at 05:26:58PM +0100, Lukasz Luba wrote:
+> Hi Marek,
+> 
+> I've give it a try with hotplug torture tests and has only one a minor
+> comment.
+> 
+> On 6/16/20 9:12 AM, Marek Szyprowski wrote:
+> > The additional soft-reset call during little core power up was needed
+> > to properly boot all cores on the Exynos5422-based boards with secure
+> > firmware (like Odroid XU3/XU4 family). This however broke big.LITTLE
+> > CPUidle driver, which worked only on boards without secure firmware
+> > (like Peach-Pit/Pi Chromebooks).
+> > 
+> > Apply the workaround only when board is running under secure firmware.
+> > 
+> > Fixes: 833b 5794 e330 ("ARM: EXYNOS: reset Little cores when cpu is up")
 
-Yes, it works with SME off with dbed452a078 ("dma-pool: decouple=20
-DMA_REMAP from DMA_COHERENT_POOL") applied.
+Fix the Fixes tag (in case of resend, otherwise I'll do it).
+
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > ---
+> >   arch/arm/mach-exynos/mcpm-exynos.c | 10 +++++++---
+> >   1 file changed, 7 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+> > index 9a681b421ae1..cd861c57d5ad 100644
+> > --- a/arch/arm/mach-exynos/mcpm-exynos.c
+> > +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+> > @@ -26,6 +26,7 @@
+> >   #define EXYNOS5420_USE_L2_COMMON_UP_STATE	BIT(30)
+> >   static void __iomem *ns_sram_base_addr __ro_after_init;
+> > +static bool secure_firmware __ro_after_init;
+> >   /*
+> >    * The common v7_exit_coherency_flush API could not be used because of the
+> > @@ -58,15 +59,16 @@ static void __iomem *ns_sram_base_addr __ro_after_init;
+> >   static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
+> >   {
+> >   	unsigned int cpunr = cpu + (cluster * EXYNOS5420_CPUS_PER_CLUSTER);
+> > +	bool state;
+> >   	pr_debug("%s: cpu %u cluster %u\n", __func__, cpu, cluster);
+> >   	if (cpu >= EXYNOS5420_CPUS_PER_CLUSTER ||
+> >   		cluster >= EXYNOS5420_NR_CLUSTERS)
+> >   		return -EINVAL;
+> > -	if (!exynos_cpu_power_state(cpunr)) {
+> > -		exynos_cpu_power_up(cpunr);
+> > -
+> > +	state = exynos_cpu_power_state(cpunr);
+> > +	exynos_cpu_power_up(cpunr);
+> 
+> I can see that you have moved this call up, probably to avoid more
+> 'if-else' stuff. I just wanted to notify you that this function
+> 'exynos_cpu_powerup' is called twice when cpu is going up:
+> 1. by the already running cpu i.e. CPU0 and the 'state' is 0 for i.e.
+> CPU2
+> 2. by the newly starting cpu i.e. CPU2 by running
+> 'secondary_start_kernel' and the state is 3.
+> 
+> In this scenario the 'exynos_cpu_power_up' will be called twice.
+> I have checked in hotplug that this is not causing any issues, but
+> thought maybe it's worth share it with you. Maybe you can double check
+> in TRM that this is not causing anything.
+
+This brings the old code, before 833b5794e33. I wonder why? I understood
+that only soft-reset should be skipped.
+
+Best regards,
+Krzysztof
