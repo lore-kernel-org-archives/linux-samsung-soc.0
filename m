@@ -2,107 +2,110 @@ Return-Path: <SRS0=H8Sj=AD=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FCCC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Jun 2020 17:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5E2C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Jun 2020 17:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B92C20702
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Jun 2020 17:20:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32BEB20707
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Jun 2020 17:50:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592846433;
-	bh=s7NKBVGazXrx+pev4bIrqDYJLUqcK98MUxRG0fzc96I=;
+	s=default; t=1592848237;
+	bh=qjtp1/KH/WMZbRfbpQzHVmAu5e9VAzUBeh+srNPb4Rg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=aj9DQEs1E9dUY/1S65vgTVYlWlau2i01dmbxK9jHQs3zCeJYFpEJ8G69WkGL65GdR
-	 WkubDQQi957Z7hD00yNyBtm0AFUNF3+6ZaTWVeqG14uAitoFcGJL+9T5PLB8K8FF4w
-	 7WS+jaqJ6ZfQU9Intqyp4hTHKZzAjBijiuV57/80=
+	b=c+GaNJWR6aEiozeCOASOgDuJT+kyCZMtcGEWB0slbbhCIWJb9lznzeeKzU4Vz5olE
+	 BuByHV93qAXpaTLwAN/9zlE5ymbCPyG8HkpewhJgqL2bmAgCPFtTLJr1v49CVYOPK+
+	 ++tlvvsqj7a28VXXnlAvxcVmQtC2nm5LoIrE+Bok=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729816AbgFVRUc (ORCPT
+        id S1730038AbgFVRug (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 22 Jun 2020 13:20:32 -0400
-Received: from mail-ej1-f65.google.com ([209.85.218.65]:33784 "EHLO
-        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729850AbgFVRUc (ORCPT
+        Mon, 22 Jun 2020 13:50:36 -0400
+Received: from mail-ej1-f68.google.com ([209.85.218.68]:33973 "EHLO
+        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729992AbgFVRug (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Jun 2020 13:20:32 -0400
-Received: by mail-ej1-f65.google.com with SMTP id n24so18833673ejd.0;
-        Mon, 22 Jun 2020 10:20:31 -0700 (PDT)
+        Mon, 22 Jun 2020 13:50:36 -0400
+Received: by mail-ej1-f68.google.com with SMTP id y10so4501832eje.1;
+        Mon, 22 Jun 2020 10:50:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jarz4soNYdNCTWcFh9oE63kyvCyOgjLwGQ/DSDrU5TA=;
-        b=NbjLFjTqPrHPX5y6IFWGwtybYFeTdS3dhO8kuhOtaBeSx/phKXOIyGiIi6D/6Ti0em
-         9OOify57O8euI+pOtaMg+rj5caiuB/8pvreTb/wDMKPK4b4L2c3B/Rhhe7vlv8fNrhEu
-         G13qJOk3tjIRUkrp90WB+L6OsWpyyPbR5I33z5RFObs07fVQgjgtj6nElanuSPlDOgHn
-         2Vt9BoxA/qxLYHHhzKUf9aDI0BejuNdiH40bUDYIUC3nQeXvhoQg0NSzg7Q8FUtZ/eIE
-         2Y/znqHHOKL4/PKmZMjQV4fSyas6+AFQNHCmHClCAZRUyNx9yGzL8qgYo0XvcQl1sagY
-         mlJQ==
-X-Gm-Message-State: AOAM531mRWp96m+LqZA8vxquTAe9j81pLtB/neCVTrSg5b4iicJMOHCq
-        Nmcr4X3zf8Cym/DgUJUe2l4f5TFB
-X-Google-Smtp-Source: ABdhPJwzxTwfTjFxeq+MB+Nqd/xTAUpAhhoNhv9wr3u8MhzbO1NON9G9JC1z87Ulh8kSZ/cFJVfp0Q==
-X-Received: by 2002:a17:906:9381:: with SMTP id l1mr17036497ejx.380.1592846430485;
-        Mon, 22 Jun 2020 10:20:30 -0700 (PDT)
+        bh=HOTnjMjsu7xKDVdNqVPUTaQv3pQPCvDqx33cGwyLPp8=;
+        b=SjbLwWFuJcdI9AzqCeHfRZT8iIDIcnPoGnl59o4XKNBcHmg3azNd0osaEn/TKN5VSV
+         NwSPt/dHMeNpev9wrlx/F8m6TKlhuxioBHu5iEbrHDbtivH09Qlx+9pXO4POBN6fcGzJ
+         WFu5BqzbqIa7fNsNKzbB8Omu0aEZOZPBPXpZb4koW8EqoP971a96FKTmEFeGAXkJpakS
+         AHopcjZkVAVGSxMsU9Fm7jpyoAwLAHBSp9muhYpVC82c03xYtqaIVCMuVWy5SkW70n/e
+         dyY25/6KEWvtwV0pNgxI6HQinRB3GTrwDsXWBh8xtPk95SU4d22Tdo7NhwIqgz57ZbXS
+         HBNQ==
+X-Gm-Message-State: AOAM533w79MrjNwhQ0iRccr+FCgzAsnBRqqqd3nZgATVOTHqOniMShM5
+        p6MLfeOhFTYAH5U8wQzL/ok=
+X-Google-Smtp-Source: ABdhPJwqCv6kCCLUnC8zvrY8jFVgGacYWcI+rhbYCVMJlmSQeTmHKLBbvMdE28EVRur5t8b44IybxQ==
+X-Received: by 2002:a17:906:6d4b:: with SMTP id a11mr17477631ejt.108.1592848234574;
+        Mon, 22 Jun 2020 10:50:34 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.235])
-        by smtp.googlemail.com with ESMTPSA id q3sm13106128eds.0.2020.06.22.10.20.28
+        by smtp.googlemail.com with ESMTPSA id rv14sm11814489ejb.110.2020.06.22.10.50.33
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Jun 2020 10:20:29 -0700 (PDT)
-Date:   Mon, 22 Jun 2020 19:20:26 +0200
+        Mon, 22 Jun 2020 10:50:33 -0700 (PDT)
+Date:   Mon, 22 Jun 2020 19:50:31 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 3/4] ARM: exynos_defconfig: Enable big.LITTLE cpuidle
- driver
-Message-ID: <20200622172026.GC4174@kozik-lap>
-References: <20200616081230.31198-1-m.szyprowski@samsung.com>
- <CGME20200616081250eucas1p2de7110898dad050866d78cb5d5120422@eucas1p2.samsung.com>
- <20200616081230.31198-4-m.szyprowski@samsung.com>
+To:     Guillaume Tucker <guillaume.tucker@collabora.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH] ARM: exynos: clear L310_AUX_CTRL_FULL_LINE_ZERO in
+ default l2c_aux_val
+Message-ID: <20200622175031.GA29235@kozik-lap>
+References: <c6d979c0050502cd1bca8619cb5ff95db239db12.1591969825.git.guillaume.tucker@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200616081230.31198-4-m.szyprowski@samsung.com>
+In-Reply-To: <c6d979c0050502cd1bca8619cb5ff95db239db12.1591969825.git.guillaume.tucker@collabora.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 16, 2020 at 10:12:29AM +0200, Marek Szyprowski wrote:
-> Enable big.LITTLE cpuidle driver, which can be used on Exynos-based
-> Peach Pit/Pi Chromebooks.
+On Fri, Jun 12, 2020 at 02:58:37PM +0100, Guillaume Tucker wrote:
+> This "alert" error message can be seen on exynos4412-odroidx2:
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>     L2C: platform modifies aux control register: 0x02070000 -> 0x3e470001
+>     L2C: platform provided aux values permit register corruption.
+> 
+> Followed by this plain error message:
+> 
+>     L2C-310: enabling full line of zeros but not enabled in Cortex-A9
+> 
+> To fix it, don't set the L310_AUX_CTRL_FULL_LINE_ZERO flag (bit 0) in
+> the default value of l2c_aux_val.  It may instead be enabled when
+> applicable by the logic in l2c310_enable() if the attribute
+> "arm,full-line-zero-disable" was set in the device tree.
+> 
+> The initial commit that introduced this default value was in v2.6.38:
+> 
+>   1cf0eb799759 "ARM: S5PV310: Add L2 cache init function in cpu.c"
+> 
+> However, the code to set the L310_AUX_CTRL_FULL_LINE_ZERO flag and
+> manage that feature was added much later and the default value was not
+> updated then.  So this seems to have been a subtle oversight
+> especially since enabling it only in the cache and not in the A9 core
+> doesn't actually prevent the platform from running.  According to the
+> TRM, the opposite would be a real issue, if the feature was enabled in
+> the A9 core but not in the cache controller.
+> 
+> Reported-by: "kernelci.org bot" <bot@kernelci.org>
+> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
 > ---
->  arch/arm/configs/exynos_defconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm/mach-exynos/exynos.c | 2 +-
 
-I guess this should be enabled after adjusting the compatibles
-in patch 2/4? If yes, then it will have to wait.
+Thanks, applied.
 
 Best regards,
 Krzysztof
 
-> 
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index 374fbff8eaa6..c928bc710c48 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -28,6 +28,7 @@ CONFIG_CPU_FREQ_GOV_CONSERVATIVE=m
->  CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
->  CONFIG_CPUFREQ_DT=y
->  CONFIG_CPU_IDLE=y
-> +CONFIG_ARM_BIG_LITTLE_CPUIDLE=y
->  CONFIG_ARM_EXYNOS_CPUIDLE=y
->  CONFIG_VFP=y
->  CONFIG_NEON=y
-> -- 
-> 2.17.1
-> 
