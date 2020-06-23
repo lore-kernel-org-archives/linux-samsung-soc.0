@@ -2,76 +2,52 @@ Return-Path: <SRS0=LEd2=AE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 750ABC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 14:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C4FC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 15:19:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F249206EB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 14:37:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592923029;
-	bh=mkt8dmPDhXNmt2xf23Tm96zuc+IIftb4GzsYnAog1gw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=LDnpWYam9tEzUjJeQU1JF1yK7GY4QMAiyPJS/4p/gJFwkJK47O8fEGfHs2d38wo3S
-	 cYeKcsNimGiQaLtk4gana4hN/xLQ4MJLT7pPfF0XXHY7s68xSGt7r8fRZKKrPVqONd
-	 3cO5DYNdOS2HdtoCCnjPxjVWqMwm6REgGla2fguQ=
+	by mail.kernel.org (Postfix) with ESMTP id 07DA72073E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 15:19:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732799AbgFWOhJ (ORCPT
+        id S1732878AbgFWPTL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 23 Jun 2020 10:37:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732754AbgFWOhI (ORCPT
+        Tue, 23 Jun 2020 11:19:11 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:40972 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732781AbgFWPTL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Jun 2020 10:37:08 -0400
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B94AA20776;
-        Tue, 23 Jun 2020 14:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592923028;
-        bh=mkt8dmPDhXNmt2xf23Tm96zuc+IIftb4GzsYnAog1gw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Nrckng5bhZywoY2H4UQEn8ZatmqTxurbAUbnXWiUCmbZZDTgj7xj3HI4KK4Usolu3
-         DAu0alGoTzXr16Vm52qbehY4kwbd8ozxR+XMTCt2W4Yt6QKN58HzyZygJw8gCBjNNc
-         idTyGSKrHvbraiB0ZDtgL+XjksVYkGoi1duT6krE=
-Received: by mail-lj1-f179.google.com with SMTP id q19so23746091lji.2;
-        Tue, 23 Jun 2020 07:37:07 -0700 (PDT)
-X-Gm-Message-State: AOAM533shaZOb6nSP3rLBKbLr/hHqrG3IslbD89GSRWDwcA4Tk4wSMr4
-        kUcAPEV6wx3htN/pXukaau2RUws9rnBCThQ1crM=
-X-Google-Smtp-Source: ABdhPJwAKP2RwWCfrk1lzjJQi1Ti/32Bj7LA/Y6jCdNCwky8kwiheblaoXr2cW9hCKV23rZ6oFRVXfEvEvSTJfd3h1c=
-X-Received: by 2002:a2e:954c:: with SMTP id t12mr11068568ljh.287.1592923026058;
- Tue, 23 Jun 2020 07:37:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <5ef21053.1c69fb81.b80ec.8649@mx.google.com>
-In-Reply-To: <5ef21053.1c69fb81.b80ec.8649@mx.google.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 23 Jun 2020 16:36:54 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdr6Fq93e8yZUPB_PGWfY4X9+fvWGznkUy=0DQ8=QeiKw@mail.gmail.com>
-Message-ID: <CAJKOXPdr6Fq93e8yZUPB_PGWfY4X9+fvWGznkUy=0DQ8=QeiKw@mail.gmail.com>
-Subject: Re: krzysztof/for-next bisection: baseline.dmesg.crit on bcm2837-rpi-3-b
-To:     "kernelci.org bot" <bot@kernelci.org>
-Cc:     gtucker@collabora.com,
-        Guillaume Tucker <guillaume.tucker@collabora.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tue, 23 Jun 2020 11:19:11 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: gtucker)
+        with ESMTPSA id D2BD52A0D7C
+Subject: Re: krzysztof/for-next bisection: baseline.dmesg.crit on
+ bcm2837-rpi-3-b
+To:     kernelci-results@groups.io, Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Kukjin Kim <kgene@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <5ef21053.1c69fb81.b80ec.8649@mx.google.com>
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Message-ID: <17e2a135-274d-19d5-be26-58ec106cf0b5@collabora.com>
+Date:   Tue, 23 Jun 2020 16:19:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <5ef21053.1c69fb81.b80ec.8649@mx.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 23 Jun 2020 at 16:23, kernelci.org bot <bot@kernelci.org> wrote:
->
+On 23/06/2020 15:23, kernelci.org bot wrote:
 > * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 > * This automated bisection report was sent to you on the basis  *
 > * that you may be involved with the breaking commit it has      *
@@ -83,26 +59,129 @@ On Tue, 23 Jun 2020 at 16:23, kernelci.org bot <bot@kernelci.org> wrote:
 > *                                                               *
 > * Hope this helps!                                              *
 > * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
->
+> 
 > krzysztof/for-next bisection: baseline.dmesg.crit on bcm2837-rpi-3-b
->
+> 
 > Summary:
 >   Start:      d6fe116541b7 Merge branch 'next/soc' into for-next
 >   Plain log:  https://storage.kernelci.org/krzysztof/for-next/v5.8-rc1-14-gd6fe116541b7/arm64/defconfig+CONFIG_RANDOMIZE_BASE=y/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.txt
 >   HTML log:   https://storage.kernelci.org/krzysztof/for-next/v5.8-rc1-14-gd6fe116541b7/arm64/defconfig+CONFIG_RANDOMIZE_BASE=y/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.html
 >   Result:     5b17a04addc2 ARM: exynos: clear L310_AUX_CTRL_FULL_LINE_ZERO in default l2c_aux_val
->
+> 
 > Checks:
 >   revert:     PASS
 >   verify:     PASS
->
+> 
 > Parameters:
 >   Tree:       krzysztof
 >   URL:        https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
 >   Branch:     for-next
 >   Target:     bcm2837-rpi-3-b
+>   CPU arch:   arm64
+>   Lab:        lab-baylibre
+>   Compiler:   gcc-8
+>   Config:     defconfig+CONFIG_RANDOMIZE_BASE=y
+>   Test case:  baseline.dmesg.crit
 
-Looks like false positive. The commit does not touch anything in arm64/bcm.
+The "crit" kernel message is:
 
-Best regards,
-Krzysztof
+[   17.566555] hwmon hwmon1: Undervoltage detected!
+
+which does not seem to have anything to do with the patch found
+by the bisection.  Also, the bcm2837-rpi-3-b uses Cortex-A53
+cores and no L2C-310 cache.
+
+This undervoltage issue is actually an intermittent issue that
+was already present before.  See next-20200616:
+
+  https://kernelci.org/test/case/id/5ee880c10e8d4cd38797bf52/
+  https://storage.kernelci.org/next/master/next-20200616/arm64/defconfig/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.html#L708
+
+I'll still take a closer look to be sure this is actually noise.
+The same revision built without CONFIG_RAMDOMIZE_BASE=y passed
+fine, although I don't see how this could be related:
+
+  https://kernelci.org/test/plan/id/5ef1ccb2d9df2557d597bf20/
+
+Maybe the rpi-3-b could get an undervoltage depending on the
+address where the kernel was loaded, and somehow my patch would
+make this more likely?  It sounds so far-fetched...
+
+This is so ironic - after 6 months with no false positives in
+kernelci bisections, and this rpi-3-b issue too random to ever
+cause a bisection to succeed, I get this report which landed a
+commit that I made, one week after enabling public bisection
+email reports again.  It must be trying to tell me something :)
+
+Guillaume
+
+
+> Breaking commit found:
+> 
+> -------------------------------------------------------------------------------
+> commit 5b17a04addc29201dc142c8d2c077eb7745d2e35
+> Author: Guillaume Tucker <guillaume.tucker@collabora.com>
+> Date:   Fri Jun 12 14:58:37 2020 +0100
+> 
+>     ARM: exynos: clear L310_AUX_CTRL_FULL_LINE_ZERO in default l2c_aux_val
+>     
+>     This "alert" error message can be seen on exynos4412-odroidx2:
+>     
+>         L2C: platform modifies aux control register: 0x02070000 -> 0x3e470001
+>         L2C: platform provided aux values permit register corruption.
+>     
+>     Followed by this plain error message:
+>     
+>         L2C-310: enabling full line of zeros but not enabled in Cortex-A9
+>     
+>     To fix it, don't set the L310_AUX_CTRL_FULL_LINE_ZERO flag (bit 0) in
+>     the default value of l2c_aux_val.  It may instead be enabled when
+>     applicable by the logic in l2c310_enable() if the attribute
+>     "arm,full-line-zero-disable" was set in the device tree.
+>     
+>     The initial commit that introduced this default value was in v2.6.38
+>     commit 1cf0eb799759 ("ARM: S5PV310: Add L2 cache init function in
+>     cpu.c").
+>     
+>     However, the code to set the L310_AUX_CTRL_FULL_LINE_ZERO flag and
+>     manage that feature was added much later and the default value was not
+>     updated then.  So this seems to have been a subtle oversight
+>     especially since enabling it only in the cache and not in the A9 core
+>     doesn't actually prevent the platform from running.  According to the
+>     TRM, the opposite would be a real issue, if the feature was enabled in
+>     the A9 core but not in the cache controller.
+>     
+>     Reported-by: "kernelci.org bot" <bot@kernelci.org>
+>     Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+>     Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 7a8d1555db40..36c37444485a 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -193,7 +193,7 @@ static void __init exynos_dt_fixup(void)
+>  }
+>  
+>  DT_MACHINE_START(EXYNOS_DT, "Samsung Exynos (Flattened Device Tree)")
+> -	.l2c_aux_val	= 0x3c400001,
+> +	.l2c_aux_val	= 0x3c400000,
+>  	.l2c_aux_mask	= 0xc20fffff,
+>  	.smp		= smp_ops(exynos_smp_ops),
+>  	.map_io		= exynos_init_io,
+> -------------------------------------------------------------------------------
+> 
+> 
+> Git bisection log:
+> 
+> -------------------------------------------------------------------------------
+> git bisect start
+> # good: [b0953d8b7cdb39493e67cff4b20b0ebe3a2bba92] Merge branch 'next/drivers' into for-next
+> git bisect good b0953d8b7cdb39493e67cff4b20b0ebe3a2bba92
+> # bad: [d6fe116541b73a56110310c39a270c99766cd909] Merge branch 'next/soc' into for-next
+> git bisect bad d6fe116541b73a56110310c39a270c99766cd909
+> # bad: [5b17a04addc29201dc142c8d2c077eb7745d2e35] ARM: exynos: clear L310_AUX_CTRL_FULL_LINE_ZERO in default l2c_aux_val
+> git bisect bad 5b17a04addc29201dc142c8d2c077eb7745d2e35
+> # first bad commit: [5b17a04addc29201dc142c8d2c077eb7745d2e35] ARM: exynos: clear L310_AUX_CTRL_FULL_LINE_ZERO in default l2c_aux_val
+> -------------------------------------------------------------------------------
+> 
+
