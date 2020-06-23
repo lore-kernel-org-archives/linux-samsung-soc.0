@@ -2,186 +2,113 @@ Return-Path: <SRS0=LEd2=AE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C4FC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 15:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D710AC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 16:47:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07DA72073E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 15:19:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7DBB2070E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 16:47:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XaG5IS7m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732878AbgFWPTL (ORCPT
+        id S1733061AbgFWQrh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 23 Jun 2020 11:19:11 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40972 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732781AbgFWPTL (ORCPT
+        Tue, 23 Jun 2020 12:47:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47710 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733052AbgFWQrg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Jun 2020 11:19:11 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: gtucker)
-        with ESMTPSA id D2BD52A0D7C
-Subject: Re: krzysztof/for-next bisection: baseline.dmesg.crit on
- bcm2837-rpi-3-b
-To:     kernelci-results@groups.io, Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Kukjin Kim <kgene@kernel.org>
-References: <5ef21053.1c69fb81.b80ec.8649@mx.google.com>
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-Message-ID: <17e2a135-274d-19d5-be26-58ec106cf0b5@collabora.com>
-Date:   Tue, 23 Jun 2020 16:19:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Tue, 23 Jun 2020 12:47:36 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47383C061755;
+        Tue, 23 Jun 2020 09:47:36 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id g21so4001237wmg.0;
+        Tue, 23 Jun 2020 09:47:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition;
+        bh=2a8A3SZ7tBOcfEqWak8yyvM0vR1xvbK/AAfn7XUHse8=;
+        b=XaG5IS7m1eA+gI4FIsCp1abY5EaS5J4F++5cxdUwUG2r6Oj46qpLOXkCiesfyQ+75z
+         5e1kVESZ1WPd+WbF1ptJigMflNi8z0SqXlT85/Jy2hBzcQKK56SkP6qFr77pZHnkTVHU
+         og9a64+MImwd6LMEHElbEuslUPh57AbB7GqvCWjqbdwrAXyD/tMgKzx2DTeu64K4cUjJ
+         Ab295T4L4df3dCYNjJNyGD2Bnz58dIMwlJemGRZLq668ic4/wmCEsew/Di9V5GbP0z7T
+         bR7srReGDI5xCZ0am81PqoKq18wXCcaE/d9u27k0n0AMwjBJhcxh88BWphAs7Yz5thUe
+         IbsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition;
+        bh=2a8A3SZ7tBOcfEqWak8yyvM0vR1xvbK/AAfn7XUHse8=;
+        b=LvvCRSC9gllARgeK+p+oKgKnVhyD8YD1d3dGDidQp8/eSyh24GW9lMqHJ0ICcz9Tlr
+         TI/7VI6/GW9e8vJxukmjEiAMTpygDmofls2vD67ew5+1ZDBgjLyU+HlWaS3unrAcJ4rn
+         WvBFFFihgZ3VDbug0l9BBLhA/rE7WI8Pjb81RjP1D4TTJffZanOX6i8x71NuCpMfnk18
+         XS14vRqH4eDuqFGhgyIjRiaNf//+szsFCtnZ6xDchiEsDzUP5zFFiI8Epr+FlUSwZqDH
+         /mVA4UREh5GTACjdLDL/OLHlllLIflq8bZ2B7rvu6fNW7re9VBmYfRw4qlG3rPafwiNk
+         1dSA==
+X-Gm-Message-State: AOAM5300vQpqnPa9XAOgN5nGXCW57x+cm37upcPCbxvc/TXJL13Ex/tV
+        Z5TtMJENEV90PH+CX/3Z5YE=
+X-Google-Smtp-Source: ABdhPJxSuhZVggr1/EQ+Jrz7f0zu6OuFXAZICwjiL3Xfp9K7vXfwNBCxLQtiBy6U5aX7CEwNsEZHRQ==
+X-Received: by 2002:a1c:2485:: with SMTP id k127mr22257875wmk.138.1592930855034;
+        Tue, 23 Jun 2020 09:47:35 -0700 (PDT)
+Received: from macmini.local (181.4.199.77.rev.sfr.net. [77.199.4.181])
+        by smtp.gmail.com with ESMTPSA id d28sm25319430wrc.50.2020.06.23.09.47.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jun 2020 09:47:34 -0700 (PDT)
+Date:   Tue, 23 Jun 2020 18:47:33 +0200
+From:   Willy Wolff <willy.mh.wolff.ml@gmail.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: brocken devfreq simple_ondemand for Odroid XU3/4?
+Message-ID: <20200623164733.qbhua7b6cg2umafj@macmini.local>
 MIME-Version: 1.0
-In-Reply-To: <5ef21053.1c69fb81.b80ec.8649@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23/06/2020 15:23, kernelci.org bot wrote:
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-> * This automated bisection report was sent to you on the basis  *
-> * that you may be involved with the breaking commit it has      *
-> * found.  No manual investigation has been done to verify it,   *
-> * and the root cause of the problem may be somewhere else.      *
-> *                                                               *
-> * If you do send a fix, please include this trailer:            *
-> *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
-> *                                                               *
-> * Hope this helps!                                              *
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-> 
-> krzysztof/for-next bisection: baseline.dmesg.crit on bcm2837-rpi-3-b
-> 
-> Summary:
->   Start:      d6fe116541b7 Merge branch 'next/soc' into for-next
->   Plain log:  https://storage.kernelci.org/krzysztof/for-next/v5.8-rc1-14-gd6fe116541b7/arm64/defconfig+CONFIG_RANDOMIZE_BASE=y/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.txt
->   HTML log:   https://storage.kernelci.org/krzysztof/for-next/v5.8-rc1-14-gd6fe116541b7/arm64/defconfig+CONFIG_RANDOMIZE_BASE=y/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.html
->   Result:     5b17a04addc2 ARM: exynos: clear L310_AUX_CTRL_FULL_LINE_ZERO in default l2c_aux_val
-> 
-> Checks:
->   revert:     PASS
->   verify:     PASS
-> 
-> Parameters:
->   Tree:       krzysztof
->   URL:        https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
->   Branch:     for-next
->   Target:     bcm2837-rpi-3-b
->   CPU arch:   arm64
->   Lab:        lab-baylibre
->   Compiler:   gcc-8
->   Config:     defconfig+CONFIG_RANDOMIZE_BASE=y
->   Test case:  baseline.dmesg.crit
+Hi everybody,
 
-The "crit" kernel message is:
+Is DVFS for memory bus really working on Odroid XU3/4 board?
+Using a simple microbenchmark that is doing only memory accesses, memory DVFS
+seems to not working properly:
 
-[   17.566555] hwmon hwmon1: Undervoltage detected!
+The microbenchmark is doing pointer chasing by following index in an array.
+Indices in the array are set to follow a random pattern (cutting prefetcher),
+and forcing RAM access.
 
-which does not seem to have anything to do with the patch found
-by the bisection.  Also, the bcm2837-rpi-3-b uses Cortex-A53
-cores and no L2C-310 cache.
+git clone https://github.com/wwilly/benchmark.git \
+  && cd benchmark \
+  && source env.sh \
+  && ./bench_build.sh \
+  && bash source/scripts/test_dvfs_mem.sh
 
-This undervoltage issue is actually an intermittent issue that
-was already present before.  See next-20200616:
+Python 3, cmake and sudo rights are required.
 
-  https://kernelci.org/test/case/id/5ee880c10e8d4cd38797bf52/
-  https://storage.kernelci.org/next/master/next-20200616/arm64/defconfig/gcc-8/lab-baylibre/baseline-bcm2837-rpi-3-b.html#L708
+Results:
+DVFS CPU with performance governor
+mem_gov = simple_ondemand at 165000000 Hz in idle, should be bumped when the
+benchmark is running.
+- on the LITTLE cluster it takes 4.74308 s to run (683.004 c per memory access),
+- on the big cluster it takes 4.76556 s to run (980.343 c per moemory access).
 
-I'll still take a closer look to be sure this is actually noise.
-The same revision built without CONFIG_RAMDOMIZE_BASE=y passed
-fine, although I don't see how this could be related:
+While forcing DVFS memory bus to use performance governor,
+mem_gov = performance at 825000000 Hz in idle,
+- on the LITTLE cluster it takes 1.1451 s to run (164.894 c per memory access),
+- on the big cluster it takes 1.18448 s to run (243.664 c per memory access).
 
-  https://kernelci.org/test/plan/id/5ef1ccb2d9df2557d597bf20/
+The kernel used is the last 5.7.5 stable with default exynos_defconfig.
 
-Maybe the rpi-3-b could get an undervoltage depending on the
-address where the kernel was loaded, and somehow my patch would
-make this more likely?  It sounds so far-fetched...
-
-This is so ironic - after 6 months with no false positives in
-kernelci bisections, and this rpi-3-b issue too random to ever
-cause a bisection to succeed, I get this report which landed a
-commit that I made, one week after enabling public bisection
-email reports again.  It must be trying to tell me something :)
-
-Guillaume
-
-
-> Breaking commit found:
-> 
-> -------------------------------------------------------------------------------
-> commit 5b17a04addc29201dc142c8d2c077eb7745d2e35
-> Author: Guillaume Tucker <guillaume.tucker@collabora.com>
-> Date:   Fri Jun 12 14:58:37 2020 +0100
-> 
->     ARM: exynos: clear L310_AUX_CTRL_FULL_LINE_ZERO in default l2c_aux_val
->     
->     This "alert" error message can be seen on exynos4412-odroidx2:
->     
->         L2C: platform modifies aux control register: 0x02070000 -> 0x3e470001
->         L2C: platform provided aux values permit register corruption.
->     
->     Followed by this plain error message:
->     
->         L2C-310: enabling full line of zeros but not enabled in Cortex-A9
->     
->     To fix it, don't set the L310_AUX_CTRL_FULL_LINE_ZERO flag (bit 0) in
->     the default value of l2c_aux_val.  It may instead be enabled when
->     applicable by the logic in l2c310_enable() if the attribute
->     "arm,full-line-zero-disable" was set in the device tree.
->     
->     The initial commit that introduced this default value was in v2.6.38
->     commit 1cf0eb799759 ("ARM: S5PV310: Add L2 cache init function in
->     cpu.c").
->     
->     However, the code to set the L310_AUX_CTRL_FULL_LINE_ZERO flag and
->     manage that feature was added much later and the default value was not
->     updated then.  So this seems to have been a subtle oversight
->     especially since enabling it only in the cache and not in the A9 core
->     doesn't actually prevent the platform from running.  According to the
->     TRM, the opposite would be a real issue, if the feature was enabled in
->     the A9 core but not in the cache controller.
->     
->     Reported-by: "kernelci.org bot" <bot@kernelci.org>
->     Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
->     Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 7a8d1555db40..36c37444485a 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -193,7 +193,7 @@ static void __init exynos_dt_fixup(void)
->  }
->  
->  DT_MACHINE_START(EXYNOS_DT, "Samsung Exynos (Flattened Device Tree)")
-> -	.l2c_aux_val	= 0x3c400001,
-> +	.l2c_aux_val	= 0x3c400000,
->  	.l2c_aux_mask	= 0xc20fffff,
->  	.smp		= smp_ops(exynos_smp_ops),
->  	.map_io		= exynos_init_io,
-> -------------------------------------------------------------------------------
-> 
-> 
-> Git bisection log:
-> 
-> -------------------------------------------------------------------------------
-> git bisect start
-> # good: [b0953d8b7cdb39493e67cff4b20b0ebe3a2bba92] Merge branch 'next/drivers' into for-next
-> git bisect good b0953d8b7cdb39493e67cff4b20b0ebe3a2bba92
-> # bad: [d6fe116541b73a56110310c39a270c99766cd909] Merge branch 'next/soc' into for-next
-> git bisect bad d6fe116541b73a56110310c39a270c99766cd909
-> # bad: [5b17a04addc29201dc142c8d2c077eb7745d2e35] ARM: exynos: clear L310_AUX_CTRL_FULL_LINE_ZERO in default l2c_aux_val
-> git bisect bad 5b17a04addc29201dc142c8d2c077eb7745d2e35
-> # first bad commit: [5b17a04addc29201dc142c8d2c077eb7745d2e35] ARM: exynos: clear L310_AUX_CTRL_FULL_LINE_ZERO in default l2c_aux_val
-> -------------------------------------------------------------------------------
-> 
-
+Cheers,
+Willy
