@@ -1,111 +1,131 @@
-Return-Path: <SRS0=H8Sj=AD=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=LEd2=AE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5E2C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Jun 2020 17:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 929D8C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 04:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32BEB20707
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Jun 2020 17:50:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592848237;
-	bh=qjtp1/KH/WMZbRfbpQzHVmAu5e9VAzUBeh+srNPb4Rg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=c+GaNJWR6aEiozeCOASOgDuJT+kyCZMtcGEWB0slbbhCIWJb9lznzeeKzU4Vz5olE
-	 BuByHV93qAXpaTLwAN/9zlE5ymbCPyG8HkpewhJgqL2bmAgCPFtTLJr1v49CVYOPK+
-	 ++tlvvsqj7a28VXXnlAvxcVmQtC2nm5LoIrE+Bok=
+	by mail.kernel.org (Postfix) with ESMTP id 7E2F2206A5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 04:18:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730038AbgFVRug (ORCPT
+        id S1730149AbgFWESc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 22 Jun 2020 13:50:36 -0400
-Received: from mail-ej1-f68.google.com ([209.85.218.68]:33973 "EHLO
-        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729992AbgFVRug (ORCPT
+        Tue, 23 Jun 2020 00:18:32 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:55466 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728386AbgFWESc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Jun 2020 13:50:36 -0400
-Received: by mail-ej1-f68.google.com with SMTP id y10so4501832eje.1;
-        Mon, 22 Jun 2020 10:50:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HOTnjMjsu7xKDVdNqVPUTaQv3pQPCvDqx33cGwyLPp8=;
-        b=SjbLwWFuJcdI9AzqCeHfRZT8iIDIcnPoGnl59o4XKNBcHmg3azNd0osaEn/TKN5VSV
-         NwSPt/dHMeNpev9wrlx/F8m6TKlhuxioBHu5iEbrHDbtivH09Qlx+9pXO4POBN6fcGzJ
-         WFu5BqzbqIa7fNsNKzbB8Omu0aEZOZPBPXpZb4koW8EqoP971a96FKTmEFeGAXkJpakS
-         AHopcjZkVAVGSxMsU9Fm7jpyoAwLAHBSp9muhYpVC82c03xYtqaIVCMuVWy5SkW70n/e
-         dyY25/6KEWvtwV0pNgxI6HQinRB3GTrwDsXWBh8xtPk95SU4d22Tdo7NhwIqgz57ZbXS
-         HBNQ==
-X-Gm-Message-State: AOAM533w79MrjNwhQ0iRccr+FCgzAsnBRqqqd3nZgATVOTHqOniMShM5
-        p6MLfeOhFTYAH5U8wQzL/ok=
-X-Google-Smtp-Source: ABdhPJwqCv6kCCLUnC8zvrY8jFVgGacYWcI+rhbYCVMJlmSQeTmHKLBbvMdE28EVRur5t8b44IybxQ==
-X-Received: by 2002:a17:906:6d4b:: with SMTP id a11mr17477631ejt.108.1592848234574;
-        Mon, 22 Jun 2020 10:50:34 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.235])
-        by smtp.googlemail.com with ESMTPSA id rv14sm11814489ejb.110.2020.06.22.10.50.33
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Jun 2020 10:50:33 -0700 (PDT)
-Date:   Mon, 22 Jun 2020 19:50:31 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Guillaume Tucker <guillaume.tucker@collabora.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH] ARM: exynos: clear L310_AUX_CTRL_FULL_LINE_ZERO in
- default l2c_aux_val
-Message-ID: <20200622175031.GA29235@kozik-lap>
-References: <c6d979c0050502cd1bca8619cb5ff95db239db12.1591969825.git.guillaume.tucker@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c6d979c0050502cd1bca8619cb5ff95db239db12.1591969825.git.guillaume.tucker@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 23 Jun 2020 00:18:32 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A55BE200015;
+        Tue, 23 Jun 2020 06:18:29 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 634B520002C;
+        Tue, 23 Jun 2020 06:18:25 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id ED23B4029C;
+        Tue, 23 Jun 2020 12:18:19 +0800 (SGT)
+From:   haibo.chen@nxp.com
+To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, jh80.chung@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, michal.simek@xilinx.com,
+        linux-samsung-soc@vger.kernel.org
+Cc:     linux-imx@nxp.com, haibo.chen@nxp.com
+Subject: [PATCH] mmc: host: dereference null return value
+Date:   Tue, 23 Jun 2020 12:06:49 +0800
+Message-Id: <1592885209-25839-1-git-send-email-haibo.chen@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jun 12, 2020 at 02:58:37PM +0100, Guillaume Tucker wrote:
-> This "alert" error message can be seen on exynos4412-odroidx2:
-> 
->     L2C: platform modifies aux control register: 0x02070000 -> 0x3e470001
->     L2C: platform provided aux values permit register corruption.
-> 
-> Followed by this plain error message:
-> 
->     L2C-310: enabling full line of zeros but not enabled in Cortex-A9
-> 
-> To fix it, don't set the L310_AUX_CTRL_FULL_LINE_ZERO flag (bit 0) in
-> the default value of l2c_aux_val.  It may instead be enabled when
-> applicable by the logic in l2c310_enable() if the attribute
-> "arm,full-line-zero-disable" was set in the device tree.
-> 
-> The initial commit that introduced this default value was in v2.6.38:
-> 
->   1cf0eb799759 "ARM: S5PV310: Add L2 cache init function in cpu.c"
-> 
-> However, the code to set the L310_AUX_CTRL_FULL_LINE_ZERO flag and
-> manage that feature was added much later and the default value was not
-> updated then.  So this seems to have been a subtle oversight
-> especially since enabling it only in the cache and not in the A9 core
-> doesn't actually prevent the platform from running.  According to the
-> TRM, the opposite would be a real issue, if the feature was enabled in
-> the A9 core but not in the cache controller.
-> 
-> Reported-by: "kernelci.org bot" <bot@kernelci.org>
-> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
-> ---
->  arch/arm/mach-exynos/exynos.c | 2 +-
+From: Haibo Chen <haibo.chen@nxp.com>
 
-Thanks, applied.
+of_match_node() has the opportunity to return NULL, so need to
+dereference null return value.
+This is reported by Coverity.
 
-Best regards,
-Krzysztof
+Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+---
+ drivers/mmc/host/dw_mmc-exynos.c   | 5 +++--
+ drivers/mmc/host/dw_mmc-k3.c       | 5 +++--
+ drivers/mmc/host/dw_mmc-pltfm.c    | 3 ++-
+ drivers/mmc/host/sdhci-of-arasan.c | 2 ++
+ 4 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+index 5e3d95b63676..27ab55abb03f 100644
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -545,12 +545,13 @@ MODULE_DEVICE_TABLE(of, dw_mci_exynos_match);
+ 
+ static int dw_mci_exynos_probe(struct platform_device *pdev)
+ {
+-	const struct dw_mci_drv_data *drv_data;
++	const struct dw_mci_drv_data *drv_data = NULL;
+ 	const struct of_device_id *match;
+ 	int ret;
+ 
+ 	match = of_match_node(dw_mci_exynos_match, pdev->dev.of_node);
+-	drv_data = match->data;
++	if (match)
++		drv_data = match->data;
+ 
+ 	pm_runtime_get_noresume(&pdev->dev);
+ 	pm_runtime_set_active(&pdev->dev);
+diff --git a/drivers/mmc/host/dw_mmc-k3.c b/drivers/mmc/host/dw_mmc-k3.c
+index 50977ff18074..e8a148c306b3 100644
+--- a/drivers/mmc/host/dw_mmc-k3.c
++++ b/drivers/mmc/host/dw_mmc-k3.c
+@@ -451,11 +451,12 @@ MODULE_DEVICE_TABLE(of, dw_mci_k3_match);
+ 
+ static int dw_mci_k3_probe(struct platform_device *pdev)
+ {
+-	const struct dw_mci_drv_data *drv_data;
++	const struct dw_mci_drv_data *drv_data = NULL;
+ 	const struct of_device_id *match;
+ 
+ 	match = of_match_node(dw_mci_k3_match, pdev->dev.of_node);
+-	drv_data = match->data;
++	if (match)
++		drv_data = match->data;
+ 
+ 	return dw_mci_pltfm_register(pdev, drv_data);
+ }
+diff --git a/drivers/mmc/host/dw_mmc-pltfm.c b/drivers/mmc/host/dw_mmc-pltfm.c
+index 7de37f524a96..d3dcb96efd13 100644
+--- a/drivers/mmc/host/dw_mmc-pltfm.c
++++ b/drivers/mmc/host/dw_mmc-pltfm.c
+@@ -78,7 +78,8 @@ static int dw_mci_pltfm_probe(struct platform_device *pdev)
+ 
+ 	if (pdev->dev.of_node) {
+ 		match = of_match_node(dw_mci_pltfm_match, pdev->dev.of_node);
+-		drv_data = match->data;
++		if (match)
++			drv_data = match->data;
+ 	}
+ 
+ 	return dw_mci_pltfm_register(pdev, drv_data);
+diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+index fb26e743e1fd..f2090f944a0e 100644
+--- a/drivers/mmc/host/sdhci-of-arasan.c
++++ b/drivers/mmc/host/sdhci-of-arasan.c
+@@ -1520,6 +1520,8 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
+ 	const struct sdhci_arasan_of_data *data;
+ 
+ 	match = of_match_node(sdhci_arasan_of_match, pdev->dev.of_node);
++	if (match == NULL)
++		return -ENOPARAM;
+ 	data = match->data;
+ 	host = sdhci_pltfm_init(pdev, data->pdata, sizeof(*sdhci_arasan));
+ 
+-- 
+2.17.1
 
