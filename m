@@ -2,114 +2,209 @@ Return-Path: <SRS0=LEd2=AE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D51FC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 13:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4753DC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 14:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5163120720
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 13:35:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 078DD20716
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 14:23:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="APdLuZED"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732688AbgFWNfW (ORCPT
+        id S1732761AbgFWOXR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 23 Jun 2020 09:35:22 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:59518 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732616AbgFWNfW (ORCPT
+        Tue, 23 Jun 2020 10:23:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53562 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732759AbgFWOXQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Jun 2020 09:35:22 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 5FFD01C0C0A; Tue, 23 Jun 2020 15:35:19 +0200 (CEST)
-Date:   Tue, 23 Jun 2020 15:35:12 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        Micha?? Miros??aw <mirq-linux@rere.qmqm.pl>,
-        kernel@collabora.com
-Subject: Re: [PATCH v2] Input: document inhibiting
-Message-ID: <20200623133512.GA2783@bug>
-References: <f9007f37-c526-5fa4-3188-a554d2434177@redhat.com>
- <20200617101822.8558-1-andrzej.p@collabora.com>
+        Tue, 23 Jun 2020 10:23:16 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0ECEC061573
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jun 2020 07:23:16 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id d12so3205322ply.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jun 2020 07:23:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from:cc;
+        bh=qFlOj3wSSSINOzv90EaLpuVFFjebeMk4KVdQXi9/yNc=;
+        b=APdLuZEDWd1OMGhDoMAaRMtSUxrpGGMQdnAaFCMsfp7ovPdt/FNXP3tG9r+eJj0kke
+         CshHHxHrhRewRr0kn6wukWaOwPFKu1dh1mThMyIWPARfIf6kKEgseYCaOZpURqNL2VVh
+         /j7L+IsrUaXRmIDOUrgJu+FLxfAyLxlXPmzGbN2t/zRFzanEpYP0ztX3sgM0yLaxK8qz
+         KIwI2T01wURJcmv0UJFT8G4T/+PkYbHaOFTGNBXiS+9w4g6xEKwhgySmhuS1Lsi6YbHb
+         ntNb/UrAQOTOhMpkEy6S6Q3I41963Ytvvp2DuTsi/4GHHl9quM6VGZAnoZX0tp4/+9kO
+         vpqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from:cc;
+        bh=qFlOj3wSSSINOzv90EaLpuVFFjebeMk4KVdQXi9/yNc=;
+        b=ZyYXaIndwUlWM3J6PIMzk6nZ3YWZGm24hJmu5CjTSG+NwsKfKcSuE0ID0mstLB+QM6
+         ZllvkSssZxaU9W+j/pt4BbqKSRTlhxXY2mngpaUdVVZmBMgILTcuwgv2Xc3clA78Sx1b
+         8lrN75trYkIlM48HehZuQGgw75QsIOL1HZfh9StsJIIJh//RCQbSuw/AI3Na4H16aPB5
+         NzesGVwFzOgDZQrgGk2pl8RCk7Uo5FOdSyo1QhJe1+8XZcabVkfiHgB45t+QUQfeBX8j
+         uKP6kPveexlz/7WY3jK5rsc35iNQnAycEy2Rcof9MWMne1eAFsCIx+LeH811z1RL78Qa
+         UXwg==
+X-Gm-Message-State: AOAM532+VGvRF3k95GoEJw2YTL3CQwFMF05v4yfJhTlP9p8xoXF1WRZC
+        SSb2a2Mmhw62C7jhL6it13YIaoS8z/8=
+X-Google-Smtp-Source: ABdhPJxrmexBOtjGKXRnBtb20pi39k+MESf7jEYVkXYd2xA5n2oHhcYZyMhHzfr8sMsSWcTkevcFOw==
+X-Received: by 2002:a17:90b:796:: with SMTP id l22mr21618759pjz.45.1592922196445;
+        Tue, 23 Jun 2020 07:23:16 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id y7sm2814095pjm.54.2020.06.23.07.23.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jun 2020 07:23:15 -0700 (PDT)
+Message-ID: <5ef21053.1c69fb81.b80ec.8649@mx.google.com>
+Date:   Tue, 23 Jun 2020 07:23:15 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200617101822.8558-1-andrzej.p@collabora.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: bisect
+X-Kernelci-Branch: for-next
+X-Kernelci-Lab-Name: lab-baylibre
+X-Kernelci-Tree: krzysztof
+X-Kernelci-Kernel: v5.8-rc1-14-gd6fe116541b7
+Subject: krzysztof/for-next bisection: baseline.dmesg.crit on bcm2837-rpi-3-b
+To:     "kernelci.org bot" <bot@kernelci.org>, gtucker@collabora.com,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Guillaume Tucker <guillaume.tucker@collabora.com>
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Kukjin Kim <kgene@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi!
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+*                                                               *
+* If you do send a fix, please include this trailer:            *
+*   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+*                                                               *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-> +Inhibiting input devices
-> +~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +Inhibiting a device means ignoring input events from it. As such it is about maintaining
-> +relationships with input handlers - either already existing relationships, or relationships
-> +to be established while the device is in inhibited state.
-> +
-> +If a device is inhibited, no input handler will receive events from it.
-> +
-> +The fact that nobody wants events from the device is exploited further, by calling device's
-> +close() (if there are users) and open() (if there are users) on inhibit and uninhibit
-> +operations, respectively. Indeed, the meaning of close() is to stop providing events
-> +to the input core and that of open() is to start providing events to the input core.
-> +
-> +Calling the device's close() method on inhibit (if there are users) allows the driver
-> +to save power. Either by directly powering down the device or by releasing the
-> +runtime-pm reference it got in open() when the driver is using runtime-pm.
-> +
-> +Inhibiting and uninhibiting are orthogonal to opening and closing the device by input
-> +handlers. Userspace might want to inhibit a device in anticipation before any handler is
-> +positively matched against it.
+krzysztof/for-next bisection: baseline.dmesg.crit on bcm2837-rpi-3-b
 
-Ok.
+Summary:
+  Start:      d6fe116541b7 Merge branch 'next/soc' into for-next
+  Plain log:  https://storage.kernelci.org/krzysztof/for-next/v5.8-rc1-14-g=
+d6fe116541b7/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-baylibre/b=
+aseline-bcm2837-rpi-3-b.txt
+  HTML log:   https://storage.kernelci.org/krzysztof/for-next/v5.8-rc1-14-g=
+d6fe116541b7/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-baylibre/b=
+aseline-bcm2837-rpi-3-b.html
+  Result:     5b17a04addc2 ARM: exynos: clear L310_AUX_CTRL_FULL_LINE_ZERO =
+in default l2c_aux_val
 
-> +Inhibiting and uninhibiting are orthogonal to device's being a wakeup source, too. 
-> Being a +wakeup source plays a role when the system is sleeping, not when the system is 
-> operating. +How drivers should program their interaction between inhibiting, sleeping 
-> and being a wakeup +source is driver-specific. + +Taking the analogy with the network 
+Checks:
+  revert:     PASS
+  verify:     PASS
 
-I don't believe making interaction driver-specific is good idea. We should decide
-what reasonable behaviour is and then make drivers implement that...
+Parameters:
+  Tree:       krzysztof
+  URL:        https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
+  Branch:     for-next
+  Target:     bcm2837-rpi-3-b
+  CPU arch:   arm64
+  Lab:        lab-baylibre
+  Compiler:   gcc-8
+  Config:     defconfig+CONFIG_RANDOMIZE_BASE=3Dy
+  Test case:  baseline.dmesg.crit
 
-Best regards,
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Breaking commit found:
+
+---------------------------------------------------------------------------=
+----
+commit 5b17a04addc29201dc142c8d2c077eb7745d2e35
+Author: Guillaume Tucker <guillaume.tucker@collabora.com>
+Date:   Fri Jun 12 14:58:37 2020 +0100
+
+    ARM: exynos: clear L310_AUX_CTRL_FULL_LINE_ZERO in default l2c_aux_val
+    =
+
+    This "alert" error message can be seen on exynos4412-odroidx2:
+    =
+
+        L2C: platform modifies aux control register: 0x02070000 -> 0x3e4700=
+01
+        L2C: platform provided aux values permit register corruption.
+    =
+
+    Followed by this plain error message:
+    =
+
+        L2C-310: enabling full line of zeros but not enabled in Cortex-A9
+    =
+
+    To fix it, don't set the L310_AUX_CTRL_FULL_LINE_ZERO flag (bit 0) in
+    the default value of l2c_aux_val.  It may instead be enabled when
+    applicable by the logic in l2c310_enable() if the attribute
+    "arm,full-line-zero-disable" was set in the device tree.
+    =
+
+    The initial commit that introduced this default value was in v2.6.38
+    commit 1cf0eb799759 ("ARM: S5PV310: Add L2 cache init function in
+    cpu.c").
+    =
+
+    However, the code to set the L310_AUX_CTRL_FULL_LINE_ZERO flag and
+    manage that feature was added much later and the default value was not
+    updated then.  So this seems to have been a subtle oversight
+    especially since enabling it only in the cache and not in the A9 core
+    doesn't actually prevent the platform from running.  According to the
+    TRM, the opposite would be a real issue, if the feature was enabled in
+    the A9 core but not in the cache controller.
+    =
+
+    Reported-by: "kernelci.org bot" <bot@kernelci.org>
+    Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+    Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 7a8d1555db40..36c37444485a 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -193,7 +193,7 @@ static void __init exynos_dt_fixup(void)
+ }
+ =
+
+ DT_MACHINE_START(EXYNOS_DT, "Samsung Exynos (Flattened Device Tree)")
+-	.l2c_aux_val	=3D 0x3c400001,
++	.l2c_aux_val	=3D 0x3c400000,
+ 	.l2c_aux_mask	=3D 0xc20fffff,
+ 	.smp		=3D smp_ops(exynos_smp_ops),
+ 	.map_io		=3D exynos_init_io,
+---------------------------------------------------------------------------=
+----
+
+
+Git bisection log:
+
+---------------------------------------------------------------------------=
+----
+git bisect start
+# good: [b0953d8b7cdb39493e67cff4b20b0ebe3a2bba92] Merge branch 'next/drive=
+rs' into for-next
+git bisect good b0953d8b7cdb39493e67cff4b20b0ebe3a2bba92
+# bad: [d6fe116541b73a56110310c39a270c99766cd909] Merge branch 'next/soc' i=
+nto for-next
+git bisect bad d6fe116541b73a56110310c39a270c99766cd909
+# bad: [5b17a04addc29201dc142c8d2c077eb7745d2e35] ARM: exynos: clear L310_A=
+UX_CTRL_FULL_LINE_ZERO in default l2c_aux_val
+git bisect bad 5b17a04addc29201dc142c8d2c077eb7745d2e35
+# first bad commit: [5b17a04addc29201dc142c8d2c077eb7745d2e35] ARM: exynos:=
+ clear L310_AUX_CTRL_FULL_LINE_ZERO in default l2c_aux_val
+---------------------------------------------------------------------------=
+----
