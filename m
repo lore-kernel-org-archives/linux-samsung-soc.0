@@ -2,104 +2,183 @@ Return-Path: <SRS0=Cil/=AF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3206AC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 10:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F64FC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 10:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F234A20706
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 10:21:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592994104;
-	bh=ryw44Z/EPBxdhw94ATVsnEt+G9bd1yf/neM/xMmnjPo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=x/Ud9GZHsI2dkSZE6ISmbTcr+LYLOeuJzudvKGIWQMR1+WbxWV/Am6PwSbTLCRniD
-	 H0zxSiYs/PAa0PhX5cWGuBU9kDP29uBTNIKkLKg4A6R7CMNxFSyI/7KPoVUq/aMjdU
-	 TTLSQVyKqOD9gd5F7xg1CS3pJfZtzQ016feIImS4=
+	by mail.kernel.org (Postfix) with ESMTP id 87EED2082F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 10:33:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390372AbgFXKVU (ORCPT
+        id S2390509AbgFXKdD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 24 Jun 2020 06:21:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55778 "EHLO mail.kernel.org"
+        Wed, 24 Jun 2020 06:33:03 -0400
+Received: from foss.arm.com ([217.140.110.172]:59560 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387843AbgFXKVR (ORCPT
+        id S2388197AbgFXKdD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 24 Jun 2020 06:21:17 -0400
-Received: from localhost (unknown [171.61.66.58])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECD8C20706;
-        Wed, 24 Jun 2020 10:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592994077;
-        bh=ryw44Z/EPBxdhw94ATVsnEt+G9bd1yf/neM/xMmnjPo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lFsxHbr3AxRhXpUmfNHF2DEskt3fDb/Un0y8cPDad7ymlHvAwylcK0tD8qT/uWprq
-         TdmBEKTWtRRYV6V6ymLtsuJGau1fmnwWOWz9EXkMPyNYBCslK08B7IZ6ruxzRudj4q
-         LX41T8W5TGpyFqB5PyztWwvOwayLiS4Q/PBtv02k=
-Date:   Wed, 24 Jun 2020 15:51:12 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     'Kishon Vijay Abraham I' <kishon@ti.com>, robh@kernel.org,
-        krzk@kernel.org, linux-samsung-soc@vger.kernel.org,
-        avri.altman@wdc.com, stanley.chu@mediatek.com,
-        linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        cang@codeaurora.org, devicetree@vger.kernel.org,
-        kwmad.kim@samsung.com, linux-kernel@vger.kernel.org,
-        "'Martin K. Petersen'" <martin.petersen@oracle.com>
-Subject: Re: [PATCH v10 00/10] exynos-ufs: Add support for UFS HCI
-Message-ID: <20200624102112.GX2324254@vkoul-mobl>
-References: <CGME20200528013223epcas5p2be85fa8803326b49a905fb7225992cad@epcas5p2.samsung.com>
- <20200528011658.71590-1-alim.akhtar@samsung.com>
- <159114947915.26776.12485309894552696104.b4-ty@oracle.com>
- <013a01d63d3e$ecf404d0$c6dc0e70$@samsung.com>
- <89b96bd0-a9a3-cdd8-dc67-1f9f49eef264@ti.com>
- <000001d646a6$6cb5fd70$4621f850$@samsung.com>
+        Wed, 24 Jun 2020 06:33:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A5261FB;
+        Wed, 24 Jun 2020 03:33:02 -0700 (PDT)
+Received: from [10.37.12.79] (unknown [10.37.12.79])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 239C93F6CF;
+        Wed, 24 Jun 2020 03:32:59 -0700 (PDT)
+Subject: Re: brocken devfreq simple_ondemand for Odroid XU3/4?
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Willy Wolff <willy.mh.wolff.ml@gmail.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200623164733.qbhua7b6cg2umafj@macmini.local>
+ <CAJKOXPeLuq81NC2xZh3y32EB-_APbDAchZD4OW_eCgQKKO+p8w@mail.gmail.com>
+ <20200623191129.GA4171@kozik-lap>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <85f5a8c0-7d48-f2cd-3385-c56d662f2c88@arm.com>
+Date:   Wed, 24 Jun 2020 11:32:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000001d646a6$6cb5fd70$4621f850$@samsung.com>
+In-Reply-To: <20200623191129.GA4171@kozik-lap>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20-06-20, 07:29, Alim Akhtar wrote:
-> Hi Kishon,
-> 
-> > -----Original Message-----
-> > From: Alim Akhtar <alim.akhtar@samsung.com>
-> > Sent: 11 June 2020 20:49
-> > To: 'Kishon Vijay Abraham I' <kishon@ti.com>; 'Martin K. Petersen'
-> > > >>
-> > > >> Applied [1,2,3,4,5,9] to 5.9/scsi-queue. The series won't show up
-> > > >> in my
-> > > > public
-> > > >> tree until shortly after -rc1 is released.
-> > > >>
-> > > > Thanks Martin,
-> > > > Hi Rob and Kishon/Vinod
-> > > > Can you please pickup dt-bindings and PHY driver respectively?
-> > >
-> > > You might have CC'ed me only for the PHY patch. I don't have the
-> > > dt-bindings in my inbox. Care to re-send what's missing again? This
-> > > will be merged after -rc1 is tagged.
-> > >
-> 
-> -rc1 is out, I do not see phy driver patch in your tree[1] yet, let me know if I am looking into right tree.
-> [1] -> git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git
+Hi Krzysztof and Willy
 
-Right tree
+On 6/23/20 8:11 PM, Krzysztof Kozlowski wrote:
+> On Tue, Jun 23, 2020 at 09:02:38PM +0200, Krzysztof Kozlowski wrote:
+>> On Tue, 23 Jun 2020 at 18:47, Willy Wolff <willy.mh.wolff.ml@gmail.com> wrote:
+>>>
+>>> Hi everybody,
+>>>
+>>> Is DVFS for memory bus really working on Odroid XU3/4 board?
+>>> Using a simple microbenchmark that is doing only memory accesses, memory DVFS
+>>> seems to not working properly:
+>>>
+>>> The microbenchmark is doing pointer chasing by following index in an array.
+>>> Indices in the array are set to follow a random pattern (cutting prefetcher),
+>>> and forcing RAM access.
+>>>
+>>> git clone https://github.com/wwilly/benchmark.git \
+>>>    && cd benchmark \
+>>>    && source env.sh \
+>>>    && ./bench_build.sh \
+>>>    && bash source/scripts/test_dvfs_mem.sh
+>>>
+>>> Python 3, cmake and sudo rights are required.
+>>>
+>>> Results:
+>>> DVFS CPU with performance governor
+>>> mem_gov = simple_ondemand at 165000000 Hz in idle, should be bumped when the
+>>> benchmark is running.
+>>> - on the LITTLE cluster it takes 4.74308 s to run (683.004 c per memory access),
+>>> - on the big cluster it takes 4.76556 s to run (980.343 c per moemory access).
+>>>
+>>> While forcing DVFS memory bus to use performance governor,
+>>> mem_gov = performance at 825000000 Hz in idle,
+>>> - on the LITTLE cluster it takes 1.1451 s to run (164.894 c per memory access),
+>>> - on the big cluster it takes 1.18448 s to run (243.664 c per memory access).
+>>>
+>>> The kernel used is the last 5.7.5 stable with default exynos_defconfig.
+>>
+>> Thanks for the report. Few thoughts:
+>> 1. What trans_stat are saying? Except DMC driver you can also check
+>> all other devfreq devices (e.g. wcore) - maybe the devfreq events
+>> (nocp) are not properly assigned?
+>> 2. Try running the measurement for ~1 minutes or longer. The counters
+>> might have some delay (which would require probably fixing but the
+>> point is to narrow the problem).
+>> 3. What do you understand by "mem_gov"? Which device is it?
 > 
-> Thanks! 
+> +Cc Lukasz who was working on this.
+
+Thanks Krzysztof for adding me here.
+
 > 
-> > Sure, will re-send this series.
+> I just run memtester and more-or-less ondemand works (at least ramps
+> up):
+> 
+> Before:
+> /sys/class/devfreq/10c20000.memory-controller$ cat trans_stat
+>       From  :   To
+>             : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
+> * 165000000:         0         0         0         0         0         0         0         0   1795950
+>    206000000:         1         0         0         0         0         0         0         0      4770
+>    275000000:         0         1         0         0         0         0         0         0     15540
+>    413000000:         0         0         1         0         0         0         0         0     20780
+>    543000000:         0         0         0         1         0         0         0         1     10760
+>    633000000:         0         0         0         0         2         0         0         0     10310
+>    728000000:         0         0         0         0         0         0         0         0         0
+>    825000000:         0         0         0         0         0         2         0         0     25920
+> Total transition : 9
+> 
+> 
+> $ sudo memtester 1G
+> 
+> During memtester:
+> /sys/class/devfreq/10c20000.memory-controller$ cat trans_stat
+>       From  :   To
+>             : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
+>    165000000:         0         0         0         0         0         0         0         1   1801490
+>    206000000:         1         0         0         0         0         0         0         0      4770
+>    275000000:         0         1         0         0         0         0         0         0     15540
+>    413000000:         0         0         1         0         0         0         0         0     20780
+>    543000000:         0         0         0         1         0         0         0         2     11090
+>    633000000:         0         0         0         0         3         0         0         0     17210
+>    728000000:         0         0         0         0         0         0         0         0         0
+> * 825000000:         0         0         0         0         0         3         0         0    169020
+> Total transition : 13
+> 
+> However after killing memtester it stays at 633 MHz for very long time
+> and does not slow down. This is indeed weird...
 
-But patches have not been sent right, pls send and me/Kishon will review
+I had issues with devfreq governor which wasn't called by devfreq
+workqueue. The old DELAYED vs DEFERRED work discussions and my patches
+for it [1]. If the CPU which scheduled the next work went idle, the
+devfreq workqueue will not be kicked and devfreq governor won't check
+DMC status and will not decide to decrease the frequency based on low
+busy_time.
+The same applies for going up with the frequency. They both are
+done by the governor but the workqueue must be scheduled periodically.
 
-Thanks
--- 
-~Vinod
+I couldn't do much with this back then. I have given the example that
+this is causing issues with the DMC [2]. There is also a description
+of your situation staying at 633MHz for long time:
+' When it is missing opportunity
+to change the frequency, it can either harm the performance or power
+consumption, depending of the frequency the device stuck on.'
+
+The patches were not accepted because it will cause CPU wake-up from
+idle, which increases the energy consumption. I know that there were
+some other attempts, but I don't know the status.
+
+I had also this devfreq workqueue issue when I have been working on
+thermal cooling for devfreq. The device status was not updated, because
+the devfreq workqueue didn't check the device [3].
+
+Let me investigate if that is the case.
+
+Regards,
+Lukasz
+
+[1] https://lkml.org/lkml/2019/2/11/1146
+[2] https://lkml.org/lkml/2019/2/12/383
+[3] 
+https://lwn.net/ml/linux-kernel/20200511111912.3001-11-lukasz.luba@arm.com/
+
+> 
+> Best regards,
+> Krzysztof
+> 
