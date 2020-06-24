@@ -1,163 +1,104 @@
-Return-Path: <SRS0=LEd2=AE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=Cil/=AF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1122DC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 19:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E97C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 04:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1DF4207D0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Jun 2020 19:11:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592939495;
-	bh=rlQHqh/1EcPc9M4t4Y9qJ2pt9mUGEddxgyBOvlhwd3o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=MPR42CNboWXeoPDO9Ve39vs335xmLY79C1OsexVnNX+bdg5LCNRA9OIUyl1wLhppy
-	 HfTpGeCcEWGjlnyjJHUY0ncIuK1YE3Oy6OXVdY7JX5gFjrGgRQVlb+oknWoYa36vz/
-	 zSPODjuhGZmqxUjmdgcZl9jDwpl3i13uFS3Zdico=
+	by mail.kernel.org (Postfix) with ESMTP id 5C9442078E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 04:32:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wpUACspt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733296AbgFWTLf (ORCPT
+        id S2388584AbgFXEcy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 23 Jun 2020 15:11:35 -0400
-Received: from mail-ej1-f41.google.com ([209.85.218.41]:45691 "EHLO
-        mail-ej1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733248AbgFWTLf (ORCPT
+        Wed, 24 Jun 2020 00:32:54 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:44968 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbgFXEcy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Jun 2020 15:11:35 -0400
-Received: by mail-ej1-f41.google.com with SMTP id a1so8698389ejg.12;
-        Tue, 23 Jun 2020 12:11:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=S6qzk+OKExXb2YpLZeuh1PmKG+c4jm0lpjuoeWwXFzk=;
-        b=r9kTTD97qkKFw+q1SPYr0Wmmq3KWGMmYl1o9LsR0k5H/dgQxF1Fj/AYaVCjMl0Xfhx
-         952UvgI6M34fyLhH+gGlkFq+u/PMO6TWDqrp/3vpXe75uggWJLtNzU2smIEt1MrgPRsR
-         2LpwPNKlxLPZ1zQAgqJ/O031v3TGNxGQYDFywEUx1p4Axdgl8olSmu3knmuhr9dDI0o/
-         XfLw/tjQCoOrBNndsTlkMuVBK1NnExcM8UQxWElMLIF9UZH9+zIgsBYtzyWyiky7jBeU
-         neE0PZ46Pqg0pkxQ5aM6CtRFI09dM5dNS9Mk4QCIRoNhymZ54j1MOxuf6kULC3Wwf0RY
-         QKzQ==
-X-Gm-Message-State: AOAM533o31B/eNTpEmWZdnSOEhqe09EvV7r9zil3N8T3FHhrEPQ6FM96
-        290/5Q5+lgkg0SAxtxMMxm0=
-X-Google-Smtp-Source: ABdhPJzL8paryXZaLIV+aJhyo9RYBnt+N7daGvK76KL9xSHh8GkcyzPYHf1WG9BUOVfCwW6i7BNwCg==
-X-Received: by 2002:a17:906:4cd0:: with SMTP id q16mr13306634ejt.418.1592939492855;
-        Tue, 23 Jun 2020 12:11:32 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.235])
-        by smtp.googlemail.com with ESMTPSA id a2sm4479503ejg.76.2020.06.23.12.11.31
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Jun 2020 12:11:31 -0700 (PDT)
-Date:   Tue, 23 Jun 2020 21:11:29 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Willy Wolff <willy.mh.wolff.ml@gmail.com>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
+        Wed, 24 Jun 2020 00:32:54 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05O4Vm6V056465;
+        Wed, 24 Jun 2020 04:32:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2020-01-29;
+ bh=U60Q9wYO24Fci/rjHg9RVDkxJHrlQYSoiIaxIYBt1/c=;
+ b=wpUACspt65cGWE27HfpTBArvU4DH636FwnMTPZU44HkREVz5S42J0y0jHmV9E15Us9zq
+ IwFxefBAa4808mG2PbdGH4JrlIqye+JgvjRIY+9vV3X//0eO7SOtQAdFE0PJ6rpF+wb9
+ XcF8e9EWh9i6zFaeKYEdYcSDgMAwVM9K1NbU/lXgR8evo9LDtaj7GRYpRdi9xe7v2O4c
+ gKy8lgkFkqm/d2ofsqkAGcpauUsb30SuwrBRtkxLDXEx1vsohbCeIB/+RT+wk6EFbZhV
+ 1U+kx+bx4cYej7NJ6RFPppQhNqxaQZhcsiTvBW9GBm6iV2tRR9US1qxqI7dkWqTD5qeT pQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 31uustgm4u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 24 Jun 2020 04:32:29 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05O4NmPk086138;
+        Wed, 24 Jun 2020 04:30:28 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 31uuqy7egc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Jun 2020 04:30:28 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 05O4UQ7e031513;
+        Wed, 24 Jun 2020 04:30:26 GMT
+Received: from ca-mkp.ca.oracle.com (/10.156.108.201)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 24 Jun 2020 04:30:25 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Seungwon Jeon <essuuj@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kiwoong Kim <kwmad.kim@samsung.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Luba <lukasz.luba@arm.com>
-Subject: Re: brocken devfreq simple_ondemand for Odroid XU3/4?
-Message-ID: <20200623191129.GA4171@kozik-lap>
-References: <20200623164733.qbhua7b6cg2umafj@macmini.local>
- <CAJKOXPeLuq81NC2xZh3y32EB-_APbDAchZD4OW_eCgQKKO+p8w@mail.gmail.com>
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] scsi: ufs: ufs-exynos: Fix return value check in exynos_ufs_init()
+Date:   Wed, 24 Jun 2020 00:30:22 -0400
+Message-Id: <159297300656.9917.6717865886612566021.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200618133837.127274-1-weiyongjun1@huawei.com>
+References: <20200618133837.127274-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPeLuq81NC2xZh3y32EB-_APbDAchZD4OW_eCgQKKO+p8w@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9661 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006240031
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9661 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
+ cotscore=-2147483648 adultscore=0 bulkscore=0 spamscore=0 phishscore=0
+ suspectscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015
+ impostorscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006240032
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 23, 2020 at 09:02:38PM +0200, Krzysztof Kozlowski wrote:
-> On Tue, 23 Jun 2020 at 18:47, Willy Wolff <willy.mh.wolff.ml@gmail.com> wrote:
-> >
-> > Hi everybody,
-> >
-> > Is DVFS for memory bus really working on Odroid XU3/4 board?
-> > Using a simple microbenchmark that is doing only memory accesses, memory DVFS
-> > seems to not working properly:
-> >
-> > The microbenchmark is doing pointer chasing by following index in an array.
-> > Indices in the array are set to follow a random pattern (cutting prefetcher),
-> > and forcing RAM access.
-> >
-> > git clone https://github.com/wwilly/benchmark.git \
-> >   && cd benchmark \
-> >   && source env.sh \
-> >   && ./bench_build.sh \
-> >   && bash source/scripts/test_dvfs_mem.sh
-> >
-> > Python 3, cmake and sudo rights are required.
-> >
-> > Results:
-> > DVFS CPU with performance governor
-> > mem_gov = simple_ondemand at 165000000 Hz in idle, should be bumped when the
-> > benchmark is running.
-> > - on the LITTLE cluster it takes 4.74308 s to run (683.004 c per memory access),
-> > - on the big cluster it takes 4.76556 s to run (980.343 c per moemory access).
-> >
-> > While forcing DVFS memory bus to use performance governor,
-> > mem_gov = performance at 825000000 Hz in idle,
-> > - on the LITTLE cluster it takes 1.1451 s to run (164.894 c per memory access),
-> > - on the big cluster it takes 1.18448 s to run (243.664 c per memory access).
-> >
-> > The kernel used is the last 5.7.5 stable with default exynos_defconfig.
-> 
-> Thanks for the report. Few thoughts:
-> 1. What trans_stat are saying? Except DMC driver you can also check
-> all other devfreq devices (e.g. wcore) - maybe the devfreq events
-> (nocp) are not properly assigned?
-> 2. Try running the measurement for ~1 minutes or longer. The counters
-> might have some delay (which would require probably fixing but the
-> point is to narrow the problem).
-> 3. What do you understand by "mem_gov"? Which device is it?
+On Thu, 18 Jun 2020 13:38:37 +0000, Wei Yongjun wrote:
 
-+Cc Lukasz who was working on this.
+> In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+> and never returns NULL. The NULL test in the return value check should
+> be replaced with IS_ERR().
 
-I just run memtester and more-or-less ondemand works (at least ramps
-up):
+Applied to 5.9/scsi-queue, thanks!
 
-Before:
-/sys/class/devfreq/10c20000.memory-controller$ cat trans_stat
-     From  :   To
-           : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
-* 165000000:         0         0         0         0         0         0         0         0   1795950
-  206000000:         1         0         0         0         0         0         0         0      4770
-  275000000:         0         1         0         0         0         0         0         0     15540
-  413000000:         0         0         1         0         0         0         0         0     20780
-  543000000:         0         0         0         1         0         0         0         1     10760
-  633000000:         0         0         0         0         2         0         0         0     10310
-  728000000:         0         0         0         0         0         0         0         0         0
-  825000000:         0         0         0         0         0         2         0         0     25920
-Total transition : 9
+[1/1] scsi: ufs: ufs-exynos: Fix return value check in exynos_ufs_init()
+      https://git.kernel.org/mkp/scsi/c/b2bc2200e89b
 
-
-$ sudo memtester 1G
-
-During memtester:
-/sys/class/devfreq/10c20000.memory-controller$ cat trans_stat
-     From  :   To
-           : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
-  165000000:         0         0         0         0         0         0         0         1   1801490
-  206000000:         1         0         0         0         0         0         0         0      4770
-  275000000:         0         1         0         0         0         0         0         0     15540
-  413000000:         0         0         1         0         0         0         0         0     20780
-  543000000:         0         0         0         1         0         0         0         2     11090
-  633000000:         0         0         0         0         3         0         0         0     17210
-  728000000:         0         0         0         0         0         0         0         0         0
-* 825000000:         0         0         0         0         0         3         0         0    169020
-Total transition : 13
-
-However after killing memtester it stays at 633 MHz for very long time
-and does not slow down. This is indeed weird...
-
-Best regards,
-Krzysztof
+-- 
+Martin K. Petersen	Oracle Linux Engineering
