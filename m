@@ -2,119 +2,85 @@ Return-Path: <SRS0=Cil/=AF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 092AFC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 11:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC07C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 11:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD96420CC7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 11:40:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="Y9PBhRyg"
+	by mail.kernel.org (Postfix) with ESMTP id 3804B20857
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 11:54:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592999673;
+	bh=4Kz40kxtuYw6HyJAzgomtBa4kIuyPe7+H+RuU6G51Ls=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ekEc8u29WS6BqFkKC3VCvXGnPzf8/m3HBQgv/h44YXqVdHb59f3nSC6OOE9Cb8Wqg
+	 /D8nkaG+0DNiJVAHvHdZoVHhzukVFTo19mkOUUvtGn0wBGL4B74lMfrTFdLwGRJtrR
+	 JqlbyYQiUZ8x6puCvIrfOWnqQ317nmxaDYOj5ti4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389024AbgFXLkF (ORCPT
+        id S2403794AbgFXLy1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 24 Jun 2020 07:40:05 -0400
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:35683 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388226AbgFXLkE (ORCPT
+        Wed, 24 Jun 2020 07:54:27 -0400
+Received: from mail-ej1-f45.google.com ([209.85.218.45]:37971 "EHLO
+        mail-ej1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403776AbgFXLyZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 24 Jun 2020 07:40:04 -0400
-Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id o3ksjttD0x3Ajo3kwjjE8i; Wed, 24 Jun 2020 13:40:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1592998802; bh=M4pU4U03MaYJwcvRFJNv8nTld2vvriNqiHmYpFeqiHo=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=Y9PBhRygZJH8v1qTk6GeENyM1/HdGazWDB7Ff3TkRYW/JneSWne/pb8QisIu+lvxX
-         s6wIPSx6k2Jpf5JxscBCdHeUYP3D/pBt3ZXJ8fhnpWq4+o4WKK5ajoQUs5vDOcaMTc
-         4tltD5Vnoges6WBpw3pR0Rnmdtg5ruTXmUqNrgoHV7eSzXZe4tiQYrEBvIunPBOpwa
-         7yvPzB3Ailhp+89o/svrDEUzpkLv7nF/FIJtDxuM7QI/3x6xg3KURVEfE8gvOmh88d
-         Z1RcjC8xxnJ9kmGSi34l/OeHaAde9ETswOIDRjHPAuBrMYQ5dXGXy17heEixMLfxEo
-         11PxwfetmBLfQ==
-Subject: Re: [PATCH 00/11] media: exynos4-is: Improve support for s5pv210 and
- parallel ports
-To:     Jonathan Bakker <xc-racer2@live.ca>, kyungmin.park@samsung.com,
+        Wed, 24 Jun 2020 07:54:25 -0400
+Received: by mail-ej1-f45.google.com with SMTP id w16so2168054ejj.5;
+        Wed, 24 Jun 2020 04:54:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ufsL1RSHA0Qgz7G5/lHH40o6RzNzgQ4/McWZWanPBsY=;
+        b=Fg7OZxm087+vNsfLY5urGBRXysy6moHFaVEtbAvms/H1VBzoefwpVOOIVcWkNP+OGH
+         92lzC1cfAQlpUicXO+sOEmEYQr+z0egzUvPyKOi5gnuJt51LTMN/1taNT3FLiU4r+LPr
+         SnJOdjPuINkMWyWf0JjvNoInvms9EQxR7/V+Egl7WqAHdzEFQt4ghjJh4V0O3vFRdVdy
+         XXj1smbzRoX/wobem0uD7EJSfnO0g8Zhp+FjldEqg082VFkhk7RpDghMSwAgNugGj0mZ
+         BvRv8XtdRbxEdT5s3PRmlfV6PgwjZqpeA8WxzGs5ni9+3+NFmwiEEc0CHHPuoWp+AaW+
+         ZswA==
+X-Gm-Message-State: AOAM530s6WDrXtTLceJ9CQdN+IkMWoxF3LwpWr0Gzx+gE1UjNvFgnqFU
+        m3yX7WkqdSVLZ0dkMZhQZLs=
+X-Google-Smtp-Source: ABdhPJxZdMjAfmb/JyEFCVwoJTo0S1v0Zs4pAvQ4nQtg9i0282GzbVAxxPadw/CghDQJQ1NdFjPSGQ==
+X-Received: by 2002:a17:906:4045:: with SMTP id y5mr15995409ejj.261.1592999662614;
+        Wed, 24 Jun 2020 04:54:22 -0700 (PDT)
+Received: from pi3 ([194.230.155.235])
+        by smtp.googlemail.com with ESMTPSA id n16sm6577049ejo.54.2020.06.24.04.54.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jun 2020 04:54:21 -0700 (PDT)
+Date:   Wed, 24 Jun 2020 13:54:19 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Jonathan Bakker <xc-racer2@live.ca>, kyungmin.park@samsung.com,
         s.nawrocki@samsung.com, mchehab@kernel.org, kgene@kernel.org,
-        krzk@kernel.org, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Tomasz Figa <tfiga@chromium.org>
+Subject: Re: [PATCH 00/11] media: exynos4-is: Improve support for s5pv210 and
+ parallel ports
+Message-ID: <20200624115419.GA20764@pi3>
 References: <BN6PR04MB06602E7221CC7455F3142540A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <07fb9000-ae00-efcd-e91a-48765ff3d4bf@xs4all.nl>
-Date:   Wed, 24 Jun 2020 13:39:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+ <07fb9000-ae00-efcd-e91a-48765ff3d4bf@xs4all.nl>
 MIME-Version: 1.0
-In-Reply-To: <BN6PR04MB06602E7221CC7455F3142540A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfBEJKAd4Mb8tPxX9RLS4ybX9o3HV73/5KTa134SPVtKW/YYaw5qOt+O5gwi6sopzKQ2i3FKcPWxMmrPVijbeohlLU6MqYP15cTTMJuig6vtLZ9x7apez
- 9kSPT+EtAWTSmnzGpP+sTg9wML3vMgoanWQ+iRRwd8F+gGyV7gxJBpEqIwPaxvESqlQLJKwNc8J5MF3XAguRDC+iwrJDI1E5GBW08Gm3FDVznr6dzN+LytN/
- KjcfwoZ4M0Qjsu0D2orcwn3K5LcgHx5COin6vjUM9X/3TjPAwylQNgbnU4bLrmWCYIb40MTDkCpVjnJuFuBGYiw+uySwNog80v/qSgjGqfw07+Rd/tGV3D5t
- O14m+MGSIyeUWCY4X8qWEFKrQ/PS4n+K1WW80FHtT8a4BRk9QOrqmIpQk9bhmmM5sdI5bKzdwGOOWd8HxvWTKVRtrh0SakR3+36L7RyXR80QLDAbDqcxn5K8
- eVE8xlcO6NnAo3/TljJTbZCK0GgttXCQgmo+tVswlRz13tC/dXuS+TDgZTg=
+Content-Disposition: inline
+In-Reply-To: <07fb9000-ae00-efcd-e91a-48765ff3d4bf@xs4all.nl>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Can someone from Samsung or someone who knows this SoC take a look at this series?
+On Wed, Jun 24, 2020 at 01:39:50PM +0200, Hans Verkuil wrote:
+> Can someone from Samsung or someone who knows this SoC take a look at this series?
+> 
+> This series looks sane to me, so I'll probably merge this if nobody replies
+> in the next two weeks or so.
 
-This series looks sane to me, so I'll probably merge this if nobody replies
-in the next two weeks or so.
+Unfortunately I don't know the media part on S5Pv210 at all so I cannot
+provide any feedback. There are not many active users of these SoCs
+nowadays. One of hem is Jonathan, so if he wants to change something he will
+mostly break/affect his own setup. :) Therefore I think it is safe to merge.
 
-Regards,
-
-	Hans
-
-On 26/04/2020 04:26, Jonathan Bakker wrote:
-> This patchset improves support in the exynos4-is driver for s5pv210
-> platforms as well as for sensors connected to the parallel ports
-> and not using the CSIS device.
-> 
-> Fixes range from nullptr exceptions to probe fixes to JPEG fixes.
-> 
-> Notably, it also changes the fwnode probing of parallel port sensors
-> to match the binding doc.  The binding doc said port A = reg 0 and
-> port B = reg 1 but the driver implemented A=1 and B=2.  The only in-tree
-> user of parallel ports is currently Goni, which notes that it uses port
-> A but has reg = 1.  Also note that the sensor driver is not mainlined
-> despite being present.  I have left the DTS as-is.
-> 
-> Some patches cleaning up non-DT support are also included.
-> 
-> The patches have been tested on a first-gen Galaxy S GT-i900M device based
-> on S5PV210.  Two sensors (CE147 and S5KA3DFX, both with non-mainline
-> drivers), both attached to port A, were succesfully used.
-> 
-> Jonathan Bakker (10):
->   media: exynos4-is: Remove static driver data for S5PV210 FIMC variants
->   media: exynos4-is: Fix nullptr when no CSIS device present
->   media: exynos4-is: Correct missing entity function initialization
->   media: exynos4-is: Improve support for sensors with multiple pads
->   media: exynos4-is: Properly set JPEG options when not using CSIS
->   media: exynos4-is: Add support for multiple sensors on one port
->   media: exynos4-is: Remove inh_sensor_ctrls
->   media: exynos4-is: Remove unused struct member input_index
->   media: exynos4-is: Prevent duplicate call to media_pipeline_stop
->   media: exynos4-is: Correct parallel port probing
-> 
-> Tomasz Figa (1):
->   media: exynos4-is: Request syscon only if ISP writeback is present
-> 
->  .../media/platform/exynos4-is/fimc-capture.c  | 22 ++----
->  drivers/media/platform/exynos4-is/fimc-core.c | 67 ++----------------
->  drivers/media/platform/exynos4-is/fimc-core.h |  5 --
->  drivers/media/platform/exynos4-is/fimc-reg.c  |  7 ++
->  drivers/media/platform/exynos4-is/media-dev.c | 68 ++++++++++++++-----
->  drivers/media/platform/exynos4-is/media-dev.h |  1 +
->  include/media/drv-intf/exynos-fimc.h          |  2 +-
->  7 files changed, 72 insertions(+), 100 deletions(-)
-> 
-
+Best regards,
+Krzysztof
