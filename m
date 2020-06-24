@@ -2,150 +2,104 @@ Return-Path: <SRS0=Cil/=AF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E38EFC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 10:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3206AC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 10:21:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C120C20767
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 10:06:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="imdBl9PI"
+	by mail.kernel.org (Postfix) with ESMTP id F234A20706
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 10:21:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592994104;
+	bh=ryw44Z/EPBxdhw94ATVsnEt+G9bd1yf/neM/xMmnjPo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=x/Ud9GZHsI2dkSZE6ISmbTcr+LYLOeuJzudvKGIWQMR1+WbxWV/Am6PwSbTLCRniD
+	 H0zxSiYs/PAa0PhX5cWGuBU9kDP29uBTNIKkLKg4A6R7CMNxFSyI/7KPoVUq/aMjdU
+	 TTLSQVyKqOD9gd5F7xg1CS3pJfZtzQ016feIImS4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390161AbgFXKGq (ORCPT
+        id S2390372AbgFXKVU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 24 Jun 2020 06:06:46 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51884 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389824AbgFXKGq (ORCPT
+        Wed, 24 Jun 2020 06:21:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55778 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387843AbgFXKVR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 24 Jun 2020 06:06:46 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200624100644euoutp0202f5c2ec7507822cc6368e15000649d4~bcuEbvWtu1959619596euoutp021
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jun 2020 10:06:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200624100644euoutp0202f5c2ec7507822cc6368e15000649d4~bcuEbvWtu1959619596euoutp021
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1592993204;
-        bh=ElIIgJiCGK3igywiFZvai5FDMBo5AkeSvYXQLNTvpI4=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=imdBl9PIQqH92B5TVh6YvBMoVNnnEvOxUCR24J65QIvyQd30HOvPVtlzPUSy9vm28
-         k0lr0EdFKMEWLKI/tN1du+4IfLNDQhw2zL19UwaS3zDvsrGuKrPXZSwpQi5ZHP8/75
-         P15uZb84FrV2IzI4CBc+MQzBnxhLqQXqeoX3qwHk=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200624100643eucas1p212a0e63f9f2be65f9c9dcaea403103a2~bcuD70-3P2465624656eucas1p20;
-        Wed, 24 Jun 2020 10:06:43 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id E4.FB.06456.3B523FE5; Wed, 24
-        Jun 2020 11:06:43 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200624100643eucas1p2afb2e6567bb6dda6ea237ad2bf3a7051~bcuDdxAh01629516295eucas1p26;
-        Wed, 24 Jun 2020 10:06:43 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200624100643eusmtrp101841f7e1e88bcbceb564666c728459f~bcuDc-TWZ1004110041eusmtrp1H;
-        Wed, 24 Jun 2020 10:06:43 +0000 (GMT)
-X-AuditID: cbfec7f2-7efff70000001938-f9-5ef325b31d03
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id CC.76.06314.3B523FE5; Wed, 24
-        Jun 2020 11:06:43 +0100 (BST)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200624100642eusmtip20d288534e9ef67ebaa19c8c663537068~bcuDAmEmP3156331563eusmtip2C;
-        Wed, 24 Jun 2020 10:06:42 +0000 (GMT)
-Subject: Re: [PATCH 4/4] ARM: multi_v7_defconfig: Enable big.LITTLE cpuidle
- driver
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Lukasz Luba <lukasz.luba@arm.com>
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <5262c50b-d9b8-8f32-874e-5ebc0672ed8c@samsung.com>
-Date:   Wed, 24 Jun 2020 12:06:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+        Wed, 24 Jun 2020 06:21:17 -0400
+Received: from localhost (unknown [171.61.66.58])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECD8C20706;
+        Wed, 24 Jun 2020 10:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592994077;
+        bh=ryw44Z/EPBxdhw94ATVsnEt+G9bd1yf/neM/xMmnjPo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lFsxHbr3AxRhXpUmfNHF2DEskt3fDb/Un0y8cPDad7ymlHvAwylcK0tD8qT/uWprq
+         TdmBEKTWtRRYV6V6ymLtsuJGau1fmnwWOWz9EXkMPyNYBCslK08B7IZ6ruxzRudj4q
+         LX41T8W5TGpyFqB5PyztWwvOwayLiS4Q/PBtv02k=
+Date:   Wed, 24 Jun 2020 15:51:12 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     'Kishon Vijay Abraham I' <kishon@ti.com>, robh@kernel.org,
+        krzk@kernel.org, linux-samsung-soc@vger.kernel.org,
+        avri.altman@wdc.com, stanley.chu@mediatek.com,
+        linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        cang@codeaurora.org, devicetree@vger.kernel.org,
+        kwmad.kim@samsung.com, linux-kernel@vger.kernel.org,
+        "'Martin K. Petersen'" <martin.petersen@oracle.com>
+Subject: Re: [PATCH v10 00/10] exynos-ufs: Add support for UFS HCI
+Message-ID: <20200624102112.GX2324254@vkoul-mobl>
+References: <CGME20200528013223epcas5p2be85fa8803326b49a905fb7225992cad@epcas5p2.samsung.com>
+ <20200528011658.71590-1-alim.akhtar@samsung.com>
+ <159114947915.26776.12485309894552696104.b4-ty@oracle.com>
+ <013a01d63d3e$ecf404d0$c6dc0e70$@samsung.com>
+ <89b96bd0-a9a3-cdd8-dc67-1f9f49eef264@ti.com>
+ <000001d646a6$6cb5fd70$4621f850$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20200616081230.31198-5-m.szyprowski@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEKsWRmVeSWpSXmKPExsWy7djP87qbVT/HGWx+qWsx77OsxfnzG9gt
-        Nj2+xmrxufcIo8WM8/uYLN78fsFusbCphd1i7ZG77A4cHmvmrWH02LSqk83jzrU9bB6bl9R7
-        9G1ZxejxeZNcAFsUl01Kak5mWWqRvl0CV8aTu19YCw6wV0zcNZWpgXEbWxcjJ4eEgInE6sVb
-        gGwuDiGBFYwS7zd/Z4ZwvjBK/DvezgLhfGaU6N6+jAmm5fui70wQieWMEt+fnWYFSQgJvGWU
-        2LuWA8QWFgiR+HajixHEFhHQl+huuwJmMwtMYJLY+TAVxGYTsJKY2L4KLM4rYCdxue0QM4jN
-        IqAqceHGc3YQW1QgQuLTg8OsEDWCEidnPmEBsTmB6t/fameDmCkucevJfCYIW15i+9s5zBCH
-        7mOXuHlKGMJ2kfh34S47hC0s8er4FihbRuL05B6wLyUE1jFK/O14wQzhbGeUWD75HzSUrCXu
-        nPsFZHMAbdCUWL9LHyLsKPH2bTcTSFhCgE/ixltBiBv4JCZtm84MEeaV6GgTgqhWk9iwbAMb
-        zNqunSuZJzAqzULy2Swk38xC8s0shL0LGFlWMYqnlhbnpqcWG+allusVJ+YWl+al6yXn525i
-        BKak0/+Of9rB+PVS0iFGAQ5GJR7eDQ8+xgmxJpYVV+YeYpTgYFYS4XU6ezpOiDclsbIqtSg/
-        vqg0J7X4EKM0B4uSOK/xopexQgLpiSWp2ampBalFMFkmDk6pBkb9OS8b93hcFlZ23Ht+K9tu
-        6dVfJJYlFB2turb96VK3JadKlasP2G1/wZcutqDdrndb8iaReXN8fSd1eS7VMZrRdMh1XcS6
-        XEbWVL2ssOrM9c9fLpx2bYayhnFNXXbz2jLRal156UVG206w39dkOfP7xObZ2yVmPbNdPIuN
-        o2/1Vf99qVYJl7SUWIozEg21mIuKEwGH9PalRQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCIsWRmVeSWpSXmKPExsVy+t/xe7qbVT/HGdyZxGcx77OsxfnzG9gt
-        Nj2+xmrxufcIo8WM8/uYLN78fsFusbCphd1i7ZG77A4cHmvmrWH02LSqk83jzrU9bB6bl9R7
-        9G1ZxejxeZNcAFuUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5m
-        WWqRvl2CXsaTu19YCw6wV0zcNZWpgXEbWxcjJ4eEgInE90XfmboYuTiEBJYySuw60waU4ABK
-        yEgcX18GUSMs8edaF1i9kMBrRomNF81AbGGBEIlvN7oYQWwRAX2J7rYrjCBzmAUmMUn8OHMH
-        quEoo8TB/1YgNpuAlcTE9lVgDbwCdhKX2w4xg9gsAqoSF248ZwexRQUiJA7vmAVVIyhxcuYT
-        FhCbE6j+/a12sJnMAuoSf+ZdYoawxSVuPZnPBGHLS2x/O4d5AqPQLCTts5C0zELSMgtJywJG
-        llWMIqmlxbnpucWGesWJucWleel6yfm5mxiBMbjt2M/NOxgvbQw+xCjAwajEw7vhwcc4IdbE
-        suLK3EOMEhzMSiK8TmdPxwnxpiRWVqUW5ccXleakFh9iNAV6biKzlGhyPjA95JXEG5oamltY
-        GpobmxubWSiJ83YIHIwREkhPLEnNTk0tSC2C6WPi4JRqYEwMdVA7Kv+U4ZjxFbMFUh+bam9z
-        TOm7tEakM96qxEp4ZYDZv+Db+9ccO7hN7nar9Z5LQr0Ggo8N9ezv6rBtl2jWyzolsiHCL+Di
-        6keuYkvNeW2cJWbmrFY9sHRZbSCXXMXBlJOslXt37mblf3P6j3tY3OqPteUi9YcL00/wT8ry
-        dHgecFc1VYmlOCPRUIu5qDgRANo6Y/jXAgAA
-X-CMS-MailID: 20200624100643eucas1p2afb2e6567bb6dda6ea237ad2bf3a7051
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200616081250eucas1p2a98f8810962ddc692fa5588a74f911b3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200616081250eucas1p2a98f8810962ddc692fa5588a74f911b3
-References: <20200616081230.31198-1-m.szyprowski@samsung.com>
-        <CGME20200616081250eucas1p2a98f8810962ddc692fa5588a74f911b3@eucas1p2.samsung.com>
-        <20200616081230.31198-5-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000001d646a6$6cb5fd70$4621f850$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-On 6/16/20 10:12 AM, Marek Szyprowski wrote:
-> Enable big.LITTLE cpuidle driver, which can be used on Exynos-based
-> Peach Pit/Pi Chromebooks.
+On 20-06-20, 07:29, Alim Akhtar wrote:
+> Hi Kishon,
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-> ---
->  arch/arm/configs/multi_v7_defconfig | 1 +
->  1 file changed, 1 insertion(+)
+> > -----Original Message-----
+> > From: Alim Akhtar <alim.akhtar@samsung.com>
+> > Sent: 11 June 2020 20:49
+> > To: 'Kishon Vijay Abraham I' <kishon@ti.com>; 'Martin K. Petersen'
+> > > >>
+> > > >> Applied [1,2,3,4,5,9] to 5.9/scsi-queue. The series won't show up
+> > > >> in my
+> > > > public
+> > > >> tree until shortly after -rc1 is released.
+> > > >>
+> > > > Thanks Martin,
+> > > > Hi Rob and Kishon/Vinod
+> > > > Can you please pickup dt-bindings and PHY driver respectively?
+> > >
+> > > You might have CC'ed me only for the PHY patch. I don't have the
+> > > dt-bindings in my inbox. Care to re-send what's missing again? This
+> > > will be merged after -rc1 is tagged.
+> > >
 > 
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index 95543914d3c7..6a922a8ef712 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -111,6 +111,7 @@ CONFIG_ARM_RASPBERRYPI_CPUFREQ=y
->  CONFIG_QORIQ_CPUFREQ=y
->  CONFIG_CPU_IDLE=y
->  CONFIG_ARM_CPUIDLE=y
-> +CONFIG_ARM_BIG_LITTLE_CPUIDLE=y
->  CONFIG_ARM_ZYNQ_CPUIDLE=y
->  CONFIG_ARM_EXYNOS_CPUIDLE=y
->  CONFIG_ARM_TEGRA_CPUIDLE=y
+> -rc1 is out, I do not see phy driver patch in your tree[1] yet, let me know if I am looking into right tree.
+> [1] -> git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git
+
+Right tree
 > 
+> Thanks! 
+> 
+> > Sure, will re-send this series.
+
+But patches have not been sent right, pls send and me/Kishon will review
+
+Thanks
+-- 
+~Vinod
