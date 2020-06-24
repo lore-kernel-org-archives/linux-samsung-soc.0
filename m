@@ -2,140 +2,144 @@ Return-Path: <SRS0=Cil/=AF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B89C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63852C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 15:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5465F20857
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:42:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F134206C0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 15:00:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593010829;
+	bh=ADS01e6UuwaXesf7T/YCyhdR1bhuKePkQrZwLqEV8XY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=K4SO1Zxee0TPwqPCm5kyc7E5xpMmfYLDNiL79/PxjoF8Hv4N9jy/yEj8XaLuTJaPf
+	 dkmWSUK0oxlARFdQ6cU8pZct1Ag3ytW/LZVBnLwu4T917JeFlcwBTpKQM57dPEeblk
+	 5sVfKGR/7lMZZgmV5IgfC6u615miv83nGOmO3HeA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389919AbgFXNmO (ORCPT
+        id S2391216AbgFXPAX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 24 Jun 2020 09:42:14 -0400
-Received: from foss.arm.com ([217.140.110.172]:51184 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388453AbgFXNmO (ORCPT
+        Wed, 24 Jun 2020 11:00:23 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41149 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389043AbgFXPAX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 24 Jun 2020 09:42:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B1B81F1;
-        Wed, 24 Jun 2020 06:42:13 -0700 (PDT)
-Received: from [10.37.12.79] (unknown [10.37.12.79])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97BAD3F6CF;
-        Wed, 24 Jun 2020 06:42:10 -0700 (PDT)
-Subject: Re: brocken devfreq simple_ondemand for Odroid XU3/4?
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kamil Konieczny <k.konieczny@samsung.com>,
-        Willy Wolff <willy.mh.wolff.ml@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20200623164733.qbhua7b6cg2umafj@macmini.local>
- <CAJKOXPeLuq81NC2xZh3y32EB-_APbDAchZD4OW_eCgQKKO+p8w@mail.gmail.com>
- <20200623191129.GA4171@kozik-lap>
- <CGME20200624103308eucas1p29c8572979809b129ff8ac729c6c728e2@eucas1p2.samsung.com>
- <85f5a8c0-7d48-f2cd-3385-c56d662f2c88@arm.com>
- <828b0d63-4d01-48d6-5971-64855adebed2@samsung.com>
- <20200624120651.GA20813@pi3> <55772862-ff8f-1e1d-91ae-7b4d7c3be1b6@arm.com>
- <20200624131341.GA20905@pi3>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <c3b4d74e-0e0e-590d-0588-3ff9756f8050@arm.com>
-Date:   Wed, 24 Jun 2020 14:42:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 24 Jun 2020 11:00:23 -0400
+Received: by mail-ot1-f67.google.com with SMTP id k15so2167936otp.8;
+        Wed, 24 Jun 2020 08:00:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eykhWQcNNxAwrKLr1Dkv70utXgS770FMiPrM6b8KPjc=;
+        b=hkHeIouE0X74Rn2j8Igk/XY/4jOLE8DlfLi2yerUJcVKFK2NOOdBPJbwUwayFt9GQG
+         WS5VZ/1HkAVQNdCD4Qw61wOfGp6p+kXSgTgiww5uGvWDHsnEHfavrw6TnCFiUMRwADaM
+         Gd+nb664kj4N2CTEWKSFKzOnyCSUoM4CJG3iDxh/Lw+ARo+KhKTWSa8WSAFoE6O8KrIX
+         QqKdDMntr1VZNUZn6VVodgXBpCRtWjQhYS0+9AUQSTZC3SGGEvb1PV8vyNRtbJ0zOqwk
+         BQ8u0iVIWuDqnwsJPwDKJqWcWWf2h1JXRTSBmURpbESG15E4O2MZV9ck1Df4AXDW5atK
+         cjyQ==
+X-Gm-Message-State: AOAM5336mnoguDHEPE24ywgzFB52m96XoeX9G0UfGu4pFJP+u37TYJUY
+        FSdV+YfFLbHlIQYcFgyWWiYMoRFz/kyJSlvVZAw=
+X-Google-Smtp-Source: ABdhPJxTfu2nRQ0ID+eDw+0oWm7stVdBgfOBXZxtPamhCD54VzLFyKUSp9gBGIPEG0mIIAqQQkSpe0tvPBek2gXWEWg=
+X-Received: by 2002:a9d:7d15:: with SMTP id v21mr22236731otn.118.1593010820398;
+ Wed, 24 Jun 2020 08:00:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200624131341.GA20905@pi3>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+ <20200608112211.12125-1-andrzej.p@collabora.com> <20200608112211.12125-4-andrzej.p@collabora.com>
+In-Reply-To: <20200608112211.12125-4-andrzej.p@collabora.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 24 Jun 2020 17:00:09 +0200
+Message-ID: <CAJZ5v0j7e9TzDtEiDXmj3fLAQ7CvFHoe7Q3aYKKas3PEXrsUuw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/7] ACPI: button: Access input device's users under
+ appropriate mutex
+To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-iio@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
+        linux-input@vger.kernel.org,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        patches@opensource.cirrus.com,
+        ibm-acpi-devel@lists.sourceforge.net,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Barry Song <baohua@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Nick Dyer <nick@shmanahar.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ferruh Yigit <fery@cypress.com>,
+        Sangwon Jee <jeesw@melfas.com>,
+        Peter Hutterer <peter.hutterer@redhat.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        Collabora Kernel ML <kernel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Mon, Jun 8, 2020 at 1:22 PM Andrzej Pietrasiewicz
+<andrzej.p@collabora.com> wrote:
+>
+> Inspecting input device's 'users' member should be done under device's
+> mutex, so add appropriate invocations.
+>
+> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 
+This looks like a fix that might be applied independently of the other
+patches in the series.
 
-On 6/24/20 2:13 PM, Krzysztof Kozlowski wrote:
-> On Wed, Jun 24, 2020 at 02:03:03PM +0100, Lukasz Luba wrote:
->>
->>
->> On 6/24/20 1:06 PM, Krzysztof Kozlowski wrote:
->>> My case was clearly showing wrong behavior. System was idle but not
->>> sleeping - network working, SSH connection ongoing.  Therefore at least
->>> one CPU was not idle and could adjust the devfreq/DMC... but this did not
->>> happen. The system stayed for like a minute in 633 MHz OPP.
->>>
->>> Not-waking up idle processors - ok... so why not using power efficient
->>> workqueue? It is exactly for this purpose - wake up from time to time on
->>> whatever CPU to do the necessary job.
->>
->> IIRC I've done this experiment, still keeping in devfreq:
->> INIT_DEFERRABLE_WORK()
->> just applying patch [1]. It uses a system_wq which should
->> be the same as system_power_efficient_wq when
->> CONFIG_WQ_POWER_EFFICIENT_DEFAULT is not set (our case).
->> This wasn't solving the issue for the deferred work. That's
->> why the patch 2/2 following patch 1/2 [1] was needed.
->>
->> The deferred work uses TIMER_DEFERRABLE in it's initialization
->> and this is the problem. When the deferred work was queued on a CPU,
->> next that CPU went idle, the work was not migrated to some other CPU.
->> The former cpu is also not woken up according to the documentation [2].
-> 
-> Yes, you need either workqueue.power_efficient kernel param or CONFIG
-> option to actually enable it.  But at least it could then work on any
-> CPU.
-> 
-> Another solution is to use directly WQ_UNBOUND.
-> 
->> That's why Kamil's approach should be continue IMHO. It gives more
->> control over important devices like: bus, dmc, gpu, which utilization
->> does not strictly correspond to cpu utilization (which might be low or
->> even 0 and cpu put into idle).
->>
->> I think Kamil was pointing out also some other issues not only dmc
->> (buses probably), but I realized too late to help him.
-> 
-> This should not be a configurable option. Why someone would prefer to
-> use one over another and decide about this during build or run time?
-> Instead it should be just *right* all the time. Always.
+Do you want me to pick it up?
 
-I had the same opinion, as you can see in my explanation to those
-patches, but I failed. That's why I agree with Kamil's approach
-because had higher chance to get into mainline and fix at least some
-of the use cases.
-
-> 
-> Argument that we want to save power so we will not wake up any CPU is
-> ridiculous if because of this system stays in high-power mode.
-> 
-> If system is idle and memory going to be idle, someone should be woken
-> up to save more power and slow down memory controller.
-> 
-> If system is idle but memory going to be busy, the currently busy CPU
-> (which performs some memory-intensive job) could do the job and ramp up
-> the devfreq performance.
-
-I agree. I think this devfreq mechanism was designed in the times
-where there was/were 1 or 2 CPUs in the system. After a while we got ~8
-and not all of them are used. This scenario was probably not
-experimented widely on mainline platforms.
-
-That is a good material for improvements, for someone who has time and
-power.
-
-Regards,
-Lukasz
-
-> 
-> Best regards,
-> Krzysztof
-> 
+> ---
+>  drivers/acpi/button.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
+> index 78cfc70cb320..ff7ab291f678 100644
+> --- a/drivers/acpi/button.c
+> +++ b/drivers/acpi/button.c
+> @@ -456,13 +456,16 @@ static int acpi_button_resume(struct device *dev)
+>  {
+>         struct acpi_device *device = to_acpi_device(dev);
+>         struct acpi_button *button = acpi_driver_data(device);
+> +       struct input_dev *input = button->input;
+>
+>         button->suspended = false;
+> -       if (button->type == ACPI_BUTTON_TYPE_LID && button->input->users) {
+> +       mutex_lock(&input->mutex);
+> +       if (button->type == ACPI_BUTTON_TYPE_LID && input->users) {
+>                 button->last_state = !!acpi_lid_evaluate_state(device);
+>                 button->last_time = ktime_get();
+>                 acpi_lid_initialize_state(device);
+>         }
+> +       mutex_unlock(&input->mutex);
+>         return 0;
+>  }
+>  #endif
+> --
+> 2.17.1
+>
