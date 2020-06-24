@@ -2,257 +2,119 @@ Return-Path: <SRS0=Cil/=AF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5720FC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 11:18:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 092AFC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 11:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D78F2082F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 11:18:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD96420CC7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 11:40:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BiPP8GF8"
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="Y9PBhRyg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390619AbgFXLSr (ORCPT
+        id S2389024AbgFXLkF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 24 Jun 2020 07:18:47 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38123 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388706AbgFXLSr (ORCPT
+        Wed, 24 Jun 2020 07:40:05 -0400
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:35683 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388226AbgFXLkE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 24 Jun 2020 07:18:47 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200624111844euoutp015ebefd95c955877d626d44977b97ffb8~bds7vDcc90578705787euoutp01M
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jun 2020 11:18:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200624111844euoutp015ebefd95c955877d626d44977b97ffb8~bds7vDcc90578705787euoutp01M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1592997524;
-        bh=XnIpEzS+JmByzmKCFEgupSV6PWDHMERPPPnvUIciVls=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=BiPP8GF8KmiErqx/xS9B9a7xU4QuFLogP38GTlimY3lOZe3im16I/0PYEJab+rLuZ
-         ap5tUVBIwlMT97KexJCq03jhLP15jAJHH3XyIzBdMk0Zp1+3qsnuRzC6cj+57LPWgM
-         OfcIlxP/kKa90xWpOJ6fdP9A13z2xi3Ed3k4hQrs=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200624111844eucas1p2e327f4f369148d4623addc19d7722351~bds7fImUx2492924929eucas1p2Q;
-        Wed, 24 Jun 2020 11:18:44 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id A0.6B.05997.49633FE5; Wed, 24
-        Jun 2020 12:18:44 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200624111843eucas1p1bcf65cc0939f6176937e43c8824bdd4a~bds7LyxFI2735727357eucas1p1n;
-        Wed, 24 Jun 2020 11:18:43 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200624111843eusmtrp2a279f69527ec990b732e8841e624d9d9~bds7LGTVI1412614126eusmtrp2i;
-        Wed, 24 Jun 2020 11:18:43 +0000 (GMT)
-X-AuditID: cbfec7f4-65dff7000000176d-9d-5ef33694e65e
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id A2.01.06314.39633FE5; Wed, 24
-        Jun 2020 12:18:43 +0100 (BST)
-Received: from [106.120.51.18] (unknown [106.120.51.18]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200624111843eusmtip27b23e45fbb32e0228cbbad65b02eabe7~bds6hf9Jg1274412744eusmtip2f;
-        Wed, 24 Jun 2020 11:18:43 +0000 (GMT)
-Subject: Re: brocken devfreq simple_ondemand for Odroid XU3/4?
-To:     Lukasz Luba <lukasz.luba@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Willy Wolff <willy.mh.wolff.ml@gmail.com>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
+        Wed, 24 Jun 2020 07:40:04 -0400
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id o3ksjttD0x3Ajo3kwjjE8i; Wed, 24 Jun 2020 13:40:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1592998802; bh=M4pU4U03MaYJwcvRFJNv8nTld2vvriNqiHmYpFeqiHo=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=Y9PBhRygZJH8v1qTk6GeENyM1/HdGazWDB7Ff3TkRYW/JneSWne/pb8QisIu+lvxX
+         s6wIPSx6k2Jpf5JxscBCdHeUYP3D/pBt3ZXJ8fhnpWq4+o4WKK5ajoQUs5vDOcaMTc
+         4tltD5Vnoges6WBpw3pR0Rnmdtg5ruTXmUqNrgoHV7eSzXZe4tiQYrEBvIunPBOpwa
+         7yvPzB3Ailhp+89o/svrDEUzpkLv7nF/FIJtDxuM7QI/3x6xg3KURVEfE8gvOmh88d
+         Z1RcjC8xxnJ9kmGSi34l/OeHaAde9ETswOIDRjHPAuBrMYQ5dXGXy17heEixMLfxEo
+         11PxwfetmBLfQ==
+Subject: Re: [PATCH 00/11] media: exynos4-is: Improve support for s5pv210 and
+ parallel ports
+To:     Jonathan Bakker <xc-racer2@live.ca>, kyungmin.park@samsung.com,
+        s.nawrocki@samsung.com, mchehab@kernel.org, kgene@kernel.org,
+        krzk@kernel.org, linux-media@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Kamil Konieczny <k.konieczny@samsung.com>
-Message-ID: <828b0d63-4d01-48d6-5971-64855adebed2@samsung.com>
-Date:   Wed, 24 Jun 2020 13:18:42 +0200
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tomasz Figa <tfiga@chromium.org>
+References: <BN6PR04MB06602E7221CC7455F3142540A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <07fb9000-ae00-efcd-e91a-48765ff3d4bf@xs4all.nl>
+Date:   Wed, 24 Jun 2020 13:39:50 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
-        Thunderbird/68.8.0
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <85f5a8c0-7d48-f2cd-3385-c56d662f2c88@arm.com>
+In-Reply-To: <BN6PR04MB06602E7221CC7455F3142540A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKKsWRmVeSWpSXmKPExsWy7djPc7pTzD7HGXyYxmxx/ctzVov+x6+Z
-        Lc6f38BucbbpDbvFpsfXWC0u75rDZvG59wijxYzz+5gsFja1sFvcblzBZvHtxCNGB26PNfPW
-        MHrsnHWX3WPTqk42j81L6j36tqxi9Pi8SS6ALYrLJiU1J7MstUjfLoEr4+a6LqaCzzYVD1r7
-        mRoYZ5h0MXJySAiYSJybdZK1i5GLQ0hgBaPElrPb2SCcL4wSv/bOYYJwPjNKzLo8gQ2m5WLH
-        PaiW5YwSfacus0A4bxklbn7ZxAJSJSxgJzH/2i5WEFtEoFLi1szvYHOZBd4ySez5extsFJuA
-        vsTBsyfBGniBGt6dOc0MYrMIqEr09nwAs0UFIiSOd09mh6gRlDg58wlYPaeAtcSSWW+ZQGxm
-        AXGJW0/mQ9nyEs1bZzODLJMQuMYuseLRBFaIu10kjm/byw5hC0u8Or4FypaR+L9zPhNEQzOj
-        xOmGqewQTg+jxN4vW6C+tpb4/PEAkM0BtEJTYv0ufYiwo8S5P0+YQcISAnwSN94KQhzBJzFp
-        23SoMK9ER5sQRLWqxPNTPUwQtrRE1/91rBMYlWYheW0WkndmIXlnFsLeBYwsqxjFU0uLc9NT
-        i43yUsv1ihNzi0vz0vWS83M3MQIT1+l/x7/sYNz1J+kQowAHoxIP74YHH+OEWBPLiitzDzFK
-        cDArifA6nT0dJ8SbklhZlVqUH19UmpNafIhRmoNFSZzXeNHLWCGB9MSS1OzU1ILUIpgsEwen
-        VAPjpO4d0wL+f9nzLz/A5HBhc3369Y1+Utv7ij4qPMnmDt5UbbOsIuCEkPTzO0Hn5t5Tq9l1
-        mkGT1YLld6NXV0J0Tv2FPWe1vn19O3Pv2Vv7NolFZvxVMpFz32cdcKVV9r7ZSis7Sfcbul7F
-        tzj/Gya/DF0SsuB6d3pdVbHODsu5X9oj2Y3vLU1QYinOSDTUYi4qTgQAlNccUlgDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsVy+t/xe7qTzT7HGfTt0LG4/uU5q0X/49fM
-        FufPb2C3ONv0ht1i0+NrrBaXd81hs/jce4TRYsb5fUwWC5ta2C1uN65gs/h24hGjA7fHmnlr
-        GD12zrrL7rFpVSebx+Yl9R59W1YxenzeJBfAFqVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2Ri
-        qWdobB5rZWSqpG9nk5Kak1mWWqRvl6CXcXNdF1PBZ5uKB639TA2MM0y6GDk5JARMJC523GPt
-        YuTiEBJYyiix4fMeFoiEtETj6dVMELawxJ9rXWwQRa8ZJSa8bWIFSQgL2EnMv7YLzBYRqJS4
-        //MOM0gRs8B7Jom/J2YyQXSsZpJo/bKeEaSKTUBf4uDZk2AreIG63505zQxiswioSvT2fACz
-        RQUiJFru/2GHqBGUODnzCVg9p4C1xJJZb8FOYhZQl/gz7xIzhC0ucevJfKi4vETz1tnMExiF
-        ZiFpn4WkZRaSlllIWhYwsqxiFEktLc5Nzy021CtOzC0uzUvXS87P3cQIjNRtx35u3sF4aWPw
-        IUYBDkYlHt4NDz7GCbEmlhVX5h5ilOBgVhLhdTp7Ok6INyWxsiq1KD++qDQntfgQoynQcxOZ
-        pUST84FJJK8k3tDU0NzC0tDc2NzYzEJJnLdD4GCMkEB6YklqdmpqQWoRTB8TB6dUA2PNjd0b
-        ZXvWTwpqEjep+Su36ujWPzevRa9m9P5tyTSbwZor4quzkcONlCnT+a59NayVu/H4zYa/3u+/
-        Xm/2y6/gXaBvknlP/FJBt8j30OULmBwL+/ZwP13PN/POBlOND7431H0/OU+bx+9UsFBqieT8
-        mECTSW4CHpFJ147MkE9+u5x93qbXLyOUWIozEg21mIuKEwFVhWFS6gIAAA==
-X-CMS-MailID: 20200624111843eucas1p1bcf65cc0939f6176937e43c8824bdd4a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200624103308eucas1p29c8572979809b129ff8ac729c6c728e2
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200624103308eucas1p29c8572979809b129ff8ac729c6c728e2
-References: <20200623164733.qbhua7b6cg2umafj@macmini.local>
-        <CAJKOXPeLuq81NC2xZh3y32EB-_APbDAchZD4OW_eCgQKKO+p8w@mail.gmail.com>
-        <20200623191129.GA4171@kozik-lap>
-        <CGME20200624103308eucas1p29c8572979809b129ff8ac729c6c728e2@eucas1p2.samsung.com>
-        <85f5a8c0-7d48-f2cd-3385-c56d662f2c88@arm.com>
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfBEJKAd4Mb8tPxX9RLS4ybX9o3HV73/5KTa134SPVtKW/YYaw5qOt+O5gwi6sopzKQ2i3FKcPWxMmrPVijbeohlLU6MqYP15cTTMJuig6vtLZ9x7apez
+ 9kSPT+EtAWTSmnzGpP+sTg9wML3vMgoanWQ+iRRwd8F+gGyV7gxJBpEqIwPaxvESqlQLJKwNc8J5MF3XAguRDC+iwrJDI1E5GBW08Gm3FDVznr6dzN+LytN/
+ KjcfwoZ4M0Qjsu0D2orcwn3K5LcgHx5COin6vjUM9X/3TjPAwylQNgbnU4bLrmWCYIb40MTDkCpVjnJuFuBGYiw+uySwNog80v/qSgjGqfw07+Rd/tGV3D5t
+ O14m+MGSIyeUWCY4X8qWEFKrQ/PS4n+K1WW80FHtT8a4BRk9QOrqmIpQk9bhmmM5sdI5bKzdwGOOWd8HxvWTKVRtrh0SakR3+36L7RyXR80QLDAbDqcxn5K8
+ eVE8xlcO6NnAo3/TljJTbZCK0GgttXCQgmo+tVswlRz13tC/dXuS+TDgZTg=
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Can someone from Samsung or someone who knows this SoC take a look at this series?
 
-On 24.06.2020 12:32, Lukasz Luba wrote:
-> Hi Krzysztof and Willy
-> 
-> On 6/23/20 8:11 PM, Krzysztof Kozlowski wrote:
->> On Tue, Jun 23, 2020 at 09:02:38PM +0200, Krzysztof Kozlowski wrote:
->>> On Tue, 23 Jun 2020 at 18:47, Willy Wolff <willy.mh.wolff.ml@gmail.com> wrote:
->>>>
->>>> Hi everybody,
->>>>
->>>> Is DVFS for memory bus really working on Odroid XU3/4 board?
->>>> Using a simple microbenchmark that is doing only memory accesses, memory DVFS
->>>> seems to not working properly:
->>>>
->>>> The microbenchmark is doing pointer chasing by following index in an array.
->>>> Indices in the array are set to follow a random pattern (cutting prefetcher),
->>>> and forcing RAM access.
->>>>
->>>> git clone https://protect2.fireeye.com/url?k=c364e88a-9eb6fe2f-c36563c5-0cc47a31bee8-631885f0a63a11a0&q=1&u=https%3A%2F%2Fgithub.com%2Fwwilly%2Fbenchmark.git \
->>>>    && cd benchmark \
->>>>    && source env.sh \
->>>>    && ./bench_build.sh \
->>>>    && bash source/scripts/test_dvfs_mem.sh
->>>>
->>>> Python 3, cmake and sudo rights are required.
->>>>
->>>> Results:
->>>> DVFS CPU with performance governor
->>>> mem_gov = simple_ondemand at 165000000 Hz in idle, should be bumped when the
->>>> benchmark is running.
->>>> - on the LITTLE cluster it takes 4.74308 s to run (683.004 c per memory access),
->>>> - on the big cluster it takes 4.76556 s to run (980.343 c per moemory access).
->>>>
->>>> While forcing DVFS memory bus to use performance governor,
->>>> mem_gov = performance at 825000000 Hz in idle,
->>>> - on the LITTLE cluster it takes 1.1451 s to run (164.894 c per memory access),
->>>> - on the big cluster it takes 1.18448 s to run (243.664 c per memory access).
->>>>
->>>> The kernel used is the last 5.7.5 stable with default exynos_defconfig.
->>>
->>> Thanks for the report. Few thoughts:
->>> 1. What trans_stat are saying? Except DMC driver you can also check
->>> all other devfreq devices (e.g. wcore) - maybe the devfreq events
->>> (nocp) are not properly assigned?
->>> 2. Try running the measurement for ~1 minutes or longer. The counters
->>> might have some delay (which would require probably fixing but the
->>> point is to narrow the problem).
->>> 3. What do you understand by "mem_gov"? Which device is it?
->>
->> +Cc Lukasz who was working on this.
-> 
-> Thanks Krzysztof for adding me here.
-> 
->>
->> I just run memtester and more-or-less ondemand works (at least ramps
->> up):
->>
->> Before:
->> /sys/class/devfreq/10c20000.memory-controller$ cat trans_stat
->>       From  :   To
->>             : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
->> * 165000000:         0         0         0         0         0         0         0         0   1795950
->>    206000000:         1         0         0         0         0         0         0         0      4770
->>    275000000:         0         1         0         0         0         0         0         0     15540
->>    413000000:         0         0         1         0         0         0         0         0     20780
->>    543000000:         0         0         0         1         0         0         0         1     10760
->>    633000000:         0         0         0         0         2         0         0         0     10310
->>    728000000:         0         0         0         0         0         0         0         0         0
->>    825000000:         0         0         0         0         0         2         0         0     25920
->> Total transition : 9
->>
->>
->> $ sudo memtester 1G
->>
->> During memtester:
->> /sys/class/devfreq/10c20000.memory-controller$ cat trans_stat
->>       From  :   To
->>             : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
->>    165000000:         0         0         0         0         0         0         0         1   1801490
->>    206000000:         1         0         0         0         0         0         0         0      4770
->>    275000000:         0         1         0         0         0         0         0         0     15540
->>    413000000:         0         0         1         0         0         0         0         0     20780
->>    543000000:         0         0         0         1         0         0         0         2     11090
->>    633000000:         0         0         0         0         3         0         0         0     17210
->>    728000000:         0         0         0         0         0         0         0         0         0
->> * 825000000:         0         0         0         0         0         3         0         0    169020
->> Total transition : 13
->>
->> However after killing memtester it stays at 633 MHz for very long time
->> and does not slow down. This is indeed weird...
-> 
-> I had issues with devfreq governor which wasn't called by devfreq
-> workqueue. The old DELAYED vs DEFERRED work discussions and my patches
-> for it [1]. If the CPU which scheduled the next work went idle, the
-> devfreq workqueue will not be kicked and devfreq governor won't check
-> DMC status and will not decide to decrease the frequency based on low
-> busy_time.
-> The same applies for going up with the frequency. They both are
-> done by the governor but the workqueue must be scheduled periodically.
-> 
-> I couldn't do much with this back then. I have given the example that
-> this is causing issues with the DMC [2]. There is also a description
-> of your situation staying at 633MHz for long time:
-> ' When it is missing opportunity
-> to change the frequency, it can either harm the performance or power
-> consumption, depending of the frequency the device stuck on.'
-> 
-> The patches were not accepted because it will cause CPU wake-up from
-> idle, which increases the energy consumption. I know that there were
-> some other attempts, but I don't know the status.
-> 
-> I had also this devfreq workqueue issue when I have been working on
-> thermal cooling for devfreq. The device status was not updated, because
-> the devfreq workqueue didn't check the device [3].
-> 
-> Let me investigate if that is the case.
-> 
-> Regards,
-> Lukasz
-> 
-> [1] https%3A%2F%2Flkml.org%2Flkml%2F2019%2F2%2F11%2F1146
-> [2] https%3A%2F%2Flkml.org%2Flkml%2F2019%2F2%2F12%2F383
-> [3] https%3A%2F%2Flwn.net%2Fml%2Flinux-kernel%2F20200511111912.3001-11-lukasz.luba%40arm.com%2F
+This series looks sane to me, so I'll probably merge this if nobody replies
+in the next two weeks or so.
 
-and here was another try to fix wq: "PM / devfreq: add possibility for delayed work"
+Regards,
 
-https://lkml.org/lkml/2019/12/9/486
+	Hans
 
--- 
-Best regards,
-Kamil Konieczny
-Samsung R&D Institute Poland
+On 26/04/2020 04:26, Jonathan Bakker wrote:
+> This patchset improves support in the exynos4-is driver for s5pv210
+> platforms as well as for sensors connected to the parallel ports
+> and not using the CSIS device.
+> 
+> Fixes range from nullptr exceptions to probe fixes to JPEG fixes.
+> 
+> Notably, it also changes the fwnode probing of parallel port sensors
+> to match the binding doc.  The binding doc said port A = reg 0 and
+> port B = reg 1 but the driver implemented A=1 and B=2.  The only in-tree
+> user of parallel ports is currently Goni, which notes that it uses port
+> A but has reg = 1.  Also note that the sensor driver is not mainlined
+> despite being present.  I have left the DTS as-is.
+> 
+> Some patches cleaning up non-DT support are also included.
+> 
+> The patches have been tested on a first-gen Galaxy S GT-i900M device based
+> on S5PV210.  Two sensors (CE147 and S5KA3DFX, both with non-mainline
+> drivers), both attached to port A, were succesfully used.
+> 
+> Jonathan Bakker (10):
+>   media: exynos4-is: Remove static driver data for S5PV210 FIMC variants
+>   media: exynos4-is: Fix nullptr when no CSIS device present
+>   media: exynos4-is: Correct missing entity function initialization
+>   media: exynos4-is: Improve support for sensors with multiple pads
+>   media: exynos4-is: Properly set JPEG options when not using CSIS
+>   media: exynos4-is: Add support for multiple sensors on one port
+>   media: exynos4-is: Remove inh_sensor_ctrls
+>   media: exynos4-is: Remove unused struct member input_index
+>   media: exynos4-is: Prevent duplicate call to media_pipeline_stop
+>   media: exynos4-is: Correct parallel port probing
+> 
+> Tomasz Figa (1):
+>   media: exynos4-is: Request syscon only if ISP writeback is present
+> 
+>  .../media/platform/exynos4-is/fimc-capture.c  | 22 ++----
+>  drivers/media/platform/exynos4-is/fimc-core.c | 67 ++----------------
+>  drivers/media/platform/exynos4-is/fimc-core.h |  5 --
+>  drivers/media/platform/exynos4-is/fimc-reg.c  |  7 ++
+>  drivers/media/platform/exynos4-is/media-dev.c | 68 ++++++++++++++-----
+>  drivers/media/platform/exynos4-is/media-dev.h |  1 +
+>  include/media/drv-intf/exynos-fimc.h          |  2 +-
+>  7 files changed, 72 insertions(+), 100 deletions(-)
+> 
 
