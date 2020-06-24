@@ -1,151 +1,211 @@
-Return-Path: <SRS0=Cil/=AF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=P8ib=AG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FORGED_MUA_MOZILLA,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F127C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 21:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79382C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Jun 2020 00:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 166532082F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 21:14:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BA412078D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Jun 2020 00:15:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="R0ajLe+M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390034AbgFXVOW (ORCPT
+        id S2388204AbgFYAPu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 24 Jun 2020 17:14:22 -0400
-Received: from mail-bn7nam10olkn2049.outbound.protection.outlook.com ([40.92.40.49]:6055
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389905AbgFXVOW (ORCPT
+        Wed, 24 Jun 2020 20:15:50 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:40606 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388479AbgFYAPu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 24 Jun 2020 17:14:22 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WIxRBAycnrwj82FPmojwpgcyYfUtikpJhJ7ReMu+4guQn6jGk68/wALJFkHwklg6ZyEPjPOhCPxstlR98jnvWI503XNv2XiOxIDvafFLeCLhKlTG6JjOQcKYZY/Sc0WJpfnbhtb1gWHGIkBr2WC/jvOs2j1nb7p7BX4zMSic0WwAJWCwM8V/CN/7WMIIUO/UCaxEkVEjTBj/voTLB1LcMzV4YcQd7s204o29R/4CLxhS1SC1sKOP6aNht3fO5x1RXpGzlNVGzR9rPxgyeGN4CQK5YLsMzoAlRkuCulRWfdA0y4le0ZX7EJmCKtfBAge5cZuo5UFKmS2sJr8a+GvVHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8CrmGzPXzKI3jNbwSiL6uV8Tmje9ePu/xLdQI4zVnhw=;
- b=NSFsmqP011XsaH/QMsZIAsb6jPGsq/CQdFZFa7ch9pvEgHxTcBCsgr1zOXGxBdU2DxoAeoiq7oBnegWA1HknD/0f+ACV1fbAz/GmK8KtARmzgKmDgNp6P3c+JtEuBkHINaO+Glm0a9sJjxfK/NufsKZp78K+dYd3lWCYTHXJbcb4oNCWyYc0Q1BjVHyOL4iClkVfK/4KQkCjaiFNZ0ZHJpxhDX+MnGqzAkLRsFG5U+1rrDchSNpWqjKxmfe3JpLnTQLdhyxrU9OnUeA1vW4+vvTlALaro17Sr9EthuxurKTnDrz+BmVQeTfVQ93A/yVMCNIVWdrH5Lf+kFTXdpeEuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from BN7NAM10FT054.eop-nam10.prod.protection.outlook.com
- (2a01:111:e400:7e8f::48) by
- BN7NAM10HT119.eop-nam10.prod.protection.outlook.com (2a01:111:e400:7e8f::463)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3131.20; Wed, 24 Jun
- 2020 21:14:19 +0000
-Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- (2a01:111:e400:7e8f::41) by BN7NAM10FT054.mail.protection.outlook.com
- (2a01:111:e400:7e8f::368) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3131.20 via Frontend
- Transport; Wed, 24 Jun 2020 21:14:19 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:8EAA0BA33DA596B0431D042A55E8E8F04DF3B3F9D273D3C0ADC17017CC8DE5B4;UpperCasedChecksum:1952420B62F245174FCDFD5DAAD7CC84C2AB14B2F50614CBD8980AFFFD81799B;SizeAsReceived:9609;Count:49
-Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- ([fe80::b9c3:9bff:541d:f383]) by BN6PR04MB0660.namprd04.prod.outlook.com
- ([fe80::b9c3:9bff:541d:f383%9]) with mapi id 15.20.3109.027; Wed, 24 Jun 2020
- 21:14:19 +0000
-Subject: Re: [PATCH 00/11] media: exynos4-is: Improve support for s5pv210 and
- parallel ports
-To:     Tomasz Figa <tfiga@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>, kgene@kernel.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <BN6PR04MB06602E7221CC7455F3142540A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
- <07fb9000-ae00-efcd-e91a-48765ff3d4bf@xs4all.nl> <20200624115419.GA20764@pi3>
- <CAAFQd5CW0CL-s6=UOPsm37Mg+kswM_DTXEEnQMHC3kc2LxAY5w@mail.gmail.com>
-From:   Jonathan Bakker <xc-racer2@live.ca>
-Message-ID: <BN6PR04MB0660566622FAB87ABE67A3C8A3950@BN6PR04MB0660.namprd04.prod.outlook.com>
-Date:   Wed, 24 Jun 2020 14:14:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
-In-Reply-To: <CAAFQd5CW0CL-s6=UOPsm37Mg+kswM_DTXEEnQMHC3kc2LxAY5w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MWHPR07CA0005.namprd07.prod.outlook.com
- (2603:10b6:300:116::15) To BN6PR04MB0660.namprd04.prod.outlook.com
- (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <ee178243-b249-a047-a752-993dcf696b98@live.ca>
+        Wed, 24 Jun 2020 20:15:50 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200625001547epoutp01af94d02dd67148493a1c8ed181e4327e~boTYdwyEJ0980309803epoutp01M
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jun 2020 00:15:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200625001547epoutp01af94d02dd67148493a1c8ed181e4327e~boTYdwyEJ0980309803epoutp01M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1593044147;
+        bh=K++Hc08bAChySryV6xpOMUZDcRAOfde/r1jVXz7IMhM=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=R0ajLe+Mp/4jHL01kttLwprq3dpuaRABc08yzW6zH/Xuni+IeiQv40kj8c54yGbPL
+         KDkLCl2yVDKTM4yMDfXkZ4OKvWbMpbPDTYsa3XnfgalIyMubG/h5B2yCpjrN3B1SzJ
+         852uSjCWTpskkiRwaT/o50jQjPJOgKWKn8K/P9bM=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20200625001545epcas5p428d7a679260ac346e34b1164dd488804~boTWr2J-J1595815958epcas5p4d;
+        Thu, 25 Jun 2020 00:15:45 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D3.98.09475.0BCE3FE5; Thu, 25 Jun 2020 09:15:44 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200625001543epcas5p2d1f9f7f7de574cac6db4157ca2ec1eec~boTVSj4E50338303383epcas5p2B;
+        Thu, 25 Jun 2020 00:15:43 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200625001543epsmtrp29bc724a369ef686a37ad4ada5537ccce~boTVRpxmv1949219492epsmtrp2d;
+        Thu, 25 Jun 2020 00:15:43 +0000 (GMT)
+X-AuditID: b6c32a4b-39fff70000002503-24-5ef3ecb0d2c8
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9B.98.08382.FACE3FE5; Thu, 25 Jun 2020 09:15:43 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200625001541epsmtip147a08a9f7f078048181c7fc901b5ff2c~boTTzIqHU1042310423epsmtip1t;
+        Thu, 25 Jun 2020 00:15:41 +0000 (GMT)
+From:   Alim Akhtar <alim.akhtar@samsung.com>
+To:     vkoul@kernel.org
+Cc:     robh+dt@kernel.org, krzk@kernel.org, kwmad.kim@samsung.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        kishon@ti.com, Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [RESEND PATCH v10 1/2] dt-bindings: phy: Document Samsung UFS PHY
+ bindings
+Date:   Thu, 25 Jun 2020 05:26:30 +0530
+Message-Id: <20200624235631.11232-1-alim.akhtar@samsung.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2001:569:fb68:9c00:8067:f823:1e15:7520] (2001:569:fb68:9c00:8067:f823:1e15:7520) by MWHPR07CA0005.namprd07.prod.outlook.com (2603:10b6:300:116::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3131.20 via Frontend Transport; Wed, 24 Jun 2020 21:14:17 +0000
-X-Microsoft-Original-Message-ID: <ee178243-b249-a047-a752-993dcf696b98@live.ca>
-X-TMN:  [paftjWaebweO0jKyE2GK8Uv0cYFzShmKvoelg+gAQYGksWntRJ65SdnMpnLZQEx8]
-X-MS-PublicTrafficType: Email
-X-IncomingHeaderCount: 49
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: e0f0716d-a91a-4249-458e-08d818838eea
-X-MS-TrafficTypeDiagnostic: BN7NAM10HT119:
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HwXtJghjvTuAM9uJyjCbfjKIFVaLDGnuAmfc2c148lxHdF1BEjNMuXKzstJfRU9Z7bfn8lQeyXraxadsqI36EbBNCtQfTjVzI6jNv+nOOhXVdR9PKmcLUSYnV3vRpEhe4wRgRFatRtakRcIwWj7vPnZEyFz4vRN/e7IL5qttzvsp0UOXQui4dzAROxdNVCsZRz3niYiLqLglIZEUgtu3Jg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: 0LJhqkaMT4495vkSwNW8yuKx9A3HyALkJd8G8p8uyiFPYSO29zZNu9v6vYZy36adYP8WaZP2KVFA1zMRzwSjO1uWzRvfUM4SWiZlVknhp1lnhtX3+8jJuBO+su+myVa9SzG6lFAoYTyzgj6WzVvnSqmevfrRZ+tOS8vfXPCYGIOsTfOxIt1P9KVENNMk60dLoEOwcvJ8E1wp1F93fUN8qg==
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0f0716d-a91a-4249-458e-08d818838eea
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2020 21:14:19.3903
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-AuthSource: BN7NAM10FT054.eop-nam10.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7NAM10HT119
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjleLIzCtJLcpLzFFi42LZdlhTS3fDm89xBov+W1o8mLeNzWL+kXOs
+        Fhee9rBZnD+/gd3i5pajLBabHl9jtbi8aw6bxYzz+5gsWvceYbfYeecEswOXx6ZVnWwem5fU
+        e/RtWcXocfzGdiaPz5vkAlijuGxSUnMyy1KL9O0SuDJmHd7IWHBfrGJd22L2BsbTgl2MnBwS
+        AiYSn3aeYuli5OIQEtjNKPHpWi8bhPOJUeLGofdMIFVCAt8YJVZOdexi5ADraNnoAlGzl1Fi
+        w9cVUDUtTBKNXzlAbDYBbYm707eAxUUERCRWr5zHCNLALPCXUWLb9Y+sIAlhgVCJw1tvgxWx
+        CKhKPNp5AizOK2Ajsf/3YVaI8+QlVm84wAwRF5Q4OfMJC4jNDBRv3jqbGWSohMBPdonza3ex
+        QFznInHvGC9Er7DEq+Nb2CFsKYnP7/ayQZRkS/TsMoYI10gsnXeMBcK2lzhwZQ7YFGYBTYn1
+        u/QhNvFJ9P5+wgTRySvR0SYEUa0q0fzuKlSntMTE7m6ogz0kzqx8xgIJkViJ3a82s05glJuF
+        5P5ZSO6fhbBsASPzKkbJ1ILi3PTUYtMC47zUcr3ixNzi0rx0veT83E2M4KSi5b2D8dGDD3qH
+        GJk4GA8xSnAwK4nwhrh9ihPiTUmsrEotyo8vKs1JLT7EKM3BoiTOq/TjTJyQQHpiSWp2ampB
+        ahFMlomDU6qB6dg/twnL56+LWfllCVvSHwWZHIve3WmHoo8oveqvbPZbqLz/j0vH8TUbnGe1
+        PFK+yHTN1mBylP0Zka5X92d6f39+aguT+orvQoslS8xmPbrhc+qxQ0DM3ValX/+31zQuOCVX
+        270s0jA9jT1zZU5SlHaBdn6gctM90/q1PDfzgpe0ZMjH1aUcmpjmn/qSs6vTLzzYveCidcnL
+        RXVTfn2992m/XmT9L8272jveSXM/F9uV05/zzsu3lknjLce5trnNHicZw1/9MStODlXUylCt
+        t3ViuH1+lq19p3Kz1/NZrDeSu91yE2Y3LeReGHMy1bWA6xDjMU3HC0rhzeXLdRgNHlkWbslV
+        7GosYnBULVdiKc5INNRiLipOBAD7ACqxmQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrELMWRmVeSWpSXmKPExsWy7bCSnO76N5/jDPb+k7Z4MG8bm8X8I+dY
+        LS487WGzOH9+A7vFzS1HWSw2Pb7GanF51xw2ixnn9zFZtO49wm6x884JZgcuj02rOtk8Ni+p
+        9+jbsorR4/iN7UwenzfJBbBGcdmkpOZklqUW6dslcGXMOryRseC+WMW6tsXsDYynBbsYOTgk
+        BEwkWja6dDFycggJ7GaUWHOxCsSWEJCWuL5xAjuELSyx8t9zIJsLqKaJSWLz589MIAk2AW2J
+        u9O3gNkiAiISq1fOYwQpYhZoZ5K4/v0AWEJYIFji89GtYDaLgKrEo50nWEFsXgEbif2/D7NC
+        bJCXWL3hADNEXFDi5MwnLCDHMQuoS6yfJwQSZgYqad46m3kCI/8sJFWzEKpmIalawMi8ilEy
+        taA4Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMjONi1NHcwbl/1Qe8QIxMH4yFGCQ5mJRHeELdP
+        cUK8KYmVValF+fFFpTmpxYcYpTlYlMR5bxQujBMSSE8sSc1OTS1ILYLJMnFwSjUwKVqYdXns
+        3Ok0ZTanyhRjq1cP7nyonhjAr9++4eQX3YVlk9saCrLPxkfITLN5+1YgbJnc264HQZPMVHL4
+        f7Ee3nfFSDqsbN/5Fed/vt2iUiAxb/e0kE0z+jwXcojd+ztRyqb+ofsNRt3ar4ynew/8ndW8
+        78HPxu9BrvnvJ6VeSow8/d9i5y6lM5s3LOS1KKq6y258NcLy0bHdwW0nvXYrWk/1FdNfeNgy
+        eGfvNplVP43mtcRrdbmI2OTEy6TnpYZcYtoaeUjIprN1VrpvsKbQo3XliVqNNn2MwaxCZtdX
+        T8756CgavnnlY6ld5UqP33WH97oflRE+KrvHVrni/obL1bc6NWZIvNkuPU/hlZWqEktxRqKh
+        FnNRcSIA6ZK74+UCAAA=
+X-CMS-MailID: 20200625001543epcas5p2d1f9f7f7de574cac6db4157ca2ec1eec
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200625001543epcas5p2d1f9f7f7de574cac6db4157ca2ec1eec
+References: <CGME20200625001543epcas5p2d1f9f7f7de574cac6db4157ca2ec1eec@epcas5p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Tomasz,
+This patch documents Samsung UFS PHY device tree bindings
 
-On 2020-06-24 4:58 a.m., Tomasz Figa wrote:
-> On Wed, Jun 24, 2020 at 1:54 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On Wed, Jun 24, 2020 at 01:39:50PM +0200, Hans Verkuil wrote:
->>> Can someone from Samsung or someone who knows this SoC take a look at this series?
->>>
->>> This series looks sane to me, so I'll probably merge this if nobody replies
->>> in the next two weeks or so.
->>
->> Unfortunately I don't know the media part on S5Pv210 at all so I cannot
->> provide any feedback. There are not many active users of these SoCs
->> nowadays. One of hem is Jonathan, so if he wants to change something he will
->> mostly break/affect his own setup. :) Therefore I think it is safe to merge.
-> 
-> I think this driver is also used on Exynos4210 and on some setups with
-> 4412 where the ISP is not used.
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Tested-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+---
+This is just a rebase on phy-next, was part of series [1]
+which adds ufs host contoller driver.
+[1]  https://lkml.org/lkml/2020/5/27/1697
 
-Yes, this driver is also used by Exynos4210 and Exynos4412, notably by the Galaxy S3 series.
-They don't use the parallel ports, but rather the CSIS.  I don't believe I've broken support
-for that, but I don't have the hardware to test.
+ .../bindings/phy/samsung,ufs-phy.yaml         | 75 +++++++++++++++++++
+ 1 file changed, 75 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
 
-My other remaining concern is whether to adjust the camera port A/camera port B to match the
-device tree documentation or to update the documentation to match the driver.  I decided to
-update the driver in these patches, but it is much simpler to simply update the binding doc.
-The only mainline user of the parallel ports is the Goni dev board which appears to be setup
-for the driver way of numbering as opposed to the binding doc.  I have no strong preference
-on which way to actually go.
+diff --git a/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+new file mode 100644
+index 000000000000..636cc501b54f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+@@ -0,0 +1,75 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/samsung,ufs-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung SoC series UFS PHY Device Tree Bindings
++
++maintainers:
++  - Alim Akhtar <alim.akhtar@samsung.com>
++
++properties:
++  "#phy-cells":
++    const: 0
++
++  compatible:
++    enum:
++      - samsung,exynos7-ufs-phy
++
++  reg:
++    maxItems: 1
++
++  reg-names:
++    items:
++      - const: phy-pma
++
++  clocks:
++    items:
++      - description: PLL reference clock
++      - description: symbol clock for input symbol ( rx0-ch0 symbol clock)
++      - description: symbol clock for input symbol ( rx1-ch1 symbol clock)
++      - description: symbol clock for output symbol ( tx0 symbol clock)
++
++  clock-names:
++    items:
++      - const: ref_clk
++      - const: rx1_symbol_clk
++      - const: rx0_symbol_clk
++      - const: tx0_symbol_clk
++
++  samsung,pmu-syscon:
++    $ref: '/schemas/types.yaml#/definitions/phandle'
++    description: phandle for PMU system controller interface, used to
++                 control pmu registers bits for ufs m-phy
++
++required:
++  - "#phy-cells"
++  - compatible
++  - reg
++  - reg-names
++  - clocks
++  - clock-names
++  - samsung,pmu-syscon
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/exynos7-clk.h>
++
++    ufs_phy: ufs-phy@15571800 {
++        compatible = "samsung,exynos7-ufs-phy";
++        reg = <0x15571800 0x240>;
++        reg-names = "phy-pma";
++        samsung,pmu-syscon = <&pmu_system_controller>;
++        #phy-cells = <0>;
++        clocks = <&clock_fsys1 SCLK_COMBO_PHY_EMBEDDED_26M>,
++                 <&clock_fsys1 PHYCLK_UFS20_RX1_SYMBOL_USER>,
++                 <&clock_fsys1 PHYCLK_UFS20_RX0_SYMBOL_USER>,
++                 <&clock_fsys1 PHYCLK_UFS20_TX0_SYMBOL_USER>;
++        clock-names = "ref_clk", "rx1_symbol_clk",
++                      "rx0_symbol_clk", "tx0_symbol_clk";
++
++    };
++...
+-- 
+2.17.1
 
-> 
-> I can't promise anything, but I'll try to do a high level review.
-> Hopefully I still have some memory from the time I used to play with
-> this hardware.
-
-Thanks, that would be appreciated,
-Jonathan
-
-> 
-> Best regards,
-> Tomasz
-> 
