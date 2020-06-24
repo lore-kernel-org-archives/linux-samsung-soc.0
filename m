@@ -2,183 +2,126 @@ Return-Path: <SRS0=Cil/=AF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F64FC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 10:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E1AC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 11:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87EED2082F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 10:33:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75F052084D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 11:04:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I8pOtPW1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390509AbgFXKdD (ORCPT
+        id S2388795AbgFXLEp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 24 Jun 2020 06:33:03 -0400
-Received: from foss.arm.com ([217.140.110.172]:59560 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388197AbgFXKdD (ORCPT
+        Wed, 24 Jun 2020 07:04:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47156 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728883AbgFXLEo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 24 Jun 2020 06:33:03 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A5261FB;
-        Wed, 24 Jun 2020 03:33:02 -0700 (PDT)
-Received: from [10.37.12.79] (unknown [10.37.12.79])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 239C93F6CF;
-        Wed, 24 Jun 2020 03:32:59 -0700 (PDT)
-Subject: Re: brocken devfreq simple_ondemand for Odroid XU3/4?
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Willy Wolff <willy.mh.wolff.ml@gmail.com>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20200623164733.qbhua7b6cg2umafj@macmini.local>
- <CAJKOXPeLuq81NC2xZh3y32EB-_APbDAchZD4OW_eCgQKKO+p8w@mail.gmail.com>
- <20200623191129.GA4171@kozik-lap>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <85f5a8c0-7d48-f2cd-3385-c56d662f2c88@arm.com>
-Date:   Wed, 24 Jun 2020 11:32:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 24 Jun 2020 07:04:44 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61A94C061573;
+        Wed, 24 Jun 2020 04:04:43 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id a127so1001221pfa.12;
+        Wed, 24 Jun 2020 04:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=t/T/N8+T8VRdD2pd3O+kasRwWgBFC0Eh4uFuB6FWblI=;
+        b=I8pOtPW1qN3NdT/NC0Qymo1nt/esn4cUsKwRbcH15Rs8nEbfF+tk3ECsLhjiDPOX98
+         0sMuNE6FqPHy8+W5Ic+/bdUc/7RQMKMBFuo66J1nE0iRajxdc4IbSReZZ6SOsjZmH+by
+         fOYFELp2qLHr/PGSOswQqtagoGjgKN1c3PPMS4CtwUwB9DwEVDjE7ZmnzjqJjlJw+Xf2
+         0MxwNAgkLzFZG8qGkBaEuaSBGSvF9f9WpyiCloKUU7Y5dn2a6JjeCE/zHz1pY22donl2
+         NKKvL7Qo4doMrJgO/GAjWvjmj5DZRhXGBM2F3Mde8Il7zq3gYCowBP+dlRsaB/C8HK9x
+         7M/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=t/T/N8+T8VRdD2pd3O+kasRwWgBFC0Eh4uFuB6FWblI=;
+        b=GnBl9HfIf9AXudsPOw1Qmt04dbYcfUnT/anaH3nP0dnZArYbXGB7WfAKNK9DOIFzXh
+         sCIVTfBgsYcmhG86R22fDc984FKsgcXgYQWbqL2oZC4JMmzVaCWcpd5dj5kwSg0B8f9H
+         bSVRUlRp9FOZp80PdQ90DKngPbYtsAsE09yhOFhKUuHW8RJIWjY+ydAzcfSF+MTI87JR
+         0vZY0bFh7sPTCjSl9168TzCUbqPKF+ocPVmgIUPWVIaR0zJUIsYNMyNUyGjgISeUDMrT
+         2z+RdvD3VKj3ptyqKFKL6N1WZPKaC232MUoI4ksNzfkgBRbWvxZmg4dShr6yRRmd8rj3
+         55Cw==
+X-Gm-Message-State: AOAM533rusp+Gh62aOnJNNYLxp/ieInRt4zdT7h52bCtWZzuH8ztjF7/
+        cOMQyw2pua+J7E/gZqyvjT7Io5Gn
+X-Google-Smtp-Source: ABdhPJwwCBDuUrdAtcpI4eEVifkWpvyoLlDNFzmhdcJKoqs7+myVuPLRwYJLFiikdQHsX+p6HaofpA==
+X-Received: by 2002:a65:6089:: with SMTP id t9mr21707464pgu.236.1592996682708;
+        Wed, 24 Jun 2020 04:04:42 -0700 (PDT)
+Received: from localhost.localdomain ([103.51.74.220])
+        by smtp.gmail.com with ESMTPSA id s98sm5272796pjb.33.2020.06.24.04.04.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jun 2020 04:04:42 -0700 (PDT)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: dts: exynos: Fix L2 cache-controller nodename
+Date:   Wed, 24 Jun 2020 11:04:35 +0000
+Message-Id: <20200624110435.1150-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <20200623191129.GA4171@kozik-lap>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof and Willy
+Fix warning message by changing nodename to 'cache-controller'.
 
-On 6/23/20 8:11 PM, Krzysztof Kozlowski wrote:
-> On Tue, Jun 23, 2020 at 09:02:38PM +0200, Krzysztof Kozlowski wrote:
->> On Tue, 23 Jun 2020 at 18:47, Willy Wolff <willy.mh.wolff.ml@gmail.com> wrote:
->>>
->>> Hi everybody,
->>>
->>> Is DVFS for memory bus really working on Odroid XU3/4 board?
->>> Using a simple microbenchmark that is doing only memory accesses, memory DVFS
->>> seems to not working properly:
->>>
->>> The microbenchmark is doing pointer chasing by following index in an array.
->>> Indices in the array are set to follow a random pattern (cutting prefetcher),
->>> and forcing RAM access.
->>>
->>> git clone https://github.com/wwilly/benchmark.git \
->>>    && cd benchmark \
->>>    && source env.sh \
->>>    && ./bench_build.sh \
->>>    && bash source/scripts/test_dvfs_mem.sh
->>>
->>> Python 3, cmake and sudo rights are required.
->>>
->>> Results:
->>> DVFS CPU with performance governor
->>> mem_gov = simple_ondemand at 165000000 Hz in idle, should be bumped when the
->>> benchmark is running.
->>> - on the LITTLE cluster it takes 4.74308 s to run (683.004 c per memory access),
->>> - on the big cluster it takes 4.76556 s to run (980.343 c per moemory access).
->>>
->>> While forcing DVFS memory bus to use performance governor,
->>> mem_gov = performance at 825000000 Hz in idle,
->>> - on the LITTLE cluster it takes 1.1451 s to run (164.894 c per memory access),
->>> - on the big cluster it takes 1.18448 s to run (243.664 c per memory access).
->>>
->>> The kernel used is the last 5.7.5 stable with default exynos_defconfig.
->>
->> Thanks for the report. Few thoughts:
->> 1. What trans_stat are saying? Except DMC driver you can also check
->> all other devfreq devices (e.g. wcore) - maybe the devfreq events
->> (nocp) are not properly assigned?
->> 2. Try running the measurement for ~1 minutes or longer. The counters
->> might have some delay (which would require probably fixing but the
->> point is to narrow the problem).
->> 3. What do you understand by "mem_gov"? Which device is it?
-> 
-> +Cc Lukasz who was working on this.
+make ARCH=arm dtbs_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/l2c2x0.yaml
+arch/arm/boot/dts/exynos4210-i9100.dt.yaml: l2-cache-controller@10502000:
+	$nodename:0: 'l2-cache-controller@10502000' does not match '
+	^(cache-controller|cpu)(@[0-9a-f,]+)*$'
+arch/arm/boot/dts/exynos4412-i9300.dt.yaml: l2-cache-controller@10502000:
+        $nodename:0: 'l2-cache-controller@10502000' does not match '
+        ^(cache-controller|cpu)(@[0-9a-f,]+)*$'
 
-Thanks Krzysztof for adding me here.
+Fixes: 56b60b8bce4a ("ARM: 8265/1: dts: exynos4: Add nodes for L2 cache controller")
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ arch/arm/boot/dts/exynos4210.dtsi | 2 +-
+ arch/arm/boot/dts/exynos4412.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> I just run memtester and more-or-less ondemand works (at least ramps
-> up):
-> 
-> Before:
-> /sys/class/devfreq/10c20000.memory-controller$ cat trans_stat
->       From  :   To
->             : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
-> * 165000000:         0         0         0         0         0         0         0         0   1795950
->    206000000:         1         0         0         0         0         0         0         0      4770
->    275000000:         0         1         0         0         0         0         0         0     15540
->    413000000:         0         0         1         0         0         0         0         0     20780
->    543000000:         0         0         0         1         0         0         0         1     10760
->    633000000:         0         0         0         0         2         0         0         0     10310
->    728000000:         0         0         0         0         0         0         0         0         0
->    825000000:         0         0         0         0         0         2         0         0     25920
-> Total transition : 9
-> 
-> 
-> $ sudo memtester 1G
-> 
-> During memtester:
-> /sys/class/devfreq/10c20000.memory-controller$ cat trans_stat
->       From  :   To
->             : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
->    165000000:         0         0         0         0         0         0         0         1   1801490
->    206000000:         1         0         0         0         0         0         0         0      4770
->    275000000:         0         1         0         0         0         0         0         0     15540
->    413000000:         0         0         1         0         0         0         0         0     20780
->    543000000:         0         0         0         1         0         0         0         2     11090
->    633000000:         0         0         0         0         3         0         0         0     17210
->    728000000:         0         0         0         0         0         0         0         0         0
-> * 825000000:         0         0         0         0         0         3         0         0    169020
-> Total transition : 13
-> 
-> However after killing memtester it stays at 633 MHz for very long time
-> and does not slow down. This is indeed weird...
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index b4466232f0c1..33435ce79ce4 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -97,7 +97,7 @@ pd_lcd1: power-domain@10023ca0 {
+ 			label = "LCD1";
+ 		};
+ 
+-		l2c: l2-cache-controller@10502000 {
++		l2c: cache-controller@10502000 {
+ 			compatible = "arm,pl310-cache";
+ 			reg = <0x10502000 0x1000>;
+ 			cache-unified;
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 48868947373e..7002832eb4c0 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -213,7 +213,7 @@ pd_isp: power-domain@10023ca0 {
+ 			label = "ISP";
+ 		};
+ 
+-		l2c: l2-cache-controller@10502000 {
++		l2c: cache-controller@10502000 {
+ 			compatible = "arm,pl310-cache";
+ 			reg = <0x10502000 0x1000>;
+ 			cache-unified;
+-- 
+2.27.0
 
-I had issues with devfreq governor which wasn't called by devfreq
-workqueue. The old DELAYED vs DEFERRED work discussions and my patches
-for it [1]. If the CPU which scheduled the next work went idle, the
-devfreq workqueue will not be kicked and devfreq governor won't check
-DMC status and will not decide to decrease the frequency based on low
-busy_time.
-The same applies for going up with the frequency. They both are
-done by the governor but the workqueue must be scheduled periodically.
-
-I couldn't do much with this back then. I have given the example that
-this is causing issues with the DMC [2]. There is also a description
-of your situation staying at 633MHz for long time:
-' When it is missing opportunity
-to change the frequency, it can either harm the performance or power
-consumption, depending of the frequency the device stuck on.'
-
-The patches were not accepted because it will cause CPU wake-up from
-idle, which increases the energy consumption. I know that there were
-some other attempts, but I don't know the status.
-
-I had also this devfreq workqueue issue when I have been working on
-thermal cooling for devfreq. The device status was not updated, because
-the devfreq workqueue didn't check the device [3].
-
-Let me investigate if that is the case.
-
-Regards,
-Lukasz
-
-[1] https://lkml.org/lkml/2019/2/11/1146
-[2] https://lkml.org/lkml/2019/2/12/383
-[3] 
-https://lwn.net/ml/linux-kernel/20200511111912.3001-11-lukasz.luba@arm.com/
-
-> 
-> Best regards,
-> Krzysztof
-> 
