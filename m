@@ -2,56 +2,66 @@ Return-Path: <SRS0=Cil/=AF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A67FDC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 08:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97006C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 08:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F89820738
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 08:14:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592986490;
-	bh=wCyFawTYIupwoV8sK17GffzQtpLZ4YNmIg9jy3ma+T8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=XjAMeDvU/h2AUsO5nlvVzfvPQZmqsKcKhc3Q59i5nOrCakn3l5MlrC+HPS7UXKna6
-	 rFN1oczTV4cORYjjrFqLW1BhwCIVblJd+UYG4OAN3AyzLpObTVACMl4yBJqKJdOhLu
-	 8xyA0EnsER9qkdERKfUHTUudF12tgnSZWbyQHZuI=
+	by mail.kernel.org (Postfix) with ESMTP id 71A4C20885
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 08:52:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nWxfbOrH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390329AbgFXIOp (ORCPT
+        id S2388671AbgFXIwV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 24 Jun 2020 04:14:45 -0400
-Received: from mail-ej1-f52.google.com ([209.85.218.52]:38533 "EHLO
-        mail-ej1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390249AbgFXIOp (ORCPT
+        Wed, 24 Jun 2020 04:52:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55044 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728732AbgFXIwU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 24 Jun 2020 04:14:45 -0400
-Received: by mail-ej1-f52.google.com with SMTP id w16so1559139ejj.5;
-        Wed, 24 Jun 2020 01:14:42 -0700 (PDT)
+        Wed, 24 Jun 2020 04:52:20 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B906FC061573;
+        Wed, 24 Jun 2020 01:52:20 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 22so1561016wmg.1;
+        Wed, 24 Jun 2020 01:52:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=lVApUt3i/7AFtwyD3Ki0a35tHO53vnjzikpdpWE5FJs=;
+        b=nWxfbOrH2lbT0UWHSbjppQTiIjOfKj5zMlQq5Aj3dFFYMGWrUFtYGxKEQpua8lGeG7
+         BYPJLI9nLyJZnF+VMvul1Ya9nnO2OoP/E2XxIEpbuVltTlU/2HNK+fTd8aSCIhm1WUUp
+         pqLlGJCyzTWO+8AzohbesMgB0/NepympE2oK7EtXXQvbbvqDN2lxSmmpB+WJ0OX1a2sX
+         YUBayu9Russ/U2lCKcSAWD9YsC0s4KbOSXDT56uWf+Ib0qDAM84FkEAYLjIXlp7gP42d
+         16MIFwwdCOMOFRxGnFaXRs9/rtrTlpi8FlkSdnCz77QGPLLq4RbraWBQPmXu7SA7nKTR
+         TRgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Ibh7qwsVmOM0eKJK6oTaNo8+HhtSr5AxAKMdLvNoMHg=;
-        b=Tx9eORMt9WfmS5rqNr50S4SZJw+JylxOQiJp64Vm2I7zAzVRXpFo6fEoHqZaqSxWJK
-         i7rnVSp6SAcXQW37ggGYt7ts8t0f+Fo0MgzyQCzJdZh03kQAr4X0/3XW0i7LhNiio0R4
-         6GOmng2ODDxncjpaYpu8ZHn9cXDcaD8hPY68F2+08nJeAInKKafte/FAa2wI0UvqnQJi
-         0aTU0l+nsweoc0igRz8EbV3FfsBXNUIcYkt6cp0cbE54SJZG0ufm6MWBus+DzfxgxCiy
-         suzQIg2/3N2QkIRq6ouQkFdssZrXx2IOzxA6H0Xhf7RaQISPdIT8Til+jAukAbuHjoX1
-         gzDQ==
-X-Gm-Message-State: AOAM532BNMExjDSwHKWNvmfaVG8LlLNp7/Jlgh0CAxfBUJ0zDfk7USMS
-        OewfcYZcl+FLbZzjGRE7Le0=
-X-Google-Smtp-Source: ABdhPJwTeuyZfApU34NyzWK0HGsXM4sXOeoUnfsKIw0gNosZtxMfWcYqWxrIgZNdijsZjlpl7dJwjQ==
-X-Received: by 2002:a17:907:11db:: with SMTP id va27mr11152068ejb.175.1592986481334;
-        Wed, 24 Jun 2020 01:14:41 -0700 (PDT)
-Received: from pi3 ([194.230.155.235])
-        by smtp.googlemail.com with ESMTPSA id f16sm3512754ejr.0.2020.06.24.01.14.39
+        bh=lVApUt3i/7AFtwyD3Ki0a35tHO53vnjzikpdpWE5FJs=;
+        b=s3jfA0OLnaVSJNBSvoOpGEYfJzkmMn4mXCOvizsv9kk34o8h2+75hBXJbFZwyBEs4E
+         UH//Umi9osmM3ZNaKvuU5NkuxG9SnE4fRpK+GN50zMQ00Y+HL7+rc0CYGiX0opfdeewN
+         x7w0BlVhY0V70dqkB9R6m7cy4z4rwOzJSpG3VVbZOE7nRt/73V9oBTOYWbrpgqKsJ1ay
+         5/HO4GPFZBc0BDkEm6Uy5UQAgSf9aLK4AzG1jAbq2LPFqHCMU3ezBNp3x5hXOX9xth+7
+         ieUlWiV4PFW96d9/nDL0hCyN6gtX0f1diACTfAVOF9aVncjiFDwb9+DMxjKv3LM3hM97
+         9+NA==
+X-Gm-Message-State: AOAM531vAbhSRIjnB2dzk5phxWcA+0URhCJsjReqaIATRcpxsipl6WAy
+        NvfJsA3Wyb5XxUjOBx9h7bo=
+X-Google-Smtp-Source: ABdhPJxEoDCK2NSYlVqZ8jHDnIBfhX/cA9jnzCKLxs1yjbdQAquYvO37dsRjlB2gsrPuj1Ijj4bjoQ==
+X-Received: by 2002:a1c:6308:: with SMTP id x8mr1289926wmb.92.1592988739418;
+        Wed, 24 Jun 2020 01:52:19 -0700 (PDT)
+Received: from macmini.local (181.4.199.77.rev.sfr.net. [77.199.4.181])
+        by smtp.gmail.com with ESMTPSA id c20sm22140185wrb.65.2020.06.24.01.52.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jun 2020 01:14:40 -0700 (PDT)
-Date:   Wed, 24 Jun 2020 10:14:38 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Willy Wolff <willy.mh.wolff.ml@gmail.com>
+        Wed, 24 Jun 2020 01:52:18 -0700 (PDT)
+Date:   Wed, 24 Jun 2020 10:52:17 +0200
+From:   Willy Wolff <willy.mh.wolff.ml@gmail.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
         MyungJoo Ham <myungjoo.ham@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
@@ -62,119 +72,129 @@ Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Lukasz Luba <lukasz.luba@arm.com>
 Subject: Re: brocken devfreq simple_ondemand for Odroid XU3/4?
-Message-ID: <20200624081438.GA20603@pi3>
+Message-ID: <20200624085217.5km2iexitfgclsev@macmini.local>
 References: <20200623164733.qbhua7b6cg2umafj@macmini.local>
  <CAJKOXPeLuq81NC2xZh3y32EB-_APbDAchZD4OW_eCgQKKO+p8w@mail.gmail.com>
  <20200623191129.GA4171@kozik-lap>
  <20200624080117.fzgowkpgyhs6tbzx@macmini.local>
+ <20200624081438.GA20603@pi3>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200624080117.fzgowkpgyhs6tbzx@macmini.local>
+In-Reply-To: <20200624081438.GA20603@pi3>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 24, 2020 at 10:01:17AM +0200, Willy Wolff wrote:
-> Hi Krzysztof,
-> Thanks to look at it.
+On 2020-06-24-10-14-38, Krzysztof Kozlowski wrote:
+> On Wed, Jun 24, 2020 at 10:01:17AM +0200, Willy Wolff wrote:
+> > Hi Krzysztof,
+> > Thanks to look at it.
+> > 
+> > mem_gov is /sys/class/devfreq/10c20000.memory-controller/governor
+> > 
+> > Here some numbers after increasing the running time:
+> > 
+> > Running using simple_ondemand:
+> > Before:
+> >      From  :   To                                                                                     
+> >            : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
+> > * 165000000:         0         0         0         0         0         0         0         4   4528600
+> >   206000000:         5         0         0         0         0         0         0         0     57780
+> >   275000000:         0         5         0         0         0         0         0         0     50060
+> >   413000000:         0         0         5         0         0         0         0         0     46240
+> >   543000000:         0         0         0         5         0         0         0         0     48970
+> >   633000000:         0         0         0         0         5         0         0         0     47330
+> >   728000000:         0         0         0         0         0         0         0         0         0
+> >   825000000:         0         0         0         0         0         5         0         0    331300
+> > Total transition : 34
+> > 
+> > 
+> > After:
+> >      From  :   To
+> >            : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
+> > * 165000000:         0         0         0         0         0         0         0         4   5098890
+> >   206000000:         5         0         0         0         0         0         0         0     57780
+> >   275000000:         0         5         0         0         0         0         0         0     50060
+> >   413000000:         0         0         5         0         0         0         0         0     46240
+> >   543000000:         0         0         0         5         0         0         0         0     48970
+> >   633000000:         0         0         0         0         5         0         0         0     47330
+> >   728000000:         0         0         0         0         0         0         0         0         0
+> >   825000000:         0         0         0         0         0         5         0         0    331300
+> > Total transition : 34
+> > 
+> > With a running time of:
+> > LITTLE => 283.699 s (680.877 c per mem access)
+> > big => 284.47 s (975.327 c per mem access)
 > 
-> mem_gov is /sys/class/devfreq/10c20000.memory-controller/governor
+> I see there were no transitions during your memory test.
 > 
-> Here some numbers after increasing the running time:
+> > 
+> > And when I set to the performance governor:
+> > Before:
+> >      From  :   To
+> >            : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
+> >   165000000:         0         0         0         0         0         0         0         5   5099040
+> >   206000000:         5         0         0         0         0         0         0         0     57780
+> >   275000000:         0         5         0         0         0         0         0         0     50060
+> >   413000000:         0         0         5         0         0         0         0         0     46240
+> >   543000000:         0         0         0         5         0         0         0         0     48970
+> >   633000000:         0         0         0         0         5         0         0         0     47330
+> >   728000000:         0         0         0         0         0         0         0         0         0
+> > * 825000000:         0         0         0         0         0         5         0         0    331350
+> > Total transition : 35
+> > 
+> > After:
+> >      From  :   To
+> >            : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
+> >   165000000:         0         0         0         0         0         0         0         5   5099040
+> >   206000000:         5         0         0         0         0         0         0         0     57780
+> >   275000000:         0         5         0         0         0         0         0         0     50060
+> >   413000000:         0         0         5         0         0         0         0         0     46240
+> >   543000000:         0         0         0         5         0         0         0         0     48970
+> >   633000000:         0         0         0         0         5         0         0         0     47330
+> >   728000000:         0         0         0         0         0         0         0         0         0
+> > * 825000000:         0         0         0         0         0         5         0         0    472980
+> > Total transition : 35
+> > 
+> > With a running time of:
+> > LITTLE: 68.8428 s (165.223 c per mem access)
+> > big: 71.3268 s (244.549 c per mem access)
+> > 
+> > 
+> > I see some transition, but not occuring during the benchmark.
+> > I haven't dive into the code, but maybe it is the heuristic behind that is not
+> > well defined? If you know how it's working that would be helpfull before I dive
+> > in it.
 > 
-> Running using simple_ondemand:
-> Before:
->      From  :   To                                                                                     
->            : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
-> * 165000000:         0         0         0         0         0         0         0         4   4528600
->   206000000:         5         0         0         0         0         0         0         0     57780
->   275000000:         0         5         0         0         0         0         0         0     50060
->   413000000:         0         0         5         0         0         0         0         0     46240
->   543000000:         0         0         0         5         0         0         0         0     48970
->   633000000:         0         0         0         0         5         0         0         0     47330
->   728000000:         0         0         0         0         0         0         0         0         0
->   825000000:         0         0         0         0         0         5         0         0    331300
-> Total transition : 34
+> Sorry, don't know that much. It seems it counts time between overflow of
+> DMC perf events and based on this bumps up the frequency.
 > 
-> 
-> After:
->      From  :   To
->            : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
-> * 165000000:         0         0         0         0         0         0         0         4   5098890
->   206000000:         5         0         0         0         0         0         0         0     57780
->   275000000:         0         5         0         0         0         0         0         0     50060
->   413000000:         0         0         5         0         0         0         0         0     46240
->   543000000:         0         0         0         5         0         0         0         0     48970
->   633000000:         0         0         0         0         5         0         0         0     47330
->   728000000:         0         0         0         0         0         0         0         0         0
->   825000000:         0         0         0         0         0         5         0         0    331300
-> Total transition : 34
-> 
-> With a running time of:
-> LITTLE => 283.699 s (680.877 c per mem access)
-> big => 284.47 s (975.327 c per mem access)
+> Maybe your test does not fit well in current formula? Maybe the formula
+> has some drawbacks...
 
-I see there were no transitions during your memory test.
+OK, I will read the code then.
 
 > 
-> And when I set to the performance governor:
-> Before:
->      From  :   To
->            : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
->   165000000:         0         0         0         0         0         0         0         5   5099040
->   206000000:         5         0         0         0         0         0         0         0     57780
->   275000000:         0         5         0         0         0         0         0         0     50060
->   413000000:         0         0         5         0         0         0         0         0     46240
->   543000000:         0         0         0         5         0         0         0         0     48970
->   633000000:         0         0         0         0         5         0         0         0     47330
->   728000000:         0         0         0         0         0         0         0         0         0
-> * 825000000:         0         0         0         0         0         5         0         0    331350
-> Total transition : 35
-> 
-> After:
->      From  :   To
->            : 165000000 206000000 275000000 413000000 543000000 633000000 728000000 825000000   time(ms)
->   165000000:         0         0         0         0         0         0         0         5   5099040
->   206000000:         5         0         0         0         0         0         0         0     57780
->   275000000:         0         5         0         0         0         0         0         0     50060
->   413000000:         0         0         5         0         0         0         0         0     46240
->   543000000:         0         0         0         5         0         0         0         0     48970
->   633000000:         0         0         0         0         5         0         0         0     47330
->   728000000:         0         0         0         0         0         0         0         0         0
-> * 825000000:         0         0         0         0         0         5         0         0    472980
-> Total transition : 35
-> 
-> With a running time of:
-> LITTLE: 68.8428 s (165.223 c per mem access)
-> big: 71.3268 s (244.549 c per mem access)
-> 
-> 
-> I see some transition, but not occuring during the benchmark.
-> I haven't dive into the code, but maybe it is the heuristic behind that is not
-> well defined? If you know how it's working that would be helpfull before I dive
-> in it.
+> > 
+> > I run your test as well, and indeed, it seems to work for large bunch of memory,
+> > and there is some delay before making a transition (seems to be around 10s).
+> > When you kill memtester, it reduces the freq stepwisely every ~10s.
+> > 
+> > Note that the timing shown above account for the critical path, and the code is
+> > looping on reading only, there is no write in the critical path.
+> > Maybe memtester is doing writes and devfreq heuristic uses only write info?
+> >
+> You mentioned that you want to cut the prefetcher to have direct access
+> to RAM. But prefetcher also accesses the RAM. He does not get the
+> contents from the air.  Although this is unrelated to the problem
+> because your pattern should kick ondemand as well.
 
-Sorry, don't know that much. It seems it counts time between overflow of
-DMC perf events and based on this bumps up the frequency.
-
-Maybe your test does not fit well in current formula? Maybe the formula
-has some drawbacks...
+Yes obvisouly. I was just describing a bit the microbenchmark and the memory pattern
+access. I was suggesting that a random pattern will break the effectiveness of the
+prefetcher, and as such we have a worst case situation on the memory bus.
 
 > 
-> I run your test as well, and indeed, it seems to work for large bunch of memory,
-> and there is some delay before making a transition (seems to be around 10s).
-> When you kill memtester, it reduces the freq stepwisely every ~10s.
-> 
-> Note that the timing shown above account for the critical path, and the code is
-> looping on reading only, there is no write in the critical path.
-> Maybe memtester is doing writes and devfreq heuristic uses only write info?
->
-You mentioned that you want to cut the prefetcher to have direct access
-to RAM. But prefetcher also accesses the RAM. He does not get the
-contents from the air.  Although this is unrelated to the problem
-because your pattern should kick ondemand as well.
-
-Best regards,
-Krzysztof
+> Best regards,
+> Krzysztof
