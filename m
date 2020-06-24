@@ -2,144 +2,159 @@ Return-Path: <SRS0=Cil/=AF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63852C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 15:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B99E6C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 15:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F134206C0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 15:00:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593010829;
-	bh=ADS01e6UuwaXesf7T/YCyhdR1bhuKePkQrZwLqEV8XY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=K4SO1Zxee0TPwqPCm5kyc7E5xpMmfYLDNiL79/PxjoF8Hv4N9jy/yEj8XaLuTJaPf
-	 dkmWSUK0oxlARFdQ6cU8pZct1Ag3ytW/LZVBnLwu4T917JeFlcwBTpKQM57dPEeblk
-	 5sVfKGR/7lMZZgmV5IgfC6u615miv83nGOmO3HeA=
+	by mail.kernel.org (Postfix) with ESMTP id 8AAF620656
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Jun 2020 15:11:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="d3Kbk6je"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391216AbgFXPAX (ORCPT
+        id S2404266AbgFXPLi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 24 Jun 2020 11:00:23 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41149 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389043AbgFXPAX (ORCPT
+        Wed, 24 Jun 2020 11:11:38 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50817 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404243AbgFXPLh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 24 Jun 2020 11:00:23 -0400
-Received: by mail-ot1-f67.google.com with SMTP id k15so2167936otp.8;
-        Wed, 24 Jun 2020 08:00:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eykhWQcNNxAwrKLr1Dkv70utXgS770FMiPrM6b8KPjc=;
-        b=hkHeIouE0X74Rn2j8Igk/XY/4jOLE8DlfLi2yerUJcVKFK2NOOdBPJbwUwayFt9GQG
-         WS5VZ/1HkAVQNdCD4Qw61wOfGp6p+kXSgTgiww5uGvWDHsnEHfavrw6TnCFiUMRwADaM
-         Gd+nb664kj4N2CTEWKSFKzOnyCSUoM4CJG3iDxh/Lw+ARo+KhKTWSa8WSAFoE6O8KrIX
-         QqKdDMntr1VZNUZn6VVodgXBpCRtWjQhYS0+9AUQSTZC3SGGEvb1PV8vyNRtbJ0zOqwk
-         BQ8u0iVIWuDqnwsJPwDKJqWcWWf2h1JXRTSBmURpbESG15E4O2MZV9ck1Df4AXDW5atK
-         cjyQ==
-X-Gm-Message-State: AOAM5336mnoguDHEPE24ywgzFB52m96XoeX9G0UfGu4pFJP+u37TYJUY
-        FSdV+YfFLbHlIQYcFgyWWiYMoRFz/kyJSlvVZAw=
-X-Google-Smtp-Source: ABdhPJxTfu2nRQ0ID+eDw+0oWm7stVdBgfOBXZxtPamhCD54VzLFyKUSp9gBGIPEG0mIIAqQQkSpe0tvPBek2gXWEWg=
-X-Received: by 2002:a9d:7d15:: with SMTP id v21mr22236731otn.118.1593010820398;
- Wed, 24 Jun 2020 08:00:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com> <20200608112211.12125-4-andrzej.p@collabora.com>
-In-Reply-To: <20200608112211.12125-4-andrzej.p@collabora.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 24 Jun 2020 17:00:09 +0200
-Message-ID: <CAJZ5v0j7e9TzDtEiDXmj3fLAQ7CvFHoe7Q3aYKKas3PEXrsUuw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/7] ACPI: button: Access input device's users under
- appropriate mutex
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
-        linux-input@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
+        Wed, 24 Jun 2020 11:11:37 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200624151135euoutp027a3e672795c5c0feb1d6f8b4ea00311d~bg4PeVFuX2325023250euoutp02L
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jun 2020 15:11:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200624151135euoutp027a3e672795c5c0feb1d6f8b4ea00311d~bg4PeVFuX2325023250euoutp02L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1593011495;
+        bh=vIfCBmSC+5GtsPYmRCTd8QesuVfaXVykkj6k7TxHWDA=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=d3Kbk6jeUH/b2U8aGb6xc4Ya2Uv1ARZ/vt/zcpb2yKnIdwyifNi/aogKF9wSFjcCY
+         0UfDxG+a4xfJBK1wYPPkNn1fpcJoTsVSCoacjsNacSk8Wvt/SunvyW8qmvUbe6HS+j
+         yKx9sbNPfvw1rxIj4PokZL2Z4apGM1W75Z0Drnp0=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200624151135eucas1p1335bb5b1799513a14a8efb3d455078b2~bg4PLTJKl1469014690eucas1p1P;
+        Wed, 24 Jun 2020 15:11:35 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id BF.7B.06456.72D63FE5; Wed, 24
+        Jun 2020 16:11:35 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200624151134eucas1p1c70eef4c8ed9fd2fb0275cbec6576f44~bg4O0FaiQ1265612656eucas1p1Q;
+        Wed, 24 Jun 2020 15:11:34 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200624151134eusmtrp1dfb6c70903341241eeeae3dbab271a31~bg4OzaZn01873818738eusmtrp1I;
+        Wed, 24 Jun 2020 15:11:34 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-e6-5ef36d270ac2
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D9.72.06017.62D63FE5; Wed, 24
+        Jun 2020 16:11:34 +0100 (BST)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200624151134eusmtip11cc243e141c704390f7521bb388feef3~bg4OEgzT22683126831eusmtip1N;
+        Wed, 24 Jun 2020 15:11:33 +0000 (GMT)
+Subject: Re: brocken devfreq simple_ondemand for Odroid XU3/4?
+To:     Lukasz Luba <lukasz.luba@arm.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        Collabora Kernel ML <kernel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+        Willy Wolff <willy.mh.wolff.ml@gmail.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <ef5184ed-00ff-4226-5ece-b0fc8eb16fb6@samsung.com>
+Date:   Wed, 24 Jun 2020 17:11:33 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.9.0
+MIME-Version: 1.0
+In-Reply-To: <85f5a8c0-7d48-f2cd-3385-c56d662f2c88@arm.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCKsWRmVeSWpSXmKPExsWy7djP87rquZ/jDPqv81hc//Kc1aL/8Wtm
+        i/PnN7BbnG16w26x6fE1VovLu+awWXzuPcJoMeP8PiaLhU0t7Ba3G1ewWXw78YjRgdtjzbw1
+        jB47Z91l99i0qpPNY/OSeo++LasYPT5vkgtgi+KySUnNySxLLdK3S+DKOHj1OGvBbr6KtdfX
+        sTYw3uPuYuTkkBAwkdjZ+5Kli5GLQ0hgBaPEufOv2CCcL4wS75uamSGcz4wSfzZ0ssK0NP9b
+        DNWynFGiv+k6E4TzkVFi8afjTCBVwgJ2EvOv7QLrEBGolLg18zvYXGaBt0wSe/7eZgNJsAkY
+        SvQe7WMEsXmBGm63dQI1c3CwCKhKzPymBBIWFYiV6Fu6gA2iRFDi5MwnLCA2p4C1xJJZb8F2
+        MQuIS9x6Mh/KlpfY/nYO2NkSArfYJb5fOQd1tovE6huNzBC2sMSr41vYIWwZidOTe1ggGpoZ
+        JXp232aHcCYwStw/voARospa4s65X2wg1zELaEqs36UPEXaUeHvsDTNIWEKAT+LGW0GII/gk
+        Jm2bDhXmlehoE4KoVpH4vWo6E4QtJdH95D/LBEalWUhem4XknVlI3pmFsHcBI8sqRvHU0uLc
+        9NRiw7zUcr3ixNzi0rx0veT83E2MwLR1+t/xTzsYv15KOsQowMGoxMO74cHHOCHWxLLiytxD
+        jBIczEoivE5nT8cJ8aYkVlalFuXHF5XmpBYfYpTmYFES5zVe9DJWSCA9sSQ1OzW1ILUIJsvE
+        wSnVwDhb0UHT0/UAK3/VOm3V7m+XtZsTomtu/szcWuNd5620QvC4628e+TRr1TLX1pslDCbX
+        mexyjjtzCuo2LTpkeIth46zQKQ83CRkFZq9bzn0lau39+tvZSS2MTkbpy542X72iufcMc/8e
+        +dNFbKd8en9N2HLHOW/366qaaR/qJ2yw6knJcZ38UImlOCPRUIu5qDgRAI2LKFhXAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xu7pquZ/jDN41m1hc//Kc1aL/8Wtm
+        i/PnN7BbnG16w26x6fE1VovLu+awWXzuPcJoMeP8PiaLhU0t7Ba3G1ewWXw78YjRgdtjzbw1
+        jB47Z91l99i0qpPNY/OSeo++LasYPT5vkgtgi9KzKcovLUlVyMgvLrFVija0MNIztLTQMzKx
+        1DM0No+1MjJV0rezSUnNySxLLdK3S9DLOHj1OGvBbr6KtdfXsTYw3uPuYuTkkBAwkWj+t5il
+        i5GLQ0hgKaPEm/5WIIcDKCElMb9FCaJGWOLPtS42EFtI4D2jxMzp7iC2sICdxPxru1hBbBGB
+        Son7P+8wg8xhFnjPJPH3xEwmiKGrmSSOvVoJ1s0mYCjRe7SPEcTmBeq+3dbJBLKMRUBVYuY3
+        sGWiArES3+5tYYMoEZQ4OfMJC4jNKWAtsWTWWyYQm1lAXeLPvEvMELa4xK0n86Hi8hLb385h
+        nsAoNAtJ+ywkLbOQtMxC0rKAkWUVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYIxuO/Zzyw7G
+        rnfBhxgFOBiVeHg3PPgYJ8SaWFZcmXuIUYKDWUmE1+ns6Tgh3pTEyqrUovz4otKc1OJDjKZA
+        v01klhJNzgemj7ySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYzp
+        7T/VVRL5E0yePJPhEOwMUTx9xN9tRlaOpkfuKvfe6nk9xWdTMu4/WvYztTZm24Kfx5fbL1Ta
+        F5F4Onf5hwtcU14WXl166ZFiyQxLVsnjLpdZNZZUMnTHfmc4eIHbXpnhf0Eow6RlDuZi9y34
+        Um4HpEy8X1MSpCfxp8xPiWdeWtSMu6tfvVFiKc5INNRiLipOBACBoft/5wIAAA==
+X-CMS-MailID: 20200624151134eucas1p1c70eef4c8ed9fd2fb0275cbec6576f44
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200624103308eucas1p188a5fe3cee1916d9430c9971c2dab3a3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200624103308eucas1p188a5fe3cee1916d9430c9971c2dab3a3
+References: <20200623164733.qbhua7b6cg2umafj@macmini.local>
+        <CAJKOXPeLuq81NC2xZh3y32EB-_APbDAchZD4OW_eCgQKKO+p8w@mail.gmail.com>
+        <20200623191129.GA4171@kozik-lap>
+        <CGME20200624103308eucas1p188a5fe3cee1916d9430c9971c2dab3a3@eucas1p1.samsung.com>
+        <85f5a8c0-7d48-f2cd-3385-c56d662f2c88@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jun 8, 2020 at 1:22 PM Andrzej Pietrasiewicz
-<andrzej.p@collabora.com> wrote:
->
-> Inspecting input device's 'users' member should be done under device's
-> mutex, so add appropriate invocations.
->
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Hi All,
 
-This looks like a fix that might be applied independently of the other
-patches in the series.
+On 24.06.2020 12:32, Lukasz Luba wrote:
+> I had issues with devfreq governor which wasn't called by devfreq
+> workqueue. The old DELAYED vs DEFERRED work discussions and my patches
+> for it [1]. If the CPU which scheduled the next work went idle, the
+> devfreq workqueue will not be kicked and devfreq governor won't check
+> DMC status and will not decide to decrease the frequency based on low
+> busy_time.
+> The same applies for going up with the frequency. They both are
+> done by the governor but the workqueue must be scheduled periodically.
 
-Do you want me to pick it up?
+As I have been working on resolving the video mixer IOMMU fault issue
+described here: https://patchwork.kernel.org/patch/10861757
+I did some investigation of the devfreq operation, mostly on Odroid U3.
 
-> ---
->  drivers/acpi/button.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
-> index 78cfc70cb320..ff7ab291f678 100644
-> --- a/drivers/acpi/button.c
-> +++ b/drivers/acpi/button.c
-> @@ -456,13 +456,16 @@ static int acpi_button_resume(struct device *dev)
->  {
->         struct acpi_device *device = to_acpi_device(dev);
->         struct acpi_button *button = acpi_driver_data(device);
-> +       struct input_dev *input = button->input;
->
->         button->suspended = false;
-> -       if (button->type == ACPI_BUTTON_TYPE_LID && button->input->users) {
-> +       mutex_lock(&input->mutex);
-> +       if (button->type == ACPI_BUTTON_TYPE_LID && input->users) {
->                 button->last_state = !!acpi_lid_evaluate_state(device);
->                 button->last_time = ktime_get();
->                 acpi_lid_initialize_state(device);
->         }
-> +       mutex_unlock(&input->mutex);
->         return 0;
->  }
->  #endif
-> --
-> 2.17.1
->
+My conclusions are similar to what Lukasz says above. I would like to add
+that broken scheduling of the performance counters read and the devfreq 
+updates seems to have one more serious implication. In each call, which
+normally should happen periodically with fixed interval we stop the counters, 
+read counter values and start the counters again. But if period between 
+calls becomes long enough to let any of the counters overflow, we will
+get wrong performance measurement results. My observations are that 
+the workqueue job can be suspended for several seconds and conditions for 
+the counter overflow occur sooner or later, depending among others 
+on the CPUs load.
+Wrong bus load measurement can lead to setting too low interconnect bus 
+clock frequency and then bad things happen in peripheral devices.
+
+I agree the workqueue issue needs to be fixed. I have some WIP code to use
+the performance counters overflow interrupts instead of SW polling and with 
+that the interconnect bus clock control seems to work much better.
+
+-- 
+Regards,
+Sylwester
