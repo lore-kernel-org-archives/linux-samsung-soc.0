@@ -2,155 +2,129 @@ Return-Path: <SRS0=P8ib=AG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E32C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Jun 2020 05:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47709C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Jun 2020 10:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19AFA2081A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Jun 2020 05:24:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="otZFkn+x"
+	by mail.kernel.org (Postfix) with ESMTP id 2EF6E2076E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Jun 2020 10:02:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389807AbgFYFYv (ORCPT
+        id S2390395AbgFYKCO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 25 Jun 2020 01:24:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47594 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389559AbgFYFYu (ORCPT
+        Thu, 25 Jun 2020 06:02:14 -0400
+Received: from foss.arm.com ([217.140.110.172]:55512 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390025AbgFYKCO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 25 Jun 2020 01:24:50 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FB3BC061573;
-        Wed, 24 Jun 2020 22:24:50 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id f9so2520187pfn.0;
-        Wed, 24 Jun 2020 22:24:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=GXdubhTV2rFDKkg/iMiISj5sENkZjDy3A69VIM0beEA=;
-        b=otZFkn+xlIJ6hX0J8f+jfwEquSCD1xAz5RZpMUYHAPHAnVIvN+uW98AINOqq4g+NOm
-         xL4CZPN2A0vT/ab2Jd2XCzsm6Q5/w8wOML61MOiIDVoBMz0OrpivZ0swlsFXgZwZAcwW
-         7DyEZ3/HcKlU1DhOwjTO29PCtzk1lP3TKVS7Lx/82NZEuHIr7JuegxtHHeg4Ha6AI9QG
-         daBSc/WMaTGe71/ywHgvTXa54cykNjtby8nkPFqvB34fchJIGyb42BqUtsasKGCOi50C
-         DFE+jfZGA7VjFK02RrnQRC5elhGL3QxISyOk3L9XjmBFuebg2RHUMANKgHLaVXcl4OpP
-         E8GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=GXdubhTV2rFDKkg/iMiISj5sENkZjDy3A69VIM0beEA=;
-        b=KPPb3QshvGySRkFFgd59VqMy0U6S5RZaO/AhcFaBtxv6hb0ZKUq+8RkB2vINk5AnMi
-         8XIP9wgvxS4ILOkdLWgnKJESAPhoQ82FjW3s+kGjmt8yfqvS8w5+eOWtpDRhCL/yeF7R
-         fK0KnzHMeITGoND3DtPOoY/tc8VTZKcMbVJqmAcxHg1tMfdZrfKSwwcVjZHty/D/cLwP
-         uhZXxXqzAioPORvSXPsT8fW3CrdFimYtr5q8cDeOOyu+jpugXfwPg9D+g/Q4Mg7EnBUS
-         aRlc2DF+kvRXS2QZRNfYPx2qvTpfeOV6FXTR7rZ9DdkL0gumQe2TYnB/RrHIkeOXz8ge
-         UmrQ==
-X-Gm-Message-State: AOAM530o6lA9xqgxvw6+nvh8ElPDhpX2KqTq2RGBdSzeHu2GWqa93THp
-        rHXIpcoImjlNs0g+sg3di2o=
-X-Google-Smtp-Source: ABdhPJwXGyiFwlJTNgi0iC6m1Ar4lC3vQXDwOYiT2Ha8Mwjs8VUcVJ7cPdCOD7pg7k+ICwf1UB/M+Q==
-X-Received: by 2002:a05:6a00:7c6:: with SMTP id n6mr30520985pfu.120.1593062689506;
-        Wed, 24 Jun 2020 22:24:49 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3c2a:73a9:c2cf:7f45])
-        by smtp.gmail.com with ESMTPSA id hv15sm6763798pjb.17.2020.06.24.22.24.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jun 2020 22:24:48 -0700 (PDT)
-Date:   Wed, 24 Jun 2020 22:24:46 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        Thu, 25 Jun 2020 06:02:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F0CB41F1;
+        Thu, 25 Jun 2020 03:02:12 -0700 (PDT)
+Received: from [10.37.12.83] (unknown [10.37.12.83])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E0EA3F73C;
+        Thu, 25 Jun 2020 03:02:10 -0700 (PDT)
+Subject: Re: brocken devfreq simple_ondemand for Odroid XU3/4?
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Willy Wolff <willy.mh.wolff.ml@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com
-Subject: Re: [PATCH v4 4/7] ACPI: button: Use input_device_enabled() helper
-Message-ID: <20200625052446.GF248110@dtor-ws>
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com>
- <20200608112211.12125-5-andrzej.p@collabora.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200623164733.qbhua7b6cg2umafj@macmini.local>
+ <CAJKOXPeLuq81NC2xZh3y32EB-_APbDAchZD4OW_eCgQKKO+p8w@mail.gmail.com>
+ <20200623191129.GA4171@kozik-lap>
+ <CGME20200624103308eucas1p188a5fe3cee1916d9430c9971c2dab3a3@eucas1p1.samsung.com>
+ <85f5a8c0-7d48-f2cd-3385-c56d662f2c88@arm.com>
+ <ef5184ed-00ff-4226-5ece-b0fc8eb16fb6@samsung.com>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <4a72fcab-e8da-8323-1fbe-98a6a4b3e0f1@arm.com>
+Date:   Thu, 25 Jun 2020 11:02:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200608112211.12125-5-andrzej.p@collabora.com>
+In-Reply-To: <ef5184ed-00ff-4226-5ece-b0fc8eb16fb6@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jun 08, 2020 at 01:22:08PM +0200, Andrzej Pietrasiewicz wrote:
-> A new helper is available, so use it.
-> 
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> ---
->  drivers/acpi/button.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
-> index ff7ab291f678..4deb2b48d03c 100644
-> --- a/drivers/acpi/button.c
-> +++ b/drivers/acpi/button.c
-> @@ -411,7 +411,7 @@ static void acpi_button_notify(struct acpi_device *device, u32 event)
->  		input = button->input;
->  		if (button->type == ACPI_BUTTON_TYPE_LID) {
->  			mutex_lock(&button->input->mutex);
-> -			users = button->input->users;
-> +			users = input_device_enabled(button->input);
->  			mutex_unlock(&button->input->mutex);
->  			if (users)
+Hi Sylwester,
 
-This chunk (pre-patch) is really wrong. 'users' value is obsolete and
-can not be trusted the moment we unlocked the mutex. "if" needs to be
-inside critical section.
-
->  				acpi_lid_update_state(device, true);
-> @@ -460,7 +460,7 @@ static int acpi_button_resume(struct device *dev)
->  
->  	button->suspended = false;
->  	mutex_lock(&input->mutex);
-> -	if (button->type == ACPI_BUTTON_TYPE_LID && input->users) {
-> +	if (button->type == ACPI_BUTTON_TYPE_LID && input_device_enabled(input)) {
->  		button->last_state = !!acpi_lid_evaluate_state(device);
->  		button->last_time = ktime_get();
->  		acpi_lid_initialize_state(device);
-> -- 
-> 2.17.1
+On 6/24/20 4:11 PM, Sylwester Nawrocki wrote:
+> Hi All,
+> 
+> On 24.06.2020 12:32, Lukasz Luba wrote:
+>> I had issues with devfreq governor which wasn't called by devfreq
+>> workqueue. The old DELAYED vs DEFERRED work discussions and my patches
+>> for it [1]. If the CPU which scheduled the next work went idle, the
+>> devfreq workqueue will not be kicked and devfreq governor won't check
+>> DMC status and will not decide to decrease the frequency based on low
+>> busy_time.
+>> The same applies for going up with the frequency. They both are
+>> done by the governor but the workqueue must be scheduled periodically.
+> 
+> As I have been working on resolving the video mixer IOMMU fault issue
+> described here: https://patchwork.kernel.org/patch/10861757
+> I did some investigation of the devfreq operation, mostly on Odroid U3.
+> 
+> My conclusions are similar to what Lukasz says above. I would like to add
+> that broken scheduling of the performance counters read and the devfreq
+> updates seems to have one more serious implication. In each call, which
+> normally should happen periodically with fixed interval we stop the counters,
+> read counter values and start the counters again. But if period between
+> calls becomes long enough to let any of the counters overflow, we will
+> get wrong performance measurement results. My observations are that
+> the workqueue job can be suspended for several seconds and conditions for
+> the counter overflow occur sooner or later, depending among others
+> on the CPUs load.
+> Wrong bus load measurement can lead to setting too low interconnect bus
+> clock frequency and then bad things happen in peripheral devices.
+> 
+> I agree the workqueue issue needs to be fixed. I have some WIP code to use
+> the performance counters overflow interrupts instead of SW polling and with
+> that the interconnect bus clock control seems to work much better.
 > 
 
-Thanks.
+Thank you for sharing your use case and investigation results. I think
+we are reaching a decent number of developers to maybe address this
+issue: 'workqueue issue needs to be fixed'.
+I have been facing this devfreq workqueue issue ~5 times in different
+platforms.
 
--- 
-Dmitry
+Regarding the 'performance counters overflow interrupts' there is one
+thing worth to keep in mind: variable utilization and frequency.
+For example, in order to make a conclusion in algorithm deciding that
+the device should increase or decrease the frequency, we fix the period
+of observation, i.e. to 500ms. That can cause the long delay if the
+utilization of the device suddenly drops. For example we set an
+overflow threshold to value i.e. 1000 and we know that at 1000MHz
+and full utilization (100%) the counter will reach that threshold
+after 500ms (which we want, because we don't want too many interrupts
+per sec). What if suddenly utilization drops to 2% (i.e. from 5GB/s
+to 250MB/s (what if it drops to 25MB/s?!)), the counter will reach the
+threshold after 50*500ms = 25s. It is impossible just for the counters
+to predict next utilization and adjust the threshold.
+To address that, we still need to have another mechanism (like watchdog)
+which will be triggered just to check if the threshold needs adjustment.
+This mechanism can be a local timer in the driver or a framework
+timer running kind of 'for loop' on all this type of devices (like
+the scheduled workqueue). In both cases in the system there will be
+interrupts, timers (even at workqueues) and scheduling.
+The approach to force developers to implement their local watchdog
+timers (or workqueues) in drivers is IMHO wrong and that's why we have
+frameworks.
+
+Regards,
+Lukasz
+
