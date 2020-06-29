@@ -2,193 +2,126 @@ Return-Path: <SRS0=5zmB=AK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94888C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2686DC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7418020724
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:00:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02D8D20776
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:08:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593464429;
-	bh=Lh3dzYXSrs+vBBw5yfOr7+OhUwSsd0+MyH/UH8tKOb0=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=cGhiJo9sJeK8gIrvY9Lr6U6ZoUXVpqCkVPHaEwiYtU25lDajpe4MUep58NSstSOYB
-	 6dvweQXtUAbTMXmWXwLAnmDz4TpEFpu5/c3eOvzfb7Oz4+XLPrsS3uYepN8E7sIdmC
-	 0nuNymugrAphcDVo4YO9qdmb6itHU44ZLwEZzE+c=
+	s=default; t=1593464916;
+	bh=f1aS4cZsNksB3LauE1ytRje/Ho2vh8OFZ9gcBrF7hoE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Uq1pcBRShJAlkJ4x9NSefMduRYl3n7mNp2RKnh31kdmFbD/swwWoslZEAF5a44vlT
+	 j4vSzv2B49cjomXczanVU6FXryO6hAj8W/cBt4cGtd6b0v0BIe1RaBEH623+DzWqJO
+	 8YB2kdsWHB3P7yAAtZ2b/V9erHpzyRvsaC79dee4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389993AbgF2VAY (ORCPT
+        id S2390409AbgF2VI1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 17:00:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52960 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387950AbgF2VAW (ORCPT
+        Mon, 29 Jun 2020 17:08:27 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38415 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390229AbgF2VIZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Jun 2020 17:00:22 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.195])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78E9B20720;
-        Mon, 29 Jun 2020 21:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593464421;
-        bh=Lh3dzYXSrs+vBBw5yfOr7+OhUwSsd0+MyH/UH8tKOb0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=kupGB0hbbgG6pMG1gVN5xphVJj+12dZ1xKSPlkX2A8B6AmtuglmspwxWi1U8a7rmS
-         79mcXRtRF3gL6cFZeOQ88ZKlMAQRyq8JphSQAhpOrzMsGg4cIhhTiJ1cvYqesf+Pql
-         PN7vnxw4+JHTNM1V+rrxLS8broP9JfjrOo74VD3Q=
+        Mon, 29 Jun 2020 17:08:25 -0400
+Received: by mail-ed1-f65.google.com with SMTP id n2so5209653edr.5;
+        Mon, 29 Jun 2020 14:08:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WVzOc0zshIAzur/W9UldDSamNUZIg6bYwU7gViF4xjM=;
+        b=XUXYJW1YjmtF6PwxsLRs3RzxxVAxAPl7iKRiELCzxj0g2cn0itGuB0hAxZWMlVWLz9
+         mB/GxGKY1TNMXWRU3RyUPszljbezvgimuF6zmQ0AUbEHJuhn5+x1GZYaLrRDElgjbSS7
+         tr0XrGMtbul0eR19pifhTezdUkD5WSsa7vIzIGTgYm2mpC0vO3G70xoKufwmcU+2ps1k
+         7xV+f1JuuXwcGNa+V4U00pMduOQX/3MwZ5Qe+fxzAnl5SjnNtYGamDSIL8apuZ/WdfZB
+         FrgtdWnROwzVaJs8oBJco62GMCT7Gck1SN5QKUVSVVl1OdVPJVU/Ub29R1fKnBhFF6X0
+         T9vw==
+X-Gm-Message-State: AOAM531cBYxiOkNeTnLFpykwfPa4/2XJFJMFgqXxfIHsM/ztjxcTxXHk
+        eAS3ol0jBFkx/OeDL/YUclE=
+X-Google-Smtp-Source: ABdhPJz7uJ34zkR7UdIcDmO5eQD/05KE/U7ACuTf+SbkMdyaKDXIEt+RJAAp/9n0LB1FcwdSrdDevA==
+X-Received: by 2002:aa7:d6cc:: with SMTP id x12mr11487518edr.354.1593464901568;
+        Mon, 29 Jun 2020 14:08:21 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.195])
+        by smtp.googlemail.com with ESMTPSA id q3sm736869eds.0.2020.06.29.14.08.19
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Jun 2020 14:08:20 -0700 (PDT)
+Date:   Mon, 29 Jun 2020 23:08:17 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <snawrocki@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2] ARM: dts: exynos: Fix missing empty reg/ranges property regulators on Trats
-Date:   Mon, 29 Jun 2020 22:59:48 +0200
-Message-Id: <20200629205948.32250-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+To:     "Alexander A. Klimov" <grandmaster@al2klimov.de>
+Cc:     corbet@lwn.net, aaro.koskinen@iki.fi, tony@atomide.com,
+        linux@armlinux.org.uk, daniel@zonque.org, haojian.zhuang@gmail.com,
+        robert.jarzmik@free.fr, kgene@kernel.org,
+        dmitry.torokhov@gmail.com, lee.jones@linaro.org,
+        wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org,
+        davem@davemloft.net, kuba@kernel.org, b.zolnierkie@samsung.com,
+        j.neuschaefer@gmx.net, mchehab+samsung@kernel.org,
+        gustavo@embeddedor.com, gregkh@linuxfoundation.org,
+        yanaijie@huawei.com, daniel.vetter@ffwll.ch,
+        rafael.j.wysocki@intel.com, Julia.Lawall@inria.fr,
+        linus.walleij@linaro.org, viresh.kumar@linaro.org, arnd@arndb.de,
+        jani.nikula@intel.com, yuehaibing@huawei.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
+        linux-parisc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH] Remove handhelds.org links and email addresses
+Message-ID: <20200629210817.GA32399@kozik-lap>
+References: <20200629203121.7892-1-grandmaster@al2klimov.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200629203121.7892-1-grandmaster@al2klimov.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Remove the regulators node entirely because its children do not have any
-unit addresses.  This fixes DTC warning:
+On Mon, Jun 29, 2020 at 10:31:21PM +0200, Alexander A. Klimov wrote:
+> Rationale:
+> https://lore.kernel.org/linux-doc/20200626110706.7b5d4a38@lwn.net/
+> 
+> Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
+> ---
+>  @Jon I thought about what I said and *no*, unfortunately I *can't* automate
+>  the detection of such as easy as the HTTPSifying. As you maybe see below
+>  cleaning up is even "harder".
+> 
+>  We have only 17 files and one domain here. Shall I split it up per subsystem
+>  or can we let it as is?
+> 
+>  Documentation/arm/sa1100/assabet.rst           |  2 --
+>  Documentation/arm/samsung-s3c24xx/h1940.rst    | 10 ----------
+>  Documentation/arm/samsung-s3c24xx/overview.rst |  3 +--
+>  Documentation/arm/samsung-s3c24xx/smdk2440.rst |  4 ----
+>  arch/arm/mach-omap1/Kconfig                    |  4 +---
+>  arch/arm/mach-pxa/h5000.c                      |  2 +-
+>  arch/arm/mach-s3c24xx/mach-h1940.c             |  2 --
+>  arch/arm/mach-s3c24xx/mach-n30.c               |  3 ---
+>  arch/arm/mach-s3c24xx/mach-rx3715.c            |  2 --
 
-    Warning (simple_bus_reg): /regulators/regulator-0: missing or empty reg/ranges property
+For s3c24xx, I am fine taking it through docs tree:
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Otherwise, after splitting, I could take the s3c-24xx bits.
 
----
+Best regards,
+Krzysztof
 
-Changes since v1:
-1. Remove the node, not only compatible, as pointed out by Sylwester.
----
- arch/arm/boot/dts/exynos4210-trats.dts | 98 ++++++++++++--------------
- 1 file changed, 47 insertions(+), 51 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index 3d791db6095c..5cc96f04a4fa 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -30,62 +30,58 @@
- 		stdout-path = "serial2:115200n8";
- 	};
- 
--	regulators {
--		compatible = "simple-bus";
--
--		vemmc_reg: regulator-0 {
--			compatible = "regulator-fixed";
--			regulator-name = "VMEM_VDD_2.8V";
--			regulator-min-microvolt = <2800000>;
--			regulator-max-microvolt = <2800000>;
--			gpio = <&gpk0 2 GPIO_ACTIVE_HIGH>;
--			enable-active-high;
--		};
-+	vemmc_reg: regulator-0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VMEM_VDD_2.8V";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		gpio = <&gpk0 2 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- 
--		tsp_reg: regulator-1 {
--			compatible = "regulator-fixed";
--			regulator-name = "TSP_FIXED_VOLTAGES";
--			regulator-min-microvolt = <2800000>;
--			regulator-max-microvolt = <2800000>;
--			gpio = <&gpl0 3 GPIO_ACTIVE_HIGH>;
--			enable-active-high;
--		};
-+	tsp_reg: regulator-1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "TSP_FIXED_VOLTAGES";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		gpio = <&gpl0 3 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- 
--		cam_af_28v_reg: regulator-2 {
--			compatible = "regulator-fixed";
--			regulator-name = "8M_AF_2.8V_EN";
--			regulator-min-microvolt = <2800000>;
--			regulator-max-microvolt = <2800000>;
--			gpio = <&gpk1 1 GPIO_ACTIVE_HIGH>;
--			enable-active-high;
--		};
-+	cam_af_28v_reg: regulator-2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "8M_AF_2.8V_EN";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		gpio = <&gpk1 1 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- 
--		cam_io_en_reg: regulator-3 {
--			compatible = "regulator-fixed";
--			regulator-name = "CAM_IO_EN";
--			regulator-min-microvolt = <2800000>;
--			regulator-max-microvolt = <2800000>;
--			gpio = <&gpe2 1 GPIO_ACTIVE_HIGH>;
--			enable-active-high;
--		};
-+	cam_io_en_reg: regulator-3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "CAM_IO_EN";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		gpio = <&gpe2 1 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- 
--		cam_io_12v_reg: regulator-4 {
--			compatible = "regulator-fixed";
--			regulator-name = "8M_1.2V_EN";
--			regulator-min-microvolt = <1200000>;
--			regulator-max-microvolt = <1200000>;
--			gpio = <&gpe2 5 GPIO_ACTIVE_HIGH>;
--			enable-active-high;
--		};
-+	cam_io_12v_reg: regulator-4 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "8M_1.2V_EN";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		gpio = <&gpe2 5 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- 
--		vt_core_15v_reg: regulator-5 {
--			compatible = "regulator-fixed";
--			regulator-name = "VT_CORE_1.5V";
--			regulator-min-microvolt = <1500000>;
--			regulator-max-microvolt = <1500000>;
--			gpio = <&gpe2 2 GPIO_ACTIVE_HIGH>;
--			enable-active-high;
--		};
-+	vt_core_15v_reg: regulator-5 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VT_CORE_1.5V";
-+		regulator-min-microvolt = <1500000>;
-+		regulator-max-microvolt = <1500000>;
-+		gpio = <&gpe2 2 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
- 	};
- 
- 	gpio-keys {
--- 
-2.17.1
-
+>  drivers/input/keyboard/gpio_keys.c             |  2 +-
+>  drivers/input/keyboard/jornada720_kbd.c        |  2 +-
+>  drivers/input/touchscreen/jornada720_ts.c      |  2 +-
+>  drivers/mfd/asic3.c                            |  2 +-
+>  drivers/mmc/host/renesas_sdhi_core.c           |  2 +-
+>  drivers/net/ethernet/dec/tulip/de4x5.c         |  1 -
+>  drivers/video/fbdev/sa1100fb.c                 |  2 +-
+>  include/linux/apm-emulation.h                  |  2 --
+>  17 files changed, 9 insertions(+), 38 deletions(-)
