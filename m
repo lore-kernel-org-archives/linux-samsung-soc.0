@@ -7,112 +7,188 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28073C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94888C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01307207FB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7418020724
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593464152;
-	bh=pNN4gqHLLPuHdeY3rwPqJyTQ2QEC0Lul2Iwl6qbr9EI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Yd1zQT+BqJydxQt+ttM5xW3HcUPjasxXJrI/xDkuq9aCzn4lpug8w8qCdrXw5BhFD
-	 RP72EymOfCs4GwVq5FjTpfyaRcp1bw56BMtRXDZT1HjltV1HWo3+mOKV2VGeEYMi6s
-	 2L8QAWkD7UEDlNj5oMzPt0//TKt0BBoE0SH+5D8U=
+	s=default; t=1593464429;
+	bh=Lh3dzYXSrs+vBBw5yfOr7+OhUwSsd0+MyH/UH8tKOb0=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=cGhiJo9sJeK8gIrvY9Lr6U6ZoUXVpqCkVPHaEwiYtU25lDajpe4MUep58NSstSOYB
+	 6dvweQXtUAbTMXmWXwLAnmDz4TpEFpu5/c3eOvzfb7Oz4+XLPrsS3uYepN8E7sIdmC
+	 0nuNymugrAphcDVo4YO9qdmb6itHU44ZLwEZzE+c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389930AbgF2Uzh (ORCPT
+        id S2389993AbgF2VAY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 16:55:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50068 "EHLO mail.kernel.org"
+        Mon, 29 Jun 2020 17:00:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389927AbgF2Uzf (ORCPT
+        id S2387950AbgF2VAW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Jun 2020 16:55:35 -0400
+        Mon, 29 Jun 2020 17:00:22 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.195])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 902FE2071A;
-        Mon, 29 Jun 2020 20:55:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78E9B20720;
+        Mon, 29 Jun 2020 21:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593464134;
-        bh=pNN4gqHLLPuHdeY3rwPqJyTQ2QEC0Lul2Iwl6qbr9EI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=keBqJYOJt7lQ3wq5+ooET7lVHtr3HdVUlgPPhGUUcOofQzcqlTUPTA5XcJeXik/rL
-         /Q3EtkyMg5Bxw/wIifvT9a4Q8vbUwv3yUBe1+8g4VHtOY33GvIWFWnqnYI50tq985Z
-         uwWeJHbuBciXzFgNO7iijoqXkWG9Qw4GRfIkzZUg=
+        s=default; t=1593464421;
+        bh=Lh3dzYXSrs+vBBw5yfOr7+OhUwSsd0+MyH/UH8tKOb0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=kupGB0hbbgG6pMG1gVN5xphVJj+12dZ1xKSPlkX2A8B6AmtuglmspwxWi1U8a7rmS
+         79mcXRtRF3gL6cFZeOQ88ZKlMAQRyq8JphSQAhpOrzMsGg4cIhhTiJ1cvYqesf+Pql
+         PN7vnxw4+JHTNM1V+rrxLS8broP9JfjrOo74VD3Q=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
+To:     Sylwester Nawrocki <snawrocki@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH 2/4] arm64: dts: exynos: Remove generic arm,armv8-pmuv3 compatible
-Date:   Mon, 29 Jun 2020 22:44:40 +0200
-Message-Id: <20200629204442.17336-2-krzk@kernel.org>
+        Pankaj Dubey <pankaj.dubey@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2] ARM: dts: exynos: Fix missing empty reg/ranges property regulators on Trats
+Date:   Mon, 29 Jun 2020 22:59:48 +0200
+Message-Id: <20200629205948.32250-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200629204442.17336-1-krzk@kernel.org>
-References: <20200629204442.17336-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The ARM PMU node is described enough with first compatible so remove the
-arm,armv8-pmuv3 to fix dtschema warnings like:
+Remove the regulators node entirely because its children do not have any
+unit addresses.  This fixes DTC warning:
 
-    arm-pmu: compatible: Additional items are not allowed ('arm,armv8-pmuv3' was unexpected)
-    arm-pmu: compatible: ['arm,cortex-a57-pmu', 'arm,armv8-pmuv3'] is too long
+    Warning (simple_bus_reg): /regulators/regulator-0: missing or empty reg/ranges property
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 ---
 
-Not tested although no effect expected.
+Changes since v1:
+1. Remove the node, not only compatible, as pointed out by Sylwester.
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 4 ++--
- arch/arm64/boot/dts/exynos/exynos7.dtsi    | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/exynos4210-trats.dts | 98 ++++++++++++--------------
+ 1 file changed, 47 insertions(+), 51 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index ebe089469b5f..57b433a1c900 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -24,7 +24,7 @@
- 	interrupt-parent = <&gic>;
- 
- 	arm_a53_pmu {
--		compatible = "arm,cortex-a53-pmu", "arm,armv8-pmuv3";
-+		compatible = "arm,cortex-a53-pmu";
- 		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
-@@ -33,7 +33,7 @@
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index 3d791db6095c..5cc96f04a4fa 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -30,62 +30,58 @@
+ 		stdout-path = "serial2:115200n8";
  	};
  
- 	arm_a57_pmu {
--		compatible = "arm,cortex-a57-pmu", "arm,armv8-pmuv3";
-+		compatible = "arm,cortex-a57-pmu";
- 		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index 523547b3d539..96ed93a21e40 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -29,7 +29,7 @@
+-	regulators {
+-		compatible = "simple-bus";
+-
+-		vemmc_reg: regulator-0 {
+-			compatible = "regulator-fixed";
+-			regulator-name = "VMEM_VDD_2.8V";
+-			regulator-min-microvolt = <2800000>;
+-			regulator-max-microvolt = <2800000>;
+-			gpio = <&gpk0 2 GPIO_ACTIVE_HIGH>;
+-			enable-active-high;
+-		};
++	vemmc_reg: regulator-0 {
++		compatible = "regulator-fixed";
++		regulator-name = "VMEM_VDD_2.8V";
++		regulator-min-microvolt = <2800000>;
++		regulator-max-microvolt = <2800000>;
++		gpio = <&gpk0 2 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
+ 
+-		tsp_reg: regulator-1 {
+-			compatible = "regulator-fixed";
+-			regulator-name = "TSP_FIXED_VOLTAGES";
+-			regulator-min-microvolt = <2800000>;
+-			regulator-max-microvolt = <2800000>;
+-			gpio = <&gpl0 3 GPIO_ACTIVE_HIGH>;
+-			enable-active-high;
+-		};
++	tsp_reg: regulator-1 {
++		compatible = "regulator-fixed";
++		regulator-name = "TSP_FIXED_VOLTAGES";
++		regulator-min-microvolt = <2800000>;
++		regulator-max-microvolt = <2800000>;
++		gpio = <&gpl0 3 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
+ 
+-		cam_af_28v_reg: regulator-2 {
+-			compatible = "regulator-fixed";
+-			regulator-name = "8M_AF_2.8V_EN";
+-			regulator-min-microvolt = <2800000>;
+-			regulator-max-microvolt = <2800000>;
+-			gpio = <&gpk1 1 GPIO_ACTIVE_HIGH>;
+-			enable-active-high;
+-		};
++	cam_af_28v_reg: regulator-2 {
++		compatible = "regulator-fixed";
++		regulator-name = "8M_AF_2.8V_EN";
++		regulator-min-microvolt = <2800000>;
++		regulator-max-microvolt = <2800000>;
++		gpio = <&gpk1 1 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
+ 
+-		cam_io_en_reg: regulator-3 {
+-			compatible = "regulator-fixed";
+-			regulator-name = "CAM_IO_EN";
+-			regulator-min-microvolt = <2800000>;
+-			regulator-max-microvolt = <2800000>;
+-			gpio = <&gpe2 1 GPIO_ACTIVE_HIGH>;
+-			enable-active-high;
+-		};
++	cam_io_en_reg: regulator-3 {
++		compatible = "regulator-fixed";
++		regulator-name = "CAM_IO_EN";
++		regulator-min-microvolt = <2800000>;
++		regulator-max-microvolt = <2800000>;
++		gpio = <&gpe2 1 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
+ 
+-		cam_io_12v_reg: regulator-4 {
+-			compatible = "regulator-fixed";
+-			regulator-name = "8M_1.2V_EN";
+-			regulator-min-microvolt = <1200000>;
+-			regulator-max-microvolt = <1200000>;
+-			gpio = <&gpe2 5 GPIO_ACTIVE_HIGH>;
+-			enable-active-high;
+-		};
++	cam_io_12v_reg: regulator-4 {
++		compatible = "regulator-fixed";
++		regulator-name = "8M_1.2V_EN";
++		regulator-min-microvolt = <1200000>;
++		regulator-max-microvolt = <1200000>;
++		gpio = <&gpe2 5 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
+ 
+-		vt_core_15v_reg: regulator-5 {
+-			compatible = "regulator-fixed";
+-			regulator-name = "VT_CORE_1.5V";
+-			regulator-min-microvolt = <1500000>;
+-			regulator-max-microvolt = <1500000>;
+-			gpio = <&gpe2 2 GPIO_ACTIVE_HIGH>;
+-			enable-active-high;
+-		};
++	vt_core_15v_reg: regulator-5 {
++		compatible = "regulator-fixed";
++		regulator-name = "VT_CORE_1.5V";
++		regulator-min-microvolt = <1500000>;
++		regulator-max-microvolt = <1500000>;
++		gpio = <&gpe2 2 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
  	};
  
- 	arm-pmu {
--		compatible = "arm,cortex-a57-pmu", "arm,armv8-pmuv3";
-+		compatible = "arm,cortex-a57-pmu";
- 		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
+ 	gpio-keys {
 -- 
 2.17.1
 
