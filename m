@@ -2,120 +2,94 @@ Return-Path: <SRS0=5zmB=AK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A6FC433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3244C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 333A4206E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:52:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 845DC20724
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:55:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593463957;
-	bh=i9ZfBpzxB3oPpousxT2bRt0NotTChvxCXKkleB811bU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xKz8kBGHNjcwkwKfWHzS1FNhetu0Ti3t1/wUX8lBYyOmEUqRwY70SJJ7LbnQEjcXt
-	 +hyFtjLOUiGd4HZFWXcEKRFCxY2v/QJTA494duwY8JNyzjAJMwCUZogfEnODQ/d8MM
-	 db9lcrAV9ADhoM8ZrGTxHMUlEHr3CwGYOGlhBzg8=
+	s=default; t=1593464133;
+	bh=T0SH2MBau/vAFhm4Mhmw/Rl8QEln2vPcejd7VRcavP0=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=W6ggcmGG0biAdxehg/EI21AEmX/hQDGRMPX+aqUCRZ/VajP481sWAR6EdtJ+xbRgt
+	 Ft3yNwLCg1pTs9YfQr5yS46ZL0Q3eFgLutnGvBtiARKijHns2kimjAG+mYejwDI/IN
+	 +EDefwk8iBiOfHACwziEhzEBWdEpQxUSmvq0WL3M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731353AbgF2TNZ (ORCPT
+        id S2388344AbgF2Uzc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 15:13:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43384 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731325AbgF2TNU (ORCPT
+        Mon, 29 Jun 2020 16:55:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50014 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731454AbgF2Uzb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Jun 2020 15:13:20 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7B91C008751;
-        Mon, 29 Jun 2020 01:35:57 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id i14so15694087ejr.9;
-        Mon, 29 Jun 2020 01:35:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=P/lWBTxJeT64MmPuE+Y53vSa9wNIb6a3JKrDaGJpzms=;
-        b=tCNf8B6YWMeZ7MhUEoFAMQQAPNwFYbsz8eq/qIeXIgJQ6vdkn0041EqqTNOsLS+Ait
-         7avI8YxjJj1tMA/EiLLMs3kgCxbshsE+tLXz1Zkr/SQZY78jFK2GDRipp7jWGmZScS1m
-         x0YWXskl11/zTACK5IRnOR5tCmC5WpBc1ZRDVWTcj5RK5B2ZK2TB6YSmWsVCouXkc9fH
-         m3LrT8ZGR4If4XF5Ru3zfQMz5xoTV5WWhsbTlYl9M7mxn+MGHY4/MM234iegMFhaWdsp
-         uhOC0QCCdFbme+VmxGNE4aqPWc/SeAOABmuCY5wbNX3szwexaajOfxaWr/jw8Q8AH78H
-         wrqg==
-X-Gm-Message-State: AOAM533VCO9psoKWQ3lh3cxY3vt8aw0C/h3kyeoM21T5JpLGZtQXoefc
-        /JH67q0msfWvT/9U+Fkm30zhyXT3
-X-Google-Smtp-Source: ABdhPJwSpDThVjcEd0PgJHWyDlPf/nuRiq+gnvJcGaWZixD0/guW/6gO2OZBM23kPBf0l0OLqzgoxQ==
-X-Received: by 2002:a17:906:a1cc:: with SMTP id bx12mr12520655ejb.461.1593419756288;
-        Mon, 29 Jun 2020 01:35:56 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.195])
-        by smtp.googlemail.com with ESMTPSA id c4sm24101091ejb.17.2020.06.29.01.35.54
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Jun 2020 01:35:55 -0700 (PDT)
-Date:   Mon, 29 Jun 2020 10:35:53 +0200
+        Mon, 29 Jun 2020 16:55:31 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.195])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30AD4206F1;
+        Mon, 29 Jun 2020 20:55:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593464131;
+        bh=T0SH2MBau/vAFhm4Mhmw/Rl8QEln2vPcejd7VRcavP0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=t1BWymo2kEX9aAiUgSn2GQ0D3j7aGOybDuL2/rfkLTI7enjMFY/i8loN+XZ2jazK0
+         YUpCE6GQxcCy4gVj/UgZO6ojhnv/MdlQvZCwfYiQELKP/BgxRC3y0kyVKrav/L1HHo
+         tGDRmHzG9g0xTD6AzRds8jIprlK/Lq9oNvUAVJZc=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Tamseel Shams <m.shams@samsung.com>
-Cc:     kgene@kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alim.akhtar@samsung.com
-Subject: Re: [PATCH v2] serial: samsung: Re-factors UART IRQ resource for
- various Samsung SoC
-Message-ID: <20200629083553.GA14028@kozik-lap>
-References: <CGME20200628071932epcas5p175059c085421a95de76202767bd132cf@epcas5p1.samsung.com>
- <20200628070007.36222-1-m.shams@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200628070007.36222-1-m.shams@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH 1/4] arm64: dts: exynos: Add PWM interrupts on Exynos7
+Date:   Mon, 29 Jun 2020 22:44:39 +0200
+Message-Id: <20200629204442.17336-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Jun 28, 2020 at 12:30:07PM +0530, Tamseel Shams wrote:
-> In few older Samsung SoCs like s3c2410, s3c2412
-> and s3c2440, UART IP is having 2 interrupt lines.
-> However, in other SoCs like s3c6400, s5pv210,
-> exynos5433, and exynos4210 UART is having only 1
-> interrupt line. Due to this, "platform_get_irq(platdev, 1)"
-> call in the driver gives the following warning:
-> "IRQ index 1 not found" on recent platforms.
-> 
-> This patch re-factors the IRQ resources handling for
-> each platform and hence fixing the above warnings seen
-> on some platforms.
-> 
-> Signed-off-by: Tamseel Shams <m.shams@samsung.com>
-> ---
-> Removed the RFC tag and using 'platform_get_irq_optional'
-> instead of 'platform_get_irq' as per comment received from
-> Robin Murphy.
-> 
->  drivers/tty/serial/samsung_tty.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> index 6ef614d8648c..60554f42e208 100644
-> --- a/drivers/tty/serial/samsung_tty.c
-> +++ b/drivers/tty/serial/samsung_tty.c
-> @@ -60,6 +60,7 @@ struct s3c24xx_uart_info {
->  	char			*name;
->  	unsigned int		type;
->  	unsigned int		fifosize;
-> +	unsigned int		irq_cnt;
+Add required interrupts to PWM node on Exynos7.  This fixes DT schema
+warning:
 
-No, it's duplicating the logic.
+    pwm@136c0000: 'interrupts' is a required property
 
-The driver already checks whether SoC has two or one interrupt line with
-s3c24xx_serial_has_interrupt_mask() so there is no point to have two of
-such methods.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Instead unify it please. Probably entire
-s3c24xx_serial_has_interrupt_mask() and s3c24xx_serial_type() should be
-removed and switched into *serial_drv_data.
+---
 
-Best regards,
-Krzysztof
+Not tested
+---
+ arch/arm64/boot/dts/exynos/exynos7.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index f590891efe25..523547b3d539 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -581,6 +581,11 @@
+ 		pwm: pwm@136c0000 {
+ 			compatible = "samsung,exynos4210-pwm";
+ 			reg = <0x136c0000 0x100>;
++			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>;
+ 			samsung,pwm-outputs = <0>, <1>, <2>, <3>;
+ 			#pwm-cells = <3>;
+ 			clocks = <&clock_peric0 PCLK_PWM>;
+-- 
+2.17.1
+
