@@ -2,179 +2,155 @@ Return-Path: <SRS0=5zmB=AK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23269C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 01:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0504DC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 01:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFAF620760
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 01:41:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A088E206D7
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 01:54:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UUj8WJah"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vR1uHPzg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbgF2BlS (ORCPT
+        id S1726490AbgF2ByJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 28 Jun 2020 21:41:18 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:26837 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbgF2BlQ (ORCPT
+        Sun, 28 Jun 2020 21:54:09 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:45411 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726395AbgF2ByI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 28 Jun 2020 21:41:16 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200629014111epoutp02887b4c5d5486f8b333cbf933c8af1fa3~c4DGc-Nwd2319923199epoutp02P
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jun 2020 01:41:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200629014111epoutp02887b4c5d5486f8b333cbf933c8af1fa3~c4DGc-Nwd2319923199epoutp02P
+        Sun, 28 Jun 2020 21:54:08 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200629015405epoutp03b003003a1b7a0348d98d3d61697fa8f7~c4OXAAS_V2887128871epoutp03d
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jun 2020 01:54:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200629015405epoutp03b003003a1b7a0348d98d3d61697fa8f7~c4OXAAS_V2887128871epoutp03d
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1593394871;
-        bh=GBtYJ99sK8P3Saiy9sz/V5dmySEOt6so4nPOpaxOd1E=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=UUj8WJahrsDuezDABul+O8SWNVUMowOPFSORL06gANElWMIOTg7PY+xWUmRbxvG2k
-         QZjBa+GawFmQcomkI3Pd7lKksyGozWhFfsxhy4oJ+6+I3h+cu2oisoTKcUCk7/dMtm
-         KSxVtyd8mExScWxfqw7hz8b+SiDDsz6ItXGrmiJ0=
+        s=mail20170921; t=1593395645;
+        bh=F5wMqotweUPi0fA9ud39EPwhp1R9YVyhnQ08XUVHxkA=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=vR1uHPzgloqGG6tt+9YLwWO/RR/Mv+bJrvEegx4MwtiBS6q1WQdkt8wzXRhlV+ZEi
+         J7sR4WcA93EF5OSjXBl97SXN8bzz60xndKnaACkBFnjdrP6zdGW7IuSnN2xmZya2UA
+         /Dpq2FuHlIH0r6+qyteT+f35v3k4bGW69qMfkIUw=
 Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200629014110epcas1p23d5fd74dc3d119a8b3d762064f2f410c~c4DFUz-rO0780107801epcas1p20;
-        Mon, 29 Jun 2020 01:41:10 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.155]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 49w9Dy0rdbzMqYkj; Mon, 29 Jun
-        2020 01:41:06 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FD.19.29173.1B649FE5; Mon, 29 Jun 2020 10:41:05 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200629014105epcas1p4250936a7acd173c58c1b9d46ea80ca42~c4DAVz6v41819118191epcas1p45;
-        Mon, 29 Jun 2020 01:41:05 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200629014105epsmtrp1be4d84a978b4ca06b5cf07daeb95fa91~c4DAVCA5y0344703447epsmtrp1i;
-        Mon, 29 Jun 2020 01:41:05 +0000 (GMT)
-X-AuditID: b6c32a37-9b7ff700000071f5-1a-5ef946b17701
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20200629015405epcas1p3b55696aa0f82e10052a18d2c996913cc~c4OWrpCmC1112111121epcas1p3D;
+        Mon, 29 Jun 2020 01:54:05 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 49w9Wv6yFfzMqYkb; Mon, 29 Jun
+        2020 01:54:03 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        19.6B.28581.8B949FE5; Mon, 29 Jun 2020 10:54:00 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200629015359epcas1p23157f5c5c4468ed2c09ce894bcd6d932~c4ORbRsdR2599925999epcas1p2-;
+        Mon, 29 Jun 2020 01:53:59 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200629015359epsmtrp2dd7f3b018d2ed5112aeb7d29c1e4d8c7~c4ORas3571671316713epsmtrp2H;
+        Mon, 29 Jun 2020 01:53:59 +0000 (GMT)
+X-AuditID: b6c32a38-2cdff70000006fa5-f7-5ef949b8179b
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        71.AF.08303.1B649FE5; Mon, 29 Jun 2020 10:41:05 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        52.CD.08382.7B949FE5; Mon, 29 Jun 2020 10:53:59 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.211]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200629014105epsmtip18c8499fe2aa0957f7e901300ddd9a1d3~c4DAHua4z0859808598epsmtip1D;
-        Mon, 29 Jun 2020 01:41:05 +0000 (GMT)
-Subject: Re: brocken devfreq simple_ondemand for Odroid XU3/4?
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Willy Wolff <willy.mh.wolff.ml@gmail.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <d66c7aba-c335-db12-5bb6-2b560422a3f7@samsung.com>
-Date:   Mon, 29 Jun 2020 10:52:17 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
-MIME-Version: 1.0
-In-Reply-To: <ef5184ed-00ff-4226-5ece-b0fc8eb16fb6@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmru5Gt59xBlMu2Fj0P37NbHH+/AZ2
-        i7NNb9gtNj2+xmpxedccNovPvUcYLWac38dksbCphd3iduMKNovDb9pZLb6deMTowO2xZt4a
-        Ro+ds+6ye2xa1cnmsXlJvUffllWMHp83yQWwRWXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5ua
-        GRjqGlpamCsp5CXmptoqufgE6Lpl5gCdp6RQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUot
-        SMkpsCzQK07MLS7NS9dLzs+1MjQwMDIFKkzIzpjw7SBrQatAxaIJS5gaGD/wdDFyckgImEjM
-        nNnE3sXIxSEksINRYsrs+UwQzidGiRt3rrFAOJ8ZJZq/7GKEaTm+/y1UYhejxLGtE6D63zNK
-        LLlxkhmkSljATmL+tV2sIAkRgRWMEm9OLWIEcZgFjjJJ7Go6xgJSxSagJbH/xQ02EJtfQFHi
-        6o/HYDt4gbq3POlmBbFZBFQlLnYtBZsqKhAmcXJbC1SNoMTJmU/A5nAK2EvMbN0JVsMsIC5x
-        6wnIFyC2vMT2t3OYQRZLCBzhkPh28BELxBMuEnNaGqAeEpZ4dXwLO4QtJfGyvw3KrpZYefII
-        G0RzB6PElv0XWCESxhL7l04G2sABtEFTYv0ufYiwosTO33MZIRbzSbz72sMKUiIhwCvR0SYE
-        UaIscfnBXSYIW1JicXsn2wRGpVlI3pmF5IVZSF6YhbBsASPLKkax1ILi3PTUYsMCY+QI38QI
-        Tr1a5jsYp739oHeIkYmD8RCjBAezkgjvZ+tvcUK8KYmVValF+fFFpTmpxYcYTYEBPJFZSjQ5
-        H5j880riDU2NjI2NLUwMzUwNDZXEeX2tLsQJCaQnlqRmp6YWpBbB9DFxcEo1MBVfyV/Pqh2m
-        ZqI52zIucfu6CZrmln17l3tPFG3UmtbpHtTUMLGF4VRc5tcn/xOMGt91/4pM8voWNvVWxb5r
-        i4U/210847vgbo/ohS8XChY9v/Y/vKglLeY/70LBmh9Wbx9rT0u/F7N0hcA1+86EjpZ8N4Zj
-        Mp/nW3vc/XtbxuHVwuOxctmXFrFy89xU2cR6sGC/T+bD03bLb/KbN7JlPGFuf/+muWKadtQ/
-        78bgLce+97Vut9ZUFHtzsjsvwUrjoMeyH48N9mpVNV9+eko+edbhpB9O/4IkX32YduWw+os7
-        O+54eb+qnsPw7tT0W8EGZusOfy5piv9xd/0Zg3n8aSnz5Ao23NqXv4glw7l9z3clluKMREMt
-        5qLiRADlueccRgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsWy7bCSnO5Gt59xBtd/8Fn0P37NbHH+/AZ2
-        i7NNb9gtNj2+xmpxedccNovPvUcYLWac38dksbCphd3iduMKNovDb9pZLb6deMTowO2xZt4a
-        Ro+ds+6ye2xa1cnmsXlJvUffllWMHp83yQWwRXHZpKTmZJalFunbJXBlTPh2kLWgVaBi0YQl
-        TA2MH3i6GDk5JARMJI7vf8vSxcjFISSwg1Hi9PJn7BAJSYlpF48ydzFyANnCEocPF0PUvGWU
-        mND9hwmkRljATmL+tV2sIAkRgRWMErc2/gZzmAWOM0msfb+BGaLlAZPE1nV7wVrYBLQk9r+4
-        wQZi8wsoSlz98ZgRxOYFGrXlSTcriM0ioCpxsWspM4gtKhAmsXPJYyaIGkGJkzOfsIDYnAL2
-        EjNbd4LVMAuoS/yZdwnKFpe49WQ+E4QtL7H97RzmCYzCs5C0z0LSMgtJyywkLQsYWVYxSqYW
-        FOem5xYbFhjlpZbrFSfmFpfmpesl5+duYgTHoJbWDsY9qz7oHWJk4mA8xCjBwawkwvvZ+luc
-        EG9KYmVValF+fFFpTmrxIUZpDhYlcd6vsxbGCQmkJ5akZqemFqQWwWSZODilGpjs9ZW2PJ0j
-        JDCh9ZYj44KQm3ZcJ3pjveb82B8nahx+cIlBo6DQIsW7OzmUdoduYFR+lVaTyXeozHLnhXnz
-        5VI43n5NWv52bePh9U8+6e4zu8UTnPlS9PrfT3HOHcrNuu/zrA1emi9bNTdq+eS3S/fcjNCX
-        PXKQ6ey5GUtus11Lu8X9V1lip+EqflPjsDaLxYZZsmb997K8Pvz9ldw97ciOoJs9DAmWfq7C
-        ueV8rhcbt/zc+FNuw8qq2SdvLdsRHys6MZh3BU995t9cuYbmI745Nw5MWH9giY7kCQbWRqt3
-        5c/37zsfuGDJ0XWsRlr5S+6fXMdSbexr9S+GK6si53CpnPKS4y5yN+LD4/aHXPyoxFKckWio
-        xVxUnAgAV5adLjADAAA=
-X-CMS-MailID: 20200629014105epcas1p4250936a7acd173c58c1b9d46ea80ca42
+        20200629015359epsmtip1caa5f1f18fc968e18170ea1ca2f1dacb~c4ORRRmzg1657016570epsmtip1H;
+        Mon, 29 Jun 2020 01:53:59 +0000 (GMT)
+From:   Inki Dae <inki.dae@samsung.com>
+To:     airlied@linux.ie
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-fixes
+Date:   Mon, 29 Jun 2020 10:59:48 +0900
+Message-Id: <1593395988-4612-1-git-send-email-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAKsWRmVeSWpSXmKPExsWy7bCmge4Oz59xBn0LeSx6z51ksrjy9T2b
+        xYzz+5gcmD22f3vA6nG/+ziTx+dNcgHMUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6
+        hpYW5koKeYm5qbZKLj4Bum6ZOUCLlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkF
+        lgV6xYm5xaV56XrJ+blWhgYGRqZAhQnZGT17l7AUNPBU/Dy4l72BsYWri5GDQ0LAROL8X8su
+        Ri4OIYEdjBLNC5axdTFyAjmfGCUmNYRAJL4xSuzeeJQZJAHSML/3JTNEYi+jxNS9a6CcL4wS
+        i3/uZQSpYhNQlZi44j7YKBEBEYnjy/6C2cwCbhJ/lp5lAVktLKAicWAiH0iYBaj8eMNuJhCb
+        V8BZ4vn5k6wQy+Qkbp7rhFr8n01i6qxqCNtF4tjLFVA1whKvjm9hh7ClJD6/28sGco+EQDOj
+        xMQZp5kgnA5GibuPr7NAVBlL7F86mQnkCGYBTYn1u/QhwooSO3/PZYS4k0/i3dceVkgQ8Up0
+        tAlBlChJHLt4gxHClpC4sGQiG4TtIdH46y4zJORiJV7M2M8+gVF2FsKCBYyMqxjFUguKc9NT
+        iw0LTJDjaBMjOOloWexgnPv2g94hRiYOxkOMEhzMSiK8n62/xQnxpiRWVqUW5ccXleakFh9i
+        NAUG2ERmKdHkfGDayyuJNzQ1MjY2tjAxNDM1NFQS5z1pdSFOSCA9sSQ1OzW1ILUIpo+Jg1Oq
+        gWnW3WDP3Qe2x11bu/zR1a+T96r2dqa1S/oePhi7PGnh7Opk54AZH9v07QMuN0lpGC/Z47m/
+        b/cdxZQbqi+etYtMWvt0Xfc787rdK//PqrPteiuWax8llHdsOvMXpq+L7T68cy50XlC5mEF1
+        Uebx0El2QdWrVmRvsLc8WXtX/8MVtnfWzctMLfcq7isJ1D5er8931/D0hESLyHOep4+s9unm
+        PyV5f2rOKhb+Tx9iqjlaVfwcfb4sMOA6c/r33Yfyt26yPFyW5DJRK7l8r69fgqnQDvd5Dd73
+        pvevn8nk9qVPT2q7z5ErK/1+PHq96ZTqhwm7fjKensV23HdRgnuW24QLabVhT6avuLwucNHV
+        6al2SizFGYmGWsxFxYkA2obI4cMDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHJMWRmVeSWpSXmKPExsWy7bCSnO52z59xBtOmyln0njvJZHHl63s2
+        ixnn9zE5MHts//aA1eN+93Emj8+b5AKYo7hsUlJzMstSi/TtErgyevYuYSlo4Kn4eXAvewNj
+        C1cXIyeHhICJxPzel8xdjFwcQgK7GSX+ru0CcjiAEhISW7ZyQJjCEocPF0OUfGKUONj4hx2k
+        l01AVWLiivtsILaIgIjE8WV/wWxmAQ+J93tWs4P0CguoSByYyAcSZgEqP96wmwnE5hVwlnh+
+        /iQrxAlyEjfPdTJPYORZwMiwilEytaA4Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMjOAi0NHcw
+        bl/1Qe8QIxMH4yFGCQ5mJRHez9bf4oR4UxIrq1KL8uOLSnNSiw8xSnOwKInz3ihcGCckkJ5Y
+        kpqdmlqQWgSTZeLglGpgynFv6eJ5ucFf+bdSntfTiVce3t/t/jV1jW+z0ZzsWeYsVzQm291v
+        LdasFBDoUm3j9NZ5bv2gbdYDQ93nyzbOaeY8t/u117Ow25YsIZ5fZ59Vb8t95HhkZaNO2R7D
+        +G8bXl+YqxunWdTnG8h4fGptyGvJi7MTDp58/KlgwxqV7PxFBf/OPez7bC6pt5Dn5oa96ydE
+        lSyoOfPvvpOS1Lol+o43pYIqfxYbfAw+xh9naX/yV47p1/T/rAcLTduePVF7XCt4c5+fCc+L
+        17MF/y0W9JoquMF84q6IrSUHBZ6oSJ06HF918ZpGWf31qjj5BQWbQx/ZM2ma2fBs32jdWOM/
+        64PrwvjH/8QzNj43PrKJUYmlOCPRUIu5qDgRAAFjiNdxAgAA
+X-CMS-MailID: 20200629015359epcas1p23157f5c5c4468ed2c09ce894bcd6d932
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200624103308eucas1p188a5fe3cee1916d9430c9971c2dab3a3
-References: <20200623164733.qbhua7b6cg2umafj@macmini.local>
-        <CAJKOXPeLuq81NC2xZh3y32EB-_APbDAchZD4OW_eCgQKKO+p8w@mail.gmail.com>
-        <20200623191129.GA4171@kozik-lap>
-        <CGME20200624103308eucas1p188a5fe3cee1916d9430c9971c2dab3a3@eucas1p1.samsung.com>
-        <85f5a8c0-7d48-f2cd-3385-c56d662f2c88@arm.com>
-        <ef5184ed-00ff-4226-5ece-b0fc8eb16fb6@samsung.com>
+X-CMS-RootMailID: 20200629015359epcas1p23157f5c5c4468ed2c09ce894bcd6d932
+References: <CGME20200629015359epcas1p23157f5c5c4468ed2c09ce894bcd6d932@epcas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
+Hi Dave,
 
-On 6/25/20 12:11 AM, Sylwester Nawrocki wrote:
-> Hi All,
-> 
-> On 24.06.2020 12:32, Lukasz Luba wrote:
->> I had issues with devfreq governor which wasn't called by devfreq
->> workqueue. The old DELAYED vs DEFERRED work discussions and my patches
->> for it [1]. If the CPU which scheduled the next work went idle, the
->> devfreq workqueue will not be kicked and devfreq governor won't check
->> DMC status and will not decide to decrease the frequency based on low
->> busy_time.
->> The same applies for going up with the frequency. They both are
->> done by the governor but the workqueue must be scheduled periodically.
-> 
-> As I have been working on resolving the video mixer IOMMU fault issue
-> described here: https://patchwork.kernel.org/patch/10861757
-> I did some investigation of the devfreq operation, mostly on Odroid U3.
-> 
-> My conclusions are similar to what Lukasz says above. I would like to add
-> that broken scheduling of the performance counters read and the devfreq 
-> updates seems to have one more serious implication. In each call, which
-> normally should happen periodically with fixed interval we stop the counters, 
-> read counter values and start the counters again. But if period between 
-> calls becomes long enough to let any of the counters overflow, we will
-> get wrong performance measurement results. My observations are that 
-> the workqueue job can be suspended for several seconds and conditions for 
-> the counter overflow occur sooner or later, depending among others 
-> on the CPUs load.
-> Wrong bus load measurement can lead to setting too low interconnect bus 
-> clock frequency and then bad things happen in peripheral devices.
-> 
-> I agree the workqueue issue needs to be fixed. I have some WIP code to use
-> the performance counters overflow interrupts instead of SW polling and with 
+   Just one cleanup and two fixups.
 
-It is good way to resolve the overflow issue.
+   Please kindly let me know if there is any problem.
 
-> that the interconnect bus clock control seems to work much better.
->
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Thanks,
+Inki Dae
+
+The following changes since commit 687a0ed337367be5267652af5f6dbcfc954b8732:
+
+  Merge tag 'drm-misc-fixes-2020-06-25' of git://anongit.freedesktop.org/drm/drm-misc into drm-fixes (2020-06-26 13:49:17 +1000)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v5.8-rc4
+
+for you to fetch changes up to d4f5a095daf0d25f0b385e1ef26338608433a4c5:
+
+  drm/exynos: fix ref count leak in mic_pre_enable (2020-06-29 09:38:41 +0900)
+
+----------------------------------------------------------------
+Two fixups
+- It fixes wrong return value by returing proper error value instead of
+  fixed one.
+- It fixes ref count leak in mic_pre_enable.
+One cleanup
+- It removes dev_err() call on platform_get_irq() failure because
+  platform_get_irq() call dev_err() itself on failure.
+
+----------------------------------------------------------------
+Marek Szyprowski (1):
+      drm/exynos: Properly propagate return value in drm_iommu_attach_device()
+
+Navid Emamdoost (1):
+      drm/exynos: fix ref count leak in mic_pre_enable
+
+Tamseel Shams (1):
+      drm/exynos: Remove dev_err() on platform_get_irq() failure
+
+ drivers/gpu/drm/exynos/exynos_drm_dma.c | 4 ++--
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c | 1 -
+ drivers/gpu/drm/exynos/exynos_drm_mic.c | 4 +++-
+ 3 files changed, 5 insertions(+), 4 deletions(-)
