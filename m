@@ -4,110 +4,118 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79854C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A6FC433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5949B20768
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:47:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 333A4206E2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:52:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593463634;
-	bh=1FzB/rHDbLCFiaQrrcup6dDILllaEDSN7udkmW8GdHs=;
+	s=default; t=1593463957;
+	bh=i9ZfBpzxB3oPpousxT2bRt0NotTChvxCXKkleB811bU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xs7nvYZNkJrbWDcwKz3YpVLh6DTWIbGIwUDrFR3lmwU0iYgWi8FV4EZPkZPpgkFKO
-	 M5uNxFlm/Upze376bh/msCRqHvRy6IOuu5iZtev6+BS7+6TPHLIZlX5q07sgkOaAbl
-	 AwvQ2fF9YEVe7oXAT2wnRwF7kZuqM7sWoUSFNt5M=
+	b=xKz8kBGHNjcwkwKfWHzS1FNhetu0Ti3t1/wUX8lBYyOmEUqRwY70SJJ7LbnQEjcXt
+	 +hyFtjLOUiGd4HZFWXcEKRFCxY2v/QJTA494duwY8JNyzjAJMwCUZogfEnODQ/d8MM
+	 db9lcrAV9ADhoM8ZrGTxHMUlEHr3CwGYOGlhBzg8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730650AbgF2UrK (ORCPT
+        id S1731353AbgF2TNZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 16:47:10 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37535 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389751AbgF2Uqr (ORCPT
+        Mon, 29 Jun 2020 15:13:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43384 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731325AbgF2TNU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Jun 2020 16:46:47 -0400
-Received: by mail-ed1-f65.google.com with SMTP id g20so13961170edm.4;
-        Mon, 29 Jun 2020 13:46:46 -0700 (PDT)
+        Mon, 29 Jun 2020 15:13:20 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7B91C008751;
+        Mon, 29 Jun 2020 01:35:57 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id i14so15694087ejr.9;
+        Mon, 29 Jun 2020 01:35:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fpPGAVi5ST0Msn1ZYb/hxyyJfD9nRccBP2hwCtuMGbQ=;
-        b=i7GMMqckeMJNgqcvezDmEvoJHQUY/MZrJ8k2hDVJGSw5KRWzu2RVsOe1O8nIOhOGNv
-         GPy0KUcL//XG4ESPqqiGITqL1CB25ar0ClG6kOcorNaKefN+zrJFaJyiB+jSObJ8EjtQ
-         bzID+TFgcJU2NAIJSh2dncjw3x74bnPWm61cqUIrd6SXLEHSx7knMwYn1MFWLTz7dpCp
-         tK35COpcYgqjACbqIOFvRjIzlg5pq4wT2x5mdTnmdbCupqW3SrJxAxXeSoJiMtDtW94g
-         ccgSg1oJ7T0fvB7vV/ISZaRYN9J0a2gNbPxNCuTEo3da8YHw+J6pwucC3ogxGVUr8c0C
-         +OzA==
-X-Gm-Message-State: AOAM530r9E1IFSGDstTD2J9IYoLlD9/gDYSY92eV0CwLwLR3lNGRLHUS
-        D99JI5Gj/Haf23WTs7oS/GQ=
-X-Google-Smtp-Source: ABdhPJxKgZqpneEuu5YuIHLp12CmML5exM0XVIJFM5zeSUnLRZQcoWHqnrzGNkURRUuzjRkRJIbIeQ==
-X-Received: by 2002:a05:6402:134e:: with SMTP id y14mr19784901edw.4.1593463605392;
-        Mon, 29 Jun 2020 13:46:45 -0700 (PDT)
+        bh=P/lWBTxJeT64MmPuE+Y53vSa9wNIb6a3JKrDaGJpzms=;
+        b=tCNf8B6YWMeZ7MhUEoFAMQQAPNwFYbsz8eq/qIeXIgJQ6vdkn0041EqqTNOsLS+Ait
+         7avI8YxjJj1tMA/EiLLMs3kgCxbshsE+tLXz1Zkr/SQZY78jFK2GDRipp7jWGmZScS1m
+         x0YWXskl11/zTACK5IRnOR5tCmC5WpBc1ZRDVWTcj5RK5B2ZK2TB6YSmWsVCouXkc9fH
+         m3LrT8ZGR4If4XF5Ru3zfQMz5xoTV5WWhsbTlYl9M7mxn+MGHY4/MM234iegMFhaWdsp
+         uhOC0QCCdFbme+VmxGNE4aqPWc/SeAOABmuCY5wbNX3szwexaajOfxaWr/jw8Q8AH78H
+         wrqg==
+X-Gm-Message-State: AOAM533VCO9psoKWQ3lh3cxY3vt8aw0C/h3kyeoM21T5JpLGZtQXoefc
+        /JH67q0msfWvT/9U+Fkm30zhyXT3
+X-Google-Smtp-Source: ABdhPJwSpDThVjcEd0PgJHWyDlPf/nuRiq+gnvJcGaWZixD0/guW/6gO2OZBM23kPBf0l0OLqzgoxQ==
+X-Received: by 2002:a17:906:a1cc:: with SMTP id bx12mr12520655ejb.461.1593419756288;
+        Mon, 29 Jun 2020 01:35:56 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.195])
-        by smtp.googlemail.com with ESMTPSA id k23sm434660ejo.120.2020.06.29.13.46.43
+        by smtp.googlemail.com with ESMTPSA id c4sm24101091ejb.17.2020.06.29.01.35.54
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Jun 2020 13:46:44 -0700 (PDT)
-Date:   Mon, 29 Jun 2020 22:46:42 +0200
+        Mon, 29 Jun 2020 01:35:55 -0700 (PDT)
+Date:   Mon, 29 Jun 2020 10:35:53 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <snawrocki@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: dts: exynos: Fix missing empty reg/ranges
- property regulators on Trats
-Message-ID: <20200629204642.GA26060@kozik-lap>
-References: <20200629193338.29540-1-krzk@kernel.org>
- <03a23289-1188-db77-6c38-a7dddeac183c@kernel.org>
+To:     Tamseel Shams <m.shams@samsung.com>
+Cc:     kgene@kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alim.akhtar@samsung.com
+Subject: Re: [PATCH v2] serial: samsung: Re-factors UART IRQ resource for
+ various Samsung SoC
+Message-ID: <20200629083553.GA14028@kozik-lap>
+References: <CGME20200628071932epcas5p175059c085421a95de76202767bd132cf@epcas5p1.samsung.com>
+ <20200628070007.36222-1-m.shams@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <03a23289-1188-db77-6c38-a7dddeac183c@kernel.org>
+In-Reply-To: <20200628070007.36222-1-m.shams@samsung.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jun 29, 2020 at 09:50:26PM +0200, Sylwester Nawrocki wrote:
-> Hi Krzysztof,
+On Sun, Jun 28, 2020 at 12:30:07PM +0530, Tamseel Shams wrote:
+> In few older Samsung SoCs like s3c2410, s3c2412
+> and s3c2440, UART IP is having 2 interrupt lines.
+> However, in other SoCs like s3c6400, s5pv210,
+> exynos5433, and exynos4210 UART is having only 1
+> interrupt line. Due to this, "platform_get_irq(platdev, 1)"
+> call in the driver gives the following warning:
+> "IRQ index 1 not found" on recent platforms.
 > 
-> On 6/29/20 21:33, Krzysztof Kozlowski wrote:
-> > Remove the simple-bus compatible from a regulators node because its
-> > children do not have any unit addresses.  This fixes DTC warning:
-> > 
-> >      Warning (simple_bus_reg): /regulators/regulator-0: missing or empty reg/ranges property
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >   arch/arm/boot/dts/exynos4210-trats.dts | 2 --
-> >   1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-> > index 3d791db6095c..cec413ee4490 100644
-> > --- a/arch/arm/boot/dts/exynos4210-trats.dts
-> > +++ b/arch/arm/boot/dts/exynos4210-trats.dts
-> > @@ -31,8 +31,6 @@
-> >   	};
-> >   	regulators {
-> > -		compatible = "simple-bus";
+> This patch re-factors the IRQ resources handling for
+> each platform and hence fixing the above warnings seen
+> on some platforms.
 > 
-> I think you would also need to remove the 'regulators' node altogether,
-> otherwise with your change the subnodes below won't get parsed and the
-> regulators will not get registered.
+> Signed-off-by: Tamseel Shams <m.shams@samsung.com>
+> ---
+> Removed the RFC tag and using 'platform_get_irq_optional'
+> instead of 'platform_get_irq' as per comment received from
+> Robin Murphy.
+> 
+>  drivers/tty/serial/samsung_tty.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> index 6ef614d8648c..60554f42e208 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -60,6 +60,7 @@ struct s3c24xx_uart_info {
+>  	char			*name;
+>  	unsigned int		type;
+>  	unsigned int		fifosize;
+> +	unsigned int		irq_cnt;
 
-Good point, I actually did not test this patch. Let me recheck and send
-a follow up.
+No, it's duplicating the logic.
 
-Thanks for review!
+The driver already checks whether SoC has two or one interrupt line with
+s3c24xx_serial_has_interrupt_mask() so there is no point to have two of
+such methods.
+
+Instead unify it please. Probably entire
+s3c24xx_serial_has_interrupt_mask() and s3c24xx_serial_type() should be
+removed and switched into *serial_drv_data.
 
 Best regards,
 Krzysztof
-
