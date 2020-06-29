@@ -2,154 +2,137 @@ Return-Path: <SRS0=5zmB=AK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CE7C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4831FC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8550C206A1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:11:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DuUNS0rI"
+	by mail.kernel.org (Postfix) with ESMTP id 32926214F1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:25:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbgF2VLA (ORCPT
+        id S1729453AbgF2SuH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 17:11:00 -0400
-Received: from www.zeus03.de ([194.117.254.33]:59288 "EHLO mail.zeus03.de"
+        Mon, 29 Jun 2020 14:50:07 -0400
+Received: from foss.arm.com ([217.140.110.172]:36234 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387537AbgF2VKg (ORCPT
+        id S1729000AbgF2SuA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Jun 2020 17:10:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=1R5VbfyjnCD0CmpFWZBQGlSYfWm+
-        NoLCMYa6SRuHNZI=; b=DuUNS0rIyBlqryiO1lADl4AQ5JfcuOPcJDV2IVFGM+pG
-        BxMC/hkT5dkyCGF6Q1HTk4aJwCOLxenQqr8CAwZ8iWxCG9hxIYJYDosJU+dNoPJO
-        Wze1Y9QWn06Sop7cYVo1anfQUotBy+ag5oUFAmqaYsB6C/ClU4FdFIxQ5eTRYoo=
-Received: (qmail 2172219 invoked from network); 29 Jun 2020 23:10:30 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jun 2020 23:10:30 +0200
-X-UD-Smtp-Session: l3s3148p1@IvsbfT+pqsMgAwDPXwOPAI5mQFP60fXe
-Date:   Mon, 29 Jun 2020 23:10:27 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     "Alexander A. Klimov" <grandmaster@al2klimov.de>
-Cc:     corbet@lwn.net, aaro.koskinen@iki.fi, tony@atomide.com,
-        linux@armlinux.org.uk, daniel@zonque.org, haojian.zhuang@gmail.com,
-        robert.jarzmik@free.fr, kgene@kernel.org, krzk@kernel.org,
-        dmitry.torokhov@gmail.com, lee.jones@linaro.org,
-        ulf.hansson@linaro.org, davem@davemloft.net, kuba@kernel.org,
-        b.zolnierkie@samsung.com, j.neuschaefer@gmx.net,
-        mchehab+samsung@kernel.org, gustavo@embeddedor.com,
-        gregkh@linuxfoundation.org, yanaijie@huawei.com,
-        daniel.vetter@ffwll.ch, rafael.j.wysocki@intel.com,
-        Julia.Lawall@inria.fr, linus.walleij@linaro.org,
-        viresh.kumar@linaro.org, arnd@arndb.de, jani.nikula@intel.com,
-        yuehaibing@huawei.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        Mon, 29 Jun 2020 14:50:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 125D91435;
+        Mon, 29 Jun 2020 04:41:59 -0700 (PDT)
+Received: from [10.37.12.67] (unknown [10.37.12.67])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5DA9D3F73C;
+        Mon, 29 Jun 2020 04:41:56 -0700 (PDT)
+Subject: Re: brocken devfreq simple_ondemand for Odroid XU3/4?
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Willy Wolff <willy.mh.wolff.ml@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
-        linux-parisc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH] Remove handhelds.org links and email addresses
-Message-ID: <20200629211027.GA1481@kunai>
-References: <20200629203121.7892-1-grandmaster@al2klimov.de>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200623164733.qbhua7b6cg2umafj@macmini.local>
+ <CAJKOXPeLuq81NC2xZh3y32EB-_APbDAchZD4OW_eCgQKKO+p8w@mail.gmail.com>
+ <20200623191129.GA4171@kozik-lap>
+ <CGME20200624103308eucas1p188a5fe3cee1916d9430c9971c2dab3a3@eucas1p1.samsung.com>
+ <85f5a8c0-7d48-f2cd-3385-c56d662f2c88@arm.com>
+ <ef5184ed-00ff-4226-5ece-b0fc8eb16fb6@samsung.com>
+ <4a72fcab-e8da-8323-1fbe-98a6a4b3e0f1@arm.com>
+ <708feba7-6b11-4943-1073-a1b5e54b6283@samsung.com>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <cf460cc5-dbb1-efeb-3021-622ee5b0be45@arm.com>
+Date:   Mon, 29 Jun 2020 12:41:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
-Content-Disposition: inline
-In-Reply-To: <20200629203121.7892-1-grandmaster@al2klimov.de>
+In-Reply-To: <708feba7-6b11-4943-1073-a1b5e54b6283@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
---G4iJoqBmSsgzjUCe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi Alexander,
+On 6/26/20 6:50 PM, Sylwester Nawrocki wrote:
+> Hi Lukasz,
+> 
+> On 25.06.2020 12:02, Lukasz Luba wrote:
+>> Regarding the 'performance counters overflow interrupts' there is one
+>> thing worth to keep in mind: variable utilization and frequency.
+>> For example, in order to make a conclusion in algorithm deciding that
+>> the device should increase or decrease the frequency, we fix the period
+>> of observation, i.e. to 500ms. That can cause the long delay if the
+>> utilization of the device suddenly drops. For example we set an
+>> overflow threshold to value i.e. 1000 and we know that at 1000MHz
+>> and full utilization (100%) the counter will reach that threshold
+>> after 500ms (which we want, because we don't want too many interrupts
+>> per sec). What if suddenly utilization drops to 2% (i.e. from 5GB/s
+>> to 250MB/s (what if it drops to 25MB/s?!)), the counter will reach the
+>> threshold after 50*500ms = 25s. It is impossible just for the counters
+>> to predict next utilization and adjust the threshold.
+> 
+> Agreed, that's in case when we use just the performance counter (PMCNT)
+> overflow interrupts. In my experiments I used the (total) cycle counter
+> (CCNT) overflow interrupts. As that counter is clocked with fixed rate
+> between devfreq updates it can be used as a timer by pre-loading it with
+> initial value depending on current bus frequency. But we could as well
+> use some reliable system timer mechanism to generate periodic events.
+> I was hoping to use the cycle counter to generate low frequency monitor
+> events and the actual performance counters overflow interrupts to detect
+> any sudden changes of utilization. However, it seems it cannot be done
+> with as simple performance counters HW architecture as on Exynos4412.
+> It looks like on Exynos5422 we have all what is needed, there is more
+> flexibility in selecting the counter source signal, e.g. each counter
+> can be a clock cycle counter or can count various bus events related to
+> actual utilization. Moreover, we could configure the counter gating period
+> and alarm interrupts are available for when the counter value drops below
+> configured MIN threshold or exceeds configured MAX value.
 
-thanks for trying to fix this, yet I have some doubts.
+I see. I don't have TRM for Exynos5422 so couldn't see that. I also
+have to keep in mind other platforms which might not have this feature.
 
-On Mon, Jun 29, 2020 at 10:31:21PM +0200, Alexander A. Klimov wrote:
-> Rationale:
-> https://lore.kernel.org/linux-doc/20200626110706.7b5d4a38@lwn.net/
+> 
+> So it should be possible to configure the HW to generate the utilization
+> monitoring events without excessive continuous CPU intervention.
 
-I think we need some text here. Clicking on a link to understand what a
-patch is about is not comfortable. You can add the link with a Link: tag
-for additional information.
+I agree, that would be desirable especially for low load in the system.
 
-Removing stale email addresses may have some value, but removing...
+> But I'm rather not going to work on the Exynos5422 SoC support at the moment.
 
->  Compaq's Bootldr + John Dorsey's patch for Assabet support
-> -(http://www.handhelds.org/Compaq/bootldr.html)
+I see.
 
-... information like this is not good. 'Wayback machine' still has
-copies in case someone wants to look at where the infos came from.
+> 
+>> To address that, we still need to have another mechanism (like watchdog)
+>> which will be triggered just to check if the threshold needs adjustment.
+>> This mechanism can be a local timer in the driver or a framework
+>> timer running kind of 'for loop' on all this type of devices (like
+>> the scheduled workqueue). In both cases in the system there will be
+>> interrupts, timers (even at workqueues) and scheduling.
+>> The approach to force developers to implement their local watchdog
+>> timers (or workqueues) in drivers is IMHO wrong and that's why we have
+>> frameworks.
+> 
+> Yes, it should be also possible in the framework to use the counter alarm
+> events where the hardware is advanced enough, in order to avoid excessive
+> SW polling.
 
-> - * Copyright 2004-2005  Phil Blundell <pb@handhelds.org>
-> + * Copyright 2004-2005  Phil Blundell
+Looks promising, but that would need more plumbing I assume.
 
-This is an OK case in my book...
+Regards,
+Lukasz
 
-
-> -MODULE_AUTHOR("Phil Blundell <pb@handhelds.org>");
-> +MODULE_AUTHOR("Phil Blundell");
-
-... same here ...
-
-> @@ -435,7 +435,6 @@
->                             case a PCI bridge (DEC chip 21152). The value of
->                             'pb' is now only initialized if a de4x5 chip is
->                             present.
-> -                           <france@handhelds.org>
-
-This is kind of a signature and should be kept IMO.
-
->   * 2001/07/23: <rmk@arm.linux.org.uk>
-> - *	- Hand merge version from handhelds.org CVS tree.  See patch
-> + *	- Hand merge version from CVS tree.  See patch
-
-That information may be useful.
-
-
->  /* SPDX-License-Identifier: GPL-2.0-only */
->  /* -*- linux-c -*-
-> - *
-> - * (C) 2003 zecke@handhelds.org
-
-Removing copyright is a bad idea.
-
-Probably some comment blocks are cruft meanwhile and can be removed as a
-whole. That can be discussed. But removing only the handhelds.org part
-makes most parts worse IMHO.
-
-Thanks and happy hacking,
-
-   Wolfram
-
-
---G4iJoqBmSsgzjUCe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl76WMAACgkQFA3kzBSg
-KbZgWA/+IxRkb15JXVvwYM1c4ReuUiEUrJ0KOI0M0XELe0YWelDrhgcOtSC0ozRT
-lTt8uizNNBK4bsRpoo+ghjZvNELOeMx+4VsVtMM+IoXXxIKha1jSJ1hqFDsBcCP0
-urAvhdaNyC+TWmEM2H98eb5JfdSxKxrzjIMs4tTBlZOBnu+wAoiDZv4mPf/y1bGv
-L33lwlFG6tkWpVX2veVNoTg04TG0LupAtXUyiI+Hnxt7srbugymQs0iwtd5sCt2R
-AG+BmuN5zmUS5cISCL6p1uXSxVRrs3FI02dwU7m5yvBfvHHSGVsx+f9wPpnpqNc8
-1I3oAR+Ct2K3lvu3uLBY2xDL4WbTmPobmzGLXbwB8ksPC/B1TV5LC/+TI2F+c+gk
-ROaTdQqzt4H0wfzNFOzYT8zGyZOoiPFro7jxCcH9CZjbkeDi19sJt7TQ6I1B0I9+
-bSTAb7s3yWhzUypFHzdR0PT97e8zeiK/xJUTbPkvv+JsDZZvPht423X7CYEUjaCo
-sPQ5UuDSfS4xT25PBabjhNeunmODzCE/+DrtbOSuM5AV63TOoVMB8zWBoJH17emH
-mRgD29xeEITWlq/fBWcPWIjgFDVanjDPYIW2/jnGqm7RLTaw703ajQSbD/7ELOAB
-84gr1NpIeJuhMnRnB11nHCJsUWnRqvl2rt7lretb/tFUB8LhGFE=
-=FQ9k
------END PGP SIGNATURE-----
-
---G4iJoqBmSsgzjUCe--
+> 
+> --
+> Regards,
+> Sylwester
+> 
