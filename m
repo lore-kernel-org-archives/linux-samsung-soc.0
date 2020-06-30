@@ -2,215 +2,152 @@ Return-Path: <SRS0=G/L8=AL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A0DC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 07:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A996C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 10:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12174207D0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 07:36:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45CF92073E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 10:09:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NcU3+YTh"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Y6QZ8UAJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731075AbgF3Hgg (ORCPT
+        id S1732277AbgF3KJ0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 30 Jun 2020 03:36:36 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:44475 "EHLO
+        Tue, 30 Jun 2020 06:09:26 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53589 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731073AbgF3Hgf (ORCPT
+        with ESMTP id S1732209AbgF3KJZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 Jun 2020 03:36:35 -0400
+        Tue, 30 Jun 2020 06:09:25 -0400
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200630073633euoutp0149506285cb3dd1a1142daadd3fa8d2c2~dQip_Zmvu0317803178euoutp01Q
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jun 2020 07:36:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200630073633euoutp0149506285cb3dd1a1142daadd3fa8d2c2~dQip_Zmvu0317803178euoutp01Q
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200630100923euoutp01d19a401c78b9dfad28fc4f45d11f076a~dSoGbfQQx0826508265euoutp01P
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jun 2020 10:09:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200630100923euoutp01d19a401c78b9dfad28fc4f45d11f076a~dSoGbfQQx0826508265euoutp01P
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1593502593;
-        bh=43wwakXWd1isGO8+rcTNITURKmYWk3ZL+jiehc1no2U=;
+        s=mail20170921; t=1593511763;
+        bh=vvk/bkZo2eYBjVnTWyH4skPDFVB5Ke9h14iiIXjhEXU=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=NcU3+YThBzOTuvZ0MmYkatV/hs8O/um3ycH28AI3y1n6nhb8XSMyj6DAQZru2YawT
-         +15EUQMscZtMp1riMzzKilUb1dcxRzotb5BSWzL/IEN0d42IXGO8dndKyT/qhsRb1C
-         zVupaqFzXe/cOxMPNKvARyYpxwrJuZGLLyqvILls=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200630073633eucas1p128dbf0cecfa5f5069d62ce143ac53195~dQipzSlGd2195821958eucas1p19;
-        Tue, 30 Jun 2020 07:36:33 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 03.29.06318.18BEAFE5; Tue, 30
-        Jun 2020 08:36:33 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200630073632eucas1p155551c37b45a6653c0611ec93fafe335~dQipVPPCH0886508865eucas1p1-;
-        Tue, 30 Jun 2020 07:36:32 +0000 (GMT)
+        b=Y6QZ8UAJu1kM16CoOkQFFrPQlbW5RBVsqg8KNYF/cNnGPWRHKOIl+514EQQtT0l3S
+         Na05LsGuSzWKtOiBmUJkw0ruf5JRX0Ny7uamkpeP3VtrOGZNPqGvam7e68yDb9WglC
+         PMzb7PdKPRtASCvJi4Za6Z9TXlcZVV/rPTJTHldY=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200630100923eucas1p21c0d910fd8e3ff9fade0ea1ad648fd91~dSoGJnirx2923529235eucas1p2t;
+        Tue, 30 Jun 2020 10:09:23 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id BF.EF.05997.35F0BFE5; Tue, 30
+        Jun 2020 11:09:23 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200630100922eucas1p2c7ae3d8210cc71045c779d8ea7f13f5e~dSoFsp6Nx1098410984eucas1p2Z;
+        Tue, 30 Jun 2020 10:09:22 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200630073632eusmtrp23e968e6b7ca52fee02b9972cc9d24323~dQipUphD81006110061eusmtrp23;
-        Tue, 30 Jun 2020 07:36:32 +0000 (GMT)
-X-AuditID: cbfec7f5-38bff700000018ae-d0-5efaeb81c109
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id EB.C6.06314.08BEAFE5; Tue, 30
-        Jun 2020 08:36:32 +0100 (BST)
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200630100922eusmtrp188ff4077e68e12838763b86609dce3a4~dSoFr9DJW1318213182eusmtrp1E;
+        Tue, 30 Jun 2020 10:09:22 +0000 (GMT)
+X-AuditID: cbfec7f4-65dff7000000176d-5d-5efb0f53dd60
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id A1.52.06314.25F0BFE5; Tue, 30
+        Jun 2020 11:09:22 +0100 (BST)
 Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200630073632eusmtip1d9b9038b235fc3bb9fe433a2cbd73bad~dQio_SjP22526025260eusmtip1H;
-        Tue, 30 Jun 2020 07:36:32 +0000 (GMT)
-Subject: Re: [PATCH v2 12/14] Bluetooth: Update background scan and report
- device based on advertisement monitors
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     linux-bluetooth <linux-bluetooth@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Miao-chen Chou <mcchou@chromium.org>,
-        Johan Hedberg <johan.hedberg@intel.com>
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200630100922eusmtip2b526e8bbd87e76e84575cdde2a4ed8dc~dSoFECbdZ3075530755eusmtip2N;
+        Tue, 30 Jun 2020 10:09:22 +0000 (GMT)
+Subject: Re: [RFT 2/3] arm64: dts: exynos: Add unit address to soc node on
+ Exynos5433
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <ddb9ef62-f773-2a0c-8ac4-31d0116ef456@samsung.com>
-Date:   Tue, 30 Jun 2020 09:36:32 +0200
+Message-ID: <1c087737-5aa5-4232-69f3-26ac999a13a1@samsung.com>
+Date:   Tue, 30 Jun 2020 12:09:22 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
         Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <2378EEDB-97C4-4AFB-91B7-4EAF63FA4EFD@holtmann.org>
+In-Reply-To: <20200629193338.29540-2-krzk@kernel.org>
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNKsWRmVeSWpSXmKPExsWy7djP87qNr3/FGTyczGGxdd9jVos51/qY
-        LWac38dk8e3TL0aL012vWBxYPWY3XGTxWL97ObvH4j0vmTw+b5ILYInisklJzcksSy3St0vg
-        yvj6eQFrwWy1io7/LA2MFxW6GDk5JARMJDbe/s7axcjFISSwglHizJnXUM4XRommx7+gnM+M
-        EovabrHAtGw/tZ4RIrGcUaJ96nuoqveMEm9nPgeq4uAQFiiW+DklA6RBREBTYu6Ss8wgNcwC
-        +xklbt5aCjaJTcBQouttFxtIPa+AncSBdmaQMIuAqkTPzM2sILaoQKxE39IFbCA2r4CgxMmZ
-        T8BaOQUcJDa07gezmQXkJba/ncMMYYtL3Hoynwlkl4TAInaJdZ/PsUJc7SLRe3s7I4QtLPHq
-        +BZ2CFtG4v9OmIZmRomH59ayQzg9jBKXm2ZAdVhL3Dn3C+xSZqB31u/Shwg7Slw518gIEpYQ
-        4JO48VYQ4gg+iUnbpjNDhHklOtqEIKrVJGYdXwe39uCFS8wTGJVmIXltFpJ3ZiF5ZxbC3gWM
-        LKsYxVNLi3PTU4uN81LL9YoTc4tL89L1kvNzNzECk8zpf8e/7mDc9yfpEKMAB6MSD2/CuZ9x
-        QqyJZcWVuYcYJTiYlUR4nc6ejhPiTUmsrEotyo8vKs1JLT7EKM3BoiTOa7zoZayQQHpiSWp2
-        ampBahFMlomDU6qBkeNpZUx69MSynfs5J56c+Gyl5ltF9+XL5z5u2HZKTlhC1Oh56CV1vgiL
-        xdxfqhPtbdoNL+x5ud8pSuuE+/uCPu/n59NeVc+M5dyvuPXqxVv7littPHpJjo/XV0Hgr1iV
-        cPjro82a3OJXvX1i3f8l//y16f62Of//N7qYq7rxXGeaEnteyFH4jxJLcUaioRZzUXEiAAt1
-        SmQuAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsVy+t/xu7oNr3/FGcz8pW2xdd9jVos51/qY
-        LWac38dk8e3TL0aL012vWBxYPWY3XGTxWL97ObvH4j0vmTw+b5ILYInSsynKLy1JVcjILy6x
-        VYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy/j6eQFrwWy1io7/LA2MFxW6
-        GDk5JARMJLafWs/YxcjFISSwlFFi/8seNoiEjMTJaQ2sELawxJ9rXWwQRW8ZJZa/nsXSxcjB
-        ISxQLPFzSgZIjYiApsTcJWeZQWqYBfYzSkzefo8RJCEkcJRJYutisEFsAoYSXW9BBnFw8ArY
-        SRxoZwYJswioSvTM3AxWIioQK/Ht3hawG3gFBCVOznzCAmJzCjhIbGjdD2YzC5hJzNv8kBnC
-        lpfY/nYOlC0ucevJfKYJjEKzkLTPQtIyC0nLLCQtCxhZVjGKpJYW56bnFhvqFSfmFpfmpesl
-        5+duYgTG1LZjPzfvYLy0MfgQowAHoxIPb8K5n3FCrIllxZW5hxglOJiVRHidzp6OE+JNSays
-        Si3Kjy8qzUktPsRoCvTcRGYp0eR8YLznlcQbmhqaW1gamhubG5tZKInzdggcjBESSE8sSc1O
-        TS1ILYLpY+LglGpgbPM8uW/7357O8/eDrf3cIrmDN/o7+PexrXhWO+9byWV/t4X2a6/6z7Z3
-        WZautCjyaMaV9QeXP/7t+yHmqc+VyLOuqX6T5WPy53kwvw7JW/dhXopZq8ZTyYWRRv0VkWI/
-        bl6+/XJe+JYem+q2pvmS+SLRT6amuhyf4rskqEuIW/ahQeopxtdblViKMxINtZiLihMByGKG
-        Lr8CAAA=
-X-CMS-MailID: 20200630073632eucas1p155551c37b45a6653c0611ec93fafe335
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHKsWRmVeSWpSXmKPExsWy7djPc7rB/L/jDE5vFbR4MG8bm8XGGetZ
+        La5/ec5qMf/IOVaL/sevmS3On9/AbrHp8TVWi8u75rBZzDi/j8li0dYv7Bate4+wW7Q/fcns
+        wOOxaVUnm8fmJfUefVtWMXp83iQXwBLFZZOSmpNZllqkb5fAlfHj9y/mgt/sFT27L7A1MG5m
+        62Lk5JAQMJGY3byXpYuRi0NIYAWjRMP0h4wQzhdGiX/nXrBDOJ8ZJSbtmMgK0zJ98R12EFtI
+        YDmjxM3n3BBF7xkl9l0/DjZXWCBc4tCqbiaQhIjALCaJtv33wEYxC2xjlDg25QnYKDYBQ4mu
+        t11gHbwCdhIHZn1kArFZBFQlfqy/C7ZCVCBWom/pAqgaQYmTM58AXcvBwSlgKrHkmBJImFlA
+        XmL72znMELa4xK0n85kgLr3ELvGuywzCdpHYsGgS1NPCEq+Ob2GHsGUkTk/uAQeAhEAzo8TD
+        c2vZIZweRonLTTMYIaqsJe6c+8UGsphZQFNi/S59iLCjxP+bb8HukRDgk7jxVhDiBj6JSdum
+        M0OEeSU62oQgqtUkZh1fB7f24IVLzBMYlWYheWwWkm9mIflmFsLeBYwsqxjFU0uLc9NTi43y
+        Usv1ihNzi0vz0vWS83M3MQJT1el/x7/sYNz1J+kQowAHoxIPb8K5n3FCrIllxZW5hxglOJiV
+        RHidzp6OE+JNSaysSi3Kjy8qzUktPsQozcGiJM5rvOhlrJBAemJJanZqakFqEUyWiYNTqoEx
+        d5nEPa2Im+/cxVWf1zVHBa8Q+e3k4VPqWXx3aX7ZEu5Z5qyfLv4qsXr2jusRwwE/2VyxZZve
+        8TmyPDGozlis/qhY/8HKlTvCPvkkhFtaKeb7mAYEmDusdPNMXBcXevUmx+XdWnP4++7rZ4XP
+        /pWseOqSuOjEHPbFq1lSnJRcDT4vZrCfWabEUpyRaKjFXFScCAAGNH+pUQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEIsWRmVeSWpSXmKPExsVy+t/xe7pB/L/jDF5MNLZ4MG8bm8XGGetZ
+        La5/ec5qMf/IOVaL/sevmS3On9/AbrHp8TVWi8u75rBZzDi/j8li0dYv7Bate4+wW7Q/fcns
+        wOOxaVUnm8fmJfUefVtWMXp83iQXwBKlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwe
+        a2VkqqRvZ5OSmpNZllqkb5egl/Hj9y/mgt/sFT27L7A1MG5m62Lk5JAQMJGYvvgOexcjF4eQ
+        wFJGiQPti6ASMhInpzWwQtjCEn+udbFBFL1llPg38SRYkbBAuMShVd1MIAkRgVlMEgf2PGYE
+        cZgFtjFK3L/SBtWymVFi+dFr7CAtbAKGEl1vu8DaeQXsJA7M+sgEYrMIqEr8WH8XrEZUIFbi
+        270tUDWCEidnPmHpYuTg4BQwlVhyTAkkzCxgJjFv80NmCFteYvvbOVC2uMStJ/OZJjAKzULS
+        PQtJyywkLbOQtCxgZFnFKJJaWpybnltsqFecmFtcmpeul5yfu4kRGJ/bjv3cvIPx0sbgQ4wC
+        HIxKPLwJ537GCbEmlhVX5h5ilOBgVhLhdTp7Ok6INyWxsiq1KD++qDQntfgQoynQbxOZpUST
+        84GpI68k3tDU0NzC0tDc2NzYzEJJnLdD4GCMkEB6YklqdmpqQWoRTB8TB6dUA6PuheqqrwVd
+        Gl9ElOf8XeUomWxy/X3cl/x2k8MCr/+lWCYKOWf4X5ianff/m8Ee5x/TUk6piir4e3IwfE7e
+        uVVGkN2hWlShbOHDw43PhXzF/LZNjpzPN8PzVmfcb1Pxe0FTPZriXx7O+Oo3f9LyoJk3bqtv
+        qDieX7Z3Tcd7ZbYjxoLPFs2/G6PEUpyRaKjFXFScCACVNFfb5QIAAA==
+X-CMS-MailID: 20200630100922eucas1p2c7ae3d8210cc71045c779d8ea7f13f5e
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200629223028eucas1p27b9482456072d7864f7505379885a0b4
+X-RootMTR: 20200629193354eucas1p20f5d1811033f3ce3189a5d4682b759f7
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200629223028eucas1p27b9482456072d7864f7505379885a0b4
-References: <cover.1592404644.git.marcel@holtmann.org>
-        <4c8aeca04ed20e2776cadd9bdb57a7a3632d622c.1592404644.git.marcel@holtmann.org>
-        <CGME20200629223028eucas1p27b9482456072d7864f7505379885a0b4@eucas1p2.samsung.com>
-        <cc9eb868-4f4e-e7a3-d0fb-73c54586e1d1@samsung.com>
-        <2378EEDB-97C4-4AFB-91B7-4EAF63FA4EFD@holtmann.org>
+X-CMS-RootMailID: 20200629193354eucas1p20f5d1811033f3ce3189a5d4682b759f7
+References: <20200629193338.29540-1-krzk@kernel.org>
+        <CGME20200629193354eucas1p20f5d1811033f3ce3189a5d4682b759f7@eucas1p2.samsung.com>
+        <20200629193338.29540-2-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marcel,
-
-On 30.06.2020 08:49, Marcel Holtmann wrote:
->>> This calls hci_update_background_scan() when there is any update on the
->>> advertisement monitors. If there is at least one advertisement monitor,
->>> the filtering policy of scan parameters should be 0x00. This also reports
->>> device found mgmt events if there is at least one monitor.
->>>
->>> The following cases were tested with btmgmt advmon-* commands.
->>> (1) add a ADV monitor and observe that the passive scanning is
->>> triggered.
->>> (2) remove the last ADV monitor and observe that the passive scanning is
->>> terminated.
->>> (3) with a LE peripheral paired, repeat (1) and observe the passive
->>> scanning continues.
->>> (4) with a LE peripheral paired, repeat (2) and observe the passive
->>> scanning continues.
->>> (5) with a ADV monitor, suspend/resume the host and observe the passive
->>> scanning continues.
->>>
->>> Signed-off-by: Miao-chen Chou <mcchou@chromium.org>
->>> Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
->> This patch landed recently in linux-next as commit 8208f5a9d435
->> ("Bluetooth: Update background scan and report device based on
->> advertisement monitors").
->>
->> It causes a regression, a kernel oops during system suspend/resume cycle
->> on Samsung Exynos5250 based Snow Chromebook:
->>
->> 8<--- cut here ---
->> Unable to handle kernel NULL pointer dereference at virtual address 00000000
->> pgd = 86c149f5
->> [00000000] *pgd=00000000
->> Internal error: Oops: 5 [#1] SMP ARM
->> Modules linked in: cmac cros_ec_sysfs cros_ec_lightbar cros_ec_debugfs
->> cros_ec_chardev cros_ec_keyb cros_ec_dev snd_soc_hdmi_codec cros_ec_i2c
->> cros_ec snd_soc_snow snd_soc_i2s snd_soc_idma snd_soc_s3c_dma exynosdrm
->> analogix_dp exynos_gsc v4l2_mem2mem snd_soc_max98095 snd_soc_core
->> ac97_bus snd_pcm_dmaengine snd_pcm snd_timer nxp_ptn3460 snd soundcore
->> pwm_samsung spi_s3c64xx cyapatp crc_itu_t mwifiex_sdio mwifiex
->> sha256_generic libsha256 sha256_arm btmrvl_sdio btmrvl cfg80211
->> bluetooth s5p_mfc governor_simpleondemand videobuf2_dma_contig
->> videobuf2_memops videobuf2_v4l2 ecdh_generic ecc videobuf2_common
->> videodev phy_exynos_usb2 ohci_exynos panfrost gpu_sched mc s3c2410_wdt
->> s5p_sss s5p_cec exynos_rng rtc_s3c i2c_arb_gpio_challenge
->> CPU: 1 PID: 16 Comm: kworker/1:0 Not tainted
->> 5.7.0-rc7-02995-g8208f5a9d435 #8564
->> Hardware name: Samsung Exynos (Flattened Device Tree)
->> Workqueue: events_freezable mmc_rescan
->> PC is at __queue_work+0x6c/0x4e8
->> LR is at __queue_work+0x68/0x4e8
->> pc : [<c03619d8>]    lr : [<c03619d4>]    psr: 60000093
->> ...
->> Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
->> Control: 10c5387d  Table: 6be2406a  DAC: 00000051
->> Process kworker/1:0 (pid: 16, stack limit = 0xf9898f75)
->> Stack: (0xee117de0 to 0xee118000)
->> ...
->> [<c03619d8>] (__queue_work) from [<c0361e94>] (queue_work_on+0x40/0x4c)
->> [<c0361e94>] (queue_work_on) from [<bf17dd0c>]
->> (hci_adv_monitors_clear+0x74/0x90 [bluetooth])
->> [<bf17dd0c>] (hci_adv_monitors_clear [bluetooth]) from [<bf17e138>]
->> (hci_unregister_dev+0x158/0x224 [bluetooth])
->> [<bf17e138>] (hci_unregister_dev [bluetooth]) from [<bf1d1638>]
->> (btmrvl_remove_card+0x58/0x7c [btmrvl])
->> [<bf1d1638>] (btmrvl_remove_card [btmrvl]) from [<c0d09698>]
->> (sdio_bus_remove+0x30/0x11c)
->> [<c0d09698>] (sdio_bus_remove) from [<c09d534c>]
->> (device_release_driver_internal+0xe8/0x1ac)
->> [<c09d534c>] (device_release_driver_internal) from [<c09d3e18>]
->> (bus_remove_device+0xcc/0xf8)
->> [<c09d3e18>] (bus_remove_device) from [<c09cfa3c>] (device_del+0x15c/0x384)
->> [<c09cfa3c>] (device_del) from [<c0d098b8>] (sdio_remove_func+0x20/0x34)
->> [<c0d098b8>] (sdio_remove_func) from [<c0d075bc>]
->> (mmc_sdio_remove+0x38/0x64)
->> [<c0d075bc>] (mmc_sdio_remove) from [<c0d08858>] (mmc_sdio_detect+0x6c/0xf8)
->> [<c0d08858>] (mmc_sdio_detect) from [<c0cff6f0>] (mmc_rescan+0x1d0/0x42c)
->> [<c0cff6f0>] (mmc_rescan) from [<c0362454>] (process_one_work+0x178/0x4ac)
->> [<c0362454>] (process_one_work) from [<c0362b44>] (worker_thread+0x2c/0x530)
->> [<c0362b44>] (worker_thread) from [<c0368610>] (kthread+0x12c/0x158)
->> [<c0368610>] (kthread) from [<c03001a8>] (ret_from_fork+0x14/0x2c)
->> Exception stack(0xee117fb0 to 0xee117ff8)
->> ...
->> ---[ end trace 0ec00d142e0a49cf ]---
->>
->> This board uses btmrvl_sdio bluetooth driver if that helps. Reverting
->> this commit in linux-next 20200629 'fixes' the issue.
->>
->> I can do more tests if needed on this hardware, just let me know how can
->> I help and what to do.
-> can you check latest bluetooth-next. I think that we applied a fix for it.
-
-Indeed. Commit f2790f025a0e ("Bluetooth: fix kernel null pointer 
-dereference error on suspend") fixed the issue.
+On 29.06.2020 21:33, Krzysztof Kozlowski wrote:
+> Add @0 unit address to 'soc' node match its 'reg' property and silence
+> DTC warning:
+>
+>      Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>
+> Not tested on HW.
+> ---
+>   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> index 6721966140f4..ebe089469b5f 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -256,7 +256,7 @@
+>   		cpu_on = <0xC4000003>;
+>   	};
+>   
+> -	soc: soc {
+> +	soc: soc@0 {
+>   		compatible = "simple-bus";
+>   		#address-cells = <1>;
+>   		#size-cells = <1>;
 
 Best regards
 -- 
