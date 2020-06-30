@@ -2,142 +2,144 @@ Return-Path: <SRS0=G/L8=AL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A6A1C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 06:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19951C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 06:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E550020759
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 06:27:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AO0scRZq"
+	by mail.kernel.org (Postfix) with ESMTP id F203E20672
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 06:32:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730164AbgF3G1F (ORCPT
+        id S1730302AbgF3Gb4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 30 Jun 2020 02:27:05 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:57651 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730154AbgF3G1D (ORCPT
+        Tue, 30 Jun 2020 02:31:56 -0400
+Received: from smtp.al2klimov.de ([78.46.175.9]:41058 "EHLO smtp.al2klimov.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730002AbgF3Gbz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 Jun 2020 02:27:03 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200630062701euoutp0230462be777cac8cd7844c3ef914718f7~dPl889bx_0833208332euoutp02j
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jun 2020 06:27:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200630062701euoutp0230462be777cac8cd7844c3ef914718f7~dPl889bx_0833208332euoutp02j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1593498421;
-        bh=837mH5WoZoAfjQ/qyJerBSqKjDYL+ctM09x1q/ySjVk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=AO0scRZq6Ez63v77F/RX554SC6gekSq9bBUTe3t0IQRWSiU/0SWPYluKTvdSKWQOc
-         uj12irRVT3mYNXi0Ll1o5jbnNihKjmZF1vvqqrXvwmOeM/qWMDPgQSDPLgFLFneQGf
-         z/nQnM749CmxFTcQ0JNdgN25uvnyBkPwCKbPI/P0=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200630062701eucas1p1b691c1894216947d32cca0a029408300~dPl8eZ-jt1426414264eucas1p1Y;
-        Tue, 30 Jun 2020 06:27:01 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id C1.4D.06318.53BDAFE5; Tue, 30
-        Jun 2020 07:27:01 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200630062700eucas1p26889ded55f324aa745bc914dcd1faed4~dPl79WWlp2732027320eucas1p2F;
-        Tue, 30 Jun 2020 06:27:00 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200630062700eusmtrp2f1d0f04afba5316efc4a2f294370e3ba~dPl78ncSS3011830118eusmtrp2c;
-        Tue, 30 Jun 2020 06:27:00 +0000 (GMT)
-X-AuditID: cbfec7f5-371ff700000018ae-38-5efadb35f8aa
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 84.0A.06017.43BDAFE5; Tue, 30
-        Jun 2020 07:27:00 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200630062700eusmtip1dcf28c8e096329f4a9f6145f772ef6f5~dPl7SBLzl0872808728eusmtip1X;
-        Tue, 30 Jun 2020 06:27:00 +0000 (GMT)
-Subject: Re: [PATCH v2] ARM: dts: exynos: Fix missing empty reg/ranges
- property regulators on Trats
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <97651868-30f3-6b91-1ea2-551ee1ebad8f@samsung.com>
-Date:   Tue, 30 Jun 2020 08:27:01 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.9.0
+        Tue, 30 Jun 2020 02:31:55 -0400
+X-Greylist: delayed 36006 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Jun 2020 02:31:53 EDT
+Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
+        by smtp.al2klimov.de (Postfix) with ESMTPA id 4EA0BBC078;
+        Tue, 30 Jun 2020 06:31:41 +0000 (UTC)
+Subject: Re: [PATCH] Remove handhelds.org links and email addresses
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     corbet@lwn.net, aaro.koskinen@iki.fi, tony@atomide.com,
+        linux@armlinux.org.uk, daniel@zonque.org, haojian.zhuang@gmail.com,
+        robert.jarzmik@free.fr, kgene@kernel.org, krzk@kernel.org,
+        dmitry.torokhov@gmail.com, lee.jones@linaro.org,
+        ulf.hansson@linaro.org, davem@davemloft.net, kuba@kernel.org,
+        b.zolnierkie@samsung.com, j.neuschaefer@gmx.net,
+        mchehab+samsung@kernel.org, gustavo@embeddedor.com,
+        gregkh@linuxfoundation.org, yanaijie@huawei.com,
+        daniel.vetter@ffwll.ch, rafael.j.wysocki@intel.com,
+        Julia.Lawall@inria.fr, linus.walleij@linaro.org,
+        viresh.kumar@linaro.org, arnd@arndb.de, jani.nikula@intel.com,
+        yuehaibing@huawei.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
+        linux-parisc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org
+References: <20200629203121.7892-1-grandmaster@al2klimov.de>
+ <20200629211027.GA1481@kunai>
+From:   "Alexander A. Klimov" <grandmaster@al2klimov.de>
+Message-ID: <09c27ac7-f5bc-064b-6751-9edc04de1679@al2klimov.de>
+Date:   Tue, 30 Jun 2020 08:31:40 +0200
 MIME-Version: 1.0
-In-Reply-To: <20200629205948.32250-1-krzk@kernel.org>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200629211027.GA1481@kunai>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa2xLYRjO13PantYq347VXiZIk80l2YaZHCGyiR8lEUQiIVbKjlm03dLa
-        jEjsQlndSiKtGruwaJrsVlZMLNkxKxmtdNjCwlixmkZil24zRnuM/Xve532e73ne5KMIulk4
-        m8rWHWT1OrVGIZKSrrZRT2LqmzHVkmGHnOm55hIxDdY6IdM5+FnIlLd6hMz53n6C8XrrxYyz
-        95WQ6WgqEzFWb7OAqWocFDMnHrSKmZMfA0RalNLpKBUpb904pjx324GUA865m8kd0tWZrCY7
-        n9Unr9kt3d9Z9J3MDQkL2rmngkI0QpqQhAK8HH51NApNSErR2I7gR+EtET8MIvCVDAvCKhoP
-        IPh2ctmko8UVQrzoJoLHodNifviGoN/ujThmYBZeFdcQYRyDt0Eo8DjyLIHHBTDy5q0ovBDh
-        pWAKmiJYhtdAF1caMZA4HiotzyIF5TgDzlVX/NVEw5PL/j88RUlwKpiD+8I0gefBnWAZweNY
-        eO0vF4SzAPvE8OK6T8DXXgeWPjPB4xnwxX1bzOM5MHFv0lCC4L2nRswPZxB0FFsRr1oF3Z4x
-        UTiZwIugrimZp9Oh+8KYOEwDng5dwWi+xHS46LIQPC2DU0aaVyeAzV37L7bluY8wI4VtymW2
-        KefYppxj+59bgUgHimXzDNos1pCiYw8lGdRaQ54uK2lvjtaJ/vyq9l/uobuoeXwPhzCFFFGy
-        3Z5RFS1U5xsOazkEFKGIka191q6iZZnqw0dYfc4ufZ6GNXAojiIVsbKUqkAGjbPUB9kDLJvL
-        6ie3AkoyuxA9vEOrMlHasUDnzk/pwyuS7HTaUe5+QeuCoZWKCZtRdbyNbLpedmljQjWncebU
-        c3V3N1ji46XrTWetukcp282s2z7ta4/xim8TSU+Le+DvspuXp17NlY9LEt/5G7S9C7lt8p/p
-        3saXRa/z+7ZU9httH+bN2rP1fdnM+bUl6iFCQRr2q5cuJvQG9W/pUwM2UQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPIsWRmVeSWpSXmKPExsVy+t/xu7omt3/FGXzbYWDxYN42NouNM9az
-        Wlz/8pzVYv6Rc6wW/Y9fM1ucP7+B3WLT42usFpd3zWGzmHF+H5PFoq1f2C1a9x5ht2h/+pLZ
-        gcdj06pONo/NS+o9+rasYvT4vEkugCVKz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng8
-        1srIVEnfziYlNSezLLVI3y5BL+N64yeWgu+sFacPnWFqYPzB0sXIySEhYCJxcNt3RhBbSGAp
-        o8Trs/4QcRmJk9MaWCFsYYk/17rYuhi5gGreMkpMmLSaCSQhLJAqca1pLXMXIweHiECYxNpV
-        5iA1zAJ/mCQ23HvDCNHQwSix/nsPG0gDm4ChRNfbLjCbV8BO4sahTmYQm0VAVWLh9LNgF4kK
-        xEp8u7cFqkZQ4uTMJywgCzgFTCUmvE0DCTMLmEnM2/yQGcKWl9j+dg6ULS5x68l8pgmMQrOQ
-        dM9C0jILScssJC0LGFlWMYqklhbnpucWG+kVJ+YWl+al6yXn525iBEbmtmM/t+xg7HoXfIhR
-        gINRiYc34dzPOCHWxLLiytxDjBIczEoivE5nT8cJ8aYkVlalFuXHF5XmpBYfYjQF+m0is5Ro
-        cj4waeSVxBuaGppbWBqaG5sbm1koifN2CByMERJITyxJzU5NLUgtgulj4uCUamDc3rSoX+qh
-        lcVz4wa2R//WLn56efMkrY0fdhssfHU75KVNrdZTF7Zfd1d9n3e7mDH6npNFyNYFYo82HUg8
-        IHjc4Umb3dbSy0xOPf68kvv3HnqfLv9M3V79c8SJUj6V6hRO/3nbG0pP7ut61bq6dHJios0G
-        0wt5lZcduw/wb1gulPU6h+3OugobJZbijERDLeai4kQADzbOMeICAAA=
-X-CMS-MailID: 20200630062700eucas1p26889ded55f324aa745bc914dcd1faed4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200629210025eucas1p219a52e75ecce9e813aa80f0126780189
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200629210025eucas1p219a52e75ecce9e813aa80f0126780189
-References: <CGME20200629210025eucas1p219a52e75ecce9e813aa80f0126780189@eucas1p2.samsung.com>
-        <20200629205948.32250-1-krzk@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-Spamd-Bar: +
+Authentication-Results: smtp.al2klimov.de;
+        auth=pass smtp.auth=aklimov@al2klimov.de smtp.mailfrom=grandmaster@al2klimov.de
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
 
-On 29.06.2020 22:59, Krzysztof Kozlowski wrote:
-> Remove the regulators node entirely because its children do not have any
-> unit addresses.  This fixes DTC warning:
->
->      Warning (simple_bus_reg): /regulators/regulator-0: missing or empty reg/ranges property
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Am 29.06.20 um 23:10 schrieb Wolfram Sang:
+> Hi Alexander,
+> 
+> thanks for trying to fix this, yet I have some doubts.
+> 
+> On Mon, Jun 29, 2020 at 10:31:21PM +0200, Alexander A. Klimov wrote:
+>> Rationale:
+>> https://lore.kernel.org/linux-doc/20200626110706.7b5d4a38@lwn.net/
+> 
+> I think we need some text here. Clicking on a link to understand what a
+> patch is about is not comfortable. You can add the link with a Link: tag
+> for additional information.
+Fine. I can easily make a v2 patch, but first...
 
-What about removing the regulators node from other boards: 
-exynos4412-origen.dts, exynos5420-smdk5420.dts and exynos5250-arndale.dts?
+> 
+> Removing stale email addresses may have some value, but removing...
+> 
+>>   Compaq's Bootldr + John Dorsey's patch for Assabet support
+>> -(http://www.handhelds.org/Compaq/bootldr.html)
+> 
+> ... information like this is not good. 'Wayback machine' still has
+> copies in case someone wants to look at where the infos came from.
+If we shall not remove *this link*, maybe we shall not remove *all links*?
 
-On the other hand, maybe it would be really easier to add missing 
-address/size-cells properties to exynos4210-trats.dts/regulators node?
+@Jon You've kinda initiated the patch, what's your opinion? Bad 
+squatters or good Wayback machine?
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> 
+>> - * Copyright 2004-2005  Phil Blundell <pb@handhelds.org>
+>> + * Copyright 2004-2005  Phil Blundell
+> 
+> This is an OK case in my book...
+> 
+> 
+>> -MODULE_AUTHOR("Phil Blundell <pb@handhelds.org>");
+>> +MODULE_AUTHOR("Phil Blundell");
+> 
+> ... same here ...
+> 
+>> @@ -435,7 +435,6 @@
+>>                              case a PCI bridge (DEC chip 21152). The value of
+>>                              'pb' is now only initialized if a de4x5 chip is
+>>                              present.
+>> -                           <france@handhelds.org>
+> 
+> This is kind of a signature and should be kept IMO.
+What for? An email address is for someone who'd like to send an email to 
+it. At the moment handhelds.org doesn't even have an MX record.
 
+> 
+>>    * 2001/07/23: <rmk@arm.linux.org.uk>
+>> - *	- Hand merge version from handhelds.org CVS tree.  See patch
+>> + *	- Hand merge version from CVS tree.  See patch
+> 
+> That information may be useful.
+Again: What for? For visiting it and thinking like damn, it's gone?
+
+> 
+> 
+>>   /* SPDX-License-Identifier: GPL-2.0-only */
+>>   /* -*- linux-c -*-
+>> - *
+>> - * (C) 2003 zecke@handhelds.org
+> 
+> Removing copyright is a bad idea.
+IMAO the CREDITS file is for (c) headers.
+If you didn't submit a patch for that - your problem.
+
+If you disagree, I can look up git blame.
+
+> 
+> Probably some comment blocks are cruft meanwhile and can be removed as a
+> whole. That can be discussed. But removing only the handhelds.org part
+> makes most parts worse IMHO.
+> 
+> Thanks and happy hacking,
+> 
+>     Wolfram
+> 
