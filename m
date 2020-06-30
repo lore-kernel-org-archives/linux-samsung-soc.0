@@ -2,144 +2,146 @@ Return-Path: <SRS0=G/L8=AL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19951C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 06:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76194C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 06:49:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F203E20672
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 06:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B003207D0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 06:49:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730302AbgF3Gb4 (ORCPT
+        id S1730446AbgF3Gtw convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 30 Jun 2020 02:31:56 -0400
-Received: from smtp.al2klimov.de ([78.46.175.9]:41058 "EHLO smtp.al2klimov.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730002AbgF3Gbz (ORCPT
+        Tue, 30 Jun 2020 02:49:52 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:47425 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730386AbgF3Gtv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 Jun 2020 02:31:55 -0400
-X-Greylist: delayed 36006 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Jun 2020 02:31:53 EDT
-Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
-        by smtp.al2klimov.de (Postfix) with ESMTPA id 4EA0BBC078;
-        Tue, 30 Jun 2020 06:31:41 +0000 (UTC)
-Subject: Re: [PATCH] Remove handhelds.org links and email addresses
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     corbet@lwn.net, aaro.koskinen@iki.fi, tony@atomide.com,
-        linux@armlinux.org.uk, daniel@zonque.org, haojian.zhuang@gmail.com,
-        robert.jarzmik@free.fr, kgene@kernel.org, krzk@kernel.org,
-        dmitry.torokhov@gmail.com, lee.jones@linaro.org,
-        ulf.hansson@linaro.org, davem@davemloft.net, kuba@kernel.org,
-        b.zolnierkie@samsung.com, j.neuschaefer@gmx.net,
-        mchehab+samsung@kernel.org, gustavo@embeddedor.com,
-        gregkh@linuxfoundation.org, yanaijie@huawei.com,
-        daniel.vetter@ffwll.ch, rafael.j.wysocki@intel.com,
-        Julia.Lawall@inria.fr, linus.walleij@linaro.org,
-        viresh.kumar@linaro.org, arnd@arndb.de, jani.nikula@intel.com,
-        yuehaibing@huawei.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
-        linux-parisc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org
-References: <20200629203121.7892-1-grandmaster@al2klimov.de>
- <20200629211027.GA1481@kunai>
-From:   "Alexander A. Klimov" <grandmaster@al2klimov.de>
-Message-ID: <09c27ac7-f5bc-064b-6751-9edc04de1679@al2klimov.de>
-Date:   Tue, 30 Jun 2020 08:31:40 +0200
-MIME-Version: 1.0
-In-Reply-To: <20200629211027.GA1481@kunai>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Spamd-Bar: +
-Authentication-Results: smtp.al2klimov.de;
-        auth=pass smtp.auth=aklimov@al2klimov.de smtp.mailfrom=grandmaster@al2klimov.de
+        Tue, 30 Jun 2020 02:49:51 -0400
+Received: from marcel-macpro.fritz.box (p5b3d2638.dip0.t-ipconnect.de [91.61.38.56])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 8E30DCECE2;
+        Tue, 30 Jun 2020 08:59:44 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
+Subject: Re: [PATCH v2 12/14] Bluetooth: Update background scan and report
+ device based on advertisement monitors
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <cc9eb868-4f4e-e7a3-d0fb-73c54586e1d1@samsung.com>
+Date:   Tue, 30 Jun 2020 08:49:49 +0200
+Cc:     linux-bluetooth <linux-bluetooth@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Miao-chen Chou <mcchou@chromium.org>,
+        Johan Hedberg <johan.hedberg@intel.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <2378EEDB-97C4-4AFB-91B7-4EAF63FA4EFD@holtmann.org>
+References: <cover.1592404644.git.marcel@holtmann.org>
+ <4c8aeca04ed20e2776cadd9bdb57a7a3632d622c.1592404644.git.marcel@holtmann.org>
+ <CGME20200629223028eucas1p27b9482456072d7864f7505379885a0b4@eucas1p2.samsung.com>
+ <cc9eb868-4f4e-e7a3-d0fb-73c54586e1d1@samsung.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+X-Mailer: Apple Mail (2.3608.80.23.2.2)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Marek,
 
+>> This calls hci_update_background_scan() when there is any update on the
+>> advertisement monitors. If there is at least one advertisement monitor,
+>> the filtering policy of scan parameters should be 0x00. This also reports
+>> device found mgmt events if there is at least one monitor.
+>> 
+>> The following cases were tested with btmgmt advmon-* commands.
+>> (1) add a ADV monitor and observe that the passive scanning is
+>> triggered.
+>> (2) remove the last ADV monitor and observe that the passive scanning is
+>> terminated.
+>> (3) with a LE peripheral paired, repeat (1) and observe the passive
+>> scanning continues.
+>> (4) with a LE peripheral paired, repeat (2) and observe the passive
+>> scanning continues.
+>> (5) with a ADV monitor, suspend/resume the host and observe the passive
+>> scanning continues.
+>> 
+>> Signed-off-by: Miao-chen Chou <mcchou@chromium.org>
+>> Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+> 
+> This patch landed recently in linux-next as commit 8208f5a9d435 
+> ("Bluetooth: Update background scan and report device based on 
+> advertisement monitors").
+> 
+> It causes a regression, a kernel oops during system suspend/resume cycle 
+> on Samsung Exynos5250 based Snow Chromebook:
+> 
+> 8<--- cut here ---
+> Unable to handle kernel NULL pointer dereference at virtual address 00000000
+> pgd = 86c149f5
+> [00000000] *pgd=00000000
+> Internal error: Oops: 5 [#1] SMP ARM
+> Modules linked in: cmac cros_ec_sysfs cros_ec_lightbar cros_ec_debugfs 
+> cros_ec_chardev cros_ec_keyb cros_ec_dev snd_soc_hdmi_codec cros_ec_i2c 
+> cros_ec snd_soc_snow snd_soc_i2s snd_soc_idma snd_soc_s3c_dma exynosdrm 
+> analogix_dp exynos_gsc v4l2_mem2mem snd_soc_max98095 snd_soc_core 
+> ac97_bus snd_pcm_dmaengine snd_pcm snd_timer nxp_ptn3460 snd soundcore 
+> pwm_samsung spi_s3c64xx cyapatp crc_itu_t mwifiex_sdio mwifiex 
+> sha256_generic libsha256 sha256_arm btmrvl_sdio btmrvl cfg80211 
+> bluetooth s5p_mfc governor_simpleondemand videobuf2_dma_contig 
+> videobuf2_memops videobuf2_v4l2 ecdh_generic ecc videobuf2_common 
+> videodev phy_exynos_usb2 ohci_exynos panfrost gpu_sched mc s3c2410_wdt 
+> s5p_sss s5p_cec exynos_rng rtc_s3c i2c_arb_gpio_challenge
+> CPU: 1 PID: 16 Comm: kworker/1:0 Not tainted 
+> 5.7.0-rc7-02995-g8208f5a9d435 #8564
+> Hardware name: Samsung Exynos (Flattened Device Tree)
+> Workqueue: events_freezable mmc_rescan
+> PC is at __queue_work+0x6c/0x4e8
+> LR is at __queue_work+0x68/0x4e8
+> pc : [<c03619d8>]    lr : [<c03619d4>]    psr: 60000093
+> ...
+> Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
+> Control: 10c5387d  Table: 6be2406a  DAC: 00000051
+> Process kworker/1:0 (pid: 16, stack limit = 0xf9898f75)
+> Stack: (0xee117de0 to 0xee118000)
+> ...
+> [<c03619d8>] (__queue_work) from [<c0361e94>] (queue_work_on+0x40/0x4c)
+> [<c0361e94>] (queue_work_on) from [<bf17dd0c>] 
+> (hci_adv_monitors_clear+0x74/0x90 [bluetooth])
+> [<bf17dd0c>] (hci_adv_monitors_clear [bluetooth]) from [<bf17e138>] 
+> (hci_unregister_dev+0x158/0x224 [bluetooth])
+> [<bf17e138>] (hci_unregister_dev [bluetooth]) from [<bf1d1638>] 
+> (btmrvl_remove_card+0x58/0x7c [btmrvl])
+> [<bf1d1638>] (btmrvl_remove_card [btmrvl]) from [<c0d09698>] 
+> (sdio_bus_remove+0x30/0x11c)
+> [<c0d09698>] (sdio_bus_remove) from [<c09d534c>] 
+> (device_release_driver_internal+0xe8/0x1ac)
+> [<c09d534c>] (device_release_driver_internal) from [<c09d3e18>] 
+> (bus_remove_device+0xcc/0xf8)
+> [<c09d3e18>] (bus_remove_device) from [<c09cfa3c>] (device_del+0x15c/0x384)
+> [<c09cfa3c>] (device_del) from [<c0d098b8>] (sdio_remove_func+0x20/0x34)
+> [<c0d098b8>] (sdio_remove_func) from [<c0d075bc>] 
+> (mmc_sdio_remove+0x38/0x64)
+> [<c0d075bc>] (mmc_sdio_remove) from [<c0d08858>] (mmc_sdio_detect+0x6c/0xf8)
+> [<c0d08858>] (mmc_sdio_detect) from [<c0cff6f0>] (mmc_rescan+0x1d0/0x42c)
+> [<c0cff6f0>] (mmc_rescan) from [<c0362454>] (process_one_work+0x178/0x4ac)
+> [<c0362454>] (process_one_work) from [<c0362b44>] (worker_thread+0x2c/0x530)
+> [<c0362b44>] (worker_thread) from [<c0368610>] (kthread+0x12c/0x158)
+> [<c0368610>] (kthread) from [<c03001a8>] (ret_from_fork+0x14/0x2c)
+> Exception stack(0xee117fb0 to 0xee117ff8)
+> ...
+> ---[ end trace 0ec00d142e0a49cf ]---
+> 
+> This board uses btmrvl_sdio bluetooth driver if that helps. Reverting 
+> this commit in linux-next 20200629 'fixes' the issue.
+> 
+> I can do more tests if needed on this hardware, just let me know how can 
+> I help and what to do.
 
-Am 29.06.20 um 23:10 schrieb Wolfram Sang:
-> Hi Alexander,
-> 
-> thanks for trying to fix this, yet I have some doubts.
-> 
-> On Mon, Jun 29, 2020 at 10:31:21PM +0200, Alexander A. Klimov wrote:
->> Rationale:
->> https://lore.kernel.org/linux-doc/20200626110706.7b5d4a38@lwn.net/
-> 
-> I think we need some text here. Clicking on a link to understand what a
-> patch is about is not comfortable. You can add the link with a Link: tag
-> for additional information.
-Fine. I can easily make a v2 patch, but first...
+can you check latest bluetooth-next. I think that we applied a fix for it.
 
-> 
-> Removing stale email addresses may have some value, but removing...
-> 
->>   Compaq's Bootldr + John Dorsey's patch for Assabet support
->> -(http://www.handhelds.org/Compaq/bootldr.html)
-> 
-> ... information like this is not good. 'Wayback machine' still has
-> copies in case someone wants to look at where the infos came from.
-If we shall not remove *this link*, maybe we shall not remove *all links*?
+Regards
 
-@Jon You've kinda initiated the patch, what's your opinion? Bad 
-squatters or good Wayback machine?
+Marcel
 
-> 
->> - * Copyright 2004-2005  Phil Blundell <pb@handhelds.org>
->> + * Copyright 2004-2005  Phil Blundell
-> 
-> This is an OK case in my book...
-> 
-> 
->> -MODULE_AUTHOR("Phil Blundell <pb@handhelds.org>");
->> +MODULE_AUTHOR("Phil Blundell");
-> 
-> ... same here ...
-> 
->> @@ -435,7 +435,6 @@
->>                              case a PCI bridge (DEC chip 21152). The value of
->>                              'pb' is now only initialized if a de4x5 chip is
->>                              present.
->> -                           <france@handhelds.org>
-> 
-> This is kind of a signature and should be kept IMO.
-What for? An email address is for someone who'd like to send an email to 
-it. At the moment handhelds.org doesn't even have an MX record.
-
-> 
->>    * 2001/07/23: <rmk@arm.linux.org.uk>
->> - *	- Hand merge version from handhelds.org CVS tree.  See patch
->> + *	- Hand merge version from CVS tree.  See patch
-> 
-> That information may be useful.
-Again: What for? For visiting it and thinking like damn, it's gone?
-
-> 
-> 
->>   /* SPDX-License-Identifier: GPL-2.0-only */
->>   /* -*- linux-c -*-
->> - *
->> - * (C) 2003 zecke@handhelds.org
-> 
-> Removing copyright is a bad idea.
-IMAO the CREDITS file is for (c) headers.
-If you didn't submit a patch for that - your problem.
-
-If you disagree, I can look up git blame.
-
-> 
-> Probably some comment blocks are cruft meanwhile and can be removed as a
-> whole. That can be discussed. But removing only the handhelds.org part
-> makes most parts worse IMHO.
-> 
-> Thanks and happy hacking,
-> 
->     Wolfram
-> 
