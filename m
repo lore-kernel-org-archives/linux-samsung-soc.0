@@ -2,104 +2,142 @@ Return-Path: <SRS0=G/L8=AL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFA1C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 03:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A6A1C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 06:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C42E020672
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 03:23:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E550020759
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Jun 2020 06:27:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oaiL4G1T"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AO0scRZq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729040AbgF3DXW (ORCPT
+        id S1730164AbgF3G1F (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 23:23:22 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:43268 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729035AbgF3DXW (ORCPT
+        Tue, 30 Jun 2020 02:27:05 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57651 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730154AbgF3G1D (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Jun 2020 23:23:22 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05U3I9PE093763;
-        Tue, 30 Jun 2020 03:23:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2020-01-29;
- bh=QkEKs1G4nOwQk9stMmsSiw10VVkVybgTTlbcrUy7lXQ=;
- b=oaiL4G1TDU6/JCSdZLXhY0Ac5oNdSR1qhTJ2ahZ/4aIhnMaD+eZ47Q4kqCkmTZor8T1G
- 1PYoT4hkmPRyiV7d6bai9bBnlgznyyNf7z1fNkPB6Qo29fen3qx8OD02Esczw7KtoFzz
- DwATBV8pUqI9UjJrD44GRtIadkb9pWDeqgnifTz1L9zOwk6qXFkfe2btS26XYxKDcqTS
- GtuWZmv9Kh9voYEzOcNaKMGrLeAboAI4xhK0tNiIYLDwenhbL2n68xGfuMvEy28Rmkyl
- p+fIpjNrtIxmEuY+Jaa39mqgH/SgIBtx5IYTRREHLGRX5yL2CmevbYGv/q0Fyu1q3Xpx ZQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 31wxrn1p9j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 30 Jun 2020 03:23:09 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05U3IW0v065236;
-        Tue, 30 Jun 2020 03:23:09 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 31xfvrpwgp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Jun 2020 03:23:09 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 05U3N7No023576;
-        Tue, 30 Jun 2020 03:23:07 GMT
-Received: from ca-mkp.ca.oracle.com (/10.156.108.201)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 30 Jun 2020 03:23:06 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Kiwoong Kim <kwmad.kim@samsung.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Avri Altman <avri.altman@wdc.com>,
-        linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>
-Subject: Re: [PATCH] scsi: ufs: ufs-exynos: Remove an unnecessary NULL check
-Date:   Mon, 29 Jun 2020 23:23:04 -0400
-Message-Id: <159348736490.22355.10176976047581563338.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200626105133.GF314359@mwanda>
-References: <20200626105133.GF314359@mwanda>
+        Tue, 30 Jun 2020 02:27:03 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200630062701euoutp0230462be777cac8cd7844c3ef914718f7~dPl889bx_0833208332euoutp02j
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jun 2020 06:27:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200630062701euoutp0230462be777cac8cd7844c3ef914718f7~dPl889bx_0833208332euoutp02j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1593498421;
+        bh=837mH5WoZoAfjQ/qyJerBSqKjDYL+ctM09x1q/ySjVk=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=AO0scRZq6Ez63v77F/RX554SC6gekSq9bBUTe3t0IQRWSiU/0SWPYluKTvdSKWQOc
+         uj12irRVT3mYNXi0Ll1o5jbnNihKjmZF1vvqqrXvwmOeM/qWMDPgQSDPLgFLFneQGf
+         z/nQnM749CmxFTcQ0JNdgN25uvnyBkPwCKbPI/P0=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200630062701eucas1p1b691c1894216947d32cca0a029408300~dPl8eZ-jt1426414264eucas1p1Y;
+        Tue, 30 Jun 2020 06:27:01 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id C1.4D.06318.53BDAFE5; Tue, 30
+        Jun 2020 07:27:01 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200630062700eucas1p26889ded55f324aa745bc914dcd1faed4~dPl79WWlp2732027320eucas1p2F;
+        Tue, 30 Jun 2020 06:27:00 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200630062700eusmtrp2f1d0f04afba5316efc4a2f294370e3ba~dPl78ncSS3011830118eusmtrp2c;
+        Tue, 30 Jun 2020 06:27:00 +0000 (GMT)
+X-AuditID: cbfec7f5-371ff700000018ae-38-5efadb35f8aa
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 84.0A.06017.43BDAFE5; Tue, 30
+        Jun 2020 07:27:00 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200630062700eusmtip1dcf28c8e096329f4a9f6145f772ef6f5~dPl7SBLzl0872808728eusmtip1X;
+        Tue, 30 Jun 2020 06:27:00 +0000 (GMT)
+Subject: Re: [PATCH v2] ARM: dts: exynos: Fix missing empty reg/ranges
+ property regulators on Trats
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <97651868-30f3-6b91-1ea2-551ee1ebad8f@samsung.com>
+Date:   Tue, 30 Jun 2020 08:27:01 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9667 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0 spamscore=0
- phishscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006300023
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9667 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 impostorscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 phishscore=0 adultscore=0 cotscore=-2147483648
- lowpriorityscore=0 suspectscore=0 spamscore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006300023
+In-Reply-To: <20200629205948.32250-1-krzk@kernel.org>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa2xLYRjO13PantYq347VXiZIk80l2YaZHCGyiR8lEUQiIVbKjlm03dLa
+        jEjsQlndSiKtGruwaJrsVlZMLNkxKxmtdNjCwlixmkZil24zRnuM/Xve532e73ne5KMIulk4
+        m8rWHWT1OrVGIZKSrrZRT2LqmzHVkmGHnOm55hIxDdY6IdM5+FnIlLd6hMz53n6C8XrrxYyz
+        95WQ6WgqEzFWb7OAqWocFDMnHrSKmZMfA0RalNLpKBUpb904pjx324GUA865m8kd0tWZrCY7
+        n9Unr9kt3d9Z9J3MDQkL2rmngkI0QpqQhAK8HH51NApNSErR2I7gR+EtET8MIvCVDAvCKhoP
+        IPh2ctmko8UVQrzoJoLHodNifviGoN/ujThmYBZeFdcQYRyDt0Eo8DjyLIHHBTDy5q0ovBDh
+        pWAKmiJYhtdAF1caMZA4HiotzyIF5TgDzlVX/NVEw5PL/j88RUlwKpiD+8I0gefBnWAZweNY
+        eO0vF4SzAPvE8OK6T8DXXgeWPjPB4xnwxX1bzOM5MHFv0lCC4L2nRswPZxB0FFsRr1oF3Z4x
+        UTiZwIugrimZp9Oh+8KYOEwDng5dwWi+xHS46LIQPC2DU0aaVyeAzV37L7bluY8wI4VtymW2
+        KefYppxj+59bgUgHimXzDNos1pCiYw8lGdRaQ54uK2lvjtaJ/vyq9l/uobuoeXwPhzCFFFGy
+        3Z5RFS1U5xsOazkEFKGIka191q6iZZnqw0dYfc4ufZ6GNXAojiIVsbKUqkAGjbPUB9kDLJvL
+        6ie3AkoyuxA9vEOrMlHasUDnzk/pwyuS7HTaUe5+QeuCoZWKCZtRdbyNbLpedmljQjWncebU
+        c3V3N1ji46XrTWetukcp282s2z7ta4/xim8TSU+Le+DvspuXp17NlY9LEt/5G7S9C7lt8p/p
+        3saXRa/z+7ZU9httH+bN2rP1fdnM+bUl6iFCQRr2q5cuJvQG9W/pUwM2UQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPIsWRmVeSWpSXmKPExsVy+t/xu7omt3/FGXzbYWDxYN42NouNM9az
+        Wlz/8pzVYv6Rc6wW/Y9fM1ucP7+B3WLT42usFpd3zWGzmHF+H5PFoq1f2C1a9x5ht2h/+pLZ
+        gcdj06pONo/NS+o9+rasYvT4vEkugCVKz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng8
+        1srIVEnfziYlNSezLLVI3y5BL+N64yeWgu+sFacPnWFqYPzB0sXIySEhYCJxcNt3RhBbSGAp
+        o8Trs/4QcRmJk9MaWCFsYYk/17rYuhi5gGreMkpMmLSaCSQhLJAqca1pLXMXIweHiECYxNpV
+        5iA1zAJ/mCQ23HvDCNHQwSix/nsPG0gDm4ChRNfbLjCbV8BO4sahTmYQm0VAVWLh9LNgF4kK
+        xEp8u7cFqkZQ4uTMJywgCzgFTCUmvE0DCTMLmEnM2/yQGcKWl9j+dg6ULS5x68l8pgmMQrOQ
+        dM9C0jILScssJC0LGFlWMYqklhbnpucWG+kVJ+YWl+al6yXn525iBEbmtmM/t+xg7HoXfIhR
+        gINRiYc34dzPOCHWxLLiytxDjBIczEoivE5nT8cJ8aYkVlalFuXHF5XmpBYfYjQF+m0is5Ro
+        cj4waeSVxBuaGppbWBqaG5sbm1koifN2CByMERJITyxJzU5NLUgtgulj4uCUamDc3rSoX+qh
+        lcVz4wa2R//WLn56efMkrY0fdhssfHU75KVNrdZTF7Zfd1d9n3e7mDH6npNFyNYFYo82HUg8
+        IHjc4Umb3dbSy0xOPf68kvv3HnqfLv9M3V79c8SJUj6V6hRO/3nbG0pP7ut61bq6dHJios0G
+        0wt5lZcduw/wb1gulPU6h+3OugobJZbijERDLeai4kQADzbOMeICAAA=
+X-CMS-MailID: 20200630062700eucas1p26889ded55f324aa745bc914dcd1faed4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200629210025eucas1p219a52e75ecce9e813aa80f0126780189
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200629210025eucas1p219a52e75ecce9e813aa80f0126780189
+References: <CGME20200629210025eucas1p219a52e75ecce9e813aa80f0126780189@eucas1p2.samsung.com>
+        <20200629205948.32250-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 26 Jun 2020 13:51:33 +0300, Dan Carpenter wrote:
+Hi Krzysztof,
 
-> The "head" pointer can't be NULL because it points to an address in
-> the middle of a ufs_hba struct.  Looking at this code, probably someone
-> would wonder if the intent was to check whether "hba" is NULL, but "hba"
-> isn't NULL and the check can just be removed.
+On 29.06.2020 22:59, Krzysztof Kozlowski wrote:
+> Remove the regulators node entirely because its children do not have any
+> unit addresses.  This fixes DTC warning:
+>
+>      Warning (simple_bus_reg): /regulators/regulator-0: missing or empty reg/ranges property
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Applied to 5.9/scsi-queue, thanks!
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[1/1] scsi: ufs: ufs-exynos: Remove an unnecessary NULL check
-      https://git.kernel.org/mkp/scsi/c/b7a80dac0f1f
+What about removing the regulators node from other boards: 
+exynos4412-origen.dts, exynos5420-smdk5420.dts and exynos5250-arndale.dts?
 
+On the other hand, maybe it would be really easier to add missing 
+address/size-cells properties to exynos4210-trats.dts/regulators node?
+
+Best regards
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
