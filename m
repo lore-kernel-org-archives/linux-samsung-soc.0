@@ -2,210 +2,160 @@ Return-Path: <SRS0=zQfj=AM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 974C7C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 06:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19827C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 10:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7557D20663
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 06:53:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593586402;
-	bh=dXBhHEPls7hLBapRWS5AGMEC2erUdD9Csqr28fSP9pw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PSfbafT7oWmF0g0Sjz2Z2juXLrGfMfy4eTPZ6O8KL2wi7I8s93JVi8BN1mtn5nail
-	 ASs17PfHDPA+jSNKgKXdt0oXmG6SnufF3zIgzQBo6RML2Y653hg8aSkOGl1Q3VuDca
-	 AGWBsbXA3nFl15D8ggsC6VugZXCaPL7zFDV5FuDU=
+	by mail.kernel.org (Postfix) with ESMTP id 0725D2074D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 10:34:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbgGAGxS (ORCPT
+        id S1729226AbgGAKeS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Jul 2020 02:53:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53388 "EHLO mail.kernel.org"
+        Wed, 1 Jul 2020 06:34:18 -0400
+Received: from mga05.intel.com ([192.55.52.43]:1968 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726144AbgGAGxR (ORCPT
+        id S1729180AbgGAKeS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Jul 2020 02:53:17 -0400
-Received: from localhost (unknown [122.182.251.219])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8CF220663;
-        Wed,  1 Jul 2020 06:53:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593586396;
-        bh=dXBhHEPls7hLBapRWS5AGMEC2erUdD9Csqr28fSP9pw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=C8eB5xTvyZai8hXpd1pcdc0CHm9taDe6vDGfPYx7sXpwjVz6r8ExHPUmXgBS8QhTm
-         ayonsd3cJSSzuIZSGVuDce2UEWd0NYgViIxwqpz5gu0hKCi+y2ptcujuKz3Iv9h/aI
-         cAZ8r14PQlW36iTVEBtUIUWAPVvSOx26j3Ocs5gE=
-Date:   Wed, 1 Jul 2020 12:23:10 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     robh+dt@kernel.org, krzk@kernel.org, kwmad.kim@samsung.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        kishon@ti.com
-Subject: Re: [RESEND PATCH v10 2/2] phy: samsung-ufs: add UFS PHY driver for
- samsung SoC
-Message-ID: <20200701065310.GX2599@vkoul-mobl>
-References: <20200624235631.11232-1-alim.akhtar@samsung.com>
- <CGME20200625001545epcas5p2127fb1fac70397d9c23a1246cc86f753@epcas5p2.samsung.com>
- <20200624235631.11232-2-alim.akhtar@samsung.com>
+        Wed, 1 Jul 2020 06:34:18 -0400
+IronPort-SDR: tXPm5DZxN8Nc4u5kMMFPc+FVBAP5palGdp7J2o8ByiMduucpju6kx9UFwll+4yafsjVyskQ//x
+ tw84jEzwh7yw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9668"; a="231406762"
+X-IronPort-AV: E=Sophos;i="5.75,299,1589266800"; 
+   d="scan'208";a="231406762"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2020 03:34:17 -0700
+IronPort-SDR: /SGe/XKYWuaoce/TsPtS7IN2mBOQJUEX4bShJOO4dvuuaJiwiojG3GnU8un3tzbr0p7pjm/jMt
+ IqGbDE29Gpaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,299,1589266800"; 
+   d="scan'208";a="303803013"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.73]) ([10.237.72.73])
+  by fmsmga004.fm.intel.com with ESMTP; 01 Jul 2020 03:34:15 -0700
+Subject: Re: [PATCH] mmc: host: dereference null return value
+To:     haibo.chen@nxp.com, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, jh80.chung@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, michal.simek@xilinx.com,
+        linux-samsung-soc@vger.kernel.org
+Cc:     linux-imx@nxp.com
+References: <1592885209-25839-1-git-send-email-haibo.chen@nxp.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <cdc9b395-37ea-8ecd-6e20-1e32f2bd0931@intel.com>
+Date:   Wed, 1 Jul 2020 13:33:37 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200624235631.11232-2-alim.akhtar@samsung.com>
+In-Reply-To: <1592885209-25839-1-git-send-email-haibo.chen@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Alim,
+On 23/06/20 7:06 am, haibo.chen@nxp.com wrote:
+> From: Haibo Chen <haibo.chen@nxp.com>
+> 
+> of_match_node() has the opportunity to return NULL, so need to
+> dereference null return value.
+> This is reported by Coverity.
+> 
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+> ---
+>  drivers/mmc/host/dw_mmc-exynos.c   | 5 +++--
+>  drivers/mmc/host/dw_mmc-k3.c       | 5 +++--
+>  drivers/mmc/host/dw_mmc-pltfm.c    | 3 ++-
+>  drivers/mmc/host/sdhci-of-arasan.c | 2 ++
+>  4 files changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index 5e3d95b63676..27ab55abb03f 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -545,12 +545,13 @@ MODULE_DEVICE_TABLE(of, dw_mci_exynos_match);
+>  
+>  static int dw_mci_exynos_probe(struct platform_device *pdev)
+>  {
+> -	const struct dw_mci_drv_data *drv_data;
+> +	const struct dw_mci_drv_data *drv_data = NULL;
+>  	const struct of_device_id *match;
+>  	int ret;
+>  
+>  	match = of_match_node(dw_mci_exynos_match, pdev->dev.of_node);
+> -	drv_data = match->data;
+> +	if (match)
+> +		drv_data = match->data;
 
-On 25-06-20, 05:26, Alim Akhtar wrote:
+Could be 1 line change:
 
-> +int samsung_ufs_phy_wait_for_lock_acq(struct phy *phy)
+	drv_data = match ? match->data : NULL;
 
-static ?
+>  
+>  	pm_runtime_get_noresume(&pdev->dev);
+>  	pm_runtime_set_active(&pdev->dev);
+> diff --git a/drivers/mmc/host/dw_mmc-k3.c b/drivers/mmc/host/dw_mmc-k3.c
+> index 50977ff18074..e8a148c306b3 100644
+> --- a/drivers/mmc/host/dw_mmc-k3.c
+> +++ b/drivers/mmc/host/dw_mmc-k3.c
+> @@ -451,11 +451,12 @@ MODULE_DEVICE_TABLE(of, dw_mci_k3_match);
+>  
+>  static int dw_mci_k3_probe(struct platform_device *pdev)
+>  {
+> -	const struct dw_mci_drv_data *drv_data;
+> +	const struct dw_mci_drv_data *drv_data = NULL;
+>  	const struct of_device_id *match;
+>  
+>  	match = of_match_node(dw_mci_k3_match, pdev->dev.of_node);
+> -	drv_data = match->data;
+> +	if (match)
+> +		drv_data = match->data;
 
-> +{
-> +	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
-> +	const unsigned int timeout_us = 100000;
-> +	const unsigned int sleep_us = 10;
-> +	u32 val;
-> +	int err;
-> +
-> +	err = readl_poll_timeout(
-> +			ufs_phy->reg_pma + PHY_APB_ADDR(PHY_PLL_LOCK_STATUS),
-> +			val, (val & PHY_PLL_LOCK_BIT), sleep_us, timeout_us);
-> +	if (err) {
-> +		dev_err(ufs_phy->dev,
-> +			"failed to get phy pll lock acquisition %d\n", err);
-> +		goto out;
-> +	}
-> +
-> +	err = readl_poll_timeout(
-> +			ufs_phy->reg_pma + PHY_APB_ADDR(PHY_CDR_LOCK_STATUS),
-> +			val, (val & PHY_CDR_LOCK_BIT), sleep_us, timeout_us);
-> +	if (err) {
-> +		dev_err(ufs_phy->dev,
-> +			"failed to get phy cdr lock acquisition %d\n", err);
-> +		goto out;
+Could be 1 line change:
 
-this one can be dropped
+	drv_data = match ? match->data : NULL;
 
-> +	}
-> +
-> +out:
-> +	return err;
-> +}
-> +
-> +int samsung_ufs_phy_calibrate(struct phy *phy)
+>  
+>  	return dw_mci_pltfm_register(pdev, drv_data);
+>  }
+> diff --git a/drivers/mmc/host/dw_mmc-pltfm.c b/drivers/mmc/host/dw_mmc-pltfm.c
+> index 7de37f524a96..d3dcb96efd13 100644
+> --- a/drivers/mmc/host/dw_mmc-pltfm.c
+> +++ b/drivers/mmc/host/dw_mmc-pltfm.c
+> @@ -78,7 +78,8 @@ static int dw_mci_pltfm_probe(struct platform_device *pdev)
+>  
+>  	if (pdev->dev.of_node) {
+>  		match = of_match_node(dw_mci_pltfm_match, pdev->dev.of_node);
+> -		drv_data = match->data;
+> +		if (match)
+> +			drv_data = match->data;
+>  	}
+>  
+>  	return dw_mci_pltfm_register(pdev, drv_data);
+> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+> index fb26e743e1fd..f2090f944a0e 100644
+> --- a/drivers/mmc/host/sdhci-of-arasan.c
+> +++ b/drivers/mmc/host/sdhci-of-arasan.c
+> @@ -1520,6 +1520,8 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
+>  	const struct sdhci_arasan_of_data *data;
+>  
+>  	match = of_match_node(sdhci_arasan_of_match, pdev->dev.of_node);
+> +	if (match == NULL)
 
-static?
+(!match) seems to be preferred over (match == NULL)
 
-> +{
-> +	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
-> +	struct samsung_ufs_phy_cfg **cfgs = ufs_phy->cfg;
-> +	const struct samsung_ufs_phy_cfg *cfg;
-> +	int i;
-> +	int err = 0;
+> +		return -ENOPARAM;
 
-err before i would make it look better
+ENOPARAM is unconventional here.  ENODEV or EINVAL are better
 
-> +
-> +	if (unlikely(ufs_phy->ufs_phy_state < CFG_PRE_INIT ||
-> +		     ufs_phy->ufs_phy_state >= CFG_TAG_MAX)) {
-> +		dev_err(ufs_phy->dev, "invalid phy config index %d\n",
-> +							ufs_phy->ufs_phy_state);
+>  	data = match->data;
+>  	host = sdhci_pltfm_init(pdev, data->pdata, sizeof(*sdhci_arasan));
+>  
+> 
 
-single line now?
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (ufs_phy->is_pre_init)
-> +		ufs_phy->is_pre_init = false;
-
-that sounds bit strange, you clear it if set? Can you explain what is
-going on here, and add comments
-
-> +static int samsung_ufs_phy_symbol_clk_init(struct samsung_ufs_phy *phy)
-> +{
-> +	int ret = 0;
-
-superfluous init
-
-> +
-> +	phy->tx0_symbol_clk = devm_clk_get(phy->dev, "tx0_symbol_clk");
-> +	if (IS_ERR(phy->tx0_symbol_clk)) {
-> +		dev_err(phy->dev, "failed to get tx0_symbol_clk clock\n");
-> +		goto out;
-> +	}
-> +
-> +	phy->rx0_symbol_clk = devm_clk_get(phy->dev, "rx0_symbol_clk");
-> +	if (IS_ERR(phy->rx0_symbol_clk)) {
-> +		dev_err(phy->dev, "failed to get rx0_symbol_clk clock\n");
-> +		goto out;
-> +	}
-> +
-> +	phy->rx1_symbol_clk = devm_clk_get(phy->dev, "rx1_symbol_clk");
-> +	if (IS_ERR(phy->rx0_symbol_clk)) {
-> +		dev_err(phy->dev, "failed to get rx1_symbol_clk clock\n");
-> +		goto out;
-> +	}
-> +
-> +	ret = clk_prepare_enable(phy->tx0_symbol_clk);
-> +	if (ret) {
-> +		dev_err(phy->dev, "%s: tx0_symbol_clk enable failed %d\n",
-> +				__func__, ret);
-> +		goto out;
-> +	}
-> +	ret = clk_prepare_enable(phy->rx0_symbol_clk);
-> +	if (ret) {
-> +		dev_err(phy->dev, "%s: rx0_symbol_clk enable failed %d\n",
-> +				__func__, ret);
-
-so we keep tx0_symbol_clk enabled when bailing out?
-
-> +		goto out;
-> +	}
-> +	ret = clk_prepare_enable(phy->rx1_symbol_clk);
-> +	if (ret) {
-> +		dev_err(phy->dev, "%s: rx1_symbol_clk enable failed %d\n",
-> +				__func__, ret);
-
-here as well
-
-> +static int samsung_ufs_phy_init(struct phy *phy)
-> +{
-> +	struct samsung_ufs_phy *_phy = get_samsung_ufs_phy(phy);
-> +	int ret;
-> +
-> +	_phy->lane_cnt = phy->attrs.bus_width;
-> +	_phy->ufs_phy_state = CFG_PRE_INIT;
-> +
-> +	/**
-> +	 * In ufs, PHY need to be calibrated at different stages / state
-> +	 * mainly before Linkstartup, after Linkstartup, before power
-> +	 * mode change and after power mode change.
-> +	 * Below state machine initialize the initial state to handle
-> +	 * PHY calibration at various stages of UFS initialization and power
-> +	 * mode changes
-> +	 */
-> +	_phy->is_pre_init = true;
-> +	_phy->is_post_init = false;
-> +	_phy->is_pre_pmc = false;
-> +	_phy->is_post_pmc = false;
-
-hmm why not have phy_state and assign that
-pre_init/post_init/pre_pmc/post_pmc states?
-
-> +static int samsung_ufs_phy_set_mode(struct phy *generic_phy,
-> +					enum phy_mode mode, int submode)
-
-pls align this to preceding line opening brace (tip: checkpatch with
---strict can tell you about these)
--- 
-~Vinod
