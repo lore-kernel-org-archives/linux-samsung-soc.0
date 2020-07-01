@@ -2,93 +2,144 @@ Return-Path: <SRS0=zQfj=AM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26051C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 10:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF7DC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 10:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06050207BB
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 10:53:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67023206CB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 10:57:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aEWV5zfe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730092AbgGAKxN (ORCPT
+        id S1730164AbgGAK5h (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Jul 2020 06:53:13 -0400
-Received: from foss.arm.com ([217.140.110.172]:57020 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729892AbgGAKxN (ORCPT
+        Wed, 1 Jul 2020 06:57:37 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37944 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729892AbgGAK5a (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Jul 2020 06:53:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B597030E;
-        Wed,  1 Jul 2020 03:53:12 -0700 (PDT)
-Received: from [10.57.21.32] (unknown [10.57.21.32])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB9483F73C;
-        Wed,  1 Jul 2020 03:53:08 -0700 (PDT)
-Subject: Re: [PATCH v3 00/34] iommu: Move iommu_group setup to IOMMU core code
-To:     Qian Cai <cai@lca.pw>, Joerg Roedel <joro@8bytes.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Will Deacon <will@kernel.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
-        jonathan.derrick@intel.com, linux-s390@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        virtualization@lists.linux-foundation.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
-References: <20200429133712.31431-1-joro@8bytes.org>
- <20200701004020.GA6221@lca.pw>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <9b0ef27a-f249-a90b-9899-e53b946f83cc@arm.com>
-Date:   Wed, 1 Jul 2020 11:53:07 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Wed, 1 Jul 2020 06:57:30 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200701105728euoutp02fe7ac6808559f1eb0875980dee731470~dm7XRXOTj2553125531euoutp02g
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Jul 2020 10:57:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200701105728euoutp02fe7ac6808559f1eb0875980dee731470~dm7XRXOTj2553125531euoutp02g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1593601048;
+        bh=icvmKZlOU5pUcij0b272NhBKag+tDSBjCIMXA7qt81Q=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=aEWV5zfedTA9v9I93VgF0IUtC6bPAfSVTRxf50A3bVkDvUSpw1jZYZd6D18LvYIY3
+         nEDgYJnRVrriup6lJUxNvhJxuf7c8ezH0kihLszrrWzaIBc2iDNlSH3VgfeN7nJlUr
+         x0U5MqCOj9JDoAL/8VY2+FThcdSZFFme/htqM9YY=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200701105728eucas1p1f9997ea064dfbc262731bd60596b8f2b~dm7W9gkpR0832308323eucas1p1f;
+        Wed,  1 Jul 2020 10:57:28 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id C8.14.05997.71C6CFE5; Wed,  1
+        Jul 2020 11:57:27 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200701105727eucas1p1aef1f9b683ea10e1aaee65e43969af82~dm7WnKQtg2957329573eucas1p1I;
+        Wed,  1 Jul 2020 10:57:27 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200701105727eusmtrp2c0f4c97603f5d20e9dd58bf67dc9acc1~dm7Wme7K60954909549eusmtrp2o;
+        Wed,  1 Jul 2020 10:57:27 +0000 (GMT)
+X-AuditID: cbfec7f4-677ff7000000176d-7f-5efc6c175183
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id AF.95.06314.71C6CFE5; Wed,  1
+        Jul 2020 11:57:27 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200701105727eusmtip15b72dd43a3f99cf35a1891d34900e0ff~dm7WGOeZj0072300723eusmtip1i;
+        Wed,  1 Jul 2020 10:57:27 +0000 (GMT)
+Subject: Re: [PATCH] mmc: host: dereference null return value
+To:     haibo.chen@nxp.com, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        jh80.chung@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        michal.simek@xilinx.com, linux-samsung-soc@vger.kernel.org
+Cc:     linux-imx@nxp.com
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <78c6f493-eb0f-d451-22db-aa1836b33018@samsung.com>
+Date:   Wed, 1 Jul 2020 12:57:26 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200701004020.GA6221@lca.pw>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+In-Reply-To: <1592885209-25839-1-git-send-email-haibo.chen@nxp.com>
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju2zk7Ow4nxznZi5rBCikp79SB1K7E/GUQZUjTVh5UnFM2rwUh
+        SV6WOrEf2rpoE0mnVopT81aaOLxOjERiQaFZGlvCDHJq5jyz/Pc8z/u83/M+8JGY8B3Xh0xV
+        ZjEqpVwhIfh458ia+ZhYsZEQUjoaSY8utBC09kMTouccRVxaO/8Do83mVzxa42jC6OEtLaJr
+        zAMc2rZ0lTa1xp3mS+v7ljjSdkMpIbXM9hHSNls3R1rRYUBSe7u/tN++jl/kxfMjkxhFag6j
+        Co6+zk8xdv3CMzeIPM1EFSpAg1wNciOBioAti4OnQXxSSDUi6H3UjbFkFYF+Us9liR1BS+9b
+        3u7K2Piqa+U5gvnmTRf5iaCtcBlzuryoKFiw1++si6hPCBaNNsI5wChvKLcUc5yYoEJBY9Xs
+        6AIqGkqsWtyJceoQ1E7U7MR5UzKoaKhzeTxh9OHCjseNOgdltmdc9s0D0GV9jLFYDB8Xajns
+        qTM8aO4/zOLzUDvZ76rgBcumDhf2g63XTj9/Gxci+DLVymNJGYL3d2sQ6zoJlinH9hXkdsIR
+        eNkTzMpn4MlyNe6UgfKAOasne4MHVHVWY6wsgJIiIesOAJ3pxb/YwekZrBJJdHua6fa00e1p
+        o/ufW4dwAxIz2er0ZEYdpmRyg9TydHW2MjnoZkZ6O9r+WuN/TKvdqGfjxhCiSCRxF5TsX08Q
+        cuU56vz0IQQkJhEJzk6OJwgFSfL8W4wqI1GVrWDUQ8iXxCViQbh+SSakkuVZTBrDZDKq3SmH
+        dPMpQEGNmwMxQ2OW5W9wNN5qzF+8ZCQmW1Y6YvXlUTqPExbN97x7n/etHww3uYfwj1/Ta55e
+        sf0OGU+8LQwIMz0QTcw6siLWRobro/0RXDCeosZyU6Zld9LiDH2jW8WplYG11QGiYh/dfV9F
+        31d6xY8wyUq0880XlW8aYi8PGmLCJLg6RR4aiKnU8r/j7tnZVgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xu7riOX/iDPa1q1mcfLKGzaL/6kpG
+        ixu/2lgt+h+/ZrY4f34Du0XXr5XMFkf+9zNazDi/j8ni3csIi+Nrwx24PBbvecnksWlVJ5vH
+        nWt72Dw2vtvB5NG3ZRWjx+dNch57P/9mCWCP0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHU
+        MzQ2j7UyMlXSt7NJSc3JLEst0rdL0MvYuv0rS8EftoquM5MYGxgPsnYxcnJICJhInDr9hb2L
+        kYtDSGApo0Tv2qlQCRmJk9MaoGxhiT/Xutggit4ySpyY/IcZJCEsYCvx5PNiVpCEiMBdRonJ
+        9x4zgSSYBUQleu+0M0F0TGOUeDJxFyNIgk3AUKLrLcgoTg5eATuJjrf9LCA2i4CKxPwzM9hB
+        bFGBWIlv97ZA1QhKnJz5BKyGU8BZoufdQlaIBWYS8zY/ZIaw5SW2v50DZYtL3Hoyn2kCo9As
+        JO2zkLTMQtIyC0nLAkaWVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmbGIFxuu3Yz807GC9tDD7E
+        KMDBqMTD2yH7O06INbGsuDL3EKMEB7OSCK/T2dNxQrwpiZVVqUX58UWlOanFhxhNgZ6byCwl
+        mpwPTCF5JfGGpobmFpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNTUwtSi2D6mDg4pRoYnSe51Av0
+        KkwTWGHk4yO94Vy2b97FZNO66atlGndNW1u2f7KOy1t9g+oZd/boJu0SfrMq6snf3cwHlPLN
+        Eo40pLpJJKieCQrsfCn5rvBu/Z59bfaPVky4Yj7rSMjqZXePyfDP36wbdpv9WwxnULPPQjuz
+        LFFpA5/3be1XTFQWsXCsV5xZ1fxfiaU4I9FQi7moOBEAcAutBukCAAA=
+X-CMS-MailID: 20200701105727eucas1p1aef1f9b683ea10e1aaee65e43969af82
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200623041836eucas1p2792e1fe062f8dd59af0ec18b8af1c1ef
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200623041836eucas1p2792e1fe062f8dd59af0ec18b8af1c1ef
+References: <CGME20200623041836eucas1p2792e1fe062f8dd59af0ec18b8af1c1ef@eucas1p2.samsung.com>
+        <1592885209-25839-1-git-send-email-haibo.chen@nxp.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020-07-01 01:40, Qian Cai wrote:
-> Looks like this patchset introduced an use-after-free on arm-smmu-v3.
-> 
-> Reproduced using mlx5,
-> 
-> # echo 1 > /sys/class/net/enp11s0f1np1/device/sriov_numvfs
-> # echo 0 > /sys/class/net/enp11s0f1np1/device/sriov_numvfs
-> 
-> The .config,
-> https://github.com/cailca/linux-mm/blob/master/arm64.config
-> 
-> Looking at the free stack,
-> 
-> iommu_release_device->iommu_group_remove_device
-> 
-> was introduced in 07/34 ("iommu: Add probe_device() and release_device()
-> call-backs").
+Hi,
 
-Right, iommu_group_remove_device can tear down the group and call 
-->domain_free before the driver has any knowledge of the last device 
-going away via the ->release_device call.
+On 23.06.2020 06:06, haibo.chen@nxp.com wrote:
+> From: Haibo Chen <haibo.chen@nxp.com>
+>
+> of_match_node() has the opportunity to return NULL, so need to
+> dereference null return value.
+> This is reported by Coverity.
+>
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
 
-I guess the question is do we simply flip the call order in 
-iommu_release_device() so drivers can easily clean up their internal 
-per-device state first, or do we now want them to be robust against 
-freeing domains with devices still nominally attached?
+There is no point in such check for a NULL. The driver won't be 
+instantiated/probed if there is no matching node found first by the 
+upper level framework. If you really want to make this code cleaner, 
+please change it to use of_device_get_match_data().
 
-Robin.
+> ---
+>   drivers/mmc/host/dw_mmc-exynos.c   | 5 +++--
+>   drivers/mmc/host/dw_mmc-k3.c       | 5 +++--
+>   drivers/mmc/host/dw_mmc-pltfm.c    | 3 ++-
+>   drivers/mmc/host/sdhci-of-arasan.c | 2 ++
+>   4 files changed, 10 insertions(+), 5 deletions(-)
+
+ > ...
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
