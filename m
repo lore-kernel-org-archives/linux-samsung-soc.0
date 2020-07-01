@@ -2,160 +2,93 @@ Return-Path: <SRS0=zQfj=AM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19827C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 10:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26051C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 10:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0725D2074D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 10:34:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06050207BB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 10:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729226AbgGAKeS (ORCPT
+        id S1730092AbgGAKxN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Jul 2020 06:34:18 -0400
-Received: from mga05.intel.com ([192.55.52.43]:1968 "EHLO mga05.intel.com"
+        Wed, 1 Jul 2020 06:53:13 -0400
+Received: from foss.arm.com ([217.140.110.172]:57020 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729180AbgGAKeS (ORCPT
+        id S1729892AbgGAKxN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Jul 2020 06:34:18 -0400
-IronPort-SDR: tXPm5DZxN8Nc4u5kMMFPc+FVBAP5palGdp7J2o8ByiMduucpju6kx9UFwll+4yafsjVyskQ//x
- tw84jEzwh7yw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9668"; a="231406762"
-X-IronPort-AV: E=Sophos;i="5.75,299,1589266800"; 
-   d="scan'208";a="231406762"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2020 03:34:17 -0700
-IronPort-SDR: /SGe/XKYWuaoce/TsPtS7IN2mBOQJUEX4bShJOO4dvuuaJiwiojG3GnU8un3tzbr0p7pjm/jMt
- IqGbDE29Gpaw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,299,1589266800"; 
-   d="scan'208";a="303803013"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.73]) ([10.237.72.73])
-  by fmsmga004.fm.intel.com with ESMTP; 01 Jul 2020 03:34:15 -0700
-Subject: Re: [PATCH] mmc: host: dereference null return value
-To:     haibo.chen@nxp.com, ulf.hansson@linaro.org,
-        linux-mmc@vger.kernel.org, jh80.chung@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, michal.simek@xilinx.com,
-        linux-samsung-soc@vger.kernel.org
-Cc:     linux-imx@nxp.com
-References: <1592885209-25839-1-git-send-email-haibo.chen@nxp.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <cdc9b395-37ea-8ecd-6e20-1e32f2bd0931@intel.com>
-Date:   Wed, 1 Jul 2020 13:33:37 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        Wed, 1 Jul 2020 06:53:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B597030E;
+        Wed,  1 Jul 2020 03:53:12 -0700 (PDT)
+Received: from [10.57.21.32] (unknown [10.57.21.32])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB9483F73C;
+        Wed,  1 Jul 2020 03:53:08 -0700 (PDT)
+Subject: Re: [PATCH v3 00/34] iommu: Move iommu_group setup to IOMMU core code
+To:     Qian Cai <cai@lca.pw>, Joerg Roedel <joro@8bytes.org>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Will Deacon <will@kernel.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
+        jonathan.derrick@intel.com, linux-s390@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        virtualization@lists.linux-foundation.org,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
+References: <20200429133712.31431-1-joro@8bytes.org>
+ <20200701004020.GA6221@lca.pw>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <9b0ef27a-f249-a90b-9899-e53b946f83cc@arm.com>
+Date:   Wed, 1 Jul 2020 11:53:07 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <1592885209-25839-1-git-send-email-haibo.chen@nxp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20200701004020.GA6221@lca.pw>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23/06/20 7:06 am, haibo.chen@nxp.com wrote:
-> From: Haibo Chen <haibo.chen@nxp.com>
+On 2020-07-01 01:40, Qian Cai wrote:
+> Looks like this patchset introduced an use-after-free on arm-smmu-v3.
 > 
-> of_match_node() has the opportunity to return NULL, so need to
-> dereference null return value.
-> This is reported by Coverity.
+> Reproduced using mlx5,
 > 
-> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
-> ---
->  drivers/mmc/host/dw_mmc-exynos.c   | 5 +++--
->  drivers/mmc/host/dw_mmc-k3.c       | 5 +++--
->  drivers/mmc/host/dw_mmc-pltfm.c    | 3 ++-
->  drivers/mmc/host/sdhci-of-arasan.c | 2 ++
->  4 files changed, 10 insertions(+), 5 deletions(-)
+> # echo 1 > /sys/class/net/enp11s0f1np1/device/sriov_numvfs
+> # echo 0 > /sys/class/net/enp11s0f1np1/device/sriov_numvfs
 > 
-> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-> index 5e3d95b63676..27ab55abb03f 100644
-> --- a/drivers/mmc/host/dw_mmc-exynos.c
-> +++ b/drivers/mmc/host/dw_mmc-exynos.c
-> @@ -545,12 +545,13 @@ MODULE_DEVICE_TABLE(of, dw_mci_exynos_match);
->  
->  static int dw_mci_exynos_probe(struct platform_device *pdev)
->  {
-> -	const struct dw_mci_drv_data *drv_data;
-> +	const struct dw_mci_drv_data *drv_data = NULL;
->  	const struct of_device_id *match;
->  	int ret;
->  
->  	match = of_match_node(dw_mci_exynos_match, pdev->dev.of_node);
-> -	drv_data = match->data;
-> +	if (match)
-> +		drv_data = match->data;
-
-Could be 1 line change:
-
-	drv_data = match ? match->data : NULL;
-
->  
->  	pm_runtime_get_noresume(&pdev->dev);
->  	pm_runtime_set_active(&pdev->dev);
-> diff --git a/drivers/mmc/host/dw_mmc-k3.c b/drivers/mmc/host/dw_mmc-k3.c
-> index 50977ff18074..e8a148c306b3 100644
-> --- a/drivers/mmc/host/dw_mmc-k3.c
-> +++ b/drivers/mmc/host/dw_mmc-k3.c
-> @@ -451,11 +451,12 @@ MODULE_DEVICE_TABLE(of, dw_mci_k3_match);
->  
->  static int dw_mci_k3_probe(struct platform_device *pdev)
->  {
-> -	const struct dw_mci_drv_data *drv_data;
-> +	const struct dw_mci_drv_data *drv_data = NULL;
->  	const struct of_device_id *match;
->  
->  	match = of_match_node(dw_mci_k3_match, pdev->dev.of_node);
-> -	drv_data = match->data;
-> +	if (match)
-> +		drv_data = match->data;
-
-Could be 1 line change:
-
-	drv_data = match ? match->data : NULL;
-
->  
->  	return dw_mci_pltfm_register(pdev, drv_data);
->  }
-> diff --git a/drivers/mmc/host/dw_mmc-pltfm.c b/drivers/mmc/host/dw_mmc-pltfm.c
-> index 7de37f524a96..d3dcb96efd13 100644
-> --- a/drivers/mmc/host/dw_mmc-pltfm.c
-> +++ b/drivers/mmc/host/dw_mmc-pltfm.c
-> @@ -78,7 +78,8 @@ static int dw_mci_pltfm_probe(struct platform_device *pdev)
->  
->  	if (pdev->dev.of_node) {
->  		match = of_match_node(dw_mci_pltfm_match, pdev->dev.of_node);
-> -		drv_data = match->data;
-> +		if (match)
-> +			drv_data = match->data;
->  	}
->  
->  	return dw_mci_pltfm_register(pdev, drv_data);
-> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
-> index fb26e743e1fd..f2090f944a0e 100644
-> --- a/drivers/mmc/host/sdhci-of-arasan.c
-> +++ b/drivers/mmc/host/sdhci-of-arasan.c
-> @@ -1520,6 +1520,8 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
->  	const struct sdhci_arasan_of_data *data;
->  
->  	match = of_match_node(sdhci_arasan_of_match, pdev->dev.of_node);
-> +	if (match == NULL)
-
-(!match) seems to be preferred over (match == NULL)
-
-> +		return -ENOPARAM;
-
-ENOPARAM is unconventional here.  ENODEV or EINVAL are better
-
->  	data = match->data;
->  	host = sdhci_pltfm_init(pdev, data->pdata, sizeof(*sdhci_arasan));
->  
+> The .config,
+> https://github.com/cailca/linux-mm/blob/master/arm64.config
 > 
+> Looking at the free stack,
+> 
+> iommu_release_device->iommu_group_remove_device
+> 
+> was introduced in 07/34 ("iommu: Add probe_device() and release_device()
+> call-backs").
 
+Right, iommu_group_remove_device can tear down the group and call 
+->domain_free before the driver has any knowledge of the last device 
+going away via the ->release_device call.
+
+I guess the question is do we simply flip the call order in 
+iommu_release_device() so drivers can easily clean up their internal 
+per-device state first, or do we now want them to be robust against 
+freeing domains with devices still nominally attached?
+
+Robin.
