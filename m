@@ -1,228 +1,141 @@
-Return-Path: <SRS0=zQfj=AM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=+yz4=AN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 470FCC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 15:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8454AC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jul 2020 06:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F5742077D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jul 2020 15:48:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fXFRvwbs"
+	by mail.kernel.org (Postfix) with ESMTP id 5EC3420663
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jul 2020 06:00:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593669608;
+	bh=pa1KsL0wFxiWclLRmFHMJNlSNaoiIY/uIWQHhzSE9PA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2CGi2Takt12wulz7mJbVynCD/XQC8KL4dDB7SuS07qz0192jvneNUhbcpdIegADsp
+	 JM+G47NlJgD7rh150TyBJGA51OSOmdMJy55YPpuweNue/nRl0sihNMBL7aa3uC0HA4
+	 DodPOrziId8fdJbz9uAJzimsLwXu6mkZ3t4jTdwc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732095AbgGAPsI (ORCPT
+        id S1726092AbgGBGAI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Jul 2020 11:48:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35052 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727941AbgGAPsH (ORCPT
+        Thu, 2 Jul 2020 02:00:08 -0400
+Received: from mail-ej1-f67.google.com ([209.85.218.67]:34524 "EHLO
+        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbgGBGAH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Jul 2020 11:48:07 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55FC0C08C5C1;
-        Wed,  1 Jul 2020 08:48:07 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id q15so22937968wmj.2;
-        Wed, 01 Jul 2020 08:48:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=mMNtPXYGOcRO7tLq+pEY3fVgHa7bYP6mmW0sBsz4iyE=;
-        b=fXFRvwbsCOJLj/fmIEHNT63bg9uryP3EE/7dDlwF8jxf9jCt5ybmb3ASo/yDalgM7E
-         iwTdhfdu8M7QgWYlCs2nrUf6HK4eHW44JBNnVDASYA7aewFaeaptanrjcwcrhCY/qWFw
-         xRs1dfvHXYXjViIlp4uGKM8SI52W8+umIvErhAL5ZtHkEXB4AUlZocgMiH4qP9ZODywZ
-         kNOtatYRD/dQ7IQzjEtTzlN3B2yz+0KvtPA3dsPXdI7YG2a0DaXBlW1Z85iOuF4Ty8un
-         GRt3oM8R1MVFoFAlXkQsdAsOUEssjZhG+cTHs37GefShIlCnPHklFfmLNBCbwM6TT/jO
-         1pEw==
+        Thu, 2 Jul 2020 02:00:07 -0400
+Received: by mail-ej1-f67.google.com with SMTP id y10so27771404eje.1;
+        Wed, 01 Jul 2020 23:00:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mMNtPXYGOcRO7tLq+pEY3fVgHa7bYP6mmW0sBsz4iyE=;
-        b=qb9OSCvVVhfuQ5gsn+2fDYAgRvZ6r+/k2KkDjlm1A5YD+UkMp9a7sjH9tP8hji+DCS
-         GIiKrmUlokjm0bIwTLNKBiMtJ1BUhcRRZH0F6SWxWTtd4uvYSBYll1pMmzJl9DNrvL99
-         d4NJfhkhjGXXkScgNZDPK8xz7ZQEvIgJa5W9w9VoBVfkQqf6AxCoYITkSyxolZW6ykpV
-         dMPA/YkIfhLWmlpwiMuZUid+h3bP6HU7/Z7r14Lsvf467EnJtlfkdHsawUo1Q4dquPBi
-         KRofi00gSV1YlL2F/jHdgIDivrChkyi5zTjfMjP7o0lhLziqfR759C1Q7GVqPJq0l/5G
-         tmQw==
-X-Gm-Message-State: AOAM531mY/l8KlMoEwddea31O3mVmyhlvomJx6MpIomlViah5dLMzj8l
-        7z8FrCuQBdcF9zxuN1TIEc8=
-X-Google-Smtp-Source: ABdhPJwoHEVt0hAkrRlr66NPMNDPJFnAM6h3LAE5obWcBhZRQBZeNju+7ADF5dUGvnRQvhJTsy+gYw==
-X-Received: by 2002:a7b:c403:: with SMTP id k3mr23338033wmi.35.1593618485682;
-        Wed, 01 Jul 2020 08:48:05 -0700 (PDT)
-Received: from macmini.local (181.4.199.77.rev.sfr.net. [77.199.4.181])
-        by smtp.gmail.com with ESMTPSA id d63sm7988050wmc.22.2020.07.01.08.48.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jul 2020 08:48:05 -0700 (PDT)
-Date:   Wed, 1 Jul 2020 17:48:04 +0200
-From:   Willy Wolff <willy.mh.wolff.ml@gmail.com>
-To:     Lukasz Luba <lukasz.luba@arm.com>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Kamil Konieczny <k.konieczny@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=k+0TJgtyGdUFAif3iB9nD6dvgm5MlSiy6/23tSnNTIE=;
+        b=Szt6ZAUsoH7wTylBmI4oLzLcqpYwmPiyPx17U3uC5RD97hpLmvIIOgSacZOnaJmGVj
+         ENXsM32uf0pCnh+dWved370AShpXNwCn1XNdvwkYU7CeFzpG9yEWLH+tYVShNp3Yl1Aj
+         OpsdSRl57F3jPiuZInPTAXeja98mSsAHTSI+oGvzkxKyT6noPoNiXCfOnl/09ObIMh5t
+         wqyocZKuPJ+aTNo7z7tzl4bOD0TDX//AGzPf8xdWt2hekBR9kx4k3JSwLBfdPipuIGnO
+         v3A7Mv1LKtl9TDJ+dLAc4khaITIybhITdpte08qG2LWsPvwwhQHXb/0Lwp7+ZG+jwYp/
+         0OAg==
+X-Gm-Message-State: AOAM531aMuwXT2rxao0sxRGZC+6CrnoR/bcx9GVfF5SBOplMfWpaVVe3
+        cwQV11oi8YbBdModKnWbh/Z6vyV1
+X-Google-Smtp-Source: ABdhPJx+92owXVBEj1k0uFeSCkezcOnNF9loDGUYXY+ITfPZQt/zwwOX52FKrdde00pwe9p9ip6TWQ==
+X-Received: by 2002:a17:906:a1c7:: with SMTP id bx7mr20452601ejb.388.1593669605407;
+        Wed, 01 Jul 2020 23:00:05 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.195])
+        by smtp.googlemail.com with ESMTPSA id a37sm8647592edf.86.2020.07.01.23.00.04
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Jul 2020 23:00:04 -0700 (PDT)
+Date:   Thu, 2 Jul 2020 08:00:02 +0200
+From:   'Krzysztof Kozlowski' <krzk@kernel.org>
+To:     Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     'Rob Herring' <robh+dt@kernel.org>,
+        'Kukjin Kim' <kgene@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: brocken devfreq simple_ondemand for Odroid XU3/4?
-Message-ID: <20200701154804.f4amjgnqmprcfonw@macmini.local>
-References: <CGME20200624103308eucas1p188a5fe3cee1916d9430c9971c2dab3a3@eucas1p1.samsung.com>
- <85f5a8c0-7d48-f2cd-3385-c56d662f2c88@arm.com>
- <ef5184ed-00ff-4226-5ece-b0fc8eb16fb6@samsung.com>
- <4a72fcab-e8da-8323-1fbe-98a6a4b3e0f1@arm.com>
- <4c3b01af-2337-1eba-4675-6488105144c8@samsung.com>
- <6f8b1119-62b1-942d-cfde-6f1e9a28c40c@arm.com>
- <ee2e4acb-3986-3227-da1f-177d2756d194@samsung.com>
- <ad4e1a73-6de3-68ee-e3b3-b30bc315bd31@samsung.com>
- <691bc55c-5b04-b519-4575-6dce5ea9914c@samsung.com>
- <be215777-54fd-ed84-0709-1d276bc3fe90@arm.com>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        'Marek Szyprowski' <m.szyprowski@samsung.com>,
+        'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
+        'Sylwester Nawrocki' <snawrocki@kernel.org>,
+        'Chanwoo Choi' <cw00.choi@samsung.com>,
+        'Pankaj Dubey' <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 1/4] arm64: dts: exynos: Add PWM interrupts on Exynos7
+Message-ID: <20200702060002.GA4175@kozik-lap>
+References: <CGME20200629205534epcas5p33eb7cbdff4aee986d2e509e0c79cf952@epcas5p3.samsung.com>
+ <20200629204442.17336-1-krzk@kernel.org>
+ <001101d64ef2$8f824620$ae86d260$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <be215777-54fd-ed84-0709-1d276bc3fe90@arm.com>
+In-Reply-To: <001101d64ef2$8f824620$ae86d260$@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020-06-29-12-52-10, Lukasz Luba wrote:
-> Hi Chanwoo,
+On Tue, Jun 30, 2020 at 08:54:28PM +0530, Alim Akhtar wrote:
+> Hi Krzysztof,
 > 
-> On 6/29/20 2:43 AM, Chanwoo Choi wrote:
-> > Hi,
+> > -----Original Message-----
+> > From: Krzysztof Kozlowski <krzk@kernel.org>
+> > Sent: 30 June 2020 02:15
+> > To: Rob Herring <robh+dt@kernel.org>; Kukjin Kim <kgene@kernel.org>;
+> > Krzysztof Kozlowski <krzk@kernel.org>; devicetree@vger.kernel.org;
+> linux-arm-
+> > kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
+> > kernel@vger.kernel.org
+> > Cc: Marek Szyprowski <m.szyprowski@samsung.com>; Bartlomiej Zolnierkiewicz
+> > <b.zolnierkie@samsung.com>; Sylwester Nawrocki <snawrocki@kernel.org>;
+> > Alim Akhtar <alim.akhtar@samsung.com>; Chanwoo Choi
+> > <cw00.choi@samsung.com>; Pankaj Dubey <pankaj.dubey@samsung.com>
+> > Subject: [PATCH 1/4] arm64: dts: exynos: Add PWM interrupts on Exynos7
 > > 
-> > Sorry for late reply because of my perfornal issue. I count not check the email.
-> 
-> I hope you are good now.
-> 
+> > Add required interrupts to PWM node on Exynos7.  This fixes DT schema
+> > warning:
 > > 
-> > On 6/26/20 8:22 PM, Bartlomiej Zolnierkiewicz wrote:
-> > > 
-> > > On 6/25/20 2:12 PM, Kamil Konieczny wrote:
-> > > > On 25.06.2020 14:02, Lukasz Luba wrote:
-> > > > > 
-> > > > > 
-> > > > > On 6/25/20 12:30 PM, Kamil Konieczny wrote:
-> > > > > > Hi Lukasz,
-> > > > > > 
-> > > > > > On 25.06.2020 12:02, Lukasz Luba wrote:
-> > > > > > > Hi Sylwester,
-> > > > > > > 
-> > > > > > > On 6/24/20 4:11 PM, Sylwester Nawrocki wrote:
-> > > > > > > > Hi All,
-> > > > > > > > 
-> > > > > > > > On 24.06.2020 12:32, Lukasz Luba wrote:
-> > > > > > > > > I had issues with devfreq governor which wasn't called by devfreq
-> > > > > > > > > workqueue. The old DELAYED vs DEFERRED work discussions and my patches
-> > > > > > > > > for it [1]. If the CPU which scheduled the next work went idle, the
-> > > > > > > > > devfreq workqueue will not be kicked and devfreq governor won't check
-> > > > > > > > > DMC status and will not decide to decrease the frequency based on low
-> > > > > > > > > busy_time.
-> > > > > > > > > The same applies for going up with the frequency. They both are
-> > > > > > > > > done by the governor but the workqueue must be scheduled periodically.
-> > > > > > > > 
-> > > > > > > > As I have been working on resolving the video mixer IOMMU fault issue
-> > > > > > > > described here: https://patchwork.kernel.org/patch/10861757
-> > > > > > > > I did some investigation of the devfreq operation, mostly on Odroid U3.
-> > > > > > > > 
-> > > > > > > > My conclusions are similar to what Lukasz says above. I would like to add
-> > > > > > > > that broken scheduling of the performance counters read and the devfreq
-> > > > > > > > updates seems to have one more serious implication. In each call, which
-> > > > > > > > normally should happen periodically with fixed interval we stop the counters,
-> > > > > > > > read counter values and start the counters again. But if period between
-> > > > > > > > calls becomes long enough to let any of the counters overflow, we will
-> > > > > > > > get wrong performance measurement results. My observations are that
-> > > > > > > > the workqueue job can be suspended for several seconds and conditions for
-> > > > > > > > the counter overflow occur sooner or later, depending among others
-> > > > > > > > on the CPUs load.
-> > > > > > > > Wrong bus load measurement can lead to setting too low interconnect bus
-> > > > > > > > clock frequency and then bad things happen in peripheral devices.
-> > > > > > > > 
-> > > > > > > > I agree the workqueue issue needs to be fixed. I have some WIP code to use
-> > > > > > > > the performance counters overflow interrupts instead of SW polling and with
-> > > > > > > > that the interconnect bus clock control seems to work much better.
-> > > > > > > > 
-> > > > > > > 
-> > > > > > > Thank you for sharing your use case and investigation results. I think
-> > > > > > > we are reaching a decent number of developers to maybe address this
-> > > > > > > issue: 'workqueue issue needs to be fixed'.
-> > > > > > > I have been facing this devfreq workqueue issue ~5 times in different
-> > > > > > > platforms.
-> > > > > > > 
-> > > > > > > Regarding the 'performance counters overflow interrupts' there is one
-> > > > > > > thing worth to keep in mind: variable utilization and frequency.
-> > > > > > > For example, in order to make a conclusion in algorithm deciding that
-> > > > > > > the device should increase or decrease the frequency, we fix the period
-> > > > > > > of observation, i.e. to 500ms. That can cause the long delay if the
-> > > > > > > utilization of the device suddenly drops. For example we set an
-> > > > > > > overflow threshold to value i.e. 1000 and we know that at 1000MHz
-> > > > > > > and full utilization (100%) the counter will reach that threshold
-> > > > > > > after 500ms (which we want, because we don't want too many interrupts
-> > > > > > > per sec). What if suddenly utilization drops to 2% (i.e. from 5GB/s
-> > > > > > > to 250MB/s (what if it drops to 25MB/s?!)), the counter will reach the
-> > > > > > > threshold after 50*500ms = 25s. It is impossible just for the counters
-> > > > > > > to predict next utilization and adjust the threshold. [...]
-> > > > > > 
-> > > > > > irq triggers for underflow and overflow, so driver can adjust freq
-> > > > > > 
-> > > > > 
-> > > > > Probably possible on some platforms, depends on how many PMU registers
-> > > > > are available, what information can be can assign to them and type of
-> > > > > interrupt. A lot of hassle and still - platform and device specific.
-> > > > > Also, drivers should not adjust the freq, governors (different types
-> > > > > of them with different settings that they can handle) should do it.
-> > > > > 
-> > > > > What the framework can do is to take this responsibility and provide
-> > > > > generic way to monitor the devices (or stop if they are suspended).
-> > > > > That should work nicely with the governors, which try to predict the
-> > > > > next best frequency. From my experience the more fluctuating intervals
-> > > > > the governors are called, the more odd decisions they make.
-> > > > > That's why I think having a predictable interval i.e. 100ms is something
-> > > > > desirable. Tuning the governors is easier in this case, statistics
-> > > > > are easier to trace and interpret, solution is not to platform specific,
-> > > > > etc.
-> > > > > 
-> > > > > Kamil do you have plans to refresh and push your next version of the
-> > > > > workqueue solution?
-> > > > 
-> > > > I do not, as Bartek takes over my work,
-> > > > +CC Bartek
-> > > 
-> > > Hi Lukasz,
-> > > 
-> > > As you remember in January Chanwoo has proposed another idea (to allow
-> > > selecting workqueue type by devfreq device driver):
-> > > 
-> > > "I'm developing the RFC patch and then I'll send it as soon as possible."
-> > > (https://lore.kernel.org/linux-pm/6107fa2b-81ad-060d-89a2-d8941ac4d17e@samsung.com/)
-> > > 
-> > > "After posting my suggestion, we can discuss it"
-> > > (https://lore.kernel.org/linux-pm/f5c5cd64-b72c-2802-f6ea-ab3d28483260@samsung.com/)
-> > > 
-> > > so we have been waiting on the patch to be posted..
+> >     pwm@136c0000: 'interrupts' is a required property
 > > 
-> > Sorry for this. I'll send it within few days.
-> 
-> 
-> Feel free to add me on CC, I can review&test the patches if you like.
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > 
+> > ---
+> > 
+> > Not tested
+> > ---
+> >  arch/arm64/boot/dts/exynos/exynos7.dtsi | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> > b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> > index f590891efe25..523547b3d539 100644
+> > --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> > +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> > @@ -581,6 +581,11 @@
+> >  		pwm: pwm@136c0000 {
+> >  			compatible = "samsung,exynos4210-pwm";
+> >  			reg = <0x136c0000 0x100>;
+> > +			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>;
+> PWM IRQs are from 449 ~ 453 for PWM[0] ~ PWM[4] on this SoC.
+> 444 ~ 447 are for HSI2C and 448 is for ADC.
 
-Please CC me too.
+Ah, indeed.
 
-> 
-> Stay safe and healthy.
-> 
-> Regards,
-> Lukasz
-> 
-Cheers,
-Willy
+> Please see the exynos7.dtsi
+> Also drivers/pwm/pwm-samsung.c does not uses interrupt at all, still we need
+> interrupts property to be added here?
+
+That's a good point. For S3C SoCs the PWM timer was used also as a
+clocksource so it required interrupts. But since Exynos this is not
+used.  I don't know why the bindings introduced required interrupts...
+It seems it would be better just to remove them from bindings and DTS.
+
+Best regards,
+Krzysztof
+
