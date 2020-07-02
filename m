@@ -2,139 +2,102 @@ Return-Path: <SRS0=+yz4=AN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8454AC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jul 2020 06:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFF1C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jul 2020 06:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EC3420663
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jul 2020 06:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3F6320884
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jul 2020 06:01:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593669608;
-	bh=pa1KsL0wFxiWclLRmFHMJNlSNaoiIY/uIWQHhzSE9PA=;
+	s=default; t=1593669680;
+	bh=hi9Y9/0kmE7oL+s9W44L8V1BELNv8ne95GsOncSLQgc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2CGi2Takt12wulz7mJbVynCD/XQC8KL4dDB7SuS07qz0192jvneNUhbcpdIegADsp
-	 JM+G47NlJgD7rh150TyBJGA51OSOmdMJy55YPpuweNue/nRl0sihNMBL7aa3uC0HA4
-	 DodPOrziId8fdJbz9uAJzimsLwXu6mkZ3t4jTdwc=
+	b=LPwfFMwtdrsEQNR5J4hc1PP6/dDysZ6B0K9z1uGje573kWx6LPcY88irgAft8amRC
+	 IlqLlyyyKpu7qh58gaZUwTDMLoRdEFxXTxk5Sqjf+xPOC7DZUU6dT39ulowWF20+d0
+	 lBCz/OuSAsh2bspcwcKQi6xYPJGSYh8XAliEZCo8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726092AbgGBGAI (ORCPT
+        id S1726118AbgGBGBU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Jul 2020 02:00:08 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:34524 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbgGBGAH (ORCPT
+        Thu, 2 Jul 2020 02:01:20 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33647 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725263AbgGBGBT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Jul 2020 02:00:07 -0400
-Received: by mail-ej1-f67.google.com with SMTP id y10so27771404eje.1;
-        Wed, 01 Jul 2020 23:00:06 -0700 (PDT)
+        Thu, 2 Jul 2020 02:01:19 -0400
+Received: by mail-ed1-f68.google.com with SMTP id h28so22353723edz.0;
+        Wed, 01 Jul 2020 23:01:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=k+0TJgtyGdUFAif3iB9nD6dvgm5MlSiy6/23tSnNTIE=;
-        b=Szt6ZAUsoH7wTylBmI4oLzLcqpYwmPiyPx17U3uC5RD97hpLmvIIOgSacZOnaJmGVj
-         ENXsM32uf0pCnh+dWved370AShpXNwCn1XNdvwkYU7CeFzpG9yEWLH+tYVShNp3Yl1Aj
-         OpsdSRl57F3jPiuZInPTAXeja98mSsAHTSI+oGvzkxKyT6noPoNiXCfOnl/09ObIMh5t
-         wqyocZKuPJ+aTNo7z7tzl4bOD0TDX//AGzPf8xdWt2hekBR9kx4k3JSwLBfdPipuIGnO
-         v3A7Mv1LKtl9TDJ+dLAc4khaITIybhITdpte08qG2LWsPvwwhQHXb/0Lwp7+ZG+jwYp/
-         0OAg==
-X-Gm-Message-State: AOAM531aMuwXT2rxao0sxRGZC+6CrnoR/bcx9GVfF5SBOplMfWpaVVe3
-        cwQV11oi8YbBdModKnWbh/Z6vyV1
-X-Google-Smtp-Source: ABdhPJx+92owXVBEj1k0uFeSCkezcOnNF9loDGUYXY+ITfPZQt/zwwOX52FKrdde00pwe9p9ip6TWQ==
-X-Received: by 2002:a17:906:a1c7:: with SMTP id bx7mr20452601ejb.388.1593669605407;
-        Wed, 01 Jul 2020 23:00:05 -0700 (PDT)
+        bh=lh8nOJbCY3dntMrTsg/+G+LQq9DAGDc6JO+HAJfI85o=;
+        b=Ce3r43SloDlJ5LMaa/k+5ABrs3d7Pu6Uu1Ug54Nd3Qhacy/JSAlpTRJ+4wfQKdzxE7
+         9Q79lYBylxeBXWSvI8zc0Dk+Ig3ooJoaaz6YmRUSTTInyfwheG7Hpf0FNI9w4cU41SPJ
+         WfiRRbU+7PoYFdp6uj3tUEzaoPF8a7yAC7aVLdIrh6uSqx3ZQJgAFf847WG7HMiFcVCT
+         PzrYvc3QY2IAcoyBi2J8o6q3NfKY9MrX8G/zwZZzuTNlYEIV5oCsgGVSCVeHyIx27eS0
+         YlgqDZRl5p/zs+09riQ1TA3OlKPIW2TQKI4B3CTMeQjXg5fUnkh3dtPPheImO/ALBU/K
+         G6LQ==
+X-Gm-Message-State: AOAM532r4B7CnzoaYyazLLbTxkJher2slrBj8gnVtQaJdsc8p5Pl7T2v
+        jqW6+CaPNR7KEi7j/E3l0X8=
+X-Google-Smtp-Source: ABdhPJytqNBKyu/7EesZQUeT1QVMje4jzUxwKQOO1ElwidZDiWnDP+YK1VCjC1i7ybpkImxk+ckfUg==
+X-Received: by 2002:a50:f9c9:: with SMTP id a9mr34533109edq.89.1593669677760;
+        Wed, 01 Jul 2020 23:01:17 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.195])
-        by smtp.googlemail.com with ESMTPSA id a37sm8647592edf.86.2020.07.01.23.00.04
+        by smtp.googlemail.com with ESMTPSA id r17sm8046146edw.68.2020.07.01.23.01.16
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Jul 2020 23:00:04 -0700 (PDT)
-Date:   Thu, 2 Jul 2020 08:00:02 +0200
-From:   'Krzysztof Kozlowski' <krzk@kernel.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     'Rob Herring' <robh+dt@kernel.org>,
-        'Kukjin Kim' <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Wed, 01 Jul 2020 23:01:17 -0700 (PDT)
+Date:   Thu, 2 Jul 2020 08:01:15 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        'Marek Szyprowski' <m.szyprowski@samsung.com>,
-        'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>,
-        'Sylwester Nawrocki' <snawrocki@kernel.org>,
-        'Chanwoo Choi' <cw00.choi@samsung.com>,
-        'Pankaj Dubey' <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 1/4] arm64: dts: exynos: Add PWM interrupts on Exynos7
-Message-ID: <20200702060002.GA4175@kozik-lap>
-References: <CGME20200629205534epcas5p33eb7cbdff4aee986d2e509e0c79cf952@epcas5p3.samsung.com>
- <20200629204442.17336-1-krzk@kernel.org>
- <001101d64ef2$8f824620$ae86d260$@samsung.com>
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 3/4] arm64: dts: exynos: Align DMA controller bus node
+ name with dtschema
+Message-ID: <20200702060115.GB4175@kozik-lap>
+References: <20200629204442.17336-1-krzk@kernel.org>
+ <CGME20200629205541eucas1p16e9c5848ed7ac84ca87c045f3a6f928b@eucas1p1.samsung.com>
+ <20200629204442.17336-3-krzk@kernel.org>
+ <3c1eb3fe-8eef-1f91-ff4e-3081a871fc80@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <001101d64ef2$8f824620$ae86d260$@samsung.com>
+In-Reply-To: <3c1eb3fe-8eef-1f91-ff4e-3081a871fc80@samsung.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 30, 2020 at 08:54:28PM +0530, Alim Akhtar wrote:
+On Tue, Jun 30, 2020 at 09:34:52AM +0200, Marek Szyprowski wrote:
 > Hi Krzysztof,
 > 
-> > -----Original Message-----
-> > From: Krzysztof Kozlowski <krzk@kernel.org>
-> > Sent: 30 June 2020 02:15
-> > To: Rob Herring <robh+dt@kernel.org>; Kukjin Kim <kgene@kernel.org>;
-> > Krzysztof Kozlowski <krzk@kernel.org>; devicetree@vger.kernel.org;
-> linux-arm-
-> > kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
-> > kernel@vger.kernel.org
-> > Cc: Marek Szyprowski <m.szyprowski@samsung.com>; Bartlomiej Zolnierkiewicz
-> > <b.zolnierkie@samsung.com>; Sylwester Nawrocki <snawrocki@kernel.org>;
-> > Alim Akhtar <alim.akhtar@samsung.com>; Chanwoo Choi
-> > <cw00.choi@samsung.com>; Pankaj Dubey <pankaj.dubey@samsung.com>
-> > Subject: [PATCH 1/4] arm64: dts: exynos: Add PWM interrupts on Exynos7
-> > 
-> > Add required interrupts to PWM node on Exynos7.  This fixes DT schema
-> > warning:
-> > 
-> >     pwm@136c0000: 'interrupts' is a required property
-> > 
+> On 29.06.2020 22:44, Krzysztof Kozlowski wrote:
+> > AMBA is a bus so name the node with DMA controllers just as "bus" to fix
+> > dtschema warnings like:
+> >
+> >      amba: $nodename:0: 'amba' does not match '^(bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
+> >
 > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > 
-> > ---
-> > 
-> > Not tested
-> > ---
-> >  arch/arm64/boot/dts/exynos/exynos7.dtsi | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> > b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> > index f590891efe25..523547b3d539 100644
-> > --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> > +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> > @@ -581,6 +581,11 @@
-> >  		pwm: pwm@136c0000 {
-> >  			compatible = "samsung,exynos4210-pwm";
-> >  			reg = <0x136c0000 0x100>;
-> > +			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>;
-> PWM IRQs are from 449 ~ 453 for PWM[0] ~ PWM[4] on this SoC.
-> 444 ~ 447 are for HSI2C and 448 is for ADC.
+> 
+> Do we really need a separate 'bus' for those DMA controllers?
+> 
+> IMHO they are not different from the hw perspective from the other 
+> devices available on the SoC. A separate bus is a historical thing, they 
+> work fine when moved directly under the 'soc' node. The separate bus 
+> only mimics the way Linux organizes its drivers. This comment affects 
+> both ARM and ARM64.
 
-Ah, indeed.
-
-> Please see the exynos7.dtsi
-> Also drivers/pwm/pwm-samsung.c does not uses interrupt at all, still we need
-> interrupts property to be added here?
-
-That's a good point. For S3C SoCs the PWM timer was used also as a
-clocksource so it required interrupts. But since Exynos this is not
-used.  I don't know why the bindings introduced required interrupts...
-It seems it would be better just to remove them from bindings and DTS.
+Good point, other boards keep them under SoC usually. Thanks for
+feedback.
 
 Best regards,
 Krzysztof
