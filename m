@@ -6,98 +6,100 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFF1C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jul 2020 06:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D97C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jul 2020 06:16:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3F6320884
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jul 2020 06:01:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D049F2085B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jul 2020 06:16:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593669680;
-	bh=hi9Y9/0kmE7oL+s9W44L8V1BELNv8ne95GsOncSLQgc=;
+	s=default; t=1593670581;
+	bh=dN0mizsIIkB+I5Pm1n6gaqSQctATXJofWBLGecbcwGA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=LPwfFMwtdrsEQNR5J4hc1PP6/dDysZ6B0K9z1uGje573kWx6LPcY88irgAft8amRC
-	 IlqLlyyyKpu7qh58gaZUwTDMLoRdEFxXTxk5Sqjf+xPOC7DZUU6dT39ulowWF20+d0
-	 lBCz/OuSAsh2bspcwcKQi6xYPJGSYh8XAliEZCo8=
+	b=VvZ7Ka8cp1qAtK8N0kBLJNUIC7O+qDdCZP1FCnwGhfKCquVdIXzB7WPp38kGazbhV
+	 ohelMqea9CTr5XiX5j8znXPbsEIcO+iUBzTF7PbYf5iShWQwLKWAvwlqrQ5ynzwIPm
+	 2rZU8aGC66g9HwmN4L2mmlCaIRkPCfzPYuPxjV8E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbgGBGBU (ORCPT
+        id S1726241AbgGBGQV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Jul 2020 02:01:20 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33647 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725263AbgGBGBT (ORCPT
+        Thu, 2 Jul 2020 02:16:21 -0400
+Received: from mail-ej1-f67.google.com ([209.85.218.67]:35113 "EHLO
+        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbgGBGQU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Jul 2020 02:01:19 -0400
-Received: by mail-ed1-f68.google.com with SMTP id h28so22353723edz.0;
-        Wed, 01 Jul 2020 23:01:18 -0700 (PDT)
+        Thu, 2 Jul 2020 02:16:20 -0400
+Received: by mail-ej1-f67.google.com with SMTP id rk21so27844107ejb.2;
+        Wed, 01 Jul 2020 23:16:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lh8nOJbCY3dntMrTsg/+G+LQq9DAGDc6JO+HAJfI85o=;
-        b=Ce3r43SloDlJ5LMaa/k+5ABrs3d7Pu6Uu1Ug54Nd3Qhacy/JSAlpTRJ+4wfQKdzxE7
-         9Q79lYBylxeBXWSvI8zc0Dk+Ig3ooJoaaz6YmRUSTTInyfwheG7Hpf0FNI9w4cU41SPJ
-         WfiRRbU+7PoYFdp6uj3tUEzaoPF8a7yAC7aVLdIrh6uSqx3ZQJgAFf847WG7HMiFcVCT
-         PzrYvc3QY2IAcoyBi2J8o6q3NfKY9MrX8G/zwZZzuTNlYEIV5oCsgGVSCVeHyIx27eS0
-         YlgqDZRl5p/zs+09riQ1TA3OlKPIW2TQKI4B3CTMeQjXg5fUnkh3dtPPheImO/ALBU/K
-         G6LQ==
-X-Gm-Message-State: AOAM532r4B7CnzoaYyazLLbTxkJher2slrBj8gnVtQaJdsc8p5Pl7T2v
-        jqW6+CaPNR7KEi7j/E3l0X8=
-X-Google-Smtp-Source: ABdhPJytqNBKyu/7EesZQUeT1QVMje4jzUxwKQOO1ElwidZDiWnDP+YK1VCjC1i7ybpkImxk+ckfUg==
-X-Received: by 2002:a50:f9c9:: with SMTP id a9mr34533109edq.89.1593669677760;
-        Wed, 01 Jul 2020 23:01:17 -0700 (PDT)
+        bh=asJB3DmZKuKIHGzbAUilqlxuUPwGBy0bD6WFb3w9qmI=;
+        b=twQsTXfHAm3Ofy9WGo6iTQth94PkIC2erWUGbCr8ejJUVxy+4cvInBm5WkS9i5gNPv
+         NtYlyd+Z33Anz/mKP+UNatXb6rabybxpYfbwkEvju/lzwkwu2Yi+3WWUET/todkGmHAE
+         ecE5P9jEgw+fOqos4BcVK6Fn2/5xNA25+H3QmCugrbWyS+veGdpqCGHfq8fIAukSRhSx
+         zS2eHLJ1umZBk0mzSVkwmIzSlGbFae5lj1byXu7vbF7FAUPAE7a/gVPC+1COS8PS1tCe
+         OqYQ7w+zN6KQmtEs4zxJqsVx6FhjNLlGGk2uwQAdhe0jXmrFgxzjB2oJkYKybXDSIthf
+         ugMw==
+X-Gm-Message-State: AOAM532Vc/wpPQdX+K2yoE6oN07rCgkskHNpSKG7zAvxB5/YHugv1mkO
+        SU62tIsypg5OO86WO4jo3126yjx6
+X-Google-Smtp-Source: ABdhPJysWqg+M+Y1cev+9zbHZwY89lD8Vq/lDl/1VbeLtMjuR39qx67zQwvhvBQsiIQ0edve30zw1g==
+X-Received: by 2002:a17:906:57c6:: with SMTP id u6mr25548743ejr.194.1593670578627;
+        Wed, 01 Jul 2020 23:16:18 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.195])
-        by smtp.googlemail.com with ESMTPSA id r17sm8046146edw.68.2020.07.01.23.01.16
+        by smtp.googlemail.com with ESMTPSA id ck6sm7155992edb.18.2020.07.01.23.16.15
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 01 Jul 2020 23:01:17 -0700 (PDT)
-Date:   Thu, 2 Jul 2020 08:01:15 +0200
+        Wed, 01 Jul 2020 23:16:17 -0700 (PDT)
+Date:   Thu, 2 Jul 2020 08:16:11 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 3/4] arm64: dts: exynos: Align DMA controller bus node
- name with dtschema
-Message-ID: <20200702060115.GB4175@kozik-lap>
-References: <20200629204442.17336-1-krzk@kernel.org>
- <CGME20200629205541eucas1p16e9c5848ed7ac84ca87c045f3a6f928b@eucas1p1.samsung.com>
- <20200629204442.17336-3-krzk@kernel.org>
- <3c1eb3fe-8eef-1f91-ff4e-3081a871fc80@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos: Fix missing empty reg/ranges
+ property regulators on Trats
+Message-ID: <20200702061611.GC4175@kozik-lap>
+References: <CGME20200629210025eucas1p219a52e75ecce9e813aa80f0126780189@eucas1p2.samsung.com>
+ <20200629205948.32250-1-krzk@kernel.org>
+ <97651868-30f3-6b91-1ea2-551ee1ebad8f@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3c1eb3fe-8eef-1f91-ff4e-3081a871fc80@samsung.com>
+In-Reply-To: <97651868-30f3-6b91-1ea2-551ee1ebad8f@samsung.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 30, 2020 at 09:34:52AM +0200, Marek Szyprowski wrote:
+On Tue, Jun 30, 2020 at 08:27:01AM +0200, Marek Szyprowski wrote:
 > Hi Krzysztof,
 > 
-> On 29.06.2020 22:44, Krzysztof Kozlowski wrote:
-> > AMBA is a bus so name the node with DMA controllers just as "bus" to fix
-> > dtschema warnings like:
+> On 29.06.2020 22:59, Krzysztof Kozlowski wrote:
+> > Remove the regulators node entirely because its children do not have any
+> > unit addresses.  This fixes DTC warning:
 > >
-> >      amba: $nodename:0: 'amba' does not match '^(bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
+> >      Warning (simple_bus_reg): /regulators/regulator-0: missing or empty reg/ranges property
 > >
 > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > 
-> Do we really need a separate 'bus' for those DMA controllers?
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > 
-> IMHO they are not different from the hw perspective from the other 
-> devices available on the SoC. A separate bus is a historical thing, they 
-> work fine when moved directly under the 'soc' node. The separate bus 
-> only mimics the way Linux organizes its drivers. This comment affects 
-> both ARM and ARM64.
+> What about removing the regulators node from other boards: 
+> exynos4412-origen.dts, exynos5420-smdk5420.dts and exynos5250-arndale.dts?
+> 
+> On the other hand, maybe it would be really easier to add missing 
+> address/size-cells properties to exynos4210-trats.dts/regulators node?
 
-Good point, other boards keep them under SoC usually. Thanks for
-feedback.
+Indeed let's keep it consistent so in such case better to add here
+proper address/size-cells.
+
+Thanks for feedback!
 
 Best regards,
 Krzysztof
