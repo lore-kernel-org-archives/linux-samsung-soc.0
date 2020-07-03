@@ -2,109 +2,155 @@ Return-Path: <SRS0=QMmB=AO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 398C2C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jul 2020 12:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BB7C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jul 2020 13:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13FEC207DA
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jul 2020 12:33:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EAC920760
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jul 2020 13:20:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYoe86Aq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBO1XJ5z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726245AbgGCMdt (ORCPT
+        id S1726039AbgGCNUW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Jul 2020 08:33:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53590 "EHLO
+        Fri, 3 Jul 2020 09:20:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbgGCMdt (ORCPT
+        with ESMTP id S1726022AbgGCNUV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Jul 2020 08:33:49 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10CC4C08C5C1;
-        Fri,  3 Jul 2020 05:33:49 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id f7so29474174wrw.1;
-        Fri, 03 Jul 2020 05:33:48 -0700 (PDT)
+        Fri, 3 Jul 2020 09:20:21 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D89C08C5C1;
+        Fri,  3 Jul 2020 06:20:21 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id 207so13801978pfu.3;
+        Fri, 03 Jul 2020 06:20:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YWChRI8U5bql1vd+LjhcuGDJidA2Y+nrVW69k/TqKfM=;
-        b=eYoe86Aq3092+g8H38oZiqt99elOVS4MoiOjphvAWqqYBA/PQlpSx1orjs/kxGvdHH
-         S6Rfw6c7V1AXmEmDQRSvGRgQk6poNEE4iUDwyHOYJdILTvBwtej70+stDofMtxR1T+NH
-         M7IMHFtBRWbzhk7wfGMp/JVtx9jlG91ZptUclVdfND0jcjXPkkaqKJHgTKQuJK4Udgt5
-         hE0fDw2vI9yP014m9M4wL3h15ciKQzo12fVdIWj0+IdXoRWhHkXKwjfGdC0LddutzTCF
-         /yBvvPFMBhd15wV4caEZllD25LZCgWf4qO3F142/83sK1ODiG9xQuq6FonSNFHEdzZoG
-         KNzg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LDiFULixaebs2MrsIr7/asrSZO8qQssL9OgufzsRRnY=;
+        b=KBO1XJ5zAIjPFUjuxrpGgKmLwz0mXFjXa559w/Dgr+rBE+hEw+sVLFas/aRJSVyQIX
+         cPfYRDxpl97pxvktYM6nSWFJZsN9ky9lLF+m4shdFGtqKIEmvxOYlPxIcJTvEqrtMAMz
+         dNrqX53T8KnWVVRCtTOs4bmOXUWuVditN/vPtyWVv766Y80sQ1mBJRXmfIDrb4I8vsI+
+         5Tj5jVn+UeU7Ksv9r780PQNE0FAJ9ixBdCcM7ZnM+nb4Xxir/v56dwD/yS+/hZ6fN0QG
+         2twPoKWn+cZNfm//ONxJUMVQNpEny3oJm3NSEiAtI7JnE4XGo9IfxelfiWwrc3FoHS0u
+         y4UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YWChRI8U5bql1vd+LjhcuGDJidA2Y+nrVW69k/TqKfM=;
-        b=ti5Y5wMS4VpQhJuY/Wx2jLg+vXoOz9KfFnG0SGzdv5iNqwc/ho9qYaccyUtQrv0zq0
-         rwS/uO9ABQiCtFY9OwW7SgZq1ibaydPACtk5WbPd19zlK82HnzoWSgUz2JIbKe7osTPW
-         N68nU58BQSF1m/NxwBKNs00fOobENStgFbmUtpMGgM4juCsdkpcKKL1n51J7B3kx5Prq
-         7rx5Bh/7aneaeDC+Oa9RUGQzRFT/fVh11cA/yIVYr0GI/znI0cCWnDb31/PWQn/PBTut
-         SxNCpRU9+T8F2YwWWZgIhOBCWkb7SFuNm+bt7d874Pl2/WFZcy4d89aK/9TmaQuIAGLQ
-         hEhA==
-X-Gm-Message-State: AOAM5316YnteKMj3Eb40iZ+LD5W5gENMVANFNVCeC4eLoriA78HcNzLk
-        cNGZ5kLxi/qTt/Xn3ahAjJc=
-X-Google-Smtp-Source: ABdhPJwId5pwOgLxvZeA3ibhyN3Y+1w1NlrODeEKmyNzl20XnLaQ2ZKRszG8w9ZVwtoqDjhX2uPt7Q==
-X-Received: by 2002:a5d:5642:: with SMTP id j2mr36401397wrw.19.1593779627773;
-        Fri, 03 Jul 2020 05:33:47 -0700 (PDT)
-Received: from macmini.local (181.4.199.77.rev.sfr.net. [77.199.4.181])
-        by smtp.gmail.com with ESMTPSA id f12sm14292219wrw.53.2020.07.03.05.33.46
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LDiFULixaebs2MrsIr7/asrSZO8qQssL9OgufzsRRnY=;
+        b=C82LmxLQfvcgMKp3VKRfe3E0xuPjwLUhNb3T3GmNFy95WgJdL+KANVkX/+yTx178XT
+         rTi0GW3aDc5TxVsjM+EoUzgl4Lv/+t80OtoIijmQ4AhRtMVQBdZsi1b+T/Uohrhx5EfC
+         PcXU7mGcA9TA55gT00hz5PAxxUn8pnpYgJ7/axMRMCxs9fAg3kgI7YYKv4FRrbTv8xq5
+         opGeEH+hqsNGNl/e23wb2hI4YmRQUeNEUPpV75JBU1i0Os62rWhXUNHTadNmz+XZSdCk
+         R8XqNb3LCTTgehTctJuKUhKOro3h5WrdWxobfnQ/ezuLhoCyJgBnKOPZuJzX9f/92H3M
+         5/dw==
+X-Gm-Message-State: AOAM531CObmX4uFx7Pwt5hkZsQQlNZQL+U/XxcrfrajKpiYoa63gGGf1
+        8S1/5o0rg11I8N6RZgz9e0M=
+X-Google-Smtp-Source: ABdhPJzurlv8AWULBx68fy6iuWnB779WRjX6EPfzmLgBnv+o31xLSHolYNxGWmjnGyerIGkgX1Nfzg==
+X-Received: by 2002:a62:8782:: with SMTP id i124mr32943371pfe.267.1593782420821;
+        Fri, 03 Jul 2020 06:20:20 -0700 (PDT)
+Received: from localhost.localdomain ([103.51.74.198])
+        by smtp.gmail.com with ESMTPSA id q10sm12706937pfk.86.2020.07.03.06.20.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2020 05:33:47 -0700 (PDT)
-Date:   Fri, 3 Jul 2020 14:33:46 +0200
-From:   Willy Wolff <willy.mh.wolff.ml@gmail.com>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     lukasz.luba@arm.com, k.konieczny@samsung.com, krzk@kernel.org,
-        kgene@kernel.org, s.nawrocki@samsung.com, b.zolnierkie@samsung.com,
-        chanwoo@kernel.org, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH 0/2] PM / devfreq: Add delayed timer for polling
-Message-ID: <20200703123346.6fy6i33ks6nox46a@macmini.local>
-References: <CGME20200703061508epcas1p171aa3c0ab832b77e5837d8bd1e563742@epcas1p1.samsung.com>
- <20200703062622.11773-1-cw00.choi@samsung.com>
+        Fri, 03 Jul 2020 06:20:19 -0700 (PDT)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] phy: samsung: Use readl_poll_timeout function
+Date:   Fri,  3 Jul 2020 13:20:12 +0000
+Message-Id: <20200703132012.579-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200703062622.11773-1-cw00.choi@samsung.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Chanwoo,
+User readl_poll_timeout function instead of open
+coded handling in crport_handshake function.
 
-I think it doesn't help on the benchmark I suggested that is doing only memory
-accesses. With both timer, I have the same timing.
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 37 +++++++++---------------
+ 1 file changed, 13 insertions(+), 24 deletions(-)
 
-To test the benchmark with these new patches about timer:
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index e510732afb8b..83274c5e3820 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -16,6 +16,7 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
++#include <linux/iopoll.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+ #include <linux/mutex.h>
+@@ -556,40 +557,28 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
+ static int crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
+ 			    u32 val, u32 cmd)
+ {
+-	u32 usec = 100;
++	u32 timeout_us = 1000, sleep_us = 10;
+ 	unsigned int result;
++	int err;
+ 
+ 	writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
+ 
+-	do {
+-		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
+-		if (result & PHYREG1_CR_ACK)
+-			break;
+-
+-		udelay(1);
+-	} while (usec-- > 0);
+-
+-	if (!usec) {
+-		dev_err(phy_drd->dev,
+-			"CRPORT handshake timeout1 (0x%08x)\n", val);
++	err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
++			result,	(result & PHYREG1_CR_ACK), sleep_us, timeout_us);
++	if (err) {
++		dev_err(phy_drd->dev, "CRPORT handshake timeout1 (0x%08x)\n", val);
+ 		return -ETIME;
+ 	}
+ 
+-	usec = 100;
++	timeout_us = 1000;
++	sleep_us = 10;
+ 
+ 	writel(val, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
+ 
+-	do {
+-		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
+-		if (!(result & PHYREG1_CR_ACK))
+-			break;
+-
+-		udelay(1);
+-	} while (usec-- > 0);
+-
+-	if (!usec) {
+-		dev_err(phy_drd->dev,
+-			"CRPORT handshake timeout2 (0x%08x)\n", val);
++	err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
++			result,	!(result & PHYREG1_CR_ACK), sleep_us, timeout_us);
++	if (err) {
++		dev_err(phy_drd->dev, "CRPORT handshake timeout2 (0x%08x)\n", val);
+ 		return -ETIME;
+ 	}
+ 
+-- 
+2.27.0
 
-git clone https://github.com/wwilly/benchmark.git \
-  && cd benchmark \
-  && source env.sh \
-  && ./bench_build.sh \
-  && bash source/scripts/test_dvfs_mem_patched.sh
-
-The benchmark is set by default to run for 1s, but you can increase this by
-tweaking the script as:
-
-taskset 8 ./bench_install/bin/microbe_cache 33554431 0 9722222 <TIME in sec> ${little_freq}
-
-
-Also, as I reported the issue, would it be possible to add a
-Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com> ?
-Many thanks in advance.
-
-
-Best Regards,
-Willy
