@@ -1,615 +1,166 @@
-Return-Path: <SRS0=+yz4=AN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=QMmB=AO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E377DC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jul 2020 20:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9B4C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jul 2020 00:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A58DE207D4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jul 2020 20:34:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF84F20748
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jul 2020 00:36:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WvKJLSgD"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RgtMdJuu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725954AbgGBUeW (ORCPT
+        id S1726302AbgGCAgp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Jul 2020 16:34:22 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35762 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726035AbgGBUeV (ORCPT
+        Thu, 2 Jul 2020 20:36:45 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:20038 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbgGCAgo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Jul 2020 16:34:21 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200702203417euoutp020b225cd5053ac93e1bd27f98ca20187b~eCcR_S5xd2441924419euoutp02i
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Jul 2020 20:34:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200702203417euoutp020b225cd5053ac93e1bd27f98ca20187b~eCcR_S5xd2441924419euoutp02i
+        Thu, 2 Jul 2020 20:36:44 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200703003642epoutp01afe54c3137174ce9047a96f4dd701330~eFv7pU8UT1920719207epoutp01g
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Jul 2020 00:36:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200703003642epoutp01afe54c3137174ce9047a96f4dd701330~eFv7pU8UT1920719207epoutp01g
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1593722057;
-        bh=F4Q9XhygBokPI3cCCxSxLMLJKoc/u8WErcqeoikqdC4=;
+        s=mail20170921; t=1593736602;
+        bh=UWuWCf1OfZKP+vcvQ2033IsVriWDyx0bdaBJZNtx+cM=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=WvKJLSgD+f4uctkXhWJkGgYJvzU1UZfs/YwsD32tzkFJggS1OOfjlJuPizNhbz90s
-         gD6Fv+/vv0XOjEsaMC5ziEZaj/PKOpPDlHX4dMTKIaeQbK1OeMGJKA4J39MCdZRWtK
-         6WJyvp69QpjtwjKcb9JEGE6TQbO3VReKjbiasHpQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200702203416eucas1p2c6940acf003a255f05b579227c2ac1f6~eCcQ-qCUy0283902839eucas1p2Y;
-        Thu,  2 Jul 2020 20:34:16 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id E8.C0.05997.8C44EFE5; Thu,  2
-        Jul 2020 21:34:16 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200702203415eucas1p1ebec4f5e3559a41ff6791b327c68aea9~eCcP3nXgI0693206932eucas1p1b;
-        Thu,  2 Jul 2020 20:34:15 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200702203415eusmtrp2164b2cd894c3cf53a586980192cc5954~eCcP24ra23270132701eusmtrp2U;
-        Thu,  2 Jul 2020 20:34:15 +0000 (GMT)
-X-AuditID: cbfec7f4-65dff7000000176d-a1-5efe44c8db6f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 82.02.06314.7C44EFE5; Thu,  2
-        Jul 2020 21:34:15 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200702203414eusmtip253239c5cf77a3938c92b56b0b12261e8~eCcO-qCES1934119341eusmtip2G;
-        Thu,  2 Jul 2020 20:34:14 +0000 (GMT)
-Subject: Re: [PATCH v2 5/8] ARM: dts: exynos: Remove DMA controller bus node
- name to fix dtschema warnings
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <11b9adcf-251f-81ad-2559-9d96c0a3ad78@samsung.com>
-Date:   Thu, 2 Jul 2020 22:34:14 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.10.0
+        b=RgtMdJuuf26N7aZInHfURi6ZiZujxNh9M28ZkA68BJjrJUpVTGDhPxWWRdSdkwBXZ
+         u4DyTz4EEntF5e061HASdFORTnOSnjUalJBNNE20xC/ng1vwPGYGOAH6KjtaO+dSqZ
+         3T4U4gSkzPTjLboDet0ue++fS/VVtNo4Zkespab0=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20200703003641epcas1p3c22a707cbedd7b2ebfe0fb9b83ec5375~eFv66bJ6h0263502635epcas1p3m;
+        Fri,  3 Jul 2020 00:36:41 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 49ybcj3FG8zMqYkw; Fri,  3 Jul
+        2020 00:36:37 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B8.AF.19033.19D7EFE5; Fri,  3 Jul 2020 09:36:33 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200703003633epcas1p2654ef23e56eb19c0203ff1680f1e75c8~eFvzOZX-a2749027490epcas1p2U;
+        Fri,  3 Jul 2020 00:36:33 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200703003633epsmtrp29b912f24b4f495ce70d54f6281235dd8~eFvzNdi8h0657606576epsmtrp2e;
+        Fri,  3 Jul 2020 00:36:33 +0000 (GMT)
+X-AuditID: b6c32a36-159ff70000004a59-fe-5efe7d91899d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7A.1C.08382.19D7EFE5; Fri,  3 Jul 2020 09:36:33 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200703003632epsmtip276e73622b711bde99e3232f7d961dcc8~eFvy5BX1N2844528445epsmtip2O;
+        Fri,  3 Jul 2020 00:36:32 +0000 (GMT)
+Subject: Re: [PATCH RFC v6 1/6] dt-bindings: exynos-bus: Add documentation
+ for interconnect properties
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        georgi.djakov@linaro.org, krzk@kernel.org
+Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
+        a.swigon@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <8795ad20-1193-8009-bec4-5ae2c72a782a@samsung.com>
+Date:   Fri, 3 Jul 2020 09:47:47 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <20200702155149.12854-5-krzk@kernel.org>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200702163724.2218-2-s.nawrocki@samsung.com>
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe3fO2TmOZse18smiaEZR4S2NXlKkImEQRdmHRMtaeVBpztq8
-        FpSX7LIkbx+awzRWdlnpdPNSdkFNnaa51LAoV4ZGmEgXt0BLy3Wy/Pb7v//nef7PAy9DSN5T
-        Xky8KolTqxRKmVBE1rVN2Hzat09H+z/OlOHB0johrtaZKPzS8ZHCZS3dFM4bGiWwzVZF43fO
-        VoTNQ/0U7msoEWK73YiwzvZYgA21DhrnPGqh8bkPIwSeaCgl8ZuCIrSFld/X22m52XhBKB/o
-        fyiUW66fludN+csv1RiRfNy8fDcdKQqJ4ZTxKZzaL/SQKO6a1Ukfs6SmNessggz0I0KL3Bhg
-        g+DLk8+0FokYCXsLwYPcqr/CgWCwPY/ixTiCzBs3hbMtA7p6xBs3EZSXNxK8+Iygp62JcFUt
-        ZJXQYRolXYaULSfAMmGgXAbB2hHkF8a7WMgGgHZM+2esmA2Frv5K2sUkuwqelmWRLl7ERoNp
-        pF7A13hAR/Hwn3c3diNMXqwU8DNXQP1YCcGzJ7weLhO4goHNYaB89BfJ770dSqtv/+WF8Mla
-        Q/O8DH7dn23IRvC+u4LmRS6Cviwd4quCYaB7cmZVZiZiLZga/FwI7FaoLlrMozu8GvPgd3CH
-        wrrLBP8shvNnJfyM1aC3Vv5LbXreS+QjmX7OZfo51+jnXKP/H3sVkUbkySVrEmI5zQYVl+qr
-        USRoklWxvkcSE8xo5uN1Tlsd91DDz8PNiGWQbL443zoVLaEUKZr0hGYEDCGTirc964yWiGMU
-        6Sc4deJBdbKS0zSjpQwp8xQHGkYOSNhYRRJ3lOOOcepZV8C4eWWgYGfX0m9hxuzs3oJaj4cC
-        br+0KnkwzLSp6as0NDfxrdF7Mxk1UX1ypTNtwZ0rp7zUnfavMXct0oyIiuECb+WJ9cWOzlpz
-        DbXnRa1PijPEfdvO4Z7w8zlrLpQU7+qNmrf3rKooaMmZth1TjMigfRn4Pbw1V27YKdiHIxtt
-        xkNix3EZqYlTBKwj1BrFb3VrRx10AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCIsWRmVeSWpSXmKPExsVy+t/xe7rHXf7FGRx8KmTxYN42NouNM9az
-        Wlz/8pzVYv6Rc6wW/Y9fM1ucP7+B3eL+16OMFpseX2O1uLxrDpvF3burGC1mnN/HZLFo6xd2
-        i9a9R9gt2p++ZLb4uWsei8XtiZMZHQQ8ds66y+6xaVUnm8eda3vYPDYvqffo/2vg0bdlFaPH
-        501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJ
-        ehmLj39lL9hcXnFoxmamBsbfEV2MnBwSAiYSd2ZsZ+xi5OIQEljKKHF1/28miISMxMlpDawQ
-        trDEn2tdbCC2kMBbRok3vbUgtrBAjsTJ9a9ZQJpFBJYySzxc/5YNxGEWuM8ocb7tJzvE2M2M
-        Eh0r34ONZRMwlOh6CzGKV8BO4sy1dewgNouAisSp+U0sILaoQJzE8i3z2SFqBCVOznwCFucU
-        MJX41b0ObA6zgJnEvM0PmSFseYntb+dA2eISt57MZ5rAKDQLSfssJC2zkLTMQtKygJFlFaNI
-        amlxbnpusaFecWJucWleul5yfu4mRmCMbzv2c/MOxksbgw8xCnAwKvHwTjj+N06INbGsuDL3
-        EKMEB7OSCK/T2dNxQrwpiZVVqUX58UWlOanFhxhNgZ6byCwlmpwPTD95JfGGpobmFpaG5sbm
-        xmYWSuK8HQIHY4QE0hNLUrNTUwtSi2D6mDg4pRoYw6v0WmMn7731gi/9Tva6qorc6v5jm/2/
-        5SSa3lBLFZl36OzMa4UaWy9/vf7rzcmbQUp5FZJrY4Jz2zq3lQtwvnlm+/5zyb0tQm1GPD6W
-        XQ+mbJ185llH+72yi7827b38WK/dZdf0jrAT3XqZOu4uK91LlI/sOrEh4nTcA0cRmWNRrxa0
-        Bp1wV2Ipzkg01GIuKk4EAMeebagHAwAA
-X-CMS-MailID: 20200702203415eucas1p1ebec4f5e3559a41ff6791b327c68aea9
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBJsWRmVeSWpSXmKPExsWy7bCmvu7E2n9xBq+ny1rcn9fKaLFxxnpW
+        i/lHzrFaXPn6ns1i+t5NbBaT7k9gsTh/fgO7xabH11gtLu+aw2bxufcIo8WM8/uYLNYeuctu
+        cbtxBZtF694j7BaH37SzWsyY/JLNQcBj06pONo871/awedzvPs7ksXlJvUffllWMHp83yQWw
+        RWXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gDdraRQ
+        lphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpsCzQK07MLS7NS9dLzs+1MjQwMDIFKkzI
+        zji6eDVrwQf2iu8bvrI2MO5j62Lk4JAQMJFouhvaxcjFISSwg1Hi+tI+NgjnE6PE/alvWSCc
+        b4wSL+fdB8pwgnVsnb4VKrGXUeJs5z12COc9o8SS8ytYQaqEBTIkfm7vAdshIhAjsf5dBEgN
+        s8AHJon/rx4ygdSwCWhJ7H9xA2wqv4CixNUfjxlB6nkF7CSab+SDhFkEVCSOPt0ONlJUIEzi
+        5LYWRhCbV0BQ4uTMJywgNqeAtUTjhQtgNcwC4hK3nsxngrDlJZq3zmYG2Ssh8IJD4seM58wQ
+        H7hInPm+G8oWlnh1fAs7hC0l8fndXqgvqyVWnjzCBtHcwSixZT/EBgkBY4n9SyczgRzKLKAp
+        sX6XPkRYUWLn77mMEIv5JN597WGFhC+vREebEESJssTlB3eZIGxJicXtnWwTGJVmIXlnFpIX
+        ZiF5YRbCsgWMLKsYxVILinPTU4sNC4yQI3sTIzhJa5ntYJz09oPeIUYmDsZDjBIczEoivAmq
+        /+KEeFMSK6tSi/Lji0pzUosPMZoCA3gis5Rocj4wT+SVxBuaGhkbG1uYGJqZGhoqifOqyVyI
+        ExJITyxJzU5NLUgtgulj4uCUamAS3vI6gt/2RZfMG2YOhoPXljU597zdLcp9z1Rg2Z5zFw4/
+        Sb52cvtiboXlC940sRkG39f2/MCs/lF3VbTJ1i6bribdP3lmVtvlVrqYX1f8bvqdc6aJdUDr
+        5sTojxl/zWz9+n9eSjx1me1hZJN59amp836WRuXOWXh81sPV134ab2HzOPTnU1He/pe8u/b4
+        n9no+qnHxrDsfEGzeCHvNssgucvP725/tnvHFg1jo6d1X+ed9X+lqZBy5KpL2+Wlzerz9FKu
+        PbvSIfukk3EaS9+i+HXR+aVP/YQ073xzWXnuxqT610w9h6OfLX1ln3DgRoPd2bCH4Qm351aI
+        OeaGbJlnZCX66sr9+2vED9fkPRbVU2Ipzkg01GIuKk4EANxDsXhbBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsWy7bCSvO7E2n9xBsu/MVvcn9fKaLFxxnpW
+        i/lHzrFaXPn6ns1i+t5NbBaT7k9gsTh/fgO7xabH11gtLu+aw2bxufcIo8WM8/uYLNYeuctu
+        cbtxBZtF694j7BaH37SzWsyY/JLNQcBj06pONo871/awedzvPs7ksXlJvUffllWMHp83yQWw
+        RXHZpKTmZJalFunbJXBlHF28mrXgA3vF9w1fWRsY97F1MXJySAiYSGydvpUFxBYS2M0osWUu
+        I0RcUmLaxaPMXYwcQLawxOHDxV2MXEAlbxklnj5axgxSIyyQIbFs3wuwehGBGIlTk2exgBQx
+        C3xgkjg0t5MRomM/o8T0BZvANrAJaEnsf3EDbDO/gKLE1R+PGUE28ArYSTTfyAcJswioSBx9
+        up0VxBYVCJPYueQxE4jNKyAocXLmE7AxnALWEo0XLoDVMAuoS/yZd4kZwhaXuPVkPhOELS/R
+        vHU28wRG4VlI2mchaZmFpGUWkpYFjCyrGCVTC4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGC
+        41VLcwfj9lUf9A4xMnEwHmKU4GBWEuFNUP0XJ8SbklhZlVqUH19UmpNafIhRmoNFSZz3RuHC
+        OCGB9MSS1OzU1ILUIpgsEwenVANTyNp5XBz69+N2n7xp49Z8TriI2dXWZKqH2qsHRudfBm8T
+        na3h7v3T9lnfo3VXz3E/TnupqRv9dvmt6Xdrc6aYfjh+d9ZxMd+772Ysmuts8L5gz8QMl6O5
+        sfPNz7/uSxa0zlx672Ci1pvYNT2nH2mYbXi+UUTw3GzhiZaP0mTWWYimxMt0/q0rNyl9x1Fq
+        5B2mb3t0pVOedMKDqqhLhUcN/8pMnX9w451/LqoeKrUsVw7ySlTlCF6+KuaYFeeZcPp7y3qD
+        Rrn1SyV+aLx+tuW09ulLHR1uhRrWBgW3czYxXXm/eNb5mKqim7v1rQOest+uz3D3fTTrxU8+
+        D5NFRyKSi2e6bF62e8aTiX+2PFlvrMRSnJFoqMVcVJwIAKDh9EFGAwAA
+X-CMS-MailID: 20200703003633epcas1p2654ef23e56eb19c0203ff1680f1e75c8
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200702155216eucas1p2424c5998e09d73e3b758e4cd8ba27157
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200702155216eucas1p2424c5998e09d73e3b758e4cd8ba27157
-References: <20200702155149.12854-1-krzk@kernel.org>
-        <CGME20200702155216eucas1p2424c5998e09d73e3b758e4cd8ba27157@eucas1p2.samsung.com>
-        <20200702155149.12854-5-krzk@kernel.org>
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3
+References: <20200702163724.2218-1-s.nawrocki@samsung.com>
+        <CGME20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3@eucas1p2.samsung.com>
+        <20200702163724.2218-2-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 02.07.2020 17:51, Krzysztof Kozlowski wrote:
-> There is no need to keep DMA controller nodes under AMBA bus node.
-> Remove the "amba" node to fix dtschema warnings like:
->
->      amba: $nodename:0: 'amba' does not match '^(bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
+Hi Sylwester,
+
+
+On 7/3/20 1:37 AM, Sylwester Nawrocki wrote:
+> Add documentation for new optional properties in the exynos bus nodes:
+> samsung,interconnect-parent, #interconnect-cells, bus-width.
+> These properties allow to specify the SoC interconnect structure which
+> then allows the interconnect consumer devices to request specific
+> bandwidth requirements.
+> 
+> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->
-> Changes since v1:
-> 1. Remove the bus, as suggested by Marek
+> Changes for v6:
+>  - added dts example of bus hierarchy definition and the interconnect
+>    consumer,
+>  - added new bus-width property.
+> 
+> Changes for v5:
+>  - exynos,interconnect-parent-node renamed to samsung,interconnect-parent
 > ---
->   arch/arm/boot/dts/exynos3250.dtsi             |  47 +++----
->   arch/arm/boot/dts/exynos4.dtsi                |  70 +++++-----
->   .../boot/dts/exynos4210-universal_c210.dts    |   2 +-
->   arch/arm/boot/dts/exynos5250.dtsi             |  92 ++++++-------
->   arch/arm/boot/dts/exynos5410.dtsi             |  46 +++----
->   arch/arm/boot/dts/exynos5420.dtsi             | 130 ++++++++----------
->   6 files changed, 174 insertions(+), 213 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> index 044e5da64a76..d3fb45a56527 100644
-> --- a/arch/arm/boot/dts/exynos3250.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> @@ -418,33 +418,26 @@
->   			status = "disabled";
->   		};
->   
-> -		amba {
-> -			compatible = "simple-bus";
-> -			#address-cells = <1>;
-> -			#size-cells = <1>;
-> -			ranges;
-> -
-> -			pdma0: pdma@12680000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x12680000 0x1000>;
-> -				interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&cmu CLK_PDMA0>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <32>;
-> -			};
-> -
-> -			pdma1: pdma@12690000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x12690000 0x1000>;
-> -				interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&cmu CLK_PDMA1>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <32>;
-> -			};
-> +		pdma0: pdma@12680000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x12680000 0x1000>;
-> +			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cmu CLK_PDMA0>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <32>;
-> +		};
-> +
-> +		pdma1: pdma@12690000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x12690000 0x1000>;
-> +			interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cmu CLK_PDMA1>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <32>;
->   		};
->   
->   		adc: adc@126c0000 {
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index d2779a790ce3..a1e54449f33f 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -669,45 +669,37 @@
->   			status = "disabled";
->   		};
->   
-> -		amba: amba {
-> -			#address-cells = <1>;
-> -			#size-cells = <1>;
-> -			compatible = "simple-bus";
-> -			interrupt-parent = <&gic>;
-> -			ranges;
-> -
-> -			pdma0: pdma@12680000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x12680000 0x1000>;
-> -				interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock CLK_PDMA0>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <32>;
-> -			};
-> -
-> -			pdma1: pdma@12690000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x12690000 0x1000>;
-> -				interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock CLK_PDMA1>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <32>;
-> -			};
-> -
-> -			mdma1: mdma@12850000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x12850000 0x1000>;
-> -				interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock CLK_MDMA>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <1>;
-> -			};
-> +		pdma0: pdma@12680000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x12680000 0x1000>;
-> +			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock CLK_PDMA0>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <32>;
-> +		};
-> +
-> +		pdma1: pdma@12690000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x12690000 0x1000>;
-> +			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock CLK_PDMA1>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <32>;
-> +		};
-> +
-> +		mdma1: mdma@12850000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x12850000 0x1000>;
-> +			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock CLK_MDMA>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <1>;
->   		};
->   
->   		fimd: fimd@11c00000 {
-> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> index 02fde1a75ebd..e07aa3aa93bd 100644
-> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> @@ -181,7 +181,7 @@
->   	};
->   };
->   
-> -&amba {
-> +&soc {
+>  .../devicetree/bindings/devfreq/exynos-bus.txt     | 68 +++++++++++++++++++++-
+>  1 file changed, 66 insertions(+), 2 deletions(-)
+
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 
-What about the alphabetical order of the labels here?
+(snip)
 
-
->   	mdma0: mdma@12840000 {
->   		compatible = "arm,pl330", "arm,primecell";
->   		reg = <0x12840000 0x1000>;
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index b6135af7ef39..e3dbe4166836 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -679,56 +679,48 @@
->   			samsung,pmureg-phandle = <&pmu_system_controller>;
->   		};
->   
-> -		amba {
-> -			#address-cells = <1>;
-> -			#size-cells = <1>;
-> -			compatible = "simple-bus";
-> -			interrupt-parent = <&gic>;
-> -			ranges;
-> -
-> -			pdma0: pdma@121a0000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x121A0000 0x1000>;
-> -				interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock CLK_PDMA0>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <32>;
-> -			};
-> -
-> -			pdma1: pdma@121b0000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x121B0000 0x1000>;
-> -				interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock CLK_PDMA1>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <32>;
-> -			};
-> -
-> -			mdma0: mdma@10800000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x10800000 0x1000>;
-> -				interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock CLK_MDMA0>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <1>;
-> -			};
-> -
-> -			mdma1: mdma@11c10000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x11C10000 0x1000>;
-> -				interrupts = <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock CLK_MDMA1>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <1>;
-> -			};
-> +		pdma0: pdma@121a0000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x121A0000 0x1000>;
-> +			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock CLK_PDMA0>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <32>;
-> +		};
-> +
-> +		pdma1: pdma@121b0000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x121B0000 0x1000>;
-> +			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock CLK_PDMA1>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <32>;
-> +		};
-> +
-> +		mdma0: mdma@10800000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x10800000 0x1000>;
-> +			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock CLK_MDMA0>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <1>;
-> +		};
-> +
-> +		mdma1: mdma@11c10000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x11C10000 0x1000>;
-> +			interrupts = <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock CLK_MDMA1>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <1>;
->   		};
->   
->   		gsc_0:  gsc@13e00000 {
-> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-> index 2eab80bf5f3a..abe75b9e39f5 100644
-> --- a/arch/arm/boot/dts/exynos5410.dtsi
-> +++ b/arch/arm/boot/dts/exynos5410.dtsi
-> @@ -189,34 +189,26 @@
->   			interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
->   		};
->   
-> -		amba {
-> -			#address-cells = <1>;
-> -			#size-cells = <1>;
-> -			compatible = "simple-bus";
-> -			interrupt-parent = <&gic>;
-> -			ranges;
-> -
-> -			pdma0: pdma@121a0000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x121a0000 0x1000>;
-> -				interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock CLK_PDMA0>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <32>;
-> -			};
-> +		pdma0: pdma@121a0000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x121a0000 0x1000>;
-> +			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock CLK_PDMA0>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <32>;
-> +		};
->   
-> -			pdma1: pdma@121b0000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x121b0000 0x1000>;
-> -				interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock CLK_PDMA1>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <32>;
-> -			};
-> +		pdma1: pdma@121b0000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x121b0000 0x1000>;
-> +			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock CLK_PDMA1>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <32>;
->   		};
->   
->   		audi2s0: i2s@3830000 {
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index b672080e7469..c76460b70532 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -433,76 +433,68 @@
->   			power-domains = <&mau_pd>;
->   		};
->   
-> -		amba {
-> -			#address-cells = <1>;
-> -			#size-cells = <1>;
-> -			compatible = "simple-bus";
-> -			interrupt-parent = <&gic>;
-> -			ranges;
-> -
-> -			adma: adma@3880000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x03880000 0x1000>;
-> -				interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock_audss EXYNOS_ADMA>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <6>;
-> -				#dma-requests = <16>;
-> -				power-domains = <&mau_pd>;
-> -			};
-> -
-> -			pdma0: pdma@121a0000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x121A0000 0x1000>;
-> -				interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock CLK_PDMA0>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <32>;
-> -			};
-> -
-> -			pdma1: pdma@121b0000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x121B0000 0x1000>;
-> -				interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock CLK_PDMA1>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <32>;
-> -			};
-> -
-> -			mdma0: mdma@10800000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x10800000 0x1000>;
-> -				interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock CLK_MDMA0>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <1>;
-> -			};
-> +		adma: adma@3880000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x03880000 0x1000>;
-> +			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock_audss EXYNOS_ADMA>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <6>;
-> +			#dma-requests = <16>;
-> +			power-domains = <&mau_pd>;
-> +		};
->   
-> -			mdma1: mdma@11c10000 {
-> -				compatible = "arm,pl330", "arm,primecell";
-> -				reg = <0x11C10000 0x1000>;
-> -				interrupts = <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clock CLK_MDMA1>;
-> -				clock-names = "apb_pclk";
-> -				#dma-cells = <1>;
-> -				#dma-channels = <8>;
-> -				#dma-requests = <1>;
-> -				/*
-> -				 * MDMA1 can support both secure and non-secure
-> -				 * AXI transactions. When this is enabled in
-> -				 * the kernel for boards that run in secure
-> -				 * mode, we are getting imprecise external
-> -				 * aborts causing the kernel to oops.
-> -				 */
-> -				status = "disabled";
-> -			};
-> +		pdma0: pdma@121a0000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x121A0000 0x1000>;
-> +			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock CLK_PDMA0>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <32>;
-> +		};
-> +
-> +		pdma1: pdma@121b0000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x121B0000 0x1000>;
-> +			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock CLK_PDMA1>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <32>;
-> +		};
-> +
-> +		mdma0: mdma@10800000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x10800000 0x1000>;
-> +			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock CLK_MDMA0>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <1>;
-> +		};
-> +
-> +		mdma1: mdma@11c10000 {
-> +			compatible = "arm,pl330", "arm,primecell";
-> +			reg = <0x11C10000 0x1000>;
-> +			interrupts = <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clock CLK_MDMA1>;
-> +			clock-names = "apb_pclk";
-> +			#dma-cells = <1>;
-> +			#dma-channels = <8>;
-> +			#dma-requests = <1>;
-> +			/*
-> +			 * MDMA1 can support both secure and non-secure
-> +			 * AXI transactions. When this is enabled in
-> +			 * the kernel for boards that run in secure
-> +			 * mode, we are getting imprecise external
-> +			 * aborts causing the kernel to oops.
-> +			 */
-> +			status = "disabled";
->   		};
->   
->   		i2s0: i2s@3830000 {
-
-Best regards
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
