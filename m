@@ -2,119 +2,106 @@ Return-Path: <SRS0=QMmB=AO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FECC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jul 2020 17:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EFCC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jul 2020 18:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B50D208E4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jul 2020 17:44:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oPyrB8Pi"
+	by mail.kernel.org (Postfix) with ESMTP id 2E39221D79
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jul 2020 18:01:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593799287;
+	bh=LtCAW4mki0pzhEa/wPXfHnMIujRWqxzjL5W2fPw6Lt0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=h0zsdrVjlNnEm2Y1PpHpwZS8R8HRPUbzWiSHcKZtL7oNMQBkWVLH/qYDJxOMakVz1
+	 pq6JsSsZY/2zDgNSOuUn2yBT5bJSgHsQ8PRL6fPzDKLcP2mydqY3BlJTNQNOc6YvKB
+	 VzyGAQsEPSOYZt9WBMgteJZ37LyPrY1hLUc9L6PQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726505AbgGCRmE (ORCPT
+        id S1726265AbgGCSBX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Jul 2020 13:42:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44392 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbgGCRmB (ORCPT
+        Fri, 3 Jul 2020 14:01:23 -0400
+Received: from mail-ej1-f67.google.com ([209.85.218.67]:39845 "EHLO
+        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726035AbgGCSBX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Jul 2020 13:42:01 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC68C08C5DE
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Jul 2020 10:42:01 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id q15so32754960wmj.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jul 2020 10:42:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GH9kLkzHctUtpjzMG5uKy/EUP0KmLjkarK3Zyi+F734=;
-        b=oPyrB8PidDxQT0BDJL8ttUMskiiCjdZZjs3FWjc7sJiQ3GTGABuuowxYHEb4PXYO9R
-         oUuXo2ZFCkIhfpc5FiL95BvY5X6H8sYdqjL+mtb7hHzsc5+VWC3YCMEvMqjGFbMZZtaG
-         c0W+rgRjDKk9CsLqqPh94NHRplYLc6no40CMSS2sqVsosXrilmdr4P4sTUGhyv3MvAFi
-         vSXEuHkzSkqfzBV05NAGb4G7gjUg4oLd7gld3YYCk6nJ6wyrZcO8NIGoeATjlSR43iDM
-         sW57euHO4YC6uPitM6vEsxyXp4WxMo/dVFUtPPoeuuSx3jG9FAR8gNR65w2CAGjEPmjw
-         QVGQ==
+        Fri, 3 Jul 2020 14:01:23 -0400
+Received: by mail-ej1-f67.google.com with SMTP id w6so35163334ejq.6;
+        Fri, 03 Jul 2020 11:01:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GH9kLkzHctUtpjzMG5uKy/EUP0KmLjkarK3Zyi+F734=;
-        b=JVkWWEW9IZtTKLilIR19VnfTcAvgi3zrWeV0kXGXfH+00a7Kkh0EqrV0rdnTvJ/Slr
-         xWjXLYNrO79WqE5/UsivQ7kVCbba1ON+eH+tHHPK+5DsT41L1fRl/+D3jCFo7nguOmaC
-         wpnUwoK2XZJtBXIqSQnQIZxjg1h36FOpikRE/oviMdzVmJOvaR3wZCRn1bIyT/ckdyt1
-         yYcLnEfA2ZLIizqTsuLuzQdwZEVxltii0V2LnF96gtJeXHna2YjwFVJS48oTYf9JvOqE
-         7x4JN7hqmgEpKc+OrGIeMek2UhY9TdwLYVnxbQCs2ezxxNC1jIPdreK/5Ko2v72dDwdE
-         6YkQ==
-X-Gm-Message-State: AOAM533oD16kOgGSe7rZHvPnzsCC0jAIO5GcqHaHUSvNntsD7zlBIsz3
-        j4YybgGohZevC+9PNwsYlkGCog==
-X-Google-Smtp-Source: ABdhPJyR175xQdUE3YbXopU3B0c7WCXx8R0l/TMeTSCdkdTrAkW/AeSsiuMDCeOhzYob4uQ7e/uQvw==
-X-Received: by 2002:a05:600c:c1:: with SMTP id u1mr38510987wmm.48.1593798119975;
-        Fri, 03 Jul 2020 10:41:59 -0700 (PDT)
-Received: from localhost.localdomain ([2.27.35.144])
-        by smtp.gmail.com with ESMTPSA id x11sm13625799wmc.26.2020.07.03.10.41.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2020 10:41:59 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Roman Weissgaerber <weissg@vienna.at>,
-        David Brownell <dbrownell@users.sourceforge.net>,
-        Christopher Hoover <ch@hpl.hp.com>,
-        Ben Dooks <ben@simtec.co.uk>, linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 02/30] usb: host: ohci-s3c2410: Demote obvious misuse of kerneldoc to standard comment block
-Date:   Fri,  3 Jul 2020 18:41:20 +0100
-Message-Id: <20200703174148.2749969-3-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200703174148.2749969-1-lee.jones@linaro.org>
-References: <20200703174148.2749969-1-lee.jones@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YageHdHnDETUH0WwG8/ZR5delr/Q4EUevxKHi51xHZM=;
+        b=Oj45A+o5SLrXa1sAWh00l6N0XEQK49KYP/UymvnhaXbXjSOVjQmPusO4vHEwshJKc6
+         CHpvnQ5SoiRADtyFusMHD+Iy3ep5UA9DafB9dtVoVMJ4QFD0jj+uIm03tvEiLZBF8qN3
+         2gdpoaeA5Uq8ToUHhXfxl7p2ZAFeDk0z1TGbXAe5R7tKA+iL950kv4k8ecyEC5vLJ/65
+         J1VueQc/pxI0Rjn0qGZN8GcphI74u31i83VsibbgHx17lKYIEOAhZm3dwWAahmvHZu06
+         UGtOYQgGL5Qx6l+dp9bpmpxpp7hZ0lK7VLOAUPdTRwBq6Z2GDr9OJTfHczbYKTXT14lZ
+         PyUw==
+X-Gm-Message-State: AOAM53335MaH52GFvF70iT5J0VFgL97wE3cESdoXAdisjyZnYLI0XPEA
+        Gb8CiKfqn43S5s2ieXiX2gQ=
+X-Google-Smtp-Source: ABdhPJwyz/pyBEbw295xSe8DvR03m0H2mpqxsylPLSbujJ36/MYAlzcJjyg7zpwwv//h3eWK2oJrNQ==
+X-Received: by 2002:a17:906:5657:: with SMTP id v23mr34429394ejr.196.1593799280892;
+        Fri, 03 Jul 2020 11:01:20 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.195])
+        by smtp.googlemail.com with ESMTPSA id y7sm9779927ejd.73.2020.07.03.11.01.19
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 03 Jul 2020 11:01:20 -0700 (PDT)
+Date:   Fri, 3 Jul 2020 20:01:17 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v2 3/8] arm64: dts: exynos: Remove generic
+ arm,armv8-pmuv3 compatible
+Message-ID: <20200703180117.GA1241@kozik-lap>
+References: <20200702155149.12854-1-krzk@kernel.org>
+ <20200702155149.12854-3-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200702155149.12854-3-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-No attempt has been made to document the function here.
+On Thu, Jul 02, 2020 at 05:51:44PM +0200, Krzysztof Kozlowski wrote:
+> The ARM PMU node is described enough with first compatible so remove the
+> arm,armv8-pmuv3 to fix dtschema warnings like:
+> 
+>     arm-pmu: compatible: Additional items are not allowed ('arm,armv8-pmuv3' was unexpected)
+>     arm-pmu: compatible: ['arm,cortex-a57-pmu', 'arm,armv8-pmuv3'] is too long
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. None
+> 
+> Not tested although no effect expected.
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 4 ++--
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi    | 2 +-
 
-Fixes the following W=1 kernel build warning(s):
+Applied.
 
- drivers/usb/host/ohci-s3c2410.c:356: warning: Function parameter or member 'dev' not described in 'ohci_hcd_s3c2410_probe'
-
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Roman Weissgaerber <weissg@vienna.at>
-Cc: David Brownell <dbrownell@users.sourceforge.net>
-Cc: Christopher Hoover <ch@hpl.hp.com>
-Cc: Ben Dooks <ben@simtec.co.uk>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/usb/host/ohci-s3c2410.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
-index d961097c90f0e..de5e570c58bae 100644
---- a/drivers/usb/host/ohci-s3c2410.c
-+++ b/drivers/usb/host/ohci-s3c2410.c
-@@ -343,7 +343,7 @@ ohci_hcd_s3c2410_remove(struct platform_device *dev)
- 	return 0;
- }
- 
--/**
-+/*
-  * ohci_hcd_s3c2410_probe - initialize S3C2410-based HCDs
-  * Context: !in_interrupt()
-  *
--- 
-2.25.1
+Best regards,
+Krzysztof
 
