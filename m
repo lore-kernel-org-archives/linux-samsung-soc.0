@@ -2,156 +2,132 @@ Return-Path: <SRS0=5g2u=AP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42887C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Jul 2020 04:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D62C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Jul 2020 10:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16992207D4
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Jul 2020 04:25:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZsxxHm1"
+	by mail.kernel.org (Postfix) with ESMTP id 60553208E4
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Jul 2020 10:22:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593858173;
+	bh=5m8/7zS+1VBFKotYEfoawEAzm4yV5slnHduPy48fO2c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=tpuSLxm+OlPutpSvnuJbKKdsKXe7DYgzuUYm8OsYVrPMERAJzvLPDy25T7xZ+rNoh
+	 rAAMcVWelRM6zGvXf2exCqOpOkH0BvORbrw0kdojNy7dzLVWfr5W7auCoRbKKBT/C3
+	 PXmutmlfckL/fxTvc3RXqRdRWmAQIGVsKveqwWMI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725710AbgGDEZK (ORCPT
+        id S1726452AbgGDKWw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 4 Jul 2020 00:25:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58606 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbgGDEZK (ORCPT
+        Sat, 4 Jul 2020 06:22:52 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37766 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbgGDKWw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 4 Jul 2020 00:25:10 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0932CC061794;
-        Fri,  3 Jul 2020 21:25:10 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id e64so29313412iof.12;
-        Fri, 03 Jul 2020 21:25:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/UPXD/iK4lkAOYf+tM3eqOazrdC4wjGMNCYGet5n4fc=;
-        b=BZsxxHm1TMVWBJ47l8VHZ0BMlWqCNJcsbkVGrEe7ShfoNKT6LynOTIUWTnbi38pGpP
-         /nfdiE1ajFPDCSCZ+Q5RVTjYAj0XIbZgDuqJAnJHKrr/avX3KH6x658tqlgVqI6yFaph
-         glBj0tNLD2nR6WDvVeCwBvbOOl9INtDn5luH8r2rSeEOM8ote42udweZIgu+bh3/4DEg
-         Xtox+8bksYsD0Ish9w8XJtEcUqbBQBVUoJXKst3TFRacP2ZmoweTMwkdFhkVJTXZbDll
-         RBcqbWlZzv7weNeptLwYQwHe8KTFZegqDBB225zP5yYrliDanDkcij+/rNzK7dI30pEp
-         Tc4Q==
+        Sat, 4 Jul 2020 06:22:52 -0400
+Received: by mail-ed1-f68.google.com with SMTP id g20so29798539edm.4;
+        Sat, 04 Jul 2020 03:22:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/UPXD/iK4lkAOYf+tM3eqOazrdC4wjGMNCYGet5n4fc=;
-        b=ezHZ98sUZH0+yDrYvVWUQXBtY5c6QodR8Bkn7bBppUFWq5VCTyvIglFHb0PN4eSjuW
-         RKKLD40Qknh+acFqsuITyY6WtBIc9T+0btwqBOKQv9XOWWsu0Vq9KGbouqTC601s400l
-         JdyghlN5/F6L/MDwKTXGMw/WrRhLc3YzH03A+I8PhNOhasBvKaiSfU0iEe1/xL89SP5N
-         8VU9mvpW/JQrsYFSo2/wkwuiI/e/BIRRHJRtrKSDTF6eR6Ye/9zKUn1ieFkSUqvzhPv9
-         gZlYTIpx2JR2tSsvUmkLAdF8v+ltE39bpllAmRdKe4TPs7s7+XVskbdDgYXx1lWzjJqK
-         9W3A==
-X-Gm-Message-State: AOAM531FTm8bN9UVXT4LM7IwbDwvs4ZvYw8r3gm24h4/TnOGMeXU2BHe
-        0J/5N8JsYV8Wq+Hw+NY/ZXIpL75suXznahmqV86F4Jl6
-X-Google-Smtp-Source: ABdhPJytPTHPUtXvxENGDlf4+5FbWJAuLYCWlYn3hSHnskudx24q1x8oV38vRxjB2qembsdZjwCKTzuMmeEDzQd72kw=
-X-Received: by 2002:a6b:691d:: with SMTP id e29mr15272167ioc.159.1593836709115;
- Fri, 03 Jul 2020 21:25:09 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+jrV0HqUbkt9Cx5rpAJlhzgehxEYGZ5fXXCayKBNA8w=;
+        b=qyOaGvEr2L8LFRXof5womsWD5GCZcG8QUeV1VebLNEzfjfHXddoWyFnAIlJpLeuEOl
+         MCSzQpciI4GKiCzcMe8YeTz18kpMlag0nw+DAjnPB2Iq3IYUiEoBcT+WnPByIfMVS8cF
+         qD7lXJGMs5ZGI5hmPCTTrGLgqNDtpllEzcAOW8Aespw1nH9bpNliRiWsg8vqXZesYB8G
+         qkrqY87NvKw78iKssLJ+G5yHzA6Xcq98DlvXH4qQje/QMuiI+lbxMkWkEEZiT5EjrCOy
+         9KILHC5jEsbWvTmz1UdM9aYL2uApuLpddeEcgjdiXu5VA/ounolYvMWD1y0xTlBb4FJL
+         H+Pg==
+X-Gm-Message-State: AOAM533ZScj8Ir/1X7bKqrK8bHA3gtLo/krDMuPAmJhCP0pk8KlNDK3l
+        rE+3YBJEZ3sxLmcv0pdyRrI=
+X-Google-Smtp-Source: ABdhPJydT2qa3CL2K8I9FiDko44uIMNxsxpERrU9lCToYFS85q0/39Ygxmz7gRja65rU5l2pJFMR+Q==
+X-Received: by 2002:a05:6402:31ad:: with SMTP id dj13mr2189528edb.88.1593858169754;
+        Sat, 04 Jul 2020 03:22:49 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.195])
+        by smtp.googlemail.com with ESMTPSA id ck6sm14236971edb.18.2020.07.04.03.22.47
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 04 Jul 2020 03:22:48 -0700 (PDT)
+Date:   Sat, 4 Jul 2020 12:22:46 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org
+Subject: Re: [PATCH] arm64: dts: exynos: Add minimal bootargs
+Message-ID: <20200704102246.GA5975@kozik-lap>
+References: <CGME20200703184543epcas5p4adb3db7693094c72477b8469d9f205ba@epcas5p4.samsung.com>
+ <20200703182536.9190-1-alim.akhtar@samsung.com>
+ <000801d6516a$b6efcb40$24cf61c0$@samsung.com>
 MIME-Version: 1.0
-References: <20200703132012.579-1-linux.amoon@gmail.com> <20200703164349.GA2914@kozik-lap>
-In-Reply-To: <20200703164349.GA2914@kozik-lap>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Sat, 4 Jul 2020 09:54:58 +0530
-Message-ID: <CANAwSgQrTobDjPF7AF96FNoiihBjhwf9CQMBgCKBVuqza4v3Bg@mail.gmail.com>
-Subject: Re: [PATCH] phy: samsung: Use readl_poll_timeout function
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <000801d6516a$b6efcb40$24cf61c0$@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-hi Krzysztof,
-
-On Fri, 3 Jul 2020 at 22:13, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Fri, Jul 03, 2020 at 01:20:12PM +0000, Anand Moon wrote:
-> > User readl_poll_timeout function instead of open
-> > coded handling in crport_handshake function.
-> >
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+On Sat, Jul 04, 2020 at 12:19:40AM +0530, Alim Akhtar wrote:
+> Adding Krzysztof's correct email address.
+> Sorry about noise.
+> 
+> > -----Original Message-----
+> > From: Alim Akhtar <alim.akhtar@samsung.com>
+> > Sent: 03 July 2020 23:56
+> > To: rzk@kernel.org
+> > Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> > samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > robh+dt@kernel.org; Alim Akhtar <alim.akhtar@samsung.com>
+> > Subject: [PATCH] arm64: dts: exynos: Add minimal bootargs
+> > 
+> > Add minimal bootargs to enable earlycon and console.
+> > This really useful in case kernel has crashed early in boot process.
+> > 
+> > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 > > ---
-> >  drivers/phy/samsung/phy-exynos5-usbdrd.c | 37 +++++++++---------------
-> >  1 file changed, 13 insertions(+), 24 deletions(-)
-> >
-> > diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> > index e510732afb8b..83274c5e3820 100644
-> > --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> > +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> > @@ -16,6 +16,7 @@
-> >  #include <linux/of.h>
-> >  #include <linux/of_address.h>
-> >  #include <linux/of_device.h>
-> > +#include <linux/iopoll.h>
-> >  #include <linux/phy/phy.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/mutex.h>
-> > @@ -556,40 +557,28 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
-> >  static int crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
-> >                           u32 val, u32 cmd)
-> >  {
-> > -     u32 usec = 100;
-> > +     u32 timeout_us = 1000, sleep_us = 10;
-> >       unsigned int result;
->
-> You silently (without mentioning in commit msg and explaining why)
-> changed both the sleep time and total timeout.
->
+> >  arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> > b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> > index 790f12ca8981..d7b42d5a3b2d 100644
+> > --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> > +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> > @@ -24,6 +24,7 @@
+> > 
+> >  	chosen {
+> >  		stdout-path = &serial_2;
+> > +		bootargs = "earlycon=exynos4210,0x14c30000
+> > console=ttySAC0,115200n8";
 
-Ok I will stick with the original default value.
-  timeout_us = 100, sleep_us = 1;
+Hi,
 
-> Nope, please explain why you chosen such values and change them in
-> separate patch..
+The console is already chosen by stdout-path and earlycon would use it
+as well, so no need for the address. It should be just "earlycon" if you
+want to enable it unconditionally.
 
-I choose these values following Alim Akhtar's UFS PHY patches.
+Also, why did you use different serial for console?
 
->
-> > +     int err;
-> >
-> >       writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
-> >
-> > -     do {
-> > -             result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
-> > -             if (result & PHYREG1_CR_ACK)
-> > -                     break;
-> > -
-> > -             udelay(1);
-> > -     } while (usec-- > 0);
-> > -
-> > -     if (!usec) {
-> > -             dev_err(phy_drd->dev,
-> > -                     "CRPORT handshake timeout1 (0x%08x)\n", val);
-> > +     err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
-> > +                     result, (result & PHYREG1_CR_ACK), sleep_us, timeout_us);
-> > +     if (err) {
-> > +             dev_err(phy_drd->dev, "CRPORT handshake timeout1 (0x%08x)\n", val);
-> >               return -ETIME;
-> >       }
-> >
-> > -     usec = 100;
-> > +     timeout_us = 1000;
-> > +     sleep_us = 10;
->
-> The same.
->
-> Best regards,
-> Krzysztof
->
+However the question is, are you sure you want earlycon on every,
+including successful boot? On most of the boards we do not enable by
+default. If developer needs, he can choose it for example via U-Boot
+"setenv opts earlycon".
+
+However it's a development kit so it could be enabled on default...
 
 Best regards,
--Anand
+Krzysztof
+
+> >  	};
+> > 
+> >  	memory@40000000 {
+> > 
+> > base-commit: 9e50b94b3eb0d859a2586b5a40d7fd6e5afd9210
+> > --
+> > 2.17.1
+> 
+> 
