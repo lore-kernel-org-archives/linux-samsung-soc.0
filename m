@@ -2,133 +2,173 @@ Return-Path: <SRS0=U93K=AQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3724DC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Jul 2020 07:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CBFC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Jul 2020 18:02:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16BB320737
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Jul 2020 07:29:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YkXHzbfF"
+	by mail.kernel.org (Postfix) with ESMTP id 5FCAA20708
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Jul 2020 18:02:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593972174;
+	bh=+AoCgWZsUCnFW+SEdgd8ByRUF6SgDVmc8jdOn2zLvo4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=q/qlKp7PTq0HlzMcWflS4jLGQoTDMulK+06aZyzt9c8gXqfrL8fik9hxueZPBYM7d
+	 vRjsVAtIiVmJSWNb2qLAymK3EDNz4bhlS5rPRGA/n9okkSOhdyXqw8e3rl6ykwFBYd
+	 IBkmmp9kXTQX9grysdElsSUWkDYcLO7lRVio1ouU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726025AbgGEH3s (ORCPT
+        id S1727823AbgGESCy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 5 Jul 2020 03:29:48 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:49199 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbgGEH3o (ORCPT
+        Sun, 5 Jul 2020 14:02:54 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54388 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727803AbgGESCx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 5 Jul 2020 03:29:44 -0400
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200705072940epoutp048fcbb3eb63aaeb7bc23bdeff1a5748bd~eyrE-XPSs1555815558epoutp04g
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Jul 2020 07:29:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200705072940epoutp048fcbb3eb63aaeb7bc23bdeff1a5748bd~eyrE-XPSs1555815558epoutp04g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1593934180;
-        bh=HCXrofelDS9SJIsUKOUl2fb+5VFxATXUSmCxo5+ME6E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YkXHzbfFO3QhVEl9Vkm/Ro6DN/mrf3wpVfiGkRIR/no0Etg+ZSTkJ1E4byZVqgQNE
-         9bkNjdgm04YzT+RqCw93OWJtfzk+H/OOxg9bFQYyrm/95uBqX6TviqvmAbAi3SkmX8
-         jEp/PPz5OIJ4A0127ruSW7KQ+uq3DjovAzEbTHhI=
-Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20200705072940epcas5p3bdf73fe71b1a3dc73d743486cb915007~eyrEar5BZ0709407094epcas5p3A;
-        Sun,  5 Jul 2020 07:29:40 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        20.DA.09467.461810F5; Sun,  5 Jul 2020 16:29:40 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200705072938epcas5p479f0d040ca34fd44b2ba893a199efb79~eyrDUeq5_1034110341epcas5p4M;
-        Sun,  5 Jul 2020 07:29:38 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200705072938epsmtrp27740552f019671b8d43c346effbdcded~eyrDT1XiP1761217612epsmtrp2g;
-        Sun,  5 Jul 2020 07:29:38 +0000 (GMT)
-X-AuditID: b6c32a49-a29ff700000024fb-d8-5f018164af4f
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C8.BD.08303.261810F5; Sun,  5 Jul 2020 16:29:38 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200705072937epsmtip14588e58cb12f7ebec4b2fde1bf2c716e~eyrCLcEy-0149301493epsmtip1N;
-        Sun,  5 Jul 2020 07:29:37 +0000 (GMT)
-From:   Alim Akhtar <alim.akhtar@samsung.com>
-To:     krzk@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sun, 5 Jul 2020 14:02:53 -0400
+Received: by mail-wm1-f65.google.com with SMTP id o8so36776406wmh.4;
+        Sun, 05 Jul 2020 11:02:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uPHomDteoTeqD1Zdsfu51U2CvSKbygx5cXktKVzxSNQ=;
+        b=SJZ6nrkPHfbGh5k/coEtKtpKoXOle9+mPZD3hbqxce2nspFHJyx5i6aV1dV7FO6PbR
+         MQiik9H+EoK3U6mpGRzoTC8Onoip4YRRghUBAiA01udpB4H5Bpe7KZGPPFey13XHRrzd
+         i7ACU70MUvBfNeh1LlCjNbXqTm7mnvQgcO8ECUPzWw9qD6uYDQ8HfPhAEUvY8TomOcRO
+         +a81Lnu5V51bnYUKT9xRKsg4Zy9o89V1GdTAWM1EDoZPTTkjRoj+EVQWJ50ouSBUYjmv
+         xTjjr2QBp2HOP2/MOi4woqm/lQWvXeZnkULaXLly+XrKvqydZz2SjqfeFR900HSGMc6I
+         q0hA==
+X-Gm-Message-State: AOAM531Lf5lFSUclI1eDuanX63mUHMDBogRSvVkdQWmBnzw5xzDPqV/1
+        n8MdowUzLq4VgokSOgnzUSE=
+X-Google-Smtp-Source: ABdhPJwnfTrvsdcHqKUfAzn5bksiQ7r5jv+emzW58WvipXFMrOlRo1gOQT1r+OV6UuZiEEBDtCYzwQ==
+X-Received: by 2002:a7b:ce97:: with SMTP id q23mr46389395wmj.89.1593972171899;
+        Sun, 05 Jul 2020 11:02:51 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.195])
+        by smtp.googlemail.com with ESMTPSA id d28sm22653770wrc.50.2020.07.05.11.02.50
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 05 Jul 2020 11:02:51 -0700 (PDT)
+Date:   Sun, 5 Jul 2020 20:02:48 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v1 2/2] arm64: dts: exynos: keep LDO12 always-on
-Date:   Sun,  5 Jul 2020 12:39:18 +0530
-Message-Id: <20200705070918.63531-2-alim.akhtar@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200705070918.63531-1-alim.akhtar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsWy7bCmlm5KI2O8wfMPrBYP5m1js5h/5Byr
-        xfnzG9gtNj2+xmpxedccNosZ5/cxWbTuPcLuwO6xaVUnm8fmJfUefVtWMXp83iQXwBLFZZOS
-        mpNZllqkb5fAlXHtzlXWgutsFUsW32BrYDzD2sXIySEhYCJx9e08RhBbSGA3o8STNdZdjFxA
-        9idGiSXnZ7JBOJ8ZJVp3PmGG6Tg98QU7RGIXo8S9xU+hnBYmiYNL74BVsQloS9ydvoUJxBYR
-        EJa4t3Q5WBGzwBFGiYbzL8ASwgIOEvfvdoIdwiKgKnFqyjk2EJtXwEZi1ubFLBDr5CVWbzgA
-        NpRTwFZi6stnTBDxfewSbcd8IGwXialnuhghbGGJV8e3sEPYUhKf3+0FmskBZGdL9OwyhgjX
-        SCyddwxqvL3EgStzWEBKmAU0Jdbv0gcJMwvwSfT+fsIE0ckr0dEmBFGtKtH87ipUp7TExO5u
-        VogSD4kjbamQUJjAKLGy+zHbBEbZWQhDFzAyrmKUTC0ozk1PLTYtMMxLLdcrTswtLs1L10vO
-        z93ECI50Lc8djHcffNA7xMjEwXiIUYKDWUmEt1ebMV6INyWxsiq1KD++qDQntfgQozQHi5I4
-        r9KPM3FCAumJJanZqakFqUUwWSYOTqkGprIZqyUY29UEfle9nenhUx7zKvdvSdivSveIjtU8
-        PS2z1W/9jDXWf7nLxvH/WcN1V+rTZIM+XjNWvRVwbteUEKef+0S57zBb/0qcv/EijzZ/j5Jn
-        8E/VrQcr1jEfVtwxvfOwvOeezJuJq/XFKxU+fHD7cPLw8e+r485tt4tbKs7AdJbd/XYk+xb7
-        uIcnsr54sSqeOuyRajD56YZJj8KfNXBW3/nRcfy5sXrBs6TVW8z+pKs+khIMT3jr2Kfv87rc
-        e1F9EDvDnI3lT4qS2N4sOcLB1Hv7R9JcRsmfW7kmPTSRYdm//vQJk53XZjt9jdu7UnT236hT
-        XNfnzmoXfv/iu1/1nM8uF//KnL5oq/d4/mUlluKMREMt5qLiRAC0WxAYYwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprELMWRmVeSWpSXmKPExsWy7bCSnG5SI2O8weYTRhYP5m1js5h/5Byr
-        xfnzG9gtNj2+xmpxedccNosZ5/cxWbTuPcLuwO6xaVUnm8fmJfUefVtWMXp83iQXwBLFZZOS
-        mpNZllqkb5fAlXHtzlXWgutsFUsW32BrYDzD2sXIySEhYCJxeuIL9i5GLg4hgR2MEi83T2KH
-        SEhLXN84AcoWllj57zlUUROTxKUtXxlBEmwC2hJ3p29hArFFgIruLV0OVsQscIpRon/7ZrBu
-        YQEHift3O8HWsQioSpyaco4NxOYVsJGYtXkxC8QGeYnVGw4wg9icArYSU18+AxsqBFTTP2s5
-        8wRGvgWMDKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz0vWS83M3MYKDTUtrB+OeVR/0DjEycTAe
-        YpTgYFYS4e3VZowX4k1JrKxKLcqPLyrNSS0+xCjNwaIkzvt11sI4IYH0xJLU7NTUgtQimCwT
-        B6dUA9OlabdcN/VJNVhnXHl4ePI+ewaWs7bHCxrZrr3cF9y1ct3hh32qp3N4dwdYhPKsLKtX
-        WenveOflysVipbtSP9X82s6UJ7LiUeeMBxvYT2SmhD52k78c/dQxbL703tLm1Zuj5SKTD+6s
-        Cvq/XHV/1c0VDnwbbO1PC1ddlzXzSI69V/JgyZeZrFX6lfWb7FYs5oqU2DMznveVxoFNk1Ie
-        svPf6L1x5NsFI9k4Y50/Iak+sxQeGlwO0PFUfex/u6ujcPK1iXfkBPa2Mb1wuq4W0FWQJuFj
-        bz9l80WGqJk52mfPnXFMPn199Q39jczZLLN+Km9c9aPpamDP1ayOc1k9253UyzhqpoWJ5V0y
-        V4yckq/EUpyRaKjFXFScCABi/LPcpQIAAA==
-X-CMS-MailID: 20200705072938epcas5p479f0d040ca34fd44b2ba893a199efb79
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20200705072938epcas5p479f0d040ca34fd44b2ba893a199efb79
-References: <20200705070918.63531-1-alim.akhtar@samsung.com>
-        <CGME20200705072938epcas5p479f0d040ca34fd44b2ba893a199efb79@epcas5p4.samsung.com>
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2] phy: samsung: Use readl_poll_timeout function
+Message-ID: <20200705180248.GA2765@kozik-lap>
+References: <20200705060435.504-1-linux.amoon@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200705060435.504-1-linux.amoon@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-LDO12 on exynos7 supply power to VDDQ_UFS20_RESET,
-in case this regulator is OFF, UFS host controller
-can not send command to UFS device. To keep this supply
-ON, set regulator-always-on property for this ldo.
+On Sun, Jul 05, 2020 at 06:04:35AM +0000, Anand Moon wrote:
+> User readl_poll_timeout function instead of open
+> coded handling in crport_handshake function.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 1 +
- 1 file changed, 1 insertion(+)
+Your change does not replace only the "open coded handling" with
+readl_poll_timeout(). Your change does more - switches busy waiting with
+udelay to a sleeping mode. I am not sure if it is correct but definitly
+it should be mentioned.  Otherwise how can we be sure that you checked
+if this is allowed in this section? Did you test everything with
+DEBUG_ATOMIC_SLEEP?
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index bb86950032d3..92fecc539c6c 100644
---- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -194,6 +194,7 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1300000>;
- 				regulator-enable-ramp-delay = <125>;
-+				regulator-always-on;
- 			};
- 
- 			ldo13_reg: LDO13 {
--- 
-2.17.1
+> 
+> Fixes: d8c80bb3b55b ("phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800")
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> Changes v2:
+> --used the default timeout values.
+> --Added missing Fixed tags.
+> ---
+>  drivers/phy/samsung/phy-exynos5-usbdrd.c | 37 +++++++++---------------
+>  1 file changed, 13 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> index e510732afb8b..c97f5fb6a9a0 100644
+> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_device.h>
+> +#include <linux/iopoll.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/mutex.h>
+> @@ -556,40 +557,28 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
+>  static int crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
+>  			    u32 val, u32 cmd)
+>  {
+> -	u32 usec = 100;
+> +	u32 timeout_us = 100, sleep_us = 1;
 
+No need for the variables actually and their type does not match. Just
+use the values directly.
+
+>  	unsigned int result;
+> +	int err;
+>  
+>  	writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
+>  
+> -	do {
+> -		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
+> -		if (result & PHYREG1_CR_ACK)
+> -			break;
+> -
+> -		udelay(1);
+> -	} while (usec-- > 0);
+> -
+> -	if (!usec) {
+> -		dev_err(phy_drd->dev,
+> -			"CRPORT handshake timeout1 (0x%08x)\n", val);
+> +	err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
+> +			result,	(result & PHYREG1_CR_ACK), sleep_us, timeout_us);
+> +	if (err) {
+> +		dev_err(phy_drd->dev, "CRPORT handshake timeout1 (0x%08x)\n", val);
+>  		return -ETIME;
+>  	}
+>  
+> -	usec = 100;
+> +	timeout_us = 100;
+> +	sleep_us = 1;
+
+Why defining then again?
+
+Best regards,
+Krzysztof
+
+
+>  
+>  	writel(val, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
+>  
+> -	do {
+> -		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
+> -		if (!(result & PHYREG1_CR_ACK))
+> -			break;
+> -
+> -		udelay(1);
+> -	} while (usec-- > 0);
+> -
+> -	if (!usec) {
+> -		dev_err(phy_drd->dev,
+> -			"CRPORT handshake timeout2 (0x%08x)\n", val);
+> +	err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
+> +			result,	!(result & PHYREG1_CR_ACK), sleep_us, timeout_us);
+> +	if (err) {
+> +		dev_err(phy_drd->dev, "CRPORT handshake timeout2 (0x%08x)\n", val);
+>  		return -ETIME;
+>  	}
+>  
+> -- 
+> 2.27.0
+> 
