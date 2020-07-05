@@ -1,155 +1,185 @@
-Return-Path: <SRS0=5g2u=AP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=U93K=AQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB0B1C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Jul 2020 14:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B9CC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Jul 2020 01:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B71CE207CD
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Jul 2020 14:27:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30FC320747
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Jul 2020 01:39:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lAPFUGo1"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qEec4qRP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbgGDO1C (ORCPT
+        id S1727922AbgGEBjZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 4 Jul 2020 10:27:02 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:11100 "EHLO
+        Sat, 4 Jul 2020 21:39:25 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:53977 "EHLO
         mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbgGDO1C (ORCPT
+        with ESMTP id S1728036AbgGEBjY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 4 Jul 2020 10:27:02 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200704142659epoutp04674c585da97e856ae255770ded8dd5dc~ekuJ1wj7B1752217522epoutp04O
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  4 Jul 2020 14:26:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200704142659epoutp04674c585da97e856ae255770ded8dd5dc~ekuJ1wj7B1752217522epoutp04O
+        Sat, 4 Jul 2020 21:39:24 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200705013919epoutp04e5c81fde7f04612551c40d0b43041476~et5LS4HGB0958309583epoutp04Z
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Jul 2020 01:39:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200705013919epoutp04e5c81fde7f04612551c40d0b43041476~et5LS4HGB0958309583epoutp04Z
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1593872819;
-        bh=bo3BR9KaIVU8rO1xsrNx2+sOCrK1lLR9D1y1xtgsDvg=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=lAPFUGo1LivKMQE0G54L72wbBJGjEDVCuaoDsILRQ9wekcAapfaya94VwNrCO0RxB
-         TsJBQ2twin0BKDq0qe2Aqv5wzVFU8XJgAJREFFdGbZsZjfmSL1VPGV7QmoCoVLHTY4
-         lEEmMWSiN/yy8je09Ag7Pb8+JtpHH+xxLivVh4qY=
+        s=mail20170921; t=1593913159;
+        bh=inQT8vZIWZCDZwlqNDHC0tfMlJIey0coUpcXgSLWahg=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=qEec4qRPyKcF11O3B3FAMkLyizypaMjyJREhlcja0Lb74ob3Fry4sDlxcDmluYcth
+         reedNRgWub4VBEl39ljtHWwV5ER+ltahFAmlLmRmYVHJ2MIw3LpIZlBgHKqpg7CP8L
+         nOqTTWS7PoL49a7HUSyFXiUnbSPqvgz9nKm5W740=
 Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20200704142658epcas5p3b0bfcb0c53feb47775864122a626dca9~ekuJFeJIL1569915699epcas5p3R;
-        Sat,  4 Jul 2020 14:26:58 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20200705013918epcas5p2ee189c21a7a55066eb0520e396381d6f~et5KiGyRw1758717587epcas5p20;
+        Sun,  5 Jul 2020 01:39:18 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
         epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        02.0F.09475.2B1900F5; Sat,  4 Jul 2020 23:26:58 +0900 (KST)
+        4C.AB.09475.64F210F5; Sun,  5 Jul 2020 10:39:18 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200704142658epcas5p254ae909fedb07dda58cece5d6d5252b4~ekuIk9OPS1952219522epcas5p21;
-        Sat,  4 Jul 2020 14:26:58 +0000 (GMT)
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20200705013917epcas5p452d47ac7c3d735a7e7b238947812f68c~et5J7sN_J0041600416epcas5p45;
+        Sun,  5 Jul 2020 01:39:17 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200704142658epsmtrp1256cc5e5c9e3212ea45bd4d747d1f6f3~ekuIjZhbG2608426084epsmtrp1c;
-        Sat,  4 Jul 2020 14:26:58 +0000 (GMT)
-X-AuditID: b6c32a4b-39fff70000002503-c3-5f0091b26061
+        20200705013917epsmtrp1a8904e1a46115cc66f81c5734fa31426~et5J7AtbX2579125791epsmtrp1l;
+        Sun,  5 Jul 2020 01:39:17 +0000 (GMT)
+X-AuditID: b6c32a4b-39fff70000002503-f6-5f012f468071
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CD.9C.08382.1B1900F5; Sat,  4 Jul 2020 23:26:57 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200704142656epsmtip1fba91bc0b977589a15ca47d9b2e9569b~ekuHGO34Y1778117781epsmtip1W;
-        Sat,  4 Jul 2020 14:26:56 +0000 (GMT)
-From:   Tamseel Shams <m.shams@samsung.com>
-To:     kgene@kernel.org, krzk@kernel.org, gregkh@linuxfoundation.org,
-        jslaby@suse.com
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
-        Tamseel Shams <m.shams@samsung.com>
-Subject: [PATCH v3] serial: samsung: Re-factors UART IRQ resource for
- various Samsung SoC
-Date:   Sat,  4 Jul 2020 19:36:46 +0530
-Message-Id: <20200704140646.66528-1-m.shams@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsWy7bCmlu6miQzxBgfXqlo8mLeNzaJ58Xo2
-        iykbPjBZ9D9+zWxx/vwGdotNj6+xWlzeNYfNYsb5fUwWZxb3slvcbV3M7sDlsWlVJ5vH/rlr
-        2D02L6n36NuyitFj/ZarLB6fN8kFsEVx2aSk5mSWpRbp2yVwZdy80cBcMJe7YtGktSwNjPM4
-        uxg5OCQETCSW3QzsYuTkEBLYzShx+GBGFyMXkP2JUaLpzTpmCOcbo8Tfne/YQapAGua+mgeV
-        2Mso8eviU3YIp4VJ4t6dpSwgY9kENCWOn+cGaRARCJF4d3YLI0gNs8BJRom9mxtYQBLCAtES
-        rV3HWEHqWQRUJa5PSQMJ8wpYSNw+8oUZYpm8xOoNB8CWSQicY5eYvbyXDSLhIvH802OoImGJ
-        V8e3QF0nJfGyvw3KzpeYP28VVE2FxMoLb6Bse4kDV+aA3ckMdOf6XfogYWYBPone30+YIKHC
-        K9HRJgRRrSjxf3c/1ERxiXcrprBC2B4S/1vWs0JCLlai6/wupgmMMrMQhi5gZFzFKJlaUJyb
-        nlpsWmCcl1quV5yYW1yal66XnJ+7iRGcALS8dzA+evBB7xAjEwfjIUYJDmYlEd4E1X9xQrwp
-        iZVVqUX58UWlOanFhxilOViUxHmVfpyJExJITyxJzU5NLUgtgskycXBKNTBl+hTGyMt93c3k
-        /nKHTRNb6talolsjOXfM+hp64kziw76NTexFdSsePaq/vzU2005ENFCw5eDGmuPrvZ3U/xdf
-        sLDjk/Q/uiTgjlXV5PpzL2tqi+88SjlV8nDVD0m7yc2cpUlPDsY/fqJ1xLvOenKUi5Ov1KO3
-        jrZTf+f4BaZJTHUuWcbMXbTGJSKjKy3a+olhQ1+4/bl/FYsU7Xyzu/08+7VcK/j0+k8scPtS
-        Ja50qLHd7aV/YrjOw+rJOi8V/h60EM/vOVrgdqt3+6T87iyPO8fUZ+4/oLzpRKfe4YjWZeoB
-        DO+2iJz6snoXa4iLiNAjlyjzSw+3VBbzB4U6PHRtuiYmsGqX/o3l8ya+V2Ipzkg01GIuKk4E
-        AEVvJK5vAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprALMWRmVeSWpSXmKPExsWy7bCSnO7GiQzxBmc22lg8mLeNzaJ58Xo2
-        iykbPjBZ9D9+zWxx/vwGdotNj6+xWlzeNYfNYsb5fUwWZxb3slvcbV3M7sDlsWlVJ5vH/rlr
-        2D02L6n36NuyitFj/ZarLB6fN8kFsEVx2aSk5mSWpRbp2yVwZdy80cBcMJe7YtGktSwNjPM4
-        uxg5OSQETCTmvprH3MXIxSEksJtR4u/9a2wQCXGJab/2M0LYwhIr/z1nhyhqYpI4N+8NUIKD
-        g01AU+L4eW4QU0QgQmLmxxqQEmaB84wSO4+vZgLpFRaIlDg/r5ENpIZFQFXi+pQ0kDCvgIXE
-        7SNfmCHGy0us3nCAeQIjzwJGhlWMkqkFxbnpucWGBYZ5qeV6xYm5xaV56XrJ+bmbGMGBpqW5
-        g3H7qg96hxiZOBgPMUpwMCuJ8Cao/osT4k1JrKxKLcqPLyrNSS0+xCjNwaIkznujcGGckEB6
-        YklqdmpqQWoRTJaJg1Oqgemqjs/7Y+FuXaEfGtMWTtotXlwwk9N4/b2rv+YVP7uzJn9CeNm5
-        9MUxigJqBe/FpnGqOf1JfqgVu6PIbOXhc7k7Xs/p4qw5z7QsRupXL3OVA1fPRHXZKfUpp2ay
-        n52wd9Ff/doGllsiGnPeif2NqNpTfkWi4volncLLZQ+8bf2ibsdt+dR68+yKpxc6fgQ6bRSf
-        /2HH+qxDXxI3ZDxifVrVcvznc6t95UEi9x+svpHyYaHF+0Mp5z7dqryyUOf44TIt15tCv+oc
-        j+6Zd6GHoePRP42Lrye/ZUk6X/pdsVmKS40zQ9MweubaKLGiln1/ZQMcLT3FFWOZSposr3Hz
-        KHxW1tv1TW7X/9fKwh9azrUpsRRnJBpqMRcVJwIAq2UZGqMCAAA=
-X-CMS-MailID: 20200704142658epcas5p254ae909fedb07dda58cece5d6d5252b4
+        8A.F6.08382.54F210F5; Sun,  5 Jul 2020 10:39:17 +0900 (KST)
+Received: from alimakhtar02 (unknown [107.108.234.165]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200705013916epsmtip161efcf4a8c0f66770fccaa943e929215~et5IUQeom2759327593epsmtip1g;
+        Sun,  5 Jul 2020 01:39:15 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzk@kernel.org>
+Cc:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>
+In-Reply-To: <20200704102246.GA5975@kozik-lap>
+Subject: RE: [PATCH] arm64: dts: exynos: Add minimal bootargs
+Date:   Sun, 5 Jul 2020 07:09:14 +0530
+Message-ID: <004c01d6526d$18c365e0$4a4a31a0$@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGPHXmhEFcAzbys4lSarlYwjg0bbAE59K/yA1z+kWMBMBDc06lX2v8w
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjleLIzCtJLcpLzFFi42LZdlhTXddNnzHeYN5+OYv5R86xWpw/v4Hd
+        YtPja6wWl3fNYbOYcX4fk0Xr3iPsDmwem1Z1snlsXlLv8XmTXABzFJdNSmpOZllqkb5dAlfG
+        zI0pBUcEK3Y9eMnYwPiVt4uRk0NCwERiz7ynrF2MXBxCArsZJWb1HWaHcD4xSjxdPoUZwvnG
+        KHFr92w2mJbzV78wQiT2MkpMbnwNVfWGUeLu5lusIFVsAroSOxa3gXWIANmbbywHm8sssBxo
+        1O8bLCAJTgE9if0NT9lBbGEBW4nvU7eCNbAIqEjsPtYMVsMrYClx8eQxNghbUOLkzCdgcWYB
+        bYllC0E2g5ykIPHz6TJWiGVuEmd2rmSGqBGXOPqzB+w6CYGf7BK/t7xn6mLkAHJcJFYciYPo
+        FZZ4dXwLO4QtJfGyv40doiRbomeXMUS4RmLpvGMsELa9xIErc1hASpgFNCXW79KH2MQn0fv7
+        CdRwXomONiGIalWJ5ndXoTqlJSZ2d7NC2B4Se+4+Yp/AqDgLyV+zkPw1C8n9sxCWLWBkWcUo
+        mVpQnJueWmxaYJyXWq5XnJhbXJqXrpecn7uJEZxktLx3MD568EHvECMTB+MhRgkOZiUR3l5t
+        xngh3pTEyqrUovz4otKc1OJDjNIcLErivEo/zsQJCaQnlqRmp6YWpBbBZJk4OKUamLa9nnGw
+        NjzK7zeHnrbn2Y6pt9ofMssqb647lW++Yc/V1Q+MZ9yJZ2188PRc7VF2+8N7Lt9fW7v8+UHP
+        Y/P/6Z99uo3Vx/Wp91WGXSyep/5kpqXydGf1rH7tmbWiaYs+Q4aldPsFV9bLS9u0pe4LBLrM
+        mBig9cfl7x9bydWhV65nVUaIrH84KX//ve3Pfi4Nsv18wvtXONehN8cTg1jr1iz48mjLigK2
+        7M/WYbe2BjZymdu2Ra6ZxuQ6heH5lj2VblkvXUXa45wfcyx1P2zg9Hzf16vTLEpeLjt648TK
+        oLPiZ3j3mjjGtRq2GNdLmdsc7l54wGHijcSQ1wu9HfSO7vzNfcZtzv31Phyfbxb5/uhWYinO
+        SDTUYi4qTgQAf49buKEDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsWy7bCSnK6rPmO8wbNX+hbzj5xjtTh/fgO7
+        xabH11gtLu+aw2Yx4/w+JovWvUfYHdg8Nq3qZPPYvKTe4/MmuQDmKC6blNSczLLUIn27BK6M
+        xhuTmAq+C1RMn7mVuYFxFW8XIyeHhICJxPmrXxi7GLk4hAR2M0rM3HeGGSIhLXF94wR2CFtY
+        YuW/5+wQRa8YJS70tLOAJNgEdCV2LG5jA7FFgOzNN5aDFTELrGaU+HtvDzNEx11Gia63R8Cq
+        OAX0JPY3PAUbKyxgK/F96lawOIuAisTuY81gU3kFLCUunjzGBmELSpyc+QQsziygLfH05lM4
+        e9nC11CnKkj8fLqMFeIKN4kzO1cyQ9SISxz92cM8gVF4FpJRs5CMmoVk1CwkLQsYWVYxSqYW
+        FOem5xYbFhjmpZbrFSfmFpfmpesl5+duYgTHjJbmDsbtqz7oHWJk4mA8xCjBwawkwturzRgv
+        xJuSWFmVWpQfX1Sak1p8iFGag0VJnPdG4cI4IYH0xJLU7NTUgtQimCwTB6dUA9Pe6Urqdy7/
+        TTw5b9ef3aH5mp82/Hl89fX/+T+WZ/ZPP/bALlBT9t7KL2nJRje/yE5aqBBV+e3Yza9zjN0s
+        Lt5xDSre/C/SwWG98oHNbB9/3m/zyDE2vuFooHjzzMI5ded19R79n/tbIqfb9jbPvLyAHSE3
+        T6xfdv+LXmCgsOksaxevYMuFaxi3CPPYiisdOf4ouKLxZVbBu5hFyxffk14YtXNialVi6KX9
+        PGozczg4Upb7rRbcGbBeWUZ65fdit6JOS8tcCTZuNyeOXZ05c2aLyOYvj9lxvKXoLffSVhOW
+        dw7J8x9f1U99qbU4qeHlNtnT4iu6zu2QKJ539BB/yL4TDNtUk9cXL/7Jc5af69hPJZbijERD
+        Leai4kQAxXKkdwgDAAA=
+X-CMS-MailID: 20200705013917epcas5p452d47ac7c3d735a7e7b238947812f68c
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
-X-CMS-RootMailID: 20200704142658epcas5p254ae909fedb07dda58cece5d6d5252b4
-References: <CGME20200704142658epcas5p254ae909fedb07dda58cece5d6d5252b4@epcas5p2.samsung.com>
+X-CMS-RootMailID: 20200703184543epcas5p4adb3db7693094c72477b8469d9f205ba
+References: <CGME20200703184543epcas5p4adb3db7693094c72477b8469d9f205ba@epcas5p4.samsung.com>
+        <20200703182536.9190-1-alim.akhtar@samsung.com>
+        <000801d6516a$b6efcb40$24cf61c0$@samsung.com>
+        <20200704102246.GA5975@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-In few older Samsung SoCs like s3c2410, s3c2412
-and s3c2440, UART IP is having 2 interrupt lines.
-However, in other SoCs like s3c6400, s5pv210,
-exynos5433, and exynos4210 UART is having only 1
-interrupt line. Due to this, "platform_get_irq(platdev, 1)"
-call in the driver gives the following warning:
-"IRQ index 1 not found" on recent platforms.
+Hi Krzysztof,
 
-This patch re-factors the IRQ resources handling for
-each platform and hence fixing the above warnings seen
-on some platforms.
+> > > =40=40 -24,6 +24,7 =40=40
+> > >
+> > >  	chosen =7B
+> > >  		stdout-path =3D &serial_2;
+> > > +		bootargs =3D =22earlycon=3Dexynos4210,0x14c30000
+> > > console=3DttySAC0,115200n8=22;
+>=20
+> Hi,
+>=20
+> The console is already chosen by stdout-path and earlycon would use it as=
+ well,
+> so no need for the address. It should be just =22earlycon=22 if you want =
+to enable it
+> unconditionally.
+>=20
+Indeed only =22earlycon=22 will do here. Thanks for point this out.
 
-Signed-off-by: Tamseel Shams <m.shams@samsung.com>
----
-Removed the logic of irq_cnt and directly using
-s3c24xx_serial_has_interrupt_mask() to check for
-number of interrupt lines.
+> Also, why did you use different serial for console?
+>=20
+Once UART driver gets probed then console changes to ttySAC0. In case I am =
+using stdout-path only,
+after bootconsole is disabled, kernel logs re-start printing from beginning=
+ (which might be expected behaviour?)
 
- drivers/tty/serial/samsung_tty.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+=5B    0.012416=5D printk: console =5Btty0=5D enabled
+=5B    0.016491=5D printk: bootconsole =5Bexynos4210=5D disabled
+=5B    0.000000=5D Booting Linux on physical CPU 0x0000000000 =5B0x410fd032=
+=5D
+=5B    0.000000=5D Linux version 5.8.0-rc3-next-20200703-00008-g4af626444f4=
+a-dirty (alim=40alim) (aarch64-linux-gnu-gcc (Linaro GCC 7.4-2019.02) 7.4.1=
+ 20181213 =5Bl0
+=5B    0.000000=5D Machine model: Samsung Exynos7 Espresso board based on E=
+xynos7
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 6ef614d8648c..8a955f3d8975 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -1908,10 +1908,13 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
- 	else {
- 		port->irq = ret;
- 		ourport->rx_irq = ret;
--		ourport->tx_irq = ret + 1;
-+		if (s3c24xx_serial_has_interrupt_mask(port))
-+			ourport->tx_irq = ret;
-+		else
-+			ourport->tx_irq = ret + 1;
- 	}
- 
--	ret = platform_get_irq(platdev, 1);
-+	ret = platform_get_irq_optional(platdev, 1);
- 	if (ret > 0)
- 		ourport->tx_irq = ret;
- 	/*
--- 
-2.17.1
+> However the question is, are you sure you want earlycon on every, includi=
+ng
+> successful boot? On most of the boards we do not enable by default. If
+> developer needs, he can choose it for example via U-Boot =22setenv opts
+> earlycon=22.
+>=20
+Using U-Boot is not the case always, any bootload can be used to boot the L=
+inux, currently I am Coreboot.
+And 'earlycon' is not setup by default.
+As Espresson board is development board, IMO it is ok to keep it enable all=
+ the time, this helps in quickly knowing what going on incase boot fails ea=
+rly.
+Let me know if it is ok to keep =22 console=3DttySAC0,115200n8=22 or shell =
+I just re-spin with only 'earlycon'? or any other suggestion?
+
+Thanks=21
+
+> However it's a development kit so it could be enabled on default...
+>=20
+> Best regards,
+> Krzysztof
+>=20
+> > >  	=7D;
+> > >
+> > >  	memory=4040000000 =7B
+> > >
+> > > base-commit: 9e50b94b3eb0d859a2586b5a40d7fd6e5afd9210
+> > > --
+> > > 2.17.1
+> >
+> >
 
