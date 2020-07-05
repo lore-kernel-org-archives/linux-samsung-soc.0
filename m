@@ -7,128 +7,131 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87237C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Jul 2020 07:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9E6C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Jul 2020 07:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6780E21924
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Jul 2020 07:18:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB44720737
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Jul 2020 07:29:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qtzhYWv7"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IsAEcUWs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbgGEHSQ (ORCPT
+        id S1725967AbgGEH3l (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 5 Jul 2020 03:18:16 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:47726 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbgGEHSK (ORCPT
+        Sun, 5 Jul 2020 03:29:41 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:58236 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbgGEH3k (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 5 Jul 2020 03:18:10 -0400
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200705071808epoutp029103ba3ca8ef9ed1a35728adc5efdd4e~eyg-_ogdt2380423804epoutp029
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Jul 2020 07:18:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200705071808epoutp029103ba3ca8ef9ed1a35728adc5efdd4e~eyg-_ogdt2380423804epoutp029
+        Sun, 5 Jul 2020 03:29:40 -0400
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200705072938epoutp0354695103288ea1a3c686cf694eb8ce13~eyrDCUgoE3066130661epoutp03Z
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Jul 2020 07:29:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200705072938epoutp0354695103288ea1a3c686cf694eb8ce13~eyrDCUgoE3066130661epoutp03Z
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1593933488;
-        bh=HCXrofelDS9SJIsUKOUl2fb+5VFxATXUSmCxo5+ME6E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qtzhYWv7SLusFOZ6syqnY4naSYsTOo5ea0cJBm7lDJyt/88KqZCil2JMneAH8l+6+
-         QNIePeZxG1VVjYwNFylSOrQzUvkad6+Rmn8LULjSZFiZ+/Lr5jTh2IfsmuwOutYCEe
-         FxVtJo1sWBErSjNqmqaK5ZT/cX/CGUjxu61dSRIE=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
+        s=mail20170921; t=1593934178;
+        bh=jDNczQCxNdBrVrr3iyPMSiYmZT3ww0WjNBXjxKIN4jI=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=IsAEcUWsuxhUkbys4RwEdzu2D3gq7Vo6iJu3dEbLm5tYD3Ofyv2ooZnbOW0P+gSk8
+         TAJHrLeTUsX2QMhfTiRCg8lSovT4se44A++w0ZwJmIiRyN6KDe9x6jsR7FIfTzvU9o
+         TCJ3CFeL/XqdNcMwRcmAMUWjaPgWEGUDauyXd5aA=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
         epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20200705071806epcas5p11f96c18a9a9505f3a8cce5c5aad47755~eyg_sijdp1567215672epcas5p1F;
-        Sun,  5 Jul 2020 07:18:06 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DB.E6.09475.EAE710F5; Sun,  5 Jul 2020 16:18:06 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200705071806epcas5p27abbd5b89689ab16328807bb5a213abf~eyg_R3ihG0437304373epcas5p2T;
-        Sun,  5 Jul 2020 07:18:06 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200705071806epsmtrp17eafbad0b0f769f755e65319b2d71e7a~eyg_RL0Dc3273532735epsmtrp10;
-        Sun,  5 Jul 2020 07:18:06 +0000 (GMT)
-X-AuditID: b6c32a4b-39fff70000002503-1a-5f017eae1e6c
+        20200705072938epcas5p1a1c45b7d71443f56e4d844e2b2bfad94~eyrCpRaI12994029940epcas5p1k;
+        Sun,  5 Jul 2020 07:29:38 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7F.CA.09467.261810F5; Sun,  5 Jul 2020 16:29:38 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200705072937epcas5p1b6c9a25770451bcb9d8bc5b14b8a8b53~eyrCF44f-2994029940epcas5p1j;
+        Sun,  5 Jul 2020 07:29:37 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200705072937epsmtrp2564429d6df2f25dee482697bdbc79a89~eyrCFPB8g1763917639epsmtrp2X;
+        Sun,  5 Jul 2020 07:29:37 +0000 (GMT)
+X-AuditID: b6c32a49-a3fff700000024fb-d3-5f018162c05a
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0E.9D.08303.EAE710F5; Sun,  5 Jul 2020 16:18:06 +0900 (KST)
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        89.BA.08382.161810F5; Sun,  5 Jul 2020 16:29:37 +0900 (KST)
 Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
         [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200705071805epsmtip1e95df8d501caf7a85580551922f2060f~eyg9MAg_V0149301493epsmtip1l;
-        Sun,  5 Jul 2020 07:18:05 +0000 (GMT)
+        20200705072936epsmtip13979d91306b4480df60df6537ccf9aa8~eyrA_4CyI0341703417epsmtip1E;
+        Sun,  5 Jul 2020 07:29:36 +0000 (GMT)
 From:   Alim Akhtar <alim.akhtar@samsung.com>
-To:     rzk@kernel.org
+To:     krzk@kernel.org
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         robh+dt@kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH 2/2] arm64: dts: exynos: keep LDO12 always-on
-Date:   Sun,  5 Jul 2020 12:27:47 +0530
-Message-Id: <20200705065747.63014-2-alim.akhtar@samsung.com>
+Subject: [PATCH v1 1/2] arm64: dts: exynos: Fix silent hang after boot
+Date:   Sun,  5 Jul 2020 12:39:17 +0530
+Message-Id: <20200705070918.63531-1-alim.akhtar@samsung.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200705065747.63014-1-alim.akhtar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsWy7bCmpu66OsZ4g8uHtCwezNvGZjH/yDlW
-        i02Pr7FaXN41h81ixvl9TBate4+wW+x8/4HRgd1j06pONo/NS+o9+rasYvT4vEkugCWKyyYl
-        NSezLLVI3y6BK+PanausBdfZKpYsvsHWwHiGtYuRg0NCwERif0tmFyMXh5DAbkaJBzfWMHcx
-        cgI5nxglXq1xhEh8ZpT4dGMPWAKkYefaiUwQiV2MEt2bl0I5LUwSayc0MYFUsQloS9ydvgXM
-        FhEQkjjQ8IsFpIhZ4AijRMP5F2AJYQFbif6/z8BsFgFViS+n/rOA2LwCNhKts66zQayTl1i9
-        4QAzyK2cQPVX+t1B5kgI7GOXOLD4HgtEjYvEtY+rmCBsYYlXx7ewQ9hSEi/729gh/syW6Nll
-        DBGukVg67xhUq73EgStzWEBKmAU0Jdbv0gcJMwvwSfT+fsIE0ckr0dEmBFGtKtH87ipUp7TE
-        xO5uVgjbQ2LP3SPskGCYwCgx+8Ie1gmMsrMQpi5gZFzFKJlaUJybnlpsWmCcl1quV5yYW1ya
-        l66XnJ+7iREc6VreOxgfPfigd4iRiYPxEKMEB7OSCG+vNmO8EG9KYmVValF+fFFpTmrxIUZp
-        DhYlcV6lH2fihATSE0tSs1NTC1KLYLJMHJxSDUwB7/9UVO6xjmrJDX3j/feLTa1JmdDWd3aZ
-        D6K6Ope5N25z/r/8npzdkl3ft91q/KO9/W7VLtVE3Yqd29SW918JrnfhaJr4qLDrYiWv9JKQ
-        K7aapl9n13582KnaEbXo1w8no2/7gtizGQ6JdPqutNo5OXP1jh1crEn+p3Xirn91Z4t6LzT/
-        WvJ5k+B9+qrPTN5nif8PkF2Q9GeKyuVpoeJnX1+MOv2iosd24vMT+xm0gyt+1t2reLnSyiD2
-        YNNW3g9TZhdun2Hy4+F5e8d/mXfjdE/OOyRepW9k2pst19p7jEOrUW7S7Kn31/stNtOLrS2Y
-        VJ474eXtc/uPqwXv3KR0Yt/psxM+yMsa3l9Rf+6IEktxRqKhFnNRcSIAb6qcj2MDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprILMWRmVeSWpSXmKPExsWy7bCSnO66OsZ4gzUP+C0ezNvGZjH/yDlW
-        i02Pr7FaXN41h81ixvl9TBate4+wW+x8/4HRgd1j06pONo/NS+o9+rasYvT4vEkugCWKyyYl
-        NSezLLVI3y6BK+PanausBdfZKpYsvsHWwHiGtYuRk0NCwERi59qJTF2MXBxCAjsYJWauhUlI
-        S1zfOIEdwhaWWPnvOTtEUROTxLELy1lAEmwC2hJ3p29hArFFBIQkDjT8YgEpYhY4xSjRv30z
-        WLewgK1E/99nYEUsAqoSX079B2vmFbCRaJ11nQ1ig7zE6g0HmLsYOTg4geqv9LuDhIWASr5d
-        fM82gZFvASPDKkbJ1ILi3PTcYsMCo7zUcr3ixNzi0rx0veT83E2M4FDT0trBuGfVB71DjEwc
-        jIcYJTiYlUR4e7UZ44V4UxIrq1KL8uOLSnNSiw8xSnOwKInzfp21ME5IID2xJDU7NbUgtQgm
-        y8TBKdXApLdhsb6gdLO9W7Fc5B7WTx4MctGuPc9W5He/rTVbIL/SJHP1vK+X+FW/TDfOafQz
-        iPU4Vvxmf03NQYMHvDwMZumLFWVigy5NvlP8qmUTQ1nLMbsbHNtv9FVurdoxR2IXX978rGv6
-        vdGr7wZ3CUb+qQ53+S741ivCYttpke9HWYMuTnjxXMD+T/apjRNVlP65/jyXP1vnTob85Z5T
-        +0MubMitVPrhMz9/TqzRTmmdH4d+VF5TSPx4NiAspF2de+vaGS8uPFOZoZCqPuPYiiuZ298E
-        tKRdaH7bvMtKL7KvJN0//WjO4WfxjF1amyOig3Uj8rfmHs+5fTmg9ldcptwslcm1tV9FZk64
-        5ZRocPSgEktxRqKhFnNRcSIANJ+58aQCAAA=
-X-CMS-MailID: 20200705071806epcas5p27abbd5b89689ab16328807bb5a213abf
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsWy7bCmum5SI2O8wYlX3BYP5m1js5h/5Byr
+        xfnzG9gtNj2+xmpxedccNosZ5/cxWbTuPcLuwO6xaVUnm8fmJfUefVtWMXp83iQXwBLFZZOS
+        mpNZllqkb5fAlbH38iK2gkaOigX725kaGO+xdTFyckgImEisftIIZHNxCAnsZpTYtHoeK4Tz
+        iVHiad8zFgjnG6PEubmfWWBa/i5pZodI7GWU+H+6HaqlhUli3/rvzCBVbALaEnenb2ECsUUE
+        hCXuLV0O1sEscIRRouH8C7CEsICbxOl508AuYRFQlXi9/RcriM0rYCPx6+gDVoh18hKrNxxg
+        BmmWEFjELvH42AwmiISLxNENaxkhbGGJV8e3sEPYUhKf3+0FGsoBZGdL9OwyhgjXSCyddwzq
+        BXuJA1fmsICUMAtoSqzfpQ8SZhbgk+j9/YQJopNXoqNNCKJaVaL53VWoTmmJid3dUJd5SHw/
+        eAjsACGBWInezSvYJjDKzEIYuoCRcRWjZGpBcW56arFpgWFearlecWJucWleul5yfu4mRnBU
+        a3nuYLz74IPeIUYmDsZDjBIczEoivL3ajPFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZV+nIkT
+        EkhPLEnNTk0tSC2CyTJxcEo1MHELfpl6JkKxL0rl6t+1ezZkzv5rcOC39KuTrw5PyrS/tKbN
+        wkbRTa5Kd7LnezbxZ+eKnBxddI6+7a3c6C4vG+/17752jap7xj5p7tX367W0FNdvz4kWydpo
+        smfPrf+H/+4vPOjxtaXC4vLLA2f9L61ZY1FrnVYx5/Lq0zxn3/fXKIu/OdvEMU9j/8Kt+Wek
+        tD3qPnFc5byQNNHjz4qj555w3fUW9k4VL33+j71JJGGDRGD+JqbeXx9UL2e/OLjbsmma8gPf
+        3hw1IX7n9EORU+s1Vuev5BBjnjBHYPPmGxVWC6bsMX/160Dj8gvPl9/3uDHveceu1WlTK+zn
+        uHt1pQlf3CM4R1R03y+Tqvmv/65WYinOSDTUYi4qTgQA1cBYCFkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFJMWRmVeSWpSXmKPExsWy7bCSnG5iI2O8wZPpihYP5m1js5h/5Byr
+        xfnzG9gtNj2+xmpxedccNosZ5/cxWbTuPcLuwO6xaVUnm8fmJfUefVtWMXp83iQXwBLFZZOS
+        mpNZllqkb5fAlbH38iK2gkaOigX725kaGO+xdTFyckgImEj8XdLM3sXIxSEksJtRYtOKPhaI
+        hLTE9Y0T2CFsYYmV/55DFTUxSUy7dR4swSagLXF3+hYmEFsEqOje0uVgRcwCpxgl+rdvBisS
+        FnCTOD1vGtg6FgFVidfbf7GC2LwCNhK/jj5ghdggL7F6wwHmCYw8CxgZVjFKphYU56bnFhsW
+        GOallusVJ+YWl+al6yXn525iBAePluYOxu2rPugdYmTiYDzEKMHBrCTC26vNGC/Em5JYWZVa
+        lB9fVJqTWnyIUZqDRUmc90bhwjghgfTEktTs1NSC1CKYLBMHp1QDk3aqsVX9qQsRPXlrNs35
+        cGVe/mR3n+kp+Tn8c+P12JN9/3f2hWvocszN/s9jY5LAlrnbYtOqT6t8+335ui1f3+5/yzb5
+        5zIZx9l1GrW8GQf1t02be+9KuvKGRM9dXDvznh6x3Vbw/0OFVrfa2U2JR9jOCE2r8vt0j8tz
+        8hvftL8GM0x/vN3ra75GabvNYYnmNxypxy5zrLh6p22h2Y6iA8X6q668n+diZCrKIL9uZtWJ
+        69qtDoF1MXlbbD75Vli+sfLrqdSPfH+rzyb5dWrF8gsu/X3O1xbctXy+6nturfOXt7v2H7n4
+        aF1Durxk//OLRrt3T9pZmvemIiNdN1pLPmftgaUq3t6SAvkL/+z4qcRSnJFoqMVcVJwIANkS
+        tHiNAgAA
+X-CMS-MailID: 20200705072937epcas5p1b6c9a25770451bcb9d8bc5b14b8a8b53
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
-X-CMS-RootMailID: 20200705071806epcas5p27abbd5b89689ab16328807bb5a213abf
-References: <20200705065747.63014-1-alim.akhtar@samsung.com>
-        <CGME20200705071806epcas5p27abbd5b89689ab16328807bb5a213abf@epcas5p2.samsung.com>
+X-CMS-RootMailID: 20200705072937epcas5p1b6c9a25770451bcb9d8bc5b14b8a8b53
+References: <CGME20200705072937epcas5p1b6c9a25770451bcb9d8bc5b14b8a8b53@epcas5p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-LDO12 on exynos7 supply power to VDDQ_UFS20_RESET,
-in case this regulator is OFF, UFS host controller
-can not send command to UFS device. To keep this supply
-ON, set regulator-always-on property for this ldo.
+Once regulators are disabled after kernel boot, on espresso
+board silent hang observed because of LDO7 being disabled.
+LDO7 actually provide power to CPU cores and non-cpu blocks
+circuitries.
+Keep this regulator always-on to fix this hang.
 
+Fixes: 9589f7721e16 ("arm64: dts: Add S2MPS15 PMIC node on exynos7-espresso")
 Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
+ - 
  arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index bb86950032d3..92fecc539c6c 100644
+index 790f12ca8981..bb86950032d3 100644
 --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
 +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -194,6 +194,7 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1300000>;
+@@ -157,6 +157,7 @@
+ 				regulator-min-microvolt = <700000>;
+ 				regulator-max-microvolt = <1150000>;
  				regulator-enable-ramp-delay = <125>;
 +				regulator-always-on;
  			};
  
- 			ldo13_reg: LDO13 {
+ 			ldo8_reg: LDO8 {
+
+base-commit: 9e50b94b3eb0d859a2586b5a40d7fd6e5afd9210
 -- 
 2.17.1
 
