@@ -4,74 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DC7C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 17:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C7DC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 18:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DE21206E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 17:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78E412075B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 18:09:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D7QOnmbu"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JSXqRKqz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728441AbgGGRzW (ORCPT
+        id S1727834AbgGGSJV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Jul 2020 13:55:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56374 "EHLO
+        Tue, 7 Jul 2020 14:09:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728404AbgGGRzV (ORCPT
+        with ESMTP id S1728100AbgGGSJU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Jul 2020 13:55:21 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27CA1C08C5E1
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jul 2020 10:55:21 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id g75so44264880wme.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jul 2020 10:55:21 -0700 (PDT)
+        Tue, 7 Jul 2020 14:09:20 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66D22C08C5DC
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jul 2020 11:09:20 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id a6so46228137wrm.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jul 2020 11:09:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=Sc9g6wGOzRwu+DnLXFZTX5cameYasawGNk3OVO7epl8=;
-        b=D7QOnmbuxoxljwvQGT3yaEZJaRFUBDlp64fFWQE1ERpsuzJiBMUztTHlfqlUQ9so2Z
-         H7kFoFEJ3xOi1f0Gb89ost5aAWVhD+vA8aUCzwj2K4+uwU3UHrSHDAkKsLiHN8KfECz7
-         jyc+yQUOvIi3JJY9mZvnaj8Mfqu4S6MDdLTFY=
+        bh=0m2aoBIP5GJAb10zyANIdy2YC3UULtv1aWEwGmldE04=;
+        b=JSXqRKqzNi8wby85ZOPYM8+WlbCbPrGifr8g3X3OVWXFVbASCxiEVbote2kigrv8wv
+         JQD7OBWXUBKKot5/flogEoaBHkhPsvwOwkfD207E+UwGA7Miz0eMQoJ7zQzwhPL61Rre
+         EuI9y+FhVrM1NKYullsJN25lGamvzcwlqp6z4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Sc9g6wGOzRwu+DnLXFZTX5cameYasawGNk3OVO7epl8=;
-        b=R33aTElxjNwNCYi1yEh/XXcttRbZgUEW1SuS8KSjQmXRpLHUFgmQ/u7yoCWd7X5prw
-         sRo1xpX2X10rb0gqeNr3Tsibp/0IYjrt5L+iIE4TRjjIUyL4MaOmCHfUXDzVHQwYsBcE
-         4PDJVcfUDb1pWzC+wtSoro83ZNOBW/HFrOgB/Zwx+J6+sewuDCpLWAfWiKNdXVwZDgx6
-         VUshbzn4sJtulFiQGJ7S2dihzhCxLsR5J0z0kkIsXe6lYRdCIsn6LMIqF+eZZdGCDW7w
-         8VXcRZ1+GmpO2/5saCyxf8Ciw+67gHgp1qXoj53MDMidlEBJGiXXyy9lZTJgHs4GDel6
-         1xRA==
-X-Gm-Message-State: AOAM530NLFJoJSc2gnoRlj18zKkue5OxTPVy5pTQbIIxzzRraE3wQ4PE
-        UFWa5HZe1SVnLpiK8sJifqPY1g==
-X-Google-Smtp-Source: ABdhPJz88/m48rj8/5SglwbXt+8ksYS3fKh8+pilMr/CD6s/J2Lz8aV+iwPGIQEZ51STz91WaC41TA==
-X-Received: by 2002:a7b:cb92:: with SMTP id m18mr3606166wmi.94.1594144519752;
-        Tue, 07 Jul 2020 10:55:19 -0700 (PDT)
+        bh=0m2aoBIP5GJAb10zyANIdy2YC3UULtv1aWEwGmldE04=;
+        b=CZGfrxWdt3ywpikcqLmB78oNVpo4iYBjVHQX4a3kROcZVu4Uathy/2lRBqbG04e7L/
+         DkZia7hm4WLKihMahCN+LVn4fo9JnxS5bhYJYVgO7NJ7TIZgQUkNK1lNB58jdKdtXhkm
+         Zuzh1X8Jmy4GRL2x3So+lzXmRLUUKZuT8QV4E6g5Sjv7/2+v02tCFmxJYzwUBv3H2Ph2
+         V4dGQNZ5X01seRjeKS+jQ8Nw70F+ZFqfFxawSeI21ECdH3umGbKDYo/hQYHTlf2ybi4C
+         bdJNkLwCPHL6t5rMg41nWJnvDJ6h/ViB6FREyVmhRomS4aXeiPVT9cZuVZOgBEHGQc4w
+         2wzA==
+X-Gm-Message-State: AOAM530MAESZsr0tQc7riz2LMiRAU+09E+AkeNUb1AudVGtNi9Knq42l
+        bPYL8Py3HhjhOXR2CefykMAVLA==
+X-Google-Smtp-Source: ABdhPJyQWxqFc1PHki3J/nn4kM+S8X1Xh3twrKQaB7PZs8HSIA+iXCuj+fKvvuYm4me4y3tj/6LZ2g==
+X-Received: by 2002:a5d:664a:: with SMTP id f10mr54971954wrw.300.1594145359012;
+        Tue, 07 Jul 2020 11:09:19 -0700 (PDT)
 Received: from chromium.org (205.215.190.35.bc.googleusercontent.com. [35.190.215.205])
-        by smtp.gmail.com with ESMTPSA id f16sm1980411wmf.17.2020.07.07.10.55.19
+        by smtp.gmail.com with ESMTPSA id v12sm2026423wrt.31.2020.07.07.11.09.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jul 2020 10:55:19 -0700 (PDT)
-Date:   Tue, 7 Jul 2020 17:55:17 +0000
+        Tue, 07 Jul 2020 11:09:18 -0700 (PDT)
+Date:   Tue, 7 Jul 2020 18:09:17 +0000
 From:   Tomasz Figa <tfiga@chromium.org>
 To:     Jonathan Bakker <xc-racer2@live.ca>
 Cc:     kyungmin.park@samsung.com, s.nawrocki@samsung.com,
         mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org,
         linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/11] media: exynos4-is: Fix nullptr when no CSIS device
- present
-Message-ID: <20200707175517.GC2621465@chromium.org>
+Subject: Re: [PATCH 04/11] media: exynos4-is: Correct missing entity function
+ initialization
+Message-ID: <20200707180917.GD2621465@chromium.org>
 References: <20200426022650.10355-1-xc-racer2@live.ca>
- <BN6PR04MB0660EE7304C2BB2E603A8824A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <BN6PR04MB0660E680A4F69E3037D87E70A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BN6PR04MB0660EE7304C2BB2E603A8824A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+In-Reply-To: <BN6PR04MB0660E680A4F69E3037D87E70A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -79,67 +79,49 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hi Jonathan,
 
-On Sat, Apr 25, 2020 at 07:26:42PM -0700, Jonathan Bakker wrote:
-> Not all devices use the CSIS device, some may use the FIMC directly in
-> which case the CSIS device isn't registered.  This leads to a nullptr
-> exception when starting the stream as the CSIS device is always
-> referenced.  Instead, if getting the CSIS device fails, try getting the
-> FIMC directly to check if we are using the subdev API
+On Sat, Apr 25, 2020 at 07:26:43PM -0700, Jonathan Bakker wrote:
+> Commit bae4500399c4 ("[media] exynos4-is: Add missing entity function
+> initialization") tried to suppress the warnings such as
 > 
+> s5p-fimc-md camera: Entity type for entity FIMC.0 was not initialized!
+> 
+> However, this didn't work in all cases.  Correct this by calling the set
+> function earlier.
+> 
+> Fixes: bae4500399c4 ("exynos4-is: Add missing entity function initialization")
 > Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 > ---
->  drivers/media/platform/exynos4-is/media-dev.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
+>  drivers/media/platform/exynos4-is/fimc-capture.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
 Thank you for the patch. Please see my comments inline.
 
-> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-> index 9aaf3b8060d5..5c32abc7251b 100644
-> --- a/drivers/media/platform/exynos4-is/media-dev.c
-> +++ b/drivers/media/platform/exynos4-is/media-dev.c
-> @@ -289,11 +289,26 @@ static int __fimc_pipeline_s_stream(struct exynos_media_pipeline *ep, bool on)
->  		{ IDX_CSIS, IDX_FLITE, IDX_FIMC, IDX_SENSOR, IDX_IS_ISP },
->  	};
->  	struct fimc_pipeline *p = to_fimc_pipeline(ep);
-> -	struct fimc_md *fmd = entity_to_fimc_mdev(&p->subdevs[IDX_CSIS]->entity);
->  	enum fimc_subdev_index sd_id;
->  	int i, ret = 0;
+> diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
+> index 705f182330ca..86c233e2f2c9 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-capture.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-capture.c
+> @@ -1799,7 +1799,6 @@ static int fimc_register_capture_device(struct fimc_dev *fimc,
+>  	vid_cap->wb_fmt.code = fmt->mbus_code;
 >  
->  	if (p->subdevs[IDX_SENSOR] == NULL) {
-> +		struct fimc_md *fmd;
-> +		struct v4l2_subdev *sd = p->subdevs[IDX_CSIS];
-> +
-> +		if (!sd)
-> +			sd = p->subdevs[IDX_FIMC];
-> +
-> +		if (!sd) {
-> +			/*
-> +			 * If neither CSIS nor FIMC was set up,
-> +			 * it's impossible to have any sensors
-> +			 */
-> +			return -ENODEV;
-> +		}
-> +
-> +		fmd = entity_to_fimc_mdev(&sd->entity);
-> +
+>  	vid_cap->vd_pad.flags = MEDIA_PAD_FL_SINK;
+> -	vfd->entity.function = MEDIA_ENT_F_PROC_VIDEO_SCALER;
 
-Are you sure this is the correct thing to do here? In general, the media
-controller should be instantiated only if there are sensors in the system.
+Isn't vfd->entity above a different entity than sd->entity below? If so,
+this line must stay.
 
-What do you mean by using "the FIMC directly"? Do you mean using it only as
-an m2m image processor or with a sensor, but without the CSIS, which would
-be the case for parallel I/F sensors?
+>  	ret = media_entity_pads_init(&vfd->entity, 1, &vid_cap->vd_pad);
+>  	if (ret)
+>  		goto err_free_ctx;
+> @@ -1898,6 +1897,7 @@ int fimc_initialize_capture_subdev(struct fimc_dev *fimc)
+>  		return ret;
+>  
+>  	sd->entity.ops = &fimc_sd_media_ops;
+> +	sd->entity.function = MEDIA_ENT_F_PROC_VIDEO_SCALER;
 
-Could you point me to the place where CSIS is always dereferenced? A quick
-look through the code only revealed that everywhere it seems to be guarded
-by a NULL check.
-
-Another thought from looking at the implementation of
-__fimc_pipeline_s_stream() is that it probably shouldn't call s_stream on
-all the subdevices included in seq[], but only on those that are actually
-included as a part of the pipeline. It would be quite a waste of power to
-enable unnecessary hardware.
+My understanding is that this is the capture subdev and not the scaler.
+Looking at the other drivers, MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER
+could be the right function to use here.
 
 Best regards,
 Tomasz
