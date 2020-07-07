@@ -2,189 +2,161 @@ Return-Path: <SRS0=MXJZ=AS=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA1D2C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 09:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977D7C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 09:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D7A2206DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 09:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7154E206DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 09:59:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sOGIb1BW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bBGHU/Ix"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbgGGJke (ORCPT
+        id S1726900AbgGGJ7S (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Jul 2020 05:40:34 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:50903 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728265AbgGGJke (ORCPT
+        Tue, 7 Jul 2020 05:59:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38630 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726879AbgGGJ7R (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Jul 2020 05:40:34 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200707094032euoutp01f836a040c9dc817931062d212647f0b0~fbv6TVsp01569715697euoutp01h
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jul 2020 09:40:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200707094032euoutp01f836a040c9dc817931062d212647f0b0~fbv6TVsp01569715697euoutp01h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1594114832;
-        bh=NKIXIZf7DqPM44p634PRRQQpgwlo737WpVwaop6YS/g=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=sOGIb1BW/40xaj8x9YhGIpD57NGrAvROgKGk93RNW5GHXK1UpyxgPS6tiWEoO2sZN
-         0nwgX2MW0/AkcMQ+jPZ7NiSuZl742N2uo5UcxndmbuASgxEeG4cexd4CX9/wEJSu3p
-         /HU/16m0NcWbHIzg4NIMJgZlCNZ0ppSNgfGp7mms=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200707094032eucas1p1561b02b886cf5d6b07ab5f897da3a11f~fbv55PHXs0287902879eucas1p1-;
-        Tue,  7 Jul 2020 09:40:32 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id A9.67.05997.013440F5; Tue,  7
-        Jul 2020 10:40:32 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200707094031eucas1p167fcabe5e1275d9d8584de4baccc36fc~fbv5kG1Zu0287902879eucas1p1_;
-        Tue,  7 Jul 2020 09:40:31 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200707094031eusmtrp224005f38d42d83c2425b55661f7c16bd~fbv5jYt8d0878708787eusmtrp2H;
-        Tue,  7 Jul 2020 09:40:31 +0000 (GMT)
-X-AuditID: cbfec7f4-677ff7000000176d-07-5f04431045b6
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id DF.69.06314.F03440F5; Tue,  7
-        Jul 2020 10:40:31 +0100 (BST)
-Received: from [106.210.85.205] (unknown [106.210.85.205]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200707094029eusmtip24fc305116ea90ec9f9c6e9d4392554ca~fbv3CyALk0258102581eusmtip2U;
-        Tue,  7 Jul 2020 09:40:29 +0000 (GMT)
-Subject: Re: [PATCH v7 08/36] drm: exynos: fix common struct sg_table
- related issues
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org,
-        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-Cc:     linux-samsung-soc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        linux-arm-kernel@lists.infradead.org
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <53d2ae18-3d60-773f-4544-3c8f55749038@samsung.com>
-Date:   Tue, 7 Jul 2020 11:40:26 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.10.0
+        Tue, 7 Jul 2020 05:59:17 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EDBCC061755;
+        Tue,  7 Jul 2020 02:59:17 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id 1so520691pfn.9;
+        Tue, 07 Jul 2020 02:59:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C4eDJfDQ2O8UUzPVYO4ixzIP7yiUb1/eu6C6M7C54kk=;
+        b=bBGHU/IxEdGnMMvzMvAddWFz0lF7tIyqAGNHt5+Zsy+CDq3FtUCvjY2GB/wuiKe+Tk
+         dOctHzgrbqDRLtdMZXmCN2ve9pPa59dN2M845uxfAZeWXz2UiiM8IZxHdOikNIMp+Y+I
+         wQUEpwED4tJ19sGhTDgN9ctCLtQ7K813PakEztg7udz6UI7JR2YhYPvtqm6LWdi54r/R
+         iQppiTyuuwC5LxjhVpNhznGxQEWqJ0hHaM1n5UuALxCF3PBnbC6CTnLF+zex05kvyNg8
+         lXoaO0mHps+0QnnH3uKsZNJwsNQmHKJ+Tmvr8aeVYjrJdCQUdU09SeqKbRAPrlzQUarL
+         4fLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C4eDJfDQ2O8UUzPVYO4ixzIP7yiUb1/eu6C6M7C54kk=;
+        b=I611HvUpaQw/ySacglDqHZlSJBFNcUxUYfBdCbDEIJ89YLA+1+6kKcziYTI52Wk1y2
+         1deGv4br9PI8p7H275s3yEE6VepGG6bbLgUhpnOE6S4dCjFCp7gTXWD+vLMwWYS7Ow+A
+         nihpV39kdfMyEonf1/Ia7Rx8rAqvWhWWFXSEZFrUtQjxhY8dLbg/JCjp0NQ1rI3N57w7
+         9q2RXVSyu5iaRkoaQYPN1vu92UCn8v0UwVofc6WIuhqu46yeLuWGi7QlDTZP5/vPF78Y
+         +1/UpgzWlvdPo3CbKr5lSrvuTdG0UGpZxLMNOc4jYA4JgciwQSkj1Bb8AZ5Yl8Q6/hkJ
+         OAHw==
+X-Gm-Message-State: AOAM530/IIDua6QqzP50quCla5nOKwpZEzM6s7c7tSa5JdIFI+7E9qrM
+        0a5+u8cXKtzNiJVzoJhsrfQ=
+X-Google-Smtp-Source: ABdhPJxYHFhB1av6cnPY3CLBmV5fQw/sgWmWMW730ilHUltzEAj0BrDaJBjpPKunfFd8fSj/k/vC/g==
+X-Received: by 2002:a65:67d9:: with SMTP id b25mr44913068pgs.311.1594115956404;
+        Tue, 07 Jul 2020 02:59:16 -0700 (PDT)
+Received: from localhost.localdomain ([103.51.74.198])
+        by smtp.gmail.com with ESMTPSA id r7sm435805pgu.51.2020.07.07.02.59.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jul 2020 02:59:15 -0700 (PDT)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3] phy: samsung: Use readl_poll_timeout function
+Date:   Tue,  7 Jul 2020 09:59:08 +0000
+Message-Id: <20200707095908.372-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <20200619103636.11974-9-m.szyprowski@samsung.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0gUURiGOTM747i5Nq6WB63MrRCLtLJiwLDUkJGC6o+BkDrl4G0vtquW
-        QbhkiGxkXvK2aS2SeMd01900UNouunhZMfGChpf1R0qL5S2L0nYcI/8953zv+33fezgEKh7C
-        vIgkeRqrlDNSCS4UGD/+tB4nwwWxJ5ZNu6nHAxaEailrxqjh1UWcqmv4gFC6rmBqZXgGoVpt
-        Ixj1qaMCp8qsnQjV9P6zE/X22xxGlRXN4xdc6MbnjYA2rU1j9NSjboTWv8yiJzZsKF00VgPo
-        N+NqnM4z1AN6ufXAVedo4bl4VpqUwSoDQ+KEiYUTu1JtHnfNbV8RNchx0wCCgORpOPssTgOE
-        hJisBbBm6YcTf1gBsHLdgvKHZQBLxq1AA5y3HNWWQoxjMVkDYPZsPC9aBLBpdFDAtXUno+Do
-        pg+n8SANDk1xBKdByWIE2oydKFfASX/4Rz+OcywiQ2B5vnlrgIA8DA3NrQjHe8gY2DxvQniN
-        G7SUzwk4dnboWzYNW16U9IEmewXKsyd8sFKHccMg+d0J1umLUX7ri7C7emGb3eFCt8GJ531w
-        s/0FwnMWnKp9iPLmXADbXrVvG4Lh5MAvnEuGOrZu7gjk3y4UtmUf4dEVjtnd+BVcYaGxFOWv
-        RTA3R8z38IVT/W3b/Txh9eAqng8k2h3BtDvCaHeE0f4fqwOCeuDJpqtkCazqlJy9E6BiZKp0
-        eULALYWsFTh+Wu9G98pr0PH7phmQBJC4iHJxNFaMMRmqTJkZQAKVeIjC+ntjxKJ4JvMeq1TE
-        KtOlrMoMvAmBxFMUVDV/Q0wmMGlsCsumssp/VYRw9lKDp/kF68m+MtuZteuLGmNJl+LJ9Lvb
-        ey9HFVRTh7QjS3qfS8es5Vj6ULbX/mBlT9Xwgj38bMpoqCbLvcE/jDBda1R/oYqZoOTJg1Zj
-        RJdfT+SVykhF37Qk1E8crWe0k3Z6Ro7NW88X5NmFuSnJ9b5WvXe7LtWScL9Ul5fYJ5UIVInM
-        yaOoUsX8Bby5r5xlAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFIsWRmVeSWpSXmKPExsVy+t/xe7r8zizxBhcfmVv0njvJZLFxxnpW
-        iytf37NZrFx9lMliwX5riy9XHjJZbHp8jdXi8q45bBYzzu9jslh75C67xcEPT1gtZkx+yebA
-        47Fm3hpGj+3fHrB63O8+zuSxeUm9x+1/j5k9Jt9Yzuix+2YDm0ffllWMHp83yQVwRunZFOWX
-        lqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehlTLrNXfBYpOLQ
-        1jdMDYxtgl2MnBwSAiYSS09OYu1i5OIQEljKKPHw810miIS4xO75b5khbGGJP9e62CCK3jJK
-        fFkyDSwhLBAmcaLjJli3iMAWRolnKw4zgjjMAtOZJG52/YCae5RR4sqyCWAtbAKaEn8332QD
-        sXkF7CRmTjjECGKzCKhIbFm/CWy3qECcxPIt89khagQlTs58wgJicwLVb/y/BayXWcBMYt7m
-        h8wQtrzE9rdzoGxxiaYvK1knMArNQtI+C0nLLCQts5C0LGBkWcUoklpanJueW2yoV5yYW1ya
-        l66XnJ+7iREYz9uO/dy8g/HSxuBDjAIcjEo8vAlHmOOFWBPLiitzDzFKcDArifA6nT0dJ8Sb
-        klhZlVqUH19UmpNafIjRFOi5icxSosn5wFSTVxJvaGpobmFpaG5sbmxmoSTO2yFwMEZIID2x
-        JDU7NbUgtQimj4mDU6qB0ZV1eqvW5kxGBT/G0qmNIRmqeXcObzFNqVYpeXCA5fWX1zNXaZ0O
-        nGOYP0t7aR33lT1BEcH3TwSUZXPFvii+9CBIYbLx1X7O5EXndq+TdG7RKTxYcSfJdlOvzAIH
-        oXKBRUHmLf97VFg8frvVXP6/y/1w5guTT8f9BBL/C/dv2iNR5zWxLstZiaU4I9FQi7moOBEA
-        P2s+Qv0CAAA=
-X-CMS-MailID: 20200707094031eucas1p167fcabe5e1275d9d8584de4baccc36fc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200619103658eucas1p1c3236e2de2798c2d8c02279a9263e9a9
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200619103658eucas1p1c3236e2de2798c2d8c02279a9263e9a9
-References: <20200619103636.11974-1-m.szyprowski@samsung.com>
-        <CGME20200619103658eucas1p1c3236e2de2798c2d8c02279a9263e9a9@eucas1p1.samsung.com>
-        <20200619103636.11974-9-m.szyprowski@samsung.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Instead of a busy waiting loop while loop using udelay
+use readl_poll_timeout function to check the condition
+is met or timeout occurs in crport_handshake function.
 
-On 19.06.2020 12:36, Marek Szyprowski wrote:
-> The Documentation/DMA-API-HOWTO.txt states that the dma_map_sg() function
-> returns the number of the created entries in the DMA address space.
-> However the subsequent calls to the dma_sync_sg_for_{device,cpu}() and
-> dma_unmap_sg must be called with the original number of the entries
-> passed to the dma_map_sg().
->
-> struct sg_table is a common structure used for describing a non-contiguous
-> memory buffer, used commonly in the DRM and graphics subsystems. It
-> consists of a scatterlist with memory pages and DMA addresses (sgl entry),
-> as well as the number of scatterlist entries: CPU pages (orig_nents entry)
-> and DMA mapped pages (nents entry).
->
-> It turned out that it was a common mistake to misuse nents and orig_nents
-> entries, calling DMA-mapping functions with a wrong number of entries or
-> ignoring the number of mapped entries returned by the dma_map_sg()
-> function.
->
-> To avoid such issues, lets use a common dma-mapping wrappers operating
-> directly on the struct sg_table objects and use scatterlist page
-> iterators where possible. This, almost always, hides references to the
-> nents and orig_nents entries, making the code robust, easier to follow
-> and copy/paste safe.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: d8c80bb3b55b ("phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800")
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+Changes v3:
+--Fix the commit message.
+--Drop the variable, used the value directly.
+Changes v2:
+--used the default timeout values.
+--Added missing Fixed tags.
+---
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 35 +++++++-----------------
+ 1 file changed, 10 insertions(+), 25 deletions(-)
 
-Reviewed-by <a.hajda@samsung.com>
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index e510732afb8b..fa75fa88da33 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -16,6 +16,7 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
++#include <linux/iopoll.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+ #include <linux/mutex.h>
+@@ -556,40 +557,24 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
+ static int crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
+ 			    u32 val, u32 cmd)
+ {
+-	u32 usec = 100;
+ 	unsigned int result;
++	int err;
+ 
+ 	writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
+ 
+-	do {
+-		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
+-		if (result & PHYREG1_CR_ACK)
+-			break;
+-
+-		udelay(1);
+-	} while (usec-- > 0);
+-
+-	if (!usec) {
+-		dev_err(phy_drd->dev,
+-			"CRPORT handshake timeout1 (0x%08x)\n", val);
++	err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
++			result,	(result & PHYREG1_CR_ACK), 1, 100);
++	if (err) {
++		dev_err(phy_drd->dev, "CRPORT handshake timeout1 (0x%08x)\n", val);
+ 		return -ETIME;
+ 	}
+ 
+-	usec = 100;
+-
+ 	writel(val, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
+ 
+-	do {
+-		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
+-		if (!(result & PHYREG1_CR_ACK))
+-			break;
+-
+-		udelay(1);
+-	} while (usec-- > 0);
+-
+-	if (!usec) {
+-		dev_err(phy_drd->dev,
+-			"CRPORT handshake timeout2 (0x%08x)\n", val);
++	err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
++			result,	!(result & PHYREG1_CR_ACK), 1, 100);
++	if (err) {
++		dev_err(phy_drd->dev, "CRPORT handshake timeout2 (0x%08x)\n", val);
+ 		return -ETIME;
+ 	}
+ 
+-- 
+2.27.0
 
-Regards
-Andrzej
-
-
-> ---
->   drivers/gpu/drm/exynos/exynos_drm_g2d.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> index fcee33a43aca..7014a8cd971a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> @@ -395,8 +395,8 @@ static void g2d_userptr_put_dma_addr(struct g2d_data *g2d,
->   		return;
->   
->   out:
-> -	dma_unmap_sg(to_dma_dev(g2d->drm_dev), g2d_userptr->sgt->sgl,
-> -			g2d_userptr->sgt->nents, DMA_BIDIRECTIONAL);
-> +	dma_unmap_sgtable(to_dma_dev(g2d->drm_dev), g2d_userptr->sgt,
-> +			  DMA_BIDIRECTIONAL, 0);
->   
->   	pages = frame_vector_pages(g2d_userptr->vec);
->   	if (!IS_ERR(pages)) {
-> @@ -511,10 +511,10 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct g2d_data *g2d,
->   
->   	g2d_userptr->sgt = sgt;
->   
-> -	if (!dma_map_sg(to_dma_dev(g2d->drm_dev), sgt->sgl, sgt->nents,
-> -				DMA_BIDIRECTIONAL)) {
-> +	ret = dma_map_sgtable(to_dma_dev(g2d->drm_dev), sgt,
-> +			      DMA_BIDIRECTIONAL, 0);
-> +	if (ret) {
->   		DRM_DEV_ERROR(g2d->dev, "failed to map sgt with dma region.\n");
-> -		ret = -ENOMEM;
->   		goto err_sg_free_table;
->   	}
->   
