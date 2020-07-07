@@ -2,172 +2,92 @@ Return-Path: <SRS0=MXJZ=AS=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A7CCC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 18:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D7EC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 18:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 518D2206E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 18:36:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F63720708
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 18:38:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j8Zl2rIo"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RZ9Fss7D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbgGGSg7 (ORCPT
+        id S1728418AbgGGSh7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Jul 2020 14:36:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34736 "EHLO
+        Tue, 7 Jul 2020 14:37:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728183AbgGGSg6 (ORCPT
+        with ESMTP id S1728364AbgGGSh7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Jul 2020 14:36:58 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C1B7C061755
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jul 2020 11:36:58 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id z13so46300152wrw.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jul 2020 11:36:58 -0700 (PDT)
+        Tue, 7 Jul 2020 14:37:59 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18364C08C5E1
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jul 2020 11:37:59 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id f18so141501wml.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jul 2020 11:37:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=Xs/zEC2jUxxPZpO/qCdnGmXC49c7mTM4qEZvyzmAiE4=;
-        b=j8Zl2rIos41vLw2JLZbCpYD9mec/2aTFapjUeJgKm37M8nGwujrClLL0UJ0Iu6QMyt
-         hP9LrGHKfycvXeK2XelwyJYsIWLfybdn3F6xkLDE70wBxYIBjYjV2OxJXuGGdioTCJ9B
-         yFFmlIXUdqG02Wz1QpcIvuLMv74eN1mouQ/Qg=
+        bh=oLoc7XcLQBFweGrIZl963QXxR/Kuf/uGSt/aRtsqQXA=;
+        b=RZ9Fss7DKBKwILhHXMQiVLBHaDpNXqgCERg4Ug14fAdONP0G6MQJBBJfrZe6h39rjo
+         CEW9YkDp3qC7EIbbZ962ghmcUF7tOqtSTEqUp4XkhvbFkbzlQIRO9pnsC7xKDctd0G8q
+         H+0lcYyOiMcg0DgIRLsOgtJyxqsy/1QqUA0u4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Xs/zEC2jUxxPZpO/qCdnGmXC49c7mTM4qEZvyzmAiE4=;
-        b=F4e7LdEcgs48pT4eXRGEm90CR+/IInm2cC6t7lcUJeCJb+QzcAkZHdsDuEYrYGGve/
-         rsEeNyzHvs8z+YkgTxoA1i2yl3wMMkpE9Qo/3DR08rEPuYs58mTyHPcQ8XcPQwXBQCJr
-         yjQr2vsyt7cUUb1tT+bJ5vdfxisHGwq6y0IX0h71B0qudCc9EcTt+3fqcaPuOu9v+6ql
-         ChodVvp5nAu3M4N4Fe6nwqxrky6uS7LzfZstqwNR/ogysL6flMxClctry6zGKHNdNh9g
-         xYfDP7Jsn0jYEkBe19Oto2dD4rFrdydDd0lbW5ClFs0gU4tj5OihBbemlc9AXrzE5N/s
-         8yaQ==
-X-Gm-Message-State: AOAM530LUIZkRTKg1z53BRCfQ1s+C8wklEiUYw1LC7kI5TUqXGChTDPP
-        Piv/y7ipI7K9rje+QdCvhzIVdw==
-X-Google-Smtp-Source: ABdhPJwaC6T+kfA8qybERBV51Yle5n7vTNwr7sCMV00fSA/7zQcs6BDUT3Z8vS/mf+l8gyQhwDRijg==
-X-Received: by 2002:a5d:5310:: with SMTP id e16mr52741384wrv.289.1594147016935;
-        Tue, 07 Jul 2020 11:36:56 -0700 (PDT)
+        bh=oLoc7XcLQBFweGrIZl963QXxR/Kuf/uGSt/aRtsqQXA=;
+        b=eTWSgvw0oeaq+PS/Z83jUsY1LiVaa+i0+DaX0XyH/MXlE5fyJ0IJGFI+zB3KehbjtE
+         3JrFmapzT6Ctv8BXrRAAAZEVTRuKTc779auIRxOQmGWF5gYCT/ASBNK4EtOwqPbf9n0x
+         v9i4JSKw6mELjPhP7+8ppHJya4IYCuCKaHCbovN8UbyeHVHfRdE7Wq7QWWSSUUj6305j
+         JuepI4XGvZRavqzAeRFCYobIft/ggaH6M6Hhh3fm8cHJt4zO0MPnu8e0wXu9XGZYrae5
+         RfAdvr+3qO6Ys+Ywvfb3zisLjhi1yYs/qPXoFJJXOhFDxi6lyTK92/0DUaS3P0NSBqj3
+         VrlA==
+X-Gm-Message-State: AOAM530v5sWhxLP3HFPm/6+SCoRWpT/QZpBFDRbzize13qCgmn/MROo8
+        ZxhyrUYX+EI1kZnlXKyuOeU/4g==
+X-Google-Smtp-Source: ABdhPJwTp5c+4PKMXHNlBDs5EyJmIu3hyAcO4wuFz0Eh5JtNDlZ7x+t1jLcMZPwjhFhde9Jltdhn5A==
+X-Received: by 2002:a1c:a7ca:: with SMTP id q193mr5582199wme.69.1594147077882;
+        Tue, 07 Jul 2020 11:37:57 -0700 (PDT)
 Received: from chromium.org (205.215.190.35.bc.googleusercontent.com. [35.190.215.205])
-        by smtp.gmail.com with ESMTPSA id 5sm2036815wmk.9.2020.07.07.11.36.56
+        by smtp.gmail.com with ESMTPSA id f17sm2461364wme.14.2020.07.07.11.37.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jul 2020 11:36:56 -0700 (PDT)
-Date:   Tue, 7 Jul 2020 18:36:55 +0000
+        Tue, 07 Jul 2020 11:37:57 -0700 (PDT)
+Date:   Tue, 7 Jul 2020 18:37:56 +0000
 From:   Tomasz Figa <tfiga@chromium.org>
 To:     Jonathan Bakker <xc-racer2@live.ca>
 Cc:     kyungmin.park@samsung.com, s.nawrocki@samsung.com,
         mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org,
         linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/11] media: exynos4-is: Add support for multiple
- sensors on one port
-Message-ID: <20200707183655.GG2621465@chromium.org>
+Subject: Re: [PATCH 08/11] media: exynos4-is: Remove inh_sensor_ctrls
+Message-ID: <20200707183756.GH2621465@chromium.org>
 References: <20200426022650.10355-1-xc-racer2@live.ca>
- <BN6PR04MB0660CE60DA8585C5E1DA9EB9A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <BN6PR04MB0660F4263807BBE9EF1DA26BA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BN6PR04MB0660CE60DA8585C5E1DA9EB9A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+In-Reply-To: <BN6PR04MB0660F4263807BBE9EF1DA26BA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Apr 25, 2020 at 07:26:46PM -0700, Jonathan Bakker wrote:
-> On some devices, there may be multiple camera sensors attached
-> to the same port.  Make sure we probe all of them, not just the
-> first one.
+On Sat, Apr 25, 2020 at 07:26:47PM -0700, Jonathan Bakker wrote:
+> This is a no-op as it is never set and is a remnant from non-DT days
+> that can be safely removed.
 > 
 > Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 > ---
->  drivers/media/platform/exynos4-is/media-dev.c | 32 ++++++++++++-------
->  1 file changed, 21 insertions(+), 11 deletions(-)
+>  drivers/media/platform/exynos4-is/fimc-capture.c | 13 +------------
+>  drivers/media/platform/exynos4-is/fimc-core.h    |  3 ---
+>  2 files changed, 1 insertion(+), 15 deletions(-)
 > 
-> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-> index b38445219c72..a87ebd7913be 100644
-> --- a/drivers/media/platform/exynos4-is/media-dev.c
-> +++ b/drivers/media/platform/exynos4-is/media-dev.c
-> @@ -397,25 +397,28 @@ static void fimc_md_pipelines_free(struct fimc_md *fmd)
->  /* Parse port node and register as a sub-device any sensor specified there. */
->  static int fimc_md_parse_port_node(struct fimc_md *fmd,
->  				   struct device_node *port,
-> -				   unsigned int index)
-> +				   unsigned int *index)
->  {
-> -	struct fimc_source_info *pd = &fmd->sensor[index].pdata;
-> +	struct fimc_source_info *pd;
->  	struct device_node *rem, *ep, *np;
-> -	struct v4l2_fwnode_endpoint endpoint = { .bus_type = 0 };
-> +	struct v4l2_fwnode_endpoint endpoint;
->  	int ret;
->  
-> -	/* Assume here a port node can have only one endpoint node. */
->  	ep = of_get_next_child(port, NULL);
->  	if (!ep)
->  		return 0;
->  
-> +parse_sensor:
-> +	pd = &fmd->sensor[*index].pdata;
-> +	endpoint.bus_type = 0;
-> +
->  	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep), &endpoint);
->  	if (ret) {
->  		of_node_put(ep);
->  		return ret;
->  	}
->  
-> -	if (WARN_ON(endpoint.base.port == 0) || index >= FIMC_MAX_SENSORS) {
-> +	if (WARN_ON(endpoint.base.port == 0) || *index >= FIMC_MAX_SENSORS) {
->  		of_node_put(ep);
->  		return -EINVAL;
->  	}
-> @@ -462,16 +465,16 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
->  		pd->fimc_bus_type = pd->sensor_bus_type;
->  	of_node_put(np);
->  
-> -	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor))) {
-> +	if (WARN_ON(*index >= ARRAY_SIZE(fmd->sensor))) {
->  		of_node_put(rem);
->  		return -EINVAL;
->  	}
->  
-> -	fmd->sensor[index].asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
-> -	fmd->sensor[index].asd.match.fwnode = of_fwnode_handle(rem);
-> +	fmd->sensor[*index].asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
-> +	fmd->sensor[*index].asd.match.fwnode = of_fwnode_handle(rem);
->  
->  	ret = v4l2_async_notifier_add_subdev(&fmd->subdev_notifier,
-> -					     &fmd->sensor[index].asd);
-> +					     &fmd->sensor[*index].asd);
->  	if (ret) {
->  		of_node_put(rem);
->  		return ret;
-> @@ -479,6 +482,13 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
->  
->  	fmd->num_sensors++;
->  
-> +	/* Check for additional sensors on same port */
-> +	ep = of_get_next_child(port, ep);
-> +	if (ep) {
-> +		(*index)++;
 
-Do we need this index argument at all? I can see that we already have
-fmd->num_sensors and we increment it every time we discover a sensor.
-Perhaps we could just use it instead?
-
-> +		goto parse_sensor;
-
-As we know, goto in principle isn't the best coding pattern. There is a
-number of exceptions where it is welcome, e.g. error handling, but
-reimplementing a loop using goto is not very nice.
-
-Instead, could you separate the code that probes one sensor into
-fimc_md_parse_one_endpoint() and in this one simply iterate over all child
-nodes of the port using for_each_child_of_node()?
+Reviewed-by: Tomasz Figa <tfiga@chromium.org>
 
 Best regards,
 Tomasz
