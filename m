@@ -2,103 +2,116 @@ Return-Path: <SRS0=MXJZ=AS=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAAF7C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 06:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F4AC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 07:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2C7220675
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 06:49:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594104582;
-	bh=PHNsfQwpamJ0em4X4EGxxtcaN0JvIAKa+/CHKaRsmcU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=X9zuKniSEG0ebKVtKh6tG+3k11ue2CbFLTWigLQktWRKMhSPF/XBlZ4VEhs1U7kkH
-	 JMnSXFBQb5ihdA8npCQrTFVkUGqn8TbkpKFJpX/Anxlubxvg25ceUKPhjorkIg/1KR
-	 5FnJBJayQUVQEOenbIP37l8Gx8ohhkKMI4aN81kc=
+	by mail.kernel.org (Postfix) with ESMTP id 3A9F420720
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 07:16:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wcKWsYuJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbgGGGtj (ORCPT
+        id S1726852AbgGGHQD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Jul 2020 02:49:39 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34918 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728265AbgGGGtf (ORCPT
+        Tue, 7 Jul 2020 03:16:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41716 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726540AbgGGHQC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Jul 2020 02:49:35 -0400
-Received: by mail-wm1-f68.google.com with SMTP id l2so43774186wmf.0;
-        Mon, 06 Jul 2020 23:49:34 -0700 (PDT)
+        Tue, 7 Jul 2020 03:16:02 -0400
+Received: from mail-ua1-x944.google.com (mail-ua1-x944.google.com [IPv6:2607:f8b0:4864:20::944])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A73CC08C5DF
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jul 2020 00:16:02 -0700 (PDT)
+Received: by mail-ua1-x944.google.com with SMTP id u6so10141392uau.8
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jul 2020 00:16:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wULRYb8hTQ3DSK0waXDTahHo3SLIrsIw0jdCnMxAKcA=;
+        b=wcKWsYuJHcCaZBBYXq+uak+cU00WVu2UgYkovzrsp2rvH7fV8jVNnFn0xBKxwAF2Ae
+         uWdnbQRiEK6JyTL9+FutmmrqTR3CC+lasw9LeA6aw0fQQSzkQYqjEbzn6cJbo7ptrWdQ
+         xGTIzf4ImUSRJoQMT+3OMQTx5AVpNVC3uq6QieRnLDtFAvv6iql5C1xW3TRRE9H5zW/1
+         TLCi3BH+Aafjz00IRsYJlvW5DyHGtm5u8uX9WfwWO32F8TishTYObMok5gWvtCg2XBjD
+         eVLL9QOY7EwPrs099vYX04X/yY7hsRooQcG8m+svdn/kyzzQ4IFCc/ThOlUtXtLlZUOu
+         8IYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ReuA5VQaVY/VFMmqRSAHaxxKix3yxHr6btejvUHKbHQ=;
-        b=ShFURUeL5o6XdWQICkc1ej+wLhVjF40Ns/AXF1d/esF+DfvxKMjj8r/fCW3KW/kchh
-         iicSx27cMeAropIEsKGUVhTB+OKOLjjj9UNoPgZuoAANhc9z3nYA8a0WsH/5HApfoIcK
-         Gq/53p01AIqsXciYq+pTkSsy6i51FSVASDWRXdE2WTyVGpwi1uQTJNw5Zpl6LhOdRQEp
-         uhJsmG2YATbNwmJjKKSxRrDqZYaz3tQtlbTFwd0r0+LzjI2Rth8R7eoFl4veOA/o0Qii
-         D8VKFCun5NR1vnqtjpWdHJa7UQCdx7rvIRc/1Es2IjCe9iiBpHqVSxNbXtG4QWrB45jx
-         JpsQ==
-X-Gm-Message-State: AOAM531g+KKqhqYAKicfVYN3JtIIoAGKmZWqUpGl9e7Rk6sVsh/jcRD/
-        28KbTElhvsQeQ489DNnH0y4=
-X-Google-Smtp-Source: ABdhPJwzjJCeYUKeawowVxH0kbFnJSkCEeak2MJl+4jXiRnTqMCEYtdPytyfVmzNDKLtluvU1c0Q/w==
-X-Received: by 2002:a1c:a5d6:: with SMTP id o205mr2503783wme.125.1594104573464;
-        Mon, 06 Jul 2020 23:49:33 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.195])
-        by smtp.googlemail.com with ESMTPSA id n14sm27897942wro.81.2020.07.06.23.49.32
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Jul 2020 23:49:32 -0700 (PDT)
-Date:   Tue, 7 Jul 2020 08:49:30 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v3] ARM: dts: exynos: Remove DMA controller bus node name
- to fix dtschema warnings
-Message-ID: <20200707064930.GE15031@kozik-lap>
-References: <20200705181754.13284-1-krzk@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wULRYb8hTQ3DSK0waXDTahHo3SLIrsIw0jdCnMxAKcA=;
+        b=NJerXIQZc/dyTgbTMghaNXT3mQkuxD9NL8d67R5F1tjFffC4giLHoTYjOFAbgzpjVj
+         /9BKCdOH2jeQk2Qn+1ylB2JCT4tiIg70wdUgKb1fwGHQRRcJgjUdUoIekj6dyob93ux0
+         GzFouY6WoVYjvAHILukLgk9N6w2gjzMN3PGfUpUyWG6L8LnI84Lx4j/sw8m3RNWTY33A
+         VI/w1/iySTqnepcWaudhD/GhxM1xAWcnrMAwD1GaNBahRlKKQobsw54AYf1xhdJooRAE
+         M0kSI0hnALeeUE2+WPzHvdFooPwMtACF2Q4HnJGaiL0iD01/H32GTmnYg/JANB54KpyH
+         Ev7Q==
+X-Gm-Message-State: AOAM532iWsvGctmejeyHNUuGZiBMLBXFuG6Dv89u3PyWgC2xijNvOmP0
+        eNtsx1IXsK8/gH0XUN0u4PHmpcRb3SPN1sq1UZJzrQ==
+X-Google-Smtp-Source: ABdhPJwMwTl3YpAgByVRV5/0CyJMIT9UexQ3ZB6gZc+BkUJfj4jbLurrY4uFc+j16UQ+IYEihjoOLDUK2mNhKiKB2zQ=
+X-Received: by 2002:a9f:22e1:: with SMTP id 88mr36772869uan.19.1594106161737;
+ Tue, 07 Jul 2020 00:16:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200705181754.13284-1-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200706163031.503431-1-colin.king@canonical.com>
+In-Reply-To: <20200706163031.503431-1-colin.king@canonical.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 7 Jul 2020 09:15:25 +0200
+Message-ID: <CAPDyKFqtcw+zccgR4LOPqYAs3dQ02Hu7SmpNq7aNgOs23dzJ5g@mail.gmail.com>
+Subject: Re: [PATCH] mmc: dw_mmc-exynos: remove redundant initialization of
+ variable 'found'
+To:     Colin King <colin.king@canonical.com>
+Cc:     Jaehoon Chung <jh80.chung@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Jul 05, 2020 at 08:17:54PM +0200, Krzysztof Kozlowski wrote:
-> There is no need to keep DMA controller nodes under AMBA bus node.
-> Remove the "amba" node to fix dtschema warnings like:
-> 
->     amba: $nodename:0: 'amba' does not match '^(bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
+On Mon, 6 Jul 2020 at 18:30, Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The variable 'found' is being initialized with a value that is never read
+> and it is being updated later with a new value.  The initialization is
+> redundant and can be removed.
+>
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Applied for next, thanks!
+
+Kind regards
+Uffe
+
+
 > ---
-> 
-> Changes since v2:
-> 1. Keep the alphabetical order in exynos4210-universal_c210.dts, as suggested by Marek
-> 
-> Changes since v1:
-> 1. Remove the bus, as suggested by Marek
-> ---
->  arch/arm/boot/dts/exynos3250.dtsi             |  47 +++----
->  arch/arm/boot/dts/exynos4.dtsi                |  70 +++++-----
->  .../boot/dts/exynos4210-universal_c210.dts    |  28 ++--
->  arch/arm/boot/dts/exynos5250.dtsi             |  92 ++++++-------
->  arch/arm/boot/dts/exynos5410.dtsi             |  46 +++----
->  arch/arm/boot/dts/exynos5420.dtsi             | 130 ++++++++----------
-
-Thanks for testing and reviews. Applied.
-
-Best regards,
-Krzysztof
-
+>  drivers/mmc/host/dw_mmc-exynos.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index 5e3d95b63676..99b900008a03 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -472,7 +472,7 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
+>         struct dw_mci_exynos_priv_data *priv = host->priv;
+>         struct mmc_host *mmc = slot->mmc;
+>         u8 start_smpl, smpl, candiates = 0;
+> -       s8 found = -1;
+> +       s8 found;
+>         int ret = 0;
+>
+>         start_smpl = dw_mci_exynos_get_clksmpl(host);
+> --
+> 2.27.0
+>
