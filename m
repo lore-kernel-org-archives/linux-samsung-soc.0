@@ -4,74 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00240C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 18:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 328E7C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 18:23:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA89720720
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 18:13:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12B0C20720
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 18:23:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bCRBoKrb"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bou7iSLd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbgGGSNO (ORCPT
+        id S1728388AbgGGSX0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Jul 2020 14:13:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59244 "EHLO
+        Tue, 7 Jul 2020 14:23:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728246AbgGGSNO (ORCPT
+        with ESMTP id S1728266AbgGGSX0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Jul 2020 14:13:14 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D48A9C061755
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jul 2020 11:13:13 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id o8so64585wmh.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jul 2020 11:13:13 -0700 (PDT)
+        Tue, 7 Jul 2020 14:23:26 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E72D0C061755
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jul 2020 11:23:25 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id j18so105589wmi.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jul 2020 11:23:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=v3SJG/oKrNkhQPAH5DvCsSZIxftjRT3Cf/rO54lasVQ=;
-        b=bCRBoKrbpz2rdJ2nV9KaHR11LkMNbRQZQEVMoGlk92r+cnRoIKV0xwny5KmjnouEw2
-         PGjjYvz0cp3e4NPnqvT2tAUoOV3Naj9K1Bd7pMl4clrjmtJMAhJxBsb4OagAywJxhw0O
-         vIc+B7bV6kYwba5VmkvKBqZXiZQCl4gWoOjho=
+        bh=ZsyQ8jMmYQ+//eOLMX7VRN1oDXj4f3bVCThH0/4XXdI=;
+        b=bou7iSLdxedN67z05Kvhn0bs7V/62M4RXxRpMjNmYppJ6OiFUT3bFt+dlqI9wxOoFd
+         ziojgyBhqT6sjphLhpJOXanj/zqXQY0Nmw+RmdXwtetXmbWNgFKsPf2+2lCda8LhjDlH
+         vweKLhivpqVwBDGPKb+MLxvg+0fGKKu3X3RGU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=v3SJG/oKrNkhQPAH5DvCsSZIxftjRT3Cf/rO54lasVQ=;
-        b=V7JMPrFEHO9jNNu8XIfiX7+T6JLBG/ey0d4pzg+tjpi6M/HFkzTOitUReE7jbjb4ep
-         u2YgBM9ErxxTEr9LoTRK6fukMQNmw8AXYZnSC57BKBbj7VeIoJ2+DVAMh/ADfIHLCv+8
-         +zA9+aT3t6JUqRvpNp1NBc7GlVac+1uO1HHCpobdnxAgtpU+K0TwfgLuqdy1D4oOtere
-         /Ei5Ooe1M3ZgmImvPR9+Ry+IKX1c8PoNDM7kJ+5fKHyNUR1YTHKLeYKES31u43Hm+J2J
-         sE7jDNdm0wT6ACiYmorTwCaOUNN2EOaV5CjSRFfoafjcJQk8OZ8enHw/nsYc8n8qXyYV
-         a9LQ==
-X-Gm-Message-State: AOAM53061QNsZD3Gsq0HKhZ0Ysf13W23iZckzDazsD6kidXAY9ZMMGU1
-        FwzBuXnBD2Q6iQPH4YQIf/muEg==
-X-Google-Smtp-Source: ABdhPJyY4ArGzU3O1VyBKhNP66gJlaXeKhOfIGNgIYcjZ8G2lNPTEGosc7euLKL3vZCGs4EG+Vg8/Q==
-X-Received: by 2002:a1c:1d04:: with SMTP id d4mr5754189wmd.156.1594145592650;
-        Tue, 07 Jul 2020 11:13:12 -0700 (PDT)
+        bh=ZsyQ8jMmYQ+//eOLMX7VRN1oDXj4f3bVCThH0/4XXdI=;
+        b=gWGK9nAhTF8tWMqE32OJVhc5aKJef0T4lbAKFACqVJS7XARHtp6NffDFg0YCpU55lq
+         4wcai/zJz7uDuwphLbWJsTTCrpzvcI0YT3DMLX/ytyeSyD8uP3Mc6Ht6e87CyeicA+WW
+         38y5eBP5SyykRsXf5wWNsAhO2g+AARGdd1F6mAKGGjrL8J/0wTg+PUswJxwYhKEiXzUu
+         BjZCZZo4YZWmZOzyTPyAf9pdMekbngFmnKJluMtQoCjfyfrH+yyAGbsTGIPCwa7DdrQc
+         OMWCn0Zt7oNWM3fTh/rjlDsqJ6SS2ttEE6QzPqcqfi0DeTHzDDVcq8ru/2mnnARrSZPM
+         EdIA==
+X-Gm-Message-State: AOAM533sIwVAi0p3sPLaCRdx3O7a7MhFIn0vuPXOgykWT1Iox/y+GU/h
+        PqV2plsiy/17dNrlCu0aqvPSag==
+X-Google-Smtp-Source: ABdhPJyjT0eHd4DtTyp0akzx5TjoI2cPq4orG1mC4OS1LTjXrelYXyIhn6aUWELC3RkHTK1QvI9Tpg==
+X-Received: by 2002:a1c:9e06:: with SMTP id h6mr5160615wme.45.1594146204616;
+        Tue, 07 Jul 2020 11:23:24 -0700 (PDT)
 Received: from chromium.org (205.215.190.35.bc.googleusercontent.com. [35.190.215.205])
-        by smtp.gmail.com with ESMTPSA id q3sm1942110wmq.22.2020.07.07.11.13.12
+        by smtp.gmail.com with ESMTPSA id p17sm1849785wma.47.2020.07.07.11.23.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jul 2020 11:13:12 -0700 (PDT)
-Date:   Tue, 7 Jul 2020 18:13:10 +0000
+        Tue, 07 Jul 2020 11:23:24 -0700 (PDT)
+Date:   Tue, 7 Jul 2020 18:23:22 +0000
 From:   Tomasz Figa <tfiga@chromium.org>
 To:     Jonathan Bakker <xc-racer2@live.ca>
 Cc:     kyungmin.park@samsung.com, s.nawrocki@samsung.com,
         mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org,
         linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/11] media: exynos4-is: Improve support for sensors
- with multiple pads
-Message-ID: <20200707181310.GE2621465@chromium.org>
+Subject: Re: [PATCH 06/11] media: exynos4-is: Properly set JPEG options when
+ not using CSIS
+Message-ID: <20200707182322.GF2621465@chromium.org>
 References: <20200426022650.10355-1-xc-racer2@live.ca>
- <BN6PR04MB06604D29C9F66EB53FB17581A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <BN6PR04MB06606F63C7ACE765B57331A1A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BN6PR04MB06604D29C9F66EB53FB17581A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+In-Reply-To: <BN6PR04MB06606F63C7ACE765B57331A1A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -79,39 +79,46 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hi Jonathan,
 
-On Sat, Apr 25, 2020 at 07:26:44PM -0700, Jonathan Bakker wrote:
-> Commit 1c9f5bd7cb8a ("[media] s5p-fimc: Add support for sensors with
-> multiple pads") caught the case where a sensor with multiple pads was
-> connected via CSIS, but missed the case where the sensor was directly
-> connected to the FIMC.
-> 
-> This still assumes that the last pad of a sensor is the source.
+On Sat, Apr 25, 2020 at 07:26:45PM -0700, Jonathan Bakker wrote:
+> Commit ee7160e57c98 ("[media] s5p-fimc: Add support for JPEG capture")
+> added support for JPEG capture, but missed setting a register when the
+> CSIS device wasn't in use.
+
+nit: Since this isn't really about using the CSIS device or not, but
+rather about the interface that the sensor is connected with, could we
+instead say "when a parallel interface is used"?
+
 > 
 > Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 > ---
->  drivers/media/platform/exynos4-is/media-dev.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/media/platform/exynos4-is/fimc-reg.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
+> diff --git a/drivers/media/platform/exynos4-is/fimc-reg.c b/drivers/media/platform/exynos4-is/fimc-reg.c
+> index 5ce2bdebd424..269a98fca1e8 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-reg.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-reg.c
+> @@ -606,6 +606,11 @@ int fimc_hw_set_camera_source(struct fimc_dev *fimc,
+>  	switch (source->fimc_bus_type) {
+>  	case FIMC_BUS_TYPE_ITU_601:
+>  	case FIMC_BUS_TYPE_ITU_656:
+> +		if (fimc_fmt_is_user_defined(f->fmt->color)) {
+> +			cfg |= FIMC_REG_CISRCFMT_ITU601_8BIT;
+> +			break;
+> +		}
+> +
+>  		for (i = 0; i < ARRAY_SIZE(pix_desc); i++) {
+>  			if (vc->ci_fmt.code == pix_desc[i].pixelcode) {
+>  				cfg = pix_desc[i].cisrcfmt;
+> @@ -707,6 +712,8 @@ int fimc_hw_set_camera_type(struct fimc_dev *fimc,
+>  	case FIMC_BUS_TYPE_ITU_601...FIMC_BUS_TYPE_ITU_656:
+>  		if (source->mux_id == 0) /* ITU-A, ITU-B: 0, 1 */
+>  			cfg |= FIMC_REG_CIGCTRL_SELCAM_ITU_A;
+> +		if (vid_cap->ci_fmt.code == MEDIA_BUS_FMT_JPEG_1X8)
+> +			cfg |= FIMC_REG_CIGCTRL_CAM_JPEG;
 
-Thank you for the patch. Please see my comments inline.
-
-> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-> index 5c32abc7251b..b38445219c72 100644
-> --- a/drivers/media/platform/exynos4-is/media-dev.c
-> +++ b/drivers/media/platform/exynos4-is/media-dev.c
-> @@ -991,7 +991,8 @@ static int fimc_md_create_links(struct fimc_md *fmd)
->  
->  		case FIMC_BUS_TYPE_ITU_601...FIMC_BUS_TYPE_ITU_656:
->  			source = &sensor->entity;
-> -			pad = 0;
-> +			/* Assume the last pad is the source */
-> +			pad = sensor->entity.num_pads - 1;
-
-Is 0 really any worse than num_pads - 1? This sounds like quite an ugly
-hack.
-
-Could you iterate over the pads of the sensor entity and explicitly find
-a source pad instead?
+Should we also handle MEDIA_BUS_FMT_S5C_UYVY_JPEG_1X8 as in the CSI
+case? The S5C73M3 sensor supports the parallel interface as well.
 
 Best regards,
 Tomasz
