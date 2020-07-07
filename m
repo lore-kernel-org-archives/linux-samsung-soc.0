@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C49D9C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 11:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF83C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 11:09:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79CAB206B6
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 11:08:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86B04206B6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 11:09:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CeDWNT7k"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LRyVEGLM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbgGGLIj (ORCPT
+        id S1725944AbgGGLJO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Jul 2020 07:08:39 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:56878 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbgGGLIi (ORCPT
+        Tue, 7 Jul 2020 07:09:14 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:38317 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727058AbgGGLJN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Jul 2020 07:08:38 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200707110836euoutp01b00b65ec52b8efa36712d6411e4caabf~fc8zeb30m2627226272euoutp01a
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jul 2020 11:08:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200707110836euoutp01b00b65ec52b8efa36712d6411e4caabf~fc8zeb30m2627226272euoutp01a
+        Tue, 7 Jul 2020 07:09:13 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200707110912euoutp02313854cd392cff4fddf44e5b80fabf1c~fc9UmU2Me0951909519euoutp02z
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jul 2020 11:09:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200707110912euoutp02313854cd392cff4fddf44e5b80fabf1c~fc9UmU2Me0951909519euoutp02z
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1594120116;
-        bh=uDhfmrZERp1dMw1EVKONzpw5EU0R7ywoj2ndjBNsH9M=;
+        s=mail20170921; t=1594120152;
+        bh=ZMkEvaJNAdjnIUQSykqZ13TdaXgLLlmLzYW2nWTOa2Y=;
         h=From:To:Cc:Subject:Date:References:From;
-        b=CeDWNT7ktEvTk9kheEEt6sm9KrcIhVVPOR1aqC5V2X/NQGDnEEb+jKSCjQ9d/P4lN
-         B07PwCcrGwhpUOWtWPIraxP3noY+wWvkmtGzf5/X5/v33lt6TSLA3VFyIQk9KIqPZX
-         hoR5hpOT0zoWlaRK4qYproY2jz+c27llfYYoM1Zk=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        b=LRyVEGLMxzpPJBo22A55x2xwXZDUbeak50C/zSADqIjL6W+U6Tn7HGrx3czHIuA8d
+         LKZRUpNpNm0gncZKAR3EdIrF6Xa5/a/w/yCX3MWjCMwsRQkmyTGGMXyQgOcAY5cWv3
+         pwrTWceySwAt7ZdPsYEkjGNoqxB9oTkCt82o/R+M=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200707110836eucas1p1d4328e5bc914139d2b412971361585ab~fc8zNaZSV0474604746eucas1p1U;
-        Tue,  7 Jul 2020 11:08:36 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 38.D0.06318.4B7540F5; Tue,  7
-        Jul 2020 12:08:36 +0100 (BST)
+        20200707110912eucas1p165fa760920130bbfc979580b4a84fb36~fc9USwYCc0474204742eucas1p1_;
+        Tue,  7 Jul 2020 11:09:12 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id D4.25.05997.8D7540F5; Tue,  7
+        Jul 2020 12:09:12 +0100 (BST)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200707110836eucas1p28420a6243542acab6f65e8bd92e59000~fc8y2Ox690065200652eucas1p2J;
-        Tue,  7 Jul 2020 11:08:36 +0000 (GMT)
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200707110911eucas1p1e21621f402b2aac89457647c3b2ad46f~fc9Tsg9VY0474204742eucas1p19;
+        Tue,  7 Jul 2020 11:09:11 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200707110836eusmtrp2e7647631f62875eadc0074314cd6dd61~fc8y1lekD3052730527eusmtrp26;
-        Tue,  7 Jul 2020 11:08:36 +0000 (GMT)
-X-AuditID: cbfec7f5-38bff700000018ae-d7-5f0457b4b2da
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6B.66.06314.4B7540F5; Tue,  7
-        Jul 2020 12:08:36 +0100 (BST)
+        20200707110911eusmtrp25305f326f8b94d9f8a36ca04de0b60d1~fc9Tr79gJ3052730527eusmtrp2a;
+        Tue,  7 Jul 2020 11:09:11 +0000 (GMT)
+X-AuditID: cbfec7f4-677ff7000000176d-0d-5f0457d81115
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id DA.76.06314.7D7540F5; Tue,  7
+        Jul 2020 12:09:11 +0100 (BST)
 Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200707110835eusmtip1de6f6c3d2057ec6d225e854a485483ba~fc8yZreZ21750217502eusmtip1x;
-        Tue,  7 Jul 2020 11:08:35 +0000 (GMT)
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200707110910eusmtip29ae819d5e368c4389517d19fe2b3d76c~fc9TMgJ4J2655526555eusmtip2g;
+        Tue,  7 Jul 2020 11:09:10 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -64,120 +64,69 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
         Inki Dae <inki.dae@samsung.com>,
         Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2] drm/exynos: Fix dma_parms allocation
-Date:   Tue,  7 Jul 2020 13:08:27 +0200
-Message-Id: <20200707110827.3760-1-m.szyprowski@samsung.com>
+Subject: [PATCH] drm/exynos: gem: Fix sparse warning
+Date:   Tue,  7 Jul 2020 13:08:59 +0200
+Message-Id: <20200707110859.3822-1-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsWy7djPc7pbwlniDR6/VbC4te4cq8XGGetZ
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsWy7djP87o3wlniDZ4sZrG4te4cq8XGGetZ
         La58fc9mMen+BBaLGef3MVmsPXKX3WLG5JdsDuwe97uPM3n0bVnF6PF5k1wAcxSXTUpqTmZZ
-        apG+XQJXxqWpygXfBSuWz/nN3sDYw9/FyMkhIWAi8X37asYuRi4OIYEVjBI/Zj5lhXC+MEr8
-        PzmfCcL5zCjRePA5M0zLxRd3oBLLgVqmbGCDa1l1eycjSBWbgKFE19suNhBbRMBNounwTLC5
-        zALXGSW+/VjEDpIQFrCQ+P+3E2wsi4CqRNPd6WANvAI2Elt2zYZaJy+xesMBZpBmCYETbBLL
-        u6+zQCRcJCZ9WwBVJCzx6vgWdghbRuL/TojDJQSaGSUenlvLDuH0MEpcbprBCFFlLXHn3C+g
-        dRxAN2lKrN+lD2JKCDhKHN3GBGHySdx4KwhSzAxkTto2nRkizCvR0SYEMUNNYtbxdXBbD164
-        BFXiIbHhUDBIWEggVqJ3VTPzBEa5WQibFjAyrmIUTy0tzk1PLTbOSy3XK07MLS7NS9dLzs/d
-        xAiM+9P/jn/dwbjvT9IhRgEORiUe3oQjzPFCrIllxZW5hxglOJiVRHidzp6OE+JNSaysSi3K
-        jy8qzUktPsQozcGiJM5rvOhlrJBAemJJanZqakFqEUyWiYNTqoGx2FXpoSGbo/9hW5bj3aks
-        10xvz9stccpu2+owyweHhSfNj7y18P+V5Sc6gg9VZbqtvH6Ce2Fqd2HTi9cRFS+FJe5P5Ho/
-        wehyms5f/qLJgSu9DT6pSPeLWglXrp67JGHj+j++pgobcgSWvjtQu/6dROvuLb4zvSc/+Fmc
-        1dwkOn2XPs+lHS9uK7EUZyQaajEXFScCAEtqGdH3AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsVy+t/xu7pbwlniDWatYrO4te4cq8XGGetZ
+        apG+XQJXRsuy86wFN9krPl6ZwNTAeImti5GTQ0LAROLAryssXYxcHEICKxglTjx5B+V8YZRY
+        uX0FE4TzmVFi+adPLDAtHU3noaqWM0psOn+cEa7l3MJl7CBVbAKGEl1vu8CWiAi4STQdnskK
+        UsQscJ1R4tuPRWBFwkCj/uzYCFbEIqAqMePKEkYQm1fARmLKvgVMEOvkJVZvOMAM0iwhcIRN
+        4tCEu8wQCReJLd9b2SFsYYlXx7dA2TIS/3fOZ4JoaGaUeHhuLTuE08MocblpBiNElbXEnXO/
+        gFZzAN2kKbF+lz5E2FFi17ZdjCBhCQE+iRtvBUHCzEDmpG3TmSHCvBIdbUIQ1WoSs46vg1t7
+        8MIlqNM8JFZtPApWLiQQK/H7cd0ERrlZCKsWMDKuYhRPLS3OTU8tNspLLdcrTswtLs1L10vO
+        z93ECIz90/+Of9nBuOtP0iFGAQ5GJR7eDjbmeCHWxLLiytxDjBIczEoivE5nT8cJ8aYkVlal
+        FuXHF5XmpBYfYpTmYFES5zVe9DJWSCA9sSQ1OzW1ILUIJsvEwSnVwNguufNki4Tyj/0Xr8u9
+        WFh3PvZ3tN7cL5xpqdsjgtMY1RbadejPTC45FvNtM4v3lJJc//mnlX6EmSo/2dAiG2FQ7/B2
+        ednqObtb2+a+2SPjKMWWYPrcpPd9QMKc/sMGGyYrnmCZf0Kl+m3mXpNt0elpHpkLA3ROiiy8
+        e/KWY6zFkyn3o6/1RSuxFGckGmoxFxUnAgBEpi+i+QIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDLMWRmVeSWpSXmKPExsVy+t/xe7rXw1niDf5vELW4te4cq8XGGetZ
         La58fc9mMen+BBaLGef3MVmsPXKX3WLG5JdsDuwe97uPM3n0bVnF6PF5k1wAc5SeTVF+aUmq
-        QkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexqWpygXfBSuWz/nN
-        3sDYw9/FyMkhIWAicfHFHaYuRi4OIYGljBLv795kg0jISJyc1sAKYQtL/LnWxQZR9IlRYu/5
-        T4wgCTYBQ4mut11gDSICHhLN346zgxQxC9xmlFj6YR4LSEJYwELi/99OZhCbRUBVounudLAG
-        XgEbiS27ZjNDbJCXWL3hAPMERp4FjAyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAgNu27Gf
-        m3cwXtoYfIhRgINRiYc34QhzvBBrYllxZe4hRgkOZiURXqezp+OEeFMSK6tSi/Lji0pzUosP
-        MZoCLZ/ILCWanA+MhrySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxS
-        DYzWazz3JiiZnTz5mue7hZyc44O398Qf3WooW7TwSsJHvdrC6o1T/ti3K53V4VhYc7IqUPYH
-        V3syg8jkW1t3/ZweumX3n7s11lPPeZY4yffu7rl/4MqfGw9iQttNYwK+zGRcIHjjnk9UxlnL
-        jU6avjsz8kx0C1I3rH61fd6vPU0nPnJUh0z5/8dIiaU4I9FQi7moOBEAruWwtE4CAAA=
-X-CMS-MailID: 20200707110836eucas1p28420a6243542acab6f65e8bd92e59000
+        QkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJeRsuy86wFN9krPl6Z
+        wNTAeImti5GTQ0LARKKj6TxLFyMXh5DAUkaJU7deMUEkZCROTmtghbCFJf5c62KDKPrEKPFm
+        /xSwIjYBQ4mut11gk0QEPCSavx1nByliFrjNKLH0wzwWkIQw0Io/OzaCFbEIqErMuLKEEcTm
+        FbCRmLJvAdQ2eYnVGw4wT2DkWcDIsIpRJLW0ODc9t9hQrzgxt7g0L10vOT93EyMw5LYd+7l5
+        B+OljcGHGAU4GJV4eBOOMMcLsSaWFVfmHmKU4GBWEuF1Ons6Tog3JbGyKrUoP76oNCe1+BCj
+        KdDyicxSosn5wHjIK4k3NDU0t7A0NDc2NzazUBLn7RA4GCMkkJ5YkpqdmlqQWgTTx8TBKdXA
+        KDTpkn125+aoZfyec/3W7zb4+ryLtd3jIP+ycrGIcLZTTL7/dRYsEpv+w9lmS/PjzW/uRbZ7
+        1GpfziqzPvvqoertuYqmBVxvO60XCLQtXxMZt7mvXVhincpiF+emMuey7cd5BRpaI7+zf449
+        mpfL25osfm/Vx9Z+8St2YYxf52znmH3Z8eNxJZbijERDLeai4kQAdQV8s08CAAA=
+X-CMS-MailID: 20200707110911eucas1p1e21621f402b2aac89457647c3b2ad46f
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200707110836eucas1p28420a6243542acab6f65e8bd92e59000
+X-RootMTR: 20200707110911eucas1p1e21621f402b2aac89457647c3b2ad46f
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200707110836eucas1p28420a6243542acab6f65e8bd92e59000
-References: <CGME20200707110836eucas1p28420a6243542acab6f65e8bd92e59000@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20200707110911eucas1p1e21621f402b2aac89457647c3b2ad46f
+References: <CGME20200707110911eucas1p1e21621f402b2aac89457647c3b2ad46f@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Since commit 9495b7e92f71 ("driver core: platform: Initialize dma_parms
-for platform devices") driver core handles allocation of the dma_parms
-structure for platform device, so there is no need to manually allocate
-nor free it.
+Add a proper cast on the exynos_gem->kvaddr assignment to avoid a sparse warning.
 
-Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Fixes: 9940d9d93406 ("drm/exynos: gem: Get rid of the internal 'pages' array")
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
-v2:
-- rebased onto current exynos-drm-next
----
- drivers/gpu/drm/exynos/exynos_drm_dma.c | 27 +------------------------
- 1 file changed, 1 insertion(+), 26 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_gem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-index 58b89ec11b0e..5887f7f52f96 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-@@ -31,23 +31,6 @@
- #define EXYNOS_DEV_ADDR_START	0x20000000
- #define EXYNOS_DEV_ADDR_SIZE	0x40000000
- 
--static inline int configure_dma_max_seg_size(struct device *dev)
--{
--	if (!dev->dma_parms)
--		dev->dma_parms = kzalloc(sizeof(*dev->dma_parms), GFP_KERNEL);
--	if (!dev->dma_parms)
--		return -ENOMEM;
--
--	dma_set_max_seg_size(dev, DMA_BIT_MASK(32));
--	return 0;
--}
--
--static inline void clear_dma_max_seg_size(struct device *dev)
--{
--	kfree(dev->dma_parms);
--	dev->dma_parms = NULL;
--}
--
- /*
-  * drm_iommu_attach_device- attach device to iommu mapping
-  *
-@@ -69,10 +52,7 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
- 		return -EINVAL;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index efa476858db5..65d11784f29f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -59,7 +59,7 @@ static int exynos_drm_alloc_buf(struct exynos_drm_gem *exynos_gem, bool kvmap)
  	}
  
--	ret = configure_dma_max_seg_size(subdrv_dev);
--	if (ret)
--		return ret;
--
-+	dma_set_max_seg_size(subdrv_dev, DMA_BIT_MASK(32));
- 	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
- 		/*
- 		 * Keep the original DMA mapping of the sub-device and
-@@ -89,9 +69,6 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
- 		ret = iommu_attach_device(priv->mapping, subdrv_dev);
- 	}
+ 	if (kvmap)
+-		exynos_gem->kvaddr = exynos_gem->cookie;
++		exynos_gem->kvaddr = (void __iomem *)exynos_gem->cookie;
  
--	if (ret)
--		clear_dma_max_seg_size(subdrv_dev);
--
- 	return ret;
- }
- 
-@@ -114,8 +91,6 @@ static void drm_iommu_detach_device(struct drm_device *drm_dev,
- 		arm_iommu_attach_device(subdrv_dev, *dma_priv);
- 	} else if (IS_ENABLED(CONFIG_IOMMU_DMA))
- 		iommu_detach_device(priv->mapping, subdrv_dev);
--
--	clear_dma_max_seg_size(subdrv_dev);
- }
- 
- int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
+ 	DRM_DEV_DEBUG_KMS(to_dma_dev(dev), "dma_addr(0x%lx), size(0x%lx)\n",
+ 			(unsigned long)exynos_gem->dma_addr, exynos_gem->size);
 -- 
 2.17.1
 
