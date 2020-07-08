@@ -2,127 +2,203 @@ Return-Path: <SRS0=l8hj=AT=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D62C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 14:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3804AC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5735620786
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 14:49:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F937207D0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:11:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="odQ4u8nw"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Sf7kFnkv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729731AbgGHOts (ORCPT
+        id S1729974AbgGHPLu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Jul 2020 10:49:48 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:48655 "EHLO
+        Wed, 8 Jul 2020 11:11:50 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:55484 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729689AbgGHOtr (ORCPT
+        with ESMTP id S1729971AbgGHPLu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Jul 2020 10:49:47 -0400
+        Wed, 8 Jul 2020 11:11:50 -0400
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200708144946euoutp02422abdaeb1b49d95698a478a1a7f4685~fznMDcE7I2133221332euoutp029
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jul 2020 14:49:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200708144946euoutp02422abdaeb1b49d95698a478a1a7f4685~fznMDcE7I2133221332euoutp029
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200708151148euoutp021aeabfc99ea6cfceb457316f391e6f1e~fz6bj_Z_u0230802308euoutp02d
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jul 2020 15:11:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200708151148euoutp021aeabfc99ea6cfceb457316f391e6f1e~fz6bj_Z_u0230802308euoutp02d
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1594219786;
-        bh=FvnKpLpfAzSLRUm2zDE6RqfbQeB+7yAT2FnD5DmeapI=;
-        h=Subject:To:From:Date:In-Reply-To:References:From;
-        b=odQ4u8nwo9Jd82INCHGBA3ReWUSALaJ1h1Omrp926IBAnvTSJDu0M9mVVYnE4FDa9
-         6gVsO/a5V7poAspknYNACao/1V02s687eNilcIAUmuJ+n2A3QA8+pKVx0H9P7jhG6P
-         tRc9a0Fzqiy7qIgsyIGHwoqDWvA93gKDP/lTh3cc=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        s=mail20170921; t=1594221108;
+        bh=1UyJZTxgyEjK49sDvXl9RzFJMxzSpHL6HWnLqW7SBNQ=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Sf7kFnkv50acmk8h9yb6LkZeoFUMr2hqHyMKAPHud+ChBsNdmAVB3PDk4D3So5kBb
+         sqaG68Tt+1CAArBgd1CHVEJCWc+K5d7ufvUQHdBCQbgyFFlzJJpRhha6pBVGddaEEr
+         AGe4IKXgl+Et/44WQ2ow3lViQLeYg+NfppGPJWcA=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200708144946eucas1p2cdb48155d4c4b27d6aeeb9a5f80e43a0~fznLyXjxp0172401724eucas1p2P;
-        Wed,  8 Jul 2020 14:49:46 +0000 (GMT)
+        20200708151148eucas1p2718f4e08ec88595dbf8dd6907dab2f5a~fz6bPGE4v3159931599eucas1p2a;
+        Wed,  8 Jul 2020 15:11:48 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 3A.79.05997.A0DD50F5; Wed,  8
-        Jul 2020 15:49:46 +0100 (BST)
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id A2.D4.06456.432E50F5; Wed,  8
+        Jul 2020 16:11:48 +0100 (BST)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200708144945eucas1p262cbd0aacfb58e0ce579aaa6cd5d3119~fznLhnd9b0283102831eucas1p26;
-        Wed,  8 Jul 2020 14:49:45 +0000 (GMT)
+        20200708151147eucas1p2dbbcc778cc0b45bee92e8237461343cd~fz6avQcNu1203112031eucas1p2L;
+        Wed,  8 Jul 2020 15:11:47 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200708144945eusmtrp223856cbb5fd52bdcab3e3d7f6b6203c8~fznLg8IxX2353923539eusmtrp2F;
-        Wed,  8 Jul 2020 14:49:45 +0000 (GMT)
-X-AuditID: cbfec7f4-677ff7000000176d-a0-5f05dd0a7b6c
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id DF.01.06314.90DD50F5; Wed,  8
-        Jul 2020 15:49:45 +0100 (BST)
+        20200708151147eusmtrp20dad62aac2f9a9f4842bbda3814ff588~fz6am1xWB0501405014eusmtrp25;
+        Wed,  8 Jul 2020 15:11:47 +0000 (GMT)
+X-AuditID: cbfec7f2-809ff70000001938-92-5f05e234a1f6
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 18.04.06314.332E50F5; Wed,  8
+        Jul 2020 16:11:47 +0100 (BST)
 Received: from [106.210.123.115] (unknown [106.210.123.115]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200708144945eusmtip2712a08ec91f400a7a3cae14cf21b82b8~fznK4YwMv0154601546eusmtip2k;
-        Wed,  8 Jul 2020 14:49:45 +0000 (GMT)
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200708151146eusmtip1bd0892aef0aef3a0286b66bd9075bfdb~fz6Zs9ti00344003440eusmtip1f;
+        Wed,  8 Jul 2020 15:11:46 +0000 (GMT)
 Subject: Re: [PATCH 03/11] media: exynos4-is: Fix nullptr when no CSIS
  device present
-To:     Jonathan Bakker <xc-racer2@live.ca>, kyungmin.park@samsung.com,
-        mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+To:     Tomasz Figa <tfiga@chromium.org>,
+        Jonathan Bakker <xc-racer2@live.ca>
+Cc:     kyungmin.park@samsung.com, mchehab@kernel.org, kgene@kernel.org,
+        krzk@kernel.org, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <c4fd36f4-a241-1279-c62b-823a67c05d88@samsung.com>
-Date:   Wed, 8 Jul 2020 16:49:44 +0200
+Message-ID: <854c0c60-b239-6626-2423-47058cb58feb@samsung.com>
+Date:   Wed, 8 Jul 2020 17:11:46 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
         Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <BN6PR04MB0660EE7304C2BB2E603A8824A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+In-Reply-To: <20200707175517.GC2621465@chromium.org>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju287ZjqPJcSq+qBkNkRKvFXRCEYuIQX/CKEFSO+pBLTdl06n1
-        Q0t0Ts3UInUZ3s2moEybNVFqkKO8lmVpitFWqGmWE7xkmfMo+e95n8v3vg98BFekx12JRFkq
-        I5fRSWKeANP3rQ35Cqbw6ADVNJ+6Y/7OpYaH2/nU4K15PqUzj+HUqKGKRxW1P8GpiuFeDtWk
-        2+BQb0qnsFA7iU6r5kk6GrIkdeOrmKS4U4skVp3HeTxCEBzHJCUqGbl/yBVBQlX9HyylEcvo
-        zmnCslEPtwDZEUAeh5/vTPwCJCBEZDOCvNWbGDssI1DX5iF2sCK4a7Wi3cjj2pYd1yMEFXrV
-        Tv4XgrF7D3Gby5EMhw96NccmOJE5HPjWXMmzCTwyEG6/LN5+SkiGgGXkB9+GMdIT1mZbMRt2
-        JqOgbbaLw3oc4FWlZZu3IyPhs350m+eSLjBhqd7BB6FroYprWwakng/r71tx9tYzUL46wGOx
-        I8yZOvksdofNZ9UcNpCDoKj7E58dShBMm2p2mgbB5ND6VprYWnEE2gz+LH0KltQTyEYDaQ8f
-        FxzYI+yhTF/OZWkh5OeJWLcn/NaWc1jsCoWWTYzFEsg3fMFL0CHNnpqaPdU0e6pp/t9QgzAt
-        cmHSFNJ4RnFUxqT7KWipIk0W7xebLNWhrd/U/9e0/BQZNmKMiCSQeL9wRodHi3BaqciUGhEQ
-        XLGT8PRgf5RIGEdnXmfkydHytCRGYURuBCZ2ER6rm40UkfF0KnONYVIY+a7KIexcs5FXvc8F
-        rw5VuE9LIe2u8Uh/MeAbsS8IV84UDK0EBp+9KImzxsa0mxfDyjod+zLuH3BTqlIu5TaqUbZp
-        5cHzpeTensHxlS7n7MWBsFVx7tzkSP+5jli/3IlW5eVikXm69OtoXzm5fOKtNiuw2niD9o46
-        fPWksCFg8/VQzPp8cmikGFMk0IHeXLmC/gfunvO7SQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsVy+t/xe7qcd1njDbqPGFv0P37NbHH+/AZ2
-        i7NNb9gtNj2+xmpxedccNoueDVtZLWac38dksWzTHyaLixPvsjhwemxa1cnmsXlJvceimz9Y
-        PPq2rGL0+LxJLoA1Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUn
-        syy1SN8uQS9jzuK/LAVLWSp2Ny9jaWDcy9zFyMkhIWAisXLhahYQW0hgKaPEoh7lLkYOoLiU
-        xPwWJYgSYYk/17rYuhi5gEreM0qc+P+CESQhLBAusebuZ1aQhIhAM5PE/+XbWCCq7jJKvFo+
-        H2wqm4ChRO/RPrAOXgE7iScX3rGD2CwCKhI/X64BqxEViJNYvmU+O0SNoMTJmU/A4pwCsRIP
-        tl1mArGZBdQl/sy7xAxhi0vcejIfKi4vsf3tHOYJjIKzkLTPQtIyC0nLLCQtCxhZVjGKpJYW
-        56bnFhvqFSfmFpfmpesl5+duYgTG27ZjPzfvYLy0MfgQowAHoxIP74tNrPFCrIllxZW5hxgl
-        OJiVRHidzp6OE+JNSaysSi3Kjy8qzUktPsRoCvTcRGYp0eR8YCrIK4k3NDU0t7A0NDc2Nzaz
-        UBLn7RA4GCMkkJ5YkpqdmlqQWgTTx8TBKdXAaDT7mxPH/DvXP56Z3mD1IFNKJX43k6AZl/u+
-        L+IFektNI88UVFvmr9F0+zr3mfX7jIcVui0HWQo1LIVWGXUcr014H7h8I9/d771mJQkW5sUf
-        7wQ+c/5yXnWG7NmzbDmbFsh6ay9fY9gYq+/woraZ6/vuKZseXpLYx/BhcuM988NXc7k3sF1e
-        rMRSnJFoqMVcVJwIAIWvT8vNAgAA
-X-CMS-MailID: 20200708144945eucas1p262cbd0aacfb58e0ce579aaa6cd5d3119
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHKsWRmVeSWpSXmKPExsWy7djPc7omj1jjDVr+8ln0P37NbHH+/AZ2
+        i7NNb9gtNj2+xmpxedccNoueDVtZLWac38dksWzTHyaLz63/2CwuTrzL4sDlMbvhIovHplWd
+        bB6bl9R7LLr5g8Wjb8sqRo/Pm+QC2KK4bFJSczLLUov07RK4Mo6svMFSsEqmYvq+o+wNjA/F
+        uhg5OSQETCROHlnB0sXIxSEksIJR4vOVNlaQhJDAF0aJrw9ZIRKfGSXu9X1kgek40X6cESKx
+        nFFi/9T/zBDOR0aJ7lPXmUCqhAXCJa5v6wSzRQQ8Ja49aAMrYha4xyix9+saZpAEm4ChRO/R
+        PkYQm1fATqJzxTSwFSwCKhIfl58DqxEViJNY/3I7E0SNoMTJmU/AajiBzri//wWYzSwgLnHr
+        yXwmCFteYvvbOWDLJAQusUv0PdvKCnG3i0T31WWMELawxKvjW9ghbBmJ/ztBmkEamhklenbf
+        ZodwJjBK3D++AKrDWuLOuV9sXYwcQCs0Jdbv0gcxJQQcJbo3V0GYfBI33gpC3MAnMWnbdGaI
+        MK9ER5sQxAwVid+rpjNB2FIS3U/+s0xgVJqF5LNZSL6ZheSbWQhrFzCyrGIUTy0tzk1PLTbM
+        Sy3XK07MLS7NS9dLzs/dxAhMVaf/Hf+0g/HrpaRDjAIcjEo8vBM2sMYLsSaWFVfmHmKU4GBW
+        EuF1Ons6Tog3JbGyKrUoP76oNCe1+BCjNAeLkjiv8aKXsUIC6YklqdmpqQWpRTBZJg5OqQZG
+        l0De9b/mHbzrUqn6tfZKtvmVhOTVJf9Xs5U9Ylq1TtrUbfaSkEvpYuerbrSf5b7+/L/ywZrP
+        AVHcFZtKpx4LV/knJHY+PkbAp6va5+rTkB/O+1eduzdzXfnJNMe0fLFJM5Z8Xp84O0Zb5c9X
+        U+69NZYbrWSTgz8zc1zf9lwu7ORDO5kTbeZtSizFGYmGWsxFxYkA8J2/tlEDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIIsWRmVeSWpSXmKPExsVy+t/xu7rGj1jjDX706ln0P37NbHH+/AZ2
+        i7NNb9gtNj2+xmpxedccNoueDVtZLWac38dksWzTHyaLz63/2CwuTrzL4sDlMbvhIovHplWd
+        bB6bl9R7LLr5g8Wjb8sqRo/Pm+QC2KL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1j
+        rYxMlfTtbFJSczLLUov07RL0Mo6svMFSsEqmYvq+o+wNjA/Fuhg5OSQETCROtB9n7GLk4hAS
+        WMoo8X7dESCHAyghJTG/RQmiRljiz7UuNoia94wSzzcfYwFJCAuES6y5+5kVxBYR8JS49qCN
+        GaSIWeAeo8TTGQ1QHe1MEvuar7KDVLEJGEr0Hu1jBLF5BewkOldMA5vEIqAi8XH5OWYQW1Qg
+        TmL5lvnsEDWCEidnPgGr4QQ69f7+F2A2s4C6xJ95l5ghbHGJW0/mM0HY8hLb385hnsAoNAtJ
+        +ywkLbOQtMxC0rKAkWUVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYHRuO/Zz8w7GSxuDDzEK
+        cDAq8fC+2MQaL8SaWFZcmXuIUYKDWUmE1+ns6Tgh3pTEyqrUovz4otKc1OJDjKZAz01klhJN
+        zgcmjrySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYyqqx+xfDy6
+        6NvlKZHzHi078SZI9clajzczA0xi3vLYnYjd/H3pTL71u5JslJxrm9Yd3MRv99Znl0vPl1cq
+        //L/7ftRpRe4SHjmCb3g6edvbHCb9+VC86ECz8oLe6+GJ9/nfqbM1bfo2fmkHxonp0pNPSCV
+        fWlh65vVr5zOrPYJVZz/dSLzrayaAiWW4oxEQy3mouJEAA7zF97kAgAA
+X-CMS-MailID: 20200708151147eucas1p2dbbcc778cc0b45bee92e8237461343cd
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200426022730eucas1p12b77bd3e1bb3ee123dcec1eb8b00bc6a
+X-RootMTR: 20200707175524eucas1p29d92419590ac09cc48de3336b834e69b
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200426022730eucas1p12b77bd3e1bb3ee123dcec1eb8b00bc6a
+X-CMS-RootMailID: 20200707175524eucas1p29d92419590ac09cc48de3336b834e69b
 References: <20200426022650.10355-1-xc-racer2@live.ca>
-        <CGME20200426022730eucas1p12b77bd3e1bb3ee123dcec1eb8b00bc6a@eucas1p1.samsung.com>
         <BN6PR04MB0660EE7304C2BB2E603A8824A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+        <CGME20200707175524eucas1p29d92419590ac09cc48de3336b834e69b@eucas1p2.samsung.com>
+        <20200707175517.GC2621465@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 26.04.2020 04:26, Jonathan Bakker wrote:
-> Not all devices use the CSIS device, some may use the FIMC directly in
-> which case the CSIS device isn't registered.  This leads to a nullptr
-> exception when starting the stream as the CSIS device is always
-> referenced.  Instead, if getting the CSIS device fails, try getting the
-> FIMC directly to check if we are using the subdev API
+Hi,
+
+On 07.07.2020 19:55, Tomasz Figa wrote:
+> On Sat, Apr 25, 2020 at 07:26:42PM -0700, Jonathan Bakker wrote:
+>> Not all devices use the CSIS device, some may use the FIMC directly in
+>> which case the CSIS device isn't registered.  This leads to a nullptr
+>> exception when starting the stream as the CSIS device is always
+>> referenced.  Instead, if getting the CSIS device fails, try getting the
+>> FIMC directly to check if we are using the subdev API
+>>
+>> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+>> ---
+>>  drivers/media/platform/exynos4-is/media-dev.c | 17 ++++++++++++++++-
+>>  1 file changed, 16 insertions(+), 1 deletion(-)
+
+> Thank you for the patch. Please see my comments inline.
+
+>> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+>> index 9aaf3b8060d5..5c32abc7251b 100644
+>> --- a/drivers/media/platform/exynos4-is/media-dev.c
+>> +++ b/drivers/media/platform/exynos4-is/media-dev.c
+>> @@ -289,11 +289,26 @@ static int __fimc_pipeline_s_stream(struct exynos_media_pipeline *ep, bool on)
+>>  		{ IDX_CSIS, IDX_FLITE, IDX_FIMC, IDX_SENSOR, IDX_IS_ISP },
+>>  	};
+>>  	struct fimc_pipeline *p = to_fimc_pipeline(ep);
+>> -	struct fimc_md *fmd = entity_to_fimc_mdev(&p->subdevs[IDX_CSIS]->entity);
+>>  	enum fimc_subdev_index sd_id;
+>>  	int i, ret = 0;
+>>  
+>>  	if (p->subdevs[IDX_SENSOR] == NULL) {
+>> +		struct fimc_md *fmd;
+>> +		struct v4l2_subdev *sd = p->subdevs[IDX_CSIS];
+>> +
+>> +		if (!sd)
+>> +			sd = p->subdevs[IDX_FIMC];
+>> +
+>> +		if (!sd) {
+>> +			/*
+>> +			 * If neither CSIS nor FIMC was set up,
+>> +			 * it's impossible to have any sensors
+>> +			 */
+>> +			return -ENODEV;
+>> +		}
+>> +
+>> +		fmd = entity_to_fimc_mdev(&sd->entity);
+>> +
 > 
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> Are you sure this is the correct thing to do here? In general, the media
+> controller should be instantiated only if there are sensors in the system.
 
-Thanks, the change looks good to me.
+The code being changed is only about getting a pointer to the driver private 
+data structure 'struct fimc_md', for that we need to get hold of a media 
+entity that represents a subdev that is actually available in the pipeline.
+In original code it is overlooked that there might camera pipelines without
+the CSIS subdev. 
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> What do you mean by using "the FIMC directly"? Do you mean using it only as
+> an m2m image processor or with a sensor, but without the CSIS, which would
+> be the case for parallel I/F sensors?
+
+I think it is about a use case where the sensor is connected directly to the 
+FIMC capture interface (parallel), without the MIPI-CSI2 receiverin between.
+
+> Could you point me to the place where CSIS is always dereferenced? A quick
+> look through the code only revealed that everywhere it seems to be guarded
+> by a NULL check.
+
+It's in this patch, above, the very first line that the patch removes.
+
+> Another thought from looking at the implementation of
+> __fimc_pipeline_s_stream() is that it probably shouldn't call s_stream on
+> all the subdevices included in seq[], but only on those that are actually
+> included as a part of the pipeline. It would be quite a waste of power to
+> enable unnecessary hardware.
+
+As we talked on IRC, only subdev in current active media pipeline will be
+powered on/off. The p->subdevs[] array is sparsely populated and there is 
+a test for NULL in __subdev_set_power(). Perhaps the test should be moved
+to the caller instead (fimc_pipeline_s_power()), so we don't ignore any
+ENXIO errors from the s_power v4l2_subdev_call. But is a material for 
+a separate patch.
+
+-- 
+Regards,
+Sylwester
