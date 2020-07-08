@@ -1,110 +1,273 @@
-Return-Path: <SRS0=MXJZ=AS=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=l8hj=AT=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4B3C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 18:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 232F0C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 07:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 032082075B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jul 2020 18:50:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594147859;
-	bh=q1dR/jTPZVK8xl37KWCnPKEDb2AOMCbqOvChW4D47CU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xYw+oNdr5LwlaqzOF1p7DSwf8jUEsKenqOxe8qwtIsG0wBZHIMSehvnMc+6Z9Lkht
-	 OeEonRs7JXXmO6QyKt9X08qo/zneF5K49eTEstZt4Z45QkpBjpsGdr9uCxYV3DgMwp
-	 InaxpHDVO0kg0hhYKXftMgkqJ2Gigr56ycK2Jfe0=
+	by mail.kernel.org (Postfix) with ESMTP id ED7BB206DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 07:09:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hwquoZgI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728238AbgGGSuz convert rfc822-to-8bit (ORCPT
+        id S1729805AbgGHHJW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Jul 2020 14:50:55 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36788 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728149AbgGGSuz (ORCPT
+        Wed, 8 Jul 2020 03:09:22 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54939 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729225AbgGHHJR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Jul 2020 14:50:55 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 17so193930wmo.1;
-        Tue, 07 Jul 2020 11:50:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=m/t4PDWucGx9E7+lQRxXkI+ujQ2IZO1RtvREvMleNek=;
-        b=XYeRo8UuqhamN5mxrIR+8yPg8YOy2sTA77fV1exURMx1f/eYvCpMashZ6MsTQuuxSq
-         PHZJSmm52aColg3xteJFnkDJf/HgMR8rKdDO5uwJjQUl3+DmssxODEEUiBbj/hqw+oDH
-         QlQgpqq7KITu7HjQZ/ogYmLgJjh8lH4ROPvzW/nfHBLLg8HEEZNGn1umScGjxw6H8E7Z
-         C9uJVG3UtIQsKDk4QDdEYPIBuMEuehWbkYjNkRZf4AvMC7WBw+JnDKY9gf+OT0cr0Xrv
-         VNRax9ytJOk+g1o5+ObsNcyq4uGDUri41NhY338KaaFDOMGTd8KVA+QNGEym3BHNkGd5
-         iFhw==
-X-Gm-Message-State: AOAM532YeTzozaK3JgBFKjDhy69Q02HaFCrToLi2I9r0a19YFQ77p2LN
-        e3iQEYSrkgFqNpc39fkLEhc=
-X-Google-Smtp-Source: ABdhPJyeYxQzWHl3HP96w4mkIZMaje9wIX3EMZDnNv2vf2IMnQnRi6Mcgqa62eD6LSqOcYGyqZ2I6A==
-X-Received: by 2002:a7b:cc08:: with SMTP id f8mr5884261wmh.106.1594147852592;
-        Tue, 07 Jul 2020 11:50:52 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.195])
-        by smtp.googlemail.com with ESMTPSA id p25sm1909109wmg.39.2020.07.07.11.50.50
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 07 Jul 2020 11:50:51 -0700 (PDT)
-Date:   Tue, 7 Jul 2020 20:50:49 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v2 1/8] dt-bindings: pwm: samsung: Do not require
- interrupts on Exynos SoCs
-Message-ID: <20200707185049.GA4698@kozik-lap>
-References: <20200702155149.12854-1-krzk@kernel.org>
- <20200706094157.kyag7p5df3vo54wx@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20200706094157.kyag7p5df3vo54wx@pengutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 8 Jul 2020 03:09:17 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200708070914euoutp02e317349209534609d19d9b5b400426b8~ftVFl1-NM0115601156euoutp02Q
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jul 2020 07:09:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200708070914euoutp02e317349209534609d19d9b5b400426b8~ftVFl1-NM0115601156euoutp02Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1594192154;
+        bh=DhyMuJGH0qTn6bnxy3z/KLVNLxOeo+CYyLoagP8wDvA=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=hwquoZgI1c7gbfb+53AzwU1lIFY3eRcFpNptY8S23NR40C/HgS0paShsstY9R9d//
+         FRFnVTxBQzvF774RUhEWo29eHpPv9bOROIsKxXbWsNV9PJzfRYrx1Q1+xKJfQEhpoM
+         X/gqUc3dgoVOpKuFXQdyPTi1H8pLxNWbAus81TB8=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200708070914eucas1p2f6755aac19b9d184872cdadc56bdf585~ftVFZWumd2996829968eucas1p2e;
+        Wed,  8 Jul 2020 07:09:14 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id C2.5C.05997.A11750F5; Wed,  8
+        Jul 2020 08:09:14 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200708070913eucas1p221ca64347d0ca03709eeee86decfd1af~ftVFH_MmP1297012970eucas1p2i;
+        Wed,  8 Jul 2020 07:09:13 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200708070913eusmtrp24ccd5afd1f6092b3a1cf3c4b52934ee0~ftVFHRXWI2779827798eusmtrp2i;
+        Wed,  8 Jul 2020 07:09:13 +0000 (GMT)
+X-AuditID: cbfec7f4-677ff7000000176d-32-5f05711a7a6c
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 2E.96.06017.911750F5; Wed,  8
+        Jul 2020 08:09:13 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200708070913eusmtip1752d3f3d343c55eb86a3a3afd15b7c2a~ftVEsOxuk2232222322eusmtip1K;
+        Wed,  8 Jul 2020 07:09:13 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Zhang Qiang <qiang.zhang@windriver.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] spi: use kthread_create_worker() helper
+Date:   Wed,  8 Jul 2020 09:09:00 +0200
+Message-Id: <20200708070900.30380-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMIsWRmVeSWpSXmKPExsWy7djP87pShazxBuvnMltsnLGe1WLqwyds
+        Fpd3zWGzmHF+H5NF48eb7BZrj9xlt/j/+Curxa0Vf9kdODw2repk8+jbsorRY/2WqywenzfJ
+        ARlbmQJYo7hsUlJzMstSi/TtErgymo/zF5yyrNiweRV7A+Nlwy5GTg4JAROJKevesnYxcnEI
+        CaxglFixaQ4bhPOFUaLx704WCOczo8T6H8fZYFrOPTvIDJFYzijx5fVOJriW31OmMINUsQkY
+        SnS97QLrEBGwlvg2YxpYnFngB6PE4zuyXYwcHMICFhKzvyiChFkEVCX6f01iArF5BWwlFnde
+        ZIJYJi+xesMBsGUSArfZJI7+3swKkXCRaN15hR3CFpZ4dXwLlC0j8X/nfCaIhmZGiYfn1rJD
+        OD2MEpebZjBCVFlL3Dn3iw3kCmYBTYn1u/Qhwo4SX253M4OEJQT4JG68FYS4mU9i0rbpUGFe
+        iY42IYhqNYlZx9fBrT144RIzhO0h0X7wCdjrQgKxErtO72KdwCg3C2HXAkbGVYziqaXFuemp
+        xUZ5qeV6xYm5xaV56XrJ+bmbGIFJ4fS/4192MO76k3SIUYCDUYmHNyORJV6INbGsuDL3EKME
+        B7OSCK/T2dNxQrwpiZVVqUX58UWlOanFhxilOViUxHmNF72MFRJITyxJzU5NLUgtgskycXBK
+        NTCuWLoq9+KmN6nf7/3YN8HEKHqJe9DRlG1iJzg/HXS5PjH72ZEGZxnloEStXknG6F9VdQ/L
+        evaZ7p287QXDi2YWzwneXIl5RimTopc/rzXj+hWeU7KD/3HY7robEx687amLqTni/CDrSckG
+        +4I09y+zJ1b0LTKY4u7cJXMhPTvSyPDK+Qv8F8KUWIozEg21mIuKEwHo0v8DBgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsVy+t/xu7qShazxBpf/6VtsnLGe1WLqwyds
+        Fpd3zWGzmHF+H5NF48eb7BZrj9xlt/j/+Curxa0Vf9kdODw2repk8+jbsorRY/2WqywenzfJ
+        ARlbmQJYo/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/Tt
+        EvQymo/zF5yyrNiweRV7A+Nlwy5GTg4JAROJc88OMncxcnEICSxllJi5/TETREJG4uS0BlYI
+        W1jiz7UuNhBbSOATo8SPGVwgNpuAoUTXW4i4iICtxPz3L1hBBjEL/GGUeDTpKZDDwSEsYCEx
+        +4siSA2LgKpE/69JYPN5geoXd16E2iUvsXrDAeYJjDwLGBlWMYqklhbnpucWG+kVJ+YWl+al
+        6yXn525iBIbitmM/t+xg7HoXfIhRgINRiYc3I5ElXog1say4MvcQowQHs5IIr9PZ03FCvCmJ
+        lVWpRfnxRaU5qcWHGE2Blk9klhJNzgfGSV5JvKGpobmFpaG5sbmxmYWSOG+HwMEYIYH0xJLU
+        7NTUgtQimD4mDk6pBkaN2eskvJe+/XliSsKP6/OS3JecvsK3fcUPiR0Oi1K+im5LszGc/jbn
+        hp7Y2tN6TiUl815v2JJfsP34mhWefSYB17TDP8yr+rZoxvTwvPtrrNwNOv+vit6Q9UxRWlA9
+        7YlQvKhgvtJUnWfZTrveu5/ckzur4+0+rp26y8t3rlrtKFDQL/r7kYeNEktxRqKhFnNRcSIA
+        n9I6M1sCAAA=
+X-CMS-MailID: 20200708070913eucas1p221ca64347d0ca03709eeee86decfd1af
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200708070913eucas1p221ca64347d0ca03709eeee86decfd1af
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200708070913eucas1p221ca64347d0ca03709eeee86decfd1af
+References: <CGME20200708070913eucas1p221ca64347d0ca03709eeee86decfd1af@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jul 06, 2020 at 11:41:57AM +0200, Uwe Kleine-König wrote:
-> On Thu, Jul 02, 2020 at 05:51:42PM +0200, Krzysztof Kozlowski wrote:
-> > The bindings required interrupts for all SoCs but actually only the PWM
-> > timer clocksource (for S3C/S5P SoCs) was using them.  This PWM timer
-> > clocksource driver is not used on Exynos SoCs thus the interrupts can be
-> > marked as optional.
-> > 
-> > Reported-by: Alim Akhtar <alim.akhtar@samsung.com>
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> LGTM,
-> 
-> Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> 
-> I'd expect it is ok to let this patch go in via whatever way the other
-> patches go. (But it's Thierry who has the authority here.)
+Since commit 4977caef05aa ("kthread: work could not be queued when worker
+being destroyed") there is a warning when kworker is used without the
+internal 'task' entry properly initialized. Fix this by using
+a kthread_create_worker() helper instead of open-coding a kworker
+initialization.
 
-This patch is independent so it can go either through PWM tree or DT
-bindings.  Usually the latter, so Rob was picking it up.
+This fixes a following warning during SPI controller probe, observed on
+the Samsung Exynos 5420-based Peach-Pit Chromebook with recent linux-next
+kernel:
 
-Thanks for ack.
+------------[ cut here ]------------
+WARNING: CPU: 3 PID: 1 at kernel/kthread.c:817 kthread_queue_work+0xac/0xd4
+Modules linked in:
+CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.8.0-rc4-00017-g4977caef05aa #1193
+Hardware name: Samsung Exynos (Flattened Device Tree)
+[<c011184c>] (unwind_backtrace) from [<c010d250>] (show_stack+0x10/0x14)
+[<c010d250>] (show_stack) from [<c0517f64>] (dump_stack+0xbc/0xe8)
+[<c0517f64>] (dump_stack) from [<c01270a8>] (__warn+0xf0/0x108)
+[<c01270a8>] (__warn) from [<c0127170>] (warn_slowpath_fmt+0xb0/0xb8)
+[<c0127170>] (warn_slowpath_fmt) from [<c01512a4>] (kthread_queue_work+0xac/0xd4)
+[<c01512a4>] (kthread_queue_work) from [<c06c38d4>] (spi_start_queue+0x58/0x74)
+[<c06c38d4>] (spi_start_queue) from [<c06c50d4>] (spi_register_controller+0x53c/0xbe8)
+[<c06c50d4>] (spi_register_controller) from [<c06c57b4>] (devm_spi_register_controller+0x34/0x6c)
+[<c06c57b4>] (devm_spi_register_controller) from [<c06cad60>] (s3c64xx_spi_probe+0x3e0/0x7ec)
+[<c06cad60>] (s3c64xx_spi_probe) from [<c064dc8c>] (platform_drv_probe+0x6c/0xa4)
+[<c064dc8c>] (platform_drv_probe) from [<c064b2c0>] (really_probe+0x200/0x48c)
+[<c064b2c0>] (really_probe) from [<c064b6b4>] (driver_probe_device+0x78/0x1fc)
+[<c064b6b4>] (driver_probe_device) from [<c064ba9c>] (device_driver_attach+0x58/0x60)
+[<c064ba9c>] (device_driver_attach) from [<c064bb80>] (__driver_attach+0xdc/0x174)
+[<c064bb80>] (__driver_attach) from [<c06490cc>] (bus_for_each_dev+0x68/0xb4)
+[<c06490cc>] (bus_for_each_dev) from [<c064a400>] (bus_add_driver+0x158/0x214)
+[<c064a400>] (bus_add_driver) from [<c064ca54>] (driver_register+0x78/0x110)
+[<c064ca54>] (driver_register) from [<c0102378>] (do_one_initcall+0x8c/0x424)
+[<c0102378>] (do_one_initcall) from [<c1001158>] (kernel_init_freeable+0x190/0x204)
+[<c1001158>] (kernel_init_freeable) from [<c0ab6d44>] (kernel_init+0x8/0x118)
+[<c0ab6d44>] (kernel_init) from [<c0100114>] (ret_from_fork+0x14/0x20)
+Exception stack(0xedd01fb0 to 0xedd01ff8)
+...
+irq event stamp: 173882
+hardirqs last  enabled at (173881): [<c0abf294>] _raw_spin_unlock_irqrestore+0x68/0x70
+hardirqs last disabled at (173882): [<c0abece0>] _raw_spin_lock_irqsave+0x1c/0x58
+softirqs last  enabled at (171200): [<c027240c>] bdi_register_va+0x178/0x2fc
+softirqs last disabled at (171198): [<c027239c>] bdi_register_va+0x108/0x2fc
+---[ end trace 0fe37f6a9b7e6bc7 ]---
 
-Best regards,
-Krzysztof
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/spi/spi.c       | 26 ++++++++++++--------------
+ include/linux/spi/spi.h |  6 ++----
+ 2 files changed, 14 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 805a51b6f54c..19a03a8d6199 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1368,7 +1368,7 @@ static void __spi_pump_messages(struct spi_controller *ctlr, bool in_kthread)
+ 
+ 	/* If another context is idling the device then defer */
+ 	if (ctlr->idling) {
+-		kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
++		kthread_queue_work(ctlr->kworker, &ctlr->pump_messages);
+ 		spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 		return;
+ 	}
+@@ -1382,7 +1382,7 @@ static void __spi_pump_messages(struct spi_controller *ctlr, bool in_kthread)
+ 
+ 		/* Only do teardown in the thread */
+ 		if (!in_kthread) {
+-			kthread_queue_work(&ctlr->kworker,
++			kthread_queue_work(ctlr->kworker,
+ 					   &ctlr->pump_messages);
+ 			spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 			return;
+@@ -1616,7 +1616,7 @@ static void spi_set_thread_rt(struct spi_controller *ctlr)
+ {
+ 	dev_info(&ctlr->dev,
+ 		"will run message pump with realtime priority\n");
+-	sched_set_fifo(ctlr->kworker_task);
++	sched_set_fifo(ctlr->kworker->task);
+ }
+ 
+ static int spi_init_queue(struct spi_controller *ctlr)
+@@ -1624,13 +1624,12 @@ static int spi_init_queue(struct spi_controller *ctlr)
+ 	ctlr->running = false;
+ 	ctlr->busy = false;
+ 
+-	kthread_init_worker(&ctlr->kworker);
+-	ctlr->kworker_task = kthread_run(kthread_worker_fn, &ctlr->kworker,
+-					 "%s", dev_name(&ctlr->dev));
+-	if (IS_ERR(ctlr->kworker_task)) {
+-		dev_err(&ctlr->dev, "failed to create message pump task\n");
+-		return PTR_ERR(ctlr->kworker_task);
++	ctlr->kworker = kthread_create_worker(0, dev_name(&ctlr->dev));
++	if (IS_ERR(ctlr->kworker)) {
++		dev_err(&ctlr->dev, "failed to create message pump kworker\n");
++		return PTR_ERR(ctlr->kworker);
+ 	}
++
+ 	kthread_init_work(&ctlr->pump_messages, spi_pump_messages);
+ 
+ 	/*
+@@ -1714,7 +1713,7 @@ void spi_finalize_current_message(struct spi_controller *ctlr)
+ 	ctlr->cur_msg = NULL;
+ 	ctlr->cur_msg_prepared = false;
+ 	ctlr->fallback = false;
+-	kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
++	kthread_queue_work(ctlr->kworker, &ctlr->pump_messages);
+ 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 
+ 	trace_spi_message_done(mesg);
+@@ -1740,7 +1739,7 @@ static int spi_start_queue(struct spi_controller *ctlr)
+ 	ctlr->cur_msg = NULL;
+ 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 
+-	kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
++	kthread_queue_work(ctlr->kworker, &ctlr->pump_messages);
+ 
+ 	return 0;
+ }
+@@ -1796,8 +1795,7 @@ static int spi_destroy_queue(struct spi_controller *ctlr)
+ 		return ret;
+ 	}
+ 
+-	kthread_flush_worker(&ctlr->kworker);
+-	kthread_stop(ctlr->kworker_task);
++	kthread_destroy_worker(ctlr->kworker);
+ 
+ 	return 0;
+ }
+@@ -1820,7 +1818,7 @@ static int __spi_queued_transfer(struct spi_device *spi,
+ 
+ 	list_add_tail(&msg->queue, &ctlr->queue);
+ 	if (!ctlr->busy && need_pump)
+-		kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
++		kthread_queue_work(ctlr->kworker, &ctlr->pump_messages);
+ 
+ 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 	return 0;
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index 0e67a9a3a1d3..5fcf5da13fdb 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -358,8 +358,7 @@ static inline void spi_unregister_driver(struct spi_driver *sdrv)
+  * @cleanup: frees controller-specific state
+  * @can_dma: determine whether this controller supports DMA
+  * @queued: whether this controller is providing an internal message queue
+- * @kworker: thread struct for message pump
+- * @kworker_task: pointer to task for message pump kworker thread
++ * @kworker: pointer to thread struct for message pump
+  * @pump_messages: work struct for scheduling work to the message pump
+  * @queue_lock: spinlock to syncronise access to message queue
+  * @queue: message queue
+@@ -593,8 +592,7 @@ struct spi_controller {
+ 	 * Over time we expect SPI drivers to be phased over to this API.
+ 	 */
+ 	bool				queued;
+-	struct kthread_worker		kworker;
+-	struct task_struct		*kworker_task;
++	struct kthread_worker		*kworker;
+ 	struct kthread_work		pump_messages;
+ 	spinlock_t			queue_lock;
+ 	struct list_head		queue;
+-- 
+2.17.1
 
