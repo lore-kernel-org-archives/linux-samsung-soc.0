@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E764BC433E5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E871C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE39D206DF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:43:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64DC520720
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:43:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594222986;
-	bh=e6MJ1jDkNLcWDBG1X6jjVt05hEmPTtGNPap9XM5tuuc=;
+	s=default; t=1594223024;
+	bh=0CkNs1w4+hp7Zb/ftz2DB5LZ5V5bhaCc01Eh0fyBlCg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=01ktvdMAAMjcfEUvKiYX+rBAvoEBpo7o21Iu/V4lOZC1dx0FgKZATO5YA2BAWMFkI
-	 m/oNlu1FjavG7Ox1KqrwNrLCNpgUigzbb1gZszTpFIgqm84yPn4X2yXE8vHdbN8Lb/
-	 WtjR+XBh5BTf1NufdMVcwP/4oHX+braiAhBoAJ/A=
+	b=s6BALJzkwL99Gqt3+OXbkaqVlWS+G19/iEF8q1Ry3zatPtAnslvRaijQrSBhWfH2N
+	 SrgNsLyXqUtu68yMt2OBD3TrtPlhr3152DN4NIYO0Z16OM1bdqXjtdepCxXYilKcBE
+	 IyLzjEVJNDynEiX7taoKwEQry5IY+gCoa14I/c1E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730622AbgGHPmB (ORCPT
+        id S1730415AbgGHPnn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Jul 2020 11:42:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49200 "EHLO mail.kernel.org"
+        Wed, 8 Jul 2020 11:43:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730620AbgGHPmA (ORCPT
+        id S1730528AbgGHPln (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Jul 2020 11:42:00 -0400
+        Wed, 8 Jul 2020 11:41:43 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 668E4206DF;
-        Wed,  8 Jul 2020 15:41:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFEFC206DF;
+        Wed,  8 Jul 2020 15:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594222920;
-        bh=e6MJ1jDkNLcWDBG1X6jjVt05hEmPTtGNPap9XM5tuuc=;
+        s=default; t=1594222902;
+        bh=0CkNs1w4+hp7Zb/ftz2DB5LZ5V5bhaCc01Eh0fyBlCg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FO3sQ50kPt51+hCGPWyPEH4dADSAa6Akjl+tyGhYL6X79uRbrsCP1hujklXTCZ/Vk
-         sTGL6Sd8D3OLovWfEgOBPjQGvHqbybw+kKAq9z4fiJyp/AeK+kg4ne/QE6xve2w5PD
-         pZBioUijgl2iV7TRx9BdmrzbSo6GEUb4AMM5P22Y=
+        b=czLJ2s44EdaMxPJHsNv4yEEGPbUfl9TRhlTkBbWUZeMba0kpXRXMTyrh/Xj7MeBO0
+         3F1hVbEHB7YeL9ETDPfnQox+RR2Z5LPKIaVDE9U2a2FkPgj0+KQ2QU8+I48D7q3ODV
+         8S3oAa6O3w65QmV9eJ1jDrkx8CRIeHvk5EnIp/eY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
@@ -48,12 +48,12 @@ Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 2/8] drm/exynos: fix ref count leak in mic_pre_enable
-Date:   Wed,  8 Jul 2020 11:41:50 -0400
-Message-Id: <20200708154157.3200116-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 05/16] drm/exynos: fix ref count leak in mic_pre_enable
+Date:   Wed,  8 Jul 2020 11:41:24 -0400
+Message-Id: <20200708154135.3199907-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200708154157.3200116-1-sashal@kernel.org>
-References: <20200708154157.3200116-1-sashal@kernel.org>
+In-Reply-To: <20200708154135.3199907-1-sashal@kernel.org>
+References: <20200708154135.3199907-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -79,10 +79,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-index 2fd299a58297e..cd5530bbfe2e6 100644
+index b78e8c5ba553b..2aff986add899 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-@@ -267,8 +267,10 @@ static void mic_pre_enable(struct drm_bridge *bridge)
+@@ -268,8 +268,10 @@ static void mic_pre_enable(struct drm_bridge *bridge)
  		goto unlock;
  
  	ret = pm_runtime_get_sync(mic->dev);
