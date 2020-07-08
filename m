@@ -2,76 +2,96 @@ Return-Path: <SRS0=l8hj=AT=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D70C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE27C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5DAE320786
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:34:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D7232088E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:42:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594222966;
+	bh=C7+GofNjhe+jY5AW/vb6dlbgYoHYz4aFI8DtT5Jram4=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=X498U5dMixyX6hpL1mRCu2wV4Rs1a5TAhSrnQJj3vt4dBMs4JG8fxOdCG/2owe5bm
+	 vLKruGGcIClO0DSnz15FRhsXQdCm6Bhj4awfq8bqcqjWmbgstAvRceyrSs9jLQIKWg
+	 hF2UIdeQ1/ltwUEWiRbdL8yR9CLrlDkAIoVV5glY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730299AbgGHPeu (ORCPT
+        id S1730349AbgGHPml (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Jul 2020 11:34:50 -0400
-Received: from foss.arm.com ([217.140.110.172]:47186 "EHLO foss.arm.com"
+        Wed, 8 Jul 2020 11:42:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730028AbgGHPeu (ORCPT
+        id S1730666AbgGHPmL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Jul 2020 11:34:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDC281FB;
-        Wed,  8 Jul 2020 08:34:49 -0700 (PDT)
-Received: from e123648.arm.com (unknown [10.37.12.67])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9C1083F237;
-        Wed,  8 Jul 2020 08:34:45 -0700 (PDT)
-From:   Lukasz Luba <lukasz.luba@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Wed, 8 Jul 2020 11:42:11 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B6DA206DF;
+        Wed,  8 Jul 2020 15:42:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594222930;
+        bh=C7+GofNjhe+jY5AW/vb6dlbgYoHYz4aFI8DtT5Jram4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BylySD7m3MvBf+poLlkpRVqv5mEvRX2ElL1U2lllVMcm2QOOyUj5aJwTlUyFVFB0s
+         RyMgIt3ebV6d5olXV7UM/BF6b6yU0F5Lynsv2Gjdp4//M1hxi+SV4bKhLDShqGRzEI
+         B3KWzGluvhhhlw+87rLVIMgW5q8n2EZgksi4MME0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Cc:     lukasz.luba@arm.com, willy.mh.wolff.ml@gmail.com,
-        k.konieczny@samsung.com, cw00.choi@samsung.com,
-        b.zolnierkie@samsung.com, krzk@kernel.org, chanwoo@kernel.org,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        s.nawrocki@samsung.com, kgene@kernel.org
-Subject: [PATCH 2/2] ARM: dts: exynos: Remove interrupts from DMC controller in Exynos5422
-Date:   Wed,  8 Jul 2020 16:34:20 +0100
-Message-Id: <20200708153420.29484-3-lukasz.luba@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200708153420.29484-1-lukasz.luba@arm.com>
-References: <20200708153420.29484-1-lukasz.luba@arm.com>
+Subject: [PATCH AUTOSEL 4.14 1/5] drm/exynos: fix ref count leak in mic_pre_enable
+Date:   Wed,  8 Jul 2020 11:42:04 -0400
+Message-Id: <20200708154208.3200232-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The interrupts in Dynamic Memory Controller in Exynos5422 and Odroid
-XU3-family boards are no longer needed. They have been used in order
-to workaround some issues in scheduled work in devfreq. Now when the
-devfreq framework design is improved, remove the interrupt driven
-approach and rely on devfreq monitoring mechanism with fixed intervals.
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
-Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+[ Upstream commit d4f5a095daf0d25f0b385e1ef26338608433a4c5 ]
+
+in mic_pre_enable, pm_runtime_get_sync is called which
+increments the counter even in case of failure, leading to incorrect
+ref count. In case of failure, decrement the ref count before returning.
+
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/exynos5420.dtsi | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_mic.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index c76460b70532..967868cc8211 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -240,9 +240,6 @@
- 		dmc: memory-controller@10c20000 {
- 			compatible = "samsung,exynos5422-dmc";
- 			reg = <0x10c20000 0x10000>, <0x10c30000 0x10000>;
--			interrupt-parent = <&combiner>;
--			interrupts = <16 0>, <16 1>;
--			interrupt-names = "drex_0", "drex_1";
- 			clocks = <&clock CLK_FOUT_SPLL>,
- 				 <&clock CLK_MOUT_SCLK_SPLL>,
- 				 <&clock CLK_FF_DOUT_SPLL2>,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+index ba4a32b132baa..59ce068b152f5 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+@@ -267,8 +267,10 @@ static void mic_pre_enable(struct drm_bridge *bridge)
+ 		goto unlock;
+ 
+ 	ret = pm_runtime_get_sync(mic->dev);
+-	if (ret < 0)
++	if (ret < 0) {
++		pm_runtime_put_noidle(mic->dev);
+ 		goto unlock;
++	}
+ 
+ 	mic_set_path(mic, 1);
+ 
 -- 
-2.17.1
+2.25.1
 
