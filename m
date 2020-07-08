@@ -2,133 +2,93 @@ Return-Path: <SRS0=l8hj=AT=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D9CC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 16:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4926EC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 16:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7DC0207C4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 16:15:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sp5vy7rm"
+	by mail.kernel.org (Postfix) with ESMTP id 19D1B206F6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 16:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594227538;
+	bh=8M6Yb1CrhNWLMCOcKsgvkbySDSF3ZKzqosp/1DO1Ma4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ecz84S6hanwhdI+UrOfjlrsrKLdj/hQCs5ABAeBasiQLfAoY9NGhol34M6ge53FCz
+	 kV+QgM/kTzuTikScWigHlHtmFWT090dr9eUDKXz2Kv43dTsZK/7Wjiu2C8SglL0Rnw
+	 L/dV9cHVN7aDlMKB3pAPTO99qtgGh5T9Rd0atWcg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728148AbgGHQPL (ORCPT
+        id S1729951AbgGHQ6y (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Jul 2020 12:15:11 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:33602 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730133AbgGHQPK (ORCPT
+        Wed, 8 Jul 2020 12:58:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35604 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725989AbgGHQ6y (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Jul 2020 12:15:10 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200708161507euoutp01a6ebcfee50d52a543e2d132a5aa6002a~f0xtmCbb63099330993euoutp01g
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jul 2020 16:15:07 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200708161507euoutp01a6ebcfee50d52a543e2d132a5aa6002a~f0xtmCbb63099330993euoutp01g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1594224907;
-        bh=vJfvmVF8vcAgmxnCgS3wKbE10DIPei7sXr/YrJ17xYQ=;
-        h=Subject:To:From:Date:In-Reply-To:References:From;
-        b=sp5vy7rmCCJgX0gCZB6VfD7gA/lWbc7ck5IDxS6Yuko8uvfkL7ohgEVwt1uPOgU/n
-         OAP/KxES3e5qAMTUxFu6iYIYZ4Pclq9xPPr4r/t7ZSVKfgjANK2Wa8NHdSoBEFz0Lb
-         I05JJCOMWnCJjFllz4g605uheFjcWFC5VMefH5S8=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200708161507eucas1p286d8adcbcff18ae68b0ae189cbc5e5df~f0xtNr1VY3193831938eucas1p2O;
-        Wed,  8 Jul 2020 16:15:07 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 50.AD.06318.B01F50F5; Wed,  8
-        Jul 2020 17:15:07 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200708161506eucas1p2273cb7bd714705ff2d0a99d7394b6baf~f0xsvvxU10142801428eucas1p2Z;
-        Wed,  8 Jul 2020 16:15:06 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200708161506eusmtrp1356dceb2c2b3c89ab2cc2819b88bf8f8~f0xsvDZti0476504765eusmtrp1s;
-        Wed,  8 Jul 2020 16:15:06 +0000 (GMT)
-X-AuditID: cbfec7f5-371ff700000018ae-86-5f05f10b2b78
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 8B.2A.06314.A01F50F5; Wed,  8
-        Jul 2020 17:15:06 +0100 (BST)
-Received: from [106.210.123.115] (unknown [106.210.123.115]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200708161506eusmtip17cfa99d68b1fe2018a5a5a5bbb86de61~f0xsLkASF1337513375eusmtip1e;
-        Wed,  8 Jul 2020 16:15:06 +0000 (GMT)
-Subject: Re: [PATCH 11/11] media: exynos4-is: Correct parallel port probing
-To:     Jonathan Bakker <xc-racer2@live.ca>, kyungmin.park@samsung.com,
-        mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <05381b4a-3581-e57d-3ecc-43eaafd9d527@samsung.com>
-Date:   Wed, 8 Jul 2020 18:15:05 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.10.0
+        Wed, 8 Jul 2020 12:58:54 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 443E8206F6;
+        Wed,  8 Jul 2020 16:58:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594227533;
+        bh=8M6Yb1CrhNWLMCOcKsgvkbySDSF3ZKzqosp/1DO1Ma4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=t3ZrTVcMrkNo5HHR+Ex2wNrC6pIbrQtZcYa5wNFeZgy07YdISjO3VhV3TJBYY0ja4
+         GRDAEnbF6LwNVDOtl4YB8KFdSS5SyawLUOIGJQ20k2qU/Y39cKx2ZIDseaBpMT0z71
+         EpYQWAOs8bWJyAvSq1S8mwNi2V37LRL3ZSHD/ag4=
+Date:   Wed, 8 Jul 2020 17:58:48 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Zhang Qiang <qiang.zhang@windriver.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2] spi: use kthread_create_worker() helper
+Message-ID: <20200708165848.GA25961@sirena.org.uk>
+References: <CGME20200708123401eucas1p1ec8fe745bb362c56f03798172a18324e@eucas1p1.samsung.com>
+ <20200708123349.6797-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <BN6PR04MB0660A14860692EAB2A658AEFA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH+d3H7t1s4zqtnUwyl3+Y5CtLLhaS1R+DiB4ghaFz6U1NnWNX
-        LSvwRWJq5gNZzlATKVuYunyUopFRUqJiopgm/eEQpy0zK8zUcl4r//uc8/0ezvfAoXF5M+lC
-        x2mTOb1Wk6AUSYjW1z/7vR3mSbVfU4Eje3tyFmcHBhopti/rE8WaJ0dIdqj9rogtaGwh2TsD
-        XRh737yMsYPFE8RhscpsuilSPalNV9W8XyRUhc0mpFow7zxFhkkORXMJcamc3jc4UhK7sOqu
-        sxJX2rPnyAw0jechMQ3MfljJyUV5SELLmToE9RU9uFB8Q1BnyBYJxQKCRzWj/0Y+Z81QgvAA
-        wfCXJcIuyJl5BNXjWjs7McehruQxZjc5M9kYTNWVi+yCiPGHW68KkZ2lTDDY6hsxOxOMBzwc
-        HKXsvJWJgAZrGyZ4HOFNuWV9gZgJh6bn0+uMMwoYs1RhArtBm+3uem5gWikozCjDhKjHIH9p
-        ZCO2E8z0NFMCu0JvaQEhDGQjKOgYp4SiCMHHnmokuA7Ch/6ltdj02oo90NDuK7RDoNTylbK3
-        gZHBqM1RCCGDklYDLrSlkJsjF9we8Mtk2IjjAvmW34TAKvgx8ZIqQu7GTWcaN51m3HSa8X+G
-        akSYkIJL4RNjOD5Ay1324TWJfIo2xicqKdGM1n6pd7Xn+1PUtXyhGzE0Um6RTptJtZzUpPJp
-        id0IaFzpLD3S1xshl0Zr0q5y+iS1PiWB47vRDppQKqQBNdZwOROjSebiOU7H6f+qGC12yUCX
-        9J1USQ1+zt3mfSOUlc3Fh4Xw+1zjFbNMtEw3lDkW3PG2uuXF3u08fibFAzewXYFDnelu245K
-        V67tjhuOLAv0Ok0PVuqcO6iTVSc8w2Os9WL1xGzG9QOZ9/wWi4lhIx3UFfouTbar4pmnQ0uH
-        RUK619JnLxrORwRVNsxETSkJPlbj74Xrec0f8Y8LfEcDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsVy+t/xu7pcH1njDfrfGlj0P37NbHH+/AZ2
-        i7NNb9gtNj2+xmpxedccNoueDVtZLWac38dksWzTHyaLixPvsjhwemxa1cnmsXlJvceimz9Y
-        PPq2rGL0+LxJLoA1Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUn
-        syy1SN8uQS/j8z/FgpcsFbua37M2ML5g7mLk5JAQMJF41/SKvYuRi0NIYCmjxJ5z7SxdjBxA
-        CSmJ+S1KEDXCEn+udbFB1LxnlLjyrYkNJCEs4C2xYtI6JpCEiEAzk8T/5dtYIKruMkqcPbwK
-        rIpNwFCi92gfI4jNK2An8XbtBiYQm0VARWLlxRvsILaoQJzE8i3z2SFqBCVOznzCAmJzCsRK
-        bNz/AsxmFlCX+DPvEjOELS5x68l8JghbXmL72znMExgFZyFpn4WkZRaSlllIWhYwsqxiFEkt
-        Lc5Nzy021CtOzC0uzUvXS87P3cQIjLdtx35u3sF4aWPwIUYBDkYlHt4Xm1jjhVgTy4orcw8x
-        SnAwK4nwOp09HSfEm5JYWZValB9fVJqTWnyI0RTouYnMUqLJ+cBUkFcSb2hqaG5haWhubG5s
-        ZqEkztshcDBGSCA9sSQ1OzW1ILUIpo+Jg1OqgTHzsWAtT92l7S+amPt0doYEapeZFmSJ+Kur
-        ZYXuS3Rv1T7yLEl0T+epu0EnuPf1HLNsCWR591Op4cOk1S+t1/05JFZXGabos8Pr140p3dFR
-        4hZq92O3/PerOxJ8SFy5emPDjpQtx7aoOtc5LX60ep37Iy67U7vendAw4LjJuHTfB27x9O8T
-        spVYijMSDbWYi4oTAelXiffNAgAA
-X-CMS-MailID: 20200708161506eucas1p2273cb7bd714705ff2d0a99d7394b6baf
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200426022757eucas1p2d10b653b3d974a1226560ccceed0d120
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200426022757eucas1p2d10b653b3d974a1226560ccceed0d120
-References: <20200426022650.10355-1-xc-racer2@live.ca>
-        <CGME20200426022757eucas1p2d10b653b3d974a1226560ccceed0d120@eucas1p2.samsung.com>
-        <BN6PR04MB0660A14860692EAB2A658AEFA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
+Content-Disposition: inline
+In-Reply-To: <20200708123349.6797-1-m.szyprowski@samsung.com>
+X-Cookie: Sign my PETITION.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
 
-On 26.04.2020 04:26, Jonathan Bakker wrote:
-> According to the binding doc[1], port A should be reg = 0
-> and port B reg = 1.  Unfortunately, the driver was treating 0
-> as invalid and 1 as camera port A.  Match the binding doc and
-> make 0=A and 1=B.
-> 
-> [1] Documentation/devicetree/bindings/media/samsung-fimc.txt
+--Qxx1br4bt0+wmkIi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thank you for correcting this. I would prefer to correct the binding
-documentation instead, so it says reg=1 for A and reg=2 for B. 
-Then it would also match what we have in dts for Goni and 
-enum fimc_input in include/media/drv-intf/exynos-fimc.h.
+On Wed, Jul 08, 2020 at 02:33:49PM +0200, Marek Szyprowski wrote:
+> Use kthread_create_worker() helper to simplify the code. It uses
+> the kthread worker API the right way. It will eventually allow
+> to remove the FIXME in kthread_worker_fn() and add more consistency
+> checks in the future.
 
+This doesn't apply against current code, please check and resend.
 
--- 
-Regards,
-Sylwester
+--Qxx1br4bt0+wmkIi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl8F+0cACgkQJNaLcl1U
+h9Aj9Qf+JCia7cYZbN/n2MnUsjmNP20nQxIexzHxNRHBu7TH4CS9aGEc0G3AvrUd
+QAAAktyW75uhb3M+yIqDvBBGqdWj8VvKhF6G+RYG5bjPHhcHvuEu3RyLk8vzPDmV
+B48FJljGs3P6l7UNbTtOJyyigDSx99YYeiPvMrWJeBeYca2jjwdgnUkObu79zfsE
+gmHW8CLw79KYXwOrfRAHhGGcFwQWq4rCOEsWKxUdOCtYfIeQ1QNpo5kGCFUdhzTF
+B7JOqreOCTbUKXNcT1dVp6OyGyzgTRkGGXDq9w6vGvIVUsFBQDx8nlyOHkiaOxna
+u1qhHoj5FKDzC8Oe8Dlv72KLAHJSMQ==
+=6m7M
+-----END PGP SIGNATURE-----
+
+--Qxx1br4bt0+wmkIi--
