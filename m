@@ -2,97 +2,123 @@ Return-Path: <SRS0=l8hj=AT=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B93C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 14:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7603CC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 14:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EDB7207C4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 14:25:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 540902078D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 14:45:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PL5cI5qu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729656AbgGHOZK (ORCPT
+        id S1729933AbgGHOph (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Jul 2020 10:25:10 -0400
-Received: from foss.arm.com ([217.140.110.172]:43460 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729541AbgGHOZJ (ORCPT
+        Wed, 8 Jul 2020 10:45:37 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:37924 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729891AbgGHOpe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Jul 2020 10:25:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F7F61FB;
-        Wed,  8 Jul 2020 07:25:09 -0700 (PDT)
-Received: from [10.37.12.67] (unknown [10.37.12.67])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E5A703F237;
-        Wed,  8 Jul 2020 07:25:05 -0700 (PDT)
-Subject: Re: [RFC PATCH 0/2] PM / devfreq: Add delayed timer for polling
-To:     Willy Wolff <willy.mh.wolff.ml@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     k.konieczny@samsung.com, krzk@kernel.org, kgene@kernel.org,
-        s.nawrocki@samsung.com, b.zolnierkie@samsung.com,
-        chanwoo@kernel.org, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <CGME20200703061508epcas1p171aa3c0ab832b77e5837d8bd1e563742@epcas1p1.samsung.com>
- <20200703062622.11773-1-cw00.choi@samsung.com>
- <20200703123346.6fy6i33ks6nox46a@macmini.local>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <a3339c58-6350-9298-6053-9dc021170048@arm.com>
-Date:   Wed, 8 Jul 2020 15:25:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 8 Jul 2020 10:45:34 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200708144532euoutp013e3240c00798a95a355a015c6cd96f5c~fzjfl2cpp2560225602euoutp01J
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jul 2020 14:45:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200708144532euoutp013e3240c00798a95a355a015c6cd96f5c~fzjfl2cpp2560225602euoutp01J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1594219532;
+        bh=YBwMR+1cTI/+5nGmGVzzQP31lKTZwJfbm6Wde/Ufl4A=;
+        h=Subject:To:From:Date:In-Reply-To:References:From;
+        b=PL5cI5quI6staJfHOmmKGhIaJO34dXKTXMQe6A2lZHo8sFXDG8u7zJvRkt+VBSlCs
+         IwhBQ/9435Q8ni4H/kvNTqhtQBDTKX8NaV99fqbFV3YJrzm+MEHw7fEQ+Pr9on+2qr
+         NEgK9HVKP/L3aoTMx3hIarOCbmR9W1/pHd86ElIw=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200708144532eucas1p221e9f49e596935cc2446d90228401a3f~fzjfPTn_W1367413674eucas1p2C;
+        Wed,  8 Jul 2020 14:45:32 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id DD.11.06456.C0CD50F5; Wed,  8
+        Jul 2020 15:45:32 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200708144531eucas1p282845354a7c2be8f70f4ef33a4d6bb1d~fzjej49pg1036510365eucas1p2i;
+        Wed,  8 Jul 2020 14:45:31 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200708144531eusmtrp2ef4e5df9d1dadc6a8f4a07e032e94097~fzjejK8C_2076020760eusmtrp2O;
+        Wed,  8 Jul 2020 14:45:31 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-5d-5f05dc0c78d0
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id A5.70.06314.B0CD50F5; Wed,  8
+        Jul 2020 15:45:31 +0100 (BST)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200708144530eusmtip2637227708c7bfcdd7c9c536e8be47371~fzjd7MV-g0039100391eusmtip2D;
+        Wed,  8 Jul 2020 14:45:30 +0000 (GMT)
+Subject: Re: [PATCH 01/11] media: exynos4-is: Remove static driver data for
+ S5PV210 FIMC variants
+To:     Jonathan Bakker <xc-racer2@live.ca>, kyungmin.park@samsung.com,
+        mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <9dae0088-e7ab-8d20-617d-7922d86f0d43@samsung.com>
+Date:   Wed, 8 Jul 2020 16:45:29 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200703123346.6fy6i33ks6nox46a@macmini.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <BN6PR04MB06603A626BB6D54D11CB502CA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjmO+dsOw4nx2n5pmI5/ZOUt/xxIhOVfgwiEUoIRW3qQcVrO95D
+        lBQ1L2v6Q1MMTeZai3BMnWaReE+Ws4zsomYwC69kXiKzNOdR8t/zPhfe9/n4SFzcyXMkE1Mz
+        GHmqLFnCFxKG4S3TWetpXrT36CMhfde8hNPj4zoBPXZ7WUDrzZM8+m1PI5+u1HXy6HvjLzBa
+        rf+D0W+qZ4hAK6lee4cvbVcVSFs+/iKkig4tkq7rXUJ54UL/OCY5MYuRewXcECboVWO89Fks
+        Z7tOiRciFVaOrEig/ODloIZfjoSkmNIg0BWXI27YQFB7fwjjhnUEqxq14DAy87nmQHiIwPjA
+        uC+IqR8IJndiLNiOioXabbPAYrKnijD4pqnnWwQ+5QNVQwpkwSIqAAa+LxEWTFDuYJjQ7PPH
+        qChoW+jCOI8tjNbP7XusqEhoNw7iFoxTDvBprgnj8EnoWmnELcuAMghAv9iHuFMvwczzn3wO
+        28HiSMdBBWfYfdqEcYEiBJXPpgTcoEQwO9J8kL4A06bfe2lyb8VpaOvx4uggaH2twCw0UDbw
+        YcWWO8IGagx1OEeLoKxEzLndYVtbd/DYjlAxt0twWAom9TxfiVwbjtRsOFKt4Ui1hv83NCNC
+        ixyYTDYlnmF9UplsT1aWwmamxnvGpqXo0d5nMu6MrHWjzYmYfkSRSGItUup40WKeLIvNTelH
+        QOISe1HwmDFKLIqT5eYx8rRoeWYyw/YjJ5KQOIjOtSxEiql4WQaTxDDpjPxQxUgrx0LkHbGc
+        SLeXDodnjJkHMqkCWzD15VweCMu+svb3lH/32vUTvfNq5abeN9C0FNiuKlw4vlW++PhWx8b7
+        r/l+icVPQi+6+ay+CwlxFURIXaryztdX9970zTdOVkSWBZeuVm+WjLu0Jim01blXS7+EeXgo
+        2VfNztfIMzlBXm6tq074lIRgE2Q+Hriclf0DXTCoDEgDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNIsWRmVeSWpSXmKPExsVy+t/xe7rcd1jjDe5flrDof/ya2eL8+Q3s
+        Fmeb3rBbbHp8jdXi8q45bBY9G7ayWsw4v4/JYtmmP0wWFyfeZXHg9Ni0qpPNY/OSeo9FN3+w
+        ePRtWcXo8XmTXABrlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpO
+        Zllqkb5dgl7GpiVnWQvuM1X8nj6BuYFxCVMXIyeHhICJxN17k4BsLg4hgaWMEls//wJyOIAS
+        UhLzW5QgaoQl/lzrYoOoec8osXzSbTaQhLBAssS034/ZQRIiAs1MEv+Xb2OBqLrLKNH9+BZY
+        FZuAoUTv0T5GEJtXwE7i8PvXLCA2i4CKxLZLK8DiogJxEsu3zGeHqBGUODnzCVgNp0CsxObT
+        R5hBbGYBdYk/8y5B2eISt57MZ4Kw5SW2v53DPIFRcBaS9llIWmYhaZmFpGUBI8sqRpHU0uLc
+        9NxiQ73ixNzi0rx0veT83E2MwIjbduzn5h2MlzYGH2IU4GBU4uF9sYk1Xog1say4MvcQowQH
+        s5IIr9PZ03FCvCmJlVWpRfnxRaU5qcWHGE2BnpvILCWanA9MBnkl8YamhuYWlobmxubGZhZK
+        4rwdAgdjhATSE0tSs1NTC1KLYPqYODilGhjVMu6LtLdk3ZvdECKTfDuKq5ihe82V1zd1T+x9
+        MVn8V+qx/3aNXB0KTRMncrMYzGmQejRTqWXJiidc4cKHSu+8V9zKpXrO/hsbj8qN300XHukY
+        Lch09eV5Z8CxOJPVoe755WX9b7atK1hbqJP6X6fjw50VYcvrbZ+x+N4I1+ZKEf3q+kjgYo4S
+        S3FGoqEWc1FxIgAxbc5IzgIAAA==
+X-CMS-MailID: 20200708144531eucas1p282845354a7c2be8f70f4ef33a4d6bb1d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200426022721eucas1p1d5cbdc4946279aeff7d6c11f93a56f74
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200426022721eucas1p1d5cbdc4946279aeff7d6c11f93a56f74
+References: <20200426022650.10355-1-xc-racer2@live.ca>
+        <CGME20200426022721eucas1p1d5cbdc4946279aeff7d6c11f93a56f74@eucas1p1.samsung.com>
+        <BN6PR04MB06603A626BB6D54D11CB502CA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Willy,
+On 26.04.2020 04:26, Jonathan Bakker wrote:
+> The S5PV210 platform only supports device tree based booting
+> where the FIMC variant data is parsed directly from
+> the device tree, hence the now unused static data can be removed.
+> 
+> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 
-On 7/3/20 1:33 PM, Willy Wolff wrote:
-> Hi Chanwoo,
-> 
-> I think it doesn't help on the benchmark I suggested that is doing only memory
-> accesses. With both timer, I have the same timing.
-> 
-> To test the benchmark with these new patches about timer:
-> 
-> git clone https://github.com/wwilly/benchmark.git \
->    && cd benchmark \
->    && source env.sh \
->    && ./bench_build.sh \
->    && bash source/scripts/test_dvfs_mem_patched.sh
-> 
-> The benchmark is set by default to run for 1s, but you can increase this by
-> tweaking the script as:
-> 
-> taskset 8 ./bench_install/bin/microbe_cache 33554431 0 9722222 <TIME in sec> ${little_freq}
-> 
-> 
-> Also, as I reported the issue, would it be possible to add a
-> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com> ?
-> Many thanks in advance.
-
-Thank you for your good work and the benchmark. I hope you will continue
-to use it and report some issues. I am going to send a follow up patches
-for the DMC and I will add your 'Reported-by'. In the tests I can see
-the improvements, but it's worth to consult with you if I understand
-the new results correctly.
-
-I think there is still some area for improvements in the devfreq and you
-could find the interesting bits to contribute.
-
-Regards,
-Lukasz
-
-> 
-> 
-> Best Regards,
-> Willy
-> 
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
