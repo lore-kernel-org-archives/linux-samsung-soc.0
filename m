@@ -4,53 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E871C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F1FC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64DC520720
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A5E12080D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jul 2020 15:43:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594223024;
-	bh=0CkNs1w4+hp7Zb/ftz2DB5LZ5V5bhaCc01Eh0fyBlCg=;
+	s=default; t=1594223029;
+	bh=B4KbhpoltGExd208/4xHgN1aUeY0aanpA2UIDqaA8Jk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s6BALJzkwL99Gqt3+OXbkaqVlWS+G19/iEF8q1Ry3zatPtAnslvRaijQrSBhWfH2N
-	 SrgNsLyXqUtu68yMt2OBD3TrtPlhr3152DN4NIYO0Z16OM1bdqXjtdepCxXYilKcBE
-	 IyLzjEVJNDynEiX7taoKwEQry5IY+gCoa14I/c1E=
+	b=eMvTN1lEo/g0TLS8GlSX/0qQpMqOTokXn2JxOa20YfENM/sDSThOrPTkq/529mZeZ
+	 qqRyFIC6OmDE729shsHvNcAGvQ6pOshgCaxGuvMlNKNH76OL5MTqyGhDC+Lw/7iu6c
+	 +tkL/sIxtOxTfcQRL6pVIlvxzTtiij8pda2O3xrI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730415AbgGHPnn (ORCPT
+        id S1730530AbgGHPlm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Jul 2020 11:43:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48594 "EHLO mail.kernel.org"
+        Wed, 8 Jul 2020 11:41:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730528AbgGHPln (ORCPT
+        id S1730515AbgGHPll (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Jul 2020 11:41:43 -0400
+        Wed, 8 Jul 2020 11:41:41 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFEFC206DF;
-        Wed,  8 Jul 2020 15:41:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66D4820874;
+        Wed,  8 Jul 2020 15:41:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594222902;
-        bh=0CkNs1w4+hp7Zb/ftz2DB5LZ5V5bhaCc01Eh0fyBlCg=;
+        s=default; t=1594222901;
+        bh=B4KbhpoltGExd208/4xHgN1aUeY0aanpA2UIDqaA8Jk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=czLJ2s44EdaMxPJHsNv4yEEGPbUfl9TRhlTkBbWUZeMba0kpXRXMTyrh/Xj7MeBO0
-         3F1hVbEHB7YeL9ETDPfnQox+RR2Z5LPKIaVDE9U2a2FkPgj0+KQ2QU8+I48D7q3ODV
-         8S3oAa6O3w65QmV9eJ1jDrkx8CRIeHvk5EnIp/eY=
+        b=e7hrprns7iZuKnnrVu63EVUGDYiaRWoBbqNZfSCvZSIv1vzbiszw1eOpfcABjipwP
+         OiRvTN9b2hb7PkpgN5WDPhELGCFu/CKn7becxuBi5kbLvVuBpSA+ikrc9+U0s/ac6B
+         FjL5SRovhG+d12EEaapv1+C7f9fwTjZlCEN/FW+U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        kbuild test robot <lkp@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
         Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 05/16] drm/exynos: fix ref count leak in mic_pre_enable
-Date:   Wed,  8 Jul 2020 11:41:24 -0400
-Message-Id: <20200708154135.3199907-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 04/16] drm/exynos: Properly propagate return value in drm_iommu_attach_device()
+Date:   Wed,  8 Jul 2020 11:41:23 -0400
+Message-Id: <20200708154135.3199907-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200708154135.3199907-1-sashal@kernel.org>
 References: <20200708154135.3199907-1-sashal@kernel.org>
@@ -63,37 +64,44 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit d4f5a095daf0d25f0b385e1ef26338608433a4c5 ]
+[ Upstream commit b9c633882de4601015625f9136f248e9abca8a7a ]
 
-in mic_pre_enable, pm_runtime_get_sync is called which
-increments the counter even in case of failure, leading to incorrect
-ref count. In case of failure, decrement the ref count before returning.
+Propagate the proper error codes from the called functions instead of
+unconditionally returning 0.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Merge conflict so merged it manually.
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/exynos/exynos_drm_mic.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos_drm_dma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-index b78e8c5ba553b..2aff986add899 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-@@ -268,8 +268,10 @@ static void mic_pre_enable(struct drm_bridge *bridge)
- 		goto unlock;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+index 619f81435c1b2..58b89ec11b0eb 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+@@ -61,7 +61,7 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
+ 				struct device *subdrv_dev, void **dma_priv)
+ {
+ 	struct exynos_drm_private *priv = drm_dev->dev_private;
+-	int ret;
++	int ret = 0;
  
- 	ret = pm_runtime_get_sync(mic->dev);
--	if (ret < 0)
-+	if (ret < 0) {
-+		pm_runtime_put_noidle(mic->dev);
- 		goto unlock;
-+	}
+ 	if (get_dma_ops(priv->dma_dev) != get_dma_ops(subdrv_dev)) {
+ 		DRM_DEV_ERROR(subdrv_dev, "Device %s lacks support for IOMMU\n",
+@@ -92,7 +92,7 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
+ 	if (ret)
+ 		clear_dma_max_seg_size(subdrv_dev);
  
- 	mic_set_path(mic, 1);
+-	return 0;
++	return ret;
+ }
  
+ /*
 -- 
 2.25.1
 
