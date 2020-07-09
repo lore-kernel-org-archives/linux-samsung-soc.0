@@ -2,236 +2,87 @@ Return-Path: <SRS0=xCO3=AU=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC411C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jul 2020 06:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6206CC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jul 2020 07:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9857420739
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jul 2020 06:50:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kYCGWHCZ"
+	by mail.kernel.org (Postfix) with ESMTP id 2860C20674
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jul 2020 07:54:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594281290;
+	bh=ZP0fMyf/+sTGbUumaGqQE5gOWjW3qaP1fbvKZAmlgJw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GhUbPwwN5cdUZ9lrKg2fU76C7dBs9KyAt+NAH3ZL8nwgEH2ftaB2fOiPvkjBxHHBp
+	 B8eP3LIlTHW30yzgNTanihWV9NuQ7WY2BHd3d8Bl07Vyi8VrD/ofqmvEpxmSb+TwTb
+	 GUcCHYTc7f5KNvvwWUiaibtEeLxqVgZ7pVjAyD88=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbgGIGuT (ORCPT
+        id S1726262AbgGIHyt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Jul 2020 02:50:19 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58156 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726184AbgGIGuS (ORCPT
+        Thu, 9 Jul 2020 03:54:49 -0400
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:44993 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726220AbgGIHyt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Jul 2020 02:50:18 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200709065017euoutp020f5b21df438a4eba0eaa6f6e331153d4~gAt0tlA182213122131euoutp02C
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jul 2020 06:50:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200709065017euoutp020f5b21df438a4eba0eaa6f6e331153d4~gAt0tlA182213122131euoutp02C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1594277417;
-        bh=FfyyPKBkmMO5/npKc8oL3jScajCmCp+2dXiPw3GaLjs=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=kYCGWHCZlkOj692RlEcvQmYAJB3R7w/Z24KTnlDVIsrwjITrbwGlwO0nYWtbuS/4s
-         /RqgsXrzhgoY/jA0nqny9+17+y06fNGR/vmMutHHq2rYFpptKEXxmgViPy2EYJtI86
-         9LdJoxjONUMc2Mkwgls3VfWwZl4OH5tBtz84mTnI=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200709065016eucas1p2cf71c2aca083e003de4e16b4bfd72dd8~gAt0fE9Fn0975609756eucas1p2X;
-        Thu,  9 Jul 2020 06:50:16 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 99.02.06456.82EB60F5; Thu,  9
-        Jul 2020 07:50:16 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200709065016eucas1p22ef816e6a2a6e47c008cabc5e06d6716~gAtz-DqYS0776507765eucas1p2g;
-        Thu,  9 Jul 2020 06:50:16 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200709065016eusmtrp16d068fd54a316c46acc9740777cb3b60~gAtz_aIkK2835428354eusmtrp1Z;
-        Thu,  9 Jul 2020 06:50:16 +0000 (GMT)
-X-AuditID: cbfec7f2-809ff70000001938-e4-5f06be288657
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id F4.7D.06314.82EB60F5; Thu,  9
-        Jul 2020 07:50:16 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200709065015eusmtip21fd653859f7d4503f867a58f63623cc5~gAtzhxwml1681816818eusmtip2m;
-        Thu,  9 Jul 2020 06:50:15 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Zhang Qiang <qiang.zhang@windriver.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3] spi: use kthread_create_worker() helper
-Date:   Thu,  9 Jul 2020 08:50:07 +0200
-Message-Id: <20200709065007.26896-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPIsWRmVeSWpSXmKPExsWy7djP87oa+9jiDWbd0rHYOGM9q8XUh0/Y
-        LC7vmsNmMeP8PiaLxo832S3WHrnLbvH/8VdWi1sr/rI7cHhsWtXJ5tG3ZRWjx/otV1k8Pm+S
-        AzK2MgWwRnHZpKTmZJalFunbJXBlTF67lqVgklrFt3sVDYxNCl2MHBwSAiYSO5s1uxi5OIQE
-        VjBKfD29kgXC+cIoseJZBxOE85lR4veO3+wwHR87NSDiyxklNj38xQrXce/tdaAOTg42AUOJ
-        rrddbCC2iIC1xLcZ05hBbGaBH4wSj+/IggwSBoq/f+YCEmYRUJW4cmciWCuvgK3ErK8vWUBs
-        CQF5idUbDjBD2PfZJPovpkPYLhJHrzSzQ9jCEq+Ob4GyZSROT+4B+0BCoJlR4uG5tewQTg+j
-        xOWmGYwQVdYSd879YgM5gllAU2L9Ln2Ixxwl7swLgzD5JG68FYS4mE9i0rbpzBBhXomONiGI
-        GWoSs46vg9t68MIlqCs9JJZcXAD2uJBArERLdyfTBEa5WQirFjAyrmIUTy0tzk1PLTbMSy3X
-        K07MLS7NS9dLzs/dxAhMBqf/Hf+0g/HrpaRDjAIcjEo8vBM2sMYLsSaWFVfmHmKU4GBWEuF1
-        Ons6Tog3JbGyKrUoP76oNCe1+BCjNAeLkjiv8aKXsUIC6YklqdmpqQWpRTBZJg5OqQZGu9tC
-        Vy9ten5+qlCPVmTigjMbAvwlePT6lJefsi5gNF9xppy3cl7x7O/Fa+dU8X7dcWhB35VaDdHo
-        XdMWLv6eU7SCV15Y2bghZ+27aLlHE+vvSS5fV8N4ecrFY+dnxJ9c2HeiJeBxmmjL+hYNEeba
-        iZWv+je9PZJ1OuFOyTqxrY7OPyc8fMg6QYmlOCPRUIu5qDgRAKJrNlcCAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsVy+t/xe7oa+9jiDb5v47XYOGM9q8XUh0/Y
-        LC7vmsNmMeP8PiaLxo832S3WHrnLbvH/8VdWi1sr/rI7cHhsWtXJ5tG3ZRWjx/otV1k8Pm+S
-        AzK2MgWwRunZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunb
-        JehlTF67lqVgklrFt3sVDYxNCl2MHBwSAiYSHzs1uhi5OIQEljJK7FzwhbWLkRMoLiNxcloD
-        lC0s8edaFxtE0SdGiQ2XPjOBJNgEDCW63oIkODlEBGwl5r9/wQpSxCzwh1Hi0aSnrCAbhAWs
-        Jd4/cwGpYRFQlbhyZyJYLy9Q/ayvL1kgFshLrN5wgHkCI88CRoZVjCKppcW56bnFhnrFibnF
-        pXnpesn5uZsYgaG47djPzTsYL20MPsQowMGoxMP7YhNrvBBrYllxZe4hRgkOZiURXqezp+OE
-        eFMSK6tSi/Lji0pzUosPMZoCLZ/ILCWanA+Mk7ySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLp
-        iSWp2ampBalFMH1MHJxSDYwulxO2rE5znLxWos894uW6z2/l1zHt3Wi66WB8cd43uZNTFavL
-        vx2ccX+28vl98Zfbudgl5eK1P5SXz+a4e+v/fccqowZ78113t9+fODX4k+ne+bqb4gWKMlTf
-        pH66d/Nv2IEzQm1aJaydLFwVlrP0zonWM0lFfuQN0+A+Np/3854LHPkhryqVWIozEg21mIuK
-        EwGWfJg5WwIAAA==
-X-CMS-MailID: 20200709065016eucas1p22ef816e6a2a6e47c008cabc5e06d6716
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200709065016eucas1p22ef816e6a2a6e47c008cabc5e06d6716
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200709065016eucas1p22ef816e6a2a6e47c008cabc5e06d6716
-References: <CGME20200709065016eucas1p22ef816e6a2a6e47c008cabc5e06d6716@eucas1p2.samsung.com>
+        Thu, 9 Jul 2020 03:54:49 -0400
+Received: by mail-ej1-f66.google.com with SMTP id ga4so1263371ejb.11
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jul 2020 00:54:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CMiLxtVTICWAGYOpfZqDMnAVll0zOnONpr0dL/HD6cU=;
+        b=LzESgAuTTj3JnrFwjkXxhD2HismRUA02rIMzP0eXHaHJ2wZanhUJjSdLUPE4EdO7hY
+         /swB/FVu4vfJSOm++9whNILfM8j3EzdNJsDzdTohT95f6XOhDbzKe+e4yGNE+k9E+rxP
+         dtJK78bPvlJ/LmeY/Xkoy9IlYCh1XcQjn2VDDKhRLUsKTXvUfc9UAX8sAtRHUJ/eIagS
+         PwkMPMj6YA/yfxilakPjEkDCNtjoNj5h3ulqCBF0OaXu0awd4ei/rsLCrZR/UvL/hhbX
+         yEdv4ymBpHhn/4btpCHj0cvrQ6QUTumKmkYABzr54nZoJHMbHbUsf+w/2/6KDmgHAQP/
+         Vtfg==
+X-Gm-Message-State: AOAM533d4pUiwIEYnHT77FKfixf6BXVLQlgSChN1R25hNDwvNBFnK3N0
+        9jpKEvzwLC+F4ot/affCF7k=
+X-Google-Smtp-Source: ABdhPJwuhrghB3WBdR6TE0cAVlc4kbY2vXMCKw8yrCqVbPHEHH/gYPd9g7LeIekhAbZVY2G4OtsU7g==
+X-Received: by 2002:a17:906:748:: with SMTP id z8mr56456214ejb.257.1594281287675;
+        Thu, 09 Jul 2020 00:54:47 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.195])
+        by smtp.googlemail.com with ESMTPSA id h15sm1271905eja.44.2020.07.09.00.54.46
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 Jul 2020 00:54:46 -0700 (PDT)
+Date:   Thu, 9 Jul 2020 09:54:44 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] drm/exynos: gem: Fix sparse warning
+Message-ID: <20200709075444.GA7306@kozik-lap>
+References: <CGME20200707110911eucas1p1e21621f402b2aac89457647c3b2ad46f@eucas1p1.samsung.com>
+ <20200707110859.3822-1-m.szyprowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200707110859.3822-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use kthread_create_worker() helper to simplify the code. It uses
-the kthread worker API the right way. It will eventually allow
-to remove the FIXME in kthread_worker_fn() and add more consistency
-checks in the future.
+On Tue, Jul 07, 2020 at 01:08:59PM +0200, Marek Szyprowski wrote:
+> Add a proper cast on the exynos_gem->kvaddr assignment to avoid a sparse warning.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Fixes: 9940d9d93406 ("drm/exynos: gem: Get rid of the internal 'pages' array")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v3:
-- rebased onto latest spi-next branch
----
- drivers/spi/spi.c       | 26 ++++++++++++--------------
- include/linux/spi/spi.h |  6 ++----
- 2 files changed, 14 insertions(+), 18 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index d4ba723a30da..1d7bba434225 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1368,7 +1368,7 @@ static void __spi_pump_messages(struct spi_controller *ctlr, bool in_kthread)
- 
- 	/* If another context is idling the device then defer */
- 	if (ctlr->idling) {
--		kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
-+		kthread_queue_work(ctlr->kworker, &ctlr->pump_messages);
- 		spin_unlock_irqrestore(&ctlr->queue_lock, flags);
- 		return;
- 	}
-@@ -1382,7 +1382,7 @@ static void __spi_pump_messages(struct spi_controller *ctlr, bool in_kthread)
- 
- 		/* Only do teardown in the thread */
- 		if (!in_kthread) {
--			kthread_queue_work(&ctlr->kworker,
-+			kthread_queue_work(ctlr->kworker,
- 					   &ctlr->pump_messages);
- 			spin_unlock_irqrestore(&ctlr->queue_lock, flags);
- 			return;
-@@ -1618,7 +1618,7 @@ static void spi_set_thread_rt(struct spi_controller *ctlr)
- 
- 	dev_info(&ctlr->dev,
- 		"will run message pump with realtime priority\n");
--	sched_setscheduler(ctlr->kworker_task, SCHED_FIFO, &param);
-+	sched_setscheduler(ctlr->kworker->task, SCHED_FIFO, &param);
- }
- 
- static int spi_init_queue(struct spi_controller *ctlr)
-@@ -1626,13 +1626,12 @@ static int spi_init_queue(struct spi_controller *ctlr)
- 	ctlr->running = false;
- 	ctlr->busy = false;
- 
--	kthread_init_worker(&ctlr->kworker);
--	ctlr->kworker_task = kthread_run(kthread_worker_fn, &ctlr->kworker,
--					 "%s", dev_name(&ctlr->dev));
--	if (IS_ERR(ctlr->kworker_task)) {
--		dev_err(&ctlr->dev, "failed to create message pump task\n");
--		return PTR_ERR(ctlr->kworker_task);
-+	ctlr->kworker = kthread_create_worker(0, dev_name(&ctlr->dev));
-+	if (IS_ERR(ctlr->kworker)) {
-+		dev_err(&ctlr->dev, "failed to create message pump kworker\n");
-+		return PTR_ERR(ctlr->kworker);
- 	}
-+
- 	kthread_init_work(&ctlr->pump_messages, spi_pump_messages);
- 
- 	/*
-@@ -1716,7 +1715,7 @@ void spi_finalize_current_message(struct spi_controller *ctlr)
- 	ctlr->cur_msg = NULL;
- 	ctlr->cur_msg_prepared = false;
- 	ctlr->fallback = false;
--	kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
-+	kthread_queue_work(ctlr->kworker, &ctlr->pump_messages);
- 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
- 
- 	trace_spi_message_done(mesg);
-@@ -1742,7 +1741,7 @@ static int spi_start_queue(struct spi_controller *ctlr)
- 	ctlr->cur_msg = NULL;
- 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
- 
--	kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
-+	kthread_queue_work(ctlr->kworker, &ctlr->pump_messages);
- 
- 	return 0;
- }
-@@ -1798,8 +1797,7 @@ static int spi_destroy_queue(struct spi_controller *ctlr)
- 		return ret;
- 	}
- 
--	kthread_flush_worker(&ctlr->kworker);
--	kthread_stop(ctlr->kworker_task);
-+	kthread_destroy_worker(ctlr->kworker);
- 
- 	return 0;
- }
-@@ -1822,7 +1820,7 @@ static int __spi_queued_transfer(struct spi_device *spi,
- 
- 	list_add_tail(&msg->queue, &ctlr->queue);
- 	if (!ctlr->busy && need_pump)
--		kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
-+		kthread_queue_work(ctlr->kworker, &ctlr->pump_messages);
- 
- 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
- 	return 0;
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index 0e67a9a3a1d3..5fcf5da13fdb 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -358,8 +358,7 @@ static inline void spi_unregister_driver(struct spi_driver *sdrv)
-  * @cleanup: frees controller-specific state
-  * @can_dma: determine whether this controller supports DMA
-  * @queued: whether this controller is providing an internal message queue
-- * @kworker: thread struct for message pump
-- * @kworker_task: pointer to task for message pump kworker thread
-+ * @kworker: pointer to thread struct for message pump
-  * @pump_messages: work struct for scheduling work to the message pump
-  * @queue_lock: spinlock to syncronise access to message queue
-  * @queue: message queue
-@@ -593,8 +592,7 @@ struct spi_controller {
- 	 * Over time we expect SPI drivers to be phased over to this API.
- 	 */
- 	bool				queued;
--	struct kthread_worker		kworker;
--	struct task_struct		*kworker_task;
-+	struct kthread_worker		*kworker;
- 	struct kthread_work		pump_messages;
- 	spinlock_t			queue_lock;
- 	struct list_head		queue;
--- 
-2.17.1
-
+Best regards,
+Krzysztof
