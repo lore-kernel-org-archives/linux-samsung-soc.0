@@ -5,146 +5,233 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A6AC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jul 2020 05:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC411C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jul 2020 06:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A50FB206A1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jul 2020 05:34:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9857420739
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jul 2020 06:50:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FNc4WtO7"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kYCGWHCZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726119AbgGIFeA (ORCPT
+        id S1726213AbgGIGuT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Jul 2020 01:34:00 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:21830 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726456AbgGIFdq (ORCPT
+        Thu, 9 Jul 2020 02:50:19 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:58156 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726184AbgGIGuS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Jul 2020 01:33:46 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200709053343epoutp04476dec4c6c45c122d2e76f372bcb91c0~f-q_8gr_U1179411794epoutp04r
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jul 2020 05:33:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200709053343epoutp04476dec4c6c45c122d2e76f372bcb91c0~f-q_8gr_U1179411794epoutp04r
+        Thu, 9 Jul 2020 02:50:18 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200709065017euoutp020f5b21df438a4eba0eaa6f6e331153d4~gAt0tlA182213122131euoutp02C
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jul 2020 06:50:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200709065017euoutp020f5b21df438a4eba0eaa6f6e331153d4~gAt0tlA182213122131euoutp02C
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1594272823;
-        bh=sfkpQ9HHY0HvMIk919py9z+6K8m7VZ3LXraenZFelz0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FNc4WtO7vhk6MsGHnPgiDzN4wM9kSMSz8Ss2j09SdS4eN2uIa4Cj+pvcPUzApSQGd
-         gyNpQDD9RaWU4lqj1IrwF+Jk3DfF1TCDWSPYPCvGR3+fVPeaF7JUK7UsYT8kUo1Y/f
-         EvLmLpbT47EEU9EVM5n2JqhIEWTba+wb9YOZDyho=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200709053343epcas1p3e21a6a9cc827ab154ec5c4eb42a85cea~f-q_Xabdh0095300953epcas1p35;
-        Thu,  9 Jul 2020 05:33:43 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4B2Pwh3jdyzMqYm2; Thu,  9 Jul
-        2020 05:33:40 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        87.CC.28581.43CA60F5; Thu,  9 Jul 2020 14:33:40 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200709053340epcas1p3bc307da98530bc166c7d354a62e4c894~f-q7aHAjo0095300953epcas1p3t;
-        Thu,  9 Jul 2020 05:33:40 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200709053340epsmtrp1095143372c99b801f9a4c354a683ea5d~f-q7ZR-ss2587325873epsmtrp1P;
-        Thu,  9 Jul 2020 05:33:40 +0000 (GMT)
-X-AuditID: b6c32a38-2e3ff70000006fa5-7c-5f06ac349ad5
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        76.F6.08303.33CA60F5; Thu,  9 Jul 2020 14:33:39 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200709053339epsmtip14829e8e1b42e3ef1aac96617c44eec41~f-q7J4Hex1123511235epsmtip1S;
-        Thu,  9 Jul 2020 05:33:39 +0000 (GMT)
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-To:     lukasz.luba@arm.com, k.konieczny@samsung.com, krzk@kernel.org,
-        kgene@kernel.org
-Cc:     s.nawrocki@samsung.com, willy.mh.wolff.ml@gmail.com,
-        b.zolnierkie@samsung.com, cw00.choi@samsung.com,
-        chanwoo@kernel.org, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 2/2] memory: samsung: exynos5422-dmc: Use delayed timer
- as default
-Date:   Thu,  9 Jul 2020 14:45:04 +0900
-Message-Id: <20200709054504.656-3-cw00.choi@samsung.com>
+        s=mail20170921; t=1594277417;
+        bh=FfyyPKBkmMO5/npKc8oL3jScajCmCp+2dXiPw3GaLjs=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=kYCGWHCZlkOj692RlEcvQmYAJB3R7w/Z24KTnlDVIsrwjITrbwGlwO0nYWtbuS/4s
+         /RqgsXrzhgoY/jA0nqny9+17+y06fNGR/vmMutHHq2rYFpptKEXxmgViPy2EYJtI86
+         9LdJoxjONUMc2Mkwgls3VfWwZl4OH5tBtz84mTnI=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200709065016eucas1p2cf71c2aca083e003de4e16b4bfd72dd8~gAt0fE9Fn0975609756eucas1p2X;
+        Thu,  9 Jul 2020 06:50:16 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 99.02.06456.82EB60F5; Thu,  9
+        Jul 2020 07:50:16 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200709065016eucas1p22ef816e6a2a6e47c008cabc5e06d6716~gAtz-DqYS0776507765eucas1p2g;
+        Thu,  9 Jul 2020 06:50:16 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200709065016eusmtrp16d068fd54a316c46acc9740777cb3b60~gAtz_aIkK2835428354eusmtrp1Z;
+        Thu,  9 Jul 2020 06:50:16 +0000 (GMT)
+X-AuditID: cbfec7f2-809ff70000001938-e4-5f06be288657
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id F4.7D.06314.82EB60F5; Thu,  9
+        Jul 2020 07:50:16 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200709065015eusmtip21fd653859f7d4503f867a58f63623cc5~gAtzhxwml1681816818eusmtip2m;
+        Thu,  9 Jul 2020 06:50:15 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Zhang Qiang <qiang.zhang@windriver.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v3] spi: use kthread_create_worker() helper
+Date:   Thu,  9 Jul 2020 08:50:07 +0200
+Message-Id: <20200709065007.26896-1-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200709054504.656-1-cw00.choi@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupik+LIzCtJLcpLzFFi42LZdlhTV9dkDVu8wcafYhYbZ6xntZh44wqL
-        xfUvz1ktFnyawWrR//g1s8X58xvYLc42vWG32PT4GqvF5V1z2Cw+9x5htJhxfh+TxcKmFnaL
-        240r2CwOv2lntfh24hGjA7/HmnlrGD12zrrL7rFpVSebx+Yl9R59W1YxenzeJBfAFpVtk5Ga
-        mJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0spJCWWJOKVAo
-        ILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwLJArzgxt7g0L10vOT/XytDAwMgUqDAhO+PGu1tM
-        BZ/ZK94e+8XSwPiMrYuRk0NCwETiw94f7CC2kMAORom7v3m6GLmA7E+MElubvzNBOJ8ZJV70
-        vIHr+PL5BjNEYhejxKJTz1ggnC+MEkvnHQarYhPQktj/4gaYLSIQKjH73lSwDmaBXUwSX6bN
-        ZAZJCAuES3x8/IsJxGYRUJXY/XE+C4jNK2Ah8Xv/MVaIdfISqzccAKvnFLCU2HJjGivIIAmB
-        Tg6Jpi/LGSGKXCT+X+qFahCWeHV8CzuELSXxsr8Nyq6WWHnyCBtEcwejxJb9F6AajCX2L50M
-        dAUH0HmaEut36UOEFSV2/p4LNp9ZgE/i3dceVpASCQFeiY42IYgSZYnLD+4yQdiSEovbO6FB
-        5CHRsvQxNFR6GCXWrz3BNIFRbhbChgWMjKsYxVILinPTU4sNC0yQ42wTIzhRalnsYJz79oPe
-        IUYmDsZDjBIczEoivAaKrPFCvCmJlVWpRfnxRaU5qcWHGE2BoTeRWUo0OR+YqvNK4g1NjYyN
-        jS1MDM1MDQ2VxHk/LWCLFxJITyxJzU5NLUgtgulj4uCUamBSMHu3YW6jLZPMu5hlwSUf378X
-        YugKPL64/EOa5wHtby5/z2jK9JafLoxeduJCMYfx73aLWz+PynpL6pxc0XCt5fijo9xt7x+d
-        TbjFVzr1/MoJn+yq2Lpmvo7XrHqq/XTNVFuZreq3V0vLyPY+qEu615iq+/uXofHhjpY0D4NJ
-        ixx3pbwykHhj0pX8VyzeekV2jWNvOPN+BeZ+3cJFZhnBatLbD4jrb7l22mOV6+vNE4+12IT5
-        GCX5NQgze12ROR65I/YDb22H8bbuW7kmcut3cgrXz34Zb/jzqPQvlo1aUbOnf9Y0uGbyIjHn
-        PIuL+uQ292JRc9+6xjfv7H9vW/HiicFjy8chWS5SRSIzVymxFGckGmoxFxUnAgDtiiseHQQA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMLMWRmVeSWpSXmKPExsWy7bCSnK7xGrZ4gxdPrC02zljPajHxxhUW
-        i+tfnrNaLPg0g9Wi//FrZovz5zewW5xtesNusenxNVaLy7vmsFl87j3CaDHj/D4mi4VNLewW
-        txtXsFkcftPOavHtxCNGB36PNfPWMHrsnHWX3WPTqk42j81L6j36tqxi9Pi8SS6ALYrLJiU1
-        J7MstUjfLoEr48a7W0wFn9kr3h77xdLA+Iyti5GTQ0LAROLL5xvMXYxcHEICOxglVs34yAiR
-        kJSYdvEoUIIDyBaWOHy4GKLmE1DN/dWsIDVsAloS+1/cABskIhApcb7hKBtIEbPAMSaJ5W/b
-        WUASwgKhEmcOzgazWQRUJXZ/nA9m8wpYSPzef4wVYpm8xOoNB5hBbE4BS4ktN6aBxYWAatZP
-        W8w6gZFvASPDKkbJ1ILi3PTcYsMCo7zUcr3ixNzi0rx0veT83E2M4HDW0trBuGfVB71DjEwc
-        jIcYJTiYlUR4DRRZ44V4UxIrq1KL8uOLSnNSiw8xSnOwKInzfp21ME5IID2xJDU7NbUgtQgm
-        y8TBKdXApHVe2pCv6VhN76nO491mv65Fdb/k45i49l6J7ZSOZ/Nbrv+7phkid2cfu8SSSzIS
-        clssJ9TrdCZxz+pUXuIWwn5qmtLZh6GPn84P45p8kCOMM+Snyu2ij7eU7z0IXXuaKSsgrGXi
-        esfSso63OfU9mzTn/D9h6fB8AXOH9qT2H3J71lmcfRK+UUDhw90Ge99X4ta3l/xaN+OR4pWN
-        Qb1bz3z42dSns6JK1f5t2EHeZoM7hre9Zs2P6vFbluF4reMH73pV/Q1bA2aEldf7yL5X3Ppp
-        ikGR4u741MOt/BMa9JhsPew7uR7kH4z+97ql51ud/CpelQPua7e2q9+dEepp9GbBi3Md3jl3
-        NpQErgjvUmIpzkg01GIuKk4EAA+ZIdnWAgAA
-X-CMS-MailID: 20200709053340epcas1p3bc307da98530bc166c7d354a62e4c894
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPIsWRmVeSWpSXmKPExsWy7djP87oa+9jiDWbd0rHYOGM9q8XUh0/Y
+        LC7vmsNmMeP8PiaLxo832S3WHrnLbvH/8VdWi1sr/rI7cHhsWtXJ5tG3ZRWjx/otV1k8Pm+S
+        AzK2MgWwRnHZpKTmZJalFunbJXBlTF67lqVgklrFt3sVDYxNCl2MHBwSAiYSO5s1uxi5OIQE
+        VjBKfD29kgXC+cIoseJZBxOE85lR4veO3+wwHR87NSDiyxklNj38xQrXce/tdaAOTg42AUOJ
+        rrddbCC2iIC1xLcZ05hBbGaBH4wSj+/IggwSBoq/f+YCEmYRUJW4cmciWCuvgK3ErK8vWUBs
+        CQF5idUbDjBD2PfZJPovpkPYLhJHrzSzQ9jCEq+Ob4GyZSROT+4B+0BCoJlR4uG5tewQTg+j
+        xOWmGYwQVdYSd879YgM5gllAU2L9Ln2Ixxwl7swLgzD5JG68FYS4mE9i0rbpzBBhXomONiGI
+        GWoSs46vg9t68MIlqCs9JJZcXAD2uJBArERLdyfTBEa5WQirFjAyrmIUTy0tzk1PLTbMSy3X
+        K07MLS7NS9dLzs/dxAhMBqf/Hf+0g/HrpaRDjAIcjEo8vBM2sMYLsSaWFVfmHmKU4GBWEuF1
+        Ons6Tog3JbGyKrUoP76oNCe1+BCjNAeLkjiv8aKXsUIC6YklqdmpqQWpRTBZJg5OqQZGu9tC
+        Vy9ten5+qlCPVmTigjMbAvwlePT6lJefsi5gNF9xppy3cl7x7O/Fa+dU8X7dcWhB35VaDdHo
+        XdMWLv6eU7SCV15Y2bghZ+27aLlHE+vvSS5fV8N4ecrFY+dnxJ9c2HeiJeBxmmjL+hYNEeba
+        iZWv+je9PZJ1OuFOyTqxrY7OPyc8fMg6QYmlOCPRUIu5qDgRAKJrNlcCAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsVy+t/xe7oa+9jiDb5v47XYOGM9q8XUh0/Y
+        LC7vmsNmMeP8PiaLxo832S3WHrnLbvH/8VdWi1sr/rI7cHhsWtXJ5tG3ZRWjx/otV1k8Pm+S
+        AzK2MgWwRunZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunb
+        JehlTF67lqVgklrFt3sVDYxNCl2MHBwSAiYSHzs1uhi5OIQEljJK7FzwhbWLkRMoLiNxcloD
+        lC0s8edaFxtE0SdGiQ2XPjOBJNgEDCW63oIkODlEBGwl5r9/wQpSxCzwh1Hi0aSnrCAbhAWs
+        Jd4/cwGpYRFQlbhyZyJYLy9Q/ayvL1kgFshLrN5wgHkCI88CRoZVjCKppcW56bnFhnrFibnF
+        pXnpesn5uZsYgaG47djPzTsYL20MPsQowMGoxMP7YhNrvBBrYllxZe4hRgkOZiURXqezp+OE
+        eFMSK6tSi/Lji0pzUosPMZoCLZ/ILCWanA+Mk7ySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLp
+        iSWp2ampBalFMH1MHJxSDYwulxO2rE5znLxWos894uW6z2/l1zHt3Wi66WB8cd43uZNTFavL
+        vx2ccX+28vl98Zfbudgl5eK1P5SXz+a4e+v/fccqowZ78113t9+fODX4k+ne+bqb4gWKMlTf
+        pH66d/Nv2IEzQm1aJaydLFwVlrP0zonWM0lFfuQN0+A+Np/3854LHPkhryqVWIozEg21mIuK
+        EwGWfJg5WwIAAA==
+X-CMS-MailID: 20200709065016eucas1p22ef816e6a2a6e47c008cabc5e06d6716
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200709053340epcas1p3bc307da98530bc166c7d354a62e4c894
-References: <20200709054504.656-1-cw00.choi@samsung.com>
-        <CGME20200709053340epcas1p3bc307da98530bc166c7d354a62e4c894@epcas1p3.samsung.com>
+X-RootMTR: 20200709065016eucas1p22ef816e6a2a6e47c008cabc5e06d6716
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200709065016eucas1p22ef816e6a2a6e47c008cabc5e06d6716
+References: <CGME20200709065016eucas1p22ef816e6a2a6e47c008cabc5e06d6716@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use delayed timer as default instead of deferrable timer
-in order to monitor the DMC status regardless of CPU idle.
+Use kthread_create_worker() helper to simplify the code. It uses
+the kthread worker API the right way. It will eventually allow
+to remove the FIXME in kthread_worker_fn() and add more consistency
+checks in the future.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/memory/samsung/exynos5422-dmc.c | 1 +
- 1 file changed, 1 insertion(+)
+v3:
+- rebased onto latest spi-next branch
+---
+ drivers/spi/spi.c       | 26 ++++++++++++--------------
+ include/linux/spi/spi.h |  6 ++----
+ 2 files changed, 14 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
-index 25196d6268e2..93e9c2429c0d 100644
---- a/drivers/memory/samsung/exynos5422-dmc.c
-+++ b/drivers/memory/samsung/exynos5422-dmc.c
-@@ -945,6 +945,7 @@ static int exynos5_dmc_get_cur_freq(struct device *dev, unsigned long *freq)
-  * It provides to the devfreq framework needed functions and polling period.
-  */
- static struct devfreq_dev_profile exynos5_dmc_df_profile = {
-+	.timer = DEVFREQ_TIMER_DELAYED,
- 	.target = exynos5_dmc_target,
- 	.get_dev_status = exynos5_dmc_get_status,
- 	.get_cur_freq = exynos5_dmc_get_cur_freq,
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index d4ba723a30da..1d7bba434225 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1368,7 +1368,7 @@ static void __spi_pump_messages(struct spi_controller *ctlr, bool in_kthread)
+ 
+ 	/* If another context is idling the device then defer */
+ 	if (ctlr->idling) {
+-		kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
++		kthread_queue_work(ctlr->kworker, &ctlr->pump_messages);
+ 		spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 		return;
+ 	}
+@@ -1382,7 +1382,7 @@ static void __spi_pump_messages(struct spi_controller *ctlr, bool in_kthread)
+ 
+ 		/* Only do teardown in the thread */
+ 		if (!in_kthread) {
+-			kthread_queue_work(&ctlr->kworker,
++			kthread_queue_work(ctlr->kworker,
+ 					   &ctlr->pump_messages);
+ 			spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 			return;
+@@ -1618,7 +1618,7 @@ static void spi_set_thread_rt(struct spi_controller *ctlr)
+ 
+ 	dev_info(&ctlr->dev,
+ 		"will run message pump with realtime priority\n");
+-	sched_setscheduler(ctlr->kworker_task, SCHED_FIFO, &param);
++	sched_setscheduler(ctlr->kworker->task, SCHED_FIFO, &param);
+ }
+ 
+ static int spi_init_queue(struct spi_controller *ctlr)
+@@ -1626,13 +1626,12 @@ static int spi_init_queue(struct spi_controller *ctlr)
+ 	ctlr->running = false;
+ 	ctlr->busy = false;
+ 
+-	kthread_init_worker(&ctlr->kworker);
+-	ctlr->kworker_task = kthread_run(kthread_worker_fn, &ctlr->kworker,
+-					 "%s", dev_name(&ctlr->dev));
+-	if (IS_ERR(ctlr->kworker_task)) {
+-		dev_err(&ctlr->dev, "failed to create message pump task\n");
+-		return PTR_ERR(ctlr->kworker_task);
++	ctlr->kworker = kthread_create_worker(0, dev_name(&ctlr->dev));
++	if (IS_ERR(ctlr->kworker)) {
++		dev_err(&ctlr->dev, "failed to create message pump kworker\n");
++		return PTR_ERR(ctlr->kworker);
+ 	}
++
+ 	kthread_init_work(&ctlr->pump_messages, spi_pump_messages);
+ 
+ 	/*
+@@ -1716,7 +1715,7 @@ void spi_finalize_current_message(struct spi_controller *ctlr)
+ 	ctlr->cur_msg = NULL;
+ 	ctlr->cur_msg_prepared = false;
+ 	ctlr->fallback = false;
+-	kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
++	kthread_queue_work(ctlr->kworker, &ctlr->pump_messages);
+ 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 
+ 	trace_spi_message_done(mesg);
+@@ -1742,7 +1741,7 @@ static int spi_start_queue(struct spi_controller *ctlr)
+ 	ctlr->cur_msg = NULL;
+ 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 
+-	kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
++	kthread_queue_work(ctlr->kworker, &ctlr->pump_messages);
+ 
+ 	return 0;
+ }
+@@ -1798,8 +1797,7 @@ static int spi_destroy_queue(struct spi_controller *ctlr)
+ 		return ret;
+ 	}
+ 
+-	kthread_flush_worker(&ctlr->kworker);
+-	kthread_stop(ctlr->kworker_task);
++	kthread_destroy_worker(ctlr->kworker);
+ 
+ 	return 0;
+ }
+@@ -1822,7 +1820,7 @@ static int __spi_queued_transfer(struct spi_device *spi,
+ 
+ 	list_add_tail(&msg->queue, &ctlr->queue);
+ 	if (!ctlr->busy && need_pump)
+-		kthread_queue_work(&ctlr->kworker, &ctlr->pump_messages);
++		kthread_queue_work(ctlr->kworker, &ctlr->pump_messages);
+ 
+ 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 	return 0;
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index 0e67a9a3a1d3..5fcf5da13fdb 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -358,8 +358,7 @@ static inline void spi_unregister_driver(struct spi_driver *sdrv)
+  * @cleanup: frees controller-specific state
+  * @can_dma: determine whether this controller supports DMA
+  * @queued: whether this controller is providing an internal message queue
+- * @kworker: thread struct for message pump
+- * @kworker_task: pointer to task for message pump kworker thread
++ * @kworker: pointer to thread struct for message pump
+  * @pump_messages: work struct for scheduling work to the message pump
+  * @queue_lock: spinlock to syncronise access to message queue
+  * @queue: message queue
+@@ -593,8 +592,7 @@ struct spi_controller {
+ 	 * Over time we expect SPI drivers to be phased over to this API.
+ 	 */
+ 	bool				queued;
+-	struct kthread_worker		kworker;
+-	struct task_struct		*kworker_task;
++	struct kthread_worker		*kworker;
+ 	struct kthread_work		pump_messages;
+ 	spinlock_t			queue_lock;
+ 	struct list_head		queue;
 -- 
 2.17.1
 
