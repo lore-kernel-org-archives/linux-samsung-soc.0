@@ -1,92 +1,103 @@
-Return-Path: <SRS0=xCO3=AU=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=/wZl=AV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA71C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jul 2020 22:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F383C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jul 2020 08:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15D0D20720
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jul 2020 22:01:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594332066;
-	bh=qGD80egtZFoMZA4mqqCxfqJGdccsub1sxXgdZJ/oxAI=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:List-ID:From;
-	b=psm9IgHnWux4UHalVcc+EyMiaUdmrGB7pGA6t/WPdNgewGU5/Zu0IDvJ3LIMsbhXi
-	 US/jBQGIW6TMk+emT4bDD09Utwfd2E9sbvnwWM6aablc4+V5XdjW/o/igIdrjR1cyC
-	 ayQkohYlrgZPd0TLO5SeDZYaE1p9zXDGq8tkzb2k=
+	by mail.kernel.org (Postfix) with ESMTP id 843BC207DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jul 2020 08:34:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbgGIWBF (ORCPT
+        id S1726818AbgGJIev (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Jul 2020 18:01:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44608 "EHLO mail.kernel.org"
+        Fri, 10 Jul 2020 04:34:51 -0400
+Received: from foss.arm.com ([217.140.110.172]:59648 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726213AbgGIWBF (ORCPT
+        id S1726768AbgGJIeu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Jul 2020 18:01:05 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7477D20672;
-        Thu,  9 Jul 2020 22:01:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594332065;
-        bh=qGD80egtZFoMZA4mqqCxfqJGdccsub1sxXgdZJ/oxAI=;
-        h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-        b=pb4bGji5iciLzjQCBs8dZ+8RF2x9sDoV4tQUe8e6j468R+x6CvcHXeJM8o5LEhTw/
-         B4sSp+udV7Q9lcQmU+jf4CJ2/EGa3HzdKB9MQxKGRyNPqcuJF8rBp1lBSIUGWujfQX
-         75BRpln9Nm4tLA9vmpueSxpLHi026SBzHmZN7Tqc=
-Date:   Thu, 09 Jul 2020 23:00:59 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     linux-spi@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Zhang Qiang <qiang.zhang@windriver.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Petr Mladek <pmladek@suse.com>
-In-Reply-To: <20200709065007.26896-1-m.szyprowski@samsung.com>
-References: <CGME20200709065016eucas1p22ef816e6a2a6e47c008cabc5e06d6716@eucas1p2.samsung.com> <20200709065007.26896-1-m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3] spi: use kthread_create_worker() helper
-Message-Id: <159433204447.479.9183431834773506860.b4-ty@kernel.org>
+        Fri, 10 Jul 2020 04:34:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F0CDB31B;
+        Fri, 10 Jul 2020 01:34:49 -0700 (PDT)
+Received: from [10.37.12.58] (unknown [10.37.12.58])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA9263F9AB;
+        Fri, 10 Jul 2020 01:34:46 -0700 (PDT)
+Subject: Re: [PATCH 1/2] memory: samsung: exynos5422-dmc: Adjust polling
+ interval and uptreshold
+To:     Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     willy.mh.wolff.ml@gmail.com, k.konieczny@samsung.com,
+        b.zolnierkie@samsung.com, krzk@kernel.org, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        s.nawrocki@samsung.com, kgene@kernel.org
+References: <20200708153420.29484-1-lukasz.luba@arm.com>
+ <CGME20200708153448epcas1p438fae2327ac69fcc1a78d9c73cfda501@epcas1p4.samsung.com>
+ <20200708153420.29484-2-lukasz.luba@arm.com>
+ <fa3f651a-3c2b-188b-e2dc-4fd05ce4a1b7@samsung.com>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <a676fc18-6f1f-8502-e8d5-5ad1ccf0eec6@arm.com>
+Date:   Fri, 10 Jul 2020 09:34:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <fa3f651a-3c2b-188b-e2dc-4fd05ce4a1b7@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 9 Jul 2020 08:50:07 +0200, Marek Szyprowski wrote:
-> Use kthread_create_worker() helper to simplify the code. It uses
-> the kthread worker API the right way. It will eventually allow
-> to remove the FIXME in kthread_worker_fn() and add more consistency
-> checks in the future.
+Hi Chanwoo,
 
-Applied to
+On 7/9/20 5:08 AM, Chanwoo Choi wrote:
+> Hi Lukasz,
+> 
+> On 7/9/20 12:34 AM, Lukasz Luba wrote:
+>> In order to react faster and make better decisions under some workloads,
+>> benchmarking the memory subsystem behavior, adjust the polling interval
+>> and upthreshold value used by the simple_ondemand governor.
+>>
+>> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
+>> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+>> ---
+>>   drivers/memory/samsung/exynos5422-dmc.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+>> index 93e9c2429c0d..e03ee35f0ab5 100644
+>> --- a/drivers/memory/samsung/exynos5422-dmc.c
+>> +++ b/drivers/memory/samsung/exynos5422-dmc.c
+>> @@ -1466,10 +1466,10 @@ static int exynos5_dmc_probe(struct platform_device *pdev)
+>>   		 * Setup default thresholds for the devfreq governor.
+>>   		 * The values are chosen based on experiments.
+>>   		 */
+>> -		dmc->gov_data.upthreshold = 30;
+>> +		dmc->gov_data.upthreshold = 10;
+>>   		dmc->gov_data.downdifferential = 5;
+>>   
+>> -		exynos5_dmc_df_profile.polling_ms = 500;
+>> +		exynos5_dmc_df_profile.polling_ms = 100;
+>>   	}
+>>   
+>>   
+>>
+> 
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> 
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Thank you for the review. Do you think this patch could go through
+your tree together with your patches?
 
-Thanks!
+I don't know Krzysztof's opinion about the patch 2/2, but
+I would expect, assuming the patch itself is correct, he would
+like to take it into his next/dt branch.
 
-[1/1] spi: use kthread_create_worker() helper
-      commit: 60a883d119ab9ef63f830c85bbd2f0e2e2314f4f
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Regards,
+Lukasz
