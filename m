@@ -2,144 +2,140 @@ Return-Path: <SRS0=/wZl=AV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E4EEC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jul 2020 13:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D65B6C433EB
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jul 2020 13:41:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DB6A20748
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jul 2020 13:19:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594387171;
-	bh=d1/GXsN4FtvvQ3dpuuOh+qoLNWXh5+3KkXm5CGMHXcI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=T+10AGsb86Dj7mKEBPuzPoSmjGd9gXbJsRqT5KG+7KI6yhVBp+ZdWoKMSQK2xL0eI
-	 oInt8qN1ZmbjjB6/cXsz/pNbBPxu5TXc2UIMNZum6ZvOQrfKh4DofvZvYkFMYDHZYK
-	 iSbrQ59nFFvPcH1u8JZXpsk4zcMl9zbsZUOtuAZw=
+	by mail.kernel.org (Postfix) with ESMTP id BA6102063A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jul 2020 13:41:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbgGJNT1 convert rfc822-to-8bit (ORCPT
+        id S1727038AbgGJNlg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Jul 2020 09:19:27 -0400
-Received: from mail-ej1-f65.google.com ([209.85.218.65]:39596 "EHLO
-        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726774AbgGJNT0 (ORCPT
+        Fri, 10 Jul 2020 09:41:36 -0400
+Received: from foss.arm.com ([217.140.110.172]:47256 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726774AbgGJNlg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Jul 2020 09:19:26 -0400
-Received: by mail-ej1-f65.google.com with SMTP id w6so5998956ejq.6;
-        Fri, 10 Jul 2020 06:19:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=aiyaF2FytE8HZZpLNpK3zBFemn/CG6XpT/cnzXTCJwM=;
-        b=qIvbPknn9kJz6NyTQzcE4XGs4Klbgd760knstF5NEfcadE/OgnMvvDWCHTHJqmZy9u
-         NlU7oxxbEqkLXweC3pzNNZ2LEJBhvC6JigDhYOLjBrCpNqdUl1b0yZUa356EFLeaO6N1
-         eFVR9UeySKpqaHCLh5PZJtkLXWBwnM8xdlEiIjPublXbEYnOj+Pp6SvTqwe1fbnWaTRQ
-         09+I1wmYlFMNxZY1rs1KBfWpxvwhoppNmjbcuRgQFPtJck7b/dkAOgp5wSqafsmxbKDY
-         KRZYesKRDaCWwkYpMOH0gvb5UCle9DxWiI3/tRY6bZagCI88R8hjQ3tWpYKtwXmpBtmh
-         xJ6g==
-X-Gm-Message-State: AOAM530yX5vSyg0LRUVubrMpZVDhpmAPtSt0e44uWb71x6JbYLIeagRx
-        NSxic3fioxOtLBKeJv9z2Vk=
-X-Google-Smtp-Source: ABdhPJyaUT+p8gosJzUaxrGPh/H7xAs294fLsRt3d6RK4D5/YPUDPN6b8icRktecgzIS+lDpaBenkw==
-X-Received: by 2002:a17:906:4a17:: with SMTP id w23mr63943545eju.360.1594387164434;
-        Fri, 10 Jul 2020 06:19:24 -0700 (PDT)
-Received: from pi3 ([194.230.155.195])
-        by smtp.googlemail.com with ESMTPSA id fi29sm3600252ejb.83.2020.07.10.06.19.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jul 2020 06:19:23 -0700 (PDT)
-Date:   Fri, 10 Jul 2020 15:19:21 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Lukasz Luba <lukasz.luba@arm.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Fri, 10 Jul 2020 09:41:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F14C1FB;
+        Fri, 10 Jul 2020 06:41:35 -0700 (PDT)
+Received: from [10.37.12.58] (unknown [10.37.12.58])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6843F3F8C6;
+        Fri, 10 Jul 2020 06:41:31 -0700 (PDT)
+Subject: Re: [PATCH 1/2] memory: samsung: exynos5422-dmc: Adjust polling
+ interval and uptreshold
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, willy.mh.wolff.ml@gmail.com,
         k.konieczny@samsung.com, b.zolnierkie@samsung.com,
         chanwoo@kernel.org, myungjoo.ham@samsung.com,
         kyungmin.park@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org
-Subject: Re: [PATCH 1/2] memory: samsung: exynos5422-dmc: Adjust polling
- interval and uptreshold
-Message-ID: <20200710131921.GA23039@pi3>
 References: <20200708153420.29484-1-lukasz.luba@arm.com>
  <CGME20200708153448epcas1p438fae2327ac69fcc1a78d9c73cfda501@epcas1p4.samsung.com>
  <20200708153420.29484-2-lukasz.luba@arm.com>
  <fa3f651a-3c2b-188b-e2dc-4fd05ce4a1b7@samsung.com>
  <a676fc18-6f1f-8502-e8d5-5ad1ccf0eec6@arm.com>
  <c016e256-65a6-8075-d88d-c3fad4815b4d@samsung.com>
+ <20200710131921.GA23039@pi3>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <4bfa227e-3a6b-dfe2-140b-b402dea52231@arm.com>
+Date:   Fri, 10 Jul 2020 14:41:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <c016e256-65a6-8075-d88d-c3fad4815b4d@samsung.com>
+In-Reply-To: <20200710131921.GA23039@pi3>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jul 10, 2020 at 03:13:18PM +0200, Marek Szyprowski wrote:
-> Hi Lukasz,
+
+
+On 7/10/20 2:19 PM, Krzysztof Kozlowski wrote:
+> On Fri, Jul 10, 2020 at 03:13:18PM +0200, Marek Szyprowski wrote:
+>> Hi Lukasz,
+>>
+>> On 10.07.2020 10:34, Lukasz Luba wrote:
+>>> Hi Chanwoo,
+>>>
+>>> On 7/9/20 5:08 AM, Chanwoo Choi wrote:
+>>>> Hi Lukasz,
+>>>>
+>>>> On 7/9/20 12:34 AM, Lukasz Luba wrote:
+>>>>> In order to react faster and make better decisions under some
+>>>>> workloads,
+>>>>> benchmarking the memory subsystem behavior, adjust the polling interval
+>>>>> and upthreshold value used by the simple_ondemand governor.
+>>>>>
+>>>>> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
+>>>>> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+>>>>> ---
+>>>>>    drivers/memory/samsung/exynos5422-dmc.c | 4 ++--
+>>>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/memory/samsung/exynos5422-dmc.c
+>>>>> b/drivers/memory/samsung/exynos5422-dmc.c
+>>>>> index 93e9c2429c0d..e03ee35f0ab5 100644
+>>>>> --- a/drivers/memory/samsung/exynos5422-dmc.c
+>>>>> +++ b/drivers/memory/samsung/exynos5422-dmc.c
+>>>>> @@ -1466,10 +1466,10 @@ static int exynos5_dmc_probe(struct
+>>>>> platform_device *pdev)
+>>>>>             * Setup default thresholds for the devfreq governor.
+>>>>>             * The values are chosen based on experiments.
+>>>>>             */
+>>>>> -        dmc->gov_data.upthreshold = 30;
+>>>>> +        dmc->gov_data.upthreshold = 10;
+>>>>>            dmc->gov_data.downdifferential = 5;
+>>>>>    -        exynos5_dmc_df_profile.polling_ms = 500;
+>>>>> +        exynos5_dmc_df_profile.polling_ms = 100;
+>>>>>        }
+>>>>>
+>>>>
+>>>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>>
+>>>
+>>> Thank you for the review. Do you think this patch could go through
+>>> your tree together with your patches?
+>>>
+>>> I don't know Krzysztof's opinion about the patch 2/2, but
+>>> I would expect, assuming the patch itself is correct, he would
+>>> like to take it into his next/dt branch.
+>>
+>> Is there really a need to remove the interrupts property? imho they are
+>> correct hw description, it just a matter of the driver to use or not to
+>> use them.
+
+Marek, I agree with you, they are correct hw description. Unfortunately,
+I don't have TRM to experiment and maybe fix the interrupt mode code.
+
 > 
-> On 10.07.2020 10:34, Lukasz Luba wrote:
-> > Hi Chanwoo,
-> >
-> > On 7/9/20 5:08 AM, Chanwoo Choi wrote:
-> >> Hi Lukasz,
-> >>
-> >> On 7/9/20 12:34 AM, Lukasz Luba wrote:
-> >>> In order to react faster and make better decisions under some 
-> >>> workloads,
-> >>> benchmarking the memory subsystem behavior, adjust the polling interval
-> >>> and upthreshold value used by the simple_ondemand governor.
-> >>>
-> >>> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
-> >>> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
-> >>> ---
-> >>>   drivers/memory/samsung/exynos5422-dmc.c | 4 ++--
-> >>>   1 file changed, 2 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/drivers/memory/samsung/exynos5422-dmc.c 
-> >>> b/drivers/memory/samsung/exynos5422-dmc.c
-> >>> index 93e9c2429c0d..e03ee35f0ab5 100644
-> >>> --- a/drivers/memory/samsung/exynos5422-dmc.c
-> >>> +++ b/drivers/memory/samsung/exynos5422-dmc.c
-> >>> @@ -1466,10 +1466,10 @@ static int exynos5_dmc_probe(struct 
-> >>> platform_device *pdev)
-> >>>            * Setup default thresholds for the devfreq governor.
-> >>>            * The values are chosen based on experiments.
-> >>>            */
-> >>> -        dmc->gov_data.upthreshold = 30;
-> >>> +        dmc->gov_data.upthreshold = 10;
-> >>>           dmc->gov_data.downdifferential = 5;
-> >>>   -        exynos5_dmc_df_profile.polling_ms = 500;
-> >>> +        exynos5_dmc_df_profile.polling_ms = 100;
-> >>>       }
-> >>>
-> >>
-> >> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> >>
-> >
-> > Thank you for the review. Do you think this patch could go through
-> > your tree together with your patches?
-> >
-> > I don't know Krzysztof's opinion about the patch 2/2, but
-> > I would expect, assuming the patch itself is correct, he would
-> > like to take it into his next/dt branch.
+> That's actually very good point. I would also prefer to leave them.
+> However I understood that driver chooses mode depending on the property.
+
+Correct
+
 > 
-> Is there really a need to remove the interrupts property? imho they are 
-> correct hw description, it just a matter of the driver to use or not to 
-> use them.
+> In such case, maybe as you said, let's switch to polling mode
+> unconditionally?
 
-That's actually very good point. I would also prefer to leave them.
-However I understood that driver chooses mode depending on the property.
+I can make happen that the polling mode will be unconditionally
+set as default.
 
-In such case, maybe as you said, let's switch to polling mode
-unconditionally?
+Do you think that the interrupt mode code can still stay in the
+driver, because maybe in future could be fixed?
 
-Best regards,
-Krzysztof
 
+> 
+> Best regards,
+> Krzysztof
+> 
