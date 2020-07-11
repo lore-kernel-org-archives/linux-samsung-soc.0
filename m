@@ -1,107 +1,210 @@
-Return-Path: <SRS0=/wZl=AV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=oAg4=AW=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,FORGED_MUA_MOZILLA,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A298EC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jul 2020 19:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE8AC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Jul 2020 16:27:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76E422078D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jul 2020 19:18:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="G8ptAYtq"
+	by mail.kernel.org (Postfix) with ESMTP id 28566207D4
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Jul 2020 16:27:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbgGJTS2 (ORCPT
+        id S1728609AbgGKQ1O (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Jul 2020 15:18:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60348 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbgGJTS1 (ORCPT
+        Sat, 11 Jul 2020 12:27:14 -0400
+Received: from mail-dm6nam12olkn2043.outbound.protection.outlook.com ([40.92.22.43]:35236
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728412AbgGKQ1O (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Jul 2020 15:18:27 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E53FFC08C5DC
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2020 12:18:26 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id e64so7150977iof.12
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2020 12:18:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A/XxOf2MPny3gUO9mnh1IW4HAphuhFeUQbRFZXAvCpM=;
-        b=G8ptAYtqk+SEo+CGoUOHZRF+vl7lJLdIBT0S/pHrduzEbWxvqh1IfPE2/4VhppHPde
-         YRXFOyzoKkrWceSDyBehaHWrFlUcgXHG6dZJw/Ckmn9tJWTq/vXETO0JL2rxorvAqYgr
-         sfYAe5TLkNk/6oh5kEcCbqnW3iSm0YxUhQvE7I1A5yKSuwuC4rUGD6Q7HEO+tu1wAlSl
-         tD0rGE8wl+/tQgRZmMsrGa6EwlUhvHi7G/Qlh1O3Vt+4ehxXhBo8td3OJyHLYU9R9Rnm
-         rBv1SJmQ77C6sJHC+gp5sx/9NhXLg9ziLq8flwiewQDJ8rwiHelTeKULpgwtJnZC8Zqx
-         8ynQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A/XxOf2MPny3gUO9mnh1IW4HAphuhFeUQbRFZXAvCpM=;
-        b=YQd3Bz5dQhfxzXcfr3ecOnNKWuM+8YM16R3bfhYIePNBU7Dg9vWiXGglpJqTiA2BKt
-         F0SMSqVuF7PxI6eiS82BCyS/Pmc8l/UDpipT77F+ecO9FMcje7/QDcWESF72aWAGzbDA
-         TMRqc3cnaM+n/oJxMAGacOJSok89NKxfJgp8/lx3DFrcKWY+Vu9tD3/2tLmlD/TJKZC7
-         SK+5kHAUKao2bkh9kjUpD9deYaVPp1oY6AdEohWCn8l7Sha6q1u56jzXme30JhEBj3Dk
-         ug+4GLgpSoJ6a+maC9hkyS+0qH422Ol/SkjWphwyTX2geMn/OaPJ73Ecjd7+wNOJMqKI
-         zDtg==
-X-Gm-Message-State: AOAM531oVMUMNl/v9+foeZddOO1yFtg6qZIY3B/RaRg2mEfCizhin3pg
-        2FQdPGXQsW+70qUlHvSC39GgTJAGLrXabNOH6yFxng==
-X-Google-Smtp-Source: ABdhPJxMIWGB7DkTs3ZmaVNfNrJhTVDywQypoX4jJyE5KKI9jPnWPX+st4yY6PAU87KCAHCqBg6cegX8IfVhneQ5zK4=
-X-Received: by 2002:a05:6638:2172:: with SMTP id p18mr81169397jak.63.1594408706326;
- Fri, 10 Jul 2020 12:18:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190908165642.22253-1-murphyt7@tcd.ie> <20190908165642.22253-5-murphyt7@tcd.ie>
- <20200710155933.GA20886@lst.de>
-In-Reply-To: <20200710155933.GA20886@lst.de>
-From:   Tom Murphy <murphyt7@tcd.ie>
-Date:   Fri, 10 Jul 2020 12:18:15 -0700
-Message-ID: <CALQxJuumgH9xR-J1Nj3LQsLW6k+4ie_0Ho3N9UJiN4R0JBGYoQ@mail.gmail.com>
-Subject: Re: [PATCH V6 4/5] iommu/dma-iommu: Use the dev->coherent_dma_mask
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux-foundation.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Andy Gross <agross@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sat, 11 Jul 2020 12:27:14 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mt3JvofXvuj5be12PTBZ6NiZWrk/MMcEF3wOba1hX02WfAdhckH8AHgHZ9Pw8oa3XNQJ5bQuUBx62lXEYkWo7PzU9aHLlJ4nYGyNKUwlWPKPgQCFP2V59MUV3ukRAym/bkaf8xRdA0MTco8onrjmJ1odSlPpm28SDYxC4CIZCjAcTaLYfi5zzShaumkUzXpWZPjhtNs8xaO/jgAVvapCvwGk7q134gTpPeM2VvXOomJvr1Itf586Kbnbs+tni28M+xAJ2JTSf9pFc5deUcrEyDkQ3R5dGoPZ17NLY0sjhJzYOTbIUQ/zpzghtBgBvLAam3b0YqMOwPGWg67ihXMARw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uubGPSYETsUg4q0kFNvlI49YgVnfc7+4KhScSvYe0tw=;
+ b=bXWjaAcrDZVsn7El4aql/j5TQmHXRwqfNMHbbcLxmzOJ92tR32jR9oHzcjDlEVCOwdDLi+MX+wEapFaLi5aw/uraxFys1+afxq0XLC9Zr5cTf7WvWXz1Lht4wgJJYzFi+jA/s70SO7ipDA2L/i7sMwHWqZv3ZisU0AMHyGmdeZYkVe+59XXbPdReINtxfwQWI60Gfn7FoDU/8NHqAPLSux02PWp5DDNJWmEJpoD/uAWYKzOP3sEkM/zPqQVMwlaXg1st5nj0cQz132AOJMDfIKz5jamXdUSUYbly4SexCUPmmRsDIfuuF6k8/FDtRcPSSDHPhz/Tf/VYcsvEaHoyuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from DM6NAM12FT066.eop-nam12.prod.protection.outlook.com
+ (2a01:111:e400:fc64::44) by
+ DM6NAM12HT054.eop-nam12.prod.protection.outlook.com (2a01:111:e400:fc64::346)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3195.9; Sat, 11 Jul
+ 2020 16:27:12 +0000
+Received: from BN6PR04MB0660.namprd04.prod.outlook.com
+ (2a01:111:e400:fc64::50) by DM6NAM12FT066.mail.protection.outlook.com
+ (2a01:111:e400:fc64::145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3195.9 via Frontend
+ Transport; Sat, 11 Jul 2020 16:27:12 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:C1C49D248E2AF8A9AD6293D12AA0585306791E83F1D9C5DB09E5293FB27EB1D8;UpperCasedChecksum:E64BE3420F45827271391A211F559F316E8A4A2A7B681DABB558B44CD4EA3957;SizeAsReceived:9381;Count:49
+Received: from BN6PR04MB0660.namprd04.prod.outlook.com
+ ([fe80::b9c3:9bff:541d:f383]) by BN6PR04MB0660.namprd04.prod.outlook.com
+ ([fe80::b9c3:9bff:541d:f383%9]) with mapi id 15.20.3174.024; Sat, 11 Jul 2020
+ 16:27:12 +0000
+Subject: Re: [PATCH 03/11] media: exynos4-is: Fix nullptr when no CSIS device
+ present
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>
+Cc:     kyungmin.park@samsung.com, mchehab@kernel.org, kgene@kernel.org,
+        krzk@kernel.org, linux-media@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200426022650.10355-1-xc-racer2@live.ca>
+ <BN6PR04MB0660EE7304C2BB2E603A8824A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <CGME20200707175524eucas1p29d92419590ac09cc48de3336b834e69b@eucas1p2.samsung.com>
+ <20200707175517.GC2621465@chromium.org>
+ <854c0c60-b239-6626-2423-47058cb58feb@samsung.com>
+From:   Jonathan Bakker <xc-racer2@live.ca>
+Message-ID: <BN6PR04MB066001C2B9BB205A634FC6A8A3620@BN6PR04MB0660.namprd04.prod.outlook.com>
+Date:   Sat, 11 Jul 2020 09:27:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
+In-Reply-To: <854c0c60-b239-6626-2423-47058cb58feb@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MWHPR03CA0020.namprd03.prod.outlook.com
+ (2603:10b6:300:117::30) To BN6PR04MB0660.namprd04.prod.outlook.com
+ (2603:10b6:404:d9::21)
+X-Microsoft-Original-Message-ID: <3295e113-d4d8-48ac-1cbd-16f83664bfd2@live.ca>
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [IPv6:2001:569:fb68:9c00:8067:f823:1e15:7520] (2001:569:fb68:9c00:8067:f823:1e15:7520) by MWHPR03CA0020.namprd03.prod.outlook.com (2603:10b6:300:117::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3174.22 via Frontend Transport; Sat, 11 Jul 2020 16:27:09 +0000
+X-Microsoft-Original-Message-ID: <3295e113-d4d8-48ac-1cbd-16f83664bfd2@live.ca>
+X-TMN:  [xYuddcOpSso6J53TnaWUTRPkvLdBPdM+G5R/Um0hdsgFZGjageBoL2UDGUuaFkwc]
+X-MS-PublicTrafficType: Email
+X-IncomingHeaderCount: 49
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-Correlation-Id: 9a59b2b9-fdd5-4beb-9998-08d825b74320
+X-MS-TrafficTypeDiagnostic: DM6NAM12HT054:
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: YG/GvzBloVMbTy1gwuItC2h7SMNnAQyFvK0z7mIBSoPPw22mKqYp/onL2xFpiWrJV28iOMPm6jdsV7n1PlvTyT66CqeARvF5f3vBpMbHukqzZKT+HzLSjIFYpoRIKI4CT9QNRokw1L0RZkoOjR1ec5/UACFium6JD4TraK3rz1YAjio1TNlu888OWrYhfxxOu2lBjvUTP0j7Q9Rt4cUt+A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
+X-MS-Exchange-AntiSpam-MessageData: LqC6jB3DD6XfXIThLqaAXmiAMUKtl98PU6Hli/zxU8xZVmagzYsUaM6w0DwXJAu7ghs6K15RFFl6L61RWFJcl/dVFwYDlXex6EeTNk/KSzx2JFCDI3noILvWXAVifPn2jwcbz/D6NuWDbbTjWxxLbP4y2J4WWylm8rF7lAty8fiS+cKXftsIA8F+1xbgytwBP3ncdP0v8qqxeGrcD912Lg==
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a59b2b9-fdd5-4beb-9998-08d825b74320
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2020 16:27:12.0992
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM12FT066.eop-nam12.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6NAM12HT054
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
->Btw, what is the current state of converting intel-iommu to the dma-iommu
+Hi Sylwester and Tomasz,
 
-These changes expose a bug in the i915 intel driver which hasn't been
-fixed yet. I don't think anyone is actively working on it but I plan
-on merging as many patches as I can so it's easier to do the
-intel-iommu -> dma-iommu conversion once the bug is fixed.
+On 2020-07-08 8:11 a.m., Sylwester Nawrocki wrote:
+> Hi,
+> 
+> On 07.07.2020 19:55, Tomasz Figa wrote:
+>> On Sat, Apr 25, 2020 at 07:26:42PM -0700, Jonathan Bakker wrote:
+>>> Not all devices use the CSIS device, some may use the FIMC directly in
+>>> which case the CSIS device isn't registered.  This leads to a nullptr
+>>> exception when starting the stream as the CSIS device is always
+>>> referenced.  Instead, if getting the CSIS device fails, try getting the
+>>> FIMC directly to check if we are using the subdev API
+>>>
+>>> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+>>> ---
+>>>  drivers/media/platform/exynos4-is/media-dev.c | 17 ++++++++++++++++-
+>>>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+>> Thank you for the patch. Please see my comments inline.
+> 
 
-You can read more about it here:
-https://patchwork.kernel.org/cover/11306999/
+Thank you both for taking the time to review the patches.
 
-On Fri, 10 Jul 2020 at 08:59, Christoph Hellwig <hch@lst.de> wrote:
->
-> Btw, what is the current state of converting intel-iommu to the dma-iommu
-> code?
+>>> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+>>> index 9aaf3b8060d5..5c32abc7251b 100644
+>>> --- a/drivers/media/platform/exynos4-is/media-dev.c
+>>> +++ b/drivers/media/platform/exynos4-is/media-dev.c
+>>> @@ -289,11 +289,26 @@ static int __fimc_pipeline_s_stream(struct exynos_media_pipeline *ep, bool on)
+>>>  		{ IDX_CSIS, IDX_FLITE, IDX_FIMC, IDX_SENSOR, IDX_IS_ISP },
+>>>  	};
+>>>  	struct fimc_pipeline *p = to_fimc_pipeline(ep);
+>>> -	struct fimc_md *fmd = entity_to_fimc_mdev(&p->subdevs[IDX_CSIS]->entity);
+>>>  	enum fimc_subdev_index sd_id;
+>>>  	int i, ret = 0;
+>>>  
+>>>  	if (p->subdevs[IDX_SENSOR] == NULL) {
+>>> +		struct fimc_md *fmd;
+>>> +		struct v4l2_subdev *sd = p->subdevs[IDX_CSIS];
+>>> +
+>>> +		if (!sd)
+>>> +			sd = p->subdevs[IDX_FIMC];
+>>> +
+>>> +		if (!sd) {
+>>> +			/*
+>>> +			 * If neither CSIS nor FIMC was set up,
+>>> +			 * it's impossible to have any sensors
+>>> +			 */
+>>> +			return -ENODEV;
+>>> +		}
+>>> +
+>>> +		fmd = entity_to_fimc_mdev(&sd->entity);
+>>> +
+>>
+>> Are you sure this is the correct thing to do here? In general, the media
+>> controller should be instantiated only if there are sensors in the system.
+> 
+> The code being changed is only about getting a pointer to the driver private 
+> data structure 'struct fimc_md', for that we need to get hold of a media 
+> entity that represents a subdev that is actually available in the pipeline.
+> In original code it is overlooked that there might camera pipelines without
+> the CSIS subdev. 
+> 
+>> What do you mean by using "the FIMC directly"? Do you mean using it only as
+>> an m2m image processor or with a sensor, but without the CSIS, which would
+>> be the case for parallel I/F sensors?
+> 
+> I think it is about a use case where the sensor is connected directly to the 
+> FIMC capture interface (parallel), without the MIPI-CSI2 receiverin between.
+> 
+
+Yep, that's exactly what I mean.  The device that I'm working with (first gen
+Galaxy S) has two devices (S5KA3DFX and CE147) connected via parallel input
+to Camera Port A (yes, both of them to the same port).
+
+Is it more correct to say "using the parallel port instead of the CSIS device"?
+I'm happy to reword the commit message if that is the case.  
+
+>> Could you point me to the place where CSIS is always dereferenced? A quick
+>> look through the code only revealed that everywhere it seems to be guarded
+>> by a NULL check.
+> 
+> It's in this patch, above, the very first line that the patch removes.
+> 
+
+Exactly :)
+
+>> Another thought from looking at the implementation of
+>> __fimc_pipeline_s_stream() is that it probably shouldn't call s_stream on
+>> all the subdevices included in seq[], but only on those that are actually
+>> included as a part of the pipeline. It would be quite a waste of power to
+>> enable unnecessary hardware.
+> 
+> As we talked on IRC, only subdev in current active media pipeline will be
+> powered on/off. The p->subdevs[] array is sparsely populated and there is 
+> a test for NULL in __subdev_set_power(). Perhaps the test should be moved
+> to the caller instead (fimc_pipeline_s_power()), so we don't ignore any
+> ENXIO errors from the s_power v4l2_subdev_call. But is a material for 
+> a separate patch.
+> 
+
+Ok, I'll leave it be for now.
+
+Thanks,
+Jonathan
