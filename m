@@ -2,171 +2,117 @@ Return-Path: <SRS0=iB35=AY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA68EC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jul 2020 07:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B69F1C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jul 2020 08:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB17720674
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jul 2020 07:43:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZhlT799S"
+	by mail.kernel.org (Postfix) with ESMTP id 99AF62068F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jul 2020 08:55:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726077AbgGMHmx (ORCPT
+        id S1726360AbgGMIzb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Jul 2020 03:42:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49678 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725818AbgGMHmx (ORCPT
+        Mon, 13 Jul 2020 04:55:31 -0400
+Received: from foss.arm.com ([217.140.110.172]:48364 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726077AbgGMIza (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Jul 2020 03:42:53 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AE79C061755;
-        Mon, 13 Jul 2020 00:42:53 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id q17so5149662pls.9;
-        Mon, 13 Jul 2020 00:42:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kv7SaniNrlUPbvo7cWwc80WSNfLRXfgs1fiLYtKopIU=;
-        b=ZhlT799SGBQhoHqAHdZ4lZj1j/AYdgOOYfKXe+d0zRdJWGte52q6+ZlkptRwdhl5v4
-         QV/4eytBNvOoIsIoKXWzcx86NjNK6/6pwau43reCmmEc8nR9FbS/FUPUgB1xvF7Zys2B
-         3nxgz2QzSdL0QR4FYvC/zdx3DWypbf6R/xf02t6VJn9f7Mej+t1xPMUDayyZLFwXJQLs
-         yGFjT8yL9ybELIToHwaEOZK9Na+q37Qt5MWWdutGF7lFA6oqtPBW9UknREOKpdbT0o2m
-         uLm5Eae8jQWqrSRbJV/aK7ExOX6L7L4QyP1+iAmM7mBe2TPqtWFbGmQ/WZ+LWqjsfR7J
-         BfRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kv7SaniNrlUPbvo7cWwc80WSNfLRXfgs1fiLYtKopIU=;
-        b=GB89Ln+TYw04YhHJDcXVqpDR0H+ByfXbbmT7hFDvKviuQ3hm/AoE0FGIFJj7KdNm//
-         l8Fu6YQwLxWn2kzyi0y0J+r2HYPVHspCaVV+uBxtyQLnk4dWVrMhkV48o7PjfuJouHDQ
-         iQ3veBxL3Z/Q2arDB0zZBj7nRpLhU7iakAxniNe1UqOYrXXyFpdpOQOxZPRl1rbwlMoy
-         5aaQK37Is4bMudlTcAJi/1zw12KSSyEv5JLt8uo7eWKV4zpMsO+At8UIDfwBYODBryeX
-         iHzxrtpdeP9rIDAiw/9vk829XADf4vZs3pgHXiMAqazzxS/NhYsGF4wTmCF8m8pHyM7t
-         v6gA==
-X-Gm-Message-State: AOAM530EPCYa24B7D8SP/d6YZxXTjW0H4iqNBGTwg5kVz7awsGpTe4kE
-        TL8xzHzGMhgz+Pkfm6BVEKw=
-X-Google-Smtp-Source: ABdhPJxHcu1Ud7WDBTb4qIFDB5l2yIOfKVi3zND/ElHwtLcc7bQ/TVlT+STA2ZBAjz08dje95SGmYA==
-X-Received: by 2002:a17:90a:bf89:: with SMTP id d9mr19127661pjs.89.1594626172692;
-        Mon, 13 Jul 2020 00:42:52 -0700 (PDT)
-Received: from localhost.localdomain ([103.51.74.198])
-        by smtp.gmail.com with ESMTPSA id e12sm13521180pfd.69.2020.07.13.00.42.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2020 00:42:52 -0700 (PDT)
-From:   Anand Moon <linux.amoon@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4] phy: samsung: Use readl_poll_timeout function
-Date:   Mon, 13 Jul 2020 07:42:43 +0000
-Message-Id: <20200713074243.530-1-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.27.0
+        Mon, 13 Jul 2020 04:55:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0267E30E;
+        Mon, 13 Jul 2020 01:55:30 -0700 (PDT)
+Received: from [10.37.12.45] (unknown [10.37.12.45])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 95A343F7D8;
+        Mon, 13 Jul 2020 01:55:26 -0700 (PDT)
+Subject: Re: [RFC PATCH 0/2] PM / devfreq: Add delayed timer for polling
+To:     Willy Wolff <willy.mh.wolff.ml@gmail.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>, k.konieczny@samsung.com,
+        krzk@kernel.org, kgene@kernel.org, s.nawrocki@samsung.com,
+        b.zolnierkie@samsung.com, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <CGME20200703061508epcas1p171aa3c0ab832b77e5837d8bd1e563742@epcas1p1.samsung.com>
+ <20200703062622.11773-1-cw00.choi@samsung.com>
+ <20200703123346.6fy6i33ks6nox46a@macmini.local>
+ <a3339c58-6350-9298-6053-9dc021170048@arm.com>
+ <20200710151233.ci5c4rgwb64eswy7@macmini.local>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <fd482a4b-305b-5332-2f3e-f204018cc7b1@arm.com>
+Date:   Mon, 13 Jul 2020 09:55:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200710151233.ci5c4rgwb64eswy7@macmini.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Instead of a busy waiting while loop using udelay
-use readl_poll_timeout function to check the condition
-is met or timeout occurs in crport_handshake function.
-readl_poll_timeout is called in non atomic context so
-it safe to sleep until the condition is met.
+Hi Willy
 
-Fixes: d8c80bb3b55b ("phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800")
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-Changes v4:
-Rebased on to of patch [0] https://patchwork.kernel.org/patch/11651673/
---Fix the commit message.
---Fix the error timeout condition for -ETIMEDOUT
----
-Changes v3:
---Fix the commit message.
---Drop the variable, used the value directly.
-Changes v2:
---used the default timeout values.
---Added missing Fixed tags.
----
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 39 ++++++++----------------
- 1 file changed, 12 insertions(+), 27 deletions(-)
+On 7/10/20 4:12 PM, Willy Wolff wrote:
+> Hi Lukasz,
+> 
+> On 2020-07-08-15-25-03, Lukasz Luba wrote:
+>> Hi Willy,
+>>
+>> On 7/3/20 1:33 PM, Willy Wolff wrote:
+>>> Hi Chanwoo,
+>>>
+>>> I think it doesn't help on the benchmark I suggested that is doing only memory
+>>> accesses. With both timer, I have the same timing.
+>>>
+>>> To test the benchmark with these new patches about timer:
+>>>
+>>> git clone https://github.com/wwilly/benchmark.git \
+>>>     && cd benchmark \
+>>>     && source env.sh \
+>>>     && ./bench_build.sh \
+>>>     && bash source/scripts/test_dvfs_mem_patched.sh
+>>>
+>>> The benchmark is set by default to run for 1s, but you can increase this by
+>>> tweaking the script as:
+>>>
+>>> taskset 8 ./bench_install/bin/microbe_cache 33554431 0 9722222 <TIME in sec> ${little_freq}
+>>>
+>>>
+>>> Also, as I reported the issue, would it be possible to add a
+>>> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com> ?
+>>> Many thanks in advance.
+>>
+>> Thank you for your good work and the benchmark. I hope you will continue
+>> to use it and report some issues. I am going to send a follow up patches
+>> for the DMC and I will add your 'Reported-by'. In the tests I can see
+>> the improvements, but it's worth to consult with you if I understand
+>> the new results correctly.
+>>
+> 
+> Thanks for that. I will follow on the other patch thread discussion.
+> 
+>> I think there is still some area for improvements in the devfreq and you
+>> could find the interesting bits to contribute.
+> 
+> In fact, this benchmark is motivated about part of my PhD research that has just
+> been accepted at LCTES2020: "Performance Optimization on big.LITTLE Architectures:
+> A Memory-latency Aware Approach" at https://dl.acm.org/doi/10.1145/3372799.3394370
+> 
 
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 7f6279fb4f8f..ad81aa65cdff 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -16,6 +16,7 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-+#include <linux/iopoll.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/mutex.h>
-@@ -556,41 +557,25 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
- static int crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
- 			    u32 val, u32 cmd)
- {
--	u32 usec = 100;
- 	unsigned int result;
-+	int err;
- 
- 	writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
- 
--	do {
--		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
--		if (result & PHYREG1_CR_ACK)
--			break;
--
--		udelay(1);
--	} while (usec-- > 0);
--
--	if (!usec) {
--		dev_err(phy_drd->dev,
--			"CRPORT handshake timeout1 (0x%08x)\n", val);
--		return -ETIME;
-+	err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
-+			result,	(result & PHYREG1_CR_ACK), 1, 100);
-+	if (err == -ETIMEDOUT) {
-+		dev_err(phy_drd->dev, "CRPORT handshake timeout1 (0x%08x)\n", val);
-+		return err;
- 	}
- 
--	usec = 100;
--
- 	writel(val, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
- 
--	do {
--		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
--		if (!(result & PHYREG1_CR_ACK))
--			break;
--
--		udelay(1);
--	} while (usec-- > 0);
--
--	if (!usec) {
--		dev_err(phy_drd->dev,
--			"CRPORT handshake timeout2 (0x%08x)\n", val);
--		return -ETIME;
-+	err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
-+			result,	!(result & PHYREG1_CR_ACK), 1, 100);
-+	if (err == -ETIMEDOUT) {
-+		dev_err(phy_drd->dev, "CRPORT handshake timeout2 (0x%08x)\n", val);
-+		return err;
- 	}
- 
- 	return 0;
--- 
-2.27.0
+Congrats and thank you for the link (I will read it).
 
+> Basically, it's about snooping latency with "bad" CPU DVFS choice on big.LITTLE
+> systems or more generally SMP/AMP architecture. I'm cleaning up my code and will
+> propose patches as an RFC later. It introduces a new CPU DVFS governor to limit
+> snooping latency.
+
+This is interesting, please add me on CC in the patch set.
+
+Regards,
+Lukasz
