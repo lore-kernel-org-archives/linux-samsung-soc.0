@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A089BC433F8
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E77CC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jul 2020 14:51:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B72820738
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jul 2020 14:50:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF63420874
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jul 2020 14:51:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JW8Zfxng"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U1WN0X53"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730125AbgGMOtn (ORCPT
+        id S1729895AbgGMOu4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Jul 2020 10:49:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60954 "EHLO
+        Mon, 13 Jul 2020 10:50:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730111AbgGMOtm (ORCPT
+        with ESMTP id S1730129AbgGMOtn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Jul 2020 10:49:42 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE250C08C5DB
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Jul 2020 07:49:41 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id q5so16886417wru.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Jul 2020 07:49:41 -0700 (PDT)
+        Mon, 13 Jul 2020 10:49:43 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C632C08C5DB
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Jul 2020 07:49:43 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id o8so13578628wmh.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Jul 2020 07:49:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EdngZibp0zWCAAM+UJcwsurIH7yKZeYEzW9/AfNLRBM=;
-        b=JW8ZfxngbL67Sj8u+8Odvmzrwr0Un0a8dfJga8fvIiSWVdYg9aR4Bmk+ZaZcNRFo4H
-         mYYCCmw1FyfXDWpX/JP8gcpGpLbGjVhpgBWMLQ7nU3B60mmVu0+j3wYxmW0D0X1k5/zs
-         4NS/fGYu/LscQ5CzpkfJBoQy0++MW25LdnoHtLiIDNIoujjsb4iXIpRxjgIXjCQSUeu5
-         5RKO/zCJXFqGKYoHk3QXfi69WgeFYkcFR2GtBorrikmsDs+1KrMwPTr8T2C2QkbQBRi/
-         bgI7VvRNsxOtIgc9DXtgUbv6Ox4Z0pppzdqBGQdi7TUTRWQYpytYkMNaweHWedM6aOUQ
-         zj4A==
+        bh=we+FYdI1lkoYeqfH+hTSe6pNVLsfmTg5CRQP3bOvglU=;
+        b=U1WN0X53vbT4MvhLNRle/Pi49aoyXp8l/FZ9qbfpELXVGRvwteyYQ59YIS581Rx0Xp
+         q5UQZNPMwm4gbhy2sGnmyUhu+w/WSyDy8SZwq5gc7YFHp11qt2IevOUpEE0bd15DH/8G
+         F0tLllXkjBOGT94L/jRw4tRXmh6xUXZ42RV3KnfYe23GHPr8WB7Izy+DlVxJwv3uNcH3
+         spPTiORGerSbhn1gcD3+8ZhgKGlr3WTLewuQPjCmNoxXAWdMLet04UicbcIPSh9F7Dh8
+         3s3nrgW8efZiHQaPyILOHhsm0gTtGvlZ75SUX8Oby7yTHrd4vKHUhLfTND2frhv/Mv0y
+         EjZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EdngZibp0zWCAAM+UJcwsurIH7yKZeYEzW9/AfNLRBM=;
-        b=Nrt0jDR5b2BcorZUSxpf5K3smfedDBYChO+zsWQ5tpsD3tqMlH1iZS8FwRHZkMGc7Y
-         Z1wf67V8/r/uNYcl4tsysrsEZ+7Bv7L2IlLdSFBDrnNe2g+EmgKzyKz3mC8ZWAt3cmmD
-         8iMrlAKkrGsB3gZTQmoMjH7227+X0cA1domI5ClBBMUCzPHKqob8Au/wwRql9DAdB8xA
-         oQBUxCaY8x803/piziF9gtDRRxmWFlTEfa+5daImcceDOWMzlDBThPryOHdPtxk0JoUV
-         c7sjAb/rREvogg5pf/pcLczlVUSGeo9N0PMRO/xbmJntcsRluAsAxsVTgcMPBK+1F7KD
-         41dw==
-X-Gm-Message-State: AOAM533vpp7jA7mM4RFwCTsSwtFi4ZqUp/vRVvDR8u0j5O+8VdaE5Qqm
-        /lM1hqLaF+T6vznVmItMeoCgJg==
-X-Google-Smtp-Source: ABdhPJwbwkd7iM4SmIi+fTezp7zvJuFCTmoF3U2ec6u5Z2hwzXy9AZwysrE+mhaEjypi6okk23x0gg==
-X-Received: by 2002:a5d:6a07:: with SMTP id m7mr81416990wru.324.1594651779599;
-        Mon, 13 Jul 2020 07:49:39 -0700 (PDT)
+        bh=we+FYdI1lkoYeqfH+hTSe6pNVLsfmTg5CRQP3bOvglU=;
+        b=OLULOXuCE0b3orNhwM+f8AqfgBB4/0K2qLv54+D9jYWQfIxh6OnUKLTEDyAnyLUpRm
+         x1Iy+/JDxAwfOpn81h+03QOcyh9dfcqo6B4b9ye2+61xz8ryw+dp1JZHBzXqE0aL5u/1
+         1vYkpLR28hnNXG4egIJSPWLIuhyxxGxcqXdte0g89mE2oli0oEXKZrZhTM/AWGfGMwSG
+         4YnLBP5D41pDpeR2dPVo59qhOGhpqzF7pJWqakpJUBNzr4SYj9/Puu5uyS4ZyhQ0pdz2
+         4C2QUXPPl2W3LmTCEQHI+CTiG6xYOM2Po9lFx/2rj8JT8Ea2dICW5v8xOqU9UFIINll+
+         NrVw==
+X-Gm-Message-State: AOAM533HEKfiu5K27CU/levGAD9qR7y3Jh8Gswal3/iufn5Kr5I3goeB
+        7Ce3WJ5z0r36CVUQMIHOJoBnEw==
+X-Google-Smtp-Source: ABdhPJxoVsuUxdjQrc3CM3WbousZGi/1/+jQn4P+0A7iaqIru6LA4EJm04rEqpNRn1DujBpLMkOpjw==
+X-Received: by 2002:a1c:c242:: with SMTP id s63mr311154wmf.146.1594651781752;
+        Mon, 13 Jul 2020 07:49:41 -0700 (PDT)
 Received: from localhost.localdomain ([2.31.163.6])
-        by smtp.gmail.com with ESMTPSA id o29sm26207756wra.5.2020.07.13.07.49.38
+        by smtp.gmail.com with ESMTPSA id o29sm26207756wra.5.2020.07.13.07.49.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2020 07:49:39 -0700 (PDT)
+        Mon, 13 Jul 2020 07:49:41 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     linus.walleij@linaro.org
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
@@ -66,11 +66,10 @@ Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Thomas Abraham <thomas.ab@samsung.com>,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 06/25] pinctrl: samsung: pinctrl-samsung: Demote obvious misuse of kerneldoc to standard comment blocks
-Date:   Mon, 13 Jul 2020 15:49:11 +0100
-Message-Id: <20200713144930.1034632-7-lee.jones@linaro.org>
+Subject: [PATCH 08/25] pinctrl: samsung: pinctrl-s3c64xx: Fix formatting issues
+Date:   Mon, 13 Jul 2020 15:49:13 +0100
+Message-Id: <20200713144930.1034632-9-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200713144930.1034632-1-lee.jones@linaro.org>
 References: <20200713144930.1034632-1-lee.jones@linaro.org>
@@ -81,45 +80,53 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-No attempt has been made to document either of the demoted functions here.
+Kerneldoc struct titles must be followed by whitespace else the
+checker gets confused.
 
 Fixes the following W=1 kernel build warning(s):
 
- drivers/pinctrl/samsung/pinctrl-samsung.c:1149: warning: Function parameter or member 'dev' not described in 'samsung_pinctrl_suspend'
- drivers/pinctrl/samsung/pinctrl-samsung.c:1199: warning: Function parameter or member 'dev' not described in 'samsung_pinctrl_resume'
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c:212: warning: cannot understand function prototype: 'struct s3c64xx_eint0_domain_data '
 
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/pinctrl/samsung/pinctrl-samsung.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index f26574ef234ab..608eb5a07248e 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1140,7 +1140,7 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
+index f97f8179f2b1b..b8166e3fe4cef 100644
+--- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
+@@ -193,7 +193,7 @@ static const struct samsung_pin_bank_type bank_type_2bit_alive = {
+ 	}
  
--/**
-+/*
-  * samsung_pinctrl_suspend - save pinctrl state for suspend
-  *
-  * Save data for all banks handled by this device.
-@@ -1187,7 +1187,7 @@ static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
- 	return 0;
- }
+ /**
+- * struct s3c64xx_eint0_data: EINT0 common data
++ * struct s3c64xx_eint0_data - EINT0 common data
+  * @drvdata: pin controller driver data
+  * @domains: IRQ domains of particular EINT0 interrupts
+  * @pins: pin offsets inside of banks of particular EINT0 interrupts
+@@ -205,7 +205,7 @@ struct s3c64xx_eint0_data {
+ };
  
--/**
-+/*
-  * samsung_pinctrl_resume - restore pinctrl state from suspend
-  *
-  * Restore one of the banks that was saved during suspend.
+ /**
+- * struct s3c64xx_eint0_domain_data: EINT0 per-domain data
++ * struct s3c64xx_eint0_domain_data - EINT0 per-domain data
+  * @bank: pin bank related to the domain
+  * @eints: EINT0 interrupts related to the domain
+  */
+@@ -215,7 +215,7 @@ struct s3c64xx_eint0_domain_data {
+ };
+ 
+ /**
+- * struct s3c64xx_eint_gpio_data: GPIO EINT data
++ * struct s3c64xx_eint_gpio_data - GPIO EINT data
+  * @drvdata: pin controller driver data
+  * @domains: array of domains related to EINT interrupt groups
+  */
 -- 
 2.25.1
 
