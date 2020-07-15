@@ -2,78 +2,142 @@ Return-Path: <SRS0=6Aeb=A2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C6AC433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Jul 2020 09:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2424C4345D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Jul 2020 15:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F22DF2053B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Jul 2020 09:17:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E96E2065D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Jul 2020 15:07:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mm5H0gkt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730580AbgGOJRa (ORCPT
+        id S1728146AbgGOPHa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Jul 2020 05:17:30 -0400
-Received: from 8bytes.org ([81.169.241.247]:57566 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729592AbgGOJR3 (ORCPT
+        Wed, 15 Jul 2020 11:07:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57164 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727930AbgGOPGp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Jul 2020 05:17:29 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 5C98829A; Wed, 15 Jul 2020 11:17:27 +0200 (CEST)
-Date:   Wed, 15 Jul 2020 11:17:20 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Cc:     Joerg Roedel <jroedel@suse.de>, Andy Gross <agross@kernel.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Daniel Drake <drake@endlessm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        jonathan.derrick@intel.com, Jonathan Hunter <jonathanh@nvidia.com>,
+        Wed, 15 Jul 2020 11:06:45 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBEEEC08C5DB
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jul 2020 08:06:44 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id f18so6164970wml.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jul 2020 08:06:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=HtRzZ5KmeCiCWZA3g8vq3ZlMKJB7i9QBYHFK4C8GH0s=;
+        b=mm5H0gktuRl27KwOE3Op7rhTrBCOq3IjXtDklC9duhaS3OTT2AIBTmiUK7enabkTxf
+         phcZ+mlV/fhB5510gdwnlVT3Nu8bq+sziuBIoKP6hjoayECw6hdssq4P9CHFYDMgDvIQ
+         ErWfZyh4qn06Cfihd8RkCok4YpfxkvExmV1F49S4++6DMkMoaoPjSjicaXvmiKHPAhAs
+         zamOm620KAFOcYr63wq8QipRJwm8ft++56w68XfTbJiF0Y/z8iqjB7oqiRiK4B4uUWpS
+         X6Lp1A3i1p5aH4zsuxlrzFMGCAXnMp1cnAVb07VjMsCZTEORkYIDT50YyijZRN7wzI4Y
+         PcOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=HtRzZ5KmeCiCWZA3g8vq3ZlMKJB7i9QBYHFK4C8GH0s=;
+        b=VR4B+kM9684zDDU4rluXjApYGd7g58twzzZlTYry1CVSW/QERG4AL9Lp14I89nR06N
+         VI4NRq/ZpNE5C2Twrq4zCQAnM8u91zNRW+G5IiUywl9DtrbloGxkqFe4pFnQwjFQ1fLA
+         KDrssLg3DghAzZchJPMn8KbevrBudSpcMzvha7dJo1uf2eyTaETjTSzQti3HtCLagt5U
+         leQWtehSFt7PNpHOwL3SL4q5/+CFgfzyf0H8znFtZxb0AT+I37MtaxiC4hAMelyBurjg
+         cSHDL0d2qewejlHeWz829IB9DdqpMpHMGRg68WNhP8H1uGhQHqm03uTJiY8m00o4TNWd
+         dnfg==
+X-Gm-Message-State: AOAM530j9qZN0VPO6gXC58I4ZF3X0FgMoFYNR1tD2atgmAxqLh+G0ye2
+        m4AxaadRDdSVSpHNXVX2tnEemw==
+X-Google-Smtp-Source: ABdhPJwPI7700rZiGUg8UA2/gAzTCD4H6EyDR617KU4GnsAL6bxdbGHlfr3Qjde6X1ytzLoqJxXbAg==
+X-Received: by 2002:a05:600c:21cb:: with SMTP id x11mr8697229wmj.141.1594825603705;
+        Wed, 15 Jul 2020 08:06:43 -0700 (PDT)
+Received: from localhost.localdomain ([2.31.163.61])
+        by smtp.gmail.com with ESMTPSA id w2sm3906140wrs.77.2020.07.15.08.06.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jul 2020 08:06:42 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     broonie@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        David Rientjes <rientjes@google.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        virtualization@lists.linux-foundation.org,
-        Will Deacon <will@kernel.org>
-Subject: Re: AMD IOMMU + SME + amdgpu regression
-Message-ID: <20200715091720.GV27672@8bytes.org>
-References: <1591915710.rakbpzst8h.none.ref@localhost>
- <1591915710.rakbpzst8h.none@localhost>
- <20200622100257.GD31822@suse.de>
- <1592839701.mxvvths2x9.none@localhost>
+        Andi Shyti <andi@etezian.org>,
+        Jaswinder Singh <jassi.brar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 07/14] spi: spi-s3c64xx: Add missing entries for structs 's3c64xx_spi_dma_data' and 's3c64xx_spi_dma_data'
+Date:   Wed, 15 Jul 2020 16:06:25 +0100
+Message-Id: <20200715150632.409077-8-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200715150632.409077-1-lee.jones@linaro.org>
+References: <20200715150632.409077-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1592839701.mxvvths2x9.none@localhost>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jun 22, 2020 at 11:30:04AM -0400, Alex Xu (Hello71) wrote:
-> Yes, it works with SME off with dbed452a078 ("dma-pool: decouple 
-> DMA_REMAP from DMA_COHERENT_POOL") applied.
+Fixes the following W=1 kernel build warning(s):
 
-Okay, I can reproduce the problem on my Ryzen System, and the boot log
-shows various warnings/bugs from the amdgpu driver. I think this should
-be looked at by the AMDGPU folks first, as I didn't really got far
-looking into the GPU drivers code.
+ drivers/spi/spi-s3c64xx.c:150: warning: Function parameter or member 'quirks' not described in 's3c64xx_spi_port_config'
+ drivers/spi/spi-s3c64xx.c:150: warning: Function parameter or member 'clk_ioclk' not described in 's3c64xx_spi_port_config'
+ drivers/spi/spi-s3c64xx.c:189: warning: Function parameter or member 'pdev' not described in 's3c64xx_spi_driver_data'
+ drivers/spi/spi-s3c64xx.c:189: warning: Function parameter or member 'rx_dma' not described in 's3c64xx_spi_driver_data'
+ drivers/spi/spi-s3c64xx.c:189: warning: Function parameter or member 'tx_dma' not described in 's3c64xx_spi_driver_data'
+ drivers/spi/spi-s3c64xx.c:189: warning: Function parameter or member 'port_conf' not described in 's3c64xx_spi_driver_data'
+ drivers/spi/spi-s3c64xx.c:189: warning: Function parameter or member 'port_id' not described in 's3c64xx_spi_driver_data'
 
-Regards,
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andi Shyti <andi@etezian.org>
+Cc: Jaswinder Singh <jassi.brar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/spi/spi-s3c64xx.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-	Joerg
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index cf67ea60dc0ed..924b24441789a 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -130,9 +130,11 @@ struct s3c64xx_spi_dma_data {
+  * @fifo_lvl_mask: Bit-mask for {TX|RX}_FIFO_LVL bits in SPI_STATUS register.
+  * @rx_lvl_offset: Bit offset of RX_FIFO_LVL bits in SPI_STATUS regiter.
+  * @tx_st_done: Bit offset of TX_DONE bit in SPI_STATUS regiter.
++ * @quirks: Bitmask of known quirks
+  * @high_speed: True, if the controller supports HIGH_SPEED_EN bit.
+  * @clk_from_cmu: True, if the controller does not include a clock mux and
+  *	prescaler unit.
++ * @clk_ioclk: True if clock is present on this device
+  *
+  * The Samsung s3c64xx SPI controller are used on various Samsung SoC's but
+  * differ in some aspects such as the size of the fifo and spi bus clock
+@@ -154,6 +156,7 @@ struct s3c64xx_spi_port_config {
+  * @clk: Pointer to the spi clock.
+  * @src_clk: Pointer to the clock used to generate SPI signals.
+  * @ioclk: Pointer to the i/o clock between master and slave
++ * @pdev: Pointer to device's platform device data
+  * @master: Pointer to the SPI Protocol master.
+  * @cntrlr_info: Platform specific data for the controller this driver manages.
+  * @lock: Controller specific lock.
+@@ -166,7 +169,11 @@ struct s3c64xx_spi_port_config {
+  * @xfer_completion: To indicate completion of xfer task.
+  * @cur_mode: Stores the active configuration of the controller.
+  * @cur_bpw: Stores the active bits per word settings.
+- * @cur_speed: Stores the active xfer clock speed.
++ * @cur_speed: Current clock speed
++ * @rx_dma: Local receive DMA data (e.g. chan and direction)
++ * @tx_dma: Local transmit DMA data (e.g. chan and direction)
++ * @port_conf: Local SPI port configuartion data
++ * @port_id: Port identification number
+  */
+ struct s3c64xx_spi_driver_data {
+ 	void __iomem                    *regs;
+-- 
+2.25.1
+
