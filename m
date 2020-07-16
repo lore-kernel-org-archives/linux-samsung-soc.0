@@ -2,111 +2,136 @@ Return-Path: <SRS0=Hjsb=A3=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F91C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jul 2020 05:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B90F0C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jul 2020 05:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D46C7207DD
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jul 2020 05:11:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 978B12070E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jul 2020 05:50:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594876283;
-	bh=fVIx7exM1IL4il1EvPnQv2j2V1fBwT20/XpSLo7h7UA=;
+	s=default; t=1594878659;
+	bh=K5M9VEUTLX2kdCyJTiXSp+ySzNwauaOQDdXxsbEw4Cs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xYe03j1OhjgZ62GFsHxRXGZYV8emeEx3nMg5iV31K8nOx2E4PWSPDDq1vrDZF7+q6
-	 DIgDWcIirChZK8g7yVipKWXCGeD05i9jjHN9bVze4kxUpOayFJe3CxFHOSrJttZLpo
-	 8m9ukrYVu1bdUc3H0bsHfNVrr1+DH3v17YyKjjBU=
+	b=uOIgoNdM7y+24Bf6ZJ2ZK2jdahfolxLqVrC2iTxzRWhQvlIfwPOLqBhZ1Tb2ZaLTi
+	 sbiPepj/BEcyHxf1+FoK2GICyi9CMbY++lY16jnc1e7V0SFiydU3b8y3v9puhXfZF/
+	 YRJYRdohRI6UZoiCq4MlEJ5dYPjzn8GRqxoz6WFk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbgGPFLX (ORCPT
+        id S1726083AbgGPFuz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Jul 2020 01:11:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56096 "EHLO mail.kernel.org"
+        Thu, 16 Jul 2020 01:50:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725268AbgGPFLX (ORCPT
+        id S1725844AbgGPFuz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Jul 2020 01:11:23 -0400
+        Thu, 16 Jul 2020 01:50:55 -0400
 Received: from localhost (unknown [122.171.202.192])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A226F207BC;
-        Thu, 16 Jul 2020 05:11:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E5122065E;
+        Thu, 16 Jul 2020 05:50:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594876282;
-        bh=fVIx7exM1IL4il1EvPnQv2j2V1fBwT20/XpSLo7h7UA=;
+        s=default; t=1594878655;
+        bh=K5M9VEUTLX2kdCyJTiXSp+ySzNwauaOQDdXxsbEw4Cs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FFfk/MgqkxjA56TqPGaFqo3E5C+UKWoOOglSrFeYYnF/KgHxASQLgFomcd5uiZvRb
-         KnNUejif5jQf0QE3YNyKokUBewlqLrdf4a21iJIb4jysDeBRgzJAEwe0TvHtfyjslP
-         1+XQ67ae0Mr7Gra1wG7mGb56g1/D8m4H820f5Yko=
-Date:   Thu, 16 Jul 2020 10:41:18 +0530
+        b=juZS0NKwsR33k8Y4iWXZk8HbFaogclJ9Cw5A9iVAP32qqQG4Unc1rqMDeuesHXXQc
+         WfRrqJAYpIBDMBSmaOLVp7vHEFdDlHXzanW6eW0Nb3vNuFUfzjmYgYh2EcQIHvtNs2
+         rhejvi6M+Qshdsw1P7jATHZ7BUqn8U+VoZ9CBWWw=
+Date:   Thu, 16 Jul 2020 11:20:50 +0530
 From:   Vinod Koul <vkoul@kernel.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     robh+dt@kernel.org, krzk@kernel.org, kwmad.kim@samsung.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        kishon@ti.com
-Subject: Re: [PATCH v12 2/2] phy: samsung-ufs: add UFS PHY driver for samsung
- SoC
-Message-ID: <20200716051118.GB55478@vkoul-mobl>
-References: <20200703171135.77389-1-alim.akhtar@samsung.com>
- <CGME20200703173144epcas5p1daa9f5c594e7f299638cc75b7425b7c8@epcas5p1.samsung.com>
- <20200703171135.77389-2-alim.akhtar@samsung.com>
- <20200713061737.GD34333@vkoul-mobl>
- <077501d65b0e$e1630100$a4290300$@samsung.com>
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v4] phy: samsung: Use readl_poll_timeout function
+Message-ID: <20200716055050.GE55478@vkoul-mobl>
+References: <20200713074243.530-1-linux.amoon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <077501d65b0e$e1630100$a4290300$@samsung.com>
+In-Reply-To: <20200713074243.530-1-linux.amoon@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Alim,
-
-On 16-07-20, 06:47, Alim Akhtar wrote:
-
-> > > +static int samsung_ufs_phy_symbol_clk_init(struct samsung_ufs_phy
-> > > +*phy) {
-> > > +	int ret = 0;
-> > 
-> > superfluous init, am sure I flagged it before as well
-> > 
-> Yes, you did, but 0-DAY CI kernel test gave warning [1], so I kept this as
-> it is.
-> [1] https://lkml.org/lkml/2020/7/3/81
-
-But you moved away from return below to goto, so that is no longer
-the case. First use of ret is for clk_prepare_enable() call below which
-is not conditional hence this is superfluous. Earlier it was not as it was
-conditional so required to be initialized
-
+On 13-07-20, 07:42, Anand Moon wrote:
+> Instead of a busy waiting while loop using udelay
+> use readl_poll_timeout function to check the condition
+> is met or timeout occurs in crport_handshake function.
+> readl_poll_timeout is called in non atomic context so
+> it safe to sleep until the condition is met.
 > 
-> > > +
-> > > +	phy->tx0_symbol_clk = devm_clk_get(phy->dev, "tx0_symbol_clk");
-> > > +	if (IS_ERR(phy->tx0_symbol_clk)) {
-> > > +		dev_err(phy->dev, "failed to get tx0_symbol_clk clock\n");
-> > > +		goto out;
-> > > +	}
-> > > +
-> > > +	phy->rx0_symbol_clk = devm_clk_get(phy->dev, "rx0_symbol_clk");
-> > > +	if (IS_ERR(phy->rx0_symbol_clk)) {
-> > > +		dev_err(phy->dev, "failed to get rx0_symbol_clk clock\n");
-> > > +		goto out;
-> > > +	}
-> > > +
-> > > +	phy->rx1_symbol_clk = devm_clk_get(phy->dev, "rx1_symbol_clk");
-> > > +	if (IS_ERR(phy->rx0_symbol_clk)) {
-> > > +		dev_err(phy->dev, "failed to get rx1_symbol_clk clock\n");
-> > > +		goto out;
-> > > +	}
-> > > +
-> > > +	ret = clk_prepare_enable(phy->tx0_symbol_clk);
-> > > +	if (ret) {
-> > > +		dev_err(phy->dev, "%s: tx0_symbol_clk enable failed %d\n",
-> > __func__, ret);
-> > > +		goto out;
-> > > +	}
+> Fixes: d8c80bb3b55b ("phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800")
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> Changes v4:
+> Rebased on to of patch [0] https://patchwork.kernel.org/patch/11651673/
+> --Fix the commit message.
+> --Fix the error timeout condition for -ETIMEDOUT
+> ---
+> Changes v3:
+> --Fix the commit message.
+> --Drop the variable, used the value directly.
+> Changes v2:
+> --used the default timeout values.
+> --Added missing Fixed tags.
+> ---
+>  drivers/phy/samsung/phy-exynos5-usbdrd.c | 39 ++++++++----------------
+>  1 file changed, 12 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> index 7f6279fb4f8f..ad81aa65cdff 100644
+> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_device.h>
+> +#include <linux/iopoll.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/mutex.h>
+> @@ -556,41 +557,25 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
+>  static int crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
+>  			    u32 val, u32 cmd)
+>  {
+> -	u32 usec = 100;
+>  	unsigned int result;
+> +	int err;
+>  
+>  	writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
+>  
+> -	do {
+> -		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
+> -		if (result & PHYREG1_CR_ACK)
+> -			break;
+> -
+> -		udelay(1);
+> -	} while (usec-- > 0);
+> -
+> -	if (!usec) {
+> -		dev_err(phy_drd->dev,
+> -			"CRPORT handshake timeout1 (0x%08x)\n", val);
+> -		return -ETIME;
+> +	err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
+> +			result,	(result & PHYREG1_CR_ACK), 1, 100);
+
+pls align this line to opening brace of preceding line:
+
+        err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
+                                 result, (result & PHYREG1_CR_ACK), 1, 100);
+
+This is recommended way of splitting lines, see
+Documentation/process/coding-style.rst and run checkpatch.pl with
+--strict option
+
+thanks
 -- 
 ~Vinod
