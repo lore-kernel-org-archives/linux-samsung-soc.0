@@ -1,246 +1,258 @@
-Return-Path: <SRS0=6Aeb=A2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=Hjsb=A3=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F06AC433E5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Jul 2020 21:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E79BCC433EB
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jul 2020 01:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6906E2070E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Jul 2020 21:30:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB42E20791
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jul 2020 01:29:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A14AiHsk"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sDJkD157"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbgGOVaR (ORCPT
+        id S1728036AbgGPB3Y (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Jul 2020 17:30:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59964 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725917AbgGOVaQ (ORCPT
+        Wed, 15 Jul 2020 21:29:24 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:49541 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728032AbgGPB3X (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Jul 2020 17:30:16 -0400
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82CE9C061755;
-        Wed, 15 Jul 2020 14:30:16 -0700 (PDT)
-Received: by mail-ot1-x342.google.com with SMTP id h13so2633372otr.0;
-        Wed, 15 Jul 2020 14:30:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=gg4JrqfCgBGC6t6EzVXSJJQHBX5kSrQQVUjGzeSKHF0=;
-        b=A14AiHsks+5grSbpMzsN/lJAbv3gaayhst+jtITpIhkxWO7Te4qRCV0vhCJpxujQwv
-         MSHcKryEA+4NjmAtKpqjxCDFutA7IbmY38R9zB4/bMgfgUw78uPO5Uz7FK0KUiaBnvl/
-         7qS6LNNmXNVcO/QJx7skMi/dUezf7cYF7XARsGJR6ol+XOVaSibV9f0UIFyYx6n1rU0q
-         0/aE58X92RvpHqxjUVT4370HyafZRQWN6th1EOjkfLFZW/T8tpTHm2zBcPQd61PSPBAm
-         kZJmrczd38wnLTYCEPJh/lyTwbhZjxS9Z7Im9kjpWyZzKRLTrpq1oW5K8dpNTBanMHMr
-         8ALA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gg4JrqfCgBGC6t6EzVXSJJQHBX5kSrQQVUjGzeSKHF0=;
-        b=lIRI87scLBZ4AMYgPeooPcCviRE/kzM/RMWe2UCJQCRSlQlIDVcluo/hhD9qaDkRkN
-         6q9IejgvK1JihIw1j9j8ronkvYSJZ9mOjYn5XXy/AyhTCSyHCKTNM0F9ckEVcXecYZ9l
-         qcpSYdVmrZuP6BkrNYhjhp/gmOOHmOfNPVSnl/UG6T8oo/IDdrTPfUD8K2JXBeHfj1Qs
-         H3vqx3sB1bo9JpzuNyO1DrEiMjwojg0jRqoskVIEJT0JtHoSQkCetsOAoghlFRQUyi/Y
-         2C39UtHdLQzZelPHmBwWGqMgTccoqbF6CNENI57jWxU0fdTzz892FCxfJ+EwPdQLcPtR
-         JzrA==
-X-Gm-Message-State: AOAM530H8ojmyEwgQLCGvYcsaypwIiaXeyBaf0SUh8Q1PXIpRoHIGaQp
-        OnngRvvDE8RC8KY5x+ExwLuIMHu8m1Zlqs4ycPNu1LIYIjLU3g==
-X-Google-Smtp-Source: ABdhPJzu5gR3kxgIlN3HLfyszBwlsUj6J/lk0upH7IO4tJs0hTwNMDyBBI+po0DLwAufxSOsmvdX8ErBf5KicFaw4FE=
-X-Received: by 2002:a9d:6c09:: with SMTP id f9mr1514735otq.362.1594848615745;
- Wed, 15 Jul 2020 14:30:15 -0700 (PDT)
+        Wed, 15 Jul 2020 21:29:23 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200716012921epoutp0311c2a1979dc14604de13f045a885647f~iF2nUDy7T1616316163epoutp03q
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jul 2020 01:29:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200716012921epoutp0311c2a1979dc14604de13f045a885647f~iF2nUDy7T1616316163epoutp03q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1594862961;
+        bh=hOa/A7YiqiUgUKfubXBHWOxCskvKIPDJb68BD6K6Sdw=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=sDJkD157ZwKeUhy3Akdkhhi095mTtIZFjR0nR2RYYcGSmYkKkNVmoEpTzQCnUoQ54
+         R7EFZORZO2AvdnDAZrjhQV7vPQ7CCyZ5Y05AiANfQpLAqRcYW96KHe9LZovcvBU0gL
+         Yfy2rjcukJhR6DshEOSLjlHlT5M+k8mZycd86jSU=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20200716012920epcas5p2ff4a5f48f3e6b052117db3476bd22e35~iF2m1jJaB0342103421epcas5p2K;
+        Thu, 16 Jul 2020 01:29:20 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4D.1A.09467.07DAF0F5; Thu, 16 Jul 2020 10:29:20 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20200716011732epcas5p4e81ce853962d66b1a48ce24e9f63d7ed~iFsTYGCbK1630116301epcas5p4Z;
+        Thu, 16 Jul 2020 01:17:32 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200716011732epsmtrp219362f3104ebe5bcc0433d9f84bf0c9a~iFsTXS0GR2678726787epsmtrp2V;
+        Thu, 16 Jul 2020 01:17:32 +0000 (GMT)
+X-AuditID: b6c32a49-a29ff700000024fb-ba-5f0fad709991
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5D.EB.08303.CAAAF0F5; Thu, 16 Jul 2020 10:17:32 +0900 (KST)
+Received: from alimakhtar02 (unknown [107.108.234.165]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200716011730epsmtip1bda720948ff454b86cbda2a5c209b952~iFsRNj4yc3113931139epsmtip19;
+        Thu, 16 Jul 2020 01:17:30 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Vinod Koul'" <vkoul@kernel.org>
+Cc:     <robh+dt@kernel.org>, <krzk@kernel.org>, <kwmad.kim@samsung.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>, <kishon@ti.com>
+In-Reply-To: <20200713061737.GD34333@vkoul-mobl>
+Subject: RE: [PATCH v12 2/2] phy: samsung-ufs: add UFS PHY driver for
+ samsung SoC
+Date:   Thu, 16 Jul 2020 06:47:28 +0530
+Message-ID: <077501d65b0e$e1630100$a4290300$@samsung.com>
 MIME-Version: 1.0
-References: <20200305111047.147355-1-enric.balletbo@collabora.com>
-In-Reply-To: <20200305111047.147355-1-enric.balletbo@collabora.com>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Wed, 15 Jul 2020 23:30:04 +0200
-Message-ID: <CAFqH_52LhfV9AsnPRZi_ZPsgYX8WrUrKEsV-E7VHOw3ZZtHd-w@mail.gmail.com>
-Subject: Re: [RESEND RESEND PATCH] arm/arm64: defconfig: Update configs to use
- the new CROS_EC options
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Collabora Kernel ML <kernel@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        linux-tegra@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Bastien Nocera <hadess@hadess.net>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Anson Huang <Anson.Huang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIAZudAEAONCLYZ7ErPEYM0UJKVzwJEgx3VAd4V62cCg/PmQ6h9FfEw
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRmVeSWpSXmKPExsWy7bCmpm7BWv54gzM39C3mHznHanHhaQ+b
+        xfnzG9gtbm45ymKx6fE1VovLu+awWcw4v4/JonXvEXaLnXdOMDtwemxa1cnmsXlJvUffllWM
+        HsdvbGfy+LxJLoA1issmJTUnsyy1SN8ugStj+l2rgjXyFfeexDUwfpHoYuTkkBAwkZh7fwcb
+        iC0ksJtR4u4PCQj7E6PE8/aiLkYuIPszo8Sby7tYYBom3rjDDpHYxSjRd+w+E4TzhlHi9Mpp
+        rCBVbAK6EjsWt4GNFRFQldjy5AEbSBGzwDNGiTWbOhhBEpwCBhKn/l0CGyssECzxYd8CZhCb
+        Bajh1pfXYDavgKXEuaWXGSFsQYmTM5+A1TMLyEtsfzuHGeIkBYmfT5cBLeYAWuYm8fleEUSJ
+        uMTRnz3MIHslBBZySKz9f4MZpEZCwEXiz1R1iFZhiVfHt7BD2FISn9/tZYMoyZbo2WUMEa6R
+        WDrvGNTz9hIHrsxhASlhFtCUWL9LHyIsKzH11DomiK18Er2/nzBBxHkldsyDsVUlmt9dhRoj
+        LTGxu5t1AqPSLCR/zULy1ywkD8xC2LaAkWUVo2RqQXFuemqxaYFhXmq5XnFibnFpXrpecn7u
+        JkZwQtLy3MF498EHvUOMTByMhxglOJiVRHh5uHjjhXhTEiurUovy44tKc1KLDzFKc7AoifMq
+        /TgTJySQnliSmp2aWpBaBJNl4uCUamDa0F96qNXs/+fZF/ZuF5syl+kjT4Jb1eMpR64Hm0rW
+        z9aXFo5s1umXNRc/erk+XIVX+nHsM+ZllxXuiS62vrFD2j98XsSjINOkkxbbeRP8Lyy1bAvj
+        2OTP88oo8P4T0RcVYmW/xVX/v8+UL5snv3TRlLeTvaceC+Cv5Ir5Vbxs3UXPrB9hBf/8frpf
+        85+3aMf8FV5Rf0N7D78yM6w8O6Guu+jphplnV6xgl1/7W1D+oOOpWdaHfGU5Ev9HTCxKmKMf
+        1LY0yPX4Ko/FG1YXBHM6rmm402nmmHFjWsvMnh9zX2w/sCEu8oKc4Cmb68Lq+fGrJ7F08nvn
+        ee6xVJtQmWUapZ9UrKvozBi0gatzwRElluKMREMt5qLiRABgTY+wtwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LZdlhJTnfNKv54gxdbNSzmHznHanHhaQ+b
+        xfnzG9gtbm45ymKx6fE1VovLu+awWcw4v4/JonXvEXaLnXdOMDtwemxa1cnmsXlJvUffllWM
+        HsdvbGfy+LxJLoA1issmJTUnsyy1SN8ugStj+l2rgjXyFfeexDUwfpHoYuTkkBAwkZh44w47
+        iC0ksINRYs5HZ4i4tMT1jRPYIWxhiZX/ngPZXEA1rxgl7t/sYQVJsAnoSuxY3MYGYosIqEps
+        efKADaSIWeAdo8TufSfZIDoeM0pcOHIXrIpTwEDi1L9LLCC2sECgxKLZ75hAbBag7ltfXjOD
+        2LwClhLnll5mhLAFJU7OfAJUzwE0VU+ibSNYmFlAXmL72znMENcpSPx8uowVpEREwE3i870i
+        iBJxiaM/e5gnMArPQjJoFsKgWUgGzULSsYCRZRWjZGpBcW56brFhgVFearlecWJucWleul5y
+        fu4mRnBkaWntYNyz6oPeIUYmDsZDjBIczEoivDxcvPFCvCmJlVWpRfnxRaU5qcWHGKU5WJTE
+        eb/OWhgnJJCeWJKanZpakFoEk2Xi4JRqYOJ7c/On3BxlV0eej5Pnp+/7kn385FSmmQqK/Fu2
+        Kf+3l4qSN/pyb+JFwfNvdTvkecrrj/QdORWbt6R78nuF1n9xCfel8/aq8iZtCX7MfKza4R1r
+        9b+dIvzXq3/tSzvf6trWl+j6tyDWzdtmUop0obRatssdhayti8/tOXd/vlc7+58ra/eaxPKG
+        r5a3vj4/Mu366qkne1I8xMR8I29L/nz0v/swi3dlo6X7OZu/alIlPOXf5q0ql41t2CegH8T9
+        jEn45sOqVtVN35x25Oc8/LepbB1bwrOpX2uKTy5wvOi7onuzReS/U76CV4VnLasvn7to5XGZ
+        hxUN11lYd7LqrEpimaP6SdT553ZrPeO3rkosxRmJhlrMRcWJAGADDc8bAwAA
+X-CMS-MailID: 20200716011732epcas5p4e81ce853962d66b1a48ce24e9f63d7ed
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200703173144epcas5p1daa9f5c594e7f299638cc75b7425b7c8
+References: <20200703171135.77389-1-alim.akhtar@samsung.com>
+        <CGME20200703173144epcas5p1daa9f5c594e7f299638cc75b7425b7c8@epcas5p1.samsung.com>
+        <20200703171135.77389-2-alim.akhtar@samsung.com>
+        <20200713061737.GD34333@vkoul-mobl>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi arm/arm64 maintainers,
+Hi Vinod,
 
-Missatge de Enric Balletbo i Serra <enric.balletbo@collabora.com> del
-dia dj., 5 de mar=C3=A7 2020 a les 12:11:
->
-> We refactored the CrOS EC drivers moving part of the code from the MFD
-> subsystem to the platform chrome subsystem. During this change we needed
-> to rename some config options, so, update the defconfigs accordingly.
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-> Tested-by: Gwendal Grignou <gwendal@chromium.org>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> ---
+> -----Original Message-----
+> From: Vinod Koul <vkoul@kernel.org>
+> Sent: 13 July 2020 11:48
+> To: Alim Akhtar <alim.akhtar@samsung.com>
+> Cc: robh+dt@kernel.org; krzk@kernel.org; kwmad.kim@samsung.com;
+> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org; kishon@ti.com
+> Subject: Re: [PATCH v12 2/2] phy: samsung-ufs: add UFS PHY driver for
+samsung
+> SoC
+> 
+> On 03-07-20, 22:41, Alim Akhtar wrote:
+> 
+> > +static const struct samsung_ufs_phy_cfg exynos7_post_init_cfg[] = {
+> > +	END_UFS_PHY_CFG
+> > +};
+> 
+> This is dummy, why not add a check to make config optional?
+> 
+Currently this is dummy, however this might be used for the similar platform
+which do some phy tunning post init.
+Will just remove this for now for this platform, will add this check in
+driver.
 
-A gentle ping. I'd like to land this if is possible because that way I
-can remove some legacy code in platform/chrome subsystem.
+> > +static int samsung_ufs_phy_symbol_clk_init(struct samsung_ufs_phy
+> > +*phy) {
+> > +	int ret = 0;
+> 
+> superfluous init, am sure I flagged it before as well
+> 
+Yes, you did, but 0-DAY CI kernel test gave warning [1], so I kept this as
+it is.
+[1] https://lkml.org/lkml/2020/7/3/81
 
-Thanks,
-  Enric
+> > +
+> > +	phy->tx0_symbol_clk = devm_clk_get(phy->dev, "tx0_symbol_clk");
+> > +	if (IS_ERR(phy->tx0_symbol_clk)) {
+> > +		dev_err(phy->dev, "failed to get tx0_symbol_clk clock\n");
+> > +		goto out;
+> > +	}
+> > +
+> > +	phy->rx0_symbol_clk = devm_clk_get(phy->dev, "rx0_symbol_clk");
+> > +	if (IS_ERR(phy->rx0_symbol_clk)) {
+> > +		dev_err(phy->dev, "failed to get rx0_symbol_clk clock\n");
+> > +		goto out;
+> > +	}
+> > +
+> > +	phy->rx1_symbol_clk = devm_clk_get(phy->dev, "rx1_symbol_clk");
+> > +	if (IS_ERR(phy->rx0_symbol_clk)) {
+> > +		dev_err(phy->dev, "failed to get rx1_symbol_clk clock\n");
+> > +		goto out;
+> > +	}
+> > +
+> > +	ret = clk_prepare_enable(phy->tx0_symbol_clk);
+> > +	if (ret) {
+> > +		dev_err(phy->dev, "%s: tx0_symbol_clk enable failed %d\n",
+> __func__, ret);
+> > +		goto out;
+> > +	}
+> > +
+> > +	ret = clk_prepare_enable(phy->rx0_symbol_clk);
+> > +	if (ret) {
+> > +		dev_err(phy->dev, "%s: rx0_symbol_clk enable failed %d\n",
+> __func__, ret);
+> > +		clk_disable_unprepare(phy->tx0_symbol_clk);
+> > +		goto out;
+> > +	}
+> > +
+> > +	ret = clk_prepare_enable(phy->rx1_symbol_clk);
+> > +	if (ret) {
+> > +		dev_err(phy->dev, "%s: rx1_symbol_clk enable failed %d\n",
+> __func__, ret);
+> > +		clk_disable_unprepare(phy->tx0_symbol_clk);
+> > +		clk_disable_unprepare(phy->rx0_symbol_clk);
+> 
+> maybe it will look better if we add common rollback and jump to proper
+labels
+> 
+Sure, will change in next version.
 
-> Dear all,
->
-> This is a resend of a resend patch [3]. In some previous discussions
-> maintainers would prefer to have this merged through the arm-soc tree
-> but wasn't merged yet and I forget to ping again, hence, sending a new
-> resend.
->
-> To give some context to some discussions that can arise again (i.e
-> whether some symbols should be built-in or not) please look at the
-> previous resends [1] and [2].
->
-> Thanks,
->  Enric
->
-> [1] https://lkml.org/lkml/2019/8/23/518
-> [2] https://lkml.org/lkml/2019/8/23/475
-> [3] https://patchwork.kernel.org/patch/11267741/
->
->  arch/arm/configs/exynos_defconfig   | 4 +++-
->  arch/arm/configs/multi_v7_defconfig | 5 ++++-
->  arch/arm/configs/pxa_defconfig      | 4 +++-
->  arch/arm/configs/tegra_defconfig    | 2 +-
->  arch/arm64/configs/defconfig        | 5 ++++-
->  5 files changed, 15 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_=
-defconfig
-> index c8e0c14092e8..cb030549dd69 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -160,7 +160,9 @@ CONFIG_DEVFREQ_THERMAL=3Dy
->  CONFIG_THERMAL_EMULATION=3Dy
->  CONFIG_WATCHDOG=3Dy
->  CONFIG_S3C2410_WATCHDOG=3Dy
-> -CONFIG_MFD_CROS_EC=3Dy
-> +CONFIG_MFD_CROS_EC_DEV=3Dy
-> +CONFIG_CHROME_PLATFORMS=3Dy
-> +CONFIG_CROS_EC=3Dy
->  CONFIG_MFD_MAX14577=3Dy
->  CONFIG_MFD_MAX77686=3Dy
->  CONFIG_MFD_MAX77693=3Dy
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi=
-_v7_defconfig
-> index 017d65f86eba..9099787ccf70 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -938,7 +938,7 @@ CONFIG_SERIO_NVEC_PS2=3Dy
->  CONFIG_NVEC_POWER=3Dy
->  CONFIG_NVEC_PAZ00=3Dy
->  CONFIG_STAGING_BOARD=3Dy
-> -CONFIG_MFD_CROS_EC=3Dm
-> +CONFIG_MFD_CROS_EC_DEV=3Dm
->  CONFIG_CROS_EC_I2C=3Dm
->  CONFIG_CROS_EC_SPI=3Dm
->  CONFIG_COMMON_CLK_MAX77686=3Dy
-> @@ -1118,3 +1118,6 @@ CONFIG_CMA_SIZE_MBYTES=3D64
->  CONFIG_PRINTK_TIME=3Dy
->  CONFIG_MAGIC_SYSRQ=3Dy
->  CONFIG_DEBUG_FS=3Dy
-> +CONFIG_CHROME_PLATFORMS=3Dy
-> +CONFIG_CROS_EC=3Dm
-> +CONFIG_CROS_EC_CHARDEV=3Dm
-> diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defcon=
-fig
-> index b817c57f05f1..f1b084ace88d 100644
-> --- a/arch/arm/configs/pxa_defconfig
-> +++ b/arch/arm/configs/pxa_defconfig
-> @@ -393,7 +393,9 @@ CONFIG_SA1100_WATCHDOG=3Dm
->  CONFIG_MFD_AS3711=3Dy
->  CONFIG_MFD_BCM590XX=3Dm
->  CONFIG_MFD_AXP20X=3Dy
-> -CONFIG_MFD_CROS_EC=3Dm
-> +CONFIG_MFD_CROS_EC_DEV=3Dm
-> +CONFIG_CHROME_PLATFORMS=3Dy
-> +CONFIG_CROS_EC=3Dm
->  CONFIG_CROS_EC_I2C=3Dm
->  CONFIG_CROS_EC_SPI=3Dm
->  CONFIG_MFD_ASIC3=3Dy
-> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_de=
-fconfig
-> index a27592d3b1fa..7bfae67d2016 100644
-> --- a/arch/arm/configs/tegra_defconfig
-> +++ b/arch/arm/configs/tegra_defconfig
-> @@ -147,7 +147,7 @@ CONFIG_SENSORS_LM95245=3Dy
->  CONFIG_WATCHDOG=3Dy
->  CONFIG_TEGRA_WATCHDOG=3Dy
->  CONFIG_MFD_AS3722=3Dy
-> -CONFIG_MFD_CROS_EC=3Dy
-> +CONFIG_MFD_CROS_EC_DEV=3Dy
->  CONFIG_MFD_MAX8907=3Dy
->  CONFIG_MFD_STMPE=3Dy
->  CONFIG_MFD_PALMAS=3Dy
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 905109f6814f..2095e61c8665 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -705,9 +705,12 @@ CONFIG_VIRTIO_BALLOON=3Dy
->  CONFIG_VIRTIO_MMIO=3Dy
->  CONFIG_XEN_GNTDEV=3Dy
->  CONFIG_XEN_GRANT_DEV_ALLOC=3Dy
-> -CONFIG_MFD_CROS_EC=3Dy
-> +CONFIG_MFD_CROS_EC_DEV=3Dy
-> +CONFIG_CHROME_PLATFORMS=3Dy
-> +CONFIG_CROS_EC=3Dy
->  CONFIG_CROS_EC_I2C=3Dy
->  CONFIG_CROS_EC_SPI=3Dy
-> +CONFIG_CROS_EC_CHARDEV=3Dm
->  CONFIG_COMMON_CLK_RK808=3Dy
->  CONFIG_COMMON_CLK_SCPI=3Dy
->  CONFIG_COMMON_CLK_CS2000_CP=3Dy
+> > +static int samsung_ufs_phy_clks_init(struct samsung_ufs_phy *phy) {
+> > +	int ret;
+> > +
+> > +	phy->ref_clk = devm_clk_get(phy->dev, "ref_clk");
+> > +	if (IS_ERR(phy->ref_clk))
+> > +		dev_err(phy->dev, "failed to get ref_clk clock\n");
+> > +
+> > +	ret = clk_prepare_enable(phy->ref_clk);
+> > +	if (ret) {
+> > +		dev_err(phy->dev, "%s: ref_clk enable failed %d\n",
+__func__,
+> ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	dev_info(phy->dev, "UFS MPHY ref_clk_rate = %ld\n",
+> > +clk_get_rate(phy->ref_clk));
+> 
+> debug pls
+> 
+Sure, will change
+
+> > +static int samsung_ufs_phy_init(struct phy *phy) {
+> > +	struct samsung_ufs_phy *_phy = get_samsung_ufs_phy(phy);
+> 
+> ss_phy perhaps?
+> 
+Sure, will change 
+
+> > +	int ret;
+> > +
+> > +	_phy->lane_cnt = phy->attrs.bus_width;
+> > +	_phy->ufs_phy_state = CFG_PRE_INIT;
+> > +
+> > +	if (_phy->drvdata->has_symbol_clk) {
+> > +		ret = samsung_ufs_phy_symbol_clk_init(_phy);
+> > +		if (ret)
+> > +			dev_err(_phy->dev, "failed to set ufs phy symbol
+> clocks\n");
+> > +	}
+> > +
+> > +	ret = samsung_ufs_phy_clks_init(_phy);
+> > +	if (ret)
+> > +		dev_err(_phy->dev, "failed to set ufs phy  clocks\n");
+> > +
+> > +	samsung_ufs_phy_calibrate(phy);
+> > +
+> > +	return 0;
+> 
+> not return samsung_ufs_phy_calibrate() ?
 > --
-> 2.25.1
->
+Will add an error path.
+
+> ~Vinod
+
