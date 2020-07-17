@@ -2,80 +2,52 @@ Return-Path: <SRS0=qGKp=A4=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 574B4C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jul 2020 09:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2924AC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:53:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 35F9B2070E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jul 2020 09:37:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 103E32070E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:53:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726013AbgGQJh5 (ORCPT
+        id S1726090AbgGQLxN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 17 Jul 2020 05:37:57 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:55434 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbgGQJh5 (ORCPT
+        Fri, 17 Jul 2020 07:53:13 -0400
+Received: from foss.arm.com ([217.140.110.172]:34456 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726040AbgGQLxM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Jul 2020 05:37:57 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 9BB002A508E
-Subject: Re: [RESEND RESEND PATCH] arm/arm64: defconfig: Update configs to use
- the new CROS_EC options
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Enric Balletbo Serra <eballetbo@gmail.com>
-Cc:     Gwendal Grignou <gwendal@chromium.org>,
-        Collabora Kernel ML <kernel@collabora.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Will Deacon <will@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>, Joel Stanley <joel@jms.id.au>,
-        Bastien Nocera <hadess@hadess.net>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Maxime Ripard <maxime@cerno.tech>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Olof Johansson <olof@lixom.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Lukasz Luba <lukasz.luba@arm.com>
-References: <20200305111047.147355-1-enric.balletbo@collabora.com>
- <CAFqH_52LhfV9AsnPRZi_ZPsgYX8WrUrKEsV-E7VHOw3ZZtHd-w@mail.gmail.com>
- <CAK8P3a0ScHe+ErEZr-x4Sj=3Yz7cppKDcemXemvwXMbPh-RVMQ@mail.gmail.com>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <2c7a9b5f-968b-38a2-3f67-f731a8617e09@collabora.com>
-Date:   Fri, 17 Jul 2020 11:37:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 17 Jul 2020 07:53:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4BFC30E;
+        Fri, 17 Jul 2020 04:53:11 -0700 (PDT)
+Received: from [10.37.12.35] (unknown [10.37.12.35])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B78F53F66E;
+        Fri, 17 Jul 2020 04:53:08 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] memory: samsung: exynos5422-dmc: Add module param
+ to control IRQ mode
+From:   Lukasz Luba <lukasz.luba@arm.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, willy.mh.wolff.ml@gmail.com,
+        k.konieczny@samsung.com, cw00.choi@samsung.com, krzk@kernel.org,
+        chanwoo@kernel.org, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org
+References: <20200710191122.11029-1-lukasz.luba@arm.com>
+ <CGME20200710191148eucas1p2552537bb911bde44c783d98808efa07f@eucas1p2.samsung.com>
+ <20200710191122.11029-3-lukasz.luba@arm.com>
+ <1a389137-cab5-124a-e198-8be3bc2ca841@samsung.com>
+ <3154b8d2-1fa8-c69d-8a9d-05832e12fdd1@arm.com>
+Message-ID: <baadfe1a-89b6-9fd5-9ea8-e39b458af1aa@arm.com>
+Date:   Fri, 17 Jul 2020 12:53:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0ScHe+ErEZr-x4Sj=3Yz7cppKDcemXemvwXMbPh-RVMQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <3154b8d2-1fa8-c69d-8a9d-05832e12fdd1@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -83,45 +55,85 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Arnd,
 
-On 17/7/20 8:59, Arnd Bergmann wrote:
-> On Wed, Jul 15, 2020 at 11:31 PM Enric Balletbo Serra
-> <eballetbo@gmail.com> wrote:
->> Missatge de Enric Balletbo i Serra <enric.balletbo@collabora.com> del
->> dia dj., 5 de març 2020 a les 12:11:
->>>
->>> We refactored the CrOS EC drivers moving part of the code from the MFD
->>> subsystem to the platform chrome subsystem. During this change we needed
->>> to rename some config options, so, update the defconfigs accordingly.
->>>
->>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
->>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
->>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
->>> Acked-by: Lee Jones <lee.jones@linaro.org>
->>> ---
->>
->> A gentle ping. I'd like to land this if is possible because that way I
->> can remove some legacy code in platform/chrome subsystem.
->>
->> Thanks,
->>   Enric
->>
->>> Dear all,
->>>
->>> This is a resend of a resend patch [3]. In some previous discussions
->>> maintainers would prefer to have this merged through the arm-soc tree
->>> but wasn't merged yet and I forget to ping again, hence, sending a new
->>> resend.
-> 
-> I've merged it into the arm/defconfig branch of the soc tree now.
-> If you have future platform specific changes to the defconfig files,
-> please just add soc@kernel.org to the recipients to get the patch
-> into patchwork.
-> 
 
-Many thanks! I'll take into account this next time.
-
->      Arnd
+On 7/14/20 10:01 AM, Lukasz Luba wrote:
+> Hi Bartek,
 > 
+> On 7/14/20 8:42 AM, Bartlomiej Zolnierkiewicz wrote:
+>>
+>> Hi,
+>>
+>> On 7/10/20 9:11 PM, Lukasz Luba wrote:
+>>> The driver can operate in two modes relaying on devfreq monitoring
+>>> mechanism which periodically checks the device status or it can use
+>>> interrupts when they are provided by loaded Device Tree. The newly
+>>> introduced module parameter can be used to choose between devfreq
+>>> monitoring and internal interrupts without modifying the Device Tree.
+>>> It also sets devfreq monitoring as default when the parameter is not set
+>>> (also the case for default when the driver is not built as a module).
+>>
+>> Could you please explain why should we leave the IRQ mode
+>> support in the dmc driver?
+> 
+> I am still experimenting with the IRQ mode in DMC, but have limited time
+> for it and no TRM.
+> The IRQ mode in memory controller or bus controller has one major
+> advantage: is more interactive. In polling we have fixed period, i.e.
+> 100ms - that's a lot when we have a sudden, latency sensitive workload.
+> There might be no check of the device load for i.e. 99ms, but the tasks
+> with such workload started running. That's a long period of a few frames
+> which are likely to be junked. Should we adjust polling interval to i.e.
+> 10ms, I don't think so. There is no easy way to address all of the
+> scenarios.
+> 
+>>
+>> What are the advantages over the polling mode?
+> 
+> As described above: more reactive to sudden workload, which might be
+> latency sensitive and cause junk frames.
+> Drawback: not best in benchmarks which are randomly jumping
+> over the data set, causing low traffic on memory.
+> It could be mitigated as Sylwester described with not only one type
+> of interrupt, but another, which could 'observe' also other information
+> type in the counters and fire.
+> 
+>>
+>> In what scenarios it should be used?
+> 
+> System like Android with GUI, when there is this sudden workload
+> quite often.
+> 
+> I think the interconnect could help here and would adjust the DMC
+> freq upfront. Although I don't know if interconnect on Exynos5422 is in
+> your scope in near future. Of course the interconnect will not cover
+> all scenarios either.
+> 
+> 
+>>
+>> [ If this is only for documentation purposes then it should be
+>>    removed as it would stay in (easily accessible) git history
+>>    anyway.. ]
+> 
+> The current interrupt mode is definitely not perfect and switching
+> to devfreq monitoring mode has more sense. On the other hand, it
+> still has potential, until there is no interconnect for this SoC.
+> I will continue experimenting with irq mode, so I would like to
+> still have the code in the driver.
+> 
+> Regards,
+> Lukasz
+> 
+>>
+>> Best regards,
+>> -- 
+>> Bartlomiej Zolnierkiewicz
+>> Samsung R&D Institute Poland
+>> Samsung Electronics
+>>
+
+Bartek, do you have some objections to the patches or you think
+they can be taken via devfreq-next?
+
+Cheers,
+Lukasz
