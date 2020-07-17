@@ -2,212 +2,142 @@ Return-Path: <SRS0=qGKp=A4=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14222C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jul 2020 12:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A54C43458
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jul 2020 13:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFCFC20717
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jul 2020 12:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 243EA208C7
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jul 2020 13:55:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CbjgZFk3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LTF03lW7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726232AbgGQMb1 (ORCPT
+        id S1727849AbgGQNzI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 17 Jul 2020 08:31:27 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39652 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726113AbgGQMb0 (ORCPT
+        Fri, 17 Jul 2020 09:55:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38676 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726971AbgGQNyf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Jul 2020 08:31:26 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200717123124euoutp0126d70abeafca85888b4da50f31cdc4dd~iih8gihsz1444514445euoutp01z
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Jul 2020 12:31:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200717123124euoutp0126d70abeafca85888b4da50f31cdc4dd~iih8gihsz1444514445euoutp01z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1594989084;
-        bh=Z5W2EOGc/ZuVFapok34VWhaEwDPiDxjuwKrZN4b8lF8=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=CbjgZFk3FqIbB/p21xYDwWNVjwMXlYBsRifIbFRiCF/6WzzZtyWvCHgcvSsY5EdYd
-         +pLvExLutWrh2t0/cxqyg785wzzcQT5yYu4ESBDg2b+6/wI3CPx5S8ubwZ2wxkxCdc
-         hScT+4ddN+CPU2RacjUOg4w1wIXc47nPKLT5AN54=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200717123123eucas1p2f504eac78f9e8d1eca8a3703eb84e9b8~iih71XKvz0614506145eucas1p2X;
-        Fri, 17 Jul 2020 12:31:23 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 25.E0.05997.B1A911F5; Fri, 17
-        Jul 2020 13:31:23 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200717123123eucas1p1d865ecb093f49f42cbafbd35d1958cd1~iih7da9si1667716677eucas1p1D;
-        Fri, 17 Jul 2020 12:31:23 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200717123123eusmtrp2b7b6f1d9aa5d5aa6c58186ccba62677d~iih7cpwYw0269102691eusmtrp2F;
-        Fri, 17 Jul 2020 12:31:23 +0000 (GMT)
-X-AuditID: cbfec7f4-677ff7000000176d-ec-5f119a1b1dfd
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 00.E6.06314.B1A911F5; Fri, 17
-        Jul 2020 13:31:23 +0100 (BST)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200717123122eusmtip2d997d2de6d17d12c1cd3e51f12296194~iih6kKDEQ3261232612eusmtip2Q;
-        Fri, 17 Jul 2020 12:31:22 +0000 (GMT)
-Subject: Re: [PATCH v2 2/2] memory: samsung: exynos5422-dmc: Add module
- param to control IRQ mode
-To:     Lukasz Luba <lukasz.luba@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, willy.mh.wolff.ml@gmail.com,
-        k.konieczny@samsung.com, cw00.choi@samsung.com, krzk@kernel.org,
-        chanwoo@kernel.org, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <4c73b414-df66-8451-7322-89da6244c4f8@samsung.com>
-Date:   Fri, 17 Jul 2020 14:31:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+        Fri, 17 Jul 2020 09:54:35 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60CDBC0619D4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Jul 2020 06:54:35 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id z15so11192866wrl.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Jul 2020 06:54:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=HtRzZ5KmeCiCWZA3g8vq3ZlMKJB7i9QBYHFK4C8GH0s=;
+        b=LTF03lW7kEJAH5aMocIcsUzVWKAAABsB7rRAQmExZ4VoAYuhMbb4bcfHA0awvwbIDn
+         fSkxCfo/z71K8EDTbTRd1sVt8VejJPdF8NuHRjTZxmZonr2ag+LnYAaMzozlvyj/Cb5E
+         PWgYZBTaStJPspQcjcGfuT8bJBxeDTvRJ0sGTQqibirjPdbO9pmPQ7kUKwHMotEFdyKo
+         MCB7tcYRiYbE8rd+eUj1eVl/BPcWVE6wBcLZhlVqdWLaOOma3YFofkP6BA3dPq9kNNRI
+         8PItgM9yXEDb1k7nXRz+os22F5zYnJ0UhBHCQb8OoWOH804RCJZrIwdQb5vBvWHvE7ZZ
+         xA7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=HtRzZ5KmeCiCWZA3g8vq3ZlMKJB7i9QBYHFK4C8GH0s=;
+        b=ZlOFngNuyaZZDklQNN0IdC6Xz/8yb3sVayvuAPv3gYguAcpBfoL44ZzgnVDlteEMnO
+         9sYzzqs8WSZQ4GXnm8bjyi57YjQbZBngzNDpsHYdZrePPu70WRQtZBb/XpboqIw9a1H7
+         vGEsDYY3QkiAnksD92zlPIonHp1BGkmInB7KnqVooC9D4H17Xwhk6FSVtUd7iNt7KAEk
+         TDUd0XB57dCw33u00cNi43binhIpjFhdmNTuAWO3tJXUhDuBu866cZubeI2EdhH+VEBj
+         wwwyRLiiGvNjzw0R1IJBTOzGSJ+003dUwPeOzp/1TNegG1x3bw5+DSEotS1Fu8LytXD1
+         u0NQ==
+X-Gm-Message-State: AOAM532UvGXPxgAhj0/LS0hyRQdSDDn2I09zEoQAumIHl8+SZrMu77Eu
+        wFpkyjC8kga3Sq8S2TUFeW3vhA==
+X-Google-Smtp-Source: ABdhPJyHX3PoYRsGFUxGkeeCqGttR+NzV972E7ncV9J1A49qk+XgxXs6FMRDtU1LSi15aefSC1/YWA==
+X-Received: by 2002:adf:8486:: with SMTP id 6mr1234507wrg.109.1594994074147;
+        Fri, 17 Jul 2020 06:54:34 -0700 (PDT)
+Received: from localhost.localdomain ([2.27.167.94])
+        by smtp.gmail.com with ESMTPSA id w128sm16118356wmb.19.2020.07.17.06.54.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jul 2020 06:54:33 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     broonie@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Andi Shyti <andi@etezian.org>,
+        Jaswinder Singh <jassi.brar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 07/14] spi: spi-s3c64xx: Add missing entries for structs 's3c64xx_spi_dma_data' and 's3c64xx_spi_dma_data'
+Date:   Fri, 17 Jul 2020 14:54:17 +0100
+Message-Id: <20200717135424.2442271-8-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200717135424.2442271-1-lee.jones@linaro.org>
+References: <20200717135424.2442271-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <baadfe1a-89b6-9fd5-9ea8-e39b458af1aa@arm.com>
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0iTYRjl3XfZt9HsdSk+ObutDCuyUn98pKhF0OhHF/xRKLamfqjkzDbv
-        fzLLNCFvFdqKWiHekLSZ2pYkXtBK5orKyhQlLe+FOibdZtu+JP+d85xznuc98DKE9BXlzSQm
-        p3KaZFWSnBaTLT0/LLtlOnfl3u9f5Gzph7ck+946QbH6hQqKLR6bIViLpVHImnNnhaxhbIBi
-        35ju0OzitW7EVlieCdj7uZeF7KeLNTTbNZtPsbbnn1G4m6L+bj1SGHXDQoWh7iqtaKq8oCh6
-        XIcUi4aNx+lIcUgcl5SYzmn2hJ4RJxiGX9Mpo+sz7eboHNThUYhEDOAgaOjqJQqRmJHiGgRD
-        zRUCnlgRzI/UUjxZdCh5F6mVyLf5qX+uagTfOpZcghTPIZidJJx4HY6FvKeTtBN7YF8YeDVM
-        OgMEHhKAcaLYJdB4P5Tm1yEnluBQeLM85QqTjkC7vcY198SnYGG0i+I97vDi1jjpxCIcDD0v
-        rS4/gb1gcPyegMeb4FLzbVchwPNCWKo0OsKMgxyC7mvBfIN1MN37WMhjH1g23hPw/ocI/hRM
-        /gu3Iqi+bqd5VzAM9f+knYsIvAMaTHv4nQfAbsvgoRt8mHPnn+AGZS3lBD+WQMEVKb9jOzRW
-        NdIrVwuNtUQJkutWFdOtKqNbVUb3/6wekXXIi0vTquM5bUAyl+GvVam1acnx/rHn1Abk+Gd9
-        9l7rE2T6HdOJMIPkayT6I1gppVTp2ix1JwKGkHtIDpr7TkslcaqsbE5zTqlJS+K0nUjGkHIv
-        SeCDqWgpjlelcmc5LoXTrKgCRuSdg3we0Sdbb5ac+DgeWDBpMh+LOf+rrXZpV14ReJijjpZu
-        8B4I820ab4ZtVU1TVzzzt/tFbkFRMn9SWdC+eUPpVnFImyUqYkQvbB/0zDQcrl47UdwTIKvE
-        KDf7xkzDaFRYoc3/a+1+W5n6iVwWIVKLSP07jZ/at788PChs2jIhlpPaBNW+nYRGq/oLlRMk
-        fGMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsVy+t/xe7rSswTjDeZ/4rSYeOMKi8X1L89Z
-        LRZ8msFq0f/4NbPF+fMb2C3ONr1ht9j0+BqrxeVdc9gsPvceYbSYcX4fk8XCphZ2i9uNK9gs
-        Dr9pZ7X4duIRowOfx5p5axg9ds66y+6xaVUnm8fmJfUefVtWMXp83iQXwBalZ1OUX1qSqpCR
-        X1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5egl7Hp7kW2ggeSFf/OxjYw
-        HhTpYuTkkBAwkXj38SVTFyMXh5DAUkaJ3yumsHYxcgAlZCSOry+DqBGW+HOtiw2i5jWjxKpt
-        exlBEsICyRJ/dpxiA7FFBFQlrl24ywJSxCxwh0ni9cFFYEVCApeYJFa+TwOx2QSsJCa2rwKL
-        8wrYSVz+/5IZxGYBat7/bwVYXFQgQuLwjllQNYISJ2c+YQGxOQWsJY6d+gJWzyygLvFn3iUo
-        W1zi1pP5TBC2vETz1tnMExiFZiFpn4WkZRaSlllIWhYwsqxiFEktLc5Nzy021CtOzC0uzUvX
-        S87P3cQIjOBtx35u3sF4aWPwIUYBDkYlHt4FXgLxQqyJZcWVuYcYJTiYlUR4nc6ejhPiTUms
-        rEotyo8vKs1JLT7EaAr03ERmKdHkfGByySuJNzQ1NLewNDQ3Njc2s1AS5+0QOBgjJJCeWJKa
-        nZpakFoE08fEwSnVwNjB2mO59JVHfOqB3GlyW86ujLy1w0n2zhaXGYGOZ0L1Z606ID3R9tSd
-        /wqfqtT/bBZ9/mZe70ymWxE9sy69fMk71XPVN8PfehyO12wm5WvdbFZcndV7xabXh8H0Wd3X
-        De9/3rY3l7S4wGzo9SpaOk+QK7Lu5IN3F68wZOwP1208YXV6LYvAj0lKLMUZiYZazEXFiQDv
-        3n1k9gIAAA==
-X-CMS-MailID: 20200717123123eucas1p1d865ecb093f49f42cbafbd35d1958cd1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200710191148eucas1p2552537bb911bde44c783d98808efa07f
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200710191148eucas1p2552537bb911bde44c783d98808efa07f
-References: <20200710191122.11029-1-lukasz.luba@arm.com>
-        <CGME20200710191148eucas1p2552537bb911bde44c783d98808efa07f@eucas1p2.samsung.com>
-        <20200710191122.11029-3-lukasz.luba@arm.com>
-        <1a389137-cab5-124a-e198-8be3bc2ca841@samsung.com>
-        <3154b8d2-1fa8-c69d-8a9d-05832e12fdd1@arm.com>
-        <baadfe1a-89b6-9fd5-9ea8-e39b458af1aa@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Fixes the following W=1 kernel build warning(s):
 
-On 7/17/20 1:53 PM, Lukasz Luba wrote:
-> 
-> 
-> On 7/14/20 10:01 AM, Lukasz Luba wrote:
->> Hi Bartek,
->>
->> On 7/14/20 8:42 AM, Bartlomiej Zolnierkiewicz wrote:
->>>
->>> Hi,
->>>
->>> On 7/10/20 9:11 PM, Lukasz Luba wrote:
->>>> The driver can operate in two modes relaying on devfreq monitoring
->>>> mechanism which periodically checks the device status or it can use
->>>> interrupts when they are provided by loaded Device Tree. The newly
->>>> introduced module parameter can be used to choose between devfreq
->>>> monitoring and internal interrupts without modifying the Device Tree.
->>>> It also sets devfreq monitoring as default when the parameter is not set
->>>> (also the case for default when the driver is not built as a module).
->>>
->>> Could you please explain why should we leave the IRQ mode
->>> support in the dmc driver?
->>
->> I am still experimenting with the IRQ mode in DMC, but have limited time
->> for it and no TRM.
->> The IRQ mode in memory controller or bus controller has one major
->> advantage: is more interactive. In polling we have fixed period, i.e.
->> 100ms - that's a lot when we have a sudden, latency sensitive workload.
->> There might be no check of the device load for i.e. 99ms, but the tasks
->> with such workload started running. That's a long period of a few frames
->> which are likely to be junked. Should we adjust polling interval to i.e.
->> 10ms, I don't think so. There is no easy way to address all of the
->> scenarios.
->>
->>>
->>> What are the advantages over the polling mode?
->>
->> As described above: more reactive to sudden workload, which might be
->> latency sensitive and cause junk frames.
->> Drawback: not best in benchmarks which are randomly jumping
->> over the data set, causing low traffic on memory.
->> It could be mitigated as Sylwester described with not only one type
->> of interrupt, but another, which could 'observe' also other information
->> type in the counters and fire.
->>
->>>
->>> In what scenarios it should be used?
->>
->> System like Android with GUI, when there is this sudden workload
->> quite often.
->>
->> I think the interconnect could help here and would adjust the DMC
->> freq upfront. Although I don't know if interconnect on Exynos5422 is in
->> your scope in near future. Of course the interconnect will not cover
->> all scenarios either.
->>
->>
->>>
->>> [ If this is only for documentation purposes then it should be
->>>    removed as it would stay in (easily accessible) git history
->>>    anyway.. ]
->>
->> The current interrupt mode is definitely not perfect and switching
->> to devfreq monitoring mode has more sense. On the other hand, it
->> still has potential, until there is no interconnect for this SoC.
->> I will continue experimenting with irq mode, so I would like to
->> still have the code in the driver.
->>
->> Regards,
->> Lukasz
->>
->>>
->>> Best regards,
->>> -- 
->>> Bartlomiej Zolnierkiewicz
->>> Samsung R&D Institute Poland
->>> Samsung Electronics
->>>
-> 
-> Bartek, do you have some objections to the patches or you think
-> they can be taken via devfreq-next?
+ drivers/spi/spi-s3c64xx.c:150: warning: Function parameter or member 'quirks' not described in 's3c64xx_spi_port_config'
+ drivers/spi/spi-s3c64xx.c:150: warning: Function parameter or member 'clk_ioclk' not described in 's3c64xx_spi_port_config'
+ drivers/spi/spi-s3c64xx.c:189: warning: Function parameter or member 'pdev' not described in 's3c64xx_spi_driver_data'
+ drivers/spi/spi-s3c64xx.c:189: warning: Function parameter or member 'rx_dma' not described in 's3c64xx_spi_driver_data'
+ drivers/spi/spi-s3c64xx.c:189: warning: Function parameter or member 'tx_dma' not described in 's3c64xx_spi_driver_data'
+ drivers/spi/spi-s3c64xx.c:189: warning: Function parameter or member 'port_conf' not described in 's3c64xx_spi_driver_data'
+ drivers/spi/spi-s3c64xx.c:189: warning: Function parameter or member 'port_id' not described in 's3c64xx_spi_driver_data'
 
-No objections from me, thank you for the IRQ mode explanation.
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andi Shyti <andi@etezian.org>
+Cc: Jaswinder Singh <jassi.brar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/spi/spi-s3c64xx.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index cf67ea60dc0ed..924b24441789a 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -130,9 +130,11 @@ struct s3c64xx_spi_dma_data {
+  * @fifo_lvl_mask: Bit-mask for {TX|RX}_FIFO_LVL bits in SPI_STATUS register.
+  * @rx_lvl_offset: Bit offset of RX_FIFO_LVL bits in SPI_STATUS regiter.
+  * @tx_st_done: Bit offset of TX_DONE bit in SPI_STATUS regiter.
++ * @quirks: Bitmask of known quirks
+  * @high_speed: True, if the controller supports HIGH_SPEED_EN bit.
+  * @clk_from_cmu: True, if the controller does not include a clock mux and
+  *	prescaler unit.
++ * @clk_ioclk: True if clock is present on this device
+  *
+  * The Samsung s3c64xx SPI controller are used on various Samsung SoC's but
+  * differ in some aspects such as the size of the fifo and spi bus clock
+@@ -154,6 +156,7 @@ struct s3c64xx_spi_port_config {
+  * @clk: Pointer to the spi clock.
+  * @src_clk: Pointer to the clock used to generate SPI signals.
+  * @ioclk: Pointer to the i/o clock between master and slave
++ * @pdev: Pointer to device's platform device data
+  * @master: Pointer to the SPI Protocol master.
+  * @cntrlr_info: Platform specific data for the controller this driver manages.
+  * @lock: Controller specific lock.
+@@ -166,7 +169,11 @@ struct s3c64xx_spi_port_config {
+  * @xfer_completion: To indicate completion of xfer task.
+  * @cur_mode: Stores the active configuration of the controller.
+  * @cur_bpw: Stores the active bits per word settings.
+- * @cur_speed: Stores the active xfer clock speed.
++ * @cur_speed: Current clock speed
++ * @rx_dma: Local receive DMA data (e.g. chan and direction)
++ * @tx_dma: Local transmit DMA data (e.g. chan and direction)
++ * @port_conf: Local SPI port configuartion data
++ * @port_id: Port identification number
+  */
+ struct s3c64xx_spi_driver_data {
+ 	void __iomem                    *regs;
+-- 
+2.25.1
+
