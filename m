@@ -2,67 +2,126 @@ Return-Path: <SRS0=qGKp=A4=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9405C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jul 2020 08:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 574B4C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jul 2020 09:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C21A92074B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jul 2020 08:05:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594973149;
-	bh=R5Xrabo1ypns4x/y+wVu5E5vQZfAi4H2W1OYTh3sGLE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=VeLXI0TDYJUK2r4RwhaS7/f1DnZq5WoA8voh8NLPKA/V70+vlYmXnrfsSspWPjvBn
-	 ww2At1y07X3u73rplzwv+N5eSWFii5obuoZVqkZ97dSDYjFfT+cOL0lUEz19AvcBBH
-	 CWZQIcEQVqeaNrR7iPiZAaX5x3m3p2SGtvE/Lqqo=
+	by mail.kernel.org (Postfix) with ESMTP id 35F9B2070E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jul 2020 09:37:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbgGQIFt (ORCPT
+        id S1726013AbgGQJh5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 17 Jul 2020 04:05:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726198AbgGQIFs (ORCPT
+        Fri, 17 Jul 2020 05:37:57 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55434 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725950AbgGQJh5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Jul 2020 04:05:48 -0400
-Received: from localhost (unknown [122.171.202.192])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC9CC20737;
-        Fri, 17 Jul 2020 08:05:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594973148;
-        bh=R5Xrabo1ypns4x/y+wVu5E5vQZfAi4H2W1OYTh3sGLE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iZ7fOzXnBfNPFl8ZRLhe36tRRmNSWBJELk+d4hqCro0BwRxK1gnPS15JAQr+DhkBK
-         rYoNYteTPWKaTORWIzldCOKBRp9WyPRI9IRq5Tjma/4/Nud224WUB1/Pjvkytbk43a
-         8pRmg0mvhvA0Kb5o8KSYJtGApZcpFz1XEMKW03QY=
-Date:   Fri, 17 Jul 2020 13:35:44 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     robh+dt@kernel.org, krzk@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v13 1/2] dt-bindings: phy: Document Samsung UFS PHY
- bindings
-Message-ID: <20200717080544.GK82923@vkoul-mobl>
-References: <CGME20200716194405epcas5p2da2808b30d8f958290bc5d424aa6a0c7@epcas5p2.samsung.com>
- <20200716192217.35740-1-alim.akhtar@samsung.com>
+        Fri, 17 Jul 2020 05:37:57 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 9BB002A508E
+Subject: Re: [RESEND RESEND PATCH] arm/arm64: defconfig: Update configs to use
+ the new CROS_EC options
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Enric Balletbo Serra <eballetbo@gmail.com>
+Cc:     Gwendal Grignou <gwendal@chromium.org>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Will Deacon <will@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>, Joel Stanley <joel@jms.id.au>,
+        Bastien Nocera <hadess@hadess.net>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Maxime Ripard <maxime@cerno.tech>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Olof Johansson <olof@lixom.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Lukasz Luba <lukasz.luba@arm.com>
+References: <20200305111047.147355-1-enric.balletbo@collabora.com>
+ <CAFqH_52LhfV9AsnPRZi_ZPsgYX8WrUrKEsV-E7VHOw3ZZtHd-w@mail.gmail.com>
+ <CAK8P3a0ScHe+ErEZr-x4Sj=3Yz7cppKDcemXemvwXMbPh-RVMQ@mail.gmail.com>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <2c7a9b5f-968b-38a2-3f67-f731a8617e09@collabora.com>
+Date:   Fri, 17 Jul 2020 11:37:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200716192217.35740-1-alim.akhtar@samsung.com>
+In-Reply-To: <CAK8P3a0ScHe+ErEZr-x4Sj=3Yz7cppKDcemXemvwXMbPh-RVMQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 17-07-20, 00:52, Alim Akhtar wrote:
-> This patch documents Samsung UFS PHY device tree bindings
+Hi Arnd,
 
-Applied both, thanks
+On 17/7/20 8:59, Arnd Bergmann wrote:
+> On Wed, Jul 15, 2020 at 11:31 PM Enric Balletbo Serra
+> <eballetbo@gmail.com> wrote:
+>> Missatge de Enric Balletbo i Serra <enric.balletbo@collabora.com> del
+>> dia dj., 5 de març 2020 a les 12:11:
+>>>
+>>> We refactored the CrOS EC drivers moving part of the code from the MFD
+>>> subsystem to the platform chrome subsystem. During this change we needed
+>>> to rename some config options, so, update the defconfigs accordingly.
+>>>
+>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+>>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
+>>> Acked-by: Lee Jones <lee.jones@linaro.org>
+>>> ---
+>>
+>> A gentle ping. I'd like to land this if is possible because that way I
+>> can remove some legacy code in platform/chrome subsystem.
+>>
+>> Thanks,
+>>   Enric
+>>
+>>> Dear all,
+>>>
+>>> This is a resend of a resend patch [3]. In some previous discussions
+>>> maintainers would prefer to have this merged through the arm-soc tree
+>>> but wasn't merged yet and I forget to ping again, hence, sending a new
+>>> resend.
+> 
+> I've merged it into the arm/defconfig branch of the soc tree now.
+> If you have future platform specific changes to the defconfig files,
+> please just add soc@kernel.org to the recipients to get the patch
+> into patchwork.
+> 
 
--- 
-~Vinod
+Many thanks! I'll take into account this next time.
+
+>      Arnd
+> 
