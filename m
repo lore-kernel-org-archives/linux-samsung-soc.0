@@ -2,176 +2,102 @@ Return-Path: <SRS0=htte=A6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=unavailable
+X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD39C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Jul 2020 09:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 164B6C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Jul 2020 13:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CB4D207DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Jul 2020 09:39:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8CE722B4E
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Jul 2020 13:50:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbgGSJjt (ORCPT
+        id S1726073AbgGSNuJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 19 Jul 2020 05:39:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45184 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbgGSJjt (ORCPT
+        Sun, 19 Jul 2020 09:50:09 -0400
+Received: from mga01.intel.com ([192.55.52.88]:14088 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725988AbgGSNuJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 19 Jul 2020 05:39:49 -0400
-Received: from smtp.al2klimov.de (smtp.al2klimov.de [IPv6:2a01:4f8:c0c:1465::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F2A8C0619D2;
-        Sun, 19 Jul 2020 02:39:49 -0700 (PDT)
-Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
-        by smtp.al2klimov.de (Postfix) with ESMTPA id A8817BC073;
-        Sun, 19 Jul 2020 09:39:45 +0000 (UTC)
-From:   "Alexander A. Klimov" <grandmaster@al2klimov.de>
-To:     robh+dt@kernel.org, kgene@kernel.org, krzk@kernel.org,
-        linux@armlinux.org.uk, devicetree@vger.kernel.org,
+        Sun, 19 Jul 2020 09:50:09 -0400
+IronPort-SDR: ZUuT4R1DL5wy7Bste3QgUUIff1Q2vsHI09G92+z2ntXYhn2i4gHpdEaWdqjWra2Eo1N7ajT3SP
+ C8BNiGXHTnEw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9686"; a="167936033"
+X-IronPort-AV: E=Sophos;i="5.75,370,1589266800"; 
+   d="scan'208";a="167936033"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2020 06:50:08 -0700
+IronPort-SDR: 2YJuQ/0QKvefYMfDyI9Y6N4/9LyEVGpAFcdg6Z5LPv51p5eSuM2Vq/zuL9N+SXd8DSYBcKNAe9
+ Y8Nw7DmR1tIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,370,1589266800"; 
+   d="scan'208";a="486963458"
+Received: from lkp-server02.sh.intel.com (HELO 50058c6ee6fc) ([10.239.97.151])
+  by fmsmga006.fm.intel.com with ESMTP; 19 Jul 2020 06:50:06 -0700
+Received: from kbuild by 50058c6ee6fc with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1jx9hd-00019d-Ji; Sun, 19 Jul 2020 13:50:05 +0000
+Date:   Sun, 19 Jul 2020 21:49:07 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     kbuild-all@lists.01.org, linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Alexander A. Klimov" <grandmaster@al2klimov.de>
-Subject: [PATCH for v5.9] ARM: SAMSUNG: Replace HTTP links with HTTPS ones
-Date:   Sun, 19 Jul 2020 11:39:39 +0200
-Message-Id: <20200719093939.57412-1-grandmaster@al2klimov.de>
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] media: exynos4-is: fix ptr_ret.cocci warnings
+Message-ID: <20200719134907.GA16381@c288844b3313>
+References: <202007192158.9kUQhoax%lkp@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: ++++++
-Authentication-Results: smtp.al2klimov.de;
-        auth=pass smtp.auth=aklimov@al2klimov.de smtp.mailfrom=grandmaster@al2klimov.de
-X-Spam: Yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202007192158.9kUQhoax%lkp@intel.com>
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Rationale:
-Reduces attack surface on kernel devs opening the links for MITM
-as HTTPS traffic is much harder to manipulate.
+From: kernel test robot <lkp@intel.com>
 
-Deterministic algorithm:
-For each file:
-  If not .svg:
-    For each line:
-      If doesn't contain `\bxmlns\b`:
-        For each link, `\bhttp://[^# \t\r\n]*(?:\w|/)`:
-	  If neither `\bgnu\.org/license`, nor `\bmozilla\.org/MPL\b`:
-            If both the HTTP and HTTPS versions
-            return 200 OK and serve the same content:
-              Replace HTTP with HTTPS.
+drivers/media/platform/exynos4-is/media-dev.c:1273:1-3: WARNING: PTR_ERR_OR_ZERO can be used
 
-Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
+
+ Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+
+Generated by: scripts/coccinelle/api/ptr_ret.cocci
+
+Fixes: 18ffec750578 ("media: exynos4-is: Add missed check for pinctrl_lookup_state()")
+CC: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: kernel test robot <lkp@intel.com>
 ---
- Continuing my work started at 93431e0607e5.
- See also: git log --oneline '--author=Alexander A. Klimov <grandmaster@al2klimov.de>' v5.7..master
- (Actually letting a shell for loop submit all this stuff for me.)
 
- If there are any URLs to be removed completely
- or at least not (just) HTTPSified:
- Just clearly say so and I'll *undo my change*.
- See also: https://lkml.org/lkml/2020/6/27/64
+tree:   git://linuxtv.org/media_tree.git master
+head:   8f2a4a9d5ff5202d0b3e3a144ebb9b67aabadd29
+commit: 18ffec750578f7447c288647d7282c7d12b1d969 [119/306] media: exynos4-is: Add missed check for pinctrl_lookup_state()
 
- If there are any valid, but yet not changed URLs:
- See: https://lkml.org/lkml/2020/6/26/837
+ media-dev.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
- If you apply the patch, please let me know.
-
- Sorry again to all maintainers who complained about subject lines.
- Now I realized that you want an actually perfect prefixes,
- not just subsystem ones.
- I tried my best...
- And yes, *I could* (at least half-)automate it.
- Impossible is nothing! :)
-
-
- arch/arm/boot/dts/exynos5410-pinctrl.dtsi | 2 +-
- arch/arm/mach-s3c24xx/Kconfig             | 2 +-
- arch/arm/mach-s3c24xx/mach-h1940.c        | 2 +-
- arch/arm/mach-s3c24xx/mach-mini2440.c     | 2 +-
- arch/arm/mach-s3c24xx/mach-n30.c          | 2 +-
- arch/arm/mach-s3c24xx/mach-rx3715.c       | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-index 369a8a7f2105..e5d0a2a4f648 100644
---- a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-@@ -3,7 +3,7 @@
-  * Exynos5410 SoC pin-mux and pin-config device tree source
-  *
-  * Copyright (c) 2013 Hardkernel Co., Ltd.
-- *              http://www.hardkernel.com
-+ *              https://www.hardkernel.com
-  */
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -1270,10 +1270,7 @@ static int fimc_md_get_pinctrl(struct fi
  
- #include <dt-bindings/pinctrl/samsung.h>
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index c5c06d98b147..7673dde9671a 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -267,7 +267,7 @@ config MACH_TCT_HAMMER
- 	select S3C_DEV_USB_HOST
- 	help
- 	  Say Y here if you are using the TinCanTools Hammer Board
--	  <http://www.tincantools.com>
-+	  <https://www.tincantools.com>
+ 	pctl->state_idle = pinctrl_lookup_state(pctl->pinctrl,
+ 					PINCTRL_STATE_IDLE);
+-	if (IS_ERR(pctl->state_idle))
+-		return PTR_ERR(pctl->state_idle);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(pctl->state_idle);
+ }
  
- config MACH_VR1000
- 	bool "Thorcom VR1000"
-diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
-index e1c372e5447b..f4710052843a 100644
---- a/arch/arm/mach-s3c24xx/mach-h1940.c
-+++ b/arch/arm/mach-s3c24xx/mach-h1940.c
-@@ -3,7 +3,7 @@
- // Copyright (c) 2003-2005 Simtec Electronics
- //   Ben Dooks <ben@simtec.co.uk>
- //
--// http://www.handhelds.org/projects/h1940.html
-+// https://www.handhelds.org/projects/h1940.html
- 
- #include <linux/kernel.h>
- #include <linux/types.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
-index 9035f868fb34..113b69ba4921 100644
---- a/arch/arm/mach-s3c24xx/mach-mini2440.c
-+++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
-@@ -6,7 +6,7 @@
- //      Weibing <http://weibing.blogbus.com> and
- //      Michel Pollet <buserror@gmail.com>
- //
--// For product information, visit http://code.google.com/p/mini2440/
-+// For product information, visit https://code.google.com/p/mini2440/
- 
- #include <linux/kernel.h>
- #include <linux/types.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-n30.c b/arch/arm/mach-s3c24xx/mach-n30.c
-index d856f23939af..9ebde6dc6169 100644
---- a/arch/arm/mach-s3c24xx/mach-n30.c
-+++ b/arch/arm/mach-s3c24xx/mach-n30.c
-@@ -9,7 +9,7 @@
- // Copyright (c) 2005-2008 Christer Weinigel <christer@weinigel.se>
- //
- // There is a wiki with more information about the n30 port at
--// http://handhelds.org/moin/moin.cgi/AcerN30Documentation .
-+// https://handhelds.org/moin/moin.cgi/AcerN30Documentation .
- 
- #include <linux/kernel.h>
- #include <linux/types.h>
-diff --git a/arch/arm/mach-s3c24xx/mach-rx3715.c b/arch/arm/mach-s3c24xx/mach-rx3715.c
-index 529c6faf862f..995f1ff34a1b 100644
---- a/arch/arm/mach-s3c24xx/mach-rx3715.c
-+++ b/arch/arm/mach-s3c24xx/mach-rx3715.c
-@@ -3,7 +3,7 @@
- // Copyright (c) 2003-2004 Simtec Electronics
- //	Ben Dooks <ben@simtec.co.uk>
- //
--// http://www.handhelds.org/projects/rx3715.html
-+// https://www.handhelds.org/projects/rx3715.html
- 
- #include <linux/kernel.h>
- #include <linux/types.h>
--- 
-2.27.0
-
+ static int cam_clk_prepare(struct clk_hw *hw)
