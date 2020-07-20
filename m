@@ -2,95 +2,114 @@ Return-Path: <SRS0=3vSf=A7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,
+	BODY_QUOTE_MALF_MSGID,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07EAEC433E8
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 14:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 720B7C433E4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 14:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB65922482
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 14:46:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595256417;
-	bh=Dq33ZNoKzcSwTdcCs52NY7i2CJ2U0tn6vrtq9IYrFrk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ZqH2yHadS88jIiV2r5Xaw1D52OL4w+wf0vf100C4mutU2pJwz3y4lGHFpYk/igW0z
-	 tITEPlQdaBSt8tWYn7ULR2US7W2qLfElJh9JHuFRbK3l3q830ACWdS6G4LPW4rFSlz
-	 UqhkXTMPq9MSQhMv+mmKaDbpCBunYDBQAr7UbbL4=
+	by mail.kernel.org (Postfix) with ESMTP id 4ADF222482
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 14:48:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ABhZoix+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728821AbgGTOqy (ORCPT
+        id S1728225AbgGTOsy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Jul 2020 10:46:54 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52868 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbgGTOqy (ORCPT
+        Mon, 20 Jul 2020 10:48:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59344 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbgGTOsy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Jul 2020 10:46:54 -0400
-Received: by mail-wm1-f67.google.com with SMTP id q15so22548154wmj.2;
-        Mon, 20 Jul 2020 07:46:52 -0700 (PDT)
+        Mon, 20 Jul 2020 10:48:54 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C89CBC0619D2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jul 2020 07:48:53 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id f139so25464972wmf.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jul 2020 07:48:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=DwUJWhYI7EDhj6o6beR5rWm8MiwiGAeMER6X1jHNG8Y=;
+        b=ABhZoix+IuHnzu1IkPw8NOvNoW1BFcGjMpqWBa07PgtDgbsqiCDtRpsPWgrg5XY0V4
+         z/KZT7+lAL4aaY1Pni5s7sHJ6CsO4ktmNC3gv+z3pb1vSA6AxlqgfhJyAt93y02RhXdZ
+         zgK6vaL4+5IuwkOHL3oOcD+h6vlodridjDb3QoxrjnpeSfSxxGeBZ+X/rnfY+aGzszdn
+         TSyn2eThwua/LH67KzSchjABzAAPEveDD7Rm1lo3MWfDEXdXPZk0C+pA4djzpPROSrO8
+         /By7oaUTk0FYwKmOjJm7irLpX0fqkPjEpKqL9ATykd9M2CGBjsshX9QiMu/aWIL00HmH
+         dwjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ubVyQHHqX9tsUnzOm6TherEnABXQb1+jkvMZGf23FqQ=;
-        b=fbKLGkdJBN8xsSgQJ0rAPYLt1BfB3KcZLc/NmTePmAc2isBnZp8l8/YAZWJb+RzhnY
-         zsgLn3pey9+7pX5AzbOI/l03D72AEybJ1ERbQn7lHbPmfJUnP0nOvfLT719SAybMU6G+
-         jx7tGKyjOPQVH0zsznNRbmXSvzNk1fcAzC9S3h58tfTUqNQXZ33aOxaAVqLu5+k4gWCO
-         c0yq5Der4VJPPj8Z2GXl+ONcMsWFYB2dnmm+ef3NSKLcFrIvTMyfOqzvd+fl/ksT93AL
-         xK1ZkRF0C+xRMoK7oLonYdN8XxIJY4KOtuOlWVZs4WNbabmYjd2oaCOnm+CcHWlZswcg
-         kr8g==
-X-Gm-Message-State: AOAM5338LUhHNMjfokNkSCv6BHKxFCJd2lmJrR0oYdZYdsIVDiC0LgxS
-        L3OgtmXMXs0KvOMIbzKVJaQ=
-X-Google-Smtp-Source: ABdhPJxAXaavtFIv3qPHXSFItxh2VKDy2GsLwn30QnRX2MpjxZJmt4Nr+m2qFL5Y9Z28WTEfIvtYIQ==
-X-Received: by 2002:a1c:7d85:: with SMTP id y127mr22660355wmc.181.1595256412049;
-        Mon, 20 Jul 2020 07:46:52 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.200])
-        by smtp.googlemail.com with ESMTPSA id f17sm35900335wme.14.2020.07.20.07.46.50
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 Jul 2020 07:46:51 -0700 (PDT)
-Date:   Mon, 20 Jul 2020 16:46:48 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Luba <lukasz.luba@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, willy.mh.wolff.ml@gmail.com,
-        k.konieczny@samsung.com, cw00.choi@samsung.com,
-        b.zolnierkie@samsung.com, chanwoo@kernel.org,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        s.nawrocki@samsung.com, kgene@kernel.org
-Subject: Re: [PATCH v2 2/2] memory: samsung: exynos5422-dmc: Add module param
- to control IRQ mode
-Message-ID: <20200720144648.GC22791@kozik-lap>
-References: <20200710191122.11029-1-lukasz.luba@arm.com>
- <20200710191122.11029-3-lukasz.luba@arm.com>
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=DwUJWhYI7EDhj6o6beR5rWm8MiwiGAeMER6X1jHNG8Y=;
+        b=m3iYIQgY+WtRx/p44cdDP1+UzZzNkHTR2STzDFWG0YnRXet2oZmc6A4q8gE6A+EwiK
+         UQKl4Yn8/LPc58MKWh/R9s7vKWKjDeEe0DrdfJJbypw2y6TFxkmZ3rTKX/O2x2nFISc0
+         qM4y8G59Ma1TkWw+JdAWWDRGY+DGafQQsuJKPor9f+WJ/luYDYnKpB9a1MUeYceTmKX3
+         Uxh0V5yvmYedmHn56sg5Yn5SzjqXYE5cqVwK6ELk8xGjY/a7ABQse5YCWa6WVEIwBZxn
+         H2VInlrAfWkJGFr2wTysH2zs27fZm6QmHfV5tq9QgUuqiIAzc3BhJlleKfV55nY32lvu
+         2etQ==
+X-Gm-Message-State: AOAM533Z10CsPO8ZghGf/7BL00JFYRpOBBTznNXNklIZwbCRBecJF8Gg
+        AYjP/9m+doAkvpFvJkhp6/+ReA==
+X-Google-Smtp-Source: ABdhPJxmJKXA4V3y2ZB6Op6gUHESetgmya1frXxZiDcOn9PevGLzhPjqefcur4GG2y3AScfIl7eA5g==
+X-Received: by 2002:a1c:dd86:: with SMTP id u128mr21394166wmg.131.1595256532527;
+        Mon, 20 Jul 2020 07:48:52 -0700 (PDT)
+Received: from dell ([2.27.167.94])
+        by smtp.gmail.com with ESMTPSA id j6sm35260375wma.25.2020.07.20.07.48.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jul 2020 07:48:52 -0700 (PDT)
+Date:   Mon, 20 Jul 2020 15:48:49 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 08/25] pinctrl: samsung: pinctrl-s3c64xx: Fix formatting
+ issues
+Message-ID: <20200720144849.GB3368211@dell>
+References: <20200713144930.1034632-1-lee.jones@linaro.org>
+ <20200713144930.1034632-9-lee.jones@linaro.org>
+ <20200720142836.GC6747@kozik-lap>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200710191122.11029-3-lukasz.luba@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200720142836.GC6747@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jul 10, 2020 at 08:11:22PM +0100, Lukasz Luba wrote:
-> The driver can operate in two modes relaying on devfreq monitoring
-> mechanism which periodically checks the device status or it can use
-> interrupts when they are provided by loaded Device Tree. The newly
-> introduced module parameter can be used to choose between devfreq
-> monitoring and internal interrupts without modifying the Device Tree.
-> It also sets devfreq monitoring as default when the parameter is not set
-> (also the case for default when the driver is not built as a module).
+On Mon, 20 Jul 2020, Krzysztof Kozlowski wrote:
+
+> On Mon, Jul 13, 2020 at 03:49:13PM +0100, Lee Jones wrote:
+> > Kerneldoc struct titles must be followed by whitespace else the
+> > checker gets confused.
+> > 
+> > Fixes the following W=1 kernel build warning(s):
+> > 
+> >  drivers/pinctrl/samsung/pinctrl-s3c64xx.c:212: warning: cannot understand function prototype: 'struct s3c64xx_eint0_domain_data '
+> > 
+> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> > Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> > Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Cc: linux-samsung-soc@vger.kernel.org
+> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> > ---
+> >  drivers/pinctrl/samsung/pinctrl-s3c64xx.c | 6 +++---
 > 
-> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
-> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
-> ---
->  drivers/memory/samsung/exynos5422-dmc.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+> Thanks, squashed with s3c24xx since these are similar issues and only
+> documentation is affected.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+This is already in -next.
 
-Best regards,
-Krzysztof
+Seems like an odd decision to squash them too.
+
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
