@@ -2,110 +2,117 @@ Return-Path: <SRS0=3vSf=A7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CBAC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 08:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3E2C433E4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 08:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F34DA20709
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 08:06:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595232367;
-	bh=DBU10xCfPXi9S7q1y4HELT5+p2XXLy5mMLrB0UTptkw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vL0ZdO8ey9heFHls9tv6H5p0dAK1eqk7Lf/+ls5LoNi7etqQW6n0lnktxn3jT/9F5
-	 Dada4O2VUBDhfjWDi2f3xlRhF1NwUPiHOBZ3RBKzzlNa+Qp2f4NIBA7mqM9cviDlhd
-	 b7Y0iOPhaTMfeLJDRfQnBGEqXmhg/A0DSA5pupMY=
+	by mail.kernel.org (Postfix) with ESMTP id 5BB272080D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 08:58:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SW+OJHzm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbgGTIGG (ORCPT
+        id S1728059AbgGTI6S (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Jul 2020 04:06:06 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37069 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbgGTIGG (ORCPT
+        Mon, 20 Jul 2020 04:58:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60848 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727849AbgGTI6S (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Jul 2020 04:06:06 -0400
-Received: by mail-wm1-f66.google.com with SMTP id o2so24236749wmh.2;
-        Mon, 20 Jul 2020 01:06:04 -0700 (PDT)
+        Mon, 20 Jul 2020 04:58:18 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F49C061794;
+        Mon, 20 Jul 2020 01:58:18 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id p15so12534831ilh.13;
+        Mon, 20 Jul 2020 01:58:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zh7Xd1q8w0eJ5dwux3SY0QwhMWb2Bu15xNtGs3cUDAU=;
+        b=SW+OJHzmVfozyQ74x1ednL/Ut9LiWwVAEc4zlcHzV7svVjqWd8H/kzYw3oMoto1wEV
+         87CgVUsrOeP0ORh51ZSzctS251uIWEIOeqmuso2uI6ozBo8FyppbdBz7M8hZIlLO6TeY
+         Mn1Y9NygIvW/yuis5631se98PPYqwd7wqguXtjK8zFpPyjPGkvpDTO4uoz1+1/CMb7oE
+         0qfB/KJsBthxDgOg+vqfqET1yhveGjHZucht9ouenewLaj97pRuSgNK1TjLsrih67io/
+         JKm15dt7DN69oBBhssgWaEa2+bDzRB8ah0MaT2C4N/sysxHcfbZDLRZKdan0SnjPRKLA
+         L+ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vg09xK5q93RhjkSo+BtXD7JwKBjiF9ZCt45w+OmMMVY=;
-        b=fUTMldOGfkrptj+n6jUNqqziKMMf/cgU3ebuM7YHLJZ0XgOOJqWml/zNAXU9MZAt1a
-         mGZvgYzT/+3kYDfQLwSwmS+97D3X71N0LmiMg3B5PnXTfT/0q4jEw+ErAXYjQu39erMv
-         PbSgzLHrqupo1/SbayKs7x3vx2lM2nE46s3LgQ2TmVm+ZkJXuxqz7NI3BWncEoacBi4W
-         3tC4eBog3hxZ4MDad6D6MPar6pq5JdCYA3wpVYVNh5IRU/TZf7xK3PDgIHBjkIQX+I5R
-         8xh6BibHYZ5Pd+acRH32bmKIZlUob72pbi5dVB2V9g6pE1J188m3hqVTBDOtLLNTNlyR
-         jLsw==
-X-Gm-Message-State: AOAM531qDr6XfPxZ57hpenTGrvUIwQWgLD3OZ9TpTfXB+rzzmUYaao2z
-        dP8m+sbw2MRjojiVe49Jaz++uIB7z3g=
-X-Google-Smtp-Source: ABdhPJxJ8ZIsf7AKkJqYCmB3NDTY1+PGtOCnwv5Wvo5iWqmnU/v7hbUEipw+IMyAcld5Qa3frDje4g==
-X-Received: by 2002:a7b:c3d0:: with SMTP id t16mr21900753wmj.117.1595232364225;
-        Mon, 20 Jul 2020 01:06:04 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.200])
-        by smtp.googlemail.com with ESMTPSA id l67sm34178337wml.13.2020.07.20.01.06.02
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 Jul 2020 01:06:03 -0700 (PDT)
-Date:   Mon, 20 Jul 2020 10:06:01 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Willy Wolff <willy.mh.wolff.ml@gmail.com>,
-        Marian Mihailescu <mihailescu2m@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Disable frequency scaling for FSYS bus
-Message-ID: <20200720080601.GA3845@kozik-lap>
-References: <CGME20200714064824eucas1p2ea0d2ee2c109c351fe489050905b4104@eucas1p2.samsung.com>
- <20200714064759.31772-1-m.szyprowski@samsung.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zh7Xd1q8w0eJ5dwux3SY0QwhMWb2Bu15xNtGs3cUDAU=;
+        b=d1oVWE5vYfg79APWpS1aW+pyod76OAx+D2L8y2kofeVFq8xVGbDJpAlzcDYQVpwH2+
+         Y++7SHkvNLDsKSbjeegdBuLsKttEAYv41arzy4TgtRivU+cbwD5k6bQhfKVg9me5f9b0
+         r5hud2rqaRcn50/LpVs/LU9xAiATFHJ7VHKufQAdvG1t/zY0WKqUK/sWl+8/Mv8GjjfO
+         mF5ylIDZ/bzQwSXSL9W+Q6m7cazm2Y5QmF4yG7Qt5fvJ8WlQH2PrhqEdbhwgpMFQjWrO
+         JZNweUQT5qmcBLATr6HPzLYiacPMmGmTa+wVzar/3/oOXNJ/KnYe8ifgsUda5eZSOo3M
+         cz0w==
+X-Gm-Message-State: AOAM532Pw1VmR/Bb8Fithmhy46X2c+j+OQgEaf3IGBgca+n0KQ+0L2LH
+        l7YBTPAnN56RJs5H+h1zIO/vvFmwAHPqsXHW5/sOhg==
+X-Google-Smtp-Source: ABdhPJwnIOuE/UoqUivSxKYwzVt0/RwqJ/memOEoi+PorBJfIKLe2TRZprgWIVxKly3HuVMuRjLH7ryKMmwn7Z46fXQ=
+X-Received: by 2002:a92:4810:: with SMTP id v16mr22260069ila.75.1595235497640;
+ Mon, 20 Jul 2020 01:58:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200714064759.31772-1-m.szyprowski@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200713074243.530-1-linux.amoon@gmail.com> <20200720075013.GA6711@kozik-lap>
+In-Reply-To: <20200720075013.GA6711@kozik-lap>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Mon, 20 Jul 2020 14:28:07 +0530
+Message-ID: <CANAwSgSpnrX_sSNSB9i=0Awnu+ErfMAo49pnK9aHtdc+_h7-pA@mail.gmail.com>
+Subject: Re: [PATCH v4] phy: samsung: Use readl_poll_timeout function
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux USB Mailing List <linux-usb@vger.kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 08:47:59AM +0200, Marek Szyprowski wrote:
-> Commit 1019fe2c7280 ("ARM: dts: exynos: Adjust bus related OPPs to the
-> values correct for Exynos5422 Odroids") changed the parameters of the
-> OPPs for the FSYS bus. Besides the frequency adjustments, it also removed
-> the 'shared-opp' property from the OPP table used for FSYS_APB and FSYS
-> busses.
-> 
-> This revealed that in fact the FSYS bus frequency scaling never worked.
-> When one OPP table is marked as 'opp-shared', only the first bus which
-> selects the OPP sets the rate of its clock. Then OPP core assumes that
-> the other busses have been changed to that OPP and no change to their
-> clock rates are needed. Thus when FSYS_APB bus, which was registered
-> first, set the rate for its clock, the OPP core did not change the FSYS
-> bus clock later.
-> 
-> The mentioned commit removed that behavior, what introduced a regression
-> on some OdroidXU3 boards. Frequency scaling of the FSYS bus causes
-> instability of the USB host operation, what can be observed as network
-> hangs. To restore old behavior, simply disable frequency scaling for the
-> FSYS bus.
-> 
-> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
-> Fixes: 1019fe2c7280 ("ARM: dts: exynos: Adjust bus related OPPs to the values correct for Exynos5422 Odroids")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 6 ------
->  1 file changed, 6 deletions(-)
+Hi Krzysztof,
 
-Thanks Willy and Marek for digging into this, applied.
+On Mon, 20 Jul 2020 at 13:20, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Mon, Jul 13, 2020 at 07:42:43AM +0000, Anand Moon wrote:
+> > Instead of a busy waiting while loop using udelay
+> > use readl_poll_timeout function to check the condition
+> > is met or timeout occurs in crport_handshake function.
+> > readl_poll_timeout is called in non atomic context so
+> > it safe to sleep until the condition is met.
+> >
+> > Fixes: d8c80bb3b55b ("phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800")
+>
+> There is no bug in original code so Fixes tag is not appropriate. Remove
+> it please.
+>
+Thanks for your review. Ok I will do that.
 
-A follow up question would be if other boards (Exynos4412) require the
-same?
+> Best regards,
+> Krzysztof
+>
+-Anand
 
-Best regards,
-Krzysztof
-
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> > Changes v4:
+> > Rebased on to of patch [0] https://patchwork.kernel.org/patch/11651673/
+> > --Fix the commit message.
+> > --Fix the error timeout condition for -ETIMEDOUT
+> > ---
+> > Changes v3:
+> > --Fix the commit message.
+> > --Drop the variable, used the value directly.
+> > Changes v2:
+> > --used the default timeout values.
+> > --Added missing Fixed tags.
+> > ---
+> >  drivers/phy/samsung/phy-exynos5-usbdrd.c | 39 ++++++++----------------
+> >  1 file changed, 12 insertions(+), 27 deletions(-)
+> >
