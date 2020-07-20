@@ -4,97 +4,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A89FBC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 14:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 896CCC433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 14:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 763232065E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 14:30:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F0F72065E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 14:27:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595255420;
-	bh=uLZdOx+ugO3fAAgHDNsz+6h/1/RsOEwJYSUL0Q8KoUQ=;
+	s=default; t=1595255240;
+	bh=RBnbtNc7P0abvcaGM8sF725QZck1VgBETyLJywQpVio=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OdVBsVEeQa7DH9KZUDwux4hK5/PizewDVnATramzCw44AEL03eIiLFvhcfb7l5Cpg
-	 BTsnWS3gD2WpHj5fKD0cl41ygRwqvUF9d3anttpv8IMDcQcbyb/z5xramSH5o4Dpm4
-	 qxKOjhxSEEWFuZib1GJ+e6vE0qZSZ8WFpnN5RDqE=
+	b=cKX4mcFCT50Fdgn6YDM49QVKMPLKyEG39ezS4XKn5BvegH8DiDJH+pg6pT6OKzNWg
+	 c2lOMCQHv/f/RtN9bCW+D6VGRgDyUy4SWtdgjZcZNnMIAZoGJjKgfZ6IU1+SGePSkr
+	 yHLpE2tq/DHXvdrQF7DRrekZJ5Sp/e4LfdVMrkpk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbgGTOaU (ORCPT
+        id S1728068AbgGTO1U (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Jul 2020 10:30:20 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:44047 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbgGTOaT (ORCPT
+        Mon, 20 Jul 2020 10:27:20 -0400
+Received: from mail-ej1-f65.google.com ([209.85.218.65]:33678 "EHLO
+        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726899AbgGTO1T (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Jul 2020 10:30:19 -0400
-Received: by mail-ej1-f67.google.com with SMTP id ga4so18254095ejb.11;
-        Mon, 20 Jul 2020 07:30:18 -0700 (PDT)
+        Mon, 20 Jul 2020 10:27:19 -0400
+Received: by mail-ej1-f65.google.com with SMTP id n26so18300962ejx.0;
+        Mon, 20 Jul 2020 07:27:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Vg62TiVK1fLPM3VJFvJufp+q6lBcbIw2n/ZWrxz9ifw=;
-        b=UeCEfE+iQB1hVMp7mn1vIzX06qfBrpHyhuCK3Autas35SJY/5IA6LFU5yLJZOgWk1F
-         ac36Kxh/PTDMWVvgnJ2zZ7hMsQIeDbbAWp0k1j7wWS+nLaFzFGk+piARAPN+DfhHi+ul
-         0oGraV0jv5fl4yOMMeM1zyrM+T0gWR9fhZSpUg4Ko08Ny4yRNvfgZgMeRjpCDqBQg4p1
-         J6cTbR7+aYqeb8MzWEx2A0C/mT7EbBT8chXvQ0/c9cIURPL3W3yuE9gL0S3mvjvv76+6
-         95rJ1V2w8P4kLxfRhgwaG4kCN4RSvx2/7747DxGXNu70iZbGJkGWpNy09DxabvP9PC1I
-         dh/A==
-X-Gm-Message-State: AOAM530MYqKAYm4nioJNoWXaPpG13bJdx47i9XDt2eF13ssTeKjnRo7B
-        lgGRUy9lrvSvxyALZiut7gA6Px4hVEM4jw==
-X-Google-Smtp-Source: ABdhPJxGqJjPlBcTJ4tDcgq0yl0vCLwNrgvT0pmiXL2brT9v+CjPAHofyWuzcsnq711IlFM8YzA+rg==
-X-Received: by 2002:a17:906:4145:: with SMTP id l5mr21191590ejk.334.1595255417451;
-        Mon, 20 Jul 2020 07:30:17 -0700 (PDT)
+        bh=MVp/N1cSKfIiCoWIHHaYXJ/b42GmjNCJKzq1XoGLrEI=;
+        b=U92z+SNLqi0lTuUNMhqQj92mdJ6LjyGDJB1EA+aQwmPJ34T35OJ2NxtDFZAfmZvSrs
+         Apr42TEdXRRorb4WySaa7Q2vfcM9EwRyUU9TdJackfH4EtdrxTAAejpton4sEM7Gpru4
+         IL8OL8Pt7Dm1Lh3kdmhzxgEKL2sA39YzMcwZ0twviXq6v77Vl1YxJ5zs9scS57pOohDe
+         bcOr8gXpmZpwbWgpY/+KekwYe4Sbco3x6boZ+lLJ4JfSZCczgIy/L5UZ34P1JkA2Qqyu
+         qlXcjUqeMxOfyYjUdzcvmTO5O6I8dHaGMOsZCe1hptFK7cWd57D5kWoEGswTgjCv3Jha
+         kjUg==
+X-Gm-Message-State: AOAM532AsL7aWQQEXMddT8nkT4MtViQft2w7b/QrVKwkISZQ6PRxv0qf
+        YJNNspGuPwr0muiQwq3Drts=
+X-Google-Smtp-Source: ABdhPJzTT58G0Lg05eXfDTVXv7oanRtSZu0RR0A3J+bLXjHJcgedqcOGfq+QlukWEmL8dIMq0wsiZA==
+X-Received: by 2002:a17:906:fa13:: with SMTP id lo19mr20771386ejb.213.1595255237737;
+        Mon, 20 Jul 2020 07:27:17 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.200])
-        by smtp.googlemail.com with ESMTPSA id kt1sm14639230ejb.78.2020.07.20.07.30.16
+        by smtp.googlemail.com with ESMTPSA id o14sm14739926eja.121.2020.07.20.07.27.16
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 Jul 2020 07:30:16 -0700 (PDT)
-Date:   Mon, 20 Jul 2020 16:30:14 +0200
+        Mon, 20 Jul 2020 07:27:16 -0700 (PDT)
+Date:   Mon, 20 Jul 2020 16:27:14 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     broonie@kernel.org, simon@lineageos.org,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 2/3] ASoC: samsung: Add sound support for Midas boards
-Message-ID: <20200720143014.GA22554@kozik-lap>
-References: <20200710173500.22365-1-s.nawrocki@samsung.com>
- <CGME20200710173517eucas1p20c325719e385995f9f094f12d87e1dcb@eucas1p2.samsung.com>
- <20200710173500.22365-2-s.nawrocki@samsung.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Thomas Abraham <thomas.ab@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 06/25] pinctrl: samsung: pinctrl-samsung: Demote obvious
+ misuse of kerneldoc to standard comment blocks
+Message-ID: <20200720142714.GA6747@kozik-lap>
+References: <20200713144930.1034632-1-lee.jones@linaro.org>
+ <20200713144930.1034632-7-lee.jones@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200710173500.22365-2-s.nawrocki@samsung.com>
+In-Reply-To: <20200713144930.1034632-7-lee.jones@linaro.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jul 10, 2020 at 07:34:59PM +0200, Sylwester Nawrocki wrote:
-> From: Simon Shields <simon@lineageos.org>
+On Mon, Jul 13, 2020 at 03:49:11PM +0100, Lee Jones wrote:
+> No attempt has been made to document either of the demoted functions here.
 > 
-> This patch adds support for voice and BT calls, along with standard
-> audio output via the speaker, earpiece, headphone jack, HDMI, and
-> any accessories compatible with Midas boards. This patch also supports
-> headphone/headset detection and headsets with inline buttons.
+> Fixes the following W=1 kernel build warning(s):
 > 
-> Signed-off-by: Simon Shields <simon@lineageos.org>
-> [m.szyprowski: adaptation to v5.1+ kernels (DAI links initialization)]
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> [s.nawrocki: removal of the clk API calls for CODEC MCLK, the jack data
->  structure moved to struct midas_priv, coding style and typo fixes,
->  conversion to new cpu/codec/dai-node binding]
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>  drivers/pinctrl/samsung/pinctrl-samsung.c:1149: warning: Function parameter or member 'dev' not described in 'samsung_pinctrl_suspend'
+>  drivers/pinctrl/samsung/pinctrl-samsung.c:1199: warning: Function parameter or member 'dev' not described in 'samsung_pinctrl_resume'
+> 
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
 > ---
->  sound/soc/samsung/Kconfig        |   8 +
->  sound/soc/samsung/Makefile       |   2 +
->  sound/soc/samsung/midas_wm1811.c | 543 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 553 insertions(+)
->  create mode 100644 sound/soc/samsung/midas_wm1811.c
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 4 ++--
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Thanks, applied.
 
 Best regards,
 Krzysztof
