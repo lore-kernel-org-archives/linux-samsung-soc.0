@@ -2,117 +2,125 @@ Return-Path: <SRS0=3vSf=A7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3E2C433E4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 08:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 860F5C433E8
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 11:03:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BB272080D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 08:58:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SW+OJHzm"
+	by mail.kernel.org (Postfix) with ESMTP id 631F422BF3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 11:03:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595242997;
+	bh=dONBMDD5LZ2vZmwe51cbIkvnEd/Aviv6J8B5VLnLMwE=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=KlFZ0wq81TtuKDXvUdQyqUDH4ZKSwb1T6s/ShSAV13EOKI5VbIsFQwmRVhim+XNp7
+	 Vcak01Y8MzvS417/ZGD/vRMHmIywrxkbkgjvXmy9kVzUnIsjy/IAEsniKi6Gbr/9E1
+	 SFcSAvH9wCtJQr7CXGMFXmuThVYEcrm0JV8c0hjY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbgGTI6S (ORCPT
+        id S1728494AbgGTLDO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Jul 2020 04:58:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60848 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727849AbgGTI6S (ORCPT
+        Mon, 20 Jul 2020 07:03:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728348AbgGTLDN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Jul 2020 04:58:18 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F49C061794;
-        Mon, 20 Jul 2020 01:58:18 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id p15so12534831ilh.13;
-        Mon, 20 Jul 2020 01:58:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zh7Xd1q8w0eJ5dwux3SY0QwhMWb2Bu15xNtGs3cUDAU=;
-        b=SW+OJHzmVfozyQ74x1ednL/Ut9LiWwVAEc4zlcHzV7svVjqWd8H/kzYw3oMoto1wEV
-         87CgVUsrOeP0ORh51ZSzctS251uIWEIOeqmuso2uI6ozBo8FyppbdBz7M8hZIlLO6TeY
-         Mn1Y9NygIvW/yuis5631se98PPYqwd7wqguXtjK8zFpPyjPGkvpDTO4uoz1+1/CMb7oE
-         0qfB/KJsBthxDgOg+vqfqET1yhveGjHZucht9ouenewLaj97pRuSgNK1TjLsrih67io/
-         JKm15dt7DN69oBBhssgWaEa2+bDzRB8ah0MaT2C4N/sysxHcfbZDLRZKdan0SnjPRKLA
-         L+ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zh7Xd1q8w0eJ5dwux3SY0QwhMWb2Bu15xNtGs3cUDAU=;
-        b=d1oVWE5vYfg79APWpS1aW+pyod76OAx+D2L8y2kofeVFq8xVGbDJpAlzcDYQVpwH2+
-         Y++7SHkvNLDsKSbjeegdBuLsKttEAYv41arzy4TgtRivU+cbwD5k6bQhfKVg9me5f9b0
-         r5hud2rqaRcn50/LpVs/LU9xAiATFHJ7VHKufQAdvG1t/zY0WKqUK/sWl+8/Mv8GjjfO
-         mF5ylIDZ/bzQwSXSL9W+Q6m7cazm2Y5QmF4yG7Qt5fvJ8WlQH2PrhqEdbhwgpMFQjWrO
-         JZNweUQT5qmcBLATr6HPzLYiacPMmGmTa+wVzar/3/oOXNJ/KnYe8ifgsUda5eZSOo3M
-         cz0w==
-X-Gm-Message-State: AOAM532Pw1VmR/Bb8Fithmhy46X2c+j+OQgEaf3IGBgca+n0KQ+0L2LH
-        l7YBTPAnN56RJs5H+h1zIO/vvFmwAHPqsXHW5/sOhg==
-X-Google-Smtp-Source: ABdhPJwnIOuE/UoqUivSxKYwzVt0/RwqJ/memOEoi+PorBJfIKLe2TRZprgWIVxKly3HuVMuRjLH7ryKMmwn7Z46fXQ=
-X-Received: by 2002:a92:4810:: with SMTP id v16mr22260069ila.75.1595235497640;
- Mon, 20 Jul 2020 01:58:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200713074243.530-1-linux.amoon@gmail.com> <20200720075013.GA6711@kozik-lap>
-In-Reply-To: <20200720075013.GA6711@kozik-lap>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Mon, 20 Jul 2020 14:28:07 +0530
-Message-ID: <CANAwSgSpnrX_sSNSB9i=0Awnu+ErfMAo49pnK9aHtdc+_h7-pA@mail.gmail.com>
-Subject: Re: [PATCH v4] phy: samsung: Use readl_poll_timeout function
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux USB Mailing List <linux-usb@vger.kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 20 Jul 2020 07:03:13 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.200])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 979B222BF3;
+        Mon, 20 Jul 2020 11:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595242993;
+        bh=dONBMDD5LZ2vZmwe51cbIkvnEd/Aviv6J8B5VLnLMwE=;
+        h=From:To:Subject:Date:From;
+        b=WtV5qGsmtTqSnUl+bSdlJIgXBC4W//GkRSqUNCjhs+mEzL7vpCKlL2XGpB+lQwUSR
+         CQb73fvHzx1S3eLMuESoI4dfNkB+nIShhMXl791Dixk78xNg4s3JH1wiLN+O/UGvmb
+         8N1G/zNJf9KeVXS4B5ZCCcwnrn1zadf1spI1sCuo=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lukasz Luba <lukasz.luba@arm.com>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] memory: samsung: exynos5422-dmc: Do not ignore return code of regmap_read()
+Date:   Mon, 20 Jul 2020 13:03:01 +0200
+Message-Id: <20200720110301.22996-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Check for regmap_read() return code before using the read value in
+following write in exynos5_switch_timing_regs().  Pass reading error
+code to the callers.
 
-On Mon, 20 Jul 2020 at 13:20, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Mon, Jul 13, 2020 at 07:42:43AM +0000, Anand Moon wrote:
-> > Instead of a busy waiting while loop using udelay
-> > use readl_poll_timeout function to check the condition
-> > is met or timeout occurs in crport_handshake function.
-> > readl_poll_timeout is called in non atomic context so
-> > it safe to sleep until the condition is met.
-> >
-> > Fixes: d8c80bb3b55b ("phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800")
->
-> There is no bug in original code so Fixes tag is not appropriate. Remove
-> it please.
->
-Thanks for your review. Ok I will do that.
+This does not introduce proper error handling for such failed reads (and
+obviously regmap_write() error is still ignored) because the driver
+ignored this in all places.  Therefor it only fixes reported issue while
+matching current driver coding style:
 
-> Best regards,
-> Krzysztof
->
--Anand
+       drivers/memory/samsung/exynos5422-dmc.c: In function 'exynos5_switch_timing_regs':
+    >> drivers/memory/samsung/exynos5422-dmc.c:216:6: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
 
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> > Changes v4:
-> > Rebased on to of patch [0] https://patchwork.kernel.org/patch/11651673/
-> > --Fix the commit message.
-> > --Fix the error timeout condition for -ETIMEDOUT
-> > ---
-> > Changes v3:
-> > --Fix the commit message.
-> > --Drop the variable, used the value directly.
-> > Changes v2:
-> > --used the default timeout values.
-> > --Added missing Fixed tags.
-> > ---
-> >  drivers/phy/samsung/phy-exynos5-usbdrd.c | 39 ++++++++----------------
-> >  1 file changed, 12 insertions(+), 27 deletions(-)
-> >
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/memory/samsung/exynos5422-dmc.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+index 93e9c2429c0d..2c326998cb1c 100644
+--- a/drivers/memory/samsung/exynos5422-dmc.c
++++ b/drivers/memory/samsung/exynos5422-dmc.c
+@@ -270,12 +270,14 @@ static int find_target_freq_idx(struct exynos5_dmc *dmc,
+  * This function switches between these banks according to the
+  * currently used clock source.
+  */
+-static void exynos5_switch_timing_regs(struct exynos5_dmc *dmc, bool set)
++static int exynos5_switch_timing_regs(struct exynos5_dmc *dmc, bool set)
+ {
+ 	unsigned int reg;
+ 	int ret;
+ 
+ 	ret = regmap_read(dmc->clk_regmap, CDREX_LPDDR3PHY_CON3, &reg);
++	if (ret)
++		return ret;
+ 
+ 	if (set)
+ 		reg |= EXYNOS5_TIMING_SET_SWI;
+@@ -283,6 +285,8 @@ static void exynos5_switch_timing_regs(struct exynos5_dmc *dmc, bool set)
+ 		reg &= ~EXYNOS5_TIMING_SET_SWI;
+ 
+ 	regmap_write(dmc->clk_regmap, CDREX_LPDDR3PHY_CON3, reg);
++
++	return 0;
+ }
+ 
+ /**
+@@ -516,7 +520,7 @@ exynos5_dmc_switch_to_bypass_configuration(struct exynos5_dmc *dmc,
+ 	/*
+ 	 * Delays are long enough, so use them for the new coming clock.
+ 	 */
+-	exynos5_switch_timing_regs(dmc, USE_MX_MSPLL_TIMINGS);
++	ret = exynos5_switch_timing_regs(dmc, USE_MX_MSPLL_TIMINGS);
+ 
+ 	return ret;
+ }
+@@ -577,7 +581,9 @@ exynos5_dmc_change_freq_and_volt(struct exynos5_dmc *dmc,
+ 
+ 	clk_set_rate(dmc->fout_bpll, target_rate);
+ 
+-	exynos5_switch_timing_regs(dmc, USE_BPLL_TIMINGS);
++	ret = exynos5_switch_timing_regs(dmc, USE_BPLL_TIMINGS);
++	if (ret)
++		goto disable_clocks;
+ 
+ 	ret = clk_set_parent(dmc->mout_mclk_cdrex, dmc->mout_bpll);
+ 	if (ret)
+-- 
+2.17.1
+
