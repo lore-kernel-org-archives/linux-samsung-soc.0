@@ -2,283 +2,173 @@ Return-Path: <SRS0=3vSf=A7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62DD6C433E5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 14:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B92B1C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 17:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E56722C9C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 14:54:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595256880;
-	bh=KHxz9t+8FOOhT2bgEpCh+cCxIFEM3aYfu3Mr44irGic=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=bayH6ITZBeYLwvefDSUgkrMlfGGrdZhXWsQ70ewBd1UR790X4VlvbMdO471aw8rEf
-	 CVgswaPzrMLZ5o9MCcGcu7g5twXboVVUO7SO3HjrzB9xF0a10HNZgpaWsNx7CfpDr7
-	 7ac3uOt7KlIlo/44ALJXNScO+HQOzi1ZJ7D304/Y=
+	by mail.kernel.org (Postfix) with ESMTP id 9A58922BEF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 17:35:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSoBcGlL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbgGTOyk (ORCPT
+        id S1729431AbgGTRfM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Jul 2020 10:54:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40100 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726506AbgGTOyi (ORCPT
+        Mon, 20 Jul 2020 13:35:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56798 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729307AbgGTRfL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Jul 2020 10:54:38 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.200])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CE2D22B4E;
-        Mon, 20 Jul 2020 14:54:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595256877;
-        bh=KHxz9t+8FOOhT2bgEpCh+cCxIFEM3aYfu3Mr44irGic=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ceECXUVpFJePaukrP/YvG7DbA47RQx2PYZSFk3kdJ6mTaJDC8oaA7rNnjxCeoz60P
-         ihnNQRLCisenLvSirgIHRnM9FQCRm5FGEUiZwVOuQY21nKpvyIchd8Prlqt7KmTs3D
-         5j6XuKrwL7gsHW/WxKmceZq8l+G218Hg1voLhmhw=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     linus.walleij@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
+        Mon, 20 Jul 2020 13:35:11 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6349C061794;
+        Mon, 20 Jul 2020 10:35:11 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id a9so158487pjd.3;
+        Mon, 20 Jul 2020 10:35:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WABzq59H5eUVYxXK83gQCdP2ji4pUab0s2f+SVe9EGI=;
+        b=KSoBcGlL4mpyA6z70T5c3zPdITp8j0hU0JwBgNNjrWFX5gJFyC40y/wPD+vC1X5Ajd
+         ACXnjLQu44r8pQzWggycGix7CiwdtpBQnqEs1eCd6mesISSUECDr7flMAuMdzat62+8x
+         UVp1LgUsiBBveXrK+fl3TO3mHwCguR7ltdYZ6QZY3moTWDy0N/o6ECEXEJxW6tMC/j33
+         XhrUsYk6MvuafN9d4/bh91e4TTBHGYXXYFnnaYS52DipCZ7kkysEwhfFm29RirNivCG0
+         6Ed4+rxF4UoZP3TZ1H1YfZuoymiKZ9W+OCHT3lfjwd0s0jxHSQGmqL1dhv1qH3T2NjWU
+         5TGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WABzq59H5eUVYxXK83gQCdP2ji4pUab0s2f+SVe9EGI=;
+        b=twKbNESBEusvaKmLqs43on29jSO3YFve6PdEx6oGzJ9fyidy9RaxKuOaVBS8qB/1pu
+         mPp3wrhyPbzYn8LSaMsrAB9QiOLLdy9oORVQM6ZRHHC1fK2qGha3eai129tbxIzv1Y3/
+         pp7PwWSy1Ol8kpCnc83Do2wyxGjf6MCDbTQeQOFVr6QC93f8iPxGepyK4+10JuJ7fg4Y
+         zjWcq8GEtRpWeL+qrUEWXKnkb7V8mmRxpA3w1qKztH7Bb6urfmd7qieXAGcaYzF6ZM7L
+         GXFYu1MYYnQ4E+uGgPCK/axQgB5Lu0WhwsL+FPh3YgWiceOpmQ2laVE00a85Z0ce7WtA
+         W5Fw==
+X-Gm-Message-State: AOAM530c6yYf4DjY5JL8Aqp1QOq85kPU2qszmdHiCjsqH0ctgjiY4OX3
+        6H6b4fhi7uf63Z2gDgCO5/Y=
+X-Google-Smtp-Source: ABdhPJzK0dZp9lmnB+R8F0pxEFC0wQCOX+oQUQyN7tpsTVwmYqbun2SGzjyQ8+lsh/JrEyyFSbnfrQ==
+X-Received: by 2002:a17:90b:488:: with SMTP id bh8mr516495pjb.49.1595266511403;
+        Mon, 20 Jul 2020 10:35:11 -0700 (PDT)
+Received: from localhost.localdomain ([103.51.73.161])
+        by smtp.gmail.com with ESMTPSA id b22sm175972pju.26.2020.07.20.10.35.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jul 2020 10:35:10 -0700 (PDT)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] pinctrl: samsung: Use bank name as irqchip name
-Date:   Mon, 20 Jul 2020 16:54:12 +0200
-Message-Id: <20200720145412.24221-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v5] phy: samsung: Use readl_poll_timeout function
+Date:   Mon, 20 Jul 2020 17:35:02 +0000
+Message-Id: <20200720173502.542-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+Instead of a busy waiting while loop using udelay
+use readl_poll_timeout function to check the condition
+is met or timeout occurs in crport_handshake function.
+readl_poll_timeout is called in non atomic context so
+it safe to sleep until the condition is met.
 
-Use the bank name as the irqchip name. This name is later visible in
-/proc/interrupts, what makes it possible to easily identify each
-GPIO interrupt.
-
-/proc/interrupts before this patch:
-143:    0     exynos4210_wkup_irq_chip   7 Edge      hdmi
-144:    0     exynos4210_wkup_irq_chip   6 Level     wm8994
-145:    1     exynos4210_wkup_irq_chip   7 Edge      max77686-pmic, max77686-rtc
-146:    1     exynos_gpio_irq_chip   3 Edge      3-0048
-
-/proc/interrupts after this patch:
-143:    0     gpx3   7 Edge      hdmi
-144:    0     gpx3   6 Level     wm8994
-145:    1     gpx0   7 Edge      max77686-pmic, max77686-rtc
-146:    1     gpm2   3 Edge      3-0048
-
-Handling of the eint_wake_mask_value has been reworked, because each bank
-has now its own exynos_irq_chip structure allocated.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
-
-Hi Linus,
-
-I have only one patch queued for Samsung pinctrl. Can you apply it
-directly?
-
-Best regards,
-Krzysztof
-
+Changes v5:
+--Fix the indentation, checkpatch warning.
+--Drop the Fix tags.
+Changes v4:
+Rebased on to of patch [0] https://patchwork.kernel.org/patch/11651673/
+--Fix the commit message.
+--Fix the error timeout condition for -ETIMEDOUT
+Changes v3:
+--Fix the commit message.
+--Drop the variable, used the value directly.
+Changes v2:
+--used the default timeout values.
+--Added missing Fixed tags.
 ---
- drivers/pinctrl/samsung/pinctrl-exynos.c | 58 +++++++++++++-----------
- 1 file changed, 32 insertions(+), 26 deletions(-)
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 39 ++++++++----------------
+ 1 file changed, 12 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 84501c785473..b9ea09fabf84 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -38,7 +38,7 @@ struct exynos_irq_chip {
- 	u32 eint_con;
- 	u32 eint_mask;
- 	u32 eint_pend;
--	u32 eint_wake_mask_value;
-+	u32 *eint_wake_mask_value;
- 	u32 eint_wake_mask_reg;
- 	void (*set_eint_wakeup_mask)(struct samsung_pinctrl_drv_data *drvdata,
- 				     struct exynos_irq_chip *irq_chip);
-@@ -207,7 +207,7 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
- /*
-  * irq_chip for gpio interrupts.
-  */
--static struct exynos_irq_chip exynos_gpio_irq_chip = {
-+static const struct exynos_irq_chip exynos_gpio_irq_chip __initconst = {
- 	.chip = {
- 		.name = "exynos_gpio_irq_chip",
- 		.irq_unmask = exynos_irq_unmask,
-@@ -274,7 +274,7 @@ struct exynos_eint_gpio_save {
-  * exynos_eint_gpio_init() - setup handling of external gpio interrupts.
-  * @d: driver data of samsung pinctrl driver.
-  */
--int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
-+__init int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index 7f6279fb4f8f..c45ed9cabc5e 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -16,6 +16,7 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
++#include <linux/iopoll.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+ #include <linux/mutex.h>
+@@ -556,41 +557,25 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
+ static int crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
+ 			    u32 val, u32 cmd)
  {
- 	struct samsung_pin_bank *bank;
- 	struct device *dev = d->dev;
-@@ -297,6 +297,15 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
- 	for (i = 0; i < d->nr_banks; ++i, ++bank) {
- 		if (bank->eint_type != EINT_TYPE_GPIO)
- 			continue;
-+
-+		bank->irq_chip = devm_kmemdup(dev, &exynos_gpio_irq_chip,
-+					   sizeof(*bank->irq_chip), GFP_KERNEL);
-+		if (!bank->irq_chip) {
-+			ret = -ENOMEM;
-+			goto err_domains;
-+		}
-+		bank->irq_chip->chip.name = bank->name;
-+
- 		bank->irq_domain = irq_domain_add_linear(bank->of_node,
- 				bank->nr_pins, &exynos_eint_irqd_ops, bank);
- 		if (!bank->irq_domain) {
-@@ -313,7 +322,6 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
- 			goto err_domains;
- 		}
+-	u32 usec = 100;
+ 	unsigned int result;
++	int err;
  
--		bank->irq_chip = &exynos_gpio_irq_chip;
- 	}
+ 	writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
  
- 	return 0;
-@@ -338,9 +346,9 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- 	pr_info("wake %s for irq %d\n", on ? "enabled" : "disabled", irqd->irq);
- 
- 	if (!on)
--		our_chip->eint_wake_mask_value |= bit;
-+		*our_chip->eint_wake_mask_value |= bit;
- 	else
--		our_chip->eint_wake_mask_value &= ~bit;
-+		*our_chip->eint_wake_mask_value &= ~bit;
- 
- 	return 0;
- }
-@@ -360,10 +368,10 @@ exynos_pinctrl_set_eint_wakeup_mask(struct samsung_pinctrl_drv_data *drvdata,
- 	pmu_regs = drvdata->retention_ctrl->priv;
- 	dev_info(drvdata->dev,
- 		 "Setting external wakeup interrupt mask: 0x%x\n",
--		 irq_chip->eint_wake_mask_value);
-+		 *irq_chip->eint_wake_mask_value);
- 
- 	regmap_write(pmu_regs, irq_chip->eint_wake_mask_reg,
--		     irq_chip->eint_wake_mask_value);
-+		     *irq_chip->eint_wake_mask_value);
- }
- 
- static void
-@@ -382,10 +390,11 @@ s5pv210_pinctrl_set_eint_wakeup_mask(struct samsung_pinctrl_drv_data *drvdata,
- 
- 	clk_base = (void __iomem *) drvdata->retention_ctrl->priv;
- 
--	__raw_writel(irq_chip->eint_wake_mask_value,
-+	__raw_writel(*irq_chip->eint_wake_mask_value,
- 		     clk_base + irq_chip->eint_wake_mask_reg);
- }
- 
-+static u32 eint_wake_mask_value = EXYNOS_EINT_WAKEUP_MASK_DISABLED;
- /*
-  * irq_chip for wakeup interrupts
-  */
-@@ -403,7 +412,7 @@ static const struct exynos_irq_chip s5pv210_wkup_irq_chip __initconst = {
- 	.eint_con = EXYNOS_WKUP_ECON_OFFSET,
- 	.eint_mask = EXYNOS_WKUP_EMASK_OFFSET,
- 	.eint_pend = EXYNOS_WKUP_EPEND_OFFSET,
--	.eint_wake_mask_value = EXYNOS_EINT_WAKEUP_MASK_DISABLED,
-+	.eint_wake_mask_value = &eint_wake_mask_value,
- 	/* Only differences with exynos4210_wkup_irq_chip: */
- 	.eint_wake_mask_reg = S5PV210_EINT_WAKEUP_MASK,
- 	.set_eint_wakeup_mask = s5pv210_pinctrl_set_eint_wakeup_mask,
-@@ -423,7 +432,7 @@ static const struct exynos_irq_chip exynos4210_wkup_irq_chip __initconst = {
- 	.eint_con = EXYNOS_WKUP_ECON_OFFSET,
- 	.eint_mask = EXYNOS_WKUP_EMASK_OFFSET,
- 	.eint_pend = EXYNOS_WKUP_EPEND_OFFSET,
--	.eint_wake_mask_value = EXYNOS_EINT_WAKEUP_MASK_DISABLED,
-+	.eint_wake_mask_value = &eint_wake_mask_value,
- 	.eint_wake_mask_reg = EXYNOS_EINT_WAKEUP_MASK,
- 	.set_eint_wakeup_mask = exynos_pinctrl_set_eint_wakeup_mask,
- };
-@@ -442,7 +451,7 @@ static const struct exynos_irq_chip exynos7_wkup_irq_chip __initconst = {
- 	.eint_con = EXYNOS7_WKUP_ECON_OFFSET,
- 	.eint_mask = EXYNOS7_WKUP_EMASK_OFFSET,
- 	.eint_pend = EXYNOS7_WKUP_EPEND_OFFSET,
--	.eint_wake_mask_value = EXYNOS_EINT_WAKEUP_MASK_DISABLED,
-+	.eint_wake_mask_value = &eint_wake_mask_value,
- 	.eint_wake_mask_reg = EXYNOS5433_EINT_WAKEUP_MASK,
- 	.set_eint_wakeup_mask = exynos_pinctrl_set_eint_wakeup_mask,
- };
-@@ -513,7 +522,7 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
-  * exynos_eint_wkup_init() - setup handling of external wakeup interrupts.
-  * @d: driver data of samsung pinctrl driver.
-  */
--int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
-+__init int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- {
- 	struct device *dev = d->dev;
- 	struct device_node *wkup_np = NULL;
-@@ -521,7 +530,7 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 	struct samsung_pin_bank *bank;
- 	struct exynos_weint_data *weint_data;
- 	struct exynos_muxed_weint_data *muxed_data;
--	struct exynos_irq_chip *irq_chip;
-+	const struct exynos_irq_chip *irq_chip;
- 	unsigned int muxed_banks = 0;
- 	unsigned int i;
- 	int idx, irq;
-@@ -531,12 +540,7 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 
- 		match = of_match_node(exynos_wkup_irq_ids, np);
- 		if (match) {
--			irq_chip = kmemdup(match->data,
--				sizeof(*irq_chip), GFP_KERNEL);
--			if (!irq_chip) {
--				of_node_put(np);
--				return -ENOMEM;
--			}
-+			irq_chip = match->data;
- 			wkup_np = np;
- 			break;
- 		}
-@@ -549,6 +553,14 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 		if (bank->eint_type != EINT_TYPE_WKUP)
- 			continue;
- 
-+		bank->irq_chip = devm_kmemdup(dev, irq_chip, sizeof(*irq_chip),
-+					      GFP_KERNEL);
-+		if (!bank->irq_chip) {
-+			of_node_put(wkup_np);
-+			return -ENOMEM;
-+		}
-+		bank->irq_chip->chip.name = bank->name;
-+
- 		bank->irq_domain = irq_domain_add_linear(bank->of_node,
- 				bank->nr_pins, &exynos_eint_irqd_ops, bank);
- 		if (!bank->irq_domain) {
-@@ -557,8 +569,6 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 			return -ENXIO;
- 		}
- 
--		bank->irq_chip = irq_chip;
+-	do {
+-		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
+-		if (result & PHYREG1_CR_ACK)
+-			break;
 -
- 		if (!of_find_property(bank->of_node, "interrupts", NULL)) {
- 			bank->eint_type = EINT_TYPE_WKUP_MUX;
- 			++muxed_banks;
-@@ -657,10 +667,6 @@ void exynos_pinctrl_suspend(struct samsung_pinctrl_drv_data *drvdata)
- 				irq_chip = bank->irq_chip;
- 				irq_chip->set_eint_wakeup_mask(drvdata,
- 							       irq_chip);
--			} else if (bank->irq_chip != irq_chip) {
--				dev_warn(drvdata->dev,
--					 "More than one external wakeup interrupt chip configured (bank: %s). This is not supported by hardware nor by driver.\n",
--					 bank->name);
- 			}
- 		}
+-		udelay(1);
+-	} while (usec-- > 0);
+-
+-	if (!usec) {
+-		dev_err(phy_drd->dev,
+-			"CRPORT handshake timeout1 (0x%08x)\n", val);
+-		return -ETIME;
++	err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
++				 result, (result & PHYREG1_CR_ACK), 1, 100);
++	if (err == -ETIMEDOUT) {
++		dev_err(phy_drd->dev, "CRPORT handshake timeout1 (0x%08x)\n", val);
++		return err;
  	}
+ 
+-	usec = 100;
+-
+ 	writel(val, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
+ 
+-	do {
+-		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
+-		if (!(result & PHYREG1_CR_ACK))
+-			break;
+-
+-		udelay(1);
+-	} while (usec-- > 0);
+-
+-	if (!usec) {
+-		dev_err(phy_drd->dev,
+-			"CRPORT handshake timeout2 (0x%08x)\n", val);
+-		return -ETIME;
++	err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
++				 result, !(result & PHYREG1_CR_ACK), 1, 100);
++	if (err == -ETIMEDOUT) {
++		dev_err(phy_drd->dev, "CRPORT handshake timeout2 (0x%08x)\n", val);
++		return err;
+ 	}
+ 
+ 	return 0;
 -- 
-2.17.1
+2.27.0
 
