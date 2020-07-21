@@ -1,174 +1,96 @@
-Return-Path: <SRS0=3vSf=A7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=UBsq=BA=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B92B1C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 17:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D5DC433EA
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jul 2020 08:04:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A58922BEF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jul 2020 17:35:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSoBcGlL"
+	by mail.kernel.org (Postfix) with ESMTP id 3AA8A2080D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jul 2020 08:04:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595318690;
+	bh=DfcAnOdK3BxY6jqQpzn4sc8Wri40qkfysNtuloW83bs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=EUZEdQVfA9viEn4S1YZOo3d/hE374mmQyznoTz/MeWVoeIHdJMmOVUPJsdCOvzOrz
+	 ZWEs2P/FLFlMoXEZq+2eHiPh1QOebTOTKtpYJsLrgiu0Xp7SKyoT+PBItX2cZFuubJ
+	 icC+rnni0aA7LcwEZt034DyqsBwhMmeeQ91Z1zl8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbgGTRfM (ORCPT
+        id S1728345AbgGUIEr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Jul 2020 13:35:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56798 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729307AbgGTRfL (ORCPT
+        Tue, 21 Jul 2020 04:04:47 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53719 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726614AbgGUIEr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Jul 2020 13:35:11 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6349C061794;
-        Mon, 20 Jul 2020 10:35:11 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id a9so158487pjd.3;
-        Mon, 20 Jul 2020 10:35:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WABzq59H5eUVYxXK83gQCdP2ji4pUab0s2f+SVe9EGI=;
-        b=KSoBcGlL4mpyA6z70T5c3zPdITp8j0hU0JwBgNNjrWFX5gJFyC40y/wPD+vC1X5Ajd
-         ACXnjLQu44r8pQzWggycGix7CiwdtpBQnqEs1eCd6mesISSUECDr7flMAuMdzat62+8x
-         UVp1LgUsiBBveXrK+fl3TO3mHwCguR7ltdYZ6QZY3moTWDy0N/o6ECEXEJxW6tMC/j33
-         XhrUsYk6MvuafN9d4/bh91e4TTBHGYXXYFnnaYS52DipCZ7kkysEwhfFm29RirNivCG0
-         6Ed4+rxF4UoZP3TZ1H1YfZuoymiKZ9W+OCHT3lfjwd0s0jxHSQGmqL1dhv1qH3T2NjWU
-         5TGQ==
+        Tue, 21 Jul 2020 04:04:47 -0400
+Received: by mail-wm1-f67.google.com with SMTP id j18so1857174wmi.3;
+        Tue, 21 Jul 2020 01:04:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WABzq59H5eUVYxXK83gQCdP2ji4pUab0s2f+SVe9EGI=;
-        b=twKbNESBEusvaKmLqs43on29jSO3YFve6PdEx6oGzJ9fyidy9RaxKuOaVBS8qB/1pu
-         mPp3wrhyPbzYn8LSaMsrAB9QiOLLdy9oORVQM6ZRHHC1fK2qGha3eai129tbxIzv1Y3/
-         pp7PwWSy1Ol8kpCnc83Do2wyxGjf6MCDbTQeQOFVr6QC93f8iPxGepyK4+10JuJ7fg4Y
-         zjWcq8GEtRpWeL+qrUEWXKnkb7V8mmRxpA3w1qKztH7Bb6urfmd7qieXAGcaYzF6ZM7L
-         GXFYu1MYYnQ4E+uGgPCK/axQgB5Lu0WhwsL+FPh3YgWiceOpmQ2laVE00a85Z0ce7WtA
-         W5Fw==
-X-Gm-Message-State: AOAM530c6yYf4DjY5JL8Aqp1QOq85kPU2qszmdHiCjsqH0ctgjiY4OX3
-        6H6b4fhi7uf63Z2gDgCO5/Y=
-X-Google-Smtp-Source: ABdhPJzK0dZp9lmnB+R8F0pxEFC0wQCOX+oQUQyN7tpsTVwmYqbun2SGzjyQ8+lsh/JrEyyFSbnfrQ==
-X-Received: by 2002:a17:90b:488:: with SMTP id bh8mr516495pjb.49.1595266511403;
-        Mon, 20 Jul 2020 10:35:11 -0700 (PDT)
-Received: from localhost.localdomain ([103.51.73.161])
-        by smtp.gmail.com with ESMTPSA id b22sm175972pju.26.2020.07.20.10.35.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jul 2020 10:35:10 -0700 (PDT)
-From:   Anand Moon <linux.amoon@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v5] phy: samsung: Use readl_poll_timeout function
-Date:   Mon, 20 Jul 2020 17:35:02 +0000
-Message-Id: <20200720173502.542-1-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.27.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=syvFVe39WCS6I7HZqBbb+16Wl3B+m141J405QHoInHE=;
+        b=WOzBDXudrswjLpFnCUlRp0S6MWhUH84fHHDeADyLAeXTDcg8axRSMifiRuaFsqaYQ6
+         amedgHwmpkqPRvxZg6ajVG3j18aImUnefB9npjZGSK/N33foieFdG94k8gdCXkS+hvuS
+         M7j0P6rGsgLJu8k+eqgHqXJQkFr3RTJLteR7oAXt77PguOYofV0Uu/7ds3GI74NLuaOa
+         jRkfbK0UIzNqTHvv7IMByIOgHvzaRMMJMK16pcy6bzam/MOI8fCWKaojUeorobdwghBb
+         yXhJPWCeQavFIDcaQMiIYV4OqGVDcaM0wD8Dcy/i+5uG7JUHpqwmCpS6kDqReFjQy7mr
+         wRrw==
+X-Gm-Message-State: AOAM53254MBRn8uINdEiBVFY8xGjlc/vDpkEPYoKAiXK0AXZpXzQycs3
+        mAzE19EOY0d72jFg7Nzq7hRKxqftEhM=
+X-Google-Smtp-Source: ABdhPJxda9SdlT7pF9+Os3z3GaDcUTXtBao7aheqKIsfkWKfKAqh6bpMotyBzTDIkJgsfF7Wf+I2vw==
+X-Received: by 2002:a7b:cb92:: with SMTP id m18mr2786559wmi.94.1595318684880;
+        Tue, 21 Jul 2020 01:04:44 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.200])
+        by smtp.googlemail.com with ESMTPSA id u65sm2545294wmg.5.2020.07.21.01.04.43
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 Jul 2020 01:04:44 -0700 (PDT)
+Date:   Tue, 21 Jul 2020 10:04:42 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Tamseel Shams <m.shams@samsung.com>
+Cc:     kgene@kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alim.akhtar@samsung.com
+Subject: Re: [PATCH v4] serial: samsung: change to platform_get_irq_optional
+Message-ID: <20200721080442.GA6580@kozik-lap>
+References: <CGME20200713141655epcas5p2cdd83477e4fc024457a2b08d8ebfbad0@epcas5p2.samsung.com>
+ <20200713135531.68583-1-m.shams@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200713135531.68583-1-m.shams@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Instead of a busy waiting while loop using udelay
-use readl_poll_timeout function to check the condition
-is met or timeout occurs in crport_handshake function.
-readl_poll_timeout is called in non atomic context so
-it safe to sleep until the condition is met.
+On Mon, Jul 13, 2020 at 07:25:31PM +0530, Tamseel Shams wrote:
+> In few older Samsung SoCs like s3c2410, s3c2412
+> and s3c2440, UART IP is having 2 interrupt lines.
+> However, in other SoCs like s3c6400, s5pv210,
+> exynos5433, and exynos4210 UART is having only 1
+> interrupt line. Due to this, "platform_get_irq(platdev, 1)"
+> call in the driver gives the following false-positive error:
+> "IRQ index 1 not found" on recent platforms.
+> 
+> This patch replaces the platform_get_irq() call with
+> platform_get_irq_optional() and hence avoiding the
+> false-positive error.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-Changes v5:
---Fix the indentation, checkpatch warning.
---Drop the Fix tags.
-Changes v4:
-Rebased on to of patch [0] https://patchwork.kernel.org/patch/11651673/
---Fix the commit message.
---Fix the error timeout condition for -ETIMEDOUT
-Changes v3:
---Fix the commit message.
---Drop the variable, used the value directly.
-Changes v2:
---used the default timeout values.
---Added missing Fixed tags.
----
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 39 ++++++++----------------
- 1 file changed, 12 insertions(+), 27 deletions(-)
+The error is not a false positive on S3C platforms, but a real error.
+The existing code did not handle missing TX IRQ but at least printed a
+message.  Your change hides the message.
 
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 7f6279fb4f8f..c45ed9cabc5e 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -16,6 +16,7 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-+#include <linux/iopoll.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/mutex.h>
-@@ -556,41 +557,25 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
- static int crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
- 			    u32 val, u32 cmd)
- {
--	u32 usec = 100;
- 	unsigned int result;
-+	int err;
- 
- 	writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
- 
--	do {
--		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
--		if (result & PHYREG1_CR_ACK)
--			break;
--
--		udelay(1);
--	} while (usec-- > 0);
--
--	if (!usec) {
--		dev_err(phy_drd->dev,
--			"CRPORT handshake timeout1 (0x%08x)\n", val);
--		return -ETIME;
-+	err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
-+				 result, (result & PHYREG1_CR_ACK), 1, 100);
-+	if (err == -ETIMEDOUT) {
-+		dev_err(phy_drd->dev, "CRPORT handshake timeout1 (0x%08x)\n", val);
-+		return err;
- 	}
- 
--	usec = 100;
--
- 	writel(val, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
- 
--	do {
--		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
--		if (!(result & PHYREG1_CR_ACK))
--			break;
--
--		udelay(1);
--	} while (usec-- > 0);
--
--	if (!usec) {
--		dev_err(phy_drd->dev,
--			"CRPORT handshake timeout2 (0x%08x)\n", val);
--		return -ETIME;
-+	err = readl_poll_timeout(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1,
-+				 result, !(result & PHYREG1_CR_ACK), 1, 100);
-+	if (err == -ETIMEDOUT) {
-+		dev_err(phy_drd->dev, "CRPORT handshake timeout2 (0x%08x)\n", val);
-+		return err;
- 	}
- 
- 	return 0;
--- 
-2.27.0
+The real problem here is a missing error handling for TX interrupt.
+Solving this one, would solve also false-positive error message on newer
+SoCs.
+
+Best regards,
+Krzysztof
 
