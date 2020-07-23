@@ -2,93 +2,119 @@ Return-Path: <SRS0=dIYQ=BC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 214CEC433F1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jul 2020 08:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D691C433E8
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jul 2020 12:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED9FC22B43
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jul 2020 08:46:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595493967;
-	bh=AAiUgOHYkF4OY8C6u9wcRgK0SkjrjcT7mFquV/ZkHu0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=QHea0IQNUPYfMPfZFLpWoVa568UFGnCrpwLARpdvpJuute3L7U6Tc3VDToBju20Kq
-	 tGpWFMnhast0FSKz9uUGsEatXnUutW+xDZf4d8rzR3evWcAXmh16YVp9k5hp6Ca/6x
-	 fc+/Xoed3dF2x6jSZn5p2bHiRoYIfXjWWVmkbTFI=
+	by mail.kernel.org (Postfix) with ESMTP id 171BB20792
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jul 2020 12:27:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TEW85Fn3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbgGWIqD (ORCPT
+        id S1728867AbgGWMY7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 23 Jul 2020 04:46:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42594 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726594AbgGWIqD (ORCPT
+        Thu, 23 Jul 2020 08:24:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58096 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728863AbgGWMY6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Jul 2020 04:46:03 -0400
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93C7C2080D;
-        Thu, 23 Jul 2020 08:46:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595493962;
-        bh=AAiUgOHYkF4OY8C6u9wcRgK0SkjrjcT7mFquV/ZkHu0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=H5hGkMUvREZ+iwFO8+i+SMcFqmmp+BgQjRUFBJrapf03C6UEjOgNXbFryaTNgUscY
-         Zbi2nll/Xxe+hY84F8zM0kqcU9jYpAQnK8DhnnwXcAMOvxrR4YOwKcanTCOyMms7Pe
-         T2g+n4wkRygjCR7qIpYjy7tHYUBh5Zk+/2Mph7U0=
-Received: by mail-lf1-f48.google.com with SMTP id i80so2822963lfi.13;
-        Thu, 23 Jul 2020 01:46:02 -0700 (PDT)
-X-Gm-Message-State: AOAM532+LdDsZqfhNr0xqOVdtS67SF/wkYJM/Os27lPJTHOEm6QnPfhh
-        92kspo5OXq0karlcpVJUPtq+keGGv/IjWosjQdE=
-X-Google-Smtp-Source: ABdhPJx/xNBqL8xTZq1HPeSBfk0iFlOL0yeDMtBtfDUNemHPw2W6G2d6snW23uvP0RNxqZmdOY1npu/21VDSfjgonzU=
-X-Received: by 2002:ac2:4144:: with SMTP id c4mr1722866lfi.118.1595493960868;
- Thu, 23 Jul 2020 01:46:00 -0700 (PDT)
+        Thu, 23 Jul 2020 08:24:58 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BB8DC0619E2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2020 05:24:58 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id g10so6397207wmc.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2020 05:24:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=iSQMgw7xYhZP3UZf5+lasa+UwlT/7rt+vW8/trm4LDo=;
+        b=TEW85Fn3KvlR1/ox+9FOgeQrHl+00ZEyopmW1JEMK9KRKelWc5NrGfaJxN3lqQocjt
+         /+ShTwf5bTX2B+t6pqrYrI0KFMv9Dy23MZNTSixscwlbOkK3Ho1pyXLoFWHN2C+ljKrq
+         b88pJwHa3bXMFQivxA9BDoKSj78A328Fg4ZDi4/iXLEOi7kBWi31zoh1V9xLfyCXG4dZ
+         ikvg9Gybxxno9+ZFPsTJsZxt8wucOKmp51JMFPFHcTNOlIxGRxLbe+aSTfm78e+cFxCK
+         aRAMxjv/PwVmKYVTywGo+sOkMNKX0GngEhlkJgd6OCBvWN5t7Enh9PZTm+CaZezzer93
+         veOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=iSQMgw7xYhZP3UZf5+lasa+UwlT/7rt+vW8/trm4LDo=;
+        b=HIISy8MefeIlZXY+f3lYfg25xlGgwcB+40/CEY3mSgrIBHyCIGx9zaPcN5cdi63sml
+         32AJyafnbPASVqsDYzJ3ari9KWm6OmxsA/uA63L3itcOjGg0Gvmu3v4XIQk4ZVlz+CSS
+         OFfpvUTV+0zy9zdW3GGIy5oRjtL5sJI6N7bUf416kBhG8kLMrmqrKenLbEzrMxpLO0Xo
+         von/qDpeY/B5iOOVvue4iuDV46vq09OKk4dXg4WikX5DGkp1xmPtMoy+Hs1tGqByaiG6
+         zt1NjQWmLOWuUpU9cvSgz8INAHFvYVQWIYwEYoz+tFd548saIpcuTYcAxSUkT9/1hYoR
+         2nXQ==
+X-Gm-Message-State: AOAM531xZ3mGv+3O5nH/N9T0FkFaXYHrsZT+eOqpG5aevsnDFQFfMhPg
+        qukAMSgr2jkoPd+oDhTJKHAYuA==
+X-Google-Smtp-Source: ABdhPJx+PZHTVIJ+E7nFbXTBN0DlXtTyzH9UQgfnehGYyyVKdjsGVbuV9soY3017Ateok39CNTwCIw==
+X-Received: by 2002:a1c:7719:: with SMTP id t25mr4164471wmi.144.1595507097059;
+        Thu, 23 Jul 2020 05:24:57 -0700 (PDT)
+Received: from localhost.localdomain ([2.27.167.73])
+        by smtp.gmail.com with ESMTPSA id j5sm3510651wma.45.2020.07.23.05.24.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jul 2020 05:24:56 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Seungwon Jeon <essuuj@gmail.com>,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 06/40] scsi: ufs: ufs-exynos: Demote seemingly unintentional kerneldoc header
+Date:   Thu, 23 Jul 2020 13:24:12 +0100
+Message-Id: <20200723122446.1329773-7-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200723122446.1329773-1-lee.jones@linaro.org>
+References: <20200723122446.1329773-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-References: <20200713144930.1034632-1-lee.jones@linaro.org>
- <20200713144930.1034632-7-lee.jones@linaro.org> <20200720142714.GA6747@kozik-lap>
- <20200720144955.GD3368211@dell> <20200720145219.GA23990@kozik-lap> <CACRpkdaYQ3PEh838Qoxig4n1iNFp8AOj_Wk9jdvB-qMy0PBRKw@mail.gmail.com>
-In-Reply-To: <CACRpkdaYQ3PEh838Qoxig4n1iNFp8AOj_Wk9jdvB-qMy0PBRKw@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 23 Jul 2020 10:45:49 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPeaQvSnCtUhcDxYRxNM=fxWgsasBccPJEtHUPaek9HQjQ@mail.gmail.com>
-Message-ID: <CAJKOXPeaQvSnCtUhcDxYRxNM=fxWgsasBccPJEtHUPaek9HQjQ@mail.gmail.com>
-Subject: Re: [PATCH 06/25] pinctrl: samsung: pinctrl-samsung: Demote obvious
- misuse of kerneldoc to standard comment blocks
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Thomas Abraham <thomas.ab@samsung.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 23 Jul 2020 at 10:44, Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Mon, Jul 20, 2020 at 4:52 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > On Mon, Jul 20, 2020 at 03:49:55PM +0100, Lee Jones wrote:
->
-> > > > Thanks, applied.
-> > >
-> > > Same as the others.  Already in -next.
-> >
-> > Thanks for letting me know. I dropped all of them.
->
-> It's a bit tricky at times with clean-up topics, I want submaintainers to pick
-> it up if possible so sorry about this, it's just too much to coordinate
-> sometimes.
+This is the only use of kerneldoc in the source file and no
+descriptions are provided.
 
-No worries. Recently Samsung pinctrl driver is not that active so I
-could just provide you only a review. Maybe there is too much hustle
-to apply to sub-maintainer tree.
+Fixes the following W=1 kernel build warning(s):
 
-Best regards,
-Krzysztof
+In file included from  drivers/scsi/ufs/ufs-exynos.c:23:
+ drivers/scsi/ufs/ufs-exynos.c:234: warning: Function parameter or member 'ufs' not described in 'exynos_ufs_auto_ctrl_hcc'
+ drivers/scsi/ufs/ufs-exynos.c:234: warning: Function parameter or member 'en' not described in 'exynos_ufs_auto_ctrl_hcc'
+
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Avri Altman <avri.altman@wdc.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Seungwon Jeon <essuuj@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/scsi/ufs/ufs-exynos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/ufs/ufs-exynos.c b/drivers/scsi/ufs/ufs-exynos.c
+index 3c0a50b7e3560..9151c7455acda 100644
+--- a/drivers/scsi/ufs/ufs-exynos.c
++++ b/drivers/scsi/ufs/ufs-exynos.c
+@@ -224,7 +224,7 @@ static int exynos7_ufs_post_pwr_change(struct exynos_ufs *ufs,
+ 	return 0;
+ }
+ 
+-/**
++/*
+  * exynos_ufs_auto_ctrl_hcc - HCI core clock control by h/w
+  * Control should be disabled in the below cases
+  * - Before host controller S/W reset
+-- 
+2.25.1
+
