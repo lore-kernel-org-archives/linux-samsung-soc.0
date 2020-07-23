@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D691C433E8
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jul 2020 12:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA27C433E4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jul 2020 12:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 171BB20792
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jul 2020 12:27:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 584F220792
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jul 2020 12:27:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TEW85Fn3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VLzuVAzw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728867AbgGWMY7 (ORCPT
+        id S1728990AbgGWM1m (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 23 Jul 2020 08:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58096 "EHLO
+        Thu, 23 Jul 2020 08:27:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728863AbgGWMY6 (ORCPT
+        with ESMTP id S1728824AbgGWMY5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Jul 2020 08:24:58 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BB8DC0619E2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2020 05:24:58 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id g10so6397207wmc.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2020 05:24:58 -0700 (PDT)
+        Thu, 23 Jul 2020 08:24:57 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1640DC0619E2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2020 05:24:57 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id 88so4977201wrh.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2020 05:24:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=iSQMgw7xYhZP3UZf5+lasa+UwlT/7rt+vW8/trm4LDo=;
-        b=TEW85Fn3KvlR1/ox+9FOgeQrHl+00ZEyopmW1JEMK9KRKelWc5NrGfaJxN3lqQocjt
-         /+ShTwf5bTX2B+t6pqrYrI0KFMv9Dy23MZNTSixscwlbOkK3Ho1pyXLoFWHN2C+ljKrq
-         b88pJwHa3bXMFQivxA9BDoKSj78A328Fg4ZDi4/iXLEOi7kBWi31zoh1V9xLfyCXG4dZ
-         ikvg9Gybxxno9+ZFPsTJsZxt8wucOKmp51JMFPFHcTNOlIxGRxLbe+aSTfm78e+cFxCK
-         aRAMxjv/PwVmKYVTywGo+sOkMNKX0GngEhlkJgd6OCBvWN5t7Enh9PZTm+CaZezzer93
-         veOg==
+        bh=mCXO0Gr/A00l7Lne4sBK8Frz9I2gxXn2t7va3NQnE+k=;
+        b=VLzuVAzwLVM/dZrwghui32Cthrp/jLIjGRFYoekwj6rOfYdWN+Ca8euH5j0gmIclVA
+         DPGAmw1kGbUVZEsPzHiJS4mVA4nIS/w0UhXhvtODtvdzRx0u3R/sEMZwyCzDADT/E9iu
+         vLDxEbeoH+2JdqhS/3o/A9XdzqzYaakIGrL8NYVb3/bFEM+CIqVptPUaom3/SoHEeGNy
+         sLA228efpCsVu2LU5uwYHYJjtRMQQlQyjtUkunjK29dLPWUIqm6go4LnmxMhmQcTNcuN
+         K+Bn4hm1c0VKWz+h46vh5QR8aI/QuPomXCz/us8WLkqhjS4TOlcTzxWt1lj0K1kR4iqs
+         V2tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iSQMgw7xYhZP3UZf5+lasa+UwlT/7rt+vW8/trm4LDo=;
-        b=HIISy8MefeIlZXY+f3lYfg25xlGgwcB+40/CEY3mSgrIBHyCIGx9zaPcN5cdi63sml
-         32AJyafnbPASVqsDYzJ3ari9KWm6OmxsA/uA63L3itcOjGg0Gvmu3v4XIQk4ZVlz+CSS
-         OFfpvUTV+0zy9zdW3GGIy5oRjtL5sJI6N7bUf416kBhG8kLMrmqrKenLbEzrMxpLO0Xo
-         von/qDpeY/B5iOOVvue4iuDV46vq09OKk4dXg4WikX5DGkp1xmPtMoy+Hs1tGqByaiG6
-         zt1NjQWmLOWuUpU9cvSgz8INAHFvYVQWIYwEYoz+tFd548saIpcuTYcAxSUkT9/1hYoR
-         2nXQ==
-X-Gm-Message-State: AOAM531xZ3mGv+3O5nH/N9T0FkFaXYHrsZT+eOqpG5aevsnDFQFfMhPg
-        qukAMSgr2jkoPd+oDhTJKHAYuA==
-X-Google-Smtp-Source: ABdhPJx+PZHTVIJ+E7nFbXTBN0DlXtTyzH9UQgfnehGYyyVKdjsGVbuV9soY3017Ateok39CNTwCIw==
-X-Received: by 2002:a1c:7719:: with SMTP id t25mr4164471wmi.144.1595507097059;
-        Thu, 23 Jul 2020 05:24:57 -0700 (PDT)
+        bh=mCXO0Gr/A00l7Lne4sBK8Frz9I2gxXn2t7va3NQnE+k=;
+        b=a7FyZd0Mnw7VgPAA8f6E5gpmmOzDCGKqWGgARMxwmVX7BaML6ysr5pfdmyXD/JRb7N
+         5H8KOSKtI8ZxZ64cPDx6eWEeoIJP9U2Cc6EqmKs3sd45X8sa8AV5ZeRlQ2gbu+eVwrkR
+         QNpdybU8Y2jgpoec7o6W8mdrGoE5Fj0QlNHViANDt72A7AMP1YkGA3kAmEX2sUzzIvf7
+         d2uibsPfLIq3ScnE1wvHuTgjB3YWxShg2RW+CzU4oyNIWcc74N/qNFSR3NewObUsJiQ3
+         /6Unm1hXG4Yd4sPSheQDh4nvlKs1ALVpoqUe3KlO+bZlUuMwLeOxMKynzZBQNh2ZkkPk
+         I40g==
+X-Gm-Message-State: AOAM531xjf6u8bIuw17rLCgmZoEpft7iVbPaMXvOt0DwaVcZ9yjawVbe
+        TROM6xVHcG76xhTUnxfuwFZhLg==
+X-Google-Smtp-Source: ABdhPJyHdbt4arhYy1wxPK9DL4Wp99G0wUnJEmOEIFHYKnmyhpXMeS1JDOviOFALkqZ19VIiGO62Sw==
+X-Received: by 2002:adf:cf0c:: with SMTP id o12mr3829930wrj.265.1595507095851;
+        Thu, 23 Jul 2020 05:24:55 -0700 (PDT)
 Received: from localhost.localdomain ([2.27.167.73])
-        by smtp.gmail.com with ESMTPSA id j5sm3510651wma.45.2020.07.23.05.24.55
+        by smtp.gmail.com with ESMTPSA id j5sm3510651wma.45.2020.07.23.05.24.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2020 05:24:56 -0700 (PDT)
+        Thu, 23 Jul 2020 05:24:55 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     jejb@linux.ibm.com, martin.petersen@oracle.com
 Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
@@ -67,54 +67,84 @@ Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
         Avri Altman <avri.altman@wdc.com>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Seungwon Jeon <essuuj@gmail.com>,
+        Kiwoong Kim <kwmad.kim@samsung.com>,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 06/40] scsi: ufs: ufs-exynos: Demote seemingly unintentional kerneldoc header
-Date:   Thu, 23 Jul 2020 13:24:12 +0100
-Message-Id: <20200723122446.1329773-7-lee.jones@linaro.org>
+Subject: [PATCH 05/40] scsi: ufs: ufs-exynos: Make stubs 'static inline'
+Date:   Thu, 23 Jul 2020 13:24:11 +0100
+Message-Id: <20200723122446.1329773-6-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200723122446.1329773-1-lee.jones@linaro.org>
 References: <20200723122446.1329773-1-lee.jones@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is the only use of kerneldoc in the source file and no
-descriptions are provided.
+Else the compiler complains of missing prototypes.
 
 Fixes the following W=1 kernel build warning(s):
 
-In file included from  drivers/scsi/ufs/ufs-exynos.c:23:
- drivers/scsi/ufs/ufs-exynos.c:234: warning: Function parameter or member 'ufs' not described in 'exynos_ufs_auto_ctrl_hcc'
- drivers/scsi/ufs/ufs-exynos.c:234: warning: Function parameter or member 'en' not described in 'exynos_ufs_auto_ctrl_hcc'
+ In file included from drivers/scsi/ufs/ufs-exynos.c:23:
+ drivers/scsi/ufs/ufs-exynos.h:302:6: warning: no previous prototype for ‘exynos_ufs_cmd_log_start’ [-Wmissing-prototypes]
+ 302 | void exynos_ufs_cmd_log_start(struct ufs_exynos_handle *handle,
+ | ^~~~~~~~~~~~~~~~~~~~~~~~
+ drivers/scsi/ufs/ufs-exynos.h:307:6: warning: no previous prototype for ‘exynos_ufs_cmd_log_end’ [-Wmissing-prototypes]
+ 307 | void exynos_ufs_cmd_log_end(struct ufs_exynos_handle *handle,
+ | ^~~~~~~~~~~~~~~~~~~~~~
+ drivers/scsi/ufs/ufs-exynos.h:312:5: warning: no previous prototype for ‘exynos_ufs_init_dbg’ [-Wmissing-prototypes]
+ 312 | int exynos_ufs_init_dbg(struct ufs_exynos_handle *handle, struct device *dev)
+ | ^~~~~~~~~~~~~~~~~~~
+ drivers/scsi/ufs/ufs-exynos.h:317:6: warning: no previous prototype for ‘exynos_ufs_dump_info’ [-Wmissing-prototypes]
+ 317 | void exynos_ufs_dump_info(struct ufs_exynos_handle *handle, struct device *dev)
+ | ^~~~~~~~~~~~~~~~~~~~
 
 Cc: Alim Akhtar <alim.akhtar@samsung.com>
 Cc: Avri Altman <avri.altman@wdc.com>
 Cc: Kukjin Kim <kgene@kernel.org>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Seungwon Jeon <essuuj@gmail.com>
+Cc: Kiwoong Kim <kwmad.kim@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/scsi/ufs/ufs-exynos.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/ufs/ufs-exynos.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/scsi/ufs/ufs-exynos.c b/drivers/scsi/ufs/ufs-exynos.c
-index 3c0a50b7e3560..9151c7455acda 100644
---- a/drivers/scsi/ufs/ufs-exynos.c
-+++ b/drivers/scsi/ufs/ufs-exynos.c
-@@ -224,7 +224,7 @@ static int exynos7_ufs_post_pwr_change(struct exynos_ufs *ufs,
+diff --git a/drivers/scsi/ufs/ufs-exynos.h b/drivers/scsi/ufs/ufs-exynos.h
+index d86d0a0f74780..0908283a76936 100644
+--- a/drivers/scsi/ufs/ufs-exynos.h
++++ b/drivers/scsi/ufs/ufs-exynos.h
+@@ -299,22 +299,22 @@ void exynos_ufs_cmd_log_end(struct ufs_exynos_handle *handle,
+ int exynos_ufs_init_dbg(struct ufs_exynos_handle *handle, struct device *dev);
+ void exynos_ufs_dump_info(struct ufs_exynos_handle *handle, struct device *dev);
+ #else
+-void exynos_ufs_cmd_log_start(struct ufs_exynos_handle *handle,
+-			      struct ufs_hba *hba, int tag)
++static inline void exynos_ufs_cmd_log_start(struct ufs_exynos_handle *handle,
++					    struct ufs_hba *hba, int tag)
+ {
+ }
+ 
+-void exynos_ufs_cmd_log_end(struct ufs_exynos_handle *handle,
+-			    struct ufs_hba *hba, int tag)
++static inline void exynos_ufs_cmd_log_end(struct ufs_exynos_handle *handle,
++					  struct ufs_hba *hba, int tag)
+ {
+ }
+ 
+-int exynos_ufs_init_dbg(struct ufs_exynos_handle *handle, struct device *dev)
++static inline int exynos_ufs_init_dbg(struct ufs_exynos_handle *handle, struct device *dev)
+ {
  	return 0;
  }
  
--/**
-+/*
-  * exynos_ufs_auto_ctrl_hcc - HCI core clock control by h/w
-  * Control should be disabled in the below cases
-  * - Before host controller S/W reset
+-void exynos_ufs_dump_info(struct ufs_exynos_handle *handle, struct device *dev)
++static inline void exynos_ufs_dump_info(struct ufs_exynos_handle *handle, struct device *dev)
+ {
+ }
+ 
 -- 
 2.25.1
 
