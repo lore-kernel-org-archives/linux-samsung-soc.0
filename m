@@ -1,96 +1,95 @@
-Return-Path: <SRS0=UBsq=BA=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=dIYQ=BC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D5DC433EA
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jul 2020 08:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FFABC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jul 2020 08:44:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AA8A2080D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jul 2020 08:04:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595318690;
-	bh=DfcAnOdK3BxY6jqQpzn4sc8Wri40qkfysNtuloW83bs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EUZEdQVfA9viEn4S1YZOo3d/hE374mmQyznoTz/MeWVoeIHdJMmOVUPJsdCOvzOrz
-	 ZWEs2P/FLFlMoXEZq+2eHiPh1QOebTOTKtpYJsLrgiu0Xp7SKyoT+PBItX2cZFuubJ
-	 icC+rnni0aA7LcwEZt034DyqsBwhMmeeQ91Z1zl8=
+	by mail.kernel.org (Postfix) with ESMTP id 17A1E22B43
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jul 2020 08:44:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kxz381Fs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728345AbgGUIEr (ORCPT
+        id S1726975AbgGWIoJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Jul 2020 04:04:47 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53719 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726614AbgGUIEr (ORCPT
+        Thu, 23 Jul 2020 04:44:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52136 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbgGWIoI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Jul 2020 04:04:47 -0400
-Received: by mail-wm1-f67.google.com with SMTP id j18so1857174wmi.3;
-        Tue, 21 Jul 2020 01:04:45 -0700 (PDT)
+        Thu, 23 Jul 2020 04:44:08 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E601C0619E2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2020 01:44:08 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id z24so5455400ljn.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2020 01:44:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CkH2cH1tSHkiWUdx4NYvU3H/EJsQDUARMZQ26FKEGq4=;
+        b=kxz381FsxyT6cNf9sYuimdhuIrl8nxWcoY7uM46nPmZffugo6no1qzJr5aIXrKo7h2
+         5/8PKpg8A61z+wAa44SJdBgFVJmKEebebfWSTexkPuGPVtDBC+M8W2EETKfrxS/ajZbu
+         jrLJqSTpXgSXiW+U+t9OKLEoilfVGq/LOzePAnPruqfi0mbPianEerwMGFitwc7Zj1Ix
+         jwx6dUtf//RZoU+1i1gpp60/9sLPr1XTolu2Q1iQAAuEoUllIQ192rjwvvpx08okrahQ
+         YV0s8XPRp2ObxIqNjdJ3SXyRjL2Ip5CA52ocGM7KqHgdPd90tsqQTO0UAmjRMnGvGkwb
+         Q1Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=syvFVe39WCS6I7HZqBbb+16Wl3B+m141J405QHoInHE=;
-        b=WOzBDXudrswjLpFnCUlRp0S6MWhUH84fHHDeADyLAeXTDcg8axRSMifiRuaFsqaYQ6
-         amedgHwmpkqPRvxZg6ajVG3j18aImUnefB9npjZGSK/N33foieFdG94k8gdCXkS+hvuS
-         M7j0P6rGsgLJu8k+eqgHqXJQkFr3RTJLteR7oAXt77PguOYofV0Uu/7ds3GI74NLuaOa
-         jRkfbK0UIzNqTHvv7IMByIOgHvzaRMMJMK16pcy6bzam/MOI8fCWKaojUeorobdwghBb
-         yXhJPWCeQavFIDcaQMiIYV4OqGVDcaM0wD8Dcy/i+5uG7JUHpqwmCpS6kDqReFjQy7mr
-         wRrw==
-X-Gm-Message-State: AOAM53254MBRn8uINdEiBVFY8xGjlc/vDpkEPYoKAiXK0AXZpXzQycs3
-        mAzE19EOY0d72jFg7Nzq7hRKxqftEhM=
-X-Google-Smtp-Source: ABdhPJxda9SdlT7pF9+Os3z3GaDcUTXtBao7aheqKIsfkWKfKAqh6bpMotyBzTDIkJgsfF7Wf+I2vw==
-X-Received: by 2002:a7b:cb92:: with SMTP id m18mr2786559wmi.94.1595318684880;
-        Tue, 21 Jul 2020 01:04:44 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.200])
-        by smtp.googlemail.com with ESMTPSA id u65sm2545294wmg.5.2020.07.21.01.04.43
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 Jul 2020 01:04:44 -0700 (PDT)
-Date:   Tue, 21 Jul 2020 10:04:42 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Tamseel Shams <m.shams@samsung.com>
-Cc:     kgene@kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alim.akhtar@samsung.com
-Subject: Re: [PATCH v4] serial: samsung: change to platform_get_irq_optional
-Message-ID: <20200721080442.GA6580@kozik-lap>
-References: <CGME20200713141655epcas5p2cdd83477e4fc024457a2b08d8ebfbad0@epcas5p2.samsung.com>
- <20200713135531.68583-1-m.shams@samsung.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CkH2cH1tSHkiWUdx4NYvU3H/EJsQDUARMZQ26FKEGq4=;
+        b=W5D9MdUULvnfXpZmY5OUMy4c3yIBTRymLzXCp4PVdmpYPzLKjRhUWyUIDA7T87x63P
+         R9hLNj1oIQzhSUfidiipuYEoCF+yTW3QCtAJ4NdEcvQ/lWbwIG8puLytVJEL2jElhq4C
+         7XKd9MZ3yR1r8UCH6IPjrdVK9BHAVNMn63cWWnO0p2maRSj1awS8/90OS6GOaeUFZ4vV
+         mpQoGRt93uyvhNN3tDkWE+WXjEFNFuOQ14tn+ZUQluQKsgB99N8WKEkGRCMQWES4nY4L
+         HFhWNMT5h914mvUZd1iSzmQNEzKg938CCQGPmsVz6tJpqOyh+Mj2LfeCIj5kVThgH2ky
+         iJCA==
+X-Gm-Message-State: AOAM532LrWg/BCy/mhLNVfz+gWC1qCR0FENBQ6BlfiABdc7d6h+PxIDg
+        KPcYIQonNtHPKh/M3SU2t1zZqoCH9RTAgFYj9Vy0nw==
+X-Google-Smtp-Source: ABdhPJy9FYQzEz5+a+xAYCl+rAh2wms4y8ztY1F8hFb6jAnV1ZJBUBI6y73dlz37/bChnljh88y3BVK9wCTiobiTO6M=
+X-Received: by 2002:a05:651c:1291:: with SMTP id 17mr1628930ljc.286.1595493846705;
+ Thu, 23 Jul 2020 01:44:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200713135531.68583-1-m.shams@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200713144930.1034632-1-lee.jones@linaro.org>
+ <20200713144930.1034632-7-lee.jones@linaro.org> <20200720142714.GA6747@kozik-lap>
+ <20200720144955.GD3368211@dell> <20200720145219.GA23990@kozik-lap>
+In-Reply-To: <20200720145219.GA23990@kozik-lap>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 23 Jul 2020 10:43:55 +0200
+Message-ID: <CACRpkdaYQ3PEh838Qoxig4n1iNFp8AOj_Wk9jdvB-qMy0PBRKw@mail.gmail.com>
+Subject: Re: [PATCH 06/25] pinctrl: samsung: pinctrl-samsung: Demote obvious
+ misuse of kerneldoc to standard comment blocks
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Thomas Abraham <thomas.ab@samsung.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jul 13, 2020 at 07:25:31PM +0530, Tamseel Shams wrote:
-> In few older Samsung SoCs like s3c2410, s3c2412
-> and s3c2440, UART IP is having 2 interrupt lines.
-> However, in other SoCs like s3c6400, s5pv210,
-> exynos5433, and exynos4210 UART is having only 1
-> interrupt line. Due to this, "platform_get_irq(platdev, 1)"
-> call in the driver gives the following false-positive error:
-> "IRQ index 1 not found" on recent platforms.
-> 
-> This patch replaces the platform_get_irq() call with
-> platform_get_irq_optional() and hence avoiding the
-> false-positive error.
+On Mon, Jul 20, 2020 at 4:52 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Mon, Jul 20, 2020 at 03:49:55PM +0100, Lee Jones wrote:
 
-The error is not a false positive on S3C platforms, but a real error.
-The existing code did not handle missing TX IRQ but at least printed a
-message.  Your change hides the message.
+> > > Thanks, applied.
+> >
+> > Same as the others.  Already in -next.
+>
+> Thanks for letting me know. I dropped all of them.
 
-The real problem here is a missing error handling for TX interrupt.
-Solving this one, would solve also false-positive error message on newer
-SoCs.
+It's a bit tricky at times with clean-up topics, I want submaintainers to pick
+it up if possible so sorry about this, it's just too much to coordinate
+sometimes.
 
-Best regards,
-Krzysztof
-
+Yours,
+Linus Walleij
