@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9ACAC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 14:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C8FC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 14:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BCFB72063A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 14:16:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24B0C2063A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 14:16:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595600167;
-	bh=onJE2kg1lOrWB4sO35BBm9Eo7GH4oyn8dKPYU7FH3Ko=;
+	s=default; t=1595600202;
+	bh=TlQGCSs76AHJDCfzSLRE1yFfO6TACOL51UP+t9ekCec=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RD5ChJsfmzxSuCBedzVUOQQFwHn/i1OiFg84synEpUelWOeDt3GH5BtjULALoj4Xp
-	 blHQR+Bjx3znowuN1/4mdqKVmCmiwU+pY3qBiawnhYESGqED57cL2r2BvpjVlh0o5z
-	 9UQLRZXZH/Zav73mj53mP377jBXaItiQau6JVwmw=
+	b=iWveNYdF6nxfe4lS+fc66IGEEi0y9uKqWj+4eXJErT4lCozxIm1wAPhE32SaUaaW9
+	 IVo0oo0VYtPx5RkWg3FEUIWyGlOj9D/cxzkrsp+8CDo/Hrw2E+aHAHNvAECo0Liu65
+	 MclcNabewyg7ZthHQ65+baHkBC25edyWwfvRUZ8E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbgGXOQH (ORCPT
+        id S1726895AbgGXOQl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 10:16:07 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:47058 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbgGXOQH (ORCPT
+        Fri, 24 Jul 2020 10:16:41 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44937 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbgGXOQl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 10:16:07 -0400
-Received: by mail-ed1-f66.google.com with SMTP id q4so3918636edv.13;
-        Fri, 24 Jul 2020 07:16:05 -0700 (PDT)
+        Fri, 24 Jul 2020 10:16:41 -0400
+Received: by mail-ed1-f67.google.com with SMTP id by13so7123234edb.11;
+        Fri, 24 Jul 2020 07:16:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tY5Z6idGhGaqy3j7rWihq62kp3XpN6wVWhfnttBTXk8=;
-        b=h8MXWKG9WHaJ1tVmsXRheG9WQ7W50vXWtrWDseBZPYUPQVZzT46PtzN+OV+aqY0HuU
-         jdfV4wKLutrl/yB1ityAAIsqPaHArfSt/aDf+VD740HoA0Vea2wMxX/8z2WPsf/syzLh
-         nyhrbzbWndrajaaKvgiwJOz2y8QYizRlO6xiBhdKigAoN7wPSHEVN4w+ZBUHxkveLbIL
-         mfoF7WT40vW859Lgmavli21kQRgaBjMiGH8Vr1mXEIkHKQRKDUbNRCRWKFk2+m8+QmHX
-         zTTv19IZTbLOwAk8n4zzYOfkFabU1JysRc/1WHTcU9IJ0WHJAeuG3vcfNWqvBEzqI7us
-         ip7A==
-X-Gm-Message-State: AOAM533OM7PF5oqawpCQWvXdGd4efln6p8TAG6ZV/PUshoplb3ES1cV3
-        riGOS16OARKTVht1JPbHgjA6NVFD2zc=
-X-Google-Smtp-Source: ABdhPJxbtj3fM+AjJ6hvcrUuIeJieCO2lk2efSggfaPTyqvT5VX+nS/1FqCch3ryhjUR2m21oTec/g==
-X-Received: by 2002:a05:6402:1b1c:: with SMTP id by28mr9171688edb.270.1595600164984;
-        Fri, 24 Jul 2020 07:16:04 -0700 (PDT)
+        bh=0sb81io14/iZEElRAIKtQbO/0LNyji9cw16nJ0jDSPU=;
+        b=U4sXtDjURRyG/D7k4xTE5TEmxatK1efr8nujMlYIIUbEnyuNuEbqOHH6zbhzjwCBUD
+         MkMBV2ykZahcUsltZj0xHelVP4k4FkIb7FfeqRHQLpqxNu5wCM9zqORnCdU+5IJrzdz1
+         G1DG0be4Gf6u9gSUkxoChtGc+NTsifbPq8UBUF1RFbhq7TcZhfMHSlu6G4uuIs5sgTfV
+         ZiCIHdIVk4LVDfiRFt9MmCYFVrxvowFXYWiAM8s8ArmZTfeBtvru27Zytn6WyYNQRV0o
+         BZSzv1yU2I8h+DasnMCTuTjF815OMlxI15Wf0YvpEpDLZSnQibgaaDrwK9XzrsRNLGYG
+         LIIA==
+X-Gm-Message-State: AOAM530n4ZJ17PuGIbmm2BYvyJl1p7RFqOtrVzuFKGXwD6I4DkvUayjp
+        czDobmYUjPcHOvAgtnnuZeM=
+X-Google-Smtp-Source: ABdhPJxZz5FjCvbGUaml5g0kUTy9tq4Ud3q1Jr1TK7yBGK4mPmuoJK+Z/MVfq8HjdZ2+i6JCiMoMWQ==
+X-Received: by 2002:a05:6402:2064:: with SMTP id bd4mr9018052edb.180.1595600198137;
+        Fri, 24 Jul 2020 07:16:38 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.213])
-        by smtp.googlemail.com with ESMTPSA id fi29sm758336ejb.83.2020.07.24.07.16.02
+        by smtp.googlemail.com with ESMTPSA id v24sm773066eds.71.2020.07.24.07.16.35
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 24 Jul 2020 07:16:04 -0700 (PDT)
-Date:   Fri, 24 Jul 2020 16:16:01 +0200
+        Fri, 24 Jul 2020 07:16:37 -0700 (PDT)
+Date:   Fri, 24 Jul 2020 16:16:34 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         Markus Mayer <mmayer@broadcom.com>,
@@ -69,29 +69,30 @@ To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 23/29] memory: pl172: Add GPLv2 SPDX license header
-Message-ID: <20200724141601.GC10663@kozik-lap>
+Subject: Re: [PATCH v2 22/29] memory: omap-gpmc: Fix whitespace issue
+Message-ID: <20200724141634.GD10663@kozik-lap>
 References: <20200724074038.5597-1-krzk@kernel.org>
- <20200724074038.5597-24-krzk@kernel.org>
+ <20200724074038.5597-23-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200724074038.5597-24-krzk@kernel.org>
+In-Reply-To: <20200724074038.5597-23-krzk@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 09:40:32AM +0200, Krzysztof Kozlowski wrote:
-> Add GPLv2 license header and remove GPL boiler plate text.
+On Fri, Jul 24, 2020 at 09:40:31AM +0200, Krzysztof Kozlowski wrote:
+> Fix minor whitespace and comment issues.  No functional changes.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
 > ---
->  drivers/memory/pl172.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
 
 Applied (and part of pull request to arm-soc).
+
+For the other omap-gpmc testing is welcomed.
 
 Best regards,
 Krzysztof
