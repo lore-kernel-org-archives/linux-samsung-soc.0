@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C55C4345C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD18C4345F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F4FD20774
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A60D20825
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595576517;
-	bh=fStTa63/zlpMTDTDyAH0TKomthctGMET63ewzq4d76A=;
+	s=default; t=1595576524;
+	bh=Z8MuOz+oKCf2eX1Gix1+yisOoYg6lXsXqmuJC5dVEe4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FpOdzlnkwrcV/QSxOVguJIflYbwfutgzvsYzLmf4XsBTlGnHVGvMfh04Bfcx7JGRd
-	 PvczH0dy43qpK/nDn/HKA2DN+EHuNQ/PV49WdXZ9E84O3/63qnV+OxfSJZwTfC4UZ+
-	 x6C0koiRx3CLgvzkt6YwAsGURbKVHmQkk0v8Zpnc=
+	b=wHoU4UV4HTcv+oJh+GkMO+6q+JK4hm0P38z3NeGxQWXeB0PLa0I9X2xP++GfZbs/3
+	 6oXGK9FN0tg2bRylsev/LylEBxOpgOcc3Ag/+wxr1qaBciXZ5rcdFhW4tK5Cb/jbol
+	 Kv3O26llsQKOqU8CuiJ5RgZvx64P4iyjEfAMgXuU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbgGXHlx (ORCPT
+        id S1727942AbgGXHmA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 03:41:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35212 "EHLO mail.kernel.org"
+        Fri, 24 Jul 2020 03:42:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726591AbgGXHlu (ORCPT
+        id S1727921AbgGXHl7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 03:41:50 -0400
+        Fri, 24 Jul 2020 03:41:59 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A86E20767;
-        Fri, 24 Jul 2020 07:41:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBA0C2074F;
+        Fri, 24 Jul 2020 07:41:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595576509;
-        bh=fStTa63/zlpMTDTDyAH0TKomthctGMET63ewzq4d76A=;
+        s=default; t=1595576519;
+        bh=Z8MuOz+oKCf2eX1Gix1+yisOoYg6lXsXqmuJC5dVEe4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pqiP9f5jPgElV8ZGYS7hJAiccj1oGzr/PTxqSOz73i1+7jLNrGzCM3D4An9R419iJ
-         Jbay4ev352LbCTbzNiCcQG5NGpo8zmiKQNoXG/q6LBSparyQ7cFTetZs/NLQwXEYtt
-         PFjg4DMs8uJggb2xFGJQsbJj8SWXO6zBY+GNekfU=
+        b=uNwQdAcsnATv7hQA0Lrn9Cdl3YK45IejFRqKxfvibToH4PDyoEn8e5bJwZTTa+wvl
+         nq9SHZ26y3lvVvdpTBoPAGSIs400WQT567lMKaioL3HHr4cbsW4bsTnzrB1RxLGmNg
+         eq6HTShxDRY+VW88G4GM4tfm7tGasGGkO59Z6Mx4=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         Markus Mayer <mmayer@broadcom.com>,
@@ -59,9 +59,9 @@ To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 08/29] memory: of: Remove __func__ in device related messages
-Date:   Fri, 24 Jul 2020 09:40:17 +0200
-Message-Id: <20200724074038.5597-9-krzk@kernel.org>
+Subject: [PATCH v2 10/29] memory: of: Remove unneeded extern from function declarations
+Date:   Fri, 24 Jul 2020 09:40:19 +0200
+Message-Id: <20200724074038.5597-11-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200724074038.5597-1-krzk@kernel.org>
 References: <20200724074038.5597-1-krzk@kernel.org>
@@ -70,91 +70,52 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Messages printed by generic of_memory code will still be using device
-context so their location/meaning will be known.  Printing __func__ is
-not needed.
+Function declarations in headers do not need to come with extern
+keyword.  Remove them to make the declaration slightly shorter.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/memory/of_memory.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/memory/of_memory.h | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/memory/of_memory.c b/drivers/memory/of_memory.c
-index cfcb91eeccfb..8a5b654eca6b 100644
---- a/drivers/memory/of_memory.c
-+++ b/drivers/memory/of_memory.c
-@@ -4,6 +4,7 @@
+diff --git a/drivers/memory/of_memory.h b/drivers/memory/of_memory.h
+index e39ecc4c733d..4a99b232ab0a 100644
+--- a/drivers/memory/of_memory.h
++++ b/drivers/memory/of_memory.h
+@@ -3,22 +3,23 @@
+  * OpenFirmware helpers for memory drivers
   *
   * Copyright (C) 2012 Texas Instruments, Inc.
-  * Copyright (C) 2019 Samsung Electronics Co., Ltd.
 + * Copyright (C) 2020 Krzysztof Kozlowski <krzk@kernel.org>
   */
  
- #include <linux/device.h>
-@@ -54,7 +55,7 @@ const struct lpddr2_min_tck *of_get_min_tck(struct device_node *np,
- 	return min;
+ #ifndef __LINUX_MEMORY_OF_REG_H
+ #define __LINUX_MEMORY_OF_REG_H
  
- default_min_tck:
--	dev_warn(dev, "%s: using default min-tck values\n", __func__);
-+	dev_warn(dev, "Using default min-tck values\n");
- 	return &lpddr2_jedec_min_tck;
- }
- EXPORT_SYMBOL(of_get_min_tck);
-@@ -114,7 +115,7 @@ const struct lpddr2_timings *of_get_ddr_timings(struct device_node *np_ddr,
- 		tim_compat = "jedec,lpddr2-timings";
- 		break;
- 	default:
--		dev_warn(dev, "%s: un-supported memory type\n", __func__);
-+		dev_warn(dev, "Unsupported memory type\n");
- 	}
- 
- 	for_each_child_of_node(np_ddr, np_tim)
-@@ -143,7 +144,7 @@ const struct lpddr2_timings *of_get_ddr_timings(struct device_node *np_ddr,
- 	return timings;
- 
- default_timings:
--	dev_warn(dev, "%s: using default timings\n", __func__);
-+	dev_warn(dev, "Using default memory timings\n");
- 	*nr_frequencies = ARRAY_SIZE(lpddr2_jedec_timings);
- 	return lpddr2_jedec_timings;
- }
-@@ -191,8 +192,7 @@ const struct lpddr3_min_tck *of_lpddr3_get_min_tck(struct device_node *np,
- 	ret |= of_property_read_u32(np, "tMRD-min-tck", &min->tMRD);
- 
- 	if (ret) {
--		dev_warn(dev, "%s: errors while parsing min-tck values\n",
--			 __func__);
-+		dev_warn(dev, "Errors while parsing min-tck values\n");
- 		devm_kfree(dev, min);
- 		goto default_min_tck;
- 	}
-@@ -200,7 +200,7 @@ const struct lpddr3_min_tck *of_lpddr3_get_min_tck(struct device_node *np,
- 	return min;
- 
- default_min_tck:
--	dev_warn(dev, "%s: using default min-tck values\n", __func__);
-+	dev_warn(dev, "Using default min-tck values\n");
- 	return NULL;
- }
- EXPORT_SYMBOL(of_lpddr3_get_min_tck);
-@@ -262,7 +262,7 @@ const struct lpddr3_timings
- 		tim_compat = "jedec,lpddr3-timings";
- 		break;
- 	default:
--		dev_warn(dev, "%s: un-supported memory type\n", __func__);
-+		dev_warn(dev, "Unsupported memory type\n");
- 	}
- 
- 	for_each_child_of_node(np_ddr, np_tim)
-@@ -291,7 +291,7 @@ const struct lpddr3_timings
- 	return timings;
- 
- default_timings:
--	dev_warn(dev, "%s: failed to get timings\n", __func__);
-+	dev_warn(dev, "Failed to get timings\n");
- 	*nr_frequencies = 0;
- 	return NULL;
- }
+ #if defined(CONFIG_OF) && defined(CONFIG_DDR)
+-extern const struct lpddr2_min_tck *of_get_min_tck(struct device_node *np,
+-		struct device *dev);
+-extern const struct lpddr2_timings
+-	*of_get_ddr_timings(struct device_node *np_ddr, struct device *dev,
+-	u32 device_type, u32 *nr_frequencies);
+-extern const struct lpddr3_min_tck
+-	*of_lpddr3_get_min_tck(struct device_node *np, struct device *dev);
+-extern const struct lpddr3_timings
+-	*of_lpddr3_get_ddr_timings(struct device_node *np_ddr,
+-	struct device *dev, u32 device_type, u32 *nr_frequencies);
++const struct lpddr2_min_tck *of_get_min_tck(struct device_node *np,
++					    struct device *dev);
++const struct lpddr2_timings *of_get_ddr_timings(struct device_node *np_ddr,
++						struct device *dev,
++						u32 device_type, u32 *nr_frequencies);
++const struct lpddr3_min_tck *of_lpddr3_get_min_tck(struct device_node *np,
++						   struct device *dev);
++const struct lpddr3_timings *
++of_lpddr3_get_ddr_timings(struct device_node *np_ddr,
++			  struct device *dev, u32 device_type, u32 *nr_frequencies);
+ #else
+ static inline const struct lpddr2_min_tck
+ 	*of_get_min_tck(struct device_node *np, struct device *dev)
 -- 
 2.17.1
 
