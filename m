@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5096DC43462
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD891C4345B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2220020774
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A498920774
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595576555;
-	bh=FgOxaXut3KMNgsxRSkJGLlmDOsLTEuccL9YQdrk1EKs=;
+	s=default; t=1595576565;
+	bh=q3j/pctKuGz1PK+SF65LyM0Wzy/rnfsCYc63Wa9bVUY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OlyzITlZd9kZxE1Jvvn6WnNc+a9eArY8Lv4Xt02XVAwFdj/hGde1TdzslrN8t6bTf
-	 3Me7353b496VMUDSeDukj6l4tZX1ZTIAXSSMJpiYwB2KttWSYWJBea3evgObCfgSBb
-	 VlNAX23PyGhV0U5JLPNylua9nYs/+XDpv/8LWcQU=
+	b=lYvoTNL4pMVdavU7ZCjqcjDG2NIsdG8S1ifdbK4mCDDeBDduwRdJaHIoZrN9dNTug
+	 A/9cP9NZII9T/Q2D8rG+mshE+QrqlS0WAmPx5Pwy3221phBiyd7SdKuIJ74a2CwUaG
+	 ygIR29bEb2V2rxjmhfnjO5233GWwyo99ccirwkxE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbgGXHme (ORCPT
+        id S1727915AbgGXHmp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 03:42:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36338 "EHLO mail.kernel.org"
+        Fri, 24 Jul 2020 03:42:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726617AbgGXHme (ORCPT
+        id S1726617AbgGXHmn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 03:42:34 -0400
+        Fri, 24 Jul 2020 03:42:43 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 370242074F;
-        Fri, 24 Jul 2020 07:42:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCFA820748;
+        Fri, 24 Jul 2020 07:42:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595576553;
-        bh=FgOxaXut3KMNgsxRSkJGLlmDOsLTEuccL9YQdrk1EKs=;
+        s=default; t=1595576563;
+        bh=q3j/pctKuGz1PK+SF65LyM0Wzy/rnfsCYc63Wa9bVUY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jfXZfekvKtnfezKe0L5biigo+3u1XLWKCF0LFLhzaROG3Lj6dIEEQ7Noe6GgTFMVa
-         HKPWZYqlOnNHqk6D092qoQQMckyQ8OCvtuN+gqAY8YtiZPpGPoKyTYCDnHGMLc0eg4
-         QW0R43G5pmqygVqFxOKeliX4OYNwfcyRYdL36AaU=
+        b=1SbShUFsrFSezguh0KZ4msnaWbrWbFmyooWVoPuSdMhr4/GJgtOqtQ8AzQ+/5S5q5
+         jyT0GRtOpmpaXUjvZIciOScRrTYTU4ZoJYRzYDvIE0O1t76s8OIKrkB8xzi2Q2e9k8
+         HgW6k5sAzFpqaaSHPzkV4HwwZCNSymGXVAkUMuOw=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         Markus Mayer <mmayer@broadcom.com>,
@@ -59,9 +59,9 @@ To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 17/29] memory: brcmstb_dpfe: Constify the contents of string
-Date:   Fri, 24 Jul 2020 09:40:26 +0200
-Message-Id: <20200724074038.5597-18-krzk@kernel.org>
+Subject: [PATCH v2 19/29] memory: mtk-smi: Add argument to function pointer definition
+Date:   Fri, 24 Jul 2020 09:40:28 +0200
+Message-Id: <20200724074038.5597-20-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200724074038.5597-1-krzk@kernel.org>
 References: <20200724074038.5597-1-krzk@kernel.org>
@@ -70,27 +70,26 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The string itself can be made const for safety.
+Fix checkpatch warning:
+    WARNING: function definition argument 'struct device *' should also have an identifier name
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-Acked-by: Markus Mayer <mmayer@broadcom.com>
 ---
- drivers/memory/brcmstb_dpfe.c | 2 +-
+ drivers/memory/mtk-smi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/memory/brcmstb_dpfe.c b/drivers/memory/brcmstb_dpfe.c
-index 82b415be18d1..5942380f343b 100644
---- a/drivers/memory/brcmstb_dpfe.c
-+++ b/drivers/memory/brcmstb_dpfe.c
-@@ -188,7 +188,7 @@ struct brcmstb_dpfe_priv {
- 	struct mutex lock;
- };
+diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
+index 109c7e51d551..c21262502581 100644
+--- a/drivers/memory/mtk-smi.c
++++ b/drivers/memory/mtk-smi.c
+@@ -60,7 +60,7 @@ struct mtk_smi_common_plat {
  
--static const char *error_text[] = {
-+static const char * const error_text[] = {
- 	"Success", "Header code incorrect", "Unknown command or argument",
- 	"Incorrect checksum", "Malformed command", "Timed out",
+ struct mtk_smi_larb_gen {
+ 	int port_in_larb[MTK_LARB_NR_MAX + 1];
+-	void (*config_port)(struct device *);
++	void (*config_port)(struct device *dev);
+ 	unsigned int			larb_direct_to_common_mask;
+ 	bool				has_gals;
  };
 -- 
 2.17.1
