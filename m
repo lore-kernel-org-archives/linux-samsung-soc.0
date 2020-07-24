@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA838C433E8
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 457F0C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EDA420748
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:41:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2372A20767
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:41:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595576479;
-	bh=KiDwqvrscO65tnWPq/R2OB/B66P+AwuiFwhSifChdeU=;
+	s=default; t=1595576483;
+	bh=Bt/ODkou+h7UXM3XoTT6oTEvvX96jMbrnoncqKrBSPA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MIQHOH0KQ/OCyZCu8gBfYERggqL7sUmhFYkb9aY4FoQP/InMrG4RLobDRC+h89M1y
-	 S0IRbcaYMVaudok/+3OWhuzc1qEfPuGTA4Mntx+OhoWCP9qn8Bj5h91z3Ad/ILw0qk
-	 XhR+ywYa/dy9bYklI5uYMTpHrhiaXsBShVelQBcc=
+	b=dMd/+BWV+FSLYoAH/BlSLEfAmQ8mokmBDsdJb+vEq2jvbQKQNWDMZkcbBGXnoLXEa
+	 mHHvgv0KJ1Aluu51oCs8d8mdpRhu3larQ6IM3BQbOQ9dPDmHtvFU8wUjTjJIrbYknN
+	 iunHvdTibNUe1a8b+/V+d3bYRr69KPn217aRjXEA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726938AbgGXHlQ (ORCPT
+        id S1727012AbgGXHlU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 03:41:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34478 "EHLO mail.kernel.org"
+        Fri, 24 Jul 2020 03:41:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbgGXHlP (ORCPT
+        id S1726567AbgGXHlU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 03:41:15 -0400
+        Fri, 24 Jul 2020 03:41:20 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FE9B2076A;
-        Fri, 24 Jul 2020 07:41:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B14E2074F;
+        Fri, 24 Jul 2020 07:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595576474;
-        bh=KiDwqvrscO65tnWPq/R2OB/B66P+AwuiFwhSifChdeU=;
+        s=default; t=1595576479;
+        bh=Bt/ODkou+h7UXM3XoTT6oTEvvX96jMbrnoncqKrBSPA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T/rBikX2msY/5l648B45mYjYFJEWzKwO4gggRv1+ATKEAM8Gt4IQ+pRCzXOquN3Qq
-         JrJ1gzK66YYv/Sj/kiGpiO4YPWLK6lgzvnGE/S6bpDYZ0G4/PqbW1stqrhvIMxO8qx
-         CvoTXNWwmtzbE80yzXs6XfUW4aSl4z3rWSt5Vg/c=
+        b=DalSWzsWoGQcDrririhVVo43b1awBPFRnkQ/ke9MWRXRFJcUbhi+jLnD838DC7sZf
+         AIYSTNNlqJfS9c481DLcmr0C1owj0rYCpKZfvzwugly82CniG1pkDfXkqlvIWwQnUZ
+         UDtllsiCmgwHAqH1yXtgp5B7njOmwPIvYfHNnXcQ=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         Markus Mayer <mmayer@broadcom.com>,
@@ -59,39 +59,65 @@ To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT v2 01/29] memory: omap-gpmc: Remove unneeded asm/mach-types.h inclusion
-Date:   Fri, 24 Jul 2020 09:40:10 +0200
-Message-Id: <20200724074038.5597-2-krzk@kernel.org>
+Subject: [RFT v2 02/29] memory: omap-gpmc: Remove unused file-scope phys_base and mem_size
+Date:   Fri, 24 Jul 2020 09:40:11 +0200
+Message-Id: <20200724074038.5597-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200724074038.5597-1-krzk@kernel.org>
 References: <20200724074038.5597-1-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The driver does not use macros from asm/mach-types.h (neither MACH_TYPE
-nor machine_is_xxx()).  Removal of this include allows compile testing
-on non-ARM architectures which lack this header.
+The file-scope variables phys_base and mem_size are assigned in
+gpmc_probe() but never read.
+
+This fixes build error when compile testing on x86_64 architecture:
+
+    drivers/memory/omap-gpmc.c:246:24: error: conflicting types for ‘phys_base’
+     static resource_size_t phys_base, mem_size;
+    In file included from arch/x86/include/asm/page.h:12:0,
+                     from arch/x86/include/asm/thread_info.h:12,
+                     from include/linux/thread_info.h:38,
+                     from arch/x86/include/asm/preempt.h:7,
+                     from include/linux/preempt.h:78,
+                     from include/linux/spinlock.h:51,
+                     from include/linux/irq.h:14,
+                     from drivers/memory/omap-gpmc.c:12:
+    arch/x86/include/asm/page_64.h:12:22: note: previous declaration of ‘phys_base’ was here
+     extern unsigned long phys_base;
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/memory/omap-gpmc.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/memory/omap-gpmc.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
 diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
-index eff26c1b1394..fc08b5292932 100644
+index fc08b5292932..8ec2ef2aebdd 100644
 --- a/drivers/memory/omap-gpmc.c
 +++ b/drivers/memory/omap-gpmc.c
-@@ -32,8 +32,6 @@
+@@ -242,7 +242,6 @@ static DEFINE_SPINLOCK(gpmc_mem_lock);
+ /* Define chip-selects as reserved by default until probe completes */
+ static unsigned int gpmc_cs_num = GPMC_CS_NUM;
+ static unsigned int gpmc_nr_waitpins;
+-static resource_size_t phys_base, mem_size;
+ static unsigned gpmc_capability;
+ static void __iomem *gpmc_base;
  
- #include <linux/platform_data/mtd-nand-omap2.h>
+@@ -2357,9 +2356,6 @@ static int gpmc_probe(struct platform_device *pdev)
+ 	if (res == NULL)
+ 		return -ENOENT;
  
--#include <asm/mach-types.h>
+-	phys_base = res->start;
+-	mem_size = resource_size(res);
 -
- #define	DEVICE_NAME		"omap-gpmc"
- 
- /* GPMC register offsets */
+ 	gpmc_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(gpmc_base))
+ 		return PTR_ERR(gpmc_base);
 -- 
 2.17.1
 
