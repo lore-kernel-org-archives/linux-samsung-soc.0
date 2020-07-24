@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C48DC43616
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4E0C43619
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03F302073E
+	by mail.kernel.org (Postfix) with ESMTP id DAA882073E
 	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1595615132;
-	bh=mzqyDslgXyru9ThgDEx6mSS2S/hN5QaatlIUgMTpLls=;
+	bh=5ktWSQf2OJMglO4ygaUgTJ1Ba7h5629G/Zz5/4zxDMA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bnWT7zMYB2lqY2yNpulBUTu5Ifx6HFhySmmSb05dMUTZ+icaSrLc7VSKxHQZqwuWR
-	 B+Oi9CyWg4Fgo5fi1TcLnUyx5V2K9iNaZKJQlLTjtR8qSJdq3Rj4MBbgtbt4o2Qagf
-	 NdGIRbXuPV8+zpmjAsEelvr5LDnohmzYs6R7jNlY=
+	b=uWn+f8giV3YU3k5pO+8BJrr2yDeCu9JXEfzHwpxXUJ7bqnnWDM8NffMipBYQZdllQ
+	 wHw70eYrasdhqBwS0vb+pMP8Ils6cZgJOyZVef5K1eaFz8XC6+lBzX3I9nEXGtm+a8
+	 ofhze0aKXhoEz2bO+V/BCOOiAetUqff4LGu509no=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbgGXSZ0 (ORCPT
+        id S1727026AbgGXSYj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 14:25:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34660 "EHLO mail.kernel.org"
+        Fri, 24 Jul 2020 14:24:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726892AbgGXSZY (ORCPT
+        id S1726988AbgGXSYi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 14:25:24 -0400
+        Fri, 24 Jul 2020 14:24:38 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 520FA207DF;
-        Fri, 24 Jul 2020 18:25:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DAD02070E;
+        Fri, 24 Jul 2020 18:24:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595615124;
-        bh=mzqyDslgXyru9ThgDEx6mSS2S/hN5QaatlIUgMTpLls=;
+        s=default; t=1595615078;
+        bh=5ktWSQf2OJMglO4ygaUgTJ1Ba7h5629G/Zz5/4zxDMA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EdkiyoX2t7hVc/xNS97HZkMxePcYUwXRHyIbBaSPKAfm6X910GkHTfQbkOEXxlZDg
-         ceJacWRxRsWIotLp8cQawCUJ9QXvhq8wtmmANLdjznV4ECvSwfDrRhUucBxAdYHfrD
-         zlNFZC/Ydw3PmIA9EkDjRyo+Ehp/uDzNI2OEhbnQ=
+        b=XBjUNT7l1oq+0hJwD2MqadgYTwGwuydK038bDcpD1LuwEDSGb69j5LKquC6bCgvh7
+         fJBOgA/0C79hQ5cTAQv5R4fjb0UPp49shcH+ohBlLJs28GOooOaa9YcrOE6+Ii5KXx
+         dSmUT5VhZj1QY09IxYk18cctDju8cxdg14kwLHWI=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <rjui@broadcom.com>,
@@ -59,9 +59,9 @@ To:     Florian Fainelli <f.fainelli@gmail.com>,
         linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-pm@vger.kernel.org
 Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 16/16] memory: samsung: exynos5422-dmc: Correct white space issues
-Date:   Fri, 24 Jul 2020 20:23:28 +0200
-Message-Id: <20200724182328.3348-17-krzk@kernel.org>
+Subject: [PATCH 06/16] memory: omap-gpmc: Use 'unsigned int' for consistency
+Date:   Fri, 24 Jul 2020 20:23:18 +0200
+Message-Id: <20200724182328.3348-7-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200724182328.3348-1-krzk@kernel.org>
 References: <20200724182328.3348-1-krzk@kernel.org>
@@ -70,34 +70,35 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Remove unneeded blank line and align indentation with open parenthesis.
+Driver uses 'unsigned int' in other places instead of 'unsigned'.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/memory/samsung/exynos5422-dmc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/memory/omap-gpmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
-index 0388066a7d96..62a7193e3904 100644
---- a/drivers/memory/samsung/exynos5422-dmc.c
-+++ b/drivers/memory/samsung/exynos5422-dmc.c
-@@ -1394,7 +1394,7 @@ static int exynos5_dmc_probe(struct platform_device *pdev)
- 		return PTR_ERR(dmc->base_drexi1);
+diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+index 62577255ba0f..e4d2f359bcfa 100644
+--- a/drivers/memory/omap-gpmc.c
++++ b/drivers/memory/omap-gpmc.c
+@@ -243,7 +243,7 @@ static DEFINE_SPINLOCK(gpmc_mem_lock);
+ /* Define chip-selects as reserved by default until probe completes */
+ static unsigned int gpmc_cs_num = GPMC_CS_NUM;
+ static unsigned int gpmc_nr_waitpins;
+-static unsigned gpmc_capability;
++static unsigned int gpmc_capability;
+ static void __iomem *gpmc_base;
  
- 	dmc->clk_regmap = syscon_regmap_lookup_by_phandle(np,
--				"samsung,syscon-clk");
-+							  "samsung,syscon-clk");
- 	if (IS_ERR(dmc->clk_regmap))
- 		return PTR_ERR(dmc->clk_regmap);
+ static struct clk *gpmc_l3_clk;
+@@ -1289,7 +1289,7 @@ int gpmc_omap_onenand_set_timings(struct device *dev, int cs, int freq,
+ }
+ EXPORT_SYMBOL_GPL(gpmc_omap_onenand_set_timings);
  
-@@ -1473,7 +1473,6 @@ static int exynos5_dmc_probe(struct platform_device *pdev)
- 		exynos5_dmc_df_profile.polling_ms = 500;
- 	}
- 
--
- 	dmc->df = devm_devfreq_add_device(dev, &exynos5_dmc_df_profile,
- 					  DEVFREQ_GOV_SIMPLE_ONDEMAND,
- 					  &dmc->gov_data);
+-int gpmc_get_client_irq(unsigned irq_config)
++int gpmc_get_client_irq(unsigned int irq_config)
+ {
+ 	if (!gpmc_irq_domain) {
+ 		pr_warn("%s called before GPMC IRQ domain available\n",
 -- 
 2.17.1
 
