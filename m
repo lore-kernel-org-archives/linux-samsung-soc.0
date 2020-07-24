@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E1BC433F8
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2685EC4345A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D97342074F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECE9D2074F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595576544;
-	bh=F8/rcj75C8QDyRhC1fqjTttvRAlPLacLZsrsJfSBM8k=;
+	s=default; t=1595576560;
+	bh=Ghgwe3gjfURJUO55ZBx1GA8tQG5sLuihQjn3oQ0A+6w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OL+YqMAQM6S5LypEypVAjHp4IIdpC7izEEd1qeUyNASYqPmYHuOtNwvrDwN+H8LDs
-	 Sen3ZKy8nZKMM6LAqhDC/RKNwuvr9XVhLe4bRz/sg6GmhN4u5EZeX/iUC6o5VnE/7U
-	 y0wwOtUpdIX7FMCv4P3GxTjXcpC5KiGPaHDFexKE=
+	b=fMf7T+/zB4+PccZowylSyV9zSaaEFDKUZZ5eBp5MyqD4/xlcsLBw3JdPWEP6LylL7
+	 sn3YNFLOkyXL9u3qBKsMf7B3CAEXsXBHJCLeTZ4GibrMarpB1fUsqSYoaRwi+yY8lI
+	 FPr1Dt6ENQBn60RtQlnlkpu0U7ZTi3KQt0o/qCAM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbgGXHmY (ORCPT
+        id S1728000AbgGXHmj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 03:42:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36080 "EHLO mail.kernel.org"
+        Fri, 24 Jul 2020 03:42:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726617AbgGXHmY (ORCPT
+        id S1726617AbgGXHmj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 03:42:24 -0400
+        Fri, 24 Jul 2020 03:42:39 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A90820786;
-        Fri, 24 Jul 2020 07:42:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0315E20768;
+        Fri, 24 Jul 2020 07:42:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595576543;
-        bh=F8/rcj75C8QDyRhC1fqjTttvRAlPLacLZsrsJfSBM8k=;
+        s=default; t=1595576558;
+        bh=Ghgwe3gjfURJUO55ZBx1GA8tQG5sLuihQjn3oQ0A+6w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sUF5n11mVJXCaxP4/pSPjd9EKKC/66XC4eBvN2akUNK7acTNqGbkk+NOzeUtHzVSq
-         n/JP6us12cXRmdHpnmFWyg24OcGln0CARZBDGH+KSCaghM6t707lLsLPZnb60VmRqD
-         FN4TmVxLjo/xpDWjhXk/HD09x7SGWG5NgELTtXiA=
+        b=hf10y5eGPMpMirF29LtX8LvWqpzjqbm3YK94XVS1sRpM3mZbyNFVC+rPIwzLUmzBJ
+         ckZshP7Y/wd99Ff/7nnl2+nGwCOIhY5BRtjMVADoU1GwBHtoyoGgRPnz77E255EWHX
+         RnAnLfSF567ej8mQ+w/YUnDH1Xx+wTO0fQo8RLGU=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         Markus Mayer <mmayer@broadcom.com>,
@@ -59,9 +59,9 @@ To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 15/29] memory: ti-emif-pm: Fix cast to iomem pointer
-Date:   Fri, 24 Jul 2020 09:40:24 +0200
-Message-Id: <20200724074038.5597-16-krzk@kernel.org>
+Subject: [PATCH v2 18/29] memory: brcmstb_dpfe: Remove unneeded braces
+Date:   Fri, 24 Jul 2020 09:40:27 +0200
+Message-Id: <20200724074038.5597-19-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200724074038.5597-1-krzk@kernel.org>
 References: <20200724074038.5597-1-krzk@kernel.org>
@@ -70,30 +70,32 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Cast pointer to iomem memory properly to fix sparse warning:
+Single statement blocks don't need braces.  Fixes checkpatch warning:
 
-    drivers/memory/ti-emif-pm.c:251:38: warning: incorrect type in argument 1 (different address spaces)
-    drivers/memory/ti-emif-pm.c:251:38:    expected void const volatile [noderef] __iomem *addr
-    drivers/memory/ti-emif-pm.c:251:38:    got void *
+    WARNING: braces {} are not necessary for single statement blocks
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Acked-by: Markus Mayer <mmayer@broadcom.com>
 ---
- drivers/memory/ti-emif-pm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/memory/brcmstb_dpfe.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/memory/ti-emif-pm.c b/drivers/memory/ti-emif-pm.c
-index 9c90f815ad3a..6c747c1e98cb 100644
---- a/drivers/memory/ti-emif-pm.c
-+++ b/drivers/memory/ti-emif-pm.c
-@@ -248,7 +248,7 @@ MODULE_DEVICE_TABLE(of, ti_emif_of_match);
- static int ti_emif_resume(struct device *dev)
- {
- 	unsigned long tmp =
--			__raw_readl((void *)emif_instance->ti_emif_sram_virt);
-+			__raw_readl((void __iomem *)emif_instance->ti_emif_sram_virt);
+diff --git a/drivers/memory/brcmstb_dpfe.c b/drivers/memory/brcmstb_dpfe.c
+index 5942380f343b..604f0e3fb112 100644
+--- a/drivers/memory/brcmstb_dpfe.c
++++ b/drivers/memory/brcmstb_dpfe.c
+@@ -379,9 +379,8 @@ static void __iomem *get_msg_ptr(struct brcmstb_dpfe_priv *priv, u32 response,
+ 	void __iomem *ptr = NULL;
  
- 	/*
- 	 * Check to see if what we are copying is already present in the
+ 	/* There is no need to use this function for API v3 or later. */
+-	if (unlikely(priv->dpfe_api->version >= 3)) {
++	if (unlikely(priv->dpfe_api->version >= 3))
+ 		return NULL;
+-	}
+ 
+ 	msg_type = (response >> DRAM_MSG_TYPE_OFFSET) & DRAM_MSG_TYPE_MASK;
+ 	offset = (response >> DRAM_MSG_ADDR_OFFSET) & DRAM_MSG_ADDR_MASK;
 -- 
 2.17.1
 
