@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 196CEC433FB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 847E9C43445
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F09BD207BB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69E30206F0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595615113;
-	bh=muCyaGVz+SpXbnkfAtqPQlZm2UB0n+WNFxw7LeFuqDM=;
+	s=default; t=1595615117;
+	bh=Vl/dugxAyzjWbfR0Cyd+BAILFtMv+EqLyvmIFi2Uc4M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ssvw/5BijDAh4A3FJLARbyA35Ne3nhh3E+eg9UBq7gNHjDVGOqLhw+uucCAXKQSQM
-	 GQkR1d5pqGN4+XlbF9rK5483nH6pdBrt+WAa94OYwt7l+2RlOVhz/HyFpPZwwPC5yJ
-	 MMv8IL+zHtnztrCQCh6exdw/DFijPQgLuF4+54/Q=
+	b=NMTfaT8GhPxsSztpz3+5g2NTEFS+aruVmDqUcJAXOCmRwmIAJrzX1Qv66bWpidOxG
+	 8GmfNi3T0woERoU8KRAROqFVV/sr5UwDPb2zpkQdIUG0ClXtglx5JQlAaa1Gj94cD3
+	 w3adUekzN3KccBeIEcFnAae/ZE4RxtnlcxRImxBA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbgGXSZM (ORCPT
+        id S1727788AbgGXSYw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 14:25:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34238 "EHLO mail.kernel.org"
+        Fri, 24 Jul 2020 14:24:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726892AbgGXSZL (ORCPT
+        id S1727089AbgGXSYw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 14:25:11 -0400
+        Fri, 24 Jul 2020 14:24:52 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48CE120748;
-        Fri, 24 Jul 2020 18:25:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D11B720771;
+        Fri, 24 Jul 2020 18:24:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595615110;
-        bh=muCyaGVz+SpXbnkfAtqPQlZm2UB0n+WNFxw7LeFuqDM=;
+        s=default; t=1595615092;
+        bh=Vl/dugxAyzjWbfR0Cyd+BAILFtMv+EqLyvmIFi2Uc4M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MyAQphoHz6ZKWzm8WDqVhc0uJvYtNKtckbOXOCw1edLC4wC3kxU8ua3nKzM0N21fG
-         CokWlmAbw0XmcN9V2uZ7EL5tfiB8UjFBz8bRjrLCsynP7kPzseOozm1iO9+Ghb3T21
-         Oswyr6CTGpkNmw4bGTO41hKWHjGDofJJHrx8KJlw=
+        b=zMf6q4K/a55Nf4iNIM966rSC9Xi3o8hA6YX2Xs50eYlq/F+w2qj/EACT9fsCo9OMG
+         ja96IRCrULjLUbfYtRZvfaSPsU+wpzsBeuF/8BJ61VYnkJJAJU8HAi3KpNNzc1vLUD
+         It+Y/GUs9l+OBdQchlBgYDo5ZoXT1aTREYE64PlE=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <rjui@broadcom.com>,
@@ -59,9 +59,9 @@ To:     Florian Fainelli <f.fainelli@gmail.com>,
         linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-pm@vger.kernel.org
 Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 13/16] memory: of: Correct kerneldoc
-Date:   Fri, 24 Jul 2020 20:23:25 +0200
-Message-Id: <20200724182328.3348-14-krzk@kernel.org>
+Subject: [PATCH 09/16] memory: omap-gpmc: Fix language typo
+Date:   Fri, 24 Jul 2020 20:23:21 +0200
+Message-Id: <20200724182328.3348-10-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200724182328.3348-1-krzk@kernel.org>
 References: <20200724182328.3348-1-krzk@kernel.org>
@@ -70,37 +70,26 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use proper kerneldoc to fix GCC warnings like:
-
-   drivers/memory/of_memory.c:30: warning: Function parameter or member 'dev' not described in 'of_get_min_tck'
+Fix arbitary -> arbitrary.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/memory/of_memory.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/memory/omap-gpmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/memory/of_memory.c b/drivers/memory/of_memory.c
-index 67b811cb2cb9..d9f5437d3bce 100644
---- a/drivers/memory/of_memory.c
-+++ b/drivers/memory/of_memory.c
-@@ -18,7 +18,7 @@
- /**
-  * of_get_min_tck() - extract min timing values for ddr
-  * @np: pointer to ddr device tree node
-- * @device: device requesting for min timing values
-+ * @dev: device requesting for min timing values
-  *
-  * Populates the lpddr2_min_tck structure by extracting data
-  * from device tree node. Returns a pointer to the populated
-@@ -155,7 +155,7 @@ EXPORT_SYMBOL(of_get_ddr_timings);
- /**
-  * of_lpddr3_get_min_tck() - extract min timing values for lpddr3
-  * @np: pointer to ddr device tree node
-- * @device: device requesting for min timing values
-+ * @dev: device requesting for min timing values
-  *
-  * Populates the lpddr3_min_tck structure by extracting data
-  * from device tree node. Returns a pointer to the populated
+diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+index 414bfb481266..76a9c700cbd5 100644
+--- a/drivers/memory/omap-gpmc.c
++++ b/drivers/memory/omap-gpmc.c
+@@ -2126,7 +2126,7 @@ static int gpmc_probe_generic_child(struct platform_device *pdev,
+ 	gpmc_cs_disable_mem(cs);
+ 
+ 	/*
+-	 * FIXME: gpmc_cs_request() will map the CS to an arbitary
++	 * FIXME: gpmc_cs_request() will map the CS to an arbitrary
+ 	 * location in the gpmc address space. When booting with
+ 	 * device-tree we want the NOR flash to be mapped to the
+ 	 * location specified in the device-tree blob. So remap the
 -- 
 2.17.1
 
