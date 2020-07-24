@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4824C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A500AC43461
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94B9F2070B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:24:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 861C3207BB
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:24:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595615075;
-	bh=j4OZBd61HSNkr1Rlja2ZzFgA907VpAkAmZpKbAqpmVE=;
+	s=default; t=1595615092;
+	bh=x7xMPArX2Q8l2DRbmFscnClk9ELgBMvWmqASsxDhbfU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XuoEc6dpKP4o0V5K99a2Dd40djfuVlebhpUcE4ypyhfghzPfZXYf4s568CPaW5fSK
-	 oV153615tWUMg/UbsJ8+NztIcFyN4rAaolGKkvEavHI/WY6G5rMaoaVH627wdy28x+
-	 hY7Y9BFpsx1v5RPmFnoE1FLaEi4HESLn7lyp3VAE=
+	b=CYGRIzWlIvTqYZ0d4R6jiWSX0SSzQAnmm1pCtwcgx2cBhwSJ99zshylEcMHL8bGr1
+	 ypnJeFyv6YZy4Dy32IVLRHvfofthl+PEoHzrQLP9DVr5rpCn/4HmNHMC3FwY0T2ufJ
+	 aNlrPuaBbmk680WUSFNHKvODb4QlFepXs0xgXvNE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbgGXSYf (ORCPT
+        id S1727768AbgGXSYs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 14:24:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33126 "EHLO mail.kernel.org"
+        Fri, 24 Jul 2020 14:24:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726988AbgGXSYe (ORCPT
+        id S1727089AbgGXSYr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 14:24:34 -0400
+        Fri, 24 Jul 2020 14:24:47 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87B7F2073E;
-        Fri, 24 Jul 2020 18:24:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C59D2070E;
+        Fri, 24 Jul 2020 18:24:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595615073;
-        bh=j4OZBd61HSNkr1Rlja2ZzFgA907VpAkAmZpKbAqpmVE=;
+        s=default; t=1595615087;
+        bh=x7xMPArX2Q8l2DRbmFscnClk9ELgBMvWmqASsxDhbfU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k8QAns7qKb8Dc2oZQ/yfh5QXJZiffCMebqBOUuQS/n3u0dNw1MP9UNKdN9CfXyxUv
-         42wvVlq4zIQ3R+8VW9b2MVS0KBJ88HgJvxQcJXOQDbggs/neMOTEwHwcFwdGxD8hKW
-         ddpcK2x6tzwTXJ4ERLJkOutwIka1XgMsxGymt67Y=
+        b=j31dWumhoDOzSWirJxjWIezRfGLMLhjbROt5uNI8OIOlYwx76qTFnhOAKg0DKEsmi
+         67JXGcHTpUlZS+i63RgYBLAeKpFN5z0+wIT9YBUWzHmPtKEsLMHP5JkNNtGf8KpEJx
+         pLaaUXFbqLOGCcqs9k64pNZTjlD786U8B6GUuPlE=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <rjui@broadcom.com>,
@@ -59,9 +59,9 @@ To:     Florian Fainelli <f.fainelli@gmail.com>,
         linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-pm@vger.kernel.org
 Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 05/16] memory: omap-gpmc: Enclose macro argument usage in parenthesis
-Date:   Fri, 24 Jul 2020 20:23:17 +0200
-Message-Id: <20200724182328.3348-6-krzk@kernel.org>
+Subject: [RFT 08/16] memory: omap-gpmc: Use WARN() instead of BUG() on wrong free
+Date:   Fri, 24 Jul 2020 20:23:20 +0200
+Message-Id: <20200724182328.3348-9-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200724182328.3348-1-krzk@kernel.org>
 References: <20200724182328.3348-1-krzk@kernel.org>
@@ -70,64 +70,32 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Macros arguments should be enclosed by parenthesis for safety.
+Since driver tracks reserved memory, freeing a non-reserved GPMC should
+not be fatal and crash the system.  Printing a warning is friendlier.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
 ---
- drivers/memory/omap-gpmc.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+
+Not tested on HW.
+---
+ drivers/memory/omap-gpmc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
-index c91a021ac421..62577255ba0f 100644
+index 9339a7c75fdd..414bfb481266 100644
 --- a/drivers/memory/omap-gpmc.c
 +++ b/drivers/memory/omap-gpmc.c
-@@ -107,8 +107,8 @@
- #define ENABLE_PREFETCH		(0x1 << 7)
- #define DMA_MPU_MODE		2
+@@ -1072,8 +1072,7 @@ void gpmc_cs_free(int cs)
  
--#define	GPMC_REVISION_MAJOR(l)		((l >> 4) & 0xf)
--#define	GPMC_REVISION_MINOR(l)		(l & 0xf)
-+#define	GPMC_REVISION_MAJOR(l)		(((l) >> 4) & 0xf)
-+#define	GPMC_REVISION_MINOR(l)		((l) & 0xf)
- 
- #define	GPMC_HAS_WR_ACCESS		0x1
- #define	GPMC_HAS_WR_DATA_MUX_BUS	0x2
-@@ -139,27 +139,27 @@
- #define GPMC_CONFIG1_WRITEMULTIPLE_SUPP (1 << 28)
- #define GPMC_CONFIG1_WRITETYPE_ASYNC    (0 << 27)
- #define GPMC_CONFIG1_WRITETYPE_SYNC     (1 << 27)
--#define GPMC_CONFIG1_CLKACTIVATIONTIME(val) ((val & 3) << 25)
-+#define GPMC_CONFIG1_CLKACTIVATIONTIME(val) (((val) & 3) << 25)
- /** CLKACTIVATIONTIME Max Ticks */
- #define GPMC_CONFIG1_CLKACTIVATIONTIME_MAX 2
--#define GPMC_CONFIG1_PAGE_LEN(val)      ((val & 3) << 23)
-+#define GPMC_CONFIG1_PAGE_LEN(val)      (((val) & 3) << 23)
- /** ATTACHEDDEVICEPAGELENGTH Max Value */
- #define GPMC_CONFIG1_ATTACHEDDEVICEPAGELENGTH_MAX 2
- #define GPMC_CONFIG1_WAIT_READ_MON      (1 << 22)
- #define GPMC_CONFIG1_WAIT_WRITE_MON     (1 << 21)
--#define GPMC_CONFIG1_WAIT_MON_TIME(val) ((val & 3) << 18)
-+#define GPMC_CONFIG1_WAIT_MON_TIME(val) (((val) & 3) << 18)
- /** WAITMONITORINGTIME Max Ticks */
- #define GPMC_CONFIG1_WAITMONITORINGTIME_MAX  2
--#define GPMC_CONFIG1_WAIT_PIN_SEL(val)  ((val & 3) << 16)
--#define GPMC_CONFIG1_DEVICESIZE(val)    ((val & 3) << 12)
-+#define GPMC_CONFIG1_WAIT_PIN_SEL(val)  (((val) & 3) << 16)
-+#define GPMC_CONFIG1_DEVICESIZE(val)    (((val) & 3) << 12)
- #define GPMC_CONFIG1_DEVICESIZE_16      GPMC_CONFIG1_DEVICESIZE(1)
- /** DEVICESIZE Max Value */
- #define GPMC_CONFIG1_DEVICESIZE_MAX     1
--#define GPMC_CONFIG1_DEVICETYPE(val)    ((val & 3) << 10)
-+#define GPMC_CONFIG1_DEVICETYPE(val)    (((val) & 3) << 10)
- #define GPMC_CONFIG1_DEVICETYPE_NOR     GPMC_CONFIG1_DEVICETYPE(0)
--#define GPMC_CONFIG1_MUXTYPE(val)       ((val & 3) << 8)
-+#define GPMC_CONFIG1_MUXTYPE(val)       (((val) & 3) << 8)
- #define GPMC_CONFIG1_TIME_PARA_GRAN     (1 << 4)
--#define GPMC_CONFIG1_FCLK_DIV(val)      (val & 3)
-+#define GPMC_CONFIG1_FCLK_DIV(val)      ((val) & 3)
- #define GPMC_CONFIG1_FCLK_DIV2          (GPMC_CONFIG1_FCLK_DIV(1))
- #define GPMC_CONFIG1_FCLK_DIV3          (GPMC_CONFIG1_FCLK_DIV(2))
- #define GPMC_CONFIG1_FCLK_DIV4          (GPMC_CONFIG1_FCLK_DIV(3))
+ 	spin_lock(&gpmc_mem_lock);
+ 	if (cs >= gpmc_cs_num || cs < 0 || !gpmc_cs_reserved(cs)) {
+-		printk(KERN_ERR "Trying to free non-reserved GPMC CS%d\n", cs);
+-		BUG();
++		WARN(1, "Trying to free non-reserved GPMC CS%d\n", cs);
+ 		spin_unlock(&gpmc_mem_lock);
+ 		return;
+ 	}
 -- 
 2.17.1
 
