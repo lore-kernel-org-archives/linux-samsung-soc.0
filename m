@@ -1,150 +1,172 @@
-Return-Path: <SRS0=dIYQ=BC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=qOx/=BD=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA27C433E4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jul 2020 12:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8647BC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 01:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 584F220792
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jul 2020 12:27:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C63020714
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 01:28:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VLzuVAzw"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mxNYSFNc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbgGWM1m (ORCPT
+        id S1726437AbgGXB2t (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 23 Jul 2020 08:27:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58088 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728824AbgGWMY5 (ORCPT
+        Thu, 23 Jul 2020 21:28:49 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:20101 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726381AbgGXB2s (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Jul 2020 08:24:57 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1640DC0619E2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2020 05:24:57 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id 88so4977201wrh.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2020 05:24:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mCXO0Gr/A00l7Lne4sBK8Frz9I2gxXn2t7va3NQnE+k=;
-        b=VLzuVAzwLVM/dZrwghui32Cthrp/jLIjGRFYoekwj6rOfYdWN+Ca8euH5j0gmIclVA
-         DPGAmw1kGbUVZEsPzHiJS4mVA4nIS/w0UhXhvtODtvdzRx0u3R/sEMZwyCzDADT/E9iu
-         vLDxEbeoH+2JdqhS/3o/A9XdzqzYaakIGrL8NYVb3/bFEM+CIqVptPUaom3/SoHEeGNy
-         sLA228efpCsVu2LU5uwYHYJjtRMQQlQyjtUkunjK29dLPWUIqm6go4LnmxMhmQcTNcuN
-         K+Bn4hm1c0VKWz+h46vh5QR8aI/QuPomXCz/us8WLkqhjS4TOlcTzxWt1lj0K1kR4iqs
-         V2tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mCXO0Gr/A00l7Lne4sBK8Frz9I2gxXn2t7va3NQnE+k=;
-        b=a7FyZd0Mnw7VgPAA8f6E5gpmmOzDCGKqWGgARMxwmVX7BaML6ysr5pfdmyXD/JRb7N
-         5H8KOSKtI8ZxZ64cPDx6eWEeoIJP9U2Cc6EqmKs3sd45X8sa8AV5ZeRlQ2gbu+eVwrkR
-         QNpdybU8Y2jgpoec7o6W8mdrGoE5Fj0QlNHViANDt72A7AMP1YkGA3kAmEX2sUzzIvf7
-         d2uibsPfLIq3ScnE1wvHuTgjB3YWxShg2RW+CzU4oyNIWcc74N/qNFSR3NewObUsJiQ3
-         /6Unm1hXG4Yd4sPSheQDh4nvlKs1ALVpoqUe3KlO+bZlUuMwLeOxMKynzZBQNh2ZkkPk
-         I40g==
-X-Gm-Message-State: AOAM531xjf6u8bIuw17rLCgmZoEpft7iVbPaMXvOt0DwaVcZ9yjawVbe
-        TROM6xVHcG76xhTUnxfuwFZhLg==
-X-Google-Smtp-Source: ABdhPJyHdbt4arhYy1wxPK9DL4Wp99G0wUnJEmOEIFHYKnmyhpXMeS1JDOviOFALkqZ19VIiGO62Sw==
-X-Received: by 2002:adf:cf0c:: with SMTP id o12mr3829930wrj.265.1595507095851;
-        Thu, 23 Jul 2020 05:24:55 -0700 (PDT)
-Received: from localhost.localdomain ([2.27.167.73])
-        by smtp.gmail.com with ESMTPSA id j5sm3510651wma.45.2020.07.23.05.24.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2020 05:24:55 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     jejb@linux.ibm.com, martin.petersen@oracle.com
-Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kiwoong Kim <kwmad.kim@samsung.com>,
+        Thu, 23 Jul 2020 21:28:48 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200724012845epoutp0294ea77aa2b41e91680133b3ee57258b4~kjAYTEDd90241802418epoutp02W
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jul 2020 01:28:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200724012845epoutp0294ea77aa2b41e91680133b3ee57258b4~kjAYTEDd90241802418epoutp02W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1595554125;
+        bh=pDxZQjEv7mBk0U/xfnx3R6uLnhFHeCtJTsQ5goSgaF4=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=mxNYSFNc6TWOIVyhpyyO0wEaPtwGWLxl8gnPF3P1cmXacf6DfASe64kqYnGwD4SJZ
+         tnOY6aVW+7NlE37pAOLF5doEs04xSUXS315xgnuMvOtDch3Wwal8FToccmlqFahbus
+         EGVyyiulDyqDlUqZ8PxDS61ee34mgfJQfv6OyiFw=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200724012845epcas1p487b493d7fec5d7e17230792aa44edb2d~kjAX4yvYp0267402674epcas1p4m;
+        Fri, 24 Jul 2020 01:28:45 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4BCWn64lDPzMqYkm; Fri, 24 Jul
+        2020 01:28:42 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        12.EA.19033.7493A1F5; Fri, 24 Jul 2020 10:28:39 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200724012838epcas1p1ca5dba82e0500fbf14f004b21ed26289~kjARshl_r1209012090epcas1p1K;
+        Fri, 24 Jul 2020 01:28:38 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200724012838epsmtrp12bd29ec8e984c87d23d5c5c8d8dca47f~kjARroT-l3006530065epsmtrp1Y;
+        Fri, 24 Jul 2020 01:28:38 +0000 (GMT)
+X-AuditID: b6c32a36-16fff70000004a59-66-5f1a39470399
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BC.18.08303.6493A1F5; Fri, 24 Jul 2020 10:28:38 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200724012838epsmtip163ac4f6afb4f6349acb2e7b46cd0118a~kjARdgQcl3014530145epsmtip1Z;
+        Fri, 24 Jul 2020 01:28:38 +0000 (GMT)
+Subject: Re: [PATCH v2 0/2] Exynos5422 DMC: adjust to new devfreq monitoring
+ mechanism
+To:     Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 05/40] scsi: ufs: ufs-exynos: Make stubs 'static inline'
-Date:   Thu, 23 Jul 2020 13:24:11 +0100
-Message-Id: <20200723122446.1329773-6-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200723122446.1329773-1-lee.jones@linaro.org>
-References: <20200723122446.1329773-1-lee.jones@linaro.org>
+Cc:     willy.mh.wolff.ml@gmail.com, k.konieczny@samsung.com,
+        b.zolnierkie@samsung.com, krzk@kernel.org, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        s.nawrocki@samsung.com, kgene@kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <b6e3e7af-203d-a24e-2757-c32236f494d4@samsung.com>
+Date:   Fri, 24 Jul 2020 10:40:25 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200710191122.11029-1-lukasz.luba@arm.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIJsWRmVeSWpSXmKPExsWy7bCmrq67pVS8QfMVXouNM9azWky8cYXF
+        YsGnGawW/Y9fM1ucP7+B3eJs0xt2i02Pr7FaXN41h83ic+8RRosZ5/cxWSxsamG3uN24gs3i
+        8Jt2VotvJx4xOvB5rJm3htFj56y77B6bVnWyeWxeUu/Rt2UVo8fnTXIBbFHZNhmpiSmpRQqp
+        ecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlA1yoplCXmlAKFAhKLi5X0
+        7WyK8ktLUhUy8otLbJVSC1JyCiwL9IoTc4tL89L1kvNzrQwNDIxMgQoTsjN+Tj7OXrCcu6Jx
+        xmL2BsZJnF2MHBwSAiYSdxozuxi5OIQEdjBKnH6xmRXC+cQoMeXJEkYI5zOjxKJbzexdjJxg
+        HUeuf4FK7GKU2LCqmRnCec8ocetbLxNIlbBAhMSrCydYQBIiAqsYJb6/PwI2mFngDqPE18a5
+        jCBVbAJaEvtf3GADsfkFFCWu/ngMFucVsJOY8uYvK4jNIqAq8ePkSbC4qECYxMltLVA1ghIn
+        Zz5hAbE5BSwlzr+eDlbPLCAucevJfCYIW15i+9s5YOdJCNzgkNg1dzkrxBMuEvfn3WSCsIUl
+        Xh3fAvWclMTL/jYou1pi5ckjbBDNHYwSW/ZfgGo2lti/dDITKPyYBTQl1u/ShwgrSuz8DfEY
+        swCfxLuvPayQIOaV6GgTgihRlrj84C7UWkmJxe2dbBMYlWYheWcWkhdmIXlhFsKyBYwsqxjF
+        UguKc9NTiw0LjJDjexMjOC1rme1gnPT2g94hRiYOxkOMEhzMSiK8Oozi8UK8KYmVValF+fFF
+        pTmpxYcYTYEBPJFZSjQ5H5gZ8kriDU2NjI2NLUwMzUwNDZXEef+dZY8XEkhPLEnNTk0tSC2C
+        6WPi4JRqYJqd8p5lIcsnZjHXWLWH1uFhzvHzg0X+ptj+3dy6VfzUlw0rKqf9OO3GXaz/48Gq
+        LvmbW4/9L6iaeut8Y/0fi/y7tV8XXJn2K8X2YP+3C8/X7/75bpXFW+6L55bbaAsuqN63vO+d
+        253Vh0/+ENeLOLzR5Oh5peZz84snLEqxzymyu/3K8/okvTylzsezWMTn3ZwyM8vw74qvnzyz
+        2tt2HatJ+XXLgCW0uNrpdv92rrWpy/PYg08eXCrgkvLBz+XMRF+JVxZnM/4fO/1gi97iPwUc
+        1+xjnPNsTjVdKWE+MHOKquw3+9Kij/N35d2yF8+cfYvhwxf9qxvU8/e0FrEnVEXvE+FT1NgZ
+        4sQ53Wv2F/16JZbijERDLeai4kQASlYPmlQEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNIsWRmVeSWpSXmKPExsWy7bCSnK6bpVS8wZzbChYbZ6xntZh44wqL
+        xYJPM1gt+h+/ZrY4f34Du8XZpjfsFpseX2O1uLxrDpvF594jjBYzzu9jsljY1MJucbtxBZvF
+        4TftrBbfTjxidODzWDNvDaPHzll32T02repk89i8pN6jb8sqRo/Pm+QC2KK4bFJSczLLUov0
+        7RK4Mn5OPs5esJy7onHGYvYGxkmcXYycHBICJhJHrn9h7GLk4hAS2MEo8fHHGkaIhKTEtItH
+        mbsYOYBsYYnDh4shat4ySjyZvZcFpEZYIELi1YUTLCAJEYFVjBL37t9gB0kwC9xhlDjYEgnR
+        0cMo8er7N1aQBJuAlsT+FzfYQGx+AUWJqz8eg23jFbCTmPLmL1gNi4CqxI+TJ8HiogJhEjuX
+        PGaCqBGUODnzCdhmTgFLifOvp7NCLFOX+DPvEjOELS5x68l8JghbXmL72znMExiFZyFpn4Wk
+        ZRaSlllIWhYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAiOTy2tHYx7Vn3QO8TI
+        xMF4iFGCg1lJhFeHUTxeiDclsbIqtSg/vqg0J7X4EKM0B4uSOO/XWQvjhATSE0tSs1NTC1KL
+        YLJMHJxSDUzCTPOqFFN4+Ldln0nJNkmSYbRjSo4KeZev560y77zL5H0Wk15f/LbN2sfhflzK
+        taL5yZOzjSc17p9ct//h9lwrda45+xY7OJ7c1W8981fFyyeyx5cwHr0zuWDpNN7p1W/28Rh0
+        6MzdX/ff5MyCm4HL3l1PUjp6MeKsP/OJU9OttXoqq3cydJ+WcfQ+x+8xb65I+nYZU3f5/Yyu
+        81zfqm1XELf79eXf1bRemak17He1lYM3TS60fLHdtNf2cpKrGfMZs31OpgzVyxucz11fM8vv
+        5pbtzs98MpdVdDMxfDP++2D5k6Ib89+wyz3heXK+hDudu6pt5pcIBt47LDIhzSFaMjOjuvJE
+        TTZcOn+hUFyJpTgj0VCLuag4EQCAQQkUPgMAAA==
+X-CMS-MailID: 20200724012838epcas1p1ca5dba82e0500fbf14f004b21ed26289
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200710191144epcas1p30f82bf6371f7f09a4e1ea1262234f392
+References: <CGME20200710191144epcas1p30f82bf6371f7f09a4e1ea1262234f392@epcas1p3.samsung.com>
+        <20200710191122.11029-1-lukasz.luba@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Else the compiler complains of missing prototypes.
+Hi Lukasz,
 
-Fixes the following W=1 kernel build warning(s):
+On 7/11/20 4:11 AM, Lukasz Luba wrote:
+> Hi all,
+> 
+> This is a v2 patch set adjusting Exynos5422 DMC to the new devfreq monitoring
+> mechanism. This time the IRQ mode is explicitly controlled using module
+> parameter (in default the driver uses polling mode = devfreq monitoring).
+> 
+> The detailed cover letter describing the topic can be found here [1].
+> 
+> The patches should apply on top of Chanwoo's devfreq-next branch, where
+> the new devfreq mechanism is queued [2]. If there is no objections
+> I think they can go via this tree, since they logically use it.
+> 
+> Changes:
+> v2:
+> - added Reviewed-by from Chanwoo for patch 1/2
+> - added module_param which controls the mode in which the driver operates
+> - switched in default to devfreq monitoring mechanism instead of interrupts
+> 
+> Regards,
+> Lukasz Luba
+> 
+> [1] https://lore.kernel.org/linux-pm/20200708153420.29484-1-lukasz.luba@arm.com/
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git/log/?h=devfreq-next
+> 
+> Lukasz Luba (2):
+>   memory: samsung: exynos5422-dmc: Adjust polling interval and
+>     uptreshold
+>   memory: samsung: exynos5422-dmc: Add module param to control IRQ mode
+> 
+>  drivers/memory/samsung/exynos5422-dmc.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
 
- In file included from drivers/scsi/ufs/ufs-exynos.c:23:
- drivers/scsi/ufs/ufs-exynos.h:302:6: warning: no previous prototype for ‘exynos_ufs_cmd_log_start’ [-Wmissing-prototypes]
- 302 | void exynos_ufs_cmd_log_start(struct ufs_exynos_handle *handle,
- | ^~~~~~~~~~~~~~~~~~~~~~~~
- drivers/scsi/ufs/ufs-exynos.h:307:6: warning: no previous prototype for ‘exynos_ufs_cmd_log_end’ [-Wmissing-prototypes]
- 307 | void exynos_ufs_cmd_log_end(struct ufs_exynos_handle *handle,
- | ^~~~~~~~~~~~~~~~~~~~~~
- drivers/scsi/ufs/ufs-exynos.h:312:5: warning: no previous prototype for ‘exynos_ufs_init_dbg’ [-Wmissing-prototypes]
- 312 | int exynos_ufs_init_dbg(struct ufs_exynos_handle *handle, struct device *dev)
- | ^~~~~~~~~~~~~~~~~~~
- drivers/scsi/ufs/ufs-exynos.h:317:6: warning: no previous prototype for ‘exynos_ufs_dump_info’ [-Wmissing-prototypes]
- 317 | void exynos_ufs_dump_info(struct ufs_exynos_handle *handle, struct device *dev)
- | ^~~~~~~~~~~~~~~~~~~~
+Applied them to devfreq-next branch. Thanks.
 
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Avri Altman <avri.altman@wdc.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kiwoong Kim <kwmad.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/scsi/ufs/ufs-exynos.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/scsi/ufs/ufs-exynos.h b/drivers/scsi/ufs/ufs-exynos.h
-index d86d0a0f74780..0908283a76936 100644
---- a/drivers/scsi/ufs/ufs-exynos.h
-+++ b/drivers/scsi/ufs/ufs-exynos.h
-@@ -299,22 +299,22 @@ void exynos_ufs_cmd_log_end(struct ufs_exynos_handle *handle,
- int exynos_ufs_init_dbg(struct ufs_exynos_handle *handle, struct device *dev);
- void exynos_ufs_dump_info(struct ufs_exynos_handle *handle, struct device *dev);
- #else
--void exynos_ufs_cmd_log_start(struct ufs_exynos_handle *handle,
--			      struct ufs_hba *hba, int tag)
-+static inline void exynos_ufs_cmd_log_start(struct ufs_exynos_handle *handle,
-+					    struct ufs_hba *hba, int tag)
- {
- }
- 
--void exynos_ufs_cmd_log_end(struct ufs_exynos_handle *handle,
--			    struct ufs_hba *hba, int tag)
-+static inline void exynos_ufs_cmd_log_end(struct ufs_exynos_handle *handle,
-+					  struct ufs_hba *hba, int tag)
- {
- }
- 
--int exynos_ufs_init_dbg(struct ufs_exynos_handle *handle, struct device *dev)
-+static inline int exynos_ufs_init_dbg(struct ufs_exynos_handle *handle, struct device *dev)
- {
- 	return 0;
- }
- 
--void exynos_ufs_dump_info(struct ufs_exynos_handle *handle, struct device *dev)
-+static inline void exynos_ufs_dump_info(struct ufs_exynos_handle *handle, struct device *dev)
- {
- }
- 
 -- 
-2.25.1
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
