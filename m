@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AB4C433EC
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D86DC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BFAA2074F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5901420748
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595576530;
-	bh=kEeIY8BXwH4Tiy+sCCMu4cX9Ql2lsKEB0G7hN7yh/jc=;
+	s=default; t=1595576543;
+	bh=ee2yfevvxPNZT07hkWmEVih9tVXRSdr7zWFQlfrcYn8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VqTkg1EYRcjsBvfg7Bsh+ZcAA+OA2C0nbOOOqaoVzNlluvIEIMynItVa9GSBCtVg/
-	 Wlm3FWPyzx6f7aH61g2JEQHGUWCQUYNlIugpPITAjKbuj6Q1pCdOa8IQvpLJBFrgge
-	 lsOz5/Di2xlNUgozwhL+Yllnqgol3DG7q75nQxNw=
+	b=ySHFA6dCS6J/grCgP7pcJHllDM0CMLelm2Gff7Xf/ZP68JNF+XN61LfIa6340RgCt
+	 npP3cr/KTxABljKsyp5j1qihkw+cM4IVI0z/RrAcF8AZ46H/bP7E992zSbEHT+hMOQ
+	 bXNG3NbzYK2BclxRDJI758IEdNqwefL1iXzDJZ2c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbgGXHmJ (ORCPT
+        id S1728001AbgGXHmT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 03:42:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35712 "EHLO mail.kernel.org"
+        Fri, 24 Jul 2020 03:42:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbgGXHmJ (ORCPT
+        id S1727784AbgGXHmT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 03:42:09 -0400
+        Fri, 24 Jul 2020 03:42:19 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 719C22078A;
-        Fri, 24 Jul 2020 07:42:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89E6820767;
+        Fri, 24 Jul 2020 07:42:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595576529;
-        bh=kEeIY8BXwH4Tiy+sCCMu4cX9Ql2lsKEB0G7hN7yh/jc=;
+        s=default; t=1595576538;
+        bh=ee2yfevvxPNZT07hkWmEVih9tVXRSdr7zWFQlfrcYn8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gGqvmiMIMc+BWLuSynac+DnMFSxTasZbTQyOR/ROP8MfQJD3HkyMr2NUgz/zPaquT
-         LGr49gWEFmtHr/1Y4bVbuBbA44SjLuFaqz5lYpIJPwwB7N/X+AUy9MehCggdEAINF5
-         SrCWge1DBaZ8RXeQgHREc9kpwMvP9joGbpqnQGjM=
+        b=sYYsdG/bbAjpHsuIPpA/70pSp49oPPnWLCXgkIjUUwHhnx2s03cTAD2aZUzKzZCCb
+         Cgk0CYgzDMmNlsBFIYDZzzj3a6eG722h1qP1YmGmL6WQSg3wGndbTyXhaRhfzBNrQL
+         HogSSCQJTin69uZGosAljLWzCyacxzknNeFxTAYU=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         Markus Mayer <mmayer@broadcom.com>,
@@ -59,9 +59,9 @@ To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 12/29] memory: emif: Put constant in comparison on the right side
-Date:   Fri, 24 Jul 2020 09:40:21 +0200
-Message-Id: <20200724074038.5597-13-krzk@kernel.org>
+Subject: [PATCH v2 14/29] memory: emif: Silence platform_get_irq() error in driver
+Date:   Fri, 24 Jul 2020 09:40:23 +0200
+Message-Id: <20200724074038.5597-15-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200724074038.5597-1-krzk@kernel.org>
 References: <20200724074038.5597-1-krzk@kernel.org>
@@ -70,28 +70,31 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Fixes checkpatch warning:
-
-    WARNING: Comparisons should place the constant on the right side of the test
+The platform_get_irq() already prints error message so there is no need
+to do it again in the driver.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/memory/emif.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/memory/emif.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/drivers/memory/emif.c b/drivers/memory/emif.c
-index 58a82eea5850..97bad1588bba 100644
+index 1241a87081f8..1bf0656d5e9a 100644
 --- a/drivers/memory/emif.c
 +++ b/drivers/memory/emif.c
-@@ -282,7 +282,7 @@ static void set_lpmode(struct emif_data *emif, u8 lpmode)
- 	 * the EMIF_PWR_MGMT_CTRL[10:8] REG_LP_MODE bit field to 0x4.
- 	 */
- 	if ((emif->plat_data->ip_rev == EMIF_4D) &&
--	    (EMIF_LP_MODE_PWR_DN == lpmode)) {
-+	    (lpmode == EMIF_LP_MODE_PWR_DN)) {
- 		WARN_ONCE(1,
- 			  "REG_LP_MODE = LP_MODE_PWR_DN(4) is prohibited by"
- 			  "erratum i743 switch to LP_MODE_SELF_REFRESH(2)\n");
+@@ -1561,11 +1561,8 @@ static int __init_or_module emif_probe(struct platform_device *pdev)
+ 		goto error;
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(emif->dev, "%s: error getting IRQ resource - %d\n",
+-			__func__, irq);
++	if (irq < 0)
+ 		goto error;
+-	}
+ 
+ 	emif_onetime_settings(emif);
+ 	emif_debugfs_init(emif);
 -- 
 2.17.1
 
