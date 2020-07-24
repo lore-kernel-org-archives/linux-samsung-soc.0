@@ -2,103 +2,103 @@ Return-Path: <SRS0=qOx/=BD=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C258AC43445
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02196C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 10:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9332720767
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 07:43:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595576613;
-	bh=01DVBx+cUJU2MUx86mEXbPPRcD1lVtSvl6DAEX/P6uE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=M5qCxvVe3GIdcnCkKmIMJhj71ITdfNen68YULW/6+lYMO+P6quBoGss/zWTseW5rT
-	 mjzD1cLzg3AzypHVWkEKPBYO2m8tA/gELAHa13v7C2m9fAzZ4aaiF2a5NkWDwfOpEz
-	 uT1nKUHwTdYNzkqTM5ofbFLr5raEq1TdbWIUz2UY=
+	by mail.kernel.org (Postfix) with ESMTP id CA632206F0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 10:19:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="zb78n5gd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728206AbgGXHnd (ORCPT
+        id S1726692AbgGXKTu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 03:43:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37848 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727886AbgGXHnb (ORCPT
+        Fri, 24 Jul 2020 06:19:50 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:49492 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726114AbgGXKTu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 03:43:31 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FD5720786;
-        Fri, 24 Jul 2020 07:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595576611;
-        bh=01DVBx+cUJU2MUx86mEXbPPRcD1lVtSvl6DAEX/P6uE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lU+ri9XTeXV7fdDhxC3z7c5crNIvFy/Om3bddXaemL8BaUIDVVuX9FV6jrqSXkBWR
-         ErCM6ROOyf8AQp9eff/vfdrUX6AZ3oLt20pPHW84/j52XGmZkRf4N+7T5vd23jUQIG
-         gv0egVrlDdHC8WMUScaOHw/vG3Ki388NlnpxjqgY=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Markus Mayer <mmayer@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Roger Quadros <rogerq@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 29/29] memory: samsung: exynos-srom: Describe the Kconfig entry
-Date:   Fri, 24 Jul 2020 09:40:38 +0200
-Message-Id: <20200724074038.5597-30-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200724074038.5597-1-krzk@kernel.org>
-References: <20200724074038.5597-1-krzk@kernel.org>
+        Fri, 24 Jul 2020 06:19:50 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06OAGbka019953;
+        Fri, 24 Jul 2020 10:19:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=bi7uRtj9UbRbPZIsGZYNbyAvEN8zForiw/cFVhf4GDI=;
+ b=zb78n5gdhe+xdpZm6rsYAyaGHYZWZ0MERshQBqZ1xxaUGBhhK3pHcSkvr+H9McAChMuz
+ Hk/ICDmpyoJGt1BpYbwhxBhOc+LEUm1ory1Cxw058Am5ftvkK4vyY4g/n+wZyFWdu62h
+ 396FzWjg46ckBk6zh2RR/ZjqNW5ja1OOfin4tZXEHOLc3Qw5v5cQrarjZv2VTUpntY9K
+ 4zyRLY+GLnSE6ZMh5VToGwgjR4e1KvXxOX0h36WHbjkwfZP5rJ8m8PNZgq/nqO72AvAN
+ 0dtj1L1WuxPTBMyktC0EO0ztYjuVDF60IWoyqvU8dGqF29ba8dvLYlKhulpBQF3LxxU/ dw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 32brgrxddg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 24 Jul 2020 10:19:45 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06OAIDMn183123;
+        Fri, 24 Jul 2020 10:19:44 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 32ft2v2ptr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 Jul 2020 10:19:44 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 06OAJhVQ023856;
+        Fri, 24 Jul 2020 10:19:43 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 24 Jul 2020 10:19:42 +0000
+Date:   Fri, 24 Jul 2020 13:19:36 +0300
+From:   <dan.carpenter@oracle.com>
+To:     kwmad.kim@samsung.com
+Cc:     linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [bug report] scsi: ufs: exynos: Implement dbg_register_dump
+Message-ID: <20200724101936.GA318943@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9691 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 spamscore=0 bulkscore=0
+ malwarescore=0 phishscore=0 mlxlogscore=783 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007240077
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9691 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 spamscore=0
+ impostorscore=0 suspectscore=3 adultscore=0 clxscore=1015 mlxlogscore=799
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007240077
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Write short description about the Exynos SROM controller driver.
+Hello Kiwoong Kim,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+The patch 957ee40d413b: "scsi: ufs: exynos: Implement
+dbg_register_dump" from Jul 15, 2020, leads to the following static
+checker warning:
 
----
+	drivers/scsi/ufs/ufs-exynos.c:1242 exynos_ufs_dbg_register_dump()
+	warn: test_bit() takes a bit number
 
-Changes since v1:
-1. New patch
----
- drivers/memory/samsung/Kconfig | 7 +++++++
- 1 file changed, 7 insertions(+)
+drivers/scsi/ufs/ufs-exynos.c
+  1238  static void exynos_ufs_dbg_register_dump(struct ufs_hba *hba)
+  1239  {
+  1240          struct exynos_ufs *ufs = ufshcd_get_variant(hba);
+  1241  
+  1242          if (!test_and_set_bit(EXYNOS_UFS_DBG_DUMP_CXT, &ufs->dbg_flag)) {
+                                      ^^^^^^^^^^^^^^^^^^^^^^^
+This is BIT(0) but test_and_set_bit should just take 0, otherwise it's
+a double shift.
 
-diff --git a/drivers/memory/samsung/Kconfig b/drivers/memory/samsung/Kconfig
-index 20a8406ce786..8e240f078afc 100644
---- a/drivers/memory/samsung/Kconfig
-+++ b/drivers/memory/samsung/Kconfig
-@@ -23,5 +23,12 @@ config EXYNOS5422_DMC
- config EXYNOS_SROM
- 	bool "Exynos SROM controller driver" if COMPILE_TEST
- 	depends on (ARM && ARCH_EXYNOS) || (COMPILE_TEST && HAS_IOMEM)
-+	help
-+	  This adds driver for Samsung Exynos SoC SROM controller.  The driver
-+	  in basic operation mode only saves and restores SROM registers
-+	  during suspend.  If however appropriate device tree configuration
-+	  is provided, the driver enables support for external memory
-+	  or external devices.
-+	  If unsure, say Y on devices with Samsung Exynos SocS.
- 
- endif
--- 
-2.17.1
+  1243                  exynos_ufs_dump_info(&ufs->handle, hba->dev);
+  1244                  clear_bit(EXYNOS_UFS_DBG_DUMP_CXT, &ufs->dbg_flag);
+  1245          }
+  1246  }
 
+regards,
+dan carpenter
