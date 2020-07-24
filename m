@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E89BC43469
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD38FC4346B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED3BF206F6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:24:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B60CA20748
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595615100;
-	bh=6vmXqSqcb3PPEIvuDeW52+V74jJx/+EfORuTXaAQGRE=;
+	s=default; t=1595615103;
+	bh=PG6DFq6DFhp0c0tCQjZwNqORmsdKI/6YANJJI3rKHkY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tcuMQSvlK7qbC6te0c85WGkq56rIiqRx6d2NAbkGym6Euc4RxmsCrk1ywCmin0nCE
-	 BqdHpEEenTRXWpryFxYQkhP6Im4dntKrjhGVM8RKR0T8HFpXC09Uqn6b2QaVXJKCO6
-	 Pzod6EAGCuU6mWsWVx3tbTQALghFnljx3fPjcYaU=
+	b=zVC+EKrn5JAFWt+KREvPK5Hk7wUw4MWLB3RzKzFtvY2b2G7byhIbzeQ2foMfHKnk4
+	 uFaflJZl/2q50shBHTZUGOIfnUssDbA9TrTcYcYj2MKGEJQgl+74CeSl3t6LoHn65H
+	 d6S7V+5XtbY9In1dRfYDTOBv32Dkgvu/JSyqTa2g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbgGXSY6 (ORCPT
+        id S1727849AbgGXSZD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 14:24:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33882 "EHLO mail.kernel.org"
+        Fri, 24 Jul 2020 14:25:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727826AbgGXSY4 (ORCPT
+        id S1727096AbgGXSZB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 14:24:56 -0400
+        Fri, 24 Jul 2020 14:25:01 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7448A207FC;
-        Fri, 24 Jul 2020 18:24:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28D7C20737;
+        Fri, 24 Jul 2020 18:24:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595615096;
-        bh=6vmXqSqcb3PPEIvuDeW52+V74jJx/+EfORuTXaAQGRE=;
+        s=default; t=1595615101;
+        bh=PG6DFq6DFhp0c0tCQjZwNqORmsdKI/6YANJJI3rKHkY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OXkhhR7G6pSAwL8sE1LkECQ/6F8GRsV/gAnihb6EZG6tkqzuMSPCcqSzp2BtAg08A
-         e8uf0NN94A+Nx0yxyK+dOGAewXfhy/90dy/VAn6o9cGAeP3luuZ9mhUc+HeQlaFS5B
-         PI3prAVts3n0s5zpMcT+CrLEwKpHUDZhIDlKiOm8=
+        b=BTpG2kxB2ql+0y+QbmJdItyS5XIiGXiPGTDT7ZSIMLEQgU4tY/6XfasLm7bIoFBAD
+         XVgXe53chcTcl3PlPI4qUlKBGyea8J4iWoEbAVu5WXkj8Vefcva6i5kNgLPG7T7Cuf
+         PmcUAAqUIUVKUqr1dCr+uXSbb4UhPFkyErwdRF60=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <rjui@broadcom.com>,
@@ -59,9 +59,9 @@ To:     Florian Fainelli <f.fainelli@gmail.com>,
         linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-pm@vger.kernel.org
 Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 10/16] memory: omap-gpmc: Consistently use !res for NULL checks
-Date:   Fri, 24 Jul 2020 20:23:22 +0200
-Message-Id: <20200724182328.3348-11-krzk@kernel.org>
+Subject: [PATCH 11/16] memory: brcmstb_dpfe: Fix language typo
+Date:   Fri, 24 Jul 2020 20:23:23 +0200
+Message-Id: <20200724182328.3348-12-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200724182328.3348-1-krzk@kernel.org>
 References: <20200724182328.3348-1-krzk@kernel.org>
@@ -70,27 +70,26 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The driver already uses 'if (!res)' pattern in the probe function so be
-consistent.
+Fix firwmare -> firmware.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/memory/omap-gpmc.c | 2 +-
+ drivers/memory/brcmstb_dpfe.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
-index 76a9c700cbd5..ce0e7e2d7cff 100644
---- a/drivers/memory/omap-gpmc.c
-+++ b/drivers/memory/omap-gpmc.c
-@@ -2393,7 +2393,7 @@ static int gpmc_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, gpmc);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (res == NULL)
-+	if (!res)
- 		return -ENOENT;
- 
- 	gpmc_base = devm_ioremap_resource(&pdev->dev, res);
+diff --git a/drivers/memory/brcmstb_dpfe.c b/drivers/memory/brcmstb_dpfe.c
+index 604f0e3fb112..60e8633b1175 100644
+--- a/drivers/memory/brcmstb_dpfe.c
++++ b/drivers/memory/brcmstb_dpfe.c
+@@ -23,7 +23,7 @@
+  *     - BE kernel + LE firmware image
+  *     - BE kernel + BE firmware image
+  *
+- * The DPCU always runs in big endian mode. The firwmare image, however, can
++ * The DPCU always runs in big endian mode. The firmware image, however, can
+  * be in either format. Also, communication between host CPU and DCPU is
+  * always in little endian.
+  */
 -- 
 2.17.1
 
