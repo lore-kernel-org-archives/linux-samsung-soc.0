@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 847E9C43445
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5D5C4346F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69E30206F0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62E66206F0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595615117;
-	bh=Vl/dugxAyzjWbfR0Cyd+BAILFtMv+EqLyvmIFi2Uc4M=;
+	s=default; t=1595615122;
+	bh=ZHssgXFw9tdp7kd/8wRKNVCbGynFMRozJTxl7pkD+Og=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NMTfaT8GhPxsSztpz3+5g2NTEFS+aruVmDqUcJAXOCmRwmIAJrzX1Qv66bWpidOxG
-	 8GmfNi3T0woERoU8KRAROqFVV/sr5UwDPb2zpkQdIUG0ClXtglx5JQlAaa1Gj94cD3
-	 w3adUekzN3KccBeIEcFnAae/ZE4RxtnlcxRImxBA=
+	b=RVjlDTCpaf9i1/paUJCiv6Iv1eE1lJt/6w5kQNBXgxfA21ANctAZ1XoJ5hhtiUpzg
+	 SAs0K55B3ZDJsrRfLuyRpt6LAXiylaJB35hSLprCHz0ApdhGLIH9gXf8IXp8i69gTN
+	 FCBhGAf99R1QxcxCOdyYcNBH2oQq2PVLUJoRpxT0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbgGXSYw (ORCPT
+        id S1727906AbgGXSZR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 14:24:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33762 "EHLO mail.kernel.org"
+        Fri, 24 Jul 2020 14:25:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727089AbgGXSYw (ORCPT
+        id S1726892AbgGXSZQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 14:24:52 -0400
+        Fri, 24 Jul 2020 14:25:16 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D11B720771;
-        Fri, 24 Jul 2020 18:24:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01060208E4;
+        Fri, 24 Jul 2020 18:25:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595615092;
-        bh=Vl/dugxAyzjWbfR0Cyd+BAILFtMv+EqLyvmIFi2Uc4M=;
+        s=default; t=1595615115;
+        bh=ZHssgXFw9tdp7kd/8wRKNVCbGynFMRozJTxl7pkD+Og=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zMf6q4K/a55Nf4iNIM966rSC9Xi3o8hA6YX2Xs50eYlq/F+w2qj/EACT9fsCo9OMG
-         ja96IRCrULjLUbfYtRZvfaSPsU+wpzsBeuF/8BJ61VYnkJJAJU8HAi3KpNNzc1vLUD
-         It+Y/GUs9l+OBdQchlBgYDo5ZoXT1aTREYE64PlE=
+        b=JjhYGXA27XLYt9lyspm8gFo+X/D5qtiSf7WzpvxzFrV94+N5wXza9uH45nrCfIiDr
+         hD7GrGNueoWRlGmxHVyJSwqUSJ+IWqojSDFuVggp6ARyZJgh0oUB8IvOl0xunJfYCP
+         yWj39eImA4yZWVOA5EvMwGxKEMJL5eXwG1G4X+gw=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <rjui@broadcom.com>,
@@ -59,9 +59,9 @@ To:     Florian Fainelli <f.fainelli@gmail.com>,
         linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-pm@vger.kernel.org
 Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 09/16] memory: omap-gpmc: Fix language typo
-Date:   Fri, 24 Jul 2020 20:23:21 +0200
-Message-Id: <20200724182328.3348-10-krzk@kernel.org>
+Subject: [PATCH 14/16] memory: pl172: Enclose macro argument usage in parenthesis
+Date:   Fri, 24 Jul 2020 20:23:26 +0200
+Message-Id: <20200724182328.3348-15-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200724182328.3348-1-krzk@kernel.org>
 References: <20200724182328.3348-1-krzk@kernel.org>
@@ -70,26 +70,50 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Fix arbitary -> arbitrary.
+Macros arguments should be enclosed by parenthesis for safety.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/memory/omap-gpmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/memory/pl172.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
-index 414bfb481266..76a9c700cbd5 100644
---- a/drivers/memory/omap-gpmc.c
-+++ b/drivers/memory/omap-gpmc.c
-@@ -2126,7 +2126,7 @@ static int gpmc_probe_generic_child(struct platform_device *pdev,
- 	gpmc_cs_disable_mem(cs);
+diff --git a/drivers/memory/pl172.c b/drivers/memory/pl172.c
+index 084891eb29cc..575fadbffa30 100644
+--- a/drivers/memory/pl172.c
++++ b/drivers/memory/pl172.c
+@@ -21,7 +21,7 @@
+ #include <linux/of_platform.h>
+ #include <linux/time.h>
  
- 	/*
--	 * FIXME: gpmc_cs_request() will map the CS to an arbitary
-+	 * FIXME: gpmc_cs_request() will map the CS to an arbitrary
- 	 * location in the gpmc address space. When booting with
- 	 * device-tree we want the NOR flash to be mapped to the
- 	 * location specified in the device-tree blob. So remap the
+-#define MPMC_STATIC_CFG(n)		(0x200 + 0x20 * n)
++#define MPMC_STATIC_CFG(n)		(0x200 + 0x20 * (n))
+ #define  MPMC_STATIC_CFG_MW_8BIT	0x0
+ #define  MPMC_STATIC_CFG_MW_16BIT	0x1
+ #define  MPMC_STATIC_CFG_MW_32BIT	0x2
+@@ -31,17 +31,17 @@
+ #define  MPMC_STATIC_CFG_EW		BIT(8)
+ #define  MPMC_STATIC_CFG_B		BIT(19)
+ #define  MPMC_STATIC_CFG_P		BIT(20)
+-#define MPMC_STATIC_WAIT_WEN(n)		(0x204 + 0x20 * n)
++#define MPMC_STATIC_WAIT_WEN(n)		(0x204 + 0x20 * (n))
+ #define  MPMC_STATIC_WAIT_WEN_MAX	0x0f
+-#define MPMC_STATIC_WAIT_OEN(n)		(0x208 + 0x20 * n)
++#define MPMC_STATIC_WAIT_OEN(n)		(0x208 + 0x20 * (n))
+ #define  MPMC_STATIC_WAIT_OEN_MAX	0x0f
+-#define MPMC_STATIC_WAIT_RD(n)		(0x20c + 0x20 * n)
++#define MPMC_STATIC_WAIT_RD(n)		(0x20c + 0x20 * (n))
+ #define  MPMC_STATIC_WAIT_RD_MAX	0x1f
+-#define MPMC_STATIC_WAIT_PAGE(n)	(0x210 + 0x20 * n)
++#define MPMC_STATIC_WAIT_PAGE(n)	(0x210 + 0x20 * (n))
+ #define  MPMC_STATIC_WAIT_PAGE_MAX	0x1f
+-#define MPMC_STATIC_WAIT_WR(n)		(0x214 + 0x20 * n)
++#define MPMC_STATIC_WAIT_WR(n)		(0x214 + 0x20 * (n))
+ #define  MPMC_STATIC_WAIT_WR_MAX	0x1f
+-#define MPMC_STATIC_WAIT_TURN(n)	(0x218 + 0x20 * n)
++#define MPMC_STATIC_WAIT_TURN(n)	(0x218 + 0x20 * (n))
+ #define  MPMC_STATIC_WAIT_TURN_MAX	0x0f
+ 
+ /* Maximum number of static chip selects */
 -- 
 2.17.1
 
