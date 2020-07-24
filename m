@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C59C4345C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E89BC43469
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B76D20737
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:24:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED3BF206F6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jul 2020 18:24:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595615085;
-	bh=lEKVZDzJhtzFur3P/7OyNZHCfVYi8hoC3ip/4L1ggro=;
+	s=default; t=1595615100;
+	bh=6vmXqSqcb3PPEIvuDeW52+V74jJx/+EfORuTXaAQGRE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jRxHzvo4Oia+I0xtiJgxS9B0PM+pS5MtCinIcqHoVROQjLI1bs09NY1zS1wTwync3
-	 NWk0kVPtrhPzpUadIaHEjn1M9KEWKfJ6SspeiopdYytM74yc+5l18eNdvuV3kvv/pm
-	 mMzPhHs+VleJPSGbVuhz0wFBldhKqPw6qCh96O7M=
+	b=tcuMQSvlK7qbC6te0c85WGkq56rIiqRx6d2NAbkGym6Euc4RxmsCrk1ywCmin0nCE
+	 BqdHpEEenTRXWpryFxYQkhP6Im4dntKrjhGVM8RKR0T8HFpXC09Uqn6b2QaVXJKCO6
+	 Pzod6EAGCuU6mWsWVx3tbTQALghFnljx3fPjcYaU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbgGXSYo (ORCPT
+        id S1727836AbgGXSY6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 14:24:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33452 "EHLO mail.kernel.org"
+        Fri, 24 Jul 2020 14:24:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727089AbgGXSYn (ORCPT
+        id S1727826AbgGXSY4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 14:24:43 -0400
+        Fri, 24 Jul 2020 14:24:56 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CAF620791;
-        Fri, 24 Jul 2020 18:24:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7448A207FC;
+        Fri, 24 Jul 2020 18:24:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595615082;
-        bh=lEKVZDzJhtzFur3P/7OyNZHCfVYi8hoC3ip/4L1ggro=;
+        s=default; t=1595615096;
+        bh=6vmXqSqcb3PPEIvuDeW52+V74jJx/+EfORuTXaAQGRE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RL46EB3CTxtzUCIVIi+XqDeDv38NEZ0GXle2sMfIjXN4qNhS46/CeXzxZHfeYTqTt
-         2VyVzL5bGmQA2yUlpROLf56SpgmwH8kUj8D88wre4+YvdT42fz7kVJh8nGfvQbAsAZ
-         wO+lF7iSF1rC46bkzDYMqaxMg1jQjmmGdcyf08ts=
+        b=OXkhhR7G6pSAwL8sE1LkECQ/6F8GRsV/gAnihb6EZG6tkqzuMSPCcqSzp2BtAg08A
+         e8uf0NN94A+Nx0yxyK+dOGAewXfhy/90dy/VAn6o9cGAeP3luuZ9mhUc+HeQlaFS5B
+         PI3prAVts3n0s5zpMcT+CrLEwKpHUDZhIDlKiOm8=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <rjui@broadcom.com>,
@@ -59,9 +59,9 @@ To:     Florian Fainelli <f.fainelli@gmail.com>,
         linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-pm@vger.kernel.org
 Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 07/16] memory: omap-gpmc: Correct white space issues
-Date:   Fri, 24 Jul 2020 20:23:19 +0200
-Message-Id: <20200724182328.3348-8-krzk@kernel.org>
+Subject: [PATCH 10/16] memory: omap-gpmc: Consistently use !res for NULL checks
+Date:   Fri, 24 Jul 2020 20:23:22 +0200
+Message-Id: <20200724182328.3348-11-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200724182328.3348-1-krzk@kernel.org>
 References: <20200724182328.3348-1-krzk@kernel.org>
@@ -70,109 +70,27 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Remove some unneeded blank lines, align indentation with open
-parenthesis (or fix existing alignment).
+The driver already uses 'if (!res)' pattern in the probe function so be
+consistent.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/memory/omap-gpmc.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+ drivers/memory/omap-gpmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
-index e4d2f359bcfa..9339a7c75fdd 100644
+index 76a9c700cbd5..ce0e7e2d7cff 100644
 --- a/drivers/memory/omap-gpmc.c
 +++ b/drivers/memory/omap-gpmc.c
-@@ -297,7 +297,6 @@ static unsigned long gpmc_get_fclk_period(void)
-  */
- static unsigned long gpmc_get_clk_period(int cs, enum gpmc_clk_domain cd)
- {
--
- 	unsigned long tick_ps = gpmc_get_fclk_period();
- 	u32 l;
- 	int div;
-@@ -317,7 +316,6 @@ static unsigned long gpmc_get_clk_period(int cs, enum gpmc_clk_domain cd)
- 	}
+@@ -2393,7 +2393,7 @@ static int gpmc_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, gpmc);
  
- 	return tick_ps;
--
- }
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res == NULL)
++	if (!res)
+ 		return -ENOENT;
  
- static unsigned int gpmc_ns_to_clk_ticks(unsigned int time_ns, int cs,
-@@ -509,7 +507,7 @@ static void gpmc_cs_show_timings(int cs, const char *desc)
- 	GPMC_GET_RAW_BOOL(GPMC_CS_CONFIG1,  4,  4, "time-para-granularity");
- 	GPMC_GET_RAW(GPMC_CS_CONFIG1,  8,  9, "mux-add-data");
- 	GPMC_GET_RAW_SHIFT_MAX(GPMC_CS_CONFIG1, 12, 13, 1,
--			 GPMC_CONFIG1_DEVICESIZE_MAX, "device-width");
-+			       GPMC_CONFIG1_DEVICESIZE_MAX, "device-width");
- 	GPMC_GET_RAW(GPMC_CS_CONFIG1, 16, 17, "wait-pin");
- 	GPMC_GET_RAW_BOOL(GPMC_CS_CONFIG1, 21, 21, "wait-on-write");
- 	GPMC_GET_RAW_BOOL(GPMC_CS_CONFIG1, 22, 22, "wait-on-read");
-@@ -623,9 +621,8 @@ static int set_gpmc_timing_reg(int cs, int reg, int st_bit, int end_bit, int max
- 
- 	l = gpmc_cs_read_reg(cs, reg);
- #ifdef CONFIG_OMAP_GPMC_DEBUG
--	pr_info(
--		"GPMC CS%d: %-17s: %3d ticks, %3lu ns (was %3i ticks) %3d ns\n",
--	       cs, name, ticks, gpmc_get_clk_period(cs, cd) * ticks / 1000,
-+	pr_info("GPMC CS%d: %-17s: %3d ticks, %3lu ns (was %3i ticks) %3d ns\n",
-+		cs, name, ticks, gpmc_get_clk_period(cs, cd) * ticks / 1000,
- 			(l >> st_bit) & mask, time);
- #endif
- 	l &= ~(mask << st_bit);
-@@ -652,7 +649,6 @@ static int set_gpmc_timing_reg(int cs, int reg, int st_bit, int end_bit, int max
-  */
- static int gpmc_calc_waitmonitoring_divider(unsigned int wait_monitoring)
- {
--
- 	int div = gpmc_ns_to_ticks(wait_monitoring);
- 
- 	div += GPMC_CONFIG1_WAITMONITORINGTIME_MAX - 1;
-@@ -664,7 +660,6 @@ static int gpmc_calc_waitmonitoring_divider(unsigned int wait_monitoring)
- 		div = 1;
- 
- 	return div;
--
- }
- 
- /**
-@@ -718,7 +713,6 @@ int gpmc_cs_set_timings(int cs, const struct gpmc_timings *t,
- 	if (!s->sync_read && !s->sync_write &&
- 	    (s->wait_on_read || s->wait_on_write)
- 	   ) {
--
- 		div = gpmc_calc_waitmonitoring_divider(t->wait_monitoring);
- 		if (div < 0) {
- 			pr_err("%s: waitmonitoringtime %3d ns too large for greatest gpmcfclkdivider.\n",
-@@ -1512,7 +1506,6 @@ static void gpmc_mem_exit(void)
- 			continue;
- 		gpmc_cs_delete_mem(cs);
- 	}
--
- }
- 
- static void gpmc_mem_init(void)
-@@ -1681,17 +1674,14 @@ static int gpmc_calc_async_read_timings(struct gpmc_timings *gpmc_t,
- 	/* oe_on */
- 	temp = dev_t->t_oeasu;
- 	if (mux)
--		temp = max_t(u32, temp,
--			gpmc_t->adv_rd_off + dev_t->t_aavdh);
-+		temp = max_t(u32, temp, gpmc_t->adv_rd_off + dev_t->t_aavdh);
- 	gpmc_t->oe_on = gpmc_round_ps_to_ticks(temp);
- 
- 	/* access */
- 	temp = max_t(u32, dev_t->t_iaa, /* XXX: remove t_iaa in async ? */
--				gpmc_t->oe_on + dev_t->t_oe);
--	temp = max_t(u32, temp,
--				gpmc_t->cs_on + dev_t->t_ce);
--	temp = max_t(u32, temp,
--				gpmc_t->adv_on + dev_t->t_aa);
-+		     gpmc_t->oe_on + dev_t->t_oe);
-+	temp = max_t(u32, temp, gpmc_t->cs_on + dev_t->t_ce);
-+	temp = max_t(u32, temp, gpmc_t->adv_on + dev_t->t_aa);
- 	gpmc_t->access = gpmc_round_ps_to_ticks(temp);
- 
- 	gpmc_t->oe_off = gpmc_t->access + gpmc_ticks_to_ps(1);
+ 	gpmc_base = devm_ioremap_resource(&pdev->dev, res);
 -- 
 2.17.1
 
