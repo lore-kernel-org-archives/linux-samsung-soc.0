@@ -2,50 +2,45 @@ Return-Path: <SRS0=MOmf=BG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9B8C433E5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jul 2020 08:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D4FC433EB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jul 2020 08:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AB7720759
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jul 2020 08:21:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6276120672
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jul 2020 08:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726297AbgG0IVs (ORCPT
+        id S1726475AbgG0Ifk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Jul 2020 04:21:48 -0400
-Received: from foss.arm.com ([217.140.110.172]:39372 "EHLO foss.arm.com"
+        Mon, 27 Jul 2020 04:35:40 -0400
+Received: from foss.arm.com ([217.140.110.172]:39540 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726139AbgG0IVs (ORCPT
+        id S1726227AbgG0Ifj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Jul 2020 04:21:48 -0400
+        Mon, 27 Jul 2020 04:35:39 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26B2CD6E;
-        Mon, 27 Jul 2020 01:21:48 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 259E6D6E;
+        Mon, 27 Jul 2020 01:35:39 -0700 (PDT)
 Received: from [10.37.12.33] (unknown [10.37.12.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 113F43F71F;
-        Mon, 27 Jul 2020 01:21:44 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] Exynos5422 DMC: adjust to new devfreq monitoring
- mechanism
-To:     Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     willy.mh.wolff.ml@gmail.com, k.konieczny@samsung.com,
-        b.zolnierkie@samsung.com, krzk@kernel.org, chanwoo@kernel.org,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        s.nawrocki@samsung.com, kgene@kernel.org
-References: <CGME20200710191144epcas1p30f82bf6371f7f09a4e1ea1262234f392@epcas1p3.samsung.com>
- <20200710191122.11029-1-lukasz.luba@arm.com>
- <b6e3e7af-203d-a24e-2757-c32236f494d4@samsung.com>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A7AD63F718;
+        Mon, 27 Jul 2020 01:35:37 -0700 (PDT)
+Subject: Re: [PATCH] memory: samsung: exynos5422-dmc: Do not ignore return
+ code of regmap_read()
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20200720110301.22996-1-krzk@kernel.org>
 From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <82080e84-a400-88e3-274c-58e57c80c4c0@arm.com>
-Date:   Mon, 27 Jul 2020 09:21:43 +0100
+Message-ID: <1f9f9bf2-d93e-5d8b-adcd-c63939b8cf8a@arm.com>
+Date:   Mon, 27 Jul 2020 09:35:35 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <b6e3e7af-203d-a24e-2757-c32236f494d4@samsung.com>
+In-Reply-To: <20200720110301.22996-1-krzk@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -54,49 +49,81 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Krzysztof,
 
+On 7/20/20 12:03 PM, Krzysztof Kozlowski wrote:
+> Check for regmap_read() return code before using the read value in
+> following write in exynos5_switch_timing_regs().  Pass reading error
+> code to the callers.
+> 
+> This does not introduce proper error handling for such failed reads (and
+> obviously regmap_write() error is still ignored) because the driver
+> ignored this in all places.  Therefor it only fixes reported issue while
+> matching current driver coding style:
+> 
+>         drivers/memory/samsung/exynos5422-dmc.c: In function 'exynos5_switch_timing_regs':
+>      >> drivers/memory/samsung/exynos5422-dmc.c:216:6: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>   drivers/memory/samsung/exynos5422-dmc.c | 12 +++++++++---
+>   1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+> index 93e9c2429c0d..2c326998cb1c 100644
+> --- a/drivers/memory/samsung/exynos5422-dmc.c
+> +++ b/drivers/memory/samsung/exynos5422-dmc.c
+> @@ -270,12 +270,14 @@ static int find_target_freq_idx(struct exynos5_dmc *dmc,
+>    * This function switches between these banks according to the
+>    * currently used clock source.
+>    */
+> -static void exynos5_switch_timing_regs(struct exynos5_dmc *dmc, bool set)
+> +static int exynos5_switch_timing_regs(struct exynos5_dmc *dmc, bool set)
+>   {
+>   	unsigned int reg;
+>   	int ret;
+>   
+>   	ret = regmap_read(dmc->clk_regmap, CDREX_LPDDR3PHY_CON3, &reg);
+> +	if (ret)
+> +		return ret;
+>   
+>   	if (set)
+>   		reg |= EXYNOS5_TIMING_SET_SWI;
+> @@ -283,6 +285,8 @@ static void exynos5_switch_timing_regs(struct exynos5_dmc *dmc, bool set)
+>   		reg &= ~EXYNOS5_TIMING_SET_SWI;
+>   
+>   	regmap_write(dmc->clk_regmap, CDREX_LPDDR3PHY_CON3, reg);
+> +
+> +	return 0;
+>   }
+>   
+>   /**
+> @@ -516,7 +520,7 @@ exynos5_dmc_switch_to_bypass_configuration(struct exynos5_dmc *dmc,
+>   	/*
+>   	 * Delays are long enough, so use them for the new coming clock.
+>   	 */
+> -	exynos5_switch_timing_regs(dmc, USE_MX_MSPLL_TIMINGS);
+> +	ret = exynos5_switch_timing_regs(dmc, USE_MX_MSPLL_TIMINGS);
+>   
+>   	return ret;
+>   }
+> @@ -577,7 +581,9 @@ exynos5_dmc_change_freq_and_volt(struct exynos5_dmc *dmc,
+>   
+>   	clk_set_rate(dmc->fout_bpll, target_rate);
+>   
+> -	exynos5_switch_timing_regs(dmc, USE_BPLL_TIMINGS);
+> +	ret = exynos5_switch_timing_regs(dmc, USE_BPLL_TIMINGS);
+> +	if (ret)
+> +		goto disable_clocks;
+>   
+>   	ret = clk_set_parent(dmc->mout_mclk_cdrex, dmc->mout_bpll);
+>   	if (ret)
+> 
 
-On 7/24/20 2:40 AM, Chanwoo Choi wrote:
-> Hi Lukasz,
-> 
-> On 7/11/20 4:11 AM, Lukasz Luba wrote:
->> Hi all,
->>
->> This is a v2 patch set adjusting Exynos5422 DMC to the new devfreq monitoring
->> mechanism. This time the IRQ mode is explicitly controlled using module
->> parameter (in default the driver uses polling mode = devfreq monitoring).
->>
->> The detailed cover letter describing the topic can be found here [1].
->>
->> The patches should apply on top of Chanwoo's devfreq-next branch, where
->> the new devfreq mechanism is queued [2]. If there is no objections
->> I think they can go via this tree, since they logically use it.
->>
->> Changes:
->> v2:
->> - added Reviewed-by from Chanwoo for patch 1/2
->> - added module_param which controls the mode in which the driver operates
->> - switched in default to devfreq monitoring mechanism instead of interrupts
->>
->> Regards,
->> Lukasz Luba
->>
->> [1] https://lore.kernel.org/linux-pm/20200708153420.29484-1-lukasz.luba@arm.com/
->> [2] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git/log/?h=devfreq-next
->>
->> Lukasz Luba (2):
->>    memory: samsung: exynos5422-dmc: Adjust polling interval and
->>      uptreshold
->>    memory: samsung: exynos5422-dmc: Add module param to control IRQ mode
->>
->>   drivers/memory/samsung/exynos5422-dmc.c | 13 +++++++++----
->>   1 file changed, 9 insertions(+), 4 deletions(-)
->>
-> 
-> Applied them to devfreq-next branch. Thanks.
-> 
+LGTM
 
-Thank you Chanwoo
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
 Regards,
 Lukasz
