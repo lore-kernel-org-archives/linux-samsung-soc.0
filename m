@@ -7,53 +7,54 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0171C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jul 2020 08:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD82C433F1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jul 2020 08:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C45FE2070B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jul 2020 08:15:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 762CD2074F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jul 2020 08:15:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595837711;
-	bh=B3gdt/ll7RUmIznhZ7AxJhplRfzzyoFav7ioOUsrdHM=;
+	s=default; t=1595837724;
+	bh=TFpjEX0h9oHta4glaLFTH33wcezQfF+w4c4pNs6nIK4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=g3jmiJBPSUb1U3RrH6KJm51g55npYbg3HbACbv3gf45MUovQooOOu/A3tw2yQ3qUX
-	 wUcN1OruRo2J/1iUbaxrAZsIX9QUN/S3VtaFZYv4I6zh+JJjHirZVP5urgOXGJcAuS
-	 Y5+I8XR60e8CPjTueTEm1Mu3bHzv6++ExDI5/0b0=
+	b=CGb+PdPiFRbyyTh0pWYXYt8KZIc2pF6JcF7ogkiHruVuO/sakudimFXGO/OQuM6gx
+	 B+yAYzmiwj4Y2+fmCReVw+kUcHtYbwAywr7t2dR9MU+B5yhM0wD9iSRHbnaCwiMXQ8
+	 zwqFWl2+s7dwo041EgO0Btq7QZgiY/CQ5GmXWnYQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbgG0IPI (ORCPT
+        id S1726877AbgG0IPV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Jul 2020 04:15:08 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:40125 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbgG0IPC (ORCPT
+        Mon, 27 Jul 2020 04:15:21 -0400
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:39615 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbgG0IPV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Jul 2020 04:15:02 -0400
-Received: by mail-ed1-f68.google.com with SMTP id b13so9067149edz.7;
-        Mon, 27 Jul 2020 01:15:01 -0700 (PDT)
+        Mon, 27 Jul 2020 04:15:21 -0400
+Received: by mail-ej1-f66.google.com with SMTP id gg18so12745100ejb.6;
+        Mon, 27 Jul 2020 01:15:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uQ6jS2p/wfLKpN5rZ4uG0Txi8VApzRXQQMOZTpW6E5I=;
-        b=FlSx8lyn6PxIQqtnya+AZusTMI7TnZzh4VZsyO2q4xap/E/TKNtQ3EdqGVTWt2H0U7
-         aPMm8gM3EPZr+WnMGc66W9a8Ir69ceWf9m0uLdbhV0iqmRcEfh/Su22WGENIPcfKB0B7
-         Ur6jPmE2rCcNb6bvxVrnIG9XzTZkga7ukNdIGoG8aPz1rUCOc1ZX/a4y9EtDMSelwR6w
-         iueugoGjhFyQT2/6vyGGWdwqcB+pydLnrYlaR18oYOmqhV8qQSw9R7+FDeXvtHO7bfe7
-         v3X7QXNKPlE05rXIE2WGNA5MMqDU7hHwa2O5ovqSwoA54FybRUb0vj/2kSRpujSOCM/h
-         u4UQ==
-X-Gm-Message-State: AOAM5318kQ9Pi4iKTuoXr/4vFC3T9U2VE10XiReBFOEmKeeuUxV54Lh1
-        fSXv63IZalKusBZ1zZInNyo=
-X-Google-Smtp-Source: ABdhPJzZy8lYuF4Dnv8+CzgE9UBuWcfCF+6QoG4nD0xokbAAauobBpYUph+um4SOa4k7Kb6rNYcUlQ==
-X-Received: by 2002:a05:6402:1bc1:: with SMTP id ch1mr11717034edb.142.1595837700542;
-        Mon, 27 Jul 2020 01:15:00 -0700 (PDT)
+        bh=QKQiyF7wLr9Rnqu8Rf8+oL92y9RtB2jN0p/kFR1Ehks=;
+        b=Od3Kqs2Rttdm5gcBa/hgTXqRovKI3jb8uCWm+DGSBqwGvFvCyy/p4O2JkzxYXMCBcc
+         1fo7Flq48HL1SO3sCio2yjmx7C/rH5Scsr3QgnprY53vxz7lsGzO4RaO/lucW+a5Ee+o
+         sdXVe3V015DGOcYL8xvM1BkfmVAiLavKWLzaL1M+Ve81PiPTcmTRBo0j4XWcSbrbSYI7
+         XGuPmYfx/ewRJ/EZeldBagy6s99oF0O8t0IS67NbL0bjGhlmGNry0bydkozt3xSYHvoj
+         RYejiDLVUl2Qo1y76aE8Hi1QjW0PeupjRzJZWRW+HYqzGMRwl6Qsq0whmxwWotCtAzCl
+         7eNQ==
+X-Gm-Message-State: AOAM531Hzp3lHWjcigf2b6P13P88z/RHb9vEU5iCPsk1hIXIbzlwkffZ
+        hu8Ghj5UnOvXorJv+ugAF2A=
+X-Google-Smtp-Source: ABdhPJx8D9Kesqr7JHVE4yKzTTMA8zdBjVGQ5SWM1D1U3CV6/UZk0ukM7JrpH/DuIChsJlASyCbpSw==
+X-Received: by 2002:a17:906:d102:: with SMTP id b2mr7039452ejz.465.1595837717998;
+        Mon, 27 Jul 2020 01:15:17 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.213])
-        by smtp.googlemail.com with ESMTPSA id g6sm6545579ejz.19.2020.07.27.01.14.58
+        by smtp.googlemail.com with ESMTPSA id u2sm7061686edq.29.2020.07.27.01.15.16
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Jul 2020 01:14:59 -0700 (PDT)
-Date:   Mon, 27 Jul 2020 10:14:57 +0200
+        Mon, 27 Jul 2020 01:15:17 -0700 (PDT)
+Date:   Mon, 27 Jul 2020 10:15:14 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
         bcm-kernel-feedback-list@broadcom.com,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -66,35 +67,31 @@ Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
         Lukasz Luba <lukasz.luba@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 11/16] memory: brcmstb_dpfe: Fix language typo
-Message-ID: <20200727081457.GA17644@kozik-lap>
+        linux-pm@vger.kernel.org
+Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 09/16] memory: omap-gpmc: Fix language typo
+Message-ID: <20200727081514.GB17644@kozik-lap>
 References: <20200724182328.3348-1-krzk@kernel.org>
- <20200724182328.3348-12-krzk@kernel.org>
- <ca3f8dd3-7fc7-85dc-5656-e1e95302d501@gmail.com>
+ <20200724182328.3348-10-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ca3f8dd3-7fc7-85dc-5656-e1e95302d501@gmail.com>
+In-Reply-To: <20200724182328.3348-10-krzk@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 11:38:57AM -0700, Florian Fainelli wrote:
-> On 7/24/20 11:23 AM, Krzysztof Kozlowski wrote:
-> > Fix firwmare -> firmware.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+On Fri, Jul 24, 2020 at 08:23:21PM +0200, Krzysztof Kozlowski wrote:
+> Fix arbitary -> arbitrary.
 > 
-> Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-
-Thanks!
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/memory/omap-gpmc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Applied to drivers/memory tree.
 
 Best regards,
 Krzysztof
-
