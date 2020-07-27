@@ -2,321 +2,238 @@ Return-Path: <SRS0=MOmf=BG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB94C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jul 2020 13:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8747AC433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jul 2020 16:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E2312078A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jul 2020 13:49:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5361A2075A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jul 2020 16:31:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dFtmj2Pf"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cd7jWrWQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729187AbgG0NtP (ORCPT
+        id S1729573AbgG0Qbm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Jul 2020 09:49:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59858 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729107AbgG0NtM (ORCPT
+        Mon, 27 Jul 2020 12:31:42 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40453 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727855AbgG0Qbl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Jul 2020 09:49:12 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CD58C0619D4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2020 06:49:12 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id dk23so5266865ejb.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2020 06:49:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5nrJGkR5gzoJoAzFw0QkQIZLHmzb77Jw0yeZu9JZot4=;
-        b=dFtmj2Pf6AsbS3ZvrmOl3FfSHcXv98akIbtsWzzmClw206P7VO9+ayWWQx9sByRB4h
-         IvdlzRxURd8G6ieLgdpRGeBUc1taiMQV3jsbSXZC2A1tKVunmUZsw/k3TKGTTsczi9M8
-         hr6HisxYH5uZ1vlNHNfdpSAqCLg7wwALQkKrs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5nrJGkR5gzoJoAzFw0QkQIZLHmzb77Jw0yeZu9JZot4=;
-        b=c0sQC/jg/R8oLLUC0PVJxQhCiBnmoHgkZjPaypJ50KDh+myyUQXhlDhyYq46Fwi2EG
-         kUSprXNTQkbGJ5zPJkRttj/taRWP6p7UeyvAX2HQxUfxBX9nI31wYUS9/rAPNJNI4P5e
-         VWBdOoSQYvBN+TjGGdF0BAre68JpR1VOWLjFxhcoCmaA7HcKiDUG/ly2+rLlkPRjoPYB
-         gUOSIIO3GJAPruuuiAupNouefqIJmlI2PLxSt42VEeIamOex4MizMTyM3/f/lqjm1NRy
-         Bo3afWg8HLmzZbGC4pXGFcQoVCYA3p9nKAb01QyPr23+zi9As91XFdhdiQjexVqRtBqg
-         t1DQ==
-X-Gm-Message-State: AOAM530txG/D5ccNZEAst4vGSVuR1bjxW9a0C6Da/ZI6ssv0PD71A5jX
-        sDetEsOmBbDrtaQbYLpaQmUIRWVqLnuJYA==
-X-Google-Smtp-Source: ABdhPJzG/mrnfV4NnHTwPKBd9NKDHMJr99OQcfqPKc3hmPfQTxn7813Jj/bbvjSq3hX7F0bKjiy9Uw==
-X-Received: by 2002:a17:906:3a17:: with SMTP id z23mr20489252eje.238.1595857750692;
-        Mon, 27 Jul 2020 06:49:10 -0700 (PDT)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
-        by smtp.gmail.com with ESMTPSA id sb3sm3606179ejb.113.2020.07.27.06.49.09
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jul 2020 06:49:09 -0700 (PDT)
-Received: by mail-wr1-f51.google.com with SMTP id b6so14964846wrs.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2020 06:49:09 -0700 (PDT)
-X-Received: by 2002:adf:82b2:: with SMTP id 47mr19927685wrc.17.1595857749000;
- Mon, 27 Jul 2020 06:49:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200426022650.10355-1-xc-racer2@live.ca> <BN6PR04MB0660DB1C884EE9F9C7D94857A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
- <20200707184412.GJ2621465@chromium.org> <BN6PR04MB0660C1942C3738F9F9D1AAAFA3620@BN6PR04MB0660.namprd04.prod.outlook.com>
- <CAAFQd5ABvEnt7QQHmwwFyCqRLMabE=Vs_e7FrG3fMmrAWgD_bQ@mail.gmail.com> <BN6PR04MB066075594507854A6619A3E3A3770@BN6PR04MB0660.namprd04.prod.outlook.com>
-In-Reply-To: <BN6PR04MB066075594507854A6619A3E3A3770@BN6PR04MB0660.namprd04.prod.outlook.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Mon, 27 Jul 2020 15:48:57 +0200
-X-Gmail-Original-Message-ID: <CAAFQd5BAb+TcfMf3C_Mczo4+USsP5MzJmFj12eVPER9f-gJ41A@mail.gmail.com>
-Message-ID: <CAAFQd5BAb+TcfMf3C_Mczo4+USsP5MzJmFj12eVPER9f-gJ41A@mail.gmail.com>
-Subject: Re: [PATCH 10/11] media: exynos4-is: Prevent duplicate call to media_pipeline_stop
-To:     Jonathan Bakker <xc-racer2@live.ca>
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>, kgene@kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 27 Jul 2020 12:31:41 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200727163139euoutp01c13217fa75b9afdc4a17d1be3b6380b2~lqQkyw3OB3233032330euoutp01t
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2020 16:31:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200727163139euoutp01c13217fa75b9afdc4a17d1be3b6380b2~lqQkyw3OB3233032330euoutp01t
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1595867499;
+        bh=jTQiKidsi9U4IkUX06k/tIsaZ8WnIaGvnDKjEbdxO2I=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=cd7jWrWQEevXK+6nbBFCeWY6Dl8k4xptxPCcn5C5T4z7lHfTWTtGzE8dNUOyKnX/9
+         dgY5gLqT8JPqulEr53TiRAACRBoYU3Q+HJdi+qsYBkdNq6v2WR5cehNXnB2gas2GPY
+         iqrC9yu+1GrNWkcmI4l/ksOFHv/ZmukFL9PSVZNc=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200727163139eucas1p29c6efa3b4429c005309bf12e472e2bf7~lqQkZq_HG1104211042eucas1p2u;
+        Mon, 27 Jul 2020 16:31:39 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 6B.8D.05997.B610F1F5; Mon, 27
+        Jul 2020 17:31:39 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200727163139eucas1p17420a06923fb625331b2ea867f75bb7e~lqQj9i1qK1544715447eucas1p1p;
+        Mon, 27 Jul 2020 16:31:39 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200727163139eusmtrp17545c4c10fac8e9549cf04ad6299c8a9~lqQj881oX1289612896eusmtrp1T;
+        Mon, 27 Jul 2020 16:31:39 +0000 (GMT)
+X-AuditID: cbfec7f4-677ff7000000176d-64-5f1f016b37cb
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 5B.92.06314.A610F1F5; Mon, 27
+        Jul 2020 17:31:38 +0100 (BST)
+Received: from AMDC3061.digital.local (unknown [106.120.51.75]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200727163138eusmtip21bfd16d666f2a9697697affe193aeb23~lqQjeQhwO0553705537eusmtip2M;
+        Mon, 27 Jul 2020 16:31:38 +0000 (GMT)
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     broonie@kernel.org, krzk@kernel.org
+Cc:     simon@lineageos.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com
+Subject: [PATCH v2 1/3] ASoC: samsung: Document DT bindings for Midas sound
+ subsystem
+Date:   Mon, 27 Jul 2020 18:30:25 +0200
+Message-Id: <20200727163027.9242-1-s.nawrocki@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgleLIzCtJLcpLzFFi42LZduznOd1sRvl4gy1bZCyuXDzEZLFxxnpW
+        i6kPn7BZzD9yjtXi/PkN7BYzzu9jslh75C67ReveI+wWh9+0s1psOXObzYHLY8PnJjaPTas6
+        2Txa1m9i8+jbsorR4/MmuQDWKC6blNSczLLUIn27BK6M+xcuMhUslK2Y2TaNpYHxsGgXIyeH
+        hICJxMmVvaxdjFwcQgIrGCXevX/FBuF8YZSY+G0zVOYzo8SR1g4mmJZVE65CVS1nlJix4z1C
+        y9lb65lBqtgEDCV6j/YxgtgiAuoS92c0gY1iFrjJKDFzUx8bSEJYIFzi8a1XYA0sAqoSRx/u
+        AVvBK2AlseR1NwvEOnmJ1RsOMIM0Swi8Z5OYMe0XM0TCRWLGmneMELawxKvjW9ghbBmJ05N7
+        WCAamhklenbfZodwJjBK3D++AKrDWuLOuV9AZ3AA3aQpsX6XPkTYUeLLjHOsIGEJAT6JG28F
+        QcLMQOakbdOZIcK8Eh1tQhDVKhK/V02HBouURPeT/1A3e0gs3XaaFcQWEoiVeHn0PtsERrlZ
+        CLsWMDKuYhRPLS3OTU8tNspLLdcrTswtLs1L10vOz93ECEwXp/8d/7KDcdefpEOMAhyMSjy8
+        Gfvl4oVYE8uKK3MPMUpwMCuJ8DqdPR0nxJuSWFmVWpQfX1Sak1p8iFGag0VJnNd40ctYIYH0
+        xJLU7NTUgtQimCwTB6dUA2P7AqnpXB5TeBZ//cn7bOf3qOx0j+1vwxKj4iuYLzHsXDDz9MUI
+        R29H4e7QluKyuuAWLr+u2S45l1005hevCtk5/Yoe3+8nImv0bs1imn7wZecVOYUs/tlHyqeo
+        5U+fbTSDRfPOk7VFqswXwxoFGWNUjG8qiB+Sy1qssDK1+th/SV9rBQe2fCWW4oxEQy3mouJE
+        AHwzGWITAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMLMWRmVeSWpSXmKPExsVy+t/xe7pZjPLxBot32lhcuXiIyWLjjPWs
+        FlMfPmGzmH/kHKvF+fMb2C1mnN/HZLH2yF12i9a9R9gtDr9pZ7XYcuY2mwOXx4bPTWwem1Z1
+        snm0rN/E5tG3ZRWjx+dNcgGsUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK
+        +nY2Kak5mWWpRfp2CXoZ9y9cZCpYKFsxs20aSwPjYdEuRk4OCQETiVUTrrKB2EICSxklZv2v
+        6GLkAIpLScxvUYIoEZb4c60LqIQLqOQTo0TP6kNg9WwChhK9R/sYQWwRAU2Jjnm3WUGKmAUe
+        MkrsP34fLCEsECpxeWsvK4jNIqAqcfThHiYQm1fASmLJ624WiA3yEqs3HGCewMizgJFhFaNI
+        amlxbnpusaFecWJucWleul5yfu4mRmCAbjv2c/MOxksbgw8xCnAwKvHwZuyXixdiTSwrrsw9
+        xCjBwawkwut09nScEG9KYmVValF+fFFpTmrxIUZToOUTmaVEk/OB0ZNXEm9oamhuYWlobmxu
+        bGahJM7bIXAwRkggPbEkNTs1tSC1CKaPiYNTqoGxr3h9o8/zE4svXTnEK58f8c92ipdpQMky
+        Vi5N5g2WoYf9BJSqjFe0VFw7wFmzvt3i+qfY30GKp+M2rL3/nUk5P0SPt9mg++/Os0ybZ8yq
+        u/1+3+Zwphf7XQslWfz3zpZUzWna0HTUrfvXKcbbuRmlkq8cVO51LOnTrzdYOP1150WWfQdv
+        5ScpsRRnJBpqMRcVJwIACsSU32YCAAA=
+X-CMS-MailID: 20200727163139eucas1p17420a06923fb625331b2ea867f75bb7e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200727163139eucas1p17420a06923fb625331b2ea867f75bb7e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200727163139eucas1p17420a06923fb625331b2ea867f75bb7e
+References: <CGME20200727163139eucas1p17420a06923fb625331b2ea867f75bb7e@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Jul 25, 2020 at 1:46 AM Jonathan Bakker <xc-racer2@live.ca> wrote:
->
-> Hi Tomasz,
->
-> On 2020-07-20 6:10 a.m., Tomasz Figa wrote:
-> > On Sat, Jul 11, 2020 at 8:17 PM Jonathan Bakker <xc-racer2@live.ca> wro=
-te:
-> >>
-> >> Hi Tomasz,
-> >>
-> >> On 2020-07-07 11:44 a.m., Tomasz Figa wrote:
-> >>> Hi Jonathan,
-> >>>
-> >>> On Sat, Apr 25, 2020 at 07:26:49PM -0700, Jonathan Bakker wrote:
-> >>>> media_pipeline_stop can be called from both release and streamoff,
-> >>>> so make sure they're both protected under the streaming flag and
-> >>>> not just one of them.
-> >>>
-> >>> First of all, thanks for the patch.
-> >>>
-> >>> Shouldn't it be that release calls streamoff, so that only streamoff
-> >>> is supposed to have the call to media_pipeline_stop()?
-> >>>
-> >>
-> >> I can't say that I understand the whole media subsystem enough to know=
- :)
-> >> Since media_pipeline_start is called in streamon, it makes sense that =
-streamoff
-> >> should have the media_pipeline_stop call.  However, even after removin=
-g the call
-> >> in fimc_capture_release I'm still getting a backtrace such as
-> >>
-> >> [   73.843117] ------------[ cut here ]------------
-> >> [   73.843251] WARNING: CPU: 0 PID: 1575 at drivers/media/mc/mc-entity=
-.c:554 media_pipeline_stop+0x20/0x2c [mc]
-> >> [   73.843265] Modules linked in: s5p_fimc v4l2_fwnode exynos4_is_comm=
-on videobuf2_dma_contig pvrsrvkm_s5pv210_sgx540_120 videobuf2_memops v4l2_m=
-em2mem brcmfmac videobuf2_v4l2 videobuf2_common hci_uart sha256_generic lib=
-sha256 btbcm bluetooth cfg80211 brcmutil ecdh_generic ecc ce147 libaes s5ka=
-3dfx videodev atmel_mxt_ts mc pwm_vibra rtc_max8998
-> >> [   73.843471] CPU: 0 PID: 1575 Comm: v4l2-ctl Not tainted 5.7.0-14534=
--g2b33418b254e-dirty #669
-> >> [   73.843487] Hardware name: Samsung S5PC110/S5PV210-based board
-> >> [   73.843562] [<c010c7c4>] (unwind_backtrace) from [<c010a120>] (show=
-_stack+0x10/0x14)
-> >> [   73.843613] [<c010a120>] (show_stack) from [<c0117038>] (__warn+0xb=
-c/0xd4)
-> >> [   73.843661] [<c0117038>] (__warn) from [<c01170b0>] (warn_slowpath_=
-fmt+0x60/0xb8)
-> >> [   73.843734] [<c01170b0>] (warn_slowpath_fmt) from [<bf00c20c>] (med=
-ia_pipeline_stop+0x20/0x2c [mc])
-> >> [   73.843867] [<bf00c20c>] (media_pipeline_stop [mc]) from [<bf145c48=
->] (fimc_cap_streamoff+0x38/0x48 [s5p_fimc])
-> >> [   73.844109] [<bf145c48>] (fimc_cap_streamoff [s5p_fimc]) from [<bf0=
-3cbf4>] (__video_do_ioctl+0x220/0x448 [videodev])
-> >> [   73.844308] [<bf03cbf4>] (__video_do_ioctl [videodev]) from [<bf03d=
-600>] (video_usercopy+0x114/0x498 [videodev])
-> >> [   73.844438] [<bf03d600>] (video_usercopy [videodev]) from [<c020502=
-4>] (ksys_ioctl+0x20c/0xa10)
-> >> [   73.844484] [<c0205024>] (ksys_ioctl) from [<c0100060>] (ret_fast_s=
-yscall+0x0/0x54)
-> >> [   73.844505] Exception stack(0xe5083fa8 to 0xe5083ff0)
-> >> [   73.844546] 3fa0:                   0049908d bef8f8c0 00000003 4004=
-5613 bef8d5ac 004c1d16
-> >> [   73.844590] 3fc0: 0049908d bef8f8c0 bef8f8c0 00000036 bef8d5ac 0000=
-0000 b6d6b320 bef8faf8
-> >> [   73.844620] 3fe0: 004e3ed4 bef8c718 004990bb b6f00d0a
-> >> [   73.844642] ---[ end trace e6a4a8b2f20addd4 ]---
-> >>
-> >> The command I'm using for testing is
-> >>
-> >> v4l2-ctl --verbose -d 1 --stream-mmap=3D3 --stream-skip=3D2 --stream-t=
-o=3D./test.yuv --stream-count=3D1
-> >>
-> >> Since I noticed that the streaming flag was being checked fimc_capture=
-_release
-> >> but not in fimc_cap_streamoff, I assumed that it was simply a missed c=
-heck.  Comparing
-> >> with other drivers, they seem to call media_pipeline_stop in their vb2=
-_ops stop_streaming
-> >> callback.
-> >
-> > vb2 does a lot of state handling internally and makes sure that driver
-> > ops are not called when unnecessary, preventing double calls for
-> > example. I suppose it could be a better place to stop the pipeline
-> > indeed. However, ...
-> >
-> >>
-> >> I'm willing to test various options
-> >>
-> >
-> > I think it could make sense to add something like WARN_ON(1) inside
-> > media_pipeline_stop() and then check where the first call came from.
->
-> Here's the results of that:
->
-> [   69.876823] ------------[ cut here ]------------
-> [   69.876962] WARNING: CPU: 0 PID: 1566 at drivers/media/mc/mc-entity.c:=
-550 __media_pipeline_stop+0x24/0xfc [mc]
-> [   69.876976] Modules linked in: s5p_fimc v4l2_fwnode exynos4_is_common =
-videobuf2_dma_contig videobuf2_memops v4l2_mem2mem brcmfmac videobuf2_v4l2 =
-pvrsrvkm_s5pv210_sgx540_120 videobuf2_common hci_uart sha256_generic btbcm =
-libsha256 bluetooth cfg80211 ce147 brcmutil s5ka3dfx ecdh_generic ecc libae=
-s videodev atmel_mxt_ts mc pwm_vibra rtc_max8998
-> [   69.877182] CPU: 0 PID: 1566 Comm: v4l2-ctl Not tainted 5.7.0-14540-gb=
-1220848c797-dirty #681
-> [   69.877198] Hardware name: Samsung S5PC110/S5PV210-based board
-> [   69.877274] [<c010c7c4>] (unwind_backtrace) from [<c010a120>] (show_st=
-ack+0x10/0x14)
-> [   69.877326] [<c010a120>] (show_stack) from [<c0117038>] (__warn+0xbc/0=
-xd4)
-> [   69.877375] [<c0117038>] (__warn) from [<c01170b0>] (warn_slowpath_fmt=
-+0x60/0xb8)
-> [   69.877448] [<c01170b0>] (warn_slowpath_fmt) from [<bf010130>] (__medi=
-a_pipeline_stop+0x24/0xfc [mc])
-> [   69.877540] [<bf010130>] (__media_pipeline_stop [mc]) from [<bf010228>=
-] (media_pipeline_stop+0x20/0x2c [mc])
-> [   69.877663] [<bf010228>] (media_pipeline_stop [mc]) from [<bf08fc48>] =
-(fimc_cap_streamoff+0x38/0x48 [s5p_fimc])
-> [   69.877904] [<bf08fc48>] (fimc_cap_streamoff [s5p_fimc]) from [<bf040b=
-f4>] (__video_do_ioctl+0x220/0x448 [videodev])
-> [   69.878105] [<bf040bf4>] (__video_do_ioctl [videodev]) from [<bf041600=
->] (video_usercopy+0x114/0x498 [videodev])
-> [   69.878234] [<bf041600>] (video_usercopy [videodev]) from [<c0205024>]=
- (ksys_ioctl+0x20c/0xa10)
-> [   69.878281] [<c0205024>] (ksys_ioctl) from [<c0100060>] (ret_fast_sysc=
-all+0x0/0x54)
-> [   69.878301] Exception stack(0xe50c1fa8 to 0xe50c1ff0)
-> [   69.878342] 1fa0:                   004ef08d 00539d0c 00000003 4004561=
-3 bec1578c 00517d16
-> [   69.878386] 1fc0: 004ef08d 00539d0c bec188c0 00000036 bec165ac 0000000=
-0 b6def320 bec18af8
-> [   69.878415] 1fe0: 00539ed4 bec15730 004ef0bb b6f84d0a
-> [   69.878436] ---[ end trace d004ab573a72c329 ]---
-> [   69.879704] ------------[ cut here ]------------
-> [   69.879794] WARNING: CPU: 0 PID: 1566 at drivers/media/mc/mc-entity.c:=
-550 __media_pipeline_stop+0x24/0xfc [mc]
-> [   69.879806] Modules linked in: s5p_fimc v4l2_fwnode exynos4_is_common =
-videobuf2_dma_contig videobuf2_memops v4l2_mem2mem brcmfmac videobuf2_v4l2 =
-pvrsrvkm_s5pv210_sgx540_120 videobuf2_common hci_uart sha256_generic btbcm =
-libsha256 bluetooth cfg80211 ce147 brcmutil s5ka3dfx ecdh_generic ecc libae=
-s videodev atmel_mxt_ts mc pwm_vibra rtc_max8998
-> [   69.880002] CPU: 0 PID: 1566 Comm: v4l2-ctl Tainted: G        W       =
-  5.7.0-14540-gb1220848c797-dirty #681
-> [   69.880016] Hardware name: Samsung S5PC110/S5PV210-based board
-> [   69.880071] [<c010c7c4>] (unwind_backtrace) from [<c010a120>] (show_st=
-ack+0x10/0x14)
-> [   69.880115] [<c010a120>] (show_stack) from [<c0117038>] (__warn+0xbc/0=
-xd4)
-> [   69.880161] [<c0117038>] (__warn) from [<c01170b0>] (warn_slowpath_fmt=
-+0x60/0xb8)
-> [   69.880231] [<c01170b0>] (warn_slowpath_fmt) from [<bf010130>] (__medi=
-a_pipeline_stop+0x24/0xfc [mc])
-> [   69.880318] [<bf010130>] (__media_pipeline_stop [mc]) from [<bf010228>=
-] (media_pipeline_stop+0x20/0x2c [mc])
-> [   69.880419] [<bf010228>] (media_pipeline_stop [mc]) from [<bf08fc48>] =
-(fimc_cap_streamoff+0x38/0x48 [s5p_fimc])
-> [   69.880582] [<bf08fc48>] (fimc_cap_streamoff [s5p_fimc]) from [<bf040b=
-f4>] (__video_do_ioctl+0x220/0x448 [videodev])
-> [   69.880776] [<bf040bf4>] (__video_do_ioctl [videodev]) from [<bf041600=
->] (video_usercopy+0x114/0x498 [videodev])
-> [   69.880895] [<bf041600>] (video_usercopy [videodev]) from [<c0205024>]=
- (ksys_ioctl+0x20c/0xa10)
-> [   69.880939] [<c0205024>] (ksys_ioctl) from [<c0100060>] (ret_fast_sysc=
-all+0x0/0x54)
-> [   69.880958] Exception stack(0xe50c1fa8 to 0xe50c1ff0)
-> [   69.880997] 1fa0:                   004ef08d bec188c0 00000003 4004561=
-3 bec165ac 00517d16
-> [   69.881040] 1fc0: 004ef08d bec188c0 bec188c0 00000036 bec165ac 0000000=
-0 b6def320 bec18af8
-> [   69.881070] 1fe0: 00539ed4 bec15718 004ef0bb b6f84d0a
-> [   69.881089] ---[ end trace d004ab573a72c32a ]---
-> [   69.881102] ------------[ cut here ]------------
-> [   69.881163] WARNING: CPU: 0 PID: 1566 at drivers/media/mc/mc-entity.c:=
-556 media_pipeline_stop+0x20/0x2c [mc]
-> [   69.881174] Modules linked in: s5p_fimc v4l2_fwnode exynos4_is_common =
-videobuf2_dma_contig videobuf2_memops v4l2_mem2mem brcmfmac videobuf2_v4l2 =
-pvrsrvkm_s5pv210_sgx540_120 videobuf2_common hci_uart sha256_generic btbcm =
-libsha256 bluetooth cfg80211 ce147 brcmutil s5ka3dfx ecdh_generic ecc libae=
-s videodev atmel_mxt_ts mc pwm_vibra rtc_max8998
-> [   69.881367] CPU: 0 PID: 1566 Comm: v4l2-ctl Tainted: G        W       =
-  5.7.0-14540-gb1220848c797-dirty #681
-> [   69.881381] Hardware name: Samsung S5PC110/S5PV210-based board
-> [   69.881424] [<c010c7c4>] (unwind_backtrace) from [<c010a120>] (show_st=
-ack+0x10/0x14)
-> [   69.881465] [<c010a120>] (show_stack) from [<c0117038>] (__warn+0xbc/0=
-xd4)
-> [   69.881511] [<c0117038>] (__warn) from [<c01170b0>] (warn_slowpath_fmt=
-+0x60/0xb8)
-> [   69.881580] [<c01170b0>] (warn_slowpath_fmt) from [<bf010228>] (media_=
-pipeline_stop+0x20/0x2c [mc])
-> [   69.881683] [<bf010228>] (media_pipeline_stop [mc]) from [<bf08fc48>] =
-(fimc_cap_streamoff+0x38/0x48 [s5p_fimc])
-> [   69.881834] [<bf08fc48>] (fimc_cap_streamoff [s5p_fimc]) from [<bf040b=
-f4>] (__video_do_ioctl+0x220/0x448 [videodev])
-> [   69.882025] [<bf040bf4>] (__video_do_ioctl [videodev]) from [<bf041600=
->] (video_usercopy+0x114/0x498 [videodev])
-> [   69.882246] [<bf041600>] (video_usercopy [videodev]) from [<c0205024>]=
- (ksys_ioctl+0x20c/0xa10)
-> [   69.882291] [<c0205024>] (ksys_ioctl) from [<c0100060>] (ret_fast_sysc=
-all+0x0/0x54)
-> [   69.882309] Exception stack(0xe50c1fa8 to 0xe50c1ff0)
-> [   69.882348] 1fa0:                   004ef08d bec188c0 00000003 4004561=
-3 bec165ac 00517d16
-> [   69.882391] 1fc0: 004ef08d bec188c0 bec188c0 00000036 bec165ac 0000000=
-0 b6def320 bec18af8
-> [   69.882420] 1fe0: 00539ed4 bec15718 004ef0bb b6f84d0a
-> [   69.882439] ---[ end trace d004ab573a72c32b ]---
->
-> With the final trace being the original one that I was having.
->
-> So it looks to me as if streamoff is being called twice.  Is this a possi=
-bility for all drivers
-> or is there a different bug that I should be trying to track down?  In an=
-y event, my patch does
-> prevent the warning (although my reasoning was wrong as I thought it was =
-being stopped on the
-> call to release).
+This patch adds documentation of DT biding for the Midas sound complex.
+Partially based on the *txt version by Simon Shields <simon@lineageos.org>.
 
-It certainly is possible for the userspace call STREAMOFF twice and
-the driver needs to ensure that the second call is essentially a
-no-op, as per [1]. FWIW, if the driver defers the stream start/stop
-operation entirely to the vb2 .start/stop_streaming callback, then vb2
-would handle this automatically.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+Changes for v2:
+ - fix wrong *-gpios entries in the example,
+ - mark sound-dai properties as required.
+---
+ .../bindings/sound/samsung,midas-audio.yaml        | 108 +++++++++++++++++++++
+ 1 file changed, 108 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
 
-[1] https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/vidioc-s=
-treamon.html#description
+diff --git a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
+new file mode 100644
+index 0000000..fb685e51
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
+@@ -0,0 +1,108 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/samsung,midas-audio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Midas audio complex with WM1811 codec
++
++maintainers:
++  - Sylwester Nawrocki <s.nawrocki@samsung.com>
++
++properties:
++  compatible:
++    const: samsung,midas-audio
++
++  model:
++    $ref: /schemas/types.yaml#/definitions/string
++    description: The user-visible name of this sound complex.
++
++  cpu:
++    type: object
++    properties:
++      sound-dai:
++        $ref: /schemas/types.yaml#/definitions/phandle-array
++        description: phandle to the I2S controller
++    required:
++      - sound-dai
++
++  codec:
++    type: object
++    properties:
++      sound-dai:
++        $ref: /schemas/types.yaml#/definitions/phandle-array
++        description: phandle to the WM1811 CODEC node
++    required:
++      - sound-dai
++
++  samsung,audio-routing:
++    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
++    description: |
++      List of the connections between audio components; each entry is
++      a pair of strings, the first being the connection's sink, the second
++      being the connection's source; valid names for sources and sinks are
++      the WM1811's pins (as documented in its binding), and the jacks
++      on the board: HP, SPK, Main Mic, Sub Mic, Headset Mic.
++
++  mic-bias-supply:
++    description: Supply for the micbias on the Main microphone
++
++  submic-bias-supply:
++    description: Supply for the micbias on the Sub microphone
++
++  fm-sel-gpios:
++    description: GPIO pin for FM selection
++
++  lineout-sel-gpios:
++    description: GPIO pin for line out selection
++
++required:
++  - compatible
++  - model
++  - cpu
++  - codec
++  - samsung,audio-routing
++  - mic-bias-supply
++  - submic-bias-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    sound {
++        compatible = "samsung,midas-audio";
++        model = "Midas";
++
++        fm-sel-gpios = <&gpaa0 3 GPIO_ACTIVE_HIGH>;
++
++        mic-bias-supply = <&mic_bias_reg>;
++        submic-bias-supply = <&submic_bias_reg>;
++
++        samsung,audio-routing =
++                "HP", "HPOUT1L",
++                "HP", "HPOUT1R",
++
++                "SPK", "SPKOUTLN",
++                "SPK", "SPKOUTLP",
++                "SPK", "SPKOUTRN",
++                "SPK", "SPKOUTRP",
++
++                "RCV", "HPOUT2N",
++                "RCV", "HPOUT2P",
++
++                "IN1LP", "Main Mic",
++                "IN1LN", "Main Mic",
++                "IN1RP", "Sub Mic",
++                "IN1LP", "Sub Mic";
++
++        cpu {
++            sound-dai = <&i2s0>;
++        };
++
++        codec {
++            sound-dai = <&wm1811>;
++        };
++
++    };
+-- 
+2.7.4
 
-Best regards,
-Tomasz
