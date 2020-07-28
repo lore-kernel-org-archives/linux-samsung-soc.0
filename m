@@ -2,105 +2,243 @@ Return-Path: <SRS0=e6OM=BH=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C668EC433E4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jul 2020 12:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28986C4345A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jul 2020 13:11:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 988AF206D7
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jul 2020 12:47:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595940435;
-	bh=UsGWWrwmfV5aaZQ/xi9YKkAi2LA0NuVnnnUH/pZMbpc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=zG/ghelpK4I1Go/XdQJ2xDXvoI2Jx0Hbzzfv/MTOxWY9IM84Tyll0qROZD7Dg1czK
-	 Tnif3Z7kzzMojfqWUhDoHuVlwqgbUozPjLiva8sixOqMwSoBTzHQXMJ81VAx7Pn1/e
-	 k9Q+BPLRayfk8OpU2yVqxR6zzq5q+TQZUogG4HvQ=
+	by mail.kernel.org (Postfix) with ESMTP id 04CFB20775
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jul 2020 13:11:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XNrIdy39"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729806AbgG1MrP (ORCPT
+        id S1730048AbgG1NLd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Jul 2020 08:47:15 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36743 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729576AbgG1MrL (ORCPT
+        Tue, 28 Jul 2020 09:11:33 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:55521 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730020AbgG1NL3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Jul 2020 08:47:11 -0400
-Received: by mail-ed1-f68.google.com with SMTP id c15so5056458edj.3;
-        Tue, 28 Jul 2020 05:47:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=T/pqmbhLh7sKGJACzLPiIlQzkqQ8XjFefTZhyBvXBXA=;
-        b=P1tumZy99UaJrzhb/iV9NVe/+Oc6ycDDWE3D04ml/nkJcVroeiQyMJkmp2XKChbqpZ
-         F/KC4mn9Et9TiYX0ld0Hhp0M5ZDmdsge8ux/Ckfni3iDBDYPoSk5RMKp5aOxg/gXNA2D
-         Mu1bTkGy9s/KARPwzmV+8oZ4uOOZtuBTgcos/FShLRjLwRXA2EBES68gvfrefcsmosj7
-         PIIUqnq4q2HUkBRR0XiWoGhJjGkIRCMcgpXmOJQQK1PChwU8QiBK3ij4kOutIUiX52aU
-         57h2FnfopyFaojmjaCWHz2A4zdpSn4KhiDca3UUMTGzV2imdU9FUZXLvV4lN+iOhxi4q
-         R8mA==
-X-Gm-Message-State: AOAM533d7VAwGC2ReB4JLNKvwLV1fWn+Y11nP0avvQXrKoR07+hbwLXW
-        66eD2p8U34Lejr5dOJRk4UY=
-X-Google-Smtp-Source: ABdhPJxqpRPRTtJr4gwvC8HABlrPkJOd0W1I02Qx/TUd4FrazEXvNoO6XEeihc+npOZ43QoBZUN7zw==
-X-Received: by 2002:a05:6402:1a54:: with SMTP id bf20mr14060285edb.217.1595940429122;
-        Tue, 28 Jul 2020 05:47:09 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.213])
-        by smtp.googlemail.com with ESMTPSA id c7sm8221178ejr.77.2020.07.28.05.47.07
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Jul 2020 05:47:08 -0700 (PDT)
-Date:   Tue, 28 Jul 2020 14:47:06 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Qinglang Miao <miaoqinglang@huawei.com>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] ARM: s3c: fix return value check in
- s3c_usb_otgphy_init()
-Message-ID: <20200728124706.GA32233@kozik-lap>
-References: <20200728022756.87687-1-miaoqinglang@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200728022756.87687-1-miaoqinglang@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 28 Jul 2020 09:11:29 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200728131127euoutp01baebd73c6780f4f26d719538f3c7c728~l7LDYKXyW1975819758euoutp01o
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jul 2020 13:11:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200728131127euoutp01baebd73c6780f4f26d719538f3c7c728~l7LDYKXyW1975819758euoutp01o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1595941887;
+        bh=LxXAXNiNU2/+HZuMBh9dY62HizQSIWMo4cmZejA+I1Q=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=XNrIdy395zjmhcghyppKw3D4af+mKZb7IvQOolDzvqfDIcXzz3rr3DOOjsRriqTgF
+         KDBH3/jTOK+zCJ1lzNcysWyk6ZdhwG/sHZRHXYXouERaMPeGSD8E38Y4kpXmdGBGsQ
+         N2oAXew4/oKjGnNtskfJMHAN37fNWEATRaYKUADM=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200728131126eucas1p1c5d36b6ae691176384dee4f62fa200ff~l7LDFoDnl3202632026eucas1p1V;
+        Tue, 28 Jul 2020 13:11:26 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 19.2B.06456.EF3202F5; Tue, 28
+        Jul 2020 14:11:26 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200728131126eucas1p16365622c52f91104373a2cd3e0ebb619~l7LCztZ251537115371eucas1p1l;
+        Tue, 28 Jul 2020 13:11:26 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200728131126eusmtrp2f5371e3065140d16723cde541d90084c~l7LCzC6790544805448eusmtrp2I;
+        Tue, 28 Jul 2020 13:11:26 +0000 (GMT)
+X-AuditID: cbfec7f2-809ff70000001938-85-5f2023fea0e2
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 92.85.06017.EF3202F5; Tue, 28
+        Jul 2020 14:11:26 +0100 (BST)
+Received: from AMDC3061.digital.local (unknown [106.120.51.75]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200728131126eusmtip261a0343f852ecdbdfc93314fb68e9cdd~l7LCVXo5e0123701237eusmtip2r;
+        Tue, 28 Jul 2020 13:11:26 +0000 (GMT)
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     broonie@kernel.org, krzk@kernel.org
+Cc:     simon@lineageos.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com
+Subject: [PATCH v3 1/3] ASoC: samsung: Document DT bindings for Midas sound
+ subsystem
+Date:   Tue, 28 Jul 2020 15:11:09 +0200
+Message-Id: <20200728131111.14334-1-s.nawrocki@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNIsWRmVeSWpSXmKPExsWy7djP87r/lBXiDV6vt7C4cvEQk8XGGetZ
+        LaY+fMJmMf/IOVaL8+c3sFvMOL+PyWLtkbvsFq17j7BbHH7Tzmqx5cxtNgcujw2fm9g8Nq3q
+        ZPNoWb+JzaNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgyLl3+xFjwX7biUtt11gbGDrEuRk4O
+        CQETiV1ne5m7GLk4hARWMEr8WLeBCcL5wigxcWkzG0iVkMBnRondxy1hOl49/sACUbScUeLi
+        2Z3McB3Hb95iBKliEzCU6D3aB2aLCKhL3J/RxApSxCxwk1Fi5qY+oLEcHMIC4RJd/cIgJouA
+        qkRTdxlIOa+AtcTFyXsYIZbJS6zecABsvoTAezaJ/wsb2SESLhLf1vdB2cISr45vgbJlJP7v
+        nM8E0dDMKNGz+zY7hDOBUeL+8QVQY60l7pz7BXYEs4CmxPpd+iCmhICjROtTYQiTT+LGW0GQ
+        YmYgc9K26cwQYV6JjjYhiBkqEr9XTWeCsKUkup/8Z4GwPSQ2XHsAVi4kECtxZY3TBEa5WQib
+        FjAyrmIUTy0tzk1PLTbMSy3XK07MLS7NS9dLzs/dxAhMEqf/Hf+0g/HrpaRDjAIcjEo8vDNE
+        FeKFWBPLiitzDzFKcDArifA6nT0dJ8SbklhZlVqUH19UmpNafIhRmoNFSZzXeNHLWCGB9MSS
+        1OzU1ILUIpgsEwenVAOj0IUpQWJ1bxQTDn169XS26tze7l+Lt6Y+NHzENmflUu3O6lsm8Vbi
+        xQs3tHVtKPVJu2nxt3f23Yhah8ogr4MnZz37J8OonvFlwsdJVgInHe4HbZvV46iQdWSuwpNz
+        xS95Vuc2VV48yKT75v5ng4X60xKeHtzx5k8B//br3zf+fb7shtE6xYX3ryixFGckGmoxFxUn
+        AgBn5i3ADgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMLMWRmVeSWpSXmKPExsVy+t/xe7r/lBXiDabuVbG4cvEQk8XGGetZ
+        LaY+fMJmMf/IOVaL8+c3sFvMOL+PyWLtkbvsFq17j7BbHH7Tzmqx5cxtNgcujw2fm9g8Nq3q
+        ZPNoWb+JzaNvyypGj8+b5AJYo/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV
+        9O1sUlJzMstSi/TtEvQyLl3+xFjwX7biUtt11gbGDrEuRk4OCQETiVePP7B0MXJxCAksZZTY
+        desZkMMBlJCSmN+iBFEjLPHnWhcbRM0nRomeO29YQBJsAoYSvUf7GEFsEQFNiY55t1lBipgF
+        HjJK7D9+HywhLBAqcWH7LWaQoSwCqhJN3WUgYV4Ba4mLk/cwQiyQl1i94QDzBEaeBYwMqxhF
+        UkuLc9Nzi430ihNzi0vz0vWS83M3MQIDdNuxn1t2MHa9Cz7EKMDBqMTDO0NUIV6INbGsuDL3
+        EKMEB7OSCK/T2dNxQrwpiZVVqUX58UWlOanFhxhNgXZPZJYSTc4HRk9eSbyhqaG5haWhubG5
+        sZmFkjhvh8DBGCGB9MSS1OzU1ILUIpg+Jg5OqQbGCLun90L8vu9WXqyYLHNG82eBduMe3ll8
+        GTVTxZvsLF+y9H4Tcdl4fweHbJLcbeXQolJFx+0Cd+dq8i51imvTZl2f6bKuL1hC/HA6z+vS
+        a45zngVNcV/MJbbDYuYGNm1HdotQgXVeTMx7+Fc2fWuUV2zgyrtl7N9/SdX4koJJ16F3ryI+
+        eyuxFGckGmoxFxUnAgCaSdh+ZgIAAA==
+X-CMS-MailID: 20200728131126eucas1p16365622c52f91104373a2cd3e0ebb619
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200728131126eucas1p16365622c52f91104373a2cd3e0ebb619
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200728131126eucas1p16365622c52f91104373a2cd3e0ebb619
+References: <CGME20200728131126eucas1p16365622c52f91104373a2cd3e0ebb619@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jul 28, 2020 at 10:27:56AM +0800, Qinglang Miao wrote:
-> the function clk_get() returns ERR_PTR() in case of error and
-> never returns NULL. So there's no need to test whether xusbxti
-> is NULL, just remove the redundant part in the return value check.
-> 
-> Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
-> ---
->  arch/arm/mach-s3c64xx/setup-usb-phy.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+This patch adds documentation of DT biding for the Midas sound complex.
+Partially based on the *txt version by Simon Shields <simon@lineageos.org>.
 
-Looks good, thanks. I don't plan to take anything before merge window
-(it is quite late in the cycle) so I will apply it after the window.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+Changes for v3:
+ - change the sound-dai property type in cpu, codec nodes from
+   phandle-array to phandle
 
-Best regards,
-Krzysztof
+Changes for v2:
+ - fix wrong *-gpios entries in the example,
+ - mark sound-dai properties as required.
+---
+ .../bindings/sound/samsung,midas-audio.yaml        | 108 +++++++++++++++++++++
+ 1 file changed, 108 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
 
-> diff --git a/arch/arm/mach-s3c64xx/setup-usb-phy.c b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-> index d6b0e3b26..99d743884 100644
-> --- a/arch/arm/mach-s3c64xx/setup-usb-phy.c
-> +++ b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-> @@ -31,7 +31,7 @@ static int s3c_usb_otgphy_init(struct platform_device *pdev)
->  	phyclk = readl(S3C_PHYCLK) & ~S3C_PHYCLK_CLKSEL_MASK;
->  
->  	xusbxti = clk_get(&pdev->dev, "xusbxti");
-> -	if (xusbxti && !IS_ERR(xusbxti)) {
-> +	if (!IS_ERR(xusbxti)) {
->  		switch (clk_get_rate(xusbxti)) {
->  		case 12 * MHZ:
->  			phyclk |= S3C_PHYCLK_CLKSEL_12M;
-> -- 
-> 2.25.1
-> 
+diff --git a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
+new file mode 100644
+index 0000000..1c755de
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
+@@ -0,0 +1,108 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/samsung,midas-audio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Midas audio complex with WM1811 codec
++
++maintainers:
++  - Sylwester Nawrocki <s.nawrocki@samsung.com>
++
++properties:
++  compatible:
++    const: samsung,midas-audio
++
++  model:
++    $ref: /schemas/types.yaml#/definitions/string
++    description: The user-visible name of this sound complex.
++
++  cpu:
++    type: object
++    properties:
++      sound-dai:
++        $ref: /schemas/types.yaml#/definitions/phandle
++        description: phandle to the I2S controller
++    required:
++      - sound-dai
++
++  codec:
++    type: object
++    properties:
++      sound-dai:
++        $ref: /schemas/types.yaml#/definitions/phandle
++        description: phandle to the WM1811 CODEC
++    required:
++      - sound-dai
++
++  samsung,audio-routing:
++    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
++    description: |
++      List of the connections between audio components; each entry is
++      a pair of strings, the first being the connection's sink, the second
++      being the connection's source; valid names for sources and sinks are
++      the WM1811's pins (as documented in its binding), and the jacks
++      on the board: HP, SPK, Main Mic, Sub Mic, Headset Mic.
++
++  mic-bias-supply:
++    description: Supply for the micbias on the Main microphone
++
++  submic-bias-supply:
++    description: Supply for the micbias on the Sub microphone
++
++  fm-sel-gpios:
++    description: GPIO pin for FM selection
++
++  lineout-sel-gpios:
++    description: GPIO pin for line out selection
++
++required:
++  - compatible
++  - model
++  - cpu
++  - codec
++  - samsung,audio-routing
++  - mic-bias-supply
++  - submic-bias-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    sound {
++        compatible = "samsung,midas-audio";
++        model = "Midas";
++
++        fm-sel-gpios = <&gpaa0 3 GPIO_ACTIVE_HIGH>;
++
++        mic-bias-supply = <&mic_bias_reg>;
++        submic-bias-supply = <&submic_bias_reg>;
++
++        samsung,audio-routing =
++                "HP", "HPOUT1L",
++                "HP", "HPOUT1R",
++
++                "SPK", "SPKOUTLN",
++                "SPK", "SPKOUTLP",
++                "SPK", "SPKOUTRN",
++                "SPK", "SPKOUTRP",
++
++                "RCV", "HPOUT2N",
++                "RCV", "HPOUT2P",
++
++                "IN1LP", "Main Mic",
++                "IN1LN", "Main Mic",
++                "IN1RP", "Sub Mic",
++                "IN1LP", "Sub Mic";
++
++        cpu {
++            sound-dai = <&i2s0>;
++        };
++
++        codec {
++            sound-dai = <&wm1811>;
++        };
++
++    };
+-- 
+2.7.4
+
