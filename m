@@ -2,110 +2,170 @@ Return-Path: <SRS0=8fUM=BI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F244C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jul 2020 16:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C20B3C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jul 2020 16:22:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65A3322BEA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jul 2020 16:11:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596039102;
-	bh=sgnxQDxNFJhXCnpuKyxV9bhtCuQWJwff+93nPoham8s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BwECkxRFGcJ4JxEdpQxhr56v0WWnEFCX7Bc3wsmhNgLucYWbHcGs8SJfcAcLRHVHz
-	 V8OA2L9Zx72jGzkvHrRQC7CF06U8p68RlI9QaGk+i8LhLolvWDIu9dj/YV/ts09Ihv
-	 0oOHjl+rOjsHI8NSJkL8GFQG/zRBY2XkVlKL2jS4=
+	by mail.kernel.org (Postfix) with ESMTP id A8C0520838
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jul 2020 16:22:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbgG2QLm (ORCPT
+        id S1726615AbgG2QWa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jul 2020 12:11:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726341AbgG2QLl (ORCPT
+        Wed, 29 Jul 2020 12:22:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49126 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbgG2QWa (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jul 2020 12:11:41 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41E2122B48;
-        Wed, 29 Jul 2020 16:11:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596039101;
-        bh=sgnxQDxNFJhXCnpuKyxV9bhtCuQWJwff+93nPoham8s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cM4dVIXwR8DqzyQLOawNX1BOBHmqXQoHA6UO6xnb+fl+HSkQZRKq+0wevYNyuMDZ+
-         Z3x3sGobVRCFxBs/1KHgpWBmeAGDp9fNHImoMNRcr8xD2XwZgK3VtM3fLR9Tuy2Wxj
-         m91TTXpMH7UsVNy/mMdeuvUGo7i6UCtRbFIp8OZk=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>,
+        Wed, 29 Jul 2020 12:22:30 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1678C061794;
+        Wed, 29 Jul 2020 09:22:29 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: gtucker)
+        with ESMTPSA id 7291A298404
+Subject: Re: [PATCH 2/3] ARM: l2c: update prefetch bits in L2X0_AUX_CTRL using
+ DT value
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Vincent Sanders <vince@simtec.co.uk>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Cc:     Sergio Prado <sergio.prado@e-labworks.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>,
-        stable@vger.kernel.org
-Subject: [PATCH 7/7] ARM: s3c24xx: Fix missing system reset
-Date:   Wed, 29 Jul 2020 18:09:42 +0200
-Message-Id: <20200729160942.28867-8-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200729160942.28867-1-krzk@kernel.org>
-References: <20200729160942.28867-1-krzk@kernel.org>
+        Rob Herring <robh+dt@kernel.org>, kernel@collabora.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <860eb8a1eed879e55daf960c96acdac514cbda93.1596028601.git.guillaume.tucker@collabora.com>
+ <79a628daef56c2d542e379f550de21da4fe3c901.1596028601.git.guillaume.tucker@collabora.com>
+ <20200729141801.GB1551@shell.armlinux.org.uk>
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Message-ID: <a85d7b4e-abfd-268a-01a5-f78068d7e30c@collabora.com>
+Date:   Wed, 29 Jul 2020 17:22:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20200729141801.GB1551@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Commit f6361c6b3880 ("ARM: S3C24XX: remove separate restart code")
-removed usage of the watchdog reset platform code in favor of the
-Samsung SoC watchdog driver.  However the latter was not selected thus
-S3C24xx platforms lost reset abilities.
+On 29/07/2020 15:18, Russell King - ARM Linux admin wrote:
+> On Wed, Jul 29, 2020 at 02:47:32PM +0100, Guillaume Tucker wrote:
+>> The L310_PREFETCH_CTRL register bits 28 and 29 to enable data and
+>> instruction prefetch respectively can also be accessed via the
+>> L2X0_AUX_CTRL register.  They appear to be actually wired together in
+>> hardware between the registers.  Changing them in the prefetch
+>> register only will get undone when restoring the aux control register
+>> later on.  For this reason, set these bits in both registers during
+>> initialisation according to the DT attributes.
+> 
+> How will that happen?
+> 
+> We write the auxiliary control register before the prefetch control
+> register, so the prefetch control register will take precedence.  See
+> l2c310_configure() - l2c_configure() writes the auxiliary control
+> register, and the function writes the prefetch control register later.
 
-Cc: <stable@vger.kernel.org>
-Fixes: f6361c6b3880 ("ARM: S3C24XX: remove separate restart code")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+What I'm seeing is that outer_cache.configure() gets called, at
+least on exynos4412-odroidx2.  See l2c_enable():
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index fe95777af653..063018c387be 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -506,8 +506,10 @@ config ARCH_S3C24XX
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C_RTC if RTC_CLASS
- 	select NEED_MACH_IO_H
-+	select S3C2410_WATCHDOG
- 	select SAMSUNG_ATAGS
- 	select USE_OF
-+	select WATCHDOG
- 	help
- 	  Samsung S3C2410, S3C2412, S3C2413, S3C2416, S3C2440, S3C2442, S3C2443
- 	  and S3C2450 SoCs based systems, such as the Simtec Electronics BAST
--- 
-2.17.1
+	if (outer_cache.configure)
+		outer_cache.configure(&l2x0_saved_regs);
+	else
+		l2x0_data->configure(base);
+
+Then instead of l2c310_configure(), exynos_l2_configure() gets
+called and writes prefetch_ctrl right before aux_ctrl.  Should
+exynos_l2_configure() be changed to swap the register writes?
+
+
+> I think the real issue is that Exynos has been modifying the prefetch
+> settings via its machine .aux_mask / .aux_val configuration, and the
+> opposite is actually true: the prefetch control register values will
+> overwrite the attempt to modify the auxiliary control values set through
+> the machine .aux_mask/.aux_val.
+
+Yes with l2c310_configure() but not with exynos_l2_configure().
+
+To be clear, this is what I've found to be happening, if you
+switch to using the device tree prefetch attributes and clear
+the bits in the default l2c_aux_val (see PATCH 3/3):
+
+1. l2x0_of_init() first gets called with the default aux_val
+
+2. l2c310_of_parse() sets the bits in l2x0_saved_regs.prefetch_ctrl
+   but not in aux_val (unless you apply this patch 2/3)
+
+3. l2c_enable() calls exynos_l2_configure() which writes
+   prefetch_ctrl and then aux_ctrl - thus setting the prefetch bits
+   and then clearing them just after
+
+4. l2c310_enable() reads back aux_ctrl and prefetch, both of which
+   now have the bits cleared (the pr_info() message about prefetch
+   enabled gets skipped)
+
+
+That's why I thought it would be safer to set the prefetch bits
+in both registers so it should work regardless if the
+initialisation sequence.  Also, if we want these bits to be
+changed, we should clear them in the aux_mask value to not get
+another error message about register corruption - so I'm doing
+that too.
+
+Thanks,
+Guillaume
+
+
+>> Fixes: ec3bd0e68a67 ("ARM: 8391/1: l2c: add options to overwrite prefetching behavior")
+>> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+>> ---
+>>  arch/arm/mm/cache-l2x0.c | 16 ++++++++++++----
+>>  1 file changed, 12 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+>> index 12c26eb88afb..43d91bfd2360 100644
+>> --- a/arch/arm/mm/cache-l2x0.c
+>> +++ b/arch/arm/mm/cache-l2x0.c
+>> @@ -1249,20 +1249,28 @@ static void __init l2c310_of_parse(const struct device_node *np,
+>>  
+>>  	ret = of_property_read_u32(np, "prefetch-data", &val);
+>>  	if (ret == 0) {
+>> -		if (val)
+>> +		if (val) {
+>>  			prefetch |= L310_PREFETCH_CTRL_DATA_PREFETCH;
+>> -		else
+>> +			*aux_val |= L310_PREFETCH_CTRL_DATA_PREFETCH;
+>> +		} else {
+>>  			prefetch &= ~L310_PREFETCH_CTRL_DATA_PREFETCH;
+>> +			*aux_val &= ~L310_PREFETCH_CTRL_DATA_PREFETCH;
+>> +		}
+>> +		*aux_mask &= ~L310_PREFETCH_CTRL_DATA_PREFETCH;
+>>  	} else if (ret != -EINVAL) {
+>>  		pr_err("L2C-310 OF prefetch-data property value is missing\n");
+>>  	}
+>>  
+>>  	ret = of_property_read_u32(np, "prefetch-instr", &val);
+>>  	if (ret == 0) {
+>> -		if (val)
+>> +		if (val) {
+>>  			prefetch |= L310_PREFETCH_CTRL_INSTR_PREFETCH;
+>> -		else
+>> +			*aux_val |= L310_PREFETCH_CTRL_INSTR_PREFETCH;
+>> +		} else {
+>>  			prefetch &= ~L310_PREFETCH_CTRL_INSTR_PREFETCH;
+>> +			*aux_val &= ~L310_PREFETCH_CTRL_INSTR_PREFETCH;
+>> +		}
+>> +		*aux_mask &= ~L310_PREFETCH_CTRL_INSTR_PREFETCH;
+>>  	} else if (ret != -EINVAL) {
+>>  		pr_err("L2C-310 OF prefetch-instr property value is missing\n");
+>>  	}
+>> -- 
+>> 2.20.1
+>>
+>>
+> 
 
