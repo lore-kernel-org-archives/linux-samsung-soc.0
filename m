@@ -2,109 +2,163 @@ Return-Path: <SRS0=8fUM=BI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8A5C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jul 2020 15:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D56C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jul 2020 16:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE6A720829
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jul 2020 15:08:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEB4D20829
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jul 2020 16:10:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596039058;
+	bh=MTQc91L8nEUije9/E2iQNE+itwpGFsm/mjfkGzLQAoo=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=dJ7vlt0zGBikpzd11L9/Qgff8K1iY2LeIrvrKmN46WqFhNxBNTkqUQYivX6D6ce6e
+	 k465jbOZ2EGUGYf49SWlclpIvepXHiBxWZqBGu3zbrMO1HVExpuwHFyGGpy6pCJt5W
+	 gqayAHdttQD8tQziHp2GpubFjcDJsBtfsrW0W2pk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbgG2PIl (ORCPT
+        id S1726746AbgG2QK6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jul 2020 11:08:41 -0400
-Received: from mga07.intel.com ([134.134.136.100]:11965 "EHLO mga07.intel.com"
+        Wed, 29 Jul 2020 12:10:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726615AbgG2PIl (ORCPT
+        id S1726341AbgG2QK6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jul 2020 11:08:41 -0400
-IronPort-SDR: SPuzCazUZ5ioKo67VL9lIGNiXm/AiZyLlhVpUxKQpI5w99qDsgK8nZj+hDhnG03vHtzpQM5cR0
- phCoi/mJ/nVw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9696"; a="215926470"
-X-IronPort-AV: E=Sophos;i="5.75,410,1589266800"; 
-   d="scan'208";a="215926470"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2020 08:08:39 -0700
-IronPort-SDR: QO6Hpww0OgWUmZ1AGqLZNrzlO+3SThzVop3B5jUXD27CAQJ/jONgWMwjAPjidCoRGeF+uKn1BJ
- cD0EiezLbctQ==
-X-IronPort-AV: E=Sophos;i="5.75,410,1589266800"; 
-   d="scan'208";a="313056856"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2020 08:08:31 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 0AB5C2079D; Wed, 29 Jul 2020 18:08:29 +0300 (EEST)
-Date:   Wed, 29 Jul 2020 18:08:28 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Antti Palosaari <crope@iki.fi>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Petr Cvek <petrcvekcz@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Bluecherry Maintainers <maintainers@bluecherrydvr.com>,
-        Anton Sviridenko <anton@corp.bluecherry.net>,
-        Andrey Utkin <andrey.utkin@corp.bluecherry.net>,
-        Ismael Luceno <ismael@iodev.co.uk>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Wed, 29 Jul 2020 12:10:58 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E333320809;
+        Wed, 29 Jul 2020 16:10:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596039057;
+        bh=MTQc91L8nEUije9/E2iQNE+itwpGFsm/mjfkGzLQAoo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=uHe5x4NeAE581Czkj+sihuBZ4wP9Ln2MxRJVS1QC6lxC4MTCjrDb69eBA3pl3EUfh
+         pUQJk6PLPMEXUDdsa5jdFXIQ+2bagoNNjdqN8HCs0MAEsX5iwSJ/ppn6jNqg/lBcHC
+         91iPYEecf0ePA52Nh5BisBkcgfnJ4VxMY4D0RjlE=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Russell King <linux@armlinux.org.uk>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Sean Young <sean@mess.org>, Michael Buesch <m@bues.ch>,
-        Malcolm Priestley <tvboxspy@gmail.com>,
-        Brian Johnson <brijohn@gmail.com>, linux-media@vger.kernel.org,
+        Vincent Sanders <vince@simtec.co.uk>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH][next] media: Use fallthrough pseudo-keyword
-Message-ID: <20200729150828.GF16711@paasikivi.fi.intel.com>
-References: <20200724221014.GA24349@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200724221014.GA24349@embeddedor>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Cc:     Sergio Prado <sergio.prado@e-labworks.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>
+Subject: [PATCH 0/7] ARM: samsung: Cleanup of various S3C bits
+Date:   Wed, 29 Jul 2020 18:09:35 +0200
+Message-Id: <20200729160942.28867-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Gustavo,
+Hi,
 
-On Fri, Jul 24, 2020 at 05:10:14PM -0500, Gustavo A. R. Silva wrote:
-> Replace the existing /* fall through */ comments and its variants with
-> the new pseudo-keyword macro fallthrough[1]. Also, remove unnecessary
-> fall-through markings when it is the case.
-> 
-> [1] https://www.kernel.org/doc/html/v5.7/process/deprecated.html?highlight=fallthrough#implicit-switch-case-fall-through
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+I tried to cleanup few warnings in S3C machine code which lead to
+finding some bigger issues.
 
-Thanks for the patch. The number of recipients may hit the limit on some
-lists.
+Patches touch mostly the ARM Samsung machine code except patch #1 (clk)
+and #5 (watchdog).  They are independent from each other, except
+some conflicting lines.
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+The last three patches would welcome some testing... as I did not
+perform such (lack of S3C hardware).
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (7):
+  clk: samsung: s3c64xx: Declare s3c64xx_clk_init() in shared header
+  ARM: s3c64xx: Include header to fix -Wmissing-prototypes
+  ARM: s3c: Remove plat-samsung/.../samsung-time.h
+  ARM: samsung: Fix language typo
+  ARM: samsung: Kill useless HAVE_S3C2410_WATCHDOG
+  ARM: s3c64xx: Switch to generic watchdog driver reset
+  ARM: s3c24xx: Fix missing system reset
+
+ MAINTAINERS                                   |  1 +
+ arch/arm/Kconfig                              |  3 +-
+ arch/arm/mach-exynos/Kconfig                  |  1 -
+ arch/arm/mach-s3c24xx/common.h                | 12 +++
+ arch/arm/mach-s3c24xx/mach-amlm5900.c         |  2 -
+ arch/arm/mach-s3c24xx/mach-anubis.c           |  1 -
+ arch/arm/mach-s3c24xx/mach-at2440evb.c        |  1 -
+ arch/arm/mach-s3c24xx/mach-bast.c             |  1 -
+ arch/arm/mach-s3c24xx/mach-gta02.c            |  1 -
+ arch/arm/mach-s3c24xx/mach-h1940.c            |  1 -
+ arch/arm/mach-s3c24xx/mach-jive.c             |  1 -
+ arch/arm/mach-s3c24xx/mach-mini2440.c         |  1 -
+ arch/arm/mach-s3c24xx/mach-n30.c              |  1 -
+ arch/arm/mach-s3c24xx/mach-nexcoder.c         |  1 -
+ arch/arm/mach-s3c24xx/mach-osiris.c           |  1 -
+ arch/arm/mach-s3c24xx/mach-otom.c             |  1 -
+ arch/arm/mach-s3c24xx/mach-qt2410.c           |  1 -
+ arch/arm/mach-s3c24xx/mach-rx1950.c           |  1 -
+ arch/arm/mach-s3c24xx/mach-rx3715.c           |  1 -
+ arch/arm/mach-s3c24xx/mach-smdk2410.c         |  1 -
+ arch/arm/mach-s3c24xx/mach-smdk2413.c         |  1 -
+ arch/arm/mach-s3c24xx/mach-smdk2416.c         |  1 -
+ arch/arm/mach-s3c24xx/mach-smdk2440.c         |  1 -
+ arch/arm/mach-s3c24xx/mach-smdk2443.c         |  1 -
+ arch/arm/mach-s3c24xx/mach-tct_hammer.c       |  1 -
+ arch/arm/mach-s3c24xx/mach-vr1000.c           |  1 -
+ arch/arm/mach-s3c24xx/mach-vstms.c            |  1 -
+ arch/arm/mach-s3c64xx/Kconfig                 |  5 +-
+ arch/arm/mach-s3c64xx/common.c                | 16 +---
+ arch/arm/mach-s3c64xx/common.h                | 17 +++-
+ arch/arm/mach-s3c64xx/mach-anw6410.c          |  2 -
+ arch/arm/mach-s3c64xx/mach-crag6410.c         |  2 -
+ arch/arm/mach-s3c64xx/mach-hmt.c              |  2 -
+ arch/arm/mach-s3c64xx/mach-mini6410.c         |  2 -
+ arch/arm/mach-s3c64xx/mach-ncp.c              |  2 -
+ arch/arm/mach-s3c64xx/mach-real6410.c         |  2 -
+ arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c       | 17 ----
+ arch/arm/mach-s3c64xx/mach-smartq.c           |  1 -
+ arch/arm/mach-s3c64xx/mach-smartq5.c          |  2 -
+ arch/arm/mach-s3c64xx/mach-smartq7.c          |  2 -
+ arch/arm/mach-s3c64xx/mach-smdk6400.c         |  2 -
+ arch/arm/mach-s3c64xx/mach-smdk6410.c         |  2 -
+ arch/arm/mach-s3c64xx/setup-spi.c             |  1 +
+ arch/arm/mach-s3c64xx/watchdog-reset.h        | 16 ----
+ arch/arm/mach-s5pv210/Kconfig                 |  1 -
+ arch/arm/plat-samsung/Kconfig                 | 10 +-
+ arch/arm/plat-samsung/Makefile                |  1 -
+ .../plat-samsung/include/plat/samsung-time.h  | 26 ------
+ arch/arm/plat-samsung/watchdog-reset.c        | 93 -------------------
+ arch/arm64/Kconfig.platforms                  |  1 -
+ drivers/clk/samsung/clk-s3c64xx.c             |  1 +
+ drivers/watchdog/Kconfig                      |  8 --
+ include/linux/clk/samsung.h                   | 21 +++++
+ 53 files changed, 59 insertions(+), 237 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c64xx/watchdog-reset.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/samsung-time.h
+ delete mode 100644 arch/arm/plat-samsung/watchdog-reset.c
+ create mode 100644 include/linux/clk/samsung.h
 
 -- 
-Regards,
+2.17.1
 
-Sakari Ailus
