@@ -5,49 +5,49 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C649AC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jul 2020 23:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84835C433E4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jul 2020 23:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE0F620829
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jul 2020 23:01:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D4BA2083B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jul 2020 23:02:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730458AbgG3XB4 (ORCPT
+        id S1730810AbgG3XCK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Jul 2020 19:01:56 -0400
-Received: from mail-bn8nam11olkn2031.outbound.protection.outlook.com ([40.92.20.31]:37217
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        Thu, 30 Jul 2020 19:02:10 -0400
+Received: from mail-co1nam11olkn2080.outbound.protection.outlook.com ([40.92.18.80]:59949
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730679AbgG3XBy (ORCPT
+        id S1730803AbgG3XCJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Jul 2020 19:01:54 -0400
+        Thu, 30 Jul 2020 19:02:09 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Qn+NJ3pwYbw8TdGyGjfZ7pq19qFrBlWe9cYgBYOi4jWfdjkudrLwsN1nrIJDfS6z0ASh1LdGaJ+o0PhTaONW/8tmoo3h7xf/hV9jwr6PxgYOGdf+6nDEd0aNu2gkt7TJ/8kDsu1tmSbQ6WHb0m4vhzWA2ZALPl2VZT2j0NLwBtjsOODLN4byUfnYfdIy48EpIkhD/TSvMSq2Kxof3usD7CNZfNhkL9E2P+uEcWatdFusx92g4x/Fy3hFwXPwQYJEut5cf6bgpxIOMmfesC88afSMh4lssmAD13K/2lVRgldbFjB13rd13QuxpzSnMgM2bCm8qcxLimEvnWFh5m7gQw==
+ b=aqfxwtKxTtRceuNSISz4pyxUoOQyQmojEq78+f9j7JmgcCaAn9QHS9JzkgYN4zM6JNBPwRsNvNUZmq7FyHa5YzHqaaZ/KfU6s1YCKnWyywbMASE6gyWUcCT8ajbLWaG9XSwoldUqIRQDd4VcpsyhaUeuduEGCCDIgebwnLyRVJtEJLGmzztk4MpOCQwUxvBS7YPnyF1TdoPmUQoZIeXgz3U1rlVs+6brSOS2X+Io2+4ikE9TYLinwUvcWWM6mcEISziED9jjFYK0fq0MnwnHU+Z3P8qCf9ZgWr7cn8/4zOmh5ufXiVJO/9M0Y4C7QH1j36oNGEJmSO0WYc6bROGTXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fzg4p0YpzGXpf7c5aJJBP2/5PAd5jC2Q8FULLAgJgeM=;
- b=VtBsHZyofX+RWAQuQ19hwYGOrvei0QyV7MW8fGwXA1Ow/o+uhpEEb5UNBrRdiSIX4UYgl7kMM5sn0gdvyDQQwcd1owsnZQ9MgVQfoi366zBMAHWX52nmKJZANuM7LVBJRdBXr4n32SzDNzdsEC5jZP5C64F5YTb3I5fCZJnfz2CeaxVN89+bpxZl9F9/rbVYH9RY975YMYdAFpr6wslCPjB9WMjW/THQN9Y9TntNFJbKw+sEBPft+lmQAAXwk1s8VWyX4Rh8NnEhCW1f+Kjzd3G2Vk1BS/Nv/ygWrayUVjdyGZKItq4Nprsa9aEsJrw2SJXpKGSI6AeNU2Oo44o63A==
+ bh=8KdOFWGq2tYRemSvmeE2n74vkpSZ4QQdHGcP2pMuyws=;
+ b=S736WyY5YNjbK9CMV9VtTXSnO/BbjayrRclrw4BoMFsIrcYlnq5f/+unfOMME+Z7C+bYRsSRHyU+jJQ9p66Un+YxLc+UaihvYe9P38UUJZndurd/L5WnV5c9DY2T0jdSvXyUP+4Kbe40Ni/fW0dJxqlmWFmzAypEtYMeRGwI1cONcDnvgWZuTQscoRyGBFIH2gxUFZhn85o0+0AioqCPLrvv4qWTbcQ4CqjljTG9OjYb2HzeTm04+Cdakpd1e3jbR//o/sS8yXhq/EDmb/AX6dWTZF25lGWnzMipQNnAAzUWYs/SOzeDHJSWE9K/GWaVfSwxqvvxvcVHHvqlASR0YA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 Received: from CO1NAM11FT027.eop-nam11.prod.protection.outlook.com
- (2a01:111:e400:3861::4c) by
- CO1NAM11HT140.eop-nam11.prod.protection.outlook.com (2a01:111:e400:3861::262)
+ (2a01:111:e400:3861::4e) by
+ CO1NAM11HT018.eop-nam11.prod.protection.outlook.com (2a01:111:e400:3861::145)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3239.20; Thu, 30 Jul
- 2020 23:01:50 +0000
+ 2020 23:02:07 +0000
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  (2a01:111:e400:3861::4a) by CO1NAM11FT027.mail.protection.outlook.com
  (2a01:111:e400:3861::224) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3239.20 via Frontend
- Transport; Thu, 30 Jul 2020 23:01:50 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:930056DD45444DF0AC78256E6DFA894564C3A9184EBDBD6DD92555D32A7F8682;UpperCasedChecksum:824827314BBC270D468198818A60EA385CE1CFD2F658A6645D723140B0A60A3A;SizeAsReceived:7885;Count:49
+ Transport; Thu, 30 Jul 2020 23:02:07 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:1F475629DDB68A38DFC130CCB8F1FAE8943C57822EFEAA169B5DBFB56D0E5C8B;UpperCasedChecksum:FBE681A75446489C350865897E87537F9731FFF3392C6B7150C1AC289B7E5F0E;SizeAsReceived:7873;Count:49
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::b9c3:9bff:541d:f383]) by BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::b9c3:9bff:541d:f383%9]) with mapi id 15.20.3239.020; Thu, 30 Jul 2020
- 23:01:50 +0000
+ 23:02:07 +0000
 From:   Jonathan Bakker <xc-racer2@live.ca>
 To:     kyungmin.park@samsung.com, s.nawrocki@samsung.com,
         mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org,
@@ -55,9 +55,9 @@ To:     kyungmin.park@samsung.com, s.nawrocki@samsung.com,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
         Jonathan Bakker <xc-racer2@live.ca>
-Subject: [PATCH v2 04/11] media: exynos4-is: Correct missing entity function initialization
-Date:   Thu, 30 Jul 2020 16:01:07 -0700
-Message-ID: <BN6PR04MB066098E34801126939AB0EF6A3710@BN6PR04MB0660.namprd04.prod.outlook.com>
+Subject: [PATCH v2 10/11] media: exynos4-is: Handle duplicate calls to vidioc_streamoff
+Date:   Thu, 30 Jul 2020 16:01:13 -0700
+Message-ID: <BN6PR04MB06606A36716392E7634CF8DCA3710@BN6PR04MB0660.namprd04.prod.outlook.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200730230114.8572-1-xc-racer2@live.ca>
 References: <20200730230114.8572-1-xc-racer2@live.ca>
@@ -66,25 +66,25 @@ Content-Type:   text/plain; charset=US-ASCII
 X-ClientProxiedBy: MWHPR07CA0002.namprd07.prod.outlook.com
  (2603:10b6:300:116::12) To BN6PR04MB0660.namprd04.prod.outlook.com
  (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <20200730230114.8572-5-xc-racer2@live.ca>
+X-Microsoft-Original-Message-ID: <20200730230114.8572-11-xc-racer2@live.ca>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from jon-hp-6570b.telus (2001:569:fb68:9c00:8067:f823:1e15:7520) by MWHPR07CA0002.namprd07.prod.outlook.com (2603:10b6:300:116::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3239.16 via Frontend Transport; Thu, 30 Jul 2020 23:01:48 +0000
+Received: from jon-hp-6570b.telus (2001:569:fb68:9c00:8067:f823:1e15:7520) by MWHPR07CA0002.namprd07.prod.outlook.com (2603:10b6:300:116::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3239.16 via Frontend Transport; Thu, 30 Jul 2020 23:02:04 +0000
 X-Mailer: git-send-email 2.20.1
-X-Microsoft-Original-Message-ID: <20200730230114.8572-5-xc-racer2@live.ca>
-X-TMN:  [Sa45lLcPFhOwcEnF5E5Yb3IoYxNJ92gRTGfPqX30OqV8oD48i2Hvw64Ur5z4kkVg]
+X-Microsoft-Original-Message-ID: <20200730230114.8572-11-xc-racer2@live.ca>
+X-TMN:  [NVzrdjcbDFmjrKPwmClgs53y4e5yhvvtuJtIwpLttDdmQ4zC7eQVZCBy2GOMpqMx]
 X-MS-PublicTrafficType: Email
 X-IncomingHeaderCount: 49
 X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: 445a7fea-0c28-466a-c284-08d834dc8b06
-X-MS-TrafficTypeDiagnostic: CO1NAM11HT140:
+X-MS-Office365-Filtering-Correlation-Id: 3dd7da9f-7c1c-4eac-443f-08d834dc94d0
+X-MS-TrafficTypeDiagnostic: CO1NAM11HT018:
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: oFUHIckc20eIyHlThbpMTM/up2nJleScSkNxHqC9/LGKjyMh+gRQwNC29wrU9mbtrHDnYFtBbchbEtI8ac/fqdNPYi4LKks67xGVE0wYdOD42A7AWpaa72rBOBMWRDWpW7TsVwhBoe6Lx6/2ar4yVUJ0WBuJwjXa10sPQ0mUEUGicuimtJ5IXc+N1p6URPWIZljJ0KcUtUJLkPS9ahU67A==
+X-Microsoft-Antispam-Message-Info: 12XirX4/pP+7CFneqKLp/Sh3GB4hdD6DC02sAuR9TsRz+T1Rkx7315O38DTXxXaTDSicMoy9v31CTGXPz8NyqkoRP0U+pi+NANuwrsZvS0HYJo0/t40h/Wkz7wkSosqPJoI6CGs6m4FkyD6YATE2IS39zPKFSBssxaoP3koCbFjWDq/1K6p32iJIyIY4RtwDRLf8UVc+NRgoIFs7D9n1Iw==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: v2HlyQ9hR2O0LjT7FhgKOJfrPChCNVvEUgoUdFMsRuuxjzSUOt57w46ismZY/yO0dxDxmU/Z1ZhA2oyfwP6HMmtBeIB9mNnwnbjKko7j0MTLqMfrum3NJK+1MQ2h6VWYMxq7pkP/bPHP0WgWRKApeEJ9PuAOBjjZeG55lDI8/lddnH3hlQrHDIbXZw7CIYhoEQXAVOjQbBE5Z/phuMLTPQ==
+X-MS-Exchange-AntiSpam-MessageData: W4whD87R1QqxYiP2vR0N6kdSkIFvPiVu+52/j1CdL3XOjqf9tNk6igGUUs1dstP5c54SMqihvF/0wn94dpn6fTZJieE53h3eiWNJZ2JTZhJjhgMwweBLmaMOctzW3bTY7cZ2OMHwUbYBzklWDS3I0t1iY4nyIN5fNrCza+BQIFCoWsB1rC+I4a8bcmlXpuj3gOXRu3fU+XRZ+t8F+1MO8g==
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 445a7fea-0c28-466a-c284-08d834dc8b06
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2020 23:01:50.6998
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3dd7da9f-7c1c-4eac-443f-08d834dc94d0
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2020 23:02:07.1959
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -92,42 +92,45 @@ X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT027.eop-nam11.prod.protection.ou
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1NAM11HT140
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1NAM11HT018
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Commit bae4500399c4 ("[media] exynos4-is: Add missing entity function
-initialization") tried to suppress the warnings such as
+vidioc_streamoff can be called multiple times from userspace, but we
+should only call media_pipeline_stop when we're actually setup.
 
-s5p-fimc-md camera: Entity type for entity FIMC.0 was not initialized!
-
-However, this missed setting for the subdev.  Set it now to avoid the
-ugly warnings on boot.
+This became more noticeable after commit 2a2599c66368 ("[media] media:
+entity: Catch unbalanced media_pipeline_stop calls") was merged as it
+added a WARN for unbalanced calls to media_pipeline_stop.
 
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 ---
 Changes from v1:
-- Don't remove the function from the vfd entity as it is distinct
-  from the sd entity
-- Re-word commit message for above change
+- re-worded commit message for a better description of the problem
 ---
- drivers/media/platform/exynos4-is/fimc-capture.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/exynos4-is/fimc-capture.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
-index 705f182330ca..82f051f6b816 100644
+index e70785d8a809..887a736b2e0e 100644
 --- a/drivers/media/platform/exynos4-is/fimc-capture.c
 +++ b/drivers/media/platform/exynos4-is/fimc-capture.c
-@@ -1898,6 +1898,7 @@ int fimc_initialize_capture_subdev(struct fimc_dev *fimc)
+@@ -1232,8 +1232,11 @@ static int fimc_cap_streamoff(struct file *file, void *priv,
+ 	if (ret < 0)
  		return ret;
  
- 	sd->entity.ops = &fimc_sd_media_ops;
-+	sd->entity.function = MEDIA_ENT_F_PROC_VIDEO_SCALER;
- 	sd->internal_ops = &fimc_capture_sd_internal_ops;
- 	v4l2_set_subdevdata(sd, fimc);
+-	media_pipeline_stop(&vc->ve.vdev.entity);
+-	vc->streaming = false;
++	if (vc->streaming) {
++		media_pipeline_stop(&vc->ve.vdev.entity);
++		vc->streaming = false;
++	}
++
  	return 0;
+ }
+ 
 -- 
 2.20.1
 
