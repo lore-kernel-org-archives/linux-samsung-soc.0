@@ -1,135 +1,298 @@
-Return-Path: <SRS0=8fUM=BI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=WO5W=BJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 579C6C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jul 2020 20:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 238C2C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jul 2020 11:34:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 36C5920809
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jul 2020 20:16:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596053806;
-	bh=6GoJNX0QgR66SKXMZ4ipLJtos+YWV5iuv3OF+dtEIP0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rNgGjwklgRBSqel2ed3Jetspf8mHKL3KDSov5u/Xtzu5wz8PIpgmym2gfVzTrfuhr
-	 LlzHpjL0SfyepE0CFGtJurJjVOpoFHq+/euRXeFFzwC8Amu2JhiLxm6ptPdJNg5XNq
-	 BHt9XBIjZJYfjvf8d81Gy2QChbhRDf3e+r56rH1o=
+	by mail.kernel.org (Postfix) with ESMTP id EE9982082E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jul 2020 11:34:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CAkTfwVM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbgG2UQm (ORCPT
+        id S1726799AbgG3Lev (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jul 2020 16:16:42 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:41033 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbgG2UQm (ORCPT
+        Thu, 30 Jul 2020 07:34:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56512 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbgG3Leu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jul 2020 16:16:42 -0400
-Received: by mail-ej1-f67.google.com with SMTP id w9so25622030ejc.8;
-        Wed, 29 Jul 2020 13:16:40 -0700 (PDT)
+        Thu, 30 Jul 2020 07:34:50 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 791A1C061794;
+        Thu, 30 Jul 2020 04:34:50 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id z6so27896838iow.6;
+        Thu, 30 Jul 2020 04:34:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/cCy3e2/ARsCaPTvfDZ1uKfIB+o4G74oHwe5Mn6cKCA=;
+        b=CAkTfwVMKQWGuz9ekL1cJ3HgC/qgAGLTmvVrwvcx01jtGw6HYmAD8Pt9aQ0wWPq8dX
+         BBGkShFGHPYnAFuaPIaAVljma+aRynx8GrTI42nCbD1HNTK9iQnhL+gVAIhjqoe6ZtUJ
+         3EGZDx8UTtF6o4mEoKrmpQ+p7YVQdXnh+XMrXFRnm4OtB8q0v7m4qyZ9nfjSSYSDgTop
+         Sqj7uaYCx8TcapSGqvuPot/sdUTAeObLbMo6k0KL/axM1WR8EpHRdXEuYvrckcW0MkkX
+         rQysbHpIjupRsbJZFVFGxJKftGdT/IJlFhNxDYN4GuFe7M+0lKtaL7D0a9/LZcswsa6P
+         +wfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=G9J40aLhPUBHarAksyHrJM+WbtR3gRhMvbXXJTyIEsw=;
-        b=k2GVsKVFsPbSoZjpQ3yHGuN2nXG3JuzUeQS7q3rJbgD8wQ3i4YS9KDvXh493xZ1163
-         PCH/5gcPzeFR8WzXsUt6l2320LsIG14JQeSuv3dLC+gdwrZBomBsKhFXVyPc/sdfxJSL
-         jxVpsVBjPuSFkybl+r+EkcU+pPgKfe4Hu9EwkzghJQGdIr7uPwaaBkJuAXOAu9xgcobS
-         FzBsSUyUacvrAsYzhgfS06VdcRIBY1CTNMSelLQNy5sMDBcsbE750/GjICDAIzztoRDy
-         rvITvxUzH7lerEzbP78/kaBtzXszVmFzn7kQdiSA2e+6pLgrJnoC+QqMWC9xGsbBINi8
-         MX/Q==
-X-Gm-Message-State: AOAM531HQspdPQmKdwXRXrtihdzC1rOoTyjQmb6u41EbhI48M8ZFFVaK
-        Z0EvW5gM2LuP/3wUtw/aU/k=
-X-Google-Smtp-Source: ABdhPJz8NSZ1YgCRCp5BY64q7jD+PPCB1uyy1HQKw9M5f39sg32SzCcRfdGo1BmuaDhYo5fGcHeBew==
-X-Received: by 2002:a17:906:78e:: with SMTP id l14mr80328ejc.67.1596053799753;
-        Wed, 29 Jul 2020 13:16:39 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.213])
-        by smtp.googlemail.com with ESMTPSA id a23sm2669500eju.68.2020.07.29.13.16.37
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Jul 2020 13:16:39 -0700 (PDT)
-Date:   Wed, 29 Jul 2020 22:16:35 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/cCy3e2/ARsCaPTvfDZ1uKfIB+o4G74oHwe5Mn6cKCA=;
+        b=NDhhRBM6DKeT3/UjymaGMVjqxVNGHbR4XywnHbHUKDVQ37ZjB5HVdkw+x2aYFM7yPj
+         kGB9Xc7WKaF/zW+LwTAzK78PthhluHwyIhEzDO4Cg8Qt2X89tn2ZO2QP4CQCi1wja4HV
+         kcN1ivwF9yTUxRuMJ8dy3fftpbdIdThBZD204jDYsV7F6hHHcMlqgTpc534RvuLQJUEN
+         uoiBoJlwJKO92gd1mRSuzcq6KGW1M8h+eqiSohnsWftLLQikuocnFlpHjPx11qSWyauI
+         D77ErTo0iS2YdfW9ydpn8Qd++MVRMOasSdevSezLtHhpTPXAfZQsUGX4X6fEpGTLxYxC
+         Q4CA==
+X-Gm-Message-State: AOAM530qH+2xU9tyC90DtgRvYyiRtdOQtKtAOKkngu++pcMvewhnkmWw
+        +B6zLh+5NytY8xr+Sc/a/hE8oSdemZ6yAsQLsTk=
+X-Google-Smtp-Source: ABdhPJyd4mFaZ3dVHSZ0+D3fgyXhU3yNg3UTIH3UHlRjZwBERyG5jEtfls1uM+yzJ3hkFSZsknSWsJ8rX5KHKVOeWtQ=
+X-Received: by 2002:a02:6d5d:: with SMTP id e29mr2778861jaf.139.1596108889675;
+ Thu, 30 Jul 2020 04:34:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200729160942.28867-1-krzk@kernel.org> <20200729160942.28867-7-krzk@kernel.org>
+ <CA+Ln22F_PaEMNyEg4XSR0PXHTa+3dQyEvzgtnRNHMu61uZytQg@mail.gmail.com> <20200729191544.GB5822@kozik-lap>
+In-Reply-To: <20200729191544.GB5822@kozik-lap>
+From:   Tomasz Figa <tomasz.figa@gmail.com>
+Date:   Thu, 30 Jul 2020 13:34:38 +0200
+Message-ID: <CA+Ln22ED+-B96jf8p89sXpD2vmDLuteKXQiuKPy50vJ80MgSjA@mail.gmail.com>
+Subject: Re: [PATCH 6/7] ARM: s3c64xx: Switch to generic watchdog driver reset
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
         Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
         Vincent Sanders <vince@simtec.co.uk>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:SAMSUNG SOC CLOCK DRIVERS" 
+        <linux-samsung-soc@vger.kernel.org>,
         linux-stm32@st-md-mailman.stormreply.com,
-        linux-watchdog@vger.kernel.org, patches@opensource.cirrus.com,
+        patches@opensource.cirrus.com,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org,
         Sergio Prado <sergio.prado@e-labworks.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>
-Subject: Re: [PATCH 1/7] clk: samsung: s3c64xx: Declare s3c64xx_clk_init() in
- shared header
-Message-ID: <20200729201635.GB26917@kozik-lap>
-References: <20200729160942.28867-1-krzk@kernel.org>
- <20200729160942.28867-2-krzk@kernel.org>
- <159605176358.1360974.7715120460121088439@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <159605176358.1360974.7715120460121088439@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 29, 2020 at 12:42:43PM -0700, Stephen Boyd wrote:
-> Quoting Krzysztof Kozlowski (2020-07-29 09:09:36)
-> > diff --git a/include/linux/clk/samsung.h b/include/linux/clk/samsung.h
-> > new file mode 100644
-> > index 000000000000..b6b253c46c22
-> > --- /dev/null
-> > +++ b/include/linux/clk/samsung.h
-> > @@ -0,0 +1,21 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Copyright (c) 2020 Krzysztof Kozlowski <krzk@kernel.org>
-> > + */
-> > +
-> > +#ifndef __LINUX_CLK_SAMSUNG_H_
-> > +#define __LINUX_CLK_SAMSUNG_H_
-> > +
-> > +#ifdef CONFIG_ARCH_S3C64XX
-> > +void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
-> 
-> Don't use __init in header files. It doesn't do anything.
-> 
-> > +                            unsigned long xusbxti_f, bool s3c6400,
-> > +                            void __iomem *base);
-> > +#else
-> > +static inline void __init s3c64xx_clk_init(struct device_node *np,
-> 
-> Forward declare struct device_node;
-> 
-> > +                                          unsigned long xtal_f,
-> > +                                          unsigned long xusbxti_f,
-> > +                                          bool s3c6400,
-> > +                                          void __iomem *base) { }
-> 
-> Include <linux/compiler.h> (or compiler_types.h) for __iomem define
-> please.
+2020=E5=B9=B47=E6=9C=8829=E6=97=A5(=E6=B0=B4) 21:15 Krzysztof Kozlowski <kr=
+zk@kernel.org>:
+>
+> On Wed, Jul 29, 2020 at 07:33:33PM +0200, Tomasz Figa wrote:
+> > Hi Krzysztof,
+> >
+> > 2020=E5=B9=B47=E6=9C=8829=E6=97=A5(=E6=B0=B4) 18:11 Krzysztof Kozlowski=
+ <krzk@kernel.org>:
+> > >
+> > > Similarly to commit f6361c6b3880 ("ARM: S3C24XX: remove separate rest=
+art
+> > > code"), the platform watchdog reset code can be removed in favor of
+> > > a generic watchdog driver which already handles reset.
+> > >
+> > > This allows removal of a bunch of machine code and fixes also W=3D1
+> > > compile warnings:
+> > >
+> > >     arch/arm/plat-samsung/watchdog-reset.c:29:6: warning: no previous=
+ prototype for 'samsung_wdt_reset' [-Wmissing-prototypes]
+> > >        29 | void samsung_wdt_reset(void)
+> > >           |      ^~~~~~~~~~~~~~~~~
+> > >     arch/arm/plat-samsung/watchdog-reset.c:69:13: warning: no previou=
+s prototype for 'samsung_wdt_reset_of_init' [-Wmissing-prototypes]
+> > >        69 | void __init samsung_wdt_reset_of_init(void)
+> > >           |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+> > >     arch/arm/plat-samsung/watchdog-reset.c:89:13: warning: no previou=
+s prototype for 'samsung_wdt_reset_init' [-Wmissing-prototypes]
+> > >        89 | void __init samsung_wdt_reset_init(void __iomem *base)
+> > >
+> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > ---
+> > >  arch/arm/mach-s3c64xx/Kconfig           |  3 +-
+> > >  arch/arm/mach-s3c64xx/common.c          | 15 +---
+> > >  arch/arm/mach-s3c64xx/common.h          |  2 -
+> > >  arch/arm/mach-s3c64xx/mach-anw6410.c    |  1 -
+> > >  arch/arm/mach-s3c64xx/mach-crag6410.c   |  1 -
+> > >  arch/arm/mach-s3c64xx/mach-hmt.c        |  1 -
+> > >  arch/arm/mach-s3c64xx/mach-mini6410.c   |  1 -
+> > >  arch/arm/mach-s3c64xx/mach-ncp.c        |  1 -
+> > >  arch/arm/mach-s3c64xx/mach-real6410.c   |  1 -
+> > >  arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c | 17 -----
+> > >  arch/arm/mach-s3c64xx/mach-smartq5.c    |  1 -
+> > >  arch/arm/mach-s3c64xx/mach-smartq7.c    |  1 -
+> > >  arch/arm/mach-s3c64xx/mach-smdk6400.c   |  1 -
+> > >  arch/arm/mach-s3c64xx/mach-smdk6410.c   |  1 -
+> > >  arch/arm/mach-s3c64xx/watchdog-reset.h  | 16 -----
+> > >  arch/arm/plat-samsung/Kconfig           |  6 --
+> > >  arch/arm/plat-samsung/Makefile          |  1 -
+> > >  arch/arm/plat-samsung/watchdog-reset.c  | 93 -----------------------=
+--
+> > >  18 files changed, 5 insertions(+), 158 deletions(-)
+> > >  delete mode 100644 arch/arm/mach-s3c64xx/watchdog-reset.h
+> > >  delete mode 100644 arch/arm/plat-samsung/watchdog-reset.c
+> > >
+> >
+> > Thanks for the patch! Please see my comments inline.
+> >
+> > > diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kc=
+onfig
+> > > index e208c2b48853..f3fcb570edf5 100644
+> > > --- a/arch/arm/mach-s3c64xx/Kconfig
+> > > +++ b/arch/arm/mach-s3c64xx/Kconfig
+> > > @@ -18,9 +18,10 @@ menuconfig ARCH_S3C64XX
+> > >         select PM_GENERIC_DOMAINS if PM
+> > >         select S3C_DEV_NAND if ATAGS
+> > >         select S3C_GPIO_TRACK if ATAGS
+> > > +       select S3C2410_WATCHDOG
+> > >         select SAMSUNG_ATAGS if ATAGS
+> > >         select SAMSUNG_WAKEMASK if PM
+> > > -       select SAMSUNG_WDT_RESET
+> > > +       select WATCHDOG
+> > >         help
+> > >           Samsung S3C64XX series based systems
+> > >
+> > > diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/c=
+ommon.c
+> > > index a655bf0c7802..42e96d196f61 100644
+> > > --- a/arch/arm/mach-s3c64xx/common.c
+> > > +++ b/arch/arm/mach-s3c64xx/common.c
+> > > @@ -50,7 +50,6 @@
+> > >
+> > >  #include "common.h"
+> > >  #include "irq-uart.h"
+> > > -#include "watchdog-reset.h"
+> > >
+> > >  /* External clock frequency */
+> > >  static unsigned long xtal_f __ro_after_init =3D 12000000;
+> > > @@ -232,10 +231,11 @@ void __init s3c64xx_init_irq(u32 vic0_valid, u3=
+2 vic1_valid)
+> > >         /*
+> > >          * FIXME: there is no better place to put this at the moment
+> > >          * (s3c64xx_clk_init needs ioremap and must happen before ini=
+t_time
+> > > -        * samsung_wdt_reset_init needs clocks)
+> > > +        * samsung_wdt_reset_init needs clocks).  However
+> > > +        * samsung_wdt_reset_init() was removed in favor of watchdog =
+driver
+> > > +        * so this should be revised.
+> >
+> > This leaves the comment referring to an inexistent function.
+>
+> Yes, I left it as a reference/reason. Although might be quite confusing
+> now...
+>
+> >
+> > I wonder if this being here is actually a problem at all. It's legacy
+> > code and probably there isn't much value in reshuffling it further.
+> > Rather than that, we would probably want to make sure that everything
+> > migrated to DT and just drop the board files.
+>
+> Maybe let's remove the FIXME and leave the clock init. Since all these
+> times no one fixed the FIXME, so now with limited hardware access I do
+> not expect any movements here.
+>
 
-Thanks for the feedback. I'll send v2.
+I think that would be fairly uncontroversial at this point.
 
-Best regards,
-Krzysztof
+> >
+> > >          */
+> > >         s3c64xx_clk_init(NULL, xtal_f, xusbxti_f, soc_is_s3c6400(), S=
+3C_VA_SYS);
+> > > -       samsung_wdt_reset_init(S3C_VA_WATCHDOG);
+> > >
+> > >         printk(KERN_DEBUG "%s: initialising interrupts\n", __func__);
+> > >
+> > > @@ -429,12 +429,3 @@ static int __init s3c64xx_init_irq_eint(void)
+> > >         return 0;
+> > >  }
+> > >  arch_initcall(s3c64xx_init_irq_eint);
+> > > -
+> > > -void s3c64xx_restart(enum reboot_mode mode, const char *cmd)
+> > > -{
+> > > -       if (mode !=3D REBOOT_SOFT)
+> > > -               samsung_wdt_reset();
+> > > -
+> > > -       /* if all else fails, or mode was for soft, jump to 0 */
+> > > -       soft_restart(0);
+> >
+> > Does this remove the soft reboot capability? I'm not sure how much of
+> > a problem that would be, though.
+>
+> 1. No one cared about it in f6361c6b3880 :)
 
+That was a different SoC family, though.
+
+> 2. Exynos does not have it
+> 3. Does soft_restart really work? It would be worth to keep it if more
+>    or less it was working.
+
+Anyway, I guess there is no way to know other than just removing it.
+It can be always brought back if it turns out that someone needs it.
+Please just mention that in the commit message.
+
+With that addressed:
+
+Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+>
+> Best regards,
+> Krzysztof
+>
+> >
+> > [snip]
+> > > diff --git a/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c b/arch/arm/mach-=
+s3c64xx/mach-s3c64xx-dt.c
+> > > index 1724f5ea5c46..09c4e8742629 100644
+> > > --- a/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+> > > +++ b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+> > > @@ -12,7 +12,6 @@
+> > >  #include <mach/map.h>
+> > >
+> > >  #include "common.h"
+> > > -#include "watchdog-reset.h"
+> > >
+> > >  /*
+> > >   * IO mapping for shared system controller IP.
+> > > @@ -39,20 +38,6 @@ static void __init s3c64xx_dt_map_io(void)
+> > >                 panic("SoC is not S3C64xx!");
+> > >  }
+> > >
+> > > -static void __init s3c64xx_dt_init_machine(void)
+> > > -{
+> > > -       samsung_wdt_reset_of_init();
+> > > -}
+> > > -
+> > > -static void s3c64xx_dt_restart(enum reboot_mode mode, const char *cm=
+d)
+> > > -{
+> > > -       if (mode !=3D REBOOT_SOFT)
+> > > -               samsung_wdt_reset();
+> > > -
+> > > -       /* if all else fails, or mode was for soft, jump to 0 */
+> > > -       soft_restart(0);
+> >
+> > Ditto.
+> >
+> > Best regards,
+> > Tomasz
