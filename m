@@ -2,191 +2,89 @@ Return-Path: <SRS0=WO5W=BJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A91CBC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jul 2020 12:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 951F9C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jul 2020 22:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8418120842
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jul 2020 12:28:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MAbNtK2B"
+	by mail.kernel.org (Postfix) with ESMTP id 649CF2083B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jul 2020 22:28:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596148125;
+	bh=mm8J/i6ZSAlgRjsL3uPXnNjYT5qwNb3j2lHa5rHt1qw=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:List-ID:From;
+	b=i38VEE3d3H0JAfZ6RPzGG1/5sRgltjqbGtPjmfRAP7sLJExihKTT26fCohob8FRnO
+	 FDXcOuseLSKkNsFPgYoKTTZgmAib/cWYPtQ6J/wzwqaYycNT7j+LI0JnM3STgHm0Fo
+	 T8zaidkQeZHfTijz5IQ4ELUbbnHSo1jWz2zizgrg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbgG3M2Z (ORCPT
+        id S1730609AbgG3W2n (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Jul 2020 08:28:25 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38853 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726774AbgG3M2Y (ORCPT
+        Thu, 30 Jul 2020 18:28:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40908 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728731AbgG3W2n (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Jul 2020 08:28:24 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200730122821euoutp0191238a9ab6f6eff93527c90fd0a6609b~mh3-7rMWn0850308503euoutp01j
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jul 2020 12:28:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200730122821euoutp0191238a9ab6f6eff93527c90fd0a6609b~mh3-7rMWn0850308503euoutp01j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1596112101;
-        bh=tPSQqM65USa2+bVxBO4NArkt40afTFNoTXwqqkbLnBk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=MAbNtK2Bs0sVsSqi9f8mypAeerjxMtcjvwQcPceAxij5eNkk41aAmffk51bWeB68R
-         dtL8vUtyTHQz2+/SqPJqFw0tjadz02pRSIFZUQsRQ4KIh73a+1x27qo/LHeLMj8t0m
-         LGB0TZid+sKAwQwvbZdVY1oejo9Am+gtangSsIpU=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200730122821eucas1p180f3c9a08f3ebf68b9415e26bdfa404d~mh3-kOryC2255322553eucas1p1h;
-        Thu, 30 Jul 2020 12:28:21 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 82.B5.05997.5ECB22F5; Thu, 30
-        Jul 2020 13:28:21 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200730122820eucas1p11e7d3107b447fb0db19c6070c40f6807~mh3-JCeMB1440914409eucas1p17;
-        Thu, 30 Jul 2020 12:28:20 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200730122820eusmtrp2f3aa1a75b1ff97a7f7d8ce02d76d68b9~mh3-HV2ll0062200622eusmtrp2Q;
-        Thu, 30 Jul 2020 12:28:20 +0000 (GMT)
-X-AuditID: cbfec7f4-65dff7000000176d-0f-5f22bce5d07f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 03.B5.06017.4ECB22F5; Thu, 30
-        Jul 2020 13:28:20 +0100 (BST)
-Received: from [106.210.123.115] (unknown [106.210.123.115]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200730122819eusmtip2f5aada00e302856eacee883d0fdd524a~mh3_EbwOQ1715917159eusmtip27;
-        Thu, 30 Jul 2020 12:28:19 +0000 (GMT)
-Subject: Re: [PATCH RFC v6 1/6] dt-bindings: exynos-bus: Add documentation
- for interconnect properties
-To:     Rob Herring <robh@kernel.org>, georgi.djakov@linaro.org
-Cc:     cw00.choi@samsung.com, krzk@kernel.org, devicetree@vger.kernel.org,
-        a.swigon@samsung.com, myungjoo.ham@samsung.com,
-        inki.dae@samsung.com, sw0312.kim@samsung.com,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <65af1a5c-8f8a-ef65-07f8-e0b3d04c336c@samsung.com>
-Date:   Thu, 30 Jul 2020 14:28:18 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200709210448.GA876103@bogus>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm27nsuFp8rsI3iy7D6K7Zhb4wxEJkBEE/KkNLW3lQSafsqGV/
-        nFlq3hILtHVRU8gmpm15yamRqEsqJ11HagvS0iginYHmJc+Okf+e93mf53vf5+XjKNUA483F
-        6pJ4vU4bp2YVdEPXhH3bUIs6cnvuwCLivHMZkYcltQx57/rKkNKOHoa8Gf/JkuJWM0uKnIU0
-        sdvr5MT8+R1DXjffYslYfgciJfY2GanpGJCTvvQqlsy2NMlJybURNghrzKYrrKb/XQurceba
-        ZBpLZZqm4JEJacbMqw+zYYp9UXxcbAqv9ws8pYjJs/ayib9XnH812k4bkG15DvLgAO+CmeEy
-        JgcpOBWuQvDZnj5fuBA8mxlCUjGGwGL4Otfh3JZxh0ri7yG4fjV73vELQd1DFyO+uxTHwERj
-        HiviZTgAqh3faVFE4UsU5I9UI7HBYn/I7yxwYyUOhMn8j7SIabweCp1P3Xg5joDakUaZpPGE
-        7huDbt4Db4WGJ43uYRT2gg+DpTIJr4GM+puUOAzwtBxupA/IpaTBMGS5zUh4KXyzPZrnV8Hs
-        Y9EsGjIQ5Fn75FJRiMBpK0OSKgD6eyZZ8QAU3gS1zX4SvR/qZh/LpLssAccPT2mJJVDUUExJ
-        tBKyM1WS2gf+mIplEvaG3MFZuhCpjQuiGRfEMS6IY/w/twzRJuTFJwvx0bywQ8ef8xW08UKy
-        Ltr3TEK8Gc19uuczNlcTap463Y4wh9SLlWt16yJVjDZFSI1vR8BR6mXKAy+fR6iUUdrUC7w+
-        IVKfHMcL7WglR6u9lDvvjpxU4WhtEn+W5xN5/b+ujPPwNiDDQRyVPawPGnI0tiq0bRut4Sc2
-        qG6GWzTHTFNru2t66o1hw8dN90PqbUddb8n1EIv1Z2eW/Vaqj2MysXLRp6QTO6dzvtQQ+Q8u
-        be+n3VMVKX6G0PLcii0tTuue3tbR2EMPIuSezqYj5V8iLr4YbRO6Dnt3ZmnGMoMDQp3+bxJi
-        1bQQo/XfTOkF7V+3TgYJcAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHIsWRmVeSWpSXmKPExsVy+t/xe7pP9ijFG1y4ZmBxf14ro8XGGetZ
-        La5/ec5qMf/IOVaLK1/fs1lM37uJzWLS/QksFufPb2C32PT4GqvF5V1z2Cw+9x5htJhxfh+T
-        xdojd9ktbjeuYLP4v2cHu8WMyS/ZHAQ8Nq3qZPO4c20Pm8f97uNMHpuX1Hv0bVnF6PF5k1wA
-        W5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJeRs/u
-        C2wF3yQrLn06xNLAeFy0i5GDQ0LAROLrDaEuRi4OIYGljBLHDv5jhYhLScxvUepi5AQyhSX+
-        XOtig6h5zyjx9/wUNpCEsECGxLJ9LxhBbBEBa4nVN96wgBQxC7QwS3ydNIMJouMho8SEh4/A
-        qtgEDCV6j/aB2bwCdhK/eu+xgNgsAqoSE+4fBLNFBeIklm+Zzw5RIyhxcuYTsDingI7Etv3b
-        WUFsZgF1iT/zLjFD2OISt57MZ4Kw5SWat85mnsAoNAtJ+ywkLbOQtMxC0rKAkWUVo0hqaXFu
-        em6xkV5xYm5xaV66XnJ+7iZGYFxvO/Zzyw7GrnfBhxgFOBiVeHgV8hTjhVgTy4orcw8xSnAw
-        K4nwOp09HSfEm5JYWZValB9fVJqTWnyI0RTouYnMUqLJ+cCUk1cSb2hqaG5haWhubG5sZqEk
-        ztshcDBGSCA9sSQ1OzW1ILUIpo+Jg1OqgfFYgEeSe7nnmYIsSVOn+9f+7jUsNOv1Ufd4vMDx
-        urj6lEv/3764rhHgaSoQULr6n9DpnqP9j87tDW8NvRzltlrExfTt91ZTVWeROZ0ec6RVP/Tn
-        hz3Y/H71TqsLhxXLLSw3tBzzypHavpMp7OjMm44cUW0q/NGvJnnJScy3ZpqyeULi/sse65VY
-        ijMSDbWYi4oTAWMBGHQBAwAA
-X-CMS-MailID: 20200730122820eucas1p11e7d3107b447fb0db19c6070c40f6807
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3
-References: <20200702163724.2218-1-s.nawrocki@samsung.com>
-        <CGME20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3@eucas1p2.samsung.com>
-        <20200702163724.2218-2-s.nawrocki@samsung.com>
-        <20200709210448.GA876103@bogus>
+        Thu, 30 Jul 2020 18:28:43 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 037F320829;
+        Thu, 30 Jul 2020 22:28:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596148122;
+        bh=mm8J/i6ZSAlgRjsL3uPXnNjYT5qwNb3j2lHa5rHt1qw=;
+        h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+        b=Uweg23OatF1tL9LWUhp6srSCrbhLnO5s3KtqUHVPPR4yX39LrtXPmeC5wemWS/eKP
+         HFGASlrbrs3jgFcIbcHDxmagFih0ANByQ5bbE8QjZhIDC8APJiV0h8ZWaMpKKC6CSa
+         VlKeBzw9u94Yoc1b4eq59TimGrUP9JOumINjoa9E=
+Date:   Thu, 30 Jul 2020 23:28:22 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     krzk@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     b.zolnierkie@samsung.com, devicetree@vger.kernel.org,
+        simon@lineageos.org, alsa-devel@alsa-project.org,
+        linux-samsung-soc@vger.kernel.org, robh+dt@kernel.org,
+        m.szyprowski@samsung.com
+In-Reply-To: <20200728131111.14334-1-s.nawrocki@samsung.com>
+References: <CGME20200728131126eucas1p16365622c52f91104373a2cd3e0ebb619@eucas1p1.samsung.com> <20200728131111.14334-1-s.nawrocki@samsung.com>
+Subject: Re: [PATCH v3 1/3] ASoC: samsung: Document DT bindings for Midas sound subsystem
+Message-Id: <159614804534.1473.10836514117836508755.b4-ty@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 09.07.2020 23:04, Rob Herring wrote:
-> On Thu, Jul 02, 2020 at 06:37:19PM +0200, Sylwester Nawrocki wrote:
->> Add documentation for new optional properties in the exynos bus nodes:
->> samsung,interconnect-parent, #interconnect-cells, bus-width.
->> These properties allow to specify the SoC interconnect structure which
->> then allows the interconnect consumer devices to request specific
->> bandwidth requirements.
->>
->> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+On Tue, 28 Jul 2020 15:11:09 +0200, Sylwester Nawrocki wrote:
+> This patch adds documentation of DT biding for the Midas sound complex.
+> Partially based on the *txt version by Simon Shields <simon@lineageos.org>.
 
->> ---
->>  .../devicetree/bindings/devfreq/exynos-bus.txt     | 68 +++++++++++++++++++++-
->>  1 file changed, 66 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
->> index e71f752..4035e3e 100644
->> --- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
->> +++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
->> @@ -51,6 +51,13 @@ Optional properties only for parent bus device:
->>  - exynos,saturation-ratio: the percentage value which is used to calibrate
->>  			the performance count against total cycle count.
->>  
->> +Optional properties for interconnect functionality (QoS frequency constraints):
->> +- samsung,interconnect-parent: phandle to the parent interconnect node; for
->> +  passive devices should point to same node as the exynos,parent-bus property.
-> 
-> Adding vendor specific properties for a common binding defeats the 
-> point.
+Applied to
 
-Should we make it then a common interconnect-parent property? Perhaps allowing
-also a second cell after the phandle to indicate the target interconnect id?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Currently the links are only being defined in drivers, I'm not sure if we want 
-to go that direction and extend the interconnect binding so it is possible
-to define any link between the nodes.
+Thanks!
 
-With the samsung,interconnect-parent property there was an assumption that
-each DT node ("samsung,exynos-bus" compatible) corresponds to an interconnect 
-provider with single interconnect node. The source and destination node id 
-for the link were unspecified and dynamically allocated by the driver.
+[1/2] ASoC: samsung: Document DT bindings for Midas sound subsystem
+      commit: f61d06ae99468e3f02b8af4b464945290c0cf2cc
+[2/2] ASoC: samsung: Add sound support for Midas boards
+      commit: fd0ea9cd9698edd8e9dab7dfe86163d00897b000
 
-I guess we don't want a property that would contain pairs of the interconnect 
-node specifiers (phandle + interconnect id) to define all links, since usually 
-additional data is required per each link.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Then perhaps we could make the new interconnect-parent property applicable
-only to DT nodes with #interconnect-cells == 0, i.e. valid only in such DT 
-nodes?
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
->> +- #interconnect-cells: should be 0.
->> +- bus-width: the interconnect bus width in bits, default value is 8 when this
->> +  property is missing.
-> 
-> Your bus is 8-bits or 4-bits as the example?
-Bus width might not be a good term for the intended purpose of that property.
-It has been added to specify minimum bus clock rate required for given data
-throughput. After checking the documentation again the AXI bus width is
-actually 128 bits everywhere for instance. The example defines data path 
-leftbus <- dmc <- (memory) and for leftbus we have bus-width=<8> and for dmc 
-bus-width=<4>. 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Perhaps it's better to use a vendor specific property instead, e.g.
-samsung, data-clock-ratio?
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
--- 
 Thanks,
-Sylwester
+Mark
