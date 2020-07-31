@@ -5,120 +5,124 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC0CC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 31 Jul 2020 09:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00878C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 31 Jul 2020 09:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98960208E4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 31 Jul 2020 09:49:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D38192074B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 31 Jul 2020 09:54:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="I8Mp4TZI"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CdVFgx5v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732244AbgGaJtk (ORCPT
+        id S1732300AbgGaJyq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 31 Jul 2020 05:49:40 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45118 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732080AbgGaJtj (ORCPT
+        Fri, 31 Jul 2020 05:54:46 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39755 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732107AbgGaJyq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 31 Jul 2020 05:49:39 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200731094937euoutp026b98f524ef3654d991fd3f262b352d54~mzWsaC2cU1604516045euoutp02n
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Jul 2020 09:49:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200731094937euoutp026b98f524ef3654d991fd3f262b352d54~mzWsaC2cU1604516045euoutp02n
+        Fri, 31 Jul 2020 05:54:46 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200731095443euoutp0128213a764c3f2373478c42169e725c3f~mzbJWpNC11413514135euoutp01K
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Jul 2020 09:54:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200731095443euoutp0128213a764c3f2373478c42169e725c3f~mzbJWpNC11413514135euoutp01K
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1596188977;
-        bh=Auf/Y7T0ZSXckA925t899qPP3Dpx8eVNM9/B0OueJEY=;
+        s=mail20170921; t=1596189283;
+        bh=kzxpbYTCVDFUL9r0oYD9eQhwj95h17pWawu87WQH3Tw=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=I8Mp4TZIQV/6qXN5wXEGb1KNltyFge/9ZGlDEaNu0fd9Nm/Ixf/C9/O6+b510SSMS
-         H8a0h+d44ve3uN2RU5jhSZptQ2Yf9ZN+fS3y70pLDEbypXB2EbUMOE42TQ7LUQyk8x
-         jGBjeE7wZOJDMLttkRG+e0WGss0bP0zJ6LdbYeeg=
+        b=CdVFgx5ve6RCw3QeK1unNKNXJXeINWZLrJGOgoVLlf0jZEkr7MH9DUyT8NTltoxyl
+         DXFXL3EW0x5Lu2PeeM57isJP9QWMMZupJ/pPQDBBu50lZ3UDAHIibM6eNxgGlNfVEH
+         pZFYsYF6QHWfWTzLnHGDVwpbWGuvrViZNJqOJb+M=
 Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200731094937eucas1p1e81eb0b6f47be64a836514ba6582f1b4~mzWsLFojb0679706797eucas1p19;
-        Fri, 31 Jul 2020 09:49:37 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id EF.DC.06318.139E32F5; Fri, 31
-        Jul 2020 10:49:37 +0100 (BST)
+        20200731095443eucas1p1cf16316d0ef393e40c4a9263e67b0c06~mzbJKWYD60727507275eucas1p1i;
+        Fri, 31 Jul 2020 09:54:43 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 3A.9D.06318.36AE32F5; Fri, 31
+        Jul 2020 10:54:43 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200731094937eucas1p267cb8d22b8d6455c3b7d59bb82b1fc39~mzWr2BBpm1213212132eucas1p2L;
-        Fri, 31 Jul 2020 09:49:37 +0000 (GMT)
+        20200731095443eucas1p2006dbbd3874265a8a49081b3c8dba7da~mzbIrhZ1P3148831488eucas1p2O;
+        Fri, 31 Jul 2020 09:54:43 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200731094937eusmtrp1d5a319bd2a0c81a7ba821a9cf31e4d8a~mzWr1Wd1W1823518235eusmtrp14;
-        Fri, 31 Jul 2020 09:49:37 +0000 (GMT)
-X-AuditID: cbfec7f5-371ff700000018ae-00-5f23e931cb57
+        20200731095443eusmtrp1f613eb532de5cecab6f6eaa0a94049f9~mzbIq4mWp2137621376eusmtrp1A;
+        Fri, 31 Jul 2020 09:54:43 +0000 (GMT)
+X-AuditID: cbfec7f5-371ff700000018ae-63-5f23ea6317aa
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 12.3A.06017.139E32F5; Fri, 31
-        Jul 2020 10:49:37 +0100 (BST)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id A1.EA.06017.26AE32F5; Fri, 31
+        Jul 2020 10:54:43 +0100 (BST)
 Received: from [106.210.123.115] (unknown [106.210.123.115]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200731094936eusmtip1cf26c9c88e8a55397ba8e1112ebb69db~mzWrAktlk2426624266eusmtip1U;
-        Fri, 31 Jul 2020 09:49:36 +0000 (GMT)
-Subject: Re: [PATCH v2 07/11] media: exynos4-is: Add support for multiple
- sensors on one port
+        20200731095442eusmtip181539015b365d5ffd5112be76d18aaab~mzbH_NmA-2935229352eusmtip1j;
+        Fri, 31 Jul 2020 09:54:42 +0000 (GMT)
+Subject: Re: [PATCH v2 10/11] media: exynos4-is: Handle duplicate calls to
+ vidioc_streamoff
 To:     Jonathan Bakker <xc-racer2@live.ca>, linux-media@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     kyungmin.park@samsung.com, mchehab@kernel.org, kgene@kernel.org,
         krzk@kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org
 From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <83a13e5e-b172-7d95-195c-6d129f0005db@samsung.com>
-Date:   Fri, 31 Jul 2020 11:49:35 +0200
+Message-ID: <e99235a5-0d8a-9948-596e-beff3da4b12e@samsung.com>
+Date:   Fri, 31 Jul 2020 11:54:41 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
         Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <BN6PR04MB0660571351D03A3A4FEDCD2CA3710@BN6PR04MB0660.namprd04.prod.outlook.com>
+In-Reply-To: <BN6PR04MB06606A36716392E7634CF8DCA3710@BN6PR04MB0660.namprd04.prod.outlook.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm2znbOS5nn1PzzcxoKpXlDf1xoBTTfqw/IRFlgc6ZB5W8taml
-        f7IiyUvewRyWYmY6MOe8ok1NzGtOsiyvWCiUmZRMwUpnzjPJf+/7PM/7vO/z8dGE+BXfgY6J
-        T2IV8fJYiUBItvT9HnX3XnSWeekNjkx5r57P5M0vEczoqIZiRu79oBjt/Ec+8769TMDkaJr5
-        zOPRTh5Trd3gMQ90vRTzrmCWDNgn1aozBdLGqjvSysl1UprbpEZSg9YpmH9NeCaSjY1JYRWe
-        /uHC6GdDc1RiC++2oSaTSkdGlIUsaMC+ULaUK8hCQlqMaxCsf2nlmQgxXkWQ0eDKEQYEFVOb
-        1O6E5rOK5IgXCNrrdOZmZXtc1bbtS9E2WAZbgSbYFtcjqC76xTM1BM5A8HQzfcdJgL3h0Zvc
-        nTtE2B+K8r9ti2iaxK7QvXbcBNvhMGjuH+dxEmsYLF0gTbUFDoXXxtodnMD2MLVQbq6PQOty
-        GWHaBXiMgo6OZsLkCfgclAzIuAA28L2/yRzGEYaLckhOfx9BTsc0xTX5COb6K8yPdBpm9H8E
-        JiMCn4D6dk8OPgu6zjzE+VvBxLI1d4MVFLaUmNeK4GGGmFO7wF91CY+rHSB7YYvMRxLVnmSq
-        PWlUe9Ko/u+tQKQa2bPJyrgoVukTz97yUMrjlMnxUR7XE+K0aPtPDRv719pQ50ZED8I0kliK
-        wsckMjFfnqJMjetBQBMSW1HgyHCYWBQpT01jFQkyRXIsq+xBh2hSYi/yqVwMFeMoeRJ7g2UT
-        WcUuy6MtHNKR2r/PcvK5+4Fit3Xdz1nXxLrWme6Q1FQ7r4ns4icjF/Iix70iqozjk13CAOHy
-        /kahaNW5xO1lSN0sqbl80LrpWLLTrOJUDUUMrFw1DOsOT0/e1a8W1qVdmindIIO6sgbxTL5x
-        /or+68kPRTeDXD5d9PM9/7bgaHBD7VCNi5/RrlJCKqPl3m6EQin/B5na085PAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHIsWRmVeSWpSXmKPExsVy+t/xu7qGL5XjDVZ+ZLeYf+Qcq0X/49fM
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0iTYRTHe/a+uzibvE7DM42kVYRdtKEf3kiGStI+VETQF0Pn0heVdMrm
+        LP3S1BS1aV4gbWmTShNRtDnXvE28riZupSR2MSFN8IaKillabXuT/PY75/zPc/5/eDgYv5fp
+        y0mSp1MKuSxZyOLixuFt29m4hWPSc6+6j5K6QRuTfDiziJF2eyubHM1ZYpP6mQkmOd5ZzSI1
+        re1MsspuZpD1+h0GmdczyCbfl03hYe4SfWMhS9L24p7k2ccfuKTE0Igk6/oj15hR3NB4Kjkp
+        g1IEiWO5ieO6DiwtB7/b9LWOpUZ6rAi5cYAIAXuFycV8ogHBYpOA5g0EbfNXixDXwesICos3
+        8L0Fk1rHpgcvEaxtjLPoYg1Ble4J26nyIqIhO78Acw68iRYE9RWrDGeBEfkInu6qXSoWIYLi
+        oRLkZB4hBrNpnulknDgBzyfmXKYOETHQbvnAoDWe8PbxrMuHm+OC1Wh2vYMRPvBpVseg2R9e
+        L1e7LgMxxoatoXZEG78Ik7lVTJq9YMFiYNN8GEYqNDi9kItA0/WZTRelCKYttf+2L8AX209H
+        Uo7jRAC0dAbR7XDoq7MynG0gPGBy2ZM24QHlxkqMbvOgIJ9Pq4/Dr8ZKBs2+8GD2D16KhNp9
+        0bT74mj3xdH+v1uL8EbkQ6mUKQmUMlhO3QlUylKUKnlCYFxqih45vtXIb8umCZl3bvUjgoOE
+        B3mxY0IpnynLUGam9CPgYEJvXsToSAyfFy/LzKIUqVKFKplS9iM/Di704QU/m4/mEwmydOo2
+        RaVRir0pg+Pmq0Y60TBhyRXbO7205c3nr4QGdGXrr6/sdlg10uYqyApKEvg/Iqd8TqZORZaG
+        wAG3G0091lVBZG+fCnfvrjGWLQp0A4bwJfn32ZXNOa0mLy9SZEC5ZwZC33hsvovKjgwTn54W
+        VbO+TRB+I1t+2w33IxZNtks1xTcr00Tcy7XlQlyZKBOdwhRK2V8KtR9RUgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIIsWRmVeSWpSXmKPExsVy+t/xu7rJr5TjDS48YbSYf+Qcq0X/49fM
         FufPb2C3ONv0ht1i0+NrrBaXd81hs+jZsJXVYsb5fUwWyzb9YbJo3XuE3eLixLssDtwem1Z1
         snlsXlLvsejmDxaPvi2rGD0+b5ILYI3SsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaP
-        tTIyVdK3s0lJzcksSy3St0vQy1h86j57wTamis8rOtkbGP8xdjFyckgImEhseDCLpYuRi0NI
-        YCmjxO6OCUAOB1BCSmJ+ixJEjbDEn2tdbBA17xkl/sy6y97FyM4hLBAv8d8JpEREYD2jxIET
-        YiAlzAJtjBKTN09igqi/wygx8UoPG0gVm4ChRO/RPrDFvAJ2EpMnvGAC2cUioCpx4KsGSFhU
-        IE7ice9/ZogSQYmTM5+wgNicArESB/+tZAKxmQXUJf7Mu8QMYYtL3HoyHyouL7H97RzmCYxC
-        s5C0z0LSMgtJyywkLQsYWVYxiqSWFuem5xYb6RUn5haX5qXrJefnbmIExuW2Yz+37GDsehd8
-        iFGAg1GJhzfhklK8EGtiWXFl7iFGCQ5mJRFep7On44R4UxIrq1KL8uOLSnNSiw8xmgL9NpFZ
-        SjQ5H5gy8kriDU0NzS0sDc2NzY3NLJTEeTsEDsYICaQnlqRmp6YWpBbB9DFxcEo1MLot/nl6
-        k0DD8QMrJN5KVewoFHNN05d5NF2eiT1NjYfBfT/HLVH2TieJrwHeLqVbw+/lRFUwbfzSY3jM
-        +2+DRuyeUxdcWiS9LyktnsrzaJNDr9Ya4fq2Cy6u1ZNVS14pRCp+WsVUJmZ1aSO/sIlD5Y36
-        vxqau8WddaZELJ7v5r/sTPD//61NSizFGYmGWsxFxYkATocZ+OECAAA=
-X-CMS-MailID: 20200731094937eucas1p267cb8d22b8d6455c3b7d59bb82b1fc39
+        tTIyVdK3s0lJzcksSy3St0vQy7g8fydzQRNLxZp7S9kaGDcxdzFyckgImEjsaJjP3sXIxSEk
+        sJRRYsmaJpYuRg6ghJTE/BYliBphiT/Xutggat4zShxs7mAFSQgLxEo0tnWADRIRWM8oceCE
+        GEgRs0Abo8TkzZOYIDruMEosW3sIrIpNwFCi92gfI4jNK2AnsW/HS7BJLAKqEouvPQOrERWI
+        k3jc+58ZokZQ4uTMJywgNifQtlPb9rGD2MwC6hJ/5l1ihrDFJW49mc8EYctLbH87h3kCo9As
+        JO2zkLTMQtIyC0nLAkaWVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIHRue3Yzy07GLveBR9i
+        FOBgVOLhTbikFC/EmlhWXJl7iFGCg1lJhNfp7Ok4Id6UxMqq1KL8+KLSnNTiQ4ymQM9NZJYS
+        Tc4HJo68knhDU0NzC0tDc2NzYzMLJXHeDoGDMUIC6YklqdmpqQWpRTB9TBycUg2MC2T+Xnov
+        dXBLKG+udptJsdkEyy/cG3jYjkYqZ344UGMfKC+2bUKr5s+Ic0fvnSs4dX3a7buK3dpyPF/j
+        n607/dAi21R+maPFSu52kwkJW9bkOF+/sLnR5umFRG7tDTzhLqqMrk9OiqpbP3z5131Wh5Pp
+        38SFm6dK2Wqfn2Opqnjx2rpP5QeuKrEUZyQaajEXFScCAKx/8ZrkAgAA
+X-CMS-MailID: 20200731095443eucas1p2006dbbd3874265a8a49081b3c8dba7da
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200730230238eucas1p29ff428328092ab522d04907ca9ea6522
+X-RootMTR: 20200730230219eucas1p1eed6b7966e17507c3a817e6d86ea84c0
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200730230238eucas1p29ff428328092ab522d04907ca9ea6522
+X-CMS-RootMailID: 20200730230219eucas1p1eed6b7966e17507c3a817e6d86ea84c0
 References: <20200730230114.8572-1-xc-racer2@live.ca>
-        <CGME20200730230238eucas1p29ff428328092ab522d04907ca9ea6522@eucas1p2.samsung.com>
-        <BN6PR04MB0660571351D03A3A4FEDCD2CA3710@BN6PR04MB0660.namprd04.prod.outlook.com>
+        <CGME20200730230219eucas1p1eed6b7966e17507c3a817e6d86ea84c0@eucas1p1.samsung.com>
+        <BN6PR04MB06606A36716392E7634CF8DCA3710@BN6PR04MB0660.namprd04.prod.outlook.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 31.07.2020 01:01, Jonathan Bakker wrote:
-> On some devices, there may be multiple camera sensors attached
-> to the same port.  Make sure we probe all of them, not just the
-> first one.
+> vidioc_streamoff can be called multiple times from userspace, but we
+> should only call media_pipeline_stop when we're actually setup.
+> 
+> This became more noticeable after commit 2a2599c66368 ("[media] media:
+> entity: Catch unbalanced media_pipeline_stop calls") was merged as it
+> added a WARN for unbalanced calls to media_pipeline_stop.
 > 
 > Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 
