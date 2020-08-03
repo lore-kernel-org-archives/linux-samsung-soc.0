@@ -2,156 +2,151 @@ Return-Path: <SRS0=j0RG=BN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16459C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 14:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E215C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 15:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2C882076E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 14:55:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596466510;
-	bh=qjp447E1FdrQ1VZ023mmW0i+s+n2xlSEVcNx6++grCw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=hCmjfJQPL5lDC7gyER9j7utAd+KoTB8qYSRF2VLHdkUO9RYk5O/hvpUbaHQOwoks7
-	 U9mosMJJj4IL/9irMYVQdfcxSJEwBERaGCfg4JzmywSeP67txGluqHNc8tob14JeIe
-	 Hc4Foai6IWcqSs3y7paJDFxpeaGGmv5ubZV659Ko=
+	by mail.kernel.org (Postfix) with ESMTP id 686DA2072A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 15:30:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="McYstQsF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbgHCOzL (ORCPT
+        id S1726797AbgHCPae (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Aug 2020 10:55:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726825AbgHCOzL (ORCPT
+        Mon, 3 Aug 2020 11:30:34 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40344 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbgHCPad (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Aug 2020 10:55:11 -0400
-Received: from localhost (mobile-166-175-186-42.mycingular.net [166.175.186.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 941822076C;
-        Mon,  3 Aug 2020 14:55:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596466509;
-        bh=qjp447E1FdrQ1VZ023mmW0i+s+n2xlSEVcNx6++grCw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=js72JAn2bH2xSm+hYcTQJGVkYXneeZJu3WaUZn6z6vYSOzv7YKwhBYVr6t9avSQXt
-         qU1B6g/sav0/hQvP8lshLpuLg09vHpm0tBm1iPdgP8Oy8IOEVvOnZHpFaz1vJf+fWC
-         OM3gS2l2KadBq5i7cExyeKjGHeiEM+cd7lXZK83k=
-Date:   Mon, 3 Aug 2020 09:55:08 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Yue Wang <yue.wang@Amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Toan Le <toan@os.amperecomputing.com>,
-        Ley Foon Tan <ley.foon.tan@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        rfi@lists.rocketboards.org
-Subject: Re: [PATCH 00/10] Remove surplus dev_err() when handing an error
- from platform_get_irq()
-Message-ID: <20200803145508.GA332368@bjorn-Precision-5520>
+        Mon, 3 Aug 2020 11:30:33 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200803153031euoutp01900136565a5dd2dcbbec70b71a004407~ny8MfD1gd1614016140euoutp01P
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Aug 2020 15:30:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200803153031euoutp01900136565a5dd2dcbbec70b71a004407~ny8MfD1gd1614016140euoutp01P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1596468631;
+        bh=Jz6tkQErBLsdV2v0wFX7a95nI5VkFFvWz7rn7bqAy1Q=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=McYstQsFMSxCGWsuBxp96VgG0398sUUSXuhSSKVvBnpi+31HfxiqKq8L07HEnI1WT
+         ihPASdzwhqgd9gtKJbJ+esbc3sCYM+9IoC6Rh9ru8XI5GRZsHcbp5UGd+wusUWC1jM
+         13cxq+1i6bsd3QH8In+Emfl6ZRBDWc5X8UJBH0FI=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200803153031eucas1p15f0cbcfe0ddfb7c18ee4566ce1dc5f00~ny8MHGGJx2152121521eucas1p1E;
+        Mon,  3 Aug 2020 15:30:31 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 5C.78.06318.79D282F5; Mon,  3
+        Aug 2020 16:30:31 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200803153030eucas1p2a28373f5e2cd3d6ae472aacbffb03c4e~ny8Lm2mRg2873728737eucas1p29;
+        Mon,  3 Aug 2020 15:30:30 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200803153030eusmtrp2bd8b688608a971563485cb1ffbe96e19~ny8LmGOdj2559225592eusmtrp2Y;
+        Mon,  3 Aug 2020 15:30:30 +0000 (GMT)
+X-AuditID: cbfec7f5-371ff700000018ae-17-5f282d97bc09
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 05.49.06314.69D282F5; Mon,  3
+        Aug 2020 16:30:30 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200803153030eusmtip22d0b2a8f9579ed8d29f0a1e38f618cf8~ny8K345ai0126701267eusmtip2K;
+        Mon,  3 Aug 2020 15:30:30 +0000 (GMT)
+Subject: Re: [PATCH v2 2/2] memory: samsung: exynos5422-dmc: Add module
+ param to control IRQ mode
+To:     Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     willy.mh.wolff.ml@gmail.com, k.konieczny@samsung.com,
+        cw00.choi@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org,
+        chanwoo@kernel.org, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <db571467-48ec-8f11-de1d-00393d8aa99b@samsung.com>
+Date:   Mon, 3 Aug 2020 17:30:30 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20200710191122.11029-3-lukasz.luba@arm.com>
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200803020151.GA291575@bjorn-Precision-5520>
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOKsWRmVeSWpSXmKPExsWy7djPc7rTdTXiDZ6fEbLYOGM9q8XEG1dY
+        LK5/ec5qseDTDFaL/sevmS3On9/AbnG26Q27xabH11gtLu+aw2bxufcIo8WM8/uYLBY2tbBb
+        3G5cwWZx+E07q8W3E48YHfg91sxbw+ixc9Zddo9NqzrZPDYvqffo27KK0ePzJrkAtigum5TU
+        nMyy1CJ9uwSujGMLrzAVNHBVNO5/z9zAOI2ji5GTQ0LARKL3WA9jFyMXh5DACkaJA3P7oJwv
+        jBINvxazQzifGSW+/XvO1sXIAdYy8XQJRHw5o8TJjXtYQEYJCbxnlLh5Mg/EFhZIlmjd/YIN
+        pEhEYBWjxPf3R1hBHGaQSZM+LGQGqWITMJToetvFBmLzCthJNNz6yg5iswioSLQt+8YIYosK
+        xEmsf7mdCaJGUOLkzCdg2zgFLCWuX1kDVsMsIC/RvHU2M4QtLnHryXwmiOf+skt0rKqCsF0k
+        vj6bBhUXlnh1fAs7hC0j8X8nSD0XkN3MKPHw3Fp2CKeHUeJy0wxGiCpriTvnfoH9zyygKbF+
+        lz5E2FHi1L5lzJBg4ZO48VYQ4gY+iUnbpkOFeSU62oQgqtUkZh1fB7f24IVLzBMYlWYh+WwW
+        km9mIflmFsLeBYwsqxjFU0uLc9NTi43zUsv1ihNzi0vz0vWS83M3MQKT2+l/x7/uYNz3J+kQ
+        owAHoxIP7wJWjXgh1sSy4srcQ4wSHMxKIrxOZ0/HCfGmJFZWpRblxxeV5qQWH2KU5mBREuc1
+        XvQyVkggPbEkNTs1tSC1CCbLxMEp1cAovNLyJ5fZ+1zOo7tnVMesf74kJSLonZOjtMzBw0dv
+        GLbnuLb7NG7XT3E+epA54LpaifFvs9nzw6753RZZoWVb0DGrouYro/+FWZ+m32LxT/bkuvKt
+        7KFdDUP40ZdOatN2nVdp0fW6UbU957r+xbsi+zKzhfWjKmJZG+J3zpSVvRFm2PpLW0mJpTgj
+        0VCLuag4EQAFJUrWagMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsVy+t/xe7rTdDXiDb4sNbbYOGM9q8XEG1dY
+        LK5/ec5qseDTDFaL/sevmS3On9/AbnG26Q27xabH11gtLu+aw2bxufcIo8WM8/uYLBY2tbBb
+        3G5cwWZx+E07q8W3E48YHfg91sxbw+ixc9Zddo9NqzrZPDYvqffo27KK0ePzJrkAtig9m6L8
+        0pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jGMLrzAVNHBV
+        NO5/z9zAOI2ji5GDQ0LARGLi6ZIuRi4OIYGljBK//y5j6WLkBIrLSJyc1sAKYQtL/LnWxQZR
+        9JZR4vLhRUwgCWGBZIk/O06BJUQEVjFK3Lt/gx3EYRb4zCjR/mY/C0TLbkaJKRfns4G0sAkY
+        SnS97QKzeQXsJBpufWUHsVkEVCTaln1jBLFFBeIklm+Zzw5RIyhxcuYTsJs4BSwlrl9ZA1bD
+        LGAmMW/zQ2YIW16ieetsKFtc4taT+UwTGIVmIWmfhaRlFpKWWUhaFjCyrGIUSS0tzk3PLTbU
+        K07MLS7NS9dLzs/dxAiM6G3Hfm7ewXhpY/AhRgEORiUe3gWsGvFCrIllxZW5hxglOJiVRHid
+        zp6OE+JNSaysSi3Kjy8qzUktPsRoCvTcRGYp0eR8YLLJK4k3NDU0t7A0NDc2NzazUBLn7RA4
+        GCMkkJ5YkpqdmlqQWgTTx8TBKdXAaBTa2b7gRztHaOjmh8unzi6aZZP3fk2FyUe1wLkZWzN4
+        d77ZI1u67tBN9YWzHz1tYPjzaUFNddezPRyO/Z8T/qs1LuqbaazvYTzxgvK5lRJfdXdJfhBI
+        rpWfL7a88OvVYsn3DRtn/nqqcpD/45asuxen5r/bZLn+X31T5fTEo6tjzqaHiF0W3a7EUpyR
+        aKjFXFScCAARIuZi/gIAAA==
+X-CMS-MailID: 20200803153030eucas1p2a28373f5e2cd3d6ae472aacbffb03c4e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200710191154eucas1p296561f285ee0730e5040fdfe3fc7e75e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200710191154eucas1p296561f285ee0730e5040fdfe3fc7e75e
+References: <20200710191122.11029-1-lukasz.luba@arm.com>
+        <CGME20200710191154eucas1p296561f285ee0730e5040fdfe3fc7e75e@eucas1p2.samsung.com>
+        <20200710191122.11029-3-lukasz.luba@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Aug 02, 2020 at 09:01:51PM -0500, Bjorn Helgaas wrote:
-> On Sun, Aug 02, 2020 at 02:25:52PM +0000, Krzysztof Wilczyński wrote:
-> > At the moment a lot of error handling code would print a duplicated
-> > error message should either the platform_get_irq() or
-> > platform_get_irq_byname() function fails to obtain an IRQ for a device.
-> > 
-> > There is no need to call the dev_err() function directly to print
-> > a custom message when handling an error from either of these functions
-> > as both are going to display an appropriate error message in case of
-> > a failure.
-> > 
-> > This series aims to remove surplus call to dev_err() when handing an
-> > error originating from either platform_get_irq() or
-> > platform_get_irq_byname() function as per suggestion from Coccinelle.
-> > 
-> > Related commits are commit 7723f4c5ecdb ("driver core: platform: Add an
-> > error message to platform_get_irq*()") and commit 98051ba2b28b
-> > ("coccinelle: Add script to check for platform_get_irq() excessive
-> > prints").
-> > 
-> > Krzysztof Wilczyński (10):
-> >   PCI: dwc: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: mobiveil: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: tegra: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: altera: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: host-generic: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: v3-semi: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: altera-msi: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: xgene-msi: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: rockchip: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> >   PCI: xilinx-nwl: Remove dev_err() when handing an error from
-> >     platform_get_irq()
-> > 
-> >  drivers/pci/controller/dwc/pci-dra7xx.c              |  8 ++------
-> >  drivers/pci/controller/dwc/pci-exynos.c              |  9 +++------
-> >  drivers/pci/controller/dwc/pci-imx6.c                |  4 +---
-> >  drivers/pci/controller/dwc/pci-keystone.c            |  4 +---
-> >  drivers/pci/controller/dwc/pci-meson.c               |  4 +---
-> >  drivers/pci/controller/dwc/pcie-armada8k.c           |  4 +---
-> >  drivers/pci/controller/dwc/pcie-artpec6.c            |  4 +---
-> >  drivers/pci/controller/dwc/pcie-histb.c              |  4 +---
-> >  drivers/pci/controller/dwc/pcie-kirin.c              |  5 +----
-> >  drivers/pci/controller/dwc/pcie-spear13xx.c          |  5 ++---
-> >  drivers/pci/controller/dwc/pcie-tegra194.c           |  4 +---
-> >  .../pci/controller/mobiveil/pcie-layerscape-gen4.c   |  5 ++---
-> >  drivers/pci/controller/mobiveil/pcie-mobiveil-host.c |  4 +---
-> >  drivers/pci/controller/pci-tegra.c                   |  8 ++------
-> >  drivers/pci/controller/pci-v3-semi.c                 |  5 ++---
-> >  drivers/pci/controller/pci-xgene-msi.c               |  2 --
-> >  drivers/pci/controller/pcie-altera-msi.c             |  1 -
-> >  drivers/pci/controller/pcie-altera.c                 |  4 +---
-> >  drivers/pci/controller/pcie-rockchip-host.c          | 12 +++---------
-> >  drivers/pci/controller/pcie-tango.c                  |  4 +---
-> >  drivers/pci/controller/pcie-xilinx-nwl.c             | 11 ++---------
-> >  21 files changed, 29 insertions(+), 82 deletions(-)
-> 
-> I squashed these together and applied them to pci/irq-error for v5.9,
-> thanks!
-> 
-> The cover letter claims there should be 10 patches, but I only got 9.
-> Just FYI.
+Hi Lukasz,
 
-I picked up and applied 10/10 as well.  And added Jesper & Ley Foon's
-reviewed-by and acked-by.  Thanks!
+On 10.07.2020 21:11, Lukasz Luba wrote:
+> The driver can operate in two modes relaying on devfreq monitoring
+> mechanism which periodically checks the device status or it can use
+> interrupts when they are provided by loaded Device Tree. The newly
+> introduced module parameter can be used to choose between devfreq
+> monitoring and internal interrupts without modifying the Device Tree.
+> It also sets devfreq monitoring as default when the parameter is not set
+> (also the case for default when the driver is not built as a module).
+>
+> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
+> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+
+I've got back from my holidays and noticed that in meantime this commit 
+got merged as commit 4fc9a0470d2d. It revealed that there is a race 
+between registering exynos5422-dmc driver and exynos-ppmu driver, which 
+can be observed sometimes as the following message and freeze on Odroid 
+XU3 with multi_v7_defconfig:
+
+[    8.767708] exynos5-dmc 10c20000.memory-controller: couldn't probe 
+performance counters
+
+I will check this later why the EPROBE_DEFER error is not properly 
+propagated and why it causes a freeze.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
