@@ -2,173 +2,158 @@ Return-Path: <SRS0=j0RG=BN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F00AC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 15:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E76C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 21:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05B6D2076C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 15:35:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YsNM689J"
+	by mail.kernel.org (Postfix) with ESMTP id A1A9922CA1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 21:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596488482;
+	bh=oN1wga6oDPnA3bltstYlRjnDl8QsPIAZBDEUhwkxmfU=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=YzpuxmCNe1NZmiE/ew8sbVDvCnLKlPLsJRID04JVhSO+kOBKwlTnAheW6IHpWU/P5
+	 r4WAIAdPD9X1Y+K/hF195ppAY2odMyYP3UUTHQgF5BY7U5fV3eTIgK0SRvKdMVJU8n
+	 TTZ2lp2hsU4zfOjA4oRasP5XIcf4zSHxdTd9/KQQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726888AbgHCPf6 (ORCPT
+        id S1729009AbgHCVBV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Aug 2020 11:35:58 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:41865 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726478AbgHCPf5 (ORCPT
+        Mon, 3 Aug 2020 17:01:21 -0400
+Received: from mail-io1-f46.google.com ([209.85.166.46]:44953 "EHLO
+        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728889AbgHCVBU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Aug 2020 11:35:57 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200803153556euoutp01dc9d8f41aa6dbe14e2b5579068396a39~nzA69NYWw2163021630euoutp01p
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Aug 2020 15:35:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200803153556euoutp01dc9d8f41aa6dbe14e2b5579068396a39~nzA69NYWw2163021630euoutp01p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1596468956;
-        bh=zaaAQhHr+G5KAp1EblCYce/6XgEeLyh+tfSOVg5NPdg=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=YsNM689JcrrXW6j7FQEpk766uWvm1YmVqyrW+KC1Y/Qwx+nI4GZXJQu7l7y2LydQk
-         fWf3dr45/dr9BodFghEsU5sxL5beJP+24gvZm97jMxMWRBi8mkc9UTF3Uxm0CclPum
-         6eRBrmmuNMAUIUn35STmf4Mp0IKyhANrLfQViyyM=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200803153556eucas1p297b2224e6861b32226ea284d3c34c7eb~nzA6rUfrQ0425704257eucas1p2i;
-        Mon,  3 Aug 2020 15:35:56 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 39.5D.06456.CDE282F5; Mon,  3
-        Aug 2020 16:35:56 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200803153555eucas1p12cd471cea5b1674dfa5aa38ee669a2ac~nzA6UchAz2352423524eucas1p19;
-        Mon,  3 Aug 2020 15:35:55 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200803153555eusmtrp24b5f7ced7bad754419fa435264f2f557~nzA6TjUdZ3080930809eusmtrp2g;
-        Mon,  3 Aug 2020 15:35:55 +0000 (GMT)
-X-AuditID: cbfec7f2-809ff70000001938-62-5f282edc8bcc
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 9B.AC.06017.BDE282F5; Mon,  3
-        Aug 2020 16:35:55 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200803153555eusmtip1d8db2ec29432bb2449eca306f6bc71ee~nzA5jtebj2941329413eusmtip1S;
-        Mon,  3 Aug 2020 15:35:55 +0000 (GMT)
-Subject: Re: [PATCH v2 2/2] memory: samsung: exynos5422-dmc: Add module
- param to control IRQ mode
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     willy.mh.wolff.ml@gmail.com, k.konieczny@samsung.com,
-        cw00.choi@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org,
-        chanwoo@kernel.org, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org
-Message-ID: <ceaa668e-a60b-1916-243b-145b1bc7fc76@samsung.com>
-Date:   Mon, 3 Aug 2020 17:35:55 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.10.0
+        Mon, 3 Aug 2020 17:01:20 -0400
+Received: by mail-io1-f46.google.com with SMTP id v6so24749093iow.11;
+        Mon, 03 Aug 2020 14:01:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=caU68Vks0Qq0qRNr1RcbbJo83bu5SQyVcphbC7uR/pw=;
+        b=eLf7LczPFnRjHgztRiF/SzIF4maOualtTBucdu4jKPARDpvweRK/8Ikey/hZ9uKHmW
+         q3ulkz9TB+0gsZyhMRRGV+RT0JScLW6eiRuVdy0h6Cs9wI3YAXyt530hyDYwClmvIrnF
+         PBSgvTeMUe4FM2Ri+r6Cu8rwmmPGbQ5HmLOvi3dURAioxjNXCSC6As/uyiRkpax9kg+I
+         MwVRonkBibAPH3Vqigm4NoLUZj9BsEoJF8P8u54s07kI5vpFnti4NApiVsjTXwetrzfw
+         Q7LbHWkLqRJaqwsn0wJl+urSidxjXe6DKTZ4jczt8GbdHlu8z0UQK1m9LWCB9sRnQUv+
+         icrQ==
+X-Gm-Message-State: AOAM530Wwp4vl3i/+A3lSiRwqAzCAJpP9Q+vPMGfTU/d18C2iXNGfuqi
+        1l7FTE3qx6SK7JIOdqNsdg==
+X-Google-Smtp-Source: ABdhPJwLvkQ8nLiW6KyvJ0FE/ZZBxba/47A0nMcMogCK9MlyD6FPHyseUZgrOPhESgV+UWpEU2XPBA==
+X-Received: by 2002:a5d:9b96:: with SMTP id r22mr1872679iom.66.1596488479389;
+        Mon, 03 Aug 2020 14:01:19 -0700 (PDT)
+Received: from xps15.herring.priv ([64.188.179.252])
+        by smtp.googlemail.com with ESMTPSA id r6sm9292280iod.7.2020.08.03.14.01.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Aug 2020 14:01:18 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Yue Wang <yue.wang@Amlogic.com>
+Subject: [RFC 00/27] PCI: dwc: Driver clean-ups
+Date:   Mon,  3 Aug 2020 15:00:49 -0600
+Message-Id: <20200803210116.3132633-1-robh@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <db571467-48ec-8f11-de1d-00393d8aa99b@samsung.com>
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURTldVYqxaFiuKJgbIiA0SLqx0QU1JhYDYkkxmg0WgtOCqFUMgO4
-        /FiLiKCASwxlMGxxAUQqVZElbqBUJFAjRpDFDRIUF6S4EjfKgPJ3zrnnvntO8mhM2Un40nHG
-        JI436gwqUo5XN/1oW9SjDtIuflkyja2yWAn2ZOcTnO34PECwRU4Lweb0vcNYh+MKxbaa31Os
-        re8pwbbXnSXZkax7iLU4bsnYYvNhiu0+VEqyje/TCfbrg9do1XRNRUEF0tSKvZTGVp5Baq6e
-        O6jJvlaONCM2/yhym3zFbs4Ql8LxIeG75LH5HZV4opPZ13jmGGlCZs9M5E4DswzEmmd4JpLT
-        SqYUQYE5j5LIZwT12f2EREYQDN7JxyZXnKNpE4OLCGrODMgkMoSg9HIz5XLNYGIgrf4N6cIk
-        EwqZHzJJl8mbKUfwbeje+DrmevfUp+LxdxVMOGS0lY1FoWmcCQBT2UqXPJPZCda3N2SSxQua
-        8/pxF3ZnIuBNb8X4KsbMhdTr+RPYB7r6C2VS1C8UVD+PlPBacFj6JyrMgEH7NUrCc+BPbeF4
-        A2BSEbxqu0xJ5DiCdrMFSa4w6GkbJV3hMCYYrHUhkrwaHt66gLlkYDyh84OXlMETTlXnTsgK
-        OHpEKbnng2iv/Hf27qPH2AmkEqc0E6e0Eae0Ef/fLUJ4OfLhkoUEPSeEGrm9akGXICQb9eqY
-        PQk2NPbfWn7bnTXoy+PoBsTQSOWhKCKCtEpClyLsT2hAQGMqb8Wa1padSsVu3f4DHL9Hyycb
-        OKEBzaZxlY9iacnbHUpGr0vi4jkukeMnpzLa3deEYjZ2f3Xb7lPpUTV/WD1r2DB9/bxXWzbn
-        nvv1QvZ8iV93l+D/o2V5U52skQ9aN3je32T9nhOR7paclBpg2xSYN7DeyS/Uy6pTW6Oe+Hms
-        vX+6+1JcT5jgZPmTiw/Hp920blDFVry0a8Ltedas21s5D/XHMPGnPlhM1wYHRkVHUq9VuBCr
-        C12A8YLuLzupyChrAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFIsWRmVeSWpSXmKPExsVy+t/xu7q39TTiDTpPG1lsnLGe1WLijSss
-        Fte/PGe1WPBpBqtF/+PXzBbnz29gtzjb9IbdYtPja6wWl3fNYbP43HuE0WLG+X1MFgubWtgt
-        bjeuYLM4/Kad1eLbiUeMDvwea+atYfTYOesuu8emVZ1sHpuX1Hv0bVnF6PF5k1wAW5SeTVF+
-        aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexuzr61gKPglU
-        HJ7azdbA2MTXxcjJISFgIvHpVytrFyMXh5DAUkaJxkXXWSESMhInpzVA2cISf651sUEUvWWU
-        uPf1JTtIQlggWeLPjlNsIDabgKFE11uIIhGBVUBF92+wgzjMAp8ZJdrf7GcBqRIS+MAosf20
-        FYjNK2An0XluJVCcg4NFQEWiYaUtSFhUIE5i+Zb57BAlghInZz4Ba+UUsJd4cXcNM4jNLGAm
-        MW/zQyhbXqJ562woW1zi1pP5TBMYhWYhaZ+FpGUWkpZZSFoWMLKsYhRJLS3OTc8tNtIrTswt
-        Ls1L10vOz93ECIznbcd+btnB2PUu+BCjAAejEg/vAlaNeCHWxLLiytxDjBIczEoivE5nT8cJ
-        8aYkVlalFuXHF5XmpBYfYjQF+m0is5Rocj4w1eSVxBuaGppbWBqaG5sbm1koifN2CByMERJI
-        TyxJzU5NLUgtgulj4uCUamA8f2dG3oaop/Kn64y67hzeyr51ynv+tM9u6YW+UanNG5njvBJm
-        Xq66uNUutiO3x7ZpnQ1btu9piYRP7Fdaag9ZXnx13Efr9TUdnWa9QF37Q1+t2PuuHtp5xJ9L
-        7Jpa3v3/y29b79PpfSV4+e3iDTOV+acFsMft+fvrn8oSWaWnTJZrwm6Jl75XYinOSDTUYi4q
-        TgQAf0DYDf0CAAA=
-X-CMS-MailID: 20200803153555eucas1p12cd471cea5b1674dfa5aa38ee669a2ac
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200710191154eucas1p296561f285ee0730e5040fdfe3fc7e75e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200710191154eucas1p296561f285ee0730e5040fdfe3fc7e75e
-References: <20200710191122.11029-1-lukasz.luba@arm.com>
-        <CGME20200710191154eucas1p296561f285ee0730e5040fdfe3fc7e75e@eucas1p2.samsung.com>
-        <20200710191122.11029-3-lukasz.luba@arm.com>
-        <db571467-48ec-8f11-de1d-00393d8aa99b@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi All,
+This is a series of clean-ups for the Designware PCI driver. The series
+primarily reworks the config space accessors to use the existing pci_ops
+struct and removes various private data that's also present in the
+pci_host_bridge struct. There's also some duplicated common (PCI and
+DWC) register defines which I converted to use the common defines.
 
-On 03.08.2020 17:30, Marek Szyprowski wrote:
-> On 10.07.2020 21:11, Lukasz Luba wrote:
->> The driver can operate in two modes relaying on devfreq monitoring
->> mechanism which periodically checks the device status or it can use
->> interrupts when they are provided by loaded Device Tree. The newly
->> introduced module parameter can be used to choose between devfreq
->> monitoring and internal interrupts without modifying the Device Tree.
->> It also sets devfreq monitoring as default when the parameter is not set
->> (also the case for default when the driver is not built as a module).
->>
->> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
->> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
->
-> I've got back from my holidays and noticed that in meantime this 
-> commit got merged as commit 4fc9a0470d2d. It revealed that there is a 
-> race between registering exynos5422-dmc driver and exynos-ppmu driver, 
-> which can be observed sometimes as the following message and freeze on 
-> Odroid XU3 with multi_v7_defconfig:
->
-> [    8.767708] exynos5-dmc 10c20000.memory-controller: couldn't probe 
-> performance counters
->
-> I will check this later why the EPROBE_DEFER error is not properly 
-> propagated and why it causes a freeze.
+This is compile tested only as I don't have any DWC based h/w, so any
+testing would be helpful. This is an RFC as it will need to be rebased
+on 5.9-rc1 and my previous clean-up series.
 
-It looks that simply propagating return value from 
-exynos5_counters_get() in exynos5_dmc_get_status() fixes the boot:
+Rob
 
-# dmesg | grep dmc
-[    8.838754] exynos-ppmu: new PPMU device registered 10d00000.ppmu 
-(ppmu-event3-dmc0_0)
-[    8.861344] exynos-ppmu: new PPMU device registered 10d10000.ppmu 
-(ppmu-event3-dmc0_1)
-[    8.868488] exynos5-dmc 10c20000.memory-controller: couldn't probe 
-performance counters
-[    8.874417] exynos-ppmu: new PPMU device registered 10d60000.ppmu 
-(ppmu-event3-dmc1_0)
-[    8.886612] exynos-ppmu: new PPMU device registered 10d70000.ppmu 
-(ppmu-event3-dmc1_1)
-[    9.396769] exynos5-dmc 10c20000.memory-controller: DMC initialized, 
-in irq mode: 0
 
-I'm still curious why it freezes if getting performance counters is not 
-possible.
+Rob Herring (27):
+  PCI: Allow root and child buses to have different pci_ops
+  PCI: dwc: Use DBI accessors instead of own config accessors
+  PCI: dwc: Allow overriding bridge pci_ops
+  PCI: dwc: Add a default pci_ops.map_bus for root port
+  PCI: dwc: al: Use pci_ops for child config space accessors
+  PCI: dwc: keystone: Use pci_ops for config space accessors
+  PCI: dwc: tegra: Use pci_ops for root config space accessors
+  PCI: dwc: meson: Use pci_ops for root config space accessors
+  PCI: dwc: kirin: Use pci_ops for root config space accessors
+  PCI: dwc: exynos: Use pci_ops for root config space accessors
+  PCI: dwc: histb: Use pci_ops for root config space accessors
+  PCI: dwc: Remove dwc specific config accessor ops
+  PCI: dwc: Use generic config accessors
+  PCI: Also call .add_bus() callback for root bus
+  PCI: dwc: keystone: Convert .scan_bus() callback to use add_bus
+  PCI: dwc: Convert to use pci_host_probe()
+  PCI: dwc: Remove root_bus pointer
+  PCI: dwc: Remove storing of PCI resources
+  PCI: dwc: Simplify config space handling
+  PCI: dwc/keystone: Drop duplicated 'num-viewport'
+  PCI: dwc: Check CONFIG_PCI_MSI inside dw_pcie_msi_init()
+  PCI: dwc/imx6: Remove duplicate define PCIE_LINK_WIDTH_SPEED_CONTROL
+  PCI: dwc/meson: Drop unnecessary RC config space initialization
+  PCI: dwc/meson: Rework PCI config and DW port logic register accesses
+  PCI: dwc/qcom: Use common PCI register definitions
+  PCI: dwc: Remove hardcoded PCI_CAP_ID_EXP offset
+  PCI: dwc/tegra: Use common Designware port logic register definitions
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+ drivers/pci/controller/dwc/pci-dra7xx.c       |   4 +-
+ drivers/pci/controller/dwc/pci-exynos.c       |  45 +--
+ drivers/pci/controller/dwc/pci-imx6.c         |   6 +-
+ drivers/pci/controller/dwc/pci-keystone.c     |  90 +++--
+ drivers/pci/controller/dwc/pci-meson.c        | 164 +++------
+ drivers/pci/controller/dwc/pcie-al.c          |  70 +---
+ drivers/pci/controller/dwc/pcie-artpec6.c     |  11 +-
+ .../pci/controller/dwc/pcie-designware-host.c | 319 ++++++------------
+ .../pci/controller/dwc/pcie-designware-plat.c |   4 +-
+ drivers/pci/controller/dwc/pcie-designware.h  |  28 +-
+ drivers/pci/controller/dwc/pcie-histb.c       |  45 +--
+ drivers/pci/controller/dwc/pcie-kirin.c       |  43 +--
+ drivers/pci/controller/dwc/pcie-qcom.c        |  31 +-
+ drivers/pci/controller/dwc/pcie-spear13xx.c   |   4 +-
+ drivers/pci/controller/dwc/pcie-tegra194.c    |  90 +++--
+ drivers/pci/controller/dwc/pcie-uniphier.c    |   3 +-
+ drivers/pci/probe.c                           |  14 +-
+ include/linux/pci.h                           |   1 +
+ 18 files changed, 368 insertions(+), 604 deletions(-)
 
+--
+2.25.1
