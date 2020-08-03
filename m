@@ -2,155 +2,82 @@ Return-Path: <SRS0=j0RG=BN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA59AC433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 07:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB45DC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 09:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A62212076C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 07:16:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=axis.com header.i=@axis.com header.b="h6z/we2Z"
+	by mail.kernel.org (Postfix) with ESMTP id AAB2120738
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 09:19:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596446387;
+	bh=DofFcpUFjE06yqe2NdDV1H4PmyUGdMscl+cYpBWQ+S4=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=e5fLOX+SpfvF+p0RQJxQSUlMfig0CZ3x5O17pukhP/ffQP/2SnEXDRZViBkUtd5Xw
+	 0WDd20HN7iqOkbhqqaM+gzgtDYIws9xH1SsFjjyWZo4l27KZZAFMMiYKBieGo0laC/
+	 cLK5Od0ncjDfJYomtUTrxhSCjlaB54sBV/qeQ9Ug=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725884AbgHCHQv (ORCPT
+        id S1726276AbgHCJTs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Aug 2020 03:16:51 -0400
-Received: from smtp1.axis.com ([195.60.68.17]:28798 "EHLO smtp1.axis.com"
+        Mon, 3 Aug 2020 05:19:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725806AbgHCHQt (ORCPT
+        id S1726118AbgHCJTr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Aug 2020 03:16:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; l=2377; q=dns/txt; s=axis-central1;
-  t=1596439009; x=1627975009;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=4eB+iWowqFuffEwqVhdlrnC6nMcvTTjY/U9qdPMCwa8=;
-  b=h6z/we2ZpIVLYLtPfrlKHe8MgcoQbZkD8iF5759ykTOOzVbavYjAMZCb
-   6UeD6cVC7cbZZuYc9lMk3UhEonQvPgcyFCyfNliKgBF8TwaZ7d29UkhJX
-   tPeXlFbJMsUvySweDFiMkj7az8qflbGxKxrU/AwMflKohmdrF2ol1WVF+
-   IN9t2ln4iOXcvcIvN9bkNgbZyD7o/WyUuT9o/azXb8c12oiYH1eqEZRhJ
-   idUlzDwULCNsgpO9b7ptdU9mE9zICuE1ygPr8Ywz2clfpcdbjNPjKnKuZ
-   N99Ctzr0gR7ZskdJ9cu6pmOe44Or25pz1k6OjwDf5v+XItSLntjCDCB2k
-   w==;
-IronPort-SDR: UaNM9T7tIvhQ2yXPgIs4QcPcTkk/tfeHxx4jq1y9AeEkV586tSbCWZGo0H5qrtreyMPTjbFCDP
- Y+y01J24Qk+f1muOB9+jFlUTw/GiCYD6ZO6oqr3An7Wu5oBT/li8icS7SKZKOzsDp1RSGVRN/P
- JHFVLeyn+a3oH1VPQGhXBUvrV08tJXL9Wa8+LfCSxrQA1U3yNOiSmezqWk0BLNTfFwG1BhdbMz
- FL4tYFSx1r3MfsJ5/LVbLSSS2e7SbjJdVyXnLyuR9Epo7K9M2bAPofd6CFKML9itofxnvwJFEr
- Bac=
-X-IronPort-AV: E=Sophos;i="5.75,429,1589234400"; 
-   d="scan'208";a="11438926"
-Date:   Mon, 3 Aug 2020 09:16:42 +0200
-From:   Jesper Nilsson <Jesper.Nilsson@axis.com>
-To:     Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
+        Mon, 3 Aug 2020 05:19:47 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.117])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DEF220719;
+        Mon,  3 Aug 2020 09:19:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596446386;
+        bh=DofFcpUFjE06yqe2NdDV1H4PmyUGdMscl+cYpBWQ+S4=;
+        h=From:To:Subject:Date:From;
+        b=p3zepOYA6fnzuYz42SncJwEHhW1Zpoejn+/Pc1Bq67KMvxz0oBcYliVvg9V2qiVXX
+         hVuhNW1iYDnOA504vgXTxYKMHV6bFu1FivB3kQeyUzXKVgmqHrg42JGY7cky6gZQnX
+         h2wKW1BkoqPDWnZJl+GnQZcDJeQWq3KWZpiGUG8k=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Yue Wang <yue.wang@Amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Jesper Nilsson <Jesper.Nilsson@axis.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Toan Le <toan@os.amperecomputing.com>,
-        Ley Foon Tan <ley.foon.tan@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        "linux-amlogic@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@axis.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "rfi@lists.rocketboards.org" <rfi@lists.rocketboards.org>
-Subject: Re: [PATCH 01/10] PCI: dwc: Remove dev_err() when handing an error
- from platform_get_irq()
-Message-ID: <20200803071642.7qgua4qnwrre4s3v@axis.com>
-References: <20200802142601.1635926-1-kw@linux.com>
- <20200802142601.1635926-2-kw@linux.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200802142601.1635926-2-kw@linux.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] leds: s3c24xx: Remove unused machine header include
+Date:   Mon,  3 Aug 2020 11:19:36 +0200
+Message-Id: <20200803091936.24984-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Aug 02, 2020 at 04:25:53PM +0200, Krzysztof Wilczyński wrote:
-> There is no need to call the dev_err() function directly to print a
-> custom message when handling an error from either the platform_get_irq()
-> or platform_get_irq_byname() functions as both are going to display an
-> appropriate error message in case of a failure.
-> 
-> This change is as per suggestion from Coccinelle:
-> 
->   drivers/pci/controller/dwc/pcie-armada8k.c:252:2-9: line 252 is
->   redundant because platform_get_irq() already prints an error
-> 
->   drivers/pci/controller/dwc/pcie-kirin.c:459:3-10: line 459 is
->   redundant because platform_get_irq() already prints an error
-> 
->   drivers/pci/controller/dwc/pci-imx6.c:872:3-10: line 872 is redundant
->   because platform_get_irq() already prints an error
-> 
->   drivers/pci/controller/dwc/pcie-artpec6.c:391:3-10: line 391 is
->   redundant because platform_get_irq() already prints an error
-> 
->   drivers/pci/controller/dwc/pcie-spear13xx.c:202:2-9: line 202 is
->   redundant because platform_get_irq() already prints an error
-> 
->   drivers/pci/controller/dwc/pci-keystone.c:1254:2-9: line 1254 is
->   redundant because platform_get_irq() already prints an error
-> 
->   drivers/pci/controller/dwc/pci-exynos.c:406:2-9: line 406 is redundant
->   because platform_get_irq() already prints an error
-> 
->   drivers/pci/controller/dwc/pci-exynos.c:419:3-10: line 419 is
->   redundant because platform_get_irq() already prints an error
-> 
->   drivers/pci/controller/dwc/pcie-tegra194.c:2193:2-9: line 2193 is
->   redundant because platform_get_irq() already prints an error
-> 
->   drivers/pci/controller/dwc/pcie-histb.c:406:3-10: line 406 is
->   redundant because platform_get_irq() already prints an error
-> 
->   drivers/pci/controller/dwc/pci-meson.c:492:3-10: line 492 is redundant
->   because platform_get_irq() already prints an error
-> 
->   drivers/pci/controller/dwc/pci-dra7xx.c:633:2-9: line 633 is redundant
->   because platform_get_irq() already prints an error
-> 
->   drivers/pci/controller/dwc/pci-dra7xx.c:875:2-9: line 875 is redundant
->   because platform_get_irq() already prints an error
-> 
-> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Krzysztof Wilczyński <kw@linux.com>
+The driver includes machine header for GPIO registers but actually does
+not use them.
 
-Looks good,
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/leds/leds-s3c24xx.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
-
-/^JN - Jesper Nilsson
+diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
+index 9b5e67664ba3..3c0c7aa63b8c 100644
+--- a/drivers/leds/leds-s3c24xx.c
++++ b/drivers/leds/leds-s3c24xx.c
+@@ -16,8 +16,6 @@
+ #include <linux/module.h>
+ #include <linux/platform_data/leds-s3c24xx.h>
+ 
+-#include <mach/regs-gpio.h>
+-
+ /* our context */
+ 
+ struct s3c24xx_gpio_led {
 -- 
-               Jesper Nilsson -- jesper.nilsson@axis.com
+2.17.1
+
