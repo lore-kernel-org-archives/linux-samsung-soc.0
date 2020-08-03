@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55148C433F2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 21:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33717C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 21:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6141B22BED
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 21:01:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41DC222CF8
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 21:01:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596488491;
-	bh=wk2UQbife8WWy3Zcpra6VeQRa3MzU6w9zgTEphtMY2M=;
+	s=default; t=1596488497;
+	bh=6BdWavkeaMpUhD6Biwc3emtCFgrFemt1UVT331z0GgA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1cYjQTJbmUK88M0CYOFWwTzxd8kG3HTjr+n1MJs6Il6v5jVLoupCPfkEkqvJDGFqe
-	 DltVx50zMIql82FYETbq/Qwn68VIGVO4FQAIoUU9/pHwewny16JX7FWqY1k8B6uVA3
-	 KZSpuNeHLI+IWh/0mwO0nKRF2B2V2ehPN43iGRsw=
+	b=lg4luGj7hMeTO9ic9AOS8+Kx0Dh4IKivVHrBEnayAeIMV5C9C1u/ZEUj5OnPq3KUl
+	 c/4p2XG3Bn62bXTD9OW21c/+AWkhIQjceCwlULMLhgyK+Zf8Hkr6L+ZVBnWEsHeu35
+	 DE2KmuZsPyy4dNmG8oLTBy8HuT8ZgnXUavgwKqXk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729349AbgHCVBa (ORCPT
+        id S1729367AbgHCVBg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Aug 2020 17:01:30 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:43651 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729040AbgHCVB3 (ORCPT
+        Mon, 3 Aug 2020 17:01:36 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:40929 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729344AbgHCVBe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Aug 2020 17:01:29 -0400
-Received: by mail-io1-f68.google.com with SMTP id k23so39948190iom.10;
-        Mon, 03 Aug 2020 14:01:29 -0700 (PDT)
+        Mon, 3 Aug 2020 17:01:34 -0400
+Received: by mail-il1-f195.google.com with SMTP id x1so12026155ilp.7;
+        Mon, 03 Aug 2020 14:01:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iogw0PHdW281Zilh8Ybv/eHK0mtpVLAHgw0xblz2JaM=;
-        b=Y+G2v9urpYl/zFtdG3UZYy7xrppuQDw4XuVOJnC+YA1KSSOiIgf3tQh6V2qHshLntD
-         xXG3yq5Kw/+74OYr3fWMaSjmr6qZFiU+kEjL8liXnId16rLCSTW4wHsYmF6zW1eR2sNp
-         nZBVHw0nzVPcc/lofqPmwnywFw/aYDPhIlx13HVrEQUKkbHnIHG17t4YdBXLRHLfsNT/
-         Ns/x3yGacAY9h22ajXgWiKkjU+nnrZ3vrbMOs+LxSkvmrT0JGz8oAwKC8cyAAXfVlWan
-         Y168V6JPNJkR8QePx3brLcY+IdQrrm4DusWfiznfyWgaYpNDYGyUInL2eqP5gktOYj4n
-         MEbA==
-X-Gm-Message-State: AOAM530Zt6IRkNcoPaDkDcVX4RCQKZPXY85uO8wvzbj3pHI6/1w17vS/
-        Hd/7blXodU0WArYVg8czgA==
-X-Google-Smtp-Source: ABdhPJzvA+ZR7sxoZ88i2XSskORxkOa+8bB7U69jJSZRKahou6ztK7tanUL8FCvVfOXfz7EcTwHx3A==
-X-Received: by 2002:a6b:c504:: with SMTP id v4mr1848864iof.20.1596488488493;
-        Mon, 03 Aug 2020 14:01:28 -0700 (PDT)
+        bh=enkj1hpfF2DRae6tMsmNr00vC0nnMrJ8ecK1LKopnys=;
+        b=rQn1t+BOENmRWvmbHYrQf3zlPXqpa/lIcaiBI45L63nvwN1Hk5EFBK1wnEIhVnzJLs
+         GtegczRiLxzQ+MWNgA9d7fmKcCg/p2cz4tD+ez+O1QUo9zCAxOB9aaPt+YblWm+TtWX0
+         1hUA7my7iKW8cyTw3Kki5X0wwPbQ+RJTV2+lArmdqOflhcuGZ8PUhsRWtuV5WkFsHF9/
+         AC8mP2sVTmP7eBT+lLTZ6HKU0oCBiUUkrbNoxMEefk0ak/tUGF6ccWg12A4a30k/9HFa
+         lkfiP8ggjOeeSpg32rHIr5q1QeCX5NMH/b3ujQfcqUK3JsYdSUwnoJy3relZ040Yzqw1
+         HRjA==
+X-Gm-Message-State: AOAM533rOodk6idYvR7l4IbEwNCCo2GO10BSeYOD6a/r70TmD1LVle3Q
+        iN49JDpO7PG5sG8gr/7QJw==
+X-Google-Smtp-Source: ABdhPJzWPzbp0GjA/fWrdCLZshRyk6S65JBCKe+YdG5gw5OjbQ3+gG0tLzeJjdOPlVejehxqb5N9Qg==
+X-Received: by 2002:a92:d2c8:: with SMTP id w8mr1409855ilg.38.1596488493349;
+        Mon, 03 Aug 2020 14:01:33 -0700 (PDT)
 Received: from xps15.herring.priv ([64.188.179.252])
-        by smtp.googlemail.com with ESMTPSA id r6sm9292280iod.7.2020.08.03.14.01.26
+        by smtp.googlemail.com with ESMTPSA id r6sm9292280iod.7.2020.08.03.14.01.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Aug 2020 14:01:27 -0700 (PDT)
+        Mon, 03 Aug 2020 14:01:32 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     Bjorn Helgaas <bhelgaas@google.com>,
         Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
@@ -83,9 +83,9 @@ Cc:     Binghui Wang <wangbinghui@hisilicon.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Xiaowei Song <songxiaowei@hisilicon.com>,
         Yue Wang <yue.wang@Amlogic.com>
-Subject: [RFC 04/27] PCI: dwc: Add a default pci_ops.map_bus for root port
-Date:   Mon,  3 Aug 2020 15:00:53 -0600
-Message-Id: <20200803210116.3132633-5-robh@kernel.org>
+Subject: [RFC 06/27] PCI: dwc: keystone: Use pci_ops for config space accessors
+Date:   Mon,  3 Aug 2020 15:00:55 -0600
+Message-Id: <20200803210116.3132633-7-robh@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200803210116.3132633-1-robh@kernel.org>
 References: <20200803210116.3132633-1-robh@kernel.org>
@@ -96,55 +96,101 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Designware root port config space is memory mapped accesses via the
-DBI space by default. Add a common implementation
-dw_pcie_own_conf_map_bus() for platforms to use.
+Now that DWC drivers can setup their own pci_ops for the root and child
+buses, convert the TI Keystone driver to use the standard pci_ops for
+config accesses.
 
-Cc: Jingoo Han <jingoohan1@gmail.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: Murali Karicheri <m-karicheri2@ti.com>
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/pci/controller/dwc/pcie-designware-host.c | 11 +++++++++++
- drivers/pci/controller/dwc/pcie-designware.h      |  2 ++
- 2 files changed, 13 insertions(+)
+ drivers/pci/controller/dwc/pci-keystone.c | 40 ++++++++++-------------
+ 1 file changed, 18 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 7cd8c9528d4c..e9d31c341881 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -615,6 +615,17 @@ static int dw_pcie_wr_conf(struct pci_bus *bus, u32 devfn,
- 	return dw_pcie_wr_other_conf(pp, bus, devfn, where, size, val);
+diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+index 790679fdfa48..df1194d186bc 100644
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -430,10 +430,10 @@ static void ks_pcie_setup_rc_app_regs(struct keystone_pcie *ks_pcie)
+ 	ks_pcie_app_writel(ks_pcie, CMD_STATUS, val);
  }
  
-+void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus, unsigned int devfn, int where)
-+{
-+	struct pcie_port *pp = bus->sysdata;
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+
-+	if (PCI_SLOT(devfn) > 0)
-+		return NULL;
-+
-+	return pci->dbi_base + where;
-+}
-+
- static struct pci_ops dw_pcie_ops = {
- 	.read = dw_pcie_rd_conf,
- 	.write = dw_pcie_wr_conf,
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index bad3cddab28e..dbe53e464e11 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -378,6 +378,8 @@ void dw_pcie_setup_rc(struct pcie_port *pp);
- int dw_pcie_host_init(struct pcie_port *pp);
- void dw_pcie_host_deinit(struct pcie_port *pp);
- int dw_pcie_allocate_domains(struct pcie_port *pp);
-+void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus, unsigned int devfn,
-+				       int where);
- #else
- static inline irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
+-static int ks_pcie_rd_other_conf(struct pcie_port *pp, struct pci_bus *bus,
+-				 unsigned int devfn, int where, int size,
+-				 u32 *val)
++static void __iomem *ks_pcie_other_map_bus(struct pci_bus *bus,
++					   unsigned int devfn, int where)
  {
++	struct pcie_port *pp = bus->sysdata;
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+ 	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
+ 	u32 reg;
+@@ -444,25 +444,14 @@ static int ks_pcie_rd_other_conf(struct pcie_port *pp, struct pci_bus *bus,
+ 		reg |= CFG_TYPE1;
+ 	ks_pcie_app_writel(ks_pcie, CFG_SETUP, reg);
+ 
+-	return dw_pcie_read(pp->va_cfg0_base + where, size, val);
++	return pp->va_cfg0_base + where;
+ }
+ 
+-static int ks_pcie_wr_other_conf(struct pcie_port *pp, struct pci_bus *bus,
+-				 unsigned int devfn, int where, int size,
+-				 u32 val)
+-{
+-	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+-	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
+-	u32 reg;
+-
+-	reg = CFG_BUS(bus->number) | CFG_DEVICE(PCI_SLOT(devfn)) |
+-		CFG_FUNC(PCI_FUNC(devfn));
+-	if (bus->parent->number != pp->root_bus_nr)
+-		reg |= CFG_TYPE1;
+-	ks_pcie_app_writel(ks_pcie, CFG_SETUP, reg);
+-
+-	return dw_pcie_write(pp->va_cfg0_base + where, size, val);
+-}
++static struct pci_ops ks_child_pcie_ops = {
++	.map_bus = ks_pcie_other_map_bus,
++	.read = pci_generic_config_read,
++	.write = pci_generic_config_write,
++};
+ 
+ /**
+  * ks_pcie_v3_65_scan_bus() - keystone scan_bus post initialization
+@@ -490,6 +479,12 @@ static void ks_pcie_v3_65_scan_bus(struct pcie_port *pp)
+ 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, ks_pcie->app.start);
+ }
+ 
++static struct pci_ops ks_pcie_ops = {
++	.map_bus = dw_pcie_own_conf_map_bus,
++	.read = pci_generic_config_read,
++	.write = pci_generic_config_write,
++};
++
+ /**
+  * ks_pcie_link_up() - Check if link up
+  */
+@@ -807,6 +802,9 @@ static int __init ks_pcie_host_init(struct pcie_port *pp)
+ 	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
+ 	int ret;
+ 
++	pp->bridge->ops = &ks_pcie_ops;
++	pp->bridge->child_ops = &ks_child_pcie_ops;
++
+ 	ret = ks_pcie_config_legacy_irq(ks_pcie);
+ 	if (ret)
+ 		return ret;
+@@ -842,8 +840,6 @@ static int __init ks_pcie_host_init(struct pcie_port *pp)
+ }
+ 
+ static const struct dw_pcie_host_ops ks_pcie_host_ops = {
+-	.rd_other_conf = ks_pcie_rd_other_conf,
+-	.wr_other_conf = ks_pcie_wr_other_conf,
+ 	.host_init = ks_pcie_host_init,
+ 	.msi_host_init = ks_pcie_msi_host_init,
+ 	.scan_bus = ks_pcie_v3_65_scan_bus,
 -- 
 2.25.1
 
