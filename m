@@ -1,105 +1,153 @@
-Return-Path: <SRS0=iAxD=BM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=j0RG=BN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 369DBC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  2 Aug 2020 20:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 975FFC433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 02:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0EB0F20722
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  2 Aug 2020 20:42:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f9sNyyLw"
+	by mail.kernel.org (Postfix) with ESMTP id 6B633207FB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 02:01:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596420115;
+	bh=csMPgTESK/931j1qG9MTrwDhZCVihaWAMQqTAqfKW5M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
+	b=IAr8FX++W6TLErtCE/RPbjnoxp3g7KFHXLdy4GueYHyIbRISQwt46YrGm3uMgLdee
+	 bXZ9MnFgigqxkcN5mnUtexFv6xUcUXR2zVyrJNSq0ZQIakjLW/vBPpfEOhzAWlCa/v
+	 XTugHd7XpMx0dXVujt9dXMJOfQXOvFddOmmk4xxY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbgHBUmj (ORCPT
+        id S1725840AbgHCCBy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 2 Aug 2020 16:42:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38338 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725925AbgHBUmj (ORCPT
+        Sun, 2 Aug 2020 22:01:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725820AbgHCCBy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 2 Aug 2020 16:42:39 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49377C06174A;
-        Sun,  2 Aug 2020 13:42:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description;
-        bh=v7okBghMo2AteEJTPGTY9KCeJL7oZdpEAZt/o6Oye7g=; b=f9sNyyLwyi6RgjrtzJp6BVKqEA
-        3iXhZ65TfR7O/R+/qUO/hgKAflRiLt1Oag5667tH+bPI3thnW0YtVXuVud6Nk++k8fttRSznLSWJ+
-        +5VhPUz05rFP6TVL7GZjRyS44Lqg8hEY/Dxf+d6N4bmue5lAUay5fWz/0Lc3+K958AU0Pa5gZs0qO
-        2JpAuOkStk3Ci4IL9ePYF1WMJkhSIysGK6FnU0Js6M6jGqyVEq3yoj72r7avOv7F/gmj6RkCFQ6KZ
-        Q/aqG12Ka3pD9+dugfb0XJt2ayM85xzONxlIV1ZDz9Nk1hV5FUf8WPGxv4PjLbnQm1iWsATMKCkNs
-        S2lg4Xqg==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k2KoW-0001SL-51; Sun, 02 Aug 2020 20:42:36 +0000
-Subject: Re: [PATCH] ARM: s3c24xx: demote kerneldoc comment
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sun, 2 Aug 2020 22:01:54 -0400
+Received: from localhost (mobile-166-175-186-42.mycingular.net [166.175.186.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFC3E206F6;
+        Mon,  3 Aug 2020 02:01:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596420113;
+        bh=csMPgTESK/931j1qG9MTrwDhZCVihaWAMQqTAqfKW5M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=nyW5nORSo5AtXim4lBz+2DzUBjRfuE320k9hfbNcGttTulZKBCWQoOXThtYwq7rjm
+         +NaG3GTmr6LRKqkBym0sSCMo1r7L1VApW8ABtHbKv/yrrUTQHXn0QhEP38Hrcd876z
+         DFuz1+WsHOhnHgx+wZ7POJRqpoNccEWEgoInOQKU=
+Date:   Sun, 2 Aug 2020 21:01:51 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
         Kukjin Kim <kgene@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200802203605.15125-1-krzk@kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4c8c1fe5-6212-57eb-7644-174ace5d3622@infradead.org>
-Date:   Sun, 2 Aug 2020 13:42:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Yue Wang <yue.wang@Amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Toan Le <toan@os.amperecomputing.com>,
+        Ley Foon Tan <ley.foon.tan@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        rfi@lists.rocketboards.org
+Subject: Re: [PATCH 00/10] Remove surplus dev_err() when handing an error
+ from platform_get_irq()
+Message-ID: <20200803020151.GA291575@bjorn-Precision-5520>
 MIME-Version: 1.0
-In-Reply-To: <20200802203605.15125-1-krzk@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200802142601.1635926-1-kw@linux.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 8/2/20 1:36 PM, Krzysztof Kozlowski wrote:
-> Remove kerneldoc annotation to fix warning:
+On Sun, Aug 02, 2020 at 02:25:52PM +0000, Krzysztof Wilczyński wrote:
+> At the moment a lot of error handling code would print a duplicated
+> error message should either the platform_get_irq() or
+> platform_get_irq_byname() function fails to obtain an IRQ for a device.
 > 
->     arch/arm/mach-s3c24xx/mach-h1940.c:185: warning:
->         cannot understand function prototype: 'struct s3c2410fb_display h1940_lcd __initdata = '
+> There is no need to call the dev_err() function directly to print
+> a custom message when handling an error from either of these functions
+> as both are going to display an appropriate error message in case of
+> a failure.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/mach-s3c24xx/mach-h1940.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> This series aims to remove surplus call to dev_err() when handing an
+> error originating from either platform_get_irq() or
+> platform_get_irq_byname() function as per suggestion from Coccinelle.
 > 
-> diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
-> index 89528bea89f1..c09f61d35d57 100644
-> --- a/arch/arm/mach-s3c24xx/mach-h1940.c
-> +++ b/arch/arm/mach-s3c24xx/mach-h1940.c
-> @@ -179,9 +179,9 @@ static struct s3c2410_ts_mach_info h1940_ts_cfg __initdata = {
->  		.cfg_gpio = s3c24xx_ts_cfg_gpio,
->  };
->  
-> -/**
-> +/*
->   * Set lcd on or off
-> - **/
-> + */
-
-Yes, that's not kernel-doc notation, so demote it.
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-
-OTOH, we could also add "__initdata" to something that can be
-handled by scripts/kernel-doc if it's needed, but it doesn't seem to
-be needed just yet.
-
->  static struct s3c2410fb_display h1940_lcd __initdata = {
->  	.lcdcon5=	S3C2410_LCDCON5_FRM565 | \
->  			S3C2410_LCDCON5_INVVLINE | \
+> Related commits are commit 7723f4c5ecdb ("driver core: platform: Add an
+> error message to platform_get_irq*()") and commit 98051ba2b28b
+> ("coccinelle: Add script to check for platform_get_irq() excessive
+> prints").
 > 
+> Krzysztof Wilczyński (10):
+>   PCI: dwc: Remove dev_err() when handing an error from
+>     platform_get_irq()
+>   PCI: mobiveil: Remove dev_err() when handing an error from
+>     platform_get_irq()
+>   PCI: tegra: Remove dev_err() when handing an error from
+>     platform_get_irq()
+>   PCI: altera: Remove dev_err() when handing an error from
+>     platform_get_irq()
+>   PCI: host-generic: Remove dev_err() when handing an error from
+>     platform_get_irq()
+>   PCI: v3-semi: Remove dev_err() when handing an error from
+>     platform_get_irq()
+>   PCI: altera-msi: Remove dev_err() when handing an error from
+>     platform_get_irq()
+>   PCI: xgene-msi: Remove dev_err() when handing an error from
+>     platform_get_irq()
+>   PCI: rockchip: Remove dev_err() when handing an error from
+>     platform_get_irq()
+>   PCI: xilinx-nwl: Remove dev_err() when handing an error from
+>     platform_get_irq()
+> 
+>  drivers/pci/controller/dwc/pci-dra7xx.c              |  8 ++------
+>  drivers/pci/controller/dwc/pci-exynos.c              |  9 +++------
+>  drivers/pci/controller/dwc/pci-imx6.c                |  4 +---
+>  drivers/pci/controller/dwc/pci-keystone.c            |  4 +---
+>  drivers/pci/controller/dwc/pci-meson.c               |  4 +---
+>  drivers/pci/controller/dwc/pcie-armada8k.c           |  4 +---
+>  drivers/pci/controller/dwc/pcie-artpec6.c            |  4 +---
+>  drivers/pci/controller/dwc/pcie-histb.c              |  4 +---
+>  drivers/pci/controller/dwc/pcie-kirin.c              |  5 +----
+>  drivers/pci/controller/dwc/pcie-spear13xx.c          |  5 ++---
+>  drivers/pci/controller/dwc/pcie-tegra194.c           |  4 +---
+>  .../pci/controller/mobiveil/pcie-layerscape-gen4.c   |  5 ++---
+>  drivers/pci/controller/mobiveil/pcie-mobiveil-host.c |  4 +---
+>  drivers/pci/controller/pci-tegra.c                   |  8 ++------
+>  drivers/pci/controller/pci-v3-semi.c                 |  5 ++---
+>  drivers/pci/controller/pci-xgene-msi.c               |  2 --
+>  drivers/pci/controller/pcie-altera-msi.c             |  1 -
+>  drivers/pci/controller/pcie-altera.c                 |  4 +---
+>  drivers/pci/controller/pcie-rockchip-host.c          | 12 +++---------
+>  drivers/pci/controller/pcie-tango.c                  |  4 +---
+>  drivers/pci/controller/pcie-xilinx-nwl.c             | 11 ++---------
+>  21 files changed, 29 insertions(+), 82 deletions(-)
 
-thanks.
--- 
-~Randy
+I squashed these together and applied them to pci/irq-error for v5.9,
+thanks!
 
+The cover letter claims there should be 10 patches, but I only got 9.
+Just FYI.
