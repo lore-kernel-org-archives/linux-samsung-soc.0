@@ -2,97 +2,125 @@ Return-Path: <SRS0=j0RG=BN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CFFDC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 14:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF77C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 14:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC299206D4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 14:22:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="RsMZkts9"
+	by mail.kernel.org (Postfix) with ESMTP id 12C0020781
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 14:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbgHCOWs (ORCPT
+        id S1727091AbgHCOlF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Aug 2020 10:22:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60242 "EHLO
+        Mon, 3 Aug 2020 10:41:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbgHCOWs (ORCPT
+        with ESMTP id S1726358AbgHCOlE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Aug 2020 10:22:48 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A555AC06174A;
-        Mon,  3 Aug 2020 07:22:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=j2YFIam7494qTnawoI5t1lPh5O713n3GMls1dHCPXuo=; b=RsMZkts9WY+1FGSehXFi1VUhA
-        uAHprLNgD2y2iMK2QdcWMXML3fYnbOHpXir2T8oJPcvLMMkS44Rl+9GJa+/04KVxu97aFil56BN0R
-        ey8yQBLTBlNk4xZWEWQrwcOc4cOGTVEcn8ILOHHsv2HsMwT78++K+t1kMluqwh1wUEQgZV0SLA+UD
-        wIFZafthZEFovFFkMDtHWL/8pUKkaY1ZAjJjRDY2j/dbJxVcHNguZ4JGNsRJCTq8cELNT5D9RTVSo
-        MBVK7Fq6QAZgR42Hqv0BP26U1dJCj442YakkjGsKP8L9IjaMY/emfnqxjf5CPtzQgu5BkA78faX8q
-        TMGlafSCQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47824)
-        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1k2bMS-0001bs-Mj; Mon, 03 Aug 2020 15:22:44 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1k2bMS-00039a-8c; Mon, 03 Aug 2020 15:22:44 +0100
-Date:   Mon, 3 Aug 2020 15:22:44 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Mon, 3 Aug 2020 10:41:04 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94B21C06174A;
+        Mon,  3 Aug 2020 07:41:04 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: andrzej.p)
+        with ESMTPSA id 6EA3629A06E
+Subject: Re: [PATCH v4 0/7] Support inhibiting input devices
+To:     Hans de Goede <hdegoede@redhat.com>, linux-pm@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         Kukjin Kim <kgene@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, kernel@collabora.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] ARM: exynos: clear L220_AUX_CTRL_NS_LOCKDOWN in
- default l2c_aux_val
-Message-ID: <20200803142244.GO1551@shell.armlinux.org.uk>
-References: <860eb8a1eed879e55daf960c96acdac514cbda93.1596028601.git.guillaume.tucker@collabora.com>
- <20200803133439.GB476@kozik-lap>
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Barry Song <baohua@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Nick Dyer <nick@shmanahar.org>,
+        Ferruh Yigit <fery@cypress.com>,
+        Sangwon Jee <jeesw@melfas.com>,
+        Peter Hutterer <peter.hutterer@redhat.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        kernel@collabora.com
+References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+ <20200608112211.12125-1-andrzej.p@collabora.com>
+ <1821a5b7-cbf3-a739-2203-a93b06f0c6f2@redhat.com>
+From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Message-ID: <8fc3a97d-94b7-e073-3981-2f146f5f209e@collabora.com>
+Date:   Mon, 3 Aug 2020 16:40:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200803133439.GB476@kozik-lap>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1821a5b7-cbf3-a739-2203-a93b06f0c6f2@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Aug 03, 2020 at 03:34:39PM +0200, Krzysztof Kozlowski wrote:
-> On Wed, Jul 29, 2020 at 02:47:31PM +0100, Guillaume Tucker wrote:
-> > The L220_AUX_CTRL_NS_LOCKDOWN flag is set during the L2C enable
-> > sequence.  There is no need to set it in the default register value,
-> > this was done before support for it was implemented in the code.  It
-> > is not set in the hardware initial value either.
-> > 
-> > Clean this up by removing this flag from the default l2c_aux_val, and
-> > add it to the l2c_aux_mask to print an alert message if it was already
-> > set before the kernel initialisation.
-> > 
-> > Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
-> > ---
-> >  arch/arm/mach-exynos/exynos.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Dmitry,
+
+W dniu 12.06.2020 o 10:17, Hans de Goede pisze:
+> Hi,
 > 
-> Makes sense. I'll take it after the merge window.
+> On 6/8/20 1:22 PM, Andrzej Pietrasiewicz wrote:
+>> This is a quick respin of v3, with just two small changes, please see
+>> the changelog below.
+>>
+>> Userspace might want to implement a policy to temporarily disregard input
+>> from certain devices.
+>>
 
-Yes, because platforms actually have no control over this bit through
-these values.
+<snip>
 
-Please fix the description to use the right define, it's
-L310_AUX_CTRL_NS_LOCKDOWN not L220_AUX_CTRL_NS_LOCKDOWN.
+>> v3..v4:
+>> - updated the comment in input_open_device() (Hans)
+>> - used more straightforward locking pattern in adc/exynos (Michał)
+>>
+>> v2..v3:
+>> - ignored autorepeat events in input_get_disposition() if a key is not
+>> pressed (Hans)
+>> - dropped inhibit()/uninhibit() driver callbacks (Hans)
+>> - split ACPI button patch into taking the lock and using the helper (Rafael)
+>> - dropped the elan_i2c conversion
+>> - fixed typos in exynos adc
+>>
+>> v1..v2:
+>> - added input_device_enabled() helper and used it in drivers (Dmitry)
+>> - the fact of open() and close() being called in inhibit/uninhibit paths has
+>> been emphasized in the commit message of PATCH 6/7 (Dmitry)
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+<snip>
+
+> 
+> The entire series looks good to me:
+> 
+> Acked-by: Hans de Goede <hdegoede@redhat.com>
+
+What are the prospects of this series being merged?
+
+Regards,
+
+Andrzej
