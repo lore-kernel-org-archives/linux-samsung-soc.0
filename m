@@ -2,92 +2,116 @@ Return-Path: <SRS0=ZdNY=BO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 690C8C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 06:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F954C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 08:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A49F2086A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 06:42:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596523340;
-	bh=QfhtwW3/FJuOOBbZvmQVCIFUWhKtej0lel9u1XnuJk4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=F0L7VdTgwR126KpjdsIcVo0QWcFOYZBiddnkbZZyI1gDXsstPENGdVNWAv0JGW8sO
-	 7BWpn/WzhEzOPst8r2+J22tays9E0XKN/8fMDgYiCVTgTZHCjXGmFkdVWDYyUM1VFP
-	 FaXA9ylL2AbIcyTW1E0nKLXXCD30oJnLsdy6Q3No=
+	by mail.kernel.org (Postfix) with ESMTP id 3077C2076E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 08:06:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727913AbgHDGmT (ORCPT
+        id S1726201AbgHDIGH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 4 Aug 2020 02:42:19 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:34402 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbgHDGmT (ORCPT
+        Tue, 4 Aug 2020 04:06:07 -0400
+Received: from foss.arm.com ([217.140.110.172]:41176 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725909AbgHDIGH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Aug 2020 02:42:19 -0400
-Received: by mail-ej1-f67.google.com with SMTP id o23so13728708ejr.1;
-        Mon, 03 Aug 2020 23:42:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=To/tKZ673YdcmGe7ISEnqDnAKsZbt6QyqhCKeqY+VQQ=;
-        b=E9Xwa0hCd9OmeS3kH3s6UDNOXQOuo3zXI0u6grAGhGMZaKxKyPYQJKRjJD+i0JYYfy
-         YWtPTMd0fsAnsAqhYZUrkY14S0/SWc3+e4FO+Nia5IjC3SWQmJt5HF1WLjcfwADIX5it
-         lv7cLoYvL7p/ZQ5PndvoK0AH+SZaKWa3QMBEbHNsD/c+Yldjs3sPp3JCxiKC2DCzIaSp
-         moQ+/o4FA4iuI1uIkf2Ezx4eYkhueKJZ8C1Ckyti3nMMH7MFLd5lKkWyBj3aT/wEcLpd
-         2pELQW7YGUUNUQhusVJmtodNoGnxznf/GsUwNyoJUmQKgmvCnRITeC0atuHrU34erYcX
-         ubxw==
-X-Gm-Message-State: AOAM531j4Iee+mNndaoaVA0A3IA4kO8V7TfopcVOXOIP4gwMUT3f2JjT
-        iHwegnxUQbjIc3eUyhMdCKss2V7nqi0=
-X-Google-Smtp-Source: ABdhPJy//7W0MX3eI3cZyIQWn6WwzEAzB6TVyn8uEL/oeZHDKkza/pBJBDyVOfFfy1hJVbO5q0GLZw==
-X-Received: by 2002:a17:906:1c84:: with SMTP id g4mr19954755ejh.59.1596523337256;
-        Mon, 03 Aug 2020 23:42:17 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.117])
-        by smtp.googlemail.com with ESMTPSA id sb3sm18150471ejb.113.2020.08.03.23.42.15
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Aug 2020 23:42:16 -0700 (PDT)
-Date:   Tue, 4 Aug 2020 08:42:13 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] memory: samsung: exynos5422-dmc: propagate error from
- exynos5_counters_get()
-Message-ID: <20200804064213.GA10089@kozik-lap>
-References: <CGME20200804061225eucas1p283c1e0dc404bc420a2184480fdfd2b0d@eucas1p2.samsung.com>
- <20200804061210.5415-1-m.szyprowski@samsung.com>
+        Tue, 4 Aug 2020 04:06:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9E711FB;
+        Tue,  4 Aug 2020 01:06:06 -0700 (PDT)
+Received: from [10.37.12.45] (unknown [10.37.12.45])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 312233F718;
+        Tue,  4 Aug 2020 01:06:03 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] memory: samsung: exynos5422-dmc: Add module param
+ to control IRQ mode
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     willy.mh.wolff.ml@gmail.com, k.konieczny@samsung.com,
+        cw00.choi@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org,
+        chanwoo@kernel.org, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org
+References: <20200710191122.11029-1-lukasz.luba@arm.com>
+ <CGME20200710191154eucas1p296561f285ee0730e5040fdfe3fc7e75e@eucas1p2.samsung.com>
+ <20200710191122.11029-3-lukasz.luba@arm.com>
+ <db571467-48ec-8f11-de1d-00393d8aa99b@samsung.com>
+ <ceaa668e-a60b-1916-243b-145b1bc7fc76@samsung.com>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <92348c27-5c0e-56cc-82d5-9b22f190c7b3@arm.com>
+Date:   Tue, 4 Aug 2020 09:06:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200804061210.5415-1-m.szyprowski@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <ceaa668e-a60b-1916-243b-145b1bc7fc76@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Aug 04, 2020 at 08:12:10AM +0200, Marek Szyprowski wrote:
-> exynos5_counters_get() might fail with -EPROBE_DEFER if the driver for
-> devfreq event counter is not yet probed. Propagate that error value to
-> the caller to ensure that the exynos5422-dmc driver will be probed again
-> when devfreq event contuner is available.
-> 
-> This fixes boot hang if both exynos5422-dmc and exynos-ppmu drivers are
-> compiled as modules.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/memory/samsung/exynos5422-dmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Marek,
 
-Thanks, looks good. I'll apply it to fixes after merge window.
+On 8/3/20 4:35 PM, Marek Szyprowski wrote:
+> Hi All,
+> 
+> On 03.08.2020 17:30, Marek Szyprowski wrote:
+>> On 10.07.2020 21:11, Lukasz Luba wrote:
+>>> The driver can operate in two modes relaying on devfreq monitoring
+>>> mechanism which periodically checks the device status or it can use
+>>> interrupts when they are provided by loaded Device Tree. The newly
+>>> introduced module parameter can be used to choose between devfreq
+>>> monitoring and internal interrupts without modifying the Device Tree.
+>>> It also sets devfreq monitoring as default when the parameter is not set
+>>> (also the case for default when the driver is not built as a module).
+>>>
+>>> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
+>>> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+>>
+>> I've got back from my holidays and noticed that in meantime this
+>> commit got merged as commit 4fc9a0470d2d. It revealed that there is a
+>> race between registering exynos5422-dmc driver and exynos-ppmu driver,
+>> which can be observed sometimes as the following message and freeze on
+>> Odroid XU3 with multi_v7_defconfig:
+>>
+>> [    8.767708] exynos5-dmc 10c20000.memory-controller: couldn't probe
+>> performance counters
+>>
+>> I will check this later why the EPROBE_DEFER error is not properly
+>> propagated and why it causes a freeze.
+> 
+> It looks that simply propagating return value from
+> exynos5_counters_get() in exynos5_dmc_get_status() fixes the boot:
+> 
+> # dmesg | grep dmc
+> [    8.838754] exynos-ppmu: new PPMU device registered 10d00000.ppmu
+> (ppmu-event3-dmc0_0)
+> [    8.861344] exynos-ppmu: new PPMU device registered 10d10000.ppmu
+> (ppmu-event3-dmc0_1)
+> [    8.868488] exynos5-dmc 10c20000.memory-controller: couldn't probe
+> performance counters
+> [    8.874417] exynos-ppmu: new PPMU device registered 10d60000.ppmu
+> (ppmu-event3-dmc1_0)
+> [    8.886612] exynos-ppmu: new PPMU device registered 10d70000.ppmu
+> (ppmu-event3-dmc1_1)
+> [    9.396769] exynos5-dmc 10c20000.memory-controller: DMC initialized,
+> in irq mode: 0
+> 
+> I'm still curious why it freezes if getting performance counters is not
+> possible.
+> 
+> Best regards
+> 
 
-Best regards,
-Krzysztof
+Thank you for investigating this issue. Indeed, it's odd why it freezes.
+I've seen you patch with the fix.
+
+Regards,
+Lukasz
