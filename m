@@ -1,236 +1,139 @@
-Return-Path: <SRS0=j0RG=BN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=ZdNY=BO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C7DC4345B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 21:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B0AC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 06:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CCF122BED
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Aug 2020 21:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596488558;
-	bh=wNAortPHAA6pASw+U8qHcUy9YXqHf1T5fCjZn0oDeAg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dlgdGVPPlkmYdSY2P2gH6dLLk9sfmyw9wb1rQHKTR+iaNCMYWQdFYRMqwS3lQo4ew
-	 n3Tp/+vhms5ukkqjuFqPEpV2jsnb8stBWXTsgnwQVB6E8PYsCJj16MDjUP6xi0LkQ4
-	 e53kn3j4mrnWQk0LmPnycQCWczmJ1c2vnO3fNQaw=
+	by mail.kernel.org (Postfix) with ESMTP id 8F25F20781
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 06:12:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vEY7jUoQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729104AbgHCVCh (ORCPT
+        id S1729323AbgHDGM2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Aug 2020 17:02:37 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43788 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728570AbgHCVCg (ORCPT
+        Tue, 4 Aug 2020 02:12:28 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:59389 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728602AbgHDGM1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Aug 2020 17:02:36 -0400
-Received: by mail-io1-f65.google.com with SMTP id k23so39951531iom.10;
-        Mon, 03 Aug 2020 14:02:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5V63dl5D15U/c4aTTJinxu1IGbYXot5HyJAyQBAcQN8=;
-        b=lf+K0Ql0HCqhJcyF4kai/etIqiUZ5bNVUJd1+XspolRaUPLVLF6HBHldF/eAGa4TuT
-         pxPeu7ETiPIkjyXkvnU3ZWVZdmXznDyHHSy93nOnTCrIYV2cy9EMWm8FCWdKvKRFDDSj
-         bj95yG17VJ9ktftMRMUw+bhcIOpKW/KbyJqppiMFA8wpr8TkW8D7ozmuY1evdMp484Jq
-         kVog3G7VEvBV+dIiF+cuEHt5FunipPMYC9l+3Pxo4oDYhz+7klGu1zcZ0tydwv08girF
-         uOf7Z2qnsEIfEYSqg6hT/M9BaaVd62Lkk2tTBr6so+m8bb3+CqlPIlE3dQM1Fo1ZD7y+
-         pxAQ==
-X-Gm-Message-State: AOAM533M199Z9L1ErQJW2xeBpdskJyMIwQUIg32k+YS0Kxx2VA2t/H6O
-        86r7O0LE3m2qQzGF9QN+6A==
-X-Google-Smtp-Source: ABdhPJye2Mo2SgL9U7MmsN235jpxm7lOgHdwxN7y4uIMz2vtYYQ/vzsM/p/WbFYNk1hakIOySw24tA==
-X-Received: by 2002:a6b:c504:: with SMTP id v4mr1853953iof.20.1596488554927;
-        Mon, 03 Aug 2020 14:02:34 -0700 (PDT)
-Received: from xps15.herring.priv ([64.188.179.252])
-        by smtp.googlemail.com with ESMTPSA id r6sm9292280iod.7.2020.08.03.14.02.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Aug 2020 14:02:34 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        Tue, 4 Aug 2020 02:12:27 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200804061226euoutp01475877a10ba53a870ee509988eb4b394~n__M4pELe0873908739euoutp01P
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  4 Aug 2020 06:12:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200804061226euoutp01475877a10ba53a870ee509988eb4b394~n__M4pELe0873908739euoutp01P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1596521546;
+        bh=h1MIe7+guqaF7sFDMh4fJlyTfxy7EDF7dzFmjh9wV8w=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=vEY7jUoQk+C2zGaMinQgVPU2BqGZzJwHWP9GUir948hqICNKmj6yCVOeNNn7OzFTW
+         WDDxWqXWLQTkln5gj5FNiMdrn0VgWy71yFZ7W5P8QugBIVzeiRESOsBOTlddFhDLcT
+         G/2v/LO7rh5LFGhw5Vst3xtMzHlj9W64apsG1Jw4=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200804061226eucas1p1f69e5befcc49f7fe6b4db4dddd841b2f~n__Mu4wO82756627566eucas1p1S;
+        Tue,  4 Aug 2020 06:12:26 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 13.8F.06318.94CF82F5; Tue,  4
+        Aug 2020 07:12:26 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200804061225eucas1p283c1e0dc404bc420a2184480fdfd2b0d~n__MBUbYS2676826768eucas1p2q;
+        Tue,  4 Aug 2020 06:12:25 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200804061225eusmtrp12c203f5ad76b778325fddfedf6fc66e1~n__MAqmPJ0612206122eusmtrp10;
+        Tue,  4 Aug 2020 06:12:25 +0000 (GMT)
+X-AuditID: cbfec7f5-371ff700000018ae-0a-5f28fc4960f3
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 9B.DB.06314.94CF82F5; Tue,  4
+        Aug 2020 07:12:25 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200804061224eusmtip26b15d686a10db96dc73b8ed4fb28abd7~n__Lh-wUq0707607076eusmtip2Q;
+        Tue,  4 Aug 2020 06:12:24 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Lukasz Luba <lukasz.luba@arm.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Yue Wang <yue.wang@Amlogic.com>
-Subject: [RFC 27/27] PCI: dwc/tegra: Use common Designware port logic register definitions
-Date:   Mon,  3 Aug 2020 15:01:16 -0600
-Message-Id: <20200803210116.3132633-28-robh@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200803210116.3132633-1-robh@kernel.org>
-References: <20200803210116.3132633-1-robh@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH] memory: samsung: exynos5422-dmc: propagate error from
+ exynos5_counters_get()
+Date:   Tue,  4 Aug 2020 08:12:10 +0200
+Message-Id: <20200804061210.5415-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLIsWRmVeSWpSXmKPExsWy7djP87pefzTiDd69Z7TYOGM9q8X1L89Z
+        Lc6f38BucXnXHDaLz71HGC1mnN/HZLGwqYXdYu2Ru+wOHB5r5q1h9Ni0qpPNo2/LKkaPz5vk
+        AliiuGxSUnMyy1KL9O0SuDJ6V01mKpjDUbF882/mBsaXbF2MnBwSAiYSrateM3UxcnEICaxg
+        lHi4fBsLhPOFUeL8v6nMEM5nRolDa14ww7Qcn3IbqmU5o0R/Vw8LSAKsZfcFCRCbTcBQoutt
+        F9gOEYF4ia0/u5lAbGaBm4wSS84adTFycAgDxfsPloOEWQRUJQ4e+c0KYvMK2EgcXneIBWKX
+        vMTqDQfAjpAQuM4mseXMaUaIhIvEtneLmSBsYYlXx7ewQ9gyEqcn97BANDQD/XNuLTuE08Mo
+        cblpBlS3tcSdc7/YQK5gFtCUWL9LHyLsKNF/6AczSFhCgE/ixltBiJv5JCZtmw4V5pXoaBOC
+        qFaTmHV8HdzagxcuQZV4SNy4VQQJkViJhQueM09glJuFsGoBI+MqRvHU0uLc9NRi47zUcr3i
+        xNzi0rx0veT83E2MwERw+t/xrzsY9/1JOsQowMGoxMO7gFUjXog1say4MvcQowQHs5IIr9PZ
+        03FCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeY0XvYwVEkhPLEnNTk0tSC2CyTJxcEo1MMZynPs1
+        efLf3uT9903n9C9ucSoryj6sKF/w+rItW/ieu5YPtj+s1v3Au9Sk6+vCyr79pVtN811XLW6N
+        nF8yqdnllu3rut01G7n9hGborw7Qmc/Bvid05iej+ktPov7/D/5Tk+tc9FVBaL/jIXXhg9kb
+        5l2pXXrj33vNO5kv7RZaFM2fcuxP5jYlluKMREMt5qLiRADPZ3xDAAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsVy+t/xe7qefzTiDRZu5LXYOGM9q8X1L89Z
+        Lc6f38BucXnXHDaLz71HGC1mnN/HZLGwqYXdYu2Ru+wOHB5r5q1h9Ni0qpPNo2/LKkaPz5vk
+        Alii9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DJ6
+        V01mKpjDUbF882/mBsaXbF2MnBwSAiYSx6fcZupi5OIQEljKKHHv5WtmiISMxMlpDawQtrDE
+        n2tdYA1CAp8YJXZs4QSx2QQMJbreQsRFBBIlvm1cyAgyiFngLqPElH0tLCAJYYFYifcHpzCB
+        2CwCqhIHj/wGG8orYCNxeN0hFogF8hKrNxxgnsDIs4CRYRWjSGppcW56brGhXnFibnFpXrpe
+        cn7uJkZgEG479nPzDsZLG4MPMQpwMCrx8C5g1YgXYk0sK67MPcQowcGsJMLrdPZ0nBBvSmJl
+        VWpRfnxRaU5q8SFGU6DlE5mlRJPzgRGSVxJvaGpobmFpaG5sbmxmoSTO2yFwMEZIID2xJDU7
+        NbUgtQimj4mDU6qBMfOcrVnDlrsLny7UO8BgxZ/8jeNDI6tA2t+5R1W+FPRb+T/sM3u+IDnl
+        icSqm65cB+LPXvZYpse5qU+SdcblqZMafYwONzGob8mVv75J+fgffjkdxtzE63MM5xQLnfJL
+        cvmpvjJM8JyCofOBj/K7mqzP3ug8VrLnXfEtHs1LhZVX2Ro5hSSFlFiKMxINtZiLihMBA8M6
+        TVgCAAA=
+X-CMS-MailID: 20200804061225eucas1p283c1e0dc404bc420a2184480fdfd2b0d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200804061225eucas1p283c1e0dc404bc420a2184480fdfd2b0d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200804061225eucas1p283c1e0dc404bc420a2184480fdfd2b0d
+References: <CGME20200804061225eucas1p283c1e0dc404bc420a2184480fdfd2b0d@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Tegra driver has its own defines for common Designware Port Logic
-registers. Convert it to use the standard register definitions.
+exynos5_counters_get() might fail with -EPROBE_DEFER if the driver for
+devfreq event counter is not yet probed. Propagate that error value to
+the caller to ensure that the exynos5422-dmc driver will be probed again
+when devfreq event contuner is available.
 
-Cc: Jingoo Han <jingoohan1@gmail.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-pci@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
+This fixes boot hang if both exynos5422-dmc and exynos-ppmu drivers are
+compiled as modules.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/pci/controller/dwc/pcie-designware.h |  6 +++
- drivers/pci/controller/dwc/pcie-tegra194.c   | 56 ++++++++------------
- 2 files changed, 28 insertions(+), 34 deletions(-)
+ drivers/memory/samsung/exynos5422-dmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index b18a9a5f48d2..3bd322db69a6 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -32,7 +32,13 @@
- /* Synopsys-specific PCIe configuration registers */
- #define PCIE_PORT_AFR			0x70C
- #define PORT_AFR_N_FTS_MASK		GENMASK(15, 8)
-+#define PORT_AFR_N_FTS(n)		FIELD_PREP(PORT_AFR_N_FTS_MASK, n)
- #define PORT_AFR_CC_N_FTS_MASK		GENMASK(23, 16)
-+#define PORT_AFR_ENTER_ASPM		BIT(30)
-+#define PORT_AFR_L0S_ENTRANCE_LAT_SHIFT	24
-+#define PORT_AFR_L0S_ENTRANCE_LAT_MASK	GENMASK(26, 24)
-+#define PORT_AFR_L1_ENTRANCE_LAT_SHIFT	27
-+#define PORT_AFR_L1_ENTRANCE_LAT_MASK	GENMASK(29, 27)
+diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+index b9c7956e5031..639811a3eecb 100644
+--- a/drivers/memory/samsung/exynos5422-dmc.c
++++ b/drivers/memory/samsung/exynos5422-dmc.c
+@@ -914,7 +914,7 @@ static int exynos5_dmc_get_status(struct device *dev,
+ 	} else {
+ 		ret = exynos5_counters_get(dmc, &load, &total);
+ 		if (ret < 0)
+-			return -EINVAL;
++			return ret;
  
- #define PCIE_PORT_LINK_CONTROL		0x710
- #define PORT_LINK_DLL_LINK_EN		BIT(5)
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index c567c9c09ff6..ad295c854853 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -183,19 +183,7 @@
- #define EVENT_COUNTER_GROUP_SEL_SHIFT	24
- #define EVENT_COUNTER_GROUP_5		0x5
- 
--#define PORT_LOGIC_ACK_F_ASPM_CTRL			0x70C
--#define ENTER_ASPM					BIT(30)
--#define L0S_ENTRANCE_LAT_SHIFT				24
--#define L0S_ENTRANCE_LAT_MASK				GENMASK(26, 24)
--#define L1_ENTRANCE_LAT_SHIFT				27
--#define L1_ENTRANCE_LAT_MASK				GENMASK(29, 27)
--#define N_FTS_SHIFT					8
--#define N_FTS_MASK					GENMASK(7, 0)
- #define N_FTS_VAL					52
--
--#define PORT_LOGIC_GEN2_CTRL				0x80C
--#define PORT_LOGIC_GEN2_CTRL_DIRECT_SPEED_CHANGE	BIT(17)
--#define FTS_MASK					GENMASK(7, 0)
- #define FTS_VAL						52
- 
- #define PORT_LOGIC_MSI_CTRL_INT_0_EN		0x828
-@@ -401,9 +389,9 @@ static irqreturn_t tegra_pcie_rp_irq_handler(int irq, void *arg)
- 			val |= APPL_CAR_RESET_OVRD_CYA_OVERRIDE_CORE_RST_N;
- 			appl_writel(pcie, val, APPL_CAR_RESET_OVRD);
- 
--			val = dw_pcie_readl_dbi(pci, PORT_LOGIC_GEN2_CTRL);
--			val |= PORT_LOGIC_GEN2_CTRL_DIRECT_SPEED_CHANGE;
--			dw_pcie_writel_dbi(pci, PORT_LOGIC_GEN2_CTRL, val);
-+			val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
-+			val |= PORT_LOGIC_SPEED_CHANGE;
-+			dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
- 		}
- 	}
- 
-@@ -694,11 +682,11 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
- 	dw_pcie_writel_dbi(pci, pcie->cfg_link_cap_l1sub, val);
- 
- 	/* Program L0s and L1 entrance latencies */
--	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL);
--	val &= ~L0S_ENTRANCE_LAT_MASK;
--	val |= (pcie->aspm_l0s_enter_lat << L0S_ENTRANCE_LAT_SHIFT);
--	val |= ENTER_ASPM;
--	dw_pcie_writel_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL, val);
-+	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
-+	val &= ~PORT_AFR_L0S_ENTRANCE_LAT_MASK;
-+	val |= (pcie->aspm_l0s_enter_lat << PORT_AFR_L0S_ENTRANCE_LAT_SHIFT);
-+	val |= PORT_AFR_ENTER_ASPM;
-+	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
- }
- 
- static int init_debugfs(struct tegra_pcie_dw *pcie)
-@@ -895,15 +883,15 @@ static void tegra_pcie_prepare_host(struct pcie_port *pp)
- 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0);
- 
- 	/* Configure FTS */
--	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL);
--	val &= ~(N_FTS_MASK << N_FTS_SHIFT);
--	val |= N_FTS_VAL << N_FTS_SHIFT;
--	dw_pcie_writel_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL, val);
-+	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
-+	val &= ~PORT_AFR_N_FTS_MASK;
-+	val |= PORT_AFR_N_FTS(N_FTS_VAL);
-+	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
- 
--	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_GEN2_CTRL);
--	val &= ~FTS_MASK;
-+	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
-+	val &= ~PORT_LOGIC_N_FTS_MASK;
- 	val |= FTS_VAL;
--	dw_pcie_writel_dbi(pci, PORT_LOGIC_GEN2_CTRL, val);
-+	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
- 
- 	/* Enable as 0xFFFF0001 response for CRS */
- 	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT);
-@@ -1820,15 +1808,15 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
- 	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
- 
- 	/* Configure N_FTS & FTS */
--	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL);
--	val &= ~(N_FTS_MASK << N_FTS_SHIFT);
--	val |= N_FTS_VAL << N_FTS_SHIFT;
--	dw_pcie_writel_dbi(pci, PORT_LOGIC_ACK_F_ASPM_CTRL, val);
-+	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
-+	val &= ~PORT_AFR_N_FTS_MASK;
-+	val |= PORT_AFR_N_FTS(FTS_VAL);
-+	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
- 
--	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_GEN2_CTRL);
--	val &= ~FTS_MASK;
-+	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
-+	val &= ~PORT_LOGIC_N_FTS_MASK;
- 	val |= FTS_VAL;
--	dw_pcie_writel_dbi(pci, PORT_LOGIC_GEN2_CTRL, val);
-+	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
- 
- 	/* Configure Max Speed from DT */
- 	if (pcie->max_speed && pcie->max_speed != -EINVAL) {
+ 		/* To protect from overflow, divide by 1024 */
+ 		stat->busy_time = load >> 10;
 -- 
-2.25.1
+2.17.1
 
