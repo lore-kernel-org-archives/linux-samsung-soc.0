@@ -5,45 +5,41 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFC5C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 09:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63181C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 10:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C50422B40
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 09:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 593AA2070A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 10:40:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725856AbgHDJLJ (ORCPT
+        id S1728048AbgHDKkL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 4 Aug 2020 05:11:09 -0400
-Received: from foss.arm.com ([217.140.110.172]:41630 "EHLO foss.arm.com"
+        Tue, 4 Aug 2020 06:40:11 -0400
+Received: from foss.arm.com ([217.140.110.172]:42368 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725811AbgHDJLJ (ORCPT
+        id S1726212AbgHDKkL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Aug 2020 05:11:09 -0400
+        Tue, 4 Aug 2020 06:40:11 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2337B1FB;
-        Tue,  4 Aug 2020 02:11:08 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD2121FB;
+        Tue,  4 Aug 2020 03:40:10 -0700 (PDT)
 Received: from [10.37.12.45] (unknown [10.37.12.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 777193F718;
-        Tue,  4 Aug 2020 02:11:06 -0700 (PDT)
-Subject: Re: [PATCH] memory: samsung: exynos5422-dmc: propagate error from
- exynos5_counters_get()
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>
-References: <CGME20200804061225eucas1p283c1e0dc404bc420a2184480fdfd2b0d@eucas1p2.samsung.com>
- <20200804061210.5415-1-m.szyprowski@samsung.com>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 503063F718;
+        Tue,  4 Aug 2020 03:40:09 -0700 (PDT)
 From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <24675559-b807-5b80-1318-805c1530ffb3@arm.com>
-Date:   Tue, 4 Aug 2020 10:11:03 +0100
+Subject: Re: [RFC] memory: exynos5422-dmc: Document mutex scope
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20200724180857.22119-1-krzk@kernel.org>
+Message-ID: <3522860a-8158-6e71-9d65-01d0e0c15f0d@arm.com>
+Date:   Tue, 4 Aug 2020 11:40:07 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200804061210.5415-1-m.szyprowski@samsung.com>
+In-Reply-To: <20200724180857.22119-1-krzk@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -52,57 +48,58 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Hi Krzysztof,
 
-On 8/4/20 7:12 AM, Marek Szyprowski wrote:
-> exynos5_counters_get() might fail with -EPROBE_DEFER if the driver for
-> devfreq event counter is not yet probed. Propagate that error value to
-> the caller to ensure that the exynos5422-dmc driver will be probed again
-> when devfreq event contuner is available.
+On 7/24/20 7:08 PM, Krzysztof Kozlowski wrote:
+> Document scope of the mutex used by driver.
 > 
-> This fixes boot hang if both exynos5422-dmc and exynos-ppmu drivers are
-> compiled as modules.
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->   drivers/memory/samsung/exynos5422-dmc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> It seems mutex was introduced to protect:
+> 1. setting actual frequency/voltage,
+> 2. dmc->curr_rate (in exynos5_dmc_get_cur_freq()).
+> 
+> However dmc->curr_rate in exynos5_dmc_get_status() is not protected. Is
+> it a bug?
+
+The callback get_dev_status() from devfreq->profile, which here is the
+exynos5_dmc_get_status() should be already called with devfreq->lock
+mutex hold, like e.g from simple_ondemand governor or directly
+using update_devfreq exported function:
+update_devfreq()
+   ->get_target_freq()
+     devfreq_update_stats()
+         df->profile->get_dev_status()
+
+The dmc->curr_rate is also used from sysfs interface from devfreq.
+The local dmc lock serializes also this use case (when the HW freq
+has changed but not set yet into curr_rate.
+
+
+> ---
+>   drivers/memory/samsung/exynos5422-dmc.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
 > diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
-> index b9c7956e5031..639811a3eecb 100644
+> index 93e9c2429c0d..0388066a7d96 100644
 > --- a/drivers/memory/samsung/exynos5422-dmc.c
 > +++ b/drivers/memory/samsung/exynos5422-dmc.c
-> @@ -914,7 +914,7 @@ static int exynos5_dmc_get_status(struct device *dev,
->   	} else {
->   		ret = exynos5_counters_get(dmc, &load, &total);
->   		if (ret < 0)
-> -			return -EINVAL;
-> +			return ret;
->   
->   		/* To protect from overflow, divide by 1024 */
->   		stat->busy_time = load >> 10;
+> @@ -114,6 +114,7 @@ struct exynos5_dmc {
+>   	void __iomem *base_drexi0;
+>   	void __iomem *base_drexi1;
+>   	struct regmap *clk_regmap;
+> +	/* Protects curr_rate and frequency/voltage setting section */
+>   	struct mutex lock;
+>   	unsigned long curr_rate;
+>   	unsigned long curr_volt;
 > 
 
-Thank you for the patch, LGTM.
-Some questions are still there, though. The function
-exynos5_performance_counters_init() should capture that the counters
-couldn't be enabled or set. So the functions:
-exynos5_counters_enable_edev() and exynos5_counters_set_event()
-must pass gently because devfreq device is registered.
-Then devfreq checks device status, and reaches the state when
-counters 'get' function returns that they are not ready...
+I assume this missing comment for the lock was required by some scripts.
+In this case LGTM:
 
-If that is a kind of 2-stage initialization, maybe we should add
-another 'check' in the exynos5_performance_counters_init() and call
-the devfreq_event_get_event() to make sure that we are ready to go,
-otherwise return ret from that function (which is probably EPROBE_DEFER)
-and not register the devfreq device.
-
-Marek do want to submit such patch or I should bake it and submit on top
-of this patch?
-
-Could you tell me how I can reproduce this? Do you simply load one
-module after another (exynos-ppmu than exynos5422-dmc) or in parallel?
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
 Regards,
 Lukasz
