@@ -2,130 +2,69 @@ Return-Path: <SRS0=ZdNY=BO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E521C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 19:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BA7C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 19:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFE8E22CBE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 19:28:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596569320;
-	bh=nHtU3jC68K1szov6StQnB9nGWj8YGb5ZSEYff2gaNZg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=o+0zK184ltwg5OAvhZ1sEAiVOpuqhgmX2g7pEX7KhYlMrfWXPw/Ff0Q5swG6SAugC
-	 Tt5+4FD+Fb5Yztx9FsyQhNe0M9eWlnCPMrZZvXLEFenZlx2nVje2uvcfndzi6XDLBA
-	 DcIHXHvrS21DbU4hihapNzT0aS21lw8kGZFHrQJo=
+	by mail.kernel.org (Postfix) with ESMTP id 3A3FE22B45
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Aug 2020 19:36:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbgHDT2j (ORCPT
+        id S1726090AbgHDTgX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 4 Aug 2020 15:28:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40992 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbgHDT2i (ORCPT
+        Tue, 4 Aug 2020 15:36:23 -0400
+Received: from 9.mo5.mail-out.ovh.net ([178.32.96.204]:37536 "EHLO
+        9.mo5.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726824AbgHDTgX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Aug 2020 15:28:38 -0400
-Received: from localhost.localdomain (unknown [194.230.155.117])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E42F822CA0;
-        Tue,  4 Aug 2020 19:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596569318;
-        bh=nHtU3jC68K1szov6StQnB9nGWj8YGb5ZSEYff2gaNZg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x3CJiubP9wgIU42gAEtOSgXFF600wkRT/BddRn49+S/ZUrq7GkjK4innamltxZyDi
-         NIxLMqMT7Wl/HZflJWFHTUWhx1bWWYIxiwvK/ZkN/CUzEcO0KUGkenjp+uA4QSU5i8
-         Ghjn108+3bhzjIs8Hm3l4L9nKfLDG9phid8fml0A=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Tue, 4 Aug 2020 15:36:23 -0400
+X-Greylist: delayed 7801 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Aug 2020 15:36:22 EDT
+Received: from player774.ha.ovh.net (unknown [10.110.103.121])
+        by mo5.mail-out.ovh.net (Postfix) with ESMTP id 869FA28F637
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  4 Aug 2020 19:09:30 +0200 (CEST)
+Received: from etezian.org (213-243-141-64.bb.dnainternet.fi [213.243.141.64])
+        (Authenticated sender: andi@etezian.org)
+        by player774.ha.ovh.net (Postfix) with ESMTPSA id 253FA151129F2;
+        Tue,  4 Aug 2020 17:09:21 +0000 (UTC)
+Authentication-Results: garm.ovh; auth=pass (GARM-103G005bf6e1e8c-ecdf-4e2c-a38c-4357f76d3ada,
+                    174E2A681E1E8355CD79DB1D1551BCD4D872E018) smtp.auth=andi@etezian.org
+Date:   Tue, 4 Aug 2020 20:09:20 +0300
+From:   Andi Shyti <andi@etezian.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
+        Mark Brown <broonie@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Cc:     Sergio Prado <sergio.prado@e-labworks.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>
-Subject: [PATCH v2 13/13] ARM: s3c24xx: camif: include header with prototypes and unify declaration
-Date:   Tue,  4 Aug 2020 21:26:54 +0200
-Message-Id: <20200804192654.12783-14-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200804192654.12783-1-krzk@kernel.org>
-References: <20200804192654.12783-1-krzk@kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: s3c24xx: correct kerneldoc comment
+Message-ID: <20200804170920.GC73082@jack.zhora.eu>
+References: <20200804151356.28057-1-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200804151356.28057-1-krzk@kernel.org>
+X-Ovh-Tracer-Id: 10829468256800653977
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduiedrjeeigdduudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhguihcuufhhhihtihcuoegrnhguihesvghtvgiiihgrnhdrohhrgheqnecuggftrfgrthhtvghrnheptdfgudduhfefueeujeefieehtdeftefggeevhefgueellefhudetgeeikeduieefnecukfhppedtrddtrddtrddtpddvudefrddvgeefrddugedurdeigeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejjeegrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomheprghnughisegvthgviihirghnrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgrmhhsuhhnghdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The s3c_camif_gpio_put() declaration in
-include/media/drv-intf/s3c_camif.h header was different than definition.
-Fixing this allows to include that header to also fix the W=1 compile
-warnings:
+Hi Krzysztof,
 
-    arch/arm/mach-s3c24xx/setup-camif.c:28:5: warning: no previous prototype for 's3c_camif_gpio_get' [-Wmissing-prototypes]
-       28 | int s3c_camif_gpio_get(void)
-    arch/arm/mach-s3c24xx/setup-camif.c:56:6: warning: no previous prototype for 's3c_camif_gpio_put' [-Wmissing-prototypes]
-       56 | void s3c_camif_gpio_put(void)
+On Tue, Aug 04, 2020 at 05:13:56PM +0200, Krzysztof Kozlowski wrote:
+> Correct the kerneldoc for structure to fix W=1 compile warning:
+> 
+>     drivers/spi/spi-s3c24xx.c:36: warning: cannot understand function prototype: 'struct s3c24xx_spi_devstate '
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+thanks,
 
----
+Acked-by: Andi Shyti <andi@etezian.org>
 
-Changes since v1:
-1. New patch
----
- arch/arm/mach-s3c24xx/setup-camif.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-s3c24xx/setup-camif.c b/arch/arm/mach-s3c24xx/setup-camif.c
-index 2b262fae3f61..4046afaad645 100644
---- a/arch/arm/mach-s3c24xx/setup-camif.c
-+++ b/arch/arm/mach-s3c24xx/setup-camif.c
-@@ -7,6 +7,7 @@
- #include <linux/gpio.h>
- #include <plat/gpio-cfg.h>
- #include <mach/gpio-samsung.h>
-+#include <media/drv-intf/s3c_camif.h>
- 
- /* Number of camera port pins, without FIELD */
- #define S3C_CAMIF_NUM_GPIOS	13
-@@ -53,7 +54,7 @@ int s3c_camif_gpio_get(void)
- 	return 0;
- }
- 
--void s3c_camif_gpio_put(void)
-+int s3c_camif_gpio_put(void)
- {
- 	int i, gpio_start, gpio_reset;
- 
-@@ -64,4 +65,6 @@ void s3c_camif_gpio_put(void)
- 		if (gpio != gpio_reset)
- 			gpio_free(gpio);
- 	}
-+
-+	return 0;
- }
--- 
-2.17.1
-
+Andi
