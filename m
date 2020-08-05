@@ -2,93 +2,76 @@ Return-Path: <SRS0=l5vg=BP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3861C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Aug 2020 19:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3681C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Aug 2020 21:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BFB6721D95
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Aug 2020 19:48:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596656915;
-	bh=B90v1e6ZZyfhc6xnwUhJIYkBjrZ5okO/hOKVJ2QwbsE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=sJEMxUNfpxs0+j83Eb2GIWXZusELeV59c5OgJI0/xuclmfASzOhUvVXHNMjtmAzzG
-	 8gS7/CE9CSvCKMcPS6TY4RfV8BVPibyWyf4Tbm1tSEhDXXfM34qw9d+9PJ3r4Gpjjq
-	 JlqlzJUxxYKNK/Ou00t2ZO6yFc6v/GP1ZItU97v4=
+	by mail.kernel.org (Postfix) with ESMTP id 9B2CD206F6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Aug 2020 21:57:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbgHETsb (ORCPT
+        id S1726528AbgHEV5e (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Aug 2020 15:48:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48060 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728235AbgHEQ4b (ORCPT
+        Wed, 5 Aug 2020 17:57:34 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:53634 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbgHEV5d (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:56:31 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A156DC0D941A;
-        Wed,  5 Aug 2020 08:14:37 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id c80so6159905wme.0;
-        Wed, 05 Aug 2020 08:14:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8NY4cETpE+tZbeXOcxF5VTOrE6Vn7Glw4DngqEOoM7o=;
-        b=HGDeRUfxjgg9Lw1XSHWsEWR9SNv6Fdj0BbpUOXoMCji9wc1Kqx3YKXxYA9nsn5j1dT
-         mpaGd6bveSvrq/8YEqoYyzaKlB9YWdtdqOwIJrGbD9eBN1X+p37XxpGbjlf56D+g4XMZ
-         6NHL4VKXTcJ5J13Z6MV/9fM+pkHJX13BFzAKeZKi9qKS1j6kL58j1I+42K39VcyquV9B
-         MYYol3bldM0F+kpurwZS45s2T9pzwyoXsNn51kkx1SxXokvhfbT2ZcbuDFy+DMGJjNX8
-         ECq32rr1bLOtlxYgfNQlsL8OO8BKm68C6BP9gfOHT0tLfqXDQEkdtS0peE6+mT5x26cX
-         Iinw==
-X-Gm-Message-State: AOAM532gAB/1b5Bti1PYfX1riNtIvQGj/u04CDkdAvjs4qQzBV8+J0xH
-        chK+jpOsx4+RpztYIcrNQ5PXurystdo=
-X-Google-Smtp-Source: ABdhPJzOCKjcIrNX/wbT4dyw20wnSgtHhzNB/LC28frRr/pwBiTKtN/9dYEeDRtDsjtj55+uHTjYnw==
-X-Received: by 2002:a1c:7405:: with SMTP id p5mr2690613wmc.130.1596625023972;
-        Wed, 05 Aug 2020 03:57:03 -0700 (PDT)
-Received: from pi3 ([194.230.155.117])
-        by smtp.googlemail.com with ESMTPSA id q5sm2207888wrp.60.2020.08.05.03.57.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Aug 2020 03:57:02 -0700 (PDT)
-Date:   Wed, 5 Aug 2020 12:57:00 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: samsung: Mark top BPLL mux on Exynos542x as critical
-Message-ID: <20200805105700.GA6100@pi3>
-References: <CGME20200805091612eucas1p28c955b21e57898de60d3ed50c95b9d18@eucas1p2.samsung.com>
- <20200805091601.11983-1-m.szyprowski@samsung.com>
+        Wed, 5 Aug 2020 17:57:33 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 7FB6F1C0BD2; Wed,  5 Aug 2020 23:57:30 +0200 (CEST)
+Date:   Wed, 5 Aug 2020 23:57:30 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] leds: s3c24xx: Remove unused machine header include
+Message-ID: <20200805215730.h6434lief5drnnu2@duo.ucw.cz>
+References: <20200803091936.24984-1-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ljilayodnbc3yjys"
 Content-Disposition: inline
-In-Reply-To: <20200805091601.11983-1-m.szyprowski@samsung.com>
+In-Reply-To: <20200803091936.24984-1-krzk@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 05, 2020 at 11:16:01AM +0200, Marek Szyprowski wrote:
-> BPLL clock must not be disabled because it is needed for proper DRAM
-> operation. This is normally handled by respective memory devfreq driver,
-> but when that driver is not yet probed or its probe has been deferred the
-> clock might got disabled what causes board hang. Fix this by marking it
-> as critical.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+--ljilayodnbc3yjys
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+On Mon 2020-08-03 11:19:36, Krzysztof Kozlowski wrote:
+> The driver includes machine header for GPIO registers but actually does
+> not use them.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Thanks, applied.
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--ljilayodnbc3yjys
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXysrSgAKCRAw5/Bqldv6
+8u62AJ4ir1EErxG9h1Qow2wCQ9gAFcX1JQCeMUBE9VPpVUUiBlKwiaTd1OB961k=
+=x79/
+-----END PGP SIGNATURE-----
+
+--ljilayodnbc3yjys--
