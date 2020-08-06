@@ -5,53 +5,53 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D30C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1BAC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1AAC2206B5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:36:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35AA9221E3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:36:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596738995;
-	bh=eC8+pdiOP0SN41WUeXwn8RHaqXAyWuLR/6yLOdAxbuk=;
+	s=default; t=1596738999;
+	bh=3O3liBSyHwDtMPlVC7YZw60Ut1YHcavAkks9soG7J1I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NanQjNhFEMLgDMeBA1qNUCfPSuIrXqZSnyyKBl9ujmKufQ1N/vAzvSx6JHWeYOfE1
-	 yEjveu8JyPiQaMjV10IQeEK8ayoJ6ZRZNWo+rOV+4oEp3TaFxDIQ2zBO3Jb29HGzEY
-	 NVa6V8WLbXCursoyq7c6wRpQIeOleUFbb88y+6A0=
+	b=elXW6iG48SCraJ0fE7eleybuZtI6M72Y8OtJPFGYxIhJDFjYsu7xd/OMAwD9uoBoW
+	 MUhyASRJBY6lTQX3cT7Y4H4ubjMGt/HG/CK/B1604vchS0p7Gl/u9TxDcNjSL0fSBY
+	 z+PJfs7pvuMj6eK9BY0aMY35Clno3imlV0IfWLc8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbgHFSgR (ORCPT
+        id S1729332AbgHFSge (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 Aug 2020 14:36:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59086 "EHLO mail.kernel.org"
+        Thu, 6 Aug 2020 14:36:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729342AbgHFSgO (ORCPT
+        id S1729328AbgHFSgN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Aug 2020 14:36:14 -0400
+        Thu, 6 Aug 2020 14:36:13 -0400
 Received: from localhost.localdomain (unknown [194.230.155.117])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 459DD22D72;
-        Thu,  6 Aug 2020 18:22:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8680A22D74;
+        Thu,  6 Aug 2020 18:23:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596738167;
-        bh=eC8+pdiOP0SN41WUeXwn8RHaqXAyWuLR/6yLOdAxbuk=;
+        s=default; t=1596738189;
+        bh=3O3liBSyHwDtMPlVC7YZw60Ut1YHcavAkks9soG7J1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VHn+t9EEdJVdosmd7F/izmV/f/BVJ2cqpO/rOXPJA+hkWnTb+ZcHGrmO09n3zqq00
-         cEZgOxnbH50Oz/fzhKpLLQL6S+SfioSMmFDm6iI8IBuS9MA7Eev/PZZ7uyPmHDHbnC
-         Kp5ilhF0X14zo6b3c/21m8qfQP2BgvBkw8gI1mIY=
+        b=ofZVJEPPrfbV5WFWbrLk1ZSYb2JuhKjThcNSuaWcyMT7nyz4wm9dNg75G6HZrHLAI
+         x+EKHl6ZJtPmfxRQ+MBxH/RG+0AB4kLBe91Y8th3E56UZvsDYLD+7vVkLT/TDAJ4/P
+         4pOOwo7TLS92qsqFNJkijQfVigbykWD0O+MtInFM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
         Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
+        Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Andi Shyti <andi@etezian.org>,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 17/41] ARM: s5pv210: use private pm save/restore
-Date:   Thu,  6 Aug 2020 20:20:34 +0200
-Message-Id: <20200806182059.2431-17-krzk@kernel.org>
+Subject: [PATCH v2 23/41] ARM: s3c24xx: move spi fiq handler into platform
+Date:   Thu,  6 Aug 2020 20:20:40 +0200
+Message-Id: <20200806182059.2431-23-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200806181932.2253-1-krzk@kernel.org>
 References: <20200806181932.2253-1-krzk@kernel.org>
@@ -62,142 +62,174 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The pm save/restore code is fairly small, so in order to
-separate the s3c and s5p platforms, adding an s5p specific
-copy instead of sharing it is actually easier.
+The fiq handler needs access to some register definitions that
+should not be used directly by device drivers.
+
+Since this is closely related to the irqchip driver anyway,
+move it into the same place.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+[krzk: Add a header guard in include/linux/spi/s3c24xx-fiq.h, fix
+      SPDX comment style, update maintainer's entry]
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/mach-s5pv210/Makefile     |  7 -----
- arch/arm/mach-s5pv210/pm.c         | 45 ++++++++++++++++++++++++++++--
- arch/arm/mach-s5pv210/regs-clock.h |  4 ++-
- arch/arm/mach-s5pv210/s5pv210.c    |  2 --
- arch/arm/plat-samsung/Makefile     |  3 +-
- 5 files changed, 47 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
-index e7b551e18e5c..aa0a1f091daf 100644
---- a/arch/arm/mach-s5pv210/Makefile
-+++ b/arch/arm/mach-s5pv210/Makefile
-@@ -3,12 +3,5 @@
- # Copyright (c) 2010 Samsung Electronics Co., Ltd.
- # 		http://www.samsung.com/
+---
+
+Changes since v1:
+1. Add a header guard in include/linux/spi/s3c24xx-fiq.h,
+2. Fix SPDX comment style,
+3. Update maintainer's entry.
+---
+ MAINTAINERS                                            |  1 +
+ arch/arm/mach-s3c24xx/Makefile                         |  2 ++
+ arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c        |  9 +++++++++
+ .../arm/mach-s3c24xx/irq-s3c24xx-fiq.S                 |  2 +-
+ drivers/spi/Makefile                                   |  1 -
+ drivers/spi/spi-s3c24xx.c                              |  7 +------
+ .../linux/spi/s3c24xx-fiq.h                            | 10 ++++++++++
+ 7 files changed, 24 insertions(+), 8 deletions(-)
+ create mode 100644 arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c
+ rename drivers/spi/spi-s3c24xx-fiq.S => arch/arm/mach-s3c24xx/irq-s3c24xx-fiq.S (98%)
+ rename drivers/spi/spi-s3c24xx-fiq.h => include/linux/spi/s3c24xx-fiq.h (66%)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 81046738cba9..d9accf3c2582 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15307,6 +15307,7 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/spi/spi-samsung.txt
+ F:	drivers/spi/spi-s3c*
+ F:	include/linux/platform_data/spi-s3c64xx.h
++F:	include/linux/spi/s3c24xx-fiq.h
  
--ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/arch/arm/plat-samsung/include
--
--# Core
--
- obj-$(CONFIG_PM_SLEEP)		+= pm.o sleep.o
--
--# machine support
--
- obj-y				+= s5pv210.o
-diff --git a/arch/arm/mach-s5pv210/pm.c b/arch/arm/mach-s5pv210/pm.c
-index efdb5a27c060..d59c094cdea8 100644
---- a/arch/arm/mach-s5pv210/pm.c
-+++ b/arch/arm/mach-s5pv210/pm.c
-@@ -13,15 +13,56 @@
- #include <linux/suspend.h>
- #include <linux/syscore_ops.h>
- #include <linux/io.h>
-+#include <linux/soc/samsung/s3c-pm.h>
+ SAMSUNG SXGBE DRIVERS
+ M:	Byungho An <bh74.an@samsung.com>
+diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
+index 8c31f84f8c97..695573df00b1 100644
+--- a/arch/arm/mach-s3c24xx/Makefile
++++ b/arch/arm/mach-s3c24xx/Makefile
+@@ -9,6 +9,8 @@
  
- #include <asm/cacheflush.h>
- #include <asm/suspend.h>
+ obj-y				+= common.o
+ obj-y				+= irq-s3c24xx.o
++obj-$(CONFIG_SPI_S3C24XX_FIQ)	+= irq-s3c24xx-fiq.o
++obj-$(CONFIG_SPI_S3C24XX_FIQ)	+= irq-s3c24xx-fiq-exports.o
  
--#include <plat/pm-common.h>
--
- #include "common.h"
- #include "regs-clock.h"
- 
-+/* helper functions to save and restore register state */
-+struct sleep_save {
-+	void __iomem	*reg;
-+	unsigned long	val;
-+};
+ obj-$(CONFIG_CPU_S3C2410)	+= s3c2410.o
+ obj-$(CONFIG_S3C2410_PLL)	+= pll-s3c2410.o
+diff --git a/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c b/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c
+new file mode 100644
+index 000000000000..84cf86376ded
+--- /dev/null
++++ b/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c
+@@ -0,0 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +
-+#define SAVE_ITEM(x) \
-+	{ .reg = (x) }
++#include <linux/stddef.h>
++#include <linux/export.h>
++#include <linux/spi/s3c24xx-fiq.h>
 +
-+/**
-+ * s3c_pm_do_save() - save a set of registers for restoration on resume.
-+ * @ptr: Pointer to an array of registers.
-+ * @count: Size of the ptr array.
-+ *
-+ * Run through the list of registers given, saving their contents in the
-+ * array for later restoration when we wakeup.
-+ */
-+static void s3c_pm_do_save(struct sleep_save *ptr, int count)
-+{
-+	for (; count > 0; count--, ptr++) {
-+		ptr->val = readl_relaxed(ptr->reg);
-+		S3C_PMDBG("saved %p value %08lx\n", ptr->reg, ptr->val);
-+	}
-+}
-+
-+/**
-+ * s3c_pm_do_restore() - restore register values from the save list.
-+ * @ptr: Pointer to an array of registers.
-+ * @count: Size of the ptr array.
-+ *
-+ * Restore the register values saved from s3c_pm_do_save().
-+ *
-+ * WARNING: Do not put any debug in here that may effect memory or use
-+ * peripherals, as things may be changing!
-+*/
-+
-+static void s3c_pm_do_restore_core(const struct sleep_save *ptr, int count)
-+{
-+	for (; count > 0; count--, ptr++)
-+		writel_relaxed(ptr->val, ptr->reg);
-+}
-+
- static struct sleep_save s5pv210_core_save[] = {
- 	/* Clock ETC */
- 	SAVE_ITEM(S5P_MDNIE_SEL),
-diff --git a/arch/arm/mach-s5pv210/regs-clock.h b/arch/arm/mach-s5pv210/regs-clock.h
-index 2a35c831a9b0..9cad2306e470 100644
---- a/arch/arm/mach-s5pv210/regs-clock.h
-+++ b/arch/arm/mach-s5pv210/regs-clock.h
-@@ -9,7 +9,9 @@
- #ifndef __ASM_ARCH_REGS_CLOCK_H
- #define __ASM_ARCH_REGS_CLOCK_H __FILE__
++EXPORT_SYMBOL(s3c24xx_spi_fiq_rx);
++EXPORT_SYMBOL(s3c24xx_spi_fiq_txrx);
++EXPORT_SYMBOL(s3c24xx_spi_fiq_tx);
+diff --git a/drivers/spi/spi-s3c24xx-fiq.S b/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq.S
+similarity index 98%
+rename from drivers/spi/spi-s3c24xx-fiq.S
+rename to arch/arm/mach-s3c24xx/irq-s3c24xx-fiq.S
+index 9d5f8f1e5e81..2a84535a14fd 100644
+--- a/drivers/spi/spi-s3c24xx-fiq.S
++++ b/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq.S
+@@ -13,7 +13,7 @@
+ #include <mach/map.h>
+ #include <mach/regs-irq.h>
  
--#include <plat/map-base.h>
-+#define S3C_ADDR_BASE		0xF6000000
-+#define S3C_ADDR(x)		((void __iomem __force *)S3C_ADDR_BASE + (x))
-+#define S3C_VA_SYS		S3C_ADDR(0x00100000)
+-#include "spi-s3c24xx-fiq.h"
++#include <linux/spi/s3c24xx-fiq.h>
  
- #define S5P_CLKREG(x)		(S3C_VA_SYS + (x))
+ #define S3C2410_SPTDAT           (0x10)
+ #define S3C2410_SPRDAT           (0x14)
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index cf955ea803cd..eba6fb607aa2 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -97,7 +97,6 @@ obj-$(CONFIG_SPI_RPCIF)			+= spi-rpc-if.o
+ obj-$(CONFIG_SPI_RSPI)			+= spi-rspi.o
+ obj-$(CONFIG_SPI_S3C24XX)		+= spi-s3c24xx-hw.o
+ spi-s3c24xx-hw-y			:= spi-s3c24xx.o
+-spi-s3c24xx-hw-$(CONFIG_SPI_S3C24XX_FIQ) += spi-s3c24xx-fiq.o
+ obj-$(CONFIG_SPI_S3C64XX)		+= spi-s3c64xx.o
+ obj-$(CONFIG_SPI_SC18IS602)		+= spi-sc18is602.o
+ obj-$(CONFIG_SPI_SH)			+= spi-sh.o
+diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
+index 92be0c6d798a..e7a4732590db 100644
+--- a/drivers/spi/spi-s3c24xx.c
++++ b/drivers/spi/spi-s3c24xx.c
+@@ -19,12 +19,12 @@
+ #include <linux/spi/spi.h>
+ #include <linux/spi/spi_bitbang.h>
+ #include <linux/spi/s3c24xx.h>
++#include <linux/spi/s3c24xx-fiq.h>
+ #include <linux/module.h>
  
-diff --git a/arch/arm/mach-s5pv210/s5pv210.c b/arch/arm/mach-s5pv210/s5pv210.c
-index 868f9c20419d..a21ed3bb992a 100644
---- a/arch/arm/mach-s5pv210/s5pv210.c
-+++ b/arch/arm/mach-s5pv210/s5pv210.c
-@@ -13,8 +13,6 @@
- #include <asm/mach/map.h>
- #include <asm/system_misc.h>
+ #include <asm/fiq.h>
  
--#include <plat/map-base.h>
+ #include "spi-s3c24xx-regs.h"
+-#include "spi-s3c24xx-fiq.h"
+ 
+ /**
+  * struct s3c24xx_spi_devstate - per device data
+@@ -229,10 +229,6 @@ struct spi_fiq_code {
+ 	u8	data[];
+ };
+ 
+-extern struct spi_fiq_code s3c24xx_spi_fiq_txrx;
+-extern struct spi_fiq_code s3c24xx_spi_fiq_tx;
+-extern struct spi_fiq_code s3c24xx_spi_fiq_rx;
 -
- #include "common.h"
- #include "regs-clock.h"
+ /**
+  * ack_bit - turn IRQ into IRQ acknowledgement bit
+  * @irq: The interrupt number
+@@ -282,7 +278,6 @@ static void s3c24xx_spi_tryfiq(struct s3c24xx_spi *hw)
+ 	regs.uregs[fiq_rrx]  = (long)hw->rx;
+ 	regs.uregs[fiq_rtx]  = (long)hw->tx + 1;
+ 	regs.uregs[fiq_rcount] = hw->len - 1;
+-	regs.uregs[fiq_rirq] = (long)S3C24XX_VA_IRQ;
  
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index c47f58ed83e2..feddb42cae51 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -24,8 +24,7 @@ obj-$(CONFIG_GPIO_SAMSUNG)     += gpio-samsung.o
+ 	set_fiq_regs(&regs);
  
- # PM support
+diff --git a/drivers/spi/spi-s3c24xx-fiq.h b/include/linux/spi/s3c24xx-fiq.h
+similarity index 66%
+rename from drivers/spi/spi-s3c24xx-fiq.h
+rename to include/linux/spi/s3c24xx-fiq.h
+index 7786b0ea56ec..d2842ac1de27 100644
+--- a/drivers/spi/spi-s3c24xx-fiq.h
++++ b/include/linux/spi/s3c24xx-fiq.h
+@@ -7,11 +7,19 @@
+  * S3C24XX SPI - FIQ pseudo-DMA transfer support
+ */
  
--obj-$(CONFIG_PM_SLEEP)		+= pm-common.o
--obj-$(CONFIG_SAMSUNG_PM)	+= pm.o
-+obj-$(CONFIG_SAMSUNG_PM)	+= pm.o pm-common.o
- obj-$(CONFIG_SAMSUNG_PM_GPIO)	+= pm-gpio.o
++#ifndef __LINUX_SPI_S3C24XX_FIQ_H
++#define __LINUX_SPI_S3C24XX_FIQ_H __FILE__
++
+ /* We have R8 through R13 to play with */
  
- obj-$(CONFIG_SAMSUNG_WAKEMASK)	+= wakeup-mask.o
+ #ifdef __ASSEMBLY__
+ #define __REG_NR(x)     r##x
+ #else
++
++extern struct spi_fiq_code s3c24xx_spi_fiq_txrx;
++extern struct spi_fiq_code s3c24xx_spi_fiq_tx;
++extern struct spi_fiq_code s3c24xx_spi_fiq_rx;
++
+ #define __REG_NR(x)     (x)
+ #endif
+ 
+@@ -21,3 +29,5 @@
+ #define fiq_rtx		__REG_NR(11)
+ #define fiq_rcount	__REG_NR(12)
+ #define fiq_rirq	__REG_NR(13)
++
++#endif /* __LINUX_SPI_S3C24XX_FIQ_H */
 -- 
 2.17.1
 
