@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A11C433E4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EEAC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E65D22C9F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:37:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6523022D74
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:37:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596739067;
-	bh=lU5wNn/T9PmwblR4OUI1J7Lrz/yR8NVfa8Ry3YJWFwQ=;
+	s=default; t=1596739066;
+	bh=D1+9AmB8yaDm6+iMV1TG40QRlTP2+KI+dVoYAxhwdPo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=N7WrTuvDAQ4v5BsjAjLiAlGw1fvzit6X6QM7W+OefBq9C5Bcg2wkxls5Mkg5PduNN
-	 O5HO6oPj95BNzXkaHWacAMg91mOdg1gpBaj25WO5/OD0a3G0FA/FlD4VqOk3WsCltD
-	 jojxfV8mje9ZXZcOJT8BsCdY0UMPPX+YGX7YrgZU=
+	b=SgQQd5512R7w3z1h5NcttDzaZw/RnR7dcwU8ssRxf1xum3CN55a7eFEI/ZLTWrWVC
+	 IC7mybvaRrhXbuqSPi42hpOqADLq8vyMhYtZG9xqgaenpvkdnUxcsOBE5a0016ofD1
+	 /OIczipUGCte/DY8OROyzgKah2jRtZBAhk8Hy/io=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbgHFShq (ORCPT
+        id S1729592AbgHFShX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 Aug 2020 14:37:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58936 "EHLO mail.kernel.org"
+        Thu, 6 Aug 2020 14:37:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728935AbgHFSf6 (ORCPT
+        id S1728932AbgHFSf7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Aug 2020 14:35:58 -0400
+        Thu, 6 Aug 2020 14:35:59 -0400
 Received: from localhost.localdomain (unknown [194.230.155.117])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D81F22CE3;
-        Thu,  6 Aug 2020 18:22:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53E9122D0A;
+        Thu,  6 Aug 2020 18:22:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596738176;
-        bh=lU5wNn/T9PmwblR4OUI1J7Lrz/yR8NVfa8Ry3YJWFwQ=;
+        s=default; t=1596738155;
+        bh=D1+9AmB8yaDm6+iMV1TG40QRlTP2+KI+dVoYAxhwdPo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2CkLjH1W6F26DkdSLwSedU1vIjnnjDrR3jFSKAOn3jiYv5qhJzJb5IL00vTAcBFWr
-         i2VPDnZGE84wG8GJYdwLd3CVGXta3qSoS5aKbL46Y9IqUmleVAqPH1neNdkw7kR9N0
-         SWcWUrarZ4rqSDEogsdgJK6OyMBAihDa4woY0v5Y=
+        b=dZghzyiY7vh/WaG7QyfBJJNLyAJj4CZvSwPvbbLXKiTw1JWEv6YBCwyE+W9d262W4
+         KQXW9RC5Lb0J6wPcDvm4PEx1PqOtYCLu1SyBz9d9WgNbHAX0/cVeO/jsdGdpsD1XJC
+         jprsOp4IfKMewZ3GlB0OldO01mCjUp6dxJWf8TYM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
         Kukjin Kim <kgene@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 19/41] ARM: s3c64xx: remove mach/hardware.h
-Date:   Thu,  6 Aug 2020 20:20:36 +0200
-Message-Id: <20200806182059.2431-19-krzk@kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Subject: [PATCH v2 15/41] ARM: exynos: stop selecting PLAT_SAMSUNG
+Date:   Thu,  6 Aug 2020 20:20:32 +0200
+Message-Id: <20200806182059.2431-15-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200806181932.2253-1-krzk@kernel.org>
 References: <20200806181932.2253-1-krzk@kernel.org>
@@ -61,170 +62,122 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-This header is empty and conflicts with the s3c24xx version
-of the same file when we merge the two, so stop including it.
+Now that no code in arch/arm is shared between mach-exynos and the
+others, make the split formal.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/mach-s3c64xx/common.c                |  1 -
- arch/arm/mach-s3c64xx/dev-uart.c              |  1 -
- arch/arm/mach-s3c64xx/include/mach/hardware.h | 17 -----------------
- arch/arm/mach-s3c64xx/mach-anw6410.c          |  1 -
- arch/arm/mach-s3c64xx/mach-crag6410.c         |  1 -
- arch/arm/mach-s3c64xx/mach-hmt.c              |  1 -
- arch/arm/mach-s3c64xx/mach-ncp.c              |  1 -
- arch/arm/mach-s3c64xx/mach-smdk6400.c         |  1 -
- arch/arm/mach-s3c64xx/mach-smdk6410.c         |  1 -
- arch/arm/mach-s3c64xx/s3c6400.c               |  1 -
- arch/arm/mach-s3c64xx/s3c6410.c               |  1 -
- 11 files changed, 27 deletions(-)
- delete mode 100644 arch/arm/mach-s3c64xx/include/mach/hardware.h
+ arch/arm/Kconfig.debug        | 8 ++++----
+ arch/arm/Makefile             | 1 -
+ arch/arm/mach-exynos/Makefile | 4 ----
+ arch/arm/plat-samsung/Kconfig | 4 ++--
+ drivers/mmc/host/Kconfig      | 2 +-
+ 5 files changed, 7 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
-index c9c20256488b..efda4bfb7948 100644
---- a/arch/arm/mach-s3c64xx/common.c
-+++ b/arch/arm/mach-s3c64xx/common.c
-@@ -37,7 +37,6 @@
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 7c34cf5c4a5b..153a9a35dd20 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -1005,7 +1005,7 @@ choice
+ 		  via SCIFA4 on Renesas SH-Mobile AG5 (SH73A0).
  
- #include <mach/map.h>
- #include <mach/irqs.h>
--#include <mach/hardware.h>
- #include <mach/regs-gpio.h>
- #include <mach/gpio-samsung.h>
+ 	config DEBUG_S3C_UART0
+-		depends on PLAT_SAMSUNG
++		depends on PLAT_SAMSUNG || ARCH_EXYNOS
+ 		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+ 		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
+ 		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
+@@ -1017,7 +1017,7 @@ choice
+ 		  by the boot-loader before use.
  
-diff --git a/arch/arm/mach-s3c64xx/dev-uart.c b/arch/arm/mach-s3c64xx/dev-uart.c
-index 5fb59ad30008..021a2b7926fa 100644
---- a/arch/arm/mach-s3c64xx/dev-uart.c
-+++ b/arch/arm/mach-s3c64xx/dev-uart.c
-@@ -15,7 +15,6 @@
+ 	config DEBUG_S3C_UART1
+-		depends on PLAT_SAMSUNG
++		depends on PLAT_SAMSUNG || ARCH_EXYNOS
+ 		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+ 		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
+ 		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
+@@ -1029,7 +1029,7 @@ choice
+ 		  by the boot-loader before use.
  
- #include <asm/mach/arch.h>
- #include <asm/mach/irq.h>
--#include <mach/hardware.h>
- #include <mach/map.h>
- #include <mach/irqs.h>
+ 	config DEBUG_S3C_UART2
+-		depends on PLAT_SAMSUNG
++		depends on PLAT_SAMSUNG || ARCH_EXYNOS
+ 		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+ 		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
+ 		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
+@@ -1041,7 +1041,7 @@ choice
+ 		  by the boot-loader before use.
  
-diff --git a/arch/arm/mach-s3c64xx/include/mach/hardware.h b/arch/arm/mach-s3c64xx/include/mach/hardware.h
-deleted file mode 100644
-index c4ed359474de..000000000000
---- a/arch/arm/mach-s3c64xx/include/mach/hardware.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/* linux/arch/arm/mach-s3c6400/include/mach/hardware.h
-- *
-- * Copyright 2008 Openmoko, Inc.
-- * Copyright 2008 Simtec Electronics
-- *      Ben Dooks <ben@simtec.co.uk>
-- *      http://armlinux.simtec.co.uk/
-- *
-- * S3C6400 - Hardware support
-- */
+ 	config DEBUG_S3C_UART3
+-		depends on PLAT_SAMSUNG && (ARCH_EXYNOS || ARCH_S5PV210)
++		depends on ARCH_EXYNOS || ARCH_S5PV210
+ 		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+ 		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
+ 		select DEBUG_S5PV210_UART if ARCH_S5PV210
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 4e877354515f..826613a20b7d 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -232,7 +232,6 @@ machine-$(CONFIG_PLAT_SPEAR)		+= spear
+ 
+ # Platform directory name.  This list is sorted alphanumerically
+ # by CONFIG_* macro name.
+-plat-$(CONFIG_ARCH_EXYNOS)	+= samsung
+ plat-$(CONFIG_ARCH_OMAP)	+= omap
+ plat-$(CONFIG_ARCH_S3C64XX)	+= samsung
+ plat-$(CONFIG_ARCH_S5PV210)	+= samsung
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 0fd3fcf8bfb0..53fa363c8e44 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -3,10 +3,6 @@
+ # Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+ #		http://www.samsung.com/
+ 
+-ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)/arch/arm/plat-samsung/include
 -
--#ifndef __ASM_ARCH_HARDWARE_H
--#define __ASM_ARCH_HARDWARE_H __FILE__
+-# Core
 -
--/* currently nothing here, placeholder */
--
--#endif /* __ASM_ARCH_IRQ_H */
-diff --git a/arch/arm/mach-s3c64xx/mach-anw6410.c b/arch/arm/mach-s3c64xx/mach-anw6410.c
-index e783f5b3593a..bb248b12e308 100644
---- a/arch/arm/mach-s3c64xx/mach-anw6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-anw6410.c
-@@ -30,7 +30,6 @@
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
+ obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o exynos-smc.o firmware.o
  
--#include <mach/hardware.h>
- #include <mach/map.h>
+ obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index c3d18b0aad75..920931c3fefd 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -4,7 +4,7 @@
  
- #include <asm/irq.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index 223a3d51d8b6..a2fefb2609e7 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -44,7 +44,6 @@
- #include <asm/mach-types.h>
+ config PLAT_SAMSUNG
+ 	bool
+-	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_EXYNOS || ARCH_S5PV210
++	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
+ 	default y
+ 	select GENERIC_IRQ_CHIP
+ 	select NO_IOPORT_MAP
+@@ -240,7 +240,7 @@ config SAMSUNG_PM_DEBUG
+ 	bool "Samsung PM Suspend debug"
+ 	depends on PM && DEBUG_KERNEL
+ 	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
+-	depends on DEBUG_EXYNOS_UART || DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
++	depends on DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
+ 	help
+ 	  Say Y here if you want verbose debugging from the PM Suspend and
+ 	  Resume code. See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 9c89a5b780e8..ddce8e62280c 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -289,7 +289,7 @@ config MMC_SDHCI_TEGRA
  
- #include <video/samsung_fimd.h>
--#include <mach/hardware.h>
- #include <mach/map.h>
- #include <mach/regs-gpio.h>
- #include <mach/gpio-samsung.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-hmt.c b/arch/arm/mach-s3c64xx/mach-hmt.c
-index ad15260c12b4..32b555a4757b 100644
---- a/arch/arm/mach-s3c64xx/mach-hmt.c
-+++ b/arch/arm/mach-s3c64xx/mach-hmt.c
-@@ -25,7 +25,6 @@
- #include <asm/mach/irq.h>
- 
- #include <video/samsung_fimd.h>
--#include <mach/hardware.h>
- #include <mach/map.h>
- #include <mach/irqs.h>
- 
-diff --git a/arch/arm/mach-s3c64xx/mach-ncp.c b/arch/arm/mach-s3c64xx/mach-ncp.c
-index 0a67ff173575..f0a26dd27938 100644
---- a/arch/arm/mach-s3c64xx/mach-ncp.c
-+++ b/arch/arm/mach-s3c64xx/mach-ncp.c
-@@ -25,7 +25,6 @@
- #include <asm/mach/irq.h>
- 
- #include <mach/irqs.h>
--#include <mach/hardware.h>
- #include <mach/map.h>
- 
- #include <asm/irq.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6400.c b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-index d24899dd3883..ca033450ab8c 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6400.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-@@ -23,7 +23,6 @@
- #include <asm/mach/irq.h>
- 
- #include <mach/irqs.h>
--#include <mach/hardware.h>
- #include <mach/map.h>
- 
- #include <plat/devs.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index 104548fb192a..7b931e7a7913 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -45,7 +45,6 @@
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
- 
--#include <mach/hardware.h>
- #include <mach/irqs.h>
- #include <mach/map.h>
- 
-diff --git a/arch/arm/mach-s3c64xx/s3c6400.c b/arch/arm/mach-s3c64xx/s3c6400.c
-index 545eea716db8..81233495d548 100644
---- a/arch/arm/mach-s3c64xx/s3c6400.c
-+++ b/arch/arm/mach-s3c64xx/s3c6400.c
-@@ -26,7 +26,6 @@
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
- 
--#include <mach/hardware.h>
- #include <asm/irq.h>
- 
- #include <plat/cpu-freq.h>
-diff --git a/arch/arm/mach-s3c64xx/s3c6410.c b/arch/arm/mach-s3c64xx/s3c6410.c
-index 47e04e019624..9465a6e0f068 100644
---- a/arch/arm/mach-s3c64xx/s3c6410.c
-+++ b/arch/arm/mach-s3c64xx/s3c6410.c
-@@ -27,7 +27,6 @@
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
- 
--#include <mach/hardware.h>
- #include <asm/irq.h>
- 
- #include <plat/cpu-freq.h>
+ config MMC_SDHCI_S3C
+ 	tristate "SDHCI support on Samsung S3C SoC"
+-	depends on MMC_SDHCI && PLAT_SAMSUNG
++	depends on MMC_SDHCI && (PLAT_SAMSUNG || ARCH_EXYNOS)
+ 	help
+ 	  This selects the Secure Digital Host Controller Interface (SDHCI)
+ 	  often referrered to as the HSMMC block in some of the Samsung S3C
 -- 
 2.17.1
 
