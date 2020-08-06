@@ -2,55 +2,59 @@ Return-Path: <SRS0=KIUv=BQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C70C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA7AC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D99FC22CAF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:42:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4E8B221E2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:42:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596739340;
-	bh=jkHktbppRvONf+xJVWmfSCc2eQC8JATnpI2A2T7cDPw=;
+	s=default; t=1596739341;
+	bh=uTq56Rd/BLEMRLRt2a4oFDY8yngnlcDiHPMoyXV8GIg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hOAXZa2mkj6Jr+ccY+YDd+QqFY3py5hJz93b2gSQcziRhf6HCO3en3t1u8Hs/niQL
-	 efy1FVTn5gnm54YEqx+uuwTn6k5bAW4oQMMVTj/l4xlJXO7M1e33YcAf+Yi2UcfUYz
-	 8Dd2p8hckA9IIR0jdMoSol+nyB4mhBJvqeqrRA1w=
+	b=JmU/lWoCsfEcRHzFc40xiOjgHTWyFS6o0hefk1Mvgw4SBJBoJA17KzfVL5EQSrlVp
+	 xD+CFVT0VsC+g7W3QC00pob9J2OFq2bxLdHLNRHWbk/b5cYcRp/RQ1oc6MmQistN/6
+	 4xaIk6ye5Y6C7sCdtEGWRkc9andRZI3tJjPkQUvc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729729AbgHFSl5 (ORCPT
+        id S1729551AbgHFSl5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
         Thu, 6 Aug 2020 14:41:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50238 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:51152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728279AbgHFSXb (ORCPT
+        id S1728347AbgHFSXc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Aug 2020 14:23:31 -0400
+        Thu, 6 Aug 2020 14:23:32 -0400
 Received: from localhost.localdomain (unknown [194.230.155.117])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7680622CF7;
-        Thu,  6 Aug 2020 18:21:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 741DE22D02;
+        Thu,  6 Aug 2020 18:22:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596738116;
-        bh=jkHktbppRvONf+xJVWmfSCc2eQC8JATnpI2A2T7cDPw=;
+        s=default; t=1596738127;
+        bh=uTq56Rd/BLEMRLRt2a4oFDY8yngnlcDiHPMoyXV8GIg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=myqjfk5TqieOfDTqf9vLXeOC0RvfTRnK4oPV3KF2Mi25rXjpnyj89EYEB/pv3E6oD
-         hX+zM779/ialBivqyBVc5q9adJbuO7yXflyYpaJyjYiFP0b4Ky4Q9mBCUgof7rc4uz
-         lDAEWR85hJEmUil1JhdfzQKn8uqDhADiCt+ymd5c=
+        b=r0ViwZBXaFQbX362Dpv2JFrMYMI5J1wOw2cwslKuXc+tZj/TKJXPBQXzjxka3jFE+
+         vZ8o27tl3/wsKhN5EVICaurW9DCiSzca4wy/PnhzernJs6DaORwPzdoPTlIg/04N7T
+         uBt+HXxvWTPrOKwVHhjxAsYmwChdVeBMFhS9QdOc=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 04/41] ARM: s3c24xx: iotiming: make functions static
-Date:   Thu,  6 Aug 2020 20:20:21 +0200
-Message-Id: <20200806182059.2431-4-krzk@kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v2 06/41] ARM: s3c24xx: pass pointer to clk driver via platform data
+Date:   Thu,  6 Aug 2020 20:20:23 +0200
+Message-Id: <20200806182059.2431-6-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200806181932.2253-1-krzk@kernel.org>
 References: <20200806181932.2253-1-krzk@kernel.org>
@@ -59,42 +63,130 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+Passing pointers directly as platform data is fragile and undocumented.
+Better to create a platform data structure which explicitly documents
+what is passed to the driver.
 
-There are two functions in this file that are never called from
-anywhere else, so they should be static to allow the compiler
-to optimize it better and not pollute the global namespace.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+[krzk: Update maintainer's entry]
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/mach-s3c24xx/iotiming-s3c2410.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
-index 9f90aaf70bf3..39081c41958c 100644
---- a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
-+++ b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
-@@ -129,7 +129,7 @@ static unsigned int calc_0124(unsigned int cyc, unsigned long hclk_tns,
- 	return 0;
- }
+---
+
+Changes since v1:
+1. Update maintainer's entry.
+---
+ MAINTAINERS                               |  1 +
+ arch/arm/mach-s3c24xx/common.c            |  7 ++++++-
+ drivers/clk/samsung/clk-s3c2410-dclk.c    |  7 ++++++-
+ include/linux/platform_data/clk-s3c2410.h | 19 +++++++++++++++++++
+ 4 files changed, 32 insertions(+), 2 deletions(-)
+ create mode 100644 include/linux/platform_data/clk-s3c2410.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5675fc9bfa00..81046738cba9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15295,6 +15295,7 @@ F:	Documentation/devicetree/bindings/clock/samsung,s5p*
+ F:	drivers/clk/samsung/
+ F:	include/dt-bindings/clock/exynos*.h
+ F:	include/linux/clk/samsung.h
++F:	include/linux/platform_data/clk-s3c2410.h
  
--int calc_tacp(unsigned int cyc, unsigned long hclk, unsigned long *v)
-+static int calc_tacp(unsigned int cyc, unsigned long hclk, unsigned long *v)
+ SAMSUNG SPI DRIVERS
+ M:	Kukjin Kim <kgene@kernel.org>
+diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+index 222238e8acbb..c476a673d07f 100644
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -17,6 +17,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
++#include <linux/platform_data/clk-s3c2410.h>
+ #include <linux/platform_data/dma-s3c24xx.h>
+ #include <linux/dmaengine.h>
+ #include <linux/clk/samsung.h>
+@@ -663,13 +664,17 @@ static struct resource s3c2410_dclk_resource[] = {
+ 	[0] = DEFINE_RES_MEM(0x56000084, 0x4),
+ };
+ 
++static struct s3c2410_clk_platform_data s3c_clk_platform_data = {
++	.modify_misccr = s3c2410_modify_misccr,
++};
++
+ struct platform_device s3c2410_device_dclk = {
+ 	.name		= "s3c2410-dclk",
+ 	.id		= 0,
+ 	.num_resources	= ARRAY_SIZE(s3c2410_dclk_resource),
+ 	.resource	= s3c2410_dclk_resource,
+ 	.dev		= {
+-		.platform_data = s3c2410_modify_misccr,
++		.platform_data = &s3c_clk_platform_data,
+ 	},
+ };
+ #endif
+diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+index 3e0f23e8ec21..f5e0a6ba2d12 100644
+--- a/drivers/clk/samsung/clk-s3c2410-dclk.c
++++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+@@ -11,6 +11,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
+ #include <linux/platform_device.h>
++#include <linux/platform_data/clk-s3c2410.h>
+ #include <linux/module.h>
+ #include "clk.h"
+ 
+@@ -89,10 +90,14 @@ static struct clk_hw *s3c24xx_register_clkout(struct device *dev,
+ 		const char *name, const char **parent_names, u8 num_parents,
+ 		u8 shift, u32 mask)
  {
- 	/* Currently no support for Tacp calculations. */
- 	return 0;
-@@ -288,8 +288,8 @@ static unsigned int get_0124(unsigned long hclk_tns,
-  * Given the BANKCON setting in @bt and the current frequency settings
-  * in @cfg, update the cycle timing information.
-  */
--void s3c2410_iotiming_getbank(struct s3c_cpufreq_config *cfg,
--			      struct s3c2410_iobank_timing *bt)
-+static void s3c2410_iotiming_getbank(struct s3c_cpufreq_config *cfg,
-+				     struct s3c2410_iobank_timing *bt)
- {
- 	unsigned long bankcon = bt->bankcon;
- 	unsigned long hclk = cfg->freq.hclk_tns;
++	struct s3c2410_clk_platform_data *pdata = dev_get_platdata(dev);
+ 	struct s3c24xx_clkout *clkout;
+ 	struct clk_init_data init;
+ 	int ret;
+ 
++	if (!pdata)
++		return ERR_PTR(-EINVAL);
++
+ 	/* allocate the clkout */
+ 	clkout = kzalloc(sizeof(*clkout), GFP_KERNEL);
+ 	if (!clkout)
+@@ -107,7 +112,7 @@ static struct clk_hw *s3c24xx_register_clkout(struct device *dev,
+ 	clkout->shift = shift;
+ 	clkout->mask = mask;
+ 	clkout->hw.init = &init;
+-	clkout->modify_misccr = dev->platform_data;
++	clkout->modify_misccr = pdata->modify_misccr;
+ 
+ 	ret = clk_hw_register(dev, &clkout->hw);
+ 	if (ret)
+diff --git a/include/linux/platform_data/clk-s3c2410.h b/include/linux/platform_data/clk-s3c2410.h
+new file mode 100644
+index 000000000000..7eb1cfa5409b
+--- /dev/null
++++ b/include/linux/platform_data/clk-s3c2410.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2020 Krzysztof Kozlowski <krzk@kernel.org>
++ */
++
++#ifndef __LINUX_PLATFORM_DATA_CLK_S3C2410_H_
++#define __LINUX_PLATFORM_DATA_CLK_S3C2410_H_
++
++/**
++ * struct s3c2410_clk_platform_data - platform data for S3C2410 clock driver
++ *
++ * @modify_misccr: Function to modify the MISCCR and return the new value
++ */
++struct s3c2410_clk_platform_data {
++	unsigned int (*modify_misccr)(unsigned int clr, unsigned int chg);
++};
++
++#endif /* __LINUX_PLATFORM_DATA_CLK_S3C2410_H_ */
++
 -- 
 2.17.1
 
