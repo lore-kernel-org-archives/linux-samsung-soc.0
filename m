@@ -2,59 +2,56 @@ Return-Path: <SRS0=KIUv=BQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA7AC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B9EC433E4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:42:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4E8B221E2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:42:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF936221E2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:42:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596739341;
-	bh=uTq56Rd/BLEMRLRt2a4oFDY8yngnlcDiHPMoyXV8GIg=;
+	s=default; t=1596739342;
+	bh=apFcycz/O6DDKT5iJ4SnSfgBjc6oT0XDJlH7NQkB7HA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JmU/lWoCsfEcRHzFc40xiOjgHTWyFS6o0hefk1Mvgw4SBJBoJA17KzfVL5EQSrlVp
-	 xD+CFVT0VsC+g7W3QC00pob9J2OFq2bxLdHLNRHWbk/b5cYcRp/RQ1oc6MmQistN/6
-	 4xaIk6ye5Y6C7sCdtEGWRkc9andRZI3tJjPkQUvc=
+	b=EJTlTMMmH7p90MU4rRtckfpwMWfmXdTOt3KqOPtY0BwieSaAbQM1pSodAefLOenC5
+	 JHAyhlJU1Hpf50TfI4Gxro/4CXzMuxpN3KLjbdNCqeV8YGFDiH5ZdHXk+Nk0i9iT94
+	 UkMzReLojGl6qVO56wQtM9Kk5gMj4i4vvFZIJBWY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729551AbgHFSl5 (ORCPT
+        id S1729015AbgHFSl4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 Aug 2020 14:41:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51152 "EHLO mail.kernel.org"
+        Thu, 6 Aug 2020 14:41:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728347AbgHFSXc (ORCPT
+        id S1728368AbgHFSXc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Thu, 6 Aug 2020 14:23:32 -0400
 Received: from localhost.localdomain (unknown [194.230.155.117])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 741DE22D02;
-        Thu,  6 Aug 2020 18:22:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38FE022D07;
+        Thu,  6 Aug 2020 18:22:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596738127;
-        bh=uTq56Rd/BLEMRLRt2a4oFDY8yngnlcDiHPMoyXV8GIg=;
+        s=default; t=1596738142;
+        bh=apFcycz/O6DDKT5iJ4SnSfgBjc6oT0XDJlH7NQkB7HA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r0ViwZBXaFQbX362Dpv2JFrMYMI5J1wOw2cwslKuXc+tZj/TKJXPBQXzjxka3jFE+
-         vZ8o27tl3/wsKhN5EVICaurW9DCiSzca4wy/PnhzernJs6DaORwPzdoPTlIg/04N7T
-         uBt+HXxvWTPrOKwVHhjxAsYmwChdVeBMFhS9QdOc=
+        b=tkd5XZmKI9D0TfLj3IIwE7AoFaSbzXVHqlCJGeuNO1nUNoY7SpZQ1eFehbh1pWTnM
+         ryXCTDP13QexBPF9tKlsF4GCLvCK8Y31mKvwJJPqhjcKb5It0oGVlCEkPFcrdTL8dc
+         9OE8YCKKrmpGSgj8t4hg8AskNCoVCdrq8EhG4PiI=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 06/41] ARM: s3c24xx: pass pointer to clk driver via platform data
-Date:   Thu,  6 Aug 2020 20:20:23 +0200
-Message-Id: <20200806182059.2431-6-krzk@kernel.org>
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 11/41] ARM: samsung: remove s3c_pm_debug_init()
+Date:   Thu,  6 Aug 2020 20:20:28 +0200
+Message-Id: <20200806182059.2431-11-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200806181932.2253-1-krzk@kernel.org>
 References: <20200806181932.2253-1-krzk@kernel.org>
@@ -63,130 +60,163 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Passing pointers directly as platform data is fragile and undocumented.
-Better to create a platform data structure which explicitly documents
-what is passed to the driver.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-[krzk: Update maintainer's entry]
+On s3c24xx and s3c64xx, this is just a wrapper around
+s3c_pm_debug_init_uart(), but this function does not exist on s5pv210,
+which always uses an empty stub as CONFIG_SAMSUNG_ATAGS is normally
+not set.
+
+In a configuration that supports both s5pv210 and s3c64xx, we would
+always call the s3c64xx function, which is probably incorrect when
+running on s5pv210.
+
+Remove the function call completely on s5pv210 and skip the wrapper on
+s3c as a cleanup.
+
+As a side-effect, the s3c64xx behavior is now always the same, regardless
+of whether it is a DT-only configuration or both DT and ATAGS are
+supported for booting.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
 ---
+ arch/arm/mach-s3c24xx/include/mach/pm-core.h   |  2 ++
+ arch/arm/mach-s3c64xx/include/mach/pm-core.h   |  2 ++
+ arch/arm/mach-s5pv210/pm.c                     |  2 --
+ arch/arm/plat-samsung/include/plat/pm-common.h | 10 ----------
+ arch/arm/plat-samsung/pm-debug.c               |  7 -------
+ arch/arm/plat-samsung/pm.c                     |  5 ++---
+ 6 files changed, 6 insertions(+), 22 deletions(-)
 
-Changes since v1:
-1. Update maintainer's entry.
----
- MAINTAINERS                               |  1 +
- arch/arm/mach-s3c24xx/common.c            |  7 ++++++-
- drivers/clk/samsung/clk-s3c2410-dclk.c    |  7 ++++++-
- include/linux/platform_data/clk-s3c2410.h | 19 +++++++++++++++++++
- 4 files changed, 32 insertions(+), 2 deletions(-)
- create mode 100644 include/linux/platform_data/clk-s3c2410.h
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5675fc9bfa00..81046738cba9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15295,6 +15295,7 @@ F:	Documentation/devicetree/bindings/clock/samsung,s5p*
- F:	drivers/clk/samsung/
- F:	include/dt-bindings/clock/exynos*.h
- F:	include/linux/clk/samsung.h
-+F:	include/linux/platform_data/clk-s3c2410.h
+diff --git a/arch/arm/mach-s3c24xx/include/mach/pm-core.h b/arch/arm/mach-s3c24xx/include/mach/pm-core.h
+index 5e4ce89d0158..cd6406820cb1 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/pm-core.h
++++ b/arch/arm/mach-s3c24xx/include/mach/pm-core.h
+@@ -15,6 +15,7 @@
  
- SAMSUNG SPI DRIVERS
- M:	Kukjin Kim <kgene@kernel.org>
-diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
-index 222238e8acbb..c476a673d07f 100644
---- a/arch/arm/mach-s3c24xx/common.c
-+++ b/arch/arm/mach-s3c24xx/common.c
-@@ -17,6 +17,7 @@
- #include <linux/platform_device.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-+#include <linux/platform_data/clk-s3c2410.h>
- #include <linux/platform_data/dma-s3c24xx.h>
- #include <linux/dmaengine.h>
- #include <linux/clk/samsung.h>
-@@ -663,13 +664,17 @@ static struct resource s3c2410_dclk_resource[] = {
- 	[0] = DEFINE_RES_MEM(0x56000084, 0x4),
- };
- 
-+static struct s3c2410_clk_platform_data s3c_clk_platform_data = {
-+	.modify_misccr = s3c2410_modify_misccr,
-+};
-+
- struct platform_device s3c2410_device_dclk = {
- 	.name		= "s3c2410-dclk",
- 	.id		= 0,
- 	.num_resources	= ARRAY_SIZE(s3c2410_dclk_resource),
- 	.resource	= s3c2410_dclk_resource,
- 	.dev		= {
--		.platform_data = s3c2410_modify_misccr,
-+		.platform_data = &s3c_clk_platform_data,
- 	},
- };
- #endif
-diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-index 3e0f23e8ec21..f5e0a6ba2d12 100644
---- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-+++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-@@ -11,6 +11,7 @@
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include <linux/platform_device.h>
-+#include <linux/platform_data/clk-s3c2410.h>
- #include <linux/module.h>
- #include "clk.h"
- 
-@@ -89,10 +90,14 @@ static struct clk_hw *s3c24xx_register_clkout(struct device *dev,
- 		const char *name, const char **parent_names, u8 num_parents,
- 		u8 shift, u32 mask)
+ static inline void s3c_pm_debug_init_uart(void)
  {
-+	struct s3c2410_clk_platform_data *pdata = dev_get_platdata(dev);
- 	struct s3c24xx_clkout *clkout;
- 	struct clk_init_data init;
++#ifdef CONFIG_SAMSUNG_PM_DEBUG
+ 	unsigned long tmp = __raw_readl(S3C2410_CLKCON);
+ 
+ 	/* re-start uart clocks */
+@@ -24,6 +25,7 @@ static inline void s3c_pm_debug_init_uart(void)
+ 
+ 	__raw_writel(tmp, S3C2410_CLKCON);
+ 	udelay(10);
++#endif
+ }
+ 
+ static inline void s3c_pm_arch_prepare_irqs(void)
+diff --git a/arch/arm/mach-s3c64xx/include/mach/pm-core.h b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
+index bbf79ed28583..1c7d179a86f3 100644
+--- a/arch/arm/mach-s3c64xx/include/mach/pm-core.h
++++ b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
+@@ -20,6 +20,7 @@
+ 
+ static inline void s3c_pm_debug_init_uart(void)
+ {
++#ifdef CONFIG_SAMSUNG_PM_DEBUG
+ 	u32 tmp = __raw_readl(S3C_PCLK_GATE);
+ 
+ 	/* As a note, since the S3C64XX UARTs generally have multiple
+@@ -35,6 +36,7 @@ static inline void s3c_pm_debug_init_uart(void)
+ 
+ 	__raw_writel(tmp, S3C_PCLK_GATE);
+ 	udelay(10);
++#endif
+ }
+ 
+ static inline void s3c_pm_arch_prepare_irqs(void)
+diff --git a/arch/arm/mach-s5pv210/pm.c b/arch/arm/mach-s5pv210/pm.c
+index b336df0c57f3..725e6746f345 100644
+--- a/arch/arm/mach-s5pv210/pm.c
++++ b/arch/arm/mach-s5pv210/pm.c
+@@ -99,8 +99,6 @@ static int s5pv210_suspend_enter(suspend_state_t state)
+ 	u32 eint_wakeup_mask = s5pv210_read_eint_wakeup_mask();
  	int ret;
  
-+	if (!pdata)
-+		return ERR_PTR(-EINVAL);
-+
- 	/* allocate the clkout */
- 	clkout = kzalloc(sizeof(*clkout), GFP_KERNEL);
- 	if (!clkout)
-@@ -107,7 +112,7 @@ static struct clk_hw *s3c24xx_register_clkout(struct device *dev,
- 	clkout->shift = shift;
- 	clkout->mask = mask;
- 	clkout->hw.init = &init;
--	clkout->modify_misccr = dev->platform_data;
-+	clkout->modify_misccr = pdata->modify_misccr;
+-	s3c_pm_debug_init();
+-
+ 	S3C_PMDBG("%s: suspending the system...\n", __func__);
  
- 	ret = clk_hw_register(dev, &clkout->hw);
- 	if (ret)
-diff --git a/include/linux/platform_data/clk-s3c2410.h b/include/linux/platform_data/clk-s3c2410.h
-new file mode 100644
-index 000000000000..7eb1cfa5409b
---- /dev/null
-+++ b/include/linux/platform_data/clk-s3c2410.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2020 Krzysztof Kozlowski <krzk@kernel.org>
-+ */
-+
-+#ifndef __LINUX_PLATFORM_DATA_CLK_S3C2410_H_
-+#define __LINUX_PLATFORM_DATA_CLK_S3C2410_H_
-+
-+/**
-+ * struct s3c2410_clk_platform_data - platform data for S3C2410 clock driver
-+ *
-+ * @modify_misccr: Function to modify the MISCCR and return the new value
-+ */
-+struct s3c2410_clk_platform_data {
-+	unsigned int (*modify_misccr)(unsigned int clr, unsigned int chg);
-+};
-+
-+#endif /* __LINUX_PLATFORM_DATA_CLK_S3C2410_H_ */
-+
+ 	S3C_PMDBG("%s: wakeup masks: %08x,%08x\n", __func__,
+diff --git a/arch/arm/plat-samsung/include/plat/pm-common.h b/arch/arm/plat-samsung/include/plat/pm-common.h
+index 1268bae04234..467e7c867c46 100644
+--- a/arch/arm/plat-samsung/include/plat/pm-common.h
++++ b/arch/arm/plat-samsung/include/plat/pm-common.h
+@@ -69,22 +69,12 @@ struct pm_uart_save {
+  */
+ extern void s3c_pm_dbg(const char *msg, ...);
+ 
+-/**
+- * s3c_pm_debug_init() - suspend/resume low level debug initialization.
+- * @base: Virtual base of UART to use for suspend/resume debugging.
+- *
+- * This function needs to be called before S3C_PMDBG() can be used, to set up
+- * UART port base address and configuration.
+- */
+-extern void s3c_pm_debug_init(void);
+-
+ #define S3C_PMDBG(fmt...) s3c_pm_dbg(fmt)
+ 
+ extern void s3c_pm_save_uarts(void);
+ extern void s3c_pm_restore_uarts(void);
+ #else
+ #define S3C_PMDBG(fmt...) pr_debug(fmt)
+-#define s3c_pm_debug_init() do { } while (0)
+ 
+ static inline void s3c_pm_save_uarts(void) { }
+ static inline void s3c_pm_restore_uarts(void) { }
+diff --git a/arch/arm/plat-samsung/pm-debug.c b/arch/arm/plat-samsung/pm-debug.c
+index b76b1e9ba4ae..105b61f3304e 100644
+--- a/arch/arm/plat-samsung/pm-debug.c
++++ b/arch/arm/plat-samsung/pm-debug.c
+@@ -22,7 +22,6 @@
+ #include <plat/pm.h>
+ #include <mach/pm-core.h>
+ #else
+-static inline void s3c_pm_debug_init_uart(void) {}
+ static inline void s3c_pm_arch_update_uart(void __iomem *regs,
+ 					   struct pm_uart_save *save) {}
+ #endif
+@@ -43,12 +42,6 @@ void s3c_pm_dbg(const char *fmt, ...)
+ 	printascii(buff);
+ }
+ 
+-void s3c_pm_debug_init(void)
+-{
+-	/* restart uart clocks so we can use them to output */
+-	s3c_pm_debug_init_uart();
+-}
+-
+ static inline void __iomem *s3c_pm_uart_base(void)
+ {
+ 	unsigned long paddr;
+diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
+index d6bfd66592b0..b40ab7abe6a9 100644
+--- a/arch/arm/plat-samsung/pm.c
++++ b/arch/arm/plat-samsung/pm.c
+@@ -70,8 +70,7 @@ static int s3c_pm_enter(suspend_state_t state)
+ {
+ 	int ret;
+ 	/* ensure the debug is initialised (if enabled) */
+-
+-	s3c_pm_debug_init();
++	s3c_pm_debug_init_uart();
+ 
+ 	S3C_PMDBG("%s(%d)\n", __func__, state);
+ 
+@@ -144,7 +143,7 @@ static int s3c_pm_enter(suspend_state_t state)
+ 		s3c_pm_restored_gpios();
+ 	}
+ 
+-	s3c_pm_debug_init();
++	s3c_pm_debug_init_uart();
+ 
+ 	/* check what irq (if any) restored the system */
+ 
 -- 
 2.17.1
 
