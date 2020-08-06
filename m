@@ -2,169 +2,292 @@ Return-Path: <SRS0=KIUv=BQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F892C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 02:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2CDC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 16:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 812BB2250E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 02:38:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 423C623117
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 16:28:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Rghf8sFw"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ize4rl6b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbgHFCiD (ORCPT
+        id S1727081AbgHFQ2X (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Aug 2020 22:38:03 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:49231 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbgHFCiC (ORCPT
+        Thu, 6 Aug 2020 12:28:23 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47651 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727991AbgHFQSo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Aug 2020 22:38:02 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200806023759epoutp020ceaacf399f5bd36e7c6811067f98b11~ojVh6xrLh0726607266epoutp02Y
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Aug 2020 02:37:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200806023759epoutp020ceaacf399f5bd36e7c6811067f98b11~ojVh6xrLh0726607266epoutp02Y
+        Thu, 6 Aug 2020 12:18:44 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200806160655euoutp024f4fd92ddc4d3e77cf33f43a7d1e40f0~ouX0maE-K1584815848euoutp02X
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Aug 2020 16:06:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200806160655euoutp024f4fd92ddc4d3e77cf33f43a7d1e40f0~ouX0maE-K1584815848euoutp02X
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1596681479;
-        bh=xH7bL+kle9j+exssiWUT4mq/xAboUma94B+Nbk8vdRs=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Rghf8sFwIoUzN38il/BZ5yAlwtgovKfqDaKMOlMK2hm+lLGvbpsKL1E0wJl/qmq3N
-         45zx1VASgA36d4SbNQadsFPbmPGFGY5YlRYwD6KLd6Frb36hF2ZKHuOLh0h8ovEmw/
-         mPFoQSBQKJ0aOfOjAyq4hdbxZgN2qDlvbOo+1SGk=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200806023758epcas1p2ef5b75dad43e18c8534c9c9d55ae876d~ojVhmAI0g0497004970epcas1p2X;
-        Thu,  6 Aug 2020 02:37:58 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.153]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4BMXj024f0zMqYkk; Thu,  6 Aug
-        2020 02:37:56 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0D.3D.28581.40D6B2F5; Thu,  6 Aug 2020 11:37:56 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200806023755epcas1p35e51d1b8d855456d129e4e725b769c88~ojVeQ2Tsw3001230012epcas1p3R;
-        Thu,  6 Aug 2020 02:37:55 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200806023755epsmtrp2a5b7acfafbc065150137e01df6e93cfd~ojVeQFxem2129621296epsmtrp2P;
-        Thu,  6 Aug 2020 02:37:55 +0000 (GMT)
-X-AuditID: b6c32a38-85df1a8000006fa5-f9-5f2b6d040949
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        82.B2.08382.20D6B2F5; Thu,  6 Aug 2020 11:37:55 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200806023754epsmtip2ad3401f148b627b271c90102e341e131~ojVeC8Ojj0843708437epsmtip23;
-        Thu,  6 Aug 2020 02:37:54 +0000 (GMT)
-Subject: Re: [PATCH] clk: samsung: Mark top BPLL mux on Exynos542x as
- critical
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <f9139970-564a-16fc-57aa-4ec11c509c8b@samsung.com>
-Date:   Thu, 6 Aug 2020 11:49:54 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
-MIME-Version: 1.0
-In-Reply-To: <20200805091601.11983-1-m.szyprowski@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmri5Lrna8wY7v/BYbZ6xntTh/fgO7
-        xceee6wWn3uPMFrMOL+PyWJhUwu7xdojd9kt/l3byGLR/vQlswOnx5p5axg9Nq3qZPPo27KK
-        0ePzJrkAlqhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23
-        zBygW5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BZYFesWJucWleel6yfm5VoYG
-        BkamQIUJ2Rkf3zgXvOSpuNTazNbAeIKri5GTQ0LAROJb7xemLkYuDiGBHYwS25t2s0I4nxgl
-        pl56ywRSJSTwjVGi/W0WTMfD6T+YIYr2Mko07v4P1fGeUeLxm7tADgeHsECAxME+U5C4iEAn
-        o8T8KTfAipgFLjFKvLv9ih1kFJuAlsT+FzfYQGx+AUWJqz8eM4LYvAJ2Ete+TmUFsVkEVCTu
-        H5wDZosKhEmc3NYCVSMocXLmExYQmxOo/suJtWBzmAXEJW49mc8EYctLbH87B+xUCYGFHBKL
-        Ts9nhfjBReJC70t2CFtY4tXxLVC2lMTnd3vZIOxqiZUnj7BBNHcwSmzZfwGq2Vhi/9LJTCBv
-        MgtoSqzfpQ8RVpTY+XsuI8RiPol3X3vAISEhwCvR0SYEUaIscfnBXSYIW1JicXsn2wRGpVlI
-        3pmF5IVZSF6YhbBsASPLKkax1ILi3PTUYsMCE+TY3sQITqdaFjsY5779oHeIkYmD8RCjBAez
-        kgjvx8/q8UK8KYmVValF+fFFpTmpxYcYTYEBPJFZSjQ5H5jQ80riDU2NjI2NLUwMzUwNDZXE
-        eR/eUogXEkhPLEnNTk0tSC2C6WPi4JRqYJr3OsM69KK6bct38Qj7WXqVq8x3nM3w55d8w8/6
-        aLn7PHYdh2UfdzK8rv3ooWro3e918fG9/6qdPmVlGzcI3RfI0vt8eXrvs5NLWN8f7L5Q1ixn
-        8uPOsnn/Knqn9cmcmx89lSv4j7ikwvK/ydslEnUMWoK2arYoequlpi64vumwUsId8+bmo1W7
-        W6c+chZwjFrcqXtn0z3jl1e3fyvLLWazjwlRebhj6RHHGWU2CRLftCfwif0L+jFN6/Pu+d+f
-        693SuHH36VafWdv32mnlebYxadxc9CNap/4oa3Jt0Sf1Lb0za9yidVdc0LnySTSqhdnv5zaf
-        40IMzrPPbsi/wVTw+q15MNOiuxX6K+fcElRiKc5INNRiLipOBABEUcr/MAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJXpc5VzveYNETRouNM9azWpw/v4Hd
-        4mPPPVaLz71HGC1mnN/HZLGwqYXdYu2Ru+wW/65tZLFof/qS2YHTY828NYwem1Z1snn0bVnF
-        6PF5k1wASxSXTUpqTmZZapG+XQJXxsc3zgUveSoutTazNTCe4Opi5OSQEDCReDj9B3MXIxeH
-        kMBuRonbu/YyQiQkJaZdPAqU4ACyhSUOHy6GqHnLKLFz9mkmkBphAT+JHZPaGEESIgKdjBJ7
-        Hv1gA3GYBa4wSuyb2cwE0TKRUeLEskdgY9kEtCT2v7jBBmLzCyhKXP3xGCzOK2Ance3rVFYQ
-        m0VAReL+wTlgtqhAmMTOJY+ZIGoEJU7OfMICYnMC1X85sRZsDrOAusSfeZeYIWxxiVtP5jNB
-        2PIS29/OYZ7AKDwLSfssJC2zkLTMQtKygJFlFaNkakFxbnpusWGBYV5quV5xYm5xaV66XnJ+
-        7iZGcGxpae5g3L7qg94hRiYOxkOMEhzMSiK8Hz+rxwvxpiRWVqUW5ccXleakFh9ilOZgURLn
-        vVG4ME5IID2xJDU7NbUgtQgmy8TBKdXAFKie8bB68Uwl/jrDy4KTalsedDPEfW7vv/ii6oGo
-        hJBKE0Ps1G3NIbJ7ImvqtgVa/pQXMd1hui14w10rrUPNTt0HxAMeGTpeDdndvEomwUbq7Mly
-        xpR0r2fFSZ9KGuKLwr3nn2W+KDn5Xne6IHNpoLRbzcm9oQdlPu28/min46wT7qVKeic3/cle
-        9y3JYnf4l5uOGy+Lbnh9o6fycNPr8+prBfcpvD+0MSBpfVpptZsD27bVC9yEv+iaXyz5/WqL
-        2qH4A8zXJuydLTd7t2B68y7RrFVXFS93+B0OFd6etCyp+uKE+zofDkToqM7Yc2bT5a7g5TeW
-        79q27J/YuUl+n17/+T551c1Zqmnf2rx8epVYijMSDbWYi4oTAaRcO1scAwAA
-X-CMS-MailID: 20200806023755epcas1p35e51d1b8d855456d129e4e725b769c88
+        s=mail20170921; t=1596730015;
+        bh=65AZBJdmRj5/qT/7JuMIu80ghQZcER+MLbhq5Zbw4Vs=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=Ize4rl6bBdi6nnrQmHgj1ch4ZNqATzNVZmFQd37LsoFcOHFRGuoLJ4pVPrWCB++Lg
+         fKESkmsjpKUKMN8k9uOn4PkpwTqUZyfF2Y6LCIFCHOU4cFHqQeqrmAAOjV7XxoN/Wh
+         IqqFSun/klDWNOFWtGyRwK3TuJsTPSfoUbwKpbD4=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200806160653eucas1p2e54542d3d003b3475a7620bc2065165a~ouXzlzrP02782927829eucas1p21;
+        Thu,  6 Aug 2020 16:06:53 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id D3.78.06318.D9A2C2F5; Thu,  6
+        Aug 2020 17:06:53 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200806160653eucas1p2b7fd860f5d89589cf9df0ad0f8d3981f~ouXzF8yay2588125881eucas1p2E;
+        Thu,  6 Aug 2020 16:06:53 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200806160653eusmtrp162b907b4b677ef5ea07e678a506cc89c~ouXzFPsA31409414094eusmtrp1U;
+        Thu,  6 Aug 2020 16:06:53 +0000 (GMT)
+X-AuditID: cbfec7f5-38bff700000018ae-ba-5f2c2a9d3f9a
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 57.BC.06017.D9A2C2F5; Thu,  6
+        Aug 2020 17:06:53 +0100 (BST)
+Received: from AMDC3061.digital.local (unknown [106.120.51.75]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200806160652eusmtip168f0faf32f75261a82f1d4a1ef7b97cb~ouXyjqvse1679816798eusmtip1C;
+        Thu,  6 Aug 2020 16:06:52 +0000 (GMT)
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     linux-clk@vger.kernel.org
+Cc:     tomasz.figa@gmail.com, cw00.choi@samsung.com, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
+        m.szyprowski@samsung.com,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] clk: samsung: Prevent potential endless loop in the PLL
+ set_rate ops
+Date:   Thu,  6 Aug 2020 18:06:46 +0200
+Message-Id: <20200806160646.1997-1-s.nawrocki@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHIsWRmVeSWpSXmKPExsWy7djPc7pztXTiDRZtMbXYOGM9q8X1L89Z
+        LT723GO1uLxrDpvFjPP7mCzWHrnLbnHxlKvF4TftrBb/rm1ksVi16w+jA5fH+xut7B47Z91l
+        99i0qpPNo2/LKkaPz5vkAlijuGxSUnMyy1KL9O0SuDJOt61jKbitW/F971uWBsa5ql2MnBwS
+        AiYSc74tYu9i5OIQEljBKLH0+wMmCOcLo8SzFWvYIJzPjBKde/cwwrQ86XwFVbWcUeLa9Jns
+        cC3nV3axgFSxCRhK9B7tA+sQEZCVuHXsJ9goZoFmJonP/U1gRcIC4RLfZ/1nA7FZBFQlps7Y
+        ww5i8wpYSVzteMEEsU5eYvWGA8wgzRIC79kkTv+7DORwADkuEt/ORUDUCEu8Or6FHcKWkTg9
+        uYcFor6ZUaJn9212CGcCo8T94wugnrCWuHPuFxvIIGYBTYn1u/Qhwo4Slx7NhZrPJ3HjrSBI
+        mBnInLRtOlSYV6KjTQiiWkXi96rpUGdKSXQ/+c8CYXtIzNp5E2yRkECsxO7rl5kmMMrNQti1
+        gJFxFaN4amlxbnpqsXFearlecWJucWleul5yfu4mRmCqOP3v+NcdjPv+JB1iFOBgVOLhrfij
+        HS/EmlhWXJl7iFGCg1lJhNfp7Ok4Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzGi17GCgmkJ5ak
+        ZqemFqQWwWSZODilGhhD/u76P4FrWbpJmG7/jfvRDSuuxUWdMXjGuHAiR2Gr8WvV0DS9eWKx
+        TFJei562O1XtCr11NrFM7P6xvHiJRmWHfB+H077TmpYxTGhI39C1ZGNzcItUl8XN5U8PHU4q
+        dM86PPlqz3Qt+SPL61pzE6MlVsbaihZ7TVtX+TNnoce91N7+Wzck5ZRYijMSDbWYi4oTAXDZ
+        JOgRAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMLMWRmVeSWpSXmKPExsVy+t/xu7pztXTiDVrbRC02zljPanH9y3NW
+        i48991gtLu+aw2Yx4/w+Jou1R+6yW1w85Wpx+E07q8W/axtZLFbt+sPowOXx/kYru8fOWXfZ
+        PTat6mTz6NuyitHj8ya5ANYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9
+        O5uU1JzMstQifbsEvYzTbetYCm7rVnzf+5algXGuahcjJ4eEgInEk85XTF2MXBxCAksZJZo/
+        7GTpYuQASkhJzG9RgqgRlvhzrYsNouYTo8SVww+YQBJsAoYSvUf7GEFsEQFZiVvHfoIVMQv0
+        Mkm0f9/CApIQFgiVaJj2D6yBRUBVYuqMPewgNq+AlcTVjhdMEBvkJVZvOMA8gZFnASPDKkaR
+        1NLi3PTcYiO94sTc4tK8dL3k/NxNjMAA3Xbs55YdjF3vgg8xCnAwKvHwVvzRjhdiTSwrrsw9
+        xCjBwawkwut09nScEG9KYmVValF+fFFpTmrxIUZToOUTmaVEk/OB0ZNXEm9oamhuYWlobmxu
+        bGahJM7bIXAwRkggPbEkNTs1tSC1CKaPiYNTqoFR75UP6x7uX6sUtl8+eTNeSvB0z02h8C/p
+        8QdLGa5U3VFc/jri2gOG05c5pvutS/8mLMf3OfDzrKNSMw8VTcwvymQ+6rt30vqHXCu/R1dY
+        x69I/h+cESmbsUZ20cXCpd8DpmateOrimyN5u/7M3jSztfxtR1xbVyudX73m+qmzTc17goU4
+        L6vXKbEUZyQaajEXFScCAPO11bxmAgAA
+X-CMS-MailID: 20200806160653eucas1p2b7fd860f5d89589cf9df0ad0f8d3981f
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200805091612eucas1p28c955b21e57898de60d3ed50c95b9d18
-References: <CGME20200805091612eucas1p28c955b21e57898de60d3ed50c95b9d18@eucas1p2.samsung.com>
-        <20200805091601.11983-1-m.szyprowski@samsung.com>
+X-RootMTR: 20200806160653eucas1p2b7fd860f5d89589cf9df0ad0f8d3981f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200806160653eucas1p2b7fd860f5d89589cf9df0ad0f8d3981f
+References: <CGME20200806160653eucas1p2b7fd860f5d89589cf9df0ad0f8d3981f@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+In the .set_rate callback for some PLLs there is a loop polling state
+of the PLL lock bit and it may become an endless loop when something
+goes wrong with the PLL. For some PLLs there is already (duplicated)
+code for polling with a timeout. This patch refactors that code a bit
+and moves it to a common helper function which is then used
+in .set_rate callbacks for all the PLLs.
 
-On 8/5/20 6:16 PM, Marek Szyprowski wrote:
-> BPLL clock must not be disabled because it is needed for proper DRAM
-> operation. This is normally handled by respective memory devfreq driver,
-> but when that driver is not yet probed or its probe has been deferred the
-> clock might got disabled what causes board hang. Fix this by marking it
-> as critical.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index fea33399a632..5ef78928938a 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -734,7 +734,7 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
->  	MUX_F(CLK_MOUT_MCLK_CDREX, "mout_mclk_cdrex", mout_mclk_cdrex_p,
->  			SRC_CDREX, 4, 1, CLK_SET_RATE_PARENT, 0),
->  	MUX_F(CLK_MOUT_BPLL, "mout_bpll", mout_bpll_p, SRC_CDREX, 0, 1,
-> -			CLK_SET_RATE_PARENT, 0),
-> +			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
->  
->  	/* MAU Block */
->  	MUX(CLK_MOUT_MAUDIO0, "mout_maudio0", mout_maudio0_p, SRC_MAU, 28, 3),
-> 
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-pll.c | 94 +++++++++++++----------------------
+ 1 file changed, 35 insertions(+), 59 deletions(-)
 
-Thanks for your fix. Looks good to me.
-Just I have one comment. I looks like the similar case of patch[1] related to G3D clock.
-[1] commit 67f96ff7c8f0 ("clk: samsung: exynos5420: Keep top G3D clocks enabled")
-
-How about fixing this issue with same style[1]?
-Or are there any reason about should you do it with CLK_IS_CRITICAL?
-
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index ac70ad785d8e..0929644be99a 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -63,6 +63,27 @@ static long samsung_pll_round_rate(struct clk_hw *hw,
+ 	return rate_table[i - 1].rate;
+ }
+ 
++static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
++				 unsigned int reg_mask)
++{
++	ktime_t timeout;
++
++	/* Wait until the PLL is in steady locked state */
++	timeout = ktime_add_ms(ktime_get(), PLL_TIMEOUT_MS);
++
++	while (!(readl_relaxed(pll->con_reg) & reg_mask)) {
++		if (ktime_after(ktime_get(), timeout)) {
++			pr_err("%s: Could not lock PLL %s\n",
++				__func__, clk_hw_get_name(&pll->hw));
++			return -EFAULT;
++		}
++
++		cpu_relax();
++	}
++
++	return 0;
++}
++
+ static int samsung_pll3xxx_enable(struct clk_hw *hw)
+ {
+ 	struct samsung_clk_pll *pll = to_clk_pll(hw);
+@@ -241,12 +262,9 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	writel_relaxed(tmp, pll->con_reg);
+ 
+ 	/* Wait until the PLL is locked if it is enabled. */
+-	if (tmp & BIT(pll->enable_offs)) {
+-		do {
+-			cpu_relax();
+-			tmp = readl_relaxed(pll->con_reg);
+-		} while (!(tmp & BIT(pll->lock_offs)));
+-	}
++	if (tmp & BIT(pll->enable_offs))
++		return samsung_pll_lock_wait(pll, BIT(pll->lock_offs));
++
+ 	return 0;
+ }
+ 
+@@ -318,7 +336,7 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 					unsigned long parent_rate)
+ {
+ 	struct samsung_clk_pll *pll = to_clk_pll(hw);
+-	u32 tmp, pll_con0, pll_con1;
++	u32 pll_con0, pll_con1;
+ 	const struct samsung_pll_rate_table *rate;
+ 
+ 	rate = samsung_get_pll_settings(pll, drate);
+@@ -356,13 +374,8 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	pll_con1 |= rate->kdiv << PLL36XX_KDIV_SHIFT;
+ 	writel_relaxed(pll_con1, pll->con_reg + 4);
+ 
+-	/* wait_lock_time */
+-	if (pll_con0 & BIT(pll->enable_offs)) {
+-		do {
+-			cpu_relax();
+-			tmp = readl_relaxed(pll->con_reg);
+-		} while (!(tmp & BIT(pll->lock_offs)));
+-	}
++	if (pll_con0 & BIT(pll->enable_offs))
++		return samsung_pll_lock_wait(pll, BIT(pll->lock_offs));
+ 
+ 	return 0;
+ }
+@@ -437,7 +450,6 @@ static int samsung_pll45xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	struct samsung_clk_pll *pll = to_clk_pll(hw);
+ 	const struct samsung_pll_rate_table *rate;
+ 	u32 con0, con1;
+-	ktime_t start;
+ 
+ 	/* Get required rate settings from table */
+ 	rate = samsung_get_pll_settings(pll, drate);
+@@ -489,20 +501,7 @@ static int samsung_pll45xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	writel_relaxed(con0, pll->con_reg);
+ 
+ 	/* Wait for locking. */
+-	start = ktime_get();
+-	while (!(readl_relaxed(pll->con_reg) & PLL45XX_LOCKED)) {
+-		ktime_t delta = ktime_sub(ktime_get(), start);
+-
+-		if (ktime_to_ms(delta) > PLL_TIMEOUT_MS) {
+-			pr_err("%s: could not lock PLL %s\n",
+-					__func__, clk_hw_get_name(hw));
+-			return -EFAULT;
+-		}
+-
+-		cpu_relax();
+-	}
+-
+-	return 0;
++	return samsung_pll_lock_wait(pll, PLL45XX_LOCKED);
+ }
+ 
+ static const struct clk_ops samsung_pll45xx_clk_ops = {
+@@ -588,7 +587,6 @@ static int samsung_pll46xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	struct samsung_clk_pll *pll = to_clk_pll(hw);
+ 	const struct samsung_pll_rate_table *rate;
+ 	u32 con0, con1, lock;
+-	ktime_t start;
+ 
+ 	/* Get required rate settings from table */
+ 	rate = samsung_get_pll_settings(pll, drate);
+@@ -648,20 +646,7 @@ static int samsung_pll46xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	writel_relaxed(con1, pll->con_reg + 0x4);
+ 
+ 	/* Wait for locking. */
+-	start = ktime_get();
+-	while (!(readl_relaxed(pll->con_reg) & PLL46XX_LOCKED)) {
+-		ktime_t delta = ktime_sub(ktime_get(), start);
+-
+-		if (ktime_to_ms(delta) > PLL_TIMEOUT_MS) {
+-			pr_err("%s: could not lock PLL %s\n",
+-					__func__, clk_hw_get_name(hw));
+-			return -EFAULT;
+-		}
+-
+-		cpu_relax();
+-	}
+-
+-	return 0;
++	return samsung_pll_lock_wait(pll, PLL46XX_LOCKED);
+ }
+ 
+ static const struct clk_ops samsung_pll46xx_clk_ops = {
+@@ -1035,14 +1020,9 @@ static int samsung_pll2550xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 			(rate->sdiv << PLL2550XX_S_SHIFT);
+ 	writel_relaxed(tmp, pll->con_reg);
+ 
+-	/* wait_lock_time */
+-	do {
+-		cpu_relax();
+-		tmp = readl_relaxed(pll->con_reg);
+-	} while (!(tmp & (PLL2550XX_LOCK_STAT_MASK
+-			<< PLL2550XX_LOCK_STAT_SHIFT)));
+-
+-	return 0;
++	/* Wait for locking. */
++	return samsung_pll_lock_wait(pll,
++			PLL2550XX_LOCK_STAT_MASK << PLL2550XX_LOCK_STAT_SHIFT);
+ }
+ 
+ static const struct clk_ops samsung_pll2550xx_clk_ops = {
+@@ -1132,13 +1112,9 @@ static int samsung_pll2650x_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	con1 |= ((rate->kdiv & PLL2650X_K_MASK) << PLL2650X_K_SHIFT);
+ 	writel_relaxed(con1, pll->con_reg + 4);
+ 
+-	do {
+-		cpu_relax();
+-		con0 = readl_relaxed(pll->con_reg);
+-	} while (!(con0 & (PLL2650X_LOCK_STAT_MASK
+-			<< PLL2650X_LOCK_STAT_SHIFT)));
+-
+-	return 0;
++	/* Wait for locking. */
++	return samsung_pll_lock_wait(pll,
++			PLL2650X_LOCK_STAT_MASK << PLL2650X_LOCK_STAT_SHIFT);
+ }
+ 
+ static const struct clk_ops samsung_pll2650x_clk_ops = {
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.17.1
+
