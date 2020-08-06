@@ -1,77 +1,170 @@
-Return-Path: <SRS0=l5vg=BP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=KIUv=BQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3681C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Aug 2020 21:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F892C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 02:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B2CD206F6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Aug 2020 21:57:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 812BB2250E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 02:38:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Rghf8sFw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbgHEV5e (ORCPT
+        id S1726005AbgHFCiD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Aug 2020 17:57:34 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:53634 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbgHEV5d (ORCPT
+        Wed, 5 Aug 2020 22:38:03 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:49231 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbgHFCiC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Aug 2020 17:57:33 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 7FB6F1C0BD2; Wed,  5 Aug 2020 23:57:30 +0200 (CEST)
-Date:   Wed, 5 Aug 2020 23:57:30 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: s3c24xx: Remove unused machine header include
-Message-ID: <20200805215730.h6434lief5drnnu2@duo.ucw.cz>
-References: <20200803091936.24984-1-krzk@kernel.org>
+        Wed, 5 Aug 2020 22:38:02 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200806023759epoutp020ceaacf399f5bd36e7c6811067f98b11~ojVh6xrLh0726607266epoutp02Y
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Aug 2020 02:37:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200806023759epoutp020ceaacf399f5bd36e7c6811067f98b11~ojVh6xrLh0726607266epoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1596681479;
+        bh=xH7bL+kle9j+exssiWUT4mq/xAboUma94B+Nbk8vdRs=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Rghf8sFwIoUzN38il/BZ5yAlwtgovKfqDaKMOlMK2hm+lLGvbpsKL1E0wJl/qmq3N
+         45zx1VASgA36d4SbNQadsFPbmPGFGY5YlRYwD6KLd6Frb36hF2ZKHuOLh0h8ovEmw/
+         mPFoQSBQKJ0aOfOjAyq4hdbxZgN2qDlvbOo+1SGk=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200806023758epcas1p2ef5b75dad43e18c8534c9c9d55ae876d~ojVhmAI0g0497004970epcas1p2X;
+        Thu,  6 Aug 2020 02:37:58 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4BMXj024f0zMqYkk; Thu,  6 Aug
+        2020 02:37:56 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0D.3D.28581.40D6B2F5; Thu,  6 Aug 2020 11:37:56 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200806023755epcas1p35e51d1b8d855456d129e4e725b769c88~ojVeQ2Tsw3001230012epcas1p3R;
+        Thu,  6 Aug 2020 02:37:55 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200806023755epsmtrp2a5b7acfafbc065150137e01df6e93cfd~ojVeQFxem2129621296epsmtrp2P;
+        Thu,  6 Aug 2020 02:37:55 +0000 (GMT)
+X-AuditID: b6c32a38-85df1a8000006fa5-f9-5f2b6d040949
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        82.B2.08382.20D6B2F5; Thu,  6 Aug 2020 11:37:55 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200806023754epsmtip2ad3401f148b627b271c90102e341e131~ojVeC8Ojj0843708437epsmtip23;
+        Thu,  6 Aug 2020 02:37:54 +0000 (GMT)
+Subject: Re: [PATCH] clk: samsung: Mark top BPLL mux on Exynos542x as
+ critical
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <f9139970-564a-16fc-57aa-4ec11c509c8b@samsung.com>
+Date:   Thu, 6 Aug 2020 11:49:54 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ljilayodnbc3yjys"
-Content-Disposition: inline
-In-Reply-To: <20200803091936.24984-1-krzk@kernel.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20200805091601.11983-1-m.szyprowski@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmri5Lrna8wY7v/BYbZ6xntTh/fgO7
+        xceee6wWn3uPMFrMOL+PyWJhUwu7xdojd9kt/l3byGLR/vQlswOnx5p5axg9Nq3qZPPo27KK
+        0ePzJrkAlqhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23
+        zBygW5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BZYFesWJucWleel6yfm5VoYG
+        BkamQIUJ2Rkf3zgXvOSpuNTazNbAeIKri5GTQ0LAROJb7xemLkYuDiGBHYwS25t2s0I4nxgl
+        pl56ywRSJSTwjVGi/W0WTMfD6T+YIYr2Mko07v4P1fGeUeLxm7tADgeHsECAxME+U5C4iEAn
+        o8T8KTfAipgFLjFKvLv9ih1kFJuAlsT+FzfYQGx+AUWJqz8eM4LYvAJ2Ete+TmUFsVkEVCTu
+        H5wDZosKhEmc3NYCVSMocXLmExYQmxOo/suJtWBzmAXEJW49mc8EYctLbH87B+xUCYGFHBKL
+        Ts9nhfjBReJC70t2CFtY4tXxLVC2lMTnd3vZIOxqiZUnj7BBNHcwSmzZfwGq2Vhi/9LJTCBv
+        MgtoSqzfpQ8RVpTY+XsuI8RiPol3X3vAISEhwCvR0SYEUaIscfnBXSYIW1JicXsn2wRGpVlI
+        3pmF5IVZSF6YhbBsASPLKkax1ILi3PTUYsMCE+TY3sQITqdaFjsY5779oHeIkYmD8RCjBAez
+        kgjvx8/q8UK8KYmVValF+fFFpTmpxYcYTYEBPJFZSjQ5H5jQ80riDU2NjI2NLUwMzUwNDZXE
+        eR/eUogXEkhPLEnNTk0tSC2C6WPi4JRqYJr3OsM69KK6bct38Qj7WXqVq8x3nM3w55d8w8/6
+        aLn7PHYdh2UfdzK8rv3ooWro3e918fG9/6qdPmVlGzcI3RfI0vt8eXrvs5NLWN8f7L5Q1ixn
+        8uPOsnn/Knqn9cmcmx89lSv4j7ikwvK/ydslEnUMWoK2arYoequlpi64vumwUsId8+bmo1W7
+        W6c+chZwjFrcqXtn0z3jl1e3fyvLLWazjwlRebhj6RHHGWU2CRLftCfwif0L+jFN6/Pu+d+f
+        693SuHH36VafWdv32mnlebYxadxc9CNap/4oa3Jt0Sf1Lb0za9yidVdc0LnySTSqhdnv5zaf
+        40IMzrPPbsi/wVTw+q15MNOiuxX6K+fcElRiKc5INNRiLipOBABEUcr/MAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJXpc5VzveYNETRouNM9azWpw/v4Hd
+        4mPPPVaLz71HGC1mnN/HZLGwqYXdYu2Ru+wW/65tZLFof/qS2YHTY828NYwem1Z1snn0bVnF
+        6PF5k1wASxSXTUpqTmZZapG+XQJXxsc3zgUveSoutTazNTCe4Opi5OSQEDCReDj9B3MXIxeH
+        kMBuRonbu/YyQiQkJaZdPAqU4ACyhSUOHy6GqHnLKLFz9mkmkBphAT+JHZPaGEESIgKdjBJ7
+        Hv1gA3GYBa4wSuyb2cwE0TKRUeLEskdgY9kEtCT2v7jBBmLzCyhKXP3xGCzOK2Ance3rVFYQ
+        m0VAReL+wTlgtqhAmMTOJY+ZIGoEJU7OfMICYnMC1X85sRZsDrOAusSfeZeYIWxxiVtP5jNB
+        2PIS29/OYZ7AKDwLSfssJC2zkLTMQtKygJFlFaNkakFxbnpusWGBYV5quV5xYm5xaV66XnJ+
+        7iZGcGxpae5g3L7qg94hRiYOxkOMEhzMSiK8Hz+rxwvxpiRWVqUW5ccXleakFh9ilOZgURLn
+        vVG4ME5IID2xJDU7NbUgtQgmy8TBKdXAFKie8bB68Uwl/jrDy4KTalsedDPEfW7vv/ii6oGo
+        hJBKE0Ps1G3NIbJ7ImvqtgVa/pQXMd1hui14w10rrUPNTt0HxAMeGTpeDdndvEomwUbq7Mly
+        xpR0r2fFSZ9KGuKLwr3nn2W+KDn5Xne6IHNpoLRbzcm9oQdlPu28/min46wT7qVKeic3/cle
+        9y3JYnf4l5uOGy+Lbnh9o6fycNPr8+prBfcpvD+0MSBpfVpptZsD27bVC9yEv+iaXyz5/WqL
+        2qH4A8zXJuydLTd7t2B68y7RrFVXFS93+B0OFd6etCyp+uKE+zofDkToqM7Yc2bT5a7g5TeW
+        79q27J/YuUl+n17/+T551c1Zqmnf2rx8epVYijMSDbWYi4oTAaRcO1scAwAA
+X-CMS-MailID: 20200806023755epcas1p35e51d1b8d855456d129e4e725b769c88
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200805091612eucas1p28c955b21e57898de60d3ed50c95b9d18
+References: <CGME20200805091612eucas1p28c955b21e57898de60d3ed50c95b9d18@eucas1p2.samsung.com>
+        <20200805091601.11983-1-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Marek,
 
---ljilayodnbc3yjys
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 8/5/20 6:16 PM, Marek Szyprowski wrote:
+> BPLL clock must not be disabled because it is needed for proper DRAM
+> operation. This is normally handled by respective memory devfreq driver,
+> but when that driver is not yet probed or its probe has been deferred the
+> clock might got disabled what causes board hang. Fix this by marking it
+> as critical.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index fea33399a632..5ef78928938a 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -734,7 +734,7 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+>  	MUX_F(CLK_MOUT_MCLK_CDREX, "mout_mclk_cdrex", mout_mclk_cdrex_p,
+>  			SRC_CDREX, 4, 1, CLK_SET_RATE_PARENT, 0),
+>  	MUX_F(CLK_MOUT_BPLL, "mout_bpll", mout_bpll_p, SRC_CDREX, 0, 1,
+> -			CLK_SET_RATE_PARENT, 0),
+> +			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>  
+>  	/* MAU Block */
+>  	MUX(CLK_MOUT_MAUDIO0, "mout_maudio0", mout_maudio0_p, SRC_MAU, 28, 3),
+> 
 
-On Mon 2020-08-03 11:19:36, Krzysztof Kozlowski wrote:
-> The driver includes machine header for GPIO registers but actually does
-> not use them.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Thanks for your fix. Looks good to me.
+Just I have one comment. I looks like the similar case of patch[1] related to G3D clock.
+[1] commit 67f96ff7c8f0 ("clk: samsung: exynos5420: Keep top G3D clocks enabled")
 
-Thanks, applied.
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+How about fixing this issue with same style[1]?
+Or are there any reason about should you do it with CLK_IS_CRITICAL?
 
---ljilayodnbc3yjys
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXysrSgAKCRAw5/Bqldv6
-8u62AJ4ir1EErxG9h1Qow2wCQ9gAFcX1JQCeMUBE9VPpVUUiBlKwiaTd1OB961k=
-=x79/
------END PGP SIGNATURE-----
-
---ljilayodnbc3yjys--
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
