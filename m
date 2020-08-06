@@ -7,116 +7,116 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4181C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EF1C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02CCC22CAF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:38:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1404722C9F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:38:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596739111;
-	bh=0MX3E7Ne/rPTcgcCD1XqjJDdOiBT4MRY8ces7kKdkI0=;
+	s=default; t=1596739116;
+	bh=jrfTfMqqNK4Bu08uryiHCRmAlSmR+sRWLonChf0RUVQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=A7lQ23ZFow6qwqaSICMTyId+/NqHR+72J5z6Dpah+qDlb++viPVneXJw+qe7NZHhB
-	 ApX4OULwI9JScsG58XsvVFU1KO8lmK7zlRdq2J7rXg2NJ0LRzibRxFZ8q0pnEkmv5r
-	 0EU74I5NGg6LIjnES1tOukERPExaT6lS6wZvauH4=
+	b=fdsjY7FwFWpJ4q01Qn0+mVC6tbmEng/au+A849TCcQdhcrP14yCDsaFfRJPaWIVSa
+	 nDxQKrzvJ1zEoq4GG/LdMlolE7sQnbDo39xE3IGBlDKdL6EEwg7FNzdL9/aEjBfHTX
+	 n2B+CcUBrlsyZ9qGzKnVdXJJ27HkRaUjNejuLYLM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729268AbgHFSiW (ORCPT
+        id S1728330AbgHFSie (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 Aug 2020 14:38:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59514 "EHLO
+        Thu, 6 Aug 2020 14:38:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbgHFSem (ORCPT
+        with ESMTP id S1729015AbgHFSeV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Aug 2020 14:34:42 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DEDFC0617A4
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Aug 2020 11:34:23 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id f7so44964951wrw.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Aug 2020 11:34:23 -0700 (PDT)
+        Thu, 6 Aug 2020 14:34:21 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13A53C06138D
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Aug 2020 11:34:17 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id a5so34969126wrm.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Aug 2020 11:34:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:resent-from:resent-date:resent-message-id
          :resent-to:dkim-signature:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=V3y99kd2tPx0hPfBwbQWWtWVC6kReg6jovRfFDOxi40=;
-        b=ultH95NJoSvz5kpjFGtB572RCxTosK97m5bXic8Digmmga0iwF80lYFMuGK0ED2sPG
-         bapYdyhOUSDlP3ZL7f/xQBPYPfXeB5Q6K5ePJfHHXM0sCfFTXlm69CJc+FHk7+OGuWSG
-         vU/+lLFnkb47te2gsZhhOvlloJXtnCz9zA0YdY/jXXrSQOL42EIYQuOq+PPYpq/daYb1
-         7hCb3nYf0zHtMdHUpIp4K3ztkeuzt2s+vlU56to2O1topoZ6DL5nMi8MK9HI3cNORc6m
-         7C1L1dQDoEWRBtM5/IH9CD9KVV3U/zW9joRoMW6VshL9j5x3qK2TaZEZ9OGK6fm2UEu5
-         SeTA==
-X-Gm-Message-State: AOAM530GGY+/jhMeYtxl8vfZgN5ur+AXTp399bar5D5UUBC1iICwopj0
-        IWMGAFoie9e69PcJJpbV4VsY4BLLPG8=
-X-Google-Smtp-Source: ABdhPJzE8gNyJqOBikEwSNZyOr2vNA+OvrZ9Kq4oo3UhnnzH+4wBYeKZFQBo1gDCmsKJdXUc8nV7MQ==
-X-Received: by 2002:a05:6000:142:: with SMTP id r2mr9306418wrx.103.1596738861536;
-        Thu, 06 Aug 2020 11:34:21 -0700 (PDT)
+        bh=t89of2ib66EvK/qIxdX9Z8OwhfoxuMvCv4hhykxxPHM=;
+        b=gcvxvJjkkxGAdHAYUsTX1hQri9je/4Mm2RziHErCwJI5i8tLXE7XT71M+Pq/ePMcqZ
+         tWbhbiZb6GR6pV/IT7p4+V2rklJz2w8igX7GVlOlX++zWnSnuFrqMRKDeW4gonzjC49e
+         l1BFwLI5vwDfYQLHEYpzd2OhOpKCY30UmU8IgZwfEpgoTFeSnRf5HRS9ix4E6EzkrXRr
+         zakLy5p0z6F+cMeWIRs63kXLrq4gk1tpoygv8I9alJhFBVeDr3x1bwFmYOyXw7HMel3B
+         i144DPe4A8+wyNOmuU4zETwQIgRb17MUiKpb1majJpUoe1JOHdtZQq+jgKMdohGJLvN/
+         e4Cg==
+X-Gm-Message-State: AOAM533JfeIhZ8vu8Ou3ajimeWrWQnfItdB2RfDK3upbbd1Zl9Vtl3Ld
+        2KThA6S8V5Jg1DrEPlBrsnKctXTeTZ4=
+X-Google-Smtp-Source: ABdhPJywvU7nMHbCgWXgIANrAqbpJurGt0N4MC5u3lPwmbY1nvNzzWRx2lXtPHAEO9/gZdPdgLPbCw==
+X-Received: by 2002:adf:b30c:: with SMTP id j12mr8423163wrd.420.1596738855387;
+        Thu, 06 Aug 2020 11:34:15 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.117])
-        by smtp.googlemail.com with ESMTPSA id f9sm7171649wrm.62.2020.08.06.11.34.21
+        by smtp.googlemail.com with ESMTPSA id l18sm7584985wrm.52.2020.08.06.11.34.15
         for <linux-samsung-soc@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Aug 2020 11:34:21 -0700 (PDT)
-Received: by 2002:ab3:1105:0:0:0:0:0 with SMTP id j5csp1541961lta;
-        Thu, 6 Aug 2020 11:23:59 -0700 (PDT)
-X-Received: by 2002:a63:4281:: with SMTP id p123mr7981709pga.94.1596738239299;
-        Thu, 06 Aug 2020 11:23:59 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1596738239; cv=none;
+        Thu, 06 Aug 2020 11:34:15 -0700 (PDT)
+Received: by 2002:ab3:1105:0:0:0:0:0 with SMTP id j5csp1542204lta;
+        Thu, 6 Aug 2020 11:24:19 -0700 (PDT)
+X-Received: by 2002:a63:4b0c:: with SMTP id y12mr7740543pga.199.1596738259446;
+        Thu, 06 Aug 2020 11:24:19 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1596738259; cv=none;
         d=google.com; s=arc-20160816;
-        b=qsagtVQ5XEjDzhvtGIO+U10tQTkfT3XLlVVZisasD+Xl1r512pIux5BIbnxR7l+EfT
-         51mfwzD/TvDAT7KdJxF9rgrFwuVp3WATOsIiZ/LPr1Px6Vxw5VueiiF/C/fTULrti9cU
-         YjTnWVh+I8zgNP7bA7jE2Yc/wHjUA5/G+DpdwXUwLaTVK1usHIJRlM7GE4tTj7T0MJwk
-         yTOgl7qH33OH7Ppv/F+wsiIlfg65wOkPNb/x06ulgp9oOUI82ET+zhalBPCPYy5hhsdT
-         QINQ1O23Iug5EwQWsI2jTS/j9ibhbpyQsvbexaQUGIKl5SexhYJDsIqQg/nOtLojajpI
-         xG6Q==
+        b=d9upnIDC6bX+mGIDBKcIHVW6Th9dZD0kVuN+SuEE0x8zRO1vM89iZOCTfxH1oa1O60
+         hHeVKvfpqEpit39ujQ/9uwwCCqTRW1I92TznDZaR/T58DfIP3yc2eQhBqX3MXnnMme5U
+         kBvM9VDAsQpbfBLQa9aPW6UWWacoG7G0SzX+czHRLYa+zed95sSbtDB400bhFmmaZX7+
+         sMzYn4ctI2yhFYaMgU6GFTgkDvROWuyddSF4bTakGPsDh8qxm3WjPq4yOBH3CEZ3PnkC
+         49BeHYyRg32PMhQUZOtHU/0TwDN3TAhWT0Yb2Y5ii3jzn9v45CcPQGx6ML0NtQgwul/G
+         dc8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:delivered-to;
-        bh=V3y99kd2tPx0hPfBwbQWWtWVC6kReg6jovRfFDOxi40=;
-        b=UllXfSZZoSuL7oElgcqFBsQk99G+wMiwuNpq7EW5qc7rWpvNDtWohkwRzjecphygsP
-         9lRkcEDNDsIQwTKBv+ws4zLxKP851iTSDIa6N+iwJFYS/FcIqXNSpfVwQ+84Rn9rmFad
-         scBM8JwwGjdYvT8tnm3C8wv8AyF17H1K0a/9QBPmn0hh7poYcnCk65fOmgeANMWTq9Ku
-         7zMDw7PEAfK17rLOBWRJekbFeNA5rA50Ok+oIlBeksVjSuhZORbce6jJPeRXpcQZNIJD
-         NqYLZO3zDtAkSld1PKoy5W9HvBfJ/M37z+/diJRMe4eYKSLDSkcqp/IshPqNgeHP6NqW
-         Ck9w==
+        bh=t89of2ib66EvK/qIxdX9Z8OwhfoxuMvCv4hhykxxPHM=;
+        b=I2lY1upvTBYSFwLLh0WQsaZSHGx4JBST3svBM+tu3T1rvgwFZ2URpIi8SGzya8dkYN
+         qplaR71g/vLaCMhlj3Rz6XBXzhiCUGLEBp91DhkBUWhQazwPbU0GgWrwoF6VNVHOvgII
+         zSnJxLopY2Zx4Oph4O/MeC423MX3OJE1oXkqBUN3jCkjZ/aLvsUoP3jdEa/i3aysNh+y
+         itdvkxZXeHalGCZNfMUpZJtLn10ez0ogh5bBg3xFt20nE3uE2p2HEiYwTVjK/wKN2OuF
+         Qv9O9d2bxt7/RJ3SoRWQugM+djl7z1Yc/pe+Qm7wnb3iEnbBbRnaA2mZpEvF75q1jwuk
+         L3JA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Fpd7yEIe;
+       dkim=pass header.i=@kernel.org header.s=default header.b=s1m6Niw6;
        spf=pass (google.com: domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Received: from mail.kernel.org (mail.kernel.org. [198.145.29.99])
-        by mx.google.com with ESMTPS id b3si3808195pgw.510.2020.08.06.11.23.59
+        by mx.google.com with ESMTPS id h8si4082180pjt.14.2020.08.06.11.24.19
         for <k.kozlowski.k+kernel@gmail.com>
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Aug 2020 11:23:59 -0700 (PDT)
+        Thu, 06 Aug 2020 11:24:19 -0700 (PDT)
 Received-SPF: pass (google.com: domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) client-ip=198.145.29.99;
 Received: by mail.kernel.org (Postfix)
-        id 6A69722EBE; Thu,  6 Aug 2020 18:23:59 +0000 (UTC)
+        id 86B0023103; Thu,  6 Aug 2020 18:24:19 +0000 (UTC)
 Received: from localhost.localdomain (unknown [194.230.155.117])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DB5D22E01;
-        Thu,  6 Aug 2020 18:23:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6E9422EBD;
+        Thu,  6 Aug 2020 18:24:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596738239;
-        bh=0MX3E7Ne/rPTcgcCD1XqjJDdOiBT4MRY8ces7kKdkI0=;
+        s=default; t=1596738259;
+        bh=jrfTfMqqNK4Bu08uryiHCRmAlSmR+sRWLonChf0RUVQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fpd7yEIes202ZGrwsi7XioG0nprsSaGhvANyXicNmF1IjIGUhWmE9/7lvAIMALBiK
-         UzCilFjlVt/VkB23Su1aGrP5eF+NC20P24Jgxn8ZBHgS+WWTblxxxZzbJVt0dH1P3e
-         DdO2vM6jvaB47RBJfmB1NZYiu8fsK4bL7CWPXc3A=
+        b=s1m6Niw69C99kV9/wFls7VY3aooYZo58lNSDxmPoeT3N05Ac+qqHtOwpvIBmwewtn
+         Cj0y+jDgdQWZHi/wwx3p+oGGdAhCGVXSKu00oIsXJS+eFZM+uuSesef27ST3Tv3tui
+         l0XEBnV9iSiieJK6h+8Yr7I8B0YTwNKWidMKHhGk=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 31/41] ARM: s3c24xx: spi: avoid hardcoding fiq number in driver
-Date:   Thu,  6 Aug 2020 20:20:48 +0200
-Message-Id: <20200806182059.2431-31-krzk@kernel.org>
+Subject: [PATCH v2 34/41] cpufreq: s3c24xx: split out registers
+Date:   Thu,  6 Aug 2020 20:20:51 +0200
+Message-Id: <20200806182059.2431-34-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200806181932.2253-1-krzk@kernel.org>
 References: <20200806181932.2253-1-krzk@kernel.org>
-X-TUID: o4q7iWKhFpf2
+X-TUID: kIdrDZjK9w+6
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -124,130 +124,142 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The IRQ_EINT0 constant is a platform detail that is
-defined in mach/irqs.h and not visible to drivers once
-that header is made private.
-
-Since the same calculation already happens in s3c24xx_set_fiq,
-just return the value from there.
+Each of the cpufreq drivers uses a fixed set of register
+bits, copy those definitions into the drivers to avoid
+including mach/regs-clock.h.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+[krzk: Fix build by copying also S3C2410_LOCKTIME]
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/mach-s3c24xx/irq-s3c24xx.c | 12 +++++++++---
- drivers/spi/spi-s3c24xx.c           | 18 ++----------------
- include/linux/spi/s3c24xx.h         |  2 +-
- 3 files changed, 12 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/irq-s3c24xx.c b/arch/arm/mach-s3c24xx/irq-s3c24xx.c
-index b0e879ee14c1..3965347cacf0 100644
---- a/arch/arm/mach-s3c24xx/irq-s3c24xx.c
-+++ b/arch/arm/mach-s3c24xx/irq-s3c24xx.c
-@@ -376,14 +376,17 @@ asmlinkage void __exception_irq_entry s3c24xx_handle_irq(struct pt_regs *regs)
- /**
-  * s3c24xx_set_fiq - set the FIQ routing
-  * @irq: IRQ number to route to FIQ on processor.
-+ * @ack_ptr: pointer to a location for storing the bit mask
-  * @on: Whether to route @irq to the FIQ, or to remove the FIQ routing.
-  *
-  * Change the state of the IRQ to FIQ routing depending on @irq and @on. If
-  * @on is true, the @irq is checked to see if it can be routed and the
-  * interrupt controller updated to route the IRQ. If @on is false, the FIQ
-  * routing is cleared, regardless of which @irq is specified.
-+ *
-+ * returns the mask value for the register.
-  */
--int s3c24xx_set_fiq(unsigned int irq, bool on)
-+int s3c24xx_set_fiq(unsigned int irq, u32 *ack_ptr, bool on)
- {
- 	u32 intmod;
- 	unsigned offs;
-@@ -391,15 +394,18 @@ int s3c24xx_set_fiq(unsigned int irq, bool on)
- 	if (on) {
- 		offs = irq - FIQ_START;
- 		if (offs > 31)
--			return -EINVAL;
-+			return 0;
+---
+
+Changes since v1:
+1. Copy also S3C2410_LOCKTIME to the driver.
+---
+ drivers/cpufreq/s3c2410-cpufreq.c | 11 +++++++++--
+ drivers/cpufreq/s3c2412-cpufreq.c | 20 +++++++++++++++++++-
+ drivers/cpufreq/s3c2440-cpufreq.c | 24 ++++++++++++++++++++++--
+ drivers/cpufreq/s3c24xx-cpufreq.c |  5 ++++-
+ 4 files changed, 54 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/cpufreq/s3c2410-cpufreq.c b/drivers/cpufreq/s3c2410-cpufreq.c
+index 0c4f2ccd7e22..5c6cb590b63f 100644
+--- a/drivers/cpufreq/s3c2410-cpufreq.c
++++ b/drivers/cpufreq/s3c2410-cpufreq.c
+@@ -20,11 +20,18 @@
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
  
- 		intmod = 1 << offs;
- 	} else {
- 		intmod = 0;
- 	}
+-#include <mach/regs-clock.h>
+-
+ #include <plat/cpu.h>
+ #include <plat/cpu-freq-core.h>
  
-+	if (ack_ptr)
-+		*ack_ptr = intmod;
- 	writel_relaxed(intmod, S3C2410_INTMOD);
--	return 0;
++#include <mach/map.h>
 +
-+	return intmod;
- }
++#define S3C2410_CLKREG(x) ((x) + S3C24XX_VA_CLKPWR)
++
++#define S3C2410_CLKDIVN	    S3C2410_CLKREG(0x14)
++
++#define S3C2410_CLKDIVN_PDIVN	     (1<<0)
++#define S3C2410_CLKDIVN_HDIVN	     (1<<1)
++
+ /* Note, 2410A has an extra mode for 1:4:4 ratio, bit 2 of CLKDIV */
  
- EXPORT_SYMBOL_GPL(s3c24xx_set_fiq);
-diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
-index e7a4732590db..d6f51695ca5b 100644
---- a/drivers/spi/spi-s3c24xx.c
-+++ b/drivers/spi/spi-s3c24xx.c
-@@ -229,17 +229,6 @@ struct spi_fiq_code {
- 	u8	data[];
- };
+ static void s3c2410_cpufreq_setdivs(struct s3c_cpufreq_config *cfg)
+diff --git a/drivers/cpufreq/s3c2412-cpufreq.c b/drivers/cpufreq/s3c2412-cpufreq.c
+index 53385a9ab957..d922d0d47c80 100644
+--- a/drivers/cpufreq/s3c2412-cpufreq.c
++++ b/drivers/cpufreq/s3c2412-cpufreq.c
+@@ -23,12 +23,30 @@
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
  
--/**
-- * ack_bit - turn IRQ into IRQ acknowledgement bit
-- * @irq: The interrupt number
-- *
-- * Returns the bit to write to the interrupt acknowledge register.
-- */
--static inline u32 ack_bit(unsigned int irq)
--{
--	return 1 << (irq - IRQ_EINT0);
--}
+-#include <mach/regs-clock.h>
+ #include <mach/s3c2412.h>
+ 
+ #include <plat/cpu.h>
+ #include <plat/cpu-freq-core.h>
+ 
++#include <mach/map.h>
++
++#define S3C2410_CLKREG(x) ((x) + S3C24XX_VA_CLKPWR)
++
++#define S3C2410_CLKDIVN	    S3C2410_CLKREG(0x14)
++
++#define S3C2412_CLKDIVN_PDIVN		(1<<2)
++#define S3C2412_CLKDIVN_HDIVN_MASK	(3<<0)
++#define S3C2412_CLKDIVN_ARMDIVN		(1<<3)
++#define S3C2412_CLKDIVN_DVSEN		(1<<4)
++#define S3C2412_CLKDIVN_HALFHCLK	(1<<5)
++#define S3C2412_CLKDIVN_USB48DIV	(1<<6)
++#define S3C2412_CLKDIVN_UARTDIV_MASK	(15<<8)
++#define S3C2412_CLKDIVN_UARTDIV_SHIFT	(8)
++#define S3C2412_CLKDIVN_I2SDIV_MASK	(15<<12)
++#define S3C2412_CLKDIVN_I2SDIV_SHIFT	(12)
++#define S3C2412_CLKDIVN_CAMDIV_MASK	(15<<16)
++#define S3C2412_CLKDIVN_CAMDIV_SHIFT	(16)
++
+ /* our clock resources. */
+ static struct clk *xtal;
+ static struct clk *fclk;
+diff --git a/drivers/cpufreq/s3c2440-cpufreq.c b/drivers/cpufreq/s3c2440-cpufreq.c
+index 3f772ba8896e..5fe7a891fa13 100644
+--- a/drivers/cpufreq/s3c2440-cpufreq.c
++++ b/drivers/cpufreq/s3c2440-cpufreq.c
+@@ -24,11 +24,31 @@
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+ 
+-#include <mach/regs-clock.h>
 -
- /**
-  * s3c24xx_spi_tryfiq - attempt to claim and setup FIQ for transfer
-  * @hw: The hardware state.
-@@ -256,6 +245,7 @@ static void s3c24xx_spi_tryfiq(struct s3c24xx_spi *hw)
- 	struct pt_regs regs;
- 	enum spi_fiq_mode mode;
- 	struct spi_fiq_code *code;
-+	u32 *ack_ptr = NULL;
- 	int ret;
+ #include <plat/cpu.h>
+ #include <plat/cpu-freq-core.h>
  
- 	if (!hw->fiq_claimed) {
-@@ -282,8 +272,6 @@ static void s3c24xx_spi_tryfiq(struct s3c24xx_spi *hw)
- 	set_fiq_regs(&regs);
++#include <mach/map.h>
++
++#define S3C2410_CLKREG(x) ((x) + S3C24XX_VA_CLKPWR)
++#define S3C2410_CLKDIVN	    S3C2410_CLKREG(0x14)
++#define S3C2440_CAMDIVN	    S3C2410_CLKREG(0x18)
++
++#define S3C2440_CLKDIVN_PDIVN	     (1<<0)
++#define S3C2440_CLKDIVN_HDIVN_MASK   (3<<1)
++#define S3C2440_CLKDIVN_HDIVN_1      (0<<1)
++#define S3C2440_CLKDIVN_HDIVN_2      (1<<1)
++#define S3C2440_CLKDIVN_HDIVN_4_8    (2<<1)
++#define S3C2440_CLKDIVN_HDIVN_3_6    (3<<1)
++#define S3C2440_CLKDIVN_UCLK         (1<<3)
++
++#define S3C2440_CAMDIVN_CAMCLK_MASK  (0xf<<0)
++#define S3C2440_CAMDIVN_CAMCLK_SEL   (1<<4)
++#define S3C2440_CAMDIVN_HCLK3_HALF   (1<<8)
++#define S3C2440_CAMDIVN_HCLK4_HALF   (1<<9)
++#define S3C2440_CAMDIVN_DVSEN        (1<<12)
++
++#define S3C2442_CAMDIVN_CAMCLK_DIV3  (1<<5)
++
+ static struct clk *xtal;
+ static struct clk *fclk;
+ static struct clk *hclk;
+diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
+index ed0e713b1b57..cf0571e8fafb 100644
+--- a/drivers/cpufreq/s3c24xx-cpufreq.c
++++ b/drivers/cpufreq/s3c24xx-cpufreq.c
+@@ -28,9 +28,12 @@
+ #include <plat/cpu.h>
+ #include <plat/cpu-freq-core.h>
  
- 	if (hw->fiq_mode != mode) {
--		u32 *ack_ptr;
--
- 		hw->fiq_mode = mode;
+-#include <mach/regs-clock.h>
++#include <mach/map.h>
  
- 		switch (mode) {
-@@ -303,12 +291,10 @@ static void s3c24xx_spi_tryfiq(struct s3c24xx_spi *hw)
- 		BUG_ON(!code);
+ /* note, cpufreq support deals in kHz, no Hz */
++#define S3C2410_CLKREG(x) ((x) + S3C24XX_VA_CLKPWR)
++#define S3C2410_LOCKTIME    S3C2410_CLKREG(0x00)
++#define S3C2410_MPLLCON     S3C2410_CLKREG(0x04)
  
- 		ack_ptr = (u32 *)&code->data[code->ack_offset];
--		*ack_ptr = ack_bit(hw->irq);
--
- 		set_fiq_handler(&code->data, code->length);
- 	}
- 
--	s3c24xx_set_fiq(hw->irq, true);
-+	s3c24xx_set_fiq(hw->irq, ack_ptr, true);
- 
- 	hw->fiq_mode = mode;
- 	hw->fiq_inuse = 1;
-diff --git a/include/linux/spi/s3c24xx.h b/include/linux/spi/s3c24xx.h
-index c91d10b82f08..440a71593162 100644
---- a/include/linux/spi/s3c24xx.h
-+++ b/include/linux/spi/s3c24xx.h
-@@ -20,6 +20,6 @@ struct s3c2410_spi_info {
- 	void (*set_cs)(struct s3c2410_spi_info *spi, int cs, int pol);
- };
- 
--extern int s3c24xx_set_fiq(unsigned int irq, bool on);
-+extern int s3c24xx_set_fiq(unsigned int irq, u32 *ack_ptr, bool on);
- 
- #endif /* __LINUX_SPI_S3C24XX_H */
+ static struct cpufreq_driver s3c24xx_driver;
+ static struct s3c_cpufreq_config cpu_cur;
 -- 
 2.17.1
 
