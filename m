@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FAB9C433E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6918C433E3
 	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6BBC22D00
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:38:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FFF622D00
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:38:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1596739101;
-	bh=hAZLCO5WhHq3DyAI5oEkcdHEncWOCsm/3pyKHSow4CE=;
+	bh=CmyXjXDSzWFOYfV+J6SRyGYZY72jRKENxVsUXecQgyE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jsAho/U+PMoc2d4vKcnA6c+GOVauOFUrORZRb/VEb/enRzdzBnO8bbumDuOufKXee
-	 IznGZyMBWgn2753nFTszD1CQeaYbiPPrmdZ0RgYRGjKfuKtdg9Bryb0WKsERnUkBWT
-	 DvYQr4sz6kpMCQuAtXAo0z4AR8hmNcoMStU2TucY=
+	b=JxkFhdxcGIe+Yg5nknZl4CAmtNOyRgj1ReyR58qXKe3C7bw6/ms77uJh9cHQcAzx1
+	 WU8t2zA92WPoZYXviQF7OjDYIhqSkLYcwqQbQsSHIVEfUZ8LUDR0fo91cEVQZ4ysVt
+	 Sc+o40U2BufAsTRnwiM9bA9kvKalSeBBs0CvUcfs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbgHFShy (ORCPT
+        id S1729719AbgHFShy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
         Thu, 6 Aug 2020 14:37:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58700 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:58698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729257AbgHFSfX (ORCPT
+        id S1729265AbgHFSfX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Thu, 6 Aug 2020 14:35:23 -0400
 Received: from localhost.localdomain (unknown [194.230.155.117])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C31922D6E;
-        Thu,  6 Aug 2020 18:22:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1995322EBE;
+        Thu,  6 Aug 2020 18:24:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596738158;
-        bh=hAZLCO5WhHq3DyAI5oEkcdHEncWOCsm/3pyKHSow4CE=;
+        s=default; t=1596738282;
+        bh=CmyXjXDSzWFOYfV+J6SRyGYZY72jRKENxVsUXecQgyE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i20+XqhKqtkDacJuZspJ6tcG7ONKYaXHJ/0mWgWzYxb44M1KnkLYqtAkpvIiqjTYb
-         4xBjxyKnTv3bP25MrP47ED+Wx+HnPJznrYf9243U7YSpPhqwv4V7LAEqZppaDGonQw
-         kgr1A6QuuhUczhF1GiC/Iyf2rRZKhcz6SEeDHuM0=
+        b=2agLhmWN2lHRhYkVP6j//+RDqkGBLxsHx+/M0CK1A7eaAtiMdYI+NAHK1fG4/zAJc
+         xrb8XPMdp7uayBaPu3GJn91TnCAqpuKq30doKerAXIlkrLxzTD2bGSCBrb5qV+51Xu
+         wtgU3m97AYl83aXNx/8uwX2doueLZimRSGlc+UZo=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
         Russell King <linux@armlinux.org.uk>,
         Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 16/41] ARM: samsung: move pm check code to drivers/soc
-Date:   Thu,  6 Aug 2020 20:20:33 +0200
-Message-Id: <20200806182059.2431-16-krzk@kernel.org>
+Subject: [PATCH v2 38/41] ARM: s3c24xx: stop including mach/hardware.h from mach/io.h
+Date:   Thu,  6 Aug 2020 20:20:55 +0200
+Message-Id: <20200806182059.2431-38-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200806181932.2253-1-krzk@kernel.org>
 References: <20200806181932.2253-1-krzk@kernel.org>
@@ -62,397 +61,322 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-This is the only part of plat-samsung that is really
-shared between the s3c and s5p ports. Moving it to
-drivers/soc/ lets us make them completely independent.
+A number of other files rely on mach/map.h to be indirectly
+included from mach/io.h through mach/hardware.h.
+
+Reduce this to the minimal plat/map-base.h and add explicit
+includes everywhere else.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/mach-s5pv210/Kconfig                 |  1 +
- arch/arm/plat-samsung/Kconfig                 | 49 +----------
- arch/arm/plat-samsung/Makefile                |  2 -
- .../arm/plat-samsung/include/plat/pm-common.h | 70 +---------------
- drivers/soc/samsung/Kconfig                   | 48 ++++++++++-
- drivers/soc/samsung/Makefile                  |  3 +
- .../soc/samsung/s3c-pm-check.c                |  2 +-
- .../soc/samsung/s3c-pm-debug.c                |  3 +-
- include/linux/soc/samsung/s3c-pm.h            | 84 +++++++++++++++++++
- 9 files changed, 139 insertions(+), 123 deletions(-)
- rename arch/arm/plat-samsung/pm-check.c => drivers/soc/samsung/s3c-pm-check.c (99%)
- rename arch/arm/plat-samsung/pm-debug.c => drivers/soc/samsung/s3c-pm-debug.c (97%)
- create mode 100644 include/linux/soc/samsung/s3c-pm.h
+ arch/arm/mach-s3c24xx/common.c                          | 1 +
+ arch/arm/mach-s3c24xx/include/mach/gpio-samsung.h       | 2 ++
+ arch/arm/mach-s3c24xx/include/mach/hardware.h           | 7 -------
+ arch/arm/mach-s3c24xx/include/mach/io.h                 | 3 +--
+ arch/arm/mach-s3c24xx/include/mach/regs-clock.h         | 2 ++
+ arch/arm/mach-s3c24xx/include/mach/regs-gpio.h          | 2 ++
+ arch/arm/mach-s3c24xx/include/mach/regs-irq.h           | 2 ++
+ arch/arm/mach-s3c24xx/include/mach/regs-s3c2443-clock.h | 1 +
+ arch/arm/mach-s3c24xx/include/mach/s3c2412.h            | 2 ++
+ arch/arm/mach-s3c24xx/mach-h1940.c                      | 1 +
+ arch/arm/mach-s3c24xx/mach-jive.c                       | 1 +
+ arch/arm/mach-s3c24xx/mach-rx1950.c                     | 1 +
+ arch/arm/mach-s3c24xx/pm-h1940.S                        | 1 -
+ arch/arm/mach-s3c24xx/regs-mem.h                        | 2 ++
+ arch/arm/mach-s3c24xx/s3c2410.c                         | 2 +-
+ arch/arm/mach-s3c24xx/s3c2412.c                         | 2 +-
+ arch/arm/mach-s3c24xx/s3c2416.c                         | 2 +-
+ arch/arm/mach-s3c24xx/s3c2443.c                         | 2 +-
+ arch/arm/mach-s3c24xx/s3c244x.c                         | 2 +-
+ arch/arm/mach-s3c24xx/sleep-s3c2410.S                   | 1 -
+ arch/arm/mach-s3c24xx/sleep-s3c2412.S                   | 1 -
+ arch/arm/mach-s3c24xx/sleep.S                           | 1 -
+ 22 files changed, 23 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index b3db1191e437..95d4e8284866 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -17,6 +17,7 @@ config ARCH_S5PV210
- 	select HAVE_S3C_RTC if RTC_CLASS
- 	select PINCTRL
- 	select PINCTRL_EXYNOS
-+	select SOC_SAMSUNG
- 	help
- 	  Samsung S5PV210/S5PC110 series based systems
+diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+index f987de1a61c2..30b0dcd20f17 100644
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -23,6 +23,7 @@
+ #include <linux/clk/samsung.h>
  
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 920931c3fefd..a7cb0db1d5cc 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -8,6 +8,7 @@ config PLAT_SAMSUNG
- 	default y
- 	select GENERIC_IRQ_CHIP
- 	select NO_IOPORT_MAP
-+	select SOC_SAMSUNG
- 	help
- 	  Base platform code for all Samsung SoC based systems
+ #include <mach/hardware.h>
++#include <mach/map.h>
+ #include <mach/regs-clock.h>
+ #include <asm/irq.h>
+ #include <asm/cacheflush.h>
+diff --git a/arch/arm/mach-s3c24xx/include/mach/gpio-samsung.h b/arch/arm/mach-s3c24xx/include/mach/gpio-samsung.h
+index 2ad22b2d459b..f8a114891f16 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/gpio-samsung.h
++++ b/arch/arm/mach-s3c24xx/include/mach/gpio-samsung.h
+@@ -14,6 +14,8 @@
+ #ifndef GPIO_SAMSUNG_S3C24XX_H
+ #define GPIO_SAMSUNG_S3C24XX_H
  
-@@ -234,54 +235,6 @@ config SAMSUNG_PM_GPIO
- 	  pinctrl-samsung driver.
- endif
++#include <mach/map.h>
++
+ /*
+  * GPIO sizes for various SoCs:
+  *
+diff --git a/arch/arm/mach-s3c24xx/include/mach/hardware.h b/arch/arm/mach-s3c24xx/include/mach/hardware.h
+index f28ac6c78d82..c732ea54984c 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/hardware.h
++++ b/arch/arm/mach-s3c24xx/include/mach/hardware.h
+@@ -9,13 +9,6 @@
+ #ifndef __ASM_ARCH_HARDWARE_H
+ #define __ASM_ARCH_HARDWARE_H
  
--comment "Power management"
+-#ifndef __ASSEMBLY__
 -
--config SAMSUNG_PM_DEBUG
--	bool "Samsung PM Suspend debug"
--	depends on PM && DEBUG_KERNEL
--	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
--	depends on DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
--	help
--	  Say Y here if you want verbose debugging from the PM Suspend and
--	  Resume code. See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
--	  for more information.
--
--config S3C_PM_DEBUG_LED_SMDK
--       bool "SMDK LED suspend/resume debugging"
--       depends on PM && (MACH_SMDK6410)
--       help
--         Say Y here to enable the use of the SMDK LEDs on the baseboard
--	 for debugging of the state of the suspend and resume process.
--
--	 Note, this currently only works for S3C64XX based SMDK boards.
--
--config SAMSUNG_PM_CHECK
--	bool "S3C2410 PM Suspend Memory CRC"
--	depends on PM && (PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210)
--	select CRC32
--	help
--	  Enable the PM code's memory area checksum over sleep. This option
--	  will generate CRCs of all blocks of memory, and store them before
--	  going to sleep. The blocks are then checked on resume for any
--	  errors.
--
--	  Note, this can take several seconds depending on memory size
--	  and CPU speed.
--
--	  See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
--
--config SAMSUNG_PM_CHECK_CHUNKSIZE
--	int "S3C2410 PM Suspend CRC Chunksize (KiB)"
--	depends on PM && SAMSUNG_PM_CHECK
--	default 64
--	help
--	  Set the chunksize in Kilobytes of the CRC for checking memory
--	  corruption over suspend and resume. A smaller value will mean that
--	  the CRC data block will take more memory, but will identify any
--	  faults with better precision.
--
--	  See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
--
- config SAMSUNG_WAKEMASK
- 	bool
- 	depends on PM
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index d8a80fbcebb3..c47f58ed83e2 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -27,7 +27,5 @@ obj-$(CONFIG_GPIO_SAMSUNG)     += gpio-samsung.o
- obj-$(CONFIG_PM_SLEEP)		+= pm-common.o
- obj-$(CONFIG_SAMSUNG_PM)	+= pm.o
- obj-$(CONFIG_SAMSUNG_PM_GPIO)	+= pm-gpio.o
--obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= pm-check.o
--obj-$(CONFIG_SAMSUNG_PM_DEBUG)	+= pm-debug.o
+ extern unsigned int s3c2410_modify_misccr(unsigned int clr, unsigned int chg);
  
- obj-$(CONFIG_SAMSUNG_WAKEMASK)	+= wakeup-mask.o
-diff --git a/arch/arm/plat-samsung/include/plat/pm-common.h b/arch/arm/plat-samsung/include/plat/pm-common.h
-index 87fa97fd6e8b..18b9607e1e39 100644
---- a/arch/arm/plat-samsung/include/plat/pm-common.h
-+++ b/arch/arm/plat-samsung/include/plat/pm-common.h
+-#endif /* __ASSEMBLY__ */
+-
+-#include <linux/sizes.h>
+-#include <mach/map.h>
+-
+ #endif /* __ASM_ARCH_HARDWARE_H */
+diff --git a/arch/arm/mach-s3c24xx/include/mach/io.h b/arch/arm/mach-s3c24xx/include/mach/io.h
+index 3e8bff26cdd5..bcddf615adb6 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/io.h
++++ b/arch/arm/mach-s3c24xx/include/mach/io.h
+@@ -10,8 +10,7 @@
+ #ifndef __ASM_ARM_ARCH_IO_H
+ #define __ASM_ARM_ARCH_IO_H
+ 
+-#include <mach/hardware.h>
+-
++#include <plat/map-base.h>
+ 
+ /*
+  * ISA style IO, for each machine to sort out mappings for,
+diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
+index 7ca3dd4f13c0..da4e7b3aeba6 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
++++ b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
+@@ -9,6 +9,8 @@
+ #ifndef __ASM_ARM_REGS_CLOCK
+ #define __ASM_ARM_REGS_CLOCK
+ 
++#include <mach/map.h>
++
+ #define S3C2410_CLKREG(x) ((x) + S3C24XX_VA_CLKPWR)
+ 
+ #define S3C2410_PLLVAL(_m,_p,_s) ((_m) << 12 | ((_p) << 4) | ((_s)))
+diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h b/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
+index 594e967c0673..51827d5577b6 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
++++ b/arch/arm/mach-s3c24xx/include/mach/regs-gpio.h
+@@ -10,6 +10,8 @@
+ #ifndef __ASM_ARCH_REGS_GPIO_H
+ #define __ASM_ARCH_REGS_GPIO_H
+ 
++#include <plat/map-s3c.h>
++
+ #define S3C24XX_MISCCR		S3C24XX_GPIOREG2(0x80)
+ 
+ /* general configuration options */
+diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-irq.h b/arch/arm/mach-s3c24xx/include/mach/regs-irq.h
+index 8d8e669e3903..2921b48c56b2 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/regs-irq.h
++++ b/arch/arm/mach-s3c24xx/include/mach/regs-irq.h
+@@ -8,6 +8,8 @@
+ #ifndef ___ASM_ARCH_REGS_IRQ_H
+ #define ___ASM_ARCH_REGS_IRQ_H
+ 
++#include <plat/map-s3c.h>
++
+ /* interrupt controller */
+ 
+ #define S3C2410_IRQREG(x)   ((x) + S3C24XX_VA_IRQ)
+diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-s3c2443-clock.h b/arch/arm/mach-s3c24xx/include/mach/regs-s3c2443-clock.h
+index 682759549e63..fefef7233f4b 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/regs-s3c2443-clock.h
++++ b/arch/arm/mach-s3c24xx/include/mach/regs-s3c2443-clock.h
 @@ -11,6 +11,7 @@
- #define __PLAT_SAMSUNG_PM_COMMON_H __FILE__
+ #define __ASM_ARM_REGS_S3C2443_CLOCK
  
- #include <linux/irq.h>
-+#include <linux/soc/samsung/s3c-pm.h>
+ #include <linux/delay.h>
++#include <plat/map-s3c.h>
  
- /* sleep save info */
+ #define S3C2443_CLKREG(x)		((x) + S3C24XX_VA_CLKPWR)
  
-@@ -36,73 +37,4 @@ extern void s3c_pm_do_save(struct sleep_save *ptr, int count);
- extern void s3c_pm_do_restore(const struct sleep_save *ptr, int count);
- extern void s3c_pm_do_restore_core(const struct sleep_save *ptr, int count);
+diff --git a/arch/arm/mach-s3c24xx/include/mach/s3c2412.h b/arch/arm/mach-s3c24xx/include/mach/s3c2412.h
+index 4ff83f956cfb..1ae369c81beb 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/s3c2412.h
++++ b/arch/arm/mach-s3c24xx/include/mach/s3c2412.h
+@@ -8,6 +8,8 @@
+ #ifndef __ARCH_ARM_MACH_S3C24XX_S3C2412_H
+ #define __ARCH_ARM_MACH_S3C24XX_S3C2412_H __FILE__
  
--/* PM debug functions */
--
--/**
-- * struct pm_uart_save - save block for core UART
-- * @ulcon: Save value for S3C2410_ULCON
-- * @ucon: Save value for S3C2410_UCON
-- * @ufcon: Save value for S3C2410_UFCON
-- * @umcon: Save value for S3C2410_UMCON
-- * @ubrdiv: Save value for S3C2410_UBRDIV
-- *
-- * Save block for UART registers to be held over sleep and restored if they
-- * are needed (say by debug).
--*/
--struct pm_uart_save {
--	u32	ulcon;
--	u32	ucon;
--	u32	ufcon;
--	u32	umcon;
--	u32	ubrdiv;
--	u32	udivslot;
--};
--
--#ifdef CONFIG_SAMSUNG_PM_DEBUG
--/**
-- * s3c_pm_dbg() - low level debug function for use in suspend/resume.
-- * @msg: The message to print.
-- *
-- * This function is used mainly to debug the resume process before the system
-- * can rely on printk/console output. It uses the low-level debugging output
-- * routine printascii() to do its work.
-- */
--extern void s3c_pm_dbg(const char *msg, ...);
--
--#define S3C_PMDBG(fmt...) s3c_pm_dbg(fmt)
--
--extern void s3c_pm_save_uarts(bool is_s3c24xx);
--extern void s3c_pm_restore_uarts(bool is_s3c24xx);
--
--#ifdef CONFIG_ARCH_S3C64XX
--extern void s3c_pm_arch_update_uart(void __iomem *regs,
--				    struct pm_uart_save *save);
--#else
--static inline void
--s3c_pm_arch_update_uart(void __iomem *regs, struct pm_uart_save *save)
--{
--}
--#endif
--
--#else
--#define S3C_PMDBG(fmt...) pr_debug(fmt)
--
--static inline void s3c_pm_save_uarts(bool is_s3c24xx) { }
--static inline void s3c_pm_restore_uarts(bool is_s3c24xx) { }
--#endif
--
--/* suspend memory checking */
--
--#ifdef CONFIG_SAMSUNG_PM_CHECK
--extern void s3c_pm_check_prepare(void);
--extern void s3c_pm_check_restore(void);
--extern void s3c_pm_check_cleanup(void);
--extern void s3c_pm_check_store(void);
--#else
--#define s3c_pm_check_prepare() do { } while (0)
--#define s3c_pm_check_restore() do { } while (0)
--#define s3c_pm_check_cleanup() do { } while (0)
--#define s3c_pm_check_store()   do { } while (0)
--#endif
--
- #endif
-diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-index 264185664594..5abe82079d2e 100644
---- a/drivers/soc/samsung/Kconfig
-+++ b/drivers/soc/samsung/Kconfig
-@@ -35,7 +35,53 @@ config EXYNOS_PMU_ARM_DRIVERS
++#include <plat/map-s3c.h>
++
+ #define S3C2412_MEMREG(x)		(S3C24XX_VA_MEMCTRL + (x))
+ #define S3C2412_EBIREG(x)		(S3C2412_VA_EBI + (x))
  
- config EXYNOS_PM_DOMAINS
- 	bool "Exynos PM domains" if COMPILE_TEST
--	depends on PM_GENERIC_DOMAINS || COMPILE_TEST
-+	depends on (ARCH_EXYNOS && PM_GENERIC_DOMAINS) || COMPILE_TEST
-+
-+config SAMSUNG_PM_DEBUG
-+	bool "Samsung PM Suspend debug"
-+	depends on PM && DEBUG_KERNEL
-+	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
-+	depends on DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
-+	help
-+	  Say Y here if you want verbose debugging from the PM Suspend and
-+	  Resume code. See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
-+	  for more information.
-+
-+config S3C_PM_DEBUG_LED_SMDK
-+       bool "SMDK LED suspend/resume debugging"
-+       depends on PM && (MACH_SMDK6410)
-+       help
-+         Say Y here to enable the use of the SMDK LEDs on the baseboard
-+	 for debugging of the state of the suspend and resume process.
-+
-+	 Note, this currently only works for S3C64XX based SMDK boards.
-+
-+config SAMSUNG_PM_CHECK
-+	bool "S3C2410 PM Suspend Memory CRC"
-+	depends on PM && (PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210)
-+	select CRC32
-+	help
-+	  Enable the PM code's memory area checksum over sleep. This option
-+	  will generate CRCs of all blocks of memory, and store them before
-+	  going to sleep. The blocks are then checked on resume for any
-+	  errors.
-+
-+	  Note, this can take several seconds depending on memory size
-+	  and CPU speed.
-+
-+	  See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
-+
-+config SAMSUNG_PM_CHECK_CHUNKSIZE
-+	int "S3C2410 PM Suspend CRC Chunksize (KiB)"
-+	depends on PM && SAMSUNG_PM_CHECK
-+	default 64
-+	help
-+	  Set the chunksize in Kilobytes of the CRC for checking memory
-+	  corruption over suspend and resume. A smaller value will mean that
-+	  the CRC data block will take more memory, but will identify any
-+	  faults with better precision.
-+
-+	  See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
+diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+index d45825898835..3cb56fc9db5c 100644
+--- a/arch/arm/mach-s3c24xx/mach-h1940.c
++++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+@@ -48,6 +48,7 @@
+ #include <sound/uda1380.h>
  
- config EXYNOS_REGULATOR_COUPLER
- 	bool "Exynos SoC Regulator Coupler" if COMPILE_TEST
-diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-index ecc3a32f6406..59e8e9453f27 100644
---- a/drivers/soc/samsung/Makefile
-+++ b/drivers/soc/samsung/Makefile
-@@ -10,3 +10,6 @@ obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
- 					exynos5250-pmu.o exynos5420-pmu.o
- obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
- obj-$(CONFIG_EXYNOS_REGULATOR_COUPLER) += exynos-regulator-coupler.o
+ #include <linux/platform_data/fb-s3c2410.h>
++#include <mach/map.h>
+ #include <mach/hardware.h>
+ #include <mach/regs-clock.h>
+ #include <mach/regs-gpio.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-jive.c b/arch/arm/mach-s3c24xx/mach-jive.c
+index ec6c40ea8f86..9ef8733be3fd 100644
+--- a/arch/arm/mach-s3c24xx/mach-jive.c
++++ b/arch/arm/mach-s3c24xx/mach-jive.c
+@@ -31,6 +31,7 @@
+ #include <linux/platform_data/mtd-nand-s3c2410.h>
+ #include <linux/platform_data/i2c-s3c2410.h>
+ 
++#include <mach/hardware.h>
+ #include <mach/regs-gpio.h>
+ #include <linux/platform_data/fb-s3c2410.h>
+ #include <mach/gpio-samsung.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c b/arch/arm/mach-s3c24xx/mach-rx1950.c
+index 2513ce7fa026..af6300076b0a 100644
+--- a/arch/arm/mach-s3c24xx/mach-rx1950.c
++++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
+@@ -46,6 +46,7 @@
+ 
+ #include <sound/uda1380.h>
+ 
++#include <mach/hardware.h>
+ #include <mach/regs-gpio.h>
+ #include <mach/gpio-samsung.h>
+ 
+diff --git a/arch/arm/mach-s3c24xx/pm-h1940.S b/arch/arm/mach-s3c24xx/pm-h1940.S
+index a7bbe336ac6b..f9ee515e1cbe 100644
+--- a/arch/arm/mach-s3c24xx/pm-h1940.S
++++ b/arch/arm/mach-s3c24xx/pm-h1940.S
+@@ -7,7 +7,6 @@
+ 
+ #include <linux/linkage.h>
+ #include <asm/assembler.h>
+-#include <mach/hardware.h>
+ #include <mach/map.h>
+ 
+ #include <mach/regs-gpio.h>
+diff --git a/arch/arm/mach-s3c24xx/regs-mem.h b/arch/arm/mach-s3c24xx/regs-mem.h
+index 2f3bc48b5890..5048ab8f06c2 100644
+--- a/arch/arm/mach-s3c24xx/regs-mem.h
++++ b/arch/arm/mach-s3c24xx/regs-mem.h
+@@ -9,6 +9,8 @@
+ #ifndef __ARCH_ARM_MACH_S3C24XX_REGS_MEM_H
+ #define __ARCH_ARM_MACH_S3C24XX_REGS_MEM_H __FILE__
+ 
++#include <plat/map-s3c.h>
 +
-+obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= s3c-pm-check.o
-+obj-$(CONFIG_SAMSUNG_PM_DEBUG)	+= s3c-pm-debug.o
-diff --git a/arch/arm/plat-samsung/pm-check.c b/drivers/soc/samsung/s3c-pm-check.c
-similarity index 99%
-rename from arch/arm/plat-samsung/pm-check.c
-rename to drivers/soc/samsung/s3c-pm-check.c
-index cd2c02c68bc3..ff3e099fc208 100644
---- a/arch/arm/plat-samsung/pm-check.c
-+++ b/drivers/soc/samsung/s3c-pm-check.c
-@@ -15,7 +15,7 @@
- #include <linux/ioport.h>
- #include <linux/slab.h>
+ #define S3C2410_MEMREG(x)		(S3C24XX_VA_MEMCTRL + (x))
  
--#include <plat/pm-common.h>
-+#include <linux/soc/samsung/s3c-pm.h>
- 
- #if CONFIG_SAMSUNG_PM_CHECK_CHUNKSIZE < 1
- #error CONFIG_SAMSUNG_PM_CHECK_CHUNKSIZE must be a positive non-zero value
-diff --git a/arch/arm/plat-samsung/pm-debug.c b/drivers/soc/samsung/s3c-pm-debug.c
-similarity index 97%
-rename from arch/arm/plat-samsung/pm-debug.c
-rename to drivers/soc/samsung/s3c-pm-debug.c
-index 482d53753e93..b5ce0e9a41e5 100644
---- a/arch/arm/plat-samsung/pm-debug.c
-+++ b/drivers/soc/samsung/s3c-pm-debug.c
-@@ -15,8 +15,7 @@
- 
+ #define S3C2410_BWSCON			S3C2410_MEMREG(0x00)
+diff --git a/arch/arm/mach-s3c24xx/s3c2410.c b/arch/arm/mach-s3c24xx/s3c2410.c
+index 8427c150dd22..44bf3e1e77f1 100644
+--- a/arch/arm/mach-s3c24xx/s3c2410.c
++++ b/arch/arm/mach-s3c24xx/s3c2410.c
+@@ -25,7 +25,7 @@
  #include <asm/mach/map.h>
+ #include <asm/mach/irq.h>
  
--#include <plat/cpu.h>
--#include <plat/pm-common.h>
-+#include <linux/soc/samsung/s3c-pm.h>
+-#include <mach/hardware.h>
++#include <mach/map.h>
+ #include <mach/gpio-samsung.h>
+ #include <asm/irq.h>
+ #include <asm/system_misc.h>
+diff --git a/arch/arm/mach-s3c24xx/s3c2412.c b/arch/arm/mach-s3c24xx/s3c2412.c
+index 209f952a6c98..75648dcc2c1d 100644
+--- a/arch/arm/mach-s3c24xx/s3c2412.c
++++ b/arch/arm/mach-s3c24xx/s3c2412.c
+@@ -29,7 +29,7 @@
+ #include <asm/irq.h>
+ #include <asm/system_misc.h>
  
- static struct pm_uart_save uart_save;
+-#include <mach/hardware.h>
++#include <mach/map.h>
+ #include <mach/regs-clock.h>
+ #include <mach/regs-gpio.h>
  
-diff --git a/include/linux/soc/samsung/s3c-pm.h b/include/linux/soc/samsung/s3c-pm.h
-new file mode 100644
-index 000000000000..730bd1d3d09a
---- /dev/null
-+++ b/include/linux/soc/samsung/s3c-pm.h
-@@ -0,0 +1,84 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-+ *	Tomasz Figa <t.figa@samsung.com>
-+ * Copyright (c) 2004 Simtec Electronics
-+ *	http://armlinux.simtec.co.uk/
-+ *	Written by Ben Dooks, <ben@simtec.co.uk>
-+ */
-+
-+#ifndef __LINUX_SOC_SAMSUNG_S3C_PM_H
-+#define __LINUX_SOC_SAMSUNG_S3C_PM_H __FILE__
-+
-+#include <linux/types.h>
-+
-+/* PM debug functions */
-+
-+/**
-+ * struct pm_uart_save - save block for core UART
-+ * @ulcon: Save value for S3C2410_ULCON
-+ * @ucon: Save value for S3C2410_UCON
-+ * @ufcon: Save value for S3C2410_UFCON
-+ * @umcon: Save value for S3C2410_UMCON
-+ * @ubrdiv: Save value for S3C2410_UBRDIV
-+ *
-+ * Save block for UART registers to be held over sleep and restored if they
-+ * are needed (say by debug).
-+*/
-+struct pm_uart_save {
-+	u32	ulcon;
-+	u32	ucon;
-+	u32	ufcon;
-+	u32	umcon;
-+	u32	ubrdiv;
-+	u32	udivslot;
-+};
-+
-+#ifdef CONFIG_SAMSUNG_PM_DEBUG
-+/**
-+ * s3c_pm_dbg() - low level debug function for use in suspend/resume.
-+ * @msg: The message to print.
-+ *
-+ * This function is used mainly to debug the resume process before the system
-+ * can rely on printk/console output. It uses the low-level debugging output
-+ * routine printascii() to do its work.
-+ */
-+extern void s3c_pm_dbg(const char *msg, ...);
-+
-+#define S3C_PMDBG(fmt...) s3c_pm_dbg(fmt)
-+
-+extern void s3c_pm_save_uarts(bool is_s3c24xx);
-+extern void s3c_pm_restore_uarts(bool is_s3c24xx);
-+
-+#ifdef CONFIG_ARCH_S3C64XX
-+extern void s3c_pm_arch_update_uart(void __iomem *regs,
-+				    struct pm_uart_save *save);
-+#else
-+static inline void
-+s3c_pm_arch_update_uart(void __iomem *regs, struct pm_uart_save *save)
-+{
-+}
-+#endif
-+
-+#else
-+#define S3C_PMDBG(fmt...) pr_debug(fmt)
-+
-+static inline void s3c_pm_save_uarts(bool is_s3c24xx) { }
-+static inline void s3c_pm_restore_uarts(bool is_s3c24xx) { }
-+#endif
-+
-+/* suspend memory checking */
-+
-+#ifdef CONFIG_SAMSUNG_PM_CHECK
-+extern void s3c_pm_check_prepare(void);
-+extern void s3c_pm_check_restore(void);
-+extern void s3c_pm_check_cleanup(void);
-+extern void s3c_pm_check_store(void);
-+#else
-+#define s3c_pm_check_prepare() do { } while (0)
-+#define s3c_pm_check_restore() do { } while (0)
-+#define s3c_pm_check_cleanup() do { } while (0)
-+#define s3c_pm_check_store()   do { } while (0)
-+#endif
-+
-+#endif
+diff --git a/arch/arm/mach-s3c24xx/s3c2416.c b/arch/arm/mach-s3c24xx/s3c2416.c
+index 9514196cad8c..6576187b4638 100644
+--- a/arch/arm/mach-s3c24xx/s3c2416.c
++++ b/arch/arm/mach-s3c24xx/s3c2416.c
+@@ -26,7 +26,7 @@
+ #include <asm/mach/map.h>
+ #include <asm/mach/irq.h>
+ 
+-#include <mach/hardware.h>
++#include <mach/map.h>
+ #include <mach/gpio-samsung.h>
+ #include <asm/proc-fns.h>
+ #include <asm/irq.h>
+diff --git a/arch/arm/mach-s3c24xx/s3c2443.c b/arch/arm/mach-s3c24xx/s3c2443.c
+index 3c05d04bbbeb..74794a55b015 100644
+--- a/arch/arm/mach-s3c24xx/s3c2443.c
++++ b/arch/arm/mach-s3c24xx/s3c2443.c
+@@ -23,7 +23,7 @@
+ #include <asm/mach/map.h>
+ #include <asm/mach/irq.h>
+ 
+-#include <mach/hardware.h>
++#include <mach/map.h>
+ #include <mach/gpio-samsung.h>
+ #include <mach/irqs.h>
+ #include <asm/irq.h>
+diff --git a/arch/arm/mach-s3c24xx/s3c244x.c b/arch/arm/mach-s3c24xx/s3c244x.c
+index f5bd489bac85..0ca188d0ffe5 100644
+--- a/arch/arm/mach-s3c24xx/s3c244x.c
++++ b/arch/arm/mach-s3c24xx/s3c244x.c
+@@ -25,7 +25,7 @@
+ #include <asm/mach/map.h>
+ #include <asm/mach/irq.h>
+ 
+-#include <mach/hardware.h>
++#include <mach/map.h>
+ #include <asm/irq.h>
+ 
+ #include <mach/regs-clock.h>
+diff --git a/arch/arm/mach-s3c24xx/sleep-s3c2410.S b/arch/arm/mach-s3c24xx/sleep-s3c2410.S
+index 659f9eff9de2..e4f6f64e7826 100644
+--- a/arch/arm/mach-s3c24xx/sleep-s3c2410.S
++++ b/arch/arm/mach-s3c24xx/sleep-s3c2410.S
+@@ -13,7 +13,6 @@
+ #include <linux/linkage.h>
+ #include <linux/serial_s3c.h>
+ #include <asm/assembler.h>
+-#include <mach/hardware.h>
+ #include <mach/map.h>
+ 
+ #include <mach/regs-gpio.h>
+diff --git a/arch/arm/mach-s3c24xx/sleep-s3c2412.S b/arch/arm/mach-s3c24xx/sleep-s3c2412.S
+index c373f1ca862b..434f5082b2ed 100644
+--- a/arch/arm/mach-s3c24xx/sleep-s3c2412.S
++++ b/arch/arm/mach-s3c24xx/sleep-s3c2412.S
+@@ -8,7 +8,6 @@
+ 
+ #include <linux/linkage.h>
+ #include <asm/assembler.h>
+-#include <mach/hardware.h>
+ #include <mach/map.h>
+ 
+ #include <mach/regs-irq.h>
+diff --git a/arch/arm/mach-s3c24xx/sleep.S b/arch/arm/mach-s3c24xx/sleep.S
+index f0f11ad60c52..4bda4a413584 100644
+--- a/arch/arm/mach-s3c24xx/sleep.S
++++ b/arch/arm/mach-s3c24xx/sleep.S
+@@ -13,7 +13,6 @@
+ #include <linux/linkage.h>
+ #include <linux/serial_s3c.h>
+ #include <asm/assembler.h>
+-#include <mach/hardware.h>
+ #include <mach/map.h>
+ 
+ #include <mach/regs-gpio.h>
 -- 
 2.17.1
 
