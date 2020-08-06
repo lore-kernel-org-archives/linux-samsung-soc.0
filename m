@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4EB7C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32292C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32E73221E3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:39:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C503221E2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Aug 2020 18:41:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596739191;
-	bh=msjJ9dPDN0Y/EID8M3/b0UU21TuitT2pnikvDbyHE2I=;
+	s=default; t=1596739302;
+	bh=DPZaom5NAT2KivsfSxfg/NbbYwOmpa1upzg9nMe0pn4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NkHcf++Cap0uLBtY+2rH/A9iUdiJ1tQ18IajRWNNMQ6IYw5uL9MMRsfMeEClpYh6a
-	 9PBC8RbgJijgoudd8Fve3O4umtIh9Qv6PXr6lYqFkgdRK9DDIgl8Idgb26UnT7TQ24
-	 gIk5vgeyohVsm/fCTMHtYnkNWiAy6QlNXSHAciJA=
+	b=Qx9MRzckZaE2kqDcXbIsfss2kO4SYKfu+WLo+lTlEpqQLdA0njPndk5oG57CsxQce
+	 79OQyHQahoJqoWjgEfjDndbszyhVjdIzzSf1PzEzCHxj8phnXoYEG2VjkZRZBXob28
+	 CT8L0wDzQO8MQtS2ftQWo96T8uSpcn+3yzISv/7w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728597AbgHFSju (ORCPT
+        id S1726197AbgHFS1c (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 Aug 2020 14:39:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54058 "EHLO mail.kernel.org"
+        Thu, 6 Aug 2020 14:27:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728720AbgHFS34 (ORCPT
+        id S1728341AbgHFSXc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Aug 2020 14:29:56 -0400
+        Thu, 6 Aug 2020 14:23:32 -0400
 Received: from localhost.localdomain (unknown [194.230.155.117])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 916D922CBB;
-        Thu,  6 Aug 2020 18:23:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5165E22D04;
+        Thu,  6 Aug 2020 18:22:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596738186;
-        bh=msjJ9dPDN0Y/EID8M3/b0UU21TuitT2pnikvDbyHE2I=;
+        s=default; t=1596738133;
+        bh=DPZaom5NAT2KivsfSxfg/NbbYwOmpa1upzg9nMe0pn4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F5HIa1FWzUMOhPyfIDYDI25KWmtk1D7XH6Z79jaL17bIBByHjnR6f8OuI9p2xO/Y3
-         89Nw//ycbSIyAIeNCAPkamI44NO299QkJWU0nz36vWUsChudZzxos81ecEdxXQezpJ
-         N6ssZyc4M6ezes6C03+BpUu065M0AknG0cwdI5Yc=
+        b=br6SESXvsfakDzF/1hP0mUDf1oXB70eWCEQ3qKKN4rKgzInWtHHsBHxX7FsBumrlM
+         KVyZKT299K/KhuKeLy4D9GiQf3wrSnoelofZuN05GtEz5b2oKezgkhRVlQ9nvg3CUl
+         jO7awguu5PH2xrZFl15Fm8gfnewVTkzd8ShLjiKc=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kukjin Kim <kgene@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: [PATCH v2 22/41] ARM: s3c: adc: move header to linux/soc/samsung
-Date:   Thu,  6 Aug 2020 20:20:39 +0200
-Message-Id: <20200806182059.2431-22-krzk@kernel.org>
+        linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 08/41] usb: gadget: s3c: use platform resources
+Date:   Thu,  6 Aug 2020 20:20:25 +0200
+Message-Id: <20200806182059.2431-8-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200806181932.2253-1-krzk@kernel.org>
 References: <20200806181932.2253-1-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -66,211 +66,137 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-There are multiple drivers using the private adc interface.
-It seems unlikely that they would ever get converted to iio,
-so make the current state official by making the header file
-global.
-
-The s3c2410_ts driver needs a couple of register definitions
-as well.
+The resources are correctly initialized, so just use them
+instead of relying on hardcoded data from platform headers.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Acked-by: Sebastian Reichel <sre@kernel.org>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/mach-s3c64xx/mach-crag6410.c         |  2 +-
- arch/arm/mach-s3c64xx/mach-mini6410.c         |  2 +-
- arch/arm/mach-s3c64xx/mach-real6410.c         |  2 +-
- arch/arm/mach-s3c64xx/mach-smdk6410.c         |  2 +-
- arch/arm/plat-samsung/adc.c                   |  2 +-
- arch/arm/plat-samsung/devs.c                  |  2 +-
- drivers/hwmon/s3c-hwmon.c                     |  2 +-
- drivers/input/touchscreen/s3c2410_ts.c        | 37 ++++++++++++++++++-
- drivers/power/supply/s3c_adc_battery.c        |  2 +-
- .../linux/soc/samsung/s3c-adc.h               |  6 +--
- 10 files changed, 46 insertions(+), 13 deletions(-)
- rename arch/arm/plat-samsung/include/plat/adc.h => include/linux/soc/samsung/s3c-adc.h (85%)
+ drivers/usb/gadget/udc/s3c2410_udc.c          | 31 +++++++------------
+ drivers/usb/gadget/udc/s3c2410_udc.h          |  1 +
+ .../usb/gadget/udc/s3c2410_udc_regs.h         |  0
+ 3 files changed, 12 insertions(+), 20 deletions(-)
+ rename arch/arm/plat-samsung/include/plat/regs-udc.h => drivers/usb/gadget/udc/s3c2410_udc_regs.h (100%)
 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index a2fefb2609e7..ca9a346056ed 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -57,7 +57,7 @@
- #include <plat/keypad.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <linux/platform_data/i2c-s3c2410.h>
- #include <plat/pm.h>
+diff --git a/drivers/usb/gadget/udc/s3c2410_udc.c b/drivers/usb/gadget/udc/s3c2410_udc.c
+index e875a0b967c0..f1ea51476add 100644
+--- a/drivers/usb/gadget/udc/s3c2410_udc.c
++++ b/drivers/usb/gadget/udc/s3c2410_udc.c
+@@ -36,15 +36,11 @@
+ #include <asm/byteorder.h>
+ #include <asm/irq.h>
+ #include <asm/unaligned.h>
+-#include <mach/irqs.h>
  
-diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
-index 636d312add81..cbf6a1696a6d 100644
---- a/arch/arm/mach-s3c64xx/mach-mini6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
-@@ -27,7 +27,7 @@
- #include <mach/regs-gpio.h>
- #include <mach/gpio-samsung.h>
+-#include <mach/hardware.h>
+-
+-#include <plat/regs-udc.h>
+ #include <linux/platform_data/usb-s3c2410_udc.h>
  
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
- #include <plat/fb.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
-index 56fc21f02c7b..e2aa7c0998bd 100644
---- a/arch/arm/mach-s3c64xx/mach-real6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-real6410.c
-@@ -29,7 +29,7 @@
- #include <mach/gpio-samsung.h>
- #include <mach/irqs.h>
+-
+ #include "s3c2410_udc.h"
++#include "s3c2410_udc_regs.h"
  
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
- #include <plat/fb.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index 7b931e7a7913..febeacc476c8 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -60,7 +60,7 @@
+ #define DRIVER_DESC	"S3C2410 USB Device Controller Gadget"
+ #define DRIVER_AUTHOR	"Herbert Pötzl <herbert@13thfloor.at>, " \
+@@ -57,6 +53,7 @@ static struct s3c2410_udc	*the_controller;
+ static struct clk		*udc_clock;
+ static struct clk		*usb_bus_clock;
+ static void __iomem		*base_addr;
++static int			irq_usbd;
+ static u64			rsrc_start;
+ static u64			rsrc_len;
+ static struct dentry		*s3c2410_udc_debugfs_root;
+@@ -835,8 +832,6 @@ static void s3c2410_udc_handle_ep(struct s3c2410_ep *ep)
+ 	}
+ }
  
- #include <plat/devs.h>
- #include <plat/cpu.h>
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <linux/platform_data/touchscreen-s3c2410.h>
- #include <plat/keypad.h>
- 
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index 55b1925f65d7..e35e04417cce 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -20,7 +20,7 @@
- #include <linux/regulator/consumer.h>
- 
- #include <plat/regs-adc.h>
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- 
- /* This driver is designed to control the usage of the ADC block between
-  * the touchscreen and any other drivers that may need to use it, such as
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 0ed3a4b9fc12..c42e4a272cc7 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -46,7 +46,7 @@
- 
- #include <plat/cpu.h>
- #include <plat/devs.h>
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <linux/platform_data/ata-samsung_cf.h>
- #include <plat/fb.h>
- #include <plat/fb-s3c2410.h>
-diff --git a/drivers/hwmon/s3c-hwmon.c b/drivers/hwmon/s3c-hwmon.c
-index b490fe3d2ee8..f2703c5460d0 100644
---- a/drivers/hwmon/s3c-hwmon.c
-+++ b/drivers/hwmon/s3c-hwmon.c
-@@ -20,7 +20,7 @@
- #include <linux/hwmon.h>
- #include <linux/hwmon-sysfs.h>
- 
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <linux/platform_data/hwmon-s3c.h>
- 
- struct s3c_hwmon_attr {
-diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
-index 82920ff46f72..2e70c0b79444 100644
---- a/drivers/input/touchscreen/s3c2410_ts.c
-+++ b/drivers/input/touchscreen/s3c2410_ts.c
-@@ -20,10 +20,43 @@
- #include <linux/clk.h>
- #include <linux/io.h>
- 
--#include <plat/adc.h>
--#include <plat/regs-adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <linux/platform_data/touchscreen-s3c2410.h>
- 
-+#define	S3C2410_ADCCON			(0x00)
-+#define	S3C2410_ADCTSC			(0x04)
-+#define	S3C2410_ADCDLY			(0x08)
-+#define	S3C2410_ADCDAT0			(0x0C)
-+#define	S3C2410_ADCDAT1			(0x10)
-+#define	S3C64XX_ADCUPDN			(0x14)
-+#define	S3C2443_ADCMUX			(0x18)
-+#define	S3C64XX_ADCCLRINT		(0x18)
-+#define	S5P_ADCMUX			(0x1C)
-+#define	S3C64XX_ADCCLRINTPNDNUP		(0x20)
-+
-+/* ADCTSC Register Bits */
-+#define S3C2443_ADCTSC_UD_SEN		(1 << 8)
-+#define S3C2410_ADCTSC_YM_SEN		(1<<7)
-+#define S3C2410_ADCTSC_YP_SEN		(1<<6)
-+#define S3C2410_ADCTSC_XM_SEN		(1<<5)
-+#define S3C2410_ADCTSC_XP_SEN		(1<<4)
-+#define S3C2410_ADCTSC_PULL_UP_DISABLE	(1<<3)
-+#define S3C2410_ADCTSC_AUTO_PST		(1<<2)
-+#define S3C2410_ADCTSC_XY_PST(x)	(((x)&0x3)<<0)
-+
-+/* ADCDAT0 Bits */
-+#define S3C2410_ADCDAT0_UPDOWN		(1<<15)
-+#define S3C2410_ADCDAT0_AUTO_PST	(1<<14)
-+#define S3C2410_ADCDAT0_XY_PST		(0x3<<12)
-+#define S3C2410_ADCDAT0_XPDATA_MASK	(0x03FF)
-+
-+/* ADCDAT1 Bits */
-+#define S3C2410_ADCDAT1_UPDOWN		(1<<15)
-+#define S3C2410_ADCDAT1_AUTO_PST	(1<<14)
-+#define S3C2410_ADCDAT1_XY_PST		(0x3<<12)
-+#define S3C2410_ADCDAT1_YPDATA_MASK	(0x03FF)
-+
-+
- #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
- 
- #define INT_DOWN	(0)
-diff --git a/drivers/power/supply/s3c_adc_battery.c b/drivers/power/supply/s3c_adc_battery.c
-index 3d00b35cafc9..60b7f41ab063 100644
---- a/drivers/power/supply/s3c_adc_battery.c
-+++ b/drivers/power/supply/s3c_adc_battery.c
-@@ -22,7 +22,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- 
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- 
- #define BAT_POLL_INTERVAL		10000 /* ms */
- #define JITTER_DELAY			500 /* ms */
-diff --git a/arch/arm/plat-samsung/include/plat/adc.h b/include/linux/soc/samsung/s3c-adc.h
-similarity index 85%
-rename from arch/arm/plat-samsung/include/plat/adc.h
-rename to include/linux/soc/samsung/s3c-adc.h
-index 74d1a46408c1..591c94ef957d 100644
---- a/arch/arm/plat-samsung/include/plat/adc.h
-+++ b/include/linux/soc/samsung/s3c-adc.h
-@@ -7,8 +7,8 @@
-  * S3C ADC driver information
+-#include <mach/regs-irq.h>
+-
+ /*
+  *	s3c2410_udc_irq - interrupt handler
   */
+@@ -977,7 +972,7 @@ static irqreturn_t s3c2410_udc_irq(int dummy, void *_dev)
+ 		}
+ 	}
  
--#ifndef __ASM_PLAT_ADC_H
--#define __ASM_PLAT_ADC_H __FILE__
-+#ifndef __LINUX_SOC_SAMSUNG_S3C_ADC_H
-+#define __LINUX_SOC_SAMSUNG_S3C_ADC_H __FILE__
+-	dprintk(DEBUG_VERBOSE, "irq: %d s3c2410_udc_done.\n", IRQ_USBD);
++	dprintk(DEBUG_VERBOSE, "irq: %d s3c2410_udc_done.\n", irq_usbd);
  
- struct s3c_adc_client;
- struct platform_device;
-@@ -29,4 +29,4 @@ extern struct s3c_adc_client *
+ 	/* Restore old index */
+ 	udc_write(idx, S3C2410_UDC_INDEX_REG);
+@@ -1777,13 +1772,7 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
+ 	spin_lock_init(&udc->lock);
+ 	udc_info = dev_get_platdata(&pdev->dev);
  
- extern void s3c_adc_release(struct s3c_adc_client *client);
+-	rsrc_start = S3C2410_PA_USBDEV;
+-	rsrc_len   = S3C24XX_SZ_USBDEV;
+-
+-	if (!request_mem_region(rsrc_start, rsrc_len, gadget_name))
+-		return -EBUSY;
+-
+-	base_addr = ioremap(rsrc_start, rsrc_len);
++	base_addr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (!base_addr) {
+ 		retval = -ENOMEM;
+ 		goto err_mem;
+@@ -1795,17 +1784,19 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
+ 	s3c2410_udc_disable(udc);
+ 	s3c2410_udc_reinit(udc);
  
--#endif /* __ASM_PLAT_ADC_H */
-+#endif /* __LINUX_SOC_SAMSUNG_S3C_ADC_H */
++	irq_usbd = platform_get_irq(pdev, 0);
++
+ 	/* irq setup after old hardware state is cleaned up */
+-	retval = request_irq(IRQ_USBD, s3c2410_udc_irq,
++	retval = request_irq(irq_usbd, s3c2410_udc_irq,
+ 			     0, gadget_name, udc);
+ 
+ 	if (retval != 0) {
+-		dev_err(dev, "cannot get irq %i, err %d\n", IRQ_USBD, retval);
++		dev_err(dev, "cannot get irq %i, err %d\n", irq_usbd, retval);
+ 		retval = -EBUSY;
+ 		goto err_map;
+ 	}
+ 
+-	dev_dbg(dev, "got irq %i\n", IRQ_USBD);
++	dev_dbg(dev, "got irq %i\n", irq_usbd);
+ 
+ 	if (udc_info && udc_info->vbus_pin > 0) {
+ 		retval = gpio_request(udc_info->vbus_pin, "udc vbus");
+@@ -1872,7 +1863,7 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
+ 	if (udc_info && udc_info->vbus_pin > 0)
+ 		gpio_free(udc_info->vbus_pin);
+ err_int:
+-	free_irq(IRQ_USBD, udc);
++	free_irq(irq_usbd, udc);
+ err_map:
+ 	iounmap(base_addr);
+ err_mem:
+@@ -1906,7 +1897,7 @@ static int s3c2410_udc_remove(struct platform_device *pdev)
+ 		free_irq(irq, udc);
+ 	}
+ 
+-	free_irq(IRQ_USBD, udc);
++	free_irq(irq_usbd, udc);
+ 
+ 	iounmap(base_addr);
+ 	release_mem_region(rsrc_start, rsrc_len);
+diff --git a/drivers/usb/gadget/udc/s3c2410_udc.h b/drivers/usb/gadget/udc/s3c2410_udc.h
+index bdcaa8dd300f..68bdf3e5aac2 100644
+--- a/drivers/usb/gadget/udc/s3c2410_udc.h
++++ b/drivers/usb/gadget/udc/s3c2410_udc.h
+@@ -90,6 +90,7 @@ struct s3c2410_udc {
+ 	unsigned			req_pending : 1;
+ 	u8				vbus;
+ 	struct dentry			*regs_info;
++	int				irq;
+ };
+ #define to_s3c2410(g)	(container_of((g), struct s3c2410_udc, gadget))
+ 
+diff --git a/arch/arm/plat-samsung/include/plat/regs-udc.h b/drivers/usb/gadget/udc/s3c2410_udc_regs.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/regs-udc.h
+rename to drivers/usb/gadget/udc/s3c2410_udc_regs.h
 -- 
 2.17.1
 
