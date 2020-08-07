@@ -2,154 +2,99 @@ Return-Path: <SRS0=fCds=BR=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 539FCC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Aug 2020 01:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC1EC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Aug 2020 04:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39500206B5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Aug 2020 01:20:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 822F422CAF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Aug 2020 04:54:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="H3yQRv02"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lqEZ9A/s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726078AbgHGBU0 (ORCPT
+        id S1725815AbgHGEyo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 Aug 2020 21:20:26 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:20769 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbgHGBUY (ORCPT
+        Fri, 7 Aug 2020 00:54:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42000 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbgHGEyn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Aug 2020 21:20:24 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200807012020epoutp0426abf13951a886155cbbfde3c14b3705~o17B6Mgv00866308663epoutp046
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Aug 2020 01:20:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200807012020epoutp0426abf13951a886155cbbfde3c14b3705~o17B6Mgv00866308663epoutp046
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1596763220;
-        bh=0bzgxzv+xoy9CsixNrx4dnMN1shAY2rIUs1e6k9XoAM=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=H3yQRv020BnNKug2KpGwRKRyPA2vFKnDTIC3DuXAausTKf1Nxc02fvVRCA71UZMHj
-         h3VRLzNWWnGdkQ1n88e8XY5L6v77mke/2g9d78KKse8gvSrg4yYjgdRK1cpH4zhuJ6
-         bkmpVWaJ6NIHzWjie4rX/3nDj1IAReooJsfpCRUQ=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200807012020epcas1p4597259080aa38005572f96b9d09acdf1~o17BSZQ6h2682726827epcas1p4Z;
-        Fri,  7 Aug 2020 01:20:20 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4BN6wy14xpzMqYl1; Fri,  7 Aug
-        2020 01:20:18 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        25.0B.18978.D4CAC2F5; Fri,  7 Aug 2020 10:20:13 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200807012012epcas1p3f110e9d8badc6c37a363de0b70b28e42~o1656fjZD1403314033epcas1p3i;
-        Fri,  7 Aug 2020 01:20:12 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200807012012epsmtrp22c2ff9c9a9096f0dee757b8a8dcb2fce~o1655iZY71933719337epsmtrp2h;
-        Fri,  7 Aug 2020 01:20:12 +0000 (GMT)
-X-AuditID: b6c32a35-5edff70000004a22-f0-5f2cac4da10b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BD.06.08382.C4CAC2F5; Fri,  7 Aug 2020 10:20:12 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200807012012epsmtip163812c47bd0156efdbd57d24c419a6fa~o165rCdPU1337713377epsmtip1U;
-        Fri,  7 Aug 2020 01:20:12 +0000 (GMT)
-Subject: Re: [PATCH] clk: samsung: Prevent potential endless loop in the PLL
- set_rate ops
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-clk@vger.kernel.org
-Cc:     tomasz.figa@gmail.com, sboyd@kernel.org, mturquette@baylibre.com,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <bb483f3c-7d83-4807-aff2-7969a43121aa@samsung.com>
-Date:   Fri, 7 Aug 2020 10:32:11 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Fri, 7 Aug 2020 00:54:43 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF3ACC061575
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Aug 2020 21:54:43 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id 17so353492pfw.9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Aug 2020 21:54:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Uw+hzHkkFQHpKKttBQnfQJy4eV1x+mEGfbQUFATKQ5o=;
+        b=lqEZ9A/sLBE1dxCtyaaFdylpUwfG+ecetWBLdSWxJKfm/3ZqWSvRiYSlWMci3zYJOk
+         larrrdPz5aE3fmGeE2b9BG/zphuVufLWJNP7RpYOa+bKIXgPntq4xKaFNajbj2S8y15n
+         nsNd6F7jo6qfSc5j7KYJ3fhW75F8Qs2qicNfIlyTuzz94a0TSzbjgKVozaf/FmfKPTdX
+         6PBOb2gVFj66mtHewKfR1RwdVpyP78vPZfHbQBMdv1WVDoTFyfFR/XKTCdG9ZAoH90QY
+         AwwcBfB+Br8ZXzlQVy0uLdruT7fz45KrcsR4Hv0FiCoEdE5WI17QleyMfscJadW3avLX
+         KgCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Uw+hzHkkFQHpKKttBQnfQJy4eV1x+mEGfbQUFATKQ5o=;
+        b=Rx9/VBchWyTnyNsJ0ICK7I23XXE8RRSlHOMERdjoLHr6dZlxcTJV0pUhgtc/pIF0Pg
+         oS/Ug1PuycjN/OnUEnhkRAlzrrqTvg3tTZxOP7l4Iy4OggjsrNyAcFzM2BgKE0knUDm+
+         JeZVw1W4FresBMNbRnKzx4bMaHjqNzCaxJ1aGpZt5gKHy/RHnJoDk5oNfVVvVDdHfKJm
+         R6o2OwfMMgZFV1seHKxv2rdLG3H25CqWJNg9AiHcA0uGDVYwgunk74DVvq7YdMqtAkJy
+         4F+eBkgPwebooBM2FbStx5rw7PEBJw55SRmmWzC7cq4VsHbr2Lq8cmIXDOPdnWHmoT8n
+         n2Ag==
+X-Gm-Message-State: AOAM530qZDUp0p3nOEO+/sCTo7k9vCg2Z0kOoD8xysLspXnv9S7ikZ9+
+        vnZ6vILstmwbdKcRRepIlPK0Lw==
+X-Google-Smtp-Source: ABdhPJxzEGct9GafiVQIRxPUdzuAW68/6ub98vgg/4bs88pQQ5Y01QiyZQGfAIlFu7w/7t8F0tWvYQ==
+X-Received: by 2002:a63:954c:: with SMTP id t12mr9852650pgn.387.1596776083077;
+        Thu, 06 Aug 2020 21:54:43 -0700 (PDT)
+Received: from localhost ([223.190.59.99])
+        by smtp.gmail.com with ESMTPSA id h63sm9182699pjb.29.2020.08.06.21.54.42
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Aug 2020 21:54:42 -0700 (PDT)
+Date:   Fri, 7 Aug 2020 10:24:36 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 34/41] cpufreq: s3c24xx: split out registers
+Message-ID: <20200807045436.m3fsaew4632l36u7@vireshk-mac-ubuntu>
+References: <20200806181932.2253-1-krzk@kernel.org>
+ <20200806182059.2431-34-krzk@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200806160646.1997-1-s.nawrocki@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmga7vGp14g1cHhC02zljPavGx5x6r
-        xeVdc9gsZpzfx2Sx9shddouLp1wtDr9pZ7X4d20ji8WqXX8YHTg93t9oZffYOesuu8emVZ1s
-        Hn1bVjF6fN4kF8AalW2TkZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk
-        4hOg65aZA3SPkkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafAskCvODG3uDQvXS85
-        P9fK0MDAyBSoMCE7Y/nlPvaCl2wVq1edZmtg3MXaxcjJISFgIrH++yvmLkYuDiGBHYwSixr/
-        s0M4nxglNvcvYYJwvjFKfFq7gQ2mpf/gWnYQW0hgL6PEnpO8EEXvGSUun1nECJIQFoiWWHp3
-        OtBcDg4RAS+JeQ26IDXMIPXtj/+BDWIT0JLY/+IGmM0voChx9cdjsF5eATuJn593soDYLAIq
-        Eje2L2UGsUUFwiRObmuBqhGUODnzCVgNp4C1xKqdV8AOYhYQl7j1ZD4ThC0vsf3tHLDfJASW
-        cki8P9AMdpCEgIvE6pVQ/wtLvDq+hR3ClpL4/G4v1JPVEitPHmGD6O1glNiy/wJUg7HE/qWT
-        mUDmMAtoSqzfpQ8RVpTY+XsuI8RePol3X3tYIVbxSnS0CUGUKEtcfnCXCcKWlFjc3sk2gVFp
-        FpJvZiH5YBaSD2YhLFvAyLKKUSy1oDg3PbXYsMAQObI3MYKTqpbpDsaJbz/oHWJk4mA8xCjB
-        wawkwpv1QjteiDclsbIqtSg/vqg0J7X4EKMpMHwnMkuJJucD03peSbyhqZGxsbGFiaGZqaGh
-        kjjvw1sK8UIC6YklqdmpqQWpRTB9TBycUg1M2gGKafUP1JS5nf/N5/62i82jyOmBTMApQcOJ
-        +55uOvQkVGt5wZXsJUt7BD6Xayeu2Hn/J5O56Htx2TSNdbPafl3l/xLI9Thvf8XWyxvnX9u5
-        nZ3hV/yRVW/mut6UePRMq9F/hjvHEo+WwxWeAolZkUqPNuhm29crdp/0mxvpUeX/gTllxec/
-        x3or9c023p/hX1Hy6a7wr92H26b/OVa70ujVk1fflOX0ps1a8mx2a03lrr1V4jX+MVMPLlac
-        oiy2Z/3ZRIsdD9XOvJvcteLomluzts/ftZWtu7BBy/tTfafBtfLO4oUTk30cplUEnTMvdkk4
-        pjklNbNHseX6+Ull1c+mTpxocsQi+mpU0bv4LCWW4oxEQy3mouJEAJ4iVyozBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmkeLIzCtJLcpLzFFi42LZdlhJTtdnjU68wbeVnBYbZ6xntfjYc4/V
-        4vKuOWwWM87vY7JYe+Quu8XFU64Wh9+0s1r8u7aRxWLVrj+MDpwe72+0snvsnHWX3WPTqk42
-        j74tqxg9Pm+SC2CN4rJJSc3JLEst0rdL4MpYfrmPveAlW8XqVafZGhh3sXYxcnJICJhI9B9c
-        y97FyMUhJLCbUaJpy2NGiISkxLSLR5m7GDmAbGGJw4eLIWreMkr8PPcGrEZYIFpi6d3pYDUi
-        Al4S8xp0QcLMAnsZJf7/rISo72OUmDBxPxtIgk1AS2L/ixtgNr+AosTVHxC7eAXsJH5+3skC
-        YrMIqEjc2L6UGcQWFQiT2LnkMRNEjaDEyZlPwGo4BawlVu28wg6xTF3iz7xLzBC2uMStJ/OZ
-        IGx5ie1v5zBPYBSehaR9FpKWWUhaZiFpWcDIsopRMrWgODc9t9iwwDAvtVyvODG3uDQvXS85
-        P3cTIzi+tDR3MG5f9UHvECMTB+MhRgkOZiUR3qwX2vFCvCmJlVWpRfnxRaU5qcWHGKU5WJTE
-        eW8ULowTEkhPLEnNTk0tSC2CyTJxcEo1MBUKfeRa8mjLLZcEtecVOumB0uruAqGXrB7MUxLe
-        y8LdVba1pbZcZh3/4ZK7Dpdf6yblsT7Krip6YvggJnT1HUuvxP0S75K9XXNDWwoYL6bHClju
-        fHn86AGfe0vP1tdHvbK/KH485Vdy19fGsOZfhmYGEVVvmHfEy36NLv317try6lXhOrz5TrzL
-        V82avlC9Z4Lntcqv9XU7++98nMJzV/fipAWrZh40Eng65WRM+q+DMy35zl5VToh88W3rvx+c
-        53vs5j091Dlp5hZGSU/eRyZrX7iUXinSFv+fNnez/eTLMtdn++88fV3Hd4L9h1veuyPOszk8
-        12i84D/Ba6lvwU1jPd/JZWr7ONgF5mguLlBiKc5INNRiLipOBADbBb+iHgMAAA==
-X-CMS-MailID: 20200807012012epcas1p3f110e9d8badc6c37a363de0b70b28e42
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200806160653eucas1p2b7fd860f5d89589cf9df0ad0f8d3981f
-References: <CGME20200806160653eucas1p2b7fd860f5d89589cf9df0ad0f8d3981f@eucas1p2.samsung.com>
-        <20200806160646.1997-1-s.nawrocki@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200806182059.2431-34-krzk@kernel.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
-
-On 8/7/20 1:06 AM, Sylwester Nawrocki wrote:
-> In the .set_rate callback for some PLLs there is a loop polling state
-> of the PLL lock bit and it may become an endless loop when something
-> goes wrong with the PLL. For some PLLs there is already (duplicated)
-> code for polling with a timeout. This patch refactors that code a bit
-> and moves it to a common helper function which is then used
-> in .set_rate callbacks for all the PLLs.
+On 06-08-20, 20:20, Krzysztof Kozlowski wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Each of the cpufreq drivers uses a fixed set of register
+> bits, copy those definitions into the drivers to avoid
+> including mach/regs-clock.h.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> [krzk: Fix build by copying also S3C2410_LOCKTIME]
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
 > ---
->  drivers/clk/samsung/clk-pll.c | 94 +++++++++++++----------------------
->  1 file changed, 35 insertions(+), 59 deletions(-)
-> 
 
-(snip)
-
-It fix the infinite loop and unify the duplicate code.
-It looks good to me. Thanks.
-
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+viresh
