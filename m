@@ -4,59 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3102C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Aug 2020 11:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65572C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Aug 2020 11:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D336022CAE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Aug 2020 11:34:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BB4F22CAE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Aug 2020 11:51:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596800099;
-	bh=tXBo25R0Y+4AIZzZGupXC8450DFRTM3yjoapLt4VqKY=;
+	s=default; t=1596801071;
+	bh=32ICotjIyNNWkXaOINpjxUnYeW8iqTjjb8pHUgr5ccg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=So5IdqNzV3E+wVgcuVB5fDMsWilTcgrHI8GYEdM36Su+VPpyvUPoO6YPCHJ1EBJm+
-	 +qM3Oay6RW17jJ8EzClkPEKhSSV0uxnvzvCNlcHNAiOb36pP2GoOYqePdM9GUu8/CZ
-	 hvlA0xluP5fHYDzvHTv1Zrw+NH2hRWxcsjaoloVQ=
+	b=GU710obp885xoplleAgg7sAdK+q1pntRx5qFxtnPgH8chauZVe5mDzGJmSsHVON+2
+	 WXiwa9OLeMaOQhMvFELo+D6aRS9nXbTac9NwUevJuHJGvDOnANXnEfSunK1KrDvqro
+	 y3lZS4EeEjRBsLfh9CY+t5PWThR//sNNni9fCGwg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbgHGLe4 (ORCPT
+        id S1728269AbgHGLvK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 7 Aug 2020 07:34:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58002 "EHLO mail.kernel.org"
+        Fri, 7 Aug 2020 07:51:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbgHGLe4 (ORCPT
+        id S1726293AbgHGLvK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Aug 2020 07:34:56 -0400
+        Fri, 7 Aug 2020 07:51:10 -0400
 Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C82E22C9F;
-        Fri,  7 Aug 2020 11:34:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45EE02075D;
+        Fri,  7 Aug 2020 11:51:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596800095;
-        bh=tXBo25R0Y+4AIZzZGupXC8450DFRTM3yjoapLt4VqKY=;
+        s=default; t=1596801070;
+        bh=32ICotjIyNNWkXaOINpjxUnYeW8iqTjjb8pHUgr5ccg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YJUZtmpa+yUWbnaqqJxL8gX6L+5u4GbVyMpIGe/1a0sQqdZibg4ol0RHlqURrggQf
-         j1IaHsPs+MLSrrmCqkzV9C9tb9SXq9GEAoWurbcsmIlVotZLwfvK02jMiZy+IENBFW
-         e0i/KRcj5BQO4xz08YK+R9h86XuQikMbMUu9a9vI=
-Date:   Fri, 7 Aug 2020 12:34:31 +0100
+        b=dSZrTt4ObpLfEnBvvixZhHoma3EdrnuvSFbklHJCxzjOk9JcDv3jUUF6H7hwUaXJn
+         L5TEkvICKneIGGgUl/0kHMt/vsR60cZw9EcJ1+ij/QHlNsBc73j5+ExfBTjMCodLjS
+         Z20sQ6+CgcenNBw8e1e2FN011lE9nB5stpR6Pgqg=
+Date:   Fri, 7 Aug 2020 12:50:45 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Russell King <linux@armlinux.org.uk>,
         Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH v2 20/41] ARM: s3c24xx: move regs-spi.h into spi driver
-Message-ID: <20200807113431.GD5435@sirena.org.uk>
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 23/41] ARM: s3c24xx: move spi fiq handler into platform
+Message-ID: <20200807115045.GF5435@sirena.org.uk>
 References: <20200806181932.2253-1-krzk@kernel.org>
- <20200806182059.2431-20-krzk@kernel.org>
+ <20200806182059.2431-23-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Hf61M2y+wYpnELGG"
+        protocol="application/pgp-signature"; boundary="5CUMAwwhRxlRszMD"
 Content-Disposition: inline
-In-Reply-To: <20200806182059.2431-20-krzk@kernel.org>
+In-Reply-To: <20200806182059.2431-23-krzk@kernel.org>
 X-Cookie: Disposable, use only once.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -65,33 +64,32 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
---Hf61M2y+wYpnELGG
+--5CUMAwwhRxlRszMD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 06, 2020 at 08:20:37PM +0200, Krzysztof Kozlowski wrote:
+On Thu, Aug 06, 2020 at 08:20:40PM +0200, Krzysztof Kozlowski wrote:
 > From: Arnd Bergmann <arnd@arndb.de>
 >=20
-> The file is mostly specific to the driver, the few bits that
-> are actually used by the platform code get moved to mach/map.h
-> instead.
+> The fiq handler needs access to some register definitions that
+> should not be used directly by device drivers.
 
 Acked-by: Mark Brown <broonie@kernel.org>
 
---Hf61M2y+wYpnELGG
+--5CUMAwwhRxlRszMD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl8tPEYACgkQJNaLcl1U
-h9D36wf+PRVDv26bxJzdzNv1s/fYpLppZOssLMHcxN+lOdauOOsa5m0C7iV/d0EZ
-WIq02xtYnwXSVCiQj7I6HnEEWdVmut0lo88HjJYTmT5WV8Lgcsijy5tY6P3p/yTu
-AF1qPbox7ymfK2O3W6Z5RKpUHWQiJJr5cZKcN6EmDbdf0E3qM5uXGwAdaUmtSrnt
-1IcZiUAso+lshS28dhovciTO/ezzp7v/6YYNYA5nD2PSNpl+u/dWZ2lm/HGR7cs9
-NOXfX8PTTx06z9N9DGwbgxho1lONB4kni4DIuB/YUGdrf9eU4O/Pt/PdRy+kDhdX
-LxFe3KVOkfJBttE6XRFFpyWio1LaRw==
-=oEjc
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl8tQBQACgkQJNaLcl1U
+h9CCwQf9H+v8zRt71X23du7fGHjes+KdpGpxon0dxFg4Oa+k6LbFzkyH/SJ9kXNk
+5Ymwb6DhbvK7xWKP/trSvDm4iiG77lOw01JlGZvfk0yuwHTiqxdlKeIRwllptK0o
+yi5k6n0UkyOqidzvRHKAY3qCxn7ze5PicFrVoaF835u8PqcfJ/wLzojQnCr/fui4
+kEl83qK8LM/2C5JCosLMXrtl4moVLxBM1J/AXVamIIstm3vWWhpSU37jJUXInXCa
+HiGTeqE/HIrSXKoLpy3/AQm6uZBG2b5lHsRQsnqwGZRYLO0H8/PfjvmcX/nKiBow
+GLIzcyPsQuCDhjLxOTtF6TP+/JStjg==
+=WzR3
 -----END PGP SIGNATURE-----
 
---Hf61M2y+wYpnELGG--
+--5CUMAwwhRxlRszMD--
