@@ -2,118 +2,149 @@ Return-Path: <SRS0=fCds=BR=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92BBAC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Aug 2020 08:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CEBC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Aug 2020 10:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EE5322CAF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Aug 2020 08:36:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 109E82075D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Aug 2020 10:21:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eIR16ZnQ"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Is6RCFe/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbgHGIgP (ORCPT
+        id S1726987AbgHGKVX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 7 Aug 2020 04:36:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47732 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726511AbgHGIgO (ORCPT
+        Fri, 7 Aug 2020 06:21:23 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:55511 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726511AbgHGKVX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Aug 2020 04:36:14 -0400
-Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E188C061574;
-        Fri,  7 Aug 2020 01:36:14 -0700 (PDT)
-Received: by mail-qt1-x841.google.com with SMTP id 6so750363qtt.0;
-        Fri, 07 Aug 2020 01:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kdO3teMZpZhh4Zg2rIT12joG5MKLgBFbBUxDW1pI73k=;
-        b=eIR16ZnQ1nthK/tYOCxXkv+uIJlqLI5IbwPoaSHYzG5gRu20ue9nD6QcbcUL6csLHq
-         qJ2Bf3uuqmFtWK+oIJ5EzY3p1D25EFds9Q/z7v8P5eEDL2TVQ9mEVGerVe/8PbTl/Qsk
-         D11fnpEB4jlA3GJjzTBBaivnKJQfkHoMpRl7Mes/NBarDLQ2EBA5tm3fKMVXCUX5p8NE
-         VtI6+OpmTkmJ4j60tffXtyKIDmyO1/uEycScTE8E6FEgO3oFk0A8h/SRUTFFX4NyHy/D
-         pAI5tBl+++1vqtgrdk6M+NIJOrts3ioniEWB22DpA+PlR4g7FKvH16B1edACnFjwhi+W
-         txjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kdO3teMZpZhh4Zg2rIT12joG5MKLgBFbBUxDW1pI73k=;
-        b=DwXflxIr0aYng0tZNcuTXEfNuxsGg8tnZ7B3e/CXmsbpD0IPeFpYOQhxxsUUvnbhgO
-         fPCUOHgxKDRmjBlpq/vx+0W2fk0zIqG3AemOiaDUx3dZZnflq+7qh0ZsJmTNjDztYjZW
-         BtS0kJZWr8xBkRem82LKmy/GxmM5dbSy6wqI3voRTPpaN6ecCW4zHIHN6eRTUHLNdcty
-         cJjQwlaxu70QcMwQ0ovAM16IZFxGOCE2Y9q3ib9z/PZ0XcJAV8STUYzJLUEFpT0Brgo3
-         nS+9N/LjKsHGtGJ0dvKZaljM/XMnn162PHBdO5ULHIyRWft2tltWxgn4N8PSOlmUSWCC
-         ec4w==
-X-Gm-Message-State: AOAM530/rzC3S1Z2DlMccmvAue2paDuNet+gamR7/9g9RtIMYzh6stmy
-        3k77orKkO78d42dV0cf+MFc=
-X-Google-Smtp-Source: ABdhPJwBojBnRxKGIEx2o9NF/V0VbhRIv+H1iWPd1xJmwPYqw7fbihn+NBWPgbuQol6WxM2CBA7iGg==
-X-Received: by 2002:aed:3947:: with SMTP id l65mr13322315qte.374.1596789373742;
-        Fri, 07 Aug 2020 01:36:13 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14d:72b1:8920:da15:c0bd:33c1:e2ad])
-        by smtp.gmail.com with ESMTPSA id c42sm7846728qte.5.2020.08.07.01.36.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Aug 2020 01:36:13 -0700 (PDT)
-From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-X-Google-Original-From: Daniel W. S. Almeida
-To:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     skhan@linuxfoundation.org,
-        "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 02/20] media: exynos4-is: media-dev.c: use PTR_ERR_OR_ZERO
-Date:   Fri,  7 Aug 2020 05:35:29 -0300
-Message-Id: <20200807083548.204360-2-dwlsalmeida@gmail.com>
-X-Mailer: git-send-email 2.28.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 7 Aug 2020 06:21:23 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200807102120euoutp02f3abaed1be97837a98049104ed64af98~o9TYOt3JA0846908469euoutp02Z
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Aug 2020 10:21:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200807102120euoutp02f3abaed1be97837a98049104ed64af98~o9TYOt3JA0846908469euoutp02Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1596795680;
+        bh=X0ZsoWqQvvoThq5jga7Zo1jwWSEllmlTdtkyzLuIfMQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=Is6RCFe/qNjEGTXKMNqzrb9/xTmIV0dR/UwCJNInaMwL+rkUUnTfgJC+4NTY2wVSW
+         yParLRTQqz/cUp7crxGwLQp59LUwc3GDnv2ixRS6BuFEmwXiC0+ZdoW+zOuzRooG/c
+         Ku/5FHJsZvGuSywpM94jfGo2LPdjHZsUAk2lWPco=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200807102120eucas1p115dd9eaa8fc4b76db601915cc9d9acfe~o9TX4MiFP1623016230eucas1p12;
+        Fri,  7 Aug 2020 10:21:20 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 34.CE.06456.F1B2D2F5; Fri,  7
+        Aug 2020 11:21:19 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200807102119eucas1p21c07d7e8f24ca4e7e2b28b2e8216ff28~o9TXjJczw1148811488eucas1p2C;
+        Fri,  7 Aug 2020 10:21:19 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200807102119eusmtrp2c9ff9e397912066a2c601485875eaca9~o9TXidIeP0661206612eusmtrp2Y;
+        Fri,  7 Aug 2020 10:21:19 +0000 (GMT)
+X-AuditID: cbfec7f2-809ff70000001938-ae-5f2d2b1f1b40
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 18.09.06314.F1B2D2F5; Fri,  7
+        Aug 2020 11:21:19 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200807102119eusmtip11dbe245183b70fca3926b4cc7ebb8ffc~o9TXIYNpa2935329353eusmtip1f;
+        Fri,  7 Aug 2020 10:21:19 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: exynos_defconfig: enable platform media drivers
+Date:   Fri,  7 Aug 2020 12:21:03 +0200
+Message-Id: <20200807102103.30796-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEIsWRmVeSWpSXmKPExsWy7djP87ry2rrxBu9v2VhsnLGe1eL8+Q3s
+        Fj0btrJazDi/j8li7ZG77BbtT18yO7B5bFrVyebRt2UVo8fnTXIBzFFcNimpOZllqUX6dglc
+        GSc+XWYr+MBdsf/nVcYGxt1cXYycHBICJhKnN19j7mLk4hASWMEoMf3tBHYI5wujxOUbU6Cc
+        z4wSC7e8ZYdpuT7lEhNEYjmjxLcrV9jgWt79P8cCUsUmYCjR9baLDcQWEXCSWDjrL9goZoHd
+        jBK7P84BKxIWcJV4vGAP2FgWAVWJvg3rmEFsXgFbiTM3DjNBrJOXWL3hANiFEgIH2CQaL8+G
+        usNFYvn862wQtrDEq+NboOIyEv93zmeCaGhmlHh4bi07hNMD9FLTDEaIKmuJO+d+AXVzAN2k
+        KbF+lz5E2FHi7N+XLCBhCQE+iRtvBUHCzEDmpG3TmSHCvBIdbUIQ1WoSs46vg1t78MIlZgjb
+        Q+Lb4Ydg9wsJxEpMX3uPaQKj3CyEXQsYGVcxiqeWFuempxYb5qWW6xUn5haX5qXrJefnbmIE
+        xvzpf8c/7WD8einpEKMAB6MSD2/FH+14IdbEsuLK3EOMEhzMSiK8TmdPxwnxpiRWVqUW5ccX
+        leakFh9ilOZgURLnNV70MlZIID2xJDU7NbUgtQgmy8TBKdXAaMrsHLUo7atxUvyja4wMwm21
+        ex/o/+Rsi42seOu4d8envetfVLWKPfZtjd3qWLO5TG3jzZnM9RFdTLM/RapyNTWcCgh+LXX6
+        3pRZktEHF2U49jU4eorfcGcUcSn4/+zrRZ6l5lL6H+V/HbR02LMlKvp1enVHSJmm6Nw0qaUF
+        ok+MXSQln2QpsRRnJBpqMRcVJwIAUfy6HvUCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsVy+t/xu7ry2rrxBj8mKVtsnLGe1eL8+Q3s
+        Fj0btrJazDi/j8li7ZG77BbtT18yO7B5bFrVyebRt2UVo8fnTXIBzFF6NkX5pSWpChn5xSW2
+        StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6GSc+XWYr+MBdsf/nVcYGxt1c
+        XYycHBICJhLXp1xi6mLk4hASWMoocfDmGUaIhIzEyWkNrBC2sMSfa11sILaQwCdGiebNYDVs
+        AoYSXW8h4iICLhL79zxlBhnELLCXUWLh16lgzcICrhKPF+xhB7FZBFQl+jasYwaxeQVsJc7c
+        OMwEsUBeYvWGA8wTGHkWMDKsYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECAyzbcd+bt7BeGlj
+        8CFGAQ5GJR7eij/a8UKsiWXFlbmHGCU4mJVEeJ3Ono4T4k1JrKxKLcqPLyrNSS0+xGgKtHwi
+        s5Rocj4wBvJK4g1NDc0tLA3Njc2NzSyUxHk7BA7GCAmkJ5akZqemFqQWwfQxcXBKNTBOOXXT
+        qO7EdklxHcY5q86HiETLsLS8YGC1dwia1/Jxkv+tGZGbnpvq3uRc4L784qmJnKZJl3S5ls5v
+        Ot3fzCT7XuWKSaMNu3/4iau5YjfPW2/++4KX5dnsV2I5J289n338TPXvKxP5v13SObnspd2O
+        tjbVyyHSvUt/vKjSXcqnbq909MuGbXmlSizFGYmGWsxFxYkA4WcgxkkCAAA=
+X-CMS-MailID: 20200807102119eucas1p21c07d7e8f24ca4e7e2b28b2e8216ff28
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200807102119eucas1p21c07d7e8f24ca4e7e2b28b2e8216ff28
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200807102119eucas1p21c07d7e8f24ca4e7e2b28b2e8216ff28
+References: <CGME20200807102119eucas1p21c07d7e8f24ca4e7e2b28b2e8216ff28@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+Commit 06b93644f4d1 ("media: Kconfig: add an option to filter in/out
+platform drivers") introduced a dependency of all platform media drivers
+on the new CONFIG_MEDIA_PLATFORM_SUPPORT symbol, so add it also to
+exynos_defconfig. While touching this part, update the media related
+configs to the current layout.
 
-Fixes the following coccinelle report:
-
-drivers/media/platform/exynos4-is/media-dev.c:1273:1-3:
-WARNING: PTR_ERR_OR_ZERO can be used
-
-By using PTR_ERR_OR_ZERO in place of the existing logic.
-
-Found using - Coccinelle (http://coccinelle.lip6.fr)
-
-Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/media/platform/exynos4-is/media-dev.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/arm/configs/exynos_defconfig | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 16dd660137a8..9346b08931e2 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -1270,10 +1270,8 @@ static int fimc_md_get_pinctrl(struct fimc_md *fmd)
- 
- 	pctl->state_idle = pinctrl_lookup_state(pctl->pinctrl,
- 					PINCTRL_STATE_IDLE);
--	if (IS_ERR(pctl->state_idle))
--		return PTR_ERR(pctl->state_idle);
- 
--	return 0;
-+	return PTR_ERR_OR_ZERO(pctl->state_idle);
- }
- 
- static int cam_clk_prepare(struct clk_hw *hw)
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 6e8b5ff0859c..cf82c9d23a08 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -191,11 +191,14 @@ CONFIG_REGULATOR_S2MPS11=y
+ CONFIG_REGULATOR_S5M8767=y
+ CONFIG_REGULATOR_TPS65090=y
+ CONFIG_REGULATOR_WM8994=y
++CONFIG_MEDIA_CEC_SUPPORT=y
++CONFIG_CEC_SAMSUNG_S5P=m
+ CONFIG_MEDIA_SUPPORT=m
++# CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
+ CONFIG_MEDIA_CAMERA_SUPPORT=y
+-CONFIG_MEDIA_CEC_SUPPORT=y
+ CONFIG_MEDIA_CONTROLLER=y
+ CONFIG_VIDEO_V4L2_SUBDEV_API=y
++CONFIG_MEDIA_PLATFORM_SUPPORT=y
+ CONFIG_MEDIA_USB_SUPPORT=y
+ CONFIG_USB_VIDEO_CLASS=m
+ CONFIG_V4L_PLATFORM_DRIVERS=y
+@@ -210,9 +213,6 @@ CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
+ CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
+ CONFIG_V4L_TEST_DRIVERS=y
+ CONFIG_VIDEO_VIVID=m
+-CONFIG_CEC_PLATFORM_DRIVERS=y
+-CONFIG_CEC_SAMSUNG_S5P=m
+-# CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
+ CONFIG_VIDEO_S5K6A3=m
+ CONFIG_VIDEO_S5C73M3=m
+ CONFIG_DRM=y
 -- 
-2.28.0
+2.17.1
 
