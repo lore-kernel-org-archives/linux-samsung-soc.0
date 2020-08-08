@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F73C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A851CC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E04122BF5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:42:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C2BB2053B
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:44:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596930124;
-	bh=IfDtPWHDu6w1xaYNiEa8Sqca5Op8tyggw6IiHrLJwWM=;
+	s=default; t=1596930287;
+	bh=lWgkR05ZLdyajB7h9qa3gzGicGf+5etfvA1S5tRgY10=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QNmxAISoqp4ekYhocQg8oTmVCOaTIu5kK8AGL7W4yWf6gnXlkJjavud3grgZDE0co
-	 BwkEZZIa9+DU3Rwme1dv591kpkDQjti6s9TnA+2vdtvkqwmKhRQSbXY+Qpb+P/30pB
-	 S3S+O3v9gA6nZGtowm/w68gcVMKs8NfV6oT8aQoo=
+	b=DNrOsBIydnoqxavPGr7dzaZP+rBPMQ+mpb0P8HsvY4ERjSwVGWqqOvfenrUIw+b8r
+	 X9fEzd92u++gMziDIKcZQ2Mz4Cnmrp0aJyojoWzDiBTtxGj0AnMl2IQKikFAXqUIE2
+	 CJ7YZYpsHt+O9KhdSte8XEjm1+z6soR+pWzzVuN0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727905AbgHHXkZ (ORCPT
+        id S1728476AbgHHXjJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 8 Aug 2020 19:40:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55796 "EHLO mail.kernel.org"
+        Sat, 8 Aug 2020 19:39:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728470AbgHHXkX (ORCPT
+        id S1728461AbgHHXjD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 8 Aug 2020 19:40:23 -0400
+        Sat, 8 Aug 2020 19:39:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC25D20855;
-        Sat,  8 Aug 2020 23:40:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7616920885;
+        Sat,  8 Aug 2020 23:39:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596930022;
-        bh=IfDtPWHDu6w1xaYNiEa8Sqca5Op8tyggw6IiHrLJwWM=;
+        s=default; t=1596929943;
+        bh=lWgkR05ZLdyajB7h9qa3gzGicGf+5etfvA1S5tRgY10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tGiQ+Y7j5cwtcsD5j0v+PQTvnF/xy/FjyIPTJzqh5stlvyquKKTLSHzX6SosASxdu
-         F5w1trTWocnEPw1E+9XTLs2nvmSKUo0G59vPCZRJC4X+2JG1ExbThxsjT1AZmzI/VD
-         Wo9tsMm/jd/bHMqiKllN7umu9mhqPXG0Mn+ApXqk=
+        b=gN0DpA5A3imi7ihUKgcwsH6vPOS/R1dfzCqIU0UXhweoLsK13yzCvHj6Nw/FXFMce
+         Npt3lIEg6UsAx/24WuooPirjYx32ag3LkIJHK4ZF3x0QaJ7rO8dJPDIu8sGjGbA4ld
+         ctHqRckuFX/ZpGX+GafV2TiovCF9LciWPc94IzTc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
@@ -47,12 +47,12 @@ Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 07/14] arm64: dts: exynos: Fix silent hang after boot on Espresso
-Date:   Sat,  8 Aug 2020 19:40:06 -0400
-Message-Id: <20200808234013.3619541-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 14/40] arm64: dts: exynos: Fix silent hang after boot on Espresso
+Date:   Sat,  8 Aug 2020 19:38:18 -0400
+Message-Id: <20200808233844.3618823-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200808234013.3619541-1-sashal@kernel.org>
-References: <20200808234013.3619541-1-sashal@kernel.org>
+In-Reply-To: <20200808233844.3618823-1-sashal@kernel.org>
+References: <20200808233844.3618823-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -80,10 +80,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index 4a8b1fb51243c..c8824b918693d 100644
+index 080e0f56e108f..61ee7b6a31594 100644
 --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
 +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -155,6 +155,7 @@ ldo7_reg: LDO7 {
+@@ -157,6 +157,7 @@ ldo7_reg: LDO7 {
  				regulator-min-microvolt = <700000>;
  				regulator-max-microvolt = <1150000>;
  				regulator-enable-ramp-delay = <125>;
