@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BABC433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C94C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6BBA206B5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15B9820672
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:50:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596930462;
-	bh=drw5bpymsEmzse0AQE94EHwiijtRpGBgXRZNsFvsyBE=;
+	s=default; t=1596930628;
+	bh=CD3HPUADLYe44TSi72mJmigB4TKXwZYje3mQ+Tm1oJA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Mv1rKQKLB3WORc7OWvG95m4CZJ5E9ACfacGb3of0XnBPieAZYfhplXDN0+61HlScC
-	 h4Znbk9FxVmzJ2Whzo2pCXot+uNwjAXcsFofd3EvMQXwIQVaDrtEMHepHs+TEsNIpq
-	 nWJ94kw5kNz3vfM6Blw0mtEKo7JmvStR9gr9yYrQ=
+	b=VrofyMD42UIWTrvfwVitVp+6kr/U/EnEpKL0rG7BOIb5S/AZvQgaCMgbatmkdg0vt
+	 VmRuY8BV8qawwAg/7EZ0x8L2pBV2poDAis1FlcQlAKFF0QuevHzpeZIfZvDfRQVjVA
+	 6hDDSVM1SG1vtlz5NK/8G/hSGg8AXEQkm/9RYG3s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbgHHXhu (ORCPT
+        id S1726967AbgHHXgj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 8 Aug 2020 19:37:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51046 "EHLO mail.kernel.org"
+        Sat, 8 Aug 2020 19:36:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727903AbgHHXhs (ORCPT
+        id S1726962AbgHHXgi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 8 Aug 2020 19:37:48 -0400
+        Sat, 8 Aug 2020 19:36:38 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84D1220748;
-        Sat,  8 Aug 2020 23:37:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E62B206C3;
+        Sat,  8 Aug 2020 23:36:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596929867;
-        bh=drw5bpymsEmzse0AQE94EHwiijtRpGBgXRZNsFvsyBE=;
+        s=default; t=1596929797;
+        bh=CD3HPUADLYe44TSi72mJmigB4TKXwZYje3mQ+Tm1oJA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kAC4PAihnd0Qnz0Ug4jHKFrtEwN7lktRC0fr+ARt2LG8dpuWcQXfeX6UBZyUsV0J3
-         jIU8zglPB88XRbaI9yWBGHUy8Z8kbczTW1MGeLNkCA1pydDumcqJXjK9jV4g+KTVPN
-         8HaBHe9xkhMhpjsvxBCrEHykAYCp/Ri8fX0G6Guk=
+        b=RTTk8jV8xMHer0yyGJy0DQbaNE/Yc+2Cq2AfLjC4jqexbA2yfdqW2AeFD00zyWcgg
+         CFekU2/rrgmlQSvBXPlMaKtkOtj7zfoNYPxvvyAAzrfmIsLHPhwFZPKuHnS8yA+8Ba
+         ZRa0CIgFL0WavmlFOj1wTgJr9dFNJmk0izgBDqXc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
+        Willy Wolff <willy.mh.wolff.ml@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 17/58] ARM: exynos: MCPM: Restore big.LITTLE cpuidle support
-Date:   Sat,  8 Aug 2020 19:36:43 -0400
-Message-Id: <20200808233724.3618168-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.8 36/72] ARM: dts: exynos: Disable frequency scaling for FSYS bus on Odroid XU3 family
+Date:   Sat,  8 Aug 2020 19:35:05 -0400
+Message-Id: <20200808233542.3617339-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200808233724.3618168-1-sashal@kernel.org>
-References: <20200808233724.3618168-1-sashal@kernel.org>
+In-Reply-To: <20200808233542.3617339-1-sashal@kernel.org>
+References: <20200808233542.3617339-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -65,68 +65,54 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit ea9dd8f61c8a890843f68e8dc0062ce78365aab8 ]
+[ Upstream commit 9ff416cf45a08f28167b75045222c762a0347930 ]
 
-Call exynos_cpu_power_up(cpunr) unconditionally. This is needed by the
-big.LITTLE cpuidle driver and has no side-effects on other code paths.
+Commit 1019fe2c7280 ("ARM: dts: exynos: Adjust bus related OPPs to the
+values correct for Exynos5422 Odroids") changed the parameters of the
+OPPs for the FSYS bus. Besides the frequency adjustments, it also removed
+the 'shared-opp' property from the OPP table used for FSYS_APB and FSYS
+busses.
 
-The additional soft-reset call during little core power up has been added
-to properly boot all cores on the Exynos5422-based boards with secure
-firmware (like Odroid XU3/XU4 family). This however broke big.LITTLE
-CPUidle driver, which worked only on boards without secure firmware (like
-Peach-Pit/Pi Chromebooks). Apply the workaround only when board is
-running under secure firmware.
+This revealed that in fact the FSYS bus frequency scaling never worked.
+When one OPP table is marked as 'opp-shared', only the first bus which
+selects the OPP sets the rate of its clock. Then OPP core assumes that
+the other busses have been changed to that OPP and no change to their
+clock rates are needed. Thus when FSYS_APB bus, which was registered
+first, set the rate for its clock, the OPP core did not change the FSYS
+bus clock later.
 
-Fixes: 833b5794e330 ("ARM: EXYNOS: reset Little cores when cpu is up")
+The mentioned commit removed that behavior, what introduced a regression
+on some Odroid XU3 boards. Frequency scaling of the FSYS bus causes
+instability of the USB host operation, what can be observed as network
+hangs. To restore old behavior, simply disable frequency scaling for the
+FSYS bus.
+
+Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
+Fixes: 1019fe2c7280 ("ARM: dts: exynos: Adjust bus related OPPs to the values correct for Exynos5422 Odroids")
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-exynos/mcpm-exynos.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
-index 9a681b421ae11..cd861c57d5adf 100644
---- a/arch/arm/mach-exynos/mcpm-exynos.c
-+++ b/arch/arm/mach-exynos/mcpm-exynos.c
-@@ -26,6 +26,7 @@
- #define EXYNOS5420_USE_L2_COMMON_UP_STATE	BIT(30)
+diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+index ab27ff8bc3dca..afe090578e8fa 100644
+--- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+@@ -411,12 +411,6 @@ &bus_fsys_apb {
+ 	status = "okay";
+ };
  
- static void __iomem *ns_sram_base_addr __ro_after_init;
-+static bool secure_firmware __ro_after_init;
- 
- /*
-  * The common v7_exit_coherency_flush API could not be used because of the
-@@ -58,15 +59,16 @@ static void __iomem *ns_sram_base_addr __ro_after_init;
- static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
- {
- 	unsigned int cpunr = cpu + (cluster * EXYNOS5420_CPUS_PER_CLUSTER);
-+	bool state;
- 
- 	pr_debug("%s: cpu %u cluster %u\n", __func__, cpu, cluster);
- 	if (cpu >= EXYNOS5420_CPUS_PER_CLUSTER ||
- 		cluster >= EXYNOS5420_NR_CLUSTERS)
- 		return -EINVAL;
- 
--	if (!exynos_cpu_power_state(cpunr)) {
--		exynos_cpu_power_up(cpunr);
+-&bus_fsys {
+-	operating-points-v2 = <&bus_fsys2_opp_table>;
+-	devfreq = <&bus_wcore>;
+-	status = "okay";
+-};
 -
-+	state = exynos_cpu_power_state(cpunr);
-+	exynos_cpu_power_up(cpunr);
-+	if (!state && secure_firmware) {
- 		/*
- 		 * This assumes the cluster number of the big cores(Cortex A15)
- 		 * is 0 and the Little cores(Cortex A7) is 1.
-@@ -258,6 +260,8 @@ static int __init exynos_mcpm_init(void)
- 		return -ENOMEM;
- 	}
- 
-+	secure_firmware = exynos_secure_firmware_available();
-+
- 	/*
- 	 * To increase the stability of KFC reset we need to program
- 	 * the PMU SPARE3 register
+ &bus_fsys2 {
+ 	operating-points-v2 = <&bus_fsys2_opp_table>;
+ 	devfreq = <&bus_wcore>;
 -- 
 2.25.1
 
