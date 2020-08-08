@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C94C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9D4C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15B9820672
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:50:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E58E206B5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:50:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596930628;
-	bh=CD3HPUADLYe44TSi72mJmigB4TKXwZYje3mQ+Tm1oJA=;
+	s=default; t=1596930655;
+	bh=bkVpK0KOWR9Ed9jeIrDj4gZF2KKuZLesyyGYbP4hNZU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VrofyMD42UIWTrvfwVitVp+6kr/U/EnEpKL0rG7BOIb5S/AZvQgaCMgbatmkdg0vt
-	 VmRuY8BV8qawwAg/7EZ0x8L2pBV2poDAis1FlcQlAKFF0QuevHzpeZIfZvDfRQVjVA
-	 6hDDSVM1SG1vtlz5NK/8G/hSGg8AXEQkm/9RYG3s=
+	b=iRh335HbIaO4M0w6zGFttv91PmAB82gvIZ3BsqWuooMPC7VlFHoXCyf+hfgkMpqQC
+	 +dh2UjYvZtjrTUAJ9kqqnzB+0Rtm62CEAj1glojrlBQ3lto+6IFDW+dRNIOgBHKlFg
+	 bx5IRSvP2AnXoK7bM9ufqaYWQh4bLvuuEtIICToQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbgHHXgj (ORCPT
+        id S1726722AbgHHXgP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 8 Aug 2020 19:36:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49248 "EHLO mail.kernel.org"
+        Sat, 8 Aug 2020 19:36:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726962AbgHHXgi (ORCPT
+        id S1726713AbgHHXgO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 8 Aug 2020 19:36:38 -0400
+        Sat, 8 Aug 2020 19:36:14 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E62B206C3;
-        Sat,  8 Aug 2020 23:36:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 913B8206E9;
+        Sat,  8 Aug 2020 23:36:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596929797;
-        bh=CD3HPUADLYe44TSi72mJmigB4TKXwZYje3mQ+Tm1oJA=;
+        s=default; t=1596929774;
+        bh=bkVpK0KOWR9Ed9jeIrDj4gZF2KKuZLesyyGYbP4hNZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RTTk8jV8xMHer0yyGJy0DQbaNE/Yc+2Cq2AfLjC4jqexbA2yfdqW2AeFD00zyWcgg
-         CFekU2/rrgmlQSvBXPlMaKtkOtj7zfoNYPxvvyAAzrfmIsLHPhwFZPKuHnS8yA+8Ba
-         ZRa0CIgFL0WavmlFOj1wTgJr9dFNJmk0izgBDqXc=
+        b=rO2h/gjVqzNETr/ewIKo0TKiLFOCW9dQDyU2PIK8plkI+w24pUg4v9m2/8tTFa7Qh
+         WoMRMs/h4u5/T+RkkRZPuNAvZrPpY0UVYU0286u593y4mXllDm0W4W1bU1MjdsfXBz
+         1KlCP+sB2SyxGpyZpzx7c9pBzfZqUpVwXgV1k+Z8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Willy Wolff <willy.mh.wolff.ml@gmail.com>,
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.8 36/72] ARM: dts: exynos: Disable frequency scaling for FSYS bus on Odroid XU3 family
-Date:   Sat,  8 Aug 2020 19:35:05 -0400
-Message-Id: <20200808233542.3617339-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.8 24/72] arm64: dts: exynos: Fix silent hang after boot on Espresso
+Date:   Sat,  8 Aug 2020 19:34:53 -0400
+Message-Id: <20200808233542.3617339-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200808233542.3617339-1-sashal@kernel.org>
 References: <20200808233542.3617339-1-sashal@kernel.org>
@@ -63,56 +62,35 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
 
-[ Upstream commit 9ff416cf45a08f28167b75045222c762a0347930 ]
+[ Upstream commit b072714bfc0e42c984b8fd6e069f3ca17de8137a ]
 
-Commit 1019fe2c7280 ("ARM: dts: exynos: Adjust bus related OPPs to the
-values correct for Exynos5422 Odroids") changed the parameters of the
-OPPs for the FSYS bus. Besides the frequency adjustments, it also removed
-the 'shared-opp' property from the OPP table used for FSYS_APB and FSYS
-busses.
+Once regulators are disabled after kernel boot, on Espresso board silent
+hang observed because of LDO7 being disabled.  LDO7 actually provide
+power to CPU cores and non-cpu blocks circuitries.  Keep this regulator
+always-on to fix this hang.
 
-This revealed that in fact the FSYS bus frequency scaling never worked.
-When one OPP table is marked as 'opp-shared', only the first bus which
-selects the OPP sets the rate of its clock. Then OPP core assumes that
-the other busses have been changed to that OPP and no change to their
-clock rates are needed. Thus when FSYS_APB bus, which was registered
-first, set the rate for its clock, the OPP core did not change the FSYS
-bus clock later.
-
-The mentioned commit removed that behavior, what introduced a regression
-on some Odroid XU3 boards. Frequency scaling of the FSYS bus causes
-instability of the USB host operation, what can be observed as network
-hangs. To restore old behavior, simply disable frequency scaling for the
-FSYS bus.
-
-Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
-Fixes: 1019fe2c7280 ("ARM: dts: exynos: Adjust bus related OPPs to the values correct for Exynos5422 Odroids")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: 9589f7721e16 ("arm64: dts: Add S2MPS15 PMIC node on exynos7-espresso")
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 6 ------
- 1 file changed, 6 deletions(-)
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index ab27ff8bc3dca..afe090578e8fa 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -411,12 +411,6 @@ &bus_fsys_apb {
- 	status = "okay";
- };
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+index 7af288fa9475f..a9412805c1d6a 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
++++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+@@ -157,6 +157,7 @@ ldo7_reg: LDO7 {
+ 				regulator-min-microvolt = <700000>;
+ 				regulator-max-microvolt = <1150000>;
+ 				regulator-enable-ramp-delay = <125>;
++				regulator-always-on;
+ 			};
  
--&bus_fsys {
--	operating-points-v2 = <&bus_fsys2_opp_table>;
--	devfreq = <&bus_wcore>;
--	status = "okay";
--};
--
- &bus_fsys2 {
- 	operating-points-v2 = <&bus_fsys2_opp_table>;
- 	devfreq = <&bus_wcore>;
+ 			ldo8_reg: LDO8 {
 -- 
 2.25.1
 
