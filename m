@@ -5,51 +5,52 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2344DC433E8
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:47:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BABC433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7B5720866
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:47:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6BBA206B5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:47:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596930440;
-	bh=bkVpK0KOWR9Ed9jeIrDj4gZF2KKuZLesyyGYbP4hNZU=;
+	s=default; t=1596930462;
+	bh=drw5bpymsEmzse0AQE94EHwiijtRpGBgXRZNsFvsyBE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=opfgP9QVft3jcOfFFJMyxBOMC5BHXXPBtO8oY2ylpxSPxRKuSo8ichF+UOyZElZXp
-	 yEzqqRsed1ilxvkW+zykmf7S+B2nc5ZR1vY638tCSCdlw1zikAMl/WF3HtUxWyUSFO
-	 Wd/SLMrcqnzwwDQCD/EoySrRU/6OKXRzTt6P8Vi8=
+	b=Mv1rKQKLB3WORc7OWvG95m4CZJ5E9ACfacGb3of0XnBPieAZYfhplXDN0+61HlScC
+	 h4Znbk9FxVmzJ2Whzo2pCXot+uNwjAXcsFofd3EvMQXwIQVaDrtEMHepHs+TEsNIpq
+	 nWJ94kw5kNz3vfM6Blw0mtEKo7JmvStR9gr9yYrQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728622AbgHHXrT (ORCPT
+        id S1728114AbgHHXhu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 8 Aug 2020 19:47:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51256 "EHLO mail.kernel.org"
+        Sat, 8 Aug 2020 19:37:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726375AbgHHXhw (ORCPT
+        id S1727903AbgHHXhs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 8 Aug 2020 19:37:52 -0400
+        Sat, 8 Aug 2020 19:37:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A0BE20748;
-        Sat,  8 Aug 2020 23:37:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84D1220748;
+        Sat,  8 Aug 2020 23:37:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596929872;
-        bh=bkVpK0KOWR9Ed9jeIrDj4gZF2KKuZLesyyGYbP4hNZU=;
+        s=default; t=1596929867;
+        bh=drw5bpymsEmzse0AQE94EHwiijtRpGBgXRZNsFvsyBE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=luasppqFyozVxgim5pGoH9snd7KkaTHKMJgGPzMKOUWJrTi5BWzvKSvax1ViF4n0c
-         ePLc1IIYOG14eKFt3awd+tmFdHrzezcjuEWYm86hJs8VZAiW8dzBgznRBfMm3Ycf33
-         NrSKc6rW45WHzupUFZ1Z7IiLfaTdQW+oKvGFSFNQ=
+        b=kAC4PAihnd0Qnz0Ug4jHKFrtEwN7lktRC0fr+ARt2LG8dpuWcQXfeX6UBZyUsV0J3
+         jIU8zglPB88XRbaI9yWBGHUy8Z8kbczTW1MGeLNkCA1pydDumcqJXjK9jV4g+KTVPN
+         8HaBHe9xkhMhpjsvxBCrEHykAYCp/Ri8fX0G6Guk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 21/58] arm64: dts: exynos: Fix silent hang after boot on Espresso
-Date:   Sat,  8 Aug 2020 19:36:47 -0400
-Message-Id: <20200808233724.3618168-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.7 17/58] ARM: exynos: MCPM: Restore big.LITTLE cpuidle support
+Date:   Sat,  8 Aug 2020 19:36:43 -0400
+Message-Id: <20200808233724.3618168-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200808233724.3618168-1-sashal@kernel.org>
 References: <20200808233724.3618168-1-sashal@kernel.org>
@@ -62,35 +63,70 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Alim Akhtar <alim.akhtar@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit b072714bfc0e42c984b8fd6e069f3ca17de8137a ]
+[ Upstream commit ea9dd8f61c8a890843f68e8dc0062ce78365aab8 ]
 
-Once regulators are disabled after kernel boot, on Espresso board silent
-hang observed because of LDO7 being disabled.  LDO7 actually provide
-power to CPU cores and non-cpu blocks circuitries.  Keep this regulator
-always-on to fix this hang.
+Call exynos_cpu_power_up(cpunr) unconditionally. This is needed by the
+big.LITTLE cpuidle driver and has no side-effects on other code paths.
 
-Fixes: 9589f7721e16 ("arm64: dts: Add S2MPS15 PMIC node on exynos7-espresso")
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+The additional soft-reset call during little core power up has been added
+to properly boot all cores on the Exynos5422-based boards with secure
+firmware (like Odroid XU3/XU4 family). This however broke big.LITTLE
+CPUidle driver, which worked only on boards without secure firmware (like
+Peach-Pit/Pi Chromebooks). Apply the workaround only when board is
+running under secure firmware.
+
+Fixes: 833b5794e330 ("ARM: EXYNOS: reset Little cores when cpu is up")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-exynos/mcpm-exynos.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index 7af288fa9475f..a9412805c1d6a 100644
---- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -157,6 +157,7 @@ ldo7_reg: LDO7 {
- 				regulator-min-microvolt = <700000>;
- 				regulator-max-microvolt = <1150000>;
- 				regulator-enable-ramp-delay = <125>;
-+				regulator-always-on;
- 			};
+diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+index 9a681b421ae11..cd861c57d5adf 100644
+--- a/arch/arm/mach-exynos/mcpm-exynos.c
++++ b/arch/arm/mach-exynos/mcpm-exynos.c
+@@ -26,6 +26,7 @@
+ #define EXYNOS5420_USE_L2_COMMON_UP_STATE	BIT(30)
  
- 			ldo8_reg: LDO8 {
+ static void __iomem *ns_sram_base_addr __ro_after_init;
++static bool secure_firmware __ro_after_init;
+ 
+ /*
+  * The common v7_exit_coherency_flush API could not be used because of the
+@@ -58,15 +59,16 @@ static void __iomem *ns_sram_base_addr __ro_after_init;
+ static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
+ {
+ 	unsigned int cpunr = cpu + (cluster * EXYNOS5420_CPUS_PER_CLUSTER);
++	bool state;
+ 
+ 	pr_debug("%s: cpu %u cluster %u\n", __func__, cpu, cluster);
+ 	if (cpu >= EXYNOS5420_CPUS_PER_CLUSTER ||
+ 		cluster >= EXYNOS5420_NR_CLUSTERS)
+ 		return -EINVAL;
+ 
+-	if (!exynos_cpu_power_state(cpunr)) {
+-		exynos_cpu_power_up(cpunr);
+-
++	state = exynos_cpu_power_state(cpunr);
++	exynos_cpu_power_up(cpunr);
++	if (!state && secure_firmware) {
+ 		/*
+ 		 * This assumes the cluster number of the big cores(Cortex A15)
+ 		 * is 0 and the Little cores(Cortex A7) is 1.
+@@ -258,6 +260,8 @@ static int __init exynos_mcpm_init(void)
+ 		return -ENOMEM;
+ 	}
+ 
++	secure_firmware = exynos_secure_firmware_available();
++
+ 	/*
+ 	 * To increase the stability of KFC reset we need to program
+ 	 * the PMU SPARE3 register
 -- 
 2.25.1
 
