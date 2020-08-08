@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9D4C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA95C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E58E206B5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:50:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA4E220672
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:51:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596930655;
-	bh=bkVpK0KOWR9Ed9jeIrDj4gZF2KKuZLesyyGYbP4hNZU=;
+	s=default; t=1596930668;
+	bh=drw5bpymsEmzse0AQE94EHwiijtRpGBgXRZNsFvsyBE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iRh335HbIaO4M0w6zGFttv91PmAB82gvIZ3BsqWuooMPC7VlFHoXCyf+hfgkMpqQC
-	 +dh2UjYvZtjrTUAJ9kqqnzB+0Rtm62CEAj1glojrlBQ3lto+6IFDW+dRNIOgBHKlFg
-	 bx5IRSvP2AnXoK7bM9ufqaYWQh4bLvuuEtIICToQ=
+	b=W+ekucRCYFOSbBtlfRwZLSXsdAUCQLYppfaZ2v9lJu0g12fE5Rkp0Oiq8LfNhCzo+
+	 NfNBHo//QBIdPfAB9BQyAH3UZHup0I0wOqBKFotdHvLVnzOzYtTV23p881pjp+BIkS
+	 0gL1eOnJA42r1TGO4MtWmpvNgqA7atFBtUWYF20E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbgHHXgP (ORCPT
+        id S1727874AbgHHXvG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 8 Aug 2020 19:36:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48572 "EHLO mail.kernel.org"
+        Sat, 8 Aug 2020 19:51:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726713AbgHHXgO (ORCPT
+        id S1726648AbgHHXgK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 8 Aug 2020 19:36:14 -0400
+        Sat, 8 Aug 2020 19:36:10 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 913B8206E9;
-        Sat,  8 Aug 2020 23:36:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CD34206D8;
+        Sat,  8 Aug 2020 23:36:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596929774;
-        bh=bkVpK0KOWR9Ed9jeIrDj4gZF2KKuZLesyyGYbP4hNZU=;
+        s=default; t=1596929769;
+        bh=drw5bpymsEmzse0AQE94EHwiijtRpGBgXRZNsFvsyBE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rO2h/gjVqzNETr/ewIKo0TKiLFOCW9dQDyU2PIK8plkI+w24pUg4v9m2/8tTFa7Qh
-         WoMRMs/h4u5/T+RkkRZPuNAvZrPpY0UVYU0286u593y4mXllDm0W4W1bU1MjdsfXBz
-         1KlCP+sB2SyxGpyZpzx7c9pBzfZqUpVwXgV1k+Z8=
+        b=NwbwsS0sSUkDcGgLRr8NMKwc22UybdwiKB0yp6/lhM5QUNEP+Va8Ao1WKVvNSBsjH
+         5b3jPdLunsVg/Tmbwemfea6SE2TJQlzKIHAbLARYXZG+xEFfxwJx+2qT1rxOfKqsBd
+         h8n49WipAbqXKtT+wESGbFedON66mzgBmJ/7ii5g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.8 24/72] arm64: dts: exynos: Fix silent hang after boot on Espresso
-Date:   Sat,  8 Aug 2020 19:34:53 -0400
-Message-Id: <20200808233542.3617339-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.8 20/72] ARM: exynos: MCPM: Restore big.LITTLE cpuidle support
+Date:   Sat,  8 Aug 2020 19:34:49 -0400
+Message-Id: <20200808233542.3617339-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200808233542.3617339-1-sashal@kernel.org>
 References: <20200808233542.3617339-1-sashal@kernel.org>
@@ -62,35 +63,70 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Alim Akhtar <alim.akhtar@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit b072714bfc0e42c984b8fd6e069f3ca17de8137a ]
+[ Upstream commit ea9dd8f61c8a890843f68e8dc0062ce78365aab8 ]
 
-Once regulators are disabled after kernel boot, on Espresso board silent
-hang observed because of LDO7 being disabled.  LDO7 actually provide
-power to CPU cores and non-cpu blocks circuitries.  Keep this regulator
-always-on to fix this hang.
+Call exynos_cpu_power_up(cpunr) unconditionally. This is needed by the
+big.LITTLE cpuidle driver and has no side-effects on other code paths.
 
-Fixes: 9589f7721e16 ("arm64: dts: Add S2MPS15 PMIC node on exynos7-espresso")
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+The additional soft-reset call during little core power up has been added
+to properly boot all cores on the Exynos5422-based boards with secure
+firmware (like Odroid XU3/XU4 family). This however broke big.LITTLE
+CPUidle driver, which worked only on boards without secure firmware (like
+Peach-Pit/Pi Chromebooks). Apply the workaround only when board is
+running under secure firmware.
+
+Fixes: 833b5794e330 ("ARM: EXYNOS: reset Little cores when cpu is up")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-exynos/mcpm-exynos.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index 7af288fa9475f..a9412805c1d6a 100644
---- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -157,6 +157,7 @@ ldo7_reg: LDO7 {
- 				regulator-min-microvolt = <700000>;
- 				regulator-max-microvolt = <1150000>;
- 				regulator-enable-ramp-delay = <125>;
-+				regulator-always-on;
- 			};
+diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+index 9a681b421ae11..cd861c57d5adf 100644
+--- a/arch/arm/mach-exynos/mcpm-exynos.c
++++ b/arch/arm/mach-exynos/mcpm-exynos.c
+@@ -26,6 +26,7 @@
+ #define EXYNOS5420_USE_L2_COMMON_UP_STATE	BIT(30)
  
- 			ldo8_reg: LDO8 {
+ static void __iomem *ns_sram_base_addr __ro_after_init;
++static bool secure_firmware __ro_after_init;
+ 
+ /*
+  * The common v7_exit_coherency_flush API could not be used because of the
+@@ -58,15 +59,16 @@ static void __iomem *ns_sram_base_addr __ro_after_init;
+ static int exynos_cpu_powerup(unsigned int cpu, unsigned int cluster)
+ {
+ 	unsigned int cpunr = cpu + (cluster * EXYNOS5420_CPUS_PER_CLUSTER);
++	bool state;
+ 
+ 	pr_debug("%s: cpu %u cluster %u\n", __func__, cpu, cluster);
+ 	if (cpu >= EXYNOS5420_CPUS_PER_CLUSTER ||
+ 		cluster >= EXYNOS5420_NR_CLUSTERS)
+ 		return -EINVAL;
+ 
+-	if (!exynos_cpu_power_state(cpunr)) {
+-		exynos_cpu_power_up(cpunr);
+-
++	state = exynos_cpu_power_state(cpunr);
++	exynos_cpu_power_up(cpunr);
++	if (!state && secure_firmware) {
+ 		/*
+ 		 * This assumes the cluster number of the big cores(Cortex A15)
+ 		 * is 0 and the Little cores(Cortex A7) is 1.
+@@ -258,6 +260,8 @@ static int __init exynos_mcpm_init(void)
+ 		return -ENOMEM;
+ 	}
+ 
++	secure_firmware = exynos_secure_firmware_available();
++
+ 	/*
+ 	 * To increase the stability of KFC reset we need to program
+ 	 * the PMU SPARE3 register
 -- 
 2.25.1
 
