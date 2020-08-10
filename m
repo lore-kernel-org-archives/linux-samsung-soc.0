@@ -4,170 +4,153 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66401C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Aug 2020 02:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C5DBC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Aug 2020 04:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C1932073E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Aug 2020 02:46:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C2A52073A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Aug 2020 04:08:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="inqBJrfm"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ArO8cC6G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbgHJCq3 (ORCPT
+        id S1725843AbgHJEIc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 9 Aug 2020 22:46:29 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:34739 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbgHJCq3 (ORCPT
+        Mon, 10 Aug 2020 00:08:32 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:10199 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbgHJEIa (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 9 Aug 2020 22:46:29 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200810024626epoutp02cdc7a9ae1fea84a02b99040c5b9fb78c~pyCDyDJlM1432314323epoutp02M
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Aug 2020 02:46:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200810024626epoutp02cdc7a9ae1fea84a02b99040c5b9fb78c~pyCDyDJlM1432314323epoutp02M
+        Mon, 10 Aug 2020 00:08:30 -0400
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200810040828epoutp04bd37371439402b05c62a1f42387faffa~pzJrujnqi1851018510epoutp04O
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Aug 2020 04:08:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200810040828epoutp04bd37371439402b05c62a1f42387faffa~pzJrujnqi1851018510epoutp04O
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1597027586;
-        bh=Hm0O4+wp4rjYdiIKJCgeEeM6ngWanf6naZsiI8pn48w=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=inqBJrfmptA999manEJmdnIMPcfNa7MRHg7x+vcQsFd1m8yba6blwSvsKlK9Iap5S
-         ZikJOA4p7j8prUs3rqOf2Md8rHRkvMn5Gep2yIjssY2GchhkvZaTardhFiyMTs3nwY
-         yaLFVlJC1y9FmnOvB7IXceUl4XPlRbNn5t8WPSF8=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200810024626epcas1p304ceed0c05a692d8cc9c7a67f1a5eaf1~pyCDbjKwO1266712667epcas1p3-;
-        Mon, 10 Aug 2020 02:46:26 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.156]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4BQ0hv5xR2zMqYlh; Mon, 10 Aug
-        2020 02:46:23 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BD.46.28581.FF4B03F5; Mon, 10 Aug 2020 11:46:23 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200810024623epcas1p2888eb6e65b5b870cdd1a343498d41621~pyCAonPsQ1322213222epcas1p22;
-        Mon, 10 Aug 2020 02:46:23 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200810024623epsmtrp19e2ace4bf31297cb87a8ef19faba5b78~pyCAntfji2223222232epsmtrp1c;
-        Mon, 10 Aug 2020 02:46:23 +0000 (GMT)
-X-AuditID: b6c32a38-2cdff70000006fa5-f7-5f30b4ff64b2
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CC.A5.08303.FF4B03F5; Mon, 10 Aug 2020 11:46:23 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200810024622epsmtip2775ae2bd691c6b00358fae458caa5262~pyCAQlQxe2988229882epsmtip2u;
-        Mon, 10 Aug 2020 02:46:22 +0000 (GMT)
-Subject: Re: [PATCH v2] clk: samsung: Keep top BPLL mux on Exynos542x
- enabled
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <9dafbfdb-c882-1151-b164-f04e65374264@samsung.com>
-Date:   Mon, 10 Aug 2020 11:58:33 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
-MIME-Version: 1.0
-In-Reply-To: <20200807133143.22748-1-m.szyprowski@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPJsWRmVeSWpSXmKPExsWy7bCmvu7/LQbxBpOm6VtsnLGe1eL8+Q3s
-        Fh977rFafO49wmgx4/w+JouFTS3sFmuP3GW3+HdtI4tF+9OXzA6cHmvmrWH02LSqk82jb8sq
-        Ro/Pm+QCWKKybTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTd
-        MnOAblFSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFFgW6BUn5haX5qXrJefnWhka
-        GBiZAhUmZGfsfPKdveA6d8XJngmMDYxXObsYOTkkBEwknm+bytLFyMUhJLCDUWLRnwvsEM4n
-        Rokp3TcYIZzPjBIP351k7WLkAGs58UsNIr6LUeJz4wRmCOc9o8TvUwvZQeYKC/hLnNx3AmyU
-        iEAno8T8KTdYQRxmgUuMEu9uvwKrYhPQktj/4gYbiM0voChx9cdjRhCbV8BOYv6VacwgNouA
-        qkTnrstg9aICYRInt7VA1QhKnJz5hAXE5gSqf71hEVicWUBc4taT+UwQtrzE9rdzwM6TEFjK
-        IbFoy1d2iLddJBbMnwVlC0u8Or4FypaSeNnfBmVXS6w8eYQNormDUWLL/gusEAljif1LJzOB
-        AoNZQFNi/S59iLCixM7fc6GO4JN497UHGl68Eh1tQhAlyhKXH9xlgrAlJRa3d7JNYFSaheSd
-        WUhemIXkhVkIyxYwsqxiFEstKM5NTy02LDBBju9NjOCUqmWxg3Hu2w96hxiZOBgPMUpwMCuJ
-        8Nrd1Y8X4k1JrKxKLcqPLyrNSS0+xGgKDOCJzFKiyfnApJ5XEm9oamRsbGxhYmhmamioJM77
-        8JZCvJBAemJJanZqakFqEUwfEwenVAOTZH1lSlncrPWTJ2SyHog88qrD9ITwA/cJxonHDO+F
-        z1mX7XLk5onvU57lKTysjCiIvj1XNPSOf/D/Vw8OtT+9fkD18s9txs1ciVda7/ScUz1vKrFn
-        o5Gq1Qlfyxjrp/GOWtWzf21j8fvM3iX17KrN6jnf1i5IPux7q6dmbtmSj2tTrnFMXHDAUiei
-        m3nPNd4S3zeXvHcnn5+m987p2FUeDdmDzNtOFClY+Z65HpQumP9kmVB19Jr3TFaPL7s7cBQb
-        OG954/7LKy9q2olfL1pUi89tC3I+eIqhueNj7GXmJqaqPpY/UcXMa5xKFzx8fuDlvO+t8k03
-        V/3c+VX6jNvmg77MD49aH72Qk797o6mYpxJLcUaioRZzUXEiAGkKVJUyBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJXvf/FoN4g009/BYbZ6xntTh/fgO7
-        xceee6wWn3uPMFrMOL+PyWJhUwu7xdojd9kt/l3byGLR/vQlswOnx5p5axg9Nq3qZPPo27KK
-        0ePzJrkAligum5TUnMyy1CJ9uwSujJ1PvrMXXOeuONkzgbGB8SpnFyMHh4SAicSJX2pdjFwc
-        QgI7GCVenTzA3sXICRSXlJh28SgzRI2wxOHDxRA1bxklbh75wAxSIyzgK9G3aRErSEJEoJNR
-        Ys+jH2wgDrPAFUaJfTObmSBaJgJlTlwFa2ET0JLY/+IGG4jNL6AocfXHY0YQm1fATmL+lWlg
-        NSwCqhKduy6DnSEqECaxc8ljJogaQYmTM5+wgNicQPWvNywC62UWUJf4M+8SM4QtLnHryXwm
-        CFteYvvbOcwTGIVnIWmfhaRlFpKWWUhaFjCyrGKUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vO
-        z93ECI4tLa0djHtWfdA7xMjEwXiIUYKDWUmE1+6ufrwQb0piZVVqUX58UWlOavEhRmkOFiVx
-        3q+zFsYJCaQnlqRmp6YWpBbBZJk4OKUamMJsdyhNP394H/eaR7MZc7f+S9/mE/a1e8e6a7Xm
-        Z7fczl2Rx1dh0J38Xfbn0dst/qa+57P79u5/dJ+L9+ZJjmNBfG+P+fayP35u+X1faOqjQxzT
-        WQuqZoaoc92IO5Rsn27p6uAauXHPUv4J+4IsK/64MCvyqpZu22xr7HWxfcX3tPczd85flbE1
-        duJh7l3WMk2Fpxc+FF714FcyQ8B7nemzwjulViZa9HazTDZL9slt1fu/28e8d6t8bPRjq8Of
-        Sv1bW31/MN9NMvrtuu/kzqaWNZ3BrLejPvy5pSKvt/aTUt/D2eY3HgfZ/WMO2ZviM3l+2pOr
-        wT/n7cq6cPCJh5ZxzaVwhScJc/mvWIquuKvEUpyRaKjFXFScCABpcE4nHAMAAA==
-X-CMS-MailID: 20200810024623epcas1p2888eb6e65b5b870cdd1a343498d41621
+        s=mail20170921; t=1597032508;
+        bh=Jbdh3K0yopand2T7T/zEb719nwefJDSoyCMyhgMSWFQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=ArO8cC6GGGo2TiOJa89viNa+gdABNMTTb3YZk8htT/yjpDNlbpOH/VHc/oq+GiImw
+         ciGn5K55yzQ+EhvzdY45Abd2zAiC7y+bd3C5yTcB6YGSGVNxOEhsBe4TTUgocig4lr
+         vrNmtgOsLrNaX40m9e+cgJ2XtHAmE2MdgiJ52baA=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20200810040827epcas5p2445f78376af69f7d2b432af1856a24c9~pzJq4mq6Q1863818638epcas5p23;
+        Mon, 10 Aug 2020 04:08:27 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E9.B5.09467.B38C03F5; Mon, 10 Aug 2020 13:08:27 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200810032514epcas5p1140fe0e44f3727953480ff0531c76b0c~pyj7r4ehk0273102731epcas5p10;
+        Mon, 10 Aug 2020 03:25:14 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200810032514epsmtrp2815add755128fe5a54a9d8e3a6ba8b82~pyj7rKIph2362623626epsmtrp2V;
+        Mon, 10 Aug 2020 03:25:14 +0000 (GMT)
+X-AuditID: b6c32a49-a29ff700000024fb-b2-5f30c83b52e2
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        63.5E.08382.A1EB03F5; Mon, 10 Aug 2020 12:25:14 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200810032512epsmtip1f2c537ee7d35fd2900cd15f57faddd2e~pyj6RgzIb1112611126epsmtip1R;
+        Mon, 10 Aug 2020 03:25:12 +0000 (GMT)
+From:   Tamseel Shams <m.shams@samsung.com>
+To:     kgene@kernel.org, krzk@kernel.org, gregkh@linuxfoundation.org,
+        jslaby@suse.com
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
+        Tamseel Shams <m.shams@samsung.com>
+Subject: [RFT PATCH v5] serial: samsung: Removes the IRQ not found warning
+Date:   Mon, 10 Aug 2020 08:30:21 +0530
+Message-Id: <20200810030021.45348-1-m.shams@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJIsWRmVeSWpSXmKPExsWy7bCmuq71CYN4g9frtC0ezNvGZtG8eD2b
+        xZQNH5gs+h+/ZrY4f34Du8Wmx9dYLS7vmsNmMeP8PiaLM4t72S3uti5md+Dy2LSqk81j/9w1
+        7B6bl9R79G1ZxeixfstVFo/Pm+QC2KK4bFJSczLLUov07RK4MvbO3clYsIO7ouvafOYGxo2c
+        XYycHBICJhLL1p9mAbGFBHYzSpxfFdjFyAVkf2KU6Jp0kh3C+cYosWjlBTaYjmftP5ghOvYy
+        Skz4KQxhtzBJrDjo28XIwcEmoClx/Dw3SFhEIETi3dktjCBzmAVOMkrs3dwAtk1YwEti9qWl
+        YHNYBFQlZs1bCxbnFbCQWDzjBRPELnmJ1RsOMIM0SwicY5d4OPEXK0TCRWL3qscsELawxKvj
+        W9ghbCmJz+/2Qh2aLzF/3ipmCLtCYuWFN1C2vcSBK3NYQA5lBjp0/S59iLCsxNRT68D2Mgvw
+        SfT+fgJ1A6/EjnkwtqLE/939UKvEJd6tmAJ1jofEykM72CDhECvx7kwH8wRG2VkIGxYwMq5i
+        lEwtKM5NTy02LTDMSy3XK07MLS7NS9dLzs/dxAhODVqeOxjvPvigd4iRiYPxEKMEB7OSCK/d
+        Xf14Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rxKP87ECQmkJ5akZqemFqQWwWSZODilGpg4Unte
+        hk6sjGH0lJ95cUJKQnEye896ln7NTXfZBDVyF+wvF7vaXtMbvJuX48Xim5eqouVm7o57f/pT
+        7ZalZ+ujNC7X3jnnbPah4MqJBfx/TlRHzXwT2e3eaXt/0zdzgVit1w33Z/zasOi626tfjj+M
+        HzJoxfxV/nt6R7PnWo7YyTH/imetu7w1d61OulFg70HjlRZFt/cwRR6zWsm4PrLWIabadfPi
+        9W1v7+5r6AxyPryo42zVIXHfSz4SzKt5jK+ffKvx80lE9/ujLK+zV4mrVv3//vxSwbwzR9TV
+        uhn9Zyx2XVe+/8XZ2UuuTXMxv2Z29YxU+UnJ3NUSZVdS7qa0bJigdbst5JCQbNju0z2FSizF
+        GYmGWsxFxYkA2EDYq3wDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprILMWRmVeSWpSXmKPExsWy7bCSnK7UPoN4g5VLJSwezNvGZtG8eD2b
+        xZQNH5gs+h+/ZrY4f34Du8Wmx9dYLS7vmsNmMeP8PiaLM4t72S3uti5md+Dy2LSqk81j/9w1
+        7B6bl9R79G1ZxeixfstVFo/Pm+QC2KK4bFJSczLLUov07RK4MvbO3clYsIO7ouvafOYGxo2c
+        XYycHBICJhLP2n8wdzFycQgJ7GaUmLzzGztEQlxi2q/9jBC2sMTKf8/ZIYqamCQun7gOlODg
+        YBPQlDh+nhvEFBGIkJj5sQakhFngPKPEzuOrmUB6hQW8JGZfWsoMYrMIqErMmreWBcTmFbCQ
+        WDzjBRPEfHmJ1RsOME9g5FnAyLCKUTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM41LQ0
+        dzBuX/VB7xAjEwfjIUYJDmYlEV67u/rxQrwpiZVVqUX58UWlOanFhxilOViUxHlvFC6MExJI
+        TyxJzU5NLUgtgskycXBKNTBd+r1ig9GTD+VyWz5sbikTcYusz/yucnrl8aM7+F1LLK02LDvO
+        d0V0wbcFB/eYfm1sWZvnK/Nivn+Esrjre55eqb/HFcWybW/t4Jn++dauOTnON3OdNZrmrJIz
+        Nvr254U3e3J+fX6F65awx4kvt076IalwKP/ABo24awf1v1k82ctswrCW/1x4O4O4iMHEc0wO
+        +483e0kEfGbbEPhL66i/V16ZrtZS+2mfjGb+Vf+yx8K1dXpr3LHfT5tdV0SaHpo5+e3vx7U8
+        dnIWhmxfPPbMVeI5sFP0WKSI89n3NZeOT9nskqqkz3jNIH1/nA1T/pqFt0veBs749XWjc+h0
+        C8n6CXezef+01f/QWfhRPYtJiaU4I9FQi7moOBEA8W0g4aQCAAA=
+X-CMS-MailID: 20200810032514epcas5p1140fe0e44f3727953480ff0531c76b0c
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f
-References: <CGME20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f@eucas1p1.samsung.com>
-        <20200807133143.22748-1-m.szyprowski@samsung.com>
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200810032514epcas5p1140fe0e44f3727953480ff0531c76b0c
+References: <CGME20200810032514epcas5p1140fe0e44f3727953480ff0531c76b0c@epcas5p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+In few older Samsung SoCs like s3c2410, s3c2412
+and s3c2440, UART IP is having 2 interrupt lines.
+However, in other SoCs like s3c6400, s5pv210,
+exynos5433, and exynos4210 UART is having only 1
+interrupt line. Due to this, "platform_get_irq(platdev, 1)"
+call in the driver gives the following false-positive error:
+"IRQ index 1 not found" on newer SoC's.
 
-On 8/7/20 10:31 PM, Marek Szyprowski wrote:
-> BPLL clock must not be disabled because it is needed for proper DRAM
-> operation. This is normally handled by respective memory devfreq driver,
-> but when that driver is not yet probed or its probe has been deferred the
-> clock might got disabled what causes board hang. Fix this by calling
-> clk_prepare_enable() directly from the clock provider driver.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
-> Tested-by: Lukasz Luba <lukasz.luba@arm.com>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index fea33399a632..521cbbfc0987 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -1655,6 +1655,11 @@ static void __init exynos5x_clk_init(struct device_node *np,
->  	 * main G3D clock enablement status.
->  	 */
->  	clk_prepare_enable(__clk_lookup("mout_sw_aclk_g3d"));
-> +	/*
-> +	 * Keep top BPLL mux enabled permanently to ensure that DRAM operates
-> +	 * properly.
-> +	 */
-> +	clk_prepare_enable(__clk_lookup("mout_bpll"));
->  
->  	samsung_clk_of_add_provider(np, ctx);
->  }
-> 
+This patch adds the condition to check for Tx interrupt
+only for the those SoC's which have 2 interrupt lines.
 
-Thanks.
+Signed-off-by: Tamseel Shams <m.shams@samsung.com>
+---
+Commit message is changed.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Added RFT, for older platform.
+ 
+Addressed Krzysztof's review comments [1]
+[1] -> https://lkml.org/lkml/2020/7/21/150
 
+ drivers/tty/serial/samsung_tty.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 6ef614d8648c..b923683e6a25 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -1911,9 +1911,11 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
+ 		ourport->tx_irq = ret + 1;
+ 	}
+ 
+-	ret = platform_get_irq(platdev, 1);
+-	if (ret > 0)
+-		ourport->tx_irq = ret;
++	if (!s3c24xx_serial_has_interrupt_mask(port)) {
++		ret = platform_get_irq(platdev, 1);
++		if (ret > 0)
++			ourport->tx_irq = ret;
++	}
+ 	/*
+ 	 * DMA is currently supported only on DT platforms, if DMA properties
+ 	 * are specified.
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.17.1
+
