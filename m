@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D6DC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Aug 2020 15:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE8FC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Aug 2020 15:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B89E8207FF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Aug 2020 15:33:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BC40207FF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Aug 2020 15:33:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uI5x7w77"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SPlHI88t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729143AbgHJPdT (ORCPT
+        id S1728646AbgHJPd0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 Aug 2020 11:33:19 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42712 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729233AbgHJPdH (ORCPT
+        Mon, 10 Aug 2020 11:33:26 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39963 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729042AbgHJPdF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 Aug 2020 11:33:07 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200810153306euoutp0264cace96db9c153f90d54a40076752a2~p8fcK7mBC1589415894euoutp02a
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Aug 2020 15:33:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200810153306euoutp0264cace96db9c153f90d54a40076752a2~p8fcK7mBC1589415894euoutp02a
+        Mon, 10 Aug 2020 11:33:05 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200810153301euoutp01f38c62e8d64292806f2f9a21a60082af~p8fYPHdU11050310503euoutp01U
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Aug 2020 15:33:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200810153301euoutp01f38c62e8d64292806f2f9a21a60082af~p8fYPHdU11050310503euoutp01U
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1597073586;
-        bh=dcuOjA1HpR3QZxk+5y9E1beTjB3I0OMJo34ZTTvNx74=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uI5x7w77V0hlEiLCla0KH1IQoSmGmbYuC4fAz6ZsFgnyW3sXx7rQHIh86xOB47Mf3
-         dJ9pJLsqpk0VKDRxhOatLItyzEvIwsl+NTgbPhzHnlmyZy6N0trosS6fA7spQ/Sjhq
-         kFz6YvU4cXA8hDKvZCp3t0XpezLKcZmnAR4dMK2Q=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200810153305eucas1p273be5417e848f874295c32d64362b8f4~p8fb4tnVd0872108721eucas1p28;
-        Mon, 10 Aug 2020 15:33:05 +0000 (GMT)
+        s=mail20170921; t=1597073582;
+        bh=xGW/Eb8TLGr6LjioWPTb6swHWqJ0i4j0PwmnzrrwdBk=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=SPlHI88tS5FdiPxQ3WIwJz/8vLojajrnKMA14WPsqLbgZma858x9QsuP9erC0p4aA
+         YypDZRFPikL/uhzNjHxsxqMF9yiy4DD5JOQSHr9IOAefkjQklNX1aW2MgRJbhnz2Vc
+         smir7zyf3Jonfw1GZ6v0lnjbG4kKyRhdUokblhuQ=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200810153301eucas1p1514acd8de8ac631d4431bda243638f2c~p8fX1rjTU2756927569eucas1p1Z;
+        Mon, 10 Aug 2020 15:33:01 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 78.FE.06318.1B8613F5; Mon, 10
-        Aug 2020 16:33:05 +0100 (BST)
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 13.4D.05997.DA8613F5; Mon, 10
+        Aug 2020 16:33:01 +0100 (BST)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200810153305eucas1p2246d0e265d6548789cd24557fcd0d6f4~p8fbj793P0868908689eucas1p2E;
-        Mon, 10 Aug 2020 15:33:05 +0000 (GMT)
+        20200810153301eucas1p2684476145e627ba124ba4740ef204712~p8fXYl1XF0867608676eucas1p2G;
+        Mon, 10 Aug 2020 15:33:01 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200810153305eusmtrp25510ee1efc4bf1ed22997012ea49e917~p8fbjYGyE0085100851eusmtrp2Z;
-        Mon, 10 Aug 2020 15:33:05 +0000 (GMT)
-X-AuditID: cbfec7f5-38bff700000018ae-bd-5f3168b10773
+        20200810153301eusmtrp2b3a126ce1cd7e02421bff081eb9eef19~p8fXX6rRk0085100851eusmtrp2L;
+        Mon, 10 Aug 2020 15:33:01 +0000 (GMT)
+X-AuditID: cbfec7f4-65dff7000000176d-a3-5f3168ad24a3
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id BE.C2.06314.1B8613F5; Mon, 10
-        Aug 2020 16:33:05 +0100 (BST)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id BC.C2.06314.CA8613F5; Mon, 10
+        Aug 2020 16:33:00 +0100 (BST)
 Received: from AMDC3061.digital.local (unknown [106.120.51.75]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200810153305eusmtip2ae761a2d74747ddc4303c2fdffbfb64e~p8fbIb6WA2897228972eusmtip2O;
-        Mon, 10 Aug 2020 15:33:05 +0000 (GMT)
+        20200810153300eusmtip29723c347483cb5ac7b9a1c407d0ee3ee~p8fW3v-uZ3149731497eusmtip2T;
+        Mon, 10 Aug 2020 15:33:00 +0000 (GMT)
 From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
 To:     linux-media@vger.kernel.org
 Cc:     hslester96@gmail.com, krzk@kernel.org,
@@ -65,162 +65,80 @@ Cc:     hslester96@gmail.com, krzk@kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
         Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/2] media: exynos4-is: Simplify the pinctrl code
-Date:   Mon, 10 Aug 2020 17:32:40 +0200
-Message-Id: <20200810153240.23827-2-s.nawrocki@samsung.com>
+Subject: [PATCH 1/2] media: Revert
+ "media: exynos4-is: Add missed check for pinctrl_lookup_state()"
+Date:   Mon, 10 Aug 2020 17:32:39 +0200
+Message-Id: <20200810153240.23827-1-s.nawrocki@samsung.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200810153240.23827-1-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjleLIzCtJLcpLzFFi42LZduznOd2NGYbxBs/mGFtsnLGe1WL2oZfM
-        FufPb2C32PT4GqvF5V1z2Cx6NmxltZhxfh+Txdojd9ktDr9pZ3Xg9Ng56y67x6ZVnWwem5fU
-        e/RtWcXo8XmTXABrFJdNSmpOZllqkb5dAlfGya/fWQuWylfMeDCXpYFxmlQXIyeHhICJxMu3
-        S1i7GLk4hARWMEp8WX6fDcL5wiix8Ww7VOYzo8SvU8+ZYVomfdrBDJFYzijxfPk6JriW9bsm
-        MIFUsQkYSvQe7WMEsUUE5CWe9N4Am8ss8J1RYue53ywgCWEBR4nbqy6B2SwCqhKzdt5kA7F5
-        Bawlzlw9wAixTl5i9YYDQOs4ODgFbCQWX+YHmSMh0Mwu8fr/K6iTXCSuTH/ACmELS7w6voUd
-        wpaR+L9zPhNUA6NEz+7b7BDOBEaJ+8cXQG2wlrhz7hcbyAZmAU2gF/Qhwo4SL9etBAtLCPBJ
-        3HgrCBJmBjInbZvODBHmlehoE4KoVpH4vWo6E4QtJdH95D8LhO0h0XlzLjQY+xklvt6YyTSB
-        UX4WwrIFjIyrGMVTS4tz01OLjfNSy/WKE3OLS/PS9ZLzczcxAlPH6X/Hv+5g3Pcn6RCjAAej
-        Eg9vgbVhvBBrYllxZe4hRgkOZiURXqezp+OEeFMSK6tSi/Lji0pzUosPMUpzsCiJ8xovehkr
-        JJCeWJKanZpakFoEk2Xi4JRqYFwxt3flQYNaV1X2hc+a7r33b632O3J+V8z0opCwJ7szfdg+
-        1Ait3LIrXNkhbOnOx94POCetD26/r35T5nLFW+lcDnX1VdH+D3QNn2ndOPkpa9+vR8aGJ/cJ
-        Nb14YCBwWvH899tiZ+ZeinRUrtULl9nzxEZro8zerC9Pb88/EykftL9Mc6ePzH8lluKMREMt
-        5qLiRADVR4kNGQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsVy+t/xe7obMwzjDRoOKFhsnLGe1WL2oZfM
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBIsWRmVeSWpSXmKPExsWy7djPc7prMwzjDR5Ok7XYOGM9q8XsQy+Z
+        Lc6f38BusenxNVaLy7vmsFn0bNjKajHj/D4mi7VH7rJbHH7TzurA6bFz1l12j02rOtk8Ni+p
+        9+jbsorR4/MmuQDWKC6blNSczLLUIn27BK6MHQ+mshRM4ay4MukhUwPjU/YuRk4OCQETiZev
+        GsBsIYEVjBKt99W7GLmA7C+MEguPLGWCcD4zShxdsh2u43XbOlaIxHJGiUnTJ7LBtXxbuJ4R
+        pIpNwFCi92gfmC0iIC/xpPcGWBGzwHdGiZ3nfrOAJIQFUiXmv+hgBbFZBFQlnjyYDWRzcPAK
+        WEt0fMmD2CYvsXrDAWaQXgmB52wSm75eZIZIuEg8PTKdBcIWlnh1fAvUeTIS/3fOZ4JoaGaU
+        6Nl9mx3CmcAocf/4AkaIKmuJO+d+sYFsYxbQlFi/Sx8i7CixqPEY2BESAnwSN94KgoSZgcxJ
+        26YzQ4R5JTrahCCqVSR+r5rOBGFLSXQ/+Q91jofEl7/HGSFhGisx7dMitgmMcrMQdi1gZFzF
+        KJ5aWpybnlpslJdarlecmFtcmpeul5yfu4kRmB5O/zv+ZQfjrj9JhxgFOBiVeHgLrA3jhVgT
+        y4orcw8xSnAwK4nwOp09HSfEm5JYWZValB9fVJqTWnyIUZqDRUmc13jRy1ghgfTEktTs1NSC
+        1CKYLBMHp1QDI/+pCcucju0p5GE4vDg8LpbJ/FPaLSvRBT/kfm+bzOy7d8W8zEvfNHj1NL9c
+        8f74c8rEF2yMwtXFEqW/WbI45epnTJj9ef5ZvzMxwTffGv+87uV4Q2sjo6nDxS29kc43rjyp
+        eXs3pf6YU6n6x28+Dcc/PL55dHUK66LJS08asi2cwGfXU/GJ+5cSS3FGoqEWc1FxIgA9j6I7
+        CwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsVy+t/xe7prMgzjDXqvWFlsnLGe1WL2oZfM
         FufPb2C32PT4GqvF5V1z2Cx6NmxltZhxfh+Txdojd9ktDr9pZ3Xg9Ng56y67x6ZVnWwem5fU
         e/RtWcXo8XmTXABrlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpO
-        Zllqkb5dgl7Gya/fWQuWylfMeDCXpYFxmlQXIyeHhICJxKRPO5i7GLk4hASWMko0PJ7M1MXI
-        AZSQkpjfogRRIyzx51oXG0TNJ0aJg3PWsYMk2AQMJXqP9jGC2CIC8hJPem+AFTEL/GeU2Djz
-        BjNIQljAUeL2qkssIDaLgKrErJ032UBsXgFriTNXDzBCbJCXWL3hADPIYk4BG4nFl/lBTCGg
-        kvvb/SYw8i1gZFjFKJJaWpybnltsqFecmFtcmpeul5yfu4kRGMLbjv3cvIPx0sbgQ4wCHIxK
-        PLwF1obxQqyJZcWVuYcYJTiYlUR4nc6ejhPiTUmsrEotyo8vKs1JLT7EaAp00kRmKdHkfGB8
-        5ZXEG5oamltYGpobmxubWSiJ83YIHIwREkhPLEnNTk0tSC2C6WPi4JRqYOyP3G3Uvt1119Yq
-        BeUApj9Fu8JCkzl81stN4udnFFi+6c6Vj7xth1q/dF18Jvi+657Xtr8vq/PDSs0yD8RF/C6x
-        710qtrVyx18vw93v31ivy57a9Xndy59fLh1oUqrgveBxXs25RmarwxfDDQGzXl8znX3RLTVs
-        mpGzT9ndhI/tsiHrWA6X8yixFGckGmoxFxUnAgCVk/EUdwIAAA==
-X-CMS-MailID: 20200810153305eucas1p2246d0e265d6548789cd24557fcd0d6f4
+        Zllqkb5dgl7GjgdTWQqmcFZcmfSQqYHxKXsXIyeHhICJxOu2daxdjFwcQgJLGSWaX91k6WLk
+        AEpIScxvUYKoEZb4c62LDaLmE6PE3WP/mEESbAKGEr1H+xhBbBEBeYknvTfAipgF/jNKbJx5
+        gxlkkLBAssT7VxUgNSwCqhJPHsxmBQnzClhLdHzJg5gvL7F6wwHmCYw8CxgZVjGKpJYW56bn
+        FhvqFSfmFpfmpesl5+duYgSG5LZjPzfvYLy0MfgQowAHoxIPb4G1YbwQa2JZcWXuIUYJDmYl
+        EV6ns6fjhHhTEiurUovy44tKc1KLDzGaAu2eyCwlmpwPjJe8knhDU0NzC0tDc2NzYzMLJXHe
+        DoGDMUIC6YklqdmpqQWpRTB9TBycUg2M8Twx07Z09ayJcC72twth5rh56X+re+jxFmsHpmfK
+        k1uL/2wW6Xv4wlc36EO1yA4tJea48r+y3qIbmNqPCxTszrG0c59XlG7i/dMhpOns6+97D3AG
+        KWlz7Jhw+tcke/6eTs3E6J2dIWfYk8Je/0ve8q7ge2xW1p5OhbTO/WuPeO6f2ZI0I0yJpTgj
+        0VCLuag4EQDAswvbXwIAAA==
+X-CMS-MailID: 20200810153301eucas1p2684476145e627ba124ba4740ef204712
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200810153305eucas1p2246d0e265d6548789cd24557fcd0d6f4
+X-RootMTR: 20200810153301eucas1p2684476145e627ba124ba4740ef204712
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200810153305eucas1p2246d0e265d6548789cd24557fcd0d6f4
-References: <20200810153240.23827-1-s.nawrocki@samsung.com>
-        <CGME20200810153305eucas1p2246d0e265d6548789cd24557fcd0d6f4@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20200810153301eucas1p2684476145e627ba124ba4740ef204712
+References: <CGME20200810153301eucas1p2684476145e627ba124ba4740ef204712@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-There is no need to request the "idle" pinctrl state in the driver as that
-is implemented in the driver core and the pinctrl_pm_* API can be used for
-switching between the default and the idle state.
+The "idle" pinctrl state is optional as documented in the DT binding.
+The change introduced by the commit being reverted makes that pinctrl state
+mandatory and breaks initialization of the whole media driver, since the
+"idle" state is not specified in any mainline dts.
 
-Simplify the pinctrl code to only request and check for the mandatory
-"default" pinctrl state.
-
-Switching between the default/idle pinctrl state is not yet implemented
-in the driver and this patch doesn't change that.
+This reverts commit 18ffec750578f7447c288647d7282c7d12b1d969 to fix
+the regression.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/media/platform/exynos4-is/media-dev.c | 27 +++++----------------------
- drivers/media/platform/exynos4-is/media-dev.h | 11 -----------
- 2 files changed, 5 insertions(+), 33 deletions(-)
+ drivers/media/platform/exynos4-is/media-dev.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 9a57523..6df2796 100644
+index 16dd660..9a57523 100644
 --- a/drivers/media/platform/exynos4-is/media-dev.c
 +++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -19,6 +19,7 @@
- #include <linux/of_platform.h>
- #include <linux/of_device.h>
- #include <linux/of_graph.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/types.h>
-@@ -1254,26 +1255,6 @@ static ssize_t fimc_md_sysfs_store(struct device *dev,
- static DEVICE_ATTR(subdev_conf_mode, S_IWUSR | S_IRUGO,
- 		   fimc_md_sysfs_show, fimc_md_sysfs_store);
+@@ -1268,11 +1268,9 @@ static int fimc_md_get_pinctrl(struct fimc_md *fmd)
+ 	if (IS_ERR(pctl->state_default))
+ 		return PTR_ERR(pctl->state_default);
  
--static int fimc_md_get_pinctrl(struct fimc_md *fmd)
--{
--	struct device *dev = &fmd->pdev->dev;
--	struct fimc_pinctrl *pctl = &fmd->pinctl;
++	/* PINCTRL_STATE_IDLE is optional */
+ 	pctl->state_idle = pinctrl_lookup_state(pctl->pinctrl,
+ 					PINCTRL_STATE_IDLE);
+-	if (IS_ERR(pctl->state_idle))
+-		return PTR_ERR(pctl->state_idle);
 -
--	pctl->pinctrl = devm_pinctrl_get(dev);
--	if (IS_ERR(pctl->pinctrl))
--		return PTR_ERR(pctl->pinctrl);
--
--	pctl->state_default = pinctrl_lookup_state(pctl->pinctrl,
--					PINCTRL_STATE_DEFAULT);
--	if (IS_ERR(pctl->state_default))
--		return PTR_ERR(pctl->state_default);
--
--	/* PINCTRL_STATE_IDLE is optional */
--	pctl->state_idle = pinctrl_lookup_state(pctl->pinctrl,
--					PINCTRL_STATE_IDLE);
--	return 0;
--}
--
- static int cam_clk_prepare(struct clk_hw *hw)
- {
- 	struct cam_clk *camclk = to_cam_clk(hw);
-@@ -1429,6 +1410,7 @@ static int fimc_md_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct v4l2_device *v4l2_dev;
-+	struct pinctrl *pinctrl;
- 	struct fimc_md *fmd;
- 	int ret;
+ 	return 0;
+ }
  
-@@ -1465,8 +1447,9 @@ static int fimc_md_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_v4l2dev;
- 
--	ret = fimc_md_get_pinctrl(fmd);
--	if (ret < 0) {
-+	pinctrl = devm_pinctrl_get(dev);
-+	if (IS_ERR(pinctrl)) {
-+		ret = PTR_ERR(pinctrl);
- 		if (ret != EPROBE_DEFER)
- 			dev_err(dev, "Failed to get pinctrl: %d\n", ret);
- 		goto err_clk;
-diff --git a/drivers/media/platform/exynos4-is/media-dev.h b/drivers/media/platform/exynos4-is/media-dev.h
-index 4b8f9ac..9447faf 100644
---- a/drivers/media/platform/exynos4-is/media-dev.h
-+++ b/drivers/media/platform/exynos4-is/media-dev.h
-@@ -27,8 +27,6 @@
- #define FIMC_IS_OF_NODE_NAME	"fimc-is"
- #define CSIS_OF_NODE_NAME	"csis"
- 
--#define PINCTRL_STATE_IDLE	"idle"
--
- #define FIMC_MAX_SENSORS	4
- #define FIMC_MAX_CAMCLKS	2
- #define DEFAULT_SENSOR_CLK_FREQ	24000000U
-@@ -109,9 +107,6 @@ struct cam_clk {
-  * @media_dev: top level media device
-  * @v4l2_dev: top level v4l2_device holding up the subdevs
-  * @pdev: platform device this media device is hooked up into
-- * @pinctrl: camera port pinctrl handle
-- * @state_default: pinctrl default state handle
-- * @state_idle: pinctrl idle state handle
-  * @cam_clk_provider: CAMCLK clock provider structure
-  * @user_subdev_api: true if subdevs are not configured by the host driver
-  * @slock: spinlock protecting @sensor array
-@@ -131,12 +126,6 @@ struct fimc_md {
- 	struct v4l2_device v4l2_dev;
- 	struct platform_device *pdev;
- 
--	struct fimc_pinctrl {
--		struct pinctrl *pinctrl;
--		struct pinctrl_state *state_default;
--		struct pinctrl_state *state_idle;
--	} pinctl;
--
- 	struct cam_clk_provider {
- 		struct clk *clks[FIMC_MAX_CAMCLKS];
- 		struct clk_onecell_data clk_data;
 -- 
 2.7.4
 
