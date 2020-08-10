@@ -2,104 +2,80 @@ Return-Path: <SRS0=2bfJ=BU=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D84DDC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Aug 2020 12:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E2AC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Aug 2020 12:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF50420709
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Aug 2020 12:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A866120748
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Aug 2020 12:25:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbgHJMW0 (ORCPT
+        id S1726718AbgHJMZc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 Aug 2020 08:22:26 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:45656 "EHLO
+        Mon, 10 Aug 2020 08:25:32 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45738 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbgHJMW0 (ORCPT
+        with ESMTP id S1726518AbgHJMZb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 Aug 2020 08:22:26 -0400
+        Mon, 10 Aug 2020 08:25:31 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: gtucker)
-        with ESMTPSA id 72289293506
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     kernel@collabora.com, devicetree@vger.kernel.org,
+        with ESMTPSA id 0840B2935C0
+Subject: Re: [PATCH 1/3] ARM: exynos: clear L220_AUX_CTRL_NS_LOCKDOWN in
+ default l2c_aux_val
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        kernel@collabora.com, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] ARM: l2c: fix prefetch bits init in L2X0_AUX_CTRL using DT values
-Date:   Mon, 10 Aug 2020 13:22:06 +0100
-Message-Id: <76f2f3ad5e77e356e0a5b99ceee1e774a2842c25.1597061474.git.guillaume.tucker@collabora.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <267a81e550a0b5d479c82b5908e2a2caa4c9c874.1597061474.git.guillaume.tucker@collabora.com>
-References: <267a81e550a0b5d479c82b5908e2a2caa4c9c874.1597061474.git.guillaume.tucker@collabora.com>
+References: <860eb8a1eed879e55daf960c96acdac514cbda93.1596028601.git.guillaume.tucker@collabora.com>
+ <20200803133439.GB476@kozik-lap>
+ <20200803142244.GO1551@shell.armlinux.org.uk>
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Message-ID: <875ad268-d65c-673e-6f5a-76d48c24f478@collabora.com>
+Date:   Mon, 10 Aug 2020 13:25:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200803142244.GO1551@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The L310_PREFETCH_CTRL register bits 28 and 29 to enable data and
-instruction prefetch respectively can also be accessed via the
-L2X0_AUX_CTRL register.  They appear to be actually wired together in
-hardware between the registers.  Changing them in the prefetch
-register only will get undone when restoring the aux control register
-later on.  For this reason, set these bits in both registers during
-initialisation according to the devicetree property values.
+On 03/08/2020 15:22, Russell King - ARM Linux admin wrote:
+> On Mon, Aug 03, 2020 at 03:34:39PM +0200, Krzysztof Kozlowski wrote:
+>> On Wed, Jul 29, 2020 at 02:47:31PM +0100, Guillaume Tucker wrote:
+>>> The L220_AUX_CTRL_NS_LOCKDOWN flag is set during the L2C enable
+>>> sequence.  There is no need to set it in the default register value,
+>>> this was done before support for it was implemented in the code.  It
+>>> is not set in the hardware initial value either.
+>>>
+>>> Clean this up by removing this flag from the default l2c_aux_val, and
+>>> add it to the l2c_aux_mask to print an alert message if it was already
+>>> set before the kernel initialisation.
+>>>
+>>> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+>>> ---
+>>>  arch/arm/mach-exynos/exynos.c | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> Makes sense. I'll take it after the merge window.
+> 
+> Yes, because platforms actually have no control over this bit through
+> these values.
+> 
+> Please fix the description to use the right define, it's
+> L310_AUX_CTRL_NS_LOCKDOWN not L220_AUX_CTRL_NS_LOCKDOWN.
 
-Fixes: ec3bd0e68a67 ("ARM: 8391/1: l2c: add options to overwrite prefetching behavior")
-Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
----
+Thanks, fixed in v2.
 
-Notes:
-    v2: tweak commit message to show this is a fix
-
- arch/arm/mm/cache-l2x0.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
-index 12c26eb88afb..43d91bfd2360 100644
---- a/arch/arm/mm/cache-l2x0.c
-+++ b/arch/arm/mm/cache-l2x0.c
-@@ -1249,20 +1249,28 @@ static void __init l2c310_of_parse(const struct device_node *np,
- 
- 	ret = of_property_read_u32(np, "prefetch-data", &val);
- 	if (ret == 0) {
--		if (val)
-+		if (val) {
- 			prefetch |= L310_PREFETCH_CTRL_DATA_PREFETCH;
--		else
-+			*aux_val |= L310_PREFETCH_CTRL_DATA_PREFETCH;
-+		} else {
- 			prefetch &= ~L310_PREFETCH_CTRL_DATA_PREFETCH;
-+			*aux_val &= ~L310_PREFETCH_CTRL_DATA_PREFETCH;
-+		}
-+		*aux_mask &= ~L310_PREFETCH_CTRL_DATA_PREFETCH;
- 	} else if (ret != -EINVAL) {
- 		pr_err("L2C-310 OF prefetch-data property value is missing\n");
- 	}
- 
- 	ret = of_property_read_u32(np, "prefetch-instr", &val);
- 	if (ret == 0) {
--		if (val)
-+		if (val) {
- 			prefetch |= L310_PREFETCH_CTRL_INSTR_PREFETCH;
--		else
-+			*aux_val |= L310_PREFETCH_CTRL_INSTR_PREFETCH;
-+		} else {
- 			prefetch &= ~L310_PREFETCH_CTRL_INSTR_PREFETCH;
-+			*aux_val &= ~L310_PREFETCH_CTRL_INSTR_PREFETCH;
-+		}
-+		*aux_mask &= ~L310_PREFETCH_CTRL_INSTR_PREFETCH;
- 	} else if (ret != -EINVAL) {
- 		pr_err("L2C-310 OF prefetch-instr property value is missing\n");
- 	}
--- 
-2.20.1
+Guilaume
 
