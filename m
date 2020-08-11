@@ -2,71 +2,64 @@ Return-Path: <SRS0=cAz1=BV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E96FBC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Aug 2020 16:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A50B3C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Aug 2020 17:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE6412076C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Aug 2020 16:54:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D13920771
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Aug 2020 17:26:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ME5nK4ym"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TXEWF0PR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbgHKQx6 (ORCPT
+        id S1729163AbgHKR0M (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Aug 2020 12:53:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44848 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729046AbgHKQx5 (ORCPT
+        Tue, 11 Aug 2020 13:26:12 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:50016 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729108AbgHKR0L (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Aug 2020 12:53:57 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CDD8C06174A;
-        Tue, 11 Aug 2020 09:53:57 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id z6so13403732iow.6;
-        Tue, 11 Aug 2020 09:53:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=nZ/k9Byto1826yL422aEJoOrFWeBEVpscC6FOqMA7kA=;
-        b=ME5nK4ymcdbDyMLRTGXIrkRc9MfpLvEQIypfQ6i7SLtjdscQ9yqRf5etWxP3lgzQqN
-         WCkmcuPrpUvn6+F/UgAMbFdy2ioyoNDmVgzF0QS1FGxqFSAOkkCSLmTLJsdgqovV43Yh
-         lsIttJxqv6oi4sSUl0Jj4ABVh2hC12n5rb5i/i9u8sW8J2LZu5FhSndWAhGTrcXLtaTl
-         kgCRiaY8APBt85uH9U77xmouwnOv60WHMEhmUTAFiGFFq1Tnhw4PgDWonLsxmE2+b0h0
-         lHKQSvaHkAmweqs6ezAoljmvb69FbqQsgTLRB7GGh0/+fuMNJayFdmoUOqa7vUawHp8i
-         jKcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=nZ/k9Byto1826yL422aEJoOrFWeBEVpscC6FOqMA7kA=;
-        b=Qdm9/EQH1JiG8GMHN+CxNKoZZ+vy6pRShArcbaJ4g5OWupAv6DFevb0b8rBU+9sUwe
-         mN69v5JpeWkDIboSBcgFzVOnjDrEZ3BZyuuj1MPTlbZgpBEZ6JU99nvIcsfUs1OBafE3
-         UJ+URG/sIe/GBKjMoOkCGvtCA8Q/kaPKjB2sV+1UbwhnRvHB4DwvzsMypydevX3ryqYU
-         RFskPsZqyBDZQPxgDV3zEAYc7cU1Q0OJiPKDKI8Cz+vBrQKvu/zRp4L/7FfvEQA5PD7t
-         BCnRzfpINTYCYT6eA17A/Cpo9++ZYFba2u4PaFQXshoWkrZE0+4o8ORh2qOMdadeLzRC
-         cHTw==
-X-Gm-Message-State: AOAM530xkVNveqhttKljVQ5JxhBIzt16Hp+bwgCJBDeZu2ucmF9an5zg
-        m1N9RERTtQjfTjhl8rAjHfw2k82IW6nQh3HFU9Q=
-X-Google-Smtp-Source: ABdhPJxuLtZbjgoEws5GBiRtQSrFjUhONQp+nc/PcBjemOv4wvx8B6pNySW1uABQ2h17VfUBda5qLktg0/VXklGmSR0=
-X-Received: by 2002:a6b:b888:: with SMTP id i130mr23575515iof.182.1597164836425;
- Tue, 11 Aug 2020 09:53:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20200811112518eucas1p2a751f664a907ac7cd8e1dd235dc2fa54@eucas1p2.samsung.com>
- <20200811112507.24418-1-s.nawrocki@samsung.com> <CA+Ln22Hfys7r2EDstOsdks1X88Fuv77DLTuXLWDynTt4kmiCiQ@mail.gmail.com>
- <66c7330e-507e-d81f-1cb1-b509bf54d050@samsung.com>
-In-Reply-To: <66c7330e-507e-d81f-1cb1-b509bf54d050@samsung.com>
-From:   Tomasz Figa <tomasz.figa@gmail.com>
-Date:   Tue, 11 Aug 2020 18:53:44 +0200
-Message-ID: <CA+Ln22E4FPexE1R2dmV=u9U5UFWsAz=8kXgqBntEBgabnUEF+Q@mail.gmail.com>
+        Tue, 11 Aug 2020 13:26:11 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200811172609euoutp01bf961d01cd6591c6479e82f6674c1f47~qRrcBRRlV1500915009euoutp01D
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Aug 2020 17:26:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200811172609euoutp01bf961d01cd6591c6479e82f6674c1f47~qRrcBRRlV1500915009euoutp01D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1597166769;
+        bh=DWSq51BVqD/cJXFaRO9qdwmVLjQYWLiMKoZTS3OxLlo=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=TXEWF0PR3a7MjDGUBYFIjGOEZ1NGlXcNmIUXoNH1tr+JsOh+6FI3pT7T19hf7GYh5
+         VCRu7/hbSDpMxDYg6QXYCO7lYQOosWxu8WBkdH1dh0F+KDy2eXk88hKNrkXbn9ywQJ
+         mENeRn7XerNHmlCyKbmcMGr8EEi7YHQuvl3sIsPM=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200811172609eucas1p2836ca6b88971ab73d32f2dc6999c53bf~qRrbZn8Ea0784407844eucas1p2H;
+        Tue, 11 Aug 2020 17:26:09 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 99.46.06456.0B4D23F5; Tue, 11
+        Aug 2020 18:26:08 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200811172608eucas1p139ea646735cd81a8c5fe76cc701c7b05~qRra4uTjq1061710617eucas1p1T;
+        Tue, 11 Aug 2020 17:26:08 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200811172608eusmtrp12364ad39b2bd51504b1a7643e3cf4898~qRra4DzuI2746427464eusmtrp19;
+        Tue, 11 Aug 2020 17:26:08 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-56-5f32d4b0daf3
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 47.99.06314.0B4D23F5; Tue, 11
+        Aug 2020 18:26:08 +0100 (BST)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200811172607eusmtip2d0f1f37c2f15c6ede57d77d2107da6c0~qRraEcG_D0617706177eusmtip2e;
+        Tue, 11 Aug 2020 17:26:07 +0000 (GMT)
 Subject: Re: [PATCH v2] clk: samsung: Prevent potential endless loop in the
  PLL set_rate ops
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     Tomasz Figa <tomasz.figa@gmail.com>
 Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -76,144 +69,70 @@ Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <774ad8b4-2d6f-fd09-1582-edd674385aa9@samsung.com>
+Date:   Tue, 11 Aug 2020 19:26:07 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.11.0
+MIME-Version: 1.0
+In-Reply-To: <CA+Ln22E4FPexE1R2dmV=u9U5UFWsAz=8kXgqBntEBgabnUEF+Q@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRjlt3u33Y0m17nY15KCmz1M0tTCS5mUKewfwyBKgrRrXqbmVDZ1
+        WoGGaPlILQ1tGZp/pIxEHb6lguUzU9FKl6VlrEzFfAuVaF6vkv+dc77zPQ58BCavE6qIiOg4
+        VhfNRFEiKV7f/rv3SPV7j5CjJbNedE1RlZAeWhwX0nPZo0L6XXOxiC7qeymgK1tHxHT/G396
+        dbAGp03NK+i0RD1jTROrm4wjYrXZlCFS59SakHrBvCdQeFnqHcZGRSSwOjefq9LwuvRnKHYI
+        T8ysrsBSkA3LRBICyGMwOPdUmImkhJysQLD2uAvxZBHBbE+TiCcLCGy9VuFWy9T85GahHIHx
+        RTPOkzkE375Xbgx2IIOhtvGjgMMK8iAsF+SKORNGPsbgR2OnmCuISHe415azvpAgZKQPLI/F
+        czJO7ofx4eINy871OXUdHzbmyEh76HpkwzksIc/DWG66iMMYqYRhW4mAx3uhYboY43YB2S6G
+        ifLKzaR+cOd5mYjHDjDZUSvmsSN052fjfEMqguyWT2Ke5CH40lGKeNdJ+Nz7R8RdipHOUNXs
+        xstnoGZqCONkIO3AOm3PH2EHD+oLN2UZ3E2X824n+GsqFPBYBVm2NTwPUcZt0Yzb4hi3xTH+
+        31uKcBNSsvF6rYbVu0ezBlc9o9XHR2tcr8VozWj9mbpXO+Yb0dJAqAWRBKJ2yErve4TIhUyC
+        PklrQUBglELm29MdLJeFMUk3WF1MiC4+itVb0G4Cp5Qyz7KJK3JSw8Sx11k2ltVtVQWERJWC
+        nC88cVY0MDcNAtNYRpf1oovvT8uJ5DzfwoAllcutzkBzovI1dtbUVzyWW+aUxUgvtfoVmD2/
+        pif3Fwb+yjiEhi2J/pqHQbERaZq40JpureE2VarY9zZ49PiM4ZS9oS2SEuyqHVBRtnyv1BXH
+        ANRSgilfHTB5Wyt9IuvPBVkoXB/OuB/GdHrmH460u0BIAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsVy+t/xe7obrhjFG9zeLWaxccZ6VovrX56z
+        WnzsucdqcXnXHDaLGef3MVmsPXKX3eLiKVeLf9c2slis2vWH0YHT4/2NVnaPnbPusntsWtXJ
+        5tG3ZRWjx+dNcgGsUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5
+        mWWpRfp2CXoZW9uWMRZcZ6no2rCCuYHxCXMXIyeHhICJxOtPr9i6GLk4hASWMkqc6VjE1MXI
+        AZSQkpjfogRRIyzx51oXVM17RonZh94wgSSEBeIktuy4CWaLCKhLfJvSzw5SxCwwn1li+fs9
+        7BAdl5gkDrRPBFvHJmAo0Xu0jxFkA6+AncS3h6UgYRYBVYnnt+awg9iiQEMf9/4HK+cVEJQ4
+        OfMJC4jNKRAo8bC/jQ3EZgZa9mfeJWYIW1zi1pP5TBC2vMT2t3OYJzAKzULSPgtJyywkLbOQ
+        tCxgZFnFKJJaWpybnltsqFecmFtcmpeul5yfu4kRGIfbjv3cvIPx0sbgQ4wCHIxKPLwLJhrF
+        C7EmlhVX5h5ilOBgVhLhdTp7Ok6INyWxsiq1KD++qDQntfgQoynQcxOZpUST84EpIq8k3tDU
+        0NzC0tDc2NzYzEJJnLdD4GCMkEB6YklqdmpqQWoRTB8TB6dUAyNDdddfqbm/y62FXx28dTn+
+        +OPrVzm/NnxxfxZ43OyUVdfh8DCHvAiWR4VX9ofPvLxttT2rYHqG3O2XaeouQc8XFkW+Lbp3
+        XvezpmfGr+tWKSo53/52zntT4Kazm8sw3eLi2Z4oJhODD4LMN1SCk17neTud7rQ3PhQoyr80
+        ju/VT0NH/j93NyixFGckGmoxFxUnAgBUVANB2QIAAA==
+X-CMS-MailID: 20200811172608eucas1p139ea646735cd81a8c5fe76cc701c7b05
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200811112518eucas1p2a751f664a907ac7cd8e1dd235dc2fa54
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200811112518eucas1p2a751f664a907ac7cd8e1dd235dc2fa54
+References: <CGME20200811112518eucas1p2a751f664a907ac7cd8e1dd235dc2fa54@eucas1p2.samsung.com>
+        <20200811112507.24418-1-s.nawrocki@samsung.com>
+        <CA+Ln22Hfys7r2EDstOsdks1X88Fuv77DLTuXLWDynTt4kmiCiQ@mail.gmail.com>
+        <66c7330e-507e-d81f-1cb1-b509bf54d050@samsung.com>
+        <CA+Ln22E4FPexE1R2dmV=u9U5UFWsAz=8kXgqBntEBgabnUEF+Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-2020=E5=B9=B48=E6=9C=8811=E6=97=A5(=E7=81=AB) 18:45 Sylwester Nawrocki <s.n=
-awrocki@samsung.com>:
->
-> Hi Tomasz,
->
-> On 11.08.2020 14:59, Tomasz Figa wrote:
-> > 2020=E5=B9=B48=E6=9C=8811=E6=97=A5(=E7=81=AB) 13:25 Sylwester Nawrocki =
-<s.nawrocki@samsung.com>:
-> >>
-> >> In the .set_rate callback for some PLLs there is a loop polling state
-> >> of the PLL lock bit and it may become an endless loop when something
-> >> goes wrong with the PLL. For some PLLs there is already (a duplicated)
-> >> code for polling with timeout. This patch replaces that code with
-> >> the readl_relaxed_poll_timeout_atomic() macro and moves it to a common
-> >> helper function, which is then used for all the PLLs. The downside
-> >> of switching to the common macro is that we drop the cpu_relax() call.
-> >
-> > Tbh. I'm not sure what effect was exactly expected from cpu_relax() in
-> > the functions which already had timeout handling. Could someone shed
-> > some light on this?
-> >
-> >> Using a common helper function rather than the macro directly allows
-> >> to avoid repeating the error message in the code and to avoid the obje=
-ct
-> >> code size increase due to inlining.
-> >>
-> >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >> ---
-> >> Changes for v2:
-> >>  - use common readl_relaxed_poll_timeout_atomic() macro
-> >> ---
-> >>  drivers/clk/samsung/clk-pll.c | 92 +++++++++++++++-------------------=
----------
-> >>  1 file changed, 32 insertions(+), 60 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-p=
-ll.c
-> >> index ac70ad7..c3c1efe 100644
-> >> --- a/drivers/clk/samsung/clk-pll.c
-> >> +++ b/drivers/clk/samsung/clk-pll.c
-> >> @@ -9,13 +9,14 @@
->
-> >> -#define PLL_TIMEOUT_MS         10
-> >> +#define PLL_TIMEOUT_US         10000U
-> >
-> > I'm also wondering if 10ms is the universal value that would cover the
-> > oldest PLLs as well, but my loose recollection is that they should
-> > still lock much faster than that. Could you double check that in the
-> > documentation?
->
-> Thanks for your comments.
->
-> The oldest PLLs have a hard coded 300 us waiting time for PLL lock and
-> are not affected by the patch.
-> I have checked some of the PLLs and maximum observed lock time was around
-> 370 us and most of the time it was just a few us.
->
-> We calculate the lock time in each set_rate op, in the oscillator cycle
-> units, as a product of current P divider value and a constant PLL type
-> specific LOCK_FACTOR. Maximum possible P value is 64, maximum possible
-> LOCK_FACTOR is 3000. Assuming minimum VCO frequency of 24 MHz (which
-> I think will usually be much higher than that) maximum lock time
-> would be (64 x 3000) / 24 MHz =3D 8 ms. I think we can leave the current
-> 10 ms value.
+On 11.08.2020 18:53, Tomasz Figa wrote:
+> Yeah... I should've thought about this. Interestingly enough, some of
+> the existing implementations in drivers/clk/samsung/clk-pll.c use the
+> ktime API. I guess they are lucky enough not to be called too early,
+> i.e. are not needed for the initialization of timers.
 
-Sounds good to me. Thanks!
+In normal conditions nothing bad really happens, the loop exits as soon
+as the lock bit is asserted. Just the timeout condition will never be
+detected - if there is something wrong with the PLL's setup and it never
+locks we will never stop polling.
 
->
-> But there is other issue, it seems we can't really use the ktime API
-> in the set_rate callbacks, as these could be called early, before the
-> clocksource is initialized and ktime doesn't work yet. Below trace
-> is from a dump_stack() added to the samsung_pll_lock_wait() callback.
-> The PLL rate setting is triggered by assigned-clock* properties in
-> the clock supplier node.
-> I think we need to switch to a simple udelay() loop, as is done in
-> clk-tegra210 driver for instance.
->
-> [    0.000000] Hardware name: Samsung Exynos (Flattened Device Tree)
-> [    0.000000] [<c0111e9c>] (unwind_backtrace) from [<c010d0ec>] (show_st=
-ack+0x10/0x14)
-> [    0.000000] [<c010d0ec>] (show_stack) from [<c051d890>] (dump_stack+0x=
-ac/0xd8)
-> [    0.000000] [<c051d890>] (dump_stack) from [<c0578d94>] (samsung_pll_l=
-ock_wait+0x14/0x174)
-> [    0.000000] [<c0578d94>] (samsung_pll_lock_wait) from [<c057319c>] (cl=
-k_change_rate+0x1a8/0x8ac)
-> [    0.000000] [<c057319c>] (clk_change_rate) from [<c0573aec>] (clk_core=
-_set_rate_nolock+0x24c/0x268)
-> [    0.000000] [<c0573aec>] (clk_core_set_rate_nolock) from [<c0573b38>] =
-(clk_set_rate+0x30/0x64)
-> [    0.000000] [<c0573b38>] (clk_set_rate) from [<c0577df8>] (of_clk_set_=
-defaults+0x214/0x384)
-> [    0.000000] [<c0577df8>] (of_clk_set_defaults) from [<c0572f34>] (of_c=
-lk_add_hw_provider+0x98/0xd8)
-> [    0.000000] [<c0572f34>] (of_clk_add_hw_provider) from [<c1120278>] (s=
-amsung_clk_of_add_provider+0x1c/0x30)
-> [    0.000000] [<c1120278>] (samsung_clk_of_add_provider) from [<c1121844=
->] (exynos5250_clk_of_clk_init_driver+0x1f4/0x240)
-> [    0.000000] [<c1121844>] (exynos5250_clk_of_clk_init_driver) from [<c1=
-1200d0>] (of_clk_init+0x16c/0x218)
-> [    0.000000] [<c11200d0>] (of_clk_init) from [<c1104bdc>] (time_init+0x=
-24/0x30)
-> [    0.000000] [<c1104bdc>] (time_init) from [<c1100d20>] (start_kernel+0=
-x3b0/0x520)
-
-Yeah... I should've thought about this. Interestingly enough, some of
-the existing implementations in drivers/clk/samsung/clk-pll.c use the
-ktime API. I guess they are lucky enough not to be called too early,
-i.e. are not needed for the initialization of timers.
-
-Best regards,
-Tomasz
-
-
-> [    0.000000] [<c1100d20>] (start_kernel) from [<00000000>] (0x0)
-> [    0.000000] samsung_pll_lock_wait: PLL fout_epll, lock time: 0 us, ret=
-: 0
-> [    0.000000] Exynos5250: clock setup completed, armclk=3D1700000000
-> [    0.000000] Switching to timer-based delay loop, resolution 41ns
-> [    0.000000] clocksource: mct-frc: mask: 0xffffffff max_cycles: 0xfffff=
-fff, max_idle_ns: 79635851949 ns
-> [    0.000003] sched_clock: 32 bits at 24MHz, resolution 41ns, wraps ever=
-y 89478484971ns
-> [    0.000032] genirq: irq_chip COMBINER did not update eff. affinity mas=
-k of irq 49
-> [    0.000523] arch_timer: cp15 timer(s) running at 24.00MHz (virt).
-> [    0.000536] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_=
-cycles: 0x588fe9dc0, max_idle_ns: 440795202592 ns
-> [    0.000551] sched_clock: 56 bits at 24MHz, resolution 41ns, wraps ever=
-y 4398046511097ns
->
-> --
-> Regards,
-> Sylwester
+-- 
+Regards,
+Sylwester
