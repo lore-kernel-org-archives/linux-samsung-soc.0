@@ -2,321 +2,134 @@ Return-Path: <SRS0=cAz1=BV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E486C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Aug 2020 12:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65164C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Aug 2020 15:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 328E920771
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Aug 2020 12:59:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44EAA2078B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Aug 2020 15:13:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a1cPlHbX"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kIG1M8fO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728740AbgHKM7V (ORCPT
+        id S1728859AbgHKPND (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Aug 2020 08:59:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36908 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728566AbgHKM7U (ORCPT
+        Tue, 11 Aug 2020 11:13:03 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:48831 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728845AbgHKPNC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Aug 2020 08:59:20 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A639C06174A;
-        Tue, 11 Aug 2020 05:59:20 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id a5so12452982ioa.13;
-        Tue, 11 Aug 2020 05:59:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=L4VCtsk+eO3KDXEQLGgJf5dPTkohmyWSCRua6qP4R2w=;
-        b=a1cPlHbXG7/oObTe7n/VqHdbhBE414RChB3tSAZkKzywVxmsmOkaNcYbSbj1Gu3Tf/
-         krBW5rdDOybwW78WM3g6wNCyn+FPpO4kWF1xwE0uP9sKRUUYeJaaASyfKXD4Qu0M2fSZ
-         KWT/1x7WL+z0xPQj0dPBBjH+F3+gielk+5mTUuFIH4kGyXa6cP75FXRLEGst+v+19leQ
-         ETON+1EfEtf0Ca34H/+EIPm178wQ2lls6uH+O0/2jEOnq4haURXiVcWQxS+6XgXtwP1Q
-         KtQX6ehmrG/lta7w2jrfPlJ1cTh38yFGiL6Stk+N0TgkyWsejmlcNPYDdiPO45+9si19
-         6lew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=L4VCtsk+eO3KDXEQLGgJf5dPTkohmyWSCRua6qP4R2w=;
-        b=mwqc2LSCaDzEztfpge6IGNTTeREntsYC5wKJYvatLv1m1JPhkSXspEmwVHeZe0mmj3
-         H+ilGJpUFLVRHNZrvxeFX6tftI7HIC04GKeEKS7hCKAPdzuD+7y2cfreRd8I/OiCs3i5
-         fZWBsIt2SYYca+5CgFM55m6rUSndfw8TwQsirge1yQFM4K+D2EdaPFMB1QsSa7h3ixGO
-         5HqlLQ5XL8/gz9WJn5OzNzrVdA0r0JW1DBjz0rpGYK6+rF/omrgoeYlEy+9iyP/XwNvw
-         cXMr2Lv14SW59jbTLH+v4DjGIbMr+T3Z/s8Eh6p2styv2YC2ZyEkZlzMGqn0s9bDAQXw
-         uVyg==
-X-Gm-Message-State: AOAM53105gTYG8PiXg/4fvTqFwamFDSFJMCInrVGEwYhiRazqEML1C4B
-        OF95FOrQA2SPBIMmoyuFpkZD+O2q/RXq8uaoaBE=
-X-Google-Smtp-Source: ABdhPJxBD0kIvwYNZDd1trtjbqHvsmieIoGy0VInezlZ4VF7mNZMt70b7JWQPq++ealJfw7STzPt1eDYhWiPv3xFElA=
-X-Received: by 2002:a02:95ae:: with SMTP id b43mr25387359jai.19.1597150759578;
- Tue, 11 Aug 2020 05:59:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20200811112518eucas1p2a751f664a907ac7cd8e1dd235dc2fa54@eucas1p2.samsung.com>
- <20200811112507.24418-1-s.nawrocki@samsung.com>
-In-Reply-To: <20200811112507.24418-1-s.nawrocki@samsung.com>
-From:   Tomasz Figa <tomasz.figa@gmail.com>
-Date:   Tue, 11 Aug 2020 14:59:07 +0200
-Message-ID: <CA+Ln22Hfys7r2EDstOsdks1X88Fuv77DLTuXLWDynTt4kmiCiQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: samsung: Prevent potential endless loop in the
- PLL set_rate ops
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        "moderated list:SAMSUNG SOC CLOCK DRIVERS" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 11 Aug 2020 11:13:02 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200811151259euoutp012466fbc16e9ba091ec35b54631c7b5f6~qP3K_ZF961190411904euoutp012
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Aug 2020 15:12:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200811151259euoutp012466fbc16e9ba091ec35b54631c7b5f6~qP3K_ZF961190411904euoutp012
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1597158779;
+        bh=gacXBuln4oGWnyT4m4WiEPmqSVavwuGzS9Pg8D+Y3KI=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=kIG1M8fOqbQEgPh//QbObK8crnbqJoOt16VfF2GuxK/CccjljP6FIp6HU4GcpEB2G
+         oJEYB4wa8gD2C2aqvgqIYwNy+n55XH9RzzuY/Ps4WH9Oic4e042kd4UrtpOa16Hed8
+         qdsvkO4K6CBCnLOK3APPX+zWBe5s25jvJz+j04dg=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200811151259eucas1p157d758c20a7780fdb04984f13b15af01~qP3KngQBt2259822598eucas1p1H;
+        Tue, 11 Aug 2020 15:12:59 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 3C.47.05997.B75B23F5; Tue, 11
+        Aug 2020 16:12:59 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200811151259eucas1p19d1f6a21e46ac9382a89cd3d3cb0b6c8~qP3KS6FBt3049230492eucas1p1_;
+        Tue, 11 Aug 2020 15:12:59 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200811151259eusmtrp14d9a5a366111308363f3e66fd4d9324f~qP3KSPGBv0657606576eusmtrp1S;
+        Tue, 11 Aug 2020 15:12:59 +0000 (GMT)
+X-AuditID: cbfec7f4-677ff7000000176d-42-5f32b57b63f7
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 75.F0.06314.B75B23F5; Tue, 11
+        Aug 2020 16:12:59 +0100 (BST)
+Received: from AMDC3061.digital.local (unknown [106.120.51.75]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200811151258eusmtip1b8a1ea51e78d8003e6696c8f72839ad4~qP3JwOT_l3252832528eusmtip1t;
+        Tue, 11 Aug 2020 15:12:58 +0000 (GMT)
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     linux-clk@vger.kernel.org
+Cc:     tomasz.figa@gmail.com, cw00.choi@samsung.com, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
+        m.szyprowski@samsung.com,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2 1/2] clk: samsung: exynos5420: Add definition of clock ID
+ for mout_sw_aclk_g3d
+Date:   Tue, 11 Aug 2020 17:12:50 +0200
+Message-Id: <20200811151251.31613-1-s.nawrocki@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLIsWRmVeSWpSXmKPExsWy7djP87rVW43iDRadl7TYOGM9q8X1L89Z
+        LT723GO1uLxrDpvFjPP7mCzWHrnLbnHxlKvF4TftrBb/rm1ksVi16w+jA5fH+xut7B47Z91l
+        99i0qpPNo2/LKkaPz5vkAlijuGxSUnMyy1KL9O0SuDIm3znAXHCMreLSp5IGxlOsXYycHBIC
+        JhJdX98B2VwcQgIrGCXOTNrCBOF8YZS49PccC4TzmVHi2uu7jDAtF242QbUsZ5SY1PWEDa7l
+        y/l5TCBVbAKGEr1H+8A6RARkJW4d+wlWxCzQzCTxub+JBSQhLJAscb+1A6yBRUBV4umXZ2wg
+        Nq+AtcSmHVfYIdbJS6zecIAZwn7PJnFmVwaE7SKxb/4kJghbWOLV8S1Q9TISpyf3gN0tIdDM
+        KNGz+zY7hDOBUeL+8QVQT1hL3Dn3C2gbB9BJmhLrd+lDhB0ltl66xwoSlhDgk7jxVhAkzAxk
+        Tto2nRkizCvR0SYEUa0i8XvVdKgTpCS6n/xngbA9JNr2rwOzhQRiJR5Ne8w4gVFuFsKuBYyM
+        qxjFU0uLc9NTi43yUsv1ihNzi0vz0vWS83M3MQITxel/x7/sYNz1J+kQowAHoxIP74KJRvFC
+        rIllxZW5hxglOJiVRHidzp6OE+JNSaysSi3Kjy8qzUktPsQozcGiJM5rvOhlrJBAemJJanZq
+        akFqEUyWiYNTqoFRdfsxG/0dkw5cnrpY1/KuR8pbdtvF00zbl3LUNja8O62359Wui+fNDk5t
+        +hf84WiTU3+Iscyrsis7/ru/fvLe0ayQ32lG0uqlV87kC1Y4R7IHvXuh//LFw68fU7O5Va+p
+        n1U+cjVcTqVC7Ub2LL5qvvju1HPcJ2cW/zFjdHR9MN1NuXehS+d9JZbijERDLeai4kQAZP2x
+        vhADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrILMWRmVeSWpSXmKPExsVy+t/xu7rVW43iDXZ/ZrXYOGM9q8X1L89Z
+        LT723GO1uLxrDpvFjPP7mCzWHrnLbnHxlKvF4TftrBb/rm1ksVi16w+jA5fH+xut7B47Z91l
+        99i0qpPNo2/LKkaPz5vkAlij9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX0
+        7WxSUnMyy1KL9O0S9DIm3znAXHCMreLSp5IGxlOsXYycHBICJhIXbjYB2VwcQgJLGSU2bf7C
+        3MXIAZSQkpjfogRRIyzx51oXG4gtJPCJUWLBaVUQm03AUKL3aB8jiC0iICtx69hPNpA5zAK9
+        TBLt37ewgCSEBRIlFrW2MIHYLAKqEk+/PAMbxCtgLbFpxxV2iAXyEqs3HGCewMizgJFhFaNI
+        amlxbnpusaFecWJucWleul5yfu4mRmBwbjv2c/MOxksbgw8xCnAwKvHwLphoFC/EmlhWXJl7
+        iFGCg1lJhNfp7Ok4Id6UxMqq1KL8+KLSnNTiQ4ymQMsnMkuJJucDIyevJN7Q1NDcwtLQ3Njc
+        2MxCSZy3Q+BgjJBAemJJanZqakFqEUwfEwenVAPj5LlJ/Ec8j0s63zm57rCviEHlodXbF0Zt
+        jiz/Jrln4QuZBNezda89uWc/fCKauPrRRMPAT9uuG/FYPF9b9H+BqNXy/bWLnb3NJt69N2nS
+        V9bLx06qHHt9dH0hC/8cAwHRzYGFxxo7BWtmiL1YydD7SXhX+5Nb67dczl/kXcEb/qLgFNeT
+        4z/77ZRYijMSDbWYi4oTAef0sixkAgAA
+X-CMS-MailID: 20200811151259eucas1p19d1f6a21e46ac9382a89cd3d3cb0b6c8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200811151259eucas1p19d1f6a21e46ac9382a89cd3d3cb0b6c8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200811151259eucas1p19d1f6a21e46ac9382a89cd3d3cb0b6c8
+References: <CGME20200811151259eucas1p19d1f6a21e46ac9382a89cd3d3cb0b6c8@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
+This patch adds ID for the mout_sw_aclk_g3d (SW_CLKMUX_ACLK_G3D) clock,
+mostly for internal use in the CMU driver. It will allow to avoid the
+__clk_lookup() call when setting up the clock during the clock provider
+initialization.
 
-2020=E5=B9=B48=E6=9C=8811=E6=97=A5(=E7=81=AB) 13:25 Sylwester Nawrocki <s.n=
-awrocki@samsung.com>:
->
-> In the .set_rate callback for some PLLs there is a loop polling state
-> of the PLL lock bit and it may become an endless loop when something
-> goes wrong with the PLL. For some PLLs there is already (a duplicated)
-> code for polling with timeout. This patch replaces that code with
-> the readl_relaxed_poll_timeout_atomic() macro and moves it to a common
-> helper function, which is then used for all the PLLs. The downside
-> of switching to the common macro is that we drop the cpu_relax() call.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ include/dt-bindings/clock/exynos5420.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Tbh. I'm not sure what effect was exactly expected from cpu_relax() in
-the functions which already had timeout handling. Could someone shed
-some light on this?
+diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+index 02d5ac4..ff917c8 100644
+--- a/include/dt-bindings/clock/exynos5420.h
++++ b/include/dt-bindings/clock/exynos5420.h
+@@ -230,6 +230,7 @@
+ #define CLK_MOUT_USER_MAU_EPLL	659
+ #define CLK_MOUT_SCLK_SPLL	660
+ #define CLK_MOUT_MX_MSPLL_CCORE_PHY	661
++#define CLK_MOUT_SW_ACLK_G3D	662
+ 
+ /* divider clocks */
+ #define CLK_DOUT_PIXEL		768
+-- 
+2.7.4
 
-> Using a common helper function rather than the macro directly allows
-> to avoid repeating the error message in the code and to avoid the object
-> code size increase due to inlining.
->
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes for v2:
->  - use common readl_relaxed_poll_timeout_atomic() macro
-> ---
->  drivers/clk/samsung/clk-pll.c | 92 +++++++++++++++----------------------=
-------
->  1 file changed, 32 insertions(+), 60 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.=
-c
-> index ac70ad7..c3c1efe 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -9,13 +9,14 @@
->  #include <linux/errno.h>
->  #include <linux/hrtimer.h>
->  #include <linux/delay.h>
-> +#include <linux/iopoll.h>
->  #include <linux/slab.h>
->  #include <linux/clk-provider.h>
->  #include <linux/io.h>
->  #include "clk.h"
->  #include "clk-pll.h"
->
-> -#define PLL_TIMEOUT_MS         10
-> +#define PLL_TIMEOUT_US         10000U
-
-I'm also wondering if 10ms is the universal value that would cover the
-oldest PLLs as well, but my loose recollection is that they should
-still lock much faster than that. Could you double check that in the
-documentation?
-
-Otherwise the patch looks good to me, thanks!
-
-Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Best regards,
-Tomasz
-
->
->  struct samsung_clk_pll {
->         struct clk_hw           hw;
-> @@ -63,6 +64,22 @@ static long samsung_pll_round_rate(struct clk_hw *hw,
->         return rate_table[i - 1].rate;
->  }
->
-> +static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
-> +                                unsigned int reg_mask)
-> +{
-> +       u32 val;
-> +       int ret;
-> +
-> +       /* Wait until the PLL is in steady locked state */
-> +       ret =3D readl_relaxed_poll_timeout_atomic(pll->con_reg, val,
-> +                                       val & reg_mask, 0, PLL_TIMEOUT_US=
-);
-> +       if (ret < 0)
-> +               pr_err("%s: Could not lock PLL %s\n",
-> +                      __func__, clk_hw_get_name(&pll->hw));
-> +
-> +       return ret;
-> +}
-> +
->  static int samsung_pll3xxx_enable(struct clk_hw *hw)
->  {
->         struct samsung_clk_pll *pll =3D to_clk_pll(hw);
-> @@ -241,12 +258,9 @@ static int samsung_pll35xx_set_rate(struct clk_hw *h=
-w, unsigned long drate,
->         writel_relaxed(tmp, pll->con_reg);
->
->         /* Wait until the PLL is locked if it is enabled. */
-> -       if (tmp & BIT(pll->enable_offs)) {
-> -               do {
-> -                       cpu_relax();
-> -                       tmp =3D readl_relaxed(pll->con_reg);
-> -               } while (!(tmp & BIT(pll->lock_offs)));
-> -       }
-> +       if (tmp & BIT(pll->enable_offs))
-> +               return samsung_pll_lock_wait(pll, BIT(pll->lock_offs));
-> +
->         return 0;
->  }
->
-> @@ -318,7 +332,7 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw=
-, unsigned long drate,
->                                         unsigned long parent_rate)
->  {
->         struct samsung_clk_pll *pll =3D to_clk_pll(hw);
-> -       u32 tmp, pll_con0, pll_con1;
-> +       u32 pll_con0, pll_con1;
->         const struct samsung_pll_rate_table *rate;
->
->         rate =3D samsung_get_pll_settings(pll, drate);
-> @@ -356,13 +370,8 @@ static int samsung_pll36xx_set_rate(struct clk_hw *h=
-w, unsigned long drate,
->         pll_con1 |=3D rate->kdiv << PLL36XX_KDIV_SHIFT;
->         writel_relaxed(pll_con1, pll->con_reg + 4);
->
-> -       /* wait_lock_time */
-> -       if (pll_con0 & BIT(pll->enable_offs)) {
-> -               do {
-> -                       cpu_relax();
-> -                       tmp =3D readl_relaxed(pll->con_reg);
-> -               } while (!(tmp & BIT(pll->lock_offs)));
-> -       }
-> +       if (pll_con0 & BIT(pll->enable_offs))
-> +               return samsung_pll_lock_wait(pll, BIT(pll->lock_offs));
->
->         return 0;
->  }
-> @@ -437,7 +446,6 @@ static int samsung_pll45xx_set_rate(struct clk_hw *hw=
-, unsigned long drate,
->         struct samsung_clk_pll *pll =3D to_clk_pll(hw);
->         const struct samsung_pll_rate_table *rate;
->         u32 con0, con1;
-> -       ktime_t start;
->
->         /* Get required rate settings from table */
->         rate =3D samsung_get_pll_settings(pll, drate);
-> @@ -489,20 +497,7 @@ static int samsung_pll45xx_set_rate(struct clk_hw *h=
-w, unsigned long drate,
->         writel_relaxed(con0, pll->con_reg);
->
->         /* Wait for locking. */
-> -       start =3D ktime_get();
-> -       while (!(readl_relaxed(pll->con_reg) & PLL45XX_LOCKED)) {
-> -               ktime_t delta =3D ktime_sub(ktime_get(), start);
-> -
-> -               if (ktime_to_ms(delta) > PLL_TIMEOUT_MS) {
-> -                       pr_err("%s: could not lock PLL %s\n",
-> -                                       __func__, clk_hw_get_name(hw));
-> -                       return -EFAULT;
-> -               }
-> -
-> -               cpu_relax();
-> -       }
-> -
-> -       return 0;
-> +       return samsung_pll_lock_wait(pll, PLL45XX_LOCKED);
->  }
->
->  static const struct clk_ops samsung_pll45xx_clk_ops =3D {
-> @@ -588,7 +583,6 @@ static int samsung_pll46xx_set_rate(struct clk_hw *hw=
-, unsigned long drate,
->         struct samsung_clk_pll *pll =3D to_clk_pll(hw);
->         const struct samsung_pll_rate_table *rate;
->         u32 con0, con1, lock;
-> -       ktime_t start;
->
->         /* Get required rate settings from table */
->         rate =3D samsung_get_pll_settings(pll, drate);
-> @@ -648,20 +642,7 @@ static int samsung_pll46xx_set_rate(struct clk_hw *h=
-w, unsigned long drate,
->         writel_relaxed(con1, pll->con_reg + 0x4);
->
->         /* Wait for locking. */
-> -       start =3D ktime_get();
-> -       while (!(readl_relaxed(pll->con_reg) & PLL46XX_LOCKED)) {
-> -               ktime_t delta =3D ktime_sub(ktime_get(), start);
-> -
-> -               if (ktime_to_ms(delta) > PLL_TIMEOUT_MS) {
-> -                       pr_err("%s: could not lock PLL %s\n",
-> -                                       __func__, clk_hw_get_name(hw));
-> -                       return -EFAULT;
-> -               }
-> -
-> -               cpu_relax();
-> -       }
-> -
-> -       return 0;
-> +       return samsung_pll_lock_wait(pll, PLL46XX_LOCKED);
->  }
->
->  static const struct clk_ops samsung_pll46xx_clk_ops =3D {
-> @@ -1035,14 +1016,9 @@ static int samsung_pll2550xx_set_rate(struct clk_h=
-w *hw, unsigned long drate,
->                         (rate->sdiv << PLL2550XX_S_SHIFT);
->         writel_relaxed(tmp, pll->con_reg);
->
-> -       /* wait_lock_time */
-> -       do {
-> -               cpu_relax();
-> -               tmp =3D readl_relaxed(pll->con_reg);
-> -       } while (!(tmp & (PLL2550XX_LOCK_STAT_MASK
-> -                       << PLL2550XX_LOCK_STAT_SHIFT)));
-> -
-> -       return 0;
-> +       /* Wait for locking. */
-> +       return samsung_pll_lock_wait(pll,
-> +                       PLL2550XX_LOCK_STAT_MASK << PLL2550XX_LOCK_STAT_S=
-HIFT);
->  }
->
->  static const struct clk_ops samsung_pll2550xx_clk_ops =3D {
-> @@ -1132,13 +1108,9 @@ static int samsung_pll2650x_set_rate(struct clk_hw=
- *hw, unsigned long drate,
->         con1 |=3D ((rate->kdiv & PLL2650X_K_MASK) << PLL2650X_K_SHIFT);
->         writel_relaxed(con1, pll->con_reg + 4);
->
-> -       do {
-> -               cpu_relax();
-> -               con0 =3D readl_relaxed(pll->con_reg);
-> -       } while (!(con0 & (PLL2650X_LOCK_STAT_MASK
-> -                       << PLL2650X_LOCK_STAT_SHIFT)));
-> -
-> -       return 0;
-> +       /* Wait for locking. */
-> +       return samsung_pll_lock_wait(pll,
-> +                       PLL2650X_LOCK_STAT_MASK << PLL2650X_LOCK_STAT_SHI=
-FT);
->  }
->
->  static const struct clk_ops samsung_pll2650x_clk_ops =3D {
-> --
-> 2.7.4
->
