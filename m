@@ -2,167 +2,107 @@ Return-Path: <SRS0=cAz1=BV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE3EC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Aug 2020 11:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40486C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Aug 2020 11:31:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1275F20716
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Aug 2020 11:27:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kmm4Tfqo"
+	by mail.kernel.org (Postfix) with ESMTP id 0AAA120782
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Aug 2020 11:31:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597145497;
+	bh=p32wtio7weVNEBp1zzXuw08zUK2gyCeyKmJ6OAdJXzU=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=EW7Qx/O3+ircwOOVeyxo9xi+u6oDiZAipoZX8FXS6CzVhyEjYssL9F6aGsuGeqEKY
+	 bRRUQPEL/Q197KR+i1EkVIP8jG8/Av0MDSmZqUL35X3tGYk7FpXF4sbQi6WvqXR71C
+	 9bbzsyO5jXBEkirddTdfpMuqck8CeWIJ0eh5X5uI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728787AbgHKL1E (ORCPT
+        id S1728768AbgHKLbg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Aug 2020 07:27:04 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45045 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728779AbgHKL1D (ORCPT
+        Tue, 11 Aug 2020 07:31:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49022 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728604AbgHKLbg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Aug 2020 07:27:03 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200811112701euoutp020e37c4fcbbc02be9117c4fe4dc570b8d~qMx3tleii1426214262euoutp02r
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Aug 2020 11:27:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200811112701euoutp020e37c4fcbbc02be9117c4fe4dc570b8d~qMx3tleii1426214262euoutp02r
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1597145221;
-        bh=mb3uJApwo1DYzh9StpkGFcFQ+kpnacrAYQ1U+QTV1+c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kmm4TfqoQ+WcKBwYNQ6/1Z7KnOnTS0Md+pwNmGo+H3oi3fMmpCw6roi+JgQEwyinT
-         IwbHNyuFO7wOw+iPemR/LITXjJ869IRf6E1QJQ3utb6SRoEiQDiKVtNwuWjkNIx1bA
-         JnCFD2/rI8b8JTCVL2hh+23p9C0zAs92ST4VkIYw=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200811112701eucas1p16b0c9addefd5c317cf1d36e3d3874ae9~qMx3VDfPl1263112631eucas1p1X;
-        Tue, 11 Aug 2020 11:27:01 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id C9.D9.06456.480823F5; Tue, 11
-        Aug 2020 12:27:01 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200811112700eucas1p28bccc0c1a9e0c37d08f5f5bcd512cf30~qMx3CjDse0422204222eucas1p2K;
-        Tue, 11 Aug 2020 11:27:00 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200811112700eusmtrp2e37e2bbaf70a0d7a057f17c4afc0a3b5~qMx3B7nAP2089620896eusmtrp2e;
-        Tue, 11 Aug 2020 11:27:00 +0000 (GMT)
-X-AuditID: cbfec7f2-809ff70000001938-2a-5f3280849289
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 3B.B3.06017.480823F5; Tue, 11
-        Aug 2020 12:27:00 +0100 (BST)
-Received: from AMDC3061.digital.local (unknown [106.120.51.75]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200811112700eusmtip2e9fa1b04b7188e2de2b42fec938f3d8f~qMx2jy6sQ2620926209eusmtip2G;
-        Tue, 11 Aug 2020 11:27:00 +0000 (GMT)
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     linux-clk@vger.kernel.org
-Cc:     tomasz.figa@gmail.com, cw00.choi@samsung.com, sboyd@kernel.org,
-        mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/2] clk: samsung: exynos5420: Avoid __clk_lookup() calls
- when enabling clocks
-Date:   Tue, 11 Aug 2020 13:26:45 +0200
-Message-Id: <20200811112645.24596-2-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200811112645.24596-1-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42LZduznOd3WBqN4g54NTBYbZ6xntbj+5Tmr
-        xceee6wWl3fNYbOYcX4fk8XaI3fZLS6ecrU4/Kad1eLftY0sFqt2/WF04PJ4f6OV3WPnrLvs
-        HptWdbJ59G1ZxejxeZNcAGsUl01Kak5mWWqRvl0CV0bHgcnsBS8FKn5PaWJrYPzD28XIySEh
-        YCJx9e9RNhBbSGAFo8Tkt0ldjFxA9hdGiQUrJjBBOJ8ZJeZ/aGGE6Vi34hULRGI5o8THSccY
-        4Vr27FzBAlLFJmAo0Xu0D6xDREBW4taxn2wgRcwCzUwSn/ubwIqEBRIk1i39CFbEIqAqcePa
-        I1YQm1fAWuLJwy42iHXyEqs3HGAGsTkFbCRe7nsMNkhCoJ1d4s6/a1A3uUh8bv/IDmELS7w6
-        vgXKlpH4v3M+E0RDM6NEz+7b7BDOBEaJ+8cXQHVbS9w59wtoLAfQfZoS63fpg5gSAo4SzRs9
-        IUw+iRtvBUGKmYHMSdumM0OEeSU62oQgZqhI/F41nQnClpLofvKfBcL2kFj1/g40tPoZJf4/
-        3Mg8gVF+FsKuBYyMqxjFU0uLc9NTiw3zUsv1ihNzi0vz0vWS83M3MQJTyOl/xz/tYPx6KekQ
-        owAHoxIPb4G1YbwQa2JZcWXuIUYJDmYlEV6ns6fjhHhTEiurUovy44tKc1KLDzFKc7AoifMa
-        L3oZKySQnliSmp2aWpBaBJNl4uCUamDMenIyRfGTmEV8XWhlqPuD2wuLfr24biyZ/fPGXdcL
-        PJslb2tWFnAFO06qfLd3Dt+hF7adV9YFTXjUraQ6q/6xXIjc78S41J6LvI2KwqZXqhUcDMWz
-        ryepW2YGGJbW3OksfjGrdVPll0+/XuVWyceIpL3WlHq6cIr6IiYTl2NH94asda0oZVNiKc5I
-        NNRiLipOBAC2W3cCHQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsVy+t/xe7otDUbxBnOOa1tsnLGe1eL6l+es
-        Fh977rFaXN41h81ixvl9TBZrj9xlt7h4ytXi8Jt2Vot/1zayWKza9YfRgcvj/Y1Wdo+ds+6y
-        e2xa1cnm0bdlFaPH501yAaxRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6
-        djYpqTmZZalF+nYJehkdByazF7wUqPg9pYmtgfEPbxcjJ4eEgInEuhWvWLoYuTiEBJYySvw6
-        2wzkcAAlpCTmtyhB1AhL/LnWxQZR84lR4u7rTiaQBJuAoUTv0T5GEFtEQFbi1rGfYEXMAr1M
-        Eu3ft7CAJIQF4iQO9ZwHK2IRUJW4ce0RK4jNK2At8eQhyFSQDfISqzccYAaxOQVsJF7uewwW
-        FwKqmbbrM/MERr4FjAyrGEVSS4tz03OLjfSKE3OLS/PS9ZLzczcxAgN627GfW3Ywdr0LPsQo
-        wMGoxMNbYG0YL8SaWFZcmXuIUYKDWUmE1+ns6Tgh3pTEyqrUovz4otKc1OJDjKZAR01klhJN
-        zgdGW15JvKGpobmFpaG5sbmxmYWSOG+HwMEYIYH0xJLU7NTUgtQimD4mDk6pBkarYh6F+dMk
-        A78lVD1b1tOV1PnmnwynxrujM9obq4WVmI4rrnRKXX0xQeummJm0beWNdevm2N2eZms5ZYbB
-        MuOe+2158XpVheUTC776CSyRVtu20/FWLrtG0xUxgaUzmq77+oovfTp5zoO9TG/+/RJkj+Nh
-        ddJeEtp1Ku01259nP/2jp0RNfKvEUpyRaKjFXFScCACJgNdwfgIAAA==
-X-CMS-MailID: 20200811112700eucas1p28bccc0c1a9e0c37d08f5f5bcd512cf30
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200811112700eucas1p28bccc0c1a9e0c37d08f5f5bcd512cf30
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200811112700eucas1p28bccc0c1a9e0c37d08f5f5bcd512cf30
-References: <20200811112645.24596-1-s.nawrocki@samsung.com>
-        <CGME20200811112700eucas1p28bccc0c1a9e0c37d08f5f5bcd512cf30@eucas1p2.samsung.com>
+        Tue, 11 Aug 2020 07:31:36 -0400
+Received: from [192.168.0.50] (89-70-52-201.dynamic.chello.pl [89.70.52.201])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 180F020658;
+        Tue, 11 Aug 2020 11:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597145495;
+        bh=p32wtio7weVNEBp1zzXuw08zUK2gyCeyKmJ6OAdJXzU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=hHdRSnNaGnZMkyftRrvf1+SaxKcgzK/2X2eQqJISSMYEoErpZkrEsLuZCMKNFRvNh
+         1Bob9S49zn1cpSSkvIrV5shuxZhSaleCo8GDdh7CeXK5iL1cfOZD9tHCLDgeFf9YwQ
+         JkOVysaoM0bXMT4GY45/mZfvmOnqModxuO4QWHN4=
+Subject: Re: [PATCH v2] clk: samsung: Keep top BPLL mux on Exynos542x enabled
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <CGME20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f@eucas1p1.samsung.com>
+ <20200807133143.22748-1-m.szyprowski@samsung.com>
+From:   Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <2ab29b37-5e7f-1a7a-e29c-f20f95aec1a9@kernel.org>
+Date:   Tue, 11 Aug 2020 13:31:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20200807133143.22748-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch adds a clk ID to the mout_sw_aclk_g3d clk definition so related
-clk pointer gets cached in the driver's private data and can be used
-later instead of a __clk_lookup() call.
+On 8/7/20 15:31, Marek Szyprowski wrote:
+> BPLL clock must not be disabled because it is needed for proper DRAM
+> operation. This is normally handled by respective memory devfreq driver,
+> but when that driver is not yet probed or its probe has been deferred the
+> clock might got disabled what causes board hang. Fix this by calling
+> clk_prepare_enable() directly from the clock provider driver.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+> Tested-by: Lukasz Luba <lukasz.luba@arm.com>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-With that we have all clocks used in the clk_prepare_enable() calls in the
-clk provider init callback cached in clk_data.hws[] and we can reference
-the clk pointers directly rather than using __clk_lookup() with global names.
+Should we add a "Fixes" tag so this commit gets backported down do the 
+kernels where the DMC driver was introduced?
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
+Fixes: 6e7674c3c6df ("memory: Add DMC driver for Exynos5422") ?
 
-Depends on patch:
-[PATCH v2] clk: samsung: Keep top BPLL mux on Exynos542x enabled
+> ---
+>   drivers/clk/samsung/clk-exynos5420.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index fea33399a632..521cbbfc0987 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -1655,6 +1655,11 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>   	 * main G3D clock enablement status.
+>   	 */
+>   	clk_prepare_enable(__clk_lookup("mout_sw_aclk_g3d"));
+> +	/*
+> +	 * Keep top BPLL mux enabled permanently to ensure that DRAM operates
+> +	 * properly.
+> +	 */
+> +	clk_prepare_enable(__clk_lookup("mout_bpll"));
 
- drivers/clk/samsung/clk-exynos5420.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+I'm going to apply the patch and then these two as a follow up:
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index bd62087..06841a6 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -712,8 +712,8 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
- 			SRC_TOP12, 8, 1),
- 	MUX(0, "mout_sw_aclk266_g2d", mout_sw_aclk266_g2d_p,
- 			SRC_TOP12, 12, 1),
--	MUX_F(0, "mout_sw_aclk_g3d", mout_sw_aclk_g3d_p, SRC_TOP12, 16, 1,
--	      CLK_SET_RATE_PARENT, 0),
-+	MUX_F(CLK_MOUT_SW_ACLK_G3D, "mout_sw_aclk_g3d", mout_sw_aclk_g3d_p,
-+			SRC_TOP12, 16, 1, CLK_SET_RATE_PARENT, 0),
- 	MUX(0, "mout_sw_aclk300_jpeg", mout_sw_aclk300_jpeg_p,
- 			SRC_TOP12, 20, 1),
- 	MUX(CLK_MOUT_SW_ACLK300, "mout_sw_aclk300_disp1",
-@@ -1649,17 +1649,18 @@ static void __init exynos5x_clk_init(struct device_node *np,
- 				     exynos5x_subcmus);
- 	}
-
-+	hws = ctx->clk_data.hws;
- 	/*
- 	 * Keep top part of G3D clock path enabled permanently to ensure
- 	 * that the internal busses get their clock regardless of the
- 	 * main G3D clock enablement status.
- 	 */
--	clk_prepare_enable(__clk_lookup("mout_sw_aclk_g3d"));
-+	clk_prepare_enable(hws[CLK_MOUT_SW_ACLK_G3D]->clk);
- 	/*
- 	 * Keep top BPLL mux enabled permanently to ensure that DRAM operates
- 	 * properly.
- 	 */
--	clk_prepare_enable(__clk_lookup("mout_bpll"));
-+	clk_prepare_enable(hws[CLK_MOUT_BPLL]->clk);
-
- 	samsung_clk_of_add_provider(np, ctx);
- }
---
-2.7.4
+https://patchwork.kernel.org/patch/11709097
+https://patchwork.kernel.org/patch/11709101
 
