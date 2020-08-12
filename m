@@ -2,49 +2,49 @@ Return-Path: <SRS0=V9ky=BW=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6AC8C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Aug 2020 07:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 461ECC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Aug 2020 07:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8ABBF2078E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Aug 2020 07:59:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 126E120781
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Aug 2020 07:59:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597219176;
-	bh=2RVi0D02jynn0p6bTNjO1y53JcI46pZTDa3hdIrdGRU=;
+	s=default; t=1597219196;
+	bh=nUUfHeOCqmOjQS3CjebFL/QT0l0R1I4tjXUUfUjhWYI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=jX7V8+SOCOEyBDdU94RBULfkheyeBnSSJLzLtCbQAx5l/PxFffz2cZ1+UV8XQdSf9
-	 s1rO1RghKJYZ9pTwE1Wp9KYzIGT3Ee2vfHa/6p/TRp2VqoWUX/zRdMAk7E7MnOCcmH
-	 Yk7+bl273rJqYQDZayON7EbiJVDO45vo83MKllrM=
+	b=EO368P43xuUKRXthZRW5hKwHaB7XBcIYwDse74nFgbXot0602eBe0kbmXL5BEm2uQ
+	 fF7krEhfVWNZYNgAGMWe7YaCE+SCOY9pfQewKb1gdMppuI8oO+MQ/JANfiMz/lfeaE
+	 CRzvliDPcql6EMblvEGUK2F5CP9yh2VS6Il+Hnf4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbgHLH7g (ORCPT
+        id S1726517AbgHLH7z (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 12 Aug 2020 03:59:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38466 "EHLO mail.kernel.org"
+        Wed, 12 Aug 2020 03:59:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726255AbgHLH7f (ORCPT
+        id S1726255AbgHLH7z (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 12 Aug 2020 03:59:35 -0400
+        Wed, 12 Aug 2020 03:59:55 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70BC1206B5;
-        Wed, 12 Aug 2020 07:59:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA2AC206B5;
+        Wed, 12 Aug 2020 07:59:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597219175;
-        bh=2RVi0D02jynn0p6bTNjO1y53JcI46pZTDa3hdIrdGRU=;
+        s=default; t=1597219195;
+        bh=nUUfHeOCqmOjQS3CjebFL/QT0l0R1I4tjXUUfUjhWYI=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=WvaHRSRcEls0qNPsEW91OJCAhQYwOYUvsuPFUefwVJarK5lbkanhw0oDP5fEvVZ3R
-         KmidoSAeqi9QgpOPRJlmz9Loj+WSXywqrDC83rtub8hXhP+yOMySrO+GCCr2nee4GG
-         Sd6V3ENtxYxNTcy5/AjbPR/zCRDTo+qvtSYrrCtw=
+        b=j3ySE3+M387YtQRtjK5XlPv4rXeV+l44DCV+48fFCdUw5/pkEjetCUhGbNDx+rHyk
+         s3Gp3ycN5c5C0X4/HCwsUyCzjYkyJCeNV9F25etkFbyds3SRrf+Zl089Bc4c8bv+g3
+         c4Y1OSNoS8oFFVKZax8zMBTYx6+RGxmURgaxyc34=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200804192654.12783-14-krzk@kernel.org>
-References: <20200804192654.12783-1-krzk@kernel.org> <20200804192654.12783-14-krzk@kernel.org>
-Subject: Re: [PATCH v2 13/13] ARM: s3c24xx: camif: include header with prototypes and unify declaration
+In-Reply-To: <20200804192654.12783-6-krzk@kernel.org>
+References: <20200804192654.12783-1-krzk@kernel.org> <20200804192654.12783-6-krzk@kernel.org>
+Subject: Re: [PATCH v2 05/13] ARM: samsung: fix language typo
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Sergio Prado <sergio.prado@e-labworks.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -70,25 +70,18 @@ To:     Alexandre Torgue <alexandre.torgue@st.com>,
         linux-samsung-soc@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-watchdog@vger.kernel.org, patches@opensource.cirrus.com
-Date:   Wed, 12 Aug 2020 00:59:34 -0700
-Message-ID: <159721917443.33733.7919188364233003142@swboyd.mtv.corp.google.com>
+Date:   Wed, 12 Aug 2020 00:59:53 -0700
+Message-ID: <159721919389.33733.16309866574875800093@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2020-08-04 12:26:54)
-> The s3c_camif_gpio_put() declaration in
-> include/media/drv-intf/s3c_camif.h header was different than definition.
-> Fixing this allows to include that header to also fix the W=3D1 compile
-> warnings:
+Quoting Krzysztof Kozlowski (2020-08-04 12:26:46)
+> Fix Complie -> Compile
 >=20
->     arch/arm/mach-s3c24xx/setup-camif.c:28:5: warning: no previous protot=
-ype for 's3c_camif_gpio_get' [-Wmissing-prototypes]
->        28 | int s3c_camif_gpio_get(void)
->     arch/arm/mach-s3c24xx/setup-camif.c:56:6: warning: no previous protot=
-ype for 's3c_camif_gpio_put' [-Wmissing-prototypes]
->        56 | void s3c_camif_gpio_put(void)
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-Maybe it should have been void all along?
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
