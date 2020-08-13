@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8C8C4345A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A32C433F2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 954B620791
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C60721775
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbgHMIhA (ORCPT
+        id S1726713AbgHMIhF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Aug 2020 04:37:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58806 "EHLO mx2.suse.de"
+        Thu, 13 Aug 2020 04:37:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59022 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726641AbgHMIhA (ORCPT
+        id S1726699AbgHMIhE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Aug 2020 04:37:00 -0400
+        Thu, 13 Aug 2020 04:37:04 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 04D7AAFAE;
-        Thu, 13 Aug 2020 08:37:21 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 977ACAFA8;
+        Thu, 13 Aug 2020 08:37:24 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -59,9 +59,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 09/20] drm/nouveau: Introduce GEM object functions
-Date:   Thu, 13 Aug 2020 10:36:33 +0200
-Message-Id: <20200813083644.31711-10-tzimmermann@suse.de>
+Subject: [PATCH 13/20] drm/rockchip: Convert to drm_gem_object_funcs
+Date:   Thu, 13 Aug 2020 10:36:37 +0200
+Message-Id: <20200813083644.31711-14-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200813083644.31711-1-tzimmermann@suse.de>
 References: <20200813083644.31711-1-tzimmermann@suse.de>
@@ -74,94 +74,63 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in nouveau.
+per-instance callbacks in rockchip. The only exception is gem_prime_mmap,
+which is non-trivial to convert.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/nouveau/nouveau_drm.c   |  9 ---------
- drivers/gpu/drm/nouveau/nouveau_gem.c   | 13 +++++++++++++
- drivers/gpu/drm/nouveau/nouveau_gem.h   |  2 ++
- drivers/gpu/drm/nouveau/nouveau_prime.c |  2 ++
- 4 files changed, 17 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c |  5 -----
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 10 ++++++++++
+ 2 files changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index 22d246acc5e5..dc2388efc857 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -1207,16 +1207,7 @@ driver_stub = {
- 
- 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
--	.gem_prime_pin = nouveau_gem_prime_pin,
--	.gem_prime_unpin = nouveau_gem_prime_unpin,
--	.gem_prime_get_sg_table = nouveau_gem_prime_get_sg_table,
- 	.gem_prime_import_sg_table = nouveau_gem_prime_import_sg_table,
--	.gem_prime_vmap = nouveau_gem_prime_vmap,
--	.gem_prime_vunmap = nouveau_gem_prime_vunmap,
--
--	.gem_free_object_unlocked = nouveau_gem_object_del,
--	.gem_open_object = nouveau_gem_object_open,
--	.gem_close_object = nouveau_gem_object_close,
- 
- 	.dumb_create = nouveau_display_dumb_create,
- 	.dumb_map_offset = nouveau_display_dumb_map_offset,
-diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
-index 81f111ad3f4f..b04b8f6bb9d5 100644
---- a/drivers/gpu/drm/nouveau/nouveau_gem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
-@@ -169,6 +169,17 @@ nouveau_gem_object_close(struct drm_gem_object *gem, struct drm_file *file_priv)
- 	ttm_bo_unreserve(&nvbo->bo);
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+index 0f3eb392fe39..b7654f5e4225 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -212,15 +212,10 @@ static const struct file_operations rockchip_drm_driver_fops = {
+ static struct drm_driver rockchip_drm_driver = {
+ 	.driver_features	= DRIVER_MODESET | DRIVER_GEM | DRIVER_ATOMIC,
+ 	.lastclose		= drm_fb_helper_lastclose,
+-	.gem_vm_ops		= &drm_gem_cma_vm_ops,
+-	.gem_free_object_unlocked = rockchip_gem_free_object,
+ 	.dumb_create		= rockchip_gem_dumb_create,
+ 	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
+ 	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
+-	.gem_prime_get_sg_table	= rockchip_gem_prime_get_sg_table,
+ 	.gem_prime_import_sg_table	= rockchip_gem_prime_import_sg_table,
+-	.gem_prime_vmap		= rockchip_gem_prime_vmap,
+-	.gem_prime_vunmap	= rockchip_gem_prime_vunmap,
+ 	.gem_prime_mmap		= rockchip_gem_mmap_buf,
+ 	.fops			= &rockchip_drm_driver_fops,
+ 	.name	= DRIVER_NAME,
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+index b9275ba7c5a5..9724e7b561f3 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+@@ -295,6 +295,14 @@ static void rockchip_gem_release_object(struct rockchip_gem_object *rk_obj)
+ 	kfree(rk_obj);
  }
  
-+const struct drm_gem_object_funcs nouveau_gem_object_funcs = {
-+	.free = nouveau_gem_object_del,
-+	.open = nouveau_gem_object_open,
-+	.close = nouveau_gem_object_close,
-+	.pin = nouveau_gem_prime_pin,
-+	.unpin = nouveau_gem_prime_unpin,
-+	.get_sg_table = nouveau_gem_prime_get_sg_table,
-+	.vmap = nouveau_gem_prime_vmap,
-+	.vunmap = nouveau_gem_prime_vunmap,
++static const struct drm_gem_object_funcs rockchip_gem_object_funcs = {
++	.free = rockchip_gem_free_object,
++	.get_sg_table = rockchip_gem_prime_get_sg_table,
++	.vmap = rockchip_gem_prime_vmap,
++	.vunmap	= rockchip_gem_prime_vunmap,
++	.vm_ops = &drm_gem_cma_vm_ops,
 +};
 +
- int
- nouveau_gem_new(struct nouveau_cli *cli, u64 size, int align, uint32_t domain,
- 		uint32_t tile_mode, uint32_t tile_flags,
-@@ -194,6 +205,8 @@ nouveau_gem_new(struct nouveau_cli *cli, u64 size, int align, uint32_t domain,
- 	if (IS_ERR(nvbo))
- 		return PTR_ERR(nvbo);
- 
-+	nvbo->bo.base.funcs = &nouveau_gem_object_funcs;
-+
- 	/* Initialize the embedded gem-object. We return a single gem-reference
- 	 * to the caller, instead of a normal nouveau_bo ttm reference. */
- 	ret = drm_gem_object_init(drm->dev, &nvbo->bo.base, size);
-diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.h b/drivers/gpu/drm/nouveau/nouveau_gem.h
-index 978e07591990..b35c180322e2 100644
---- a/drivers/gpu/drm/nouveau/nouveau_gem.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_gem.h
-@@ -5,6 +5,8 @@
- #include "nouveau_drv.h"
- #include "nouveau_bo.h"
- 
-+extern const struct drm_gem_object_funcs nouveau_gem_object_funcs;
-+
- static inline struct nouveau_bo *
- nouveau_gem_object(struct drm_gem_object *gem)
+ static struct rockchip_gem_object *
+ 	rockchip_gem_alloc_object(struct drm_device *drm, unsigned int size)
  {
-diff --git a/drivers/gpu/drm/nouveau/nouveau_prime.c b/drivers/gpu/drm/nouveau/nouveau_prime.c
-index bae6a3eccee0..30f616aa251e 100644
---- a/drivers/gpu/drm/nouveau/nouveau_prime.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_prime.c
-@@ -79,6 +79,8 @@ struct drm_gem_object *nouveau_gem_prime_import_sg_table(struct drm_device *dev,
+@@ -309,6 +317,8 @@ static struct rockchip_gem_object *
  
- 	nvbo->valid_domains = NOUVEAU_GEM_DOMAIN_GART;
+ 	obj = &rk_obj->base;
  
-+	nvbo->bo.base.funcs = &nouveau_gem_object_funcs;
++	obj->funcs = &rockchip_gem_object_funcs;
 +
- 	/* Initialize the embedded gem-object. We return a single gem-reference
- 	 * to the caller, instead of a normal nouveau_bo ttm reference. */
- 	ret = drm_gem_object_init(dev, &nvbo->bo.base, size);
+ 	drm_gem_object_init(drm, obj, size);
+ 
+ 	return rk_obj;
 -- 
 2.28.0
 
