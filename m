@@ -2,78 +2,147 @@ Return-Path: <SRS0=zvk9=BX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 002DDC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 13:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D11C433E4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 13:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD9F420885
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 13:13:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCE4E208B3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 13:36:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mD2ffode"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726576AbgHMNNm (ORCPT
+        id S1726142AbgHMNgY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Aug 2020 09:13:42 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:54094 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726100AbgHMNNl (ORCPT
+        Thu, 13 Aug 2020 09:36:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34270 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbgHMNgX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Aug 2020 09:13:41 -0400
-Received: from [37.161.87.136] (port=46789 helo=[192.168.42.162])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1k6D2s-0007Xk-BW; Thu, 13 Aug 2020 15:13:26 +0200
-Subject: Re: [PATCH v2] ARM: s3c64xx: use simple i2c probe function
-To:     Stephen Kitt <steve@sk2.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        patches@opensource.cirrus.com,
+        Thu, 13 Aug 2020 09:36:23 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 217CCC061757;
+        Thu, 13 Aug 2020 06:36:21 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EEF4C80C;
+        Thu, 13 Aug 2020 15:36:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1597325779;
+        bh=LFjCPgHaIF6gKZ6ttwoh7vM/ha5xd+8WqVY3LrXFqdY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mD2ffodeTiALBx4jMPG8qxz9L2zNHMknBM29LVKDZwsuv+HPNiU01uwaTPvLjoGS1
+         sOMLw+vbWye9FliJAd9NJAyN9AUdPYnu7XpJWDyFWNmXGiBOuqF8WtSmdbAdPKkTbA
+         m/8ZHk2o7qVvXfCHUPCtVlJuq/Rqpw7zILkn+1Oc=
+Date:   Thu, 13 Aug 2020 16:36:05 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
+        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
+        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
+        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
+        michal.simek@xilinx.com, sumit.semwal@linaro.org,
+        evan.quan@amd.com, Hawking.Zhang@amd.com, tianci.yin@amd.com,
+        marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        abdiel.janulgue@linux.intel.com, tvrtko.ursulin@linux.intel.com,
+        andi.shyti@intel.com, sam@ravnborg.org, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200809172243.15192-1-steve@sk2.org>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <8f0ef4d5-4a43-ee9b-816b-26dd347772b8@lucaceresoli.net>
-Date:   Thu, 13 Aug 2020 15:13:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH 19/20] drm/xlnx: Initialize DRM driver instance with CMA
+ helper macro
+Message-ID: <20200813133605.GJ6057@pendragon.ideasonboard.com>
+References: <20200813083644.31711-1-tzimmermann@suse.de>
+ <20200813083644.31711-20-tzimmermann@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20200809172243.15192-1-steve@sk2.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Disposition: inline
+In-Reply-To: <20200813083644.31711-20-tzimmermann@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Thomas,
 
-On 09/08/20 19:22, Stephen Kitt wrote:
-> The i2c probe functions here don't use the id information provided in
-> their second argument, so the single-parameter i2c probe function
-> ("probe_new") can be used instead.
+Thank you for the patch.
+
+On Thu, Aug 13, 2020 at 10:36:43AM +0200, Thomas Zimmermann wrote:
+> The xlnx driver uses CMA helpers with default callback functions.
+> Initialize the driver structure with the rsp CMA helper macro. The
+> driver is being converted to use GEM object functions as part of
+> this change.
 > 
-> This avoids scanning the identifier tables during probes.
+> Two callbacks, .dumb_destroy and .gem_prime_import, were initialized
+> to their default implementations, so they are just kept empty now.
 > 
-> Signed-off-by: Stephen Kitt <steve@sk2.org>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>  drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 14 +-------------
+>  1 file changed, 1 insertion(+), 13 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> index 26328c76305b..058044dcc062 100644
+> --- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> +++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> @@ -80,19 +80,7 @@ static struct drm_driver zynqmp_dpsub_drm_driver = {
+>  	.driver_features		= DRIVER_MODESET | DRIVER_GEM |
+>  					  DRIVER_ATOMIC,
+>  
+> -	.prime_handle_to_fd		= drm_gem_prime_handle_to_fd,
+> -	.prime_fd_to_handle		= drm_gem_prime_fd_to_handle,
+> -	.gem_prime_export		= drm_gem_prime_export,
+> -	.gem_prime_import		= drm_gem_prime_import,
+> -	.gem_prime_get_sg_table		= drm_gem_cma_prime_get_sg_table,
+> -	.gem_prime_import_sg_table	= drm_gem_cma_prime_import_sg_table,
+> -	.gem_prime_vmap			= drm_gem_cma_prime_vmap,
+> -	.gem_prime_vunmap		= drm_gem_cma_prime_vunmap,
+> -	.gem_prime_mmap			= drm_gem_cma_prime_mmap,
+> -	.gem_free_object_unlocked	= drm_gem_cma_free_object,
+> -	.gem_vm_ops			= &drm_gem_cma_vm_ops,
+> -	.dumb_create			= zynqmp_dpsub_dumb_create,
+> -	.dumb_destroy			= drm_gem_dumb_destroy,
+> +	DRM_GEM_CMA_DRIVER_OPS_VMAP_WITH_DUMB_CREATE(zynqmp_dpsub_dumb_create),
 
-Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
+The only effective change here is
 
+-	.gem_prime_import_sg_table	= drm_gem_cma_prime_import_sg_table,
+-	.gem_prime_mmap			= drm_gem_cma_prime_mmap,
++	.gem_prime_import_sg_table	= drm_gem_cma_prime_import_sg_table_vmap,
++	.gem_prime_mmap			= drm_gem_prime_mmap,
 
+The change is significant, and I have a hard time following the code to
+verify that it's correct, or if it's an undesired side effect. If it's
+correct, could the change be mentioned in the commit message, with at
+least a brief explanation of why this is correct, and what the
+consequences here ?
+
+>  
+>  	.fops				= &zynqmp_dpsub_drm_fops,
+>  
 
 -- 
-Luca
+Regards,
+
+Laurent Pinchart
