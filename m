@@ -2,318 +2,459 @@ Return-Path: <SRS0=zvk9=BX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAD5C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 09:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A638C433E5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 10:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CC872074D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 09:55:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ulKfNKLH"
+	by mail.kernel.org (Postfix) with ESMTP id 02AE720885
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 10:17:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbgHMJzY (ORCPT
+        id S1726486AbgHMKRR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Aug 2020 05:55:24 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51141 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726106AbgHMJzX (ORCPT
+        Thu, 13 Aug 2020 06:17:17 -0400
+Received: from asavdk4.altibox.net ([109.247.116.15]:37292 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbgHMKRQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Aug 2020 05:55:23 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200813095520euoutp023f3cdf4e24701caf08666c957046ee9a~qy0ZUnuHJ2222022220euoutp02X
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Aug 2020 09:55:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200813095520euoutp023f3cdf4e24701caf08666c957046ee9a~qy0ZUnuHJ2222022220euoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1597312520;
-        bh=pbcmhTFv8QmhXk6820rAhoNUO/TkBc40q1AEGWorLLY=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=ulKfNKLHnNU686NzmkHNDE8oKr+P2cPE/yJq9DclFoasVbl+ni61RMRDbiPRPmqHD
-         FexeoNekhtvteI/Dp6QMeD0WegW+mPXtqbBkrAQ/0PKF4LL7LMCJBlv5mwhMWH73qQ
-         YPL4fiolJEmuiDlr9sKTi8EE9Uwxv7wFJKhs1leY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200813095520eucas1p230b921067a32bdf9dd3973d09cbdf52b~qy0Y_0Tvr1596915969eucas1p2t;
-        Thu, 13 Aug 2020 09:55:20 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id CE.C2.05997.80E053F5; Thu, 13
-        Aug 2020 10:55:20 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200813095520eucas1p209432599420d62e0e54a5545334c329c~qy0YpIMZh1146911469eucas1p2t;
-        Thu, 13 Aug 2020 09:55:20 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200813095520eusmtrp2fe4e9b5d47a39aa0810c3ed57fe67bea~qy0YoVe951763817638eusmtrp2Z;
-        Thu, 13 Aug 2020 09:55:20 +0000 (GMT)
-X-AuditID: cbfec7f4-65dff7000000176d-79-5f350e080c68
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id CC.E2.06314.70E053F5; Thu, 13
-        Aug 2020 10:55:20 +0100 (BST)
-Received: from AMDC3061.digital.local (unknown [106.120.51.75]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200813095519eusmtip1dd85c2a532534f620e64589b11d3d65f~qy0YKPvHN3006430064eusmtip1_;
-        Thu, 13 Aug 2020 09:55:19 +0000 (GMT)
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     linux-clk@vger.kernel.org
-Cc:     tomasz.figa@gmail.com, cw00.choi@samsung.com, sboyd@kernel.org,
-        mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3] clk: samsung: Prevent potential endless loop in the PLL
- set_rate ops
-Date:   Thu, 13 Aug 2020 11:55:08 +0200
-Message-Id: <20200813095508.7563-1-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLIsWRmVeSWpSXmKPExsWy7djPc7ocfKbxBt9eCllsnLGe1eL6l+es
-        Fh977rFaXN41h81ixvl9TBZrj9xlt7h4ytXi8Jt2Vot/1zayWKza9YfRgcvj/Y1Wdo+ds+6y
-        e2xa1cnm0bdlFaPH501yAaxRXDYpqTmZZalF+nYJXBkzJ69gKdhiUjGhn6WB8aJWFyMnh4SA
-        iUT3261sXYxcHEICKxglLi9aygrhfGGUeLroFguE85lRYvrk94wwLa+uP2GCSCxnlPjRfpMZ
-        ruXXmTXsIFVsAoYSvUf7wDpEBGQlbh37CbaEWaCZSeJzfxMLSEJYIEri4bpnYDaLgKpE3+1L
-        YA28AlYSsxdsYoVYJy+xesMBsA0SAq/ZJDZd+cgMkXCRWPf2CwuELSzx6vgWdghbRuL/zvlM
-        EA3NjBI9u2+zQzgTGCXuH18A9YW1xJ1zv4Bu4gC6SVNi/S59EFNCwFHi61NGCJNP4sZbQZBi
-        ZiBz0rbpzBBhXomONiGIGSoSv1dNZ4KwpSS6n/yHusZDouHTNbBrhARiJdo+rGaewCg3C2HV
-        AkbGVYziqaXFuempxUZ5qeV6xYm5xaV56XrJ+bmbGIGJ4vS/4192MO76k3SIUYCDUYmHd8Iv
-        43gh1sSy4srcQ4wSHMxKIrxOZ0/HCfGmJFZWpRblxxeV5qQWH2KU5mBREuc1XvQyVkggPbEk
-        NTs1tSC1CCbLxMEp1cAocJhJ68mKWLZrDCvfz4xX2T6ndSHXrAK200+277lw8flUlZvPXl5W
-        3G2rPyXg4NqITasvtF887Xh99R8g9dRi2d/E65nXl046bjVBaM+eqW/lE1ZJVZ+fZn16lbaO
-        zIl+Yat/z76+Lqm9c9kzMtBBeb6czMk3rDdjv2iG1jyLWqwlbtB580mBEktxRqKhFnNRcSIA
-        a1z/hRADAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrILMWRmVeSWpSXmKPExsVy+t/xu7ocfKbxBjOsLTbOWM9qcf3Lc1aL
-        jz33WC0u75rDZjHj/D4mi7VH7rJbXDzlanH4TTurxb9rG1ksVu36w+jA5fH+Riu7x85Zd9k9
-        Nq3qZPPo27KK0ePzJrkA1ig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07
-        m5TUnMyy1CJ9uwS9jJmTV7AUbDGpmNDP0sB4UauLkZNDQsBE4tX1J0xdjFwcQgJLGSW2Tm8A
-        cjiAElIS81uUIGqEJf5c62KDqPnEKHFp9wpmkASbgKFE79E+RhBbREBW4taxn2BFzAK9TBLt
-        37ewgCSEBSIkJh28yA5iswioSvTdvgTWwCtgJTF7wSZWiA3yEqs3HGCewMizgJFhFaNIamlx
-        bnpusaFecWJucWleul5yfu4mRmBwbjv2c/MOxksbgw8xCnAwKvHwTvhlHC/EmlhWXJl7iFGC
-        g1lJhNfp7Ok4Id6UxMqq1KL8+KLSnNTiQ4ymQMsnMkuJJucDIyevJN7Q1NDcwtLQ3Njc2MxC
-        SZy3Q+BgjJBAemJJanZqakFqEUwfEwenVAOj6NtlL3IOOdlLbVt1baECK0eLaFTlvnOyucrP
-        fKpE+RQN1k3aflmxTEsnzlFw2fXFKj+Pbp8fu+3h2lf71n+bt1nqyG1zSdncVfmlIjy1Cw9L
-        T/o4p++9HevbnRduT9U3qfyjWcL198dr1u89Z84dWugdv6drpqN8htlG47qstue7OHdZNAiZ
-        KrEUZyQaajEXFScCAAQEVetkAgAA
-X-CMS-MailID: 20200813095520eucas1p209432599420d62e0e54a5545334c329c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200813095520eucas1p209432599420d62e0e54a5545334c329c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200813095520eucas1p209432599420d62e0e54a5545334c329c
-References: <CGME20200813095520eucas1p209432599420d62e0e54a5545334c329c@eucas1p2.samsung.com>
+        Thu, 13 Aug 2020 06:17:16 -0400
+Received: from ravnborg.org (unknown [188.228.123.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 346C580503;
+        Thu, 13 Aug 2020 12:17:01 +0200 (CEST)
+Date:   Thu, 13 Aug 2020 12:16:59 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
+        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
+        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
+        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
+        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
+        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
+        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        abdiel.janulgue@linux.intel.com, tvrtko.ursulin@linux.intel.com,
+        andi.shyti@intel.com, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH 20/20] drm: Remove obsolete GEM and PRIME callbacks from
+ struct drm_driver
+Message-ID: <20200813101659.GA752979@ravnborg.org>
+References: <20200813083644.31711-1-tzimmermann@suse.de>
+ <20200813083644.31711-21-tzimmermann@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200813083644.31711-21-tzimmermann@suse.de>
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=aP3eV41m c=1 sm=1 tr=0
+        a=S6zTFyMACwkrwXSdXUNehg==:117 a=S6zTFyMACwkrwXSdXUNehg==:17
+        a=kj9zAlcOel0A:10 a=N6sGBX8BiyC5GP_3pz8A:9 a=EQFFPReBfTXNiWI6:21
+        a=YPaO2tjWljxz4Jer:21 a=CjuIK1q_8ugA:10
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-In the .set_rate callback for some PLLs there is a loop polling state
-of the PLL lock bit and it may become an endless loop when something
-goes wrong with the PLL. For some PLLs there is already code for polling
-with a timeout but it uses the ktime API, which doesn't work in some
-conditions when the set_rate op is called, in particular during
-initialization of the clk provider before the clocksource initialization
-has completed. Hence the ktime API cannot be used to reliably detect
-the PLL locking timeout.
+Hi Thomas.
 
-This patch adds a common helper function for busy waiting on the PLL lock
-bit with timeout detection.
+On Thu, Aug 13, 2020 at 10:36:44AM +0200, Thomas Zimmermann wrote:
+> Several GEM and PRIME callbacks have been deprecated in favor of
+> per-instance GEM object functions. Remove the callbacks as they are
+> now unused. The only exception is .gem_prime_mmap, which is still
+> in use by several drivers.
+> 
+> What is also gone is gem_vm_ops in struct drm_driver. All drivers now
+> use struct drm_gem_object_funcs.vm_ops instead.
+> 
+> While at it, the patch also improves error handling around calls
+> to .free and .get_sg_table callbacks.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-Actual PLL lock time depends on the P divider value, the VCO frequency
-and a constant PLL type specific LOCK_FACTOR and can be calculated as
+After this following entry in todo.rst is done?
 
- lock_time = Pdiv * LOCK_FACTOR / VCO_freq
+"
+struct drm_gem_object_funcs
+---------------------------
 
-Common timeout value of 10 ms is used for all the PLLs with an assumption
-that maximum possible value of Pdiv is 64, maximum possible LOCK_FACTOR
-value is 3000 and minimum VCO frequency is 24 MHz.
+GEM objects can now have a function table instead of having the callbacks on the
+DRM driver struct. This is now the preferred way and drivers can be moved over.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Changes for v3:
- - use busy-loop with udelay() instead of ktime API
-Changes for v2:
- - use common readl_relaxed_poll_timeout_atomic() macro
----
- drivers/clk/samsung/clk-pll.c | 94 ++++++++++++++++---------------------------
- 1 file changed, 34 insertions(+), 60 deletions(-)
+We also need a 2nd version of the CMA define that doesn't require the
+vmapping to be present (different hook for prime importing). Plus this needs to
+be rolled out to all drivers using their own implementations, too.
+"
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index ac70ad7..c83d261 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -15,7 +15,7 @@
- #include "clk.h"
- #include "clk-pll.h"
+If yes, then delete it too.
 
--#define PLL_TIMEOUT_MS		10
-+#define PLL_TIMEOUT_US		10000U
+	Sam
 
- struct samsung_clk_pll {
- 	struct clk_hw		hw;
-@@ -63,6 +63,25 @@ static long samsung_pll_round_rate(struct clk_hw *hw,
- 	return rate_table[i - 1].rate;
- }
-
-+static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
-+				 unsigned int reg_mask)
-+{
-+	int i;
-+
-+	/* Wait until the PLL is in steady locked state */
-+	for (i = 0; i < PLL_TIMEOUT_US / 2; i++) {
-+		if (readl_relaxed(pll->con_reg) & reg_mask)
-+			return 0;
-+
-+		udelay(2);
-+		cpu_relax();
-+	}
-+
-+	pr_err("Could not lock PLL %s\n", clk_hw_get_name(&pll->hw));
-+
-+	return -ETIMEDOUT;
-+}
-+
- static int samsung_pll3xxx_enable(struct clk_hw *hw)
- {
- 	struct samsung_clk_pll *pll = to_clk_pll(hw);
-@@ -241,12 +260,9 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	writel_relaxed(tmp, pll->con_reg);
-
- 	/* Wait until the PLL is locked if it is enabled. */
--	if (tmp & BIT(pll->enable_offs)) {
--		do {
--			cpu_relax();
--			tmp = readl_relaxed(pll->con_reg);
--		} while (!(tmp & BIT(pll->lock_offs)));
--	}
-+	if (tmp & BIT(pll->enable_offs))
-+		return samsung_pll_lock_wait(pll, BIT(pll->lock_offs));
-+
- 	return 0;
- }
-
-@@ -318,7 +334,7 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 					unsigned long parent_rate)
- {
- 	struct samsung_clk_pll *pll = to_clk_pll(hw);
--	u32 tmp, pll_con0, pll_con1;
-+	u32 pll_con0, pll_con1;
- 	const struct samsung_pll_rate_table *rate;
-
- 	rate = samsung_get_pll_settings(pll, drate);
-@@ -356,13 +372,8 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	pll_con1 |= rate->kdiv << PLL36XX_KDIV_SHIFT;
- 	writel_relaxed(pll_con1, pll->con_reg + 4);
-
--	/* wait_lock_time */
--	if (pll_con0 & BIT(pll->enable_offs)) {
--		do {
--			cpu_relax();
--			tmp = readl_relaxed(pll->con_reg);
--		} while (!(tmp & BIT(pll->lock_offs)));
--	}
-+	if (pll_con0 & BIT(pll->enable_offs))
-+		return samsung_pll_lock_wait(pll, BIT(pll->lock_offs));
-
- 	return 0;
- }
-@@ -437,7 +448,6 @@ static int samsung_pll45xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	struct samsung_clk_pll *pll = to_clk_pll(hw);
- 	const struct samsung_pll_rate_table *rate;
- 	u32 con0, con1;
--	ktime_t start;
-
- 	/* Get required rate settings from table */
- 	rate = samsung_get_pll_settings(pll, drate);
-@@ -489,20 +499,7 @@ static int samsung_pll45xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	writel_relaxed(con0, pll->con_reg);
-
- 	/* Wait for locking. */
--	start = ktime_get();
--	while (!(readl_relaxed(pll->con_reg) & PLL45XX_LOCKED)) {
--		ktime_t delta = ktime_sub(ktime_get(), start);
--
--		if (ktime_to_ms(delta) > PLL_TIMEOUT_MS) {
--			pr_err("%s: could not lock PLL %s\n",
--					__func__, clk_hw_get_name(hw));
--			return -EFAULT;
--		}
--
--		cpu_relax();
--	}
--
--	return 0;
-+	return samsung_pll_lock_wait(pll, PLL45XX_LOCKED);
- }
-
- static const struct clk_ops samsung_pll45xx_clk_ops = {
-@@ -588,7 +585,6 @@ static int samsung_pll46xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	struct samsung_clk_pll *pll = to_clk_pll(hw);
- 	const struct samsung_pll_rate_table *rate;
- 	u32 con0, con1, lock;
--	ktime_t start;
-
- 	/* Get required rate settings from table */
- 	rate = samsung_get_pll_settings(pll, drate);
-@@ -648,20 +644,7 @@ static int samsung_pll46xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	writel_relaxed(con1, pll->con_reg + 0x4);
-
- 	/* Wait for locking. */
--	start = ktime_get();
--	while (!(readl_relaxed(pll->con_reg) & PLL46XX_LOCKED)) {
--		ktime_t delta = ktime_sub(ktime_get(), start);
--
--		if (ktime_to_ms(delta) > PLL_TIMEOUT_MS) {
--			pr_err("%s: could not lock PLL %s\n",
--					__func__, clk_hw_get_name(hw));
--			return -EFAULT;
--		}
--
--		cpu_relax();
--	}
--
--	return 0;
-+	return samsung_pll_lock_wait(pll, PLL46XX_LOCKED);
- }
-
- static const struct clk_ops samsung_pll46xx_clk_ops = {
-@@ -1035,14 +1018,9 @@ static int samsung_pll2550xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 			(rate->sdiv << PLL2550XX_S_SHIFT);
- 	writel_relaxed(tmp, pll->con_reg);
-
--	/* wait_lock_time */
--	do {
--		cpu_relax();
--		tmp = readl_relaxed(pll->con_reg);
--	} while (!(tmp & (PLL2550XX_LOCK_STAT_MASK
--			<< PLL2550XX_LOCK_STAT_SHIFT)));
--
--	return 0;
-+	/* Wait for locking. */
-+	return samsung_pll_lock_wait(pll,
-+			PLL2550XX_LOCK_STAT_MASK << PLL2550XX_LOCK_STAT_SHIFT);
- }
-
- static const struct clk_ops samsung_pll2550xx_clk_ops = {
-@@ -1132,13 +1110,9 @@ static int samsung_pll2650x_set_rate(struct clk_hw *hw, unsigned long drate,
- 	con1 |= ((rate->kdiv & PLL2650X_K_MASK) << PLL2650X_K_SHIFT);
- 	writel_relaxed(con1, pll->con_reg + 4);
-
--	do {
--		cpu_relax();
--		con0 = readl_relaxed(pll->con_reg);
--	} while (!(con0 & (PLL2650X_LOCK_STAT_MASK
--			<< PLL2650X_LOCK_STAT_SHIFT)));
--
--	return 0;
-+	/* Wait for locking. */
-+	return samsung_pll_lock_wait(pll,
-+			PLL2650X_LOCK_STAT_MASK << PLL2650X_LOCK_STAT_SHIFT);
- }
-
- static const struct clk_ops samsung_pll2650x_clk_ops = {
---
-2.7.4
-
+> ---
+>  drivers/gpu/drm/drm_gem.c            | 35 +++---------
+>  drivers/gpu/drm/drm_gem_cma_helper.c |  6 +-
+>  drivers/gpu/drm/drm_prime.c          | 17 +++---
+>  include/drm/drm_drv.h                | 85 ++--------------------------
+>  4 files changed, 23 insertions(+), 120 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index 19d73868490e..96945bed8291 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -247,12 +247,9 @@ drm_gem_object_release_handle(int id, void *ptr, void *data)
+>  {
+>  	struct drm_file *file_priv = data;
+>  	struct drm_gem_object *obj = ptr;
+> -	struct drm_device *dev = obj->dev;
+>  
+>  	if (obj->funcs && obj->funcs->close)
+>  		obj->funcs->close(obj, file_priv);
+> -	else if (dev->driver->gem_close_object)
+> -		dev->driver->gem_close_object(obj, file_priv);
+>  
+>  	drm_gem_remove_prime_handles(obj, file_priv);
+>  	drm_vma_node_revoke(&obj->vma_node, file_priv);
+> @@ -407,10 +404,6 @@ drm_gem_handle_create_tail(struct drm_file *file_priv,
+>  		ret = obj->funcs->open(obj, file_priv);
+>  		if (ret)
+>  			goto err_revoke;
+> -	} else if (dev->driver->gem_open_object) {
+> -		ret = dev->driver->gem_open_object(obj, file_priv);
+> -		if (ret)
+> -			goto err_revoke;
+>  	}
+>  
+>  	*handlep = handle;
+> @@ -982,12 +975,11 @@ drm_gem_object_free(struct kref *kref)
+>  {
+>  	struct drm_gem_object *obj =
+>  		container_of(kref, struct drm_gem_object, refcount);
+> -	struct drm_device *dev = obj->dev;
+>  
+> -	if (obj->funcs)
+> -		obj->funcs->free(obj);
+> -	else if (dev->driver->gem_free_object_unlocked)
+> -		dev->driver->gem_free_object_unlocked(obj);
+> +	if (drm_WARN_ON_ONCE(obj->dev, !obj->funcs || !obj->funcs->free))
+> +		return;
+> +
+> +	obj->funcs->free(obj);
+>  }
+>  EXPORT_SYMBOL(drm_gem_object_free);
+>  
+> @@ -1049,9 +1041,9 @@ EXPORT_SYMBOL(drm_gem_vm_close);
+>   * @obj_size: the object size to be mapped, in bytes
+>   * @vma: VMA for the area to be mapped
+>   *
+> - * Set up the VMA to prepare mapping of the GEM object using the gem_vm_ops
+> - * provided by the driver. Depending on their requirements, drivers can either
+> - * provide a fault handler in their gem_vm_ops (in which case any accesses to
+> + * Set up the VMA to prepare mapping of the GEM object using the GEM object's
+> + * vm_ops. Depending on their requirements, GEM objects can either
+> + * provide a fault handler in their vm_ops (in which case any accesses to
+>   * the object will be trapped, to perform migration, GTT binding, surface
+>   * register allocation, or performance monitoring), or mmap the buffer memory
+>   * synchronously after calling drm_gem_mmap_obj.
+> @@ -1065,12 +1057,11 @@ EXPORT_SYMBOL(drm_gem_vm_close);
+>   * callers must verify access restrictions before calling this helper.
+>   *
+>   * Return 0 or success or -EINVAL if the object size is smaller than the VMA
+> - * size, or if no gem_vm_ops are provided.
+> + * size, or if no vm_ops are provided.
+>   */
+>  int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
+>  		     struct vm_area_struct *vma)
+>  {
+> -	struct drm_device *dev = obj->dev;
+>  	int ret;
+>  
+>  	/* Check for valid size. */
+> @@ -1095,8 +1086,6 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
+>  	} else {
+>  		if (obj->funcs && obj->funcs->vm_ops)
+>  			vma->vm_ops = obj->funcs->vm_ops;
+> -		else if (dev->driver->gem_vm_ops)
+> -			vma->vm_ops = dev->driver->gem_vm_ops;
+>  		else {
+>  			drm_gem_object_put(obj);
+>  			return -EINVAL;
+> @@ -1206,8 +1195,6 @@ int drm_gem_pin(struct drm_gem_object *obj)
+>  {
+>  	if (obj->funcs && obj->funcs->pin)
+>  		return obj->funcs->pin(obj);
+> -	else if (obj->dev->driver->gem_prime_pin)
+> -		return obj->dev->driver->gem_prime_pin(obj);
+>  	else
+>  		return 0;
+>  }
+> @@ -1216,8 +1203,6 @@ void drm_gem_unpin(struct drm_gem_object *obj)
+>  {
+>  	if (obj->funcs && obj->funcs->unpin)
+>  		obj->funcs->unpin(obj);
+> -	else if (obj->dev->driver->gem_prime_unpin)
+> -		obj->dev->driver->gem_prime_unpin(obj);
+>  }
+>  
+>  void *drm_gem_vmap(struct drm_gem_object *obj)
+> @@ -1226,8 +1211,6 @@ void *drm_gem_vmap(struct drm_gem_object *obj)
+>  
+>  	if (obj->funcs && obj->funcs->vmap)
+>  		vaddr = obj->funcs->vmap(obj);
+> -	else if (obj->dev->driver->gem_prime_vmap)
+> -		vaddr = obj->dev->driver->gem_prime_vmap(obj);
+>  	else
+>  		vaddr = ERR_PTR(-EOPNOTSUPP);
+>  
+> @@ -1244,8 +1227,6 @@ void drm_gem_vunmap(struct drm_gem_object *obj, void *vaddr)
+>  
+>  	if (obj->funcs && obj->funcs->vunmap)
+>  		obj->funcs->vunmap(obj, vaddr);
+> -	else if (obj->dev->driver->gem_prime_vunmap)
+> -		obj->dev->driver->gem_prime_vunmap(obj, vaddr);
+>  }
+>  
+>  /**
+> diff --git a/drivers/gpu/drm/drm_gem_cma_helper.c b/drivers/gpu/drm/drm_gem_cma_helper.c
+> index 822edeadbab3..209202257cc2 100644
+> --- a/drivers/gpu/drm/drm_gem_cma_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_cma_helper.c
+> @@ -419,7 +419,7 @@ EXPORT_SYMBOL(drm_gem_cma_print_info);
+>   *
+>   * This function exports a scatter/gather table suitable for PRIME usage by
+>   * calling the standard DMA mapping API. Drivers using the CMA helpers should
+> - * set this as their &drm_driver.gem_prime_get_sg_table callback.
+> + * set this as their &drm_gem_object_funcs.get_sg_table callback.
+>   *
+>   * Returns:
+>   * A pointer to the scatter/gather table of pinned pages or NULL on failure.
+> @@ -542,7 +542,7 @@ EXPORT_SYMBOL_GPL(drm_gem_cma_prime_mmap);
+>   * virtual address space. Since the CMA buffers are already mapped into the
+>   * kernel virtual address space this simply returns the cached virtual
+>   * address. Drivers using the CMA helpers should set this as their DRM
+> - * driver's &drm_driver.gem_prime_vmap callback.
+> + * driver's &drm_gem_object_funcs.vmap callback.
+>   *
+>   * Returns:
+>   * The kernel virtual address of the CMA GEM object's backing store.
+> @@ -564,7 +564,7 @@ EXPORT_SYMBOL_GPL(drm_gem_cma_prime_vmap);
+>   * This function removes a buffer exported via DRM PRIME from the kernel's
+>   * virtual address space. This is a no-op because CMA buffers cannot be
+>   * unmapped from kernel space. Drivers using the CMA helpers should set this
+> - * as their &drm_driver.gem_prime_vunmap callback.
+> + * as their &drm_gem_object_funcs.vunmap callback.
+>   */
+>  void drm_gem_cma_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
+>  {
+> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+> index 1693aa7c14b5..9a87639e7008 100644
+> --- a/drivers/gpu/drm/drm_prime.c
+> +++ b/drivers/gpu/drm/drm_prime.c
+> @@ -386,10 +386,6 @@ static struct dma_buf *export_and_register_object(struct drm_device *dev,
+>  
+>  	if (obj->funcs && obj->funcs->export)
+>  		dmabuf = obj->funcs->export(obj, flags);
+> -	else if (dev->driver->gem_prime_export)
+> -		dmabuf = dev->driver->gem_prime_export(obj, flags);
+> -	else
+> -		dmabuf = drm_gem_prime_export(obj, flags);
+>  	if (IS_ERR(dmabuf)) {
+>  		/* normally the created dma-buf takes ownership of the ref,
+>  		 * but if that fails then drop the ref
+> @@ -419,7 +415,7 @@ static struct dma_buf *export_and_register_object(struct drm_device *dev,
+>   * This is the PRIME export function which must be used mandatorily by GEM
+>   * drivers to ensure correct lifetime management of the underlying GEM object.
+>   * The actual exporting from GEM object to a dma-buf is done through the
+> - * &drm_driver.gem_prime_export driver callback.
+> + * &drm_gem_object_funcs.export callback.
+>   */
+>  int drm_gem_prime_handle_to_fd(struct drm_device *dev,
+>  			       struct drm_file *file_priv, uint32_t handle,
+> @@ -616,15 +612,18 @@ struct sg_table *drm_gem_map_dma_buf(struct dma_buf_attachment *attach,
+>  				     enum dma_data_direction dir)
+>  {
+>  	struct drm_gem_object *obj = attach->dmabuf->priv;
+> -	struct sg_table *sgt;
+> +	struct sg_table *sgt = NULL;
+>  
+>  	if (WARN_ON(dir == DMA_NONE))
+>  		return ERR_PTR(-EINVAL);
+>  
+> -	if (obj->funcs)
+> +	if (obj->funcs && obj->funcs->get_sg_table)
+>  		sgt = obj->funcs->get_sg_table(obj);
+> -	else
+> -		sgt = obj->dev->driver->gem_prime_get_sg_table(obj);
+> +
+> +	if (!sgt)
+> +		return ERR_PTR(-EINVAL);
+> +	else if (IS_ERR(sgt))
+> +		return sgt;
+>  
+>  	if (!dma_map_sg_attrs(attach->dev, sgt->sgl, sgt->nents, dir,
+>  			      DMA_ATTR_SKIP_CPU_SYNC)) {
+> diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
+> index 7116abc1a04e..8b325bf6cef4 100644
+> --- a/include/drm/drm_drv.h
+> +++ b/include/drm/drm_drv.h
+> @@ -36,10 +36,12 @@ struct drm_file;
+>  struct drm_gem_object;
+>  struct drm_master;
+>  struct drm_minor;
+> +struct dma_buf;
+>  struct dma_buf_attachment;
+>  struct drm_display_mode;
+>  struct drm_mode_create_dumb;
+>  struct drm_printer;
+> +struct sg_table;
+>  
+>  /**
+>   * enum drm_driver_feature - feature flags
+> @@ -327,32 +329,6 @@ struct drm_driver {
+>  	 */
+>  	void (*debugfs_init)(struct drm_minor *minor);
+>  
+> -	/**
+> -	 * @gem_free_object_unlocked: deconstructor for drm_gem_objects
+> -	 *
+> -	 * This is deprecated and should not be used by new drivers. Use
+> -	 * &drm_gem_object_funcs.free instead.
+> -	 */
+> -	void (*gem_free_object_unlocked) (struct drm_gem_object *obj);
+> -
+> -	/**
+> -	 * @gem_open_object:
+> -	 *
+> -	 * This callback is deprecated in favour of &drm_gem_object_funcs.open.
+> -	 *
+> -	 * Driver hook called upon gem handle creation
+> -	 */
+> -	int (*gem_open_object) (struct drm_gem_object *, struct drm_file *);
+> -
+> -	/**
+> -	 * @gem_close_object:
+> -	 *
+> -	 * This callback is deprecated in favour of &drm_gem_object_funcs.close.
+> -	 *
+> -	 * Driver hook called upon gem handle release
+> -	 */
+> -	void (*gem_close_object) (struct drm_gem_object *, struct drm_file *);
+> -
+>  	/**
+>  	 * @gem_create_object: constructor for gem objects
+>  	 *
+> @@ -361,6 +337,7 @@ struct drm_driver {
+>  	 */
+>  	struct drm_gem_object *(*gem_create_object)(struct drm_device *dev,
+>  						    size_t size);
+> +
+>  	/**
+>  	 * @prime_handle_to_fd:
+>  	 *
+> @@ -383,14 +360,7 @@ struct drm_driver {
+>  	 */
+>  	int (*prime_fd_to_handle)(struct drm_device *dev, struct drm_file *file_priv,
+>  				int prime_fd, uint32_t *handle);
+> -	/**
+> -	 * @gem_prime_export:
+> -	 *
+> -	 * Export hook for GEM drivers. Deprecated in favour of
+> -	 * &drm_gem_object_funcs.export.
+> -	 */
+> -	struct dma_buf * (*gem_prime_export)(struct drm_gem_object *obj,
+> -					     int flags);
+> +
+>  	/**
+>  	 * @gem_prime_import:
+>  	 *
+> @@ -400,29 +370,6 @@ struct drm_driver {
+>  	 */
+>  	struct drm_gem_object * (*gem_prime_import)(struct drm_device *dev,
+>  				struct dma_buf *dma_buf);
+> -
+> -	/**
+> -	 * @gem_prime_pin:
+> -	 *
+> -	 * Deprecated hook in favour of &drm_gem_object_funcs.pin.
+> -	 */
+> -	int (*gem_prime_pin)(struct drm_gem_object *obj);
+> -
+> -	/**
+> -	 * @gem_prime_unpin:
+> -	 *
+> -	 * Deprecated hook in favour of &drm_gem_object_funcs.unpin.
+> -	 */
+> -	void (*gem_prime_unpin)(struct drm_gem_object *obj);
+> -
+> -
+> -	/**
+> -	 * @gem_prime_get_sg_table:
+> -	 *
+> -	 * Deprecated hook in favour of &drm_gem_object_funcs.get_sg_table.
+> -	 */
+> -	struct sg_table *(*gem_prime_get_sg_table)(struct drm_gem_object *obj);
+> -
+>  	/**
+>  	 * @gem_prime_import_sg_table:
+>  	 *
+> @@ -433,22 +380,6 @@ struct drm_driver {
+>  				struct drm_device *dev,
+>  				struct dma_buf_attachment *attach,
+>  				struct sg_table *sgt);
+> -	/**
+> -	 * @gem_prime_vmap:
+> -	 *
+> -	 * Deprecated vmap hook for GEM drivers. Please use
+> -	 * &drm_gem_object_funcs.vmap instead.
+> -	 */
+> -	void *(*gem_prime_vmap)(struct drm_gem_object *obj);
+> -
+> -	/**
+> -	 * @gem_prime_vunmap:
+> -	 *
+> -	 * Deprecated vunmap hook for GEM drivers. Please use
+> -	 * &drm_gem_object_funcs.vunmap instead.
+> -	 */
+> -	void (*gem_prime_vunmap)(struct drm_gem_object *obj, void *vaddr);
+> -
+>  	/**
+>  	 * @gem_prime_mmap:
+>  	 *
+> @@ -523,14 +454,6 @@ struct drm_driver {
+>  			    struct drm_device *dev,
+>  			    uint32_t handle);
+>  
+> -	/**
+> -	 * @gem_vm_ops: Driver private ops for this object
+> -	 *
+> -	 * For GEM drivers this is deprecated in favour of
+> -	 * &drm_gem_object_funcs.vm_ops.
+> -	 */
+> -	const struct vm_operations_struct *gem_vm_ops;
+> -
+>  	/** @major: driver major number */
+>  	int major;
+>  	/** @minor: driver minor number */
+> -- 
+> 2.28.0
