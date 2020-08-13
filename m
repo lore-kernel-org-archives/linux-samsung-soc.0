@@ -2,162 +2,148 @@ Return-Path: <SRS0=zvk9=BX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB43C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 01:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD4BC433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E51E20771
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 01:25:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597281952;
-	bh=qIzZXfltMZ2c8wweV3aCSivjOgKWA6wcnMyMvK5rvOs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QZHWYZRXPKeR1RiXz/0P8M/tyTQiIdOtFxTHMvxArP+PcCH7CG+9Q2bqLVHDrh2cK
-	 cIWtvciFlnuArnO8gbSO5KZqOba7xeyHPo2CmpBO5fupXwyQgcfQaPZ+hicnWYjv4x
-	 ce1VQH8lvRbKK2IQ8l0yF+LBU2JnEpaqa90s7g0A=
+	by mail.kernel.org (Postfix) with ESMTP id EAA1520866
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:36:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbgHMBZv (ORCPT
+        id S1726546AbgHMIgx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 12 Aug 2020 21:25:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35186 "EHLO mail.kernel.org"
+        Thu, 13 Aug 2020 04:36:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58584 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725869AbgHMBZv (ORCPT
+        id S1726144AbgHMIgx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 12 Aug 2020 21:25:51 -0400
-Received: from gmail.com (unknown [104.132.1.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6056A205CB;
-        Thu, 13 Aug 2020 01:25:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597281950;
-        bh=qIzZXfltMZ2c8wweV3aCSivjOgKWA6wcnMyMvK5rvOs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xzxPv8NhPd3bdEBw0WOvPDRCmOSCtSWI/RjMbtBdB9WqYX1VHf7qKA+3I7/8/HKp/
-         E/Hfu5DlQH6KVIGGgAyIu5w6dq8GfBfYYh9dcLMoxRSZ5e/p0776Ji/dZ0foJKbhfg
-         R0nX1GNIG3+sILDhplnkvtvcE1+Ox6ynJPuJZEWM=
-Date:   Wed, 12 Aug 2020 18:25:48 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     robh@kernel.org, devicetree@vger.kernel.org,
-        linux-scsi@vger.kernel.org, krzk@kernel.org, avri.altman@wdc.com,
-        martin.petersen@oracle.com, kwmad.kim@samsung.com,
-        stanley.chu@mediatek.com, cang@codeaurora.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kishon@ti.com
-Subject: Re: [RESEND PATCH v10 04/10] scsi: ufs: introduce
- UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk
-Message-ID: <20200813012548.GA1782889@gmail.com>
-References: <20200613024706.27975-1-alim.akhtar@samsung.com>
- <CGME20200613030445epcas5p4428da322cd9527d1075ff0f1ccc75d23@epcas5p4.samsung.com>
- <20200613024706.27975-5-alim.akhtar@samsung.com>
- <20200812002920.GA1352011@gmail.com>
- <000401d67110$0be2d9c0$23a88d40$@samsung.com>
+        Thu, 13 Aug 2020 04:36:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 95354AFA8;
+        Thu, 13 Aug 2020 08:37:13 +0000 (UTC)
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
+        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
+        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
+        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
+        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
+        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
+        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        abdiel.janulgue@linux.intel.com, tvrtko.ursulin@linux.intel.com,
+        andi.shyti@intel.com, sam@ravnborg.org, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH 01/20] drm/amdgpu: Introduce GEM object functions
+Date:   Thu, 13 Aug 2020 10:36:25 +0200
+Message-Id: <20200813083644.31711-2-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200813083644.31711-1-tzimmermann@suse.de>
+References: <20200813083644.31711-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000401d67110$0be2d9c0$23a88d40$@samsung.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 13, 2020 at 06:51:13AM +0530, Alim Akhtar wrote:
-> Hi Eric,
-> 
-> > -----Original Message-----
-> > From: Eric Biggers <ebiggers@kernel.org>
-> > Sent: 12 August 2020 05:59
-> > To: Alim Akhtar <alim.akhtar@samsung.com>
-> > Cc: robh@kernel.org; devicetree@vger.kernel.org;
-> linux-scsi@vger.kernel.org;
-> > krzk@kernel.org; avri.altman@wdc.com; martin.petersen@oracle.com;
-> > kwmad.kim@samsung.com; stanley.chu@mediatek.com;
-> > cang@codeaurora.org; linux-samsung-soc@vger.kernel.org; linux-arm-
-> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; kishon@ti.com
-> > Subject: Re: [RESEND PATCH v10 04/10] scsi: ufs: introduce
-> > UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk
-> > 
-> > Hi Alim,
-> > 
-> > On Sat, Jun 13, 2020 at 08:17:00AM +0530, Alim Akhtar wrote:
-> > > Some UFS host controllers like Exynos uses granularities of PRDT
-> > > length and offset as bytes, whereas others uses actual segment count.
-> > >
-> > > Reviewed-by: Avri Altman <avri.altman@wdc.com>
-> > > Signed-off-by: Kiwoong Kim <kwmad.kim@samsung.com>
-> > > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> > > ---
-> > >  drivers/scsi/ufs/ufshcd.c | 30 +++++++++++++++++++++++-------
-> > > drivers/scsi/ufs/ufshcd.h |  6 ++++++
-> > >  2 files changed, 29 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> > > index ee30ed6cc805..ba093d0d0942 100644
-> > > --- a/drivers/scsi/ufs/ufshcd.c
-> > > +++ b/drivers/scsi/ufs/ufshcd.c
-> > > @@ -2151,8 +2151,14 @@ static int ufshcd_map_sg(struct ufs_hba *hba,
-> > struct ufshcd_lrb *lrbp)
-> > >  		return sg_segments;
-> > >
-> > >  	if (sg_segments) {
-> > > -		lrbp->utr_descriptor_ptr->prd_table_length =
-> > > -			cpu_to_le16((u16)sg_segments);
-> > > +
-> > > +		if (hba->quirks & UFSHCD_QUIRK_PRDT_BYTE_GRAN)
-> > > +			lrbp->utr_descriptor_ptr->prd_table_length =
-> > > +				cpu_to_le16((sg_segments *
-> > > +					sizeof(struct ufshcd_sg_entry)));
-> > > +		else
-> > > +			lrbp->utr_descriptor_ptr->prd_table_length =
-> > > +				cpu_to_le16((u16) (sg_segments));
-> > >
-> > >  		prd_table = (struct ufshcd_sg_entry *)lrbp->ucd_prdt_ptr;
-> > >
-> > > @@ -3500,11 +3506,21 @@ static void
-> > ufshcd_host_memory_configure(struct ufs_hba *hba)
-> > >
-> > 	cpu_to_le32(upper_32_bits(cmd_desc_element_addr));
-> > >
-> > >  		/* Response upiu and prdt offset should be in double words
-> */
-> > > -		utrdlp[i].response_upiu_offset =
-> > > -			cpu_to_le16(response_offset >> 2);
-> > > -		utrdlp[i].prd_table_offset = cpu_to_le16(prdt_offset >> 2);
-> > > -		utrdlp[i].response_upiu_length =
-> > > -			cpu_to_le16(ALIGNED_UPIU_SIZE >> 2);
-> > > +		if (hba->quirks & UFSHCD_QUIRK_PRDT_BYTE_GRAN) {
-> > > +			utrdlp[i].response_upiu_offset =
-> > > +				cpu_to_le16(response_offset);
-> > > +			utrdlp[i].prd_table_offset =
-> > > +				cpu_to_le16(prdt_offset);
-> > > +			utrdlp[i].response_upiu_length =
-> > > +				cpu_to_le16(ALIGNED_UPIU_SIZE);
-> > > +		} else {
-> > > +			utrdlp[i].response_upiu_offset =
-> > > +				cpu_to_le16(response_offset >> 2);
-> > > +			utrdlp[i].prd_table_offset =
-> > > +				cpu_to_le16(prdt_offset >> 2);
-> > > +			utrdlp[i].response_upiu_length =
-> > > +				cpu_to_le16(ALIGNED_UPIU_SIZE >> 2);
-> > > +		}
-> > >
-> > >  		ufshcd_init_lrb(hba, &hba->lrb[i], i);
-> > >  	}
-> > 
-> > Isn't this patch missing an update to ufshcd_print_trs()?  It uses
-> > ->prd_table_length as the number of segments, not the number of bytes.
-> > 
-> prd_table_length will be populated before it reaches ufshcd_print_trs()
-> based on UFSHCD_QUIRK_PRDT_BYTE_GRAN.
-> 
+GEM object functions deprecate several similar callback interfaces in
+struct drm_driver. This patch replaces the per-driver callbacks with
+per-instance callbacks in amdgpu. The only exception is gem_prime_mmap,
+which is non-trivial to convert.
 
-Yes, which is why it seems ufshcd_print_trs() needs to be updated to take
-UFSHCD_QUIRK_PRDT_BYTE_GRAN into account.
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    |  6 ------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c | 12 ++++++++++++
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
-- Eric
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+index 81a79760ca61..51525b8774c9 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+@@ -1468,19 +1468,13 @@ static struct drm_driver kms_driver = {
+ 	.lastclose = amdgpu_driver_lastclose_kms,
+ 	.irq_handler = amdgpu_irq_handler,
+ 	.ioctls = amdgpu_ioctls_kms,
+-	.gem_free_object_unlocked = amdgpu_gem_object_free,
+-	.gem_open_object = amdgpu_gem_object_open,
+-	.gem_close_object = amdgpu_gem_object_close,
+ 	.dumb_create = amdgpu_mode_dumb_create,
+ 	.dumb_map_offset = amdgpu_mode_dumb_mmap,
+ 	.fops = &amdgpu_driver_kms_fops,
+ 
+ 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+ 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+-	.gem_prime_export = amdgpu_gem_prime_export,
+ 	.gem_prime_import = amdgpu_gem_prime_import,
+-	.gem_prime_vmap = amdgpu_gem_prime_vmap,
+-	.gem_prime_vunmap = amdgpu_gem_prime_vunmap,
+ 	.gem_prime_mmap = amdgpu_gem_prime_mmap,
+ 
+ 	.name = DRIVER_NAME,
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+index 43f4966331dd..ca2b79f94e99 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+@@ -36,6 +36,7 @@
+ #include <drm/amdgpu_drm.h>
+ #include <drm/drm_cache.h>
+ #include "amdgpu.h"
++#include "amdgpu_dma_buf.h"
+ #include "amdgpu_trace.h"
+ #include "amdgpu_amdkfd.h"
+ 
+@@ -510,6 +511,15 @@ bool amdgpu_bo_support_uswc(u64 bo_flags)
+ #endif
+ }
+ 
++static const struct drm_gem_object_funcs amdgpu_gem_object_funcs = {
++	.free = amdgpu_gem_object_free,
++	.open = amdgpu_gem_object_open,
++	.close = amdgpu_gem_object_close,
++	.export = amdgpu_gem_prime_export,
++	.vmap = amdgpu_gem_prime_vmap,
++	.vunmap = amdgpu_gem_prime_vunmap,
++};
++
+ static int amdgpu_bo_do_create(struct amdgpu_device *adev,
+ 			       struct amdgpu_bo_param *bp,
+ 			       struct amdgpu_bo **bo_ptr)
+@@ -552,6 +562,8 @@ static int amdgpu_bo_do_create(struct amdgpu_device *adev,
+ 	bo = kzalloc(sizeof(struct amdgpu_bo), GFP_KERNEL);
+ 	if (bo == NULL)
+ 		return -ENOMEM;
++
++	bo->tbo.base.funcs = &amdgpu_gem_object_funcs;
+ 	drm_gem_private_object_init(adev->ddev, &bo->tbo.base, size);
+ 	INIT_LIST_HEAD(&bo->shadow_list);
+ 	bo->vm_bo = NULL;
+-- 
+2.28.0
+
