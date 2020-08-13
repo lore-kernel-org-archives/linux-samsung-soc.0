@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8FB9C43446
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52FC8C4345D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F53120791
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 385AA20885
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbgHMIg7 (ORCPT
+        id S1726716AbgHMIhC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Aug 2020 04:36:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58722 "EHLO mx2.suse.de"
+        Thu, 13 Aug 2020 04:37:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59022 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbgHMIg7 (ORCPT
+        id S1726699AbgHMIhC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Aug 2020 04:36:59 -0400
+        Thu, 13 Aug 2020 04:37:02 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 12352AFA8;
-        Thu, 13 Aug 2020 08:37:20 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id EC9B2B59D;
+        Thu, 13 Aug 2020 08:37:21 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -59,9 +59,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 08/20] drm/msm: Introduce GEM object funcs
-Date:   Thu, 13 Aug 2020 10:36:32 +0200
-Message-Id: <20200813083644.31711-9-tzimmermann@suse.de>
+Subject: [PATCH 10/20] drm/omapdrm: Introduce GEM object functions
+Date:   Thu, 13 Aug 2020 10:36:34 +0200
+Message-Id: <20200813083644.31711-11-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200813083644.31711-1-tzimmermann@suse.de>
 References: <20200813083644.31711-1-tzimmermann@suse.de>
@@ -74,108 +74,96 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in msm. The only exception is gem_prime_mmap,
-which is non-trivial to convert.
+per-instance callbacks in omapdrm.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/msm/msm_drv.c | 13 -------------
- drivers/gpu/drm/msm/msm_drv.h |  1 -
- drivers/gpu/drm/msm/msm_gem.c | 19 ++++++++++++++++++-
- 3 files changed, 18 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/omapdrm/omap_drv.c |  9 ---------
+ drivers/gpu/drm/omapdrm/omap_gem.c | 16 +++++++++++++++-
+ drivers/gpu/drm/omapdrm/omap_gem.h |  1 -
+ 3 files changed, 15 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-index 36d98d4116ca..365a1098761e 100644
---- a/drivers/gpu/drm/msm/msm_drv.c
-+++ b/drivers/gpu/drm/msm/msm_drv.c
-@@ -989,12 +989,6 @@ static const struct drm_ioctl_desc msm_ioctls[] = {
- 	DRM_IOCTL_DEF_DRV(MSM_SUBMITQUEUE_QUERY, msm_ioctl_submitqueue_query, DRM_RENDER_ALLOW),
- };
+diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
+index 53d5e184ee77..2e598b8b72af 100644
+--- a/drivers/gpu/drm/omapdrm/omap_drv.c
++++ b/drivers/gpu/drm/omapdrm/omap_drv.c
+@@ -521,12 +521,6 @@ static int dev_open(struct drm_device *dev, struct drm_file *file)
+ 	return 0;
+ }
  
--static const struct vm_operations_struct vm_ops = {
--	.fault = msm_gem_fault,
+-static const struct vm_operations_struct omap_gem_vm_ops = {
+-	.fault = omap_gem_fault,
 -	.open = drm_gem_vm_open,
 -	.close = drm_gem_vm_close,
 -};
 -
- static const struct file_operations fops = {
- 	.owner              = THIS_MODULE,
- 	.open               = drm_open,
-@@ -1020,18 +1014,11 @@ static struct drm_driver msm_driver = {
- 	.irq_preinstall     = msm_irq_preinstall,
- 	.irq_postinstall    = msm_irq_postinstall,
- 	.irq_uninstall      = msm_irq_uninstall,
--	.gem_free_object_unlocked = msm_gem_free_object,
--	.gem_vm_ops         = &vm_ops,
- 	.dumb_create        = msm_gem_dumb_create,
- 	.dumb_map_offset    = msm_gem_dumb_map_offset,
+ static const struct file_operations omapdriver_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = drm_open,
+@@ -549,10 +543,7 @@ static struct drm_driver omap_drm_driver = {
+ #endif
  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
--	.gem_prime_pin      = msm_gem_prime_pin,
--	.gem_prime_unpin    = msm_gem_prime_unpin,
--	.gem_prime_get_sg_table = msm_gem_prime_get_sg_table,
- 	.gem_prime_import_sg_table = msm_gem_prime_import_sg_table,
--	.gem_prime_vmap     = msm_gem_prime_vmap,
--	.gem_prime_vunmap   = msm_gem_prime_vunmap,
- 	.gem_prime_mmap     = msm_gem_prime_mmap,
- #ifdef CONFIG_DEBUG_FS
- 	.debugfs_init       = msm_debugfs_init,
-diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
-index af259b0573ea..7bcea10be81f 100644
---- a/drivers/gpu/drm/msm/msm_drv.h
-+++ b/drivers/gpu/drm/msm/msm_drv.h
-@@ -269,7 +269,6 @@ void msm_gem_shrinker_cleanup(struct drm_device *dev);
- int msm_gem_mmap_obj(struct drm_gem_object *obj,
- 			struct vm_area_struct *vma);
- int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
--vm_fault_t msm_gem_fault(struct vm_fault *vmf);
- uint64_t msm_gem_mmap_offset(struct drm_gem_object *obj);
- int msm_gem_get_iova(struct drm_gem_object *obj,
- 		struct msm_gem_address_space *aspace, uint64_t *iova);
-diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
-index b2f49152b4d4..465b97a77c38 100644
---- a/drivers/gpu/drm/msm/msm_gem.c
-+++ b/drivers/gpu/drm/msm/msm_gem.c
-@@ -247,7 +247,7 @@ int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
- 	return msm_gem_mmap_obj(vma->vm_private_data, vma);
- }
- 
--vm_fault_t msm_gem_fault(struct vm_fault *vmf)
-+static vm_fault_t msm_gem_fault(struct vm_fault *vmf)
+-	.gem_prime_export = omap_gem_prime_export,
+ 	.gem_prime_import = omap_gem_prime_import,
+-	.gem_free_object_unlocked = omap_gem_free_object,
+-	.gem_vm_ops = &omap_gem_vm_ops,
+ 	.dumb_create = omap_gem_dumb_create,
+ 	.dumb_map_offset = omap_gem_dumb_map_offset,
+ 	.ioctls = ioctls,
+diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
+index d0d12d5dd76c..d68dc63dea0a 100644
+--- a/drivers/gpu/drm/omapdrm/omap_gem.c
++++ b/drivers/gpu/drm/omapdrm/omap_gem.c
+@@ -487,7 +487,7 @@ static vm_fault_t omap_gem_fault_2d(struct drm_gem_object *obj,
+  * vma->vm_private_data points to the GEM object that is backing this
+  * mapping.
+  */
+-vm_fault_t omap_gem_fault(struct vm_fault *vmf)
++static vm_fault_t omap_gem_fault(struct vm_fault *vmf)
  {
  	struct vm_area_struct *vma = vmf->vma;
  	struct drm_gem_object *obj = vma->vm_private_data;
-@@ -994,6 +994,22 @@ int msm_gem_new_handle(struct drm_device *dev, struct drm_file *file,
- 	return ret;
+@@ -1169,6 +1169,18 @@ static bool omap_gem_validate_flags(struct drm_device *dev, u32 flags)
+ 	return true;
  }
  
-+static const struct vm_operations_struct vm_ops = {
-+	.fault = msm_gem_fault,
++static const struct vm_operations_struct omap_gem_vm_ops = {
++	.fault = omap_gem_fault,
 +	.open = drm_gem_vm_open,
 +	.close = drm_gem_vm_close,
 +};
 +
-+static const struct drm_gem_object_funcs msm_gem_object_funcs = {
-+	.free = msm_gem_free_object,
-+	.pin = msm_gem_prime_pin,
-+	.unpin = msm_gem_prime_unpin,
-+	.get_sg_table = msm_gem_prime_get_sg_table,
-+	.vmap = msm_gem_prime_vmap,
-+	.vunmap = msm_gem_prime_vunmap,
-+	.vm_ops = &vm_ops,
++static const struct drm_gem_object_funcs omap_gem_object_funcs = {
++	.free = omap_gem_free_object,
++	.export = omap_gem_prime_export,
++	.vm_ops = &omap_gem_vm_ops,
 +};
 +
- static int msm_gem_new_impl(struct drm_device *dev,
- 		uint32_t size, uint32_t flags,
- 		struct drm_gem_object **obj)
-@@ -1024,6 +1040,7 @@ static int msm_gem_new_impl(struct drm_device *dev,
- 	INIT_LIST_HEAD(&msm_obj->vmas);
+ /* GEM buffer object constructor */
+ struct drm_gem_object *omap_gem_new(struct drm_device *dev,
+ 		union omap_gem_size gsize, u32 flags)
+@@ -1236,6 +1248,8 @@ struct drm_gem_object *omap_gem_new(struct drm_device *dev,
+ 		size = PAGE_ALIGN(gsize.bytes);
+ 	}
  
- 	*obj = &msm_obj->base;
-+	(*obj)->funcs = &msm_gem_object_funcs;
++	obj->funcs = &omap_gem_object_funcs;
++
+ 	/* Initialize the GEM object. */
+ 	if (!(flags & OMAP_BO_MEM_SHMEM)) {
+ 		drm_gem_private_object_init(dev, obj, size);
+diff --git a/drivers/gpu/drm/omapdrm/omap_gem.h b/drivers/gpu/drm/omapdrm/omap_gem.h
+index 729b7812a815..9e6b5c8195d9 100644
+--- a/drivers/gpu/drm/omapdrm/omap_gem.h
++++ b/drivers/gpu/drm/omapdrm/omap_gem.h
+@@ -69,7 +69,6 @@ struct dma_buf *omap_gem_prime_export(struct drm_gem_object *obj, int flags);
+ struct drm_gem_object *omap_gem_prime_import(struct drm_device *dev,
+ 		struct dma_buf *buffer);
  
- 	return 0;
- }
+-vm_fault_t omap_gem_fault(struct vm_fault *vmf);
+ int omap_gem_roll(struct drm_gem_object *obj, u32 roll);
+ void omap_gem_cpu_sync_page(struct drm_gem_object *obj, int pgoff);
+ void omap_gem_dma_sync_buffer(struct drm_gem_object *obj,
 -- 
 2.28.0
 
