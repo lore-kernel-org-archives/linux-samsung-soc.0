@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93867C4346A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79566C433EC
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72469221E2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61A0D20781
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Aug 2020 08:37:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbgHMIhH (ORCPT
+        id S1726730AbgHMIhD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Aug 2020 04:37:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59022 "EHLO mx2.suse.de"
+        Thu, 13 Aug 2020 04:37:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58806 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726641AbgHMIhG (ORCPT
+        id S1726710AbgHMIhC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Aug 2020 04:37:06 -0400
+        Thu, 13 Aug 2020 04:37:02 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 60B0EB597;
-        Thu, 13 Aug 2020 08:37:27 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id D99B6B597;
+        Thu, 13 Aug 2020 08:37:22 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -59,9 +59,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 16/20] drm/vgem: Introduce GEM object functions
-Date:   Thu, 13 Aug 2020 10:36:40 +0200
-Message-Id: <20200813083644.31711-17-tzimmermann@suse.de>
+Subject: [PATCH 11/20] drm/pl111: Introduce GEM object functions
+Date:   Thu, 13 Aug 2020 10:36:35 +0200
+Message-Id: <20200813083644.31711-12-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200813083644.31711-1-tzimmermann@suse.de>
 References: <20200813083644.31711-1-tzimmermann@suse.de>
@@ -74,74 +74,65 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in vgem. The only exception is gem_prime_mmap,
+per-instance callbacks in pl111. The only exception is gem_prime_mmap,
 which is non-trivial to convert.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/vgem/vgem_drv.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/pl111/pl111_drv.c | 28 ++++++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index 313339bbff90..c49f841dd4cd 100644
---- a/drivers/gpu/drm/vgem/vgem_drv.c
-+++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -50,6 +50,8 @@
- #define DRIVER_MAJOR	1
- #define DRIVER_MINOR	0
- 
-+static const struct drm_gem_object_funcs vgem_gem_object_funcs;
-+
- static struct vgem_device {
- 	struct drm_device drm;
- 	struct platform_device *platform;
-@@ -167,6 +169,8 @@ static struct drm_vgem_gem_object *__vgem_gem_create(struct drm_device *dev,
- 	if (!obj)
- 		return ERR_PTR(-ENOMEM);
- 
-+	obj->base.funcs = &vgem_gem_object_funcs;
-+
- 	ret = drm_gem_object_init(dev, &obj->base, roundup(size, PAGE_SIZE));
- 	if (ret) {
- 		kfree(obj);
-@@ -408,13 +412,21 @@ static void vgem_release(struct drm_device *dev)
- 	platform_device_unregister(vgem->platform);
+diff --git a/drivers/gpu/drm/pl111/pl111_drv.c b/drivers/gpu/drm/pl111/pl111_drv.c
+index 46b0d1c4a16c..00b605060336 100644
+--- a/drivers/gpu/drm/pl111/pl111_drv.c
++++ b/drivers/gpu/drm/pl111/pl111_drv.c
+@@ -211,6 +211,29 @@ pl111_gem_import_sg_table(struct drm_device *dev,
+ 	return drm_gem_cma_prime_import_sg_table(dev, attach, sgt);
  }
  
-+static const struct drm_gem_object_funcs vgem_gem_object_funcs = {
-+	.free = vgem_gem_free_object,
-+	.pin = vgem_prime_pin,
-+	.unpin = vgem_prime_unpin,
-+	.get_sg_table = vgem_prime_get_sg_table,
-+	.vmap = vgem_prime_vmap,
-+	.vunmap = vgem_prime_vunmap,
-+	.vm_ops = &vgem_gem_vm_ops,
++static const struct drm_gem_object_funcs pl111_gem_object_funcs = {
++	.free = drm_gem_cma_free_object,
++	.get_sg_table = drm_gem_cma_prime_get_sg_table,
++	.vmap = drm_gem_cma_prime_vmap,
++	.vm_ops = &drm_gem_cma_vm_ops,
 +};
 +
- static struct drm_driver vgem_driver = {
- 	.driver_features		= DRIVER_GEM | DRIVER_RENDER,
- 	.release			= vgem_release,
- 	.open				= vgem_open,
- 	.postclose			= vgem_postclose,
--	.gem_free_object_unlocked	= vgem_gem_free_object,
--	.gem_vm_ops			= &vgem_gem_vm_ops,
- 	.ioctls				= vgem_ioctls,
- 	.num_ioctls 			= ARRAY_SIZE(vgem_ioctls),
- 	.fops				= &vgem_driver_fops,
-@@ -423,13 +435,8 @@ static struct drm_driver vgem_driver = {
++static struct drm_gem_object *
++pl111_gem_create_object(struct drm_device *dev, size_t size)
++{
++	static struct drm_gem_cma_object *cma_obj;
++	struct drm_gem_object *obj;
++
++	cma_obj = kzalloc(sizeof(*cma_obj), GFP_KERNEL);
++	if (!cma_obj)
++		return NULL;
++
++	obj = &cma_obj->base;
++	obj->funcs = &pl111_gem_object_funcs;
++
++	return obj;
++}
++
+ DEFINE_DRM_GEM_CMA_FOPS(drm_fops);
  
+ static struct drm_driver pl111_drm_driver = {
+@@ -224,15 +247,12 @@ static struct drm_driver pl111_drm_driver = {
+ 	.major = 1,
+ 	.minor = 0,
+ 	.patchlevel = 0,
++	.gem_create_object = pl111_gem_create_object,
+ 	.dumb_create = drm_gem_cma_dumb_create,
+-	.gem_free_object_unlocked = drm_gem_cma_free_object,
+-	.gem_vm_ops = &drm_gem_cma_vm_ops,
  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
--	.gem_prime_pin = vgem_prime_pin,
--	.gem_prime_unpin = vgem_prime_unpin,
- 	.gem_prime_import = vgem_prime_import,
- 	.gem_prime_import_sg_table = vgem_prime_import_sg_table,
--	.gem_prime_get_sg_table = vgem_prime_get_sg_table,
--	.gem_prime_vmap = vgem_prime_vmap,
--	.gem_prime_vunmap = vgem_prime_vunmap,
- 	.gem_prime_mmap = vgem_prime_mmap,
+ 	.gem_prime_import_sg_table = pl111_gem_import_sg_table,
+-	.gem_prime_get_sg_table	= drm_gem_cma_prime_get_sg_table,
+ 	.gem_prime_mmap = drm_gem_cma_prime_mmap,
+-	.gem_prime_vmap = drm_gem_cma_prime_vmap,
  
- 	.name	= DRIVER_NAME,
+ #if defined(CONFIG_DEBUG_FS)
+ 	.debugfs_init = pl111_debugfs_init,
 -- 
 2.28.0
 
