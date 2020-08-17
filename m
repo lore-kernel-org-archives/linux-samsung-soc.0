@@ -4,82 +4,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DADC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 19:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DE8C433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 19:16:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C2B02076E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 19:05:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F22720578
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 19:16:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597691102;
-	bh=sBUCv5w3lNjKLqyJWKSVBjVv87IacI3e30a6X4QqE6w=;
+	s=default; t=1597691794;
+	bh=zIS/OxiWJT0USm8ylTU7Llp58GDXNvLgpHpQm6PVlsU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=HVR//vsc1xy4pqwfTOdVGjvSM0X6CxhU00jlaUyHjCuR4kowOYbr1D9Sb5njv1cxu
-	 +Ep0yX40424Xtdx9FBPvoj2c398nEymfTn6JHqqJT8Zxzj6jyjDw1IxkM8IpohOnZp
-	 hwsetvXlEPYC8XjIkR9iw05hxzyK/421+wNu/A2A=
+	b=LWjK7yY5kkF161wHtT/XKKqHMDy6ZGEXm7PJqeetIru/fZ7PKqMlR8P1cfgEKD60S
+	 6OxptWxfg0/1NodQ18+0sUrVzr7FmiNz0ALkS80kbNDm2bgwkhDB8SRoavrXM07p9P
+	 SD+Zr/cLosZPaOeIL02mwtgzh0DyajuJpuIU+cQM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389880AbgHQTE5 (ORCPT
+        id S1730329AbgHQTQd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Aug 2020 15:04:57 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:41785 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730618AbgHQPp0 (ORCPT
+        Mon, 17 Aug 2020 15:16:33 -0400
+Received: from mail-ej1-f65.google.com ([209.85.218.65]:39995 "EHLO
+        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730457AbgHQPjM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Aug 2020 11:45:26 -0400
-Received: by mail-ej1-f67.google.com with SMTP id t10so18278770ejs.8;
-        Mon, 17 Aug 2020 08:45:25 -0700 (PDT)
+        Mon, 17 Aug 2020 11:39:12 -0400
+Received: by mail-ej1-f65.google.com with SMTP id o18so18265019eje.7;
+        Mon, 17 Aug 2020 08:39:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=88NsSfMcBydVtMdxoydTDCkwKyXtq2TXNnD+2/bVGE0=;
-        b=Jafkq9PPkG1zkZN6RAB54JHNcKYZvbiTZjQswfkCRrI8IOa2GEQr6RRASL9kGvdgiL
-         bmli8G8wVuP6URqwOb+BY4imLLXLLGxJp9Y1+UQtBVWuCcU9/lZjMF2pmVbM06UBTZbf
-         Dq7nhknCdaXCF5N0fhN+k5F8AVUaR1MJHQHPRLI40ez7uJfL7uJaIayxwcZSlkc1cXuO
-         cCZGh8vNEkigwC3WZGmARUcb8XJh4b5MktgTxY1Kj/94FOVs9qr7JkVoj7i2OD7TW5h/
-         2CXw0N4deO9/RMUw405l/HpHlT8tX2SU27FAR2jYQsRtAT7DMP9QcdC0sxrKiojR4/Tl
-         LG5Q==
-X-Gm-Message-State: AOAM531X+jvynh68dYEE0m29e8TBGHKe0qfX7x6tmkCLbFpoC44vWL0q
-        7VlLE/dTyEinS0SeEHVGn/U=
-X-Google-Smtp-Source: ABdhPJxhZ268mQwED+RocFeuapgWW+9IdkMyvpMZGdBWtySWhBhqmYB3SPqu8gQUSnqzUJrm7lL6yA==
-X-Received: by 2002:a17:906:228a:: with SMTP id p10mr15557518eja.23.1597679124911;
-        Mon, 17 Aug 2020 08:45:24 -0700 (PDT)
+        bh=bbc3Jq90wBrnkEhTh6h/zVaFu4opATk2C7+6kErmGF8=;
+        b=GCKK+1hcrnSS17rJv8IS357S3eN0sG4DiA9p4C51g/OBQPN4/ihdCGXJmCTtyErJ9o
+         oKCl+e9V0JL61+aUaBZp3dDQcZyb5GHsjG37qpyztgswHroBfICkvmffBo1wvDnQpv4K
+         NPl5dUNWWon3zy6iagTFSxA952rdt1KgwToIfnIq83ucNImuJQYm3jKD0wgl6VaMKa5Y
+         Xku3HTyhd/Dcmnb8Rr2T4MJEOUdak3+VcOI1VXqNvY+hAOfcI58Kj2iHktGM1my/d+6g
+         nUZEbGajLiNsEJXftUWoCfm7Xtf4qiDFkbQW25paipHgAE7Z4eF3R4rv68EA/Ckm6Tt3
+         BFzQ==
+X-Gm-Message-State: AOAM533tcIwroyp7hf4wSr0kSBmlbowIMzjFZ5FvtRmUb88IeKfjAuwn
+        q67mlBc1ZeaV3EehDYHkyJU=
+X-Google-Smtp-Source: ABdhPJyEi8WZWyZaI3VmlZPB34uMnAbvDO2ZsHQq9+VQ+Ddi9qRQZCpn162YzLhp+f5b7s22O2AfqQ==
+X-Received: by 2002:a17:906:4dd4:: with SMTP id f20mr16628985ejw.170.1597678750714;
+        Mon, 17 Aug 2020 08:39:10 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id s18sm14671616ejd.54.2020.08.17.08.45.23
+        by smtp.googlemail.com with ESMTPSA id k10sm14563979ejj.108.2020.08.17.08.39.09
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Aug 2020 08:45:24 -0700 (PDT)
-Date:   Mon, 17 Aug 2020 17:45:22 +0200
+        Mon, 17 Aug 2020 08:39:10 -0700 (PDT)
+Date:   Mon, 17 Aug 2020 17:39:08 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Qinglang Miao <miaoqinglang@huawei.com>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] ARM: s3c: fix return value check in
- s3c_usb_otgphy_init()
-Message-ID: <20200817154522.GA15887@kozik-lap>
-References: <20200728022756.87687-1-miaoqinglang@huawei.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Lukasz Luba <lukasz.luba@arm.com>
+Subject: Re: [PATCH 2/4] cpuidle: big.LITTLE: enable driver only on
+ Peach-Pit/Pi Chromebooks
+Message-ID: <20200817153908.GA13144@kozik-lap>
+References: <20200616081230.31198-1-m.szyprowski@samsung.com>
+ <CGME20200616081249eucas1p2ad165b545f265bec88a06270d55fce76@eucas1p2.samsung.com>
+ <20200616081230.31198-3-m.szyprowski@samsung.com>
+ <db3315ef-1ca8-14b5-486a-9cc5a02150a8@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200728022756.87687-1-miaoqinglang@huawei.com>
+In-Reply-To: <db3315ef-1ca8-14b5-486a-9cc5a02150a8@samsung.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jul 28, 2020 at 10:27:56AM +0800, Qinglang Miao wrote:
-> the function clk_get() returns ERR_PTR() in case of error and
-> never returns NULL. So there's no need to test whether xusbxti
-> is NULL, just remove the redundant part in the return value check.
+On Wed, Jun 24, 2020 at 12:05:46PM +0200, Bartlomiej Zolnierkiewicz wrote:
 > 
-> Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
-> ---
->  arch/arm/mach-s3c64xx/setup-usb-phy.c | 2 +-
+> On 6/16/20 10:12 AM, Marek Szyprowski wrote:
+> > This driver always worked properly only on the Exynos 5420/5800 based
+> > Chromebooks (Peach-Pit/Pi), so change the required compatible string to
+> > the 'google,peach', to avoid enabling it on the other Exynos 542x/5800
+> > boards, which hangs in such case. The main difference between Peach-Pit/Pi
+> > and other Exynos 542x/5800 boards is the firmware - Peach platform doesn't
+> > use secure firmware at all.
+> > 
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+
+This patch waited on list for almost two months and was not picked up.
+Therefore I'll take it for v5.10.
 
 Thanks, applied.
 
