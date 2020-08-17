@@ -2,130 +2,93 @@ Return-Path: <SRS0=AiQW=B3=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F82C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 17:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AB2C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 17:17:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE9E32067C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 17:01:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHgr2XhL"
+	by mail.kernel.org (Postfix) with ESMTP id 8FF6B20716
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 17:17:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730081AbgHQRB0 (ORCPT
+        id S2389618AbgHQRRa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Aug 2020 13:01:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47994 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730003AbgHQRBN (ORCPT
+        Mon, 17 Aug 2020 13:17:30 -0400
+Received: from foss.arm.com ([217.140.110.172]:57932 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389620AbgHQRRV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Aug 2020 13:01:13 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D920C061389;
-        Mon, 17 Aug 2020 10:01:11 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id g19so18316221ioh.8;
-        Mon, 17 Aug 2020 10:01:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7QBcITzR7oBFEugc9nX1hxSt40e3uHeGjBJ8k9Ii1wk=;
-        b=fHgr2XhLG9zj5YkcLQCd22NWhIzfoaeu5QeDS+zuPzhgz6A9WrGtRdh1mQGvYcgzgH
-         6fj9TEyhln/WsR5x6BeC/423hYjuYZ9wlMXn5FPXN6T07cqvK8Y0oPlHotB2Gh5KOdJT
-         LJif1UzKeOQupsxHtrzDH/KPmIbvLLTsQG6KiVJJ3NvgHwx1pmdFar1M/FHW0UasC8Ll
-         R6VPhg+9IY93n8I8ad7FHyBc+B1u5jept/EHHoEy+14aujf43pE8VBOGQoTiOWPAvjEb
-         WdQW5G6QLx6h4Ma3swlKqupxWiwrjKAcA1iKiIuVFJMfGb0ZdOml/F6Vl6D2fImHN7d0
-         gJ8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7QBcITzR7oBFEugc9nX1hxSt40e3uHeGjBJ8k9Ii1wk=;
-        b=fMWw829erfdWc35n5lKmlLLiIh+9HmNE0hB41ezzkPTMFGq6g+qSR7mFqY5/MIMddl
-         5ODHUeaBkz3PtE+NBtBBHbi0a2E4TBMZin4QWu1iuI1AlnYpNm546DDhKaq5FPwStpte
-         HIXUuPNUvvny0duPb7L9gB8/V6wRjFOG0bt3izbF2x/2vallDC4vh3ncRb5H/UpphGL/
-         ZYfU8bEIDhmjWT+pkleAjy+xrJadkmPGvjS2CwIewhShllbqYwuJTfVGZV2fMonyYYuw
-         9zYAGo2mQiduADRfYKfq4WFaPI+tcG+3LnxFdxeeAVUkdxCxY7QtJ5t6yliIlaj8fwac
-         qlNQ==
-X-Gm-Message-State: AOAM533gSSOdGpkkFLrZ6P7QYFJJfyB+B0uX7AeAsatiXMpdviaDGjeM
-        sxC1uD0pX/E3CYCKHN0MGSWceRJTL9Z/fJ+6wtvHBkx6
-X-Google-Smtp-Source: ABdhPJyXrGoxJReNPAI+1RpBbwcrrU2PnQSgVLTs6ychSyck01qgTlPaYHYMzi+J5YyRvm1QP4hn4zCwUZeN4+VdjeU=
-X-Received: by 2002:a02:95ae:: with SMTP id b43mr15158386jai.19.1597683670733;
- Mon, 17 Aug 2020 10:01:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200804192654.12783-1-krzk@kernel.org> <20200804192654.12783-7-krzk@kernel.org>
- <20200817165748.GA29664@kozik-lap>
-In-Reply-To: <20200817165748.GA29664@kozik-lap>
-From:   Tomasz Figa <tomasz.figa@gmail.com>
-Date:   Mon, 17 Aug 2020 19:00:54 +0200
-Message-ID: <CA+Ln22Hw8_FT0s2N0rBo=2XVmuLagj=BFrTkTGd10J7d4B1Jow@mail.gmail.com>
-Subject: Re: [PATCH v2 06/13] ARM: samsung: remove HAVE_S3C2410_WATCHDOG and
- use direct dependencies
+        Mon, 17 Aug 2020 13:17:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34E0631B;
+        Mon, 17 Aug 2020 10:17:11 -0700 (PDT)
+Received: from [10.37.12.68] (unknown [10.37.12.68])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 35A973F66B;
+        Mon, 17 Aug 2020 10:17:08 -0700 (PDT)
+Subject: Re: [PATCH 2/2] ARM: dts: exynos: Remove interrupts from DMC
+ controller in Exynos5422
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:SAMSUNG SOC CLOCK DRIVERS" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        patches@opensource.cirrus.com,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org,
-        Sergio Prado <sergio.prado@e-labworks.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, willy.mh.wolff.ml@gmail.com,
+        k.konieczny@samsung.com, cw00.choi@samsung.com,
+        b.zolnierkie@samsung.com, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        s.nawrocki@samsung.com, kgene@kernel.org
+References: <20200708153420.29484-1-lukasz.luba@arm.com>
+ <20200708153420.29484-3-lukasz.luba@arm.com>
+ <20200817155021.GC15887@kozik-lap>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <2099aea9-5a63-6e5b-d7f9-4e6476584461@arm.com>
+Date:   Mon, 17 Aug 2020 18:17:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20200817155021.GC15887@kozik-lap>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-2020=E5=B9=B48=E6=9C=8817=E6=97=A5(=E6=9C=88) 18:57 Krzysztof Kozlowski <kr=
-zk@kernel.org>:
->
-> On Tue, Aug 04, 2020 at 09:26:47PM +0200, Krzysztof Kozlowski wrote:
-> > A separate Kconfig option HAVE_S3C2410_WATCHDOG for Samsung SoCs is not
-> > really needed and the s3c24xx watchdog driver can depend on Samsung ARM
-> > architectures instead.
-> >
-> > The "HAVE_xxx_WATCHDOG" pattern of dependency is not popular and Samsun=
-g
-> > platforms are here exceptions.  All others just depend on
-> > CONFIG_ARCH_xxx.
-> >
-> > This makes the code slightly smaller without any change in
-> > functionality.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >
-> > ---
-> >
-> > Changes since v1:
-> > 1. Re-add the dependency on architectures to keep same functionality.
->
-> Hi Guenter, Tomasz,
->
-> Does such removal of HAVE_S3C2410_WATCHDOG makes sense for you?
+Hi Krzysztof,
 
-I don't have any objections and the patch itself is trivial.
+On 8/17/20 4:50 PM, Krzysztof Kozlowski wrote:
+> On Wed, Jul 08, 2020 at 04:34:20PM +0100, Lukasz Luba wrote:
+>> The interrupts in Dynamic Memory Controller in Exynos5422 and Odroid
+>> XU3-family boards are no longer needed. They have been used in order
+>> to workaround some issues in scheduled work in devfreq. Now when the
+>> devfreq framework design is improved, remove the interrupt driven
+>> approach and rely on devfreq monitoring mechanism with fixed intervals.
+>>
+>> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
+>> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+>> ---
+>>   arch/arm/boot/dts/exynos5420.dtsi | 3 ---
+>>   1 file changed, 3 deletions(-)
+> 
+> I think the dependencies were merged so this can be safely applied
+> without bisectability problems?
 
-Best regards,
-Tomasz
+I have created v2 of that fix and it got merged
+via Chanwoo's tree, the commit 4fc9a0470d2dc37028
+https://lkml.org/lkml/2020/7/10/1048
+
+That commit switched the driver default mode from 'irq driven' to
+new devfreq monitoring mechanism. Furthermore, when the driver is
+built as a module, you can try to use the 'irq mode', but for this
+you would need the DT IRQs description (this $subject tries to remove).
+
+I would like to keep this IRQ mode for experimentation, as I
+described in answers to Bartek's questions:
+https://lkml.org/lkml/2020/7/14/315
+
+Unfortunately, I am quite busy and won't make any progress before the
+LPC.
+
+Regards,
+Lukasz
