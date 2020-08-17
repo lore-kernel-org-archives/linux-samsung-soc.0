@@ -4,89 +4,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45854C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 18:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50500C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 18:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A862204EC
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 18:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FBCC20578
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 18:56:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597690256;
-	bh=okS449SiMJwhh6wi/76ByFQ04nynJXjMuYg/drWDrzg=;
+	s=default; t=1597690560;
+	bh=ebV6n4RrdDkYsGcLdnPQDJFEnzE4Pi4mJ81KHMA4+8k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jAoFEcjZz6c3WfwGsyg+0IYStHaFWEePMh0iMYWC2OVmphnFUkyvjFMuuj+bvdO7/
-	 BN2Cnx9wqP2NBR8OfGJQjL85Rgit1g/fSzWuryXJzJC72wP254WQkL80ouqT+rpnOu
-	 GKF5qG9HchKyI2VM7pHkcvKqYgyl5va7zDqpKPSk=
+	b=BWZNNMeF6njHTCtcCDI6jSL7qU5jiQ1JK2Szw235p2xHxgQQJYyCdZCB4kPIw9lOK
+	 JOevbC/NU308/e4+Ds+dlxYqnpKZLtFxsgOr3FxfrMmGq5zPM47ZJrjlNcYsGndOic
+	 7L6r9cH0aRt1rXsQIddGS4IyKjVns9Mi5LPEbB7A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387913AbgHQSuy (ORCPT
+        id S2403946AbgHQSzo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Aug 2020 14:50:54 -0400
-Received: from mail-ej1-f65.google.com ([209.85.218.65]:42758 "EHLO
+        Mon, 17 Aug 2020 14:55:44 -0400
+Received: from mail-ej1-f65.google.com ([209.85.218.65]:39728 "EHLO
         mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387911AbgHQPxQ (ORCPT
+        with ESMTP id S1730535AbgHQPu0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Aug 2020 11:53:16 -0400
-Received: by mail-ej1-f65.google.com with SMTP id g19so18292388ejc.9;
-        Mon, 17 Aug 2020 08:53:15 -0700 (PDT)
+        Mon, 17 Aug 2020 11:50:26 -0400
+Received: by mail-ej1-f65.google.com with SMTP id f24so18320903ejx.6;
+        Mon, 17 Aug 2020 08:50:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Vtt9zu3rKhz+aEK+qnCz92XQFKGN9MiYVulnhNcc6uc=;
-        b=iNxev2U48j+e+L2L+O+F3IcRXtfg52cFOMJ2ItjWmlKEDNdiuz7Fo4ICIsveJTHomT
-         v/a7I2pDlu4riySf07tc1BvCl+ulFsMO01KedwF0vq0fFBZ3LODtJD3e4t3AC80RZ5r9
-         /PNv+Mm0hTUPgh4F4XdRtT5H1fnLwZQ06a69DkSL4jSyXYttqPKBsmSmVJrwmoAy0XKV
-         5+OcKMA7I+c0rk9IRGsUQZrsfilLnTemce377EQ9QFTpQZLoQSeaxNwUOr4MTuO39Ogt
-         mCg6rLzitKsmwqRopXg8IIKELoJQuEbXpiMlT/yAI1T45gsCVpANE+HUc6kGW98AHWwW
-         m/kg==
-X-Gm-Message-State: AOAM5300GZh81AGoQf9g1fo7K54WeSE9g2JxeWMECi905Dxkffzpj68N
-        BYyQOFLaAqj1hYzsoonCUQI=
-X-Google-Smtp-Source: ABdhPJwyKhWu7DD4MWUN9q9tsLJuBm/9FV41CT+IeC5LSQzePyUu1SGYQjo0fVxodFmVcFMiWrd2NA==
-X-Received: by 2002:a17:907:aaa:: with SMTP id bz10mr15533045ejc.304.1597679594754;
-        Mon, 17 Aug 2020 08:53:14 -0700 (PDT)
+        bh=CvY+Gv9fZiNUpyRo8aOD2OAX4f7HvaEYlR7elhE0eDI=;
+        b=Z9tlqxxJD367x/vsFxQW1v7W2GGDyy8/7TJtOzee1d2tvH8PCI/cdgqHw3H+k6DXEm
+         wAt37Suvj1+IfZO3xr3yRiF6kGtM41lKo44G3AQ664Q6MWBZT8ZdyFXcV7WOIDSuQYAu
+         3c55axNm2VksqwpKUbf0FAGiouwKY7mFMfGLOP1yUf3JcjIZzzo/SU2x+VwcHSLsDfG3
+         RPBmQ4OL2D0zpqsGV52iGB7JrK9UfBfwvHjI0VcUUKoLC6RvbSownFkNn7tPDHS/r2CT
+         QtJpaSYpG042Hc+UpDeuCLHZwTVpc5qYLGckSiceELHVrJUurd0f8QJMUighkm168vGx
+         TABg==
+X-Gm-Message-State: AOAM532cK3jCFIk0qKYwBvgHPXWysWJ/qhKlESqlAQIlCPnyDSdqkeSm
+        VVjvtfhPGtiiyhJNHI4jz+s=
+X-Google-Smtp-Source: ABdhPJwUH2JfieM4+gZF9eNKg35FhFE+j87Rl4f371bQ3K5WOxcwB8LzeD/gzxX+LVyjfatGHlfezg==
+X-Received: by 2002:a17:906:78e:: with SMTP id l14mr16737436ejc.67.1597679424558;
+        Mon, 17 Aug 2020 08:50:24 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id y14sm14305273ejr.35.2020.08.17.08.53.13
+        by smtp.googlemail.com with ESMTPSA id g9sm14232950ejf.101.2020.08.17.08.50.23
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Aug 2020 08:53:14 -0700 (PDT)
-Date:   Mon, 17 Aug 2020 17:53:12 +0200
+        Mon, 17 Aug 2020 08:50:23 -0700 (PDT)
+Date:   Mon, 17 Aug 2020 17:50:21 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Stephen Kitt <steve@sk2.org>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        patches@opensource.cirrus.com,
+To:     Lukasz Luba <lukasz.luba@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: s3c64xx: use simple i2c probe function
-Message-ID: <20200817155312.GD15887@kozik-lap>
-References: <20200809172243.15192-1-steve@sk2.org>
+        linux-samsung-soc@vger.kernel.org, willy.mh.wolff.ml@gmail.com,
+        k.konieczny@samsung.com, cw00.choi@samsung.com,
+        b.zolnierkie@samsung.com, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        s.nawrocki@samsung.com, kgene@kernel.org
+Subject: Re: [PATCH 2/2] ARM: dts: exynos: Remove interrupts from DMC
+ controller in Exynos5422
+Message-ID: <20200817155021.GC15887@kozik-lap>
+References: <20200708153420.29484-1-lukasz.luba@arm.com>
+ <20200708153420.29484-3-lukasz.luba@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200809172243.15192-1-steve@sk2.org>
+In-Reply-To: <20200708153420.29484-3-lukasz.luba@arm.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Aug 09, 2020 at 07:22:43PM +0200, Stephen Kitt wrote:
-> The i2c probe functions here don't use the id information provided in
-> their second argument, so the single-parameter i2c probe function
-> ("probe_new") can be used instead.
+On Wed, Jul 08, 2020 at 04:34:20PM +0100, Lukasz Luba wrote:
+> The interrupts in Dynamic Memory Controller in Exynos5422 and Odroid
+> XU3-family boards are no longer needed. They have been used in order
+> to workaround some issues in scheduled work in devfreq. Now when the
+> devfreq framework design is improved, remove the interrupt driven
+> approach and rely on devfreq monitoring mechanism with fixed intervals.
 > 
-> This avoids scanning the identifier tables during probes.
-> 
-> Signed-off-by: Stephen Kitt <steve@sk2.org>
+> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
+> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
 > ---
-> Changes since v1:
->   - split into per-sub-architecture patches.
-> 
->  arch/arm/mach-s3c64xx/mach-crag6410-module.c | 5 ++---
+>  arch/arm/boot/dts/exynos5420.dtsi | 3 ---
+>  1 file changed, 3 deletions(-)
 
-Thanks, applied.
+I think the dependencies were merged so this can be safely applied
+without bisectability problems?
 
 Best regards,
 Krzysztof
