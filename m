@@ -2,93 +2,223 @@ Return-Path: <SRS0=AiQW=B3=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AB2C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 17:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2651C433E4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 17:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8FF6B20716
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 17:17:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 737A820716
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 17:31:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597685474;
+	bh=r2VsT4GFLEqt9d5QAhoRvDuti8uCDhyea92ziT7tlj0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=SOMRC8hmCtnRbs0sW/oprkSMliNrRwOXeUfzND0cbN5Xmli2rEGMKLJa0t4QNcnHp
+	 88/PV19Y4xA23qfZYuP7CtPIxRlP1YX3PJ1iu0NBpXD3fMtPkgmAZBSjy+vKuL0RnU
+	 Qrx4obW3FDNsi3LcmU+n0X/t9RbXWA8qXxxg1LtE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389618AbgHQRRa (ORCPT
+        id S2389595AbgHQRbL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Aug 2020 13:17:30 -0400
-Received: from foss.arm.com ([217.140.110.172]:57932 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389620AbgHQRRV (ORCPT
+        Mon, 17 Aug 2020 13:31:11 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40186 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389260AbgHQQ5z (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Aug 2020 13:17:21 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34E0631B;
-        Mon, 17 Aug 2020 10:17:11 -0700 (PDT)
-Received: from [10.37.12.68] (unknown [10.37.12.68])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 35A973F66B;
-        Mon, 17 Aug 2020 10:17:08 -0700 (PDT)
-Subject: Re: [PATCH 2/2] ARM: dts: exynos: Remove interrupts from DMC
- controller in Exynos5422
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Mon, 17 Aug 2020 12:57:55 -0400
+Received: by mail-ed1-f67.google.com with SMTP id a14so12842919edx.7;
+        Mon, 17 Aug 2020 09:57:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3FrKyZ4bgiqRw6fMNXhefxjUO50+4ZZhHM2k568ceUE=;
+        b=jvrzQdFP09I5YMO7ChDtG87bLrS8VDGZGi9TeokYuoPc9doSqg5JaM9RALcaDEX+/S
+         Zm1/ZhcmiyQDsadEY7zSFk9h0rU10m+HBIHgLhTA8Pm6gsqOdN9G8paMkCwCEPMxaTHk
+         SYXsK+CwUIRDvX7RWihL3uBuEYKzooLxRGfCTMq3XHfFoM0Wr7+xvtGrNzj91fvCB7IR
+         wlr8zdrzjcwVn2PUoH1DE5almTWNTSPo7TG1LJD+ATClRY93VRiDs+/Gv5JDTR3+Ewln
+         BZmgyViqqxPLDmzJzx9HdU8+Blf+Cmr1hpjDVUzyLBx1ByknD4jjd7ROjg6MYprJS33o
+         MUqA==
+X-Gm-Message-State: AOAM531ZKy6bJRWv538iXu+EMR7Qa5aS7RzVt+ztD2nH+P5nMDjlhIP8
+        g3vSWchu9UovQStmqc8yr1o=
+X-Google-Smtp-Source: ABdhPJwXGUSxJY2KPJAkdjrQkP68EfvY0m+GPVkx6BxNteF9/a1Q2fay39xFJBTtva4bNXqbU3on7w==
+X-Received: by 2002:a50:ec95:: with SMTP id e21mr15439113edr.250.1597683472383;
+        Mon, 17 Aug 2020 09:57:52 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.216])
+        by smtp.googlemail.com with ESMTPSA id lc10sm14820453ejb.22.2020.08.17.09.57.50
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Aug 2020 09:57:51 -0700 (PDT)
+Date:   Mon, 17 Aug 2020 18:57:48 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, willy.mh.wolff.ml@gmail.com,
-        k.konieczny@samsung.com, cw00.choi@samsung.com,
-        b.zolnierkie@samsung.com, chanwoo@kernel.org,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        s.nawrocki@samsung.com, kgene@kernel.org
-References: <20200708153420.29484-1-lukasz.luba@arm.com>
- <20200708153420.29484-3-lukasz.luba@arm.com>
- <20200817155021.GC15887@kozik-lap>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <2099aea9-5a63-6e5b-d7f9-4e6476584461@arm.com>
-Date:   Mon, 17 Aug 2020 18:17:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        Sergio Prado <sergio.prado@e-labworks.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>
+Subject: Re: [PATCH v2 06/13] ARM: samsung: remove HAVE_S3C2410_WATCHDOG and
+ use direct dependencies
+Message-ID: <20200817165748.GA29664@kozik-lap>
+References: <20200804192654.12783-1-krzk@kernel.org>
+ <20200804192654.12783-7-krzk@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200817155021.GC15887@kozik-lap>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200804192654.12783-7-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On 8/17/20 4:50 PM, Krzysztof Kozlowski wrote:
-> On Wed, Jul 08, 2020 at 04:34:20PM +0100, Lukasz Luba wrote:
->> The interrupts in Dynamic Memory Controller in Exynos5422 and Odroid
->> XU3-family boards are no longer needed. They have been used in order
->> to workaround some issues in scheduled work in devfreq. Now when the
->> devfreq framework design is improved, remove the interrupt driven
->> approach and rely on devfreq monitoring mechanism with fixed intervals.
->>
->> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
->> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
->> ---
->>   arch/arm/boot/dts/exynos5420.dtsi | 3 ---
->>   1 file changed, 3 deletions(-)
+On Tue, Aug 04, 2020 at 09:26:47PM +0200, Krzysztof Kozlowski wrote:
+> A separate Kconfig option HAVE_S3C2410_WATCHDOG for Samsung SoCs is not
+> really needed and the s3c24xx watchdog driver can depend on Samsung ARM
+> architectures instead.
 > 
-> I think the dependencies were merged so this can be safely applied
-> without bisectability problems?
+> The "HAVE_xxx_WATCHDOG" pattern of dependency is not popular and Samsung
+> platforms are here exceptions.  All others just depend on
+> CONFIG_ARCH_xxx.
+> 
+> This makes the code slightly smaller without any change in
+> functionality.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Re-add the dependency on architectures to keep same functionality.
 
-I have created v2 of that fix and it got merged
-via Chanwoo's tree, the commit 4fc9a0470d2dc37028
-https://lkml.org/lkml/2020/7/10/1048
+Hi Guenter, Tomasz,
 
-That commit switched the driver default mode from 'irq driven' to
-new devfreq monitoring mechanism. Furthermore, when the driver is
-built as a module, you can try to use the 'irq mode', but for this
-you would need the DT IRQs description (this $subject tries to remove).
+Does such removal of HAVE_S3C2410_WATCHDOG makes sense for you?
 
-I would like to keep this IRQ mode for experimentation, as I
-described in answers to Bartek's questions:
-https://lkml.org/lkml/2020/7/14/315
+Best regards,
+Krzysztof
 
-Unfortunately, I am quite busy and won't make any progress before the
-LPC.
 
-Regards,
-Lukasz
+> ---
+>  arch/arm/Kconfig              |  1 -
+>  arch/arm/mach-exynos/Kconfig  |  1 -
+>  arch/arm/mach-s3c64xx/Kconfig |  2 --
+>  arch/arm/mach-s5pv210/Kconfig |  1 -
+>  arch/arm64/Kconfig.platforms  |  1 -
+>  drivers/watchdog/Kconfig      | 10 ++--------
+>  6 files changed, 2 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 7564f293f107..fe95777af653 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -504,7 +504,6 @@ config ARCH_S3C24XX
+>  	select GPIOLIB
+>  	select GENERIC_IRQ_MULTI_HANDLER
+>  	select HAVE_S3C2410_I2C if I2C
+> -	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+>  	select HAVE_S3C_RTC if RTC_CLASS
+>  	select NEED_MACH_IO_H
+>  	select SAMSUNG_ATAGS
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index f185cd3d4c62..d2d249706ebb 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -24,7 +24,6 @@ menuconfig ARCH_EXYNOS
+>  	select HAVE_ARM_ARCH_TIMER if ARCH_EXYNOS5
+>  	select HAVE_ARM_SCU if SMP
+>  	select HAVE_S3C2410_I2C if I2C
+> -	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+>  	select HAVE_S3C_RTC if RTC_CLASS
+>  	select PINCTRL
+>  	select PINCTRL_EXYNOS
+> diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+> index ac3e3563487f..e208c2b48853 100644
+> --- a/arch/arm/mach-s3c64xx/Kconfig
+> +++ b/arch/arm/mach-s3c64xx/Kconfig
+> @@ -13,7 +13,6 @@ menuconfig ARCH_S3C64XX
+>  	select GPIO_SAMSUNG if ATAGS
+>  	select GPIOLIB
+>  	select HAVE_S3C2410_I2C if I2C
+> -	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+>  	select HAVE_TCM
+>  	select PLAT_SAMSUNG
+>  	select PM_GENERIC_DOMAINS if PM
+> @@ -165,7 +164,6 @@ config MACH_SMDK6410
+>  	bool "SMDK6410"
+>  	depends on ATAGS
+>  	select CPU_S3C6410
+> -	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+>  	select S3C64XX_SETUP_FB_24BPP
+>  	select S3C64XX_SETUP_I2C1
+>  	select S3C64XX_SETUP_IDE
+> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+> index 03984a791879..b3db1191e437 100644
+> --- a/arch/arm/mach-s5pv210/Kconfig
+> +++ b/arch/arm/mach-s5pv210/Kconfig
+> @@ -14,7 +14,6 @@ config ARCH_S5PV210
+>  	select COMMON_CLK_SAMSUNG
+>  	select GPIOLIB
+>  	select HAVE_S3C2410_I2C if I2C
+> -	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+>  	select HAVE_S3C_RTC if RTC_CLASS
+>  	select PINCTRL
+>  	select PINCTRL_EXYNOS
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index cd58f8495c45..d235b27cf372 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -80,7 +80,6 @@ config ARCH_EXYNOS
+>  	select EXYNOS_CHIPID
+>  	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+>  	select EXYNOS_PMU
+> -	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+>  	select HAVE_S3C_RTC if RTC_CLASS
+>  	select PINCTRL
+>  	select PINCTRL_EXYNOS
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index 4f4687c46d38..297af1c40643 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -478,16 +478,10 @@ config IXP4XX_WATCHDOG
+>  
+>  	  Say N if you are unsure.
+>  
+> -config HAVE_S3C2410_WATCHDOG
+> -	bool
+> -	help
+> -	  This will include watchdog timer support for Samsung SoCs. If
+> -	  you want to include watchdog support for any machine, kindly
+> -	  select this in the respective mach-XXXX/Kconfig file.
+> -
+>  config S3C2410_WATCHDOG
+>  	tristate "S3C2410 Watchdog"
+> -	depends on HAVE_S3C2410_WATCHDOG || COMPILE_TEST
+> +	depends on ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || \
+> +		   COMPILE_TEST
+>  	select WATCHDOG_CORE
+>  	select MFD_SYSCON if ARCH_EXYNOS
+>  	help
+> -- 
+> 2.17.1
+> 
