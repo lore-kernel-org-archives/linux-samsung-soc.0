@@ -1,64 +1,64 @@
-Return-Path: <SRS0=AiQW=B3=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=m+J2=B4=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70843C433E4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 21:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA0CC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Aug 2020 06:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F28B20674
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Aug 2020 21:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1956120709
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Aug 2020 06:04:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="tQ0FE9hL"
+	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="hxpRljSM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728228AbgHQVUN (ORCPT
+        id S1726624AbgHRGEf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Aug 2020 17:20:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60360 "EHLO
+        Tue, 18 Aug 2020 02:04:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbgHQVUC (ORCPT
+        with ESMTP id S1726651AbgHRGE0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Aug 2020 17:20:02 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C2D8C061347
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Aug 2020 14:20:02 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id e4so8427662pjd.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Aug 2020 14:20:02 -0700 (PDT)
+        Tue, 18 Aug 2020 02:04:26 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56E4BC061348
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Aug 2020 23:04:26 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id ep8so8760989pjb.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Aug 2020 23:04:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=tcd-ie.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
         bh=a6SU4e7qioZa1MSGn21iWR1ma/iTKUTYpUuysCGcy14=;
-        b=tQ0FE9hLvaMYPBTVoFLMvapqE3NmtNzvVLom8ama2749kqs+FHz9nxs7AHIJO7mDBv
-         K8Q+pQ4G/b4TMv1DEEAJUykFiG2bIYGrU3nC3oR7j6f2NPSzKfCcVFaY4kOAcXUttSVT
-         FcQd5pxyrvBzc1oQk+/2JMAu6G+p7dtknI9bruysURWXuQybraU9AWYk41P2rQ/Ugs1V
-         KCxO0AsJuqMRVrwiHYTBB1bwM8dzGrwTw+I2FuHbRzUP2Mdhb2OLUMXYWcNu2LS9HUSM
-         o/iArU0Mr099iYvhHaRGgPLkM2XevIGWNnpUQKOQ1d+f4UwWeBsVd7zpHvgp1Gst8iud
-         sCxw==
+        b=hxpRljSMtWhlvVTpffp4qhvMX1mdxLX6f0iMxptJuN7hUOC5AHsbLalFs+KtKDLB/V
+         YL6y4BRukmSd0p99UL6RuVK4dHIwnPQgujw5EkR0OwSLbuHb6cHKrRpJ9I9XehRsNagY
+         rxVhoRNaj3NwPAkQz+yOOdny8t4nvLbSgWrNevsCNIQB2QmDSOJnPiGn8C2yAhJBBcU6
+         SA3gEspw8HLI8LBXCjAdHDMxYTIUo9jpwo1cNNTJfUxHkX/I3V3In9OZhaglBBrdlzyT
+         s8Fv+oSbk5r/Z+poak4UteeUno8QRtJmD4t+F9iexuoY0lyXqxIis3Td5/onXebHC4tY
+         tBtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
         bh=a6SU4e7qioZa1MSGn21iWR1ma/iTKUTYpUuysCGcy14=;
-        b=kglUL90z0RfbasyeGYAKssoXe+I5GCfYMQ4pcN1dpFIS3uZt8BYXpZYZofrtDBpCzq
-         IHpRRd63g3aUMSDfDh57OPNvMwA9kUZSiC8RxYJeZe2S9sLQLazi8GYSIF62GVHk+Foo
-         JSnTCC89T41lUtvS84pxNW3g429OyL+wYxCAEaRmihaevbVQ7rXTfeoI6nz3C3c/cVQh
-         SU1xzmN7pBQaGQC3udv8i4LqGZPAEGTtJp4Yy+U8GEKsb4wZKoEYedEpDHVuZCqT4JcO
-         Z8HzJlN2LzyLDco7T5BfBc+6hgCQsr9ME599C+UlmYFIp2H6voS0qi9t7JTomr4kjGm9
-         W6pQ==
-X-Gm-Message-State: AOAM533MfD/AUSnUwFxd5H5O3IbGxDr1zt7Qg4qoGI/CTl0lmd1uyii/
-        ltnddj48tMalJtpJ1YPTdhFTKw==
-X-Google-Smtp-Source: ABdhPJxLpxYOD9HqJyjPsE+aMSLqEST9f99mfp5IwRRr6pkeOH6GEyp42pRMo63jP9uxCJQN7toCzQ==
-X-Received: by 2002:a17:90b:128e:: with SMTP id fw14mr14318007pjb.66.1597699202157;
-        Mon, 17 Aug 2020 14:20:02 -0700 (PDT)
-Received: from localhost.localdomain (S0106ac17c8c0ce82.vc.shawcable.net. [24.87.214.6])
-        by smtp.googlemail.com with ESMTPSA id q10sm20733468pfs.75.2020.08.17.14.20.01
+        b=SIiNVefce+QkjtEBPjuZQEvUQseh2DAQkf9QGRvJUGmqoaHpHKGPfwr/7TlIZclPFz
+         +T2mAqoQM4NjuHF7qkESboL9/y09oT9sqVzrBp0vRqO9zIGNfjG01zW/8XHGrMpjuX6K
+         saqkbcHoc5FBLMn4GIPgjuLxLiMIClMWZKQiCaDgqk6nysF9x1e6n/CbzYldLByOi48V
+         uj/o2mJfLaMoJdl0xXnh9I7/EBlf5FUg1YQDSZeYGwMV7XNwyQ9jYQT2KzKTJ0/+C3Zk
+         VTWSyq6xM9UuFRvUxt6Xkwf1Pw3aoKhu50wDx9gfoU3bjCbTv0Z0Tr7KsiyNfKF0dq/i
+         +mXQ==
+X-Gm-Message-State: AOAM531FH6UdozqUHMk3izr4O4JErn4N3KdTzigmYptSaNkSEpRqRxsv
+        HnmWOCYNF/thoq6O6iDTFOgfDQ==
+X-Google-Smtp-Source: ABdhPJwIgdAjrz0QhHxtqrEjKsSeJiVX/sPlDBbqWWmVnl1cgdOijSjJUBJdGuOHZxzXZMmQ6vRK4Q==
+X-Received: by 2002:a17:90a:1682:: with SMTP id o2mr16209039pja.227.1597730665925;
+        Mon, 17 Aug 2020 23:04:25 -0700 (PDT)
+Received: from tom-ThinkPad-X1-Carbon-5th.teksavvy.com ([69.172.145.184])
+        by smtp.googlemail.com with ESMTPSA id v10sm7102985pjy.3.2020.08.17.23.04.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Aug 2020 14:20:01 -0700 (PDT)
+        Mon, 17 Aug 2020 23:04:25 -0700 (PDT)
 From:   Tom Murphy <murphyt7@tcd.ie>
 To:     iommu@lists.linux-foundation.org
 Cc:     Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>,
@@ -89,12 +89,12 @@ Cc:     Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>,
         linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
-Subject: [PATCH 2/2] Handle init_iova_flush_queue failure in dma-iommu path
-Date:   Mon, 17 Aug 2020 22:19:50 +0100
-Message-Id: <20200817211951.14794-2-murphyt7@tcd.ie>
+Subject: [PATCH V2 2/2] Handle init_iova_flush_queue failure in dma-iommu path
+Date:   Tue, 18 Aug 2020 07:04:14 +0100
+Message-Id: <20200818060415.19522-2-murphyt7@tcd.ie>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200817211951.14794-1-murphyt7@tcd.ie>
-References: <20200817211951.14794-1-murphyt7@tcd.ie>
+In-Reply-To: <20200818060415.19522-1-murphyt7@tcd.ie>
+References: <20200818060415.19522-1-murphyt7@tcd.ie>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
