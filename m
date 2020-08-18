@@ -2,103 +2,130 @@ Return-Path: <SRS0=m+J2=B4=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 089A9C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Aug 2020 08:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6FAFC433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Aug 2020 13:36:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1F2C206B5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Aug 2020 08:22:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86B9B20738
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Aug 2020 13:36:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597757803;
+	bh=axA6OGzpfyAZ/ezh8rhvucD/432ettQbcxBBNuhqQS4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=kCZFd1sCh+wlCi92Bs96AsXIhHBRL5af2cAbeoqWu/Y+MdbiLsWASM0e8k6PWP8j5
+	 KtUJUX+Z8FNXe1ZTWyJsVvBqbhsakQLLtuAZih0SZbdr9qpJcoS1zeEcKxhh5akaEu
+	 TmubFpv+lO1ntpvakIg7uvLn5KcDQEVvWScF/Qr0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbgHRIW0 (ORCPT
+        id S1726845AbgHRNgl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 18 Aug 2020 04:22:26 -0400
-Received: from foss.arm.com ([217.140.110.172]:37866 "EHLO foss.arm.com"
+        Tue, 18 Aug 2020 09:36:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726043AbgHRIW0 (ORCPT
+        id S1726633AbgHRNf7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Aug 2020 04:22:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A74771FB;
-        Tue, 18 Aug 2020 01:22:25 -0700 (PDT)
-Received: from [10.37.12.68] (unknown [10.37.12.68])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA8FC3F66B;
-        Tue, 18 Aug 2020 01:22:21 -0700 (PDT)
-Subject: Re: [PATCH 16/16] memory: samsung: exynos5422-dmc: Correct white
- space issues
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Markus Mayer <mmayer@broadcom.com>,
-        Roger Quadros <rogerq@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
+        Tue, 18 Aug 2020 09:35:59 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6452C206B5;
+        Tue, 18 Aug 2020 13:35:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597757758;
+        bh=axA6OGzpfyAZ/ezh8rhvucD/432ettQbcxBBNuhqQS4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XeI/bnsFVetWO5lL/OkgNUHswpSU5zOg2XvqCYrdWkntnL+afrwkThFU8cKWd9s7Y
+         OZIBPPYoklGiXzclyOpu6hpmv2GSI22XdYfjjjwmbqg/tdmYWf74w2VXe3qrlHbbwc
+         4tCPlMNCZG/54dTWiilZEEMvI2yktQU+vTu+iQ2s=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-media@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <20200724182328.3348-1-krzk@kernel.org>
- <20200724182328.3348-17-krzk@kernel.org>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <f02d1d01-aefa-cdae-c937-7a3b6e4e3114@arm.com>
-Date:   Tue, 18 Aug 2020 09:22:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/7] media: exynos4-is: no need to check return value of debugfs_create functions
+Date:   Tue, 18 Aug 2020 15:36:04 +0200
+Message-Id: <20200818133608.462514-3-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200818133608.462514-1-gregkh@linuxfoundation.org>
+References: <20200818133608.462514-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20200724182328.3348-17-krzk@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+When calling debugfs functions, there is no need to ever check the
+return value.  The function can work or not, but the code logic should
+never do something different based on this.
 
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-media@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/media/platform/exynos4-is/fimc-is.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
-On 7/24/20 7:23 PM, Krzysztof Kozlowski wrote:
-> Remove unneeded blank line and align indentation with open parenthesis.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->   drivers/memory/samsung/exynos5422-dmc.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
-> index 0388066a7d96..62a7193e3904 100644
-> --- a/drivers/memory/samsung/exynos5422-dmc.c
-> +++ b/drivers/memory/samsung/exynos5422-dmc.c
-> @@ -1394,7 +1394,7 @@ static int exynos5_dmc_probe(struct platform_device *pdev)
->   		return PTR_ERR(dmc->base_drexi1);
->   
->   	dmc->clk_regmap = syscon_regmap_lookup_by_phandle(np,
-> -				"samsung,syscon-clk");
-> +							  "samsung,syscon-clk");
->   	if (IS_ERR(dmc->clk_regmap))
->   		return PTR_ERR(dmc->clk_regmap);
->   
-> @@ -1473,7 +1473,6 @@ static int exynos5_dmc_probe(struct platform_device *pdev)
->   		exynos5_dmc_df_profile.polling_ms = 500;
->   	}
->   
-> -
->   	dmc->df = devm_devfreq_add_device(dev, &exynos5_dmc_df_profile,
->   					  DEVFREQ_GOV_SIMPLE_ONDEMAND,
->   					  &dmc->gov_data);
-> 
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index a474014f0a0f..019bb47df915 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -756,18 +756,12 @@ static void fimc_is_debugfs_remove(struct fimc_is *is)
+ 	is->debugfs_entry = NULL;
+ }
+ 
+-static int fimc_is_debugfs_create(struct fimc_is *is)
++static void fimc_is_debugfs_create(struct fimc_is *is)
+ {
+-	struct dentry *dentry;
+-
+ 	is->debugfs_entry = debugfs_create_dir("fimc_is", NULL);
+ 
+-	dentry = debugfs_create_file("fw_log", S_IRUGO, is->debugfs_entry,
+-				     is, &fimc_is_fops);
+-	if (!dentry)
+-		fimc_is_debugfs_remove(is);
+-
+-	return is->debugfs_entry == NULL ? -EIO : 0;
++	debugfs_create_file("fw_log", S_IRUGO, is->debugfs_entry, is,
++			    &fimc_is_fops);
+ }
+ 
+ static int fimc_is_runtime_resume(struct device *dev);
+@@ -853,9 +847,7 @@ static int fimc_is_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_pm;
+ 
+-	ret = fimc_is_debugfs_create(is);
+-	if (ret < 0)
+-		goto err_sd;
++	fimc_is_debugfs_create(is);
+ 
+ 	ret = fimc_is_request_firmware(is, FIMC_IS_FW_FILENAME);
+ 	if (ret < 0)
+@@ -868,7 +860,6 @@ static int fimc_is_probe(struct platform_device *pdev)
+ 
+ err_dfs:
+ 	fimc_is_debugfs_remove(is);
+-err_sd:
+ 	fimc_is_unregister_subdevs(is);
+ err_pm:
+ 	pm_runtime_put_noidle(dev);
+-- 
+2.28.0
 
-LGTM
-
-Acked-by: Lukasz Luba <lukasz.luba@arm.com>
-
-Regards,
-Lukasz
