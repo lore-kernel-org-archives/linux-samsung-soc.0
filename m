@@ -2,88 +2,109 @@ Return-Path: <SRS0=U8aZ=B5=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A31C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 18:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25ACBC433E4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 18:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C5C2207DE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 18:14:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B48620758
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 18:16:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597860852;
-	bh=QYBuIuEm2ugvBD7nOVhqIOoABVuY8EssjEfLEHT6Y2o=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=FWYRTk9KHVKyR3OjgIPHIbiSQqSipE6XTdgRipXwIIqHLjRvjp34CESfa1sm0yTSY
-	 El/bIQPgq5Yn2tBYzYtWO4fa38Lgk44V/+CnhgTM6mi/UAQrlZz4hCULo4UL5q5U9b
-	 SGJkFt+oGA/jmHVsg6k1ZANzTHyPZdnKOpgS1gQs=
+	s=default; t=1597860997;
+	bh=NTiItKTfsa7SWpZkyww5teiQMHRP2dn+TF2yXF1ZHYs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=IZsbPzCwSiexTpEUtM+U1OkO89bm+fXGUGgk01JfbSht0fMxU6zi33GjXlbEuhb1x
+	 c36EzHti7f+MQvxRWEsZaU6dbDoMC8ib5X9g1klXT2ebaZT27Ec88PrUNN/iT4h77v
+	 Wmi9VBeAVkPhTDlW41r0UC3ZrL3b488c9rSqfME4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbgHSSOI (ORCPT
+        id S1726715AbgHSSQe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Aug 2020 14:14:08 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:42672 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbgHSSOH (ORCPT
+        Wed, 19 Aug 2020 14:16:34 -0400
+Received: from mail-ej1-f68.google.com ([209.85.218.68]:36900 "EHLO
+        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbgHSSQ3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Aug 2020 14:14:07 -0400
-Received: by mail-ed1-f68.google.com with SMTP id df16so18892817edb.9;
-        Wed, 19 Aug 2020 11:14:05 -0700 (PDT)
+        Wed, 19 Aug 2020 14:16:29 -0400
+Received: by mail-ej1-f68.google.com with SMTP id qc22so27429339ejb.4;
+        Wed, 19 Aug 2020 11:16:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TUMql2k18FTxjS/+xzZXm3YL9WZCKUoPkdoTZwrxrK8=;
-        b=Xte9k78t/JlQPcbVz8+Uu3VT/a5SDqF6g7nTtQppEj4Zn+kt7VyIBgGP1J3QRCzhpb
-         8lhfnJ2pAUW9kOtMOYA928zW0rQu0vbRmyRf7CXiCCuWb0BHtB8dVDC2cMH07zzKDifT
-         uOVU89FIgdOvaAs+8E/iIiIuj1rzHm5ap0IFpNtS/Byh35GTdzIL4DrJR9Q48ULRNxjT
-         0XwoOFMoTStaDy4aXu5XTh8PgqJ8uCT7GKQddpLZEP+4kv37GqMVVaVlWuQIxzeztg47
-         Z4lc7MUk7lLhiILbDSp/A/2E4ANHnLI0Kv3zuc1lLMzW0cfu40agwQ0vmvRaFH4ihlDh
-         lNOQ==
-X-Gm-Message-State: AOAM531wuejfYUwH8ienyS/xD44nu9ejHJkXvkagM6ANHrOsCDhXAp0e
-        i5QRL2FUqSZ7Xz3gMOJjuis=
-X-Google-Smtp-Source: ABdhPJzm9IKPaPX6c5msiAAQTSoc8HBbQJ1lELbzrQFuIrCSQOQG4wOpSWFZZFYs6II6k/SaJfvFlg==
-X-Received: by 2002:a50:ee92:: with SMTP id f18mr26020037edr.80.1597860845273;
-        Wed, 19 Aug 2020 11:14:05 -0700 (PDT)
+        bh=t3qsgE3nJwNaWUKRuhBUBlsZ1BJmez2mj7vmp2zbCgY=;
+        b=Tnlj1unBauggwSlix70f6vUjhUdPBQurt+KOWCLPYbMhjWMOU3JgapxH/J7Q5F83aH
+         4wyVyqm3s6E830ylmawbZ8hAnwGKLQ6GIqFDMUrAKT9Dmz0f3/oZqM2KHuSE2m4cGme2
+         4u9r8F82WpnY72uJNvWbog33acySLCunQPdYHxU1tKiXVOxVsLb5kaxEM5DGa8krmjMf
+         zB/874ApOtviZy3ZGQYwrxSfPrjQD8OKGAIL4HS605W3sJcjVetSYMG/pxzJSBcsKj6Z
+         8Q02KRppgs1dOLREeVe/N1/eTU1pCrC30gu/H76ZkJROpBte3yKE222ts5V9wf4IxRpD
+         Q29A==
+X-Gm-Message-State: AOAM531T6t375gWm9oDMaW1zskRmi+juImDvW0yNqLkX3tMYDMfH56J4
+        1tkfxbDPcFJVvI3tElvfKP0=
+X-Google-Smtp-Source: ABdhPJzOcN1GZKTtRnWkWtwfjQiD9o87+S+tpPQkggCUttDLUkxuxmb4YmLExAOC3PinRJdWfsIbkw==
+X-Received: by 2002:a17:906:e17:: with SMTP id l23mr25676842eji.13.1597860987481;
+        Wed, 19 Aug 2020 11:16:27 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id qk30sm19144565ejb.125.2020.08.19.11.14.04
+        by smtp.googlemail.com with ESMTPSA id gh25sm18892391ejb.109.2020.08.19.11.16.25
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Aug 2020 11:14:04 -0700 (PDT)
-Date:   Wed, 19 Aug 2020 20:14:02 +0200
+        Wed, 19 Aug 2020 11:16:26 -0700 (PDT)
+Date:   Wed, 19 Aug 2020 20:16:23 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+To:     Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3] ARM: s3c24xx: drop s3c-camif setup platform code
-Message-ID: <20200819181402.GB394@kozik-lap>
-References: <20200817164836.4613-1-krzk@kernel.org>
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Cc:     Sergio Prado <sergio.prado@e-labworks.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>
+Subject: Re: [PATCH v2 06/13] ARM: samsung: remove HAVE_S3C2410_WATCHDOG and
+ use direct dependencies
+Message-ID: <20200819181623.GA21298@kozik-lap>
+References: <20200804192654.12783-1-krzk@kernel.org>
+ <20200804192654.12783-7-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200817164836.4613-1-krzk@kernel.org>
+In-Reply-To: <20200804192654.12783-7-krzk@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Aug 17, 2020 at 06:48:36PM +0200, Krzysztof Kozlowski wrote:
-> The s3c-camif driver setup platform code does not have any users so it
-> can be safely removed.
+On Tue, Aug 04, 2020 at 09:26:47PM +0200, Krzysztof Kozlowski wrote:
+> A separate Kconfig option HAVE_S3C2410_WATCHDOG for Samsung SoCs is not
+> really needed and the s3c24xx watchdog driver can depend on Samsung ARM
+> architectures instead.
 > 
-> Along with the code W=1 compile warnings go away:
+> The "HAVE_xxx_WATCHDOG" pattern of dependency is not popular and Samsung
+> platforms are here exceptions.  All others just depend on
+> CONFIG_ARCH_xxx.
 > 
->     arch/arm/mach-s3c24xx/setup-camif.c:28:5: warning: no previous prototype for 's3c_camif_gpio_get' [-Wmissing-prototypes]
->     arch/arm/mach-s3c24xx/setup-camif.c:56:6: warning: no previous prototype for 's3c_camif_gpio_put' [-Wmissing-prototypes]
+> This makes the code slightly smaller without any change in
+> functionality.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
 
-Applied to samsung-soc for S3C cleanup.
+Applied.
 
 Best regards,
 Krzysztof
