@@ -2,182 +2,213 @@ Return-Path: <SRS0=U8aZ=B5=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8426DC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 07:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF8CC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 10:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 592872054F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 07:13:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08B172076E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 10:45:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uRThKpBV"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hq3DNU8G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbgHSG4V (ORCPT
+        id S1726919AbgHSKpO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Aug 2020 02:56:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36582 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbgHSG4U (ORCPT
+        Wed, 19 Aug 2020 06:45:14 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:35654 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbgHSKpN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Aug 2020 02:56:20 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93972C061389;
-        Tue, 18 Aug 2020 23:56:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=z2KvWaZyjho7ndXMH0ORSIBGMLsoLoOlaFmWAQTQuew=; b=uRThKpBVD38wHW4O1Rw+m7ReIB
-        6g8DAFjC8rOV8slo1/sXfbFmSe2ZQ/D8oXBbMOULOMMqWf/LF2YgmRNBRhy6xw/WNcPfIgir5jkfY
-        jMUBZNOtuPrAml+wEbfI5OBf4FZwNLx4AJ6KLMbazwwdxWKTRuJ8t4QvNBD00a4zi7/l8eeZNVCHo
-        TVip/vAV16StqtD9sSi3vWzGnecdc/pw7stv6o2Z7fnoWC5+a2JoL1fYWc4VJinapBZy26rlLUcYn
-        mtr0U1RQYeE7P0ovTcYzaF9TaQqsHNEEbAFwOJIquRs9u5qnSydzfDIu7+tbwzSbcDpvLkPbTkcNu
-        ySmmqGNA==;
-Received: from [2001:4bb8:198:f3b2:86b6:2277:f429:37a1] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k8I0q-0008Kr-1o; Wed, 19 Aug 2020 06:55:57 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        iommu@lists.linux-foundation.org
-Cc:     Tom Lendacky <thomas.lendacky@amd.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
-        netdev@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-mm@kvack.org,
-        alsa-devel@alsa-project.org
-Subject: a saner API for allocating DMA addressable pages
-Date:   Wed, 19 Aug 2020 08:55:27 +0200
-Message-Id: <20200819065555.1802761-1-hch@lst.de>
-X-Mailer: git-send-email 2.28.0
+        Wed, 19 Aug 2020 06:45:13 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 07JAhS5P011860;
+        Wed, 19 Aug 2020 05:43:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1597833808;
+        bh=FQ/P96RlmX4WL6iS15Y4+TdcnOXuRLw5jD5fcCLIPRM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=hq3DNU8GyRjS+6Rnn7skcN1ku0AwIVNiB8bZ3hVmcFFpSNzKBAUK00toMRz1KnLCE
+         NxcnurQiObMWPuedh5shwC1BCu6hnnUua5zjmH8lZNKmxDlxcyNuA14gMqszA0YtC2
+         JjErGKTXzkqOL97zfTZs8nV570QUwaiW3pOgGLAw=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 07JAhSRj019744
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 19 Aug 2020 05:43:28 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 19
+ Aug 2020 05:43:28 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 19 Aug 2020 05:43:27 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07JAhFih039071;
+        Wed, 19 Aug 2020 05:43:15 -0500
+Subject: Re: [PATCH 10/20] drm/omapdrm: Introduce GEM object functions
+To:     Thomas Zimmermann <tzimmermann@suse.de>,
+        <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+        <airlied@linux.ie>, <daniel@ffwll.ch>, <linux@armlinux.org.uk>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <l.stach@pengutronix.de>, <christian.gmeiner@gmail.com>,
+        <inki.dae@samsung.com>, <jy0922.shim@samsung.com>,
+        <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>,
+        <kgene@kernel.org>, <krzk@kernel.org>,
+        <patrik.r.jakobsson@gmail.com>, <jani.nikula@linux.intel.com>,
+        <joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
+        <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>,
+        <matthias.bgg@gmail.com>, <robdclark@gmail.com>, <sean@poorly.run>,
+        <bskeggs@redhat.com>, <eric@anholt.net>, <hjc@rock-chips.com>,
+        <heiko@sntech.de>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <rodrigosiqueiramelo@gmail.com>,
+        <hamohammed.sa@gmail.com>, <oleksandr_andrushchenko@epam.com>,
+        <hyun.kwon@xilinx.com>, <laurent.pinchart@ideasonboard.com>,
+        <michal.simek@xilinx.com>, <sumit.semwal@linaro.org>,
+        <evan.quan@amd.com>, <Hawking.Zhang@amd.com>, <tianci.yin@amd.com>,
+        <marek.olsak@amd.com>, <hdegoede@redhat.com>,
+        <andrey.grodzovsky@amd.com>, <Felix.Kuehling@amd.com>,
+        <xinhui.pan@amd.com>, <aaron.liu@amd.com>, <nirmoy.das@amd.com>,
+        <chris@chris-wilson.co.uk>, <matthew.auld@intel.com>,
+        <abdiel.janulgue@linux.intel.com>,
+        <tvrtko.ursulin@linux.intel.com>, <andi.shyti@intel.com>,
+        <sam@ravnborg.org>, <miaoqinglang@huawei.com>,
+        <emil.velikov@collabora.com>
+CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <etnaviv@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <intel-gfx@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
+        <nouveau@lists.freedesktop.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>, <xen-devel@lists.xenproject.org>
+References: <20200813083644.31711-1-tzimmermann@suse.de>
+ <20200813083644.31711-11-tzimmermann@suse.de>
+From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <8739b085-0342-4c43-60e3-a21d6b257319@ti.com>
+Date:   Wed, 19 Aug 2020 13:43:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200813083644.31711-11-tzimmermann@suse.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi all,
+Hi,
 
-this series replaced the DMA_ATTR_NON_CONSISTENT flag to dma_alloc_attrs
-with a separate new dma_alloc_pages API, which is available on all
-platforms.  In addition to cleaning up the convoluted code path, this
-ensures that other drivers that have asked for better support for
-non-coherent DMA to pages with incurring bounce buffering over can finally
-be properly supported.
+On 13/08/2020 11:36, Thomas Zimmermann wrote:
+> GEM object functions deprecate several similar callback interfaces in
+> struct drm_driver. This patch replaces the per-driver callbacks with
+> per-instance callbacks in omapdrm.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>  drivers/gpu/drm/omapdrm/omap_drv.c |  9 ---------
+>  drivers/gpu/drm/omapdrm/omap_gem.c | 16 +++++++++++++++-
+>  drivers/gpu/drm/omapdrm/omap_gem.h |  1 -
+>  3 files changed, 15 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
+> index 53d5e184ee77..2e598b8b72af 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_drv.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_drv.c
+> @@ -521,12 +521,6 @@ static int dev_open(struct drm_device *dev, struct drm_file *file)
+>  	return 0;
+>  }
+>  
+> -static const struct vm_operations_struct omap_gem_vm_ops = {
+> -	.fault = omap_gem_fault,
+> -	.open = drm_gem_vm_open,
+> -	.close = drm_gem_vm_close,
+> -};
+> -
+>  static const struct file_operations omapdriver_fops = {
+>  	.owner = THIS_MODULE,
+>  	.open = drm_open,
+> @@ -549,10 +543,7 @@ static struct drm_driver omap_drm_driver = {
+>  #endif
+>  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+>  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+> -	.gem_prime_export = omap_gem_prime_export,
+>  	.gem_prime_import = omap_gem_prime_import,
+> -	.gem_free_object_unlocked = omap_gem_free_object,
+> -	.gem_vm_ops = &omap_gem_vm_ops,
+>  	.dumb_create = omap_gem_dumb_create,
+>  	.dumb_map_offset = omap_gem_dumb_map_offset,
+>  	.ioctls = ioctls,
+> diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
+> index d0d12d5dd76c..d68dc63dea0a 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_gem.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_gem.c
+> @@ -487,7 +487,7 @@ static vm_fault_t omap_gem_fault_2d(struct drm_gem_object *obj,
+>   * vma->vm_private_data points to the GEM object that is backing this
+>   * mapping.
+>   */
+> -vm_fault_t omap_gem_fault(struct vm_fault *vmf)
+> +static vm_fault_t omap_gem_fault(struct vm_fault *vmf)
+>  {
+>  	struct vm_area_struct *vma = vmf->vma;
+>  	struct drm_gem_object *obj = vma->vm_private_data;
+> @@ -1169,6 +1169,18 @@ static bool omap_gem_validate_flags(struct drm_device *dev, u32 flags)
+>  	return true;
+>  }
+>  
+> +static const struct vm_operations_struct omap_gem_vm_ops = {
+> +	.fault = omap_gem_fault,
+> +	.open = drm_gem_vm_open,
+> +	.close = drm_gem_vm_close,
+> +};
+> +
+> +static const struct drm_gem_object_funcs omap_gem_object_funcs = {
+> +	.free = omap_gem_free_object,
+> +	.export = omap_gem_prime_export,
+> +	.vm_ops = &omap_gem_vm_ops,
+> +};
+> +
+>  /* GEM buffer object constructor */
+>  struct drm_gem_object *omap_gem_new(struct drm_device *dev,
+>  		union omap_gem_size gsize, u32 flags)
+> @@ -1236,6 +1248,8 @@ struct drm_gem_object *omap_gem_new(struct drm_device *dev,
+>  		size = PAGE_ALIGN(gsize.bytes);
+>  	}
+>  
+> +	obj->funcs = &omap_gem_object_funcs;
+> +
+>  	/* Initialize the GEM object. */
+>  	if (!(flags & OMAP_BO_MEM_SHMEM)) {
+>  		drm_gem_private_object_init(dev, obj, size);
+> diff --git a/drivers/gpu/drm/omapdrm/omap_gem.h b/drivers/gpu/drm/omapdrm/omap_gem.h
+> index 729b7812a815..9e6b5c8195d9 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_gem.h
+> +++ b/drivers/gpu/drm/omapdrm/omap_gem.h
+> @@ -69,7 +69,6 @@ struct dma_buf *omap_gem_prime_export(struct drm_gem_object *obj, int flags);
+>  struct drm_gem_object *omap_gem_prime_import(struct drm_device *dev,
+>  		struct dma_buf *buffer);
+>  
+> -vm_fault_t omap_gem_fault(struct vm_fault *vmf);
+>  int omap_gem_roll(struct drm_gem_object *obj, u32 roll);
+>  void omap_gem_cpu_sync_page(struct drm_gem_object *obj, int pgoff);
+>  void omap_gem_dma_sync_buffer(struct drm_gem_object *obj,
 
-I'm still a little unsure about the API naming, as alloc_pages sort of
-implies a struct page return value, but we return a kernel virtual
-address.  The other alternative would be to name the API
-dma_alloc_noncoherent, but the whole non-coherent naming seems to put
-people off.  As a follow up I plan to move the implementation of the
-DMA_ATTR_NO_KERNEL_MAPPING flag over to this framework as well, given
-that is also is a fundamentally non coherent allocation.  The replacement
-for that flag would then return a struct page, as it is allowed to
-actually return pages without a kernel mapping as the name suggested
-(although most of the time they will actually have a kernel mapping..)
+omap_gem_free_object() can also be made static, and removed from omap_gem.h.
 
-In addition to the conversions of the existing non-coherent DMA users
-the last three patches also convert the DMA coherent allocations in
-the NVMe driver to use this new framework through a dmapool addition.
-This was both to give me a good testing vehicle, but also because it
-should speed up the NVMe driver on platforms with non-coherent DMA
-nicely, without a downside on platforms with cache coherent DMA.
+Tested on AM5 EVM.
 
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-A git tree is available here:
+ Tomi
 
-    git://git.infradead.org/users/hch/misc.git dma_alloc_pages
-
-Gitweb:
-
-    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma_alloc_pages
-
-
-Diffstat:
- Documentation/core-api/dma-api.rst                       |   92 ++----
- Documentation/core-api/dma-attributes.rst                |    8 
- Documentation/userspace-api/media/v4l/buffer.rst         |   17 -
- Documentation/userspace-api/media/v4l/vidioc-reqbufs.rst |    1 
- arch/alpha/kernel/pci_iommu.c                            |    2 
- arch/arm/include/asm/dma-direct.h                        |    4 
- arch/arm/mm/dma-mapping-nommu.c                          |    2 
- arch/arm/mm/dma-mapping.c                                |    4 
- arch/ia64/Kconfig                                        |    3 
- arch/ia64/hp/common/sba_iommu.c                          |    2 
- arch/ia64/kernel/dma-mapping.c                           |   14 
- arch/ia64/mm/init.c                                      |    3 
- arch/mips/Kconfig                                        |    1 
- arch/mips/bmips/dma.c                                    |    4 
- arch/mips/cavium-octeon/dma-octeon.c                     |    4 
- arch/mips/include/asm/dma-direct.h                       |    4 
- arch/mips/include/asm/jazzdma.h                          |    2 
- arch/mips/jazz/jazzdma.c                                 |  102 +------
- arch/mips/loongson2ef/fuloong-2e/dma.c                   |    4 
- arch/mips/loongson2ef/lemote-2f/dma.c                    |    4 
- arch/mips/loongson64/dma.c                               |    4 
- arch/mips/mm/dma-noncoherent.c                           |   48 +--
- arch/mips/pci/pci-ar2315.c                               |    4 
- arch/mips/pci/pci-xtalk-bridge.c                         |    4 
- arch/mips/sgi-ip32/ip32-dma.c                            |    4 
- arch/parisc/Kconfig                                      |    1 
- arch/parisc/kernel/pci-dma.c                             |    6 
- arch/powerpc/include/asm/dma-direct.h                    |    4 
- arch/powerpc/kernel/dma-iommu.c                          |    2 
- arch/powerpc/platforms/ps3/system-bus.c                  |    4 
- arch/powerpc/platforms/pseries/vio.c                     |    2 
- arch/s390/pci/pci_dma.c                                  |    2 
- arch/x86/kernel/amd_gart_64.c                            |    8 
- drivers/gpu/drm/exynos/exynos_drm_gem.c                  |    2 
- drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c      |    3 
- drivers/iommu/dma-iommu.c                                |    2 
- drivers/iommu/intel/iommu.c                              |    6 
- drivers/media/common/videobuf2/videobuf2-core.c          |   36 --
- drivers/media/common/videobuf2/videobuf2-dma-contig.c    |   19 -
- drivers/media/common/videobuf2/videobuf2-dma-sg.c        |    3 
- drivers/media/common/videobuf2/videobuf2-v4l2.c          |   12 
- drivers/net/ethernet/amd/au1000_eth.c                    |   15 -
- drivers/net/ethernet/i825xx/lasi_82596.c                 |   36 +-
- drivers/net/ethernet/i825xx/lib82596.c                   |  148 +++++-----
- drivers/net/ethernet/i825xx/sni_82596.c                  |   23 -
- drivers/net/ethernet/seeq/sgiseeq.c                      |   24 -
- drivers/nvme/host/pci.c                                  |   79 ++---
- drivers/parisc/ccio-dma.c                                |    2 
- drivers/parisc/sba_iommu.c                               |    2 
- drivers/scsi/53c700.c                                    |  120 ++++----
- drivers/scsi/53c700.h                                    |    9 
- drivers/scsi/sgiwd93.c                                   |   14 
- drivers/xen/swiotlb-xen.c                                |    2 
- include/linux/dma-direct.h                               |   55 ++-
- include/linux/dma-mapping.h                              |   32 +-
- include/linux/dma-noncoherent.h                          |   21 -
- include/linux/dmapool.h                                  |   23 +
- include/linux/gfp.h                                      |    6 
- include/media/videobuf2-core.h                           |    3 
- include/uapi/linux/videodev2.h                           |    2 
- kernel/dma/Kconfig                                       |    9 
- kernel/dma/Makefile                                      |    1 
- kernel/dma/coherent.c                                    |   17 +
- kernel/dma/direct.c                                      |  112 +++++--
- kernel/dma/mapping.c                                     |  104 ++-----
- kernel/dma/ops_helpers.c                                 |   86 ++++++
- kernel/dma/pool.c                                        |    2 
- kernel/dma/swiotlb.c                                     |    4 
- kernel/dma/virt.c                                        |    2 
- mm/dmapool.c                                             |  211 +++++++++------
- sound/mips/hal2.c                                        |   58 +---
- 71 files changed, 872 insertions(+), 803 deletions(-)
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
