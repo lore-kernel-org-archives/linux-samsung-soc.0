@@ -2,63 +2,67 @@ Return-Path: <SRS0=U8aZ=B5=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CA2C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 19:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 221AAC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 19:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28422207DE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 19:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 030FC2078D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 19:18:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597864384;
-	bh=voSL+lWqcnfjcy4h1Q6c2nLbMzJXxHUzKbBfLNzsfzs=;
+	s=default; t=1597864691;
+	bh=ja9zTGvas8+5tbhcgcma7CyTxxBOwXM64Fyi2BLBCTo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=VauPPkpGkkneVKzJMI4YaV3z3Tn7MzfSrstaCgPJV7khF8CMKmWO1wVsfvOHui4Eu
-	 Ly7NSm/Iu4739cz8leLT2s7mY5JzU81jOjLsUTYh68VGRkHTB93fSvcGABhF2sOii2
-	 1I1oJVngTLtSlKF/Jd543xZ+9MtrdkA2ovyCPXCU=
+	b=csr8oGVdUTmtQDUz6luxQUQm2F/yfsBSK+bh41bJVunOiVW0PgC+ThRjXiKD2iU73
+	 jSuYW1AVByLZrDWccxvM1OIq6EblovhmqplP93pZ5y19EQPQ0HJ5FXUmfK3KeFYX9M
+	 Kp2EPAQGOUrDHoehvx6yEBibOl91B1r+5/8S/MjQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbgHSTNA (ORCPT
+        id S1727012AbgHSTSB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Aug 2020 15:13:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57638 "EHLO mail.kernel.org"
+        Wed, 19 Aug 2020 15:18:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbgHSTM7 (ORCPT
+        id S1726870AbgHSTRy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Aug 2020 15:12:59 -0400
+        Wed, 19 Aug 2020 15:17:54 -0400
 Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B2B2207BB;
-        Wed, 19 Aug 2020 19:12:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 323312078D;
+        Wed, 19 Aug 2020 19:17:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597864378;
-        bh=voSL+lWqcnfjcy4h1Q6c2nLbMzJXxHUzKbBfLNzsfzs=;
+        s=default; t=1597864673;
+        bh=ja9zTGvas8+5tbhcgcma7CyTxxBOwXM64Fyi2BLBCTo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=y9m3ROd13cymoWNcFmiOdWCsIdtgyR3zURjHnW2LQBMxuy+CNg6CP/98MyNRXY7vs
-         U3NtBlNa6h4tQ6Uw8SbZ0xsJKmEPnEC6POk7Fde5gp9nSmG1N/qw7gm4Zg62fhY3rQ
-         CPbbWExy+EqaqKZY1DgV/g29d7RxeulK19mDlOWg=
-Date:   Wed, 19 Aug 2020 20:12:27 +0100
+        b=j+F1qKX+o3xFhR8SHLgmObhhLP6ZPWEEV3vRBu8SRkLCYEn4lYrxP5NjcauFwMQY+
+         XND3i9GRBsU25re0GRwg2yw9z6Km3T0zpp2YRP757LbvI4HBsnrxxvzbrvIk5fX+If
+         MT0yayqEf+I0eU/F7u3C0A7Sm6/B+NxPZrNOV4Qs=
+Date:   Wed, 19 Aug 2020 20:17:22 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Lukasz Stelmach <l.stelmach@samsung.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
-        linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        m.szyprowski@samsung.com, b.zolnierkie@samsung.com
-Subject: Re: [PATCH 1/8] spi: spi-s3c64xx: swap s3c64xx_spi_set_cs() and
- s3c64xx_enable_datapath()
-Message-ID: <20200819191227.GG5441@sirena.org.uk>
-References: <20200819131635.GD5441@sirena.org.uk>
- <CGME20200819140203eucas1p2818858289f2394b32f3c647e47705cd2@eucas1p2.samsung.com>
- <dleftj4koy20q7.fsf%l.stelmach@samsung.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 01/41] ARM: s3c: Remove unneeded machine header
+ includes
+Message-ID: <20200819191722.GA38371@sirena.org.uk>
+References: <20200806181932.2253-1-krzk@kernel.org>
+ <20200806182059.2431-1-krzk@kernel.org>
+ <159783932455.55025.7979458249415199743.b4-ty@kernel.org>
+ <20200819190232.GA18183@kozik-lap>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pE2VAHO2njSJCslu"
+        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
 Content-Disposition: inline
-In-Reply-To: <dleftj4koy20q7.fsf%l.stelmach@samsung.com>
-X-Cookie: I wish you were a Scotch on the rocks.
+In-Reply-To: <20200819190232.GA18183@kozik-lap>
+X-Cookie: Absence makes the heart grow frantic.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -66,93 +70,61 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
---pE2VAHO2njSJCslu
-Content-Type: text/plain; charset=utf-8
+--HcAYCG3uE/tztfnV
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 19, 2020 at 04:01:52PM +0200, Lukasz Stelmach wrote:
-> It was <2020-08-19 =C5=9Bro 14:16>, when Mark Brown wrote:
-> > On Wed, Aug 19, 2020 at 02:58:22PM +0200, Krzysztof Kozlowski wrote:
-> >> On Wed, Aug 19, 2020 at 02:51:27PM +0200, Lukasz Stelmach wrote:
+On Wed, Aug 19, 2020 at 09:02:32PM +0200, Krzysztof Kozlowski wrote:
 
-> >> >     0732a9d2a155 spi/s3c64xx: Use core message handling
+> Thanks Mark.  Could you provide me with a tag/branch with these to pull
+> into samsung-soc?
 
-> >> Then describe at least this... maybe Mark knows why he brough back old
-> >> code after refactoring?
+The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5:
 
-> > I'm not sure what's being referred to as being lost in the second commit
-> > TBH.
+  Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
 
-> Order of enable_cs() and enable_datapath(). The order 0f5a sets makes
-> (for a reaseon I don't know) my devices work. In the latter commit,
-> which rewrites "everything", enable_datapath() is called before what
-> later (in aa4964c4eb3e) became s3c64xx_spi_set_cs().
+are available in the Git repository at:
 
-That's doesn't look like what the changes do.  Note that the enable_cs()
-function that got moved in 0f5a751ace250097 (spi/s3c64xx: Enable GPIO
-/CS prior to starting hardware) does not touch the chip registers at
-all, it only manipulates GPIOs, code that was subsequently factored out
-into the core.  The write to the _SLAVE_SEL register has so far as I can
-see always been after enable_datapath() right back to the initial
-commit, it just got made more complex for the Exynos7 controller (I'm
-guessing your new one might be an ancestor of that?) in bf77cba95f8c06
-(spi: s3c64xx: add support for exynos7 SPI controller) and then factored
-out in the commit you mention above.
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git tags/samsung-platdrv-boards
 
-Are you sure your new ordering works for all controller revisions?
-According to the comment the _set_cs() is what's actually kicking off
-the transfer which suggests that the data/DMA needed to be ready
-beforehand to avoid an underflow or something (and nobody reported
-issues before, I know people have done things like downloaded firmwares
-using this controller...), this could be something that got changed
-between revisions.
+for you to fetch changes up to dcacbc0f9bb89ac48d5b602d27a8630e641294cc:
 
-Please include human readable descriptions of things like commits and
-issues being discussed in e-mail in your mails, this makes them much
-easier for humans to read especially when they have no internet access.
+  ASoC: samsung: s3c2412-i2s: avoid hardcoded S3C2410_PA_IIS (2020-08-19 20:15:45 +0100)
 
-> > The first commit is simple code motion rather than a correctness
-> > thing, and more related to the handling of GPIO controlled chip
-> > selects according to the description (which people should be using
-> > with that controller anyway where possible IIRC, the native chip
-> > select has too many assumptions about what it's doing).
+----------------------------------------------------------------
+ASoC: Convert Samsung drivers to platform drivers
 
-> Funny, but without the automatic CS control (see the next patch in this
-> series) my stuff does not work.
+----------------------------------------------------------------
+Arnd Bergmann (4):
+      ASoC: samsung: h1940: turn into platform driver
+      ASoC: samsung: neo1973: turn into platform driver
+      ASoC: samsung: rx1950: turn into platform driver
+      ASoC: samsung: s3c2412-i2s: avoid hardcoded S3C2410_PA_IIS
 
-There's two things, there's changing the controller registers and there
-is the use of the signal coming out of the controller as the chip select
-that the device on the SPI bus sees.  Most systems have pinmuxing which
-allows the internal chip select to just not be connected to anything
-which is what I'm talking about in the above text, IIRC all versions of
-the controller have unfortunate assumptions about how chip selects
-should work which make GPIO controlled chip selects much better.
+ arch/arm/mach-s3c24xx/mach-gta02.c  | 17 ++++++++
+ arch/arm/mach-s3c24xx/mach-h1940.c  | 18 ++++++++
+ arch/arm/mach-s3c24xx/mach-rx1950.c | 16 +++++++
+ sound/soc/samsung/h1940_uda1380.c   | 71 ++++++++++---------------------
+ sound/soc/samsung/neo1973_wm8753.c  | 85 ++++++++++++-------------------------
+ sound/soc/samsung/rx1950_uda1380.c  | 72 ++++++++++---------------------
+ sound/soc/samsung/s3c-i2s-v2.c      |  3 +-
+ sound/soc/samsung/s3c-i2s-v2.h      |  3 +-
+ sound/soc/samsung/s3c2412-i2s.c     |  2 +-
+ 9 files changed, 126 insertions(+), 161 deletions(-)
 
-> > I don't know that I ever actually used a system that used the native
-> > chip select as the actual chip select.  Perhaps some quirk was
-> > introduced where the chip select signal does something?
-
-> > The commit is also lacking a description of what the issues that are
-> > being fixed are.
-
-> On Exynos3250 DMA transfers from SPI longer than 512 fail.
-
-Could you expand on "fail" please?
-
---pE2VAHO2njSJCslu
+--HcAYCG3uE/tztfnV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl89eZoACgkQJNaLcl1U
-h9BwZwgAgLyMhDbuvcsndqZiqJpOqaOMWwtUanWbPlI1mWRQOocopn6pWYcaerCp
-KiqYol0vX1AkJbxGnIFMx9Tr0HPbEsBi5rnuePo/5h+siW8A+cHeNieB1SMV8LdP
-h9Kw7yRUaLAZXjg5FvFqIiZeV0o5hVI4jX7qgmgnDc7cLhjlAvz7NFxXiDUWDphJ
-5ynpg5iQ2VjlSSi9emiWXGZCBPelkoLCUEFh9Nhydur4jKek0NaqyrY9k4YTn03I
-V/ncmgOlEtR6UjFFdedlaMB4LNPDWm+Gyj/m2FRvPwTYNpkqkSTk6MboQsCFhUlc
-o4K4LnbfTa1bzvPZ6aXn5R6cPx/cfQ==
-=i5Ty
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl89esEACgkQJNaLcl1U
+h9Dkwwf/W8mvyfntwp5cuKoybqCa0Ov7tbgr3EOc/YKmnIEHA3IAqAGldEFbc314
+kN/6CKhvm49l+Xven7KJmbXDBoEvDe+N96Ejvw/5Mihu3voTChdK/waoxbCAomCl
++o3hIjuj6X+qbfUVO5HyHiklFJoRTRd2i87dJ8dOxeqfrxR+JQAgkTWciQlGrF4x
+sxAVUyJHzNFvy+vaRyiTzY7hRMuST1i5ciBlABm4EsMjWJ59rOW3hCrFAvQ5dZyP
+LGck2oVKyfHdcNll2lLCcUSJ0plO4iPG4Gg1wxrA6Bi7ZSbvM9HWd6iMG1elca0B
+dXmCebRsD0xYBH2xgdLlW/wdfolaXw==
+=Wokk
 -----END PGP SIGNATURE-----
 
---pE2VAHO2njSJCslu--
+--HcAYCG3uE/tztfnV--
