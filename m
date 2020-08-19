@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D498C433F7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 06:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE38C43457
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 06:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11AA222BEA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 06:57:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DF1D21775
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Aug 2020 06:58:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MIBdEjIo"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u6vSRQC9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbgHSG5U (ORCPT
+        id S1728110AbgHSG6A (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Aug 2020 02:57:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36714 "EHLO
+        Wed, 19 Aug 2020 02:58:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727824AbgHSG5D (ORCPT
+        with ESMTP id S1728070AbgHSG5w (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Aug 2020 02:57:03 -0400
+        Wed, 19 Aug 2020 02:57:52 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65414C061343;
-        Tue, 18 Aug 2020 23:57:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B62D4C061342;
+        Tue, 18 Aug 2020 23:57:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=X8i7nxueqjYiXXABx6iAbSqyBXetjeuy5DnMYgOTSbg=; b=MIBdEjIoLTHUEBHUGUn2hxEK+5
-        BevUewh66/hAJEodxv37XHol1UkTJvsD7JDl+I4rW2ckgBABThtPp31SAHD8ICQgZg9JKLfxRcH4k
-        kvTpdncuF+HUCxaXssYT/w0O4ikj+Sa+Lyaln7QVFgqhX6bxyjj0pvaSW2wvw4j8/oBw/WQ88dOqN
-        Q3mRJmv4cM/nFVeWy5kNDxSA93Axsk8QBY2jkY9bRnSUGTtFij8Kiwsj0O2Rue4Vw4+6MrVBOLl4l
-        sw31W2/w6nJQFhVEeODf45+zE6F1ZoCoe3LFOUxDAEiAGB56VL+rjQdReZWkrm5RWIPjt6oDiXNpz
-        MmYdslVQ==;
+        bh=x1sUcmGO9MrhIj1ZnTCGxtvCXn3JVCX8pLSqOEGJVeQ=; b=u6vSRQC9fVad37bBaSkK60SHWJ
+        6EwwbLS18F5aFivn2ChzghfBPrByYl1r51d8Jv8lVMGJ7tcALRFJdo3GWptQYoQ4UUuHQTb9UE51O
+        qTlro6hdElitB7fQIcnMrk2i6qm1OdlP4j38VhfvBmeLtT+8rwS4hsN90yiBnmwrguN69ZTHCHvu8
+        yVuHNDXJuW3tANjr0ql4qsWOdE2wfuOh8g7/5vm5R+uVEwAnleVZQvwn02t9aADNVkJHvbYeU0YMJ
+        JEjWPsC90vMzrSnzJkxDzWYR9Ok7+cLqFWAIN8EcfwA6y18GUJ0g3xj02d3MCThoC0GeH1v8No6S7
+        MnLsgqzg==;
 Received: from [2001:4bb8:198:f3b2:86b6:2277:f429:37a1] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k8I18-0008NZ-2u; Wed, 19 Aug 2020 06:56:14 +0000
+        id 1k8I1m-000050-VI; Wed, 19 Aug 2020 06:56:55 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
@@ -59,9 +59,9 @@ Cc:     Tom Lendacky <thomas.lendacky@amd.com>, linux-doc@vger.kernel.org,
         netdev@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-mm@kvack.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH 09/28] MIPS/jazzdma: remove the unused vdma_remap function
-Date:   Wed, 19 Aug 2020 08:55:36 +0200
-Message-Id: <20200819065555.1802761-10-hch@lst.de>
+Subject: [PATCH 24/28] 53c700: convert from dma_cache_sync to dma_sync_single_for_device
+Date:   Wed, 19 Aug 2020 08:55:51 +0200
+Message-Id: <20200819065555.1802761-25-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200819065555.1802761-1-hch@lst.de>
 References: <20200819065555.1802761-1-hch@lst.de>
@@ -73,106 +73,45 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Use the proper modern API to transfer cache ownership for incoherent DMA.
+
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/mips/include/asm/jazzdma.h |  2 -
- arch/mips/jazz/jazzdma.c        | 70 ---------------------------------
- 2 files changed, 72 deletions(-)
+ drivers/scsi/53c700.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/include/asm/jazzdma.h b/arch/mips/include/asm/jazzdma.h
-index d13f940022d5f9..c831da7fa89803 100644
---- a/arch/mips/include/asm/jazzdma.h
-+++ b/arch/mips/include/asm/jazzdma.h
-@@ -10,8 +10,6 @@
-  */
- extern unsigned long vdma_alloc(unsigned long paddr, unsigned long size);
- extern int vdma_free(unsigned long laddr);
--extern int vdma_remap(unsigned long laddr, unsigned long paddr,
--		      unsigned long size);
- extern unsigned long vdma_phys2log(unsigned long paddr);
- extern unsigned long vdma_log2phys(unsigned long laddr);
- extern void vdma_stats(void);		/* for debugging only */
-diff --git a/arch/mips/jazz/jazzdma.c b/arch/mips/jazz/jazzdma.c
-index 014773f0bfcd74..fe40dbed04c1d6 100644
---- a/arch/mips/jazz/jazzdma.c
-+++ b/arch/mips/jazz/jazzdma.c
-@@ -209,76 +209,6 @@ int vdma_free(unsigned long laddr)
+diff --git a/drivers/scsi/53c700.c b/drivers/scsi/53c700.c
+index 521950d0731e4a..57a08c42d00325 100644
+--- a/drivers/scsi/53c700.c
++++ b/drivers/scsi/53c700.c
+@@ -269,18 +269,25 @@ NCR_700_get_SXFER(struct scsi_device *SDp)
+ 					      spi_period(SDp->sdev_target));
+ }
  
- EXPORT_SYMBOL(vdma_free);
++static inline dma_addr_t virt_to_dma(struct NCR_700_Host_Parameters *h, void *p)
++{
++	return h->pScript + ((uintptr_t)p - (uintptr_t)h->script);
++}
++
+ static inline void dma_sync_to_dev(struct NCR_700_Host_Parameters *h,
+ 		void *addr, size_t size)
+ {
+ 	if (h->noncoherent)
+-		dma_cache_sync(h->dev, addr, size, DMA_TO_DEVICE);
++		dma_sync_single_for_device(h->dev, virt_to_dma(h, addr),
++					   size, DMA_BIDIRECTIONAL);
+ }
  
--/*
-- * Map certain page(s) to another physical address.
-- * Caller must have allocated the page(s) before.
-- */
--int vdma_remap(unsigned long laddr, unsigned long paddr, unsigned long size)
--{
--	int first, pages;
--
--	if (laddr > 0xffffff) {
--		if (vdma_debug)
--			printk
--			    ("vdma_map: Invalid logical address: %08lx\n",
--			     laddr);
--		return -EINVAL; /* invalid logical address */
--	}
--	if (paddr > 0x1fffffff) {
--		if (vdma_debug)
--			printk
--			    ("vdma_map: Invalid physical address: %08lx\n",
--			     paddr);
--		return -EINVAL; /* invalid physical address */
--	}
--
--	pages = (((paddr & (VDMA_PAGESIZE - 1)) + size) >> 12) + 1;
--	first = laddr >> 12;
--	if (vdma_debug)
--		printk("vdma_remap: first=%x, pages=%x\n", first, pages);
--	if (first + pages > VDMA_PGTBL_ENTRIES) {
--		if (vdma_debug)
--			printk("vdma_alloc: Invalid size: %08lx\n", size);
--		return -EINVAL;
--	}
--
--	paddr &= ~(VDMA_PAGESIZE - 1);
--	while (pages > 0 && first < VDMA_PGTBL_ENTRIES) {
--		if (pgtbl[first].owner != laddr) {
--			if (vdma_debug)
--				printk("Trying to remap other's pages.\n");
--			return -EPERM;	/* not owner */
--		}
--		pgtbl[first].frame = paddr;
--		paddr += VDMA_PAGESIZE;
--		first++;
--		pages--;
--	}
--
--	/*
--	 * Update translation table
--	 */
--	r4030_write_reg32(JAZZ_R4030_TRSTBL_INV, 0);
--
--	if (vdma_debug > 2) {
--		int i;
--		pages = (((paddr & (VDMA_PAGESIZE - 1)) + size) >> 12) + 1;
--		first = laddr >> 12;
--		printk("LADDR: ");
--		for (i = first; i < first + pages; i++)
--			printk("%08x ", i << 12);
--		printk("\nPADDR: ");
--		for (i = first; i < first + pages; i++)
--			printk("%08x ", pgtbl[i].frame);
--		printk("\nOWNER: ");
--		for (i = first; i < first + pages; i++)
--			printk("%08x ", pgtbl[i].owner);
--		printk("\n");
--	}
--
--	return 0;
--}
--
- /*
-  * Translate a physical address to a logical address.
-  * This will return the logical address of the first
+ static inline void dma_sync_from_dev(struct NCR_700_Host_Parameters *h,
+ 		void *addr, size_t size)
+ {
+ 	if (h->noncoherent)
+-		dma_cache_sync(h->dev, addr, size, DMA_FROM_DEVICE);
++		dma_sync_single_for_device(h->dev, virt_to_dma(h, addr), size,
++					   DMA_BIDIRECTIONAL);
+ }
+ 
+ struct Scsi_Host *
 -- 
 2.28.0
 
