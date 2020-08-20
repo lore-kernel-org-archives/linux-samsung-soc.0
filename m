@@ -2,166 +2,95 @@ Return-Path: <SRS0=tRmH=B6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1474C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 15:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC84C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 16:08:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C04F422D71
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 15:55:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ebljxtw8"
+	by mail.kernel.org (Postfix) with ESMTP id 8F28B208A9
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 16:08:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597939717;
+	bh=ayiAKFJuyEbSeqgfRdhVADjtAmxMdAjwNZQLdiLmsuo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ZdMspqWqJ+JijS+qqknL/xqrt83mU4GK8a+5lXSE7G+bx8eHtJvvsdTxT8tbiVgx3
+	 5yJsnAY5mE4ryiIIYhjX9RudZ8kjX/N4GHlkeUniTsKK30UzzIiLPFCSsgJr3XYCwA
+	 11JHXfn5fTpIwn8KDKJhubJ9WAAWzNLFEp+FAb/A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728209AbgHTPzS (ORCPT
+        id S1729485AbgHTQI3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Aug 2020 11:55:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60174 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726731AbgHTPzQ (ORCPT
+        Thu, 20 Aug 2020 12:08:29 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33771 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729256AbgHTQI2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Aug 2020 11:55:16 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F250C061385;
-        Thu, 20 Aug 2020 08:55:15 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id f18so4058327wmc.0;
-        Thu, 20 Aug 2020 08:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4gsAD01Lu/a6HHuOZz2Js+H3gnol7gh8tJ3zMDutdDc=;
-        b=ebljxtw8UtQQ032VUUuCGK812jroSyyHZHtTYoOMrud/UydGhZ3UMgBUN9qe9aAvk4
-         EHygzdAvntJ9+R/Y3KA0p2V8fSCNXm6RFtsp3+CZNKezVJQ8X2aAKOeBHvVnuXgBzp1O
-         Z4mdnxldoQFQbYRJYgGPkdtLHKlnlIzkaDXqkqTa3laBrCC8GM7uy1HvEv9ndhSWNfl7
-         gtrl6II21EVeL5x1fdWpBOS2x6s/Ea7ce8pWBuPej62eiBTIeFwATx0cPhjPkPFtdmbp
-         cpVIJwigFocq1ZQgZzWrnaG3CAmE48jwTnhO+RO8Uw3CBwiyc46QOxMJqP5MrYAE3v9X
-         TZPg==
+        Thu, 20 Aug 2020 12:08:28 -0400
+Received: by mail-wm1-f66.google.com with SMTP id f18so4080176wmc.0;
+        Thu, 20 Aug 2020 09:08:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4gsAD01Lu/a6HHuOZz2Js+H3gnol7gh8tJ3zMDutdDc=;
-        b=M2YK8C25wXwiSlREDrwaje+Pc+ecbq1cXWwfA8Fk0e9DOJid8OOBnn1mdwH3HLoous
-         spe0JTBTU3BNH/1lUxcQP12SqaQP8TYy2nFQR2zIJ3JzMtU+1MdVXEvzUuz+ynyXOHiF
-         NNTrAesVGO/237I03JgLbMlQPOIN5jPIWKW4dzmQMu3ka0K3Syc1BFhzgpSjAKYmIIUS
-         Ro13v0tmcQNrOn33wGG5SB10T/CLuBTvcn77p1DsTRl0j6dZ9dv/YDzJlp/D+ELCDXbC
-         G7VxZ0V+V37l9EphncDzikuoaGxD/q+oXognZs/fniQ6Xkup3rk+ZulWtNICnYb73WzT
-         76mQ==
-X-Gm-Message-State: AOAM530phEGQ7c76G/posaBLJMHDsZTTmg628O0OV4MvnhllB/svZFvP
-        zyvsTVBmsgak4Hyt5yvUQEi8fi8A0NvkmP5s33Q=
-X-Google-Smtp-Source: ABdhPJymrLvmSo2mjxf1P+WzawgnYC5TC99FhFkAg2iJ/mZCttmTx/9BBIkjwyymKsU721sVZprDLyZXm16x0EfQzm0=
-X-Received: by 2002:a7b:c257:: with SMTP id b23mr3974646wmj.164.1597938913876;
- Thu, 20 Aug 2020 08:55:13 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wuRU/uq8S53phIeWuIyFmBKk+PYK0W37wHIS7Hlciek=;
+        b=YlYXW6lFe8zpxR07x6CB799xf28bj0o9IlKFSNq/Q6UfbS5YpBlCK0vaQrXEddwoXc
+         JqeqzUUi8lCBq0V7WWLp8QrlZFSxsIKSEMN6Cfz5/NpxXmL7nbjilaxq46FeBT6yua6u
+         5IUd5x/UwvPURqXi8SuxM9rcsY+UUaSGxEHug2ttfYnmj6H6RKqcET6yX00dOIV/I3AS
+         FAjUTuf8TR60wwOT9KmJdt4aQbKdhuG2vhoh2trsqR6ETLUzTF1bQG81WKE7D06FbUD7
+         olWdF4Jllw2bo5MoHUXvfWV3o+eGvndc4hUD8Gk3lv4bMfdfgMKmlN09RSrLfRr96THG
+         7bdA==
+X-Gm-Message-State: AOAM531edItLLJqQOE1w3BEzP3rRZJM0RZRiyi55Zl2p53xZnQZM2siq
+        8+cJ8TC9+VLNCCmQeoFK/b4=
+X-Google-Smtp-Source: ABdhPJxoa/dTHTt5Vl/8wlFD8PPP1Dm01I/o1aTvx5QxWoQ4fHjzcI5g0ZadKHebFBvRuvW9rUV/sQ==
+X-Received: by 2002:a1c:ed16:: with SMTP id l22mr3915573wmh.80.1597939706102;
+        Thu, 20 Aug 2020 09:08:26 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.216])
+        by smtp.googlemail.com with ESMTPSA id c10sm5038030wrn.24.2020.08.20.09.08.17
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Aug 2020 09:08:18 -0700 (PDT)
+Date:   Thu, 20 Aug 2020 18:08:16 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] leds: s3c24xx: Remove unused machine header include
+Message-ID: <20200820160816.GB21395@kozik-lap>
+References: <20200803091936.24984-1-krzk@kernel.org>
+ <20200805215730.h6434lief5drnnu2@duo.ucw.cz>
 MIME-Version: 1.0
-References: <cover.1597931875.git.robin.murphy@arm.com> <93d7de3533cfd952aecd6198b9221d7a58c0e521.1597931876.git.robin.murphy@arm.com>
-In-Reply-To: <93d7de3533cfd952aecd6198b9221d7a58c0e521.1597931876.git.robin.murphy@arm.com>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Thu, 20 Aug 2020 08:55:02 -0700
-Message-ID: <CAF6AEGuKa4P=gfus08CdfT2H5pG6a2PBumGb=Pw3qvD=NWueig@mail.gmail.com>
-Subject: Re: [PATCH 10/18] iommu/msm: Add IOMMU_DOMAIN_DMA support
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        digetx@gmail.com, Suman Anna <s-anna@ti.com>,
-        Will Deacon <will@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "moderated list:ARM/S5P EXYNOS AR..." 
-        <linux-samsung-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
-        linux-media@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        "moderated list:ARM/Mediatek SoC..." 
-        <linux-mediatek@lists.infradead.org>, linux-tegra@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        t-kristo@ti.com,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200805215730.h6434lief5drnnu2@duo.ucw.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Side note, I suspect we'll end up needing something like
-0e764a01015dfebff8a8ffd297d74663772e248a .. if someone can dig a 32b
-device out of the closet and dust it off, the fix is easy enough.
-Just wanted to mention that here so anyone with a 32b device could
-find what is needed.
+On Wed, Aug 05, 2020 at 11:57:30PM +0200, Pavel Machek wrote:
+> On Mon 2020-08-03 11:19:36, Krzysztof Kozlowski wrote:
+> > The driver includes machine header for GPIO registers but actually does
+> > not use them.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> Thanks, applied.
 
-BR,
--R
+Hi Pavel,
 
-On Thu, Aug 20, 2020 at 8:09 AM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> Now that arch/arm is wired up for default domains and iommu-dma,
-> implement the corresponding driver-side support for DMA domains.
->
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> ---
->  drivers/iommu/msm_iommu.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
-> index 3615cd6241c4..f34efcbb0b2b 100644
-> --- a/drivers/iommu/msm_iommu.c
-> +++ b/drivers/iommu/msm_iommu.c
-> @@ -8,6 +8,7 @@
->  #include <linux/kernel.h>
->  #include <linux/init.h>
->  #include <linux/platform_device.h>
-> +#include <linux/dma-iommu.h>
->  #include <linux/errno.h>
->  #include <linux/io.h>
->  #include <linux/io-pgtable.h>
-> @@ -314,13 +315,16 @@ static struct iommu_domain *msm_iommu_domain_alloc(unsigned type)
->  {
->         struct msm_priv *priv;
->
-> -       if (type != IOMMU_DOMAIN_UNMANAGED)
-> +       if (type != IOMMU_DOMAIN_UNMANAGED && type != IOMMU_DOMAIN_DMA)
->                 return NULL;
->
->         priv = kzalloc(sizeof(*priv), GFP_KERNEL);
->         if (!priv)
->                 goto fail_nomem;
->
-> +       if (type == IOMMU_DOMAIN_DMA && iommu_get_dma_cookie(&priv->domain))
-> +               goto fail_nomem;
-> +
->         INIT_LIST_HEAD(&priv->list_attached);
->
->         priv->domain.geometry.aperture_start = 0;
-> @@ -339,6 +343,7 @@ static void msm_iommu_domain_free(struct iommu_domain *domain)
->         struct msm_priv *priv;
->         unsigned long flags;
->
-> +       iommu_put_dma_cookie(domain);
->         spin_lock_irqsave(&msm_iommu_lock, flags);
->         priv = to_msm_priv(domain);
->         kfree(priv);
-> --
-> 2.28.0.dirty
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+I am confused because I had impression this will go into v5.9-rc1 but
+it's not there.  My further S3C cleanup depends on it [1] and now
+applying of the patches stuck in the middle.
+
+I could take the patch through samsung-soc along with the rest of the
+series or pull from stable tag (but tag with only that patch...).
+
+Best regards,
+Krzysztof
+
