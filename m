@@ -2,31 +2,31 @@ Return-Path: <SRS0=tRmH=B6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B75C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 15:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89877C433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 15:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C31562184D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 15:10:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73E0321734
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 15:10:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728788AbgHTPJw (ORCPT
+        id S1728879AbgHTPKD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Aug 2020 11:09:52 -0400
-Received: from foss.arm.com ([217.140.110.172]:41146 "EHLO foss.arm.com"
+        Thu, 20 Aug 2020 11:10:03 -0400
+Received: from foss.arm.com ([217.140.110.172]:41298 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728757AbgHTPJk (ORCPT
+        id S1728799AbgHTPJz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Aug 2020 11:09:40 -0400
+        Thu, 20 Aug 2020 11:09:55 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81AC414BF;
-        Thu, 20 Aug 2020 08:09:39 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B02CC1529;
+        Thu, 20 Aug 2020 08:09:54 -0700 (PDT)
 Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DFEF43F6CF;
-        Thu, 20 Aug 2020 08:09:35 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 200693F6CF;
+        Thu, 20 Aug 2020 08:09:51 -0700 (PDT)
 From:   Robin Murphy <robin.murphy@arm.com>
 To:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk
 Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
@@ -42,9 +42,9 @@ Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
         linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 12/18] iommu/tegra-gart: Add IOMMU_DOMAIN_DMA support
-Date:   Thu, 20 Aug 2020 16:08:31 +0100
-Message-Id: <516b33118d489e56499ff8c64c019709b744110c.1597931876.git.robin.murphy@arm.com>
+Subject: [PATCH 16/18] staging/media/tegra-vde: Clean up IOMMU workaround
+Date:   Thu, 20 Aug 2020 16:08:35 +0100
+Message-Id: <3535c205b9bce52556abbf2f63384fb38e009df9.1597931876.git.robin.murphy@arm.com>
 X-Mailer: git-send-email 2.28.0.dirty
 In-Reply-To: <cover.1597931875.git.robin.murphy@arm.com>
 References: <cover.1597931875.git.robin.murphy@arm.com>
@@ -55,54 +55,44 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Now that arch/arm is wired up for default domains and iommu-dma,
-implement the corresponding driver-side support for DMA domains.
+Now that arch/arm is wired up for default domains and iommu-dma, we no
+longer need to work around the arch-private mapping.
 
 Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/iommu/tegra-gart.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/staging/media/tegra-vde/iommu.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index fac720273889..e081387080f6 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -9,6 +9,7 @@
+diff --git a/drivers/staging/media/tegra-vde/iommu.c b/drivers/staging/media/tegra-vde/iommu.c
+index 6af863d92123..4f770189ed34 100644
+--- a/drivers/staging/media/tegra-vde/iommu.c
++++ b/drivers/staging/media/tegra-vde/iommu.c
+@@ -10,10 +10,6 @@
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
  
- #define dev_fmt(fmt)	"gart: " fmt
+-#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
+-#include <asm/dma-iommu.h>
+-#endif
+-
+ #include "vde.h"
  
-+#include <linux/dma-iommu.h>
- #include <linux/io.h>
- #include <linux/iommu.h>
- #include <linux/moduleparam.h>
-@@ -145,16 +146,22 @@ static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
- {
- 	struct iommu_domain *domain;
+ int tegra_vde_iommu_map(struct tegra_vde *vde,
+@@ -70,14 +66,6 @@ int tegra_vde_iommu_init(struct tegra_vde *vde)
+ 	if (!vde->group)
+ 		return 0;
  
--	if (type != IOMMU_DOMAIN_UNMANAGED)
-+	if (type != IOMMU_DOMAIN_UNMANAGED && type != IOMMU_DOMAIN_DMA)
- 		return NULL;
- 
- 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
--	if (domain) {
--		domain->geometry.aperture_start = gart_handle->iovmm_base;
--		domain->geometry.aperture_end = gart_handle->iovmm_end - 1;
--		domain->geometry.force_aperture = true;
-+	if (!domain)
-+		return NULL;
-+
-+	if (type == IOMMU_DOMAIN_DMA && iommu_get_dma_cookie(domain)) {
-+		kfree(domain);
-+		return NULL;
- 	}
- 
-+	domain->geometry.aperture_start = gart_handle->iovmm_base;
-+	domain->geometry.aperture_end = gart_handle->iovmm_end - 1;
-+	domain->geometry.force_aperture = true;
-+
- 	return domain;
- }
- 
+-#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
+-	if (dev->archdata.mapping) {
+-		struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
+-
+-		arm_iommu_detach_device(dev);
+-		arm_iommu_release_mapping(mapping);
+-	}
+-#endif
+ 	vde->domain = iommu_domain_alloc(&platform_bus_type);
+ 	if (!vde->domain) {
+ 		err = -ENOMEM;
 -- 
 2.28.0.dirty
 
