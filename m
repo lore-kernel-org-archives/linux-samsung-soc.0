@@ -2,110 +2,98 @@ Return-Path: <SRS0=tRmH=B6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A97C2C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 05:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DEAC433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 05:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A93C2184D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 05:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00A9520758
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 05:04:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725882AbgHTFCW (ORCPT
+        id S1726729AbgHTFEP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Aug 2020 01:02:22 -0400
-Received: from verein.lst.de ([213.95.11.211]:40485 "EHLO verein.lst.de"
+        Thu, 20 Aug 2020 01:04:15 -0400
+Received: from mga09.intel.com ([134.134.136.24]:45660 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725780AbgHTFCU (ORCPT
+        id S1725780AbgHTFEO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Aug 2020 01:02:20 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 7DCC068BEB; Thu, 20 Aug 2020 07:02:14 +0200 (CEST)
-Date:   Thu, 20 Aug 2020 07:02:14 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Tomasz Figa <tfiga@chromium.org>, Christoph Hellwig <hch@lst.de>,
-        alsa-devel@alsa-project.org, linux-ia64@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        nouveau@lists.freedesktop.org, linux-nvme@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        linux-mm@kvack.org, Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        linux-scsi@vger.kernel.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Pawel Osciak <pawel@osciak.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-parisc@vger.kernel.org, netdev@vger.kernel.org,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        linux-mips@vger.kernel.org
-Subject: Re: [PATCH 05/28] media/v4l2: remove
- V4L2-FLAG-MEMORY-NON-CONSISTENT
-Message-ID: <20200820050214.GA4815@lst.de>
-References: <20200819065555.1802761-1-hch@lst.de> <20200819065555.1802761-6-hch@lst.de> <CAAFQd5COLxjydDYrfx47ht8tj-aNPiaVnC+WyQA7nvpW4gs=ww@mail.gmail.com> <62e4f4fc-c8a5-3ee8-c576-fe7178cb4356@arm.com> <CAAFQd5AcCTDguB2C9KyDiutXWoEvBL8tL7+a==Uo8vj_8CLOJw@mail.gmail.com> <2b32f1d8-16f7-3352-40a5-420993d52fb5@arm.com>
+        Thu, 20 Aug 2020 01:04:14 -0400
+IronPort-SDR: LAI45mVG2xLY0ONW7CGjQsLhPLCGtL3dptEEGuQRbXqfRYMIXjsQuWJw9aLMCRtpIqNI+w5zZe
+ UAFa2pXdSGIQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9718"; a="156307267"
+X-IronPort-AV: E=Sophos;i="5.76,332,1592895600"; 
+   d="scan'208";a="156307267"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2020 22:04:14 -0700
+IronPort-SDR: 5ew4P0zvnHwOu7lJzv+xOjVYlGdfsv79mm0uX03gaziLHUvawKN3Sx8MLKVZCyYgrqcDwdHdi1
+ 5Fv9ZawvzNRg==
+X-IronPort-AV: E=Sophos;i="5.76,332,1592895600"; 
+   d="scan'208";a="441846299"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.3]) ([10.239.13.3])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2020 22:04:11 -0700
+Subject: Re: [clk] a2499eff4b: BUG:kernel_NULL_pointer_dereference,address
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>, 0day robot <lkp@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org
+References: <20200811084943.GC7488@shao2-debian>
+ <159780681339.334488.10402512224012716827@swboyd.mtv.corp.google.com>
+From:   Rong Chen <rong.a.chen@intel.com>
+Message-ID: <be4c9098-98a2-e9c0-b787-57fa7d7da24f@intel.com>
+Date:   Thu, 20 Aug 2020 13:03:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2b32f1d8-16f7-3352-40a5-420993d52fb5@arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <159780681339.334488.10402512224012716827@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 19, 2020 at 03:07:04PM +0100, Robin Murphy wrote:
->> FWIW, I asked back in time what the plan is for non-coherent
->> allocations and it seemed like DMA_ATTR_NON_CONSISTENT and
->> dma_sync_*() was supposed to be the right thing to go with. [2] The
->> same thread also explains why dma_alloc_pages() isn't suitable for the
->> users of dma_alloc_attrs() and DMA_ATTR_NON_CONSISTENT.
->
-> AFAICS even back then Christoph was implying getting rid of NON_CONSISTENT 
-> and *replacing* it with something streaming-API-based - i.e. this series - 
-> not encouraging mixing the existing APIs. It doesn't seem impossible to 
-> implement a remapping version of this new dma_alloc_pages() for 
-> IOMMU-backed ops if it's really warranted (although at that point it seems 
-> like "non-coherent" vb2-dc starts to have significant conceptual overlap 
-> with vb2-sg).
 
-You can alway vmap the returned pages from dma_alloc_pages, but it will
-make cache invalidation hell - you'll need to use
-invalidate_kernel_vmap_range and flush_kernel_vmap_range to properly
-handle virtually indexed caches.
 
-Or with remapping you mean using the iommu do de-scatter/gather?
+On 8/19/20 11:13 AM, Stephen Boyd wrote:
+> Quoting kernel test robot (2020-08-11 01:49:44)
+>> Greeting,
+>>
+>> FYI, we noticed the following commit (built with gcc-9):
+>>
+>> commit: a2499eff4b30a85d56e4466e6ca4746c72a347c6 ("[PATCH v2] clk: samsung: Keep top BPLL mux on Exynos542x enabled")
+>> url: https://github.com/0day-ci/linux/commits/Marek-Szyprowski/clk-samsung-Keep-top-BPLL-mux-on-Exynos542x-enabled/20200807-213239
+>> base: https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git clk-next
+>>
+>> in testcase: trinity
+>> with following parameters:
+>>
+>>          runtime: 300s
+>>
+>> test-description: Trinity is a linux system call fuzz tester.
+>> test-url: http://codemonkey.org.uk/projects/trinity/
+>>
+>>
+>> on test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> Cool robot. But this doesn't look related to the patch at all?
 
-You can implement that trivially implement it yourself for the iommu
-case:
+Hi Stephen,
 
-{
-	merge_boundary = dma_get_merge_boundary(dev);
-	if (!merge_boundary || merge_boundary > chunk_size - 1) {
-		/* can't coalesce */
-		return -EINVAL;
-	}
+Sorry for the inconvenience, you are right, we run more times
+on the parent commit and can reproduce the error too.
 
-	
-	nents = DIV_ROUND_UP(total_size, chunk_size);
-	sg = sgl_alloc();
-	for_each_sgl() {
-		sg->page = __alloc_pages(get_order(chunk_size))
-		sg->len = chunk_size;
-	}
-	dma_map_sg(sg, DMA_ATTR_SKIP_CPU_SYNC);
-	// you are guaranteed to get a single dma_addr out
-}
+Best Regards,
+Rong Chen
 
-Of course this still uses the scatterlist structure with its annoying
-mix of input and output parametes, so I'd rather not expose it as
-an official API at the DMA layer.
+
