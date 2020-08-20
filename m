@@ -2,100 +2,77 @@ Return-Path: <SRS0=tRmH=B6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A813C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 16:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A803FC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 16:51:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71387206DA
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 16:10:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597939832;
-	bh=DyrCEp5nrQ/CxeXFhMvsA6dwCNA1rJFhGyz1ylzDTcc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=muB3XRTatHGsBZdpdTRdlNtvuRJAoBu4eUdci/c0WYPTVUrci8xbUd4MLwGOUjiTs
-	 X5XIfUgCNVflR+Wfg4nCG7xuHGAJq0cGGlazI+y+KvNX5mhHwvelVhvS/fdgifvR21
-	 /PQS/3QJpG5dlfhiYAXWUvrsGGmjPwCsat2FCOOs=
+	by mail.kernel.org (Postfix) with ESMTP id 86DC2207DE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 16:51:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729513AbgHTQKb (ORCPT
+        id S1729891AbgHTQvT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Aug 2020 12:10:31 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45161 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728600AbgHTQKa (ORCPT
+        Thu, 20 Aug 2020 12:51:19 -0400
+Received: from verein.lst.de ([213.95.11.211]:43051 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727946AbgHTQvS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Aug 2020 12:10:30 -0400
-Received: by mail-wr1-f66.google.com with SMTP id z18so2525882wrm.12;
-        Thu, 20 Aug 2020 09:10:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WGXlRSR7lXq30rpskgPe8rcnGUPknRy+AGgctdPl6fQ=;
-        b=cqdiASi+CcM24JXeTH6gTVz5emn8VaMKOIxgwGKH/bDlGzS8Bp+3iJjObuv12zdu07
-         V8RY+eOUHPV8LQzI1G4VS01SYJ4Q7Rr5DtoPSzOmfSwsfoX3rdBI0XyWCb82KuQoftaT
-         TuQXskR2244jTCfRPYXopl5xEsw0SFfuVnVF6JwfRo4E8FXhQSCRgH0BDyF0JZUnlKWv
-         FvcxTnXtNLZTbg+1g53LaKdli/D4DvsqRCA/yPJykbA7B/Wy6RsX+PPPbuZBe9/Jl8fT
-         +0W8+DxVB1SInJu7HX/qxgDcR6+CFQkziZK4Y+No/au3ifOMEdQbr64YunNJZJtcbLpI
-         rTBA==
-X-Gm-Message-State: AOAM532IO/G+1bAZAQ4cei/CDUWyEYrum/oliPRkWT8tlhRtllz4IbFd
-        PvjhmtZ23ibUgPg9zHG3hD8=
-X-Google-Smtp-Source: ABdhPJzzEo0e/uhopSopFUEZ1f+CHEWVnNWLPGvTmnswbcDSZQ5RTkJRIf4eysf0ZAY1iJuXv5NSqA==
-X-Received: by 2002:adf:e902:: with SMTP id f2mr3860928wrm.174.1597939828227;
-        Thu, 20 Aug 2020 09:10:28 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id q7sm5271008wra.56.2020.08.20.09.10.27
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Aug 2020 09:10:27 -0700 (PDT)
-Date:   Thu, 20 Aug 2020 18:10:25 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: s3c24xx: Remove unused machine header include
-Message-ID: <20200820161025.GA19865@kozik-lap>
-References: <20200803091936.24984-1-krzk@kernel.org>
- <20200805215730.h6434lief5drnnu2@duo.ucw.cz>
- <20200820160816.GB21395@kozik-lap>
+        Thu, 20 Aug 2020 12:51:18 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 01D2C68AFE; Thu, 20 Aug 2020 18:51:13 +0200 (CEST)
+Date:   Thu, 20 Aug 2020 18:51:12 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        alsa-devel@alsa-project.org, linux-ia64@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        nouveau@lists.freedesktop.org, linux-nvme@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        linux-mm@kvack.org, Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        linux-scsi@vger.kernel.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Matt Porter <mporter@kernel.crashing.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Pawel Osciak <pawel@osciak.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-parisc@vger.kernel.org, netdev@vger.kernel.org,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        linux-mips@vger.kernel.org
+Subject: Re: [PATCH 05/28] media/v4l2: remove
+ V4L2-FLAG-MEMORY-NON-CONSISTENT
+Message-ID: <20200820165112.GB12693@lst.de>
+References: <20200819065555.1802761-1-hch@lst.de> <20200819065555.1802761-6-hch@lst.de> <CAAFQd5COLxjydDYrfx47ht8tj-aNPiaVnC+WyQA7nvpW4gs=ww@mail.gmail.com> <62e4f4fc-c8a5-3ee8-c576-fe7178cb4356@arm.com> <CAAFQd5AcCTDguB2C9KyDiutXWoEvBL8tL7+a==Uo8vj_8CLOJw@mail.gmail.com> <20200819135738.GB17098@lst.de> <CAAFQd5BvpzJTycFvjntmX9W_d879hHFX+rJ8W9EK6+6cqFaVMA@mail.gmail.com> <20200820044533.GA4570@lst.de> <CAAFQd5CEsC2h-oEdZOPTkUQ4WfFL0yyYu9dE5UscEVpLyMLrCg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200820160816.GB21395@kozik-lap>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAAFQd5CEsC2h-oEdZOPTkUQ4WfFL0yyYu9dE5UscEVpLyMLrCg@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 20, 2020 at 06:08:16PM +0200, Krzysztof Kozlowski wrote:
-> On Wed, Aug 05, 2020 at 11:57:30PM +0200, Pavel Machek wrote:
-> > On Mon 2020-08-03 11:19:36, Krzysztof Kozlowski wrote:
-> > > The driver includes machine header for GPIO registers but actually does
-> > > not use them.
-> > > 
-> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > 
-> > Thanks, applied.
+On Thu, Aug 20, 2020 at 12:09:34PM +0200, Tomasz Figa wrote:
+> > I'm happy to Cc and active participant in the discussion.  I'm not
+> > going to add all reviewers because even with the trimmed CC list
+> > I'm already hitting the number of receipients limit on various lists.
 > 
-> Hi Pavel,
+> Fair enough.
 > 
-> I am confused because I had impression this will go into v5.9-rc1 but
-> it's not there.  My further S3C cleanup depends on it [1] and now
-> applying of the patches stuck in the middle.
-> 
-> I could take the patch through samsung-soc along with the rest of the
-> series or pull from stable tag (but tag with only that patch...).
+> We'll make your job easier and just turn my MAINTAINERS entry into a
+> maintainer. :)
 
-... and the missing link:
-[1] https://marc.info/?l=dri-devel&m=159793916332137&w=2
-
-Best regards,
-Krzysztof
-
+Sounds like a plan.
