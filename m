@@ -2,93 +2,107 @@ Return-Path: <SRS0=tRmH=B6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDF8C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 21:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DD9C433E4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 23:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DD92207BB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 21:52:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADA7C207DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 23:01:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbgHTVwB (ORCPT
+        id S1728605AbgHTXBq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Aug 2020 17:52:01 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:45420 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbgHTVwB (ORCPT
+        Thu, 20 Aug 2020 19:01:46 -0400
+Received: from foss.arm.com ([217.140.110.172]:46972 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728368AbgHTXBq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Aug 2020 17:52:01 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 8ECAC1C0BB3; Thu, 20 Aug 2020 23:51:57 +0200 (CEST)
-Date:   Thu, 20 Aug 2020 23:51:56 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>,
+        Thu, 20 Aug 2020 19:01:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C6C6331B;
+        Thu, 20 Aug 2020 16:01:44 -0700 (PDT)
+Received: from [10.57.40.122] (unknown [10.57.40.122])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 98AAB3F71F;
+        Thu, 20 Aug 2020 16:01:39 -0700 (PDT)
+Subject: Re: [PATCH 17/18] media/omap3isp: Clean up IOMMU workaround
+To:     Sakari Ailus <sakari.ailus@iki.fi>
+Cc:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk,
+        will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        agross@kernel.org, bjorn.andersson@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, vdumpa@nvidia.com,
+        digetx@gmail.com, matthias.bgg@gmail.com, yong.wu@mediatek.com,
+        geert+renesas@glider.be, magnus.damm@gmail.com, t-kristo@ti.com,
+        s-anna@ti.com, laurent.pinchart@ideasonboard.com,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-leds@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: s3c24xx: Remove unused machine header include
-Message-ID: <20200820215156.GB18063@amd>
-References: <20200803091936.24984-1-krzk@kernel.org>
- <20200805215730.h6434lief5drnnu2@duo.ucw.cz>
- <20200820160816.GB21395@kozik-lap>
+References: <cover.1597931875.git.robin.murphy@arm.com>
+ <11d8419744e4e744a9448180801b0c4683328afd.1597931876.git.robin.murphy@arm.com>
+ <20200820165339.GK7145@valkosipuli.retiisi.org.uk>
+ <be010209-4abc-ba48-4e31-185427776a13@arm.com>
+ <20200820195536.GL7145@valkosipuli.retiisi.org.uk>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <5190a40e-ad24-d98e-3588-b95592ea2db3@arm.com>
+Date:   Fri, 21 Aug 2020 00:01:38 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ftEhullJWpWg/VHq"
-Content-Disposition: inline
-In-Reply-To: <20200820160816.GB21395@kozik-lap>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20200820195536.GL7145@valkosipuli.retiisi.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On 2020-08-20 20:55, Sakari Ailus wrote:
+> On Thu, Aug 20, 2020 at 06:25:19PM +0100, Robin Murphy wrote:
+>> On 2020-08-20 17:53, Sakari Ailus wrote:
+>>> Hi Robin,
+>>>
+>>> On Thu, Aug 20, 2020 at 04:08:36PM +0100, Robin Murphy wrote:
+>>>> Now that arch/arm is wired up for default domains and iommu-dma, devices
+>>>> behind IOMMUs will get mappings set up automatically as appropriate, so
+>>>> there is no need for drivers to do so manually.
+>>>>
+>>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>>>
+>>> Thanks for the patch.
+>>
+>> Many thanks for testing so quickly!
+>>
+>>> I haven't looked at the details but it seems that this causes the buffer
+>>> memory allocation to be physically contiguous, which causes a failure to
+>>> allocate video buffers of entirely normal size. I guess that was not
+>>> intentional?
+>>
+>> Hmm, it looks like the device ends up with the wrong DMA ops, which implies
+>> something didn't go as expected with the earlier IOMMU setup and default
+>> domain creation. Chances are that either I missed some subtlety in the
+>> omap_iommu change, or I've fundamentally misjudged how the ISP probing works
+>> and it never actually goes down the of_iommu_configure() path in the first
+>> place. Do you get any messages from the IOMMU layer earlier on during boot?
+> 
+> I do get these:
+> 
+> [    2.934936] iommu: Default domain type: Translated
+> [    2.940917] omap-iommu 480bd400.mmu: 480bd400.mmu registered
+> [    2.946899] platform 480bc000.isp: Adding to iommu group 0
+> 
 
---ftEhullJWpWg/VHq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So that much looks OK, if there are no obvious errors. Unfortunately 
+there's no easy way to tell exactly what of_iommu_configure() is doing 
+(beyond enabling a couple of vague debug messages). The first thing I'll 
+do tomorrow is double-check whether it's really working on my boards 
+here, or whether I was just getting lucky with CMA... (I assume you 
+don't have CMA enabled if you're ending up in remap_allocator_alloc())
 
-On Thu 2020-08-20 18:08:16, Krzysztof Kozlowski wrote:
-> On Wed, Aug 05, 2020 at 11:57:30PM +0200, Pavel Machek wrote:
-> > On Mon 2020-08-03 11:19:36, Krzysztof Kozlowski wrote:
-> > > The driver includes machine header for GPIO registers but actually do=
-es
-> > > not use them.
-> > >=20
-> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >=20
-> > Thanks, applied.
->=20
-> Hi Pavel,
->=20
-> I am confused because I had impression this will go into v5.9-rc1 but
-> it's not there.  My further S3C cleanup depends on it [1] and now
-> applying of the patches stuck in the middle.
-
-It was too late for -rc1 at that moment. It is on my for-next branch
-now.
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---ftEhullJWpWg/VHq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl8+8HwACgkQMOfwapXb+vLFNgCfSV6+xtBjjojcryBGj5H+qmEY
-Nw8Ani6mjaqSwajJN0MdWMWPYz5VJOOs
-=CAcR
------END PGP SIGNATURE-----
-
---ftEhullJWpWg/VHq--
+Robin.
