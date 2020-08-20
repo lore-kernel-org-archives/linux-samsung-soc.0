@@ -2,98 +2,98 @@ Return-Path: <SRS0=tRmH=B6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DEAC433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 05:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A93C433EA
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 05:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 00A9520758
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 05:04:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D01E20786
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Aug 2020 05:15:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbgHTFEP (ORCPT
+        id S1725977AbgHTFPT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Aug 2020 01:04:15 -0400
-Received: from mga09.intel.com ([134.134.136.24]:45660 "EHLO mga09.intel.com"
+        Thu, 20 Aug 2020 01:15:19 -0400
+Received: from verein.lst.de ([213.95.11.211]:40549 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725780AbgHTFEO (ORCPT
+        id S1725798AbgHTFPT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Aug 2020 01:04:14 -0400
-IronPort-SDR: LAI45mVG2xLY0ONW7CGjQsLhPLCGtL3dptEEGuQRbXqfRYMIXjsQuWJw9aLMCRtpIqNI+w5zZe
- UAFa2pXdSGIQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9718"; a="156307267"
-X-IronPort-AV: E=Sophos;i="5.76,332,1592895600"; 
-   d="scan'208";a="156307267"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2020 22:04:14 -0700
-IronPort-SDR: 5ew4P0zvnHwOu7lJzv+xOjVYlGdfsv79mm0uX03gaziLHUvawKN3Sx8MLKVZCyYgrqcDwdHdi1
- 5Fv9ZawvzNRg==
-X-IronPort-AV: E=Sophos;i="5.76,332,1592895600"; 
-   d="scan'208";a="441846299"
-Received: from shao2-debian.sh.intel.com (HELO [10.239.13.3]) ([10.239.13.3])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2020 22:04:11 -0700
-Subject: Re: [clk] a2499eff4b: BUG:kernel_NULL_pointer_dereference,address
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Lukasz Luba <lukasz.luba@arm.com>, 0day robot <lkp@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org
-References: <20200811084943.GC7488@shao2-debian>
- <159780681339.334488.10402512224012716827@swboyd.mtv.corp.google.com>
-From:   Rong Chen <rong.a.chen@intel.com>
-Message-ID: <be4c9098-98a2-e9c0-b787-57fa7d7da24f@intel.com>
-Date:   Thu, 20 Aug 2020 13:03:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 20 Aug 2020 01:15:19 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id A894C68BEB; Thu, 20 Aug 2020 07:15:12 +0200 (CEST)
+Date:   Thu, 20 Aug 2020 07:15:12 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Matt Porter <mporter@kernel.crashing.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        alsa-devel@alsa-project.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-ia64@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-parisc@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        nouveau@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>
+Subject: Re: [PATCH 19/28] dma-mapping: replace DMA_ATTR_NON_CONSISTENT
+ with dma_{alloc, free}_pages
+Message-ID: <20200820051512.GA5141@lst.de>
+References: <20200819065555.1802761-1-hch@lst.de> <20200819065555.1802761-20-hch@lst.de> <CAAFQd5Bbp-eAVKS1MKS8xtrT4ZoOmBPfZyw9mys=eOmDb6r8Lw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <159780681339.334488.10402512224012716827@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAFQd5Bbp-eAVKS1MKS8xtrT4ZoOmBPfZyw9mys=eOmDb6r8Lw@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Wed, Aug 19, 2020 at 05:03:52PM +0200, Tomasz Figa wrote:
+> >
+> > -Warning: These pieces of the DMA API should not be used in the
+> > -majority of cases, since they cater for unlikely corner cases that
+> > -don't belong in usual drivers.
+> > +These APIs allow to allocate pages that can be used like normal pages
+> > +in the kernel direct mapping, but are guaranteed to be DMA addressable.
+> 
+> Could we elaborate a bit more on what "like normal pages in kernel
+> direct mapping" mean from the driver perspective?
 
+It mostly means you can call virt_to_page and then do anything you'd
+do with a page struct.  Unlike dma_alloc_attrs that just return an
+opaque virtual address that the caller is not allowed to poke into.
 
-On 8/19/20 11:13 AM, Stephen Boyd wrote:
-> Quoting kernel test robot (2020-08-11 01:49:44)
->> Greeting,
->>
->> FYI, we noticed the following commit (built with gcc-9):
->>
->> commit: a2499eff4b30a85d56e4466e6ca4746c72a347c6 ("[PATCH v2] clk: samsung: Keep top BPLL mux on Exynos542x enabled")
->> url: https://github.com/0day-ci/linux/commits/Marek-Szyprowski/clk-samsung-Keep-top-BPLL-mux-on-Exynos542x-enabled/20200807-213239
->> base: https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git clk-next
->>
->> in testcase: trinity
->> with following parameters:
->>
->>          runtime: 300s
->>
->> test-description: Trinity is a linux system call fuzz tester.
->> test-url: http://codemonkey.org.uk/projects/trinity/
->>
->>
->> on test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-> Cool robot. But this doesn't look related to the patch at all?
+> There is one aspect that the existing dma_alloc_attrs() handles, but
+> this new function doesn't: IOMMU support. The function will always
+> allocate a physically-contiguous block memory, which is a costly
+> operation and not even guaranteed to succeed, even if enough free
+> memory is available.
+> 
+> Modern SoCs employ IOMMUs to avoid the need to allocate
+> physically-contiguous memory and those happen to be also the devices
+> that could benefit from non-coherent allocations a lot. One of the
+> tasks of the DMA API was making it possible to allocate suitable
+> memory for a given device, without having the driver know about the
+> SoC integration details, such as the presence of an IOMMU.
 
-Hi Stephen,
-
-Sorry for the inconvenience, you are right, we run more times
-on the parent commit and can reproduce the error too.
-
-Best Regards,
-Rong Chen
-
-
+This is completely out of scope for this API exactly because it
+guarantees a page in the direct mapping.  But see my previous mail
+in reply to Robin on how you can implement the funtionality you
+want right now without any help from the dma-mapping subsystem.
