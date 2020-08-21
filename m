@@ -2,138 +2,117 @@ Return-Path: <SRS0=7p8p=B7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 540BEC433F4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Aug 2020 03:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7F9C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Aug 2020 06:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28DEA20714
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Aug 2020 03:57:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 449A9207DA
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Aug 2020 06:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597982224;
-	bh=dXLJiyFUjrApQZf6a9/aA8cJQMutVZ5QE89WFWGyUTI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JZVyj5DzF+UYZaZdkAjFD+4LP6866XuJrJezQm/w6I7sV7rC8VmDl4uU8O1HZmYo7
-	 qwXeesFVeladr+HnkDDeT44dxwSi6EHokt+z8shBqqEcDe6mHpzZ03VhLb7uUVnmiU
-	 n97eCIftp4uGeR5byiUh3xptwrRgbf1pvWVAHVBE=
+	s=default; t=1597991503;
+	bh=nlYLizszK9f9v583kG2r3NUZircSq8a0b7ncAj+8nCE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=kkIz5bKjKcdhWRCoI4u1QdOUIdnyVkPYTT4TAJRPL3lZ+kxhQ46N3BIEGxcG2vkF1
+	 AXwpIzqxSZg1e+XUoTeevvjQW1Q5cwWnEmbZaiTb4AsoJHTRyy9n6b5ywY6LrAbKUU
+	 HS5Ifhyc89qUt2kDRG8AdyJ/jvjhPZcOkdD/KE+g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbgHUD5C (ORCPT
+        id S1726345AbgHUGbm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Aug 2020 23:57:02 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33190 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727945AbgHUD4x (ORCPT
+        Fri, 21 Aug 2020 02:31:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42060 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725951AbgHUGbm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Aug 2020 23:56:53 -0400
-Received: by mail-io1-f65.google.com with SMTP id g14so497662iom.0;
-        Thu, 20 Aug 2020 20:56:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=by4oX7Q9EHMVJaM1a51OAzD7P0ljQOmX5mYz/PVurNU=;
-        b=e9oRTBo+oi/goTO6LY21bODGrGLzrAEKxudNPPG14SPRS1I5nPkNLwx/kjI27q1PuL
-         GqC76iVQcNNt9zPfMvIXwy6vhJPuKM4U3EWVmIPNWXiH2k/Ga9/F7cwVTSz3y4sGYqr7
-         xHxLL4VTtpMuJI7kX3vp4MV+njwL/15J2rOT0phcK9g+6XHKtBxcr1nNFlRoc5jpslFl
-         aRtB50rm8Z3Y9soSr12ayUCBtV77rQ1Ex94V3X6qwvSPbAHmA3wBFUMQqFJ8fcQOOAQI
-         U4xzUXxk99jTGHwiVDrwRlcZrweNf7z36Bnwf/lhKnGV4Z6tMhvB5GEEdGt0TaoxZzU8
-         Jilg==
-X-Gm-Message-State: AOAM530+ZLWtEzfopPt473t9xjc+RWLy+zMfVETmVkxMpMgv4xisu/uj
-        8E0mOSm+F4wM4J5qzDim1gCNDBGqjw==
-X-Google-Smtp-Source: ABdhPJxM5kjSHd3L5b8T/on1Z1mm06cBCvBOTiUQ8rjsJmv63ck+8CPmCubjjHoxbemoW0uKPGWg4g==
-X-Received: by 2002:a02:aa87:: with SMTP id u7mr925566jai.13.1597982212144;
-        Thu, 20 Aug 2020 20:56:52 -0700 (PDT)
-Received: from xps15.herring.priv ([64.188.179.249])
-        by smtp.googlemail.com with ESMTPSA id 79sm413923ilc.9.2020.08.20.20.56.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Aug 2020 20:56:51 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     linux-pci@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dilip Kota <eswara.kota@linux.intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Yue Wang <yue.wang@Amlogic.com>, Marc Zyngier <maz@kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 38/40] PCI: dwc/intel-gw: Drop unused max_width
-Date:   Thu, 20 Aug 2020 21:54:18 -0600
-Message-Id: <20200821035420.380495-39-robh@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200821035420.380495-1-robh@kernel.org>
-References: <20200821035420.380495-1-robh@kernel.org>
+        Fri, 21 Aug 2020 02:31:42 -0400
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D848B20732;
+        Fri, 21 Aug 2020 06:31:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597991501;
+        bh=nlYLizszK9f9v583kG2r3NUZircSq8a0b7ncAj+8nCE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=icHK5nj5ReIwEwsVtVm7zKaYGoNmULev+0nWZpsolGw0fskgZbyej0dJjTasvCJSl
+         dyVIbbFqKdtRskezltcj/zCCcfZtT8K9Q6wL39HyrObOtZ2QmFy5ZvDRlDs24PSRB4
+         OuHhul5XgUWTX5ZquBlRv7fRWehPVzRQGg81x9TI=
+Received: by mail-ej1-f52.google.com with SMTP id bo3so1004135ejb.11;
+        Thu, 20 Aug 2020 23:31:40 -0700 (PDT)
+X-Gm-Message-State: AOAM530bQ0KMHn63PX+jdczb14N/tE4X2urd7fx6GNrBQoVI/+OVC7/a
+        Ca0YB2LGtJYljHP/ouXDT1xUkn2NtPXijx/uRAI=
+X-Google-Smtp-Source: ABdhPJzmsRwacUgF9wp7sh4Uo7RCl0p0/BWQy6sNA1lK7shnUeEfA2XLjnyNUqiOPykidWM5/kQR7817vJYiPMs1QXw=
+X-Received: by 2002:a17:906:9989:: with SMTP id af9mr1305560ejc.385.1597991499427;
+ Thu, 20 Aug 2020 23:31:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200708153420.29484-1-lukasz.luba@arm.com> <20200708153420.29484-3-lukasz.luba@arm.com>
+ <20200817155021.GC15887@kozik-lap> <2099aea9-5a63-6e5b-d7f9-4e6476584461@arm.com>
+In-Reply-To: <2099aea9-5a63-6e5b-d7f9-4e6476584461@arm.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 21 Aug 2020 08:31:28 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPc063m_YcouAO2Q9piJ_GV1Fh9XeS3ZZ3KR=ZyMxPKZ5w@mail.gmail.com>
+Message-ID: <CAJKOXPc063m_YcouAO2Q9piJ_GV1Fh9XeS3ZZ3KR=ZyMxPKZ5w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: exynos: Remove interrupts from DMC
+ controller in Exynos5422
+To:     Lukasz Luba <lukasz.luba@arm.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, willy.mh.wolff.ml@gmail.com,
+        k.konieczny@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        s.nawrocki@samsung.com, kgene@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-'max_width' is read, but never used, so let's remove it.
+On Mon, 17 Aug 2020 at 19:17, Lukasz Luba <lukasz.luba@arm.com> wrote:
+>
+> Hi Krzysztof,
+>
+> On 8/17/20 4:50 PM, Krzysztof Kozlowski wrote:
+> > On Wed, Jul 08, 2020 at 04:34:20PM +0100, Lukasz Luba wrote:
+> >> The interrupts in Dynamic Memory Controller in Exynos5422 and Odroid
+> >> XU3-family boards are no longer needed. They have been used in order
+> >> to workaround some issues in scheduled work in devfreq. Now when the
+> >> devfreq framework design is improved, remove the interrupt driven
+> >> approach and rely on devfreq monitoring mechanism with fixed intervals.
+> >>
+> >> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
+> >> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+> >> ---
+> >>   arch/arm/boot/dts/exynos5420.dtsi | 3 ---
+> >>   1 file changed, 3 deletions(-)
+> >
+> > I think the dependencies were merged so this can be safely applied
+> > without bisectability problems?
+>
+> I have created v2 of that fix and it got merged
+> via Chanwoo's tree, the commit 4fc9a0470d2dc37028
+> https://lkml.org/lkml/2020/7/10/1048
+>
+> That commit switched the driver default mode from 'irq driven' to
+> new devfreq monitoring mechanism. Furthermore, when the driver is
+> built as a module, you can try to use the 'irq mode', but for this
+> you would need the DT IRQs description (this $subject tries to remove).
+>
+> I would like to keep this IRQ mode for experimentation, as I
+> described in answers to Bartek's questions:
+> https://lkml.org/lkml/2020/7/14/315
+>
+> Unfortunately, I am quite busy and won't make any progress before the
+> LPC.
 
-Cc: Dilip Kota <eswara.kota@linux.intel.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/pci/controller/dwc/pcie-intel-gw.c | 4 ----
- 1 file changed, 4 deletions(-)
+None of these were the actual answer to my question, unless by "v2 of
+that fix and it got merged" means the dependencies?
 
-diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
-index 807e1fa1bd6f..333f11561807 100644
---- a/drivers/pci/controller/dwc/pcie-intel-gw.c
-+++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
-@@ -67,7 +67,6 @@ struct intel_pcie_port {
- 	void __iomem		*app_base;
- 	struct gpio_desc	*reset_gpio;
- 	u32			rst_intrvl;
--	u32			max_width;
- 	u32			n_fts;
- 	struct clk		*core_clk;
- 	struct reset_control	*core_rst;
-@@ -133,9 +132,6 @@ static void intel_pcie_link_setup(struct intel_pcie_port *lpp)
- 	u32 val;
- 	u8 offset = dw_pcie_find_capability(&lpp->pci, PCI_CAP_ID_EXP);
- 
--	val = pcie_rc_cfg_rd(lpp, offset + PCI_EXP_LNKCAP);
--	lpp->max_width = FIELD_GET(PCI_EXP_LNKCAP_MLW, val);
--
- 	val = pcie_rc_cfg_rd(lpp, offset + PCI_EXP_LNKCTL);
- 
- 	val &= ~(PCI_EXP_LNKCTL_LD | PCI_EXP_LNKCTL_ASPMC);
--- 
-2.25.1
+I'll drop it from the queue. Please resend if it is valid.
 
+Best regards,
+Krzysztof
