@@ -2,107 +2,162 @@ Return-Path: <SRS0=7p8p=B7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F465C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Aug 2020 08:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 162AFC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Aug 2020 13:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06C7D2087D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Aug 2020 08:07:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597997256;
-	bh=LaMlJ8OWitxR94LYzLAW+/aCIQp70S1xt+7fdRecGkM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Ug5wgV7RZLumlhbCG1lSSlxB0nv2TQ2rUXVgP7hM7S1wxBfp6G2dpQlKteXClycHr
-	 B4XtC8z/pFXHC7H6cDwbFQ5rcbZiiV2JJdoNM8MjI1wyGJE4r/dCLbRJI8qR7jXCSC
-	 cZPQrFTqWmZVFlXn0TAkoc5/ylpLoA8J1rpOCWBA=
+	by mail.kernel.org (Postfix) with ESMTP id D573220855
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Aug 2020 13:52:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VVysEcMM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbgHUIHf (ORCPT
+        id S1728776AbgHUNwJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 21 Aug 2020 04:07:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35258 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727840AbgHUIHd (ORCPT
+        Fri, 21 Aug 2020 09:52:09 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57467 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727929AbgHUNwF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Aug 2020 04:07:33 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DA4C2078D;
-        Fri, 21 Aug 2020 08:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597997252;
-        bh=LaMlJ8OWitxR94LYzLAW+/aCIQp70S1xt+7fdRecGkM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lvzNVTn3kK+R6rhX3v2r5kGGWFVmcbdZ4VJtDADKQTwh2Aes+1MU5H+LAHiN8OQ+H
-         ket2nq3Gs0f+y7KGGrtoh30Khl+NLrKZB5sMVZ4StNWFcKM28IvThm25QAGBbg8Bw9
-         DAQdnRs+m1kjIK5XxPYS+MsULpHW1cs7ylBpEn4U=
-Date:   Fri, 21 Aug 2020 09:07:25 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk,
-        inki.dae@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        agross@kernel.org, bjorn.andersson@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, vdumpa@nvidia.com,
-        digetx@gmail.com, matthias.bgg@gmail.com, yong.wu@mediatek.com,
-        geert+renesas@glider.be, magnus.damm@gmail.com, t-kristo@ti.com,
-        s-anna@ti.com, laurent.pinchart@ideasonboard.com,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/18] iommu/arm-smmu: Remove arch/arm workaround
-Message-ID: <20200821080724.GA20060@willie-the-truck>
-References: <cover.1597931875.git.robin.murphy@arm.com>
- <ef39be82b98d2471c9e99c82d0eeda37ba30e4fa.1597931876.git.robin.murphy@arm.com>
+        Fri, 21 Aug 2020 09:52:05 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200821135202euoutp02ac6a7165d379c0865fc848d18431d039~tTNWTHzgY1711217112euoutp02w
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Aug 2020 13:52:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200821135202euoutp02ac6a7165d379c0865fc848d18431d039~tTNWTHzgY1711217112euoutp02w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1598017923;
+        bh=xSyw6j8uhqFc0rId8dLokmjX37Nhx2OesuMasUQmfDY=;
+        h=From:Subject:To:Cc:Date:In-Reply-To:References:From;
+        b=VVysEcMMbV84aTuyJBkW9uSwbawqUU1AgB/zL8tt2hwYKwzWNewpQe83l6iiVvuRN
+         1mCEogQeN+4lHwbDs0dKRMb8JbDhqAg0YQkWqmM1CHXLpwaX2KshRCdD86yY47K7s2
+         ldu5bVjOuR6piskmZMkq9Dgp+9kDKTrJL2RoElrg=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200821135202eucas1p149727e705b4925a47a08bdc8b9ca3a13~tTNWHo1P31675816758eucas1p1s;
+        Fri, 21 Aug 2020 13:52:02 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 4D.74.06318.281DF3F5; Fri, 21
+        Aug 2020 14:52:02 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200821135202eucas1p1dc2de0fb3e687899859e41787357e199~tTNV2G6as0667006670eucas1p1a;
+        Fri, 21 Aug 2020 13:52:02 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200821135202eusmtrp2d3a7cde28c105c020cf66d27e5556562~tTNV1a6xY0859608596eusmtrp2I;
+        Fri, 21 Aug 2020 13:52:02 +0000 (GMT)
+X-AuditID: cbfec7f5-371ff700000018ae-59-5f3fd182afa8
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id C6.D9.06314.281DF3F5; Fri, 21
+        Aug 2020 14:52:02 +0100 (BST)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200821135202eusmtip167e50593caedc04e8f3336c6ec977351~tTNVdBehL2857328573eusmtip1d;
+        Fri, 21 Aug 2020 13:52:02 +0000 (GMT)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 00/41] spi / fbdev / cpufreq / usb / mmc / hwmon /
+ ARM: Prepare for multiplatform S3C
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>
+Message-ID: <7caa287e-5e02-95d1-0397-5ae74e3138a1@samsung.com>
+Date:   Fri, 21 Aug 2020 15:52:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef39be82b98d2471c9e99c82d0eeda37ba30e4fa.1597931876.git.robin.murphy@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200820155913.GA21395@kozik-lap>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGKsWRmVeSWpSXmKPExsWy7djPc7pNF+3jDRZ/07b4O+kYu8WVr+/Z
+        LM6f38BusenxNVaLE30fWC0u75rDZjHj/D4mi0NT9zI6cHhcvnaR2eP3r0mMHptWdbJ53O8+
+        zuSxeUm9x+dNcgFsUVw2Kak5mWWpRfp2CVwZ7e/WMRbs4qz4eXo1awPjIfYuRk4OCQETiQ17
+        XgHZXBxCAisYJS42z2eFcL4wSpzdtxQq85lRYtrmY3AtT86cZ4FILGeUmLXhPyOE85ZRou/r
+        BkaQKjYBK4mJ7avAbGGBPImbjYvAbBEBTYnrf7+D7WAW+MQocWJpExNIglfATuL0/qesIDaL
+        gKrE5MMHwNaJCkRIfHpwmBWiRlDi5MwnLCA2p4C+xLrOuWC9zALiEreezIey5SW2v53DDLJA
+        QuAYu8TB3bNZIe52kZjc1wJlC0u8Or4F6h8Zif87QZpBGtYxSvzteAHVvZ1RYvnkf2wQVdYS
+        d879ArI5gFZoSqzfpQ8RdpRo23aUESQsIcAnceOtIMQRfBKTtk1nhgjzSnS0CUFUq0lsWLaB
+        DWZt186VzBMYlWYheW0WkndmIXlnFsLeBYwsqxjFU0uLc9NTi43zUsv1ihNzi0vz0vWS83M3
+        MQJT0+l/x7/uYNz3J+kQowAHoxIP749D9vFCrIllxZW5hxglOJiVRHidzp6OE+JNSaysSi3K
+        jy8qzUktPsQozcGiJM5rvOhlrJBAemJJanZqakFqEUyWiYNTqoFRN8zvu4b4wXf+BUsUWXtT
+        LE+mpZ0+GazOMPeJ+6Pzf6OUOicw/Ga69zr2xo+NzN6v+w2Cfc0eGCVJXVJ5u1V2zkJBB5+a
+        lVbP385u/M89a+OzyI/rg7fdnTXLVDJq+Tszl/Uv98XHP9Dw4/tVxeX+4rTo5G1qrXMuVc5J
+        PleUElHh6Hxieme4EktxRqKhFnNRcSIAybJdhEkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRmVeSWpSXmKPExsVy+t/xu7pNF+3jDX6ckrL4O+kYu8WVr+/Z
+        LM6f38BusenxNVaLE30fWC0u75rDZjHj/D4mi0NT9zI6cHhcvnaR2eP3r0mMHptWdbJ53O8+
+        zuSxeUm9x+dNcgFsUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5
+        mWWpRfp2CXoZ7e/WMRbs4qz4eXo1awPjIfYuRk4OCQETiSdnzrN0MXJxCAksZZRY9/E8axcj
+        B1BCRuL4+jKIGmGJP9e62CBqXjNKdF85wQaSYBOwkpjYvooRxBYWyJOY1NnDBGKLCGhKXP/7
+        nRWkgVngE6PEt7ZPjBDdaxgldjUfAuvgFbCTOL3/KSuIzSKgKjH58AGwk0QFIiQO75gFVSMo
+        cXLmExYQm1NAX2Jd51ywDcwC6hJ/5l1ihrDFJW49mQ8Vl5fY/nYO8wRGoVlI2mchaZmFpGUW
+        kpYFjCyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAiNx27Gfm3cwXtoYfIhRgINRiYf3xyH7
+        eCHWxLLiytxDjBIczEoivE5nT8cJ8aYkVlalFuXHF5XmpBYfYjQFem4is5Rocj4wSeSVxBua
+        GppbWBqaG5sbm1koifN2CByMERJITyxJzU5NLUgtgulj4uCUamCs/Cn8a3JwpJPFu+ruFaps
+        Av+qbI0v/DjyTP3tm0fs377NzZnco/9i9bOJd7a1Zt4Tal2/kEFv1tcaf7+I+GOqKeX6h9c+
+        0og50ya9qezmPJcH+luqVvOZCYu06Fu8P+moKh+wJsyZhamHQ/7S4gePrG5avDb2mt3l/4/f
+        oMb72THmcrWdt5cpsRRnJBpqMRcVJwIAyy0cYNoCAAA=
+X-CMS-MailID: 20200821135202eucas1p1dc2de0fb3e687899859e41787357e199
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200820155923eucas1p2f73e16e6321e3592bd702ea657ff0709
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200820155923eucas1p2f73e16e6321e3592bd702ea657ff0709
+References: <20200806181932.2253-1-krzk@kernel.org>
+        <CGME20200820155923eucas1p2f73e16e6321e3592bd702ea657ff0709@eucas1p2.samsung.com>
+        <20200820155913.GA21395@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 20, 2020 at 04:08:26PM +0100, Robin Murphy wrote:
-> Now that arch/arm is wired up for default domains and iommu-dma, remove
-> the add_device workaround.
-> 
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> ---
->  drivers/iommu/arm/arm-smmu/arm-smmu.c | 10 ----------
->  1 file changed, 10 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> index 09c42af9f31e..4e52d8cb67dd 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> @@ -1164,17 +1164,7 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
->  		return -ENXIO;
->  	}
->  
-> -	/*
-> -	 * FIXME: The arch/arm DMA API code tries to attach devices to its own
-> -	 * domains between of_xlate() and probe_device() - we have no way to cope
-> -	 * with that, so until ARM gets converted to rely on groups and default
-> -	 * domains, just say no (but more politely than by dereferencing NULL).
-> -	 * This should be at least a WARN_ON once that's sorted.
-> -	 */
->  	cfg = dev_iommu_priv_get(dev);
-> -	if (!cfg)
-> -		return -ENODEV;
-> -
->  	smmu = cfg->smmu;
->  
->  	ret = arm_smmu_rpm_get(smmu);
 
-Acked-by: Will Deacon <will@kernel.org>
+[ trimmed Cc: list ]
 
-Will
+On 8/20/20 5:59 PM, Krzysztof Kozlowski wrote:
+> On Thu, Aug 06, 2020 at 08:19:32PM +0200, Krzysztof Kozlowski wrote:
+>> Hi All,
+>>
+>> Shortly
+>> =======
+>> This is a continuation of Arnd's work from 2019 [1].  The goal is to
+>> cleanup, merge and finally make the Samsung S3C24xx and S3C64xx
+>> architectures multiplatform.  The multiplatform did not happen yet
+>> here... just cleaning up and merging into one mach-s3c.
+>>
+>> I intend to take it through Samsung SoC tree so all Acks are welcomed.
+>>
+>> Changes since v1
+>> ================
+>> 1. Rebased,
+>> 2. Addressed comments (including mine),
+>> 3. Few new patches.
+>>
+>> Please see individual changelogs (per patch).
+>>
+>> [1] https://patchwork.kernel.org/project/linux-samsung-soc/list/?series=185855&state=*
+>>
+> 
+> Hi All,
+
+Hi Krzysztof,
+
+> I applied second part of the set which finishes this step of S3C
+> cleanup. Thanks to Arnd for the work!
+
+Thank you (& Arnd) for working on this!
+
+PS I've checked fbdev related changes now and they all look good to me.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> Best regards,
+> Krzysztof
