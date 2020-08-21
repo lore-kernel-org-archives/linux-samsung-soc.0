@@ -2,128 +2,82 @@ Return-Path: <SRS0=7p8p=B7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A8EC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Aug 2020 07:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B3CC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Aug 2020 07:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF0762078D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Aug 2020 07:10:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D10C92087D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Aug 2020 07:43:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597993840;
-	bh=kP6S+GTnzj2U5cE2GuEwtUgvwvAkwdWUZC7g45JD9As=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=fd0ODMSobZmNR2dyWNv1YmSxwPbe1S+pRJ3Nyud2w46ZLYp5b18CkysQ+mK07vBlY
-	 GolcIxRCXmgn2ZIk9pApDECFQ/jLbw8C0eUZUeSHKsRY1NJ8+csSCaTS/I3MhGqSo9
-	 fdgYyrxXHcRxmhJO3nb+Uw98GmThLod1jpJqzT6A=
+	s=default; t=1597995789;
+	bh=snzhPM8cOWUDWnwq2KTsF9Bnjhly7fQhbcxo/se/pak=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=xN+ak/T9I+BIWKxBGHJFEk+jTCQeqcOQU3nMKqn84Y5a2cUF6yr0H6m9kiW5t3bZV
+	 TzcRp/43E/P8r3kX1/eseNXke6e+FNa8hW3OBB5zaNLRnE0qt75paD0bpX0OSLiIoe
+	 /9mJ4K0G0Yq08QW15E8ALV+ujAgDkGEYfL4XrHm4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbgHUHKg convert rfc822-to-8bit (ORCPT
+        id S1726332AbgHUHnI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 21 Aug 2020 03:10:36 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42623 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbgHUHKg (ORCPT
+        Fri, 21 Aug 2020 03:43:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38234 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726002AbgHUHnI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Aug 2020 03:10:36 -0400
-Received: by mail-wr1-f67.google.com with SMTP id d16so974961wrq.9;
-        Fri, 21 Aug 2020 00:10:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jz5YmMUMv7fyLq3wiwjcdiqT8QN6h8dN46ufIK0XqjU=;
-        b=TdXL19WXJzmGbMno2fWq0ObyowvQMLoy6ue8pWYEE9NobwO0y+K3rnXYXWl3nH2hcE
-         uGbGjwcgzeKecfFRIbHqrkFz2VB7t7OQ4wqj74lUte9JJQQ7utM5kWOU9pbI04JhQHZ/
-         czkQC5RX8g2pI4TDbOaAHHFWeNHM0JToleeO+AFxDWDGz/EIMwlIYSfVQK7NweGfsxIf
-         EClw4b0HntwHCQ+FTIT45a5RGYPP5SYia1WlYKFD0n3iskKhLVlruJwdYLCG7ZA0JzBk
-         ZIZkjqupfaIz00vnq4r9x9lwMCFqdlyQ5r05pBfHsp4PoQBpgPg6PRgMdQlTq/RkZZVX
-         lPcg==
-X-Gm-Message-State: AOAM530xBl/7cm+j4TYeXXru2CAxnsJa4c/eKQJRptTRs/qQb+04MRSj
-        X8qUDKHlEfGzga7hjmTSV28=
-X-Google-Smtp-Source: ABdhPJwZdIK9j+sztRpjPkTystFIOkQ+5HeSyiTpAe/3quHWZDea6vpzykvVTCUJA8QZl8Gvd3OPmg==
-X-Received: by 2002:adf:9501:: with SMTP id 1mr1370184wrs.413.1597993833286;
-        Fri, 21 Aug 2020 00:10:33 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id p15sm2487017wrj.61.2020.08.21.00.10.31
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Aug 2020 00:10:32 -0700 (PDT)
-Date:   Fri, 21 Aug 2020 09:10:30 +0200
+        Fri, 21 Aug 2020 03:43:08 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.216])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B1022078D;
+        Fri, 21 Aug 2020 07:43:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597995788;
+        bh=snzhPM8cOWUDWnwq2KTsF9Bnjhly7fQhbcxo/se/pak=;
+        h=From:To:Subject:Date:From;
+        b=n/0mfI5N7S+Ofkrfi6HMmkCIBszBlYwspVxEdfmTFUWu8L5oEoOOTakE+JZ0St4TP
+         wtQLT5hlmBSpr9oOJKYK+QERc8H4N56d5ZHv3j/m8rL/I//tLXEBVw0fyjYzBPajj4
+         dXhiJD2bqmQAYXVI5LqgJu6iY3zt9atia8ijt2uc=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Stelmach <l.stelmach@samsung.com>
-Cc:     Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        m.szyprowski@samsung.com, b.zolnierkie@samsung.com
-Subject: Re: [PATCH 7/8] spi: spi-s3c64xx: Increase transfer timeout
-Message-ID: <20200821071030.GA8585@kozik-lap>
-References: <20200819124940.GG18122@kozik-lap>
- <CGME20200819133957eucas1p293192baeabb9788ac9148068c1627a57@eucas1p2.samsung.com>
- <dleftjblj621qr.fsf%l.stelmach@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <dleftjblj621qr.fsf%l.stelmach@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+To:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: s3c: Cleanup from old plat-samsung include
+Date:   Fri, 21 Aug 2020 09:42:51 +0200
+Message-Id: <20200821074251.26798-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 19, 2020 at 03:39:56PM +0200, Lukasz Stelmach wrote:
-> It was <2020-08-19 śro 14:49>, when Krzysztof Kozlowski wrote:
-> > On Wed, Aug 19, 2020 at 02:32:07PM +0200, Łukasz Stelmach wrote:
-> >> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-> >
-> > Why? Everything works fine and suddenly minimum timeout is 100 ms?
-> 
-> Actually I am not 100% sure the max() call is required, maybe +30 is
-> enough. Definitely some minimum value is required because for small
-> tranfers (100s of bytes) ms is 0 after the first assignment.
+The arch/arm/plat-samsung/ was removed and merged into
+arch/arm/mach-s3c/ so the include path is not needed anymore.
 
-Sure, just please describe it all in commit msg. All these questions
-"why?" came because of lack of explanation in commit msg.
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/mach-s3c/Makefile.s3c64xx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I guess minimum timeout 100 ms for each transfer is quite high, so maybe
-just bump the tolerance to 30 which also would be a minimum timeout.
-
-Best regards,
-Krzysztof
-
-
-> 
-> >> ---
-> >>  drivers/spi/spi-s3c64xx.c | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >> 
-> >> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> >> index 27d77600a820..27db1e0f6f32 100644
-> >> --- a/drivers/spi/spi-s3c64xx.c
-> >> +++ b/drivers/spi/spi-s3c64xx.c
-> >> @@ -464,7 +464,8 @@ static int s3c64xx_wait_for_dma(struct s3c64xx_spi_driver_data *sdd,
-> >>  
-> >>  	/* millisecs to xfer 'len' bytes @ 'cur_speed' */
-> >>  	ms = xfer->len * 8 * 1000 / sdd->cur_speed;
-> >> -	ms += 10; /* some tolerance */
-> >> +	ms = (ms * 10) + 30;    /* some tolerance */
-> >> +	ms = max(ms, 100);      /* minimum timeout */
-> >>  
-> >>  	val = msecs_to_jiffies(ms) + 10;
-> >>  	val = wait_for_completion_timeout(&sdd->xfer_completion, val);
-> >> -- 
-> >> 2.26.2
-> >> 
-> >
-> >
-> 
-> -- 
-> Łukasz Stelmach
-> Samsung R&D Institute Poland
-> Samsung Electronics
-
+diff --git a/arch/arm/mach-s3c/Makefile.s3c64xx b/arch/arm/mach-s3c/Makefile.s3c64xx
+index e06e5356da9b..0c18e31936df 100644
+--- a/arch/arm/mach-s3c/Makefile.s3c64xx
++++ b/arch/arm/mach-s3c/Makefile.s3c64xx
+@@ -3,8 +3,8 @@
+ # Copyright 2008 Openmoko, Inc.
+ # Copyright 2008 Simtec Electronics
+ 
+-ccflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/$(src)/include -I$(srctree)/arch/arm/plat-samsung/include
+-asflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/$(src)/include -I$(srctree)/arch/arm/plat-samsung/include
++ccflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/$(src)/include
++asflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/$(src)/include
+ 
+ # PM
+ 
+-- 
+2.17.1
 
