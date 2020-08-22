@@ -2,154 +2,250 @@ Return-Path: <SRS0=N1Gb=CA=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE61C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 15:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A54F2C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 16:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBFB920738
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 15:20:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GqRC2h7Z"
+	by mail.kernel.org (Postfix) with ESMTP id 7513820855
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 16:32:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598113958;
+	bh=TRlm30t86MjSYo1EEsLjO22W4UsIuUhrEDplYYJjKVQ=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=TmNJC0jIgikJAgdZ3Y3f2CDn3y501td22JxvYDBlY0ZXrx5ErNh78TZaihuZdbOtm
+	 ugiQIquP9qk03A3ImVIqhcS4boSwJaQUwlGREfwPzwaPTWzomfLQYcTqu9bUNahgU6
+	 MpACxNlLfOZDF37gVeBEp5oxHwZNoAD0s0gr2u3Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbgHVPUf (ORCPT
+        id S1728357AbgHVQch (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 22 Aug 2020 11:20:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48354 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbgHVPUb (ORCPT
+        Sat, 22 Aug 2020 12:32:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40198 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728244AbgHVQch (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Aug 2020 11:20:31 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B061C061573
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Aug 2020 08:20:31 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id si26so5985799ejb.12
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Aug 2020 08:20:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=LN5JFqdEmJKSQD9LQroiOhG0/S7s6+UdrWun1PeHIeU=;
-        b=GqRC2h7ZpP/gqzffABDnoB7CwyD+X7HNnxeNruuV8wiICFNZI6sVKjwF16rr3BwbGv
-         EAmTCNLmcNCLY2+DmUhCTPgb/Xx1jS0xFIxgCQftI5TVWVOFyLt12b9cKsY5uvkqX8e4
-         AkPUumv0jeqjqk/zyjjYDLED1HLlTfJAG7MDs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=LN5JFqdEmJKSQD9LQroiOhG0/S7s6+UdrWun1PeHIeU=;
-        b=s+thWQq3q6Iaj8ZcueAMwObbaMb9hzNDnIEPXPaEqE6dD7MQ0Yt+jKhkvOLWiV+PGR
-         r0bu7ab1xsKvg7tXz+oQKdwm2k//X+g66JmvYQyIs6hI72qmPVeipGaLSAr8MRMRBQjH
-         Gq7qPghMBgCbdf4x/MuBibWVKccHCAwrhQPFXfkgCOndWWPt9Yp3eKbrAKLyFH0/yETK
-         qV0ILaLZD1ElOv1mgA+k+AKNq36YBiVA+UcU3IHg41/aqyMR8zhKWHyTdmb/tqyhlvz6
-         rv4N/oRf6cQ8qv60CWeKVk5E9ws9tOxLBtvxpdVqVT0C56yA3kcr/tXGllDhIeKMZrJR
-         zOzA==
-X-Gm-Message-State: AOAM5301LWMwyAtFGfC0X8QYikvLcaL4Rj681imXzPrPbP7g1lFQo0Op
-        +msqxZUVGgQkmFF/RpdJ/oM5A0HmYYgG1A==
-X-Google-Smtp-Source: ABdhPJx3uxK1T3Qpf1Mgzoo1z9mfCXxpQbK9VIAMKuj3BqLnKv2O3YXyk+rfuEuA0Rqtpo3SpM/Aig==
-X-Received: by 2002:a17:906:a84f:: with SMTP id dx15mr7453317ejb.377.1598109629534;
-        Sat, 22 Aug 2020 08:20:29 -0700 (PDT)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com. [209.85.221.46])
-        by smtp.gmail.com with ESMTPSA id p1sm3017591edu.11.2020.08.22.08.20.28
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Aug 2020 08:20:28 -0700 (PDT)
-Received: by mail-wr1-f46.google.com with SMTP id r2so4553161wrs.8
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Aug 2020 08:20:28 -0700 (PDT)
-X-Received: by 2002:a5d:6744:: with SMTP id l4mr7993640wrw.105.1598109628053;
- Sat, 22 Aug 2020 08:20:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200821161401.11307-1-l.stelmach@samsung.com>
- <CGME20200821161407eucas1p249e4833b8839f717cc2a496ab43bb8a2@eucas1p2.samsung.com>
- <20200821161401.11307-8-l.stelmach@samsung.com> <20200822124325.GF20423@kozik-lap>
- <CAAFQd5CmPXDsOWmPBS+z5McxGvn+L2nkV2Wh934Bq7xY6DMO4A@mail.gmail.com> <20200822151819.GA13668@kozik-lap>
-In-Reply-To: <20200822151819.GA13668@kozik-lap>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Sat, 22 Aug 2020 17:20:16 +0200
-X-Gmail-Original-Message-ID: <CAAFQd5BZYkrJc7CB6aYU5F78wZhRmzVexRbk1siK4Xs7sjgNLQ@mail.gmail.com>
-Message-ID: <CAAFQd5BZYkrJc7CB6aYU5F78wZhRmzVexRbk1siK4Xs7sjgNLQ@mail.gmail.com>
-Subject: Re: [PATCH v2 7/9] spi: spi-s3c64xx: Ensure cur_speed holds actual
- clock value
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Sat, 22 Aug 2020 12:32:37 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.216])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8ECE206C0;
+        Sat, 22 Aug 2020 16:32:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598113956;
+        bh=TRlm30t86MjSYo1EEsLjO22W4UsIuUhrEDplYYJjKVQ=;
+        h=From:To:Subject:Date:From;
+        b=Pyl7fNyoa7bCkM8lGz65UBoK6qPb+eC+kAtHMyi96vn08cN9TnRSImWhaCwbsDDKI
+         UqBSUnpm7J1Pz93W+koiYAmOFA/1VDWOufr21OyyFDbJ5d7fn1JQ5xdZhpqpFD51GG
+         BTCC43jF+SIEbsQKa4v5HUFtGQYOziuV82s3qiic=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lukasz Luba <lukasz.luba@arm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/3] memory: samsung: exynos5422-dmc: rename timing register fields variables
+Date:   Sat, 22 Aug 2020 18:32:16 +0200
+Message-Id: <20200822163218.21857-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Aug 22, 2020 at 5:18 PM Krzysztof Kozlowski <krzk@kernel.org> wrote=
-:
->
-> On Sat, Aug 22, 2020 at 04:52:40PM +0200, Tomasz Figa wrote:
-> > On Sat, Aug 22, 2020 at 2:43 PM Krzysztof Kozlowski <krzk@kernel.org> w=
-rote:
-> > >
-> > > On Fri, Aug 21, 2020 at 06:13:59PM +0200, =C5=81ukasz Stelmach wrote:
-> > > > cur_speed is used to calculate transfer timeout and needs to be
-> > > > set to the actual value of (half) the clock speed for precise
-> > > > calculations.
-> > >
-> > > If you need this only for timeout calculation just divide it in
-> > > s3c64xx_wait_for_dma().
-> >
-> > Division is not the point of the patch. The point is that
-> > clk_set_rate() that was originally there doesn't guarantee that the
-> > rate is set exactly.
->
-> Unfortunately onlt that point of timeout is mentioned in commit msg. If
-> the correction of timeout was not the point of the patch, then describe
-> the real point...
->
-> > The rate directly determines the SPI transfer
-> > speed and thus the driver needs to use the rate that was actually set
-> > for further calculations.
->
-> Yep, makes sense.
->
-> >
-> > > Otherwise why only if (cmu) case is updated?
-> >
-> > Right, the !cmu case actually suffers from the same problem. The code
-> > divides the parent clock rate with the requested speed to obtain the
-> > divider to program into the register. This is subject to integer
-> > rounding, so (parent / (parent / speed)) doesn't always equal (speed).
->
-> It is not only this problem. The meaning of cur_speed is now changed.
-> For !cmu_case this the requested in trasnfer SPI bus clock frequency,
-> for cmu_case this is now real src_clk frequency. It's getting slightly
-> messier.
->
-> >
-> > >
-> > > You are also affecting here not only timeout but
-> > > s3c64xx_enable_datapath() which is not mentioned in commit log. In ot=
-her
-> > > words, this looks wrong.
-> >
-> > Actually this is right and fixes one more problem, which I didn't spot
-> > when looking at this code when I suggested the change (I only spotted
-> > the effects on timeout calculation). The rounding error might have
-> > caused wrong configuration there, because e.g. 30000000 Hz could be
-> > requested and rounded to 28000000 Hz. The former is a threshold for
-> > setting the S3C64XX_SPI_CH_HS_EN bit, but the real frequency wouldn't
-> > actually require setting it.
->
-> Wrong is here describing one thing and doing much more.
+The driver has file-scope arrays defining fields of timing registers
+(e.g. struct timing_reg timing_row) and actual values for these
+registers per each OPP in state container (struct
+exynos5_dmc.timing_row).  The meanings of these are different so use
+different names to avoid confusion.
 
-Yeah, agreed that the description could be improved. :)
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/memory/samsung/exynos5422-dmc.c | 49 +++++++++++++------------
+ 1 file changed, 25 insertions(+), 24 deletions(-)
 
-Best regards,
-Tomasz
+diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+index 0045fa536b2b..31864ce59b25 100644
+--- a/drivers/memory/samsung/exynos5422-dmc.c
++++ b/drivers/memory/samsung/exynos5422-dmc.c
+@@ -170,7 +170,7 @@ struct timing_reg {
+ 	unsigned int val;
+ };
+ 
+-static const struct timing_reg timing_row[] = {
++static const struct timing_reg timing_row_reg_fields[] = {
+ 	TIMING_FIELD("tRFC", 24, 31),
+ 	TIMING_FIELD("tRRD", 20, 23),
+ 	TIMING_FIELD("tRP", 16, 19),
+@@ -179,7 +179,7 @@ static const struct timing_reg timing_row[] = {
+ 	TIMING_FIELD("tRAS", 0, 5),
+ };
+ 
+-static const struct timing_reg timing_data[] = {
++static const struct timing_reg timing_data_reg_fields[] = {
+ 	TIMING_FIELD("tWTR", 28, 31),
+ 	TIMING_FIELD("tWR", 24, 27),
+ 	TIMING_FIELD("tRTP", 20, 23),
+@@ -190,7 +190,7 @@ static const struct timing_reg timing_data[] = {
+ 	TIMING_FIELD("RL", 0, 3),
+ };
+ 
+-static const struct timing_reg timing_power[] = {
++static const struct timing_reg timing_power_reg_fields[] = {
+ 	TIMING_FIELD("tFAW", 26, 31),
+ 	TIMING_FIELD("tXSR", 16, 25),
+ 	TIMING_FIELD("tXP", 8, 15),
+@@ -198,8 +198,9 @@ static const struct timing_reg timing_power[] = {
+ 	TIMING_FIELD("tMRD", 0, 3),
+ };
+ 
+-#define TIMING_COUNT (ARRAY_SIZE(timing_row) + ARRAY_SIZE(timing_data) + \
+-		      ARRAY_SIZE(timing_power))
++#define TIMING_COUNT (ARRAY_SIZE(timing_row_reg_fields) + \
++		      ARRAY_SIZE(timing_data_reg_fields) + \
++		      ARRAY_SIZE(timing_power_reg_fields))
+ 
+ static int exynos5_counters_set_event(struct exynos5_dmc *dmc)
+ {
+@@ -1022,117 +1023,117 @@ static int create_timings_aligned(struct exynos5_dmc *dmc, u32 *reg_timing_row,
+ 	val = dmc->timings->tRFC / clk_period_ps;
+ 	val += dmc->timings->tRFC % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tRFC);
+-	reg = &timing_row[0];
++	reg = &timing_row_reg_fields[0];
+ 	*reg_timing_row |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tRRD / clk_period_ps;
+ 	val += dmc->timings->tRRD % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tRRD);
+-	reg = &timing_row[1];
++	reg = &timing_row_reg_fields[1];
+ 	*reg_timing_row |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tRPab / clk_period_ps;
+ 	val += dmc->timings->tRPab % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tRPab);
+-	reg = &timing_row[2];
++	reg = &timing_row_reg_fields[2];
+ 	*reg_timing_row |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tRCD / clk_period_ps;
+ 	val += dmc->timings->tRCD % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tRCD);
+-	reg = &timing_row[3];
++	reg = &timing_row_reg_fields[3];
+ 	*reg_timing_row |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tRC / clk_period_ps;
+ 	val += dmc->timings->tRC % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tRC);
+-	reg = &timing_row[4];
++	reg = &timing_row_reg_fields[4];
+ 	*reg_timing_row |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tRAS / clk_period_ps;
+ 	val += dmc->timings->tRAS % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tRAS);
+-	reg = &timing_row[5];
++	reg = &timing_row_reg_fields[5];
+ 	*reg_timing_row |= TIMING_VAL2REG(reg, val);
+ 
+ 	/* data related timings */
+ 	val = dmc->timings->tWTR / clk_period_ps;
+ 	val += dmc->timings->tWTR % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tWTR);
+-	reg = &timing_data[0];
++	reg = &timing_data_reg_fields[0];
+ 	*reg_timing_data |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tWR / clk_period_ps;
+ 	val += dmc->timings->tWR % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tWR);
+-	reg = &timing_data[1];
++	reg = &timing_data_reg_fields[1];
+ 	*reg_timing_data |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tRTP / clk_period_ps;
+ 	val += dmc->timings->tRTP % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tRTP);
+-	reg = &timing_data[2];
++	reg = &timing_data_reg_fields[2];
+ 	*reg_timing_data |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tW2W_C2C / clk_period_ps;
+ 	val += dmc->timings->tW2W_C2C % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tW2W_C2C);
+-	reg = &timing_data[3];
++	reg = &timing_data_reg_fields[3];
+ 	*reg_timing_data |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tR2R_C2C / clk_period_ps;
+ 	val += dmc->timings->tR2R_C2C % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tR2R_C2C);
+-	reg = &timing_data[4];
++	reg = &timing_data_reg_fields[4];
+ 	*reg_timing_data |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tWL / clk_period_ps;
+ 	val += dmc->timings->tWL % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tWL);
+-	reg = &timing_data[5];
++	reg = &timing_data_reg_fields[5];
+ 	*reg_timing_data |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tDQSCK / clk_period_ps;
+ 	val += dmc->timings->tDQSCK % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tDQSCK);
+-	reg = &timing_data[6];
++	reg = &timing_data_reg_fields[6];
+ 	*reg_timing_data |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tRL / clk_period_ps;
+ 	val += dmc->timings->tRL % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tRL);
+-	reg = &timing_data[7];
++	reg = &timing_data_reg_fields[7];
+ 	*reg_timing_data |= TIMING_VAL2REG(reg, val);
+ 
+ 	/* power related timings */
+ 	val = dmc->timings->tFAW / clk_period_ps;
+ 	val += dmc->timings->tFAW % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tFAW);
+-	reg = &timing_power[0];
++	reg = &timing_power_reg_fields[0];
+ 	*reg_timing_power |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tXSR / clk_period_ps;
+ 	val += dmc->timings->tXSR % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tXSR);
+-	reg = &timing_power[1];
++	reg = &timing_power_reg_fields[1];
+ 	*reg_timing_power |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tXP / clk_period_ps;
+ 	val += dmc->timings->tXP % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tXP);
+-	reg = &timing_power[2];
++	reg = &timing_power_reg_fields[2];
+ 	*reg_timing_power |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tCKE / clk_period_ps;
+ 	val += dmc->timings->tCKE % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tCKE);
+-	reg = &timing_power[3];
++	reg = &timing_power_reg_fields[3];
+ 	*reg_timing_power |= TIMING_VAL2REG(reg, val);
+ 
+ 	val = dmc->timings->tMRD / clk_period_ps;
+ 	val += dmc->timings->tMRD % clk_period_ps ? 1 : 0;
+ 	val = max(val, dmc->min_tck->tMRD);
+-	reg = &timing_power[4];
++	reg = &timing_power_reg_fields[4];
+ 	*reg_timing_power |= TIMING_VAL2REG(reg, val);
+ 
+ 	return 0;
+-- 
+2.17.1
+
