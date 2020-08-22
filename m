@@ -2,126 +2,139 @@ Return-Path: <SRS0=N1Gb=CA=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4ABC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 14:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B6AC433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 15:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74ACB2078D
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 14:54:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FQkQhG80"
+	by mail.kernel.org (Postfix) with ESMTP id 24F5020838
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 15:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598109527;
+	bh=qLFyfzV8A4SmcuXtDf8CYWnpoQBFNQx5tPFWbwMa0Es=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kG//pvh+vjDGVacYNKhRIaVv7FEQmwxAlhnYmpvFD+GNuONEETgELiRdzE0z6zqcC
+	 9foFKhDQ3jonvsvbcsLC2DLnVhTfkzoyTaFFyFtH8Jvan351b0/vI3dvyUxswWOXDg
+	 rVvPeBjooSgMGA7UfSZhjMBaF+8Qt4UjC0kUQZrA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbgHVOyi (ORCPT
+        id S1728020AbgHVPSq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 22 Aug 2020 10:54:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44322 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbgHVOyf (ORCPT
+        Sat, 22 Aug 2020 11:18:46 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39827 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727807AbgHVPSp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Aug 2020 10:54:35 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A90C061574
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Aug 2020 07:54:35 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id md23so5174932ejb.6
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Aug 2020 07:54:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Mbzm5gpuiwO9tFrWmdPpY3arq5Fa+qKMjnEd29bPLpQ=;
-        b=FQkQhG808JI0eCeL5TQ57rNtCCg1AYXnUaZ+z+bIXDm0JphY/3kTObu2x7RD3HTTTE
-         J/4DdcSBvZEl3HzlW99RxNL4Ctxtq7j2efM5diD9FiLMYPYVjnlCzbrlPS7Reu+anrxL
-         fbO+3Lp90y+V28Qscu0lHKi06nifW+YbDpIJo=
+        Sat, 22 Aug 2020 11:18:45 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a5so4567744wrm.6;
+        Sat, 22 Aug 2020 08:18:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Mbzm5gpuiwO9tFrWmdPpY3arq5Fa+qKMjnEd29bPLpQ=;
-        b=N6ZXF0/wQkXUmcDwxiqrMmsq/lcEeRNqMPexibZNp1PcIUlpOJTFmOxgldNtYNf3kv
-         5gceGY3LErFbqZFJeR5eX2UWNhv8eY49VUGcyv2Okhc3zwCOaz7hpJ2pLRYtRscooA67
-         etVn16oo9GK6kx+4Wtv9pZ7w+iKkhZVzoTh4SFm7xBlp2Da8BITfGbBRzFYRgv3gFGyW
-         t7MehWjjRp8lJrUbbhzea4yEUvegnJuNyAu9Dj7RlSCV35l1V6HxUoaSPxaEBskmxZJz
-         Fmm4XgSZInVEOP4c10KXegFhaOqJVhRheZEBPZD68bXJwOAkpOWSsKQk2Alcm060KxGI
-         HQYA==
-X-Gm-Message-State: AOAM533NlN607q/K/tlK66kN23SzIaHraszfmmQUgO6xbhLzXaHzVizs
-        bMiFYwAihr21eMl+EInkQUWzpLUk0tWuow==
-X-Google-Smtp-Source: ABdhPJxQJVWbfOuEypwsGQvP6rSFl+d9rpOPvqcCDA1osIzQ2frGLp7iicNmRA0Kj86wgIVY6TOYAQ==
-X-Received: by 2002:a17:906:1f8e:: with SMTP id t14mr7905030ejr.336.1598108073711;
-        Sat, 22 Aug 2020 07:54:33 -0700 (PDT)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com. [209.85.221.53])
-        by smtp.gmail.com with ESMTPSA id 24sm3013745edx.35.2020.08.22.07.54.32
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Aug 2020 07:54:33 -0700 (PDT)
-Received: by mail-wr1-f53.google.com with SMTP id c15so4488480wrs.11
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Aug 2020 07:54:32 -0700 (PDT)
-X-Received: by 2002:adf:ec4f:: with SMTP id w15mr7016601wrn.385.1598108072233;
- Sat, 22 Aug 2020 07:54:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20200821161407eucas1p249e4833b8839f717cc2a496ab43bb8a2@eucas1p2.samsung.com>
- <20200821161401.11307-1-l.stelmach@samsung.com> <20200821161401.11307-8-l.stelmach@samsung.com>
-In-Reply-To: <20200821161401.11307-8-l.stelmach@samsung.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Sat, 22 Aug 2020 16:54:19 +0200
-X-Gmail-Original-Message-ID: <CAAFQd5DKCsDOQXcaAqB0h8V8rdo_EcBevgkPO1LzU7FZJ+r_hg@mail.gmail.com>
-Message-ID: <CAAFQd5DKCsDOQXcaAqB0h8V8rdo_EcBevgkPO1LzU7FZJ+r_hg@mail.gmail.com>
-Subject: Re: [PATCH v2 7/9] spi: spi-s3c64xx: Ensure cur_speed holds actual
- clock value
-To:     linux-spi@vger.kernel.org
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=fPurPcq4qIlsFmVZToY8qZyZV/HXm+35zPSjztTMBbk=;
+        b=RnHBy8FoT6Z6vtdD4wKfJaNHSVPsg4CvGvsOy/FAascPpMTGFY438NYgVrT+clquCY
+         5zKgykQGAXd3WLMcDv7b1Zp8KxvuF3PjAvgEnjF/q+WQLatvdJvPDmlFimLpQRDBz4Pg
+         03zomDg/gzdAFQtdFz8nkRQpaRYUIBXwipjXjQeTgy3lx5s9mpyCjTi4dpiFlF/H3+Q2
+         ZB7FeFnsFVkMG0f1UZJy4lJjjKDVSVq6qc8juoyfiz0P/wCzZ9pIyR2EocrmEvYFSGEY
+         RVjZWdmW1uyh98Vj4C4cHGrgSjbx+ZYsSiFb4rfZNdrGYSzLkSSGBd5HBb8wYHhBAVES
+         uqPw==
+X-Gm-Message-State: AOAM532T1qkDrwy7WF7qxKlxDF5r5xu4gTNrpPgTxb522aW1o15+gHFT
+        6ZbymATerxUhDdTuSkEHjcg=
+X-Google-Smtp-Source: ABdhPJxopqANZ1WSRtMZknMlZMkWKProljOBBBQjtUznRcRFTqGL5IEt7HEGpC7njulqLAHazh5Wgg==
+X-Received: by 2002:adf:fac8:: with SMTP id a8mr7477185wrs.368.1598109523037;
+        Sat, 22 Aug 2020 08:18:43 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.216])
+        by smtp.googlemail.com with ESMTPSA id m16sm10738841wrr.71.2020.08.22.08.18.31
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 22 Aug 2020 08:18:42 -0700 (PDT)
+Date:   Sat, 22 Aug 2020 17:18:19 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
         Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 7/9] spi: spi-s3c64xx: Ensure cur_speed holds actual
+ clock value
+Message-ID: <20200822151819.GA13668@kozik-lap>
+References: <20200821161401.11307-1-l.stelmach@samsung.com>
+ <CGME20200821161407eucas1p249e4833b8839f717cc2a496ab43bb8a2@eucas1p2.samsung.com>
+ <20200821161401.11307-8-l.stelmach@samsung.com>
+ <20200822124325.GF20423@kozik-lap>
+ <CAAFQd5CmPXDsOWmPBS+z5McxGvn+L2nkV2Wh934Bq7xY6DMO4A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAAFQd5CmPXDsOWmPBS+z5McxGvn+L2nkV2Wh934Bq7xY6DMO4A@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Aug 21, 2020 at 6:14 PM =C5=81ukasz Stelmach <l.stelmach@samsung.co=
-m> wrote:
->
-> cur_speed is used to calculate transfer timeout and needs to be
-> set to the actual value of (half) the clock speed for precise
-> calculations.
->
-> Cc: Tomasz Figa <tfiga@chromium.org>
+On Sat, Aug 22, 2020 at 04:52:40PM +0200, Tomasz Figa wrote:
+> On Sat, Aug 22, 2020 at 2:43 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > On Fri, Aug 21, 2020 at 06:13:59PM +0200, Łukasz Stelmach wrote:
+> > > cur_speed is used to calculate transfer timeout and needs to be
+> > > set to the actual value of (half) the clock speed for precise
+> > > calculations.
+> >
+> > If you need this only for timeout calculation just divide it in
+> > s3c64xx_wait_for_dma().
+> 
+> Division is not the point of the patch. The point is that
+> clk_set_rate() that was originally there doesn't guarantee that the
+> rate is set exactly.
 
-As we talked on IRC, Lukasz forgot to add:
+Unfortunately onlt that point of timeout is mentioned in commit msg. If
+the correction of timeout was not the point of the patch, then describe
+the real point...
 
-Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> The rate directly determines the SPI transfer
+> speed and thus the driver needs to use the rate that was actually set
+> for further calculations.
 
-Would be nice if it could be added when (and if) applying.
+Yep, makes sense.
 
-> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
-> ---
->  drivers/spi/spi-s3c64xx.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 02de734b8ab1..89c162efe355 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -626,6 +626,7 @@ static int s3c64xx_spi_config(struct s3c64xx_spi_driv=
-er_data *sdd)
->                 ret =3D clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
->                 if (ret)
->                         return ret;
-> +               sdd->cur_speed =3D clk_get_rate(sdd->src_clk) / 2;
->         } else {
->                 /* Configure Clock */
->                 val =3D readl(regs + S3C64XX_SPI_CLK_CFG);
-> --
-> 2.26.2
->
+> 
+> > Otherwise why only if (cmu) case is updated?
+> 
+> Right, the !cmu case actually suffers from the same problem. The code
+> divides the parent clock rate with the requested speed to obtain the
+> divider to program into the register. This is subject to integer
+> rounding, so (parent / (parent / speed)) doesn't always equal (speed).
+
+It is not only this problem. The meaning of cur_speed is now changed.
+For !cmu_case this the requested in trasnfer SPI bus clock frequency,
+for cmu_case this is now real src_clk frequency. It's getting slightly
+messier.
+
+> 
+> >
+> > You are also affecting here not only timeout but
+> > s3c64xx_enable_datapath() which is not mentioned in commit log. In other
+> > words, this looks wrong.
+> 
+> Actually this is right and fixes one more problem, which I didn't spot
+> when looking at this code when I suggested the change (I only spotted
+> the effects on timeout calculation). The rounding error might have
+> caused wrong configuration there, because e.g. 30000000 Hz could be
+> requested and rounded to 28000000 Hz. The former is a threshold for
+> setting the S3C64XX_SPI_CH_HS_EN bit, but the real frequency wouldn't
+> actually require setting it.
+
+Wrong is here describing one thing and doing much more.
+
+Best regards,
+Krzysztof
+
