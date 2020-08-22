@@ -2,89 +2,157 @@ Return-Path: <SRS0=N1Gb=CA=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E06BFC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 12:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA58C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 14:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3D1520720
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 12:44:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598100278;
-	bh=Y4DWmUZUUPm/9a/OVw5Yj+wqdTSrwWiLyfMroihIYRw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1vyKp/LwyUCniqHRgmL9Hh7J2yKdPNyINFCJAa+tffrib/SZdwZ9zJCEetjcekjiz
-	 YkQAZnTBlmgHr77OIr3Qu+9hDTFTn83m3hv3/tU35XREFfKG1coUaRRoAGgq7wAmmA
-	 J5vP5BA+zaEHyjGBgFEZtbosoFVlbvoROrC9eSog=
+	by mail.kernel.org (Postfix) with ESMTP id 2AC3520825
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 14:53:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hQ1o/5Y/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbgHVMoi convert rfc822-to-8bit (ORCPT
+        id S1727856AbgHVOxA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 22 Aug 2020 08:44:38 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43895 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727827AbgHVMog (ORCPT
+        Sat, 22 Aug 2020 10:53:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44070 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbgHVOw7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Aug 2020 08:44:36 -0400
-Received: by mail-wr1-f68.google.com with SMTP id a15so4306270wrh.10;
-        Sat, 22 Aug 2020 05:44:35 -0700 (PDT)
+        Sat, 22 Aug 2020 10:52:59 -0400
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D84E7C061574
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Aug 2020 07:52:58 -0700 (PDT)
+Received: by mail-ed1-x542.google.com with SMTP id bs17so3996523edb.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Aug 2020 07:52:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CzryhHj21VyQdaYbcJxzbCkh7ulFs1srWgrHkgzAcig=;
+        b=hQ1o/5Y/4q/t5eH3b4oYTYS+j6BBmkvOvdk5CSuEea3VwBeU0OHljITtVxIcC4vCHt
+         hfi4dXK+MeSKZ8VyzL7H09BrJ26pay6jyq9e2S1ZF2jeZP2zkBclgH21+JM5LbigzrSk
+         FgyEqMOA+E5uPzvp6H3iKBc585YiZLE6fvqFo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=FetylycVAb2VdmXFV8OSnaxjVdiLE5dOceTQeBcYszc=;
-        b=rp/xoSP7varLCLv2XnQvqFws7MXEJ2d/CHvfL6Z3D6GEk5v57yyFOoiw39m5xn360D
-         COO62WLjEYpMVrFzlK2PCcZGdvbFlcIAH+JzROvRgIovKahjFOYlRVHZWMFcI1cG3pD5
-         OMtyDdRYfcTgH3KGpZQsHRKTLwx9AOOriuvd5GfgszirJ0ZPn2Rkgc37+u8HiDLaiMpV
-         UieAC02hcBGEIFRIddZhlqdk+lMZY6bz7pS+ePYomma/tA550SFywTFocbW1LiJL86q/
-         ZspWBi7rTrRcwhrHcuYxagxBfa1y4XkjaVwjqWY0pcQ1sY5xGgwU0jQ1fCLaXk2j5gWQ
-         Ndaw==
-X-Gm-Message-State: AOAM533PYn6HfgQu12NGvmt8iZQyAGXCXTctkoxqEhFuk3omEAZz8aMQ
-        YX2wXSqkrl/bDUFZs6D8UOA=
-X-Google-Smtp-Source: ABdhPJxomFoNz2Jn4UGmWCgyq4C/fViPiWfYwBoRb4XshfTNnJSn61Q/pXbf5c6nzHiRoADEShdSmg==
-X-Received: by 2002:a5d:6505:: with SMTP id x5mr6812637wru.336.1598100274718;
-        Sat, 22 Aug 2020 05:44:34 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id h5sm8809466wrt.31.2020.08.22.05.44.33
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 22 Aug 2020 05:44:34 -0700 (PDT)
-Date:   Sat, 22 Aug 2020 14:44:31 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
-Cc:     Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        m.szyprowski@samsung.com, b.zolnierkie@samsung.com
-Subject: Re: [PATCH v2 9/9] spi: spi-s3c64xx: Turn on interrupts upon resume
-Message-ID: <20200822124431.GH20423@kozik-lap>
-References: <20200821161401.11307-1-l.stelmach@samsung.com>
- <CGME20200821161408eucas1p196aa4b954b3d19ad1b89a48dbbe41fbc@eucas1p1.samsung.com>
- <20200821161401.11307-10-l.stelmach@samsung.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CzryhHj21VyQdaYbcJxzbCkh7ulFs1srWgrHkgzAcig=;
+        b=r97ZBo4HzLBqtHiD7uWpLTGNNO/TyYPjqbj9wSuCQYNTC9J997hyCU+XwqbpCsREBh
+         843xUufDXxuzwf7SOlr4GUQXwenOp2XPTPQhrwohP06f2J9uDAadnbNUrw3cMbDojcy8
+         QBwX43S4VDkI3bzyY4WljyUOge+5uBVpzC+ZI2+kFsXxGxdHydo1kZhAJ6cDC65SKIpy
+         XNsJw4K9JfqOb0b4b/71N0ON3xrCt6SPZEBPFcm/uEjsxO+5y9hGZbQiXqDHf69MeV70
+         c6+OxqEp1mrRk1tTj8YRG+KVferY4rqDXaBBn51ntuVuD1b6UhlAk2M+4rE1Qgd/LEXW
+         6xTQ==
+X-Gm-Message-State: AOAM5321oJ4SvgwtkxB5Zeb2QSpnZSCPGfByhRgEQV3xsqljbpSdGwUR
+        TGciOmmwCvYpdQkgc+Dr0ZtlnEgQBV0W1Q==
+X-Google-Smtp-Source: ABdhPJzTg+wqvbLLd44aD4ku9zMnqEgkDUmzY48XqnBpCDphosp3K+W3v4Fn1GjlQAezsKVHVbJBGQ==
+X-Received: by 2002:a50:ee0a:: with SMTP id g10mr7185867eds.289.1598107976037;
+        Sat, 22 Aug 2020 07:52:56 -0700 (PDT)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com. [209.85.221.52])
+        by smtp.gmail.com with ESMTPSA id k25sm112437edx.96.2020.08.22.07.52.54
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Aug 2020 07:52:54 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id a15so4499278wrh.10
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Aug 2020 07:52:54 -0700 (PDT)
+X-Received: by 2002:a5d:6744:: with SMTP id l4mr7904439wrw.105.1598107973784;
+ Sat, 22 Aug 2020 07:52:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20200821161401.11307-10-l.stelmach@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200821161401.11307-1-l.stelmach@samsung.com>
+ <CGME20200821161407eucas1p249e4833b8839f717cc2a496ab43bb8a2@eucas1p2.samsung.com>
+ <20200821161401.11307-8-l.stelmach@samsung.com> <20200822124325.GF20423@kozik-lap>
+In-Reply-To: <20200822124325.GF20423@kozik-lap>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Sat, 22 Aug 2020 16:52:40 +0200
+X-Gmail-Original-Message-ID: <CAAFQd5CmPXDsOWmPBS+z5McxGvn+L2nkV2Wh934Bq7xY6DMO4A@mail.gmail.com>
+Message-ID: <CAAFQd5CmPXDsOWmPBS+z5McxGvn+L2nkV2Wh934Bq7xY6DMO4A@mail.gmail.com>
+Subject: Re: [PATCH v2 7/9] spi: spi-s3c64xx: Ensure cur_speed holds actual
+ clock value
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Aug 21, 2020 at 06:14:01PM +0200, Łukasz Stelmach wrote:
-> s3c64xx_spi_hwinit() disables interrupts. In s3c64xx_spi_probe() after
-> calling s3c64xx_spi_hwinit() they are enabled with the following call.
-> 
-> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-> ---
->  drivers/spi/spi-s3c64xx.c | 4 ++++
->  1 file changed, 4 insertions(+)
+On Sat, Aug 22, 2020 at 2:43 PM Krzysztof Kozlowski <krzk@kernel.org> wrote=
+:
+>
+> On Fri, Aug 21, 2020 at 06:13:59PM +0200, =C5=81ukasz Stelmach wrote:
+> > cur_speed is used to calculate transfer timeout and needs to be
+> > set to the actual value of (half) the clock speed for precise
+> > calculations.
+>
+> If you need this only for timeout calculation just divide it in
+> s3c64xx_wait_for_dma().
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Division is not the point of the patch. The point is that
+clk_set_rate() that was originally there doesn't guarantee that the
+rate is set exactly. The rate directly determines the SPI transfer
+speed and thus the driver needs to use the rate that was actually set
+for further calculations.
+
+> Otherwise why only if (cmu) case is updated?
+
+Right, the !cmu case actually suffers from the same problem. The code
+divides the parent clock rate with the requested speed to obtain the
+divider to program into the register. This is subject to integer
+rounding, so (parent / (parent / speed)) doesn't always equal (speed).
+
+>
+> You are also affecting here not only timeout but
+> s3c64xx_enable_datapath() which is not mentioned in commit log. In other
+> words, this looks wrong.
+
+Actually this is right and fixes one more problem, which I didn't spot
+when looking at this code when I suggested the change (I only spotted
+the effects on timeout calculation). The rounding error might have
+caused wrong configuration there, because e.g. 30000000 Hz could be
+requested and rounded to 28000000 Hz. The former is a threshold for
+setting the S3C64XX_SPI_CH_HS_EN bit, but the real frequency wouldn't
+actually require setting it.
 
 Best regards,
-Krzysztof
+Tomasz
+
+>
+> Best regards,
+> Krzysztof
+>
+> >
+> > Cc: Tomasz Figa <tfiga@chromium.org>
+> > Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+> > ---
+> >  drivers/spi/spi-s3c64xx.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> > index 02de734b8ab1..89c162efe355 100644
+> > --- a/drivers/spi/spi-s3c64xx.c
+> > +++ b/drivers/spi/spi-s3c64xx.c
+> > @@ -626,6 +626,7 @@ static int s3c64xx_spi_config(struct s3c64xx_spi_dr=
+iver_data *sdd)
+> >               ret =3D clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+> >               if (ret)
+> >                       return ret;
+> > +             sdd->cur_speed =3D clk_get_rate(sdd->src_clk) / 2;
+> >       } else {
+> >               /* Configure Clock */
+> >               val =3D readl(regs + S3C64XX_SPI_CLK_CFG);
+> > --
+> > 2.26.2
+> >
