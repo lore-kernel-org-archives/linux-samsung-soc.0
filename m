@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 444F1C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 12:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 003D1C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 12:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13C892072D
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 12:03:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D046C20738
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 12:27:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598097825;
-	bh=HgKKI3wD2EtUTYoj39v/MVYCHs1WBnvJNuWQ7vOlizw=;
+	s=default; t=1598099222;
+	bh=5KaXnJRlpYm63xTnyOYPDtGnseb/+gEdDxWJpGGk2GM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qdqWHpQRR/tibBhPlCIsJ8NVUGIVr2m7B373d0icTdza/eD5JME9+Kp/3lIqeWstL
-	 JduinYienHgGgmQyN962h9Bvx5LH9jUi/O/nWPElf+Dpj9OinrDpUpbL37uJHWA4Xk
-	 SpH+3DLbiRwEFOo0BvMq2aim3lDAN3A3xOzX1Ujg=
+	b=QN0U/6dbnSBTrXRiViVIEbFkimCcVpGjR3jwgh/CypD551eE+EFe4aBlj8rzylDxE
+	 9srz7aXV4kmtCzjiyFZa6ltRNUunp1TG89yyzV95uAETCCgOo206SflWimhhbOrrfK
+	 9BzykDGeMXrsLmdUWm0KuD3NGVw+7Oa3ZUkuHur0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbgHVMDo convert rfc822-to-8bit (ORCPT
+        id S1727979AbgHVM1C convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 22 Aug 2020 08:03:44 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34767 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbgHVMDo (ORCPT
+        Sat, 22 Aug 2020 08:27:02 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42822 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727900AbgHVM1B (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Aug 2020 08:03:44 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f7so4294682wrw.1;
-        Sat, 22 Aug 2020 05:03:42 -0700 (PDT)
+        Sat, 22 Aug 2020 08:27:01 -0400
+Received: by mail-wr1-f68.google.com with SMTP id d16so4286014wrq.9;
+        Sat, 22 Aug 2020 05:27:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=O5Mmh807+dlkwZ+noBd99oZ7U6ajTTxKmW3eWIkcpC8=;
-        b=FgtByyRhgKBwo2jm17So3bUotUhty0XbmX4nf8KzQgz6W5oZw7HNkjd2BvScnD8Pg5
-         pgdsGou/F9pd719zUEItkTpdI6IN4z99cUR5NiPIforLDhpMR/bIn6Tqbe0kqSxI1YTO
-         L5F3fFEd5ecHhffR/VRYIfEsLdeFPsDG2GAKQCUfDjLkCYjwcR5fXQtDxLAIJuOYD0V8
-         ElO/b9jVrCCiz8du+Hk5cKQ7BD8f3a+qtFwSAVFn4EHvE6BhUy5VMHLMY8GNM1BKy8Yf
-         kqqFvl0M9GOYbvpwJCKyTvr1Dk9ybjk3X2xLtAhfbbs7hGtpjpfCf5lyJvQsI5RY7eyF
-         Mabg==
-X-Gm-Message-State: AOAM532ze90Dm1mTXFe1Fp5f2+a3YiWu/uVAwZ+1NGLbTjwkmPgWM3XT
-        dwMHDWU6i8tmghASR66VfsQ=
-X-Google-Smtp-Source: ABdhPJyAzAxWwpFrLyd0fuXR80dw6dBnXHXDLD6m6Dsc7ZhR4bzh8gJwsoJs4njQUlKgSSS0M/OiqQ==
-X-Received: by 2002:a5d:6944:: with SMTP id r4mr5753332wrw.132.1598097821916;
-        Sat, 22 Aug 2020 05:03:41 -0700 (PDT)
+        bh=ZGKQZE5UXURzH01fkYYDy2bGkaVf9EVp2rSo9uoV0wE=;
+        b=r/Tsfp2nJIJ9qtTMzO6aGHwf5iMGkPgywAjGTBmpW6RJsMh/lwXrfqdWs/006BK3AT
+         mE7KIHjxt8bB4po/mch4PdoW9fOUqqPNy05UTi7fbvXCbyZwY77JIi7HrVvKFzFFBOWF
+         65sYvj3WQP+9m01SLtrtJKh9isdWg/vFuFC9UCGQZ0C8AZNchiKMLez8fHvLXxi4q66X
+         QKv4HqZ6HJ4p8/PYRb32CjPupZxCfUa6FAC8U5k3i5nxmp2YJvCMe6oSOAOmmn0pR1tf
+         QGzg5O04KtbUYSTXwv8sYURxE8WxtEg+yuN/0BHBwbKpwt4jkcg0ZApLpPhi4QT80OqZ
+         ztAw==
+X-Gm-Message-State: AOAM531cbC29LYb/W1nvurB3+D6aTLldWaJNS+woyWRRDOWG3v2dZdHU
+        yQKDwSH9fb+GeKFWe8y3QR4=
+X-Google-Smtp-Source: ABdhPJyBd0nGmaoVqrTgj3M+s2WQBh+tWnxc6i8aNBW22rL2BI87rZcBtBqLNC8VxJaUARBFzs7dCQ==
+X-Received: by 2002:a5d:5086:: with SMTP id a6mr6881355wrt.304.1598099219712;
+        Sat, 22 Aug 2020 05:26:59 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id g3sm11611456wrb.59.2020.08.22.05.03.40
+        by smtp.googlemail.com with ESMTPSA id n24sm11141916wmi.36.2020.08.22.05.26.58
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 22 Aug 2020 05:03:41 -0700 (PDT)
-Date:   Sat, 22 Aug 2020 14:03:39 +0200
+        Sat, 22 Aug 2020 05:26:59 -0700 (PDT)
+Date:   Sat, 22 Aug 2020 14:26:56 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
 Cc:     Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
@@ -59,33 +59,33 @@ Cc:     Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
         linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         m.szyprowski@samsung.com, b.zolnierkie@samsung.com
-Subject: Re: [PATCH v2 3/9] spi: spi-s3c64xx: Report more information when
- errors occur
-Message-ID: <20200822120339.GC20423@kozik-lap>
+Subject: Re: [PATCH v2 5/9] spi: spi-s3c64xx: Fix doc comment for struct
+ s3c64xx_spi_driver_data
+Message-ID: <20200822122656.GD20423@kozik-lap>
 References: <20200821161401.11307-1-l.stelmach@samsung.com>
- <CGME20200821161405eucas1p19280babcd73926b5c22a48830f5fecd7@eucas1p1.samsung.com>
- <20200821161401.11307-4-l.stelmach@samsung.com>
+ <CGME20200821161406eucas1p121553719d4e9cc020d2c557a69000f0c@eucas1p1.samsung.com>
+ <20200821161401.11307-6-l.stelmach@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20200821161401.11307-4-l.stelmach@samsung.com>
+In-Reply-To: <20200821161401.11307-6-l.stelmach@samsung.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Aug 21, 2020 at 06:13:55PM +0200, Łukasz Stelmach wrote:
-> Report amount of pending data when a transfer stops due to errors.
-> 
-> Report if DMA was used to transfer data and print the status code.
+On Fri, Aug 21, 2020 at 06:13:57PM +0200, Łukasz Stelmach wrote:
+> Remove descriptions for non-existent fields and fix indentation.
 > 
 > Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-
-I already reviewed v1. Include tags you receive on resubmissions.
+> ---
+>  drivers/spi/spi-s3c64xx.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
+
