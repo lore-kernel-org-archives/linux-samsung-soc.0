@@ -1,82 +1,104 @@
-Return-Path: <SRS0=N1Gb=CA=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=tMmX=CB=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4FFC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 16:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 190C6C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Aug 2020 08:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A897206C0
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Aug 2020 16:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E62D52074D
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Aug 2020 08:42:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598114223;
-	bh=dfGnt+5ykVIU/FKUhQ2ZU0csLC2jXSrfImGzu3SlobE=;
-	h=From:To:Subject:Date:List-ID:From;
-	b=MOS8JF/LW/G8xuEKljo8JJNsTNMLg4qnuwuuKIMGBbQzVnSUW4+xkutULn3ZiUNoy
-	 p9y/4kUIHkN3DiE1sNEL7SDF+VicnntT4MAoBWxcKDBjRvsgUOp8D5v0X8EDQneckO
-	 v1Dx5U7ufjPkBbbqT/LGza2qy1zqtHfNP93reb5Y=
+	s=default; t=1598172168;
+	bh=wPHHynZ8wXpznE548gb8T0VkD0SCWg7q/BqD14/vlwM=;
+	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To:List-ID:
+	 From;
+	b=oiCRC5XgnsEa3+icQ1NQWnp7RG54pbsYQ2Vdnyx8wpZUtPf6dL/tJajW1kI2IKVPq
+	 pD/Cwtwmz3qVWqsvwF61xOJxfWTASpHRrgmaCynKfSqjE+jBv47YMgSgLZ+VQujqv+
+	 vpPFDbICas3sKyuoGlHI7d6vIqbmaa6tXUn45j2g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbgHVQg7 (ORCPT
+        id S1726371AbgHWIms (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 22 Aug 2020 12:36:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45118 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727856AbgHVQg6 (ORCPT
+        Sun, 23 Aug 2020 04:42:48 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:32898 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726303AbgHWImq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Aug 2020 12:36:58 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.216])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5769C206C0;
-        Sat, 22 Aug 2020 16:36:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598114218;
-        bh=dfGnt+5ykVIU/FKUhQ2ZU0csLC2jXSrfImGzu3SlobE=;
-        h=From:To:Subject:Date:From;
-        b=VtoK6mSENvhmAMvISv5x+bJ2DnA5oyFI0rfuKfuxKeuc1SAIPWaD6V/IKivGTYJK0
-         J59OBL4HpDhg7gWLPCaL62PO66FtWhN4RHfw9Sa+cSJ7QdfhJy/4h+NsVMGm852PC1
-         A7ZQVtIvaqWpoY1YXxlM+V255D+JGEP1qjZMM9OU=
+        Sun, 23 Aug 2020 04:42:46 -0400
+Received: by mail-wr1-f67.google.com with SMTP id o4so1679821wrn.0;
+        Sun, 23 Aug 2020 01:42:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pIEExo4zmDjRLEImoub+ih8awSkem1c2osObskHGAIM=;
+        b=kLvkCu3zJa+EnX+Hjk5nqU6JoPIrJtPT4b7v/seHAkDSBvUku7KCB4ipm+YYhELfU7
+         nyYH4iM9qRraOu1yLq5/POugdqohyZlBwY7QjhMrioT9Cjvqr2irGKLZiLr7+skoewcv
+         HDFDhyuiivBq021IvCuDjk7ptGeBU6wiQFo0JQ7rBHorfCFfmfaX1DBDied2EaYqXVCF
+         nmi4SJx4+F6AyhRyz051+3zDpp/79q1a4gla5u8iBncvZap3zDNHATZxxtiEEubItjq2
+         TKb0F2ce56ROCXaV4/mOqCO/xdmMo09kXWslpHIWBBBuzkADSN2j/tsIEVIlJkudlr6k
+         sGpw==
+X-Gm-Message-State: AOAM531xRXRXrnsMfK5V3pJ+w7pTz7zGb8o4rJoPRlEAQF2kvfLLSXAS
+        63POsXBn50vdTjA7bjJ0XpI=
+X-Google-Smtp-Source: ABdhPJwnk5UwLhacVVFi/x2XKKHRfm91exlxOzeGN6dguMsFPqbNWS8dFyQzPkOGMrHQDXIFh32vWg==
+X-Received: by 2002:adf:ba10:: with SMTP id o16mr777693wrg.100.1598172164634;
+        Sun, 23 Aug 2020 01:42:44 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.216])
+        by smtp.googlemail.com with ESMTPSA id 126sm17215985wme.42.2020.08.23.01.42.43
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 23 Aug 2020 01:42:44 -0700 (PDT)
+Date:   Sun, 23 Aug 2020 10:42:41 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Luba <lukasz.luba@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] memory: samsung: exynos5422-dmc: add missing kerneldoc for dmc_opp_table
-Date:   Sat, 22 Aug 2020 18:36:46 +0200
-Message-Id: <20200822163646.24202-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+To:     Shawn Guo <shawnguo@kernel.org>
+List-Id: <soc.lore.kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        arm@kernel.org, soc@kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Subject: Re: [PATCH v2 1/2] arm64: defconfig: Enable USB gadget with configfs
+Message-ID: <20200823084241.GA2886@kozik-lap>
+References: <20200817065654.4419-1-krzk@kernel.org>
+ <20200823014600.GH30094@dragon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200823014600.GH30094@dragon>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+On Sun, Aug 23, 2020 at 09:46:01AM +0800, Shawn Guo wrote:
+> On Mon, Aug 17, 2020 at 08:56:53AM +0200, Krzysztof Kozlowski wrote:
+> > USB OTG connections are pretty common for embedded and development
+> > boards, for example to have networking or serial access to the device.
+> > Build as a module the USB gadget configfs options so the defconfig can
+> > be used in such development configurations.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> Applied both, thanks.
 
----
+Thanks, although few days ago I got confirmation from patchwork that
+Olof already applied them to arm-soc.  I cannot find them in arm-soc
+or next trees, though.
 
-To be squashed with https://lore.kernel.org/linux-samsung-soc/20200822163218.21857-3-krzk@kernel.org/T/#u
----
- drivers/memory/samsung/exynos5422-dmc.c | 2 ++
- 1 file changed, 2 insertions(+)
+Dear Olof,
+Did you pick these up already?
 
-diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
-index a9d04bd31603..4961a565c462 100644
---- a/drivers/memory/samsung/exynos5422-dmc.c
-+++ b/drivers/memory/samsung/exynos5422-dmc.c
-@@ -98,6 +98,8 @@ MODULE_PARM_DESC(irqmode, "Enable IRQ mode (0=off [default], 1=on)");
- 
- /**
-  * struct dmc_opp_table - Operating level desciption
-+ * @freq_hz:		target frequency in Hz
-+ * @volt_uv:		target voltage in uV
-  *
-  * Covers frequency and voltage settings of the DMC operating mode.
-  */
--- 
-2.17.1
+Best regards,
+Krzysztof
 
