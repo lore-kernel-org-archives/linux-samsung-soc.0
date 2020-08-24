@@ -2,121 +2,384 @@ Return-Path: <SRS0=sDIw=CC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31225C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 08:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67789C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 09:09:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12D742074D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 08:26:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598257601;
-	bh=Z5v3yALan58X82pcXsq2Jd8sMAElN8QVKUbO2NvOlRg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=p8Tk6eEK+CL7pa/rWlkry22ffVBzuyZPCpv9/fxzRSG0Yin3O2oGr2B8tWWLU2tte
-	 yXu+WbyBPUkCc+q0FeC/PNeRM4IvSNAP/Er625VcTNRtcCzDJdFWrXcJmNJIcB0skD
-	 hr0R3EEfSYiikVwTNXdaLo367IFlgaOUb3aOnkhI=
+	by mail.kernel.org (Postfix) with ESMTP id 289B3206F0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 09:09:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BPXypc1U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbgHXI0k (ORCPT
+        id S1728190AbgHXJJs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Aug 2020 04:26:40 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36868 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726580AbgHXI0k (ORCPT
+        Mon, 24 Aug 2020 05:09:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39752 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbgHXJJl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Aug 2020 04:26:40 -0400
-Received: by mail-wr1-f67.google.com with SMTP id y3so7744775wrl.4;
-        Mon, 24 Aug 2020 01:26:38 -0700 (PDT)
+        Mon, 24 Aug 2020 05:09:41 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B92E6C061573
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Aug 2020 02:09:40 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id m34so4248357pgl.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Aug 2020 02:09:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KkjksCGs4AQuVWCwGfdEcJFYrQa9D8++X80GpI0F1Zo=;
+        b=BPXypc1U/ODzYLqbC9yrqE4xPIwzl1Ox4y5aPhPJ66J/ahwQz/B0ppevelkSK8WqFo
+         eIIpvjrVmIgJaU5e1AwKWm8c6KhLAb4hq8CQsSlOUddaO9LiCKKfPeM28Ie1Iv/0Qd6p
+         +6Pipv/rmD59wKhGKvZ4J0zLYEkvkSF/FwU5zTxTjvzkYz4fUfXLqBnOKCELssTmv4c4
+         e8NmNd0QyeFsNdtjg/VtMqUEQcarutVcdG2JCnKMjQrQIqemG6Y2YcB8zzA8P3ksArMW
+         nVVoi2mo0ra88W0QtZECvg/Rn2TXtjM3isK00WZ1zhu92BqbXJX1cfV9DVESbXYO7njY
+         pHBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EwnSSERLhwr59xH9xxkGQsLVrHFbS0iVSLa9oXTssQk=;
-        b=YvAiqwspAmuXiL5s6NXaoIOF7kqM7eENiu4/xt+fLd5D0OmZaKtebJTGgoLIo/5N1G
-         CF+bhSSlDsu/ThNuuejVpQqF9KkKVUIMIZCZpE/4FGYL1QIRar4OOhap+hy76ICDJp8v
-         6KBGfSEk8HkSISwzz1QTBU8fSRZio8pJVyD/pFqfRouhtYy0PzicuYHb5oSBYwIBKcby
-         8YiCoqdhR9O/AAt+DQoj4YgxKtfKMQUb5aZ6HBAyuqsq6ywE4DzyhK/+Xqoa2fr0Fb9L
-         MTRQYRG2UFP2iopBMCVrmwwLmcIZ/9Er5W4l3oTPtLLd0tOZ6M9U5U/Hu/i3HBTue276
-         W8IQ==
-X-Gm-Message-State: AOAM530Q/NvyXjvs0PMm0aISfz8THiPYt1+jbKq2+VNJbhNGuuoGJp8w
-        4fRmw4MTn8Z+LIvvNopJXU0=
-X-Google-Smtp-Source: ABdhPJyfwbFUcMPFowdfSohjmf5Een0Qin2LUBTL30LqpiJthvHEC+F/P+baWuv3HPZCiDCL8xSSCg==
-X-Received: by 2002:adf:a11d:: with SMTP id o29mr4769908wro.421.1598257597768;
-        Mon, 24 Aug 2020 01:26:37 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id m1sm22173394wmc.28.2020.08.24.01.26.36
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Aug 2020 01:26:37 -0700 (PDT)
-Date:   Mon, 24 Aug 2020 10:26:35 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Lukasz Luba <lukasz.luba@arm.com>
-Subject: Re: [PATCH 2/4] cpuidle: big.LITTLE: enable driver only on
- Peach-Pit/Pi Chromebooks
-Message-ID: <20200824082635.GA15030@kozik-lap>
-References: <20200616081230.31198-1-m.szyprowski@samsung.com>
- <CGME20200616081249eucas1p2ad165b545f265bec88a06270d55fce76@eucas1p2.samsung.com>
- <20200616081230.31198-3-m.szyprowski@samsung.com>
- <db3315ef-1ca8-14b5-486a-9cc5a02150a8@samsung.com>
- <20200817153908.GA13144@kozik-lap>
- <f46e7041-f75e-8d97-e967-2ac458aaaf2e@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KkjksCGs4AQuVWCwGfdEcJFYrQa9D8++X80GpI0F1Zo=;
+        b=nZvmhFnZyuOnmkbHOse8MHpKaUfsdcbOmrlHsUNKoGjPh8BbrF1B7PJTxDXE3RKdAq
+         /9kfAXd8tquFxtGxcTPq7geACQ2z7USexKshUMEFzsmpw0Mr3xQ96zX5cNV3pGwGfACd
+         RjTcRyOjRmhiYuWPVdW8YMewwkl9TJN5PpSu9FsTBVLOjiW65ZsobpKUc6pTFkSnPdrO
+         vu2LIQNIWYxOwaNzdGqtKz58Aegk7SpO+BAPNFwT1MLsrBe6iJwP8iXVixTbWpBMAI6Q
+         OwBcjRWhQfUZzbF3psbi3DYdnlFJBHwmNZqT+ifS0Yick3eKG/PFBPDfs5xgljMgAWtc
+         mwxQ==
+X-Gm-Message-State: AOAM530WSn5/rncN8Y/rmwyVLwZEUeWsYSn2rRxZkiKPqvtn04/Apl3f
+        k+Mb1K28PuFUI69RJR9Na8Wynmp8Y9G5DQ==
+X-Google-Smtp-Source: ABdhPJyJVYyNtoeLgVn3sekF5Av1U4evkK87vnqaw33gDUhUL13Ji8mvBsdyrgxvAjnJnWQ6qyhGwA==
+X-Received: by 2002:a63:5542:: with SMTP id f2mr2822925pgm.196.1598260180107;
+        Mon, 24 Aug 2020 02:09:40 -0700 (PDT)
+Received: from localhost ([122.172.43.13])
+        by smtp.gmail.com with ESMTPSA id r7sm10965833pfl.186.2020.08.24.02.09.39
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Aug 2020 02:09:39 -0700 (PDT)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>, nks@flawful.org,
+        georgi.djakov@linaro.org, Stephan Gerhold <stephan@gerhold.net>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH V2 1/2] opp: Allow dev_pm_opp_get_opp_table() to return -EPROBE_DEFER
+Date:   Mon, 24 Aug 2020 14:39:32 +0530
+Message-Id: <24ff92dd1b0ee1b802b45698520f2937418f8094.1598260050.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.25.0.rc1.19.g042ed3e048af
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f46e7041-f75e-8d97-e967-2ac458aaaf2e@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 10:15:42AM +0200, Daniel Lezcano wrote:
-> On 17/08/2020 17:39, Krzysztof Kozlowski wrote:
-> > On Wed, Jun 24, 2020 at 12:05:46PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> >>
-> >> On 6/16/20 10:12 AM, Marek Szyprowski wrote:
-> >>> This driver always worked properly only on the Exynos 5420/5800 based
-> >>> Chromebooks (Peach-Pit/Pi), so change the required compatible string to
-> >>> the 'google,peach', to avoid enabling it on the other Exynos 542x/5800
-> >>> boards, which hangs in such case. The main difference between Peach-Pit/Pi
-> >>> and other Exynos 542x/5800 boards is the firmware - Peach platform doesn't
-> >>> use secure firmware at all.
-> >>>
-> >>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >>
-> >> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > 
-> > This patch waited on list for almost two months and was not picked up.
-> > Therefore I'll take it for v5.10.
-> 
-> It happens some patches can fall into the cracks, especially when we are
-> fully busy with a peak of work. Also, we have filters in our mailers
-> which are not perfect. A gentle ping is enough to ask to pay attention
-> to the series.
-> 
-> I can understand that is annoying, but preemptively pick the patch is
-> not adequate.
+From: Stephan Gerhold <stephan@gerhold.net>
 
-I apologize if my message was harsh or sounded rude. That was not my
-intention.
+The OPP core manages various resources, e.g. clocks or interconnect paths.
+These resources are looked up when the OPP table is allocated once
+dev_pm_opp_get_opp_table() is called the first time (either directly
+or indirectly through one of the many helper functions).
 
-I understand that patches soometimes got missed. That's life. This patch
-here is quite simple, non-intrusive, got independent ack. Also in the
-past SoC-specific drivers were sometimes going through SoC tree (so in
-this case - mine for Samsung).  Patch also blocks the dependant DT
-change (for entire cycle). Therefore I guessed that it won't be a
-problem and it is just simpler to apply it.
+At this point, the resources may not be available yet, i.e. looking them
+up will result in -EPROBE_DEFER. Unfortunately, dev_pm_opp_get_opp_table()
+is currently unable to propagate this error code since it only returns
+the allocated OPP table or NULL.
 
-If it is an issue, I can drop it and rebase my branch.
+This means that all consumers of the OPP core are required to make sure
+that all necessary resources are available. Usually this happens by
+requesting them, checking the result and releasing them immediately after.
 
-Best regards,
-Krzysztof
+For example, we have added "dev_pm_opp_of_find_icc_paths(dev, NULL)" to
+several drivers now just to make sure the interconnect providers are
+ready before the OPP table is allocated. If this call is missing,
+the OPP core will only warn about this and then attempt to continue
+without interconnect. This will eventually fail horribly, e.g.:
+
+    cpu cpu0: _allocate_opp_table: Error finding interconnect paths: -517
+    ... later ...
+    of: _read_bw: Mismatch between opp-peak-kBps and paths (1 0)
+    cpu cpu0: _opp_add_static_v2: opp key field not found
+    cpu cpu0: _of_add_opp_table_v2: Failed to add OPP, -22
+
+This example happens when trying to use interconnects for a CPU OPP
+table together with qcom-cpufreq-nvmem.c. qcom-cpufreq-nvmem calls
+dev_pm_opp_set_supported_hw(), which ends up allocating the OPP table
+early. To fix the problem with the current approach we would need to add
+yet another call to dev_pm_opp_of_find_icc_paths(dev, NULL).
+But actually qcom-cpufreq-nvmem.c has nothing to do with interconnects...
+
+This commit attempts to make this more robust by allowing
+dev_pm_opp_get_opp_table() to return an error pointer. Fixing all
+the usages is trivial because the function is usually used indirectly
+through another helper (e.g. dev_pm_opp_set_supported_hw() above).
+These other helpers already return an error pointer.
+
+The example above then works correctly because set_supported_hw() will
+return -EPROBE_DEFER, and qcom-cpufreq-nvmem.c already propagates that
+error. It should also be possible to remove the remaining usages of
+"dev_pm_opp_of_find_icc_paths(dev, NULL)" from other drivers as well.
+
+Note that this commit currently only handles -EPROBE_DEFER for the
+clock/interconnects within _allocate_opp_table(). Other errors are just
+ignored as before. Eventually those should be propagated as well.
+
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+[ Viresh: skip checking return value of dev_pm_opp_get_opp_table() for
+	  EPROBE_DEFER in domain.c, fix NULL return value and reorder
+	  code a bit in core.c, and update exynos-asv.c ]
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+Stephan, I have made some changes to the code. Please try it again and
+lemme know if it works fine.
+
+ drivers/base/power/domain.c      | 14 +++++----
+ drivers/opp/core.c               | 53 +++++++++++++++++++-------------
+ drivers/opp/of.c                 |  8 ++---
+ drivers/soc/samsung/exynos-asv.c |  2 +-
+ 4 files changed, 44 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 2cb5e04cf86c..b92bb61550d3 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -2044,8 +2044,9 @@ int of_genpd_add_provider_simple(struct device_node *np,
+ 	if (genpd->set_performance_state) {
+ 		ret = dev_pm_opp_of_add_table(&genpd->dev);
+ 		if (ret) {
+-			dev_err(&genpd->dev, "Failed to add OPP table: %d\n",
+-				ret);
++			if (ret != -EPROBE_DEFER)
++				dev_err(&genpd->dev, "Failed to add OPP table: %d\n",
++					ret);
+ 			goto unlock;
+ 		}
+ 
+@@ -2054,7 +2055,7 @@ int of_genpd_add_provider_simple(struct device_node *np,
+ 		 * state.
+ 		 */
+ 		genpd->opp_table = dev_pm_opp_get_opp_table(&genpd->dev);
+-		WARN_ON(!genpd->opp_table);
++		WARN_ON(IS_ERR(genpd->opp_table));
+ 	}
+ 
+ 	ret = genpd_add_provider(np, genpd_xlate_simple, genpd);
+@@ -2111,8 +2112,9 @@ int of_genpd_add_provider_onecell(struct device_node *np,
+ 		if (genpd->set_performance_state) {
+ 			ret = dev_pm_opp_of_add_table_indexed(&genpd->dev, i);
+ 			if (ret) {
+-				dev_err(&genpd->dev, "Failed to add OPP table for index %d: %d\n",
+-					i, ret);
++				if (ret != -EPROBE_DEFER)
++					dev_err(&genpd->dev, "Failed to add OPP table for index %d: %d\n",
++						i, ret);
+ 				goto error;
+ 			}
+ 
+@@ -2121,7 +2123,7 @@ int of_genpd_add_provider_onecell(struct device_node *np,
+ 			 * performance state.
+ 			 */
+ 			genpd->opp_table = dev_pm_opp_get_opp_table_indexed(&genpd->dev, i);
+-			WARN_ON(!genpd->opp_table);
++			WARN_ON(IS_ERR(genpd->opp_table));
+ 		}
+ 
+ 		genpd->provider = &np->fwnode;
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index 6978b9218c6e..8c69a764d0a4 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -1068,7 +1068,7 @@ static struct opp_table *_allocate_opp_table(struct device *dev, int index)
+ 	 */
+ 	opp_table = kzalloc(sizeof(*opp_table), GFP_KERNEL);
+ 	if (!opp_table)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	mutex_init(&opp_table->lock);
+ 	mutex_init(&opp_table->genpd_virt_dev_lock);
+@@ -1079,8 +1079,8 @@ static struct opp_table *_allocate_opp_table(struct device *dev, int index)
+ 
+ 	opp_dev = _add_opp_dev(dev, opp_table);
+ 	if (!opp_dev) {
+-		kfree(opp_table);
+-		return NULL;
++		ret = -ENOMEM;
++		goto err;
+ 	}
+ 
+ 	_of_init_opp_table(opp_table, dev, index);
+@@ -1089,16 +1089,21 @@ static struct opp_table *_allocate_opp_table(struct device *dev, int index)
+ 	opp_table->clk = clk_get(dev, NULL);
+ 	if (IS_ERR(opp_table->clk)) {
+ 		ret = PTR_ERR(opp_table->clk);
+-		if (ret != -EPROBE_DEFER)
+-			dev_dbg(dev, "%s: Couldn't find clock: %d\n", __func__,
+-				ret);
++		if (ret == -EPROBE_DEFER)
++			goto err;
++
++		dev_dbg(dev, "%s: Couldn't find clock: %d\n", __func__, ret);
+ 	}
+ 
+ 	/* Find interconnect path(s) for the device */
+ 	ret = dev_pm_opp_of_find_icc_paths(dev, opp_table);
+-	if (ret)
++	if (ret) {
++		if (ret == -EPROBE_DEFER)
++			goto err;
++
+ 		dev_warn(dev, "%s: Error finding interconnect paths: %d\n",
+ 			 __func__, ret);
++	}
+ 
+ 	BLOCKING_INIT_NOTIFIER_HEAD(&opp_table->head);
+ 	INIT_LIST_HEAD(&opp_table->opp_list);
+@@ -1107,6 +1112,10 @@ static struct opp_table *_allocate_opp_table(struct device *dev, int index)
+ 	/* Secure the device table modification */
+ 	list_add(&opp_table->node, &opp_tables);
+ 	return opp_table;
++
++err:
++	kfree(opp_table);
++	return ERR_PTR(ret);
+ }
+ 
+ void _get_opp_table_kref(struct opp_table *opp_table)
+@@ -1129,7 +1138,7 @@ static struct opp_table *_opp_get_opp_table(struct device *dev, int index)
+ 	if (opp_table) {
+ 		if (!_add_opp_dev_unlocked(dev, opp_table)) {
+ 			dev_pm_opp_put_opp_table(opp_table);
+-			opp_table = NULL;
++			opp_table = ERR_PTR(-ENOMEM);
+ 		}
+ 		goto unlock;
+ 	}
+@@ -1573,8 +1582,8 @@ struct opp_table *dev_pm_opp_set_supported_hw(struct device *dev,
+ 	struct opp_table *opp_table;
+ 
+ 	opp_table = dev_pm_opp_get_opp_table(dev);
+-	if (!opp_table)
+-		return ERR_PTR(-ENOMEM);
++	if (IS_ERR(opp_table))
++		return opp_table;
+ 
+ 	/* Make sure there are no concurrent readers while updating opp_table */
+ 	WARN_ON(!list_empty(&opp_table->opp_list));
+@@ -1632,8 +1641,8 @@ struct opp_table *dev_pm_opp_set_prop_name(struct device *dev, const char *name)
+ 	struct opp_table *opp_table;
+ 
+ 	opp_table = dev_pm_opp_get_opp_table(dev);
+-	if (!opp_table)
+-		return ERR_PTR(-ENOMEM);
++	if (IS_ERR(opp_table))
++		return opp_table;
+ 
+ 	/* Make sure there are no concurrent readers while updating opp_table */
+ 	WARN_ON(!list_empty(&opp_table->opp_list));
+@@ -1725,8 +1734,8 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+ 	int ret, i;
+ 
+ 	opp_table = dev_pm_opp_get_opp_table(dev);
+-	if (!opp_table)
+-		return ERR_PTR(-ENOMEM);
++	if (IS_ERR(opp_table))
++		return opp_table;
+ 
+ 	/* This should be called before OPPs are initialized */
+ 	if (WARN_ON(!list_empty(&opp_table->opp_list))) {
+@@ -1833,8 +1842,8 @@ struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const char *name)
+ 	int ret;
+ 
+ 	opp_table = dev_pm_opp_get_opp_table(dev);
+-	if (!opp_table)
+-		return ERR_PTR(-ENOMEM);
++	if (IS_ERR(opp_table))
++		return opp_table;
+ 
+ 	/* This should be called before OPPs are initialized */
+ 	if (WARN_ON(!list_empty(&opp_table->opp_list))) {
+@@ -1901,8 +1910,8 @@ struct opp_table *dev_pm_opp_register_set_opp_helper(struct device *dev,
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	opp_table = dev_pm_opp_get_opp_table(dev);
+-	if (!opp_table)
+-		return ERR_PTR(-ENOMEM);
++	if (!IS_ERR(opp_table))
++		return opp_table;
+ 
+ 	/* This should be called before OPPs are initialized */
+ 	if (WARN_ON(!list_empty(&opp_table->opp_list))) {
+@@ -1982,8 +1991,8 @@ struct opp_table *dev_pm_opp_attach_genpd(struct device *dev,
+ 	const char **name = names;
+ 
+ 	opp_table = dev_pm_opp_get_opp_table(dev);
+-	if (!opp_table)
+-		return ERR_PTR(-ENOMEM);
++	if (IS_ERR(opp_table))
++		return opp_table;
+ 
+ 	/*
+ 	 * If the genpd's OPP table isn't already initialized, parsing of the
+@@ -2153,8 +2162,8 @@ int dev_pm_opp_add(struct device *dev, unsigned long freq, unsigned long u_volt)
+ 	int ret;
+ 
+ 	opp_table = dev_pm_opp_get_opp_table(dev);
+-	if (!opp_table)
+-		return -ENOMEM;
++	if (IS_ERR(opp_table))
++		return PTR_ERR(opp_table);
+ 
+ 	/* Fix regulator count for dynamic OPPs */
+ 	opp_table->regulator_count = 1;
+diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+index 7d9d4455a59e..e39ddcc779af 100644
+--- a/drivers/opp/of.c
++++ b/drivers/opp/of.c
+@@ -947,8 +947,8 @@ int dev_pm_opp_of_add_table(struct device *dev)
+ 	int ret;
+ 
+ 	opp_table = dev_pm_opp_get_opp_table_indexed(dev, 0);
+-	if (!opp_table)
+-		return -ENOMEM;
++	if (IS_ERR(opp_table))
++		return PTR_ERR(opp_table);
+ 
+ 	/*
+ 	 * OPPs have two version of bindings now. Also try the old (v1)
+@@ -1002,8 +1002,8 @@ int dev_pm_opp_of_add_table_indexed(struct device *dev, int index)
+ 	}
+ 
+ 	opp_table = dev_pm_opp_get_opp_table_indexed(dev, index);
+-	if (!opp_table)
+-		return -ENOMEM;
++	if (IS_ERR(opp_table))
++		return PTR_ERR(opp_table);
+ 
+ 	ret = _of_add_opp_table_v2(dev, opp_table);
+ 	if (ret)
+diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
+index 30bb7b7cc769..8abf4dfaa5c5 100644
+--- a/drivers/soc/samsung/exynos-asv.c
++++ b/drivers/soc/samsung/exynos-asv.c
+@@ -93,7 +93,7 @@ static int exynos_asv_update_opps(struct exynos_asv *asv)
+ 			continue;
+ 
+ 		opp_table = dev_pm_opp_get_opp_table(cpu);
+-		if (IS_ERR_OR_NULL(opp_table))
++		if (IS_ERR(opp_table))
+ 			continue;
+ 
+ 		if (!last_opp_table || opp_table != last_opp_table) {
+-- 
+2.25.0.rc1.19.g042ed3e048af
 
