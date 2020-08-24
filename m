@@ -2,166 +2,217 @@ Return-Path: <SRS0=sDIw=CC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E201DC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 00:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B4FC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 07:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8A8D20720
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 00:04:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E09AF207DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 07:45:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="ph3cmZei"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Tl2QZJr3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbgHXAEw (ORCPT
+        id S1726656AbgHXHpB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 23 Aug 2020 20:04:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40206 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727823AbgHXAEs (ORCPT
+        Mon, 24 Aug 2020 03:45:01 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:41959 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbgHXHo7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 23 Aug 2020 20:04:48 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 479A6C061575
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Aug 2020 17:04:47 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id t4so5829014iln.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Aug 2020 17:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2qvzvkep7ZlQHNyjrGsuXQAp+x7s+RjdNiOv81NxtoQ=;
-        b=ph3cmZeijsQTsHnHnrr9eCGgxMPexaLwCGnu3F9Od9T7oE9SJ1xriseSecoaLR+A31
-         cxdttU99z8vHmtpSvs9wLGOOgPOY6GzwuKuovZh4UMjplaxKJu/wyAtKKGV99cTnuUCc
-         b9jW667DJd78gpOSqL093TQrnCvZ9zpW4sDgc9e3s4gqdpHbIh0cqwIbSVLaQrTLqDAX
-         thER0vKrZAtqkOJvYQeGZuITMeh4kPZ6AWC1kOvIEmnWvuxZr35lD2OOnlXMpkqB5GBo
-         XlqFU7D/ggoXmysuTUVEiDWk1jvnBEMzHRuwpliqu/K2HYrSEPvB6WXxqYArt4mYifKa
-         QdMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2qvzvkep7ZlQHNyjrGsuXQAp+x7s+RjdNiOv81NxtoQ=;
-        b=kQn+Vi59/0IqOsm89yE6a4+94dIaUJE0W7BL1ez8urupOyboLqrB9XNYp8H2AIKmPa
-         Y7B1PcacfYuRA6G3wBGnSE8Q95fm/qYyQfuO1idRwzgq4NR39mAmIhNY8gxQq8TUoY9X
-         FROk4x/g8tBCqA598gMeIFmhZRiwSa0nXfyn7ppx2ctXEPeHrHB6PlIwpaLJVXw9Itnw
-         x9IBV7S+s6dlf3CTaJwWdmh20DsQVeO1ITCV6nypTV4M7MckCJ3iwPmrO3Ef9lsjZrl8
-         hNQt+m4G/vU8WBrYcns8UY4HxOVCMSmbOA3pqamI5YCDEKceI3jiI70oEqXx0dVCwVKG
-         9uAw==
-X-Gm-Message-State: AOAM532SlZdojR5zHgENEWljkvvk3+d6OXkAF5CGW0yifeAeZMk22sBj
-        l1ZdCReo4qMm0k709rxHydVllGzaXcDkTmgsLKWZ2Q==
-X-Google-Smtp-Source: ABdhPJx+Rb9Dh5afCkPV93ubbfa83YINwHuyBNL6aGGIC9gNFt/GVdQQ5DqMV2LQPpqLPd5cGrS+QMzugsAJ9rHE3h4=
-X-Received: by 2002:a92:4f:: with SMTP id 76mr2640989ila.11.1598227486317;
- Sun, 23 Aug 2020 17:04:46 -0700 (PDT)
+        Mon, 24 Aug 2020 03:44:59 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200824074457euoutp02c1669bcf589b199cd0b2798d048dc00a~uJIseqYwT1810118101euoutp02B
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Aug 2020 07:44:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200824074457euoutp02c1669bcf589b199cd0b2798d048dc00a~uJIseqYwT1810118101euoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1598255097;
+        bh=NKVy/sWYWG971/QVRyY0L+mpzmMtV3Lqj3zUr4SbB04=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Tl2QZJr3VsEaXxDOTDmz3WvAUZuJDrFdvBvZKJLjHPD9hcmwWMd9qL2xCtgVf6vBk
+         oHqNcCxJkXn/49ll0p/Hflk2MMwsNwPv2gO3pX4+2Si8KHJUlsckeVLgn917iwno4o
+         FIU9BHHaTK8bsPDL+LaWao7IkR/XbBI2kxAv+bNw=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200824074457eucas1p2bdfb2be072477e5e75d0899217b9b183~uJIsL_e_52951529515eucas1p2y;
+        Mon, 24 Aug 2020 07:44:57 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 8F.1B.05997.9FF634F5; Mon, 24
+        Aug 2020 08:44:57 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200824074456eucas1p1b3b686114ef31dd5ba8bd1e87d923894~uJIr0xGPB3199131991eucas1p1V;
+        Mon, 24 Aug 2020 07:44:56 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200824074456eusmtrp1a1a589fd3020b3a0e472698664f4e453~uJIr0KeyQ2682226822eusmtrp1V;
+        Mon, 24 Aug 2020 07:44:56 +0000 (GMT)
+X-AuditID: cbfec7f4-65dff7000000176d-34-5f436ff90651
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 20.67.06017.8FF634F5; Mon, 24
+        Aug 2020 08:44:56 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200824074456eusmtip1e013d3f459d75bd438f932a8c04efd7f~uJIrUwtoW3183231832eusmtip11;
+        Mon, 24 Aug 2020 07:44:56 +0000 (GMT)
+Subject: Re: [PATCH] memory: samsung: exynos5422-dmc: propagate error from
+ exynos5_counters_get()
+To:     Lukasz Luba <lukasz.luba@arm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <a0c9373b-edb4-fb85-ac00-82d20fa08495@samsung.com>
+Date:   Mon, 24 Aug 2020 09:44:56 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.11.0
 MIME-Version: 1.0
-References: <20191221150402.13868-1-murphyt7@tcd.ie> <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
- <20200529124523.GA11817@infradead.org> <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
- <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com> <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
- <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com>
-In-Reply-To: <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com>
-From:   Tom Murphy <murphyt7@tcd.ie>
-Date:   Mon, 24 Aug 2020 01:04:35 +0100
-Message-ID: <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
-Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        linux-mediatek@lists.infradead.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <f5a15356-d5b9-4b04-f92a-997b92ef5630@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMKsWRmVeSWpSXmKPExsWy7djP87o/853jDe4fEbHYOGM9q8X1L89Z
+        Lc6f38BucXnXHDaLz71HGC1mnN/HZLGwqYXdgd1jzbw1jB6bVnWyefRtWcXo8XmTXABLFJdN
+        SmpOZllqkb5dAlfGm81rWQruyVbs3vabrYHxgUQXIweHhICJxNwW3i5GLg4hgRWMEk9bPzJD
+        OF8YJd4eWAjlfGaUaDvwnb2LkROsY+KmN2wQieWMEks+XGMCSQgJvGeUmLFfEMQWFkiW2DHz
+        OyPIChEBH4klr9VBwswCexklVh4LA7HZBAwlut52sYHYvAJ2EmcunWQHKWcRUJWYsDUNJCwq
+        ECex9fhVJogSQYmTM5+wgNicAtYSnVc/s0OMlJdo3jqbGcIWl7j1ZD4TyGkSAuvYJVZfuswM
+        cbOLxP2fs1ghbGGJV8e3QP0iI3F6cg8LREMzo8TDc2vZIZweRonLTTMYIaqsJe6c+8UGch2z
+        gKbE+l36EGFHif5DP5ghwcgnceOtIMQRfBKTtk2HCvNKdLQJQVSrScw6vg5u7cELl5gnMCrN
+        QvLaLCTvzELyziyEvQsYWVYxiqeWFuempxYb5aWW6xUn5haX5qXrJefnbmIEJp3T/45/2cG4
+        60/SIUYBDkYlHt4fh+zjhVgTy4orcw8xSnAwK4nwOp09HSfEm5JYWZValB9fVJqTWnyIUZqD
+        RUmc13jRy1ghgfTEktTs1NSC1CKYLBMHp1QDo5ZT/ZWock7pqWsuF0emJXCpuH+vW/euk1X2
+        a11Fd62UtpnRjzPl4oY7/4S/+Pr5v6D1d1F9j8UBOxj8avRFMzzeXtF+neeqNzmhfdfBFx2s
+        T4OuuZ697+JsFht67Xrzn1bW120V4UynVlXPkFFd3ca6Wu/4ncQZev12lol/tdr2WFhpPV+g
+        xFKckWioxVxUnAgAhn3NIzYDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsVy+t/xu7o/8p3jDWZ9M7fYOGM9q8X1L89Z
+        Lc6f38BucXnXHDaLz71HGC1mnN/HZLGwqYXdgd1jzbw1jB6bVnWyefRtWcXo8XmTXABLlJ5N
+        UX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7Gm81rWQru
+        yVbs3vabrYHxgUQXIyeHhICJxMRNb9i6GLk4hASWMkr0fWpjgUjISJyc1sAKYQtL/LnWBVX0
+        llFiV8dEJpCEsECyxI6Z3xm7GDk4RAR8JJa8VgepYRbYyyjxZPpPJoiGP0wSk5/eB5vKJmAo
+        0fUWZBInB6+AncSZSyfZQZpZBFQlJmxNAwmLCsRJPO79zwxRIihxcuYTsFZOAWuJzquf2UFs
+        ZgEziXmbHzJD2PISzVtnQ9niEreezGeawCg0C0n7LCQts5C0zELSsoCRZRWjSGppcW56brGR
+        XnFibnFpXrpecn7uJkZgrG079nPLDsaud8GHGAU4GJV4eH8cso8XYk0sK67MPcQowcGsJMLr
+        dPZ0nBBvSmJlVWpRfnxRaU5q8SFGU6DfJjJLiSbnA9NAXkm8oamhuYWlobmxubGZhZI4b4fA
+        wRghgfTEktTs1NSC1CKYPiYOTqkGRgWZGdEN7sIhPVGmj6uUFurl3vC9KGDxyPBiy7n7/Xnq
+        X+a8+RnGpv7n5AoJgVdJQu1XXp+xfVR6Pbnh508e4ZV/p355XLIgvOoIn4HPJ+fzRauf/bkW
+        oZ8g//aYqO7biJsXhE3DF066JRNo+3WX8+VMzXlavJ7eBywjTxqkr65vurtqrmGIhhJLcUai
+        oRZzUXEiAG+UG9jLAgAA
+X-CMS-MailID: 20200824074456eucas1p1b3b686114ef31dd5ba8bd1e87d923894
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200804061225eucas1p283c1e0dc404bc420a2184480fdfd2b0d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200804061225eucas1p283c1e0dc404bc420a2184480fdfd2b0d
+References: <CGME20200804061225eucas1p283c1e0dc404bc420a2184480fdfd2b0d@eucas1p2.samsung.com>
+        <20200804061210.5415-1-m.szyprowski@samsung.com>
+        <24675559-b807-5b80-1318-805c1530ffb3@arm.com>
+        <78c95f58-8142-7607-6d74-5cfa6a7ffb77@samsung.com>
+        <f3f416ac-0d63-b4e5-676f-8801b4166c11@arm.com>
+        <20200817120724.GC2346@kozik-lap>
+        <f5a15356-d5b9-4b04-f92a-997b92ef5630@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Logan/All,
+Hi,
 
-I have added a check for the sg_dma_len == 0 :
-"""
- } __sgt_iter(struct scatterlist *sgl, bool dma) {
-        struct sgt_iter s = { .sgp = sgl };
-
-+       if (sgl && sg_dma_len(sgl) == 0)
-+           s.sgp = NULL;
-
-        if (s.sgp) {
-            .....
-"""
-at location [1].
-but it doens't fix the problem.
-
-You're right though, this change does need to be made, this code
-doesn't handle pages of sg_dma_len(sg) == 0 correctly
-So my guess is that we have more bugs in other parts of the i915
-driver (or there is a problem with my "sg_dma_len == 0" fix above).
-I have been trying to spot where else the code might be buggy but I
-haven't had any luck so far.
-
-I'm doing a microconfernce (at LPC 2020) this wednesdays [1] on this
-if you're interested in attending.
-I'm hoping I can chat about it with a few people and find how can
-reproduce and fix this issues. I don't have any more time I can give
-to this unfortunately and it would be a shame for the work to go to
-waste.
-
-[0] https://github.com/torvalds/linux/blob/d012a7190fc1fd72ed48911e77ca97ba4521bccd/drivers/gpu/drm/i915/i915_scatterlist.h#L28
-[1] https://linuxplumbersconf.org/event/7/contributions/846/
-
-On Fri, 29 May 2020 at 22:21, Logan Gunthorpe <logang@deltatee.com> wrote:
+On 17.08.2020 14:27, Lukasz Luba wrote:
+> On 8/17/20 1:07 PM, Krzysztof Kozlowski wrote:
+>> On Tue, Aug 04, 2020 at 01:38:11PM +0100, Lukasz Luba wrote:
+>>> On 8/4/20 1:19 PM, Marek Szyprowski wrote:
+>>>> On 04.08.2020 11:11, Lukasz Luba wrote:
+>>>>> On 8/4/20 7:12 AM, Marek Szyprowski wrote:
+>>>>>> exynos5_counters_get() might fail with -EPROBE_DEFER if the 
+>>>>>> driver for
+>>>>>> devfreq event counter is not yet probed. Propagate that error 
+>>>>>> value to
+>>>>>> the caller to ensure that the exynos5422-dmc driver will be 
+>>>>>> probed again
+>>>>>> when devfreq event contuner is available.
+>>>>>>
+>>>>>> This fixes boot hang if both exynos5422-dmc and exynos-ppmu 
+>>>>>> drivers are
+>>>>>> compiled as modules.
+>>>>>>
+>>>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>>>> ---
+>>>>>>     drivers/memory/samsung/exynos5422-dmc.c | 2 +-
+>>>>>>     1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/memory/samsung/exynos5422-dmc.c
+>>>>>> b/drivers/memory/samsung/exynos5422-dmc.c
+>>>>>> index b9c7956e5031..639811a3eecb 100644
+>>>>>> --- a/drivers/memory/samsung/exynos5422-dmc.c
+>>>>>> +++ b/drivers/memory/samsung/exynos5422-dmc.c
+>>>>>> @@ -914,7 +914,7 @@ static int exynos5_dmc_get_status(struct device
+>>>>>> *dev,
+>>>>>>         } else {
+>>>>>>             ret = exynos5_counters_get(dmc, &load, &total);
+>>>>>>             if (ret < 0)
+>>>>>> -            return -EINVAL;
+>>>>>> +            return ret;
+>>>>>>               /* To protect from overflow, divide by 1024 */
+>>>>>>             stat->busy_time = load >> 10;
+>>>>>>
+>>>>>
+>>>>> Thank you for the patch, LGTM.
+>>>>> Some questions are still there, though. The function
+>>>>> exynos5_performance_counters_init() should capture that the counters
+>>>>> couldn't be enabled or set. So the functions:
+>>>>> exynos5_counters_enable_edev() and exynos5_counters_set_event()
+>>>>> must pass gently because devfreq device is registered.
+>>>>> Then devfreq checks device status, and reaches the state when
+>>>>> counters 'get' function returns that they are not ready...
+>>>>>
+>>>>> If that is a kind of 2-stage initialization, maybe we should add
+>>>>> another 'check' in the exynos5_performance_counters_init() and call
+>>>>> the devfreq_event_get_event() to make sure that we are ready to go,
+>>>>> otherwise return ret from that function (which is probably 
+>>>>> EPROBE_DEFER)
+>>>>> and not register the devfreq device.
+>>>>
+>>>> I've finally investigated this further and it turned out that the 
+>>>> issue
+>>>> is elsewhere. The $subject patch can be discarded, as it doesn't fix
+>>>> anything. The -EPROBE_DEFER is properly returned by
+>>>> exynos5_performance_counters_init(), which redirects 
+>>>> exynos5_dmc_probe()
+>>>> to remove_clocks label. This causes disabling mout_bpll/fout_bpll 
+>>>> clocks
+>>>> what in turn *sometimes* causes boot hang. This random behavior 
+>>>> mislead
+>>>> me that the $subject patch fixes the issue, but then longer tests
+>>>> revealed that it didn't change anything.
+>>>
+>>> Really good investigation, great work Marek!
+>>>
+>>>>
+>>>> It looks that the proper fix would be to keep fout_bpll enabled all 
+>>>> the
+>>>> time.
+>>>
+>>> Yes, I agree. I am looking for your next patch to test it then.
+>>
+>> Hi all,
+>>
+>> Is the patch still useful then? Shall I apply it?
+>
+> Marek has created different patch for it, which fixes the clock:
+> https://lore.kernel.org/linux-clk/20200807133143.22748-1-m.szyprowski@samsung.com/ 
 >
 >
->
-> On 2020-05-29 3:11 p.m., Marek Szyprowski wrote:
-> > Patches are pending:
-> > https://lore.kernel.org/linux-iommu/20200513132114.6046-1-m.szyprowski@samsung.com/T/
->
-> Cool, nice! Though, I still don't think that fixes the issue in
-> i915_scatterlist.h given it still ignores sg_dma_len() and strictly
-> relies on sg_next()/sg_is_last() to stop iterating -- and I suspect this
-> is the bug that got in Tom's way.
->
-> >> However, as Robin pointed out, there are other ugly tricks like stopping
-> >> iterating through the SGL when sg_dma_len() is zero. For example, the
-> >> AMD driver appears to use drm_prime_sg_to_page_addr_arrays() which does
-> >> this trick and thus likely isn't buggy (otherwise, I'd expect someone to
-> >> have complained by now seeing AMD has already switched to IOMMU-DMA.
-> >
-> > I'm not sure that this is a trick. Stopping at zero sg_dma_len() was
-> > somewhere documented.
->
-> Well whatever you want to call it, it is ugly to have some drivers doing
-> one thing with the returned value and others assuming there's an extra
-> zero at the end. It just causes confusion for people reading/copying the
-> code. It would be better if they are all consistent. However, I concede
-> stopping at zero should not be broken, presently.
->
-> Logan
+> So you don't have to apply this one IMO.
+
+Indeed, you can drop this one.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
