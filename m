@@ -2,162 +2,190 @@ Return-Path: <SRS0=sDIw=CC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C30C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 13:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C1F6C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 14:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 260B821775
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 13:21:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HmZ0L+ZO"
+	by mail.kernel.org (Postfix) with ESMTP id 8349A2074D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 14:02:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbgHXNVv (ORCPT
+        id S1726483AbgHXOCB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Aug 2020 09:21:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51336 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbgHXNVt (ORCPT
+        Mon, 24 Aug 2020 10:02:01 -0400
+Received: from foss.arm.com ([217.140.110.172]:34574 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725780AbgHXOCA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Aug 2020 09:21:49 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5D31C061574
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Aug 2020 06:21:48 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id bs17so8016573edb.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Aug 2020 06:21:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=90su1owIcZp1qZ8W+tbpS5QP1K7qOdgVEZYDn1cZZPI=;
-        b=HmZ0L+ZO9rkNEJk5r0Ka6FMGlXEuCReREwZJyU/MzsB9S8jVOUjFNQYMNFTr4abObP
-         fVq1khF3ehL0JqKu8fdJVYpL2pp6XNDHNuG3uUUBs0Lfm+yk9/suss49FVzUcBjw/aoI
-         gkqBI6IH42fGKgFpGz3vy69QOSjGS+S1H/25Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=90su1owIcZp1qZ8W+tbpS5QP1K7qOdgVEZYDn1cZZPI=;
-        b=LiqfXErf8nN2oR7Yqq2y9p5sKKWJdfcHq9rD4klOgTxK3EGRBHeXIPOEP3A3OMPlb1
-         Y14EY4Z9YaGGNc9eoevTfM14TIkc30WMbXW9TYoVJ6v9s0Z2nQL0ddEViR9CrSs3fnQo
-         xJy04ySGkgSiB8W1ir83UMYqtbPQc4p/aJwRE0cLDnfdp5JILK6KW9ozuw9jG+88jhyb
-         lQw8dYdIBMtYqqRCyry0JfRnY2D8dggQLpM9cAPe1jsruP8QVyGikUP10VMGg/00xbyh
-         3Zc4S9iRTzYGGolW8zwTxDwnDKC0xWHiPC0EBMexDk6acZMX47nla68X5w8uPn1bb4An
-         +h6Q==
-X-Gm-Message-State: AOAM532kFLMe05o4Ey3nkNokSIDewg/hvXcUdR74Y1RA5WcXzSyHDKE6
-        yIsjo6hSs8+9WhYvg4obKiKtXIrF22BZSw==
-X-Google-Smtp-Source: ABdhPJwpsp2k//MqQEvS8+e0cULK05gi+/XF9SHe7RbElgRCClvL+7P7eA+5lzAmB/rU1rTd7MbO2w==
-X-Received: by 2002:aa7:d688:: with SMTP id d8mr5451211edr.168.1598275307410;
-        Mon, 24 Aug 2020 06:21:47 -0700 (PDT)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com. [209.85.128.42])
-        by smtp.gmail.com with ESMTPSA id bu19sm9410249edb.34.2020.08.24.06.21.46
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Aug 2020 06:21:46 -0700 (PDT)
-Received: by mail-wm1-f42.google.com with SMTP id a65so4713693wme.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Aug 2020 06:21:46 -0700 (PDT)
-X-Received: by 2002:a1c:5581:: with SMTP id j123mr5764243wmb.11.1598275305542;
- Mon, 24 Aug 2020 06:21:45 -0700 (PDT)
+        Mon, 24 Aug 2020 10:02:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C6AE61FB;
+        Mon, 24 Aug 2020 07:01:58 -0700 (PDT)
+Received: from [10.57.40.122] (unknown [10.57.40.122])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A711F3F71F;
+        Mon, 24 Aug 2020 07:01:52 -0700 (PDT)
+Subject: Re: [PATCH 16/18] staging/media/tegra-vde: Clean up IOMMU workaround
+To:     Dmitry Osipenko <digetx@gmail.com>, hch@lst.de, joro@8bytes.org,
+        linux@armlinux.org.uk
+Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        agross@kernel.org, bjorn.andersson@linaro.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, vdumpa@nvidia.com,
+        matthias.bgg@gmail.com, yong.wu@mediatek.com,
+        geert+renesas@glider.be, magnus.damm@gmail.com, t-kristo@ti.com,
+        s-anna@ti.com, laurent.pinchart@ideasonboard.com,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1597931875.git.robin.murphy@arm.com>
+ <3535c205b9bce52556abbf2f63384fb38e009df9.1597931876.git.robin.murphy@arm.com>
+ <07135a55-cbc9-83e5-60dc-731282192554@gmail.com>
+ <cb12808b-7316-19db-7413-b7f852a6f8ae@arm.com>
+ <62a72187-442b-2103-46c3-39d3cd999f54@gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <affe2cfb-19e8-8e55-acd0-7170e274ab34@arm.com>
+Date:   Mon, 24 Aug 2020 15:01:51 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-References: <CGME20200824131716eucas1p16a3fde52aa765e7cd6584d4733762047@eucas1p1.samsung.com>
- <20200822124325.GF20423@kozik-lap> <dleftj5z98xjxs.fsf%l.stelmach@samsung.com>
-In-Reply-To: <dleftj5z98xjxs.fsf%l.stelmach@samsung.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Mon, 24 Aug 2020 15:21:34 +0200
-X-Gmail-Original-Message-ID: <CAAFQd5ADym6YapCoJ8+fJbPjSestcD_2R8L5T8jAfO4c=GFQkA@mail.gmail.com>
-Message-ID: <CAAFQd5ADym6YapCoJ8+fJbPjSestcD_2R8L5T8jAfO4c=GFQkA@mail.gmail.com>
-Subject: Re: [PATCH v2 7/9] spi: spi-s3c64xx: Ensure cur_speed holds actual
- clock value
-To:     Lukasz Stelmach <l.stelmach@samsung.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <62a72187-442b-2103-46c3-39d3cd999f54@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 3:17 PM Lukasz Stelmach <l.stelmach@samsung.com> wr=
-ote:
->
-> It was <2020-08-22 sob 14:43>, when Krzysztof Kozlowski wrote:
-> > On Fri, Aug 21, 2020 at 06:13:59PM +0200, =C5=81ukasz Stelmach wrote:
-> >> cur_speed is used to calculate transfer timeout and needs to be
-> >> set to the actual value of (half) the clock speed for precise
-> >> calculations.
-> >
-> > If you need this only for timeout calculation just divide it in
-> > s3c64xx_wait_for_dma().
->
-> I divide it here to keep the relationship between the value the variable
-> holds and the one that is inside clk_* (See? It's multiplied 3 lines
-> above). If you look around every single clk_get_rate() call in the file i=
-s
-> divided by two.
->
-> > Otherwise why only if (cmu) case is updated?
->
-> You are righ I will update that too.
->
-> However, I wonder if it is even possible that the value read from
-> S3C64XX_SPI_CLK_CFG would be different than the one written to it?
->
+On 2020-08-23 22:34, Dmitry Osipenko wrote:
+> 21.08.2020 03:11, Robin Murphy пишет:
+> ...
+>>> Hello, Robin! Thank you for yours work!
+>>>
+>>> Some drivers, like this Tegra VDE (Video Decoder Engine) driver for
+>>> example, do not want to use implicit IOMMU domain.
+>>
+>> That isn't (intentionally) changing here - the only difference should be
+>> that instead of having the ARM-special implicit domain, which you have
+>> to kick out of the way with the ARM-specific API before you're able to
+>> attach your own domain, the implicit domain is now a proper IOMMU API
+>> default domain, which automatically gets bumped by your attach. The
+>> default domains should still only be created in the same cases that the
+>> ARM dma_iommu_mappings were.
+>>
+>>> Tegra VDE driver
+>>> relies on explicit IOMMU domain in a case of Tegra SMMU because VDE
+>>> hardware can't access last page of the AS and because driver wants to
+>>> reserve some fixed addresses [1].
+>>>
+>>> [1]
+>>> https://elixir.bootlin.com/linux/v5.9-rc1/source/drivers/staging/media/tegra-vde/iommu.c#L100
+>>>
+>>>
+>>> Tegra30 SoC supports up to 4 domains, hence it's not possible to afford
+>>> wasting unused implicit domains. I think this needs to be addressed
+>>> before this patch could be applied.
+>>
+>> Yeah, there is one subtle change in behaviour from removing the ARM
+>> layer on top of the core API, in that the IOMMU driver will no longer
+>> see an explicit detach call. Thus it does stand to benefit from being a
+>> bit cleverer about noticing devices being moved from one domain to
+>> another by an attach call, either by releasing the hardware context for
+>> the inactive domain once the device(s) are moved across to the new one,
+>> or by simply reprogramming the hardware context in-place for the new
+>> domain's address space without allocating a new one at all (most of the
+>> drivers that don't have multiple contexts already handle the latter
+>> approach quite well).
+>>
+>>> Would it be possible for IOMMU drivers to gain support for filtering out
+>>> devices in iommu_domain_alloc(dev, type)? Then perhaps Tegra SMMU driver
+>>> could simply return NULL in a case of type=IOMMU_DOMAIN_DMA and
+>>> dev=tegra-vde.
+>>
+>> If you can implement IOMMU_DOMAIN_IDENTITY by allowing the relevant
+>> devices to bypass translation entirely without needing a hardware
+>> context (or at worst, can spare one context which all identity-mapped
+>> logical domains can share), then you could certainly do that kind of
+>> filtering with the .def_domain_type callback if you really wanted to. As
+>> above, the intent is that that shouldn't be necessary for this
+>> particular case, since only one of a group's default domain and
+>> explicitly attached domain can be live at any given time, so the driver
+>> should be able to take advantage of that.
+>>
+>> If you simply have more active devices (groups) than available contexts
+>> then yes, you probably would want to do some filtering to decide who
+>> deserves a translation domain and who doesn't, but in that case you
+>> should already have had a long-standing problem with the ARM implicit
+>> domains.
+>>
+>>> Alternatively, the Tegra SMMU could be changed such that the devices
+>>> will be attached to a domain at the time of a first IOMMU mapping
+>>> invocation instead of attaching at the time of attach_dev() callback
+>>> invocation.
+>>>
+>>> Or maybe even IOMMU core could be changed to attach devices at the time
+>>> of the first IOMMU mapping invocation? This could be a universal
+>>> solution for all drivers.
+>>
+>> I suppose technically you could do that within an IOMMU driver already
+>> (similar to how some defer most of setup that logically belongs to
+>> ->domain_alloc until the first ->attach_dev). It's a bit grim from the
+>> caller's PoV though, in terms of the failure mode being non-obvious and
+>> having no real way to recover. Again, you'd be better off simply making
+>> decisions up-front at domain_alloc or attach time based on the domain type.
+> 
+> Robin, thank you very much for the clarifications!
+> 
+> In accordance to yours comments, this patch can't be applied until Tegra
+> SMMU will support IOMMU_DOMAIN_IDENTITY and implement def_domain_type()
+> callback that returns IOMMU_DOMAIN_IDENTITY for the VDE device.
+> 
+> Otherwise you're breaking the VDE driver because
+> dma_buf_map_attachment() [1] returns the IOMMU SGT of the implicit
+> domain which is then mapped into the VDE's explicit domain [2], and this
+> is a nonsense.
 
-It is not possible for the register itself, but please see my other
-reply, where I explained the integer rounding error which can happen
-when calculating the value to write to the register.
+It's true that iommu_dma_ops will do some work in the unattached default 
+domain, but non-coherent cache maintenance will still be performed 
+correctly on the underlying memory, which is really all that you care 
+about for this case. As for tegra_vde_iommu_map(), that seems to do the 
+right thing in only referencing the physical side of the scatterlist 
+(via iommu_map_sg()) and ignoring the DMA side, so things ought to work 
+out OK even if it is a little non-obvious.
 
-> > You are also affecting here not only timeout but
-> > s3c64xx_enable_datapath() which is not mentioned in commit log. In othe=
-r
-> > words, this looks wrong.
->
-> Indeed, there is a reference too. I've corrected the message.
->
+> [1]
+> https://elixir.bootlin.com/linux/v5.9-rc1/source/drivers/staging/media/tegra-vde/dmabuf-cache.c#L102
+> 
+> [2]
+> https://elixir.bootlin.com/linux/v5.9-rc1/source/drivers/staging/media/tegra-vde/dmabuf-cache.c#L122
+> 
+> Hence, either VDE driver should bypass iommu_dma_ops from the start or
+> it needs a way to kick out the ops, like it does this using ARM's
+> arm_iommu_detach_device().
+> 
+> 
+> The same applies to the Tegra GPU devices, otherwise you're breaking
+> them as well because Tegra DRM is sensible to implicit vs explicit domain.
 
-Thanks!
+Note that Tegra DRM will only be as broken as its current state on 
+arm64, and I was under the impression that that was OK now - at least I 
+don't recall seeing any complaints since 43c5bf11a610. Although that 
+commit and the one before it are resolving the scalability issue that 
+they describe, it was very much in my mind at the time that they also 
+have the happy side-effect described above - the default domain isn't 
+*completely* out of the way, but it's far enough that sensible cases 
+should be able to work as expected.
 
-Best regards,
-Tomasz
+> BTW, I tried to apply this series and T30 doesn't boot anymore. I don't
+> have more info for now.
 
-> >>
-> >> Cc: Tomasz Figa <tfiga@chromium.org>
-> >> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
-> >> ---
-> >>  drivers/spi/spi-s3c64xx.c | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> >> index 02de734b8ab1..89c162efe355 100644
-> >> --- a/drivers/spi/spi-s3c64xx.c
-> >> +++ b/drivers/spi/spi-s3c64xx.c
-> >> @@ -626,6 +626,7 @@ static int s3c64xx_spi_config(struct s3c64xx_spi_d=
-river_data *sdd)
-> >>              ret =3D clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
-> >>              if (ret)
-> >>                      return ret;
-> >> +            sdd->cur_speed =3D clk_get_rate(sdd->src_clk) / 2;
-> >>      } else {
-> >>              /* Configure Clock */
-> >>              val =3D readl(regs + S3C64XX_SPI_CLK_CFG);
-> >> --
-> >> 2.26.2
-> >>
-> >
-> >
->
-> --
-> =C5=81ukasz Stelmach
-> Samsung R&D Institute Poland
-> Samsung Electronics
+Yeah, I'm still trying to get to the bottom of whether it's actually 
+working as intended at all, even on my RK3288. So far my debugging 
+instrumentation has been confusingly inconclusive :/
+
+Robin.
