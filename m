@@ -2,150 +2,95 @@ Return-Path: <SRS0=sDIw=CC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A954EC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 09:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 235E2C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 10:29:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 749C1206F0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 09:17:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC60A207DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 10:28:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598260673;
-	bh=xH8C/wX2D0QP9RUL/qMv0EswjmIrMieua1aVSmMTXCs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=0ZPdgAcJZLheLIhXkdfWL/F3jSc0ejinCCrTJIdM9tnHLzDLuhtr7o2Ap3GOpTChf
-	 EFQFIXQeDd6EijPQjOzpt3lSHquK0F3Jxdx703Oc7OHKs/Wvay4oipSUsXGqi8jTuu
-	 VsYowNW7xxeBI4tOsX/SGGwEptqs5tOs97n7QZd0=
+	s=default; t=1598264939;
+	bh=NDhUf/nP2mxoHfjf7T44MWooQOLOp+W6Th3UihAUPk4=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=wtnpIH2c2RgtJ0df0BzhozwD6b9EwexTA1aGgx8SyVCdtcD5tMmvavqyvd9daIzg/
+	 EoX9uqAexi/A+XRfUuwK142kLVoXSweith4mUlALTAGKPSd6mDGtou7JUdb9onXcBP
+	 9lvsTwK47T3890xmQvL0gr58Dgn6QknEkFlccKow=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbgHXJRl (ORCPT
+        id S1726051AbgHXK27 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Aug 2020 05:17:41 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36345 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729770AbgHXJRa (ORCPT
+        Mon, 24 Aug 2020 06:28:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53140 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726241AbgHXK24 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Aug 2020 05:17:30 -0400
-Received: by mail-wr1-f68.google.com with SMTP id x7so1838496wro.3;
-        Mon, 24 Aug 2020 02:17:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=piFoeKFrUJtBI57BDIALP5epFRujdzh3bH9V8VDZYAo=;
-        b=GZFVbseRjfzRmeYXFX0EmDZgoFijYc9/oWlgTjr1qb3y1gWhSj062+vqjo0XQHsKvZ
-         rT/uE7jzYeGTiQId2VtFzRakfIp+s5E3/q2ofYEFSwR8vz9i30nPz+jPbnQCKJ/Fszzg
-         hTUxIan7Idq2mQighRB7F3qdaWkfu07luZJAv4fREbQUwMb/lQlGSLN26Um5/yupQd/P
-         RloQRNiw8OxcfDDtBfHIeB0uo4rHYpAuX5lad1X6l9GVySCF/vnuqO8iBo3pitodgRKa
-         fFM+9S+gHfzADpUPBk6OERZdjVeSKXwMScrXFUrOAPvd22AOPvDWBE/JlNX8lEQB6ly9
-         0AYQ==
-X-Gm-Message-State: AOAM530au0AWrCR9k4K55GfIL0C6KB7BVdsybT+PxWfY8FTVN3YFPA2B
-        JMz424n7lhB5AQkxmmSJrXU=
-X-Google-Smtp-Source: ABdhPJzySf+UXQLxcG9X2DZIMX9284mRLw4G7ickfby9Bst4b2X7s+cUhUsK3Zq0OPsQTu9d2qfDhQ==
-X-Received: by 2002:a05:6000:d0:: with SMTP id q16mr4847868wrx.389.1598260647712;
-        Mon, 24 Aug 2020 02:17:27 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id u7sm22138521wrq.89.2020.08.24.02.17.25
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Aug 2020 02:17:27 -0700 (PDT)
-Date:   Mon, 24 Aug 2020 11:17:24 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>, nks@flawful.org,
-        georgi.djakov@linaro.org, Stephan Gerhold <stephan@gerhold.net>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] opp: Allow dev_pm_opp_get_opp_table() to return
- -EPROBE_DEFER
-Message-ID: <20200824091724.GB20819@kozik-lap>
-References: <24ff92dd1b0ee1b802b45698520f2937418f8094.1598260050.git.viresh.kumar@linaro.org>
+        Mon, 24 Aug 2020 06:28:56 -0400
+Received: from [192.168.0.50] (89-70-52-201.dynamic.chello.pl [89.70.52.201])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 175D520738;
+        Mon, 24 Aug 2020 10:28:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598264935;
+        bh=NDhUf/nP2mxoHfjf7T44MWooQOLOp+W6Th3UihAUPk4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=XggvhdR1Szz+C2VO8HTTOPRjAqIa/TDcdPlm3E0ODNfUDDzq80nm0vsPxh/bijYYz
+         0s9qhiZjWcMR+YLzOfBBWI4Jjc9ut5S6FXpd0bQ5R7pwiFvsAfRwKwYNcYYOh/if3v
+         0BQiTaxKX1ofkzOdDD6XfgBPzaHHWWIedzfyu5MQ=
+Subject: Re: [PATCH v2] clk: samsung: Keep top BPLL mux on Exynos542x enabled
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>
+References: <CGME20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f@eucas1p1.samsung.com>
+ <20200807133143.22748-1-m.szyprowski@samsung.com>
+ <159780685238.334488.5802955284004610550@swboyd.mtv.corp.google.com>
+ <f4c87130-25a0-2195-9caa-be805d207c34@kernel.org>
+From:   Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <fff07b05-f1f6-5333-a056-69ba6995ed4f@kernel.org>
+Date:   Mon, 24 Aug 2020 12:28:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <24ff92dd1b0ee1b802b45698520f2937418f8094.1598260050.git.viresh.kumar@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <f4c87130-25a0-2195-9caa-be805d207c34@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 02:39:32PM +0530, Viresh Kumar wrote:
-> From: Stephan Gerhold <stephan@gerhold.net>
+On 8/23/20 12:12, Sylwester Nawrocki wrote:
+> On 8/19/20 05:14, Stephen Boyd wrote:
+>> Quoting Marek Szyprowski (2020-08-07 06:31:43)
+>>> BPLL clock must not be disabled because it is needed for proper DRAM
+>>> operation. This is normally handled by respective memory devfreq driver,
+>>> but when that driver is not yet probed or its probe has been deferred 
+>>> the
+>>> clock might got disabled what causes board hang. Fix this by calling
+>>> clk_prepare_enable() directly from the clock provider driver.
+>>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+>>> Tested-by: Lukasz Luba <lukasz.luba@arm.com>
+>>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>> ---
+>>
+>> Can I pick this up for clk-fixes?
 > 
-> The OPP core manages various resources, e.g. clocks or interconnect paths.
-> These resources are looked up when the OPP table is allocated once
-> dev_pm_opp_get_opp_table() is called the first time (either directly
-> or indirectly through one of the many helper functions).
-> 
-> At this point, the resources may not be available yet, i.e. looking them
-> up will result in -EPROBE_DEFER. Unfortunately, dev_pm_opp_get_opp_table()
-> is currently unable to propagate this error code since it only returns
-> the allocated OPP table or NULL.
-> 
-> This means that all consumers of the OPP core are required to make sure
-> that all necessary resources are available. Usually this happens by
-> requesting them, checking the result and releasing them immediately after.
-> 
-> For example, we have added "dev_pm_opp_of_find_icc_paths(dev, NULL)" to
-> several drivers now just to make sure the interconnect providers are
-> ready before the OPP table is allocated. If this call is missing,
-> the OPP core will only warn about this and then attempt to continue
-> without interconnect. This will eventually fail horribly, e.g.:
-> 
->     cpu cpu0: _allocate_opp_table: Error finding interconnect paths: -517
->     ... later ...
->     of: _read_bw: Mismatch between opp-peak-kBps and paths (1 0)
->     cpu cpu0: _opp_add_static_v2: opp key field not found
->     cpu cpu0: _of_add_opp_table_v2: Failed to add OPP, -22
-> 
-> This example happens when trying to use interconnects for a CPU OPP
-> table together with qcom-cpufreq-nvmem.c. qcom-cpufreq-nvmem calls
-> dev_pm_opp_set_supported_hw(), which ends up allocating the OPP table
-> early. To fix the problem with the current approach we would need to add
-> yet another call to dev_pm_opp_of_find_icc_paths(dev, NULL).
-> But actually qcom-cpufreq-nvmem.c has nothing to do with interconnects...
-> 
-> This commit attempts to make this more robust by allowing
-> dev_pm_opp_get_opp_table() to return an error pointer. Fixing all
-> the usages is trivial because the function is usually used indirectly
-> through another helper (e.g. dev_pm_opp_set_supported_hw() above).
-> These other helpers already return an error pointer.
-> 
-> The example above then works correctly because set_supported_hw() will
-> return -EPROBE_DEFER, and qcom-cpufreq-nvmem.c already propagates that
-> error. It should also be possible to remove the remaining usages of
-> "dev_pm_opp_of_find_icc_paths(dev, NULL)" from other drivers as well.
-> 
-> Note that this commit currently only handles -EPROBE_DEFER for the
-> clock/interconnects within _allocate_opp_table(). Other errors are just
-> ignored as before. Eventually those should be propagated as well.
-> 
-> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-> [ Viresh: skip checking return value of dev_pm_opp_get_opp_table() for
-> 	  EPROBE_DEFER in domain.c, fix NULL return value and reorder
-> 	  code a bit in core.c, and update exynos-asv.c ]
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
-> Stephan, I have made some changes to the code. Please try it again and
-> lemme know if it works fine.
-> 
->  drivers/base/power/domain.c      | 14 +++++----
->  drivers/opp/core.c               | 53 +++++++++++++++++++-------------
->  drivers/opp/of.c                 |  8 ++---
->  drivers/soc/samsung/exynos-asv.c |  2 +-
->  4 files changed, 44 insertions(+), 33 deletions(-)
+> Sure, thanks for taking care of this.
 
-For Samsung:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+OTOH, I planned to queue that patch for next merged window, together 
+with a patch that depends on that one, since the fix is not for an issue
+introduced in the last merge window.
+I guess it's better to avoid pulling (part of) the clk-fixes branch to
+the clk/samsung tree for next merge window?
 
-Best regards,
-Krzysztof
