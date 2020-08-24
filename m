@@ -2,56 +2,46 @@ Return-Path: <SRS0=sDIw=CC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B7BFC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 11:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF73C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 11:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70BC62078D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 11:41:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F8242074D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 11:43:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbgHXLfY (ORCPT
+        id S1726700AbgHXLni (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Aug 2020 07:35:24 -0400
-Received: from foss.arm.com ([217.140.110.172]:60190 "EHLO foss.arm.com"
+        Mon, 24 Aug 2020 07:43:38 -0400
+Received: from foss.arm.com ([217.140.110.172]:60374 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727114AbgHXLeN (ORCPT
+        id S1726466AbgHXLnh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Aug 2020 07:34:13 -0400
+        Mon, 24 Aug 2020 07:43:37 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECC4E1063;
-        Mon, 24 Aug 2020 04:34:12 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F21631063;
+        Mon, 24 Aug 2020 04:43:36 -0700 (PDT)
 Received: from [10.37.12.65] (unknown [10.37.12.65])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D50583F66B;
-        Mon, 24 Aug 2020 04:34:09 -0700 (PDT)
-Subject: Re: [PATCH 2/2] ARM: dts: exynos: Remove interrupts from DMC
- controller in Exynos5422
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, willy.mh.wolff.ml@gmail.com,
-        k.konieczny@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>,
-        =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= 
-        <b.zolnierkie@samsung.com>, chanwoo@kernel.org,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        s.nawrocki@samsung.com, kgene@kernel.org
-References: <20200708153420.29484-1-lukasz.luba@arm.com>
- <20200708153420.29484-3-lukasz.luba@arm.com>
- <20200817155021.GC15887@kozik-lap>
- <2099aea9-5a63-6e5b-d7f9-4e6476584461@arm.com>
- <CAJKOXPc063m_YcouAO2Q9piJ_GV1Fh9XeS3ZZ3KR=ZyMxPKZ5w@mail.gmail.com>
- <CAJKOXPcfo+1UY2wmy0WhyNRo_KqS7sGb9d8bDskDTOehFZoN5Q@mail.gmail.com>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9399D3F66B;
+        Mon, 24 Aug 2020 04:43:35 -0700 (PDT)
+Subject: Re: [PATCH 2/3] memory: samsung: exynos5422-dmc: remove unused
+ exynos5_dmc members
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20200822163218.21857-1-krzk@kernel.org>
+ <20200822163218.21857-2-krzk@kernel.org>
 From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <7a531591-83e5-2c93-ef61-4154635f761e@arm.com>
-Date:   Mon, 24 Aug 2020 12:34:08 +0100
+Message-ID: <6c61572d-ef7a-ca0a-2253-7a3c0736f0a5@arm.com>
+Date:   Mon, 24 Aug 2020 12:43:33 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPcfo+1UY2wmy0WhyNRo_KqS7sGb9d8bDskDTOehFZoN5Q@mail.gmail.com>
+In-Reply-To: <20200822163218.21857-2-krzk@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -60,57 +50,55 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Krzysztof,
 
-
-On 8/21/20 7:32 AM, Krzysztof Kozlowski wrote:
-> On Fri, 21 Aug 2020 at 08:31, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On Mon, 17 Aug 2020 at 19:17, Lukasz Luba <lukasz.luba@arm.com> wrote:
->>>
->>> Hi Krzysztof,
->>>
->>> On 8/17/20 4:50 PM, Krzysztof Kozlowski wrote:
->>>> On Wed, Jul 08, 2020 at 04:34:20PM +0100, Lukasz Luba wrote:
->>>>> The interrupts in Dynamic Memory Controller in Exynos5422 and Odroid
->>>>> XU3-family boards are no longer needed. They have been used in order
->>>>> to workaround some issues in scheduled work in devfreq. Now when the
->>>>> devfreq framework design is improved, remove the interrupt driven
->>>>> approach and rely on devfreq monitoring mechanism with fixed intervals.
->>>>>
->>>>> Reported-by: Willy Wolff <willy.mh.wolff.ml@gmail.com>
->>>>> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
->>>>> ---
->>>>>    arch/arm/boot/dts/exynos5420.dtsi | 3 ---
->>>>>    1 file changed, 3 deletions(-)
->>>>
->>>> I think the dependencies were merged so this can be safely applied
->>>> without bisectability problems?
->>>
->>> I have created v2 of that fix and it got merged
->>> via Chanwoo's tree, the commit 4fc9a0470d2dc37028
->>> https://lkml.org/lkml/2020/7/10/1048
->>>
->>> That commit switched the driver default mode from 'irq driven' to
->>> new devfreq monitoring mechanism. Furthermore, when the driver is
->>> built as a module, you can try to use the 'irq mode', but for this
->>> you would need the DT IRQs description (this $subject tries to remove).
->>>
->>> I would like to keep this IRQ mode for experimentation, as I
->>> described in answers to Bartek's questions:
->>> https://lkml.org/lkml/2020/7/14/315
->>>
->>> Unfortunately, I am quite busy and won't make any progress before the
->>> LPC.
->>
->> None of these were the actual answer to my question, unless by "v2 of
->> that fix and it got merged" means the dependencies?
->>
->> I'll drop it from the queue. Please resend if it is valid.
+On 8/22/20 5:32 PM, Krzysztof Kozlowski wrote:
+> The struct exynos5_dmc members bypass_rate, mx_mspll_ccore_phy,
+> mout_mx_mspll_ccore_phy and opp_bypass are not actually used.
 > 
-> Agh, not drop, I mean postpone for the next cycle (this is v5.11).
+> Apparently there was a plan to store the OPP for the bypass mode in
+> opp_bypass member, but drivers fails to do it and instead always sets
+> target voltage during bypass mode.
 > 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>   drivers/memory/samsung/exynos5422-dmc.c | 9 ---------
+>   1 file changed, 9 deletions(-)
+> 
+> diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+> index 31864ce59b25..df02afa8aa90 100644
+> --- a/drivers/memory/samsung/exynos5422-dmc.c
+> +++ b/drivers/memory/samsung/exynos5422-dmc.c
+> @@ -123,9 +123,7 @@ struct exynos5_dmc {
+>   	struct mutex lock;
+>   	unsigned long curr_rate;
+>   	unsigned long curr_volt;
+> -	unsigned long bypass_rate;
+>   	struct dmc_opp_table *opp;
+> -	struct dmc_opp_table opp_bypass;
+>   	int opp_count;
+>   	u32 timings_arr_size;
+>   	u32 *timing_row;
+> @@ -143,8 +141,6 @@ struct exynos5_dmc {
+>   	struct clk *mout_bpll;
+>   	struct clk *mout_mclk_cdrex;
+>   	struct clk *mout_mx_mspll_ccore;
+> -	struct clk *mx_mspll_ccore_phy;
+> -	struct clk *mout_mx_mspll_ccore_phy;
+>   	struct devfreq_event_dev **counter;
+>   	int num_counters;
+>   	u64 last_overflow_ts[2];
+> @@ -455,9 +451,6 @@ static int exynos5_dmc_align_bypass_voltage(struct exynos5_dmc *dmc,
+>   					    unsigned long target_volt)
+>   {
+>   	int ret = 0;
+> -	unsigned long bypass_volt = dmc->opp_bypass.volt_uv;
+> -
+> -	target_volt = max(bypass_volt, target_volt);
 
-Fair enough
+
+Could you explain which use cases you considered when you decided to
+remove these lines?
 
 Regards,
 Lukasz
