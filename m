@@ -4,43 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF3AC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 10:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E771CC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 11:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 725B420738
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 10:59:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5142206B5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 11:01:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbgHXK7U (ORCPT
+        id S1726831AbgHXLBv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Aug 2020 06:59:20 -0400
-Received: from foss.arm.com ([217.140.110.172]:59556 "EHLO foss.arm.com"
+        Mon, 24 Aug 2020 07:01:51 -0400
+Received: from foss.arm.com ([217.140.110.172]:59610 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725998AbgHXK7T (ORCPT
+        id S1726483AbgHXLBg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Aug 2020 06:59:19 -0400
+        Mon, 24 Aug 2020 07:01:36 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 88A551063;
-        Mon, 24 Aug 2020 03:59:13 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F22741063;
+        Mon, 24 Aug 2020 04:01:35 -0700 (PDT)
 Received: from [10.37.12.65] (unknown [10.37.12.65])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D7F03F66B;
-        Mon, 24 Aug 2020 03:59:11 -0700 (PDT)
-Subject: Re: [PATCH 1/3] memory: samsung: exynos5422-dmc: rename timing
- register fields variables
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 653203F66B;
+        Mon, 24 Aug 2020 04:01:34 -0700 (PDT)
+Subject: Re: [PATCH 3/3] memory: samsung: exynos5422-dmc: add missing and fix
+ kerneldoc
 To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 References: <20200822163218.21857-1-krzk@kernel.org>
+ <20200822163218.21857-3-krzk@kernel.org>
 From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <d8d7b2bb-d277-4e48-889c-16110f4d594d@arm.com>
-Date:   Mon, 24 Aug 2020 11:59:08 +0100
+Message-ID: <6a87531f-a16f-5597-a10f-bdc2130077f1@arm.com>
+Date:   Mon, 24 Aug 2020 12:01:32 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200822163218.21857-1-krzk@kernel.org>
+In-Reply-To: <20200822163218.21857-3-krzk@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -52,17 +53,19 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
 On 8/22/20 5:32 PM, Krzysztof Kozlowski wrote:
-> The driver has file-scope arrays defining fields of timing registers
-> (e.g. struct timing_reg timing_row) and actual values for these
-> registers per each OPP in state container (struct
-> exynos5_dmc.timing_row).  The meanings of these are different so use
-> different names to avoid confusion.
-
-Good point
-
+> Add missing kerneldoc to struct exynos5_dmc and correct the existing
+> kerneldoc in other places to fix W=1 warnings like:
+> 
+>      drivers/memory/samsung/exynos5422-dmc.c:107: warning: Function parameter or member 'freq_hz' not described in 'dmc_opp_table'
+>      drivers/memory/samsung/exynos5422-dmc.c:154: warning: Function parameter or member 'dev' not described in 'exynos5_dmc'
+>      drivers/memory/samsung/exynos5422-dmc.c:357: warning: Excess function parameter 'param' description in 'exynos5_set_bypass_dram_timings'
+>      drivers/memory/samsung/exynos5422-dmc.c:630: warning: Function parameter or member 'flags' not described in 'exynos5_dmc_get_volt_freq'
+>      drivers/memory/samsung/exynos5422-dmc.c:962: warning: cannot understand function prototype: 'struct devfreq_dev_profile exynos5_dmc_df_profile = '
+>      drivers/memory/samsung/exynos5422-dmc.c:1011: warning: Function parameter or member 'reg_timing_row' not described in 'create_timings_aligned'
+>      drivers/memory/samsung/exynos5422-dmc.c:1011: warning: Excess function parameter 'idx' description in 'create_timings_aligned'
+>      drivers/memory/samsung/exynos5422-dmc.c:1345: warning: Excess function parameter 'set' description in 'exynos5_dmc_set_pause_on_switching'
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
 
 Acked-by: Lukasz Luba <lukasz.luba@arm.com>
 
