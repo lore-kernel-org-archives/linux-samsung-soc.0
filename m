@@ -2,190 +2,195 @@ Return-Path: <SRS0=sDIw=CC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA101C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 13:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1545C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 13:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8620D20838
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 13:03:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96517214F1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 13:17:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XONJDaKt"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ACZj1Mvv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbgHXNC7 (ORCPT
+        id S1725780AbgHXNR0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Aug 2020 09:02:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48382 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725601AbgHXNC5 (ORCPT
+        Mon, 24 Aug 2020 09:17:26 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47186 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbgHXNRV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Aug 2020 09:02:57 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17F58C061573;
-        Mon, 24 Aug 2020 06:02:57 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id bs17so7956475edb.1;
-        Mon, 24 Aug 2020 06:02:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=P1Zncp3mBPUwy/XcJd/Yz/e5wA8bamhjeRbMn86RZ00=;
-        b=XONJDaKtbTenPVd8qxPHXGDxygjmiThWQu9BDEYWfQkNXTReQ/uDZ5EpmkZRn48ejm
-         efOlakAgT3CzeiVj7Mb+Xe3MGYfSkK8ChioK5iaE0FrECZyu1NMbrsagF1MD4zeLbQBR
-         YlcHE6GAiOf6uGdxmW7WV6BtF/nYzbopOxDsPzJW8y7ozmI8qbtwt/W/4c/3cQppu7NS
-         uvR+ZYua5Efzwcpl/UYFTfrd/HHrj+o8hEJgQzJ/lWjW5Q/34xZ6iMphmfkOvs8Kryyf
-         VaQ73biFs1164Ey+UwqI8Z3LwrPXz4xep8H74Fgq2ahk0F8imuGO7V4XUm/TyepKgz3W
-         4d0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=P1Zncp3mBPUwy/XcJd/Yz/e5wA8bamhjeRbMn86RZ00=;
-        b=M8SQLHgl7xxa+fdh8q0il3mOQJPjSrL2tqSl64m8EVjQNaXQIzu1ycMZAtLfSn9fxJ
-         q6uaUYmY+laJ+745Bq5aeZ0pc+ttMWJaKDNRiHIp9/vqF8MgKrNYYZC/h+nGB6MMoh9h
-         dpjvwGu6kNFELwOkli0RCYH+TrBqu5V/INBjeu1FBJByN4g1tOx/6Bl7WtFoa5ap4X1O
-         ERfLw5/rxaqtAUKu4D7BjJINE2YLr6VymnfMXYIw7UBB8wPrwFZVyEOepoypLHOBSzQW
-         kYSEq24U8wT8IN6oZgvdiFHCPNYPmKdbpJ2uEdIsTyPtfvA/lPI12tTCqZiwZ1lNeEJ/
-         xv0Q==
-X-Gm-Message-State: AOAM532jwNz2X0QJKzfv9Cqpi9y7Fcz5xfWjRecWfvKU1I4U8s2O1prT
-        23WzId03hOGStJ4ER1xOXbA=
-X-Google-Smtp-Source: ABdhPJzyf2lmrCIi0SqicxviBRWrSr49744XFzc3aRPrmSNXEykr6WnIHEpJxxogoesnOqE2WhNmSQ==
-X-Received: by 2002:a50:c3c4:: with SMTP id i4mr5236603edf.244.1598274175628;
-        Mon, 24 Aug 2020 06:02:55 -0700 (PDT)
-Received: from felia.fritz.box ([2001:16b8:2d4c:8a00:f0ec:b5d5:8c1c:a145])
-        by smtp.gmail.com with ESMTPSA id g11sm9366898edt.88.2020.08.24.06.02.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2020 06:02:55 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Ettore Chimenti <ek5.chimenti@gmail.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
+        Mon, 24 Aug 2020 09:17:21 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200824131717euoutp01c0e823076f7354b33bc42e0918d2d93f~uNq2p0st_0844408444euoutp01b;
+        Mon, 24 Aug 2020 13:17:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200824131717euoutp01c0e823076f7354b33bc42e0918d2d93f~uNq2p0st_0844408444euoutp01b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1598275037;
+        bh=OT0rqyQlWmdMQHNzRDIfGcRAB/16hVBFM4XsdepxvKw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ACZj1Mvv4Svwq0OPmzI6UcJ09Yg0d5sTog3cxDDQk3GbIB0AUzExGdVGD4TFpkE+X
+         2/oervLIkhSfCucsVU0wTC7cRsiOrQ9y7y+evjNd/8HQ5pbbrCMhP7LOQRClnXM9wX
+         bDRJjHphdEm/yStQ5d7LHWQxKg5+aqpu0fJ/UYIY=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200824131716eucas1p2440fe398c3fa497c05d22b5a92e56ab0~uNq2WXiRW2849428494eucas1p2S;
+        Mon, 24 Aug 2020 13:17:16 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 6C.E5.05997.CDDB34F5; Mon, 24
+        Aug 2020 14:17:16 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200824131716eucas1p16a3fde52aa765e7cd6584d4733762047~uNq2Cckhe0260302603eucas1p1x;
+        Mon, 24 Aug 2020 13:17:16 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200824131716eusmtrp1377337d38a0ecdd03f7106296b03990b~uNq2BugMn1770017700eusmtrp1Z;
+        Mon, 24 Aug 2020 13:17:16 +0000 (GMT)
+X-AuditID: cbfec7f4-65dff7000000176d-12-5f43bddce15a
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 5A.DB.06314.CDDB34F5; Mon, 24
+        Aug 2020 14:17:16 +0100 (BST)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200824131716eusmtip17784587fb037d3a2cfa5d332992f3853~uNq13hKY-1595415954eusmtip1S;
+        Mon, 24 Aug 2020 13:17:16 +0000 (GMT)
+From:   Lukasz Stelmach <l.stelmach@samsung.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org, Joe Perches <joe@perches.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH THIRD RESEND] MAINTAINERS: adjust entries to moving CEC platform drivers
-Date:   Mon, 24 Aug 2020 15:02:43 +0200
-Message-Id: <20200824130243.27162-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        m.szyprowski@samsung.com, b.zolnierkie@samsung.com,
+        Tomasz Figa <tfiga@chromium.org>
+Subject: Re: [PATCH v2 7/9] spi: spi-s3c64xx: Ensure cur_speed holds actual
+ clock value
+Date:   Mon, 24 Aug 2020 15:17:03 +0200
+In-Reply-To: <20200822124325.GF20423@kozik-lap> (Krzysztof Kozlowski's
+        message of "Sat, 22 Aug 2020 14:43:25 +0200")
+Message-ID: <dleftj5z98xjxs.fsf%l.stelmach@samsung.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURTN60ynBa0+CoZrESINmriBgOAQVERcJv5o4g8YtRaYFCItpAO4
+        /IAkgiKLQlBATWQRSZV9CRKRpCESQKgoixCQaCGIqCxFKQbRtoMJf+ede+6599w8MSEdFsrE
+        0Zp4VqtRxsgpe7Lx9VLPnpGWEMVe/cf9dIl5UkDX5FcJ6bxP4xSdbZwmaIOhWkTXGgeE9Pvm
+        hxSdb3gloK/PDYnoirZREW26sUIdXsc8SO4lmcHSeYKp1d2imLrSJCarXocYU63baeqs/YFI
+        NiY6kdV6HbpoH2VaLEdxDU5XMlqekskoxyEdicWA98FonW86shNLcTmCzqqYdGRvwQsI7vX/
+        FfAPE4KyoWWRVWVtGNP3i/jCUwSliw2rqkkEaW1PSKsthT2hoiLU2uCEd8Dgn0WhVUPgTgHU
+        91bZnBxxGHStDJBWTOJt0GAusvF2OBEW7nbYeAneD91v8m14Ew6A+i9jIp53gI6CcRtPYDUU
+        GL4h6wDAcyJY7jAJ+FWPQnJKD8ljR/jaXr8aYQt05WaQfP4kyM3x53szEDQ+NK/qA2Gk5zfF
+        42DoLpoV8voN8OG7Az93A+Q03id4WgI3U6W82gMqs1+uusgg82s54jEDs8u/CP5WKQgeGbOE
+        d9DWwjVxCtfEKbTYEpbbVTV78fQuKCuaJnh8ECorZ8jHSKhDzmwCp1axnI+GvezJKdVcgkbl
+        GRGrrkWWX9a10r7QhJqXw/UIi5F8vcSsD1JIhcpE7qpajzwsTp+rn71FMlITq2HlTpIj3V0X
+        pJJI5dVrrDZWoU2IYTk9chGTcmeJb/HUeSlWKePZSywbx2r/VwViO1kycs5yV+dF4MeuXimO
+        lRsNmVTNzMSJzIbdJc+SdAk49EyT852Rn8aTfX+57Amj149q5lSAP/Zobd38PMk7KC74QtgL
+        1U73d6r8cMb1mJuiyW8uMNWnN6vMLzxXYf655FC6vX1by/Hvfm0DGWqX6eG0c+ztkOIUY998
+        1PNp3dCUjJSTXJTSeyeh5ZT/ABTl4S5tAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEIsWRmVeSWpSXmKPExsVy+t/xu7p39jrHG9y+rWix+MdzJouNM9az
+        Wkx9+ITNov/xa2aL8+c3sFtsenyN1eLyrjlsFjPO72OyaPx4k91i7ZG77BafW/+xOXB7zG64
+        yOJxfcknZo9NqzrZPDYvqffo27KK0ePzJrkAtig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMT
+        Sz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jM/fVzAWbBWp6Nm7nKWBcZJgFyMnh4SAicT9Q1fZ
+        uxi5OIQEljJKXPh7l62LkQMoISWxcm46RI2wxJ9rXWwQNU8ZJXYe2MUIUsMmoCexdm0ESI2I
+        gKbE9b/fWUFqmAUOMUmsaJnPApIQFgiXuLP0GTOILQRUf2lXPzuIzSKgKrH1x0J2kDmcAmUS
+        xze5g4R5Bcwlzp6ZAdYqKmApseXFfXaIuKDEyZlPwOLMAtkSX1c/Z57AKDALSWoWktQsoKnM
+        QCet36UPEdaWWLbwNTOEbSuxbt17lgWMrKsYRVJLi3PTc4sN9YoTc4tL89L1kvNzNzEC43Db
+        sZ+bdzBe2hh8iFGAg1GJh/fHIft4IdbEsuLK3EOMKkBjHm1YfYFRiiUvPy9VSYTX6ezpOCHe
+        lMTKqtSi/Pii0pzU4kOMpkBvTmSWEk3OB6aOvJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFCAumJ
+        JanZqakFqUUwfUwcnFINjL51PbEna4vU1p/ZX7o3Ryfv4pSns13sX4pYajPOel7E3BbZ7qNm
+        cunTCh2NxYoHfsy78TPKWOSFYb/fAakY5h0NaiYngzr9rFdHOIt/r1F4eP8iv0/1BEGXqyyP
+        uRzuyL5vjxSKiVhQ8mPKJ36bzmy5fRP4ekX3xU+NeyYV86fT12+Z4e39SizFGYmGWsxFxYkA
+        ESmkX+UCAAA=
+X-CMS-MailID: 20200824131716eucas1p16a3fde52aa765e7cd6584d4733762047
+X-Msg-Generator: CA
+X-RootMTR: 20200824131716eucas1p16a3fde52aa765e7cd6584d4733762047
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200824131716eucas1p16a3fde52aa765e7cd6584d4733762047
+References: <20200822124325.GF20423@kozik-lap>
+        <CGME20200824131716eucas1p16a3fde52aa765e7cd6584d4733762047@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Commit 4be5e8648b0c ("media: move CEC platform drivers to a separate
-directory") moved various files into a new directory structure, but did
-not adjust the entries in MAINTAINERS.
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since then, ./scripts/get_maintainer.pl --self-test=patterns complains:
+It was <2020-08-22 sob 14:43>, when Krzysztof Kozlowski wrote:
+> On Fri, Aug 21, 2020 at 06:13:59PM +0200, =C5=81ukasz Stelmach wrote:
+>> cur_speed is used to calculate transfer timeout and needs to be
+>> set to the actual value of (half) the clock speed for precise
+>> calculations.
+>
+> If you need this only for timeout calculation just divide it in
+> s3c64xx_wait_for_dma().
 
-  warning: no file matches F: drivers/media/platform/s5p-cec/
-  warning: no file matches F: drivers/media/platform/tegra-cec/
-  warning: no file matches F: drivers/media/platform/cec-gpio/
-  warning: no file matches F: drivers/media/platform/meson/ao-cec-g12a.c
-  warning: no file matches F: drivers/media/platform/meson/ao-cec.c
-  warning: no file matches F: drivers/media/platform/seco-cec/seco-cec.c
-  warning: no file matches F: drivers/media/platform/seco-cec/seco-cec.h
-  warning: no file matches F: drivers/media/platform/sti/cec/
+I divide it here to keep the relationship between the value the variable
+holds and the one that is inside clk_* (See? It's multiplied 3 lines
+above). If you look around every single clk_get_rate() call in the file is
+divided by two.
 
-Update the MAINTAINERS entries to the new file locations.
+> Otherwise why only if (cmu) case is updated?
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Mauro, please pick this non-urgent minor clean-up patch.
-  
-applies cleanly on v5.9-rc2 and next-20200824
+You are righ I will update that too.
 
-v1 send here:
-https://lore.kernel.org/lkml/20200418093630.6149-1-lukas.bulwahn@gmail.com/
- 
-v1 first resend here:
-https://lore.kernel.org/lkml/20200506050744.4779-1-lukas.bulwahn@gmail.com/
+However, I wonder if it is even possible that the value read from
+S3C64XX_SPI_CLK_CFG would be different than the one written to it?
 
-v2 second resend here:
-https://lore.kernel.org/lkml/20200525142946.8268-1-lukas.bulwahn@gmail.com/
+> You are also affecting here not only timeout but
+> s3c64xx_enable_datapath() which is not mentioned in commit log. In other
+> words, this looks wrong.
 
- MAINTAINERS | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+Indeed, there is a reference too. I've corrected the message.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f0068bceeb61..0cdb71b63f4f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2446,7 +2446,7 @@ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
- L:	linux-media@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/media/s5p-cec.txt
--F:	drivers/media/platform/s5p-cec/
-+F:	drivers/media/cec/platform/s5p/
- 
- ARM/SAMSUNG S5P SERIES JPEG CODEC SUPPORT
- M:	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
-@@ -2591,7 +2591,7 @@ L:	linux-tegra@vger.kernel.org
- L:	linux-media@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/media/tegra-cec.txt
--F:	drivers/media/platform/tegra-cec/
-+F:	drivers/media/cec/platform/tegra/
- 
- ARM/TETON BGA MACHINE SUPPORT
- M:	"Mark F. Brown" <mark.brown314@gmail.com>
-@@ -4014,7 +4014,7 @@ S:	Supported
- W:	http://linuxtv.org
- T:	git git://linuxtv.org/media_tree.git
- F:	Documentation/devicetree/bindings/media/cec-gpio.txt
--F:	drivers/media/platform/cec-gpio/
-+F:	drivers/media/cec/platform/cec-gpio/
- 
- CELL BROADBAND ENGINE ARCHITECTURE
- M:	Arnd Bergmann <arnd@arndb.de>
-@@ -11292,8 +11292,7 @@ S:	Supported
- W:	http://linux-meson.com/
- T:	git git://linuxtv.org/media_tree.git
- F:	Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
--F:	drivers/media/platform/meson/ao-cec-g12a.c
--F:	drivers/media/platform/meson/ao-cec.c
-+F:	drivers/media/cec/platform/meson/
- 
- MESON NAND CONTROLLER DRIVER FOR AMLOGIC SOCS
- M:	Liang Yang <liang.yang@amlogic.com>
-@@ -15476,8 +15475,7 @@ F:	drivers/mmc/host/sdricoh_cs.c
- SECO BOARDS CEC DRIVER
- M:	Ettore Chimenti <ek5.chimenti@gmail.com>
- S:	Maintained
--F:	drivers/media/platform/seco-cec/seco-cec.c
--F:	drivers/media/platform/seco-cec/seco-cec.h
-+F:	drivers/media/cec/platform/seco/
- 
- SECURE COMPUTING
- M:	Kees Cook <keescook@chromium.org>
-@@ -16511,7 +16509,7 @@ STI CEC DRIVER
- M:	Benjamin Gaignard <benjamin.gaignard@linaro.org>
- S:	Maintained
- F:	Documentation/devicetree/bindings/media/stih-cec.txt
--F:	drivers/media/platform/sti/cec/
-+F:	drivers/media/cec/platform/sti/
- 
- STK1160 USB VIDEO CAPTURE DRIVER
- M:	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
--- 
-2.17.1
+>>=20
+>> Cc: Tomasz Figa <tfiga@chromium.org>
+>> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+>> ---
+>>  drivers/spi/spi-s3c64xx.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>=20
+>> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+>> index 02de734b8ab1..89c162efe355 100644
+>> --- a/drivers/spi/spi-s3c64xx.c
+>> +++ b/drivers/spi/spi-s3c64xx.c
+>> @@ -626,6 +626,7 @@ static int s3c64xx_spi_config(struct s3c64xx_spi_dri=
+ver_data *sdd)
+>>  		ret =3D clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+>>  		if (ret)
+>>  			return ret;
+>> +		sdd->cur_speed =3D clk_get_rate(sdd->src_clk) / 2;
+>>  	} else {
+>>  		/* Configure Clock */
+>>  		val =3D readl(regs + S3C64XX_SPI_CLK_CFG);
+>> --=20
+>> 2.26.2
+>>=20
+>
+>
 
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl9Dvc8ACgkQsK4enJil
+gBA0rQgAnJlpI7A1yxNurb3bruQTwOt7iW6zXvP/OP+6/YaJoV6EciSx6JbgDwWa
+TSSmQAzzaZooyRZMGoZ0CU4mkxdgsJVuZKdVjmj5Omh/b0ElpC2IzmHoDk1mDH7I
+rbYgiJnhmlI6Qz2zNZ6kig5eUxuDq/tuZ2L3tpg6tvinzFZSvFsklA3vBAkAJqJm
+HK+VHbfcqqeoUXLQQqELF1A25ft8cD57BjOBtfL7ozjWc+SvQXSsjSQv64O8MPAK
+WMIoxt5TcIBXdR/r8Is0bvmp4Q+Yq7Q61T4nQZeqdw6RfYTlvUhhTm1IZO4aHAb/
+730YBXVP5vTjw79wVoyFF0h/mw5qcg==
+=L5s0
+-----END PGP SIGNATURE-----
+--=-=-=--
