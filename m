@@ -1,145 +1,260 @@
-Return-Path: <SRS0=sDIw=CC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=8ACj=CD=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4193DC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 21:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4432C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Aug 2020 09:02:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1063A2072D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Aug 2020 21:56:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98AD12068F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Aug 2020 09:02:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ejZiB6ta"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mVotJBVH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbgHXV4h (ORCPT
+        id S1726045AbgHYJCQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Aug 2020 17:56:37 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:38154 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbgHXV4g (ORCPT
+        Tue, 25 Aug 2020 05:02:16 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:48536 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbgHYJCP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Aug 2020 17:56:36 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 07OLtjYQ054833;
-        Mon, 24 Aug 2020 16:55:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1598306145;
-        bh=ToO+3NPhNZ4b2VimF7JI2m/Y+G+uDEUZKNJic2RPL6o=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ejZiB6taEENr+Hn0hc5bAxqg24U0O44RwRV6vWtKHX8yF2fcogQtJomSomBv68bsw
-         PLYH2FmE7jGwhcY7LIUnfJ+iODjLSNf3FaJ0nJiaJysxQlv4DWvzMPBjl/LP0PdV54
-         oEReJqNmiKlUmO1gpvLUOBekMLgyCfT8DdSLNWaM=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 07OLtiU8069939
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Aug 2020 16:55:44 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 24
- Aug 2020 16:55:43 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 24 Aug 2020 16:55:43 -0500
-Received: from [10.250.32.171] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 07OLtgT3075587;
-        Mon, 24 Aug 2020 16:55:43 -0500
-Subject: Re: [PATCH 17/18] media/omap3isp: Clean up IOMMU workaround
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>
-CC:     <hch@lst.de>, <joro@8bytes.org>, <linux@armlinux.org.uk>,
-        <will@kernel.org>, <inki.dae@samsung.com>,
-        <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>,
-        <m.szyprowski@samsung.com>, <agross@kernel.org>,
-        <bjorn.andersson@linaro.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <vdumpa@nvidia.com>, <digetx@gmail.com>,
-        <matthias.bgg@gmail.com>, <yong.wu@mediatek.com>,
-        <geert+renesas@glider.be>, <magnus.damm@gmail.com>,
-        <t-kristo@ti.com>, <laurent.pinchart@ideasonboard.com>,
+        Tue, 25 Aug 2020 05:02:15 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200825090212euoutp01700f5b9288498d259a8209f47c7530c0~ud1bdEimP0084600846euoutp019;
+        Tue, 25 Aug 2020 09:02:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200825090212euoutp01700f5b9288498d259a8209f47c7530c0~ud1bdEimP0084600846euoutp019
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1598346132;
+        bh=nELQW/qZXEXb5q6ziQQU/InqD+gC34e4yfOiwAkGpIE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mVotJBVHQa2SJXC/GPLHmnFaMBDWg7oG7CrZ4LaOIUdUauuIyfLnnLS2kXYeB9Cqd
+         JbAp1s77YTwUNVGeao7Wc4uuX0Z1nRM9SrPsFKK6Y7U3tq1OueBszDUwbEZOdF2uja
+         ilC6uZP0oteoK+0bnUVW0lx1aR+VjLdJi/8S6CWM=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200825090212eucas1p150bcd747d4e709a207e26dd7a86bf9ce~ud1bEUhYL1252612526eucas1p12;
+        Tue, 25 Aug 2020 09:02:12 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 53.31.05997.493D44F5; Tue, 25
+        Aug 2020 10:02:12 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200825090211eucas1p1b63191fa778a775e33169ba2c1d3b74b~ud1amVFGr1917419174eucas1p1H;
+        Tue, 25 Aug 2020 09:02:11 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200825090211eusmtrp19b47e5e8064a4b295d1c4478b18a4c6f~ud1allHsk1202112021eusmtrp1D;
+        Tue, 25 Aug 2020 09:02:11 +0000 (GMT)
+X-AuditID: cbfec7f4-677ff7000000176d-96-5f44d3945aba
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 58.11.06017.393D44F5; Tue, 25
+        Aug 2020 10:02:11 +0100 (BST)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200825090211eusmtip2d0eced059a8edbe0bafdf0e313467860~ud1aZ3n4s1247012470eusmtip27;
+        Tue, 25 Aug 2020 09:02:11 +0000 (GMT)
+From:   Lukasz Stelmach <l.stelmach@samsung.com>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "list\@263.net\:IOMMU DRIVERS \<iommu\@lists.linux-foundation.org\>\,
+        Joerg Roedel \<joro\@8bytes.org\>\," 
         <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <cover.1597931875.git.robin.murphy@arm.com>
- <11d8419744e4e744a9448180801b0c4683328afd.1597931876.git.robin.murphy@arm.com>
- <20200820165339.GK7145@valkosipuli.retiisi.org.uk>
- <be010209-4abc-ba48-4e31-185427776a13@arm.com>
- <20200820195536.GL7145@valkosipuli.retiisi.org.uk>
- <5190a40e-ad24-d98e-3588-b95592ea2db3@arm.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <86d2fb37-33b8-68f1-fe0c-dad496869b29@ti.com>
-Date:   Mon, 24 Aug 2020 16:55:42 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 7/9] spi: spi-s3c64xx: Ensure cur_speed holds actual
+ clock value
+Date:   Tue, 25 Aug 2020 11:01:53 +0200
+In-Reply-To: <CAAFQd5ADym6YapCoJ8+fJbPjSestcD_2R8L5T8jAfO4c=GFQkA@mail.gmail.com>
+        (Tomasz Figa's message of "Mon, 24 Aug 2020 15:21:34 +0200")
+Message-ID: <dleftjk0xnw132.fsf%l.stelmach@samsung.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <5190a40e-ad24-d98e-3588-b95592ea2db3@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUhUURjuzF3mqo2dRsuf0UInhTLSsrAbLVj5MA8+SERUUDbaRSVnjLm5
+        VA8uoGjoKC40TZZZg8WUWja4FUpmboNONmAqaYsDpVbiUm455PUa9Pad/1v+7xwOQ8iHKAUT
+        r73C6bTqBCXtSta1L9h2ldjDo3bPD7qxD+a/SthnhhqKLf3soNmC0QmCtdmeStna0X6KtTeV
+        0azB1ixhM6YGpWxV27CUncly0mFuqtvpfaTqvWmaUNWac2nVc1OaSm8xI9VM7dZI+qzroYtc
+        Qnwypws+csE1bkC/jC4vBqR294xQ6ah8yw3kwgDeB5X5Q9QN5MrI8SMEHQ4DJRByPIugf5QR
+        iRkEw3deU/8cJcvVpEg8RPCt+6NUPHxFkOl8saJiGBoHQVXVacHgif1hqctACxoC3yehfsS8
+        muSBz4DV2U8KmMQBMGQvWRW54EIE9VO/JQIhw/sh+8/0qmETPgCWb8I2Yb4Rum45Vs0E1sAt
+        23ck1vslhbF33iIOh7lcx1ptDxjvsEhF7APW4jxSKAo4DYqLQoW9gPMQ1JXNk6LmIHzoXaRF
+        fBSsTwyUqHeHgR8bxbXuUFR3kxDHMsjJlotqf6gueLmWooD88UdrzVSQa8yUiK9rQmBaDC1E
+        vsb/LmP87zLGlVQC74CapmBxvBMqKyYIER+G6upJ8h6izMiLS+I1sRwfouVSgni1hk/SxgbF
+        JGpq0covszo7ZhtQ05/oVoQZpFwvS28+HiWn1Mn8VU0r8l9J+vL08VukILWJWk7pKTvWYz0v
+        l11UX73G6RKjdEkJHN+KvBlS6SXbe3/snBzHqq9wlzjuMqf7x0oYF0U64j/Zz/XpFY07DvpN
+        xZx84LclfC7LP+Dn5s7FMW00YWyYoBZOvSlXDdRvregNMxaWb9f3LfCTge3qUjbyhGdJ6qv+
+        iKWQwM+ejS1JNx/7WiL0e7XGznXbTvN965xtUr3jyWTBjLXmhdmRsWHUSxrY4aPXXG9JNe0Z
+        ilsoi8y5m6Ik+Tj1nkBCx6v/Am7+G6JtAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t/xe7qTL7vEGyz+q22x+MdzJouNM9az
+        Wkx9+ITNov/xa2aL8+c3sFtsenyN1eLyrjlsFjPO72OyaPx4k91i7ZG77BafW/+xOXB7zG64
+        yOJxfcknZo9NqzrZPDYvqffo27KK0ePzJrkAtig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMT
+        Sz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jBt9fxkLfqlWnDp7j7WBcb5sFyMnh4SAicSUv+tY
+        uhi5OIQEljJKNF66wNrFyAGUkJJYOTcdokZY4s+1LjaImqeMEt/ffAOrYRPQk1i7NgKkRkRA
+        ReL3yRlsIDazwGQWiWdLDEFsYYFwiTtLnzGD2EICARLfzl1kBbFZBFQlbl2eAjaTU2ACo8T2
+        j9+YQBK8AuYSbX8+gRWJClhKbHlxnx0iLihxcuYTFogF2RJfVz9nnsAoMAtJahaS1Cyg85gF
+        NCXW79KHCGtLLFv4mhnCtpVYt+49ywJG1lWMIqmlxbnpucVGesWJucWleel6yfm5mxiBkbjt
+        2M8tOxi73gUfYhTgYFTi4W3Y5xwvxJpYVlyZe4hRBWjMow2rLzBKseTl56UqifA6nT0dJ8Sb
+        klhZlVqUH19UmpNafIjRFOjRicxSosn5wOSRVxJvaGpobmFpaG5sbmxmoSTO2yFwMEZIID2x
+        JDU7NbUgtQimj4mDU6qBccaDleLvfyoURE57nl/SwP+5/dBZGT7XO7/evTb95BfLslOorurC
+        9qn6d088mLjk0rNtc/OXWj3Knl971nzt3ntZRQelzz1SVV/pGu9b0nN5USGT+uVLz6wEGRhz
+        D/ZvsmC/fXan06yDrZGaErZltlqT/13gmeKq9yvo8YXpHSuDdUszvVVa1yixFGckGmoxFxUn
+        AgCFIZFV5gIAAA==
+X-CMS-MailID: 20200825090211eucas1p1b63191fa778a775e33169ba2c1d3b74b
+X-Msg-Generator: CA
+X-RootMTR: 20200825090211eucas1p1b63191fa778a775e33169ba2c1d3b74b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200825090211eucas1p1b63191fa778a775e33169ba2c1d3b74b
+References: <CAAFQd5ADym6YapCoJ8+fJbPjSestcD_2R8L5T8jAfO4c=GFQkA@mail.gmail.com>
+        <CGME20200825090211eucas1p1b63191fa778a775e33169ba2c1d3b74b@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 8/20/20 6:01 PM, Robin Murphy wrote:
-> On 2020-08-20 20:55, Sakari Ailus wrote:
->> On Thu, Aug 20, 2020 at 06:25:19PM +0100, Robin Murphy wrote:
->>> On 2020-08-20 17:53, Sakari Ailus wrote:
->>>> Hi Robin,
->>>>
->>>> On Thu, Aug 20, 2020 at 04:08:36PM +0100, Robin Murphy wrote:
->>>>> Now that arch/arm is wired up for default domains and iommu-dma, devices
->>>>> behind IOMMUs will get mappings set up automatically as appropriate, so
->>>>> there is no need for drivers to do so manually.
->>>>>
->>>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->>>>
->>>> Thanks for the patch.
->>>
->>> Many thanks for testing so quickly!
->>>
->>>> I haven't looked at the details but it seems that this causes the buffer
->>>> memory allocation to be physically contiguous, which causes a failure to
->>>> allocate video buffers of entirely normal size. I guess that was not
->>>> intentional?
->>>
->>> Hmm, it looks like the device ends up with the wrong DMA ops, which implies
->>> something didn't go as expected with the earlier IOMMU setup and default
->>> domain creation. Chances are that either I missed some subtlety in the
->>> omap_iommu change, or I've fundamentally misjudged how the ISP probing works
->>> and it never actually goes down the of_iommu_configure() path in the first
->>> place. Do you get any messages from the IOMMU layer earlier on during boot?
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, I don't think we go through the of_iommu_configure() path, the setup is
-mostly done using .probe_device() and .attach_dev() ops. Since the MMUs are
-present directly in the respective sub-systems and relies on the sub-system
-clocking and power, the MMU itself is turned ON and enabled during .attach_dev().
-
-regards
-Suman
-
+It was <2020-08-24 pon 15:21>, when Tomasz Figa wrote:
+> On Mon, Aug 24, 2020 at 3:17 PM Lukasz Stelmach <l.stelmach@samsung.com> =
+wrote:
 >>
->> I do get these:
+>> It was <2020-08-22 sob 14:43>, when Krzysztof Kozlowski wrote:
+>> > On Fri, Aug 21, 2020 at 06:13:59PM +0200, =C5=81ukasz Stelmach wrote:
+>> >> cur_speed is used to calculate transfer timeout and needs to be
+>> >> set to the actual value of (half) the clock speed for precise
+>> >> calculations.
+>> >
+>> > If you need this only for timeout calculation just divide it in
+>> > s3c64xx_wait_for_dma().
 >>
->> [    2.934936] iommu: Default domain type: Translated
->> [    2.940917] omap-iommu 480bd400.mmu: 480bd400.mmu registered
->> [    2.946899] platform 480bc000.isp: Adding to iommu group 0
+>> I divide it here to keep the relationship between the value the variable
+>> holds and the one that is inside clk_* (See? It's multiplied 3 lines
+>> above). If you look around every single clk_get_rate() call in the file =
+is
+>> divided by two.
 >>
-> 
-> So that much looks OK, if there are no obvious errors. Unfortunately there's no
-> easy way to tell exactly what of_iommu_configure() is doing (beyond enabling a
-> couple of vague debug messages). The first thing I'll do tomorrow is
-> double-check whether it's really working on my boards here, or whether I was
-> just getting lucky with CMA... (I assume you don't have CMA enabled if you're
-> ending up in remap_allocator_alloc())
-> 
-> Robin.
+>> > Otherwise why only if (cmu) case is updated?
+>>
+>> You are righ I will update that too.
+>>
+>> However, I wonder if it is even possible that the value read from
+>> S3C64XX_SPI_CLK_CFG would be different than the one written to it?
+>>
+>
+> It is not possible for the register itself, but please see my other
+> reply, where I explained the integer rounding error which can happen
+> when calculating the value to write to the register.
 
+I don't have any board to test it and Marek says there is only one that
+doesn't use cmu *and* has an SPI device attached.
+
+Here is what I think should work for the !cmu case.
+
+=2D-8<---------------cut here---------------start------------->8---
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 18b89e53ceda..5ebb1caade4d 100644
+=2D-- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -655,13 +655,18 @@ static int s3c64xx_spi_config(struct
+s3c64xx_spi_driver_data *sdd)
+                        return ret;
+                sdd->cur_speed =3D clk_get_rate(sdd->src_clk) / 2;
+        } else {
++               int src_clk_rate =3D clk_get_rate(sdd->src_clk);
++               int clk_val =3D (src_clk_rate / sdd->cur_speed / 2 - 1);
++
+                /* Configure Clock */
+                val =3D readl(regs + S3C64XX_SPI_CLK_CFG);
+                val &=3D ~S3C64XX_SPI_PSR_MASK;
+=2D               val |=3D ((clk_get_rate(sdd->src_clk) / sdd->cur_speed / =
+2 - 1)
+=2D                               & S3C64XX_SPI_PSR_MASK);
++               val |=3D (clk_val & S3C64XX_SPI_PSR_MASK);
+                writel(val, regs + S3C64XX_SPI_CLK_CFG);
+
++               /* Keep the actual value */
++               sdd->cur_speed =3D src_clk_rate / (2 * (clk_val + 1));
++
+                /* Enable Clock */
+                val =3D readl(regs + S3C64XX_SPI_CLK_CFG);
+                val |=3D S3C64XX_SPI_ENCLK_ENABLE;
+=2D-8<---------------cut here---------------end--------------->8---
+
+
+>> > You are also affecting here not only timeout but
+>> > s3c64xx_enable_datapath() which is not mentioned in commit log. In oth=
+er
+>> > words, this looks wrong.
+>>
+>> Indeed, there is a reference too. I've corrected the message.
+>>
+>
+> Thanks!
+>
+> Best regards,
+> Tomasz
+>
+>> >>
+>> >> Cc: Tomasz Figa <tfiga@chromium.org>
+>> >> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+>> >> ---
+>> >>  drivers/spi/spi-s3c64xx.c | 1 +
+>> >>  1 file changed, 1 insertion(+)
+>> >>
+>> >> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+>> >> index 02de734b8ab1..89c162efe355 100644
+>> >> --- a/drivers/spi/spi-s3c64xx.c
+>> >> +++ b/drivers/spi/spi-s3c64xx.c
+>> >> @@ -626,6 +626,7 @@ static int s3c64xx_spi_config(struct s3c64xx_spi_=
+driver_data *sdd)
+>> >>              ret =3D clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
+>> >>              if (ret)
+>> >>                      return ret;
+>> >> +            sdd->cur_speed =3D clk_get_rate(sdd->src_clk) / 2;
+>> >>      } else {
+>> >>              /* Configure Clock */
+>> >>              val =3D readl(regs + S3C64XX_SPI_CLK_CFG);
+>> >> --
+>> >> 2.26.2
+>> >>
+>> >
+>> >
+>>
+>> --
+>> =C5=81ukasz Stelmach
+>> Samsung R&D Institute Poland
+>> Samsung Electronics
+>
+>
+
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl9E04EACgkQsK4enJil
+gBDGmwf9GF7LoqlLOeEGgYseadIIz0SaVDnQx04lZNBEvKy5teghZc/iWOoe4B6E
+xknfXtPzzgJdukcCUjs6RVtNqkLI1O2t8eAHhnT6fYP4fi1vJDmyUwjdum2mVlhx
+z54qiFeXWFBqimcEKwfxBqcdLnCq5HVgwndthlBLkk3841KrOxrzOk0DF9HyL9Yc
+DpiGijpDOo1IcqwMdizgnl04pEvuZ+dGoLWF8xYWW5vmhPrGu1O1dHRzhrPv7nCv
+TIk2+eQ+yzC1FKShL644NRwY+C10QECDx0h/VTbuDu94UKGzR4a5MDFD8oXN4s8p
+sh5/Irl1LVF4WEf+xAx3Tps7E5PSeQ==
+=5KAi
+-----END PGP SIGNATURE-----
+--=-=-=--
