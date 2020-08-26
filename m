@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9353AC433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF3FC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3952078D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:57:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEC5D21741
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:57:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598453859;
-	bh=T5xvC4E4MsMwGEUX1i7xJJFIfrS9fUuZLYOkjgS9wJs=;
+	s=default; t=1598453877;
+	bh=EO6+OrtQUwKwY8gZU4JakHT0nILSB70xFqDRJMkESZY=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iajrykSVzCiC0Z9LHa7C9gpbS/mJhFDha6uyStNfVtNJZ7c+SI7bjVjjEvubGPybL
-	 pw3Tl7f3ADSLrpc/PxS7n/z0OIkpwCthJ7taR/cJT+wQL381IUBgDzv1vpQdLycpQz
-	 pVxbtNZPGFQZwgfY+ZlBv7oSC7RcePoc1IFUjYSY=
+	b=ZJLO4j2DfVCKrGZ5xnp/lGWqj3mHxPRaQ1q/CISkh7Z79waaRmVNCHtim6/fAvXRT
+	 bybnXeYTlLTeyrawLTzmhDyP7zeGRwxz+uxgYq7h0ee51BH9g71kQkv7nfcGVlRHTF
+	 +TpOvaDf1QQj8nJqcCsTV7LJcLSXY9314AYBn9WU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbgHZO5h (ORCPT
+        id S1727827AbgHZO5y (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Aug 2020 10:57:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40144 "EHLO mail.kernel.org"
+        Wed, 26 Aug 2020 10:57:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728185AbgHZOxJ (ORCPT
+        id S1728169AbgHZOw6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Aug 2020 10:53:09 -0400
+        Wed, 26 Aug 2020 10:52:58 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 274E822B47;
-        Wed, 26 Aug 2020 14:53:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9E0F21741;
+        Wed, 26 Aug 2020 14:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598453589;
-        bh=T5xvC4E4MsMwGEUX1i7xJJFIfrS9fUuZLYOkjgS9wJs=;
+        s=default; t=1598453578;
+        bh=EO6+OrtQUwKwY8gZU4JakHT0nILSB70xFqDRJMkESZY=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=TcqQ7VNMtsK+sKv7CWZAgceEyGN4b2Kv4KecHfDzf2y6sQudrL/XO+CMTh0E0YAHT
-         nl4Y8124+m8Egy0EyY4N9B+q4hWpeo7q4e+KRsmcpuEW0ZA3wnnH+0gc4ebw5vvi+b
-         kj8Mh0mQoca0QAp+eL6ifjaReTfgXrfyoF5MrhPE=
+        b=lp7M6zPOo/NbXV/KmnrIZP2j/7osA6KnrnBkn7shBUFVg2hnnQTzWduD5TiLx0Ht8
+         fq7PppS6Qip528k2PlASRjtE6lMvHH0fsQdhFZGue0pxH7GKSotNtOcdL8qHiWjMfG
+         CeSJAVZKWw9V3sMB8ZmCdfUUIu/6WJ+KVF8kZqgg=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
@@ -64,9 +64,9 @@ To:     Jonathan Cameron <jic23@kernel.org>,
         linux-samsung-soc@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH 12/16] iio: dac: dpot-dac: Simplify with dev_err_probe()
-Date:   Wed, 26 Aug 2020 16:51:49 +0200
-Message-Id: <20200826145153.10444-12-krzk@kernel.org>
+Subject: [PATCH 10/16] iio: amplifiers: hmc425a: Simplify with dev_err_probe()
+Date:   Wed, 26 Aug 2020 16:51:47 +0200
+Message-Id: <20200826145153.10444-10-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200826145153.10444-1-krzk@kernel.org>
 References: <20200826145153.10444-1-krzk@kernel.org>
@@ -80,38 +80,29 @@ dev_err_probe().  Less code and also it prints the error value.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/iio/dac/dpot-dac.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/iio/amplifiers/hmc425a.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/iio/dac/dpot-dac.c b/drivers/iio/dac/dpot-dac.c
-index be61c3b01e8b..2258535b8a42 100644
---- a/drivers/iio/dac/dpot-dac.c
-+++ b/drivers/iio/dac/dpot-dac.c
-@@ -183,18 +183,14 @@ static int dpot_dac_probe(struct platform_device *pdev)
- 	indio_dev->num_channels = 1;
+diff --git a/drivers/iio/amplifiers/hmc425a.c b/drivers/iio/amplifiers/hmc425a.c
+index 582708924e4f..9efa692151f0 100644
+--- a/drivers/iio/amplifiers/hmc425a.c
++++ b/drivers/iio/amplifiers/hmc425a.c
+@@ -201,12 +201,9 @@ static int hmc425a_probe(struct platform_device *pdev)
+ 	st->gain = st->chip_info->default_gain;
  
- 	dac->vref = devm_regulator_get(dev, "vref");
--	if (IS_ERR(dac->vref)) {
--		if (PTR_ERR(dac->vref) != -EPROBE_DEFER)
--			dev_err(&pdev->dev, "failed to get vref regulator\n");
--		return PTR_ERR(dac->vref);
+ 	st->gpios = devm_gpiod_get_array(&pdev->dev, "ctrl", GPIOD_OUT_LOW);
+-	if (IS_ERR(st->gpios)) {
+-		ret = PTR_ERR(st->gpios);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(&pdev->dev, "failed to get gpios\n");
+-		return ret;
 -	}
-+	if (IS_ERR(dac->vref))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(dac->vref),
-+				     "failed to get vref regulator\n");
++	if (IS_ERR(st->gpios))
++		return dev_err_probe(&pdev->dev, PTR_ERR(st->gpios),
++				     "failed to get gpios\n");
  
- 	dac->dpot = devm_iio_channel_get(dev, "dpot");
--	if (IS_ERR(dac->dpot)) {
--		if (PTR_ERR(dac->dpot) != -EPROBE_DEFER)
--			dev_err(dev, "failed to get dpot input channel\n");
--		return PTR_ERR(dac->dpot);
--	}
-+	if (IS_ERR(dac->dpot))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(dac->dpot),
-+				     "failed to get dpot input channel\n");
- 
- 	ret = iio_get_channel_type(dac->dpot, &type);
- 	if (ret < 0)
+ 	if (st->gpios->ndescs != st->chip_info->num_gpios) {
+ 		dev_err(&pdev->dev, "%d GPIOs needed to operate\n",
 -- 
 2.17.1
 
