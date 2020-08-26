@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A684C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 112A0C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E22632224D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:52:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5C9822B3F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:53:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598453564;
-	bh=puGjOEDLy1X0v7TsUcfxnMsdsGraY1mRsNBw6Wv3Cv4=;
+	s=default; t=1598453580;
+	bh=Y7G4DkYRnj4ZC6IYiwugOSDmIVV0GnhDCg89XlxnjaM=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZnzPosuJjFv+9wbpE38/xMwmgKUqRJBTgDEPdKe62P+9gnyrBBkDTk7e9f+F8trkX
-	 qiRGkCudymP9w0Tw2m5Zh/gla0/5bv3t3U6+eSean/ybjT5ZChsl+q5SyM43dOny+d
-	 CpwKAhNeufqW3wcm2MaueWcQfRp1dQrjmp0NBUIA=
+	b=osQLGzvwN6pjXDR1sMOmk27Fe/rYGhOAtuFZfL6hqI/XiWoXfPmGwVPnB+BNHtYoI
+	 Y5aZwdKh2cGjPG6NenpQ9UqTO8qVNJx9WO4kr6ZSw0od8kh4Q05y1ttsdiyFiDG8ib
+	 XdcnAZD24pbp4gWgCeP2s/5Z6vcS9ZKA7e4ygvwI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbgHZOwn (ORCPT
+        id S1728080AbgHZOw5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Aug 2020 10:52:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39292 "EHLO mail.kernel.org"
+        Wed, 26 Aug 2020 10:52:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728135AbgHZOwl (ORCPT
+        id S1727769AbgHZOwr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Aug 2020 10:52:41 -0400
+        Wed, 26 Aug 2020 10:52:47 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69A5B2078D;
-        Wed, 26 Aug 2020 14:52:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC7DF22B3F;
+        Wed, 26 Aug 2020 14:52:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598453561;
-        bh=puGjOEDLy1X0v7TsUcfxnMsdsGraY1mRsNBw6Wv3Cv4=;
+        s=default; t=1598453566;
+        bh=Y7G4DkYRnj4ZC6IYiwugOSDmIVV0GnhDCg89XlxnjaM=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=ldIBv5k3e8+FgbZ2n0OafK9d/gfOuB8cpZ3ndZLJbp0j51kuUE4udvnkuwnRZhk6E
-         VCbrjo05ajjrlxIrvwUmAYd963AMJ/HR3rw3z8bcjYfSevDPJHo6BMt8NCVX/SfASx
-         OjqFXjQIkWcN0Q8QtJtMZ+iN5Uq6VI9zPsWy5veI=
+        b=P2tzGz1PbCoU4kS+sLpzj1slIGGJOedVGNQUHWnnySa0173mP0PIvh/lMi9P1HJ/U
+         rbC4oZik38HRxpeaCleLq+P7EY0GBgxMi6DXrZ4ey/6PsgisG3H+8/LRdoy0Z17RUK
+         ES9Hj0kUVggFLJd/pQkCSs2w+CPSvnLOAo0jd6OQ=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
@@ -64,9 +64,9 @@ To:     Jonathan Cameron <jic23@kernel.org>,
         linux-samsung-soc@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH 07/16] iio: adc: rcar-gyroadc: Simplify with dev_err_probe()
-Date:   Wed, 26 Aug 2020 16:51:44 +0200
-Message-Id: <20200826145153.10444-7-krzk@kernel.org>
+Subject: [PATCH 08/16] iio: adc: stm32: Simplify with dev_err_probe()
+Date:   Wed, 26 Aug 2020 16:51:45 +0200
+Message-Id: <20200826145153.10444-8-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200826145153.10444-1-krzk@kernel.org>
 References: <20200826145153.10444-1-krzk@kernel.org>
@@ -80,29 +80,159 @@ dev_err_probe().  Less code and also it prints the error value.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/iio/adc/rcar-gyroadc.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/iio/adc/stm32-adc-core.c  | 62 ++++++++++++-------------------
+ drivers/iio/adc/stm32-adc.c       | 10 ++---
+ drivers/iio/adc/stm32-dfsdm-adc.c | 10 ++---
+ 3 files changed, 30 insertions(+), 52 deletions(-)
 
-diff --git a/drivers/iio/adc/rcar-gyroadc.c b/drivers/iio/adc/rcar-gyroadc.c
-index d2c1419e72a0..dcaefc108ff6 100644
---- a/drivers/iio/adc/rcar-gyroadc.c
-+++ b/drivers/iio/adc/rcar-gyroadc.c
-@@ -495,12 +495,9 @@ static int rcar_gyroadc_probe(struct platform_device *pdev)
- 		return PTR_ERR(priv->regs);
+diff --git a/drivers/iio/adc/stm32-adc-core.c b/drivers/iio/adc/stm32-adc-core.c
+index 0e2068ec068b..184d5491c7ed 100644
+--- a/drivers/iio/adc/stm32-adc-core.c
++++ b/drivers/iio/adc/stm32-adc-core.c
+@@ -582,11 +582,9 @@ static int stm32_adc_core_switches_probe(struct device *dev,
+ 	priv->syscfg = syscon_regmap_lookup_by_phandle(np, "st,syscfg");
+ 	if (IS_ERR(priv->syscfg)) {
+ 		ret = PTR_ERR(priv->syscfg);
+-		if (ret != -ENODEV) {
+-			if (ret != -EPROBE_DEFER)
+-				dev_err(dev, "Can't probe syscfg: %d\n", ret);
+-			return ret;
+-		}
++		if (ret != -ENODEV)
++			return dev_err_probe(dev, ret, "Can't probe syscfg\n");
++
+ 		priv->syscfg = NULL;
+ 	}
  
- 	priv->clk = devm_clk_get(dev, "fck");
--	if (IS_ERR(priv->clk)) {
--		ret = PTR_ERR(priv->clk);
+@@ -596,12 +594,9 @@ static int stm32_adc_core_switches_probe(struct device *dev,
+ 		priv->booster = devm_regulator_get_optional(dev, "booster");
+ 		if (IS_ERR(priv->booster)) {
+ 			ret = PTR_ERR(priv->booster);
+-			if (ret != -ENODEV) {
+-				if (ret != -EPROBE_DEFER)
+-					dev_err(dev, "can't get booster %d\n",
+-						ret);
+-				return ret;
+-			}
++			if (ret != -ENODEV)
++				dev_err_probe(dev, ret, "can't get booster\n");
++
+ 			priv->booster = NULL;
+ 		}
+ 	}
+@@ -612,11 +607,10 @@ static int stm32_adc_core_switches_probe(struct device *dev,
+ 		priv->vdd = devm_regulator_get_optional(dev, "vdd");
+ 		if (IS_ERR(priv->vdd)) {
+ 			ret = PTR_ERR(priv->vdd);
+-			if (ret != -ENODEV) {
+-				if (ret != -EPROBE_DEFER)
+-					dev_err(dev, "can't get vdd %d\n", ret);
+-				return ret;
+-			}
++			if (ret != -ENODEV)
++				return dev_err_probe(dev, ret,
++						     "can't get vdd\n");
++
+ 			priv->vdd = NULL;
+ 		}
+ 	}
+@@ -669,40 +663,32 @@ static int stm32_adc_probe(struct platform_device *pdev)
+ 	priv->common.phys_base = res->start;
+ 
+ 	priv->vdda = devm_regulator_get(&pdev->dev, "vdda");
+-	if (IS_ERR(priv->vdda)) {
+-		ret = PTR_ERR(priv->vdda);
 -		if (ret != -EPROBE_DEFER)
--			dev_err(dev, "Failed to get IF clock (ret=%i)\n", ret);
+-			dev_err(&pdev->dev, "vdda get failed, %d\n", ret);
 -		return ret;
 -	}
-+	if (IS_ERR(priv->clk))
-+		return dev_err_probe(dev, PTR_ERR(priv->clk),
-+				     "Failed to get IF clock\n");
++	if (IS_ERR(priv->vdda))
++		return dev_err_probe(&pdev->dev, PTR_ERR(priv->vdda),
++				     "vdda get failed\n");
  
- 	ret = rcar_gyroadc_parse_subdevs(indio_dev);
- 	if (ret)
+ 	priv->vref = devm_regulator_get(&pdev->dev, "vref");
+-	if (IS_ERR(priv->vref)) {
+-		ret = PTR_ERR(priv->vref);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(&pdev->dev, "vref get failed, %d\n", ret);
+-		return ret;
+-	}
++	if (IS_ERR(priv->vref))
++		return dev_err_probe(&pdev->dev, PTR_ERR(priv->vref),
++				     "vref get failed\n");
+ 
+ 	priv->aclk = devm_clk_get(&pdev->dev, "adc");
+ 	if (IS_ERR(priv->aclk)) {
+ 		ret = PTR_ERR(priv->aclk);
+-		if (ret != -ENOENT) {
+-			if (ret != -EPROBE_DEFER)
+-				dev_err(&pdev->dev, "Can't get 'adc' clock\n");
+-			return ret;
+-		}
++		if (ret != -ENOENT)
++			return dev_err_probe(&pdev->dev, ret,
++					     "Can't get 'adc' clock\n");
++
+ 		priv->aclk = NULL;
+ 	}
+ 
+ 	priv->bclk = devm_clk_get(&pdev->dev, "bus");
+ 	if (IS_ERR(priv->bclk)) {
+ 		ret = PTR_ERR(priv->bclk);
+-		if (ret != -ENOENT) {
+-			if (ret != -EPROBE_DEFER)
+-				dev_err(&pdev->dev, "Can't get 'bus' clock\n");
+-			return ret;
+-		}
++		if (ret != -ENOENT)
++			return dev_err_probe(&pdev->dev, ret,
++					     "Can't get 'bus' clock\n");
++
+ 		priv->bclk = NULL;
+ 	}
+ 
+diff --git a/drivers/iio/adc/stm32-adc.c b/drivers/iio/adc/stm32-adc.c
+index 3eb9ebe8372f..b3f31f147347 100644
+--- a/drivers/iio/adc/stm32-adc.c
++++ b/drivers/iio/adc/stm32-adc.c
+@@ -1805,13 +1805,9 @@ static int stm32_adc_dma_request(struct device *dev, struct iio_dev *indio_dev)
+ 	adc->dma_chan = dma_request_chan(dev, "rx");
+ 	if (IS_ERR(adc->dma_chan)) {
+ 		ret = PTR_ERR(adc->dma_chan);
+-		if (ret != -ENODEV) {
+-			if (ret != -EPROBE_DEFER)
+-				dev_err(dev,
+-					"DMA channel request failed with %d\n",
+-					ret);
+-			return ret;
+-		}
++		if (ret != -ENODEV)
++			return dev_err_probe(dev, ret,
++					     "DMA channel request failed with\n");
+ 
+ 		/* DMA is optional: fall back to IRQ mode */
+ 		adc->dma_chan = NULL;
+diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
+index 5e10fb4f3704..c7e0109315f8 100644
+--- a/drivers/iio/adc/stm32-dfsdm-adc.c
++++ b/drivers/iio/adc/stm32-dfsdm-adc.c
+@@ -1473,13 +1473,9 @@ static int stm32_dfsdm_adc_init(struct device *dev, struct iio_dev *indio_dev)
+ 	/* Optionally request DMA */
+ 	ret = stm32_dfsdm_dma_request(dev, indio_dev);
+ 	if (ret) {
+-		if (ret != -ENODEV) {
+-			if (ret != -EPROBE_DEFER)
+-				dev_err(dev,
+-					"DMA channel request failed with %d\n",
+-					ret);
+-			return ret;
+-		}
++		if (ret != -ENODEV)
++			return dev_err_probe(dev, ret,
++					     "DMA channel request failed with\n");
+ 
+ 		dev_dbg(dev, "No DMA support\n");
+ 		return 0;
 -- 
 2.17.1
 
