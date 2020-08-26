@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4812BC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0189C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F9B92078D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:56:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A56B22078D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:57:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598453803;
-	bh=J8VgXHUUZP2pCXXB1Ijbi0zWjJmibqmGMPN7gfP7amg=;
+	s=default; t=1598453834;
+	bh=L62NHGTlHRmxfW0UXMzF8rz6Eg4TzDjh28d5OkWRb1E=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RZgp9Qcr4KqmuLTt9tlF2r3iOVOL570HHj9eeh6mYuDuyC/Z+7YwXsolJeTquOKpv
-	 WxCLGY7hynHTibDNRprfQsmflTJWhOExfWA2QgQFvAm9HEpT8v3UOEzj2NvAsbIldO
-	 1Mw4gWFmtqZtA3Tn4TU+9pZ4nvNbAZ9d+S7Z5ctI=
+	b=g0jPT0uymzBIHYce2MUjJ9j6g+TVe4ypg4OPVq0xs9MK2THHfrTt1RVw9JpuDHS05
+	 M+e2bY5oUjPJreZTgheDEC4XkDTmZ1eakrkPe7EvYpdXpxEZTNln/jNlRR9WIIxugE
+	 KrHxdvCP0LUnjUb9QzzMWmWcAc0oRjBUqKZ/kEy0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbgHZOxb (ORCPT
+        id S1726831AbgHZO46 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Aug 2020 10:53:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40830 "EHLO mail.kernel.org"
+        Wed, 26 Aug 2020 10:56:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728252AbgHZOxa (ORCPT
+        id S1726809AbgHZOxX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Aug 2020 10:53:30 -0400
+        Wed, 26 Aug 2020 10:53:23 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 045DA2078D;
-        Wed, 26 Aug 2020 14:53:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DB7921741;
+        Wed, 26 Aug 2020 14:53:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598453609;
-        bh=J8VgXHUUZP2pCXXB1Ijbi0zWjJmibqmGMPN7gfP7amg=;
+        s=default; t=1598453602;
+        bh=L62NHGTlHRmxfW0UXMzF8rz6Eg4TzDjh28d5OkWRb1E=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=QpJqNogrcmlIGvb4oSew7Gtwl5VPXjukXCXYclJ6UOVEGs06JEbRVTgRxwLro9q62
-         ADpxRrdQhRq5jU8PZrmfqvjl/YGPxs25o142b1BzCgT5UUTbRXSHIdJJ8PL0kEme+y
-         Fkm7I6YSAVvX2QO4Fik8Br5k9Gus3sl77yPC/kyo=
+        b=vP/Bl97+JtTx4OaxuqQf637JfAncWM+cvwXtDyt0M8X8AQGOnemx5q4V2euAPCZtf
+         WMttIrtvRRJoKWifKDkfX1+8Lk9eoqJepIe0UPQtCofwtHrOo0FSV5Ulu90tABrKky
+         CgwWyQQVxz02bZRXieUrcDYksXCsOiCqHlrCVigs=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
@@ -64,9 +64,9 @@ To:     Jonathan Cameron <jic23@kernel.org>,
         linux-samsung-soc@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH 15/16] iio: light: tsl2772: Simplify with dev_err_probe()
-Date:   Wed, 26 Aug 2020 16:51:52 +0200
-Message-Id: <20200826145153.10444-15-krzk@kernel.org>
+Subject: [PATCH 14/16] iio: light: isl29018: Simplify with dev_err_probe()
+Date:   Wed, 26 Aug 2020 16:51:51 +0200
+Message-Id: <20200826145153.10444-14-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200826145153.10444-1-krzk@kernel.org>
 References: <20200826145153.10444-1-krzk@kernel.org>
@@ -80,31 +80,29 @@ dev_err_probe().  Less code and also it prints the error value.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/iio/light/tsl2772.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/iio/light/isl29018.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/iio/light/tsl2772.c b/drivers/iio/light/tsl2772.c
-index 735399405417..00073346ad1e 100644
---- a/drivers/iio/light/tsl2772.c
-+++ b/drivers/iio/light/tsl2772.c
-@@ -1776,14 +1776,9 @@ static int tsl2772_probe(struct i2c_client *clientp,
- 	ret = devm_regulator_bulk_get(&clientp->dev,
- 				      ARRAY_SIZE(chip->supplies),
- 				      chip->supplies);
--	if (ret < 0) {
--		if (ret != -EPROBE_DEFER)
--			dev_err(&clientp->dev,
--				"Failed to get regulators: %d\n",
--				ret);
--
--		return ret;
--	}
-+	if (ret < 0)
-+		return dev_err_probe(&clientp->dev, ret,
-+				     "Failed to get regulators\n");
+diff --git a/drivers/iio/light/isl29018.c b/drivers/iio/light/isl29018.c
+index ac8ad0f32689..2689867467a8 100644
+--- a/drivers/iio/light/isl29018.c
++++ b/drivers/iio/light/isl29018.c
+@@ -746,12 +746,9 @@ static int isl29018_probe(struct i2c_client *client,
+ 	chip->suspended = false;
  
- 	ret = regulator_bulk_enable(ARRAY_SIZE(chip->supplies), chip->supplies);
- 	if (ret < 0) {
+ 	chip->vcc_reg = devm_regulator_get(&client->dev, "vcc");
+-	if (IS_ERR(chip->vcc_reg)) {
+-		err = PTR_ERR(chip->vcc_reg);
+-		if (err != -EPROBE_DEFER)
+-			dev_err(&client->dev, "failed to get VCC regulator!\n");
+-		return err;
+-	}
++	if (IS_ERR(chip->vcc_reg))
++		return dev_err_probe(&client->dev, PTR_ERR(chip->vcc_reg),
++				     "failed to get VCC regulator!\n");
+ 
+ 	err = regulator_enable(chip->vcc_reg);
+ 	if (err) {
 -- 
 2.17.1
 
