@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF3FC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DAAC433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:58:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEC5D21741
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52EE421741
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:58:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598453877;
-	bh=EO6+OrtQUwKwY8gZU4JakHT0nILSB70xFqDRJMkESZY=;
+	s=default; t=1598453885;
+	bh=0BJzEKvQ44LGzPY9kSUrwxv7Ki3QbBPW0SdS15oQN5E=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZJLO4j2DfVCKrGZ5xnp/lGWqj3mHxPRaQ1q/CISkh7Z79waaRmVNCHtim6/fAvXRT
-	 bybnXeYTlLTeyrawLTzmhDyP7zeGRwxz+uxgYq7h0ee51BH9g71kQkv7nfcGVlRHTF
-	 +TpOvaDf1QQj8nJqcCsTV7LJcLSXY9314AYBn9WU=
+	b=XOCAFv1RJn0puBNYL4u8sk1euWJxiDu/sVD1RLVeaFmMmJnizrk2yRDCtWdEDC3he
+	 3U0h3FYedVhXhvda/D4D20SknlLYOM+NhiiVDFCyqp3mjl9aK6NbHbVBStj439SKOR
+	 KQnasrEFRkieqIrkJnAGkk7XPvw8v7cHZvhpfv2I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbgHZO5y (ORCPT
+        id S1728078AbgHZOwg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Aug 2020 10:57:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39720 "EHLO mail.kernel.org"
+        Wed, 26 Aug 2020 10:52:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728169AbgHZOw6 (ORCPT
+        id S1727774AbgHZOwT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Aug 2020 10:52:58 -0400
+        Wed, 26 Aug 2020 10:52:19 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9E0F21741;
-        Wed, 26 Aug 2020 14:52:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44A8022B40;
+        Wed, 26 Aug 2020 14:52:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598453578;
-        bh=EO6+OrtQUwKwY8gZU4JakHT0nILSB70xFqDRJMkESZY=;
+        s=default; t=1598453539;
+        bh=0BJzEKvQ44LGzPY9kSUrwxv7Ki3QbBPW0SdS15oQN5E=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=lp7M6zPOo/NbXV/KmnrIZP2j/7osA6KnrnBkn7shBUFVg2hnnQTzWduD5TiLx0Ht8
-         fq7PppS6Qip528k2PlASRjtE6lMvHH0fsQdhFZGue0pxH7GKSotNtOcdL8qHiWjMfG
-         CeSJAVZKWw9V3sMB8ZmCdfUUIu/6WJ+KVF8kZqgg=
+        b=vLeiuX8dqkF1ILp+s6YfKWBeEPj1isB94J2AOD4ZWu4h9uuQ+odO28g6fwvx62i3j
+         JhRBQwWv+pGHNl1x/53Y1mCgqfMXMx0XoMqp+jNA2yIBgbDPrRqzQ75bfGIhXF8gTU
+         +Dbct08w/0wIm+JwqVTyud5Aw0G3kXEuhO697oH0=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
@@ -64,9 +64,9 @@ To:     Jonathan Cameron <jic23@kernel.org>,
         linux-samsung-soc@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH 10/16] iio: amplifiers: hmc425a: Simplify with dev_err_probe()
-Date:   Wed, 26 Aug 2020 16:51:47 +0200
-Message-Id: <20200826145153.10444-10-krzk@kernel.org>
+Subject: [PATCH 03/16] iio: adc: envelope-detector: Simplify with dev_err_probe()
+Date:   Wed, 26 Aug 2020 16:51:40 +0200
+Message-Id: <20200826145153.10444-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200826145153.10444-1-krzk@kernel.org>
 References: <20200826145153.10444-1-krzk@kernel.org>
@@ -80,29 +80,43 @@ dev_err_probe().  Less code and also it prints the error value.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/iio/amplifiers/hmc425a.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/iio/adc/envelope-detector.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/iio/amplifiers/hmc425a.c b/drivers/iio/amplifiers/hmc425a.c
-index 582708924e4f..9efa692151f0 100644
---- a/drivers/iio/amplifiers/hmc425a.c
-+++ b/drivers/iio/amplifiers/hmc425a.c
-@@ -201,12 +201,9 @@ static int hmc425a_probe(struct platform_device *pdev)
- 	st->gain = st->chip_info->default_gain;
+diff --git a/drivers/iio/adc/envelope-detector.c b/drivers/iio/adc/envelope-detector.c
+index 2a4fd3bb64cf..d73eac36153f 100644
+--- a/drivers/iio/adc/envelope-detector.c
++++ b/drivers/iio/adc/envelope-detector.c
+@@ -348,11 +348,9 @@ static int envelope_detector_probe(struct platform_device *pdev)
+ 	indio_dev->num_channels = 1;
  
- 	st->gpios = devm_gpiod_get_array(&pdev->dev, "ctrl", GPIOD_OUT_LOW);
--	if (IS_ERR(st->gpios)) {
--		ret = PTR_ERR(st->gpios);
+ 	env->dac = devm_iio_channel_get(dev, "dac");
+-	if (IS_ERR(env->dac)) {
+-		if (PTR_ERR(env->dac) != -EPROBE_DEFER)
+-			dev_err(dev, "failed to get dac input channel\n");
+-		return PTR_ERR(env->dac);
+-	}
++	if (IS_ERR(env->dac))
++		return dev_err_probe(dev, PTR_ERR(env->dac),
++				     "failed to get dac input channel\n");
+ 
+ 	env->comp_irq = platform_get_irq_byname(pdev, "comp");
+ 	if (env->comp_irq < 0)
+@@ -360,11 +358,9 @@ static int envelope_detector_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_request_irq(dev, env->comp_irq, envelope_detector_comp_isr,
+ 			       0, "envelope-detector", env);
+-	if (ret) {
 -		if (ret != -EPROBE_DEFER)
--			dev_err(&pdev->dev, "failed to get gpios\n");
+-			dev_err(dev, "failed to request interrupt\n");
 -		return ret;
 -	}
-+	if (IS_ERR(st->gpios))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(st->gpios),
-+				     "failed to get gpios\n");
- 
- 	if (st->gpios->ndescs != st->chip_info->num_gpios) {
- 		dev_err(&pdev->dev, "%d GPIOs needed to operate\n",
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to request interrupt\n");
++
+ 	env->comp_irq_trigger = irq_get_trigger_type(env->comp_irq);
+ 	if (env->comp_irq_trigger & IRQF_TRIGGER_RISING)
+ 		env->comp_irq_trigger_inv |= IRQF_TRIGGER_FALLING;
 -- 
 2.17.1
 
