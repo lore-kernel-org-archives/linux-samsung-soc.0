@@ -6,72 +6,63 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2F3C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 16:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 348C3C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 16:07:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 039E82075E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 16:03:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F1A82075E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 16:07:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbgHZQCl (ORCPT
+        id S1726887AbgHZQH0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Aug 2020 12:02:41 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:53116 "EHLO vps0.lunn.ch"
+        Wed, 26 Aug 2020 12:07:26 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:53144 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726990AbgHZQCi (ORCPT
+        id S1726763AbgHZQHY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Aug 2020 12:02:38 -0400
+        Wed, 26 Aug 2020 12:07:24 -0400
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
         (envelope-from <andrew@lunn.ch>)
-        id 1kAxsY-00Bxyy-Vd; Wed, 26 Aug 2020 18:02:26 +0200
-Date:   Wed, 26 Aug 2020 18:02:26 +0200
+        id 1kAxxD-00By1C-Em; Wed, 26 Aug 2020 18:07:15 +0200
+Date:   Wed, 26 Aug 2020 18:07:15 +0200
 From:   Andrew Lunn <andrew@lunn.ch>
-To:     Lukasz Stelmach <l.stelmach@samsung.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     'Lukasz Stelmach' <l.stelmach@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, m.szyprowski@samsung.com,
-        b.zolnierkie@samsung.com
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>
 Subject: Re: [PATCH 1/3] net: ax88796c: ASIX AX88796C SPI Ethernet Adapter
  Driver
-Message-ID: <20200826160226.GU2403519@lunn.ch>
+Message-ID: <20200826160715.GV2403519@lunn.ch>
 References: <20200825184413.GA2693@kozik-lap>
  <CGME20200826145929eucas1p1367c260edb8fa003869de1da527039c0@eucas1p1.samsung.com>
  <dleftja6yhv4g2.fsf%l.stelmach@samsung.com>
+ <1efebb42c30a4c40bf91649d83d60e1c@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dleftja6yhv4g2.fsf%l.stelmach@samsung.com>
+In-Reply-To: <1efebb42c30a4c40bf91649d83d60e1c@AcuMS.aculab.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> >> +module_param(comp, int, 0);
-> >> +MODULE_PARM_DESC(comp, "0=Non-Compression Mode, 1=Compression Mode");
-> >> +
-> >> +module_param(ps_level, int, 0);
-> >> +MODULE_PARM_DESC(ps_level,
-> >> +	"Power Saving Level (0:disable 1:level 1 2:level 2)");
-> >> +
-> >> +module_param(msg_enable, int, 0);
-> >> +MODULE_PARM_DESC(msg_enable, "Message mask (see linux/netdevice.h for bitmap)");
-> >> +
-> >> +static char *macaddr;
-> >> +module_param(macaddr, charp, 0);
-> >> +MODULE_PARM_DESC(macaddr, "MAC address");
-> >
-> > I think MAC address as param is not accepted in mainline...
-> >
-> 
-> $ git grep MODULE_PARM_DESC\(macaddr -- drivers/net | wc -l
-> 6
+> (I can't imagine SPI being fast enough to be useful for ethernet...)
 
-Yes, they exist. But still it is considered back practice, don't do
-it, use device tree for MAC addresses. 
+There are plenty of IoT things which only need a few kbit/s.
 
-    Andrew
+A VoIP phone can probably get by with 128Kbps, which a 50Mbps SPI bus
+has no problem to provide, etc.
+
+      Andrew
