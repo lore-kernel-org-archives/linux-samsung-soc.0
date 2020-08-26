@@ -7,69 +7,54 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA5DC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D1EC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99C3121741
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A672D214F1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:55:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598453618;
-	bh=v/Zb3PmGpo5l2DvxNKoEoZ/zVbV6OtENUtPofNroKvs=;
-	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iDmbApuMJZOzxfwMAbSsDran24RtFhlgNcQj76FhbCMTVVFTc5+gLLuFuo41DDrdJ
-	 osu6VeUV45aanxoZpLf8705EcPfbUlY62Pa+C9oohn8UWs9hjL+7jWs4xVO11ml2O1
-	 m8yh2H+QyZI3OtCLyPXrAraSpIZ9A2YfUvGS/28o=
+	s=default; t=1598453734;
+	bh=gKXl1ZpEahM5GZKiwmsRUCIU4Nv7/kn9yq6EaD8r/ZE=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=JbmZjx3aANT36A0uZtZF8M0gg6KdM1nJ932eMElQM6izA8oyyjC+eB05EMKU1LIy+
+	 GPbWGeu/PtvUlXZWU66VP5AIl5AwTdVNka/Ql2ZXYXHh6KUqMP1V9gm74p7Stjityj
+	 hoGswIyNFxWIHIlNwWV4xwpC+MI7osewJFvF3Jek=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728274AbgHZOxh (ORCPT
+        id S1728014AbgHZOz2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Aug 2020 10:53:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41056 "EHLO mail.kernel.org"
+        Wed, 26 Aug 2020 10:55:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727840AbgHZOxg (ORCPT
+        id S1728067AbgHZOzU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Aug 2020 10:53:36 -0400
+        Wed, 26 Aug 2020 10:55:20 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06B9A2177B;
-        Wed, 26 Aug 2020 14:53:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B19042078D;
+        Wed, 26 Aug 2020 14:55:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598453615;
-        bh=v/Zb3PmGpo5l2DvxNKoEoZ/zVbV6OtENUtPofNroKvs=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=G1yTKeODAnBmqu0tCCEEeOyfX9WSgWuaRVB3SQP1H4qDRVlOSt+hpoRkjYlGCBeok
-         gmAK8tht/DTIU8dviczhNyYxIUUm3LiA3INTKD5WTXuyCsmJyzN0tD+pJ8COzkkiWo
-         7i/+1mvilt2zqVD/ofW0B8ni0jFzO+qcRjHUi2ro=
+        s=default; t=1598453720;
+        bh=gKXl1ZpEahM5GZKiwmsRUCIU4Nv7/kn9yq6EaD8r/ZE=;
+        h=From:To:Subject:Date:From;
+        b=lIfxfGLDBfMoYSTveYiYmFbSWIsSxZ8pBQL3LWFzyvx07QmeyNC17vzRAxNqaSRU2
+         +ATK1jiqGX80Y4Rb3VaDpi2G/mKlfpGG6Z1i3U3a40vmgYfcmiQ7FzRKsx2Qdu3BLl
+         HSUrxnrA5W18ecBfhV5sk956SKO5QbqDk+qgDLlo=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Peter Rosin <peda@axentia.se>, Kukjin Kim <kgene@kernel.org>,
+To:     Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Beniamin Bia <beniamin.bia@analog.com>,
-        Tomasz Duszynski <tomasz.duszynski@octakon.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Bakker <xc-racer2@live.ca>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH 16/16] iio: magnetometer: ak8974: Simplify with dev_err_probe()
-Date:   Wed, 26 Aug 2020 16:51:53 +0200
-Message-Id: <20200826145153.10444-16-krzk@kernel.org>
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] drm/exynos: dsi: Simplify with dev_err_probe()
+Date:   Wed, 26 Aug 2020 16:55:12 +0200
+Message-Id: <20200826145513.10657-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200826145153.10444-1-krzk@kernel.org>
-References: <20200826145153.10444-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -80,32 +65,27 @@ dev_err_probe().  Less code and also it prints the error value.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/iio/magnetometer/ak8974.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iio/magnetometer/ak8974.c b/drivers/iio/magnetometer/ak8974.c
-index cbb44e401c0a..fa6a8e1a815c 100644
---- a/drivers/iio/magnetometer/ak8974.c
-+++ b/drivers/iio/magnetometer/ak8974.c
-@@ -843,15 +843,9 @@ static int ak8974_probe(struct i2c_client *i2c,
- 	ret = devm_regulator_bulk_get(&i2c->dev,
- 				      ARRAY_SIZE(ak8974->regs),
- 				      ak8974->regs);
--	if (ret < 0) {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 1a1a2853a842..5b9666fc7af1 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1760,11 +1760,8 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	dsi->supplies[1].supply = "vddio";
+ 	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(dsi->supplies),
+ 				      dsi->supplies);
+-	if (ret) {
 -		if (ret != -EPROBE_DEFER)
--			dev_err(&i2c->dev, "cannot get regulators: %d\n", ret);
--		else
--			dev_dbg(&i2c->dev,
--				"regulators unavailable, deferring probe\n");
--
+-			dev_info(dev, "failed to get regulators: %d\n", ret);
 -		return ret;
 -	}
-+	if (ret < 0)
-+		return dev_err_probe(&i2c->dev, ret,
-+				     "cannot get regulators\n");
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to get regulators\n");
  
- 	ret = regulator_bulk_enable(ARRAY_SIZE(ak8974->regs), ak8974->regs);
- 	if (ret < 0) {
+ 	dsi->clks = devm_kcalloc(dev,
+ 			dsi->driver_data->num_clks, sizeof(*dsi->clks),
 -- 
 2.17.1
 
