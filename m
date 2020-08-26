@@ -2,115 +2,130 @@ Return-Path: <SRS0=5lYo=CE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 510AEC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 15:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36542C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 15:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3645120738
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 15:47:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FE7F2080C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 15:56:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ORyDOvzJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbgHZPr5 (ORCPT
+        id S1727895AbgHZP4S (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Aug 2020 11:47:57 -0400
-Received: from smtpout1.mo803.mail-out.ovh.net ([79.137.123.219]:54677 "EHLO
-        smtpout1.mo803.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726739AbgHZPr5 (ORCPT
+        Wed, 26 Aug 2020 11:56:18 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38586 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728024AbgHZP4I (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Aug 2020 11:47:57 -0400
-X-Greylist: delayed 575 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Aug 2020 11:47:56 EDT
-Received: from pro2.mail.ovh.net (unknown [10.109.156.191])
-        by mo803.mail-out.ovh.net (Postfix) with ESMTPS id 6EAE963F16E0;
-        Wed, 26 Aug 2020 17:38:18 +0200 (CEST)
-Received: from localhost (34.103.240.152) by DAG2EX1.emp2.local (172.16.2.11)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2044.4; Wed, 26 Aug
- 2020 17:38:17 +0200
-Date:   Wed, 26 Aug 2020 17:34:34 +0200
-From:   Tomasz Duszynski <tomasz.duszynski@octakon.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-CC:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Peter Rosin <peda@axentia.se>, Kukjin Kim <kgene@kernel.org>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Beniamin Bia <beniamin.bia@analog.com>,
-        Tomasz Duszynski <tomasz.duszynski@octakon.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Bakker <xc-racer2@live.ca>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: Re: [PATCH 11/16] iio: chemical: scd30: Simplify with dev_err_probe()
-Message-ID: <20200826153434.GA7468@arch>
-References: <20200826145153.10444-1-krzk@kernel.org>
- <20200826145153.10444-11-krzk@kernel.org>
+        Wed, 26 Aug 2020 11:56:08 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200826155607euoutp01f0e113ae0d61ea36ac9905f969961eab~u3IGsWi9B1525915259euoutp01j
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Aug 2020 15:56:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200826155607euoutp01f0e113ae0d61ea36ac9905f969961eab~u3IGsWi9B1525915259euoutp01j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1598457367;
+        bh=797iMJmF4byuxy4fF7Nm01q6tzaVQ6LfJQEWT6x0h6g=;
+        h=Subject:To:From:Date:In-Reply-To:References:From;
+        b=ORyDOvzJUvj6l0GGdlbOjoxeEmDxWdJL18OmWJC3c0aka0UcPtEc96EGUa7Bc2byK
+         i09gpvZ2/IQdA0mTovsG6i58VK7FRLbSHE5YVoOTFlC8z512FZSEl4RnIlvdVn4Paw
+         S54bPq/tGQNKBrJnKpopGahgBwEhFKyJOhWsewxM=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200826155607eucas1p17c291ea7c3c04c74e520bd6f0593a96f~u3IGfxZEa0034300343eucas1p1l;
+        Wed, 26 Aug 2020 15:56:07 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 67.EF.06456.616864F5; Wed, 26
+        Aug 2020 16:56:06 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200826155606eucas1p13dc2a56112531c6cf9cb3f75a23beae2~u3IGCQ5Fo1505315053eucas1p1E;
+        Wed, 26 Aug 2020 15:56:06 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200826155606eusmtrp1eeba4d742022840ab062dcf6c9121c0c~u3IGBkoho2120121201eusmtrp1J;
+        Wed, 26 Aug 2020 15:56:06 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-ef-5f46861636a6
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 17.F6.06314.616864F5; Wed, 26
+        Aug 2020 16:56:06 +0100 (BST)
+Received: from [106.210.85.205] (unknown [106.210.85.205]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200826155605eusmtip11da46399c815ab3a3ebc146124f2e163~u3IEwUb0f2185021850eusmtip1z;
+        Wed, 26 Aug 2020 15:56:05 +0000 (GMT)
+Subject: Re: [PATCH 1/2] drm/exynos: dsi: Simplify with dev_err_probe()
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <5fe9318a-8ad7-a223-7ae0-38cff601fb69@samsung.com>
+Date:   Wed, 26 Aug 2020 17:56:04 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.11.0
 MIME-Version: 1.0
+In-Reply-To: <20200826145513.10657-1-krzk@kernel.org>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHeXbv7q7DyXVaHkwMh0FKambChUIsREefepEiK23lRU3ny6am
+        9UERE7VsppE2TZYkTqmUq86XynKlQ2zqfAktc4UhviSKb5hppbuT/PY///M7zzl/eEhM3Mt3
+        JmPikxlFvCxOQghxXdevPq+9OcERh/NGj9AFvd08+q/uAUYPrcwTdJG5EKenxk04rZqYxei+
+        vnoBbcz6KaDZiU98erCtnKBL+9p5dGnxNBFoK32zqsGlbG0eIW1e/caXmu8aeNKGZxnS+421
+        SLrEup4WhAmPRzJxMamMwifgqjD690w+kdjKS+vfaBVkohxePrIhgToKj8q/8/ORkBRTWgTl
+        XVqCK5YRDFYUYFyxhODrc41gZ6Sho9lKVSNQLSxaqXkEJfNl+DblQIVAYYWKt91wpF5jkFc7
+        bhknKA/YbBgltrWICgC2p9qiceoA1A/PWpg9VDg0GYZ5HGMP3Y9/WB61ofxhcqbDwmPUfmie
+        K8c47QRZyzWWFEANCGBtrc56axCs5y3gnHaAGUOj1XeBnuJ7Vj8DzNpsjBvORdBU34pxjWMw
+        1ru+tY3c2uABdW0+nH0CdKZO/rYNlB2MzNlzN9hBka4E42wR5OaIOdoNzMYm64NOUNW/QnBa
+        Ch/eLqBC5KbelVK9K5l6VzL1/xs0CK9FTkyKUh7FKH3jmZveSplcmRIf5X09Qc6irV/W88ew
+        2IJWBq7pEUUiia3oYERwhJgvS1Wmy/UISEziKDpp7AkXiyJl6bcYRUKEIiWOUerRPhKXOIn8
+        KqeviKkoWTITyzCJjGKnyyNtnDNR7kPjWjZfo/V9SmkupN2+8WWxsOxVZ2D0VFelL/8zWzUo
+        b/Z8EsouJLWbNoz+odN+Kt2lkNx1/bCkYz2g44467czq+fcuBnd28uxmxoZJODK0lsQOqlZj
+        a1yDJj+6egU62r88p7potgszvXNXFRUFtxxKvxwLp1pfjOkZCV0lwZXRMl9PTKGU/QNIqAYK
+        YQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xu7pibW7xBv9my1v0njvJZPF/20Rm
+        iytf37NZTLo/gcXixb2LLBb9j18zW5w/v4Hd4mzTG3aLTY+vsVpc3jWHzWLG+X1MFjMmv2Rz
+        4PHY+20Bi8emVZ1sHtu/PWD1uN99nMlj85J6j74tqxg9Pm+SC2CP0rMpyi8tSVXIyC8usVWK
+        NrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Mv4/aqLrWAnU8WFPzvZGxjbmLoY
+        OTkkBEwkNh/czgZiCwksZZQ4t80DIi4usXv+W2YIW1jiz7UuoBouoJq3jBIPD/8CaxYWcJeY
+        MK+fCSQhIrCHWaL1bTcLRFUHo8Sqtn4WkCo2AU2Jv5tvgq3gFbCT2HR6OZjNIqAqseHqa3YQ
+        W1QgTuJx739miBpBiZMzn4D1cgqYSjx7dRCsnlnATGLe5ofMELa8xPa3c6BscYmmLytZJzAK
+        zkLSPgtJyywkLbOQtCxgZFnFKJJaWpybnltsqFecmFtcmpeul5yfu4kRGKPbjv3cvIPx0sbg
+        Q4wCHIxKPLwa8W7xQqyJZcWVuYcYJTiYlUR4nc6ejhPiTUmsrEotyo8vKs1JLT7EaAr03ERm
+        KdHkfGD6yCuJNzQ1NLewNDQ3Njc2s1AS5+0QOBgjJJCeWJKanZpakFoE08fEwSnVwNi0RWeG
+        TeXL6VW/ct3c3wS+jnSQf9+8yCBX1OXqZlXuKuNY6Xn9LQGLb6us2lwue8D3/7fzT4TONR2d
+        G59T3a/V6Pn81epbTuIC3Zrzucv75jxhtQxqvxNwZ5WF+u+fBtsmiqQ6XlDPWqfFUrm08Om7
+        vI5bplpLnPvv3kwVdOLPVv9bzRijpcRSnJFoqMVcVJwIAILifU/nAgAA
+X-CMS-MailID: 20200826155606eucas1p13dc2a56112531c6cf9cb3f75a23beae2
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20200826145153.10444-11-krzk@kernel.org>
-X-Originating-IP: [34.103.240.152]
-X-ClientProxiedBy: CAS2.emp2.local (172.16.1.2) To DAG2EX1.emp2.local
- (172.16.2.11)
-X-Ovh-Tracer-Id: 9361576253439499417
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduiedruddvvddgledtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfhfgggtuggjihesthdtredttddtjeenucfhrhhomhepvfhomhgrshiiucffuhhsiiihnhhskhhiuceothhomhgrshiirdguuhhsiiihnhhskhhisehotghtrghkohhnrdgtohhmqeenucggtffrrghtthgvrhhnpedtheevtefhffduteejfedtkeeuheejgeejvdetfffgveekffefgeffueeghefgjeenucfkpheptddrtddrtddrtddpfeegrddutdefrddvgedtrdduhedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepthhomhgrshiirdguuhhsiiihnhhskhhisehotghtrghkohhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqshhtmhefvdesshhtqdhmugdqmhgrihhlmhgrnhdrshhtohhrmhhrvghplhihrdgtohhm
+X-RootMTR: 20200826145528eucas1p10342e7d1c88a31adfcea420f8c80af81
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200826145528eucas1p10342e7d1c88a31adfcea420f8c80af81
+References: <CGME20200826145528eucas1p10342e7d1c88a31adfcea420f8c80af81@eucas1p1.samsung.com>
+        <20200826145513.10657-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 26, 2020 at 04:51:48PM +0200, Krzysztof Kozlowski wrote:
+
+On 26.08.2020 16:55, Krzysztof Kozlowski wrote:
 > Common pattern of handling deferred probe can be simplified with
 > dev_err_probe().  Less code and also it prints the error value.
 >
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/iio/chemical/scd30_core.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/iio/chemical/scd30_core.c b/drivers/iio/chemical/scd30_core.c
-> index eac76972f83e..92358797796d 100644
-> --- a/drivers/iio/chemical/scd30_core.c
-> +++ b/drivers/iio/chemical/scd30_core.c
-> @@ -705,13 +705,9 @@ int scd30_probe(struct device *dev, int irq, const char *name, void *priv,
->  	indio_dev->available_scan_masks = scd30_scan_masks;
->
->  	state->vdd = devm_regulator_get(dev, "vdd");
-> -	if (IS_ERR(state->vdd)) {
-> -		if (PTR_ERR(state->vdd) == -EPROBE_DEFER)
-> -			return -EPROBE_DEFER;
-> -
-> -		dev_err(dev, "failed to get regulator\n");
-> -		return PTR_ERR(state->vdd);
-> -	}
-> +	if (IS_ERR(state->vdd))
-> +		return dev_err_probe(dev, PTR_ERR(state->vdd),
-> +				     "failed to get regulator\n");
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-I'd say that removing like break would slightly improve readability.
-Besides, staying within 100 columns seems socially acceptable now.
-Otherwise,
-
-Acked-by: Tomasz Duszynski <tomasz.duszynski@octakon.com>
-
->
->  	ret = regulator_enable(state->vdd);
->  	if (ret)
-> --
-> 2.17.1
->
+Regards
+Andrzej
