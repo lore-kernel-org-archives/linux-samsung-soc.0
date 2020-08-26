@@ -2,207 +2,170 @@ Return-Path: <SRS0=5lYo=CE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A20D2C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 05:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD6EC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 06:38:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 721C1206FA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 05:11:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 196352071E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 06:38:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LQj7nEji"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="H072O/jD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725779AbgHZFLk (ORCPT
+        id S1726233AbgHZGiS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Aug 2020 01:11:40 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47509 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725764AbgHZFLi (ORCPT
+        Wed, 26 Aug 2020 02:38:18 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:37697 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbgHZGfd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Aug 2020 01:11:38 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200826051135euoutp02e5d551df7b2b5d99978f8dd4ab4f2aac~uuVXLc0l72850028500euoutp02L;
-        Wed, 26 Aug 2020 05:11:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200826051135euoutp02e5d551df7b2b5d99978f8dd4ab4f2aac~uuVXLc0l72850028500euoutp02L
+        Wed, 26 Aug 2020 02:35:33 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200826063531euoutp017e17aa3d4c3d19c25bda35c2d16830ad~uvepLjFtC1717217172euoutp01W
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Aug 2020 06:35:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200826063531euoutp017e17aa3d4c3d19c25bda35c2d16830ad~uvepLjFtC1717217172euoutp01W
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1598418695;
-        bh=UoWZxsq2ehgW6OJCcDlHRW36cf3DBAGPj6G6QPuhOk4=;
+        s=mail20170921; t=1598423731;
+        bh=8H1bscYmofV6UafZRI60uVVnlPqwrLm9J9QpIebQpZ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LQj7nEji6ZHBRvG8OclXTVyjMFZD6W6NYuQ+HDNHW8GbULvR3lgq9bL46Hz6+9pdC
-         rjiuAMKGgPvryc2dRdzCXSOcAaPwniLnH7ijo6P+OxB3rfyhntALLGj1ieadr7Fr53
-         4UKfOJUur5HLD/zQJR8dqjn2qp0ke5Q6VakWpH8o=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        b=H072O/jDGDDFjuFTH5o3idIRZA7eo8/ZDFnBI5bCrEtr+dI1R17Y7bPDxKjoHJtQ8
+         SE1QNwAc9lI5BtTbbUPWmCWclFCh8KTKq6VvRkfk16vQxQJY7J3PjHkOGmhhz5i81W
+         OuLw9rY6bbnaobEhiRcYuFMICfRe0GDOLEDWf3JM=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200826051134eucas1p2e7e95ebb5be135386f7e12e5fd00a133~uuVWRFIe-0099700997eucas1p27;
-        Wed, 26 Aug 2020 05:11:34 +0000 (GMT)
+        20200826063531eucas1p248ebe392029fc6a0fd4a1b8c8288bab3~uveo5b_lz0402804028eucas1p2e;
+        Wed, 26 Aug 2020 06:35:31 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 7E.36.05997.60FE54F5; Wed, 26
-        Aug 2020 06:11:34 +0100 (BST)
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id CC.23.06456.3B2064F5; Wed, 26
+        Aug 2020 07:35:31 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200826051134eucas1p23a1c91b2179678eecc5dd5eeb2d0e4c9~uuVVoxr7O2361423614eucas1p2M;
-        Wed, 26 Aug 2020 05:11:34 +0000 (GMT)
+        20200826063531eucas1p21c9277fe2a91e632e40822fb04a2c095~uveog6mDa0403504035eucas1p2o;
+        Wed, 26 Aug 2020 06:35:31 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200826051134eusmtrp16606dc6df146f0b38b332affe9d28037~uuVVoC1Bn2068720687eusmtrp1v;
-        Wed, 26 Aug 2020 05:11:34 +0000 (GMT)
-X-AuditID: cbfec7f4-65dff7000000176d-0d-5f45ef06ddf3
+        20200826063531eusmtrp133d833530b3a2b770231736ad24afb9e~uveogH7nN1091110911eusmtrp1L;
+        Wed, 26 Aug 2020 06:35:31 +0000 (GMT)
+X-AuditID: cbfec7f2-809ff70000001938-b7-5f4602b344c9
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 40.7A.06314.60FE54F5; Wed, 26
-        Aug 2020 06:11:34 +0100 (BST)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200826051134eusmtip2c4cbe24fe8f6a11cc1119606acfc10e1~uuVVapPyv0656206562eusmtip2a;
-        Wed, 26 Aug 2020 05:11:33 +0000 (GMT)
-From:   Lukasz Stelmach <l.stelmach@samsung.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, m.szyprowski@samsung.com,
-        b.zolnierkie@samsung.com
-Subject: Re: [PATCH 3/3] ARM: defconfig: Enable ax88796c driver
-Date:   Wed, 26 Aug 2020 07:11:18 +0200
-In-Reply-To: <20200825185152.GC2693@kozik-lap> (Krzysztof Kozlowski's
-        message of "Tue, 25 Aug 2020 20:51:52 +0200")
-Message-ID: <dleftjk0xmuh3d.fsf%l.stelmach@samsung.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-        protocol="application/pgp-signature"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCKsWRmVeSWpSXmKPExsWy7djP87ps713jDZ68NLTYOGM9q8Wc8y0s
-        FvOPnGO16H/8mtni/PkN7BYXtvWxWmx6fI3V4vKuOWwWM87vY7I4NHUvo8XaI3fZLY4tELNo
-        3XuE3YHX4/K1i8weW1beZPLYtKqTzWPzknqPvi2rGD0+b5ILYIvisklJzcksSy3St0vgyji4
-        7TVbwQTxinUzepkaGJtEuhg5OSQETCT2Pmpi72Lk4hASWMEocWn5BUYI5wujxJ9pL9ggnM+M
-        Eif/TWeDaZl84DITRGI5o8SH08ugnOeMEq/PHGXpYuTgYBPQk1i7NgKkQURAU+L63++sIDXM
-        ArOYJS5u+c4CkhAWsJc4urqHEcRmEVCV+HPyFtgGToFSiXcntjKD2LwC5hLTnk1mArFFBSwl
-        try4zw4RF5Q4OfMJ2BxmgVyJmeffgN0tIfCXXaLr7AlmiFNdJG6f3s8CYQtLvDq+hR3ClpE4
-        PbkH7FAJgXqJyZPMIHp7GCW2zfkBVW8tcefcL6iXHSVaDq5nhqjnk7jxVhBiL5/EpG3TocK8
-        Eh1tQhDVKhLr+vdATZGS6H21ghHC9pBY/BfCFhJoZJT49UZuAqPCLCTfzELyzSygqczAoFu/
-        Sx8irC2xbOFrZgjbVmLduvcsCxhZVzGKp5YW56anFhvlpZbrFSfmFpfmpesl5+duYgSmt9P/
-        jn/ZwbjrT9IhRgEORiUe3gVsrvFCrIllxZW5hxhVgCY92rD6AqMUS15+XqqSCK/T2dNxQrwp
-        iZVVqUX58UWlOanFhxilOViUxHmNF72MFRJITyxJzU5NLUgtgskycXBKNTAuPyOzxdmK/3KA
-        2yWVJY0atuWyUcknbZbtOyby807ky8+b7BsuMEvpZIcsK5xzabuS0LHQG8JypxjFH/DPN3YJ
-        /fOxtULta69BdSv7rAU/L9jJPbQorv1TX99n4ub5nqFLMcr+V//DndPi5aM7vjUaP631rS95
-        O5mpZvlmZQMD8zmGNY+DK5VYijMSDbWYi4oTAQTkyOB3AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNIsWRmVeSWpSXmKPExsVy+t/xe7ps713jDbZc5bDYOGM9q8Wc8y0s
-        FvOPnGO16H/8mtni/PkN7BYXtvWxWmx6fI3V4vKuOWwWM87vY7I4NHUvo8XaI3fZLY4tELNo
-        3XuE3YHX4/K1i8weW1beZPLYtKqTzWPzknqPvi2rGD0+b5ILYIvSsynKLy1JVcjILy6xVYo2
-        tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQyzi47TVbwQTxinUzepkaGJtEuhg5
-        OSQETCQmH7jM1MXIxSEksJRR4uiOD0AOB1BCSmLl3HSIGmGJP9e62CBqnjJKPHreDVbDJqAn
-        sXZtBEiNiICmxPW/31lBapgF+pgl7i78yQiSEBawlzi6ugfMFhLQlbi3eh8riM0ioCrx5+Qt
-        NpA5nAKlEtO32oCEeQXMJaY9m8wEYosKWEpseXGfHSIuKHFy5hMWEJtZIFvi6+rnzBMYBWYh
-        Sc1CkpoFNJUZ6KT1u/QhwtoSyxa+ZoawbSXWrXvPsoCRdRWjSGppcW56brGhXnFibnFpXrpe
-        cn7uJkZgZG479nPzDsZLG4MPMQpwMCrx8C5gc40XYk0sK67MPcSoAjTm0YbVFxilWPLy81KV
-        RHidzp6OE+JNSaysSi3Kjy8qzUktPsRoCvTmRGYp0eR8YDLJK4k3NDU0t7A0NDc2NzazUBLn
-        7RA4GCMkkJ5YkpqdmlqQWgTTx8TBKdXAWHHFi2XGperEM8snrIh3qy/Wm2O0++S3BKvPU0oe
-        i586cz9inlW/d3yz65XGjl/a7l8CL21gdgxOkNKy+Ln88N8j7H8kzLd/X3iPv2XfSrfvfscq
-        Lnv47ePPnde10lKCq/TmoZ2hvOLaJ6vKol6u4Hmk/Xx7df6s6acad1f2p6R9eH5yxsxCLyWW
-        4oxEQy3mouJEAP4Td0XuAgAA
-X-CMS-MailID: 20200826051134eucas1p23a1c91b2179678eecc5dd5eeb2d0e4c9
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 8C.C0.06314.2B2064F5; Wed, 26
+        Aug 2020 07:35:30 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200826063530eusmtip247af081d1930d5e275f6f52617cdf1d2~uvenw-tS40092200922eusmtip2x;
+        Wed, 26 Aug 2020 06:35:30 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org,
+        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v9 06/32] drm: exynos: use common helper for a scatterlist
+ contiguity check
+Date:   Wed, 26 Aug 2020 08:32:50 +0200
+Message-Id: <20200826063316.23486-7-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200826063316.23486-1-m.szyprowski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSe0hTYRjG+XbOzs6Wy9M0/LKLMMhQUpOivkhNw+xEElGEGZTOPKipU87U
+        sn8ahpmb5mpdRNTUSs17W6wwvOaaYrryhpJ5YRlajswbFGS5Hcv/fu/7Ps/3vLx8JCbp4buS
+        cfIUhpXLEqSECDe8/Wn20vNCIva8VG9Bub1dPPQ8v56P/hjuYGhg6TuBnlUbeejuuAZHJS2H
+        0PTYBxzlWb5hyGxuEKCejFkBWhyY5CGdZYiP+hsLCZRvbuah2o5PAtQ295mP8rUzRKCErimu
+        AXTTcglO66qyCfrl8gSfHlebeLT+yXX644oFo7XDFYB+PaIk6NsvqgC9oNtxasN5kV80kxCX
+        xrA+AZGi2Kn7FkFyqcPVoYVBQgm0IhUgSUjtg4NGRxUQkRKqEsCsAT3gikUAjT+Ma8UCgHlZ
+        mYQKCO0OVUUWwQ0qAFSOGdctk7oHfJuKoHyhyqqyO5ypTAA7cx1sIoyqwGFR9W+7yIm6AO+Z
+        y4GNcWonnC3twmwspvyhUTm1FucGqxta7X0hFQBN6ry1/owAFs35cxwMO2ZzAcdO8KvphYDj
+        bbBbm4PbgiF1Y3W73loBV+QA2J+Rv+Y4BEd7fxG2c2CUB6xv9OEuEwTv6f043AiHrZtsYmwV
+        7xoeYlxbDG/dlHBvuMMCU93/1Lb3fRjHNCysUdtzJNQdAB81e2iAW8F6VAkAVcCFSVUkxjAK
+        XzlzxVshS1SkymO8LyUl6sDqJ+teMc2/Akt9Ue2AIoHUQVxCHI2Q8GVpivTEdgBJTOosPtLT
+        fVEijpalX2PYpAg2NYFRtIOtJC51Ee8tm7kgoWJkKUw8wyQz7L8pjxS6KkF93JHTAVc6QtwB
+        W7BbExXy5pi/u3f0jGbu7HIh3YCFnmnVlD2eXhi5Vb5ffcxPaCjyDmQK3b+4Xj4ujXZsi2TC
+        paxz04HMyODt4WFVoUNs2eHRIqt1s8uZ7BO410TY0zqtl774dmVUkKG9M/5pXUvX1vKWcy7z
+        u6Y8Tx5893yiWYorYmW+nhirkP0FEPcxe2ADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsVy+t/xe7qbmNziDRZ8trHoPXeSyWLjjPWs
+        Fv+3TWS2uPL1PZvFytVHmSwm3Z/AYrFgv7XFi3sXWSz6H79mtjh/fgO7xdmmN+wWX648ZLLY
+        9Pgaq8XlXXPYLGac38dksfbIXXaLgx+esFrMmPySzUHIY828NYwee78tYPHYtKqTzWP7twes
+        Hve7jzN5bF5S73H732Nmj8k3ljN67L7ZwObRt2UVo8fnTXIB3FF6NkX5pSWpChn5xSW2StGG
+        FkZ6hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6GU+nPmYvWMhTce3zVbYGxslcXYyc
+        HBICJhJdy9vZuhi5OIQEljJK7DzSww6RkJE4Oa2BFcIWlvhzrQuq6BOjxIyr69lAEmwChhJd
+        byESIgKdjBLTuj+ygzjMAptZJP6tfwI2SlggWmL10qPMIDaLgKrEm4UnwWxeAVuJow1P2SBW
+        yEus3nAALM4pYCdxvLsfLC4EVHN67QzmCYx8CxgZVjGKpJYW56bnFhvqFSfmFpfmpesl5+du
+        YgTG17ZjPzfvYLy0MfgQowAHoxIP7wI213gh1sSy4srcQ4wSHMxKIrxOZ0/HCfGmJFZWpRbl
+        xxeV5qQWH2I0BTpqIrOUaHI+MPbzSuINTQ3NLSwNzY3Njc0slMR5OwQOxggJpCeWpGanphak
+        FsH0MXFwSjUwGq5vejPD8X7PrqZbxsqLvrg55WnMP3jAqq3FvbsgKuX974at358++DCD6WTO
+        pEbWKde00ktsl5eUf/g0/52FrPOt+jcxd/yklm/vfL15m/jKqPeHfy9epHr23hOeRk8OfZ/t
+        cX8OHeQued28K/qzjrn8lNNNijM1LjRcq/7EIZQ850NtqNfXGCWW4oxEQy3mouJEABxpr6LF
+        AgAA
+X-CMS-MailID: 20200826063531eucas1p21c9277fe2a91e632e40822fb04a2c095
 X-Msg-Generator: CA
-X-RootMTR: 20200826051134eucas1p23a1c91b2179678eecc5dd5eeb2d0e4c9
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200826063531eucas1p21c9277fe2a91e632e40822fb04a2c095
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200826051134eucas1p23a1c91b2179678eecc5dd5eeb2d0e4c9
-References: <20200825185152.GC2693@kozik-lap>
-        <CGME20200826051134eucas1p23a1c91b2179678eecc5dd5eeb2d0e4c9@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20200826063531eucas1p21c9277fe2a91e632e40822fb04a2c095
+References: <20200826063316.23486-1-m.szyprowski@samsung.com>
+        <CGME20200826063531eucas1p21c9277fe2a91e632e40822fb04a2c095@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Use common helper for checking the contiguity of the imported dma-buf.
 
-It was <2020-08-25 wto 20:51>, when Krzysztof Kozlowski wrote:
-> On Tue, Aug 25, 2020 at 07:03:11PM +0200, =C5=81ukasz Stelmach wrote:
->> Enable ax88796c driver for the ethernet chip on Exynos3250-based
->> ARTIK5 boards.
->>=20
->> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
->> ---
->>  arch/arm/configs/exynos_defconfig   | 2 ++
->>  arch/arm/configs/multi_v7_defconfig | 2 ++
->>  2 files changed, 4 insertions(+)
->>=20
->> Please DO NOT merge before these two
->
-> Sure, it can wait but shouldn't actually DT wait? It's only defconfig so
-> it does not change anything except automated systems booting these
-> defconfigs... The boards might be broken by DT.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by : Inki Dae <inki.dae@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_gem.c | 23 +++--------------------
+ 1 file changed, 3 insertions(+), 20 deletions(-)
 
-I was told, to ask for deferred merge of defconfig and it makes sense to
-me. DT won't break anything if the driver isn't compiled. However, I can
-see that you have a word you may decide about DT too. My point is to
-wait until spi-s3c64xx patches are merged and not to break ARTIK5
-boards.
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index efa476858db5..1716a023bca0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -431,27 +431,10 @@ exynos_drm_gem_prime_import_sg_table(struct drm_device *dev,
+ {
+ 	struct exynos_drm_gem *exynos_gem;
+ 
+-	if (sgt->nents < 1)
++	/* check if the entries in the sg_table are contiguous */
++	if (drm_prime_get_contiguous_size(sgt) < attach->dmabuf->size) {
++		DRM_ERROR("buffer chunks must be mapped contiguously");
+ 		return ERR_PTR(-EINVAL);
+-
+-	/*
+-	 * Check if the provided buffer has been mapped as contiguous
+-	 * into DMA address space.
+-	 */
+-	if (sgt->nents > 1) {
+-		dma_addr_t next_addr = sg_dma_address(sgt->sgl);
+-		struct scatterlist *s;
+-		unsigned int i;
+-
+-		for_each_sg(sgt->sgl, s, sgt->nents, i) {
+-			if (!sg_dma_len(s))
+-				break;
+-			if (sg_dma_address(s) != next_addr) {
+-				DRM_ERROR("buffer chunks must be mapped contiguously");
+-				return ERR_PTR(-EINVAL);
+-			}
+-			next_addr = sg_dma_address(s) + sg_dma_len(s);
+-		}
+ 	}
+ 
+ 	exynos_gem = exynos_drm_gem_init(dev, attach->dmabuf->size);
+-- 
+2.17.1
 
->>=20
->>   https://lore.kernel.org/lkml/20200821161401.11307-2-l.stelmach@samsung=
-.com/
->>   https://lore.kernel.org/lkml/20200821161401.11307-3-l.stelmach@samsung=
-.com/
->>=20
->> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos=
-_defconfig
->> index 6e8b5ff0859c..82480b2bf545 100644
->> --- a/arch/arm/configs/exynos_defconfig
->> +++ b/arch/arm/configs/exynos_defconfig
->> @@ -107,6 +107,8 @@ CONFIG_MD=3Dy
->>  CONFIG_BLK_DEV_DM=3Dy
->>  CONFIG_DM_CRYPT=3Dm
->>  CONFIG_NETDEVICES=3Dy
->> +CONFIG_NET_VENDOR_ASIX=3Dy
->> +CONFIG_SPI_AX88796C=3Dy
->>  CONFIG_SMSC911X=3Dy
->>  CONFIG_USB_RTL8150=3Dm
->>  CONFIG_USB_RTL8152=3Dy
->> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/mult=
-i_v7_defconfig
->> index e9e76e32f10f..a8b4e95d4148 100644
->> --- a/arch/arm/configs/multi_v7_defconfig
->> +++ b/arch/arm/configs/multi_v7_defconfig
->> @@ -241,6 +241,8 @@ CONFIG_SATA_HIGHBANK=3Dy
->>  CONFIG_SATA_MV=3Dy
->>  CONFIG_SATA_RCAR=3Dy
->>  CONFIG_NETDEVICES=3Dy
->> +CONFIG_NET_VENDOR_ASIX=3Dy
->> +CONFIG_SPI_AX88796C=3Dm
->>  CONFIG_VIRTIO_NET=3Dy
->>  CONFIG_B53_SPI_DRIVER=3Dm
->>  CONFIG_B53_MDIO_DRIVER=3Dm
->> --=20
->> 2.26.2
->>=20
->
->
-
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl9F7vYACgkQsK4enJil
-gBAFHQgAmtB7lnKmjz1HmpsDGOZW6GL7+dy6DzX/WdcZYKl/BqPGkdJdS3mmZ2vL
-ReeRKBNGMi1tF5ke//+PK2ymKNUlM+oNogikadhqey9bPRNNehuAHT5A3iL+KulJ
-ynt0tiCPR1+1Map3UNgiMzAhcLmLZnJ+CIDeTq8z+USD7noFT05O3G4rNGnh5wMc
-iIyx3zVUCCVVoqEE1HlulzOgXc1p1E9ZnoH331iBVEr3aTUDoLvSoymMRx6eA2zA
-ggmUcoaFC5qjBza+qipukpqir4OZ40lisI3pgD8YPtJlJkZz4B7JitjcIb5s/7hT
-8h5mI4Wf/w2tA+GWcoYAnMfKZR+O2Q==
-=cYnG
------END PGP SIGNATURE-----
---=-=-=--
