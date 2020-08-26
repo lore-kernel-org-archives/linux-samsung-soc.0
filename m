@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 475CAC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 012B3C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26F0B22B4E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D17912224D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 14:52:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598453543;
-	bh=lwcapEqh1mnH2bnwZTOp+jWQ1z3sGCNA5lWoA1rbyV4=;
-	h=From:To:Subject:Date:List-ID:From;
-	b=abuBZw/sqwJzodE2TcAElQOgsqhA9TDsfXgrxcVU4LjH2HnjkRZb02dS2mCJJj5Rf
-	 9RKKxOz614jvgqjpICSt7VkBcPpcUMtjkx9lKjH85frIEQQz8oA5+joO+LSyiio5mG
-	 M+HFdAZ6PACkb9TmTl/EM1IcOnnCVPCDD7+SKBWU=
+	s=default; t=1598453556;
+	bh=9WnEmDPaImvJaOTWnFx8b/OSZEA9nx5y8bHKHDlhKUI=;
+	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=uYxmOTpiyxh3G4sLxBIL+cf5nbuKQvTE8T3LRV886HQAW25aJoYwRHlZhifaEd7YS
+	 Vir0xJ1mBRQ5MTGzDiddBIBoBXTVNfxAIGsWubleFodvKWXDQTlNsWdTJU0u1I6uNG
+	 CgF4Y3pRQ3T74kDtn/Z6OdmRZyR8LtllkW6ChdtE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbgHZOwS (ORCPT
+        id S1727012AbgHZOwg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Aug 2020 10:52:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38214 "EHLO mail.kernel.org"
+        Wed, 26 Aug 2020 10:52:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727821AbgHZOwI (ORCPT
+        id S1727115AbgHZOwO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Aug 2020 10:52:08 -0400
+        Wed, 26 Aug 2020 10:52:14 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CE2B21741;
-        Wed, 26 Aug 2020 14:52:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0EAE22B3F;
+        Wed, 26 Aug 2020 14:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598453528;
-        bh=lwcapEqh1mnH2bnwZTOp+jWQ1z3sGCNA5lWoA1rbyV4=;
-        h=From:To:Subject:Date:From;
-        b=W5poQ48UfnSWvBecbti9ouY3yxhCPYG7lJ2YWTWVuAvPzu89EU7+uxyv8YXTofPQB
-         3gXzjtXyB8/4Ngg7w+SKJToYcj5ZxCKpk+/tsTswwQXNhHScaZm2HPq2MnZV/thjFq
-         k/Zgr1eJS8cgJ8XzHei6NU7DBymAvV//O1xoQWec=
+        s=default; t=1598453533;
+        bh=9WnEmDPaImvJaOTWnFx8b/OSZEA9nx5y8bHKHDlhKUI=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=aJrqJa6HvWi+UDeHiktjcnwsc8pvpxK3yOD/bTOpc0gZ0Dz5jNA/JXWkV9VjM1hSi
+         EZG3uyLXtjiAu642kY2Xla9sVjz6itQu/EscsjJ+s45ehCjWuRtu4Ye+wq19dH8gsP
+         mAoIMP6wd/aAK7HX8R5JQR+boq/TIuNLctb4AbFY=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
@@ -64,10 +64,12 @@ To:     Jonathan Cameron <jic23@kernel.org>,
         linux-samsung-soc@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH 01/16] iio: accel: bma180: Simplify with dev_err_probe()
-Date:   Wed, 26 Aug 2020 16:51:38 +0200
-Message-Id: <20200826145153.10444-1-krzk@kernel.org>
+Subject: [PATCH 02/16] iio: accel: mma8452: Simplify with dev_err_probe()
+Date:   Wed, 26 Aug 2020 16:51:39 +0200
+Message-Id: <20200826145153.10444-2-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200826145153.10444-1-krzk@kernel.org>
+References: <20200826145153.10444-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -78,41 +80,42 @@ dev_err_probe().  Less code and also it prints the error value.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/iio/accel/bma180.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ drivers/iio/accel/mma8452.c | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
-index 5b7a467c7b27..448faed001fd 100644
---- a/drivers/iio/accel/bma180.c
-+++ b/drivers/iio/accel/bma180.c
-@@ -1000,19 +1000,15 @@ static int bma180_probe(struct i2c_client *client,
- 		return ret;
+diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
+index 4e6e70250048..104b87b98455 100644
+--- a/drivers/iio/accel/mma8452.c
++++ b/drivers/iio/accel/mma8452.c
+@@ -1538,22 +1538,14 @@ static int mma8452_probe(struct i2c_client *client,
+ 	data->chip_info = match->data;
  
- 	data->vdd_supply = devm_regulator_get(dev, "vdd");
--	if (IS_ERR(data->vdd_supply)) {
--		if (PTR_ERR(data->vdd_supply) != -EPROBE_DEFER)
--			dev_err(dev, "Failed to get vdd regulator %d\n",
--				(int)PTR_ERR(data->vdd_supply));
--		return PTR_ERR(data->vdd_supply);
+ 	data->vdd_reg = devm_regulator_get(&client->dev, "vdd");
+-	if (IS_ERR(data->vdd_reg)) {
+-		if (PTR_ERR(data->vdd_reg) == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
+-
+-		dev_err(&client->dev, "failed to get VDD regulator!\n");
+-		return PTR_ERR(data->vdd_reg);
 -	}
-+	if (IS_ERR(data->vdd_supply))
-+		return dev_err_probe(dev, PTR_ERR(data->vdd_supply),
-+				     "Failed to get vdd regulator\n");
-+
- 	data->vddio_supply = devm_regulator_get(dev, "vddio");
--	if (IS_ERR(data->vddio_supply)) {
--		if (PTR_ERR(data->vddio_supply) != -EPROBE_DEFER)
--			dev_err(dev, "Failed to get vddio regulator %d\n",
--				(int)PTR_ERR(data->vddio_supply));
--		return PTR_ERR(data->vddio_supply);
++	if (IS_ERR(data->vdd_reg))
++		return dev_err_probe(&client->dev, PTR_ERR(data->vdd_reg),
++				     "failed to get VDD regulator!\n");
+ 
+ 	data->vddio_reg = devm_regulator_get(&client->dev, "vddio");
+-	if (IS_ERR(data->vddio_reg)) {
+-		if (PTR_ERR(data->vddio_reg) == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
+-
+-		dev_err(&client->dev, "failed to get VDDIO regulator!\n");
+-		return PTR_ERR(data->vddio_reg);
 -	}
-+	if (IS_ERR(data->vddio_supply))
-+		return dev_err_probe(dev, PTR_ERR(data->vddio_supply),
-+				     "Failed to get vddio regulator\n");
-+
- 	/* Typical voltage 2.4V these are min and max */
- 	ret = regulator_set_voltage(data->vdd_supply, 1620000, 3600000);
- 	if (ret)
++	if (IS_ERR(data->vddio_reg))
++		return dev_err_probe(&client->dev, PTR_ERR(data->vddio_reg),
++				     "failed to get VDDIO regulator!\n");
+ 
+ 	ret = regulator_enable(data->vdd_reg);
+ 	if (ret) {
 -- 
 2.17.1
 
