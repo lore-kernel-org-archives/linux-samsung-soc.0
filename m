@@ -2,106 +2,115 @@ Return-Path: <SRS0=5lYo=CE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB9EC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 15:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 510AEC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 15:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFCEE207BC
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 15:07:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3645120738
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 15:47:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbgHZPG6 (ORCPT
+        id S1726803AbgHZPr5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Aug 2020 11:06:58 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:29471 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726923AbgHZPG4 (ORCPT
+        Wed, 26 Aug 2020 11:47:57 -0400
+Received: from smtpout1.mo803.mail-out.ovh.net ([79.137.123.219]:54677 "EHLO
+        smtpout1.mo803.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726739AbgHZPr5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Aug 2020 11:06:56 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-261-ph5PWed-PFGPcuia_f9y9w-1; Wed, 26 Aug 2020 16:06:52 +0100
-X-MC-Unique: ph5PWed-PFGPcuia_f9y9w-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 26 Aug 2020 16:06:51 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 26 Aug 2020 16:06:51 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Lukasz Stelmach' <l.stelmach@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org" 
+        Wed, 26 Aug 2020 11:47:57 -0400
+X-Greylist: delayed 575 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Aug 2020 11:47:56 EDT
+Received: from pro2.mail.ovh.net (unknown [10.109.156.191])
+        by mo803.mail-out.ovh.net (Postfix) with ESMTPS id 6EAE963F16E0;
+        Wed, 26 Aug 2020 17:38:18 +0200 (CEST)
+Received: from localhost (34.103.240.152) by DAG2EX1.emp2.local (172.16.2.11)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2044.4; Wed, 26 Aug
+ 2020 17:38:17 +0200
+Date:   Wed, 26 Aug 2020 17:34:34 +0200
+From:   Tomasz Duszynski <tomasz.duszynski@octakon.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+CC:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Peter Rosin <peda@axentia.se>, Kukjin Kim <kgene@kernel.org>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Beniamin Bia <beniamin.bia@analog.com>,
+        Tomasz Duszynski <tomasz.duszynski@octakon.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Bakker <xc-racer2@live.ca>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
         <linux-samsung-soc@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>
-Subject: RE: [PATCH 1/3] net: ax88796c: ASIX AX88796C SPI Ethernet Adapter
- Driver
-Thread-Topic: [PATCH 1/3] net: ax88796c: ASIX AX88796C SPI Ethernet Adapter
- Driver
-Thread-Index: AQHWe7mj43dSzPFWakSayEhKlD9dNqlKfEsw
-Date:   Wed, 26 Aug 2020 15:06:51 +0000
-Message-ID: <1efebb42c30a4c40bf91649d83d60e1c@AcuMS.aculab.com>
-References: <20200825184413.GA2693@kozik-lap>
-        <CGME20200826145929eucas1p1367c260edb8fa003869de1da527039c0@eucas1p1.samsung.com>
- <dleftja6yhv4g2.fsf%l.stelmach@samsung.com>
-In-Reply-To: <dleftja6yhv4g2.fsf%l.stelmach@samsung.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        <linux-amlogic@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [PATCH 11/16] iio: chemical: scd30: Simplify with dev_err_probe()
+Message-ID: <20200826153434.GA7468@arch>
+References: <20200826145153.10444-1-krzk@kernel.org>
+ <20200826145153.10444-11-krzk@kernel.org>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0.001
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20200826145153.10444-11-krzk@kernel.org>
+X-Originating-IP: [34.103.240.152]
+X-ClientProxiedBy: CAS2.emp2.local (172.16.1.2) To DAG2EX1.emp2.local
+ (172.16.2.11)
+X-Ovh-Tracer-Id: 9361576253439499417
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduiedruddvvddgledtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfhfgggtuggjihesthdtredttddtjeenucfhrhhomhepvfhomhgrshiiucffuhhsiiihnhhskhhiuceothhomhgrshiirdguuhhsiiihnhhskhhisehotghtrghkohhnrdgtohhmqeenucggtffrrghtthgvrhhnpedtheevtefhffduteejfedtkeeuheejgeejvdetfffgveekffefgeffueeghefgjeenucfkpheptddrtddrtddrtddpfeegrddutdefrddvgedtrdduhedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepthhomhgrshiirdguuhhsiiihnhhskhhisehotghtrghkohhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqshhtmhefvdesshhtqdhmugdqmhgrihhlmhgrnhdrshhtohhrmhhrvghplhihrdgtohhm
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogTHVrYXN6IFN0ZWxtYWNoDQo+IFNlbnQ6IDI2IEF1Z3VzdCAyMDIwIDE1OjU5DQo+IA0K
-PiBJdCB3YXMgPDIwMjAtMDgtMjUgd3RvIDIwOjQ0Piwgd2hlbiBLcnp5c3p0b2YgS296bG93c2tp
-IHdyb3RlOg0KPiA+IE9uIFR1ZSwgQXVnIDI1LCAyMDIwIGF0IDA3OjAzOjA5UE0gKzAyMDAsIMWB
-dWthc3ogU3RlbG1hY2ggd3JvdGU6DQo+ID4+IEFTSVggQVg4ODc5NlsxXSBpcyBhIHZlcnNhdGls
-ZSBldGhlcm5ldCBhZGFwdGVyIGNoaXAsIHRoYXQgY2FuIGJlDQo+ID4+IGNvbm5lY3RlZCB0byBh
-IENQVSB3aXRoIGEgOC8xNi1iaXQgYnVzIG9yIHdpdGggYW4gU1BJLiBUaGlzIGRyaXZlcg0KPiA+
-PiBzdXBwb3J0cyBTUEkgY29ubmVjdGlvbi4NCi4uLg0KPiA+PiArKysgYi9kcml2ZXJzL25ldC9l
-dGhlcm5ldC9hc2l4L0tjb25maWcNCj4gPj4gQEAgLTAsMCArMSwyMCBAQA0KPiA+PiArIw0KPiA+
-PiArIyBBc2l4IG5ldHdvcmsgZGV2aWNlIGNvbmZpZ3VyYXRpb24NCj4gPj4gKyMNCj4gPj4gKw0K
-PiA+PiArY29uZmlnIE5FVF9WRU5ET1JfQVNJWA0KPiA+PiArCWJvb2wgIkFzaXggZGV2aWNlcyIN
-Cj4gPj4gKwlkZXBlbmRzIG9uIFNQSQ0KPiA+PiArCWhlbHANCj4gPj4gKwkgIElmIHlvdSBoYXZl
-IGEgbmV0d29yayAoRXRoZXJuZXQpIGludGVyZmFjZSBiYXNlZCBvbiBhIGNoaXAgZnJvbSBBU0lY
-LCBzYXkgWQ0KPiA+DQo+ID4gTG9va3MgbGlrZSB0b28gbG9uZywgZGlkIGl0IHBhc3MgY2hlY2tw
-YXRjaD8NCj4gDQo+IFllcz8gTGV0IG1lIHRyeSBhZ2Fpbi4gWWVzLCB0aGlzIG9uZSBwYXNzZWQs
-IGJ1dCBJIG1pc3NlZCBhIGZldyBvdGhlcg0KPiBwcm9ibGVtcy4gVGhhbmsgeW91Lg0KPiANCj4g
-Pj4gKw0KPiA+PiAraWYgTkVUX1ZFTkRPUl9BU0lYDQo+ID4+ICsNCj4gPj4gK2NvbmZpZyBTUElf
-QVg4ODc5NkMNCj4gPj4gKwl0cmlzdGF0ZSAiQXNpeCBBWDg4Nzk2Qy1TUEkgc3VwcG9ydCINCj4g
-Pj4gKwlkZXBlbmRzIG9uIFNQSQ0KPiA+PiArCWRlcGVuZHMgb24gR1BJT0xJQg0KPiA+PiArCWhl
-bHANCj4gPj4gKwkgIFNheSBZIGhlcmUgaWYgeW91IGludGVuZCB0byBhdHRhY2ggYSBBc2l4IEFY
-ODg3OTZDIGFzIFNQSSBtb2RlDQo+ID4+ICsNCj4gPj4gK2VuZGlmICMgTkVUX1ZFTkRPUl9BU0lY
-DQoNClRoZXJlIGFyZSBwbGVudHkgb2Ygb3RoZXIgZXRoZXJuZXQgZGV2aWNlcyBtYWRlIGJ5IEFT
-SVggKGVnIFVTQiBvbmVzKQ0KdGhhdCBoYXZlIG5vdGhpbmcgYXQgYWxsIHRvIGRvIHdpdGggdGhp
-cyBkcml2ZXIuDQpTbyB0aG9zZSBxdWVzdGlvbnMgYXJlIHRvbyBicm9hZC4NCg0KVGhlIGZpcnN0
-IG9uZSBzaG91bGQgcHJvYmFibGUgYmUgZm9yIEFTSVggU1BJIG5ldHdvcmsgZGV2aWNlcy4NCg0K
-KEkgY2FuJ3QgaW1hZ2luZSBTUEkgYmVpbmcgZmFzdCBlbm91Z2ggdG8gYmUgdXNlZnVsIGZvciBl
-dGhlcm5ldC4uLikNCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwg
-QnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVn
-aXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On Wed, Aug 26, 2020 at 04:51:48PM +0200, Krzysztof Kozlowski wrote:
+> Common pattern of handling deferred probe can be simplified with
+> dev_err_probe().  Less code and also it prints the error value.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/iio/chemical/scd30_core.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/iio/chemical/scd30_core.c b/drivers/iio/chemical/scd30_core.c
+> index eac76972f83e..92358797796d 100644
+> --- a/drivers/iio/chemical/scd30_core.c
+> +++ b/drivers/iio/chemical/scd30_core.c
+> @@ -705,13 +705,9 @@ int scd30_probe(struct device *dev, int irq, const char *name, void *priv,
+>  	indio_dev->available_scan_masks = scd30_scan_masks;
+>
+>  	state->vdd = devm_regulator_get(dev, "vdd");
+> -	if (IS_ERR(state->vdd)) {
+> -		if (PTR_ERR(state->vdd) == -EPROBE_DEFER)
+> -			return -EPROBE_DEFER;
+> -
+> -		dev_err(dev, "failed to get regulator\n");
+> -		return PTR_ERR(state->vdd);
+> -	}
+> +	if (IS_ERR(state->vdd))
+> +		return dev_err_probe(dev, PTR_ERR(state->vdd),
+> +				     "failed to get regulator\n");
 
+I'd say that removing like break would slightly improve readability.
+Besides, staying within 100 columns seems socially acceptable now.
+Otherwise,
+
+Acked-by: Tomasz Duszynski <tomasz.duszynski@octakon.com>
+
+>
+>  	ret = regulator_enable(state->vdd);
+>  	if (ret)
+> --
+> 2.17.1
+>
