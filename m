@@ -2,156 +2,100 @@ Return-Path: <SRS0=5lYo=CE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB39C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 06:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1AAC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 07:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83463207DF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 06:46:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598424412;
-	bh=hVffajsF2+XdKaXPf34BPboBIlD4e9nfaQNS/KKUDNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=an84pqN0bDvxOJ+dFS1SuiALyZRuxeZYnIf+9AcM/9fSaT85m5oJV8fPVt2Y5D738
-	 ObFnkr/XP13rhwX+7z2AjBtNmwmq0qOt8ly+Ms2Dn4p/I8QSJo0dC49aFNaGTqxQUZ
-	 0XgzyhwGXndFVGJqIUfssZRX044uzIjxxJqFceTQ=
+	by mail.kernel.org (Postfix) with ESMTP id 438F9206EB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 07:13:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbgHZGqw convert rfc822-to-8bit (ORCPT
+        id S1726698AbgHZHN1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Aug 2020 02:46:52 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37673 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbgHZGqv (ORCPT
+        Wed, 26 Aug 2020 03:13:27 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:36715 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbgHZHN1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Aug 2020 02:46:51 -0400
-Received: by mail-wm1-f68.google.com with SMTP id x9so618599wmi.2;
-        Tue, 25 Aug 2020 23:46:49 -0700 (PDT)
+        Wed, 26 Aug 2020 03:13:27 -0400
+Received: by mail-oi1-f195.google.com with SMTP id b9so695859oiy.3;
+        Wed, 26 Aug 2020 00:13:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=woDwpwEGnSTSc4kljToA4r5StN2rkeplc2dBRDufFZA=;
-        b=axwIzwdJXwjZsXIrMW6pOdz/Fl6s46kYixkoGoQQN/7r9Q/vxadPrX3i+bebYsbCiu
-         F4qZsZvN95U99837oYJKDflwgzafkp8BGFvkifvpW9oEhMLE333cpq/DJ6shNJJfSU5K
-         fnmuUSViSObLp0Ewaib3nIfSmb8PtCnnfdI5BujC6YtDd+HCiTYKVXGRsyhEHO+jm7pY
-         zQmoJVHnBmZRFKyutbDAAbYCLy1mkWk3CT00a6x0Cu1r3oCwcCfSknTc66vPeMBdwA5U
-         nLq76H0aID+17EaVGxsDpqxCaKdydyCQWRbilU7I08vj/SVRvwa1e2WoBzJMws98UpK1
-         2LPQ==
-X-Gm-Message-State: AOAM531ug6AshDEqLNSwI/selChhVUmSRNzRglZTYEfaWpy+w8gqY/Fn
-        x7ybN70ny7ur9SgYvotdq0ZJbNX2crg=
-X-Google-Smtp-Source: ABdhPJwwnq5+FT5AJu3knzHTD/+s17qG77/RpFqNYzEjYg24N/OVflA007W8XbHJWMrOxuCfflZj9Q==
-X-Received: by 2002:a7b:cf13:: with SMTP id l19mr5238783wmg.115.1598424408857;
-        Tue, 25 Aug 2020 23:46:48 -0700 (PDT)
-Received: from pi3 ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id g17sm3402102wrr.28.2020.08.25.23.46.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Aug 2020 23:46:48 -0700 (PDT)
-Date:   Wed, 26 Aug 2020 08:46:45 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Stelmach <l.stelmach@samsung.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FGHPb84Jx11W3vIf+ODKn/oBh3C6uj3q4u2snyewUTw=;
+        b=TPRbD82xxEC79PMccp+ZMzJ5MVIGmAwTuXCY1UUHzFpOD1E3s2Wch/5XWinv0bYWXF
+         s8yCbd9DMBQW+xOr6/wXdUeDPttAPu8gSqKvXc78Oz6/8//8H1qazrRolufojI3siDPy
+         6n5NP+43t1fV20nj4OpaPbJkf8NX938MnMM925QrVXiVbGJnfIU80GpixayLF7x6uk/R
+         mk9gGftC5RpehgtfUc5OaqmDEB2YGEr6vecq9qEyWnKj5CkQWETVnjO3fBLqOpqIoZPe
+         rYFmUOKbUReXyM7O30WTfBJdkj5tGqYCqRkdEsDusL1xBpl3ViG9ZgYwrLppk4fi3A2m
+         J7nA==
+X-Gm-Message-State: AOAM531/WUMwliqa8O3BASt/i04yccXlsgCfKQFhG7SpxuKaZ7fhd/sq
+        AN4sXy0OBecMWlfTZN4hW7vLb09xl0qOdKdZfys88k8F89I=
+X-Google-Smtp-Source: ABdhPJzJ6a5NBDzJtEvfkg5F2sVcb5PuRWQN4ld2RSTCZ8WlCraVfILM0VjbwiytxZr10m9hx+KCyWNT6QSx2+Z7PCM=
+X-Received: by 2002:aca:3402:: with SMTP id b2mr648406oia.153.1598426006201;
+ Wed, 26 Aug 2020 00:13:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <CGME20200825170322eucas1p2c6619aa3e02d2762e07da99640a2451c@eucas1p2.samsung.com>
+ <20200825170311.24886-1-l.stelmach@samsung.com> <20200825180134.GN2403519@lunn.ch>
+In-Reply-To: <20200825180134.GN2403519@lunn.ch>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 26 Aug 2020 09:13:14 +0200
+Message-ID: <CAMuHMdWNdMEnSnLRkUkRmLop4E-tnBirjfMw06e_40Ss-V-JyQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] net: ax88796c: ASIX AX88796C SPI Ethernet Adapter Driver
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, m.szyprowski@samsung.com,
-        b.zolnierkie@samsung.com
-Subject: Re: [PATCH 3/3] ARM: defconfig: Enable ax88796c driver
-Message-ID: <20200826064645.GA12103@pi3>
-References: <20200825185152.GC2693@kozik-lap>
- <CGME20200826051134eucas1p23a1c91b2179678eecc5dd5eeb2d0e4c9@eucas1p2.samsung.com>
- <dleftjk0xmuh3d.fsf%l.stelmach@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
-In-Reply-To: <dleftjk0xmuh3d.fsf%l.stelmach@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 26, 2020 at 07:11:18AM +0200, Lukasz Stelmach wrote:
-> It was <2020-08-25 wto 20:51>, when Krzysztof Kozlowski wrote:
-> > On Tue, Aug 25, 2020 at 07:03:11PM +0200, Łukasz Stelmach wrote:
-> >> Enable ax88796c driver for the ethernet chip on Exynos3250-based
-> >> ARTIK5 boards.
-> >> 
-> >> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-> >> ---
-> >>  arch/arm/configs/exynos_defconfig   | 2 ++
-> >>  arch/arm/configs/multi_v7_defconfig | 2 ++
-> >>  2 files changed, 4 insertions(+)
-> >> 
-> >> Please DO NOT merge before these two
-> >
-> > Sure, it can wait but shouldn't actually DT wait? It's only defconfig so
-> > it does not change anything except automated systems booting these
-> > defconfigs... The boards might be broken by DT.
-> 
-> I was told, to ask for deferred merge of defconfig and it makes sense to
-> me. DT won't break anything if the driver isn't compiled. However, I can
-> see that you have a word you may decide about DT too. My point is to
-> wait until spi-s3c64xx patches are merged and not to break ARTIK5
-> boards.
+On Tue, Aug 25, 2020 at 8:02 PM Andrew Lunn <andrew@lunn.ch> wrote:
+> On Tue, Aug 25, 2020 at 07:03:09PM +0200, Łukasz Stelmach wrote:
+> > +     if (netif_msg_pktdata(ax_local)) {
+> > +             int loop;
+> > +             netdev_info(ndev, "TX packet len %d, total len %d, seq %d\n",
+> > +                             pkt_len, tx_skb->len, seq_num);
+> > +
+> > +             netdev_info(ndev, "  Dump SPI Header:\n    ");
+> > +             for (loop = 0; loop < 4; loop++)
+> > +                     netdev_info(ndev, "%02x ", *(tx_skb->data + loop));
+> > +
+> > +             netdev_info(ndev, "\n");
+>
+> This no longer works as far as i remember. Lines are terminate by
+> default even if they don't have a \n.
+>
+> Please you should not be using netdev_info(). netdev_dbg() please.
 
-The config is chosen and adjusted by each person, during build. Merging
-defconfig does not necessarily affect them. However merging DT affects -
-you cannot disable it without source code modification.
+We have a nice helper for this: print_hex_dump_debug().
 
-Anyway, no problem for me with waiting with defconfig.
+Gr{oetje,eeting}s,
 
-Best regards,
-Krzysztof
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> 
-> >> 
-> >>   https://lore.kernel.org/lkml/20200821161401.11307-2-l.stelmach@samsung.com/
-> >>   https://lore.kernel.org/lkml/20200821161401.11307-3-l.stelmach@samsung.com/
-> >> 
-> >> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> >> index 6e8b5ff0859c..82480b2bf545 100644
-> >> --- a/arch/arm/configs/exynos_defconfig
-> >> +++ b/arch/arm/configs/exynos_defconfig
-> >> @@ -107,6 +107,8 @@ CONFIG_MD=y
-> >>  CONFIG_BLK_DEV_DM=y
-> >>  CONFIG_DM_CRYPT=m
-> >>  CONFIG_NETDEVICES=y
-> >> +CONFIG_NET_VENDOR_ASIX=y
-> >> +CONFIG_SPI_AX88796C=y
-> >>  CONFIG_SMSC911X=y
-> >>  CONFIG_USB_RTL8150=m
-> >>  CONFIG_USB_RTL8152=y
-> >> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> >> index e9e76e32f10f..a8b4e95d4148 100644
-> >> --- a/arch/arm/configs/multi_v7_defconfig
-> >> +++ b/arch/arm/configs/multi_v7_defconfig
-> >> @@ -241,6 +241,8 @@ CONFIG_SATA_HIGHBANK=y
-> >>  CONFIG_SATA_MV=y
-> >>  CONFIG_SATA_RCAR=y
-> >>  CONFIG_NETDEVICES=y
-> >> +CONFIG_NET_VENDOR_ASIX=y
-> >> +CONFIG_SPI_AX88796C=m
-> >>  CONFIG_VIRTIO_NET=y
-> >>  CONFIG_B53_SPI_DRIVER=m
-> >>  CONFIG_B53_MDIO_DRIVER=m
-> >> -- 
-> >> 2.26.2
-> >> 
-> >
-> >
-> 
-> -- 
-> Łukasz Stelmach
-> Samsung R&D Institute Poland
-> Samsung Electronics
-
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
