@@ -2,109 +2,120 @@ Return-Path: <SRS0=N7cY=CF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF279C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 12:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F26D5C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 15:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA3F122BF5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 12:54:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGT1CbGR"
+	by mail.kernel.org (Postfix) with ESMTP id DAB8F22B40
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 15:10:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729115AbgH0Myr (ORCPT
+        id S1728765AbgH0Lqd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 08:54:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43104 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728973AbgH0Mym (ORCPT
+        Thu, 27 Aug 2020 07:46:33 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2697 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728869AbgH0Loh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Aug 2020 08:54:42 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D09A0C061264;
-        Thu, 27 Aug 2020 05:54:41 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id a65so5064001wme.5;
-        Thu, 27 Aug 2020 05:54:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=a5lpHFvSWQoGrjybaXmlV69Axq+442tGTTEhKXzXB/M=;
-        b=FGT1CbGRN8nWIZimQQJFHaFlgGbXUWXcohmF6aYnzTMEIdoXLV8ASHcjH/rftf8dPu
-         05h7ynqky+tK0sVnESIUNMOkwDJXKaIKOOjfk8ZzK2aS6ItFzfPK1RiS8Sgq9gCPkksa
-         s87z1TYPj+YUb/w6uaLEL+ETfgmlzhXCU10ucGJlzNXsBINUdbYoCrfyflOTHYw+cbz4
-         RAdiDof8rxMnyZ5hwply2FrDERb1PY3A2wl1RdJOsOW1zwqi8pXPitwO0zzOFjipVey5
-         oUPQnIgnx+nqlo3zwpUr7dRtVO/mC+2RV5+VHT1jDZZ+PWuU7gSvtmMNjL2CWO/kpKhp
-         IGew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=a5lpHFvSWQoGrjybaXmlV69Axq+442tGTTEhKXzXB/M=;
-        b=MJE0yRwoQzsnxhBdyQfT/5MJsLRMJJNbLzi6l5vW6qxHl5bqRp/XIPtRcshfhf1MXi
-         ylS/yD4UhWjMvhOPZHiOUs34DMwd3ylguODBJMUWyPTfH/BopgBdvZoWr6ulu4PuP+qe
-         PSJg+eQXemuAwlNiNq9hCnsrI3g41k+OsE+klK1Dq0pCO7n6T2gONMN+jQtgwl/Awrag
-         s0leS9JW4OhpgpJev6w9NZUvE1UHPaNEfgwgrXhRRJKJo219VmJNPxwKHorUR+4ardYd
-         5TGqVnuDjEDAObVVoAoW+NexE/QJex7LwaKZbSR5fiz0RZIIYEuHf8Wt4YHYadvfqj/3
-         rNTg==
-X-Gm-Message-State: AOAM530XMfU3U+EJgb0wemg2LzY3pj35cT57QRmYtFb/CbltHCsXBKw3
-        rzSZ80YqV2s8TTs0/YOtSp/HI5Ab9ROw9zwo
-X-Google-Smtp-Source: ABdhPJwqZV7pk1FvOSkguIjKJvFkFK+Tun3miq523wTMnXd9BGquVzYW29lvsrXbzl2PtJrmqLojuA==
-X-Received: by 2002:a1c:7d55:: with SMTP id y82mr3074513wmc.100.1598532878977;
-        Thu, 27 Aug 2020 05:54:38 -0700 (PDT)
-Received: from ziggy.stardust ([213.195.119.187])
-        by smtp.gmail.com with ESMTPSA id m11sm5436719wrn.11.2020.08.27.05.54.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Aug 2020 05:54:38 -0700 (PDT)
-Subject: Re: Aw: [PATCH 00/18] Convert arch/arm to use iommu-dma
-To:     Frank Wunderlich <frank-w@public-files.de>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk,
-        geert+renesas@glider.be, dri-devel@lists.freedesktop.org,
-        bjorn.andersson@linaro.org, thierry.reding@gmail.com,
-        laurent.pinchart@ideasonboard.com, digetx@gmail.com, s-anna@ti.com,
-        will@kernel.org, m.szyprowski@samsung.com,
-        linux-samsung-soc@vger.kernel.org, magnus.damm@gmail.com,
-        kyungmin.park@samsung.com, jonathanh@nvidia.com, agross@kernel.org,
-        yong.wu@mediatek.com, linux-media@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, inki.dae@samsung.com,
-        vdumpa@nvidia.com, linux-mediatek@lists.infradead.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        sw0312.kim@samsung.com, linux-kernel@vger.kernel.org,
-        t-kristo@ti.com, iommu@lists.linux-foundation.org
-References: <cover.1597931875.git.robin.murphy@arm.com>
- <trinity-d6be65d8-9086-42bc-b993-238b731cdf60-1598531519064@3c-app-gmx-bap26>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <d54f5d47-63aa-d07e-3875-6acce69073f3@gmail.com>
-Date:   Thu, 27 Aug 2020 14:54:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Thu, 27 Aug 2020 07:44:37 -0400
+Received: from lhreml710-chm.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 386C1FEB9735C037E07C;
+        Thu, 27 Aug 2020 12:26:06 +0100 (IST)
+Received: from localhost (10.227.96.57) by lhreml710-chm.china.huawei.com
+ (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1913.5; Thu, 27 Aug
+ 2020 12:26:05 +0100
+Date:   Thu, 27 Aug 2020 12:26:05 +0100
+From:   Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+CC:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Peter Rosin <peda@axentia.se>, Kukjin Kim <kgene@kernel.org>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        "Kevin Hilman" <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Beniamin Bia <beniamin.bia@analog.com>,
+        "Tomasz Duszynski" <tomasz.duszynski@octakon.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Bakker <xc-racer2@live.ca>,
+        "Alexandru Ardelean" <alexandru.ardelean@analog.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [PATCH 01/16] iio: accel: bma180: Simplify with dev_err_probe()
+Message-ID: <20200827122605.0000770f@huawei.com>
+In-Reply-To: <20200826145153.10444-1-krzk@kernel.org>
+References: <20200826145153.10444-1-krzk@kernel.org>
+Organization: Huawei tech. R&D (UK)  Ltd.
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-In-Reply-To: <trinity-d6be65d8-9086-42bc-b993-238b731cdf60-1598531519064@3c-app-gmx-bap26>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.227.96.57]
+X-ClientProxiedBy: lhreml715-chm.china.huawei.com (10.201.108.66) To
+ lhreml710-chm.china.huawei.com (10.201.108.61)
+X-CFilter-Loop: Reflected
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Wed, 26 Aug 2020 16:51:38 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-
-On 27/08/2020 14:31, Frank Wunderlich wrote:
-> Tested full series on bananapi r2 (mt7623/mt2701, 5.9-rc1 + hdmi-patches), works so far fbcon+x without issues
+> Common pattern of handling deferred probe can be simplified with
+> dev_err_probe().  Less code and also it prints the error value.
 > 
-> Tested-by: Frank Wunderlich <frank-w@public-files.de>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Please make sure to send v2 to linux-iio@vger.kernel.org
+
+> ---
+>  drivers/iio/accel/bma180.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
 > 
+> diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
+> index 5b7a467c7b27..448faed001fd 100644
+> --- a/drivers/iio/accel/bma180.c
+> +++ b/drivers/iio/accel/bma180.c
+> @@ -1000,19 +1000,15 @@ static int bma180_probe(struct i2c_client *client,
+>  		return ret;
+>  
+>  	data->vdd_supply = devm_regulator_get(dev, "vdd");
+> -	if (IS_ERR(data->vdd_supply)) {
+> -		if (PTR_ERR(data->vdd_supply) != -EPROBE_DEFER)
+> -			dev_err(dev, "Failed to get vdd regulator %d\n",
+> -				(int)PTR_ERR(data->vdd_supply));
+> -		return PTR_ERR(data->vdd_supply);
+> -	}
+> +	if (IS_ERR(data->vdd_supply))
+> +		return dev_err_probe(dev, PTR_ERR(data->vdd_supply),
+> +				     "Failed to get vdd regulator\n");
+> +
+>  	data->vddio_supply = devm_regulator_get(dev, "vddio");
+> -	if (IS_ERR(data->vddio_supply)) {
+> -		if (PTR_ERR(data->vddio_supply) != -EPROBE_DEFER)
+> -			dev_err(dev, "Failed to get vddio regulator %d\n",
+> -				(int)PTR_ERR(data->vddio_supply));
+> -		return PTR_ERR(data->vddio_supply);
+> -	}
+> +	if (IS_ERR(data->vddio_supply))
+> +		return dev_err_probe(dev, PTR_ERR(data->vddio_supply),
+> +				     "Failed to get vddio regulator\n");
+> +
+>  	/* Typical voltage 2.4V these are min and max */
+>  	ret = regulator_set_voltage(data->vdd_supply, 1620000, 3600000);
+>  	if (ret)
 
-Thanks for testing.
-
-Robin this is especially relevant for:
-[PATCH 09/18] iommu/mediatek-v1: Add IOMMU_DOMAIN_DMA support
-
-Regards,
-Matthias
