@@ -2,161 +2,182 @@ Return-Path: <SRS0=N7cY=CF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D95DC433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 21:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2935C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 21:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57AA62075B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 21:36:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 979842080C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 21:46:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="ppSg/+iq"
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="HbVfK0IO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbgH0Vgt (ORCPT
+        id S1726234AbgH0Vqw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 17:36:49 -0400
-Received: from ale.deltatee.com ([204.191.154.188]:56066 "EHLO
-        ale.deltatee.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbgH0Vgp (ORCPT
+        Thu, 27 Aug 2020 17:46:52 -0400
+Received: from mail-eopbgr130104.outbound.protection.outlook.com ([40.107.13.104]:1701
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726147AbgH0Vqw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Aug 2020 17:36:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=deltatee.com; s=20200525; h=Subject:Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Sender:
-        Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-        :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=zdm0S2PWnmi/4XqIOhf530rvRuJxiVED1nzE9jKGFv8=; b=ppSg/+iqJxad7jlIdh8Y9MCuj8
-        eSljdwyCXvCK6jPPd1tDLxSyQS3OfNvWLb9rtPcYH0tWwPfWbqN/SiMzEXvytS1UAroOMpWq4CKsr
-        xfvgurd/B+ph0RQQQ1EzYI+0ZpzdPV5/Uswr2aB44f4wnSsg3hKjVRT5VB+fo6TYDz8WScdTIrB1a
-        lqtdPM5OflsEyE9zX8HxA1hW1slt1BtGeyEXEyB6sDZqrjj08vGYlUHqbHHMmg7U/d8+fLz2ulJyX
-        sTKVbt8qvuIIoPlaapegTlcU5pwKMVdug8+j4AwArHv8UF09Cs7kGZZdcUEzA8cBdrj5P5NOXyHnm
-        VcG2ZJyQ==;
-Received: from s01060023bee90a7d.cg.shawcable.net ([24.64.145.4] helo=[192.168.0.10])
-        by ale.deltatee.com with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <logang@deltatee.com>)
-        id 1kBPZG-0002Dd-OC; Thu, 27 Aug 2020 15:36:23 -0600
-To:     Tom Murphy <murphyt7@tcd.ie>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        linux-mediatek@lists.infradead.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thu, 27 Aug 2020 17:46:52 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dcUHY+5BYwV2qUOhUTsPuQopCCJzmxI71sgneasKvifWZmpnDfBJpSENM6HeSC0n5QLQNuMfuCLRYsfW6LOOrq3U+0cO+rCQyCH6eCtd7syEHmnqXhx/dWHhOtgISs6JDzfm+P9to7HNFX9vLSVeC5PC9IxYgxlFDbEmcYLFRAABYm3z+8TsuJUhl/OOny+7wUYNZh74khYQOJ+hizHgRQXhCOS0AJa2HICtLOrHRVi29hbe8qaH27yn+IlB925r52T7fiYje5dT6qVUSnQbCJ4tb6HbWPHDTORtYBJ241nIoOmwWk5YfeknWq+CLIAIEpAQoXpO+/B4yIIQV3v6lQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YLL0g+LKSmRw27hs5C3fWN5Scep5juQsSUtJpPMHcqY=;
+ b=kWI/DaCWPx1GTO9AUDWclrWgzF1B6tJqrYp6oUla8ESo92B88rwtwiJF+yScpjmQB4MV7339/jC3EXZXBCOg8yihUhbP0sMB+vjRhAyq0EqFse4ucHJD5wn0w2SuH7E+fbUkjD43S4OyBz+FKP2iwvX/1hCxhHvIDOVvRg7751A4ocJ1CD6s+E73efyZIoIhL9mKMZ7GN7ijncOPMyvLMyFd/D2hv5FjAM4JLQq0pr4sbywwtkkPR9PoremiKMT7y1mX0czfdFyzKe7KMCopysNwgqIwctUWE8kvwGnLOi2BCU/eMolzgnkH7Wf73BhFDeXrL81ZBYbImi8/WEXkaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=axentia.se; dmarc=pass action=none header.from=axentia.se;
+ dkim=pass header.d=axentia.se; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YLL0g+LKSmRw27hs5C3fWN5Scep5juQsSUtJpPMHcqY=;
+ b=HbVfK0IOoGP+dCzEFDdLCUVbZxExzENAl67D1SJav2E2xGu0Dhj04x6a705PM9J+6tlqWpA+8YnwzUIWDiPvinkBKJ6RYxEMtiuii0ScHeiJDh7UOtFyUOEJcZM/jdQ8QQ8FDmEaKDPcBuOtXkIhiX3AXzGVsFnQJHW8qhWgrf4=
+Authentication-Results: st-md-mailman.stormreply.com; dkim=none (message not
+ signed) header.d=none;st-md-mailman.stormreply.com; dmarc=none action=none
+ header.from=axentia.se;
+Received: from DB8PR02MB5482.eurprd02.prod.outlook.com (2603:10a6:10:eb::29)
+ by DB8PR02MB5962.eurprd02.prod.outlook.com (2603:10a6:10:f8::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.24; Thu, 27 Aug
+ 2020 21:46:46 +0000
+Received: from DB8PR02MB5482.eurprd02.prod.outlook.com
+ ([fe80::3890:7b1:97a6:1e47]) by DB8PR02MB5482.eurprd02.prod.outlook.com
+ ([fe80::3890:7b1:97a6:1e47%7]) with mapi id 15.20.3326.021; Thu, 27 Aug 2020
+ 21:46:46 +0000
+Subject: Re: [PATCH v2 09/18] iio: afe: iio-rescale: Simplify with
+ dev_err_probe()
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         Kukjin Kim <kgene@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-References: <20191221150402.13868-1-murphyt7@tcd.ie>
- <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
- <20200529124523.GA11817@infradead.org>
- <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
- <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com>
- <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
- <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com>
- <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com>
-Date:   Thu, 27 Aug 2020 15:36:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Beniamin Bia <beniamin.bia@analog.com>,
+        Tomasz Duszynski <tomasz.duszynski@octakon.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
+References: <20200827192642.1725-1-krzk@kernel.org>
+ <20200827192642.1725-9-krzk@kernel.org>
+From:   Peter Rosin <peda@axentia.se>
+Organization: Axentia Technologies AB
+Message-ID: <f4a5777e-fe85-9f3f-4818-f7539f223adc@axentia.se>
+Date:   Thu, 27 Aug 2020 23:46:40 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.11.0
-MIME-Version: 1.0
-In-Reply-To: <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
+In-Reply-To: <20200827192642.1725-9-krzk@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 24.64.145.4
-X-SA-Exim-Rcpt-To: joonas.lahtinen@linux.intel.com, jani.nikula@linux.intel.com, dwmw2@infradead.org, kgene@kernel.org, linux-kernel@vger.kernel.org, cohuck@redhat.com, robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org, virtualization@lists.linux-foundation.org, tglx@linutronix.de, linux-tegra@vger.kernel.org, rodrigo.vivi@intel.com, linux-mediatek@lists.infradead.org, alex.williamson@redhat.com, intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, linux-s390@vger.kernel.org, gerald.schaefer@de.ibm.com, agross@kernel.org, linux-rockchip@lists.infradead.org, jonathanh@nvidia.com, krzk@kernel.org, maz@kernel.org, linux-samsung-soc@vger.kernel.org, jean-philippe@linaro.org, will@kernel.org, thierry.reding@gmail.com, julien.grall@arm.com, matthias.bgg@gmail.com, bjorn.andersson@linaro.org, dri-devel@lists.freedesktop.org, airlied@linux.ie, kvm@vger.kernel.org, iommu@lists.linux-foundation.org, hch@infradead.org, m.szyprowski@samsung.com, murphyt7@tcd.ie
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-ClientProxiedBy: HE1P192CA0004.EURP192.PROD.OUTLOOK.COM (2603:10a6:3:fe::14)
+ To DB8PR02MB5482.eurprd02.prod.outlook.com (2603:10a6:10:eb::29)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.13.3] (85.226.217.78) by HE1P192CA0004.EURP192.PROD.OUTLOOK.COM (2603:10a6:3:fe::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.19 via Frontend Transport; Thu, 27 Aug 2020 21:46:44 +0000
+X-Originating-IP: [85.226.217.78]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f0d4bfae-0706-4539-708d-08d84ad2b1ce
+X-MS-TrafficTypeDiagnostic: DB8PR02MB5962:
+X-Microsoft-Antispam-PRVS: <DB8PR02MB59628362E2AA2F8ED772AA22BC550@DB8PR02MB5962.eurprd02.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: tR4XeSsmbvq0R2m2TUu636PShIyT/3DwdsmOBVTNOX7ix7pxW28I+yvuhZtIq/ApT2Ds4mEPVXPqvYyVW8fFzaf1hTg+duNyPeO9cYMdQtcP8mlWnHPveAB7/IGLVNlqzKB9W9HpuMhjzCKlsbiieB5jIKFnUsXEEJde5fXVn8Ff/UzuptUhcs8WDR9tpFTBUzuy5/5qUegQZ8FYJJIoDe172glYc7aghUWUBzoTZWx2wKrAPIeKrr6VcehkyQnblVVCZbb8qi2ILTLsvaSpxTUi9qv/Rpa2FXfdqeGwi0BNXGDSyPDb+aOFQjmeOjLXyPLN8qFD7DzROKdYuO8x3Whmvxw/pih+MldBFpr3f3bO3s3oMC5oXWzTKN4i2b9MyFgB5ovESku9y2vP2fpxjw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR02MB5482.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(39840400004)(366004)(376002)(136003)(396003)(346002)(8936002)(8676002)(956004)(2616005)(6486002)(36756003)(26005)(31696002)(66476007)(7416002)(6666004)(478600001)(5660300002)(86362001)(66556008)(66946007)(2906002)(316002)(83380400001)(53546011)(16526019)(110136005)(31686004)(52116002)(36916002)(186003)(16576012)(921003)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: B72S+Ct1Nwk85TCX2Ck3euVygkPxRZrLCWqlTVsaFpCkGyYI96+SyZYBTu6YJAbefTgA+JnEPxtwC0LnyhQTSCjwWICjJki3PMs/57XrfzouMMBqpDAlx8gRH73n406acO+kHLDLsIVJrQpNmTJTecAbFF1FygD0w17HamxwXsyQQ4fzXgHw3aexOn9FIceGmS5ZU7F6rOQITbX562yavNXIxxssMLbNo5K8V6UfhhKRSU7I9YiY3WkJfdxRgBPyWM9i1sLwR9XJ3drAxSANXOhWqLA2UIZ4H3PC7yIYfBiazeSVjXgwhwJmyWyB13SMgzcI8PdV2NImzvXEBmuDZMXiV4JxXbaJNjl+PCraZy5q6w4djXDiH1PK90SYCO1wkNlm5px3nHrcz2e/srESuv6OjmMy2DCZZNcNdBOo7qbosj3UGWpB+iMjwneQVKAh7Z4dwJPUZzXyUMHecqv14UDwgkGPOUW1/nY1yHouvBRT/+Gbq221GwZTUxAhut737KfinyjC2XIINUksRNsgn/ysgjovx0qk9DdIq47UYP/1gcZ0rpw9t+y9M09yIcR7DVutVI0Gp7NuCH8brDqPKrBqfOcEa8Bf8nq7kftw1Pc1SfQUYapC/lxRqt4HMZSrOMLyuQjGKfiDWEOPUsuThQ==
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0d4bfae-0706-4539-708d-08d84ad2b1ce
+X-MS-Exchange-CrossTenant-AuthSource: DB8PR02MB5482.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2020 21:46:46.3307
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: H7pGlbZCqhZH9dLv7qJlmbA6DutWB4JMmWvkyXL7jCpNygxsI9A+zRRDWAio4XdZ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR02MB5962
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-
-On 2020-08-23 6:04 p.m., Tom Murphy wrote:
-> I have added a check for the sg_dma_len == 0 :
-> """
->  } __sgt_iter(struct scatterlist *sgl, bool dma) {
->         struct sgt_iter s = { .sgp = sgl };
+On 2020-08-27 21:26, Krzysztof Kozlowski wrote:
+> Common pattern of handling deferred probe can be simplified with
+> dev_err_probe().  Less code and also it prints the error value.
 > 
-> +       if (sgl && sg_dma_len(sgl) == 0)
-> +           s.sgp = NULL;
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > 
->         if (s.sgp) {
->             .....
-> """
-> at location [1].
-> but it doens't fix the problem.
+> ---
+> 
+> Changes since v1:
+> 1. Wrap dev_err_probe() lines at 100 character
+> ---
+>  drivers/iio/afe/iio-rescale.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iio/afe/iio-rescale.c b/drivers/iio/afe/iio-rescale.c
+> index 69c0f277ada0..8cd9645c50e8 100644
+> --- a/drivers/iio/afe/iio-rescale.c
+> +++ b/drivers/iio/afe/iio-rescale.c
+> @@ -276,11 +276,8 @@ static int rescale_probe(struct platform_device *pdev)
+>  	int ret;
+>  
+>  	source = devm_iio_channel_get(dev, NULL);
+> -	if (IS_ERR(source)) {
+> -		if (PTR_ERR(source) != -EPROBE_DEFER)
+> -			dev_err(dev, "failed to get source channel\n");
+> -		return PTR_ERR(source);
+> -	}
+> +	if (IS_ERR(source))
+> +		return dev_err_probe(dev, PTR_ERR(source), "failed to get source channel\n");
 
-Based on my read of the code, it looks like we also need to change usage
-of sgl->length... Something like the rough patch below, maybe?
+Hi!
 
-Also, Tom, do you have an updated version of the patchset to convert the
-Intel IOMMU to dma-iommu available? The last one I've found doesn't
-apply cleanly (I'm assuming parts of it have been merged in slightly
-modified forms).
+Sorry to be a pain...but...
 
-Thanks,
+I'm not a huge fan of adding *one* odd line breaking the 80 column
+recommendation to any file. I like to be able to fit multiple
+windows side by side in a meaningful way. Also, I don't like having
+a shitload of emptiness on my screen, which is what happens when some
+lines are longer and you want to see it all. I strongly believe that
+the 80 column rule/recommendation is still as valid as it ever was.
+It's just hard to read longish lines; there's a reason newspapers
+columns are quite narrow...
 
-Logan
+Same comment for the envelope-detector (3/18).
 
---
+You will probably never look at these files again, but *I* might have
+to revisit them for one reason or another, and these long lines will
+annoy me when that happens.
 
-diff --git a/drivers/gpu/drm/i915/i915_scatterlist.h
-b/drivers/gpu/drm/i915/i915
-index b7b59328cb76..9367ac801f0c 100644
---- a/drivers/gpu/drm/i915/i915_scatterlist.h
-+++ b/drivers/gpu/drm/i915/i915_scatterlist.h
-@@ -27,13 +27,19 @@ static __always_inline struct sgt_iter {
- } __sgt_iter(struct scatterlist *sgl, bool dma) {
-        struct sgt_iter s = { .sgp = sgl };
+You did wrap the lines for dpot-dac (12/18) - which is excellent - but
+that makes me curious as to what the difference is?
 
-+       if (sgl && !sg_dma_len(s.sgp))
-+               s.sgp = NULL;
-+
-        if (s.sgp) {
-                s.max = s.curr = s.sgp->offset;
--               s.max += s.sgp->length;
--               if (dma)
-+
-+               if (dma) {
-+                       s.max += sg_dma_len(s.sgp);
-                        s.dma = sg_dma_address(s.sgp);
--               else
-+               } else {
-+                       s.max += s.sgp->length;
-                        s.pfn = page_to_pfn(sg_page(s.sgp));
-+               }
-        }
+Cheers,
+Peter
 
-        return s;
+>  
+>  	sizeof_ext_info = iio_get_channel_ext_info_count(source);
+>  	if (sizeof_ext_info) {
+> 
+ 
