@@ -2,128 +2,87 @@ Return-Path: <SRS0=N7cY=CF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A729C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 20:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E203FC433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 20:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4A0A2071B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 20:02:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTu6o2U3"
+	by mail.kernel.org (Postfix) with ESMTP id C28A0208C9
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 20:52:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbgH0UC0 (ORCPT
+        id S1726307AbgH0UwF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 16:02:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53822 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbgH0UCZ (ORCPT
+        Thu, 27 Aug 2020 16:52:05 -0400
+Received: from smtp4-g21.free.fr ([212.27.42.4]:35916 "EHLO smtp4-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726147AbgH0UwF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Aug 2020 16:02:25 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6CDEC061264;
-        Thu, 27 Aug 2020 13:02:25 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id 17so4331181pfw.9;
-        Thu, 27 Aug 2020 13:02:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jZGo/LXMWA743P+olH7TRkE+L3lrjbqKbRZ3LxAQjPo=;
-        b=dTu6o2U3wIn+j1v+r3MXNSN35FUN+T2Ga+C6IEZhOqyDDBfBE3A597INaQykc/zK5N
-         e29lSW8oIy3von1EDSHzrXAVeRMAvW1ed+lYOELqagYL5sR2inJeqwfBbqXV4FK6sCMk
-         Hfm42l4h/LTOWilsOGK7JOMAPAdmKuTI7ri15EU81fGomSsgujOEykmO3j5u3b8d00JT
-         y6G7L3ZjYiblAjxovxtPZnHCI16Md4+vLhzEs1tK7lNien1ry4pAHrXAiN3tLj6C5xlc
-         yK8rJWblvVYrsonzu63yJ/EgonbAcYBoDqsF2KrONQ8csAQTA+38zWBBwcTvD1DPUifV
-         GLSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jZGo/LXMWA743P+olH7TRkE+L3lrjbqKbRZ3LxAQjPo=;
-        b=mS4xUPJAIs6/fgjpcWp1vmIfjkQyihn4P+Y7q2SRTA6rmUh37dVoBgGjG+zLH98zXG
-         5oRefqZBb003vDawErEhRVmO7eWcUL6jnV/4PobB2zvQyOgZBYsaw/jlnTw9YWjjJggv
-         nqGt2+LuM9K1GN+FoMNhGI5fhPa6KgJo8sp2aNPFLX0RTRfuyU2e8i8hTCOBRDG57nYv
-         xmY8rJfSMzJEaEHAnPZ255/+COmlkeCixqby9TtAirZM+sPhSCq9XOXRJJyppk+w/rSK
-         qJ0Ji0cQCZ7q27NQRbcpP5M8S9suLBFgpmJbTzcpFy8sV1ksiAfGvkSOG1d6YveXHE/M
-         +K/Q==
-X-Gm-Message-State: AOAM531aelGRC0R/4qKJpP5AacIF90RkXKZ9EykLBpmVjG+8rLH7NjQt
-        nMcx1PgBo4vcPgHMMhLy5IPlLTg2GjaRLFYzHng=
-X-Google-Smtp-Source: ABdhPJyrJVOQaAjVOgzTH9Ia08ZxKIpsXNc3Mfx5rESAlYI8qMYgqJ1+s8Yh5E+7TlXUKU+iWqHjdU0n6g2EX6jm0oE=
-X-Received: by 2002:aa7:95b8:: with SMTP id a24mr17478277pfk.219.1598558545190;
- Thu, 27 Aug 2020 13:02:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200827192642.1725-1-krzk@kernel.org> <20200827192642.1725-18-krzk@kernel.org>
-In-Reply-To: <20200827192642.1725-18-krzk@kernel.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 27 Aug 2020 23:02:08 +0300
-Message-ID: <CAHp75Vc4R_PkVSYFGNr0UO5yJ+dLGhVV-G7vznGnNu_aCVoTVQ@mail.gmail.com>
-Subject: Re: [PATCH v2 18/18] iio: magnetometer: iio-mux: Simplify with dev_err_probe()
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Peter Rosin <peda@axentia.se>, Kukjin Kim <kgene@kernel.org>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Thu, 27 Aug 2020 16:52:05 -0400
+Received: from [IPv6:2a01:cb1d:6eb:3100:ad4:cff:fee2:7ba1] (unknown [IPv6:2a01:cb1d:6eb:3100:ad4:cff:fee2:7ba1])
+        (Authenticated sender: sed)
+        by smtp4-g21.free.fr (Postfix) with ESMTPSA id DAD4519F61F;
+        Thu, 27 Aug 2020 22:50:30 +0200 (CEST)
+Subject: Re: [PATCH v2 13/13] ARM: s3c24xx: camif: include header with
+ prototypes and unify declaration
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
         Alexandre Torgue <alexandre.torgue@st.com>,
-        Tomasz Duszynski <tomasz.duszynski@octakon.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        patches@opensource.cirrus.com,
+        Sergio Prado <sergio.prado@e-labworks.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Lihua Yao <ylhuajnu@outlook.com>
+References: <20200804192654.12783-1-krzk@kernel.org>
+ <20200804192654.12783-14-krzk@kernel.org>
+ <159721917443.33733.7919188364233003142@swboyd.mtv.corp.google.com>
+ <CGME20200812091510eucas1p15944eb26bb496e20b9fadd609063a490@eucas1p1.samsung.com>
+ <CAK8P3a13u0KY0jzxNLs=irTs6ZSXyObKKTp-8KEmowcOZrZXxQ@mail.gmail.com>
+ <8066413c-367d-2f8d-3e7b-dacd954675be@samsung.com>
+ <CAK8P3a1xXe56k5nKuCJ-25h1VqWKRb9JGnFrr=SPg_icay-vZA@mail.gmail.com>
+ <6ccf14a9-802f-25b8-494d-e957cafd073d@samsung.com>
+ <20200812133109.GA15697@pi3>
+From:   Cedric Roux <sed@free.fr>
+Message-ID: <30eb6355-0749-8268-c87a-f389dc4b4f1b@free.fr>
+Date:   Thu, 27 Aug 2020 22:52:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20200812133109.GA15697@pi3>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 27, 2020 at 10:29 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Common pattern of handling deferred probe can be simplified with
-> dev_err_probe().  Less code and also it prints the error value.
+On 8/12/20 3:31 PM, Krzysztof Kozlowski wrote:
+> Or even more important - is it worth to spend effort and time on this?
+> If there is no single production system using recent Linux kernel, the
+> answer should be negative...
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/iio/multiplexer/iio-mux.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/iio/multiplexer/iio-mux.c b/drivers/iio/multiplexer/iio-mux.c
-> index 6910218fdb00..d219d4a86657 100644
-> --- a/drivers/iio/multiplexer/iio-mux.c
-> +++ b/drivers/iio/multiplexer/iio-mux.c
-> @@ -354,11 +354,8 @@ static int mux_probe(struct platform_device *pdev)
->                 return -ENODEV;
->
->         parent = devm_iio_channel_get(dev, "parent");
-> -       if (IS_ERR(parent)) {
-> -               if (PTR_ERR(parent) != -EPROBE_DEFER)
-> -                       dev_err(dev, "failed to get parent channel\n");
-> -               return PTR_ERR(parent);
-> -       }
-> +       if (IS_ERR(parent))
-> +               return dev_err_probe(dev, PTR_ERR(parent), "failed to get parent channel\n");
->
->         sizeof_ext_info = iio_get_channel_ext_info_count(parent);
->         if (sizeof_ext_info) {
-> --
-> 2.17.1
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Well, I have a server running on mini2440 with a not-too-young
+but not-too-old kernel. I don't have much time to test recent
+kernels though so I guess that doesn't count.
