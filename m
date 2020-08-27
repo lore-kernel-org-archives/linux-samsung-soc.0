@@ -2,160 +2,169 @@ Return-Path: <SRS0=N7cY=CF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFA6C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 21:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3236C28B49
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 23:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC5BA2084C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 21:52:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81D5820848
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 23:35:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="PSfhP/nx"
+	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="z5afeT1u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726266AbgH0Vw7 (ORCPT
+        id S1727845AbgH0Xe5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 17:52:59 -0400
-Received: from mail-am6eur05on2114.outbound.protection.outlook.com ([40.107.22.114]:20321
-        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726147AbgH0Vw6 (ORCPT
+        Thu, 27 Aug 2020 19:34:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58608 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728046AbgH0Xez (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Aug 2020 17:52:58 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KQveaOybCAe3SFj52kw9B0GAZ+tJAmAOPnuO1BCJRfFCWjEYiJB9TIyWfcVwASrz/EsZRNvz4EGzqSfX8IDk5jKuSPvkf4UGTk+FUm5DsmKe+RPWQUmhBqf0aGyA+eqZWc/rJB80Jy9lXioitUhz4j1mPpyyqjs6lSOgu+bzAGkPhfGH4QBrpxXPlv4RBfYV51S6hZfpN+Vbbel0HP7HKu9uR3pNuPQE89aLoHNWDAsEujC1aC7Vm3Vp/4/XvTHywcbHwEe7RHyvdbH39POhd9hs8RUw4shBAvvv67zEYkZ4GpVthyScovHes3sc5u1/elZI8WyimtILaV3/Ee47lA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DfsLL6oheHoLMdXAsX/wDJUY2XmjCK4ogCvSShWIc5g=;
- b=Eeh4u9TnB1uwWhWCDP7T5h1tjr+wKE+9aiPUuMf7+gh858ZuGj5fJcG7tMjd3E/N6wGP1Nj4l0iAfjYGG8CX9qF+n3wP3fELNwo1q2IUpjLNOuEMVIzPYsbOD9mD5rapioa8mQJ/m7B60Ff2K4Ro8ZvX8yuKKy2G79wilm1EOVvWfTkBo4IXfbxAvyRsWC3o3CmCFhlS/eKEYTabLwQp5PDbR8zCO+wenwVtzj1kHIPu7IJwGDsWZXlNRxE+HcLfIL6ACNdO8mjfNGweTQW1RNmceVVBohZ5l1p0ZMi8K2SGm/oMPfB/+odd4EnlxpLv9iQjnnZiJSBLwkhWM+JReQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axentia.se; dmarc=pass action=none header.from=axentia.se;
- dkim=pass header.d=axentia.se; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DfsLL6oheHoLMdXAsX/wDJUY2XmjCK4ogCvSShWIc5g=;
- b=PSfhP/nxpJPdDSlE8F8Mg7pPO2tsltCLp2npa2rNf2GPl8xFzEqodjXCQCv3LSBuo6eWtHLcerif1VCVAVfrJkmnbIlO+23UHin69+/FZehnGhjRZIPIkgm0bpTeL5qZcdW2PL2C46tTLfD7y63P2U8nQ7SKhUdXhyBQ+qrWNs0=
-Authentication-Results: st-md-mailman.stormreply.com; dkim=none (message not
- signed) header.d=none;st-md-mailman.stormreply.com; dmarc=none action=none
- header.from=axentia.se;
-Received: from DB8PR02MB5482.eurprd02.prod.outlook.com (2603:10a6:10:eb::29)
- by DB6PR02MB3176.eurprd02.prod.outlook.com (2603:10a6:6:1b::28) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.26; Thu, 27 Aug
- 2020 21:52:54 +0000
-Received: from DB8PR02MB5482.eurprd02.prod.outlook.com
- ([fe80::3890:7b1:97a6:1e47]) by DB8PR02MB5482.eurprd02.prod.outlook.com
- ([fe80::3890:7b1:97a6:1e47%7]) with mapi id 15.20.3326.021; Thu, 27 Aug 2020
- 21:52:54 +0000
-Subject: Re: [PATCH v2 18/18] iio: magnetometer: iio-mux: Simplify with
- dev_err_probe()
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Beniamin Bia <beniamin.bia@analog.com>,
-        Tomasz Duszynski <tomasz.duszynski@octakon.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-References: <20200827192642.1725-1-krzk@kernel.org>
- <20200827192642.1725-18-krzk@kernel.org>
-From:   Peter Rosin <peda@axentia.se>
-Organization: Axentia Technologies AB
-Message-ID: <325481bb-64b7-b063-f210-65d167888ca7@axentia.se>
-Date:   Thu, 27 Aug 2020 23:52:48 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
-In-Reply-To: <20200827192642.1725-18-krzk@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: sv-SE
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: HE1P195CA0004.EURP195.PROD.OUTLOOK.COM (2603:10a6:3:fd::14)
- To DB8PR02MB5482.eurprd02.prod.outlook.com (2603:10a6:10:eb::29)
+        Thu, 27 Aug 2020 19:34:55 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EBFCC061235
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Aug 2020 16:34:55 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id j9so6380755ilc.11
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Aug 2020 16:34:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WedloSq7WEmmdLIoMis0OnTbQ3vwipQyHuMeYXqSrtc=;
+        b=z5afeT1uAO8r4nUnyvdyA9XOFk/fx4rNEV7OzYIxSzIyRPXSSuP0kLR0uFLb5b32/u
+         2F9MWfvV9WNZ+AXIi+QLZ8p0NAvNTBNro8XHBAkvaJyY3ufO9Q62GJ4oCd3Mw0z1agKr
+         qFAx/HdJ+EmG1djyMZ9CSGcKQmWFu/zVKz5vJDxg6Nx++SMMng1dGMX9Fmd/wZDTKzHU
+         hK7p1r057Z3QOjx4Tgjjmk5k/beu18E/9gkjDnfpmsN6+7UO8xqzHsjZBJhd37zZ1RdM
+         prBipf1AI2muUbFcyfU3La5FJDcrT8wuyB+danzKbVnftQC2AzrWmBaIjshroZB9Cb96
+         Llhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WedloSq7WEmmdLIoMis0OnTbQ3vwipQyHuMeYXqSrtc=;
+        b=VVQSaBoKcjX5A7XQw6xVuQY3JOX9oI8LynMsUoVR6749cNEsqRObN38z6yrMpUiOA6
+         kriRL9WxvzRjcZuX9iz5rAwTWkq9mzzc6rOmSo1IJRiEq8co6xIaP4vuZ2lr3cRTPBxv
+         GQN2vq5xrfTDGCybneH+IFRcDKV5dSz1bpW3d+yYzBwJshjHAldTVffB6IIbwlU2/bQL
+         NsU37BUwEB/CXx1ClHDwgKC41B7JxbW/0jwr5x0apP9m53GaEE4zIU7j01HoUjTr/GXa
+         J3LVyMHqjrIUXqChSY1579soRZIH7NwWKerWATUzZYjRtQF+scgi50Nd60kkI245TEYW
+         2Uiw==
+X-Gm-Message-State: AOAM532LP9s/bS7jPvrRRjcD9JLqolZM/rk+zcORrYOP//0IL64CFp0h
+        3uDB9oEoGkjwOTHJoHDUYp+Hg8eOlR0a1rH71Q0j+A==
+X-Google-Smtp-Source: ABdhPJw0W2KNMSiVDCp6qP+D3bxqQi5szrf3hiteZz0kvkkYuvF0+Qn7lDLtjb0Ko+kJMcKtvMnZ3YU+iAfoJmlGVTk=
+X-Received: by 2002:a92:4f:: with SMTP id 76mr18588367ila.11.1598571293162;
+ Thu, 27 Aug 2020 16:34:53 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.13.3] (85.226.217.78) by HE1P195CA0004.EURP195.PROD.OUTLOOK.COM (2603:10a6:3:fd::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.19 via Frontend Transport; Thu, 27 Aug 2020 21:52:51 +0000
-X-Originating-IP: [85.226.217.78]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fb212ce4-0bee-44aa-b583-08d84ad38cfd
-X-MS-TrafficTypeDiagnostic: DB6PR02MB3176:
-X-Microsoft-Antispam-PRVS: <DB6PR02MB3176F05D83B87F5FF26795A6BC550@DB6PR02MB3176.eurprd02.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 7Z33sRAWscyOK035iaeJVLTdnhzfui+/SL/dYZv+D5DJ8bxNsTb31/4fzrHpO7s9/veHFvKZPTnbUydU8LaoOZJWFu38YO2vfwz2/8ufHQE4SYQkkDYRt4JNpcSk0piCklIsO2KBW7GFMZRbuOeQPTdcCRJK2lsYRfNdAjTuYkeIMIpR+WoXHgZQZo/JxUy6wIn1S5mQKiX/vmUSFyS2hgb91RZzyeXuoTnvIbz82a5btN5qEXRu78hWDIA6Y4W2oZMCaTqmkJxseSAgydaLogj5ZL7sDSPeX7TG2bCYnpZHmRiZCIzMqOgkFosaLmhQTuZxCVJv/K4lbPOLKo9srU55sS3ePzo9QfsosrObQExpAK2zDIywFJATCogTN1I9tEvcW8cwLixCxhHFJyPrFA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR02MB5482.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(346002)(396003)(366004)(136003)(39840400004)(36756003)(16576012)(8676002)(316002)(53546011)(186003)(8936002)(36916002)(83380400001)(2906002)(52116002)(26005)(66946007)(6486002)(66556008)(110136005)(478600001)(66476007)(86362001)(2616005)(16526019)(6666004)(7416002)(31686004)(956004)(31696002)(5660300002)(921003)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: aBSuJ1Qg631JDAQY1otRa8HjN8rHjUEZweseGyn0E9YoyjyYpOukbSE77sVeIrkNeE5SWzQBHt2fpTRZZcx/EyfUqKmjbIn5D4MF/SKWq4VDT9PlHuHGts/t+MnIinyLByybW+5591ZUmfe9dt/inNeo2jnO9lDHESvq1IehnZE/Av7gXTioDmOxiRiux/ul8Q/saL9ih3IzxHOTkDCtOAAe3HJiJ1I5zlbV+uH4Jsjnpvc459eeZb7PpMwcxXvWb3mcYM+gYemcrxtjukBn+m38tPV7tMl0Gms6OxbjOiIDqlzAfeRqD3KrWXwIphcK3G+Hlm5dOQgQs6krdfcYJL07HijOn+tn9S7mr5zi8ilJDaalahI8GlM8BrsbGuz4iFMJg5JwtQ6oyyKl87kgzNyaLvYgtvisjAj2S/ygKd7pv/9h4NwYFSvEW6N166y62vwcpa1TSyXg7p1PiFTPAc8iZbRPPXw0koRh8Kw/n/H+qsTIOhMEIWwp0yEmiIQ6FLEYNHZFX3TexwcmWsMmDmqWXIZ2o+MZymLWFqPaUO+bnb/1c4zrUSwA9VlYjSUFioJVDNHAh/iuFRE7S4zZ1ZS1l20IM8EeeWhpCKYojwsY4gwBAYCGp9IreCr4n0oepRzBBF1krTQJis+yBR2EkA==
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb212ce4-0bee-44aa-b583-08d84ad38cfd
-X-MS-Exchange-CrossTenant-AuthSource: DB8PR02MB5482.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2020 21:52:53.9925
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Gp8pe3RxEyeZgAS7g3nmk73OTM7sKAfnY0UfGUdpnPD0Z5saWMFXnqGXSIN85j8i
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR02MB3176
+References: <20191221150402.13868-1-murphyt7@tcd.ie> <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
+ <20200529124523.GA11817@infradead.org> <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
+ <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com> <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
+ <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com> <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
+ <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com>
+In-Reply-To: <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com>
+From:   Tom Murphy <murphyt7@tcd.ie>
+Date:   Fri, 28 Aug 2020 00:34:41 +0100
+Message-ID: <CALQxJuuS8KKUX_eWWSE81gsq5ePAETB-FoqRUSWFfqgr+B13gg@mail.gmail.com>
+Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org,
+        Alex Williamson <alex.williamson@redhat.com>,
+        linux-mediatek@lists.infradead.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi!
+On Thu, 27 Aug 2020 at 22:36, Logan Gunthorpe <logang@deltatee.com> wrote:
+>
+>
+>
+> On 2020-08-23 6:04 p.m., Tom Murphy wrote:
+> > I have added a check for the sg_dma_len == 0 :
+> > """
+> >  } __sgt_iter(struct scatterlist *sgl, bool dma) {
+> >         struct sgt_iter s = { .sgp = sgl };
+> >
+> > +       if (sgl && sg_dma_len(sgl) == 0)
+> > +           s.sgp = NULL;
+> >
+> >         if (s.sgp) {
+> >             .....
+> > """
+> > at location [1].
+> > but it doens't fix the problem.
+>
+> Based on my read of the code, it looks like we also need to change usage
+> of sgl->length... Something like the rough patch below, maybe?
+>
+> Also, Tom, do you have an updated version of the patchset to convert the
+> Intel IOMMU to dma-iommu available? The last one I've found doesn't
+> apply cleanly (I'm assuming parts of it have been merged in slightly
+> modified forms).
+>
 
-Wrong subject. Made me overlook it on the first pass...
+I'll try and post one in the next 24hours
 
-On 2020-08-27 21:26, Krzysztof Kozlowski wrote:
-> Common pattern of handling deferred probe can be simplified with
-> dev_err_probe().  Less code and also it prints the error value.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/iio/multiplexer/iio-mux.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/iio/multiplexer/iio-mux.c b/drivers/iio/multiplexer/iio-mux.c
-> index 6910218fdb00..d219d4a86657 100644
-> --- a/drivers/iio/multiplexer/iio-mux.c
-> +++ b/drivers/iio/multiplexer/iio-mux.c
-> @@ -354,11 +354,8 @@ static int mux_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  
->  	parent = devm_iio_channel_get(dev, "parent");
-> -	if (IS_ERR(parent)) {
-> -		if (PTR_ERR(parent) != -EPROBE_DEFER)
-> -			dev_err(dev, "failed to get parent channel\n");
-> -		return PTR_ERR(parent);
-> -	}
-> +	if (IS_ERR(parent))
-> +		return dev_err_probe(dev, PTR_ERR(parent), "failed to get parent channel\n");
-
-As per the comment for 9/18, I'm not a fan of the long line here...
-
-Cheers,
-Peter
-
->  
->  	sizeof_ext_info = iio_get_channel_ext_info_count(parent);
->  	if (sizeof_ext_info) {
-> 
+> Thanks,
+>
+> Logan
+>
+> --
+>
+> diff --git a/drivers/gpu/drm/i915/i915_scatterlist.h
+> b/drivers/gpu/drm/i915/i915
+> index b7b59328cb76..9367ac801f0c 100644
+> --- a/drivers/gpu/drm/i915/i915_scatterlist.h
+> +++ b/drivers/gpu/drm/i915/i915_scatterlist.h
+> @@ -27,13 +27,19 @@ static __always_inline struct sgt_iter {
+>  } __sgt_iter(struct scatterlist *sgl, bool dma) {
+>         struct sgt_iter s = { .sgp = sgl };
+>
+> +       if (sgl && !sg_dma_len(s.sgp))
+> +               s.sgp = NULL;
+> +
+>         if (s.sgp) {
+>                 s.max = s.curr = s.sgp->offset;
+> -               s.max += s.sgp->length;
+> -               if (dma)
+> +
+> +               if (dma) {
+> +                       s.max += sg_dma_len(s.sgp);
+>                         s.dma = sg_dma_address(s.sgp);
+> -               else
+> +               } else {
+> +                       s.max += s.sgp->length;
+>                         s.pfn = page_to_pfn(sg_page(s.sgp));
+> +               }
+>         }
+>
+>         return s;
