@@ -2,171 +2,87 @@ Return-Path: <SRS0=N7cY=CF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9223EC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 07:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5E9C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 12:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EF9322CB1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 07:06:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 581A322B40
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 12:38:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+Qfdi8o"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="KGLhb4lQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbgH0HFz (ORCPT
+        id S1729066AbgH0MhO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 03:05:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44914 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbgH0HFy (ORCPT
+        Thu, 27 Aug 2020 08:37:14 -0400
+Received: from mout.gmx.net ([212.227.17.22]:37021 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729064AbgH0MeH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Aug 2020 03:05:54 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 433B1C061264;
-        Thu, 27 Aug 2020 00:05:53 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id v12so5194018ljc.10;
-        Thu, 27 Aug 2020 00:05:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=brG5EoXG8FKt7Fq1ykdF4ABCLTAm7xSy7pDQ9zIqBmM=;
-        b=D+Qfdi8ojtdlFaIaWaofdcOW2dSpHJq/jTsM6dpwBevrFASrN1edAw8teUWVNerpgu
-         63ga9PzLJ1u8xo9GANebl8qwYj4EgB2Lt5+c2FZtDG0o0O+j7oIfdc233tEfNoJKuFe7
-         DUxpMDtEWgsp8LTUtik3F1caZRHo486JrXlztWvaxpavYrnD9ARqY6DH44IQECiMjSIF
-         cpTJQhP3AoFpI2jsFeq3dPzY4jmtYVXO8Sn8JUBkHLcyef3/N2jsvX1pnc2YLoznUsCF
-         HDRVd99ElVGCkW/Ai5VbnxNG4jsJBtsJfFUa7vCIIoL+cOkFeVgwwtrqBHrnRCjQFsrY
-         elFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=brG5EoXG8FKt7Fq1ykdF4ABCLTAm7xSy7pDQ9zIqBmM=;
-        b=lQKuy1WTIMBCmqUg63ksZAe4FLpxfq6BV0mJVT+My9DmuF+uVbXV5yu69nKtuACdAD
-         XAKIl6SPJpVPSaZ7KujG67/lic0wqkRUwjlduKbxAMmpAAO9FFoNfdMTqrwISR+Au2n6
-         48eWOoUENmDYqF/mmJpGjYYnVI2htnSeYg3g+ZOovPoycODeg8is55y/A9yFWJL3qQp0
-         XVr95gKWl/7XXZYeLaD5ZstW/4mRUaAq+bnzZmvRKKzY2RqqCDGLWlsi6SyQf6pz2Y56
-         wT4HN+Ujz4w2W+O9NTSYM6cRHKJmQPLwRO2FNcLr+cnoMFnM3S1fhYGvU5VMO0C/To0w
-         N0Zg==
-X-Gm-Message-State: AOAM5326EnNJ6pXRIYgcahR1QEbSrCQUTvyXH0EiPpXDurdYwH75rAkz
-        YP3biWrL7acvswuzUGUsF55EIFDkh5I=
-X-Google-Smtp-Source: ABdhPJydX9Y9oDAFN3zznJgsiPNaCKcyWdKxS8pHyPJWykfpSUQ7Hoqsd5NtTOYp9/AGdUkscMfEjA==
-X-Received: by 2002:a05:651c:106a:: with SMTP id y10mr9032794ljm.296.1598511951247;
-        Thu, 27 Aug 2020 00:05:51 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id i131sm294684lfd.27.2020.08.27.00.05.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Aug 2020 00:05:50 -0700 (PDT)
-Subject: Re: [PATCH 16/18] staging/media/tegra-vde: Clean up IOMMU workaround
-To:     Robin Murphy <robin.murphy@arm.com>, hch@lst.de, joro@8bytes.org,
-        linux@armlinux.org.uk
-Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        agross@kernel.org, bjorn.andersson@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, vdumpa@nvidia.com,
-        matthias.bgg@gmail.com, yong.wu@mediatek.com,
-        geert+renesas@glider.be, magnus.damm@gmail.com, t-kristo@ti.com,
-        s-anna@ti.com, laurent.pinchart@ideasonboard.com,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1597931875.git.robin.murphy@arm.com>
- <3535c205b9bce52556abbf2f63384fb38e009df9.1597931876.git.robin.murphy@arm.com>
- <07135a55-cbc9-83e5-60dc-731282192554@gmail.com>
- <cb12808b-7316-19db-7413-b7f852a6f8ae@arm.com>
- <62a72187-442b-2103-46c3-39d3cd999f54@gmail.com>
- <affe2cfb-19e8-8e55-acd0-7170e274ab34@arm.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <f1923a53-e799-e63c-fd22-4a6cca3b8212@gmail.com>
-Date:   Thu, 27 Aug 2020 10:05:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 27 Aug 2020 08:34:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1598531519;
+        bh=92IISck0Hh+QcjDct9i6ju3E7DbMlpwjZF7zW6G46Sc=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=KGLhb4lQ48yAcFw8dyYZZ4x3abl5+wHNWFde6rh76yn9TPOcDV2dbkia1bYvTngcK
+         7dd3CUH7vIzWvLAdPDqQQvSbIGjz+6C3cK0LESwWWnNOYWDreQs6J7TFzngFQN5veX
+         SkpUre3ZxsKqNnQ1AiFgZ92OsNfUIQ3UCQ6X9UmI=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [217.61.146.7] ([217.61.146.7]) by web-mail.gmx.net
+ (3c-app-gmx-bap26.server.lan [172.19.172.96]) (via HTTP); Thu, 27 Aug 2020
+ 14:31:59 +0200
 MIME-Version: 1.0
-In-Reply-To: <affe2cfb-19e8-8e55-acd0-7170e274ab34@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Message-ID: <trinity-d6be65d8-9086-42bc-b993-238b731cdf60-1598531519064@3c-app-gmx-bap26>
+From:   Frank Wunderlich <frank-w@public-files.de>
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     hch@lst.de, joro@8bytes.org, linux@armlinux.org.uk,
+        geert+renesas@glider.be, dri-devel@lists.freedesktop.org,
+        bjorn.andersson@linaro.org, thierry.reding@gmail.com,
+        laurent.pinchart@ideasonboard.com, digetx@gmail.com, s-anna@ti.com,
+        will@kernel.org, m.szyprowski@samsung.com,
+        linux-samsung-soc@vger.kernel.org, magnus.damm@gmail.com,
+        kyungmin.park@samsung.com, jonathanh@nvidia.com, agross@kernel.org,
+        yong.wu@mediatek.com, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, inki.dae@samsung.com,
+        vdumpa@nvidia.com, linux-mediatek@lists.infradead.org,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        sw0312.kim@samsung.com, linux-kernel@vger.kernel.org,
+        t-kristo@ti.com, iommu@lists.linux-foundation.org
+Subject: Aw: [PATCH 00/18] Convert arch/arm to use iommu-dma
+Content-Type: text/plain; charset=UTF-8
+Date:   Thu, 27 Aug 2020 14:31:59 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <cover.1597931875.git.robin.murphy@arm.com>
+References: <cover.1597931875.git.robin.murphy@arm.com>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:s+a4a7dJl6sfE8qr3afXfh3rFMEB0yoGDcQKLuHS4QzYWvUvvC45GFgO8lF9qXw9R52Wk
+ DtakmHS+HD6cGoa1Zil3uW/U+yFS9kxTAT+z6AMI2xcYorqC2HXtzYuOCqJCgtLpQ+XE0cJjSFZx
+ jxGxAyxNxltq5fYSEegUZWLgP9jut/anC9MQ4QvGWdC7Fx2DqQGzPbELk6qKjHDVZ/m5suQOG5WX
+ iSa5xQ1TVnlfnQDl3zDcjq+ZYocRCeCF/YEHBWcp/6xTs4r2KnkcTO/1Z2Mnufc+NBr+EgqeLN3I
+ Vw=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:FxwUSbP1mjI=:ttSQgY8yWxDnU00gqYZD9w
+ Z/qDxX2NghmiDYfDQ5KlK2CvVPv511mt50baxcV9OWViPRqrVksHRa4Q70leW/35miqZsjM4V
+ IO6h92zZspcakoDMbQBjPkuMoyi+5LQ/QFBqRCLiWwjAvFd059HIdZ3wIqx4Ym54NMmsqjccz
+ GSjwDTLDSlPZZ31m1rM3TpUiUEHmvR2WgipwWqz1AAq7WXhaIEH9QsZ2JnZLEEbOhxXoPsI/Z
+ TRcWMQZ1A9GV15KtQDIO2i/Dq3pFNOn6hQhy7q9DtWpXhyRvveQF9KRDJYqc0qTjBpvzvMKr7
+ cwEg2rxqBaJWgiTbO8eTHZQs26rh5cUZDyt0F7+vYHaCPFuefMRRBB057XIJ51LSUel/IEcBx
+ jKL0kBgE2bzG14g6AuFmvgYvmWEVN4O/y2NQMUrsTNo+oCPAkE4kNJZRWZcUmma+gyoOQcDkF
+ PF2HL5TN/+tF8l4QCRCJegf1NBi1AFsXmHuAdCOMo4mEr8RGOKC4Z9Q1zFeTTDPSLLcCl+zEE
+ Ii91uM5UaMUTvml0hGGBCxEsqbJsfJ8v3jTJ9teKmcwELpC6kt7ciWfOUlIPV4vD2eQdFtfwk
+ 1oipkVsSHlw6p58a4q/xNJukuLHryikdXoZi+l8M+576WxE3K6Ngz4VHUmx0HOrdPsQ3RuO6H
+ UQHfIQ/HTJp3cXIfVqtRO2Xhoda3GGGLYRUb8PYIOqNcBnvhX6Jze8vfjXKlOuNpMwLk=
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-24.08.2020 17:01, Robin Murphy пишет:
-...
->> Robin, thank you very much for the clarifications!
->>
->> In accordance to yours comments, this patch can't be applied until Tegra
->> SMMU will support IOMMU_DOMAIN_IDENTITY and implement def_domain_type()
->> callback that returns IOMMU_DOMAIN_IDENTITY for the VDE device.
->>
->> Otherwise you're breaking the VDE driver because
->> dma_buf_map_attachment() [1] returns the IOMMU SGT of the implicit
->> domain which is then mapped into the VDE's explicit domain [2], and this
->> is a nonsense.
-> 
-> It's true that iommu_dma_ops will do some work in the unattached default
-> domain, but non-coherent cache maintenance will still be performed
-> correctly on the underlying memory, which is really all that you care
-> about for this case. As for tegra_vde_iommu_map(), that seems to do the
-> right thing in only referencing the physical side of the scatterlist
-> (via iommu_map_sg()) and ignoring the DMA side, so things ought to work
-> out OK even if it is a little non-obvious.
+Tested full series on bananapi r2 (mt7623/mt2701, 5.9-rc1 + hdmi-patches), works so far fbcon+x without issues
 
-I'll need to double-check this, it's indeed not clear to me right now.
+Tested-by: Frank Wunderlich <frank-w@public-files.de>
 
-I see that if Tegra DRM driver uses implicit IOMMU domain, then when VDE
-driver imports DMA-buf from Terga DRM and the imported buffer will be
-auto-mapped to the implicit VDE IOVA [1].
-
-[1]
-https://elixir.bootlin.com/linux/v5.9-rc2/source/drivers/gpu/drm/tegra/gem.c#L574
-
->> Hence, either VDE driver should bypass iommu_dma_ops from the start or
->> it needs a way to kick out the ops, like it does this using ARM's
->> arm_iommu_detach_device().
->>
->>
->> The same applies to the Tegra GPU devices, otherwise you're breaking
->> them as well because Tegra DRM is sensible to implicit vs explicit
->> domain.
-> 
-> Note that Tegra DRM will only be as broken as its current state on
-> arm64, and I was under the impression that that was OK now - at least I
-> don't recall seeing any complaints since 43c5bf11a610. Although that
-> commit and the one before it are resolving the scalability issue that
-> they describe, it was very much in my mind at the time that they also
-> have the happy side-effect described above - the default domain isn't
-> *completely* out of the way, but it's far enough that sensible cases
-> should be able to work as expected.
-
-The Tegra DRM has a very special quirk for ARM32 that was added in this
-commit [2] and driver relies on checking of whether explicit or implicit
-IOMMU is used in order to activate the quirk.
-
-[2]
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=273da5a046965ccf0ec79eb63f2d5173467e20fa
-
-Once the implicit IOMMU is used for the DRM driver, the quirk no longer
-works (if I'm not missing something). This problem needs to be resolved
-before implicit IOMMU could be used by the Tegra DRM on ARM32.
-
->> BTW, I tried to apply this series and T30 doesn't boot anymore. I don't
->> have more info for now.
-> 
-> Yeah, I'm still trying to get to the bottom of whether it's actually
-> working as intended at all, even on my RK3288. So far my debugging
-> instrumentation has been confusingly inconclusive :/
-
-Surely it will take some time to resolve all the problems and it's great
-that you're pushing this work!
-
-I'll try to help with fixing the ARM32 Tegra side of the problems. I
-added this to my "TODO" list and should be able to take a closer look
-during of this/next weeks!
+regards Frank
