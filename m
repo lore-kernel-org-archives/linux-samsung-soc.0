@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61AE9C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 19:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD53C433E4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 19:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39B5B22CAF
+	by mail.kernel.org (Postfix) with ESMTP id D5E7122CAF
 	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 19:28:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1598556484;
-	bh=egvRrbp3SIvUqDFHa2E5ojGok/WhL9H00xW2YWNmE9c=;
+	bh=nO07OHVtqYTYYgYXG9kFf3Gxi+yDeW2oQQkBmlm177s=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QsuImuLXDjG8yqyAH3GDnmdrIGExg0j2uldA1c+7QWcYjdE68ZcMF6XeTq2c4dblF
-	 XlWFl6MCKIOHrEJOCGGJJgupyXvgGR4oWxjFNZ13QnyxHLdUhIYfOGfecko8d7BbFC
-	 NRUeSYuM5/zHmfwwBiNE4dzO50miJfYSO4xNA2pE=
+	b=MoAJeDhJsyIiurTufpdThTPtKKzkEriMmVYlNJgDGZzLhDRLLM+kJYENQXPKR7HqI
+	 ckZ0qKsOQ4238Fyf8F+zCBVc1dV2MgZoeBhjzRT//BvouGqE8+npL5HCW1DW4uCa06
+	 EfVMuTQkWnvR0P2tqAz2OFAY3QvQ8VJmPx3Rfo+A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbgH0T16 (ORCPT
+        id S1726894AbgH0T1v (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 15:27:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58832 "EHLO mail.kernel.org"
+        Thu, 27 Aug 2020 15:27:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726120AbgH0T14 (ORCPT
+        id S1726147AbgH0T1u (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Aug 2020 15:27:56 -0400
+        Thu, 27 Aug 2020 15:27:50 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8553D22B4D;
-        Thu, 27 Aug 2020 19:27:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A528207CD;
+        Thu, 27 Aug 2020 19:27:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598556476;
-        bh=egvRrbp3SIvUqDFHa2E5ojGok/WhL9H00xW2YWNmE9c=;
+        s=default; t=1598556469;
+        bh=nO07OHVtqYTYYgYXG9kFf3Gxi+yDeW2oQQkBmlm177s=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=YrqYvR2AFqNkPyVJe8qYG4DwCpi44gE0L+dWdiTNupGsESrLiEdUQ1/dg/fGiy2cE
-         aE4M1q2MnNgR1L12x9H27RkOAvWZKejkBXU8LcGWsGJAXulas6ZLM8WZ9HHczVpBtL
-         PywOhp7u4UvaZ2baefJuOq1Gta7E5W9ikO03GgvQ=
+        b=k2f7aVJFj4bXD51NGX2cAVppPH/aVQDanfa8llcV1nYctPMf6LmiIC/KJbJmb8WHD
+         9eSWB3C7sSdZhBRMpSTtKkNtAWEc3q0dVkFWVgYs3YhXfGIR2mRl5rCiKcZJ+9oSmf
+         RmEnwuBTnbt7fXl4frQrycGFpDI6oZGYa32S4y+c=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
@@ -64,9 +64,9 @@ To:     Jonathan Cameron <jic23@kernel.org>,
         linux-samsung-soc@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v2 05/18] iio: adc: ltc2497: Simplify with dev_err_probe()
-Date:   Thu, 27 Aug 2020 21:26:29 +0200
-Message-Id: <20200827192642.1725-5-krzk@kernel.org>
+Subject: [PATCH v2 04/18] iio: adc: exynos_adc: Simplify with dev_err_probe()
+Date:   Thu, 27 Aug 2020 21:26:28 +0200
+Message-Id: <20200827192642.1725-4-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200827192642.1725-1-krzk@kernel.org>
 References: <20200827192642.1725-1-krzk@kernel.org>
@@ -85,29 +85,29 @@ Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Changes since v1:
 1. Wrap dev_err_probe() lines at 100 character
 ---
- drivers/iio/adc/ltc2497-core.c | 9 ++-------
+ drivers/iio/adc/exynos_adc.c | 9 ++-------
  1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/iio/adc/ltc2497-core.c b/drivers/iio/adc/ltc2497-core.c
-index 9b8fd9c32364..d337ed96bbb0 100644
---- a/drivers/iio/adc/ltc2497-core.c
-+++ b/drivers/iio/adc/ltc2497-core.c
-@@ -180,13 +180,8 @@ int ltc2497core_probe(struct device *dev, struct iio_dev *indio_dev)
- 		return ret;
+diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+index 7d23b6c33284..40585a96c848 100644
+--- a/drivers/iio/adc/exynos_adc.c
++++ b/drivers/iio/adc/exynos_adc.c
+@@ -844,13 +844,8 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 	}
  
- 	ddata->ref = devm_regulator_get(dev, "vref");
--	if (IS_ERR(ddata->ref)) {
--		if (PTR_ERR(ddata->ref) != -EPROBE_DEFER)
--			dev_err(dev, "Failed to get vref regulator: %pe\n",
--				ddata->ref);
--
--		return PTR_ERR(ddata->ref);
+ 	info->vdd = devm_regulator_get(&pdev->dev, "vdd");
+-	if (IS_ERR(info->vdd)) {
+-		if (PTR_ERR(info->vdd) != -EPROBE_DEFER)
+-			dev_err(&pdev->dev,
+-				"failed getting regulator, err = %ld\n",
+-				PTR_ERR(info->vdd));
+-		return PTR_ERR(info->vdd);
 -	}
-+	if (IS_ERR(ddata->ref))
-+		return dev_err_probe(dev, PTR_ERR(ddata->ref), "Failed to get vref regulator\n");
++	if (IS_ERR(info->vdd))
++		return dev_err_probe(&pdev->dev, PTR_ERR(info->vdd), "failed getting regulator");
  
- 	ret = regulator_enable(ddata->ref);
- 	if (ret < 0) {
+ 	ret = regulator_enable(info->vdd);
+ 	if (ret)
 -- 
 2.17.1
 
