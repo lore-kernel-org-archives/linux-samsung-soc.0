@@ -1,187 +1,92 @@
-Return-Path: <SRS0=5lYo=CE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=N7cY=CF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BF7C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 18:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1B8C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 06:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B22FF20786
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Aug 2020 18:27:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aATDp49D"
+	by mail.kernel.org (Postfix) with ESMTP id 0700C207BC
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 06:52:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598511171;
+	bh=Sfh2/0Qp4TyFlFJssrYt1e6Hl6o55B3x4IwpqSUGhQM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DCCoey4FsyorW+OqVTYAfkPGH5doguZxTmNLy24k0gYfj6vaP0xGAK2qW9Suid5zd
+	 hkn33aB5N2g4OvJ0M1hyn9eg1WNcu0CaRMGIWW1C2O+i4WHO358rIf2SYF7rzhkrW/
+	 N1RqujP+zbFQI8KhVEsQkzGch7Juw0gJ9Fa774hM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbgHZS1g (ORCPT
+        id S1727107AbgH0Gwu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Aug 2020 14:27:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39624 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727950AbgHZS0y (ORCPT
+        Thu, 27 Aug 2020 02:52:50 -0400
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:36439 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbgH0Gwu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Aug 2020 14:26:54 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99B2EC061574;
-        Wed, 26 Aug 2020 11:26:53 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id x7so2834378wro.3;
-        Wed, 26 Aug 2020 11:26:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Bu4pOYOLpF8hHIWAO8QllDzn4fIcc5GK3Fq1pOjr02M=;
-        b=aATDp49DrNEi4o+dQ3aZilAVzYRQBAblxtl0UNdBGXKSmVRdFgpISE1zQyc7cNSsZ9
-         lW/EYpEmbA0Lu3HCV4gTg4WJlfsP9Ucv3zSATOZO1HiWK3Xl7zEtjeqoNbC6i1Ns4mAR
-         ZRq0r3vG4sM3xbUlDy8LPAizO4V/iBIepvQgRwBNTOXvKWuZklWHI7dz6KPp6mM5pW+8
-         e4/LtEjr5E3izgeXPBOlpPbB1jJpfchAVzL6KSrkYYKPwTjqCaTuOMWV4ujlyA488gay
-         4N7boVhG1b57UDIcUR6HQBrmSeSXAtmip16JCAoNV2oOOh9NdAZhe34FxbbIB/ucho4E
-         KVLQ==
+        Thu, 27 Aug 2020 02:52:50 -0400
+Received: by mail-ej1-f66.google.com with SMTP id l2so6189079eji.3;
+        Wed, 26 Aug 2020 23:52:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Bu4pOYOLpF8hHIWAO8QllDzn4fIcc5GK3Fq1pOjr02M=;
-        b=KMT3IIu+WYoS+2TjRhO2ASZGjQ1stICBN3bZz98cCXy0H5V67NQ9cx/0nOnoyDSFVm
-         S655VKHuuHugwYv6oXlhqHAByKuf6g8UUnhlBQmzjyGbF3hJ/p9JJiExDo0bf89WiDag
-         Yw5NLd7sb68w9XhQfUPMfGr3ncvRTfx3eVfjw4pny56QIvH94z20taUQz/EJbMEsCnEy
-         t/Qfid7r+pKyeJ2ANjAVh1hW+yv5SwPj48uzAGJQvi5wfZ8LO7JxQeJeKHI0UjO7imNr
-         2Yw4eaRjV4a9cQKGwYJGQX6/6mThq332GBJ7q2XvoHCqi/SSbPRKTHUEBKP71pyjOUZP
-         N+vA==
-X-Gm-Message-State: AOAM531uRpkhojzPLxSEH8WtuRUSROfEwKZQb6eE1hYseE3DBJtR+792
-        tOnaQh44sFPlvNC7RGw8S0tBJn/ndQxIGB5CSpc=
-X-Google-Smtp-Source: ABdhPJw6XRhfFzc0ep7oxhqIsPm6hA1ZYk5Rt4Z7Rf4kNW/IcW2BOalXNQMof7JDtDOsechyJwXMAwWd0bJeEtpmfUE=
-X-Received: by 2002:a5d:6085:: with SMTP id w5mr16385547wrt.362.1598466412249;
- Wed, 26 Aug 2020 11:26:52 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yjb4IAblmNaYNb4UyN8UvAWwkcCaPYr1YWuJlC155Xw=;
+        b=jKwiImRjcsHWQqPdS5M4AuYB362jWhMKB72U5NoGjuGsbYWP72O6kcFzV5LD4FDL9A
+         WaXEnHtJx8h0UbDhFldGZj4gfkZ7/Yc09xYGYDpA1t2kjZLuTMqEKVy5z4sDpbxjmPFU
+         7oN4QGKGVGiBRI+bDO6xKHh7jX5EyGLUZVq0SH5VMFeidAPUMR0M0gHZx+DofjD43IqE
+         csp8lNp4hBRv5EuNkIcBzvwjSN+W/PXSEwbR31HUa4gC2ArNnlBHsdsb8oD3ScgBDvW9
+         hLOhKsCnOun9lwWoWqGkENvklmwdT6ewqM7N2iE0I7B2f2nlc6Nf7Lqp8iBnfuKgu5sf
+         zPVg==
+X-Gm-Message-State: AOAM532N0dKiPVKDqUJ+ueHEqY/4V26RcU/tRf+xCeYTfdHFEj0EueFw
+        D/buAU4/RXWXfGiPzaGWmm8=
+X-Google-Smtp-Source: ABdhPJxFi7OZcJ8tVwLQiriRIQeG6696mgkLPi6JyH7EO4QW9OqOFKyOZ9PPbkYg6qtMEYqAYHQLDw==
+X-Received: by 2002:a17:906:1404:: with SMTP id p4mr19224149ejc.256.1598511168930;
+        Wed, 26 Aug 2020 23:52:48 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.216])
+        by smtp.googlemail.com with ESMTPSA id l25sm1146359ejg.11.2020.08.26.23.52.47
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Aug 2020 23:52:48 -0700 (PDT)
+Date:   Thu, 27 Aug 2020 08:52:46 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Tang Bin <tangbin@cmss.chinamobile.com>
+Cc:     gregkh@linuxfoundation.org, stern@rowland.harvard.edu,
+        kgene@kernel.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Zhang Shengju <zhangshengju@cmss.chinamobile.com>
+Subject: Re: [PATCH] usb: host: ohci-exynos: Fix error handling in
+ exynos_ohci_probe()
+Message-ID: <20200827065246.GA17964@kozik-lap>
+References: <20200826144931.1828-1-tangbin@cmss.chinamobile.com>
 MIME-Version: 1.0
-References: <20191221150402.13868-1-murphyt7@tcd.ie> <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
- <20200529124523.GA11817@infradead.org> <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
- <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com> <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
- <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com> <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
-In-Reply-To: <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 26 Aug 2020 14:26:40 -0400
-Message-ID: <CADnq5_PRuPtpzR-pCgXARRXVaC0vO=HdcGUkGQr7sDqUmq7G_Q@mail.gmail.com>
-Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
-To:     Tom Murphy <murphyt7@tcd.ie>
-Cc:     Logan Gunthorpe <logang@deltatee.com>, kvm@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-tegra@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-s390@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        linux-mediatek@lists.infradead.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:VIRTIO CORE, NET..." 
-        <virtualization@lists.linux-foundation.org>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200826144931.1828-1-tangbin@cmss.chinamobile.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 2:56 AM Tom Murphy <murphyt7@tcd.ie> wrote:
->
-> Hi Logan/All,
->
-> I have added a check for the sg_dma_len == 0 :
-> """
->  } __sgt_iter(struct scatterlist *sgl, bool dma) {
->         struct sgt_iter s = { .sgp = sgl };
->
-> +       if (sgl && sg_dma_len(sgl) == 0)
-> +           s.sgp = NULL;
->
->         if (s.sgp) {
->             .....
-> """
-> at location [1].
-> but it doens't fix the problem.
->
-> You're right though, this change does need to be made, this code
-> doesn't handle pages of sg_dma_len(sg) == 0 correctly
-> So my guess is that we have more bugs in other parts of the i915
-> driver (or there is a problem with my "sg_dma_len == 0" fix above).
-> I have been trying to spot where else the code might be buggy but I
-> haven't had any luck so far.
->
-> I'm doing a microconfernce (at LPC 2020) this wednesdays [1] on this
-> if you're interested in attending.
-> I'm hoping I can chat about it with a few people and find how can
-> reproduce and fix this issues. I don't have any more time I can give
-> to this unfortunately and it would be a shame for the work to go to
-> waste.
->
-> [0] https://github.com/torvalds/linux/blob/d012a7190fc1fd72ed48911e77ca97ba4521bccd/drivers/gpu/drm/i915/i915_scatterlist.h#L28
-> [1] https://linuxplumbersconf.org/event/7/contributions/846/
->
-> On Fri, 29 May 2020 at 22:21, Logan Gunthorpe <logang@deltatee.com> wrote:
-> >
-> >
-> >
-> > On 2020-05-29 3:11 p.m., Marek Szyprowski wrote:
-> > > Patches are pending:
-> > > https://lore.kernel.org/linux-iommu/20200513132114.6046-1-m.szyprowski@samsung.com/T/
-> >
-> > Cool, nice! Though, I still don't think that fixes the issue in
-> > i915_scatterlist.h given it still ignores sg_dma_len() and strictly
-> > relies on sg_next()/sg_is_last() to stop iterating -- and I suspect this
-> > is the bug that got in Tom's way.
-> >
-> > >> However, as Robin pointed out, there are other ugly tricks like stopping
-> > >> iterating through the SGL when sg_dma_len() is zero. For example, the
-> > >> AMD driver appears to use drm_prime_sg_to_page_addr_arrays() which does
-> > >> this trick and thus likely isn't buggy (otherwise, I'd expect someone to
-> > >> have complained by now seeing AMD has already switched to IOMMU-DMA.
+On Wed, Aug 26, 2020 at 10:49:31PM +0800, Tang Bin wrote:
+> If the function platform_get_irq() failed, the negative value
+> returned will not be detected here. So fix error handling in
+> exynos_ohci_probe(). And when get irq failed, the function
+> platform_get_irq() logs an error message, so remove redundant
+> message here.
+> 
+> Fixes: 62194244cf87 ("USB: Add Samsung Exynos OHCI diver")
+> Signed-off-by: Zhang Shengju <zhangshengju@cmss.chinamobile.com>
+> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
+> ---
+>  drivers/usb/host/ohci-exynos.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 
-We ran into the same issue with amdgpu and radeon when the AMD IOMMU
-driver was converted and had to fix it as well.  The relevant fixes
-were:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=42e67b479eab6d26459b80b4867298232b0435e7
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0199172f933342d8b1011aae2054a695c25726f4
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=47f7826c520ecd92ffbffe59ecaa2fe61e42ec70
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c0f83d164fb8f3a2b7bc379a6c1e27d1123a9eab
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Alex
-
-> > >
-> > > I'm not sure that this is a trick. Stopping at zero sg_dma_len() was
-> > > somewhere documented.
-> >
-> > Well whatever you want to call it, it is ugly to have some drivers doing
-> > one thing with the returned value and others assuming there's an extra
-> > zero at the end. It just causes confusion for people reading/copying the
-> > code. It would be better if they are all consistent. However, I concede
-> > stopping at zero should not be broken, presently.
-> >
-> > Logan
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Best regards,
+Krzysztof
