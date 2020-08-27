@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD53C433E4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 19:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0325FC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 19:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5E7122CAF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 19:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D83E022B4D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 19:28:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598556484;
-	bh=nO07OHVtqYTYYgYXG9kFf3Gxi+yDeW2oQQkBmlm177s=;
+	s=default; t=1598556488;
+	bh=63gj/uTCsFYMkt/AT+w/CDkwgSGu5Zbr+ERRB5p1wnM=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MoAJeDhJsyIiurTufpdThTPtKKzkEriMmVYlNJgDGZzLhDRLLM+kJYENQXPKR7HqI
-	 ckZ0qKsOQ4238Fyf8F+zCBVc1dV2MgZoeBhjzRT//BvouGqE8+npL5HCW1DW4uCa06
-	 EfVMuTQkWnvR0P2tqAz2OFAY3QvQ8VJmPx3Rfo+A=
+	b=sZBrmnrBxdFPIJ2WHfgIlIPdJkGaTaB2KXa4zo0PqI7N+yzFy6nERLRVQ+8mzmpu7
+	 uBzVkM2h/Km19XsqnFWtzeMJaO7cHBCEJiSR51x+YNlIg81ed+g9QqO2hHGd8RmQQR
+	 M69PxaUBvsMEpiUaHbum11poF+WHtcix9gUZxFWo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbgH0T1v (ORCPT
+        id S1727049AbgH0T2E (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 15:27:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58698 "EHLO mail.kernel.org"
+        Thu, 27 Aug 2020 15:28:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726147AbgH0T1u (ORCPT
+        id S1726120AbgH0T2D (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Aug 2020 15:27:50 -0400
+        Thu, 27 Aug 2020 15:28:03 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A528207CD;
-        Thu, 27 Aug 2020 19:27:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BB10207DF;
+        Thu, 27 Aug 2020 19:27:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598556469;
-        bh=nO07OHVtqYTYYgYXG9kFf3Gxi+yDeW2oQQkBmlm177s=;
+        s=default; t=1598556482;
+        bh=63gj/uTCsFYMkt/AT+w/CDkwgSGu5Zbr+ERRB5p1wnM=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=k2f7aVJFj4bXD51NGX2cAVppPH/aVQDanfa8llcV1nYctPMf6LmiIC/KJbJmb8WHD
-         9eSWB3C7sSdZhBRMpSTtKkNtAWEc3q0dVkFWVgYs3YhXfGIR2mRl5rCiKcZJ+9oSmf
-         RmEnwuBTnbt7fXl4frQrycGFpDI6oZGYa32S4y+c=
+        b=cxhJv2mRkaAjMGY7eC8aNZGedE/iwVcclAU3napyra8QfmIEYonkfRWoflQ/CCNi4
+         MBTT9/iN4vHxrRhLR7eBaVZ8tNSc7ZHXRkyrhaPEhwd8cPG6xcpUvlE3tHZ+7n/062
+         M9BToTnR2Z7Qn15KmL16A336fkhvJNaNX6VtP/EM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
@@ -64,9 +64,9 @@ To:     Jonathan Cameron <jic23@kernel.org>,
         linux-samsung-soc@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v2 04/18] iio: adc: exynos_adc: Simplify with dev_err_probe()
-Date:   Thu, 27 Aug 2020 21:26:28 +0200
-Message-Id: <20200827192642.1725-4-krzk@kernel.org>
+Subject: [PATCH v2 06/18] iio: adc: meson_saradc: Simplify with dev_err_probe()
+Date:   Thu, 27 Aug 2020 21:26:30 +0200
+Message-Id: <20200827192642.1725-6-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200827192642.1725-1-krzk@kernel.org>
 References: <20200827192642.1725-1-krzk@kernel.org>
@@ -79,35 +79,28 @@ Common pattern of handling deferred probe can be simplified with
 dev_err_probe().  Less code and also it prints the error value.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
 ---
+ drivers/iio/adc/meson_saradc.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-Changes since v1:
-1. Wrap dev_err_probe() lines at 100 character
----
- drivers/iio/adc/exynos_adc.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index 7d23b6c33284..40585a96c848 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -844,13 +844,8 @@ static int exynos_adc_probe(struct platform_device *pdev)
+diff --git a/drivers/iio/adc/meson_saradc.c b/drivers/iio/adc/meson_saradc.c
+index 93c2252c0b89..a9d06e8a576a 100644
+--- a/drivers/iio/adc/meson_saradc.c
++++ b/drivers/iio/adc/meson_saradc.c
+@@ -719,11 +719,8 @@ static int meson_sar_adc_temp_sensor_init(struct iio_dev *indio_dev)
+ 		if (ret == -ENODEV)
+ 			return 0;
+ 
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(indio_dev->dev.parent,
+-				"failed to get temperature_calib cell\n");
+-
+-		return ret;
++		return dev_err_probe(indio_dev->dev.parent, ret,
++				     "failed to get temperature_calib cell\n");
  	}
  
- 	info->vdd = devm_regulator_get(&pdev->dev, "vdd");
--	if (IS_ERR(info->vdd)) {
--		if (PTR_ERR(info->vdd) != -EPROBE_DEFER)
--			dev_err(&pdev->dev,
--				"failed getting regulator, err = %ld\n",
--				PTR_ERR(info->vdd));
--		return PTR_ERR(info->vdd);
--	}
-+	if (IS_ERR(info->vdd))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(info->vdd), "failed getting regulator");
- 
- 	ret = regulator_enable(info->vdd);
- 	if (ret)
+ 	priv->tsc_regmap =
 -- 
 2.17.1
 
