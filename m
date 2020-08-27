@@ -2,42 +2,64 @@ Return-Path: <SRS0=N7cY=CF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F26D5C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 15:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D13C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 15:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DAB8F22B40
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 15:10:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68DAE2087D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 15:22:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598541773;
+	bh=rQtSyGS19qhI73p4nj9F1AzSVLUD48s+T8e8dZDhTi0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Q50DwrhPIIPLKEm5iOrD/pxIP1azXPLKlHp91wrFuxzunY/smiRfiyc/SKmBE+9j4
+	 hURg9oo+Bb5Q5cG8Qs9lrnVa2AiN5OoTniDmzJ0tH5Y1NSgg8v+17ovquj5yIk20b+
+	 KfD0Enrqq6FQK2gf6yE2z/+8icG0M1I9LK43LLl8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbgH0Lqd (ORCPT
+        id S1728647AbgH0Las (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 07:46:33 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2697 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728869AbgH0Loh (ORCPT
+        Thu, 27 Aug 2020 07:30:48 -0400
+Received: from mail-ej1-f68.google.com ([209.85.218.68]:46824 "EHLO
+        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728358AbgH0L37 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Aug 2020 07:44:37 -0400
-Received: from lhreml710-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 386C1FEB9735C037E07C;
-        Thu, 27 Aug 2020 12:26:06 +0100 (IST)
-Received: from localhost (10.227.96.57) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1913.5; Thu, 27 Aug
- 2020 12:26:05 +0100
-Date:   Thu, 27 Aug 2020 12:26:05 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-CC:     Jonathan Cameron <jic23@kernel.org>,
+        Thu, 27 Aug 2020 07:29:59 -0400
+Received: by mail-ej1-f68.google.com with SMTP id d11so7096502ejt.13;
+        Thu, 27 Aug 2020 04:29:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iXm+BK1XseUH+QiQCNWCtflu2oIe/pb8DPKprrM24Fk=;
+        b=VmNKZOqsUZdpT6TBH75t1vcMfIHLkE16hloBQvND4FbjDgASpyiOz0zWfOhyiyvAEs
+         8ZB7VDuPlJoM85ibGG3i+nWTIQbbdxeuhrugWX2o1GH9espsJBV7HCkAGSdbac08coo5
+         xyvOgIFJGqwUr/+/YpLHxAQY85AALYDeAqvBAl4RRgSCLyRObwGVp43sFaJ2FEUZFO3u
+         C7o5g28NUuJNJ6SogaCA8FWd/a+1QLBF1haZcKCO144Nn6wpblkgcUOLib3jyrpzoA1E
+         brKVllNZL6yhpdtoUrgk2zGzm13F108hludGk2liBsH2WdTKi+BljjvKwYTZJtTZprbz
+         6oNQ==
+X-Gm-Message-State: AOAM531m5sX5kVRNUkmuzAUiIAj5Ftaqqb/jqqBwjYQ4SXuhqpMx/4Sz
+        fxDUM8BL4dKSDcVpVXgntaqNuj3y8lj2sQ==
+X-Google-Smtp-Source: ABdhPJyEwtZ0NCeIt0EbDqNivfcPk1e08kNJdKFzd3GWd/Lf1IHJnIxd+vov5vkjwPfN2ooxo9kx2A==
+X-Received: by 2002:a17:906:8d8:: with SMTP id o24mr19868792eje.384.1598527743036;
+        Thu, 27 Aug 2020 04:29:03 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.216])
+        by smtp.googlemail.com with ESMTPSA id o8sm1631358eji.34.2020.08.27.04.29.01
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Aug 2020 04:29:02 -0700 (PDT)
+Date:   Thu, 27 Aug 2020 13:28:59 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         Peter Rosin <peda@axentia.se>, Kukjin Kim <kgene@kernel.org>,
         Michael Hennerich <Michael.Hennerich@analog.com>,
-        "Kevin Hilman" <khilman@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
@@ -45,77 +67,40 @@ CC:     Jonathan Cameron <jic23@kernel.org>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
         Beniamin Bia <beniamin.bia@analog.com>,
-        "Tomasz Duszynski" <tomasz.duszynski@octakon.com>,
+        Tomasz Duszynski <tomasz.duszynski@octakon.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Jonathan Bakker <xc-racer2@live.ca>,
-        "Alexandru Ardelean" <alexandru.ardelean@analog.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
 Subject: Re: [PATCH 01/16] iio: accel: bma180: Simplify with dev_err_probe()
-Message-ID: <20200827122605.0000770f@huawei.com>
-In-Reply-To: <20200826145153.10444-1-krzk@kernel.org>
+Message-ID: <20200827112859.GA11849@kozik-lap>
 References: <20200826145153.10444-1-krzk@kernel.org>
-Organization: Huawei tech. R&D (UK)  Ltd.
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+ <20200827122605.0000770f@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.227.96.57]
-X-ClientProxiedBy: lhreml715-chm.china.huawei.com (10.201.108.66) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200827122605.0000770f@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 26 Aug 2020 16:51:38 +0200
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
-
-> Common pattern of handling deferred probe can be simplified with
-> dev_err_probe().  Less code and also it prints the error value.
+On Thu, Aug 27, 2020 at 12:26:05PM +0100, Jonathan Cameron wrote:
+> On Wed, 26 Aug 2020 16:51:38 +0200
+> Krzysztof Kozlowski <krzk@kernel.org> wrote:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Please make sure to send v2 to linux-iio@vger.kernel.org
-
-> ---
->  drivers/iio/accel/bma180.c | 20 ++++++++------------
->  1 file changed, 8 insertions(+), 12 deletions(-)
+> > Common pattern of handling deferred probe can be simplified with
+> > dev_err_probe().  Less code and also it prints the error value.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > 
-> diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
-> index 5b7a467c7b27..448faed001fd 100644
-> --- a/drivers/iio/accel/bma180.c
-> +++ b/drivers/iio/accel/bma180.c
-> @@ -1000,19 +1000,15 @@ static int bma180_probe(struct i2c_client *client,
->  		return ret;
->  
->  	data->vdd_supply = devm_regulator_get(dev, "vdd");
-> -	if (IS_ERR(data->vdd_supply)) {
-> -		if (PTR_ERR(data->vdd_supply) != -EPROBE_DEFER)
-> -			dev_err(dev, "Failed to get vdd regulator %d\n",
-> -				(int)PTR_ERR(data->vdd_supply));
-> -		return PTR_ERR(data->vdd_supply);
-> -	}
-> +	if (IS_ERR(data->vdd_supply))
-> +		return dev_err_probe(dev, PTR_ERR(data->vdd_supply),
-> +				     "Failed to get vdd regulator\n");
-> +
->  	data->vddio_supply = devm_regulator_get(dev, "vddio");
-> -	if (IS_ERR(data->vddio_supply)) {
-> -		if (PTR_ERR(data->vddio_supply) != -EPROBE_DEFER)
-> -			dev_err(dev, "Failed to get vddio regulator %d\n",
-> -				(int)PTR_ERR(data->vddio_supply));
-> -		return PTR_ERR(data->vddio_supply);
-> -	}
-> +	if (IS_ERR(data->vddio_supply))
-> +		return dev_err_probe(dev, PTR_ERR(data->vddio_supply),
-> +				     "Failed to get vddio regulator\n");
-> +
->  	/* Typical voltage 2.4V these are min and max */
->  	ret = regulator_set_voltage(data->vdd_supply, 1620000, 3600000);
->  	if (ret)
+> Please make sure to send v2 to linux-iio@vger.kernel.org
 
+Sure, my bad.
+
+Best regards,
+Krzysztof
