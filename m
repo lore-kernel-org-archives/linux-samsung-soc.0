@@ -2,100 +2,117 @@ Return-Path: <SRS0=N7cY=CF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19810C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 18:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E30EC433E3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 19:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 021CA22B4D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 18:18:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EDF722B4D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 Aug 2020 19:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598556452;
+	bh=lwcapEqh1mnH2bnwZTOp+jWQ1z3sGCNA5lWoA1rbyV4=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=J0/EjdoQVHeVpwH+tjMcXvCL+9fgM8k3rLx934HdRF3aw2QxJbYYwt4DaAlKn2dSQ
+	 Z54VDjQBbJkZPTm3Dv8twFXco7wlBOAuN8J7sNvEtIbc5DPnzwF45GGfdojy2zMevP
+	 Fsg0adDdX6RUtIYF5jVOmt3y5eqvA5h9/xshYZbg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbgH0SST (ORCPT
+        id S1726197AbgH0T1b (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 14:18:19 -0400
-Received: from foss.arm.com ([217.140.110.172]:32922 "EHLO foss.arm.com"
+        Thu, 27 Aug 2020 15:27:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726243AbgH0SSS (ORCPT
+        id S1726147AbgH0T1b (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Aug 2020 14:18:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35068101E;
-        Thu, 27 Aug 2020 11:18:17 -0700 (PDT)
-Received: from [10.57.40.122] (unknown [10.57.40.122])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C62533F68F;
-        Thu, 27 Aug 2020 11:18:13 -0700 (PDT)
-Subject: Re: [PATCH 13/18] iommu/tegra: Add IOMMU_DOMAIN_DMA support
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     geert+renesas@glider.be, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, laurent.pinchart@ideasonboard.com,
-        digetx@gmail.com, will@kernel.org, hch@lst.de,
-        linux-samsung-soc@vger.kernel.org, magnus.damm@gmail.com,
-        linux@armlinux.org.uk, jonathanh@nvidia.com, agross@kernel.org,
-        kyungmin.park@samsung.com, linux-media@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, inki.dae@samsung.com,
-        linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com,
-        linux-arm-kernel@lists.infradead.org, sw0312.kim@samsung.com,
-        linux-kernel@vger.kernel.org, t-kristo@ti.com,
-        iommu@lists.linux-foundation.org
-References: <cover.1597931875.git.robin.murphy@arm.com>
- <cd11bc7851dbe46db6d14821a942678047331913.1597931876.git.robin.murphy@arm.com>
- <20200827154502.GA1660457@ulmo>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <f6697e60-286c-f7c7-39d1-fe0784cc3e6d@arm.com>
-Date:   Thu, 27 Aug 2020 19:18:12 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
-MIME-Version: 1.0
-In-Reply-To: <20200827154502.GA1660457@ulmo>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Thu, 27 Aug 2020 15:27:31 -0400
+Received: from localhost.localdomain (unknown [194.230.155.216])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06074207CD;
+        Thu, 27 Aug 2020 19:27:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598556450;
+        bh=lwcapEqh1mnH2bnwZTOp+jWQ1z3sGCNA5lWoA1rbyV4=;
+        h=From:To:Subject:Date:From;
+        b=vDACDjMN6Ffk+dwJKEXdyHNYQl1LSRhWd4rY8FxqjQSlr3i+YVbeUVTTxaYwPuBLG
+         Lr/cR0dCM+SEssxNVdI6rwYQTXpXr1iBRY3N+itjh9g+lhC9yZbflbrJ7DfFgCM4Ju
+         wV+IT1ulsV3Xks9GuVRprBDSrQNGt8UtfSolXT94=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Peter Rosin <peda@axentia.se>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Beniamin Bia <beniamin.bia@analog.com>,
+        Tomasz Duszynski <tomasz.duszynski@octakon.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH v2 01/18] iio: accel: bma180: Simplify with dev_err_probe()
+Date:   Thu, 27 Aug 2020 21:26:25 +0200
+Message-Id: <20200827192642.1725-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020-08-27 16:45, Thierry Reding wrote:
-> On Thu, Aug 20, 2020 at 04:08:32PM +0100, Robin Murphy wrote:
->> Now that arch/arm is wired up for default domains and iommu-dma,
->> implement the corresponding driver-side support for DMA domains.
->>
->> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->> ---
->>   drivers/iommu/tegra-smmu.c | 37 +++++++++++++++++++++----------------
->>   1 file changed, 21 insertions(+), 16 deletions(-)
-> 
-> We can't do that yet because it will currently still break for use-cases
-> such as display where we don't properly set up identity mappings during
-> boot. The result is that the dma-iommu code will enable translations
-> before the driver gets a chance to set up any mappings and if the
-> display controller was left on by the bootloader, scanning out a splash
-> screen, this causes faults between the point where dma-iommu is being
-> set up for the display controller and where the display controller
-> starts mapping its own buffers (rather than the ones mapped by the
-> bootloader).
+Common pattern of handling deferred probe can be simplified with
+dev_err_probe().  Less code and also it prints the error value.
 
-Rest assured that I understand the situation all too well ;) As with 
-tegra-gart, the unspoken point here is that since tegra-smmu implements 
-of_xlate(), then arm_setup_iommu_dma_ops() must already be causing the 
-exact same problem, no? This patch only seeks to move any existing 
-behaviour over to the common backend, regardless of whether it was ever 
-really appropriate in the first place.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/iio/accel/bma180.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-> That said, I do have a series that I've been carrying around for longer
-> than I've wanted that does exactly this for Tegra SMMU and I'd prefer if
-> you could drop this particular change from your series so that I can
-> keep working on resolving the identity mapping issues first.
+diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
+index 5b7a467c7b27..448faed001fd 100644
+--- a/drivers/iio/accel/bma180.c
++++ b/drivers/iio/accel/bma180.c
+@@ -1000,19 +1000,15 @@ static int bma180_probe(struct i2c_client *client,
+ 		return ret;
+ 
+ 	data->vdd_supply = devm_regulator_get(dev, "vdd");
+-	if (IS_ERR(data->vdd_supply)) {
+-		if (PTR_ERR(data->vdd_supply) != -EPROBE_DEFER)
+-			dev_err(dev, "Failed to get vdd regulator %d\n",
+-				(int)PTR_ERR(data->vdd_supply));
+-		return PTR_ERR(data->vdd_supply);
+-	}
++	if (IS_ERR(data->vdd_supply))
++		return dev_err_probe(dev, PTR_ERR(data->vdd_supply),
++				     "Failed to get vdd regulator\n");
++
+ 	data->vddio_supply = devm_regulator_get(dev, "vddio");
+-	if (IS_ERR(data->vddio_supply)) {
+-		if (PTR_ERR(data->vddio_supply) != -EPROBE_DEFER)
+-			dev_err(dev, "Failed to get vddio regulator %d\n",
+-				(int)PTR_ERR(data->vddio_supply));
+-		return PTR_ERR(data->vddio_supply);
+-	}
++	if (IS_ERR(data->vddio_supply))
++		return dev_err_probe(dev, PTR_ERR(data->vddio_supply),
++				     "Failed to get vddio regulator\n");
++
+ 	/* Typical voltage 2.4V these are min and max */
+ 	ret = regulator_set_voltage(data->vdd_supply, 1620000, 3600000);
+ 	if (ret)
+-- 
+2.17.1
 
-That would mean you'd see a functional change from the final patch, 
-wherein nothing would ever be able to get translation unless drivers do 
-their own explicit IOMMU API management. If you definitely want that 
-change then OK, but it would still be nice to do it "properly" with 
-IOMMU_DOMAIN_IDENTITY support, rather than just forcibly failing default 
-domain allocation. I'm having a go at reworking the tegra-gart patch in 
-that direction, so I can certainly try it for tegra-smmu as well.
-
-Robin.
