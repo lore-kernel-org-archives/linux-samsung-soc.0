@@ -2,170 +2,94 @@ Return-Path: <SRS0=3Fgs=CG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B254C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 06:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AECB4C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 06:32:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5EC220757
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 06:24:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DA1F208CA
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 06:32:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598595889;
-	bh=PnVOZ3/btnQu+55XKtuBogX6ON1ZvzYWAch/mGvQdhQ=;
+	s=default; t=1598596357;
+	bh=2X7zmK7wK9Xn4Y6nx2scXDe244y4yNKZ0j+7lmFrv9Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=uvLFq+717M0JSj1anYfbrSf6ABhA6PdezHl8EEPtICbU3EbHDSCpN82U4p3xgBAxB
-	 E6yYi//ZAYcpe1y0CQb6Kj0owY+Gz4k6mYFTaS0naFIT0+qKtUl/iGIhr4hW/sB6Ig
-	 /NpvfsaFoiET0tu1QnxZFMneT6+drIH8e5YA8mls=
+	b=D1sOxcfty8N5dsaDWVMT6RWW4LCC226Qej2k/uBfZQd8JzbvBsDy50LIxtJO/Mpi7
+	 oswet3+E5K4CCPoXJ4OBWzgnbYYaZAUkm/L9uoQNV532Qaa9ploEYYDiBc0OODfojV
+	 kYHJvXQoeaKKmlWA5VfV8Bx6+rIHEzmvE9gbk7wA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbgH1GYt (ORCPT
+        id S1726798AbgH1Gcc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Aug 2020 02:24:49 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38138 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbgH1GYt (ORCPT
+        Fri, 28 Aug 2020 02:32:32 -0400
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:33659 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725849AbgH1Gcc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Aug 2020 02:24:49 -0400
-Received: by mail-ed1-f68.google.com with SMTP id b2so143178edw.5;
-        Thu, 27 Aug 2020 23:24:47 -0700 (PDT)
+        Fri, 28 Aug 2020 02:32:32 -0400
+Received: by mail-ej1-f66.google.com with SMTP id a21so81544ejp.0;
+        Thu, 27 Aug 2020 23:32:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=p5CxlDCkzVcslzoI2Y1jCiSF6kba4WwnH5Gi/cefvyw=;
-        b=A7xZo3sEwDq1/H+BBUomIsJU6WyFanOBQUHo3TMTDGltE2kvlvsXNSPA0QOdqvP83/
-         MimFnYqP80AjRw6Q4twPkuVoW56FbenTNB5lSCcPHpFPtltCDFlHKLSM0rqWP3/f5EzH
-         NSzuugftvm04cHpd+oA84iibgy+kSXWdMCkkBge+gx7o1+EUWd3VBtuVkAF81D2dLYYT
-         fhiKHZ7EHl00p8PZCBvLpsXv9Ueq/ZpWgp9IX9VDv04o9bXMnnDqwpKgTp+qidI9kTMM
-         Jqbc3SxUL+OoE48h382crlhxo73Crpilsn+d9assNp1uvJZaLtMLs1/8MHcWNxshXGAp
-         A+EQ==
-X-Gm-Message-State: AOAM532eBVHFBCmXnm2a5k2doo2qW9pkBNHtHoAczzUJRoy3CqLZJQSq
-        OkbPcEKXENioM2BgkbnMz7g=
-X-Google-Smtp-Source: ABdhPJxeW0KD9hKV2DDa/EdMjU+5aNFXnsb+vG7w/NJJBOIDbbnxf68rltSFEJDK0Zq+nf99uGbtHw==
-X-Received: by 2002:a05:6402:2039:: with SMTP id ay25mr310806edb.87.1598595886637;
-        Thu, 27 Aug 2020 23:24:46 -0700 (PDT)
+        bh=iJ6Jz3iSoebkwphXOK+PaTApY88wa2v9adyL9D4joAI=;
+        b=VlZC1lTkgWmWLiZOEFUikdRKK1YgtkMrW+FMEV7L9il2uZ4y3hKwdC8MfIn+9L3I3B
+         f4kqXeQLG9bla22AyLfKE+lLv6HRoa7HK7HF3WzpWpgXAP6e/uMj3nLZfdcBpFNh8dnR
+         5lRB6WhAvjvw48fjQqWLV/LmzB7NDSmfuMLkQf75EGp2dDBjZybj97ptSj4yj5jTaj6O
+         +h7pKRHTsC0zLWvQ+yl+kx8CCsmHhq1OJrm6bjP60n8T2hnvwWNWMHu1ZPUdS1HH5q5R
+         v33nMcI90t5bJzxE0tLBX/Qr1XO9GvpK8BGY/1CYAyOGP0IIJBDoa/Kwzc8QjP3zDuPm
+         GutQ==
+X-Gm-Message-State: AOAM5308mwed2QRDHiMzc3CHbwkU6V768F393aLRuiI8qjYUqlblx+1Q
+        vpr7PfRLCG1b3kP4DY/QtGHtDPW00XVKs0HX
+X-Google-Smtp-Source: ABdhPJzl0qJn7ybQfapFfD4JkE3UKFatZaQGsEJmVNgsEi7UXwduBVsx4zJFgcla8Z5fo4Kh75OgMg==
+X-Received: by 2002:a17:906:5f8f:: with SMTP id a15mr266055eju.291.1598596349754;
+        Thu, 27 Aug 2020 23:32:29 -0700 (PDT)
 Received: from pi3 ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id w20sm3809310ejc.77.2020.08.27.23.24.44
+        by smtp.googlemail.com with ESMTPSA id i35sm149056edi.41.2020.08.27.23.32.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Aug 2020 23:24:46 -0700 (PDT)
-Date:   Fri, 28 Aug 2020 08:24:43 +0200
+        Thu, 27 Aug 2020 23:32:29 -0700 (PDT)
+Date:   Fri, 28 Aug 2020 08:32:26 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Beniamin Bia <beniamin.bia@analog.com>,
-        Tomasz Duszynski <tomasz.duszynski@octakon.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 09/18] iio: afe: iio-rescale: Simplify with
- dev_err_probe()
-Message-ID: <20200828062443.GA17343@pi3>
-References: <20200827192642.1725-1-krzk@kernel.org>
- <20200827192642.1725-9-krzk@kernel.org>
- <f4a5777e-fe85-9f3f-4818-f7539f223adc@axentia.se>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+Subject: Re: [PATCH 1/3] clk: samsung: Add clk ID definitions for the CPU
+ parent clocks
+Message-ID: <20200828063226.GA17406@pi3>
+References: <CGME20200826171539eucas1p2e999972d3e7dd6dd701e312548933e87@eucas1p2.samsung.com>
+ <20200826171529.23618-1-s.nawrocki@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f4a5777e-fe85-9f3f-4818-f7539f223adc@axentia.se>
+In-Reply-To: <20200826171529.23618-1-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 27, 2020 at 11:46:40PM +0200, Peter Rosin wrote:
-> On 2020-08-27 21:26, Krzysztof Kozlowski wrote:
-> > Common pattern of handling deferred probe can be simplified with
-> > dev_err_probe().  Less code and also it prints the error value.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > 
-> > ---
-> > 
-> > Changes since v1:
-> > 1. Wrap dev_err_probe() lines at 100 character
-> > ---
-> >  drivers/iio/afe/iio-rescale.c | 7 ++-----
-> >  1 file changed, 2 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/iio/afe/iio-rescale.c b/drivers/iio/afe/iio-rescale.c
-> > index 69c0f277ada0..8cd9645c50e8 100644
-> > --- a/drivers/iio/afe/iio-rescale.c
-> > +++ b/drivers/iio/afe/iio-rescale.c
-> > @@ -276,11 +276,8 @@ static int rescale_probe(struct platform_device *pdev)
-> >  	int ret;
-> >  
-> >  	source = devm_iio_channel_get(dev, NULL);
-> > -	if (IS_ERR(source)) {
-> > -		if (PTR_ERR(source) != -EPROBE_DEFER)
-> > -			dev_err(dev, "failed to get source channel\n");
-> > -		return PTR_ERR(source);
-> > -	}
-> > +	if (IS_ERR(source))
-> > +		return dev_err_probe(dev, PTR_ERR(source), "failed to get source channel\n");
+On Wed, Aug 26, 2020 at 07:15:27PM +0200, Sylwester Nawrocki wrote:
+> Add clock ID definitions for the CPU parent clocks for SoCs
+> which don't have such definitions yet. This will allow us to
+> reference the parent clocks directly by cached struct clk_hw
+> pointers in the clock provider, rather than doing clk lookup
+> by name.
 > 
-> Hi!
-> 
-> Sorry to be a pain...but...
-> 
-> I'm not a huge fan of adding *one* odd line breaking the 80 column
-> recommendation to any file. I like to be able to fit multiple
-> windows side by side in a meaningful way. Also, I don't like having
-> a shitload of emptiness on my screen, which is what happens when some
-> lines are longer and you want to see it all. I strongly believe that
-> the 80 column rule/recommendation is still as valid as it ever was.
-> It's just hard to read longish lines; there's a reason newspapers
-> columns are quite narrow...
-> 
-> Same comment for the envelope-detector (3/18).
-> 
-> You will probably never look at these files again, but *I* might have
-> to revisit them for one reason or another, and these long lines will
-> annoy me when that happens.
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  include/dt-bindings/clock/exynos5250.h | 4 +++-
+>  include/dt-bindings/clock/exynos5420.h | 5 +++++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
 
-Initially I posted it with 80-characters wrap. Then I received a comment
-- better to stick to the new 100, as checkpatch accepts it.
 
-Now you write, better to go back to 80.
-
-Maybe then someone else will write to me, better to go to 100.
-
-And another person will reply, no, coding style still mentions 80, so
-keep it at 80.
-
-Sure guys, please first decide which one you prefer, then I will wrap it
-accordingly. :)
-
-Otherwise I will just jump from one to another depending on one person's
-personal preference.
-
-If there is no consensus among discussing people, I find this 100 line
-more readable, already got review, checkpatch accepts it so if subsystem
-maintainer likes it, I prefer to leave it like this.
-
-> You did wrap the lines for dpot-dac (12/18) - which is excellent - but
-> that makes me curious as to what the difference is?
-
-Didn't fit into limit of 100.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
-
-
