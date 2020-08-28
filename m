@@ -2,76 +2,74 @@ Return-Path: <SRS0=3Fgs=CG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57552C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 07:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2D0C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 08:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 153882078A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 07:11:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C1B120C56
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 08:25:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=invensense.com header.i=@invensense.com header.b="ag/+CjI3";
-	dkim=pass (1024-bit key) header.d=invensense.onmicrosoft.com header.i=@invensense.onmicrosoft.com header.b="K0OybrXN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ECtC8Qr2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726450AbgH1HLN (ORCPT
+        id S1727971AbgH1IZb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Aug 2020 03:11:13 -0400
-Received: from mx0b-00328301.pphosted.com ([148.163.141.47]:33768 "EHLO
-        mx0b-00328301.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725858AbgH1HLM (ORCPT
+        Fri, 28 Aug 2020 04:25:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbgH1IZZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Aug 2020 03:11:12 -0400
-X-Greylist: delayed 2064 seconds by postgrey-1.27 at vger.kernel.org; Fri, 28 Aug 2020 03:11:10 EDT
-Received: from pps.filterd (m0156136.ppops.net [127.0.0.1])
-        by mx0b-00328301.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 07S6STNB000878;
-        Thu, 27 Aug 2020 23:36:04 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=invensense.com; h=from : to :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pfpt1;
- bh=s3oNc/aroHRT0LGnJ6MatEAtknT0o3rAkQWAPHki2hM=;
- b=ag/+CjI3qGXmaV3HPJkJSZ1MgRj3K6OLzEu0bnelboHntV7rhcnpMf5sQRA5gVSZxJHt
- Xs3C0MF33IxQ76/ZxMB3XOd26t87Ct29gFOG/z4Da8JGMgVTg2qITwsuU+chThF43V/t
- pr9YU5jQE2U3+hZw2YBXy6h/9yYEciPnF2X6seaEQ4iyYK/pKXChgq0s8D93SquLjYcX
- rn+/McX7PUA+cHvxfwUfcFph7n+C4wJTxdZezQ9yTCNBZ5Bewbf6RNXbupdZJ18kmzkf
- ARTtsgxaWcklDgEFOmODjd0YckVNbIYajXwuARwnTcnX+WQdb769SbAubnnflExxvqLK pw== 
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2108.outbound.protection.outlook.com [104.47.70.108])
-        by mx0b-00328301.pphosted.com with ESMTP id 33512u9c8w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Aug 2020 23:36:04 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jFQG+z3S0xOfyhe+7eMLPVKVu4M5rs4w6yzdvXImpp77Bdf4SwOg5BLBoMTLOSJwTTLAHzDy51G5O4B30Me8nmOIbqd7ClCMxldKWVWUx3CfNRstjwS4wdszrGYiabdPFsQm75xYRQP8uHIjw3bVxMPnTLsv2uEBAIWUXzxtSSwxPj25L1r4wQ89BAozvEEXe37qOABtDVir0J9mSOTSHZNtqa5tMhaB3P8HbDeS5xX1B+LMD3/u4NGK1E3/RwyKIMIV1PmDOHpDhue1Bz1pOjRJW/tbmCBczCmAcwsUwYH4tfqr7RmK1khdHExhctSna7sKcYNwLaMn8uDpBkYQzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s3oNc/aroHRT0LGnJ6MatEAtknT0o3rAkQWAPHki2hM=;
- b=j0bAcb7akqGMd5WkMVKZwSzyIbYA6+Bnd3TEQlv0xn4TJc2CbB8ASeNdt7oxgfSJge6NVZjhcKIjmC0uzFa2ym+a/fpP5PawN/zlhXrSxpQRJqywNUvRELm3rl72jiAQYPopD+6k0jCZIZu8RsAIDNKWAViTmIwk6vwWKfT5InyABe/85PgziiAbsQ4IMpMawZbX2aol+DzJX57fRZt9O4iWtfFtQY2CBEZHwn1LDkosqhFE7QzF3jZ0CLH1goSSI4bUTJTrqlJX2pL+gjJCko/MWMNmPSamUTRD6ei3qfeiLPvwnY4QY2V554LPme9KyAP4TmkKoE59JAfhsfnHUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=invensense.com; dmarc=pass action=none
- header.from=invensense.com; dkim=pass header.d=invensense.com; arc=none
+        Fri, 28 Aug 2020 04:25:25 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF72FC061264;
+        Fri, 28 Aug 2020 01:25:23 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id nv17so190976pjb.3;
+        Fri, 28 Aug 2020 01:25:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=invensense.onmicrosoft.com; s=selector2-invensense-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s3oNc/aroHRT0LGnJ6MatEAtknT0o3rAkQWAPHki2hM=;
- b=K0OybrXNcBWDbGUZCmA7ZEf9guopG6XijiJ5mRIPAAEMpXov9Bmj5xh+p9XsSUFlXqicoZrWR5S3Xj56EWHQ6TXmYDV0qZcUPoCaSU+3EpLIBi+2M93BbG6yzIcHG85eRxPiXkXwVKVMhIXdQkezBbDPaV7V3qH7U0V4QYSPi1k=
-Received: from MN2PR12MB4390.namprd12.prod.outlook.com (2603:10b6:208:26e::21)
- by MN2PR12MB4205.namprd12.prod.outlook.com (2603:10b6:208:198::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.24; Fri, 28 Aug
- 2020 06:36:03 +0000
-Received: from MN2PR12MB4390.namprd12.prod.outlook.com
- ([fe80::88ac:4a48:bb2a:51b7]) by MN2PR12MB4390.namprd12.prod.outlook.com
- ([fe80::88ac:4a48:bb2a:51b7%9]) with mapi id 15.20.3326.021; Fri, 28 Aug 2020
- 06:36:02 +0000
-From:   Jean-Baptiste Maneyrol <JManeyrol@invensense.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hgp9U9Y/G0zo5rd2YjDP3ShdcPx6s9r42iPuJEDI0jc=;
+        b=ECtC8Qr2QpWVT5Ln1YYdt0d41D8iu4+1QljOFImcKWuMAAwp02hB9Z/uL8VN2ey2J+
+         p3GD3wlvEExKnV3Z319A58NvE45esf1chM+0V/fjhkBUwXersN3vaLphhdr1J4difc+p
+         0CAUiHbAVl9ixDZFHnIBUOaHukXywdJoUMvTFy3YA0YF9c3y5XU82ueUeX/Egnq+CmRC
+         9hNwIbKnSRxOMPUVO8etY6uZgLfo6aqikvMDuvVT9IqO2gK9kJBCJF/qz+RdRz2245Vy
+         DFaJDmcxFVDbDqen+wlr2csyHQ1eWpt/RK7KSuNhW3eyhUvIV3DI9LK5Mo5H9XXISrU7
+         E5/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hgp9U9Y/G0zo5rd2YjDP3ShdcPx6s9r42iPuJEDI0jc=;
+        b=pctQx0EBEnxpYdTF8BTf/T8OmcYKWNG+l71XLGbNh4QWNPrKoPDqFrhe8NWAtpl0jd
+         NtwgLkYIvS0C/IUdRpCyLGd2Wpcu7M9i59xEi9YyCDeeS6b3Gw8pDrQfhyocDxydNhFz
+         Jo5ZMckd8nquGjRM+caow/WxlT54OZqMCSOBMuBUX4Xh78s2wBEqARBW9zkjK6AIl8h5
+         twpROwDA0LeYzmInsp1iaoRsyed4HZeYSPAuJ7bJjkLDfkhViV8nmVPoDyB5ul6i5LlT
+         XpLe5KfjwiVX88anWzUZoerUuJxiufLhkReJ+fCPwibw1WLcpL35YlU49+cgg0dguVJ+
+         I00g==
+X-Gm-Message-State: AOAM532arx/TYS8Jx1jO+bgzgdWVixMm7e+LzER+rpPI/sNpsmJUJX3R
+        W7m9U+x/DebwJHlHCbNdndv4QHn3KP5GF9LJ44E=
+X-Google-Smtp-Source: ABdhPJwsbuw20O2OB1p5m5faNM+P4s8DD8aLK8TuvYw3gq+cYE8m/WMyHxDzBvhpeh/QCh5ExRey2Xy2BFReiumdd/0=
+X-Received: by 2002:a17:902:b194:: with SMTP id s20mr408970plr.321.1598603123368;
+ Fri, 28 Aug 2020 01:25:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200827192642.1725-1-krzk@kernel.org> <20200827192642.1725-9-krzk@kernel.org>
+ <f4a5777e-fe85-9f3f-4818-f7539f223adc@axentia.se>
+In-Reply-To: <f4a5777e-fe85-9f3f-4818-f7539f223adc@axentia.se>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 28 Aug 2020 11:25:06 +0300
+Message-ID: <CAHp75VdWDtoGxm3uxxeXveZQ3Y_ofShdYPSXHL0Vxsz5d0miuQ@mail.gmail.com>
+Subject: Re: [PATCH v2 09/18] iio: afe: iio-rescale: Simplify with dev_err_probe()
+To:     Peter Rosin <peda@axentia.se>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Peter Rosin <peda@axentia.se>, Kukjin Kim <kgene@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
         Michael Hennerich <Michael.Hennerich@analog.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
@@ -83,141 +81,37 @@ To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Beniamin Bia <beniamin.bia@analog.com>,
         Tomasz Duszynski <tomasz.duszynski@octakon.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-amlogic@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: Re: [PATCH v2 13/18] iio: imu: inv_mpu6050: Simplify with
- dev_err_probe()
-Thread-Topic: [PATCH v2 13/18] iio: imu: inv_mpu6050: Simplify with
- dev_err_probe()
-Thread-Index: AQHWfKhP9EoLl2DH4kG3ErVWqrVkfKlNELaV
-Date:   Fri, 28 Aug 2020 06:36:02 +0000
-Message-ID: <MN2PR12MB439074B42FE1114B62189130C4520@MN2PR12MB4390.namprd12.prod.outlook.com>
-References: <20200827192642.1725-1-krzk@kernel.org>,<20200827192642.1725-13-krzk@kernel.org>
-In-Reply-To: <20200827192642.1725-13-krzk@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=invensense.com;
-x-originating-ip: [2a01:e0a:393:a700:8116:36f6:f0c8:916f]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2c529cfe-f087-4ab0-b116-08d84b1ca25a
-x-ms-traffictypediagnostic: MN2PR12MB4205:
-x-microsoft-antispam-prvs: <MN2PR12MB42054E7302A8B7C168CC4A0FC4520@MN2PR12MB4205.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: JMeFDUcupaFrahFRQmZRXxmZyi0g4ecjwzKuWhGUa33/c1Vrst6MTaXM8czHRSn8f3CeODfjGJt0FdtykYgdKUnT/jumjrYrU1WAtmE4BTQkWDGS9OIecasUjU1SYJke1CrmrFKo8cn32x6ljtlECB6xZerZJKNYaQjmyxEyy4gTATSznvB9SHCJNhX8t4vjHsqJC3OG3iF66yNg/Sk8zxlUW555wVWax5bHkS0y6hTKKBz8crC1n10nOYTYXRCorckGTWb1x98HkwEQOxChhg8834YSmGWFp7aqqHHKTwTvBMcZYJkDCs+vRA7j/U/cdsnuKb+qxEF7/Pdxp8HCAHQfAFbNG3IhLZfc9ElC2X5FxW/bCDTGr4hmn6x59dB6
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB4390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(376002)(39850400004)(366004)(136003)(396003)(7696005)(2906002)(33656002)(86362001)(71200400001)(52536014)(5660300002)(83380400001)(110136005)(7416002)(8936002)(64756008)(55016002)(9686003)(186003)(478600001)(8676002)(316002)(66446008)(76116006)(53546011)(66476007)(66556008)(66946007)(91956017)(6506007)(921003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: cCZkIEut8EQUM5+mzAVAIQObSeOPcb3mmweEqv5nymqe0UopRbW5x0g+HrSfM5L3SN9gZ+Nm1rqKKw/yRINRFbDpnDgBnoLJOj3dupI2kH1hMPwCv7pFlD5lyBQ0GcMAttfwWUX0gkeET6x0kz45ffGXBq7rWZDXPdTeSd5tezYcPKuVQ1UejqFCMjuAXrBvLJY0ZygbSyWnFtk1WeGiKVOkfKtmgKnthAOKUQXutltQsF2N3PC8izTHvhzj5j05bKZX4mlEAOtFPm10dtASjghqA8Z68LhE91moZBm9SKtPjwQIbDOUo/eP+U/gpfn61RMs6y44JVFuBWdpJkLqNQh8qlAbnw7qFzQBHzxqYIsS9K3tEDp0JzXa7pU5Vh89gRxDq3P4TZp+ji8Y79ZOLaUs32YkAWmCTqtghlE1YigoEdsbp8Zq9FdZ4s+QhrIuKgTyBkgVvNmnJtDCT1zf97+KPYPTOqakaaFOJqbeRQiPO/rgLbyu27ikjogpvtc2Mauiw5nT6dA41alM8PwjoVVKSHdzROCW6bkWqZI0IwI6sitTATkOu0pI+VJ2uhYbeGvzsg/RQzImacXCM5+iZC4i9W0pvFtDWvr1ybyKi7B3tsBs66lvozRa+7N+eK4gtOj/BCPYwA0PpOgYrpt8+osO6QCbVP/NJawcbcfkwA5Z6uUXxbdEyiGy9LzmeizX9YPgAabeJvP86sAMmN5/Tw==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: invensense.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB4390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c529cfe-f087-4ab0-b116-08d84b1ca25a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2020 06:36:02.4390
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 462b3b3b-e42b-47ea-801a-f1581aac892d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: hGmIj4EPrsJmTxyinPjmc6sYmo35TCcJ/ItiWZli9WxNiSmzr9gdnqUkhmLW20lGlWlSrcwU5o4+esuLKWPO9OzYfmGQ5KR68z+i94pgFb8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4205
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-28_03:2020-08-27,2020-08-28 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 spamscore=0 priorityscore=1501 mlxscore=0 clxscore=1011
- suspectscore=0 phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008280050
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello,
+On Fri, Aug 28, 2020 at 12:46 AM Peter Rosin <peda@axentia.se> wrote:
+> On 2020-08-27 21:26, Krzysztof Kozlowski wrote:
 
-thanks for the patch.
+...
 
-Best regards,
-JB
+> I'm not a huge fan of adding *one* odd line breaking the 80 column
+> recommendation to any file. I like to be able to fit multiple
+> windows side by side in a meaningful way. Also, I don't like having
+> a shitload of emptiness on my screen, which is what happens when some
+> lines are longer and you want to see it all. I strongly believe that
+> the 80 column rule/recommendation is still as valid as it ever was.
+> It's just hard to read longish lines; there's a reason newspapers
+> columns are quite narrow...
 
-Reviewed-by: Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>
+Why not to introduce 66 (or so, like TeX recommends)? Or even less?
+I consider any comparison to news or natural language text is silly.
+Programming language is different in many aspects, including helpful
+scripts and utilities to browse the source code.
 
-________________________________________
-From: linux-iio-owner@vger.kernel.org <linux-iio-owner@vger.kernel.org> on =
-behalf of Krzysztof Kozlowski <krzk@kernel.org>
-Sent: Thursday, August 27, 2020 21:26
-To: Jonathan Cameron; Hartmut Knaack; Lars-Peter Clausen; Peter Meerwald-St=
-adler; Peter Rosin; Kukjin Kim; Krzysztof Kozlowski; Michael Hennerich; Kev=
-in Hilman; Neil Armstrong; Jerome Brunet; Martin Blumenstingl; Marek Vasut;=
- Maxime Coquelin; Alexandre Torgue; Beniamin Bia; Tomasz Duszynski; Linus W=
-alleij; Andy Shevchenko; linux-iio@vger.kernel.org; linux-kernel@vger.kerne=
-l.org; linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.=
-org; linux-amlogic@lists.infradead.org; linux-stm32@st-md-mailman.stormrepl=
-y.com
-Subject: [PATCH v2 13/18] iio: imu: inv_mpu6050: Simplify with dev_err_prob=
-e()
-
- CAUTION: This email originated from outside of the organization. Please ma=
-ke sure the sender is who they say they are and do not click links or open =
-attachments unless you recognize the sender and know the content is safe.
-
-Common pattern of handling deferred probe can be simplified with
-dev_err_probe().  Less code and also it prints the error value.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/i=
-nv_mpu6050/inv_mpu_core.c
-index 3fee3947f772..18a1898e3e34 100644
---- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-+++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-@@ -1475,22 +1475,14 @@ int inv_mpu_core_probe(struct regmap *regmap, int i=
-rq, const char *name,
-        }
-
-        st->vdd_supply =3D devm_regulator_get(dev, "vdd");
--       if (IS_ERR(st->vdd_supply)) {
--               if (PTR_ERR(st->vdd_supply) !=3D -EPROBE_DEFER)
--                       dev_err(dev, "Failed to get vdd regulator %d\n",
--                               (int)PTR_ERR(st->vdd_supply));
--
--               return PTR_ERR(st->vdd_supply);
--       }
-+       if (IS_ERR(st->vdd_supply))
-+               return dev_err_probe(dev, PTR_ERR(st->vdd_supply),
-+                                    "Failed to get vdd regulator\n");
-
-        st->vddio_supply =3D devm_regulator_get(dev, "vddio");
--       if (IS_ERR(st->vddio_supply)) {
--               if (PTR_ERR(st->vddio_supply) !=3D -EPROBE_DEFER)
--                       dev_err(dev, "Failed to get vddio regulator %d\n",
--                               (int)PTR_ERR(st->vddio_supply));
--
--               return PTR_ERR(st->vddio_supply);
--       }
-+       if (IS_ERR(st->vddio_supply))
-+               return dev_err_probe(dev, PTR_ERR(st->vddio_supply),
-+                                    "Failed to get vddio regulator\n");
-
-        result =3D regulator_enable(st->vdd_supply);
-        if (result) {
---
-2.17.1
-
+-- 
+With Best Regards,
+Andy Shevchenko
