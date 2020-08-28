@@ -2,103 +2,189 @@ Return-Path: <SRS0=3Fgs=CG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF499C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 14:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC6A1C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 14:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A46572086A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 14:33:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A13FC208CA
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 14:49:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SXuwPRZC"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pnpm4ey7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbgH1Oda (ORCPT
+        id S1727996AbgH1Oto (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Aug 2020 10:33:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56464 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbgH1Od2 (ORCPT
+        Fri, 28 Aug 2020 10:49:44 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:33440 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727040AbgH1Oti (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Aug 2020 10:33:28 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFBCDC061264
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Aug 2020 07:33:27 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id i10so1574422ljn.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Aug 2020 07:33:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rpmT8z3vCoI387yR05xFtDPOcMcQ4MSd+QWPcIK213o=;
-        b=SXuwPRZCasKbRTNTD4rBVmpvxw5674fLb7D3nUZanlM12QZHv9w8tybE1ygcVHuyHf
-         oInP73nxqRqG/m924yhoXHEfVfMd8UNcGRHcOgglzIGOvStEqWimRNUmkiNO8lXlxASX
-         CCpDX7fmupyd+Q7PIqp/vvF9e1lBa3Fh+ICv7e70bLR/G0jT4Gkx4E349CQz9h+h21Rd
-         J9n3piyD5XHKRoxk039mI9PtUaLpkGEORrwzNi7gop6r9A58+nzmeDGzRENEZ4/0F3H/
-         ri4qABCfHUAxKq3affmj3xX920jjMz3hnbCzfllSaY6dfAWtXQUtN0eWy5GAs/w/o60R
-         vy8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rpmT8z3vCoI387yR05xFtDPOcMcQ4MSd+QWPcIK213o=;
-        b=r+PYNQPlmfDkwG50Fvwojmg0LurfV/9yxZ8R8qWXKw1w5rqTFsKj0T6CVz1JVCPHkO
-         8zkGxBeCOfFaNzM8jrQUc1ua6C7UXCJPmFWwy7UxbGAgorj3xrHCWl3NNtHPYrWgfi6C
-         EMVKNeq0yXncerKTI7TqN4YSkxguS8TcRnTTNnZfmrd6oMIQOICC2Z6panj4qNWUM0Np
-         WA2xs7N89xHJZXJXlhc4iYTiW+0pp+8Ejyb5GI9nbwgg4l/aAxittoIEhYecuznGaAEB
-         3Uf8qWXFm4OSgqQZxlXqTHlvRZUEO9YCU6uLsNwF6Qv0O9oLYWG5DqsiMfIzEMIJkO4k
-         HznQ==
-X-Gm-Message-State: AOAM533gTDP39/1xctdlEO8M1FRayA0gKFGvGW7kUxSoURrqXqQesSBN
-        FncZCbGuH4LrX9uaUN5YR1jNMhNpg1HW5UxX4ec8Fg==
-X-Google-Smtp-Source: ABdhPJx50N3WCz+95xej33BT+LFzbgw+YdB2RFlR9a5r50nwxYsPt9Je6m4kpOoXdZYez8d1PPZWYNLG7DhnlToAq/A=
-X-Received: by 2002:a2e:558:: with SMTP id 85mr1056326ljf.293.1598625206108;
- Fri, 28 Aug 2020 07:33:26 -0700 (PDT)
+        Fri, 28 Aug 2020 10:49:38 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200828144936euoutp01202248445ac32c7974c35d17f5400d92~vdgme5xw01155111551euoutp01C
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Aug 2020 14:49:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200828144936euoutp01202248445ac32c7974c35d17f5400d92~vdgme5xw01155111551euoutp01C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1598626176;
+        bh=rnJHZDd3J2Cg79B07RVoEV7HxwE8uhmX3bSXaJNxqDs=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=pnpm4ey7TSKo/uhiM2rz4EYvwE7vHPTKFc2Q0m61F6qEDlZ9yAZfspJuUk7YoI0G6
+         LO936QYAvhpEfm1VbmXNNnpKwDrE9z2RoEAilyE96uB6pk/tFhLxvQsKpedZOXAH1T
+         d/qnIegvCOZDOyeg61HDf9pYy1ci8h+tgJRTxy+w=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200828144935eucas1p21bc6d076e38045d6b6e8590b1b889724~vdgmDisXY0200302003eucas1p2D;
+        Fri, 28 Aug 2020 14:49:35 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id C6.3D.06318.F79194F5; Fri, 28
+        Aug 2020 15:49:35 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200828144935eucas1p144aa5bfceb24dc26b5149a4bcd462a48~vdglnRCu41371413714eucas1p1-;
+        Fri, 28 Aug 2020 14:49:35 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200828144935eusmtrp1a5ca3fb1aa00dd2762742fb47b3cb456~vdglmZUdP0687706877eusmtrp1K;
+        Fri, 28 Aug 2020 14:49:35 +0000 (GMT)
+X-AuditID: cbfec7f5-38bff700000018ae-5c-5f49197f0318
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 7C.1B.06017.F79194F5; Fri, 28
+        Aug 2020 15:49:35 +0100 (BST)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200828144934eusmtip164aea37a1e5a1a68977a9bb8f8567f7e~vdgkZI_v01183611836eusmtip18;
+        Fri, 28 Aug 2020 14:49:34 +0000 (GMT)
+Subject: Re: [PATCH RFC v6 1/6] dt-bindings: exynos-bus: Add documentation
+ for interconnect properties
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     Rob Herring <robh@kernel.org>, georgi.djakov@linaro.org
+Cc:     cw00.choi@samsung.com, krzk@kernel.org, devicetree@vger.kernel.org,
+        a.swigon@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <35d9d396-b553-a815-1f3b-1af4dc37a2ca@samsung.com>
+Date:   Fri, 28 Aug 2020 16:49:33 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.11.0
 MIME-Version: 1.0
-References: <20200827192642.1725-1-krzk@kernel.org> <20200827192642.1725-16-krzk@kernel.org>
-In-Reply-To: <20200827192642.1725-16-krzk@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 28 Aug 2020 16:33:15 +0200
-Message-ID: <CACRpkdZTTq=yARxK5uAu6f5rAJy0tH0V5HQU3d6ddEMa_a9KnQ@mail.gmail.com>
-Subject: Re: [PATCH v2 16/18] iio: magnetometer: ak8974: Simplify with dev_err_probe()
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Peter Rosin <peda@axentia.se>, Kukjin Kim <kgene@kernel.org>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Beniamin Bia <beniamin.bia@analog.com>,
-        Tomasz Duszynski <tomasz.duszynski@octakon.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <65af1a5c-8f8a-ef65-07f8-e0b3d04c336c@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH+e3e3V2lyfVqelpRMgysyAf6xy3DzAomVERQZKW27KKSU9tV
+        SwkfvXPTzB7qDF8YipGu+cgsh4o1xJzQfJWvHqOYZBLzgSktt2vkf5/vOd/D9xw4JEaPCSVk
+        fGIKq0yUJ0gJZ7zl7aJxZ9aG8Gj/GWMQM1l2AzHPixuEzPDsdyFT3m0UMgNzMwRT1K4jmMLJ
+        Apzp79eKGN3XISFjantMMNa8bsQU9+sFzLPucREzmlNLMLbXrSKm+L6FCKVkuro7hGxs6DUh
+        m1QZBLLG6ixZflMdkll1m48Sp5z3nGcT4tNYpV/IWee4paKUZC19efynRZSN5l1ykRMJVBA8
+        Kn6P5yJnkqZqEZjuTot4MYugcbAM44UVwberVdi/kcJPPauNGgT63D4BL34hmO0dENldblQc
+        LL5QE3YmqADIe5OP7OxOBcPTkR+OQIy6jkGe5amjIaZCQFc54hjGqa1gelLjGF5PRUGzYVDA
+        e1yhp8SM29mJ2gs2VafDg1Ge8NFcLuB5C1xrLl1dNYeEhbdZPB8ATbVFxLMbTBmaVnkT9N5X
+        OxYC6hoC9atRES8KEEwaKhDvCoYx4++VNHIlYRs0tPnx5X2gtb0U2MtAucDItCu/gwsUthRh
+        fFkMt2/SvNsbluqKBDxLQGW24QVIqllzmWbNNZo112j+51YgvA55sqmcIpblAhPZS76cXMGl
+        Jsb6xiQpdGjl53r/GOZakX75XBeiSCRdJx4hwqNpoTyNS1d0ISAxqbs4rK83ihafl6dnsMqk
+        aGVqAst1oY0kLvUUB1ZZImkqVp7CXmDZZFb5rysgnSTZaHfa5uQEetcO75Izn49HeNLjA1qX
+        g5r+qY5bb465hl6RHJgJq52YV0aYvMjlw/hovv9FVfCw+nRnvTJ9z6hfpDbT4sNNyJLivfaF
+        xQx1eLzzsH2w4ldL9m9SlFaaT2wJrT32xePkYP38wqF206MYfYb4XmlZ5pGHqgdBPjne+lKx
+        FOfi5AHbMSUn/wvR+ny4bwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHIsWRmVeSWpSXmKPExsVy+t/xu7r1kp7xBts+i1vcn9fKaLFxxnpW
+        i+tfnrNazD9yjtXiytf3bBbT925is5h0fwKLxfnzG9gtNj2+xmpxedccNovPvUcYLWac38dk
+        sfbIXXaL240r2Cz+79nBbjFj8ks2BwGPTas62TzuXNvD5nG/+ziTx+Yl9R59W1YxenzeJBfA
+        FqVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CX8Xt6
+        ScEGoYq7716yNzB+4+ti5OSQEDCRmPTgJHMXIxeHkMBSRokV7/YzdTFyACWkJOa3KEHUCEv8
+        udbFBlHznlGi7/g7VpCEsECGxLJ9LxhBbDYBQ4neo31gtoiAtcTqG29YQBqYBVqYJb5OmsEE
+        0T2NSeJY70IWkCpeATuJTQtvsIPYLAKqEpeXLmcDsUUF4iQe9/5nhqgRlDg58wlYPaeAvcT/
+        7oNgNcwC6hJ/5l1ihrDFJW49mc8EYctLNG+dzTyBUWgWkvZZSFpmIWmZhaRlASPLKkaR1NLi
+        3PTcYiO94sTc4tK8dL3k/NxNjMC43nbs55YdjF3vgg8xCnAwKvHw3mDzjBdiTSwrrsw9xCjB
+        wawkwut09nScEG9KYmVValF+fFFpTmrxIUZToOcmMkuJJucDU05eSbyhqaG5haWhubG5sZmF
+        kjhvh8DBGCGB9MSS1OzU1ILUIpg+Jg5OqQbGOZdvnHhyVU3kzdId3pL/tbQ0U/euK2ZP+LXv
+        Wmdn3NMcFf1d9/VusG76/PfKB8vb8x4Ifuh9JHK1VCHkjETDOrf1T8wZctNe5Kzu//965/9Z
+        fvdbUp3THl+canvvAHOfyHbF/f0Cfl5n7EW3T/aWmLS7/fRRzaclYXW9LAcLn4VKPY17l6Xe
+        q8RSnJFoqMVcVJwIAIbpuC0BAwAA
+X-CMS-MailID: 20200828144935eucas1p144aa5bfceb24dc26b5149a4bcd462a48
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3
+References: <20200702163724.2218-1-s.nawrocki@samsung.com>
+        <CGME20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3@eucas1p2.samsung.com>
+        <20200702163724.2218-2-s.nawrocki@samsung.com>
+        <20200709210448.GA876103@bogus>
+        <65af1a5c-8f8a-ef65-07f8-e0b3d04c336c@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 27, 2020 at 9:29 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On 30.07.2020 14:28, Sylwester Nawrocki wrote:
+> On 09.07.2020 23:04, Rob Herring wrote:
+>> On Thu, Jul 02, 2020 at 06:37:19PM +0200, Sylwester Nawrocki wrote:
+>>> Add documentation for new optional properties in the exynos bus nodes:
+>>> samsung,interconnect-parent, #interconnect-cells, bus-width.
+>>> These properties allow to specify the SoC interconnect structure which
+>>> then allows the interconnect consumer devices to request specific
+>>> bandwidth requirements.
+>>>
+>>> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+>>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-> Common pattern of handling deferred probe can be simplified with
-> dev_err_probe().  Less code and also it prints the error value.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>> --- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+>>> +++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+>>> @@ -51,6 +51,13 @@ Optional properties only for parent bus device:
+>>>  - exynos,saturation-ratio: the percentage value which is used to calibrate
+>>>  			the performance count against total cycle count.
+>>>  
+>>> +Optional properties for interconnect functionality (QoS frequency constraints):
+>>> +- samsung,interconnect-parent: phandle to the parent interconnect node; for
+>>> +  passive devices should point to same node as the exynos,parent-bus property.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>> Adding vendor specific properties for a common binding defeats the 
+>> point.
 
-Yours,
-Linus Walleij
+Actually we could do without any new property if we used existing interconnect
+consumers binding to specify linking between the provider nodes. I think those
+exynos-bus nodes could well be considered both the interconnect providers 
+and consumers. The example would then be something along the lines 
+(yes, I know the bus node naming needs to be fixed):
+
+	soc {
+		bus_dmc: bus_dmc {
+			compatible = "samsung,exynos-bus";
+			/* ... */
+			samsung,data-clock-ratio = <4>;
+			#interconnect-cells = <0>;
+		};
+
+		bus_leftbus: bus_leftbus {
+			compatible = "samsung,exynos-bus";
+			/* ... */
+			interconnects = <&bus_leftbus &bus_dmc>;
+			#interconnect-cells = <0>;
+		};
+
+		bus_display: bus_display {
+			compatible = "samsung,exynos-bus";
+			/* ... */
+			interconnects = <&bus_display &bus_leftbus>;
+			#interconnect-cells = <0>;
+		};
+
+
+		&mixer {
+			compatible = "samsung,exynos4212-mixer";
+			interconnects = <&bus_display &bus_dmc>;
+			/* ... */
+		};
+	};
+
+What do you think, Georgi, Rob?
+
+-- 
+Regards
+Sylwester
