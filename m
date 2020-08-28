@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D312C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 06:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06116C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 06:40:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71135208CA
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 06:33:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D03A92145D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 06:40:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598596398;
-	bh=JvylaWXieNyCtyy2+VFl58I1E2W4uhRggj+BhV6CIik=;
+	s=default; t=1598596854;
+	bh=o0DvwBJycu4mClUYxJbCqVEQk81q47GMWC6SPnDCSnA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PBTORtjiKJVSsdwYfKY8Yio+u2sEgGR0j+fV2pgw1WX0UHMK73Kog6sZ0g8sP/Dqi
-	 TNgAzy75LBHL7aw5ldz7h8EatpzCh8IuMH4tWY6Jpc7rRKaIWOq15GU8t2mMyd/7Hp
-	 ILbTkxZGvo5+HqJj48Bajlbr8VAHhlvjuRmSYvtg=
+	b=PLYADKqgqYnxypO6x8anEhPUu8bN0xxwIg1nPmUgJSftAOl3Bx68wdyZEXwP0oU3k
+	 8lgfRMUmvEpxYQhODvsBuWuuWxK20FyRax6nXVzFTxa5cDYhDj3btl2GPRVrvq3bG5
+	 gR2fhItdOskaeSCeRS9QuevMIIw7u9xPVJiLzTL0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbgH1GdR (ORCPT
+        id S1725969AbgH1Gkv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Aug 2020 02:33:17 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46088 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725849AbgH1GdQ (ORCPT
+        Fri, 28 Aug 2020 02:40:51 -0400
+Received: from mail-ej1-f67.google.com ([209.85.218.67]:43184 "EHLO
+        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbgH1Gkv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Aug 2020 02:33:16 -0400
-Received: by mail-ed1-f66.google.com with SMTP id n26so136118edv.13;
-        Thu, 27 Aug 2020 23:33:15 -0700 (PDT)
+        Fri, 28 Aug 2020 02:40:51 -0400
+Received: by mail-ej1-f67.google.com with SMTP id m22so54395eje.10;
+        Thu, 27 Aug 2020 23:40:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Vg8m3jBI5UQMBYtnHdDz9S/St5JXY8tMZCUrYUxpYto=;
-        b=nFJZqnbfhKIGFEIO/xZQpv7ptbwXgtE0+NBRQbSZEV1JVzVuK2mnLzZYL2FajIXI0e
-         7Hj3q9HPP520smkwtHYOfDWjzpbpF1M4jcijccQZFMtc2ihStlwf8cU8i7VnPdXPKH50
-         2l/7jalD1Bq6F7UkZWKg0zJg8yZ+EIK6V+PzbHLHZpJ6EI+GEYcbR2QNCtf08ZQa/UAq
-         /x3aCg6EzHV2B5gAtYeL06LsB3+kKeq2lVfRtsfReg8VtMTt7OtTX7n9GjxY3R0E+4jo
-         WDcln2emM3k93F3KRSwef7PqIDt5GoV4RTW6bIhMzqrPj92bx/rYZZ62krWfAHBsx0I9
-         oghQ==
-X-Gm-Message-State: AOAM531CoEeqQcKfHke4xFkwokfwAJ/x/g846Wqp1LpRaWKvkdkucsLk
-        Die1ouIJbGNrqAL0OhKAq5Q=
-X-Google-Smtp-Source: ABdhPJy72Nl+2Lap2N1ZzNKi4Z5VFds07gmbJkTgUrzJZRXQuDvPeF8JuAeTTbqIJcF0iZyklYXHNw==
-X-Received: by 2002:aa7:d284:: with SMTP id w4mr375850edq.258.1598596394321;
-        Thu, 27 Aug 2020 23:33:14 -0700 (PDT)
+        bh=CdphvIxkab/YX1ffuXPnoifp6qWQpQf0APCtuuMP1Lw=;
+        b=nX03C9yhufTPAh5mHQQQTIQwn16/VdoduYkKzR9PyE7danmJlLzUlWR4AI7yPYJKgv
+         tTy49WHYMQ+okTnF4hohwB1+EuqGjF0aj5SMsThA3QYl5sEl9RWSICe6olHvGiMnCq8d
+         CEvNgDOcoc1SI7RwCblu/vcF7T6Ll0HwkQET8vsrs+M+u5x7ahTfocl6+vKPd+KJJL0Z
+         Uy6goLsBykTThMqC731YeXo4SwY4oVcmzLqDJQgqnBvY0/tG6ooV7IzjOH2ZaWS/73nb
+         aZJHAFAzry3eGtzWCtspwAxDmgOz1BvihfiqwNK7yrDFTwTrk6L4LipnqySG4mBOIpWg
+         wkfw==
+X-Gm-Message-State: AOAM532Pp89juW6y8TBoi+An54BTV5KS1yT/vwUNQH5P4VcAYVUue0bP
+        U8wYS5B71RGle1/qrKUjRUU=
+X-Google-Smtp-Source: ABdhPJwTxtk1I8/HNlEgrbvBSVMeu1t34ItwkeBp44qDs/tNjiLPiQBZ1khYH/UgBI7CkJn7BP42qQ==
+X-Received: by 2002:a17:906:970e:: with SMTP id k14mr291072ejx.417.1598596848763;
+        Thu, 27 Aug 2020 23:40:48 -0700 (PDT)
 Received: from pi3 ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id v10sm134917eda.87.2020.08.27.23.33.12
+        by smtp.googlemail.com with ESMTPSA id 24sm162457edx.35.2020.08.27.23.40.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Aug 2020 23:33:13 -0700 (PDT)
-Date:   Fri, 28 Aug 2020 08:33:11 +0200
+        Thu, 27 Aug 2020 23:40:48 -0700 (PDT)
+Date:   Fri, 28 Aug 2020 08:40:45 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc:     linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
@@ -61,32 +61,38 @@ Cc:     linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         m.szyprowski@samsung.com, b.zolnierkie@samsung.com
-Subject: Re: [PATCH 2/3] clk: samsung: exynos5420/5250: Add IDs to the CPU
- parent clk definitions
-Message-ID: <20200828063311.GB17406@pi3>
+Subject: Re: [PATCH 3/3] clk: samsung: Use cached clk_hws instead of
+ __clk_lookup() calls
+Message-ID: <20200828064045.GC17406@pi3>
 References: <20200826171529.23618-1-s.nawrocki@samsung.com>
- <CGME20200826171552eucas1p28ace6b1efbcdab420aaa4458ac8bad08@eucas1p2.samsung.com>
- <20200826171529.23618-2-s.nawrocki@samsung.com>
+ <CGME20200826171557eucas1p13c960ad6abc814cf53bc125f5c4d9b39@eucas1p1.samsung.com>
+ <20200826171529.23618-3-s.nawrocki@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200826171529.23618-2-s.nawrocki@samsung.com>
+In-Reply-To: <20200826171529.23618-3-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 26, 2020 at 07:15:28PM +0200, Sylwester Nawrocki wrote:
-> Use non-zero clock IDs in definitions of the CPU parent clocks
-> for exynos5420, exynos5250 SoCs. This will allow us to reference
-> the parent clocks directly in the driver by cached struct clk_hw
-> pointers, rather than doing clk lookup by name.
+On Wed, Aug 26, 2020 at 07:15:29PM +0200, Sylwester Nawrocki wrote:
+> For the CPU clock registration two parent clocks are required, these
+> are now being passed as struct clk_hw pointers, rather than by the
+> global scope names. That allows us to avoid  __clk_lookup() calls
+> and simplifies a bit the CPU clock registration function.
+> While at it drop unneeded extern keyword in the function declaration.
 > 
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->  drivers/clk/samsung/clk-exynos5250.c |  4 ++--
->  drivers/clk/samsung/clk-exynos5420.c | 11 ++++++-----
->  2 files changed, 8 insertions(+), 7 deletions(-)
+>  drivers/clk/samsung/clk-cpu.c        | 37 +++++++++++++++---------------------
+>  drivers/clk/samsung/clk-cpu.h        |  6 +++---
+>  drivers/clk/samsung/clk-exynos3250.c |  6 ++++--
+>  drivers/clk/samsung/clk-exynos4.c    |  7 +++++--
+>  drivers/clk/samsung/clk-exynos5250.c |  4 +++-
+>  drivers/clk/samsung/clk-exynos5420.c |  6 +++---
+>  drivers/clk/samsung/clk-exynos5433.c | 10 ++++++++--
+>  7 files changed, 41 insertions(+), 35 deletions(-)
 
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
