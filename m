@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56AAEC433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 14:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3F4C433E7
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 14:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 335252100A
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 14:25:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D953D206C0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 14:25:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598711135;
-	bh=FChOyw+UxllK7n3TGJNRYk1h0+ezJuNBhzEmjvavxmc=;
+	s=default; t=1598711137;
+	bh=R+YptOt/CSt+P2Wj8C74CaZMIMAj5J5igqnpYW+07eY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2TFnwwiUSgorOltelA769Tb0wt7nOgDEQE5Y93CddMEMdH21mhMb88OT7hZI2b/JT
-	 4Z4aOmOSnEqe3Ym2o/3JGCKc0y/4UHD2d5OZPTnMYmD50e16fh3oBGZf0LvILwwD+9
-	 ViH9w0NXMPsvSSu699b95yabK3wjjRQuzNrRkF9I=
+	b=ldXjI725BB45SodetRzi/7ti/lWtzMbhLnNsUDfd7Xucwc1emG91gdXntH4i9ror7
+	 NmCnOykGGaOVxWyxqmrqGxzPrpLS14vj997pJYvwSJgVH70yXRaWKNtgymSMYVKsW4
+	 VvKMe8yNk3R6S79+ANdgd6mLhdgP3Dddveew2NeQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbgH2OZa (ORCPT
+        id S1728213AbgH2OZh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 29 Aug 2020 10:25:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52872 "EHLO mail.kernel.org"
+        Sat, 29 Aug 2020 10:25:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728146AbgH2OZX (ORCPT
+        id S1728192AbgH2OZd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 29 Aug 2020 10:25:23 -0400
+        Sat, 29 Aug 2020 10:25:33 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1184A212CC;
-        Sat, 29 Aug 2020 14:25:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6019020791;
+        Sat, 29 Aug 2020 14:25:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598711122;
-        bh=FChOyw+UxllK7n3TGJNRYk1h0+ezJuNBhzEmjvavxmc=;
+        s=default; t=1598711133;
+        bh=R+YptOt/CSt+P2Wj8C74CaZMIMAj5J5igqnpYW+07eY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nt13qQQxE0l22irkiXHiyOaHYJ2cp/srxNsj5oZD1Zoa3PNeC6sl3xow8kVUf+YTk
-         Qh7t94IUdGLGZCPyLqyZ4DggDMb9KRWz5Vr6Zxrthpu+vcHsHaT7TPIiqbbyBTQL99
-         M51siByHWIJ2slT8WGkFjPsQiIitsjvfvdhMn8OM=
+        b=JtNk4txujpBviSezAH5cbRaeNwlCH0zcAGxuhCwLxzLq/jFv9OdHiLHEFxd5amY0s
+         bHtGKCzqBHiT58+c2PQjUpW8NcBfjdFvzJri3BXr7xoSFhb04qZFOxuDK2R2hnDNPd
+         UdVK7pqBsoeK25H3FGG4uxQ7GvJTYdCdpr4hg5NM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -62,9 +62,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 02/10] dt-bindings: gpu: arm,mali-midgard: Use unevaluatedProperties
-Date:   Sat, 29 Aug 2020 16:24:53 +0200
-Message-Id: <20200829142501.31478-2-krzk@kernel.org>
+Subject: [PATCH 04/10] dt-bindings: mfd: syscon: Document Samsung Exynos compatibles
+Date:   Sat, 29 Aug 2020 16:24:55 +0200
+Message-Id: <20200829142501.31478-4-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200829142501.31478-1-krzk@kernel.org>
 References: <20200829142501.31478-1-krzk@kernel.org>
@@ -73,31 +73,29 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Additional properties or nodes actually might appear (e.g. operating
-points table) so use unevaluatedProperties to fix dtbs_check warnings
-like:
-
-  arch/arm64/boot/dts/exynos/exynos5433-tm2.dt.yaml: gpu@14ac0000:
-    'opp_table' does not match any of the regexes: 'pinctrl-[0-9]+'
+Samsung Exynos SoCs use syscon for system registers so document its
+compatibles.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/mfd/syscon.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
-index 80d519a76db2..c60300ffd764 100644
---- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
-+++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
-@@ -96,7 +96,7 @@ required:
-   - interrupt-names
-   - clocks
+diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+index 049ec2ffc7f9..0f21943dea28 100644
+--- a/Documentation/devicetree/bindings/mfd/syscon.yaml
++++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+@@ -40,6 +40,10 @@ properties:
+               - allwinner,sun50i-a64-system-controller
+               - microchip,sparx5-cpu-syscon
+               - mstar,msc313-pmsleep
++              - samsung,exynos3-sysreg
++              - samsung,exynos4-sysreg
++              - samsung,exynos5-sysreg
++              - samsung,exynos5433-sysreg
  
--additionalProperties: false
-+unevaluatedProperties: false
+           - const: syscon
  
- allOf:
-   - if:
 -- 
 2.17.1
 
