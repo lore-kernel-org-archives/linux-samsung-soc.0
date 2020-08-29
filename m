@@ -1,122 +1,110 @@
-Return-Path: <SRS0=3Fgs=CG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=6CO4=CH=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E102C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 18:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD42C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 06:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 046D120872
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Aug 2020 18:00:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C5FA20E65
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 06:48:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598683690;
+	bh=yjKI4zUzuXR+IVjk7uHyPqKHxj0RHDSmODneNvcyT0g=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=JYiMslRHGZKlVHTmECLOITh3bVJqidxz6FB2MjzJa87uC9d1N8ppnSUYn2iQ0mz1s
+	 vZN2lxsRBoapJWDi+gQGue2VbtzxqMD2TQNpqXwzWf7kTu4wHxzu0T5LXFhHU0oZ4L
+	 AK03Ub9c8xtgiBkNCixgxEY1qQgaEek+bpPRptZE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbgH1SAs (ORCPT
+        id S1726083AbgH2GsG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Aug 2020 14:00:48 -0400
-Received: from smtprelay0111.hostedemail.com ([216.40.44.111]:38338 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726010AbgH1SAs (ORCPT
+        Sat, 29 Aug 2020 02:48:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40290 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725886AbgH2GsG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Aug 2020 14:00:48 -0400
-X-Greylist: delayed 525 seconds by postgrey-1.27 at vger.kernel.org; Fri, 28 Aug 2020 14:00:47 EDT
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave06.hostedemail.com (Postfix) with ESMTP id 578D38124C8D
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Aug 2020 17:52:03 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 9C5C8100E7B4C;
-        Fri, 28 Aug 2020 17:52:00 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: edge90_0e065aa27077
-X-Filterd-Recvd-Size: 3579
-Received: from XPS-9350.home (unknown [47.151.133.149])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Aug 2020 17:51:56 +0000 (UTC)
-Message-ID: <d8dce79d93363e19ea132ba8237a607a1ff28f09.camel@perches.com>
-Subject: Re: [PATCH v2 09/18] iio: afe: iio-rescale: Simplify with
- dev_err_probe()
-From:   Joe Perches <joe@perches.com>
-To:     Peter Rosin <peda@axentia.se>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
+        Sat, 29 Aug 2020 02:48:06 -0400
+Received: from localhost.localdomain (unknown [194.230.155.216])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8734B20838;
+        Sat, 29 Aug 2020 06:48:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598683685;
+        bh=yjKI4zUzuXR+IVjk7uHyPqKHxj0RHDSmODneNvcyT0g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=v1itUy8PJxMJU90/s/P4twMjMOdkFOc+jJ43EZmEUWpZ1BwoaDCntjPop5LrTaebQ
+         l+VF63Yd2eaCVhuqI5BNiG5LmTZ2abboHxbQkBOJnNZ0KUc0o+rm19ThGyKxS+1H3W
+         aExY/a1lCtxl0Fg/Geuvk5zMc54z1F3BuXftNjvg=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Jonathan Cameron <jic23@kernel.org>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
+        Peter Rosin <peda@axentia.se>,
         Michael Hennerich <Michael.Hennerich@analog.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Marek Vasut <marek.vasut@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Beniamin Bia <beniamin.bia@analog.com>,
         Tomasz Duszynski <tomasz.duszynski@octakon.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-iio@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         linux-stm32@st-md-mailman.stormreply.com
-Date:   Fri, 28 Aug 2020 10:51:55 -0700
-In-Reply-To: <b7a5a441-cda1-ad02-b723-255231f2bd94@axentia.se>
-References: <20200827192642.1725-1-krzk@kernel.org>
-         <20200827192642.1725-9-krzk@kernel.org>
-         <f4a5777e-fe85-9f3f-4818-f7539f223adc@axentia.se>
-         <20200828062443.GA17343@pi3>
-         <3a5cb59b-454e-2c3f-9f31-43147e843c66@axentia.se>
-         <CAJKOXPcqNE5U82UThzBTPCvucCf2LsCVSfAHE1vnecJGCKCaig@mail.gmail.com>
-         <b7a5a441-cda1-ad02-b723-255231f2bd94@axentia.se>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.36.4-0ubuntu1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 01/18] iio: accel: bma180: Simplify with dev_err_probe()
+Date:   Sat, 29 Aug 2020 08:47:09 +0200
+Message-Id: <20200829064726.26268-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 2020-08-28 at 11:39 +0200, Peter Rosin wrote:
-> On 2020-08-28 09:03, Krzysztof Kozlowski wrote:
-> > > > If there is no consensus among discussing people, I find this 100 line
-> > > > more readable, already got review, checkpatch accepts it so if subsystem
-> > > > maintainer likes it, I prefer to leave it like this.
-> > > 
-> > > I'm not impressed by that argument. For the files I have mentioned, it
-> > > does not matter very much to me if you and some random person think that
-> > > 100 columns might *slightly* improve readability.
-> > > 
-> > > Quoting coding-style
-> > > 
-> > >   Statements longer than 80 columns should be broken into sensible chunks,
-> > >   unless exceeding 80 columns significantly increases readability and does
-> > >   not hide information.
-> > > 
-> > > Notice that word? *significantly*
-> > 
-> > Notice also checkpatch change...
-> 
-> How is that relevant? checkpatch has *never* had the final say and its
-> heuristics can never be perfect. Meanwhile, coding style is talking about
-> exactly the case under discussion, and agrees with me perfectly.
+Common pattern of handling deferred probe can be simplified with
+dev_err_probe().  Less code and also it prints the error value.
 
-As the checkpatch maintainer, checkpatch is stupid.
-Using it as a primary argument should never be acceptable.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ drivers/iio/accel/bma180.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-But line lengths from 81 to 100 columns should be exceptions
-rather than
-standard use.
-
-Any named maintainer of actual code determines the style for
-that code.
-
-Style consistency and use of kernel standard mechanisms
-should be the primary goals here.
-
+diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
+index 5b7a467c7b27..448faed001fd 100644
+--- a/drivers/iio/accel/bma180.c
++++ b/drivers/iio/accel/bma180.c
+@@ -1000,19 +1000,15 @@ static int bma180_probe(struct i2c_client *client,
+ 		return ret;
+ 
+ 	data->vdd_supply = devm_regulator_get(dev, "vdd");
+-	if (IS_ERR(data->vdd_supply)) {
+-		if (PTR_ERR(data->vdd_supply) != -EPROBE_DEFER)
+-			dev_err(dev, "Failed to get vdd regulator %d\n",
+-				(int)PTR_ERR(data->vdd_supply));
+-		return PTR_ERR(data->vdd_supply);
+-	}
++	if (IS_ERR(data->vdd_supply))
++		return dev_err_probe(dev, PTR_ERR(data->vdd_supply),
++				     "Failed to get vdd regulator\n");
++
+ 	data->vddio_supply = devm_regulator_get(dev, "vddio");
+-	if (IS_ERR(data->vddio_supply)) {
+-		if (PTR_ERR(data->vddio_supply) != -EPROBE_DEFER)
+-			dev_err(dev, "Failed to get vddio regulator %d\n",
+-				(int)PTR_ERR(data->vddio_supply));
+-		return PTR_ERR(data->vddio_supply);
+-	}
++	if (IS_ERR(data->vddio_supply))
++		return dev_err_probe(dev, PTR_ERR(data->vddio_supply),
++				     "Failed to get vddio regulator\n");
++
+ 	/* Typical voltage 2.4V these are min and max */
+ 	ret = regulator_set_voltage(data->vdd_supply, 1620000, 3600000);
+ 	if (ret)
+-- 
+2.17.1
 
