@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E088DC433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 06:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 519BAC433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 06:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B467120E65
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 06:49:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30ED620E65
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 06:49:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598683759;
-	bh=q8HI6Zm7rrRPqVe1eb6PzsXiCtitXv9sgq9WQhNoADo=;
+	s=default; t=1598683760;
+	bh=NEcenenUcbzd6lORmkCXVctqSBGbaMDN9QPAnMp0744=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nducfxy+qmyuSkut0T6nsGXdHd4U6fh1jNy0I97IO67FKR25S4LvYgBJ6U7+xiNTA
-	 H+lP6IYTzBMlE86Xyhz7RAwBnbkPA56aT9hxc3gqDAlauoq1lb45cdKPmMSvZvFleg
-	 lBE25Qaq9HCtogiy3bRtUL3D/0JcwOpCnk+RRldQ=
+	b=h7LytFf3lQhHlhMGQWqLJIR3ozdqyu9qA6Poiz6+6c8rp7TYCG2dVe9NHDwD4qAX8
+	 FDNXM91AKks0p2NOtMsDOT99X8qLbdl2iGZsCTzpcnY71clHtTXCWL0RVxT+OZwgiE
+	 p3Ns//H+GkCC1CiqGsRoruxRu0/I9jV0pAzUSfIY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbgH2Gsk (ORCPT
+        id S1726912AbgH2Gs3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 29 Aug 2020 02:48:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41366 "EHLO mail.kernel.org"
+        Sat, 29 Aug 2020 02:48:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727024AbgH2Gsd (ORCPT
+        id S1727024AbgH2Gs0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 29 Aug 2020 02:48:33 -0400
+        Sat, 29 Aug 2020 02:48:26 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 635092137B;
-        Sat, 29 Aug 2020 06:48:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 633EE21527;
+        Sat, 29 Aug 2020 06:48:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598683713;
-        bh=q8HI6Zm7rrRPqVe1eb6PzsXiCtitXv9sgq9WQhNoADo=;
+        s=default; t=1598683706;
+        bh=NEcenenUcbzd6lORmkCXVctqSBGbaMDN9QPAnMp0744=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FlJiwlmJ/eHlpJIJJ9BSxU4PqYPRgC3cKYkPTHh9d/+Dr0YvNtCy1juaWK4MMAtnF
-         8fUFw+f+34uf7wphW0zsJk1jSYOwaaSQOwQgqSCr4L4Pl6ZFxu2FZMmL/l/7mUB1fn
-         1gKGAHQhVbDCxwsjBFe2HDqSHZ8MAl+DJ1UJU2tc=
+        b=0yCi57U8/gwDZjDeiVoaqj/ObrtIczk+aNECWfPoBCKZi9js3zT9EMe/pYr1PPjKk
+         /xIQaDBjWsj0zueLeZYlkYViahrki0B6wQQKWI6uaBb0pP6eDLih9R/c5AiuEHXE+i
+         Jvo54mDY37BEHAdX90RgIjW06kN/WLZ/PuNeTci4=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Lars-Peter Clausen <lars@metafoo.de>,
@@ -55,9 +55,9 @@ To:     Jonathan Cameron <jic23@kernel.org>,
         linux-stm32@st-md-mailman.stormreply.com
 Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 09/18] iio: afe: iio-rescale: Simplify with dev_err_probe()
-Date:   Sat, 29 Aug 2020 08:47:17 +0200
-Message-Id: <20200829064726.26268-9-krzk@kernel.org>
+Subject: [PATCH v3 07/18] iio: adc: rcar-gyroadc: Simplify with dev_err_probe()
+Date:   Sat, 29 Aug 2020 08:47:15 +0200
+Message-Id: <20200829064726.26268-7-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200829064726.26268-1-krzk@kernel.org>
 References: <20200829064726.26268-1-krzk@kernel.org>
@@ -80,28 +80,29 @@ Changes since v2:
 Changes since v1:
 1. Wrap dev_err_probe() lines at 100 character
 ---
- drivers/iio/afe/iio-rescale.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/iio/adc/rcar-gyroadc.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/iio/afe/iio-rescale.c b/drivers/iio/afe/iio-rescale.c
-index 69c0f277ada0..e42ea2b1707d 100644
---- a/drivers/iio/afe/iio-rescale.c
-+++ b/drivers/iio/afe/iio-rescale.c
-@@ -276,11 +276,9 @@ static int rescale_probe(struct platform_device *pdev)
- 	int ret;
+diff --git a/drivers/iio/adc/rcar-gyroadc.c b/drivers/iio/adc/rcar-gyroadc.c
+index d2c1419e72a0..dcaefc108ff6 100644
+--- a/drivers/iio/adc/rcar-gyroadc.c
++++ b/drivers/iio/adc/rcar-gyroadc.c
+@@ -495,12 +495,9 @@ static int rcar_gyroadc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->regs);
  
- 	source = devm_iio_channel_get(dev, NULL);
--	if (IS_ERR(source)) {
--		if (PTR_ERR(source) != -EPROBE_DEFER)
--			dev_err(dev, "failed to get source channel\n");
--		return PTR_ERR(source);
+ 	priv->clk = devm_clk_get(dev, "fck");
+-	if (IS_ERR(priv->clk)) {
+-		ret = PTR_ERR(priv->clk);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(dev, "Failed to get IF clock (ret=%i)\n", ret);
+-		return ret;
 -	}
-+	if (IS_ERR(source))
-+		return dev_err_probe(dev, PTR_ERR(source),
-+				     "failed to get source channel\n");
++	if (IS_ERR(priv->clk))
++		return dev_err_probe(dev, PTR_ERR(priv->clk),
++				     "Failed to get IF clock\n");
  
- 	sizeof_ext_info = iio_get_channel_ext_info_count(source);
- 	if (sizeof_ext_info) {
+ 	ret = rcar_gyroadc_parse_subdevs(indio_dev);
+ 	if (ret)
 -- 
 2.17.1
 
