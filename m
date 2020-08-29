@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBEEC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 14:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B7FC433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 14:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 211A420791
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 14:26:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FBE820791
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 14:26:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598711164;
-	bh=6gznRRrKsqAQNWmMyK3EtnSRpMtqnII6P6GgV9nfPDo=;
+	s=default; t=1598711172;
+	bh=E1hVAd3lBjehhCh0G784FFWukEKouWeGXwdRL4oXW8s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ygRsJsq7a1hph0S0yM63BE9rqwBrzCwQkC5cB19igJ0Em9aryIWCX7cekrJw2+53n
-	 ZgbDmsF55tw/NH5bomigKMdDXwWvvP9MTFasbcBDKYlkPC5tQa2xPwvleWUmpOnXFE
-	 540Q7iPGbRcbiUfuvVC4xtGvvpECieYyGXuaFd00=
+	b=Z3IyP0ijJBh+gpHKRJi/ru9dBC6ezZryxgf2RDiOGOV83wrs58T1wW6o3/DLhrPbk
+	 5/vRmF30F7U0vHDeT65Y21t8IJYXKCMdZzJzD9+MGPyN5ArERBXaed73cPYq2fGgXt
+	 VymQngcc/Q9RCxvZOBlsaDW9bj5Eg17oSiiFYegQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbgH2OZ7 (ORCPT
+        id S1728280AbgH2O0G (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 29 Aug 2020 10:25:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53736 "EHLO mail.kernel.org"
+        Sat, 29 Aug 2020 10:26:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728220AbgH2OZy (ORCPT
+        id S1728268AbgH2OZ7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 29 Aug 2020 10:25:54 -0400
+        Sat, 29 Aug 2020 10:25:59 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D726820791;
-        Sat, 29 Aug 2020 14:25:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C0B120C56;
+        Sat, 29 Aug 2020 14:25:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598711153;
-        bh=6gznRRrKsqAQNWmMyK3EtnSRpMtqnII6P6GgV9nfPDo=;
+        s=default; t=1598711158;
+        bh=E1hVAd3lBjehhCh0G784FFWukEKouWeGXwdRL4oXW8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ykSI5/vivMZCJ/zaqQo1HfS6rLP0th/ECZU3qUrs4QBNLMpoSQCspQsQFh6kiqmsI
-         Y7xEH8oXyzlvQRE0WpAD96kv0vIpwAirg6JrfcPFqBtItQV2RFbD6i68BEbOEhOJ9U
-         6Z1iMrsvNt+/i83xi7toS8eLB4ehdk4S/hm47wFk=
+        b=cr7yPnmX9yXVCWjvWHUOp+ejxR44jkEQyY9aMINktokMsSu/4DwnEwjMCRLZlaZFO
+         fXGE90a1K6Vfo1IOeauMfcjbYBAcVHFtknsboKDm3U8sYTRtNVlPDlCzgYhzItH0Fw
+         6eb20eRaUV3JnU5yvHoy9DHW6KrvvOvaM5SksL6w=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -62,9 +62,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 08/10] arm64: dts: exynos: Add compatibles to sysreg nodes
-Date:   Sat, 29 Aug 2020 16:24:59 +0200
-Message-Id: <20200829142501.31478-8-krzk@kernel.org>
+Subject: [RFT 09/10] arm64: dts: exynos: Correct port of USB-C connector node on Exynos5433 TM2
+Date:   Sat, 29 Aug 2020 16:25:00 +0200
+Message-Id: <20200829142501.31478-9-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200829142501.31478-1-krzk@kernel.org>
 References: <20200829142501.31478-1-krzk@kernel.org>
@@ -73,42 +73,57 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-System register nodes, implementing syscon binding, should use
-appropriate compatible.  This fixes dtbs_check warnings:
+The USB-C connector bindings require port@0.  Such port was already
+described in DTS but outside of the connector itself.  Put it into
+proper place to fix dtbs_check warnings like:
 
-  arch/arm64/boot/dts/exynos/exynos5433-tm2.dt.yaml: syscon@13b80000:
-    compatible: ['syscon'] is not valid under any of the given schemas
+  arch/arm64/boot/dts/exynos/exynos5433-tm2.dt.yaml: musb_connector: ports: 'port@0' is a required property
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 74ac4ac75865..b2eebdd88c3c 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -1015,17 +1015,17 @@
+---
+
+Not tested on HQ. Please kindly review and test.
+
+Best regards,
+Krzysztof
+---
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi    | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 6246cce2a15e..bab6c1addd5f 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -871,6 +871,13 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 
++					port@0 {
++						reg = <0>;
++						muic_to_usb: endpoint {
++							remote-endpoint = <&usb_to_muic>;
++						};
++					};
++
+ 					port@3 {
+ 						reg = <3>;
+ 						musb_con_to_mhl: endpoint {
+@@ -879,14 +886,6 @@
+ 					};
+ 				};
+ 			};
+-
+-			ports {
+-				port {
+-					muic_to_usb: endpoint {
+-						remote-endpoint = <&usb_to_muic>;
+-					};
+-				};
+-			};
  		};
  
- 		syscon_disp: syscon@13b80000 {
--			compatible = "syscon";
-+			compatible = "samsung,exynos5433-sysreg", "syscon";
- 			reg = <0x13b80000 0x1010>;
- 		};
- 
- 		syscon_cam0: syscon@120f0000 {
--			compatible = "syscon";
-+			compatible = "samsung,exynos5433-sysreg", "syscon";
- 			reg = <0x120f0000 0x1020>;
- 		};
- 
- 		syscon_cam1: syscon@145f0000 {
--			compatible = "syscon";
-+			compatible = "samsung,exynos5433-sysreg", "syscon";
- 			reg = <0x145f0000 0x1038>;
- 		};
- 
+ 		regulators {
 -- 
 2.17.1
 
