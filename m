@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A975C433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 17:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB28C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 17:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7FDBA2071B
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 17:25:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 323B820CC7
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 17:26:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598721958;
-	bh=nRhkqYcTGAk69BeB3yEs3mP59lvOEI+VgG69O0TBHeo=;
+	s=default; t=1598721962;
+	bh=+nY9mykADdwF60jwNNmm7FFTN2Md3KZ+mkgsQiSWT+A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yTzscLjHYBvV7bpjcpzR4K+jTF8LUxK0hQjp5RIH3yLdSu4z7VwIcCE3Vfz/nzzvs
-	 4b0LPyyZKputFbedopvc7brjj6a4+B0akMfwDZ3VBDCTL8jsJUv5sJ5ZfH15aWAdCK
-	 DWHVlUCCS9nGhvN/htGjdUweSEmyvv597GoVU3eQ=
+	b=gkXp6km+abUgLQ7pkydyVQAsgeKbxGD42GBrj7tIfZ5JbT9d399xibL43R7OO7ka2
+	 KX8M3cBa/Jo9/2iQ+TQzB1pwvBM2psQdKOrYeb1I0fgp01ZTnIAnZCwZ0huqgV49di
+	 641gaH3lafoGhmWLjD/EthKH20AOYQHE809O4Qm4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbgH2RZv (ORCPT
+        id S1728373AbgH2RZ6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 29 Aug 2020 13:25:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59760 "EHLO mail.kernel.org"
+        Sat, 29 Aug 2020 13:25:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728335AbgH2RZu (ORCPT
+        id S1728355AbgH2RZx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 29 Aug 2020 13:25:50 -0400
+        Sat, 29 Aug 2020 13:25:53 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B75252074A;
-        Sat, 29 Aug 2020 17:25:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 460AC20714;
+        Sat, 29 Aug 2020 17:25:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598721949;
-        bh=nRhkqYcTGAk69BeB3yEs3mP59lvOEI+VgG69O0TBHeo=;
+        s=default; t=1598721953;
+        bh=+nY9mykADdwF60jwNNmm7FFTN2Md3KZ+mkgsQiSWT+A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SNEO2opzvqmgxsWGfLRLM80Zk2/ifz5ocHMwSdfHOTK0kW+dNh5fL7GajsQI9PoJ+
-         ZOhNTsGiDS8OqkmehvUuZsLPGYslV/++iDwt6fM1TeSTTzzRVRcZI8SwQvypYM+YM9
-         OGU3t23CIp8fWeT+eqM0ca8hynmdyhuMGHdRQfY8=
+        b=uXvec8+QQTrPCMN2QCX7MutzzreA731+VA/ru/aRaEVo4FxWXEyrs4Nvji4j94j6+
+         6AbmrY3qk1PGNm0pXx+eEHDAOt6W/H5tOhSbELqVS1Nnk7CN7PJG5o/N6KzjFQVZEz
+         ZZKBhouPI0Oulk5z40uiLVft2UUwnO8ZSOFNSOYw=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Sam Ravnborg <sam@ravnborg.org>,
@@ -55,9 +55,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [RFT 3/4] ARM: dts: exynos: Move CMU assigned ISP clocks to buses in Exynos3250
-Date:   Sat, 29 Aug 2020 19:25:31 +0200
-Message-Id: <20200829172532.29358-3-krzk@kernel.org>
+Subject: [PATCH 4/4] ARM: dts: exynos: Remove snps,dwc2 compatible in Exynos3250
+Date:   Sat, 29 Aug 2020 19:25:32 +0200
+Message-Id: <20200829172532.29358-4-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200829172532.29358-1-krzk@kernel.org>
 References: <20200829172532.29358-1-krzk@kernel.org>
@@ -66,60 +66,30 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Commit 52005dece527 ("ARM: dts: Add assigned clock parents to CMU node
-for exynos3250") added assigned clocks under Clock Management Unit to
-fix hangs when accessing ISP registers.
+The binding for DesignWare HS OTG USB 2.0 in Samsung SoCs take only one
+compatible.  This fixes dtbs_check warnings like:
 
-This is not the place for it as CMU does not have a required "clocks"
-property:
-
-  arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml: clock-controller@10030000: 'clocks' is a dependency of 'assigned-clocks'
+  arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml: hsotg@12480000:
+    compatible: ['samsung,s3c6400-hsotg', 'snps,dwc2'] is not valid under any of the given schemas (Possible causes of the failure):
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
 ---
-
-Not tested and I wonder whether actually correct. For example, what will
-happen if devfreq (exynos-bus) is not built in?
-
-Could someone verify it?
----
- arch/arm/boot/dts/exynos3250.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/exynos3250.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index c67c70e46794..6d467022d929 100644
+index 6d467022d929..78734c132822 100644
 --- a/arch/arm/boot/dts/exynos3250.dtsi
 +++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -214,10 +214,6 @@
- 			compatible = "samsung,exynos3250-cmu";
- 			reg = <0x10030000 0x20000>;
- 			#clock-cells = <1>;
--			assigned-clocks = <&cmu CLK_MOUT_ACLK_400_MCUISP_SUB>,
--					  <&cmu CLK_MOUT_ACLK_266_SUB>;
--			assigned-clock-parents = <&cmu CLK_FIN_PLL>,
--						 <&cmu CLK_FIN_PLL>;
+@@ -350,7 +350,7 @@
  		};
  
- 		cmu_dmc: clock-controller@105c0000 {
-@@ -835,6 +831,8 @@
- 			compatible = "samsung,exynos-bus";
- 			clocks = <&cmu CLK_DIV_ACLK_400_MCUISP>;
- 			clock-names = "bus";
-+			assigned-clocks = <&cmu CLK_MOUT_ACLK_400_MCUISP_SUB>;
-+			assigned-clock-parents = <&cmu CLK_FIN_PLL>;
- 			operating-points-v2 = <&bus_mcuisp_opp_table>;
- 			status = "disabled";
- 		};
-@@ -843,6 +841,8 @@
- 			compatible = "samsung,exynos-bus";
- 			clocks = <&cmu CLK_DIV_ACLK_266>;
- 			clock-names = "bus";
-+			assigned-clocks =  <&cmu CLK_MOUT_ACLK_266_SUB>;
-+			assigned-clock-parents = <&cmu CLK_FIN_PLL>;
- 			operating-points-v2 = <&bus_isp_opp_table>;
- 			status = "disabled";
- 		};
+ 		hsotg: hsotg@12480000 {
+-			compatible = "samsung,s3c6400-hsotg", "snps,dwc2";
++			compatible = "samsung,s3c6400-hsotg";
+ 			reg = <0x12480000 0x20000>;
+ 			interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cmu CLK_USBOTG>;
 -- 
 2.17.1
 
