@@ -2,189 +2,124 @@ Return-Path: <SRS0=6CO4=CH=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F2AC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 14:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4444DC433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 14:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0A9D2065F
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 14:30:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1322D20757
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 14:34:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598711431;
-	bh=+r594Mll/9YuTOqi3UrI/hCezf7xrKr/GY6GKpDqTCw=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=r7M3IZcrTe97O/OBeTIs37DMQV4KDAQGsZi9grlsZ+ITY95rfDyzNX8d0LIclS/Uf
-	 s5pQ4fZIe+kaV1n3UUpjCVfrrDnY70VqpE4F+G0dqzF40GG3uRAmeI70yOUcH6/mJ8
-	 ChzAsyCld3XSeqXlMPJMp7OmHidk3WT+Gka23sYI=
+	s=default; t=1598711674;
+	bh=Bt2LcvmRA8aueOn9MiH2KddIvcJ9ARbLl4fgBrMMH28=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=CvBN2g0xDIEdnielibIVUePjwkTASskDE+iMmGyAx+fhrSD4vNuGZq03YWMWwrN1q
+	 JQlDetibsBlu2ePqNB99dOpoE5bpb8qtV8OhivG90oC+V3HrRvjsy1Bcwob2uw7xJI
+	 ufrIe+I4I7Za0+W4dhM6gbRem9T7CjkAnwdlXB5c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728082AbgH2O37 (ORCPT
+        id S1728012AbgH2Oed (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 29 Aug 2020 10:29:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56194 "EHLO mail.kernel.org"
+        Sat, 29 Aug 2020 10:34:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728012AbgH2O35 (ORCPT
+        id S1727772AbgH2Oed (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 29 Aug 2020 10:29:57 -0400
-Received: from localhost.localdomain (unknown [194.230.155.216])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Sat, 29 Aug 2020 10:34:33 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1125206C0;
-        Sat, 29 Aug 2020 14:29:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49EF92065F;
+        Sat, 29 Aug 2020 14:34:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598711396;
-        bh=+r594Mll/9YuTOqi3UrI/hCezf7xrKr/GY6GKpDqTCw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Rc7P51Xbp8wfp1EbyQwhCBLsD74s5v2H17QUdDJFuMJVOJtjDXKiGtSwcXVkAhwYH
-         7tMAEQiutEDfnBU455F7+7IpXTWSkfPkAsLl5EOp7S9cXhY3mDAiEKUZCFpuPQziHl
-         SP5vbQ3isjClTnmaZgEeDHbMFzvaqI3eswUXJbCE=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Opasiak <k.opasiak@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfc@lists.01.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 1/4] dt-bindings: net: nfc: s3fwrn5: Convert to dtschema
-Date:   Sat, 29 Aug 2020 16:29:45 +0200
-Message-Id: <20200829142948.32365-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        s=default; t=1598711672;
+        bh=Bt2LcvmRA8aueOn9MiH2KddIvcJ9ARbLl4fgBrMMH28=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=wFpkbrgQQGSDHhMuRaTI5o3Q0C950XgQuaRIAhBM2rJVMsZnepCaD0CwIu0xjxS6I
+         NkHjakIMpm68h3NjuQT1PFOxzrNnF/Ae4Y/XEfVdcM62EQV1sWjQvLqO3saoLy3LmP
+         /aA2XwUc/M9D+lR7f8pKp0RiwWLhQSTsw4dR++9w=
+Date:   Sat, 29 Aug 2020 15:34:26 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Peter Rosin <peda@axentia.se>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Tomasz Duszynski <tomasz.duszynski@octakon.com>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v3 01/18] iio: accel: bma180: Simplify with
+ dev_err_probe()
+Message-ID: <20200829153426.5430ad8b@archlinux>
+In-Reply-To: <20200829064726.26268-1-krzk@kernel.org>
+References: <20200829064726.26268-1-krzk@kernel.org>
+X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the Samsung S3FWRN5 NCI NFC controller bindings to dtschema.
-This is conversion only so it includes properties with invalid prefixes
-(s3fwrn5,en-gpios) which should be addressed later.
+On Sat, 29 Aug 2020 08:47:09 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../devicetree/bindings/net/nfc/s3fwrn5.txt   | 25 --------
- .../devicetree/bindings/net/nfc/s3fwrn5.yaml  | 59 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 3 files changed, 60 insertions(+), 25 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt
- create mode 100644 Documentation/devicetree/bindings/net/nfc/s3fwrn5.yaml
+> Common pattern of handling deferred probe can be simplified with
+> dev_err_probe().  Less code and also it prints the error value.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-diff --git a/Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt b/Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt
-deleted file mode 100644
-index f02f6fb7f81c..000000000000
---- a/Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt
-+++ /dev/null
-@@ -1,25 +0,0 @@
--* Samsung S3FWRN5 NCI NFC Controller
--
--Required properties:
--- compatible: Should be "samsung,s3fwrn5-i2c".
--- reg: address on the bus
--- interrupts: GPIO interrupt to which the chip is connected
--- s3fwrn5,en-gpios: Output GPIO pin used for enabling/disabling the chip
--- s3fwrn5,fw-gpios: Output GPIO pin used to enter firmware mode and
--  sleep/wakeup control
--
--Example:
--
--&hsi2c_4 {
--	s3fwrn5@27 {
--		compatible = "samsung,s3fwrn5-i2c";
--
--		reg = <0x27>;
--
--		interrupt-parent = <&gpa1>;
--		interrupts = <3 0 0>;
--
--		s3fwrn5,en-gpios = <&gpf1 4 0>;
--		s3fwrn5,fw-gpios = <&gpj0 2 0>;
--	};
--};
-diff --git a/Documentation/devicetree/bindings/net/nfc/s3fwrn5.yaml b/Documentation/devicetree/bindings/net/nfc/s3fwrn5.yaml
-new file mode 100644
-index 000000000000..c22451dea350
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/nfc/s3fwrn5.yaml
-@@ -0,0 +1,59 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/nfc/s3fwrn5.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung S3FWRN5 NCI NFC Controller
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+  - Krzysztof Opasiak <k.opasiak@samsung.com>
-+
-+properties:
-+  compatible:
-+    const: samsung,s3fwrn5-i2c
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  s3fwrn5,en-gpios:
-+    maxItems: 1
-+    description:
-+      Output GPIO pin used for enabling/disabling the chip
-+
-+  s3fwrn5,fw-gpios:
-+    maxItems: 1
-+    description:
-+      Output GPIO pin used to enter firmware mode and sleep/wakeup control
-+
-+required:
-+  - compatible
-+  - interrupts
-+  - reg
-+  - s3fwrn5,en-gpios
-+  - s3fwrn5,fw-gpios
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c4 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        s3fwrn5@27 {
-+            compatible = "samsung,s3fwrn5-i2c";
-+            reg = <0x27>;
-+
-+            interrupt-parent = <&gpa1>;
-+            interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
-+
-+            s3fwrn5,en-gpios = <&gpf1 4 GPIO_ACTIVE_HIGH>;
-+            s3fwrn5,fw-gpios = <&gpj0 2 GPIO_ACTIVE_HIGH>;
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ac79fdbdf8d0..91b3d5c349d8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15273,6 +15273,7 @@ M:	Robert Baldyga <r.baldyga@samsung.com>
- M:	Krzysztof Opasiak <k.opasiak@samsung.com>
- L:	linux-nfc@lists.01.org (moderated for non-subscribers)
- S:	Supported
-+F:	Documentation/devicetree/bindings/net/nfc/s3fwrn5.yaml
- F:	drivers/nfc/s3fwrn5
- 
- SAMSUNG S5C73M3 CAMERA DRIVER
--- 
-2.17.1
+Series applied to the togreg branch of iio.git. I'll push that out
+as testing for the autobuilders to play with it sometime later
+today.
+
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/accel/bma180.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
+> index 5b7a467c7b27..448faed001fd 100644
+> --- a/drivers/iio/accel/bma180.c
+> +++ b/drivers/iio/accel/bma180.c
+> @@ -1000,19 +1000,15 @@ static int bma180_probe(struct i2c_client *client,
+>  		return ret;
+>  
+>  	data->vdd_supply = devm_regulator_get(dev, "vdd");
+> -	if (IS_ERR(data->vdd_supply)) {
+> -		if (PTR_ERR(data->vdd_supply) != -EPROBE_DEFER)
+> -			dev_err(dev, "Failed to get vdd regulator %d\n",
+> -				(int)PTR_ERR(data->vdd_supply));
+> -		return PTR_ERR(data->vdd_supply);
+> -	}
+> +	if (IS_ERR(data->vdd_supply))
+> +		return dev_err_probe(dev, PTR_ERR(data->vdd_supply),
+> +				     "Failed to get vdd regulator\n");
+> +
+>  	data->vddio_supply = devm_regulator_get(dev, "vddio");
+> -	if (IS_ERR(data->vddio_supply)) {
+> -		if (PTR_ERR(data->vddio_supply) != -EPROBE_DEFER)
+> -			dev_err(dev, "Failed to get vddio regulator %d\n",
+> -				(int)PTR_ERR(data->vddio_supply));
+> -		return PTR_ERR(data->vddio_supply);
+> -	}
+> +	if (IS_ERR(data->vddio_supply))
+> +		return dev_err_probe(dev, PTR_ERR(data->vddio_supply),
+> +				     "Failed to get vddio regulator\n");
+> +
+>  	/* Typical voltage 2.4V these are min and max */
+>  	ret = regulator_set_voltage(data->vdd_supply, 1620000, 3600000);
+>  	if (ret)
 
