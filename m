@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C67D1C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 06:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE61C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 06:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A59F420E65
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 06:49:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3BE720E65
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 06:49:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598683760;
-	bh=f6+Tik++luo2PZ4Mb2eOWG5RToVxg+N7sCh7U3p3bZ8=;
+	s=default; t=1598683765;
+	bh=+9ZHsUV0y46Ja0TiXAlSDjBe8qgvjNNrJDCcRfHGJs8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qqNBel85vd0lgqdBoa+5G6HERbeMbp2DXq51q4KoL2dUpn93V0Af93nIBrLwU2Yra
-	 t24lw/k6kqz3pudvfMEeqLIcRl7pxa9NuP+iBSfRqStI/ZN6JjXH3DWk19zEElUhix
-	 AQcZIPQqXyGbOC15aPgWYy8GysBIsHcdEzGzFLPs=
+	b=DODG4EdV3b+EhZMZ3464DpEjqrVS2xKLbu2xULcBnZjS7NvqyEj/abcl4wLdaF4YO
+	 ON0stuxOfilBsESZT1+uJUmJ5XPPgTbid6Y4zGbSHtgcyZcfCzB8VDC6sVsvczWqK6
+	 LbL0GsDFl/6wINz1RzwjQ5RoCP4+3xR/uFXAOHmA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbgH2GtU (ORCPT
+        id S1727003AbgH2GsY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 29 Aug 2020 02:49:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41516 "EHLO mail.kernel.org"
+        Sat, 29 Aug 2020 02:48:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727051AbgH2Gsh (ORCPT
+        id S1726981AbgH2GsX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 29 Aug 2020 02:48:37 -0400
+        Sat, 29 Aug 2020 02:48:23 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC1602145D;
-        Sat, 29 Aug 2020 06:48:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECC4A212CC;
+        Sat, 29 Aug 2020 06:48:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598683717;
-        bh=f6+Tik++luo2PZ4Mb2eOWG5RToVxg+N7sCh7U3p3bZ8=;
+        s=default; t=1598683702;
+        bh=+9ZHsUV0y46Ja0TiXAlSDjBe8qgvjNNrJDCcRfHGJs8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=thEheuIYmGXal/L7ScJpySupzF+kcZenN/wAYN1aU8WkvzbtgSihXdvgL+rLOi1i1
-         UY59B5HgzprHiRaWT/pGM10SlFXQx8P6ay+BHX86+1rCtDJ/EML25//SBRyEpzjFMt
-         qJZqhXWIq6e0ppCE+CaKTEG+FYiz9Q8cNiJa1Xt0=
+        b=KIeViUeY6QyTX92YBy2Cu08o+4iOH/rmeVUGnTZsxx1fz529OQybhMrqmUPpmS2eQ
+         Wlvt3lUkfvE0ZPh5IXXdFSxAZ0xQ9LZl4mdhdoA2HDNroIJQvSb1uGynZ2GnTe7A9Y
+         vTR2diwZNHhhkSso8ozxl0HX0nc0EAloutIphD/8=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Lars-Peter Clausen <lars@metafoo.de>,
@@ -55,9 +55,9 @@ To:     Jonathan Cameron <jic23@kernel.org>,
         linux-stm32@st-md-mailman.stormreply.com
 Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 10/18] iio: amplifiers: hmc425a: Simplify with dev_err_probe()
-Date:   Sat, 29 Aug 2020 08:47:18 +0200
-Message-Id: <20200829064726.26268-10-krzk@kernel.org>
+Subject: [PATCH v3 06/18] iio: adc: meson_saradc: Simplify with dev_err_probe()
+Date:   Sat, 29 Aug 2020 08:47:14 +0200
+Message-Id: <20200829064726.26268-6-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200829064726.26268-1-krzk@kernel.org>
 References: <20200829064726.26268-1-krzk@kernel.org>
@@ -71,38 +71,28 @@ dev_err_probe().  Less code and also it prints the error value.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
 ---
+ drivers/iio/adc/meson_saradc.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-Changes since v2:
-1. Wrap dev_err_probe() lines at 80 character
-
-Changes since v1:
-1. Wrap dev_err_probe() lines at 100 character
----
- drivers/iio/amplifiers/hmc425a.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/iio/amplifiers/hmc425a.c b/drivers/iio/amplifiers/hmc425a.c
-index 582708924e4f..9efa692151f0 100644
---- a/drivers/iio/amplifiers/hmc425a.c
-+++ b/drivers/iio/amplifiers/hmc425a.c
-@@ -201,12 +201,9 @@ static int hmc425a_probe(struct platform_device *pdev)
- 	st->gain = st->chip_info->default_gain;
+diff --git a/drivers/iio/adc/meson_saradc.c b/drivers/iio/adc/meson_saradc.c
+index 93c2252c0b89..a9d06e8a576a 100644
+--- a/drivers/iio/adc/meson_saradc.c
++++ b/drivers/iio/adc/meson_saradc.c
+@@ -719,11 +719,8 @@ static int meson_sar_adc_temp_sensor_init(struct iio_dev *indio_dev)
+ 		if (ret == -ENODEV)
+ 			return 0;
  
- 	st->gpios = devm_gpiod_get_array(&pdev->dev, "ctrl", GPIOD_OUT_LOW);
--	if (IS_ERR(st->gpios)) {
--		ret = PTR_ERR(st->gpios);
 -		if (ret != -EPROBE_DEFER)
--			dev_err(&pdev->dev, "failed to get gpios\n");
+-			dev_err(indio_dev->dev.parent,
+-				"failed to get temperature_calib cell\n");
+-
 -		return ret;
--	}
-+	if (IS_ERR(st->gpios))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(st->gpios),
-+				     "failed to get gpios\n");
++		return dev_err_probe(indio_dev->dev.parent, ret,
++				     "failed to get temperature_calib cell\n");
+ 	}
  
- 	if (st->gpios->ndescs != st->chip_info->num_gpios) {
- 		dev_err(&pdev->dev, "%d GPIOs needed to operate\n",
+ 	priv->tsc_regmap =
 -- 
 2.17.1
 
