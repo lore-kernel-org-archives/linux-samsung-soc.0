@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 630B6C433E2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE60C43461
 	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 13:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 380D021534
+	by mail.kernel.org (Postfix) with ESMTP id BF7AE2145D
 	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 13:55:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1598795717;
-	bh=TTjHKAyk9At+IUU5vNSawItxwFQVyBHFrL+xnjQf8yc=;
+	bh=bvy5JgfVStU+LmnfyJ6fxrqzEqJ3ekac2/7lOiEU4fI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1pCLNiCMO/KsV7y092vbqjj2eOD3IBOXTSwh6PlWsuCzyE8LsPw4fejchHOynGNuk
-	 T+T84ipdHAlrRP5CtX1rZ/LNPSN+JZus3onCL5tXNx9wUdN/xD5Pf23xMbtiNSOd6g
-	 0vDpfMVUoKXAGlLFzcgMktHYnslZW8kh6dB4RL3A=
+	b=lc1jrJpGRFf9kpsGEhk29DRMPnSWun+U4F1Q31CKwwVQydoD4yG5tmvqqvrom4ux8
+	 jNOjAOO9NOTs0MEef1O0jBWFQ9FKdoC3vJqvDSappuVGTUOv2PrLfi0Jk8D+3rwT+g
+	 RAGV02b/hGwOZ2nccRRb8V/+yz7adKsQuAmRtWoA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbgH3NzI (ORCPT
+        id S1728962AbgH3NzO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 30 Aug 2020 09:55:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55896 "EHLO mail.kernel.org"
+        Sun, 30 Aug 2020 09:55:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728941AbgH3Nyu (ORCPT
+        id S1728945AbgH3Nyy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 30 Aug 2020 09:54:50 -0400
+        Sun, 30 Aug 2020 09:54:54 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8D042137B;
-        Sun, 30 Aug 2020 13:54:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0845420EDD;
+        Sun, 30 Aug 2020 13:54:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598795689;
-        bh=TTjHKAyk9At+IUU5vNSawItxwFQVyBHFrL+xnjQf8yc=;
+        s=default; t=1598795692;
+        bh=bvy5JgfVStU+LmnfyJ6fxrqzEqJ3ekac2/7lOiEU4fI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HE1fjI0+fT5mhm0IWRVSB7I06QSINTSR0V5aBMsNguT9M5iJZKkYsoSJvROOzdgk8
-         XSScjZst+pwzZQ+JktPxpCVIY1QNE3dNvYCzQ97dmOMjvkO2GSdGid5ONn7k5xHZ3J
-         UhWZEYTRw23KCqvC29pTvhHyvW85FwqI0SsVWTEI=
+        b=K7cJ3p82YVQ7DddJCjLDCPppLFVVAzWnWVCP5cq5ymEQYla3h2vqnYR11y1FPuGbi
+         8I41zw4ehdUL+MEkERQimJNTE8kbGZCpPP46iARC04+WmwOL/mirG9SIqEvKXer4pk
+         DCsnVNEbfdyZjZVJDMIz+abKYDiwL8le0mRlY1Ao=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -50,9 +50,9 @@ To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 18/33] ARM: dts: exynos: Override thermal by label in Trats
-Date:   Sun, 30 Aug 2020 15:51:45 +0200
-Message-Id: <20200830135200.24304-18-krzk@kernel.org>
+Subject: [PATCH 19/33] ARM: dts: exynos: Add CPU cooling in Origen
+Date:   Sun, 30 Aug 2020 15:51:46 +0200
+Message-Id: <20200830135200.24304-19-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200830135200.24304-1-krzk@kernel.org>
 References: <20200830135200.24304-1-krzk@kernel.org>
@@ -61,66 +61,43 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Using full paths to extend or override a device tree node is error prone
-since if there was a typo error, a new node will be created instead of
-extending the node as it was desired.  This will lead to run-time errors
-that could be hard to detect.
-
-A mistyped label on the other hand, will cause a dtc compile error
-(during build time).
+Add missing cooling devices for CPU thermal zones in Exynos4210 Origen
+board.  This allows to scale down CPU frequency (and voltage) in case of
+thermal pressure.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos4210-trats.dts | 29 ++++++++++++--------------
- 1 file changed, 13 insertions(+), 16 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index 33b40f619dea..75483e08b4b4 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -140,22 +140,6 @@
- 			clock-frequency = <32768>;
- 		};
- 	};
--
--	thermal-zones {
--		cpu_thermal: cpu-thermal {
--			cooling-maps {
--				map0 {
--				     /* Corresponds to 800MHz at freq_table */
--				     cooling-device = <&cpu0 2 2>, <&cpu1 2 2>;
--				};
--				map1 {
--				     /* Corresponds to 200MHz at freq_table */
--				     cooling-device = <&cpu0 4 4>, <&cpu1 4 4>;
--			       };
--		       };
--		};
--	};
--
- };
- 
- &camera {
-@@ -166,6 +150,19 @@
- 	cpu0-supply = <&varm_breg>;
+---
+
+Not tested on HW.
+---
+ arch/arm/boot/dts/exynos4210-origen.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index fcf45619a3e4..d6d8a8096eb4 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -129,6 +129,19 @@
+ 	cpu0-supply = <&buck1_reg>;
  };
  
 +&cpu_thermal {
 +	cooling-maps {
 +		map0 {
-+			/* Corresponds to 800MHz at freq_table */
-+			cooling-device = <&cpu0 2 2>, <&cpu1 2 2>;
++			/* Corresponds to 800MHz */
++			cooling-device = <&cpu0 2 2>;
 +		};
 +		map1 {
-+			/* Corresponds to 200MHz at freq_table */
-+			cooling-device = <&cpu0 4 4>, <&cpu1 4 4>;
++			/* Corresponds to 200MHz */
++			cooling-device = <&cpu0 4 4>;
 +		};
 +	};
 +};
 +
- &dsi_0 {
- 	vddcore-supply = <&vusb_reg>;
- 	vddio-supply = <&vmipi_reg>;
+ &exynos_usbphy {
+ 	status = "okay";
+ };
 -- 
 2.17.1
 
