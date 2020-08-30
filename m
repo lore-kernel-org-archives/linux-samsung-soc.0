@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C0CC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9B9C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:10:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A24952078D
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:10:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 908B82078D
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:10:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598796600;
-	bh=NOBhlq6ryk8xSFNoYiENoIebYUcdXst8K3M7id276H4=;
+	s=default; t=1598796630;
+	bh=PezkV/BBxdiRHsbfh2DW7duf8rwEieb1A2/fZcuH92g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TKzMxYdu4RJ0raembY8prIqopvbZqglRamqaW2cDuspGDsKupvaMlvtIi2zJXx3oN
-	 fvf4bBiTYieb6ylfZzNMt7xy2SOqeiddg4nr8OyTm0k11SVV/vbbE/VxOPlbk8t1FR
-	 oXqz0YTg09h6j87mTdWXew0o+41NuTWbPZkEASd4=
+	b=pl7G55OXmRw1seCLJvNF7j1tQR11vJRHcajC26zxA3+XJaB52xuFvX0VsvVaZnLqy
+	 XOpZQimo0uJNunSljIyNsBgDIRMiUOmSy1VMtR8WVoS+8B4VatYkCZ8tAlyB0I7hoL
+	 mdbNZsYKb1BuVZKK01NDoWOlEf1pNJCFByWvpB6s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbgH3OJl (ORCPT
+        id S1726439AbgH3OK3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 30 Aug 2020 10:09:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55338 "EHLO mail.kernel.org"
+        Sun, 30 Aug 2020 10:10:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728903AbgH3Nyh (ORCPT
+        id S1728789AbgH3NyT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 30 Aug 2020 09:54:37 -0400
+        Sun, 30 Aug 2020 09:54:19 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA45B2087D;
-        Sun, 30 Aug 2020 13:54:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B19E2087D;
+        Sun, 30 Aug 2020 13:54:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598795677;
-        bh=NOBhlq6ryk8xSFNoYiENoIebYUcdXst8K3M7id276H4=;
+        s=default; t=1598795658;
+        bh=PezkV/BBxdiRHsbfh2DW7duf8rwEieb1A2/fZcuH92g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XZSUcDJtpyt5TRXcxkB8OxyRn+jBeocmi6PqHxDJ43cD+UBwJ60KbaszpeIQyhgpo
-         A6FrimnR5G6EOljn7JKq45IbjCoNhzGlbxFbsFZ4FPzVrQ2rM2HV+nJ4LjYiYS2W/p
-         EjjRrlu4ltU3IThMvt+iGBg37Tdf24BBC+r6PFS4=
+        b=YQ1Lkc+DLVhD8zbiFFDJOxl7GM+sItk3JeIvbiuVnOlSS+bOju7ShyYxgAiB24FZT
+         AP4wg9Q4xXyAp696G5OmGqLqCzrOH0FZrl227DmEIqgLAj5lIWa5hCPu1BjCyNiURz
+         7Rf1idlvZ8lzpchlTez1Tv2/k1Mq9zNthWY84Q7I=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -50,9 +50,9 @@ To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [RFT 14/33] ARM: dts: exynos: Replace deprecated GPIO spi-gpio properties in Universal C210
-Date:   Sun, 30 Aug 2020 15:51:41 +0200
-Message-Id: <20200830135200.24304-14-krzk@kernel.org>
+Subject: [PATCH 08/33] ARM: dts: exynos: Add and enable 32 kHz modem clock in Galaxy I9100
+Date:   Sun, 30 Aug 2020 15:51:35 +0200
+Message-Id: <20200830135200.24304-8-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200830135200.24304-1-krzk@kernel.org>
 References: <20200830135200.24304-1-krzk@kernel.org>
@@ -61,32 +61,31 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-"gpio-sck" and "gpio-mosi" are deprecated so update the DTS to fix
-dtbs_checks warnings like:
-
-  arch/arm/boot/dts/exynos4210-universal_c210.dt.yaml: spi-lcd:
-    gpio-sck: False schema does not allow [[85, 1, 0]]
+The PMIC has a 32768 Hz clock used by the modem which is implemented by
+driver as a regulator.  Add and enable it to be sure modem get's its
+signal.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos4210-universal_c210.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos4210-i9100.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index 3509fdf8f245..279f0f8f86ed 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -124,8 +124,8 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		gpio-sck = <&gpy3 1 GPIO_ACTIVE_HIGH>;
--		gpio-mosi = <&gpy3 3 GPIO_ACTIVE_HIGH>;
-+		sck-gpios = <&gpy3 1 GPIO_ACTIVE_HIGH>;
-+		mosi-gpios = <&gpy3 3 GPIO_ACTIVE_HIGH>;
- 		num-chipselects = <1>;
- 		cs-gpios = <&gpy4 3 GPIO_ACTIVE_LOW>;
- 
+diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
+index d63274c8539d..1d200a5e1b72 100644
+--- a/arch/arm/boot/dts/exynos4210-i9100.dts
++++ b/arch/arm/boot/dts/exynos4210-i9100.dts
+@@ -580,6 +580,11 @@
+ 				regulator-name = "EN32KHZ_AP";
+ 				regulator-always-on;
+ 			};
++
++			EN32KHZ_CP {
++				regulator-name = "EN32KHZ_CP";
++				regulator-always-on;
++			};
+ 		};
+ 	};
+ };
 -- 
 2.17.1
 
