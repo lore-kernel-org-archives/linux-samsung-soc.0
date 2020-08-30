@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C35C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEBAC433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 168C5206FA
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:00:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB33A206FA
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:01:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598796033;
-	bh=uNfTXwgoO6BxRl6jN3Qy3MaFxligNIVyKs8EdVjfwzU=;
+	s=default; t=1598796094;
+	bh=/xSzpE7IEfFeATfIQHM1H2NPtnP7xYuNb+n1sDJdnRs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DDLyZefIwzeZvYN9dtNCbmB7c7lUx0rydBwE5HapsV39CAta0G7CaMbwWFaiY1m39
-	 0LVWEIdnvReFpxgoDo6mqfZgN4bxjAo0qFR9A9mnYDTvVxXQmJqJYzLqmavNwqbzRB
-	 uUx/VwztsnC9OYdVQy0ujoyHaRQCEw639B1tVq3E=
+	b=XpCFb/A6UOsNWy8kuK32TapIo3EJngVZjH3dcFVB6hCN/uH3pfPPpVtPMROtDLUCn
+	 KRNUi0yDU/ixAxY7+3rftnJwLyx2jUldyADjypyUqycaRVk0uA1+7AsklAKX0Nhw12
+	 2vSzKNTRIgRmQUXUesDjqW1F23xLYQShR/PDLVi0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbgH3OA3 (ORCPT
+        id S1726565AbgH3OAy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 30 Aug 2020 10:00:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55896 "EHLO mail.kernel.org"
+        Sun, 30 Aug 2020 10:00:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728933AbgH3N4M (ORCPT
+        id S1728969AbgH3Nzg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 30 Aug 2020 09:56:12 -0400
+        Sun, 30 Aug 2020 09:55:36 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 215FE21531;
-        Sun, 30 Aug 2020 13:55:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 166CB2151B;
+        Sun, 30 Aug 2020 13:55:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598795735;
-        bh=uNfTXwgoO6BxRl6jN3Qy3MaFxligNIVyKs8EdVjfwzU=;
+        s=default; t=1598795728;
+        bh=/xSzpE7IEfFeATfIQHM1H2NPtnP7xYuNb+n1sDJdnRs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qoFwOJrNry2znxlpy9F6HfjXoyXSqdosgorTx85N6brLUYqkDSxsZvbm8Ji3LhzFg
-         44lvMG7bW8wY5W9QhCAVQWSqLlsr8Zjd3diXihaGt5Q2K8F5HyvT2O6BTW18EBzXLr
-         IVEqCI0MDShvWjBZnTzTsOZ1xQdUFk91pQ/3MOPc=
+        b=EioYxfVHApgaryO0nLtwQufBLa3+/IKuksd9HRjxg/i+bMAv4NyCGiixFUOARNDLw
+         dWg517dVjHQl8tzBq7o0ZjaI2qr5f/rBLxvxBtTzMQTcTORp9kOFFi2FTqdGiDPYS8
+         xaVIvAeNrajLGs2v/KFc7vLYkN+lqm53qYetyiAo=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -50,9 +50,9 @@ To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 33/33] ARM: dts: exynos: Correct whitespace and indentation issues
-Date:   Sun, 30 Aug 2020 15:52:00 +0200
-Message-Id: <20200830135200.24304-33-krzk@kernel.org>
+Subject: [PATCH 31/33] ARM: dts: exynos: Correct S3C RTC bindings in SMDK4412
+Date:   Sun, 30 Aug 2020 15:51:58 +0200
+Message-Id: <20200830135200.24304-31-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200830135200.24304-1-krzk@kernel.org>
 References: <20200830135200.24304-1-krzk@kernel.org>
@@ -61,330 +61,49 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Remove double space after '=' and fix indentation in Exynos3250,
-Exynos4210 and Exynos4412 boards.
+The S3C RTC requires 32768 Hz clock as input which is provided by PMIC.
+However the PMIC is not described in DTS at all so at least add a
+workaround to model its clock with fixed-clock and silence dtbs_check
+warnings like:
+
+  arch/arm/boot/dts/exynos4412-smdk4412.dt.yaml: rtc@10070000: clocks: [[7, 346]] is too short
+  arch/arm/boot/dts/exynos4412-smdk4412.dt.yaml: rtc@10070000: clock-names: ['rtc'] is too short
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos3250-monk.dts         |   2 +-
- arch/arm/boot/dts/exynos3250-rinato.dts       |   2 +-
- arch/arm/boot/dts/exynos4210-trats.dts        | 138 +++++++++---------
- .../boot/dts/exynos4210-universal_c210.dts    |   4 +-
- arch/arm/boot/dts/exynos4412-i9300.dts        |   2 +-
- arch/arm/boot/dts/exynos4412-i9305.dts        |   2 +-
- arch/arm/boot/dts/exynos4412-n710x.dts        |   2 +-
- arch/arm/boot/dts/exynos4412-trats2.dts       |   2 +-
- 8 files changed, 77 insertions(+), 77 deletions(-)
+ arch/arm/boot/dts/exynos4412-smdk4412.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index ca29d7ed8216..9d77a73bc92b 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -26,7 +26,7 @@
- 
- 	memory@40000000 {
- 		device_type = "memory";
--		reg =  <0x40000000 0x1ff00000>;
-+		reg = <0x40000000 0x1ff00000>;
- 	};
- 
- 	firmware@205f000 {
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index aba8350cfdaf..3df003af0d15 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -30,7 +30,7 @@
- 
- 	memory@40000000 {
- 		device_type = "memory";
--		reg =  <0x40000000 0x1ff00000>;
-+		reg = <0x40000000 0x1ff00000>;
- 	};
- 
- 	firmware@205f000 {
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index 75483e08b4b4..2b49c1d77391 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -316,135 +316,135 @@
- 
- 		regulators {
- 			valive_reg: LDO2 {
--			     regulator-name = "VALIVE_1.1V_C210";
--			     regulator-min-microvolt = <1100000>;
--			     regulator-max-microvolt = <1100000>;
--			     regulator-always-on;
-+				regulator-name = "VALIVE_1.1V_C210";
-+				regulator-min-microvolt = <1100000>;
-+				regulator-max-microvolt = <1100000>;
-+				regulator-always-on;
- 			};
- 
- 			vusb_reg: LDO3 {
--			     regulator-name = "VUSB_1.1V_C210";
--			     regulator-min-microvolt = <1100000>;
--			     regulator-max-microvolt = <1100000>;
-+				regulator-name = "VUSB_1.1V_C210";
-+				regulator-min-microvolt = <1100000>;
-+				regulator-max-microvolt = <1100000>;
- 			};
- 
- 			vmipi_reg: LDO4 {
--			     regulator-name = "VMIPI_1.8V";
--			     regulator-min-microvolt = <1800000>;
--			     regulator-max-microvolt = <1800000>;
-+				regulator-name = "VMIPI_1.8V";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
- 			};
- 
- 			vpda_reg: LDO6 {
--			     regulator-name = "VCC_1.8V_PDA";
--			     regulator-min-microvolt = <1800000>;
--			     regulator-max-microvolt = <1800000>;
--			     regulator-always-on;
-+				regulator-name = "VCC_1.8V_PDA";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
- 			};
- 
- 			vcam_reg: LDO7 {
--			     regulator-name = "CAM_ISP_1.8V";
--			     regulator-min-microvolt = <1800000>;
--			     regulator-max-microvolt = <1800000>;
-+				regulator-name = "CAM_ISP_1.8V";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
- 			};
- 
- 			vusbdac_reg: LDO8 {
--			     regulator-name = "VUSB+VDAC_3.3V_C210";
--			     regulator-min-microvolt = <3300000>;
--			     regulator-max-microvolt = <3300000>;
-+				regulator-name = "VUSB+VDAC_3.3V_C210";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
- 			};
- 
- 			vccpda_reg: LDO9 {
--			     regulator-name = "VCC_2.8V_PDA";
--			     regulator-min-microvolt = <2800000>;
--			     regulator-max-microvolt = <2800000>;
--			     regulator-always-on;
-+				regulator-name = "VCC_2.8V_PDA";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-always-on;
- 			};
- 
- 			vpll_reg: LDO10 {
--			     regulator-name = "VPLL_1.1V_C210";
--			     regulator-min-microvolt = <1100000>;
--			     regulator-max-microvolt = <1100000>;
--			     regulator-always-on;
-+				regulator-name = "VPLL_1.1V_C210";
-+				regulator-min-microvolt = <1100000>;
-+				regulator-max-microvolt = <1100000>;
-+				regulator-always-on;
- 			};
- 
- 			vtcam_reg: LDO12 {
--			     regulator-name = "VT_CAM_1.8V";
--			     regulator-min-microvolt = <1800000>;
--			     regulator-max-microvolt = <1800000>;
-+				regulator-name = "VT_CAM_1.8V";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
- 			};
- 
- 			vcclcd_reg: LDO13 {
--			     regulator-name = "VCC_3.3V_LCD";
--			     regulator-min-microvolt = <3300000>;
--			     regulator-max-microvolt = <3300000>;
-+				regulator-name = "VCC_3.3V_LCD";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
- 			};
- 
- 			vlcd_reg: LDO15 {
--			     regulator-name = "VLCD_2.2V";
--			     regulator-min-microvolt = <2200000>;
--			     regulator-max-microvolt = <2200000>;
-+				regulator-name = "VLCD_2.2V";
-+				regulator-min-microvolt = <2200000>;
-+				regulator-max-microvolt = <2200000>;
- 			};
- 
- 			camsensor_reg: LDO16 {
--			     regulator-name = "CAM_SENSOR_IO_1.8V";
--			     regulator-min-microvolt = <1800000>;
--			     regulator-max-microvolt = <1800000>;
-+				regulator-name = "CAM_SENSOR_IO_1.8V";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
- 			};
- 
- 			tflash_reg: LDO17 {
--			     regulator-name = "VTF_2.8V";
--			     regulator-min-microvolt = <2800000>;
--			     regulator-max-microvolt = <2800000>;
-+				regulator-name = "VTF_2.8V";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
- 			};
- 
- 			vddq_reg: LDO21 {
--			     regulator-name = "VDDQ_M1M2_1.2V";
--			     regulator-min-microvolt = <1200000>;
--			     regulator-max-microvolt = <1200000>;
--			     regulator-always-on;
-+				regulator-name = "VDDQ_M1M2_1.2V";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-always-on;
- 			};
- 
- 			varm_breg: BUCK1 {
--			     regulator-name = "VARM_1.2V_C210";
--			     regulator-min-microvolt = <900000>;
--			     regulator-max-microvolt = <1350000>;
--			     regulator-always-on;
-+				regulator-name = "VARM_1.2V_C210";
-+				regulator-min-microvolt = <900000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-always-on;
- 			};
- 
- 			vint_breg: BUCK2 {
--			     regulator-name = "VINT_1.1V_C210";
--			     regulator-min-microvolt = <900000>;
--			     regulator-max-microvolt = <1100000>;
--			     regulator-always-on;
-+				regulator-name = "VINT_1.1V_C210";
-+				regulator-min-microvolt = <900000>;
-+				regulator-max-microvolt = <1100000>;
-+				regulator-always-on;
- 			};
- 
- 			camisp_breg: BUCK4 {
--			     regulator-name = "CAM_ISP_CORE_1.2V";
--			     regulator-min-microvolt = <1200000>;
--			     regulator-max-microvolt = <1200000>;
-+				regulator-name = "CAM_ISP_CORE_1.2V";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
- 			};
- 
- 			vmem_breg: BUCK5 {
--			     regulator-name = "VMEM_1.2V_C210";
--			     regulator-min-microvolt = <1200000>;
--			     regulator-max-microvolt = <1200000>;
--			     regulator-always-on;
-+				regulator-name = "VMEM_1.2V_C210";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-always-on;
- 			};
- 
- 			vccsub_breg: BUCK7 {
--			     regulator-name = "VCC_SUB_2.0V";
--			     regulator-min-microvolt = <2000000>;
--			     regulator-max-microvolt = <2000000>;
--			     regulator-always-on;
-+				regulator-name = "VCC_SUB_2.0V";
-+				regulator-min-microvolt = <2000000>;
-+				regulator-max-microvolt = <2000000>;
-+				regulator-always-on;
- 			};
- 
- 			safe1_sreg: ESAFEOUT1 {
--			     regulator-name = "SAFEOUT1";
-+				regulator-name = "SAFEOUT1";
- 			};
- 
- 			safe2_sreg: ESAFEOUT2 {
--			     regulator-name = "SAFEOUT2";
--			     regulator-boot-on;
-+				regulator-name = "SAFEOUT2";
-+				regulator-boot-on;
- 			};
- 
- 			EN32KHZ_AP {
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index 546d84fe4599..a9f4db533183 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -49,7 +49,7 @@
- 	};
- 
- 	vemmc_reg: voltage-regulator {
--	        compatible = "regulator-fixed";
-+		compatible = "regulator-fixed";
- 		regulator-name = "VMEM_VDD_2_8V";
- 		regulator-min-microvolt = <2800000>;
- 		regulator-max-microvolt = <2800000>;
-@@ -111,7 +111,7 @@
- 	};
- 
- 	tsp_reg: voltage-regulator {
--	        compatible = "regulator-fixed";
-+		compatible = "regulator-fixed";
- 		regulator-name = "TSP_2_8V";
- 		regulator-min-microvolt = <2800000>;
- 		regulator-max-microvolt = <2800000>;
-diff --git a/arch/arm/boot/dts/exynos4412-i9300.dts b/arch/arm/boot/dts/exynos4412-i9300.dts
-index 3691802b69c5..07fbcf845c49 100644
---- a/arch/arm/boot/dts/exynos4412-i9300.dts
-+++ b/arch/arm/boot/dts/exynos4412-i9300.dts
-@@ -17,7 +17,7 @@
- 
- 	memory@40000000 {
- 		device_type = "memory";
--		reg =  <0x40000000 0x40000000>;
-+		reg = <0x40000000 0x40000000>;
+diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+index 3667fa048e0f..49971203a8aa 100644
+--- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
++++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+@@ -37,6 +37,13 @@
+ 			compatible = "samsung,clock-xusbxti";
+ 			clock-frequency = <24000000>;
+ 		};
++
++		pmic_ap_clk: pmic-ap-clk {
++			/* Workaround for missing clock on PMIC */
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
  	};
  };
  
-diff --git a/arch/arm/boot/dts/exynos4412-i9305.dts b/arch/arm/boot/dts/exynos4412-i9305.dts
-index 54a2a55dbf70..6bc3d897f432 100644
---- a/arch/arm/boot/dts/exynos4412-i9305.dts
-+++ b/arch/arm/boot/dts/exynos4412-i9305.dts
-@@ -10,7 +10,7 @@
- 
- 	memory@40000000 {
- 		device_type = "memory";
--		reg =  <0x40000000 0x80000000>;
-+		reg = <0x40000000 0x80000000>;
+@@ -142,6 +149,11 @@
  	};
  };
  
-diff --git a/arch/arm/boot/dts/exynos4412-n710x.dts b/arch/arm/boot/dts/exynos4412-n710x.dts
-index 2361d89a79a8..a47b7f35fc80 100644
---- a/arch/arm/boot/dts/exynos4412-n710x.dts
-+++ b/arch/arm/boot/dts/exynos4412-n710x.dts
-@@ -8,7 +8,7 @@
- 
- 	memory@40000000 {
- 		device_type = "memory";
--		reg =  <0x40000000 0x80000000>;
-+		reg = <0x40000000 0x80000000>;
- 	};
- 
- 	/* bootargs are passed in by bootloader */
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index aac533933c61..7b447b63007e 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -18,7 +18,7 @@
- 
- 	memory@40000000 {
- 		device_type = "memory";
--		reg =  <0x40000000 0x40000000>;
-+		reg = <0x40000000 0x40000000>;
- 	};
- 
- 	chosen {
++&rtc {
++	clocks = <&clock CLK_RTC>, <&pmic_ap_clk>;
++	clock-names = "rtc", "rtc_src";
++};
++
+ &sdhci_2 {
+ 	bus-width = <4>;
+ 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sd2_cd>;
 -- 
 2.17.1
 
