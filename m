@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29841C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3231C433E7
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2281206FA
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:02:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1EA9206FA
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:02:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598796152;
-	bh=d+payrNDUljAt/FZ1UI0yKfpcaTabtKwEuWurVJMuPs=;
+	s=default; t=1598796157;
+	bh=UnqZkO538P3VTBEgrV3OxJqxre1q+xhSq04m0APAXkU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=y4NSXljJviZhrSyJNqDJefdqAEUfb2EmcTCrZXEln3E+jd1po5lR1jbaa9oQ3Gqzo
-	 yLQBNV1nxGcn1fI+UFhvpz4H1HvWAocDCJxWzF7Vhri8sjicIq0KhBxSd7adeDnYUV
-	 UyLnebSzahON4Q9Tw+kiyqnqOmfu0Quk+rVRipMg=
+	b=DOZl+iyyiPwAS9E1spB2d1otT6g2PYkNU7EggT2f+N2etS5lZCPUNU/UG0PW7kXrW
+	 VOD33QYtM1+y20Slpky0bHZamOKM6P0JnQScfjrsqNlye2xBu89HZZbUBjgQWy1nCB
+	 ZMbgZNv5eOzBcjDI5c/4SvQMdx7ExoO4HoP/afGI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbgH3OCQ (ORCPT
+        id S1726023AbgH3OCC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 30 Aug 2020 10:02:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56828 "EHLO mail.kernel.org"
+        Sun, 30 Aug 2020 10:02:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728972AbgH3NzZ (ORCPT
+        id S1728973AbgH3Nzg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 30 Aug 2020 09:55:25 -0400
+        Sun, 30 Aug 2020 09:55:36 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16D5221527;
-        Sun, 30 Aug 2020 13:55:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32C7820707;
+        Sun, 30 Aug 2020 13:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598795725;
-        bh=d+payrNDUljAt/FZ1UI0yKfpcaTabtKwEuWurVJMuPs=;
+        s=default; t=1598795731;
+        bh=UnqZkO538P3VTBEgrV3OxJqxre1q+xhSq04m0APAXkU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G96usUA1PN8PO5pfeD+4ZXDevuAWUMiwN1qb9rceGkXtI8KhzRToFSsP3qhFvEeIv
-         0OZjAdvW0BaT/j/IdUzfYuGnRjse9Tm+ygZ1xY330Byize9pBnL4o2cx/4D70xTib+
-         CxjPOI356+7hKLTPaKvi0s/WEoPPcL1Cn8lajDuw=
+        b=UuWtO4mcaZ1vLZO4arAJrZgMwK0zNw/QZ5IDuLrRmP+ZPhtORSnaUhoc56xIaROsx
+         6lyoGWOWKwSFOGUB7H7Oi1LVhlPQF8g81deVVtlFysUgVEVWCYfxVRApaOPTlwmyrf
+         OvdHHlD/fILpM+9MjEdwm16rxiob0uawZGDslwxI=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -50,9 +50,9 @@ To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 30/33] ARM: dts: exynos: Add CPU cooling in Tiny4412
-Date:   Sun, 30 Aug 2020 15:51:57 +0200
-Message-Id: <20200830135200.24304-30-krzk@kernel.org>
+Subject: [PATCH 32/33] ARM: dts: exynos: Correct S3C RTC bindings in Tiny4412
+Date:   Sun, 30 Aug 2020 15:51:59 +0200
+Message-Id: <20200830135200.24304-32-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200830135200.24304-1-krzk@kernel.org>
 References: <20200830135200.24304-1-krzk@kernel.org>
@@ -61,41 +61,46 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add missing cooling devices for CPU thermal zones in Exynos4412 Tiny4412
-board.  This allows to scale down CPU frequency (and voltage) in case of
-thermal pressure.
+The S3C RTC requires 32768 Hz clock as input which is provided by PMIC.
+However the PMIC is not described in DTS at all so at least add a
+workaround to model its clock with fixed-clock.  This fixes S3C RTC and
+silences dtbs_check warnings like:
+
+  arch/arm/boot/dts/exynos4412-tiny4412.dt.yaml: rtc@10070000: clocks: [[7, 346]] is too short
+  arch/arm/boot/dts/exynos4412-tiny4412.dt.yaml: rtc@10070000: clock-names: ['rtc'] is too short
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos4412-tiny4412.dts | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/boot/dts/exynos4412-tiny4412.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-index 3a91de8a8082..7512c86e634e 100644
+index 7512c86e634e..017b26108bb0 100644
 --- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
 +++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-@@ -78,6 +78,21 @@
+@@ -65,6 +65,13 @@
+ 			compatible = "samsung,clock-xusbxti";
+ 			clock-frequency = <24000000>;
+ 		};
++
++		pmic_ap_clk: pmic-ap-clk {
++			/* Workaround for missing clock on PMIC */
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
  	};
+ 
+ 	panel {
+@@ -110,6 +117,8 @@
+ 
+ &rtc {
+ 	status = "okay";
++	clocks = <&clock CLK_RTC>, <&pmic_ap_clk>;
++	clock-names = "rtc", "rtc_src";
  };
  
-+&cpu_thermal {
-+	cooling-maps {
-+		cooling_map0: map0 {
-+			/* Corresponds to 800MHz at freq_table */
-+			cooling-device = <&cpu0 7 7>, <&cpu1 7 7>,
-+					 <&cpu2 7 7>, <&cpu3 7 7>;
-+		};
-+		cooling_map1: map1 {
-+			/* Corresponds to 200MHz at freq_table */
-+			cooling-device = <&cpu0 13 13>, <&cpu1 13 13>,
-+					 <&cpu2 13 13>, <&cpu3 13 13>;
-+		};
-+	};
-+};
-+
- &fimd {
- 	pinctrl-0 = <&lcd_clk>, <&lcd_data24>;
- 	pinctrl-names = "default";
+ &sdhci_2 {
 -- 
 2.17.1
 
