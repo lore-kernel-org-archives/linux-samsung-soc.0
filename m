@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ECF6C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10283C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F01D3206FA
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:02:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAB17206FA
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:04:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598796178;
-	bh=3FhkzB8eUbDw5OZXgkgtTSdvcFxjQ0d9pdGTQZ8lJHg=;
+	s=default; t=1598796280;
+	bh=uQCj/HLwG7euETSyzEphZLcSpSGJVabxZwir3jTUtnI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Kdy9uvhW/p7+ery5JPYJRpZ9VVwDTrDxoykKA50zs7HHEkWne3RUayruMKkM33+dh
-	 6H5EsXLQbTh5jBBUVvDdRF30RAbRHSNhtPOz5XxNVC98fCso96bSK8bgDYrlyDMvyB
-	 xZdaStvrVdHxMEIdZZwQjrL8t5WnwNZ29A+bLquE=
+	b=TD+96TutxLrvCy6mSdncSM0OkKPj2ulXaWBxJVzdg4r7Wu4ogYD+IDiiKwoMF7aob
+	 yz4leHvxE/gStAw3lVlzgwepo9N42l9akepVNp/oWfIX4f43toijRCYkUaV4Jli4X3
+	 +owkbdkL73KH2pEpOOFtaxl9tTFplQQhWhnngGUA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbgH3OCs (ORCPT
+        id S1726459AbgH3OEC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 30 Aug 2020 10:02:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56702 "EHLO mail.kernel.org"
+        Sun, 30 Aug 2020 10:04:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728970AbgH3NzT (ORCPT
+        id S1728963AbgH3NzR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 30 Aug 2020 09:55:19 -0400
+        Sun, 30 Aug 2020 09:55:17 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C88CD21532;
-        Sun, 30 Aug 2020 13:55:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5DDF214DB;
+        Sun, 30 Aug 2020 13:55:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598795719;
-        bh=3FhkzB8eUbDw5OZXgkgtTSdvcFxjQ0d9pdGTQZ8lJHg=;
+        s=default; t=1598795716;
+        bh=uQCj/HLwG7euETSyzEphZLcSpSGJVabxZwir3jTUtnI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qa5H5kaNR7SwNDX+HWw+ZABj28S0HUfxCbI0Q8a+TDyMzby3Pq1nVT8VGAlVcd+9d
-         3XVIQ8nVceVBGnfF0jG2y+ZImvJs+h0Z036JVjUsUOHt0rsWUrKbkADZpWadfjKszH
-         lk2jVQidDmSKlYEiFQewwwLuhBk1mZsXofnb4oJk=
+        b=HtmWAuUK4aV7S2K2blvrDqm8waDpaYCS5g/MQPiPO4/JxnpYAkzqzMB+4kLHOUjp2
+         nYzmMRUNh7EYUDctZlPAuKP1ffm6/AUSM7xo3L5+6ma49p+4darkdLStWBy0bJsamU
+         ibuRDlzr3t80q8/Bpq7+Ejw/5RQAoQUBTWZvO2pE=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -50,9 +50,9 @@ To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 28/33] ARM: dts: exynos: Add CPU cooling in Exynos4412 Origen
-Date:   Sun, 30 Aug 2020 15:51:55 +0200
-Message-Id: <20200830135200.24304-28-krzk@kernel.org>
+Subject: [PATCH 27/33] ARM: dts: exynos: Override thermal by label in Exynos4412 Odroids
+Date:   Sun, 30 Aug 2020 15:51:54 +0200
+Message-Id: <20200830135200.24304-27-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200830135200.24304-1-krzk@kernel.org>
 References: <20200830135200.24304-1-krzk@kernel.org>
@@ -61,21 +61,52 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add missing cooling devices for CPU thermal zones in Exynos4412 Origen
-board.  This allows to scale down CPU frequency (and voltage) in case of
-thermal pressure.
+Using full paths to extend or override a device tree node is error prone
+since if there was a typo error, a new node will be created instead of
+extending the node as it was desired.  This will lead to run-time errors
+that could be hard to detect.
+
+A mistyped label on the other hand, will cause a dtc compile error
+(during build time).
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos4412-origen.dts | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ .../boot/dts/exynos4412-odroid-common.dtsi    | 34 ++++++--------
+ arch/arm/boot/dts/exynos4412-odroidu3.dts     | 46 +++++++++----------
+ 2 files changed, 36 insertions(+), 44 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index 4c52ca6dbe57..c2e793b69e7d 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -75,6 +75,21 @@
- 	cpu0-supply = <&buck2_reg>;
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index 6d3576e21ffa..ca3c78e0966c 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -66,25 +66,6 @@
+ 			clock-frequency = <24000000>;
+ 		};
+ 	};
+-
+-	thermal-zones {
+-		cpu_thermal: cpu-thermal {
+-			cooling-maps {
+-				cooling_map0: map0 {
+-				     /* Corresponds to 800MHz at freq_table */
+-				     cooling-device = <&cpu0 7 7>, <&cpu1 7 7>,
+-						      <&cpu2 7 7>, <&cpu3 7 7>;
+-				};
+-				cooling_map1: map1 {
+-				     /* Corresponds to 200MHz at freq_table */
+-				     cooling-device = <&cpu0 13 13>,
+-						      <&cpu1 13 13>,
+-						      <&cpu2 13 13>,
+-						      <&cpu3 13 13>;
+-			       };
+-		       };
+-		};
+-	};
+ };
+ 
+ &bus_dmc {
+@@ -172,6 +153,21 @@
+ 	};
  };
  
 +&cpu_thermal {
@@ -93,8 +124,72 @@ index 4c52ca6dbe57..c2e793b69e7d 100644
 +	};
 +};
 +
- &exynos_usbphy {
- 	status = "okay";
+ &pinctrl_1 {
+ 	gpio_power_key: power_key {
+ 		samsung,pins = "gpx1-3";
+diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+index 8ff243ba4542..b8549d846f86 100644
+--- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
++++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+@@ -37,31 +37,6 @@
+ 		#cooling-cells = <2>;
+ 		cooling-levels = <0 102 170 230>;
+ 	};
+-
+-	thermal-zones {
+-		cpu_thermal: cpu-thermal {
+-			cooling-maps {
+-				map0 {
+-				     trip = <&cpu_alert1>;
+-				     cooling-device = <&cpu0 9 9>, <&cpu1 9 9>,
+-						      <&cpu2 9 9>, <&cpu3 9 9>,
+-						      <&fan0 1 2>;
+-				};
+-				map1 {
+-				     trip = <&cpu_alert2>;
+-				     cooling-device = <&cpu0 15 15>,
+-						      <&cpu1 15 15>,
+-						      <&cpu2 15 15>,
+-						      <&cpu3 15 15>,
+-						      <&fan0 2 3>;
+-				};
+-				map2 {
+-				     trip = <&cpu_alert0>;
+-				     cooling-device = <&fan0 0 1>;
+-				};
+-			};
+-		};
+-	};
+ };
+ 
+ &adc {
+@@ -76,6 +51,27 @@
+ 	regulator-max-microvolt = <3300000>;
+ };
+ 
++&cpu_thermal {
++	cooling-maps {
++		map0 {
++			trip = <&cpu_alert1>;
++			cooling-device = <&cpu0 9 9>, <&cpu1 9 9>,
++					 <&cpu2 9 9>, <&cpu3 9 9>,
++					 <&fan0 1 2>;
++		};
++		map1 {
++			trip = <&cpu_alert2>;
++			cooling-device = <&cpu0 15 15>, <&cpu1 15 15>,
++					 <&cpu2 15 15>, <&cpu3 15 15>,
++					 <&fan0 2 3>;
++		};
++		map2 {
++			trip = <&cpu_alert0>;
++			cooling-device = <&fan0 0 1>;
++		};
++	};
++};
++
+ &hdmicec {
+ 	needs-hpd;
  };
 -- 
 2.17.1
