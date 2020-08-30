@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D5CC433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F84C433E7
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CE4D21548
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA3C32078D
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:09:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598796537;
-	bh=TJtlygoY/w0YlAC0Y0RpJRO7BKHHMoo0CEZk3p9WflY=;
+	s=default; t=1598796550;
+	bh=4viBEan7JfS5u7rHMOLLKJU0AwOPR9C3uj5SCmPphdE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Fwcyz8puJhCGD4BUmRbTYpi87rOXE5tIMtfAYjEsUPIOlm0nW49CutSM7E0uo7+JF
-	 T4ZWyTZJjpgyhWwWOaD9OXQWDi7gxn7K7zxlu7Cca8r3ou46JaCqx+DwLf7nRw4WhK
-	 KuuGMu09ZuubAff4xmEmRa2Ei7k4EVv81Upk5k8U=
+	b=ERqWze7aaZ0kqyUlH8882KlggKhDD06ug0IkPJxI9RjAVqfQP/FnQUToHz2s87lno
+	 IrsNbzeI/vs2YhoUkgd0n40x6UDtoGNXdyuEqvg9Gt5bZJ/CqmWrKoJdF9/5ku7sHh
+	 nIHxHxZyLqxFsP9m9eKXSHvt9j11Ztp4HNeqA824=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbgH3OIx (ORCPT
+        id S1726867AbgH3OI4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 30 Aug 2020 10:08:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55720 "EHLO mail.kernel.org"
+        Sun, 30 Aug 2020 10:08:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728932AbgH3Nyo (ORCPT
+        id S1728925AbgH3Nyk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 30 Aug 2020 09:54:44 -0400
+        Sun, 30 Aug 2020 09:54:40 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3CB0208DB;
-        Sun, 30 Aug 2020 13:54:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9A1F20757;
+        Sun, 30 Aug 2020 13:54:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598795683;
-        bh=TJtlygoY/w0YlAC0Y0RpJRO7BKHHMoo0CEZk3p9WflY=;
+        s=default; t=1598795680;
+        bh=4viBEan7JfS5u7rHMOLLKJU0AwOPR9C3uj5SCmPphdE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NbrFTJu+Plki7WU9nsnZnOp0gTSCYfuO/EDNkowUAG74VGP0BbeR6r+abmkGlDzqo
-         qnplg66HY9FikwXcmkcpRWqCLEdLzq1yKw6Gvntxq+0MbX232caNAF7xRSNReJRYQ6
-         vGf2bd7PsUQW1yf46bIhOtrEgCa22649XJpd2fbI=
+        b=m2TgCA7fJluiAieUrO9+xzlyA/MuIJujY0zb/gPtTYPaLVDZPHUluh2ZiARs1hm1d
+         4GhT3zR41IW3YFzjJ1HjA79mW/aWCL6PE9cJsFLBVieIn2QuIi62cNgZnUAbEPeWb6
+         aazh4WpLAapx1Oio6l3vQzQ06kX0Qa7ri7or3TdQ=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -50,9 +50,9 @@ To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 16/33] ARM: dts: exynos: Override thermal by label in Exynos4210
-Date:   Sun, 30 Aug 2020 15:51:43 +0200
-Message-Id: <20200830135200.24304-16-krzk@kernel.org>
+Subject: [PATCH 15/33] ARM: dts: exynos: Align SPI GPIO node name with dtschema in Galaxy I9100
+Date:   Sun, 30 Aug 2020 15:51:42 +0200
+Message-Id: <20200830135200.24304-15-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200830135200.24304-1-krzk@kernel.org>
 References: <20200830135200.24304-1-krzk@kernel.org>
@@ -61,67 +61,30 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Using full paths to extend or override a device tree node is error prone
-since if there was a typo error, a new node will be created instead of
-extending the node as it was desired.  This will lead to run-time errors
-that could be hard to detect.
+The device tree schema expects SPI controller to be named "spi",
+otherwise dtbs_check complain with a warning like:
 
-A mistyped label on the other hand, will cause a dtc compile error
-(during build time).
+  arch/arm/boot/dts/exynos4210-i9100.dt.yaml: spi-lcd:
+    $nodename:0: 'spi-lcd' does not match '^spi(@.*|-[0-9a-f])*$'
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos4210.dtsi | 36 +++++++++++++++----------------
- 1 file changed, 17 insertions(+), 19 deletions(-)
+ arch/arm/boot/dts/exynos4210-i9100.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 73360f29d53e..fddc661ded28 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -365,26 +365,24 @@
- 			};
+diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
+index 1d200a5e1b72..5623e17889a5 100644
+--- a/arch/arm/boot/dts/exynos4210-i9100.dts
++++ b/arch/arm/boot/dts/exynos4210-i9100.dts
+@@ -147,7 +147,7 @@
  		};
  	};
-+};
  
--	thermal-zones {
--		cpu_thermal: cpu-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <0>;
--			thermal-sensors = <&tmu 0>;
--
--			trips {
--				cpu_alert0: cpu-alert-0 {
--					temperature = <85000>; /* millicelsius */
--				};
--				cpu_alert1: cpu-alert-1 {
--					temperature = <100000>; /* millicelsius */
--				};
--				cpu_alert2: cpu-alert-2 {
--					temperature = <110000>; /* millicelsius */
--				};
--			};
--		};
--	};
-+&cpu_alert0 {
-+	temperature = <85000>; /* millicelsius */
-+};
-+
-+&cpu_alert1 {
-+	temperature = <100000>; /* millicelsius */
-+};
-+
-+&cpu_alert2 {
-+	temperature = <110000>; /* millicelsius */
-+};
-+
-+&cpu_thermal {
-+	polling-delay-passive = <0>;
-+	polling-delay = <0>;
-+	thermal-sensors = <&tmu 0>;
- };
- 
- &gic {
+-	spi-lcd {
++	spi-3 {
+ 		compatible = "spi-gpio";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
 2.17.1
 
