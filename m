@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9B9C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90548C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 908B82078D
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:10:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 650C820EDD
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:10:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598796630;
-	bh=PezkV/BBxdiRHsbfh2DW7duf8rwEieb1A2/fZcuH92g=;
+	s=default; t=1598796653;
+	bh=BJu2ygEsYuHqBLXUZVb62si7DnFLg02WRfhJZMLE0UI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pl7G55OXmRw1seCLJvNF7j1tQR11vJRHcajC26zxA3+XJaB52xuFvX0VsvVaZnLqy
-	 XOpZQimo0uJNunSljIyNsBgDIRMiUOmSy1VMtR8WVoS+8B4VatYkCZ8tAlyB0I7hoL
-	 mdbNZsYKb1BuVZKK01NDoWOlEf1pNJCFByWvpB6s=
+	b=WBYrAQwkmRNkplSdRP/vfoqqq2w9j7Z10UQ8vrP1UE9jMFtz1S7gw871vPFXx1DzZ
+	 ywOCrDCsu4d06o8vewbm6I8JuOAcOX2P3S2mWh7gaIipvbba+/VENulKUjQDrTTqXW
+	 2pibJmCfwEZSl5Vb/4cswT4lYCmbcOQkkIRcDgLY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbgH3OK3 (ORCPT
+        id S1728900AbgH3NyP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 30 Aug 2020 10:10:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55124 "EHLO mail.kernel.org"
+        Sun, 30 Aug 2020 09:54:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728789AbgH3NyT (ORCPT
+        id S1728887AbgH3NyE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 30 Aug 2020 09:54:19 -0400
+        Sun, 30 Aug 2020 09:54:04 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B19E2087D;
-        Sun, 30 Aug 2020 13:54:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8C302087D;
+        Sun, 30 Aug 2020 13:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598795658;
-        bh=PezkV/BBxdiRHsbfh2DW7duf8rwEieb1A2/fZcuH92g=;
+        s=default; t=1598795643;
+        bh=BJu2ygEsYuHqBLXUZVb62si7DnFLg02WRfhJZMLE0UI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YQ1Lkc+DLVhD8zbiFFDJOxl7GM+sItk3JeIvbiuVnOlSS+bOju7ShyYxgAiB24FZT
-         AP4wg9Q4xXyAp696G5OmGqLqCzrOH0FZrl227DmEIqgLAj5lIWa5hCPu1BjCyNiURz
-         7Rf1idlvZ8lzpchlTez1Tv2/k1Mq9zNthWY84Q7I=
+        b=dPorNLpJOPZEfol6g1uhSKyL6ir4bsR56fQH0IekTnhwGqn+NC2t98/ep8mo0ssRn
+         vuWC9pqPgKt1iChhUQOFz2QG6c0erlx0bdoSNisEtKH+G4eag7uHF4kwvCwVOZ2vvB
+         ambJwAqajcYm44zGT5ayAqcCIGKEGfr3nvhCVC5U=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -50,9 +50,9 @@ To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 08/33] ARM: dts: exynos: Add and enable 32 kHz modem clock in Galaxy I9100
-Date:   Sun, 30 Aug 2020 15:51:35 +0200
-Message-Id: <20200830135200.24304-8-krzk@kernel.org>
+Subject: [PATCH 03/33] ARM: dts: exynos: Correct S3C RTC bindings and enable it in Galaxy I9100
+Date:   Sun, 30 Aug 2020 15:51:30 +0200
+Message-Id: <20200830135200.24304-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200830135200.24304-1-krzk@kernel.org>
 References: <20200830135200.24304-1-krzk@kernel.org>
@@ -61,31 +61,66 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The PMIC has a 32768 Hz clock used by the modem which is implemented by
-driver as a regulator.  Add and enable it to be sure modem get's its
-signal.
+The S3C RTC requires 32768 Hz clock as input which is provided by PMIC
+(Maxim MAX8997).  However there is no clock provided for the PMIC and
+the driver registers the clock as regulator.  This is an old driver
+which will not be updated so add a workaround:
+1. Enable the "clock" regulator in PMIC,
+2. Add a fixed-clock to fill missing clock phandle reference in S3C RTC.
+
+This allows to enable the S3C RTC and fixes dtbs_check warnings:
+
+  arch/arm/boot/dts/exynos4210-i9100.dt.yaml: rtc@10070000: clocks: [[5, 346]] is too short
+  arch/arm/boot/dts/exynos4210-i9100.dt.yaml: rtc@10070000: clock-names: ['rtc'] is too short
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos4210-i9100.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/exynos4210-i9100.dts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
-index d63274c8539d..1d200a5e1b72 100644
+index 6fa57d1fa1d7..d63274c8539d 100644
 --- a/arch/arm/boot/dts/exynos4210-i9100.dts
 +++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -580,6 +580,11 @@
- 				regulator-name = "EN32KHZ_AP";
+@@ -209,6 +209,13 @@
+ 			compatible = "samsung,clock-xusbxti";
+ 			clock-frequency = <24000000>;
+ 		};
++
++		pmic_ap_clk: pmic-ap-clk {
++			/* Workaround for missing clock on max8997 PMIC */
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
+ 	};
+ 
+ 	thermal-zones {
+@@ -568,6 +575,11 @@
+ 				regulator-max-microvolt = <4100000>;
  				regulator-always-on;
  			};
 +
-+			EN32KHZ_CP {
-+				regulator-name = "EN32KHZ_CP";
++			EN32KHZ_AP {
++				regulator-name = "EN32KHZ_AP";
 +				regulator-always-on;
 +			};
  		};
  	};
  };
+@@ -688,6 +700,12 @@
+ 	};
+ };
+ 
++&rtc {
++	status = "okay";
++	clocks = <&clock CLK_RTC>, <&pmic_ap_clk>;
++	clock-names = "rtc", "rtc_src";
++};
++
+ &sdhci_0 {
+ 	status = "okay";
+ 
 -- 
 2.17.1
 
