@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F84C433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A22C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:09:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA3C32078D
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:09:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED1B82137B
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 14:09:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598796550;
-	bh=4viBEan7JfS5u7rHMOLLKJU0AwOPR9C3uj5SCmPphdE=;
+	s=default; t=1598796588;
+	bh=bZKjaF7zU21mhUOf60pHRJSVa3D+wHQ9mx0XEEaNPk0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ERqWze7aaZ0kqyUlH8882KlggKhDD06ug0IkPJxI9RjAVqfQP/FnQUToHz2s87lno
-	 IrsNbzeI/vs2YhoUkgd0n40x6UDtoGNXdyuEqvg9Gt5bZJ/CqmWrKoJdF9/5ku7sHh
-	 nIHxHxZyLqxFsP9m9eKXSHvt9j11Ztp4HNeqA824=
+	b=lAxam7Xfv7OCnxtU88drDA6dUbB8ieBt271LtencnS4YiAGy/n6TLFRj3Y9zoPYNx
+	 pdz5drdnggc81G/vsA+gu/L+zwnUIQg4+i1m0UyxagQoEalWMkpisA7voYXXxqVCQx
+	 YAw+ARQAPO82FIuwY0dV3HREPavwyq8cr3wDhMEo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbgH3OI4 (ORCPT
+        id S1726924AbgH3OJl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 30 Aug 2020 10:08:56 -0400
+        Sun, 30 Aug 2020 10:09:41 -0400
 Received: from mail.kernel.org ([198.145.29.99]:55260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728925AbgH3Nyk (ORCPT
+        id S1728913AbgH3Nyb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 30 Aug 2020 09:54:40 -0400
+        Sun, 30 Aug 2020 09:54:31 -0400
 Received: from localhost.localdomain (unknown [194.230.155.216])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9A1F20757;
-        Sun, 30 Aug 2020 13:54:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B49120EDD;
+        Sun, 30 Aug 2020 13:54:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598795680;
-        bh=4viBEan7JfS5u7rHMOLLKJU0AwOPR9C3uj5SCmPphdE=;
+        s=default; t=1598795670;
+        bh=bZKjaF7zU21mhUOf60pHRJSVa3D+wHQ9mx0XEEaNPk0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m2TgCA7fJluiAieUrO9+xzlyA/MuIJujY0zb/gPtTYPaLVDZPHUluh2ZiARs1hm1d
-         4GhT3zR41IW3YFzjJ1HjA79mW/aWCL6PE9cJsFLBVieIn2QuIi62cNgZnUAbEPeWb6
-         aazh4WpLAapx1Oio6l3vQzQ06kX0Qa7ri7or3TdQ=
+        b=whhUpAaz8uHIu+rbNB7NYpNJWDdOeIf9ZV9Z16GtnFgM9VnU7hba/qfZFT57TMII0
+         ZqlMi/ySrpVsMzz+Zy5fv4mQPkrGEM1EFNVKToeCO3BEirqVw+1p/mNLBLOSa6Xv6g
+         85oXVDg+C4LQH04kCX46+MqQ3c2S8PUXpXH0kwiw=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -50,9 +50,9 @@ To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 15/33] ARM: dts: exynos: Align SPI GPIO node name with dtschema in Galaxy I9100
-Date:   Sun, 30 Aug 2020 15:51:42 +0200
-Message-Id: <20200830135200.24304-15-krzk@kernel.org>
+Subject: [PATCH 12/33] ARM: dts: exynos: Remove empty camera pinctrl configuration in Universal C210
+Date:   Sun, 30 Aug 2020 15:51:39 +0200
+Message-Id: <20200830135200.24304-12-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200830135200.24304-1-krzk@kernel.org>
 References: <20200830135200.24304-1-krzk@kernel.org>
@@ -61,30 +61,30 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The device tree schema expects SPI controller to be named "spi",
-otherwise dtbs_check complain with a warning like:
+The camera's pinctrl configuration is simply empty and not effective.
+Remove it to fix dtbs_check warning:
 
-  arch/arm/boot/dts/exynos4210-i9100.dt.yaml: spi-lcd:
-    $nodename:0: 'spi-lcd' does not match '^spi(@.*|-[0-9a-f])*$'
+  arch/arm/boot/dts/exynos4210-universal_c210.dt.yaml: camera: pinctrl-0: True is not of type 'array'
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos4210-i9100.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos4210-universal_c210.dts | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
-index 1d200a5e1b72..5623e17889a5 100644
---- a/arch/arm/boot/dts/exynos4210-i9100.dts
-+++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -147,7 +147,7 @@
- 		};
- 	};
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index 9479e41bdc2a..7c83ce019b44 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+@@ -190,9 +190,6 @@
  
--	spi-lcd {
-+	spi-3 {
- 		compatible = "spi-gpio";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+ &camera {
+ 	status = "okay";
+-
+-	pinctrl-names = "default";
+-	pinctrl-0 = <>;
+ };
+ 
+ &cpu0 {
 -- 
 2.17.1
 
