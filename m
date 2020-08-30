@@ -1,124 +1,92 @@
-Return-Path: <SRS0=6CO4=CH=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=9Nct=CI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E48C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 21:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4EDC433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 13:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38E8420774
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Aug 2020 21:30:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="O1G0vLzu"
+	by mail.kernel.org (Postfix) with ESMTP id 041592087D
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 13:52:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598795543;
+	bh=p18sRxzhST8XgwhYT13ReRxvX7HC7a6S5P1tlyouidM=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Xz3hSjfAlNHlkfrjJTjIH1YZCR+80Q2iIlwInHjT6IuZI7MpF/pU0JVoiC5I67Nzo
+	 JvRzphEW+/4Go3CKTgFfx/v0cFSfd3ic5kef6giXw3LyX4scpqgj9Y3aZPVSDPX/VQ
+	 BaMibVtMHgDXiBi65W+Tt7ORqb0WU16W016z6Ibk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727954AbgH2Vas (ORCPT
+        id S1728797AbgH3NwU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 29 Aug 2020 17:30:48 -0400
-Received: from mail-eopbgr50091.outbound.protection.outlook.com ([40.107.5.91]:58241
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726748AbgH2Var (ORCPT
+        Sun, 30 Aug 2020 09:52:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728783AbgH3NwS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 29 Aug 2020 17:30:47 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QG3mCNDtxB2cXaXm2Lq0dDj0EcXssVpbgDyqNbYhxqub0vQBjkD29dRNzcO1XxrOld/qf90Pn3EgEdMrr4t7WB5OlSFx1o4bIKv3IiFQppbBYo4DYIkvkgwZhI5d+8LunmgPqMzSa5zEPulYDwH0D3mmmEALJS74Pd/f/ekuJVAv5yygXFKprHnYuuvr+Kaj3Wc39OoKlL2jcIKY2cGeCVg5Ibe4swH42ce6N6g29W4L36RwQjd+3QH6znQgvdi3RIbx/EiXLZxco/CvX5f0ij5h/EzoQYRbo3dwF2Kk/Bm5/cj6kuv+7fswaDO8FhZfsgO0RUKocMX/odrhLhvIww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Oi1J4wd3y5TlCF6TlMOYxE9LsQWiMmri7Rg7agcDIQ=;
- b=GXLPnnzAfNDGF84uXmqZrJBos4VwdLE6nmnkpUtNrRNHx/SdLXIpniZEyVPkhIOFjB1dDkUH5ED1pfv/jA7XtAHBX3dr0//JbZqAxqCG0eoM2wVr1/Rxbwht9XIHAYatsxXEDCGxJmqZRj2K6jX4NohXWmIkWwvbFbGhye1a9iNXNMJVji5Du1mnzJvRUG9mkJTcXvLlJHqWzAvr6hTEzITQTVkJLVVPlW+Zv2u0cNKUQCm9/PQIxO/m6pl3y4iFzhmE1isSlCcEU2Tfu7YP4rcjV0P+kHLdUVRGZB956clVdcSaCexfz/7P+n7l6+qVUAXo9NpfMQCnQG22R0TEcQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axentia.se; dmarc=pass action=none header.from=axentia.se;
- dkim=pass header.d=axentia.se; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Oi1J4wd3y5TlCF6TlMOYxE9LsQWiMmri7Rg7agcDIQ=;
- b=O1G0vLzuEOZuEqFLC2ga1QoL9cSvNKmYDoYYJt60J7ZuYOY0vKIJjDMaFntLDg+DLjRyMaKHsvzTz8SV+bFGU79vgEGNuPYghh8twKqGdRN7oqsAYhwTg1O8qo+sF4Ntwz++Fx/DCc9iX4UrD361iKgFoOPMU09m5WZydWDV3PI=
-Authentication-Results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=axentia.se;
-Received: from DB8PR02MB5482.eurprd02.prod.outlook.com (2603:10a6:10:eb::29)
- by DBAPR02MB6294.eurprd02.prod.outlook.com (2603:10a6:10:197::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.21; Sat, 29 Aug
- 2020 21:30:44 +0000
-Received: from DB8PR02MB5482.eurprd02.prod.outlook.com
- ([fe80::3890:7b1:97a6:1e47]) by DB8PR02MB5482.eurprd02.prod.outlook.com
- ([fe80::3890:7b1:97a6:1e47%7]) with mapi id 15.20.3326.023; Sat, 29 Aug 2020
- 21:30:44 +0000
-Subject: Re: [PATCH v3 18/18] iio: multiplexer: iio-mux: Simplify with
- dev_err_probe()
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Tomasz Duszynski <tomasz.duszynski@octakon.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20200829064726.26268-1-krzk@kernel.org>
- <20200829064726.26268-18-krzk@kernel.org>
-From:   Peter Rosin <peda@axentia.se>
-Organization: Axentia Technologies AB
-Message-ID: <01032a02-f06b-a952-4c2c-2147077cf850@axentia.se>
-Date:   Sat, 29 Aug 2020 23:30:40 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
-In-Reply-To: <20200829064726.26268-18-krzk@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: sv-SE
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: HE1PR05CA0212.eurprd05.prod.outlook.com
- (2603:10a6:3:fa::12) To DB8PR02MB5482.eurprd02.prod.outlook.com
- (2603:10a6:10:eb::29)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.13.3] (85.226.217.78) by HE1PR05CA0212.eurprd05.prod.outlook.com (2603:10a6:3:fa::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.19 via Frontend Transport; Sat, 29 Aug 2020 21:30:42 +0000
-X-Originating-IP: [85.226.217.78]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 317d1ec9-dd70-41d7-d5a7-08d84c62c934
-X-MS-TrafficTypeDiagnostic: DBAPR02MB6294:
-X-Microsoft-Antispam-PRVS: <DBAPR02MB6294D4AB1CB16B3838715595BC530@DBAPR02MB6294.eurprd02.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1148;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: U6spX94V5buMYNrKMMJm9dIzFu1VzWUspTDwPZHRYxJvQIgeA4TF/1EmFe2piOe3AjUF6XDITGSNAChrraJD3qYEseWkJDYThQ8AKO0uDdUiZgKc64utaeMvUF9Nvry+gJMdaoR6//REgFRJqjbN0ymZdjlUgzxiby2rurfW/+5CD+EKpFJ9diym6uEjGMgwnWA6KzCuGLD+MXlvdcykgdy2vMvlwP6UPi2USAD5WtfNJFkSYwrwlLoLHdGBGjnE66KB4RGnR8IFi08AkZFlPw6wKl+Yls3Y/nSHfEAiubPXKymhdPt3j5pEV7IXtJM4uBoKqe7vqSsgsJKoLw10/vGFiPP+CDNMeLuxaMUp7yanzYLYnWD6upv03mxBojmB6OiD4CWPEwZ7YMcdeGA5VA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR02MB5482.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(376002)(396003)(346002)(136003)(39830400003)(7416002)(83380400001)(86362001)(16576012)(316002)(110136005)(6486002)(956004)(36756003)(478600001)(31696002)(2616005)(4744005)(4326008)(16526019)(186003)(8676002)(26005)(66946007)(8936002)(36916002)(5660300002)(52116002)(53546011)(2906002)(31686004)(66556008)(66476007)(921003)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: mmAH5NDY5Nh7ZE8DGqySqwfv8sOUZlSkbtKmAcE0+O3AVVVuPn/1XzCT8tY0fhWRC8AUgZnV9QWp3H6cOnFOWD1JXEEqMOik6tWQxtbTyguJ6MsDVcXgwVxndIvVTBc8zQZQOjL+wpL2BQQgfk7/GgJBwgijmljWunLv5nCkxF/xNrlEi4SbUZrU1+8etGm8fqyolOwovvOMOJ2UXfHpXe5MEvxyXnIQF4fwGIUYJzUFsRjuljqmB6AIx//Jr2qufUo+Z0wX1yUj/I0zNJ+UZB9FC0iVEyjmuWeUykX78JyDgo2d5eFtITb4aXmAQ0BDQ7lh9v1/MdX9hl9aCVKMzw7oAu+9PqKCZlyCFr2HOPT6oUZfo+rHgHT9dSN5KrackBU3V6ppo5gp178FvDcsx8QNZ1blxan/EaI/t1VTjTRIja9PR5HSst/Z0t2L44QITuBSGHEX9A4PiGOHj8dJUwSaxuivPSXaSCwiKXVUYmurN7w7quVizV+uRajZagbCQXj6j1WaDiZEeVgkwUpxAFPsewlIQlHd/vnN4DmPdnOxqAk8bpNLBJR3KmLUTiIeOK4JAVOMGB0gkKxdQQNJ4gHO+qTnDibLZSFWmPkb/G8Q/0aKTUnXbtcvTvgyWWf/m0cWXikzdImuix4C1cvR/w==
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: 317d1ec9-dd70-41d7-d5a7-08d84c62c934
-X-MS-Exchange-CrossTenant-AuthSource: DB8PR02MB5482.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2020 21:30:44.1302
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BtRyF7mSyYizYqKLWxwRxiHob4DjebeTcG+gqw/FRe9bp2x/l4co8/6XHgOKguWi
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR02MB6294
+        Sun, 30 Aug 2020 09:52:18 -0400
+Received: from localhost.localdomain (unknown [194.230.155.216])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90E0520757;
+        Sun, 30 Aug 2020 13:52:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598795538;
+        bh=p18sRxzhST8XgwhYT13ReRxvX7HC7a6S5P1tlyouidM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=N26CP6VTXx7+IIKB5LAYttgv/UjJ7zv4VS7M49+bMk2lG+mFu3IJZ1O2nGTVgCVaq
+         cmwZS+2tkIAsKI/ebE8FAdoF2NaVAE53Es2qZfgw4OrV5er1VQZGK0iKpG91FRG7qC
+         D3DBAUHtH9H4dXKdshhJhCrUWfei2Ab0K+ut2klE=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Denis GNUtoo Carikli" <GNUtoo@cyberdimension.org>,
+        Simon Shields <simon@lineageos.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: [PATCH 01/33] ARM: dts: exynos: Silence i2c-gpio dtschema warning in Galaxy I9100
+Date:   Sun, 30 Aug 2020 15:51:28 +0200
+Message-Id: <20200830135200.24304-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020-08-29 08:47, Krzysztof Kozlowski wrote:
-> Common pattern of handling deferred probe can be simplified with
-> dev_err_probe().  Less code and also it prints the error value.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+The name of I2C controller over GPIO lines node ends with '-gpio' which
+confuses dtschema:
 
-Acked-by: Peter Rosin <peda@axentia.se>
+  /arch/arm/boot/dts/exynos4210-i9100.dt.yaml: /: i2c-gpio:
+    {'compatible': ['i2c-gpio'], ...  'maxim,over-volt': [[4500]]}} is not of type 'array'
+    From schema: lib/python3.6/site-packages/dtschema/schemas/gpio/gpio-consumer.yaml
 
-Cheers,
-Peter
+Add a '-0' suffix to silence it.  This pattern on naming i2c-gpio is
+already present in many other dts.  No functional change.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos4210-i9100.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
+index 6d0c04d77a39..3eb11cc2c3c5 100644
+--- a/arch/arm/boot/dts/exynos4210-i9100.dts
++++ b/arch/arm/boot/dts/exynos4210-i9100.dts
+@@ -123,7 +123,7 @@
+ 		reset-gpios = <&gpl1 2 GPIO_ACTIVE_LOW>;
+ 	};
+ 
+-	i2c_max17042_fuel: i2c-gpio {
++	i2c_max17042_fuel: i2c-gpio-0 {
+ 		compatible = "i2c-gpio";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-- 
+2.17.1
 
