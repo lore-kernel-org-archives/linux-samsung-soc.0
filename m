@@ -2,62 +2,72 @@ Return-Path: <SRS0=sdu9=CJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEBBC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 12:36:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C02C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 12:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B8D62073A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 12:36:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598877384;
-	bh=kArTAMCnRklLSjboZvy3ishXpCwt8hGzMmtpI02TPmY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PoKjsRM52J6sD+2hFHu74emBPNUAhzOYTYjPs20+KzP7J5hfm+NMHSxans/qz6wKg
-	 uKJ3KyHYhUozg3jTR4K6R1XOAP79EbZmYMFqa4KEEytn06NTIed41Dk5l/QblUrBle
-	 IZWsho5W0NLZoXFdWs53Oj6F3vtJ58bcmkmHhqCM=
+	by mail.kernel.org (Postfix) with ESMTP id F16942068E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 12:50:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dSJu+R31"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbgHaMgQ (ORCPT
+        id S1726526AbgHaMu3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Aug 2020 08:36:16 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:41746 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727923AbgHaMen (ORCPT
+        Mon, 31 Aug 2020 08:50:29 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47443 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbgHaMu3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Aug 2020 08:34:43 -0400
-Received: by mail-ej1-f67.google.com with SMTP id b17so8230906ejq.8;
-        Mon, 31 Aug 2020 05:34:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gZ0CJ8Hc1sn63t+kbr2ePS/jsX1/ElRjSGgnzflGJ5c=;
-        b=cax9ChphkFYojvYUDC/EZeJX3Eu+ApEmKaXerOY8HA4jHHTplGcr0dJpYSLBYIM/f5
-         LI4ja2TxT8v22w5y9dcNEwdXpRAL37FxINKwP3lrzlBKgVGSk8dQHGp+x5TKbWwsk6AW
-         hyMTlgiCVp6+r34FihOoBFQEEfR6nj0CV7SkYViTzVSXa+nfegvCM4k4uvpofARnl+pw
-         SAg7YXyEkhYSP83WmSWCWh1sbYuUmp5/Bru6LBtbIP7vcLoz4G13hqzDpBdlLpA1JLjw
-         lpNSBZ42ePVGAwNOCJ+JjHzWcX4eX7Zf4uHrV6UOiaTQ6ZkJmCrmuZH9Rct1FJN2TzCU
-         TmdQ==
-X-Gm-Message-State: AOAM531f4tyj4A217hThUmoyRDYp4qgXijVH2kaCzIez888FMkuE2eIW
-        vVyo0E5N1C3Y9NEy+sMEusU=
-X-Google-Smtp-Source: ABdhPJwHQ+kbuB17V3EV8bJwx6CZ9YUlL7K7t8FmVxpql1tXRrhoh31zM7AD8jShfHwOzEmNhb7SKA==
-X-Received: by 2002:a17:906:edc4:: with SMTP id sb4mr956998ejb.144.1598877280585;
-        Mon, 31 Aug 2020 05:34:40 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id y14sm1576652eje.10.2020.08.31.05.34.38
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 31 Aug 2020 05:34:39 -0700 (PDT)
-Date:   Mon, 31 Aug 2020 14:34:36 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mon, 31 Aug 2020 08:50:29 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200831125027euoutp0196faf44fa7f4024c3261c4ceb92e1e42~wW0bXo22c1481114811euoutp01F
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Aug 2020 12:50:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200831125027euoutp0196faf44fa7f4024c3261c4ceb92e1e42~wW0bXo22c1481114811euoutp01F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1598878227;
+        bh=ir04O1LBgiamn4Vazqxm9bW0gx2zBzPUQkXJ9yzi9dk=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=dSJu+R310gcbph1FFnNuIIQoAlaWq825Kf/lKv1z5qvRwpuaDqRhuFM3gLWsml6Fq
+         PyrwJcGYwbslYqEAQ30a3EY7ojhX8/9BkF9iHgZs7ZojuXeD78QupjYNo/U3LqoBug
+         5KYxGAsgREQtlQdCQe1MDELoHqXlHmx8Vcm+Ncfk=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200831125026eucas1p28c5c8eb5d04c54f1c0f399a07ad6ba24~wW0axwOZj1885018850eucas1p2J;
+        Mon, 31 Aug 2020 12:50:26 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id D2.54.06456.212FC4F5; Mon, 31
+        Aug 2020 13:50:26 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200831125026eucas1p1c96e5c04f89ecbd3888b5b3701edb1a3~wW0aOoNzs1393813938eucas1p1u;
+        Mon, 31 Aug 2020 12:50:26 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200831125026eusmtrp1da72ff1101fc009870a8ff16cce3bb1e~wW0aNrDNm1767617676eusmtrp1H;
+        Mon, 31 Aug 2020 12:50:26 +0000 (GMT)
+X-AuditID: cbfec7f2-809ff70000001938-6e-5f4cf2124571
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E7.74.06017.212FC4F5; Mon, 31
+        Aug 2020 13:50:26 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200831125025eusmtip16c96ef0a69b98a69a6fd7c9dccd44027~wW0ZIM22t0528205282eusmtip13;
+        Mon, 31 Aug 2020 12:50:25 +0000 (GMT)
+Subject: Re: [RFT 09/10] arm64: dts: exynos: Correct port of USB-C connector
+ node on Exynos5433 TM2
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         Lee Jones <lee.jones@linaro.org>,
         Sangbeom Kim <sbkim73@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -65,58 +75,132 @@ Cc:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        alsa-devel@alsa-project.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        alsa-devel@alsa-project.org
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 04/10] dt-bindings: mfd: syscon: Document Samsung Exynos
- compatibles
-Message-ID: <20200831123436.GA27700@kozik-lap>
-References: <20200829142501.31478-1-krzk@kernel.org>
- <CGME20200829142536eucas1p12c539f1cd45195adef96f8b752778fcf@eucas1p1.samsung.com>
- <20200829142501.31478-4-krzk@kernel.org>
- <8b0a42a3-e014-c2ed-7403-021f9a476fc8@samsung.com>
+        Inki Dae <inki.dae@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <4eb7d0d9-29e2-9162-4521-10e4422f9c71@samsung.com>
+Date:   Mon, 31 Aug 2020 14:50:25 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8b0a42a3-e014-c2ed-7403-021f9a476fc8@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200829142501.31478-9-krzk@kernel.org>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+c5da3Wcxd7sBoOKgjQp4SMjKiIOFdIfQTfSZh40nBqbs+yf
+        pOs6XWaZqUtsSaANcmualVnS1IZOpzmxKM28RGiZ4aZdrZzHyv+e5/1+D8/7wseRygImjDuU
+        mi7qUjVaNRNMVT775lmpHNket+pmWwR+Veah8UVPA4HbnzsJfDffRuPcnn4Gv/C/p3GRbyH+
+        XXmZxDfqJrD20WEGX+nOprCp7wOJW1rsLO4erUd4rN1IYEdfB429VYUMzm95QuDTj+tYXPvx
+        LI2fl/oJfPbdAInLHbnkBpVg951ghMdjFkp4aO5iBYf1HCN0dlQzwiePhxXuj72lhe7zLkIo
+        v3VcuFRhRYLPsWjHjL3B6xJE7aEMURex/kBw0nWXnTl8b/bRUfvaLNQ8Q0JBHPBroNzrQxIK
+        5pR8KYLB+vesbPwIfhZ3kLLxIfCcriD+Rkq8WVNUCYISZ82UGUaQV3OTDVChvAil0u3J+Bze
+        SMPVaisdMCTvRSDVZNMBiuEjQRqSmIBW8OvhtVEiA5ril0DWuWoqoOfysfCssZeSmRBoKOif
+        1EF8FOQN9E7yJL8Y7g8VTmkVvOq/QQTKgG/loMuSw8qLbwZr4yAj61AYdFVMzReAO+cCJQdO
+        Iujx3GFlcwGB90Q+kqlo6PR8n0hzExXLwVYVIY83wrj/BxsYAz8LXg6FyEvMgiuVeaQ8VoDx
+        jFKml4LZVfav9mlrG5mN1OZpp5mnnWOedo75f68FUVakEg36lERRH5kqHgnXa1L0htTE8INp
+        KQ408WHdv1wjD9BoW7wT8RxSz1R8rd8Wp6Q1GfrMFCcCjlTPUWxqdscqFQmazGOiLi1OZ9CK
+        eieaz1FqlWJ18cB+JZ+oSReTRfGwqPv7SnBBYVnIGB237vOqg8mKnobB+L42/wK7ocvYZEuz
+        RheJZNDxKGSyjJtCdmmGc+1hYaXFlx7datxSkVxUGGqTvlyL2fcGLdd2bmTWhNe2qtK2LrMu
+        Vpm8MR8WXZfm7TZcHDHV2RJ31ifoZjfu1e04tSkns6nYa3Zzlu7xMW1Eb/rOTPceNaVP0kSu
+        IHV6zR8dJKe4rAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHe+7brtPVbVo+SKWN/JDZbL4+ms3o00UrAulLaWvlxUVuk93N
+        soxGEeqamdGLrWX2Ir6F2WZaUZFLW2bORF2RhaVGrdKgqRRE5ZyB3/7n/P+/czhwaFzcSIbR
+        +zR6TqdR5kkoIdH9x/lurfjHZsW6E9cZ9KbJRaIyVxeGBvocGLpdeYtE5z6MUejV5CcSVXmX
+        o7+tFTi60jETG5j6TqEzw6cJVD76FUe9vc0CNDzVCdD0QAmGbKNuEvXft1KosvcRhk487BCg
+        J9+KSdRXN4mh4o8eHNlt5/CNoWyz9xjFPpyuJth7lncC1tZQSrFv3Q8odsLlErBt0+9Jdvik
+        E2PtN46yp1oaAOu1rdgWuEOaqtMa9FyESsvrN0h2ylCsVJaMpLHxyVJZXFJ2SmyCJEaemsPl
+        7SvgdDHy3VLVJWczlX9n0cGp5hQj6Ak0gQAaMvGwtt8oMAEhLWZqADS9dBF+YxnsOm8k/ToY
+        /nabKH9oHMDaimvAZwQzHKwz1eM+I4Qxk/B4jXm2wJlBAIfumAk/YgdwoKsU8yEUI4Omcd+s
+        AFrEyOFQiQn3aYKJhMbSB7O7lzC74Avz57nMYth1cWy2H8AkwAuekdk8ziTCKvuHOR0O28at
+        czoUvhm7gp0GYss83DIPscxDLPOQakA0gBDOwKtz1XyslFeqeYMmV7pXq7aBmUdpffqr5S4w
+        TWQ6AEMDSZDoZ2eGQkwqC/hCtQNAGpeEiDb1dO8Si3KUhYc4nVahM+RxvAMkzBxXgYct2aud
+        eTuNXiFLkCWhZFlSXFJcIpKEikqY9iwxk6vUc/s5Lp/T/ecwOiDMCAbTtpZdGxHony9c1RYR
+        +jg6vKV8vajeuUWcfkCksnv2FB0xEkJvZOPZ7HhnRaXwiyq6J7da83cyw1Ik51+vDOq8OVm5
+        oIakq5x2Y7tmqdSemeZuym63Fuzx0KsnrELHmue9xIgyKutZVth2B/IQhzPH09MOYgeGGiyX
+        r0ZyEoJXKWVRuI5X/gO0LJ3zPgMAAA==
+X-CMS-MailID: 20200831125026eucas1p1c96e5c04f89ecbd3888b5b3701edb1a3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200829142602eucas1p1ce457a8fddc6b1fba4bf8c08992fa0b3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200829142602eucas1p1ce457a8fddc6b1fba4bf8c08992fa0b3
+References: <20200829142501.31478-1-krzk@kernel.org>
+        <CGME20200829142602eucas1p1ce457a8fddc6b1fba4bf8c08992fa0b3@eucas1p1.samsung.com>
+        <20200829142501.31478-9-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Aug 31, 2020 at 02:30:52PM +0200, Sylwester Nawrocki wrote:
-> On 29.08.2020 16:24, Krzysztof Kozlowski wrote:
-> > Samsung Exynos SoCs use syscon for system registers so document its
-> > compatibles.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  Documentation/devicetree/bindings/mfd/syscon.yaml | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
-> > index 049ec2ffc7f9..0f21943dea28 100644
-> > --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
-> > +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
-> > @@ -40,6 +40,10 @@ properties:
-> >                - allwinner,sun50i-a64-system-controller
-> >                - microchip,sparx5-cpu-syscon
-> >                - mstar,msc313-pmsleep
-> > +              - samsung,exynos3-sysreg
-> > +              - samsung,exynos4-sysreg
-> > +              - samsung,exynos5-sysreg
-> > +              - samsung,exynos5433-sysreg
-> 
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
-> Do you also have a patch updating Documentation/devicetree/
-> bindings/arm/samsung/sysreg.yaml with new compatibles?
+Hi Krzysztof,
 
-Good point. This file should be probably dropped as everything is
-documented in syscon.
+On 29.08.2020 16:25, Krzysztof Kozlowski wrote:
+> The USB-C connector bindings require port@0.  Such port was already
+> described in DTS but outside of the connector itself.  Put it into
+> proper place to fix dtbs_check warnings like:
+>
+>    arch/arm64/boot/dts/exynos/exynos5433-tm2.dt.yaml: musb_connector: ports: 'port@0' is a required property
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Best regards,
-Krzysztof
+I'm not sure if topic should be about USB-C, I will call it simply USB 
+connector node. TM2(e) uses Samsung's 11-pin micro USB 2.0 connector, 
+which has nothing in common with USB Type-C.
+
+Anyway, this patch breaks DWC3 (tested in Device mode) driver operation, 
+so something has to be somehow adjusted or fixed. Added CC Andrzej 
+Hajda, who actually worked on this.
+
+> ---
+>
+> Not tested on HQ. Please kindly review and test.
+>
+> Best regards,
+> Krzysztof
+> ---
+>   .../boot/dts/exynos/exynos5433-tm2-common.dtsi    | 15 +++++++--------
+>   1 file changed, 7 insertions(+), 8 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> index 6246cce2a15e..bab6c1addd5f 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> @@ -871,6 +871,13 @@
+>   					#address-cells = <1>;
+>   					#size-cells = <0>;
+>   
+> +					port@0 {
+> +						reg = <0>;
+> +						muic_to_usb: endpoint {
+> +							remote-endpoint = <&usb_to_muic>;
+> +						};
+> +					};
+> +
+>   					port@3 {
+>   						reg = <3>;
+>   						musb_con_to_mhl: endpoint {
+> @@ -879,14 +886,6 @@
+>   					};
+>   				};
+>   			};
+> -
+> -			ports {
+> -				port {
+> -					muic_to_usb: endpoint {
+> -						remote-endpoint = <&usb_to_muic>;
+> -					};
+> -				};
+> -			};
+>   		};
+>   
+>   		regulators {
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
