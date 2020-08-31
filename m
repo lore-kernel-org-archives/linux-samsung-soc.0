@@ -1,131 +1,119 @@
-Return-Path: <SRS0=9Nct=CI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=sdu9=CJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33685C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 19:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6FEC43461
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 04:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F21212071B
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Aug 2020 19:44:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81B1F2078D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 04:29:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhzf3GQj"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NA4ctU1k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbgH3Ton (ORCPT
+        id S1726081AbgHaE3X (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 30 Aug 2020 15:44:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40930 "EHLO
+        Mon, 31 Aug 2020 00:29:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbgH3Tom (ORCPT
+        with ESMTP id S1726042AbgHaE3R (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 30 Aug 2020 15:44:42 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 708DEC061573;
-        Sun, 30 Aug 2020 12:44:42 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id c2so229856ljj.12;
-        Sun, 30 Aug 2020 12:44:42 -0700 (PDT)
+        Mon, 31 Aug 2020 00:29:17 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3352C061755
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 30 Aug 2020 21:29:14 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id g29so3628199pgl.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 30 Aug 2020 21:29:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=w2b3uQ3grQuHzLpPQOfEHno6ki6zY9r+UONQurulOvI=;
-        b=fhzf3GQjA1EtS/4zAwotNBVfEP5BgQC/vHh7NlqVuoqdj7ROn0tVvewLZVBzxTj4Pv
-         4uAEsVCRdvMO7MN38yRhvjx55DRhviVUp+DeySquLtSENxd8LUNUq5mIKtUDp7268hWj
-         EiAUYpoHBSpKqaW7iOB+cqshvXFhudBmVbsI7vuQfku+8lEdvR++g+KmaUBIrqUudFxn
-         W8bUy8KkEXDCgYhxAAGz+7w9KmUMEitnB8JF5nbRsi/deNwUInd6AYGqmk3s0Ib8ljbl
-         l0EyB1+767rr0k5EB5hEav1tXcXzg8p3RaCj4yuxNRG9oCWCo1/o1xG6lEcvfnnZFy/d
-         3pcQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fy+jYTLzmo8SG0PRGSLlA/pnVKtwE9a1uKPk/UDp9I4=;
+        b=NA4ctU1kZIKSEfqA8R2XSbBLEyXSCjda7w9pU9k/KMsgUTwNEPReFipZw7VUKCb0tb
+         TRy4OCOMUBA29mByAF5JiZgD0Qt9inZ3HuChAvAxxnFwXrWmjHGKxGXYkY3pmnynkb6z
+         OYvELM2mDyL8dfVNEkQ9c0DnRkmk1UGStGtJS4yOtZ00Pb6rmJE7QF2OElRDPHYb8zhH
+         ZMI7y/MvR3UJIrdxn12l0R3X6aml2dbxkz6FGd+Tj8kVb9zSYRQTLb3RqH+w3RQ+bWO7
+         quqAr0ZA4rwS1G12JBIlV2fxR6h8JtA5lJXbNfCDXLt3qmthqFeKLQMXFJNzVTsfzDlg
+         vb9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=w2b3uQ3grQuHzLpPQOfEHno6ki6zY9r+UONQurulOvI=;
-        b=leG/wgtrMJFH5J1J6VxTS5Hd9aNg/sD84usrjAA03Y1WiJFHL4z0fproDJoB7tZcAL
-         64na/53cO6FqPjD53NATlKU+XdzYTqaZK6RXa5Tzy/xcHKDjRrmc1FwbKQ0alVVFyx1l
-         rUciuBZv4gnUyPPz95rSjHMUOwjfMxcLqt1KrEbWowTn5W/NQLmeq8nYdsxxZ319OF5V
-         HdHM5iyf0h4q1Z6QO0wEx8cEHseIRCq6bUp+ZNkg+3wZrQWED/tbQOXW3dHOW2y5UWB5
-         TkWkcCJOypZMplVCrlU6gWw1a+GlGk0roCnk6JjsbxNd0OcjMXmYy21aRkSfK4ebEzgD
-         3Xxg==
-X-Gm-Message-State: AOAM530wrMXZiGXqjocBQznwdUCvRy6X8lg5eIBDvQkGtFfKVewLDvZT
-        NcfpDvUyAuhtxtARDPDNifjjow+d+5c=
-X-Google-Smtp-Source: ABdhPJz59TfkPi8wlRB5m8RE5yjEcxQe68Z6X9P8P2LdznriMOncqOezMDUqioFbPNx1FbZLjJi8TA==
-X-Received: by 2002:a05:651c:11c5:: with SMTP id z5mr3132694ljo.74.1598816680601;
-        Sun, 30 Aug 2020 12:44:40 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-170-211.dynamic.spd-mgts.ru. [109.252.170.211])
-        by smtp.googlemail.com with ESMTPSA id e8sm1114886lja.93.2020.08.30.12.44.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 30 Aug 2020 12:44:39 -0700 (PDT)
-Subject: Re: [PATCH 16/18] staging/media/tegra-vde: Clean up IOMMU workaround
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>, hch@lst.de, joro@8bytes.org,
-        linux@armlinux.org.uk, will@kernel.org, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        m.szyprowski@samsung.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, jonathanh@nvidia.com,
-        vdumpa@nvidia.com, matthias.bgg@gmail.com, yong.wu@mediatek.com,
-        geert+renesas@glider.be, magnus.damm@gmail.com, t-kristo@ti.com,
-        s-anna@ti.com, laurent.pinchart@ideasonboard.com,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fy+jYTLzmo8SG0PRGSLlA/pnVKtwE9a1uKPk/UDp9I4=;
+        b=fdYnVmQEyOb0Ag1EAek1ttd8rZ/7ehpbUw1XL+cbkTpXpePE9peIDWSyMZMMw1ENcT
+         yzAxHXQGgb4yK4fLrNyx7Ot9AY4qlQND+X+jvDpVjD/b03bFMOgCdjiL3qx5cCPLSRHt
+         5gdynj+Op94l3czPEwJV+ZXbwKOFEKdL4zmpVJvUzw0I46MY2u0bPX8Aq3ZvD4ZAlaBz
+         gX7GAFRxftaquwl4l3UZAdVmW2GA1emAVOBki9+r3VfnBDmZEmmhGWxP3LjsGtWg7zOU
+         bz2UDQO4hPBMmsNOLhQeFJonAwz6krOcfmDptm2oXFSZlmvR4V+6PVchwZpS6YlgvuKv
+         7yUA==
+X-Gm-Message-State: AOAM533hSkdQsa4SMnMOP70IGLc84eJpZksh/ymiUkHfwMquYKEUap3e
+        MdksL8Be9QKs5Q3FeCF/hp6zNw==
+X-Google-Smtp-Source: ABdhPJyD6b4IOWELQvuYc3r+NvPnogxg5ZJa39sm8LOUCLLFiHHrfalUW2QapDOWE73WPvEvqmk3zA==
+X-Received: by 2002:a63:ab43:: with SMTP id k3mr7183808pgp.426.1598848154284;
+        Sun, 30 Aug 2020 21:29:14 -0700 (PDT)
+Received: from localhost ([122.167.135.199])
+        by smtp.gmail.com with ESMTPSA id h9sm6641639pfq.18.2020.08.30.21.29.13
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 30 Aug 2020 21:29:13 -0700 (PDT)
+Date:   Mon, 31 Aug 2020 09:59:09 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1597931875.git.robin.murphy@arm.com>
- <3535c205b9bce52556abbf2f63384fb38e009df9.1597931876.git.robin.murphy@arm.com>
- <07135a55-cbc9-83e5-60dc-731282192554@gmail.com>
- <cb12808b-7316-19db-7413-b7f852a6f8ae@arm.com>
- <62a72187-442b-2103-46c3-39d3cd999f54@gmail.com>
- <affe2cfb-19e8-8e55-acd0-7170e274ab34@arm.com>
- <f1923a53-e799-e63c-fd22-4a6cca3b8212@gmail.com>
- <20200827155446.GB1660457@ulmo>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <f6240633-feed-70b7-2fe8-49fcee687676@gmail.com>
-Date:   Sun, 30 Aug 2020 22:44:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] cpufreq: s5pv210: Use dev_err instead of pr_err in
+ probe
+Message-ID: <20200831042909.jeg2rv6f3mhcnkim@vireshk-i7>
+References: <20200826160016.469-1-krzk@kernel.org>
+ <20200826160016.469-2-krzk@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200827155446.GB1660457@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200826160016.469-2-krzk@kernel.org>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-27.08.2020 18:54, Thierry Reding пишет:
-...
->> The Tegra DRM has a very special quirk for ARM32 that was added in this
->> commit [2] and driver relies on checking of whether explicit or implicit
->> IOMMU is used in order to activate the quirk.
->>
->> [2]
->> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=273da5a046965ccf0ec79eb63f2d5173467e20fa
->>
->> Once the implicit IOMMU is used for the DRM driver, the quirk no longer
->> works (if I'm not missing something). This problem needs to be resolved
->> before implicit IOMMU could be used by the Tegra DRM on ARM32.
-...
-> I do have a patch lying around somewhere that implements the mapping
-> cache that was referenced in the above commit. Let me know if I should
-> dig that up and send it out.
+On 26-08-20, 18:00, Krzysztof Kozlowski wrote:
+> dev_err() allows easily to identify the device printing the message so
+> no need for __func__.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/cpufreq/s5pv210-cpufreq.c | 14 +++++---------
+>  1 file changed, 5 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+> index 7dccdb364fcf..911a655895d8 100644
+> --- a/drivers/cpufreq/s5pv210-cpufreq.c
+> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
+> @@ -616,8 +616,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+>  
+>  	np = of_find_compatible_node(NULL, NULL, "samsung,s5pv210-clock");
+>  	if (!np) {
+> -		pr_err("%s: failed to find clock controller DT node\n",
+> -			__func__);
+> +		dev_err(dev, "failed to find clock controller DT node\n");
+>  		result = -ENODEV;
+>  		goto err_clock;
+>  	}
+> @@ -625,16 +624,14 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+>  	clk_base = of_iomap(np, 0);
+>  	of_node_put(np);
+>  	if (!clk_base) {
+> -		pr_err("%s: failed to map clock registers\n", __func__);
+> -		result = -EFAULT;
 
-Hello, Thierry! It certainly will be interesting to take a look at yours
-patch!
+I have restored this back as it didn't look intentional.
 
-I think that the caching shouldn't be strictly necessary for keeping the
-current workaround working and it should be possible to keep the code
-as-is by replacing the domain-type checking with the SoC-generation
-check in the Tegra DRM driver.
+Applied both. Thanks.
 
-In general, IMO it should be better to stash the complex changes until
-we'll get closer to adopting the new UAPI as it will certainly touch the
-aspect of the per-device mappings. But if yours patch is less than 100
-LOC, then maybe we could consider applying it right now!
+-- 
+viresh
