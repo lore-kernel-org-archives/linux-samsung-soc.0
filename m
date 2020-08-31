@@ -2,121 +2,119 @@ Return-Path: <SRS0=sdu9=CJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C604AC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 08:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A89C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 09:16:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FC142073A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 08:44:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF64D20936
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 09:16:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oS6Iro0d"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eAH2o6eW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbgHaIon (ORCPT
+        id S1728223AbgHaJQO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Aug 2020 04:44:43 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:33866 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727962AbgHaIom (ORCPT
+        Mon, 31 Aug 2020 05:16:14 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44691 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728222AbgHaJQN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Aug 2020 04:44:42 -0400
+        Mon, 31 Aug 2020 05:16:13 -0400
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200831084440euoutp01a4b607289681a17acd2c3b2d4a605379~wTd1lTUg42950429504euoutp01u
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Aug 2020 08:44:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200831084440euoutp01a4b607289681a17acd2c3b2d4a605379~wTd1lTUg42950429504euoutp01u
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200831091611euoutp020e6123714955c9716b7f7bc7204f7298~wT5WAk-g92156221562euoutp02B
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Aug 2020 09:16:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200831091611euoutp020e6123714955c9716b7f7bc7204f7298~wT5WAk-g92156221562euoutp02B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1598863481;
-        bh=kEAACSpDUP9iD+P6ziLCS1tlWwTb6u8yQL3yoqPQHso=;
+        s=mail20170921; t=1598865371;
+        bh=uEv4mRNARVrH1pGeF1D9VS4PlE2P5tcROsx7w9b3Gqc=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=oS6Iro0dE+Qtro7p5IAkUjCF5RQB2fgJOngUQwhkrVdN1anoeA6GsWtzOxhwtSKSJ
-         R/brZLGdKjnVKh7DE1VlUkE36FkgA3oAyiD4UuG76dJOZXvjpGcZAdqpOUu6NVtWku
-         y3aSMLOQTAvuYAssSJb55JLmrruyPuyLrBpMdmhA=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        b=eAH2o6eWT7DKWOirYFX7ZCd9jABljAafHHO/rcnl+FPBv6oHIne15jBiyIquJCDcc
+         n2YSWq4hQYnMYkFO5IlJMQnVUvYrzo3RVKD9PJlkyCwz+0v6dMci7CBKdjmRPKXA51
+         cC9cWCxIuSBwX3CKFObWv9lB/UbZw4FqRvE1oTUA=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200831084440eucas1p1f578012994a77cab14d7e9264faa4f0c~wTd1U3wx31400814008eucas1p1u;
-        Mon, 31 Aug 2020 08:44:40 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 47.6D.06456.878BC4F5; Mon, 31
-        Aug 2020 09:44:40 +0100 (BST)
+        20200831091610eucas1p1650cbe1f0f0cecd0d88a505da6826134~wT5VqhPTN0532005320eucas1p1B;
+        Mon, 31 Aug 2020 09:16:10 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 86.20.05997.ADFBC4F5; Mon, 31
+        Aug 2020 10:16:10 +0100 (BST)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200831084440eucas1p168ff4960505f1350d35746343a61d19b~wTd0rgc381357513575eucas1p1y;
-        Mon, 31 Aug 2020 08:44:40 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200831091610eucas1p2b5b8c3d7229f1f38609deebb5a0dc28c~wT5VENLkN0155001550eucas1p2D;
+        Mon, 31 Aug 2020 09:16:10 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200831084440eusmtrp24d2f9a40bf2392721e8bf5c3a86f9430~wTd0qsuWp2515925159eusmtrp2k;
-        Mon, 31 Aug 2020 08:44:40 +0000 (GMT)
-X-AuditID: cbfec7f2-809ff70000001938-3b-5f4cb878b04a
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 2C.F1.06017.778BC4F5; Mon, 31
-        Aug 2020 09:44:39 +0100 (BST)
+        20200831091610eusmtrp238db72ac8b0b6fa2813b6d9428ec6c10~wT5VDhcAn1178611786eusmtrp2j;
+        Mon, 31 Aug 2020 09:16:10 +0000 (GMT)
+X-AuditID: cbfec7f4-65dff7000000176d-3b-5f4cbfdaebf6
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id D1.03.06314.ADFBC4F5; Mon, 31
+        Aug 2020 10:16:10 +0100 (BST)
 Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200831084439eusmtip2358c9e420a371bb2d56d43bf45373be8~wTd0FKpCx2809128091eusmtip2B;
-        Mon, 31 Aug 2020 08:44:39 +0000 (GMT)
-Subject: Re: [PATCH 23/33] ARM: dts: exynos: Remove empty camera pinctrl
- configuration in Odroid X/U3
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200831091609eusmtip18267f5839469d0502083de4160185b6d~wT5Ueffj90646006460eusmtip1C;
+        Mon, 31 Aug 2020 09:16:09 +0000 (GMT)
+Subject: Re: [PATCH 09/33] ARM: dts: exynos: Add and enable 32 kHz modem
+ clock in Origen
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Denis GNUtoo Carikli <GNUtoo@cyberdimension.org>,
-        Simon Shields <simon@lineageos.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Simon Shields <simon@lineageos.org>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <5d0ce951-4472-f7f4-31be-b1f7dc8f05cb@samsung.com>
-Date:   Mon, 31 Aug 2020 10:44:39 +0200
+Message-ID: <0f898c36-714c-43ef-2afc-7843d444b41b@samsung.com>
+Date:   Mon, 31 Aug 2020 11:16:09 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
         Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPfR8YVmBqCd5+8B2TdM_tXZbWobK0pLxXxxkrsDEMR-vw@mail.gmail.com>
+In-Reply-To: <20200830135200.24304-9-krzk@kernel.org>
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+Xa2s+NsdpyWLyqFC0UzXVLQCS+paAwyKISoIHXqQSU3bceZ
-        RpG6TB2SIpQ2pFKE8lLqGssLirc5vJsrFQvKtNC8QZaloOV2svzv9z7v894+PgITdfOciSRF
-        Gq1UyJLFuIBr6F0f8cloiog+WpjjRTWW1fOoxz3DPCp3YoZPFc0sYNTISAOf0s2M8yhzSzlO
-        lY20c6jcth4+pR98h1N5n+exYFupsSMbk+pqCnDpnXodLn1ZdVt6T1+DpKu6A+fwy4KAeDo5
-        KZ1WSoJiBImL9w0odcgmY8U4gGehDb4G2RBAHgdDXSvSIAEhIp8hWK4owdjgO4LNuUEeG6wi
-        ME3N4jsl2V8mORYWkU8RjBfgrGkFQXtOP7IkHMgEWBo1YhZ2JL1gYvOntRNGvsZgvanNWo2T
-        fqBZ0li7CskgaH2r51qYS7pDdve4Vd9HRkFv/ycu67GHvoezVrYhz4P6Y6O1D0YehFdL5RjL
-        TjA1+5jDbjrOh7mxQyyHQW/fIsayA3w16f8+gCv8brb4BdusRjA9/JzPBoUIzDlliHX5w/vh
-        je2NiO0JXlDfImHlECgub+RbZCDtYHLJnt3BDkoMpRgrCyH/roh1e4DW9OLf2M7RMawYibW7
-        LtPuuka76xrt/7lPELcGOdEqRp5AM34K+rovI5MzKkWCb1yKXIe2v9bAlulbE/oxFtuFSAKJ
-        9wh/Gc9Ei3iydCZT3oWAwMSOwtChgSiRMF6WeYNWpkQrVck004VcCK7YSXiscv6KiEyQpdFX
-        aTqVVu5kOYSNcxa6mLpVtz81/hZ+StzkYeeTOBo6XdTsXZnf0RlP7T2rjHogNdRx1mpPvMmr
-        dC0yO6K1sEsxcZHrao3JMTxkgdNVLa6qQsmNEvXkYINbt+fpWFeFKqZCEBGs8ZCsuJNutsvX
-        /D8EYierkwJQoLHUXHszt5dJD/eMvODyqEN/xFvMZRJlfocxJSP7A6CAB0tWAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsVy+t/xe7rlO3ziDV5ts7HYOGM9q8X8I+dY
-        LVqvP2a36H/8mtni/PkN7BabHl9jtbi8aw6bxYzz+5gsWvceYbfYcuY2m0X705fMDtweRw80
-        MntsWtXJ5tGyfhObx+Yl9R59W1YxenzeJBfAFqVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2Ri
-        qWdobB5rZWSqpG9nk5Kak1mWWqRvl6CX8WbqNsaCs5wV74+eZmtg/MXexcjJISFgItH47AZT
-        FyMXh5DAUkaJG8vfsUAkZCROTmtghbCFJf5c62KDKHrLKHHtyTVGkISwQLrE2wtHmUFsEQFN
-        iet/v7OCFDELXGaW2L2inx2iYwOTxJuDh8Gq2AQMJbregozi5OAVsJPYfXUL2DoWAVWJxsPX
-        wOKiAnESZ3peQNUISpyc+QSshlMgUKL5wUYmEJtZwExi3uaHzBC2vMT2t3OgbHGJW0/mM01g
-        FJqFpH0WkpZZSFpmIWlZwMiyilEktbQ4Nz232EivODG3uDQvXS85P3cTIzBStx37uWUHY9e7
-        4EOMAhyMSjy8P456xwuxJpYVV+YeYpTgYFYS4XU6ezpOiDclsbIqtSg/vqg0J7X4EKMp0HMT
-        maVEk/OBSSSvJN7Q1NDcwtLQ3Njc2MxCSZy3Q+BgjJBAemJJanZqakFqEUwfEwenVAMjX3SY
-        ZPL0mPD0VsbzitWv/3ffbS6a3mDdMVVw2SXLpWvW7HHJOSaZ7/B/jpRU7eGj01OZopWTT8xr
-        qa6ZNb0l+l/AwiMhz+eKS379vlTkamjn6x0vf5l5l1tEnneYXxu+wVRs462Ec/GMfx4xhbvd
-        ia/pWq1c05WVFqz+okRv/QaprqJjkdOUWIozEg21mIuKEwEwl2Y26gIAAA==
-X-CMS-MailID: 20200831084440eucas1p168ff4960505f1350d35746343a61d19b
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMKsWRmVeSWpSXmKPExsWy7djPc7q39vvEG9xdYWSxccZ6Vov5R86x
+        WrRef8xu0f/4NbPF+fMb2C02Pb7GanF51xw2ixnn9zFZtO49wm6x5cxtNov2py+ZHbg9jh5o
+        ZPbYtKqTzaNl/SY2j81L6j36tqxi9Pi8SS6ALYrLJiU1J7MstUjfLoEr49WWRuaCBo6KFx+b
+        WRoYF7J1MXJySAiYSDxsWMjexcjFISSwglFi9pupTBDOF0aJS0efMIJUCQl8ZpRoWBcH0zFx
+        yio2iKLljBJ333WxQDjvGSUOTu9gBqkSFoiSuHxtC1iViMAZJom/366AJZgFUiV2vz3GCmKz
+        CRhKdL3tAjuEV8BOYu7KvWA1LAKqEnfO/2cBsUUF4iSOnXrEAlEjKHFy5hMwm1PAVOL/zQNs
+        EDPlJba/nQM1X1zi1pP5YD9ICFxil9h6+j9QggPIcZF4e9Eb4gVhiVfHt7BD2DIS/3fC1Dcz
+        Sjw8t5YdwulhlLjcNIMRospa4s65X2wgg5gFNCXW79KHCDtKvF7Wwgoxn0/ixltBiBv4JCZt
+        mw61lleio00IolpNYtbxdXBrD164xDyBUWkWks9mIflmFpJvZiHsXcDIsopRPLW0ODc9tdgo
+        L7Vcrzgxt7g0L10vOT93EyMwaZ3+d/zLDsZdf5IOMQpwMCrx8P446h0vxJpYVlyZe4hRgoNZ
+        SYTX6ezpOCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8xotexgoJpCeWpGanphakFsFkmTg4pRoY
+        CyRmb/wRdNHLWfTr+ubVN6/vCZ+wwOqQzI3uUAt9j1pZZqPKi0J+Lx9VSPs9c577UuhFydP9
+        3B8f5Zac3RMfERA09X3QjBVZW5RqrdLyj38PVPbhXN7b/dhSrPT+xaMfNTx6JqUt+b9E3XH2
+        /fsrKz0VvrvtWGkXsX+qud7BBd+PuViHTu9arcRSnJFoqMVcVJwIAPyHHCdWAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xu7q39vvEG5yaxW2xccZ6Vov5R86x
+        WrRef8xu0f/4NbPF+fMb2C02Pb7GanF51xw2ixnn9zFZtO49wm6x5cxtNov2py+ZHbg9jh5o
+        ZPbYtKqTzaNl/SY2j81L6j36tqxi9Pi8SS6ALUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jE
+        Us/Q2DzWyshUSd/OJiU1J7MstUjfLkEv49WWRuaCBo6KFx+bWRoYF7J1MXJySAiYSEycsgrI
+        5uIQEljKKLHhwXZ2iISMxMlpDawQtrDEn2tdUEVvGSW+THvN0sXIwSEsECXx9aofSFxE4ByT
+        xMyF/WDNzAKpEhObpjJBNGxmlJh07zIzSIJNwFCi620X2GpeATuJuSv3gsVZBFQl7pz/zwJi
+        iwrESZzpeQFVIyhxcuYTsDingKnE/5sH2CAWmEnM2/yQGcKWl9j+dg6ULS5x68l8pgmMQrOQ
+        tM9C0jILScssJC0LGFlWMYqklhbnpucWG+oVJ+YWl+al6yXn525iBMbptmM/N+9gvLQx+BCj
+        AAejEg/vj6Pe8UKsiWXFlbmHGCU4mJVEeJ3Ono4T4k1JrKxKLcqPLyrNSS0+xGgK9NxEZinR
+        5HxgCskriTc0NTS3sDQ0NzY3NrNQEuftEDgYIySQnliSmp2aWpBaBNPHxMEp1cAoOzNIe3vb
+        LQk3t/N9E9tPLa+IKF4ovo1be90Uqd9inHZlYY3aIcV9nJHHZrWpqbq88gnT/zArOOOXUnFw
+        6s6+830B2ksjWR6HyAfzS2z/Yx4nacK1QPvI8pXNWsn7vhz/GL9MZK3xqnkCBYxBZx/qisVe
+        2rC14velWKsZ4RUfN7y9JCpvraTEUpyRaKjFXFScCADzEa0M6QIAAA==
+X-CMS-MailID: 20200831091610eucas1p2b5b8c3d7229f1f38609deebb5a0dc28c
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200830135508eucas1p21ad0d4f6a2ef78f854fc74750db3fa2a
+X-RootMTR: 20200830135426eucas1p19a79abc3fcc3580f466782a856eb0c78
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200830135508eucas1p21ad0d4f6a2ef78f854fc74750db3fa2a
+X-CMS-RootMailID: 20200830135426eucas1p19a79abc3fcc3580f466782a856eb0c78
 References: <20200830135200.24304-1-krzk@kernel.org>
-        <CGME20200830135508eucas1p21ad0d4f6a2ef78f854fc74750db3fa2a@eucas1p2.samsung.com>
-        <20200830135200.24304-23-krzk@kernel.org>
-        <c9daff05-dca7-f1b1-8cfe-46b185bf60dd@samsung.com>
-        <CAJKOXPfR8YVmBqCd5+8B2TdM_tXZbWobK0pLxXxxkrsDEMR-vw@mail.gmail.com>
+        <CGME20200830135426eucas1p19a79abc3fcc3580f466782a856eb0c78@eucas1p1.samsung.com>
+        <20200830135200.24304-9-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -124,33 +122,36 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hi Krzysztof,
 
-On 31.08.2020 10:38, Krzysztof Kozlowski wrote:
-> On Mon, 31 Aug 2020 at 10:31, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->> On 30.08.2020 15:51, Krzysztof Kozlowski wrote:
->>> The camera's pinctrl configuration is simply empty and not effective.
->>> Remove it to fix dtbs_check warning:
->>>
->>>     arch/arm/boot/dts/exynos4412-odroidx.dt.yaml: camera: pinctrl-0: True is not of type 'array'
->>>
->>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->> I think that this was intentional to properly enable support for
->> mem-2-mem mode in Exynos4-IS (FIMC), but I'm not sure what are the
->> default values if no pinctrl properties are provided. Sylwester, could
->> you comment?
-> Indeed it could be intentional... I see now errors:
-> [   33.752203] s5p-fimc-md soc:camera: Failed to get pinctrl: -19
+On 30.08.2020 15:51, Krzysztof Kozlowski wrote:
+> The PMIC has a 32768 Hz clock used by the modem which is implemented by
+> driver as a regulator.  Add and enable it to be sure modem get's its
+> signal.
 >
-> I wonder why getting an empty pinctrl is needed... maybe the driver
-> should accept missing pinctrl?
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Please ensure that you have those patches applied:
+Origen board doesn't have any modem/cp, so I see no point in enabling 
+this clock.
 
-https://patchwork.kernel.org/patch/11707579/
-
-https://patchwork.kernel.org/patch/11707577/
-
-https://patchwork.kernel.org/patch/11705409/
-
+> ---
+>   arch/arm/boot/dts/exynos4210-origen.dts | 5 +++++
+>   1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+> index 747221bbb856..fcf45619a3e4 100644
+> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+> @@ -298,6 +298,11 @@
+>   				regulator-name = "EN32KHZ_AP";
+>   				regulator-always-on;
+>   			};
+> +
+> +			EN32KHZ_CP {
+> +				regulator-name = "EN32KHZ_CP";
+> +				regulator-always-on;
+> +			};
+>   		};
+>   	};
+>   };
 
 Best regards
 -- 
