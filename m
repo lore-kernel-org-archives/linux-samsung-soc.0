@@ -2,154 +2,91 @@ Return-Path: <SRS0=sdu9=CJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E535DC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 09:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61340C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 09:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B00DD20936
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 09:25:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GgiI1R1E"
+	by mail.kernel.org (Postfix) with ESMTP id 3C80E208DB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 09:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598866689;
+	bh=EHA+yyfRzZHd0hQyJ+TVmjv/gqYm0Gm7uGiiBljNENU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=k8UVpNEuHTxnIEFfdcEfTKCf4e+X9175sUZMnfS22ObcVCPjcXr3W9pTZJAjPSbmk
+	 1HERg39ip9Yo0pnEJjU1eYsCdf4Foxpp/6f0DTSpFy3E+G7JeXLpBSfNNwH4ZgU1nM
+	 MlKe4j9Dz6Y4bymGTu++CZd8rVEz+o8pzGrGd3Os=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbgHaJZR (ORCPT
+        id S1726326AbgHaJiD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Aug 2020 05:25:17 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51032 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726800AbgHaJZO (ORCPT
+        Mon, 31 Aug 2020 05:38:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39694 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726121AbgHaJiC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Aug 2020 05:25:14 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200831092512euoutp017631b6e660a0cf2ba53bc838f69e9c38~wUBOd2Wky3109231092euoutp01c
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Aug 2020 09:25:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200831092512euoutp017631b6e660a0cf2ba53bc838f69e9c38~wUBOd2Wky3109231092euoutp01c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1598865912;
-        bh=27ver/+sncw91cQvHNYvzmH/OzPk0oFElsklYtQMeAA=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=GgiI1R1Eurn8EHu2lyl7oshDlHogzPFprD3uHwnPWB7MzE9ogcfNGtirnXAj0NHSd
-         Z8oxzlnTFa8DcftH6dDGZJ+lG97QbSUOE98NevUcYaY4Yy+r68qd+9tzRFQ48KTfJr
-         SNCeCEeauaNN4bRkkrvtricWwUP0u22Gt3fNRQEY=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200831092512eucas1p112a0bb336cc057cac47bc1f009f7fbfc~wUBOA1upE1108311083eucas1p1s;
-        Mon, 31 Aug 2020 09:25:12 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 95.54.06456.8F1CC4F5; Mon, 31
-        Aug 2020 10:25:12 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200831092512eucas1p1d6ea26db5585f850165ea13477f25b50~wUBNuMt-x1108311083eucas1p1r;
-        Mon, 31 Aug 2020 09:25:12 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200831092512eusmtrp2b9426955777d764c605f82c77aabdffb~wUBNteigB1806518065eusmtrp2q;
-        Mon, 31 Aug 2020 09:25:12 +0000 (GMT)
-X-AuditID: cbfec7f2-809ff70000001938-e3-5f4cc1f8cdbc
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id F1.38.06017.7F1CC4F5; Mon, 31
-        Aug 2020 10:25:12 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200831092511eusmtip1e983ea2b263177fe9219a4bf7a4a4945~wUBNJZG_c1160911609eusmtip1B;
-        Mon, 31 Aug 2020 09:25:11 +0000 (GMT)
-Subject: Re: [RFT 14/33] ARM: dts: exynos: Replace deprecated GPIO spi-gpio
- properties in Universal C210
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Denis GNUtoo Carikli <GNUtoo@cyberdimension.org>,
-        Simon Shields <simon@lineageos.org>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <d2237c0f-a52f-df61-b3c6-841a1b8bd5dc@samsung.com>
-Date:   Mon, 31 Aug 2020 11:25:11 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.12.0
+        Mon, 31 Aug 2020 05:38:02 -0400
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCE9020EDD;
+        Mon, 31 Aug 2020 09:38:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598866682;
+        bh=EHA+yyfRzZHd0hQyJ+TVmjv/gqYm0Gm7uGiiBljNENU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CALVGSU60F8LU5w4vSApko60pt22LuuZnUsZWZdQrRcIMd+RYS2RlfAUYzyOhdZZl
+         EM75t0oaFSKjURfxkrAT9NrXhX0sfYa1dl1bhJCUo15NqZv+wNG6A6sM7xJ+C+ZEMc
+         82t4DqeZAO9Saec+HMmoS6fzS2P3bpfn7Mfh818I=
+Received: by mail-ej1-f44.google.com with SMTP id a26so7635712ejc.2;
+        Mon, 31 Aug 2020 02:38:01 -0700 (PDT)
+X-Gm-Message-State: AOAM5329MdEAlyApLw2pnS3r4l2in8cWUqjs++mktcVRlp3V7/APwCuD
+        4s1JBOG2HR3qlRxNAbqFGT+YQdwD8YXo6iIwZIc=
+X-Google-Smtp-Source: ABdhPJzEMydj1flQe8yJ1fHDr/f/GID/UjECg9Fvi2J91xAvL9Nrnw1B2S17ifqKsFMYn4zaczyeTsQzAZzitv06LdA=
+X-Received: by 2002:a17:906:ca4f:: with SMTP id jx15mr305412ejb.454.1598866680422;
+ Mon, 31 Aug 2020 02:38:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200830135200.24304-14-krzk@kernel.org>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMKsWRmVeSWpSXmKPExsWy7djPc7o/DvrEG6z9JGaxccZ6Vov5R86x
-        WrRef8xu0f/4NbPF+fMb2C02Pb7GanF51xw2ixnn9zFZtO49wm6x5cxtNov2py+ZHbg9jh5o
-        ZPbYtKqTzaNl/SY2j81L6j36tqxi9Pi8SS6ALYrLJiU1J7MstUjfLoEr48cRgYL9nBX3mlay
-        NzC+YO9i5OSQEDCROPf9O2MXIxeHkMAKRonzx64xQThfGCW+v5rEBFIlJPCZUeLuiQCYjj07
-        HkB1LGeUWDjvASuE855R4sWu5WAdwgJZEqd//AQbJSJwhkni77crzCAJZoFUid1vj7GC2GwC
-        hhJdb7vYQGxeATuJHYu/soDYLAKqEq+vPQYbJCoQJ3Hs1CMWiBpBiZMzn4DZnAJmEtP2/2SB
-        mCkvsf3tHKj54hK3nswHWywhcIld4vf6eUwQd7tIzNt6ig3CFpZ4dXwLNARkJP7vhGloZpR4
-        eG4tO4TTwyhxuWkGI0SVtcSdc7+AujmAVmhKrN+lDxF2lLg66R8jSFhCgE/ixltBiCP4JCZt
-        m84MEeaV6GgTgqhWk5h1fB3c2oMXLjFPYFSaheS1WUjemYXknVkIexcwsqxiFE8tLc5NTy02
-        zEst1ytOzC0uzUvXS87P3cQITFqn/x3/tIPx66WkQ4wCHIxKPLw/jnrHC7EmlhVX5h5ilOBg
-        VhLhdTp7Ok6INyWxsiq1KD++qDQntfgQozQHi5I4r/Gil7FCAumJJanZqakFqUUwWSYOTqkG
-        RtF3+/TvNW7Uipysy7nuxbNX0bP3LL17yNDVUeakXhc/e8qNngnHO2aG6tcG8714I+TENid1
-        sezuUJHUoFkHGE9cPbpW587+tJC2sKoeTZffy/vnyBy1br9o5LWYceLOFfKss7i9Ky63SVwI
-        PLFPMvTdvGnd7/dFtUpu9A9dI7ytultGaRsPuxJLcUaioRZzUXEiAFk9dipWAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKIsWRmVeSWpSXmKPExsVy+t/xu7o/DvrEG9w4wWSxccZ6Vov5R86x
-        WrRef8xu0f/4NbPF+fMb2C02Pb7GanF51xw2ixnn9zFZtO49wm6x5cxtNov2py+ZHbg9jh5o
-        ZPbYtKqTzaNl/SY2j81L6j36tqxi9Pi8SS6ALUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jE
-        Us/Q2DzWyshUSd/OJiU1J7MstUjfLkEv48cRgYL9nBX3mlayNzC+YO9i5OSQEDCR2LPjASOI
-        LSSwlFFi4g9/iLiMxMlpDawQtrDEn2tdbF2MXEA1bxklPi+/wwySEBbIkjj94ycTSEJE4ByT
-        xMyF/WBTmQVSJSY2TWWC6NjCKHH2xV2wFWwChhJdb0FGcXLwCthJ7Fj8lQXEZhFQlXh97TET
-        iC0qECdxpucFVI2gxMmZT8BqOAXMJKbt/8kCscBMYt7mh8wQtrzE9rdzoGxxiVtP5jNNYBSa
-        haR9FpKWWUhaZiFpWcDIsopRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwSrcd+7llB2PXu+BD
-        jAIcjEo8vD+OescLsSaWFVfmHmKU4GBWEuF1Ons6Tog3JbGyKrUoP76oNCe1+BCjKdBzE5ml
-        RJPzgQkkryTe0NTQ3MLS0NzY3NjMQkmct0PgYIyQQHpiSWp2ampBahFMHxMHp1QDY1CeWKac
-        Xuejrta12l9ulfuIzJkhd2Dbzpc3pT588pWJ1GlkKd5ZvefvQ55d0zISi6bc048OfcH15Pvp
-        14l9y52LbP6Z67tEnzVL0mqZ+Xrdjg3K1+akRH5wfmN4UyZ/69uznuoz24/PmnpIJ2ajoLUq
-        1/uKhc2RLcH/v6S8uCypv3jFtFgHNyWW4oxEQy3mouJEAMWjBkjoAgAA
-X-CMS-MailID: 20200831092512eucas1p1d6ea26db5585f850165ea13477f25b50
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200830135440eucas1p2e72db4f3b1ee2c20119c56ea9f2cd8ae
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200830135440eucas1p2e72db4f3b1ee2c20119c56ea9f2cd8ae
-References: <20200830135200.24304-1-krzk@kernel.org>
-        <CGME20200830135440eucas1p2e72db4f3b1ee2c20119c56ea9f2cd8ae@eucas1p2.samsung.com>
-        <20200830135200.24304-14-krzk@kernel.org>
+References: <20200830135200.24304-1-krzk@kernel.org> <CGME20200830135426eucas1p19a79abc3fcc3580f466782a856eb0c78@eucas1p1.samsung.com>
+ <20200830135200.24304-9-krzk@kernel.org> <0f898c36-714c-43ef-2afc-7843d444b41b@samsung.com>
+In-Reply-To: <0f898c36-714c-43ef-2afc-7843d444b41b@samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 31 Aug 2020 11:37:49 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfyOo40Jx2M+U0_3TY7Y1=qaszeQ9Sqtu_hzrthoSdtow@mail.gmail.com>
+Message-ID: <CAJKOXPfyOo40Jx2M+U0_3TY7Y1=qaszeQ9Sqtu_hzrthoSdtow@mail.gmail.com>
+Subject: Re: [PATCH 09/33] ARM: dts: exynos: Add and enable 32 kHz modem clock
+ in Origen
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Denis GNUtoo Carikli <GNUtoo@cyberdimension.org>,
+        Simon Shields <simon@lineageos.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 30.08.2020 15:51, Krzysztof Kozlowski wrote:
-> "gpio-sck" and "gpio-mosi" are deprecated so update the DTS to fix
-> dtbs_checks warnings like:
+On Mon, 31 Aug 2020 at 11:16, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 >
->    arch/arm/boot/dts/exynos4210-universal_c210.dt.yaml: spi-lcd:
->      gpio-sck: False schema does not allow [[85, 1, 0]]
+> Hi Krzysztof,
 >
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->   arch/arm/boot/dts/exynos4210-universal_c210.dts | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> On 30.08.2020 15:51, Krzysztof Kozlowski wrote:
+> > The PMIC has a 32768 Hz clock used by the modem which is implemented by
+> > driver as a regulator.  Add and enable it to be sure modem get's its
+> > signal.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 >
-> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> index 3509fdf8f245..279f0f8f86ed 100644
-> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> @@ -124,8 +124,8 @@
->   		#address-cells = <1>;
->   		#size-cells = <0>;
->   
-> -		gpio-sck = <&gpy3 1 GPIO_ACTIVE_HIGH>;
-> -		gpio-mosi = <&gpy3 3 GPIO_ACTIVE_HIGH>;
-> +		sck-gpios = <&gpy3 1 GPIO_ACTIVE_HIGH>;
-> +		mosi-gpios = <&gpy3 3 GPIO_ACTIVE_HIGH>;
->   		num-chipselects = <1>;
->   		cs-gpios = <&gpy4 3 GPIO_ACTIVE_LOW>;
->   
+> Origen board doesn't have any modem/cp, so I see no point in enabling
+> this clock.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Good point, thanks for review.
 
+Best regards,
+Krzysztof
