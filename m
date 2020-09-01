@@ -2,177 +2,83 @@ Return-Path: <SRS0=7h8a=CK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C5EC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 14:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 346D5C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 14:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37FAD2078B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 14:53:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="wObSEMiI";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="aKMifmu3"
+	by mail.kernel.org (Postfix) with ESMTP id 1BAAB206EB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 14:57:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728831AbgIAOxO (ORCPT
+        id S1726871AbgIALZC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Sep 2020 10:53:14 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:42334 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728454AbgIAOwp (ORCPT
+        Tue, 1 Sep 2020 07:25:02 -0400
+Received: from verein.lst.de ([213.95.11.211]:53056 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726107AbgIALYH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Sep 2020 10:52:45 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 2FA1E8EE112;
-        Tue,  1 Sep 2020 07:52:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1598971964;
-        bh=5QgiJp1XQuU8WeasWKUrByXxrzK/9M/xvKJovjxtOSE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=wObSEMiIFiMQqpuLxaCfGj6fWwMB1SR5uR3WpqveV9O4eMPwCERYxZe+pGeu45B1s
-         Hh0lHOhPmaDzTL+z1MwoTQwce39LAcI0HTI6j6IhhJYI3h5nKO0TMp801H3LPYpAS2
-         cAlNurtUenHcZUudnTaoIqyV7yZakslR9e7UqKeA=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 0Zy3Ukh5UkrA; Tue,  1 Sep 2020 07:52:44 -0700 (PDT)
-Received: from [153.66.254.174] (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id C9BD38EE0F5;
-        Tue,  1 Sep 2020 07:52:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1598971963;
-        bh=5QgiJp1XQuU8WeasWKUrByXxrzK/9M/xvKJovjxtOSE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=aKMifmu3auQ6FWaycnVm58I6hz9G+D25US7ZBIQmKPWtl/OO3oAlisEasTKoEqxvs
-         l6ihGgc23PPx6Vjc2Wtc/36E47y53pW7IPIx5bd2ov50jG73PyojCzhwq4i11ZzTyB
-         Dg3UC/gKa12A9sw0Wl45QN34rTiyU/vUbrJxeAio=
-Message-ID: <1598971960.4238.5.camel@HansenPartnership.com>
-Subject: Re: [PATCH 07/28] 53c700: improve non-coherent DMA handling
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Tue, 1 Sep 2020 07:24:07 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 508E268B05; Tue,  1 Sep 2020 13:06:18 +0200 (CEST)
+Date:   Tue, 1 Sep 2020 13:06:17 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Christoph Hellwig <hch@lst.de>, alsa-devel@alsa-project.org,
+        linux-ia64@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        nouveau@lists.freedesktop.org, linux-nvme@lists.infradead.org,
+        linux-mips@vger.kernel.org,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        linux-mm@kvack.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        linux-scsi@vger.kernel.org,
         Kyungmin Park <kyungmin.park@samsung.com>,
         Ben Skeggs <bskeggs@redhat.com>,
-        Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
         Matt Porter <mporter@kernel.crashing.org>,
-        iommu@lists.linux-foundation.org
-Cc:     Tom Lendacky <thomas.lendacky@amd.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
-        netdev@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-mm@kvack.org,
-        alsa-devel@alsa-project.org
-Date:   Tue, 01 Sep 2020 07:52:40 -0700
-In-Reply-To: <20200819065555.1802761-8-hch@lst.de>
-References: <20200819065555.1802761-1-hch@lst.de>
-         <20200819065555.1802761-8-hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Pawel Osciak <pawel@osciak.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-parisc@vger.kernel.org, netdev@vger.kernel.org,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>
+Subject: Re: [PATCH 05/28] media/v4l2: remove
+ V4L2-FLAG-MEMORY-NON-CONSISTENT
+Message-ID: <20200901110617.GA13232@lst.de>
+References: <20200819065555.1802761-1-hch@lst.de> <20200819065555.1802761-6-hch@lst.de> <CAAFQd5COLxjydDYrfx47ht8tj-aNPiaVnC+WyQA7nvpW4gs=ww@mail.gmail.com> <20200819135454.GA17098@lst.de> <CAAFQd5BuXP7t3d-Rwft85j=KTyXq7y4s24mQxLr=VoY9krEGZw@mail.gmail.com> <20200820044347.GA4533@lst.de> <20200820052004.GA5305@lst.de> <CAAFQd5CFiA2WBaaPQ9ezvMjYZfNw37c42UEy9Pk7kJyCi1mLzQ@mail.gmail.com> <20200820165407.GD12693@lst.de> <CAAFQd5D=NzgjosB51-O_cH27a8V6CPgCfaPSfHHz7nKJPbazgg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAFQd5D=NzgjosB51-O_cH27a8V6CPgCfaPSfHHz7nKJPbazgg@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 2020-08-19 at 08:55 +0200, Christoph Hellwig wrote:
-> Switch the 53c700 driver to only use non-coherent descriptor memory
-> if it really has to because dma_alloc_coherent fails.  This doesn't
-> matter for any of the platforms it runs on currently, but that will
-> change soon.
+On Thu, Aug 20, 2020 at 07:33:48PM +0200, Tomasz Figa wrote:
+> > It wasn't meant to be too insulting, but I found this out when trying
+> > to figure out how to just disable it.  But it also ends up using
+> > the actual dma attr flags for it's own consistency checks, so just
+> > not setting the flag did not turn out to work that easily.
+> >
 > 
-> To help with this two new helpers to transfer ownership to and from
-> the device are added that abstract the syncing of the non-coherent
-> memory. The two current bidirectional cases are mapped to transfers
-> to the device, as that appears to what they are used for.  Note that
-> for parisc, which is the only architecture this driver needs to use
-> non-coherent memory on, the direction argument of dma_cache_sync is
-> ignored, so this will not change behavior in any way.
+> Yes, sadly the videobuf2 ended up becoming quite counterintuitive
+> after growing for the long years and that is reflected in the design
+> of this feature as well. I think we need to do something about it.
 
-I think this looks mostly OK, except for one misnamed parameter below. 
-Unfortunately, the last non-coherent parisc was the 700 series and I no
-longer own a box, so I can't test that part of it (I can fire up the
-C360 to test it on a coherent arch).
+So I'm about to respin the series and wonder how we should proceed.
+I've failed to come up with a clean patch to keep the flag and make
+it a no-op.  Can you or your team give it a spin?
 
-[...]
-> diff --git a/drivers/scsi/53c700.h b/drivers/scsi/53c700.h
-> index 05fe439b66afe5..0f545b05fe611d 100644
-> --- a/drivers/scsi/53c700.h
-> +++ b/drivers/scsi/53c700.h
-> @@ -209,6 +209,7 @@ struct NCR_700_Host_Parameters {
->  #endif
->  	__u32	chip710:1;	/* set if really a 710 not
-> 700 */
->  	__u32	burst_length:4;	/* set to 0 to disable
-> 710 bursting */
-> +	__u32	noncoherent:1;	/* needs to use non-
-> coherent DMA */
->  
->  	/* NOTHING BELOW HERE NEEDS ALTERING */
->  	__u32	fast:1;		/* if we can alter the
-> SCSI bus clock
-> @@ -429,7 +430,7 @@ struct NCR_700_Host_Parameters {
->  	for(i=0; i< (sizeof(A_##symbol##_used) / sizeof(__u32));
-> i++) { \
->  		__u32 val =
-> bS_to_cpu((script)[A_##symbol##_used[i]]) + da; \
->  		(script)[A_##symbol##_used[i]] = bS_to_host(val); \
-> -		dma_cache_sync((dev),
-> &(script)[A_##symbol##_used[i]], 4, DMA_TO_DEVICE); \
-> +		dma_sync_to_dev((dev),
-> &(script)[A_##symbol##_used[i]], 4); \
->  		DEBUG((" script, patching %s at %d to %pad\n", \
->  		       #symbol, A_##symbol##_used[i], &da)); \
->  	} \
-> @@ -441,7 +442,7 @@ struct NCR_700_Host_Parameters {
->  	dma_addr_t da = value; \
->  	for(i=0; i< (sizeof(A_##symbol##_used) / sizeof(__u32));
-> i++) { \
->  		(script)[A_##symbol##_used[i]] = bS_to_host(da); \
-> -		dma_cache_sync((dev),
-> &(script)[A_##symbol##_used[i]], 4, DMA_TO_DEVICE); \
-> +		dma_sync_to_dev((dev),
-> &(script)[A_##symbol##_used[i]], 4); \
->  		DEBUG((" script, patching %s at %d to %pad\n", \
->  		       #symbol, A_##symbol##_used[i], &da)); \
->  	} \
-> @@ -456,7 +457,7 @@ struct NCR_700_Host_Parameters {
->  		val &= 0xff00ffff; \
->  		val |= ((value) & 0xff) << 16; \
->  		(script)[A_##symbol##_used[i]] = bS_to_host(val); \
-> -		dma_cache_sync((dev),
-> &(script)[A_##symbol##_used[i]], 4, DMA_TO_DEVICE); \
-> +		dma_sync_to_dev((dev),
-> &(script)[A_##symbol##_used[i]], 4); \
->  		DEBUG((" script, patching ID field %s at %d to
-> 0x%x\n", \
->  		       #symbol, A_##symbol##_used[i], val)); \
->  	} \
-> @@ -470,7 +471,7 @@ struct NCR_700_Host_Parameters {
->  		val &= 0xffff0000; \
->  		val |= ((value) & 0xffff); \
->  		(script)[A_##symbol##_used[i]] = bS_to_host(val); \
-> -		dma_cache_sync((dev),
-> &(script)[A_##symbol##_used[i]], 4, DMA_TO_DEVICE); \
-> +		dma_sync_to_dev((dev),
-> &(script)[A_##symbol##_used[i]], 4); \
->  		DEBUG((" script, patching short field %s at %d to
-> 0x%x\n", \
->  		       #symbol, A_##symbol##_used[i], val)); \
->  	} \
-
-These macro arguments need updating.  Since you changed the input from
-hostdata->dev to hostdata, leaving the macro argument as dev is simply
-misleading.  It needs to become hostdata or h.
-
-James
-
+Also I wonder if the flag should be renamed from NON_CONSISTENT
+to NON_COHERENT - the consistent thing is a weird wart from the times
+the old PCI DMA API that is mostly gone now.
