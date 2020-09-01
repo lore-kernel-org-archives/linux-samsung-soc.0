@@ -2,103 +2,115 @@ Return-Path: <SRS0=7h8a=CK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C238C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 13:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F73C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 13:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC589206EB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 13:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CACD206C0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 13:46:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598967988;
+	bh=guT/B9fm9Ax+xhrDZqhYNKmIiJEYV14+wiZXb20HXnI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=09910QDLcIhyyCNX/xAsHDRLvkL+ozq5GyEg+L1K7czKuoXNsxA4ekbQvrw5spJJb
+	 oEpVc1FOu8+ScYFVExGEUAKXY+ygYhU0DP4ijvlLBTlTg/rAYzoCJUduVIzKjq6S6O
+	 HRdtbDUbNn48LuqHkAgcXSM2468cpq0ZjcMyehCU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbgIANfE (ORCPT
+        id S1728220AbgIANqR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Sep 2020 09:35:04 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:55092 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728235AbgIANeq (ORCPT
+        Tue, 1 Sep 2020 09:46:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38692 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728249AbgIANpn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Sep 2020 09:34:46 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: gtucker)
-        with ESMTPSA id BDFD8281E3A
+        Tue, 1 Sep 2020 09:45:43 -0400
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FCD4207D3;
+        Tue,  1 Sep 2020 13:45:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598967913;
+        bh=guT/B9fm9Ax+xhrDZqhYNKmIiJEYV14+wiZXb20HXnI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hudO0/H+uQAeOGPA+ktyBcHnLqVX2dyLBCxEt+ywj0UIO1YSNwOhHCVAcYZEPv9EY
+         1D5/bzVAS5GlVN0xalWvRoOkhw5BOA3bOtnpLlmlTFAPeaBVUC6l/5EvetxKRFGc+I
+         ACbDt2katkMN2P6321ZbpXOSsHy4GwMsPYuffik0=
+Received: by mail-ej1-f50.google.com with SMTP id m22so1702052eje.10;
+        Tue, 01 Sep 2020 06:45:13 -0700 (PDT)
+X-Gm-Message-State: AOAM530B4eaYFD/DyGbYe7FKsqjO5dDSpFsuWoSRUkW4JbnaszM9ynsU
+        2AHrYHHIJ0qizXGxTnDsorJuqBsN5k2neSJQrg8=
+X-Google-Smtp-Source: ABdhPJz6uIBMsaYsaaZUhy+VeyCk3/2LqThr6HHemeSXoOexn5BStaqskVKcLfb/AYO3ekqe9civ7FgwssrPQoIa3ps=
+X-Received: by 2002:a17:906:9356:: with SMTP id p22mr1481115ejw.119.1598967912146;
+ Tue, 01 Sep 2020 06:45:12 -0700 (PDT)
+MIME-Version: 1.0
+References: <267a81e550a0b5d479c82b5908e2a2caa4c9c874.1597061474.git.guillaume.tucker@collabora.com>
+ <c0509b5f-a064-2e73-7e04-51f41a56d222@collabora.com>
+In-Reply-To: <c0509b5f-a064-2e73-7e04-51f41a56d222@collabora.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 1 Sep 2020 15:45:00 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPczS_RpSFpjGygZ_1MCYxJ_cUDRjriZvrHd6+zhmq=c8Q@mail.gmail.com>
+Message-ID: <CAJKOXPczS_RpSFpjGygZ_1MCYxJ_cUDRjriZvrHd6+zhmq=c8Q@mail.gmail.com>
 Subject: Re: [PATCH v2 1/4] ARM: exynos: clear L310_AUX_CTRL_NS_LOCKDOWN in
  default l2c_aux_val
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        kernel@collabora.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <267a81e550a0b5d479c82b5908e2a2caa4c9c874.1597061474.git.guillaume.tucker@collabora.com>
-Message-ID: <c0509b5f-a064-2e73-7e04-51f41a56d222@collabora.com>
-Date:   Tue, 1 Sep 2020 14:34:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
-MIME-Version: 1.0
-In-Reply-To: <267a81e550a0b5d479c82b5908e2a2caa4c9c874.1597061474.git.guillaume.tucker@collabora.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To:     Guillaume Tucker <guillaume.tucker@collabora.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, kernel@collabora.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof, Russell,
+On Tue, 1 Sep 2020 at 15:34, Guillaume Tucker
+<guillaume.tucker@collabora.com> wrote:
+>
+> Hi Krzysztof, Russell,
+>
+> On 10/08/2020 13:22, Guillaume Tucker wrote:
+> > The L310_AUX_CTRL_NS_LOCKDOWN flag is set during the L2C enable
+> > sequence.  There is no need to set it in the default register value,
+> > this was done before support for it was implemented in the code.  It
+> > is not set in the hardware initial value either.
+> >
+> > Clean this up by removing this flag from the default l2c_aux_val, and
+> > add it to the l2c_aux_mask to print an alert message if it was already
+> > set before the kernel initialisation.
+> >
+> > Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+> > ---
+> >
+> > Notes:
+> >     v2: fix flag name L310_AUX_CTRL_NS_LOCKDOWN
+> >
+> >  arch/arm/mach-exynos/exynos.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> I believe this v2 series has addressed all previous comments and
+> you were waiting for the 5.9 merge window to end.  The patches
+> all still apply cleanly on v5.9-rc3.  Do you want me to resend
+> the series anyway or is there anything else needed at this point?
+>
+> Maybe one thing that wasn't completely clear in v1 was whether
+> patch 2/4 was the right approach.  I've explained the reason
+> behind it but didn't get a final reply from Russell[1].
 
-On 10/08/2020 13:22, Guillaume Tucker wrote:
-> The L310_AUX_CTRL_NS_LOCKDOWN flag is set during the L2C enable
-> sequence.  There is no need to set it in the default register value,
-> this was done before support for it was implemented in the code.  It
-> is not set in the hardware initial value either.
-> 
-> Clean this up by removing this flag from the default l2c_aux_val, and
-> add it to the l2c_aux_mask to print an alert message if it was already
-> set before the kernel initialisation.
-> 
-> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
-> ---
-> 
-> Notes:
->     v2: fix flag name L310_AUX_CTRL_NS_LOCKDOWN
-> 
->  arch/arm/mach-exynos/exynos.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+I am sorry, my bad. I already applied this one and 3/4 (dts).
+Apparently I forgot to reply with confirmation and Patchwork did not
+notify you for some reason.
 
-I believe this v2 series has addressed all previous comments and
-you were waiting for the 5.9 merge window to end.  The patches
-all still apply cleanly on v5.9-rc3.  Do you want me to resend
-the series anyway or is there anything else needed at this point?
+Patch 2/4 does not look like one for me so I would need ack from
+Russell to take. Did you submit it to the ARM patches queue?
+Patch 4/4 will wait for v5.10-rc1 as it depends on 1/4 and it is DTS patch.
 
-Maybe one thing that wasn't completely clear in v1 was whether
-patch 2/4 was the right approach.  I've explained the reason
-behind it but didn't get a final reply from Russell[1].
-
-Best wishes,
-Guillaume
-
-
-[1] https://lore.kernel.org/lkml/46fa1159-fcd6-b528-b8e8-2fba048236b2@collabora.com/
-
-
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 36c37444485a..a96f3353a0c1 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -193,8 +193,8 @@ static void __init exynos_dt_fixup(void)
->  }
->  
->  DT_MACHINE_START(EXYNOS_DT, "Samsung Exynos (Flattened Device Tree)")
-> -	.l2c_aux_val	= 0x3c400000,
-> -	.l2c_aux_mask	= 0xc20fffff,
-> +	.l2c_aux_val	= 0x38400000,
-> +	.l2c_aux_mask	= 0xc60fffff,
->  	.smp		= smp_ops(exynos_smp_ops),
->  	.map_io		= exynos_init_io,
->  	.init_early	= exynos_firmware_init,
-> 
-
+Best regards,
+Krzysztof
