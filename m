@@ -2,94 +2,216 @@ Return-Path: <SRS0=7h8a=CK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5849EC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 08:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA15C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 08:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 350882068F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 08:42:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598949768;
-	bh=BapteVP8tE+4r4nW5BxhF7ZHdNQsLqYAF+RC1XokMIs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=CIctcpWPEQFnjGyPmCkokcKX3VAgUn4yY6DMk0YZI/C1BxEH8zczyiNeR1DJ6NReQ
-	 xPxbUPILftJ2y/Ni/jaQCXw6pyFMd8KpA6hDopZKZQY76wvHLD6aV/Z7JQtQyrSh2L
-	 IPYV0LM6t49NDBLoUUs7YBzL7vO/YRiH9799/PZM=
+	by mail.kernel.org (Postfix) with ESMTP id A8063206EB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 08:57:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GdU3zOmr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726064AbgIAImr (ORCPT
+        id S1726226AbgIAI5M (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Sep 2020 04:42:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52944 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725949AbgIAImq (ORCPT
+        Tue, 1 Sep 2020 04:57:12 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:59566 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbgIAI5L (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Sep 2020 04:42:46 -0400
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E448D2071B;
-        Tue,  1 Sep 2020 08:42:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598949766;
-        bh=BapteVP8tE+4r4nW5BxhF7ZHdNQsLqYAF+RC1XokMIs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0nyRHeoqCNiiBFP6QF7Vu8TKPFCF/ZRSGmdVMD7HeLiHvOg67mL4E03ckk6IhSwRP
-         VK5WjfXuB9wd54tvydBoGx0/97L3E7PBtfpJBq9Rxcxenq5GnOcPQxW+iV0GLJM31g
-         epLZ5NQBJVu/9MBBTz3pSKRcShnXIM0d5WVcXcWo=
-Received: by mail-ed1-f44.google.com with SMTP id w14so649973eds.0;
-        Tue, 01 Sep 2020 01:42:45 -0700 (PDT)
-X-Gm-Message-State: AOAM532farUAxaZ5Xyv3QkwmdXlmy+ePshAljLuScQk2PveWz9yaMMMb
-        XKzJM8bV2wbNl/1KtYZZLU9/qPoyTkEo1FKikCw=
-X-Google-Smtp-Source: ABdhPJyBJ2bEFjwMxy7tdkMWyLN4O9t/L+1SErRbMO8hnZ3DI56BaUruK44RZr/8zIeyeWpaxM3wT0lH/YX9S/NSYp4=
-X-Received: by 2002:a50:fd0b:: with SMTP id i11mr785806eds.298.1598949764527;
- Tue, 01 Sep 2020 01:42:44 -0700 (PDT)
+        Tue, 1 Sep 2020 04:57:11 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200901085709euoutp014f17623a0a7472c680ecfa845826bd48~wnSAqAayU2596725967euoutp01_
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Sep 2020 08:57:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200901085709euoutp014f17623a0a7472c680ecfa845826bd48~wnSAqAayU2596725967euoutp01_
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1598950629;
+        bh=AH1jb8nTf9FyiyQjqccqupk/5L/OMBQYmwo67xczGnU=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=GdU3zOmrXy2xn+rpACP935sbW9Uxl0pq2pPyh7m8W8FSsyimk6kscrHVP886oIsRM
+         mtN8J+lPd05v2H1THjWww7mgXoVYh9/cnumQSaycBJCwMcZHkWhhLP+jRboEKrhHF+
+         ZpOsUe52vIOWvKtDdBJoBRRwATJmVoBVFrMfv9aM=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200901085708eucas1p25e4d058e9f54de3e552e14b8828a1758~wnSAJ62OL1189711897eucas1p2Z;
+        Tue,  1 Sep 2020 08:57:08 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 2F.F8.06318.4EC0E4F5; Tue,  1
+        Sep 2020 09:57:08 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200901085708eucas1p231ccacd7b41685ece92ee21e3b726f28~wnR-yrw151189711897eucas1p2Y;
+        Tue,  1 Sep 2020 08:57:08 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200901085708eusmtrp2f9bc146a457c3f5323b660efc13d8d8b~wnR-xxf0O0816408164eusmtrp2P;
+        Tue,  1 Sep 2020 08:57:08 +0000 (GMT)
+X-AuditID: cbfec7f5-371ff700000018ae-b9-5f4e0ce49b4b
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 91.76.06314.4EC0E4F5; Tue,  1
+        Sep 2020 09:57:08 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200901085707eusmtip254c384354dd462d2080c433619779de2~wnR__i8nM2392323923eusmtip2M;
+        Tue,  1 Sep 2020 08:57:07 +0000 (GMT)
+Subject: Re: [PATCH V2 2/2] cpufreq: dt: Refactor initialization to handle
+ probe deferral properly
+To:     Viresh Kumar <viresh.kumar@linaro.org>, ulf.hansson@linaro.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        nks@flawful.org, georgi.djakov@linaro.org,
+        Stephan Gerhold <stephan@gerhold.net>,
+        linux-kernel@vger.kernel.org,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <00a87bad-f750-b08c-4ccb-545b90dd87fc@samsung.com>
+Date:   Tue, 1 Sep 2020 10:57:09 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.0
 MIME-Version: 1.0
-References: <20200901075417.22481-1-krzk@kernel.org> <CGME20200901075518eucas1p252ef2b85cf5e1a83d88f8de2dd4a8196@eucas1p2.samsung.com>
- <20200901075417.22481-12-krzk@kernel.org> <800d8fa8-7fd4-6221-f8be-ef422e5642d9@samsung.com>
- <CAJKOXPd+Mr0c7ype1KTseBc2=qx0NNKKj5Ku0w0HBOgjEsGvKg@mail.gmail.com>
- <CAJKOXPfKnzsRA3D8b3z=iG4oD6P+M7Q7YMVbrOAmLTiNgZ5mXA@mail.gmail.com> <4836dc12-df88-5936-c208-8f6ff2a6bdc1@samsung.com>
-In-Reply-To: <4836dc12-df88-5936-c208-8f6ff2a6bdc1@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 1 Sep 2020 10:42:33 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPf9rFVbMnEYURw-QTzJPvVu56BBoThsWq=teHggrRDAGw@mail.gmail.com>
-Message-ID: <CAJKOXPf9rFVbMnEYURw-QTzJPvVu56BBoThsWq=teHggrRDAGw@mail.gmail.com>
-Subject: Re: [PATCH 11/13] ARM: dts: exynos: Silence SATA PHY warning in
- Exynos5250 Arndale
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <f75c61f193f396608d592ae2a9938264d582c038.1598260050.git.viresh.kumar@linaro.org>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRjlvffu7ipOr7PysSJthKBQKkldTOwDf9wgy36UaKTOvH6UTttV
+        yyCQIlurwCzRhqUo2BqaOkyz8iOxVq05c7XMD0yzyHBkalpZmtvN8t95zjnPe54DL4VLh0Sr
+        qVRFFqdUyNNkpDPR+OSHeeOoy964wHGLD1M0PEoyxS16kjGb68TMzCsVxljul5LM1OVOxJSY
+        WzHGdO2NmBn/bsKYF8YeETNvrSeY3hvBjKEmilF1zuBM/Td2hxt7pqwUY/PLt7PNmkExq9dd
+        INkB60OSbXh9nmANvU0YO6VfF0nFOIcmcmmpOZwyICzeOaXIUI1lWrxP1g7Vi/LQoJcaOVFA
+        B0P7Yx2hRs6UlNYiaKj5TdgFKT2NoCvfXxCmEFS2PiWWNuq1lSJBuIWgSDWEC8MXBB+N3SK7
+        y4NOhJr+EYdrBX0XQcWHPNIu4PQQBnVj/nZM0kGgtqkdvIQOg0+qmw5M0Bug3Gp1xK2kY+HJ
+        8xFC8LjDs+ujDuy0yE+NXMWFN72hyVb6F3tC32gZZg8G+ocYZpvPiYS7w2HiXdvfDh7w2dAg
+        FvBaWGheWjiLYLirRiwMlxBYzpQgwbUNBrp+Lp5HLUb4Qe39AIHeCdrBSbGdBtoVem3uwhGu
+        UNhYjAu0BFT5UsHtCxrDnX+xj7p78AIk0yyrpllWR7OsjuZ/bjkidMiTy+bTkzl+s4I7sYmX
+        p/PZiuRNRzLS9Wjx2xnnDd/uodZfCR2IppDMRaKd2RMnFclz+Nz0DgQULlsh2WUyxkolifLc
+        U5wyI06ZncbxHWgNRcg8JZsrxg5L6WR5FneM4zI55ZKKUU6r89BW28/K8cnY4/HxusLbGcE7
+        S06/MYf0vtSYdpsGC2KjE6KMfT7tZmtE2lGlNqShKvNt5FftwuyB5ujTqnwPfVjghN/6uUOW
+        g7UXre3qlmlDtSbKN2c+kgxPco0Z29fm51Z1pX82gNyiSGrkbWX3kCXifbfXXFnbg/2h5lWN
+        1o3tMoJPkQf540pe/geiIl7XcgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMIsWRmVeSWpSXmKPExsVy+t/xe7pPePziDdZN5bSY+vAJm8X0vZvY
+        LM6f38Bu8e1KB5PF5V1z2Cw+9x5htJhxfh+Txdkp19kt3vw4y2Rx5vQlVot/1zayWNyYa2Jx
+        fG24RceRb8wWG796OPB7NM2fw+TRtsDeY+esu+wem1Z1snncubaHzWPL1XYWj+M3tjN5fN4k
+        F8ARpWdTlF9akqqQkV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJcx
+        9fgapoLL8hXr729kbWC8K9nFyMkhIWAisXHFYtYuRi4OIYGljBJzmm+yQSRkJE5Oa2CFsIUl
+        /lzrYoMoessocXHvIbCEsECKxNrbj8C6RQS2Mkq8On4ArIpZ4CGTxL2utewQLRsZJc4f/MsM
+        0sImYCjR9bYLbAevgJ3Ei455YDaLgIrEgmvXWEBsUYE4iTM9L6BqBCVOznwCFucEin9+NBls
+        DrOAmcS8zQ+hbHmJ7W/nQNniEreezGeawCg0C0n7LCQts5C0zELSsoCRZRWjSGppcW56brGh
+        XnFibnFpXrpecn7uJkZghG879nPzDsZLG4MPMQpwMCrx8AZ88YkXYk0sK67MPcQowcGsJMLr
+        dPZ0nBBvSmJlVWpRfnxRaU5q8SFGU6DnJjJLiSbnA5NPXkm8oamhuYWlobmxubGZhZI4b4fA
+        wRghgfTEktTs1NSC1CKYPiYOTqkGRhdTtylNBVMFIsoMJxf9vK/vlVJQKtVQ2cYUf1xpx/e7
+        /GIJFyPsjl+VW6wYujnhkHdcuzDH4YjdV5SFtVx8eZa9b7trsywrQHW93uxTDIdqnKZX1m+b
+        IcSy8PL99df/FDL+ze1La1ilbVw2adnHXdONbjh7tMnLZOwT2R9iFrvW9MOXVCVdJZbijERD
+        Leai4kQAAwJlvwYDAAA=
+X-CMS-MailID: 20200901085708eucas1p231ccacd7b41685ece92ee21e3b726f28
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200901085708eucas1p231ccacd7b41685ece92ee21e3b726f28
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200901085708eucas1p231ccacd7b41685ece92ee21e3b726f28
+References: <24ff92dd1b0ee1b802b45698520f2937418f8094.1598260050.git.viresh.kumar@linaro.org>
+        <f75c61f193f396608d592ae2a9938264d582c038.1598260050.git.viresh.kumar@linaro.org>
+        <CGME20200901085708eucas1p231ccacd7b41685ece92ee21e3b726f28@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 1 Sep 2020 at 10:36, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+Hi Viresh
 
-> >>> I'm not against the rename, but frankly, the above node and all i2c
-> >>> parameters should be moved to exynos5250.dtsi. This is a SoC internal
-> >>> things (the same way as hdmiphy in exynos4.dtsi), so the board dts
-> >>> should only contain information like status = "enabled" for i2c_8 and
-> >>> hdmi_i2c_phy nodes. No need to duplicate it here and in smdk5250.dts.
-> >> Good point, the I2C bus used here is an internal part of SoC.
-> >>
-> >> I will squash these two changes into a new one. Thanks for the review!
-> > While at it, I wonder about the samsung,i2c-slave-addr property. Is it
-> > really needed? Are there multiple masters on this bus?
+On 24.08.2020 11:09, Viresh Kumar wrote:
+> From: Stephan Gerhold <stephan@gerhold.net>
 >
-> This might be some cargo-cult, probably copied from HDMI DDC (I'm not
-> sure if it is needed there). I've removed it and SATA still works fine
-> on Exynos5250 Arndale board.
+> cpufreq-dt is currently unable to handle -EPROBE_DEFER properly
+> because the error code is not propagated for the cpufreq_driver->init()
+> callback. Instead, it attempts to avoid the situation by temporarily
+> requesting all resources within resources_available() and releasing them
+> again immediately after. This has several disadvantages:
+>
+>    - Whenever we add something like interconnect handling to the OPP core
+>      we need to patch cpufreq-dt to request these resources early.
+>
+>    - resources_available() is only run for CPU0, but other clusters may
+>      eventually depend on other resources that are not available yet.
+>      (See FIXME comment removed by this commit...)
+>
+>    - All resources need to be looked up several times.
+>
+> Now that the OPP core can propagate -EPROBE_DEFER during initialization,
+> it would be nice to avoid all that trouble and just propagate its error
+> code when necessary.
+>
+> This commit refactors the cpufreq-dt driver to initialize private_data
+> before registering the cpufreq driver. We do this by iterating over
+> all possible CPUs and ensure that all resources are initialized:
+>
+>    1. dev_pm_opp_get_opp_table() ensures the OPP table is allocated
+>       and initialized with clock and interconnects.
+>
+>    2. dev_pm_opp_set_regulators() requests the regulators and assigns
+>       them to the OPP table.
+>
+>    3. We call dev_pm_opp_of_get_sharing_cpus() early so that we only
+>       initialize the OPP table once for each shared policy.
+>
+> With these changes, we actually end up saving a few lines of code,
+> the resources are no longer looked up multiple times and everything
+> should be much more robust.
+>
+> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+> [ Viresh: Use list_head structure for maintaining the list and minor
+> 	  changes ]
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Cool, thanks!
+This patch landed in linux-next about a week ago. It introduces a 
+following warning on Samsung Exnyos3250 SoC:
 
-Best regards,
-Krzysztof
+cpu cpu1: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 
+1000000000, volt: 1150000, enabled: 1. New: freq: 1000000000, volt: 
+1150000, enabled: 1
+cpu cpu1: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 
+900000000, volt: 1112500, enabled: 1. New: freq: 900000000, volt: 
+1112500, enabled: 1
+cpu cpu1: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 
+800000000, volt: 1075000, enabled: 1. New: freq: 800000000, volt: 
+1075000, enabled: 1
+cpu cpu1: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 
+700000000, volt: 1037500, enabled: 1. New: freq: 700000000, volt: 
+1037500, enabled: 1
+cpu cpu1: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 
+600000000, volt: 1000000, enabled: 1. New: freq: 600000000, volt: 
+1000000, enabled: 1
+cpu cpu1: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 
+500000000, volt: 962500, enabled: 1. New: freq: 500000000, volt: 962500, 
+enabled: 1
+cpu cpu1: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 
+400000000, volt: 925000, enabled: 1. New: freq: 400000000, volt: 925000, 
+enabled: 1
+cpu cpu1: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 
+300000000, volt: 887500, enabled: 1. New: freq: 300000000, volt: 887500, 
+enabled: 1
+cpu cpu1: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 
+200000000, volt: 850000, enabled: 1. New: freq: 200000000, volt: 850000, 
+enabled: 1
+cpu cpu1: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 
+100000000, volt: 850000, enabled: 1. New: freq: 100000000, volt: 850000, 
+enabled: 1
+
+I've checked a bit and this is related to the fact that Exynos3250 SoC 
+use OPP-v1 table. Is this intentional? It is not a problem to convert it 
+to OPP-v2 and mark OPP table as shared, but this is a kind of a regression.
+
+> ...
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
