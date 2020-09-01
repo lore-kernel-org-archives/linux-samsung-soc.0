@@ -1,129 +1,107 @@
-Return-Path: <SRS0=sdu9=CJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=7h8a=CK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4EF6C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 13:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F63AC433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 07:54:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80542208CA
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Aug 2020 13:59:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 599C72087D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 07:54:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598882367;
-	bh=0ELgDN4DCdbC4neuwarO8uv8nWk+EoaxkCEgogyZFGE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=0+eYDvcGbnif23xIe/ocjQeAmle9T/xbjgHaC3CCzKowkGgh6oo4G4xhHV0rY2vZ9
-	 kIG2Y3CSvxSPC3WGjHdbwnrjRB5FEksaGoTp50lQT43olUmh8jPB47qUm6K94mwr66
-	 8JVIfysrJqYw2LvcnR5a9Zg2dLpvKZDhIchmR5gE=
+	s=default; t=1598946872;
+	bh=hGEI/ofcezmzuQaXuob3lez+98BFO5sSIf5h57sXBSI=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=PlfQBcktQpC2DgvSXeWiz7OtKxNOkXLngmioNuVxP6H0RbrlGx22v5WFvNpG83asn
+	 SgQtvEz/mO8YbqaTVMEzGvR2rLbQJAaTjKWKAoIU7GNXdGwAUw1jND4Q4OHYsoHbUZ
+	 b8b5MIZv/SvukLfP0idtiEZ5foIAXhL7g+m66fhI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbgHaN7X (ORCPT
+        id S1726124AbgIAHya (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Aug 2020 09:59:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48266 "EHLO mail.kernel.org"
+        Tue, 1 Sep 2020 03:54:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726326AbgHaN7V (ORCPT
+        id S1726044AbgIAHy2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Aug 2020 09:59:21 -0400
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+        Tue, 1 Sep 2020 03:54:28 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD84420936;
-        Mon, 31 Aug 2020 13:59:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA7BD2071B;
+        Tue,  1 Sep 2020 07:54:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598882361;
-        bh=0ELgDN4DCdbC4neuwarO8uv8nWk+EoaxkCEgogyZFGE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Ut5tovIEHzLSBfa4ieSRCaowAFda6fVXnIF6OfQVSDnQjQqD5u3XBE9ipwjTcLPjA
-         8HyTMoS6pX0snp0m/oY5G0zGSFDaK0RFmCmcf26Dx5DV5v/vOXhZ50i8IQcxHCevvO
-         yx44Yq7XOmt5yi5Id68//MxfeE2QR2wd+C/OynSU=
-Received: by mail-ed1-f44.google.com with SMTP id w1so1906645edr.3;
-        Mon, 31 Aug 2020 06:59:20 -0700 (PDT)
-X-Gm-Message-State: AOAM532uKRsAsJ8lS8Ey37CFHZaIxYTNDdHJrcDCCsr70rOTAeBT1ajY
-        s+EEQUOBrKRaZL4UgCBCAqQ6NFZTn8+i58nuA5I=
-X-Google-Smtp-Source: ABdhPJz4mIou6NQDF9GoU0glbeGAVtu339WyqeM8YO5d2GjJ0q1vFCMgP88xGwBXgdcvmJjfHSnIr2cub9+CDPtsrSM=
-X-Received: by 2002:a50:fd0b:: with SMTP id i11mr1363872eds.298.1598882359253;
- Mon, 31 Aug 2020 06:59:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200830135200.24304-1-krzk@kernel.org> <CGME20200830135508eucas1p21ad0d4f6a2ef78f854fc74750db3fa2a@eucas1p2.samsung.com>
- <20200830135200.24304-23-krzk@kernel.org> <c9daff05-dca7-f1b1-8cfe-46b185bf60dd@samsung.com>
- <CAJKOXPfR8YVmBqCd5+8B2TdM_tXZbWobK0pLxXxxkrsDEMR-vw@mail.gmail.com>
- <96651e85-c27f-3167-7b41-2ea051c25c65@kernel.org> <CAJKOXPdF4zzXvYrOiGQM9o=4rrWHvEr=o9aSTuR238dEaiD4cQ@mail.gmail.com>
- <01bb90db-511d-fbf5-d29a-1fba932f0abf@samsung.com>
-In-Reply-To: <01bb90db-511d-fbf5-d29a-1fba932f0abf@samsung.com>
+        s=default; t=1598946868;
+        bh=hGEI/ofcezmzuQaXuob3lez+98BFO5sSIf5h57sXBSI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LhLH7mT5NfS4W9jasj6YiSHEkSeWyoaCctvrEXYpmWlRup1tZIDAdR6CrmHvKZv2W
+         plbFr1o0MH14KlZ58jDBnb5HgftyxtehwzSeorMj67KhIhrfpqaDCalEXPN1nGkKI9
+         A6fTQi/aXCpiuaeSVC++6sfBB1tfoG/s19XLw79E=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 31 Aug 2020 15:59:08 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPd+067DywsEJ=5G4NLPfo9+hrun0qvkrYGAsVepCZC3Jg@mail.gmail.com>
-Message-ID: <CAJKOXPd+067DywsEJ=5G4NLPfo9+hrun0qvkrYGAsVepCZC3Jg@mail.gmail.com>
-Subject: Re: [PATCH 23/33] ARM: dts: exynos: Remove empty camera pinctrl
- configuration in Odroid X/U3
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Denis GNUtoo Carikli <GNUtoo@cyberdimension.org>,
-        Simon Shields <simon@lineageos.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: [PATCH 00/13] ARM: dts: exynos: dtschema cleanups for Exynos5
+Date:   Tue,  1 Sep 2020 09:54:04 +0200
+Message-Id: <20200901075417.22481-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 31 Aug 2020 at 15:57, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
->
-> On 31.08.2020 12:42, Krzysztof Kozlowski wrote:
-> > On Mon, 31 Aug 2020 at 12:35, Sylwester Nawrocki <snawrocki@kernel.org> wrote:
-> >> On 8/31/20 10:38, Krzysztof Kozlowski wrote:
-> >>> On Mon, 31 Aug 2020 at 10:31, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> >>>> On 30.08.2020 15:51, Krzysztof Kozlowski wrote:
-> >>>>> The camera's pinctrl configuration is simply empty and not effective.
-> >>>>> Remove it to fix dtbs_check warning:
-> >>>>>
-> >>>>>     arch/arm/boot/dts/exynos4412-odroidx.dt.yaml: camera: pinctrl-0: True is not of type 'array'
-> >>>>>
-> >>>>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >>>>
-> >>>> I think that this was intentional to properly enable support for
-> >>>> mem-2-mem mode in Exynos4-IS (FIMC), but I'm not sure what are the
-> >>>> default values if no pinctrl properties are provided. Sylwester, could
-> >>>> you comment?
-> >>>
-> >>> Indeed it could be intentional... I see now errors:
-> >>> [   33.752203] s5p-fimc-md soc:camera: Failed to get pinctrl: -19
-> >>>
-> >>> I wonder why getting an empty pinctrl is needed... maybe the driver
-> >>> should accept missing pinctrl?
-> >>
-> >> It might have been better to have the pinctrl properties optional, as there
-> >> might be boards without the image sensor attached and FIMC could still be
-> >> used in memory-to-memory mode, as Marek pointed out. But it seems too late
-> >> now to change that. The binding defines the pinctrl properties as required
-> >> (Documentation/devicetree/bindings/media/samsung-fimc.txt) and we need to
-> >> keep them in dtses.
-> >
-> > You can always make a required property optional and it is not a break
-> > of ABI. The other way around would be a break. Why then not changing
-> > the driver to accept optional pinctrl?
->
-> Feel free to send the patch, I would prefer to leave that as is though.
-> Is it really suddenly a problem to use an empty property? The pinctrl
-> bindings allows it.
+Hi,
 
-The bindings scream:
-arch/arm/boot/dts/exynos4412-odroidx.dt.yaml: camera: pinctrl-0: True
-is not of type 'array'
-so either we should model it differently (not as empty array), update
-the driver to make it optional or change the bindings/dtschema. I'll
-see how to fix it properly.
+This is continuation of my series of dtschema cleanup for Exynos SoCs.
+
+The previous series are here:
+https://lore.kernel.org/linux-samsung-soc/20200830135200.24304-1-krzk@kernel.org/T/#t
+https://lore.kernel.org/linux-samsung-soc/20200830135200.24304-1-krzk@kernel.org/T/#t
+https://lore.kernel.org/linux-samsung-soc/20200830135200.24304-1-krzk@kernel.org/T/#t
+https://lore.kernel.org/linux-samsung-soc/20200830135200.24304-1-krzk@kernel.org/T/#t
+
+TODO - remaining: S3C, S5Pv210.
 
 Best regards,
 Krzysztof
+
+Krzysztof Kozlowski (13):
+  ARM: dts: exynos: Correct compatible for Exynos5 GIC
+  ARM: dts: exynos: Correct compatible for Exynos5260 GIC
+  ARM: dts: exynos: Remove unneeded address/size cells in Exynos5260 GIC
+  ARM: dts: exynos: Correct S3C RTC bindings in SMDK5410
+  ARM: dts: exynos: Silence i2c-gpio dtschema warning in Exynos5250
+    Arndale
+  ARM: dts: exynos: Correct whitespace and indentation issues in Exynos5
+  ARM: dts: exynos: Override thermal by label in Exynos5250
+  ARM: dts: exynos: Add max77686 clocks for S3C RTC in SMDK5250
+  ARM: dts: exynos: Use S5M8767 clock in S3C RTC in Exynos5250 Spring
+  ARM: dts: exynos: Silence DP HPD pinctrl dtschema warning in
+    Exynos5250 Spring
+  ARM: dts: exynos: Silence SATA PHY warning in Exynos5250 Arndale
+  ARM: dts: exynos: Silence SATA PHY warning in SMDK5250
+  ARM: dts: exynos: Use S2MPS11 clock in S3C RTC in SMDK5420
+
+ arch/arm/boot/dts/exynos5.dtsi                | 10 ++--
+ arch/arm/boot/dts/exynos5250-arndale.dts      | 12 ++---
+ arch/arm/boot/dts/exynos5250-smdk5250.dts     |  8 +++-
+ arch/arm/boot/dts/exynos5250-spring.dts       | 41 ++++++++++-------
+ arch/arm/boot/dts/exynos5250.dtsi             | 46 +++++++++----------
+ arch/arm/boot/dts/exynos5260.dtsi             |  4 +-
+ arch/arm/boot/dts/exynos5410-odroidxu.dts     |  8 ++--
+ arch/arm/boot/dts/exynos5410-smdk5410.dts     | 12 +++++
+ arch/arm/boot/dts/exynos5410.dtsi             | 12 ++---
+ arch/arm/boot/dts/exynos5420-smdk5420.dts     |  3 ++
+ arch/arm/boot/dts/exynos5420.dtsi             | 16 +++----
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  4 +-
+ 12 files changed, 99 insertions(+), 77 deletions(-)
+
+-- 
+2.17.1
+
