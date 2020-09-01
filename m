@@ -2,110 +2,103 @@ Return-Path: <SRS0=7h8a=CK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 262D2C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 13:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C238C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 13:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 08265207D3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 13:34:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC589206EB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 13:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbgIANcg (ORCPT
+        id S1727937AbgIANfE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Sep 2020 09:32:36 -0400
-Received: from elvis.franken.de ([193.175.24.41]:45627 "EHLO elvis.franken.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728129AbgIANby (ORCPT
+        Tue, 1 Sep 2020 09:35:04 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55092 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728235AbgIANeq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Sep 2020 09:31:54 -0400
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1kD6NY-0001cg-00; Tue, 01 Sep 2020 15:31:16 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id A31F7C0E44; Tue,  1 Sep 2020 15:29:05 +0200 (CEST)
-Date:   Tue, 1 Sep 2020 15:29:05 +0200
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        iommu@lists.linux-foundation.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        linux-mm@kvack.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH 06/28] lib82596: move DMA allocation into the callers of
- i82596_probe
-Message-ID: <20200901132905.GA11506@alpha.franken.de>
-References: <20200819065555.1802761-1-hch@lst.de>
- <20200819065555.1802761-7-hch@lst.de>
+        Tue, 1 Sep 2020 09:34:46 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: gtucker)
+        with ESMTPSA id BDFD8281E3A
+Subject: Re: [PATCH v2 1/4] ARM: exynos: clear L310_AUX_CTRL_NS_LOCKDOWN in
+ default l2c_aux_val
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        kernel@collabora.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <267a81e550a0b5d479c82b5908e2a2caa4c9c874.1597061474.git.guillaume.tucker@collabora.com>
+Message-ID: <c0509b5f-a064-2e73-7e04-51f41a56d222@collabora.com>
+Date:   Tue, 1 Sep 2020 14:34:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200819065555.1802761-7-hch@lst.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <267a81e550a0b5d479c82b5908e2a2caa4c9c874.1597061474.git.guillaume.tucker@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 19, 2020 at 08:55:33AM +0200, Christoph Hellwig wrote:
-> This allows us to get rid of the LIB82596_DMA_ATTR defined and prepare
-> for untangling the coherent vs non-coherent DMA allocation API.
+Hi Krzysztof, Russell,
+
+On 10/08/2020 13:22, Guillaume Tucker wrote:
+> The L310_AUX_CTRL_NS_LOCKDOWN flag is set during the L2C enable
+> sequence.  There is no need to set it in the default register value,
+> this was done before support for it was implemented in the code.  It
+> is not set in the hardware initial value either.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Clean this up by removing this flag from the default l2c_aux_val, and
+> add it to the l2c_aux_mask to print an alert message if it was already
+> set before the kernel initialisation.
+> 
+> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
 > ---
->  drivers/net/ethernet/i825xx/lasi_82596.c | 24 ++++++++++------
->  drivers/net/ethernet/i825xx/lib82596.c   | 36 ++++++++----------------
->  drivers/net/ethernet/i825xx/sni_82596.c  | 19 +++++++++----
->  3 files changed, 40 insertions(+), 39 deletions(-)
 > 
-> [...]
-> diff --git a/drivers/net/ethernet/i825xx/sni_82596.c b/drivers/net/ethernet/i825xx/sni_82596.c
-> index 22f5887578b2bd..e80e790ffbd4d4 100644
-> --- a/drivers/net/ethernet/i825xx/sni_82596.c
-> +++ b/drivers/net/ethernet/i825xx/sni_82596.c
-> @@ -24,8 +24,6 @@
+> Notes:
+>     v2: fix flag name L310_AUX_CTRL_NS_LOCKDOWN
+> 
+>  arch/arm/mach-exynos/exynos.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+I believe this v2 series has addressed all previous comments and
+you were waiting for the 5.9 merge window to end.  The patches
+all still apply cleanly on v5.9-rc3.  Do you want me to resend
+the series anyway or is there anything else needed at this point?
+
+Maybe one thing that wasn't completely clear in v1 was whether
+patch 2/4 was the right approach.  I've explained the reason
+behind it but didn't get a final reply from Russell[1].
+
+Best wishes,
+Guillaume
+
+
+[1] https://lore.kernel.org/lkml/46fa1159-fcd6-b528-b8e8-2fba048236b2@collabora.com/
+
+
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 36c37444485a..a96f3353a0c1 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -193,8 +193,8 @@ static void __init exynos_dt_fixup(void)
+>  }
 >  
->  static const char sni_82596_string[] = "snirm_82596";
->  
-> -#define LIB82596_DMA_ATTR	0
-> -
->  #define DMA_WBACK(priv, addr, len)     do { } while (0)
->  #define DMA_INV(priv, addr, len)       do { } while (0)
->  #define DMA_WBACK_INV(priv, addr, len) do { } while (0)
-> @@ -134,10 +132,19 @@ static int sni_82596_probe(struct platform_device *dev)
->  	lp->ca = ca_addr;
->  	lp->mpu_port = mpu_addr;
->  
-> +	lp->dma = dma_alloc_coherent(dev->dev.parent, sizeof(struct i596_dma),
-> +				     &lp->dma_addr, GFP_KERNEL);
+>  DT_MACHINE_START(EXYNOS_DT, "Samsung Exynos (Flattened Device Tree)")
+> -	.l2c_aux_val	= 0x3c400000,
+> -	.l2c_aux_mask	= 0xc20fffff,
+> +	.l2c_aux_val	= 0x38400000,
+> +	.l2c_aux_mask	= 0xc60fffff,
+>  	.smp		= smp_ops(exynos_smp_ops),
+>  	.map_io		= exynos_init_io,
+>  	.init_early	= exynos_firmware_init,
+> 
 
-this needs to use &dev->dev as device argument otherwise I get a
-
-WARNING: CPU: 0 PID: 1 at linux/kernel/dma/mapping.c:416 dma_alloc_attrs+0x64/0x98
-
-(coherent_dma_mask is set correctly).
-
-dev->dev.parent was correct when going from netdevice to underlying device,
-but now allocation is done via platform_device probe. I wonder why this works
-for parisc.
-
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
