@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D54FC433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 07:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9388C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 07:55:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E217C208DB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 07:55:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A200220684
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 07:55:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598946935;
-	bh=zApmnDF9Ii9NjM8St9RUBDwhe2Focy2FrYiga7i/r7Q=;
+	s=default; t=1598946939;
+	bh=W0uN8aKDqSAGlnT2Mlz/Qc+vE6rVkb26WLYOnYjnz1A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=W5CmnaMHsgjiblTWflEHOFLhE6UjmJYXI9FoCgxNVOx9RM4qjXyp6WdQi4jJ5Dhdl
-	 dLpt2ON5Bumd6MZfmbcz/bFcBjY2vXIJxDtAplY0e5JljWDkjTlVP3H7HIPvSBjGD9
-	 j7Xq+HsfY2kHn70vcaGwGZmODdTzKFtyFLJzWm0E=
+	b=eHS8u9c5hSy3Gs3yN2NcsMCuL7zh30OlA0W3z8Vnb+yCx7g6s87U/FNbEL1+YO28d
+	 iWnWDPBjK7hp/lk2MnoPGNgBPImirZfbszASWGYuoy8UiWkg0pV1n/TkE4YFax8gYX
+	 mBA/L19zmGUJkT1wIrtn7+9y3/T70s8NoCZefDk4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbgIAHzd (ORCPT
+        id S1728015AbgIAHzR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Sep 2020 03:55:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47424 "EHLO mail.kernel.org"
+        Tue, 1 Sep 2020 03:55:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727970AbgIAHzU (ORCPT
+        id S1728009AbgIAHzQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Sep 2020 03:55:20 -0400
+        Tue, 1 Sep 2020 03:55:16 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D9062083B;
-        Tue,  1 Sep 2020 07:55:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1E612087D;
+        Tue,  1 Sep 2020 07:55:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598946920;
-        bh=zApmnDF9Ii9NjM8St9RUBDwhe2Focy2FrYiga7i/r7Q=;
+        s=default; t=1598946916;
+        bh=W0uN8aKDqSAGlnT2Mlz/Qc+vE6rVkb26WLYOnYjnz1A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T5LPiGw/g9O4Z77CpiahKBkbcMz3DQQMBXlcVnwOfFUlk8v4mf+kg1YQoNGD1iwb/
-         kymBEr6EFE1HnBAKP/pSuH3/vR7Yla/0RVAzsgKQ9ys0vxg/RWW/7U4eIG43aitJ48
-         xvkpVSMFpZMuIZqzUR/Su+NyDWaI3oYyA8W36mYE=
+        b=FSauzjsEjMvli3RYqDS9PBw5hxdHzpOIYlonnPpBENaTbBfymRv7UjY6DmpfUIlsn
+         jfy7YFfOYaCzmOP13p0fFg1KCefgLhArfHB7kXGh0e0VB7e20eZ4EGNPn1HbJO7sk/
+         NhQS7DkhfcOeZbtcGdbkh6yufp7pMO5X2UP6BqgE=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -48,9 +48,9 @@ To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 13/13] ARM: dts: exynos: Use S2MPS11 clock in S3C RTC in SMDK5420
-Date:   Tue,  1 Sep 2020 09:54:17 +0200
-Message-Id: <20200901075417.22481-14-krzk@kernel.org>
+Subject: [PATCH 12/13] ARM: dts: exynos: Silence SATA PHY warning in SMDK5250
+Date:   Tue,  1 Sep 2020 09:54:16 +0200
+Message-Id: <20200901075417.22481-13-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200901075417.22481-1-krzk@kernel.org>
 References: <20200901075417.22481-1-krzk@kernel.org>
@@ -59,38 +59,36 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the 32 kHz clock from S2MPS11 PMIC in the S3C RTC node. Except
-making the S3C RTC working, this also fixes dtbs_check warnings:
+The SATA PHY in Exynos5250 SoCs has two interfaces and two device nodes:
+1. sata-phy@12170000
+2. i2c-9/i2c@38
 
-  arch/arm/boot/dts/exynos5420-smdk5420.dt.yaml: rtc@101e0000: clocks: [[2, 317]] is too short
-  arch/arm/boot/dts/exynos5420-smdk5420.dt.yaml: rtc@101e0000: clock-names: ['rtc'] is too short
+The first node represents the actual SATA PHY device with phy-cells.
+The second represents additional I2C interface, needed by the driver
+to communicate with the SATA PHY device.  It is not a PHY-provider in
+the terms of dtschema so rename it to silence dtbs_check warning:
+
+  arch/arm/boot/dts/exynos5250-smdk5250.dt.yaml: sata-phy@38: '#phy-cells' is a required property
+    From schema: lib/python3.6/site-packages/dtschema/schemas/phy/phy-provider.yaml
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos5420-smdk5420.dts | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/exynos5250-smdk5250.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index 83fa800fa1eb..4e49d8095b29 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -9,6 +9,7 @@
- /dts-v1/;
- #include "exynos5420.dtsi"
- #include "exynos5420-cpus.dtsi"
-+#include <dt-bindings/clock/samsung,s2mps11.h>
- #include <dt-bindings/gpio/gpio.h>
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index 00af7fb65080..e613814da386 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -328,7 +328,7 @@
+ 	samsung,i2c-max-bus-freq = <40000>;
+ 	samsung,i2c-slave-addr = <0x38>;
  
- / {
-@@ -401,6 +402,8 @@
- 
- &rtc {
- 	status = "okay";
-+	clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
-+	clock-names = "rtc", "rtc_src";
- };
- 
- &usbdrd_phy0 {
+-	sata_phy_i2c: sata-phy@38 {
++	sata_phy_i2c: sata-phy-i2c@38 {
+ 		compatible = "samsung,exynos-sataphy-i2c";
+ 		reg = <0x38>;
+ 	};
 -- 
 2.17.1
 
