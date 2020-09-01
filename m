@@ -4,97 +4,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D8CCC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 10:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FBBC433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 10:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3BB3206EB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 10:13:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D46C207EA
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Sep 2020 10:15:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598955209;
-	bh=XlCTuRG9aKHJrBqJ5YHYjkSJmfNQjeKpw0/g27pnlb8=;
+	s=default; t=1598955348;
+	bh=ZyI1/1iVuAKLzGnD5bs9lY6pUeVXwQkjOXtoFbjELNk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ebH0yc70iv9RVsSyJU8LAQnzXFBh1V3rbK8P1vqz4SmEa+icbKaITXe8CRMMLFJo2
-	 B4/0qr9CMV5+GYvBF95/kquX6Fpo+2meEv/Ed9pT2oSNuwPv0Ojj1WjwKv4kayocVY
-	 ZB+0q9yE8ImDwvK2nxqCeKYOGLcJtCXnCxUN+Lj0=
+	b=lmRIVuXTDf4pqHahvZDEDU29cmXxHOy8wEfvcIalwfFeNijgD//s3TrpcbouM7mZj
+	 eY23dfII1fWuSNZG/gng16OMii+ENpZ+7k86dTugRYEfTpcjMGbxXcUyj3C7FHcdHh
+	 CoEzsCh/YnaEXfkskB294wagcQ5SMOi2KcOU8OL0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726131AbgIAKN3 (ORCPT
+        id S1726139AbgIAKPn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Sep 2020 06:13:29 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42452 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbgIAKN2 (ORCPT
+        Tue, 1 Sep 2020 06:15:43 -0400
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:32779 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbgIAKPj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Sep 2020 06:13:28 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c18so844037wrm.9;
-        Tue, 01 Sep 2020 03:13:27 -0700 (PDT)
+        Tue, 1 Sep 2020 06:15:39 -0400
+Received: by mail-wm1-f52.google.com with SMTP id e11so632757wme.0;
+        Tue, 01 Sep 2020 03:15:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=60OSzGQnLdO/drci+KqV2aNKAQlqAAKks8TSNwdM2FY=;
-        b=GTz4d8MoyAeV6Tk/Pu6reOc3nXo6n2CGsXSa2SklzXvL0tQAOsjAgwzGxHwe/ddLIe
-         rpd3XRECac2nqSwL8Z+N7N/1ZGVc/+NCWPKKJaQCtjbOwnXVIcNm7gAXkAyQoTa5yxTO
-         fKJzD1vlcd+go0vdUqg+H7llsadwdcM50R3k4FA0R0+86W7hB57TRR2LJixrw9pIraQx
-         UYEIX/q9Ios2jtWwtriVAIoTymFwd7Blnb3lSMOor/4/CxWOujHcmAg879YLJD6LIy0h
-         AExZm5YH8JryIPGGfBFH621kZtP+962PM6vnhF/VI+SVSIAb/pdlP25UQFU5bsTkftE1
-         vcKg==
-X-Gm-Message-State: AOAM530IDFJWx23gTbwbDQ/X/SmIn+CpYpCxAwntfMXKvsAN0ps6JQiy
-        y3BWxHk5Ge8Wv9lUo+Y+IEw=
-X-Google-Smtp-Source: ABdhPJxMqwy/axvlMjQ/xJnNPGIvM2iHQeNPPj3R8YD2jG1F8eJm1SltrAiVX5VChjwgA+YtEBCEew==
-X-Received: by 2002:a05:6000:7:: with SMTP id h7mr1171095wrx.16.1598955206626;
-        Tue, 01 Sep 2020 03:13:26 -0700 (PDT)
+        bh=pLH5AgoXpGhrsa52Snk5FTxJg17QsSXpFgLhDFft8A8=;
+        b=G01X2LHl3AlbnjCNvRLWMX3PQNiJBXhWRXcQaOP7glOvAyb8vkmW0mHjHc0R/B939p
+         OreH6NEQq0I6sZdEgBW6BLOgSlmgMWRzM8z8kkEfFiQOaZ9d5qDOcgImkdrqIkdG4jH/
+         yEA2VsCoVhk8fozR04PETgH3CPsqyGTrYwAZwwqqEd5sXrgGaKi6rmO7woS9UiE3JKDV
+         VTvsbLEDaRiG8XP6KehuzSzJeHTGzpy2nCIndqW2hofSl+TTxpiOkoM4pKbvWFiZS0Ro
+         ptxLsadaLH1OUvz+AmZRLceK6HjKzf0gYzLZNvtnnEAHLKYZ5c7v4y5AqgMW12FCnJe6
+         2WFg==
+X-Gm-Message-State: AOAM530sSQjIsefrb24b9NexFDS2MxoJ7WnDvwqNopT1UmfG0cwmLgKx
+        +fmo7xT9A7SCrObq6LvBs2E=
+X-Google-Smtp-Source: ABdhPJwg2dcdM6+5RfvAb5uRSTytSw6wmKRiuo8vRcUAavtF9U7ySqhFZpn0KffXgkNU3dhursmPFw==
+X-Received: by 2002:a7b:c084:: with SMTP id r4mr1030648wmh.23.1598955337291;
+        Tue, 01 Sep 2020 03:15:37 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.106])
-        by smtp.googlemail.com with ESMTPSA id c6sm1490149wrr.15.2020.09.01.03.13.24
+        by smtp.googlemail.com with ESMTPSA id e18sm1792617wra.36.2020.09.01.03.15.35
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 01 Sep 2020 03:13:26 -0700 (PDT)
-Date:   Tue, 1 Sep 2020 12:13:22 +0200
+        Tue, 01 Sep 2020 03:15:36 -0700 (PDT)
+Date:   Tue, 1 Sep 2020 12:15:34 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        alsa-devel@alsa-project.org
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Hoegeun Kwon <hoegeun.kwon@samsung.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 08/10] arm64: dts: exynos: Add compatibles to sysreg nodes
-Message-ID: <20200901101322.GD23793@kozik-lap>
-References: <20200829142501.31478-1-krzk@kernel.org>
- <20200829142501.31478-8-krzk@kernel.org>
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: Re: [RFT 2/4] ARM: dts: exynos: Move fixed clocks under root node in
+ Exynos3250
+Message-ID: <20200901101534.GE23793@kozik-lap>
+References: <20200829172532.29358-1-krzk@kernel.org>
+ <20200829172532.29358-2-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200829142501.31478-8-krzk@kernel.org>
+In-Reply-To: <20200829172532.29358-2-krzk@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Aug 29, 2020 at 04:24:59PM +0200, Krzysztof Kozlowski wrote:
-> System register nodes, implementing syscon binding, should use
-> appropriate compatible.  This fixes dtbs_check warnings:
+On Sat, Aug 29, 2020 at 07:25:30PM +0200, Krzysztof Kozlowski wrote:
+> The fixed clocks are kept under dedicated node fixed-rate-clocks, thus a
+> fake "reg" was added.  This is not correct with dtschema as fixed-clock
+> binding does not have a "reg" property:
 > 
->   arch/arm64/boot/dts/exynos/exynos5433-tm2.dt.yaml: syscon@13b80000:
->     compatible: ['syscon'] is not valid under any of the given schemas
+>   arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml: clock@0: 'reg' does not match any of the regexes: 'pinctrl-[0-9]+'
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 6 +++---
+>  arch/arm/boot/dts/exynos3250.dtsi | 42 +++++++++++++------------------
+>  1 file changed, 17 insertions(+), 25 deletions(-)
 
 Applied.
 
