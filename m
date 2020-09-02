@@ -7,89 +7,88 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 948E0C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Sep 2020 15:36:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 749E5C433E7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Sep 2020 15:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7505C21548
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Sep 2020 15:36:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41E9120678
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Sep 2020 15:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599060983;
-	bh=AbssYCX9u2KiF1QbYK9CHg8zUKqCbMV3rsw9D3opKvg=;
+	s=default; t=1599061159;
+	bh=DMUWDuOVtUvkZyIN7nS13NNM0VZ6/dCJAZupzIgkiBY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=waeApJB+jl4PJK29JyM51PzjCd0aS5bOBVV5rnXZItT7YpJWIMntc2M4Z54mZo4Bc
-	 e2B6zc4QvIA+8CO+HPwNLa04b30dL3lRi/dJBfl/CLsfxgh3S8nEMwEaIv0or9ZHLa
-	 aDKo+ekjz4V9EacBpXYUa0H1hlakQyFoNQEqD1jo=
+	b=1fmD649pdctLrJWhfcxQrbx2TdaMk6b3dG6S21GZmNSG0YvVZECWVqBi44lYY8FOj
+	 b/H92MB6nPHGdZFY0Ow4DME3G/CPmNjuxk8ZKsCe4qdnKe60PRPfnzJVjBtE1PCt87
+	 mIdQzP+VEjWbdL+mA3Pn1QgluX/KWf7+BHX672MM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbgIBPfz (ORCPT
+        id S1727895AbgIBPjG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Sep 2020 11:35:55 -0400
-Received: from mail-ej1-f68.google.com ([209.85.218.68]:33725 "EHLO
-        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbgIBPfx (ORCPT
+        Wed, 2 Sep 2020 11:39:06 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44620 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728419AbgIBPjE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Sep 2020 11:35:53 -0400
-Received: by mail-ej1-f68.google.com with SMTP id j11so1592648ejk.0;
-        Wed, 02 Sep 2020 08:35:51 -0700 (PDT)
+        Wed, 2 Sep 2020 11:39:04 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b12so5374991edz.11;
+        Wed, 02 Sep 2020 08:39:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GCEsTdInS4YkDl/rs9szjQgucjoUvpkSLEs7mz1t++4=;
-        b=kEk0nAFLnXSWcXv04QUfqZACxSxV2guiswkFaOiOmRNF1tQLdNdjULMuRnLEZ7N8JR
-         jJ5npkwRgkSbt+n35QgfctPyww+SczPAbwcbR6AgZH/YaO5hFWT08E0UxVYSFyI6/g2L
-         Q5iyRUGLaRPHzruy5nDlXkYpn8HqsgbkET0UN9U5cj2C5Q5j7tb26qwi0inCyrbBb0US
-         eK7iAn73iL0RTZgiwYA7kZcwFkuLhXwKflsQZqb/ANemPgsYdCV30cOxRIRmdnZQ2yJz
-         IcuWRoFSdwAp207yHeyuvLqC9qafw5rYjNPXH3oemLVbLPp1DaksVN+C9X9BpDd66FCc
-         De1Q==
-X-Gm-Message-State: AOAM53152WQfy7ChpFJl5W0oug90KIJk7VghXafYnT6zJcZ7anRE/BiQ
-        88q6QRuIvUZhtkCHr6c9YMOctvtR6WD3oQ==
-X-Google-Smtp-Source: ABdhPJzw7TROsNYzuEprNdGNAqhujN6cK49CW6dMCBTEBU/ojNemUw092ImCl/ElfWwyB7tC0pTXIA==
-X-Received: by 2002:a17:906:e24f:: with SMTP id gq15mr557382ejb.395.1599060951087;
-        Wed, 02 Sep 2020 08:35:51 -0700 (PDT)
+        bh=f9RVe5a3WOs0Z8G5noGYlG05SPy10EgM9kuZ1XKP0v8=;
+        b=l8Nag+P9r223wmyFr7qY8X+gw9l20G0BT44BgdIUfxEp7DzHrV4cco97OGvCxB2V4n
+         SlK9FoakxZyC8iV/hqTGXoaIpQu82IQtisM7pAE9qFf/KDpjSnRokDQI/pM6SWFG7puY
+         sZJvq9dzyqopW8gpe/rJYSRozGR8T1YhcIFGOQp20ze2khb5Pu0smdrNFjGizwILEjnM
+         e7k6uKlvB2r7F6jby/PC8DeE9ulweHBzXRi0H6z80/A1yhmC8PZ8EVXjzVBTBFMEmJ7C
+         fAQ+4AIUw6eZ04MK8QKvjNfV5G/B5aH23pYaaWReEjLvxWxP3iKv6fRbeX5LnxyShKjc
+         ma8A==
+X-Gm-Message-State: AOAM532a+/1hTroe6rXnhZCRUUFbwzCmXV1iqFpO/8WkBY+mASeGjxqx
+        15MrDdObXKIUklFBozKpCWs=
+X-Google-Smtp-Source: ABdhPJzKmSdWZbHw7WTs7nAsmR+RbtPdB69nq6cY5TRzrRXgEYKypAGDu5XWn+Um1XF7iPrL71nPNw==
+X-Received: by 2002:a50:d2d1:: with SMTP id q17mr636013edg.167.1599061141702;
+        Wed, 02 Sep 2020 08:39:01 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.106])
-        by smtp.googlemail.com with ESMTPSA id lg22sm4841727ejb.48.2020.09.02.08.35.48
+        by smtp.googlemail.com with ESMTPSA id w11sm4370550edx.81.2020.09.02.08.39.00
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 02 Sep 2020 08:35:50 -0700 (PDT)
-Date:   Wed, 2 Sep 2020 17:35:47 +0200
+        Wed, 02 Sep 2020 08:39:01 -0700 (PDT)
+Date:   Wed, 2 Sep 2020 17:38:58 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Hoegeun Kwon <hoegeun.kwon@samsung.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
+To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Denis GNUtoo Carikli <GNUtoo@cyberdimension.org>,
+        Simon Shields <simon@lineageos.org>
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: [PATCH 4/4] ARM: dts: exynos: Remove snps,dwc2 compatible in
- Exynos3250
-Message-ID: <20200902153547.GA21503@kozik-lap>
-References: <20200829172532.29358-1-krzk@kernel.org>
- <20200829172532.29358-4-krzk@kernel.org>
+Subject: Re: [PATCH 01/33] ARM: dts: exynos: Silence i2c-gpio dtschema
+ warning in Galaxy I9100
+Message-ID: <20200902153858.GB21503@kozik-lap>
+References: <20200830135200.24304-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200829172532.29358-4-krzk@kernel.org>
+In-Reply-To: <20200830135200.24304-1-krzk@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Aug 29, 2020 at 07:25:32PM +0200, Krzysztof Kozlowski wrote:
-> The binding for DesignWare HS OTG USB 2.0 in Samsung SoCs take only one
-> compatible.  This fixes dtbs_check warnings like:
+On Sun, Aug 30, 2020 at 03:51:28PM +0200, Krzysztof Kozlowski wrote:
+> The name of I2C controller over GPIO lines node ends with '-gpio' which
+> confuses dtschema:
 > 
->   arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml: hsotg@12480000:
->     compatible: ['samsung,s3c6400-hsotg', 'snps,dwc2'] is not valid under any of the given schemas (Possible causes of the failure):
+>   /arch/arm/boot/dts/exynos4210-i9100.dt.yaml: /: i2c-gpio:
+>     {'compatible': ['i2c-gpio'], ...  'maxim,over-volt': [[4500]]}} is not of type 'array'
+>     From schema: lib/python3.6/site-packages/dtschema/schemas/gpio/gpio-consumer.yaml
+> 
+> Add a '-0' suffix to silence it.  This pattern on naming i2c-gpio is
+> already present in many other dts.  No functional change.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  arch/arm/boot/dts/exynos3250.dtsi | 2 +-
+>  arch/arm/boot/dts/exynos4210-i9100.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Applied.
 
