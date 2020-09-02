@@ -2,223 +2,97 @@ Return-Path: <SRS0=Bi+5=CL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B56EC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Sep 2020 11:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 948E0C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Sep 2020 15:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 301462065E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Sep 2020 11:24:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NkLqzdPK"
+	by mail.kernel.org (Postfix) with ESMTP id 7505C21548
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Sep 2020 15:36:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599060983;
+	bh=AbssYCX9u2KiF1QbYK9CHg8zUKqCbMV3rsw9D3opKvg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=waeApJB+jl4PJK29JyM51PzjCd0aS5bOBVV5rnXZItT7YpJWIMntc2M4Z54mZo4Bc
+	 e2B6zc4QvIA+8CO+HPwNLa04b30dL3lRi/dJBfl/CLsfxgh3S8nEMwEaIv0or9ZHLa
+	 aDKo+ekjz4V9EacBpXYUa0H1hlakQyFoNQEqD1jo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbgIBLYD (ORCPT
+        id S1728436AbgIBPfz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Sep 2020 07:24:03 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55713 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726406AbgIBLX5 (ORCPT
+        Wed, 2 Sep 2020 11:35:55 -0400
+Received: from mail-ej1-f68.google.com ([209.85.218.68]:33725 "EHLO
+        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbgIBPfx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Sep 2020 07:23:57 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200902112354euoutp01ee9132e56ec95cbc961ee11f62139798~w87bVqvdv0569105691euoutp01I
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Sep 2020 11:23:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200902112354euoutp01ee9132e56ec95cbc961ee11f62139798~w87bVqvdv0569105691euoutp01I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1599045834;
-        bh=OtSO6kCDRYzARjt52u8mNHXpNRyAs7EY5ZDWyY0I4u4=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=NkLqzdPKs6UYEvaWHE1TwMxARf8Y/8XaIF7mRlJHKy0wCLc+qTAjrJ8mslFjq7eT6
-         i4118r9JnMzQxqcIYrD8+SayCGCnSmdWC/e8feSLAijWxL+O6rrPTq18/eNvwN257p
-         nxHkgl8whKTIweqMlhdQ70i2Xy2tRpkQWtC+pWbQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200902112353eucas1p2782d672dc8e626e6fe9f4e658edf778e~w87aZ8amE2679626796eucas1p2r;
-        Wed,  2 Sep 2020 11:23:53 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id A3.FD.05997.9C08F4F5; Wed,  2
-        Sep 2020 12:23:53 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200902112352eucas1p1a409c435036274b5f6466ceff2b437cc~w87aHLjPq2822728227eucas1p1o;
-        Wed,  2 Sep 2020 11:23:52 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200902112352eusmtrp1d22680c373f1eacedd592cc5d879c179~w87aGMMr_2475724757eusmtrp1L;
-        Wed,  2 Sep 2020 11:23:52 +0000 (GMT)
-X-AuditID: cbfec7f4-677ff7000000176d-38-5f4f80c980f5
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 87.9B.06017.8C08F4F5; Wed,  2
-        Sep 2020 12:23:52 +0100 (BST)
-Received: from [106.210.85.205] (unknown [106.210.85.205]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200902112351eusmtip1e4fc0a16aed08cc448ebe5f4f51da2dd~w87YzDC-Q1814318143eusmtip1D;
-        Wed,  2 Sep 2020 11:23:51 +0000 (GMT)
-Subject: Re: [RFT 09/10] arm64: dts: exynos: Correct port of USB-C connector
- node on Exynos5433 TM2
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Wed, 2 Sep 2020 11:35:53 -0400
+Received: by mail-ej1-f68.google.com with SMTP id j11so1592648ejk.0;
+        Wed, 02 Sep 2020 08:35:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GCEsTdInS4YkDl/rs9szjQgucjoUvpkSLEs7mz1t++4=;
+        b=kEk0nAFLnXSWcXv04QUfqZACxSxV2guiswkFaOiOmRNF1tQLdNdjULMuRnLEZ7N8JR
+         jJ5npkwRgkSbt+n35QgfctPyww+SczPAbwcbR6AgZH/YaO5hFWT08E0UxVYSFyI6/g2L
+         Q5iyRUGLaRPHzruy5nDlXkYpn8HqsgbkET0UN9U5cj2C5Q5j7tb26qwi0inCyrbBb0US
+         eK7iAn73iL0RTZgiwYA7kZcwFkuLhXwKflsQZqb/ANemPgsYdCV30cOxRIRmdnZQ2yJz
+         IcuWRoFSdwAp207yHeyuvLqC9qafw5rYjNPXH3oemLVbLPp1DaksVN+C9X9BpDd66FCc
+         De1Q==
+X-Gm-Message-State: AOAM53152WQfy7ChpFJl5W0oug90KIJk7VghXafYnT6zJcZ7anRE/BiQ
+        88q6QRuIvUZhtkCHr6c9YMOctvtR6WD3oQ==
+X-Google-Smtp-Source: ABdhPJzw7TROsNYzuEprNdGNAqhujN6cK49CW6dMCBTEBU/ojNemUw092ImCl/ElfWwyB7tC0pTXIA==
+X-Received: by 2002:a17:906:e24f:: with SMTP id gq15mr557382ejb.395.1599060951087;
+        Wed, 02 Sep 2020 08:35:51 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.106])
+        by smtp.googlemail.com with ESMTPSA id lg22sm4841727ejb.48.2020.09.02.08.35.48
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 02 Sep 2020 08:35:50 -0700 (PDT)
+Date:   Wed, 2 Sep 2020 17:35:47 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        alsa-devel@alsa-project.org
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <021495a9-7a00-eb91-ddfa-885cc2fb5462@samsung.com>
-Date:   Wed, 2 Sep 2020 13:23:50 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.12.0
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Hoegeun Kwon <hoegeun.kwon@samsung.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: Re: [PATCH 4/4] ARM: dts: exynos: Remove snps,dwc2 compatible in
+ Exynos3250
+Message-ID: <20200902153547.GA21503@kozik-lap>
+References: <20200829172532.29358-1-krzk@kernel.org>
+ <20200829172532.29358-4-krzk@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <4eb7d0d9-29e2-9162-4521-10e4422f9c71@samsung.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxTH89znvoFWLhXtCRszdn7RREFnsmfZ0jlflrsvaoIfyIzWqlck
-        QjG9wsDMgHUKQ0EcYcMiiuBGqbFiKyBETEAUK9LOCWw4OlDUBQXf+qLi27hezPj2O+f/P8/5
-        n+ThsbaEjeVTzDski9mUqmcj6YbLL3zzPbmrjAkFvwmk0OuhSPf1NoqcKTvNkNJbd1jyZ/Bf
-        hhwNxJG3DYcwOdbuZUh36BFLDg49wMTnq+PIQOgSIuHufIq4hnoZcqP5CEvKfBcocqrdz5G9
-        Le0cuTiSx5Dr9iBF8u4OY+J2leIlM8W6gJUVW8KVtNhk83Oiy/EjK/b3nmfFh14vJzaGBxlx
-        YH8HJbpP5IhFZx1IDLg+Wj3l28gvNkupKZmSJd6wIXLrcKgcb6+IyXpe/wTlImdUAYrgQVgM
-        vuMHmQIUyWsFOwLb0ze0WgQR/PHs7oQSQFBdPIzej4T9hawq1CAIVZVSavEIgbuk+p1ruiCB
-        vaAWK0KM0MjAq9YgUgosFCLYE36KFRcrzIXX7j5WYY1gAE/5CKcwLcyBQI2TUniGsB4uX71N
-        q55o8By+M848HyF8CfdbzEobC7OgcfQIVlkH1mDtu9wgXOPhpTPAqrmXw9vBm5zK0+F+x9kJ
-        /hA6Sw7QKufAgP0HrA7nI6iva8Kq8Dn0e8dYZTEeD326OV5tfwWvgy85pQ3CNPhrNFrNMA1+
-        avgFq20N5O/Tqu7ZMNBVP/GgDn79PcQWI71t0mG2SdfYJl1j+39vJaIdSCdlyGnJkrzILH23
-        QDalyRnm5AWb0tNcaPyrdr7pCJ5Dza82tiGBR/qpmjLjSqOWMWXK2WltCHisj9Es7epcr9Vs
-        NmXvlCzpRktGqiS3oQ94Wq/TfFI1vE4rJJt2SNskabtkea9SfERsLirvW6b7u9ewwiA6a6IS
-        Xzz2z39cleTZtWaLNV67/59t5MD3RalTDXFLm2/8nD2j9esebmSZPf1kj9ylvWIrr7KeS1ou
-        tybsdvOxWb7aphX+vqLRtVTZkm+Koztmfxy3uGewIs+V5Zy3J2fEWhGNu6IOaRodn42dX22s
-        TdxU6bhX/6melreaFs7DFtn0Hwm3d2qmAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHee7dvbtaw9vUfFJTGRIUON182aOohR/q0gcT+lBoOS9609Bt
-        sTujlw+KFtp8SQPBptMgyxfwpc20sgXqytSaRWYUDRWNTFOL+ZJlmUuDffud8z8/DgcOhYvv
-        Er7UWbWO06rZHAnpLhj+M2APeZ5/TBnmWESozDaIodHXfRi6V91OoKrJaRK9W/pMoDrHXrTR
-        VYmjequNQKPLiyS6PjWHo5GRDiEaX34K0MpoMYZMU2MEevOolkTVI08w1Gq1C9FVi1WI+r8W
-        Eeh10xKGij59wZHZVIUf2s10OApIxrJyS8A8NNiFjKnlGsl8HHtMMgs2m5DpXpkgmPGSAYwx
-        N+Qx5Z0tgHGYApJ2JEtjtZpcHReUpeF1cZIUGZJLZdFIKo+IlsrCFadj5JGS0PjYDC7n7HlO
-        GxqfJs36slyDnzN6Xfhx/zvIB20eeuBGQToCrtjLSD1wp8T0HQDbbw/hW4EP7Kmf32ZPuD6m
-        3x6aB7Bp4obAGXjSHGzSN+POwIvuIeC38leEs8DpMgCnPluEW8oMgPdbp0inQtL74W/z+38s
-        ouPhYM1XoZMFdDB0NLZhTvamU+GL0pntmV1w8Ob05jqKcqMPwlmL2tnG6ShYZ57EtzgQds/X
-        brMPLFhqJiqA2OBiG1wUg4ticFFuAUEL8OJyeVWmipdLeVbF56ozpekalQls/kjXs7XOB0C/
-        cLwP0BSQ7BRVKxOVYoI9z19U9QFI4RIvUcLL4VSxKIO9eInTapTa3ByO7wORm7dV4r7e6ZrN
-        j1PrlLJImQJFyxThivAoJPERFdO9p8R0JqvjsjnuHKf972GUm28+iLV4RAr62QJrmnbNP652
-        qbE775c9sOtKcJJw460HF+JdPgADUhOOrrr7nWkOKmkpPbmmaMiOjir88LOEW09ZnDvxHqtf
-        ZZP8jMY7Hb3ZMttDyFE9jtLLQw+g/5sZgbu8uDLM2vg2JynNfCAx/8geq/lwIdzXKamYNcY0
-        Ji9LBHwWKzuAa3n2L7MKsL45AwAA
-X-CMS-MailID: 20200902112352eucas1p1a409c435036274b5f6466ceff2b437cc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200829142602eucas1p1ce457a8fddc6b1fba4bf8c08992fa0b3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200829142602eucas1p1ce457a8fddc6b1fba4bf8c08992fa0b3
-References: <20200829142501.31478-1-krzk@kernel.org>
-        <CGME20200829142602eucas1p1ce457a8fddc6b1fba4bf8c08992fa0b3@eucas1p1.samsung.com>
-        <20200829142501.31478-9-krzk@kernel.org>
-        <4eb7d0d9-29e2-9162-4521-10e4422f9c71@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200829172532.29358-4-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Sat, Aug 29, 2020 at 07:25:32PM +0200, Krzysztof Kozlowski wrote:
+> The binding for DesignWare HS OTG USB 2.0 in Samsung SoCs take only one
+> compatible.  This fixes dtbs_check warnings like:
+> 
+>   arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml: hsotg@12480000:
+>     compatible: ['samsung,s3c6400-hsotg', 'snps,dwc2'] is not valid under any of the given schemas (Possible causes of the failure):
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  arch/arm/boot/dts/exynos3250.dtsi | 2 +-
 
-On 31.08.2020 14:50, Marek Szyprowski wrote:
-> Hi Krzysztof,
->
-> On 29.08.2020 16:25, Krzysztof Kozlowski wrote:
->> The USB-C connector bindings require port@0.  Such port was already
->> described in DTS but outside of the connector itself.  Put it into
->> proper place to fix dtbs_check warnings like:
->>
->>     arch/arm64/boot/dts/exynos/exynos5433-tm2.dt.yaml: musb_connector: ports: 'port@0' is a required property
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> I'm not sure if topic should be about USB-C, I will call it simply USB
-> connector node. TM2(e) uses Samsung's 11-pin micro USB 2.0 connector,
-> which has nothing in common with USB Type-C.
->
-> Anyway, this patch breaks DWC3 (tested in Device mode) driver operation,
-> so something has to be somehow adjusted or fixed. Added CC Andrzej
-> Hajda, who actually worked on this.
->
->> ---
->>
->> Not tested on HQ. Please kindly review and test.
->>
->> Best regards,
->> Krzysztof
->> ---
->>    .../boot/dts/exynos/exynos5433-tm2-common.dtsi    | 15 +++++++--------
->>    1 file changed, 7 insertions(+), 8 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
->> index 6246cce2a15e..bab6c1addd5f 100644
->> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
->> @@ -871,6 +871,13 @@
->>    					#address-cells = <1>;
->>    					#size-cells = <0>;
->>    
->> +					port@0 {
->> +						reg = <0>;
->> +						muic_to_usb: endpoint {
->> +							remote-endpoint = <&usb_to_muic>;
->> +						};
->> +					};
->> +
+Applied.
 
+Best regards,
+Krzysztof
 
-According to not-yet-yaml documentation of dt-bindings (patch 05/10):
-> -Required nodes:
-> -- any data bus to the connector should be modeled using the OF graph bindings
-> -  specified in bindings/graph.txt, unless the bus is between parent node and
-> -  the connector.
-
-This is 'unless' case - muic is parent of the connector, so the port 0 is not necessary.
-
-
->>    					port@3 {
->>    						reg = <3>;
->>    						musb_con_to_mhl: endpoint {
->> @@ -879,14 +886,6 @@
->>    					};
->>    				};
->>    			};
->> -
->> -			ports {
->> -				port {
->> -					muic_to_usb: endpoint {
->> -						remote-endpoint = <&usb_to_muic>;
->> -					};
->> -				};
-
-
-And this port belongs to MUIC - it describes connection between USB-HOST 
-and MUIC, it has nothing to do with the connector, and is necessary.
-
-
-Regards
-
-Andrzej
-
-
->> -			};
->>    		};
->>    
->>    		regulators {
-> Best regards
