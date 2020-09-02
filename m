@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D301C433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Sep 2020 15:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43393C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Sep 2020 15:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2210F208B3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Sep 2020 15:41:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 175E2208B3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Sep 2020 15:45:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599061312;
-	bh=U/FrWjCVRX3Hk7iHajxH4QM3gC3DReY5aOm/DBjQJBw=;
+	s=default; t=1599061528;
+	bh=ijBnkVVdcjhZXwue0wkoqqh2MPDtx6F6WJZtVrmduIE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=flJ3GSVTHImbeOOSCNE8TAu25gQiY7/ZV55GVjPL2j2+YzULsTBukzGXn85A7Im0D
-	 fyKmV7EaGenbTOUBzAVAmNk4FLBA5bUm1zzL8KMdQ2kvno1j1ShL3opF0soiVO2LmM
-	 0+RSHQs0QpE3GVKWNkZ76jvY8bMJ2buUe43KBt80=
+	b=vtGctjUbGFPb9Cr6wa+g2bFxWas5ZOWFGrkhUJXrpFrmsG//HV0MtbtTcA6aMMFx+
+	 mgn3VfXieJIeFfAyc0hNz4dbvxvDGz6PbvLfL31aQYT2doO+Kgg4Yb9QbjHDUrqHfk
+	 07lQok9fKgMYZiPonPHRziseQH4jkszLRHwn1rNI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728337AbgIBPls (ORCPT
+        id S1728279AbgIBPp0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Sep 2020 11:41:48 -0400
-Received: from mail-ej1-f66.google.com ([209.85.218.66]:34109 "EHLO
-        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728382AbgIBPlc (ORCPT
+        Wed, 2 Sep 2020 11:45:26 -0400
+Received: from mail-ej1-f68.google.com ([209.85.218.68]:45321 "EHLO
+        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728479AbgIBPpU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Sep 2020 11:41:32 -0400
-Received: by mail-ej1-f66.google.com with SMTP id d26so7356155ejr.1;
-        Wed, 02 Sep 2020 08:41:31 -0700 (PDT)
+        Wed, 2 Sep 2020 11:45:20 -0400
+Received: by mail-ej1-f68.google.com with SMTP id i26so7289020ejb.12;
+        Wed, 02 Sep 2020 08:45:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1xXVqQjAqOVPgtcZl42fAfsWErSM00VQqzmCqs7NOo8=;
-        b=Ienxv3l5c+79q9Grjy+DlYD4zgcLd19XznMDxSMK3MOr+bXWnXKCvNhWSUgwSeHCwA
-         N28L6AaUbf3HBnhBO724XpFoGfYMC9R0/ssDMbn7M6DAJcwa3ctw3NOxVxX+bHG28oRI
-         JsAQ+GusHKkRhMa0hrex1iw9pq7dRzDxEohl8DSLzjAae5i6LqMyUCV1w7KFsOETFQnk
-         Mxr7ItofMVQ15EuJXwYlEgxOnDIj0xffAeEEMG6N2Zp+LF0OtlF4cFES3bXtMBkbPi3s
-         avVq4ETFeOxndDnQudArEIEvpPUINTPTNWSxz+HoUWX8uOxzUJSA/3mo37j4gvw0Mx/c
-         OEJg==
-X-Gm-Message-State: AOAM531zWAAp87UgXz75CHNd5VqTFGxGAzkn97aC48JEaRG0AIQvJQEy
-        cl0SFxVW/hMaqi5w9lTtv8c=
-X-Google-Smtp-Source: ABdhPJzMvJ052zqv6VUIRhYkxSS7d2AEeVKY+RQ81YHfSyreeVsyWOLXRDdmR1rNQ0vOFdNaAwLaRw==
-X-Received: by 2002:a17:906:52c2:: with SMTP id w2mr590678ejn.389.1599061290243;
-        Wed, 02 Sep 2020 08:41:30 -0700 (PDT)
+        bh=CbjBKHsNFYbmhkSKiXfeqKeTOD9op4yW4EQUpwppWSE=;
+        b=QnYSLrjJY9sFpJ+dixZx5uad8EIIplx8kvVmC/kz41Bls/j8v8YYwwwtbPu6JPUqkL
+         eGgmpDZMShpK/7/ncnj5c3qIYkapyAWeabF0FC4uoakUpuErBR18Mul9esXML6eoJoh+
+         cWhe2TAn/MYy37XsCZRDZCKN2hl6BmjPdhP/LiOArMiCxLVq+/k8CMJIL614HksVgOcD
+         oKAjZM1GDwii9sqEKYdFwNVH7wHBlkLrpZuD4amUY+ntaS/sfczCiUlDaANwLpMKsuju
+         Z4ss+ewNPQFnvcYeWKqyJ/stMSNsf24IrGFkyEfvYg1dE88ahKrWA0THPA4gWUAsUb4K
+         C7bQ==
+X-Gm-Message-State: AOAM531yeXwkqUfNrVyXfDEkYtWY+D3oyh8P2bRo01bVtvJ1sHVqCKTk
+        bJ+WVj4jx/wWNJdwCUcYFek=
+X-Google-Smtp-Source: ABdhPJxbrSCvE1jscskVpGAgJwHs/4bDMu2P/ON+hkWK12T/tM8tjNPSmxTEbAY2t2HS35m9Q9iDnA==
+X-Received: by 2002:a17:906:a242:: with SMTP id bi2mr639084ejb.122.1599061506936;
+        Wed, 02 Sep 2020 08:45:06 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.106])
-        by smtp.googlemail.com with ESMTPSA id w7sm4726747ejy.4.2020.09.02.08.41.28
+        by smtp.googlemail.com with ESMTPSA id l10sm4551399edr.12.2020.09.02.08.45.05
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 02 Sep 2020 08:41:29 -0700 (PDT)
-Date:   Wed, 2 Sep 2020 17:41:26 +0200
+        Wed, 02 Sep 2020 08:45:06 -0700 (PDT)
+Date:   Wed, 2 Sep 2020 17:45:03 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -60,32 +60,36 @@ To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: [PATCH 08/33] ARM: dts: exynos: Add and enable 32 kHz modem
- clock in Galaxy I9100
-Message-ID: <20200902154126.GC21503@kozik-lap>
+Subject: Re: [PATCH 22/33] ARM: dts: exynos: Align MHL GPIO pin configuration
+ with dtschema on Galaxy I9100
+Message-ID: <20200902154503.GD21503@kozik-lap>
 References: <20200830135200.24304-1-krzk@kernel.org>
- <20200830135200.24304-8-krzk@kernel.org>
+ <20200830135200.24304-22-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200830135200.24304-8-krzk@kernel.org>
+In-Reply-To: <20200830135200.24304-22-krzk@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Aug 30, 2020 at 03:51:35PM +0200, Krzysztof Kozlowski wrote:
-> The PMIC has a 32768 Hz clock used by the modem which is implemented by
-> driver as a regulator.  Add and enable it to be sure modem get's its
-> signal.
+On Sun, Aug 30, 2020 at 03:51:49PM +0200, Krzysztof Kozlowski wrote:
+> Align the name of mag-mhl-gpio node to avoid dtschema confusion and
+> dtbs_check warning:
+> 
+>   arch/arm/boot/dts/exynos4210-i9100.dt.yaml: pinctrl@11000000: mag-mhl-gpio:
+>     {'samsung,pins': ['gpd0-2'], 'samsung,pin-function': [[3]], 'samsung,pin-pud': [[0]]} is not of type 'array'
+>     From schema: dtschema/schemas/gpio/gpio-consumer.yaml
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  arch/arm/boot/dts/exynos4210-i9100.dts | 5 +++++
->  1 file changed, 5 insertions(+)
+>  arch/arm/boot/dts/exynos4210-i9100.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied all 1-8. Skipping 9th patch.
+Applied 13-22.
 
 Best regards,
 Krzysztof
+
