@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C83D4C433E9
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 16:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33589C2BC0E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 16:57:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD1C620716
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 16:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1509220716
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 16:57:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbgICQ5f (ORCPT
+        id S1728633AbgICQ5g (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 12:57:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59018 "EHLO
+        Thu, 3 Sep 2020 12:57:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728465AbgICQ5Z (ORCPT
+        with ESMTP id S1728951AbgICQ53 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 12:57:25 -0400
+        Thu, 3 Sep 2020 12:57:29 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC92C061245
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Sep 2020 09:57:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D875C061245
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Sep 2020 09:57:28 -0700 (PDT)
 Received: from [2a0a:edc0:0:1101:1d::39] (helo=dude03.red.stw.pengutronix.de)
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <mtr@pengutronix.de>)
-        id 1kDsY5-0003YF-GM; Thu, 03 Sep 2020 18:57:23 +0200
+        id 1kDsY9-0003YA-Ok; Thu, 03 Sep 2020 18:57:26 +0200
 Received: from mtr by dude03.red.stw.pengutronix.de with local (Exim 4.92)
         (envelope-from <mtr@dude03.red.stw.pengutronix.de>)
-        id 1kDsY3-005L3f-N3; Thu, 03 Sep 2020 18:57:19 +0200
+        id 1kDsY3-005L3Q-Kq; Thu, 03 Sep 2020 18:57:19 +0200
 From:   Michael Tretter <m.tretter@pengutronix.de>
 To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc:     kernel@pengutronix.de, Laurent.pinchart@ideasonboard.com,
         krzk@kernel.org, narmstrong@baylibre.com,
         Michael Tretter <m.tretter@pengutronix.de>
-Date:   Thu,  3 Sep 2020 18:57:14 +0200
-Message-Id: <20200903165717.1272492-14-m.tretter@pengutronix.de>
+Date:   Thu,  3 Sep 2020 18:57:09 +0200
+Message-Id: <20200903165717.1272492-9-m.tretter@pengutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200903165717.1272492-1-m.tretter@pengutronix.de>
 References: <20200903165717.1272492-1-m.tretter@pengutronix.de>
@@ -46,7 +46,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::39
 X-SA-Exim-Mail-From: mtr@pengutronix.de
-Subject: [PATCH 13/16] drm/exynos: add callback for tearing effect handler
+Subject: [PATCH 08/16] drm/exynos: use exynos_dsi as drvdata
 X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
 X-SA-Exim-Scanned: Yes (on metis.ext.pengutronix.de)
 X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
@@ -55,97 +55,89 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The tearing effect interrupts are not handled by the MIPI DSI bridge
-driver, but the display controller driver.
-
-Allow platforms to register a callback for the tearing effect interrupt.
+Use the exynos_dsi as drvdata instead of the encoder to further decouple
+the driver from the encoder.
 
 Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 23 +++++++----------------
+ 1 file changed, 7 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 287bc6e9b3ca..993402f1f7c7 100644
+index 51ec37304a69..2e8142464b74 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -254,6 +254,7 @@ struct exynos_dsi_driver_data {
- 	unsigned int wait_for_reset;
- 	unsigned int num_bits_resol;
- 	const unsigned int *reg_values;
-+	void (*te_handler)(struct drm_encoder *encoder);
- };
+@@ -290,11 +290,6 @@ struct exynos_dsi {
+ #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
+ #define connector_to_dsi(c) container_of(c, struct exynos_dsi, connector)
  
- struct exynos_dsi {
-@@ -465,6 +466,11 @@ static const unsigned int exynos5433_reg_values[] = {
- 	[PHYTIMING_HS_TRAIL] = 0x0c,
- };
- 
-+static void exynos_dsi_te_handler(struct drm_encoder *encoder)
-+{
-+	exynos_drm_crtc_te_handler(encoder->crtc);
-+}
-+
- static const struct exynos_dsi_driver_data exynos3_dsi_driver_data = {
- 	.reg_ofs = EXYNOS_REG_OFS,
- 	.plltmr_reg = 0x50,
-@@ -475,6 +481,7 @@ static const struct exynos_dsi_driver_data exynos3_dsi_driver_data = {
- 	.wait_for_reset = 1,
- 	.num_bits_resol = 11,
- 	.reg_values = reg_values,
-+	.te_handler = exynos_dsi_te_handler,
- };
- 
- static const struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
-@@ -487,6 +494,7 @@ static const struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
- 	.wait_for_reset = 1,
- 	.num_bits_resol = 11,
- 	.reg_values = reg_values,
-+	.te_handler = exynos_dsi_te_handler,
- };
- 
- static const struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
-@@ -497,6 +505,7 @@ static const struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
- 	.wait_for_reset = 1,
- 	.num_bits_resol = 11,
- 	.reg_values = reg_values,
-+	.te_handler = exynos_dsi_te_handler,
- };
- 
- static const struct exynos_dsi_driver_data exynos5433_dsi_driver_data = {
-@@ -508,6 +517,7 @@ static const struct exynos_dsi_driver_data exynos5433_dsi_driver_data = {
- 	.wait_for_reset = 0,
- 	.num_bits_resol = 12,
- 	.reg_values = exynos5433_reg_values,
-+	.te_handler = exynos_dsi_te_handler,
- };
- 
- static const struct exynos_dsi_driver_data exynos5422_dsi_driver_data = {
-@@ -519,6 +529,7 @@ static const struct exynos_dsi_driver_data exynos5422_dsi_driver_data = {
- 	.wait_for_reset = 1,
- 	.num_bits_resol = 12,
- 	.reg_values = exynos5422_reg_values,
-+	.te_handler = exynos_dsi_te_handler,
- };
- 
- static const struct of_device_id exynos_dsi_of_match[] = {
-@@ -1305,11 +1316,13 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
- 
- static irqreturn_t exynos_dsi_te_irq_handler(int irq, void *dev_id)
+-static inline struct exynos_dsi *encoder_to_dsi(struct drm_encoder *e)
+-{
+-	return container_of(e, struct exynos_dsi, encoder);
+-}
+-
+ enum reg_idx {
+ 	DSIM_STATUS_REG,	/* Status register */
+ 	DSIM_SWRST_REG,		/* Software reset register */
+@@ -1738,8 +1733,8 @@ static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
+ static int exynos_dsi_bind(struct device *dev, struct device *master,
+ 				void *data)
  {
--	struct exynos_dsi *dsi = (struct exynos_dsi *)dev_id;
-+	struct exynos_dsi *dsi = dev_id;
-+	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
- 	struct drm_encoder *encoder = dsi->bridge.encoder;
+-	struct drm_encoder *encoder = dev_get_drvdata(dev);
+-	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
++	struct exynos_dsi *dsi = dev_get_drvdata(dev);
++	struct drm_encoder *encoder = &dsi->encoder;
+ 	struct drm_device *drm_dev = data;
+ 	struct device_node *in_bridge_node;
+ 	struct drm_bridge *in_bridge;
+@@ -1769,8 +1764,7 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
+ static void exynos_dsi_unbind(struct device *dev, struct device *master,
+ 				void *data)
+ {
+-	struct drm_encoder *encoder = dev_get_drvdata(dev);
+-	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
++	struct exynos_dsi *dsi = dev_get_drvdata(dev);
  
--	if (dsi->state & DSIM_STATE_VIDOUT_AVAILABLE)
--		exynos_drm_crtc_te_handler(encoder->crtc);
-+	if (driver_data->te_handler &&
-+	    (dsi->state & DSIM_STATE_VIDOUT_AVAILABLE))
-+		driver_data->te_handler(encoder);
+ 	exynos_dsi_disable(dsi);
  
- 	return IRQ_HANDLED;
+@@ -1896,15 +1890,14 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	dsi = __exynos_dsi_probe(pdev);
+ 	if (IS_ERR(dsi))
+ 		return PTR_ERR(dsi);
+-	platform_set_drvdata(pdev, &dsi->encoder);
++	platform_set_drvdata(pdev, dsi);
+ 
+ 	return component_add(&pdev->dev, &exynos_dsi_component_ops);
  }
+ 
+ static int exynos_dsi_remove(struct platform_device *pdev)
+ {
+-	struct drm_encoder *encoder = platform_get_drvdata(pdev);
+-	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
++	struct exynos_dsi *dsi = platform_get_drvdata(pdev);
+ 
+ 	__exynos_dsi_remove(dsi);
+ 
+@@ -1915,8 +1908,7 @@ static int exynos_dsi_remove(struct platform_device *pdev)
+ 
+ static int __maybe_unused exynos_dsi_suspend(struct device *dev)
+ {
+-	struct drm_encoder *encoder = dev_get_drvdata(dev);
+-	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
++	struct exynos_dsi *dsi = dev_get_drvdata(dev);
+ 	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+ 	int ret, i;
+ 
+@@ -1946,8 +1938,7 @@ static int __maybe_unused exynos_dsi_suspend(struct device *dev)
+ 
+ static int __maybe_unused exynos_dsi_resume(struct device *dev)
+ {
+-	struct drm_encoder *encoder = dev_get_drvdata(dev);
+-	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
++	struct exynos_dsi *dsi = dev_get_drvdata(dev);
+ 	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+ 	int ret, i;
+ 
 -- 
 2.20.1
 
