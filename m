@@ -2,92 +2,117 @@ Return-Path: <SRS0=oxPC=CM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D02BCC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B60C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB22520709
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:49:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599166144;
-	bh=OrFqxx96piTetoArjMGO4ar6u22RTdKYhvtEIXSaISM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bEs3mfE15b89/yAjZvQc4VdwGFteDXyfw94R8KHemF+KREf+MjPJs2+iL3+JdBeTV
-	 6seuBGI1S6FfvLgyxeKmOqUt+Xt1fSgtGlt4A5f6ym9aKwgD48sD9QzTr3bdNz7kg0
-	 50Bg8Oag96/w0uSiWFdxzOG949XvFijMGMF960/M=
+	by mail.kernel.org (Postfix) with ESMTP id 529FB2067C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:51:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbgICUtE (ORCPT
+        id S1726397AbgICUvy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 16:49:04 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39476 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728397AbgICUtD (ORCPT
+        Thu, 3 Sep 2020 16:51:54 -0400
+Received: from foss.arm.com ([217.140.110.172]:41068 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726088AbgICUvy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 16:49:03 -0400
-Received: by mail-wm1-f67.google.com with SMTP id b79so4157839wmb.4;
-        Thu, 03 Sep 2020 13:49:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TTR4ZevWbBTzzWBk5Ftm+jdBL57hcsdTyw/U1bSsOcE=;
-        b=r691mwlEN1DZRFY5CzBJjooZAKjA+OIV1MMR7EI1j3jj/s+AqooIGCUEWQexXAycWg
-         FXCQkxO+osEOBsBvKDnbOxYpOU7g5g6gOM39OsWTr2xk6ZeiMMTnfFKbbnmht4dm4vad
-         zdu8v2V+/ftDGnv7v9zMxdRxSKE9u1I0M30BO05AmUk03fGsi46pWHH9mCDUSXg88fte
-         KcT42HaACAncF68B+pBsoeOBWVAQ/Z0QkVuR/pcMjuhJdp0wyJwBbruxR5EwMRXKiBwC
-         u0vZUTv14+3otg7wiA4HErum/PH+r6SxkuKXFxCb8HxFf1oXzH+b+metDE7XBBuviO3Z
-         TyIw==
-X-Gm-Message-State: AOAM533rDYF9NMRM9QwHgnpycG+ts3BpcVmuJP52CyvYhq2Y1+8qq2+v
-        wa+5mts6m6+SwACxxyllBFQ=
-X-Google-Smtp-Source: ABdhPJxbAqG+Z7hrWdt6vHYFdCHeNv0eFaCop/ZdMBXFkp4runoehm2xwhF/xenMGGhJzuf0hgPGCg==
-X-Received: by 2002:a1c:234d:: with SMTP id j74mr4123561wmj.157.1599166139821;
-        Thu, 03 Sep 2020 13:48:59 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.106])
-        by smtp.googlemail.com with ESMTPSA id j7sm6108628wrs.11.2020.09.03.13.48.57
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 03 Sep 2020 13:48:58 -0700 (PDT)
-Date:   Thu, 3 Sep 2020 22:48:56 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: [PATCH 01/13] ARM: dts: exynos: Correct compatible for Exynos5
- GIC
-Message-ID: <20200903204856.GA20285@kozik-lap>
-References: <20200901075417.22481-1-krzk@kernel.org>
- <20200901075417.22481-2-krzk@kernel.org>
+        Thu, 3 Sep 2020 16:51:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B99B1045;
+        Thu,  3 Sep 2020 13:51:53 -0700 (PDT)
+Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 623DB3F68F;
+        Thu,  3 Sep 2020 13:51:52 -0700 (PDT)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] drm/exynos: Drop local dma_parms
+Date:   Thu,  3 Sep 2020 21:51:48 +0100
+Message-Id: <dade9fce82e4905f3d61494785f81604674df5da.1599166024.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.28.0.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200901075417.22481-2-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 01, 2020 at 09:54:05AM +0200, Krzysztof Kozlowski wrote:
-> Exynos5250 and Exynso54xx SoCs have ARM GIC 400.  Correct the
-> compatibles to match dtschema and fix the dtbs_check warnings like:
-> 
->   arch/arm/boot/dts/exynos5420-peach-pit.dt.yaml: interrupt-controller@10481000:
->     compatible: ['arm,gic-400', 'arm,cortex-a15-gic', 'arm,cortex-a9-gic']
->     is not valid under any of the given schemas
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/boot/dts/exynos5.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+Since commit 9495b7e92f71 ("driver core: platform: Initialize dma_parms
+for platform devices"), struct platform_device already provides a
+dma_parms structure, so we can save allocating another one.
 
-Applied 1-10.
+Also the DMA segment size is simply a size, not a bitmask.
 
-Best regards,
-Krzysztof
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dma.c | 26 +------------------------
+ 1 file changed, 1 insertion(+), 25 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+index 58b89ec11b0e..9f25a5ebbf7d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+@@ -31,23 +31,6 @@
+ #define EXYNOS_DEV_ADDR_START	0x20000000
+ #define EXYNOS_DEV_ADDR_SIZE	0x40000000
+ 
+-static inline int configure_dma_max_seg_size(struct device *dev)
+-{
+-	if (!dev->dma_parms)
+-		dev->dma_parms = kzalloc(sizeof(*dev->dma_parms), GFP_KERNEL);
+-	if (!dev->dma_parms)
+-		return -ENOMEM;
+-
+-	dma_set_max_seg_size(dev, DMA_BIT_MASK(32));
+-	return 0;
+-}
+-
+-static inline void clear_dma_max_seg_size(struct device *dev)
+-{
+-	kfree(dev->dma_parms);
+-	dev->dma_parms = NULL;
+-}
+-
+ /*
+  * drm_iommu_attach_device- attach device to iommu mapping
+  *
+@@ -69,9 +52,7 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
+ 		return -EINVAL;
+ 	}
+ 
+-	ret = configure_dma_max_seg_size(subdrv_dev);
+-	if (ret)
+-		return ret;
++	dma_set_max_seg_size(subdrv_dev, UINT_MAX);
+ 
+ 	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
+ 		/*
+@@ -89,9 +70,6 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
+ 		ret = iommu_attach_device(priv->mapping, subdrv_dev);
+ 	}
+ 
+-	if (ret)
+-		clear_dma_max_seg_size(subdrv_dev);
+-
+ 	return ret;
+ }
+ 
+@@ -114,8 +92,6 @@ static void drm_iommu_detach_device(struct drm_device *drm_dev,
+ 		arm_iommu_attach_device(subdrv_dev, *dma_priv);
+ 	} else if (IS_ENABLED(CONFIG_IOMMU_DMA))
+ 		iommu_detach_device(priv->mapping, subdrv_dev);
+-
+-	clear_dma_max_seg_size(subdrv_dev);
+ }
+ 
+ int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
+-- 
+2.28.0.dirty
 
