@@ -2,105 +2,176 @@ Return-Path: <SRS0=oxPC=CM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E539CC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F5CC2D0A6
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C775220897
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:08:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599163721;
-	bh=VNQBiy+9hTVwRrEP9Lqn0yhiulQhOMN+3eYs5y17OSo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=uS3Bq/LHj3yp8lGQ485KZtk8pSkLW/Qo3Ium+wutJa7B2IUn3qKM2cEASLNDUBj57
-	 3B0YcRwgVgyuDcg2Mm6F1ZD8f13uGQU4t1K3mYVWaejFZQ48QKuwwme65yKiMFB31h
-	 LCZG2wM4pduuRDgqh1QHvVwIB2Jd+0Y+CCrMDDJo=
+	by mail.kernel.org (Postfix) with ESMTP id 11150206C0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:27:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="RCNqeDrb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728491AbgICUIl (ORCPT
+        id S1729167AbgICU1R (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 16:08:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57180 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728312AbgICUIl (ORCPT
+        Thu, 3 Sep 2020 16:27:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34834 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728397AbgICU1L (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 16:08:41 -0400
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65A31208FE
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Sep 2020 20:08:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599163720;
-        bh=VNQBiy+9hTVwRrEP9Lqn0yhiulQhOMN+3eYs5y17OSo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fpu3+eIhqnPrgb0qkZaEvK3Kmu6p311u+wQxiizl/PBDQky26ZvdXEF9ZBBWJX790
-         KQiAx25ql7TsaMgmfFnPlg+xYGZbmKisva1U51ZXi/PmbDdJ3jVQNYBbBEOzuUbsDI
-         W4iLYZPfAEzOMG9cHh4+nZQsdoQ8fdBGp+++s/Tc=
-Received: by mail-ej1-f46.google.com with SMTP id j11so5649986ejk.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Sep 2020 13:08:40 -0700 (PDT)
-X-Gm-Message-State: AOAM530n2RN2eXdeFTyFNgv3h3CvG+oppVIom1g76wFvVFIsO6RkcaL0
-        pJJtl8Q74sEPMOF1Atvg50Y87QxEHQq/A9cL6PA=
-X-Google-Smtp-Source: ABdhPJyuDkfhPLPKz+PzRWR6ZZ6XjdtJBpFQ1L6Teu/datJrHcsDx/4D3LZlqVcdF89l0M1sqH04BmaIJmXbbK5x2pw=
-X-Received: by 2002:a17:906:82d1:: with SMTP id a17mr3855109ejy.385.1599163718890;
- Thu, 03 Sep 2020 13:08:38 -0700 (PDT)
+        Thu, 3 Sep 2020 16:27:11 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C424C061246
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Sep 2020 13:27:09 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id d190so4839488iof.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Sep 2020 13:27:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XHoryAxbdooXqCdzEiDfBNHDRDqVJTRBeWqND7AhQWw=;
+        b=RCNqeDrberJQa8iEXoKdFFmsXmVgm0OJW7eIchkOEab4PeUqCYPXFDpEN7VrPE2Q2r
+         GUQQuiaAGbKydhEJAnnDCPiK90LXur6kCJr5L5sQ2r/ne46TMpiIdcTaCv2fHYoM6yNb
+         n/CznyFIPF9GJUXXveE7AfWdl33o/8t6SBeJ8YB3I8NVC2PqmD4/iWDqPdEI5wN78LVf
+         ncTI5ftXwXoF9V4Ax5mdMwpMg3xer78eQreGPZO8czXhtl772MKmX11X+ribr9UqcF1C
+         urDp6n8FeZvPlJlmjz8S3oOgFUFG1EujxtEbZKlxpUccJF2SFlBjkXHX8U39zQ/QDpq6
+         IUOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XHoryAxbdooXqCdzEiDfBNHDRDqVJTRBeWqND7AhQWw=;
+        b=Oxa+gNxUCwNnzIhqkfThOihc5N3BWnkprkwbznC5S4Bgih2CjEPxEyh4hPujdvbS1A
+         Dqs+v0Fq4QsMRztJgRlmL6tZEqdwNLNbXYQwy1ff0jW+a4hxau426fsiDaBQiY2/CTNi
+         TVk10HkfAYCHkJ7bTnOt7bqdpqZeHEBFbRQokzD9on2sHng7kQbAGjMA00ETlcRVpBtj
+         qIncgrwfWRv/wIR06lJpCA6Llb8wesgFP9ynwHzbWC18tY8aYj7ubgASqoaoNdxa6Bbr
+         WTclxCIFt8UmyGXNuT2UzbdlGlSnBQrSLMmbGAzIUaX+5icv/n78tatAx6IaFS8CflNJ
+         z6Wg==
+X-Gm-Message-State: AOAM530DSS34T+d4owOKkpEtkDXCLz6fA4br8d9otg6CRN9UUErE+y2t
+        4c/9Hn35q4X10VAoJ/JPdFuYLQh4RpAem48sYrHlMw==
+X-Google-Smtp-Source: ABdhPJwmTrpk85LWcnftpfNTJtQ24c/2yXv/TkIoKUAohLkMn+MLB1sF1W3BqKfqx9SeVWLrNTgZBBPqyFF6pQr5QKA=
+X-Received: by 2002:a02:834a:: with SMTP id w10mr5122585jag.63.1599164828964;
+ Thu, 03 Sep 2020 13:27:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200903165717.1272492-1-m.tretter@pengutronix.de>
-In-Reply-To: <20200903165717.1272492-1-m.tretter@pengutronix.de>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 3 Sep 2020 22:08:27 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPcJCfFL43OLXC_DAowU0o_jW2rZ7qX-m8ePcPEMo0PEgQ@mail.gmail.com>
-Message-ID: <CAJKOXPcJCfFL43OLXC_DAowU0o_jW2rZ7qX-m8ePcPEMo0PEgQ@mail.gmail.com>
-Subject: Re: [PATCH 00/16] drm/exynos: Convert driver to drm bridge
-To:     Michael Tretter <m.tretter@pengutronix.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, kernel@pengutronix.de,
-        Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com
+References: <20191221150402.13868-1-murphyt7@tcd.ie> <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
+ <20200529124523.GA11817@infradead.org> <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
+ <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com> <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
+ <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com> <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
+ <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com> <CALQxJuuS8KKUX_eWWSE81gsq5ePAETB-FoqRUSWFfqgr+B13gg@mail.gmail.com>
+In-Reply-To: <CALQxJuuS8KKUX_eWWSE81gsq5ePAETB-FoqRUSWFfqgr+B13gg@mail.gmail.com>
+From:   Tom Murphy <murphyt7@tcd.ie>
+Date:   Thu, 3 Sep 2020 21:26:57 +0100
+Message-ID: <CALQxJuuk0YR9dZWkqSmLU-kUKoOuuNj-kSikvQGq0wekijycLA@mail.gmail.com>
+Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org,
+        Alex Williamson <alex.williamson@redhat.com>,
+        linux-mediatek@lists.infradead.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 3 Sep 2020 at 18:57, Michael Tretter <m.tretter@pengutronix.de> wrote:
+On Fri, 28 Aug 2020 at 00:34, Tom Murphy <murphyt7@tcd.ie> wrote:
 >
-> Hello,
+> On Thu, 27 Aug 2020 at 22:36, Logan Gunthorpe <logang@deltatee.com> wrote:
+> >
+> >
+> >
+> > On 2020-08-23 6:04 p.m., Tom Murphy wrote:
+> > > I have added a check for the sg_dma_len == 0 :
+> > > """
+> > >  } __sgt_iter(struct scatterlist *sgl, bool dma) {
+> > >         struct sgt_iter s = { .sgp = sgl };
+> > >
+> > > +       if (sgl && sg_dma_len(sgl) == 0)
+> > > +           s.sgp = NULL;
+> > >
+> > >         if (s.sgp) {
+> > >             .....
+> > > """
+> > > at location [1].
+> > > but it doens't fix the problem.
+> >
+> > Based on my read of the code, it looks like we also need to change usage
+> > of sgl->length... Something like the rough patch below, maybe?
+> >
+> > Also, Tom, do you have an updated version of the patchset to convert the
+> > Intel IOMMU to dma-iommu available? The last one I've found doesn't
+> > apply cleanly (I'm assuming parts of it have been merged in slightly
+> > modified forms).
+> >
 >
-> the Exynos MIPI DSI Phy is also found on the i.MX8M Mini. However, on the
-> i.MX8M Mini, the bridge is driven by an LCDIF display controller instead of
-> the Exynos Decon. The driver for the LCDIF does not use the component
-> framework, but uses drm bridges.
+> I'll try and post one in the next 24hours
+
+I have just posted this now:
+The subject of the cover letter is:
+"[PATCH V2 0/5] Convert the intel iommu driver to the dma-iommu api"
+
 >
-> This series converts the Exynos MIPI DSI into a drm bridge and makes it usable
-> with such drivers. Although the driver is converted, it still supports the
-> component framework API to stay compliant with the Exynos DRM driver.
->
-> Unfortunately, I don't have any Exynos SoC to actually test the series.  I
-> tested the driver with a few additional unfinished patches on the i.MX8M Mini
-> EVK, but somebody should definitely verify that the driver is still working on
-> Exynos hardware.
-
-Hi Michael,
-
-+Cc maintainers and folks in Samsung.
-
-Please follow the script/get_maintainers.pl to get the list of
-maintainers of the Exynos DRM drivers. First they could provide you
-with testing, second they might be the people merging the driver.
-
-Unfortunately I cannot provide proper testing as none of my boards
-have a display attached. :)
-
-Best regards,
-Krzysztof
+> > Thanks,
+> >
+> > Logan
+> >
+> > --
+> >
+> > diff --git a/drivers/gpu/drm/i915/i915_scatterlist.h
+> > b/drivers/gpu/drm/i915/i915
+> > index b7b59328cb76..9367ac801f0c 100644
+> > --- a/drivers/gpu/drm/i915/i915_scatterlist.h
+> > +++ b/drivers/gpu/drm/i915/i915_scatterlist.h
+> > @@ -27,13 +27,19 @@ static __always_inline struct sgt_iter {
+> >  } __sgt_iter(struct scatterlist *sgl, bool dma) {
+> >         struct sgt_iter s = { .sgp = sgl };
+> >
+> > +       if (sgl && !sg_dma_len(s.sgp))
+> > +               s.sgp = NULL;
+> > +
+> >         if (s.sgp) {
+> >                 s.max = s.curr = s.sgp->offset;
+> > -               s.max += s.sgp->length;
+> > -               if (dma)
+> > +
+> > +               if (dma) {
+> > +                       s.max += sg_dma_len(s.sgp);
+> >                         s.dma = sg_dma_address(s.sgp);
+> > -               else
+> > +               } else {
+> > +                       s.max += s.sgp->length;
+> >                         s.pfn = page_to_pfn(sg_page(s.sgp));
+> > +               }
+> >         }
+> >
+> >         return s;
