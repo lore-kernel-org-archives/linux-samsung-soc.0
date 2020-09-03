@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BB3C2BC0E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 19:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7988CC433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 19:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D52D208FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 19:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EDA920C56
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 19:14:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599160411;
-	bh=kz/Uqq2oMfLmGSiuriAAU+P69b2k+xxFqKh/1NQEKh8=;
-	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iA+wPPMqZYoIJDV4VVSWLyUrrvahsU+mjrzE53O3+PeyOWwYh8ZFi9nbthAMf6zFM
-	 IbxdBe7WwqfUw7kx/tbLpCib+Sw21pR4NTDw9jIxPST+fnPHUolKyk6P9gSbtT0cvD
-	 nCFmZdpRyLyGJNv7IrInmEdyuAxGYmazYCwKqmA0=
+	s=default; t=1599160490;
+	bh=aY9WSw+KtEcd/Y/kDDSzJvuWuATd0tgV5DIFu+97x2U=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=tArrIxwfSwtMBGGK+yqwQLSS64BxeBIjSMr4R60sLSE1uMWbmlBq6v/PMVj0rJ8ec
+	 k6/hITyVkDNz+ojsnPUUkwhol4iAcdsLFz1n0Q0+9D4W27GBti4D4112z+kFyq8ya9
+	 l13ZYp3YbJnInyL4zUvH91OEFY5+C2SOmRk0vL1U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729175AbgICTN3 (ORCPT
+        id S1729055AbgICTOp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 15:13:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35022 "EHLO mail.kernel.org"
+        Thu, 3 Sep 2020 15:14:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729100AbgICTN2 (ORCPT
+        id S1728419AbgICTOp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 15:13:28 -0400
+        Thu, 3 Sep 2020 15:14:45 -0400
 Received: from localhost.localdomain (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3415B208CA;
-        Thu,  3 Sep 2020 19:13:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D722920C56;
+        Thu,  3 Sep 2020 19:14:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599160408;
-        bh=kz/Uqq2oMfLmGSiuriAAU+P69b2k+xxFqKh/1NQEKh8=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=Zt6iYc8LImn017WG47ATpl6LGIMnqKGsZiPyQfhq44ZgU6uYncL7xVkm7IyliFOMh
-         9UBi928x31zO7QzHetsxpaCelTn+/HNa0n0E2jbfSoN3/YdcCEbIvhqSN3BkAwDZ9G
-         1s8o1mB4j1gsbj+5rSp7pwctlXb0E+ExdE1uWsUA=
+        s=default; t=1599160484;
+        bh=aY9WSw+KtEcd/Y/kDDSzJvuWuATd0tgV5DIFu+97x2U=;
+        h=From:To:Subject:Date:From;
+        b=Q90It/9c77d5zJj8kdeeL2dBCwBCHOJQQqjPg9gYXxbE5piWOW96E/hIbBiWCy1ev
+         bBmmhX4urz65mWPY0MELhjTAIf/LoQX5dDQ7xSox6zFk/t5JGD95c4xYzG6/vIvTz7
+         KyLP4+vC8SvmNRTZvZ1zFXI8kUfOXGVd+/j+MT2M=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] dt-bindings: timer: exynos4210-mct: Add missing clocks
-Date:   Thu,  3 Sep 2020 21:13:11 +0200
-Message-Id: <20200903191311.12293-2-krzk@kernel.org>
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Inki Dae <inki.dae@samsung.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 1/6] dt-bindings: gpu: arm,mali-midgard: Add missing properties
+Date:   Thu,  3 Sep 2020 21:14:33 +0200
+Message-Id: <20200903191438.12781-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200903191311.12293-1-krzk@kernel.org>
-References: <20200903191311.12293-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Exynos Multi Core Timer driver requires two clocks.  This was never
-documented in the binding.  Add it to fix dtschema warnings like:
+Add common properties appearing in DTSes (opp-table) to fix dtbs_check
+warnings like:
 
-  arch/arm64/boot/dts/exynos/exynos5433-tm2.dt.yaml: timer@101c0000:
-    'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
+  arch/arm64/boot/dts/exynos/exynos5433-tm2.dt.yaml: gpu@14ac0000:
+    'opp-table' does not match any of the regexes: 'pinctrl-[0-9]+'
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
@@ -73,100 +73,21 @@ Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Changes since v1:
 1. Add properties instead of using unevaluated
 ---
- .../timer/samsung,exynos4210-mct.yaml         | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-index 37bd01a62c52..f11cbc7ccc14 100644
---- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-+++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-@@ -23,6 +23,15 @@ properties:
-       - samsung,exynos4210-mct
-       - samsung,exynos4412-mct
+diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
+index 80d519a76db2..e9c42b59f30f 100644
+--- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
++++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
+@@ -74,6 +74,7 @@ properties:
+       - const: bus
  
-+  clocks:
-+    minItems: 2
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - pattern: "^(fin_pll|mct)$"
-+      - pattern: "^(fin_pll|mct)$"
-+
-   reg:
+   mali-supply: true
++  opp-table: true
+ 
+   power-domains:
      maxItems: 1
- 
-@@ -49,6 +58,8 @@ properties:
- 
- required:
-   - compatible
-+  - clock-names
-+  - clocks
-   - interrupts
-   - reg
- 
-@@ -59,11 +70,15 @@ examples:
-     // In this example, the IP contains two local timers, using separate
-     // interrupts, so two local timer interrupts have been specified,
-     // in addition to four global timer interrupts.
-+    #include <dt-bindings/clock/exynos4.h>
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     timer@10050000 {
-         compatible = "samsung,exynos4210-mct";
-         reg = <0x10050000 0x800>;
-+        clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
-+        clock-names = "fin_pll", "mct";
-+
-         interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-                      <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-                      <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-@@ -75,11 +90,15 @@ examples:
-   - |
-     // In this example, the timer interrupts are connected to two separate
-     // interrupt controllers. Hence, an interrupts-extended is needed.
-+    #include <dt-bindings/clock/exynos4.h>
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     timer@101c0000 {
-         compatible = "samsung,exynos4210-mct";
-         reg = <0x101C0000 0x800>;
-+        clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
-+        clock-names = "fin_pll", "mct";
-+
-         interrupts-extended = <&gic GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-                               <&gic GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-                               <&combiner 12 6>,
-@@ -92,11 +111,14 @@ examples:
-     // In this example, the IP contains four local timers, but using
-     // a per-processor interrupt to handle them. Only one first local
-     // interrupt is specified.
-+    #include <dt-bindings/clock/exynos4.h>
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     timer@10050000 {
-         compatible = "samsung,exynos4412-mct";
-         reg = <0x10050000 0x800>;
-+        clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
-+        clock-names = "fin_pll", "mct";
- 
-         interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-                      <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-@@ -109,11 +131,14 @@ examples:
-     // In this example, the IP contains four local timers, but using
-     // a per-processor interrupt to handle them. All the local timer
-     // interrupts are specified.
-+    #include <dt-bindings/clock/exynos4.h>
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     timer@10050000 {
-         compatible = "samsung,exynos4412-mct";
-         reg = <0x10050000 0x800>;
-+        clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
-+        clock-names = "fin_pll", "mct";
- 
-         interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-                      <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
 -- 
 2.17.1
 
