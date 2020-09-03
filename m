@@ -2,102 +2,92 @@ Return-Path: <SRS0=oxPC=CM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEACC2D0E1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D02BCC433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:49:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C775A20658
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB22520709
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:49:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599165279;
-	bh=92uFz6sFhAh1pp3KzCm8GS1+pP7l6jA8SS2d+ieytR8=;
-	h=From:To:Subject:Date:List-ID:From;
-	b=izs6mXuRAVWIT8oPp6cvr91ukabTK4E1iqT+Tj4xlPVzTrDSjUgO+AGohT+bdr1X1
-	 pBwxitVVQLA3OgZ6bn/1xNKzMDqIRALf+G81mNig/ku7HF9o3tAWCE8fIcBV8VfM+3
-	 sItSj6mGmtqO39TZj8mF6enzr9XwUhGiHRplzKXA=
+	s=default; t=1599166144;
+	bh=OrFqxx96piTetoArjMGO4ar6u22RTdKYhvtEIXSaISM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bEs3mfE15b89/yAjZvQc4VdwGFteDXyfw94R8KHemF+KREf+MjPJs2+iL3+JdBeTV
+	 6seuBGI1S6FfvLgyxeKmOqUt+Xt1fSgtGlt4A5f6ym9aKwgD48sD9QzTr3bdNz7kg0
+	 50Bg8Oag96/w0uSiWFdxzOG949XvFijMGMF960/M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729421AbgICUei (ORCPT
+        id S1729240AbgICUtE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 16:34:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40506 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729602AbgICUdF (ORCPT
+        Thu, 3 Sep 2020 16:49:04 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39476 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728397AbgICUtD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 16:33:05 -0400
-Received: from localhost.localdomain (unknown [194.230.155.106])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80B7620658;
-        Thu,  3 Sep 2020 20:33:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599165185;
-        bh=92uFz6sFhAh1pp3KzCm8GS1+pP7l6jA8SS2d+ieytR8=;
-        h=From:To:Subject:Date:From;
-        b=RhMk/jlN1GrSCCHWwfyBk8c6vjdyZL4trcZAoUtR2Pj6c+zkByMAfdIYCwyCTNzct
-         tQ8iIiltGL5PChRum0BZyNoiFKGrh5cKwjW7wcfYwm8sMwdEZS36+j83CgtJ5m5TFg
-         KJpc9Qof6PAk/hkh1Om+q3zoY7MMzk+rW4BcQpK0=
+        Thu, 3 Sep 2020 16:49:03 -0400
+Received: by mail-wm1-f67.google.com with SMTP id b79so4157839wmb.4;
+        Thu, 03 Sep 2020 13:49:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TTR4ZevWbBTzzWBk5Ftm+jdBL57hcsdTyw/U1bSsOcE=;
+        b=r691mwlEN1DZRFY5CzBJjooZAKjA+OIV1MMR7EI1j3jj/s+AqooIGCUEWQexXAycWg
+         FXCQkxO+osEOBsBvKDnbOxYpOU7g5g6gOM39OsWTr2xk6ZeiMMTnfFKbbnmht4dm4vad
+         zdu8v2V+/ftDGnv7v9zMxdRxSKE9u1I0M30BO05AmUk03fGsi46pWHH9mCDUSXg88fte
+         KcT42HaACAncF68B+pBsoeOBWVAQ/Z0QkVuR/pcMjuhJdp0wyJwBbruxR5EwMRXKiBwC
+         u0vZUTv14+3otg7wiA4HErum/PH+r6SxkuKXFxCb8HxFf1oXzH+b+metDE7XBBuviO3Z
+         TyIw==
+X-Gm-Message-State: AOAM533rDYF9NMRM9QwHgnpycG+ts3BpcVmuJP52CyvYhq2Y1+8qq2+v
+        wa+5mts6m6+SwACxxyllBFQ=
+X-Google-Smtp-Source: ABdhPJxbAqG+Z7hrWdt6vHYFdCHeNv0eFaCop/ZdMBXFkp4runoehm2xwhF/xenMGGhJzuf0hgPGCg==
+X-Received: by 2002:a1c:234d:: with SMTP id j74mr4123561wmj.157.1599166139821;
+        Thu, 03 Sep 2020 13:48:59 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.106])
+        by smtp.googlemail.com with ESMTPSA id j7sm6108628wrs.11.2020.09.03.13.48.57
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 03 Sep 2020 13:48:58 -0700 (PDT)
+Date:   Thu, 3 Sep 2020 22:48:56 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 1/4] ASoC: odroid: Add missing properties
-Date:   Thu,  3 Sep 2020 22:32:47 +0200
-Message-Id: <20200903203250.19830-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: Re: [PATCH 01/13] ARM: dts: exynos: Correct compatible for Exynos5
+ GIC
+Message-ID: <20200903204856.GA20285@kozik-lap>
+References: <20200901075417.22481-1-krzk@kernel.org>
+ <20200901075417.22481-2-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200901075417.22481-2-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Usage of "unevaluatedProperties: false" is not correct as it suppresses
-warnings about all undocumented properties.  Instead, add all missing
-properties.
+On Tue, Sep 01, 2020 at 09:54:05AM +0200, Krzysztof Kozlowski wrote:
+> Exynos5250 and Exynso54xx SoCs have ARM GIC 400.  Correct the
+> compatibles to match dtschema and fix the dtbs_check warnings like:
+> 
+>   arch/arm/boot/dts/exynos5420-peach-pit.dt.yaml: interrupt-controller@10481000:
+>     compatible: ['arm,gic-400', 'arm,cortex-a15-gic', 'arm,cortex-a9-gic']
+>     is not valid under any of the given schemas
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  arch/arm/boot/dts/exynos5.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Applied 1-10.
 
----
-
-Fixup for:
-https://lore.kernel.org/lkml/30b8ea43-c2d0-5ddf-dc16-a8fe80d47c38@samsung.com/
----
- .../devicetree/bindings/sound/samsung,odroid.yaml          | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.yaml b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
-index de1be3d6d1e9..e8122bc87362 100644
---- a/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
-+++ b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
-@@ -28,6 +28,11 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/string
-     description: The user-visible name of this sound complex.
- 
-+  assigned-clock-parents: true
-+  assigned-clock-rates: true
-+  assigned-clocks: true
-+  clocks: true
-+
-   cpu:
-     type: object
-     properties:
-@@ -69,7 +74,7 @@ required:
-   - cpu
-   - codec
- 
--unevaluatedProperties: false
-+additionalProperties: false
- 
- examples:
-   - |
--- 
-2.17.1
+Best regards,
+Krzysztof
 
