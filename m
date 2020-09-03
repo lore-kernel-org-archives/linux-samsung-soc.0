@@ -2,92 +2,105 @@ Return-Path: <SRS0=oxPC=CM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 530BCC2BC0E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 19:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E539CC433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3125421534
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 19:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C775220897
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:08:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599160504;
-	bh=IVFnr/w8qzpikNYZme0KyM2gXhCf6WEzWZ9gUTCRq8Q=;
-	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lmc8v9r+6U/o0LlisO9WjwEQSH8bcLg7bazlRmJuKC0FH2Obf4xQ5DVitx3CIz3Ih
-	 +Ea8niscpm0Y2iwMijHI6YfdQMSNMkAucKrJjH3lcIdbcbsQhABDnRdLqGRzqt/611
-	 gnobF6KTxWHj1qfH23IWpHcP4szlNSNdIYLFv14g=
+	s=default; t=1599163721;
+	bh=VNQBiy+9hTVwRrEP9Lqn0yhiulQhOMN+3eYs5y17OSo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=uS3Bq/LHj3yp8lGQ485KZtk8pSkLW/Qo3Ium+wutJa7B2IUn3qKM2cEASLNDUBj57
+	 3B0YcRwgVgyuDcg2Mm6F1ZD8f13uGQU4t1K3mYVWaejFZQ48QKuwwme65yKiMFB31h
+	 LCZG2wM4pduuRDgqh1QHvVwIB2Jd+0Y+CCrMDDJo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729393AbgICTPD (ORCPT
+        id S1728491AbgICUIl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 15:15:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36232 "EHLO mail.kernel.org"
+        Thu, 3 Sep 2020 16:08:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729371AbgICTPC (ORCPT
+        id S1728312AbgICUIl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 15:15:02 -0400
-Received: from localhost.localdomain (unknown [194.230.155.106])
+        Thu, 3 Sep 2020 16:08:41 -0400
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E348020DD4;
-        Thu,  3 Sep 2020 19:14:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65A31208FE
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Sep 2020 20:08:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599160501;
-        bh=IVFnr/w8qzpikNYZme0KyM2gXhCf6WEzWZ9gUTCRq8Q=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=EJSstaUSaVq067mlnHyLCPe1lQiAd9/60P4Af6ExT5BYaoK1vA4paLS5ti8l+6wUH
-         CHnVgnuRofbiPGV4H8hVYoIk4Eyz2L6CZgLe8ewPc3KFTZfl545+inMQjppsNh1/86
-         OmjgYq7VppbLTdWiDXzEzl02o+HT/OBNb1aPTWuU=
+        s=default; t=1599163720;
+        bh=VNQBiy+9hTVwRrEP9Lqn0yhiulQhOMN+3eYs5y17OSo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fpu3+eIhqnPrgb0qkZaEvK3Kmu6p311u+wQxiizl/PBDQky26ZvdXEF9ZBBWJX790
+         KQiAx25ql7TsaMgmfFnPlg+xYGZbmKisva1U51ZXi/PmbDdJ3jVQNYBbBEOzuUbsDI
+         W4iLYZPfAEzOMG9cHh4+nZQsdoQ8fdBGp+++s/Tc=
+Received: by mail-ej1-f46.google.com with SMTP id j11so5649986ejk.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Sep 2020 13:08:40 -0700 (PDT)
+X-Gm-Message-State: AOAM530n2RN2eXdeFTyFNgv3h3CvG+oppVIom1g76wFvVFIsO6RkcaL0
+        pJJtl8Q74sEPMOF1Atvg50Y87QxEHQq/A9cL6PA=
+X-Google-Smtp-Source: ABdhPJyuDkfhPLPKz+PzRWR6ZZ6XjdtJBpFQ1L6Teu/datJrHcsDx/4D3LZlqVcdF89l0M1sqH04BmaIJmXbbK5x2pw=
+X-Received: by 2002:a17:906:82d1:: with SMTP id a17mr3855109ejy.385.1599163718890;
+ Thu, 03 Sep 2020 13:08:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200903165717.1272492-1-m.tretter@pengutronix.de>
+In-Reply-To: <20200903165717.1272492-1-m.tretter@pengutronix.de>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
+Date:   Thu, 3 Sep 2020 22:08:27 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcJCfFL43OLXC_DAowU0o_jW2rZ7qX-m8ePcPEMo0PEgQ@mail.gmail.com>
+Message-ID: <CAJKOXPcJCfFL43OLXC_DAowU0o_jW2rZ7qX-m8ePcPEMo0PEgQ@mail.gmail.com>
+Subject: Re: [PATCH 00/16] drm/exynos: Convert driver to drm bridge
+To:     Michael Tretter <m.tretter@pengutronix.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
         Inki Dae <inki.dae@samsung.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 6/6] arm64: dts: exynos: Align OPP table name with dt-schema
-Date:   Thu,  3 Sep 2020 21:14:38 +0200
-Message-Id: <20200903191438.12781-6-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200903191438.12781-1-krzk@kernel.org>
-References: <20200903191438.12781-1-krzk@kernel.org>
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, kernel@pengutronix.de,
+        Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Device tree nodes should have hyphens instead of underscores.  This is
-also expected by the bindings.
+On Thu, 3 Sep 2020 at 18:57, Michael Tretter <m.tretter@pengutronix.de> wrote:
+>
+> Hello,
+>
+> the Exynos MIPI DSI Phy is also found on the i.MX8M Mini. However, on the
+> i.MX8M Mini, the bridge is driven by an LCDIF display controller instead of
+> the Exynos Decon. The driver for the LCDIF does not use the component
+> framework, but uses drm bridges.
+>
+> This series converts the Exynos MIPI DSI into a drm bridge and makes it usable
+> with such drivers. Although the driver is converted, it still supports the
+> component framework API to stay compliant with the Exynos DRM driver.
+>
+> Unfortunately, I don't have any Exynos SoC to actually test the series.  I
+> tested the driver with a few additional unfinished patches on the i.MX8M Mini
+> EVK, but somebody should definitely verify that the driver is still working on
+> Exynos hardware.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Hi Michael,
 
----
++Cc maintainers and folks in Samsung.
 
-Changes since v1:
-1. New patch
----
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please follow the script/get_maintainers.pl to get the list of
+maintainers of the Exynos DRM drivers. First they could provide you
+with testing, second they might be the people merging the driver.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index b2eebdd88c3c..9651bb9fdadc 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -1087,7 +1087,7 @@
- 			operating-points-v2 = <&gpu_opp_table>;
- 			status = "disabled";
- 
--			gpu_opp_table: opp_table {
-+			gpu_opp_table: opp-table {
- 				compatible = "operating-points-v2";
- 
- 				opp-160000000 {
--- 
-2.17.1
+Unfortunately I cannot provide proper testing as none of my boards
+have a display attached. :)
 
+Best regards,
+Krzysztof
