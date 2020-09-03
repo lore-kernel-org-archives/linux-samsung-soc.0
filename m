@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC34C2D0E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C5DC35263
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EBAA420722
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:34:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00D8D20678
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:34:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599165249;
-	bh=rGPaazvsw6UUUMLNC7pSLAMKZMR24aj4m3T8eVAFLtU=;
+	s=default; t=1599165268;
+	bh=6z3I61UrsqdEOlJteYcY9hQ+jdgGM1aWxnw3gt+fAgU=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nJq0A6gMe+SqpL9t++VlvWVs98aX0IofTG+PW7KXaRai24mi6boP5G/p0Jd0r5GJQ
-	 SHCkmIUG+Jj+r4hpO9w+TTG+djfYGA8b5cw4WSH+OEnZIer9/grq9oFnpRginzpuRR
-	 MYX5f/nNxh4w/UKItXNFhodgbEhReRWgmMDW4nxk=
+	b=0osTQxHJ+88uK9idr4h4p1b5Rzku/RxEezDymkh7tp56y0bDJpS/cRB8W1qW/Y+3u
+	 WhfaSTSLR+h/inVNZyeATRekRFBTPqu4EBabO2NjY7Y413LdfILh+WzcRWV+w0LmCN
+	 LHLQ0WIXXks0tpJZSSgXuV7jzH88dJZHc2yraxOc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729656AbgICUd5 (ORCPT
+        id S1729633AbgICUeS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 16:33:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40854 "EHLO mail.kernel.org"
+        Thu, 3 Sep 2020 16:34:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729323AbgICUdR (ORCPT
+        id S1729621AbgICUdN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 16:33:17 -0400
+        Thu, 3 Sep 2020 16:33:13 -0400
 Received: from localhost.localdomain (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB5142071B;
-        Thu,  3 Sep 2020 20:33:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FD7420678;
+        Thu,  3 Sep 2020 20:33:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599165196;
-        bh=rGPaazvsw6UUUMLNC7pSLAMKZMR24aj4m3T8eVAFLtU=;
+        s=default; t=1599165193;
+        bh=6z3I61UrsqdEOlJteYcY9hQ+jdgGM1aWxnw3gt+fAgU=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=twPSX/J8eCw7EPQ43IcfD/idW6US0ZSlCKYsZLrCf6DMYqxT+UmGNZiLO37/ZIJLx
-         4HiW95TbPfl+AWwb3sjp21IC0PnPs+DhgWvi4PFuibzUL6uhIFy4B6gpi+jAX3ORbR
-         8wlEPqg+kMQifhzYnPq2SpyDMGFD4ekY7H73pvno=
+        b=hL9jVygnF3BMdbkCrhqqbkhnCtKbgKYLMxqnpnapF/MU1/gThkESEQcXzOu1V05dq
+         sFTDQW7vwIUvfi610Ad/C+0SpRzBbkHs/GvT6SOj8T+TWnIvjYnzEhuRon666IxCp1
+         9uH7c96wyX9z+KX/KoBZNVTfSiWe66DJPEaUQnLM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Sangbeom Kim <sbkim73@samsung.com>,
@@ -50,9 +50,9 @@ To:     Krzysztof Kozlowski <krzk@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 4/4] ARM: dts: exynos: Add clocks sound node in Exynos5422 Odroid XU4
-Date:   Thu,  3 Sep 2020 22:32:50 +0200
-Message-Id: <20200903203250.19830-4-krzk@kernel.org>
+Subject: [PATCH 3/4] arm64: dts: exynos: Remove undocumented i2s properties in Exynos5433
+Date:   Thu,  3 Sep 2020 22:32:49 +0200
+Message-Id: <20200903203250.19830-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200903203250.19830-1-krzk@kernel.org>
 References: <20200903203250.19830-1-krzk@kernel.org>
@@ -61,30 +61,33 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The dtschema expects "clocks" property if "assigned-clocks" are used.
-Add reference to all parent clocks to silence the dtbs_check warnings.
+Few I2S device node properties were not documented and not used by any
+of the drivers.  Remove them to fix dtbs_check warning:
+
+  arch/arm64/boot/dts/exynos/exynos5433-tm2.dt.yaml: i2s@14d60000:
+    Additional properties are not allowed ('samsung,supports-rstclr', 'samsung,supports-tdm',
+    'samsung,supports-6ch', 'samsung,supports-low-rfs' were unexpected)
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos5422-odroidxu4.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-index 892d389d6d09..fe4266850659 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-@@ -44,6 +44,11 @@
- 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
- 				<&clock_audss EXYNOS_DOUT_I2S>;
- 
-+		clocks = <&clock CLK_FOUT_EPLL>,
-+			 <&clock CLK_MOUT_EPLL>,
-+			 <&clock CLK_MOUT_MAU_EPLL>,
-+			 <&clock CLK_MAU_EPLL>,
-+			 <&clock_audss EXYNOS_MOUT_AUDSS>;
- 		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
- 				<&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 9651bb9fdadc..8eb4576da8f3 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -1460,10 +1460,6 @@
+ 				 <&cmu_peric CLK_SCLK_I2S1>;
+ 			clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+ 			#clock-cells = <1>;
+-			samsung,supports-6ch;
+-			samsung,supports-rstclr;
+-			samsung,supports-tdm;
+-			samsung,supports-low-rfs;
+ 			#sound-dai-cells = <1>;
+ 			status = "disabled";
+ 		};
 -- 
 2.17.1
 
