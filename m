@@ -4,90 +4,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A9EC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 18:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD251C433E9
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 19:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 709DE208C7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 18:14:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9675C20658
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 19:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599156887;
-	bh=5b3Egfm+10MTau1tfMtMDO2dK/Gow5RosvWsPo2xF0o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eTUfSm6r+Y+pYNJKrod+6In+eix4h/FcOYFmoh7gWruUAhOEYLyLVn/2VIbwKbHC5
-	 1PGzwZHRaGwvLbs42EhkkWC7FQ0hVaonwKvuQwJLTTcU/j0EFsuelio7vHaQTHu5XG
-	 1jjJCbtdsJzSWj7oXVK1tCVf6+vmlHBBBtdL7Ork=
+	s=default; t=1599160409;
+	bh=5xuDaQDGdISJYSnuE7kyV2UyZlRMPZhBkIJjyjicBzI=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=v2YO4EiLkEWJIBifvFclCh6QLjBWaofJHO4RujlJNJK53kz7ZZXf4msB03S4Ro6Im
+	 0tq2tjTQSV2R3rs/yWWiSLvKd0CdxfmhNeOUbIkoqHGdu6YJcAvghPTKvOraDND9f6
+	 pqvS/Y0IQYCboIE2eGDtFi8M4oUlLy2dECg6OzUg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbgICSOj (ORCPT
+        id S1729088AbgICTN0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 14:14:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39292 "EHLO mail.kernel.org"
+        Thu, 3 Sep 2020 15:13:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729031AbgICSOi (ORCPT
+        id S1728358AbgICTN0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 14:14:38 -0400
+        Thu, 3 Sep 2020 15:13:26 -0400
 Received: from localhost.localdomain (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D235C20DD4;
-        Thu,  3 Sep 2020 18:14:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE00E208C7;
+        Thu,  3 Sep 2020 19:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599156878;
-        bh=5b3Egfm+10MTau1tfMtMDO2dK/Gow5RosvWsPo2xF0o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pYLFRJoATh3RydGMt1khMfDZm21rtcbKjrJvbuVtJJq8tmJ4fTNqlXzhoUENsPInk
-         UV7keYdSR7lmKcJE0y5olYVM9zLcXu3eE9qV4mLmiAZJlWxe1EmCOsAzyW0exUX+kI
-         MHXBf2BJJ2IDWm4d7f7C33O+hSLnpf2TthUOaW1I=
+        s=default; t=1599160405;
+        bh=5xuDaQDGdISJYSnuE7kyV2UyZlRMPZhBkIJjyjicBzI=;
+        h=From:To:Subject:Date:From;
+        b=NiubHCl/WH/T3jWrAm/ZOhg/zt2LYD4OngdfoSpvkvPZ9+gxaA6VxhknW5OjpBgN7
+         f57ef94ZmoeHSxxEgtphK6QOb2QW8uzi6vR1erWZrEdua22R2eHrh+Y705cj6QNGbS
+         J2upMN96tRnC3+RIgFonXeftPVo9/vXe1+rFp/Dw=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH v2 3/3] ARM: dts: exynos: Add assigned clock parent to CMU in Exynos5422 Odroid XU3
-Date:   Thu,  3 Sep 2020 20:14:25 +0200
-Message-Id: <20200903181425.5015-3-krzk@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] dt-bindings: arm: samsung: pmu: Add missing properties
+Date:   Thu,  3 Sep 2020 21:13:10 +0200
+Message-Id: <20200903191311.12293-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200903181425.5015-1-krzk@kernel.org>
-References: <20200903181425.5015-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Commit 78a68acf3d33 ("ARM: dts: exynos: Switch to dedicated Odroid XU3
-sound card binding") added assigned clocks under sound device node.
+Add common properties appearing in DTSes (assigned-clock-parents,
+assigned-clocks) to fix dtbs_check warnings like:
 
-However the dtschema expects "clocks" property if "assigned-clocks" are
-used.  Add reference to input clock, the parent used in
-"assigned-clock-parents" to silence the dtschema warnings:
-
-  arch/arm/boot/dts/exynos5422-odroidxu3.dt.yaml: sound: 'clocks' is a dependency of 'assigned-clocks'
+  arch/arm64/boot/dts/exynos/exynos5433-tm2.dt.yaml: system-controller@105c0000:
+    'assigned-clock-parents', 'assigned-clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-index c3c2d85267da..44467a10c3b8 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-@@ -29,6 +29,11 @@
- 			"HiFi Playback", "Mixer DAI TX",
- 			"Mixer DAI RX", "HiFi Capture";
+---
+
+Changes since v1:
+1. Add properties instead of using unevaluated
+---
+ Documentation/devicetree/bindings/arm/samsung/pmu.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+index 686c13c14e32..edbe8c69387b 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+@@ -45,6 +45,9 @@ properties:
+   reg:
+     maxItems: 1
  
-+		clocks = <&clock CLK_FOUT_EPLL>,
-+			 <&clock CLK_MOUT_EPLL>,
-+			 <&clock CLK_MOUT_MAU_EPLL>,
-+			 <&clock CLK_MAU_EPLL>,
-+			 <&clock_audss EXYNOS_MOUT_AUDSS>;
- 		assigned-clocks = <&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MOUT_USER_MAU_EPLL>,
++  assigned-clock-parents: true
++  assigned-clocks: true
++
+   '#clock-cells':
+     const: 1
+ 
 -- 
 2.17.1
 
