@@ -2,108 +2,123 @@ Return-Path: <SRS0=oxPC=CM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D99C433E9
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 16:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBE9C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 16:57:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7644A208B3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 16:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599151531;
-	bh=+RN+tred1kejqXIdlddVwHGuj/QRKXoNuX9WzHzJ6+c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=blXRbg96UePbwcYT7a6crKz1HDOnR67Gdkl6FJPyKlAiNQ+S/NzQ2uO8U0rv38OPa
-	 s9GRquiEvZqSXwoxlXQRlD7LcIQsCglORpblx87oAiEzAaxCMuYBHXHoXCSJitb0J2
-	 JAlB8qCa/25EKJhusoNKjHd0HkPIq2dn3KaXzOR4=
+	by mail.kernel.org (Postfix) with ESMTP id 5BFB8208B3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 16:57:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbgICQpX (ORCPT
+        id S1728491AbgICQ5Z (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 12:45:23 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41535 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728145AbgICQpV (ORCPT
+        Thu, 3 Sep 2020 12:57:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59010 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728085AbgICQ5Y (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 12:45:21 -0400
-Received: by mail-io1-f67.google.com with SMTP id m23so3623844iol.8;
-        Thu, 03 Sep 2020 09:45:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZP59A809vUXPKAmKCl/+/Toy2Yc+dTL7EkzSdpcrdXA=;
-        b=JmQlumHyxHCdAITw1RXbti28uuoFttAt5onCUNYTJ8YD/cnK4ULSN7IKJ/KNM0TfY/
-         xf8+ehMIXIO73R+p3/+bIR/oNNe0h7GhSn2y85IrCtOnM9UwgfOGFDjv2BVf5/Ios1pr
-         3fdFMDD4atn9JSQmVq+qK7laFFd59KN0J6xnreG2rlNo+0qRrEV2k9y/qtk2CfKN73zp
-         EOZByji7QFVS4Ii0EF7O8D1yZBZyAJkE+o5b9xEjtK6BwCx1hXQrsCgEiGs4q033+sFN
-         HpW/2o8SXqKzkQ8h/gE1zSkQb7HoZdNGkV9fbkQF5v7KJEZgQETK1jl/eFDZjILRJ1Eb
-         1spQ==
-X-Gm-Message-State: AOAM5331RsOfPYi4hRWHmTSg+ya+y60vWdLHLzo7Cfor+cRdvRFV+QCr
-        070PY+2hQm8PVnKkkqgUjA==
-X-Google-Smtp-Source: ABdhPJz3QtFdJj9xf68T2MjYHLUlRhw4wqkk0yrCjfmHkP7HHKrqIxRy5KYmadUP48rBi4sy6gDkig==
-X-Received: by 2002:a05:6638:d4f:: with SMTP id d15mr4016623jak.119.1599151518184;
-        Thu, 03 Sep 2020 09:45:18 -0700 (PDT)
-Received: from xps15 ([64.188.179.249])
-        by smtp.gmail.com with ESMTPSA id p78sm1582218iod.0.2020.09.03.09.45.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Sep 2020 09:45:17 -0700 (PDT)
-Received: (nullmailer pid 2928036 invoked by uid 1000);
-        Thu, 03 Sep 2020 16:45:13 -0000
-Date:   Thu, 3 Sep 2020 10:45:13 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        David Airlie <airlied@linux.ie>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        alsa-devel@alsa-project.org, Sangbeom Kim <sbkim73@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: [PATCH 01/10] dt-bindings: arm: samsung: pmu: Use
- unevaluatedProperties
-Message-ID: <20200903164513.GB2925151@bogus>
-References: <20200829142501.31478-1-krzk@kernel.org>
- <159897179515.47719.9922715760129781914.b4-ty@kernel.org>
+        Thu, 3 Sep 2020 12:57:24 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68AF7C061245
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Sep 2020 09:57:24 -0700 (PDT)
+Received: from [2a0a:edc0:0:1101:1d::39] (helo=dude03.red.stw.pengutronix.de)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1kDsY5-0003Y9-GE; Thu, 03 Sep 2020 18:57:22 +0200
+Received: from mtr by dude03.red.stw.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mtr@dude03.red.stw.pengutronix.de>)
+        id 1kDsY3-005L3N-KR; Thu, 03 Sep 2020 18:57:19 +0200
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc:     kernel@pengutronix.de, Laurent.pinchart@ideasonboard.com,
+        krzk@kernel.org, narmstrong@baylibre.com,
+        Michael Tretter <m.tretter@pengutronix.de>
+Date:   Thu,  3 Sep 2020 18:57:08 +0200
+Message-Id: <20200903165717.1272492-8-m.tretter@pengutronix.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200903165717.1272492-1-m.tretter@pengutronix.de>
+References: <20200903165717.1272492-1-m.tretter@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <159897179515.47719.9922715760129781914.b4-ty@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::39
+X-SA-Exim-Mail-From: mtr@pengutronix.de
+Subject: [PATCH 07/16] drm/exynos: get encoder from bridge whenever possible
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on metis.ext.pengutronix.de)
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 01, 2020 at 03:50:00PM +0100, Mark Brown wrote:
-> On Sat, 29 Aug 2020 16:24:52 +0200, Krzysztof Kozlowski wrote:
-> > Additional properties actually might appear (e.g. assigned-clocks) so
-> > use unevaluatedProperties to fix dtbs_check warnings like:
-> > 
-> >   arch/arm64/boot/dts/exynos/exynos5433-tm2.dt.yaml: system-controller@105c0000:
-> >     'assigned-clock-parents', 'assigned-clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
-> 
-> Applied to
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-> 
-> Thanks!
-> 
-> [1/1] ASoC: samsung-i2s: Use unevaluatedProperties
->       commit: 8187d8300251a99e40e288be80bef6a15b7b22e4
+The bridge will not necessarily use the encoder of struct exynos_dsi,
+but might use another encoder from another drm driver. Therefore, the
+driver has to use the encoder from the bridge instead of the one from
+exynos_dsi.
 
-Please revert or drop. All these 'unevaluatedProperties' changes are 
-wrong.
+Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-Rob
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 657de5407190..51ec37304a69 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1289,7 +1289,7 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
+ static irqreturn_t exynos_dsi_te_irq_handler(int irq, void *dev_id)
+ {
+ 	struct exynos_dsi *dsi = (struct exynos_dsi *)dev_id;
+-	struct drm_encoder *encoder = &dsi->encoder;
++	struct drm_encoder *encoder = dsi->bridge.encoder;
+ 
+ 	if (dsi->state & DSIM_STATE_VIDOUT_AVAILABLE)
+ 		exynos_drm_crtc_te_handler(encoder->crtc);
+@@ -1491,11 +1491,10 @@ static const struct drm_connector_helper_funcs exynos_dsi_connector_helper_funcs
+ 	.get_modes = exynos_dsi_get_modes,
+ };
+ 
+-static int exynos_dsi_create_connector(struct drm_encoder *encoder)
++static int exynos_dsi_create_connector(struct exynos_dsi *dsi)
+ {
+-	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+ 	struct drm_connector *connector = &dsi->connector;
+-	struct drm_device *drm = encoder->dev;
++	struct drm_device *drm = dsi->bridge.dev;
+ 	int ret;
+ 
+ 	connector->polled = DRM_CONNECTOR_POLL_HPD;
+@@ -1510,7 +1509,7 @@ static int exynos_dsi_create_connector(struct drm_encoder *encoder)
+ 
+ 	connector->status = connector_status_disconnected;
+ 	drm_connector_helper_add(connector, &exynos_dsi_connector_helper_funcs);
+-	drm_connector_attach_encoder(connector, encoder);
++	drm_connector_attach_encoder(connector, dsi->bridge.encoder);
+ 	if (!drm->registered)
+ 		return 0;
+ 
+@@ -1586,7 +1585,7 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+ 		dsi->out_bridge = out_bridge;
+ 		list_splice_init(&encoder->bridge_chain, &dsi->bridge_chain);
+ 	} else {
+-		int ret = exynos_dsi_create_connector(encoder);
++		int ret = exynos_dsi_create_connector(dsi);
+ 
+ 		if (ret) {
+ 			DRM_DEV_ERROR(dsi->dev,
+@@ -1637,7 +1636,7 @@ static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
+ 				  struct mipi_dsi_device *device)
+ {
+ 	struct exynos_dsi *dsi = host_to_dsi(host);
+-	struct drm_device *drm = dsi->encoder.dev;
++	struct drm_device *drm = dsi->bridge.encoder->dev;
+ 
+ 	if (dsi->panel) {
+ 		mutex_lock(&drm->mode_config.mutex);
+-- 
+2.20.1
+
