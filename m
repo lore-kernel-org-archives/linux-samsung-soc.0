@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65221C35267
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEACC2D0E1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FAE420658
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:34:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C775A20658
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:34:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599165269;
-	bh=jQf1YvOOi6qqOrdkJa0hlJPeE/VEjcP4wOVbLqeX3js=;
-	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c3C7q7dPi0Su/n9JWrgAyaNDN/W0ctl39kaWdeLW11EXlV4j1F8woSuzWy1w+5NoB
-	 MtwSdhb6gxV8LDxWO9WhiNKsBPwpEOcudMuy35AFD8qiH41k63JmkK6t8oQQNgHRML
-	 GfFHfYSKhMxjvp0jn3BxgQOM5JOVGfR78wTfbcU0=
+	s=default; t=1599165279;
+	bh=92uFz6sFhAh1pp3KzCm8GS1+pP7l6jA8SS2d+ieytR8=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=izs6mXuRAVWIT8oPp6cvr91ukabTK4E1iqT+Tj4xlPVzTrDSjUgO+AGohT+bdr1X1
+	 pBwxitVVQLA3OgZ6bn/1xNKzMDqIRALf+G81mNig/ku7HF9o3tAWCE8fIcBV8VfM+3
+	 sItSj6mGmtqO39TZj8mF6enzr9XwUhGiHRplzKXA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729232AbgICUeR (ORCPT
+        id S1729421AbgICUei (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 16:34:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40608 "EHLO mail.kernel.org"
+        Thu, 3 Sep 2020 16:34:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729607AbgICUdK (ORCPT
+        id S1729602AbgICUdF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 16:33:10 -0400
+        Thu, 3 Sep 2020 16:33:05 -0400
 Received: from localhost.localdomain (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 845F120684;
-        Thu,  3 Sep 2020 20:33:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80B7620658;
+        Thu,  3 Sep 2020 20:33:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599165189;
-        bh=jQf1YvOOi6qqOrdkJa0hlJPeE/VEjcP4wOVbLqeX3js=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=unymFlAvsxJBHZVuoj7ah2m390fM5UKAcnYHWW0rts3GWScaOIKpbm2URLteZPJUJ
-         WRns507l8M+gsoxxfUDPPoUvtH2rv/h8ExKajWoGGjthpBUZ8FzcXz68IZs86uDZs+
-         z1Cbyp/c1zl3H9L9ySoci4NKJTxtpnBjlWigdCGE=
+        s=default; t=1599165185;
+        bh=92uFz6sFhAh1pp3KzCm8GS1+pP7l6jA8SS2d+ieytR8=;
+        h=From:To:Subject:Date:From;
+        b=RhMk/jlN1GrSCCHWwfyBk8c6vjdyZL4trcZAoUtR2Pj6c+zkByMAfdIYCwyCTNzct
+         tQ8iIiltGL5PChRum0BZyNoiFKGrh5cKwjW7wcfYwm8sMwdEZS36+j83CgtJ5m5TFg
+         KJpc9Qof6PAk/hkh1Om+q3zoY7MMzk+rW4BcQpK0=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Sangbeom Kim <sbkim73@samsung.com>,
@@ -50,12 +50,10 @@ To:     Krzysztof Kozlowski <krzk@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 2/4] ASoC: samsung-i2s: Add missing properties
-Date:   Thu,  3 Sep 2020 22:32:48 +0200
-Message-Id: <20200903203250.19830-2-krzk@kernel.org>
+Subject: [PATCH 1/4] ASoC: odroid: Add missing properties
+Date:   Thu,  3 Sep 2020 22:32:47 +0200
+Message-Id: <20200903203250.19830-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200903203250.19830-1-krzk@kernel.org>
-References: <20200903203250.19830-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -70,61 +68,30 @@ Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
 
 Fixup for:
-https://lore.kernel.org/linux-samsung-soc/20200829142501.31478-6-krzk@kernel.org/T/#m7476a34a33a443d05d2f05988e43d6a34c6fb227
+https://lore.kernel.org/lkml/30b8ea43-c2d0-5ddf-dc16-a8fe80d47c38@samsung.com/
 ---
- .../devicetree/bindings/sound/samsung-i2s.yaml  | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/sound/samsung,odroid.yaml          | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.yaml b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
-index 16dc81288115..2e3628ef48df 100644
---- a/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
-+++ b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
-@@ -41,6 +41,12 @@ properties:
-       - samsung,exynos7-i2s
-       - samsung,exynos7-i2s1
- 
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-   reg:
-     maxItems: 1
- 
-@@ -58,6 +64,9 @@ properties:
-           - const: rx
-           - const: tx-sec
+diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.yaml b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
+index de1be3d6d1e9..e8122bc87362 100644
+--- a/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
++++ b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
+@@ -28,6 +28,11 @@ properties:
+     $ref: /schemas/types.yaml#/definitions/string
+     description: The user-visible name of this sound complex.
  
 +  assigned-clock-parents: true
++  assigned-clock-rates: true
 +  assigned-clocks: true
++  clocks: true
 +
-   clocks:
-     minItems: 1
-     maxItems: 3
-@@ -92,6 +101,9 @@ properties:
-           - const: i2s_cdclk2
-     description: Names of the CDCLK I2S output clocks.
- 
-+  interrupts:
-+    maxItems: 1
-+
-   samsung,idma-addr:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     description: |
-@@ -104,6 +116,9 @@ properties:
-   pinctrl-names:
-     const: default
- 
-+  power-domains:
-+    maxItems: 1
-+
-   "#sound-dai-cells":
-     const: 1
- 
-@@ -115,7 +130,7 @@ required:
-   - clocks
-   - clock-names
+   cpu:
+     type: object
+     properties:
+@@ -69,7 +74,7 @@ required:
+   - cpu
+   - codec
  
 -unevaluatedProperties: false
 +additionalProperties: false
