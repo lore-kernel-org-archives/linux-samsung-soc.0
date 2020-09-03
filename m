@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33589C2BC0E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BB9C2D0A5
 	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 16:57:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1509220716
+	by mail.kernel.org (Postfix) with ESMTP id CEF75206A5
 	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 16:57:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbgICQ5g (ORCPT
+        id S1728688AbgICQ5h (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 12:57:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59038 "EHLO
+        Thu, 3 Sep 2020 12:57:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728951AbgICQ53 (ORCPT
+        with ESMTP id S1728988AbgICQ5a (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 12:57:29 -0400
+        Thu, 3 Sep 2020 12:57:30 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D875C061245
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Sep 2020 09:57:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A749FC06125C
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Sep 2020 09:57:29 -0700 (PDT)
 Received: from [2a0a:edc0:0:1101:1d::39] (helo=dude03.red.stw.pengutronix.de)
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <mtr@pengutronix.de>)
-        id 1kDsY9-0003YA-Ok; Thu, 03 Sep 2020 18:57:26 +0200
+        id 1kDsY9-0003YG-Or; Thu, 03 Sep 2020 18:57:27 +0200
 Received: from mtr by dude03.red.stw.pengutronix.de with local (Exim 4.92)
         (envelope-from <mtr@dude03.red.stw.pengutronix.de>)
-        id 1kDsY3-005L3Q-Kq; Thu, 03 Sep 2020 18:57:19 +0200
+        id 1kDsY3-005L3i-NZ; Thu, 03 Sep 2020 18:57:19 +0200
 From:   Michael Tretter <m.tretter@pengutronix.de>
 To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc:     kernel@pengutronix.de, Laurent.pinchart@ideasonboard.com,
         krzk@kernel.org, narmstrong@baylibre.com,
         Michael Tretter <m.tretter@pengutronix.de>
-Date:   Thu,  3 Sep 2020 18:57:09 +0200
-Message-Id: <20200903165717.1272492-9-m.tretter@pengutronix.de>
+Date:   Thu,  3 Sep 2020 18:57:15 +0200
+Message-Id: <20200903165717.1272492-15-m.tretter@pengutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200903165717.1272492-1-m.tretter@pengutronix.de>
 References: <20200903165717.1272492-1-m.tretter@pengutronix.de>
@@ -46,7 +46,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::39
 X-SA-Exim-Mail-From: mtr@pengutronix.de
-Subject: [PATCH 08/16] drm/exynos: use exynos_dsi as drvdata
+Subject: [PATCH 14/16] drm/exynos: add callback for enabling i80 mode
 X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
 X-SA-Exim-Scanned: Yes (on metis.ext.pengutronix.de)
 X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
@@ -55,88 +55,98 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the exynos_dsi as drvdata instead of the encoder to further decouple
-the driver from the encoder.
+Display controllers need to know if the MIPI DSI bridge is running in
+command or video mode. Allow platform drivers to register a callback for
+being notified about the used mode.
 
 Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 23 +++++++----------------
- 1 file changed, 7 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 51ec37304a69..2e8142464b74 100644
+index 993402f1f7c7..a9dac66c834f 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -290,11 +290,6 @@ struct exynos_dsi {
- #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
- #define connector_to_dsi(c) container_of(c, struct exynos_dsi, connector)
+@@ -255,6 +255,7 @@ struct exynos_dsi_driver_data {
+ 	unsigned int num_bits_resol;
+ 	const unsigned int *reg_values;
+ 	void (*te_handler)(struct drm_encoder *encoder);
++	void (*set_command_node)(struct drm_encoder *encoder, bool enable);
+ };
  
--static inline struct exynos_dsi *encoder_to_dsi(struct drm_encoder *e)
--{
--	return container_of(e, struct exynos_dsi, encoder);
--}
--
- enum reg_idx {
- 	DSIM_STATUS_REG,	/* Status register */
- 	DSIM_SWRST_REG,		/* Software reset register */
-@@ -1738,8 +1733,8 @@ static int exynos_dsi_parse_dt(struct exynos_dsi *dsi)
- static int exynos_dsi_bind(struct device *dev, struct device *master,
- 				void *data)
- {
--	struct drm_encoder *encoder = dev_get_drvdata(dev);
--	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
-+	struct exynos_dsi *dsi = dev_get_drvdata(dev);
-+	struct drm_encoder *encoder = &dsi->encoder;
- 	struct drm_device *drm_dev = data;
- 	struct device_node *in_bridge_node;
- 	struct drm_bridge *in_bridge;
-@@ -1769,8 +1764,7 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
- static void exynos_dsi_unbind(struct device *dev, struct device *master,
- 				void *data)
- {
--	struct drm_encoder *encoder = dev_get_drvdata(dev);
--	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
-+	struct exynos_dsi *dsi = dev_get_drvdata(dev);
- 
- 	exynos_dsi_disable(dsi);
- 
-@@ -1896,15 +1890,14 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 	dsi = __exynos_dsi_probe(pdev);
- 	if (IS_ERR(dsi))
- 		return PTR_ERR(dsi);
--	platform_set_drvdata(pdev, &dsi->encoder);
-+	platform_set_drvdata(pdev, dsi);
- 
- 	return component_add(&pdev->dev, &exynos_dsi_component_ops);
+ struct exynos_dsi {
+@@ -471,6 +472,19 @@ static void exynos_dsi_te_handler(struct drm_encoder *encoder)
+ 	exynos_drm_crtc_te_handler(encoder->crtc);
  }
  
- static int exynos_dsi_remove(struct platform_device *pdev)
- {
--	struct drm_encoder *encoder = platform_get_drvdata(pdev);
--	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
-+	struct exynos_dsi *dsi = platform_get_drvdata(pdev);
++static void exynos_dsi_set_command_mode(struct drm_encoder *encoder,
++					bool enable)
++{
++	struct drm_device *drm = encoder->dev;
++	struct exynos_drm_crtc *crtc;
++
++	crtc = exynos_drm_crtc_get_by_type(drm, EXYNOS_DISPLAY_TYPE_LCD);
++	if (IS_ERR(crtc))
++		return;
++
++	crtc->i80_mode = enable;
++}
++
+ static const struct exynos_dsi_driver_data exynos3_dsi_driver_data = {
+ 	.reg_ofs = EXYNOS_REG_OFS,
+ 	.plltmr_reg = 0x50,
+@@ -482,6 +496,7 @@ static const struct exynos_dsi_driver_data exynos3_dsi_driver_data = {
+ 	.num_bits_resol = 11,
+ 	.reg_values = reg_values,
+ 	.te_handler = exynos_dsi_te_handler,
++	.set_command_node = exynos_dsi_set_command_mode,
+ };
  
- 	__exynos_dsi_remove(dsi);
+ static const struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
+@@ -495,6 +510,7 @@ static const struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
+ 	.num_bits_resol = 11,
+ 	.reg_values = reg_values,
+ 	.te_handler = exynos_dsi_te_handler,
++	.set_command_node = exynos_dsi_set_command_mode,
+ };
  
-@@ -1915,8 +1908,7 @@ static int exynos_dsi_remove(struct platform_device *pdev)
+ static const struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
+@@ -506,6 +522,7 @@ static const struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
+ 	.num_bits_resol = 11,
+ 	.reg_values = reg_values,
+ 	.te_handler = exynos_dsi_te_handler,
++	.set_command_node = exynos_dsi_set_command_mode,
+ };
  
- static int __maybe_unused exynos_dsi_suspend(struct device *dev)
- {
--	struct drm_encoder *encoder = dev_get_drvdata(dev);
--	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
-+	struct exynos_dsi *dsi = dev_get_drvdata(dev);
- 	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
- 	int ret, i;
+ static const struct exynos_dsi_driver_data exynos5433_dsi_driver_data = {
+@@ -518,6 +535,7 @@ static const struct exynos_dsi_driver_data exynos5433_dsi_driver_data = {
+ 	.num_bits_resol = 12,
+ 	.reg_values = exynos5433_reg_values,
+ 	.te_handler = exynos_dsi_te_handler,
++	.set_command_node = exynos_dsi_set_command_mode,
+ };
  
-@@ -1946,8 +1938,7 @@ static int __maybe_unused exynos_dsi_suspend(struct device *dev)
+ static const struct exynos_dsi_driver_data exynos5422_dsi_driver_data = {
+@@ -530,6 +548,7 @@ static const struct exynos_dsi_driver_data exynos5422_dsi_driver_data = {
+ 	.num_bits_resol = 12,
+ 	.reg_values = exynos5422_reg_values,
+ 	.te_handler = exynos_dsi_te_handler,
++	.set_command_node = exynos_dsi_set_command_mode,
+ };
  
- static int __maybe_unused exynos_dsi_resume(struct device *dev)
- {
--	struct drm_encoder *encoder = dev_get_drvdata(dev);
--	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
-+	struct exynos_dsi *dsi = dev_get_drvdata(dev);
- 	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
- 	int ret, i;
+ static const struct of_device_id exynos_dsi_of_match[] = {
+@@ -1651,8 +1670,9 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+ 	dsi->lanes = device->lanes;
+ 	dsi->format = device->format;
+ 	dsi->mode_flags = device->mode_flags;
+-	exynos_drm_crtc_get_by_type(drm, EXYNOS_DISPLAY_TYPE_LCD)->i80_mode =
+-			!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO);
++	if (dsi->driver_data->set_command_node)
++		dsi->driver_data->set_command_node(encoder,
++				!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO));
+ 
+ 	mutex_unlock(&drm->mode_config.mutex);
  
 -- 
 2.20.1
