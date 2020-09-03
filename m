@@ -2,176 +2,89 @@ Return-Path: <SRS0=oxPC=CM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F5CC2D0A6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC34C2D0E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11150206C0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:27:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="RCNqeDrb"
+	by mail.kernel.org (Postfix) with ESMTP id EBAA420722
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Sep 2020 20:34:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599165249;
+	bh=rGPaazvsw6UUUMLNC7pSLAMKZMR24aj4m3T8eVAFLtU=;
+	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=nJq0A6gMe+SqpL9t++VlvWVs98aX0IofTG+PW7KXaRai24mi6boP5G/p0Jd0r5GJQ
+	 SHCkmIUG+Jj+r4hpO9w+TTG+djfYGA8b5cw4WSH+OEnZIer9/grq9oFnpRginzpuRR
+	 MYX5f/nNxh4w/UKItXNFhodgbEhReRWgmMDW4nxk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729167AbgICU1R (ORCPT
+        id S1729656AbgICUd5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 16:27:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34834 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728397AbgICU1L (ORCPT
+        Thu, 3 Sep 2020 16:33:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40854 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729323AbgICUdR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 16:27:11 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C424C061246
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Sep 2020 13:27:09 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id d190so4839488iof.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Sep 2020 13:27:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XHoryAxbdooXqCdzEiDfBNHDRDqVJTRBeWqND7AhQWw=;
-        b=RCNqeDrberJQa8iEXoKdFFmsXmVgm0OJW7eIchkOEab4PeUqCYPXFDpEN7VrPE2Q2r
-         GUQQuiaAGbKydhEJAnnDCPiK90LXur6kCJr5L5sQ2r/ne46TMpiIdcTaCv2fHYoM6yNb
-         n/CznyFIPF9GJUXXveE7AfWdl33o/8t6SBeJ8YB3I8NVC2PqmD4/iWDqPdEI5wN78LVf
-         ncTI5ftXwXoF9V4Ax5mdMwpMg3xer78eQreGPZO8czXhtl772MKmX11X+ribr9UqcF1C
-         urDp6n8FeZvPlJlmjz8S3oOgFUFG1EujxtEbZKlxpUccJF2SFlBjkXHX8U39zQ/QDpq6
-         IUOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XHoryAxbdooXqCdzEiDfBNHDRDqVJTRBeWqND7AhQWw=;
-        b=Oxa+gNxUCwNnzIhqkfThOihc5N3BWnkprkwbznC5S4Bgih2CjEPxEyh4hPujdvbS1A
-         Dqs+v0Fq4QsMRztJgRlmL6tZEqdwNLNbXYQwy1ff0jW+a4hxau426fsiDaBQiY2/CTNi
-         TVk10HkfAYCHkJ7bTnOt7bqdpqZeHEBFbRQokzD9on2sHng7kQbAGjMA00ETlcRVpBtj
-         qIncgrwfWRv/wIR06lJpCA6Llb8wesgFP9ynwHzbWC18tY8aYj7ubgASqoaoNdxa6Bbr
-         WTclxCIFt8UmyGXNuT2UzbdlGlSnBQrSLMmbGAzIUaX+5icv/n78tatAx6IaFS8CflNJ
-         z6Wg==
-X-Gm-Message-State: AOAM530DSS34T+d4owOKkpEtkDXCLz6fA4br8d9otg6CRN9UUErE+y2t
-        4c/9Hn35q4X10VAoJ/JPdFuYLQh4RpAem48sYrHlMw==
-X-Google-Smtp-Source: ABdhPJwmTrpk85LWcnftpfNTJtQ24c/2yXv/TkIoKUAohLkMn+MLB1sF1W3BqKfqx9SeVWLrNTgZBBPqyFF6pQr5QKA=
-X-Received: by 2002:a02:834a:: with SMTP id w10mr5122585jag.63.1599164828964;
- Thu, 03 Sep 2020 13:27:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191221150402.13868-1-murphyt7@tcd.ie> <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
- <20200529124523.GA11817@infradead.org> <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
- <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com> <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
- <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com> <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
- <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com> <CALQxJuuS8KKUX_eWWSE81gsq5ePAETB-FoqRUSWFfqgr+B13gg@mail.gmail.com>
-In-Reply-To: <CALQxJuuS8KKUX_eWWSE81gsq5ePAETB-FoqRUSWFfqgr+B13gg@mail.gmail.com>
-From:   Tom Murphy <murphyt7@tcd.ie>
-Date:   Thu, 3 Sep 2020 21:26:57 +0100
-Message-ID: <CALQxJuuk0YR9dZWkqSmLU-kUKoOuuNj-kSikvQGq0wekijycLA@mail.gmail.com>
-Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        linux-mediatek@lists.infradead.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
+        Thu, 3 Sep 2020 16:33:17 -0400
+Received: from localhost.localdomain (unknown [194.230.155.106])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB5142071B;
+        Thu,  3 Sep 2020 20:33:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599165196;
+        bh=rGPaazvsw6UUUMLNC7pSLAMKZMR24aj4m3T8eVAFLtU=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=twPSX/J8eCw7EPQ43IcfD/idW6US0ZSlCKYsZLrCf6DMYqxT+UmGNZiLO37/ZIJLx
+         4HiW95TbPfl+AWwb3sjp21IC0PnPs+DhgWvi4PFuibzUL6uhIFy4B6gpi+jAX3ORbR
+         8wlEPqg+kMQifhzYnPq2SpyDMGFD4ekY7H73pvno=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 4/4] ARM: dts: exynos: Add clocks sound node in Exynos5422 Odroid XU4
+Date:   Thu,  3 Sep 2020 22:32:50 +0200
+Message-Id: <20200903203250.19830-4-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200903203250.19830-1-krzk@kernel.org>
+References: <20200903203250.19830-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 28 Aug 2020 at 00:34, Tom Murphy <murphyt7@tcd.ie> wrote:
->
-> On Thu, 27 Aug 2020 at 22:36, Logan Gunthorpe <logang@deltatee.com> wrote:
-> >
-> >
-> >
-> > On 2020-08-23 6:04 p.m., Tom Murphy wrote:
-> > > I have added a check for the sg_dma_len == 0 :
-> > > """
-> > >  } __sgt_iter(struct scatterlist *sgl, bool dma) {
-> > >         struct sgt_iter s = { .sgp = sgl };
-> > >
-> > > +       if (sgl && sg_dma_len(sgl) == 0)
-> > > +           s.sgp = NULL;
-> > >
-> > >         if (s.sgp) {
-> > >             .....
-> > > """
-> > > at location [1].
-> > > but it doens't fix the problem.
-> >
-> > Based on my read of the code, it looks like we also need to change usage
-> > of sgl->length... Something like the rough patch below, maybe?
-> >
-> > Also, Tom, do you have an updated version of the patchset to convert the
-> > Intel IOMMU to dma-iommu available? The last one I've found doesn't
-> > apply cleanly (I'm assuming parts of it have been merged in slightly
-> > modified forms).
-> >
->
-> I'll try and post one in the next 24hours
+The dtschema expects "clocks" property if "assigned-clocks" are used.
+Add reference to all parent clocks to silence the dtbs_check warnings.
 
-I have just posted this now:
-The subject of the cover letter is:
-"[PATCH V2 0/5] Convert the intel iommu driver to the dma-iommu api"
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu4.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
->
-> > Thanks,
-> >
-> > Logan
-> >
-> > --
-> >
-> > diff --git a/drivers/gpu/drm/i915/i915_scatterlist.h
-> > b/drivers/gpu/drm/i915/i915
-> > index b7b59328cb76..9367ac801f0c 100644
-> > --- a/drivers/gpu/drm/i915/i915_scatterlist.h
-> > +++ b/drivers/gpu/drm/i915/i915_scatterlist.h
-> > @@ -27,13 +27,19 @@ static __always_inline struct sgt_iter {
-> >  } __sgt_iter(struct scatterlist *sgl, bool dma) {
-> >         struct sgt_iter s = { .sgp = sgl };
-> >
-> > +       if (sgl && !sg_dma_len(s.sgp))
-> > +               s.sgp = NULL;
-> > +
-> >         if (s.sgp) {
-> >                 s.max = s.curr = s.sgp->offset;
-> > -               s.max += s.sgp->length;
-> > -               if (dma)
-> > +
-> > +               if (dma) {
-> > +                       s.max += sg_dma_len(s.sgp);
-> >                         s.dma = sg_dma_address(s.sgp);
-> > -               else
-> > +               } else {
-> > +                       s.max += s.sgp->length;
-> >                         s.pfn = page_to_pfn(sg_page(s.sgp));
-> > +               }
-> >         }
-> >
-> >         return s;
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+index 892d389d6d09..fe4266850659 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+@@ -44,6 +44,11 @@
+ 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
+ 				<&clock_audss EXYNOS_DOUT_I2S>;
+ 
++		clocks = <&clock CLK_FOUT_EPLL>,
++			 <&clock CLK_MOUT_EPLL>,
++			 <&clock CLK_MOUT_MAU_EPLL>,
++			 <&clock CLK_MAU_EPLL>,
++			 <&clock_audss EXYNOS_MOUT_AUDSS>;
+ 		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
+ 				<&clock CLK_MOUT_EPLL>,
+ 				<&clock CLK_MOUT_MAU_EPLL>,
+-- 
+2.17.1
+
