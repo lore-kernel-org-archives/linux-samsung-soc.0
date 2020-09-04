@@ -5,154 +5,195 @@ X-Spam-Level:
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8A6C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Sep 2020 07:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 739D4C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Sep 2020 07:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E4E9206D4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Sep 2020 07:02:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31C1B20791
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Sep 2020 07:28:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ss8Um3kc"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Wi+Nidlb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726425AbgIDHCY (ORCPT
+        id S1729572AbgIDH2b (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 4 Sep 2020 03:02:24 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:33495 "EHLO
+        Fri, 4 Sep 2020 03:28:31 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43351 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbgIDHCX (ORCPT
+        with ESMTP id S1726089AbgIDH2b (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Sep 2020 03:02:23 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200904070221euoutp01ea0572957d3a3969e5777c41f78502d1~xgpoeq6qG2978529785euoutp01v
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Sep 2020 07:02:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200904070221euoutp01ea0572957d3a3969e5777c41f78502d1~xgpoeq6qG2978529785euoutp01v
+        Fri, 4 Sep 2020 03:28:31 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200904072829euoutp017e9093fb5228345967a3298232d173c2~xhAdKDkcl1922619226euoutp01x
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Sep 2020 07:28:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200904072829euoutp017e9093fb5228345967a3298232d173c2~xhAdKDkcl1922619226euoutp01x
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1599202941;
-        bh=GElZ8nRDfQZGXdl9mZOXUOC0do4xtZsOVmmu33lDiM0=;
+        s=mail20170921; t=1599204509;
+        bh=/luka6O8tQmQC+CLQPjkd8M2eOCfrb18ULApQWDFayo=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Ss8Um3kcvL9aAuiO3NyE8TCk8wZzPyarLqfRiyNGdo+Pvni/wv4zakkbpF8TIIm5m
-         ju6tL7H/A7k5LiM9hCK+WqMzNSbShCnsxsSzsOawkFA2DCx8mxPhA4QjIoWis8SkSQ
-         cWPcNfM5KSMk53jOZNsBE1eZkfWhKP3Pb3xd4tjM=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200904070220eucas1p1cd894fc5775cdc872bb05e062c97d089~xgpoMIp9k2108221082eucas1p1q;
-        Fri,  4 Sep 2020 07:02:20 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 10.9D.06318.C76E15F5; Fri,  4
-        Sep 2020 08:02:20 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200904070220eucas1p29c63e03c10163f153b70e37d4a4ad0d9~xgpn2m7vZ2350823508eucas1p2b;
-        Fri,  4 Sep 2020 07:02:20 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200904070220eusmtrp1283f3745cee48ad685fb9c5a9616cbbd~xgpn16HNu1044210442eusmtrp1U;
-        Fri,  4 Sep 2020 07:02:20 +0000 (GMT)
-X-AuditID: cbfec7f5-371ff700000018ae-cb-5f51e67c62ba
+        b=Wi+Nidlb9NhmL1W3difNQMO+T3TgxkafophTicOijU1NvvKeAQOGTcVK0z67Oodsp
+         v2h7gFNxf8O6RkuJYjpwPkftia6KDigJdM9o+irSEIMthKKtTmf1XjVT+y0cpPmyiW
+         P3pOnc5HHyUiRd9nEwlQtEgkK5CI3IBZCmTrVwn8=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200904072829eucas1p28bbad0d7b5be0d28993650082eed32dd~xhAdD04fD2946229462eucas1p2w;
+        Fri,  4 Sep 2020 07:28:29 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 2E.B8.06456.D9CE15F5; Fri,  4
+        Sep 2020 08:28:29 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200904072829eucas1p19256652ad2a0f155fbe048fe0fead505~xhAcqxfVq0715107151eucas1p1W;
+        Fri,  4 Sep 2020 07:28:29 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200904072828eusmtrp2ad1f439f525315fa25a159856d87414a~xhAcqJWd31062510625eusmtrp2H;
+        Fri,  4 Sep 2020 07:28:28 +0000 (GMT)
+X-AuditID: cbfec7f2-809ff70000001938-ed-5f51ec9d7420
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 17.16.06017.C76E15F5; Fri,  4
-        Sep 2020 08:02:20 +0100 (BST)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6D.48.06314.C9CE15F5; Fri,  4
+        Sep 2020 08:28:28 +0100 (BST)
 Received: from [106.210.88.143] (unknown [106.210.88.143]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200904070219eusmtip1403d55af07f71eb3aeefb19e701bf38a~xgpnXYF1g3186731867eusmtip1X;
-        Fri,  4 Sep 2020 07:02:19 +0000 (GMT)
-Subject: Re: [PATCH v2 2/3] ARM: dts: exynos: Add assigned clock parent to
- CMU in Exynos4412 Odroid
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
+        20200904072828eusmtip13fe683db3791fd332c7a80e6875405de~xhAcKnOOT1102411024eusmtip1a;
+        Fri,  4 Sep 2020 07:28:28 +0000 (GMT)
+Subject: Re: [PATCH] drm/exynos: Drop local dma_parms
+To:     Robin Murphy <robin.murphy@arm.com>, inki.dae@samsung.com,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com
+Cc:     linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>
+        dri-devel@lists.freedesktop.org
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <d5468bf5-516f-58a8-4544-fe7fc377e7b1@samsung.com>
-Date:   Fri, 4 Sep 2020 09:02:23 +0200
+Message-ID: <fedadf3b-f9f8-b959-6e25-e687ad8a78f3@samsung.com>
+Date:   Fri, 4 Sep 2020 09:28:32 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
         Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <20200903181425.5015-2-krzk@kernel.org>
+In-Reply-To: <dade9fce82e4905f3d61494785f81604674df5da.1599166024.git.robin.murphy@arm.com>
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGKsWRmVeSWpSXmKPExsWy7djPc7o1zwLjDeYeMrSYf+Qcq0X/49fM
-        FufPb2C32PT4GqvF5V1z2CxmnN/HZNG69wi7RfvTl8wOHB6bVnWyeWxeUu/xeZNcAHMUl01K
-        ak5mWWqRvl0CV8bdN4dYCvbzVDR9Ps7WwLiGq4uRk0NCwETi9Pm5rF2MXBxCAisYJS7NOMkM
-        khAS+MIocWaaLUTiM6PEv5/TmGA6Zk6fA9WxnFHiV+trNgjnPaPEhY2r2UGqhAVSJbYtaGQB
-        SYiAtF+efA1sLrOArsT0d2/AbDYBQ4mut11sIDavgJ3E/VUTweIsAioSnz9fAVsnKhAncezU
-        IxaIGkGJkzOfgNmcQGfsuPWVFWKmvMT2t3Og5otL3HoynwlksYTAKnaJ5dtOsUHc7SLxc1M3
-        O4QtLPHq+BYoW0bi9OQeFoiGZkaJh+fWskM4PUBnN81ghKiylrhz7hfQJA6gFZoS63fpQ4Qd
-        JQ5d7WECCUsI8EnceCsIcQSfxKRt05khwrwSHW1CENVqErOOr4Nbe/DCJeYJjEqzkLw2C8k7
-        s5C8Mwth7wJGllWM4qmlxbnpqcXGeanlesWJucWleel6yfm5mxiBqef0v+NfdzDu+5N0iFGA
-        g1GJh/fG+4B4IdbEsuLK3EOMEhzMSiK8TmdPxwnxpiRWVqUW5ccXleakFh9ilOZgURLnNV70
-        MlZIID2xJDU7NbUgtQgmy8TBKdXAyGGyqM0178BixZs1y4InJLgt+mvS4XHOSv2de/VUn808
-        gdbdX72K/7sVHbRSWTrrTJVd2pz/mZ/3CytZJp0x23rzit23w6Zy2vG7gptiK/hS/xyRv1xr
-        yvNqjtSOZlvlUt37H99fYl/9snqWumgOy/zYooBe8Wn3vgtxbn/30GRinUHX9PPMSizFGYmG
-        WsxFxYkAM3gMkDkDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsVy+t/xu7o1zwLjDX41ilvMP3KO1aL/8Wtm
-        i/PnN7BbbHp8jdXi8q45bBYzzu9jsmjde4Tdov3pS2YHDo9NqzrZPDYvqff4vEkugDlKz6Yo
-        v7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL+Pum0MsBft5
-        Kpo+H2drYFzD1cXIySEhYCIxc/oc1i5GLg4hgaWMEgsb1zNDJGQkTk5rYIWwhSX+XOtigyh6
-        yyix/8sjoAQHh7BAqsTcHmOQuIjAZ0aJZ42bwJqZBXQlpr97wwzRsJFRYvGqX4wgCTYBQ4mu
-        tyCTODl4Bewk7q+aCNbAIqAi8fnzFSYQW1QgTuJMzwuoGkGJkzOfsIDYnECn7rj1lRVigZnE
-        vM0PoZbJS2x/OwfKFpe49WQ+0wRGoVlI2mchaZmFpGUWkpYFjCyrGEVSS4tz03OLjfSKE3OL
-        S/PS9ZLzczcxAmNt27GfW3Ywdr0LPsQowMGoxMN7431AvBBrYllxZe4hRgkOZiURXqezp+OE
-        eFMSK6tSi/Lji0pzUosPMZoCPTeRWUo0OR+YBvJK4g1NDc0tLA3Njc2NzSyUxHk7BA7GCAmk
-        J5akZqemFqQWwfQxcXBKNTDGaFhcmHLf6e4G98tlaxVi13I/kHU6uW7XRZ2cGzvZc38Xx/2d
-        fuyPn16s21tn6w+fuFcxTNqYO4nD+Mah9xF1//QVe0+rt15Y532ctarzldYmW/Z8BdZbD3lf
-        /PmzteP8tGuRaRbMa4KV+y44lotf/Rdy1c50ZrTBSgOxidpbc/LSK9vMz21RYinOSDTUYi4q
-        TgQA3vADQMsCAAA=
-X-CMS-MailID: 20200904070220eucas1p29c63e03c10163f153b70e37d4a4ad0d9
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djP87pz3wTGGxw5Jmxx5et7NotJ9yew
+        WLy4d5HF4mzTG3aLTY+vsVrMOL+PyeLghydA1uSXbA4cHmvmrWH0uN99nMlj85J6j74tqxg9
+        Pm+SC2CN4rJJSc3JLEst0rdL4Mo49imq4IBIRc/pVpYGxmsCXYycHBICJhLPdp1hBrGFBFYw
+        Sixps+9i5AKyvzBKdG98zwrhfGaUOHOjlRmm48SnZewQieWMEt+n/2eBcN4zSjT8a2ACqRIW
+        MJW4cO8mWLuIQDejxJolIFWcHMwCeRILNhxhBLHZBAwlut52sYHYvAJ2EjtWzAZrZhFQkTh/
+        +xeYLSoQJ3Hs1CMWiBpBiZMzn4DZnALREle6zzNDzJSX2P52DpQtLnHryXwmkMUSAuvYJbY/
+        fAjUwAHkuEicWZ0H8YKwxKvjW9ghbBmJ/zth6psZJR6eW8sO4fQwSlxumsEIUWUtcefcLzaQ
+        QcwCmhLrd+lDhB0lGve+ZIWYzydx460gxA18EpO2TWeGCPNKdLQJQVSrScw6vg5u7cELl5gn
+        MCrNQvLZLCTfzELyzSyEvQsYWVYxiqeWFuempxYb5qWW6xUn5haX5qXrJefnbmIEpqLT/45/
+        2sH49VLSIUYBDkYlHt4b7wPihVgTy4orcw8xSnAwK4nwOp09HSfEm5JYWZValB9fVJqTWnyI
+        UZqDRUmc13jRy1ghgfTEktTs1NSC1CKYLBMHp1QD46Svrc+/qS/s9D19Pb4lSiH0kcbb1BlR
+        R/avyFrOrD9TrrypdaYN780g1yeJXyVF+76sv1i6I+vIoUgGjdTFUp9PF/7fs7TDy6997f6v
+        1781a1/kMnK5PmnLtguMzv1P5semdqsmiq2xZLzkcCpEMOe6p2Vaeem0aa/N49kEgjjfxEYs
+        N+sOUmIpzkg01GIuKk4EANSosONBAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xu7pz3gTGG/xtM7e48vU9m8Wk+xNY
+        LF7cu8hicbbpDbvFpsfXWC1mnN/HZHHwwxMga/JLNgcOjzXz1jB63O8+zuSxeUm9R9+WVYwe
+        nzfJBbBG6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl
+        6GUc+xRVcECkoud0K0sD4zWBLkZODgkBE4kTn5axdzFycQgJLGWUuPDmMTNEQkbi5LQGVghb
+        WOLPtS42iKK3jBITzywEKxIWMJW4cO8mWJGIQDejxKTD8iA2s0CexPvdF6GmrmMEcrYzgiTY
+        BAwlut6CTOLk4BWwk9ixYjYTiM0ioCJx/vYvMFtUIE7iTM8LqBpBiZMzn7CA2JwC0RJXus8z
+        Qywwk5i3+SGULS+x/e0cKFtc4taT+UwTGIVmIWmfhaRlFpKWWUhaFjCyrGIUSS0tzk3PLTbU
+        K07MLS7NS9dLzs/dxAiMvm3Hfm7ewXhpY/AhRgEORiUe3hvvA+KFWBPLiitzDzFKcDArifA6
+        nT0dJ8SbklhZlVqUH19UmpNafIjRFOi5icxSosn5wMSQVxJvaGpobmFpaG5sbmxmoSTO2yFw
+        MEZIID2xJDU7NbUgtQimj4mDU6qBseKC4dfdM57K/Z3juiR0+7SrV6xavRuvKB63W6rSxP+l
+        yIhFqX3FyXudacFti09clC4Vjn1vs7GOf53m24fTs37vKmNTiX1zVVeUs+vHw5vPNvBNitW+
+        Ebzu8HQ5KbbIP1N+REcxlh33epVzcSbPnrm6/PldDi0tl+qP5j6TEFiyS7VFpL5BW4mlOCPR
+        UIu5qDgRABB0k+XUAgAA
+X-CMS-MailID: 20200904072829eucas1p19256652ad2a0f155fbe048fe0fead505
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200903181440eucas1p251f5f467fdacf8d74d3c20418052eb38
+X-RootMTR: 20200903205201eucas1p124161a3310b7a0a3ba077a8369daa45b
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200903181440eucas1p251f5f467fdacf8d74d3c20418052eb38
-References: <20200903181425.5015-1-krzk@kernel.org>
-        <CGME20200903181440eucas1p251f5f467fdacf8d74d3c20418052eb38@eucas1p2.samsung.com>
-        <20200903181425.5015-2-krzk@kernel.org>
+X-CMS-RootMailID: 20200903205201eucas1p124161a3310b7a0a3ba077a8369daa45b
+References: <CGME20200903205201eucas1p124161a3310b7a0a3ba077a8369daa45b@eucas1p1.samsung.com>
+        <dade9fce82e4905f3d61494785f81604674df5da.1599166024.git.robin.murphy@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Hi Robin,
 
-On 03.09.2020 20:14, Krzysztof Kozlowski wrote:
-> Commit 68605101460e ("ARM: dts: exynos: Add support for audio over HDMI
-> for Odroid X/X2/U3") added assigned clocks under Clock Management Unit.
+On 03.09.2020 22:51, Robin Murphy wrote:
+> Since commit 9495b7e92f71 ("driver core: platform: Initialize dma_parms
+> for platform devices"), struct platform_device already provides a
+> dma_parms structure, so we can save allocating another one.
 >
-> However the dtschema expects "clocks" property if "assigned-clocks" are
-> used.  Add reference to input clock, the parent used in
-> "assigned-clock-parents" to silence the dtschema warnings:
+> Also the DMA segment size is simply a size, not a bitmask.
 >
->    arch/arm/boot/dts/exynos4412-odroidu3.dt.yaml: clock-controller@10030000: 'clocks' is a dependency of 'assigned-clocks'
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+
+I've sent a similar patch over 2 months ago, but it looks it got lost:
+
+https://lore.kernel.org/dri-devel/20200707110827.3760-1-m.szyprowski@samsung.com/
+
+Inki, could You queue it for merge?
+
 > ---
->   arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 +
->   1 file changed, 1 insertion(+)
+>   drivers/gpu/drm/exynos/exynos_drm_dma.c | 26 +------------------------
+>   1 file changed, 1 insertion(+), 25 deletions(-)
 >
-> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> index ca3c78e0966c..9375df064076 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> @@ -120,6 +120,7 @@
->   };
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+> index 58b89ec11b0e..9f25a5ebbf7d 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+> @@ -31,23 +31,6 @@
+>   #define EXYNOS_DEV_ADDR_START	0x20000000
+>   #define EXYNOS_DEV_ADDR_SIZE	0x40000000
 >   
->   &clock {
-> +	clocks = <&clock CLK_FOUT_EPLL>;
-
-This should be one of xusbxti or xxti, because this is the proper input 
-clock for the clock controller. However in case of Exynos4, those clocks 
-needs much more cleanup. For the historical reasons, they don't use 
-generic 'fixed-clock' property, but the custom one and they are no 
-instantiated by clock framework, but the exynos4 clock driver...
-
->   	assigned-clocks = <&clock CLK_FOUT_EPLL>;
->   	assigned-clock-rates = <45158401>;
->   };
+> -static inline int configure_dma_max_seg_size(struct device *dev)
+> -{
+> -	if (!dev->dma_parms)
+> -		dev->dma_parms = kzalloc(sizeof(*dev->dma_parms), GFP_KERNEL);
+> -	if (!dev->dma_parms)
+> -		return -ENOMEM;
+> -
+> -	dma_set_max_seg_size(dev, DMA_BIT_MASK(32));
+> -	return 0;
+> -}
+> -
+> -static inline void clear_dma_max_seg_size(struct device *dev)
+> -{
+> -	kfree(dev->dma_parms);
+> -	dev->dma_parms = NULL;
+> -}
+> -
+>   /*
+>    * drm_iommu_attach_device- attach device to iommu mapping
+>    *
+> @@ -69,9 +52,7 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
+>   		return -EINVAL;
+>   	}
+>   
+> -	ret = configure_dma_max_seg_size(subdrv_dev);
+> -	if (ret)
+> -		return ret;
+> +	dma_set_max_seg_size(subdrv_dev, UINT_MAX);
+>   
+>   	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
+>   		/*
+> @@ -89,9 +70,6 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
+>   		ret = iommu_attach_device(priv->mapping, subdrv_dev);
+>   	}
+>   
+> -	if (ret)
+> -		clear_dma_max_seg_size(subdrv_dev);
+> -
+>   	return ret;
+>   }
+>   
+> @@ -114,8 +92,6 @@ static void drm_iommu_detach_device(struct drm_device *drm_dev,
+>   		arm_iommu_attach_device(subdrv_dev, *dma_priv);
+>   	} else if (IS_ENABLED(CONFIG_IOMMU_DMA))
+>   		iommu_detach_device(priv->mapping, subdrv_dev);
+> -
+> -	clear_dma_max_seg_size(subdrv_dev);
+>   }
+>   
+>   int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
 
 Best regards
 -- 
