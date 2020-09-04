@@ -2,221 +2,170 @@ Return-Path: <SRS0=fnc5=CN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59054C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Sep 2020 12:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B86D2C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Sep 2020 14:09:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29B7420791
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Sep 2020 12:20:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64475206B7
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Sep 2020 14:09:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aeYL8iR9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729941AbgIDMUi (ORCPT
+        id S1730618AbgIDOJL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 4 Sep 2020 08:20:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40338 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729932AbgIDMUf (ORCPT
+        Fri, 4 Sep 2020 10:09:11 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44927 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730612AbgIDNp4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Sep 2020 08:20:35 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61A49C061244
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Sep 2020 05:20:33 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1kEAhU-0007Vg-I5; Fri, 04 Sep 2020 14:20:16 +0200
-Received: from mtr by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1kEAhS-0007Fc-P3; Fri, 04 Sep 2020 14:20:14 +0200
-Date:   Fri, 4 Sep 2020 14:20:14 +0200
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= 
-        <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
+        Fri, 4 Sep 2020 09:45:56 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200904133458euoutp01ef65dc854e0189762ebf453d1229273d~xmAblNcoR0637106371euoutp017
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Sep 2020 13:34:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200904133458euoutp01ef65dc854e0189762ebf453d1229273d~xmAblNcoR0637106371euoutp017
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1599226498;
+        bh=8H1bscYmofV6UafZRI60uVVnlPqwrLm9J9QpIebQpZ0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=aeYL8iR9JYc9lkmxnzMIIHAnNI3E0L252yBi/RWf78z5pZDqnne/pZVBM42URUREE
+         aAvXgPCsXHqX6bfECz0cfNd1+O3pwZ/M8k0r9KjRAvBXOcCoNtdG0D7kAUAqZjSOeo
+         Com1uRGEf26F2ZIluMII0as3yXBHCrWjAZi8HNKY=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200904133457eucas1p1058cf2b68d182f31cbfbeceea7957319~xmAbFDaFL1681116811eucas1p1b;
+        Fri,  4 Sep 2020 13:34:57 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 12.66.05997.182425F5; Fri,  4
+        Sep 2020 14:34:57 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200904133457eucas1p24d73bb3e4aa921cb76dc03b309ad5632~xmAauOTvi1446414464eucas1p2N;
+        Fri,  4 Sep 2020 13:34:57 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200904133457eusmtrp2a28ab62b459b3dd2dccde1bca8d8a4db~xmAatbq4P0905709057eusmtrp2d;
+        Fri,  4 Sep 2020 13:34:57 +0000 (GMT)
+X-AuditID: cbfec7f4-677ff7000000176d-4e-5f52428144c8
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id BF.90.06017.082425F5; Fri,  4
+        Sep 2020 14:34:57 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200904133456eusmtip1181679675ed5d882c788a0eff35a5877~xmAZ7SJtr1932019320eusmtip1O;
+        Fri,  4 Sep 2020 13:34:56 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     dri-devel@lists.freedesktop.org, iommu@lists.linux-foundation.org,
+        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Inki Dae <inki.dae@samsung.com>,
         Joonyoung Shim <jy0922.shim@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
-        dri-devel@lists.freedesktop.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, kernel@pengutronix.de,
-        Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com
-Subject: Re: [PATCH 00/16] drm/exynos: Convert driver to drm bridge
-Message-ID: <20200904122014.GA7459@pengutronix.de>
-References: <20200903165717.1272492-1-m.tretter@pengutronix.de>
- <CGME20200903200844eucas1p1e3829942daec8a49d7a8ec3cd2e09038@eucas1p1.samsung.com>
- <CAJKOXPcJCfFL43OLXC_DAowU0o_jW2rZ7qX-m8ePcPEMo0PEgQ@mail.gmail.com>
- <cb6d3ced-5bd2-443f-674e-b4c9acb8c021@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cb6d3ced-5bd2-443f-674e-b4c9acb8c021@samsung.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 14:06:05 up 197 days, 19:36, 134 users,  load average: 0.48, 0.62,
- 0.37
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v10 06/30] drm: exynos: use common helper for a scatterlist
+ contiguity check
+Date:   Fri,  4 Sep 2020 15:16:47 +0200
+Message-Id: <20200904131711.12950-7-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200904131711.12950-1-m.szyprowski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSa1BMYRj2ndueXS2nrZm+YsQOzQglmvHNpOQy48zww/SPGbJ0VNRmdm1k
+        xlhbUutaDVZuXRC7XbYtRZRqlkW1G7XZkNQWFQ2jNOMWu87Kv+d9nuf9nmfe+Whc0k4G0Iny
+        fZxCLkuSUiKi5tE325Ija2Jil1b0zEInrU8wVKmrINHvmhwcdX79RKFbhocYyu09Q6CCBxFo
+        6M0zAp12fsCRzWYUoDbNRwEa7+zDkMnZRaKOuksU0tkaMFRm7hGgps8DJNLlDVPRErb0Silg
+        6ycKCNakz6bY2om3JNt73IKxVdcOs68mnTib5ygB7L1uNcWeqtYDdsw0Z9P0LaKVcVxSYiqn
+        CI3aLkoYPOsU7C30OtA1ZqfUIE+kBUIaMuHwtq4b0wIRLWFuAnjDkSvgh3EAbbXtHmUMwItF
+        54h/K8Xl4x6hBMDBx3Z8asXQfYxyuygmDGpHtX+xL3MUwMcnvdwmnCkh4GXDL1ILaNqH2Qaz
+        exa7PQSzAD6qacfdWMxEwsIT50g+LRAajI1/eSET5So7QLrfgcyoAI5Y7QLetA4OlWfgPPaB
+        I5ZqDz8b/r57FeMX0gHss5YJ+OEEgB0aHeBdEfC19TvlboQzC2FFXShPr4Yv9VWYm4bMDOgY
+        9XbTuAvm1pzHeVoMszIlvDsI5lvKp2Kb2p976rDQMmT33DTHddPWp9gZEJj/P6wAAD3w41TK
+        5HhOuUzO7Q9RypKVKnl8yM6UZBNw/bOWScv4HVD3c0czYGgg9RJPWxUTKyFlqcq05GYAaVzq
+        K17T1rJNIo6TpR3kFCmxClUSp2wGs2hC6ideXjS8VcLEy/ZxezhuL6f4p2K0MEANwtTOi42O
+        J8J5nc8qsPtdGnPCoiut6cVzBxqMGxZVhvRbM9L7J9rY2cPTxoSGp/J3qqwVVzVBZv/XiZuD
+        uzaKU8OLqPcHZmbudpod3r1fLvgHal7akPzHelUTtTbTtzeHYI19Pj3S6JmFkYda/Oc3SkID
+        668ndt5/ITZ3H1/2apeUUCbIwoJxhVL2B90DlvljAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIIsWRmVeSWpSXmKPExsVy+t/xu7qNTkHxBrtbmCx6z51kstg4Yz2r
+        xf9tE5ktrnx9z2axcvVRJotJ9yewWCzYb23x4t5FFov+x6+ZLc6f38BucbbpDbvFlysPmSw2
+        Pb7GanF51xw2ixnn9zFZrD1yl93i4IcnrBYzJr9kcxDyWDNvDaPH3m8LWDw2repk89j+7QGr
+        x/3u40wem5fUe9z+95jZY/KN5Yweu282sHn0bVnF6PF5k1wAd5SeTVF+aUmqQkZ+cYmtUrSh
+        hZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJextOpj9kLFvJUXPt8la2BcTJXFyMn
+        h4SAicTidV+Yuhi5OIQEljJK3Fm0hwUiISNxcloDK4QtLPHnWhcbRNEnRom2f6/YQBJsAoYS
+        XW8hEiICnYwS07o/soM4zAKbWST+rX8C5HBwCAvESCyeogHSwCKgKnFs2wVmEJtXwFZiYc80
+        qA3yEqs3HACLcwrYSWyd8QQsLgRU82HOYpYJjHwLGBlWMYqklhbnpucWG+kVJ+YWl+al6yXn
+        525iBEbXtmM/t+xg7HoXfIhRgINRiYeXwT4oXog1say4MvcQowQHs5IIr9PZ03FCvCmJlVWp
+        RfnxRaU5qcWHGE2BjprILCWanA+M/LySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2amp
+        BalFMH1MHJxSDYyGPxu7Jr5W7Wk0PXffjXufSI7liX0dc7qfibjEb9/q0hnP99Tr9Dm94i0b
+        rj4NOiHrYsxXMj1PJNP+Wf/a0+p3zl3f+f6ufsV255L3j64Frl3R7qa38PH1eQaznopovV5s
+        sPCMRi1jjKmn9vVbk81K7JOqvjDNXP0obZd+m0jR+vzXO3/4XF2mxFKckWioxVxUnAgAX2IH
+        OMQCAAA=
+X-CMS-MailID: 20200904133457eucas1p24d73bb3e4aa921cb76dc03b309ad5632
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200904133457eucas1p24d73bb3e4aa921cb76dc03b309ad5632
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200904133457eucas1p24d73bb3e4aa921cb76dc03b309ad5632
+References: <20200904131711.12950-1-m.szyprowski@samsung.com>
+        <CGME20200904133457eucas1p24d73bb3e4aa921cb76dc03b309ad5632@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Use common helper for checking the contiguity of the imported dma-buf.
 
-On Fri, 04 Sep 2020 10:31:12 +0200, Marek Szyprowski wrote:
-> Hi Krzysztof,
-> 
-> On 03.09.2020 22:08, Krzysztof Kozlowski wrote:
-> > On Thu, 3 Sep 2020 at 18:57, Michael Tretter <m.tretter@pengutronix.de> wrote:
-> >> the Exynos MIPI DSI Phy is also found on the i.MX8M Mini. However, on the
-> >> i.MX8M Mini, the bridge is driven by an LCDIF display controller instead of
-> >> the Exynos Decon. The driver for the LCDIF does not use the component
-> >> framework, but uses drm bridges.
-> >>
-> >> This series converts the Exynos MIPI DSI into a drm bridge and makes it usable
-> >> with such drivers. Although the driver is converted, it still supports the
-> >> component framework API to stay compliant with the Exynos DRM driver.
-> >>
-> >> Unfortunately, I don't have any Exynos SoC to actually test the series.  I
-> >> tested the driver with a few additional unfinished patches on the i.MX8M Mini
-> >> EVK, but somebody should definitely verify that the driver is still working on
-> >> Exynos hardware.
-> > Hi Michael,
-> >
-> > +Cc maintainers and folks in Samsung.
-> >
-> > Please follow the script/get_maintainers.pl to get the list of
-> > maintainers of the Exynos DRM drivers. First they could provide you
-> > with testing, second they might be the people merging the driver.
-> >
-> > Unfortunately I cannot provide proper testing as none of my boards
-> > have a display attached. :)
-> 
-> Thanks for adding cc to me. Sadly this patchset crashed badly on Samsung 
-> Exnyos based boards. Here is the log from Exynos3250-based Rinato:
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by : Inki Dae <inki.dae@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_gem.c | 23 +++--------------------
+ 1 file changed, 3 insertions(+), 20 deletions(-)
 
-Thanks for testing.
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index efa476858db5..1716a023bca0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -431,27 +431,10 @@ exynos_drm_gem_prime_import_sg_table(struct drm_device *dev,
+ {
+ 	struct exynos_drm_gem *exynos_gem;
+ 
+-	if (sgt->nents < 1)
++	/* check if the entries in the sg_table are contiguous */
++	if (drm_prime_get_contiguous_size(sgt) < attach->dmabuf->size) {
++		DRM_ERROR("buffer chunks must be mapped contiguously");
+ 		return ERR_PTR(-EINVAL);
+-
+-	/*
+-	 * Check if the provided buffer has been mapped as contiguous
+-	 * into DMA address space.
+-	 */
+-	if (sgt->nents > 1) {
+-		dma_addr_t next_addr = sg_dma_address(sgt->sgl);
+-		struct scatterlist *s;
+-		unsigned int i;
+-
+-		for_each_sg(sgt->sgl, s, sgt->nents, i) {
+-			if (!sg_dma_len(s))
+-				break;
+-			if (sg_dma_address(s) != next_addr) {
+-				DRM_ERROR("buffer chunks must be mapped contiguously");
+-				return ERR_PTR(-EINVAL);
+-			}
+-			next_addr = sg_dma_address(s) + sg_dma_len(s);
+-		}
+ 	}
+ 
+ 	exynos_gem = exynos_drm_gem_init(dev, attach->dmabuf->size);
+-- 
+2.17.1
 
-> 
-> exynos4-fb 11c00000.fimd: Adding to iommu group 0
-> OF: graph: no port node found in /soc/fimd@11c00000
-> [drm] Exynos DRM: using 11c00000.fimd device for DMA mapping operations
-> exynos-drm exynos-drm: bound 11c00000.fimd (ops fimd_component_ops)
-> OF: graph: no port node found in /soc/dsi@11c80000
-> 8<--- cut here ---
-> Unable to handle kernel NULL pointer dereference at virtual address 00000650
-> pgd = (ptrval)
-> [00000650] *pgd=00000000
-> Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-> Modules linked in:
-> CPU: 1 PID: 1 Comm: swapper/0 Not tainted 
-> 5.9.0-rc2-next-20200824-00017-g3e9b20f7eb0d #1576
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> PC is at samsung_dsim_resume+0x18/0x120
-> LR is at genpd_runtime_resume+0x160/0x278
-> ...
-> [<c064f590>] (samsung_dsim_resume) from [<c0685020>] 
-> (genpd_runtime_resume+0x160/0x278)
-> [<c0685020>] (genpd_runtime_resume) from [<c0677e84>] 
-> (__rpm_callback+0xbc/0x124)
-> [<c0677e84>] (__rpm_callback) from [<c0677f0c>] (rpm_callback+0x20/0x80)
-> [<c0677f0c>] (rpm_callback) from [<c0676aec>] (rpm_resume+0x388/0x714)
-> [<c0676aec>] (rpm_resume) from [<c0676edc>] (__pm_runtime_resume+0x64/0x9c)
-> [<c0676edc>] (__pm_runtime_resume) from [<c0669e10>] 
-> (__device_attach+0xcc/0x17c)
-> [<c0669e10>] (__device_attach) from [<c0668ee8>] 
-> (bus_probe_device+0x88/0x90)
-> [<c0668ee8>] (bus_probe_device) from [<c06660a0>] (device_add+0x4e8/0x79c)
-> [<c06660a0>] (device_add) from [<c063dc1c>] 
-> (mipi_dsi_device_register_full+0xc8/0x148)
-> [<c063dc1c>] (mipi_dsi_device_register_full) from [<c063dcec>] 
-> (mipi_dsi_host_register+0x50/0x168)
-> [<c063dcec>] (mipi_dsi_host_register) from [<c064d90c>] 
-> (samsung_dsim_bind+0x368/0x40c)
-> [<c064d90c>] (samsung_dsim_bind) from [<c06449f8>] 
-> (exynos_dsi_bind+0x78/0x88)
-> [<c06449f8>] (exynos_dsi_bind) from [<c0661ef0>] 
-> (component_bind_all+0xfc/0x290)
-> [<c0661ef0>] (component_bind_all) from [<c06413d0>] 
-> (exynos_drm_bind+0xe4/0x19c)
-> [<c06413d0>] (exynos_drm_bind) from [<c0662464>] 
-> (try_to_bring_up_master+0x1e4/0x2c4)
-> [<c0662464>] (try_to_bring_up_master) from [<c06629a4>] 
-> (component_master_add_with_match+0xd4/0x108)
-> [<c06629a4>] (component_master_add_with_match) from [<c06410f8>] 
-> (exynos_drm_platform_probe+0xe4/0x110)
-> [<c06410f8>] (exynos_drm_platform_probe) from [<c066cb8c>] 
-> (platform_drv_probe+0x6c/0xa4)
-> [<c066cb8c>] (platform_drv_probe) from [<c066a0c8>] 
-> (really_probe+0x200/0x4fc)
-> [<c066a0c8>] (really_probe) from [<c066a58c>] 
-> (driver_probe_device+0x78/0x1fc)
-> [<c066a58c>] (driver_probe_device) from [<c066a974>] 
-> (device_driver_attach+0x58/0x60)
-> [<c066a974>] (device_driver_attach) from [<c066aa58>] 
-> (__driver_attach+0xdc/0x174)
-> [<c066aa58>] (__driver_attach) from [<c0667e50>] 
-> (bus_for_each_dev+0x68/0xb4)
-> [<c0667e50>] (bus_for_each_dev) from [<c0669184>] 
-> (bus_add_driver+0x158/0x214)
-> [<c0669184>] (bus_add_driver) from [<c066b93c>] (driver_register+0x78/0x110)
-> [<c066b93c>] (driver_register) from [<c06412b8>] 
-> (exynos_drm_init+0xe4/0x118)
-> [<c06412b8>] (exynos_drm_init) from [<c01023f4>] 
-> (do_one_initcall+0x8c/0x424)
-> [<c01023f4>] (do_one_initcall) from [<c10011a8>] 
-> (kernel_init_freeable+0x190/0x1dc)
-> [<c10011a8>] (kernel_init_freeable) from [<c0ae8e5c>] 
-> (kernel_init+0x8/0x118)
-> [<c0ae8e5c>] (kernel_init) from [<c0100114>] (ret_from_fork+0x14/0x20)
-> Exception stack(0xd94a5fb0 to 0xd94a5ff8)
-> ...
-> ---[ end trace 1a053145d15f23dc ]---
-> Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
-> CPU0: stopping
-> CPU: 0 PID: 0 Comm: swapper/0 Tainted: G      D 
-> 5.9.0-rc2-next-20200824-00017-g3e9b20f7eb0d #1576
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> [<c011160c>] (unwind_backtrace) from [<c010cfc0>] (show_stack+0x10/0x14)
-> [<c010cfc0>] (show_stack) from [<c0533c3c>] (dump_stack+0xbc/0xe8)
-> [<c0533c3c>] (dump_stack) from [<c01104e0>] (handle_IPI+0x3e0/0x428)
-> [<c01104e0>] (handle_IPI) from [<c05511dc>] (gic_handle_irq+0x98/0x9c)
-> [<c05511dc>] (gic_handle_irq) from [<c0100af0>] (__irq_svc+0x70/0xb0)
-> Exception stack(0xc1101f08 to 0xc1101f50)
-> ...
-> [<c0100af0>] (__irq_svc) from [<c01095dc>] (arch_cpu_idle+0x24/0x44)
-> [<c01095dc>] (arch_cpu_idle) from [<c01635dc>] (do_idle+0x1bc/0x2bc)
-> [<c01635dc>] (do_idle) from [<c0163a90>] (cpu_startup_entry+0x18/0x1c)
-> [<c0163a90>] (cpu_startup_entry) from [<c1000f88>] 
-> (start_kernel+0x628/0x664)
-> [<c1000f88>] (start_kernel) from [<00000000>] (0x0)
-> ---[ end Kernel panic - not syncing: Attempted to kill init! 
-> exitcode=0x0000000b ]---
-
-This and the other null pointer dereference look like two different problems.
-I will look into both of them and send an update.
-
-I will also try to come up with something to at least test the bind/unbind
-interface and reduce the code that I cannot test.
-
-> 
-> I've didn't check the code yet, but the conversion also lacks "select 
-> DRM_SAMSUNG_DSIM" in the Exynos DSI driver's Kconfig, as I wasn't even 
-> able to compile it with the current exynos_defconfig.
-
-Dang, of course. I will fix it.
-
-Michael
