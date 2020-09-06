@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CC7C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F68C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:40:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1AC2207BB
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:39:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BC9920578
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:40:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599406780;
-	bh=ipXNcf/TRHvf+ZR7u/TpP2y/IWKhoPj+ksZzOBS6oeY=;
+	s=default; t=1599406842;
+	bh=y7UdK9SwiWPgD8tbpf2MGHg1kLY8LPM78Jur53+Y3P4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Er9iSHloaYcCBREUYa7D2FBGvHKHajNoT6YPWCtApYzF6ZyBN9I1eFcYBvopjrq25
-	 tRFqWwWEIOeh2SP7n7N5B+3I59IOABsPIWUw+84qLaf8LloqLcmirx7eBNtRR3cPhw
-	 W6p3c3cS56fkEe5pimeIeavizCYRjY+RsZvjc4oY=
+	b=Mktb3e/ujxvLs7jCURHcAVgWUwT1Ieh8eDxplYlDV1hvvX6GOu6w9unbi5J61a976
+	 sia91ASYceUxhWOc9crPVZa3jDkSWpFGR2ctEKkjhlokXHdfoiHI+2Y9HlFQucn4F8
+	 7oD3Ts0KOzTM0X7qtnBdFlovGWZ5eABrEZRmAo4w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729046AbgIFPje (ORCPT
+        id S1728994AbgIFPk1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Sep 2020 11:39:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48152 "EHLO mail.kernel.org"
+        Sun, 6 Sep 2020 11:40:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728986AbgIFPhl (ORCPT
+        id S1729033AbgIFPjI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Sep 2020 11:37:41 -0400
+        Sun, 6 Sep 2020 11:39:08 -0400
 Received: from localhost.localdomain (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F38A420DD4;
-        Sun,  6 Sep 2020 15:37:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB5A9214DB;
+        Sun,  6 Sep 2020 15:37:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599406661;
-        bh=ipXNcf/TRHvf+ZR7u/TpP2y/IWKhoPj+ksZzOBS6oeY=;
+        s=default; t=1599406679;
+        bh=y7UdK9SwiWPgD8tbpf2MGHg1kLY8LPM78Jur53+Y3P4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EN5QpLwReQiJ4Glm7ap6/s/E+bad2seEm2qD979OOsHwJO6NxtBNuVQWXu46iwk5I
-         sb3UUYxeaQVGzwhn/yk/g0OKHsuRUBZzCte1FsF7UN0HpJnSG3crg3+F0ct4b95UNf
-         r+XbvXDH1sBVNqzlUD1VNdYoeJsBOswU5qejeKUM=
+        b=ydAGqeozq8pLrEsAwdhHGujNHIzMJS3/51NYxjemPC/OBfv/HS5xdQhiW3qVQFM8i
+         FaPoaUMkievY8OPwP0EdTaVrxuPPCHAihy0NsVcYlMN7YniQoXher3u/Bx2VL4dm7a
+         sSbZcCuQM5Wzr+ZjjPZFaHi7sVP5pIX4gLN28kKg=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
@@ -54,9 +54,9 @@ To:     "David S. Miller" <davem@davemloft.net>,
         linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 3/9] nfc: s3fwrn5: Remove wrong vendor prefix from GPIOs
-Date:   Sun,  6 Sep 2020 17:36:48 +0200
-Message-Id: <20200906153654.2925-4-krzk@kernel.org>
+Subject: [PATCH v2 8/9] arm64: dts: exynos: Use newer S3FWRN5 GPIO properties in Exynos5433 TM2
+Date:   Sun,  6 Sep 2020 17:36:53 +0200
+Message-Id: <20200906153654.2925-9-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200906153654.2925-1-krzk@kernel.org>
 References: <20200906153654.2925-1-krzk@kernel.org>
@@ -65,50 +65,30 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The device tree property prefix describes the vendor, which in case of
-S3FWRN5 chip is Samsung.  Therefore the "s3fwrn5" prefix for "en-gpios"
-and "fw-gpios" is not correct and should be deprecated.  Introduce
-properly named properties for these GPIOs but still support deprecated
-ones.
+Since "s3fwrn5" is not a valid vendor prefix, use new GPIO properties
+instead of the deprecated.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/nfc/s3fwrn5/i2c.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nfc/s3fwrn5/i2c.c b/drivers/nfc/s3fwrn5/i2c.c
-index b4eb926d220a..557279492503 100644
---- a/drivers/nfc/s3fwrn5/i2c.c
-+++ b/drivers/nfc/s3fwrn5/i2c.c
-@@ -200,13 +200,21 @@ static int s3fwrn5_i2c_parse_dt(struct i2c_client *client)
- 	if (!np)
- 		return -ENODEV;
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 250fc01de78d..24aab3ea3f52 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -795,8 +795,8 @@
+ 		reg = <0x27>;
+ 		interrupt-parent = <&gpa1>;
+ 		interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
+-		s3fwrn5,en-gpios = <&gpf1 4 GPIO_ACTIVE_HIGH>;
+-		s3fwrn5,fw-gpios = <&gpj0 2 GPIO_ACTIVE_HIGH>;
++		en-gpios = <&gpf1 4 GPIO_ACTIVE_HIGH>;
++		wake-gpios = <&gpj0 2 GPIO_ACTIVE_HIGH>;
+ 	};
+ };
  
--	phy->gpio_en = of_get_named_gpio(np, "s3fwrn5,en-gpios", 0);
--	if (!gpio_is_valid(phy->gpio_en))
--		return -ENODEV;
-+	phy->gpio_en = of_get_named_gpio(np, "en-gpios", 0);
-+	if (!gpio_is_valid(phy->gpio_en)) {
-+		/* Support also deprecated property */
-+		phy->gpio_en = of_get_named_gpio(np, "s3fwrn5,en-gpios", 0);
-+		if (!gpio_is_valid(phy->gpio_en))
-+			return -ENODEV;
-+	}
- 
--	phy->gpio_fw_wake = of_get_named_gpio(np, "s3fwrn5,fw-gpios", 0);
--	if (!gpio_is_valid(phy->gpio_fw_wake))
--		return -ENODEV;
-+	phy->gpio_fw_wake = of_get_named_gpio(np, "wake-gpios", 0);
-+	if (!gpio_is_valid(phy->gpio_fw_wake)) {
-+		/* Support also deprecated property */
-+		phy->gpio_fw_wake = of_get_named_gpio(np, "s3fwrn5,fw-gpios", 0);
-+		if (!gpio_is_valid(phy->gpio_fw_wake))
-+			return -ENODEV;
-+	}
- 
- 	return 0;
- }
 -- 
 2.17.1
 
