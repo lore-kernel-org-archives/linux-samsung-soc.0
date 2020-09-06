@@ -2,94 +2,157 @@ Return-Path: <SRS0=CEv7=CP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4461DC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 13:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D49BC43461
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:22:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 048D7208B3
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 13:11:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AA3220838
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:22:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599397897;
-	bh=RwvoKmkqXFzSWzO8EuJyeGXXoNMCcZe3Wdf5nzC6Sng=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jm60C4Y15Qv2RB8RIaSFbCyJI/xOlLwOCO2wAOb+Le94FhkRLNkM9VN2EvzlIwo/a
-	 UDFk3Dv+1kt0K294g8hh2ZQDpEoSwrJdd2V0C+KIyu45oIe8piwLIhztqNoddG0LH3
-	 504zJqeE4Su/CtbqXLihNoui7sr3LE7mTByVjTAs=
+	s=default; t=1599402177;
+	bh=Yfm4K/YBgu9cciVqK5uLID5d3xhCSI8ollTmhI7pFOA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=btMFyE65O1pqs+HOho0gARzAI9j+KDu0a9YgVLPAV3FJ+D7tELBg5L4herMa7yvYK
+	 B/bkMoqeFthw+blYlIsSf7n2FGaN328xVyvwsagi5OGCFZ34Yyb5l+5g88DsEo9Sfp
+	 R6iguiwULtPr6yen/2FtRngYWK2E4yMCDuZkjFvc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbgIFNLI (ORCPT
+        id S1726501AbgIFOW2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Sep 2020 09:11:08 -0400
-Received: from mail-ej1-f68.google.com ([209.85.218.68]:34575 "EHLO
-        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725803AbgIFNLB (ORCPT
+        Sun, 6 Sep 2020 10:22:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57514 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728891AbgIFOV5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Sep 2020 09:11:01 -0400
-Received: by mail-ej1-f68.google.com with SMTP id gr14so13261336ejb.1;
-        Sun, 06 Sep 2020 06:11:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nBl9UMlY1oWNy/GCwLn7tQTZrUz9EDW9e61eAlkzz9s=;
-        b=Mc6KJ8gYmLC8mUFWbxctHqS43aZlTIIAFCrWMyyslT1vrs2z+L6JyRywj7y/XpZGvj
-         t4W5ZStfOtXLFbFo7qvUrpMR9haOD3oSp+xSQnQBhT7pBcwoASs9i2jDoNfb8m2RywVt
-         PqUOnp3/UAr3cd6TXsl/aH3jpYSJ+K0xWF5vApv2g18TwUvdvTSi2TcPPi88VUBdvXxs
-         tdhZO00A88ZnpwviYTh0AktDkFnwh6v92w0kaNvCnkpsJXC4HMQyJHAOJ0vLtezjA8rj
-         kTltBXrKxCaVVOLa/xNWpkC0Oes8EzhnRVbUgF1xjfnuuznqRWbNy/H7wH0tFMlbJ8tH
-         Orrw==
-X-Gm-Message-State: AOAM5303ROZVkZKH9WazRR6pIhke3VWh1plcA19/Jz3ziDDBHTHh6zf4
-        ixsoBp9n3l/3xSm8YumiFkfIzMGOxIs=
-X-Google-Smtp-Source: ABdhPJwZpwu8aMycqUKtCNZy10jlArz9SO9TZiCFOz4zSvKdisadZYItdzaDjgXG8etlrzDUL+bNmg==
-X-Received: by 2002:a17:906:d9da:: with SMTP id qk26mr16261105ejb.435.1599397859698;
-        Sun, 06 Sep 2020 06:10:59 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.174])
-        by smtp.googlemail.com with ESMTPSA id v18sm11710019edb.26.2020.09.06.06.10.58
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 06 Sep 2020 06:10:58 -0700 (PDT)
-Date:   Sun, 6 Sep 2020 15:10:56 +0200
+        Sun, 6 Sep 2020 10:21:57 -0400
+Received: from localhost.localdomain (unknown [194.230.155.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED2CB2080A;
+        Sun,  6 Sep 2020 14:21:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599402117;
+        bh=Yfm4K/YBgu9cciVqK5uLID5d3xhCSI8ollTmhI7pFOA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=bi+GHytMd1KAyNF80myj0dpn168NNyPU8sk1iAlHJhNIOS//+KpCcnTFQvQR5YnPH
+         3ZoPfRZbw3LCwRGnafjse3+GKHVszekkY5w88u1QRzRuY2g4kXGn0WY2Uauxn8EP54
+         VGyWuDLfkFsDksELqv8jY/tiXzoBjuee+q7RReGQ=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: [PATCH v2 1/2] ARM: dts: exynos: Remove I2C9
- samsung,i2c-slave-addr from Exynos5250 boards
-Message-ID: <20200906131056.GA12691@kozik-lap>
-References: <20200902155733.20271-1-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200902155733.20271-1-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Subject: [PATCH v3 3/3] ARM: dts: exynos: Add clocks sound node in Exynos5422 Odroid XU4
+Date:   Sun,  6 Sep 2020 16:21:46 +0200
+Message-Id: <20200906142146.21266-3-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200906142146.21266-1-krzk@kernel.org>
+References: <20200906142146.21266-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 02, 2020 at 05:57:32PM +0200, Krzysztof Kozlowski wrote:
-> The property samsung,i2c-slave-addr in I2C9 controller on Exynos5250
-> Arndale and SMDK5250 boards, is not actually needed.  There is only one
-> master on this bus.  It's not clear why this property was added at first
-> place.
-> 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> Changes since v1:
-> 1. New patch, Marek already tested the removal so I am adding his tag.
-> ---
->  arch/arm/boot/dts/exynos5250-arndale.dts  | 1 -
+The dtschema expects "clocks" property if "assigned-clocks" are used.
+Add reference to all parent clocks to silence the dtbs_check warnings.
 
-Applied both.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Best regards,
-Krzysztof
+---
+
+Changes since v2:
+1. Move clock properties to i2s, just like Sylwester Nawrocki did for
+   Odroid XU3.
+---
+ arch/arm/boot/dts/exynos5422-odroidxu4.dts | 60 ++++++++++------------
+ 1 file changed, 27 insertions(+), 33 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+index 892d389d6d09..ddd55d3bcadd 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+@@ -35,30 +35,6 @@
+ 
+ 		samsung,audio-routing = "I2S Playback", "Mixer DAI TX";
+ 
+-		assigned-clocks = <&clock CLK_MOUT_EPLL>,
+-				<&clock CLK_MOUT_MAU_EPLL>,
+-				<&clock CLK_MOUT_USER_MAU_EPLL>,
+-				<&clock_audss EXYNOS_MOUT_AUDSS>,
+-				<&clock_audss EXYNOS_MOUT_I2S>,
+-				<&clock_audss EXYNOS_DOUT_SRP>,
+-				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
+-				<&clock_audss EXYNOS_DOUT_I2S>;
+-
+-		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
+-				<&clock CLK_MOUT_EPLL>,
+-				<&clock CLK_MOUT_MAU_EPLL>,
+-				<&clock CLK_MAU_EPLL>,
+-				<&clock_audss EXYNOS_MOUT_AUDSS>;
+-
+-		assigned-clock-rates = <0>,
+-				<0>,
+-				<0>,
+-				<0>,
+-				<0>,
+-				<196608001>,
+-				<(196608002 / 2)>,
+-				<196608000>;
+-
+ 		cpu {
+ 			sound-dai = <&i2s0 0>, <&i2s0 1>;
+ 		};
+@@ -69,17 +45,35 @@
+ 	};
+ };
+ 
+-&clock_audss {
+-	assigned-clocks = <&clock_audss EXYNOS_DOUT_SRP>,
+-			  <&clock CLK_FOUT_EPLL>;
+-	assigned-clock-rates = <(196608000 / 256)>,
+-			       <196608000>;
+-};
+-
+ &i2s0 {
+ 	status = "okay";
+-	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
+-	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
++
++	assigned-clocks = <&clock CLK_MOUT_EPLL>,
++			  <&clock CLK_MOUT_MAU_EPLL>,
++			  <&clock CLK_MOUT_USER_MAU_EPLL>,
++			  <&clock_audss EXYNOS_MOUT_AUDSS>,
++			  <&clock_audss EXYNOS_MOUT_I2S>,
++			  <&i2s0 CLK_I2S_RCLK_SRC>,
++			  <&clock_audss EXYNOS_DOUT_SRP>,
++			  <&clock_audss EXYNOS_DOUT_AUD_BUS>,
++			  <&clock_audss EXYNOS_DOUT_I2S>;
++
++	assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
++				 <&clock CLK_MOUT_EPLL>,
++				 <&clock CLK_MOUT_MAU_EPLL>,
++				 <&clock CLK_MAU_EPLL>,
++				 <&clock_audss EXYNOS_MOUT_AUDSS>,
++				 <&clock_audss EXYNOS_SCLK_I2S>;
++
++	assigned-clock-rates = <0>,
++			       <0>,
++			       <0>,
++			       <0>,
++			       <0>,
++			       <0>,
++			       <196608001>,
++			       <(196608002 / 2)>,
++			       <196608000>;
+ };
+ 
+ &pwm {
+-- 
+2.17.1
 
