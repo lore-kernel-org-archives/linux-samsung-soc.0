@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7618FC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 112C5C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:47:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31A882078E
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D100C207BB
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599407060;
-	bh=zplVVIgMQojsbwVzaG1n4QTE3TMlBcAZb0xfKeub8eE=;
+	s=default; t=1599407263;
+	bh=jHH/wPFyXijfn4qbxAJDIqeZ9sIT7sZEqBqRbDpc3/A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gUo4ZQfzY0yTD3FZshN+b+mwON5eJ8vSYM8NU626vbACMXSk+X3u2xqSKQoC1yTCk
-	 Uc/87ScuZV3W53+zD+wbtxMqxS20IH53lyU0leAJMGOARsNx3ep+Zz8DCKxQpSK3qU
-	 GiOVn2bGYu3ze2t/2O20uJUN5XQ6lWXvtXiBz9uI=
+	b=BjzcRd8IyGBXAiilXDpBqt6SOq0QWHkqN/eInlAoXqQY/WJt9Q6++X28gtYKMTR51
+	 EtKSwCPio8ls7tJqfWrMRuhO+Vj+5zagwyS4WwifAXybll8bL1JPfGiT6nGSWSNtQG
+	 Pty9FfjTMjIPZb9bLIgOXE9WPFLV4m9US+XG15jk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729011AbgIFPoP (ORCPT
+        id S1729006AbgIFPoO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Sep 2020 11:44:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48230 "EHLO mail.kernel.org"
+        Sun, 6 Sep 2020 11:44:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728991AbgIFPhp (ORCPT
+        id S1729029AbgIFPi7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Sep 2020 11:37:45 -0400
+        Sun, 6 Sep 2020 11:38:59 -0400
 Received: from localhost.localdomain (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C1D72080A;
-        Sun,  6 Sep 2020 15:37:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4545208C7;
+        Sun,  6 Sep 2020 15:37:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599406664;
-        bh=zplVVIgMQojsbwVzaG1n4QTE3TMlBcAZb0xfKeub8eE=;
+        s=default; t=1599406671;
+        bh=jHH/wPFyXijfn4qbxAJDIqeZ9sIT7sZEqBqRbDpc3/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gM4O+hP07ABQ3OZHrIxBfLvCcF0ZYd26PkkTUQ+rorh3Xx91bwMDTtNFD8RkxIK+1
-         z/Qkl5EAQlzG9TfC1U7bzfUPncpacZNX/zSMpP4FScdUctxBXzf3WjQqWVVn9LGpAd
-         rbeUWmBvFw3pIvloB4BL/jt3hQo6g9hWh8x+ZTvM=
+        b=E7ocihmc3g81cmtKJS+kiq0LeUGmxxi2tg8cDi3WE4S/H2StDcgEEdtAxrjzXU7qb
+         4Ng3Fv/8UzKs5ZpmceXdtbS+fxaPBiXHH3/IjPm0EcMIjpbPnfemO2fvCWaC3rGNj8
+         nsZykmblUWGpNFX/OS5CnB9uS+z5um9z5Zq8XEjQ=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
@@ -54,9 +54,9 @@ To:     "David S. Miller" <davem@davemloft.net>,
         linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 4/9] nfc: s3fwrn5: Remove unneeded 'ret' variable
-Date:   Sun,  6 Sep 2020 17:36:49 +0200
-Message-Id: <20200906153654.2925-5-krzk@kernel.org>
+Subject: [PATCH v2 6/9] nfc: s3fwrn5: Constify s3fwrn5_fw_info when not modified
+Date:   Sun,  6 Sep 2020 17:36:51 +0200
+Message-Id: <20200906153654.2925-7-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200906153654.2925-1-krzk@kernel.org>
 References: <20200906153654.2925-1-krzk@kernel.org>
@@ -65,38 +65,49 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The local variable 'ret' can be removed:
-
-  drivers/nfc/s3fwrn5/i2c.c:167:6: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
+Two functions accept pointer to struct s3fwrn5_fw_info but do not
+modify the contents.  Make them const so the code is a little bit safer.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/nfc/s3fwrn5/i2c.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/nfc/s3fwrn5/firmware.c | 4 ++--
+ drivers/nfc/s3fwrn5/firmware.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/nfc/s3fwrn5/i2c.c b/drivers/nfc/s3fwrn5/i2c.c
-index 557279492503..dc995286be84 100644
---- a/drivers/nfc/s3fwrn5/i2c.c
-+++ b/drivers/nfc/s3fwrn5/i2c.c
-@@ -164,7 +164,6 @@ static int s3fwrn5_i2c_read(struct s3fwrn5_i2c_phy *phy)
- static irqreturn_t s3fwrn5_i2c_irq_thread_fn(int irq, void *phy_id)
- {
- 	struct s3fwrn5_i2c_phy *phy = phy_id;
--	int ret = 0;
+diff --git a/drivers/nfc/s3fwrn5/firmware.c b/drivers/nfc/s3fwrn5/firmware.c
+index 69857f080704..ec930ee2c847 100644
+--- a/drivers/nfc/s3fwrn5/firmware.c
++++ b/drivers/nfc/s3fwrn5/firmware.c
+@@ -348,7 +348,7 @@ static int s3fwrn5_fw_get_base_addr(
+ }
  
- 	if (!phy || !phy->ndev) {
- 		WARN_ON_ONCE(1);
-@@ -179,10 +178,9 @@ static irqreturn_t s3fwrn5_i2c_irq_thread_fn(int irq, void *phy_id)
- 	switch (phy->mode) {
- 	case S3FWRN5_MODE_NCI:
- 	case S3FWRN5_MODE_FW:
--		ret = s3fwrn5_i2c_read(phy);
-+		s3fwrn5_i2c_read(phy);
- 		break;
- 	case S3FWRN5_MODE_COLD:
--		ret = -EREMOTEIO;
- 		break;
- 	}
+ static inline bool
+-s3fwrn5_fw_is_custom(struct s3fwrn5_fw_cmd_get_bootinfo_rsp *bootinfo)
++s3fwrn5_fw_is_custom(const struct s3fwrn5_fw_cmd_get_bootinfo_rsp *bootinfo)
+ {
+ 	return !!bootinfo->hw_version[2];
+ }
+@@ -399,7 +399,7 @@ int s3fwrn5_fw_setup(struct s3fwrn5_fw_info *fw_info)
+ 	return ret;
+ }
+ 
+-bool s3fwrn5_fw_check_version(struct s3fwrn5_fw_info *fw_info, u32 version)
++bool s3fwrn5_fw_check_version(const struct s3fwrn5_fw_info *fw_info, u32 version)
+ {
+ 	struct s3fwrn5_fw_version *new = (void *) &fw_info->fw.version;
+ 	struct s3fwrn5_fw_version *old = (void *) &version;
+diff --git a/drivers/nfc/s3fwrn5/firmware.h b/drivers/nfc/s3fwrn5/firmware.h
+index cf1a83a5a525..3c83e6730d30 100644
+--- a/drivers/nfc/s3fwrn5/firmware.h
++++ b/drivers/nfc/s3fwrn5/firmware.h
+@@ -91,7 +91,7 @@ struct s3fwrn5_fw_info {
+ 
+ void s3fwrn5_fw_init(struct s3fwrn5_fw_info *fw_info, const char *fw_name);
+ int s3fwrn5_fw_setup(struct s3fwrn5_fw_info *fw_info);
+-bool s3fwrn5_fw_check_version(struct s3fwrn5_fw_info *fw_info, u32 version);
++bool s3fwrn5_fw_check_version(const struct s3fwrn5_fw_info *fw_info, u32 version);
+ int s3fwrn5_fw_download(struct s3fwrn5_fw_info *fw_info);
+ void s3fwrn5_fw_cleanup(struct s3fwrn5_fw_info *fw_info);
  
 -- 
 2.17.1
