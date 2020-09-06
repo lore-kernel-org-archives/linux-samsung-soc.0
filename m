@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AF6C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D94C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 079D420714
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:31:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3198A20838
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:31:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599402685;
-	bh=br/hzg6lNZVK5EakhampscuZH0tZyYzLNorJ+mKMInE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nXOcCIolpUT14VVvtVcQuMC9/7J0G1MBVaoQBJUuQ7bU3oqLDZJoTnTVsJMIJ6dZ2
-	 90rGwdGEQQ7RDjKqw635inrzrvOEwFjxj44Hz7i3h37cq3ckmBSCoVxgrb3lbzIKJ0
-	 VPiXvjZnZepN0aur8jK8TK0/J6RVD+6mQsppRp7E=
+	s=default; t=1599402704;
+	bh=cDyc+wot3vTMEATBk2z4vEu0zSazrJ7Fe/RR4d6egKY=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=S/bnlZpuaQqvxEEH8cyg46RBdeHa0GyCDV7g0h6kBjev2w5Qa1omMGOhcPFsUaSx7
+	 XDigq0L5SQahcWKOZ/f1umTofBpIEVb8/5vBAy/aK8o4sTsKAir/AIWFxp00yfMeEA
+	 VmVom1cqU2sM4CFm4VbhZPpdsefZdnthcJqFGE5E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728763AbgIFOW5 (ORCPT
+        id S1726931AbgIFOWk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Sep 2020 10:22:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57422 "EHLO mail.kernel.org"
+        Sun, 6 Sep 2020 10:22:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728905AbgIFOVz (ORCPT
+        id S1728896AbgIFOV4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Sep 2020 10:21:55 -0400
+        Sun, 6 Sep 2020 10:21:56 -0400
 Received: from localhost.localdomain (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C1AC208C7;
-        Sun,  6 Sep 2020 14:21:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2005207BC;
+        Sun,  6 Sep 2020 14:21:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599402114;
-        bh=br/hzg6lNZVK5EakhampscuZH0tZyYzLNorJ+mKMInE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Ytcjf9GeqtEZRksLpNgVi2vJfHcPxzotuV8g1kn1dLhaSjp7M6O775tKpVNPzYTx
-         Xywx24N8ytJfIrnP3yPCx2Gt27sUgrWnR6oZDUfUClVR0ZTe1sYRI70M5E0PZwWMdY
-         MIRvwjkcco0yWvYmpLUdNaKGQLm9WEIMsoqdHBzg=
+        s=default; t=1599402111;
+        bh=cDyc+wot3vTMEATBk2z4vEu0zSazrJ7Fe/RR4d6egKY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UoXNCHzaBtT3ITrr6Y52mq0pWb01bUH+0eJPTdvWjjHlT/g1UIOSprE+ik68wQ/bX
+         Tu3YV+m2f1IaNEor5YJyMvvp424lSWzoelj3ESbPnRa4/m7v3Ky3qLaTPepAVEe8HF
+         9C+3BpMHgNMA0BcMQ/mPY0Aa/YjqNhMNnOcK0vtg=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -48,25 +48,24 @@ To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH v3 2/3] ARM: dts: exynos: Add assigned clock parent to CMU in Exynos4412 Odroid
-Date:   Sun,  6 Sep 2020 16:21:45 +0200
-Message-Id: <20200906142146.21266-2-krzk@kernel.org>
+Subject: [PATCH v3 1/3] ARM: dts: exynos: Add assigned clock parent to CMU in Exynos3250
+Date:   Sun,  6 Sep 2020 16:21:44 +0200
+Message-Id: <20200906142146.21266-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200906142146.21266-1-krzk@kernel.org>
-References: <20200906142146.21266-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Commit 68605101460e ("ARM: dts: exynos: Add support for audio over HDMI
-for Odroid X/X2/U3") added assigned clocks under Clock Management Unit.
+Commit 52005dece527 ("ARM: dts: Add assigned clock parents to CMU node
+for exynos3250") added assigned clocks under Clock Management Unit to
+fix hangs when accessing ISP registers.
 
 However the dtschema expects "clocks" property if "assigned-clocks" are
 used.  Add reference to input clock, the parent used in
 "assigned-clock-parents" to silence the dtschema warnings:
 
-  arch/arm/boot/dts/exynos4412-odroidu3.dt.yaml: clock-controller@10030000: 'clocks' is a dependency of 'assigned-clocks'
+  arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml: clock-controller@10030000: 'clocks' is a dependency of 'assigned-clocks'
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
@@ -74,21 +73,62 @@ Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Changes since v2:
 1. Use XUSBXTI as real input clock.
----
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index ca3c78e0966c..4a9f9881f10f 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -120,6 +120,7 @@
+Changes since v1:
+1. Add clocks property.
+
+This is a v2 for:
+https://lore.kernel.org/linux-samsung-soc/20200901101534.GE23793@kozik-lap/T/#me85ac382b847dadbc3f6ebf30e94e70b5df1ebb6
+---
+ arch/arm/boot/dts/exynos3250-artik5.dtsi | 4 ++++
+ arch/arm/boot/dts/exynos3250-monk.dts    | 4 ++++
+ arch/arm/boot/dts/exynos3250-rinato.dts  | 4 ++++
+ 3 files changed, 12 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+index 6c2f320be2f4..12887b3924af 100644
+--- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
++++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+@@ -55,6 +55,10 @@
+ 	assigned-clock-rates = <6000000>;
  };
  
- &clock {
-+	clocks = <&clock CLK_XUSBXTI>;
- 	assigned-clocks = <&clock CLK_FOUT_EPLL>;
- 	assigned-clock-rates = <45158401>;
++&cmu {
++	clocks = <&xusbxti>;
++};
++
+ &cpu0 {
+ 	cpu0-supply = <&buck2_reg>;
+ };
+diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+index 9d77a73bc92b..c1a68e612037 100644
+--- a/arch/arm/boot/dts/exynos3250-monk.dts
++++ b/arch/arm/boot/dts/exynos3250-monk.dts
+@@ -164,6 +164,10 @@
+ 	status = "okay";
+ };
+ 
++&cmu {
++	clocks = <&xusbxti>;
++};
++
+ &cpu0 {
+ 	cpu0-supply = <&buck2_reg>;
+ };
+diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+index 3df003af0d15..b55afaaa691e 100644
+--- a/arch/arm/boot/dts/exynos3250-rinato.dts
++++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+@@ -205,6 +205,10 @@
+ 	status = "okay";
+ };
+ 
++&cmu {
++	clocks = <&xusbxti>;
++};
++
+ &cpu0 {
+ 	cpu0-supply = <&buck2_reg>;
  };
 -- 
 2.17.1
