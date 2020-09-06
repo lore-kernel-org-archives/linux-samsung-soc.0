@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D49BC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AF6C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0AA3220838
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:22:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 079D420714
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:31:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599402177;
-	bh=Yfm4K/YBgu9cciVqK5uLID5d3xhCSI8ollTmhI7pFOA=;
+	s=default; t=1599402685;
+	bh=br/hzg6lNZVK5EakhampscuZH0tZyYzLNorJ+mKMInE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=btMFyE65O1pqs+HOho0gARzAI9j+KDu0a9YgVLPAV3FJ+D7tELBg5L4herMa7yvYK
-	 B/bkMoqeFthw+blYlIsSf7n2FGaN328xVyvwsagi5OGCFZ34Yyb5l+5g88DsEo9Sfp
-	 R6iguiwULtPr6yen/2FtRngYWK2E4yMCDuZkjFvc=
+	b=nXOcCIolpUT14VVvtVcQuMC9/7J0G1MBVaoQBJUuQ7bU3oqLDZJoTnTVsJMIJ6dZ2
+	 90rGwdGEQQ7RDjKqw635inrzrvOEwFjxj44Hz7i3h37cq3ckmBSCoVxgrb3lbzIKJ0
+	 VPiXvjZnZepN0aur8jK8TK0/J6RVD+6mQsppRp7E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbgIFOW2 (ORCPT
+        id S1728763AbgIFOW5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Sep 2020 10:22:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57514 "EHLO mail.kernel.org"
+        Sun, 6 Sep 2020 10:22:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728891AbgIFOV5 (ORCPT
+        id S1728905AbgIFOVz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Sep 2020 10:21:57 -0400
+        Sun, 6 Sep 2020 10:21:55 -0400
 Received: from localhost.localdomain (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED2CB2080A;
-        Sun,  6 Sep 2020 14:21:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C1AC208C7;
+        Sun,  6 Sep 2020 14:21:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599402117;
-        bh=Yfm4K/YBgu9cciVqK5uLID5d3xhCSI8ollTmhI7pFOA=;
+        s=default; t=1599402114;
+        bh=br/hzg6lNZVK5EakhampscuZH0tZyYzLNorJ+mKMInE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bi+GHytMd1KAyNF80myj0dpn168NNyPU8sk1iAlHJhNIOS//+KpCcnTFQvQR5YnPH
-         3ZoPfRZbw3LCwRGnafjse3+GKHVszekkY5w88u1QRzRuY2g4kXGn0WY2Uauxn8EP54
-         VGyWuDLfkFsDksELqv8jY/tiXzoBjuee+q7RReGQ=
+        b=2Ytcjf9GeqtEZRksLpNgVi2vJfHcPxzotuV8g1kn1dLhaSjp7M6O775tKpVNPzYTx
+         Xywx24N8ytJfIrnP3yPCx2Gt27sUgrWnR6oZDUfUClVR0ZTe1sYRI70M5E0PZwWMdY
+         MIRvwjkcco0yWvYmpLUdNaKGQLm9WEIMsoqdHBzg=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -48,9 +48,9 @@ To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH v3 3/3] ARM: dts: exynos: Add clocks sound node in Exynos5422 Odroid XU4
-Date:   Sun,  6 Sep 2020 16:21:46 +0200
-Message-Id: <20200906142146.21266-3-krzk@kernel.org>
+Subject: [PATCH v3 2/3] ARM: dts: exynos: Add assigned clock parent to CMU in Exynos4412 Odroid
+Date:   Sun,  6 Sep 2020 16:21:45 +0200
+Message-Id: <20200906142146.21266-2-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200906142146.21266-1-krzk@kernel.org>
 References: <20200906142146.21266-1-krzk@kernel.org>
@@ -59,100 +59,37 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The dtschema expects "clocks" property if "assigned-clocks" are used.
-Add reference to all parent clocks to silence the dtbs_check warnings.
+Commit 68605101460e ("ARM: dts: exynos: Add support for audio over HDMI
+for Odroid X/X2/U3") added assigned clocks under Clock Management Unit.
+
+However the dtschema expects "clocks" property if "assigned-clocks" are
+used.  Add reference to input clock, the parent used in
+"assigned-clock-parents" to silence the dtschema warnings:
+
+  arch/arm/boot/dts/exynos4412-odroidu3.dt.yaml: clock-controller@10030000: 'clocks' is a dependency of 'assigned-clocks'
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 ---
 
 Changes since v2:
-1. Move clock properties to i2s, just like Sylwester Nawrocki did for
-   Odroid XU3.
+1. Use XUSBXTI as real input clock.
 ---
- arch/arm/boot/dts/exynos5422-odroidxu4.dts | 60 ++++++++++------------
- 1 file changed, 27 insertions(+), 33 deletions(-)
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-index 892d389d6d09..ddd55d3bcadd 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-@@ -35,30 +35,6 @@
- 
- 		samsung,audio-routing = "I2S Playback", "Mixer DAI TX";
- 
--		assigned-clocks = <&clock CLK_MOUT_EPLL>,
--				<&clock CLK_MOUT_MAU_EPLL>,
--				<&clock CLK_MOUT_USER_MAU_EPLL>,
--				<&clock_audss EXYNOS_MOUT_AUDSS>,
--				<&clock_audss EXYNOS_MOUT_I2S>,
--				<&clock_audss EXYNOS_DOUT_SRP>,
--				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
--				<&clock_audss EXYNOS_DOUT_I2S>;
--
--		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
--				<&clock CLK_MOUT_EPLL>,
--				<&clock CLK_MOUT_MAU_EPLL>,
--				<&clock CLK_MAU_EPLL>,
--				<&clock_audss EXYNOS_MOUT_AUDSS>;
--
--		assigned-clock-rates = <0>,
--				<0>,
--				<0>,
--				<0>,
--				<0>,
--				<196608001>,
--				<(196608002 / 2)>,
--				<196608000>;
--
- 		cpu {
- 			sound-dai = <&i2s0 0>, <&i2s0 1>;
- 		};
-@@ -69,17 +45,35 @@
- 	};
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index ca3c78e0966c..4a9f9881f10f 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -120,6 +120,7 @@
  };
  
--&clock_audss {
--	assigned-clocks = <&clock_audss EXYNOS_DOUT_SRP>,
--			  <&clock CLK_FOUT_EPLL>;
--	assigned-clock-rates = <(196608000 / 256)>,
--			       <196608000>;
--};
--
- &i2s0 {
- 	status = "okay";
--	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
--	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
-+
-+	assigned-clocks = <&clock CLK_MOUT_EPLL>,
-+			  <&clock CLK_MOUT_MAU_EPLL>,
-+			  <&clock CLK_MOUT_USER_MAU_EPLL>,
-+			  <&clock_audss EXYNOS_MOUT_AUDSS>,
-+			  <&clock_audss EXYNOS_MOUT_I2S>,
-+			  <&i2s0 CLK_I2S_RCLK_SRC>,
-+			  <&clock_audss EXYNOS_DOUT_SRP>,
-+			  <&clock_audss EXYNOS_DOUT_AUD_BUS>,
-+			  <&clock_audss EXYNOS_DOUT_I2S>;
-+
-+	assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
-+				 <&clock CLK_MOUT_EPLL>,
-+				 <&clock CLK_MOUT_MAU_EPLL>,
-+				 <&clock CLK_MAU_EPLL>,
-+				 <&clock_audss EXYNOS_MOUT_AUDSS>,
-+				 <&clock_audss EXYNOS_SCLK_I2S>;
-+
-+	assigned-clock-rates = <0>,
-+			       <0>,
-+			       <0>,
-+			       <0>,
-+			       <0>,
-+			       <0>,
-+			       <196608001>,
-+			       <(196608002 / 2)>,
-+			       <196608000>;
+ &clock {
++	clocks = <&clock CLK_XUSBXTI>;
+ 	assigned-clocks = <&clock CLK_FOUT_EPLL>;
+ 	assigned-clock-rates = <45158401>;
  };
- 
- &pwm {
 -- 
 2.17.1
 
