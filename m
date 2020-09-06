@@ -2,44 +2,43 @@ Return-Path: <SRS0=CEv7=CP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 911DDC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D4E3C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:49:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A1082078E
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCA51207BB
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:49:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599407266;
-	bh=q4PfSN/iGfvSKBF5OqA0xnoo0M75rGDiILB3JNyi3Sc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LoP7p+vn7aQA7qj6muSovTJhBXyLYPIEQnHb92VV52Il2ql0s2sc54h6D4scatlSW
-	 P///oyTDfVMOWRnl+VnZ9n8Tq7gbA6/F0iHbX6f0moKsblr1Of0lUK6rm+r2l1yfhT
-	 thLL/4RWZnySMiP7LVTxgDRgote2JSV2UZaWXoOI=
+	s=default; t=1599407376;
+	bh=QMf/wFRc+/7EGE63iw3nhSRMSoeUHkpuvT+2XQ3Psfc=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=b/8xCJRvfPA0bukOJQf0wahVNBZKF94jeqycqK5rOMVK9mnYM+t2lRmxiXLbp39qD
+	 Ldjv1Ef9pCIH7K6Kj07N3zws3g9wLZO9NPWQo8YGQtWYdo4EQXQQN1TZEw9wlbFlpX
+	 x90VlclEE137kjoxaqufX/ZSxZf42OwhrzJL4Hxc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbgIFPoN (ORCPT
+        id S1729083AbgIFPrr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Sep 2020 11:44:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49196 "EHLO mail.kernel.org"
+        Sun, 6 Sep 2020 11:47:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729028AbgIFPi7 (ORCPT
+        id S1728936AbgIFPhb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Sep 2020 11:38:59 -0400
+        Sun, 6 Sep 2020 11:37:31 -0400
 Received: from localhost.localdomain (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 180932087C;
-        Sun,  6 Sep 2020 15:37:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15626207BB;
+        Sun,  6 Sep 2020 15:37:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599406668;
-        bh=q4PfSN/iGfvSKBF5OqA0xnoo0M75rGDiILB3JNyi3Sc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mefOvFPvkOhJ1KcRy7p46kGHjsedLZGjp2Kt5upg97ASLzTfnGSC8WlkySSNo6pPQ
-         5lebo9u6KrD611LAzv67xR9keoBcwnHUikfjbPOTp0OLAHtocpuxFEVs5MgiNjc2tO
-         X2sH7WwyFAdR9hI3lzU91hR0RQkL2kf7W6eSb6UA=
+        s=default; t=1599406650;
+        bh=QMf/wFRc+/7EGE63iw3nhSRMSoeUHkpuvT+2XQ3Psfc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mZbl1KhJLMExdZBg7OuFDQ5CtaRBFiyM8L/4cV1jq2L3g2QO/44Cn40ybg46BVAU0
+         ly/h7p7ZUkgQLJJeoJX2lTlhEU9XXVtG/PHKjWUxdFw/67L2tc4Cyaiw1N5deUPOcf
+         mx8PmA2fQxa0k//o0FAXkJaxVM5MKcw8ZAD/DA6Y=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
@@ -54,40 +53,57 @@ To:     "David S. Miller" <davem@davemloft.net>,
         linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 5/9] nfc: s3fwrn5: Add missing CRYPTO_HASH dependency
-Date:   Sun,  6 Sep 2020 17:36:50 +0200
-Message-Id: <20200906153654.2925-6-krzk@kernel.org>
+Subject: [PATCH v2 0/9] nfc: s3fwrn5: Few cleanups
+Date:   Sun,  6 Sep 2020 17:36:45 +0200
+Message-Id: <20200906153654.2925-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200906153654.2925-1-krzk@kernel.org>
-References: <20200906153654.2925-1-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The driver uses crypto hash functions so it needs to select CRYPTO_HASH.
-This fixes build errors:
+Hi,
 
-  arc-linux-ld: drivers/nfc/s3fwrn5/firmware.o: in function `s3fwrn5_fw_download':
-  firmware.c:(.text+0x152): undefined reference to `crypto_alloc_shash'
+Changes since v1:
+1. Rename dtschema file and add additionalProperties:false, as Rob
+   suggested,
+2. Add Marek's tested-by,
+3. New patches: #4, #5, #6, #7 and #9.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/nfc/s3fwrn5/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Best regards,
+Krzysztof
 
-diff --git a/drivers/nfc/s3fwrn5/Kconfig b/drivers/nfc/s3fwrn5/Kconfig
-index af9d18690afe..3f8b6da58280 100644
---- a/drivers/nfc/s3fwrn5/Kconfig
-+++ b/drivers/nfc/s3fwrn5/Kconfig
-@@ -2,6 +2,7 @@
- config NFC_S3FWRN5
- 	tristate
- 	select CRYPTO
-+	select CRYPTO_HASH
- 	help
- 	  Core driver for Samsung S3FWRN5 NFC chip. Contains core utilities
- 	  of chip. It's intended to be used by PHYs to avoid duplicating lots
+
+Krzysztof Kozlowski (9):
+  dt-bindings: net: nfc: s3fwrn5: Convert to dtschema
+  dt-bindings: net: nfc: s3fwrn5: Remove wrong vendor prefix from GPIOs
+  nfc: s3fwrn5: Remove wrong vendor prefix from GPIOs
+  nfc: s3fwrn5: Remove unneeded 'ret' variable
+  nfc: s3fwrn5: Add missing CRYPTO_HASH dependency
+  nfc: s3fwrn5: Constify s3fwrn5_fw_info when not modified
+  MAINTAINERS: Add Krzysztof Kozlowski to Samsung S3FWRN5 and remove
+    Robert
+  arm64: dts: exynos: Use newer S3FWRN5 GPIO properties in Exynos5433
+    TM2
+  arm64: defconfig: Enable Samsung S3FWRN5 NFC driver
+
+ CREDITS                                       |  4 +
+ .../devicetree/bindings/net/nfc/s3fwrn5.txt   | 25 -------
+ .../bindings/net/nfc/samsung,s3fwrn5.yaml     | 73 +++++++++++++++++++
+ MAINTAINERS                                   |  5 +-
+ .../dts/exynos/exynos5433-tm2-common.dtsi     |  4 +-
+ arch/arm64/configs/defconfig                  |  3 +
+ drivers/nfc/s3fwrn5/Kconfig                   |  1 +
+ drivers/nfc/s3fwrn5/firmware.c                |  4 +-
+ drivers/nfc/s3fwrn5/firmware.h                |  2 +-
+ drivers/nfc/s3fwrn5/i2c.c                     | 24 +++---
+ 10 files changed, 104 insertions(+), 41 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt
+ create mode 100644 Documentation/devicetree/bindings/net/nfc/samsung,s3fwrn5.yaml
+
 -- 
 2.17.1
 
