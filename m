@@ -2,91 +2,110 @@ Return-Path: <SRS0=CEv7=CP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FE2C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E72F5C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:42:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE4DB2078E
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:41:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFECA207BB
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:42:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599406902;
-	bh=riEwVeVBIORWfwWar/cs3TjEW/xzLOlUM/PuZjLHNds=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IiHJkXGbgzpSlt2ZJzu2weI0TYpw82g2BGMpLJt+HzUspofIJWeTJdbDKelfV0S6c
-	 N28M4G/VM2Dq7rbRxkCiA+mIhHRP0+lYYvqEYeuBJO9Re6p2bYbfmEsyTyOOOiN6js
-	 EKIcuNtABjnG1zCVYIuSNRGlEVoijaexjRNJ8ukA=
+	s=default; t=1599406979;
+	bh=r/gOQLwi0vjxIzoJJal9o3e2qU4i0aOboXzVPzBsSr8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=SH/xnPpQan28E7PjX3W0BrDo34ukAv0/0tGqJAWxPYMEJfMy8T8QWU7MGsb3dECfM
+	 WLEMiOPERlJ0BHYuZrpT2lc/owNSqW6Qbt/9VFGfkWjdChsGSXOXhOjsCYC3eBlocc
+	 wtlYEme8o8RKXPiX0o3J1YIWZAbxWuzVhSSEeTRk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728979AbgIFPkm (ORCPT
+        id S1729081AbgIFPmx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Sep 2020 11:40:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49280 "EHLO mail.kernel.org"
+        Sun, 6 Sep 2020 11:42:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729039AbgIFPjI (ORCPT
+        id S1729077AbgIFPmA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Sep 2020 11:39:08 -0400
-Received: from localhost.localdomain (unknown [194.230.155.174])
+        Sun, 6 Sep 2020 11:42:00 -0400
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC6932145D;
-        Sun,  6 Sep 2020 15:37:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC587208B3;
+        Sun,  6 Sep 2020 15:41:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599406683;
-        bh=riEwVeVBIORWfwWar/cs3TjEW/xzLOlUM/PuZjLHNds=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cp2jKXbMKdKR9Ttiv9ZPUR9LeIjOpqALidfU69eMvTRXTPOe3l1KKWIKYnIQgKFdp
-         BVL+6DbBuhmuVJ687CTnLoJqLzIbh6r8hXYmV5ffV3v5QOskKctwcZkJv+C7rJ19G7
-         DUYcftK3GJysPy0Cg494DFmscESZwsZUDOHNfYcI=
+        s=default; t=1599406920;
+        bh=r/gOQLwi0vjxIzoJJal9o3e2qU4i0aOboXzVPzBsSr8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LDXst8xQux98fgwS+DCPPihpnc/EIEY5qjXq28Z6Q+CGRBgcseA42lQoMei/yn6wl
+         7o3dnsXl8KCvWfXAyW6DQN8eWLud2lv08WmDva8Ob3vXhLaa5IAihtkKAgQoSAAx5o
+         w9KubcmigtPzKB26MfUkK97aI+LYQYGo4cwv/I4U=
+Received: by mail-ed1-f54.google.com with SMTP id t16so5493912edw.7;
+        Sun, 06 Sep 2020 08:41:59 -0700 (PDT)
+X-Gm-Message-State: AOAM532nFJQzpVqxCCzLyHyNjM00mgT4uKzwyTV38z3lHJtLKn5tqrbt
+        H0Xk0c8UukToWbW8LN5pcwBz9UUslDOmK+KRoic=
+X-Google-Smtp-Source: ABdhPJxIynhvt9FPtCkCknmoZlm54k/a28/XHX67a2orq3+WSH0hrY9/KZ8SKA/AvmUK58YzhTnGp1wjkPUSp+tg52g=
+X-Received: by 2002:a05:6402:ca7:: with SMTP id cn7mr17583253edb.143.1599406918482;
+ Sun, 06 Sep 2020 08:41:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200804192654.12783-1-krzk@kernel.org> <20200804192654.12783-14-krzk@kernel.org>
+ <159721917443.33733.7919188364233003142@swboyd.mtv.corp.google.com>
+ <CGME20200812091510eucas1p15944eb26bb496e20b9fadd609063a490@eucas1p1.samsung.com>
+ <CAK8P3a13u0KY0jzxNLs=irTs6ZSXyObKKTp-8KEmowcOZrZXxQ@mail.gmail.com>
+ <8066413c-367d-2f8d-3e7b-dacd954675be@samsung.com> <CAK8P3a1xXe56k5nKuCJ-25h1VqWKRb9JGnFrr=SPg_icay-vZA@mail.gmail.com>
+ <6ccf14a9-802f-25b8-494d-e957cafd073d@samsung.com> <20200812133109.GA15697@pi3>
+ <30eb6355-0749-8268-c87a-f389dc4b4f1b@free.fr>
+In-Reply-To: <30eb6355-0749-8268-c87a-f389dc4b4f1b@free.fr>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Krzysztof Opasiak <k.opasiak@samsung.com>,
+Date:   Sun, 6 Sep 2020 17:41:46 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcrhv=1FKE+9RxuYtCb9ZbmMcLt2N0p5pf_sUTimE5Jtw@mail.gmail.com>
+Message-ID: <CAJKOXPcrhv=1FKE+9RxuYtCb9ZbmMcLt2N0p5pf_sUTimE5Jtw@mail.gmail.com>
+Subject: Re: [PATCH v2 13/13] ARM: s3c24xx: camif: include header with
+ prototypes and unify declaration
+To:     Cedric Roux <sed@free.fr>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Olof Johansson <olof@lixom.net>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-nfc@lists.01.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 9/9] arm64: defconfig: Enable Samsung S3FWRN5 NFC driver
-Date:   Sun,  6 Sep 2020 17:36:54 +0200
-Message-Id: <20200906153654.2925-10-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200906153654.2925-1-krzk@kernel.org>
-References: <20200906153654.2925-1-krzk@kernel.org>
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        patches@opensource.cirrus.com,
+        Sergio Prado <sergio.prado@e-labworks.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Lihua Yao <ylhuajnu@outlook.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Enable the Samsung S3FWRN5 NFC driver present in Exynos5433-based
-TM2/TM2E boards.
+On Thu, 27 Aug 2020 at 22:51, Cedric Roux <sed@free.fr> wrote:
+>
+> On 8/12/20 3:31 PM, Krzysztof Kozlowski wrote:
+> > Or even more important - is it worth to spend effort and time on this?
+> > If there is no single production system using recent Linux kernel, the
+> > answer should be negative...
+>
+> Well, I have a server running on mini2440 with a not-too-young
+> but not-too-old kernel. I don't have much time to test recent
+> kernels though so I guess that doesn't count.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+Actually good to hear. It counts a little bit :)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index a03cefd58799..b78a14d43f3f 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -199,6 +199,9 @@ CONFIG_MAC80211_LEDS=y
- CONFIG_RFKILL=m
- CONFIG_NET_9P=y
- CONFIG_NET_9P_VIRTIO=y
-+CONFIG_NFC=m
-+CONFIG_NFC_NCI=m
-+CONFIG_NFC_S3FWRN5_I2C=m
- CONFIG_PCI=y
- CONFIG_PCIEPORTBUS=y
- CONFIG_PCI_IOV=y
--- 
-2.17.1
-
+Best regards,
+Krzysztof
