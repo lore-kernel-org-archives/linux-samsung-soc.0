@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F68C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FE2C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BC9920578
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:40:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE4DB2078E
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:41:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599406842;
-	bh=y7UdK9SwiWPgD8tbpf2MGHg1kLY8LPM78Jur53+Y3P4=;
+	s=default; t=1599406902;
+	bh=riEwVeVBIORWfwWar/cs3TjEW/xzLOlUM/PuZjLHNds=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Mktb3e/ujxvLs7jCURHcAVgWUwT1Ieh8eDxplYlDV1hvvX6GOu6w9unbi5J61a976
-	 sia91ASYceUxhWOc9crPVZa3jDkSWpFGR2ctEKkjhlokXHdfoiHI+2Y9HlFQucn4F8
-	 7oD3Ts0KOzTM0X7qtnBdFlovGWZ5eABrEZRmAo4w=
+	b=IiHJkXGbgzpSlt2ZJzu2weI0TYpw82g2BGMpLJt+HzUspofIJWeTJdbDKelfV0S6c
+	 N28M4G/VM2Dq7rbRxkCiA+mIhHRP0+lYYvqEYeuBJO9Re6p2bYbfmEsyTyOOOiN6js
+	 EKIcuNtABjnG1zCVYIuSNRGlEVoijaexjRNJ8ukA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728994AbgIFPk1 (ORCPT
+        id S1728979AbgIFPkm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Sep 2020 11:40:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49214 "EHLO mail.kernel.org"
+        Sun, 6 Sep 2020 11:40:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729033AbgIFPjI (ORCPT
+        id S1729039AbgIFPjI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Sun, 6 Sep 2020 11:39:08 -0400
 Received: from localhost.localdomain (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB5A9214DB;
-        Sun,  6 Sep 2020 15:37:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC6932145D;
+        Sun,  6 Sep 2020 15:37:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599406679;
-        bh=y7UdK9SwiWPgD8tbpf2MGHg1kLY8LPM78Jur53+Y3P4=;
+        s=default; t=1599406683;
+        bh=riEwVeVBIORWfwWar/cs3TjEW/xzLOlUM/PuZjLHNds=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ydAGqeozq8pLrEsAwdhHGujNHIzMJS3/51NYxjemPC/OBfv/HS5xdQhiW3qVQFM8i
-         FaPoaUMkievY8OPwP0EdTaVrxuPPCHAihy0NsVcYlMN7YniQoXher3u/Bx2VL4dm7a
-         sSbZcCuQM5Wzr+ZjjPZFaHi7sVP5pIX4gLN28kKg=
+        b=cp2jKXbMKdKR9Ttiv9ZPUR9LeIjOpqALidfU69eMvTRXTPOe3l1KKWIKYnIQgKFdp
+         BVL+6DbBuhmuVJ687CTnLoJqLzIbh6r8hXYmV5ffV3v5QOskKctwcZkJv+C7rJ19G7
+         DUYcftK3GJysPy0Cg494DFmscESZwsZUDOHNfYcI=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
@@ -54,9 +54,9 @@ To:     "David S. Miller" <davem@davemloft.net>,
         linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 8/9] arm64: dts: exynos: Use newer S3FWRN5 GPIO properties in Exynos5433 TM2
-Date:   Sun,  6 Sep 2020 17:36:53 +0200
-Message-Id: <20200906153654.2925-9-krzk@kernel.org>
+Subject: [PATCH v2 9/9] arm64: defconfig: Enable Samsung S3FWRN5 NFC driver
+Date:   Sun,  6 Sep 2020 17:36:54 +0200
+Message-Id: <20200906153654.2925-10-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200906153654.2925-1-krzk@kernel.org>
 References: <20200906153654.2925-1-krzk@kernel.org>
@@ -65,30 +65,28 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Since "s3fwrn5" is not a valid vendor prefix, use new GPIO properties
-instead of the deprecated.
+Enable the Samsung S3FWRN5 NFC driver present in Exynos5433-based
+TM2/TM2E boards.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/configs/defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index 250fc01de78d..24aab3ea3f52 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -795,8 +795,8 @@
- 		reg = <0x27>;
- 		interrupt-parent = <&gpa1>;
- 		interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
--		s3fwrn5,en-gpios = <&gpf1 4 GPIO_ACTIVE_HIGH>;
--		s3fwrn5,fw-gpios = <&gpj0 2 GPIO_ACTIVE_HIGH>;
-+		en-gpios = <&gpf1 4 GPIO_ACTIVE_HIGH>;
-+		wake-gpios = <&gpj0 2 GPIO_ACTIVE_HIGH>;
- 	};
- };
- 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index a03cefd58799..b78a14d43f3f 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -199,6 +199,9 @@ CONFIG_MAC80211_LEDS=y
+ CONFIG_RFKILL=m
+ CONFIG_NET_9P=y
+ CONFIG_NET_9P_VIRTIO=y
++CONFIG_NFC=m
++CONFIG_NFC_NCI=m
++CONFIG_NFC_S3FWRN5_I2C=m
+ CONFIG_PCI=y
+ CONFIG_PCIEPORTBUS=y
+ CONFIG_PCI_IOV=y
 -- 
 2.17.1
 
