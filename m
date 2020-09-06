@@ -2,178 +2,113 @@ Return-Path: <SRS0=CEv7=CP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B10C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CC7C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:39:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71C7920759
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:44:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1AC2207BB
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 15:39:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599403475;
-	bh=7IEOIE7fQw9QHXmykxTiIVu886iDkKJ30802n3q5IwU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=yEBi4fK9RK8lmTX9usK1hv4vaXYj0tbTavM58CeDNCvFqzFosTrjKxukJBJGHvv2j
-	 W2SV9CqNMtbeFnohYOqJuPS8A3gZyx6ZWmFVTHPfeFsPAp8OHANAubSO7VTSdvQsou
-	 H6cB0mkEDwuEzzQOlMDYVZJVVKAe6rBU9V+pkcWg=
+	s=default; t=1599406780;
+	bh=ipXNcf/TRHvf+ZR7u/TpP2y/IWKhoPj+ksZzOBS6oeY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Er9iSHloaYcCBREUYa7D2FBGvHKHajNoT6YPWCtApYzF6ZyBN9I1eFcYBvopjrq25
+	 tRFqWwWEIOeh2SP7n7N5B+3I59IOABsPIWUw+84qLaf8LloqLcmirx7eBNtRR3cPhw
+	 W6p3c3cS56fkEe5pimeIeavizCYRjY+RsZvjc4oY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbgIFOld (ORCPT
+        id S1729046AbgIFPje (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Sep 2020 10:41:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34590 "EHLO mail.kernel.org"
+        Sun, 6 Sep 2020 11:39:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728850AbgIFOkJ (ORCPT
+        id S1728986AbgIFPhl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Sep 2020 10:40:09 -0400
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+        Sun, 6 Sep 2020 11:37:41 -0400
+Received: from localhost.localdomain (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01B9B20838;
-        Sun,  6 Sep 2020 14:39:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F38A420DD4;
+        Sun,  6 Sep 2020 15:37:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599403147;
-        bh=7IEOIE7fQw9QHXmykxTiIVu886iDkKJ30802n3q5IwU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=etXM+rlB1+DW1J4jNFEGcm+fF67s78ieiIJMokib3gbJ/4axa/QC0n2G8dk5lqyab
-         qBGZpGxKO4g23EzVrnLE9URUV/18btbD6jd7BioxTKQiRAZiF9j5rBoO60/0+AU19R
-         QrrjUKSu0Uk6jLxywtE5Upy8feMDExtu7wnkOdM4=
-Received: by mail-ej1-f51.google.com with SMTP id o8so1353409ejb.10;
-        Sun, 06 Sep 2020 07:39:06 -0700 (PDT)
-X-Gm-Message-State: AOAM531tqYkhj80e+PXdMwLyhpduhVhMUwWc77d5dfLswhKd6azxDxHT
-        2qwXRhjc+5czxV+tq8MIXY63DKTLCaqjHxLMBoQ=
-X-Google-Smtp-Source: ABdhPJwZbjzSkmXyfdB9RtLYvattBo3H9pni7matmcNuK/Qe1S1r3L8Nqgb9OFRwyrC4kvI+4viaz1GbEG+WoE49O3Y=
-X-Received: by 2002:a17:907:724f:: with SMTP id ds15mr16286701ejc.119.1599403145475;
- Sun, 06 Sep 2020 07:39:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200829142948.32365-1-krzk@kernel.org> <20200903163255.GA2903619@bogus>
-In-Reply-To: <20200903163255.GA2903619@bogus>
+        s=default; t=1599406661;
+        bh=ipXNcf/TRHvf+ZR7u/TpP2y/IWKhoPj+ksZzOBS6oeY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=EN5QpLwReQiJ4Glm7ap6/s/E+bad2seEm2qD979OOsHwJO6NxtBNuVQWXu46iwk5I
+         sb3UUYxeaQVGzwhn/yk/g0OKHsuRUBZzCte1FsF7UN0HpJnSG3crg3+F0ct4b95UNf
+         r+XbvXDH1sBVNqzlUD1VNdYoeJsBOswU5qejeKUM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Sun, 6 Sep 2020 16:38:53 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPeTRNvnMijzXrpJNHKr_DLCfAWhqHmBvXsKr-Cp3XuzcQ@mail.gmail.com>
-Message-ID: <CAJKOXPeTRNvnMijzXrpJNHKr_DLCfAWhqHmBvXsKr-Cp3XuzcQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: net: nfc: s3fwrn5: Convert to dtschema
-To:     Rob Herring <robh@kernel.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
+To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Krzysztof Opasiak <k.opasiak@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-nfc@lists.01.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Olof Johansson <olof@lixom.net>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-nfc@lists.01.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2 3/9] nfc: s3fwrn5: Remove wrong vendor prefix from GPIOs
+Date:   Sun,  6 Sep 2020 17:36:48 +0200
+Message-Id: <20200906153654.2925-4-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200906153654.2925-1-krzk@kernel.org>
+References: <20200906153654.2925-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 3 Sep 2020 at 18:33, Rob Herring <robh@kernel.org> wrote:
->
-> On Sat, Aug 29, 2020 at 04:29:45PM +0200, Krzysztof Kozlowski wrote:
-> > Convert the Samsung S3FWRN5 NCI NFC controller bindings to dtschema.
-> > This is conversion only so it includes properties with invalid prefixes
-> > (s3fwrn5,en-gpios) which should be addressed later.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  .../devicetree/bindings/net/nfc/s3fwrn5.txt   | 25 --------
-> >  .../devicetree/bindings/net/nfc/s3fwrn5.yaml  | 59 +++++++++++++++++++
->
-> Please rename to samsung,s3fwrn5-i2c.yaml.
->
-> >  MAINTAINERS                                   |  1 +
-> >  3 files changed, 60 insertions(+), 25 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt
-> >  create mode 100644 Documentation/devicetree/bindings/net/nfc/s3fwrn5.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt b/Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt
-> > deleted file mode 100644
-> > index f02f6fb7f81c..000000000000
-> > --- a/Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt
-> > +++ /dev/null
-> > @@ -1,25 +0,0 @@
-> > -* Samsung S3FWRN5 NCI NFC Controller
-> > -
-> > -Required properties:
-> > -- compatible: Should be "samsung,s3fwrn5-i2c".
-> > -- reg: address on the bus
-> > -- interrupts: GPIO interrupt to which the chip is connected
-> > -- s3fwrn5,en-gpios: Output GPIO pin used for enabling/disabling the chip
-> > -- s3fwrn5,fw-gpios: Output GPIO pin used to enter firmware mode and
-> > -  sleep/wakeup control
-> > -
-> > -Example:
-> > -
-> > -&hsi2c_4 {
-> > -     s3fwrn5@27 {
-> > -             compatible = "samsung,s3fwrn5-i2c";
-> > -
-> > -             reg = <0x27>;
-> > -
-> > -             interrupt-parent = <&gpa1>;
-> > -             interrupts = <3 0 0>;
-> > -
-> > -             s3fwrn5,en-gpios = <&gpf1 4 0>;
-> > -             s3fwrn5,fw-gpios = <&gpj0 2 0>;
-> > -     };
-> > -};
-> > diff --git a/Documentation/devicetree/bindings/net/nfc/s3fwrn5.yaml b/Documentation/devicetree/bindings/net/nfc/s3fwrn5.yaml
-> > new file mode 100644
-> > index 000000000000..c22451dea350
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/nfc/s3fwrn5.yaml
-> > @@ -0,0 +1,59 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/net/nfc/s3fwrn5.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Samsung S3FWRN5 NCI NFC Controller
-> > +
-> > +maintainers:
-> > +  - Krzysztof Kozlowski <krzk@kernel.org>
-> > +  - Krzysztof Opasiak <k.opasiak@samsung.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: samsung,s3fwrn5-i2c
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  s3fwrn5,en-gpios:
-> > +    maxItems: 1
-> > +    description:
-> > +      Output GPIO pin used for enabling/disabling the chip
-> > +
-> > +  s3fwrn5,fw-gpios:
-> > +    maxItems: 1
-> > +    description:
-> > +      Output GPIO pin used to enter firmware mode and sleep/wakeup control
-> > +
-> > +required:
-> > +  - compatible
-> > +  - interrupts
-> > +  - reg
-> > +  - s3fwrn5,en-gpios
-> > +  - s3fwrn5,fw-gpios
->
-> additionalProperties: false
+The device tree property prefix describes the vendor, which in case of
+S3FWRN5 chip is Samsung.  Therefore the "s3fwrn5" prefix for "en-gpios"
+and "fw-gpios" is not correct and should be deprecated.  Introduce
+properly named properties for these GPIOs but still support deprecated
+ones.
 
-Sure, I'll fix both issues.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/nfc/s3fwrn5/i2c.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/nfc/s3fwrn5/i2c.c b/drivers/nfc/s3fwrn5/i2c.c
+index b4eb926d220a..557279492503 100644
+--- a/drivers/nfc/s3fwrn5/i2c.c
++++ b/drivers/nfc/s3fwrn5/i2c.c
+@@ -200,13 +200,21 @@ static int s3fwrn5_i2c_parse_dt(struct i2c_client *client)
+ 	if (!np)
+ 		return -ENODEV;
+ 
+-	phy->gpio_en = of_get_named_gpio(np, "s3fwrn5,en-gpios", 0);
+-	if (!gpio_is_valid(phy->gpio_en))
+-		return -ENODEV;
++	phy->gpio_en = of_get_named_gpio(np, "en-gpios", 0);
++	if (!gpio_is_valid(phy->gpio_en)) {
++		/* Support also deprecated property */
++		phy->gpio_en = of_get_named_gpio(np, "s3fwrn5,en-gpios", 0);
++		if (!gpio_is_valid(phy->gpio_en))
++			return -ENODEV;
++	}
+ 
+-	phy->gpio_fw_wake = of_get_named_gpio(np, "s3fwrn5,fw-gpios", 0);
+-	if (!gpio_is_valid(phy->gpio_fw_wake))
+-		return -ENODEV;
++	phy->gpio_fw_wake = of_get_named_gpio(np, "wake-gpios", 0);
++	if (!gpio_is_valid(phy->gpio_fw_wake)) {
++		/* Support also deprecated property */
++		phy->gpio_fw_wake = of_get_named_gpio(np, "s3fwrn5,fw-gpios", 0);
++		if (!gpio_is_valid(phy->gpio_fw_wake))
++			return -ENODEV;
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
+
