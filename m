@@ -2,134 +2,178 @@ Return-Path: <SRS0=CEv7=CP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D94C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B10C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3198A20838
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:31:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71C7920759
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Sep 2020 14:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599402704;
-	bh=cDyc+wot3vTMEATBk2z4vEu0zSazrJ7Fe/RR4d6egKY=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=S/bnlZpuaQqvxEEH8cyg46RBdeHa0GyCDV7g0h6kBjev2w5Qa1omMGOhcPFsUaSx7
-	 XDigq0L5SQahcWKOZ/f1umTofBpIEVb8/5vBAy/aK8o4sTsKAir/AIWFxp00yfMeEA
-	 VmVom1cqU2sM4CFm4VbhZPpdsefZdnthcJqFGE5E=
+	s=default; t=1599403475;
+	bh=7IEOIE7fQw9QHXmykxTiIVu886iDkKJ30802n3q5IwU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=yEBi4fK9RK8lmTX9usK1hv4vaXYj0tbTavM58CeDNCvFqzFosTrjKxukJBJGHvv2j
+	 W2SV9CqNMtbeFnohYOqJuPS8A3gZyx6ZWmFVTHPfeFsPAp8OHANAubSO7VTSdvQsou
+	 H6cB0mkEDwuEzzQOlMDYVZJVVKAe6rBU9V+pkcWg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbgIFOWk (ORCPT
+        id S1728778AbgIFOld (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Sep 2020 10:22:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57398 "EHLO mail.kernel.org"
+        Sun, 6 Sep 2020 10:41:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728896AbgIFOV4 (ORCPT
+        id S1728850AbgIFOkJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Sep 2020 10:21:56 -0400
-Received: from localhost.localdomain (unknown [194.230.155.174])
+        Sun, 6 Sep 2020 10:40:09 -0400
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2005207BC;
-        Sun,  6 Sep 2020 14:21:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01B9B20838;
+        Sun,  6 Sep 2020 14:39:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599402111;
-        bh=cDyc+wot3vTMEATBk2z4vEu0zSazrJ7Fe/RR4d6egKY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UoXNCHzaBtT3ITrr6Y52mq0pWb01bUH+0eJPTdvWjjHlT/g1UIOSprE+ik68wQ/bX
-         Tu3YV+m2f1IaNEor5YJyMvvp424lSWzoelj3ESbPnRa4/m7v3Ky3qLaTPepAVEe8HF
-         9C+3BpMHgNMA0BcMQ/mPY0Aa/YjqNhMNnOcK0vtg=
+        s=default; t=1599403147;
+        bh=7IEOIE7fQw9QHXmykxTiIVu886iDkKJ30802n3q5IwU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=etXM+rlB1+DW1J4jNFEGcm+fF67s78ieiIJMokib3gbJ/4axa/QC0n2G8dk5lqyab
+         qBGZpGxKO4g23EzVrnLE9URUV/18btbD6jd7BioxTKQiRAZiF9j5rBoO60/0+AU19R
+         QrrjUKSu0Uk6jLxywtE5Upy8feMDExtu7wnkOdM4=
+Received: by mail-ej1-f51.google.com with SMTP id o8so1353409ejb.10;
+        Sun, 06 Sep 2020 07:39:06 -0700 (PDT)
+X-Gm-Message-State: AOAM531tqYkhj80e+PXdMwLyhpduhVhMUwWc77d5dfLswhKd6azxDxHT
+        2qwXRhjc+5czxV+tq8MIXY63DKTLCaqjHxLMBoQ=
+X-Google-Smtp-Source: ABdhPJwZbjzSkmXyfdB9RtLYvattBo3H9pni7matmcNuK/Qe1S1r3L8Nqgb9OFRwyrC4kvI+4viaz1GbEG+WoE49O3Y=
+X-Received: by 2002:a17:907:724f:: with SMTP id ds15mr16286701ejc.119.1599403145475;
+ Sun, 06 Sep 2020 07:39:05 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200829142948.32365-1-krzk@kernel.org> <20200903163255.GA2903619@bogus>
+In-Reply-To: <20200903163255.GA2903619@bogus>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+Date:   Sun, 6 Sep 2020 16:38:53 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPeTRNvnMijzXrpJNHKr_DLCfAWhqHmBvXsKr-Cp3XuzcQ@mail.gmail.com>
+Message-ID: <CAJKOXPeTRNvnMijzXrpJNHKr_DLCfAWhqHmBvXsKr-Cp3XuzcQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: net: nfc: s3fwrn5: Convert to dtschema
+To:     Rob Herring <robh@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Krzysztof Opasiak <k.opasiak@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-nfc@lists.01.org, linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH v3 1/3] ARM: dts: exynos: Add assigned clock parent to CMU in Exynos3250
-Date:   Sun,  6 Sep 2020 16:21:44 +0200
-Message-Id: <20200906142146.21266-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Commit 52005dece527 ("ARM: dts: Add assigned clock parents to CMU node
-for exynos3250") added assigned clocks under Clock Management Unit to
-fix hangs when accessing ISP registers.
+On Thu, 3 Sep 2020 at 18:33, Rob Herring <robh@kernel.org> wrote:
+>
+> On Sat, Aug 29, 2020 at 04:29:45PM +0200, Krzysztof Kozlowski wrote:
+> > Convert the Samsung S3FWRN5 NCI NFC controller bindings to dtschema.
+> > This is conversion only so it includes properties with invalid prefixes
+> > (s3fwrn5,en-gpios) which should be addressed later.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >  .../devicetree/bindings/net/nfc/s3fwrn5.txt   | 25 --------
+> >  .../devicetree/bindings/net/nfc/s3fwrn5.yaml  | 59 +++++++++++++++++++
+>
+> Please rename to samsung,s3fwrn5-i2c.yaml.
+>
+> >  MAINTAINERS                                   |  1 +
+> >  3 files changed, 60 insertions(+), 25 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt
+> >  create mode 100644 Documentation/devicetree/bindings/net/nfc/s3fwrn5.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt b/Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt
+> > deleted file mode 100644
+> > index f02f6fb7f81c..000000000000
+> > --- a/Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt
+> > +++ /dev/null
+> > @@ -1,25 +0,0 @@
+> > -* Samsung S3FWRN5 NCI NFC Controller
+> > -
+> > -Required properties:
+> > -- compatible: Should be "samsung,s3fwrn5-i2c".
+> > -- reg: address on the bus
+> > -- interrupts: GPIO interrupt to which the chip is connected
+> > -- s3fwrn5,en-gpios: Output GPIO pin used for enabling/disabling the chip
+> > -- s3fwrn5,fw-gpios: Output GPIO pin used to enter firmware mode and
+> > -  sleep/wakeup control
+> > -
+> > -Example:
+> > -
+> > -&hsi2c_4 {
+> > -     s3fwrn5@27 {
+> > -             compatible = "samsung,s3fwrn5-i2c";
+> > -
+> > -             reg = <0x27>;
+> > -
+> > -             interrupt-parent = <&gpa1>;
+> > -             interrupts = <3 0 0>;
+> > -
+> > -             s3fwrn5,en-gpios = <&gpf1 4 0>;
+> > -             s3fwrn5,fw-gpios = <&gpj0 2 0>;
+> > -     };
+> > -};
+> > diff --git a/Documentation/devicetree/bindings/net/nfc/s3fwrn5.yaml b/Documentation/devicetree/bindings/net/nfc/s3fwrn5.yaml
+> > new file mode 100644
+> > index 000000000000..c22451dea350
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/nfc/s3fwrn5.yaml
+> > @@ -0,0 +1,59 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/net/nfc/s3fwrn5.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Samsung S3FWRN5 NCI NFC Controller
+> > +
+> > +maintainers:
+> > +  - Krzysztof Kozlowski <krzk@kernel.org>
+> > +  - Krzysztof Opasiak <k.opasiak@samsung.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: samsung,s3fwrn5-i2c
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  s3fwrn5,en-gpios:
+> > +    maxItems: 1
+> > +    description:
+> > +      Output GPIO pin used for enabling/disabling the chip
+> > +
+> > +  s3fwrn5,fw-gpios:
+> > +    maxItems: 1
+> > +    description:
+> > +      Output GPIO pin used to enter firmware mode and sleep/wakeup control
+> > +
+> > +required:
+> > +  - compatible
+> > +  - interrupts
+> > +  - reg
+> > +  - s3fwrn5,en-gpios
+> > +  - s3fwrn5,fw-gpios
+>
+> additionalProperties: false
 
-However the dtschema expects "clocks" property if "assigned-clocks" are
-used.  Add reference to input clock, the parent used in
-"assigned-clock-parents" to silence the dtschema warnings:
+Sure, I'll fix both issues.
 
-  arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml: clock-controller@10030000: 'clocks' is a dependency of 'assigned-clocks'
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
----
-
-Changes since v2:
-1. Use XUSBXTI as real input clock.
-
-Changes since v1:
-1. Add clocks property.
-
-This is a v2 for:
-https://lore.kernel.org/linux-samsung-soc/20200901101534.GE23793@kozik-lap/T/#me85ac382b847dadbc3f6ebf30e94e70b5df1ebb6
----
- arch/arm/boot/dts/exynos3250-artik5.dtsi | 4 ++++
- arch/arm/boot/dts/exynos3250-monk.dts    | 4 ++++
- arch/arm/boot/dts/exynos3250-rinato.dts  | 4 ++++
- 3 files changed, 12 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-index 6c2f320be2f4..12887b3924af 100644
---- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-@@ -55,6 +55,10 @@
- 	assigned-clock-rates = <6000000>;
- };
- 
-+&cmu {
-+	clocks = <&xusbxti>;
-+};
-+
- &cpu0 {
- 	cpu0-supply = <&buck2_reg>;
- };
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index 9d77a73bc92b..c1a68e612037 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -164,6 +164,10 @@
- 	status = "okay";
- };
- 
-+&cmu {
-+	clocks = <&xusbxti>;
-+};
-+
- &cpu0 {
- 	cpu0-supply = <&buck2_reg>;
- };
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index 3df003af0d15..b55afaaa691e 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -205,6 +205,10 @@
- 	status = "okay";
- };
- 
-+&cmu {
-+	clocks = <&xusbxti>;
-+};
-+
- &cpu0 {
- 	cpu0-supply = <&buck2_reg>;
- };
--- 
-2.17.1
-
+Best regards,
+Krzysztof
