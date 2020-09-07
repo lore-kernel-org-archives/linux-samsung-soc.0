@@ -2,170 +2,141 @@ Return-Path: <SRS0=PEKn=CQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 602E1C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 09:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE610C2BB84
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 10:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1431A21473
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 09:36:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E51D2166E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 10:08:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GdR9hDKN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbgIGJgK (ORCPT
+        id S1728529AbgIGKIG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 05:36:10 -0400
-Received: from foss.arm.com ([217.140.110.172]:58790 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727122AbgIGJgH (ORCPT
+        Mon, 7 Sep 2020 06:08:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59150 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728524AbgIGKIA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 05:36:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D06430E;
-        Mon,  7 Sep 2020 02:36:06 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BF733F66E;
-        Mon,  7 Sep 2020 02:36:01 -0700 (PDT)
-Date:   Mon, 7 Sep 2020 10:35:58 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dilip Kota <eswara.kota@linux.intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Yue Wang <yue.wang@Amlogic.com>, Marc Zyngier <maz@kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 00/40] PCI: dwc: Driver clean-ups
-Message-ID: <20200907093558.GC6428@e121166-lin.cambridge.arm.com>
-References: <20200821035420.380495-1-robh@kernel.org>
+        Mon, 7 Sep 2020 06:08:00 -0400
+Received: from mail-ua1-x944.google.com (mail-ua1-x944.google.com [IPv6:2607:f8b0:4864:20::944])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1EFBC061755
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Sep 2020 03:07:59 -0700 (PDT)
+Received: by mail-ua1-x944.google.com with SMTP id i22so3434961uat.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Sep 2020 03:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=QuNLltsEiIW4LCbpFyTWl1p44IkTT3QJmbdClg97dn0=;
+        b=GdR9hDKN5L9o4E+D9klMf226TdSBiyQrmIJFqTy1wvu7JgUOP5hnq9D/dbGUt34nVN
+         XTE9ZkkMZYDWJkEj8/LXyenZz3T0Irx/WXSUQIYDB4F7XGGOjeU/eP0cHxgH70gtpxoS
+         593wZnUVUiqgZqhmNZJBvdbDOEAjelVZNg7W3uJxmMeE2W2+4ryrLED4uLWr5d2on/1Y
+         V+k0+LPGbknr9eHhBtS9n9cOKc/o9fFLWU4T/+6C9EhAuV3OtNNgAG8pjet6UXydTeg8
+         /OlJ55P8StYowRupDWz7iqCrO55GZV8SHF0Qf78K+dPX1qyWPG1Pi5uUN5Re3N+8QgpF
+         Opsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=QuNLltsEiIW4LCbpFyTWl1p44IkTT3QJmbdClg97dn0=;
+        b=tNViTTK//aiafrps42tY5muumJQs0FNzLzYDcJlseiruaQHPTCqmj6lX1Jku5DbyUE
+         ywiqutWBgwW1s5ObtLh20l7Kxp6me59+UTFS48UwmWE8rLX8w6Q81Dleg/qVG/pHyWZM
+         mB2I27Bs8EAsQD/V2Z05z0jzqxAaoZ3wCvTqigkoxHUS3hG65U3qjSzDLGwIiqTxV7TI
+         ZcY3m0/ZvseyrpCCcF2rfasgDV5Mf8y0z7ZPcEXwfrTMK+PM/ZiULm7cr5jv5wXoA+KZ
+         hawgUcEJidnKElsUJ/JRjjO22p5PW4nXOLE0pJJr3RZ5F4H2fxOaPjGE6KsyTHZ37+DC
+         QBZg==
+X-Gm-Message-State: AOAM5337FLnC6hfxE+++hOoL4TpXNiNm4TtzlrJGfa1VxxudDEp1CH49
+        Y/YfshSAl+tekNUUpVAcfpj3rhygC0yfgMNU1k6ITg==
+X-Google-Smtp-Source: ABdhPJylvGTfdGwP02Q+D0hgvcDauwlOQni6HAn5s7aLot2eLwS2w0Wmn0FgXWKx98K2aaDsiVxs7F4QHZfQitRnsZs=
+X-Received: by 2002:ab0:130a:: with SMTP id g10mr1522518uae.100.1599473277782;
+ Mon, 07 Sep 2020 03:07:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200821035420.380495-1-robh@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200904164315.24618-1-krzk@kernel.org>
+In-Reply-To: <20200904164315.24618-1-krzk@kernel.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 7 Sep 2020 12:07:21 +0200
+Message-ID: <CAPDyKFrzDeNqvM4cc69iCdVW7QnF=O9C=v13+o5bGBSCSzZfWA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mmc: host: Drop unneeded MMC dependency in Kconfig
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Manuel Lauss <manuel.lauss@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Prabu Thangamuthu <prabu.t@synopsys.com>,
+        Manjunath M B <manjumb@synopsys.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-arm-kernel@axis.com,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 20, 2020 at 09:53:40PM -0600, Rob Herring wrote:
-> This is a series of clean-ups for the Designware PCI driver. The series
-> initially reworks the config space accessors to use the existing pci_ops
-> struct. Then there's removal of various private data that's also present
-> in the pci_host_bridge struct. There's also some duplicated common (PCI
-> and DWC) register defines which I converted to use the common defines.
-> Finally, the initialization for speed/gen, number of lanes, and N_FTS
-> are all moved to the common DWC code.
-> 
-> This is compile tested only as I don't have any DWC based h/w, so any
-> testing would be helpful. A branch is here[1].
+On Fri, 4 Sep 2020 at 18:43, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> All entries in Kconfig are already part of "if MMC", so there is no need
+> for additional dependency on MMC.
+>
+> Suggested-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Applied the series to pci/dwc, thanks.
+Applied for next, thanks!
 
-Lorenzo
+Kind regards
+Uffe
 
-> Rob
-> 
-> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git pci-dw-cleanups
-> 
-> Rob Herring (40):
->   PCI: Allow root and child buses to have different pci_ops
->   PCI: dwc: Use DBI accessors instead of own config accessors
->   PCI: dwc: Allow overriding bridge pci_ops
->   PCI: dwc: Add a default pci_ops.map_bus for root port
->   PCI: dwc: al: Use pci_ops for child config space accessors
->   PCI: dwc: keystone: Use pci_ops for config space accessors
->   PCI: dwc: tegra: Use pci_ops for root config space accessors
->   PCI: dwc: meson: Use pci_ops for root config space accessors
->   PCI: dwc: kirin: Use pci_ops for root config space accessors
->   PCI: dwc: exynos: Use pci_ops for root config space accessors
->   PCI: dwc: histb: Use pci_ops for root config space accessors
->   PCI: dwc: Remove dwc specific config accessor ops
->   PCI: dwc: Use generic config accessors
->   PCI: Also call .add_bus() callback for root bus
->   PCI: dwc: keystone: Convert .scan_bus() callback to use add_bus
->   PCI: dwc: Convert to use pci_host_probe()
->   PCI: dwc: Remove root_bus pointer
->   PCI: dwc: Remove storing of PCI resources
->   PCI: dwc: Simplify config space handling
->   PCI: dwc/keystone: Drop duplicated 'num-viewport'
->   PCI: dwc: Check CONFIG_PCI_MSI inside dw_pcie_msi_init()
->   PCI: dwc/imx6: Remove duplicate define PCIE_LINK_WIDTH_SPEED_CONTROL
->   PCI: dwc: Add a 'num_lanes' field to struct dw_pcie
->   PCI: dwc: Ensure FAST_LINK_MODE is cleared
->   PCI: dwc/meson: Drop the duplicate number of lanes setup
->   PCI: dwc/meson: Drop unnecessary RC config space initialization
->   PCI: dwc/meson: Rework PCI config and DW port logic register accesses
->   PCI: dwc/imx6: Use common PCI register definitions
->   PCI: dwc/qcom: Use common PCI register definitions
->   PCI: dwc: Remove hardcoded PCI_CAP_ID_EXP offset
->   PCI: dwc/tegra: Use common Designware port logic register definitions
->   PCI: dwc: Remove read_dbi2 code
->   PCI: dwc: Make ATU accessors private
->   PCI: dwc: Centralize link gen setting
->   PCI: dwc: Set PORT_LINK_DLL_LINK_EN in common setup code
->   PCI: dwc/intel-gw: Drop unnecessary checking of DT 'device_type'
->     property
->   PCI: dwc/intel-gw: Move getting PCI_CAP_ID_EXP offset to
->     intel_pcie_link_setup()
->   PCI: dwc/intel-gw: Drop unused max_width
->   PCI: dwc: Move N_FTS setup to common setup
->   PCI: dwc: Use DBI accessors
-> 
->  drivers/pci/controller/dwc/pci-dra7xx.c       |  29 +-
->  drivers/pci/controller/dwc/pci-exynos.c       |  45 +--
->  drivers/pci/controller/dwc/pci-imx6.c         |  52 +--
->  drivers/pci/controller/dwc/pci-keystone.c     | 126 ++-----
->  drivers/pci/controller/dwc/pci-meson.c        | 156 ++-------
->  drivers/pci/controller/dwc/pcie-al.c          |  70 +---
->  drivers/pci/controller/dwc/pcie-artpec6.c     |  48 +--
->  .../pci/controller/dwc/pcie-designware-ep.c   |  11 +-
->  .../pci/controller/dwc/pcie-designware-host.c | 319 ++++++------------
->  .../pci/controller/dwc/pcie-designware-plat.c |   4 +-
->  drivers/pci/controller/dwc/pcie-designware.c  | 104 +++---
->  drivers/pci/controller/dwc/pcie-designware.h  |  54 +--
->  drivers/pci/controller/dwc/pcie-histb.c       |  45 +--
->  drivers/pci/controller/dwc/pcie-intel-gw.c    |  65 +---
->  drivers/pci/controller/dwc/pcie-kirin.c       |  43 +--
->  drivers/pci/controller/dwc/pcie-qcom.c        |  33 +-
->  drivers/pci/controller/dwc/pcie-spear13xx.c   |  39 +--
->  drivers/pci/controller/dwc/pcie-tegra194.c    | 120 ++-----
->  drivers/pci/controller/dwc/pcie-uniphier.c    |   3 +-
->  drivers/pci/probe.c                           |  14 +-
->  include/linux/pci.h                           |   1 +
->  21 files changed, 443 insertions(+), 938 deletions(-)
-> 
+
+>
+> ---
+>
+> Changes since v1:
+> 1. New patch
+> ---
+>  drivers/mmc/host/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index b95f79f53395..eea01fde0591 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -422,7 +422,7 @@ config MMC_SDHCI_IPROC
+>
+>  config MMC_MESON_GX
+>         tristate "Amlogic S905/GX*/AXG SD/MMC Host Controller support"
+> -       depends on ARCH_MESON && MMC
+> +       depends on ARCH_MESON
+>         help
+>           This selects support for the Amlogic SD/MMC Host Controller
+>           found on the S905/GX*/AXG family of SoCs.  This controller is
+> @@ -458,7 +458,7 @@ config MMC_MESON_MX_SDIO
+>
+>  config MMC_MOXART
+>         tristate "MOXART SD/MMC Host Controller support"
+> -       depends on ARCH_MOXART && MMC
+> +       depends on ARCH_MOXART
+>         help
+>           This selects support for the MOXART SD/MMC Host Controller.
+>           MOXA provides one multi-functional card reader which can
 > --
-> 2.25.1
+> 2.17.1
+>
