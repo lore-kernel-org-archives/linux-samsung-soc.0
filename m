@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E83C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2095C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB76E2080A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:22:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEB4B21556
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:24:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599495722;
-	bh=ejtq/VIVsktLn4Dgw4vy86y+KtXeh8BqyiiI41C0oYM=;
+	s=default; t=1599495844;
+	bh=INsnJaELqRYsET4RRsxOzKJWpIsKuNPsUd4VuZL+kig=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yQlb3jth5qQ56FI/Ixm4uApPFbbuf9xUCiPFGObgPPv0SCWjvpTslmFUxhWq9bKg+
-	 5Rvro2mxV1x3lgSj4uh7M7KtxHxmbZrwwVHdu+tGR9e+EdygNIiBrAYCvX4+UAqEF8
-	 m8kdepd3Ub5rzSpKrhnDgKBwIH9otdf3WhOBSd7M=
+	b=dWF/wjUYclhJGkYvSrXoUKc3HX4+tzc1SL1dIV8X/MyAJqQAUyjw70BckteKT9KZC
+	 EUoaFG8bXr8Axc989WLOs1Bqt8o9pWmqWb1SiVFjfm8FjcnEEnyHYBAEASC03kD9es
+	 mtfCdVGh3hi6NKk7uXxGgjtDNOjEofRSJiHScfhI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730456AbgIGQV4 (ORCPT
+        id S1729970AbgIGQNS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 12:21:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33378 "EHLO mail.kernel.org"
+        Mon, 7 Sep 2020 12:13:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730389AbgIGQNV (ORCPT
+        id S1730386AbgIGQNO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 12:13:21 -0400
+        Mon, 7 Sep 2020 12:13:14 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEDE921897;
-        Mon,  7 Sep 2020 16:13:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A703206E6;
+        Mon,  7 Sep 2020 16:13:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599495201;
-        bh=ejtq/VIVsktLn4Dgw4vy86y+KtXeh8BqyiiI41C0oYM=;
+        s=default; t=1599495193;
+        bh=INsnJaELqRYsET4RRsxOzKJWpIsKuNPsUd4VuZL+kig=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=nNkR14erhjM+1VUXixXRp1KJe6Zdmr2ez4f0PwcJ4p8eEzRNgNJ6DjxDty7fxYr+l
-         8fMvogRLvor3RRwwLPnT8HOvXMOTIYpMGsB37OvspsErCVf788XlVeXWIDYezWyeKm
-         0/5E7+5HVT2HJdrjsMXM7xpv07bIXaLPLVml5rjA=
+        b=Z/xvc2E0pU0W7wifdwH6nXDDK8ZLaQVF/rtfD7l3/YbRIIv4MmQjtHbOq1pzT0vxg
+         S3VFMWnUnNWGIJsMdsvlMyL81ZbDWE+ONNyxX1HXCnqttgNUzDX9gpj/uNgNXc3yOf
+         0I/Ce/wW1oqj/gjsaKhJcOpIpkjvCoHujfUXs1Xk=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -52,9 +52,9 @@ To:     Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: [PATCH 13/25] ARM: dts: s5pv210: add RTC 32 KHz clock in SMDKC110
-Date:   Mon,  7 Sep 2020 18:11:29 +0200
-Message-Id: <20200907161141.31034-14-krzk@kernel.org>
+Subject: [PATCH 11/25] ARM: dts: s5pv210: add RTC 32 KHz clock in Aries family
+Date:   Mon,  7 Sep 2020 18:11:27 +0200
+Message-Id: <20200907161141.31034-12-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200907161141.31034-1-krzk@kernel.org>
 References: <20200907161141.31034-1-krzk@kernel.org>
@@ -64,8 +64,10 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 The S3C RTC requires 32768 Hz clock as input which is provided by PMIC.
-However the PMIC is not described in DTS at all so at least add
-a workaround to model its clock with a fixed-clock.
+However there is no such clock provider but rather a regulator driver
+which registers the clock as a regulator.  This is an old driver which
+will not be updated so add a workaround - a fixed-clock to fill missing
+clock phandle reference in S3C RTC.
 
 This fixes dtbs_check warnings:
 
@@ -74,36 +76,39 @@ This fixes dtbs_check warnings:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/s5pv210-smdkc110.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/boot/dts/s5pv210-aries.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/s5pv210-smdkc110.dts b/arch/arm/boot/dts/s5pv210-smdkc110.dts
-index e5aec6c526fb..0c623b78af72 100644
---- a/arch/arm/boot/dts/s5pv210-smdkc110.dts
-+++ b/arch/arm/boot/dts/s5pv210-smdkc110.dts
-@@ -30,6 +30,13 @@
- 		device_type = "memory";
- 		reg = <0x20000000 0x20000000>;
+diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
+index 6ba23562da46..86c3b26fd21e 100644
+--- a/arch/arm/boot/dts/s5pv210-aries.dtsi
++++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
+@@ -47,6 +47,13 @@
+ 		};
  	};
-+
+ 
 +	pmic_ap_clk: clock-0 {
-+		/* Workaround for missing PMIC and its clock */
++		/* Workaround for missing clock on PMIC */
 +		compatible = "fixed-clock";
 +		#clock-cells = <0>;
 +		clock-frequency = <32768>;
 +	};
++
+ 	bt_codec: bt_sco {
+ 		compatible = "linux,bt-sco";
+ 		#sound-dai-cells = <0>;
+@@ -825,6 +832,11 @@
+ 	samsung,pwm-outputs = <1>;
  };
  
- &xusbxti {
-@@ -54,6 +61,8 @@
- 
- &rtc {
- 	status = "okay";
++&rtc {
 +	clocks = <&clocks CLK_RTC>, <&pmic_ap_clk>;
 +	clock-names = "rtc", "rtc_src";
- };
- 
- &i2c0 {
++};
++
+ &sdhci1 {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
 -- 
 2.17.1
 
