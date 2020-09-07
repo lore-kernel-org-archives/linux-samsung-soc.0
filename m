@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D81EDC2BB84
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 18:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E07C2BB84
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 18:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E1B22087D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 18:34:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEC862151B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 18:34:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599503662;
-	bh=t266Nu1lB7LStASkQx6vx6QrRbEc2k7w1JLEvAlzAJc=;
+	s=default; t=1599503668;
+	bh=SNHOlGVRp9tnGD12pIQzWTN4qNINzqpUoktgGrWekX8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2BC4I859sQlZ0JddteqTafMIQjkWKwL1b5yrdStfPWhtBdQj4Tn9aPt4d1gRQbwcm
-	 c9gKqEgDFOlOvuv5d3egcOKQc9umqZRIZVVpLap7NN9pnY8gtiktABEBav9PnOH5Bj
-	 5HbABhT3yiikUhGlhO4jN5CUsNCaE8Jy6E8YitgA=
+	b=n2VY7H+Gt/A0AVge65FPsfRvYou8vez4ngEpp6ss4CBhjMh1a13q996x+3TCCeUKF
+	 f/eat7kzdXInZDI1qYLygFRJ215wQDvJpGBuBQDvIfibuuvkkFwdK1pcat5NnqPurn
+	 eecZZ4Y9LBYa6PjWktzKqT64oqStA1bkG2+Ku108=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729654AbgIGSeJ (ORCPT
+        id S1729580AbgIGSdn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 14:34:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41520 "EHLO mail.kernel.org"
+        Mon, 7 Sep 2020 14:33:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730226AbgIGSdy (ORCPT
+        id S1729538AbgIGSdn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 14:33:54 -0400
+        Mon, 7 Sep 2020 14:33:43 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0FA72087D;
-        Mon,  7 Sep 2020 18:33:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 417C020C09;
+        Mon,  7 Sep 2020 18:33:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599503634;
-        bh=t266Nu1lB7LStASkQx6vx6QrRbEc2k7w1JLEvAlzAJc=;
+        s=default; t=1599503622;
+        bh=SNHOlGVRp9tnGD12pIQzWTN4qNINzqpUoktgGrWekX8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DUBHzOWIgCRdcU0dSwV3do+czaKmzBjG/mqhWRLUmK5mQkpZdrxYisfCl2NN/sRWf
-         v9Q4apQPRU2UhKc3dwOO7KbfQtnBY8IFUywDR8798XNegaf0770XfhU6Z8Pagitg8i
-         KJQPGkxPXp3CiH0aK0F3vGuaiGYsbVwX3gVZyPFA=
+        b=gmYZJQRShqYDqRLZyvXggf1qSytOj7VpU7EDxcaA9jEW6nyLDunWqaQ/XlQk49yPe
+         K9XCjNfWGvnEcEmhmP8PLru5OLEHMnMN2oORtld2/ceLiH9sIoj7iGBAa2N/Dbsi8i
+         F4FaJA59RnivKNFIksNg87IzAzW4cwMk/avMnFkg=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -52,9 +52,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 10/11] ARM: dts: s3c24xx: add address to CPU node
-Date:   Mon,  7 Sep 2020 20:33:12 +0200
-Message-Id: <20200907183313.29234-11-krzk@kernel.org>
+Subject: [PATCH 06/11] ARM: dts: s3c6410: remove additional CPU compatible
+Date:   Mon,  7 Sep 2020 20:33:08 +0200
+Message-Id: <20200907183313.29234-7-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200907183313.29234-1-krzk@kernel.org>
 References: <20200907183313.29234-1-krzk@kernel.org>
@@ -63,38 +63,29 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The CPU nodes should be described as children of "cpus" bus node with
-appropriate "reg" properties:
+Only the specific compatible (arm,arm1176jzf-s) is allowed by dtschema:
 
-  cpus: '#address-cells' is a required property
-  cpus: '#size-cells' is a required property
-  cpu: 'device_type' is a required property
-  cpu: 'reg' is a required property
+  cpu@0: compatible: ['arm,arm1176jzf-s', 'arm,arm1176'] is too long
+  cpu@0: compatible: Additional items are not allowed ('arm,arm1176' was unexpected)
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/s3c2416.dtsi | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/s3c64xx.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/s3c2416.dtsi b/arch/arm/boot/dts/s3c2416.dtsi
-index d1dec9f52f69..4f084f4fe44f 100644
---- a/arch/arm/boot/dts/s3c2416.dtsi
-+++ b/arch/arm/boot/dts/s3c2416.dtsi
-@@ -18,8 +18,13 @@
- 	};
+diff --git a/arch/arm/boot/dts/s3c64xx.dtsi b/arch/arm/boot/dts/s3c64xx.dtsi
+index 2e611df37911..cb11a87dbc42 100644
+--- a/arch/arm/boot/dts/s3c64xx.dtsi
++++ b/arch/arm/boot/dts/s3c64xx.dtsi
+@@ -34,7 +34,7 @@
  
- 	cpus {
--		cpu {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
- 			compatible = "arm,arm926ej-s";
-+			reg = <0x0>;
+ 		cpu@0 {
+ 			device_type = "cpu";
+-			compatible = "arm,arm1176jzf-s", "arm,arm1176";
++			compatible = "arm,arm1176jzf-s";
+ 			reg = <0x0>;
  		};
  	};
- 
 -- 
 2.17.1
 
