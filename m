@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F27B8C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43606C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:24:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C099220757
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:24:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10ADC20757
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:24:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599495853;
-	bh=yx/xrKwi3d342OuVJ6+t5DVvoWKbXVtqclPlrgpbk3Y=;
+	s=default; t=1599495861;
+	bh=qDYGfZ3RmLMzEdL/D31BVomLhzU4Yf8Q9HdCrkY+B7M=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k2HcbbtW3ukj9ecHy9dCW59sKfSjfP2DcHMvmSA25BMiK9AFJcSHDA77gWwJHQD3q
-	 Zbfg1zJOKgJSrI72ysXDIVBSj0OvkvLOrAW3OEBdjlt60cqNPpaINfAuOUhByAOPXX
-	 owSYyMVO48yoiOQnLYQrp/YDaI8nVbrJDGrCnX/Q=
+	b=At1eJ3fcDZSKvGbN+I6PZy1cGw4yDww+4hNduR2bA2gkwvGM+eTvqNxIUE7dgGk7b
+	 +xK16CzjH5xZRIYO99CnzK8W2gX/DsYuVG41cdyyD4SC1haKBl4Hws9LX58b7B4WL9
+	 BYF5VPX4MQgXXO7EqKQI3y+XloBrnns7ckqkiwFk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730393AbgIGQYB (ORCPT
+        id S1730380AbgIGQNH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 12:24:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33292 "EHLO mail.kernel.org"
+        Mon, 7 Sep 2020 12:13:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729937AbgIGQNS (ORCPT
+        id S1729937AbgIGQM4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 12:13:18 -0400
+        Mon, 7 Sep 2020 12:12:56 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39503207DE;
-        Mon,  7 Sep 2020 16:13:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4039206E6;
+        Mon,  7 Sep 2020 16:12:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599495197;
-        bh=yx/xrKwi3d342OuVJ6+t5DVvoWKbXVtqclPlrgpbk3Y=;
+        s=default; t=1599495175;
+        bh=qDYGfZ3RmLMzEdL/D31BVomLhzU4Yf8Q9HdCrkY+B7M=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=AvZnRTKZawYE3HQooBh8Fj2d4hN/5dCV9Kt4ZgIPQouJdeq/+bazDiPaEgGeCW4V2
-         ZAPxuKbRNKpo88YfNvxNxs0DB2HO8xoKg2K9Yvv9rJ/EMc0EeuadiOKjDZxKkZJb3v
-         EoDlBPgID3PfgjjKpnCeqwOFOa7Y0cgpEF6mPfNc=
+        b=2HlZYLGDXRkHSOlvKLZG4N1MYxjdg3kgFUw0boXQ+tQCu/eUQINFSNUd4gvaBfJml
+         vQ6L90Mnr1qXXK/azSFdFF7j6CbTXhzC0BhYGaDIZ3Y0mVUtcRqRjt1z8GE8rjbEbu
+         3S3ak1/xNBLuZcOBZm8k3ASFgoZLMORPQTtLcF4Y=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -52,9 +52,9 @@ To:     Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: [PATCH 12/25] ARM: dts: s5pv210: add RTC 32 KHz clock in Goni
-Date:   Mon,  7 Sep 2020 18:11:28 +0200
-Message-Id: <20200907161141.31034-13-krzk@kernel.org>
+Subject: [RFT 06/25] ARM: dts: s5pv210: move fixed clocks under root node
+Date:   Mon,  7 Sep 2020 18:11:22 +0200
+Message-Id: <20200907161141.31034-7-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200907161141.31034-1-krzk@kernel.org>
 References: <20200907161141.31034-1-krzk@kernel.org>
@@ -63,64 +63,76 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The S3C RTC requires 32768 Hz clock as input which is provided by PMIC.
-However there is no such clock provider but rather a regulator driver
-which registers the clock as a regulator.  This is an old driver which
-will not be updated so add a workaround - a fixed-clock to fill missing
-clock phandle reference in S3C RTC.
+The fixed clocks are kept under dedicated 'external-clocks' node, thus a
+fake 'reg' was added.  This is not correct with dtschema as fixed-clock
+binding does not have a 'reg' property.  Moving fixed clocks out of
+'soc' to root node fixes multiple dtbs_check warnings:
 
-This fixes dtbs_check warnings:
-
-  rtc@e2800000: clocks: [[2, 145]] is too short
-  rtc@e2800000: clock-names: ['rtc'] is too short
+  external-clocks: $nodename:0: 'external-clocks' does not match '^([a-z][a-z0-9\\-]+-bus|bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
+  external-clocks: #size-cells:0:0: 0 is not one of [1, 2]
+  external-clocks: oscillator@0:reg:0: [0] is too short
+  external-clocks: oscillator@1:reg:0: [1] is too short
+  external-clocks: 'ranges' is a required property
+  oscillator@0: 'reg' does not match any of the regexes: 'pinctrl-[0-9]+'
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/s5pv210-goni.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm/boot/dts/s5pv210.dtsi | 36 +++++++++++++---------------------
+ 1 file changed, 14 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/s5pv210-goni.dts b/arch/arm/boot/dts/s5pv210-goni.dts
-index fbbd93707404..c8714bf0b6e4 100644
---- a/arch/arm/boot/dts/s5pv210-goni.dts
-+++ b/arch/arm/boot/dts/s5pv210-goni.dts
-@@ -33,6 +33,13 @@
- 			0x50000000 0x08000000>;
- 	};
- 
-+	pmic_ap_clk: clock-0 {
-+		/* Workaround for missing clock on PMIC */
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -224,6 +231,11 @@
- 					regulator-max-microvolt = <1200000>;
- 					regulator-always-on;
- 				};
-+
-+				ap32khz_reg: EN32KHz-AP {
-+					regulator-name = "32KHz AP";
-+					regulator-always-on;
-+				};
- 			};
+diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
+index 84e4447931de..5c760a6d7955 100644
+--- a/arch/arm/boot/dts/s5pv210.dtsi
++++ b/arch/arm/boot/dts/s5pv210.dtsi
+@@ -52,34 +52,26 @@
  		};
  	};
-@@ -308,6 +320,11 @@
- 	status = "okay";
- };
  
-+&rtc {
-+	clocks = <&clocks CLK_RTC>, <&pmic_ap_clk>;
-+	clock-names = "rtc", "rtc_src";
-+};
++	xxti: oscillator-0 {
++		compatible = "fixed-clock";
++		clock-frequency = <0>;
++		clock-output-names = "xxti";
++		#clock-cells = <0>;
++	};
 +
- &sdhci0 {
- 	bus-width = <4>;
- 	non-removable;
++	xusbxti: oscillator-1 {
++		compatible = "fixed-clock";
++		clock-frequency = <0>;
++		clock-output-names = "xusbxti";
++		#clock-cells = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges;
+ 
+-		external-clocks {
+-			compatible = "simple-bus";
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			xxti: oscillator@0 {
+-				compatible = "fixed-clock";
+-				reg = <0>;
+-				clock-frequency = <0>;
+-				clock-output-names = "xxti";
+-				#clock-cells = <0>;
+-			};
+-
+-			xusbxti: oscillator@1 {
+-				compatible = "fixed-clock";
+-				reg = <1>;
+-				clock-frequency = <0>;
+-				clock-output-names = "xusbxti";
+-				#clock-cells = <0>;
+-			};
+-		};
+-
+ 		onenand: onenand@b0600000 {
+ 			compatible = "samsung,s5pv210-onenand";
+ 			reg = <0xb0600000 0x2000>,
 -- 
 2.17.1
 
