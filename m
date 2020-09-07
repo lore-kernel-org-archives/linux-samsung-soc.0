@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3ADC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 973C8C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1874A2177B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A28A21789
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:13:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599495165;
-	bh=mmrbMHMlywRamMbAoD8m1NVZ3xc1llmLdf9vpJqmSWo=;
+	s=default; t=1599495220;
+	bh=qgXqI4frisFwx8QzGcIa8tBsjc+jjvV/N85jzzXwX90=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=X8483S+Aw72zf+OshcMzzJ/fElZSzspOXbXUH/kDOr3lW3H4vl2sn4BwI8D+Fooyd
-	 d18+cZo1FcY1SUjJH8yopYTtdpNZg1QsR3OU8FnpcSHpyPdSm3+2etc3ZRjh1op/m0
-	 CNHJTs2mNy6PaOYvdfDApHvJuvqAPW4xctTnVoKE=
+	b=eKtRcv96wAV/7rLswBCV8U8tPI25Uva8hWXfQx29tzCBIaO0mBpOBl2P7uKV1OtKL
+	 hZU2q5wIlFyHrHqG1yW/YmmqfOWy5YpaNlhceRonbYYQkddTGjg4wZMAp4U9pX9yPb
+	 QSoJYKI60jYBC3WrlBh+XaOQr4kXZDTnknSB2SoE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730307AbgIGQMm (ORCPT
+        id S1730402AbgIGQNi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 12:12:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60894 "EHLO mail.kernel.org"
+        Mon, 7 Sep 2020 12:13:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729931AbgIGQMa (ORCPT
+        id S1729934AbgIGQNc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 12:12:30 -0400
+        Mon, 7 Sep 2020 12:13:32 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9171206E6;
-        Mon,  7 Sep 2020 16:12:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A70CC20757;
+        Mon,  7 Sep 2020 16:13:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599495149;
-        bh=mmrbMHMlywRamMbAoD8m1NVZ3xc1llmLdf9vpJqmSWo=;
+        s=default; t=1599495211;
+        bh=qgXqI4frisFwx8QzGcIa8tBsjc+jjvV/N85jzzXwX90=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=Hxu6rgxfiW5iKv9B71dOEX1kzrSB+ZYt+jhvfDbkfRFnmnvS6eX2DH/XPC4N3lKpu
-         /PgWsiwEnSuoQx8iUkpRVrFOYYn0uFjBMWSd1s4UXaTA9DNVQxGibJkseL5//NfLG9
-         Eyb3VQ6NgnRYkwyP7nrUpwzH/UwHSLEBjRIPMdzQ=
+        b=lhlP2atmwmPguVgSXCI4YIVL6tyzpJrfhphhFctmVThZToRl2T1f148DWmY1M5DQ0
+         lFOZ8f33+AhCk+PyHsR8HjoZZAIA92ghniWQ/nCufS+FPKNu0vuygIwsO+e3tPpgC2
+         44Z8Nnv673y51nyIV5Xlf0TGA1c22EEKDL7eYGVU=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -52,9 +52,9 @@ To:     Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: [PATCH 02/25] dt-bindings: iio: adc: exynos-adc: require second interrupt with touch screen
-Date:   Mon,  7 Sep 2020 18:11:18 +0200
-Message-Id: <20200907161141.31034-3-krzk@kernel.org>
+Subject: [PATCH 15/25] ARM: dts: s5pv210: add RTC 32 KHz clock in Torbreck
+Date:   Mon,  7 Sep 2020 18:11:31 +0200
+Message-Id: <20200907161141.31034-16-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200907161141.31034-1-krzk@kernel.org>
 References: <20200907161141.31034-1-krzk@kernel.org>
@@ -63,51 +63,47 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The ADC in S3C/S5P/Exynos SoCs can be used also for handling touch
-screen.  In such case the second interrupt is required.  This second
-interrupt can be anyway provided, even without touch screens.  This
-fixes dtbs_check warnings like:
+The S3C RTC requires 32768 Hz clock as input which is provided by PMIC.
+However the PMIC is not described in DTS at all so at least add
+a workaround to model its clock with a fixed-clock.
 
-  arch/arm/boot/dts/s5pv210-aquila.dt.yaml: adc@e1700000: interrupts: [[23], [24]] is too long
+This fixes dtbs_check warnings:
+
+  rtc@e2800000: clocks: [[2, 145]] is too short
+  rtc@e2800000: clock-names: ['rtc'] is too short
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- .../bindings/iio/adc/samsung,exynos-adc.yaml      | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/s5pv210-torbreck.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-index cc3c8ea6a894..89b4f9c252a6 100644
---- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-@@ -41,7 +41,10 @@ properties:
-     maxItems: 2
- 
-   interrupts:
--    maxItems: 1
-+    description:
-+      ADC interrupt followed by optional touchscreen interrupt.
-+    minItems: 1
-+    maxItems: 2
- 
-   "#io-channel-cells":
-     const: 1
-@@ -107,6 +110,16 @@ allOf:
-           items:
-             - const: adc
- 
-+  - if:
-+      properties:
-+        has-touchscreen:
-+          true
-+    then:
-+      properties:
-+        interrupts:
-+          minItems: 2
-+          maxItems: 2
+diff --git a/arch/arm/boot/dts/s5pv210-torbreck.dts b/arch/arm/boot/dts/s5pv210-torbreck.dts
+index cd25e72ccd84..e18259737684 100644
+--- a/arch/arm/boot/dts/s5pv210-torbreck.dts
++++ b/arch/arm/boot/dts/s5pv210-torbreck.dts
+@@ -30,6 +30,13 @@
+ 		device_type = "memory";
+ 		reg = <0x20000000 0x20000000>;
+ 	};
 +
- examples:
-   - |
-     adc: adc@12d10000 {
++	pmic_ap_clk: clock-0 {
++		/* Workaround for missing PMIC and its clock */
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++	};
+ };
+ 
+ &xusbxti {
+@@ -54,6 +61,8 @@
+ 
+ &rtc {
+ 	status = "okay";
++	clocks = <&clocks CLK_RTC>, <&pmic_ap_clk>;
++	clock-names = "rtc", "rtc_src";
+ };
+ 
+ &sdhci0 {
 -- 
 2.17.1
 
