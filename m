@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 440B9C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0EF0C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:25:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17028207DE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:24:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 746F7207DE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:25:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599495878;
-	bh=6BAvdsAwxvGCRAvXMQZS4I59p4w7Bxsi3s+90oUZ7fI=;
+	s=default; t=1599495902;
+	bh=GtKhtYeqhoFhkk4l+56UWm2i17dljFhd74agdK6C2Ew=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CyVAifqwOgqEtRS/0osPF/3jQFj+hSsLROAAyOg3UGLkFD1lfZUuQI5LBrB/KEwcf
-	 kOCQ2j9vlXuvtbZWxKlZ4uTmXUWCajLqi+3/nhwvcVlat5um0ds0zzEouCniDM+1Ng
-	 EtvSRhXbKlvqWhf7iQOMyx1ZDRnNJDCWy5ds0/gY=
+	b=2aJ/t0HpApzRHRRXvj0cI2DzN0+zk4/3BJvOoWV0EpZFE5SRmHypqJQF1GHRl8lsg
+	 dCOscnhiRbIDhkglNvN32cgMOqwEDG2V4TF27rtc92qzhEAXKIBtZnGbL2s/ZgD1wb
+	 O/eptG4mEcZE9X5My5CoHs+DjGOwMHsWXJ/CT7k0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730386AbgIGQYg (ORCPT
+        id S1730344AbgIGQYy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 12:24:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33106 "EHLO mail.kernel.org"
+        Mon, 7 Sep 2020 12:24:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730108AbgIGQNF (ORCPT
+        id S1729944AbgIGQNA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 12:13:05 -0400
+        Mon, 7 Sep 2020 12:13:00 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D91221897;
-        Mon,  7 Sep 2020 16:13:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A91021789;
+        Mon,  7 Sep 2020 16:12:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599495183;
-        bh=6BAvdsAwxvGCRAvXMQZS4I59p4w7Bxsi3s+90oUZ7fI=;
+        s=default; t=1599495180;
+        bh=GtKhtYeqhoFhkk4l+56UWm2i17dljFhd74agdK6C2Ew=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=PS5JkxRIrPd7Ju/BO352HryeQX+LeigF4gQJqq6SFtYYyZXZ36gr5RJXAT/G7vt0a
-         UDBSvv6GElJyGrS5tUECja051Sec+VgMzLdnRHohw9WmXVaaN0AoJe8OB7cWxhiWtu
-         PLdVMMWorm+EgEZ8x5XXcde5sFb0Bvw9cBLzk5Vs=
+        b=1HtKxRs+iHnNOY6R6jfZ5BjznDhzhDljRmRFsaA+oDVT7biI+paXbhSVSYefBbH5c
+         RWilAlgGup9PDTDvQF4NK/kbiRwvTiMby/9/r43rcNd/ygb08hYwoCtEZwqCxI73ZM
+         qiX3bUrZveJfPjCkY/XQ3Q39CjSsqM1f0oCdurnI=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -52,9 +52,9 @@ To:     Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: [RFT 08/25] ARM: dts: s5pv210: remove dedicated 'audio-subsystem' node
-Date:   Mon,  7 Sep 2020 18:11:24 +0200
-Message-Id: <20200907161141.31034-9-krzk@kernel.org>
+Subject: [RFT 07/25] ARM: dts: s5pv210: move PMU node out of clock controller
+Date:   Mon,  7 Sep 2020 18:11:23 +0200
+Message-Id: <20200907161141.31034-8-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200907161141.31034-1-krzk@kernel.org>
 References: <20200907161141.31034-1-krzk@kernel.org>
@@ -63,97 +63,48 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The 'audio-subsystem' node is an artificial creation, not representing
-real hardware.  The hardware is described by its nodes - AUDSS clock
-controller and I2S0.
+The Power Management Unit (PMU) is a separate device which has little
+common with clock controller.  Moving it to one level up (from clock
+controller child to SoC) allows to remove fake simple-bus compatible and
+dtbs_check warnings like:
 
-Remove the 'audio-subsystem' node along with its undocumented compatible
-to fix dtbs_check warnings like:
-
-  audio-subsystem: $nodename:0: 'audio-subsystem' does not match '^([a-z][a-z0-9\\-]+-bus|bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
+  clock-controller@e0100000: $nodename:0:
+    'clock-controller@e0100000' does not match '^([a-z][a-z0-9\\-]+-bus|bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/s5pv210.dtsi | 65 +++++++++++++++-------------------
- 1 file changed, 29 insertions(+), 36 deletions(-)
+ arch/arm/boot/dts/s5pv210.dtsi | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index 46221a5c8ce5..2871351ab907 100644
+index 5c760a6d7955..46221a5c8ce5 100644
 --- a/arch/arm/boot/dts/s5pv210.dtsi
 +++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -223,43 +223,36 @@
- 			status = "disabled";
+@@ -92,19 +92,16 @@
  		};
  
--		audio-subsystem {
--			compatible = "samsung,s5pv210-audss", "simple-bus";
+ 		clocks: clock-controller@e0100000 {
+-			compatible = "samsung,s5pv210-clock", "simple-bus";
++			compatible = "samsung,s5pv210-clock";
+ 			reg = <0xe0100000 0x10000>;
+ 			clock-names = "xxti", "xusbxti";
+ 			clocks = <&xxti>, <&xusbxti>;
+ 			#clock-cells = <1>;
 -			#address-cells = <1>;
 -			#size-cells = <1>;
 -			ranges;
--
--			clk_audss: clock-controller@eee10000 {
--				compatible = "samsung,s5pv210-audss-clock";
--				reg = <0xeee10000 0x1000>;
--				clock-names = "hclk", "xxti",
--						"fout_epll",
--						"sclk_audio0";
--				clocks = <&clocks DOUT_HCLKP>, <&xxti>,
--						<&clocks FOUT_EPLL>,
--						<&clocks SCLK_AUDIO0>;
--				#clock-cells = <1>;
--			};
-+		clk_audss: clock-controller@eee10000 {
-+			compatible = "samsung,s5pv210-audss-clock";
-+			reg = <0xeee10000 0x1000>;
-+			clock-names = "hclk", "xxti",
-+				      "fout_epll",
-+				      "sclk_audio0";
-+			clocks = <&clocks DOUT_HCLKP>, <&xxti>,
-+				 <&clocks FOUT_EPLL>,
-+				 <&clocks SCLK_AUDIO0>;
-+			#clock-cells = <1>;
 +		};
  
--			i2s0: i2s@eee30000 {
--				compatible = "samsung,s5pv210-i2s";
--				reg = <0xeee30000 0x1000>;
--				interrupt-parent = <&vic2>;
--				interrupts = <16>;
--				dma-names = "rx", "tx", "tx-sec";
--				dmas = <&pdma1 9>, <&pdma1 10>, <&pdma1 11>;
--				clock-names = "iis",
--						"i2s_opclk0",
--						"i2s_opclk1";
--				clocks = <&clk_audss CLK_I2S>,
--						<&clk_audss CLK_I2S>,
--						<&clk_audss CLK_DOUT_AUD_BUS>;
--				samsung,idma-addr = <0xc0010000>;
--				pinctrl-names = "default";
--				pinctrl-0 = <&i2s0_bus>;
--				#sound-dai-cells = <0>;
--				status = "disabled";
+-			pmu_syscon: syscon@e0108000 {
+-				compatible = "samsung-s5pv210-pmu", "syscon";
+-				reg = <0xe0108000 0x8000>;
 -			};
-+		i2s0: i2s@eee30000 {
-+			compatible = "samsung,s5pv210-i2s";
-+			reg = <0xeee30000 0x1000>;
-+			interrupt-parent = <&vic2>;
-+			interrupts = <16>;
-+			dma-names = "rx", "tx", "tx-sec";
-+			dmas = <&pdma1 9>, <&pdma1 10>, <&pdma1 11>;
-+			clock-names = "iis",
-+				      "i2s_opclk0",
-+				      "i2s_opclk1";
-+			clocks = <&clk_audss CLK_I2S>,
-+				 <&clk_audss CLK_I2S>,
-+				 <&clk_audss CLK_DOUT_AUD_BUS>;
-+			samsung,idma-addr = <0xc0010000>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&i2s0_bus>;
-+			#sound-dai-cells = <0>;
-+			status = "disabled";
++		pmu_syscon: syscon@e0108000 {
++			compatible = "samsung-s5pv210-pmu", "syscon";
++			reg = <0xe0108000 0x8000>;
  		};
  
- 		i2s1: i2s@e2100000 {
+ 		pinctrl0: pinctrl@e0200000 {
 -- 
 2.17.1
 
