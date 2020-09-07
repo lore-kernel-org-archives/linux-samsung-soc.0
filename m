@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58DF3C2D0E1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4ECAC43461
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 130E621532
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:18:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6807D207DE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:18:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599495533;
-	bh=jWL3HWcEEiNy/8rVC7of/uRNx5Tnyo1FPmlxmXCKRBs=;
+	s=default; t=1599495537;
+	bh=lJTmDWXKg31GyIqyPqmh82OMpoVmcuqwnXsiJb+RucQ=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hNsgAdkOl6FYNu0KUSKwc6BnbV2V8t8ZYJIm6nDmofPYKip34LFaycc+UCO4GS6na
-	 zXti9zfUNGdKLErCY7Jx8udXY4JlSGK3x3MwKPcG1ZZCQrkwl8nnIskIJdPSDaPGED
-	 FID8fJKKHVpp6XHDzbzOHYynFM5cUp+IXJf9sbhg=
+	b=sJA898PCETFVG65IQU+QOvgMCfDmqaa0Kelu7szZwrrCB87IAdd3xW2iEM6aqs25Y
+	 yBHlAXcgb4m/bosX9TgP3Ma3hpw82tVzQFRCbODTZ5use6AeTMN1BRZNCvP7Ayz341
+	 5BFhhteVTozU06uaI18B9Krqbnr2iTGtd4JiAd4I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730448AbgIGQOE (ORCPT
+        id S1729995AbgIGQSz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 12:14:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34004 "EHLO mail.kernel.org"
+        Mon, 7 Sep 2020 12:18:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729893AbgIGQN7 (ORCPT
+        id S1730321AbgIGQN4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 12:13:59 -0400
+        Mon, 7 Sep 2020 12:13:56 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1641D2177B;
-        Mon,  7 Sep 2020 16:13:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78C0621897;
+        Mon,  7 Sep 2020 16:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599495238;
-        bh=jWL3HWcEEiNy/8rVC7of/uRNx5Tnyo1FPmlxmXCKRBs=;
+        s=default; t=1599495235;
+        bh=lJTmDWXKg31GyIqyPqmh82OMpoVmcuqwnXsiJb+RucQ=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=iKLcR5zfkqvnazuCXr9yn7VqbcERxdWOIZBqIz9YdCR//HQh5G4biLwQe9jpFkztW
-         jMEzjpnJlJ09LOpX92V8MZ6uxOQ7HXBuNvSglz/haWLZZiiesc1yIr5eUFpWP9ChEc
-         Fi6sj66RzV9aDkequXlALLdESWA+dvlG3DOOZrKs=
+        b=apbLCJlXZDFOcqmNdYWKAzYQ5IYHMZM0fzUr/YBo4a3tCRD9ELwNdyRu2pOZh1vmg
+         PGXKryJQ5bXeTX23Z8mt93I/IOYHBsKxh+gsZ7z1XcmdKyWd8kWHxk+eQcH5hU52Fj
+         GCRVfGx0ID0YL6dibhHWAaIw3bhpNRPBD3lKLQBo=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -52,9 +52,9 @@ To:     Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: [RFT 23/25] ARM: dts: s5pv210: replace deprecated "gpios" i2c-gpio property in Goni
-Date:   Mon,  7 Sep 2020 18:11:39 +0200
-Message-Id: <20200907161141.31034-24-krzk@kernel.org>
+Subject: [RFT 22/25] ARM: dts: s5pv210: replace deprecated "gpios" i2c-gpio property in Aquila
+Date:   Mon,  7 Sep 2020 18:11:38 +0200
+Message-Id: <20200907161141.31034-23-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200907161141.31034-1-krzk@kernel.org>
 References: <20200907161141.31034-1-krzk@kernel.org>
@@ -63,7 +63,7 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-"gpios" property is deprecated.  Update the Goni DTS to fix
+"gpios" property is deprecated.  Update the Aquila DTS to fix
 dtbs_checks warnings like:
 
   i2c-pmic: 'sda-gpios' is a required property
@@ -71,14 +71,14 @@ dtbs_checks warnings like:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/s5pv210-goni.dts | 4 ++--
+ arch/arm/boot/dts/s5pv210-aquila.dts | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/s5pv210-goni.dts b/arch/arm/boot/dts/s5pv210-goni.dts
-index eec6531e6ef8..ad8d5d2fa32d 100644
---- a/arch/arm/boot/dts/s5pv210-goni.dts
-+++ b/arch/arm/boot/dts/s5pv210-goni.dts
-@@ -76,8 +76,8 @@
+diff --git a/arch/arm/boot/dts/s5pv210-aquila.dts b/arch/arm/boot/dts/s5pv210-aquila.dts
+index 28e9e81bb2d1..8e57e5a1f0c5 100644
+--- a/arch/arm/boot/dts/s5pv210-aquila.dts
++++ b/arch/arm/boot/dts/s5pv210-aquila.dts
+@@ -65,8 +65,8 @@
  
  	i2c_pmic: i2c-pmic {
  		compatible = "i2c-gpio";
