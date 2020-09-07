@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2095C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F27B8C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:24:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEB4B21556
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C099220757
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:24:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599495844;
-	bh=INsnJaELqRYsET4RRsxOzKJWpIsKuNPsUd4VuZL+kig=;
+	s=default; t=1599495853;
+	bh=yx/xrKwi3d342OuVJ6+t5DVvoWKbXVtqclPlrgpbk3Y=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dWF/wjUYclhJGkYvSrXoUKc3HX4+tzc1SL1dIV8X/MyAJqQAUyjw70BckteKT9KZC
-	 EUoaFG8bXr8Axc989WLOs1Bqt8o9pWmqWb1SiVFjfm8FjcnEEnyHYBAEASC03kD9es
-	 mtfCdVGh3hi6NKk7uXxGgjtDNOjEofRSJiHScfhI=
+	b=k2HcbbtW3ukj9ecHy9dCW59sKfSjfP2DcHMvmSA25BMiK9AFJcSHDA77gWwJHQD3q
+	 Zbfg1zJOKgJSrI72ysXDIVBSj0OvkvLOrAW3OEBdjlt60cqNPpaINfAuOUhByAOPXX
+	 owSYyMVO48yoiOQnLYQrp/YDaI8nVbrJDGrCnX/Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729970AbgIGQNS (ORCPT
+        id S1730393AbgIGQYB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 12:13:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33244 "EHLO mail.kernel.org"
+        Mon, 7 Sep 2020 12:24:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730386AbgIGQNO (ORCPT
+        id S1729937AbgIGQNS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 12:13:14 -0400
+        Mon, 7 Sep 2020 12:13:18 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A703206E6;
-        Mon,  7 Sep 2020 16:13:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39503207DE;
+        Mon,  7 Sep 2020 16:13:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599495193;
-        bh=INsnJaELqRYsET4RRsxOzKJWpIsKuNPsUd4VuZL+kig=;
+        s=default; t=1599495197;
+        bh=yx/xrKwi3d342OuVJ6+t5DVvoWKbXVtqclPlrgpbk3Y=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=Z/xvc2E0pU0W7wifdwH6nXDDK8ZLaQVF/rtfD7l3/YbRIIv4MmQjtHbOq1pzT0vxg
-         S3VFMWnUnNWGIJsMdsvlMyL81ZbDWE+ONNyxX1HXCnqttgNUzDX9gpj/uNgNXc3yOf
-         0I/Ce/wW1oqj/gjsaKhJcOpIpkjvCoHujfUXs1Xk=
+        b=AvZnRTKZawYE3HQooBh8Fj2d4hN/5dCV9Kt4ZgIPQouJdeq/+bazDiPaEgGeCW4V2
+         ZAPxuKbRNKpo88YfNvxNxs0DB2HO8xoKg2K9Yvv9rJ/EMc0EeuadiOKjDZxKkZJb3v
+         EoDlBPgID3PfgjjKpnCeqwOFOa7Y0cgpEF6mPfNc=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -52,9 +52,9 @@ To:     Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: [PATCH 11/25] ARM: dts: s5pv210: add RTC 32 KHz clock in Aries family
-Date:   Mon,  7 Sep 2020 18:11:27 +0200
-Message-Id: <20200907161141.31034-12-krzk@kernel.org>
+Subject: [PATCH 12/25] ARM: dts: s5pv210: add RTC 32 KHz clock in Goni
+Date:   Mon,  7 Sep 2020 18:11:28 +0200
+Message-Id: <20200907161141.31034-13-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200907161141.31034-1-krzk@kernel.org>
 References: <20200907161141.31034-1-krzk@kernel.org>
@@ -76,15 +76,15 @@ This fixes dtbs_check warnings:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/s5pv210-aries.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/boot/dts/s5pv210-goni.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
-index 6ba23562da46..86c3b26fd21e 100644
---- a/arch/arm/boot/dts/s5pv210-aries.dtsi
-+++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
-@@ -47,6 +47,13 @@
- 		};
+diff --git a/arch/arm/boot/dts/s5pv210-goni.dts b/arch/arm/boot/dts/s5pv210-goni.dts
+index fbbd93707404..c8714bf0b6e4 100644
+--- a/arch/arm/boot/dts/s5pv210-goni.dts
++++ b/arch/arm/boot/dts/s5pv210-goni.dts
+@@ -33,6 +33,13 @@
+ 			0x50000000 0x08000000>;
  	};
  
 +	pmic_ap_clk: clock-0 {
@@ -94,11 +94,23 @@ index 6ba23562da46..86c3b26fd21e 100644
 +		clock-frequency = <32768>;
 +	};
 +
- 	bt_codec: bt_sco {
- 		compatible = "linux,bt-sco";
- 		#sound-dai-cells = <0>;
-@@ -825,6 +832,11 @@
- 	samsung,pwm-outputs = <1>;
+ 	regulators {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -224,6 +231,11 @@
+ 					regulator-max-microvolt = <1200000>;
+ 					regulator-always-on;
+ 				};
++
++				ap32khz_reg: EN32KHz-AP {
++					regulator-name = "32KHz AP";
++					regulator-always-on;
++				};
+ 			};
+ 		};
+ 	};
+@@ -308,6 +320,11 @@
+ 	status = "okay";
  };
  
 +&rtc {
@@ -106,9 +118,9 @@ index 6ba23562da46..86c3b26fd21e 100644
 +	clock-names = "rtc", "rtc_src";
 +};
 +
- &sdhci1 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
+ &sdhci0 {
+ 	bus-width = <4>;
+ 	non-removable;
 -- 
 2.17.1
 
