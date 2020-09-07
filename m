@@ -2,44 +2,44 @@ Return-Path: <SRS0=PEKn=CQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 323E8C2BB84
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 489BFC433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2911217A0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:25:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 172DD21556
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:25:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599495917;
-	bh=Bhn6KRdaULsG9pRYzH7uLvigiJIcrPVsqWuLDn7U+iA=;
+	s=default; t=1599495920;
+	bh=huRRtVQAV4kXuTBNP9D6urMFzmt8KLZCSNdWyYF4x5A=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WpxqvQ9oXKykBgdKXESIWAc/BEGC0ZuAF/wF1h6uw07I7KN6sladhW/nGmuI0wWTU
-	 iTFbkjNQ0G1Vj4jC1aL8QJpKRHR6uczjui0Dmg4qB8byZxRO5X0v3H4rj8owFHxNU8
-	 Q9buYjrVyiD6zwyQFr6eGWNk2LfVEV+JnJiZ17Yc=
+	b=2vNYDIm7tiykGFYY/SFEKXsdRTxGGSX1GShE0oh67SXx/xCFiAbTUHNR13nbhqa3G
+	 lV2O/fAh6lrOrEOgPOcN8aPg2zaSs70iyjE31tZq3ACwMbTglRbgb0Fz9DhBxfbd66
+	 KUut+cfxIVHGOzJ2M/RtSqyElqomMI3G0CAkYTSo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbgIGQZI (ORCPT
+        id S1730325AbgIGQMn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 12:25:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32894 "EHLO mail.kernel.org"
+        Mon, 7 Sep 2020 12:12:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730362AbgIGQMt (ORCPT
+        id S1729937AbgIGQMg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 12:12:49 -0400
+        Mon, 7 Sep 2020 12:12:36 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FE4C20757;
-        Mon,  7 Sep 2020 16:12:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1270421789;
+        Mon,  7 Sep 2020 16:12:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599495169;
-        bh=Bhn6KRdaULsG9pRYzH7uLvigiJIcrPVsqWuLDn7U+iA=;
+        s=default; t=1599495155;
+        bh=huRRtVQAV4kXuTBNP9D6urMFzmt8KLZCSNdWyYF4x5A=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=CefOpdUYTiwOy83U+E/kcagZtJuDYKM3vHG4RXnwsLRQKXLKzEfdM49z2gS2XzlIF
-         8GFAchq+g6UQcSx6eSYMSNlridJoSBjbflQgDK2echbPZEYMWPOgODBGgQDNGXRilG
-         lTozH74eKjnnYv7+TRzUujQbXA4Z96ZZeNRqtCrA=
+        b=AAhaIjLCHPgSP4hTnbUU5WAX8BN7tc0jQNKZB7arK9c5SQ+dauvzHVbRJp1wFjsaD
+         OfpmxIivh9T65EjT7ZKDeaMqKx2zM954N46rSbigDf7q82Vjb6kJUpOqXTWMMMOGt6
+         5iqhY+vqX8A2YEuZNS8SXqs9wlQWvLjBVGqvOOt0=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -52,9 +52,9 @@ To:     Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: [RFT 05/25] ARM: dts: s5pv210: remove DMA controller bus node name to fix dtschema warnings
-Date:   Mon,  7 Sep 2020 18:11:21 +0200
-Message-Id: <20200907161141.31034-6-krzk@kernel.org>
+Subject: [PATCH 03/25] dt-bindings: iio: adc: exynos-adc: do not require syscon on S5Pv210
+Date:   Mon,  7 Sep 2020 18:11:19 +0200
+Message-Id: <20200907161141.31034-4-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200907161141.31034-1-krzk@kernel.org>
 References: <20200907161141.31034-1-krzk@kernel.org>
@@ -63,77 +63,29 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-There is no need to keep DMA controller nodes under AMBA bus node.
-Remove the "amba" node to fix dtschema warnings like:
+The ADC in S5Pv210 does not have ADC phy registers in separate block for
+which syscon would be needed.  Remove this requirement to fix dtbs_check
+warnings like:
 
-  amba: $nodename:0: 'amba' does not match '^([a-z][a-z0-9\\-]+-bus|bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
+  arch/arm/boot/dts/s5pv210-fascinate4g.dt.yaml: adc@e1700000: 'samsung,syscon-phandle' is a required property
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/s5pv210.dtsi | 49 +++++++++++++++-------------------
- 1 file changed, 21 insertions(+), 28 deletions(-)
+ .../devicetree/bindings/iio/adc/samsung,exynos-adc.yaml          | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index 1b0ee884e91d..84e4447931de 100644
---- a/arch/arm/boot/dts/s5pv210.dtsi
-+++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -128,35 +128,28 @@
- 			};
- 		};
- 
--		amba {
--			#address-cells = <1>;
--			#size-cells = <1>;
--			compatible = "simple-bus";
--			ranges;
--
--			pdma0: dma@e0900000 {
--				compatible = "arm,pl330", "arm,primecell";
--				reg = <0xe0900000 0x1000>;
--				interrupt-parent = <&vic0>;
--				interrupts = <19>;
--				clocks = <&clocks CLK_PDMA0>;
--				clock-names = "apb_pclk";
--				#dma-cells = <1>;
--				#dma-channels = <8>;
--				#dma-requests = <32>;
--			};
-+		pdma0: dma@e0900000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0xe0900000 0x1000>;
-+			interrupt-parent = <&vic0>;
-+			interrupts = <19>;
-+			clocks = <&clocks CLK_PDMA0>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <32>;
-+		};
- 
--			pdma1: dma@e0a00000 {
--				compatible = "arm,pl330", "arm,primecell";
--				reg = <0xe0a00000 0x1000>;
--				interrupt-parent = <&vic0>;
--				interrupts = <20>;
--				clocks = <&clocks CLK_PDMA1>;
--				clock-names = "apb_pclk";
--				#dma-cells = <1>;
--				#dma-channels = <8>;
--				#dma-requests = <32>;
--			};
-+		pdma1: dma@e0a00000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0xe0a00000 0x1000>;
-+			interrupt-parent = <&vic0>;
-+			interrupts = <20>;
-+			clocks = <&clocks CLK_PDMA1>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <32>;
- 		};
- 
- 		adc: adc@e1700000 {
+diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+index 89b4f9c252a6..75174af72288 100644
+--- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+@@ -81,7 +81,6 @@ allOf:
+               - samsung,exynos-adc-v2
+               - samsung,exynos3250-adc
+               - samsung,exynos4212-adc
+-              - samsung,s5pv210-adc
+     then:
+       required:
+         - samsung,syscon-phandle
 -- 
 2.17.1
 
