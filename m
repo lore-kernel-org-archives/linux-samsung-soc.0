@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4ECAC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D8EC43461
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:19:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6807D207DE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:18:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAE2F2080A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:19:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599495537;
-	bh=lJTmDWXKg31GyIqyPqmh82OMpoVmcuqwnXsiJb+RucQ=;
+	s=default; t=1599495558;
+	bh=XaZQTe1g93YjbbwMKI+XDVCFTgySS4Ksy5Om23OC0Sg=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sJA898PCETFVG65IQU+QOvgMCfDmqaa0Kelu7szZwrrCB87IAdd3xW2iEM6aqs25Y
-	 yBHlAXcgb4m/bosX9TgP3Ma3hpw82tVzQFRCbODTZ5use6AeTMN1BRZNCvP7Ayz341
-	 5BFhhteVTozU06uaI18B9Krqbnr2iTGtd4JiAd4I=
+	b=bQm0p+7cGFF7hZ9m0jtKrE5VqoFwJKtcCKO039qqwczfIHdLy8jGrcGbhUnCFntyX
+	 YnWCnrRGl1DP260tOsQHch6irixtSnu4fY8r/h+nG7rxXjP9tkU/HwoZQhr+u+dIZg
+	 f7bZW7gqosl9pHoVDQTr18xRrXKo8YrhApF+i7D8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729995AbgIGQSz (ORCPT
+        id S1730430AbgIGQNw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 12:18:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33966 "EHLO mail.kernel.org"
+        Mon, 7 Sep 2020 12:13:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730321AbgIGQN4 (ORCPT
+        id S1730422AbgIGQNs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 12:13:56 -0400
+        Mon, 7 Sep 2020 12:13:48 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78C0621897;
-        Mon,  7 Sep 2020 16:13:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F05FA21775;
+        Mon,  7 Sep 2020 16:13:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599495235;
-        bh=lJTmDWXKg31GyIqyPqmh82OMpoVmcuqwnXsiJb+RucQ=;
+        s=default; t=1599495225;
+        bh=XaZQTe1g93YjbbwMKI+XDVCFTgySS4Ksy5Om23OC0Sg=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=apbLCJlXZDFOcqmNdYWKAzYQ5IYHMZM0fzUr/YBo4a3tCRD9ELwNdyRu2pOZh1vmg
-         PGXKryJQ5bXeTX23Z8mt93I/IOYHBsKxh+gsZ7z1XcmdKyWd8kWHxk+eQcH5hU52Fj
-         GCRVfGx0ID0YL6dibhHWAaIw3bhpNRPBD3lKLQBo=
+        b=cADlHFa1clb9r2CudarorQbJiQnfvy8IcyJTuV37YA6y1mAxT+rAm4gz+OWOUv0Lv
+         9+Z1xZtPk5tdhH8pY7JcoZOiAssfgP1mXbGt/qGsEIibtx2k42B0eJTEZT4B8d4gjg
+         cDM2NpsUEhXBfmhPo0F2p0XxPan/kiuTVoNIk2h0=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -52,9 +52,9 @@ To:     Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: [RFT 22/25] ARM: dts: s5pv210: replace deprecated "gpios" i2c-gpio property in Aquila
-Date:   Mon,  7 Sep 2020 18:11:38 +0200
-Message-Id: <20200907161141.31034-23-krzk@kernel.org>
+Subject: [PATCH 19/25] ARM: dts: s5pv210: use defines for IRQ flags in Goni
+Date:   Mon,  7 Sep 2020 18:11:35 +0200
+Message-Id: <20200907161141.31034-20-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200907161141.31034-1-krzk@kernel.org>
 References: <20200907161141.31034-1-krzk@kernel.org>
@@ -63,32 +63,35 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-"gpios" property is deprecated.  Update the Aquila DTS to fix
-dtbs_checks warnings like:
-
-  i2c-pmic: 'sda-gpios' is a required property
-  i2c-pmic: 'scl-gpios' is a required property
+Replace hard-coded flags with defines for readability.  No functional
+change.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/s5pv210-aquila.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/s5pv210-goni.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/s5pv210-aquila.dts b/arch/arm/boot/dts/s5pv210-aquila.dts
-index 28e9e81bb2d1..8e57e5a1f0c5 100644
---- a/arch/arm/boot/dts/s5pv210-aquila.dts
-+++ b/arch/arm/boot/dts/s5pv210-aquila.dts
-@@ -65,8 +65,8 @@
+diff --git a/arch/arm/boot/dts/s5pv210-goni.dts b/arch/arm/boot/dts/s5pv210-goni.dts
+index 77d1c5144afd..20f1c2773805 100644
+--- a/arch/arm/boot/dts/s5pv210-goni.dts
++++ b/arch/arm/boot/dts/s5pv210-goni.dts
+@@ -12,6 +12,7 @@
  
- 	i2c_pmic: i2c-pmic {
- 		compatible = "i2c-gpio";
--		gpios = <&gpj4 0 GPIO_ACTIVE_HIGH>, /* sda */
--			<&gpj4 3 GPIO_ACTIVE_HIGH>; /* scl */
-+		sda-gpios = <&gpj4 0 GPIO_ACTIVE_HIGH>;
-+		scl-gpios = <&gpj4 3 GPIO_ACTIVE_HIGH>;
- 		i2c-gpio,delay-us = <2>;        /* ~100 kHz */
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+ /dts-v1/;
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/input/input.h>
+ #include "s5pv210.dtsi"
+ 
+@@ -366,7 +367,7 @@
+ 		compatible = "atmel,maxtouch";
+ 		reg = <0x4a>;
+ 		interrupt-parent = <&gpj0>;
+-		interrupts = <5 2>;
++		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
+ 
+ 		atmel,x-line = <17>;
+ 		atmel,y-line = <11>;
 -- 
 2.17.1
 
