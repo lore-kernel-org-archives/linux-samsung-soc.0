@@ -2,206 +2,238 @@ Return-Path: <SRS0=PEKn=CQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E60FCC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 18:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2794C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 18:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB214217BA
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 18:07:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jWpGnNXe"
+	by mail.kernel.org (Postfix) with ESMTP id 7678E20732
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 18:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729667AbgIGSHa (ORCPT
+        id S1729734AbgIGSTK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 14:07:30 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58764 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728421AbgIGSHS (ORCPT
+        Mon, 7 Sep 2020 14:19:10 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:48154 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729290AbgIGSTG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 14:07:18 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200907180716euoutp0174eb10b253a3c460e8311e64a5fd3f9e~ykqC6nTPG1643416434euoutp01a;
-        Mon,  7 Sep 2020 18:07:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200907180716euoutp0174eb10b253a3c460e8311e64a5fd3f9e~ykqC6nTPG1643416434euoutp01a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1599502036;
-        bh=9Ov1IwgdblahQ1lnpPYahXN/H6AgUfE+QnPNwnweqZw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jWpGnNXeM2sOwVjlU76n6o/dgwIKCvpzpTDZzn9kS0XdHu1VEKG4N5ZrYY8cZwPMP
-         hxZI+GMAOldQSVf0b3zCpVcsb8Bx5LlZborBUGJ2mGK1XJJxKNyxFRfbAlD61R9I/c
-         0mhVsltxLLM0etSEUYJNrUuHsGkSomgJ8q5iO+OY=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200907180716eucas1p20a614580eaa2b31e3d99363c794e84d6~ykqCfIW8o3155731557eucas1p2P;
-        Mon,  7 Sep 2020 18:07:16 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 5C.27.06456.4D6765F5; Mon,  7
-        Sep 2020 19:07:16 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200907180715eucas1p1c1e41bb1ddb5a401a4d9c8cb6117e1f6~ykqB3Wzxx0579005790eucas1p18;
-        Mon,  7 Sep 2020 18:07:15 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200907180715eusmtrp28dad76c94961905038faa5884ba07596~ykqB2izpA0235102351eusmtrp2T;
-        Mon,  7 Sep 2020 18:07:15 +0000 (GMT)
-X-AuditID: cbfec7f2-7efff70000001938-10-5f5676d4e5df
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E6.D4.06017.3D6765F5; Mon,  7
-        Sep 2020 19:07:15 +0100 (BST)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200907180715eusmtip2eb502591ea7603adc67594d5c9abe1ea~ykqBthZor0136101361eusmtip2m;
-        Mon,  7 Sep 2020 18:07:15 +0000 (GMT)
-From:   Lukasz Stelmach <l.stelmach@samsung.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        Mon, 7 Sep 2020 14:19:06 -0400
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
+        (envelope-from <andrew@lunn.ch>)
+        id 1kFLjC-00DfCu-N3; Mon, 07 Sep 2020 20:18:54 +0200
+Date:   Mon, 7 Sep 2020 20:18:54 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Lukasz Stelmach <l.stelmach@samsung.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
-        "linux-arm-kernel\@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-samsung-soc\@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
-        "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "m.szyprowski\@samsung.com" <m.szyprowski@samsung.com>,
-        "b.zolnierkie\@samsung.com" <b.zolnierkie@samsung.com>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, b.zolnierkie@samsung.com,
+        m.szyprowski@samsung.com
 Subject: Re: [PATCH 1/3] net: ax88796c: ASIX AX88796C SPI Ethernet Adapter
  Driver
-Date:   Mon, 07 Sep 2020 20:06:56 +0200
-In-Reply-To: <1efebb42c30a4c40bf91649d83d60e1c@AcuMS.aculab.com> (David
-        Laight's message of "Wed, 26 Aug 2020 15:06:51 +0000")
-Message-ID: <dleftjk0x5qx4v.fsf%l.stelmach@samsung.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+Message-ID: <20200907181854.GD3254313@lunn.ch>
+References: <20200825180134.GN2403519@lunn.ch>
+ <CGME20200907173945eucas1p240c0d7ebff3010a3bf752eaf8e619eb1@eucas1p2.samsung.com>
+ <dleftjwo15qyei.fsf%l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-        protocol="application/pgp-signature"
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SeUhUURTGve+9efMcGruNWqcpRKaCFnJpsRtZaRg8/KOiRSIwG+tlojMT
-        M2kb1LRig2muqQlNWWaGZjoOZmU1qJOYjtlCgmVkUW4VldlCi6+b0H/f/c7vu+ecyxVYzaBC
-        KyQad0lmoz5Zx6s4Z/M3z9xHqTFxIR/yBHKt4KqCFHuOcqTuYg1Dzja2K0hm7wBLPJ4qJelw
-        ZihIde8TBXlYX8yTAk8DQ1x5txCpaHymJM32ieTYrUZlhI+YeSaXFx8+ecCKjstdjFhdfoIX
-        ay4cFDMc5Uj8VB2wRrlJFb5NSk5MlczBy7aodjS9mrzzht8e250hpRV1YxvyFgAvAHfVEGdD
-        KkGDyxB8aT3M0sNnBH0jTl6mNPgTAkdL4Fgif8TGUf8SAs+7cBp4g6C/3z0aEAQeB0FFxUaZ
-        8cOzIedzNyMzLK5VQHmLDckFX7wOSh7fZ2XN4RnwM/8OL0Pe2IqgtKnrb2c1XgTXSkoZWfvj
-        xeB426Ok/gRoKXz1dwoWG6DQM4jkMOAsAX73tijpqFFQas9mqPaFfrfjnz8Vfl8/y8iTAj4I
-        OdlhNJuOwFn8laPMEuhu/85THQk9zi885X3g6dAE2tcHsp2nWWqrIe24htLToTLz5r9btHCy
-        vwxRRIRsm4m+VQ4C97NvzCkUWPTfNkX/bVM0GmHxLLhaH0ztOVB6boCleilUVr7n7EhRjiZJ
-        KRZDgmQJNUq7gyx6gyXFmBC01WSoRqP/rvWX+2MdGu6MdyEsIN049YfomDiNQp9q2Wtwoemj
-        N72sutKBtJzRZJR0fuoVba2bNept+r37JLMpzpySLFlcaIrA6Sap55/vi9XgBP0uKUmSdkrm
-        sSojeGutyFA7MnMdMS3/8XRVc7wua3xkpf0ut6EtTSDdIcmqZbFF/kcONWDrgqT4qLqjphOr
-        azoTp21VR/uHHQhcGR5hf/5CFxP8vmnNsGuKuNa+/VB6W4JVe4Oo7mX2VLxOK5lbHPs6ZsC3
-        YFzQsFdVx6L2EK/bnQvjX+b2JPrNawjYv15zX8dZduhDZ7Nmi/4PjNCQA38DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsVy+t/xe7qXy8LiDeZPU7DYOGM9q8Wc8y0s
-        FjuWbmaymH/kHKtF/+PXzBbnz29gt7iwrY/VYtPja6wWl3fNYbOYcX4fk8WhqXsZLdYeuctu
-        cWyBmEXr3iPsDnwe/bOnsHlcvnaR2WPLyptMHptWdbJ5bF5S79G3ZRWjx+dNcgHsUXo2Rfml
-        JakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZR59IFuwWqeg6
-        8Ja9gfGOQBcjJ4eEgInEtO9dLF2MXBxCAksZJY68O8TaxcgBlJCSWDk3HaJGWOLPtS42iJqn
-        jBKPTm1lBKlhE9CTWLs2AqRGREBLYvKXO0wgNcwCC1klJu9/ygySEBYIlHgw7xQ7SL2QgL3E
-        5/lKIGEWAVWJv9MOgM3kFGhglFh29CYbSIJXwFxi4+JlTCC2qIClxJYX99kh4oISJ2c+YQGx
-        mQWyJb6ufs48gVFgFpLULCSpWUDrmAU0Jdbv0ocIa0ssW/iaGcK2lVi37j3LAkbWVYwiqaXF
-        uem5xUZ6xYm5xaV56XrJ+bmbGIHRuu3Yzy07GLveBR9iFOBgVOLh/eAVFi/EmlhWXJl7iFEF
-        aMyjDasvMEqx5OXnpSqJ8DqdPR0nxJuSWFmVWpQfX1Sak1p8iNEU6NGJzFKiyfnABJNXEm9o
-        amhuYWlobmxubGahJM7bIXAwRkggPbEkNTs1tSC1CKaPiYNTqoHRqXH2Vu1s5qJZ9wINXTZs
-        OrdVNkUzrrr7ZkfP7s5goQXnZWbn/jDj28BtJRLJeWaB/9zu2U5NihEKL64oh1bKb05Y6Z7s
-        nVa6412tcMbz7HW6t3ZVJp3XEb4adv1oRHvyyU03FDdtPhvC6lgjEnTjT6Tf3JCmTL+nv0y5
-        O04r1rE6+bd/lVdiKc5INNRiLipOBABgnstS+AIAAA==
-X-CMS-MailID: 20200907180715eucas1p1c1e41bb1ddb5a401a4d9c8cb6117e1f6
-X-Msg-Generator: CA
-X-RootMTR: 20200907180715eucas1p1c1e41bb1ddb5a401a4d9c8cb6117e1f6
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200907180715eucas1p1c1e41bb1ddb5a401a4d9c8cb6117e1f6
-References: <1efebb42c30a4c40bf91649d83d60e1c@AcuMS.aculab.com>
-        <CGME20200907180715eucas1p1c1e41bb1ddb5a401a4d9c8cb6117e1f6@eucas1p1.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dleftjwo15qyei.fsf%l.stelmach@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+> > On Tue, Aug 25, 2020 at 07:03:09PM +0200, Łukasz Stelmach wrote:
+> >> +++ b/drivers/net/ethernet/asix/ax88796c_ioctl.c
+> >
+> > This is an odd filename. The ioctl code is wrong anyway, but there is
+> > a lot more than ioctl in here. I suggest you give it a new name.
+> >
+> 
+> Sure, any suggestions?
 
-It was <2020-08-26 =C5=9Bro 15:06>, when David Laight wrote:
-> From: Lukasz Stelmach
->> Sent: 26 August 2020 15:59
->>=20
->> It was <2020-08-25 wto 20:44>, when Krzysztof Kozlowski wrote:
->> > On Tue, Aug 25, 2020 at 07:03:09PM +0200, =C5=81ukasz Stelmach wrote:
->> >> ASIX AX88796[1] is a versatile ethernet adapter chip, that can be
->> >> connected to a CPU with a 8/16-bit bus or with an SPI. This driver
->> >> supports SPI connection.
-> ...
->> >> +++ b/drivers/net/ethernet/asix/Kconfig
->> >> @@ -0,0 +1,20 @@
->> >> +#
->> >> +# Asix network device configuration
->> >> +#
->> >> +
->> >> +config NET_VENDOR_ASIX
->> >> +	bool "Asix devices"
->> >> +	depends on SPI
->> >> +	help
->> >> +	  If you have a network (Ethernet) interface based on a chip from A=
-SIX, say Y
->> >
->> > Looks like too long, did it pass checkpatch?
->>=20
->> Yes? Let me try again. Yes, this one passed, but I missed a few other
->> problems. Thank you.
->>=20
->> >> +
->> >> +if NET_VENDOR_ASIX
->> >> +
->> >> +config SPI_AX88796C
->> >> +	tristate "Asix AX88796C-SPI support"
->> >> +	depends on SPI
->> >> +	depends on GPIOLIB
->> >> +	help
->> >> +	  Say Y here if you intend to attach a Asix AX88796C as SPI mode
->> >> +
->> >> +endif # NET_VENDOR_ASIX
->
-> There are plenty of other ethernet devices made by ASIX (eg USB ones)
-> that have nothing at all to do with this driver.
-> So those questions are too broad.
->
-> The first one should probable be for ASIX SPI network devices.
->
+Sorry, i have forgotten what is actually contained. Does it even need
+to be a separate file?
 
-On the other hand there is only one ASIX SPI network device and there
-are four other Non-PCI AX88* chips (and that is all I know about them).
+> >> +u8 ax88796c_check_power(struct ax88796c_device *ax_local)
+> >
+> > bool ?
+> 
+> OK.
+> 
+> It appears, however, that 0 means OK and 1 !OK. Do you think changing to
+> TRUE and FALSE (or FALSE and TRUE) is required?
 
-> (I can't imagine SPI being fast enough to be useful for ethernet...)
+Or change the name, ax88796c_check_power_off()? I don't really care,
+so long as it is logical and not surprising.
 
-Not for a file server, sure. It handles clock up to 40MHz and it's meant
-for systems that cannot handle more than a few MB/s anyway.
+> >> +	AX_READ_STATUS(&ax_local->ax_spi, &ax_status);
+> >> +	if (!(ax_status.status & AX_STATUS_READY)) {
+> >> +
+> >> +		/* AX88796C in power saving mode */
+> >> +		AX_WAKEUP(&ax_local->ax_spi);
+> >> +
+> >> +		/* Check status */
+> >> +		start_time = jiffies;
+> >> +		do {
+> >> +			if (time_after(jiffies, start_time + HZ/2)) {
+> >> +				netdev_err(ax_local->ndev,
+> >> +					"timeout waiting for wakeup"
+> >> +					" from power saving\n");
+> >> +				break;
+> >> +			}
+> >> +
+> >> +			AX_READ_STATUS(&ax_local->ax_spi, &ax_status);
+> >> +
+> >> +		} while (!(ax_status.status & AX_STATUS_READY));
+> >
+> > include/linux/iopoll.h
+> >
+> 
+> Done. The result seems only slightly more elegant since the generic
+> read_poll_timeout() needs to be employed.
 
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
+Often code like this has bugs in it, not correctly handling the
+scheduler sleeping longer than expected. That is why i point people at
+iopoll, no bugs, not elegance.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+> The manufacturer says
+> 
+>     The AX88796C integrates on-chip Fast Ethernet MAC and PHY, […]
+> 
+> There is a single integrated PHY in this chip and no possiblity to
+> connect external one. Do you think it makes sense in such case to
+> introduce the additional layer of abstraction?
 
------BEGIN PGP SIGNATURE-----
+Yes it does, because it then uses all the standard phylib code to
+drive the PHY which many people understand, is well tested, etc. It
+will make the MAC driver smaller and probably less buggy.
 
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl9WdsEACgkQsK4enJil
-gBCEDwf/ZAzzxZQsYFkciKV12hSut3cBhW9zfz+Zbxu1YFnFrPRfBmdwn7vmP8vb
-uJTacwtFJ3OAJiWhQIt7r4tb/Uh1lK9S/kjVDABUtssuGj8YDgbBKUVdeA1ESPy9
-u3wl2aId3k9NPp6sshwqb9Wmigqh6SjsA9hLvxQEBgfOrjvh95JA0TYqrmRijyn2
-k1YitbAzKa5uIh1GziCGwehfvOxALSg09uCkA7mr/yRpjbmvrlitNlfQA+at0XWy
-d+f0T474TbGCVDIxIV2f8+HFe3iOPeZJxFOkjiEi9PclaB/arQvbhT6IxJd3mIei
-g/+F/BYB/aiBxxSLgg3Q3XL7YY6ecA==
-=/xTC
------END PGP SIGNATURE-----
---=-=-=--
+> >> +static char *macaddr;
+> >> +module_param(macaddr, charp, 0);
+> >> +MODULE_PARM_DESC(macaddr, "MAC address");
+> >
+> > No Module parameters. You can get the MAC address from DT.
+> 
+> What about systems without DT? Not every bootloader is sophisicated
+> enough to edit DT before starting kernel. AX88786C is a chip that can be
+> used in a variety of systems and I'd like to avoid too strong
+> assumptions.
+
+There is also a standardised way to read it from ACPI. And you can set
+it using ip link set. DaveM will likely NACK a module parameter.
+
+> >> +MODULE_AUTHOR("ASIX");
+> >
+> > Do you expect ASIX to support this? 
+> 
+> No.
+> 
+> > You probably want to put your name here.
+> 
+> I don't want to be considered as the only author and as far as I can
+> tell being mentioned as an author does not imply being a
+> maintainer. Do you think two MODULE_AUTHOR()s be OK?
+
+Can you have two? One with two names listed is O.K.
+
+> >> +
+> >> +	phy_status = AX_READ(&ax_local->ax_spi, P0_PSCR);
+> >> +	if (phy_status & PSCR_PHYLINK) {
+> >> +
+> >> +		ax_local->w_state = ax_nop;
+> >> +		time_to_chk = 0;
+> >> +
+> >> +	} else if (!(phy_status & PSCR_PHYCOFF)) {
+> >> +		/* The ethernet cable has been plugged */
+> >> +		if (ax_local->w_state == chk_cable) {
+> >> +			if (netif_msg_timer(ax_local))
+> >> +				netdev_info(ndev, "Cable connected\n");
+> >> +
+> >> +			ax_local->w_state = chk_link;
+> >> +			ax_local->w_ticks = 0;
+> >> +		} else {
+> >> +			if (netif_msg_timer(ax_local))
+> >> +				netdev_info(ndev, "Check media status\n");
+> >> +
+> >> +			if (++ax_local->w_ticks == AX88796C_WATCHDOG_RESTART) {
+> >> +				if (netif_msg_timer(ax_local))
+> >> +					netdev_info(ndev, "Restart autoneg\n");
+> >> +				ax88796c_mdio_write(ndev,
+> >> +					ax_local->mii.phy_id, MII_BMCR,
+> >> +					(BMCR_SPEED100 | BMCR_ANENABLE |
+> >> +					BMCR_ANRESTART));
+> >> +
+> >> +				if (netif_msg_hw(ax_local))
+> >> +					ax88796c_dump_phy_regs(ax_local);
+> >> +				ax_local->w_ticks = 0;
+> >> +			}
+> >> +		}
+> >> +	} else {
+> >> +		if (netif_msg_timer(ax_local))
+> >> +			netdev_info(ndev, "Check cable status\n");
+> >> +
+> >> +		ax_local->w_state = chk_cable;
+> >> +	}
+> >> +
+> >> +	ax88796c_set_power_saving(ax_local, ax_local->ps_level);
+> >> +
+> >> +	if (time_to_chk)
+> >> +		mod_timer(&ax_local->watchdog, jiffies + time_to_chk);
+> >> +}
+> >
+> > This is not the normal use of a watchdog in network drivers. The
+> > normal case is the network stack as asked the driver to do something,
+> > normally a TX, and the driver has not reported the action has
+> > completed.  The state of the cable should not make any
+> > difference. This does not actually appear to do anything useful, like
+> > kick the hardware to bring it back to life.
+> >
+> 
+> Maybe it's the naming that is a problem. Yes, it is not a watchdog, but
+> rather a periodic housekeeping and it kicks hw if it can't negotiate
+> the connection. The question is: should the settings be reset in such case.
+
+Let see what is left once you convert to phylib.
+
+> >> +	struct net_device *ndev = ax_local->ndev;
+> >> +	int status;
+> >> +
+> >> +	do {
+> >> +		if (!(ax_local->checksum & AX_RX_CHECKSUM))
+> >> +			break;
+> >> +
+> >> +		/* checksum error bit is set */
+> >> +		if ((rxhdr->flags & RX_HDR3_L3_ERR) ||
+> >> +		    (rxhdr->flags & RX_HDR3_L4_ERR))
+> >> +			break;
+> >> +
+> >> +		if ((rxhdr->flags & RX_HDR3_L4_TYPE_TCP) ||
+> >> +		    (rxhdr->flags & RX_HDR3_L4_TYPE_UDP)) {
+> >> +			skb->ip_summed = CHECKSUM_UNNECESSARY;
+> >> +		}
+> >> +	} while (0);
+> >
+> >
+> > ??
+> >
+> 
+> if() break; Should I use goto?
+
+Sorry, i was too ambiguous. Why:
+
+do {
+} while (0);
+
+It is an odd construct.
+
+   Andrew
