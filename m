@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E622FC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA209C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9457207DE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:18:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B02B72080A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:18:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599495520;
-	bh=bwtOi8QElP0mGjZhVUaaYJrre3PcACxIN1rrV3SxlNw=;
+	s=default; t=1599495531;
+	bh=FvdcTxTqJSV8i1AoGBW4JbEg+c4jrac22rp1N0zL13c=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i2/c/z8FYgj4ht0i+P9FOsz0LKKAN/pVn5hD0sDEUWskFCwjstcwxaG7Rs0EiO9Mt
-	 gSRDNEsDwCZyb0Zez9jVv0jZXIcwHuRBAMtfpY7PvB2nz99bu3/ekxk/KS/R1Lm0Tg
-	 2rL9SnjkIZDA2Qmwh8UnX46WEkdu20sZ7JmAPFnc=
+	b=uhwzQv3uXpDnY88gCfxOQmWosPiHGu0YGWqZyZkKY5m052tz+1j8Z+YGm2wssLYnZ
+	 L2V8MtazzKH/E1xW7ZRuuBdRZVteXpUZ0E4oseJmO0j5TPcn/4WYTHLuubUqMYsOiP
+	 PFKrwKcUhg5dSD298H4DQjgcqnKo+bxRbQ8sEKIU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730455AbgIGQOI (ORCPT
+        id S1730452AbgIGQOF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 12:14:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34096 "EHLO mail.kernel.org"
+        Mon, 7 Sep 2020 12:14:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730453AbgIGQOG (ORCPT
+        id S1729916AbgIGQOC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 12:14:06 -0400
+        Mon, 7 Sep 2020 12:14:02 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D1AB207DE;
-        Mon,  7 Sep 2020 16:14:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F8E8206E6;
+        Mon,  7 Sep 2020 16:13:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599495245;
-        bh=bwtOi8QElP0mGjZhVUaaYJrre3PcACxIN1rrV3SxlNw=;
+        s=default; t=1599495241;
+        bh=FvdcTxTqJSV8i1AoGBW4JbEg+c4jrac22rp1N0zL13c=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=UYSZxr7VgfQX85+efnx0NAZinxygKy1kqfcI7NL163KkguKnH6Q6dd6fGPoc7+E0Z
-         wxtyeFS25ChjYbXllL/KHWggeCnRQvDmF7P85PVn9/oUtIecD3rE+pknvEsLHJsstj
-         R5STZXc7cq6FhMu0OvpuG97q4DvqJIDNW8EpzziY=
+        b=eFtiJjR1HcgO5wpmayaA/t8LIQDw5BSDdkGyRkZ6rWmwjvpQLkKMgv3ckFmNdnrDL
+         26hXfMqVjAZK6OPeE1FfK/kDTr8e4wVc4/qX/RLhgEwzLbtB16tMNxIaloiABJ7rBk
+         uILe9GoqQRs2v727Sk2DGAN2bO9iXuEHo8qBxdok=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -52,9 +52,9 @@ To:     Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: [RFT 25/25] ARM: dts: s5pv210: align DMA channels with dtschema
-Date:   Mon,  7 Sep 2020 18:11:41 +0200
-Message-Id: <20200907161141.31034-26-krzk@kernel.org>
+Subject: [RFT 24/25] ARM: dts: s5pv210: align SPI GPIO node name with dtschema in Aries
+Date:   Mon,  7 Sep 2020 18:11:40 +0200
+Message-Id: <20200907161141.31034-25-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200907161141.31034-1-krzk@kernel.org>
 References: <20200907161141.31034-1-krzk@kernel.org>
@@ -63,54 +63,29 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-dtschema expects DMA channels in specific order (tx, rx and tx-sec).
-The order actually should not matter because dma-names is used however
-let's make it aligned with dtschema to suppress warnings like:
+The device tree schema expects SPI controller to be named "spi",
+otherwise dtbs_check complain with a warning like:
 
-  i2s@eee30000: dma-names: ['rx', 'tx', 'tx-sec'] is not valid under any of the given schemas
+  spi-gpio-0: $nodename:0: 'spi-gpio-0' does not match '^spi(@.*|-[0-9a-f])*$'
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/s5pv210.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/s5pv210-aries.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index 96e667ba1c3f..72fb9d9f7ba3 100644
---- a/arch/arm/boot/dts/s5pv210.dtsi
-+++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -240,8 +240,8 @@
- 			reg = <0xeee30000 0x1000>;
- 			interrupt-parent = <&vic2>;
- 			interrupts = <16>;
--			dma-names = "rx", "tx", "tx-sec";
--			dmas = <&pdma1 9>, <&pdma1 10>, <&pdma1 11>;
-+			dma-names = "tx", "rx", "tx-sec";
-+			dmas = <&pdma1 10>, <&pdma1 9>, <&pdma1 11>;
- 			clock-names = "iis",
- 				      "i2s_opclk0",
- 				      "i2s_opclk1";
-@@ -260,8 +260,8 @@
- 			reg = <0xe2100000 0x1000>;
- 			interrupt-parent = <&vic2>;
- 			interrupts = <17>;
--			dma-names = "rx", "tx";
--			dmas = <&pdma1 12>, <&pdma1 13>;
-+			dma-names = "tx", "rx";
-+			dmas = <&pdma1 13>, <&pdma1 12>;
- 			clock-names = "iis", "i2s_opclk0";
- 			clocks = <&clocks CLK_I2S1>, <&clocks SCLK_AUDIO1>;
- 			pinctrl-names = "default";
-@@ -275,8 +275,8 @@
- 			reg = <0xe2a00000 0x1000>;
- 			interrupt-parent = <&vic2>;
- 			interrupts = <18>;
--			dma-names = "rx", "tx";
--			dmas = <&pdma1 14>, <&pdma1 15>;
-+			dma-names = "tx", "rx";
-+			dmas = <&pdma1 15>, <&pdma1 14>;
- 			clock-names = "iis", "i2s_opclk0";
- 			clocks = <&clocks CLK_I2S2>, <&clocks SCLK_AUDIO2>;
- 			pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
+index 86c3b26fd21e..bd4450dbdcb6 100644
+--- a/arch/arm/boot/dts/s5pv210-aries.dtsi
++++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
+@@ -545,7 +545,7 @@
+ 		value = <0x5200>;
+ 	};
+ 
+-	spi_lcd: spi-gpio-0 {
++	spi_lcd: spi-2 {
+ 		compatible = "spi-gpio";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
 2.17.1
 
