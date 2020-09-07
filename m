@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D23C43461
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81EDC2BB84
 	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 18:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3698D21532
+	by mail.kernel.org (Postfix) with ESMTP id 9E1B22087D
 	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Sep 2020 18:34:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1599503662;
-	bh=aDc9+/SMZFvLx8hLQQ+z1mERnBlVBNE/bUXwrPjKYdo=;
+	bh=t266Nu1lB7LStASkQx6vx6QrRbEc2k7w1JLEvAlzAJc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VoNRSgNbXVTxbE4nmgAWm3sO4tmLjEpyEuIax5NcGeQYtxXtB6qBB30Y6TPyYWWo7
-	 qTaoe92CbW7uWm/3NyMcWiizXa7pN3hAq5dqDabZk0cVj84fdauMCk6c/A+UMTvKuo
-	 8j0xN33eSbOFa3dqlDuBOXm9ps4ileyyTnzsZ6Hk=
+	b=2BC4I859sQlZ0JddteqTafMIQjkWKwL1b5yrdStfPWhtBdQj4Tn9aPt4d1gRQbwcm
+	 c9gKqEgDFOlOvuv5d3egcOKQc9umqZRIZVVpLap7NN9pnY8gtiktABEBav9PnOH5Bj
+	 5HbABhT3yiikUhGlhO4jN5CUsNCaE8Jy6E8YitgA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730290AbgIGSeK (ORCPT
+        id S1729654AbgIGSeJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 14:34:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41416 "EHLO mail.kernel.org"
+        Mon, 7 Sep 2020 14:34:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730224AbgIGSdv (ORCPT
+        id S1730226AbgIGSdy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 14:33:51 -0400
+        Mon, 7 Sep 2020 14:33:54 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F110321532;
-        Mon,  7 Sep 2020 18:33:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0FA72087D;
+        Mon,  7 Sep 2020 18:33:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599503631;
-        bh=aDc9+/SMZFvLx8hLQQ+z1mERnBlVBNE/bUXwrPjKYdo=;
+        s=default; t=1599503634;
+        bh=t266Nu1lB7LStASkQx6vx6QrRbEc2k7w1JLEvAlzAJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X+1PS6hRk3SfG8ZxWJ8/uckGnMUjCpx32WYfer4ucD3sKdiCxbTEFntNVifSaOfw8
-         XFRfBCrwr4pGU3S+j+yxn13K4hgGXREGRZRB5x77d7yRrw5BagDbd2C4DUlbIHG325
-         z6duIh4pzjxDtE71HdPyQdFXkRUTdBa+bv5VaNnA=
+        b=DUBHzOWIgCRdcU0dSwV3do+czaKmzBjG/mqhWRLUmK5mQkpZdrxYisfCl2NN/sRWf
+         v9Q4apQPRU2UhKc3dwOO7KbfQtnBY8IFUywDR8798XNegaf0770XfhU6Z8Pagitg8i
+         KJQPGkxPXp3CiH0aK0F3vGuaiGYsbVwX3gVZyPFA=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -52,9 +52,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 09/11] ARM: dts: s3c24xx: align PWM/timer node name with dtschema
-Date:   Mon,  7 Sep 2020 20:33:11 +0200
-Message-Id: <20200907183313.29234-10-krzk@kernel.org>
+Subject: [PATCH 10/11] ARM: dts: s3c24xx: add address to CPU node
+Date:   Mon,  7 Sep 2020 20:33:12 +0200
+Message-Id: <20200907183313.29234-11-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200907183313.29234-1-krzk@kernel.org>
 References: <20200907183313.29234-1-krzk@kernel.org>
@@ -63,29 +63,38 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Although PWM is used on S3C24xx as clocksource/timer, the dtschema
-expects the node to be named in certain format:
+The CPU nodes should be described as children of "cpus" bus node with
+appropriate "reg" properties:
 
-  timer@51000000: $nodename:0: 'timer@51000000' does not match '^pwm(@.*|-[0-9a-f])*$'
+  cpus: '#address-cells' is a required property
+  cpus: '#size-cells' is a required property
+  cpu: 'device_type' is a required property
+  cpu: 'reg' is a required property
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/s3c24xx.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/s3c2416.dtsi | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/s3c24xx.dtsi b/arch/arm/boot/dts/s3c24xx.dtsi
-index 80d4ce79be55..06f82c7e458e 100644
---- a/arch/arm/boot/dts/s3c24xx.dtsi
-+++ b/arch/arm/boot/dts/s3c24xx.dtsi
-@@ -39,7 +39,7 @@
+diff --git a/arch/arm/boot/dts/s3c2416.dtsi b/arch/arm/boot/dts/s3c2416.dtsi
+index d1dec9f52f69..4f084f4fe44f 100644
+--- a/arch/arm/boot/dts/s3c2416.dtsi
++++ b/arch/arm/boot/dts/s3c2416.dtsi
+@@ -18,8 +18,13 @@
+ 	};
+ 
+ 	cpus {
+-		cpu {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
+ 			compatible = "arm,arm926ej-s";
++			reg = <0x0>;
  		};
  	};
  
--	timer: timer@51000000 {
-+	timer: pwm@51000000 {
- 		compatible = "samsung,s3c2410-pwm";
- 		reg = <0x51000000 0x1000>;
- 		interrupts = <0 0 10 3>, <0 0 11 3>, <0 0 12 3>, <0 0 13 3>, <0 0 14 3>;
 -- 
 2.17.1
 
