@@ -2,98 +2,92 @@ Return-Path: <SRS0=z50o=CR=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA4BC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 06:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51954C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 08:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD196218AC
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 06:57:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A8A821741
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 08:39:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599548255;
-	bh=o6mAew2lMKKYAMTkRd6PG3NmJjMJBBmt33Nluw5zleA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RzN6R3ImFB/ODunjLfT1N2kLD90YTtdV89xwzyLVF8EZHIzWndreH/9gIp+haMhAz
-	 sxnedVlpbwFzTICU7FVB1RFFBUYcP7YlN4EGIYALauaO5b8a+aFDeW/8lYWm09uxhI
-	 a2RrFipnaJ6uQwn9KU/PgfGabrdXLv8cvUBDihMo=
+	s=default; t=1599554340;
+	bh=9MbsarOq+P/4I79z3A+fJ+J72iGu7faVW8HMRIAC4yg=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=W8rYB6fiTWnNhlogXHDdMKpD9c54YrDgp2Cavp2MCqcHwuvlAMB+08vofV0A/S3mV
+	 o2pM3DUqiphJsE5eRdP4dvVH1IHu8iq2jVp0FnG6QME6IrJTzFZl6mKEHxncA4ABAl
+	 BrcFaYF8rtpufngHbAqkTwnk4sFD32EyFS1j3xyg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728479AbgIHG5a (ORCPT
+        id S1729912AbgIHIiw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 02:57:30 -0400
-Received: from mail-ed1-f47.google.com ([209.85.208.47]:43807 "EHLO
-        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728501AbgIHG52 (ORCPT
+        Tue, 8 Sep 2020 04:38:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37072 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729564AbgIHIiv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Sep 2020 02:57:28 -0400
-Received: by mail-ed1-f47.google.com with SMTP id n13so14848751edo.10;
-        Mon, 07 Sep 2020 23:57:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=umGp2mRac5tjGgvL1953FmzEeKMsaUQqM0ZLASNYOdw=;
-        b=N5fqJEZG7B7/XsNoynwNGrDwdYwKYI0k2+m058IJt7fmvML1HP74NBozLoAOSuJK1a
-         QPFpJVVmpyIlvq5Y0cI2TTLsDuegaDqEDlZwjQMCeEgs+4tQnMrxhQL8BKvRCMYTyszE
-         lFBbhusQq3/GjDc+QrmRifs8YIDN1mOAjgyQkPkNt8gkWt9+9O3I7yuzW1g29FiW33nK
-         9REI+OURjC44wtMREFGCFzB62qT90llzw7ot+twtQfDpBaBip1oDxdp2pSf4GI5LxiH2
-         MOKW/v7Y5/MRIqXnnGiWqXbbhOvkzZtJZN+G+YZro5cQXTsWexgcSPxyNP47RFaW1px/
-         xFHg==
-X-Gm-Message-State: AOAM533WY4OCuvvxLNCeQi+p5tOkd5iX618ycdMOipkav38oIAchdgBC
-        /5hum4UfFtx126vxWkw9SP0=
-X-Google-Smtp-Source: ABdhPJwQKk7dDYAUqS1F8cS+l02dQ8Fkn0v4UEjEo7y2l4To8N85pyzNNjSurB/LEnao9OgD3/0vtw==
-X-Received: by 2002:a05:6402:1859:: with SMTP id v25mr16745883edy.118.1599548245356;
-        Mon, 07 Sep 2020 23:57:25 -0700 (PDT)
-Received: from pi3 ([194.230.155.174])
-        by smtp.googlemail.com with ESMTPSA id r16sm8407822edc.57.2020.09.07.23.57.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Sep 2020 23:57:24 -0700 (PDT)
-Date:   Tue, 8 Sep 2020 08:57:22 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Jonathan Bakker <xc-racer2@live.ca>
+        Tue, 8 Sep 2020 04:38:51 -0400
+Received: from [192.168.0.50] (89-70-52-201.dynamic.chello.pl [89.70.52.201])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A582215A4;
+        Tue,  8 Sep 2020 08:38:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599554331;
+        bh=9MbsarOq+P/4I79z3A+fJ+J72iGu7faVW8HMRIAC4yg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ABlmjheudFWqMnnqN7fkj7Y8fpGWpqp+Q+5bztrxFGYwdt/wYgY/MV7PHBbVNqkon
+         YKpo8TUVTX6CKqR+9LMrE0vMFmrIIsUlMMIhexMaoFG+3MN9Tu7yuOd+G3uin4Mt/h
+         ku2dg3SQDqNkWUHQcVwN7jdxOTn9U8cssWk6hieU=
+Subject: Re: [RFT 09/25] ARM: dts: s5pv210: fix number of I2S DAI cells
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Bakker <xc-racer2@live.ca>
 Cc:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Jonathan Cameron <jic23@kernel.org>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [RFT 25/25] ARM: dts: s5pv210: align DMA channels with dtschema
-Message-ID: <20200908065722.GD24227@pi3>
 References: <20200907161141.31034-1-krzk@kernel.org>
- <20200907161141.31034-26-krzk@kernel.org>
- <25178674-e4af-ba35-b7f0-42091208e0e8@live.ca>
- <BN6PR04MB06601A7FC9D1A697481EA37FCB290@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <20200907161141.31034-10-krzk@kernel.org>
+ <BN6PR04MB0660D9B0D0B5FB4F40CF2769CB280@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <20200908065321.GB24227@pi3>
+From:   Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <48aa966f-d3b8-7e4a-36aa-aed4630d331a@kernel.org>
+Date:   Tue, 8 Sep 2020 10:38:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <BN6PR04MB06601A7FC9D1A697481EA37FCB290@BN6PR04MB0660.namprd04.prod.outlook.com>
+In-Reply-To: <20200908065321.GB24227@pi3>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 07, 2020 at 05:28:54PM -0700, Jonathan Bakker wrote:
-> Ah, I figured out why the dma stopped working.  In s5pv210-aries.dtsi the dma's for i2s0
-> are overriden to use pdma0 instead of pdma1.  That also needs changing for this to
-> work properly.
+On 9/8/20 08:53, Krzysztof Kozlowski wrote:
+> On Mon, Sep 07, 2020 at 04:55:26PM -0700, Jonathan Bakker wrote:
+>> Sadly, this is causing issues for me.  The machine driver is no longer probing correctly
+>> on the Galaxy S.
+>>
+>> The failing call in sound/soc/samsung/aries_wm8994.c is
+>>
+>> 	/* Set CPU of_node for BT DAI */
+>> 	aries_dai[2].cpus->of_node = of_parse_phandle(cpu,
+>> 			"sound-dai", 1);
+>>
+>> where cpus->of_node is not set properly.  Which is definitely weird because it doesn't
+>> look like this should affect that.
+>>
+>> Let me know if there's any specific test that you want me to do.
+> Thanks for the tests. I wonder now if this was working before because
+> really my change should not break it... I'll think more about it.
 
-Indeed I missed this, thanks for review and tests.
-
-Best regards,
-Krzysztof
-
-> 
-> Thanks,
-> Jonathan
-> 
-> On 2020-09-07 5:17 p.m., Jonathan Bakker wrote:
-> > Initial testing on both an i9000 and an SGH-T959P are showing that the audio has
-> > stopped working with this.  I'm not 100% convinced as I've had DMA issues in the
-> > past.  However trying to play something just results in a hang after 1.5s while
-> > it works just fine without this patch.
-> > 
-> > Thanks,
-> > Jonathan
+I think of_parse_phandle_with_args() needs to be used instead of just
+of_parse_phandle() for that to work, as AFAICS the latter assumes the
+cells count == 0. We would need first to update the driver and then dts.
