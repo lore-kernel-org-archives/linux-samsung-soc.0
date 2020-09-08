@@ -2,171 +2,124 @@ Return-Path: <SRS0=z50o=CR=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,FORGED_MUA_MOZILLA,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB2EC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 00:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 608ABC43461
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 06:48:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2301321D24
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 00:29:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CD8D21D20
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 06:48:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599547717;
+	bh=NO/usNhy16yhSKDVyBRRSAZoxSAHHglvXKFbsXtLhrk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=1+67Q6Ek/Aj1BYjtPnCao5sK6iNRNS3P+cMHQ/Rg9zsjwbSVvjnaFqvfBaIShYFDu
+	 0TjchK2Z9P5nZP9VLKBYeNoTXRD0reYKBSrDlvHpzKr7F8YKjXHKwqUSGebuIUPvnf
+	 zjPwCfvML5sWfEgkDCWT1mV9CIxZOtLC0T7IIo1k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbgIHA3C (ORCPT
+        id S1728998AbgIHGs3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 20:29:02 -0400
-Received: from mail-dm6nam11olkn2069.outbound.protection.outlook.com ([40.92.19.69]:14112
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726918AbgIHA3B (ORCPT
+        Tue, 8 Sep 2020 02:48:29 -0400
+Received: from mail-ej1-f65.google.com ([209.85.218.65]:44654 "EHLO
+        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728759AbgIHGsR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 20:29:01 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R+NyPvosW0pqp7cqxU1WOZTO5rwJPWY4J8X8oYRvSBFHrQGhS1X3IpmvRYu+fGzRFUQf5V+FtIiMQb3EvgyGHkFyuhc+THbXjM3ThGk+///rXKjuFXzGwRVUFCko3P3Sslp4RJ/LATRR92R/YNKyYVlqZrUp3I1UK+rVGIARN2wLfVoBNDCt1n6NNsT3la8t0tsLgH5EZaOGBnUgmmyYnwuLruPRe4yX6swINQOTu86sA0jM0lEOBp5Pv1a0Y6VpdmoV+5CXJ2uBKY3NI/jPXsv6mQx91FtSxB8lpexRMSPLttgc3OqyDt5EYGYDdENkc338X3K1bbC26z2BYum+6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v3N1AuyMACUPavKKqXqF2WT6pRgKILXwHTpE9w6tznI=;
- b=RySDqYayan422FkmAV/qYMZDrSTLQkj95yy39cx8RaIdten5LE3TaDAwoH34/y59pN12+AERnzEbG5lUkYkDi7+LffZBZ6ZpITe4oN8OzO1yC1XL3tPNusC24RfwL7dWXK1bYURTRrS9rQ8TawD2ysbZne7qdEw6zBjvMXwpT7TUkD5VVUA0GPc1L43ZPt9+AsUelkmNbyDufKHPHqGXBViYsi/GBe0H0m3y21byhfSthyIVMjdz3XSqTfwhGcsM4zwk1FNCSvtk/KtraXXndYiAcAdtMHm+qY7UtWPGtZAs5+AM9HYHemVlPPU4GtT9wD+jJixxe+PXuHLK2Z3DXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from DM6NAM11FT064.eop-nam11.prod.protection.outlook.com
- (2a01:111:e400:fc4d::47) by
- DM6NAM11HT127.eop-nam11.prod.protection.outlook.com (2a01:111:e400:fc4d::173)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.21; Tue, 8 Sep
- 2020 00:28:59 +0000
-Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- (2a01:111:e400:fc4d::4a) by DM6NAM11FT064.mail.protection.outlook.com
- (2a01:111:e400:fc4d::234) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.19 via Frontend
- Transport; Tue, 8 Sep 2020 00:28:59 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:2A931EF18A50EB819341FE5AEF4E469EA8487410AC98E03086BCAAE1D373C31C;UpperCasedChecksum:5F2EC04B40DDA8D36DCB770B7E4E18200FC4EFE157354A8DE97D042357E79125;SizeAsReceived:9325;Count:48
-Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- ([fe80::303b:a75b:d03e:bd04]) by BN6PR04MB0660.namprd04.prod.outlook.com
- ([fe80::303b:a75b:d03e:bd04%3]) with mapi id 15.20.3348.019; Tue, 8 Sep 2020
- 00:28:59 +0000
-Subject: Re: [RFT 25/25] ARM: dts: s5pv210: align DMA channels with dtschema
-From:   Jonathan Bakker <xc-racer2@live.ca>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Tue, 8 Sep 2020 02:48:17 -0400
+Received: by mail-ej1-f65.google.com with SMTP id r7so7546601ejs.11;
+        Mon, 07 Sep 2020 23:48:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=VyiVf+Mq59UC5ZzKMYrAjFhEEKe4orUQbv2Dw6ICisQ=;
+        b=Qt2OvcNIVdt78UW4jLDz6nktC9mUQL/abkGCyd41iCFp1dO1iDhVQgQ9KQRsFJIqP/
+         +cAXGjR8GXm/R8n8bNtHgtid78nlHpKhGzuVnXWukF1nyeyh+YVqzUegEZsPibxnna8y
+         xW4SDv7DnqzXfBVK1RDpg19qGRllqHBskRWEmUsYZNbsFmSLjRqDtNw2IyDhbFw/6vGT
+         roUdrWvMHfSgUc4Jv9/LEie8dJt8SPHrDQJ8bo6ZszAysLFS0cL/2qPDDv7BQRHCKSRc
+         p8U0APQR6BqN0cqC1jphrNDbPejCgFwzVXKk29H97WHEJSEQ0jm9xFwT9ANcaKCMnBtT
+         OCpg==
+X-Gm-Message-State: AOAM531vjY+lOC8/Xan29LgR+bvW9Qr6t7j52kfPWy/zg9i5PKIygj1X
+        Qg8hInokSXw5h9zxQWLtLDA=
+X-Google-Smtp-Source: ABdhPJy61y/aCX2qNyKljrz5UJOWH8ADbK1AwDDzicWB2lQYIWTkbWIYURrKncOKjTAbVcUMp5Tlaw==
+X-Received: by 2002:a17:906:455:: with SMTP id e21mr25591439eja.170.1599547694870;
+        Mon, 07 Sep 2020 23:48:14 -0700 (PDT)
+Received: from pi3 ([194.230.155.174])
+        by smtp.googlemail.com with ESMTPSA id j8sm16697525edp.58.2020.09.07.23.48.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Sep 2020 23:48:13 -0700 (PDT)
+Date:   Tue, 8 Sep 2020 08:48:11 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Jonathan Bakker <xc-racer2@live.ca>
+Cc:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Jonathan Cameron <jic23@kernel.org>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH 03/25] dt-bindings: iio: adc: exynos-adc: do not require
+ syscon on S5Pv210
+Message-ID: <20200908064811.GA24227@pi3>
 References: <20200907161141.31034-1-krzk@kernel.org>
- <20200907161141.31034-26-krzk@kernel.org>
- <25178674-e4af-ba35-b7f0-42091208e0e8@live.ca>
-Message-ID: <BN6PR04MB06601A7FC9D1A697481EA37FCB290@BN6PR04MB0660.namprd04.prod.outlook.com>
-Date:   Mon, 7 Sep 2020 17:28:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-In-Reply-To: <25178674-e4af-ba35-b7f0-42091208e0e8@live.ca>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW3PR05CA0019.namprd05.prod.outlook.com
- (2603:10b6:303:2b::24) To BN6PR04MB0660.namprd04.prod.outlook.com
- (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <cd8f9450-2d74-35d6-f368-8a62469c4fff@live.ca>
+ <20200907161141.31034-4-krzk@kernel.org>
+ <BN6PR04MB06601B8D0B7F1E51953024E6CB280@BN6PR04MB0660.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2001:569:fb68:9c00:8067:f823:1e15:7520] (2001:569:fb68:9c00:8067:f823:1e15:7520) by MW3PR05CA0019.namprd05.prod.outlook.com (2603:10b6:303:2b::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3370.9 via Frontend Transport; Tue, 8 Sep 2020 00:28:56 +0000
-X-Microsoft-Original-Message-ID: <cd8f9450-2d74-35d6-f368-8a62469c4fff@live.ca>
-X-TMN:  [8gb0dIQq4GXvh1ciJhPU4B9dDh9c+FhY8tCvGwlkx7uIdvDvEj5YZPH1QtDQhU/I]
-X-MS-PublicTrafficType: Email
-X-IncomingHeaderCount: 48
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: b48fd2c4-b8c9-422a-84be-08d8538e2d97
-X-MS-TrafficTypeDiagnostic: DM6NAM11HT127:
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Z8cSbXkDhgEGfvhC2RHYtzqVcTOmcQs3hKOkV/M2j21v6UL9UPAfNo6C3/G6jM6jkQnBQL9SGVaC1+L/CfN3H0976RHNrPChNjMT8K3zKgNpCoddOsK0yr7nr8ZJDfLoacOX2CPfJOw8mojG/vnsNmmblOAQVW5WEAhIipq9K67xo/presD2FkAj61aInAo8yQeAL+lqqcWkhZG/JMjRyQ==
-X-MS-Exchange-AntiSpam-MessageData: 4ovq0SWyMfmLWjhKV2KAogH7o4Ox72SskzNSTK/qctrk0O0NOPqK6fxWF/Ntnl3DdgLb/xjyy8ZSyu2cKeEdHZFFbpppItRTo6Mezp1PTH1NexFHp4SDHw+7gVCBj4hlbe3uVJM0gcp2pz0khObS1Li5j8Tebh4vAEhHmbCbRXB/KbK3WVINJd9sY73HtDHNTEfKcD7JTyDU/Y9u1XHdfw==
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b48fd2c4-b8c9-422a-84be-08d8538e2d97
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2020 00:28:59.1649
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT064.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6NAM11HT127
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <BN6PR04MB06601B8D0B7F1E51953024E6CB280@BN6PR04MB0660.namprd04.prod.outlook.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Ah, I figured out why the dma stopped working.  In s5pv210-aries.dtsi the dma's for i2s0
-are overriden to use pdma0 instead of pdma1.  That also needs changing for this to
-work properly.
+On Mon, Sep 07, 2020 at 02:49:49PM -0700, Jonathan Bakker wrote:
+> Looking at this again, it appears that there is actually control for
+> it at offset 0x6818 of pmu_syscon (0xe0108000) [1].  However, it defaults to
+> enabled so it's not required for proper use of the block.  Whether it should
+> be present in the schema/DTS is up to you.
 
-Thanks,
-Jonathan
+Indeed the driver could turn off the ADC phy via syscon however bindings
+(before YAML conversion) explicitly were saying that it is not needed. I
+am not going to add it as I am not able to test the change and also
+adding such requirement would be a break of ABI (described by first TXT
+bindings).
 
-On 2020-09-07 5:17 p.m., Jonathan Bakker wrote:
-> Initial testing on both an i9000 and an SGH-T959P are showing that the audio has
-> stopped working with this.  I'm not 100% convinced as I've had DMA issues in the
-> past.  However trying to play something just results in a hang after 1.5s while
-> it works just fine without this patch.
+Best regards,
+Krzysztof
+
+
 > 
 > Thanks,
 > Jonathan
 > 
+> [1] https://android.googlesource.com/kernel/samsung/+/refs/heads/android-samsung-3.0-jb-mr0/arch/arm/mach-s5pv210/include/mach/regs-clock.h#325
+> 
 > On 2020-09-07 9:11 a.m., Krzysztof Kozlowski wrote:
->> dtschema expects DMA channels in specific order (tx, rx and tx-sec).
->> The order actually should not matter because dma-names is used however
->> let's make it aligned with dtschema to suppress warnings like:
->>
->>   i2s@eee30000: dma-names: ['rx', 'tx', 'tx-sec'] is not valid under any of the given schemas
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->> ---
->>  arch/arm/boot/dts/s5pv210.dtsi | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
->> index 96e667ba1c3f..72fb9d9f7ba3 100644
->> --- a/arch/arm/boot/dts/s5pv210.dtsi
->> +++ b/arch/arm/boot/dts/s5pv210.dtsi
->> @@ -240,8 +240,8 @@
->>  			reg = <0xeee30000 0x1000>;
->>  			interrupt-parent = <&vic2>;
->>  			interrupts = <16>;
->> -			dma-names = "rx", "tx", "tx-sec";
->> -			dmas = <&pdma1 9>, <&pdma1 10>, <&pdma1 11>;
->> +			dma-names = "tx", "rx", "tx-sec";
->> +			dmas = <&pdma1 10>, <&pdma1 9>, <&pdma1 11>;
->>  			clock-names = "iis",
->>  				      "i2s_opclk0",
->>  				      "i2s_opclk1";
->> @@ -260,8 +260,8 @@
->>  			reg = <0xe2100000 0x1000>;
->>  			interrupt-parent = <&vic2>;
->>  			interrupts = <17>;
->> -			dma-names = "rx", "tx";
->> -			dmas = <&pdma1 12>, <&pdma1 13>;
->> +			dma-names = "tx", "rx";
->> +			dmas = <&pdma1 13>, <&pdma1 12>;
->>  			clock-names = "iis", "i2s_opclk0";
->>  			clocks = <&clocks CLK_I2S1>, <&clocks SCLK_AUDIO1>;
->>  			pinctrl-names = "default";
->> @@ -275,8 +275,8 @@
->>  			reg = <0xe2a00000 0x1000>;
->>  			interrupt-parent = <&vic2>;
->>  			interrupts = <18>;
->> -			dma-names = "rx", "tx";
->> -			dmas = <&pdma1 14>, <&pdma1 15>;
->> +			dma-names = "tx", "rx";
->> +			dmas = <&pdma1 15>, <&pdma1 14>;
->>  			clock-names = "iis", "i2s_opclk0";
->>  			clocks = <&clocks CLK_I2S2>, <&clocks SCLK_AUDIO2>;
->>  			pinctrl-names = "default";
->>
+> > The ADC in S5Pv210 does not have ADC phy registers in separate block for
+> > which syscon would be needed.  Remove this requirement to fix dtbs_check
+> > warnings like:
+> > 
+> >   arch/arm/boot/dts/s5pv210-fascinate4g.dt.yaml: adc@e1700000: 'samsung,syscon-phandle' is a required property
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >  .../devicetree/bindings/iio/adc/samsung,exynos-adc.yaml          | 1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> > index 89b4f9c252a6..75174af72288 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> > @@ -81,7 +81,6 @@ allOf:
+> >                - samsung,exynos-adc-v2
+> >                - samsung,exynos3250-adc
+> >                - samsung,exynos4212-adc
+> > -              - samsung,s5pv210-adc
+> >      then:
+> >        required:
+> >          - samsung,syscon-phandle
+> > 
