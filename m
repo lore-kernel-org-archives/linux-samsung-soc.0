@@ -2,131 +2,181 @@ Return-Path: <SRS0=z50o=CR=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 635E0C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D091C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 22:44:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 282782080A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:25:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599596750;
-	bh=Rpd66JFgV+oZm7elTQ/Xy7ZObDimWV1sQo1SVYnl6g0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=zr9oGuTyG5vfor1lRwrzX9U8QiWSlT64gm5z9mk6eE213mKnsJjgDcj+/8iX1ZErv
-	 EhANoOFwlGuYBWwXseE2VrUm9r2L4rlZAxG/qNRHFXgNJBntY44h9Hc4zuySCfGJ9t
-	 eJtJ52ogqUMZj7QNqmNhykIDEtMlogLj5dUZObBQ=
+	by mail.kernel.org (Postfix) with ESMTP id 5C17B207DE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 22:44:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="cMCk0lKz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730177AbgIHUZt (ORCPT
+        id S1730128AbgIHWny (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 16:25:49 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:44368 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729691AbgIHUZs (ORCPT
+        Tue, 8 Sep 2020 18:43:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33506 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730465AbgIHWnc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Sep 2020 16:25:48 -0400
-Received: by mail-il1-f193.google.com with SMTP id h11so156057ilj.11;
-        Tue, 08 Sep 2020 13:25:47 -0700 (PDT)
+        Tue, 8 Sep 2020 18:43:32 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03110C061755
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Sep 2020 15:43:32 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id b17so515214ilh.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Sep 2020 15:43:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kP3fRBjvfm91Lgym+an8BHFQ2PuoWlJ3si63rQdbN8c=;
+        b=cMCk0lKzNfxAMTO2UkKJ0lXqynPZojKcMVW8pVBD0mlICjkRQgjWFrGN9QLlhQkHwT
+         /1hBT7NZs2Gr3ljH38g6Vgva0RGAIwKBL2lof8SnGTM7KVvDmeSc64CAB5ZYI51ye64A
+         myig/VRQXeaoQ2s/61egtsT7H1YfnYF00beULBHNwfkxORoyxD3tpyeCI6Vv4fXW9aiB
+         GZnJVGUOtP0w4hIktrh22UQPPwcXtPBeUim5uFhP4e860zMBj/sx+nCWMoR6wglWGBae
+         T9aUpzVxoJnsq7orTcIcavPOpRMVeH9o5ow658uO6j6bws7ZRAzwVfQXC+uLjcXt9vgh
+         eYDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jY9UdHICeYt7zlT7tUlhe4/kxIL9pAaiTbl/yxvrt4w=;
-        b=CSwN3P+Smp5zOYxW7nH+4M9SO2ezArKowt9Tl+AaxbLhIomnL2of55yizPP3reyT11
-         aeHUDqAD6dW0RHFHs2T70/igDGqGhobGeM/MbUVqgUoAmXTegvxGevTupFjKXCDeL7Bd
-         jDcT4lua3qT0rGMS2+DgsuMnBF3WC0863GeTT0xiUBFS5A3NIIhp/dXAmn0jKsn3PinT
-         rXhkow3YY8tlb92AszWegy3ab7LhoW7+1ibEBaAjPRYMzbdKtw/eqdCeifiUaL7raD58
-         mIbZTnu0yVa26y8CD1l6PbzDDASjXP0gZJ1kST+bT9dz1mqG9UuESvxhcG/vXfUIkx+5
-         qpVA==
-X-Gm-Message-State: AOAM533//DovIRVetqTauRKU8dAtAbBEIHq0OTiNPkb3k/X3yHKp7X53
-        O9eEoZMyahlbXEMqubeOGQ==
-X-Google-Smtp-Source: ABdhPJzXNYzVQL4xww4DrKkNdGx47Rqhrl6WaRwl4ojNtm5QVw7UMlWvDjZnXk6bhRJ281tteQMOiw==
-X-Received: by 2002:a05:6e02:13ce:: with SMTP id v14mr527407ilj.79.1599596746781;
-        Tue, 08 Sep 2020 13:25:46 -0700 (PDT)
-Received: from xps15 ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id c12sm148132ilm.17.2020.09.08.13.25.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2020 13:25:46 -0700 (PDT)
-Received: (nullmailer pid 850495 invoked by uid 1000);
-        Tue, 08 Sep 2020 20:25:45 -0000
-Date:   Tue, 8 Sep 2020 14:25:44 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Jonathan Bakker <xc-racer2@live.ca>,
-        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH 02/25] dt-bindings: iio: adc: exynos-adc: require second
- interrupt with touch screen
-Message-ID: <20200908202544.GB846754@bogus>
-References: <20200907161141.31034-1-krzk@kernel.org>
- <20200907161141.31034-3-krzk@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kP3fRBjvfm91Lgym+an8BHFQ2PuoWlJ3si63rQdbN8c=;
+        b=nhOOBI352N5zT5ABem0ycF5SqPWgCqlih4aUSHfjBkttOBw7DGY47QJUKFCvTNvrfE
+         dVfOAb49IQN/j3ZUsHg9/8piSXCiLzcn5T4lX6RLnGu2Q7pCWm+2zZW+Cpnh+31QAsLF
+         g/r9NCMkJElGMSh/5Z7rlgQGNKiCvhxOkiiKx10lZzsCYqAg82vn392hS4Ihh+5dN82+
+         0y0o8IiGO63/xWlzdqEmFJaDSp3mPXzWOXdwMI/gAAnOUT453q6HSrFMmSxsBZJ3iix2
+         F3kc7bJrk7pyZ8qwnCX1E0ImcIB+7zWSvlMnhT8VEDjbfFEK9y7RBgkIL1V2f8pS3DK6
+         fsyA==
+X-Gm-Message-State: AOAM531fqZkkBrZBn3zMdpugIFubzmzpaOqJsHVQd+iClN9uA5k/6tIn
+        BBEw99tKCwzsHR9V8hn+insQNl05y+xCb9DOXYCR2A==
+X-Google-Smtp-Source: ABdhPJy2euDOe9gR5D2dH2jq/gUSw+Ds2//IpXgtG+LSuaTtkhuhiIiGtc0UENWkqIWHIiGMHapySfCTPJbwaFtJHWw=
+X-Received: by 2002:a92:9408:: with SMTP id c8mr928626ili.61.1599605010111;
+ Tue, 08 Sep 2020 15:43:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200907161141.31034-3-krzk@kernel.org>
+References: <20191221150402.13868-1-murphyt7@tcd.ie> <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
+ <20200529124523.GA11817@infradead.org> <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
+ <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com> <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
+ <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com> <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
+ <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com> <60a82319-cbee-4cd1-0d5e-3c407cc51330@linux.intel.com>
+ <e598fb31-ef7a-c2ee-8a54-bf62d50c480c@deltatee.com> <b27cae1f-07ff-bef2-f125-a5f0d968016d@linux.intel.com>
+In-Reply-To: <b27cae1f-07ff-bef2-f125-a5f0d968016d@linux.intel.com>
+From:   Tom Murphy <murphyt7@tcd.ie>
+Date:   Tue, 8 Sep 2020 23:43:19 +0100
+Message-ID: <CALQxJut5c=cWdi+SVkN3JnbkhPSYmLkOyRUhduL-UJ9gyKn9Ow@mail.gmail.com>
+Subject: Re: [Intel-gfx] [PATCH 0/8] Convert the intel iommu driver to the
+ dma-iommu api
+To:     Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Cc:     Logan Gunthorpe <logang@deltatee.com>, kvm@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-tegra@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, Kukjin Kim <kgene@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 07, 2020 at 06:11:18PM +0200, Krzysztof Kozlowski wrote:
-> The ADC in S3C/S5P/Exynos SoCs can be used also for handling touch
-> screen.  In such case the second interrupt is required.  This second
-> interrupt can be anyway provided, even without touch screens.  This
-> fixes dtbs_check warnings like:
-> 
->   arch/arm/boot/dts/s5pv210-aquila.dt.yaml: adc@e1700000: interrupts: [[23], [24]] is too long
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .../bindings/iio/adc/samsung,exynos-adc.yaml      | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-> index cc3c8ea6a894..89b4f9c252a6 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-> @@ -41,7 +41,10 @@ properties:
->      maxItems: 2
->  
->    interrupts:
-> -    maxItems: 1
-> +    description:
-> +      ADC interrupt followed by optional touchscreen interrupt.
-> +    minItems: 1
-> +    maxItems: 2
->  
->    "#io-channel-cells":
->      const: 1
-> @@ -107,6 +110,16 @@ allOf:
->            items:
->              - const: adc
->  
-> +  - if:
-> +      properties:
-> +        has-touchscreen:
-> +          true
+On Tue, 8 Sep 2020 at 16:56, Tvrtko Ursulin
+<tvrtko.ursulin@linux.intel.com> wrote:
+>
+>
+> On 08/09/2020 16:44, Logan Gunthorpe wrote:
+> > On 2020-09-08 9:28 a.m., Tvrtko Ursulin wrote:
+> >>>
+> >>> diff --git a/drivers/gpu/drm/i915/i915_scatterlist.h
+> >>> b/drivers/gpu/drm/i915/i915
+> >>> index b7b59328cb76..9367ac801f0c 100644
+> >>> --- a/drivers/gpu/drm/i915/i915_scatterlist.h
+> >>> +++ b/drivers/gpu/drm/i915/i915_scatterlist.h
+> >>> @@ -27,13 +27,19 @@ static __always_inline struct sgt_iter {
+> >>>    } __sgt_iter(struct scatterlist *sgl, bool dma) {
+> >>>           struct sgt_iter s = { .sgp = sgl };
+> >>>
+> >>> +       if (sgl && !sg_dma_len(s.sgp))
+> >>
+> >> I'd extend the condition to be, just to be safe:
+> >>      if (dma && sgl && !sg_dma_len(s.sgp))
+> >>
+> >
+> > Right, good catch, that's definitely necessary.
+> >
+> >>> +               s.sgp = NULL;
+> >>> +
+> >>>           if (s.sgp) {
+> >>>                   s.max = s.curr = s.sgp->offset;
+> >>> -               s.max += s.sgp->length;
+> >>> -               if (dma)
+> >>> +
+> >>> +               if (dma) {
+> >>> +                       s.max += sg_dma_len(s.sgp);
+> >>>                           s.dma = sg_dma_address(s.sgp);
+> >>> -               else
+> >>> +               } else {
+> >>> +                       s.max += s.sgp->length;
+> >>>                           s.pfn = page_to_pfn(sg_page(s.sgp));
+> >>> +               }
+> >>
+> >> Otherwise has this been tested or alternatively how to test it? (How to
+> >> repro the issue.)
+> >
+> > It has not been tested. To test it, you need Tom's patch set without the
+> > last "DO NOT MERGE" patch:
+> >
+> > https://lkml.kernel.org/lkml/20200907070035.GA25114@infradead.org/T/
+>
+> Tom, do you have a branch somewhere I could pull from? (Just being lazy
+> about downloading a bunch of messages from the archives.)
 
-This evaluates as true if 'has-touchscreen' is not present too. You 
-should use 'required' here.
+I don't unfortunately. I'm working locally with poor internet.
 
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          minItems: 2
-> +          maxItems: 2
-> +
->  examples:
->    - |
->      adc: adc@12d10000 {
-> -- 
-> 2.17.1
-> 
+>
+> What GPU is in your Lenovo x1 carbon 5th generation and what
+> graphical/desktop setup I need to repro?
+
+
+Is this enough info?:
+
+$ lspci -vnn | grep VGA -A 12
+00:02.0 VGA compatible controller [0300]: Intel Corporation HD
+Graphics 620 [8086:5916] (rev 02) (prog-if 00 [VGA controller])
+    Subsystem: Lenovo ThinkPad X1 Carbon 5th Gen [17aa:224f]
+    Flags: bus master, fast devsel, latency 0, IRQ 148
+    Memory at eb000000 (64-bit, non-prefetchable) [size=16M]
+    Memory at 60000000 (64-bit, prefetchable) [size=256M]
+    I/O ports at e000 [size=64]
+    [virtual] Expansion ROM at 000c0000 [disabled] [size=128K]
+    Capabilities: [40] Vendor Specific Information: Len=0c <?>
+    Capabilities: [70] Express Root Complex Integrated Endpoint, MSI 00
+    Capabilities: [ac] MSI: Enable+ Count=1/1 Maskable- 64bit-
+    Capabilities: [d0] Power Management version 2
+    Capabilities: [100] Process Address Space ID (PASID)
+    Capabilities: [200] Address Translation Service (ATS)
+
+
+>
+> Regards,
+>
+> Tvrtko
