@@ -2,181 +2,95 @@ Return-Path: <SRS0=z50o=CR=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D091C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 22:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61012C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 23:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C17B207DE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 22:44:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="cMCk0lKz"
+	by mail.kernel.org (Postfix) with ESMTP id 2359421D46
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 23:01:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599606088;
+	bh=5+6n6DKcDtI4F+rO/ROomSv28JsO4K+RfkfOBx+7p6s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=E841T7skJM3q0ULTeECGor4hTFUie12czoAhqxgTu47wUcAMXOhPiUjdsl/Lt0g/v
+	 e9AbZSptPmOsefbhzyWIHlKgGv2V1ftrxm2jo7DsJuTSJYKhvgFI1nbxLH0cYkC9Nk
+	 dDA1+iLz8P9TtpbpBUpW7OcgS9Ujj+SlKApys1kM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730128AbgIHWny (ORCPT
+        id S1728442AbgIHXBW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 18:43:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33506 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730465AbgIHWnc (ORCPT
+        Tue, 8 Sep 2020 19:01:22 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:34803 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbgIHXBV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Sep 2020 18:43:32 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03110C061755
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Sep 2020 15:43:32 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id b17so515214ilh.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Sep 2020 15:43:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kP3fRBjvfm91Lgym+an8BHFQ2PuoWlJ3si63rQdbN8c=;
-        b=cMCk0lKzNfxAMTO2UkKJ0lXqynPZojKcMVW8pVBD0mlICjkRQgjWFrGN9QLlhQkHwT
-         /1hBT7NZs2Gr3ljH38g6Vgva0RGAIwKBL2lof8SnGTM7KVvDmeSc64CAB5ZYI51ye64A
-         myig/VRQXeaoQ2s/61egtsT7H1YfnYF00beULBHNwfkxORoyxD3tpyeCI6Vv4fXW9aiB
-         GZnJVGUOtP0w4hIktrh22UQPPwcXtPBeUim5uFhP4e860zMBj/sx+nCWMoR6wglWGBae
-         T9aUpzVxoJnsq7orTcIcavPOpRMVeH9o5ow658uO6j6bws7ZRAzwVfQXC+uLjcXt9vgh
-         eYDQ==
+        Tue, 8 Sep 2020 19:01:21 -0400
+Received: by mail-io1-f68.google.com with SMTP id m17so1203259ioo.1;
+        Tue, 08 Sep 2020 16:01:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kP3fRBjvfm91Lgym+an8BHFQ2PuoWlJ3si63rQdbN8c=;
-        b=nhOOBI352N5zT5ABem0ycF5SqPWgCqlih4aUSHfjBkttOBw7DGY47QJUKFCvTNvrfE
-         dVfOAb49IQN/j3ZUsHg9/8piSXCiLzcn5T4lX6RLnGu2Q7pCWm+2zZW+Cpnh+31QAsLF
-         g/r9NCMkJElGMSh/5Z7rlgQGNKiCvhxOkiiKx10lZzsCYqAg82vn392hS4Ihh+5dN82+
-         0y0o8IiGO63/xWlzdqEmFJaDSp3mPXzWOXdwMI/gAAnOUT453q6HSrFMmSxsBZJ3iix2
-         F3kc7bJrk7pyZ8qwnCX1E0ImcIB+7zWSvlMnhT8VEDjbfFEK9y7RBgkIL1V2f8pS3DK6
-         fsyA==
-X-Gm-Message-State: AOAM531fqZkkBrZBn3zMdpugIFubzmzpaOqJsHVQd+iClN9uA5k/6tIn
-        BBEw99tKCwzsHR9V8hn+insQNl05y+xCb9DOXYCR2A==
-X-Google-Smtp-Source: ABdhPJy2euDOe9gR5D2dH2jq/gUSw+Ds2//IpXgtG+LSuaTtkhuhiIiGtc0UENWkqIWHIiGMHapySfCTPJbwaFtJHWw=
-X-Received: by 2002:a92:9408:: with SMTP id c8mr928626ili.61.1599605010111;
- Tue, 08 Sep 2020 15:43:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191221150402.13868-1-murphyt7@tcd.ie> <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
- <20200529124523.GA11817@infradead.org> <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
- <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com> <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
- <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com> <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
- <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com> <60a82319-cbee-4cd1-0d5e-3c407cc51330@linux.intel.com>
- <e598fb31-ef7a-c2ee-8a54-bf62d50c480c@deltatee.com> <b27cae1f-07ff-bef2-f125-a5f0d968016d@linux.intel.com>
-In-Reply-To: <b27cae1f-07ff-bef2-f125-a5f0d968016d@linux.intel.com>
-From:   Tom Murphy <murphyt7@tcd.ie>
-Date:   Tue, 8 Sep 2020 23:43:19 +0100
-Message-ID: <CALQxJut5c=cWdi+SVkN3JnbkhPSYmLkOyRUhduL-UJ9gyKn9Ow@mail.gmail.com>
-Subject: Re: [Intel-gfx] [PATCH 0/8] Convert the intel iommu driver to the
- dma-iommu api
-To:     Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Cc:     Logan Gunthorpe <logang@deltatee.com>, kvm@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-tegra@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=m89In9DmPLFvZGgeKa+y2k8098Kswn69VDIHU75w5H4=;
+        b=Ksa6pz5rRbVbCBJZLoL3+NGUPRAVaVz79JbJqgXrX0r0iJoDRLNwI6bWDdGNxDGJiq
+         XwPN0/2NloTvFtqee2beDG34SlzeieEoi+4xFtPcnRleD+DvxGsqPZbSHaG0wUJMCqQA
+         78Xstz5naIswFfwytOjr+aIGfZcgUuwcPENYJBtowlGUz/3y2yyVFmToYGYb8e40BsZX
+         JtWUxyI7ovZv+A3kLr9JuEYkqXY2ePFmam1wW2MqwX5rA1MyV2SN/mLHRpGUuCRBt3Nx
+         s4ZWeyOBdqEJAUwgArU+3JW9nx4R6ewi32A0uj5NyPNgefbANAn9M0ibcVzgDJoXR3No
+         /3BQ==
+X-Gm-Message-State: AOAM5305AhiN2KJ1Sf6NsdaLXFfNU3zviT9JnYvgoJuG74aKLhlhbrM9
+        NedxQ1oXL6LEp17O2K/Duw==
+X-Google-Smtp-Source: ABdhPJzIrAPYwrTxeYyBssMDWjL0nXwlBTgg0SHWrsNuw4AiWN/2RL2jNeBp0V/VAeApkqjiImK6Cw==
+X-Received: by 2002:a05:6638:2647:: with SMTP id n7mr1355405jat.9.1599606078731;
+        Tue, 08 Sep 2020 16:01:18 -0700 (PDT)
+Received: from xps15 ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id l16sm387039ilc.3.2020.09.08.16.01.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Sep 2020 16:01:18 -0700 (PDT)
+Received: (nullmailer pid 1102281 invoked by uid 1000);
+        Tue, 08 Sep 2020 23:01:16 -0000
+Date:   Tue, 8 Sep 2020 17:01:16 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     linux-clk@vger.kernel.org, m.szyprowski@samsung.com,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, Kukjin Kim <kgene@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com
+Subject: Re: [PATCH 1/3] clk: samsung: Add clk ID definitions for the CPU
+ parent clocks
+Message-ID: <20200908230116.GA1102229@bogus>
+References: <CGME20200826171539eucas1p2e999972d3e7dd6dd701e312548933e87@eucas1p2.samsung.com>
+ <20200826171529.23618-1-s.nawrocki@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200826171529.23618-1-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 8 Sep 2020 at 16:56, Tvrtko Ursulin
-<tvrtko.ursulin@linux.intel.com> wrote:
->
->
-> On 08/09/2020 16:44, Logan Gunthorpe wrote:
-> > On 2020-09-08 9:28 a.m., Tvrtko Ursulin wrote:
-> >>>
-> >>> diff --git a/drivers/gpu/drm/i915/i915_scatterlist.h
-> >>> b/drivers/gpu/drm/i915/i915
-> >>> index b7b59328cb76..9367ac801f0c 100644
-> >>> --- a/drivers/gpu/drm/i915/i915_scatterlist.h
-> >>> +++ b/drivers/gpu/drm/i915/i915_scatterlist.h
-> >>> @@ -27,13 +27,19 @@ static __always_inline struct sgt_iter {
-> >>>    } __sgt_iter(struct scatterlist *sgl, bool dma) {
-> >>>           struct sgt_iter s = { .sgp = sgl };
-> >>>
-> >>> +       if (sgl && !sg_dma_len(s.sgp))
-> >>
-> >> I'd extend the condition to be, just to be safe:
-> >>      if (dma && sgl && !sg_dma_len(s.sgp))
-> >>
-> >
-> > Right, good catch, that's definitely necessary.
-> >
-> >>> +               s.sgp = NULL;
-> >>> +
-> >>>           if (s.sgp) {
-> >>>                   s.max = s.curr = s.sgp->offset;
-> >>> -               s.max += s.sgp->length;
-> >>> -               if (dma)
-> >>> +
-> >>> +               if (dma) {
-> >>> +                       s.max += sg_dma_len(s.sgp);
-> >>>                           s.dma = sg_dma_address(s.sgp);
-> >>> -               else
-> >>> +               } else {
-> >>> +                       s.max += s.sgp->length;
-> >>>                           s.pfn = page_to_pfn(sg_page(s.sgp));
-> >>> +               }
-> >>
-> >> Otherwise has this been tested or alternatively how to test it? (How to
-> >> repro the issue.)
-> >
-> > It has not been tested. To test it, you need Tom's patch set without the
-> > last "DO NOT MERGE" patch:
-> >
-> > https://lkml.kernel.org/lkml/20200907070035.GA25114@infradead.org/T/
->
-> Tom, do you have a branch somewhere I could pull from? (Just being lazy
-> about downloading a bunch of messages from the archives.)
+On Wed, 26 Aug 2020 19:15:27 +0200, Sylwester Nawrocki wrote:
+> Add clock ID definitions for the CPU parent clocks for SoCs
+> which don't have such definitions yet. This will allow us to
+> reference the parent clocks directly by cached struct clk_hw
+> pointers in the clock provider, rather than doing clk lookup
+> by name.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  include/dt-bindings/clock/exynos5250.h | 4 +++-
+>  include/dt-bindings/clock/exynos5420.h | 5 +++++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
 
-I don't unfortunately. I'm working locally with poor internet.
-
->
-> What GPU is in your Lenovo x1 carbon 5th generation and what
-> graphical/desktop setup I need to repro?
-
-
-Is this enough info?:
-
-$ lspci -vnn | grep VGA -A 12
-00:02.0 VGA compatible controller [0300]: Intel Corporation HD
-Graphics 620 [8086:5916] (rev 02) (prog-if 00 [VGA controller])
-    Subsystem: Lenovo ThinkPad X1 Carbon 5th Gen [17aa:224f]
-    Flags: bus master, fast devsel, latency 0, IRQ 148
-    Memory at eb000000 (64-bit, non-prefetchable) [size=16M]
-    Memory at 60000000 (64-bit, prefetchable) [size=256M]
-    I/O ports at e000 [size=64]
-    [virtual] Expansion ROM at 000c0000 [disabled] [size=128K]
-    Capabilities: [40] Vendor Specific Information: Len=0c <?>
-    Capabilities: [70] Express Root Complex Integrated Endpoint, MSI 00
-    Capabilities: [ac] MSI: Enable+ Count=1/1 Maskable- 64bit-
-    Capabilities: [d0] Power Management version 2
-    Capabilities: [100] Process Address Space ID (PASID)
-    Capabilities: [200] Address Translation Service (ATS)
-
-
->
-> Regards,
->
-> Tvrtko
+Acked-by: Rob Herring <robh@kernel.org>
