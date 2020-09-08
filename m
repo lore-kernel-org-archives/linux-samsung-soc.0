@@ -2,55 +2,54 @@ Return-Path: <SRS0=z50o=CR=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5223BC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 06:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA4BC43461
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 06:57:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FFBF21532
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 06:55:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD196218AC
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Sep 2020 06:57:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599548116;
-	bh=DETA+0KrLFGYn+ConUVH+45tfhX9j4ZSY1Mr5Bili0s=;
+	s=default; t=1599548255;
+	bh=o6mAew2lMKKYAMTkRd6PG3NmJjMJBBmt33Nluw5zleA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=j8O6qih4naRl1wlXqMbZPimCwIg9fJZAXwbmM6dmbD2JiB1cp/7JTVumMVCutDqBi
-	 nj4briZw6sRtinQsDesStA7B2KeoAY3Sd2nBQAx8htkzNTvBnjH2IUtb+BFAHJMdTT
-	 tNWHZUDCtJqPM688MgDrcMJZgBoE21kMWjaDwY0g=
+	b=RzN6R3ImFB/ODunjLfT1N2kLD90YTtdV89xwzyLVF8EZHIzWndreH/9gIp+haMhAz
+	 sxnedVlpbwFzTICU7FVB1RFFBUYcP7YlN4EGIYALauaO5b8a+aFDeW/8lYWm09uxhI
+	 a2RrFipnaJ6uQwn9KU/PgfGabrdXLv8cvUBDihMo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728562AbgIHGzI (ORCPT
+        id S1728479AbgIHG5a (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 02:55:08 -0400
-Received: from mail-ej1-f66.google.com ([209.85.218.66]:43690 "EHLO
-        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728479AbgIHGzF (ORCPT
+        Tue, 8 Sep 2020 02:57:30 -0400
+Received: from mail-ed1-f47.google.com ([209.85.208.47]:43807 "EHLO
+        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728501AbgIHG52 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Sep 2020 02:55:05 -0400
-Received: by mail-ej1-f66.google.com with SMTP id o8so7724897ejb.10;
-        Mon, 07 Sep 2020 23:55:03 -0700 (PDT)
+        Tue, 8 Sep 2020 02:57:28 -0400
+Received: by mail-ed1-f47.google.com with SMTP id n13so14848751edo.10;
+        Mon, 07 Sep 2020 23:57:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Z8F+J0dpPaiXwn0OwzuDM1BFUxGBJiTwV0EOyF8yDGs=;
-        b=XVeM8rqWwz4lWbvONRX7NrXSwWogaWtzDZYoOEdikHQOBKYS2bHDFGshhlmHHR/1//
-         kGalxlQfWRB5nrjZXEZ8PCwq6uuzlsKDEw0FhMNVRFTA9GRJUDZBuOEO5b5MqPmxEIrp
-         I6qD17yECB229Dz98CV7zsqcy5F8j9Oo5l+atqXLAS4WG9FxbkGwVUpE58VVhU/Adr0B
-         wJKfYZKkAbQu1RM7Kayi4tal0wt+2qO2gZKKvu7NDdgPxRskTBkbakgVLmPa8+sA4pU8
-         X0EQiFlsoSQlrFVFe1DyZ2ErzjrmAPHY1rYeavaf5IRPufkTEWUhuAObCTmKJAjdI+uw
-         i1DQ==
-X-Gm-Message-State: AOAM533b/hqmuXUgJShWcz3A/wVf9lBYBTuY1TuIdFfHKbqES6tTPLHY
-        dvmXNCfiyFiKF+Ak4ZekLEl57QNBCgI=
-X-Google-Smtp-Source: ABdhPJwqcrsoBbvXyOtx/zQlu89AL3rfhHav4wMeQ17ElFc0uWvFvkR65vNYNv3eRpa34TVxqpdFcA==
-X-Received: by 2002:a17:906:faec:: with SMTP id lu44mr23959522ejb.527.1599548102559;
-        Mon, 07 Sep 2020 23:55:02 -0700 (PDT)
+        bh=umGp2mRac5tjGgvL1953FmzEeKMsaUQqM0ZLASNYOdw=;
+        b=N5fqJEZG7B7/XsNoynwNGrDwdYwKYI0k2+m058IJt7fmvML1HP74NBozLoAOSuJK1a
+         QPFpJVVmpyIlvq5Y0cI2TTLsDuegaDqEDlZwjQMCeEgs+4tQnMrxhQL8BKvRCMYTyszE
+         lFBbhusQq3/GjDc+QrmRifs8YIDN1mOAjgyQkPkNt8gkWt9+9O3I7yuzW1g29FiW33nK
+         9REI+OURjC44wtMREFGCFzB62qT90llzw7ot+twtQfDpBaBip1oDxdp2pSf4GI5LxiH2
+         MOKW/v7Y5/MRIqXnnGiWqXbbhOvkzZtJZN+G+YZro5cQXTsWexgcSPxyNP47RFaW1px/
+         xFHg==
+X-Gm-Message-State: AOAM533WY4OCuvvxLNCeQi+p5tOkd5iX618ycdMOipkav38oIAchdgBC
+        /5hum4UfFtx126vxWkw9SP0=
+X-Google-Smtp-Source: ABdhPJwQKk7dDYAUqS1F8cS+l02dQ8Fkn0v4UEjEo7y2l4To8N85pyzNNjSurB/LEnao9OgD3/0vtw==
+X-Received: by 2002:a05:6402:1859:: with SMTP id v25mr16745883edy.118.1599548245356;
+        Mon, 07 Sep 2020 23:57:25 -0700 (PDT)
 Received: from pi3 ([194.230.155.174])
-        by smtp.googlemail.com with ESMTPSA id 16sm3865463edx.72.2020.09.07.23.55.00
+        by smtp.googlemail.com with ESMTPSA id r16sm8407822edc.57.2020.09.07.23.57.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Sep 2020 23:55:01 -0700 (PDT)
-Date:   Tue, 8 Sep 2020 08:54:59 +0200
+        Mon, 07 Sep 2020 23:57:24 -0700 (PDT)
+Date:   Tue, 8 Sep 2020 08:57:22 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jonathan Bakker <xc-racer2@live.ca>
 Cc:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
@@ -61,79 +60,40 @@ Cc:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH 11/25] ARM: dts: s5pv210: add RTC 32 KHz clock in Aries
- family
-Message-ID: <20200908065459.GC24227@pi3>
+Subject: Re: [RFT 25/25] ARM: dts: s5pv210: align DMA channels with dtschema
+Message-ID: <20200908065722.GD24227@pi3>
 References: <20200907161141.31034-1-krzk@kernel.org>
- <20200907161141.31034-12-krzk@kernel.org>
- <BN6PR04MB0660939E010C3175CD0DF9D6CB280@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <20200907161141.31034-26-krzk@kernel.org>
+ <25178674-e4af-ba35-b7f0-42091208e0e8@live.ca>
+ <BN6PR04MB06601A7FC9D1A697481EA37FCB290@BN6PR04MB0660.namprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <BN6PR04MB0660939E010C3175CD0DF9D6CB280@BN6PR04MB0660.namprd04.prod.outlook.com>
+In-Reply-To: <BN6PR04MB06601A7FC9D1A697481EA37FCB290@BN6PR04MB0660.namprd04.prod.outlook.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 07, 2020 at 04:57:53PM -0700, Jonathan Bakker wrote:
-> Hi Krzysztof,
-> 
-> On 2020-09-07 9:11 a.m., Krzysztof Kozlowski wrote:
-> > The S3C RTC requires 32768 Hz clock as input which is provided by PMIC.
-> > However there is no such clock provider but rather a regulator driver
-> > which registers the clock as a regulator.  This is an old driver which
-> > will not be updated so add a workaround - a fixed-clock to fill missing
-> > clock phandle reference in S3C RTC.
-> > 
-> > This fixes dtbs_check warnings:
-> > 
-> >   rtc@e2800000: clocks: [[2, 145]] is too short
-> >   rtc@e2800000: clock-names: ['rtc'] is too short
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  arch/arm/boot/dts/s5pv210-aries.dtsi | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
-> > index 6ba23562da46..86c3b26fd21e 100644
-> > --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
-> > +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
-> > @@ -47,6 +47,13 @@
-> >  		};
-> >  	};
-> >  
-> > +	pmic_ap_clk: clock-0 {
-> > +		/* Workaround for missing clock on PMIC */
-> > +		compatible = "fixed-clock";
-> > +		#clock-cells = <0>;
-> > +		clock-frequency = <32768>;
-> > +	};
-> > +
-> >  	bt_codec: bt_sco {
-> >  		compatible = "linux,bt-sco";
-> >  		#sound-dai-cells = <0>;
-> > @@ -825,6 +832,11 @@
-> >  	samsung,pwm-outputs = <1>;
-> >  };
-> >  
-> > +&rtc {
-> > +	clocks = <&clocks CLK_RTC>, <&pmic_ap_clk>;
-> > +	clock-names = "rtc", "rtc_src";
-> 
-> Missing a
-> 
-> status = "okay";
-> 
-> here, but with that it works fine for me.  Looks like it's also
-> missing in the patches for the other devices as well.
+On Mon, Sep 07, 2020 at 05:28:54PM -0700, Jonathan Bakker wrote:
+> Ah, I figured out why the dma stopped working.  In s5pv210-aries.dtsi the dma's for i2s0
+> are overriden to use pdma0 instead of pdma1.  That also needs changing for this to
+> work properly.
 
-It wasn't there on purpose - I did not want to enable the RTC, just fix
-the DTS with the dtschema. However a separate patch could be to actually
-enable it.
-
-I'll add your tested-by to this patch.
+Indeed I missed this, thanks for review and tests.
 
 Best regards,
 Krzysztof
+
+> 
+> Thanks,
+> Jonathan
+> 
+> On 2020-09-07 5:17 p.m., Jonathan Bakker wrote:
+> > Initial testing on both an i9000 and an SGH-T959P are showing that the audio has
+> > stopped working with this.  I'm not 100% convinced as I've had DMA issues in the
+> > past.  However trying to play something just results in a hang after 1.5s while
+> > it works just fine without this patch.
+> > 
+> > Thanks,
+> > Jonathan
