@@ -2,191 +2,252 @@ Return-Path: <SRS0=LGYT=CS=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6D6C10DAA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Sep 2020 09:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 423FBC10DAA
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Sep 2020 16:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79D1B21D79
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Sep 2020 09:17:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE2E72166E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Sep 2020 16:54:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ab58mHj/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726489AbgIIJRK (ORCPT
+        id S1730846AbgIIQDR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 9 Sep 2020 05:17:10 -0400
-Received: from mga18.intel.com ([134.134.136.126]:62578 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725826AbgIIJRI (ORCPT
+        Wed, 9 Sep 2020 12:03:17 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:56203 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730323AbgIIQCz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Sep 2020 05:17:08 -0400
-IronPort-SDR: 4UfoviER+163ZOfzvllxRS/M+W5Ldi8Ryv0yri+p+qHvLJVmuHgWLSYY5x76tEdwZa0KKFqs3/
- diG40ofYg8CQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9738"; a="146013094"
-X-IronPort-AV: E=Sophos;i="5.76,409,1592895600"; 
-   d="scan'208";a="146013094"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2020 02:16:52 -0700
-IronPort-SDR: Eu5LFEF7mQvPvjaKgHiNi+EAI6twzANJVXLRWHJjqt2BIA4DKeAAOOzWigLRgh7pJRkcZk2JZB
- paZ/kvhmY5KQ==
-X-IronPort-AV: E=Sophos;i="5.76,409,1592895600"; 
-   d="scan'208";a="480390735"
-Received: from vdc-station-04.ger.corp.intel.com (HELO [10.251.165.91]) ([10.251.165.91])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2020 02:16:41 -0700
-Subject: Re: [Intel-gfx] [PATCH 0/8] Convert the intel iommu driver to the
- dma-iommu api
-To:     Tom Murphy <murphyt7@tcd.ie>
-Cc:     Logan Gunthorpe <logang@deltatee.com>, kvm@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-tegra@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, Kukjin Kim <kgene@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-References: <20191221150402.13868-1-murphyt7@tcd.ie>
- <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
- <20200529124523.GA11817@infradead.org>
- <CGME20200529190523eucas1p2c086133e707257c0cdc002f502d4f51d@eucas1p2.samsung.com>
- <33137cfb-603c-86e8-1091-f36117ecfaf3@deltatee.com>
- <ef2150d5-7b6a-df25-c10d-e43316fe7812@samsung.com>
- <b9140772-0370-a858-578c-af503a06d8e9@deltatee.com>
- <CALQxJuutRaeX89k2o4ffTKYRMizmMu0XbRnzpFuSSrkQR02jKg@mail.gmail.com>
- <766525c3-4da9-6db7-cd90-fb4b82cd8083@deltatee.com>
- <60a82319-cbee-4cd1-0d5e-3c407cc51330@linux.intel.com>
- <e598fb31-ef7a-c2ee-8a54-bf62d50c480c@deltatee.com>
- <b27cae1f-07ff-bef2-f125-a5f0d968016d@linux.intel.com>
- <CALQxJut5c=cWdi+SVkN3JnbkhPSYmLkOyRUhduL-UJ9gyKn9Ow@mail.gmail.com>
-From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Organization: Intel Corporation UK Plc
-Message-ID: <7106602a-9964-851e-9c4e-d8acf4033b89@linux.intel.com>
-Date:   Wed, 9 Sep 2020 10:16:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 9 Sep 2020 12:02:55 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200909144709euoutp02b323565148265b491294cd52a79ec9db~zJN5VwIZe0245002450euoutp02f
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Sep 2020 14:47:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200909144709euoutp02b323565148265b491294cd52a79ec9db~zJN5VwIZe0245002450euoutp02f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1599662830;
+        bh=6pD2jBm6l4NY8TMCPp0T0+uNfiB/x7JVe6XpoPosFww=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Ab58mHj/nrCKS1ik30p5kv8vxCIElYMllX720IHeoWDLwdpv5Xdxd+2F0lItj/7+p
+         Id2qc+lEGkNFIv6MInMB6llvVd53Z+n07yMGIIwShjk+QiX4fU/IRyi0FrrD7Rt3RJ
+         dp1rwJ0SYVMxViFYkWxDkgThm3HUmN230Sq+MBFo=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200909144709eucas1p2b4703806571a6b7d4677bb44b1129e64~zJN4vjCO_0720307203eucas1p2H;
+        Wed,  9 Sep 2020 14:47:09 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 54.DC.05997.DEAE85F5; Wed,  9
+        Sep 2020 15:47:09 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200909144708eucas1p22c7a9c941f4656ff4efc94e1d156a9a6~zJN4U79yv0034700347eucas1p20;
+        Wed,  9 Sep 2020 14:47:08 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200909144708eusmtrp1cea369908fda34b63479819aba3041e8~zJN4UJEpe1317213172eusmtrp1G;
+        Wed,  9 Sep 2020 14:47:08 +0000 (GMT)
+X-AuditID: cbfec7f4-65dff7000000176d-0e-5f58eaed414a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id B1.1E.06017.CEAE85F5; Wed,  9
+        Sep 2020 15:47:08 +0100 (BST)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200909144707eusmtip2e63e94961e81d7208ff2d3503e173a61~zJN3U6Wu32459124591eusmtip2b;
+        Wed,  9 Sep 2020 14:47:07 +0000 (GMT)
+Subject: Re: [PATCH RFC v6 1/6] dt-bindings: exynos-bus: Add documentation
+ for interconnect properties
+To:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Cc:     cw00.choi@samsung.com, krzk@kernel.org, devicetree@vger.kernel.org,
+        a.swigon@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <e6e369fb-ccf2-09ed-ad6a-680e67198359@samsung.com>
+Date:   Wed, 9 Sep 2020 16:47:06 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <CALQxJut5c=cWdi+SVkN3JnbkhPSYmLkOyRUhduL-UJ9gyKn9Ow@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <b711257d-c34b-b609-3ada-312871967b98@linaro.org>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+XYuO462jsvyRcVqSRelqRnxSSXdqFH/BFmElLb04Cy3YnPV
+        Qsgww3uW1dastAso01iuMjXtDy9ZWq60THJmmCWO7KaRdtE6nkX+93ue93n5nhc+hpD3Un5M
+        ki6F0+vUyQpaQlY9GHcuHXbvjAt7NyjDfZczEK602Cn8cnSQwsVN7RR+/u0Tjc31Dhqf6Ssg
+        sdN5U4wdb7so3Fl7kcYjeU0IW5z3RfhGU68Y9xwvo/FkXbUYWwqH6DWsymHLolWurjpa1ZfT
+        IlLdun5MlX/bhlQjjsCtdIxkVQKXnHSI04dG7ZFoskq6xQc/zj8y5rKhNFTpn428GGCXg9v6
+        gs5GEkbOliEo63lDCWIUQXHveY8YQdD4I1/0b6Wr87VnUIqg3fLYI74g6HCWUnxqFquB8bu5
+        NM8+7BZ4erWO4EMEe4KAvKFyxA9oNhzymvOnWMpGQeOp72Q2YhiSDYJPmTLens3GwoPWflKI
+        eMOjCwNT7PU3/sE5QfBMsL7waqBYJPBcSL9TNPUWsMcZ+DqY4am9AZ5VnqUEngXulttigQOg
+        rTCXFBbSEeTe6xELogBBX0sJElIrwdX+g+bbEewSsNeGCvZauDlZI+JtYGXQPewtlJDBmSoz
+        IdhSyDwpF9JB8NNm9tTxg5yBSbIAKazTTrNOO8c67Rzr/3dLEGlDvpzRoE3kDMt03GGlQa01
+        GHWJyvgDWgf6++naJlpGq1Htr70NiGWQYoY0s3dnnJxSHzKYtA0IGELhI133pC1WLk1Qm45y
+        +gNxemMyZ2hA/gyp8JVGXB3aLWcT1Sncfo47yOn/TUWMl18aOrlZMVY+HjLvpbmgvzzkdGi8
+        O/LStYhXqLk4ZsG9U67mnMiNHa31mmjb5J6IYP/UfXuv0DUVWWAPiMRPF7a+XRRo3JXU+RAb
+        w7aj8ni8WnK+7VxK5jufinNVmqIVnz9bTcbu0NjCCeX76E39QWEzg43KbYuHTXNSf5dutK6P
+        3mFXkAaNOjyY0BvUfwBBw3q3cAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLIsWRmVeSWpSXmKPExsVy+t/xe7pvXkXEG2zu1re4P6+V0WLjjPWs
+        Fte/PGe1mH/kHKvFla/v2Sym793EZjHp/gQWi/PnN7BbbHp8jdXi8q45bBafe48wWsw4v4/J
+        Yu2Ru+wWtxtXsFn837OD3WLG5JdsDgIem1Z1snncubaHzeN+93Emj81L6j36tqxi9Pi8SS6A
+        LUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEvo3PB
+        DfaCd4oVP+6sYmxg3CjdxcjJISFgInHt8j1WEFtIYCmjRP+E8C5GDqC4lMT8FiWIEmGJP9e6
+        2LoYuYBK3jNKPDn0lw0kISyQIbFs3wtGEFtEwFviwqI9zCBFzAItzBJfJ81gguj4zyTR0PIW
+        bAObgKFE79E+sA5eATuJw/3fWUC2sQioSLzv4AMJiwrESZzpecEGUSIocXLmExYQmxOo/M35
+        f8wgNrOAusSfeZegbHGJW0/mM0HY8hLNW2czT2AUmoWkfRaSlllIWmYhaVnAyLKKUSS1tDg3
+        PbfYSK84Mbe4NC9dLzk/dxMjMKq3Hfu5ZQdj17vgQ4wCHIxKPLwddyPihVgTy4orcw8xSnAw
+        K4nwOp09HSfEm5JYWZValB9fVJqTWnyI0RTot4nMUqLJ+cCEk1cSb2hqaG5haWhubG5sZqEk
+        ztshcDBGSCA9sSQ1OzW1ILUIpo+Jg1OqgbHZKfJ1pMsdHmPmi1Mju2In5gtEaGjr/3TT+HH7
+        WPAD9tOvvXef2/dz4Trpd8u32K5esXSmZ/ncKo61qrc2FPOaTj37WuPFm1/r5VdMzVNsm3j1
+        nHl6mOZlL++nu3lvTzfeov13xvzLt1kSP/JWeRQw+7MbfA7gf/G4lXVm+bGdh1KYzObEPPZS
+        YinOSDTUYi4qTgQABaXelwADAAA=
+X-CMS-MailID: 20200909144708eucas1p22c7a9c941f4656ff4efc94e1d156a9a6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3
+References: <20200702163724.2218-1-s.nawrocki@samsung.com>
+        <CGME20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3@eucas1p2.samsung.com>
+        <20200702163724.2218-2-s.nawrocki@samsung.com>
+        <20200709210448.GA876103@bogus>
+        <65af1a5c-8f8a-ef65-07f8-e0b3d04c336c@samsung.com>
+        <35d9d396-b553-a815-1f3b-1af4dc37a2ca@samsung.com>
+        <b711257d-c34b-b609-3ada-312871967b98@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Georgi,
 
-On 08/09/2020 23:43, Tom Murphy wrote:
-> On Tue, 8 Sep 2020 at 16:56, Tvrtko Ursulin
-> <tvrtko.ursulin@linux.intel.com> wrote:
->>
->>
->> On 08/09/2020 16:44, Logan Gunthorpe wrote:
->>> On 2020-09-08 9:28 a.m., Tvrtko Ursulin wrote:
+On 09.09.2020 11:07, Georgi Djakov wrote:
+> On 8/28/20 17:49, Sylwester Nawrocki wrote:
+>> On 30.07.2020 14:28, Sylwester Nawrocki wrote:
+>>> On 09.07.2020 23:04, Rob Herring wrote:
+>>>> On Thu, Jul 02, 2020 at 06:37:19PM +0200, Sylwester Nawrocki wrote:
+>>>>> Add documentation for new optional properties in the exynos bus nodes:
+>>>>> samsung,interconnect-parent, #interconnect-cells, bus-width.
+>>>>> These properties allow to specify the SoC interconnect structure which
+>>>>> then allows the interconnect consumer devices to request specific
+>>>>> bandwidth requirements.
 >>>>>
->>>>> diff --git a/drivers/gpu/drm/i915/i915_scatterlist.h
->>>>> b/drivers/gpu/drm/i915/i915
->>>>> index b7b59328cb76..9367ac801f0c 100644
->>>>> --- a/drivers/gpu/drm/i915/i915_scatterlist.h
->>>>> +++ b/drivers/gpu/drm/i915/i915_scatterlist.h
->>>>> @@ -27,13 +27,19 @@ static __always_inline struct sgt_iter {
->>>>>     } __sgt_iter(struct scatterlist *sgl, bool dma) {
->>>>>            struct sgt_iter s = { .sgp = sgl };
->>>>>
->>>>> +       if (sgl && !sg_dma_len(s.sgp))
->>>>
->>>> I'd extend the condition to be, just to be safe:
->>>>       if (dma && sgl && !sg_dma_len(s.sgp))
->>>>
->>>
->>> Right, good catch, that's definitely necessary.
->>>
->>>>> +               s.sgp = NULL;
->>>>> +
->>>>>            if (s.sgp) {
->>>>>                    s.max = s.curr = s.sgp->offset;
->>>>> -               s.max += s.sgp->length;
->>>>> -               if (dma)
->>>>> +
->>>>> +               if (dma) {
->>>>> +                       s.max += sg_dma_len(s.sgp);
->>>>>                            s.dma = sg_dma_address(s.sgp);
->>>>> -               else
->>>>> +               } else {
->>>>> +                       s.max += s.sgp->length;
->>>>>                            s.pfn = page_to_pfn(sg_page(s.sgp));
->>>>> +               }
->>>>
->>>> Otherwise has this been tested or alternatively how to test it? (How to
->>>> repro the issue.)
->>>
->>> It has not been tested. To test it, you need Tom's patch set without the
->>> last "DO NOT MERGE" patch:
->>>
->>> https://lkml.kernel.org/lkml/20200907070035.GA25114@infradead.org/T/
+>>>>> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+>>>>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 >>
->> Tom, do you have a branch somewhere I could pull from? (Just being lazy
->> about downloading a bunch of messages from the archives.)
-> 
-> I don't unfortunately. I'm working locally with poor internet.
-> 
+>>>>> --- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+>>>>> +++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+
+>>>>> +Optional properties for interconnect functionality (QoS frequency constraints):
+>>>>> +- samsung,interconnect-parent: phandle to the parent interconnect node; for
+>>>>> +  passive devices should point to same node as the exynos,parent-bus property.
 >>
->> What GPU is in your Lenovo x1 carbon 5th generation and what
->> graphical/desktop setup I need to repro?
+>>>> Adding vendor specific properties for a common binding defeats the 
+>>>> point.
+>>
+>> Actually we could do without any new property if we used existing interconnect
+>> consumers binding to specify linking between the provider nodes. I think those
+>> exynos-bus nodes could well be considered both the interconnect providers 
+>> and consumers. The example would then be something along the lines 
+>> (yes, I know the bus node naming needs to be fixed):
+>>
+>> 	soc {
+>> 		bus_dmc: bus_dmc {
+>> 			compatible = "samsung,exynos-bus";
+>> 			/* ... */
+>> 			samsung,data-clock-ratio = <4>;
+>> 			#interconnect-cells = <0>;
+>> 		};
+>>
+>> 		bus_leftbus: bus_leftbus {
+>> 			compatible = "samsung,exynos-bus";
+>> 			/* ... */
+>> 			interconnects = <&bus_leftbus &bus_dmc>;
+>> 			#interconnect-cells = <0>;
+>> 		};
+>>
+>> 		bus_display: bus_display {
+>> 			compatible = "samsung,exynos-bus";
+>> 			/* ... */
+>> 			interconnects = <&bus_display &bus_leftbus>;
 > 
+> Hmm, bus_display being a consumer of itself is a bit odd? Did you mean:
+>  			interconnects = <&bus_dmc &bus_leftbus>;
+
+Might be, but we would need to swap the phandles so <source, destination>
+order is maintained, i.e. interconnects = <&bus_leftbus &bus_dmc>;
+
+My intention here was to describe the 'bus_display -> bus_leftbus' part 
+of data path 'bus_display -> bus_leftbus -> bus_dmc', bus_display is
+really a consumer of 'bus_leftbus -> bus_dmc' path.
+
+I'm not sure if it is allowed to specify only single phandle (and 
+interconnect provider specifier) in the interconnect property, that would
+be needed for the bus_leftbus node to define bus_dmc as the interconnect 
+destination port. There seems to be such a use case in arch/arm64/boot/
+dts/allwinner/sun50i-a64.dtsi. 
+
+>> 			#interconnect-cells = <0>;
+>> 		};
+>>
+>>
+>> 		&mixer {
+>> 			compatible = "samsung,exynos4212-mixer";
+>> 			interconnects = <&bus_display &bus_dmc>;
+>> 			/* ... */
+>> 		};
+>> 	};
+>>
+>> What do you think, Georgi, Rob?
 > 
-> Is this enough info?:
-> 
-> $ lspci -vnn | grep VGA -A 12
-> 00:02.0 VGA compatible controller [0300]: Intel Corporation HD
-> Graphics 620 [8086:5916] (rev 02) (prog-if 00 [VGA controller])
->      Subsystem: Lenovo ThinkPad X1 Carbon 5th Gen [17aa:224f]
->      Flags: bus master, fast devsel, latency 0, IRQ 148
->      Memory at eb000000 (64-bit, non-prefetchable) [size=16M]
->      Memory at 60000000 (64-bit, prefetchable) [size=256M]
->      I/O ports at e000 [size=64]
->      [virtual] Expansion ROM at 000c0000 [disabled] [size=128K]
->      Capabilities: [40] Vendor Specific Information: Len=0c <?>
->      Capabilities: [70] Express Root Complex Integrated Endpoint, MSI 00
->      Capabilities: [ac] MSI: Enable+ Count=1/1 Maskable- 64bit-
->      Capabilities: [d0] Power Management version 2
->      Capabilities: [100] Process Address Space ID (PASID)
->      Capabilities: [200] Address Translation Service (ATS)
+> I can't understand the above example with bus_display being it's own consumer.
+> This seems strange to me. Could you please clarify it?
 
-Works for a start. What about the steps to repro? Any desktop 
-environment and it is just visual corruption, no hangs/stalls or such?
+> Otherwise the interconnect consumer DT bindings are already well established
+> and i don't see anything preventing a node to be both consumer and provider.
+> So this should be okay in general.
 
-I've submitted a series consisting of what I understood are the patches 
-needed to repro the issue to our automated CI here:
+Thanks, below is an updated example according to your suggestions. 
+Does it look better now?
 
-https://patchwork.freedesktop.org/series/81489/
+---------------------------8<------------------------------
+soc {
+	bus_dmc: bus_dmc {
+		compatible = "samsung,exynos-bus";
+		/* ... */
+		samsung,data-clock-ratio = <4>;
+		#interconnect-cells = <0>;
+	};
 
-So will see if it will catch something, or more targeted testing will be 
-required. Hopefully it does trip over in which case I can add the patch 
-suggested by Logan on top and see if that fixes it. Or I'll need to 
-write a new test case.
+	bus_leftbus: bus_leftbus {
+		compatible = "samsung,exynos-bus";
+		/* ... */
+		interconnects = <&bus_dmc>;
+		#interconnect-cells = <0>;
+	};
 
-If you could glance over my series to check I identified the patches 
-correctly it would be appreciated.
+	bus_display: bus_display {
+		compatible = "samsung,exynos-bus";
+		/* ... */
+		interconnects = <&bus_leftbus &bus_dmc>;
+		#interconnect-cells = <0>;
+	};
 
+	&mixer {
+		compatible = "samsung,exynos4212-mixer";
+		interconnects = <&bus_display &bus_dmc>;
+		/* ... */
+	};
+};
+---------------------------8<------------------------------
+
+-- 
 Regards,
-
-Tvrtko
+Sylwester
