@@ -5,112 +5,86 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF560C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FB4C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD65421D7E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:19:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7775F20C09
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599758382;
-	bh=E5MilslhrwDTn9643nyVveDghPC9CwnzqfWv/QBY2oA=;
-	h=From:To:Subject:Date:List-ID:From;
-	b=J4jXWl8ujR9SkPsFL0PpQByjvDOdsXIa9q3TcKdgJDTB7fAGGjNSaOZfjYeMc1nCx
-	 eQ1sQquXjsKhRtqRVyZZfxuUxZDxK+N72c4Pk28Jl+q5z20ECytmkDHOEMGxMan0lx
-	 6Ss+9sBrzKqZihfNwEuUS+ZPGXk4zdusimSNveDg=
+	s=default; t=1599760376;
+	bh=y7UdK9SwiWPgD8tbpf2MGHg1kLY8LPM78Jur53+Y3P4=;
+	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=gFDRx+Ws9bD+NyidzgXb580ChL02Aq2/RinogrH+lvANcIrmkI8R0ZimP9xDEBCBT
+	 04izMB4ZlnZKZQ//ZgVS7JtQscTd6G6Zf+juFM1/e4G9xpEVZGoTm61dEfJgQv6Gpf
+	 WsF8qMHoVMeIctaJ7z4eW3glzxIOoXrmcP47KJ4Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726228AbgIJQc4 (ORCPT
+        id S1727852AbgIJRwq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 12:32:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36722 "EHLO mail.kernel.org"
+        Thu, 10 Sep 2020 13:52:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725965AbgIJQU1 (ORCPT
+        id S1726410AbgIJQPN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 12:20:27 -0400
+        Thu, 10 Sep 2020 12:15:13 -0400
 Received: from localhost.localdomain (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25690206A1;
-        Thu, 10 Sep 2020 16:19:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36BA5221E5;
+        Thu, 10 Sep 2020 16:12:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599754781;
-        bh=E5MilslhrwDTn9643nyVveDghPC9CwnzqfWv/QBY2oA=;
-        h=From:To:Subject:Date:From;
-        b=OF8xq9xhv+JmwGyjqxkh9SDIuZDYO3T85mMKEHok2TZefbQyNUqptmBg2DbF5ESAi
-         LA0FbreygSKV8b+pD5lSmoAtnGHNg3P3w99wFmGyqwNUcESwwHhY65ypiOtty5g9uJ
-         CwR/Z7tFZBQ1RAj5U3e+1I9vhJXj5CLb+xGhPJSg=
+        s=default; t=1599754376;
+        bh=y7UdK9SwiWPgD8tbpf2MGHg1kLY8LPM78Jur53+Y3P4=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=Sr4FnyB9BYBSj8kmwpB4EpjwU5VGFhjVrUID+26oBvfocjhfEWs/f75LJDNXM87Hk
+         5/7YEEEEh5AdIuhx35bhG+sWRiDRTtX3c3ZfUJbUJKEoBW/lFUQn38x/wHu9EyLXIj
+         PwRfrhKMqwOji3pE3Gk/SdbTnaphFIcV2KLPpv8c=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] dt-bindings: iio: adc: exynos-adc: require second interrupt with touch screen
-Date:   Thu, 10 Sep 2020 18:19:32 +0200
-Message-Id: <20200910161933.9156-1-krzk@kernel.org>
+        Krzysztof Opasiak <k.opasiak@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-nfc@lists.01.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v3 8/8] arm64: dts: exynos: Use newer S3FWRN5 GPIO properties in Exynos5433 TM2
+Date:   Thu, 10 Sep 2020 18:12:19 +0200
+Message-Id: <20200910161219.6237-9-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200910161219.6237-1-krzk@kernel.org>
+References: <20200910161219.6237-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The ADC in S3C/S5P/Exynos SoCs can be used also for handling touch
-screen.  In such case the second interrupt is required.  This second
-interrupt can be anyway provided, even without touch screens.  This
-fixes dtbs_check warnings like:
-
-  arch/arm/boot/dts/s5pv210-aquila.dt.yaml: adc@e1700000: interrupts: [[23], [24]] is too long
+Since "s3fwrn5" is not a valid vendor prefix, use new GPIO properties
+instead of the deprecated.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huwei.com>
-
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes since v1:
-1. Fix if:has-touchscreen, as pointed by Rob.
-2. Add Ack.
----
- .../bindings/iio/adc/samsung,exynos-adc.yaml       | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-index cc3c8ea6a894..17a08be3fe85 100644
---- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-@@ -41,7 +41,10 @@ properties:
-     maxItems: 2
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 250fc01de78d..24aab3ea3f52 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -795,8 +795,8 @@
+ 		reg = <0x27>;
+ 		interrupt-parent = <&gpa1>;
+ 		interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
+-		s3fwrn5,en-gpios = <&gpf1 4 GPIO_ACTIVE_HIGH>;
+-		s3fwrn5,fw-gpios = <&gpj0 2 GPIO_ACTIVE_HIGH>;
++		en-gpios = <&gpf1 4 GPIO_ACTIVE_HIGH>;
++		wake-gpios = <&gpj0 2 GPIO_ACTIVE_HIGH>;
+ 	};
+ };
  
-   interrupts:
--    maxItems: 1
-+    description:
-+      ADC interrupt followed by optional touchscreen interrupt.
-+    minItems: 1
-+    maxItems: 2
- 
-   "#io-channel-cells":
-     const: 1
-@@ -107,6 +110,15 @@ allOf:
-           items:
-             - const: adc
- 
-+  - if:
-+      required:
-+        - has-touchscreen
-+    then:
-+      properties:
-+        interrupts:
-+          minItems: 2
-+          maxItems: 2
-+
- examples:
-   - |
-     adc: adc@12d10000 {
 -- 
 2.17.1
 
