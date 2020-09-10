@@ -2,104 +2,93 @@ Return-Path: <SRS0=wHux=CT=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B07A8C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 12:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB72DC43461
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 16:17:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B051208FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 12:10:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6320C21D91
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 16:17:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599739835;
-	bh=ftw+9lHW/uw9KeqwaGHdnGsb8ijDkMpb7UkG/tH4jUs=;
+	s=default; t=1599754661;
+	bh=cFm01d5A2xJtuwGGnkI+tpSI9gpBQSqULzzvO5shbnk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QQZ3aJL0WEgT6P+cK3yRh5RVlc6Ji8DWo2pAEhY4ErS5shJ3YM+0nnYjdGin0qjHw
-	 PqITg9pJJA4t70rhqavSFuQ/hiQRtxlI4QRY9dgEZZQ5rZCyg8iob+Ov6Y/Es2+dTs
-	 NM+ZoFz68uX+2LCI5UnWvhYqmvAPJ3o0sNWRfrhs=
+	b=m9V6sUKKWjSaHU7kRmIKSMkyUxWEOCO2s62ovvzBGr+ynhkWHkPUeOkgzlH7mVqDa
+	 sRQtKkEP82oZFuleum3isdcWLmo2OP8rLd6LB9L/Zlu0ptGmbglZmb300eFx0ZoTfV
+	 xrl20FrSXBByp+HWJb4eBXE79JLUmOTgTjnbiH4o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729663AbgIJMKJ (ORCPT
+        id S1725866AbgIJQRe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 08:10:09 -0400
-Received: from mail-ej1-f68.google.com ([209.85.218.68]:40184 "EHLO
-        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730461AbgIJMJ5 (ORCPT
+        Thu, 10 Sep 2020 12:17:34 -0400
+Received: from mail-ej1-f67.google.com ([209.85.218.67]:38337 "EHLO
+        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbgIJQOM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 08:09:57 -0400
-Received: by mail-ej1-f68.google.com with SMTP id z22so8327645ejl.7;
-        Thu, 10 Sep 2020 05:08:16 -0700 (PDT)
+        Thu, 10 Sep 2020 12:14:12 -0400
+Received: by mail-ej1-f67.google.com with SMTP id i22so9558589eja.5;
+        Thu, 10 Sep 2020 09:14:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fMr7yVrAmB2s1rgrqGSTgH2SeLcG7AUVdmZBn9HXpKw=;
-        b=oi11BHVyCYK5OErZsFe84YXQjYFe/5drTSvQ3aI+JjZKA14ukiIzKqf/hsiGuu93mM
-         7jCdXvWGq/s9zWW48kIQiE+tZcswJhHHq+hcyKKtWS9z1tpeVQ5Gy6MOPr9QS4Yzhww9
-         CaLMFsLSEdU3LqkZd6U2Kq2x/+JZcyvczdgBuWrcRKkTLpY8zviXrNGdALo+uUWlKeOH
-         jJKLIJtusz7mH69viwAP7qllebJQSq1aV/dj/wecsnE7E7G5KR+mKXS6FBYtyUOMAeax
-         ab1/7f5mOZx9AeFcMa/LhyYEcWdRYAUR5tW6johmmrvCwVubrKKwcvAkNzwrgFnmO3M2
-         ix7g==
-X-Gm-Message-State: AOAM532/2KdOK74VLwRgw3Ih3u5EMEfvQwg1FJn96u8BBIGehxW+amD3
-        DUbxf1UDW/gaVfCVqAnbjtlfDGSkhX0=
-X-Google-Smtp-Source: ABdhPJznuwyTY0MUsaJSoqj7g6gSzRl1JGZ3NGHhpIGRwpsjCVqpYLabExRBhxJ0Bt8KNlmwTEOzwQ==
-X-Received: by 2002:a17:907:9c3:: with SMTP id bx3mr8658856ejc.164.1599739695700;
-        Thu, 10 Sep 2020 05:08:15 -0700 (PDT)
-Received: from pi3 ([194.230.155.174])
-        by smtp.googlemail.com with ESMTPSA id cf7sm6822005edb.78.2020.09.10.05.08.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Sep 2020 05:08:14 -0700 (PDT)
-Date:   Thu, 10 Sep 2020 14:08:12 +0200
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UlWeBO5XXsVkxeqCqR5Hh1T/dXmevbm+y0dv6NWqW5E=;
+        b=LpPNVk86sMy2KDgrWnb7UxCte0zXxhgIWlrxXDr5bFMXeXiS/0qgotYWAUdV7FtpdX
+         EStLLainBAqcdYUIDwe/2NPTVQc8sFavT5UM8Du3ttRgOR33LSkMW1A2Dt8VrmSXmK2g
+         jQAoIKlmXtx3b5FpoG+Bj5Dv4y7xDsrJy6+AK209K4ZcgUOQk++rv9GukQmIWr3u0z3B
+         V4GuY598sz9B3A2zOHK97EDdPvfwH41L6YCRCnJZMvyzkuaIP/itKRnsq4IlZ9oadzkg
+         1CoE+h49w4UIABbnxxI+qz607I+nqHRPaGPzV2wPoRgoHRfEWKaSHcgtQeT0ub6/Yh3+
+         Wnaw==
+X-Gm-Message-State: AOAM5320MZwQn0zC5VRCnTeiaLZpuYRyO8T/RE7bys2y1lmo6yprBk+r
+        bax5CGrzxSXCPQXUc5MqYPs=
+X-Google-Smtp-Source: ABdhPJwIIQ8dJ5uLZ10q13CyfyBK+itpFUo2QKO7vjp47zYPGf4bkS+d38Lcvwn5F7hpQoBbFA1R6A==
+X-Received: by 2002:a17:906:69c1:: with SMTP id g1mr9261970ejs.285.1599754450515;
+        Thu, 10 Sep 2020 09:14:10 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.174])
+        by smtp.googlemail.com with ESMTPSA id f13sm7520054ejb.81.2020.09.10.09.14.08
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Sep 2020 09:14:09 -0700 (PDT)
+Date:   Thu, 10 Sep 2020 18:14:06 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        lukasz.luba@arm.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 3/3] PM / devfreq: event: Change prototype of
- devfreq_event_get_edev_by_phandle function
-Message-ID: <20200910120812.GC2206@pi3>
-References: <20200908102447.15097-1-cw00.choi@samsung.com>
- <CGME20200908101231epcas1p4b6262aae4d5272f6cce366ac1ffbb955@epcas1p4.samsung.com>
- <20200908102447.15097-4-cw00.choi@samsung.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Opasiak <k.opasiak@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Olof Johansson <olof@lixom.net>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-nfc@lists.01.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 9/9] arm64: defconfig: Enable Samsung S3FWRN5 NFC
+ driver
+Message-ID: <20200910161406.GA6491@kozik-lap>
+References: <20200906153654.2925-1-krzk@kernel.org>
+ <20200906153654.2925-10-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200908102447.15097-4-cw00.choi@samsung.com>
+In-Reply-To: <20200906153654.2925-10-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 08, 2020 at 07:24:47PM +0900, Chanwoo Choi wrote:
-> Previously, devfreq core support 'devfreq-events' property in order to get
-> the devfreq-event device by phandle. But, 'devfreq-events' property name is
-> not proper on devicetree binding because this name doesn't mean
-> the any h/w attribute.
+On Sun, Sep 06, 2020 at 05:36:54PM +0200, Krzysztof Kozlowski wrote:
+> Enable the Samsung S3FWRN5 NFC driver present in Exynos5433-based
+> TM2/TM2E boards.
 > 
-> The devfreq-event core hand over the rights to decide the property name
-> for getting the devfreq-event device on devicetree. Each devfreq-event driver
-> will decide the property name on devicetree binding and then pass
-> the their own property name to devfreq_event_get_edev_by_phandle function.
-> 
-> And change the prototype of devfreq_event_get_edev_count function
-> because of used deprecated 'devfreq-events' property.
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  drivers/devfreq/devfreq-event.c         | 14 ++++++++------
->  drivers/devfreq/exynos-bus.c            |  5 +++--
->  drivers/devfreq/rk3399_dmc.c            |  2 +-
->  drivers/memory/samsung/exynos5422-dmc.c |  6 ++++--
->  include/linux/devfreq-event.h           | 14 ++++++++++----
->  5 files changed, 26 insertions(+), 15 deletions(-)
-> 
+>  arch/arm64/configs/defconfig | 3 +++
 
-Feel free to take it via devfreq tree. I don't expect conflicts around
-memory/samsung/exynos5422-dmc.c.
-
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Applied.
 
 Best regards,
 Krzysztof
+
