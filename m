@@ -2,102 +2,166 @@ Return-Path: <SRS0=wHux=CT=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99277C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 949EDC43461
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 19:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6522D2087C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62785221E2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 19:38:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599763727;
-	bh=JhOw623KmZjBBWX0PTYpbPtOZstZZ5KRZ2j6lA39E/U=;
-	h=From:To:Subject:Date:List-ID:From;
-	b=LjHSqevrC4H6qIZ77bPSYxZIe4ed0We+r6OUxg564Dr5uptweCNULSfwIlBkhuFyx
-	 INdQMQmMcQgU7nkr7adv5zdNbXbZwmsUBxIt/RGeqWcu+H9XGuhelK9nEPTCW9Lk+h
-	 EnwfSQeKwGDzfk1nOBGgRIHTnYGAGng0jbTVqXhA=
+	s=default; t=1599766738;
+	bh=7/GQtbMpBvk6Kn5kVES74TXZCExnH/I5HKULKqYnLN4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=kXCLhrkiV3JI6L0EaQzK6TVMWuPd1EnPc6PBNpkVUT8VJUxwK/FWKTBJN6OxhZ03d
+	 7+37mgHzJG+oZ2zGUORWpAiArnm1BQVd4gDfr4hkOH9mUf5P4ddH15A99hYyrNTRz3
+	 yNZTR97KbZXnbLZ2P4SXITvg/PMotIrCBMlmdU5A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbgIJSqT (ORCPT
+        id S1731338AbgIJPm7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 14:46:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59612 "EHLO mail.kernel.org"
+        Thu, 10 Sep 2020 11:42:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726662AbgIJQNP (ORCPT
+        id S1731270AbgIJPmJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 12:13:15 -0400
+        Thu, 10 Sep 2020 11:42:09 -0400
 Received: from localhost.localdomain (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49D7A206A1;
-        Thu, 10 Sep 2020 16:12:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFA5F208E4;
+        Thu, 10 Sep 2020 15:41:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599754351;
-        bh=JhOw623KmZjBBWX0PTYpbPtOZstZZ5KRZ2j6lA39E/U=;
-        h=From:To:Subject:Date:From;
-        b=ClnfGNMmJjyHNJZRcZRkTbL6v51e9FpL4NSkzP8h/hIgijqenCo0olUYJQPmUg0k7
-         Rig5O7O38k14zzJ15FsHkgYeZJU8oHTI+XqHi6xJ3X9LGOzYgPyZA5Ie6m9bnYTQiz
-         YxZv1cb9KRiFxdhIzCa41oYtVTg/g8pT9njMlV5o=
+        s=default; t=1599752523;
+        bh=7/GQtbMpBvk6Kn5kVES74TXZCExnH/I5HKULKqYnLN4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IhMKY788JI2IUOnBRk7ru2o8BXRFF6mZfMJRWw70ZFAqd/2nytaObkY3yNCLDFTJN
+         r1GnWi5wCPTc1vTgqebn4bxa4xVgx644flY2CsSCzz9Yaj6Bq7TbKu1FETsrRnuB3M
+         opuUNXP1W0hAmmFQy7ZBnGp4CyxS57LRsA1zEYEM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Krzysztof Opasiak <k.opasiak@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-nfc@lists.01.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v3 0/8] nfc: s3fwrn5: Few cleanups
-Date:   Thu, 10 Sep 2020 18:12:11 +0200
-Message-Id: <20200910161219.6237-1-krzk@kernel.org>
+        Russell King <linux@armlinux.org.uk>,
+        Tomasz Figa <t.figa@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 2/2] ARM: s3c24xx: fix Wunused-variable warning on !MMU
+Date:   Thu, 10 Sep 2020 17:41:50 +0200
+Message-Id: <20200910154150.3318-2-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200910154150.3318-1-krzk@kernel.org>
+References: <20200910154150.3318-1-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+If S3C24xx machine code is build without CONFIG_MMU, the iotable()
+macros do nothing so annotate structures to get rid of warnings:
 
-Changes since v2:
-1. Fix dtschema ID after rename (patch 1/8).
-2. Apply patch 9/9 (defconfig change).
+  arch/arm/mach-s3c24xx/common.c:140:24: warning: ‘s3c_iodesc’ defined but not used [-Wunused-variable]
+  arch/arm/mach-s3c24xx/s3c2410.c:49:24: warning: ‘s3c2410_iodesc’ defined but not used [-Wunused-variable]
+  arch/arm/mach-s3c24xx/s3c2412.c:60:24: warning: ‘s3c2412_iodesc’ defined but not used [-Wunused-variable]
+  arch/arm/mach-s3c24xx/s3c2416.c:54:24: warning: ‘s3c2416_iodesc’ defined but not used [-Wunused-variable]
+  arch/arm/mach-s3c24xx/s3c2443.c:45:24: warning: ‘s3c2443_iodesc’ defined but not used [-Wunused-variable]
+  arch/arm/mach-s3c24xx/s3c244x.c:44:24: warning: ‘s3c244x_iodesc’ defined but not used [-Wunused-variable]
 
-Changes since v1:
-1. Rename dtschema file and add additionalProperties:false, as Rob
-   suggested,
-2. Add Marek's tested-by,
-3. New patches: #4, #5, #6, #7 and #9.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/mach-s3c24xx/common.c  | 2 +-
+ arch/arm/mach-s3c24xx/s3c2410.c | 2 +-
+ arch/arm/mach-s3c24xx/s3c2412.c | 2 +-
+ arch/arm/mach-s3c24xx/s3c2416.c | 2 +-
+ arch/arm/mach-s3c24xx/s3c2443.c | 2 +-
+ arch/arm/mach-s3c24xx/s3c244x.c | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (8):
-  dt-bindings: net: nfc: s3fwrn5: Convert to dtschema
-  dt-bindings: net: nfc: s3fwrn5: Remove wrong vendor prefix from GPIOs
-  nfc: s3fwrn5: Remove wrong vendor prefix from GPIOs
-  nfc: s3fwrn5: Remove unneeded 'ret' variable
-  nfc: s3fwrn5: Add missing CRYPTO_HASH dependency
-  nfc: s3fwrn5: Constify s3fwrn5_fw_info when not modified
-  MAINTAINERS: Add Krzysztof Kozlowski to Samsung S3FWRN5 and remove
-    Robert
-  arm64: dts: exynos: Use newer S3FWRN5 GPIO properties in Exynos5433
-    TM2
-
- CREDITS                                       |  4 +
- .../devicetree/bindings/net/nfc/s3fwrn5.txt   | 25 -------
- .../bindings/net/nfc/samsung,s3fwrn5.yaml     | 73 +++++++++++++++++++
- MAINTAINERS                                   |  5 +-
- .../dts/exynos/exynos5433-tm2-common.dtsi     |  4 +-
- drivers/nfc/s3fwrn5/Kconfig                   |  1 +
- drivers/nfc/s3fwrn5/firmware.c                |  4 +-
- drivers/nfc/s3fwrn5/firmware.h                |  2 +-
- drivers/nfc/s3fwrn5/i2c.c                     | 24 +++---
- 9 files changed, 101 insertions(+), 41 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/net/nfc/s3fwrn5.txt
- create mode 100644 Documentation/devicetree/bindings/net/nfc/samsung,s3fwrn5.yaml
-
+diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+index 3dc029c2d2cb..1ec8fe20684c 100644
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -137,7 +137,7 @@ static struct cpu_table cpu_ids[] __initdata = {
+ 
+ /* minimal IO mapping */
+ 
+-static struct map_desc s3c_iodesc[] __initdata = {
++static struct map_desc s3c_iodesc[] __initdata __maybe_unused = {
+ 	IODESC_ENT(GPIO),
+ 	IODESC_ENT(IRQ),
+ 	IODESC_ENT(MEMCTRL),
+diff --git a/arch/arm/mach-s3c24xx/s3c2410.c b/arch/arm/mach-s3c24xx/s3c2410.c
+index 21fd5404bc98..ed498835ce13 100644
+--- a/arch/arm/mach-s3c24xx/s3c2410.c
++++ b/arch/arm/mach-s3c24xx/s3c2410.c
+@@ -46,7 +46,7 @@
+ 
+ /* Initial IO mappings */
+ 
+-static struct map_desc s3c2410_iodesc[] __initdata = {
++static struct map_desc s3c2410_iodesc[] __initdata __maybe_unused = {
+ 	IODESC_ENT(CLKPWR),
+ 	IODESC_ENT(TIMER),
+ 	IODESC_ENT(WATCHDOG),
+diff --git a/arch/arm/mach-s3c24xx/s3c2412.c b/arch/arm/mach-s3c24xx/s3c2412.c
+index 8fe4d4670dcb..d1ea1cab86e7 100644
+--- a/arch/arm/mach-s3c24xx/s3c2412.c
++++ b/arch/arm/mach-s3c24xx/s3c2412.c
+@@ -57,7 +57,7 @@ static inline void s3c2412_init_gpio2(void)
+ 
+ /* Initial IO mappings */
+ 
+-static struct map_desc s3c2412_iodesc[] __initdata = {
++static struct map_desc s3c2412_iodesc[] __initdata __maybe_unused = {
+ 	IODESC_ENT(CLKPWR),
+ 	IODESC_ENT(TIMER),
+ 	IODESC_ENT(WATCHDOG),
+diff --git a/arch/arm/mach-s3c24xx/s3c2416.c b/arch/arm/mach-s3c24xx/s3c2416.c
+index 9514196cad8c..17157f063264 100644
+--- a/arch/arm/mach-s3c24xx/s3c2416.c
++++ b/arch/arm/mach-s3c24xx/s3c2416.c
+@@ -51,7 +51,7 @@
+ #include "nand-core.h"
+ #include "spi-core.h"
+ 
+-static struct map_desc s3c2416_iodesc[] __initdata = {
++static struct map_desc s3c2416_iodesc[] __initdata __maybe_unused = {
+ 	IODESC_ENT(WATCHDOG),
+ 	IODESC_ENT(CLKPWR),
+ 	IODESC_ENT(TIMER),
+diff --git a/arch/arm/mach-s3c24xx/s3c2443.c b/arch/arm/mach-s3c24xx/s3c2443.c
+index 4cbeb74cf3d6..2afeb53a48d1 100644
+--- a/arch/arm/mach-s3c24xx/s3c2443.c
++++ b/arch/arm/mach-s3c24xx/s3c2443.c
+@@ -42,7 +42,7 @@
+ #include "nand-core.h"
+ #include "spi-core.h"
+ 
+-static struct map_desc s3c2443_iodesc[] __initdata = {
++static struct map_desc s3c2443_iodesc[] __initdata __maybe_unused = {
+ 	IODESC_ENT(WATCHDOG),
+ 	IODESC_ENT(CLKPWR),
+ 	IODESC_ENT(TIMER),
+diff --git a/arch/arm/mach-s3c24xx/s3c244x.c b/arch/arm/mach-s3c24xx/s3c244x.c
+index a75f588b9d45..4439cfb1d049 100644
+--- a/arch/arm/mach-s3c24xx/s3c244x.c
++++ b/arch/arm/mach-s3c24xx/s3c244x.c
+@@ -41,7 +41,7 @@
+ #include "nand-core.h"
+ #include "regs-dsc.h"
+ 
+-static struct map_desc s3c244x_iodesc[] __initdata = {
++static struct map_desc s3c244x_iodesc[] __initdata __maybe_unused = {
+ 	IODESC_ENT(CLKPWR),
+ 	IODESC_ENT(TIMER),
+ 	IODESC_ENT(WATCHDOG),
 -- 
 2.17.1
 
