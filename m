@@ -7,162 +7,226 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3096C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 08:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 655AEC07548
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 10:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79C36206D4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 08:39:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D6CF20BED
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 10:56:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599727192;
-	bh=FTig6rPaZltKUx3M9pM1ycw/aGv4o3ffuusmSgumDhI=;
+	s=default; t=1599735410;
+	bh=426DpA/GVvBchbCt06SpJGjKU4je/b+dpqllLf+JSR8=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=gx0lU5Lo1hsrtC2DPTwe2czFzS64wT7JXGIxjBl90Xz/FW9Oes5AdB7rKaFDKDLxW
-	 GUGVQXGYvHRSfO1jeYJgde6IKk77D079+qmgYiDOlEJCQUiC4uzLHCuz15/UHU9E9k
-	 8P1/RMFo5c52hAd0gXW1obWeHfwMooxVRwCzQWY0=
+	b=YvI9F18nU87fsZ1mtTJX60DLV2MhKBMbFP+6H7AcshsNZdrPOIuOUvD6XLw58W4hw
+	 v5nRMAkq/P+euN8zHOsqfk2g+69orrvHFTYdgh1X5oYRxIk4agWXWj5+hy7IYENFY6
+	 qOZ0vMjCyq13Eo1EKwHqldIv4WzFjGN4EwIOZuRk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730336AbgIJIiJ (ORCPT
+        id S1729251AbgIJKza (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 04:38:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55792 "EHLO mail.kernel.org"
+        Thu, 10 Sep 2020 06:55:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730498AbgIJIgx (ORCPT
+        id S1730604AbgIJKxX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 04:36:53 -0400
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+        Thu, 10 Sep 2020 06:53:23 -0400
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EC2A20770;
-        Thu, 10 Sep 2020 08:36:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1CE221D6C;
+        Thu, 10 Sep 2020 10:53:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599727012;
-        bh=FTig6rPaZltKUx3M9pM1ycw/aGv4o3ffuusmSgumDhI=;
+        s=default; t=1599735202;
+        bh=426DpA/GVvBchbCt06SpJGjKU4je/b+dpqllLf+JSR8=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=xShM8od5RQmoImiTHhOxlMyzg9o3ljBugN4a2iBHXy0Z2ekwWv3uBFmyvtisw6ts1
-         9ua5wSzxOQGjLK8n1jw65HT2a5t327eRPtroSOFd4/mnPnzor9N2j2F5ueX9IXzQqg
-         7z1VW1nyh9Oc5r6RQbLV2cuuT9DFnJ0lyOAZRp4I=
-Received: by mail-ej1-f50.google.com with SMTP id i22so7503482eja.5;
-        Thu, 10 Sep 2020 01:36:52 -0700 (PDT)
-X-Gm-Message-State: AOAM533otwDkPUZTJ7vhgiATyqLU2p8YMQA3YJC5/iH4tfuIMSAFVS8y
-        cpJmvCewDCuU1gvtlmoL6Z6IGYQ9wpcSUz3gXEg=
-X-Google-Smtp-Source: ABdhPJwjtDYLRSBq6Amx7NdpRb+UlTD9WZghEMqB4PGHfXl5M8kyQ8hrvlps+rLSbZFVvjfFqiDxJqkHawrXCoPGuqc=
-X-Received: by 2002:a17:906:4046:: with SMTP id y6mr8123139ejj.148.1599727010714;
- Thu, 10 Sep 2020 01:36:50 -0700 (PDT)
+        b=0V/e/wz1WenVmC3pPaGFBHAG/lV6TCw7GufciP4TkPqRCrKXD3PaFc+keE0TVmYpO
+         76fSGs6njLQh7PZ0I7aXGhNddj1O7NSuxz62HPYrd/HV3MldvZVYMAnf9sW7+yMEVP
+         dJ9JqVaroKHlr3UI74JE3IE0+KZY/lARcC/6l09M=
+Received: by mail-ej1-f46.google.com with SMTP id z22so8016890ejl.7;
+        Thu, 10 Sep 2020 03:53:21 -0700 (PDT)
+X-Gm-Message-State: AOAM532ndb6fn6dvJK+d+byCcdnNk1gSqIi4f9PnlThyGlKdWWkkFFXt
+        RldEvRUGSZhxVv3Db8qW7fYgCtC9H2uAOsc+hqI=
+X-Google-Smtp-Source: ABdhPJxuiAoiRqYvlmScHBYbVBWNtkR54i9+ci/6nlyH6E1t5+auTks3zPtO7XvjIZZjtpRLYuxY1yLuT2dJygU0JIk=
+X-Received: by 2002:a17:906:af53:: with SMTP id ly19mr7845762ejb.503.1599735200004;
+ Thu, 10 Sep 2020 03:53:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200829064726.26268-1-krzk@kernel.org> <20200829064726.26268-8-krzk@kernel.org>
- <20200909193600.41970d8c@archlinux> <CAJKOXPeo8SXWaRmiFG6z+t9jcnaSMRpvRPm2X22Rf6rtEeKVew@mail.gmail.com>
- <a37c69f2-1f16-2680-2716-0c1b77748d55@axentia.se> <CAHp75Vc4-zkkWtOz8w7pA0Vu1yMAVodhPSLQ1NJH4K+j9XD52g@mail.gmail.com>
- <CAJKOXPdNAw8scFKCGaC_hp4jMyLD_mFLKr=+fGKSm6nCkcRF9g@mail.gmail.com> <20200910091208.000055fa@Huawei.com>
-In-Reply-To: <20200910091208.000055fa@Huawei.com>
+References: <20200906153654.2925-1-krzk@kernel.org> <20200906153654.2925-2-krzk@kernel.org>
+ <20200908194520.GA786466@bogus>
+In-Reply-To: <20200908194520.GA786466@bogus>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 10 Sep 2020 10:36:39 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdD0Qa1Fom4QYctjua4TfBa8CPaHd6PG5QViNweAr3GJQ@mail.gmail.com>
-Message-ID: <CAJKOXPdD0Qa1Fom4QYctjua4TfBa8CPaHd6PG5QViNweAr3GJQ@mail.gmail.com>
-Subject: Re: [PATCH v3 08/18] iio: adc: stm32: Simplify with dev_err_probe()
-To:     Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Tomasz Duszynski <tomasz.duszynski@octakon.com>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Date:   Thu, 10 Sep 2020 12:53:07 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPeexek3Dq1Ly6z=PO51ULTWy+v13i-NDQm-Mz8YAET+iA@mail.gmail.com>
+Message-ID: <CAJKOXPeexek3Dq1Ly6z=PO51ULTWy+v13i-NDQm-Mz8YAET+iA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/9] dt-bindings: net: nfc: s3fwrn5: Convert to dtschema
+To:     Rob Herring <robh@kernel.org>
+Cc:     netdev@vger.kernel.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-nfc@lists.01.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Olof Johansson <olof@lixom.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Krzysztof Opasiak <k.opasiak@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        "linux-amlogic@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>, Peter Rosin <peda@axentia.se>,
-        Jonathan Cameron <jic23@kernel.org>
+        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 10 Sep 2020 at 10:13, Jonathan Cameron
-<Jonathan.Cameron@huawei.com> wrote:
+On Tue, 8 Sep 2020 at 21:45, Rob Herring <robh@kernel.org> wrote:
 >
-> On Thu, 10 Sep 2020 08:58:57 +0200
-> Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> > On Thu, 10 Sep 2020 at 08:52, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > >
-> > >
-> > >
-> > > On Thursday, September 10, 2020, Peter Rosin <peda@axentia.se> wrote:
-> > >>
-> > >> Hi!
-> > >>
-> > >> On 2020-09-09 21:57, Krzysztof Kozlowski wrote:
-> > >> > On Wed, 9 Sep 2020 at 20:36, Jonathan Cameron <jic23@kernel.org> wrote:
-> > >> >>
-> > >> >> On Sat, 29 Aug 2020 08:47:16 +0200
-> > >> >> Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >> >>
-> > >> >>> Common pattern of handling deferred probe can be simplified with
-> > >> >>> dev_err_probe().  Less code and also it prints the error value.
-> > >> >>>
-> > >> >>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > >> >>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > >> >>>
-> > >> >> I don't have the thread to hand, but this tripped a warning next
-> > >> >> and the patch was dropped as a result. See below.
->
-> oops. That is what I get for reading an email very quickly then looking
-> at the code a few hours later.  Still a problem here we need to fix
-> unless I'm missing something.
->
-> > >> >
-> > >> > Thanks for letting me know. If you mean the warning caused by:
-> > >> > https://lore.kernel.org/lkml/20200909073716.GA560912@kroah.com/
-> > >> > then the driver-core patch was dropped, not the iio one:
-> > >> > https://lore.kernel.org/linux-next/20200909074130.GB561485@kroah.com/T/#t
-> > >> >
-> > >> > So we are good here :)
-> > >>
-> > >> No, we are definitely not good. See below. That means "See below", and
-> > >> not "Please take a guess at what is being talking about".
-> > >
-> > >
-> > >
-> > >>
-> > >> >>> @@ -596,12 +594,9 @@ static int stm32_adc_core_switches_probe(struct device *dev,
-> > >> >>>               priv->booster = devm_regulator_get_optional(dev, "booster");
-> > >> >>>               if (IS_ERR(priv->booster)) {
-> > >> >>>                       ret = PTR_ERR(priv->booster);
-> > >> >>> -                     if (ret != -ENODEV) {
-> > >> >>> -                             if (ret != -EPROBE_DEFER)
-> > >> >>> -                                     dev_err(dev, "can't get booster %d\n",
-> > >> >>> -                                             ret);
-> > >> >>> -                             return ret;
-> > >> >>> -                     }
-> > >> >>> +                     if (ret != -ENODEV)
-> > >> >>> +                             dev_err_probe(dev, ret, "can't get booster\n");
-> > >> >>
-> > >> >> This tripped a warning and got the patch dropped because we no longer
-> > >> >> return on error.
-> > >>
-> > >> As Jonathan already said, we no longer return in this hunk. I.e., you have
-> > >> clobbered the error path.
-> > >
-> > >
-> > > Exactly my point why I proposed _must_check in the first place.
+> On Sun, 06 Sep 2020 17:36:46 +0200, Krzysztof Kozlowski wrote:
+> > Convert the Samsung S3FWRN5 NCI NFC controller bindings to dtschema.
+> > This is conversion only so it includes properties with invalid prefixes
+> > (s3fwrn5,en-gpios) which should be addressed later.
 > >
-> > That was not exactly that point as you did not mention possible errors
-> > but only "miss the opportunity to optimize". Optimization is different
-> > things than a mistake.
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >  .../devicetree/bindings/net/nfc/s3fwrn5.txt   | 25 --------
+> >  .../bindings/net/nfc/samsung,s3fwrn5.yaml     | 61 +++++++++++++++++++
+> >  MAINTAINERS                                   |  1 +
+> >  3 files changed, 62 insertions(+), 25 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/net/nfc/s3fwrn5.t=
+xt
+> >  create mode 100644 Documentation/devicetree/bindings/net/nfc/samsung,s=
+3fwrn5.yaml
+> >
 >
-> In this particular case we have introduced a bug. If the regulator returns
-> an error other than -ENODEV we will carry on when really should error out.
-> This includes deferred probe route in which it won't print a message but also won't
-> actually defer.
+>
+> My bot found errors running 'make dt_binding_check' on your patch:
+>
+> ./Documentation/devicetree/bindings/net/nfc/samsung,s3fwrn5.yaml: $id: re=
+lative path/filename doesn't match actual path or filename
+>         expected: http://devicetree.org/schemas/net/nfc/samsung,s3fwrn5.y=
+aml#
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/net/=
+nfc/samsung,s3fwrn5.example.dt.yaml: s3fwrn5@27: 's3fwrn5,en-gpios', 's3fwr=
+n5,fw-gpios' do not match any of the regexes: '^#.*', '^(at25|devbus|dmacap=
+|dsa|exynos|fsi[ab]|gpio-fan|gpio|gpmc|hdmi|i2c-gpio),.*', '^(keypad|m25p|m=
+ax8952|max8997|max8998|mpmc),.*', '^(pinctrl-single|#pinctrl-single|PowerPC=
+),.*', '^(pl022|pxa-mmc|rcar_sound|rotary-encoder|s5m8767|sdhci),.*', '^(si=
+mple-audio-card|st-plgpio|st-spics|ts),.*', '^70mai,.*', '^GEFanuc,.*', '^O=
+RCL,.*', '^SUNW,.*', '^[a-zA-Z0-9#_][a-zA-Z0-9+\\-._@]{0,63}$', '^[a-zA-Z0-=
+9+\\-._]*@[0-9a-zA-Z,]*$', '^abilis,.*', '^abracon,.*', '^acer,.*', '^acme,=
+.*', '^actions,.*', '^active-semi,.*', '^ad,.*', '^adafruit,.*', '^adapteva=
+,.*', '^adaptrum,.*', '^adh,.*', '^adi,.*', '^advantech,.*', '^aeroflexgais=
+ler,.*', '^al,.*', '^allegro,.*', '^allo,.*', '^allwinner,.*', '^alphascale=
+,.*', '^alps,.*', '^altr,.*', '^amarula,.*', '^amazon,.*', '^amcc,.*', '^am=
+d,.*', '^amediatech,.*', '^amlogic,.*', '^ampire,.*', '^ams,.*', '^amstaos,=
+.*', '^analogix,.*', '^andestech,.*', '^anvo,.*', '^apm,.*', '^aptina,.*', =
+'^arasan,.*', '^archermind,.*', '^arctic,.*', '^arcx,.*', '^aries,.*', '^ar=
+m,.*', '^armadeus,.*', '^arrow,.*', '^artesyn,.*', '^asahi-kasei,.*', '^asc=
+,.*', '^aspeed,.*', '^asus,.*', '^atlas,.*', '^atmel,.*', '^auo,.*', '^auvi=
+dea,.*', '^avago,.*', '^avia,.*', '^avic,.*', '^avnet,.*', '^awinic,.*', '^=
+axentia,.*', '^axis,.*', '^azoteq,.*', '^azw,.*', '^baikal,.*', '^bananapi,=
+.*', '^beacon,.*', '^beagle,.*', '^bhf,.*', '^bitmain,.*', '^boe,.*', '^bos=
+ch,.*', '^boundary,.*', '^brcm,.*', '^broadmobi,.*', '^bticino,.*', '^buffa=
+lo,.*', '^bur,.*', '^calaosystems,.*', '^calxeda,.*', '^capella,.*', '^casc=
+oda,.*', '^catalyst,.*', '^cavium,.*', '^cdns,.*', '^cdtech,.*', '^cellwise=
+,.*', '^ceva,.*', '^checkpoint,.*', '^chipidea,.*', '^chipone,.*', '^chipsp=
+ark,.*', '^chrontel,.*', '^chrp,.*', '^chunghwa,.*', '^chuwi,.*', '^ciaa,.*=
+', '^cirrus,.*', '^cloudengines,.*', '^cnm,.*', '^cnxt,.*', '^colorfly,.*',=
+ '^compulab,.*', '^coreriver,.*', '^corpro,.*', '^cortina,.*', '^cosmic,.*'=
+, '^crane,.*', '^creative,.*', '^crystalfontz,.*', '^csky,.*', '^csq,.*', '=
+^cubietech,.*', '^cypress,.*', '^cznic,.*', '^dallas,.*', '^dataimage,.*', =
+'^davicom,.*', '^dell,.*', '^delta,.*', '^denx,.*', '^devantech,.*', '^dh,.=
+*', '^difrnce,.*', '^digi,.*', '^digilent,.*', '^dioo,.*', '^dlc,.*', '^dlg=
+,.*', '^dlink,.*', '^dmo,.*', '^domintech,.*', '^dongwoon,.*', '^dptechnics=
+,.*', '^dragino,.*', '^dserve,.*', '^dynaimage,.*', '^ea,.*', '^ebs-systart=
+,.*', '^ebv,.*', '^eckelmann,.*', '^edt,.*', '^eeti,.*', '^einfochips,.*', =
+'^elan,.*', '^elgin,.*', '^elida,.*', '^embest,.*', '^emlid,.*', '^emmicro,=
+.*', '^empire-electronix,.*', '^emtrion,.*', '^endless,.*', '^ene,.*', '^en=
+ergymicro,.*', '^engicam,.*', '^epcos,.*', '^epfl,.*', '^epson,.*', '^esp,.=
+*', '^est,.*', '^ettus,.*', '^eukrea,.*', '^everest,.*', '^everspin,.*', '^=
+evervision,.*', '^exar,.*', '^excito,.*', '^ezchip,.*', '^facebook,.*', '^f=
+airphone,.*', '^faraday,.*', '^fastrax,.*', '^fcs,.*', '^feixin,.*', '^feiy=
+ang,.*', '^firefly,.*', '^focaltech,.*', '^frida,.*', '^friendlyarm,.*', '^=
+fsl,.*', '^fujitsu,.*', '^gardena,.*', '^gateworks,.*', '^gcw,.*', '^ge,.*'=
+, '^geekbuying,.*', '^gef,.*', '^gemei,.*', '^geniatech,.*', '^giantec,.*',=
+ '^giantplus,.*', '^globalscale,.*', '^globaltop,.*', '^gmt,.*', '^goodix,.=
+*', '^google,.*', '^grinn,.*', '^grmn,.*', '^gumstix,.*', '^gw,.*', '^hanns=
+tar,.*', '^haoyu,.*', '^hardkernel,.*', '^hideep,.*', '^himax,.*', '^hisili=
+con,.*', '^hit,.*', '^hitex,.*', '^holt,.*', '^holtek,.*', '^honeywell,.*',=
+ '^hoperun,.*', '^hp,.*', '^hsg,.*', '^hugsun,.*', '^hwacom,.*', '^hydis,.*=
+', '^hyundai,.*', '^i2se,.*', '^ibm,.*', '^icplus,.*', '^idt,.*', '^ifi,.*'=
+, '^ilitek,.*', '^img,.*', '^imi,.*', '^incircuit,.*', '^inet-tek,.*', '^in=
+fineon,.*', '^inforce,.*', '^ingenic,.*', '^innolux,.*', '^inside-secure,.*=
+', '^inspur,.*', '^intel,.*', '^intercontrol,.*', '^invensense,.*', '^inver=
+sepath,.*', '^iom,.*', '^isee,.*', '^isil,.*', '^issi,.*', '^ite,.*', '^ite=
+ad,.*', '^ivo,.*', '^iwave,.*', '^jdi,.*', '^jedec,.*', '^jesurun,.*', '^ji=
+anda,.*', '^kam,.*', '^karo,.*', '^keithkoep,.*', '^keymile,.*', '^khadas,.=
+*', '^kiebackpeter,.*', '^kinetic,.*', '^kingdisplay,.*', '^kingnovel,.*', =
+'^kionix,.*', '^kobo,.*', '^koe,.*', '^kontron,.*', '^kosagi,.*', '^kyo,.*'=
+, '^lacie,.*', '^laird,.*', '^lamobo,.*', '^lantiq,.*', '^lattice,.*', '^le=
+adtek,.*', '^leez,.*', '^lego,.*', '^lemaker,.*', '^lenovo,.*', '^lg,.*', '=
+^lgphilips,.*', '^libretech,.*', '^licheepi,.*', '^linaro,.*', '^linksprite=
+,.*', '^linksys,.*', '^linutronix,.*', '^linux,.*', '^linx,.*', '^lltc,.*',=
+ '^logicpd,.*', '^logictechno,.*', '^longcheer,.*', '^loongson,.*', '^lsi,.=
+*', '^lwn,.*', '^lxa,.*', '^macnica,.*', '^mapleboard,.*', '^marvell,.*', '=
+^maxbotix,.*', '^maxim,.*', '^mbvl,.*', '^mcube,.*', '^meas,.*', '^mecer,.*=
+', '^mediatek,.*', '^megachips,.*', '^mele,.*', '^melexis,.*', '^melfas,.*'=
+, '^mellanox,.*', '^memsic,.*', '^menlo,.*', '^merrii,.*', '^micrel,.*', '^=
+microchip,.*', '^microcrystal,.*', '^micron,.*', '^microsoft,.*', '^mikroe,=
+.*', '^mikrotik,.*', '^miniand,.*', '^minix,.*', '^miramems,.*', '^mitsubis=
+hi,.*', '^mosaixtech,.*', '^motorola,.*', '^moxa,.*', '^mpl,.*', '^mps,.*',=
+ '^mqmaker,.*', '^mrvl,.*', '^mscc,.*', '^msi,.*', '^mstar,.*', '^mti,.*', =
+'^multi-inno,.*', '^mundoreader,.*', '^murata,.*', '^mxicy,.*', '^myir,.*',=
+ '^national,.*', '^nec,.*', '^neonode,.*', '^netgear,.*', '^netlogic,.*', '=
+^netron-dy,.*', '^netxeon,.*', '^neweast,.*', '^newhaven,.*', '^nexbox,.*',=
+ '^nextthing,.*', '^ni,.*', '^nintendo,.*', '^nlt,.*', '^nokia,.*', '^nordi=
+c,.*', '^novtech,.*', '^nutsboard,.*', '^nuvoton,.*', '^nvd,.*', '^nvidia,.=
+*', '^nxp,.*', '^oceanic,.*', '^okaya,.*', '^oki,.*', '^olimex,.*', '^olpc,=
+.*', '^onion,.*', '^onnn,.*', '^ontat,.*', '^opalkelly,.*', '^opencores,.*'=
+, '^openrisc,.*', '^option,.*', '^oranth,.*', '^orisetech,.*', '^ortustech,=
+.*', '^osddisplays,.*', '^overkiz,.*', '^ovti,.*', '^oxsemi,.*', '^ozzmaker=
+,.*', '^panasonic,.*', '^parade,.*', '^parallax,.*', '^pda,.*', '^pericom,.=
+*', '^pervasive,.*', '^phicomm,.*', '^phytec,.*', '^picochip,.*', '^pine64,=
+.*', '^pineriver,.*', '^pixcir,.*', '^plantower,.*', '^plathome,.*', '^plda=
+,.*', '^plx,.*', '^pni,.*', '^pocketbook,.*', '^polaroid,.*', '^portwell,.*=
+', '^poslab,.*', '^pov,.*', '^powervr,.*', '^primux,.*', '^probox2,.*', '^p=
+rt,.*', '^pulsedlight,.*', '^purism,.*', '^qca,.*', '^qcom,.*', '^qemu,.*',=
+ '^qi,.*', '^qiaodian,.*', '^qihua,.*', '^qnap,.*', '^radxa,.*', '^raidsoni=
+c,.*', '^ralink,.*', '^ramtron,.*', '^raspberrypi,.*', '^raydium,.*', '^rda=
+,.*', '^realtek,.*', '^renesas,.*', '^rervision,.*', '^richtek,.*', '^ricoh=
+,.*', '^rikomagic,.*', '^riscv,.*', '^rockchip,.*', '^rocktech,.*', '^rohm,=
+.*', '^ronbo,.*', '^roofull,.*', '^samsung,.*', '^samtec,.*', '^sancloud,.*=
+', '^sandisk,.*', '^satoz,.*', '^sbs,.*', '^schindler,.*', '^seagate,.*', '=
+^seirobotics,.*', '^semtech,.*', '^sensirion,.*', '^sensortek,.*', '^sff,.*=
+', '^sgd,.*', '^sgmicro,.*', '^sgx,.*', '^sharp,.*', '^shimafuji,.*', '^shi=
+ratech,.*', '^si-en,.*', '^si-linux,.*', '^sifive,.*', '^sigma,.*', '^sii,.=
+*', '^sil,.*', '^silabs,.*', '^silead,.*', '^silergy,.*', '^silex-insight,.=
+*', '^siliconmitus,.*', '^simtek,.*', '^sinlinx,.*', '^sinovoip,.*', '^sipe=
+ed,.*', '^sirf,.*', '^sis,.*', '^sitronix,.*', '^skyworks,.*', '^smartlabs,=
+.*', '^smsc,.*', '^snps,.*', '^sochip,.*', '^socionext,.*', '^solidrun,.*',=
+ '^solomon,.*', '^sony,.*', '^spansion,.*', '^sprd,.*', '^sst,.*', '^sstar,=
+.*', '^st,.*', '^st-ericsson,.*', '^starry,.*', '^startek,.*', '^ste,.*', '=
+^stericsson,.*', '^summit,.*', '^sunchip,.*', '^swir,.*', '^syna,.*', '^syn=
+ology,.*', '^tbs,.*', '^tbs-biometrics,.*', '^tcg,.*', '^tcl,.*', '^technex=
+ion,.*', '^technologic,.*', '^techstar,.*', '^tempo,.*', '^terasic,.*', '^t=
+fc,.*', '^thine,.*', '^thingyjp,.*', '^ti,.*', '^tianma,.*', '^tlm,.*', '^t=
+mt,.*', '^topeet,.*', '^toppoly,.*', '^topwise,.*', '^toradex,.*', '^toshib=
+a,.*', '^toumaz,.*', '^tpk,.*', '^tplink,.*', '^tpo,.*', '^tq,.*', '^tronfy=
+,.*', '^tronsmart,.*', '^truly,.*', '^tsd,.*', '^tyan,.*', '^u-blox,.*', '^=
+u-boot,.*', '^ubnt,.*', '^ucrobotics,.*', '^udoo,.*', '^ugoos,.*', '^uniwes=
+t,.*', '^upisemi,.*', '^urt,.*', '^usi,.*', '^utoo,.*', '^v3,.*', '^vaisala=
+,.*', '^vamrs,.*', '^variscite,.*', '^via,.*', '^videostrong,.*', '^virtio,=
+.*', '^vishay,.*', '^visionox,.*', '^vitesse,.*', '^vivante,.*', '^vocore,.=
+*', '^voipac,.*', '^vot,.*', '^vxt,.*', '^waveshare,.*', '^wd,.*', '^we,.*'=
+, '^wetek,.*', '^wexler,.*', '^whwave,.*', '^wi2wi,.*', '^winbond,.*', '^wi=
+nstar,.*', '^wits,.*', '^wlf,.*', '^wm,.*', '^wobo,.*', '^x-powers,.*', '^x=
+es,.*', '^xiaomi,.*', '^xillybus,.*', '^xingbangda,.*', '^xinpeng,.*', '^xl=
+nx,.*', '^xnano,.*', '^xunlong,.*', '^xylon,.*', '^ylm,.*', '^yna,.*', '^yo=
+nes-toptech,.*', '^ysoft,.*', '^zarlink,.*', '^zeitec,.*', '^zidoo,.*', '^z=
+ii,.*', '^zte,.*', '^zyxel,.*'
+>         From schema: /builds/robherring/linux-dt-review/Documentation/dev=
+icetree/bindings/vendor-prefixes.yaml
 
-Yes, I see, Peter pointed this out. The commit was actually not
-dropped from next so I will send a fixup.
+ My bad, I'll send v3.
 
 Best regards,
 Krzysztof
