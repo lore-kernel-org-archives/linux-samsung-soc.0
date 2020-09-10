@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 949EDC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 19:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 084FDC43461
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 19:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62785221E2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 19:38:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C006F21556
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 19:39:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599766738;
-	bh=7/GQtbMpBvk6Kn5kVES74TXZCExnH/I5HKULKqYnLN4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kXCLhrkiV3JI6L0EaQzK6TVMWuPd1EnPc6PBNpkVUT8VJUxwK/FWKTBJN6OxhZ03d
-	 7+37mgHzJG+oZ2zGUORWpAiArnm1BQVd4gDfr4hkOH9mUf5P4ddH15A99hYyrNTRz3
-	 yNZTR97KbZXnbLZ2P4SXITvg/PMotIrCBMlmdU5A=
+	s=default; t=1599766758;
+	bh=P91+gTcFqZsVXHGB3OESB5O/+DN+aXhnKMJXknOiXEE=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=oHqF1eSpzESZtMjYeo4yffaSkAJXs9qh5oNcjZzNyYc1VjOHZm2XKlZvlaMBomX+0
+	 IleOyyG2vR2lWZcAzfC9tJWQEXHVS5Xksl6kBZhJWwbqVsrJNjjSsGLwlH7U7kDG5t
+	 nuzNFZO4xFBaopMYkzUdmCnkQGz2K1EA4XcAiebo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731338AbgIJPm7 (ORCPT
+        id S1727991AbgIJTjO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 11:42:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40746 "EHLO mail.kernel.org"
+        Thu, 10 Sep 2020 15:39:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731270AbgIJPmJ (ORCPT
+        id S1731263AbgIJPmJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Thu, 10 Sep 2020 11:42:09 -0400
 Received: from localhost.localdomain (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFA5F208E4;
-        Thu, 10 Sep 2020 15:41:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3E0F2087C;
+        Thu, 10 Sep 2020 15:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599752523;
-        bh=7/GQtbMpBvk6Kn5kVES74TXZCExnH/I5HKULKqYnLN4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IhMKY788JI2IUOnBRk7ru2o8BXRFF6mZfMJRWw70ZFAqd/2nytaObkY3yNCLDFTJN
-         r1GnWi5wCPTc1vTgqebn4bxa4xVgx644flY2CsSCzz9Yaj6Bq7TbKu1FETsrRnuB3M
-         opuUNXP1W0hAmmFQy7ZBnGp4CyxS57LRsA1zEYEM=
+        s=default; t=1599752519;
+        bh=P91+gTcFqZsVXHGB3OESB5O/+DN+aXhnKMJXknOiXEE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gK7UKUQXnZfxgXKXiWYA2RFHQC2GxckJQpn1qPSGEYxp1QBGvdF86cm775y+PARHW
+         sNWZ2Se3EXiwgExLq5sEnNY5gwNWE76BeeYDIoiBxv+SL13Air3hHqqwasg+jEzrPk
+         ZcHVtgevAPLG5EQBScqj/fz5CdHEW/tsbft/1RlI=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -49,13 +49,11 @@ To:     Kukjin Kim <kgene@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 2/2] ARM: s3c24xx: fix Wunused-variable warning on !MMU
-Date:   Thu, 10 Sep 2020 17:41:50 +0200
-Message-Id: <20200910154150.3318-2-krzk@kernel.org>
+        Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org
+Subject: [PATCH 1/2] ARM: samsung: fix PM debug build with DEBUG_LL but !MMU
+Date:   Thu, 10 Sep 2020 17:41:49 +0200
+Message-Id: <20200910154150.3318-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200910154150.3318-1-krzk@kernel.org>
-References: <20200910154150.3318-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -64,104 +62,37 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-If S3C24xx machine code is build without CONFIG_MMU, the iotable()
-macros do nothing so annotate structures to get rid of warnings:
+Selecting CONFIG_SAMSUNG_PM_DEBUG (depending on CONFIG_DEBUG_LL) but
+without CONFIG_MMU leads to build errors:
 
-  arch/arm/mach-s3c24xx/common.c:140:24: warning: ‘s3c_iodesc’ defined but not used [-Wunused-variable]
-  arch/arm/mach-s3c24xx/s3c2410.c:49:24: warning: ‘s3c2410_iodesc’ defined but not used [-Wunused-variable]
-  arch/arm/mach-s3c24xx/s3c2412.c:60:24: warning: ‘s3c2412_iodesc’ defined but not used [-Wunused-variable]
-  arch/arm/mach-s3c24xx/s3c2416.c:54:24: warning: ‘s3c2416_iodesc’ defined but not used [-Wunused-variable]
-  arch/arm/mach-s3c24xx/s3c2443.c:45:24: warning: ‘s3c2443_iodesc’ defined but not used [-Wunused-variable]
-  arch/arm/mach-s3c24xx/s3c244x.c:44:24: warning: ‘s3c244x_iodesc’ defined but not used [-Wunused-variable]
+  arch/arm/plat-samsung/pm-debug.c: In function ‘s3c_pm_uart_base’:
+  arch/arm/plat-samsung/pm-debug.c:57:2: error:
+    implicit declaration of function ‘debug_ll_addr’ [-Werror=implicit-function-declaration]
 
+Reported-by: kernel test robot <lkp@intel.com>
+Fixes: 99b2fc2b8b40 ("ARM: SAMSUNG: Use debug_ll_addr() to get UART base address")
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/mach-s3c24xx/common.c  | 2 +-
- arch/arm/mach-s3c24xx/s3c2410.c | 2 +-
- arch/arm/mach-s3c24xx/s3c2412.c | 2 +-
- arch/arm/mach-s3c24xx/s3c2416.c | 2 +-
- arch/arm/mach-s3c24xx/s3c2443.c | 2 +-
- arch/arm/mach-s3c24xx/s3c244x.c | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
-index 3dc029c2d2cb..1ec8fe20684c 100644
---- a/arch/arm/mach-s3c24xx/common.c
-+++ b/arch/arm/mach-s3c24xx/common.c
-@@ -137,7 +137,7 @@ static struct cpu_table cpu_ids[] __initdata = {
- 
- /* minimal IO mapping */
- 
--static struct map_desc s3c_iodesc[] __initdata = {
-+static struct map_desc s3c_iodesc[] __initdata __maybe_unused = {
- 	IODESC_ENT(GPIO),
- 	IODESC_ENT(IRQ),
- 	IODESC_ENT(MEMCTRL),
-diff --git a/arch/arm/mach-s3c24xx/s3c2410.c b/arch/arm/mach-s3c24xx/s3c2410.c
-index 21fd5404bc98..ed498835ce13 100644
---- a/arch/arm/mach-s3c24xx/s3c2410.c
-+++ b/arch/arm/mach-s3c24xx/s3c2410.c
-@@ -46,7 +46,7 @@
- 
- /* Initial IO mappings */
- 
--static struct map_desc s3c2410_iodesc[] __initdata = {
-+static struct map_desc s3c2410_iodesc[] __initdata __maybe_unused = {
- 	IODESC_ENT(CLKPWR),
- 	IODESC_ENT(TIMER),
- 	IODESC_ENT(WATCHDOG),
-diff --git a/arch/arm/mach-s3c24xx/s3c2412.c b/arch/arm/mach-s3c24xx/s3c2412.c
-index 8fe4d4670dcb..d1ea1cab86e7 100644
---- a/arch/arm/mach-s3c24xx/s3c2412.c
-+++ b/arch/arm/mach-s3c24xx/s3c2412.c
-@@ -57,7 +57,7 @@ static inline void s3c2412_init_gpio2(void)
- 
- /* Initial IO mappings */
- 
--static struct map_desc s3c2412_iodesc[] __initdata = {
-+static struct map_desc s3c2412_iodesc[] __initdata __maybe_unused = {
- 	IODESC_ENT(CLKPWR),
- 	IODESC_ENT(TIMER),
- 	IODESC_ENT(WATCHDOG),
-diff --git a/arch/arm/mach-s3c24xx/s3c2416.c b/arch/arm/mach-s3c24xx/s3c2416.c
-index 9514196cad8c..17157f063264 100644
---- a/arch/arm/mach-s3c24xx/s3c2416.c
-+++ b/arch/arm/mach-s3c24xx/s3c2416.c
-@@ -51,7 +51,7 @@
- #include "nand-core.h"
- #include "spi-core.h"
- 
--static struct map_desc s3c2416_iodesc[] __initdata = {
-+static struct map_desc s3c2416_iodesc[] __initdata __maybe_unused = {
- 	IODESC_ENT(WATCHDOG),
- 	IODESC_ENT(CLKPWR),
- 	IODESC_ENT(TIMER),
-diff --git a/arch/arm/mach-s3c24xx/s3c2443.c b/arch/arm/mach-s3c24xx/s3c2443.c
-index 4cbeb74cf3d6..2afeb53a48d1 100644
---- a/arch/arm/mach-s3c24xx/s3c2443.c
-+++ b/arch/arm/mach-s3c24xx/s3c2443.c
-@@ -42,7 +42,7 @@
- #include "nand-core.h"
- #include "spi-core.h"
- 
--static struct map_desc s3c2443_iodesc[] __initdata = {
-+static struct map_desc s3c2443_iodesc[] __initdata __maybe_unused = {
- 	IODESC_ENT(WATCHDOG),
- 	IODESC_ENT(CLKPWR),
- 	IODESC_ENT(TIMER),
-diff --git a/arch/arm/mach-s3c24xx/s3c244x.c b/arch/arm/mach-s3c24xx/s3c244x.c
-index a75f588b9d45..4439cfb1d049 100644
---- a/arch/arm/mach-s3c24xx/s3c244x.c
-+++ b/arch/arm/mach-s3c24xx/s3c244x.c
-@@ -41,7 +41,7 @@
- #include "nand-core.h"
- #include "regs-dsc.h"
- 
--static struct map_desc s3c244x_iodesc[] __initdata = {
-+static struct map_desc s3c244x_iodesc[] __initdata __maybe_unused = {
- 	IODESC_ENT(CLKPWR),
- 	IODESC_ENT(TIMER),
- 	IODESC_ENT(WATCHDOG),
+---
+
+Patchset is rebased on v5.9-rc1.
+---
+ arch/arm/plat-samsung/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 301e572651c0..790c87ee7271 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -241,6 +241,7 @@ config SAMSUNG_PM_DEBUG
+ 	depends on PM && DEBUG_KERNEL
+ 	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
+ 	depends on DEBUG_EXYNOS_UART || DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
++	depends on DEBUG_LL && MMU
+ 	help
+ 	  Say Y here if you want verbose debugging from the PM Suspend and
+ 	  Resume code. See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
 -- 
 2.17.1
 
