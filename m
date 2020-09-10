@@ -2,93 +2,95 @@ Return-Path: <SRS0=wHux=CT=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB72DC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 16:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C62DEC07548
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6320C21D91
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 16:17:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72986214F1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:19:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599754661;
-	bh=cFm01d5A2xJtuwGGnkI+tpSI9gpBQSqULzzvO5shbnk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=m9V6sUKKWjSaHU7kRmIKSMkyUxWEOCO2s62ovvzBGr+ynhkWHkPUeOkgzlH7mVqDa
-	 sRQtKkEP82oZFuleum3isdcWLmo2OP8rLd6LB9L/Zlu0ptGmbglZmb300eFx0ZoTfV
-	 xrl20FrSXBByp+HWJb4eBXE79JLUmOTgTjnbiH4o=
+	s=default; t=1599758382;
+	bh=XL/yLUGWGiJdk/mhoX+RmpLCAvn1heVhfC4nRB0t1CQ=;
+	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=vTAGoizk19vGPIGXRGe5hVt4ylnRutSqRasXiIIae+kVXQbf5+syTD2G4coFsuODg
+	 BS+f6el1Nkt6d7KVqbCmtRjKk1Om3CE8jNtrPkGTho/JDIRDrJcehGO6g+k6YxejT1
+	 7IUe15LkJzURkNGjEbSBiHNJTuskKi6Y+QQkSU+g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725866AbgIJQRe (ORCPT
+        id S1725945AbgIJQcy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 12:17:34 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:38337 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbgIJQOM (ORCPT
+        Thu, 10 Sep 2020 12:32:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36768 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726287AbgIJQU1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 12:14:12 -0400
-Received: by mail-ej1-f67.google.com with SMTP id i22so9558589eja.5;
-        Thu, 10 Sep 2020 09:14:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UlWeBO5XXsVkxeqCqR5Hh1T/dXmevbm+y0dv6NWqW5E=;
-        b=LpPNVk86sMy2KDgrWnb7UxCte0zXxhgIWlrxXDr5bFMXeXiS/0qgotYWAUdV7FtpdX
-         EStLLainBAqcdYUIDwe/2NPTVQc8sFavT5UM8Du3ttRgOR33LSkMW1A2Dt8VrmSXmK2g
-         jQAoIKlmXtx3b5FpoG+Bj5Dv4y7xDsrJy6+AK209K4ZcgUOQk++rv9GukQmIWr3u0z3B
-         V4GuY598sz9B3A2zOHK97EDdPvfwH41L6YCRCnJZMvyzkuaIP/itKRnsq4IlZ9oadzkg
-         1CoE+h49w4UIABbnxxI+qz607I+nqHRPaGPzV2wPoRgoHRfEWKaSHcgtQeT0ub6/Yh3+
-         Wnaw==
-X-Gm-Message-State: AOAM5320MZwQn0zC5VRCnTeiaLZpuYRyO8T/RE7bys2y1lmo6yprBk+r
-        bax5CGrzxSXCPQXUc5MqYPs=
-X-Google-Smtp-Source: ABdhPJwIIQ8dJ5uLZ10q13CyfyBK+itpFUo2QKO7vjp47zYPGf4bkS+d38Lcvwn5F7hpQoBbFA1R6A==
-X-Received: by 2002:a17:906:69c1:: with SMTP id g1mr9261970ejs.285.1599754450515;
-        Thu, 10 Sep 2020 09:14:10 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.174])
-        by smtp.googlemail.com with ESMTPSA id f13sm7520054ejb.81.2020.09.10.09.14.08
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Sep 2020 09:14:09 -0700 (PDT)
-Date:   Thu, 10 Sep 2020 18:14:06 +0200
+        Thu, 10 Sep 2020 12:20:27 -0400
+Received: from localhost.localdomain (unknown [194.230.155.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AC5321D79;
+        Thu, 10 Sep 2020 16:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599754785;
+        bh=XL/yLUGWGiJdk/mhoX+RmpLCAvn1heVhfC4nRB0t1CQ=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=AhUWISxmRLPEeqyqFN1VIILYUYzcyK30t5NC24oFgTnSStnAQKsb98uImfzCQ+0Tb
+         060ktHYZuk7rRnCS/pZu0WUiZV2eTlNmKjc9rjDT6xbGuEMP45nB45vOaLLTIreiws
+         LWEqENAeNFCTmrP4l0prN77w+e/mcGDOlHhB6ZGM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Opasiak <k.opasiak@samsung.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Olof Johansson <olof@lixom.net>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-nfc@lists.01.org,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 9/9] arm64: defconfig: Enable Samsung S3FWRN5 NFC
- driver
-Message-ID: <20200910161406.GA6491@kozik-lap>
-References: <20200906153654.2925-1-krzk@kernel.org>
- <20200906153654.2925-10-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200906153654.2925-10-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] dt-bindings: iio: adc: exynos-adc: do not require syscon on S5Pv210
+Date:   Thu, 10 Sep 2020 18:19:33 +0200
+Message-Id: <20200910161933.9156-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200910161933.9156-1-krzk@kernel.org>
+References: <20200910161933.9156-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Sep 06, 2020 at 05:36:54PM +0200, Krzysztof Kozlowski wrote:
-> Enable the Samsung S3FWRN5 NFC driver present in Exynos5433-based
-> TM2/TM2E boards.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm64/configs/defconfig | 3 +++
+The ADC in S5Pv210 does not have ADC phy registers in separate block for
+which syscon would be needed.  Remove this requirement to fix dtbs_check
+warnings like:
 
-Applied.
+  arch/arm/boot/dts/s5pv210-fascinate4g.dt.yaml: adc@e1700000: 'samsung,syscon-phandle' is a required property
 
-Best regards,
-Krzysztof
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huwei.com>
+
+---
+
+Changes since v1:
+1. Add Ack.
+---
+ .../devicetree/bindings/iio/adc/samsung,exynos-adc.yaml          | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+index 17a08be3fe85..37d6591ff78c 100644
+--- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+@@ -81,7 +81,6 @@ allOf:
+               - samsung,exynos-adc-v2
+               - samsung,exynos3250-adc
+               - samsung,exynos4212-adc
+-              - samsung,s5pv210-adc
+     then:
+       required:
+         - samsung,syscon-phandle
+-- 
+2.17.1
 
