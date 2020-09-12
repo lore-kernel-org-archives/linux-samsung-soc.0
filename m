@@ -1,95 +1,78 @@
-Return-Path: <SRS0=sx2+=CU=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=x9Fk=CV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82182C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Sep 2020 17:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5586C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 12 Sep 2020 15:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32C8F221E7
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Sep 2020 17:09:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599844155;
-	bh=pxDnD1LPwz6cQdYGLz2qypJjOQmlNcsRNHrBlZI7hpM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=JEg5LJQxPciAnok45zKrPlnz/r3ebFGUgRasVpql+/5RE6aFM5jhm4D1IFevqkKy8
-	 5kROIhVuXC9mMLd28YDa4J8Nk7lRCbS+/IRXAHXRErmLLHyp1tcpZBqchZU+AONbYR
-	 K+R8R9n0KHdpqGvixxWdrzvWGxOop8QPiSjHFaHE=
+	by mail.kernel.org (Postfix) with ESMTP id 611C82073E
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 12 Sep 2020 15:25:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbgIKRJO (ORCPT
+        id S1725904AbgILPZO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 11 Sep 2020 13:09:14 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46432 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbgIKO6Z (ORCPT
+        Sat, 12 Sep 2020 11:25:14 -0400
+Received: from smtprelay0217.hostedemail.com ([216.40.44.217]:41536 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725846AbgILPZO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 11 Sep 2020 10:58:25 -0400
-Received: by mail-lj1-f195.google.com with SMTP id a22so12648323ljp.13;
-        Fri, 11 Sep 2020 07:58:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bIIMnHfFJYpi3UwZe4wCDvPNzvOBVTUDM/t6ueEm2IQ=;
-        b=mAyo/tpi8ARmR8aDwqrb1CtKPA3r11YT9SqXea3V7E11uhFHH/a5OIah7JgYkwgdwk
-         3FnL7ijrjMjYZfCgwem+jZBiN0qfbSDtsb/V/STpcR7Yt1KAnWgeYIrqR30/1kaMNkYu
-         040wegaJwfEPKkQu0m5yVEgdOr5Il0FyFkil0l8rQjHiVMw1x9tLxBrooiqhwWu9OnlN
-         gta5Kfcr1d16HRcSWFETUlwOFcW1fseWDdFlSQlErkFKQHiWJ8AabYcyjPWLqEipdZ+2
-         ZQozfyR9U/TCz5LlBXY+Oq0WSeAuXsCjPU6xConqI5yr5SKQu4NBHXhU4zjCpUZs1uL8
-         RV/w==
-X-Gm-Message-State: AOAM532gcbCwD7zWpO8CYPwcwR99ZP4/yl35z2KxPnt1O4skbuHLniaf
-        y2xOpf9UKLMnU2j5bLzUg4ZI5OHHC3Dung==
-X-Google-Smtp-Source: ABdhPJywwF2Qwh/N3i4i3wh28Wz8xzxLonYVXzEwdMBro7y7SeyhloT6RGdTzB5T3g8Tol8cwACJZw==
-X-Received: by 2002:a17:906:a256:: with SMTP id bi22mr2324488ejb.375.1599835117275;
-        Fri, 11 Sep 2020 07:38:37 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.174])
-        by smtp.googlemail.com with ESMTPSA id f17sm1780002eds.45.2020.09.11.07.38.35
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Sep 2020 07:38:36 -0700 (PDT)
-Date:   Fri, 11 Sep 2020 16:38:34 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Lihua Yao <ylhuajnu@outlook.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 00/11] ARM: dts: s3c: dtschema fixes
-Message-ID: <20200911143834.GB659@kozik-lap>
-References: <20200907183313.29234-1-krzk@kernel.org>
+        Sat, 12 Sep 2020 11:25:14 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 23EEE18224D8A;
+        Sat, 12 Sep 2020 15:25:10 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: face08_0d076f6270f8
+X-Filterd-Recvd-Size: 1871
+Received: from XPS-9350.home (unknown [47.151.133.149])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 12 Sep 2020 15:25:08 +0000 (UTC)
+Message-ID: <da6f30896a8fd78635b3ca454d77a5292a9aa76d.camel@perches.com>
+Subject: Re: [PATCH] MAINTAINERS: make linux-usb list remarks consistent
+From:   Joe Perches <joe@perches.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Sat, 12 Sep 2020 08:25:07 -0700
+In-Reply-To: <20200912124025.GA174230@kroah.com>
+References: <20200912121346.2796-1-lukas.bulwahn@gmail.com>
+         <alpine.DEB.2.21.2009121416500.3770@felia>
+         <20200912124025.GA174230@kroah.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200907183313.29234-1-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 07, 2020 at 08:33:02PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
+On Sat, 2020-09-12 at 14:40 +0200, Greg Kroah-Hartman wrote:
+> On Sat, Sep 12, 2020 at 02:19:02PM +0200, Lukas Bulwahn wrote:
+> > 
+> > On Sat, 12 Sep 2020, Lukas Bulwahn wrote:
+> > 
+> > > This patch submission will also show me if linux-usb is moderated or not.
+> > > I have not subscribed to linux-usb and if it shows up quickly in the
+> > > archive, the list is probably not moderated, and hence, validating the
+> > > patch.
+> > > 
+> > 
+> > The patch showed up in the archives within seconds:
+> > 
+> > https://lore.kernel.org/linux-usb/20200912121346.2796-1-lukas.bulwahn@gmail.com/
+> > 
+> > So, the linux-usb list is most likely not moderated. Patch validated.
 > 
-> This is last serie of big dtschema cleanups for Samsung DTS.  It fixes
-> almost all dtschema violations, except:
-> 
->   s3c6410-mini6410.dt.yaml: srom-cs1-bus@18000000: ethernet@18000000:reg:0: [402653184, 2, 402653188, 2] is too long
-> 
-> which is similar to the case with SMDK5410 (Exynos5410).
-> 
-> The patchset was not tested on HW.
-> 
-> Best regards,
-> Krzysztof
+> Yes, it is not moderated, and never has been, no idea where that idea came from.
 
-Applied entire series.
+There's also linux-samsung-soc@vger.kernel.org
+that is listed as moderated
 
-Best regards,
-Krzysztof
+Are any of the vger lists actually moderated?
+
 
