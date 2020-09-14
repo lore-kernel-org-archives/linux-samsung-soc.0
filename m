@@ -2,222 +2,174 @@ Return-Path: <SRS0=fOmg=CX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD0BC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 16:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0012C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 16:47:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B085021D1A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 16:47:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KmfGrfDX"
+	by mail.kernel.org (Postfix) with ESMTP id 9300021BE5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 16:47:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600102064;
+	bh=0ROvPwI9GHsA6soQBVXwOuivIgyaZ2vSEX0i8eZ+57s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=cS0TXN07ilgYEGyJ46vGWwgHi4NrQzQ2XYdysOPMLprMimqYE3Pm65DTbyEnSWG2B
+	 fvlQ/9SDTuvD/M4NhRv+kPbc65OWQyqPGPfSoq3sOly4FSVBaSLYa9KybFu0DKoqyz
+	 kB3WexmgHdMquVPejXk/Q18bGjX/hBv8jjDglJcw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726147AbgINPJY (ORCPT
+        id S1726035AbgINQrl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Sep 2020 11:09:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44052 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbgINPJH (ORCPT
+        Mon, 14 Sep 2020 12:47:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59354 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726034AbgINPJT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Sep 2020 11:09:07 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79CF6C06178A;
-        Mon, 14 Sep 2020 08:09:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=Hd44flV0rNOoconJIhItgKEmFIKY+u0t7YJsM9KNpfo=; b=KmfGrfDX7byZuKSDmAvqbHPmbG
-        rVaI8AfoPY6UsW2JcwgF4VuMlzi7fLK0J2xpI95SGy0q+W5zBRBcMVQ48ucc/QC/JtBbmBw2rpIi9
-        k2hdX5nDNJVJiGWdMoQGMk7KRRTGvh0MIF+0oRVh8VPbm/iHIJ4t0AAsaDW8cmC9dxwwIAuvWz6+v
-        Gta5PNKJzPOsjrE8pPJot2z39D/4owQoF9Nt8nXSM22jnkkdQMTdKKTO6VZE0csNfpqzMQatn8xP6
-        SS2WBIoSfFEy1gOvLpecVGJG4LcKAOo3nI1A6Rs3aY3bxSBocIMVe8GEYW4DiACK5ruWQPrRzPTSo
-        HLZyS2gw==;
-Received: from 089144214092.atnat0023.highway.a1.net ([89.144.214.92] helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kHq5w-0003B7-Sc; Mon, 14 Sep 2020 15:08:41 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        iommu@lists.linux-foundation.org
-Cc:     Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        linux1394-devel@lists.sourceforge.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-mm@kvack.org,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 10/17] hal2: convert to dma_alloc_noncoherent
-Date:   Mon, 14 Sep 2020 16:44:26 +0200
-Message-Id: <20200914144433.1622958-11-hch@lst.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200914144433.1622958-1-hch@lst.de>
-References: <20200914144433.1622958-1-hch@lst.de>
+        Mon, 14 Sep 2020 11:09:19 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6381720829;
+        Mon, 14 Sep 2020 15:09:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600096158;
+        bh=0ROvPwI9GHsA6soQBVXwOuivIgyaZ2vSEX0i8eZ+57s=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=KJlRnz/O4V5mlRC/axk0yDSKCcbjoVr0zU0uJHLx9DH6OAkHdR+adl/yCvsg5kmHY
+         GiL0ONjceNB+vn2xXKhpJ3I3SWINlX7TJhq+69reYdD60FYnHv4h6DKcvw7NjyPGmJ
+         VFlDL20ElYv2bhWDVt3uJkMZB5HxTS2fGuEQBYm4=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1kHq6W-00Biog-Ec; Mon, 14 Sep 2020 16:09:16 +0100
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Date:   Mon, 14 Sep 2020 16:09:16 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Valentin Schneider <Valentin.Schneider@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Saravana Kannan <saravanak@google.com>,
+        kernel-team@android.com,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v3 08/16] irqchip/gic: Configure SGIs as standard
+ interrupts
+In-Reply-To: <65565f85-d932-37f3-a8cd-dbd13d7dbfad@samsung.com>
+References: <20200901144324.1071694-1-maz@kernel.org>
+ <20200901144324.1071694-9-maz@kernel.org>
+ <CGME20200914130601eucas1p23ce276d168dee37909b22c75499e68da@eucas1p2.samsung.com>
+ <a917082d-4bfd-a6fd-db88-36e75f5f5921@samsung.com>
+ <8642847d83ef5bb15663d0246d6af668@kernel.org>
+ <65565f85-d932-37f3-a8cd-dbd13d7dbfad@samsung.com>
+User-Agent: Roundcube Webmail/1.4.8
+Message-ID: <14e2c690bf99280588538989014c7356@kernel.org>
+X-Sender: maz@kernel.org
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: m.szyprowski@samsung.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, will@kernel.org, catalin.marinas@arm.com, linux@arm.linux.org.uk, tglx@linutronix.de, jason@lakedaemon.net, sumit.garg@linaro.org, Valentin.Schneider@arm.com, f.fainelli@gmail.com, gregory.clement@bootlin.com, andrew@lunn.ch, saravanak@google.com, kernel-team@android.com, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, b.zolnierkie@samsung.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the new non-coherent DMA API including proper ownership transfers.
-This also means we can allocate the buffer memory with the proper
-direction instead of bidirectional.
+Marek,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- sound/mips/hal2.c | 58 ++++++++++++++++++++++-------------------------
- 1 file changed, 27 insertions(+), 31 deletions(-)
+On 2020-09-14 14:26, Marek Szyprowski wrote:
+> Hi Marc,
+> 
+> On 14.09.2020 15:13, Marc Zyngier wrote:
+>> On 2020-09-14 14:06, Marek Szyprowski wrote:
+>>> On 01.09.2020 16:43, Marc Zyngier wrote:
+>>>> Change the way we deal with GIC SGIs by turning them into proper
+>>>> IRQs, and calling into the arch code to register the interrupt range
+>>>> instead of a callback.
+>>>> 
+>>>> Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
+>>>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>>> This patch landed in linux next-20200914 as commit ac063232d4b0
+>>> ("irqchip/gic: Configure SGIs as standard interrupts"). Sadly it 
+>>> breaks
+>>> booting of all Samsung Exynos 4210/4412 based boards (dual/quad ARM
+>>> Cortex A9 based). Here are the last lines from the bootlog:
+>>> 
+>>> [    0.106322] CPU: Testing write buffer coherency: ok
+>>> [    0.109895] CPU0: Spectre v2: using BPIALL workaround
+>>> [    0.116057] CPU0: thread -1, cpu 0, socket 9, mpidr 80000900
+>>> [    0.123885] Setting up static identity map for 0x40100000 -
+>>> 0x40100060
+>>> [    0.130191] rcu: Hierarchical SRCU implementation.
+>>> [    0.137195] soc soc0: Exynos: CPU[EXYNOS4210] PRO_ID[0x43210211]
+>>> REV[0x11] Detected
+>>> [    0.145129] smp: Bringing up secondary CPUs ...
+>>> [    0.156279] CPU1: thread -1, cpu 1, socket 9, mpidr 80000901
+>>> [    0.156291] CPU1: Spectre v2: using BPIALL workaround
+>>> [    2.716379] random: fast init done
+>> 
+>> Thanks for the report. Is this the funky non-banked GIC?
+> 
+> Both Exynos 4210 and 4412 use non-zero cpu-offset in GIC node in
+> device-tree: arch/arm/boot/dts/exynos{4210,4412}.dtsi, so I assume that
+> the GIC registers are not banked.
 
-diff --git a/sound/mips/hal2.c b/sound/mips/hal2.c
-index ec84bc4c3a6e77..9ac9b58d7c8cdd 100644
---- a/sound/mips/hal2.c
-+++ b/sound/mips/hal2.c
-@@ -441,7 +441,8 @@ static inline void hal2_stop_adc(struct snd_hal2 *hal2)
- 	hal2->adc.pbus.pbus->pbdma_ctrl = HPC3_PDMACTRL_LD;
- }
- 
--static int hal2_alloc_dmabuf(struct snd_hal2 *hal2, struct hal2_codec *codec)
-+static int hal2_alloc_dmabuf(struct snd_hal2 *hal2, struct hal2_codec *codec,
-+		enum dma_data_direction buffer_dir)
- {
- 	struct device *dev = hal2->card->dev;
- 	struct hal2_desc *desc;
-@@ -449,15 +450,15 @@ static int hal2_alloc_dmabuf(struct snd_hal2 *hal2, struct hal2_codec *codec)
- 	int count = H2_BUF_SIZE / H2_BLOCK_SIZE;
- 	int i;
- 
--	codec->buffer = dma_alloc_attrs(dev, H2_BUF_SIZE, &buffer_dma,
--					GFP_KERNEL, DMA_ATTR_NON_CONSISTENT);
-+	codec->buffer = dma_alloc_noncoherent(dev, H2_BUF_SIZE, &buffer_dma,
-+					buffer_dir, GFP_KERNEL);
- 	if (!codec->buffer)
- 		return -ENOMEM;
--	desc = dma_alloc_attrs(dev, count * sizeof(struct hal2_desc),
--			       &desc_dma, GFP_KERNEL, DMA_ATTR_NON_CONSISTENT);
-+	desc = dma_alloc_noncoherent(dev, count * sizeof(struct hal2_desc),
-+			&desc_dma, DMA_BIDIRECTIONAL, GFP_KERNEL);
- 	if (!desc) {
--		dma_free_attrs(dev, H2_BUF_SIZE, codec->buffer, buffer_dma,
--			       DMA_ATTR_NON_CONSISTENT);
-+		dma_free_noncoherent(dev, H2_BUF_SIZE, codec->buffer, buffer_dma,
-+				buffer_dir);
- 		return -ENOMEM;
- 	}
- 	codec->buffer_dma = buffer_dma;
-@@ -470,20 +471,22 @@ static int hal2_alloc_dmabuf(struct snd_hal2 *hal2, struct hal2_codec *codec)
- 		      desc_dma : desc_dma + (i + 1) * sizeof(struct hal2_desc);
- 		desc++;
- 	}
--	dma_cache_sync(dev, codec->desc, count * sizeof(struct hal2_desc),
--		       DMA_TO_DEVICE);
-+	dma_sync_single_for_device(dev, codec->desc_dma,
-+				   count * sizeof(struct hal2_desc),
-+				   DMA_BIDIRECTIONAL);
- 	codec->desc_count = count;
- 	return 0;
- }
- 
--static void hal2_free_dmabuf(struct snd_hal2 *hal2, struct hal2_codec *codec)
-+static void hal2_free_dmabuf(struct snd_hal2 *hal2, struct hal2_codec *codec,
-+		enum dma_data_direction buffer_dir)
- {
- 	struct device *dev = hal2->card->dev;
- 
--	dma_free_attrs(dev, codec->desc_count * sizeof(struct hal2_desc),
--		       codec->desc, codec->desc_dma, DMA_ATTR_NON_CONSISTENT);
--	dma_free_attrs(dev, H2_BUF_SIZE, codec->buffer, codec->buffer_dma,
--		       DMA_ATTR_NON_CONSISTENT);
-+	dma_free_noncoherent(dev, codec->desc_count * sizeof(struct hal2_desc),
-+		       codec->desc, codec->desc_dma, DMA_BIDIRECTIONAL);
-+	dma_free_noncoherent(dev, H2_BUF_SIZE, codec->buffer, codec->buffer_dma,
-+			buffer_dir);
- }
- 
- static const struct snd_pcm_hardware hal2_pcm_hw = {
-@@ -509,21 +512,16 @@ static int hal2_playback_open(struct snd_pcm_substream *substream)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct snd_hal2 *hal2 = snd_pcm_substream_chip(substream);
--	int err;
- 
- 	runtime->hw = hal2_pcm_hw;
--
--	err = hal2_alloc_dmabuf(hal2, &hal2->dac);
--	if (err)
--		return err;
--	return 0;
-+	return hal2_alloc_dmabuf(hal2, &hal2->dac, DMA_TO_DEVICE);
- }
- 
- static int hal2_playback_close(struct snd_pcm_substream *substream)
- {
- 	struct snd_hal2 *hal2 = snd_pcm_substream_chip(substream);
- 
--	hal2_free_dmabuf(hal2, &hal2->dac);
-+	hal2_free_dmabuf(hal2, &hal2->dac, DMA_TO_DEVICE);
- 	return 0;
- }
- 
-@@ -579,7 +577,9 @@ static void hal2_playback_transfer(struct snd_pcm_substream *substream,
- 	unsigned char *buf = hal2->dac.buffer + rec->hw_data;
- 
- 	memcpy(buf, substream->runtime->dma_area + rec->sw_data, bytes);
--	dma_cache_sync(hal2->card->dev, buf, bytes, DMA_TO_DEVICE);
-+	dma_sync_single_for_device(hal2->card->dev,
-+			hal2->dac.buffer_dma + rec->hw_data, bytes,
-+			DMA_TO_DEVICE);
- 
- }
- 
-@@ -597,22 +597,16 @@ static int hal2_capture_open(struct snd_pcm_substream *substream)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct snd_hal2 *hal2 = snd_pcm_substream_chip(substream);
--	struct hal2_codec *adc = &hal2->adc;
--	int err;
- 
- 	runtime->hw = hal2_pcm_hw;
--
--	err = hal2_alloc_dmabuf(hal2, adc);
--	if (err)
--		return err;
--	return 0;
-+	return hal2_alloc_dmabuf(hal2, &hal2->adc, DMA_FROM_DEVICE);
- }
- 
- static int hal2_capture_close(struct snd_pcm_substream *substream)
- {
- 	struct snd_hal2 *hal2 = snd_pcm_substream_chip(substream);
- 
--	hal2_free_dmabuf(hal2, &hal2->adc);
-+	hal2_free_dmabuf(hal2, &hal2->adc, DMA_FROM_DEVICE);
- 	return 0;
- }
- 
-@@ -667,7 +661,9 @@ static void hal2_capture_transfer(struct snd_pcm_substream *substream,
- 	struct snd_hal2 *hal2 = snd_pcm_substream_chip(substream);
- 	unsigned char *buf = hal2->adc.buffer + rec->hw_data;
- 
--	dma_cache_sync(hal2->card->dev, buf, bytes, DMA_FROM_DEVICE);
-+	dma_sync_single_for_cpu(hal2->card->dev,
-+			hal2->adc.buffer_dma + rec->hw_data, bytes,
-+			DMA_FROM_DEVICE);
- 	memcpy(substream->runtime->dma_area + rec->sw_data, buf, bytes);
- }
- 
+Annoyingly, it seems to work correctly in QEMU:
+
+root@unassigned-hostname:~# cat /proc/interrupts
+            CPU0       CPU1
+  40:          0          0     GIC-0  89 Level     mct_comp_irq
+  41:      16144          0     GIC-0  74 Level     mct_tick0
+  42:          0      15205     GIC-0  80 Level     mct_tick1
+  43:          0          0  COMBINER  18 Edge      arm-pmu
+  44:          0          0  COMBINER  26 Edge      arm-pmu
+  46:       2270          0     GIC-0 107 Level     mmc0
+  48:        878          0     GIC-0  84 Level     13800000.serial
+  52:          0          0     GIC-0  90 Level     13860000.i2c
+  54:          0          0     GIC-0  67 Level     12680000.pdma
+  55:          0          0     GIC-0  68 Level     12690000.pdma
+  56:          0          0     GIC-0  66 Level     12850000.mdma
+  59:          0          0  COMBINER  45 Edge      13620000.sysmmu
+  60:          0          0  COMBINER  46 Edge      13630000.sysmmu
+  61:          0          0  COMBINER  44 Edge      12e20000.sysmmu
+  62:          0          0  COMBINER  34 Edge      11a20000.sysmmu
+  63:          0          0  COMBINER  35 Edge      11a30000.sysmmu
+  64:          0          0  COMBINER  36 Edge      11a40000.sysmmu
+  65:          0          0  COMBINER  37 Edge      11a50000.sysmmu
+  66:          0          0  COMBINER  38 Edge      11a60000.sysmmu
+  67:          0          0  COMBINER  40 Edge      12a30000.sysmmu
+  68:          0          0  COMBINER  42 Edge      11e20000.sysmmu
+  74:          0          0     GIC-0  79 Level     11400000.pinctrl
+  75:          0          0     GIC-0  78 Level     11000000.pinctrl
+  77:          0          0  COMBINER  39 Edge      12a20000.sysmmu
+  78:          0          0  COMBINER  43 Edge      12220000.sysmmu
+IPI0:          0          1  CPU wakeup interrupts
+IPI1:          0          0  Timer broadcast interrupts
+IPI2:         32         63  Rescheduling interrupts
+IPI3:       3925       5381  Function call interrupts
+IPI4:          0          0  CPU stop interrupts
+IPI5:       4375       3778  IRQ work interrupts
+IPI6:          0          0  completion interrupts
+Err:          0
+
+Do you happen to know whether the QEMU emulation is trustworthy?
+
+Thanks,
+
+         M.
 -- 
-2.28.0
-
+Jazz is not dead. It just smells funny...
