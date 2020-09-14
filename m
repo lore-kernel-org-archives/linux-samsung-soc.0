@@ -2,80 +2,77 @@ Return-Path: <SRS0=fOmg=CX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MALFORMED_FREEMAIL,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MALFORMED_FREEMAIL,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29154C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 06:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7692CC43461
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 07:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CFB32208DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 06:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3621421BE5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 07:08:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZ3kcprX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWzwor+b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726044AbgINGdG (ORCPT
+        id S1726144AbgINHIm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Sep 2020 02:33:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48782 "EHLO
+        Mon, 14 Sep 2020 03:08:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbgINGdE (ORCPT
+        with ESMTP id S1726094AbgINHIj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Sep 2020 02:33:04 -0400
+        Mon, 14 Sep 2020 03:08:39 -0400
 Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09A57C06174A;
-        Sun, 13 Sep 2020 23:33:04 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id e23so21527372eja.3;
-        Sun, 13 Sep 2020 23:33:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C020C06174A;
+        Mon, 14 Sep 2020 00:08:36 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id z23so21604102ejr.13;
+        Mon, 14 Sep 2020 00:08:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:date:to:cc:subject:in-reply-to:message-id:references
          :user-agent:mime-version;
-        bh=+zWKNmxOOGJkUHebwsTYQ6mc4spYZ4aje4SzHCAk110=;
-        b=XZ3kcprXlCIeiXQsSMjiNkLiTp/URhZzh806g+QB5c2yj127CT3KA4juOvAPsOw39x
-         fRK1jJMVS0neuIhmvHUPr/7e9++n/jWNMWU3borskvWPMcv2uKJ0S67OPS1YaASKT2Gq
-         aQGB4BO263uw92OclfMGe0VpmkmyGeg6PnK9fHXV9MC8zdMovf3acBwkSr+ewmZb2lZ4
-         gmFQJE2CtzDJr+cEXo/55vBM8PxziyIz1NgsJzAtMkzvRWNb/Ym1LqCCvr9CkSPEvtMq
-         ka2Nf6ZBQPDfWlEBaDkrUrvOr+aB+38ziuJR/IfGoGJTBQr0J425KySK/9bBf6Ty7TpU
-         hwRg==
+        bh=3BwV3eqQxR2q+pjhckPY9e2FGa7fDKgyPbhSIosiRac=;
+        b=RWzwor+bVqWYRQlIlKtz9Im9rt+ctVgfNYz/qvojMqE5WP3pVKL8rNSceBnNmu89no
+         ik6VpaY1n6IWLNSGepwca8jQgNv/iEYcNQDqhqpDzaI+EhTCnZ1D0UuMmuXeBc+DoQpb
+         8bBIa/65W8UqBXTVZY1NdjldRuZgRHGMZA1/X9sbY6rk/EakGdDpzBsF0C/iHolVtU3k
+         sTKQ5AJZcaa2a5Li8Ph/FL2Wu/miW5+//3nS6ngwF5oCGk0Gwx/84Q8BwJpkL1xAaFkO
+         RFGl5VKKtXzeDlAB0yTZtR98s8so0zW+DloncaKcdM68bogbLyRExtUomWjT1gwvULzR
+         bilQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
          :references:user-agent:mime-version;
-        bh=+zWKNmxOOGJkUHebwsTYQ6mc4spYZ4aje4SzHCAk110=;
-        b=JzW6SPeZaciZt1k6SGlRkvlcpIWTzulqPMiUnEHCR5U9yX26fV91CofoFPZKt6mET/
-         O/4Qu5CynEZmUQH5dgCmgqvQSF0Pw7lo3m86srnDBuErPxE56avPZM+p4lLwiLg3MZcI
-         kNEJAYLOYkCWuxpZMEc7+RqUYKhHaPGrqjJIV3wlvevUk4WZso1RZV+ZUDrhLB4KkPVX
-         H5iN7gmi+IS/0skBOhisXsjTDcqtHsTXjlkpoNqUKWzUWLdvnuDxKef5UATTwVwLjA0n
-         n9j7hlO7UOomha+k6mx6Fuuj2lDRrlqiNGipNaCFTZmyXkVD3lIfgZDyWaCGEEnKeqiF
-         nm2Q==
-X-Gm-Message-State: AOAM531evZL916U5TsFouxH8nvzWYCUkufipx4rdyBtdvuBtfCKHtL8K
-        k0GVuV2FCWbQdpfFrWuLohw=
-X-Google-Smtp-Source: ABdhPJzf2Au88TObtH5Ip+6/fozXZbgrbKrqtODjaYoPfyP31mlfnKCZT3U8rBS2fUNxs79TyN2uQw==
-X-Received: by 2002:a17:906:56c2:: with SMTP id an2mr13415924ejc.118.1600065182668;
-        Sun, 13 Sep 2020 23:33:02 -0700 (PDT)
+        bh=3BwV3eqQxR2q+pjhckPY9e2FGa7fDKgyPbhSIosiRac=;
+        b=JV3hSPZ4qCgTPPTWGiG6/LI7QQKUbrokyNKFbktR+P4fMyTvzjH9z658P8nPT0ArHj
+         sqZxm0NgHqiWLxr0OihbLjmygsh/RiIYyuMdaH3x/WSYbxZluOP7fjJBAXpX8TYnTnVl
+         HhbSDrNvWfLWjtyZ40YJc70kS3OHaleRetIF/btr7r3KvwcKVUmyiBfWGold9vj2I0Uv
+         DQRldsEGr8O/NlU1O3QWDmEh8NWTTHBHkaS7X6nocI+QKMu+uVclU4krdY4Z8VLPVveK
+         Xbybz2t8O4PF62RmPP6mQsn1TGL5djNwQlTdph56QYACKqkQLRhEiXI+Ue/XozJxljvQ
+         l4SA==
+X-Gm-Message-State: AOAM531OycZz5XcEw4h7Q1vD6JFkK1GexanFgIYR8Z8Ang2LiIUUmMw/
+        gytgfopzjG8F38oRbVDLzJ1qq0jfxmmls7Ef
+X-Google-Smtp-Source: ABdhPJzyF0wH7O+BzLyXZXC7DAnv404JgSq4TUAfNNmUQx2qdz7opyv/dSEdSQhJN0ddtOAWkab1Sg==
+X-Received: by 2002:a17:906:4154:: with SMTP id l20mr14138366ejk.68.1600067314823;
+        Mon, 14 Sep 2020 00:08:34 -0700 (PDT)
 Received: from felia ([2001:16b8:2ddc:3000:7936:d9d0:986e:cca5])
-        by smtp.gmail.com with ESMTPSA id a26sm6962614ejk.66.2020.09.13.23.33.01
+        by smtp.gmail.com with ESMTPSA id i3sm8745206edn.55.2020.09.14.00.08.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Sep 2020 23:33:02 -0700 (PDT)
+        Mon, 14 Sep 2020 00:08:34 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
 X-Google-Original-From: Lukas Bulwahn <lukas@gmail.com>
-Date:   Mon, 14 Sep 2020 08:32:56 +0200 (CEST)
+Date:   Mon, 14 Sep 2020 09:08:32 +0200 (CEST)
 X-X-Sender: lukas@felia
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-cc:     Krzysztof Kozlowski <k.kozlowski.k@gmail.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        Pia Eichinger <pia.eichinger@st.oth-regensburg.de>,
-        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: mark linux-samsung-soc list non-moderated
-In-Reply-To: <20200914061353.17535-1-lukas.bulwahn@gmail.com>
-Message-ID: <alpine.DEB.2.21.2009140819130.17999@felia>
-References: <20200914061353.17535-1-lukas.bulwahn@gmail.com>
+To:     Joe Perches <joe@perches.com>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: make linux-usb list remarks consistent
+In-Reply-To: <da6f30896a8fd78635b3ca454d77a5292a9aa76d.camel@perches.com>
+Message-ID: <alpine.DEB.2.21.2009140834010.17999@felia>
+References: <20200912121346.2796-1-lukas.bulwahn@gmail.com> <alpine.DEB.2.21.2009121416500.3770@felia> <20200912124025.GA174230@kroah.com> <da6f30896a8fd78635b3ca454d77a5292a9aa76d.camel@perches.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -86,113 +83,57 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
 
-On Mon, 14 Sep 2020, Lukas Bulwahn wrote:
+On Sat, 12 Sep 2020, Joe Perches wrote:
 
-> In fifteen entries mentioning linux-samsung-soc@vger.kernel.org in
-> MAINTAINERS, seven entries mention the list being moderated for
-> non-subscribers and eight entries do not. Clearly only one can be right,
-> though.
+> On Sat, 2020-09-12 at 14:40 +0200, Greg Kroah-Hartman wrote:
+> > On Sat, Sep 12, 2020 at 02:19:02PM +0200, Lukas Bulwahn wrote:
+> > > 
+> > > On Sat, 12 Sep 2020, Lukas Bulwahn wrote:
+> > > 
+> > > > This patch submission will also show me if linux-usb is moderated or not.
+> > > > I have not subscribed to linux-usb and if it shows up quickly in the
+> > > > archive, the list is probably not moderated, and hence, validating the
+> > > > patch.
+> > > > 
+> > > 
+> > > The patch showed up in the archives within seconds:
+> > > 
+> > > https://lore.kernel.org/linux-usb/20200912121346.2796-1-lukas.bulwahn@gmail.com/
+> > > 
+> > > So, the linux-usb list is most likely not moderated. Patch validated.
+> > 
+> > Yes, it is not moderated, and never has been, no idea where that idea came from.
 > 
-> Joe Perches suggested that all vger.kernel.org are not moderated for
-> non-subscribers.
+> There's also linux-samsung-soc@vger.kernel.org
+> that is listed as moderated
 > 
-> Remove all the remarks from the entries following Joe's suggestion.
-> 
-> Link: https://lore.kernel.org/lkml/da6f30896a8fd78635b3ca454d77a5292a9aa76d.camel@perches.com/
-> Suggested-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on v5.9-rc5 and next-20200911
-> 
-> Krzysztof, please pick this minor non-urgent cleanup patch.
-> 
-> This patch submission will also show me if linux-samsung-soc is moderated
-> or not. I have not subscribed to linux-samsung-soc and if it shows up
-> quickly in the archive, the list is probably not moderated, and hence,
-> validating the patch.
-> 
-
-The patch showed up within seconds in the archive:
-
-https://lore.kernel.org/linux-samsung-soc/20200914061353.17535-1-lukas.bulwahn@gmail.com/
+> Are any of the vger lists actually moderated?
+>  
 
 
-So, linux-samsung-soc seems not be moderated. So, this validates this 
-patch.
+Joe, I found these five list entries with inconsistent remarks:
+
+- linux-usb@vger.kernel.org:
+  - Patch: https://lore.kernel.org/lkml/20200912121346.2796-1-lukas.bulwahn@gmail.com/  (the patch here)
+
+- linux-aspeed@lists.ozlabs.org:
+  - Patch: https://lore.kernel.org/lkml/20200912183334.22683-1-lukas.bulwahn@gmail.com/
+
+- linux-mediatek@lists.infradead.org:
+  - Patch: https://lore.kernel.org/lkml/20200914053110.23286-1-lukas.bulwahn@gmail.com/
+    - initial patch here was wrong.
+    - waiting for somebody to confirm that it is not moderated to then 
+send the correct patch.
+
+- linux-samsung-soc@vger.kernel.org:
+  - Patch: https://lore.kernel.org/lkml/20200914061353.17535-1-lukas.bulwahn@gmail.com/
+
+- linux-arm-kernel@lists.infradead.org:
+  - by 'majority vote' (131 vs. 27), it is probably moderated.
+  - no patch sent yet; patch will follow once the others are accepted.
+
+Then, more patches on adding 'exploders for non-subscribers' remarks will 
+follow.
+
 
 Lukas
- 
->  MAINTAINERS | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0d0862b19ce5..de8741d24cb0 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2399,7 +2399,7 @@ ARM/SAMSUNG EXYNOS ARM ARCHITECTURES
->  M:	Kukjin Kim <kgene@kernel.org>
->  M:	Krzysztof Kozlowski <krzk@kernel.org>
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> -L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
-> +L:	linux-samsung-soc@vger.kernel.org
->  S:	Maintained
->  Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
->  F:	Documentation/arm/samsung/
-> @@ -2441,7 +2441,7 @@ F:	drivers/media/platform/s5p-g2d/
->  
->  ARM/SAMSUNG S5P SERIES HDMI CEC SUBSYSTEM SUPPORT
->  M:	Marek Szyprowski <m.szyprowski@samsung.com>
-> -L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
-> +L:	linux-samsung-soc@vger.kernel.org
->  L:	linux-media@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/media/s5p-cec.txt
-> @@ -13321,7 +13321,7 @@ PCI DRIVER FOR SAMSUNG EXYNOS
->  M:	Jingoo Han <jingoohan1@gmail.com>
->  L:	linux-pci@vger.kernel.org
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> -L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
-> +L:	linux-samsung-soc@vger.kernel.org
->  S:	Maintained
->  F:	drivers/pci/controller/dwc/pci-exynos.c
->  
-> @@ -13729,7 +13729,7 @@ M:	Tomasz Figa <tomasz.figa@gmail.com>
->  M:	Krzysztof Kozlowski <krzk@kernel.org>
->  M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> -L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
-> +L:	linux-samsung-soc@vger.kernel.org
->  S:	Maintained
->  Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git
-> @@ -15275,7 +15275,7 @@ F:	include/linux/mfd/samsung/
->  SAMSUNG S3C24XX/S3C64XX SOC SERIES CAMIF DRIVER
->  M:	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
->  L:	linux-media@vger.kernel.org
-> -L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
-> +L:	linux-samsung-soc@vger.kernel.org
->  S:	Maintained
->  F:	drivers/media/platform/s3c-camif/
->  F:	include/media/drv-intf/s3c_camif.h
-> @@ -15324,7 +15324,7 @@ SAMSUNG SOC CLOCK DRIVERS
->  M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
->  M:	Tomasz Figa <tomasz.figa@gmail.com>
->  M:	Chanwoo Choi <cw00.choi@samsung.com>
-> -L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
-> +L:	linux-samsung-soc@vger.kernel.org
->  S:	Supported
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
->  F:	Documentation/devicetree/bindings/clock/exynos*.txt
-> @@ -15338,7 +15338,7 @@ M:	Kukjin Kim <kgene@kernel.org>
->  M:	Krzysztof Kozlowski <krzk@kernel.org>
->  M:	Andi Shyti <andi@etezian.org>
->  L:	linux-spi@vger.kernel.org
-> -L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
-> +L:	linux-samsung-soc@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/spi/spi-samsung.txt
->  F:	drivers/spi/spi-s3c*
-> -- 
-> 2.17.1
-> 
-> 
