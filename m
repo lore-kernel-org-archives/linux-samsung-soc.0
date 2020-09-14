@@ -6,90 +6,82 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5383BC2BBD1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 20:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CBD4C2BBD1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 20:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11D1520E65
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 20:25:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F69A21741
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 20:34:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600115103;
-	bh=sUpQmxDrb/xQf1mS9UlusLhaZBCxj2IZKaAP1bv3fYY=;
+	s=default; t=1600115695;
+	bh=iXzm84Bg+v7E/r9sE/u3IA6LFB3kkxzQyblhBDGiUOw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kBHRD0QZohPDfHufZNCZKy0EwiTWZrHxGPJfpTt/aXJMP5JHXZVvYWm+YkGPuz9YA
-	 jqkkyKMxISxXn6Vc3ZD0zWB+lp86SwISAIGUI8fuGWFLCZl5gSrQozTO3CeMd4bqEA
-	 ke3LTpZ7a/wZyiRcJEiIRWqpjFKq5UByyqihfDrk=
+	b=pE0rxFwjJ/KzJZxtAsKyBZfUMkgX7SeZokwGoxkV32XImFDuMSPHx+wi/fbj6yKjR
+	 P7+HtCJLqwVyx1r24N5/EZfHR38LREbfcGJv/vhGWQveOKAVNHnh338ItLEgF4EmwU
+	 RaLN8LscA/19XhhSR62juHwD5+iZz3uL8zjRYVLo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbgINUZB (ORCPT
+        id S1726095AbgINUen (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Sep 2020 16:25:01 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37662 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725979AbgINUY7 (ORCPT
+        Mon, 14 Sep 2020 16:34:43 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:34529 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726192AbgINUej (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Sep 2020 16:24:59 -0400
-Received: by mail-io1-f66.google.com with SMTP id y13so1584083iow.4;
-        Mon, 14 Sep 2020 13:24:59 -0700 (PDT)
+        Mon, 14 Sep 2020 16:34:39 -0400
+Received: by mail-il1-f193.google.com with SMTP id a8so909508ilk.1;
+        Mon, 14 Sep 2020 13:34:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=nUDjp8j5wWOQqg15UHuAS/Y7Onv8wU4rYO/koTwtI4A=;
-        b=GhKKVzAPLNSxOhYln6mbO/Gvm3xoer4APg8OFt7jufIZMk1v+YszVZWdXiIeyJxROp
-         WYeaKf0GwohifsVAfutFFmgzGEIi6A7YYhkkpQfsiLfe/atiqytUx8GHXyUvaDjFD6rD
-         KXAZVtyo73dLMPmLSDpKnsBg5DfogAv7BW+2kyNR4ft2mKgrYQt8bNJxKN8dk1bnJ3BQ
-         jjWuPei1LBmoxjpEx/ifI5ca7Ri3wIz4jIN5feFhfcz7rpEIpI3atRu7h/1ikq14EmcV
-         y5pkf2l0zeqB24PYkMbn9K7UyKQTM4j95vOL7ej/+Fy6fnO5f4QlHGcsTdFuoWVQ9Kxz
-         EM7A==
-X-Gm-Message-State: AOAM532dLiskovqZWGDqaCeAqb5PoE7i7uXBUNFxn6YhV87isozJ8HJw
-        W96NWUbaZ9X1pkB3qfkWfQ==
-X-Google-Smtp-Source: ABdhPJw8kDQwpVmCVH7WPZG7bhrAujc8CaMp2ORC3JbM+ClS0LfR9qNa+cx7SKRyXaPz0RRolRqv2A==
-X-Received: by 2002:a05:6602:1602:: with SMTP id x2mr12808391iow.22.1600115098647;
-        Mon, 14 Sep 2020 13:24:58 -0700 (PDT)
+        bh=8SKqdAzj3Ng3db21P1hBsfC6jbYXvAGRvhEU1dLjCy0=;
+        b=bT0VGJWNMWWJqIYiwTXUxGyO8aLa7XY0YxCaZO7MEygsqHl2vC7Nm2wP5Mjorpn0hR
+         9CP3UCBqgqP4euPw7D1nMPdYsTkCe1zDf+dVXcRWpDMSLiGn0FbBsQKatJqj4rTd1qxU
+         mHzugtLniASd9qQr24RADnVtQ65h86baatHlDvlzY0cdMwB1cdTgM55C1kpFFII9Wv8i
+         cK2t4Zn5e+YFBt2jXuxeC3FXGR9OcZjy5vSHtYMf9mBJQGF/6LKQQdgcy+tLFKyZZDhu
+         mic/OjfKoyXlc/8331gX4iKMGakqViXn5JAoDf2s9u7KNaawGSEHyiibEBoJRO8HSLi4
+         8jLA==
+X-Gm-Message-State: AOAM531PJ9X9FLCkS/GmY61YIFNfCbKLb3RP8Pzc5i9wqU1HsgthKhZE
+        xNSS2kS4TTqMWrn6j3Y7sMYq4uEll8H/
+X-Google-Smtp-Source: ABdhPJxTC+W/I4vkanS89qGG5f+QFVC8794VQm6dKbtPPcaUtcWXXjBDA4AnUdwyJFDUfO5I9tQDaA==
+X-Received: by 2002:a92:7711:: with SMTP id s17mr5622477ilc.236.1600115678338;
+        Mon, 14 Sep 2020 13:34:38 -0700 (PDT)
 Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id k11sm6580242iof.40.2020.09.14.13.24.56
+        by smtp.gmail.com with ESMTPSA id s6sm7288807ilp.4.2020.09.14.13.34.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2020 13:24:58 -0700 (PDT)
-Received: (nullmailer pid 181213 invoked by uid 1000);
-        Mon, 14 Sep 2020 20:24:55 -0000
-Date:   Mon, 14 Sep 2020 14:24:55 -0600
+        Mon, 14 Sep 2020 13:34:37 -0700 (PDT)
+Received: (nullmailer pid 197071 invoked by uid 1000);
+        Mon, 14 Sep 2020 20:34:36 -0000
+Date:   Mon, 14 Sep 2020 14:34:36 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: mfd: syscon: Merge Samsung Exynos
- Sysreg bindings
-Message-ID: <20200914202455.GA181160@bogus>
-References: <20200902161452.28832-1-krzk@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        linux-kernel@vger.kernel.org,
+        Kamil Konieczny <k.konieczny@samsung.com>,
+        linux-crypto@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH 1/3] dt-bindings: crypto: slimsss: Correct a typo in
+ compatible
+Message-ID: <20200914203436.GA197037@bogus>
+References: <20200903180400.2865-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200902161452.28832-1-krzk@kernel.org>
+In-Reply-To: <20200903180400.2865-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 02 Sep 2020 18:14:51 +0200, Krzysztof Kozlowski wrote:
-> The Samsung Exynos System Registers (Sysreg) bindings are quite simple -
-> just additional compatible to the syscon.  They do not have any value so
-> merge them into generic MFD syscon bindings.
+On Thu, 03 Sep 2020 20:03:58 +0200, Krzysztof Kozlowski wrote:
+> Correct a typo in the compatible - missing trailing 's'.
 > 
-> Suggested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
 > ---
-> 
-> Changes since v1:
-> 1. New patch
-> ---
->  .../bindings/arm/samsung/sysreg.yaml          | 45 -------------------
->  .../devicetree/bindings/mfd/syscon.yaml       |  2 +
->  2 files changed, 2 insertions(+), 45 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/samsung/sysreg.yaml
+>  Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Applied, thanks!
