@@ -2,68 +2,45 @@ Return-Path: <SRS0=fOmg=CX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C85FC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 15:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A477C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 16:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E77E520EDD
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 15:36:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A55E217BA
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 16:43:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSn2RJzb"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dP3pKRmp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbgINPee (ORCPT
+        id S1726168AbgINQmf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Sep 2020 11:34:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47990 "EHLO
+        Mon, 14 Sep 2020 12:42:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbgINPeH (ORCPT
+        with ESMTP id S1726172AbgINPNb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Sep 2020 11:34:07 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A12DC06174A;
-        Mon, 14 Sep 2020 08:34:06 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id a15so75289ljk.2;
-        Mon, 14 Sep 2020 08:34:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6QGIaljRH231VAywJdapvuATziOfA42BJnpSHpoIEVE=;
-        b=RSn2RJzblwAHTSK+plrf24n4vXY7/p/jXtG+T94xADRsRUBY8CHEBNgnMf/kQyrnxy
-         YieEPQGTw3bOqSmW8AmGOLLdGNA7YSDJLGbEMo+AGcNWh2pxH6XRgNcz8Cs5uCOpKkzC
-         gQyRsPyGfUidZAcBfjITy0I3uSNrMpc1xEktaPuU1N5ohOzXYJc8kuUdIFaZ6+PLkH1j
-         ej79ZdbMIfsu6iduHBqVwRFdln66PldWiNNCVGGJ8TfEu+jWybTfxA05D2VHpJvxymYA
-         bWH+DdU6BYBQ8HP2CiwI9zxdkYMl9jJc8yEPZeyVx3GZKr3H03N+EEitFWK+0KohnbKI
-         Gy2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6QGIaljRH231VAywJdapvuATziOfA42BJnpSHpoIEVE=;
-        b=YeYWECqoKGgbUSdB7xoMSOD7SkTRDc++YfYAp4jk2pcoR4iYbHtzsBxOMMgZAAkNIO
-         8QtdEuJPnlwOBQpkNGad07r0lsOxpKt1h2+UZ6i/kHMRtFHCAjel0r/VHQqr7/FtYbAe
-         tuG1V9nzlm84tLTlUTgV0QsgfadauDyZrs4kQmrzDhELpX9kRusWxY/R+w09JbzqL//8
-         TYkG0uoblChY5NtJ0UNIh+/C3iH4CPRt+4ThnH1eB3Vd9C4HM1RMAA0bqOKwZDTSwBwh
-         C48ANhNXerj6QSjh4FHIcX9eV8JXMcoF/jlBJK9h8vTDa7iPvTC9mCY2bplQ9NeFWN3p
-         W44g==
-X-Gm-Message-State: AOAM533/5JLXyTteFDb4tICppE4xrIsfS8mNU4Jh3XRiNR6b8pOfPFxa
-        xc5ym6NM7k92D0ZIoIA23D4=
-X-Google-Smtp-Source: ABdhPJwhd/LhTRq+JWSW5bzIk6PAoYzRDD2WFOZyHy/0zgbs8GXUoAwbOWmbxU7cQ/01j9Vl+1ORow==
-X-Received: by 2002:a05:651c:200b:: with SMTP id s11mr5091489ljo.196.1600097644849;
-        Mon, 14 Sep 2020 08:34:04 -0700 (PDT)
-Received: from wasted.omprussia.ru ([2a00:1fa0:44ca:acb2:3cb7:6882:b0eb:1108])
-        by smtp.gmail.com with ESMTPSA id l129sm3367001lfd.191.2020.09.14.08.34.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Sep 2020 08:34:04 -0700 (PDT)
-Subject: Re: [PATCH 03/17] drm/exynos: stop setting DMA_ATTR_NON_CONSISTENT
-To:     Christoph Hellwig <hch@lst.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mon, 14 Sep 2020 11:13:31 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 226CBC06174A;
+        Mon, 14 Sep 2020 08:13:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=RqQGv7rUrofRqLyMSzfEtcHVgVUslC8cDoNR577KrIg=; b=dP3pKRmpC+I0E+dOSbraRXJ35X
+        3haQwB40uPuLpGR5zn67wQbMCYeYUDIDCnlsB5tNCLi9vaoDWIjbKg2ty0ncKAbUYHiAWQ1Gwe4T2
+        /L1d3ii2rUMCke8WZymWHb2tl/HocPOnGFPqgOwVy0kntsQ5+2r+a5DBRhRIc7Qwt5AhJHft+rUwc
+        cUuL4BH3aNOU3nrCkiiuv/cztMGgjnYHVBqE36sUV2hPE4iUig7eK9l316jWvenjHMhEIQ2Nevj2v
+        NzaWOE2Dnmj9Uqr/OYUKSLadMvLX2JkZjrKxFODSeBkgfvxBjLKXD/2ClVZgj/x7V7GdULKR4vyHX
+        B3N9jL+g==;
+Received: from 089144214092.atnat0023.highway.a1.net ([89.144.214.92] helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kHqAB-0003UL-04; Mon, 14 Sep 2020 15:13:03 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
         Joonyoung Shim <jy0922.shim@samsung.com>,
@@ -81,31 +58,128 @@ Cc:     Stefan Richter <stefanr@s5r6.in-berlin.de>,
         nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
         linux-scsi@vger.kernel.org, linux-mm@kvack.org,
         alsa-devel@alsa-project.org
+Subject: [PATCH 12/17] 53c700: convert to dma_alloc_noncoherent
+Date:   Mon, 14 Sep 2020 16:44:28 +0200
+Message-Id: <20200914144433.1622958-13-hch@lst.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200914144433.1622958-1-hch@lst.de>
 References: <20200914144433.1622958-1-hch@lst.de>
- <20200914144433.1622958-4-hch@lst.de>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Message-ID: <7a1d11c2-0fc5-e110-dabe-960e516bb343@gmail.com>
-Date:   Mon, 14 Sep 2020 18:34:02 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <20200914144433.1622958-4-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 9/14/20 5:44 PM, Christoph Hellwig wrote:
+Use the new non-coherent DMA API including proper ownership transfers.
 
-> DMA_ATTR_NON_CONSISTENT is a no-op except on PARISC and some mips
-> configs, so don't set it in this ARM specific driver.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/scsi/53c700.c | 11 +++++++++--
+ drivers/scsi/53c700.h | 16 ++++++++--------
+ 2 files changed, 17 insertions(+), 10 deletions(-)
 
-   Hm, PARICS and ARM capitalized but mips in lower case? :-)
+diff --git a/drivers/scsi/53c700.c b/drivers/scsi/53c700.c
+index 9a343f8ecb6c3e..5117d90ccd9edf 100644
+--- a/drivers/scsi/53c700.c
++++ b/drivers/scsi/53c700.c
+@@ -269,18 +269,25 @@ NCR_700_get_SXFER(struct scsi_device *SDp)
+ 					      spi_period(SDp->sdev_target));
+ }
+ 
++static inline dma_addr_t virt_to_dma(struct NCR_700_Host_Parameters *h, void *p)
++{
++	return h->pScript + ((uintptr_t)p - (uintptr_t)h->script);
++}
++
+ static inline void dma_sync_to_dev(struct NCR_700_Host_Parameters *h,
+ 		void *addr, size_t size)
+ {
+ 	if (h->noncoherent)
+-		dma_cache_sync(h->dev, addr, size, DMA_TO_DEVICE);
++		dma_sync_single_for_device(h->dev, virt_to_dma(h, addr),
++					   size, DMA_BIDIRECTIONAL);
+ }
+ 
+ static inline void dma_sync_from_dev(struct NCR_700_Host_Parameters *h,
+ 		void *addr, size_t size)
+ {
+ 	if (h->noncoherent)
+-		dma_cache_sync(h->dev, addr, size, DMA_FROM_DEVICE);
++		dma_sync_single_for_device(h->dev, virt_to_dma(h, addr), size,
++					   DMA_BIDIRECTIONAL);
+ }
+ 
+ struct Scsi_Host *
+diff --git a/drivers/scsi/53c700.h b/drivers/scsi/53c700.h
+index 0f545b05fe611d..c9f8c497babb3d 100644
+--- a/drivers/scsi/53c700.h
++++ b/drivers/scsi/53c700.h
+@@ -423,33 +423,33 @@ struct NCR_700_Host_Parameters {
+ #define NCR_710_MIN_XFERP	0
+ #define NCR_700_MIN_PERIOD	25 /* for SDTR message, 100ns */
+ 
+-#define script_patch_32(dev, script, symbol, value) \
++#define script_patch_32(h, script, symbol, value) \
+ { \
+ 	int i; \
+ 	dma_addr_t da = value; \
+ 	for(i=0; i< (sizeof(A_##symbol##_used) / sizeof(__u32)); i++) { \
+ 		__u32 val = bS_to_cpu((script)[A_##symbol##_used[i]]) + da; \
+ 		(script)[A_##symbol##_used[i]] = bS_to_host(val); \
+-		dma_sync_to_dev((dev), &(script)[A_##symbol##_used[i]], 4); \
++		dma_sync_to_dev((h), &(script)[A_##symbol##_used[i]], 4); \
+ 		DEBUG((" script, patching %s at %d to %pad\n", \
+ 		       #symbol, A_##symbol##_used[i], &da)); \
+ 	} \
+ }
+ 
+-#define script_patch_32_abs(dev, script, symbol, value) \
++#define script_patch_32_abs(h, script, symbol, value) \
+ { \
+ 	int i; \
+ 	dma_addr_t da = value; \
+ 	for(i=0; i< (sizeof(A_##symbol##_used) / sizeof(__u32)); i++) { \
+ 		(script)[A_##symbol##_used[i]] = bS_to_host(da); \
+-		dma_sync_to_dev((dev), &(script)[A_##symbol##_used[i]], 4); \
++		dma_sync_to_dev((h), &(script)[A_##symbol##_used[i]], 4); \
+ 		DEBUG((" script, patching %s at %d to %pad\n", \
+ 		       #symbol, A_##symbol##_used[i], &da)); \
+ 	} \
+ }
+ 
+ /* Used for patching the SCSI ID in the SELECT instruction */
+-#define script_patch_ID(dev, script, symbol, value) \
++#define script_patch_ID(h, script, symbol, value) \
+ { \
+ 	int i; \
+ 	for(i=0; i< (sizeof(A_##symbol##_used) / sizeof(__u32)); i++) { \
+@@ -457,13 +457,13 @@ struct NCR_700_Host_Parameters {
+ 		val &= 0xff00ffff; \
+ 		val |= ((value) & 0xff) << 16; \
+ 		(script)[A_##symbol##_used[i]] = bS_to_host(val); \
+-		dma_sync_to_dev((dev), &(script)[A_##symbol##_used[i]], 4); \
++		dma_sync_to_dev((h), &(script)[A_##symbol##_used[i]], 4); \
+ 		DEBUG((" script, patching ID field %s at %d to 0x%x\n", \
+ 		       #symbol, A_##symbol##_used[i], val)); \
+ 	} \
+ }
+ 
+-#define script_patch_16(dev, script, symbol, value) \
++#define script_patch_16(h, script, symbol, value) \
+ { \
+ 	int i; \
+ 	for(i=0; i< (sizeof(A_##symbol##_used) / sizeof(__u32)); i++) { \
+@@ -471,7 +471,7 @@ struct NCR_700_Host_Parameters {
+ 		val &= 0xffff0000; \
+ 		val |= ((value) & 0xffff); \
+ 		(script)[A_##symbol##_used[i]] = bS_to_host(val); \
+-		dma_sync_to_dev((dev), &(script)[A_##symbol##_used[i]], 4); \
++		dma_sync_to_dev((h), &(script)[A_##symbol##_used[i]], 4); \
+ 		DEBUG((" script, patching short field %s at %d to 0x%x\n", \
+ 		       #symbol, A_##symbol##_used[i], val)); \
+ 	} \
+-- 
+2.28.0
 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-[...]
-
-MBR, Sergei
