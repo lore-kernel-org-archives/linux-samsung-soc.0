@@ -2,163 +2,173 @@ Return-Path: <SRS0=fOmg=CX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD287C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 00:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7FEC433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 06:14:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9446C221E7
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 00:03:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF534206F4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Sep 2020 06:14:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aB8mtERB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U+xrXrSD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725989AbgINADj (ORCPT
+        id S1726081AbgINGOK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 13 Sep 2020 20:03:39 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:29947 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbgINADf (ORCPT
+        Mon, 14 Sep 2020 02:14:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45868 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbgINGOG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 13 Sep 2020 20:03:35 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200914000332epoutp044ac609e57f1e99cecedb9a4b670de8fa~0fY0mcUFC3147331473epoutp04K
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2020 00:03:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200914000332epoutp044ac609e57f1e99cecedb9a4b670de8fa~0fY0mcUFC3147331473epoutp04K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1600041812;
-        bh=qDu6UuoR1j78Y94GV7MM4oVV/smj/mjEvM/pJIQx1oE=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=aB8mtERBFvIWaAxq37bCavViN32BY1yON4WF1OMUuZ7nF7pYGA4SZu9MTtDDuVaJP
-         Tpbzd3AU0i0pIUY2qZCaEf15mE8zIoNV0ppQW8IpPjeE052umRKu0NsP0wjQ/QpilR
-         pWAnrsHc68J7HLH40eyw6JEtflWDILkLsrM4/jNU=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200914000332epcas1p428a2a2a7d94877e6f217dc3f416021ee~0fYz6368S3186631866epcas1p4V;
-        Mon, 14 Sep 2020 00:03:32 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.157]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4BqRQm6gLXzMqYkv; Mon, 14 Sep
-        2020 00:03:28 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        35.B7.20696.F43BE5F5; Mon, 14 Sep 2020 09:03:27 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200914000327epcas1p4d83c4cf93f3661c3c8787b2261b8a526~0fYvu_SCq2542825428epcas1p4C;
-        Mon, 14 Sep 2020 00:03:27 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200914000327epsmtrp1441c3c23f39c7c8b32249cebf4c06ee5~0fYvuICRQ0656106561epsmtrp1F;
-        Mon, 14 Sep 2020 00:03:27 +0000 (GMT)
-X-AuditID: b6c32a39-eebff700000050d8-2d-5f5eb34f79d6
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        66.A2.08382.F43BE5F5; Mon, 14 Sep 2020 09:03:27 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200914000327epsmtip2cfb48a96f91d45f9133e1a880291f55d~0fYvfkwot2499624996epsmtip2T;
-        Mon, 14 Sep 2020 00:03:27 +0000 (GMT)
-Subject: Re: [PATCH v3 3/3] PM / devfreq: event: Change prototype of
- devfreq_event_get_edev_by_phandle function
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        lukasz.luba@arm.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <6ed7a604-d10d-c2e1-34cf-d22b6fa083f8@samsung.com>
-Date:   Mon, 14 Sep 2020 09:15:39 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
-MIME-Version: 1.0
-In-Reply-To: <20200910120812.GC2206@pi3>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJJsWRmVeSWpSXmKPExsWy7bCmnq7/5rh4g76fJhbnz29gtzjb9Ibd
-        YtPja6wWl3fNYbP43HuE0WLG+X1MFgubWtgtbjeuYHPg8Fgzbw2jx6ZVnWwem5fUe/RtWcXo
-        8XmTXABrVLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+Arltm
-        DtApSgpliTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwCywK94sTc4tK8dL3k/FwrQwMD
-        I1OgwoTsjId/rjIVvOGuaJ+9m62B8SRnFyMnh4SAicShw39YQGwhgR2MEhtnC3cxcgHZnxgl
-        mjdfYYJwvjFKHFq+BMjhAOs4f0cAomEvo0TbmWQI+z2jxP8FpiC2sEChxPVjV9hAbBEBTYnr
-        f7+zgsxhFrjIKNH59Ro7SIJNQEti/4sbYEX8AooSV388ZgSxeQXsJM5fawKrYRFQlbh0ZDMT
-        iC0qECZxclsLVI2gxMmZT8Cu5hTQkGh49gasnllAXOLWk/lMELa8xPa3c5ghvlzIIXHwqxyE
-        7SKx5MJNNghbWOLV8S3sELaUxMv+Nii7WmLlySNsIEdLCHQwSmzZf4EVImEssX/pZHBAMAN9
-        tn6XPkRYUWLn77mMEHv5JN597WGFhBWvREebEESJssTlB3eZIGxJicXtnWwTGJVmIflmFpIP
-        ZiH5YBbCsgWMLKsYxVILinPTU4sNC0yRo3oTIziNalnuYJz+9oPeIUYmDsZDjBIczEoivK4p
-        sfFCvCmJlVWpRfnxRaU5qcWHGE2B4TuRWUo0OR+YyPNK4g1NjYyNjS1MDM1MDQ2VxHkf3lKI
-        FxJITyxJzU5NLUgtgulj4uCUamBSepT5+OdLrb+uZxJn7qmpva1w9+y+S4ELWJ6JTLe2ejyz
-        /kLV9MM2FdJv5ryTXJ65Uv7b1aTZPw9OmpowhU8uzWSNmqfvwo0pRboejnNP2XjdivVe9sP/
-        Y9P04vV/v8/41F+yNnXB4Q9OChv2t4YG3XRVWPzKPTlStddUYcXNyp6d07yyRT//mV52/IyU
-        hUdExl5bNoEF+97KJz3nTF9/oNVwp3JOblj+nkPlUcIPpSpt3r0pLJioFhp0X+PXym/5m29H
-        HUiTeXbI4KF+gccWZb8n3+VvRWss4PFf3Ps2/MPPcw/U0tTZb5tbekjM8bX0dw7SOXzBOPCJ
-        xpsTm7/Mvjjvmvj6tTkis7YIVE99psRSnJFoqMVcVJwIALp5KVcsBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplkeLIzCtJLcpLzFFi42LZdlhJXtd/c1y8wapd8hbnz29gtzjb9Ibd
-        YtPja6wWl3fNYbP43HuE0WLG+X1MFgubWtgtbjeuYHPg8Fgzbw2jx6ZVnWwem5fUe/RtWcXo
-        8XmTXABrFJdNSmpOZllqkb5dAlfGwz9XmQrecFe0z97N1sB4krOLkYNDQsBE4vwdgS5GTg4h
-        gd2MEu9PiYHYEgKSEtMuHmWGKBGWOHy4uIuRC6jkLaPE+unz2UBqhAUKJa4fuwJmiwhoSlz/
-        +50VpIhZ4CKjxIufv9gght5mlNj5xB/EZhPQktj/4gZYnF9AUeLqj8eMIDavgJ3E+WtN7CA2
-        i4CqxKUjm5lAbFGBMImdSx4zQdQISpyc+YQFxOYU0JBoePYGrJ5ZQF3iz7xLzBC2uMStJ/OZ
-        IGx5ie1v5zBPYBSehaR9FpKWWUhaZiFpWcDIsopRMrWgODc9t9iwwDAvtVyvODG3uDQvXS85
-        P3cTIzimtDR3MG5f9UHvECMTB+MhRgkOZiURXteU2Hgh3pTEyqrUovz4otKc1OJDjNIcLEri
-        vDcKF8YJCaQnlqRmp6YWpBbBZJk4OKUamFgK/y+axJUTeYal0tum9t7yRwaMG7YohFdyNbQZ
-        mBjnf3/C2xb872HX62suayNZe548ci9vctLNCpxZ3pPRfsW/Y5JK9RYdv28fb8o2aMZ8mSe1
-        QG8rcynnN32Nxe2cbyt/nfpw/O4jRy5em5Z4zqJTxocTOde33jpw6z7DmuZ5zFwTloY3a1U2
-        dj4wMlaTM/A7uPGW5MoVzNMb4/51tu46PTf0yd09hxfvNdPo6Jm00fYBT+3ZzaclX61lsFa/
-        aZmTn6kfosa0NlXLk7+F5Zvisfnb+cy2Ptk2bcZRSZv9Mp+S97cu2pPXZXZJso5TQVx5770c
-        pw6/dwFHLsX87lS8N7vvzseW5RLWmYtalViKMxINtZiLihMBs/vDhRgDAAA=
-X-CMS-MailID: 20200914000327epcas1p4d83c4cf93f3661c3c8787b2261b8a526
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200908101231epcas1p4b6262aae4d5272f6cce366ac1ffbb955
-References: <20200908102447.15097-1-cw00.choi@samsung.com>
-        <CGME20200908101231epcas1p4b6262aae4d5272f6cce366ac1ffbb955@epcas1p4.samsung.com>
-        <20200908102447.15097-4-cw00.choi@samsung.com> <20200910120812.GC2206@pi3>
+        Mon, 14 Sep 2020 02:14:06 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F280AC06174A;
+        Sun, 13 Sep 2020 23:14:05 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id i26so21440921ejb.12;
+        Sun, 13 Sep 2020 23:14:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=rIC1oHrjeeueYz0HBFCkUv0ag151JIWmWoXarLnIZ+0=;
+        b=U+xrXrSDw4TAeqmWS5MUGHGG2D46SgGKRCAiPepOWuqpLsn0bLYNR2enUp8NXYi6g3
+         vLiKwgup66PPSTNeN9SJfuqjvdiDxtc2wvUXQJ7PI5UVXMzc4bNndtvu3NVq8Q2LLtGZ
+         jr1zbApXt4OzE3NdcscJPlS/GBKAOtROtHG5RFuke677Gc1VhiFo0nbisXSeBiCzfaO6
+         9dbajD5pPZPDSJVyfTPh5Avn8JRo+zpdsYWmwiXzIxtrDME7xU7ThX6P2tlDC/JIxAdC
+         JQHm21cS7XFAPh0fQp0y5YYzZp/N/h8qDacwzlbtJyPhM2YFcB4XU482n6Hanfc8E2bc
+         fgZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rIC1oHrjeeueYz0HBFCkUv0ag151JIWmWoXarLnIZ+0=;
+        b=l8ngG3XsCewBTVH+iJNcrHL4hsq2LSB1lAtR6JXro27/J0qBfuzVfxYBuI9ympxPrK
+         d2s1uX++mKshgzkX1fO5KaygK+Kx/+S85XZAiRdDPyR7bpSLrQ27Dzv4YUCNo0hUBrmV
+         M53/6goGbnZIj3UzVVXVje9i6RsZyEatlmowBkeq6l8OXjG0bOz0mW+txgiFtbimQHHD
+         QUFMCTD5bAnmU8CTy/8JW/NxS8lF6HwnZ/7kcNGrhtXbXQJ8FAR7izV+ZVayy6K2/Kqj
+         fW/BJCEmYNR80dSjwJkyRKaatp7kSieB21gdiN5UYokdckXNEO+zHXpfZ9l4S2jSQSzY
+         KcHw==
+X-Gm-Message-State: AOAM530zlU5fJk7INmOz3OtOSVBeyaclMxvRJIblP+u73yKxCIfFJCXz
+        5GEL2hM3zUaG7K5vhbVqlRQ=
+X-Google-Smtp-Source: ABdhPJxhBiboB7fvBSZBflKPyaSYrlFG8klS6slvEQ6v0pbn8KL5pzjo9IHEjVDrbIZLulUhgCKyWw==
+X-Received: by 2002:a17:906:72d2:: with SMTP id m18mr13009569ejl.220.1600064044596;
+        Sun, 13 Sep 2020 23:14:04 -0700 (PDT)
+Received: from felia.fritz.box ([2001:16b8:2ddc:3000:7936:d9d0:986e:cca5])
+        by smtp.gmail.com with ESMTPSA id dv6sm6865615ejb.7.2020.09.13.23.14.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Sep 2020 23:14:04 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Krzysztof Kozlowski <k.kozlowski.k@gmail.com>,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        Pia Eichinger <pia.eichinger@st.oth-regensburg.de>,
+        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: mark linux-samsung-soc list non-moderated
+Date:   Mon, 14 Sep 2020 08:13:53 +0200
+Message-Id: <20200914061353.17535-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 9/10/20 9:08 PM, Krzysztof Kozlowski wrote:
-> On Tue, Sep 08, 2020 at 07:24:47PM +0900, Chanwoo Choi wrote:
->> Previously, devfreq core support 'devfreq-events' property in order to get
->> the devfreq-event device by phandle. But, 'devfreq-events' property name is
->> not proper on devicetree binding because this name doesn't mean
->> the any h/w attribute.
->>
->> The devfreq-event core hand over the rights to decide the property name
->> for getting the devfreq-event device on devicetree. Each devfreq-event driver
->> will decide the property name on devicetree binding and then pass
->> the their own property name to devfreq_event_get_edev_by_phandle function.
->>
->> And change the prototype of devfreq_event_get_edev_count function
->> because of used deprecated 'devfreq-events' property.
->>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>  drivers/devfreq/devfreq-event.c         | 14 ++++++++------
->>  drivers/devfreq/exynos-bus.c            |  5 +++--
->>  drivers/devfreq/rk3399_dmc.c            |  2 +-
->>  drivers/memory/samsung/exynos5422-dmc.c |  6 ++++--
->>  include/linux/devfreq-event.h           | 14 ++++++++++----
->>  5 files changed, 26 insertions(+), 15 deletions(-)
->>
-> 
-> Feel free to take it via devfreq tree. I don't expect conflicts around
-> memory/samsung/exynos5422-dmc.c.
-> 
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
+In fifteen entries mentioning linux-samsung-soc@vger.kernel.org in
+MAINTAINERS, seven entries mention the list being moderated for
+non-subscribers and eight entries do not. Clearly only one can be right,
+though.
 
-Thanks for review. Applied them to devfreq-next.
+Joe Perches suggested that all vger.kernel.org are not moderated for
+non-subscribers.
 
+Remove all the remarks from the entries following Joe's suggestion.
+
+Link: https://lore.kernel.org/lkml/da6f30896a8fd78635b3ca454d77a5292a9aa76d.camel@perches.com/
+Suggested-by: Joe Perches <joe@perches.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on v5.9-rc5 and next-20200911
+
+Krzysztof, please pick this minor non-urgent cleanup patch.
+
+This patch submission will also show me if linux-samsung-soc is moderated
+or not. I have not subscribed to linux-samsung-soc and if it shows up
+quickly in the archive, the list is probably not moderated, and hence,
+validating the patch.
+
+ MAINTAINERS | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0d0862b19ce5..de8741d24cb0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2399,7 +2399,7 @@ ARM/SAMSUNG EXYNOS ARM ARCHITECTURES
+ M:	Kukjin Kim <kgene@kernel.org>
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
+ F:	Documentation/arm/samsung/
+@@ -2441,7 +2441,7 @@ F:	drivers/media/platform/s5p-g2d/
+ 
+ ARM/SAMSUNG S5P SERIES HDMI CEC SUBSYSTEM SUPPORT
+ M:	Marek Szyprowski <m.szyprowski@samsung.com>
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/s5p-cec.txt
+@@ -13321,7 +13321,7 @@ PCI DRIVER FOR SAMSUNG EXYNOS
+ M:	Jingoo Han <jingoohan1@gmail.com>
+ L:	linux-pci@vger.kernel.org
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ F:	drivers/pci/controller/dwc/pci-exynos.c
+ 
+@@ -13729,7 +13729,7 @@ M:	Tomasz Figa <tomasz.figa@gmail.com>
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git
+@@ -15275,7 +15275,7 @@ F:	include/linux/mfd/samsung/
+ SAMSUNG S3C24XX/S3C64XX SOC SERIES CAMIF DRIVER
+ M:	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+ L:	linux-media@vger.kernel.org
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ F:	drivers/media/platform/s3c-camif/
+ F:	include/media/drv-intf/s3c_camif.h
+@@ -15324,7 +15324,7 @@ SAMSUNG SOC CLOCK DRIVERS
+ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+ M:	Tomasz Figa <tomasz.figa@gmail.com>
+ M:	Chanwoo Choi <cw00.choi@samsung.com>
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
+ F:	Documentation/devicetree/bindings/clock/exynos*.txt
+@@ -15338,7 +15338,7 @@ M:	Kukjin Kim <kgene@kernel.org>
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ M:	Andi Shyti <andi@etezian.org>
+ L:	linux-spi@vger.kernel.org
+-L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/spi/spi-samsung.txt
+ F:	drivers/spi/spi-s3c*
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.17.1
+
