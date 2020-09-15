@@ -2,61 +2,61 @@ Return-Path: <SRS0=0LAj=CY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62899C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 13:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C72AC43461
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 13:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12E8F21D24
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 13:42:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 249C421D1B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 13:43:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bggXbn95"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iTkCkO/f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726507AbgIONmX (ORCPT
+        id S1726539AbgIONmU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 09:42:23 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:45221 "EHLO
+        Tue, 15 Sep 2020 09:42:20 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45220 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726493AbgIONkq (ORCPT
+        with ESMTP id S1726507AbgIONkr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 09:40:46 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200915133308euoutp018d95b06c01606681a3f0c3f7f9be865b~0_E_4bECp0438004380euoutp01L
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2020 13:33:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200915133308euoutp018d95b06c01606681a3f0c3f7f9be865b~0_E_4bECp0438004380euoutp01L
+        Tue, 15 Sep 2020 09:40:47 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200915133309euoutp01d6d56cca360f2559e3755f6d1c7ed302~0_E-s47p60402404024euoutp01q
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2020 13:33:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200915133309euoutp01d6d56cca360f2559e3755f6d1c7ed302~0_E-s47p60402404024euoutp01q
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1600176788;
-        bh=aCmn9Ak4bEbvr1/sdV2tQtGRlMYwWNIVBMKU464Jy4g=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=bggXbn95koPqKmlSb4pd5swQOP38tckH4pfQMBtQRbK/GPEUMAG45wrm9FVm2seEx
-         uGbdjjdKHoa4ZJhEXml7WjObV5IEcU1tiRrIwIcIEMgVccXKHXk6h4V6QpVz1OuYqR
-         5EqORQ8nBbmrywfD4ifddy63dmhVichGXCpiL4Zo=
+        s=mail20170921; t=1600176789;
+        bh=eCw5I8pYrfFFBjFsoG+EmC7RVNzBZd5XzgYc1xY4fjE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iTkCkO/fHbS2vFkNgbifPDhE9o0FQmEU7JsTfggXwYHd6cdCy8vAjMe2yrEuN8/9h
+         sJhYyDqHK8OvA401Wa/EQni9+U2Ein1gi4liYSlPXLDc0zFwJXIHnhLLVdgq5cy4+k
+         X2g6kamiVS5h2xDTAbKyf6cnuUx++wqYaLAv/snk=
 Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200915133308eucas1p1152bdf446eb089d21d0cf1f47f1bbae5~0_E_nzvwV0214102141eucas1p1b;
-        Tue, 15 Sep 2020 13:33:08 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 58.11.05997.492C06F5; Tue, 15
-        Sep 2020 14:33:08 +0100 (BST)
+        20200915133309eucas1p1ddc99ebde39abfe133ba3aae0d52e79d~0_E-YJoin0220202202eucas1p1H;
+        Tue, 15 Sep 2020 13:33:09 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id E8.11.05997.592C06F5; Tue, 15
+        Sep 2020 14:33:09 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200915133308eucas1p2a9a4354abbe3af95f9978b7e6adbe3a1~0_E_RC9AT1220112201eucas1p2v;
-        Tue, 15 Sep 2020 13:33:08 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        20200915133309eucas1p27768c75d4391f646b3715f29ff0c452a~0_E-BcY6K2313723137eucas1p2D;
+        Tue, 15 Sep 2020 13:33:09 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200915133308eusmtrp17ffc2f06c7fc963e53c3f244c90cd876~0_E_QV8B70801708017eusmtrp1S;
-        Tue, 15 Sep 2020 13:33:08 +0000 (GMT)
-X-AuditID: cbfec7f4-65dff7000000176d-8d-5f60c29445f6
+        20200915133309eusmtrp10283eb4504d067ea62811fd959cec066~0_E-ASkam0804908049eusmtrp1H;
+        Tue, 15 Sep 2020 13:33:09 +0000 (GMT)
+X-AuditID: cbfec7f4-677ff7000000176d-8e-5f60c295ada6
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 40.EF.06017.492C06F5; Tue, 15
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 62.20.06314.492C06F5; Tue, 15
         Sep 2020 14:33:08 +0100 (BST)
 Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200915133307eusmtip246487716a187a2d20bb45e049285b3b9~0_E91QGUQ0270202702eusmtip26;
-        Tue, 15 Sep 2020 13:33:07 +0000 (GMT)
+        20200915133308eusmtip2ca76179ebe2323342c260df289195709~0_E_lwbuQ0271402714eusmtip21;
+        Tue, 15 Sep 2020 13:33:08 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -65,83 +65,250 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Robin Murphy <robin.murphy@arm.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 0/2] Exynos4-IS: adapt for the planned ARM IOMMU-DMA changes
-Date:   Tue, 15 Sep 2020 15:32:54 +0200
-Message-Id: <20200915133256.1210-1-m.szyprowski@samsung.com>
+Subject: [PATCH 2/2] media: platform: exynos4-is: add support for generic
+ IOMMU-DMA glue code
+Date:   Tue, 15 Sep 2020 15:32:56 +0200
+Message-Id: <20200915133256.1210-3-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAIsWRmVeSWpSXmKPExsWy7djP87pTDiXEG1zuUrLYOGM9q8X58xvY
-        LXo2bGW1mHF+H5PF2iN32S2WbfrDZHHwwxNWi/anL5kdODzWzFvD6LFpVSebR9+WVYwenzfJ
-        BbBEcdmkpOZklqUW6dslcGXsPbSUpWAFZ8W9dQdZGhifs3cxcnJICJhIbJ61g62LkYtDSGAF
-        o8TqyS9YIZwvjBJTWg+zQzifGSXmr3/OCNPy9dktqKrljBIb9z5ih2vpeDWRBaSKTcBQoutt
-        FxuILSLgJLFw1l+wImaBPiaJK/MWs4IkhAV8JCaeewVmswioSqzdsh6omYODV8BGov9fHcQ2
-        eYnVGw4wg/RKCNxmk/i8ZisLRMJFYs+zVqgvhCVeHd8CZctInJ7cwwLR0Mwo8fDcWnYIp4dR
-        4nLTDKgnrCXunPvFBrKNWUBTYv0ufYiwo8TcA+vZQcISAnwSN94KgoSZgcxJ26YzQ4R5JTra
-        hCCq1SRmHV8Ht/bghUvMELaHRPOhDUwgtpBArMS9nedYJzDKzULYtYCRcRWjeGppcW56arFR
-        Xmq5XnFibnFpXrpecn7uJkZgOjj97/iXHYy7/iQdYhTgYFTi4U0oj48XYk0sK67MPcQowcGs
-        JMLrdPZ0nBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe40UvY4UE0hNLUrNTUwtSi2CyTBycUg2M
-        wue9xa/q9kvqxKq55L5TW3Rq+wnJRZXm75qzVd7/sDwY53jvV4tWPnfIj+v7ObY98jPgvmy6
-        NbpIm2v+9+q1pp4Tz3x2nDzr6NVfywODNc5MnZA6wUWqR5Ej/U7efYfks7+5yjeu3hVZrm68
-        ZO0yDuYVrtM90neY/9CKVL9ff0507tdsSZM9SizFGYmGWsxFxYkA5OGh0AMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsVy+t/xe7pTDiXEGyz4wmmxccZ6Vovz5zew
+In-Reply-To: <20200915133256.1210-1-m.szyprowski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLIsWRmVeSWpSXmKPExsWy7djPc7pTDyXEGyz+KW6xccZ6Vovz5zew
         W/Rs2MpqMeP8PiaLtUfuslss2/SHyeLghyesFu1PXzI7cHismbeG0WPTqk42j74tqxg9Pm+S
-        C2CJ0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0MvY
-        e2gpS8EKzop76w6yNDA+Z+9i5OSQEDCR+PrsFmsXIxeHkMBSRonfd36yQSRkJE5Oa2CFsIUl
-        /lzrYoMo+sQo8WvKcbAiNgFDia63XWC2iICLxP49T5lBipgFJjFJ/O7fzgiSEBbwkZh47hXY
-        JBYBVYm1W9azdDFycPAK2Ej0/6uDWCAvsXrDAeYJjDwLGBlWMYqklhbnpucWG+kVJ+YWl+al
-        6yXn525iBAbhtmM/t+xg7HoXfIhRgINRiYc3oTw+Xog1say4MvcQowQHs5IIr9PZ03FCvCmJ
-        lVWpRfnxRaU5qcWHGE2Bdk9klhJNzgdGSF5JvKGpobmFpaG5sbmxmYWSOG+HwMEYIYH0xJLU
-        7NTUgtQimD4mDk6pBkbVP1Z/Psxw/Z25wYZnjXrsbzZW5g/rlHo2L3l86v9s9yO2iQEf+4Ne
-        5iV2163zspLbs9ZOKfL+yp27bydc+nBE72XBcuV6gx8hr3Zk/+Pv7tv555htphn/rGmB0brZ
-        f/d3i6iJLYzI2LpNg+fN8hkuEuvzzhTP21/FpXly+/Gda2xWL92zvuirEktxRqKhFnNRcSIA
-        Wsg61lgCAAA=
-X-CMS-MailID: 20200915133308eucas1p2a9a4354abbe3af95f9978b7e6adbe3a1
+        C2CJ4rJJSc3JLEst0rdL4MpYMPsGU8FJw4q1E+4yNjDO0uxi5OSQEDCRmNV2nb2LkYtDSGAF
+        o8Ti11OYIJwvjBKfVp6BynxmlJjw5TITTMuF3XPYIBLLGSU2LGlAaPn84wwbSBWbgKFE19su
+        MFtEwEli4ay/YKOYBfqYJK7MW8wKkhAWiJfYMmM3C4jNIqAqcW7OdrAVvAI2Et/n/WOBWCcv
+        sXrDAWYQm1PAVuLGu2fMEPH3bBLnv4lB2C4SbctvQ50nLPHq+BZ2CFtG4vTkHhaQxRICzYwS
+        D8+tZYdwehglLjfNYISospa4c+4X0KkcQOdpSqzfpQ8RdpT49XMJI0hYQoBP4sZbQZAwM5A5
+        adt0Zogwr0RHmxBEtZrErOPr4NYevHAJ6kwPiabWNdAAmsAocXj7NsYJjPKzEJYtYGRcxSie
+        Wlqcm55abJSXWq5XnJhbXJqXrpecn7uJEZgoTv87/mUH464/SYcYBTgYlXh4E8rj44VYE8uK
+        K3MPMUpwMCuJ8DqdPR0nxJuSWFmVWpQfX1Sak1p8iFGag0VJnNd40ctYIYH0xJLU7NTUgtQi
+        mCwTB6dUA6PGpJmMjvNrOD6vWjEx5Zzcq/06B/Zae4Tau06JOlbjx8xwNtZt67wVpZNrPC4I
+        hKfPP2229k3F+eXtT5NyFy5b7GGxRCRJ02vnyle8GVbdlXc+W9rtMpJcszb//Kevev0y6o1+
+        ykLTJrG5xDytaefePe3o4k3K7v4G8gkWykmyeZpXyyfOV1diKc5INNRiLipOBADblqDbEAMA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsVy+t/xe7pTDiXEG9yZa22xccZ6Vovz5zew
+        W/Rs2MpqMeP8PiaLtUfuslss2/SHyeLghyesFu1PXzI7cHismbeG0WPTqk42j74tqxg9Pm+S
+        C2CJ0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0MtY
+        MPsGU8FJw4q1E+4yNjDO0uxi5OSQEDCRuLB7DlsXIxeHkMBSRonb0zYyQSRkJE5Oa2CFsIUl
+        /lzrgir6xCgxfWYrO0iCTcBQoustSIKTQ0TARWL/nqfMIEXMApOYJH73b2cESQgLxErsPnII
+        rIhFQFXi3JztYBt4BWwkvs/7xwKxQV5i9YYDzCA2p4CtxI13z8BsIaCaR2u62CYw8i1gZFjF
+        KJJaWpybnltsqFecmFtcmpeul5yfu4kRGLbbjv3cvIPx0sbgQ4wCHIxKPLwJ5fHxQqyJZcWV
+        uYcYJTiYlUR4nc6ejhPiTUmsrEotyo8vKs1JLT7EaAp01ERmKdHkfGBM5ZXEG5oamltYGpob
+        mxubWSiJ83YIHIwREkhPLEnNTk0tSC2C6WPi4JRqYBTYvVTdl1O0M4vv+MyE+9rS1nuyC1en
+        lH0+EmH7Me057823rFbz3VWU0r+6NTy8ldw6+VRXYcvN4oBz13qF787LZmR69NEmTTEqq3t6
+        tWlV7zd37Q0l9ka/9n+4z6D691RHh9SE7c3/QqYxv5wffccv+GTKSuZHF9t3aN7nqRH8GukZ
+        onbslRJLcUaioRZzUXEiABWLlq5xAgAA
+X-CMS-MailID: 20200915133309eucas1p27768c75d4391f646b3715f29ff0c452a
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200915133308eucas1p2a9a4354abbe3af95f9978b7e6adbe3a1
+X-RootMTR: 20200915133309eucas1p27768c75d4391f646b3715f29ff0c452a
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200915133308eucas1p2a9a4354abbe3af95f9978b7e6adbe3a1
-References: <CGME20200915133308eucas1p2a9a4354abbe3af95f9978b7e6adbe3a1@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20200915133309eucas1p27768c75d4391f646b3715f29ff0c452a
+References: <20200915133256.1210-1-m.szyprowski@samsung.com>
+        <CGME20200915133309eucas1p27768c75d4391f646b3715f29ff0c452a@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Exynos4-IS driver relies on the way the ARM DMA-IOMMU glue code works:
+the IOVA allocator uses first-fit algorithm and the first allocated
+buffer is at 0x0 DMA/IOVA address. This is not true for the generic
+IOMMU-DMA glue code that will be used for ARM architecture soon, so add
+the needed code to support such case too.
 
-This patchset updates Exynos4-IS driver for the planned kernel changes in
-the area of ARM DMA-mapping and IOMMU integration [1].
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/media/platform/exynos4-is/fimc-is.c | 95 ++++++++++++++++++---
+ drivers/media/platform/exynos4-is/fimc-is.h |  6 +-
+ 2 files changed, 88 insertions(+), 13 deletions(-)
 
-Best regards,
-Marek Szyprowski
-
-
-References:
-
-[1] https://lore.kernel.org/lkml/cover.1597931875.git.robin.murphy@arm.com/
-
-
-Patch summary:
-
-Marek Szyprowski (2):
-  media: platform: exynos4-is: remove all references to physicall
-    addresses
-  media: platform: exynos4-is: add support for generic IOMMU-DMA glue
-    code
-
- .../media/platform/exynos4-is/fimc-capture.c  |  6 +-
- drivers/media/platform/exynos4-is/fimc-core.c | 28 +++---
- drivers/media/platform/exynos4-is/fimc-core.h | 18 ++--
- drivers/media/platform/exynos4-is/fimc-is.c   | 95 ++++++++++++++++---
- drivers/media/platform/exynos4-is/fimc-is.h   | 10 +-
- .../media/platform/exynos4-is/fimc-lite-reg.c |  4 +-
- drivers/media/platform/exynos4-is/fimc-lite.c |  2 +-
- drivers/media/platform/exynos4-is/fimc-lite.h |  4 +-
- drivers/media/platform/exynos4-is/fimc-m2m.c  |  8 +-
- drivers/media/platform/exynos4-is/fimc-reg.c  | 18 ++--
- drivers/media/platform/exynos4-is/fimc-reg.h  |  4 +-
- 11 files changed, 135 insertions(+), 62 deletions(-)
-
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index 41b841a96338..bdef61be0cad 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -19,6 +19,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/i2c.h>
++#include <linux/iommu.h>
+ #include <linux/of_irq.h>
+ #include <linux/of_address.h>
+ #include <linux/of_graph.h>
+@@ -269,7 +270,7 @@ int fimc_is_cpu_set_power(struct fimc_is *is, int on)
+ 		mcuctl_write(0, is, REG_WDT_ISP);
+ 
+ 		/* Cortex-A5 start address setting */
+-		mcuctl_write(is->memory.addr, is, MCUCTL_REG_BBOAR);
++		mcuctl_write(is->memory.base, is, MCUCTL_REG_BBOAR);
+ 
+ 		/* Enable and start Cortex-A5 */
+ 		pmuisp_write(0x18000, is, REG_PMU_ISP_ARM_OPTION);
+@@ -330,37 +331,105 @@ int fimc_is_start_firmware(struct fimc_is *is)
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_IOMMU_DMA
++#define FIMC_IS_CPU_MEM_BASE	(0)
++static int fimc_iommu_remap_cpu_memory(struct fimc_is *is)
++{
++	struct device *dev = &is->pdev->dev;
++	struct iommu_domain *domain;
++	struct sg_table sgt;
++	int ret;
++
++	domain = iommu_domain_alloc(&platform_bus_type);
++	if (!domain)
++		return -ENOMEM;
++
++	ret = dma_get_sgtable(dev, &sgt, is->memory.vaddr,
++			      is->memory.alloc_addr, FIMC_IS_CPU_MEM_SIZE);
++	if (ret)
++		goto err_free_domain;
++
++	ret = iommu_attach_device(domain, dev);
++	if (ret)
++		goto err_free_sgt;
++
++	ret = iommu_map_sgtable(domain, FIMC_IS_CPU_MEM_BASE, &sgt,
++				IOMMU_READ | IOMMU_WRITE);
++	if (ret != FIMC_IS_CPU_MEM_SIZE) {
++		ret = -EINVAL;
++		goto err_detach;
++	}
++
++	is->memory.base = FIMC_IS_CPU_MEM_BASE;
++	is->memory.domain = domain;
++	sg_free_table(&sgt);
++
++	return 0;
++
++err_detach:
++	iommu_detach_device(domain, dev);
++err_free_sgt:
++	sg_free_table(&sgt);
++err_free_domain:
++	iommu_domain_free(domain);
++	return ret;
++}
++
++static void fimc_iommu_unmap_cpu_memory(struct fimc_is *is)
++{
++	struct iommu_domain *domain = is->memory.domain;
++	struct device *dev = &is->pdev->dev;
++
++	iommu_unmap(domain, FIMC_IS_CPU_MEM_BASE, FIMC_IS_CPU_MEM_SIZE);
++	iommu_detach_device(domain, dev);
++	iommu_domain_free(domain);
++}
++#else
++static inline int fimc_iommu_remap_cpu_memory(struct fimc_is *is)
++{
++	is->memory.base = is->memory.alloc_addr;
++	return 0;
++}
++
++static void fimc_iommu_unmap_cpu_memory(struct fimc_is *is) { }
++#endif
++
+ /* Allocate working memory for the FIMC-IS CPU. */
+ static int fimc_is_alloc_cpu_memory(struct fimc_is *is)
+ {
+ 	struct device *dev = &is->pdev->dev;
+ 
+ 	is->memory.vaddr = dma_alloc_coherent(dev, FIMC_IS_CPU_MEM_SIZE,
+-					      &is->memory.addr, GFP_KERNEL);
++					    &is->memory.alloc_addr, GFP_KERNEL);
+ 	if (is->memory.vaddr == NULL)
+ 		return -ENOMEM;
+ 
++	if (fimc_iommu_remap_cpu_memory(is))
++		goto err;
++
+ 	is->memory.size = FIMC_IS_CPU_MEM_SIZE;
+ 
+-	dev_info(dev, "FIMC-IS CPU memory base: %pad\n", &is->memory.addr);
++	dev_info(dev, "FIMC-IS CPU memory base: %pad\n", &is->memory.base);
+ 
+-	if (((u32)is->memory.addr) & FIMC_IS_FW_ADDR_MASK) {
++	if (((u32)is->memory.base) & FIMC_IS_FW_ADDR_MASK) {
+ 		dev_err(dev, "invalid firmware memory alignment: %#x\n",
+-			(u32)is->memory.addr);
+-		dma_free_coherent(dev, is->memory.size, is->memory.vaddr,
+-				  is->memory.addr);
+-		return -EIO;
++			(u32)is->memory.base);
++		goto err;
+ 	}
+ 
+ 	is->is_p_region = (struct is_region *)(is->memory.vaddr +
+ 				FIMC_IS_CPU_MEM_SIZE - FIMC_IS_REGION_SIZE);
+ 
+-	is->is_dma_p_region = is->memory.addr +
++	is->is_dma_p_region = is->memory.base +
+ 				FIMC_IS_CPU_MEM_SIZE - FIMC_IS_REGION_SIZE;
+ 
+ 	is->is_shared_region = (struct is_share_region *)(is->memory.vaddr +
+ 				FIMC_IS_SHARED_REGION_OFFSET);
+ 	return 0;
++err:
++	dma_free_coherent(dev, is->memory.size, is->memory.vaddr,
++			  is->memory.alloc_addr);
++	return -EIO;
+ }
+ 
+ static void fimc_is_free_cpu_memory(struct fimc_is *is)
+@@ -370,8 +439,9 @@ static void fimc_is_free_cpu_memory(struct fimc_is *is)
+ 	if (is->memory.vaddr == NULL)
+ 		return;
+ 
++	fimc_iommu_unmap_cpu_memory(is);
+ 	dma_free_coherent(dev, is->memory.size, is->memory.vaddr,
+-			  is->memory.addr);
++			  is->memory.alloc_addr);
+ }
+ 
+ static void fimc_is_load_firmware(const struct firmware *fw, void *context)
+@@ -416,7 +486,8 @@ static void fimc_is_load_firmware(const struct firmware *fw, void *context)
+ 
+ 	dev_info(dev, "loaded firmware: %s, rev. %s\n",
+ 		 is->fw.info, is->fw.version);
+-	dev_dbg(dev, "FW size: %zu, DMA addr: %pad\n", fw->size, &is->memory.addr);
++	dev_dbg(dev, "FW size: %zu, DMA addr: %pad\n", fw->size,
++		&is->memory.base);
+ 
+ 	is->is_shared_region->chip_id = 0xe4412;
+ 	is->is_shared_region->chip_rev_no = 1;
+@@ -699,7 +770,7 @@ int fimc_is_hw_initialize(struct fimc_is *is)
+ 	}
+ 
+ 	pr_debug("shared region: %pad, parameter region: %pad\n",
+-		 &is->memory.addr + FIMC_IS_SHARED_REGION_OFFSET,
++		 &is->memory.base + FIMC_IS_SHARED_REGION_OFFSET,
+ 		 &is->is_dma_p_region);
+ 
+ 	is->setfile.sub_index = 0;
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.h b/drivers/media/platform/exynos4-is/fimc-is.h
+index ce30b007bc55..e96bf9122e91 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.h
++++ b/drivers/media/platform/exynos4-is/fimc-is.h
+@@ -186,11 +186,15 @@ struct fimc_is_firmware {
+ 
+ struct fimc_is_memory {
+ 	/* DMA base address */
+-	dma_addr_t addr;
++	dma_addr_t base;
++	/* DMA address from allocator */
++	dma_addr_t alloc_addr;
+ 	/* virtual base address */
+ 	void *vaddr;
+ 	/* total length */
+ 	unsigned int size;
++	/* optional IOMMU domain */
++	struct iommu_domain *domain;
+ };
+ 
+ #define FIMC_IS_I2H_MAX_ARGS	12
 -- 
 2.17.1
 
