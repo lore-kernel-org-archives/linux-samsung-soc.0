@@ -2,278 +2,247 @@ Return-Path: <SRS0=0LAj=CY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34024C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 18:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F22C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 18:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E49B22193E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 18:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1710A20872
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 18:39:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Ft9IxLhr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727916AbgIOSDF (ORCPT
+        id S1727904AbgIOSji (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 14:03:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39400 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbgIOSCo (ORCPT
+        Tue, 15 Sep 2020 14:39:38 -0400
+Received: from mail-dm6nam10on2049.outbound.protection.outlook.com ([40.107.93.49]:15409
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728022AbgIOSjZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 14:02:44 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DD73C06178B
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2020 11:02:42 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1kIFHt-0005KV-59; Tue, 15 Sep 2020 20:02:41 +0200
-Received: from mtr by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1kIFHr-00070z-MD; Tue, 15 Sep 2020 20:02:39 +0200
-Date:   Tue, 15 Sep 2020 20:02:39 +0200
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     Andrzej Hajda <a.hajda@samsung.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        jy0922.shim@samsung.com, b.zolnierkie@samsung.com,
-        narmstrong@baylibre.com, sw0312.kim@samsung.com, krzk@kernel.org,
-        Laurent.pinchart@ideasonboard.com, kernel@pengutronix.de,
-        sylvester.nawrocki@gmail.com
-Subject: Re: [PATCH v2 08/16] drm/exynos: add host_ops callback for platform
- drivers
-Message-ID: <20200915180239.GB16903@pengutronix.de>
-References: <20200911135413.3654800-1-m.tretter@pengutronix.de>
- <CGME20200911135451eucas1p245ccd6535a7ce18b400793cc5039bc87@eucas1p2.samsung.com>
- <20200911135413.3654800-9-m.tretter@pengutronix.de>
- <12dda4ee-8595-f534-b818-e97f4dfe6f2b@samsung.com>
+        Tue, 15 Sep 2020 14:39:25 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RArpkZ/l/P0gBhyiVnFzlnK1+ltpu4x88FRuCdWtNwWkp98mExU2EARfU6VG5otrPM9YMztHQ/zNIMyLWyYeDSehv+5ddUu5QkXHHrPXqkcHNzmYi/ERU4FdoINvsO0vS4BwlbEdx7+wtX0wfgwsnyORrfNfHGuXiyS1GCBCOdPHP7YfyO9HbWENIeHr4NEhKRcC1qdLa1GgV9F9xiTcV35GTG9B98p17FI7Dcmdoy5O8kN2yk4QEPzW+msX7k0AmzfXVF4ub8AMUSXd/UHcD3pRDMGcul4U5uWl9czAi4Uclw9huD+9RW5oEjZtfYzlCedo3XonK4F5T9S6WNrTwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4nIO+lhNFgioRkRyGhdB1I3Uj8gi/oxj23FCH5WSe8E=;
+ b=R8H8SkAXciLhrprBnQK3SHbWsJcLCXqoT+g20E1/ybgGhxqZtPiDOGOmY/LrTSxcpGB73tZW5v1PNPMcgwEzSZMJdunPyGyb+IohPUaPR8BO2oj2GZkHVfq647GrY3z9KniynTif8AVTOztHi1kEtPjQOLSScdWMVRNUP4xQLbCzGB+Kfj9GTwzzxOTbf1K+UAkqii38ibdb+kBBQr49WLJLJh8RjphzYqjDNYKUdZZhOGHIvovYgMzNgpj8qUJI3LwCXulrTIIc9F1n4FS+99hApKJrfmt6b9+AGfaSps5cJLpvUeMu5jyKWPcKjQLuB7YD69qLPjzISQqhD+zOhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4nIO+lhNFgioRkRyGhdB1I3Uj8gi/oxj23FCH5WSe8E=;
+ b=Ft9IxLhrSyAZPH7YXskNwwHcjwsioZd1gYOVg7DJ49DbK3VXAIGTwQZq6Glqpt3+ujNcSgKehvmyZBDWmlOiekjX6vYBG7i/63A/aBX5gGzuEwyXfvt9wM1DbWvK0PScJ0JlBQD0msFJtI3bvUvSgDPCXYHOa2r5LaLrKnngICs=
+Received: from SN4PR0501CA0139.namprd05.prod.outlook.com
+ (2603:10b6:803:2c::17) by BL0PR02MB3843.namprd02.prod.outlook.com
+ (2603:10b6:207:3e::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3391.11; Tue, 15 Sep
+ 2020 18:39:16 +0000
+Received: from SN1NAM02FT052.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:803:2c:cafe::ab) by SN4PR0501CA0139.outlook.office365.com
+ (2603:10b6:803:2c::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3391.5 via Frontend
+ Transport; Tue, 15 Sep 2020 18:39:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT052.mail.protection.outlook.com (10.152.72.146) with Microsoft SMTP
+ Server id 15.20.3370.16 via Frontend Transport; Tue, 15 Sep 2020 18:39:16
+ +0000
+Received: from [149.199.38.66] (port=33529 helo=smtp.xilinx.com)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
+        (envelope-from <hyun.kwon@xilinx.com>)
+        id 1kIFrC-00079p-6M; Tue, 15 Sep 2020 11:39:10 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by smtp.xilinx.com with smtp (Exim 4.63)
+        (envelope-from <hyun.kwon@xilinx.com>)
+        id 1kIFrI-0001lD-0V; Tue, 15 Sep 2020 11:39:16 -0700
+Received: from xsj-pvapsmtp01 (smtp-fallback.xilinx.com [149.199.38.66] (may be forged))
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 08FId9kc008886;
+        Tue, 15 Sep 2020 11:39:09 -0700
+Received: from [172.19.75.82] (helo=xsjsycl40.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <hyun.kwon@xilinx.com>)
+        id 1kIFrB-0001kK-AQ; Tue, 15 Sep 2020 11:39:09 -0700
+Received: by xsjsycl40.xilinx.com (Postfix, from userid 13638)
+        id 491F2352CB5; Tue, 15 Sep 2020 11:39:09 -0700 (PDT)
+Date:   Tue, 15 Sep 2020 11:39:09 -0700
+From:   Hyun Kwon <hyun.kwon@xilinx.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
+        "hamohammed.sa@gmail.com" <hamohammed.sa@gmail.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Michal Simek <michals@xilinx.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "sam@ravnborg.org" <sam@ravnborg.org>,
+        "emil.velikov@collabora.com" <emil.velikov@collabora.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "jy0922.shim@samsung.com" <jy0922.shim@samsung.com>,
+        "oleksandr_andrushchenko@epam.com" <oleksandr_andrushchenko@epam.com>,
+        "tomi.valkeinen@ti.com" <tomi.valkeinen@ti.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "bskeggs@redhat.com" <bskeggs@redhat.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "matthew.auld@intel.com" <matthew.auld@intel.com>,
+        "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+        "andi.shyti@intel.com" <andi.shyti@intel.com>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "marek.olsak@amd.com" <marek.olsak@amd.com>,
+        "tianci.yin@amd.com" <tianci.yin@amd.com>,
+        "etnaviv@lists.freedesktop.org" <etnaviv@lists.freedesktop.org>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "evan.quan@amd.com" <evan.quan@amd.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "tvrtko.ursulin@linux.intel.com" <tvrtko.ursulin@linux.intel.com>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "chris@chris-wilson.co.uk" <chris@chris-wilson.co.uk>,
+        "rodrigosiqueiramelo@gmail.com" <rodrigosiqueiramelo@gmail.com>,
+        "aaron.liu@amd.com" <aaron.liu@amd.com>,
+        "Felix.Kuehling@amd.com" <Felix.Kuehling@amd.com>,
+        "xinhui.pan@amd.com" <xinhui.pan@amd.com>,
+        "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>,
+        "hjc@rock-chips.com" <hjc@rock-chips.com>,
+        "miaoqinglang@huawei.com" <miaoqinglang@huawei.com>,
+        "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
+        "nirmoy.das@amd.com" <nirmoy.das@amd.com>,
+        "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+        "Hawking.Zhang@amd.com" <Hawking.Zhang@amd.com>,
+        "freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>,
+        "christian.koenig@amd.com" <christian.koenig@amd.com>
+Subject: Re: [PATCH v2 20/21] drm/xlnx: Initialize DRM driver instance with
+ CMA helper macro
+Message-ID: <20200915183909.GA2471550@xilinx.com>
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-21-tzimmermann@suse.de>
+ <20200915155346.GA26029@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <12dda4ee-8595-f534-b818-e97f4dfe6f2b@samsung.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 19:19:39 up 209 days, 50 min, 148 users,  load average: 0.02, 0.13,
- 0.17
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20200915155346.GA26029@pendragon.ideasonboard.com>
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a08eb784-7c2d-4b5d-737f-08d859a6a687
+X-MS-TrafficTypeDiagnostic: BL0PR02MB3843:
+X-Microsoft-Antispam-PRVS: <BL0PR02MB38435935F57FA757CF2846C9D6200@BL0PR02MB3843.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:157;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: U5bh9p8yPdraqnUk+xpYEA9i315rY+tyWwgDCieDtcnxN/f08b8LfgTIPR0GVDc5TRbMRXbHtIXk9bwONidsek5dZEXL+1y34WGM3WdbloNejuTXRi0u7TVejfJUu6BbouAoHtr7XSuNv/iPrCOZdzQkV2YIy+PArroWHUXic6Shn0pF4O80yuLM7tjzcp2iKGSrKvqYXw0TBXGOJg5JyFqV6kFN5VAMDTsLwzN7Hit4ODczPUGyZgtP4XT6nPUqqiitbhxAr1EuURtpmENziPCH4vQXR+nDXArcpQd4278wALBESD7chGXylksQ6s3YQyYjsKlYVatWB7uEKLed35BqRz3Gy46Mhnug4dwY7t+Rj2tVLG/yba9zNZG8kGqGOmxIOMyILOdQTgk+Ki6V7uCriWFAGUbxgsYixwbVMMx/uT4iwgSiPOdzqnhhrleSZ3KhArLnfwy/3ExD2W9jQg==
+X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFS:(136003)(396003)(376002)(39860400002)(346002)(46966005)(82310400003)(2906002)(36756003)(8676002)(54906003)(83380400001)(44832011)(70586007)(82740400003)(70206006)(356005)(5660300002)(1076003)(47076004)(81166007)(2616005)(450100002)(4326008)(478600001)(426003)(6266002)(336012)(316002)(26005)(186003)(42186006)(33656002)(6862004)(8936002)(966005)(42866002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2020 18:39:16.6223
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a08eb784-7c2d-4b5d-737f-08d859a6a687
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT052.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB3843
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 15 Sep 2020 19:07:59 +0200, Andrzej Hajda wrote:
+Hi Tomas,
+
+Thanks for the patch.
+
+On Tue, Sep 15, 2020 at 08:53:46AM -0700, Laurent Pinchart wrote:
+> Hi Thomas,
 > 
-> W dniu 11.09.2020 o 15:54, Michael Tretter pisze:
-> > Platform drivers need to be aware if a mipi dsi device attaches or
-> > detaches. Add host_ops to the driver_data for attach and detach
-> > callbacks and move the i80 mode selection and the hotplug handling into
-> > the callback, because these depend on the drm driver.
-> >
-> > Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
-> > ---
+> Thank you for the patch.
+> 
+> On Tue, Sep 15, 2020 at 04:59:57PM +0200, Thomas Zimmermann wrote:
+> > The xlnx driver uses CMA helpers with default callback functions.
+> > Initialize the driver structure with the rsp CMA helper macro. The
+> > driver is being converted to use GEM object functions as part of
+> > this change.
+> > 
+> > Two callbacks, .dumb_destroy and .gem_prime_import, were initialized
+> > to their default implementations, so they are just kept empty now.
+> > 
 > > v2:
-> > - new patch
+> > 	* initialize with DRM_GEM_CMA_DRIVER_OPS_WITH_DUMB_CREATE (Laurent)
+> > 
+> > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+
+Reviewed-by: Hyun Kwon <hyun.kwon@xilinx.com>
+
+Thanks,
+-hyun
+
 > > ---
-> >   drivers/gpu/drm/exynos/exynos_drm_dsi.c | 64 ++++++++++++++++++++-----
-> >   1 file changed, 53 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> > index 1a15ae71205d..684a2fbef08a 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> > @@ -239,6 +239,12 @@ struct exynos_dsi_transfer {
-> >   #define DSIM_STATE_CMD_LPM		BIT(2)
-> >   #define DSIM_STATE_VIDOUT_AVAILABLE	BIT(3)
-> >   
-> > +struct exynos_dsi;
-> > +struct exynos_dsi_host_ops {
-> > +	int (*attach)(struct device *dev, struct mipi_dsi_device *device);
-> > +	int (*detach)(struct device *dev, struct mipi_dsi_device *device);
-> > +};
-> > +
-> >   enum exynos_reg_offset {
-> >   	EXYNOS_REG_OFS,
-> >   	EXYNOS5433_REG_OFS
-> > @@ -254,6 +260,7 @@ struct exynos_dsi_driver_data {
-> >   	unsigned int wait_for_reset;
-> >   	unsigned int num_bits_resol;
-> >   	const unsigned int *reg_values;
-> > +	const struct exynos_dsi_host_ops *host_ops;
-> >   };
-> >   
-> >   struct exynos_dsi {
-> > @@ -467,6 +474,41 @@ static const unsigned int exynos5433_reg_values[] = {
-> >   	[PHYTIMING_HS_TRAIL] = 0x0c,
-> >   };
-> >   
-> > +static int __exynos_dsi_host_attach(struct device *dev,
-> > +				    struct mipi_dsi_device *device)
-> > +{
-> > +	struct exynos_dsi *dsi = dev_get_drvdata(dev);
-> > +	struct drm_device *drm = dsi->encoder.dev;
+> >  drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 14 +-------------
+> >  1 file changed, 1 insertion(+), 13 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> > index 8e69303aad3f..f3ffc3703a0e 100644
+> > --- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> > +++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> > @@ -80,19 +80,7 @@ static struct drm_driver zynqmp_dpsub_drm_driver = {
+> >  	.driver_features		= DRIVER_MODESET | DRIVER_GEM |
+> >  					  DRIVER_ATOMIC,
+> >  
+> > -	.prime_handle_to_fd		= drm_gem_prime_handle_to_fd,
+> > -	.prime_fd_to_handle		= drm_gem_prime_fd_to_handle,
+> > -	.gem_prime_export		= drm_gem_prime_export,
+> > -	.gem_prime_import		= drm_gem_prime_import,
+> > -	.gem_prime_get_sg_table		= drm_gem_cma_prime_get_sg_table,
+> > -	.gem_prime_import_sg_table	= drm_gem_cma_prime_import_sg_table,
+> > -	.gem_prime_vmap			= drm_gem_cma_prime_vmap,
+> > -	.gem_prime_vunmap		= drm_gem_cma_prime_vunmap,
+> > -	.gem_prime_mmap			= drm_gem_cma_prime_mmap,
+> > -	.gem_free_object_unlocked	= drm_gem_cma_free_object,
+> > -	.gem_vm_ops			= &drm_gem_cma_vm_ops,
+> > -	.dumb_create			= zynqmp_dpsub_dumb_create,
+> > -	.dumb_destroy			= drm_gem_dumb_destroy,
+> > +	DRM_GEM_CMA_DRIVER_OPS_WITH_DUMB_CREATE(zynqmp_dpsub_dumb_create),
+> >  
+> >  	.fops				= &zynqmp_dpsub_drm_fops,
+> >  
 > 
+> -- 
+> Regards,
 > 
-> As I wrote yesterday drm device was guaranteed to be present here only 
-> if mipi dsi host registration was performed in component bind. In case 
-> it is performed in probe it will be always NULL, and the code does not 
-> make sense.
-
-Correct, but if the driver is used as a drm bridge, there won't be an encoder
-until bridge_attach. Mipi dsi devices defer their probe until the mipi dsi
-host is available. If I move the mipi dsi host registration into
-bridge_attach, the driver does not know if the next device is another bridge
-or a panel during bridge_attach, but the driver cannot successfully return
-from bridge_attach, because then the drm driver expects a connector.
-
-I guess that the encoder should be initialized before registering the mipi dsi
-host during probe instead of bind. The probe won't be rolled back on
-PROBE_DEFER during bind and the encoder will be available in host_attach.
-When splitting the driver into the exynos platform specific code and the more
-generic code, there won't be an encoder during host_attach in the generic
-code, but the host_ops callback could (and will) use the platform specific
-encoder, which is available before bridge_attach.
-
-Does this make sense to you?
-
-Michael
-
-> 
-> 
-> Regards
-> 
-> Andrzej
-> 
-> 
-> 
-> > +	struct exynos_drm_crtc *crtc;
-> > +
-> > +	mutex_lock(&drm->mode_config.mutex);
-> > +	crtc = exynos_drm_crtc_get_by_type(drm, EXYNOS_DISPLAY_TYPE_LCD);
-> > +	crtc->i80_mode = !(device->mode_flags & MIPI_DSI_MODE_VIDEO);
-> > +	mutex_unlock(&drm->mode_config.mutex);
-> > +
-> > +	if (drm->mode_config.poll_enabled)
-> > +		drm_kms_helper_hotplug_event(drm);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int __exynos_dsi_host_detach(struct device *dev,
-> > +				     struct mipi_dsi_device *device)
-> > +{
-> > +	struct exynos_dsi *dsi = dev_get_drvdata(dev);
-> > +	struct drm_device *drm = dsi->encoder.dev;
-> > +
-> > +	if (drm->mode_config.poll_enabled)
-> > +		drm_kms_helper_hotplug_event(drm);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct exynos_dsi_host_ops exynos_dsi_host_ops = {
-> > +	.attach = __exynos_dsi_host_attach,
-> > +	.detach = __exynos_dsi_host_detach,
-> > +};
-> > +
-> >   static const struct exynos_dsi_driver_data exynos3_dsi_driver_data = {
-> >   	.reg_ofs = EXYNOS_REG_OFS,
-> >   	.plltmr_reg = 0x50,
-> > @@ -477,6 +519,7 @@ static const struct exynos_dsi_driver_data exynos3_dsi_driver_data = {
-> >   	.wait_for_reset = 1,
-> >   	.num_bits_resol = 11,
-> >   	.reg_values = reg_values,
-> > +	.host_ops = &exynos_dsi_host_ops,
-> >   };
-> >   
-> >   static const struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
-> > @@ -489,6 +532,7 @@ static const struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
-> >   	.wait_for_reset = 1,
-> >   	.num_bits_resol = 11,
-> >   	.reg_values = reg_values,
-> > +	.host_ops = &exynos_dsi_host_ops,
-> >   };
-> >   
-> >   static const struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
-> > @@ -499,6 +543,7 @@ static const struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
-> >   	.wait_for_reset = 1,
-> >   	.num_bits_resol = 11,
-> >   	.reg_values = reg_values,
-> > +	.host_ops = &exynos_dsi_host_ops,
-> >   };
-> >   
-> >   static const struct exynos_dsi_driver_data exynos5433_dsi_driver_data = {
-> > @@ -510,6 +555,7 @@ static const struct exynos_dsi_driver_data exynos5433_dsi_driver_data = {
-> >   	.wait_for_reset = 0,
-> >   	.num_bits_resol = 12,
-> >   	.reg_values = exynos5433_reg_values,
-> > +	.host_ops = &exynos_dsi_host_ops,
-> >   };
-> >   
-> >   static const struct exynos_dsi_driver_data exynos5422_dsi_driver_data = {
-> > @@ -521,6 +567,7 @@ static const struct exynos_dsi_driver_data exynos5422_dsi_driver_data = {
-> >   	.wait_for_reset = 1,
-> >   	.num_bits_resol = 12,
-> >   	.reg_values = exynos5422_reg_values,
-> > +	.host_ops = &exynos_dsi_host_ops,
-> >   };
-> >   
-> >   static const struct of_device_id exynos_dsi_of_match[] = {
-> > @@ -1551,8 +1598,8 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
-> >   				  struct mipi_dsi_device *device)
-> >   {
-> >   	struct exynos_dsi *dsi = host_to_dsi(host);
-> > +	const struct exynos_dsi_host_ops *ops = dsi->driver_data->host_ops;
-> >   	struct drm_encoder *encoder = &dsi->encoder;
-> > -	struct drm_device *drm = encoder->dev;
-> >   	struct drm_bridge *out_bridge;
-> >   
-> >   	out_bridge  = of_drm_find_bridge(device->dev.of_node);
-> > @@ -1590,18 +1637,12 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
-> >   			return ret;
-> >   	}
-> >   
-> > -	mutex_lock(&drm->mode_config.mutex);
-> > -
-> >   	dsi->lanes = device->lanes;
-> >   	dsi->format = device->format;
-> >   	dsi->mode_flags = device->mode_flags;
-> > -	exynos_drm_crtc_get_by_type(drm, EXYNOS_DISPLAY_TYPE_LCD)->i80_mode =
-> > -			!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO);
-> >   
-> > -	mutex_unlock(&drm->mode_config.mutex);
-> > -
-> > -	if (drm->mode_config.poll_enabled)
-> > -		drm_kms_helper_hotplug_event(drm);
-> > +	if (ops && ops->attach)
-> > +		ops->attach(dsi->dsi_host.dev, device);
-> >   
-> >   	return 0;
-> >   }
-> > @@ -1610,6 +1651,7 @@ static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
-> >   				  struct mipi_dsi_device *device)
-> >   {
-> >   	struct exynos_dsi *dsi = host_to_dsi(host);
-> > +	const struct exynos_dsi_host_ops *ops = dsi->driver_data->host_ops;
-> >   	struct drm_device *drm = dsi->encoder.dev;
-> >   
-> >   	if (dsi->panel) {
-> > @@ -1625,8 +1667,8 @@ static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
-> >   		INIT_LIST_HEAD(&dsi->bridge_chain);
-> >   	}
-> >   
-> > -	if (drm->mode_config.poll_enabled)
-> > -		drm_kms_helper_hotplug_event(drm);
-> > +	if (ops && ops->detach)
-> > +		ops->detach(dsi->dsi_host.dev, device);
-> >   
-> >   	exynos_dsi_unregister_te_irq(dsi);
-> >   
-> 
+> Laurent Pinchart
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
