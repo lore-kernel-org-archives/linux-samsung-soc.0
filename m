@@ -2,209 +2,133 @@ Return-Path: <SRS0=0LAj=CY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE2FC31E40
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0388DC43461
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7BB320770
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FBF420936
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:23:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cyrJz8tQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbgIOXBh (ORCPT
+        id S1727327AbgIOXXc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 19:01:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34064 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727375AbgIOPAZ (ORCPT
+        Tue, 15 Sep 2020 19:23:32 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:41763 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727191AbgIOOiB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 11:00:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B6C0FAF48;
-        Tue, 15 Sep 2020 15:00:17 +0000 (UTC)
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 01/21] drm/amdgpu: Introduce GEM object functions
-Date:   Tue, 15 Sep 2020 16:59:38 +0200
-Message-Id: <20200915145958.19993-2-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200915145958.19993-1-tzimmermann@suse.de>
-References: <20200915145958.19993-1-tzimmermann@suse.de>
+        Tue, 15 Sep 2020 10:38:01 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200915132047euoutp02f93b35b0a706eb6fa1f09f1af5383e2f~096MNgNZX0422904229euoutp023
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2020 13:20:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200915132047euoutp02f93b35b0a706eb6fa1f09f1af5383e2f~096MNgNZX0422904229euoutp023
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1600176047;
+        bh=V9AlOqxPwxY4S8d5Y22eljC6V4KHy1iNU+4AudaT48I=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=cyrJz8tQzjV1YPw4JbjZHF1e9aBf8jKSKPCM+fR59+LY9F3/sF7pMfhvyI+BTWuDq
+         H1eYNj3TTddJGXhQLXgj7X8liBY/d5VAODRQ9h5WEZXsaUayFX+RWgNn/X3i9UKpaT
+         oliJ+LLruIsZUWjysocwjpqqnUdya8JBDGIQ33sU=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200915132046eucas1p19a2165a26efea41ac355ac5055fd3873~096LruAGl0923209232eucas1p14;
+        Tue, 15 Sep 2020 13:20:46 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 72.C3.06456.EAFB06F5; Tue, 15
+        Sep 2020 14:20:46 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200915132046eucas1p217e810858d346fb491b2498343dfc622~096LSULhJ0258102581eucas1p2F;
+        Tue, 15 Sep 2020 13:20:46 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200915132046eusmtrp258f6d267df6a5c9ea4f34a0b515b7496~096LRfueX1190311903eusmtrp2e;
+        Tue, 15 Sep 2020 13:20:46 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-c9-5f60bfae1cb3
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 1D.BD.06017.EAFB06F5; Tue, 15
+        Sep 2020 14:20:46 +0100 (BST)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200915132044eusmtip1973441b492f8735e7726439bc55811c8~096J8yndw1171511715eusmtip1Y;
+        Tue, 15 Sep 2020 13:20:44 +0000 (GMT)
+Subject: Re: [PATCH 2/3] clk: samsung: exynos5420/5250: Add IDs to the CPU
+ parent clk definitions
+To:     linux-clk@vger.kernel.org
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <944913e7-be99-ff11-615f-4613f19c5973@samsung.com>
+Date:   Tue, 15 Sep 2020 15:20:44 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200826171529.23618-2-s.nawrocki@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMKsWRmVeSWpSXmKPExsWy7djP87rr9ifEG7Qe1LDYOGM9q8X1L89Z
+        LeYfOcdq0f/4NbPF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Sx9shddouLp1wtWvceYbf4
+        d20ji8WqXX8YHfg83t9oZffYOesuu8emVZ1sHpuX1Hv0bVnF6PF5k1wAWxSXTUpqTmZZapG+
+        XQJXRtPrg8wFv5kqfm9dxt7AuJ2pi5GTQ0LAROLMrLVsXYxcHEICKxgl9p7YBuV8YZQ4OrWJ
+        BcL5DORsPs0C07Jn+nZGiMRyRomF7begqj4CObdXMoNUCQskS0zoew22RERAVuLWsZ9gc5kF
+        jjFL3F25ECzBJmAo0Xu0jxHE5hWwk2g48g6smUVAVeJ673d2EFtUIE7i2KlHLBA1ghInZz4B
+        szkFbCQ2bLkE1sssIC5x68l8JghbXmL72znMIMskBL6yS0z4ehTqbheJ3hNNUG8LS7w6voUd
+        wpaR+L8TpBmkoZlRomf3bXYIZwKjxP3jCxghqqwl7pz7BfQDB9AKTYn1u/Qhwo4Sz9rusYCE
+        JQT4JG68FYQ4gk9i0rbpzBBhXomONiGIahWJ36umQ50gJdH95D/LBEalWUhem4XknVlI3pmF
+        sHcBI8sqRvHU0uLc9NRiw7zUcr3ixNzi0rx0veT83E2MwKR2+t/xTzsYv15KOsQowMGoxMOb
+        UB4fL8SaWFZcmXuIUYKDWUmE1+ns6Tgh3pTEyqrUovz4otKc1OJDjNIcLErivMaLXsYKCaQn
+        lqRmp6YWpBbBZJk4OKUaGC3FlYxWzcs676zQ3eMeXnxBT48hPDr808UE3+2XFCYeUlmxZeoR
+        SaX7yjdVTjqntS04MEkTmA5D18rebRBrLbphoaP6ZZrtXI9rWwv773ldPZJwbKb4OVOemz5/
+        en1uBFqek9C6l/3yxwvHlsvCTxcKMP7+IbY5WUckdPXMbe8uvS9+c2mVuRJLcUaioRZzUXEi
+        AL1lL9NmAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsVy+t/xu7rr9ifEG0z7w2exccZ6VovrX56z
+        Wsw/co7Vov/xa2aL8+c3sFtsenyN1eJjzz1Wi8u75rBZzDi/j8li7ZG77BYXT7latO49wm7x
+        79pGFotVu/4wOvB5vL/Ryu6xc9Zddo9NqzrZPDYvqffo27KK0ePzJrkAtig9m6L80pJUhYz8
+        4hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jKbXB5kLfjNV/N66jL2B
+        cTtTFyMnh4SAicSe6dsZuxi5OIQEljJK3Dg5k7WLkQMoISUxv0UJokZY4s+1LjYQW0jgPaPE
+        ueOSILawQLLEhL7XYHNEBGQlbh37yQYyh1ngGLPEzimnWCCGHmSU+LH2GVgVm4ChRO/RPkYQ
+        m1fATqLhyDtmEJtFQFXieu93dhBbVCBO4kzPCzaIGkGJkzOfsIDYnAI2Ehu2XALrZRZQl/gz
+        7xIzhC0ucevJfCYIW15i+9s5zBMYhWYhaZ+FpGUWkpZZSFoWMLKsYhRJLS3OTc8tNtIrTswt
+        Ls1L10vOz93ECIzgbcd+btnB2PUu+BCjAAejEg9vQnl8vBBrYllxZe4hRgkOZiURXqezp+OE
+        eFMSK6tSi/Lji0pzUosPMZoCPTeRWUo0OR+YXPJK4g1NDc0tLA3Njc2NzSyUxHk7BA7GCAmk
+        J5akZqemFqQWwfQxcXBKNTBKL57w6tKqzgB+9lyhBYsmTOR4tMeUx8zrJEfU24KHJ46EK1ul
+        Ssu5MQiIv8z8WXpCVtRswYnWaQpn//WJXeBOLveYXcdeqcdmYGvB9W9L19Pq7lPPWVbkGxgV
+        bslfkrq20apMLvfunql3Mjm+/N61zvG0Fs9Uhw07AibOn1nVkDr98bSGwnAlluKMREMt5qLi
+        RACpfJZm9gIAAA==
+X-CMS-MailID: 20200915132046eucas1p217e810858d346fb491b2498343dfc622
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200826171552eucas1p28ace6b1efbcdab420aaa4458ac8bad08
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200826171552eucas1p28ace6b1efbcdab420aaa4458ac8bad08
+References: <20200826171529.23618-1-s.nawrocki@samsung.com>
+        <CGME20200826171552eucas1p28ace6b1efbcdab420aaa4458ac8bad08@eucas1p2.samsung.com>
+        <20200826171529.23618-2-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-GEM object functions deprecate several similar callback interfaces in
-struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in amdgpu. The only exception is gem_prime_mmap,
-which is non-trivial to convert.
+On 26.08.2020 19:15, Sylwester Nawrocki wrote:
+> Use non-zero clock IDs in definitions of the CPU parent clocks
+> for exynos5420, exynos5250 SoCs. This will allow us to reference
+> the parent clocks directly in the driver by cached struct clk_hw
+> pointers, rather than doing clk lookup by name.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-v2:
-	* move object-function instance to amdgpu_gem.c (Christian)
-	* set callbacks in amdgpu_gem_object_create() (Christian)
-
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    |  6 ------
- drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c    | 23 +++++++++++++++++-----
- drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h    |  5 -----
- drivers/gpu/drm/amd/amdgpu/amdgpu_object.c |  1 +
- 4 files changed, 19 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-index 6edde2b9e402..840ca8f9c1e1 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -1505,19 +1505,13 @@ static struct drm_driver kms_driver = {
- 	.lastclose = amdgpu_driver_lastclose_kms,
- 	.irq_handler = amdgpu_irq_handler,
- 	.ioctls = amdgpu_ioctls_kms,
--	.gem_free_object_unlocked = amdgpu_gem_object_free,
--	.gem_open_object = amdgpu_gem_object_open,
--	.gem_close_object = amdgpu_gem_object_close,
- 	.dumb_create = amdgpu_mode_dumb_create,
- 	.dumb_map_offset = amdgpu_mode_dumb_mmap,
- 	.fops = &amdgpu_driver_kms_fops,
- 
- 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
--	.gem_prime_export = amdgpu_gem_prime_export,
- 	.gem_prime_import = amdgpu_gem_prime_import,
--	.gem_prime_vmap = amdgpu_gem_prime_vmap,
--	.gem_prime_vunmap = amdgpu_gem_prime_vunmap,
- 	.gem_prime_mmap = amdgpu_gem_prime_mmap,
- 
- 	.name = DRIVER_NAME,
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-index aa7f230c71bf..aeecd5dc3ce4 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-@@ -36,9 +36,12 @@
- 
- #include "amdgpu.h"
- #include "amdgpu_display.h"
-+#include "amdgpu_dma_buf.h"
- #include "amdgpu_xgmi.h"
- 
--void amdgpu_gem_object_free(struct drm_gem_object *gobj)
-+static const struct drm_gem_object_funcs amdgpu_gem_object_funcs;
-+
-+static void amdgpu_gem_object_free(struct drm_gem_object *gobj)
- {
- 	struct amdgpu_bo *robj = gem_to_amdgpu_bo(gobj);
- 
-@@ -87,6 +90,7 @@ int amdgpu_gem_object_create(struct amdgpu_device *adev, unsigned long size,
- 		return r;
- 	}
- 	*obj = &bo->tbo.base;
-+	(*obj)->funcs = &amdgpu_gem_object_funcs;
- 
- 	return 0;
- }
-@@ -119,8 +123,8 @@ void amdgpu_gem_force_release(struct amdgpu_device *adev)
-  * Call from drm_gem_handle_create which appear in both new and open ioctl
-  * case.
-  */
--int amdgpu_gem_object_open(struct drm_gem_object *obj,
--			   struct drm_file *file_priv)
-+static int amdgpu_gem_object_open(struct drm_gem_object *obj,
-+				  struct drm_file *file_priv)
- {
- 	struct amdgpu_bo *abo = gem_to_amdgpu_bo(obj);
- 	struct amdgpu_device *adev = amdgpu_ttm_adev(abo->tbo.bdev);
-@@ -152,8 +156,8 @@ int amdgpu_gem_object_open(struct drm_gem_object *obj,
- 	return 0;
- }
- 
--void amdgpu_gem_object_close(struct drm_gem_object *obj,
--			     struct drm_file *file_priv)
-+static void amdgpu_gem_object_close(struct drm_gem_object *obj,
-+				    struct drm_file *file_priv)
- {
- 	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
- 	struct amdgpu_device *adev = amdgpu_ttm_adev(bo->tbo.bdev);
-@@ -211,6 +215,15 @@ void amdgpu_gem_object_close(struct drm_gem_object *obj,
- 	ttm_eu_backoff_reservation(&ticket, &list);
- }
- 
-+static const struct drm_gem_object_funcs amdgpu_gem_object_funcs = {
-+	.free = amdgpu_gem_object_free,
-+	.open = amdgpu_gem_object_open,
-+	.close = amdgpu_gem_object_close,
-+	.export = amdgpu_gem_prime_export,
-+	.vmap = amdgpu_gem_prime_vmap,
-+	.vunmap = amdgpu_gem_prime_vunmap,
-+};
-+
- /*
-  * GEM ioctls.
-  */
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
-index e0f025dd1b14..637bf51dbf06 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
-@@ -33,11 +33,6 @@
- #define AMDGPU_GEM_DOMAIN_MAX		0x3
- #define gem_to_amdgpu_bo(gobj) container_of((gobj), struct amdgpu_bo, tbo.base)
- 
--void amdgpu_gem_object_free(struct drm_gem_object *obj);
--int amdgpu_gem_object_open(struct drm_gem_object *obj,
--				struct drm_file *file_priv);
--void amdgpu_gem_object_close(struct drm_gem_object *obj,
--				struct drm_file *file_priv);
- unsigned long amdgpu_gem_timeout(uint64_t timeout_ns);
- 
- /*
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-index ac043baac05d..c4e82a8fa53f 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
-@@ -561,6 +561,7 @@ static int amdgpu_bo_do_create(struct amdgpu_device *adev,
- 	bo = kzalloc(sizeof(struct amdgpu_bo), GFP_KERNEL);
- 	if (bo == NULL)
- 		return -ENOMEM;
-+
- 	drm_gem_private_object_init(adev_to_drm(adev), &bo->tbo.base, size);
- 	INIT_LIST_HEAD(&bo->shadow_list);
- 	bo->vm_bo = NULL;
--- 
-2.28.0
-
+Applied.
