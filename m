@@ -2,131 +2,86 @@ Return-Path: <SRS0=0LAj=CY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F30BC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4072C2D0E3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:31:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6149C20809
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:31:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Itp/Q3JR"
+	by mail.kernel.org (Postfix) with ESMTP id 96F4220872
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:31:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600209063;
+	bh=8+1P9qS5z6t5FdvETm4LTTARiYF70pqWnyt3JI9TZ8Y=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=V8YXZuTOc3TnJ2aQarSqjezxu2WKJ8ObiOKoV30Htzd2b0T3uh+8YNamgc5N22pFE
+	 /r8noZY8PdtlR7TGuggGCBQMICn4XgsYz/FPj0tRoQfkdIV3XMf93wue77T9NAYmLK
+	 QIohImEjFVlVo4SvtVjt7TScGnygy3ErnHZtLah8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727626AbgIOWbD (ORCPT
+        id S1727562AbgIOWbC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 18:31:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50424 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727266AbgIOQRe (ORCPT
+        Tue, 15 Sep 2020 18:31:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59568 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727612AbgIOQRU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 12:17:34 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8A2CC061A2B;
-        Tue, 15 Sep 2020 09:13:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=Guqxj07xwr5MuMGWT2PdBQLUVmSBHz1SxHMxp26SQAM=; b=Itp/Q3JRcH/NoLIHSU3m7qeF67
-        gdhEr5XoAv7CiO4A0JxQ9Ti91ecohZg09mmgvHrQ+qoZ6uxG9jjAF5CYBRkGY4hkrZ8oLusOXawRu
-        itEmIISOfcaM1ZycQkbekQzpocP6mbHhti1ust7wPgdCSXc66m8BGmkDx98nY/j8QwaRK1bMXlU+m
-        bYtvv7XU/3VQJbFpljGBOuuUeAEg3A3Iw5CUCndXJ/8B9we1WY5JyUIiuhTRei/9HurInzcXik9Ju
-        uioPNWsVFBKt3ob9SdqR4jaV4K2ad4/sztjOMkemAO/dxqRpZQjqa6xUWACYYBfwxKEGU2wvZU38V
-        7RUXb+ng==;
-Received: from 089144214092.atnat0023.highway.a1.net ([89.144.214.92] helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kIDZx-0004jl-Hl; Tue, 15 Sep 2020 16:13:13 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        iommu@lists.linux-foundation.org
-Cc:     Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        linux1394-devel@lists.sourceforge.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-mm@kvack.org,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 09/18] sgiwd93: convert to dma_alloc_noncoherent
-Date:   Tue, 15 Sep 2020 17:51:13 +0200
-Message-Id: <20200915155122.1768241-10-hch@lst.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200915155122.1768241-1-hch@lst.de>
-References: <20200915155122.1768241-1-hch@lst.de>
+        Tue, 15 Sep 2020 12:17:20 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D8D520708;
+        Tue, 15 Sep 2020 16:17:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600186631;
+        bh=8+1P9qS5z6t5FdvETm4LTTARiYF70pqWnyt3JI9TZ8Y=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=uD2AeQEj4Xqs79H2UEUkkuZq7CbJ3GVHCXBCL8oH28D1uCvoWlLteMCd4nPTq3Azn
+         rYOQ7rcKMSW4KbnqOKDqgx5G+DzheogSz6ZDUNAk5GFqpHue1Rx8TEpbcaBXJ2KrhB
+         hnwM3dHCfhaGftsvBY/Hvxd1jBBs6SJ8MF/j8NOw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <8d90ada6-ac26-9d7a-6ad5-7f7704cfffc5@samsung.com>
+References: <CGME20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f@eucas1p1.samsung.com> <20200807133143.22748-1-m.szyprowski@samsung.com> <159780685238.334488.5802955284004610550@swboyd.mtv.corp.google.com> <f4c87130-25a0-2195-9caa-be805d207c34@kernel.org> <fff07b05-f1f6-5333-a056-69ba6995ed4f@kernel.org> <20200824103123.GD25860@kozik-lap> <3ba7cf94-1b1f-a500-4c4f-a9769531097b@samsung.com> <8d90ada6-ac26-9d7a-6ad5-7f7704cfffc5@samsung.com>
+Subject: Re: [PATCH v2] clk: samsung: Keep top BPLL mux on Exynos542x enabled
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date:   Tue, 15 Sep 2020 09:17:10 -0700
+Message-ID: <160018663023.4188128.11636063556241845225@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the new non-coherent DMA API including proper ownership transfers.
-This also means we can allocate the memory as DMA_TO_DEVICE instead
-of bidirectional.
+Quoting Sylwester Nawrocki (2020-09-15 05:43:07)
+> On 02.09.2020 11:24, Sylwester Nawrocki wrote:
+> > On 24.08.2020 12:31, Krzysztof Kozlowski wrote:
+> >>> the clk/samsung tree for next merge window?
+> >>
+> >> All current multi_v7 and some of exynos defconfig boots fail on Odroid
+> >> XU3-family, starting from v5.9-rc1. On kernelci and my boot systems. If
+> >> I understand correctly, this is a fix for this issue, so it should go =
+as
+> >> fast as possible to v5.9 cycle.
+> >>
+> >> Otherwise we cannot test anything. The current v5.9 RC is then simply
+> >> broken.
+> >=20
+> > Right, we need that patch in v5.9. Stephen, can you please apply
+> > the patch to your clk-fixes?
+>=20
+> So I applied the patch to my tree and sent you a pull request
+> instead... :) I thought it will handling subsequent patches
+> that depend on that one more straightforward.
+>=20
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/scsi/sgiwd93.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/scsi/sgiwd93.c b/drivers/scsi/sgiwd93.c
-index 3bdf0deb8f1529..cf1030c9dda17f 100644
---- a/drivers/scsi/sgiwd93.c
-+++ b/drivers/scsi/sgiwd93.c
-@@ -95,7 +95,7 @@ void fill_hpc_entries(struct ip22_hostdata *hd, struct scsi_cmnd *cmd, int din)
- 	 */
- 	hcp->desc.pbuf = 0;
- 	hcp->desc.cntinfo = HPCDMA_EOX;
--	dma_cache_sync(hd->dev, hd->cpu,
-+	dma_sync_single_for_device(hd->dev, hd->dma,
- 		       (unsigned long)(hcp + 1) - (unsigned long)hd->cpu,
- 		       DMA_TO_DEVICE);
- }
-@@ -234,8 +234,8 @@ static int sgiwd93_probe(struct platform_device *pdev)
- 
- 	hdata = host_to_hostdata(host);
- 	hdata->dev = &pdev->dev;
--	hdata->cpu = dma_alloc_attrs(&pdev->dev, HPC_DMA_SIZE, &hdata->dma,
--				     GFP_KERNEL, DMA_ATTR_NON_CONSISTENT);
-+	hdata->cpu = dma_alloc_noncoherent(&pdev->dev, HPC_DMA_SIZE,
-+				&hdata->dma, DMA_TO_DEVICE, GFP_KERNEL);
- 	if (!hdata->cpu) {
- 		printk(KERN_WARNING "sgiwd93: Could not allocate memory for "
- 		       "host %d buffer.\n", unit);
-@@ -274,8 +274,8 @@ static int sgiwd93_probe(struct platform_device *pdev)
- out_irq:
- 	free_irq(irq, host);
- out_free:
--	dma_free_attrs(&pdev->dev, HPC_DMA_SIZE, hdata->cpu, hdata->dma,
--		       DMA_ATTR_NON_CONSISTENT);
-+	dma_free_noncoherent(&pdev->dev, HPC_DMA_SIZE, hdata->cpu, hdata->dma,
-+			DMA_TO_DEVICE);
- out_put:
- 	scsi_host_put(host);
- out:
-@@ -291,8 +291,8 @@ static int sgiwd93_remove(struct platform_device *pdev)
- 
- 	scsi_remove_host(host);
- 	free_irq(pd->irq, host);
--	dma_free_attrs(&pdev->dev, HPC_DMA_SIZE, hdata->cpu, hdata->dma,
--		       DMA_ATTR_NON_CONSISTENT);
-+	dma_free_noncoherent(&pdev->dev, HPC_DMA_SIZE, hdata->cpu, hdata->dma,
-+			DMA_TO_DEVICE);
- 	scsi_host_put(host);
- 	return 0;
- }
--- 
-2.28.0
-
+Great!
