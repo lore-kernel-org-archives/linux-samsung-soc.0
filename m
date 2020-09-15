@@ -2,253 +2,171 @@ Return-Path: <SRS0=0LAj=CY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43882C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 09:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D8F7C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 12:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7D8A21D24
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 09:48:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600163337;
-	bh=rD/UNyFOCyRF0Jm2w6/woqRyP5HVr7lmAT2+g4WW3+M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=2sizP7KTzywAi5iKz/xgOAEMd7GPX69BFzugNdbEnbbMgZCXRb6aFsBXRSxZgnhrg
-	 4vV/HEFG/Tok7qDlgGZ4Gu0X4OOVF1Bhs8+W9669+QW9ZvVln5ZMy8+Qx73Jan/cpl
-	 JklyPJ1wLB9WhgGvWljLIcm+e3B1/tEvLOvaqnMs=
+	by mail.kernel.org (Postfix) with ESMTP id C170920936
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 12:44:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HPDnB1Bm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726125AbgIOJs4 (ORCPT
+        id S1726444AbgIOMoP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 05:48:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60734 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726095AbgIOJsx (ORCPT
+        Tue, 15 Sep 2020 08:44:15 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49076 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbgIOMnj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 05:48:53 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B66E021D1B;
-        Tue, 15 Sep 2020 09:48:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600163332;
-        bh=rD/UNyFOCyRF0Jm2w6/woqRyP5HVr7lmAT2+g4WW3+M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=X1a5GFVGN7r8G7Gjfeq8GR12AjMpUfPgIubRv/9sLAp4MH2MbEm1pmbHe5sdGnyCz
-         7CiOGRqqODyzZu5muuwNOpGHMtk9WFCLi3Si7cC8XqpP0NB1AfFVrP45sKwyKGOZ/J
-         3GrZnVuuNNIe9u7fNNx8UFNr0rsFzxAZibIpWk/s=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1kI7Zy-00BxXi-KC; Tue, 15 Sep 2020 10:48:50 +0100
+        Tue, 15 Sep 2020 08:43:39 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200915124309euoutp02b5464d7f34ec7b1504842679c6c020d9~09ZVkTZ6h1076710767euoutp027
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2020 12:43:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200915124309euoutp02b5464d7f34ec7b1504842679c6c020d9~09ZVkTZ6h1076710767euoutp027
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1600173789;
+        bh=neMABDveNM+YfgI7cV05Snghwve9pnFQDi0Bd3F3O18=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=HPDnB1BmilY6EoSn7a4RNJJLtMssnlNE+X7Msu6+KcAcMKeu5M1QHAJtgIq21Z/IC
+         qkSl1ucXIbSL5e2h+z8t5KqZyjopcbyReOKrjqqvHZ2s7Ch49SA+l4b610Kywcy4Yh
+         b8KfUWy8/dCbqWhwkQf2u4iSVKqdeix6fAaMzqT4=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200915124309eucas1p13b682cc4f847f2c91923a42edbcb9a14~09ZVSbG4a2565525655eucas1p14;
+        Tue, 15 Sep 2020 12:43:09 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 4E.CF.06318.DD6B06F5; Tue, 15
+        Sep 2020 13:43:09 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200915124308eucas1p15bfb141a491a564b5b5c6a7683d5b755~09ZU7abAh2613026130eucas1p1k;
+        Tue, 15 Sep 2020 12:43:08 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200915124308eusmtrp24a17123047471dff714aa7bb71cb488b~09ZU6xzsP2113121131eusmtrp2g;
+        Tue, 15 Sep 2020 12:43:08 +0000 (GMT)
+X-AuditID: cbfec7f5-371ff700000018ae-27-5f60b6ddac80
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id A8.C7.06314.CD6B06F5; Tue, 15
+        Sep 2020 13:43:08 +0100 (BST)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200915124307eusmtip1c61f0a32f8a0bd7c9e2aaf1c8365dac7~09ZT1xIaA2752827528eusmtip1B;
+        Tue, 15 Sep 2020 12:43:07 +0000 (GMT)
+Subject: Re: [PATCH v2] clk: samsung: Keep top BPLL mux on Exynos542x
+ enabled
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <8d90ada6-ac26-9d7a-6ad5-7f7704cfffc5@samsung.com>
+Date:   Tue, 15 Sep 2020 14:43:07 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 15 Sep 2020 10:48:50 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Valentin Schneider <Valentin.Schneider@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Saravana Kannan <saravanak@google.com>,
-        kernel-team@android.com,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v3 08/16] irqchip/gic: Configure SGIs as standard
- interrupts
-In-Reply-To: <ce90375a-6752-1fa9-6927-991a99168b33@samsung.com>
-References: <20200901144324.1071694-1-maz@kernel.org>
- <20200901144324.1071694-9-maz@kernel.org>
- <CGME20200914130601eucas1p23ce276d168dee37909b22c75499e68da@eucas1p2.samsung.com>
- <a917082d-4bfd-a6fd-db88-36e75f5f5921@samsung.com>
- <8642847d83ef5bb15663d0246d6af668@kernel.org>
- <65565f85-d932-37f3-a8cd-dbd13d7dbfad@samsung.com>
- <14e2c690bf99280588538989014c7356@kernel.org>
- <33e3ef7c-44e9-a509-74ad-c2e39779fd9d@samsung.com>
- <731a70ded2e2e862483d1df96224d039@kernel.org>
- <ce90375a-6752-1fa9-6927-991a99168b33@samsung.com>
-User-Agent: Roundcube Webmail/1.4.8
-Message-ID: <77e4565c507b3a9ea0646ee06590ac95@kernel.org>
-X-Sender: maz@kernel.org
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: m.szyprowski@samsung.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, will@kernel.org, catalin.marinas@arm.com, linux@arm.linux.org.uk, tglx@linutronix.de, jason@lakedaemon.net, sumit.garg@linaro.org, Valentin.Schneider@arm.com, f.fainelli@gmail.com, gregory.clement@bootlin.com, andrew@lunn.ch, saravanak@google.com, kernel-team@android.com, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, b.zolnierkie@samsung.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+In-Reply-To: <3ba7cf94-1b1f-a500-4c4f-a9769531097b@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIKsWRmVeSWpSXmKPExsWy7djP87p3tyXEG3SfELDYOGM9q8X1L89Z
+        Lc6f38Bu8bHnHqvF594jjBYzzu9jsljY1MJusfbIXXaLf9c2sjhweqyZt4bRY9OqTjaPvi2r
+        GD0+b5ILYInisklJzcksSy3St0vgyti8ooWloEmgYsWhv6wNjO28XYycHBICJhIrjx1g7GLk
+        4hASWMEosbPlG5TzhVFi4qtpLBDOZ0aJFyu+scC0/D72iBkisZxRYtqXZ1DOR0aJySv3sIFU
+        CQv4S5zcd4IdxGYTMJToPdrHCGKLCHhJHLs1hQ2kgVmgh0libdcmVpAEr4CdxM7Li8EaWARU
+        JVa86gMbJCoQJ3Hs1CMWiBpBiZMzn4DZnAL2EhtX3ALrZRYQl7j1ZD4ThC0vsf3tHGaIU/ex
+        S/zstoOwXSTu7FzMBGELS7w6voUdwpaR+L8TpJcLyG5mlOjZfZsdwpnAKHH/+AJGiCpriTvn
+        fgFdxAG0QVNi/S59iLCjxPR7s5lAwhICfBI33gpC3MAnMWnbdGaIMK9ER5sQRLWKxO9V06FO
+        kJLofvKfZQKj0iwkn81C8s0sJN/MQti7gJFlFaN4amlxbnpqsXFearlecWJucWleul5yfu4m
+        RmBCOv3v+NcdjPv+JB1iFOBgVOLh5SiNjxdiTSwrrsw9xCjBwawkwut09nScEG9KYmVValF+
+        fFFpTmrxIUZpDhYlcV7jRS9jhQTSE0tSs1NTC1KLYLJMHJxSDYwejzgqdOqW1vZ3yilGqDdN
+        6NJ8EOD+Rrn1wusL5lMKily3Ks85xmt6Rux0iM/PJtZlLLODih8HPNjL+/Mq46H7nwzMw+tF
+        2ernP3xX/Gh/oJn+zm3bxZaGC67kfCyw/Qt33rY2A+O7q5V2rqm437vBfOZc7aTc6Xo5gq83
+        Wk+/+17xY+fbJk8lluKMREMt5qLiRAC/v9goRAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xu7p3tiXEG2z8Y2ixccZ6VovrX56z
+        Wpw/v4Hd4mPPPVaLz71HGC1mnN/HZLGwqYXdYu2Ru+wW/65tZHHg9Fgzbw2jx6ZVnWwefVtW
+        MXp83iQXwBKlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqk
+        b5egl7F5RQtLQZNAxYpDf1kbGNt5uxg5OSQETCR+H3vEDGILCSxllHj83LiLkQMoLiUxv0UJ
+        okRY4s+1LrYuRi6gkveMEo0Xv7KCJIQFfCX6Ni0Cs9kEDCV6j/YxgtgiAl4Sx25NAWtgFuhj
+        kriz9worRPcsZonlXx6wgVTxCthJ7Ly8mB3EZhFQlVjxqg8sLioQJ3Gm5wVUjaDEyZlPWEBs
+        TgF7iY0rboFtYxZQl/gz7xIzhC0ucevJfCYIW15i+9s5zBMYhWYhaZ+FpGUWkpZZSFoWMLKs
+        YhRJLS3OTc8tNtQrTswtLs1L10vOz93ECIy/bcd+bt7BeGlj8CFGAQ5GJR7ehPL4eCHWxLLi
+        ytxDjBIczEoivE5nT8cJ8aYkVlalFuXHF5XmpBYfYjQFem4is5Rocj4wNeSVxBuaGppbWBqa
+        G5sbm1koifN2CByMERJITyxJzU5NLUgtgulj4uCUamAM6NAN7yzqrU2y81R9uduoawrve5XV
+        GstbHi1ddHBLacJPgbsmC2aeLXwiseTylx0nlOrOdRf0Nks8mFX32pL/X+xNkX99Pe8XfLoy
+        mfmPf6/8xMUdc1uW2gadNt9+Xv6xUGfiFl/l+Yc4J76Zzn4h9HjMnrxVHROrVc/6cbG8MWCq
+        UfU8ufuDEktxRqKhFnNRcSIAVl9vgNUCAAA=
+X-CMS-MailID: 20200915124308eucas1p15bfb141a491a564b5b5c6a7683d5b755
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f
+References: <CGME20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f@eucas1p1.samsung.com>
+        <20200807133143.22748-1-m.szyprowski@samsung.com>
+        <159780685238.334488.5802955284004610550@swboyd.mtv.corp.google.com>
+        <f4c87130-25a0-2195-9caa-be805d207c34@kernel.org>
+        <fff07b05-f1f6-5333-a056-69ba6995ed4f@kernel.org>
+        <20200824103123.GD25860@kozik-lap>
+        <3ba7cf94-1b1f-a500-4c4f-a9769531097b@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020-09-15 09:35, Marek Szyprowski wrote:
-> Hi Marc,
+On 02.09.2020 11:24, Sylwester Nawrocki wrote:
+> On 24.08.2020 12:31, Krzysztof Kozlowski wrote:
+>> On Mon, Aug 24, 2020 at 12:28:51PM +0200, Sylwester Nawrocki wrote:
+>>> On 8/23/20 12:12, Sylwester Nawrocki wrote:
+>>>> On 8/19/20 05:14, Stephen Boyd wrote:
+>>>>> Quoting Marek Szyprowski (2020-08-07 06:31:43)
+>>>>>> BPLL clock must not be disabled because it is needed for proper DRAM
+>>>>>> operation. This is normally handled by respective memory devfreq driver,
+>>>>>> but when that driver is not yet probed or its probe has been
+>>>>>> deferred the
+>>>>>> clock might got disabled what causes board hang. Fix this by calling
+>>>>>> clk_prepare_enable() directly from the clock provider driver.
+>>>>>>
+>>>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>>>> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+>>>>>> Tested-by: Lukasz Luba <lukasz.luba@arm.com>
+>>>>>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>>>>> ---
+>>>>>
+>>>>> Can I pick this up for clk-fixes?
+>>>>
+>>>> Sure, thanks for taking care of this.
+>>>
+>>> OTOH, I planned to queue that patch for next merged window, together 
+>>> with a patch that depends on that one, since the fix is not for an issue
+>>> introduced in the last merge window.
+>>> I guess it's better to avoid pulling (part of) the clk-fixes branch to
+>>> the clk/samsung tree for next merge window?
+>>
+>> All current multi_v7 and some of exynos defconfig boots fail on Odroid
+>> XU3-family, starting from v5.9-rc1. On kernelci and my boot systems. If
+>> I understand correctly, this is a fix for this issue, so it should go as
+>> fast as possible to v5.9 cycle.
+>>
+>> Otherwise we cannot test anything. The current v5.9 RC is then simply
+>> broken.
 > 
-> On 15.09.2020 10:07, Marc Zyngier wrote:
->> On 2020-09-15 07:48, Marek Szyprowski wrote:
->>>>> Both Exynos 4210 and 4412 use non-zero cpu-offset in GIC node in
->>>>> device-tree: arch/arm/boot/dts/exynos{4210,4412}.dtsi, so I assume
->>>>> that
->>>>> the GIC registers are not banked.
->>>> 
->>>> Annoyingly, it seems to work correctly in QEMU:
->> 
->> [...]
->> 
->>>> Do you happen to know whether the QEMU emulation is trustworthy?
->>> 
->>> I didn't play much with Exynos emulation on QEMU. All I know is that
->>> this patch simply doesn't work on the real hw.
->> 
->> I don't doubt it. The question was more whether we could trust QEMU
->> to be reliable, in which case the issue would be around a kernel
->> configuration problem. Could you stash your kernel config somewhere?
-> 
-> I just use the vanilla exynos_defconfig for my tests.
+> Right, we need that patch in v5.9. Stephen, can you please apply
+> the patch to your clk-fixes?
 
-Tried that with QEMU, same result. It keeps working. Oh well.
-
-> 
->>> If there is anything to check or test, let me know. I will try to 
->>> help
->>> as much as possible.
->> 
->> It would be interesting to see whether the CPUs are getting any IPI.
->> Can you try the following patch, and send the results back?
-
-[...]
-
-> [    0.145493] smp: Bringing up secondary CPUs ...
-> [    0.152740] CPU0 send IPI0 base = f0800000
-> [    0.152786] CPU1: Booted secondary processor
-> [    0.155582] CPU0 send IPI0 base = f0800000
-> [    0.163945] CPU1 IPI0 base = f0808000
-> [    0.163956] CPU1 IPI1 base = f0808000
-> [    0.163966] CPU1 IPI2 base = f0808000
-> [    0.163976] CPU1 IPI3 base = f0808000
-> [    0.163986] CPU1 IPI4 base = f0808000
-> [    0.163995] CPU1 IPI5 base = f0808000
-> [    0.164004] CPU1 IPI6 base = f0808000
-> [    0.164014] CPU1 IPI7 base = f0808000
-> [    0.164025] CPU1: thread -1, cpu 1, socket 9, mpidr 80000901
-> [    0.164035] CPU1: Spectre v2: using BPIALL workaround
-> [    0.203803] CPU1 send IPI2 base = f0808000
-> [    0.207834] CPU1 IPI0 received
-> [    0.207839] CPU0 IPI2 received
-> [    0.214052] CPU0 send IPI2 base = f0800000
-> [    0.217990] CPU1 IPI2 received
-> [    0.222188] CPU1 send IPI2 base = f0808000
-> [    2.754062] random: fast init done
-
-So IPIs *do work* for some time, but CPU0 ends up not seeing IPI2.
-I see a slightly different behaviour in QEMU:
-
-[    0.555590] smp: Bringing up secondary CPUs ...
-[    0.606032] CPU0 send IPI0 base = f0800000
-[    0.609149] CPU0 send IPI0 base = f0800000
-[    0.610329] CPU0 send IPI0 base = f0800000
-[    0.611445] CPU0 send IPI0 base = f0800000
-[    0.611588] CPU1: Booted secondary processor
-[    0.613579] CPU0 send IPI0 base = f0800000
-[    0.616180] CPU1 IPI0 base = f0808000
-[    0.616470] CPU1 IPI1 base = f0808000
-[    0.616634] CPU1 IPI2 base = f0808000
-[    0.616781] CPU1 IPI3 base = f0808000
-[    0.616931] CPU1 IPI4 base = f0808000
-[    0.617074] CPU1 IPI5 base = f0808000
-[    0.617220] CPU1 IPI6 base = f0808000
-[    0.617366] CPU1 IPI7 base = f0808000
-[    0.617824] CPU1: thread -1, cpu 1, socket 9, mpidr 80000901
-[    0.618115] CPU1: Spectre v2: using BPIALL workaround
-[    0.627969] CPU1 send IPI3 base = f0808000
-[    0.631301] CPU0 IPI3 received
-[    0.631389] CPU1 IPI0 received
-[    0.639726] CPU0 send IPI2 base = f0800000
-[    0.641632] CPU1 IPI2 received
-[    0.664666] CPU1 send IPI2 base = f0808000
-[    0.665987] CPU0 IPI2 received
-[    0.670718] smp: Brought up 1 node, 2 CPUs
-[    0.672175] SMP: Total of 2 processors activated (48.00 BogoMIPS).
-[    0.674071] CPU: All CPU(s) started in SVC mode.
-
-where the secondary starts by sending IPI3 (IPI_CALL_FUNC). Not sure it
-matters.
-
-The fact that CPU0 doesn't process the second IPI2 makes me wonder
-if there is something flawed in the EOI logic.
-
-Can you try applying this patch, which reverts that particular logic?
-If that happens to work, we'll have to investigate what comes out
-of the IAR register...
-
-Otherwise, we'll keep reverting bits of the patch until we nail it...
-
-Thanks,
-
-         M.
-
-diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-index 4be2b62f816f..6daf2de7233a 100644
---- a/drivers/irqchip/irq-gic.c
-+++ b/drivers/irqchip/irq-gic.c
-@@ -335,22 +335,31 @@ static void __exception_irq_entry 
-gic_handle_irq(struct pt_regs *regs)
-  		irqstat = readl_relaxed(cpu_base + GIC_CPU_INTACK);
-  		irqnr = irqstat & GICC_IAR_INT_ID_MASK;
-
--		if (unlikely(irqnr >= 1020))
--			break;
--
--		if (static_branch_likely(&supports_deactivate_key))
-+		if (likely(irqnr > 15 && irqnr < 1020)) {
-+			if (static_branch_likely(&supports_deactivate_key))
-+				writel_relaxed(irqstat, cpu_base + GIC_CPU_EOI);
-+			isb();
-+			handle_domain_irq(gic->domain, irqnr, regs);
-+			continue;
-+		}
-+		if (irqnr < 16) {
-  			writel_relaxed(irqstat, cpu_base + GIC_CPU_EOI);
--		isb();
--
--		/*
--		 * Ensure any shared data written by the CPU sending the IPI
--		 * is read after we've read the ACK register on the GIC.
--		 *
--		 * Pairs with the write barrier in gic_ipi_send_mask
--		 */
--		if (irqnr <= 15)
-+			if (static_branch_likely(&supports_deactivate_key))
-+				writel_relaxed(irqstat, cpu_base + GIC_CPU_DEACTIVATE);
-+#ifdef CONFIG_SMP
-+			/*
-+			 * Ensure any shared data written by the CPU sending
-+			 * the IPI is read after we've read the ACK register
-+			 * on the GIC.
-+			 *
-+			 * Pairs with the write barrier in gic_raise_softirq
-+			 */
-  			smp_rmb();
--		handle_domain_irq(gic->domain, irqnr, regs);
-+			handle_IPI(irqnr, regs);
-+#endif
-+			continue;
-+		}
-+		break;
-  	} while (1);
-  }
-
+So I applied the patch to my tree and sent you a pull request
+instead... :) I thought it will handling subsequent patches
+that depend on that one more straightforward.
 
 -- 
-Jazz is not dead. It just smells funny...
+Regards,
+Sylwester
