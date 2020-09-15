@@ -2,225 +2,215 @@ Return-Path: <SRS0=0LAj=CY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABBCEC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDAF9C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EDD720809
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:32:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DkmB3YTM"
+	by mail.kernel.org (Postfix) with ESMTP id 91F7120770
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:33:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbgIOWc2 (ORCPT
+        id S1727507AbgIOWdS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 18:32:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50208 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727603AbgIOQRR (ORCPT
+        Tue, 15 Sep 2020 18:33:18 -0400
+Received: from mga09.intel.com ([134.134.136.24]:62427 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727391AbgIOQRJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 12:17:17 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 543DBC061A10;
-        Tue, 15 Sep 2020 09:11:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=I03vZyMCQXixsKgB+vAi29QqwSDPgVkGV9+ViaS1CMg=; b=DkmB3YTM4x4P/03PR0YpgL495M
-        EfAecJ6/RbGViN36w0QSd/Tr391/7C3qp+8l6E51mioxfYFEf84qweB7rrRnnk+XS4NrRJAxVL9or
-        eM1zmit6nOvg6b55NFhpo114VioVSvnslqOCa1VQJwriMKfnb1O5WFoJuez65V/sByOexHLk1aG12
-        kIJoLn37eUqAXIXtLeRRXw1BLM962vL4dorybD0panUqncIhUNKnleKBHKVtAPesBxrCrYXQozSDG
-        Ht+YUL90n+pvTplQ82CtOCFOCta92rwWzKpTg+cQVDksvP2loDwB8A2oyP92wwnyQJsL9Bj01w7CB
-        wY2hcvmw==;
-Received: from 089144214092.atnat0023.highway.a1.net ([89.144.214.92] helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kIDXq-0004bk-Fp; Tue, 15 Sep 2020 16:11:02 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        iommu@lists.linux-foundation.org
-Cc:     Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        linux1394-devel@lists.sourceforge.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-mm@kvack.org,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 08/18] dma-mapping: add a new dma_alloc_noncoherent API
-Date:   Tue, 15 Sep 2020 17:51:12 +0200
-Message-Id: <20200915155122.1768241-9-hch@lst.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200915155122.1768241-1-hch@lst.de>
-References: <20200915155122.1768241-1-hch@lst.de>
+        Tue, 15 Sep 2020 12:17:09 -0400
+IronPort-SDR: IbtUr6bGrMTllGLr2qCYUQ3EixVxs0J+WVj4+HeKmKAIC4m+DqWuILk+HLcbx/TxbuPYzO0Ank
+ jSMSxBpYZvQw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9745"; a="160229129"
+X-IronPort-AV: E=Sophos;i="5.76,430,1592895600"; 
+   d="scan'208";a="160229129"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2020 09:14:54 -0700
+IronPort-SDR: 1NweJQ/LUpVMZGR2CNL7idgXNRkgQYlVvGnbjzV+v3epVrjgQ3OHB8LQ+g+ZsKRvdD4MQ7Rl1b
+ B/J1ZOWPLOog==
+X-IronPort-AV: E=Sophos;i="5.76,430,1592895600"; 
+   d="scan'208";a="451484915"
+Received: from oshaham-mobl.ger.corp.intel.com (HELO [10.214.241.3]) ([10.214.241.3])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2020 09:14:31 -0700
+Subject: Re: [PATCH v2 06/21] drm/i915: Introduce GEM object functions
+To:     Thomas Zimmermann <tzimmermann@suse.de>, alexander.deucher@amd.com,
+        christian.koenig@amd.com, airlied@linux.ie, daniel@ffwll.ch,
+        linux@armlinux.org.uk, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, l.stach@pengutronix.de,
+        christian.gmeiner@gmail.com, inki.dae@samsung.com,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        patrik.r.jakobsson@gmail.com, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        chunkuang.hu@kernel.org, p.zabel@pengutronix.de,
+        matthias.bgg@gmail.com, robdclark@gmail.com, sean@poorly.run,
+        bskeggs@redhat.com, tomi.valkeinen@ti.com, eric@anholt.net,
+        hjc@rock-chips.com, heiko@sntech.de, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, rodrigosiqueiramelo@gmail.com,
+        hamohammed.sa@gmail.com, oleksandr_andrushchenko@epam.com,
+        hyun.kwon@xilinx.com, laurent.pinchart@ideasonboard.com,
+        michal.simek@xilinx.com, sumit.semwal@linaro.org,
+        evan.quan@amd.com, Hawking.Zhang@amd.com, tianci.yin@amd.com,
+        marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        andi.shyti@intel.com, sam@ravnborg.org, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-7-tzimmermann@suse.de>
+From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Organization: Intel Corporation UK Plc
+Message-ID: <76e5eb2f-e324-8f56-866a-15b022abba8d@linux.intel.com>
+Date:   Tue, 15 Sep 2020 17:14:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200915145958.19993-7-tzimmermann@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add a new API to allocate and free memory that is guaranteed to be
-addressable by a device, but which potentially is not cache coherent
-for DMA.
 
-To transfer ownership to and from the device, the existing streaming
-DMA API calls dma_sync_single_for_device and dma_sync_single_for_cpu
-must be used.
+On 15/09/2020 15:59, Thomas Zimmermann wrote:
+> GEM object functions deprecate several similar callback interfaces in
+> struct drm_driver. This patch replaces the per-driver callbacks with
+> per-instance callbacks in i915.
+> 
+> v2:
+> 	* move object-function instance to i915_gem_object.c (Jani)
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>   drivers/gpu/drm/i915/gem/i915_gem_object.c    | 21 ++++++++++++++++---
+>   drivers/gpu/drm/i915/gem/i915_gem_object.h    |  3 ---
+>   drivers/gpu/drm/i915/i915_drv.c               |  4 ----
+>   .../gpu/drm/i915/selftests/mock_gem_device.c  |  3 ---
+>   4 files changed, 18 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.c b/drivers/gpu/drm/i915/gem/i915_gem_object.c
+> index c8421fd9d2dc..3389ac972d16 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_object.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_object.c
+> @@ -39,9 +39,18 @@ static struct i915_global_object {
+>   	struct kmem_cache *slab_objects;
+>   } global;
+>   
+> +static const struct drm_gem_object_funcs i915_gem_object_funcs;
+> +
+>   struct drm_i915_gem_object *i915_gem_object_alloc(void)
+>   {
+> -	return kmem_cache_zalloc(global.slab_objects, GFP_KERNEL);
+> +	struct drm_i915_gem_object *obj;
+> +
+> +	obj = kmem_cache_zalloc(global.slab_objects, GFP_KERNEL);
+> +	if (!obj)
+> +		return NULL;
+> +	obj->base.funcs = &i915_gem_object_funcs;
+> +
+> +	return obj;
+>   }
+>   
+>   void i915_gem_object_free(struct drm_i915_gem_object *obj)
+> @@ -101,7 +110,7 @@ void i915_gem_object_set_cache_coherency(struct drm_i915_gem_object *obj,
+>   		!(obj->cache_coherent & I915_BO_CACHE_COHERENT_FOR_WRITE);
+>   }
+>   
+> -void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file)
+> +static void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file)
+>   {
+>   	struct drm_i915_gem_object *obj = to_intel_bo(gem);
+>   	struct drm_i915_file_private *fpriv = file->driver_priv;
+> @@ -264,7 +273,7 @@ static void __i915_gem_free_work(struct work_struct *work)
+>   	i915_gem_flush_free_objects(i915);
+>   }
+>   
+> -void i915_gem_free_object(struct drm_gem_object *gem_obj)
+> +static void i915_gem_free_object(struct drm_gem_object *gem_obj)
+>   {
+>   	struct drm_i915_gem_object *obj = to_intel_bo(gem_obj);
+>   	struct drm_i915_private *i915 = to_i915(obj->base.dev);
+> @@ -403,6 +412,12 @@ int __init i915_global_objects_init(void)
+>   	return 0;
+>   }
+>   
+> +static const struct drm_gem_object_funcs i915_gem_object_funcs = {
+> +	.free = i915_gem_free_object,
+> +	.close = i915_gem_close_object,
+> +	.export = i915_gem_prime_export,
+> +};
+> +
+>   #if IS_ENABLED(CONFIG_DRM_I915_SELFTEST)
+>   #include "selftests/huge_gem_object.c"
+>   #include "selftests/huge_pages.c"
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.h b/drivers/gpu/drm/i915/gem/i915_gem_object.h
+> index d46db8d8f38e..eaf3d4147be0 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_object.h
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_object.h
+> @@ -38,9 +38,6 @@ void __i915_gem_object_release_shmem(struct drm_i915_gem_object *obj,
+>   
+>   int i915_gem_object_attach_phys(struct drm_i915_gem_object *obj, int align);
+>   
+> -void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file);
+> -void i915_gem_free_object(struct drm_gem_object *obj);
+> -
+>   void i915_gem_flush_free_objects(struct drm_i915_private *i915);
+>   
+>   struct sg_table *
+> diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+> index 94e00e450683..011a3fb41ece 100644
+> --- a/drivers/gpu/drm/i915/i915_drv.c
+> +++ b/drivers/gpu/drm/i915/i915_drv.c
+> @@ -1750,12 +1750,8 @@ static struct drm_driver driver = {
+>   	.lastclose = i915_driver_lastclose,
+>   	.postclose = i915_driver_postclose,
+>   
+> -	.gem_close_object = i915_gem_close_object,
+> -	.gem_free_object_unlocked = i915_gem_free_object,
+> -
+>   	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+>   	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+> -	.gem_prime_export = i915_gem_prime_export,
+>   	.gem_prime_import = i915_gem_prime_import,
+>   
+>   	.dumb_create = i915_gem_dumb_create,
+> diff --git a/drivers/gpu/drm/i915/selftests/mock_gem_device.c b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
+> index f127e633f7ca..9244b5d6fb01 100644
+> --- a/drivers/gpu/drm/i915/selftests/mock_gem_device.c
+> +++ b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
+> @@ -87,9 +87,6 @@ static struct drm_driver mock_driver = {
+>   	.name = "mock",
+>   	.driver_features = DRIVER_GEM,
+>   	.release = mock_device_release,
+> -
+> -	.gem_close_object = i915_gem_close_object,
+> -	.gem_free_object_unlocked = i915_gem_free_object,
+>   };
+>   
+>   static void release_dev(struct device *dev)
+> 
 
-For now the new calls are implemented on top of dma_alloc_attrs just
-like the old-noncoherent API, but once all drivers are switched to
-the new API it will be replaced with a better working implementation
-that is available on all architectures.
+Looks obviously fine.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- Documentation/core-api/dma-api.rst | 75 ++++++++++++++----------------
- include/linux/dma-mapping.h        | 12 +++++
- 2 files changed, 48 insertions(+), 39 deletions(-)
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
 
-diff --git a/Documentation/core-api/dma-api.rst b/Documentation/core-api/dma-api.rst
-index 90239348b30f6f..ea0413276ddb70 100644
---- a/Documentation/core-api/dma-api.rst
-+++ b/Documentation/core-api/dma-api.rst
-@@ -516,48 +516,56 @@ routines, e.g.:::
- 	}
- 
- 
--Part II - Advanced dma usage
------------------------------
-+Part II - Non-coherent DMA allocations
-+--------------------------------------
- 
--Warning: These pieces of the DMA API should not be used in the
--majority of cases, since they cater for unlikely corner cases that
--don't belong in usual drivers.
-+These APIs allow to allocate pages in the kernel direct mapping that are
-+guaranteed to be DMA addressable.  This means that unlike dma_alloc_coherent,
-+virt_to_page can be called on the resulting address, and the resulting
-+struct page can be used for everything a struct page is suitable for.
- 
--If you don't understand how cache line coherency works between a
--processor and an I/O device, you should not be using this part of the
--API at all.
-+If you don't understand how cache line coherency works between a processor and
-+an I/O device, you should not be using this part of the API.
- 
- ::
- 
- 	void *
--	dma_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
--			gfp_t flag, unsigned long attrs)
-+	dma_alloc_noncoherent(struct device *dev, size_t size,
-+			dma_addr_t *dma_handle, enum dma_data_direction dir,
-+			gfp_t gfp)
- 
--Identical to dma_alloc_coherent() except that when the
--DMA_ATTR_NON_CONSISTENT flags is passed in the attrs argument, the
--platform will choose to return either consistent or non-consistent memory
--as it sees fit.  By using this API, you are guaranteeing to the platform
--that you have all the correct and necessary sync points for this memory
--in the driver should it choose to return non-consistent memory.
-+This routine allocates a region of <size> bytes of consistent memory.  It
-+returns a pointer to the allocated region (in the processor's virtual address
-+space) or NULL if the allocation failed.  The returned memory may or may not
-+be in the kernels direct mapping.  Drivers must not call virt_to_page on
-+the returned memory region.
- 
--Note: where the platform can return consistent memory, it will
--guarantee that the sync points become nops.
-+It also returns a <dma_handle> which may be cast to an unsigned integer the
-+same width as the bus and given to the device as the DMA address base of
-+the region.
- 
--Warning:  Handling non-consistent memory is a real pain.  You should
--only use this API if you positively know your driver will be
--required to work on one of the rare (usually non-PCI) architectures
--that simply cannot make consistent memory.
-+The dir parameter specified if data is read and/or written by the device,
-+see dma_map_single() for details.
-+
-+The gfp parameter allows the caller to specify the ``GFP_`` flags (see
-+kmalloc()) for the allocation, but rejects flags used to specify a memory
-+zone such as GFP_DMA or GFP_HIGHMEM.
-+
-+Before giving the memory to the device, dma_sync_single_for_device() needs
-+to be called, and before reading memory written by the device,
-+dma_sync_single_for_cpu(), just like for streaming DMA mappings that are
-+reused.
- 
- ::
- 
- 	void
--	dma_free_attrs(struct device *dev, size_t size, void *cpu_addr,
--		       dma_addr_t dma_handle, unsigned long attrs)
-+	dma_free_noncoherent(struct device *dev, size_t size, void *cpu_addr,
-+			dma_addr_t dma_handle, enum dma_data_direction dir)
- 
--Free memory allocated by the dma_alloc_attrs().  All common
--parameters must be identical to those otherwise passed to dma_free_coherent,
--and the attrs argument must be identical to the attrs passed to
--dma_alloc_attrs().
-+Free a region of memory previously allocated using dma_alloc_noncoherent().
-+dev, size and dma_handle and dir must all be the same as those passed into
-+dma_alloc_noncoherent().  cpu_addr must be the virtual address returned by
-+the dma_alloc_noncoherent().
- 
- ::
- 
-@@ -575,17 +583,6 @@ memory or doing partial flushes.
- 	into the width returned by this call.  It will also always be a power
- 	of two for easy alignment.
- 
--::
--
--	void
--	dma_cache_sync(struct device *dev, void *vaddr, size_t size,
--		       enum dma_data_direction direction)
--
--Do a partial sync of memory that was allocated by dma_alloc_attrs() with
--the DMA_ATTR_NON_CONSISTENT flag starting at virtual address vaddr and
--continuing on for size.  Again, you *must* observe the cache line
--boundaries when doing this.
--
- 
- Part III - Debug drivers use of the DMA-API
- -------------------------------------------
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index df0bff2ea750e0..4e1de194b45cbf 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -389,6 +389,18 @@ static inline unsigned long dma_get_merge_boundary(struct device *dev)
- }
- #endif /* CONFIG_HAS_DMA */
- 
-+static inline void *dma_alloc_noncoherent(struct device *dev, size_t size,
-+		dma_addr_t *dma_handle, enum dma_data_direction dir, gfp_t gfp)
-+{
-+	return dma_alloc_attrs(dev, size, dma_handle, gfp,
-+			DMA_ATTR_NON_CONSISTENT);
-+}
-+static inline void dma_free_noncoherent(struct device *dev, size_t size,
-+		void *vaddr, dma_addr_t dma_handle, enum dma_data_direction dir)
-+{
-+	dma_free_attrs(dev, size, vaddr, dma_handle, DMA_ATTR_NON_CONSISTENT);
-+}
-+
- static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
- 		size_t size, enum dma_data_direction dir, unsigned long attrs)
- {
--- 
-2.28.0
+Regards,
 
+Tvrtko
