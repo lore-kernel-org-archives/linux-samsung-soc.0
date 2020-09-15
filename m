@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C00C31E40
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6A3C35256
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EF1520B1F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13F4020770
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbgIOXB0 (ORCPT
+        id S1727416AbgIOXB1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 19:01:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36394 "EHLO mx2.suse.de"
+        Tue, 15 Sep 2020 19:01:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36738 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726900AbgIOPB1 (ORCPT
+        id S1727383AbgIOPB1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Tue, 15 Sep 2020 11:01:27 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 1F328AE4B;
-        Tue, 15 Sep 2020 15:00:22 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 60ABAB042;
+        Tue, 15 Sep 2020 15:00:27 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -59,9 +59,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 06/21] drm/i915: Introduce GEM object functions
-Date:   Tue, 15 Sep 2020 16:59:43 +0200
-Message-Id: <20200915145958.19993-7-tzimmermann@suse.de>
+Subject: [PATCH v2 12/21] drm/radeon: Introduce GEM object functions
+Date:   Tue, 15 Sep 2020 16:59:49 +0200
+Message-Id: <20200915145958.19993-13-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200915145958.19993-1-tzimmermann@suse.de>
 References: <20200915145958.19993-1-tzimmermann@suse.de>
@@ -74,119 +74,153 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in i915.
+per-instance callbacks in radeon.
 
 v2:
-	* move object-function instance to i915_gem_object.c (Jani)
+	* move object-function instance to radeon_gem.c (Christian)
+	* set callbacks in radeon_gem_object_create() (Christian)
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/i915/gem/i915_gem_object.c    | 21 ++++++++++++++++---
- drivers/gpu/drm/i915/gem/i915_gem_object.h    |  3 ---
- drivers/gpu/drm/i915/i915_drv.c               |  4 ----
- .../gpu/drm/i915/selftests/mock_gem_device.c  |  3 ---
- 4 files changed, 18 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/radeon/radeon_drv.c | 23 +--------------------
+ drivers/gpu/drm/radeon/radeon_gem.c | 31 +++++++++++++++++++++++++----
+ 2 files changed, 28 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.c b/drivers/gpu/drm/i915/gem/i915_gem_object.c
-index c8421fd9d2dc..3389ac972d16 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_object.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_object.c
-@@ -39,9 +39,18 @@ static struct i915_global_object {
- 	struct kmem_cache *slab_objects;
- } global;
+diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+index 4cd30613fa1d..65061c949aee 100644
+--- a/drivers/gpu/drm/radeon/radeon_drv.c
++++ b/drivers/gpu/drm/radeon/radeon_drv.c
+@@ -124,13 +124,6 @@ void radeon_driver_irq_preinstall_kms(struct drm_device *dev);
+ int radeon_driver_irq_postinstall_kms(struct drm_device *dev);
+ void radeon_driver_irq_uninstall_kms(struct drm_device *dev);
+ irqreturn_t radeon_driver_irq_handler_kms(int irq, void *arg);
+-void radeon_gem_object_free(struct drm_gem_object *obj);
+-int radeon_gem_object_open(struct drm_gem_object *obj,
+-				struct drm_file *file_priv);
+-void radeon_gem_object_close(struct drm_gem_object *obj,
+-				struct drm_file *file_priv);
+-struct dma_buf *radeon_gem_prime_export(struct drm_gem_object *gobj,
+-					int flags);
+ extern int radeon_get_crtc_scanoutpos(struct drm_device *dev, unsigned int crtc,
+ 				      unsigned int flags, int *vpos, int *hpos,
+ 				      ktime_t *stime, ktime_t *etime,
+@@ -145,14 +138,9 @@ int radeon_mode_dumb_mmap(struct drm_file *filp,
+ int radeon_mode_dumb_create(struct drm_file *file_priv,
+ 			    struct drm_device *dev,
+ 			    struct drm_mode_create_dumb *args);
+-struct sg_table *radeon_gem_prime_get_sg_table(struct drm_gem_object *obj);
+ struct drm_gem_object *radeon_gem_prime_import_sg_table(struct drm_device *dev,
+ 							struct dma_buf_attachment *,
+ 							struct sg_table *sg);
+-int radeon_gem_prime_pin(struct drm_gem_object *obj);
+-void radeon_gem_prime_unpin(struct drm_gem_object *obj);
+-void *radeon_gem_prime_vmap(struct drm_gem_object *obj);
+-void radeon_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
  
-+static const struct drm_gem_object_funcs i915_gem_object_funcs;
+ /* atpx handler */
+ #if defined(CONFIG_VGA_SWITCHEROO)
+@@ -550,7 +538,7 @@ long radeon_drm_ioctl(struct file *filp,
+ 	}
+ 
+ 	ret = drm_ioctl(filp, cmd, arg);
+-	
 +
- struct drm_i915_gem_object *i915_gem_object_alloc(void)
- {
--	return kmem_cache_zalloc(global.slab_objects, GFP_KERNEL);
-+	struct drm_i915_gem_object *obj;
+ 	pm_runtime_mark_last_busy(dev->dev);
+ 	pm_runtime_put_autosuspend(dev->dev);
+ 	return ret;
+@@ -609,22 +597,13 @@ static struct drm_driver kms_driver = {
+ 	.irq_uninstall = radeon_driver_irq_uninstall_kms,
+ 	.irq_handler = radeon_driver_irq_handler_kms,
+ 	.ioctls = radeon_ioctls_kms,
+-	.gem_free_object_unlocked = radeon_gem_object_free,
+-	.gem_open_object = radeon_gem_object_open,
+-	.gem_close_object = radeon_gem_object_close,
+ 	.dumb_create = radeon_mode_dumb_create,
+ 	.dumb_map_offset = radeon_mode_dumb_mmap,
+ 	.fops = &radeon_driver_kms_fops,
+ 
+ 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+ 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+-	.gem_prime_export = radeon_gem_prime_export,
+-	.gem_prime_pin = radeon_gem_prime_pin,
+-	.gem_prime_unpin = radeon_gem_prime_unpin,
+-	.gem_prime_get_sg_table = radeon_gem_prime_get_sg_table,
+ 	.gem_prime_import_sg_table = radeon_gem_prime_import_sg_table,
+-	.gem_prime_vmap = radeon_gem_prime_vmap,
+-	.gem_prime_vunmap = radeon_gem_prime_vunmap,
+ 
+ 	.name = DRIVER_NAME,
+ 	.desc = DRIVER_DESC,
+diff --git a/drivers/gpu/drm/radeon/radeon_gem.c b/drivers/gpu/drm/radeon/radeon_gem.c
+index e5c4271e64ed..0ccd7213e41f 100644
+--- a/drivers/gpu/drm/radeon/radeon_gem.c
++++ b/drivers/gpu/drm/radeon/radeon_gem.c
+@@ -35,7 +35,17 @@
+ 
+ #include "radeon.h"
+ 
+-void radeon_gem_object_free(struct drm_gem_object *gobj)
++struct dma_buf *radeon_gem_prime_export(struct drm_gem_object *gobj,
++					int flags);
++struct sg_table *radeon_gem_prime_get_sg_table(struct drm_gem_object *obj);
++int radeon_gem_prime_pin(struct drm_gem_object *obj);
++void radeon_gem_prime_unpin(struct drm_gem_object *obj);
++void *radeon_gem_prime_vmap(struct drm_gem_object *obj);
++void radeon_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
 +
-+	obj = kmem_cache_zalloc(global.slab_objects, GFP_KERNEL);
-+	if (!obj)
-+		return NULL;
-+	obj->base.funcs = &i915_gem_object_funcs;
++static const struct drm_gem_object_funcs radeon_gem_object_funcs;
 +
-+	return obj;
- }
- 
- void i915_gem_object_free(struct drm_i915_gem_object *obj)
-@@ -101,7 +110,7 @@ void i915_gem_object_set_cache_coherency(struct drm_i915_gem_object *obj,
- 		!(obj->cache_coherent & I915_BO_CACHE_COHERENT_FOR_WRITE);
- }
- 
--void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file)
-+static void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file)
++static void radeon_gem_object_free(struct drm_gem_object *gobj)
  {
- 	struct drm_i915_gem_object *obj = to_intel_bo(gem);
- 	struct drm_i915_file_private *fpriv = file->driver_priv;
-@@ -264,7 +273,7 @@ static void __i915_gem_free_work(struct work_struct *work)
- 	i915_gem_flush_free_objects(i915);
- }
+ 	struct radeon_bo *robj = gem_to_radeon_bo(gobj);
  
--void i915_gem_free_object(struct drm_gem_object *gem_obj)
-+static void i915_gem_free_object(struct drm_gem_object *gem_obj)
+@@ -85,6 +95,7 @@ int radeon_gem_object_create(struct radeon_device *rdev, unsigned long size,
+ 		return r;
+ 	}
+ 	*obj = &robj->tbo.base;
++	(*obj)->funcs = &radeon_gem_object_funcs;
+ 	robj->pid = task_pid_nr(current);
+ 
+ 	mutex_lock(&rdev->gem.mutex);
+@@ -146,7 +157,7 @@ void radeon_gem_fini(struct radeon_device *rdev)
+  * Call from drm_gem_handle_create which appear in both new and open ioctl
+  * case.
+  */
+-int radeon_gem_object_open(struct drm_gem_object *obj, struct drm_file *file_priv)
++static int radeon_gem_object_open(struct drm_gem_object *obj, struct drm_file *file_priv)
  {
- 	struct drm_i915_gem_object *obj = to_intel_bo(gem_obj);
- 	struct drm_i915_private *i915 = to_i915(obj->base.dev);
-@@ -403,6 +412,12 @@ int __init i915_global_objects_init(void)
+ 	struct radeon_bo *rbo = gem_to_radeon_bo(obj);
+ 	struct radeon_device *rdev = rbo->rdev;
+@@ -176,8 +187,8 @@ int radeon_gem_object_open(struct drm_gem_object *obj, struct drm_file *file_pri
  	return 0;
  }
  
-+static const struct drm_gem_object_funcs i915_gem_object_funcs = {
-+	.free = i915_gem_free_object,
-+	.close = i915_gem_close_object,
-+	.export = i915_gem_prime_export,
+-void radeon_gem_object_close(struct drm_gem_object *obj,
+-			     struct drm_file *file_priv)
++static void radeon_gem_object_close(struct drm_gem_object *obj,
++				    struct drm_file *file_priv)
+ {
+ 	struct radeon_bo *rbo = gem_to_radeon_bo(obj);
+ 	struct radeon_device *rdev = rbo->rdev;
+@@ -216,6 +227,18 @@ static int radeon_gem_handle_lockup(struct radeon_device *rdev, int r)
+ 	return r;
+ }
+ 
++static const struct drm_gem_object_funcs radeon_gem_object_funcs = {
++	.free = radeon_gem_object_free,
++	.open = radeon_gem_object_open,
++	.close = radeon_gem_object_close,
++	.export = radeon_gem_prime_export,
++	.pin = radeon_gem_prime_pin,
++	.unpin = radeon_gem_prime_unpin,
++	.get_sg_table = radeon_gem_prime_get_sg_table,
++	.vmap = radeon_gem_prime_vmap,
++	.vunmap = radeon_gem_prime_vunmap,
 +};
 +
- #if IS_ENABLED(CONFIG_DRM_I915_SELFTEST)
- #include "selftests/huge_gem_object.c"
- #include "selftests/huge_pages.c"
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.h b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-index d46db8d8f38e..eaf3d4147be0 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_object.h
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-@@ -38,9 +38,6 @@ void __i915_gem_object_release_shmem(struct drm_i915_gem_object *obj,
- 
- int i915_gem_object_attach_phys(struct drm_i915_gem_object *obj, int align);
- 
--void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file);
--void i915_gem_free_object(struct drm_gem_object *obj);
--
- void i915_gem_flush_free_objects(struct drm_i915_private *i915);
- 
- struct sg_table *
-diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
-index 94e00e450683..011a3fb41ece 100644
---- a/drivers/gpu/drm/i915/i915_drv.c
-+++ b/drivers/gpu/drm/i915/i915_drv.c
-@@ -1750,12 +1750,8 @@ static struct drm_driver driver = {
- 	.lastclose = i915_driver_lastclose,
- 	.postclose = i915_driver_postclose,
- 
--	.gem_close_object = i915_gem_close_object,
--	.gem_free_object_unlocked = i915_gem_free_object,
--
- 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
--	.gem_prime_export = i915_gem_prime_export,
- 	.gem_prime_import = i915_gem_prime_import,
- 
- 	.dumb_create = i915_gem_dumb_create,
-diff --git a/drivers/gpu/drm/i915/selftests/mock_gem_device.c b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
-index f127e633f7ca..9244b5d6fb01 100644
---- a/drivers/gpu/drm/i915/selftests/mock_gem_device.c
-+++ b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
-@@ -87,9 +87,6 @@ static struct drm_driver mock_driver = {
- 	.name = "mock",
- 	.driver_features = DRIVER_GEM,
- 	.release = mock_device_release,
--
--	.gem_close_object = i915_gem_close_object,
--	.gem_free_object_unlocked = i915_gem_free_object,
- };
- 
- static void release_dev(struct device *dev)
+ /*
+  * GEM ioctls.
+  */
 -- 
 2.28.0
 
