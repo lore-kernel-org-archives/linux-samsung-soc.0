@@ -2,283 +2,157 @@ Return-Path: <SRS0=0LAj=CY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F8BFC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 21:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5F5C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0EFE320731
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 21:41:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="veI3Avon"
+	by mail.kernel.org (Postfix) with ESMTP id 5A96820809
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:04:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600207473;
+	bh=6zE0t0oBSXBMiJpCVysJvWDi1OuIiOE0z/RDPqK5QEo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=iQNKqob4+GGRh5VmzG8NmwtpPhxirBa5btRiz5SfdhVwk3OBDCG8Yc0pGiR8FO1w9
+	 1YsjIqG6Q/+xP4Q+QwJ0j5yo3Kh1UA0+yb24wmeYsKhsXfI5qCHb+9V8x7lNrQw0hN
+	 U0NsGC1m0nvNCTGiJWIu7qm1wZ7Zf50oHpEvd4wo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbgIOVkx (ORCPT
+        id S1727816AbgIOWEW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 17:40:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45410 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727708AbgIOVk0 (ORCPT
+        Tue, 15 Sep 2020 18:04:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52466 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727708AbgIOWDM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 17:40:26 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4BC4C06174A
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2020 14:40:22 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id o5so4738971wrn.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2020 14:40:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZyrGKVFDx4BGNZ/Sa7IJ5z8va1EbUDyxko9EIPRujuM=;
-        b=veI3AvonDskRaUwF5ORDqWFJETZI+22t06b/E6CdpcUb2Bzet3eVUU+UbEoXj1wSQD
-         OGEwGLzQwLOITt4yQYbu1Ie+NhSn1/be3xk3XtV2QILTMQMBjh+aJ0UpN9pQ8mpszEeE
-         kXSR8rL/V1SbcsTZ7EK2+nY4J4F4WSIfRRNfbWPSxbxhUMRUMI097f484mmSRO6pX6rY
-         D6pt8gDg5MvVwfT1GtNlmnmorUrZ+k/hCNb2a2/hfjXAYcgXcJqZG+RTzVLyA2KUTthX
-         ZjVfvZ0sTXMyhkyKNP+m95A/ZlvhmFnw/gYhj82/QTMufjmd/wgIM63mEm+fXS4iVePJ
-         fpOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZyrGKVFDx4BGNZ/Sa7IJ5z8va1EbUDyxko9EIPRujuM=;
-        b=WFcVKVnHLpA0J3QdRMF0eUjlWFXE0oCfQ/cemSEtOqRn0/qCz5ADLdrgPBKpAvUZpO
-         6ZRZbi7adK8Kb+us5ovGfpBY0+vRf2ZTew8EbK1cu1OlKWguJ7g3B9NXGJFo5Vr8CzNp
-         SbVS4M689Wac8Fp5cZRIjoS3d8939Y4vJ/VYVLfOZTZXmEN4xp1Y0RAjO0ifqgzBq6iG
-         /3hkyr9YgFL8JgNp9iIsZkCLdhTSxGrbBGFOF4YAQ8suXSrW4a3qtPKG2PCraIzRs3v7
-         FOb0gJZmXOeN5kQWf6z/YoE3RaDehsxkzLSuIVP4PEwURxbSqSArQ/N97hzkG9mGnp3j
-         zN4w==
-X-Gm-Message-State: AOAM531JUiX+Oqm+5/GtgmE0xDNoBOEdLcmoE3kCgMz+sycpGmhkp7yG
-        cZmPZeZEvbVLCHrqkeIerUihFQ==
-X-Google-Smtp-Source: ABdhPJyxWNiKiFioPsFe2QDV2mvw1qAZrQlyU6fOTAFIT5XSLZvrE8JtKxXTq+yytVPmhh3AebY7qg==
-X-Received: by 2002:a5d:69cd:: with SMTP id s13mr22613427wrw.379.1600206021323;
-        Tue, 15 Sep 2020 14:40:21 -0700 (PDT)
-Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id g14sm443358wrv.25.2020.09.15.14.40.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Sep 2020 14:40:20 -0700 (PDT)
-Subject: Re: [PATCH RFC v6 1/6] dt-bindings: exynos-bus: Add documentation for
- interconnect properties
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh@kernel.org>
-Cc:     cw00.choi@samsung.com, krzk@kernel.org, devicetree@vger.kernel.org,
-        a.swigon@samsung.com, myungjoo.ham@samsung.com,
-        inki.dae@samsung.com, sw0312.kim@samsung.com,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20200702163724.2218-1-s.nawrocki@samsung.com>
- <CGME20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3@eucas1p2.samsung.com>
- <20200702163724.2218-2-s.nawrocki@samsung.com>
- <20200709210448.GA876103@bogus>
- <65af1a5c-8f8a-ef65-07f8-e0b3d04c336c@samsung.com>
- <35d9d396-b553-a815-1f3b-1af4dc37a2ca@samsung.com>
- <b711257d-c34b-b609-3ada-312871967b98@linaro.org>
- <e6e369fb-ccf2-09ed-ad6a-680e67198359@samsung.com>
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
- 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
- KEmKjLDvB0pePJkdTw==
-Message-ID: <ae438269-fbb5-326a-aa97-f04033c2b3b6@linaro.org>
-Date:   Wed, 16 Sep 2020 00:40:18 +0300
+        Tue, 15 Sep 2020 18:03:12 -0400
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B62E121974;
+        Tue, 15 Sep 2020 22:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600207391;
+        bh=6zE0t0oBSXBMiJpCVysJvWDi1OuIiOE0z/RDPqK5QEo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=nNCs3AKsNhyvwcxJiuYiwuCZk8aJhCrWu2hHimpp/80ZVp0COd9LLbRvKE7dYfj9M
+         UORNn/A+ChZMXAgv8WUY92cLPIDrP1OUaIAq8koeKyYALz8L3fH6X5tH8exC0BtO4g
+         z6E2UHuTiI3HCcJiuVDfh+u+2xN/iP4Lh+BzdNkg=
+Received: by mail-ot1-f53.google.com with SMTP id w25so4761987otk.8;
+        Tue, 15 Sep 2020 15:03:11 -0700 (PDT)
+X-Gm-Message-State: AOAM531NQIIxLzhVLM+Klo3Lx2z7QE5n1nnjONnDPwOguca9waIswJfS
+        P05c7x7FHnG6Ool8ckXG//iLxvI+/IWdRMWzFQ==
+X-Google-Smtp-Source: ABdhPJyEQLpI+Is0tXGd/BZAER5EHEJNoezWAKvaE8B6IPjEqoZXnEMY3dBYYK0F9I37uCwuUgkTqRhbfRj/m0u6ldo=
+X-Received: by 2002:a9d:6ada:: with SMTP id m26mr560428otq.192.1600207390980;
+ Tue, 15 Sep 2020 15:03:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <e6e369fb-ccf2-09ed-ad6a-680e67198359@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200821035420.380495-1-robh@kernel.org> <20200915091218.28737-1-michael@walle.cc>
+In-Reply-To: <20200915091218.28737-1-michael@walle.cc>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 15 Sep 2020 16:02:59 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLHBPduSjs1L3R2vbsLygJNDzajt4XThAkRG0DEu-GnAA@mail.gmail.com>
+Message-ID: <CAL_JsqLHBPduSjs1L3R2vbsLygJNDzajt4XThAkRG0DEu-GnAA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/40] PCI: dwc: Driver clean-ups
+To:     Michael Walle <michael@walle.cc>
+Cc:     "Gross, Andy" <agross@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dilip Kota <eswara.kota@linux.intel.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-arm-kernel@axis.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        PCI <linux-pci@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Song Xiaowei <songxiaowei@hisilicon.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Wangbinghui <wangbinghui@hisilicon.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Yue Wang <yue.wang@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
-
-On 9/9/20 17:47, Sylwester Nawrocki wrote:
-> Hi Georgi,
-> 
-> On 09.09.2020 11:07, Georgi Djakov wrote:
->> On 8/28/20 17:49, Sylwester Nawrocki wrote:
->>> On 30.07.2020 14:28, Sylwester Nawrocki wrote:
->>>> On 09.07.2020 23:04, Rob Herring wrote:
->>>>> On Thu, Jul 02, 2020 at 06:37:19PM +0200, Sylwester Nawrocki wrote:
->>>>>> Add documentation for new optional properties in the exynos bus nodes:
->>>>>> samsung,interconnect-parent, #interconnect-cells, bus-width.
->>>>>> These properties allow to specify the SoC interconnect structure which
->>>>>> then allows the interconnect consumer devices to request specific
->>>>>> bandwidth requirements.
->>>>>>
->>>>>> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
->>>>>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>>
->>>>>> --- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
->>>>>> +++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-> 
->>>>>> +Optional properties for interconnect functionality (QoS frequency constraints):
->>>>>> +- samsung,interconnect-parent: phandle to the parent interconnect node; for
->>>>>> +  passive devices should point to same node as the exynos,parent-bus property.
->>>
->>>>> Adding vendor specific properties for a common binding defeats the 
->>>>> point.
->>>
->>> Actually we could do without any new property if we used existing interconnect
->>> consumers binding to specify linking between the provider nodes. I think those
->>> exynos-bus nodes could well be considered both the interconnect providers 
->>> and consumers. The example would then be something along the lines 
->>> (yes, I know the bus node naming needs to be fixed):
->>>
->>> 	soc {
->>> 		bus_dmc: bus_dmc {
->>> 			compatible = "samsung,exynos-bus";
->>> 			/* ... */
->>> 			samsung,data-clock-ratio = <4>;
->>> 			#interconnect-cells = <0>;
->>> 		};
->>>
->>> 		bus_leftbus: bus_leftbus {
->>> 			compatible = "samsung,exynos-bus";
->>> 			/* ... */
->>> 			interconnects = <&bus_leftbus &bus_dmc>;
->>> 			#interconnect-cells = <0>;
->>> 		};
->>>
->>> 		bus_display: bus_display {
->>> 			compatible = "samsung,exynos-bus";
->>> 			/* ... */
->>> 			interconnects = <&bus_display &bus_leftbus>;
->>
->> Hmm, bus_display being a consumer of itself is a bit odd? Did you mean:
->>  			interconnects = <&bus_dmc &bus_leftbus>;
-> 
-> Might be, but we would need to swap the phandles so <source, destination>
-> order is maintained, i.e. interconnects = <&bus_leftbus &bus_dmc>;
-
-Ok, i see. Thanks for clarifying! Currently the "interconnects" property is
-defined as a pair of initiator and target nodes. You can keep it also as
-interconnects = <&bus_display &bus_dmc>, but you will need to figure out
-during probe that there is another node in the middle and defer. I assume
-that if a provider is also an interconnect consumer, we will link it to
-whatever nodes are specified in the "interconnects" property?
-
-> My intention here was to describe the 'bus_display -> bus_leftbus' part 
-> of data path 'bus_display -> bus_leftbus -> bus_dmc', bus_display is
-> really a consumer of 'bus_leftbus -> bus_dmc' path.
+On Tue, Sep 15, 2020 at 3:12 AM Michael Walle <michael@walle.cc> wrote:
 >
-> I'm not sure if it is allowed to specify only single phandle (and 
-> interconnect provider specifier) in the interconnect property, that would
-> be needed for the bus_leftbus node to define bus_dmc as the interconnect 
-> destination port. There seems to be such a use case in arch/arm64/boot/
-> dts/allwinner/sun50i-a64.dtsi.
+> Hi Rob,
+>
+> > This is a series of clean-ups for the Designware PCI driver. The series
+> > initially reworks the config space accessors to use the existing pci_ops
+> > struct. Then there's removal of various private data that's also present
+> > in the pci_host_bridge struct. There's also some duplicated common (PCI
+> > and DWC) register defines which I converted to use the common defines.
+> > Finally, the initialization for speed/gen, number of lanes, and N_FTS
+> > are all moved to the common DWC code.
+>
+> > This is compile tested only as I don't have any DWC based h/w, so any
+> > testing would be helpful. A branch is here[1].
+>
+> I've noticed that with the latest linux-next, my board doesn't boot
+> anymore. I've traced it back to this series. There is a similar
+> board in kernelci [1,2] where you can have a look at the backtrace.
+>
+> I've bisected this to the following patch:
+>   PCI: dwc: Use generic config accessors
 
-In the general case you have to specify pairs. The "dma-mem" is a reserved
-name for devices that perform DMA through another bus with separate address
-translation rules.
+That's helpful.
 
->>> 			#interconnect-cells = <0>;
->>> 		};
->>>
->>>
->>> 		&mixer {
->>> 			compatible = "samsung,exynos4212-mixer";
->>> 			interconnects = <&bus_display &bus_dmc>;
->>> 			/* ... */
->>> 		};
->>> 	};
->>>
->>> What do you think, Georgi, Rob?
->>
->> I can't understand the above example with bus_display being it's own consumer.
->> This seems strange to me. Could you please clarify it?
-> 
->> Otherwise the interconnect consumer DT bindings are already well established
->> and i don't see anything preventing a node to be both consumer and provider.
->> So this should be okay in general.
-> 
-> Thanks, below is an updated example according to your suggestions. 
-> Does it look better now?
-> 
-> ---------------------------8<------------------------------
-> soc {
-> 	bus_dmc: bus_dmc {
-> 		compatible = "samsung,exynos-bus";
-> 		/* ... */
-> 		samsung,data-clock-ratio = <4>;
-> 		#interconnect-cells = <0>;
-> 	};
-> 
-> 	bus_leftbus: bus_leftbus {
-> 		compatible = "samsung,exynos-bus";
-> 		/* ... */
-> 		interconnects = <&bus_dmc>;
-> 		#interconnect-cells = <0>;
-> 	};
-> 
-> 	bus_display: bus_display {
-> 		compatible = "samsung,exynos-bus";
-> 		/* ... */
-> 		interconnects = <&bus_leftbus &bus_dmc>;
-> 		#interconnect-cells = <0>;
-> 	};
-> 
-> 	&mixer {
-> 		compatible = "samsung,exynos4212-mixer";
-> 		interconnects = <&bus_display &bus_dmc>;
-> 		/* ... */
-> 	};
-> };
-> ---------------------------8<------------------------------
+> I'm pretty much lost here. It seems that the kernel tries to read from
+> an invalid/unmapped memory address.
+>
+> [1] https://kernelci.org/test/plan/id/5f5f4992d1c53777a0a6092d/
+> [2] https://storage.kernelci.org/next/master/next-20200914/arm64/defconfig/gcc-8/lab-nxp/baseline-fsl-ls1028a-rdb.txt
 
-It's difficult to have a common way to describe all the different kinds of
-topologies in DT, as some SoCs are very complex, having multi-tiered topologies
-with hundreds of nodes, with multiple links between them etc. Currently, the
-idea is to have the topology as platform data, but i guess that you want to
-avoid this. I hope that we will be able to describe simpler topologies in DT in
-the future, but we don't have such support in the framework yet.
+Thanks for the pointers. I was wondering if kernelci had any boards with DWC.
 
-So maybe we could try your proposal and see how it will work for exynos.
+Can you try this? The link up check seemed unnecessary as it is racy.
+What happens if the link goes down right after checking? That's the
+only thing in the change that sticks out.
 
-Thanks,
-Georgi
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c
+b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 317ff512f8df..afee1a0e8883 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -441,6 +441,9 @@ static void __iomem
+*dw_pcie_other_conf_map_bus(struct pci_bus *bus,
+        struct pcie_port *pp = bus->sysdata;
+        struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+
++       if (!dw_pcie_link_up(pci))
++               return NULL;
++
+        busdev = PCIE_ATU_BUS(bus->number) | PCIE_ATU_DEV(PCI_SLOT(devfn)) |
+                 PCIE_ATU_FUNC(PCI_FUNC(devfn));
