@@ -2,313 +2,144 @@ Return-Path: <SRS0=0LAj=CY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C72AC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 13:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8396C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 15:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 249C421D1B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 13:43:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iTkCkO/f"
+	by mail.kernel.org (Postfix) with ESMTP id A09CE20770
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 15:02:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbgIONmU (ORCPT
+        id S1727392AbgIOPBp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 09:42:20 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:45220 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726507AbgIONkr (ORCPT
+        Tue, 15 Sep 2020 11:01:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36396 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727317AbgIOPB0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 09:40:47 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200915133309euoutp01d6d56cca360f2559e3755f6d1c7ed302~0_E-s47p60402404024euoutp01q
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2020 13:33:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200915133309euoutp01d6d56cca360f2559e3755f6d1c7ed302~0_E-s47p60402404024euoutp01q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1600176789;
-        bh=eCw5I8pYrfFFBjFsoG+EmC7RVNzBZd5XzgYc1xY4fjE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iTkCkO/fHbS2vFkNgbifPDhE9o0FQmEU7JsTfggXwYHd6cdCy8vAjMe2yrEuN8/9h
-         sJhYyDqHK8OvA401Wa/EQni9+U2Ein1gi4liYSlPXLDc0zFwJXIHnhLLVdgq5cy4+k
-         X2g6kamiVS5h2xDTAbKyf6cnuUx++wqYaLAv/snk=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200915133309eucas1p1ddc99ebde39abfe133ba3aae0d52e79d~0_E-YJoin0220202202eucas1p1H;
-        Tue, 15 Sep 2020 13:33:09 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id E8.11.05997.592C06F5; Tue, 15
-        Sep 2020 14:33:09 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200915133309eucas1p27768c75d4391f646b3715f29ff0c452a~0_E-BcY6K2313723137eucas1p2D;
-        Tue, 15 Sep 2020 13:33:09 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200915133309eusmtrp10283eb4504d067ea62811fd959cec066~0_E-ASkam0804908049eusmtrp1H;
-        Tue, 15 Sep 2020 13:33:09 +0000 (GMT)
-X-AuditID: cbfec7f4-677ff7000000176d-8e-5f60c295ada6
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 62.20.06314.492C06F5; Tue, 15
-        Sep 2020 14:33:08 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200915133308eusmtip2ca76179ebe2323342c260df289195709~0_E_lwbuQ0271402714eusmtip21;
-        Tue, 15 Sep 2020 13:33:08 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 2/2] media: platform: exynos4-is: add support for generic
- IOMMU-DMA glue code
-Date:   Tue, 15 Sep 2020 15:32:56 +0200
-Message-Id: <20200915133256.1210-3-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200915133256.1210-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLIsWRmVeSWpSXmKPExsWy7djPc7pTDyXEGyz+KW6xccZ6Vovz5zew
-        W/Rs2MpqMeP8PiaLtUfuslss2/SHyeLghyesFu1PXzI7cHismbeG0WPTqk42j74tqxg9Pm+S
-        C2CJ4rJJSc3JLEst0rdL4MpYMPsGU8FJw4q1E+4yNjDO0uxi5OSQEDCRmNV2nb2LkYtDSGAF
-        o8Ti11OYIJwvjBKfVp6BynxmlJjw5TITTMuF3XPYIBLLGSU2LGlAaPn84wwbSBWbgKFE19su
-        MFtEwEli4ay/YKOYBfqYJK7MW8wKkhAWiJfYMmM3C4jNIqAqcW7OdrAVvAI2Et/n/WOBWCcv
-        sXrDAWYQm1PAVuLGu2fMEPH3bBLnv4lB2C4SbctvQ50nLPHq+BZ2CFtG4vTkHhaQxRICzYwS
-        D8+tZYdwehglLjfNYISospa4c+4X0KkcQOdpSqzfpQ8RdpT49XMJI0hYQoBP4sZbQZAwM5A5
-        adt0Zogwr0RHmxBEtZrErOPr4NYevHAJ6kwPiabWNdAAmsAocXj7NsYJjPKzEJYtYGRcxSie
-        Wlqcm55abJSXWq5XnJhbXJqXrpecn7uJEZgoTv87/mUH464/SYcYBTgYlXh4E8rj44VYE8uK
-        K3MPMUpwMCuJ8DqdPR0nxJuSWFmVWpQfX1Sak1p8iFGag0VJnNd40ctYIYH0xJLU7NTUgtQi
-        mCwTB6dUA6PGpJmMjvNrOD6vWjEx5Zzcq/06B/Zae4Tau06JOlbjx8xwNtZt67wVpZNrPC4I
-        hKfPP2229k3F+eXtT5NyFy5b7GGxRCRJ02vnyle8GVbdlXc+W9rtMpJcszb//Kevev0y6o1+
-        ykLTJrG5xDytaefePe3o4k3K7v4G8gkWykmyeZpXyyfOV1diKc5INNRiLipOBADblqDbEAMA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsVy+t/xe7pTDiXEG9yZa22xccZ6Vovz5zew
-        W/Rs2MpqMeP8PiaLtUfuslss2/SHyeLghyesFu1PXzI7cHismbeG0WPTqk42j74tqxg9Pm+S
-        C2CJ0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0MtY
-        MPsGU8FJw4q1E+4yNjDO0uxi5OSQEDCRuLB7DlsXIxeHkMBSRonb0zYyQSRkJE5Oa2CFsIUl
-        /lzrgir6xCgxfWYrO0iCTcBQoustSIKTQ0TARWL/nqfMIEXMApOYJH73b2cESQgLxErsPnII
-        rIhFQFXi3JztYBt4BWwkvs/7xwKxQV5i9YYDzCA2p4CtxI13z8BsIaCaR2u62CYw8i1gZFjF
-        KJJaWpybnltsqFecmFtcmpeul5yfu4kRGLbbjv3cvIPx0sbgQ4wCHIxKPLwJ5fHxQqyJZcWV
-        uYcYJTiYlUR4nc6ejhPiTUmsrEotyo8vKs1JLT7EaAp01ERmKdHkfGBM5ZXEG5oamltYGpob
-        mxubWSiJ83YIHIwREkhPLEnNTk0tSC2C6WPi4JRqYBTYvVTdl1O0M4vv+MyE+9rS1nuyC1en
-        lH0+EmH7Me057823rFbz3VWU0r+6NTy8ldw6+VRXYcvN4oBz13qF787LZmR69NEmTTEqq3t6
-        tWlV7zd37Q0l9ka/9n+4z6D691RHh9SE7c3/QqYxv5wffccv+GTKSuZHF9t3aN7nqRH8GukZ
-        onbslRJLcUaioRZzUXEiABWLlq5xAgAA
-X-CMS-MailID: 20200915133309eucas1p27768c75d4391f646b3715f29ff0c452a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200915133309eucas1p27768c75d4391f646b3715f29ff0c452a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200915133309eucas1p27768c75d4391f646b3715f29ff0c452a
-References: <20200915133256.1210-1-m.szyprowski@samsung.com>
-        <CGME20200915133309eucas1p27768c75d4391f646b3715f29ff0c452a@eucas1p2.samsung.com>
+        Tue, 15 Sep 2020 11:01:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 3D4ABAF84;
+        Tue, 15 Sep 2020 15:00:23 +0000 (UTC)
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
+        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
+        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
+        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
+        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
+        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
+        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
+        sam@ravnborg.org, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v2 07/21] drm/mediatek: Introduce GEM object functions
+Date:   Tue, 15 Sep 2020 16:59:44 +0200
+Message-Id: <20200915145958.19993-8-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200915145958.19993-1-tzimmermann@suse.de>
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Exynos4-IS driver relies on the way the ARM DMA-IOMMU glue code works:
-the IOVA allocator uses first-fit algorithm and the first allocated
-buffer is at 0x0 DMA/IOVA address. This is not true for the generic
-IOMMU-DMA glue code that will be used for ARM architecture soon, so add
-the needed code to support such case too.
+GEM object functions deprecate several similar callback interfaces in
+struct drm_driver. This patch replaces the per-driver callbacks with
+per-instance callbacks in mediatek. The only exception is gem_prime_mmap,
+which is non-trivial to convert.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/media/platform/exynos4-is/fimc-is.c | 95 ++++++++++++++++++---
- drivers/media/platform/exynos4-is/fimc-is.h |  6 +-
- 2 files changed, 88 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c |  5 -----
+ drivers/gpu/drm/mediatek/mtk_drm_gem.c | 11 +++++++++++
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-index 41b841a96338..bdef61be0cad 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@ -19,6 +19,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/i2c.h>
-+#include <linux/iommu.h>
- #include <linux/of_irq.h>
- #include <linux/of_address.h>
- #include <linux/of_graph.h>
-@@ -269,7 +270,7 @@ int fimc_is_cpu_set_power(struct fimc_is *is, int on)
- 		mcuctl_write(0, is, REG_WDT_ISP);
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 040a8f393fe2..2f8d0043fca7 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -301,18 +301,13 @@ struct drm_gem_object *mtk_drm_gem_prime_import(struct drm_device *dev,
+ static struct drm_driver mtk_drm_driver = {
+ 	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_ATOMIC,
  
- 		/* Cortex-A5 start address setting */
--		mcuctl_write(is->memory.addr, is, MCUCTL_REG_BBOAR);
-+		mcuctl_write(is->memory.base, is, MCUCTL_REG_BBOAR);
+-	.gem_free_object_unlocked = mtk_drm_gem_free_object,
+-	.gem_vm_ops = &drm_gem_cma_vm_ops,
+ 	.dumb_create = mtk_drm_gem_dumb_create,
  
- 		/* Enable and start Cortex-A5 */
- 		pmuisp_write(0x18000, is, REG_PMU_ISP_ARM_OPTION);
-@@ -330,37 +331,105 @@ int fimc_is_start_firmware(struct fimc_is *is)
- 	return ret;
- }
+ 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+ 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+ 	.gem_prime_import = mtk_drm_gem_prime_import,
+-	.gem_prime_get_sg_table = mtk_gem_prime_get_sg_table,
+ 	.gem_prime_import_sg_table = mtk_gem_prime_import_sg_table,
+ 	.gem_prime_mmap = mtk_drm_gem_mmap_buf,
+-	.gem_prime_vmap = mtk_drm_gem_prime_vmap,
+-	.gem_prime_vunmap = mtk_drm_gem_prime_vunmap,
+ 	.fops = &mtk_drm_fops,
  
-+#ifdef CONFIG_IOMMU_DMA
-+#define FIMC_IS_CPU_MEM_BASE	(0)
-+static int fimc_iommu_remap_cpu_memory(struct fimc_is *is)
-+{
-+	struct device *dev = &is->pdev->dev;
-+	struct iommu_domain *domain;
-+	struct sg_table sgt;
-+	int ret;
+ 	.name = DRIVER_NAME,
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_gem.c b/drivers/gpu/drm/mediatek/mtk_drm_gem.c
+index 6190cc3b7b0d..591b90410e4a 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_gem.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_gem.c
+@@ -8,11 +8,20 @@
+ #include <drm/drm.h>
+ #include <drm/drm_device.h>
+ #include <drm/drm_gem.h>
++#include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_prime.h>
+ 
+ #include "mtk_drm_drv.h"
+ #include "mtk_drm_gem.h"
+ 
++static const struct drm_gem_object_funcs mtk_drm_gem_object_funcs = {
++	.free = mtk_drm_gem_free_object,
++	.get_sg_table = mtk_gem_prime_get_sg_table,
++	.vmap = mtk_drm_gem_prime_vmap,
++	.vunmap = mtk_drm_gem_prime_vunmap,
++	.vm_ops = &drm_gem_cma_vm_ops,
++};
 +
-+	domain = iommu_domain_alloc(&platform_bus_type);
-+	if (!domain)
-+		return -ENOMEM;
-+
-+	ret = dma_get_sgtable(dev, &sgt, is->memory.vaddr,
-+			      is->memory.alloc_addr, FIMC_IS_CPU_MEM_SIZE);
-+	if (ret)
-+		goto err_free_domain;
-+
-+	ret = iommu_attach_device(domain, dev);
-+	if (ret)
-+		goto err_free_sgt;
-+
-+	ret = iommu_map_sgtable(domain, FIMC_IS_CPU_MEM_BASE, &sgt,
-+				IOMMU_READ | IOMMU_WRITE);
-+	if (ret != FIMC_IS_CPU_MEM_SIZE) {
-+		ret = -EINVAL;
-+		goto err_detach;
-+	}
-+
-+	is->memory.base = FIMC_IS_CPU_MEM_BASE;
-+	is->memory.domain = domain;
-+	sg_free_table(&sgt);
-+
-+	return 0;
-+
-+err_detach:
-+	iommu_detach_device(domain, dev);
-+err_free_sgt:
-+	sg_free_table(&sgt);
-+err_free_domain:
-+	iommu_domain_free(domain);
-+	return ret;
-+}
-+
-+static void fimc_iommu_unmap_cpu_memory(struct fimc_is *is)
-+{
-+	struct iommu_domain *domain = is->memory.domain;
-+	struct device *dev = &is->pdev->dev;
-+
-+	iommu_unmap(domain, FIMC_IS_CPU_MEM_BASE, FIMC_IS_CPU_MEM_SIZE);
-+	iommu_detach_device(domain, dev);
-+	iommu_domain_free(domain);
-+}
-+#else
-+static inline int fimc_iommu_remap_cpu_memory(struct fimc_is *is)
-+{
-+	is->memory.base = is->memory.alloc_addr;
-+	return 0;
-+}
-+
-+static void fimc_iommu_unmap_cpu_memory(struct fimc_is *is) { }
-+#endif
-+
- /* Allocate working memory for the FIMC-IS CPU. */
- static int fimc_is_alloc_cpu_memory(struct fimc_is *is)
+ static struct mtk_drm_gem_obj *mtk_drm_gem_init(struct drm_device *dev,
+ 						unsigned long size)
  {
- 	struct device *dev = &is->pdev->dev;
+@@ -25,6 +34,8 @@ static struct mtk_drm_gem_obj *mtk_drm_gem_init(struct drm_device *dev,
+ 	if (!mtk_gem_obj)
+ 		return ERR_PTR(-ENOMEM);
  
- 	is->memory.vaddr = dma_alloc_coherent(dev, FIMC_IS_CPU_MEM_SIZE,
--					      &is->memory.addr, GFP_KERNEL);
-+					    &is->memory.alloc_addr, GFP_KERNEL);
- 	if (is->memory.vaddr == NULL)
- 		return -ENOMEM;
- 
-+	if (fimc_iommu_remap_cpu_memory(is))
-+		goto err;
++	mtk_gem_obj->base.funcs = &mtk_drm_gem_object_funcs;
 +
- 	is->memory.size = FIMC_IS_CPU_MEM_SIZE;
- 
--	dev_info(dev, "FIMC-IS CPU memory base: %pad\n", &is->memory.addr);
-+	dev_info(dev, "FIMC-IS CPU memory base: %pad\n", &is->memory.base);
- 
--	if (((u32)is->memory.addr) & FIMC_IS_FW_ADDR_MASK) {
-+	if (((u32)is->memory.base) & FIMC_IS_FW_ADDR_MASK) {
- 		dev_err(dev, "invalid firmware memory alignment: %#x\n",
--			(u32)is->memory.addr);
--		dma_free_coherent(dev, is->memory.size, is->memory.vaddr,
--				  is->memory.addr);
--		return -EIO;
-+			(u32)is->memory.base);
-+		goto err;
- 	}
- 
- 	is->is_p_region = (struct is_region *)(is->memory.vaddr +
- 				FIMC_IS_CPU_MEM_SIZE - FIMC_IS_REGION_SIZE);
- 
--	is->is_dma_p_region = is->memory.addr +
-+	is->is_dma_p_region = is->memory.base +
- 				FIMC_IS_CPU_MEM_SIZE - FIMC_IS_REGION_SIZE;
- 
- 	is->is_shared_region = (struct is_share_region *)(is->memory.vaddr +
- 				FIMC_IS_SHARED_REGION_OFFSET);
- 	return 0;
-+err:
-+	dma_free_coherent(dev, is->memory.size, is->memory.vaddr,
-+			  is->memory.alloc_addr);
-+	return -EIO;
- }
- 
- static void fimc_is_free_cpu_memory(struct fimc_is *is)
-@@ -370,8 +439,9 @@ static void fimc_is_free_cpu_memory(struct fimc_is *is)
- 	if (is->memory.vaddr == NULL)
- 		return;
- 
-+	fimc_iommu_unmap_cpu_memory(is);
- 	dma_free_coherent(dev, is->memory.size, is->memory.vaddr,
--			  is->memory.addr);
-+			  is->memory.alloc_addr);
- }
- 
- static void fimc_is_load_firmware(const struct firmware *fw, void *context)
-@@ -416,7 +486,8 @@ static void fimc_is_load_firmware(const struct firmware *fw, void *context)
- 
- 	dev_info(dev, "loaded firmware: %s, rev. %s\n",
- 		 is->fw.info, is->fw.version);
--	dev_dbg(dev, "FW size: %zu, DMA addr: %pad\n", fw->size, &is->memory.addr);
-+	dev_dbg(dev, "FW size: %zu, DMA addr: %pad\n", fw->size,
-+		&is->memory.base);
- 
- 	is->is_shared_region->chip_id = 0xe4412;
- 	is->is_shared_region->chip_rev_no = 1;
-@@ -699,7 +770,7 @@ int fimc_is_hw_initialize(struct fimc_is *is)
- 	}
- 
- 	pr_debug("shared region: %pad, parameter region: %pad\n",
--		 &is->memory.addr + FIMC_IS_SHARED_REGION_OFFSET,
-+		 &is->memory.base + FIMC_IS_SHARED_REGION_OFFSET,
- 		 &is->is_dma_p_region);
- 
- 	is->setfile.sub_index = 0;
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.h b/drivers/media/platform/exynos4-is/fimc-is.h
-index ce30b007bc55..e96bf9122e91 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.h
-+++ b/drivers/media/platform/exynos4-is/fimc-is.h
-@@ -186,11 +186,15 @@ struct fimc_is_firmware {
- 
- struct fimc_is_memory {
- 	/* DMA base address */
--	dma_addr_t addr;
-+	dma_addr_t base;
-+	/* DMA address from allocator */
-+	dma_addr_t alloc_addr;
- 	/* virtual base address */
- 	void *vaddr;
- 	/* total length */
- 	unsigned int size;
-+	/* optional IOMMU domain */
-+	struct iommu_domain *domain;
- };
- 
- #define FIMC_IS_I2H_MAX_ARGS	12
+ 	ret = drm_gem_object_init(dev, &mtk_gem_obj->base, size);
+ 	if (ret < 0) {
+ 		DRM_ERROR("failed to initialize gem object\n");
 -- 
-2.17.1
+2.28.0
 
