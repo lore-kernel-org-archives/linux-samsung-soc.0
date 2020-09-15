@@ -1,134 +1,102 @@
-Return-Path: <SRS0=0LAj=CY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=Wlns=CZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0388DC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8086C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 00:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FBF420936
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:23:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77BC12076B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 00:26:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cyrJz8tQ"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ZDUvluzG";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ZDUvluzG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbgIOXXc (ORCPT
+        id S1726785AbgIPA00 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 19:23:32 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41763 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727191AbgIOOiB (ORCPT
+        Tue, 15 Sep 2020 20:26:26 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34438 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726798AbgIOOMf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 10:38:01 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200915132047euoutp02f93b35b0a706eb6fa1f09f1af5383e2f~096MNgNZX0422904229euoutp023
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2020 13:20:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200915132047euoutp02f93b35b0a706eb6fa1f09f1af5383e2f~096MNgNZX0422904229euoutp023
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1600176047;
-        bh=V9AlOqxPwxY4S8d5Y22eljC6V4KHy1iNU+4AudaT48I=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=cyrJz8tQzjV1YPw4JbjZHF1e9aBf8jKSKPCM+fR59+LY9F3/sF7pMfhvyI+BTWuDq
-         H1eYNj3TTddJGXhQLXgj7X8liBY/d5VAODRQ9h5WEZXsaUayFX+RWgNn/X3i9UKpaT
-         oliJ+LLruIsZUWjysocwjpqqnUdya8JBDGIQ33sU=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200915132046eucas1p19a2165a26efea41ac355ac5055fd3873~096LruAGl0923209232eucas1p14;
-        Tue, 15 Sep 2020 13:20:46 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 72.C3.06456.EAFB06F5; Tue, 15
-        Sep 2020 14:20:46 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200915132046eucas1p217e810858d346fb491b2498343dfc622~096LSULhJ0258102581eucas1p2F;
-        Tue, 15 Sep 2020 13:20:46 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200915132046eusmtrp258f6d267df6a5c9ea4f34a0b515b7496~096LRfueX1190311903eusmtrp2e;
-        Tue, 15 Sep 2020 13:20:46 +0000 (GMT)
-X-AuditID: cbfec7f2-7efff70000001938-c9-5f60bfae1cb3
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 1D.BD.06017.EAFB06F5; Tue, 15
-        Sep 2020 14:20:46 +0100 (BST)
-Received: from [106.210.123.115] (unknown [106.210.123.115]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200915132044eusmtip1973441b492f8735e7726439bc55811c8~096J8yndw1171511715eusmtip1Y;
-        Tue, 15 Sep 2020 13:20:44 +0000 (GMT)
-Subject: Re: [PATCH 2/3] clk: samsung: exynos5420/5250: Add IDs to the CPU
- parent clk definitions
-To:     linux-clk@vger.kernel.org
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        m.szyprowski@samsung.com, b.zolnierkie@samsung.com
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <944913e7-be99-ff11-615f-4613f19c5973@samsung.com>
-Date:   Tue, 15 Sep 2020 15:20:44 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.12.0
-MIME-Version: 1.0
-In-Reply-To: <20200826171529.23618-2-s.nawrocki@samsung.com>
-Content-Language: en-US
+        Tue, 15 Sep 2020 10:12:35 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 9BF068EE188;
+        Tue, 15 Sep 2020 07:10:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1600179008;
+        bh=+R+IKAKZQYkLR7KIiLxpuuPm5bZnjzeal3GKWrEShUo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ZDUvluzGV6yKCC/nF9wrKzitsx/6M3Qz4Dv0CFUEt0vmhscavKWlYegA3t3D9AtoS
+         cgl18SKCLQ6g+fOWhOlSE1rajdI6kKqsO/3XSzI9vcO6roMQjXQ+sBvii1pDKecG7Q
+         7/nP62+cOOfIkefYX7rGreL2C+Tu2bzmyrkPw+GQ=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id o2D0dkS7cauB; Tue, 15 Sep 2020 07:10:08 -0700 (PDT)
+Received: from [153.66.254.174] (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 329868EE107;
+        Tue, 15 Sep 2020 07:10:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1600179008;
+        bh=+R+IKAKZQYkLR7KIiLxpuuPm5bZnjzeal3GKWrEShUo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ZDUvluzGV6yKCC/nF9wrKzitsx/6M3Qz4Dv0CFUEt0vmhscavKWlYegA3t3D9AtoS
+         cgl18SKCLQ6g+fOWhOlSE1rajdI6kKqsO/3XSzI9vcO6roMQjXQ+sBvii1pDKecG7Q
+         7/nP62+cOOfIkefYX7rGreL2C+Tu2bzmyrkPw+GQ=
+Message-ID: <1600179006.5092.6.camel@HansenPartnership.com>
+Subject: Re: [PATCH 07/17] 53c700: improve non-coherent DMA handling
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Matt Porter <mporter@kernel.crashing.org>,
+        iommu@lists.linux-foundation.org,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        linux1394-devel@lists.sourceforge.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-mm@kvack.org,
+        alsa-devel@alsa-project.org
+Date:   Tue, 15 Sep 2020 07:10:06 -0700
+In-Reply-To: <20200915062738.GA19113@lst.de>
+References: <20200914144433.1622958-1-hch@lst.de>
+         <20200914144433.1622958-8-hch@lst.de>
+         <1600096818.4061.7.camel@HansenPartnership.com>
+         <20200915062738.GA19113@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMKsWRmVeSWpSXmKPExsWy7djP87rr9ifEG7Qe1LDYOGM9q8X1L89Z
-        LeYfOcdq0f/4NbPF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Sx9shddouLp1wtWvceYbf4
-        d20ji8WqXX8YHfg83t9oZffYOesuu8emVZ1sHpuX1Hv0bVnF6PF5k1wAWxSXTUpqTmZZapG+
-        XQJXRtPrg8wFv5kqfm9dxt7AuJ2pi5GTQ0LAROLMrLVsXYxcHEICKxgl9p7YBuV8YZQ4OrWJ
-        BcL5DORsPs0C07Jn+nZGiMRyRomF7begqj4CObdXMoNUCQskS0zoew22RERAVuLWsZ9gc5kF
-        jjFL3F25ECzBJmAo0Xu0jxHE5hWwk2g48g6smUVAVeJ673d2EFtUIE7i2KlHLBA1ghInZz4B
-        szkFbCQ2bLkE1sssIC5x68l8JghbXmL72znMIMskBL6yS0z4ehTqbheJ3hNNUG8LS7w6voUd
-        wpaR+L8TpBmkoZlRomf3bXYIZwKjxP3jCxghqqwl7pz7BfQDB9AKTYn1u/Qhwo4Sz9rusYCE
-        JQT4JG68FYQ4gk9i0rbpzBBhXomONiGIahWJ36umQ50gJdH95D/LBEalWUhem4XknVlI3pmF
-        sHcBI8sqRvHU0uLc9NRiw7zUcr3ixNzi0rx0veT83E2MwKR2+t/xTzsYv15KOsQowMGoxMOb
-        UB4fL8SaWFZcmXuIUYKDWUmE1+ns6Tgh3pTEyqrUovz4otKc1OJDjNIcLErivMaLXsYKCaQn
-        lqRmp6YWpBbBZJk4OKUaGC3FlYxWzcs676zQ3eMeXnxBT48hPDr808UE3+2XFCYeUlmxZeoR
-        SaX7yjdVTjqntS04MEkTmA5D18rebRBrLbphoaP6ZZrtXI9rWwv773ldPZJwbKb4OVOemz5/
-        en1uBFqek9C6l/3yxwvHlsvCTxcKMP7+IbY5WUckdPXMbe8uvS9+c2mVuRJLcUaioRZzUXEi
-        AL1lL9NmAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsVy+t/xu7rr9ifEG0z7w2exccZ6VovrX56z
-        Wsw/co7Vov/xa2aL8+c3sFtsenyN1eJjzz1Wi8u75rBZzDi/j8li7ZG77BYXT7latO49wm7x
-        79pGFotVu/4wOvB5vL/Ryu6xc9Zddo9NqzrZPDYvqffo27KK0ePzJrkAtig9m6L80pJUhYz8
-        4hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jKbXB5kLfjNV/N66jL2B
-        cTtTFyMnh4SAicSe6dsZuxi5OIQEljJK3Dg5k7WLkQMoISUxv0UJokZY4s+1LjYQW0jgPaPE
-        ueOSILawQLLEhL7XYHNEBGQlbh37yQYyh1ngGLPEzimnWCCGHmSU+LH2GVgVm4ChRO/RPkYQ
-        m1fATqLhyDtmEJtFQFXieu93dhBbVCBO4kzPCzaIGkGJkzOfsIDYnAI2Ehu2XALrZRZQl/gz
-        7xIzhC0ucevJfCYIW15i+9s5zBMYhWYhaZ+FpGUWkpZZSFoWMLKsYhRJLS3OTc8tNtIrTswt
-        Ls1L10vOz93ECIzgbcd+btnB2PUu+BCjAAejEg9vQnl8vBBrYllxZe4hRgkOZiURXqezp+OE
-        eFMSK6tSi/Lji0pzUosPMZoCPTeRWUo0OR+YXPJK4g1NDc0tLA3Njc2NzSyUxHk7BA7GCAmk
-        J5akZqemFqQWwfQxcXBKNTBKL57w6tKqzgB+9lyhBYsmTOR4tMeUx8zrJEfU24KHJ46EK1ul
-        Ssu5MQiIv8z8WXpCVtRswYnWaQpn//WJXeBOLveYXcdeqcdmYGvB9W9L19Pq7lPPWVbkGxgV
-        bslfkrq20apMLvfunql3Mjm+/N61zvG0Fs9Uhw07AibOn1nVkDr98bSGwnAlluKMREMt5qLi
-        RACpfJZm9gIAAA==
-X-CMS-MailID: 20200915132046eucas1p217e810858d346fb491b2498343dfc622
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200826171552eucas1p28ace6b1efbcdab420aaa4458ac8bad08
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200826171552eucas1p28ace6b1efbcdab420aaa4458ac8bad08
-References: <20200826171529.23618-1-s.nawrocki@samsung.com>
-        <CGME20200826171552eucas1p28ace6b1efbcdab420aaa4458ac8bad08@eucas1p2.samsung.com>
-        <20200826171529.23618-2-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 26.08.2020 19:15, Sylwester Nawrocki wrote:
-> Use non-zero clock IDs in definitions of the CPU parent clocks
-> for exynos5420, exynos5250 SoCs. This will allow us to reference
-> the parent clocks directly in the driver by cached struct clk_hw
-> pointers, rather than doing clk lookup by name.
+On Tue, 2020-09-15 at 08:27 +0200, Christoph Hellwig wrote:
+> On Mon, Sep 14, 2020 at 08:20:18AM -0700, James Bottomley wrote:
+> > If you're going to change the macros from taking a device to taking
+> > a hostdata structure then the descriptive argument name needs to
+> > change ... it can't be dev anymore.  I'm happy with it simply
+> > becoming 'h' if hostdata is too long.
+> > 
+> > I already asked for this on the first go around:
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> And I did rename them, those hunks just accidentally slipped into
+> patch 12 instead of this one.  Fixed for the next versions.
 
-Applied.
+Ah, yes, found it ... thanks for doing that!
+
+James
+
