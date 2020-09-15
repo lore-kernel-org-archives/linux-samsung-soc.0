@@ -2,215 +2,257 @@ Return-Path: <SRS0=0LAj=CY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDAF9C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C3FC433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91F7120770
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:33:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5E0520872
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:35:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TNPCL5eo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbgIOWdS (ORCPT
+        id S1727662AbgIOWfN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 18:33:18 -0400
-Received: from mga09.intel.com ([134.134.136.24]:62427 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727391AbgIOQRJ (ORCPT
+        Tue, 15 Sep 2020 18:35:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49530 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727523AbgIOQKm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 12:17:09 -0400
-IronPort-SDR: IbtUr6bGrMTllGLr2qCYUQ3EixVxs0J+WVj4+HeKmKAIC4m+DqWuILk+HLcbx/TxbuPYzO0Ank
- jSMSxBpYZvQw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9745"; a="160229129"
-X-IronPort-AV: E=Sophos;i="5.76,430,1592895600"; 
-   d="scan'208";a="160229129"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2020 09:14:54 -0700
-IronPort-SDR: 1NweJQ/LUpVMZGR2CNL7idgXNRkgQYlVvGnbjzV+v3epVrjgQ3OHB8LQ+g+ZsKRvdD4MQ7Rl1b
- B/J1ZOWPLOog==
-X-IronPort-AV: E=Sophos;i="5.76,430,1592895600"; 
-   d="scan'208";a="451484915"
-Received: from oshaham-mobl.ger.corp.intel.com (HELO [10.214.241.3]) ([10.214.241.3])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2020 09:14:31 -0700
-Subject: Re: [PATCH v2 06/21] drm/i915: Introduce GEM object functions
-To:     Thomas Zimmermann <tzimmermann@suse.de>, alexander.deucher@amd.com,
-        christian.koenig@amd.com, airlied@linux.ie, daniel@ffwll.ch,
-        linux@armlinux.org.uk, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, l.stach@pengutronix.de,
-        christian.gmeiner@gmail.com, inki.dae@samsung.com,
-        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
-        patrik.r.jakobsson@gmail.com, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        chunkuang.hu@kernel.org, p.zabel@pengutronix.de,
-        matthias.bgg@gmail.com, robdclark@gmail.com, sean@poorly.run,
-        bskeggs@redhat.com, tomi.valkeinen@ti.com, eric@anholt.net,
-        hjc@rock-chips.com, heiko@sntech.de, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, rodrigosiqueiramelo@gmail.com,
-        hamohammed.sa@gmail.com, oleksandr_andrushchenko@epam.com,
-        hyun.kwon@xilinx.com, laurent.pinchart@ideasonboard.com,
-        michal.simek@xilinx.com, sumit.semwal@linaro.org,
-        evan.quan@amd.com, Hawking.Zhang@amd.com, tianci.yin@amd.com,
-        marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        andi.shyti@intel.com, sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-7-tzimmermann@suse.de>
-From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Organization: Intel Corporation UK Plc
-Message-ID: <76e5eb2f-e324-8f56-866a-15b022abba8d@linux.intel.com>
-Date:   Tue, 15 Sep 2020 17:14:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 15 Sep 2020 12:10:42 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE08BC0611C1;
+        Tue, 15 Sep 2020 09:07:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=jNO1brRzt5ng659lhtl+4oBfakGzrKMS1ATQw8TQgTw=; b=TNPCL5eofP+HlOArQnkCfBaBcr
+        YSGLdW/Qiv8AzkIHe8+EOuTfZrgbsKu9jL1zP7QoNQXeZv0pCDWNLoYO6X7GX52MyzpQm/Qd0l4TW
+        s31qJRN7rvs24hSZP6bcKILlEwfoqjkT6or2AmTorYl7yaujPyXyRdb9xYCgwn0zC5nSKokjgc87s
+        wAsYB3/f0N9P1i3981XSC7+myVSEdufwVNd9kMFcESiR1kuA3nHY385p7qPLuLXrEFtb5WxZTOQ3I
+        4Q6UFijBo+aeSfJD4+xDoOSZN+FjexdxQU+nwsfcM9/hEd0538/gLTNdu3xeyaqFFbXJnbQhSDROE
+        mrXYuVRA==;
+Received: from 089144214092.atnat0023.highway.a1.net ([89.144.214.92] helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kIDTc-0004Iz-Az; Tue, 15 Sep 2020 16:06:40 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Matt Porter <mporter@kernel.crashing.org>,
+        iommu@lists.linux-foundation.org
+Cc:     Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        linux1394-devel@lists.sourceforge.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-mm@kvack.org,
+        alsa-devel@alsa-project.org
+Subject: [PATCH 06/18] lib82596: move DMA allocation into the callers of i82596_probe
+Date:   Tue, 15 Sep 2020 17:51:10 +0200
+Message-Id: <20200915155122.1768241-7-hch@lst.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200915155122.1768241-1-hch@lst.de>
+References: <20200915155122.1768241-1-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20200915145958.19993-7-tzimmermann@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+This allows us to get rid of the LIB82596_DMA_ATTR defined and prepare
+for untangling the coherent vs non-coherent DMA allocation API.
 
-On 15/09/2020 15:59, Thomas Zimmermann wrote:
-> GEM object functions deprecate several similar callback interfaces in
-> struct drm_driver. This patch replaces the per-driver callbacks with
-> per-instance callbacks in i915.
-> 
-> v2:
-> 	* move object-function instance to i915_gem_object.c (Jani)
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
->   drivers/gpu/drm/i915/gem/i915_gem_object.c    | 21 ++++++++++++++++---
->   drivers/gpu/drm/i915/gem/i915_gem_object.h    |  3 ---
->   drivers/gpu/drm/i915/i915_drv.c               |  4 ----
->   .../gpu/drm/i915/selftests/mock_gem_device.c  |  3 ---
->   4 files changed, 18 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.c b/drivers/gpu/drm/i915/gem/i915_gem_object.c
-> index c8421fd9d2dc..3389ac972d16 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gem_object.c
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_object.c
-> @@ -39,9 +39,18 @@ static struct i915_global_object {
->   	struct kmem_cache *slab_objects;
->   } global;
->   
-> +static const struct drm_gem_object_funcs i915_gem_object_funcs;
-> +
->   struct drm_i915_gem_object *i915_gem_object_alloc(void)
->   {
-> -	return kmem_cache_zalloc(global.slab_objects, GFP_KERNEL);
-> +	struct drm_i915_gem_object *obj;
-> +
-> +	obj = kmem_cache_zalloc(global.slab_objects, GFP_KERNEL);
-> +	if (!obj)
-> +		return NULL;
-> +	obj->base.funcs = &i915_gem_object_funcs;
-> +
-> +	return obj;
->   }
->   
->   void i915_gem_object_free(struct drm_i915_gem_object *obj)
-> @@ -101,7 +110,7 @@ void i915_gem_object_set_cache_coherency(struct drm_i915_gem_object *obj,
->   		!(obj->cache_coherent & I915_BO_CACHE_COHERENT_FOR_WRITE);
->   }
->   
-> -void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file)
-> +static void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file)
->   {
->   	struct drm_i915_gem_object *obj = to_intel_bo(gem);
->   	struct drm_i915_file_private *fpriv = file->driver_priv;
-> @@ -264,7 +273,7 @@ static void __i915_gem_free_work(struct work_struct *work)
->   	i915_gem_flush_free_objects(i915);
->   }
->   
-> -void i915_gem_free_object(struct drm_gem_object *gem_obj)
-> +static void i915_gem_free_object(struct drm_gem_object *gem_obj)
->   {
->   	struct drm_i915_gem_object *obj = to_intel_bo(gem_obj);
->   	struct drm_i915_private *i915 = to_i915(obj->base.dev);
-> @@ -403,6 +412,12 @@ int __init i915_global_objects_init(void)
->   	return 0;
->   }
->   
-> +static const struct drm_gem_object_funcs i915_gem_object_funcs = {
-> +	.free = i915_gem_free_object,
-> +	.close = i915_gem_close_object,
-> +	.export = i915_gem_prime_export,
-> +};
-> +
->   #if IS_ENABLED(CONFIG_DRM_I915_SELFTEST)
->   #include "selftests/huge_gem_object.c"
->   #include "selftests/huge_pages.c"
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.h b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-> index d46db8d8f38e..eaf3d4147be0 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gem_object.h
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-> @@ -38,9 +38,6 @@ void __i915_gem_object_release_shmem(struct drm_i915_gem_object *obj,
->   
->   int i915_gem_object_attach_phys(struct drm_i915_gem_object *obj, int align);
->   
-> -void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file);
-> -void i915_gem_free_object(struct drm_gem_object *obj);
-> -
->   void i915_gem_flush_free_objects(struct drm_i915_private *i915);
->   
->   struct sg_table *
-> diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
-> index 94e00e450683..011a3fb41ece 100644
-> --- a/drivers/gpu/drm/i915/i915_drv.c
-> +++ b/drivers/gpu/drm/i915/i915_drv.c
-> @@ -1750,12 +1750,8 @@ static struct drm_driver driver = {
->   	.lastclose = i915_driver_lastclose,
->   	.postclose = i915_driver_postclose,
->   
-> -	.gem_close_object = i915_gem_close_object,
-> -	.gem_free_object_unlocked = i915_gem_free_object,
-> -
->   	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
->   	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
-> -	.gem_prime_export = i915_gem_prime_export,
->   	.gem_prime_import = i915_gem_prime_import,
->   
->   	.dumb_create = i915_gem_dumb_create,
-> diff --git a/drivers/gpu/drm/i915/selftests/mock_gem_device.c b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
-> index f127e633f7ca..9244b5d6fb01 100644
-> --- a/drivers/gpu/drm/i915/selftests/mock_gem_device.c
-> +++ b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
-> @@ -87,9 +87,6 @@ static struct drm_driver mock_driver = {
->   	.name = "mock",
->   	.driver_features = DRIVER_GEM,
->   	.release = mock_device_release,
-> -
-> -	.gem_close_object = i915_gem_close_object,
-> -	.gem_free_object_unlocked = i915_gem_free_object,
->   };
->   
->   static void release_dev(struct device *dev)
-> 
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/net/ethernet/i825xx/lasi_82596.c | 24 ++++++++++------
+ drivers/net/ethernet/i825xx/lib82596.c   | 36 ++++++++----------------
+ drivers/net/ethernet/i825xx/sni_82596.c  | 19 +++++++++----
+ 3 files changed, 40 insertions(+), 39 deletions(-)
 
-Looks obviously fine.
+diff --git a/drivers/net/ethernet/i825xx/lasi_82596.c b/drivers/net/ethernet/i825xx/lasi_82596.c
+index aec7e98bcc853a..a12218e940a2fa 100644
+--- a/drivers/net/ethernet/i825xx/lasi_82596.c
++++ b/drivers/net/ethernet/i825xx/lasi_82596.c
+@@ -96,8 +96,6 @@
+ 
+ #define OPT_SWAP_PORT	0x0001	/* Need to wordswp on the MPU port */
+ 
+-#define LIB82596_DMA_ATTR	DMA_ATTR_NON_CONSISTENT
+-
+ #define DMA_WBACK(ndev, addr, len) \
+ 	do { dma_cache_sync((ndev)->dev.parent, (void *)addr, len, DMA_TO_DEVICE); } while (0)
+ 
+@@ -155,7 +153,7 @@ lan_init_chip(struct parisc_device *dev)
+ {
+ 	struct	net_device *netdevice;
+ 	struct i596_private *lp;
+-	int	retval;
++	int retval = -ENOMEM;
+ 	int i;
+ 
+ 	if (!dev->irq) {
+@@ -186,12 +184,22 @@ lan_init_chip(struct parisc_device *dev)
+ 
+ 	lp = netdev_priv(netdevice);
+ 	lp->options = dev->id.sversion == 0x72 ? OPT_SWAP_PORT : 0;
++	lp->dma = dma_alloc_attrs(&dev->dev, sizeof(struct i596_dma),
++			      &lp->dma_addr, GFP_KERNEL,
++			      DMA_ATTR_NON_CONSISTENT);
++	if (!lp->dma)
++		goto out_free_netdev;
+ 
+ 	retval = i82596_probe(netdevice);
+-	if (retval) {
+-		free_netdev(netdevice);
+-		return -ENODEV;
+-	}
++	if (retval)
++		goto out_free_dma;
++	return 0;
++
++out_free_dma:
++	dma_free_attrs(&dev->dev, sizeof(struct i596_dma), lp->dma,
++			lp->dma_addr, DMA_ATTR_NON_CONSISTENT);
++out_free_netdev:
++	free_netdev(netdevice);
+ 	return retval;
+ }
+ 
+@@ -202,7 +210,7 @@ static int __exit lan_remove_chip(struct parisc_device *pdev)
+ 
+ 	unregister_netdev (dev);
+ 	dma_free_attrs(&pdev->dev, sizeof(struct i596_private), lp->dma,
+-		       lp->dma_addr, LIB82596_DMA_ATTR);
++		       lp->dma_addr, DMA_ATTR_NON_CONSISTENT);
+ 	free_netdev (dev);
+ 	return 0;
+ }
+diff --git a/drivers/net/ethernet/i825xx/lib82596.c b/drivers/net/ethernet/i825xx/lib82596.c
+index b03757e169e475..b4e4b3eb5758b5 100644
+--- a/drivers/net/ethernet/i825xx/lib82596.c
++++ b/drivers/net/ethernet/i825xx/lib82596.c
+@@ -1047,9 +1047,8 @@ static const struct net_device_ops i596_netdev_ops = {
+ 
+ static int i82596_probe(struct net_device *dev)
+ {
+-	int i;
+ 	struct i596_private *lp = netdev_priv(dev);
+-	struct i596_dma *dma;
++	int ret;
+ 
+ 	/* This lot is ensure things have been cache line aligned. */
+ 	BUILD_BUG_ON(sizeof(struct i596_rfd) != 32);
+@@ -1063,41 +1062,28 @@ static int i82596_probe(struct net_device *dev)
+ 	if (!dev->base_addr || !dev->irq)
+ 		return -ENODEV;
+ 
+-	dma = dma_alloc_attrs(dev->dev.parent, sizeof(struct i596_dma),
+-			      &lp->dma_addr, GFP_KERNEL,
+-			      LIB82596_DMA_ATTR);
+-	if (!dma) {
+-		printk(KERN_ERR "%s: Couldn't get shared memory\n", __FILE__);
+-		return -ENOMEM;
+-	}
+-
+ 	dev->netdev_ops = &i596_netdev_ops;
+ 	dev->watchdog_timeo = TX_TIMEOUT;
+ 
+-	memset(dma, 0, sizeof(struct i596_dma));
+-	lp->dma = dma;
+-
+-	dma->scb.command = 0;
+-	dma->scb.cmd = I596_NULL;
+-	dma->scb.rfd = I596_NULL;
++	memset(lp->dma, 0, sizeof(struct i596_dma));
++	lp->dma->scb.command = 0;
++	lp->dma->scb.cmd = I596_NULL;
++	lp->dma->scb.rfd = I596_NULL;
+ 	spin_lock_init(&lp->lock);
+ 
+-	DMA_WBACK_INV(dev, dma, sizeof(struct i596_dma));
++	DMA_WBACK_INV(dev, lp->dma, sizeof(struct i596_dma));
+ 
+-	i = register_netdev(dev);
+-	if (i) {
+-		dma_free_attrs(dev->dev.parent, sizeof(struct i596_dma),
+-			       dma, lp->dma_addr, LIB82596_DMA_ATTR);
+-		return i;
+-	}
++	ret = register_netdev(dev);
++	if (ret)
++		return ret;
+ 
+ 	DEB(DEB_PROBE, printk(KERN_INFO "%s: 82596 at %#3lx, %pM IRQ %d.\n",
+ 			      dev->name, dev->base_addr, dev->dev_addr,
+ 			      dev->irq));
+ 	DEB(DEB_INIT, printk(KERN_INFO
+ 			     "%s: dma at 0x%p (%d bytes), lp->scb at 0x%p\n",
+-			     dev->name, dma, (int)sizeof(struct i596_dma),
+-			     &dma->scb));
++			     dev->name, lp->dma, (int)sizeof(struct i596_dma),
++			     &lp->dma->scb));
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/ethernet/i825xx/sni_82596.c b/drivers/net/ethernet/i825xx/sni_82596.c
+index 22f5887578b2bd..4b9ac0c6557731 100644
+--- a/drivers/net/ethernet/i825xx/sni_82596.c
++++ b/drivers/net/ethernet/i825xx/sni_82596.c
+@@ -24,8 +24,6 @@
+ 
+ static const char sni_82596_string[] = "snirm_82596";
+ 
+-#define LIB82596_DMA_ATTR	0
+-
+ #define DMA_WBACK(priv, addr, len)     do { } while (0)
+ #define DMA_INV(priv, addr, len)       do { } while (0)
+ #define DMA_WBACK_INV(priv, addr, len) do { } while (0)
+@@ -134,10 +132,19 @@ static int sni_82596_probe(struct platform_device *dev)
+ 	lp->ca = ca_addr;
+ 	lp->mpu_port = mpu_addr;
+ 
++	lp->dma = dma_alloc_coherent(&dev->dev, sizeof(struct i596_dma),
++				     &lp->dma_addr, GFP_KERNEL);
++	if (!lp->dma)
++		goto probe_failed;
++
+ 	retval = i82596_probe(netdevice);
+-	if (retval == 0)
+-		return 0;
++	if (retval)
++		goto probe_failed_free_dma;
++	return 0;
+ 
++probe_failed_free_dma:
++	dma_free_coherent(&dev->dev, sizeof(struct i596_dma), lp->dma,
++			  lp->dma_addr);
+ probe_failed:
+ 	free_netdev(netdevice);
+ probe_failed_free_ca:
+@@ -153,8 +160,8 @@ static int sni_82596_driver_remove(struct platform_device *pdev)
+ 	struct i596_private *lp = netdev_priv(dev);
+ 
+ 	unregister_netdev(dev);
+-	dma_free_attrs(dev->dev.parent, sizeof(struct i596_private), lp->dma,
+-		       lp->dma_addr, LIB82596_DMA_ATTR);
++	dma_free_coherent(&pdev->dev, sizeof(struct i596_private), lp->dma,
++			  lp->dma_addr);
+ 	iounmap(lp->ca);
+ 	iounmap(lp->mpu_port);
+ 	free_netdev (dev);
+-- 
+2.28.0
 
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-
-Regards,
-
-Tvrtko
