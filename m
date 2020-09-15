@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E85BC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C00C31E40
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0348A208E4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EF1520B1F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:01:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbgIOXBH (ORCPT
+        id S1726146AbgIOXB0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 19:01:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37768 "EHLO mx2.suse.de"
+        Tue, 15 Sep 2020 19:01:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36394 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727317AbgIOPCM (ORCPT
+        id S1726900AbgIOPB1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 11:02:12 -0400
+        Tue, 15 Sep 2020 11:01:27 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 50ECAB2B6;
-        Tue, 15 Sep 2020 15:00:34 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 1F328AE4B;
+        Tue, 15 Sep 2020 15:00:22 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -59,9 +59,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 20/21] drm/xlnx: Initialize DRM driver instance with CMA helper macro
-Date:   Tue, 15 Sep 2020 16:59:57 +0200
-Message-Id: <20200915145958.19993-21-tzimmermann@suse.de>
+Subject: [PATCH v2 06/21] drm/i915: Introduce GEM object functions
+Date:   Tue, 15 Sep 2020 16:59:43 +0200
+Message-Id: <20200915145958.19993-7-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200915145958.19993-1-tzimmermann@suse.de>
 References: <20200915145958.19993-1-tzimmermann@suse.de>
@@ -72,47 +72,121 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The xlnx driver uses CMA helpers with default callback functions.
-Initialize the driver structure with the rsp CMA helper macro. The
-driver is being converted to use GEM object functions as part of
-this change.
-
-Two callbacks, .dumb_destroy and .gem_prime_import, were initialized
-to their default implementations, so they are just kept empty now.
+GEM object functions deprecate several similar callback interfaces in
+struct drm_driver. This patch replaces the per-driver callbacks with
+per-instance callbacks in i915.
 
 v2:
-	* initialize with DRM_GEM_CMA_DRIVER_OPS_WITH_DUMB_CREATE (Laurent)
+	* move object-function instance to i915_gem_object.c (Jani)
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ drivers/gpu/drm/i915/gem/i915_gem_object.c    | 21 ++++++++++++++++---
+ drivers/gpu/drm/i915/gem/i915_gem_object.h    |  3 ---
+ drivers/gpu/drm/i915/i915_drv.c               |  4 ----
+ .../gpu/drm/i915/selftests/mock_gem_device.c  |  3 ---
+ 4 files changed, 18 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-index 8e69303aad3f..f3ffc3703a0e 100644
---- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-+++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-@@ -80,19 +80,7 @@ static struct drm_driver zynqmp_dpsub_drm_driver = {
- 	.driver_features		= DRIVER_MODESET | DRIVER_GEM |
- 					  DRIVER_ATOMIC,
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.c b/drivers/gpu/drm/i915/gem/i915_gem_object.c
+index c8421fd9d2dc..3389ac972d16 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_object.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_object.c
+@@ -39,9 +39,18 @@ static struct i915_global_object {
+ 	struct kmem_cache *slab_objects;
+ } global;
  
--	.prime_handle_to_fd		= drm_gem_prime_handle_to_fd,
--	.prime_fd_to_handle		= drm_gem_prime_fd_to_handle,
--	.gem_prime_export		= drm_gem_prime_export,
--	.gem_prime_import		= drm_gem_prime_import,
--	.gem_prime_get_sg_table		= drm_gem_cma_prime_get_sg_table,
--	.gem_prime_import_sg_table	= drm_gem_cma_prime_import_sg_table,
--	.gem_prime_vmap			= drm_gem_cma_prime_vmap,
--	.gem_prime_vunmap		= drm_gem_cma_prime_vunmap,
--	.gem_prime_mmap			= drm_gem_cma_prime_mmap,
--	.gem_free_object_unlocked	= drm_gem_cma_free_object,
--	.gem_vm_ops			= &drm_gem_cma_vm_ops,
--	.dumb_create			= zynqmp_dpsub_dumb_create,
--	.dumb_destroy			= drm_gem_dumb_destroy,
-+	DRM_GEM_CMA_DRIVER_OPS_WITH_DUMB_CREATE(zynqmp_dpsub_dumb_create),
++static const struct drm_gem_object_funcs i915_gem_object_funcs;
++
+ struct drm_i915_gem_object *i915_gem_object_alloc(void)
+ {
+-	return kmem_cache_zalloc(global.slab_objects, GFP_KERNEL);
++	struct drm_i915_gem_object *obj;
++
++	obj = kmem_cache_zalloc(global.slab_objects, GFP_KERNEL);
++	if (!obj)
++		return NULL;
++	obj->base.funcs = &i915_gem_object_funcs;
++
++	return obj;
+ }
  
- 	.fops				= &zynqmp_dpsub_drm_fops,
+ void i915_gem_object_free(struct drm_i915_gem_object *obj)
+@@ -101,7 +110,7 @@ void i915_gem_object_set_cache_coherency(struct drm_i915_gem_object *obj,
+ 		!(obj->cache_coherent & I915_BO_CACHE_COHERENT_FOR_WRITE);
+ }
  
+-void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file)
++static void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file)
+ {
+ 	struct drm_i915_gem_object *obj = to_intel_bo(gem);
+ 	struct drm_i915_file_private *fpriv = file->driver_priv;
+@@ -264,7 +273,7 @@ static void __i915_gem_free_work(struct work_struct *work)
+ 	i915_gem_flush_free_objects(i915);
+ }
+ 
+-void i915_gem_free_object(struct drm_gem_object *gem_obj)
++static void i915_gem_free_object(struct drm_gem_object *gem_obj)
+ {
+ 	struct drm_i915_gem_object *obj = to_intel_bo(gem_obj);
+ 	struct drm_i915_private *i915 = to_i915(obj->base.dev);
+@@ -403,6 +412,12 @@ int __init i915_global_objects_init(void)
+ 	return 0;
+ }
+ 
++static const struct drm_gem_object_funcs i915_gem_object_funcs = {
++	.free = i915_gem_free_object,
++	.close = i915_gem_close_object,
++	.export = i915_gem_prime_export,
++};
++
+ #if IS_ENABLED(CONFIG_DRM_I915_SELFTEST)
+ #include "selftests/huge_gem_object.c"
+ #include "selftests/huge_pages.c"
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.h b/drivers/gpu/drm/i915/gem/i915_gem_object.h
+index d46db8d8f38e..eaf3d4147be0 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_object.h
++++ b/drivers/gpu/drm/i915/gem/i915_gem_object.h
+@@ -38,9 +38,6 @@ void __i915_gem_object_release_shmem(struct drm_i915_gem_object *obj,
+ 
+ int i915_gem_object_attach_phys(struct drm_i915_gem_object *obj, int align);
+ 
+-void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file);
+-void i915_gem_free_object(struct drm_gem_object *obj);
+-
+ void i915_gem_flush_free_objects(struct drm_i915_private *i915);
+ 
+ struct sg_table *
+diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+index 94e00e450683..011a3fb41ece 100644
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -1750,12 +1750,8 @@ static struct drm_driver driver = {
+ 	.lastclose = i915_driver_lastclose,
+ 	.postclose = i915_driver_postclose,
+ 
+-	.gem_close_object = i915_gem_close_object,
+-	.gem_free_object_unlocked = i915_gem_free_object,
+-
+ 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+ 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+-	.gem_prime_export = i915_gem_prime_export,
+ 	.gem_prime_import = i915_gem_prime_import,
+ 
+ 	.dumb_create = i915_gem_dumb_create,
+diff --git a/drivers/gpu/drm/i915/selftests/mock_gem_device.c b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
+index f127e633f7ca..9244b5d6fb01 100644
+--- a/drivers/gpu/drm/i915/selftests/mock_gem_device.c
++++ b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
+@@ -87,9 +87,6 @@ static struct drm_driver mock_driver = {
+ 	.name = "mock",
+ 	.driver_features = DRIVER_GEM,
+ 	.release = mock_device_release,
+-
+-	.gem_close_object = i915_gem_close_object,
+-	.gem_free_object_unlocked = i915_gem_free_object,
+ };
+ 
+ static void release_dev(struct device *dev)
 -- 
 2.28.0
 
