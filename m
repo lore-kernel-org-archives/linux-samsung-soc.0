@@ -2,156 +2,198 @@ Return-Path: <SRS0=Wlns=CZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B44C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 09:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D199C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 10:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17C3E21D1B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 09:32:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30F782080C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 10:03:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="YwQFNnZ4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbgIPJbv (ORCPT
+        id S1726833AbgIPKDd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 05:31:51 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:46876 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726688AbgIPJbi (ORCPT
+        Wed, 16 Sep 2020 06:03:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47218 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbgIPKDY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 05:31:38 -0400
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08G9PWrX012821;
-        Wed, 16 Sep 2020 05:31:31 -0400
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 33k5p61v2p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Sep 2020 05:31:30 -0400
-Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 08G9VT0n050743
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Wed, 16 Sep 2020 05:31:29 -0400
-Received: from SCSQMBX10.ad.analog.com (10.77.17.5) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Wed, 16 Sep
- 2020 02:31:36 -0700
-Received: from zeus.spd.analog.com (10.66.68.11) by SCSQMBX10.ad.analog.com
- (10.77.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Wed, 16 Sep 2020 02:31:36 -0700
-Received: from localhost.localdomain ([10.48.65.12])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 08G9VL9d022209;
-        Wed, 16 Sep 2020 05:31:22 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>, <kgene@kernel.org>, <krzk@kernel.org>,
-        Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH v2] iio: adc: exynos_adc: Replace indio_dev->mlock with own device lock
-Date:   Wed, 16 Sep 2020 12:31:23 +0300
-Message-ID: <20200916093123.78954-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200826132203.236748-1-alexandru.ardelean@analog.com>
-References: <20200826132203.236748-1-alexandru.ardelean@analog.com>
+        Wed, 16 Sep 2020 06:03:24 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7436EC06174A
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2020 03:03:23 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id w5so6232984wrp.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2020 03:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=e2Znfx8BWkk5aVcx8hHpr3x0pz1zwQZhs1djRV0gcOU=;
+        b=YwQFNnZ46y23ilMPtQ+YA1uU56yQbhOv6Wnxz4ZcYBv/64HXgnQIstoy81UuE+BuFc
+         RbVimusECAo2qKzk8yvrlLUDfal98le+MXG5s9js8pfohQ+Bnhlzr8odUz3778w+kM1b
+         6iP/yC9nMmGqgDJRKWjaW8mpLjM0JRvnAZoXk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=e2Znfx8BWkk5aVcx8hHpr3x0pz1zwQZhs1djRV0gcOU=;
+        b=nqIXyNV6iNNDq8goPZCvwzg7GwmGYgSC7uBBu4IatCrBHocQDgsFBe8dswYXb4wZYC
+         wTpsTRV6+u3+n48dAyyD3Ah4hKBCwImPGEHCRHIyX7XftdwLb2XBvS4u6hkaJmx7hU+7
+         XckCncSzJqtZe6/z8STOLNP2eEpdTTjjv8a5RLb6jZX9Zh/sj3qNnl4myW/j3EeCQc22
+         8PFLNerH2YTm6XvLXDy0qvio5CoWASBUsqspA+WJGlExm5MMezQmEdSDSl1njwSfjNlF
+         of54RO5hayYLBKeXjYllvL2vDUSK2hBsMuEO1433ZYQl0daIllhVxE8k9QQSpZU3MBup
+         bWCw==
+X-Gm-Message-State: AOAM530iYJ+QXpMgVJZmQnWCWa55xbTpt7/eauByoyX+LdTiY/vMVIvZ
+        Ek82FSMuc5WYlw8EkbRXYYKaJQ==
+X-Google-Smtp-Source: ABdhPJzeuyJCXxonH76Yve4EPaguLB8swVVrVRKLIRv+fjNVrJReD84NaGvyyVb0RMzIohYAQGFSOA==
+X-Received: by 2002:adf:81e6:: with SMTP id 93mr25703900wra.412.1600250602103;
+        Wed, 16 Sep 2020 03:03:22 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id s26sm4516179wmh.44.2020.09.16.03.03.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2020 03:03:21 -0700 (PDT)
+Date:   Wed, 16 Sep 2020 12:03:18 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
+        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
+        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
+        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
+        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
+        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
+        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
+        sam@ravnborg.org, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v2 04/21] drm/exynos: Introduce GEM object functions
+Message-ID: <20200916100318.GF438822@phenom.ffwll.local>
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-5-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-16_02:2020-09-15,2020-09-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=949
- lowpriorityscore=0 impostorscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 mlxscore=0 phishscore=0 clxscore=1011 suspectscore=0
- malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009160069
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200915145958.19993-5-tzimmermann@suse.de>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+On Tue, Sep 15, 2020 at 04:59:41PM +0200, Thomas Zimmermann wrote:
+> GEM object functions deprecate several similar callback interfaces in
+> struct drm_driver. This patch replaces the per-driver callbacks with
+> per-instance callbacks in exynos. The only exception is gem_prime_mmap,
+> which is non-trivial to convert.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 10 ----------
+>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 15 +++++++++++++++
+>  2 files changed, 15 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index dbd80f1e4c78..fe46680ca208 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -75,11 +75,6 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+>  	file->driver_priv = NULL;
+>  }
+>  
+> -static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
+> -	.open = drm_gem_vm_open,
+> -	.close = drm_gem_vm_close,
+> -};
+> -
+>  static const struct drm_ioctl_desc exynos_ioctls[] = {
+>  	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_CREATE, exynos_drm_gem_create_ioctl,
+>  			DRM_RENDER_ALLOW),
+> @@ -124,16 +119,11 @@ static struct drm_driver exynos_drm_driver = {
+>  	.open			= exynos_drm_open,
+>  	.lastclose		= drm_fb_helper_lastclose,
+>  	.postclose		= exynos_drm_postclose,
+> -	.gem_free_object_unlocked = exynos_drm_gem_free_object,
+> -	.gem_vm_ops		= &exynos_drm_gem_vm_ops,
+>  	.dumb_create		= exynos_drm_gem_dumb_create,
+>  	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
+>  	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
+>  	.gem_prime_import	= exynos_drm_gem_prime_import,
+> -	.gem_prime_get_sg_table	= exynos_drm_gem_prime_get_sg_table,
+>  	.gem_prime_import_sg_table	= exynos_drm_gem_prime_import_sg_table,
+> -	.gem_prime_vmap		= exynos_drm_gem_prime_vmap,
+> -	.gem_prime_vunmap	= exynos_drm_gem_prime_vunmap,
+>  	.gem_prime_mmap		= exynos_drm_gem_prime_mmap,
+>  	.ioctls			= exynos_ioctls,
+>  	.num_ioctls		= ARRAY_SIZE(exynos_ioctls),
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> index efa476858db5..69a5cf28b4ae 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> @@ -129,6 +129,19 @@ void exynos_drm_gem_destroy(struct exynos_drm_gem *exynos_gem)
+>  	kfree(exynos_gem);
+>  }
+>  
+> +static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
+> +	.open = drm_gem_vm_open,
+> +	.close = drm_gem_vm_close,
+> +};
 
-As part of the general cleanup of indio_dev->mlock, this change replaces
-it with a local lock, to protect potential concurrent access to the
-completion callback during a conversion.
+Hm moving the drm_gem_cma_vm_ops into drm_gem.h or so and maybe calling
+them drm_gem_simple_ops or so would remove a pile of these. But perhaps a
+quick follow up series.
 
-This is part of a bigger cleanup.
-Link: https://lore.kernel.org/linux-iio/CA+U=Dsoo6YABe5ODLp+eFNPGFDjk5ZeQEceGkqjxXcVEhLWubw@mail.gmail.com/
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/iio/adc/exynos_adc.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+> +
+> +static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs = {
+> +	.free = exynos_drm_gem_free_object,
+> +	.get_sg_table = exynos_drm_gem_prime_get_sg_table,
+> +	.vmap = exynos_drm_gem_prime_vmap,
+> +	.vunmap	= exynos_drm_gem_prime_vunmap,
+> +	.vm_ops = &exynos_drm_gem_vm_ops,
+> +};
+> +
+>  static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
+>  						  unsigned long size)
+>  {
+> @@ -143,6 +156,8 @@ static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
+>  	exynos_gem->size = size;
+>  	obj = &exynos_gem->base;
+>  
+> +	obj->funcs = &exynos_drm_gem_object_funcs;
+> +
+>  	ret = drm_gem_object_init(dev, obj, size);
+>  	if (ret < 0) {
+>  		DRM_DEV_ERROR(dev->dev, "failed to initialize gem object\n");
+> -- 
+> 2.28.0
+> 
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index 20477b249f2a..99f4404e9fd1 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -138,6 +138,16 @@ struct exynos_adc {
- 	bool			read_ts;
- 	u32			ts_x;
- 	u32			ts_y;
-+
-+	/*
-+	 * Lock to protect from potential concurrent access to the
-+	 * completion callback during a manual conversion. For this driver
-+	 * a wait-callback is used to wait for the conversion result,
-+	 * so in the meantime no other read request (or conversion start)
-+	 * must be performed, otherwise it would interfere with the
-+	 * current conversion result.
-+	 */
-+	struct mutex		lock;
- };
- 
- struct exynos_adc_data {
-@@ -542,7 +552,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 		return -EINVAL;
- 	}
- 
--	mutex_lock(&indio_dev->mlock);
-+	mutex_lock(&info->lock);
- 	reinit_completion(&info->completion);
- 
- 	/* Select the channel to be used and Trigger conversion */
-@@ -562,7 +572,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 		ret = IIO_VAL_INT;
- 	}
- 
--	mutex_unlock(&indio_dev->mlock);
-+	mutex_unlock(&info->lock);
- 
- 	return ret;
- }
-@@ -573,7 +583,7 @@ static int exynos_read_s3c64xx_ts(struct iio_dev *indio_dev, int *x, int *y)
- 	unsigned long timeout;
- 	int ret;
- 
--	mutex_lock(&indio_dev->mlock);
-+	mutex_lock(&info->lock);
- 	info->read_ts = true;
- 
- 	reinit_completion(&info->completion);
-@@ -598,7 +608,7 @@ static int exynos_read_s3c64xx_ts(struct iio_dev *indio_dev, int *x, int *y)
- 	}
- 
- 	info->read_ts = false;
--	mutex_unlock(&indio_dev->mlock);
-+	mutex_unlock(&info->lock);
- 
- 	return ret;
- }
-@@ -868,6 +878,8 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 	indio_dev->channels = exynos_adc_iio_channels;
- 	indio_dev->num_channels = info->data->num_channels;
- 
-+	mutex_init(&info->lock);
-+
- 	ret = request_irq(info->irq, exynos_adc_isr,
- 					0, dev_name(&pdev->dev), info);
- 	if (ret < 0) {
 -- 
-2.17.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
