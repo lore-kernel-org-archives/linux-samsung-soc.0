@@ -2,97 +2,233 @@ Return-Path: <SRS0=Wlns=CZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 581B9C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6963C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E717521973
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:22:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600287753;
-	bh=fHr8s2aEyDjlxUpOJp1EETFRNOt+FYCr0P+W9KOp4jM=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=KRoPm0EDDUQ+iUXC1lLsB5DN/bhgQH3A2PJAQBSGVLa11xTFk3mcMrTFVGnvxnw7E
-	 Zwh+883jCXuzMGvGgzzEfcMC3jsqu76pwBaCs4NF7YLukLr/IGbkTe4PO+Y86tAxEx
-	 QjOWwjMRKNjCtMoxocgcA/JaijdTE9T460IZXi4k=
+	by mail.kernel.org (Postfix) with ESMTP id 276FC21974
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:24:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="GUr+B+EI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbgIPUWI (ORCPT
+        id S1727079AbgIPUYj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:22:08 -0400
-Received: from mail-wm1-f44.google.com ([209.85.128.44]:39134 "EHLO
-        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726818AbgIPR3Q (ORCPT
+        Wed, 16 Sep 2020 16:24:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60646 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727077AbgIPR1x (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:29:16 -0400
-Received: by mail-wm1-f44.google.com with SMTP id b79so3869120wmb.4;
-        Wed, 16 Sep 2020 10:28:56 -0700 (PDT)
+        Wed, 16 Sep 2020 13:27:53 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF5CAC0698C7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2020 04:24:29 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id y15so2615641wmi.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2020 04:24:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=+a06VRmEudn2VQsC3iRJVsBR9BGJLaW45iWLDadZyRI=;
+        b=GUr+B+EIQnykYRecoS9xztPc0/dmBYz0juGXJQ+82bnH0XOFLeyGdR7DXoJWfQI/8v
+         uV6cBfGWTv8GfGsnvr2MrJOMoG5UfSEg4lIignk/xv/qBGjiERDGzKpRftrrWz5Mz7Ds
+         IxCKmFcqeMxhPaSpSYh1wxMK2TNY4jkQyjW+A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=E47fYlcJkUJ8l3iZf6clnfI3aqBpmWj9zsUvUFymYP4=;
-        b=chxz123lmU+GQnQtaRRx4Z2afnjUpzAn6iS26p+C4Qs4L/fuCtlhx4Dbrucl8dZZSU
-         QNqwpbK2kvxct99Q2OVrXa4Ye+3bi9e2VxRLv6wSG4ZbwhW8ZiH21UWOrM3LihhQjram
-         t2Kc8qC38zmMGUU5sU7h5tM57ZegawoVfZErS9j1MwckA8JUDigteO9vGVQOIvKw9/YD
-         +3RTZ61XXJV/9XCZ06CnGqvi6I3dLScuj0LQR9wMOaJr1O9qs5OGN6YFto/gZRSTh9tV
-         YlxjcUem5qBj9+ONIVVItoAxscWXUxyCWnJYLvJHjh4FJ/UGU7ihrFYbPl89l3F8Ifu3
-         eVqQ==
-X-Gm-Message-State: AOAM532rwa3glTN/hbZeuTMRK34crta/78oT4dN11UbUpVeK00eQ51bK
-        CUUn+ps6TJJ3GeAuUzWnB8E5aYk218IvFtCC
-X-Google-Smtp-Source: ABdhPJweKg9u7dlDmDehpToHUH+j70OfpazvGEE4rWT8Uv/tAw2q657tC8ru2bXuXynBmdptDnBrNA==
-X-Received: by 2002:a1c:4d14:: with SMTP id o20mr5723207wmh.74.1600276608983;
-        Wed, 16 Sep 2020 10:16:48 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.191])
-        by smtp.googlemail.com with ESMTPSA id a13sm6462323wme.26.2020.09.16.10.16.46
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Sep 2020 10:16:47 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 19:16:44 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Jonathan Bakker <xc-racer2@live.ca>,
-        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=+a06VRmEudn2VQsC3iRJVsBR9BGJLaW45iWLDadZyRI=;
+        b=qkn+iyrnSbCXqMDVma9X8cQtWraBOieUgsmGfXZfXeEFHzSmQ79OhslkdS6mUDRC0V
+         XYfWB5VeBqmyYYpmvK+WMddVnaqF91ooqO5g8no18QBZSGn4BzA+oW0E1+NqKQFeREsf
+         BaLrIE3nvQZ4DfZe5EU3+RTwS++IyrZU1tPbu/Hv6CWaLIKXOY0/EBAGfCMoemx4dK6q
+         4tVc0xFq33L8KlLRRhGk4taNuzP1Y3GkbGcb0LT7AE9G22vqZM5C9M/Coaz9/NiYhTY3
+         by22rehCYICx/lPGjvv8O6oX5epw8cGmeAzcIraUT2/faX7bpG7UYqeVj7lyhYMNYqUd
+         qA0A==
+X-Gm-Message-State: AOAM531KJWhlU/1MJo/gyeTbdFoT4O7cClBI/tSTFweAf1HuN8ggo5zO
+        IfFfTwSrGFh+MAdbhF6C2pzlUg==
+X-Google-Smtp-Source: ABdhPJz4UqL+lwqUdWSoHFY6s7qCiJkilQoTwwhfF2waks/JDm6PnP2Zfkj6hPwcgWm/ZWJDyyjL3w==
+X-Received: by 2002:a7b:c24a:: with SMTP id b10mr3984516wmj.149.1600255468515;
+        Wed, 16 Sep 2020 04:24:28 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id h76sm5509546wme.10.2020.09.16.04.24.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2020 04:24:27 -0700 (PDT)
+Date:   Wed, 16 Sep 2020 13:24:24 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, hamohammed.sa@gmail.com,
+        airlied@linux.ie, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, michal.simek@xilinx.com,
+        thierry.reding@gmail.com, krzk@kernel.org, sam@ravnborg.org,
+        emil.velikov@collabora.com, linux-samsung-soc@vger.kernel.org,
+        jy0922.shim@samsung.com, oleksandr_andrushchenko@epam.com,
+        tomi.valkeinen@ti.com, linux-tegra@vger.kernel.org,
+        linux@armlinux.org.uk, jonathanh@nvidia.com,
+        linux-rockchip@lists.infradead.org, kgene@kernel.org,
+        bskeggs@redhat.com, xen-devel@lists.xenproject.org,
+        miaoqinglang@huawei.com, intel-gfx@lists.freedesktop.org,
+        matthew.auld@intel.com, chunkuang.hu@kernel.org,
+        andi.shyti@intel.com, linux-arm-msm@vger.kernel.org,
+        marek.olsak@amd.com, tianci.yin@amd.com,
+        etnaviv@lists.freedesktop.org, hdegoede@redhat.com,
+        linux-mediatek@lists.infradead.org, rodrigo.vivi@intel.com,
+        matthias.bgg@gmail.com, evan.quan@amd.com, sean@poorly.run,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [RFT 21/25] ARM: dts: s5pv210: move fixed regulators under root
- node in Goni
-Message-ID: <20200916171644.GF19427@kozik-lap>
-References: <20200907161141.31034-1-krzk@kernel.org>
- <20200907161141.31034-22-krzk@kernel.org>
+        tvrtko.ursulin@linux.intel.com, amd-gfx@lists.freedesktop.org,
+        laurent.pinchart@ideasonboard.com, hyun.kwon@xilinx.com,
+        rodrigosiqueiramelo@gmail.com, aaron.liu@amd.com,
+        Felix.Kuehling@amd.com, xinhui.pan@amd.com, sw0312.kim@samsung.com,
+        hjc@rock-chips.com, chris@chris-wilson.co.uk,
+        kyungmin.park@samsung.com, nirmoy.das@amd.com,
+        alexander.deucher@amd.com, Hawking.Zhang@amd.com,
+        freedreno@lists.freedesktop.org, christian.koenig@amd.com
+Subject: Re: [PATCH v2 04/21] drm/exynos: Introduce GEM object functions
+Message-ID: <20200916112424.GH438822@phenom.ffwll.local>
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-5-tzimmermann@suse.de>
+ <20200916100318.GF438822@phenom.ffwll.local>
+ <fb1f5992-1642-5751-5672-486b89442e1c@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200907161141.31034-22-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fb1f5992-1642-5751-5672-486b89442e1c@suse.de>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 07, 2020 at 06:11:37PM +0200, Krzysztof Kozlowski wrote:
-> The fixed regulators are kept under dedicated "regulators" node but this
-> causes multiple dtschema warnings:
+On Wed, Sep 16, 2020 at 12:36:28PM +0200, Thomas Zimmermann wrote:
+> Hi
 > 
->   regulators: $nodename:0: 'regulators' does not match '^([a-z][a-z0-9\\-]+-bus|bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
->   regulators: #size-cells:0:0: 0 is not one of [1, 2]
->   regulators: fixed-regulator@0:reg:0: [0] is too short
->   regulators: fixed-regulator@1:reg:0: [1] is too short
->   regulators: fixed-regulator@2:reg:0: [2] is too short
->   regulators: fixed-regulator@3:reg:0: [3] is too short
+> Am 16.09.20 um 12:03 schrieb Daniel Vetter:
+> > On Tue, Sep 15, 2020 at 04:59:41PM +0200, Thomas Zimmermann wrote:
+> >> GEM object functions deprecate several similar callback interfaces in
+> >> struct drm_driver. This patch replaces the per-driver callbacks with
+> >> per-instance callbacks in exynos. The only exception is gem_prime_mmap,
+> >> which is non-trivial to convert.
+> >>
+> >> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> >> ---
+> >>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 10 ----------
+> >>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 15 +++++++++++++++
+> >>  2 files changed, 15 insertions(+), 10 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> >> index dbd80f1e4c78..fe46680ca208 100644
+> >> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> >> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> >> @@ -75,11 +75,6 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+> >>  	file->driver_priv = NULL;
+> >>  }
+> >>  
+> >> -static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
+> >> -	.open = drm_gem_vm_open,
+> >> -	.close = drm_gem_vm_close,
+> >> -};
+> >> -
+> >>  static const struct drm_ioctl_desc exynos_ioctls[] = {
+> >>  	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_CREATE, exynos_drm_gem_create_ioctl,
+> >>  			DRM_RENDER_ALLOW),
+> >> @@ -124,16 +119,11 @@ static struct drm_driver exynos_drm_driver = {
+> >>  	.open			= exynos_drm_open,
+> >>  	.lastclose		= drm_fb_helper_lastclose,
+> >>  	.postclose		= exynos_drm_postclose,
+> >> -	.gem_free_object_unlocked = exynos_drm_gem_free_object,
+> >> -	.gem_vm_ops		= &exynos_drm_gem_vm_ops,
+> >>  	.dumb_create		= exynos_drm_gem_dumb_create,
+> >>  	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
+> >>  	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
+> >>  	.gem_prime_import	= exynos_drm_gem_prime_import,
+> >> -	.gem_prime_get_sg_table	= exynos_drm_gem_prime_get_sg_table,
+> >>  	.gem_prime_import_sg_table	= exynos_drm_gem_prime_import_sg_table,
+> >> -	.gem_prime_vmap		= exynos_drm_gem_prime_vmap,
+> >> -	.gem_prime_vunmap	= exynos_drm_gem_prime_vunmap,
+> >>  	.gem_prime_mmap		= exynos_drm_gem_prime_mmap,
+> >>  	.ioctls			= exynos_ioctls,
+> >>  	.num_ioctls		= ARRAY_SIZE(exynos_ioctls),
+> >> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> >> index efa476858db5..69a5cf28b4ae 100644
+> >> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> >> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> >> @@ -129,6 +129,19 @@ void exynos_drm_gem_destroy(struct exynos_drm_gem *exynos_gem)
+> >>  	kfree(exynos_gem);
+> >>  }
+> >>  
+> >> +static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
+> >> +	.open = drm_gem_vm_open,
+> >> +	.close = drm_gem_vm_close,
+> >> +};
+> > 
+> > Hm moving the drm_gem_cma_vm_ops into drm_gem.h or so and maybe calling
+> > them drm_gem_simple_ops or so would remove a pile of these. But perhaps a
+> > quick follow up series.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/boot/dts/s5pv210-goni.dts | 64 +++++++++++++-----------------
+> Good idea. Several interfaces use the term 'default' in their name, so
+> something like drm_gem_default_vm_ops seems appropriate.
 
-Applied.
+Default sounds like a fine naming choice too.
 
-Best regards,
-Krzysztof
+> BTW is there a reason why we have file operations like
+> DEFINE_DRM_GEM_CMA_FOPS() in each module? It seems like this could also
+> be provided by the rsp memory-manager library.
 
+It's for the module reference counting of the underlying file. So
+file_operations need this.
+-Daniel
+
+
+> 
+> Best regards
+> Thomas
+> 
+> > 
+> > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > 
+> >> +
+> >> +static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs = {
+> >> +	.free = exynos_drm_gem_free_object,
+> >> +	.get_sg_table = exynos_drm_gem_prime_get_sg_table,
+> >> +	.vmap = exynos_drm_gem_prime_vmap,
+> >> +	.vunmap	= exynos_drm_gem_prime_vunmap,
+> >> +	.vm_ops = &exynos_drm_gem_vm_ops,
+> >> +};
+> >> +
+> >>  static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
+> >>  						  unsigned long size)
+> >>  {
+> >> @@ -143,6 +156,8 @@ static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *dev,
+> >>  	exynos_gem->size = size;
+> >>  	obj = &exynos_gem->base;
+> >>  
+> >> +	obj->funcs = &exynos_drm_gem_object_funcs;
+> >> +
+> >>  	ret = drm_gem_object_init(dev, obj, size);
+> >>  	if (ret < 0) {
+> >>  		DRM_DEV_ERROR(dev->dev, "failed to initialize gem object\n");
+> >> -- 
+> >> 2.28.0
+> >>
+> > 
+> 
+> -- 
+> Thomas Zimmermann
+> Graphics Driver Developer
+> SUSE Software Solutions Germany GmbH
+> Maxfeldstr. 5, 90409 Nürnberg, Germany
+> (HRB 36809, AG Nürnberg)
+> Geschäftsführer: Felix Imendörffer
+> 
+
+
+
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
