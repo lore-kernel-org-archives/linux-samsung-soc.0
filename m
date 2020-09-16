@@ -2,255 +2,116 @@ Return-Path: <SRS0=Wlns=CZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D76C2BB84
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D66C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF1D5221E8
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:23:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 738FC221E3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:37:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="h4M5AySz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbgIPSXt (ORCPT
+        id S1727867AbgIPShN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 14:23:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38076 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727882AbgIPSXs (ORCPT
+        Wed, 16 Sep 2020 14:37:13 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:2940 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728075AbgIPSg7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 14:23:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3CCD4B28A;
-        Wed, 16 Sep 2020 10:36:48 +0000 (UTC)
-Subject: Re: [PATCH v2 04/21] drm/exynos: Introduce GEM object functions
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     hamohammed.sa@gmail.com, airlied@linux.ie,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        michal.simek@xilinx.com, thierry.reding@gmail.com, krzk@kernel.org,
-        sam@ravnborg.org, emil.velikov@collabora.com,
-        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
-        oleksandr_andrushchenko@epam.com, tomi.valkeinen@ti.com,
-        linux-tegra@vger.kernel.org, linux@armlinux.org.uk,
-        jonathanh@nvidia.com, linux-rockchip@lists.infradead.org,
-        kgene@kernel.org, bskeggs@redhat.com,
-        xen-devel@lists.xenproject.org, miaoqinglang@huawei.com,
-        intel-gfx@lists.freedesktop.org, matthew.auld@intel.com,
-        chunkuang.hu@kernel.org, andi.shyti@intel.com,
-        linux-arm-msm@vger.kernel.org, marek.olsak@amd.com,
-        tianci.yin@amd.com, etnaviv@lists.freedesktop.org,
-        hdegoede@redhat.com, linux-mediatek@lists.infradead.org,
-        rodrigo.vivi@intel.com, matthias.bgg@gmail.com, evan.quan@amd.com,
-        sean@poorly.run, linux-arm-kernel@lists.infradead.org,
-        tvrtko.ursulin@linux.intel.com, amd-gfx@lists.freedesktop.org,
-        laurent.pinchart@ideasonboard.com, hyun.kwon@xilinx.com,
-        rodrigosiqueiramelo@gmail.com, aaron.liu@amd.com,
-        Felix.Kuehling@amd.com, xinhui.pan@amd.com, sw0312.kim@samsung.com,
-        hjc@rock-chips.com, chris@chris-wilson.co.uk,
-        kyungmin.park@samsung.com, nirmoy.das@amd.com,
-        alexander.deucher@amd.com, Hawking.Zhang@amd.com,
-        freedreno@lists.freedesktop.org, christian.koenig@amd.com
-References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-5-tzimmermann@suse.de>
- <20200916100318.GF438822@phenom.ffwll.local>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Message-ID: <fb1f5992-1642-5751-5672-486b89442e1c@suse.de>
-Date:   Wed, 16 Sep 2020 12:36:28 +0200
+        Wed, 16 Sep 2020 14:36:59 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f621e260000>; Wed, 16 Sep 2020 07:16:06 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 16 Sep 2020 07:16:49 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 16 Sep 2020 07:16:49 -0700
+Received: from [10.26.74.242] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 16 Sep
+ 2020 14:16:37 +0000
+Subject: Re: [PATCH v3 08/16] irqchip/gic: Configure SGIs as standard
+ interrupts
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Marc Zyngier <maz@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Sumit Garg <sumit.garg@linaro.org>, <kernel-team@android.com>,
+        "Florian Fainelli" <f.fainelli@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Saravana Kannan <saravanak@google.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "'Linux Samsung SOC'" <linux-samsung-soc@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>,
+        Valentin Schneider <Valentin.Schneider@arm.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <20200901144324.1071694-1-maz@kernel.org>
+ <20200901144324.1071694-9-maz@kernel.org>
+ <CGME20200914130601eucas1p23ce276d168dee37909b22c75499e68da@eucas1p2.samsung.com>
+ <a917082d-4bfd-a6fd-db88-36e75f5f5921@samsung.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <933bc43e-3cd7-10ec-b9ec-58afaa619fb7@nvidia.com>
+Date:   Wed, 16 Sep 2020 15:16:35 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200916100318.GF438822@phenom.ffwll.local>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="VLzf65jApKkRavuxi39QvnC87GfNF3zix"
+In-Reply-To: <a917082d-4bfd-a6fd-db88-36e75f5f5921@samsung.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1600265766; bh=pV8Al2EsECbYDuX4UchdWHAopEeJoNVCwOOj35gvWvM=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=h4M5AySzWoSIHgOXxW6Cn6jFLbFFw8EwZnKcPIVJxTt3lSUrVD8nJr9GNzVJRZw5V
+         mImZhD/RoS7WwjvahDfKgHkYaIXfp+ftoL0pqJHgDB+z5tAdDFpFx9bA/x6JlhfK07
+         SLOGZitVugJy7yKYTZsjbw1FujpcWOlBOZraOptc4MQLn05uQ3SocrToJ8Savf0KM4
+         SnNPc4LrFohTkfjRPSVWjsWMZh0carNG4uAOHRtzY/JiNFmLJdERbfdH1kEdnhq6Cv
+         tBNxAb5MW8py5l5lQvAPjoT6utASZ4p7GrGoOsMgMNbtZa/YXT9RYgS2d2jEzajJb+
+         5CnyNusDsNCYg==
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---VLzf65jApKkRavuxi39QvnC87GfNF3zix
-Content-Type: multipart/mixed; boundary="dt3SkYl9e3y1MIK8AYjuI2mtP7GQiTevE";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: hamohammed.sa@gmail.com, airlied@linux.ie, nouveau@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, michal.simek@xilinx.com,
- thierry.reding@gmail.com, krzk@kernel.org, sam@ravnborg.org,
- emil.velikov@collabora.com, linux-samsung-soc@vger.kernel.org,
- jy0922.shim@samsung.com, oleksandr_andrushchenko@epam.com,
- tomi.valkeinen@ti.com, linux-tegra@vger.kernel.org, linux@armlinux.org.uk,
- jonathanh@nvidia.com, linux-rockchip@lists.infradead.org, kgene@kernel.org,
- bskeggs@redhat.com, xen-devel@lists.xenproject.org, miaoqinglang@huawei.com,
- intel-gfx@lists.freedesktop.org, matthew.auld@intel.com,
- chunkuang.hu@kernel.org, andi.shyti@intel.com,
- linux-arm-msm@vger.kernel.org, marek.olsak@amd.com, tianci.yin@amd.com,
- etnaviv@lists.freedesktop.org, hdegoede@redhat.com,
- linux-mediatek@lists.infradead.org, rodrigo.vivi@intel.com,
- matthias.bgg@gmail.com, evan.quan@amd.com, sean@poorly.run,
- linux-arm-kernel@lists.infradead.org, tvrtko.ursulin@linux.intel.com,
- amd-gfx@lists.freedesktop.org, laurent.pinchart@ideasonboard.com,
- hyun.kwon@xilinx.com, rodrigosiqueiramelo@gmail.com, aaron.liu@amd.com,
- Felix.Kuehling@amd.com, xinhui.pan@amd.com, sw0312.kim@samsung.com,
- hjc@rock-chips.com, chris@chris-wilson.co.uk, kyungmin.park@samsung.com,
- nirmoy.das@amd.com, alexander.deucher@amd.com, Hawking.Zhang@amd.com,
- freedreno@lists.freedesktop.org, christian.koenig@amd.com
-Message-ID: <fb1f5992-1642-5751-5672-486b89442e1c@suse.de>
-Subject: Re: [PATCH v2 04/21] drm/exynos: Introduce GEM object functions
-References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-5-tzimmermann@suse.de>
- <20200916100318.GF438822@phenom.ffwll.local>
-In-Reply-To: <20200916100318.GF438822@phenom.ffwll.local>
+Hi Marc,
 
---dt3SkYl9e3y1MIK8AYjuI2mtP7GQiTevE
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-Hi
-
-Am 16.09.20 um 12:03 schrieb Daniel Vetter:
-> On Tue, Sep 15, 2020 at 04:59:41PM +0200, Thomas Zimmermann wrote:
->> GEM object functions deprecate several similar callback interfaces in
->> struct drm_driver. This patch replaces the per-driver callbacks with
->> per-instance callbacks in exynos. The only exception is gem_prime_mmap=
-,
->> which is non-trivial to convert.
+On 14/09/2020 14:06, Marek Szyprowski wrote:
+> Hi Marc,
+> 
+> On 01.09.2020 16:43, Marc Zyngier wrote:
+>> Change the way we deal with GIC SGIs by turning them into proper
+>> IRQs, and calling into the arch code to register the interrupt range
+>> instead of a callback.
 >>
->> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 10 ----------
->>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 15 +++++++++++++++
->>  2 files changed, 15 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm=
-/exynos/exynos_drm_drv.c
->> index dbd80f1e4c78..fe46680ca208 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> @@ -75,11 +75,6 @@ static void exynos_drm_postclose(struct drm_device =
-*dev, struct drm_file *file)
->>  	file->driver_priv =3D NULL;
->>  }
->> =20
->> -static const struct vm_operations_struct exynos_drm_gem_vm_ops =3D {
->> -	.open =3D drm_gem_vm_open,
->> -	.close =3D drm_gem_vm_close,
->> -};
->> -
->>  static const struct drm_ioctl_desc exynos_ioctls[] =3D {
->>  	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_CREATE, exynos_drm_gem_create_ioctl,
->>  			DRM_RENDER_ALLOW),
->> @@ -124,16 +119,11 @@ static struct drm_driver exynos_drm_driver =3D {=
+>> Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
+>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> This patch landed in linux next-20200914 as commit ac063232d4b0 
+> ("irqchip/gic: Configure SGIs as standard interrupts"). Sadly it breaks 
+> booting of all Samsung Exynos 4210/4412 based boards (dual/quad ARM 
+> Cortex A9 based). Here are the last lines from the bootlog:
 
->>  	.open			=3D exynos_drm_open,
->>  	.lastclose		=3D drm_fb_helper_lastclose,
->>  	.postclose		=3D exynos_drm_postclose,
->> -	.gem_free_object_unlocked =3D exynos_drm_gem_free_object,
->> -	.gem_vm_ops		=3D &exynos_drm_gem_vm_ops,
->>  	.dumb_create		=3D exynos_drm_gem_dumb_create,
->>  	.prime_handle_to_fd	=3D drm_gem_prime_handle_to_fd,
->>  	.prime_fd_to_handle	=3D drm_gem_prime_fd_to_handle,
->>  	.gem_prime_import	=3D exynos_drm_gem_prime_import,
->> -	.gem_prime_get_sg_table	=3D exynos_drm_gem_prime_get_sg_table,
->>  	.gem_prime_import_sg_table	=3D exynos_drm_gem_prime_import_sg_table,=
+I am observing the same thing on several Tegra boards (both arm and
+arm64). Bisect is pointing to this commit. Reverting this alone does not
+appear to be enough to fix the issue.
 
->> -	.gem_prime_vmap		=3D exynos_drm_gem_prime_vmap,
->> -	.gem_prime_vunmap	=3D exynos_drm_gem_prime_vunmap,
->>  	.gem_prime_mmap		=3D exynos_drm_gem_prime_mmap,
->>  	.ioctls			=3D exynos_ioctls,
->>  	.num_ioctls		=3D ARRAY_SIZE(exynos_ioctls),
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm=
-/exynos/exynos_drm_gem.c
->> index efa476858db5..69a5cf28b4ae 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
->> @@ -129,6 +129,19 @@ void exynos_drm_gem_destroy(struct exynos_drm_gem=
- *exynos_gem)
->>  	kfree(exynos_gem);
->>  }
->> =20
->> +static const struct vm_operations_struct exynos_drm_gem_vm_ops =3D {
->> +	.open =3D drm_gem_vm_open,
->> +	.close =3D drm_gem_vm_close,
->> +};
->=20
-> Hm moving the drm_gem_cma_vm_ops into drm_gem.h or so and maybe calling=
+Cheers
+Jon
 
-> them drm_gem_simple_ops or so would remove a pile of these. But perhaps=
- a
-> quick follow up series.
-
-Good idea. Several interfaces use the term 'default' in their name, so
-something like drm_gem_default_vm_ops seems appropriate.
-
-BTW is there a reason why we have file operations like
-DEFINE_DRM_GEM_CMA_FOPS() in each module? It seems like this could also
-be provided by the rsp memory-manager library.
-
-Best regards
-Thomas
-
->=20
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
->=20
->> +
->> +static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs =
-=3D {
->> +	.free =3D exynos_drm_gem_free_object,
->> +	.get_sg_table =3D exynos_drm_gem_prime_get_sg_table,
->> +	.vmap =3D exynos_drm_gem_prime_vmap,
->> +	.vunmap	=3D exynos_drm_gem_prime_vunmap,
->> +	.vm_ops =3D &exynos_drm_gem_vm_ops,
->> +};
->> +
->>  static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *=
-dev,
->>  						  unsigned long size)
->>  {
->> @@ -143,6 +156,8 @@ static struct exynos_drm_gem *exynos_drm_gem_init(=
-struct drm_device *dev,
->>  	exynos_gem->size =3D size;
->>  	obj =3D &exynos_gem->base;
->> =20
->> +	obj->funcs =3D &exynos_drm_gem_object_funcs;
->> +
->>  	ret =3D drm_gem_object_init(dev, obj, size);
->>  	if (ret < 0) {
->>  		DRM_DEV_ERROR(dev->dev, "failed to initialize gem object\n");
->> --=20
->> 2.28.0
->>
->=20
-
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
-
-
---dt3SkYl9e3y1MIK8AYjuI2mtP7GQiTevE--
-
---VLzf65jApKkRavuxi39QvnC87GfNF3zix
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQFIBAEBCAAyFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl9h6qwUHHR6aW1tZXJt
-YW5uQHN1c2UuZGUACgkQaA3BHVMLeiPl9Qf+KR96aoWYf20LvHA3GnV4zrCawiec
-y2yduL2GYhWPOf4GMfY2D+iMsP8w0W7E25g5LPHA+Vqz5D02rDOi3daO0DrNPmW6
-693QU4qPhbQzK7Y+2jWAjMeuNnkrX+LMllUvQ1+QfapihbnvGqu9aNH3BpXfjOgt
-BoqBHPnc6jc6BCC9knI+JDmxfv+mxrkN3TVEWw78TRR8W9HubgJK3Qx5yFPb76jL
-BTd4moKQlMWspChoyM+/682BI3I/vaGbC7dL6ABTxoYc5Ub2PxY3RtaKnNPfCcpq
-dvopHHQ1YJ3wOj988DPHGprg6T0jK2zsR3M9rja76IOs/Y3rh1LWAWk2LA==
-=Gxfw
------END PGP SIGNATURE-----
-
---VLzf65jApKkRavuxi39QvnC87GfNF3zix--
+-- 
+nvpublic
