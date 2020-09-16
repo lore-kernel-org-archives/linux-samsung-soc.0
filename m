@@ -2,109 +2,127 @@ Return-Path: <SRS0=Wlns=CZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE26C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 06:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04934C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 07:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13AE121D7D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 06:17:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600237076;
-	bh=Le8cm9gE2z5pfDs8aVJuZRitFzE6151nR7wWrlWTopE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=P6yYYggcF3VzOIe5tbHF2rJ6uogvYoMOYfmYlRvIpxERcz0N6/4yT0rOzqf1D2GlC
-	 +UVzQxMQA/95GaezAxs+s0aZbhqGCjslNbtQH7CiBPnNVpwmr4q6rKaDxTTotGsqS2
-	 0Dr82rbvQT3EWvEdS4+xEBgWik7HyBX71rXiLKsg=
+	by mail.kernel.org (Postfix) with ESMTP id AF1D72078D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 07:54:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="hZYcEooi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbgIPGRz (ORCPT
+        id S1726377AbgIPHyW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 02:17:55 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33728 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbgIPGRx (ORCPT
+        Wed, 16 Sep 2020 03:54:22 -0400
+Received: from ssl.serverraum.org ([176.9.125.105]:49189 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbgIPHyW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 02:17:53 -0400
-Received: by mail-wr1-f68.google.com with SMTP id m6so5618637wrn.0;
-        Tue, 15 Sep 2020 23:17:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8vW5SNbsYECBXjdZ1DGGkHYYubwmAc4H6dnKQMUSdNQ=;
-        b=ZOIue+DuPibp02cAhjTcdne/FL6c/Ls7msxQVjIotiE4Yq+Ui9kQJvOmRtzrudZBoR
-         fPG5u5c2U5cWsrCH0OkMP1CqpWgH+AzEAmwK3mJts0FiBQc0Kdbu5ybUAyfroIG4EBf+
-         TJ9tJoUGmt2xgDlfK2DOgW8xNi8fKsBxiqQ+kXC78G2XL4As8UeS4kQ7TWW2N9XdGQZB
-         cLv6jW5JEZWAoZLDpnOe/EhVGrg0uJXWLQtdJVr+5XlrxS63/Z8Y30ps8dBVeoQonT7Z
-         N2/jMLJr5czqUdJxuOPxK/zmJEd7qO2tpWdPe9GT8crqA6aatVhRPLlx7rcsZkvL9Qww
-         pjDA==
-X-Gm-Message-State: AOAM531EENRzP/QLoZp/ceHW/T3r8USsuXG6VixdNXgBRvmiIH8Mo//5
-        fzcjlcyX4lTLb3v42rfHWCk=
-X-Google-Smtp-Source: ABdhPJzMLOJzsclIPzvuI83RUFmsd5HgaJ2eaBsTbqc3L06wuPMXJeI+OP+Ge57HQlUgAnZDDyL8RQ==
-X-Received: by 2002:a5d:46c5:: with SMTP id g5mr26008097wrs.416.1600237070506;
-        Tue, 15 Sep 2020 23:17:50 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.124])
-        by smtp.googlemail.com with ESMTPSA id z19sm3344360wmi.3.2020.09.15.23.17.48
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Sep 2020 23:17:49 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 08:17:47 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Rob Herring <robh@kernel.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: adc: exynos-adc: require second
- interrupt with touch screen
-Message-ID: <20200916061747.GB5719@kozik-lap>
-References: <20200910161933.9156-1-krzk@kernel.org>
- <20200915194444.GA2384148@bogus>
+        Wed, 16 Sep 2020 03:54:22 -0400
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id DFEDB22F00;
+        Wed, 16 Sep 2020 09:54:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1600242857;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/mrV4ooFGnJh2/RwC1ApcYKUUoJS8TkPIKcSBJOevMI=;
+        b=hZYcEooibPlvGYZsIy6M1JnuIGdhF2nyPQr1geOw5eoiHM1PLx4w1uqnELsVgZaNK9oHSm
+        J6p7MyQNttvX9ylL+BtvV4J5f43XLjVJl9to5980o1I2bsOOnMfHmjEWfJQwKTEZ7audCW
+        GI7REFPaQWuDo39bLZ59wHfcBEUMegs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200915194444.GA2384148@bogus>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 16 Sep 2020 09:54:10 +0200
+From:   Michael Walle <michael@walle.cc>
+To:     Rob Herring <robh@kernel.org>
+Cc:     "Gross, Andy" <agross@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dilip Kota <eswara.kota@linux.intel.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-arm-kernel@axis.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        PCI <linux-pci@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Song Xiaowei <songxiaowei@hisilicon.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Wangbinghui <wangbinghui@hisilicon.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Yue Wang <yue.wang@amlogic.com>
+Subject: Re: [PATCH v2 00/40] PCI: dwc: Driver clean-ups
+In-Reply-To: <CAL_JsqLHBPduSjs1L3R2vbsLygJNDzajt4XThAkRG0DEu-GnAA@mail.gmail.com>
+References: <20200821035420.380495-1-robh@kernel.org>
+ <20200915091218.28737-1-michael@walle.cc>
+ <CAL_JsqLHBPduSjs1L3R2vbsLygJNDzajt4XThAkRG0DEu-GnAA@mail.gmail.com>
+User-Agent: Roundcube Webmail/1.4.8
+Message-ID: <346b694e43b1b6b86e4f3164e6589d25@walle.cc>
+X-Sender: michael@walle.cc
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 01:44:44PM -0600, Rob Herring wrote:
-> On Thu, 10 Sep 2020 18:19:32 +0200, Krzysztof Kozlowski wrote:
-> > The ADC in S3C/S5P/Exynos SoCs can be used also for handling touch
-> > screen.  In such case the second interrupt is required.  This second
-> > interrupt can be anyway provided, even without touch screens.  This
-> > fixes dtbs_check warnings like:
-> > 
-> >   arch/arm/boot/dts/s5pv210-aquila.dt.yaml: adc@e1700000: interrupts: [[23], [24]] is too long
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > Acked-by: Jonathan Cameron <Jonathan.Cameron@huwei.com>
-> > 
-> > ---
-> > 
-> > Changes since v1:
-> > 1. Fix if:has-touchscreen, as pointed by Rob.
-> > 2. Add Ack.
-> > ---
-> >  .../bindings/iio/adc/samsung,exynos-adc.yaml       | 14 +++++++++++++-
-> >  1 file changed, 13 insertions(+), 1 deletion(-)
-> > 
+Am 2020-09-16 00:02, schrieb Rob Herring:
+> Can you try this? The link up check seemed unnecessary as it is racy.
+> What happens if the link goes down right after checking? That's the
+> only thing in the change that sticks out.
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c
+> b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 317ff512f8df..afee1a0e8883 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -441,6 +441,9 @@ static void __iomem
+> *dw_pcie_other_conf_map_bus(struct pci_bus *bus,
+>         struct pcie_port *pp = bus->sysdata;
+>         struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> 
+> +       if (!dw_pcie_link_up(pci))
+> +               return NULL;
+> +
+>         busdev = PCIE_ATU_BUS(bus->number) | 
+> PCIE_ATU_DEV(PCI_SLOT(devfn)) |
+>                  PCIE_ATU_FUNC(PCI_FUNC(devfn));
 
-Jonathan,
+This will fix the issue.
 
-Could you pick up these two?
-
-Best regards,
-Krzysztof
-
+-michael
