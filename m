@@ -2,209 +2,117 @@ Return-Path: <SRS0=Wlns=CZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77899C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 900B9C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25358221E7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:47:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600289221;
-	bh=mpAdHBdSMzoCqVev8/I8QdC32AN7Gx99N6kNTPpTi1I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=xZCat9z7T8CIGaaR2G5UEuAhiAr24Pk5LdJKohs16L9ZSSMRiMfzp1wmxe2wjKX/q
-	 t8vSNF/17HjphP4+c1hzkX0ZBpcPvkN+QmmDHq/Fpx3c8HNrRH5K78QXbCb7ihrOiN
-	 C2nlmvHnjaTKqoqETmvbds/my17EhwjtpU5PW23g=
+	by mail.kernel.org (Postfix) with ESMTP id 2EFBD20770
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:48:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aADs+wA7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbgIPUq6 (ORCPT
+        id S1728403AbgIPUsE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:46:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55590 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726690AbgIPRBX (ORCPT
+        Wed, 16 Sep 2020 16:48:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55274 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbgIPRBO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:01:23 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F302C221F0;
-        Wed, 16 Sep 2020 16:28:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600273724;
-        bh=mpAdHBdSMzoCqVev8/I8QdC32AN7Gx99N6kNTPpTi1I=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=CjSGKgXW5qBH1DXUCssLzes7A7cgOMvTlufIoLz4NbatyTTkMh1yUDCPD5r+qetlO
-         zinL0stoWd+oPuyeALmQUdPeLRKCBwN2UXzHdMMXHMV7gN1j/yg8uiIlTPnc+W5TcW
-         efEBhn5RSsxA2FClxpq5U0Sg26f3OoT9u6TXrY7w=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1kIaIU-00CNjN-2H; Wed, 16 Sep 2020 17:28:42 +0100
+        Wed, 16 Sep 2020 13:01:14 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E626AC0D941D;
+        Wed, 16 Sep 2020 09:54:01 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id z9so3782141wmk.1;
+        Wed, 16 Sep 2020 09:54:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zX0LITDdTRuuCUge/vQRwE/mjMWdK4VvHcKMoxIg+PM=;
+        b=aADs+wA7Plzzsr9mINUP5TmmQYKvZ662dmq2plN2cCpo5awBVMFzy/lFDfCyFsTyxa
+         7JSJxNl8H4X8yEyPwkwpAsRmhC9Iac/1/wWVlbVvZIouPZ5SnmZEZT8fN5JJ5ZyvTUZB
+         PTka1oj0qXKGyFYkNcHHG1WTYqFQ8ciqqlvo3l7Ib3Pg/G9ef+l6tz8cPPTt7iB0t//f
+         icbBjMBpW2b1o1zg8ih2Kv/fNBbrH5WfL9l5UsIOPXUDLxTekbpyNuYp0UXJx0xoA8jY
+         RxEzbW3/xVYpP9g8uW5jJRhCYAHw1ussrb8BT0TUTSFKjTKdiNHwOP4HbuJtwiLKxR3a
+         Pwig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zX0LITDdTRuuCUge/vQRwE/mjMWdK4VvHcKMoxIg+PM=;
+        b=uI/jSXPvWpJawMrwL+fKrzpnzigQ/bkGbbqO3RRK6bcXxqbpKWr/OI/MslSHBNgCke
+         dFPxh3ktleJ8W7IKwRkNHdo5bC63ioMGcXyQ2SapKX3WdWlZFyHc4MdpeAgu2z0nXFmZ
+         bgZ+HcGTan9oQhw38Cbz+WmQcvKGYdHzvIaLMmoRtNRwJnU0q2aOg+9Q3/vBkUUUJ0za
+         H3GJ3AQaPyyB63Ux6H8vEGRdB3WkSziAKENHXzzRAJP7rzmjj3Hu8UPXAy2g6zdz3rP6
+         r4szSfLHVuETMM95rQu/F4MsjsKEuAivKl279c3lXvD+aBiIUARhxMW7RbF/UtdwQsT8
+         +JQQ==
+X-Gm-Message-State: AOAM530Mtf/zE6k52tPvIyV3hWVZALwhQa6/0/av0hyCced3T44U7vVb
+        S84rnaGOVdCP0/KVRy9MeDo=
+X-Google-Smtp-Source: ABdhPJzdve2S5+ojtGAs6QR7XcI+4lN6whbTHWSGnFkjuxZ5CBL0MKIrnOCDXAV6/8zWm00ogW6uOg==
+X-Received: by 2002:a7b:cd8b:: with SMTP id y11mr5813023wmj.172.1600275240202;
+        Wed, 16 Sep 2020 09:54:00 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.191])
+        by smtp.googlemail.com with ESMTPSA id o15sm6107022wmh.29.2020.09.16.09.53.58
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Sep 2020 09:53:59 -0700 (PDT)
+Date:   Wed, 16 Sep 2020 18:53:57 +0200
+From:   Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        Pia Eichinger <pia.eichinger@st.oth-regensburg.de>,
+        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: mark linux-samsung-soc list non-moderated
+Message-ID: <20200916165357.GA18287@kozik-lap>
+References: <20200914061353.17535-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 16 Sep 2020 17:28:42 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Sumit Garg <sumit.garg@linaro.org>, linus.walleij@linaro.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Saravana Kannan <saravanak@google.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com,
-        Valentin Schneider <Valentin.Schneider@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3 08/16] irqchip/gic: Configure SGIs as standard
- interrupts
-In-Reply-To: <13c096832bd923f956ddd7db7e337857@kernel.org>
-References: <20200901144324.1071694-1-maz@kernel.org>
- <20200901144324.1071694-9-maz@kernel.org>
- <CGME20200914130601eucas1p23ce276d168dee37909b22c75499e68da@eucas1p2.samsung.com>
- <a917082d-4bfd-a6fd-db88-36e75f5f5921@samsung.com>
- <933bc43e-3cd7-10ec-b9ec-58afaa619fb7@nvidia.com>
- <3378cd07b92e87a24f1db75f708424ee@kernel.org>
- <dcf812d9-2409-bcae-1925-e21740c2932e@nvidia.com>
- <a6c7bbc91c5b23baa44f3abe35eb61c9@kernel.org>
- <d6dddab0-47aa-ddf2-959b-85493b8da52d@nvidia.com>
- <13c096832bd923f956ddd7db7e337857@kernel.org>
-User-Agent: Roundcube Webmail/1.4.8
-Message-ID: <5c2ec2bf156f27f2f1cde54611a98923@kernel.org>
-X-Sender: maz@kernel.org
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: jonathanh@nvidia.com, sumit.garg@linaro.org, linus.walleij@linaro.org, f.fainelli@gmail.com, linux@arm.linux.org.uk, jason@lakedaemon.net, saravanak@google.com, andrew@lunn.ch, catalin.marinas@arm.com, gregory.clement@bootlin.com, b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, krzk@kernel.org, will@kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, tglx@linutronix.de, kernel-team@android.com, Valentin.Schneider@arm.com, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200914061353.17535-1-lukas.bulwahn@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020-09-16 17:22, Marc Zyngier wrote:
-> On 2020-09-16 16:58, Jon Hunter wrote:
->> On 16/09/2020 16:55, Marc Zyngier wrote:
->>> On 2020-09-16 16:46, Jon Hunter wrote:
->>>> On 16/09/2020 16:10, Marc Zyngier wrote:
->>>>> Hi Jon,
->>>>> 
->>>>> +Linus, who is facing a similar issue.
->>>>> 
->>>>> On 2020-09-16 15:16, Jon Hunter wrote:
->>>>>> Hi Marc,
->>>>>> 
->>>>>> On 14/09/2020 14:06, Marek Szyprowski wrote:
->>>>>>> Hi Marc,
->>>>>>> 
->>>>>>> On 01.09.2020 16:43, Marc Zyngier wrote:
->>>>>>>> Change the way we deal with GIC SGIs by turning them into proper
->>>>>>>> IRQs, and calling into the arch code to register the interrupt 
->>>>>>>> range
->>>>>>>> instead of a callback.
->>>>>>>> 
->>>>>>>> Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
->>>>>>>> Signed-off-by: Marc Zyngier <maz@kernel.org>
->>>>>>> This patch landed in linux next-20200914 as commit ac063232d4b0
->>>>>>> ("irqchip/gic: Configure SGIs as standard interrupts"). Sadly it
->>>>>>> breaks
->>>>>>> booting of all Samsung Exynos 4210/4412 based boards (dual/quad 
->>>>>>> ARM
->>>>>>> Cortex A9 based). Here are the last lines from the bootlog:
->>>>>> 
->>>>>> I am observing the same thing on several Tegra boards (both arm 
->>>>>> and
->>>>>> arm64). Bisect is pointing to this commit. Reverting this alone 
->>>>>> does
->>>>>> not
->>>>>> appear to be enough to fix the issue.
->>>>> 
->>>>> Right, I am just massively by the GICv3 spec, and failed to 
->>>>> remember
->>>>> that ye olde GIC exposes the source CPU in AIR *and* wants it back,
->>>>> while
->>>>> newer GICs deal with that transparently.
->>>>> 
->>>>> Can you try the patch below and let me know?
->>>> 
->>>> Yes will do.
->>>> 
->>>>> @@ -365,14 +354,13 @@ static void __exception_irq_entry
->>>>> gic_handle_irq(struct pt_regs *regs)
->>>>>              smp_rmb();
->>>>> 
->>>>>              /*
->>>>> -             * Samsung's funky GIC encodes the source CPU in
->>>>> -             * GICC_IAR, leading to the deactivation to fail if
->>>>> -             * not written back as is to GICC_EOI.  Stash the
->>>>> -             * INTID away for gic_eoi_irq() to write back.
->>>>> -             * This only works because we don't nest SGIs...
->>>>> +             * The GIC encodes the source CPU in GICC_IAR,
->>>>> +             * leading to the deactivation to fail if not
->>>>> +             * written back as is to GICC_EOI.  Stash the INTID
->>>>> +             * away for gic_eoi_irq() to write back.  This only
->>>>> +             * works because we don't nest SGIs...
->>>>>               */
->>>>> -            if (is_frankengic())
->>>>> -                set_sgi_intid(irqstat);
->>>>> +            this_cpu_write(sgi_intid, intid);
->>>> 
->>>> I assume that it should be irqstat here and not intid?
->>> 
->>> Indeed. As you can tell, I haven't even tried to compile it, sorry 
->>> about
->>> that.
->> 
->> No worries, I got the gist. However, even with this change, it still
->> does not boot :-(
+On Mon, Sep 14, 2020 at 08:13:53AM +0200, Lukas Bulwahn wrote:
+> In fifteen entries mentioning linux-samsung-soc@vger.kernel.org in
+> MAINTAINERS, seven entries mention the list being moderated for
+> non-subscribers and eight entries do not. Clearly only one can be right,
+> though.
 > 
-> Do you boot form EL2? If so, you'd also need this:
+> Joe Perches suggested that all vger.kernel.org are not moderated for
+> non-subscribers.
 > 
->  static void gic_eoimode1_eoi_irq(struct irq_data *d)
->  {
-> +	u32 hwirq = gic_irq(d);
-> +
->  	/* Do not deactivate an IRQ forwarded to a vcpu. */
->  	if (irqd_is_forwarded_to_vcpu(d))
->  		return;
+> Remove all the remarks from the entries following Joe's suggestion.
 > 
-> +	if (hwirq < 16)
-> +		hwirq = this_cpu_read(sgi_intid);
-> +
->  	writel_relaxed(gic_irq(d), gic_cpu_base(d) + GIC_CPU_DEACTIVATE);
->  }
+> Link: https://lore.kernel.org/lkml/da6f30896a8fd78635b3ca454d77a5292a9aa76d.camel@perches.com/
+> Suggested-by: Joe Perches <joe@perches.com>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> applies cleanly on v5.9-rc5 and next-20200911
+> 
+> Krzysztof, please pick this minor non-urgent cleanup patch.
+> 
+> This patch submission will also show me if linux-samsung-soc is moderated
+> or not. I have not subscribed to linux-samsung-soc and if it shows up
+> quickly in the archive, the list is probably not moderated, and hence,
+> validating the patch.
 
-Make it that instead:
+Please use scripts/get_maintainers.pl (for example on files in modified
+maintainers section) to get the addresses of people.  This mail missed
+all my filters and got archived immediately because you sent it to
+unusual address (how did you get this address, BTW? It does not appear
+in the sources since few years).
 
-  static void gic_eoimode1_eoi_irq(struct irq_data *d)
-  {
-+	u32 hwirq = gic_irq(d);
-+
-  	/* Do not deactivate an IRQ forwarded to a vcpu. */
-  	if (irqd_is_forwarded_to_vcpu(d))
-  		return;
+Thanks, applied.
 
--	writel_relaxed(gic_irq(d), gic_cpu_base(d) + GIC_CPU_DEACTIVATE);
-+	if (hwirq < 16)
-+		hwirq = this_cpu_read(sgi_intid);
-+
-+	writel_relaxed(hwirq, gic_cpu_base(d) + GIC_CPU_DEACTIVATE);
-  }
+Best regards,
+Krzysztof
 
-
-         M.
--- 
-Jazz is not dead. It just smells funny...
