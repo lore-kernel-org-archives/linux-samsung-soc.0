@@ -4,95 +4,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C48FC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 17:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E944C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48881206DC
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 17:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4861320838
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:04:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600278109;
-	bh=H5Sd2l96YrWVp9OD5yMosyZLB2csVPahejm+A/weDqQ=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=SPNqVPHeeSM5vQK0dmk2TuBbyWXZkaSznfTApaid9J8jM+vP2ACMaW4ebw1+JaNRS
-	 zco0q97gSx1eeOwjiB7WPV7IlvE/N0CLYiVOT52VXk27uaGeT4vC/OMIg1tQZS1sy0
-	 qtBRLWn9RdBUZ4OrZMOsP+TmKq3V8QBEpwOnBIcw=
+	s=default; t=1600279462;
+	bh=wekwBAIKPu1Rz5oUbsaznCNgfQb4fGuy2YA7PTMymvk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=QxXpDwCPboNTumkAX66AU+f84EZWc2wT3ZFmuH1fLw4RM02Dq/snwctWzIXxYghKE
+	 vBSb4sfb3E30pnIj804Z7fAfZ2Px+5Yr0X2697pUUPHOa2HeU4HlOHP4Xun1dRUyFF
+	 zmjebXLNW/4eglWs28/yElOw7i1ynlI7JYpnvQjI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbgIPRlT (ORCPT
+        id S1726962AbgIPSEM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 13:41:19 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36724 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727346AbgIPRlH (ORCPT
+        Wed, 16 Sep 2020 14:04:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727614AbgIPSDa (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:41:07 -0400
-Received: by mail-lf1-f65.google.com with SMTP id x69so7905881lff.3;
-        Wed, 16 Sep 2020 10:41:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7K53KnV3RB0dBmHomdKTRhU0IiLbQ4+LVNa0ye9IqpI=;
-        b=XO0jE2YWluxGLF1NkWeNI5+guceqtHhyq2y8vSqFOHO6wPOmi8GNrHdH4Ia14eDIiX
-         NTAo0sQt66iT/hOhjwGV4EvNUMYy6CTGAi+6V9EuOw4tWA4aJpIRGVa13u4sHtgV3o3y
-         mJmxBJ0RQGnQ18Iwk72z5wkooPM0qQizoXbDWGM6jgB9J0b5WgC6cgjKGb2Pvw349DcB
-         gdvwB63FDpUgEsREmvK9PIVc75ImXto1WZGEFN+0rINhA2vECBH0YZgdbVaHOv09Qe/K
-         xJeO0DETnXqlVnd7MceBDZ6W2Nj/h5qWjCkaCvErVMalawjDf4nATXUSR13MQ6hB47Tt
-         Hcpw==
-X-Gm-Message-State: AOAM533/LQ7ONQ6ZFTILxEObzINjk31zJyxwjHssqc46Ke6/1QWyyIhB
-        5L8iz3PpnU5ckQDHxe22+QK82kaIrAMuN+vF
-X-Google-Smtp-Source: ABdhPJxBtful0Z+qE+L5pXwSxbO+yea+lOU0v+qNQxTnSCG1x8dx7LmcGHJsv0G0v/GE5JcpanqZ4A==
-X-Received: by 2002:adf:f084:: with SMTP id n4mr4551624wro.26.1600276345057;
-        Wed, 16 Sep 2020 10:12:25 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.191])
-        by smtp.googlemail.com with ESMTPSA id n11sm34074076wrx.91.2020.09.16.10.12.23
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Sep 2020 10:12:24 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 19:12:21 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Wed, 16 Sep 2020 14:03:30 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CDC32137B;
+        Wed, 16 Sep 2020 18:03:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600279409;
+        bh=wekwBAIKPu1Rz5oUbsaznCNgfQb4fGuy2YA7PTMymvk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SVFaNdjRvlX2xA5CJGz4fdD1CDDM/wAVxm3wfv9vsDjqVmFBZqoj/HoT/8KZEifIP
+         V0C+2baqHooYe68TrshZU7HmpYZ745fbWOYXd66Lcj3vt1sMRGimbCHk2Uwu9xFxzt
+         gn7DIsychTc3yYLT6scbS7MrQ0q0Y11qrN0qwTMo=
+Date:   Wed, 16 Sep 2020 19:03:26 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         Rob Herring <robh+dt@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
         Kukjin Kim <kgene@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Inki Dae <inki.dae@samsung.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] ARM: dts: exynos: Align OPP table name with
- dt-schema
-Message-ID: <20200916171221.GC19427@kozik-lap>
-References: <20200903191438.12781-1-krzk@kernel.org>
- <20200903191438.12781-5-krzk@kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: adc: exynos-adc: require
+ second interrupt with touch screen
+Message-ID: <20200916190326.3095e945@archlinux>
+In-Reply-To: <20200916061747.GB5719@kozik-lap>
+References: <20200910161933.9156-1-krzk@kernel.org>
+        <20200915194444.GA2384148@bogus>
+        <20200916061747.GB5719@kozik-lap>
+X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200903191438.12781-5-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Sep 03, 2020 at 09:14:37PM +0200, Krzysztof Kozlowski wrote:
-> Device tree nodes should have hyphens instead of underscores.  This is
-> also expected by the bindings.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> Changes since v1:
-> 1. New patch
-> ---
->  arch/arm/boot/dts/exynos4412.dtsi | 16 ++++++++--------
->  arch/arm/boot/dts/exynos5250.dtsi |  2 +-
->  2 files changed, 9 insertions(+), 9 deletions(-)
+On Wed, 16 Sep 2020 08:17:47 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Applied.
+> On Tue, Sep 15, 2020 at 01:44:44PM -0600, Rob Herring wrote:
+> > On Thu, 10 Sep 2020 18:19:32 +0200, Krzysztof Kozlowski wrote:  
+> > > The ADC in S3C/S5P/Exynos SoCs can be used also for handling touch
+> > > screen.  In such case the second interrupt is required.  This second
+> > > interrupt can be anyway provided, even without touch screens.  This
+> > > fixes dtbs_check warnings like:
+> > > 
+> > >   arch/arm/boot/dts/s5pv210-aquila.dt.yaml: adc@e1700000: interrupts: [[23], [24]] is too long
+> > > 
+> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > Acked-by: Jonathan Cameron <Jonathan.Cameron@huwei.com>
+> > > 
+> > > ---
+> > > 
+> > > Changes since v1:
+> > > 1. Fix if:has-touchscreen, as pointed by Rob.
+> > > 2. Add Ack.
+> > > ---
+> > >  .../bindings/iio/adc/samsung,exynos-adc.yaml       | 14 +++++++++++++-
+> > >  1 file changed, 13 insertions(+), 1 deletion(-)
+> > >   
+> > 
+> > Reviewed-by: Rob Herring <robh@kernel.org>  
+> 
+> Jonathan,
+> 
+> Could you pick up these two?
+Done.  Applied to the togreg branch of iio.git and pushed out
+as testing for the autobuilders to possibly poke them.
 
-Best regards,
-Krzysztof
+Thanks,
+
+Jonathan
+
+> 
+> Best regards,
+> Krzysztof
+> 
 
