@@ -2,175 +2,255 @@ Return-Path: <SRS0=Wlns=CZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A1B8C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D76C2BB84
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8E1A21D43
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:23:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="D8Cn+Lnz"
+	by mail.kernel.org (Postfix) with ESMTP id CF1D5221E8
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:23:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbgIPSX3 (ORCPT
+        id S1727975AbgIPSXt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 14:23:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727970AbgIPSW5 (ORCPT
+        Wed, 16 Sep 2020 14:23:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38076 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727882AbgIPSXs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 14:22:57 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68984C034601
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2020 05:07:39 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id c18so6624839wrm.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2020 05:07:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=MGCPV3gxMGzqEc3cNJPEYSeaflc+Izh53Gg+hbi1Nhw=;
-        b=D8Cn+LnzRzcwcAFRiK+P1SGw66Mhbu0VayIxxEwp3/Ke3uFcgTtEyg2O2TchfbyaU1
-         /t1Jed/k7t8UhbtyHLBWwi9QGEEtHwtsdBVK0+CssfY95ypMsX9PNDgpg6PAhXIZmBww
-         EM4H0+Gc3gntNd2KUdiNeLGf+3Tz2z1yDgJeU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=MGCPV3gxMGzqEc3cNJPEYSeaflc+Izh53Gg+hbi1Nhw=;
-        b=GBYFKMgryJiG1FCHpzaV0N9hNvAdRdsd2MJZ4JXKMtLLmO5EXdKiVcNgNCdsvBkx/i
-         x+bz2yKrrJ/hLUFVVLw5xGjOIkhL1gdkxHY0dXa3ToTJCDs/AXc002Ij9Ghhe1pXL3T+
-         xq6R6Bjmi2f60Y9cvpFfvS4+zr6HFsg6H+BLStjRyYPy/bwGGrHzM15Hnsojaf+t9PjX
-         XF0p4M6zrILrTNxVJSi2O9OgyF/vSRe2nn9gqU10OGwoSO3RcPG+HSC4GWn3An9Fj4zq
-         jZfKOmV792w52YyPsP1749TEBK9poTOOq/KV7vFxR0JRr0N0ckgK+NzOS283B8xIBPFy
-         Mw2g==
-X-Gm-Message-State: AOAM531bMaJ6sZNy+iYROC9y0zA7r+xRbD5Gtmop/UIOP+F1UjWhVgIc
-        XNRp5JuEKW/JUaioVRWVM/028Q==
-X-Google-Smtp-Source: ABdhPJwrWIpLSYf41av9bZsrjEfrlf4lf8//RpX+N0WUgXGOZN7ZDB+gPcHHEGIp6RA3wivQd9OHbQ==
-X-Received: by 2002:a05:6000:1152:: with SMTP id d18mr26158129wrx.173.1600258057971;
-        Wed, 16 Sep 2020 05:07:37 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id y2sm4834552wmg.23.2020.09.16.05.07.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2020 05:07:36 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 14:07:33 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 13/21] drm/rockchip: Convert to drm_gem_object_funcs
-Message-ID: <20200916120733.GN438822@phenom.ffwll.local>
+        Wed, 16 Sep 2020 14:23:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 3CCD4B28A;
+        Wed, 16 Sep 2020 10:36:48 +0000 (UTC)
+Subject: Re: [PATCH v2 04/21] drm/exynos: Introduce GEM object functions
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     hamohammed.sa@gmail.com, airlied@linux.ie,
+        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        michal.simek@xilinx.com, thierry.reding@gmail.com, krzk@kernel.org,
+        sam@ravnborg.org, emil.velikov@collabora.com,
+        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+        oleksandr_andrushchenko@epam.com, tomi.valkeinen@ti.com,
+        linux-tegra@vger.kernel.org, linux@armlinux.org.uk,
+        jonathanh@nvidia.com, linux-rockchip@lists.infradead.org,
+        kgene@kernel.org, bskeggs@redhat.com,
+        xen-devel@lists.xenproject.org, miaoqinglang@huawei.com,
+        intel-gfx@lists.freedesktop.org, matthew.auld@intel.com,
+        chunkuang.hu@kernel.org, andi.shyti@intel.com,
+        linux-arm-msm@vger.kernel.org, marek.olsak@amd.com,
+        tianci.yin@amd.com, etnaviv@lists.freedesktop.org,
+        hdegoede@redhat.com, linux-mediatek@lists.infradead.org,
+        rodrigo.vivi@intel.com, matthias.bgg@gmail.com, evan.quan@amd.com,
+        sean@poorly.run, linux-arm-kernel@lists.infradead.org,
+        tvrtko.ursulin@linux.intel.com, amd-gfx@lists.freedesktop.org,
+        laurent.pinchart@ideasonboard.com, hyun.kwon@xilinx.com,
+        rodrigosiqueiramelo@gmail.com, aaron.liu@amd.com,
+        Felix.Kuehling@amd.com, xinhui.pan@amd.com, sw0312.kim@samsung.com,
+        hjc@rock-chips.com, chris@chris-wilson.co.uk,
+        kyungmin.park@samsung.com, nirmoy.das@amd.com,
+        alexander.deucher@amd.com, Hawking.Zhang@amd.com,
+        freedreno@lists.freedesktop.org, christian.koenig@amd.com
 References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-14-tzimmermann@suse.de>
+ <20200915145958.19993-5-tzimmermann@suse.de>
+ <20200916100318.GF438822@phenom.ffwll.local>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Message-ID: <fb1f5992-1642-5751-5672-486b89442e1c@suse.de>
+Date:   Wed, 16 Sep 2020 12:36:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200915145958.19993-14-tzimmermann@suse.de>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+In-Reply-To: <20200916100318.GF438822@phenom.ffwll.local>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="VLzf65jApKkRavuxi39QvnC87GfNF3zix"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 04:59:50PM +0200, Thomas Zimmermann wrote:
-> GEM object functions deprecate several similar callback interfaces in
-> struct drm_driver. This patch replaces the per-driver callbacks with
-> per-instance callbacks in rockchip. The only exception is gem_prime_mmap,
-> which is non-trivial to convert.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--VLzf65jApKkRavuxi39QvnC87GfNF3zix
+Content-Type: multipart/mixed; boundary="dt3SkYl9e3y1MIK8AYjuI2mtP7GQiTevE";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: hamohammed.sa@gmail.com, airlied@linux.ie, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, michal.simek@xilinx.com,
+ thierry.reding@gmail.com, krzk@kernel.org, sam@ravnborg.org,
+ emil.velikov@collabora.com, linux-samsung-soc@vger.kernel.org,
+ jy0922.shim@samsung.com, oleksandr_andrushchenko@epam.com,
+ tomi.valkeinen@ti.com, linux-tegra@vger.kernel.org, linux@armlinux.org.uk,
+ jonathanh@nvidia.com, linux-rockchip@lists.infradead.org, kgene@kernel.org,
+ bskeggs@redhat.com, xen-devel@lists.xenproject.org, miaoqinglang@huawei.com,
+ intel-gfx@lists.freedesktop.org, matthew.auld@intel.com,
+ chunkuang.hu@kernel.org, andi.shyti@intel.com,
+ linux-arm-msm@vger.kernel.org, marek.olsak@amd.com, tianci.yin@amd.com,
+ etnaviv@lists.freedesktop.org, hdegoede@redhat.com,
+ linux-mediatek@lists.infradead.org, rodrigo.vivi@intel.com,
+ matthias.bgg@gmail.com, evan.quan@amd.com, sean@poorly.run,
+ linux-arm-kernel@lists.infradead.org, tvrtko.ursulin@linux.intel.com,
+ amd-gfx@lists.freedesktop.org, laurent.pinchart@ideasonboard.com,
+ hyun.kwon@xilinx.com, rodrigosiqueiramelo@gmail.com, aaron.liu@amd.com,
+ Felix.Kuehling@amd.com, xinhui.pan@amd.com, sw0312.kim@samsung.com,
+ hjc@rock-chips.com, chris@chris-wilson.co.uk, kyungmin.park@samsung.com,
+ nirmoy.das@amd.com, alexander.deucher@amd.com, Hawking.Zhang@amd.com,
+ freedreno@lists.freedesktop.org, christian.koenig@amd.com
+Message-ID: <fb1f5992-1642-5751-5672-486b89442e1c@suse.de>
+Subject: Re: [PATCH v2 04/21] drm/exynos: Introduce GEM object functions
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-5-tzimmermann@suse.de>
+ <20200916100318.GF438822@phenom.ffwll.local>
+In-Reply-To: <20200916100318.GF438822@phenom.ffwll.local>
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> ---
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.c |  5 -----
->  drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 10 ++++++++++
->  2 files changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-> index 0f3eb392fe39..b7654f5e4225 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-> @@ -212,15 +212,10 @@ static const struct file_operations rockchip_drm_driver_fops = {
->  static struct drm_driver rockchip_drm_driver = {
->  	.driver_features	= DRIVER_MODESET | DRIVER_GEM | DRIVER_ATOMIC,
->  	.lastclose		= drm_fb_helper_lastclose,
-> -	.gem_vm_ops		= &drm_gem_cma_vm_ops,
-> -	.gem_free_object_unlocked = rockchip_gem_free_object,
->  	.dumb_create		= rockchip_gem_dumb_create,
->  	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
->  	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
-> -	.gem_prime_get_sg_table	= rockchip_gem_prime_get_sg_table,
->  	.gem_prime_import_sg_table	= rockchip_gem_prime_import_sg_table,
-> -	.gem_prime_vmap		= rockchip_gem_prime_vmap,
-> -	.gem_prime_vunmap	= rockchip_gem_prime_vunmap,
->  	.gem_prime_mmap		= rockchip_gem_mmap_buf,
->  	.fops			= &rockchip_drm_driver_fops,
->  	.name	= DRIVER_NAME,
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-> index 0055d86576f7..bddc7d99efe3 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-> @@ -296,6 +296,14 @@ static void rockchip_gem_release_object(struct rockchip_gem_object *rk_obj)
->  	kfree(rk_obj);
->  }
->  
-> +static const struct drm_gem_object_funcs rockchip_gem_object_funcs = {
-> +	.free = rockchip_gem_free_object,
-> +	.get_sg_table = rockchip_gem_prime_get_sg_table,
-> +	.vmap = rockchip_gem_prime_vmap,
-> +	.vunmap	= rockchip_gem_prime_vunmap,
-> +	.vm_ops = &drm_gem_cma_vm_ops,
-> +};
-> +
->  static struct rockchip_gem_object *
->  	rockchip_gem_alloc_object(struct drm_device *drm, unsigned int size)
->  {
-> @@ -310,6 +318,8 @@ static struct rockchip_gem_object *
->  
->  	obj = &rk_obj->base;
->  
-> +	obj->funcs = &rockchip_gem_object_funcs;
-> +
->  	drm_gem_object_init(drm, obj, size);
->  
->  	return rk_obj;
-> -- 
-> 2.28.0
-> 
+--dt3SkYl9e3y1MIK8AYjuI2mtP7GQiTevE
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Hi
+
+Am 16.09.20 um 12:03 schrieb Daniel Vetter:
+> On Tue, Sep 15, 2020 at 04:59:41PM +0200, Thomas Zimmermann wrote:
+>> GEM object functions deprecate several similar callback interfaces in
+>> struct drm_driver. This patch replaces the per-driver callbacks with
+>> per-instance callbacks in exynos. The only exception is gem_prime_mmap=
+,
+>> which is non-trivial to convert.
+>>
+>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 10 ----------
+>>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 15 +++++++++++++++
+>>  2 files changed, 15 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm=
+/exynos/exynos_drm_drv.c
+>> index dbd80f1e4c78..fe46680ca208 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>> @@ -75,11 +75,6 @@ static void exynos_drm_postclose(struct drm_device =
+*dev, struct drm_file *file)
+>>  	file->driver_priv =3D NULL;
+>>  }
+>> =20
+>> -static const struct vm_operations_struct exynos_drm_gem_vm_ops =3D {
+>> -	.open =3D drm_gem_vm_open,
+>> -	.close =3D drm_gem_vm_close,
+>> -};
+>> -
+>>  static const struct drm_ioctl_desc exynos_ioctls[] =3D {
+>>  	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_CREATE, exynos_drm_gem_create_ioctl,
+>>  			DRM_RENDER_ALLOW),
+>> @@ -124,16 +119,11 @@ static struct drm_driver exynos_drm_driver =3D {=
+
+>>  	.open			=3D exynos_drm_open,
+>>  	.lastclose		=3D drm_fb_helper_lastclose,
+>>  	.postclose		=3D exynos_drm_postclose,
+>> -	.gem_free_object_unlocked =3D exynos_drm_gem_free_object,
+>> -	.gem_vm_ops		=3D &exynos_drm_gem_vm_ops,
+>>  	.dumb_create		=3D exynos_drm_gem_dumb_create,
+>>  	.prime_handle_to_fd	=3D drm_gem_prime_handle_to_fd,
+>>  	.prime_fd_to_handle	=3D drm_gem_prime_fd_to_handle,
+>>  	.gem_prime_import	=3D exynos_drm_gem_prime_import,
+>> -	.gem_prime_get_sg_table	=3D exynos_drm_gem_prime_get_sg_table,
+>>  	.gem_prime_import_sg_table	=3D exynos_drm_gem_prime_import_sg_table,=
+
+>> -	.gem_prime_vmap		=3D exynos_drm_gem_prime_vmap,
+>> -	.gem_prime_vunmap	=3D exynos_drm_gem_prime_vunmap,
+>>  	.gem_prime_mmap		=3D exynos_drm_gem_prime_mmap,
+>>  	.ioctls			=3D exynos_ioctls,
+>>  	.num_ioctls		=3D ARRAY_SIZE(exynos_ioctls),
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm=
+/exynos/exynos_drm_gem.c
+>> index efa476858db5..69a5cf28b4ae 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+>> @@ -129,6 +129,19 @@ void exynos_drm_gem_destroy(struct exynos_drm_gem=
+ *exynos_gem)
+>>  	kfree(exynos_gem);
+>>  }
+>> =20
+>> +static const struct vm_operations_struct exynos_drm_gem_vm_ops =3D {
+>> +	.open =3D drm_gem_vm_open,
+>> +	.close =3D drm_gem_vm_close,
+>> +};
+>=20
+> Hm moving the drm_gem_cma_vm_ops into drm_gem.h or so and maybe calling=
+
+> them drm_gem_simple_ops or so would remove a pile of these. But perhaps=
+ a
+> quick follow up series.
+
+Good idea. Several interfaces use the term 'default' in their name, so
+something like drm_gem_default_vm_ops seems appropriate.
+
+BTW is there a reason why we have file operations like
+DEFINE_DRM_GEM_CMA_FOPS() in each module? It seems like this could also
+be provided by the rsp memory-manager library.
+
+Best regards
+Thomas
+
+>=20
+> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+>=20
+>> +
+>> +static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs =
+=3D {
+>> +	.free =3D exynos_drm_gem_free_object,
+>> +	.get_sg_table =3D exynos_drm_gem_prime_get_sg_table,
+>> +	.vmap =3D exynos_drm_gem_prime_vmap,
+>> +	.vunmap	=3D exynos_drm_gem_prime_vunmap,
+>> +	.vm_ops =3D &exynos_drm_gem_vm_ops,
+>> +};
+>> +
+>>  static struct exynos_drm_gem *exynos_drm_gem_init(struct drm_device *=
+dev,
+>>  						  unsigned long size)
+>>  {
+>> @@ -143,6 +156,8 @@ static struct exynos_drm_gem *exynos_drm_gem_init(=
+struct drm_device *dev,
+>>  	exynos_gem->size =3D size;
+>>  	obj =3D &exynos_gem->base;
+>> =20
+>> +	obj->funcs =3D &exynos_drm_gem_object_funcs;
+>> +
+>>  	ret =3D drm_gem_object_init(dev, obj, size);
+>>  	if (ret < 0) {
+>>  		DRM_DEV_ERROR(dev->dev, "failed to initialize gem object\n");
+>> --=20
+>> 2.28.0
+>>
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+
+
+--dt3SkYl9e3y1MIK8AYjuI2mtP7GQiTevE--
+
+--VLzf65jApKkRavuxi39QvnC87GfNF3zix
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFIBAEBCAAyFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl9h6qwUHHR6aW1tZXJt
+YW5uQHN1c2UuZGUACgkQaA3BHVMLeiPl9Qf+KR96aoWYf20LvHA3GnV4zrCawiec
+y2yduL2GYhWPOf4GMfY2D+iMsP8w0W7E25g5LPHA+Vqz5D02rDOi3daO0DrNPmW6
+693QU4qPhbQzK7Y+2jWAjMeuNnkrX+LMllUvQ1+QfapihbnvGqu9aNH3BpXfjOgt
+BoqBHPnc6jc6BCC9knI+JDmxfv+mxrkN3TVEWw78TRR8W9HubgJK3Qx5yFPb76jL
+BTd4moKQlMWspChoyM+/682BI3I/vaGbC7dL6ABTxoYc5Ub2PxY3RtaKnNPfCcpq
+dvopHHQ1YJ3wOj988DPHGprg6T0jK2zsR3M9rja76IOs/Y3rh1LWAWk2LA==
+=Gxfw
+-----END PGP SIGNATURE-----
+
+--VLzf65jApKkRavuxi39QvnC87GfNF3zix--
