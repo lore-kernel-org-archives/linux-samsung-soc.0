@@ -2,185 +2,93 @@ Return-Path: <SRS0=Wlns=CZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E283C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CDD9C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D48FA206DB
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:03:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="VZm53vKz"
+	by mail.kernel.org (Postfix) with ESMTP id 2D24A20715
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:06:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600283168;
+	bh=20Rjc9sv54f025IJgJ9WtQQq6irnrdSnWqWXMGzSFwQ=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=ct5jFwBOkOc1argFXJUyq+VDHdG2uXvyiuKqeIp14kNPztlLPSmUZTqZAAn+aT7jt
+	 M5H7D6/0x3kv8ZHWI1qMGCXHd8GZLqrQ0jgROopFl8/SuMiOM0eRIIlZDvpr+Ml0jY
+	 U7BljlZ0Orag3XfgAK8vaKvO/Nvu7teJ1NN1iD9w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbgIPTDL (ORCPT
+        id S1728304AbgIPTGC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 15:03:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35718 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727369AbgIPRsf (ORCPT
+        Wed, 16 Sep 2020 15:06:02 -0400
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:51171 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbgIPRpn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:48:35 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 588CCC0698D2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2020 04:35:20 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id b79so2622294wmb.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2020 04:35:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DdTA+P9lRhC68qI4dpVtWpzlyCIniGzxdHE1O+Q7zUU=;
-        b=VZm53vKzP2cW6qF7XV0KSRt5PPELHpk07zG//Mxa2CBTIBDdZdST/S+s0rdEQKVsZW
-         gTZ1OWjoGqV/1N91UgOzFqec1vf3PElY/ngrFrKXGmjuOOcYrYiRpj5tf2Kdv9HG27Xk
-         tCQbqYKzbNGq1n8DixVR/dUuMsm1DSxiACKH4=
+        Wed, 16 Sep 2020 13:45:43 -0400
+Received: by mail-wm1-f52.google.com with SMTP id e17so3607002wme.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2020 10:45:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DdTA+P9lRhC68qI4dpVtWpzlyCIniGzxdHE1O+Q7zUU=;
-        b=H7m3TqUmj90A3wYHxpIdKvJQb22QiPkXRArWjxxKOvBPa1OM5p7TRJ206S6WRyzpBc
-         TmqDv+fRdQ0Kt4t/uwEakfccMAsduJQpVjznku3dktlNRXgwFYp8+vs1sBTC0VKOFl2b
-         fuFlfesRz9AqRGgL6hDjNX8KyJPyVARZohZPVISQVMQwN4OGTIdrKfC5EsMY8j0SOIfC
-         njEL4hhC1D17ti0QuXehA1UWUBSvkT9b41OaOCjhV6Pk+xo5ghNsmgQOGlsM3PhbvRu3
-         y8S6V+hxNF6i80zKLrWbWfUyqfwcTY1sXO24QUfRR0DWMs+DNwrECNdmNDYw27UQK1Zs
-         5AeA==
-X-Gm-Message-State: AOAM533Ny5o2J0NFv6fNtzfdJa9IE3C6BkJPt2TWdD4RQs45TBEuOWDD
-        xHDB8yrK4t4MethDtsl43vGsEA==
-X-Google-Smtp-Source: ABdhPJylkcOBbGgEGGZKZhaBAwyH9kqk9RFSGhRv17hk61GEhNulx96NJ9Vhx8cdjXcbwhCg7LMEDQ==
-X-Received: by 2002:a05:600c:2109:: with SMTP id u9mr3990398wml.147.1600256118887;
-        Wed, 16 Sep 2020 04:35:18 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id g14sm4163583wrv.25.2020.09.16.04.35.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2020 04:35:18 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 13:35:14 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NsVNkWfU/xN6v/3RuJ+E3lKyP7RLysQnfO7peLpE7kY=;
+        b=Kfvef3OxIF7mKmvxWsNNcabqD2X2ZraJc/amKBPQ715GwcDPq+YIo/qsCf7oLQO98F
+         9Fd2t60jOm6CygQxcUhj1VdtClLoIxFXtc1DOOv7vfwxbBdoZzD6ybN0cyUmb67beOPV
+         NW2+ZIRsFW7deyTTmrZRyV6CxRY/OrudgNhVDxvHrztSXTl+1kBcX2AihrulIe8+cHYM
+         NUfDRdVcjBfmmC+j+OdwIF17DyqVaqBCrxVdn4bdbznCTzgkasRAHMA2I3cZugel+Mhl
+         FrgfhJQEU/SSa2T0oTPsz9gSwu8b3Y+DY8ABKnph7mJzI+VX1R5pdXl62D4d52nFO/HH
+         nC0A==
+X-Gm-Message-State: AOAM530kS0nUIi+2EAxG4CAsB43KjtcjDwLraqp9SCQ9xUAIpy2NVp19
+        eyQ9hq+0PFF69Jf7Lv5Z6rxXPxpyJVVBiSTl
+X-Google-Smtp-Source: ABdhPJwCjPvgxD4dQGPl4rSxujR29N2FIrmsHbZlFKpyM6D15ecoUifRyyZYzgPH1gpbcK+Vzu7mfQ==
+X-Received: by 2002:a1c:b407:: with SMTP id d7mr6142610wmf.59.1600276640309;
+        Wed, 16 Sep 2020 10:17:20 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.191])
+        by smtp.googlemail.com with ESMTPSA id p1sm8727158wma.0.2020.09.16.10.17.18
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Sep 2020 10:17:19 -0700 (PDT)
+Date:   Wed, 16 Sep 2020 19:17:17 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Jonathan Bakker <xc-racer2@live.ca>,
+        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 07/21] drm/mediatek: Introduce GEM object functions
-Message-ID: <20200916113514.GK438822@phenom.ffwll.local>
-References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-8-tzimmermann@suse.de>
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [RFT 23/25] ARM: dts: s5pv210: replace deprecated "gpios"
+ i2c-gpio property in Goni
+Message-ID: <20200916171717.GH19427@kozik-lap>
+References: <20200907161141.31034-1-krzk@kernel.org>
+ <20200907161141.31034-24-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200915145958.19993-8-tzimmermann@suse.de>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+In-Reply-To: <20200907161141.31034-24-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 04:59:44PM +0200, Thomas Zimmermann wrote:
-> GEM object functions deprecate several similar callback interfaces in
-> struct drm_driver. This patch replaces the per-driver callbacks with
-> per-instance callbacks in mediatek. The only exception is gem_prime_mmap,
-> which is non-trivial to convert.
+On Mon, Sep 07, 2020 at 06:11:39PM +0200, Krzysztof Kozlowski wrote:
+> "gpios" property is deprecated.  Update the Goni DTS to fix
+> dtbs_checks warnings like:
 > 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>   i2c-pmic: 'sda-gpios' is a required property
+>   i2c-pmic: 'scl-gpios' is a required property
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c |  5 -----
->  drivers/gpu/drm/mediatek/mtk_drm_gem.c | 11 +++++++++++
->  2 files changed, 11 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> index 040a8f393fe2..2f8d0043fca7 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -301,18 +301,13 @@ struct drm_gem_object *mtk_drm_gem_prime_import(struct drm_device *dev,
->  static struct drm_driver mtk_drm_driver = {
->  	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_ATOMIC,
->  
-> -	.gem_free_object_unlocked = mtk_drm_gem_free_object,
-> -	.gem_vm_ops = &drm_gem_cma_vm_ops,
->  	.dumb_create = mtk_drm_gem_dumb_create,
->  
->  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
->  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
->  	.gem_prime_import = mtk_drm_gem_prime_import,
-> -	.gem_prime_get_sg_table = mtk_gem_prime_get_sg_table,
->  	.gem_prime_import_sg_table = mtk_gem_prime_import_sg_table,
->  	.gem_prime_mmap = mtk_drm_gem_mmap_buf,
-> -	.gem_prime_vmap = mtk_drm_gem_prime_vmap,
-> -	.gem_prime_vunmap = mtk_drm_gem_prime_vunmap,
->  	.fops = &mtk_drm_fops,
->  
->  	.name = DRIVER_NAME,
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_gem.c b/drivers/gpu/drm/mediatek/mtk_drm_gem.c
-> index 6190cc3b7b0d..591b90410e4a 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_gem.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_gem.c
-> @@ -8,11 +8,20 @@
->  #include <drm/drm.h>
->  #include <drm/drm_device.h>
->  #include <drm/drm_gem.h>
-> +#include <drm/drm_gem_cma_helper.h>
->  #include <drm/drm_prime.h>
->  
->  #include "mtk_drm_drv.h"
->  #include "mtk_drm_gem.h"
->  
-> +static const struct drm_gem_object_funcs mtk_drm_gem_object_funcs = {
-> +	.free = mtk_drm_gem_free_object,
-> +	.get_sg_table = mtk_gem_prime_get_sg_table,
-> +	.vmap = mtk_drm_gem_prime_vmap,
-> +	.vunmap = mtk_drm_gem_prime_vunmap,
-> +	.vm_ops = &drm_gem_cma_vm_ops,
-> +};
-> +
->  static struct mtk_drm_gem_obj *mtk_drm_gem_init(struct drm_device *dev,
->  						unsigned long size)
->  {
-> @@ -25,6 +34,8 @@ static struct mtk_drm_gem_obj *mtk_drm_gem_init(struct drm_device *dev,
->  	if (!mtk_gem_obj)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	mtk_gem_obj->base.funcs = &mtk_drm_gem_object_funcs;
-> +
->  	ret = drm_gem_object_init(dev, &mtk_gem_obj->base, size);
->  	if (ret < 0) {
->  		DRM_ERROR("failed to initialize gem object\n");
-> -- 
-> 2.28.0
+>  arch/arm/boot/dts/s5pv210-goni.dts | 4 ++--
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Applied.
 
-> 
+Best regards,
+Krzysztof
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
