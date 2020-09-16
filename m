@@ -2,184 +2,95 @@ Return-Path: <SRS0=Wlns=CZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F93C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B18C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F9DA21974
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:26:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Gb4KarHw"
+	by mail.kernel.org (Postfix) with ESMTP id C1B1F221E7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:28:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600288135;
+	bh=PiDVu2AfNwO7VHbgJcAtXVLi+t+ME0jWrz0mm4ZR6IM=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=JDZPpvWRCVqggUCmkyckgtaVMSVAP9Kwn1vvR+qVercvCaQ4AAdg3/S8qd+LQPHlR
+	 6gC33gXVcHYZudA6vEWOZfYrmwyXt4DP1cx/9mn1yQEGbB15MlTqm0L3ldVuzWo9+k
+	 B3hOSl7Fgpk2JwUF/gWwkeUU9XXtutxHQNPAwxdA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbgIPUZl (ORCPT
+        id S1726943AbgIPU2K (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:25:41 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:14539 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbgIPR1i (ORCPT
+        Wed, 16 Sep 2020 16:28:10 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33164 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbgIPRYR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:27:38 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f62361e0000>; Wed, 16 Sep 2020 08:58:22 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 16 Sep 2020 08:58:34 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 16 Sep 2020 08:58:34 -0700
-Received: from [10.26.74.242] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 16 Sep
- 2020 15:58:22 +0000
-Subject: Re: [PATCH v3 08/16] irqchip/gic: Configure SGIs as standard
- interrupts
-To:     Marc Zyngier <maz@kernel.org>
-CC:     Sumit Garg <sumit.garg@linaro.org>, <linus.walleij@linaro.org>,
-        "Florian Fainelli" <f.fainelli@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Saravana Kannan <saravanak@google.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        <linux-kernel@vger.kernel.org>,
-        "Krzysztof Kozlowski" <krzk@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        "'Linux Samsung SOC'" <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <kernel-team@android.com>,
-        Valentin Schneider <Valentin.Schneider@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20200901144324.1071694-1-maz@kernel.org>
- <20200901144324.1071694-9-maz@kernel.org>
- <CGME20200914130601eucas1p23ce276d168dee37909b22c75499e68da@eucas1p2.samsung.com>
- <a917082d-4bfd-a6fd-db88-36e75f5f5921@samsung.com>
- <933bc43e-3cd7-10ec-b9ec-58afaa619fb7@nvidia.com>
- <3378cd07b92e87a24f1db75f708424ee@kernel.org>
- <dcf812d9-2409-bcae-1925-e21740c2932e@nvidia.com>
- <a6c7bbc91c5b23baa44f3abe35eb61c9@kernel.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <d6dddab0-47aa-ddf2-959b-85493b8da52d@nvidia.com>
-Date:   Wed, 16 Sep 2020 16:58:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 16 Sep 2020 13:24:17 -0400
+Received: by mail-wr1-f65.google.com with SMTP id m6so7789673wrn.0;
+        Wed, 16 Sep 2020 10:22:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zyl8TJrhVfTe2TXHn1Ylm3CaGAI0Eut0vrDhMWKREwU=;
+        b=WqRV0r/O3bTIQ4soOV3uyD+bdvMNsZFtEAmsLproaR5hrgGx2Vs+OGMKCJW7bPh/aM
+         VTvVa5ul3Nm54zYZtIYO7ziaBlwONkiBnbN2ahYxZsHrC5cYDHFkZvB8F+4oZw7Zb3Db
+         u4Veu5V8WWPLq7AIs1O8zN32a40VF4elQ42MdNVKQdnYfNAnfVHVpXPai/zv9Vm73SQU
+         Fifxg/LbmohT2c+O8MSkHUOTt8jgFFRq2fytKn2IjYNe5zVHMux/SVqzABfodekpDxXB
+         8JjAlgwq9iFCN85OeTr8euSIP+HtuaDkSDRv5xgjRvRHuy3SJYt+yvnnFhdSMLeUWg4w
+         0y9w==
+X-Gm-Message-State: AOAM5302qx9Qahrx4zHSoXSjHMo5DoyjZ9SddBuvf2JQ8Yvbzu/HDWmE
+        p0Akp/wzypMWmB7AClOiF6ool2sZo35+aoET
+X-Google-Smtp-Source: ABdhPJzxTPnq22IWDSWfZN82ctZiAHt+M7IbEHPa2jzbRm5lvwD+4JIY7doBYk52EE6ZV+4m3nYEgw==
+X-Received: by 2002:adf:cd05:: with SMTP id w5mr27473177wrm.62.1600276396656;
+        Wed, 16 Sep 2020 10:13:16 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.191])
+        by smtp.googlemail.com with ESMTPSA id k8sm33846128wrl.42.2020.09.16.10.13.14
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Sep 2020 10:13:15 -0700 (PDT)
+Date:   Wed, 16 Sep 2020 19:13:13 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Inki Dae <inki.dae@samsung.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] arm64: dts: exynos: Align OPP table name with
+ dt-schema
+Message-ID: <20200916171313.GD19427@kozik-lap>
+References: <20200903191438.12781-1-krzk@kernel.org>
+ <20200903191438.12781-6-krzk@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <a6c7bbc91c5b23baa44f3abe35eb61c9@kernel.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1600271902; bh=OInfV1VGaZqOky+4sqAk+1JkJLOXjadzDikei1Od4OI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Gb4KarHw3+zcTv/V6iSsJDbvfGwcXVN4lmZsAkeW/bxXJblXfSYu2paCUtH3M18RZ
-         bZwmG2KuON5AniHraV5oygS6tN7yHMYb/78WfizBc+pdEdTMI/8Tglh3muYkqrN5Ss
-         lksxTyfGWT5qBzw+oDcyNKRWoqzJ4OtbfJZPK15CCF2Nf1avZSz5ovP0h2aOSl6SN/
-         TR+Y7x+9vk2Tx8Hh9eiUD3m28nC7kFhh5r23VCSCv7kWmOgU9s+6VbL0M2s4K+/1zI
-         0ajW2N0f6Bv8MapUXyl7o3tyOm+HMvZIAVt6eHEndChF1cR6Q6k0VJ0TFl1u5+D4CU
-         Pbd4YSB80xeEQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200903191438.12781-6-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Thu, Sep 03, 2020 at 09:14:38PM +0200, Krzysztof Kozlowski wrote:
+> Device tree nodes should have hyphens instead of underscores.  This is
+> also expected by the bindings.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. New patch
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 2 +-
 
-On 16/09/2020 16:55, Marc Zyngier wrote:
-> On 2020-09-16 16:46, Jon Hunter wrote:
->> On 16/09/2020 16:10, Marc Zyngier wrote:
->>> Hi Jon,
->>>
->>> +Linus, who is facing a similar issue.
->>>
->>> On 2020-09-16 15:16, Jon Hunter wrote:
->>>> Hi Marc,
->>>>
->>>> On 14/09/2020 14:06, Marek Szyprowski wrote:
->>>>> Hi Marc,
->>>>>
->>>>> On 01.09.2020 16:43, Marc Zyngier wrote:
->>>>>> Change the way we deal with GIC SGIs by turning them into proper
->>>>>> IRQs, and calling into the arch code to register the interrupt range
->>>>>> instead of a callback.
->>>>>>
->>>>>> Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
->>>>>> Signed-off-by: Marc Zyngier <maz@kernel.org>
->>>>> This patch landed in linux next-20200914 as commit ac063232d4b0
->>>>> ("irqchip/gic: Configure SGIs as standard interrupts"). Sadly it
->>>>> breaks
->>>>> booting of all Samsung Exynos 4210/4412 based boards (dual/quad ARM
->>>>> Cortex A9 based). Here are the last lines from the bootlog:
->>>>
->>>> I am observing the same thing on several Tegra boards (both arm and
->>>> arm64). Bisect is pointing to this commit. Reverting this alone does
->>>> not
->>>> appear to be enough to fix the issue.
->>>
->>> Right, I am just massively by the GICv3 spec, and failed to remember
->>> that ye olde GIC exposes the source CPU in AIR *and* wants it back,
->>> while
->>> newer GICs deal with that transparently.
->>>
->>> Can you try the patch below and let me know?
->>
->> Yes will do.
->>
->>> @@ -365,14 +354,13 @@ static void __exception_irq_entry
->>> gic_handle_irq(struct pt_regs *regs)
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 smp_rmb();
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 /*
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 * Samsung's funky GIC encodes the source CPU in
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 * GICC_IAR, leading to the deactivation to fail if
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 * not written back as is to GICC_EOI.=C2=A0 Stash the
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 * INTID away for gic_eoi_irq() to write back.
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 * This only works because we don't nest SGIs...
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 * The GIC encodes the source CPU in GICC_IAR,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 * leading to the deactivation to fail if not
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 * written back as is to GICC_EOI.=C2=A0 Stash the INTID
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 * away for gic_eoi_irq() to write back.=C2=A0 This only
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 * works because we don't nest SGIs...
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 */
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if =
-(is_frankengic())
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 set_sgi_intid(irqstat);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 thi=
-s_cpu_write(sgi_intid, intid);
->>
->> I assume that it should be irqstat here and not intid?
->=20
-> Indeed. As you can tell, I haven't even tried to compile it, sorry about
-> that.
+Applied.
 
-No worries, I got the gist. However, even with this change, it still
-does not boot :-(
+Best regards,
+Krzysztof
 
-Jon
-
---=20
-nvpublic
