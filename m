@@ -2,152 +2,208 @@ Return-Path: <SRS0=Wlns=CZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E572C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D765C2D0E3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD05E21D24
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:49:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="FENeMTOi"
+	by mail.kernel.org (Postfix) with ESMTP id 4B28822208
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:59:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600289993;
+	bh=xmzrdiPDzVhpJTnNuaWDllL6DAJjHryvlroLhWdhC9M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=E0WMq22MA5K7FLRQYNKwlDVXtziamonOMvjsRQ/B1fYO2rBMIASoHk7/I/w1V9+x7
+	 TFCRAVe5TJKPdJG7QKa03GweLdC8vSNy0Ghqs3tDaWiAqpEJXpMxAUdhYrI8RbNBeX
+	 CcZ9JvszrCQONMMsYxSZrJ3YhpRQD9nCHsTEBvSM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbgIPUt2 (ORCPT
+        id S1726506AbgIPU7i (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:49:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56122 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbgIPRAU (ORCPT
+        Wed, 16 Sep 2020 16:59:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43078 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726305AbgIPQag (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:00:20 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 876EEC08E85D
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2020 05:09:55 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id m6so6698853wrn.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2020 05:09:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+3jvoy/bBV/BNfVwVnfU8KcCZN1nPBtEmgjgdo9EwXk=;
-        b=FENeMTOiWrFokQkUzY6vSvMhlCXV7HMJqSDFsMTbLqeNytwJMofYpFGvXfw3GhxJQe
-         D9FUrSX8+Brv74I6kUhpyFb/XZioFwNiGTb+QuFgOQkexhfx/xeg364unF1nN8hvk40W
-         Hh+h3hsu+pBXFmPF/2PAzcQ04fALpK5XDa9tA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+3jvoy/bBV/BNfVwVnfU8KcCZN1nPBtEmgjgdo9EwXk=;
-        b=AycRJagKRjp8h1aY4emQ08fGNXmTM6m5B8lFkgw8kgrBNWD8ZFAfbY+IZzkvp95Iek
-         lwMsM72XFZK/da9ByTNSaDww7h9RN330If6FLkRmXHMtn3tAwX4vJD6DuyTTLh1R3sYj
-         1s1W32nR6S8I7Ey8wtDal9hlkOeUZpvmbHNZQwVKpFtmOh9Tj6JTGDTdJurzKEtblJ+J
-         BTp71Qox5FDxziHKpJdFr760Cph3l8LRAi1REe7CS4W2KsLyOLxVCcYJPodDJlXnLDky
-         EdM42f5xIacpkJOzojCUlbdUArAcLXg2az/5+jIFPioXN+kz7VTnYSdgOyqLIJCLVy23
-         0fsQ==
-X-Gm-Message-State: AOAM533tGCZZ+3DoQJlDCZV8kOY10rMgYww9VQLXK6XML3ZwOxYKqTvZ
-        Pi0AfZqI3pWJ6a+PPX1hZORbvQ==
-X-Google-Smtp-Source: ABdhPJwcFrpBowFHXDaGWxAmgGA6UC0qLIIbiwK0yYyfwUChHgh/bXrgr93clOHTT0R4i2flV+cOiA==
-X-Received: by 2002:a5d:4448:: with SMTP id x8mr28185933wrr.207.1600258192468;
-        Wed, 16 Sep 2020 05:09:52 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id n11sm32655611wrx.91.2020.09.16.05.09.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2020 05:09:51 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 14:09:48 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 17/21] drm/virtgpu: Set PRIME export function in
- struct drm_gem_object_funcs
-Message-ID: <20200916120948.GO438822@phenom.ffwll.local>
-References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-18-tzimmermann@suse.de>
+        Wed, 16 Sep 2020 12:30:36 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A92B223FB;
+        Wed, 16 Sep 2020 15:10:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600269059;
+        bh=xmzrdiPDzVhpJTnNuaWDllL6DAJjHryvlroLhWdhC9M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=1SOzr1ftqfk896/TZheIMp9Y5OQJlAqv5Rb7IRMk3qQ4uEy5eZv7YxkYhKOVDxGW0
+         O65YkHDIgG1Ce8rxdSQVFNzalVXKEHTKP3Qp+pAUK3wXt90mp04qtSDGirtMMozHjl
+         F1Q6QSQsnrecimNKmlLUAqskD0wF+V7uIujIH2Lo=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1kIZ5F-00CMqs-JJ; Wed, 16 Sep 2020 16:10:57 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200915145958.19993-18-tzimmermann@suse.de>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 16 Sep 2020 16:10:57 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Sumit Garg <sumit.garg@linaro.org>, kernel-team@android.com,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Saravana Kannan <saravanak@google.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>,
+        Valentin Schneider <Valentin.Schneider@arm.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linus.walleij@linaro.org
+Subject: Re: [PATCH v3 08/16] irqchip/gic: Configure SGIs as standard
+ interrupts
+In-Reply-To: <933bc43e-3cd7-10ec-b9ec-58afaa619fb7@nvidia.com>
+References: <20200901144324.1071694-1-maz@kernel.org>
+ <20200901144324.1071694-9-maz@kernel.org>
+ <CGME20200914130601eucas1p23ce276d168dee37909b22c75499e68da@eucas1p2.samsung.com>
+ <a917082d-4bfd-a6fd-db88-36e75f5f5921@samsung.com>
+ <933bc43e-3cd7-10ec-b9ec-58afaa619fb7@nvidia.com>
+User-Agent: Roundcube Webmail/1.4.8
+Message-ID: <3378cd07b92e87a24f1db75f708424ee@kernel.org>
+X-Sender: maz@kernel.org
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: jonathanh@nvidia.com, m.szyprowski@samsung.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, sumit.garg@linaro.org, kernel-team@android.com, f.fainelli@gmail.com, linux@arm.linux.org.uk, jason@lakedaemon.net, saravanak@google.com, andrew@lunn.ch, catalin.marinas@arm.com, gregory.clement@bootlin.com, b.zolnierkie@samsung.com, krzk@kernel.org, linux-samsung-soc@vger.kernel.org, tglx@linutronix.de, will@kernel.org, Valentin.Schneider@arm.com, linux-tegra@vger.kernel.org, linus.walleij@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 04:59:54PM +0200, Thomas Zimmermann wrote:
-> GEM object functions deprecate several similar callback interfaces in
-> struct drm_driver. This patch replaces virtgpu's per-driver PRIME export
-> function with a per-object function.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Hi Jon,
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
++Linus, who is facing a similar issue.
 
-> ---
->  drivers/gpu/drm/virtio/virtgpu_drv.c    | 1 -
->  drivers/gpu/drm/virtio/virtgpu_object.c | 1 +
->  2 files changed, 1 insertion(+), 1 deletion(-)
+On 2020-09-16 15:16, Jon Hunter wrote:
+> Hi Marc,
 > 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> index b039f493bda9..1f8d6ed11d21 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> @@ -203,7 +203,6 @@ static struct drm_driver driver = {
->  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
->  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
->  	.gem_prime_mmap = drm_gem_prime_mmap,
-> -	.gem_prime_export = virtgpu_gem_prime_export,
->  	.gem_prime_import = virtgpu_gem_prime_import,
->  	.gem_prime_import_sg_table = virtgpu_gem_prime_import_sg_table,
->  
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
-> index 842f8b61aa89..4f7d7ea8194c 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_object.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_object.c
-> @@ -108,6 +108,7 @@ static const struct drm_gem_object_funcs virtio_gpu_shmem_funcs = {
->  	.close = virtio_gpu_gem_object_close,
->  
->  	.print_info = drm_gem_shmem_print_info,
-> +	.export = virtgpu_gem_prime_export,
->  	.pin = drm_gem_shmem_pin,
->  	.unpin = drm_gem_shmem_unpin,
->  	.get_sg_table = drm_gem_shmem_get_sg_table,
-> -- 
-> 2.28.0
+> On 14/09/2020 14:06, Marek Szyprowski wrote:
+>> Hi Marc,
+>> 
+>> On 01.09.2020 16:43, Marc Zyngier wrote:
+>>> Change the way we deal with GIC SGIs by turning them into proper
+>>> IRQs, and calling into the arch code to register the interrupt range
+>>> instead of a callback.
+>>> 
+>>> Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
+>>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>> This patch landed in linux next-20200914 as commit ac063232d4b0
+>> ("irqchip/gic: Configure SGIs as standard interrupts"). Sadly it 
+>> breaks
+>> booting of all Samsung Exynos 4210/4412 based boards (dual/quad ARM
+>> Cortex A9 based). Here are the last lines from the bootlog:
 > 
+> I am observing the same thing on several Tegra boards (both arm and
+> arm64). Bisect is pointing to this commit. Reverting this alone does 
+> not
+> appear to be enough to fix the issue.
+
+Right, I am just massively by the GICv3 spec, and failed to remember
+that ye olde GIC exposes the source CPU in AIR *and* wants it back, 
+while
+newer GICs deal with that transparently.
+
+Can you try the patch below and let me know?
+
+         M.
+
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index 98743afdaea6..56492bf8b6f9 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -121,9 +121,10 @@ static struct gic_chip_data 
+gic_data[CONFIG_ARM_GIC_MAX_NR] __read_mostly;
+
+  static struct gic_kvm_info gic_v2_kvm_info;
+
++static DEFINE_PER_CPU(u32, sgi_intid);
++
+  #ifdef CONFIG_GIC_NON_BANKED
+  static DEFINE_STATIC_KEY_FALSE(frankengic_key);
+-static DEFINE_PER_CPU(u32, sgi_intid);
+
+  static void enable_frankengic(void)
+  {
+@@ -135,16 +136,6 @@ static inline bool is_frankengic(void)
+  	return static_branch_unlikely(&frankengic_key);
+  }
+
+-static inline void set_sgi_intid(u32 intid)
+-{
+-	this_cpu_write(sgi_intid, intid);
+-}
+-
+-static inline u32 get_sgi_intid(void)
+-{
+-	return this_cpu_read(sgi_intid);
+-}
+-
+  static inline void __iomem *__get_base(union gic_base *base)
+  {
+  	if (is_frankengic())
+@@ -160,8 +151,6 @@ static inline void __iomem *__get_base(union 
+gic_base *base)
+  #define gic_data_cpu_base(d)	((d)->cpu_base.common_base)
+  #define enable_frankengic()	do { } while(0)
+  #define is_frankengic()		false
+-#define set_sgi_intid(i)	do { } while(0)
+-#define get_sgi_intid()		0
+  #endif
+
+  static inline void __iomem *gic_dist_base(struct irq_data *d)
+@@ -236,8 +225,8 @@ static void gic_eoi_irq(struct irq_data *d)
+  {
+  	u32 hwirq = gic_irq(d);
+
+-	if (is_frankengic() && hwirq < 16)
+-		hwirq = get_sgi_intid();
++	if (hwirq < 16)
++		hwirq = this_cpu_read(sgi_intid);
+
+  	writel_relaxed(hwirq, gic_cpu_base(d) + GIC_CPU_EOI);
+  }
+@@ -365,14 +354,13 @@ static void __exception_irq_entry 
+gic_handle_irq(struct pt_regs *regs)
+  			smp_rmb();
+
+  			/*
+-			 * Samsung's funky GIC encodes the source CPU in
+-			 * GICC_IAR, leading to the deactivation to fail if
+-			 * not written back as is to GICC_EOI.  Stash the
+-			 * INTID away for gic_eoi_irq() to write back.
+-			 * This only works because we don't nest SGIs...
++			 * The GIC encodes the source CPU in GICC_IAR,
++			 * leading to the deactivation to fail if not
++			 * written back as is to GICC_EOI.  Stash the INTID
++			 * away for gic_eoi_irq() to write back.  This only
++			 * works because we don't nest SGIs...
+  			 */
+-			if (is_frankengic())
+-				set_sgi_intid(irqstat);
++			this_cpu_write(sgi_intid, intid);
+  		}
+
+  		handle_domain_irq(gic->domain, irqnr, regs);
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Jazz is not dead. It just smells funny...
