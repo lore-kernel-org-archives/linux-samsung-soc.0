@@ -2,117 +2,152 @@ Return-Path: <SRS0=Wlns=CZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 900B9C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E572C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:49:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EFBD20770
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:48:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD05E21D24
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:49:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aADs+wA7"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="FENeMTOi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728403AbgIPUsE (ORCPT
+        id S1726744AbgIPUt2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:48:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55274 "EHLO
+        Wed, 16 Sep 2020 16:49:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbgIPRBO (ORCPT
+        with ESMTP id S1726142AbgIPRAU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:01:14 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E626AC0D941D;
-        Wed, 16 Sep 2020 09:54:01 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id z9so3782141wmk.1;
-        Wed, 16 Sep 2020 09:54:01 -0700 (PDT)
+        Wed, 16 Sep 2020 13:00:20 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 876EEC08E85D
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2020 05:09:55 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id m6so6698853wrn.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2020 05:09:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=ffwll.ch; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zX0LITDdTRuuCUge/vQRwE/mjMWdK4VvHcKMoxIg+PM=;
-        b=aADs+wA7Plzzsr9mINUP5TmmQYKvZ662dmq2plN2cCpo5awBVMFzy/lFDfCyFsTyxa
-         7JSJxNl8H4X8yEyPwkwpAsRmhC9Iac/1/wWVlbVvZIouPZ5SnmZEZT8fN5JJ5ZyvTUZB
-         PTka1oj0qXKGyFYkNcHHG1WTYqFQ8ciqqlvo3l7Ib3Pg/G9ef+l6tz8cPPTt7iB0t//f
-         icbBjMBpW2b1o1zg8ih2Kv/fNBbrH5WfL9l5UsIOPXUDLxTekbpyNuYp0UXJx0xoA8jY
-         RxEzbW3/xVYpP9g8uW5jJRhCYAHw1ussrb8BT0TUTSFKjTKdiNHwOP4HbuJtwiLKxR3a
-         Pwig==
+         :content-disposition:in-reply-to;
+        bh=+3jvoy/bBV/BNfVwVnfU8KcCZN1nPBtEmgjgdo9EwXk=;
+        b=FENeMTOiWrFokQkUzY6vSvMhlCXV7HMJqSDFsMTbLqeNytwJMofYpFGvXfw3GhxJQe
+         D9FUrSX8+Brv74I6kUhpyFb/XZioFwNiGTb+QuFgOQkexhfx/xeg364unF1nN8hvk40W
+         Hh+h3hsu+pBXFmPF/2PAzcQ04fALpK5XDa9tA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zX0LITDdTRuuCUge/vQRwE/mjMWdK4VvHcKMoxIg+PM=;
-        b=uI/jSXPvWpJawMrwL+fKrzpnzigQ/bkGbbqO3RRK6bcXxqbpKWr/OI/MslSHBNgCke
-         dFPxh3ktleJ8W7IKwRkNHdo5bC63ioMGcXyQ2SapKX3WdWlZFyHc4MdpeAgu2z0nXFmZ
-         bgZ+HcGTan9oQhw38Cbz+WmQcvKGYdHzvIaLMmoRtNRwJnU0q2aOg+9Q3/vBkUUUJ0za
-         H3GJ3AQaPyyB63Ux6H8vEGRdB3WkSziAKENHXzzRAJP7rzmjj3Hu8UPXAy2g6zdz3rP6
-         r4szSfLHVuETMM95rQu/F4MsjsKEuAivKl279c3lXvD+aBiIUARhxMW7RbF/UtdwQsT8
-         +JQQ==
-X-Gm-Message-State: AOAM530Mtf/zE6k52tPvIyV3hWVZALwhQa6/0/av0hyCced3T44U7vVb
-        S84rnaGOVdCP0/KVRy9MeDo=
-X-Google-Smtp-Source: ABdhPJzdve2S5+ojtGAs6QR7XcI+4lN6whbTHWSGnFkjuxZ5CBL0MKIrnOCDXAV6/8zWm00ogW6uOg==
-X-Received: by 2002:a7b:cd8b:: with SMTP id y11mr5813023wmj.172.1600275240202;
-        Wed, 16 Sep 2020 09:54:00 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.191])
-        by smtp.googlemail.com with ESMTPSA id o15sm6107022wmh.29.2020.09.16.09.53.58
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Sep 2020 09:53:59 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 18:53:57 +0200
-From:   Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     linux-samsung-soc@vger.kernel.org,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        Pia Eichinger <pia.eichinger@st.oth-regensburg.de>,
-        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: mark linux-samsung-soc list non-moderated
-Message-ID: <20200916165357.GA18287@kozik-lap>
-References: <20200914061353.17535-1-lukas.bulwahn@gmail.com>
+         :mime-version:content-disposition:in-reply-to;
+        bh=+3jvoy/bBV/BNfVwVnfU8KcCZN1nPBtEmgjgdo9EwXk=;
+        b=AycRJagKRjp8h1aY4emQ08fGNXmTM6m5B8lFkgw8kgrBNWD8ZFAfbY+IZzkvp95Iek
+         lwMsM72XFZK/da9ByTNSaDww7h9RN330If6FLkRmXHMtn3tAwX4vJD6DuyTTLh1R3sYj
+         1s1W32nR6S8I7Ey8wtDal9hlkOeUZpvmbHNZQwVKpFtmOh9Tj6JTGDTdJurzKEtblJ+J
+         BTp71Qox5FDxziHKpJdFr760Cph3l8LRAi1REe7CS4W2KsLyOLxVCcYJPodDJlXnLDky
+         EdM42f5xIacpkJOzojCUlbdUArAcLXg2az/5+jIFPioXN+kz7VTnYSdgOyqLIJCLVy23
+         0fsQ==
+X-Gm-Message-State: AOAM533tGCZZ+3DoQJlDCZV8kOY10rMgYww9VQLXK6XML3ZwOxYKqTvZ
+        Pi0AfZqI3pWJ6a+PPX1hZORbvQ==
+X-Google-Smtp-Source: ABdhPJwcFrpBowFHXDaGWxAmgGA6UC0qLIIbiwK0yYyfwUChHgh/bXrgr93clOHTT0R4i2flV+cOiA==
+X-Received: by 2002:a5d:4448:: with SMTP id x8mr28185933wrr.207.1600258192468;
+        Wed, 16 Sep 2020 05:09:52 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id n11sm32655611wrx.91.2020.09.16.05.09.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2020 05:09:51 -0700 (PDT)
+Date:   Wed, 16 Sep 2020 14:09:48 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
+        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
+        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
+        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
+        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
+        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
+        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
+        sam@ravnborg.org, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v2 17/21] drm/virtgpu: Set PRIME export function in
+ struct drm_gem_object_funcs
+Message-ID: <20200916120948.GO438822@phenom.ffwll.local>
+References: <20200915145958.19993-1-tzimmermann@suse.de>
+ <20200915145958.19993-18-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200914061353.17535-1-lukas.bulwahn@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200915145958.19993-18-tzimmermann@suse.de>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 14, 2020 at 08:13:53AM +0200, Lukas Bulwahn wrote:
-> In fifteen entries mentioning linux-samsung-soc@vger.kernel.org in
-> MAINTAINERS, seven entries mention the list being moderated for
-> non-subscribers and eight entries do not. Clearly only one can be right,
-> though.
+On Tue, Sep 15, 2020 at 04:59:54PM +0200, Thomas Zimmermann wrote:
+> GEM object functions deprecate several similar callback interfaces in
+> struct drm_driver. This patch replaces virtgpu's per-driver PRIME export
+> function with a per-object function.
 > 
-> Joe Perches suggested that all vger.kernel.org are not moderated for
-> non-subscribers.
-> 
-> Remove all the remarks from the entries following Joe's suggestion.
-> 
-> Link: https://lore.kernel.org/lkml/da6f30896a8fd78635b3ca454d77a5292a9aa76d.camel@perches.com/
-> Suggested-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
 > ---
-> applies cleanly on v5.9-rc5 and next-20200911
+>  drivers/gpu/drm/virtio/virtgpu_drv.c    | 1 -
+>  drivers/gpu/drm/virtio/virtgpu_object.c | 1 +
+>  2 files changed, 1 insertion(+), 1 deletion(-)
 > 
-> Krzysztof, please pick this minor non-urgent cleanup patch.
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
+> index b039f493bda9..1f8d6ed11d21 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
+> @@ -203,7 +203,6 @@ static struct drm_driver driver = {
+>  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+>  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+>  	.gem_prime_mmap = drm_gem_prime_mmap,
+> -	.gem_prime_export = virtgpu_gem_prime_export,
+>  	.gem_prime_import = virtgpu_gem_prime_import,
+>  	.gem_prime_import_sg_table = virtgpu_gem_prime_import_sg_table,
+>  
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
+> index 842f8b61aa89..4f7d7ea8194c 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_object.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_object.c
+> @@ -108,6 +108,7 @@ static const struct drm_gem_object_funcs virtio_gpu_shmem_funcs = {
+>  	.close = virtio_gpu_gem_object_close,
+>  
+>  	.print_info = drm_gem_shmem_print_info,
+> +	.export = virtgpu_gem_prime_export,
+>  	.pin = drm_gem_shmem_pin,
+>  	.unpin = drm_gem_shmem_unpin,
+>  	.get_sg_table = drm_gem_shmem_get_sg_table,
+> -- 
+> 2.28.0
 > 
-> This patch submission will also show me if linux-samsung-soc is moderated
-> or not. I have not subscribed to linux-samsung-soc and if it shows up
-> quickly in the archive, the list is probably not moderated, and hence,
-> validating the patch.
 
-Please use scripts/get_maintainers.pl (for example on files in modified
-maintainers section) to get the addresses of people.  This mail missed
-all my filters and got archived immediately because you sent it to
-unusual address (how did you get this address, BTW? It does not appear
-in the sources since few years).
-
-Thanks, applied.
-
-Best regards,
-Krzysztof
-
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
