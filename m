@@ -2,189 +2,106 @@ Return-Path: <SRS0=b06D=C2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF38C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Sep 2020 11:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F00C2BBD1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Sep 2020 11:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 217A621734
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Sep 2020 11:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A0ED21734
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Sep 2020 11:36:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WT+tCnqs"
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="PO4byAB7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbgIQLbv (ORCPT
+        id S1726829AbgIQLfa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 17 Sep 2020 07:31:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59400 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726505AbgIQLbc (ORCPT
+        Thu, 17 Sep 2020 07:35:30 -0400
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:54535 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726858AbgIQLfS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 17 Sep 2020 07:31:32 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92CBBC061788;
-        Thu, 17 Sep 2020 04:31:31 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id s13so1610286wmh.4;
-        Thu, 17 Sep 2020 04:31:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=QoGoJWGY9uvsPbK1VFldPakdj/95886EaH4XmF5Nmig=;
-        b=WT+tCnqscdjnhBzx4pey4qfrs3TpF1Xktu7jt8T8cQSP0yZJdX3KoYHPdWspzIugsq
-         6HSKY9VJKgsdLw89cCYxqdbs7Vt7/k4/jK9LtTE+4i9XvfXW1Lr/Fm+fEnngxxWPD5dx
-         hAgvu8wEl2ImGMZ/Vxi1axcUTWC/C1hcCZmRCP+VMlQrWSEcu/Hqzj+fuVKA2INfBjX3
-         /zcARTJCVi7gGPGSYovxguWtsuZzPwF6TsPs2IH9t/Kp5k3R+t/9fCDbL8cqbYXRyKxo
-         iHGdqfCt+o61f/ixQfUMrk5tyRoSS69zCZaqGiTmJsGllEHi/xlz25EYavgN+6zZY8AL
-         WM8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=QoGoJWGY9uvsPbK1VFldPakdj/95886EaH4XmF5Nmig=;
-        b=aqjDBpusXuNQUj7CV+AkN9pQhHXDrkvYezt/YCQfSCm3JbRvtEAsOK6MmDn7TGscnd
-         pM3DULz9ei+usiI0HQIgf/SnTZQnpCXeocXi3Ra1rmUwriJXZRaX8NFR2Sh5BAFHetcc
-         LDFzexaVOpRFVXadVab6h3gfYDRn93FLG5GQ+BsUROm0m4kp6BT8hvHC/OoKbraFfi/1
-         eV9q4bo/Iwz4eduj2WAy30OZDiw2YQ/xrcAxEOQJwix7ad4KxmHZunuMi7RqdFi4pMHq
-         g/YIE+MXtBn7/znatiKyxN0lcdNmrnx8iPigDoa0t/q85MHqaF6LelCQtl30T5WCGaGW
-         j/uQ==
-X-Gm-Message-State: AOAM532rw2w2svcJsxjGy+a3a/LHq2P7waiaLVBHBzPTdvraUoSlbpid
-        YiIDvbOUqcFwRxAxrIRO/fs=
-X-Google-Smtp-Source: ABdhPJyuZcp+AqRLPz3yJIfvdwNUATarIMvgIK7I09VrN4WEXhLqSMqZyvaS1A1ZqiWgJrdIoQA/Hg==
-X-Received: by 2002:a1c:96:: with SMTP id 144mr9601334wma.84.1600342290200;
-        Thu, 17 Sep 2020 04:31:30 -0700 (PDT)
-Received: from smtp.gmail.com (a95-92-181-29.cpe.netcabo.pt. [95.92.181.29])
-        by smtp.gmail.com with ESMTPSA id 11sm10489240wmi.14.2020.09.17.04.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 04:31:29 -0700 (PDT)
-Date:   Thu, 17 Sep 2020 08:31:20 -0300
-From:   Melissa Wen <melissa.srw@gmail.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com, linux-samsung-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, amd-gfx@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org, freedreno@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 18/21] drm/vkms: Introduce GEM object functions
-Message-ID: <20200917113120.dtz7yxvdg7xdgbx5@smtp.gmail.com>
-References: <20200915145958.19993-1-tzimmermann@suse.de>
- <20200915145958.19993-19-tzimmermann@suse.de>
+        Thu, 17 Sep 2020 07:35:18 -0400
+X-Greylist: delayed 467 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 07:35:17 EDT
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id Is3qkM7BCPTBMIs3tkllRF; Thu, 17 Sep 2020 13:26:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1600342013; bh=f4uU11TplcltXscEBKpGneN6cvdGllExJEW1PbYfP6g=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=PO4byAB7mXg96eKklNbeMqFiF+BXBc5YfTTlVc34KfLZHUhHIdhk+2OAnHtkEuX4s
+         udqIK2fjqR9DNscCBDRsOo71erq+iM2tL7gvVtTW8NCrv5kGCuf9cTR+pMaWsydw+P
+         KJa91bdZ/3EfVpo4bIiLV1btI0FDu4z0T6+tkxH2nGgc9rESJqZykSO1ir1U/dXmwd
+         uL1r82b8N+8DnwdYSjtZPvTkaYmW2RRYaPRbgWiucXoZdJhXTmPG9nEkw9Mznd2phR
+         oKLdROxKAKTWaP+OIQk8xd1pnX+qFRyiWFrtFBlzW66cdIEzioobVjz4/nju3D0WHM
+         K2IQNdTZotokw==
+Subject: Re: [PATCH] media: platform: s3c-camif: Fix runtime PM imbalance in
+ s3c_camif_open
+To:     Dinghao Liu <dinghao.liu@zju.edu.cn>, kjlu@umn.edu
+Cc:     Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200522082915.4731-1-dinghao.liu@zju.edu.cn>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <611ffe6a-c4ef-d23c-4d3f-a7771ce56bab@xs4all.nl>
+Date:   Thu, 17 Sep 2020 13:26:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200915145958.19993-19-tzimmermann@suse.de>
+In-Reply-To: <20200522082915.4731-1-dinghao.liu@zju.edu.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfL73kWQRYSxDnh7SSlpi0XbenrsCQooROgHQTF9H+9opAp/kiXPa03L40yxbRGKjEKAyts40RsDxNxFPgFMbFeOAucSwIlQNk8rABAWrBuF33e87p95c
+ Jj1mPqoof52toqHmpCr81RE5NVbyjq3V5o6Ug4AJ5f+t0rLTcpDsuwpYDv6vbGComj7YuSI5zLtUGH6yDPzYlEL4uI+J1Xi5ViqDM0DuErKgc5O0PCV6lnRA
+ GIXRoJOLpHq5BDgzGISwDNZ2ooNBT4vFVB0hITD/XuvrUPOlAUi0nLPAfoXZY1vsc2VveR//TIgCmhyd6C2urtuzi2p6bosqV7KtXBy/y/wG8MZP2lHCz94l
+ r+0sXa/LTPGq4prFv6W/A6tCPeQ/LeiAShbNKJn/eMrIyq4JNRryFqfyAtaP+oemw9Lhl2HZi0KHG5+dISZWnQUdHvENSTbX+YYLnVjOcM4l4DXAXJ/oGUVj
+ KW+oYee3kH7nbcS27DEWCSDXsZ9QH5us9TmrIg==
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Thomas,
-
-On 09/15, Thomas Zimmermann wrote:
-> GEM object functions deprecate several similar callback interfaces in
-> struct drm_driver. This patch replaces the per-driver callbacks with
-> per-instance callbacks in vkms.
+On 22/05/2020 10:29, Dinghao Liu wrote:
+> pm_runtime_get_sync() increments the runtime PM usage counter even
+> when it returns an error code. Thus a pairing decrement is needed on
+> the error handling path to keep the counter balanced.
 > 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Thanks! Looks fine.
-
-Reviewed-by: Melissa Wen <melissa.srw@gmail.com>
-
+> Also, call pm_runtime_put() and v4l2_fh_release() when sensor_set_power()
+> returns an error code.
+> 
+> Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
 > ---
->  drivers/gpu/drm/vkms/vkms_drv.c |  8 --------
->  drivers/gpu/drm/vkms/vkms_gem.c | 13 +++++++++++++
->  2 files changed, 13 insertions(+), 8 deletions(-)
+>  drivers/media/platform/s3c-camif/camif-capture.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-> index cb0b6230c22c..726801ab44d4 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.c
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.c
-> @@ -51,12 +51,6 @@ static const struct file_operations vkms_driver_fops = {
->  	.release	= drm_release,
->  };
+> diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
+> index 9ca49af29542..d42d9cfaf674 100644
+> --- a/drivers/media/platform/s3c-camif/camif-capture.c
+> +++ b/drivers/media/platform/s3c-camif/camif-capture.c
+> @@ -552,11 +552,9 @@ static int s3c_camif_open(struct file *file)
+>  		goto err_pm;
 >  
-> -static const struct vm_operations_struct vkms_gem_vm_ops = {
-> -	.fault = vkms_gem_fault,
-> -	.open = drm_gem_vm_open,
-> -	.close = drm_gem_vm_close,
-> -};
-> -
->  static void vkms_release(struct drm_device *dev)
->  {
->  	struct vkms_device *vkms = container_of(dev, struct vkms_device, drm);
-> @@ -98,8 +92,6 @@ static struct drm_driver vkms_driver = {
->  	.release		= vkms_release,
->  	.fops			= &vkms_driver_fops,
->  	.dumb_create		= vkms_dumb_create,
-> -	.gem_vm_ops		= &vkms_gem_vm_ops,
-> -	.gem_free_object_unlocked = vkms_gem_free_object,
->  	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
->  	.gem_prime_import_sg_table = vkms_prime_import_sg_table,
+>  	ret = sensor_set_power(camif, 1);
+> -	if (!ret)
+> -		goto unlock;
+
+This is wrong, now this will call v4l2_fh_release() as well on success.
+
+This needs to be reworked.
+
+Regards,
+
+	Hans
+
 >  
-> diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
-> index a017fc59905e..19a0e260a4df 100644
-> --- a/drivers/gpu/drm/vkms/vkms_gem.c
-> +++ b/drivers/gpu/drm/vkms/vkms_gem.c
-> @@ -7,6 +7,17 @@
->  
->  #include "vkms_drv.h"
->  
-> +static const struct vm_operations_struct vkms_gem_vm_ops = {
-> +	.fault = vkms_gem_fault,
-> +	.open = drm_gem_vm_open,
-> +	.close = drm_gem_vm_close,
-> +};
-> +
-> +static const struct drm_gem_object_funcs vkms_gem_object_funcs = {
-> +	.free = vkms_gem_free_object,
-> +	.vm_ops = &vkms_gem_vm_ops,
-> +};
-> +
->  static struct vkms_gem_object *__vkms_gem_create(struct drm_device *dev,
->  						 u64 size)
->  {
-> @@ -17,6 +28,8 @@ static struct vkms_gem_object *__vkms_gem_create(struct drm_device *dev,
->  	if (!obj)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	obj->gem.funcs = &vkms_gem_object_funcs;
-> +
->  	size = roundup(size, PAGE_SIZE);
->  	ret = drm_gem_object_init(dev, &obj->gem, size);
->  	if (ret) {
-> -- 
-> 2.28.0
+> -	pm_runtime_put(camif->dev);
+>  err_pm:
+> +	pm_runtime_put(camif->dev);
+>  	v4l2_fh_release(file);
+>  unlock:
+>  	mutex_unlock(&camif->lock);
 > 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
