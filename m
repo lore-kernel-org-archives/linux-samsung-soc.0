@@ -2,213 +2,194 @@ Return-Path: <SRS0=UMxf=C3=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6935C43469
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Sep 2020 14:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AB5C43468
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Sep 2020 15:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D59823719
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Sep 2020 14:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E18C2395C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Sep 2020 15:13:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mgrImLII"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JTFat9C0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726154AbgIROs5 (ORCPT
+        id S1726298AbgIRPNZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 18 Sep 2020 10:48:57 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44513 "EHLO
+        Fri, 18 Sep 2020 11:13:25 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:51770 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726728AbgIROs4 (ORCPT
+        with ESMTP id S1726281AbgIRPNZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Sep 2020 10:48:56 -0400
+        Fri, 18 Sep 2020 11:13:25 -0400
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200918144855euoutp02f753a6b207e3e990f60eec7eb981b27c~16C-teQs32946329463euoutp02n
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Sep 2020 14:48:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200918144855euoutp02f753a6b207e3e990f60eec7eb981b27c~16C-teQs32946329463euoutp02n
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200918151323euoutp0249e412e0380043929dcadd88f33addb8~16YWzXMta1272812728euoutp02Q
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Sep 2020 15:13:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200918151323euoutp0249e412e0380043929dcadd88f33addb8~16YWzXMta1272812728euoutp02Q
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1600440535;
-        bh=RCuLRfHQO0zMamxsPVc9KnXy3A4V8FmIbMSlqAKbmTI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mgrImLIIBkbayygnBjYlCj5KeIugTkC52wSuYEtCueUwyD1XpUfl/vNjGWnOS7eaz
-         dOJVRMff+pr+KCCGhRVyO6Mdc0GFyiWd4UvKjoo97v65IWt6dgKqBYd/fBurKdLIXI
-         IHWIvMqkGnk+465Obyvr/gorTzq+f98oUZTliQ/w=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        s=mail20170921; t=1600442003;
+        bh=SZbHVV2JypCryt9GVj8eUqjOJnnk5VyYDZFqjnLzPdA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=JTFat9C0WXn81ciROxXFIIcowHMhlvZRdjq59LEqVPJHlJZz/h+jE3sW8fhkbMUUf
+         zrz9Lq5reWgDIi/o0d664y65AQWogMlifALxhxPMCvhVSbfYRh9JQ4atYBuv/9UA/K
+         +7PD6bOm303iF+bVH3MJVI8bifoU8uAbpF63BJEU=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200918144854eucas1p1967dc67825cc314eba6121726efef9cc~16C-e10zj2767027670eucas1p12;
-        Fri, 18 Sep 2020 14:48:54 +0000 (GMT)
+        20200918151322eucas1p154435b3ed506dda02cbde20320f59e9d~16YWSYSP81330713307eucas1p1D;
+        Fri, 18 Sep 2020 15:13:22 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id B8.BE.05997.6D8C46F5; Fri, 18
-        Sep 2020 15:48:54 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id BE.94.06318.29EC46F5; Fri, 18
+        Sep 2020 16:13:22 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200918144854eucas1p2ad33e726e1e3caa04ab4145f86b05486~16C_wu6F21175311753eucas1p2O;
-        Fri, 18 Sep 2020 14:48:54 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200918144854eusmtrp12b51a427d45a1a2583df8d4e1c665556~16C_wIer21892418924eusmtrp1E;
-        Fri, 18 Sep 2020 14:48:54 +0000 (GMT)
-X-AuditID: cbfec7f4-65dff7000000176d-57-5f64c8d63011
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id F9.2E.06314.6D8C46F5; Fri, 18
-        Sep 2020 15:48:54 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200918144853eusmtip111e745941de67270c021f9ae5210ac18~16C_UYDIz1497714977eusmtip1i;
-        Fri, 18 Sep 2020 14:48:53 +0000 (GMT)
+        20200918151322eucas1p236126959c3cc725132450b228701ee72~16YV6FGzN2444524445eucas1p2S;
+        Fri, 18 Sep 2020 15:13:22 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200918151322eusmtrp2fd051ad885278f61b4ae44c30dc2a27d~16YV49JF20618906189eusmtrp2S;
+        Fri, 18 Sep 2020 15:13:22 +0000 (GMT)
+X-AuditID: cbfec7f5-371ff700000018ae-d9-5f64ce927644
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 35.52.06017.19EC46F5; Fri, 18
+        Sep 2020 16:13:21 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200918151320eusmtip2208d181453ed3ef09a4f43c068dcffaa~16YUdkdOB0469904699eusmtip24;
+        Fri, 18 Sep 2020 15:13:20 +0000 (GMT)
+Subject: Re: [PATCH 00/18] Convert arch/arm to use iommu-dma
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>
-Subject: [PATCH v2 4/4] media: platform: s5p-mfc: add support for generic
- DMA-IOMMU glue code
-Date:   Fri, 18 Sep 2020 16:48:33 +0200
-Message-Id: <20200918144833.14618-5-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200918144833.14618-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjleLIzCtJLcpLzFFi42LZduznOd1rJ1LiDRb2GltsnLGe1eL8+Q3s
-        Fj0btrJazDi/j8li7ZG77BbLNv1hsjj44QmrRfvTl8wWn1v/sTlweqyZt4bRY3bDRRaPTas6
-        2Tz6tqxi9Pi8SS6ANYrLJiU1J7MstUjfLoEro/fAQuaC6XIV006eZW5gnCfZxcjJISFgIvFn
-        8y82EFtIYAWjxJM9yl2MXED2F0aJ183T2SCcz4wSlxbvZ4TpOL5vIhNEYjmjxOeNs9nhWg5t
-        +8QKUsUmYCjR9bYLbK6IgJPEwll/wYqYBTYxSex684EJJCEsEC/x8fdsFhCbRUBVoufRLHYQ
-        m1fAVuLS86csEOvkJVZvOMDcxcjBwSlgJ3G1yRJkjoRAM7vElBnfWCFqXCQObOplgrCFJV4d
-        38IOYctInJ7cwwLVwCjx8Nxadginh1HictMMqIesJe6cAwUBB9B5mhLrd+lDhB0lfi5fBLZY
-        QoBP4sZbQZAwM5A5adt0qDCvREebEES1msSs4+vg1h68cIkZwvaQmPPhByskgCYySsyec5p9
-        AqP8LIRlCxgZVzGKp5YW56anFhvlpZbrFSfmFpfmpesl5+duYgSmjtP/jn/ZwbjrT9IhRgEO
-        RiUe3hfzUuKFWBPLiitzDzFKcDArifA6nT0dJ8SbklhZlVqUH19UmpNafIhRmoNFSZzXeNHL
-        WCGB9MSS1OzU1ILUIpgsEwenVAOjpOKuXwvda7fGcM40qn5W2+XX8fewyXaRnIIXXV/fl0y2
-        DtKzzqlS3+dge3haPZdTc32/YcvrefMuv/ezyftsZ7XPQa3DPWV1glpyttmVdU0TuaI6V1n/
-        upMgmLtHRqs2yuVWglecuIfphyN3Jj5ZZ7/8ikTzvpqJMzNi+O+fURfdWWl4epcSS3FGoqEW
-        c1FxIgBmwhzKGQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOLMWRmVeSWpSXmKPExsVy+t/xu7rXTqTEG+z/xmyxccZ6Vovz5zew
-        W/Rs2MpqMeP8PiaLtUfuslss2/SHyeLghyesFu1PXzJbfG79x+bA6bFm3hpGj9kNF1k8Nq3q
-        ZPPo27KK0ePzJrkA1ig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TU
-        nMyy1CJ9uwS9jN4DC5kLpstVTDt5lrmBcZ5kFyMnh4SAicTxfROZuhi5OIQEljJKXNl+iBki
-        ISNxcloDK4QtLPHnWhcbRNEnRomlz66xgCTYBAwlut6CJDg5RARcJPbvecoMUsQssI1J4tfW
-        RUwgCWGBWIn+F2vBGlgEVCV6Hs1iB7F5BWwlLj1/ygKxQV5i9YYDQM0cHJwCdhJXmyxBwkJA
-        Ja1LlrBNYORbwMiwilEktbQ4Nz232FCvODG3uDQvXS85P3cTIzCQtx37uXkH46WNwYcYBTgY
-        lXh4X8xLiRdiTSwrrsw9xCjBwawkwut09nScEG9KYmVValF+fFFpTmrxIUZToJsmMkuJJucD
-        oyyvJN7Q1NDcwtLQ3Njc2MxCSZy3Q+BgjJBAemJJanZqakFqEUwfEwenVANjyXax2bwtn0s9
-        Vk75t//UhaMHb8+WlJ/NI/Bgu8f/i2alCg/WO2x+e0J5ktW8M+45zszGxp0OtXOZDzuzLzMu
-        v2n0Qvav4RTvmCUJ4hkXg87auYR6JG36sK7v3SGZpbFmIle8Jla9Ff97xICtdY7CqnfXClln
-        XX/zbJ6ZlkwV+5m/jXYb94kHK7EUZyQaajEXFScCAIlTWCV6AgAA
-X-CMS-MailID: 20200918144854eucas1p2ad33e726e1e3caa04ab4145f86b05486
+To:     Robin Murphy <robin.murphy@arm.com>, hch@lst.de, joro@8bytes.org,
+        linux@armlinux.org.uk
+Cc:     will@kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, vdumpa@nvidia.com, digetx@gmail.com,
+        matthias.bgg@gmail.com, yong.wu@mediatek.com,
+        geert+renesas@glider.be, magnus.damm@gmail.com, t-kristo@ti.com,
+        s-anna@ti.com, laurent.pinchart@ideasonboard.com,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <693f4d91-7dd3-31e6-92b6-7ffa84dd3226@samsung.com>
+Date:   Fri, 18 Sep 2020 17:13:22 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.0
+MIME-Version: 1.0
+In-Reply-To: <bf32cdea-ee5b-1431-3b97-c0889acdacc6@samsung.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0yTZxTG9373Emo+ipMzXNjWuCWaiCKavYmE3ZN3f5gsiybGRFi3fkEU
+        KuknOuaWVcBJO0VbM8Ci1SDGDbwwLpV7Q7V2BSkCiuhgdcLmysRiwE1B3Ww/2Pjvd55znpzz
+        vHkFWnOVixcyDTsko0GXpeWiGOflx/7lNr8+faXzQDz2j8wwuMt1n8HVD0YQvvYwxOFj5TaE
+        f6j2UNgWOMTgE661uNBewWBzeQ2Pu/Pv8dhsreRx7cgAi62ubh73Nx/l8P6aBhb3F/QiXNbT
+        TmHzlJ3D7u/aEL5dPc7h/MJk3DExyuK26XYWlx0OcrjytyIOP252MLi47WNcOLQGB2x1zNsJ
+        ZLTDQZEzjjOI9A/00sTavZw02Yd5Ul50hCW1VWaODA20ciTwrZcidZVfk8ODpxFpuWniSKHP
+        xZADBfc5UlxfhYh38AL1UcymqBS9lJW5UzKuSP0kakvD30tyQos+7+zrpUyoQ2NBKgHE1WCu
+        LqEsKErQiN8jmLzxiFaKKQQB0wSjFJMIDpb8RM9ZJjpLZxunEYz1HJ21hBDM7B1hw1OxYgp4
+        eu9GHJyYBJZxCxfmheJmmG58wocNtNjKgskWYMINtZgKp1pqIsyIr8Mvx5oi/KKYBpc778zO
+        xIDvyOhzFgSV+Bb86IoOy7T4ChQ0lNMKx8Gt0eORQCCWqsC37xKrnP0+NJ5roBSOhTFvPa/w
+        y/BP05yhAMGv/rO8UuxH0J9fhpSptTDkn+bCm2lxKZxvXqHI74BnuDUig7gABsdjlCMWgM1Z
+        SiuyGoq+mX3sN8DuPfff2o6rffQhpLXPS2afF8c+L479/70nEFOF4qRcOTtDkpMN0q5EWZct
+        5xoyEj/bnl2Lnv/zrmfeh42o/cmnbiQKSBut/sOhT9ewup1yXrYbgUBrF6rf7e5K06j1urwv
+        JOP2dGNuliS70WKB0capkyuCmzVihm6HtE2SciTjXJcSVPEmpDrVZmi2rHd6Uto148OrdoXe
+        vLd1z0FH13WNGzlbSOzJnoRLX+7WvSenvXY24avFVyouBH/PGby959WYnLtBhy9+Xf3G4zPr
+        3Bf3Pc3c2JpXetL351ZPUmjpJHk0pR37C1le+rAuWPUB9BVbz6cyiSUbeJ+18oU1q/U3on+2
+        ZdzEWMvIW3RJy2ijrPsX0InXyeMDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe8/OOTtGi9Na9TK6cVIIoVOb6R5rmtWHTtCHLtSHrGy4w6yc
+        k3NmZBTNHKGzJI3Ktlo3LdI+mJdM09YsMzMLM5aFaeEig7wUWXRBU1fgtx/P8/898MCfUajf
+        UVpmT5pdlNJMqRw9lWwdae5eUvjMnLTs9GF41vubhFbfAAllX3oRvBwepOGCpxDBjbImAgp7
+        TpJwybcSnO4rJOR6ypXQdvSzEnILipVQ0RugoMDXpoSOuvM0HC+vpqAjux1B0fN7BOR+c9PQ
+        eLoBwbuyfhqOOqPAPxSkoOHXPQqKTn2iofhDDg0/67wk5DdsBmdXNPQUVpIJ84Wg30sIN703
+        kdARaFcIBW1LhFr3W6XgyTlHCRWlubTQFainhZ68ZkKoLD4inOq8joS7rx204GzxkcKJ7AFa
+        yK8qRUJzZw2xccZ23ijZMuziwhSbbI/jEnWg53WxwOuXx/K6KMPOFfpobmm80Sym7tkvSkvj
+        d/Mp1T/C0wdnH3jyop1wIL/ahcIYzC7HQ0/Oki40lVGzJQg7L2crQou5uOWMgwrxTPwn4KJD
+        oX6E60b6iPHFTNaIm9o/Tgg0q8Ou/vFQGKNhd+Jv18smWMHWU7ikXxuS7yN8dfTKhKxi43HJ
+        3XJynEk2AndfqJ3gWewu/PR4Hx3KzMAt54Jjc4YJY1fhW75poZsx2Fv5XhHiBTi72vOP5+A3
+        wYvESaR2T7LdkxT3JMU9SbmEyFKkETNkq8Uq63nZZJUz0ix8ss1agcbadfvRz6o7yDWwpRGx
+        DOKmqfq85iQ1ZdovZ1obEWYUnEa1pq11l1plNmUeFCVbkpSRKsqNKHrstwKFdlaybayrafYk
+        XbTOALE6Q5QhKga4Oaoc1r9DzVpMdnGfKKaL0n+PYMK0DrS4atHuZO4V72ww67v1XYPd0x8Y
+        /X+k0b1r7eWRlhvVs0s9ZJ4U3HYm3JlXkxnewTpWboW5QwHNvPrECG1Wa+Kh4WtNceSUT/cj
+        uc5lPz4WRaTHDA0/tGy2H6kZ3PT98Rrj+pIN7n1fdxxbN7ot/2Fn1peY1bUJI/m8hkjIYuIM
+        HCmnmHSRCkk2/QUeyKrJcwMAAA==
+X-CMS-MailID: 20200918151322eucas1p236126959c3cc725132450b228701ee72
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200918144854eucas1p2ad33e726e1e3caa04ab4145f86b05486
+X-RootMTR: 20200820150857eucas1p18f5f2ad87703a68b6ed20a090f7c1c57
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200918144854eucas1p2ad33e726e1e3caa04ab4145f86b05486
-References: <20200918144833.14618-1-m.szyprowski@samsung.com>
-        <CGME20200918144854eucas1p2ad33e726e1e3caa04ab4145f86b05486@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20200820150857eucas1p18f5f2ad87703a68b6ed20a090f7c1c57
+References: <CGME20200820150857eucas1p18f5f2ad87703a68b6ed20a090f7c1c57@eucas1p1.samsung.com>
+        <cover.1597931875.git.robin.murphy@arm.com>
+        <bf32cdea-ee5b-1431-3b97-c0889acdacc6@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-S5P-MFC driver relies on the way the ARM DMA-IOMMU glue code works:
-the IOVA allocator uses first-fit algorithm, so the first allocated
-buffer is at 0x0 DMA/IOVA address. This is not true for the generic
-IOMMU-DMA glue code that will be used for ARM architecture soon, so add
-the needed code to support it too.
+Hi all,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc.c      | 35 ++++++++++++++++++-
- .../media/platform/s5p-mfc/s5p_mfc_common.h   |  2 ++
- 2 files changed, 36 insertions(+), 1 deletion(-)
+On 24.08.2020 13:40, Marek Szyprowski wrote:
+> On 20.08.2020 17:08, Robin Murphy wrote:
+>> After 5 years or so of intending to get round to this, finally the
+>> time comes! The changes themselves actualy turn out to be relatively
+>> mechanical; the bigger concern appears to be how to get everything
+>> merged across about 5 diffferent trees given the dependencies.
+>>
+>> I've lightly boot-tested things on Rockchip RK3288 and Exynos 4412
+>> (Odroid-U3), to the degree that their display drivers should be using
+>> IOMMU-backed buffers and don't explode (the Odroid doesn't manage to
+>> send a working HDMI signal to the one monitor I have that it actually
+>> detects, but that's a pre-existing condition...) Confirmation that the
+>> Mediatek, OMAP and Tegra changes work will be most welcome.
+>>
+>> Patches are based on 5.9-rc1, branch available here:
+>>
+>>    git://linux-arm.org/linux-rm arm/dma
+>
+> Well, my first proposal for the ARM and ARM64 DMA-mapping unification 
+> has been posted long time ago: https://lkml.org/lkml/2016/2/19/79
+>
+> Thanks for resurrecting it! :)
+>
+> I've tested this patchset on various ARM32bit Exynos based boards (not 
+> only Exynos4412) and most of them works fine after your conversion. 
+> However there are issues you cannot learn from the code.
+>
+> Conversion of the Exynos DRM was straightforward (thanks!), but there 
+> are other Exynos drivers that depends on the old ARM implementation. 
+> The S5P-MFC (only for the v5 hardware) and Exynos4 FIMC-ISP drivers 
+> depends on the first-fit IOVA allocation algorithm in the old ARM 
+> DMA-mapping. This was the main reason I've didn't continue my initial 
+> conversion attempt.
+>
+> Both drivers allocate a buffer for their firmware and then in the 
+> hardware registers address video buffers as an offset from the 
+> begginning of the firmware. This doesn't work when underlying 
+> DMA-mapping allocates IOVA with the last-fit algorithm, what the 
+> drivers/iommu/dma-iommu.c does. So far I didn't find a good solution 
+> for that issue.
+>
+> I'm open for suggestions. One more limitation for the S5P-MFC driver 
+> is that the hardware is capable only for addressing 128MiB. They will 
+> probably need to call IOMMU API directly, but I would like to keep as 
+> much from the IOMMU/DMA-mapping code as possible.
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 4e50c342b322..63cbf1d29c43 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -10,6 +10,7 @@
- #include <linux/delay.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-+#include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/sched.h>
-@@ -1201,6 +1202,10 @@ static int s5p_mfc_configure_common_memory(struct s5p_mfc_dev *mfc_dev)
- 	if (!mfc_dev->mem_bitmap)
- 		return -ENOMEM;
- 
-+	/* MFC v5 can access memory only via the 128M window */
-+	if (exynos_is_iommu_available(dev) && !IS_MFCV6_PLUS(mfc_dev))
-+		dma_set_mask_and_coherent(dev, SZ_128M - 1);
-+
- 	mfc_dev->mem_virt = dma_alloc_coherent(dev, mem_size,
- 					       &mfc_dev->mem_base, GFP_KERNEL);
- 	if (!mfc_dev->mem_virt) {
-@@ -1218,13 +1223,37 @@ static int s5p_mfc_configure_common_memory(struct s5p_mfc_dev *mfc_dev)
- 	 * as used (to keep required base alignment) and adjust base address
- 	 */
- 	if (mfc_dev->mem_base == (dma_addr_t)0) {
--		unsigned int offset = 1 << MFC_BASE_ALIGN_ORDER;
-+		unsigned int offset = MFC_MIN_VALID_BASE;
- 
- 		bitmap_set(mfc_dev->mem_bitmap, 0, offset >> PAGE_SHIFT);
- 		mfc_dev->dma_base[BANK_L_CTX] += offset;
- 		mfc_dev->dma_base[BANK_R_CTX] += offset;
- 	}
- 
-+	/*
-+	 * Generic DMA-IOMMU use last-fit memory allocation algorithm, so
-+	 * remap the firmware to the lowest supported address for MFC v5 to
-+	 * let HW properly address buffers as an offset from the firmware.
-+	 */
-+	if (IS_ENABLED(CONFIG_IOMMU_DMA) && exynos_is_iommu_available(dev) &&
-+	    !IS_MFCV6_PLUS(mfc_dev)) {
-+		struct sg_table sgt;
-+		int size;
-+
-+		if (dma_get_sgtable(dev, &sgt, mfc_dev->mem_virt,
-+				    mfc_dev->mem_base, mfc_dev->mem_size) != 0)
-+			return -ENOMEM;
-+		size = iommu_map_sgtable(iommu_get_domain_for_dev(dev),
-+					 MFC_MIN_VALID_BASE, &sgt,
-+					 IOMMU_READ | IOMMU_WRITE);
-+		sg_free_table(&sgt);
-+		if (size != mem_size)
-+			return -ENOMEM;
-+
-+		mfc_dev->dma_base[BANK_L_CTX] = MFC_MIN_VALID_BASE;
-+		mfc_dev->dma_base[BANK_R_CTX] = MFC_MIN_VALID_BASE;
-+	}
-+
- 	/* Firmware allocation cannot fail in this case */
- 	s5p_mfc_alloc_firmware(mfc_dev);
- 
-@@ -1241,6 +1270,10 @@ static void s5p_mfc_unconfigure_common_memory(struct s5p_mfc_dev *mfc_dev)
- {
- 	struct device *dev = &mfc_dev->plat_dev->dev;
- 
-+	if (IS_ENABLED(CONFIG_IOMMU_DMA) && exynos_is_iommu_available(dev) &&
-+	    !IS_MFCV6_PLUS(mfc_dev))
-+		iommu_unmap(iommu_get_domain_for_dev(dev), MFC_MIN_VALID_BASE,
-+			    mfc_dev->mem_size);
- 	dma_free_coherent(dev, mfc_dev->mem_size, mfc_dev->mem_virt,
- 			  mfc_dev->mem_base);
- 	kfree(mfc_dev->mem_bitmap);
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-index 96d1ecd1521b..f28c943b8426 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-@@ -37,6 +37,8 @@
- #define MFC_BANK2_ALIGN_ORDER	13
- #define MFC_BASE_ALIGN_ORDER	17
- 
-+#define MFC_MIN_VALID_BASE	(1 << MFC_BASE_ALIGN_ORDER)
-+
- #define MFC_FW_MAX_VERSIONS	2
- 
- #include <media/videobuf2-dma-contig.h>
+Just for the record. I've finally managed to add needed workarounds to 
+the both problematic Exynos4 drivers, so they work fine with this 
+patchset. It turned out that it wasn't that hard:
+
+https://lore.kernel.org/linux-samsung-soc/20200918144833.14618-1-m.szyprowski@samsung.com/T/#t
+
+So from my side you have a green light to go ahead and switch ARM 32bit 
+to generic code. Time to say good bye to the one of my biggest 
+architecture related things merged once to mainline Linux. ;)
+
+Best regards
 -- 
-2.17.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
