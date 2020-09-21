@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35C71C4363C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Sep 2020 20:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5315EC4363C
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Sep 2020 20:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F04EF2376F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Sep 2020 20:51:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1870723730
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Sep 2020 20:51:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600721469;
-	bh=GrcQBuUzkSCE7UvOvr0XUftHS4HEZMx37swbChp5jCo=;
+	s=default; t=1600721475;
+	bh=zb0fiXx4q88oQ4QlGImpEgmvV2wcIYbMZneDGVsL9nE=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gy3PA020F8blcRYz/AliZUq8jrvJe1xEDDxrFmh30siVh+6fTRR8qVgM9p+b2GJZa
-	 8bK9di4CGy5Hb106AxzBVlzIdI6IalGJFPdLQWEbqf1ixb8ZaRpKK5YdqjE325XPg/
-	 +SewiSBkdBqmzjmR1ZJSpi/lkPcZOvXOgkQ5QTeQ=
+	b=rIrmiss/3z+7lRIQK2VyAPSPUkgWtjiQKJwZv6v4xYAfHx7eSxlNbhSQzHX4tj2DA
+	 XjXmtEoGrN+SPTdwpEv9Mhk1xDTbnNtthKYKTzF1z4i+HJMt9zOe+z5lIxVPx4t82+
+	 JWUjqGbDX8+SjsmqNWpNiOM66no2rOHzZDmd3ZN8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbgIUUvI (ORCPT
+        id S1728293AbgIUUvO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Sep 2020 16:51:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56768 "EHLO mail.kernel.org"
+        Mon, 21 Sep 2020 16:51:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727030AbgIUUvI (ORCPT
+        id S1727062AbgIUUvO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Sep 2020 16:51:08 -0400
+        Mon, 21 Sep 2020 16:51:14 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8611A23718;
-        Mon, 21 Sep 2020 20:51:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15C1521D7A;
+        Mon, 21 Sep 2020 20:51:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600721467;
-        bh=GrcQBuUzkSCE7UvOvr0XUftHS4HEZMx37swbChp5jCo=;
+        s=default; t=1600721473;
+        bh=zb0fiXx4q88oQ4QlGImpEgmvV2wcIYbMZneDGVsL9nE=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=ikKAlphicMPpC2drKkw3KPtmkHQi3DzT4A1RTByNMNMNnEpkoXl3wH0e4lb4ArrJd
-         6fGKBc2kzqUw8jEXgGHjUTGYLldycbl6R4Ep5pSBy/5TD/NkFypyPV93TchEpqA30C
-         tU7lpoAl5j20Hh04qJ3zEmC82/SfzJETKkjARVac=
+        b=WeH4xWqDUbnrmfayiyVfy6f47B8JMK1omBHCn2XogiSRitB4Xm9ydtzd4levj5bHi
+         oig/AEYU6grBcr84LjXQa+37OlcaHMtU2ws4Vr/JovJ59BNlk5NykLJRpt0YkQS5kR
+         DaXApGlPh93oocq91VJtARDT5tb0QmzY76Xkl4xM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Lee Jones <lee.jones@linaro.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -63,9 +63,9 @@ To:     Lee Jones <lee.jones@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rpi-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: [PATCH 07/42] mfd: bcm590xx: use PLATFORM_DEVID_NONE
-Date:   Mon, 21 Sep 2020 22:49:41 +0200
-Message-Id: <20200921205016.20461-7-krzk@kernel.org>
+Subject: [PATCH 08/42] mfd: da9055: use PLATFORM_DEVID_NONE
+Date:   Mon, 21 Sep 2020 22:49:42 +0200
+Message-Id: <20200921205016.20461-8-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200921205016.20461-1-krzk@kernel.org>
 References: <20200921205016.20461-1-krzk@kernel.org>
@@ -79,25 +79,22 @@ Use PLATFORM_DEVID_NONE define instead of "-1" value because:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/mfd/bcm590xx.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/mfd/da9055-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/bcm590xx.c b/drivers/mfd/bcm590xx.c
-index bfac5dc091ca..2f7186a6f6c0 100644
---- a/drivers/mfd/bcm590xx.c
-+++ b/drivers/mfd/bcm590xx.c
-@@ -78,8 +78,9 @@ static int bcm590xx_i2c_probe(struct i2c_client *i2c_pri,
- 		goto err;
- 	}
+diff --git a/drivers/mfd/da9055-core.c b/drivers/mfd/da9055-core.c
+index 6d0af8486269..ff8fe165b937 100644
+--- a/drivers/mfd/da9055-core.c
++++ b/drivers/mfd/da9055-core.c
+@@ -400,7 +400,7 @@ int da9055_device_init(struct da9055 *da9055)
  
--	ret = devm_mfd_add_devices(&i2c_pri->dev, -1, bcm590xx_devs,
--				   ARRAY_SIZE(bcm590xx_devs), NULL, 0, NULL);
-+	ret = devm_mfd_add_devices(&i2c_pri->dev, PLATFORM_DEVID_NONE,
-+				   bcm590xx_devs, ARRAY_SIZE(bcm590xx_devs),
-+				   NULL, 0, NULL);
- 	if (ret < 0) {
- 		dev_err(&i2c_pri->dev, "failed to add sub-devices: %d\n", ret);
- 		goto err;
+ 	da9055->irq_base = regmap_irq_chip_get_base(da9055->irq_data);
+ 
+-	ret = mfd_add_devices(da9055->dev, -1,
++	ret = mfd_add_devices(da9055->dev, PLATFORM_DEVID_NONE,
+ 			      da9055_devs, ARRAY_SIZE(da9055_devs),
+ 			      NULL, da9055->irq_base, NULL);
+ 	if (ret)
 -- 
 2.17.1
 
