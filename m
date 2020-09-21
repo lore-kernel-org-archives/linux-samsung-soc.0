@@ -7,87 +7,89 @@ X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37551C4347E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Sep 2020 17:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 408EAC35257
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Sep 2020 20:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E80E821D91
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Sep 2020 17:48:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0354F21D43
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Sep 2020 20:35:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600710518;
-	bh=5HbWkTPMjTEjcRZk0/muHA9531uVnOzMMAxeJwJifjo=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=ytvC26VlXK3C3Vcmh0jdjaYfla9Yy9vpmRIuSNyyn+oSgA4PdJOAnFbuUHhOKInnV
-	 lk3mp0nl7HhIYBt16YI5iJSKUG91jjnUfAedOPLEAzjUYdkadvXwxbv/NF6k2FazzG
-	 bF+NVsjL5/eEl/8EEMWIYvF6PGDuMHI6CpRZAZdI=
+	s=default; t=1600720547;
+	bh=/wtETaXOWAeot366BdSSRX4NUfzVkmU//hz/ecaJgr4=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=TXBYU9USySjClZCzV3tJnPmAEfeSIRIMSc4W2D5BCzkq85T6Aq9Y7VxnFmTtdbQJO
+	 8MtCEEbRiAJcKZdR2DdnXYmQ2tJdhg8wgIp4kq49b0HEuWDHVMJqQy37VbKWHt0WQP
+	 iDLpF4WTMMoNOlfRHhoxxM1qzRTIyVLqGXv/RJqE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbgIURsc (ORCPT
+        id S1726599AbgIUUfo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Sep 2020 13:48:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38548 "EHLO mail.kernel.org"
+        Mon, 21 Sep 2020 16:35:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726537AbgIURsa (ORCPT
+        id S1726610AbgIUUfn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Sep 2020 13:48:30 -0400
-Received: from localhost.localdomain (unknown [194.230.155.191])
+        Mon, 21 Sep 2020 16:35:43 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7828B216C4;
-        Mon, 21 Sep 2020 17:48:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C802C218AC;
+        Mon, 21 Sep 2020 20:35:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600710510;
-        bh=5HbWkTPMjTEjcRZk0/muHA9531uVnOzMMAxeJwJifjo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DNcxGJEyXWr5Mm8SeWt4U95UvNq1O3+tIgBWdAbYwXdKu3rXJLeFlGnhuo1PtgyH9
-         oGpP3vUT82cjnzA7Lxm4AR6cvFngN1lqsjxQ7Y6HUcld3PSM+4QCMikAEylTLB8HPA
-         rquwcWXzyNCNlIO1YRxpdgbCLP6BNLdfYwtIraV8=
+        s=default; t=1600720543;
+        bh=/wtETaXOWAeot366BdSSRX4NUfzVkmU//hz/ecaJgr4=;
+        h=From:To:Subject:Date:From;
+        b=mwLAQuWvlu4WJk8B43mBWwOIhB/muusT6C8FH599begb+hnQpBUTCCuF+obyhu2DR
+         6uj3FZDo+2LIW1Fh3KcWaofCuvYYgBl2uvSjKdV/TIcn4r8qBYhNPVP20hhhjnsiM4
+         bd8n5F9DNf3gOck5W6G6RuTeNgIZ/EsTJNOZ97xg=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+To:     Sangbeom Kim <sbkim73@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: revert "add input clock to CMU in Exynos4412 Odroid"
-Date:   Mon, 21 Sep 2020 19:48:18 +0200
-Message-Id: <20200921174818.15525-1-krzk@kernel.org>
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] mfd: sec: initialize driver via module_platform_driver
+Date:   Mon, 21 Sep 2020 22:34:21 +0200
+Message-Id: <20200921203421.19456-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This reverts commit eaf2d2f6895d676dda6c95a652b58594f2887720.
+The driver was using subsys_initcall() because in old times deferred
+probe was not supported everywhere and specific ordering was needed.
+Since probe deferral works fine and specific ordering is discouraged
+(hides dependencies between drivers and couples their boot order), the
+driver can be converted to regular module_platform_driver.
 
-The commit eaf2d2f6895d ("ARM: dts: exynos: add input clock to CMU in
-Exynos4412 Odroid") breaks probing of usb3503 USB hub on Odroid U3.
-
-It changes the order of clock drivers probe: the clkout (Exynos PMU)
-driver is probed before the main clk-exynos4 driver.  The clkout driver
-on Exynos4412 depends on clk-exynos4 but it does not support deferred
-probe, therefore this dependency and changed probe order causes probe
-failure.
-
-The usb3503 USB hub on Odroid U3 on the other hand requires clkout
-clock.  This can be seen in logs:
-
-    [    5.007442] usb3503 0-0008: unable to request refclk (-517)
-
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/mfd/sec-core.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index ab291cec650a..2983e91bc7dd 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -122,7 +122,6 @@
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index 95473ff9bb4b..8d55992da19e 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -549,19 +549,7 @@ static struct i2c_driver sec_pmic_driver = {
+ 	.shutdown = sec_pmic_shutdown,
+ 	.id_table = sec_pmic_id,
  };
+-
+-static int __init sec_pmic_init(void)
+-{
+-	return i2c_add_driver(&sec_pmic_driver);
+-}
+-
+-subsys_initcall(sec_pmic_init);
+-
+-static void __exit sec_pmic_exit(void)
+-{
+-	i2c_del_driver(&sec_pmic_driver);
+-}
+-module_exit(sec_pmic_exit);
++module_i2c_driver(sec_pmic_driver);
  
- &clock {
--	clocks = <&clock CLK_XUSBXTI>;
- 	assigned-clocks = <&clock CLK_FOUT_EPLL>;
- 	assigned-clock-rates = <45158401>;
- };
+ MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
+ MODULE_DESCRIPTION("Core support for the S5M MFD");
 -- 
 2.17.1
 
