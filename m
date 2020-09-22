@@ -2,127 +2,148 @@ Return-Path: <SRS0=odV2=C7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48622C2D0E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 08:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 631D8C2D0E2
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 08:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E359623A1E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 08:23:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C643323A5F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 08:32:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T9ABVP4I"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kv8yRsau"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726746AbgIVIXH (ORCPT
+        id S1726801AbgIVIcY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Sep 2020 04:23:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37374 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726743AbgIVIXH (ORCPT
+        Tue, 22 Sep 2020 04:32:24 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:64723 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726488AbgIVIcY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Sep 2020 04:23:07 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 584D0C061755;
-        Tue, 22 Sep 2020 01:23:07 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id d6so11740688pfn.9;
-        Tue, 22 Sep 2020 01:23:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wPxHaBm+GJpOsgGu569qludylznm1Q7RqZ/7WCqRYDk=;
-        b=T9ABVP4Io72ILRuNmJK1wQLXNy7HJF012rO7xpLqU6KIrg4N4ZLvEHzQE+gg2bs/es
-         Ui3p355Tqb/62EcoHxIrIKRQRBGYr5/UpZxD4CIeNwo+DMC6uf0gsreSTv3iIJEO/LFz
-         saGDKLwKWkMOkZil3+q8RCxnn77JYBWV8ZhxUpRPBVEGCwi21wb2xmClqENLgdyKJjjf
-         aXQxva2xys8NA+zochRngqRsRckb0keXmi4op4V6cNS84la3EyutD9afib9RBjQAIfg2
-         cgBOZhkQbOBZPCnd6xKE5nEghTNzanigVxlcaDm1G9jyrvXFCoznqB3egesCx4YJOv+t
-         r7tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wPxHaBm+GJpOsgGu569qludylznm1Q7RqZ/7WCqRYDk=;
-        b=X2kIbmSjzVTKiKRDbHjbhfaiWGdD3xJ2Howe7evogWp/C+KQS6vK2QNPGOMog7myxY
-         rV8kyH/R2iHXGxYzDRhmSBvFhyc+VcDdXjb3MwcJrHi8i4cgn4Cy8NWZGTvrw8t1yAAg
-         h+NObVvduBRlsEMDQgXXXJ8Geg5ByG5M5/g3VON6MnCQLzI3ebEs2ejV4BLXtgJCDJMd
-         CneLu9RQhSaZnVYxh1inFijCuEnd82+6ElXpPfk9gCIWKgiGqPlxrcCZiscb0FstdYm+
-         4TzJLSnwdw0Ur7Rc1m+JjBaOaUKTyJ7O9DjANxU2tPLdTiKezEWLH+wyEFC6I95mGiGl
-         7zJw==
-X-Gm-Message-State: AOAM5310hlh0E+RAS5UJRW2a9bRbmSYIknwN2bul9Hs5Vl/BpAbCVChR
-        SBEoj88zQ6ik649SNaPyBmRBMkqkwt5Hz82xHQI=
-X-Google-Smtp-Source: ABdhPJzi2FDCJYACw6w9gxRyP6h63DxFy1f+mMZkZzN6oQhnq6un3C1tTVtOTbNBvNNejo0GxRaddWM2Eh2a+lBZYA4=
-X-Received: by 2002:aa7:81d5:0:b029:142:2501:39fa with SMTP id
- c21-20020aa781d50000b0290142250139famr3233304pfn.73.1600762986936; Tue, 22
- Sep 2020 01:23:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200921205016.20461-1-krzk@kernel.org> <20200921205016.20461-11-krzk@kernel.org>
-In-Reply-To: <20200921205016.20461-11-krzk@kernel.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 22 Sep 2020 11:22:50 +0300
-Message-ID: <CAHp75Vd8tjNx1N=TVSS=coC8f1R7yGP07TXw7985+7yzAQXSTw@mail.gmail.com>
-Subject: Re: [PATCH 11/42] mfd: intel_soc_pmic: use PLATFORM_DEVID_NONE
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Milo Kim <milo.kim@ti.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Tony Lindgren <tony@atomide.com>,
-        patches@opensource.cirrus.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 22 Sep 2020 04:32:24 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200922083221epoutp0110e505d573ff877183431b4e19a63f51~3DfWirgy02449024490epoutp01f
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Sep 2020 08:32:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200922083221epoutp0110e505d573ff877183431b4e19a63f51~3DfWirgy02449024490epoutp01f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1600763541;
+        bh=fGPi3yuodYVA3M593PyFWDwnUuFC9Z4QYIo5H1/3txs=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=kv8yRsauO1mcYiKUgJMhygbd5EzItGdXBsqHmVKkFzVM9QZvJwLBqZKNPks6ATeYo
+         k4qTinPvXYK6f0HlWFCTlFntF4IB8aip6zFSUNKqg1GDUxnOQEDNsB+oE9lrTPZImo
+         6tntSbvCsgNnpqUCI+UIVbrlma21nDZBLfzDZO48=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200922083220epcas1p21630dcfe30dbfdd5fbce896401e71b37~3DfV4BLG92356023560epcas1p2s;
+        Tue, 22 Sep 2020 08:32:20 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4BwZL85KllzMqYkt; Tue, 22 Sep
+        2020 08:32:16 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5B.E9.09582.C86B96F5; Tue, 22 Sep 2020 17:32:12 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200922083212epcas1p3874ca74fbb2d46214b69bc0dd757aaaf~3DfOfJVCG0436704367epcas1p3T;
+        Tue, 22 Sep 2020 08:32:12 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200922083212epsmtrp11df77360deae260fd90eb229e9f529d7~3DfOeivM_0032600326epsmtrp1u;
+        Tue, 22 Sep 2020 08:32:12 +0000 (GMT)
+X-AuditID: b6c32a37-8afff7000000256e-44-5f69b68c7b59
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        17.3C.08604.C86B96F5; Tue, 22 Sep 2020 17:32:12 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.211]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200922083212epsmtip11955315706774bcded1db345e9d0b4bd~3DfOQy9Dz2032420324epsmtip1n;
+        Tue, 22 Sep 2020 08:32:12 +0000 (GMT)
+From:   Inki Dae <inki.dae@samsung.com>
+To:     airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc:     linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-next
+Date:   Tue, 22 Sep 2020 17:38:59 +0900
+Message-Id: <1600763939-20032-1-git-send-email-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCKsWRmVeSWpSXmKPExsWy7bCmvm7Ptsx4g2udlha9504yWVz5+p7N
+        Ysb5fUwOzB7bvz1g9bjffZzJ4/MmuQDmqGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0Nd
+        Q0sLcyWFvMTcVFslF58AXbfMHKBFSgpliTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwC
+        ywK94sTc4tK8dL3k/FwrQwMDI1OgwoTsjPfT5zMXbOSqWHJ9K3MD4wOOLkZODgkBE4mNx98z
+        dTFycQgJ7GCUmLrtASuE84lR4t3SfWwQzjdGifVveplgWvZtOcgOkdjLKNF2/TyU84VR4uec
+        NWBVbAKqEhNX3GcDsUUETCU6Ji1lAbGZgeL/1v9hBrGFBZQldl/fxwpiswDFH+2+AdbLK+Ai
+        cf/cChaIbXISN891MoMskBBoZpc40vOFDSLhInHv0FxWCFtY4tXxLewQtpTEy/42dqgGRomJ
+        M04zQTgdjBJ3H1+HGmsssX/pZKAEB9BJmhLrd+lDhBUldv6eywhxKZ/Eu689rCAlEgK8Eh1t
+        QhAlShLHLt5ghLAlJC4smQh1j4fExo/PwOJCArESX76sZZ7AKDsLYcECRsZVjGKpBcW56anF
+        hgXGyPG0iRGcfLTMdzBOe/tB7xAjEwfjIUYJDmYlEV41o/R4Id6UxMqq1KL8+KLSnNTiQ4ym
+        wBCbyCwlmpwPTH95JfGGpkbGxsYWJoZmpoaGSuK8D28pxAsJpCeWpGanphakFsH0MXFwSjUw
+        xf7eeqBJ/1Sc/NUP3qqBk5X6T5XpMm/6GBGSybtOsy3+E+f3RW8S99xO3lIS8EpEWFg0wP0f
+        l4Xu2ao/YT+kNkscq/m+8mzWq3Pi/dwzPQwibr50+xHtqJj4y3hR9/Pg4NMOjrOqBf/lTH9U
+        6LvVJ1d5dWQ6D3vzhbxw1bozSSeEuQ5+9Z/7NTmkbeJKuTVLD6y7x/6AK6GfT0ZfQ3vL92mK
+        eze/X50v7rBM4PeReLs+sQ4z5z9nIq4Itjd8fy/5d0NMxD7vKobHmQL13NueR6vVsU3Uddml
+        3zR7q96RC8zRTt7+G32mThMV38+eolP5p8L3QeufhnP7I98b7Pt0roenV22ht77Cbamve/qV
+        WIozEg21mIuKEwHR4HpoxwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPJMWRmVeSWpSXmKPExsWy7bCSnG7Ptsx4g+YGSYvecyeZLK58fc9m
+        MeP8PiYHZo/t3x6wetzvPs7k8XmTXABzFJdNSmpOZllqkb5dAlfG++nzmQs2clUsub6VuYHx
+        AUcXIyeHhICJxL4tB9m7GLk4hAR2M0p8PDuHsYuRAyghIbFlKweEKSxx+HAxRMknRomlfz+x
+        gPSyCahKTFxxnw3EFhEwlzhx8TYjiM0MFP+3/g8ziC0soCyx+/o+VhCbBSj+aPcNJhCbV8BF
+        4v65FSwQN8hJ3DzXyTyBkWcBI8MqRsnUguLc9NxiwwLDvNRyveLE3OLSvHS95PzcTYzgMNDS
+        3MG4fdUHvUOMTByMhxglOJiVRHjVjNLjhXhTEiurUovy44tKc1KLDzFKc7AoifPeKFwYJySQ
+        nliSmp2aWpBaBJNl4uCUamC6cmn7rL8381WSfv1kePOviW2+ppv4/rXNZ45fOeGz8uGUyw98
+        G/84TgsWK05YYrhdoGTF/+qJWu2J58puSaxmeXib46X96y1dy3917RRJyk+reLg+St7CU+XY
+        toit2oemrnQR19g3Kbt7yeEjd7mFX5u0bDI75d+6PHaP1A6l/mtnyiM92T+Hytwwtd7P8DKo
+        L9qY5amaW4bma/Vk1991MhYuh+d+yvOvKF9c0/Fz554otsyYdRbpcx/5KLrErcrce/lJVoLe
+        n71zm5b9Cvq1omL39dBnP4yXfE6Qu/bBm+erzJaHP5mT/LjiJ6bK3ig29bgjYPRZaW329QeK
+        h85e38xevP2BEseOiTzMiZnZSizFGYmGWsxFxYkA5Hoc6nICAAA=
+X-CMS-MailID: 20200922083212epcas1p3874ca74fbb2d46214b69bc0dd757aaaf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200922083212epcas1p3874ca74fbb2d46214b69bc0dd757aaaf
+References: <CGME20200922083212epcas1p3874ca74fbb2d46214b69bc0dd757aaaf@epcas1p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 21, 2020 at 11:54 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Use PLATFORM_DEVID_NONE define instead of "-1" value because:
->  - it brings some meaning,
->  - it might point attention why auto device ID was not used.
+Hi Dave,
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+   Just two cleanups.
 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/mfd/intel_soc_pmic_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mfd/intel_soc_pmic_core.c b/drivers/mfd/intel_soc_pmic_core.c
-> index ddd64f9e3341..b7bbe58dedcc 100644
-> --- a/drivers/mfd/intel_soc_pmic_core.c
-> +++ b/drivers/mfd/intel_soc_pmic_core.c
-> @@ -86,7 +86,7 @@ static int intel_soc_pmic_i2c_probe(struct i2c_client *i2c,
->         /* Add lookup table for crc-pwm */
->         pwm_add_table(crc_pwm_lookup, ARRAY_SIZE(crc_pwm_lookup));
->
-> -       ret = mfd_add_devices(dev, -1, config->cell_dev,
-> +       ret = mfd_add_devices(dev, PLATFORM_DEVID_NONE, config->cell_dev,
->                               config->n_cell_devs, NULL, 0,
->                               regmap_irq_get_domain(pmic->irq_chip_data));
->         if (ret)
-> --
-> 2.17.1
->
+   Please kindly let me know if there is any problem.
 
+Thanks,
+Inki Dae
 
--- 
-With Best Regards,
-Andy Shevchenko
+The following changes since commit b40be05ed255d9a0257fb66ab2728ecca2c9d597:
+
+  Merge branch 'for-5.10-drm-sg-fix' of https://github.com/mszyprow/linux into drm-next (2020-09-17 16:07:11 +1000)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-v5.10
+
+for you to fetch changes up to ddfd4ab6bb08832e1261d7c8c4ae11e5568485af:
+
+  drm/exynos: Fix dma_parms allocation (2020-09-22 13:49:09 +0900)
+
+----------------------------------------------------------------
+Two cleanups
+- Simply use dev_err_probe() instead of returning -EPROBE_DEFER.
+- Drop drm_parms allocation and deallocation code which aren't needed.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (2):
+      drm/exynos: dsi: Simplify with dev_err_probe()
+      drm/exynos: hdmi: Simplify with dev_err_probe()
+
+Marek Szyprowski (1):
+      drm/exynos: Fix dma_parms allocation
+
+ drivers/gpu/drm/exynos/exynos_drm_dma.c | 27 +--------------------------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c |  7 ++-----
+ drivers/gpu/drm/exynos/exynos_hdmi.c    |  7 ++-----
+ 3 files changed, 5 insertions(+), 36 deletions(-)
