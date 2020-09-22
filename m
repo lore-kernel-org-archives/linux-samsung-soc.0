@@ -2,97 +2,83 @@ Return-Path: <SRS0=odV2=C7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4BFBC4363D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 15:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC67C4727C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 19:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C8FF2388B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 15:57:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 435F0238D6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 19:23:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600790231;
-	bh=GFbvZo8YdYmnjYOB7nFfXL1WeZICwV/G0hv27J459kE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Yv+O/r5Mx1hzR6hfqVk0yyQ1PaPe6CPFoSIcGMnDeLBjMNfyETHLHZT7D9nMNwP5O
-	 NcSLZ+e9slqGRhIZKALE3cmKKJgxIFubxdfwBre/pM9Ft+KG51TOepPZsOiMG5KlIi
-	 U208nXqBbxgIBeY/PzVQLFsgio9KmjjkctEfbKyA=
+	s=default; t=1600802638;
+	bh=HE3FPRd/RHytxOWMqvWVJQBApbrarbBnl7sA2NPA458=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=xDkDfu954LBZ1lRVgEoSiPqaa6yVKsQrp2bfZrXu4zOEmnz3BX+5FghTxnbDBcKyv
+	 9Apw6QgpN5cPKWwJuIH2G+AZPy5fObHdREVEyfN439m+24PycLgoJnLLsJmQjFqvqH
+	 emsB4AXPkJeKNDvghMziQO3NeHgw8XG14EIt1vDo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbgIVP5K (ORCPT
+        id S1726682AbgIVTX5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Sep 2020 11:57:10 -0400
-Received: from mail-ej1-f65.google.com ([209.85.218.65]:40001 "EHLO
-        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbgIVP5K (ORCPT
+        Tue, 22 Sep 2020 15:23:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34698 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726448AbgIVTX5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Sep 2020 11:57:10 -0400
-Received: by mail-ej1-f65.google.com with SMTP id z22so23592790ejl.7;
-        Tue, 22 Sep 2020 08:57:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sERBe70Mn/s4g1duy0j0yN11x3Ks4EdvrlFMkdpqRYU=;
-        b=gdx0VcqiR+Jph8khncoEJ/XVs2/hFWcFMQwDiBmIyqITg9WiVUN08OnAjSRtP0Y00I
-         uSBytkcG0yQqQRO2qL1+iScyLB1JHcPYOsuolnr9v/JlXWTJ2u29rE/QKP1greFImVG4
-         wMZH7Q7jwIoHwngFMX5n5J0QCX9ttrjx/3GDiUNwt0UP24hSG2yNt/G8eb9UvBxmckqz
-         rljgG9XkdeBJ/+eAn8u7j++FZLOE5whXE3ldax0XCvy0sthYWbebMXbtsOok+X/a8MVI
-         9Qx3a1QVp4P7WCqxUKoCLOAAItBSqW+XCbnhfYHFyfyZAdXR6DxM/3fkDHSvPyFIPCm9
-         8VWw==
-X-Gm-Message-State: AOAM530626KXf+bua4wZACqAoA4CkfN6+w15DZItmsRhsJlwuF+qdY5H
-        4SHEGcsNEatrEU+yey3MFy0=
-X-Google-Smtp-Source: ABdhPJx8NxfXDC6lJn3W2A8rdpFB8klB1mSGI7I0Z2Vwbyot9dGPKKj50qx/B3J0tVWKDrQaPzmYOQ==
-X-Received: by 2002:a17:906:b146:: with SMTP id bt6mr5512551ejb.287.1600790228544;
-        Tue, 22 Sep 2020 08:57:08 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.191])
-        by smtp.googlemail.com with ESMTPSA id bx24sm11577039ejb.51.2020.09.22.08.57.05
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Sep 2020 08:57:07 -0700 (PDT)
-Date:   Tue, 22 Sep 2020 17:57:02 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos: revert "add input clock to CMU in
- Exynos4412 Odroid"
-Message-ID: <20200922155702.GA5580@kozik-lap>
-References: <20200921174818.15525-1-krzk@kernel.org>
+        Tue, 22 Sep 2020 15:23:57 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2669A2376F;
+        Tue, 22 Sep 2020 19:23:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600802637;
+        bh=HE3FPRd/RHytxOWMqvWVJQBApbrarbBnl7sA2NPA458=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=vBRTd+eD7aMY/3tF3qsYB7xdIKSMn4y6HQjsGwJ9XVyOboxdoL1Wcst0OG3Nl/e6s
+         ttpYTIsWDp9bluVo81IXUnG1XYOnS/whlmS0nagPObYmGA6ngk861u2R9CX5wlLiiE
+         9ApY54zv8nmixZTwEvnem6NQyt/s8Kj/SrQMcPXk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200921174818.15525-1-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f086a2ed-3825-bdb7-1ed6-02f2978713c2@samsung.com>
+References: <CGME20200922100235eucas1p29e2d2b543dee8504a69cd059db78a4df@eucas1p2.samsung.com> <f086a2ed-3825-bdb7-1ed6-02f2978713c2@samsung.com>
+Subject: Re: [GIT PULL] clk: samsung: Updates for v5.10
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date:   Tue, 22 Sep 2020 12:23:55 -0700
+Message-ID: <160080263573.310579.13874284932570545017@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 21, 2020 at 07:48:18PM +0200, Krzysztof Kozlowski wrote:
-> This reverts commit eaf2d2f6895d676dda6c95a652b58594f2887720.
-> 
-> The commit eaf2d2f6895d ("ARM: dts: exynos: add input clock to CMU in
-> Exynos4412 Odroid") breaks probing of usb3503 USB hub on Odroid U3.
-> 
-> It changes the order of clock drivers probe: the clkout (Exynos PMU)
-> driver is probed before the main clk-exynos4 driver.  The clkout driver
-> on Exynos4412 depends on clk-exynos4 but it does not support deferred
-> probe, therefore this dependency and changed probe order causes probe
-> failure.
-> 
-> The usb3503 USB hub on Odroid U3 on the other hand requires clkout
-> clock.  This can be seen in logs:
-> 
->     [    5.007442] usb3503 0-0008: unable to request refclk (-517)
-> 
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 -
+Quoting Sylwester Nawrocki (2020-09-22 03:02:34)
+> Hi Stephen, Mike,
+>=20
+>=20
+> The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bb=
+f5:
+>=20
+>   Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
+>=20
+> are available in the git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/=
+clk-v5.10-samsung
+>=20
+> for you to fetch changes up to ff8e0ff9b99643a32f7e33a96867e76d0fa10f76:
+>=20
+>   clk: samsung: Use cached clk_hws instead of __clk_lookup() calls (2020-=
+09-17 12:05:18 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Applied.
-
-Best regards,
-Krzysztof
-
+Thanks. Pulled into clk-next
