@@ -8,113 +8,116 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 579FFC4727D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 08:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E43C2D0E2
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 08:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6A3823A1E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 08:04:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AC64239D2
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 08:04:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="j1bxxd/r"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dF+Dqn99"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbgIVIE3 (ORCPT
+        id S1726559AbgIVIEg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Sep 2020 04:04:29 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58832 "EHLO
+        Tue, 22 Sep 2020 04:04:36 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58868 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbgIVIE2 (ORCPT
+        with ESMTP id S1726554AbgIVIEe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Sep 2020 04:04:28 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200922080426euoutp0134edd2fa3fca1e7b83cbcf6a08671122~3DG_xS1Hp3232332323euoutp010
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Sep 2020 08:04:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200922080426euoutp0134edd2fa3fca1e7b83cbcf6a08671122~3DG_xS1Hp3232332323euoutp010
+        Tue, 22 Sep 2020 04:04:34 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200922080432euoutp01d22c0c97297305ecf6a6a046d1ac1091~3DHEcHao63141231412euoutp01e
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Sep 2020 08:04:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200922080432euoutp01d22c0c97297305ecf6a6a046d1ac1091~3DHEcHao63141231412euoutp01e
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1600761866;
-        bh=vMZZdD6CU4Tq8VLs7D3b0T5e/AAfjtVgzf6Xc6Ok4E0=;
+        s=mail20170921; t=1600761872;
+        bh=t5JgHuaA0LpHPq4LbftovBXGuGuzQ1cQIB+yPo9jjcs=;
         h=Subject:To:From:Date:In-Reply-To:References:From;
-        b=j1bxxd/r4p1rnR3l0CngqeJ5TUEfIJAZEqCQOFKrfq7K2iu8+d/Hp4DgOxZLVEsPw
-         Y7xlYzZJtd1+UeBvyVLBpZnFo9zxu0r1H7itRsMDaD3i0NykBUSegZD9SydHK3n9Gn
-         SyjkbA+578LhjFLZE0UZtwGMFTU4f3kv+OqoWOv0=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200922080426eucas1p1cf421a684b96be9c16c4cecf2d37f10f~3DG_hfbOO0725507255eucas1p1d;
-        Tue, 22 Sep 2020 08:04:26 +0000 (GMT)
+        b=dF+Dqn99CopSxq1ozccMHygJgkX9xFlCP23wGeXqtrS5UeMsxhJMFW6R7ljaeCwFs
+         VnUqqKUREeeFzTOpWEhH0Y0hCcNFR5l7jk7jFoyJ5QBk6FwJIBws86b7gVizntUofB
+         Fw+kr57Ksb+jtcfsi4fk4XKXNcoxuPThG/hnbCHM=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200922080432eucas1p2937967313737d3aacd37477a069791f9~3DHEHaiiS2319723197eucas1p2b;
+        Tue, 22 Sep 2020 08:04:32 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id DE.1D.06456.A00B96F5; Tue, 22
-        Sep 2020 09:04:26 +0100 (BST)
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 76.DC.06318.F00B96F5; Tue, 22
+        Sep 2020 09:04:31 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200922080425eucas1p11ccdb959d694d6de86a249bf9c4d1f0e~3DG_JTXxu0946509465eucas1p1F;
-        Tue, 22 Sep 2020 08:04:25 +0000 (GMT)
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200922080431eucas1p23ff07fa3bb202e7d3ab90a55aa833d48~3DHDqRS-x0085000850eucas1p2v;
+        Tue, 22 Sep 2020 08:04:31 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200922080425eusmtrp19c07c4d48061b191b09503859c967b2e~3DG_IrTJV1174311743eusmtrp1z;
-        Tue, 22 Sep 2020 08:04:25 +0000 (GMT)
-X-AuditID: cbfec7f2-809ff70000001938-d6-5f69b00a37bf
+        20200922080431eusmtrp1d7fab84d77fa82174f81f89cb23a7f5e~3DHDplAdy1146911469eusmtrp1V;
+        Tue, 22 Sep 2020 08:04:31 +0000 (GMT)
+X-AuditID: cbfec7f5-38bff700000018ae-49-5f69b00f8bbf
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 76.71.06314.900B96F5; Tue, 22
-        Sep 2020 09:04:25 +0100 (BST)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 39.71.06314.F00B96F5; Tue, 22
+        Sep 2020 09:04:31 +0100 (BST)
 Received: from [106.210.88.143] (unknown [106.210.88.143]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200922080425eusmtip1316409021e73d1389aa52f1baed72a13~3DG9xDjyF0959909599eusmtip1b;
-        Tue, 22 Sep 2020 08:04:25 +0000 (GMT)
-Subject: Re: [PATCH] mfd: sec: initialize driver via module_platform_driver
+        20200922080431eusmtip1759b71075b7ca2ba90c31bf9521834c9~3DHDLncnh0969309693eusmtip1O;
+        Tue, 22 Sep 2020 08:04:31 +0000 (GMT)
+Subject: Re: [PATCH] clk: s2mps11: initialize driver via
+ module_platform_driver
 To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Sangbeom Kim <sbkim73@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <ca74d48f-f611-19ca-87ce-24944535c135@samsung.com>
-Date:   Tue, 22 Sep 2020 10:04:25 +0200
+Message-ID: <fc06b97d-a2b4-f263-fba4-505dfc75c43f@samsung.com>
+Date:   Tue, 22 Sep 2020 10:04:30 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
         Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <20200921203421.19456-1-krzk@kernel.org>
+In-Reply-To: <20200921203558.19554-1-krzk@kernel.org>
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH+e3e3d2tJtdpeLKHNSkqcCoVDAzTCBn0T1SURGrXvEzLbbbr
-        sweJRqmJiEO0OTGD0malLlkiIamoU2szRZsPyjekjcIH5SDJ+evhf59zzvf8zvkefjQhqxb6
-        00naVE6vZZPllIS0dq06giQNSXEhrQuUsrG8Xqh0OBpEys8rnUg52GKilOWOVoHyQ+2yIIJS
-        Wcz5lGp8+A2lKmoyI9WSZfdp8qLkWAKXnJTO6YPDL0sSbU43Smnfkjk0YULZyCYuQGIamCPw
-        qjefKEASWsbUIlh4PCPEwTKCzolfJA6WELzrGVmv0Bstlc2xOF+DoM5kR56nZMw3BJPPbnvY
-        hzkFltkxyiPyZb4i+PhkUuApUEwoFLgKKA9LmXDIvmsSephk9kFbjX2DtzGx0NU7RWKNN/Q8
-        nNlgMXMUOtxVG70EEwCvXSYCsx+MzlQJPMOAMYhgIMdGYnMn4VNjiwizD8x3N/3hndBnKCRx
-        Q+761vYXIhwUIhjMKUdYFQbjdjfl8UwwB6G+JRinI2FqyILwKbzA6fLGS3hBibWMwGkp5N2T
-        YfV+MHa//De2rX+AwKyC2pxCqhjtNW6yadxkzbjJmvH/Do8QaUZ+XBqvUXN8qJbLUPCshk/T
-        qhVXdBoLWv84fWvdi81oZSC+HTE0km+Vvi1NjJMJ2XQ+S9OOgCbkvtIT7/tiZdIENusGp9fF
-        6dOSOb4d7aBJuZ/08OMvMTJGzaZy1zguhdP/rQposX82Ks7MuBVjbTy7fPX6z+eG+Lyimok9
-        Lp5U/xjZhYYkXLRiOifQ5vV90ZluzR2fVtlRUOABRVRrQNXY3Pxqx/D94/1P2WbeeIaVPaic
-        HnWURWfrquvnZi9UNIQ7Kkotd7i1SxQzFWkICxG3mXN12+sUS94lkO4+73fTGQXnIuQkn8iG
-        HiL0PPsb5JaftjQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsVy+t/xu7qcGzLjDT7s1bbYOGM9q8X58xvY
-        Le5/PcpocXnXHDaLGef3MVlcXPGFyYHNY9OqTjaPO9f2sHn0bVnF6PF5k1wAS5SeTVF+aUmq
-        QkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexokbvxgLDnFXXH0w
-        h7GB8QRnFyMHh4SAicTcHXFdjFwcQgJLGSU2XWhi7GLkBIrLSJyc1sAKYQtL/LnWxQZR9Bao
-        6OwBsISwgLfEpqe3wRIiAm8YJT49PssCUdXBKHH1fh87SBWbgKFE11uQdk4OXgE7iYaWOWDd
-        LAKqEgeXnwOzRQXiJM70vICqEZQ4OfMJC4jNKWAqcfjXfLA4s4CZxLzND5khbHmJ7W/nQNni
-        EreezGeawCg4C0n7LCQts5C0zELSsoCRZRWjSGppcW56brGhXnFibnFpXrpecn7uJkZgLG07
-        9nPzDsZLG4MPMQpwMCrx8B6YmhEvxJpYVlyZe4hRgoNZSYTX6ezpOCHelMTKqtSi/Pii0pzU
-        4kOMpkDPTWSWEk3OB8Z5Xkm8oamhuYWlobmxubGZhZI4b4fAwRghgfTEktTs1NSC1CKYPiYO
-        TqkGxv4++XIuW95Ae4XNSZnO8or8i2TEeCQem3itfn9Pu6YzNMffYcsmicuba5pmFUqZ2wfc
-        NntW+rkpJXbW5BjVn4/YzViaJSuPL9hVWhZW7GcTtNT5lVT3LOZoA4E3vK9fZDdKHA23uqD/
-        YFVZcaiz6bwwA633P9b4JTEdFdK4IHRMu7BqwVIlluKMREMt5qLiRADhrNZmuwIAAA==
-X-CMS-MailID: 20200922080425eucas1p11ccdb959d694d6de86a249bf9c4d1f0e
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOKsWRmVeSWpSXmKPExsWy7djP87r8GzLjDX5usbbYOGM9q8X58xvY
+        LT723GO1uLxrDpvFjPP7mCwunnK1uLjiC5PFv2sbWRw4PN7faGX32LSqk82jb8sqRo/Pm+QC
+        WKK4bFJSczLLUov07RK4Mr5fnMRU0MtTceXTHtYGxhlcXYycHBICJhKHnu1jA7GFBFYwSrQ2
+        mELYXxglnq2Wh7A/M0rsOK4MU79jRSN7FyMXUHw5o8TuZetZIZz3jBKHv35jBKkSFgiU+H3s
+        OhNIQkRgK5PExhmdYCvYBAwlut52gdm8AnYSkw9sZAKxWQRUJZZc6gFrFhWIkzh26hELRI2g
+        xMmZT4BsDg5OAVOJHe85QcLMAvIS29/OYYawxSVuPZkPtktCYBW7xOPj71khTnWRuLRnBROE
+        LSzx6vgWdghbRuL05B4WiIZmRomH59ayQzg9jBKXm2YwQlRZS9w594sNZDOzgKbE+l36EGFH
+        iWfPvjKDhCUE+CRuvBWEOIJPYtK26VBhXomONiGIajWJWcfXwa09eOESVImHxN17BRMYFWch
+        eXIWks9mIflsFsIJCxhZVjGKp5YW56anFhvnpZbrFSfmFpfmpesl5+duYgQmn9P/jn/dwbjv
+        T9IhRgEORiUe3gNTM+KFWBPLiitzDzFKcDArifA6nT0dJ8SbklhZlVqUH19UmpNafIhRmoNF
+        SZzXeNHLWCGB9MSS1OzU1ILUIpgsEwenVAOjaefe5nA9bbf/6cfyZa6ybeBmUN7uvfnkjnv6
+        t69vWvP0g+3qx8obdjNMuZn+7Py3vGntH9QZHktsN27btin9985V+R55c3z87q3w0v+TNSNs
+        gZNatnPdtAVXgty5St9JWjIftZhtFtC222E7g5qs66vFtdF1G3eYbbKNDshuM16R27bHlddM
+        iaU4I9FQi7moOBEAqLuKzjoDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsVy+t/xu7r8GzLjDab/UrHYOGM9q8X58xvY
+        LT723GO1uLxrDpvFjPP7mCwunnK1uLjiC5PFv2sbWRw4PN7faGX32LSqk82jb8sqRo/Pm+QC
+        WKL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0Mr5f
+        nMRU0MtTceXTHtYGxhlcXYycHBICJhI7VjSydzFycQgJLGWU+Hb1PhtEQkbi5LQGVghbWOLP
+        tS42iKK3jBLTf+xnBkkICwRK/D52nQkkISKwlUmib3c7WEJIoINRYv87FxCbTcBQouttF9hU
+        XgE7ickHNjKB2CwCqhJLLvUwgtiiAnESZ3peQNUISpyc+YSli5GDg1PAVGLHe06QMLOAmcS8
+        zQ+ZIWx5ie1v50DZ4hK3nsxnmsAoOAtJ9ywkLbOQtMxC0rKAkWUVo0hqaXFuem6xoV5xYm5x
+        aV66XnJ+7iZGYGxtO/Zz8w7GSxuDDzEKcDAq8fAemJoRL8SaWFZcmXuIUYKDWUmE1+ns6Tgh
+        3pTEyqrUovz4otKc1OJDjKZAv01klhJNzgfGfV5JvKGpobmFpaG5sbmxmYWSOG+HwMEYIYH0
+        xJLU7NTUgtQimD4mDk6pBsYJ33327vCdM3PuB9MPWeI7mI9e/xe52+yw4PziKdmpAaXWB6zC
+        9kYefBN86ocIS9cc1SfCZTm3w7ZLXDL12VdnI1XivP9w0cVfbgeSp3VUPN3dfC/I9LehqtWP
+        bZO6eJYmazQFvjrjO+/jjlLDXEFnUXGRhl7OV/6nmxJjt8pOWOToNM0qea4SS3FGoqEWc1Fx
+        IgC1xMfPwwIAAA==
+X-CMS-MailID: 20200922080431eucas1p23ff07fa3bb202e7d3ab90a55aa833d48
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200921203605eucas1p2cd3ab81a750ccbe8dda839ad9f0e98e4
+X-RootMTR: 20200921203614eucas1p19b9203eb6bbd7b80647f7e48705c731a
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200921203605eucas1p2cd3ab81a750ccbe8dda839ad9f0e98e4
-References: <CGME20200921203605eucas1p2cd3ab81a750ccbe8dda839ad9f0e98e4@eucas1p2.samsung.com>
-        <20200921203421.19456-1-krzk@kernel.org>
+X-CMS-RootMailID: 20200921203614eucas1p19b9203eb6bbd7b80647f7e48705c731a
+References: <CGME20200921203614eucas1p19b9203eb6bbd7b80647f7e48705c731a@eucas1p1.samsung.com>
+        <20200921203558.19554-1-krzk@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hi Krzysztof,
 
-On 21.09.2020 22:34, Krzysztof Kozlowski wrote:
+On 21.09.2020 22:35, Krzysztof Kozlowski wrote:
 > The driver was using subsys_initcall() because in old times deferred
 > probe was not supported everywhere and specific ordering was needed.
 > Since probe deferral works fine and specific ordering is discouraged
@@ -124,34 +127,33 @@ On 21.09.2020 22:34, Krzysztof Kozlowski wrote:
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->   drivers/mfd/sec-core.c | 14 +-------------
->   1 file changed, 1 insertion(+), 13 deletions(-)
+>   drivers/clk/clk-s2mps11.c | 13 +------------
+>   1 file changed, 1 insertion(+), 12 deletions(-)
 >
-> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-> index 95473ff9bb4b..8d55992da19e 100644
-> --- a/drivers/mfd/sec-core.c
-> +++ b/drivers/mfd/sec-core.c
-> @@ -549,19 +549,7 @@ static struct i2c_driver sec_pmic_driver = {
->   	.shutdown = sec_pmic_shutdown,
->   	.id_table = sec_pmic_id,
+> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+> index 2ce370c804aa..aa21371f9104 100644
+> --- a/drivers/clk/clk-s2mps11.c
+> +++ b/drivers/clk/clk-s2mps11.c
+> @@ -267,18 +267,7 @@ static struct platform_driver s2mps11_clk_driver = {
+>   	.remove = s2mps11_clk_remove,
+>   	.id_table = s2mps11_clk_id,
 >   };
 > -
-> -static int __init sec_pmic_init(void)
+> -static int __init s2mps11_clk_init(void)
 > -{
-> -	return i2c_add_driver(&sec_pmic_driver);
+> -	return platform_driver_register(&s2mps11_clk_driver);
 > -}
+> -subsys_initcall(s2mps11_clk_init);
 > -
-> -subsys_initcall(sec_pmic_init);
-> -
-> -static void __exit sec_pmic_exit(void)
+> -static void __exit s2mps11_clk_cleanup(void)
 > -{
-> -	i2c_del_driver(&sec_pmic_driver);
+> -	platform_driver_unregister(&s2mps11_clk_driver);
 > -}
-> -module_exit(sec_pmic_exit);
-> +module_i2c_driver(sec_pmic_driver);
+> -module_exit(s2mps11_clk_cleanup);
+> +module_platform_driver(s2mps11_clk_driver);
 >   
->   MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
->   MODULE_DESCRIPTION("Core support for the S5M MFD");
+>   MODULE_DESCRIPTION("S2MPS11 Clock Driver");
+>   MODULE_AUTHOR("Yadwinder Singh Brar <yadi.brar@samsung.com>");
 
 Best regards
 -- 
