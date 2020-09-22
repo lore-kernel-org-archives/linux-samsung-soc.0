@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9FBC4727F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 11:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 246B1C4727E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 11:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B0BE221EB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 11:50:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC167239A1
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 11:50:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbgIVLuM (ORCPT
+        id S1726657AbgIVLuU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Sep 2020 07:50:12 -0400
-Received: from elvis.franken.de ([193.175.24.41]:51267 "EHLO elvis.franken.de"
+        Tue, 22 Sep 2020 07:50:20 -0400
+Received: from elvis.franken.de ([193.175.24.41]:51272 "EHLO elvis.franken.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727004AbgIVLuG (ORCPT
+        id S1727004AbgIVLuT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Sep 2020 07:50:06 -0400
+        Tue, 22 Sep 2020 07:50:19 -0400
 Received: from uucp (helo=alpha)
         by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1kKfxr-000822-05; Tue, 22 Sep 2020 12:56:03 +0200
+        id 1kKfxr-000822-06; Tue, 22 Sep 2020 12:56:03 +0200
 Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 1F289C0FFF; Tue, 22 Sep 2020 10:51:16 +0200 (CEST)
-Date:   Tue, 22 Sep 2020 10:51:16 +0200
+        id 4F214C0FFF; Tue, 22 Sep 2020 10:51:34 +0200 (CEST)
+Date:   Tue, 22 Sep 2020 10:51:34 +0200
 From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -46,31 +46,26 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         nouveau@lists.freedesktop.org, netdev@vger.kernel.org,
         linux-scsi@vger.kernel.org, linux-mm@kvack.org,
         alsa-devel@alsa-project.org
-Subject: Re: [PATCH 12/18] sgiseeq: convert to dma_alloc_noncoherent
-Message-ID: <20200922085116.GF8477@alpha.franken.de>
+Subject: Re: [PATCH 13/18] 53c700: convert to dma_alloc_noncoherent
+Message-ID: <20200922085134.GG8477@alpha.franken.de>
 References: <20200915155122.1768241-1-hch@lst.de>
- <20200915155122.1768241-13-hch@lst.de>
+ <20200915155122.1768241-14-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200915155122.1768241-13-hch@lst.de>
+In-Reply-To: <20200915155122.1768241-14-hch@lst.de>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 05:51:16PM +0200, Christoph Hellwig wrote:
+On Tue, Sep 15, 2020 at 05:51:17PM +0200, Christoph Hellwig wrote:
 > Use the new non-coherent DMA API including proper ownership transfers.
-> This includes adding additional calls to dma_sync_desc_dev as the
-> old syncing was rather ad-hoc.
-> 
-> Thanks to Thomas Bogendoerfer for debugging the ownership transfer
-> issues.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  drivers/net/ethernet/seeq/sgiseeq.c | 28 ++++++++++++++++++----------
->  1 file changed, 18 insertions(+), 10 deletions(-)
+>  drivers/scsi/53c700.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
 
 Tested-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 
