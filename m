@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C50CFC49ECB
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F27C4742A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E26A2388A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E94B238D7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726748AbgIWKWS (ORCPT
+        id S1726761AbgIWKWU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Sep 2020 06:22:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57174 "EHLO mx2.suse.de"
+        Wed, 23 Sep 2020 06:22:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57482 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726709AbgIWKWR (ORCPT
+        id S1726662AbgIWKWT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Sep 2020 06:22:17 -0400
+        Wed, 23 Sep 2020 06:22:19 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2DD48B28F;
-        Wed, 23 Sep 2020 10:22:53 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 1F324B283;
+        Wed, 23 Sep 2020 10:22:55 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -61,10 +61,10 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Thierry Reding <treding@nvidia.com>
-Subject: [PATCH v3 15/22] drm/tegra: Introduce GEM object functions
-Date:   Wed, 23 Sep 2020 12:21:52 +0200
-Message-Id: <20200923102159.24084-16-tzimmermann@suse.de>
+        Melissa Wen <melissa.srw@gmail.com>
+Subject: [PATCH v3 17/22] drm/vgem: Introduce GEM object functions
+Date:   Wed, 23 Sep 2020 12:21:54 +0200
+Message-Id: <20200923102159.24084-18-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200923102159.24084-1-tzimmermann@suse.de>
 References: <20200923102159.24084-1-tzimmermann@suse.de>
@@ -76,58 +76,74 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in tegra.
+per-instance callbacks in vgem. The only exception is gem_prime_mmap,
+which is non-trivial to convert.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Melissa Wen <melissa.srw@gmail.com>
 ---
- drivers/gpu/drm/tegra/drm.c | 4 ----
- drivers/gpu/drm/tegra/gem.c | 8 ++++++++
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/vgem/vgem_drv.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index ba9d1c3e7cac..f0f581cd345e 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -858,12 +858,8 @@ static struct drm_driver tegra_drm_driver = {
- 	.debugfs_init = tegra_debugfs_init,
- #endif
+diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+index cb884c890065..fa54a6d1403d 100644
+--- a/drivers/gpu/drm/vgem/vgem_drv.c
++++ b/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -50,6 +50,8 @@
+ #define DRIVER_MAJOR	1
+ #define DRIVER_MINOR	0
  
--	.gem_free_object_unlocked = tegra_bo_free_object,
--	.gem_vm_ops = &tegra_bo_vm_ops,
--
- 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
--	.gem_prime_export = tegra_gem_prime_export,
- 	.gem_prime_import = tegra_gem_prime_import,
++static const struct drm_gem_object_funcs vgem_gem_object_funcs;
++
+ static struct vgem_device {
+ 	struct drm_device drm;
+ 	struct platform_device *platform;
+@@ -167,6 +169,8 @@ static struct drm_vgem_gem_object *__vgem_gem_create(struct drm_device *dev,
+ 	if (!obj)
+ 		return ERR_PTR(-ENOMEM);
  
- 	.dumb_create = tegra_bo_dumb_create,
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index a2bac20ff19d..794ec2456934 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -230,6 +230,12 @@ static int tegra_bo_iommu_unmap(struct tegra_drm *tegra, struct tegra_bo *bo)
++	obj->base.funcs = &vgem_gem_object_funcs;
++
+ 	ret = drm_gem_object_init(dev, &obj->base, roundup(size, PAGE_SIZE));
+ 	if (ret) {
+ 		kfree(obj);
+@@ -401,12 +405,20 @@ static int vgem_prime_mmap(struct drm_gem_object *obj,
  	return 0;
  }
  
-+static const struct drm_gem_object_funcs tegra_gem_object_funcs = {
-+	.free = tegra_bo_free_object,
-+	.export = tegra_gem_prime_export,
-+	.vm_ops = &tegra_bo_vm_ops,
++static const struct drm_gem_object_funcs vgem_gem_object_funcs = {
++	.free = vgem_gem_free_object,
++	.pin = vgem_prime_pin,
++	.unpin = vgem_prime_unpin,
++	.get_sg_table = vgem_prime_get_sg_table,
++	.vmap = vgem_prime_vmap,
++	.vunmap = vgem_prime_vunmap,
++	.vm_ops = &vgem_gem_vm_ops,
 +};
 +
- static struct tegra_bo *tegra_bo_alloc_object(struct drm_device *drm,
- 					      size_t size)
- {
-@@ -240,6 +246,8 @@ static struct tegra_bo *tegra_bo_alloc_object(struct drm_device *drm,
- 	if (!bo)
- 		return ERR_PTR(-ENOMEM);
+ static struct drm_driver vgem_driver = {
+ 	.driver_features		= DRIVER_GEM | DRIVER_RENDER,
+ 	.open				= vgem_open,
+ 	.postclose			= vgem_postclose,
+-	.gem_free_object_unlocked	= vgem_gem_free_object,
+-	.gem_vm_ops			= &vgem_gem_vm_ops,
+ 	.ioctls				= vgem_ioctls,
+ 	.num_ioctls 			= ARRAY_SIZE(vgem_ioctls),
+ 	.fops				= &vgem_driver_fops,
+@@ -415,13 +427,8 @@ static struct drm_driver vgem_driver = {
  
-+	bo->gem.funcs = &tegra_gem_object_funcs;
-+
- 	host1x_bo_init(&bo->base, &tegra_bo_ops);
- 	size = round_up(size, PAGE_SIZE);
+ 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+ 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+-	.gem_prime_pin = vgem_prime_pin,
+-	.gem_prime_unpin = vgem_prime_unpin,
+ 	.gem_prime_import = vgem_prime_import,
+ 	.gem_prime_import_sg_table = vgem_prime_import_sg_table,
+-	.gem_prime_get_sg_table = vgem_prime_get_sg_table,
+-	.gem_prime_vmap = vgem_prime_vmap,
+-	.gem_prime_vunmap = vgem_prime_vunmap,
+ 	.gem_prime_mmap = vgem_prime_mmap,
  
+ 	.name	= DRIVER_NAME,
 -- 
 2.28.0
 
