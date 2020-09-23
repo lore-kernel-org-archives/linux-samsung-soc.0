@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC59C47425
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC098C47423
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D7FB23119
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B47D02388A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbgIWKWE (ORCPT
+        id S1726685AbgIWKWL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Sep 2020 06:22:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56790 "EHLO mx2.suse.de"
+        Wed, 23 Sep 2020 06:22:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57174 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726314AbgIWKWE (ORCPT
+        id S1726632AbgIWKWI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Sep 2020 06:22:04 -0400
+        Wed, 23 Sep 2020 06:22:08 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A24C4B016;
-        Wed, 23 Sep 2020 10:22:39 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 71F61B284;
+        Wed, 23 Sep 2020 10:22:43 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -60,15 +60,15 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 01/22] drm/amdgpu: Introduce GEM object functions
-Date:   Wed, 23 Sep 2020 12:21:38 +0200
-Message-Id: <20200923102159.24084-2-tzimmermann@suse.de>
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH v3 05/22] drm/gma500: Introduce GEM object functions
+Date:   Wed, 23 Sep 2020 12:21:42 +0200
+Message-Id: <20200923102159.24084-6-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200923102159.24084-1-tzimmermann@suse.de>
 References: <20200923102159.24084-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -76,127 +76,146 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in amdgpu. The only exception is gem_prime_mmap,
-which is non-trivial to convert.
-
-v3:
-	* remove amdgpu_object.c from patch (Christian)
-v2:
-	* move object-function instance to amdgpu_gem.c (Christian)
-	* set callbacks in amdgpu_gem_object_create() (Christian)
+per-instance callbacks in gma500.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Christian König <christian.koenig@amd.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c |  6 ------
- drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 23 ++++++++++++++++++-----
- drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h |  5 -----
- 3 files changed, 18 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/gma500/framebuffer.c |  2 ++
+ drivers/gpu/drm/gma500/gem.c         | 18 ++++++++++++++++--
+ drivers/gpu/drm/gma500/gem.h         |  3 +++
+ drivers/gpu/drm/gma500/psb_drv.c     |  9 ---------
+ drivers/gpu/drm/gma500/psb_drv.h     |  2 --
+ 5 files changed, 21 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-index 6edde2b9e402..840ca8f9c1e1 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -1505,19 +1505,13 @@ static struct drm_driver kms_driver = {
- 	.lastclose = amdgpu_driver_lastclose_kms,
- 	.irq_handler = amdgpu_irq_handler,
- 	.ioctls = amdgpu_ioctls_kms,
--	.gem_free_object_unlocked = amdgpu_gem_object_free,
--	.gem_open_object = amdgpu_gem_object_open,
--	.gem_close_object = amdgpu_gem_object_close,
- 	.dumb_create = amdgpu_mode_dumb_create,
- 	.dumb_map_offset = amdgpu_mode_dumb_mmap,
- 	.fops = &amdgpu_driver_kms_fops,
+diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+index 54d9876b5305..5ede24fb44ae 100644
+--- a/drivers/gpu/drm/gma500/framebuffer.c
++++ b/drivers/gpu/drm/gma500/framebuffer.c
+@@ -24,6 +24,7 @@
+ #include <drm/drm_gem_framebuffer_helper.h>
  
- 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
--	.gem_prime_export = amdgpu_gem_prime_export,
- 	.gem_prime_import = amdgpu_gem_prime_import,
--	.gem_prime_vmap = amdgpu_gem_prime_vmap,
--	.gem_prime_vunmap = amdgpu_gem_prime_vunmap,
- 	.gem_prime_mmap = amdgpu_gem_prime_mmap,
- 
- 	.name = DRIVER_NAME,
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-index aa7f230c71bf..aeecd5dc3ce4 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-@@ -36,9 +36,12 @@
- 
- #include "amdgpu.h"
- #include "amdgpu_display.h"
-+#include "amdgpu_dma_buf.h"
- #include "amdgpu_xgmi.h"
- 
--void amdgpu_gem_object_free(struct drm_gem_object *gobj)
-+static const struct drm_gem_object_funcs amdgpu_gem_object_funcs;
-+
-+static void amdgpu_gem_object_free(struct drm_gem_object *gobj)
- {
- 	struct amdgpu_bo *robj = gem_to_amdgpu_bo(gobj);
- 
-@@ -87,6 +90,7 @@ int amdgpu_gem_object_create(struct amdgpu_device *adev, unsigned long size,
- 		return r;
+ #include "framebuffer.h"
++#include "gem.h"
+ #include "gtt.h"
+ #include "psb_drv.h"
+ #include "psb_intel_drv.h"
+@@ -285,6 +286,7 @@ static struct gtt_range *psbfb_alloc(struct drm_device *dev, int aligned_size)
+ 	/* Begin by trying to use stolen memory backing */
+ 	backing = psb_gtt_alloc_range(dev, aligned_size, "fb", 1, PAGE_SIZE);
+ 	if (backing) {
++		backing->gem.funcs = &psb_gem_object_funcs;
+ 		drm_gem_private_object_init(dev, &backing->gem, aligned_size);
+ 		return backing;
  	}
- 	*obj = &bo->tbo.base;
-+	(*obj)->funcs = &amdgpu_gem_object_funcs;
+diff --git a/drivers/gpu/drm/gma500/gem.c b/drivers/gpu/drm/gma500/gem.c
+index f9c4b1d76f56..8f07de83b6fb 100644
+--- a/drivers/gpu/drm/gma500/gem.c
++++ b/drivers/gpu/drm/gma500/gem.c
+@@ -18,7 +18,9 @@
  
- 	return 0;
- }
-@@ -119,8 +123,8 @@ void amdgpu_gem_force_release(struct amdgpu_device *adev)
-  * Call from drm_gem_handle_create which appear in both new and open ioctl
-  * case.
-  */
--int amdgpu_gem_object_open(struct drm_gem_object *obj,
--			   struct drm_file *file_priv)
-+static int amdgpu_gem_object_open(struct drm_gem_object *obj,
-+				  struct drm_file *file_priv)
+ #include "psb_drv.h"
+ 
+-void psb_gem_free_object(struct drm_gem_object *obj)
++static vm_fault_t psb_gem_fault(struct vm_fault *vmf);
++
++static void psb_gem_free_object(struct drm_gem_object *obj)
  {
- 	struct amdgpu_bo *abo = gem_to_amdgpu_bo(obj);
- 	struct amdgpu_device *adev = amdgpu_ttm_adev(abo->tbo.bdev);
-@@ -152,8 +156,8 @@ int amdgpu_gem_object_open(struct drm_gem_object *obj,
- 	return 0;
+ 	struct gtt_range *gtt = container_of(obj, struct gtt_range, gem);
+ 
+@@ -36,6 +38,17 @@ int psb_gem_get_aperture(struct drm_device *dev, void *data,
+ 	return -EINVAL;
  }
  
--void amdgpu_gem_object_close(struct drm_gem_object *obj,
--			     struct drm_file *file_priv)
-+static void amdgpu_gem_object_close(struct drm_gem_object *obj,
-+				    struct drm_file *file_priv)
- {
- 	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
- 	struct amdgpu_device *adev = amdgpu_ttm_adev(bo->tbo.bdev);
-@@ -211,6 +215,15 @@ void amdgpu_gem_object_close(struct drm_gem_object *obj,
- 	ttm_eu_backoff_reservation(&ticket, &list);
- }
- 
-+static const struct drm_gem_object_funcs amdgpu_gem_object_funcs = {
-+	.free = amdgpu_gem_object_free,
-+	.open = amdgpu_gem_object_open,
-+	.close = amdgpu_gem_object_close,
-+	.export = amdgpu_gem_prime_export,
-+	.vmap = amdgpu_gem_prime_vmap,
-+	.vunmap = amdgpu_gem_prime_vunmap,
++static const struct vm_operations_struct psb_gem_vm_ops = {
++	.fault = psb_gem_fault,
++	.open = drm_gem_vm_open,
++	.close = drm_gem_vm_close,
 +};
 +
- /*
-  * GEM ioctls.
++const struct drm_gem_object_funcs psb_gem_object_funcs = {
++	.free = psb_gem_free_object,
++	.vm_ops = &psb_gem_vm_ops,
++};
++
+ /**
+  *	psb_gem_create		-	create a mappable object
+  *	@file: the DRM file of the client
+@@ -63,6 +76,7 @@ int psb_gem_create(struct drm_file *file, struct drm_device *dev, u64 size,
+ 		dev_err(dev->dev, "no memory for %lld byte GEM object\n", size);
+ 		return -ENOSPC;
+ 	}
++	r->gem.funcs = &psb_gem_object_funcs;
+ 	/* Initialize the extra goodies GEM needs to do all the hard work */
+ 	if (drm_gem_object_init(dev, &r->gem, size) != 0) {
+ 		psb_gtt_free_range(dev, r);
+@@ -123,7 +137,7 @@ int psb_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+  *	vma->vm_private_data points to the GEM object that is backing this
+  *	mapping.
   */
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
-index e0f025dd1b14..637bf51dbf06 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h
-@@ -33,11 +33,6 @@
- #define AMDGPU_GEM_DOMAIN_MAX		0x3
- #define gem_to_amdgpu_bo(gobj) container_of((gobj), struct amdgpu_bo, tbo.base)
+-vm_fault_t psb_gem_fault(struct vm_fault *vmf)
++static vm_fault_t psb_gem_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct drm_gem_object *obj;
+diff --git a/drivers/gpu/drm/gma500/gem.h b/drivers/gpu/drm/gma500/gem.h
+index 4a74dc623b6b..3741a711b9fd 100644
+--- a/drivers/gpu/drm/gma500/gem.h
++++ b/drivers/gpu/drm/gma500/gem.h
+@@ -8,6 +8,9 @@
+ #ifndef _GEM_H
+ #define _GEM_H
  
--void amdgpu_gem_object_free(struct drm_gem_object *obj);
--int amdgpu_gem_object_open(struct drm_gem_object *obj,
--				struct drm_file *file_priv);
--void amdgpu_gem_object_close(struct drm_gem_object *obj,
--				struct drm_file *file_priv);
- unsigned long amdgpu_gem_timeout(uint64_t timeout_ns);
++extern const struct drm_gem_object_funcs psb_gem_object_funcs;
++
+ extern int psb_gem_create(struct drm_file *file, struct drm_device *dev,
+ 			  u64 size, u32 *handlep, int stolen, u32 align);
++
+ #endif
+diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
+index 34b4aae9a15e..b13376a6fb91 100644
+--- a/drivers/gpu/drm/gma500/psb_drv.c
++++ b/drivers/gpu/drm/gma500/psb_drv.c
+@@ -480,12 +480,6 @@ static const struct dev_pm_ops psb_pm_ops = {
+ 	.runtime_idle = psb_runtime_idle,
+ };
  
- /*
+-static const struct vm_operations_struct psb_gem_vm_ops = {
+-	.fault = psb_gem_fault,
+-	.open = drm_gem_vm_open,
+-	.close = drm_gem_vm_close,
+-};
+-
+ static const struct file_operations psb_gem_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = drm_open,
+@@ -507,9 +501,6 @@ static struct drm_driver driver = {
+ 	.irq_uninstall = psb_irq_uninstall,
+ 	.irq_handler = psb_irq_handler,
+ 
+-	.gem_free_object_unlocked = psb_gem_free_object,
+-	.gem_vm_ops = &psb_gem_vm_ops,
+-
+ 	.dumb_create = psb_gem_dumb_create,
+ 	.ioctls = psb_ioctls,
+ 	.fops = &psb_gem_fops,
+diff --git a/drivers/gpu/drm/gma500/psb_drv.h b/drivers/gpu/drm/gma500/psb_drv.h
+index 956926341316..c71a5a4e912c 100644
+--- a/drivers/gpu/drm/gma500/psb_drv.h
++++ b/drivers/gpu/drm/gma500/psb_drv.h
+@@ -735,12 +735,10 @@ extern const struct drm_connector_helper_funcs
+ extern const struct drm_connector_funcs psb_intel_lvds_connector_funcs;
+ 
+ /* gem.c */
+-extern void psb_gem_free_object(struct drm_gem_object *obj);
+ extern int psb_gem_get_aperture(struct drm_device *dev, void *data,
+ 			struct drm_file *file);
+ extern int psb_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+ 			struct drm_mode_create_dumb *args);
+-extern vm_fault_t psb_gem_fault(struct vm_fault *vmf);
+ 
+ /* psb_device.c */
+ extern const struct psb_ops psb_chip_ops;
 -- 
 2.28.0
 
