@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4C8C47426
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB031C4727E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58EC721D7D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98C5B21BE5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbgIWKWI (ORCPT
+        id S1726669AbgIWKWK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Sep 2020 06:22:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56896 "EHLO mx2.suse.de"
+        Wed, 23 Sep 2020 06:22:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57274 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726332AbgIWKWF (ORCPT
+        id S1726634AbgIWKWJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Sep 2020 06:22:05 -0400
+        Wed, 23 Sep 2020 06:22:09 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 91779B27A;
-        Wed, 23 Sep 2020 10:22:40 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 6CA01B286;
+        Wed, 23 Sep 2020 10:22:44 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     alexander.deucher@amd.com, christian.koenig@amd.com,
         airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
@@ -61,10 +61,10 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         xen-devel@lists.xenproject.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH v3 02/22] drm/armada: Introduce GEM object functions
-Date:   Wed, 23 Sep 2020 12:21:39 +0200
-Message-Id: <20200923102159.24084-3-tzimmermann@suse.de>
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Subject: [PATCH v3 06/22] drm/i915: Introduce GEM object functions
+Date:   Wed, 23 Sep 2020 12:21:43 +0200
+Message-Id: <20200923102159.24084-7-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200923102159.24084-1-tzimmermann@suse.de>
 References: <20200923102159.24084-1-tzimmermann@suse.de>
@@ -76,91 +76,120 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 GEM object functions deprecate several similar callback interfaces in
 struct drm_driver. This patch replaces the per-driver callbacks with
-per-instance callbacks in armada.
+per-instance callbacks in i915.
+
+v2:
+	* move object-function instance to i915_gem_object.c (Jani)
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
 ---
- drivers/gpu/drm/armada/armada_drv.c |  3 ---
- drivers/gpu/drm/armada/armada_gem.c | 12 +++++++++++-
- drivers/gpu/drm/armada/armada_gem.h |  2 --
- 3 files changed, 11 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/i915/gem/i915_gem_object.c    | 21 ++++++++++++++++---
+ drivers/gpu/drm/i915/gem/i915_gem_object.h    |  3 ---
+ drivers/gpu/drm/i915/i915_drv.c               |  4 ----
+ .../gpu/drm/i915/selftests/mock_gem_device.c  |  3 ---
+ 4 files changed, 18 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/armada/armada_drv.c b/drivers/gpu/drm/armada/armada_drv.c
-index 980d3f1f8f16..22247cfce80b 100644
---- a/drivers/gpu/drm/armada/armada_drv.c
-+++ b/drivers/gpu/drm/armada/armada_drv.c
-@@ -37,13 +37,10 @@ DEFINE_DRM_GEM_FOPS(armada_drm_fops);
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.c b/drivers/gpu/drm/i915/gem/i915_gem_object.c
+index c8421fd9d2dc..3389ac972d16 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_object.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_object.c
+@@ -39,9 +39,18 @@ static struct i915_global_object {
+ 	struct kmem_cache *slab_objects;
+ } global;
  
- static struct drm_driver armada_drm_driver = {
- 	.lastclose		= drm_fb_helper_lastclose,
--	.gem_free_object_unlocked = armada_gem_free_object,
- 	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
--	.gem_prime_export	= armada_gem_prime_export,
- 	.gem_prime_import	= armada_gem_prime_import,
- 	.dumb_create		= armada_gem_dumb_create,
--	.gem_vm_ops		= &armada_gem_vm_ops,
- 	.major			= 1,
- 	.minor			= 0,
- 	.name			= "armada-drm",
-diff --git a/drivers/gpu/drm/armada/armada_gem.c b/drivers/gpu/drm/armada/armada_gem.c
-index 6654bccd9466..21909642ee4c 100644
---- a/drivers/gpu/drm/armada/armada_gem.c
-+++ b/drivers/gpu/drm/armada/armada_gem.c
-@@ -25,7 +25,7 @@ static vm_fault_t armada_gem_vm_fault(struct vm_fault *vmf)
- 	return vmf_insert_pfn(vmf->vma, vmf->address, pfn);
++static const struct drm_gem_object_funcs i915_gem_object_funcs;
++
+ struct drm_i915_gem_object *i915_gem_object_alloc(void)
+ {
+-	return kmem_cache_zalloc(global.slab_objects, GFP_KERNEL);
++	struct drm_i915_gem_object *obj;
++
++	obj = kmem_cache_zalloc(global.slab_objects, GFP_KERNEL);
++	if (!obj)
++		return NULL;
++	obj->base.funcs = &i915_gem_object_funcs;
++
++	return obj;
  }
  
--const struct vm_operations_struct armada_gem_vm_ops = {
-+static const struct vm_operations_struct armada_gem_vm_ops = {
- 	.fault	= armada_gem_vm_fault,
- 	.open	= drm_gem_vm_open,
- 	.close	= drm_gem_vm_close,
-@@ -184,6 +184,12 @@ armada_gem_map_object(struct drm_device *dev, struct armada_gem_object *dobj)
- 	return dobj->addr;
+ void i915_gem_object_free(struct drm_i915_gem_object *obj)
+@@ -101,7 +110,7 @@ void i915_gem_object_set_cache_coherency(struct drm_i915_gem_object *obj,
+ 		!(obj->cache_coherent & I915_BO_CACHE_COHERENT_FOR_WRITE);
  }
  
-+static const struct drm_gem_object_funcs armada_gem_object_funcs = {
-+	.free = armada_gem_free_object,
-+	.export = armada_gem_prime_export,
-+	.vm_ops = &armada_gem_vm_ops,
+-void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file)
++static void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file)
+ {
+ 	struct drm_i915_gem_object *obj = to_intel_bo(gem);
+ 	struct drm_i915_file_private *fpriv = file->driver_priv;
+@@ -264,7 +273,7 @@ static void __i915_gem_free_work(struct work_struct *work)
+ 	i915_gem_flush_free_objects(i915);
+ }
+ 
+-void i915_gem_free_object(struct drm_gem_object *gem_obj)
++static void i915_gem_free_object(struct drm_gem_object *gem_obj)
+ {
+ 	struct drm_i915_gem_object *obj = to_intel_bo(gem_obj);
+ 	struct drm_i915_private *i915 = to_i915(obj->base.dev);
+@@ -403,6 +412,12 @@ int __init i915_global_objects_init(void)
+ 	return 0;
+ }
+ 
++static const struct drm_gem_object_funcs i915_gem_object_funcs = {
++	.free = i915_gem_free_object,
++	.close = i915_gem_close_object,
++	.export = i915_gem_prime_export,
 +};
 +
- struct armada_gem_object *
- armada_gem_alloc_private_object(struct drm_device *dev, size_t size)
- {
-@@ -195,6 +201,8 @@ armada_gem_alloc_private_object(struct drm_device *dev, size_t size)
- 	if (!obj)
- 		return NULL;
+ #if IS_ENABLED(CONFIG_DRM_I915_SELFTEST)
+ #include "selftests/huge_gem_object.c"
+ #include "selftests/huge_pages.c"
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.h b/drivers/gpu/drm/i915/gem/i915_gem_object.h
+index d46db8d8f38e..eaf3d4147be0 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_object.h
++++ b/drivers/gpu/drm/i915/gem/i915_gem_object.h
+@@ -38,9 +38,6 @@ void __i915_gem_object_release_shmem(struct drm_i915_gem_object *obj,
  
-+	obj->obj.funcs = &armada_gem_object_funcs;
-+
- 	drm_gem_private_object_init(dev, &obj->obj, size);
+ int i915_gem_object_attach_phys(struct drm_i915_gem_object *obj, int align);
  
- 	DRM_DEBUG_DRIVER("alloc private obj %p size %zu\n", obj, size);
-@@ -214,6 +222,8 @@ static struct armada_gem_object *armada_gem_alloc_object(struct drm_device *dev,
- 	if (!obj)
- 		return NULL;
+-void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file);
+-void i915_gem_free_object(struct drm_gem_object *obj);
+-
+ void i915_gem_flush_free_objects(struct drm_i915_private *i915);
  
-+	obj->obj.funcs = &armada_gem_object_funcs;
-+
- 	if (drm_gem_object_init(dev, &obj->obj, size)) {
- 		kfree(obj);
- 		return NULL;
-diff --git a/drivers/gpu/drm/armada/armada_gem.h b/drivers/gpu/drm/armada/armada_gem.h
-index de04cc2c8f0e..ffcc7e8dd351 100644
---- a/drivers/gpu/drm/armada/armada_gem.h
-+++ b/drivers/gpu/drm/armada/armada_gem.h
-@@ -21,8 +21,6 @@ struct armada_gem_object {
- 	void			*update_data;
+ struct sg_table *
+diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+index acc32066cec3..45e719c79183 100644
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -1750,12 +1750,8 @@ static struct drm_driver driver = {
+ 	.lastclose = i915_driver_lastclose,
+ 	.postclose = i915_driver_postclose,
+ 
+-	.gem_close_object = i915_gem_close_object,
+-	.gem_free_object_unlocked = i915_gem_free_object,
+-
+ 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+ 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+-	.gem_prime_export = i915_gem_prime_export,
+ 	.gem_prime_import = i915_gem_prime_import,
+ 
+ 	.dumb_create = i915_gem_dumb_create,
+diff --git a/drivers/gpu/drm/i915/selftests/mock_gem_device.c b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
+index 397c313a8b69..79664046c622 100644
+--- a/drivers/gpu/drm/i915/selftests/mock_gem_device.c
++++ b/drivers/gpu/drm/i915/selftests/mock_gem_device.c
+@@ -87,9 +87,6 @@ static struct drm_driver mock_driver = {
+ 	.name = "mock",
+ 	.driver_features = DRIVER_GEM,
+ 	.release = mock_device_release,
+-
+-	.gem_close_object = i915_gem_close_object,
+-	.gem_free_object_unlocked = i915_gem_free_object,
  };
  
--extern const struct vm_operations_struct armada_gem_vm_ops;
--
- #define drm_to_armada_gem(o) container_of(o, struct armada_gem_object, obj)
- 
- void armada_gem_free_object(struct drm_gem_object *);
+ static void release_dev(struct device *dev)
 -- 
 2.28.0
 
