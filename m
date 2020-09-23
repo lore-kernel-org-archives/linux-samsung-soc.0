@@ -1,71 +1,204 @@
-Return-Path: <SRS0=odV2=C7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=274J=DA=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E2DC2D0E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 19:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EE4C4727F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D1E323787
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Sep 2020 19:31:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600803068;
-	bh=pUiCqpmiBnRvZTY0i20SbClpoG81rlDX6FiAvbNu0nE=;
-	h=In-Reply-To:References:Subject:From:To:Date:List-ID:From;
-	b=ZzVMkFdvmjhEsA/a9WmqS6jV7pbksbx+zjwOyCoaUeSLO8lHcbErI0mCFV3sRkh/r
-	 RNRAyygKq8gky5GGogHRu1zFbir1d4e3MuEAUxrAfNTV/ttJ4VioIHi9rnaVVnpHbo
-	 RV18Urj3Hc2MMkn901RrFLuU4XWWsnhFj9KLYl7g=
+	by mail.kernel.org (Postfix) with ESMTP id 9C173214D8
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 10:22:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbgIVTbI (ORCPT
+        id S1726584AbgIWKWF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Sep 2020 15:31:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42720 "EHLO mail.kernel.org"
+        Wed, 23 Sep 2020 06:22:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56714 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726448AbgIVTbH (ORCPT
+        id S1726130AbgIWKWE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Sep 2020 15:31:07 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B42A207C3;
-        Tue, 22 Sep 2020 19:31:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600803067;
-        bh=pUiCqpmiBnRvZTY0i20SbClpoG81rlDX6FiAvbNu0nE=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=j/z7ht+1QBbUKmw3c/u9O6AtMG5CIGvilLgZEAoROraBxzS1gtOhW6sytjv6VGdyz
-         +QZGiu25JgKnJMbgwqkHhDoy9bwvmlU6qsqt47OunRQC6TdVdLdwwUfJkKazkIJjqe
-         oRNWPs9FWyP1E9ufODhdjweO94LZy1mgzrFz8TPY=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 23 Sep 2020 06:22:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 67929B009;
+        Wed, 23 Sep 2020 10:22:39 +0000 (UTC)
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
+        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
+        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
+        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
+        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
+        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
+        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
+        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
+        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
+        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
+        chris@chris-wilson.co.uk, matthew.auld@intel.com,
+        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
+        sam@ravnborg.org, miaoqinglang@huawei.com,
+        emil.velikov@collabora.com, laurentiu.palcu@oss.nxp.com,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v3 00/22] Convert all remaining drivers to GEM object functions
+Date:   Wed, 23 Sep 2020 12:21:37 +0200
+Message-Id: <20200923102159.24084-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200921203558.19554-1-krzk@kernel.org>
-References: <20200921203558.19554-1-krzk@kernel.org>
-Subject: Re: [PATCH] clk: s2mps11: initialize driver via module_platform_driver
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sangbeom Kim <sbkim73@samsung.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Date:   Tue, 22 Sep 2020 12:31:06 -0700
-Message-ID: <160080306613.310579.7180322224684096553@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2020-09-21 13:35:57)
-> The driver was using subsys_initcall() because in old times deferred
-> probe was not supported everywhere and specific ordering was needed.
-> Since probe deferral works fine and specific ordering is discouraged
-> (hides dependencies between drivers and couples their boot order), the
-> driver can be converted to regular module_platform_driver.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+The GEM and PRIME related callbacks in struct drm_driver are deprecated in
+favor of GEM object functions in struct drm_gem_object_funcs. This patchset
+converts the remaining drivers to object functions and removes most of the
+obsolete interfaces.
 
-Applied to clk-next
+Version 3 of this patchset mostly fixes drm_gem_prime_handle_to_fd and
+updates i.MX's dcss driver. The driver was missing from earlier versions
+and still needs review.
+
+Patches #1 to #6, #8 to #17 and #19 to #20 convert DRM drivers to GEM object
+functions, one by one. Each patch moves existing callbacks from struct
+drm_driver to an instance of struct drm_gem_object_funcs, and sets these
+funcs when the GEM object is initialized. The expection is .gem_prime_mmap.
+There are different ways of how drivers implement the callback, and moving
+it to GEM object functions requires a closer review for each.
+
+Patch #18 fixes virtgpu to use GEM object functions where possible. The
+driver recently introduced a function for one of the deprecated callbacks.
+
+Patches #7 and #20 convert i.MX's dcss and xlnx to CMA helper macros. There's
+no apparent reason why the drivers do the GEM setup on their's own. Using CMA
+helper macros adds GEM object functions implicitly.
+
+With most of the GEM and PRIME moved to GEM object functions, related code
+in struct drm_driver and in the DRM core/helpers is being removed by patch
+#22.
+
+Further testing is welcome. I tested the drivers for which I have HW
+available. These are gma500, i915, nouveau, radeon and vc4. The console,
+Weston and Xorg apparently work with the patches applied.
+
+v3:
+	* restore default call to drm_gem_prime_export() in
+	  drm_gem_prime_handle_to_fd()
+	* return -ENOSYS if get_sg_table is not set
+	* drop all checks for obj->funcs
+	* clean up TODO list and documentation
+v2:
+	* moved code in amdgpu and radeon
+	* made several functions static in various drivers
+	* updated TODO-list item
+	* fix virtgpu
+
+Thomas Zimmermann (22):
+  drm/amdgpu: Introduce GEM object functions
+  drm/armada: Introduce GEM object functions
+  drm/etnaviv: Introduce GEM object functions
+  drm/exynos: Introduce GEM object functions
+  drm/gma500: Introduce GEM object functions
+  drm/i915: Introduce GEM object functions
+  drm/imx/dcss: Initialize DRM driver instance with CMA helper macro
+  drm/mediatek: Introduce GEM object functions
+  drm/msm: Introduce GEM object funcs
+  drm/nouveau: Introduce GEM object functions
+  drm/omapdrm: Introduce GEM object functions
+  drm/pl111: Introduce GEM object functions
+  drm/radeon: Introduce GEM object functions
+  drm/rockchip: Convert to drm_gem_object_funcs
+  drm/tegra: Introduce GEM object functions
+  drm/vc4: Introduce GEM object functions
+  drm/vgem: Introduce GEM object functions
+  drm/virtgpu: Set PRIME export function in struct drm_gem_object_funcs
+  drm/vkms: Introduce GEM object functions
+  drm/xen: Introduce GEM object functions
+  drm/xlnx: Initialize DRM driver instance with CMA helper macro
+  drm: Remove obsolete GEM and PRIME callbacks from struct drm_driver
+
+ Documentation/gpu/drm-mm.rst                  |  4 +-
+ Documentation/gpu/todo.rst                    |  9 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c       |  6 --
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c       | 23 +++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h       |  5 --
+ drivers/gpu/drm/armada/armada_drv.c           |  3 -
+ drivers/gpu/drm/armada/armada_gem.c           | 12 ++-
+ drivers/gpu/drm/armada/armada_gem.h           |  2 -
+ drivers/gpu/drm/drm_gem.c                     | 53 ++++--------
+ drivers/gpu/drm/drm_gem_cma_helper.c          |  8 +-
+ drivers/gpu/drm/drm_prime.c                   | 14 +--
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c         | 13 ---
+ drivers/gpu/drm/etnaviv/etnaviv_drv.h         |  1 -
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c         | 19 ++++-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c       | 10 ---
+ drivers/gpu/drm/exynos/exynos_drm_gem.c       | 15 ++++
+ drivers/gpu/drm/gma500/framebuffer.c          |  2 +
+ drivers/gpu/drm/gma500/gem.c                  | 18 +++-
+ drivers/gpu/drm/gma500/gem.h                  |  3 +
+ drivers/gpu/drm/gma500/psb_drv.c              |  9 --
+ drivers/gpu/drm/gma500/psb_drv.h              |  2 -
+ drivers/gpu/drm/i915/gem/i915_gem_object.c    | 21 ++++-
+ drivers/gpu/drm/i915/gem/i915_gem_object.h    |  3 -
+ drivers/gpu/drm/i915/i915_drv.c               |  4 -
+ .../gpu/drm/i915/selftests/mock_gem_device.c  |  3 -
+ drivers/gpu/drm/imx/dcss/dcss-kms.c           | 14 +--
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        |  5 --
+ drivers/gpu/drm/mediatek/mtk_drm_gem.c        | 11 +++
+ drivers/gpu/drm/msm/msm_drv.c                 | 13 ---
+ drivers/gpu/drm/msm/msm_drv.h                 |  1 -
+ drivers/gpu/drm/msm/msm_gem.c                 | 19 ++++-
+ drivers/gpu/drm/nouveau/nouveau_drm.c         |  9 --
+ drivers/gpu/drm/nouveau/nouveau_gem.c         | 13 +++
+ drivers/gpu/drm/nouveau/nouveau_gem.h         |  2 +
+ drivers/gpu/drm/nouveau/nouveau_prime.c       |  2 +
+ drivers/gpu/drm/omapdrm/omap_drv.c            |  9 --
+ drivers/gpu/drm/omapdrm/omap_gem.c            | 18 +++-
+ drivers/gpu/drm/omapdrm/omap_gem.h            |  2 -
+ drivers/gpu/drm/pl111/pl111_drv.c             |  5 +-
+ drivers/gpu/drm/radeon/radeon_drv.c           | 23 +----
+ drivers/gpu/drm/radeon/radeon_gem.c           | 31 ++++++-
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |  5 --
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c   | 12 ++-
+ drivers/gpu/drm/tegra/drm.c                   |  4 -
+ drivers/gpu/drm/tegra/gem.c                   |  8 ++
+ drivers/gpu/drm/vc4/vc4_bo.c                  | 21 ++++-
+ drivers/gpu/drm/vc4/vc4_drv.c                 | 12 ---
+ drivers/gpu/drm/vc4/vc4_drv.h                 |  1 -
+ drivers/gpu/drm/vgem/vgem_drv.c               | 21 +++--
+ drivers/gpu/drm/virtio/virtgpu_drv.c          |  1 -
+ drivers/gpu/drm/virtio/virtgpu_object.c       |  1 +
+ drivers/gpu/drm/vkms/vkms_drv.c               |  8 --
+ drivers/gpu/drm/vkms/vkms_gem.c               | 13 +++
+ drivers/gpu/drm/xen/xen_drm_front.c           | 44 ++++------
+ drivers/gpu/drm/xen/xen_drm_front.h           |  2 +
+ drivers/gpu/drm/xen/xen_drm_front_gem.c       | 15 ++++
+ drivers/gpu/drm/xlnx/zynqmp_dpsub.c           | 14 +--
+ include/drm/drm_drv.h                         | 85 +------------------
+ include/drm/drm_gem.h                         |  2 +-
+ 59 files changed, 333 insertions(+), 375 deletions(-)
+
+--
+2.28.0
+
