@@ -1,274 +1,321 @@
-Return-Path: <SRS0=274J=DA=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=DxXa=DB=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51326C4727E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 14:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF73C4346E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Sep 2020 08:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE2A82223E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Sep 2020 14:33:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B50B23772
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Sep 2020 08:32:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="I2UjvRQO"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LXChwB/R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbgIWOdq (ORCPT
+        id S1727193AbgIXIcA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Sep 2020 10:33:46 -0400
-Received: from mail-bn8nam11on2082.outbound.protection.outlook.com ([40.107.236.82]:16928
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726603AbgIWOdq (ORCPT
+        Thu, 24 Sep 2020 04:32:00 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47906 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbgIXIb6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Sep 2020 10:33:46 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JN2ZYEtEXk1Qj4f41rNRyTKdQorN7gK2cZ8UG2SsgikjgyGCfJ4zXdnRYSr59RVtl6A+peYiA/Q8kmPjVY9LYtVX54DOpP+18HhAUnbjChfJB47xExKGjAydnWRxlKPZifIJWJvu+W/xAXsg+vl1X788JATZCXk6oskNVtW4G9tf78QEHvH5dWiPf7oI6JM09r+MHapPRgYIQnEcQsRELhlIlhkDLwp58nB2J4b9owKiW7qQc50PTw31kpjg13L5/WrC6YSVNOSfAHohF9uDvXBrk3F9rx7FzpF9ZnlJZyrtj3oW8IzlyB35Z1kc98cqQGB8ajL5w057en6VlcemNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h3IPL0ivarmUKpPMxxGaKq/U0k8n2iy8w/Y9wuxWLRA=;
- b=d2qBK9gw3bM9OkvzoKJXY49zOERZzDZt6t0S2GcvYy416uWNS+frtbQxQp4YsgfqquozCPCICUmmqpnczm84zKGLKHPW9cXH/VdWgjUrnUOrMZj09NvTYZbuqvQBvMnUxum4K/PoQZxHwLhrtE3c9lC4fw4He/QBT51DLbevNbHwSmwfnqHn77QW2iVQNA2Qg6KyiDB6vF4IWadXlL9qPHdzcZjaAvKo8+W/s+LlSFUfhdzz1tZUCSHYv0Z8+ZK5+yeHbX+OV21wC65wTzvPFD2ZGf8RuvkoztN7h6fcgq7xXvnC+hWOVunj/18GK/RqoRqdWpfbVlPvrDvoAL/Fjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h3IPL0ivarmUKpPMxxGaKq/U0k8n2iy8w/Y9wuxWLRA=;
- b=I2UjvRQOXfBXt2LnrW+t8TVooCzskuZ3ACdaCxSCfLpKdMWhvd50ncNr/Iwhow6EeJKRE/NpMz38W1VVRHIANHViG2Dp1CqBo13b+X+dBChoqLVur5YSrzWLckSpUSBUE97C+R15uF3ypFGJ8J1fiVQFua19/DJowti2N2XhT/U=
-Authentication-Results: lists.xenproject.org; dkim=none (message not signed)
- header.d=none;lists.xenproject.org; dmarc=none action=none
- header.from=amd.com;
-Received: from MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
- by MN2PR12MB4549.namprd12.prod.outlook.com (2603:10b6:208:268::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3391.19; Wed, 23 Sep
- 2020 14:33:41 +0000
-Received: from MN2PR12MB3775.namprd12.prod.outlook.com
- ([fe80::f8f7:7403:1c92:3a60]) by MN2PR12MB3775.namprd12.prod.outlook.com
- ([fe80::f8f7:7403:1c92:3a60%6]) with mapi id 15.20.3412.022; Wed, 23 Sep 2020
- 14:33:41 +0000
-Subject: Re: [PATCH v3 00/22] Convert all remaining drivers to GEM object
- functions
-To:     Thomas Zimmermann <tzimmermann@suse.de>, alexander.deucher@amd.com,
-        airlied@linux.ie, daniel@ffwll.ch, linux@armlinux.org.uk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, patrik.r.jakobsson@gmail.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, chunkuang.hu@kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@gmail.com,
-        robdclark@gmail.com, sean@poorly.run, bskeggs@redhat.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, hjc@rock-chips.com,
-        heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        oleksandr_andrushchenko@epam.com, hyun.kwon@xilinx.com,
-        laurent.pinchart@ideasonboard.com, michal.simek@xilinx.com,
-        sumit.semwal@linaro.org, evan.quan@amd.com, Hawking.Zhang@amd.com,
-        tianci.yin@amd.com, marek.olsak@amd.com, hdegoede@redhat.com,
-        andrey.grodzovsky@amd.com, Felix.Kuehling@amd.com,
-        xinhui.pan@amd.com, aaron.liu@amd.com, nirmoy.das@amd.com,
-        chris@chris-wilson.co.uk, matthew.auld@intel.com,
-        tvrtko.ursulin@linux.intel.com, andi.shyti@intel.com,
-        sam@ravnborg.org, miaoqinglang@huawei.com,
-        emil.velikov@collabora.com, laurentiu.palcu@oss.nxp.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-References: <20200923102159.24084-1-tzimmermann@suse.de>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <f6ee9aab-1568-1896-ef07-a4de6ceec989@amd.com>
-Date:   Wed, 23 Sep 2020 16:33:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-In-Reply-To: <20200923102159.24084-1-tzimmermann@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
-X-ClientProxiedBy: AM0PR02CA0101.eurprd02.prod.outlook.com
- (2603:10a6:208:154::42) To MN2PR12MB3775.namprd12.prod.outlook.com
- (2603:10b6:208:159::19)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7] (2a02:908:1252:fb60:be8a:bd56:1f94:86e7) by AM0PR02CA0101.eurprd02.prod.outlook.com (2603:10a6:208:154::42) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.20 via Frontend Transport; Wed, 23 Sep 2020 14:33:30 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: cdc5d2fe-1c0c-4af6-44a3-08d85fcdaa89
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4549:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR12MB4549FCDCA2E53DF248C9E00583380@MN2PR12MB4549.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5Ap4vP6/2a9OIkw75pLp/ouoPmmiv0yY6sfZ7LPtk6OyHVwNVqxHrWq443HM6aTGHUFQOQxYJ3uA2aA8Tm8BeL0fu0ORFsdua7Ex71HOGfNMGd0e7AKPFIrGMgwSW16gLrMbxRTpwTuFvhp3OjBPO4JKOk0hWo7q1x0jFE6au0HUukALB/Ij3/EvctIO+7GEZCIArQoqdEXnQUJdUoEY/6zEsrjNK+IuGLwV9s7RVhD8Ztcct9mwH33IWyLrQRH8WQAAtAMaDHY68bkKiDwKCAzwuli+XO00zyWWo2H86l4w4njQfxgBow/g/OnfXeu3L/o3J/p+2dipwsRwsjNLIF/+YOoTSvUO6cYfa9tx588/FmhYwjafC0vMyODqW0I6nqddOvel9LE+8rJ3Zem4Mp1Nl9cGAA1PLel3kp21N+9QkAUcpj6g8blfR1vL0aZh
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3775.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(39860400002)(346002)(376002)(396003)(136003)(66574015)(8936002)(52116002)(66476007)(316002)(7406005)(7366002)(7416002)(66556008)(66946007)(4326008)(8676002)(478600001)(6666004)(6486002)(16526019)(2616005)(186003)(36756003)(2906002)(31686004)(5660300002)(86362001)(1191002)(83380400001)(31696002)(921003)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: XcUTekjQMx9d/ieEiI3o4xdJ23NeWOEK7c6wtUYschSBxtmwgmI3Ti7WLdQdP+iYbgjIInFx3ArSf6fdxUxFGdYokBrNDR5fOTkwSTcSZzwIfnucFyo/dn2KDnxy/eT66XVoGUq8vwMX78OYt7RFTY+Z5Yx81rvDoTMcaJbzTZujI9MlZjOufm6P4Z/nVIvAhP0j86+VGPDHODnnZtyrnxIHerDgPfvRqvOeux+S1d2ripf3XtuQgj11oe5SXPc9/xi7RBULsRMTP/gcya9Upzfhk3n31BrF5cAf4npUaD57wEntdfgmkflQjWVMF6mslTWXS58tc5nOuHV63EL2OJOkdYVJ6pkdgp18+BfvMG3FoaDIeuv4KI3h6cYgi7dEGT1j4HWfRWMGaxenObA80xW9vKnPySC+2wyZO+GFhNMrQzC9WywilaBdvtIhtSAbGQSxMmPUvGesJBNwlIJYcLlBGAbTjK/MuKjN5vZlv+27aZ2sKAUkMuHSARfYebYXFNs9Alm3BMtVJ04kHFrKkWw/J3dMIUn5h55aODYHf7WDR64xc9R3J+ZKEGyPa1QchIPrh6mlGFeCuK4sZhMeip9YhEH9hP/Eq6A2DSrAYkuO+pgUFTT2L0o+LH+mEyO3F+OZAjSIo9IAQenZjkYHHWCQEmRVv4oH1HEFutxJCLkhYbabNsAWRxqfArIUW68XSRy1QlAKt34vI4q1i0zYeA==
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cdc5d2fe-1c0c-4af6-44a3-08d85fcdaa89
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3775.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2020 14:33:41.1159
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fYPcp7VH3V+QYnBgkjSyEP1koe+X8eMtnU2MNQVB3vhRL5SYivz4KcFlfJ4tP5y1
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4549
+        Thu, 24 Sep 2020 04:31:58 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200924083157euoutp01c0ac8621cb11c71ce9d39b539517bcf7~3qxkxlo-Z0335103351euoutp01J
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Sep 2020 08:31:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200924083157euoutp01c0ac8621cb11c71ce9d39b539517bcf7~3qxkxlo-Z0335103351euoutp01J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1600936317;
+        bh=eVj4D/ix98W+nGOcKd3EOlZerUq6l2PfF6CunR81zuk=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=LXChwB/RCQsB5dKORG0Oe4fvVgD/KJCtBPAFGQmGsqOu2KMecvz0lXBgL+Po3UOMf
+         1w1tO7XJ6Ngu9+nlHN5NBh+96oD9cERGcicFdfOIFr1HFJElJn4/pvxfVIgdwEY2Vd
+         52ag8VZJ491Gld2Qq4AwG2ChFZ3XuHvnqw14pXdI=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200924083156eucas1p1d02776091f229cf1f2c225ca733f5b57~3qxkbfTey1301313013eucas1p1_;
+        Thu, 24 Sep 2020 08:31:56 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id E6.F9.06456.C795C6F5; Thu, 24
+        Sep 2020 09:31:56 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200924083156eucas1p14406128445a655393013effe719f2228~3qxkIEqtq2203122031eucas1p1t;
+        Thu, 24 Sep 2020 08:31:56 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200924083156eusmtrp2b2c389a8dafcbb121822681070231a8d~3qxkHTtUE2983029830eusmtrp2p;
+        Thu, 24 Sep 2020 08:31:56 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-b6-5f6c597ca298
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 28.29.06314.C795C6F5; Thu, 24
+        Sep 2020 09:31:56 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200924083156eusmtip2674245e03c238d4b0435c17ee62a0fb8~3qxjrKb0p1003110031eusmtip2A;
+        Thu, 24 Sep 2020 08:31:56 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/bridge: tc358764: restore connector support
+Date:   Thu, 24 Sep 2020 10:31:45 +0200
+Message-Id: <20200924083145.23312-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpileLIzCtJLcpLzFFi42LZduznOd2ayJx4g2nbjSxurTvHanHl63s2
+        i6vfXzJbnHxzlcWic+ISdovLu+awWcw4v4/JYu2Ru+wWh/qiHTg93t9oZfeY3TGT1ePEhEtM
+        Hve7jzN59G1ZxehxoHcyi8fnTXIB7FFcNimpOZllqUX6dglcGe1nVrMWHDGtWHTmI0sD42ed
+        LkZODgkBE4lnE2azdzFycQgJrGCUOHriDJTzhVHizOyNLBDOZ0aJD00NjDAtu46vhEosZ5Q4
+        veg+G1zL4T23WEGq2AQMJbredrGB2CICbhJNh2eyghQxCyxlktje9I0dJCEs4CAxp2k2mM0i
+        oCrxasUOsAZeAVuJ269vMkOsk5dYveEAlP2ZTeL2zBoI20Vi8sUPLBC2sMSr41vYIWwZif87
+        5zOBLJMQaGaUeHhuLTuE08MocblpBtQT1hJ3zv0C2sYBdJKmxPpd+hBhR4nXG9uZQcISAnwS
+        N94KgoSZgcxJ26ZDhXklOtqEIKrVJGYdXwe39uCFS1Bnekj0rnrGBFIuJBArsXuS+QRGuVkI
+        qxYwMq5iFE8tLc5NTy02zEst1ytOzC0uzUvXS87P3cQITBmn/x3/tIPx66WkQ4wCHIxKPLwc
+        utnxQqyJZcWVuYcYJTiYlUR4nc6ejhPiTUmsrEotyo8vKs1JLT7EKM3BoiTOa7zoZayQQHpi
+        SWp2ampBahFMlomDU6qB8SBTTy5f8nHXqeKai3/E5V3c9KJ37mv/VIYVl+bUSwldyfGdmPv/
+        o3IlT7Pol8mRrPNMAvsE9jmaf795Y/GbHzX2U7MFXddH6R3Vn5Qjtvd+zMRJjyb071jApq5t
+        w2hx7bpg3d+t0zOu/on9GXJYOyVo9cubJVaOcq5bZsTtYxVVVfo7tWqHrxJLcUaioRZzUXEi
+        AEPZIcwVAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBLMWRmVeSWpSXmKPExsVy+t/xe7o1kTnxBm9PylrcWneO1eLK1/ds
+        Fle/v2S2OPnmKotF58Ql7BaXd81hs5hxfh+Txdojd9ktDvVFO3B6vL/Ryu4xu2Mmq8eJCZeY
+        PO53H2fy6NuyitHjQO9kFo/Pm+QC2KP0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1j
+        rYxMlfTtbFJSczLLUov07RL0MtrPrGYtOGJasejMR5YGxs86XYycHBICJhK7jq9k6WLk4hAS
+        WMooMe/LbUaIhIzEyWkNrBC2sMSfa11sILaQwCdGidtbbUBsNgFDia63EHERAQ+J5m/H2UEG
+        MQusZJLov7gSLCEs4CAxp2k2O4jNIqAq8WrFDrA4r4CtxO3XN5khFshLrN5wgHkCI88CRoZV
+        jCKppcW56bnFhnrFibnFpXnpesn5uZsYgaG67djPzTsYL20MPsQowMGoxMPLoZsdL8SaWFZc
+        mXuIUYKDWUmE1+ns6Tgh3pTEyqrUovz4otKc1OJDjKZAyycyS4km5wPjKK8k3tDU0NzC0tDc
+        2NzYzEJJnLdD4GCMkEB6YklqdmpqQWoRTB8TB6dUA2O57lKhQL3WtUsyT1guN12zvDJhyh75
+        3bP07Jx+v19xftJM55cVXc1fD+3OVqrd/Et3lf2Gi7OOHngSuItR6QjvXQHhA19/PWRKVH13
+        No13VVPHN4NKgZ873gRM/yUi5qxflvmu/dN34Vw/tcv+3HkL72zKTM8WsfQz1Mv4/9pY/OeE
+        4rUpWqlKLMUZiYZazEXFiQDl6lx7awIAAA==
+X-CMS-MailID: 20200924083156eucas1p14406128445a655393013effe719f2228
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200924083156eucas1p14406128445a655393013effe719f2228
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200924083156eucas1p14406128445a655393013effe719f2228
+References: <CGME20200924083156eucas1p14406128445a655393013effe719f2228@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Feel free to add an Acked-by: Christian König <christian.koenig@amd.com> 
-to all patches which I haven't explicitly reviewed.
+This patch restores DRM connector registration in the TC358764 bridge
+driver and restores usage of the old drm_panel_* API, thus allows dynamic
+panel registration. This fixes panel operation on Exynos5250-based
+Arndale board.
 
-I would say we should just push this to drm-misc-next now.
+This is equivalent to the revert of the following commits:
+1644127f83bc "drm/bridge: tc358764: add drm_panel_bridge support"
+385ca38da29c "drm/bridge: tc358764: drop drm_connector_(un)register"
+and removal of the calls to drm_panel_attach()/drm_panel_detach(), which
+were no-ops and has been removed in meanwhile.
 
-Thanks for the nice cleanup,
-Christian.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+As I've reported and Andrzej Hajda pointed, the reverted patches break
+operation of the panel on the Arndale board. Noone suggested how to fix
+the regression, I've decided to send a revert until a new solution is
+found.
 
-Am 23.09.20 um 12:21 schrieb Thomas Zimmermann:
-> The GEM and PRIME related callbacks in struct drm_driver are deprecated in
-> favor of GEM object functions in struct drm_gem_object_funcs. This patchset
-> converts the remaining drivers to object functions and removes most of the
-> obsolete interfaces.
->
-> Version 3 of this patchset mostly fixes drm_gem_prime_handle_to_fd and
-> updates i.MX's dcss driver. The driver was missing from earlier versions
-> and still needs review.
->
-> Patches #1 to #6, #8 to #17 and #19 to #20 convert DRM drivers to GEM object
-> functions, one by one. Each patch moves existing callbacks from struct
-> drm_driver to an instance of struct drm_gem_object_funcs, and sets these
-> funcs when the GEM object is initialized. The expection is .gem_prime_mmap.
-> There are different ways of how drivers implement the callback, and moving
-> it to GEM object functions requires a closer review for each.
->
-> Patch #18 fixes virtgpu to use GEM object functions where possible. The
-> driver recently introduced a function for one of the deprecated callbacks.
->
-> Patches #7 and #20 convert i.MX's dcss and xlnx to CMA helper macros. There's
-> no apparent reason why the drivers do the GEM setup on their's own. Using CMA
-> helper macros adds GEM object functions implicitly.
->
-> With most of the GEM and PRIME moved to GEM object functions, related code
-> in struct drm_driver and in the DRM core/helpers is being removed by patch
-> #22.
->
-> Further testing is welcome. I tested the drivers for which I have HW
-> available. These are gma500, i915, nouveau, radeon and vc4. The console,
-> Weston and Xorg apparently work with the patches applied.
->
-> v3:
-> 	* restore default call to drm_gem_prime_export() in
-> 	  drm_gem_prime_handle_to_fd()
-> 	* return -ENOSYS if get_sg_table is not set
-> 	* drop all checks for obj->funcs
-> 	* clean up TODO list and documentation
-> v2:
-> 	* moved code in amdgpu and radeon
-> 	* made several functions static in various drivers
-> 	* updated TODO-list item
-> 	* fix virtgpu
->
-> Thomas Zimmermann (22):
->    drm/amdgpu: Introduce GEM object functions
->    drm/armada: Introduce GEM object functions
->    drm/etnaviv: Introduce GEM object functions
->    drm/exynos: Introduce GEM object functions
->    drm/gma500: Introduce GEM object functions
->    drm/i915: Introduce GEM object functions
->    drm/imx/dcss: Initialize DRM driver instance with CMA helper macro
->    drm/mediatek: Introduce GEM object functions
->    drm/msm: Introduce GEM object funcs
->    drm/nouveau: Introduce GEM object functions
->    drm/omapdrm: Introduce GEM object functions
->    drm/pl111: Introduce GEM object functions
->    drm/radeon: Introduce GEM object functions
->    drm/rockchip: Convert to drm_gem_object_funcs
->    drm/tegra: Introduce GEM object functions
->    drm/vc4: Introduce GEM object functions
->    drm/vgem: Introduce GEM object functions
->    drm/virtgpu: Set PRIME export function in struct drm_gem_object_funcs
->    drm/vkms: Introduce GEM object functions
->    drm/xen: Introduce GEM object functions
->    drm/xlnx: Initialize DRM driver instance with CMA helper macro
->    drm: Remove obsolete GEM and PRIME callbacks from struct drm_driver
->
->   Documentation/gpu/drm-mm.rst                  |  4 +-
->   Documentation/gpu/todo.rst                    |  9 +-
->   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c       |  6 --
->   drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c       | 23 +++--
->   drivers/gpu/drm/amd/amdgpu/amdgpu_gem.h       |  5 --
->   drivers/gpu/drm/armada/armada_drv.c           |  3 -
->   drivers/gpu/drm/armada/armada_gem.c           | 12 ++-
->   drivers/gpu/drm/armada/armada_gem.h           |  2 -
->   drivers/gpu/drm/drm_gem.c                     | 53 ++++--------
->   drivers/gpu/drm/drm_gem_cma_helper.c          |  8 +-
->   drivers/gpu/drm/drm_prime.c                   | 14 +--
->   drivers/gpu/drm/etnaviv/etnaviv_drv.c         | 13 ---
->   drivers/gpu/drm/etnaviv/etnaviv_drv.h         |  1 -
->   drivers/gpu/drm/etnaviv/etnaviv_gem.c         | 19 ++++-
->   drivers/gpu/drm/exynos/exynos_drm_drv.c       | 10 ---
->   drivers/gpu/drm/exynos/exynos_drm_gem.c       | 15 ++++
->   drivers/gpu/drm/gma500/framebuffer.c          |  2 +
->   drivers/gpu/drm/gma500/gem.c                  | 18 +++-
->   drivers/gpu/drm/gma500/gem.h                  |  3 +
->   drivers/gpu/drm/gma500/psb_drv.c              |  9 --
->   drivers/gpu/drm/gma500/psb_drv.h              |  2 -
->   drivers/gpu/drm/i915/gem/i915_gem_object.c    | 21 ++++-
->   drivers/gpu/drm/i915/gem/i915_gem_object.h    |  3 -
->   drivers/gpu/drm/i915/i915_drv.c               |  4 -
->   .../gpu/drm/i915/selftests/mock_gem_device.c  |  3 -
->   drivers/gpu/drm/imx/dcss/dcss-kms.c           | 14 +--
->   drivers/gpu/drm/mediatek/mtk_drm_drv.c        |  5 --
->   drivers/gpu/drm/mediatek/mtk_drm_gem.c        | 11 +++
->   drivers/gpu/drm/msm/msm_drv.c                 | 13 ---
->   drivers/gpu/drm/msm/msm_drv.h                 |  1 -
->   drivers/gpu/drm/msm/msm_gem.c                 | 19 ++++-
->   drivers/gpu/drm/nouveau/nouveau_drm.c         |  9 --
->   drivers/gpu/drm/nouveau/nouveau_gem.c         | 13 +++
->   drivers/gpu/drm/nouveau/nouveau_gem.h         |  2 +
->   drivers/gpu/drm/nouveau/nouveau_prime.c       |  2 +
->   drivers/gpu/drm/omapdrm/omap_drv.c            |  9 --
->   drivers/gpu/drm/omapdrm/omap_gem.c            | 18 +++-
->   drivers/gpu/drm/omapdrm/omap_gem.h            |  2 -
->   drivers/gpu/drm/pl111/pl111_drv.c             |  5 +-
->   drivers/gpu/drm/radeon/radeon_drv.c           | 23 +----
->   drivers/gpu/drm/radeon/radeon_gem.c           | 31 ++++++-
->   drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |  5 --
->   drivers/gpu/drm/rockchip/rockchip_drm_gem.c   | 12 ++-
->   drivers/gpu/drm/tegra/drm.c                   |  4 -
->   drivers/gpu/drm/tegra/gem.c                   |  8 ++
->   drivers/gpu/drm/vc4/vc4_bo.c                  | 21 ++++-
->   drivers/gpu/drm/vc4/vc4_drv.c                 | 12 ---
->   drivers/gpu/drm/vc4/vc4_drv.h                 |  1 -
->   drivers/gpu/drm/vgem/vgem_drv.c               | 21 +++--
->   drivers/gpu/drm/virtio/virtgpu_drv.c          |  1 -
->   drivers/gpu/drm/virtio/virtgpu_object.c       |  1 +
->   drivers/gpu/drm/vkms/vkms_drv.c               |  8 --
->   drivers/gpu/drm/vkms/vkms_gem.c               | 13 +++
->   drivers/gpu/drm/xen/xen_drm_front.c           | 44 ++++------
->   drivers/gpu/drm/xen/xen_drm_front.h           |  2 +
->   drivers/gpu/drm/xen/xen_drm_front_gem.c       | 15 ++++
->   drivers/gpu/drm/xlnx/zynqmp_dpsub.c           | 14 +--
->   include/drm/drm_drv.h                         | 85 +------------------
->   include/drm/drm_gem.h                         |  2 +-
->   59 files changed, 333 insertions(+), 375 deletions(-)
->
-> --
-> 2.28.0
->
+The issues with tc358764 might be automatically resolved once the Exynos
+DSI itself is converted to DRM bridge:
+https://patchwork.kernel.org/cover/11770683/
+but that approach has also its own issues so far.
+
+Best regards,
+Marek Szyprowski
+---
+ drivers/gpu/drm/bridge/tc358764.c | 107 +++++++++++++++++++++++++-----
+ 1 file changed, 92 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/tc358764.c b/drivers/gpu/drm/bridge/tc358764.c
+index d89394bc5aa4..c1e35bdf9232 100644
+--- a/drivers/gpu/drm/bridge/tc358764.c
++++ b/drivers/gpu/drm/bridge/tc358764.c
+@@ -153,9 +153,10 @@ static const char * const tc358764_supplies[] = {
+ struct tc358764 {
+ 	struct device *dev;
+ 	struct drm_bridge bridge;
++	struct drm_connector connector;
+ 	struct regulator_bulk_data supplies[ARRAY_SIZE(tc358764_supplies)];
+ 	struct gpio_desc *gpio_reset;
+-	struct drm_bridge *panel_bridge;
++	struct drm_panel *panel;
+ 	int error;
+ };
+ 
+@@ -209,6 +210,12 @@ static inline struct tc358764 *bridge_to_tc358764(struct drm_bridge *bridge)
+ 	return container_of(bridge, struct tc358764, bridge);
+ }
+ 
++static inline
++struct tc358764 *connector_to_tc358764(struct drm_connector *connector)
++{
++	return container_of(connector, struct tc358764, connector);
++}
++
+ static int tc358764_init(struct tc358764 *ctx)
+ {
+ 	u32 v = 0;
+@@ -271,11 +278,43 @@ static void tc358764_reset(struct tc358764 *ctx)
+ 	usleep_range(1000, 2000);
+ }
+ 
++static int tc358764_get_modes(struct drm_connector *connector)
++{
++	struct tc358764 *ctx = connector_to_tc358764(connector);
++
++	return drm_panel_get_modes(ctx->panel, connector);
++}
++
++static const
++struct drm_connector_helper_funcs tc358764_connector_helper_funcs = {
++	.get_modes = tc358764_get_modes,
++};
++
++static const struct drm_connector_funcs tc358764_connector_funcs = {
++	.fill_modes = drm_helper_probe_single_connector_modes,
++	.destroy = drm_connector_cleanup,
++	.reset = drm_atomic_helper_connector_reset,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
++};
++
++static void tc358764_disable(struct drm_bridge *bridge)
++{
++	struct tc358764 *ctx = bridge_to_tc358764(bridge);
++	int ret = drm_panel_disable(bridge_to_tc358764(bridge)->panel);
++
++	if (ret < 0)
++		dev_err(ctx->dev, "error disabling panel (%d)\n", ret);
++}
++
+ static void tc358764_post_disable(struct drm_bridge *bridge)
+ {
+ 	struct tc358764 *ctx = bridge_to_tc358764(bridge);
+ 	int ret;
+ 
++	ret = drm_panel_unprepare(ctx->panel);
++	if (ret < 0)
++		dev_err(ctx->dev, "error unpreparing panel (%d)\n", ret);
+ 	tc358764_reset(ctx);
+ 	usleep_range(10000, 15000);
+ 	ret = regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+@@ -296,28 +335,71 @@ static void tc358764_pre_enable(struct drm_bridge *bridge)
+ 	ret = tc358764_init(ctx);
+ 	if (ret < 0)
+ 		dev_err(ctx->dev, "error initializing bridge (%d)\n", ret);
++	ret = drm_panel_prepare(ctx->panel);
++	if (ret < 0)
++		dev_err(ctx->dev, "error preparing panel (%d)\n", ret);
++}
++
++static void tc358764_enable(struct drm_bridge *bridge)
++{
++	struct tc358764 *ctx = bridge_to_tc358764(bridge);
++	int ret = drm_panel_enable(ctx->panel);
++
++	if (ret < 0)
++		dev_err(ctx->dev, "error enabling panel (%d)\n", ret);
+ }
+ 
+ static int tc358764_attach(struct drm_bridge *bridge,
+ 			   enum drm_bridge_attach_flags flags)
++{
++	struct tc358764 *ctx = bridge_to_tc358764(bridge);
++	struct drm_device *drm = bridge->dev;
++	int ret;
++
++	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR) {
++		DRM_ERROR("Fix bridge driver to make connector optional!");
++		return -EINVAL;
++	}
++
++	ctx->connector.polled = DRM_CONNECTOR_POLL_HPD;
++	ret = drm_connector_init(drm, &ctx->connector,
++				 &tc358764_connector_funcs,
++				 DRM_MODE_CONNECTOR_LVDS);
++	if (ret) {
++		DRM_ERROR("Failed to initialize connector\n");
++		return ret;
++	}
++
++	drm_connector_helper_add(&ctx->connector,
++				 &tc358764_connector_helper_funcs);
++	drm_connector_attach_encoder(&ctx->connector, bridge->encoder);
++	ctx->connector.funcs->reset(&ctx->connector);
++	drm_connector_register(&ctx->connector);
++
++	return 0;
++}
++
++static void tc358764_detach(struct drm_bridge *bridge)
+ {
+ 	struct tc358764 *ctx = bridge_to_tc358764(bridge);
+ 
+-	return drm_bridge_attach(bridge->encoder, ctx->panel_bridge,
+-				 bridge, flags);
++	drm_connector_unregister(&ctx->connector);
++	ctx->panel = NULL;
++	drm_connector_put(&ctx->connector);
+ }
+ 
+ static const struct drm_bridge_funcs tc358764_bridge_funcs = {
++	.disable = tc358764_disable,
+ 	.post_disable = tc358764_post_disable,
++	.enable = tc358764_enable,
+ 	.pre_enable = tc358764_pre_enable,
+ 	.attach = tc358764_attach,
++	.detach = tc358764_detach,
+ };
+ 
+ static int tc358764_parse_dt(struct tc358764 *ctx)
+ {
+-	struct drm_bridge *panel_bridge;
+ 	struct device *dev = ctx->dev;
+-	struct drm_panel *panel;
+ 	int ret;
+ 
+ 	ctx->gpio_reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+@@ -326,16 +408,12 @@ static int tc358764_parse_dt(struct tc358764 *ctx)
+ 		return PTR_ERR(ctx->gpio_reset);
+ 	}
+ 
+-	ret = drm_of_find_panel_or_bridge(dev->of_node, 1, 0, &panel, NULL);
+-	if (ret)
+-		return ret;
+-
+-	panel_bridge = devm_drm_panel_bridge_add(dev, panel);
+-	if (IS_ERR(panel_bridge))
+-		return PTR_ERR(panel_bridge);
++	ret = drm_of_find_panel_or_bridge(ctx->dev->of_node, 1, 0, &ctx->panel,
++					  NULL);
++	if (ret && ret != -EPROBE_DEFER)
++		dev_err(dev, "cannot find panel (%d)\n", ret);
+ 
+-	ctx->panel_bridge = panel_bridge;
+-	return 0;
++	return ret;
+ }
+ 
+ static int tc358764_configure_regulators(struct tc358764 *ctx)
+@@ -381,7 +459,6 @@ static int tc358764_probe(struct mipi_dsi_device *dsi)
+ 		return ret;
+ 
+ 	ctx->bridge.funcs = &tc358764_bridge_funcs;
+-	ctx->bridge.type = DRM_MODE_CONNECTOR_LVDS;
+ 	ctx->bridge.of_node = dev->of_node;
+ 
+ 	drm_bridge_add(&ctx->bridge);
+-- 
+2.17.1
 
