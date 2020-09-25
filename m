@@ -2,148 +2,253 @@ Return-Path: <SRS0=jhxA=DC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF24C4727D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Sep 2020 14:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 998DCC47420
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Sep 2020 15:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EAAD208A9
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Sep 2020 14:13:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C8DF208B6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Sep 2020 15:13:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VjaUG617"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="FDS209oy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbgIYOMd (ORCPT
+        id S1729251AbgIYPNX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 25 Sep 2020 10:12:33 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:50584 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728973AbgIYOMd (ORCPT
+        Fri, 25 Sep 2020 11:13:23 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:12149 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728806AbgIYPNW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 25 Sep 2020 10:12:33 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200925141232euoutp01e2afabe28921841a9a6d730000b040e1~4DEOhyKdI1106011060euoutp01f
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Sep 2020 14:12:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200925141232euoutp01e2afabe28921841a9a6d730000b040e1~4DEOhyKdI1106011060euoutp01f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1601043152;
-        bh=09pv1gfbrMxHYJO8AD2snW5aXubFJIYR4lyEPqOH5uU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VjaUG617xjpS25xHY+2VFzQl2odlMBm65cz5PGEeXU08wEE9pZ/qW13B0SPqT0kru
-         G+jd1sq7hMKaX1w99LfqXun38Lh1Fnp3A82MAj4qwqJUiGuI63nRzS9JpZHSC3mlW+
-         hNVAyJHqupO6778Su8pTHRaPVGYyTym+/3Zjkq1c=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200925141231eucas1p20d3233eb3232f4d36c19cfa361272ddf~4DEOAP91c3256732567eucas1p2i;
-        Fri, 25 Sep 2020 14:12:31 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id CB.E4.06456.FCAFD6F5; Fri, 25
-        Sep 2020 15:12:31 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200925141231eucas1p223c342cc989df23e4fc28d97fe3010c5~4DENtkpoZ3253732537eucas1p2z;
-        Fri, 25 Sep 2020 14:12:31 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200925141231eusmtrp2883de88f9ea00225cba96e6eb43335bb~4DENs9Nam2598725987eusmtrp2i;
-        Fri, 25 Sep 2020 14:12:31 +0000 (GMT)
-X-AuditID: cbfec7f2-7efff70000001938-5b-5f6dfacfef32
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id FE.39.06314.FCAFD6F5; Fri, 25
-        Sep 2020 15:12:31 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200925141230eusmtip1b4b74b11e2277e18fef6a5019d2e2f2b~4DENMB_3U1229912299eusmtip1y;
-        Fri, 25 Sep 2020 14:12:30 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     Linux IOMMU <iommu@lists.linux-foundation.org>,
-        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, Christoph Hellwig <hch@lst.de>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/8] dma-mapping: add DMA_ATTR_LOW_ADDRESS attribute
-Date:   Fri, 25 Sep 2020 16:12:11 +0200
-Message-Id: <20200925141218.13550-2-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200925141218.13550-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WSbUhTURjHObu7d3fD2W0KniwTBgUaqbOgC5ZYWtz6EFKSINS85UWtTWXz
-        JQVrJL4NNU2wobZsOa053RLzZVq5ZToyNd9AwUBjFgZaqYGt1Dav2pfD7zzn9/yfw+HgiEiH
-        +uLJKemMIoWWiTEBt73/9/DREadcGqKv9SNfaEwo+bzpHYesexNGFteYeeTIiGsZt9RiZIn5
-        JUpqRl5zyOa+TzzS+sOBkoXzCwi5kr+BRXhQDquWQxm1RkDVqEa5VKuhGKMqpxoB1T2twqiy
-        NgOgVloPRuNxgpMJjCw5k1EEh8cLkkz6ejRtiX970rbIU4FSXA34OCSOw8H3E5gaCHAR8QzA
-        PKuVy25WAeyoesJxWyJiBUBbYehOh7OhgsdKjQC+qp/g7HaYR/sRt4UREqheVLtycdybSIcN
-        dk+3gxAODuxZZ1O9iCj4p8nCdTOXOATtk28xNwuJU7D8wybKTvOHTeberUw+EQ7nRnuBOwgS
-        Bh4sKp3nsVIUtGvyuSx7wW8Dbdv1A3Cz6zGHbcgDcG64mcduSgAcv6cBrBUGZ4adW1dFiABo
-        sgS7ERKnoa4YY9ETTi3udcuICx+0P0TYshAWFYjYjMOweqBld6r14xjCMgWd6+Pb71MBYMHc
-        GFYO/Kv/z6oDwAB8mAylPJFRSlKYrCAlLVdmpCQG3UiVtwLXzxncGFjuBL/GrtsAgQOxh9D+
-        WS4VoXSmMltuAxBHxN7CM0OD10TCBDo7h1GkShUZMkZpA/txrthHeEy3cFVEJNLpzC2GSWMU
-        O6ccnO+rAkVPRbP7JtaIjcrL2khkMPdCeKihz0+fUSMJqTQ6pg3GwLI7X+9Xe6/pogXxjm5H
-        oFoR15JgydXHRlIr9BfZ7KW1mObZPTnxd6d7vms9TvycsbbNS8/ZV88uddou/s3MvlIVYfGi
-        Olrab5pM0V0VsoD1LMOj82hIbMxy5pEhnZirTKIlgYhCSf8DmeqdJDUDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphkeLIzCtJLcpLzFFi42I5/e/4Xd3zv3LjDbpO8VpsnLGe1WLl6qNM
-        Fgv2W1t0zt7AbnH+PJC4vGsOm0XPhq2sFjPO72OyWHvkLrvFwQ9PWC3an75ktvjc+o/Ngcfj
-        ycF5TB5r5q1h9JjdcJHFY9OqTjaPyTeWM3rsvtnA5tG3ZRWjx+dNcgEcUXo2RfmlJakKGfnF
-        JbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZ65cuYS14x1lx9dBb9gbG
-        Xo4uRk4OCQETiV/LJrJ3MXJxCAksZZT4eOQcM0RCRuLktAZWCFtY4s+1LjaIok+MEls2HWUD
-        SbAJGEp0ve0Cs0UEyiQ6rmxlBiliFnjDJHH31Q92kISwgIvE79W7WEBsFgFViRNXD4M18ArY
-        Skw48x9qg7zE6g0HwDZzCthJPLx4gLGLkQNom63E/odOExj5FjAyrGIUSS0tzk3PLTbUK07M
-        LS7NS9dLzs/dxAiMgW3Hfm7ewXhpY/AhRgEORiUe3hOPcuOFWBPLiitzDzFKcDArifA6nT0d
-        J8SbklhZlVqUH19UmpNafIjRFOimicxSosn5wPjMK4k3NDU0t7A0NDc2NzazUBLn7RA4GCMk
-        kJ5YkpqdmlqQWgTTx8TBKdXA6PJgjXyaSIa8D9MpcVaDHQzdzz2OflwRwXT5okTF3V/fKqW0
-        6grcMhmeie+crLN49dfZ7DOF/ZaKSbv0PA7Y2ONSY+1fdODhHPsQ+9JME/+5XwQ9Yw5cMNqj
-        eHfaDe64e5tX9CamWEXPdV+pqRoWlDTrftmRxgfmEknsnDfnTFycrxtkZh2mxFKckWioxVxU
-        nAgAEI6bVpcCAAA=
-X-CMS-MailID: 20200925141231eucas1p223c342cc989df23e4fc28d97fe3010c5
-X-Msg-Generator: CA
+        Fri, 25 Sep 2020 11:13:22 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f6e09030001>; Fri, 25 Sep 2020 08:13:07 -0700
+Received: from [10.26.74.254] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 25 Sep
+ 2020 15:13:04 +0000
+Subject: Re: [PATCH v2 0/5] PCI: dwc: improve msi handling
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+CC:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        <linux-pci@vger.kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        <linux-arm-kernel@axis.com>, Vidya Sagar <vidyas@nvidia.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        <linux-tegra@vger.kernel.org>,
+        "Krzysztof Kozlowski" <krzk@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        "Kukjin Kim" <kgene@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
+        <linux-arm-msm@vger.kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "Yue Wang" <yue.wang@Amlogic.com>,
+        <linux-samsung-soc@vger.kernel.org>,
+        "Bjorn Helgaas" <bhelgaas@google.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "Jingoo Han" <jingoohan1@gmail.com>,
+        Andy Gross <agross@kernel.org>, <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>
+References: <20200924190421.549cb8fc@xhacker.debian>
+ <de4d9294-4f6d-c7d1-efc7-c8ef6570bd64@nvidia.com>
+ <20200925171712.254a018d@xhacker.debian>
+ <20200925172724.5bdf6aab@xhacker.debian>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <d4715e17-147f-a4fe-32c1-32fdfe8548bb@nvidia.com>
+Date:   Fri, 25 Sep 2020 16:13:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20200925172724.5bdf6aab@xhacker.debian>
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200925141231eucas1p223c342cc989df23e4fc28d97fe3010c5
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200925141231eucas1p223c342cc989df23e4fc28d97fe3010c5
-References: <20200925141218.13550-1-m.szyprowski@samsung.com>
-        <CGME20200925141231eucas1p223c342cc989df23e4fc28d97fe3010c5@eucas1p2.samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1601046787; bh=EBv+3J4epfd1Uw+GuLLec005qVEJj6G4T0IJRV9QFbs=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=FDS209oyLGTSt7i1V6NK2xiOWb4fEIB67U9niLqBhIfCxKGwLgwvpJgin6NRjdTNS
+         l+ufEtTXI9j1coOP65bF57TK4jsQxk6doxrrHT25FL1Bgf2qeFUpYP5egByiS5KJYb
+         OjL0CO18Vf7cW2d6PeclWb7k5iSPArrTx27CPGuhJzsnJgpQadfuxIMrYZd6ik01Xc
+         6Irq2uGPbc32UsyDGSodTVIf2oicazmIHjwAPtWYOn7K5pjf3UwrMPdaGZzRfAm/1G
+         t8rUn2p/jIY/EZ4S+rOUBWuq7bi/IT55HqOsvgTojr8V/9Gq0akrFxpRjwD013ceah
+         Djhyq/XI74ZIQ==
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Some devices require to allocate a special buffer (usually for the
-firmware) just at the beginning of the address space to ensure that all
-further allocations can be expressed as a positive offset from that
-special buffer. When IOMMU is used for managing the DMA address space,
-such requirement can be easily fulfilled, simply by enforcing the
-'first-fit' IOVA allocation algorithm.
+Hi Jisheng,
 
-This patch adds a DMA attribute for such case.
+On 25/09/2020 10:27, Jisheng Zhang wrote:
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- include/linux/dma-mapping.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+...
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index bb138ac6f5e6..c8c568ba375b 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -66,6 +66,12 @@
-  * at least read-only at lesser-privileged levels).
-  */
- #define DMA_ATTR_PRIVILEGED		(1UL << 9)
-+/*
-+ * DMA_ATTR_LOW_ADDRESS: used to indicate that the buffer should be allocated
-+ * at the lowest possible DMA address, usually just at the beginning of the
-+ * DMA/IOVA address space ('first-fit' allocation algorithm).
-+ */
-+#define DMA_ATTR_LOW_ADDRESS		(1UL << 10)
+>> Could you please try below patch?
+>>
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+>> index bf25d783b5c5..7e5dc54d060e 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+>> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+>> @@ -197,7 +197,6 @@ static struct irq_chip dw_pci_msi_bottom_irq_chip = {
+>>         .name = "DWPCI-MSI",
+>>         .irq_ack = dw_pci_bottom_ack,
+>>         .irq_compose_msi_msg = dw_pci_setup_msi_msg,
+>> -       .irq_set_affinity = dw_pci_msi_set_affinity,
+>>         .irq_mask = dw_pci_bottom_mask,
+>>         .irq_unmask = dw_pci_bottom_unmask,
+>>  };
+> 
+> A complete patch w/o compiler warning:
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index bf25d783b5c5..18f719cfed0b 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -137,12 +137,6 @@ static void dw_pci_setup_msi_msg(struct irq_data *d, struct msi_msg *msg)
+>  		(int)d->hwirq, msg->address_hi, msg->address_lo);
+>  }
+>  
+> -static int dw_pci_msi_set_affinity(struct irq_data *d,
+> -				   const struct cpumask *mask, bool force)
+> -{
+> -	return -EINVAL;
+> -}
+> -
+>  static void dw_pci_bottom_mask(struct irq_data *d)
+>  {
+>  	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
+> @@ -197,7 +191,6 @@ static struct irq_chip dw_pci_msi_bottom_irq_chip = {
+>  	.name = "DWPCI-MSI",
+>  	.irq_ack = dw_pci_bottom_ack,
+>  	.irq_compose_msi_msg = dw_pci_setup_msi_msg,
+> -	.irq_set_affinity = dw_pci_msi_set_affinity,
+>  	.irq_mask = dw_pci_bottom_mask,
+>  	.irq_unmask = dw_pci_bottom_unmask,
+>  };
+> 
+
+
+Thanks I was not expecting this to work because ...
+
+ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
+                         bool force)
+ {
+         struct irq_desc *desc = irq_data_to_desc(data);
+         struct irq_chip *chip = irq_data_get_irq_chip(data);
+         int ret;
  
- /*
-  * A dma_addr_t can hold any valid DMA or bus address for the platform.
--- 
-2.17.1
+         if (!chip || !chip->irq_set_affinity)
+                 return -EINVAL;
 
+However, with your patch Tegra crashes on boot ...
+
+[   11.613853] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+[   11.622500] Mem abort info:
+[   11.622515]   ESR = 0x86000004
+[   11.622524]   EC = 0x21: IABT (current EL), IL = 32 bits
+[   11.622540]   SET = 0, FnV = 0
+[   11.636544]   EA = 0, S1PTW = 0
+[   11.636554] user pgtable: 4k pages, 48-bit VAs, pgdp=000000046a28e000
+[   11.636559] [0000000000000000] pgd=0000000000000000, p4d=0000000000000000
+[   11.652652] Internal error: Oops: 86000004 [#1] PREEMPT SMP
+[   11.652658] Modules linked in: pwm_tegra phy_tegra194_p2u crct10dif_ce lm90 pwm_fan tegra_bpmp_thermal pcie_tegra194 ip_tables x_tables ipv6
+[   11.670525] CPU: 3 PID: 138 Comm: kworker/3:3 Not tainted 5.9.0-rc4-dirty #12
+[   11.670534] Hardware name: NVIDIA Jetson AGX Xavier Developer Kit (DT)
+[   11.683967] Workqueue: events deferred_probe_work_func
+[   11.683974] pstate: 60c00089 (nZCv daIf +PAN +UAO BTYPE=--)
+[   11.683985] pc : 0x0
+[   11.696669] lr : msi_domain_set_affinity+0x44/0xc0
+[   11.696672] sp : ffff800012bcb390
+[   11.696680] x29: ffff800012bcb390 x28: ffff0003e3033c20 
+[   11.709891] x27: ffff0003e76cfe58 x26: 0000000000000000 
+[   11.709900] x25: ffff800011d7e850 x24: ffff800011d7e878 
+[   11.709908] x23: 0000000000000000 x22: ffff0003e76cfe00 
+[   11.709914] x21: ffff0003e76cfe58 x20: ffff0003e76cfe58 
+[   11.709921] x19: ffff800011b19000 x18: ffffffffffffffff 
+[   11.709927] x17: 0000000000000000 x16: 0000000000000000 
+[   11.741262] x15: ffff800011b19948 x14: 0000000000000040 
+[   11.741267] x13: 0000000000000228 x12: 0000000000000030 
+[   11.741272] x11: 0101010101010101 x10: 0000000000000040 
+[   11.741277] x9 : 0000000000000000 x8 : 0000000000000004 
+[   11.741281] x7 : ffffffffffffffff x6 : 00000000000000ff 
+[   11.767374] x5 : 0000000000000000 x4 : 0000000000000000 
+[   11.767379] x3 : 0000000000000000 x2 : 0000000000000000 
+[   11.767384] x1 : ffff800011d7e898 x0 : ffff0003e262bf00 
+[   11.767406] Call trace:
+[   11.767410]  0x0
+[   11.767424]  irq_do_set_affinity+0x4c/0x178
+[   11.791400]  irq_setup_affinity+0x124/0x1b0
+[   11.791423]  irq_startup+0x6c/0x118
+[   11.791434]  __setup_irq+0x810/0x8a0
+[   11.802510]  request_threaded_irq+0xdc/0x188
+[   11.802517]  pcie_pme_probe+0x98/0x110
+[   11.802536]  pcie_port_probe_service+0x34/0x60
+[   11.814799]  really_probe+0x110/0x400
+[   11.814809]  driver_probe_device+0x54/0xb8
+[   11.822438]  __device_attach_driver+0x90/0xc0
+[   11.822463]  bus_for_each_drv+0x70/0xc8
+[   11.822471]  __device_attach+0xec/0x150
+[   11.834307]  device_initial_probe+0x10/0x18
+[   11.834311]  bus_probe_device+0x94/0xa0
+[   11.834315]  device_add+0x464/0x730
+[   11.834338]  device_register+0x1c/0x28
+[   11.834349]  pcie_port_device_register+0x2d0/0x3e8
+[   11.854056]  pcie_portdrv_probe+0x34/0xd8
+[   11.854063]  local_pci_probe+0x3c/0xa0
+[   11.854088]  pci_device_probe+0x128/0x1c8
+[   11.854103]  really_probe+0x110/0x400
+[   11.869283]  driver_probe_device+0x54/0xb8
+[   11.869311]  __device_attach_driver+0x90/0xc0
+[   11.877638]  bus_for_each_drv+0x70/0xc8
+[   11.877645]  __device_attach+0xec/0x150
+[   11.877669]  device_attach+0x10/0x18
+[   11.877680]  pci_bus_add_device+0x4c/0xb0
+[   11.892642]  pci_bus_add_devices+0x44/0x90
+[   11.892646]  dw_pcie_host_init+0x370/0x4f8
+[   11.892653]  tegra_pcie_dw_probe+0x5e8/0xb50 [pcie_tegra194]
+[   11.892661]  platform_drv_probe+0x50/0xa8
+[   11.910179]  really_probe+0x110/0x400
+[   11.910183]  driver_probe_device+0x54/0xb8
+[   11.910186]  __device_attach_driver+0x90/0xc0
+[   11.910213]  bus_for_each_drv+0x70/0xc8
+[   11.910240]  __device_attach+0xec/0x150
+[   11.929689]  device_initial_probe+0x10/0x18
+[   11.929694]  bus_probe_device+0x94/0xa0
+[   11.929719]  deferred_probe_work_func+0x6c/0xa0
+[   11.929730]  process_one_work+0x1cc/0x360
+[   11.946008]  worker_thread+0x48/0x450
+[   11.949602]  kthread+0x120/0x150
+[   11.952803]  ret_from_fork+0x10/0x1c
+[   11.956332] Code: bad PC value
+[   11.959360] ---[ end trace 03c30e252fe4e40b ]---
+
+To be honest, I am not sure I completely understand why it crashes here.
+
+Cheers
+Jon
+
+-- 
+nvpublic
