@@ -7,36 +7,39 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A379C4727D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 14:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98474C47423
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 14:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48FE1208B8
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 14:05:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47A04208B8
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 14:05:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730496AbgI2OFC (ORCPT
+        id S1727328AbgI2OFk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Sep 2020 10:05:02 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:47964 "EHLO
+        Tue, 29 Sep 2020 10:05:40 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:48038 "EHLO
         mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728867AbgI2OFB (ORCPT
+        by vger.kernel.org with ESMTP id S1728481AbgI2OFj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Sep 2020 10:05:01 -0400
+        Tue, 29 Sep 2020 10:05:39 -0400
 X-IronPort-AV: E=Sophos;i="5.77,318,1596492000"; 
-   d="scan'208";a="470079953"
+   d="scan'208";a="470079965"
 Received: from palace.lip6.fr ([132.227.105.202])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/AES256-SHA256; 29 Sep 2020 15:57:41 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+To:     Kyungmin Park <kyungmin.park@samsung.com>
 Cc:     =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
         Joe Perches <joe@perches.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         kernel-janitors@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 07/20] media: s3c-camif: use semicolons rather than commas to separate statements
-Date:   Tue, 29 Sep 2020 15:14:30 +0200
-Message-Id: <1601385283-26144-8-git-send-email-Julia.Lawall@inria.fr>
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 19/20] media: exynos4-is: use semicolons rather than commas to separate statements
+Date:   Tue, 29 Sep 2020 15:14:42 +0200
+Message-Id: <1601385283-26144-20-git-send-email-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
 References: <1601385283-26144-1-git-send-email-Julia.Lawall@inria.fr>
@@ -61,16 +64,16 @@ e2
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/media/platform/s3c-camif/camif-core.c |    6 ++++--
+ drivers/media/platform/exynos4-is/fimc-core.c |    6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
-index 92f43c0cbc0c..02b5f933c411 100644
---- a/drivers/media/platform/s3c-camif/camif-core.c
-+++ b/drivers/media/platform/s3c-camif/camif-core.c
-@@ -131,11 +131,13 @@ static int camif_get_scaler_factor(u32 src, u32 tar, u32 *ratio, u32 *shift)
+diff --git a/drivers/media/platform/exynos4-is/fimc-core.c b/drivers/media/platform/exynos4-is/fimc-core.c
+index 08d1f39a914c..db6e548fe08e 100644
+--- a/drivers/media/platform/exynos4-is/fimc-core.c
++++ b/drivers/media/platform/exynos4-is/fimc-core.c
+@@ -214,11 +214,13 @@ static int fimc_get_scaler_factor(u32 src, u32 tar, u32 *ratio, u32 *shift)
  	while (sh--) {
- 		unsigned int tmp = 1 << sh;
+ 		u32 tmp = 1 << sh;
  		if (src >= tar * tmp) {
 -			*shift = sh, *ratio = tmp;
 +			*shift = sh;
