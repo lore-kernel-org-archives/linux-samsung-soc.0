@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C418C47428
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 15:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 422D7C4727C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 15:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4E4121924
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 15:14:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEAE220789
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 15:14:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731605AbgI2POq (ORCPT
+        id S1731606AbgI2POr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Sep 2020 11:14:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59918 "EHLO mx2.suse.de"
+        Tue, 29 Sep 2020 11:14:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60100 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730942AbgI2POp (ORCPT
+        id S1731529AbgI2POq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Sep 2020 11:14:45 -0400
+        Tue, 29 Sep 2020 11:14:46 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2E9C7AFB8;
-        Tue, 29 Sep 2020 15:14:43 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 5E7F3AE64;
+        Tue, 29 Sep 2020 15:14:44 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
         airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
@@ -51,108 +51,194 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, xen-devel@lists.xenproject.org,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 2/7] drm/ttm: Add ttm_kmap_obj_to_dma_buf_map() for type conversion
-Date:   Tue, 29 Sep 2020 17:14:32 +0200
-Message-Id: <20200929151437.19717-3-tzimmermann@suse.de>
+Subject: [PATCH v3 4/7] drm/gem: Update internal GEM vmap/vunmap interfaces to use struct dma_buf_map
+Date:   Tue, 29 Sep 2020 17:14:34 +0200
+Message-Id: <20200929151437.19717-5-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200929151437.19717-1-tzimmermann@suse.de>
 References: <20200929151437.19717-1-tzimmermann@suse.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The new helper ttm_kmap_obj_to_dma_buf() extracts address and location
-from and instance of TTM's kmap_obj and initializes struct dma_buf_map
-with these values. Helpful for TTM-based drivers.
+GEM's vmap and vunmap interfaces now wrap memory pointers in struct
+dma_buf_map.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- include/drm/ttm/ttm_bo_api.h | 24 ++++++++++++++++++++++++
- include/linux/dma-buf-map.h  | 20 ++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+ drivers/gpu/drm/drm_client.c   | 18 +++++++++++-------
+ drivers/gpu/drm/drm_gem.c      | 28 ++++++++++++++--------------
+ drivers/gpu/drm/drm_internal.h |  5 +++--
+ drivers/gpu/drm/drm_prime.c    | 14 ++++----------
+ 4 files changed, 32 insertions(+), 33 deletions(-)
 
-diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm/ttm_bo_api.h
-index c96a25d571c8..62d89f05a801 100644
---- a/include/drm/ttm/ttm_bo_api.h
-+++ b/include/drm/ttm/ttm_bo_api.h
-@@ -34,6 +34,7 @@
- #include <drm/drm_gem.h>
- #include <drm/drm_hashtab.h>
- #include <drm/drm_vma_manager.h>
+diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
+index 495f47d23d87..ac0082bed966 100644
+--- a/drivers/gpu/drm/drm_client.c
++++ b/drivers/gpu/drm/drm_client.c
+@@ -3,6 +3,7 @@
+  * Copyright 2018 Noralf Trønnes
+  */
+ 
 +#include <linux/dma-buf-map.h>
- #include <linux/kref.h>
  #include <linux/list.h>
- #include <linux/wait.h>
-@@ -486,6 +487,29 @@ static inline void *ttm_kmap_obj_virtual(struct ttm_bo_kmap_obj *map,
- 	return map->virtual;
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+@@ -304,7 +305,8 @@ drm_client_buffer_create(struct drm_client_dev *client, u32 width, u32 height, u
+  */
+ void *drm_client_buffer_vmap(struct drm_client_buffer *buffer)
+ {
+-	void *vaddr;
++	struct dma_buf_map map;
++	int ret;
+ 
+ 	if (buffer->vaddr)
+ 		return buffer->vaddr;
+@@ -317,13 +319,13 @@ void *drm_client_buffer_vmap(struct drm_client_buffer *buffer)
+ 	 * fd_install step out of the driver backend hooks, to make that
+ 	 * final step optional for internal users.
+ 	 */
+-	vaddr = drm_gem_vmap(buffer->gem);
+-	if (IS_ERR(vaddr))
+-		return vaddr;
++	ret = drm_gem_vmap(buffer->gem, &map);
++	if (ret)
++		return ERR_PTR(ret);
+ 
+-	buffer->vaddr = vaddr;
++	buffer->vaddr = map.vaddr;
+ 
+-	return vaddr;
++	return map.vaddr;
+ }
+ EXPORT_SYMBOL(drm_client_buffer_vmap);
+ 
+@@ -337,7 +339,9 @@ EXPORT_SYMBOL(drm_client_buffer_vmap);
+  */
+ void drm_client_buffer_vunmap(struct drm_client_buffer *buffer)
+ {
+-	drm_gem_vunmap(buffer->gem, buffer->vaddr);
++	struct dma_buf_map map = DMA_BUF_MAP_INIT_VADDR(buffer->vaddr);
++
++	drm_gem_vunmap(buffer->gem, &map);
+ 	buffer->vaddr = NULL;
+ }
+ EXPORT_SYMBOL(drm_client_buffer_vunmap);
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index 0c4a66dea5c2..f2b2f37d41c4 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -1205,32 +1205,32 @@ void drm_gem_unpin(struct drm_gem_object *obj)
+ 		obj->funcs->unpin(obj);
  }
  
-+/**
-+ * ttm_kmap_obj_to_dma_buf_map
-+ *
-+ * @kmap: A struct ttm_bo_kmap_obj returned from ttm_bo_kmap.
-+ * @map: Returns the mapping as struct dma_buf_map
-+ *
-+ * Converts struct ttm_bo_kmap_obj to struct dma_buf_map. If the memory
-+ * is not mapped, the returned mapping is initialized to NULL.
-+ */
-+static inline void ttm_kmap_obj_to_dma_buf_map(struct ttm_bo_kmap_obj *kmap,
-+					       struct dma_buf_map *map)
-+{
-+	bool is_iomem;
-+	void *vaddr = ttm_kmap_obj_virtual(kmap, &is_iomem);
-+
-+	if (!vaddr)
-+		dma_buf_map_clear(map);
-+	else if (is_iomem)
-+		dma_buf_map_set_vaddr_iomem(map, (void __force __iomem *)vaddr);
-+	else
-+		dma_buf_map_set_vaddr(map, vaddr);
-+}
-+
- /**
-  * ttm_bo_kmap
-  *
-diff --git a/include/linux/dma-buf-map.h b/include/linux/dma-buf-map.h
-index fd1aba545fdf..2e8bbecb5091 100644
---- a/include/linux/dma-buf-map.h
-+++ b/include/linux/dma-buf-map.h
-@@ -45,6 +45,12 @@
-  *
-  *	dma_buf_map_set_vaddr(&map. 0xdeadbeaf);
-  *
-+ * To set an address in I/O memory, use dma_buf_map_set_vaddr_iomem().
-+ *
-+ * .. code-block:: c
-+ *
-+ *	dma_buf_map_set_vaddr_iomem(&map. 0xdeadbeaf);
-+ *
-  * Test if a mapping is valid with either dma_buf_map_is_set() or
-  * dma_buf_map_is_null().
-  *
-@@ -118,6 +124,20 @@ static inline void dma_buf_map_set_vaddr(struct dma_buf_map *map, void *vaddr)
- 	map->is_iomem = false;
+-void *drm_gem_vmap(struct drm_gem_object *obj)
++int drm_gem_vmap(struct drm_gem_object *obj, struct dma_buf_map *map)
+ {
+-	struct dma_buf_map map;
+ 	int ret;
+ 
+-	if (!obj->funcs->vmap) {
+-		return ERR_PTR(-EOPNOTSUPP);
++	if (!obj->funcs->vmap)
++		return -EOPNOTSUPP;
+ 
+-	ret = obj->funcs->vmap(obj, &map);
++	ret = obj->funcs->vmap(obj, map);
+ 	if (ret)
+-		return ERR_PTR(ret);
+-	else if (dma_buf_map_is_null(&map))
+-		return ERR_PTR(-ENOMEM);
++		return ret;
++	else if (dma_buf_map_is_null(map))
++		return -ENOMEM;
+ 
+-	return map.vaddr;
++	return 0;
  }
  
-+/**
-+ * dma_buf_map_set_vaddr_iomem - Sets a dma-buf mapping structure to an address in I/O memory
-+ * @map:		The dma-buf mapping structure
-+ * @vaddr_iomem:	An I/O-memory address
-+ *
-+ * Sets the address and the I/O-memory flag.
-+ */
-+static inline void dma_buf_map_set_vaddr_iomem(struct dma_buf_map *map,
-+					       void __iomem *vaddr_iomem)
-+{
-+	map->vaddr_iomem = vaddr_iomem;
-+	map->is_iomem = true;
-+}
+-void drm_gem_vunmap(struct drm_gem_object *obj, void *vaddr)
++void drm_gem_vunmap(struct drm_gem_object *obj, struct dma_buf_map *map)
+ {
+-	struct dma_buf_map map = DMA_BUF_MAP_INIT_VADDR(vaddr);
+-
+-	if (!vaddr)
++	if (dma_buf_map_is_null(map))
+ 		return;
+ 
+ 	if (obj->funcs->vunmap)
+-		obj->funcs->vunmap(obj, &map);
++		obj->funcs->vunmap(obj, map);
 +
++	/* Always set the mapping to NULL. Callers may rely on this. */
++	dma_buf_map_clear(map);
+ }
+ 
  /**
-  * dma_buf_map_is_equal - Compares two dma-buf mapping structures for equality
-  * @lhs:	The dma-buf mapping structure
+diff --git a/drivers/gpu/drm/drm_internal.h b/drivers/gpu/drm/drm_internal.h
+index b65865c630b0..58832d75a9bd 100644
+--- a/drivers/gpu/drm/drm_internal.h
++++ b/drivers/gpu/drm/drm_internal.h
+@@ -33,6 +33,7 @@
+ 
+ struct dentry;
+ struct dma_buf;
++struct dma_buf_map;
+ struct drm_connector;
+ struct drm_crtc;
+ struct drm_framebuffer;
+@@ -187,8 +188,8 @@ void drm_gem_print_info(struct drm_printer *p, unsigned int indent,
+ 
+ int drm_gem_pin(struct drm_gem_object *obj);
+ void drm_gem_unpin(struct drm_gem_object *obj);
+-void *drm_gem_vmap(struct drm_gem_object *obj);
+-void drm_gem_vunmap(struct drm_gem_object *obj, void *vaddr);
++int drm_gem_vmap(struct drm_gem_object *obj, struct dma_buf_map *map);
++void drm_gem_vunmap(struct drm_gem_object *obj, struct dma_buf_map *map);
+ 
+ /* drm_debugfs.c drm_debugfs_crc.c */
+ #if defined(CONFIG_DEBUG_FS)
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 89e2a2496734..cb8fbeeb731b 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -667,21 +667,15 @@ EXPORT_SYMBOL(drm_gem_unmap_dma_buf);
+  *
+  * Sets up a kernel virtual mapping. This can be used as the &dma_buf_ops.vmap
+  * callback. Calls into &drm_gem_object_funcs.vmap for device specific handling.
++ * The kernel virtual address is returned in map.
+  *
+- * Returns the kernel virtual address or NULL on failure.
++ * Returns 0 on success or a negative errno code otherwise.
+  */
+ int drm_gem_dmabuf_vmap(struct dma_buf *dma_buf, struct dma_buf_map *map)
+ {
+ 	struct drm_gem_object *obj = dma_buf->priv;
+-	void *vaddr;
+ 
+-	vaddr = drm_gem_vmap(obj);
+-	if (IS_ERR(vaddr))
+-		return PTR_ERR(vaddr);
+-
+-	dma_buf_map_set_vaddr(map, vaddr);
+-
+-	return 0;
++	return drm_gem_vmap(obj, map);
+ }
+ EXPORT_SYMBOL(drm_gem_dmabuf_vmap);
+ 
+@@ -697,7 +691,7 @@ void drm_gem_dmabuf_vunmap(struct dma_buf *dma_buf, struct dma_buf_map *map)
+ {
+ 	struct drm_gem_object *obj = dma_buf->priv;
+ 
+-	drm_gem_vunmap(obj, map->vaddr);
++	drm_gem_vunmap(obj, map);
+ }
+ EXPORT_SYMBOL(drm_gem_dmabuf_vunmap);
+ 
 -- 
 2.28.0
 
