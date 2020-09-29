@@ -2,169 +2,281 @@ Return-Path: <SRS0=mzy8=DG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A467C47425
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 17:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D635C4741F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 17:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37C1C20C09
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 17:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601400346;
-	bh=Xv0rt8BvK5NQflV4HM9+bGl203Y0k3NIGUz7VcStvqM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=Uk/kewWPy22EqrvtR63Fr0tYR8+/2xjV1CFEFwFbeRdqj3njwd0ZXLAlx/hmO9/zP
-	 qKt5mXwNlZo1T6xv8s/r9cZl+8CjI/WHPsmSIwLtveztj5PfJKLGAIEJB/qMAoru6u
-	 11cJE3WV92wDeyt66eeWmPEVsvj33+RHhf9T6MXo=
+	by mail.kernel.org (Postfix) with ESMTP id CD904208B8
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 17:49:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbgI2RZn (ORCPT
+        id S1728449AbgI2Rth (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Sep 2020 13:25:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35900 "EHLO mail.kernel.org"
+        Tue, 29 Sep 2020 13:49:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44560 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727328AbgI2RZl (ORCPT
+        id S1728198AbgI2Rth (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Sep 2020 13:25:41 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 003972075A;
-        Tue, 29 Sep 2020 17:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601400340;
-        bh=Xv0rt8BvK5NQflV4HM9+bGl203Y0k3NIGUz7VcStvqM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=vW3pXJX83SknNw5HoHFJQaYImR0HN6DhmSa2zEwx5veHCgjUlwS3WW2rRAeg408gA
-         H1Lqkq/nBOwGW3k+W/Jj3WHvm6EHshDZ2YUWoZtTfb4mE55OgYwVXg8gdo4huvJu+i
-         McYfN0AlCJeWRJ5Ebe8RDHaYlGXXxb3l0QXk+F9c=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1kNJNh-00Fu9z-Hl; Tue, 29 Sep 2020 18:25:37 +0100
+        Tue, 29 Sep 2020 13:49:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 1E5DBAD3C
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Sep 2020 17:49:35 +0000 (UTC)
+Subject: Re: [PATCH v3 2/7] drm/ttm: Add ttm_kmap_obj_to_dma_buf_map() for
+ type conversion
+To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
+        alexander.deucher@amd.com, kraxel@redhat.com,
+        l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
+        christian.gmeiner@gmail.com, inki.dae@samsung.com,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        yuq825@gmail.com, bskeggs@redhat.com, robh@kernel.org,
+        tomeu.vizoso@collabora.com, steven.price@arm.com,
+        alyssa.rosenzweig@collabora.com, hjc@rock-chips.com,
+        heiko@sntech.de, hdegoede@redhat.com, sean@poorly.run,
+        eric@anholt.net, oleksandr_andrushchenko@epam.com,
+        ray.huang@amd.com, sumit.semwal@linaro.org,
+        emil.velikov@collabora.com, luben.tuikov@amd.com, apaneers@amd.com,
+        linus.walleij@linaro.org, melissa.srw@gmail.com,
+        chris@chris-wilson.co.uk, miaoqinglang@huawei.com
+Cc:     linux-samsung-soc@vger.kernel.org, lima@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linaro-mm-sig@lists.linaro.org, linux-rockchip@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+        spice-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <20200929151437.19717-1-tzimmermann@suse.de>
+ <20200929151437.19717-3-tzimmermann@suse.de>
+ <8fad0114-064a-4ed5-c21d-d1b4294de0a1@amd.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Message-ID: <2614314a-81f7-4722-c400-68d90e48e09a@suse.de>
+Date:   Tue, 29 Sep 2020 19:49:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 29 Sep 2020 18:25:37 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-pci@vger.kernel.org,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-arm-kernel@axis.com, Vidya Sagar <vidyas@nvidia.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        linux-tegra@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-msm@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Yue Wang <yue.wang@amlogic.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH v2 0/5] PCI: dwc: improve msi handling
-In-Reply-To: <8e06a370-a37a-5f33-b43b-2830adb31b3e@nvidia.com>
-References: <20200924190421.549cb8fc@xhacker.debian>
- <de4d9294-4f6d-c7d1-efc7-c8ef6570bd64@nvidia.com>
- <20200929184851.22682ff1@xhacker.debian>
- <8e06a370-a37a-5f33-b43b-2830adb31b3e@nvidia.com>
-User-Agent: Roundcube Webmail/1.4.8
-Message-ID: <d4a6eea3c5e33a3a4056885419df95a7@kernel.org>
-X-Sender: maz@kernel.org
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: jonathanh@nvidia.com, Jisheng.Zhang@synaptics.com, hayashi.kunihiko@socionext.com, narmstrong@baylibre.com, linux-pci@vger.kernel.org, wangbinghui@hisilicon.com, bjorn.andersson@linaro.org, yamada.masahiro@socionext.com, thierry.reding@gmail.com, linux-arm-kernel@axis.com, vidyas@nvidia.com, festevam@gmail.com, jbrunet@baylibre.com, robh@kernel.org, jesper.nilsson@axis.com, lorenzo.pieralisi@arm.com, khilman@baylibre.com, pratyush.anand@gmail.com, linux-tegra@vger.kernel.org, krzk@kernel.org, kishon@ti.com, kgene@kernel.org, linux-imx@nxp.com, songxiaowei@hisilicon.com, hongxing.zhu@nxp.com, martin.blumenstingl@googlemail.com, linux-arm-msm@vger.kernel.org, s.hauer@pengutronix.de, yue.wang@amlogic.com, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jingoohan1@gmail.com, agross@kernel.org, linux-kernel@vger.kernel.org, svarbanov@mm-sol.com, kernel@pengutroni
- x.de, gustavo.pimentel@synopsys.com, shawnguo@kernel.org, l.stach@pengutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+In-Reply-To: <8fad0114-064a-4ed5-c21d-d1b4294de0a1@amd.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="TxZtp2xZDgS8tF4LCH0pvplac5jBMMD1n"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020-09-29 14:22, Jon Hunter wrote:
-> Hi Jisheng,
-> 
-> On 29/09/2020 11:48, Jisheng Zhang wrote:
->> Hi Jon,
->> 
->> On Fri, 25 Sep 2020 09:53:45 +0100 Jon Hunter wrote:
->> 
->>> 
->>> On 24/09/2020 12:05, Jisheng Zhang wrote:
->>>> Improve the msi code:
->>>> 1. Add proper error handling.
->>>> 2. Move dw_pcie_msi_init() from each users to designware host to 
->>>> solve
->>>> msi page leakage in resume path.
->>> 
->>> Apologies if this is slightly off topic, but I have been meaning to 
->>> ask
->>> about MSIs and PCI. On Tegra194 which uses the DWC PCI driver, 
->>> whenever we
->>> hotplug CPUs we see the following warnings ...
->>> 
->>>  [      79.068351] WARNING KERN IRQ70: set affinity failed(-22).
->>>  [      79.068362] WARNING KERN IRQ71: set affinity failed(-22).
->>> 
->> 
->> I tried to reproduce this issue on Synaptics SoC, but can't reproduce 
->> it.
->> Per my understanding of the code in kernel/irq/cpuhotplug.c, this 
->> warning
->> happened when we migrate irqs away from the offline cpu, this 
->> implicitly
->> implies that before this point the irq has bind to the offline cpu, 
->> but how
->> could this happen given current dw_pci_msi_set_affinity() 
->> implementation
->> always return -EINVAL
-> 
-> By default the smp_affinity should be set so that all CPUs can be
-> interrupted ...
-> 
-> $ cat /proc/irq/70/smp_affinity
-> 0xff
-> 
-> In my case there are 8 CPUs and so 0xff implies that the interrupt can
-> be triggered on any of the 8 CPUs.
-> 
-> Do you see the set_affinity callback being called for the DWC irqchip 
-> in
-> migrate_one_irq()?
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--TxZtp2xZDgS8tF4LCH0pvplac5jBMMD1n
+Content-Type: multipart/mixed; boundary="KHQT7KYakINZF3D85LRV0AG8BWDH6IVnP";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@linux.ie,
+ daniel@ffwll.ch, sam@ravnborg.org, alexander.deucher@amd.com,
+ kraxel@redhat.com, l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
+ christian.gmeiner@gmail.com, inki.dae@samsung.com, jy0922.shim@samsung.com,
+ sw0312.kim@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org,
+ krzk@kernel.org, yuq825@gmail.com, bskeggs@redhat.com, robh@kernel.org,
+ tomeu.vizoso@collabora.com, steven.price@arm.com,
+ alyssa.rosenzweig@collabora.com, hjc@rock-chips.com, heiko@sntech.de,
+ hdegoede@redhat.com, sean@poorly.run, eric@anholt.net,
+ oleksandr_andrushchenko@epam.com, ray.huang@amd.com,
+ sumit.semwal@linaro.org, emil.velikov@collabora.com, luben.tuikov@amd.com,
+ apaneers@amd.com, linus.walleij@linaro.org, melissa.srw@gmail.com,
+ chris@chris-wilson.co.uk, miaoqinglang@huawei.com
+Cc: linux-samsung-soc@vger.kernel.org, lima@lists.freedesktop.org,
+ nouveau@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+ amd-gfx@lists.freedesktop.org, virtualization@lists.linux-foundation.org,
+ linaro-mm-sig@lists.linaro.org, linux-rockchip@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+ spice-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-media@vger.kernel.org
+Message-ID: <2614314a-81f7-4722-c400-68d90e48e09a@suse.de>
+Subject: Re: [PATCH v3 2/7] drm/ttm: Add ttm_kmap_obj_to_dma_buf_map() for
+ type conversion
+References: <20200929151437.19717-1-tzimmermann@suse.de>
+ <20200929151437.19717-3-tzimmermann@suse.de>
+ <8fad0114-064a-4ed5-c21d-d1b4294de0a1@amd.com>
+In-Reply-To: <8fad0114-064a-4ed5-c21d-d1b4294de0a1@amd.com>
 
-The problem is common to all MSI implementations that end up muxing
-all the end-point MSIs into a single interrupt. With these systems,
-you cannot set the affinity of individual MSIs (they don't target a
-CPU, they target another interrupt... braindead). Only the mux
-interrupt can have its affinity changed.
+--KHQT7KYakINZF3D85LRV0AG8BWDH6IVnP
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-So returning -EINVAL is the right thing to do.
+Hi Christian
 
-          M.
--- 
-Jazz is not dead. It just smells funny...
+Am 29.09.20 um 17:35 schrieb Christian K=C3=B6nig:
+> Am 29.09.20 um 17:14 schrieb Thomas Zimmermann:
+>> The new helper ttm_kmap_obj_to_dma_buf() extracts address and location=
+
+>> from and instance of TTM's kmap_obj and initializes struct dma_buf_map=
+
+>> with these values. Helpful for TTM-based drivers.
+>=20
+> We could completely drop that if we use the same structure inside TTM a=
+s
+> well.
+>=20
+> Additional to that which driver is going to use this?
+
+As Daniel mentioned, it's in patch 3. The TTM-based drivers will
+retrieve the pointer via this function.
+
+I do want to see all that being more tightly integrated into TTM, but
+not in this series. This one is about fixing the bochs-on-sparc64
+problem for good. Patch 7 adds an update to TTM to the DRM TODO list.
+
+Best regards
+Thomas
+
+>=20
+> Regards,
+> Christian.
+>=20
+>>
+>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> ---
+>> =C2=A0 include/drm/ttm/ttm_bo_api.h | 24 ++++++++++++++++++++++++
+>> =C2=A0 include/linux/dma-buf-map.h=C2=A0 | 20 ++++++++++++++++++++
+>> =C2=A0 2 files changed, 44 insertions(+)
+>>
+>> diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm/ttm_bo_api=
+=2Eh
+>> index c96a25d571c8..62d89f05a801 100644
+>> --- a/include/drm/ttm/ttm_bo_api.h
+>> +++ b/include/drm/ttm/ttm_bo_api.h
+>> @@ -34,6 +34,7 @@
+>> =C2=A0 #include <drm/drm_gem.h>
+>> =C2=A0 #include <drm/drm_hashtab.h>
+>> =C2=A0 #include <drm/drm_vma_manager.h>
+>> +#include <linux/dma-buf-map.h>
+>> =C2=A0 #include <linux/kref.h>
+>> =C2=A0 #include <linux/list.h>
+>> =C2=A0 #include <linux/wait.h>
+>> @@ -486,6 +487,29 @@ static inline void *ttm_kmap_obj_virtual(struct
+>> ttm_bo_kmap_obj *map,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return map->virtual;
+>> =C2=A0 }
+>> =C2=A0 +/**
+>> + * ttm_kmap_obj_to_dma_buf_map
+>> + *
+>> + * @kmap: A struct ttm_bo_kmap_obj returned from ttm_bo_kmap.
+>> + * @map: Returns the mapping as struct dma_buf_map
+>> + *
+>> + * Converts struct ttm_bo_kmap_obj to struct dma_buf_map. If the memo=
+ry
+>> + * is not mapped, the returned mapping is initialized to NULL.
+>> + */
+>> +static inline void ttm_kmap_obj_to_dma_buf_map(struct ttm_bo_kmap_obj=
+
+>> *kmap,
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 struct dma_buf_map *map)
+>> +{
+>> +=C2=A0=C2=A0=C2=A0 bool is_iomem;
+>> +=C2=A0=C2=A0=C2=A0 void *vaddr =3D ttm_kmap_obj_virtual(kmap, &is_iom=
+em);
+>> +
+>> +=C2=A0=C2=A0=C2=A0 if (!vaddr)
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dma_buf_map_clear(map);
+>> +=C2=A0=C2=A0=C2=A0 else if (is_iomem)
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dma_buf_map_set_vaddr_iome=
+m(map, (void __force __iomem *)vaddr);
+>> +=C2=A0=C2=A0=C2=A0 else
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dma_buf_map_set_vaddr(map,=
+ vaddr);
+>> +}
+>> +
+>> =C2=A0 /**
+>> =C2=A0=C2=A0 * ttm_bo_kmap
+>> =C2=A0=C2=A0 *
+>> diff --git a/include/linux/dma-buf-map.h b/include/linux/dma-buf-map.h=
+
+>> index fd1aba545fdf..2e8bbecb5091 100644
+>> --- a/include/linux/dma-buf-map.h
+>> +++ b/include/linux/dma-buf-map.h
+>> @@ -45,6 +45,12 @@
+>> =C2=A0=C2=A0 *
+>> =C2=A0=C2=A0 *=C2=A0=C2=A0=C2=A0 dma_buf_map_set_vaddr(&map. 0xdeadbea=
+f);
+>> =C2=A0=C2=A0 *
+>> + * To set an address in I/O memory, use dma_buf_map_set_vaddr_iomem()=
+=2E
+>> + *
+>> + * .. code-block:: c
+>> + *
+>> + *=C2=A0=C2=A0=C2=A0 dma_buf_map_set_vaddr_iomem(&map. 0xdeadbeaf);
+>> + *
+>> =C2=A0=C2=A0 * Test if a mapping is valid with either dma_buf_map_is_s=
+et() or
+>> =C2=A0=C2=A0 * dma_buf_map_is_null().
+>> =C2=A0=C2=A0 *
+>> @@ -118,6 +124,20 @@ static inline void dma_buf_map_set_vaddr(struct
+>> dma_buf_map *map, void *vaddr)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 map->is_iomem =3D false;
+>> =C2=A0 }
+>> =C2=A0 +/**
+>> + * dma_buf_map_set_vaddr_iomem - Sets a dma-buf mapping structure to
+>> an address in I/O memory
+>> + * @map:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 The dma-buf mappin=
+g structure
+>> + * @vaddr_iomem:=C2=A0=C2=A0=C2=A0 An I/O-memory address
+>> + *
+>> + * Sets the address and the I/O-memory flag.
+>> + */
+>> +static inline void dma_buf_map_set_vaddr_iomem(struct dma_buf_map *ma=
+p,
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 void __iomem *vaddr_iomem)
+>> +{
+>> +=C2=A0=C2=A0=C2=A0 map->vaddr_iomem =3D vaddr_iomem;
+>> +=C2=A0=C2=A0=C2=A0 map->is_iomem =3D true;
+>> +}
+>> +
+>> =C2=A0 /**
+>> =C2=A0=C2=A0 * dma_buf_map_is_equal - Compares two dma-buf mapping str=
+uctures
+>> for equality
+>> =C2=A0=C2=A0 * @lhs:=C2=A0=C2=A0=C2=A0 The dma-buf mapping structure
+>=20
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+
+
+--KHQT7KYakINZF3D85LRV0AG8BWDH6IVnP--
+
+--TxZtp2xZDgS8tF4LCH0pvplac5jBMMD1n
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFIBAEBCAAyFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl9zc60UHHR6aW1tZXJt
+YW5uQHN1c2UuZGUACgkQaA3BHVMLeiNPnwf/aCTKdBejEjGzelqMuF4UePySm/kg
+uxWq4a3bhUNU/jUfaYErgmfPo7k2kd8GBKNwzUIWBmuanOtyVjPUASvzWxWn7GBo
+c0Y2iWSttNk7zk3Qr330IDKDPtQjtzVbklLBu1YsbOQi0WqdzK0uFpRKl9MAvmth
+5mi7+IzMbP/w3eu8z71VaPc7xy5tYCmeeyqeEPIEV3CoY4QnFaJDhRxenlDIZ/bR
+M9RHikgzelrT1Nra42ooEtT6b3mBp4p63jHBHzTQnSjlAYT1khyKFLvQSHjNPyCN
+GMHZqwUnG3U9EMjYvcGsvk7hZ4ROSOwVpq0j00R3hAK5rfbg6C1+v4XNSQ==
+=/tV0
+-----END PGP SIGNATURE-----
+
+--TxZtp2xZDgS8tF4LCH0pvplac5jBMMD1n--
