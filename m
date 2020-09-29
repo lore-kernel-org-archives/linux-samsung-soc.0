@@ -2,42 +2,69 @@ Return-Path: <SRS0=mzy8=DG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE42C47429
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 15:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA9AC4727C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 15:35:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63CB4207C4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 15:14:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68B402145D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 15:35:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="x3ECmjA4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731681AbgI2POs (ORCPT
+        id S1727864AbgI2Pfv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Sep 2020 11:14:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60318 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730805AbgI2POr (ORCPT
+        Tue, 29 Sep 2020 11:35:51 -0400
+Received: from mail-eopbgr760077.outbound.protection.outlook.com ([40.107.76.77]:21378
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725765AbgI2Pfu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Sep 2020 11:14:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 04E8DB248;
-        Tue, 29 Sep 2020 15:14:45 +0000 (UTC)
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        Tue, 29 Sep 2020 11:35:50 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dCeEQgCpwFbMt9Ut7StnkqEJI88NmsYt6RWuL4M+qVaI4pf7RxVUEg4KFC+i5xFW1/qf3Qu7Tv6W96kbJMsRPE0+soaDdBLWMsRaFOPEmV7su1oZzmJoHJbq0U2yWEF/DS5fVsacZcI6dsUzqLOPtFPjt2TVpe+7jQJkq7Yws3Zp1Z5gytHKrYeOVo2Um1RkK1tI4Vrn/gm4PjBRY6tQwf5gFnqjZbua6B0N10eCiQFgkQRD2rdVU4tVGZOqn1hX4ZVIwChZS1i+VTz8smlqZi93YL2K4SZNbuZlLSn+hyAnR+/8oF63vvx4+aqrSi0dm25vmvR6PwNL8MvNo4mfwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ju9ytlC3PEvMSd+W5egJQ5uOSMVZssTWQs1Oko2De6k=;
+ b=R+1ZyOp7wyj/h4ESpcP/kQtqLipiUru1S7EQKOK47H9S5Ua6UrX9sUSSkNObVUHHlKmCfpcbMLGrnTwPPSv2CBCmEgE0A49r4h15ktetjNY8ETWTuRp92DkGXdkTP86ogDvHKhpdWrL8qsOh6EDVizxEQmgSq7HeXtQvr74rfqDXEOJmDg9GemjaEI/spkYYZF1zQT9SkUPZYScph6vqvMrCE4OEmLGKx+MPXfqrqozzWB/G49KsPRb6bqECJkd1D1UNuXouAVUyg8+KNo7ySaNf1j/eKn7cBJK/7er3PA2lyyv3KwO+RSILBkIGnND0s7N7K7enq34cCTIO4vMyyg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ju9ytlC3PEvMSd+W5egJQ5uOSMVZssTWQs1Oko2De6k=;
+ b=x3ECmjA4MYmkpV7I+irD7C1GTLBGr4kBmeXoLiSae3yLyVVXBNqAiC+k568wj0Q/qbvc46KxCO5opfaB1GL8G/39fNOa7ykKmPePadgoC3UkrBqRcX/5KwaJNR1sS2S+xk/N5o7WjkI5RJg0+np+2uKnPOZJpEsm5z7tCrCDCFI=
+Authentication-Results: lists.linaro.org; dkim=none (message not signed)
+ header.d=none;lists.linaro.org; dmarc=none action=none header.from=amd.com;
+Received: from MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
+ by MN2PR12MB3838.namprd12.prod.outlook.com (2603:10b6:208:16c::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.24; Tue, 29 Sep
+ 2020 15:35:45 +0000
+Received: from MN2PR12MB3775.namprd12.prod.outlook.com
+ ([fe80::f8f7:7403:1c92:3a60]) by MN2PR12MB3775.namprd12.prod.outlook.com
+ ([fe80::f8f7:7403:1c92:3a60%6]) with mapi id 15.20.3433.032; Tue, 29 Sep 2020
+ 15:35:45 +0000
+Subject: Re: [PATCH v3 2/7] drm/ttm: Add ttm_kmap_obj_to_dma_buf_map() for
+ type conversion
+To:     Thomas Zimmermann <tzimmermann@suse.de>,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
         airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
-        alexander.deucher@amd.com, christian.koenig@amd.com,
-        kraxel@redhat.com, l.stach@pengutronix.de,
-        linux+etnaviv@armlinux.org.uk, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, yuq825@gmail.com,
-        bskeggs@redhat.com, robh@kernel.org, tomeu.vizoso@collabora.com,
-        steven.price@arm.com, alyssa.rosenzweig@collabora.com,
-        hjc@rock-chips.com, heiko@sntech.de, hdegoede@redhat.com,
-        sean@poorly.run, eric@anholt.net, oleksandr_andrushchenko@epam.com,
+        alexander.deucher@amd.com, kraxel@redhat.com,
+        l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
+        christian.gmeiner@gmail.com, inki.dae@samsung.com,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        yuq825@gmail.com, bskeggs@redhat.com, robh@kernel.org,
+        tomeu.vizoso@collabora.com, steven.price@arm.com,
+        alyssa.rosenzweig@collabora.com, hjc@rock-chips.com,
+        heiko@sntech.de, hdegoede@redhat.com, sean@poorly.run,
+        eric@anholt.net, oleksandr_andrushchenko@epam.com,
         ray.huang@amd.com, sumit.semwal@linaro.org,
         emil.velikov@collabora.com, luben.tuikov@amd.com, apaneers@amd.com,
         linus.walleij@linaro.org, melissa.srw@gmail.com,
@@ -49,214 +76,150 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-samsung-soc@vger.kernel.org, lima@lists.freedesktop.org,
         nouveau@lists.freedesktop.org, spice-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, xen-devel@lists.xenproject.org,
-        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 5/7] drm/gem: Store client buffer mappings as struct dma_buf_map
-Date:   Tue, 29 Sep 2020 17:14:35 +0200
-Message-Id: <20200929151437.19717-6-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200929151437.19717-1-tzimmermann@suse.de>
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
 References: <20200929151437.19717-1-tzimmermann@suse.de>
+ <20200929151437.19717-3-tzimmermann@suse.de>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Message-ID: <8fad0114-064a-4ed5-c21d-d1b4294de0a1@amd.com>
+Date:   Tue, 29 Sep 2020 17:35:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+In-Reply-To: <20200929151437.19717-3-tzimmermann@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
+X-ClientProxiedBy: AM0PR07CA0021.eurprd07.prod.outlook.com
+ (2603:10a6:208:ac::34) To MN2PR12MB3775.namprd12.prod.outlook.com
+ (2603:10b6:208:159::19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7] (2a02:908:1252:fb60:be8a:bd56:1f94:86e7) by AM0PR07CA0021.eurprd07.prod.outlook.com (2603:10a6:208:ac::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.14 via Frontend Transport; Tue, 29 Sep 2020 15:35:38 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: c529fcd8-bed7-4c69-b34a-08d8648d54bf
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3838:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MN2PR12MB38388DEAAA691518AF637C2883320@MN2PR12MB3838.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 3krDVIfFcjVTMVXvyeIOLttWbphZc92nAU+lVeWLNQuH655CyezATODFQee4nEtXFn+dSn5RYtOORxUKYpT+2lRX15kgiiCdizu68bOizZRxEsU/eLWS7x17rQKrIm3Lx+qILUgIDUowRxe/GWswYSzRG9sbYarbIqhidqcDBdXxbNJcftZGi9aCM8ZxmuuV1a7Bi/7s1W9x8m7XZjDiwvJR1s8vQmsVdDd55MNv5W7n9Hm5Xf0+5XfwzZq6vvxZyab+mkCeM+LevyfFqP1yFrOTCLVGIwg87aVc032azFmwS4+8gUay0i4j61/ILJeCW2JeOlSmxmo3/YrySRIjg8Iuzqq40jDT1miWc9m9a8uMsn+rZw1nzHBw4TkZeROEXueyyeThPd2vAhxE4wp+tT5GCC4REqfDp1FunBA0woKftm9455MIctl6SKaz+9Cm
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3775.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(366004)(346002)(396003)(376002)(136003)(6666004)(7416002)(7406005)(36756003)(31696002)(478600001)(6486002)(5660300002)(66476007)(86362001)(4326008)(66556008)(66946007)(8676002)(2906002)(316002)(16526019)(186003)(83380400001)(52116002)(31686004)(8936002)(2616005)(921003)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: qs2y5/iFY6MylDTntvJqcHSPxxQNn9Pi6s89WySDm5nZZq9Zfi+hq3CzAuVv2QPTvNoXN/nfnYNjy2nCYdNRoC8PY+stTVMurzJFOuXE71e11pUhPfxvB89bvALgjodcuGoPpxAaTSP2RarCvvhJpQNMW9uuBbQ5afEtqCYJslQ/mr/1KMG5ZF8vwDu40BVvTzmX8o0wGAFQo6DmpGzS0zyV0EB3rEf4+JtUXZIiwWR8uTAi3DPDLKY+g/qQP+rDdM422SCOj+xbrAIYI/crymN7ZdGS5ueF929Lad4GjiV7JgHlM5yfY+FCOxRqQeSS84vHxPOM64FGpU3Qtu5fRyBDWY4wnoHUsN7occY4J/W+4JxfihZErcFZ3TheFhWlnLxWUnsvbmraoiN7WHKh4yuyFMtmuvmQ2AHs1QD9vmLTVZrKX6S0agt1oSsQPWj6brCe3WrqXF/6wDfn79Klvgaa7pVsh96B2Q9DmNPik0UG+BOA+OKoFYyfSk+Z5ts4FCcpKx9VIzqNwvNVF2RcAIB5TpnNbrqpvyjdCp10N/5dPvQpGNiHSejHfSUgHoeFsRd/2A8GJv8IikHqMtmqJ1t7c9jEE13GFFEDp85QktFpq1B8BrxZ7WxvUf0lou5r1cEAQzkSIGtC6HZI9dE92aeRJ311MeH8lmU5HCWtoJveJx54ic/+yiLJ9bIzi7QiQqWExwExPwW15LsUxhNZpg==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c529fcd8-bed7-4c69-b34a-08d8648d54bf
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3775.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2020 15:35:45.0829
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pVoMbhegp5DAxOASZ/64obyU3fjd+Qay3enQe2qZ7Ua1aIyoMW2Lj/SnVxZO58zs
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3838
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Kernel DRM clients now store their framebuffer address in an instance
-of struct dma_buf_map. Depending on the buffer's location, the address
-refers to system or I/O memory.
+Am 29.09.20 um 17:14 schrieb Thomas Zimmermann:
+> The new helper ttm_kmap_obj_to_dma_buf() extracts address and location
+> from and instance of TTM's kmap_obj and initializes struct dma_buf_map
+> with these values. Helpful for TTM-based drivers.
 
-Callers of drm_client_buffer_vmap() receive a copy of the value in
-the call's supplied arguments. It can be accessed and modified with
-dma_buf_map interfaces.
+We could completely drop that if we use the same structure inside TTM as 
+well.
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- drivers/gpu/drm/drm_client.c    | 34 +++++++++++++++++++--------------
- drivers/gpu/drm/drm_fb_helper.c | 23 +++++++++++++---------
- include/drm/drm_client.h        |  7 ++++---
- 3 files changed, 38 insertions(+), 26 deletions(-)
+Additional to that which driver is going to use this?
 
-diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
-index ac0082bed966..fe573acf1067 100644
---- a/drivers/gpu/drm/drm_client.c
-+++ b/drivers/gpu/drm/drm_client.c
-@@ -235,7 +235,7 @@ static void drm_client_buffer_delete(struct drm_client_buffer *buffer)
- {
- 	struct drm_device *dev = buffer->client->dev;
- 
--	drm_gem_vunmap(buffer->gem, buffer->vaddr);
-+	drm_gem_vunmap(buffer->gem, &buffer->map);
- 
- 	if (buffer->gem)
- 		drm_gem_object_put(buffer->gem);
-@@ -291,25 +291,31 @@ drm_client_buffer_create(struct drm_client_dev *client, u32 width, u32 height, u
- /**
-  * drm_client_buffer_vmap - Map DRM client buffer into address space
-  * @buffer: DRM client buffer
-+ * @map_copy: Returns the mapped memory's address
-  *
-  * This function maps a client buffer into kernel address space. If the
-- * buffer is already mapped, it returns the mapping's address.
-+ * buffer is already mapped, it returns the existing mapping's address.
-  *
-  * Client buffer mappings are not ref'counted. Each call to
-  * drm_client_buffer_vmap() should be followed by a call to
-  * drm_client_buffer_vunmap(); or the client buffer should be mapped
-  * throughout its lifetime.
-  *
-+ * The returned address is a copy of the internal value. In contrast to
-+ * other vmap interfaces, you don't need it for the client's vunmap
-+ * function. So you can modify it at will during blit and draw operations.
-+ *
-  * Returns:
-- *	The mapped memory's address
-+ *	0 on success, or a negative errno code otherwise.
-  */
--void *drm_client_buffer_vmap(struct drm_client_buffer *buffer)
-+int
-+drm_client_buffer_vmap(struct drm_client_buffer *buffer, struct dma_buf_map *map_copy)
- {
--	struct dma_buf_map map;
-+	struct dma_buf_map *map = &buffer->map;
- 	int ret;
- 
--	if (buffer->vaddr)
--		return buffer->vaddr;
-+	if (dma_buf_map_is_set(map))
-+		goto out;
- 
- 	/*
- 	 * FIXME: The dependency on GEM here isn't required, we could
-@@ -319,13 +325,14 @@ void *drm_client_buffer_vmap(struct drm_client_buffer *buffer)
- 	 * fd_install step out of the driver backend hooks, to make that
- 	 * final step optional for internal users.
- 	 */
--	ret = drm_gem_vmap(buffer->gem, &map);
-+	ret = drm_gem_vmap(buffer->gem, map);
- 	if (ret)
--		return ERR_PTR(ret);
-+		return ret;
- 
--	buffer->vaddr = map.vaddr;
-+out:
-+	*map_copy = *map;
- 
--	return map.vaddr;
-+	return 0;
- }
- EXPORT_SYMBOL(drm_client_buffer_vmap);
- 
-@@ -339,10 +346,9 @@ EXPORT_SYMBOL(drm_client_buffer_vmap);
-  */
- void drm_client_buffer_vunmap(struct drm_client_buffer *buffer)
- {
--	struct dma_buf_map map = DMA_BUF_MAP_INIT_VADDR(buffer->vaddr);
-+	struct dma_buf_map *map = &buffer->map;
- 
--	drm_gem_vunmap(buffer->gem, &map);
--	buffer->vaddr = NULL;
-+	drm_gem_vunmap(buffer->gem, map);
- }
- EXPORT_SYMBOL(drm_client_buffer_vunmap);
- 
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 8697554ccd41..343a292f2c7c 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -394,7 +394,7 @@ static void drm_fb_helper_dirty_blit_real(struct drm_fb_helper *fb_helper,
- 	unsigned int cpp = fb->format->cpp[0];
- 	size_t offset = clip->y1 * fb->pitches[0] + clip->x1 * cpp;
- 	void *src = fb_helper->fbdev->screen_buffer + offset;
--	void *dst = fb_helper->buffer->vaddr + offset;
-+	void *dst = fb_helper->buffer->map.vaddr + offset;
- 	size_t len = (clip->x2 - clip->x1) * cpp;
- 	unsigned int y;
- 
-@@ -416,7 +416,8 @@ static void drm_fb_helper_dirty_work(struct work_struct *work)
- 	struct drm_clip_rect *clip = &helper->dirty_clip;
- 	struct drm_clip_rect clip_copy;
- 	unsigned long flags;
--	void *vaddr;
-+	struct dma_buf_map map;
-+	int ret;
- 
- 	spin_lock_irqsave(&helper->dirty_lock, flags);
- 	clip_copy = *clip;
-@@ -429,8 +430,8 @@ static void drm_fb_helper_dirty_work(struct work_struct *work)
- 
- 		/* Generic fbdev uses a shadow buffer */
- 		if (helper->buffer) {
--			vaddr = drm_client_buffer_vmap(helper->buffer);
--			if (IS_ERR(vaddr))
-+			ret = drm_client_buffer_vmap(helper->buffer, &map);
-+			if (ret)
- 				return;
- 			drm_fb_helper_dirty_blit_real(helper, &clip_copy);
- 		}
-@@ -2076,7 +2077,8 @@ static int drm_fb_helper_generic_probe(struct drm_fb_helper *fb_helper,
- 	struct drm_framebuffer *fb;
- 	struct fb_info *fbi;
- 	u32 format;
--	void *vaddr;
-+	struct dma_buf_map map;
-+	int ret;
- 
- 	drm_dbg_kms(dev, "surface width(%d), height(%d) and bpp(%d)\n",
- 		    sizes->surface_width, sizes->surface_height,
-@@ -2112,11 +2114,14 @@ static int drm_fb_helper_generic_probe(struct drm_fb_helper *fb_helper,
- 		fb_deferred_io_init(fbi);
- 	} else {
- 		/* buffer is mapped for HW framebuffer */
--		vaddr = drm_client_buffer_vmap(fb_helper->buffer);
--		if (IS_ERR(vaddr))
--			return PTR_ERR(vaddr);
-+		ret = drm_client_buffer_vmap(fb_helper->buffer, &map);
-+		if (ret)
-+			return ret;
-+		if (map.is_iomem)
-+			fbi->screen_base = map.vaddr_iomem;
-+		else
-+			fbi->screen_buffer = map.vaddr;
- 
--		fbi->screen_buffer = vaddr;
- 		/* Shamelessly leak the physical address to user-space */
- #if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
- 		if (drm_leak_fbdev_smem && fbi->fix.smem_start == 0)
-diff --git a/include/drm/drm_client.h b/include/drm/drm_client.h
-index 7aaea665bfc2..f07f2fb02e75 100644
---- a/include/drm/drm_client.h
-+++ b/include/drm/drm_client.h
-@@ -3,6 +3,7 @@
- #ifndef _DRM_CLIENT_H_
- #define _DRM_CLIENT_H_
- 
-+#include <linux/dma-buf-map.h>
- #include <linux/lockdep.h>
- #include <linux/mutex.h>
- #include <linux/types.h>
-@@ -141,9 +142,9 @@ struct drm_client_buffer {
- 	struct drm_gem_object *gem;
- 
- 	/**
--	 * @vaddr: Virtual address for the buffer
-+	 * @map: Virtual address for the buffer
- 	 */
--	void *vaddr;
-+	struct dma_buf_map map;
- 
- 	/**
- 	 * @fb: DRM framebuffer
-@@ -155,7 +156,7 @@ struct drm_client_buffer *
- drm_client_framebuffer_create(struct drm_client_dev *client, u32 width, u32 height, u32 format);
- void drm_client_framebuffer_delete(struct drm_client_buffer *buffer);
- int drm_client_framebuffer_flush(struct drm_client_buffer *buffer, struct drm_rect *rect);
--void *drm_client_buffer_vmap(struct drm_client_buffer *buffer);
-+int drm_client_buffer_vmap(struct drm_client_buffer *buffer, struct dma_buf_map *map);
- void drm_client_buffer_vunmap(struct drm_client_buffer *buffer);
- 
- int drm_client_modeset_create(struct drm_client_dev *client);
--- 
-2.28.0
+Regards,
+Christian.
+
+>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>   include/drm/ttm/ttm_bo_api.h | 24 ++++++++++++++++++++++++
+>   include/linux/dma-buf-map.h  | 20 ++++++++++++++++++++
+>   2 files changed, 44 insertions(+)
+>
+> diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm/ttm_bo_api.h
+> index c96a25d571c8..62d89f05a801 100644
+> --- a/include/drm/ttm/ttm_bo_api.h
+> +++ b/include/drm/ttm/ttm_bo_api.h
+> @@ -34,6 +34,7 @@
+>   #include <drm/drm_gem.h>
+>   #include <drm/drm_hashtab.h>
+>   #include <drm/drm_vma_manager.h>
+> +#include <linux/dma-buf-map.h>
+>   #include <linux/kref.h>
+>   #include <linux/list.h>
+>   #include <linux/wait.h>
+> @@ -486,6 +487,29 @@ static inline void *ttm_kmap_obj_virtual(struct ttm_bo_kmap_obj *map,
+>   	return map->virtual;
+>   }
+>   
+> +/**
+> + * ttm_kmap_obj_to_dma_buf_map
+> + *
+> + * @kmap: A struct ttm_bo_kmap_obj returned from ttm_bo_kmap.
+> + * @map: Returns the mapping as struct dma_buf_map
+> + *
+> + * Converts struct ttm_bo_kmap_obj to struct dma_buf_map. If the memory
+> + * is not mapped, the returned mapping is initialized to NULL.
+> + */
+> +static inline void ttm_kmap_obj_to_dma_buf_map(struct ttm_bo_kmap_obj *kmap,
+> +					       struct dma_buf_map *map)
+> +{
+> +	bool is_iomem;
+> +	void *vaddr = ttm_kmap_obj_virtual(kmap, &is_iomem);
+> +
+> +	if (!vaddr)
+> +		dma_buf_map_clear(map);
+> +	else if (is_iomem)
+> +		dma_buf_map_set_vaddr_iomem(map, (void __force __iomem *)vaddr);
+> +	else
+> +		dma_buf_map_set_vaddr(map, vaddr);
+> +}
+> +
+>   /**
+>    * ttm_bo_kmap
+>    *
+> diff --git a/include/linux/dma-buf-map.h b/include/linux/dma-buf-map.h
+> index fd1aba545fdf..2e8bbecb5091 100644
+> --- a/include/linux/dma-buf-map.h
+> +++ b/include/linux/dma-buf-map.h
+> @@ -45,6 +45,12 @@
+>    *
+>    *	dma_buf_map_set_vaddr(&map. 0xdeadbeaf);
+>    *
+> + * To set an address in I/O memory, use dma_buf_map_set_vaddr_iomem().
+> + *
+> + * .. code-block:: c
+> + *
+> + *	dma_buf_map_set_vaddr_iomem(&map. 0xdeadbeaf);
+> + *
+>    * Test if a mapping is valid with either dma_buf_map_is_set() or
+>    * dma_buf_map_is_null().
+>    *
+> @@ -118,6 +124,20 @@ static inline void dma_buf_map_set_vaddr(struct dma_buf_map *map, void *vaddr)
+>   	map->is_iomem = false;
+>   }
+>   
+> +/**
+> + * dma_buf_map_set_vaddr_iomem - Sets a dma-buf mapping structure to an address in I/O memory
+> + * @map:		The dma-buf mapping structure
+> + * @vaddr_iomem:	An I/O-memory address
+> + *
+> + * Sets the address and the I/O-memory flag.
+> + */
+> +static inline void dma_buf_map_set_vaddr_iomem(struct dma_buf_map *map,
+> +					       void __iomem *vaddr_iomem)
+> +{
+> +	map->vaddr_iomem = vaddr_iomem;
+> +	map->is_iomem = true;
+> +}
+> +
+>   /**
+>    * dma_buf_map_is_equal - Compares two dma-buf mapping structures for equality
+>    * @lhs:	The dma-buf mapping structure
 
