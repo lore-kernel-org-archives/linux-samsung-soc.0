@@ -2,144 +2,161 @@ Return-Path: <SRS0=mzy8=DG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE0DC4727C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 14:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F327FC4727C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 15:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A15CA20C09
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 14:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601389949;
-	bh=VjYWaMro1xYrDNe26Vn7kbXKrgcLLp4Ul6eqYCvWIoQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=BVQmeW2gQwKoHtqJhDRCyfoJHd0vZy4zZUOclULKWFZIXq/XB85TKSmIjMT372o/x
-	 EcEyNhl60Hr11gLIC+y5FvQOdKi/YnnwRSqzLn06mlM3vDN3nnw7exOzZTIeE6p2yO
-	 NUBIybGUboTslSPmTo6vRbubBFNMgLYFPBJ1Hs/c=
+	by mail.kernel.org (Postfix) with ESMTP id 945DC20789
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 15:14:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728818AbgI2Oc3 (ORCPT
+        id S1731373AbgI2POo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Sep 2020 10:32:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43118 "EHLO mail.kernel.org"
+        Tue, 29 Sep 2020 11:14:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59896 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725554AbgI2Oc3 (ORCPT
+        id S1730404AbgI2POo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Sep 2020 10:32:29 -0400
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D849F20C09;
-        Tue, 29 Sep 2020 14:32:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601389948;
-        bh=VjYWaMro1xYrDNe26Vn7kbXKrgcLLp4Ul6eqYCvWIoQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=H42ozem74rjURrts0hRxe5T7CR4s7jiAxWHjUUrTYgxfrnGr0VLpdA4Aw1dCyY2XN
-         F3H1cPJHIvXCrMnWjDV3iLSMTT23c4tqpcm164P6bprzHmV6oXC2ERW52N1oVptGMB
-         32FTqmUy5XKdV9HwtzY+TaD8vzqFnaRvS+GdHy30=
-Received: by mail-ot1-f46.google.com with SMTP id 60so4623648otw.3;
-        Tue, 29 Sep 2020 07:32:27 -0700 (PDT)
-X-Gm-Message-State: AOAM530hi35aVK04eo9DT35oBrTCsxBc06yqeDT+7RJyjb7kAAo18258
-        LDW5TRFGJegbTh4tDbzO0PkVpUlrsBGMACKTcQ==
-X-Google-Smtp-Source: ABdhPJzrYJQxmXmK64+WMD0rkZVvGC2aVs8Bric+nrdYTcuT20sY6koxQbDnQMlcrE1ulqGTm+OoF2mzSgf9Ky4PhtA=
-X-Received: by 2002:a9d:6ada:: with SMTP id m26mr3041497otq.192.1601389946977;
- Tue, 29 Sep 2020 07:32:26 -0700 (PDT)
+        Tue, 29 Sep 2020 11:14:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id D8DC3AE64;
+        Tue, 29 Sep 2020 15:14:41 +0000 (UTC)
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
+        alexander.deucher@amd.com, christian.koenig@amd.com,
+        kraxel@redhat.com, l.stach@pengutronix.de,
+        linux+etnaviv@armlinux.org.uk, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, yuq825@gmail.com,
+        bskeggs@redhat.com, robh@kernel.org, tomeu.vizoso@collabora.com,
+        steven.price@arm.com, alyssa.rosenzweig@collabora.com,
+        hjc@rock-chips.com, heiko@sntech.de, hdegoede@redhat.com,
+        sean@poorly.run, eric@anholt.net, oleksandr_andrushchenko@epam.com,
+        ray.huang@amd.com, sumit.semwal@linaro.org,
+        emil.velikov@collabora.com, luben.tuikov@amd.com, apaneers@amd.com,
+        linus.walleij@linaro.org, melissa.srw@gmail.com,
+        chris@chris-wilson.co.uk, miaoqinglang@huawei.com
+Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, lima@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, spice-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xenproject.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v3 0/7] Support GEM object mappings from I/O memory
+Date:   Tue, 29 Sep 2020 17:14:30 +0200
+Message-Id: <20200929151437.19717-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-References: <20200821035420.380495-1-robh@kernel.org> <20200915091218.28737-1-michael@walle.cc>
- <CAL_JsqLHBPduSjs1L3R2vbsLygJNDzajt4XThAkRG0DEu-GnAA@mail.gmail.com>
- <346b694e43b1b6b86e4f3164e6589d25@walle.cc> <6b776dda-e575-74f0-5575-0e5d30641522@ti.com>
-In-Reply-To: <6b776dda-e575-74f0-5575-0e5d30641522@ti.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 29 Sep 2020 09:32:16 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+kQdmRfMQo-1AE+A3TxH7J99fuuuV5H0H=cOT1DK436Q@mail.gmail.com>
-Message-ID: <CAL_Jsq+kQdmRfMQo-1AE+A3TxH7J99fuuuV5H0H=cOT1DK436Q@mail.gmail.com>
-Subject: Re: [PATCH v2 00/40] PCI: dwc: Driver clean-ups
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Michael Walle <michael@walle.cc>,
-        "Gross, Andy" <agross@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dilip Kota <eswara.kota@linux.intel.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-arm-kernel@axis.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        PCI <linux-pci@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Song Xiaowei <songxiaowei@hisilicon.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Wangbinghui <wangbinghui@hisilicon.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Yue Wang <yue.wang@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 29, 2020 at 12:24 AM Kishon Vijay Abraham I <kishon@ti.com> wrote:
->
-> Hi,
->
-> On 16/09/20 1:24 pm, Michael Walle wrote:
-> > Am 2020-09-16 00:02, schrieb Rob Herring:
-> >> Can you try this? The link up check seemed unnecessary as it is racy.
-> >> What happens if the link goes down right after checking? That's the
-> >> only thing in the change that sticks out.
-> >>
-> >> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c
-> >> b/drivers/pci/controller/dwc/pcie-designware-host.c
-> >> index 317ff512f8df..afee1a0e8883 100644
-> >> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> >> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> >> @@ -441,6 +441,9 @@ static void __iomem
-> >> *dw_pcie_other_conf_map_bus(struct pci_bus *bus,
-> >>         struct pcie_port *pp = bus->sysdata;
-> >>         struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> >>
-> >> +       if (!dw_pcie_link_up(pci))
-> >> +               return NULL;
-> >> +
-> >>         busdev = PCIE_ATU_BUS(bus->number) |
-> >> PCIE_ATU_DEV(PCI_SLOT(devfn)) |
-> >>                  PCIE_ATU_FUNC(PCI_FUNC(devfn));
-> >
-> > This will fix the issue.
->
-> This fix is required to get DRA7 EVM booting again in linux-next.
+DRM's fbdev console uses regular load and store operations to update
+framebuffer memory. The bochs driver on sparc64 requires the use of
+I/O-specific load and store operations. We have a workaround, but need
+a long-term solution to the problem.
 
-Did you see the discussion here[1]? Is firmware setting up the same
-register in question?
+This patchset changes GEM's vmap/vunmap interfaces to forward pointers
+of type struct dma_buf_map and updates the generic fbdev emulation to
+use them correctly. This enables I/O-memory operations on all framebuffers
+that require and support them.
 
-Rob
+Patches #1 and #2 prepare VRAM helpers and TTM for the changes in patch
+#3. Patch #3 updates GEM's vmap/vunmap callback to forward instances of
+type struct dma_buf_map. While the patch touches many files throughout the
+DRM modules, the applied changes are mostly trivial interface fixes.
 
-[1] http://lore.kernel.org/r/HE1PR0402MB33713A623A37D08AE3253DEB84320@HE1PR0402MB3371.eurprd04.prod.outlook.com
+Patch #4 updates GEM's internal vmap/vunmap functions to forward struct
+dma_buf_map.
+
+Patches #5 and #6 convert DRM clients and generic fbdev emulation to use
+struct dma_buf_map. Updating the fbdev framebuffer will select the correct
+functions, either for system or I/O memory.
+
+The patch set is just enough to fix the bochs issue on sparc64 and a
+correct way. Patch #7 updates the TODO list with ideas for further
+improvements
+
+v3:
+	* recreate the whole patchset on top of struct dma_buf_map
+
+v2:
+	* RFC patchset
+
+Thomas Zimmermann (7):
+  drm/vram-helper: Remove invariant parameters from internal kmap
+    function
+  drm/ttm: Add ttm_kmap_obj_to_dma_buf_map() for type conversion
+  drm/gem: Use struct dma_buf_map in GEM vmap ops and convert GEM
+    backends
+  drm/gem: Update internal GEM vmap/vunmap interfaces to use struct
+    dma_buf_map
+  drm/gem: Store client buffer mappings as struct dma_buf_map
+  drm/fb_helper: Support framebuffers in I/O memory
+  drm/todo: Update entries around struct dma_buf_map
+
+ Documentation/gpu/todo.rst                  |  24 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c |  14 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.h |   4 +-
+ drivers/gpu/drm/ast/ast_cursor.c            |  29 ++-
+ drivers/gpu/drm/ast/ast_drv.h               |   7 +-
+ drivers/gpu/drm/bochs/bochs_kms.c           |   1 -
+ drivers/gpu/drm/drm_client.c                |  38 ++--
+ drivers/gpu/drm/drm_fb_helper.c             | 238 ++++++++++++++++++--
+ drivers/gpu/drm/drm_gem.c                   |  28 ++-
+ drivers/gpu/drm/drm_gem_cma_helper.c        |  14 +-
+ drivers/gpu/drm/drm_gem_shmem_helper.c      |  48 ++--
+ drivers/gpu/drm/drm_gem_vram_helper.c       |  93 ++++----
+ drivers/gpu/drm/drm_internal.h              |   5 +-
+ drivers/gpu/drm/drm_prime.c                 |  14 +-
+ drivers/gpu/drm/etnaviv/etnaviv_drv.h       |   4 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c |  11 +-
+ drivers/gpu/drm/exynos/exynos_drm_gem.c     |   6 +-
+ drivers/gpu/drm/exynos/exynos_drm_gem.h     |   4 +-
+ drivers/gpu/drm/lima/lima_gem.c             |   6 +-
+ drivers/gpu/drm/lima/lima_sched.c           |  11 +-
+ drivers/gpu/drm/mgag200/mgag200_mode.c      |  12 +-
+ drivers/gpu/drm/nouveau/nouveau_gem.h       |   4 +-
+ drivers/gpu/drm/nouveau/nouveau_prime.c     |   9 +-
+ drivers/gpu/drm/panfrost/panfrost_perfcnt.c |  14 +-
+ drivers/gpu/drm/qxl/qxl_display.c           |  13 +-
+ drivers/gpu/drm/qxl/qxl_draw.c              |  16 +-
+ drivers/gpu/drm/qxl/qxl_drv.h               |   8 +-
+ drivers/gpu/drm/qxl/qxl_object.c            |  23 +-
+ drivers/gpu/drm/qxl/qxl_object.h            |   2 +-
+ drivers/gpu/drm/qxl/qxl_prime.c             |  12 +-
+ drivers/gpu/drm/radeon/radeon_gem.c         |   4 +-
+ drivers/gpu/drm/radeon/radeon_prime.c       |   9 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c |  22 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.h |   4 +-
+ drivers/gpu/drm/tiny/cirrus.c               |  10 +-
+ drivers/gpu/drm/tiny/gm12u320.c             |  10 +-
+ drivers/gpu/drm/udl/udl_modeset.c           |   8 +-
+ drivers/gpu/drm/vboxvideo/vbox_mode.c       |  11 +-
+ drivers/gpu/drm/vc4/vc4_bo.c                |   6 +-
+ drivers/gpu/drm/vc4/vc4_drv.h               |   2 +-
+ drivers/gpu/drm/vgem/vgem_drv.c             |  16 +-
+ drivers/gpu/drm/xen/xen_drm_front_gem.c     |  18 +-
+ drivers/gpu/drm/xen/xen_drm_front_gem.h     |   6 +-
+ include/drm/drm_client.h                    |   7 +-
+ include/drm/drm_gem.h                       |   5 +-
+ include/drm/drm_gem_cma_helper.h            |   4 +-
+ include/drm/drm_gem_shmem_helper.h          |   4 +-
+ include/drm/drm_gem_vram_helper.h           |   4 +-
+ include/drm/drm_mode_config.h               |  12 -
+ include/drm/ttm/ttm_bo_api.h                |  24 ++
+ include/linux/dma-buf-map.h                 |  92 +++++++-
+ 51 files changed, 685 insertions(+), 305 deletions(-)
+
+--
+2.28.0
+
