@@ -2,158 +2,214 @@ Return-Path: <SRS0=mzy8=DG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D95C4346E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 10:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDC7C4727C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 13:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBEEE208FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 10:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BACCC21924
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 13:08:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="fzGWL+Dt"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XuQXXLYB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbgI2Kte (ORCPT
+        id S1728441AbgI2NIR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Sep 2020 06:49:34 -0400
-Received: from mail-bn8nam11on2043.outbound.protection.outlook.com ([40.107.236.43]:20577
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727761AbgI2Ktd (ORCPT
+        Tue, 29 Sep 2020 09:08:17 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42967 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728346AbgI2NIQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Sep 2020 06:49:33 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EgK4TbOnr0fczpx5TAK6RA2ni7US/7NnDQ+LvZW8WoKUpwIPuLYiLtUsw1hfq05CLJDyTf/LaK488Qq33vHlh+Yxf9DsSMzvu5i5lmFbhjDNn3m+itfDeDIBGz2xHYecjRSxLpa9MGlANfT8qd9vN6iQz/FYD1jthiVQUJm0wIGuQG0VxKu9dWnOcKmb8GL85xCjesKevcxiSYZG2xum/5ptx045qcw7snH6BIAGjtUx93X30OnjzHdWreE9UpGlXb1RMiPCqqfv0DR3HHQET3Lx4J5N3qkdvW70XXwJ2XdqSA6NKkaXkMtGZR6Z4CrvxUIJZbDpxu9A6/wLFMFBFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RrEqLeOG0e+YEU9Ew3Jbjzgylpn3z6Ewcxvzj7PRsog=;
- b=iwGWAcbqwq5ivUMM3n8DQNgsckZFsme7VLkdsyWxRFDVYywsvYSEhf4zL2WDvfL9fySw6VhuKrTPnxw8TJmLYAjy+MZNjdR+qdpEhlMs/9ksg0r7sv4lk6QMgxbxvIU39A5OXQC7XAJ7sqrg6ODL8wvIEIdwGg6Z/0wPFLEo8SPO9x0G6d2CtjE9F/JKVhHhgCF3KkHW2r1xMGyCF3Da6q35WTpEedEyO9YHePl/IhSI0ZXKO8Qs4UrwNrumveAicLuBWFkAJC/tflH89Tx4Ppc9Ku5coWsCsBi5gNWYUoP1UL8mfe4xFUHcBJVOiksCPhSyUikAPUlewJ3PO+iwnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synaptics.com; dmarc=pass action=none
- header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RrEqLeOG0e+YEU9Ew3Jbjzgylpn3z6Ewcxvzj7PRsog=;
- b=fzGWL+Dtmv1fbrzf/1UqoiwBl4DNVP8RYtDYz8YuHO6crpagZ1TAA0Fj5DVPqzC6PE/7L9J/Jep9nES1qMUNSKsWyfziinUmfbT6uRs4sziCKH4vpY4KRthBrm0R2Im5jNpKbqoX66pG4dr9kdx+SPih/r2nKZlYZucEA8snNNA=
-Authentication-Results: nvidia.com; dkim=none (message not signed)
- header.d=none;nvidia.com; dmarc=none action=none header.from=synaptics.com;
-Received: from DM6PR03MB4555.namprd03.prod.outlook.com (2603:10b6:5:102::17)
- by DM6PR03MB4442.namprd03.prod.outlook.com (2603:10b6:5:10a::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.26; Tue, 29 Sep
- 2020 10:49:28 +0000
-Received: from DM6PR03MB4555.namprd03.prod.outlook.com
- ([fe80::e494:740f:155:4a38]) by DM6PR03MB4555.namprd03.prod.outlook.com
- ([fe80::e494:740f:155:4a38%7]) with mapi id 15.20.3433.032; Tue, 29 Sep 2020
- 10:49:28 +0000
-Date:   Tue, 29 Sep 2020 18:48:51 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "Yue Wang" <yue.wang@Amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "Neil Armstrong" <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-arm-kernel@axis.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        Vidya Sagar <vidyas@nvidia.com>
-Subject: Re: [PATCH v2 0/5] PCI: dwc: improve msi handling
-Message-ID: <20200929184851.22682ff1@xhacker.debian>
-In-Reply-To: <de4d9294-4f6d-c7d1-efc7-c8ef6570bd64@nvidia.com>
-References: <20200924190421.549cb8fc@xhacker.debian>
-        <de4d9294-4f6d-c7d1-efc7-c8ef6570bd64@nvidia.com>
-X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: TYAPR01CA0054.jpnprd01.prod.outlook.com
- (2603:1096:404:2b::18) To DM6PR03MB4555.namprd03.prod.outlook.com
- (2603:10b6:5:102::17)
+        Tue, 29 Sep 2020 09:08:16 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200929130815euoutp023286ef59f35091004e64afc60b7ffc86~5QxPhhg9c2301123011euoutp02d
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Sep 2020 13:08:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200929130815euoutp023286ef59f35091004e64afc60b7ffc86~5QxPhhg9c2301123011euoutp02d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1601384895;
+        bh=gj/TzXzuP6hejQ6F+uBZMNLkcOdRWW/mBYTNZQmbO1Q=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=XuQXXLYBgUgH+QGVRFF1G9qoi+r19uX/cCpjkwZM1d146pYDAMaru30t3/M1DUjlB
+         1TEeZhivVwbJ0oTjq1CBIikVN3JUZ94CxuFKYKdVg0JGN6CYbhjAoGDrvXncvR9/7o
+         ix16WvDl59s8RRkbvKo0Y6AYSSSaDTes3HkTsIkY=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200929130814eucas1p2be586a7c08fc858fd2b1e066227443a5~5QxPQbTEk2712127121eucas1p2F;
+        Tue, 29 Sep 2020 13:08:14 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 62.61.06456.EB1337F5; Tue, 29
+        Sep 2020 14:08:14 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200929130814eucas1p1c09e7e1fe2d808d9bd41718cadf33754~5QxO4S68z0597905979eucas1p19;
+        Tue, 29 Sep 2020 13:08:14 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200929130814eusmtrp121da2ad0f975cdfe3b189adf7128a7ec~5QxO3q50I2024120241eusmtrp1b;
+        Tue, 29 Sep 2020 13:08:14 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-66-5f7331becb71
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 4B.DF.06017.EB1337F5; Tue, 29
+        Sep 2020 14:08:14 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200929130814eusmtip16c32df3373b84fb26ac70d3d1edcbe1a~5QxOdGhUd0578005780eusmtip1L;
+        Tue, 29 Sep 2020 13:08:13 +0000 (GMT)
+Subject: Re: [PATCH 5/7] ASoC: soc-pcm: add soc_pcm_clean() and call it from
+ soc_pcm_open/close()
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Linux-ALSA <alsa-devel@alsa-project.org>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <1fa68abd-a86c-7a29-6c28-9ecde75ab4c6@samsung.com>
+Date:   Tue, 29 Sep 2020 15:08:14 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from xhacker.debian (124.74.246.114) by TYAPR01CA0054.jpnprd01.prod.outlook.com (2603:1096:404:2b::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.32 via Frontend Transport; Tue, 29 Sep 2020 10:49:16 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a7998fb7-2a5a-4760-9244-08d864655641
-X-MS-TrafficTypeDiagnostic: DM6PR03MB4442:
-X-Microsoft-Antispam-PRVS: <DM6PR03MB4442DDA95D15D07A19C05B42ED320@DM6PR03MB4442.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: bdv1cSzH0wAYG1qqqX9oVTw7xry1CEJvAkVhoAYoETIovnkvhyU9bR2l8SJsKl/2HDwWFtggQHCE02U5rq7nmuvzIlBk+Q05L+5vvP0AOf32sg3STsncAFYVV5mPvGUmte6Bl1L2RR6Z4aCq4wla9AkyAYf2fqEgv+xXdkxurNvxjoOvcy+aFXPh0NyE+uLGOJDmAiXmIETWWQ556OXr5g3yvYTsaTM0H8rgbyfsYTw6yCSt8gPHpHtv628GpNVvcFmiW83uRD1m0OLV8y7RhEzkpPANRTg41ICHSRdEzlTJnVcm26IyCIPiXYfq+X0Kw+bk85hh4oMbCnua/Xahush3rUUFt3YK6vBN9Gzswd+WrIP3fLkDpr+kiGnDEU8D
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR03MB4555.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(136003)(346002)(376002)(366004)(396003)(66946007)(956004)(6666004)(8676002)(86362001)(478600001)(8936002)(1076003)(6916009)(4326008)(5660300002)(7696005)(52116002)(7416002)(7406005)(53546011)(2906002)(16526019)(6506007)(26005)(186003)(66556008)(316002)(66476007)(9686003)(83380400001)(55016002)(54906003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: mXCAddAnPLSkQjPzsCwpnlw31nefGW/Yx2Iy7B5gG4NvIlsPMeoj+EycO5dJ+1dVLM4SMg1eYvdh0/J4xRdUKxV7hyi8HkEmu5s3ikYHSViqYO+qdYIwse6fRJahYUy2WRPvTJLxZAeyOHpYnfzRQiQ8S5uNddpGtkt24/VGOn8TDwAN3LpOj4a6cSiCHvUwkAarEoOFdAMkVBbu+1TpATEBRxv2qLS08noWBQLcfiBD2FZOXiHB5KkhEA5t7QrCRi2nvDwHio/JzxjDOFQNhmXez8HKEDGT9g1FNVQyXSvYvZjhDmnOAx3jgOyDH9c01jjz6r9UpcXNArgsdAy60sEETGRsKusk9/bkIfpGMJpl/QNQ9DQ1T7CN+uShmyBjGFRmUeQrXxLiNUpiaNtHf1Fu5JPXQJXHfHUg7932UXTwzsQpiJv9YMZrBYJJjIpbh7RXIG1P+BB+m7ntLyMTbz9m1jbnFtk/0Px1Zrgxv2DhjmwJxNTS5Uba/lKCgu2XsPF1aZpWGt1wQF4eIvxz+E6fyhNHagR3OniEkeJ3TUx27m+3hFEhI0pV5GrXLuOekQPRcTiYrWrtAF6y4DVaJQeCzPhwnB8MGZfS5+CT18dTXYefIZ6ZQInu4H9tICnzeMht4P2QLbwsNfNzCvng/A==
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7998fb7-2a5a-4760-9244-08d864655641
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR03MB4555.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2020 10:49:27.6996
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lL2OHFP21JIEiE6gpUPB0JP6ixr9g7VrYwQhCn1EXTXxDmQDeFIIIviGQOFYASIUIctBsQ9kmm1z1Za8IFSsjg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR03MB4442
+In-Reply-To: <87ft72bwn4.wl-kuninori.morimoto.gx@renesas.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKKsWRmVeSWpSXmKPExsWy7djP87r7DIvjDX4eNrG4cvEQk8XUh0/Y
+        LM6f38Bu8erwLkaLGef3MVkcftPO6sDmseFzE5vHplWdbB7fzkxk8ejbsorR4/MmuQDWKC6b
+        lNSczLLUIn27BK6MvilTmAtOilZsPXSWvYFxkmAXIyeHhICJxLkpB1i6GLk4hARWMEr8/NHF
+        CuF8YZTYve0QI4TzmVHiW8MqoDIOsJZf5yxBuoUEljNK7HxcA1HznlFi781+VpCEsECyxPHv
+        HUwg9SIC0RLXT9uB1DAL7GWUeNvUzQhSwyZgKNH1tosNxOYVsJPY1LELLM4ioCrx4OsWsDmi
+        AnESx049YoGoEZQ4OfMJmM0pYCsx/f4ddhCbWUBeonnrbGYIW1zi1pP5TCDLJATWsUv03/rA
+        CPGni8SuB30sELawxKvjW9ghbBmJ05N7WCAamhklHp5byw7h9DBKXG6aAdVtLXHn3C82kHeY
+        BTQl1u/Shwg7SnQs2wMNFT6JG28FIY7gk5i0bTozRJhXoqNNCKJaTWLW8XVwaw9euMQ8gVFp
+        FpLXZiF5ZxaSd2Yh7F3AyLKKUTy1tDg3PbXYMC+1XK84Mbe4NC9dLzk/dxMjMPGc/nf80w7G
+        r5eSDjEKcDAq8fByiBXHC7EmlhVX5h5ilOBgVhLhdTp7Ok6INyWxsiq1KD++qDQntfgQozQH
+        i5I4r/Gil7FCAumJJanZqakFqUUwWSYOTqkGxr26bc2/3ywV/39df4bA+z/Wf7n8xQyKtyuU
+        8b3atGDFGmPbCs+VvVKLiwu+WtY+uNt+QkXJK/JKak5ZR3OZ2rcXTnVJu+796p/5tuy716+X
+        V1++r18t9uyevOKx20l1vncYIut6KteE5NUIsM6Qin+59eKHw73zjpdcEUg+VKWo877nFusN
+        LSWW4oxEQy3mouJEALuyH544AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOIsWRmVeSWpSXmKPExsVy+t/xu7r7DIvjDWZsl7S4cvEQk8XUh0/Y
+        LM6f38Bu8erwLkaLGef3MVkcftPO6sDmseFzE5vHplWdbB7fzkxk8ejbsorR4/MmuQDWKD2b
+        ovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MvilTmAtO
+        ilZsPXSWvYFxkmAXIweHhICJxK9zll2MnBxCAksZJV7OTASxJQRkJE5Oa2CFsIUl/lzrYuti
+        5AKqecsocenTLXaQhLBAssTx7x1MILaIQLTE5GX/wYqYBfYzSlztncwGMTVfYkXfR0YQm03A
+        UKLrbRdYnFfATmJTxy6wOIuAqsSDr1vAtokKxEmc6XkBVSMocXLmExYQm1PAVmL6/Ttgi5kF
+        zCTmbX7IDGHLSzRvnQ1li0vcejKfaQKj0Cwk7bOQtMxC0jILScsCRpZVjCKppcW56bnFRnrF
+        ibnFpXnpesn5uZsYgZG27djPLTsYu94FH2IU4GBU4uFNkCiOF2JNLCuuzD3EKMHBrCTC63T2
+        dJwQb0piZVVqUX58UWlOavEhRlOg5yYyS4km5wOTQF5JvKGpobmFpaG5sbmxmYWSOG+HwMEY
+        IYH0xJLU7NTUgtQimD4mDk6pBkbhrznPVdNOa5vX36ysWnvVNqH5ioXLI/cHzm1nYt6J37eb
+        tEJiweeD59bUeW7oiCwzfv1mLcv7y+9XGVqrHe3SnHVhTdyCrF7XBD4fT473f6favQmaM/vT
+        gqsn7ObrazqJ7nEydmU/GpDqmCpkc0/4+DUtuYyiuncbU/8z8ju4zdL/eeVt6wslluKMREMt
+        5qLiRADdJIi9ygIAAA==
+X-CMS-MailID: 20200929130814eucas1p1c09e7e1fe2d808d9bd41718cadf33754
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200929130814eucas1p1c09e7e1fe2d808d9bd41718cadf33754
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200929130814eucas1p1c09e7e1fe2d808d9bd41718cadf33754
+References: <87mu1abwp2.wl-kuninori.morimoto.gx@renesas.com>
+        <87ft72bwn4.wl-kuninori.morimoto.gx@renesas.com>
+        <CGME20200929130814eucas1p1c09e7e1fe2d808d9bd41718cadf33754@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jon,
+Hi
 
-On Fri, 25 Sep 2020 09:53:45 +0100 Jon Hunter wrote:
+On 28.09.2020 02:01, Kuninori Morimoto wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> soc_pcm_open() does rollback when failed (A),
+> but, it is almost same as soc_pcm_close().
+>
+> 	static int soc_pcm_open(xxx)
+> 	{
+> 		...
+> 		if (ret < 0)
+> 			goto xxx_err;
+> 		...
+> 		return 0;
+>
+>   ^	config_err:
+>   |		...
+>   |	rtd_startup_err:
+> (A)		...
+>   |	component_err:
+>   |		...
+>   v		return ret;
+> 	}
+>
+> The difference is
+> soc_pcm_close() is for all dai/component/substream,
+> rollback        is for succeeded part only.
+>
+> This kind of duplicated code can be a hotbed of bugs,
+> thus, we want to share soc_pcm_close() and rollback.
+>
+> Now, soc_pcm_open/close() are handling
+> 	1) snd_soc_dai_startup/shutdown()
+> 	2) snd_soc_link_startup/shutdown()
+> 	3) snd_soc_component_module_get/put()
+> 	4) snd_soc_component_open/close()
+> 	5) pm_runtime_put/get()
+>
+> Now, 1) to 5) are handled.
+> This patch adds new soc_pcm_clean() and call it from
+> soc_pcm_open() as rollback, and from soc_pcm_close() as
+> normal close handler.
+>
+> One note here is that it don't need to call snd_soc_runtime_deactivate()
+> when rollback case, because it will be called without
+> snd_soc_runtime_activate().
+> It also don't need to call snd_soc_dapm_stream_stop() when rollback case.
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-> 
-> On 24/09/2020 12:05, Jisheng Zhang wrote:
-> > Improve the msi code:
-> > 1. Add proper error handling.
-> > 2. Move dw_pcie_msi_init() from each users to designware host to solve
-> > msi page leakage in resume path.  
-> 
-> Apologies if this is slightly off topic, but I have been meaning to ask
-> about MSIs and PCI. On Tegra194 which uses the DWC PCI driver, whenever we
-> hotplug CPUs we see the following warnings ...
-> 
->  [      79.068351] WARNING KERN IRQ70: set affinity failed(-22).
->  [      79.068362] WARNING KERN IRQ71: set affinity failed(-22).
-> 
+This patch landed in linux next-20200929 as commit 140a4532cdb8 ("ASoC: 
+soc-pcm: add soc_pcm_clean() and call it from soc_pcm_open/close()"). 
+Sadly it causes a regression in ALSA operation on my various test 
+boards: Exynos4412 based Trats2, Exynos5410 based Odroid XU, Exynos5250 
+Snow Chromebook and other. The first app, which tries to open ALSA 
+device fails. Then, on the second try, it work.
 
-I tried to reproduce this issue on Synaptics SoC, but can't reproduce it.
-Per my understanding of the code in kernel/irq/cpuhotplug.c, this warning
-happened when we migrate irqs away from the offline cpu, this implicitly
-implies that before this point the irq has bind to the offline cpu, but how
-could this happen given current dw_pci_msi_set_affinity() implementation
-always return -EINVAL
+Here is a log from Odroid XU:
 
-thanks
+[    3.775032] max98090 1-0010: MAX98090 REVID=0x43
+[    3.781958] max98090 1-0010: use default 2.8v micbias
+[    3.812813] ALSA device list:
+[    3.814448]   #0: Odroid-XU
+
+# speaker-test -l1
+
+speaker-test 1.1.3
+
+Playback device is default
+Stream parameters are 48000Hz, S16_LE, 1 channels
+Using 16 octaves of pink noise
+Playback open error: -22,Invalid argument
+# speaker-test -l1
+
+speaker-test 1.1.3
+
+Playback device is default
+Stream parameters are 48000Hz, S16_LE, 1 channels
+Using 16 octaves of pink noise
+Rate set to 48000Hz (requested 48000Hz)
+Buffer size range from 128 to 131072
+Period size range from 64 to 65536
+Using max buffer size 131072
+Periods = 4
+was set period_size = 32768
+was set buffer_size = 131072
+  0 - Front Left
+Time per period = 0.029512
+#
+
+ > ...
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
