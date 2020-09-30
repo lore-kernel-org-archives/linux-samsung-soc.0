@@ -1,186 +1,176 @@
-Return-Path: <SRS0=mzy8=DG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=Ewlv=DH=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A33CC4727C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 18:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8B7C4727C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Sep 2020 01:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A58062184D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Sep 2020 18:13:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601403181;
-	bh=KbbIptFu2by3ZEgiSoxO0ItV258aPMBQ8QGyKLlZVN4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=rAKRY+OU7gzUZAe0F56Buz4HQjVkf+BbC9Dix3c1GSE567zXBycozRAWQnUdNGp8f
-	 7jbhT7xk9Z6Hzcyr9emwo+eSOHcLQMisK0kJ0GBNj3WQl8MLYooRmjVSi7dN0Zpe5R
-	 dxoL5fFyZsXnrTZJbVNIW76FPOfD3a0o77y80XZs=
+	by mail.kernel.org (Postfix) with ESMTP id 9E4D720B1F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Sep 2020 01:23:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="TbGAkIpM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727887AbgI2SNB (ORCPT
+        id S1729322AbgI3BXp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Sep 2020 14:13:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47796 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725320AbgI2SNA (ORCPT
+        Tue, 29 Sep 2020 21:23:45 -0400
+Received: from mail-bn7nam10on2080.outbound.protection.outlook.com ([40.107.92.80]:17025
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728149AbgI3BXo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Sep 2020 14:13:00 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61130208B8;
-        Tue, 29 Sep 2020 18:12:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601403179;
-        bh=KbbIptFu2by3ZEgiSoxO0ItV258aPMBQ8QGyKLlZVN4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RJjs+GRAdQMy1SObha2G7D1UaBcQCAAyaTf8WgvCvreuOJYCdRhPfgljfewCRMqNa
-         fgTvFA+0dGumXNIblpNRfptGGEAht5GxmMN852H1TK4YPcCUSphboNBwtzPzAVnGzS
-         +GpbuSl9ZZMwew3iyJxm0lXQg8HDC9Hx7S1EK6Fw=
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1kNK7V-00FxpD-8M; Tue, 29 Sep 2020 19:12:57 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 29 Sep 2020 19:12:57 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-pci@vger.kernel.org,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-arm-kernel@axis.com, Vidya Sagar <vidyas@nvidia.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Tue, 29 Sep 2020 21:23:44 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=b3J6dHJfPVNv6CjeEta09Jj4kRH3sX0yo9jyK0xJtXIzEo+SOko0SWEzJ+xFGVcKL+JVTmjZGspjCE/2B6fEr6F0SORO3stqBkw9YmngSVnbcneeg5hxN0h6jCrMRsnClM4MhEyAvtR2BrvuN7UJDHX/LJLWumkn1cP+cbfNVzvhMMMkiloDjV7Q9bTLSyhKCbPigjB86IrXVFThPgKsSny/FvqMBfu3ZfaItXJCJSTF9BW4hrkxgVv1wrUOztxtaDQTz8coVBcBOSWpKEgAbZMkg8svTuPfn+UuJwjRjNQCcnzPiIhWcne6C9qlG6Xvx8EH9upWcNRqYM0wZHfOaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r8nw3Dec9uN1gNyB6+voYhdiaRUQvu6G396QHm35HN0=;
+ b=JZu8PXDiv4Sn8NvdjLOjkTBXKdmywHyrR9BDWPc6xjxpRQko3HgOuacp/Or+buJb/6us4j0Vz22aLzCBtM75H+wqiYVMP4GJEG8sQaXN+FsRSrzrFN1Y26c4wvDfRbQhHfiVIz/Co4pnmw+PNypDVIooUUct/WRt7qoqj2/bsgIXoymesjWG/c0KppkKHiIGSt0rc0NEcb0wBtkrGW7JRMpcmfqAxecWlGXImzCduNuzeis64cxsNNKLoDd/5D71KCKkDU/0bdq629khxzIMe1uhJpCcFJDb1WSJ/18ZVWxuptzV/HMelb9YNPYPbaG9+cN49p3SpUn2rwA24njpxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synaptics.com; dmarc=pass action=none
+ header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r8nw3Dec9uN1gNyB6+voYhdiaRUQvu6G396QHm35HN0=;
+ b=TbGAkIpMlhPQJBajq0fJGDBMWLXgpjO6UHCm+rE8ju/vGhETQ4Xs1UH3RzhyK1F4Id7LwPA9gbAC/GdzZ1QF7NuEK/66R9g3aGxfBwUZNCnPPzpNOssIflsObszT4RhmaWutpcaqcmyGXpRcCTDGcbX23XLpMdmdKTCG+5q0AhA=
+Authentication-Results: misterjones.org; dkim=none (message not signed)
+ header.d=none;misterjones.org; dmarc=none action=none
+ header.from=synaptics.com;
+Received: from DM6PR03MB4555.namprd03.prod.outlook.com (2603:10b6:5:102::17)
+ by DM6PR03MB5099.namprd03.prod.outlook.com (2603:10b6:5:1e4::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.32; Wed, 30 Sep
+ 2020 01:23:40 +0000
+Received: from DM6PR03MB4555.namprd03.prod.outlook.com
+ ([fe80::e494:740f:155:4a38]) by DM6PR03MB4555.namprd03.prod.outlook.com
+ ([fe80::e494:740f:155:4a38%7]) with mapi id 15.20.3433.032; Wed, 30 Sep 2020
+ 01:23:40 +0000
+Date:   Wed, 30 Sep 2020 09:23:13 +0800
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Marc Zyngier <maz@misterjones.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        linux-tegra@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-msm@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Yue Wang <yue.wang@amlogic.com>,
-        linux-samsung-soc@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
         Bjorn Helgaas <bhelgaas@google.com>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
         Jingoo Han <jingoohan1@gmail.com>,
-        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
         Shawn Guo <shawnguo@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH v2 0/5] PCI: dwc: improve msi handling
-In-Reply-To: <6ead62a5-6ad5-bde8-a5df-93c0f8029f65@nvidia.com>
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Yue Wang <yue.wang@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/5] PCI: dwc: Check alloc_page() return value
+Message-ID: <20200930092313.6124a082@xhacker.debian>
+In-Reply-To: <74af578c79bd09f2111e5438917f2c6e@misterjones.org>
 References: <20200924190421.549cb8fc@xhacker.debian>
- <de4d9294-4f6d-c7d1-efc7-c8ef6570bd64@nvidia.com>
- <20200929184851.22682ff1@xhacker.debian>
- <8e06a370-a37a-5f33-b43b-2830adb31b3e@nvidia.com>
- <d4a6eea3c5e33a3a4056885419df95a7@kernel.org>
- <6ead62a5-6ad5-bde8-a5df-93c0f8029f65@nvidia.com>
-User-Agent: Roundcube Webmail/1.4.8
-Message-ID: <5f4947b18bf381615a37aa81c2242477@kernel.org>
-X-Sender: maz@kernel.org
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: jonathanh@nvidia.com, Jisheng.Zhang@synaptics.com, hayashi.kunihiko@socionext.com, narmstrong@baylibre.com, linux-pci@vger.kernel.org, wangbinghui@hisilicon.com, bjorn.andersson@linaro.org, yamada.masahiro@socionext.com, thierry.reding@gmail.com, linux-arm-kernel@axis.com, vidyas@nvidia.com, festevam@gmail.com, jbrunet@baylibre.com, robh@kernel.org, jesper.nilsson@axis.com, lorenzo.pieralisi@arm.com, khilman@baylibre.com, pratyush.anand@gmail.com, linux-tegra@vger.kernel.org, krzk@kernel.org, kishon@ti.com, kgene@kernel.org, linux-imx@nxp.com, songxiaowei@hisilicon.com, hongxing.zhu@nxp.com, martin.blumenstingl@googlemail.com, linux-arm-msm@vger.kernel.org, s.hauer@pengutronix.de, yue.wang@amlogic.com, linux-samsung-soc@vger.kernel.org, bhelgaas@google.com, linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jingoohan1@gmail.com, agross@kernel.org, linux-kernel@vger.kernel.org, svarbanov@mm-sol.com, kernel@pengutroni
- x.de, gustavo.pimentel@synopsys.com, shawnguo@kernel.org, l.stach@pengutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        <20200924190623.3251c2ac@xhacker.debian>
+        <74af578c79bd09f2111e5438917f2c6e@misterjones.org>
+X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [124.74.246.114]
+X-ClientProxiedBy: TYAPR01CA0055.jpnprd01.prod.outlook.com
+ (2603:1096:404:2b::19) To DM6PR03MB4555.namprd03.prod.outlook.com
+ (2603:10b6:5:102::17)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from xhacker.debian (124.74.246.114) by TYAPR01CA0055.jpnprd01.prod.outlook.com (2603:1096:404:2b::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.32 via Frontend Transport; Wed, 30 Sep 2020 01:23:30 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d24250ab-a243-439e-357f-08d864df7653
+X-MS-TrafficTypeDiagnostic: DM6PR03MB5099:
+X-Microsoft-Antispam-PRVS: <DM6PR03MB50995B1FCFA034BDAD2B05B0ED330@DM6PR03MB5099.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 2vASMwgp7dj6oRqrQKwOMOalj8jNKVyNV8jsplf4scAaN/Oj+7CLCGQANuxMgumUSZCzKbZmxfFXV0SirJd7PgeeY6lOZirPt1dU5F1bJfo84U/5O4nXvppjgDtQP2+1Pa04NTzi4hvfepVQeqMzRmcQ2gSj7uvXZw9vbsCvKHZIF59GDSTdpUOE3s39l5aVBYvAXEJvjbDa4e/yaW++Hus6PsonCi0zKX5WGdK8dPl0eWye9FzQY9mMLpwvQeNKIkH4pVRZ0WNQblyPRykBkLkwJNxXw0NKnAHUrl4V2zt31ZeNUg3+ZcLfm+y+rJXcqNFlmiz5RxYjpg1zbnu9yA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR03MB4555.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(396003)(346002)(136003)(376002)(39850400004)(9686003)(8676002)(66556008)(6916009)(66476007)(316002)(4326008)(66946007)(7406005)(7416002)(478600001)(5660300002)(6666004)(2906002)(1076003)(8936002)(53546011)(6506007)(956004)(83380400001)(86362001)(54906003)(55016002)(26005)(7696005)(52116002)(186003)(16526019);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: P3UnmWd3vnE+fFbtVEPHm7djjY+q6NxF+7Yj5Af1XT/oCZUCZbaLHg81jjgNawX1sBXiHB27FHsZqCJV+jFbhtdp3LScteYXKLPR+0QcyH8jyd6ok2PilyZVcVMJ2+9kaLzx5t8FCKkAc494a/ESl4yPho54sbTA4Dn9Y4Jqgwk3TTXWK7t7150szNcYWAKaTsPz2aHPcvpqrY4wK/20qo0dye861XZ7YNLYcOgpFls67AHTFu1ul/9nAgDODxfB4/vvYWtYCRuMrJgu5qdCp8Pp0QEyftJMWHfXr2ObXhdIi5oTcvCToptdny2IlCt4D2RNrDvc7ffiigC8hCAgmQTzvbxGAsX05Nga3gapn9nq12KOSJET7stlMPXIamD0uF/+XBvLlek+dCRIGPQpcHmM6Qq7Qd1JbIuGA2XKYaOI7V6uc+fwb5d6aoWGrY/DLCGLuxhi7vTikVofqGHAIXv0m5gqmgVj7PVK3BLQaOeod4qur9iFbqB0AB3FI8itTGyRSplo9CkAwxcSK3AM7etJDHyuErqviJHJjr6OgxlIq9FcDDhSS4a5pwhA16ruuULXoATcGnSWA3HCCjhB0R4G/JcZiojRK3sJ3rkuALluZNhMuk9YC6ZgNukNjXz/TY30poFSa64M0VePSs8DgA==
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d24250ab-a243-439e-357f-08d864df7653
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR03MB4555.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2020 01:23:40.1912
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JKcNhXuEm07mcD4LtDFkb57sxMOOhAL5B/aTa7EbOue++PRWoIErKCd2JbYjrCIZsqEQFkREaLLYy6EecEwpEg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR03MB5099
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020-09-29 19:02, Jon Hunter wrote:
-> On 29/09/2020 18:25, Marc Zyngier wrote:
->> On 2020-09-29 14:22, Jon Hunter wrote:
->>> Hi Jisheng,
->>> 
->>> On 29/09/2020 11:48, Jisheng Zhang wrote:
->>>> Hi Jon,
->>>> 
->>>> On Fri, 25 Sep 2020 09:53:45 +0100 Jon Hunter wrote:
->>>> 
->>>>> 
->>>>> On 24/09/2020 12:05, Jisheng Zhang wrote:
->>>>>> Improve the msi code:
->>>>>> 1. Add proper error handling.
->>>>>> 2. Move dw_pcie_msi_init() from each users to designware host to 
->>>>>> solve
->>>>>> msi page leakage in resume path.
->>>>> 
->>>>> Apologies if this is slightly off topic, but I have been meaning to 
->>>>> ask
->>>>> about MSIs and PCI. On Tegra194 which uses the DWC PCI driver,
->>>>> whenever we
->>>>> hotplug CPUs we see the following warnings ...
->>>>> 
->>>>>  [      79.068351] WARNING KERN IRQ70: set affinity failed(-22).
->>>>>  [      79.068362] WARNING KERN IRQ71: set affinity failed(-22).
->>>>> 
->>>> 
->>>> I tried to reproduce this issue on Synaptics SoC, but can't 
->>>> reproduce
->>>> it.
->>>> Per my understanding of the code in kernel/irq/cpuhotplug.c, this
->>>> warning
->>>> happened when we migrate irqs away from the offline cpu, this 
->>>> implicitly
->>>> implies that before this point the irq has bind to the offline cpu,
->>>> but how
->>>> could this happen given current dw_pci_msi_set_affinity() 
->>>> implementation
->>>> always return -EINVAL
->>> 
->>> By default the smp_affinity should be set so that all CPUs can be
->>> interrupted ...
->>> 
->>> $ cat /proc/irq/70/smp_affinity
->>> 0xff
->>> 
->>> In my case there are 8 CPUs and so 0xff implies that the interrupt 
->>> can
->>> be triggered on any of the 8 CPUs.
->>> 
->>> Do you see the set_affinity callback being called for the DWC irqchip 
->>> in
->>> migrate_one_irq()?
->> 
->> The problem is common to all MSI implementations that end up muxing
->> all the end-point MSIs into a single interrupt. With these systems,
->> you cannot set the affinity of individual MSIs (they don't target a
->> CPU, they target another interrupt... braindead). Only the mux
->> interrupt can have its affinity changed.
->> 
->> So returning -EINVAL is the right thing to do.
+Hi Marc,
+
+On Tue, 29 Sep 2020 18:29:52 +0100 Marc Zyngier wrote:
+
 > 
-> Right, so if that is the case, then surely there should be some way to
-> avoid these warnings because they are not relevant?
+> 
+> On 2020-09-24 12:06, Jisheng Zhang wrote:
+> > We need to check alloc_page() succeed or not before continuing.
+> >
+> > Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-designware-host.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c
+> > b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > index 0a19de946351..9e04e8ef3aa4 100644
+> > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > @@ -303,6 +303,11 @@ void dw_pcie_msi_init(struct pcie_port *pp)
+> >       u64 msi_target;
+> >
+> >       pp->msi_page = alloc_page(GFP_KERNEL);
+> > +     if (!pp->msi_page) {
+> > +             dev_err(dev, "Failed to alloc MSI page\n");  
+> 
+> A failing allocation will already scream, so there is no need to
+> add insult to injury.
+> 
+> More importantly, what is this MSI page ever used for? If I remember
+> well, this is just a random address that never gets written to.
+> 
+> So why do we allocate a page here? Why do we bother with this DMA
+> mapping?
+> 
 
-I don't think there is a way to do this, because the core code
-doesn't (and cannot) know the exact interrupt topology.
+Ard and Rob also pointed out that there's no need to allocate a page, instead,
+we could use an address in the driver data for MSI address. So I refactored
+the patches and verified this solution works fine. Could you please review
+the V5?
 
-The only alternative would be to change the affinity of the mux
-interrupt when a MSI affinity changes, but that tends to break
-userspace (irqbalance, for example).
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+Thanks
