@@ -2,148 +2,154 @@ Return-Path: <SRS0=Ewlv=DH=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89902C4727E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Sep 2020 14:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A28C4363D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Sep 2020 23:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1390B2085B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Sep 2020 14:31:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TsTdwYTs"
+	by mail.kernel.org (Postfix) with ESMTP id 143BB206F4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Sep 2020 23:33:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730104AbgI3Ob5 (ORCPT
+        id S1730498AbgI3Xdh convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Sep 2020 10:31:57 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:53509 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729903AbgI3Ob5 (ORCPT
+        Wed, 30 Sep 2020 19:33:37 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:33028 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730338AbgI3Xdh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Sep 2020 10:31:57 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200930143155euoutp01796d74f154c6a5b437785a6e5f9c797d~5ljljbVJh3199631996euoutp01R
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Sep 2020 14:31:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200930143155euoutp01796d74f154c6a5b437785a6e5f9c797d~5ljljbVJh3199631996euoutp01R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1601476315;
-        bh=VdTMVF/5RBjfkqF1GszAZp16h8e/DsklT6np30DQjHE=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=TsTdwYTsKr76Y9TzkXSfp1fF8kOnmn0aWFWVQ/UcFVB1IrGSUkcRptcTBVD3chaqy
-         /a1TUD9hrSCIv+y0nobWfYokkg36A1ZqIFLEhWGm3Fm0aqWW/63aGmbv/tjGRacov7
-         XyMmeF46WSYZUZIFfRbBnWkIgvgIvlHKqQ7eX7iE=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200930143155eucas1p288ee6fba10f00cca2d3befec1340b391~5ljlHGye_0260402604eucas1p2-;
-        Wed, 30 Sep 2020 14:31:55 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 23.7B.06456.BD6947F5; Wed, 30
-        Sep 2020 15:31:55 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200930143154eucas1p22c1560c485f5d8b8be729c76028c89c7~5ljkmymV00258402584eucas1p21;
-        Wed, 30 Sep 2020 14:31:54 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200930143154eusmtrp290f2e874f36d0cc3c9d887ecd66737ab~5ljkmGWKQ2809328093eusmtrp2X;
-        Wed, 30 Sep 2020 14:31:54 +0000 (GMT)
-X-AuditID: cbfec7f2-809ff70000001938-05-5f7496dbe3a6
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6D.C5.06314.AD6947F5; Wed, 30
-        Sep 2020 15:31:54 +0100 (BST)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200930143154eusmtip242fb214d20d775c8ad10b93e01927cac~5ljkdL2oi1540515405eusmtip2J;
-        Wed, 30 Sep 2020 14:31:54 +0000 (GMT)
-From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Add a placeholder for a MAC address
-Date:   Wed, 30 Sep 2020 16:31:51 +0200
-Message-Id: <20200930143151.23961-1-l.stelmach@samsung.com>
-X-Mailer: git-send-email 2.26.2
-MIME-Version: 1.0
-Organization: Samsung R&D Institute Poland
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOKsWRmVeSWpSXmKPExsWy7djP87q3p5XEG2yeymOxccZ6Vov5R86x
-        WvQ/fs1scf78BnaLm4dWMFpsenyN1eLyrjlsFjPO72OyWHvkLrtF694j7A5cHptWdbJ5bF5S
-        79G3ZRWjx+dNcgEsUVw2Kak5mWWpRfp2CVwZbw6tZio4yV7RvPQpUwPjRLYuRk4OCQETifmf
-        XjJ3MXJxCAmsYJR4dGwvE4TzhVHi6a5lLBDOZ0aJB5c2ssK0TJt6kBUisZxRYuGNB1Atzxkl
-        3vX0MYJUsQk4SvQvPQFWJQLSPnPuJCaQBLNAqcTW42+ZQWxhATeJW08WgF3CIqAq0TZtMlgz
-        r4C1RMexmcwQ6+Ql2pdvZ4OIC0qcnPmEBcTmF9CSWNN0nQViprxE89bZYF9ICCxil3j9dAMj
-        RLOLxP+Wy1CvCku8Or6FHcKWkfi/cz7QQRxAdr3E5ElmEL09jBLb5vxggaixlrhz7hcbSA2z
-        gKbE+l36EGFHibM7utghWvkkbrwVhDiBT2LStunMEGFeiY42IYhqFYl1/XugBkpJ9L5awQhR
-        4iHRfZFrAqPiLCR/zULyyyyEtQsYmVcxiqeWFuempxYb5qWW6xUn5haX5qXrJefnbmIEJp/T
-        /45/2sH49VLSIUYBDkYlHt4JeSXxQqyJZcWVuYcYJTiYlUR4nc6ejhPiTUmsrEotyo8vKs1J
-        LT7EKM3BoiTOa7zoZayQQHpiSWp2ampBahFMlomDU6qBcZrFh3tBdbEaW3i+dKhWLk+OPOvd
-        Zs26ZPGXwJPTp3/N2bzfrzTrwl/NL99DP17P3/jSuO+uybFezWqZ3U03cwSmiTcc/3xET/Df
-        DufyL3MSrH8+Wv1phbOjoWPz/H15e+0SlB5LT3fY0BUUdspAeJrEDe/X+6QC9facTpp/7WFz
-        u3lphhzjHiWW4oxEQy3mouJEAJrsPeY6AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsVy+t/xe7q3ppXEG3zdpGmxccZ6Vov5R86x
-        WvQ/fs1scf78BnaLm4dWMFpsenyN1eLyrjlsFjPO72OyWHvkLrtF694j7A5cHptWdbJ5bF5S
-        79G3ZRWjx+dNcgEsUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5
-        mWWpRfp2CXoZbw6tZio4yV7RvPQpUwPjRLYuRk4OCQETiWlTD7J2MXJxCAksZZToe/MTyOEA
-        SkhJrJybDlEjLPHnWhdYvZDAU0aJSdfEQWw2AUeJ/qUnWEFsEYGfjBLbzjqCtDILlEu8OBgI
-        EhYWcJO49WQBWCuLgKpE27TJjCA2r4C1RMexmcwQ4+Ul2pdvZ4OIC0qcnPmEBWKMusT6eUIg
-        YX4BLYk1TddZQGxmoPLmrbOZJzAKzELSMQuhYxaSqgWMzKsYRVJLi3PTc4sN9YoTc4tL89L1
-        kvNzNzECo2bbsZ+bdzBe2hh8iFGAg1GJh3dCXkm8EGtiWXFl7iFGCQ5mJRFep7On44R4UxIr
-        q1KL8uOLSnNSiw8xmgK9M5FZSjQ5HxjRQD2GpobmFpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNT
-        UwtSi2D6mDg4pRoYZ6zfbFvpLGzz3WDGsvoTe4MfHb553L2KzX7ZsgaOvceZL3HfEThQse/t
-        et5r8XIs3kLbX4Z8flZ979D2a5qOjf2VjYoHtwWLSy1SPVv2yrvw+OnLLAzW+5LfRj/6vOZo
-        iIPeXNFvP55cVmJd22T9uCpC+31P7/wP/3LYrcrtjZrDl02N8uhZqcRSnJFoqMVcVJwIABLd
-        N2WwAgAA
-X-CMS-MailID: 20200930143154eucas1p22c1560c485f5d8b8be729c76028c89c7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200930143154eucas1p22c1560c485f5d8b8be729c76028c89c7
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200930143154eucas1p22c1560c485f5d8b8be729c76028c89c7
-References: <CGME20200930143154eucas1p22c1560c485f5d8b8be729c76028c89c7@eucas1p2.samsung.com>
+        Wed, 30 Sep 2020 19:33:37 -0400
+X-Greylist: delayed 303 seconds by postgrey-1.27 at vger.kernel.org; Wed, 30 Sep 2020 19:33:37 EDT
+Date:   01 Oct 2020 08:28:33 +0900
+X-IronPort-AV: E=Sophos;i="5.77,322,1596466800"; 
+   d="scan'208";a="58602614"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 01 Oct 2020 08:28:33 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id ACF024002C28;
+        Thu,  1 Oct 2020 08:28:33 +0900 (JST)
+Message-ID: <87v9fualv7.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 5/7] ASoC: soc-pcm: add soc_pcm_clean() and call it from soc_pcm_open/close()
+In-Reply-To: <1fa68abd-a86c-7a29-6c28-9ecde75ab4c6@samsung.com>
+References: <87mu1abwp2.wl-kuninori.morimoto.gx@renesas.com>
+        <87ft72bwn4.wl-kuninori.morimoto.gx@renesas.com>
+        <CGME20200929130814eucas1p1c09e7e1fe2d808d9bd41718cadf33754@eucas1p1.samsung.com>
+        <1fa68abd-a86c-7a29-6c28-9ecde75ab4c6@samsung.com>
+User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add a placeholder for a MAC address. A bootloader may fill it
-to set the MAC address and override EEPROM settings.
 
-Signed-off-by: ≈Åukasz Stelmach <l.stelmach@samsung.com>
----
- arch/arm/boot/dts/exynos5422-odroidxu3.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Hi Marek
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index db0bc17a667b..9f7f3eacb750 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -70,3 +70,21 @@ &pwm {
- &usbdrd_dwc3_1 {
- 	dr_mode = "peripheral";
- };
-+
-+&usbhost2 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	hub@1 {
-+		compatible = "usb8087,0024";
-+		reg = <1>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethernet: usbether@1 {
-+			compatible = "usb0c45,6310";
-+			reg = <1>;
-+			mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
-+		};
-+	};
-+};
--- 
-2.26.2
+Thank you for testing.
+I will check it
 
+> On 28.09.2020 02:01, Kuninori Morimoto wrote:
+> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> >
+> > soc_pcm_open() does rollback when failed (A),
+> > but, it is almost same as soc_pcm_close().
+> >
+> > 	static int soc_pcm_open(xxx)
+> > 	{
+> > 		...
+> > 		if (ret < 0)
+> > 			goto xxx_err;
+> > 		...
+> > 		return 0;
+> >
+> >   ^	config_err:
+> >   |		...
+> >   |	rtd_startup_err:
+> > (A)		...
+> >   |	component_err:
+> >   |		...
+> >   v		return ret;
+> > 	}
+> >
+> > The difference is
+> > soc_pcm_close() is for all dai/component/substream,
+> > rollback        is for succeeded part only.
+> >
+> > This kind of duplicated code can be a hotbed of bugs,
+> > thus, we want to share soc_pcm_close() and rollback.
+> >
+> > Now, soc_pcm_open/close() are handling
+> > 	1) snd_soc_dai_startup/shutdown()
+> > 	2) snd_soc_link_startup/shutdown()
+> > 	3) snd_soc_component_module_get/put()
+> > 	4) snd_soc_component_open/close()
+> > 	5) pm_runtime_put/get()
+> >
+> > Now, 1) to 5) are handled.
+> > This patch adds new soc_pcm_clean() and call it from
+> > soc_pcm_open() as rollback, and from soc_pcm_close() as
+> > normal close handler.
+> >
+> > One note here is that it don't need to call snd_soc_runtime_deactivate()
+> > when rollback case, because it will be called without
+> > snd_soc_runtime_activate().
+> > It also don't need to call snd_soc_dapm_stream_stop() when rollback case.
+> >
+> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> This patch landed in linux next-20200929 as commit 140a4532cdb8 ("ASoC: 
+> soc-pcm: add soc_pcm_clean() and call it from soc_pcm_open/close()"). 
+> Sadly it causes a regression in ALSA operation on my various test 
+> boards: Exynos4412 based Trats2, Exynos5410 based Odroid XU, Exynos5250 
+> Snow Chromebook and other. The first app, which tries to open ALSA 
+> device fails. Then, on the second try, it work.
+> 
+> Here is a log from Odroid XU:
+> 
+> [††† 3.775032] max98090 1-0010: MAX98090 REVID=0x43
+> [††† 3.781958] max98090 1-0010: use default 2.8v micbias
+> [††† 3.812813] ALSA device list:
+> [††† 3.814448]†† #0: Odroid-XU
+> 
+> # speaker-test -l1
+> 
+> speaker-test 1.1.3
+> 
+> Playback device is default
+> Stream parameters are 48000Hz, S16_LE, 1 channels
+> Using 16 octaves of pink noise
+> Playback open error: -22,Invalid argument
+> # speaker-test -l1
+> 
+> speaker-test 1.1.3
+> 
+> Playback device is default
+> Stream parameters are 48000Hz, S16_LE, 1 channels
+> Using 16 octaves of pink noise
+> Rate set to 48000Hz (requested 48000Hz)
+> Buffer size range from 128 to 131072
+> Period size range from 64 to 65536
+> Using max buffer size 131072
+> Periods = 4
+> was set period_size = 32768
+> was set buffer_size = 131072
+>  †0 - Front Left
+> Time per period = 0.029512
+> #
+> 
+>  > ...
+> 
+> Best regards
+> -- 
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+> 
