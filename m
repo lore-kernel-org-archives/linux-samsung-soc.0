@@ -2,356 +2,148 @@ Return-Path: <SRS0=Ewlv=DH=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8C6C4727E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Sep 2020 12:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89902C4727E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Sep 2020 14:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BC6E20936
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Sep 2020 12:51:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1390B2085B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Sep 2020 14:31:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="XquRtfZk"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TsTdwYTs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbgI3Mv7 (ORCPT
+        id S1730104AbgI3Ob5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Sep 2020 08:51:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46220 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725771AbgI3Mv6 (ORCPT
+        Wed, 30 Sep 2020 10:31:57 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53509 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729903AbgI3Ob5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Sep 2020 08:51:58 -0400
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8678CC061755
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Sep 2020 05:51:58 -0700 (PDT)
-Received: by mail-ot1-x342.google.com with SMTP id o8so1682084otl.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Sep 2020 05:51:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=0wPhcg2LSZHu/TGS7lNnmy/csXQmnvXJn2oVG4UhCFU=;
-        b=XquRtfZkI3Z1/dyelbhmy6+S3LdOrJ+Ls99zb0gNP1isZ5/ROkggvmrEz/emoeYGWy
-         +7WV2wttZIrKzGps4H/VfZv8ipVy3amtJxb5yY3hYY3sY9T+XmpNAPp9usVKoA9ucM8I
-         yFhLFNdvMezP74CymnCXqb+/GWbzizh3ybux8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0wPhcg2LSZHu/TGS7lNnmy/csXQmnvXJn2oVG4UhCFU=;
-        b=L7SNql6VhOClvll12cY2dbn94dOXQ7Zz3W2FdcZhnj1UyWUyq4TA+T+No+mtfiAODa
-         1PG5FCwuJuvrZSUblzXk5LgEKlzs+rlT0HS7eAWMmfM3KQUiffUQgxUowIWZ2LevE/2L
-         AJNQ39maUzdB0+IpTlNQwfolEsr5aTZif+FMM+J+Dmb41wEw8ip2wochH/An2Pqoigsx
-         91eYWinkVcD9EjeSduuUQAULUHT6AP57ekjy7HJ/wl8iO88nERPOW2L/LZk4ajrnS1Bc
-         jvMr5ncBYZ6f6FEQJ7o+uQgcU9/Lt94R0qzFdiD6DGaCK+fMaQfkdif5rL3SbkyS7F4S
-         0RFw==
-X-Gm-Message-State: AOAM5338q5C9BSOJiAQu3a3GPG3rkVLsnQS8vDeXhXHuseEElbF754F5
-        2TzzqvV7cf7sqvCNUlCtHN3+Lq56pdKW6jTxtSAkIw==
-X-Google-Smtp-Source: ABdhPJxxpGai/lgr0vj7vZLBdjw/nwkhoKL0Cu07SVu0LJH3S5jKfA3Xrm3c1q+2d1FIg6dGQXev7SEllIxIp/8QKPM=
-X-Received: by 2002:a05:6830:14d9:: with SMTP id t25mr1567057otq.188.1601470317809;
- Wed, 30 Sep 2020 05:51:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200929151437.19717-1-tzimmermann@suse.de> <20200929151437.19717-3-tzimmermann@suse.de>
- <8fad0114-064a-4ed5-c21d-d1b4294de0a1@amd.com> <2614314a-81f7-4722-c400-68d90e48e09a@suse.de>
- <8a84f62b-33f3-f44c-52af-c859a0e0d1fb@gmail.com> <07972ada-9135-3743-a86b-487f610c509f@suse.de>
- <b569b7e3-68f0-edcc-c8f4-170e9042d348@gmail.com> <20200930094712.GW438822@phenom.ffwll.local>
- <8479d0aa-3826-4f37-0109-55daca515793@amd.com>
-In-Reply-To: <8479d0aa-3826-4f37-0109-55daca515793@amd.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 30 Sep 2020 14:51:46 +0200
-Message-ID: <CAKMK7uH0U36NG8w98i0x6HVGeogiwnYDRiKquLW-8znLa7-0yg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/7] drm/ttm: Add ttm_kmap_obj_to_dma_buf_map() for
- type conversion
-To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
+        Wed, 30 Sep 2020 10:31:57 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200930143155euoutp01796d74f154c6a5b437785a6e5f9c797d~5ljljbVJh3199631996euoutp01R
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Sep 2020 14:31:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200930143155euoutp01796d74f154c6a5b437785a6e5f9c797d~5ljljbVJh3199631996euoutp01R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1601476315;
+        bh=VdTMVF/5RBjfkqF1GszAZp16h8e/DsklT6np30DQjHE=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=TsTdwYTsKr76Y9TzkXSfp1fF8kOnmn0aWFWVQ/UcFVB1IrGSUkcRptcTBVD3chaqy
+         /a1TUD9hrSCIv+y0nobWfYokkg36A1ZqIFLEhWGm3Fm0aqWW/63aGmbv/tjGRacov7
+         XyMmeF46WSYZUZIFfRbBnWkIgvgIvlHKqQ7eX7iE=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200930143155eucas1p288ee6fba10f00cca2d3befec1340b391~5ljlHGye_0260402604eucas1p2-;
+        Wed, 30 Sep 2020 14:31:55 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 23.7B.06456.BD6947F5; Wed, 30
+        Sep 2020 15:31:55 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200930143154eucas1p22c1560c485f5d8b8be729c76028c89c7~5ljkmymV00258402584eucas1p21;
+        Wed, 30 Sep 2020 14:31:54 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200930143154eusmtrp290f2e874f36d0cc3c9d887ecd66737ab~5ljkmGWKQ2809328093eusmtrp2X;
+        Wed, 30 Sep 2020 14:31:54 +0000 (GMT)
+X-AuditID: cbfec7f2-809ff70000001938-05-5f7496dbe3a6
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6D.C5.06314.AD6947F5; Wed, 30
+        Sep 2020 15:31:54 +0100 (BST)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200930143154eusmtip242fb214d20d775c8ad10b93e01927cac~5ljkdL2oi1540515405eusmtip2J;
+        Wed, 30 Sep 2020 14:31:54 +0000 (GMT)
+From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Qiang Yu <yuq825@gmail.com>, Ben Skeggs <bskeggs@redhat.com>,
-        Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sean Paul <sean@poorly.run>, "Anholt, Eric" <eric@anholt.net>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Luben Tuikov <luben.tuikov@amd.com>, apaneers@amd.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Melissa Wen <melissa.srw@gmail.com>,
-        "Wilson, Chris" <chris@chris-wilson.co.uk>,
-        Qinglang Miao <miaoqinglang@huawei.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        lima@lists.freedesktop.org,
-        Nouveau Dev <nouveau@lists.freedesktop.org>,
-        The etnaviv authors <etnaviv@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        "open list:VIRTIO CORE, NET..." 
-        <virtualization@lists.linux-foundation.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <spice-devel@lists.freedesktop.org>,
-        "moderated list:DRM DRIVERS FOR XEN" <xen-devel@lists.xenproject.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH] ARM: dts: exynos: Add a placeholder for a MAC address
+Date:   Wed, 30 Sep 2020 16:31:51 +0200
+Message-Id: <20200930143151.23961-1-l.stelmach@samsung.com>
+X-Mailer: git-send-email 2.26.2
+MIME-Version: 1.0
+Organization: Samsung R&D Institute Poland
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOKsWRmVeSWpSXmKPExsWy7djP87q3p5XEG2yeymOxccZ6Vov5R86x
+        WvQ/fs1scf78BnaLm4dWMFpsenyN1eLyrjlsFjPO72OyWHvkLrtF694j7A5cHptWdbJ5bF5S
+        79G3ZRWjx+dNcgEsUVw2Kak5mWWpRfp2CVwZbw6tZio4yV7RvPQpUwPjRLYuRk4OCQETifmf
+        XjJ3MXJxCAmsYJR4dGwvE4TzhVHi6a5lLBDOZ0aJB5c2ssK0TJt6kBUisZxRYuGNB1Atzxkl
+        3vX0MYJUsQk4SvQvPQFWJQLSPnPuJCaQBLNAqcTW42+ZQWxhATeJW08WgF3CIqAq0TZtMlgz
+        r4C1RMexmcwQ6+Ql2pdvZ4OIC0qcnPmEBcTmF9CSWNN0nQViprxE89bZYF9ICCxil3j9dAMj
+        RLOLxP+Wy1CvCku8Or6FHcKWkfi/cz7QQRxAdr3E5ElmEL09jBLb5vxggaixlrhz7hcbSA2z
+        gKbE+l36EGFHibM7utghWvkkbrwVhDiBT2LStunMEGFeiY42IYhqFYl1/XugBkpJ9L5awQhR
+        4iHRfZFrAqPiLCR/zULyyyyEtQsYmVcxiqeWFuempxYb5qWW6xUn5haX5qXrJefnbmIEJp/T
+        /45/2sH49VLSIUYBDkYlHt4JeSXxQqyJZcWVuYcYJTiYlUR4nc6ejhPiTUmsrEotyo8vKs1J
+        LT7EKM3BoiTOa7zoZayQQHpiSWp2ampBahFMlomDU6qBcZrFh3tBdbEaW3i+dKhWLk+OPOvd
+        Zs26ZPGXwJPTp3/N2bzfrzTrwl/NL99DP17P3/jSuO+uybFezWqZ3U03cwSmiTcc/3xET/Df
+        DufyL3MSrH8+Wv1phbOjoWPz/H15e+0SlB5LT3fY0BUUdspAeJrEDe/X+6QC9facTpp/7WFz
+        u3lphhzjHiWW4oxEQy3mouJEAJrsPeY6AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsVy+t/xe7q3ppXEG3zdpGmxccZ6Vov5R86x
+        WvQ/fs1scf78BnaLm4dWMFpsenyN1eLyrjlsFjPO72OyWHvkLrtF694j7A5cHptWdbJ5bF5S
+        79G3ZRWjx+dNcgEsUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5
+        mWWpRfp2CXoZbw6tZio4yV7RvPQpUwPjRLYuRk4OCQETiWlTD7J2MXJxCAksZZToe/MTyOEA
+        SkhJrJybDlEjLPHnWhdYvZDAU0aJSdfEQWw2AUeJ/qUnWEFsEYGfjBLbzjqCtDILlEu8OBgI
+        EhYWcJO49WQBWCuLgKpE27TJjCA2r4C1RMexmcwQ4+Ul2pdvZ4OIC0qcnPmEBWKMusT6eUIg
+        YX4BLYk1TddZQGxmoPLmrbOZJzAKzELSMQuhYxaSqgWMzKsYRVJLi3PTc4sN9YoTc4tL89L1
+        kvNzNzECo2bbsZ+bdzBe2hh8iFGAg1GJh3dCXkm8EGtiWXFl7iFGCQ5mJRFep7On44R4UxIr
+        q1KL8uOLSnNSiw8xmgK9M5FZSjQ5HxjRQD2GpobmFpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNT
+        UwtSi2D6mDg4pRoYZ6zfbFvpLGzz3WDGsvoTe4MfHb553L2KzX7ZsgaOvceZL3HfEThQse/t
+        et5r8XIs3kLbX4Z8flZ979D2a5qOjf2VjYoHtwWLSy1SPVv2yrvw+OnLLAzW+5LfRj/6vOZo
+        iIPeXNFvP55cVmJd22T9uCpC+31P7/wP/3LYrcrtjZrDl02N8uhZqcRSnJFoqMVcVJwIABLd
+        N2WwAgAA
+X-CMS-MailID: 20200930143154eucas1p22c1560c485f5d8b8be729c76028c89c7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200930143154eucas1p22c1560c485f5d8b8be729c76028c89c7
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200930143154eucas1p22c1560c485f5d8b8be729c76028c89c7
+References: <CGME20200930143154eucas1p22c1560c485f5d8b8be729c76028c89c7@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 30, 2020 at 2:34 PM Christian K=C3=B6nig
-<christian.koenig@amd.com> wrote:
->
-> Am 30.09.20 um 11:47 schrieb Daniel Vetter:
-> > On Wed, Sep 30, 2020 at 10:34:31AM +0200, Christian K=C3=B6nig wrote:
-> >> Am 30.09.20 um 10:19 schrieb Thomas Zimmermann:
-> >>> Hi
-> >>>
-> >>> Am 30.09.20 um 10:05 schrieb Christian K=C3=B6nig:
-> >>>> Am 29.09.20 um 19:49 schrieb Thomas Zimmermann:
-> >>>>> Hi Christian
-> >>>>>
-> >>>>> Am 29.09.20 um 17:35 schrieb Christian K=C3=B6nig:
-> >>>>>> Am 29.09.20 um 17:14 schrieb Thomas Zimmermann:
-> >>>>>>> The new helper ttm_kmap_obj_to_dma_buf() extracts address and loc=
-ation
-> >>>>>>> from and instance of TTM's kmap_obj and initializes struct dma_bu=
-f_map
-> >>>>>>> with these values. Helpful for TTM-based drivers.
-> >>>>>> We could completely drop that if we use the same structure inside =
-TTM as
-> >>>>>> well.
-> >>>>>>
-> >>>>>> Additional to that which driver is going to use this?
-> >>>>> As Daniel mentioned, it's in patch 3. The TTM-based drivers will
-> >>>>> retrieve the pointer via this function.
-> >>>>>
-> >>>>> I do want to see all that being more tightly integrated into TTM, b=
-ut
-> >>>>> not in this series. This one is about fixing the bochs-on-sparc64
-> >>>>> problem for good. Patch 7 adds an update to TTM to the DRM TODO lis=
-t.
-> >>>> I should have asked which driver you try to fix here :)
-> >>>>
-> >>>> In this case just keep the function inside bochs and only fix it the=
-re.
-> >>>>
-> >>>> All other drivers can be fixed when we generally pump this through T=
-TM.
-> >>> Did you take a look at patch 3? This function will be used by VRAM
-> >>> helpers, nouveau, radeon, amdgpu and qxl. If we don't put it here, we
-> >>> have to duplicate the functionality in each if these drivers. Bochs
-> >>> itself uses VRAM helpers and doesn't touch the function directly.
-> >> Ah, ok can we have that then only in the VRAM helpers?
-> >>
-> >> Alternative you could go ahead and use dma_buf_map in ttm_bo_kmap_obj
-> >> directly and drop the hack with the TTM_BO_MAP_IOMEM_MASK.
-> >>
-> >> What I want to avoid is to have another conversion function in TTM bec=
-ause
-> >> what happens here is that we already convert from ttm_bus_placement to
-> >> ttm_bo_kmap_obj and then to dma_buf_map.
-> > Hm I'm not really seeing how that helps with a gradual conversion of
-> > everything over to dma_buf_map and assorted helpers for access? There's
-> > too many places in ttm drivers where is_iomem and related stuff is used=
- to
-> > be able to convert it all in one go. An intermediate state with a bunch=
- of
-> > conversions seems fairly unavoidable to me.
->
-> Fair enough. I would just have started bottom up and not top down.
->
-> Anyway feel free to go ahead with this approach as long as we can remove
-> the new function again when we clean that stuff up for good.
+Add a placeholder for a MAC address. A bootloader may fill it
+to set the MAC address and override EEPROM settings.
 
-Yeah I guess bottom up would make more sense as a refactoring. But the
-main motivation to land this here is to fix the __mmio vs normal
-memory confusion in the fbdev emulation helpers for sparc (and
-anything else that needs this). Hence the top down approach for
-rolling this out.
--Daniel
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
->
-> Christian.
->
-> > -Daniel
-> >
-> >> Thanks,
-> >> Christian.
-> >>
-> >>> Best regards
-> >>> Thomas
-> >>>
-> >>>> Regards,
-> >>>> Christian.
-> >>>>
-> >>>>> Best regards
-> >>>>> Thomas
-> >>>>>
-> >>>>>> Regards,
-> >>>>>> Christian.
-> >>>>>>
-> >>>>>>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> >>>>>>> ---
-> >>>>>>>     include/drm/ttm/ttm_bo_api.h | 24 ++++++++++++++++++++++++
-> >>>>>>>     include/linux/dma-buf-map.h  | 20 ++++++++++++++++++++
-> >>>>>>>     2 files changed, 44 insertions(+)
-> >>>>>>>
-> >>>>>>> diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm/ttm_b=
-o_api.h
-> >>>>>>> index c96a25d571c8..62d89f05a801 100644
-> >>>>>>> --- a/include/drm/ttm/ttm_bo_api.h
-> >>>>>>> +++ b/include/drm/ttm/ttm_bo_api.h
-> >>>>>>> @@ -34,6 +34,7 @@
-> >>>>>>>     #include <drm/drm_gem.h>
-> >>>>>>>     #include <drm/drm_hashtab.h>
-> >>>>>>>     #include <drm/drm_vma_manager.h>
-> >>>>>>> +#include <linux/dma-buf-map.h>
-> >>>>>>>     #include <linux/kref.h>
-> >>>>>>>     #include <linux/list.h>
-> >>>>>>>     #include <linux/wait.h>
-> >>>>>>> @@ -486,6 +487,29 @@ static inline void *ttm_kmap_obj_virtual(str=
-uct
-> >>>>>>> ttm_bo_kmap_obj *map,
-> >>>>>>>         return map->virtual;
-> >>>>>>>     }
-> >>>>>>>     +/**
-> >>>>>>> + * ttm_kmap_obj_to_dma_buf_map
-> >>>>>>> + *
-> >>>>>>> + * @kmap: A struct ttm_bo_kmap_obj returned from ttm_bo_kmap.
-> >>>>>>> + * @map: Returns the mapping as struct dma_buf_map
-> >>>>>>> + *
-> >>>>>>> + * Converts struct ttm_bo_kmap_obj to struct dma_buf_map. If the=
- memory
-> >>>>>>> + * is not mapped, the returned mapping is initialized to NULL.
-> >>>>>>> + */
-> >>>>>>> +static inline void ttm_kmap_obj_to_dma_buf_map(struct ttm_bo_kma=
-p_obj
-> >>>>>>> *kmap,
-> >>>>>>> +                           struct dma_buf_map *map)
-> >>>>>>> +{
-> >>>>>>> +    bool is_iomem;
-> >>>>>>> +    void *vaddr =3D ttm_kmap_obj_virtual(kmap, &is_iomem);
-> >>>>>>> +
-> >>>>>>> +    if (!vaddr)
-> >>>>>>> +        dma_buf_map_clear(map);
-> >>>>>>> +    else if (is_iomem)
-> >>>>>>> +        dma_buf_map_set_vaddr_iomem(map, (void __force __iomem *=
-)vaddr);
-> >>>>>>> +    else
-> >>>>>>> +        dma_buf_map_set_vaddr(map, vaddr);
-> >>>>>>> +}
-> >>>>>>> +
-> >>>>>>>     /**
-> >>>>>>>      * ttm_bo_kmap
-> >>>>>>>      *
-> >>>>>>> diff --git a/include/linux/dma-buf-map.h b/include/linux/dma-buf-=
-map.h
-> >>>>>>> index fd1aba545fdf..2e8bbecb5091 100644
-> >>>>>>> --- a/include/linux/dma-buf-map.h
-> >>>>>>> +++ b/include/linux/dma-buf-map.h
-> >>>>>>> @@ -45,6 +45,12 @@
-> >>>>>>>      *
-> >>>>>>>      *    dma_buf_map_set_vaddr(&map. 0xdeadbeaf);
-> >>>>>>>      *
-> >>>>>>> + * To set an address in I/O memory, use dma_buf_map_set_vaddr_io=
-mem().
-> >>>>>>> + *
-> >>>>>>> + * .. code-block:: c
-> >>>>>>> + *
-> >>>>>>> + *    dma_buf_map_set_vaddr_iomem(&map. 0xdeadbeaf);
-> >>>>>>> + *
-> >>>>>>>      * Test if a mapping is valid with either dma_buf_map_is_set(=
-) or
-> >>>>>>>      * dma_buf_map_is_null().
-> >>>>>>>      *
-> >>>>>>> @@ -118,6 +124,20 @@ static inline void dma_buf_map_set_vaddr(str=
-uct
-> >>>>>>> dma_buf_map *map, void *vaddr)
-> >>>>>>>         map->is_iomem =3D false;
-> >>>>>>>     }
-> >>>>>>>     +/**
-> >>>>>>> + * dma_buf_map_set_vaddr_iomem - Sets a dma-buf mapping structur=
-e to
-> >>>>>>> an address in I/O memory
-> >>>>>>> + * @map:        The dma-buf mapping structure
-> >>>>>>> + * @vaddr_iomem:    An I/O-memory address
-> >>>>>>> + *
-> >>>>>>> + * Sets the address and the I/O-memory flag.
-> >>>>>>> + */
-> >>>>>>> +static inline void dma_buf_map_set_vaddr_iomem(struct dma_buf_ma=
-p *map,
-> >>>>>>> +                           void __iomem *vaddr_iomem)
-> >>>>>>> +{
-> >>>>>>> +    map->vaddr_iomem =3D vaddr_iomem;
-> >>>>>>> +    map->is_iomem =3D true;
-> >>>>>>> +}
-> >>>>>>> +
-> >>>>>>>     /**
-> >>>>>>>      * dma_buf_map_is_equal - Compares two dma-buf mapping struct=
-ures
-> >>>>>>> for equality
-> >>>>>>>      * @lhs:    The dma-buf mapping structure
-> >>>>>> _______________________________________________
-> >>>>>> dri-devel mailing list
-> >>>>>> dri-devel@lists.freedesktop.org
-> >>>>>> https://nam11.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%=
-2Flists.freedesktop.org%2Fmailman%2Flistinfo%2Fdri-devel&amp;data=3D02%7C01=
-%7Cchristian.koenig%40amd.com%7C472c3d655a61411deb6708d86525d1b8%7C3dd8961f=
-e4884e608e11a82d994e183d%7C0%7C0%7C637370560438965013&amp;sdata=3DHdHOA%2F1=
-VcIX%2F7YtfYTiAqYEvw7Ag%2FS%2BxS5VwJKOv5y0%3D&amp;reserved=3D0
-> >>>>> _______________________________________________
-> >>>>> amd-gfx mailing list
-> >>>>> amd-gfx@lists.freedesktop.org
-> >>>>> https://nam11.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2=
-Flists.freedesktop.org%2Fmailman%2Flistinfo%2Famd-gfx&amp;data=3D02%7C01%7C=
-christian.koenig%40amd.com%7C472c3d655a61411deb6708d86525d1b8%7C3dd8961fe48=
-84e608e11a82d994e183d%7C0%7C0%7C637370560438965013&amp;sdata=3DH%2B5HKCsTrk=
-sRV2EyEiFGSTyS79jsWCmJimSMoJYusx8%3D&amp;reserved=3D0
-> >>>> _______________________________________________
-> >>>> dri-devel mailing list
-> >>>> dri-devel@lists.freedesktop.org
-> >>>> https://nam11.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2F=
-lists.freedesktop.org%2Fmailman%2Flistinfo%2Fdri-devel&amp;data=3D02%7C01%7=
-Cchristian.koenig%40amd.com%7C472c3d655a61411deb6708d86525d1b8%7C3dd8961fe4=
-884e608e11a82d994e183d%7C0%7C0%7C637370560438965013&amp;sdata=3DHdHOA%2F1Vc=
-IX%2F7YtfYTiAqYEvw7Ag%2FS%2BxS5VwJKOv5y0%3D&amp;reserved=3D0
-> >>>>
-> >>> _______________________________________________
-> >>> amd-gfx mailing list
-> >>> amd-gfx@lists.freedesktop.org
-> >>> https://nam11.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fl=
-ists.freedesktop.org%2Fmailman%2Flistinfo%2Famd-gfx&amp;data=3D02%7C01%7Cch=
-ristian.koenig%40amd.com%7C472c3d655a61411deb6708d86525d1b8%7C3dd8961fe4884=
-e608e11a82d994e183d%7C0%7C0%7C637370560438965013&amp;sdata=3DH%2B5HKCsTrksR=
-V2EyEiFGSTyS79jsWCmJimSMoJYusx8%3D&amp;reserved=3D0
->
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index db0bc17a667b..9f7f3eacb750 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -70,3 +70,21 @@ &pwm {
+ &usbdrd_dwc3_1 {
+ 	dr_mode = "peripheral";
+ };
++
++&usbhost2 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	hub@1 {
++		compatible = "usb8087,0024";
++		reg = <1>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ethernet: usbether@1 {
++			compatible = "usb0c45,6310";
++			reg = <1>;
++			mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
++		};
++	};
++};
+-- 
+2.26.2
 
-
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
