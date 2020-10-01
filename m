@@ -2,100 +2,84 @@ Return-Path: <SRS0=2c9Z=DI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 027C1C47420
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Oct 2020 16:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4653C4727E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Oct 2020 16:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B07422158C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Oct 2020 16:14:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 545A42075F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Oct 2020 16:57:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601568882;
-	bh=QfU1X7o6CMv2QgATvf/sDmoCIsKFJq810j1nD3jmnHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=n2rDhJ9ONMFlG168Su7iMgWRqPwlM8ic/DWOJcWiXF+7YRpYYVmiw535teh0L1ISX
-	 7pZqiZdTc3ygnm1s/EFR8tFPY6xJ1b3O2YYOQ4AjNd/2acbjivpS45FmC+C/QdmoTd
-	 7aCiFaIZxXf8xJgdkVPbz0/LeK0Fk00HkXRNaRcY=
+	s=default; t=1601571426;
+	bh=Bt0Gx0sCicncHn7/LXvk0u9+DwgWSv4J/UpkSmtFvDA=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Bv5/u0iPTg+jJoBU1+gh7i/G516of7dcMnaWVs9YTYeNg1YuzuOD+J4g3m3+eEcHI
+	 jA0wBve3Y0l/tzgPIm7+oMk3sT94pbaX7hC881Ml2j5u95Y3jiGucHSpy3621bUit8
+	 p9WybhqTUhTZH6rKLfD7eGPrRIlz3ulIHw8nq9HE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732046AbgJAQOm (ORCPT
+        id S1732213AbgJAQ5D (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 1 Oct 2020 12:14:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39632 "EHLO mail.kernel.org"
+        Thu, 1 Oct 2020 12:57:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731917AbgJAQOm (ORCPT
+        id S1732096AbgJAQ5C (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 1 Oct 2020 12:14:42 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 1 Oct 2020 12:57:02 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.194])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E10D320759;
-        Thu,  1 Oct 2020 16:14:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B194C2075F;
+        Thu,  1 Oct 2020 16:56:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601568881;
-        bh=QfU1X7o6CMv2QgATvf/sDmoCIsKFJq810j1nD3jmnHo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ujOpC++6SqUikoMRcuslDHokLz1aTcwJc9LWD9k9kpYnnPIJi6IdR0ZjQSd8iHJhm
-         EjvA2C/6W/bOeLKovX3iX9nng/J1vOwmhQRG1tAwQ0dMdxogy3iS+g7tC60pxicO5m
-         evfOJEMZMYm6seqxrkH56mhbO5SbcnYCIkjka3ls=
-Date:   Thu, 1 Oct 2020 17:13:40 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        s=default; t=1601571422;
+        bh=Bt0Gx0sCicncHn7/LXvk0u9+DwgWSv4J/UpkSmtFvDA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=zZL1Z8w0QLURbWU1pODgu7T2djyFQ7VTPG77QVPRCSgOC+oyyMdtc7cAZQkdDh8jl
+         xoCIpwKPUXHMBecvPSjJbAUSFFZPVh4LtIwrEzsKwtDCOfwuC8EpEY7LUGeuGIaHfn
+         BGwfy8do4Y3JWqypk1k4aY/9M6qZxGCE8Wq2ONrg=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
-        Andi Shyti <andi@etezian.org>, linux-spi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        m.szyprowski@samsung.com, b.zolnierkie@samsung.com
-Subject: Re: [PATCH v2 RESEND 0/9] Some fixes for spi-s3c64xx
-Message-ID: <20201001161340.GM6715@sirena.org.uk>
-References: <20200821161401.11307-1-l.stelmach@samsung.com>
- <CGME20201001152246eucas1p1ee289b8a85b707f7496355c081623796@eucas1p1.samsung.com>
- <20201001152148.29747-1-l.stelmach@samsung.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kaF1vgn83Aa7CiXN"
-Content-Disposition: inline
-In-Reply-To: <20201001152148.29747-1-l.stelmach@samsung.com>
-X-Cookie: Stay away from flying saucers today.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/2] samsung: exynos: convert clkout to module driver
+Date:   Thu,  1 Oct 2020 18:56:44 +0200
+Message-Id: <20201001165646.32279-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi,
 
---kaF1vgn83Aa7CiXN
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The patch #2 depends on #1.  I could take it via samsung-soc or both
+could go via samsung-clk tree.
 
-On Thu, Oct 01, 2020 at 05:21:39PM +0200, =C5=81ukasz Stelmach wrote:
-> This is a series of fixes created during porting a device driver (these
-> patches will be released soon too) for an SPI device to the current kerne=
-l.
+The patchset is a proper solution to issue reported by Marek [1], for
+which a revert was done [2].
 
-There appeared to be a number of outstanding review comments (misleading
-commit message on patch 7, some concerns about the non-CMU case), please
-address those.
+[1] https://lore.kernel.org/linux-samsung-soc/20200906142146.21266-1-krzk@kernel.org/T/#m726edc89ff2927cf5aaf8b165128b3e3c45a677a
+[2] https://lore.kernel.org/linux-samsung-soc/20200921174818.15525-1-krzk@kernel.org/T/#u
 
-Please don't send new patches in reply to old ones, it buries them in
-threads and can make it hard to follow what's going on.
+Best regards,
+Krzysztof
 
---kaF1vgn83Aa7CiXN
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Krzysztof Kozlowski (2):
+  soc: samsung: exynos-pmu: instantiate clkout driver as MFD
+  clk: samsung: exynos-clkout: convert to module driver
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl92ADMACgkQJNaLcl1U
-h9Dvbwf/RxRHBrkQpmJBwvP6aCwHfrBFfZdf8prH5Yv/UlBniia8LJYK7YX2R8/Y
-Cu+5SvplgHueBk53qt+oQ0M5iv1DOn4TbXyhsZXUqwlyKh4tGb+LKpRrc8AR09Sp
-nYuTT/+AuBsxWdG3aUdILbsEeqtj8k7krbLz8qrd6wsi9idAaZtsFuIMNhVmRcuv
-mvxTFebn/PKTNeC1win9D668cSe6oRcDVbuD/GUsYZA+CuVnOi/jR/ZQn6rv9Q+Y
-jyWtAWBfl+bRe+yQqwITfaiLzeu0Y1CizmsO14piuAoNhxUEinhE+7FlJlgf44Jx
-uQ/xxgm8jvwtQV3zbUlXM6ybioqPnw==
-=ZotW
------END PGP SIGNATURE-----
+ drivers/clk/samsung/clk-exynos-clkout.c | 198 +++++++++++++++++-------
+ drivers/soc/samsung/exynos-pmu.c        |  11 ++
+ 2 files changed, 152 insertions(+), 57 deletions(-)
 
---kaF1vgn83Aa7CiXN--
+-- 
+2.17.1
+
