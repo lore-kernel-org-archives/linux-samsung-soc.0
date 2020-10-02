@@ -2,94 +2,104 @@ Return-Path: <SRS0=6p2y=DJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD83C4727F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  2 Oct 2020 06:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC8B8C47423
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  2 Oct 2020 09:13:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20A50206DD
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  2 Oct 2020 06:18:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3B8A206A5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  2 Oct 2020 09:13:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601619534;
-	bh=m5XI/OtoJviRX5j5H8biLvrnJfLzSt/yDgh3YeqKJ8M=;
+	s=default; t=1601629987;
+	bh=8a9a2j+Q9TdoEDPH23Ae2HnjNbpRmIF9vtNV8rnH2vQ=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=IdKSqikXHP+qxnF61IWgN03wwNZeoXRva3iKL4xUoOT2E5/IeNzJQoxIpYpqKAYtp
-	 2Cz5RZ0HPtIHSaBCJVZf4+FWhL3aO/fpdDQbPkfufkeadM+CknP0ztdwJYVQFjfmK+
-	 cWOCpKNsa0mBZY7I73pT3SC8HrHNVw4kX6NKjAqk=
+	b=yS12aOKomYX1vJt1cHLTWyWuQFNAcwA3unj3tmHPPfwRaWz9Fu3uNAVdDmWhtWb63
+	 chp8QAruR6EWgg1Eqh8XGQ+S8JccYaa7n4moTfCFS6pdnsgvSno0wFT2cOSzdpaYJ6
+	 YLJtsVOHDuA9M+fQvhTNTKmDxWQb26OUa2QE91kQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725961AbgJBGSu (ORCPT
+        id S1726464AbgJBJNF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 2 Oct 2020 02:18:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35056 "EHLO mail.kernel.org"
+        Fri, 2 Oct 2020 05:13:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbgJBGSu (ORCPT
+        id S1725993AbgJBJNE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Oct 2020 02:18:50 -0400
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+        Fri, 2 Oct 2020 05:13:04 -0400
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7E45206DD;
-        Fri,  2 Oct 2020 06:18:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF4222074B;
+        Fri,  2 Oct 2020 09:13:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601619529;
-        bh=m5XI/OtoJviRX5j5H8biLvrnJfLzSt/yDgh3YeqKJ8M=;
+        s=default; t=1601629984;
+        bh=8a9a2j+Q9TdoEDPH23Ae2HnjNbpRmIF9vtNV8rnH2vQ=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MIqK+8lZ6Z+cyr3TtcBe0Ti4SpTsfUBuf0SBQFLYPz0kNgbl4f9Yhp/pjnTnK8C3x
-         DaQ4+7S0PgQ2/FwQxMWH8soxwZk2ZtBU6kn/1gmRGH+8hf5Em+bVFszdc4MeUrDT9L
-         UtJ7AYf79Na4TW3WUW1YYSbD9zQearTYeGMuc8Ks=
-Received: by mail-ej1-f48.google.com with SMTP id q13so335663ejo.9;
-        Thu, 01 Oct 2020 23:18:49 -0700 (PDT)
-X-Gm-Message-State: AOAM533PToFXOQMfnq01toEFxTp55uCcAwV7GuBL+KJlVNpoqtWcSP+O
-        Q6f2aUDw2rZ6b/465efNs1jjDjLyOCb/SYUyX5U=
-X-Google-Smtp-Source: ABdhPJyJG8+fduSSWgQX63WCX2hMCN2Y9svLP3ptOTYwOPtXGpYuXWZ0lGiJmIJxw7rOHwEkR20SH6+bFhvP/JvRMXw=
-X-Received: by 2002:a17:906:af53:: with SMTP id ly19mr613748ejb.503.1601619528324;
- Thu, 01 Oct 2020 23:18:48 -0700 (PDT)
+        b=e2Ws41X+UNrnNFSTOb3hHvWb3YfjncnZQ59oCGnE7JOU6e7heO6JfoSLH5pHei0eg
+         BC2b71jVluyqxGHJ0QR5kWnUooypgWbQFCErWr5684bzCO+XF6iFpwxtP7Y+nxZdxZ
+         RpIRhmFkBimbov+669+iCgi5oldne2Y5z8G4dV28=
+Received: by mail-ed1-f51.google.com with SMTP id t16so913601edw.7;
+        Fri, 02 Oct 2020 02:13:03 -0700 (PDT)
+X-Gm-Message-State: AOAM533bhUyNTzqj6FIBc7ggNOs45TVm+lKNinn8GSshSYsJEZYmiri4
+        4up+B3qc6q12m/n58FmoW9WbaC+axTBMtJFW8XA=
+X-Google-Smtp-Source: ABdhPJxBtB7fdjB7sO1ypylhPr0oi8dpib+2DW5jCMpkty90gseodUSNpkeVzNSqRvn/UxzjtCaV66+yk1Gc6ZLF7DA=
+X-Received: by 2002:a05:6402:22b7:: with SMTP id cx23mr1353773edb.246.1601629982305;
+ Fri, 02 Oct 2020 02:13:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201001161340.GM6715@sirena.org.uk> <CGME20201001182315eucas1p1b1fc9d5d0ea91db6e56e92d5cf2583e5@eucas1p1.samsung.com>
- <dleftjft6xg60r.fsf%l.stelmach@samsung.com> <20201001190257.GA11048@kozik-lap>
- <20201001194339.GX6715@sirena.org.uk>
-In-Reply-To: <20201001194339.GX6715@sirena.org.uk>
+References: <20200930234637.7573-1-post@lespocky.de> <20200930234637.7573-6-post@lespocky.de>
+In-Reply-To: <20200930234637.7573-6-post@lespocky.de>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 2 Oct 2020 08:18:35 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPe+w=mYfX9PaG=FXt5mWPqBiqe833mdetCQWca+H_nXSQ@mail.gmail.com>
-Message-ID: <CAJKOXPe+w=mYfX9PaG=FXt5mWPqBiqe833mdetCQWca+H_nXSQ@mail.gmail.com>
-Subject: Re: [PATCH v2 RESEND 0/9] Some fixes for spi-s3c64xx
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Lukasz Stelmach <l.stelmach@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
-        linux-spi@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
+Date:   Fri, 2 Oct 2020 11:12:50 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfBKnESpRkSDZp5CB3T-t95DXg2dNKQnNNXv6Q_ywck2w@mail.gmail.com>
+Message-ID: <CAJKOXPfBKnESpRkSDZp5CB3T-t95DXg2dNKQnNNXv6Q_ywck2w@mail.gmail.com>
+Subject: Re: [PATCH v6 5/7] ARM: dts: Fix schema warnings for pwm-leds
+To:     Alexander Dahl <post@lespocky.de>
+Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Alexander Dahl <ada@thorsis.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 1 Oct 2020 at 21:44, Mark Brown <broonie@kernel.org> wrote:
+On Thu, 1 Oct 2020 at 01:53, Alexander Dahl <post@lespocky.de> wrote:
 >
-> On Thu, Oct 01, 2020 at 09:02:57PM +0200, Krzysztof Kozlowski wrote:
+> The node names for devices using the pwm-leds driver follow a certain
+> naming scheme (now).
 >
-> > That is correct. We did not provide final comments on the list so they
-> > could be added here - in change log. This would also be an explanation
-> > why there is a resend. Another solution would be to extend the commit #7
-> > description - why only CMU case is covered.
+> Signed-off-by: Alexander Dahl <post@lespocky.de>
+> ---
 >
-> If there's a new changelog then it's not a resend, the changelog is part
-> of the content so I'd expect a version bump for that alone.  IIRC the
-> changelog needed some clarification anyway?
+> Notes:
+>     v6:
+>       * added this patch to series
+>
+>  arch/arm/boot/dts/at91-kizbox.dts             | 10 +++----
+>  arch/arm/boot/dts/at91-kizbox2-common.dtsi    |  8 +++---
+>  arch/arm/boot/dts/at91-kizbox3-hs.dts         | 16 ++++++------
+>  arch/arm/boot/dts/at91-kizbox3_common.dtsi    | 10 +++----
+>  arch/arm/boot/dts/at91-kizboxmini-common.dtsi |  8 +++---
+>  arch/arm/boot/dts/at91sam9m10g45ek.dts        | 10 +++----
+>  arch/arm/boot/dts/at91sam9rlek.dts            | 10 +++----
+>  .../boot/dts/berlin2cd-google-chromecast.dts  |  6 ++---
+>  arch/arm/boot/dts/exynos5422-odroidhc1.dts    |  4 +--
+>  arch/arm/boot/dts/exynos5422-odroidxu4.dts    |  4 +--
 
-Yes, documenting the non-CMU case in changeloge would be good. It
-should be also v3 because of another reason: two patches got reordered
-to a more meaningful position in patchset, which brought minor
-differences in them.
+Somehow you did not CC the maintainers... please use
+scripts/get_maintainers.pl to obtain list of addresses.
+
+All these should be separate patches per sub-architecture.
 
 Best regards,
 Krzysztof
