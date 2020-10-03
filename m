@@ -2,169 +2,222 @@ Return-Path: <SRS0=/9gS=DK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A2AC4363D
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  3 Oct 2020 09:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1BEC41604
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  3 Oct 2020 10:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1970F206CA
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  3 Oct 2020 09:46:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="hDibXoHA"
+	by mail.kernel.org (Postfix) with ESMTP id 42080206CA
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  3 Oct 2020 10:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1601719815;
+	bh=4uc/yvgQ0Bg2rkjDtTSRMtPCAxTyxmhc3nyBiJXwIp0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=V7zRp2i2eiZTBWL3WXsBVrKJss49pd7tk6bGkxLa/mHHPoKhEuwE546jmpWBCqTaf
+	 H70+5oX7JAfeHnY8u9uBfO/KfnxHg8g7AquHbH/Gnv0EcGBfbFw0UXA5/olhy9F+f9
+	 hgBLjnY7ArFCS8iTEfaI6gJKPhISbqI+oikeW2aM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725781AbgJCJqD (ORCPT
+        id S1725681AbgJCKKK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 3 Oct 2020 05:46:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35022 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725681AbgJCJqD (ORCPT
+        Sat, 3 Oct 2020 06:10:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36794 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725601AbgJCKKK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 3 Oct 2020 05:46:03 -0400
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EEE7C0613E8
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  3 Oct 2020 02:46:03 -0700 (PDT)
-Received: by mail-ot1-x343.google.com with SMTP id s66so3859509otb.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 03 Oct 2020 02:46:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=WmsHZ3xTqss6S86de6F2+GmRY4pwh6QmzDJN/bVYlUo=;
-        b=hDibXoHAY2NY8DYQlETzpK27wX4ATsoMa5kzy1M2/palInn8ZKnTsfX9OAvCBMHLJ7
-         UTXJhzhKn4fSMh0ypNeHIZ7V603V9nGrHtFMY58a+YAo7uy+FISml44C4EG7POAXsSK5
-         tta54lMbGSCYR/621NNEVOBJzs4fvGGa04aCQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WmsHZ3xTqss6S86de6F2+GmRY4pwh6QmzDJN/bVYlUo=;
-        b=UjZ6w/V/upFt8qlaLeLYszT8m+iZhHoZAfTcma+SAhYwe37Eq2I+bwR6AiHberzY8h
-         fbtztyL7eWQLB7Q0a9lDsYvezqduYc1QdrULkYkD+p0Hf5SWTe/zaUyBbrTgMWOa3II1
-         hX492BxuHwBnWPz9TBbsuueerM8wLjCreybYepjsgJKqwVf6rJfbLCrzd+hCc0jlGjJq
-         ElphDJNyUiWqoSF8C5OesRDgMyLfgY+Rtpd0HkDESsfQ/DgEr97Dy2sZniPPn3pfcxeV
-         cekj8uH0v799fAyj4HP6VE7mlaLi2/yLGnO6woD7cIQRZP5wOOTMvdGWWL1COjjNFk+s
-         WY7w==
-X-Gm-Message-State: AOAM531J8uYqMVR3ytbijb9vjlaC63uy82Vksp4pPbxIZ6hzOhDxexE2
-        bdPu891KhlZpdUJACc6cVtXmAH7p1KBLijs7TRwQTw==
-X-Google-Smtp-Source: ABdhPJx7DZsiJzsUZCobrpWxpW+51JFbUQoJiBR48TvpUyFl0hMBEePfLwnrqOzsuokwHF8YWn4ObJWhXDnnLDo1YzY=
-X-Received: by 2002:a9d:4b99:: with SMTP id k25mr5004991otf.281.1601718362705;
- Sat, 03 Oct 2020 02:46:02 -0700 (PDT)
+        Sat, 3 Oct 2020 06:10:10 -0400
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DB35206DB;
+        Sat,  3 Oct 2020 10:10:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1601719809;
+        bh=4uc/yvgQ0Bg2rkjDtTSRMtPCAxTyxmhc3nyBiJXwIp0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WDzokKxhT2P5YFYukQBAb+AdsJuSG5RYTi/TLJUFAIPUNSS7FPWreUOZJPhduUgaI
+         IdxgzcQkOb0cNucRjsC+j3lE2zfFwKFgr6gSepkwrGFmGFW/fVw+LLTE6YujRgLjNx
+         r3O7NsYGeKbVugZmLsP7edh6M90bbWgQ6JiXYSpE=
+Received: by mail-ej1-f46.google.com with SMTP id p15so5084039ejm.7;
+        Sat, 03 Oct 2020 03:10:09 -0700 (PDT)
+X-Gm-Message-State: AOAM533y81cjjHObQMy2KJQ1hLfBvCke6X2WsGSpf0mdYOen+5UZVCk6
+        +qv/Qz6wr9iRpWCdr076mPjU1f9m6b1hQnPheUc=
+X-Google-Smtp-Source: ABdhPJzsmojD/sHn318W+3K8GmWS4SrdOb2+YB41wl8ewmNenZaBBjddwx/tEamQQEtD4UTCIX8d2tfHG5kC/ZRLua0=
+X-Received: by 2002:a17:906:14db:: with SMTP id y27mr6295897ejc.148.1601719807676;
+ Sat, 03 Oct 2020 03:10:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201002175303.390363-1-daniel.vetter@ffwll.ch>
- <20201002175303.390363-2-daniel.vetter@ffwll.ch> <cb56763e-4fda-a783-03ae-7f749ec55981@nvidia.com>
-In-Reply-To: <cb56763e-4fda-a783-03ae-7f749ec55981@nvidia.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Sat, 3 Oct 2020 11:45:51 +0200
-Message-ID: <CAKMK7uGzZ2dBe040vP1BJmQ7cuhj_OQHL0ncyz5XyUcb=bPjmg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm/frame-vec: use FOLL_LONGTERM
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>
+References: <CGME20201002192215eucas1p2c1d2baebfe2a9caa11d88175a2899fea@eucas1p2.samsung.com>
+ <20201002192210.19967-1-l.stelmach@samsung.com> <20201002192210.19967-2-l.stelmach@samsung.com>
+In-Reply-To: <20201002192210.19967-2-l.stelmach@samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Sat, 3 Oct 2020 12:09:55 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPeLiKQLSud4f9zxqBdR9a1sk04K56_=jtQr1FGxyDmDuQ@mail.gmail.com>
+Message-ID: <CAJKOXPeLiKQLSud4f9zxqBdR9a1sk04K56_=jtQr1FGxyDmDuQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: net: Add bindings for AX88796C SPI
+ Ethernet Adapter
+To:     =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        =?UTF-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Oct 3, 2020 at 12:39 AM John Hubbard <jhubbard@nvidia.com> wrote:
+On Fri, 2 Oct 2020 at 21:22, =C5=81ukasz Stelmach <l.stelmach@samsung.com> =
+wrote:
 >
-> On 10/2/20 10:53 AM, Daniel Vetter wrote:
-> > For $reasons I've stumbled over this code and I'm not sure the change
-> > to the new gup functions in 55a650c35fea ("mm/gup: frame_vector:
-> > convert get_user_pages() --> pin_user_pages()") was entirely correct.
-> >
-> > This here is used for long term buffers (not just quick I/O) like
-> > RDMA, and John notes this in his patch. But I thought the rule for
-> > these is that they need to add FOLL_LONGTERM, which John's patch
-> > didn't do.
+> Add bindings for AX88796C SPI Ethernet Adapter.
 >
-> Yep. The earlier gup --> pup conversion patches were intended to not
-> have any noticeable behavior changes, and FOLL_LONGTERM, with it's
-> special cases and such, added some risk that I wasn't ready to take
-> on yet. Also, FOLL_LONGTERM rules are only *recently* getting firmed
-> up. So there was some doubt at least in my mind, about which sites
-> should have it.
+> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+> ---
+>  .../bindings/net/asix,ax88796c-spi.yaml       | 76 +++++++++++++++++++
+>  .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
+>  2 files changed, 78 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/asix,ax88796c-s=
+pi.yaml
 >
-> But now that we're here, I think it's really good that you've brought
-> this up. It's definitely time to add FOLL_LONGTERM wherever it's missing.
+> diff --git a/Documentation/devicetree/bindings/net/asix,ax88796c-spi.yaml=
+ b/Documentation/devicetree/bindings/net/asix,ax88796c-spi.yaml
+> new file mode 100644
+> index 000000000000..50a488d59dbf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/asix,ax88796c-spi.yaml
+> @@ -0,0 +1,76 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/asix,ax88796c-spi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ASIX AX88796C SPI Ethernet Adapter
+> +
+> +allOf:
+> +  - $ref: ethernet-controller.yaml#
 
-So should I keep this patch, or will it collide with a series you're workin=
-g on?
+Order of top-level entries please:
+1. id, schema
+2. title
+3. maintainers
+4. description
+and then allOf. See example-schema.yaml.
 
-Also with the firmed up rules, correct that I can also drop the
-vma_is_fsdax check when the FOLL_LONGTERM flag is set?
+> +
+> +description: |
+> +  ASIX AX88796C is an Ethernet controller with a built in PHY. This
+> +  describes SPI mode of the chip.
+> +
+> +  The node for this driver must be a child node of a SPI controller, hen=
+ce
+> +  all mandatory properties described in ../spi/spi-bus.txt must be speci=
+fied.
+> +
+> +maintainers:
+> +  - =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: asix,ax99796c-spi
+> +
+> +  reg:
+> +    description:
+> +      SPI device address.
 
-Thanks, Daniel
+Skip description, it's trivial.
 
->
-> thanks,
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    maximum: 40000000
+> +
+> +  interrupts:
+> +    description:
+> +     GPIO interrupt to which the chip is connected.
+
+Skip the description. It's trivial and might be not accurate (does not
+have to be a GPIO).
+
+> +    maxItems: 1
+> +
+> +  interrupt-parrent:
+> +    description:
+> +      A phandle of an interrupt controller.
+
+Skip description.
+
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    description:
+> +      A GPIO line handling reset of the chip. As the line is active low,
+> +      it should be marked GPIO_ACTIVE_LOW.
+> +    maxItems: 1
+> +
+> +  local-mac-address: true
+> +
+> +  mac-address: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - spi-max-frequency
+> +  - interrupts
+> +  - interrupt-parrent
+> +  - reset-gpios
+
+Additional properties false.
+
+> +
+> +examples:
+> +  # Artik5 eval board
+> +  - |
+> +    ax88796c@0 {
+> +        compatible =3D "asix,ax88796c";
+> +        local-mac-address =3D [00 00 00 00 00 00]; /* Filled in by a boo=
+tloader */
+> +        interrupt-parent =3D <&gpx2>;
+> +        interrupts =3D <0 IRQ_TYPE_LEVEL_LOW>;
+> +        spi-max-frequency =3D <40000000>;
+> +        reg =3D <0x0>;
+> +        reset-gpios =3D <&gpe0 2 GPIO_ACTIVE_LOW>;
+> +        controller-data {
+> +            samsung,spi-feedback-delay =3D <2>;
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Doc=
+umentation/devicetree/bindings/vendor-prefixes.yaml
+> index 2baee2c817c1..5ce5c4a43735 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -117,6 +117,8 @@ patternProperties:
+>      description: Asahi Kasei Corp.
+>    "^asc,.*":
+>      description: All Sensors Corporation
+> +  "^asix,.*":
+> +    description: ASIX Electronics Corporation
+
+Separate patch please.
+
+Best regards,
+Krzysztof
+
+>    "^aspeed,.*":
+>      description: ASPEED Technology Inc.
+>    "^asus,.*":
 > --
-> John Hubbard
-> NVIDIA
+> 2.26.2
 >
-> >
-> > There is already a dax specific check (added in b7f0554a56f2 ("mm:
-> > fail get_vaddr_frames() for filesystem-dax mappings")), so this seems
-> > like the prudent thing to do.
-> >
-> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: John Hubbard <jhubbard@nvidia.com>
-> > Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: linux-mm@kvack.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Cc: linux-media@vger.kernel.org
-> > ---
-> > Hi all,
-> >
-> > I stumbled over this and figured typing this patch can't hurt. Really
-> > just to maybe learn a few things about how gup/pup is supposed to be
-> > used (we have a bit of that in drivers/gpu), this here isn't really
-> > ralated to anything I'm doing.
-> >
-> > I'm also wondering whether the explicit dax check should be removed,
-> > since FOLL_LONGTERM should take care of that already.
-> > -Daniel
-> > ---
-> >   mm/frame_vector.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/mm/frame_vector.c b/mm/frame_vector.c
-> > index 5d34c9047e9c..3507e09cb3ff 100644
-> > --- a/mm/frame_vector.c
-> > +++ b/mm/frame_vector.c
-> > @@ -35,7 +35,7 @@ int get_vaddr_frames(unsigned long start, unsigned in=
-t nr_frames,
-> >   {
-> >       struct mm_struct *mm =3D current->mm;
-> >       struct vm_area_struct *vma;
-> > -     unsigned int gup_flags =3D FOLL_WRITE | FOLL_FORCE;
-> > +     unsigned int gup_flags =3D FOLL_WRITE | FOLL_FORCE | FOLL_LONGTER=
-M;
-> >       int ret =3D 0;
-> >       int err;
-> >       int locked;
-> >
->
-
-
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
