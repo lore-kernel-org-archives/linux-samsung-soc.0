@@ -4,152 +4,148 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8378AC4363C
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Oct 2020 11:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 953C7C4363C
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Oct 2020 12:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40793206A1
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Oct 2020 11:22:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F67120759
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Oct 2020 12:51:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="f5dd3Mrk"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="W9fKhhT9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726035AbgJDLWN (ORCPT
+        id S1726083AbgJDMvC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 4 Oct 2020 07:22:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43646 "EHLO
+        Sun, 4 Oct 2020 08:51:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726012AbgJDLUo (ORCPT
+        with ESMTP id S1725840AbgJDMvC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 4 Oct 2020 07:20:44 -0400
-Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC967C0613CF
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  4 Oct 2020 04:20:43 -0700 (PDT)
-Received: by mail-ot1-x32b.google.com with SMTP id o8so5870891otl.4
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 Oct 2020 04:20:43 -0700 (PDT)
+        Sun, 4 Oct 2020 08:51:02 -0400
+Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40A57C0613CE
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  4 Oct 2020 05:51:02 -0700 (PDT)
+Received: by mail-qv1-xf43.google.com with SMTP id db4so4310401qvb.4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 Oct 2020 05:51:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F1P39aVq/hZE1a/ZNFpkwqSichMZqIMoJHAVD0hctIo=;
-        b=f5dd3MrkYcy8/aD7b+pp4n3Qd4ummEslPZLTRt6CmyxxeMAlfleGd5Dfp874p+qUpY
-         j6kAiBeOvNPrJhgZA8ZwL8CfE9QHGJf7l9mEUa3q3twT+o7VwA7yWSbyIEkatqa7DjKZ
-         2o7kSRHm9MLEBW4gDBATa2dJOssUGc4hiGwFE=
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=UGbXQ0m+bhJCTErRPquTM6BteOTMiFqzd2EWO2s4mFY=;
+        b=W9fKhhT9gZPcLblKAmPnfnimQd8ftf00/a+144bKPFTEsVyurYJ7UddnCfhpXYHyp7
+         W6zQWz2EGYx9I5z3YLpofo7PF0pbpROUQF+LTjn9ADPVpuQdRTPWTQ/f8WO4ZsOQSrXT
+         KABDUKUgPFWiqJXqRLAKwbuysocQ7zyJzNbPGVnGZAdQTjXQHGXgDuACQlMKrRM3JqQB
+         zKGtw4NJG10hTUnjpBpn/YOm2rbi2HVPtHishpuDuBxjziPpR1p/4ifk4VbMan1Z6ZZr
+         K8NmhM1NL7g46JQIPx7kmCQzRw0OkwO9xlDTAULE1eLpvxp5rFfeR+MYjcEU39Ue7bCd
+         d1KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F1P39aVq/hZE1a/ZNFpkwqSichMZqIMoJHAVD0hctIo=;
-        b=LaG0OQnOFTbZeuGc1JSwkIr0oLfyamDxCTBu5c6sU93oeWY/NyTlonFZ7hG4VTuOHu
-         K+XgswSDU2RX9K1DeSpJ9O6d3ycwVwY1CAs7iXN1IzlH/F0X+sC7o+0LG267rGpNrCWt
-         +E83dlnpJoRWRXh2hACTAs31pXgpP+UibPU3chCCy31vuHwaMa3zDLgayJ9ls07F0ioh
-         uYCUDUR+VVy+ZmLU+iCEktX5qT1K5kJLG2DSdC3MThwlZQk+iYtnXrtzTVWRujH1BEhn
-         Hq9AfyxILRAy4CArgnFI+gtsuGgrunay1Wxeso3cRgtzb1GHF1YTCVvcAM7R/smGxnRW
-         u44g==
-X-Gm-Message-State: AOAM533OPhMFalZ+wwXsvYUhvMj2FC9sBGRKm63+wROveBKKXAuHbtGo
-        t6Su5u5p8E7EcI6lMzMpE1GNbUIQhOsA+qkNmG6FAw==
-X-Google-Smtp-Source: ABdhPJzk4utKZUHKkD2Pntaa4TtV+H5VfSo7BOy9dlnzPXQ7sPmOEnfTjNGZnPb4bUQ2llmVT9XDHSXvI1R3pQKQgMQ=
-X-Received: by 2002:a05:6830:1647:: with SMTP id h7mr777182otr.281.1601810442219;
- Sun, 04 Oct 2020 04:20:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201002175303.390363-1-daniel.vetter@ffwll.ch>
- <20201002175303.390363-2-daniel.vetter@ffwll.ch> <cb56763e-4fda-a783-03ae-7f749ec55981@nvidia.com>
- <CAKMK7uGzZ2dBe040vP1BJmQ7cuhj_OQHL0ncyz5XyUcb=bPjmg@mail.gmail.com>
- <f5130c7f-eebe-7b21-62b8-68f08212b106@nvidia.com> <20201003232441.GO9916@ziepe.ca>
-In-Reply-To: <20201003232441.GO9916@ziepe.ca>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Sun, 4 Oct 2020 13:20:31 +0200
-Message-ID: <CAKMK7uFjGDiWMD+KeEFziY-nqWy_FtCpn0rekb70yVLaxzJHjA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm/frame-vec: use FOLL_LONGTERM
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=UGbXQ0m+bhJCTErRPquTM6BteOTMiFqzd2EWO2s4mFY=;
+        b=bi68AA2xRG3NkHSGcVReUcjTcTKeVtndoKBa/SLBFCsm/oApwwi7TrhhNFryMStbxJ
+         cgJ6mkvaOuFRGHwoFbyI1fwFwXB8r61zWIL7Qny77nm5RWrHV4NCb/NhNf38myUb/LOU
+         bZv4kZbuC0gROb6LM67LBTKfUWKwlXe2szqspX9fhMLp2g0XOlJj83YUmyRoIn2fChss
+         dL5rBPzBLqRQ4t5zXfOZrwgET4GhG+uz4q3ELPFHFZEMBeklxmOB4MIEJ0oeKORZnc+b
+         OWQ1Ed5qOM1c61+dlJnJ9URYAkf/6d6EFo/tw+bdiEenwSfQLz/JpOswjzhr1rYjeXoA
+         RTag==
+X-Gm-Message-State: AOAM531VuesPUY/WQiyVtKo51Vouixk1LMCo8gC032MZfmRxlhp3Atfx
+        g4bi2v7c1oksM9eVUMM3Jklmdg==
+X-Google-Smtp-Source: ABdhPJy8Yfds4NEUHCufWQMM3OiOFZaJGgKnGPYb9qLMVbqTTnA5dMcD8m9CgoMS4BHgfwkh5pPdXA==
+X-Received: by 2002:ad4:4af4:: with SMTP id cp20mr10200433qvb.40.1601815861241;
+        Sun, 04 Oct 2020 05:51:01 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
+        by smtp.gmail.com with ESMTPSA id n11sm5205534qkk.105.2020.10.04.05.51.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Oct 2020 05:51:00 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1kP3Tf-007HEC-QI; Sun, 04 Oct 2020 09:50:59 -0300
+Date:   Sun, 4 Oct 2020 09:50:59 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Daniel Vetter <daniel.vetter@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
         Jan Kara <jack@suse.cz>,
         Dan Williams <dan.j.williams@intel.com>,
         Linux MM <linux-mm@kvack.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        <linux-media@vger.kernel.org>, Oded Gabbay <oded.gabbay@gmail.com>
+Subject: Re: [PATCH 2/2] mm/frame-vec: use FOLL_LONGTERM
+Message-ID: <20201004125059.GP9916@ziepe.ca>
+References: <20201002175303.390363-1-daniel.vetter@ffwll.ch>
+ <20201002175303.390363-2-daniel.vetter@ffwll.ch>
+ <20201002180603.GL9916@ziepe.ca>
+ <CAKMK7uGF+y-r4swLXmodhduRMy0NPa=ASBY8JOXS_g=9Rq9XQw@mail.gmail.com>
+ <20201002233118.GM9916@ziepe.ca>
+ <CAKMK7uFP-XQHUPYeRhPx7tjvjARQiF-os9z9jx6WANV6sgSf6g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uFP-XQHUPYeRhPx7tjvjARQiF-os9z9jx6WANV6sgSf6g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Oct 4, 2020 at 1:24 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> On Sat, Oct 03, 2020 at 03:52:32PM -0700, John Hubbard wrote:
-> > On 10/3/20 2:45 AM, Daniel Vetter wrote:
-> > > On Sat, Oct 3, 2020 at 12:39 AM John Hubbard <jhubbard@nvidia.com> wrote:
-> > > >
-> > > > On 10/2/20 10:53 AM, Daniel Vetter wrote:
-> > > > > For $reasons I've stumbled over this code and I'm not sure the change
-> > > > > to the new gup functions in 55a650c35fea ("mm/gup: frame_vector:
-> > > > > convert get_user_pages() --> pin_user_pages()") was entirely correct.
-> > > > >
-> > > > > This here is used for long term buffers (not just quick I/O) like
-> > > > > RDMA, and John notes this in his patch. But I thought the rule for
-> > > > > these is that they need to add FOLL_LONGTERM, which John's patch
-> > > > > didn't do.
-> > > >
-> > > > Yep. The earlier gup --> pup conversion patches were intended to not
-> > > > have any noticeable behavior changes, and FOLL_LONGTERM, with it's
-> > > > special cases and such, added some risk that I wasn't ready to take
-> > > > on yet. Also, FOLL_LONGTERM rules are only *recently* getting firmed
-> > > > up. So there was some doubt at least in my mind, about which sites
-> > > > should have it.
-> > > >
-> > > > But now that we're here, I think it's really good that you've brought
-> > > > this up. It's definitely time to add FOLL_LONGTERM wherever it's missing.
-> > >
-> > > So should I keep this patch, or will it collide with a series you're working on?
-> >
-> > It doesn't collide with anything on my end yet, because I've been slow to
-> > pick up on the need for changing callsites to add FOLL_LONGTERM. :)
-> >
-> > And it looks like that's actually a problem, because:
-> >
-> > >
-> > > Also with the firmed up rules, correct that I can also drop the
-> > > vma_is_fsdax check when the FOLL_LONGTERM flag is set?
-> >
-> > That's the right direction to go *in general*, but I see that the
-> > pin_user_pages code is still a bit stuck in the past. And this patch
-> > won't actually work, with or without that vma_is_fsdax() check.
-> > Because:
-> >
-> > get_vaddr_frames(FOLL_LONGTERM)
-> >    pin_user_pages_locked()
-> >       if (WARN_ON_ONCE(gup_flags & FOLL_LONGTERM))
-> >               return -EINVAL;
->
-> There is no particular reason this code needs to have the mm sem at
-> that point.
->
-> It should call pin_user_pages_fast() and only if that fails get the mmap
-> lock and extract the VMA to do broken hackery.
+On Sat, Oct 03, 2020 at 11:40:22AM +0200, Daniel Vetter wrote:
 
-Yeah I think that works. I tried understanding gup.c code a bit more,
-and it looks like FOLL_LONGTERM only works for the pup_fast variant
-right now? All others seem to have this comment that it's somehow
-incompatible with FAULT_FLAG_ALLOW_RETRY and daxfs. But grepping
-around for that didn't show up anything, at least not nearby dax code.
-For my understanding of all this, what's the hiccup there?
+> > That leaves the only interesting places as vb2_dc_get_userptr() and
+> > vb2_vmalloc_get_userptr() which both completely fail to follow the
+> > REQUIRED behavior in the function's comment about checking PTEs. It
+> > just DMA maps them. Badly broken.
+> >
+> > Guessing this hackery is for some embedded P2P DMA transfer?
+> 
+> Yeah, see also the follow_pfn trickery in
+> videobuf_dma_contig_user_get(), I think this is fully intentional and
+> userspace abi we can't break :-/
 
-For plans, I only started this for a bit of my own learning, but I
-think I'll respin with the following changes:
-- convert exynos and habanalabs to pin_user_pages_fast directly,
-instead of going through this frame-vector detour
-- move the locking and convert get_vaddr_frames to pup_fast as Jason suggested
-- hack up some truly gross rfc to plug the follow_pfn hole
+We don't need to break uABI, it just needs to work properly in the
+kernel:
 
-Cheers, Daniel
+  vma = find_vma_intersection()
+  dma_buf = dma_buf_get_from_vma(vma)
+  sg = dma_buf_p2p_dma_map(dma_buf)
+  [.. do dma ..]
+  dma_buf_unmap(sg)
+  dma_buf_put(dma_buf)
 
---
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+It is as we discussed before, dma buf needs to be discoverable from a
+VMA, at least for users doing this kind of stuff.
+
+> Yup this should be done with dma_buf instead, and v4l has that. But
+> old uapi and all that. This is why I said we might need a new
+> VM_DYNAMIC_PFNMAP or so, to make follow_pfn not resolve this in the
+> case where the driver manages the underlying iomem range (or whatever
+> it is) dynamically and moves buffer objects around, like drm drivers
+> do. But I looked, and we've run out of vma->vm_flags :-(
+
+A VM flag doesn't help - we need to introduce some kind of lifetime,
+and that has to be derived from the VMA. It needs data not just a flag
+
+> The other problem is that I also have no real working clue about all
+> the VM_* flags and what they all mean, and whether drm drivers set the
+> right ones in all cases (they probably don't, but oh well).
+> Documentation for this stuff in headers is a bit thin at times.
+
+Yah, I don't really know either :\
+
+The comment above vm_normal_page() is a bit helpful. Don't know what
+VM_IO/VM_PFNMAP mean in their 3 combinations
+
+There are very few places that set VM_PFNMAP without VM_IO..
+
+Jason
