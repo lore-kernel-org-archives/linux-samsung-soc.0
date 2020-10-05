@@ -2,127 +2,106 @@ Return-Path: <SRS0=ELwQ=DM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3DE4C4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 11:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DA9C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 13:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8122020774
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 11:14:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="NiiFVbnN"
+	by mail.kernel.org (Postfix) with ESMTP id 4720320774
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 13:43:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725932AbgJELO5 (ORCPT
+        id S1725939AbgJENnM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Oct 2020 07:14:57 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:42939 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbgJELO4 (ORCPT
+        Mon, 5 Oct 2020 09:43:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60464 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbgJENnM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Oct 2020 07:14:56 -0400
-X-Greylist: delayed 342 seconds by postgrey-1.27 at vger.kernel.org; Mon, 05 Oct 2020 07:14:55 EDT
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4C4dCB6nDXz6D;
-        Mon,  5 Oct 2020 13:09:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1601896151; bh=29wYbsPytcZ/IhNwUazul/bDu8+y5OSG3sJTGkf3ZyQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NiiFVbnNDhA2ihwlqCEJGp++fMbrcDcboJtUDl2cwQoFIYlpm9rwd9MCNzthDOECP
-         5GoVOGOsUxT0L2YHwf1ZbtuFPIKRc367UTSIZVMISHEME+/iDpaCTlxLwYxyRFyV80
-         /VY1SBsJOUIb3B0OHN95SST5/+TZvi3adakzDB38q6VSAQvwBMMx+zzgwsvEGNFO/W
-         2X7Ny2gcIRdYr5ektFZm968NEkCBpeFi/z2jkRq1dUFQTS7H2DSPdBrFS/3IWmcUdg
-         pb2EAJ3PUiJ1vYav7dvB7HG8BssFhzZbS3933jGhDBjV7hFki9Anu6GzCKj9G8uDqs
-         KLOl3Pj7WlC5A==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.4 at mail
-Date:   Mon, 5 Oct 2020 13:09:08 +0200
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     dmitry.torokhov@gmail.com
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: exynos: do not rely on 'users' counter in ISR
-Message-ID: <20201005110908.GA3243@qmqm.qmqm.pl>
-References: <20201005052420.GA3262631@dtor-ws>
+        Mon, 5 Oct 2020 09:43:12 -0400
+Received: from mail-out.m-online.net (mail-out.m-online.net [IPv6:2001:a60:0:28:0:1:25:1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CDCEC0613CE
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Oct 2020 06:43:12 -0700 (PDT)
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 4C4hcr6mlbz1s5CX;
+        Mon,  5 Oct 2020 15:43:08 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 4C4hcr5fV9z1qqkg;
+        Mon,  5 Oct 2020 15:43:08 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id mMRxvtm3VSYf; Mon,  5 Oct 2020 15:43:05 +0200 (CEST)
+X-Auth-Info: gvl2Zt7G+C6HudS7ak0NaK2YB+Ed7vBwmgM/rMOlJKw=
+Received: from desktop.lan (ip-89-176-112-137.net.upcbroadband.cz [89.176.112.137])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Mon,  5 Oct 2020 15:43:05 +0200 (CEST)
+From:   Marek Vasut <marex@denx.de>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Marek Vasut <marex@denx.de>, Fabio Estevam <festevam@gmail.com>,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/3] drm/exynos: Init the DSIM PHY in samsung_dsim_enable()
+Date:   Mon,  5 Oct 2020 15:42:48 +0200
+Message-Id: <20201005134250.527153-1-marex@denx.de>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201005052420.GA3262631@dtor-ws>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Oct 04, 2020 at 10:24:20PM -0700, dmitry.torokhov@gmail.com wrote:
-> The order in which 'users' counter is decremented vs calling drivers'
-> close() method is implementation specific, and we should not rely on
-> it. Let's introduce driver private flag and use it to signal ISR
-> to exit when device is being closed.
-> 
-> This has a side-effect of fixing issue of accessing inut->users
-> outside of input->mutex protection.
-> 
-> Reported-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/iio/adc/exynos_adc.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index 22131a677445..7eb2a5df6e98 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -135,6 +135,8 @@ struct exynos_adc {
->  	u32			value;
->  	unsigned int            version;
->  
-> +	bool			ts_enabled;
-> +
->  	bool			read_ts;
->  	u32			ts_x;
->  	u32			ts_y;
-> @@ -633,7 +635,7 @@ static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
->  	bool pressed;
->  	int ret;
->  
-> -	while (info->input->users) {
-> +	while (info->ts_enabled) {
->  		ret = exynos_read_s3c64xx_ts(dev, &x, &y);
->  		if (ret == -ETIMEDOUT)
->  			break;
-> @@ -712,6 +714,8 @@ static int exynos_adc_ts_open(struct input_dev *dev)
->  {
->  	struct exynos_adc *info = input_get_drvdata(dev);
->  
-> +	info->ts_enabled = true;
-> +	mb();
->  	enable_irq(info->tsirq);
->  
->  	return 0;
-> @@ -721,6 +725,8 @@ static void exynos_adc_ts_close(struct input_dev *dev)
->  {
->  	struct exynos_adc *info = input_get_drvdata(dev);
->  
-> +	info->ts_enabled = false;
-> +	mb();
->  	disable_irq(info->tsirq);
+In case the PHY is not initialized, do it in samsung_dsim_enable(),
+otherwise the link configuration registers are not programmed at all.
 
-This should be WRITE_ONCE paired with READ_ONCE in the ISR.
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Guido GÃ¼nther <agx@sigxcpu.org>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Michael Tretter <m.tretter@pengutronix.de>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+--
+NOTE: This depends on https://patchwork.kernel.org/project/dri-devel/list/?series=347439
+---
+ drivers/gpu/drm/bridge/samsung-dsim.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-But is the check really needed? I see that this is to break waiting for
-a touch release event, so I would assume this shouldn't wait forever
-(unless the hardware is buggy) and breaking the loop will desync touch
-state (I would guess this would be noticable by next user).
+diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+index 6d2d8dc027de..fbd87a74eb9f 100644
+--- a/drivers/gpu/drm/bridge/samsung-dsim.c
++++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+@@ -1244,6 +1244,13 @@ static void samsung_dsim_enable(struct samsung_dsim *dsi)
+ 	pm_runtime_get_sync(dsi->dev);
+ 	dsi->state |= DSIM_STATE_ENABLED;
+ 
++	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
++		ret = samsung_dsim_init(dsi);
++		if (ret)
++			return;
++		dsi->state |= DSIM_STATE_INITIALIZED;
++	}
++
+ 	if (dsi->panel) {
+ 		ret = drm_panel_prepare(dsi->panel);
+ 		if (ret < 0)
+-- 
+2.28.0
 
-Best Regards,
-Micha³ Miros³aw
