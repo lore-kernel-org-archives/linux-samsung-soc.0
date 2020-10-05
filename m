@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C41C4727E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A569BC47095
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C87C204EA
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78CF720853
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:37:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729717AbgJEUhB (ORCPT
+        id S1729650AbgJEUhe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Oct 2020 16:37:01 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:37855 "EHLO
+        Mon, 5 Oct 2020 16:37:34 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:46417 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729231AbgJEUgY (ORCPT
+        with ESMTP id S1729196AbgJEUh3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Oct 2020 16:36:24 -0400
+        Mon, 5 Oct 2020 16:37:29 -0400
 Received: from methusalix.internal.home.lespocky.de ([92.117.55.152]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1Mf0uq-1krT710Xnu-00gc2C; Mon, 05 Oct 2020 22:35:49 +0200
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MUGuZ-1jyPZb1tMx-00REKR; Mon, 05 Oct 2020 22:36:00 +0200
 Received: from lemmy.internal.home.lespocky.de ([192.168.243.176] helo=lemmy.home.lespocky.de)
         by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <alex@home.lespocky.de>)
-        id 1kPXD0-0004Vs-2D; Mon, 05 Oct 2020 22:35:47 +0200
-Received: (nullmailer pid 10299 invoked by uid 2001);
-        Mon, 05 Oct 2020 20:35:35 -0000
+        id 1kPXDC-0004XF-0c; Mon, 05 Oct 2020 22:35:58 +0200
+Received: (nullmailer pid 10388 invoked by uid 2001);
+        Mon, 05 Oct 2020 20:35:40 -0000
 From:   Alexander Dahl <post@lespocky.de>
 To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Rob Herring <robh+dt@kernel.org>
@@ -42,139 +42,103 @@ Cc:     Alexander Dahl <ada@thorsis.com>,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        Denis Osterland-Heim <denis.osterland@diehl.com>,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH v7 01/12] leds: pwm: Remove platform_data support
-Date:   Mon,  5 Oct 2020 22:34:40 +0200
-Message-Id: <20201005203451.9985-2-post@lespocky.de>
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH v7 10/12] ARM: dts: stm32: Fix schema warnings for pwm-leds
+Date:   Mon,  5 Oct 2020 22:34:49 +0200
+Message-Id: <20201005203451.9985-11-post@lespocky.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201005203451.9985-1-post@lespocky.de>
 References: <20201005203451.9985-1-post@lespocky.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 60b617cbd4bf9c2e08b69b262f748e48
-X-Provags-ID: V03:K1:F6CgTqFAM3Qqi3ZE0tnTBE4mNujqwFryfVD6rzRWENkVcmWDhRr
- ou4O8IwayvYCgYv1NB2QHjUyKASNO7CpeAclu6bjzPbL58Yz1gjVaTbdDBLPyxkddbNmtuS
- u/zezbz5ZKHIwKkOlUPALYQ/zqHv8QRZ0g1AFFM4I9nHeiA/U1S+TTqF/YMxJ9jyNM1FNbS
- lbO7btq+DmlmbcWrsSohA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:dEdS/I+Xl2I=:PiLtBsHPvNdnKu/d/mxmsJ
- rEdBMUdvRuwWDDKxyaDMAHPYxYM88Oedh0ZKhZCTBisht7o/bSAwwCmh5yLjH++jYj4GKdY7h
- iKf9faeQjYQ8Ul4FLjZDsbZIstFJNoq8pwE7EckpgkTRHOVrrokkfm5tODmAzdlLvH34+xPJh
- mXYvgsGtDDL2pCp03/03mON0DCWPhB8XG0B2w+LcGABS23CL035nuH2fHjD/Xe4YfBvLBaaGV
- OsUZlv6HNVFtuUgrjhxmj4iwkoPovo/J3QCJ3651JqQUcbDtx6V1urdeVT7QyFvQ0IZsF+z54
- /zUMHwh75CMpvTC9OWDjTLDWGYoXwCg6i4tsD4YZ6yTIRXSea9xId5KCg6Gs06SXX63UrrTbO
- AZpMIvSUeqlk3KM1a9fxNa9vr2cV9HKYu/G584ctHMX803O3BHZL5qe7267p8pKo2HTpfnOpv
- AvSbJMMgZ9LWEiTRg6XCaBS5pvXx6EwASb20FVKHtAX1sNf9dko+psaZplMFMh2r25Nn1LAQx
- CuWxdse3MucWTkS3+d4Uws/qJ7L2thzCqLDJ/EjVWtA3LuLBLhXxAoTE2B7L3Vx929KdAv7AJ
- lDtKP1Um9mgL0Jehee0bzE3MedQbE4oRQ3Fgg3bgbIyxVnvgm21DKOcXWFmkqqGTwsrvJuc1r
- ZfGlonYTZeJIeu3YQqUy4gapBGXY0N24kLYZmeD/ygjyKgSyusCoz8l/Ymf3n85CCdzO0N4Ga
- B3dHGs6BYAKGvKUYWYRaGPLF+l9pHvmSMgRx1RKA8i0KLNenqDT+W+t9hlBIW86kFKkRDIcKp
- 7r7xrzNZi6L+vlKt/FWCmHM/PrxbfGJw1EMyW0qrs8fB7ujLAO/XY0VmcS9HjeU1LiAtIqw
+X-Scan-Signature: 5d1699e822705c24f051c25a2c63fb4e
+X-Provags-ID: V03:K1:6ZKlG0rDZ5U1HQ7ILaIQAQNhKsTXV0TSWVRTzdpESm8fmO/tqwD
+ iK4rNm/LJgtYztQSGYN9mW2xOwWJqbOhPMTtcK0uMXIKykp/wPaXJdVtzJPD9fS68IFAo13
+ m8pjTU++ifqTH58lQckSCePhpI7rOcl9djtxrldlZORvq75IKTz+HyXe6R1Ro14yadqgFaT
+ yWxI/4fKVjFWSsSAD+Scw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:HfmFjwagyQ0=:h4dYDYwyiy8+d8FNw1Tme/
+ r9lDpQaopjx5uAFoZpCL/Sfgflnwwqv7WCVOingGfgSngvmlV8afjKAsdcbXb1invDLOs/m4o
+ FRTZ0gcC2VNPdbdZ6gNpvxbSVQFyKlAIoDJstuxvz7C9Xia1cZwKeZQzvbpMOex8Iftfxb+ri
+ pvBb/pE0O1Iy2okCv/W4sRx1kFtwJN6Qj2BAFuilTCk9M74ttuKlqRC3pGDq3wb4MuRO5nOhM
+ bCrgUYF1thmP0ZWnlJQvAuu+XAlvbrlf0xBPtNaDnrCOG0bj3OfYsUnVw7Pl3ItulFUgoGjwR
+ bTN6k+2rYXcKHYWWx7JTQEEJAJZ/v10n6Idw7NqrbwHlN/kAWMssThoV7eL56F3fIW9gi6fJr
+ 7oz7b5beUetnfvzz8GKLKxZ71DYKKnyzdV6gOVKi/wXHq1IgJr9GaC/02nJJboX3QtNo+z8SD
+ XPd6uZGSiq/M7DU4xiAomk8WVT3O/+gxRhpr0lIWm5Q1lt5RF8GJU/7ySadWVWtFTAXHb7R9f
+ cWmfIPSLFqWbwuj3hf0Zma1sC55eMQ5NEvJA/00bE8hRE+gTXzZBBFUgxhaLkJXT0KkHfGRw6
+ xBiTtP7BsZza7AMHilLGg07Dbji5b19SqrKQET728usCQvFHGjyecAjd41SPv6TzidPqNyojd
+ ipJphF2BvRdYxHWsKqS0zDJbdxVZPOFftntG20ilDgZG/L0HyN3VCxm1cDYiNK4utBnpkNbDl
+ 6d046gXSkxPW0BHlPdD5I0LSChWLPT+BEu4NZchrs5hwMzCHmaA87WM/b0WmUp9zMYoAT2xtM
+ FXPk2j6rpzJswBRN3vrEoGBNNux4O4JMoZ17KgGvguzn9fZ6HoQA1AHShUJEtC/9W/vwvpN
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Since commit 141f15c66d94 ("leds: pwm: remove header") that platform
-interface is not usable from outside and there seems to be no in tree
-user anymore.  All in-tree users of the leds-pwm driver seem to use DT
-currently.  Getting rid of the old platform interface allows the
-leds-pwm driver to switch over from 'devm_led_classdev_register()' to
-'devm_led_classdev_register_ext()'.
+The node names for devices using the pwm-leds driver follow a certain
+naming scheme (now).  Parent node name is not enforced, but recommended
+by DT project.
+
+  DTC     arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
+  CHECK   arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml: led-rgb: 'led-blue', 'led-green', 'led-red' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
 
 Signed-off-by: Alexander Dahl <post@lespocky.de>
-Cc: Denis Osterland-Heim <denis.osterland@diehl.com>
-Reviewed-by: Marek Behún <marek.behun@nic.cz>
 ---
 
 Notes:
     v6 -> v7:
-      * (no changes on this patch)
-    
-    v5 -> v6:
-      * added Reviewed-by from Marek
-      * minimal commit message rewording, because a later patch was
-        already applied
-    
-    v5:
-      * added this patch to series (replacing another patch with a not
-        working, different approach)
+      * split up patch (one per sub arch)
+      * added actual warnings to commit message
 
- drivers/leds/leds-pwm.c | 30 +++++-------------------------
- 1 file changed, 5 insertions(+), 25 deletions(-)
+ arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index 2a16ae0bf022..f53f9309ca6c 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -24,11 +24,6 @@ struct led_pwm {
- 	unsigned int	max_brightness;
- };
+diff --git a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts b/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
+index 5700e6b700d3..25d548cb975b 100644
+--- a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
+@@ -36,34 +36,34 @@
+ 		stdout-path = &uart4;
+ 	};
  
--struct led_pwm_platform_data {
--	int		num_leds;
--	struct led_pwm	*leds;
--};
--
- struct led_pwm_data {
- 	struct led_classdev	cdev;
- 	struct pwm_device	*pwm;
-@@ -60,6 +55,7 @@ static int led_pwm_set(struct led_classdev *led_cdev,
- 	return pwm_apply_state(led_dat->pwm, &led_dat->pwmstate);
- }
+-	led-act {
++	led-controller-1 {
+ 		compatible = "gpio-leds";
  
-+__attribute__((nonnull))
- static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 		       struct led_pwm *led, struct fwnode_handle *fwnode)
- {
-@@ -73,10 +69,7 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 	led_data->cdev.max_brightness = led->max_brightness;
- 	led_data->cdev.flags = LED_CORE_SUSPENDRESUME;
+-		led-green {
++		led-1 {
+ 			label = "mc1:green:act";
+ 			gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
+ 			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
  
--	if (fwnode)
--		led_data->pwm = devm_fwnode_pwm_get(dev, fwnode, NULL);
--	else
--		led_data->pwm = devm_pwm_get(dev, led->name);
-+	led_data->pwm = devm_fwnode_pwm_get(dev, fwnode, NULL);
- 	if (IS_ERR(led_data->pwm))
- 		return dev_err_probe(dev, PTR_ERR(led_data->pwm),
- 				     "unable to request PWM for %s\n",
-@@ -139,15 +132,11 @@ static int led_pwm_create_fwnode(struct device *dev, struct led_pwm_priv *priv)
+-	led-rgb {
++	led-controller-2 {
+ 		compatible = "pwm-leds";
  
- static int led_pwm_probe(struct platform_device *pdev)
- {
--	struct led_pwm_platform_data *pdata = dev_get_platdata(&pdev->dev);
- 	struct led_pwm_priv *priv;
--	int count, i;
- 	int ret = 0;
-+	int count;
+-		led-red {
++		led-2 {
+ 			label = "mc1:red:rgb";
+ 			pwms = <&leds_pwm 1 1000000 0>;
+ 			max-brightness = <255>;
+ 			active-low;
+ 		};
  
--	if (pdata)
--		count = pdata->num_leds;
--	else
--		count = device_get_child_node_count(&pdev->dev);
-+	count = device_get_child_node_count(&pdev->dev);
+-		led-green {
++		led-3 {
+ 			label = "mc1:green:rgb";
+ 			pwms = <&leds_pwm 2 1000000 0>;
+ 			max-brightness = <255>;
+ 			active-low;
+ 		};
  
- 	if (!count)
- 		return -EINVAL;
-@@ -157,16 +146,7 @@ static int led_pwm_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	if (pdata) {
--		for (i = 0; i < count; i++) {
--			ret = led_pwm_add(&pdev->dev, priv, &pdata->leds[i],
--					  NULL);
--			if (ret)
--				break;
--		}
--	} else {
--		ret = led_pwm_create_fwnode(&pdev->dev, priv);
--	}
-+	ret = led_pwm_create_fwnode(&pdev->dev, priv);
- 
- 	if (ret)
- 		return ret;
+-		led-blue {
++		led-4 {
+ 			label = "mc1:blue:rgb";
+ 			pwms = <&leds_pwm 3 1000000 0>;
+ 			max-brightness = <255>;
 -- 
 2.20.1
 
