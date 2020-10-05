@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 864B5C47095
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF65C47428
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 561022168B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D66F820853
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729781AbgJEUgT (ORCPT
+        id S1729860AbgJEUgf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Oct 2020 16:36:19 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:57027 "EHLO
+        Mon, 5 Oct 2020 16:36:35 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:46925 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729231AbgJEUgS (ORCPT
+        with ESMTP id S1729837AbgJEUgd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Oct 2020 16:36:18 -0400
+        Mon, 5 Oct 2020 16:36:33 -0400
 Received: from methusalix.internal.home.lespocky.de ([92.117.55.152]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1N5VPg-1kRAoj34jS-016sx1; Mon, 05 Oct 2020 22:35:47 +0200
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1M7JrG-1kK4681bhc-007kJO; Mon, 05 Oct 2020 22:36:00 +0200
 Received: from lemmy.internal.home.lespocky.de ([192.168.243.176] helo=lemmy.home.lespocky.de)
         by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <alex@home.lespocky.de>)
-        id 1kPXCz-0004Vl-00; Mon, 05 Oct 2020 22:35:45 +0200
-Received: (nullmailer pid 10331 invoked by uid 2001);
-        Mon, 05 Oct 2020 20:35:37 -0000
+        id 1kPXD9-0004X3-UD; Mon, 05 Oct 2020 22:35:56 +0200
+Received: (nullmailer pid 10395 invoked by uid 2001);
+        Mon, 05 Oct 2020 20:35:40 -0000
 From:   Alexander Dahl <post@lespocky.de>
 To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Rob Herring <robh+dt@kernel.org>
@@ -42,72 +42,124 @@ Cc:     Alexander Dahl <ada@thorsis.com>,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: [PATCH v7 04/12] ARM: dts: at91: smartkiz: Reference led node directly
-Date:   Mon,  5 Oct 2020 22:34:43 +0200
-Message-Id: <20201005203451.9985-5-post@lespocky.de>
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v7 11/12] arm64: dts: meson: Fix schema warnings for pwm-leds
+Date:   Mon,  5 Oct 2020 22:34:50 +0200
+Message-Id: <20201005203451.9985-12-post@lespocky.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201005203451.9985-1-post@lespocky.de>
 References: <20201005203451.9985-1-post@lespocky.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 883e206fe91cc1c75a414c154095e545
-X-Provags-ID: V03:K1:5ZDmDCrnMLx3t8rF84LEdt0tTtR8Fz7PUe/C49eHIKrHHckpnKI
- 5cF2sq0KusblA1UyT1LyDWK4Lx3bF2aGfk1iGUgsONivlyK4O/264pTjy+QcghGG2DeLQH1
- NcN82XoGOPMsQsXJUt4vEYFcYLi+iiiCSJmwy/4vR1Kgc2x6lQRitMzLFvjv7+VfHbgGy8U
- 6rpzJAtAU5CdOrFJ8KNpQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:6z4X9w84V2Y=:Bk5QOnfSm45rYOQ9PzKPFb
- tRoe/FQgeDv8ozAY3XzzIgvx3Qau2hcSwYdJmzqUCpsdqETs4iHEPplJYXOc2FjzddjkxvM5X
- WKRv6zShH7A6vROm3qL02gfuYHiPpqIPk4+GBiGixiySzCoeDras5b96TXcNw6iUgXtisgtaE
- THcbqftbFfCHzilD2fy5mBRgouhoPtvXToaJrnKAltiLj2MOL3lKu+ChrhkbBP+GZDWQhQSsz
- ivPU0NzehlAJVhcVh3u7eQsgX7tpd8RIxx6YAWI/mC4fALmtyfr3p/2+phofXbyzO1UvrGDrr
- uQN2CrteXXfHnDFaEFY55sQ8+Ug33ofX9uB8EsQctv4l8BUk8afPVLzSRckd0fwiOX/ycfdti
- RjXiPILw7fp0Ljo/MAUeDfljGJinYU7EvwLOmy4XTjH/uOieGBtGor1EDTPwetypMyJkVE+QW
- 14X7JXL2wKrrUN7wROmvZajT282/Ywma09Bxuz7CGkx9jh12y7yT4+RMGeCzr2xHjbIvCqny4
- X219GbiHDKvgzFlio1pmfPIzuwlZ4/mOBwCAXiCIFkBRYyXKL3tZ+6eTQyj2h0eTm/obw4L+n
- W+uxFbme/925gxoOoC17Aj4BGZSfuZIp/ZcOvqKZDej4TpThQl9ACpW5RP/AbnVkSP77yJhe9
- 8vgD2EAokOfTio92ICoJrgHBbmC23DSz3E0q16TCnNVrMVM7KlNhx479k6cXUO9pOj7HBE277
- 9NYOObU322OrY5PYWu/cAyj5MmomAVxu/+jvX3UmiwnGrXfag17KHPevc61mVWoLGtOLXKbJy
- yu+w9NadE7z2Yfgam0QeuxVW0hIHn3ZmN50+JUIPteo3I2NDQoihbc59+cqf9u5qj05HQr6
+X-Scan-Signature: 9f5b2199e4483c1fbb1603fea470fc05
+X-Provags-ID: V03:K1:A4oxbG+VP4keve1usN9ADR72uw0WccVPSSBWokgSTOYr4HO0wXU
+ h4RFD7nLJIzovO2Gs4xcpY+0BKCCyDjL8Mjxgi3z2Qh1iU+WASkkhFmghKKTEFF9Q/f9rpM
+ +4/nJcVli6ea+DZquPU/7SLA2oHuGw4PxnchPmtnsm62Gi6nxZo4lk2B3bw2RvLv0lA+h58
+ 0lhR3dJRtVTCUoBXhvr9g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5ovu7SMkV4Q=:PH7u5YKYkwCKqj8o1agAGk
+ rWTBchz6xUWT2uBSBXi4dbo0qLg3hNmYgVIEtS3KljJSK0tQ/ZLNwX0FwAf2o1n6GZV35GHDg
+ Jev9Z/2ImNZJWCyjAGly9esRXyLPPGZnlTM+ucRmiyjGDBkdLS1RBRRWm5htpCycF2YDJKD0X
+ a7HX+Te79Z9hJoLGOYvYCZcBQKJoVj9kdvnFiAmBUI/joN8vflOmZYlZxvBMaZTtiLpmQUN8X
+ NUMVCZaJmNkNjn0GfnEnqR/BAfdulIS4Vbx9bwMIDHotBFwTY/SDyTCTgsWgHD6LSwfWEVFT0
+ gMkGvSZPyPfnG0T/xmgRSHDEAcJclkHy5TjCSfKHvpki8FGS1IXA+ealzJ3oZ0FoHMtRyoGMD
+ ycuGqk+TUjj1N8lV2KqzWDUEcDtwgPzg44iNfa17ioq0yCrwE0b6Hdzt+CgT2XNTJE3DWUaeu
+ C6ZojrgnplPxhZkym+Kg1RhZTYmmkFevC3MXgq0CZ6leahy9wN7F7ahrVVLo7MGWQ5lvvGsC5
+ XkeegLfcMAHcVIvcbPvjFy2lFzkylqe7lfcW1H2cVOArjikK0zTArJ1ycQa6XHL+1kERqjZGf
+ HLPMbza2Pkdgk/pgtdPI5RWswwsxEfwPO/npXiIuM27iW66XnD43Lo7uWVpNgiDZ2o9dyKgrX
+ H00a1LUmLwEaV6nBG+Gi5WnVff118/hBl7bNoRiipRWzQSJR4yAE/yYbkzkqgYJ8dRJ/L8D+A
+ G3DHdcyiJ6iDDAMwrXygXjhlNm8BB1dHQVxyDpjin+Ybt5QkGqvLuawPQ/MOZ6aVSH366W1z3
+ cpzBuPnSl/RVFuPEsY35bJ/23eZOxWq0BhWdwzPKCXcwJ7t67FnX1VKZ5E3TEhM+ZgiScVK
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Do it the simple way like for the other kizbox boards.  This will allow
-renaming the led controller node name later without breaking things.
+The node names for devices using the pwm-leds driver follow a certain
+naming scheme (now).  Parent node name is not enforced, but recommended
+by DT project.
 
 Signed-off-by: Alexander Dahl <post@lespocky.de>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
 
 Notes:
     v6 -> v7:
-      * (no changes on this patch)
+      * added Reviewed-by
+      * added another explaining sentence to commit message
     
     v6:
       * added this patch to series
 
- arch/arm/boot/dts/at91-smartkiz.dts | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ .../arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts | 4 ++--
+ arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts     | 4 ++--
+ arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts          | 8 ++++----
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/at91-smartkiz.dts b/arch/arm/boot/dts/at91-smartkiz.dts
-index 106f23ba4a3b..b76a6b5ac464 100644
---- a/arch/arm/boot/dts/at91-smartkiz.dts
-+++ b/arch/arm/boot/dts/at91-smartkiz.dts
-@@ -84,10 +84,8 @@
- 	status = "okay";
- };
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+index 8bcdffdf55d0..adfc72500e66 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+@@ -42,10 +42,10 @@
+ 		};
+ 	};
  
--&leds {
--	blue {
--		status = "okay";
--	};
-+&led_blue {
-+	status = "okay";
- };
+-	pwmleds {
++	led-controller {
+ 		compatible = "pwm-leds";
  
- &adc0 {
+-		power {
++		led-1 {
+ 			label = "vim:red:power";
+ 			pwms = <&pwm_AO_ab 1 7812500 0>;
+ 			max-brightness = <255>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+index bff8ec2c1c70..dcb435af4e0b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+@@ -81,10 +81,10 @@
+ 		};
+ 	};
+ 
+-	pwmleds {
++	led-controller {
+ 		compatible = "pwm-leds";
+ 
+-		power {
++		led-1 {
+ 			label = "vim:red:power";
+ 			pwms = <&pwm_AO_ab 1 7812500 0>;
+ 			max-brightness = <255>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
+index 5ab139a34c01..039a8d0d1e9b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
+@@ -101,20 +101,20 @@
+ 		};
+ 	};
+ 
+-	leds {
++	led-controller-1 {
+ 		compatible = "gpio-leds";
+ 
+-		led-bluetooth {
++		led-1 {
+ 			label = "sei610:blue:bt";
+ 			gpios = <&gpio GPIOC_7 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
+ 			default-state = "off";
+ 		};
+ 	};
+ 
+-	pwmleds {
++	led-controller-2 {
+ 		compatible = "pwm-leds";
+ 
+-		power {
++		led-2 {
+ 			label = "sei610:red:power";
+ 			pwms = <&pwm_AO_ab 0 30518 0>;
+ 			max-brightness = <255>;
 -- 
 2.20.1
 
