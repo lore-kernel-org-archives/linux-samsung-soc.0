@@ -2,236 +2,146 @@ Return-Path: <SRS0=ELwQ=DM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF33C4727D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 04:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8AC8C4741F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 05:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D76D2065D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 04:46:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81B3A20795
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 05:06:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sbBAVh4K"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfNreHzW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725890AbgJEEq3 (ORCPT
+        id S1725872AbgJEFGt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Oct 2020 00:46:29 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:50334 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbgJEEq2 (ORCPT
+        Mon, 5 Oct 2020 01:06:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37112 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbgJEFGs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Oct 2020 00:46:28 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201005044625euoutp0211d7d4ed3821cd53082f26bf8869c649~6-yzShZ9J3041930419euoutp02C
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Oct 2020 04:46:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201005044625euoutp0211d7d4ed3821cd53082f26bf8869c649~6-yzShZ9J3041930419euoutp02C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1601873185;
-        bh=Tu5e5wNR2PsQGnOyXDYlqqSao7h9DYF6j+U56TopWAs=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=sbBAVh4KL7w+2pHOLItzLThPFOhacvaQvrmlynfcPlxsXmMXFxn05aKZtURpH3nIM
-         OvY9153pYpgZNVFaKdQCQNQ+TcmDFcuii9zCohGE/vIhBabquEsoaCShYOKFqeaDqH
-         xsFC17Y9OMwxIuZwsPfO5OSACHy8qfgoe4jHyWAE=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201005044624eucas1p2dcd6538d5480084894735240682cc444~6-yyo7D1g0400004000eucas1p2r;
-        Mon,  5 Oct 2020 04:46:24 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 31.3B.05997.025AA7F5; Mon,  5
-        Oct 2020 05:46:24 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20201005044624eucas1p2c20673290b584e38d0a0c628c49ed95c~6-yyDYwSU3147231472eucas1p2V;
-        Mon,  5 Oct 2020 04:46:24 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201005044624eusmtrp2c36360e2382611f7dcd39199f9e66817~6-yyCrSj92239022390eusmtrp2C;
-        Mon,  5 Oct 2020 04:46:24 +0000 (GMT)
-X-AuditID: cbfec7f4-677ff7000000176d-f5-5f7aa5209c4d
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id BD.B8.06314.025AA7F5; Mon,  5
-        Oct 2020 05:46:24 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201005044623eusmtip145ee034c0c9f24e2dab9319c79d476e2~6-yxXI_9A0558105581eusmtip1H;
-        Mon,  5 Oct 2020 04:46:23 +0000 (GMT)
-Subject: Re: [PATCH] phy: exynos-mipi-video: Add support for NXP i.MX8MM
-To:     Marek Vasut <marex@denx.de>, linux-arm-kernel@lists.infradead.org
-Cc:     Abel Vesa <abel.vesa@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        =?UTF-8?Q?Guido_G=c3=bcnther?= <agx@sigxcpu.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 5 Oct 2020 01:06:48 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40393C0613CE;
+        Sun,  4 Oct 2020 22:06:47 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id g18so3111449pgd.5;
+        Sun, 04 Oct 2020 22:06:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=dxt0ysy04CUIuZwj7WZsE2Z9ZTrTyYeaScGu6k5Gpj0=;
+        b=gfNreHzWt4TPfz/30KqlxE3MmSR0uk0mNv4BhxD1qrqJU0kKDdXnMMbeoKiZ0cDo9n
+         zw3xJ9K8H22DaXnZrAlKWHNLkgYI/AEBTnGiW70jS/x9rp8plOxdERg7bBxCEXxSH5Dj
+         YXHXkr4RUDj+NIT4fSnmTepF7er3jlNAirotlQ0SapEZD6bEVaPAM05Vmf91Wyzz3NyE
+         juXio4hcz9qeyUkl2tVR5TsqeKh5CaQSQ7eP6wPww+qzVBDAl9juAUdkOYXFZUNkJ388
+         pG/3UC6TExI4FXwx/TM1GB4E2cvgU0V7QZ3nDxfm6/syOWz1HtnL208EUdiy+R9io2kT
+         OeaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=dxt0ysy04CUIuZwj7WZsE2Z9ZTrTyYeaScGu6k5Gpj0=;
+        b=CS4QUaG1nVlnmZQNiOxDZ+l7DTWmY3D6b32gigdojytAvve5vTwpagxLdfGNqhgyLX
+         XXjKK+05qClJn+vOUqsIZhwI+jI4euYNnJava640jUAAScTaFUsJ72oRPlrNr3oj+rSR
+         hBtagG/dH/ZmrTNv2JZkCxw04luBZugcwsOVqtlF3yVnNDpkR80qkXZEPqGpuHWWLt5f
+         9Trzv8wkwanKqCPy3UiWF0N4mYtOiUAm6NoR1gdqagwsMg4iTV3GP5YwJpKZ0U9u+wqe
+         pc7cIzGrSsZZ72kvCDeLFDLIHjPPtdbMCThEafFLkaJDnPI/NAb9SikBfMtlUusNo8cG
+         OSEw==
+X-Gm-Message-State: AOAM533vMj4hBUUio9WQnFujmhYZU72c1R4qwJ9PaIroSwy5a6xKN3XL
+        naThKXN38t4SPqGs1dhifQ0=
+X-Google-Smtp-Source: ABdhPJwKCvznRcFib6nkD+RO0m57F4NQznJJCICJJkM3Pz3kXgehY0ax8kdg9YjCt0l6aqeH/wrt+Q==
+X-Received: by 2002:a65:4cc1:: with SMTP id n1mr4035788pgt.404.1601874406624;
+        Sun, 04 Oct 2020 22:06:46 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
+        by smtp.gmail.com with ESMTPSA id m11sm4684586pfa.69.2020.10.04.22.06.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Oct 2020 22:06:45 -0700 (PDT)
+Date:   Sun, 4 Oct 2020 22:06:42 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <4bac0539-f537-ab59-c29e-18ae30a67191@samsung.com>
-Date:   Mon, 5 Oct 2020 06:46:23 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.3.1
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Barry Song <baohua@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Nick Dyer <nick@shmanahar.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ferruh Yigit <fery@cypress.com>,
+        Sangwon Jee <jeesw@melfas.com>,
+        Peter Hutterer <peter.hutterer@redhat.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        kernel@collabora.com
+Subject: Re: [PATCH v4 4/7] ACPI: button: Use input_device_enabled() helper
+Message-ID: <20201005050642.GH1009802@dtor-ws>
+References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+ <20200608112211.12125-1-andrzej.p@collabora.com>
+ <20200608112211.12125-5-andrzej.p@collabora.com>
+ <20200625052446.GF248110@dtor-ws>
 MIME-Version: 1.0
-In-Reply-To: <20201003225020.164358-1-marex@denx.de>
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0gUYRSG+XZmdkdp5XPVPGlabBdI8FrUQGJ2ZaAg60c/gtLRBhVdjV1N
-        1x9ec8tNNCLLRsyK7CKYpZuu19AsTXHdjExDQynNJFvCCyiu5jRa/nu+c96X877w0YRqkPKg
-        YxOSeG0CF6+WO5K1b+d7fbeWp4UHjIz7MI/63iDmd9YoxcwUNRBMWbuFYkY/nmQGFgwUM1I6
-        KGOqv/ZTjHHhKcEU97bImJ+GLMTkNrcrmAmTe6iSvSt0kmy9MKxgqyvy5GzNwwz2xS+zjC20
-        B7AFpgrECtdqETtd7R3mcNYx+AIfH3uJ1/qHRDjGlJbkyS+Wq1MLBAuViWY8jciBBrwHegx2
-        uRE50ir8BMGLwjZSeswgqKzqlIkqFZ5GMHHv+JrD+n1xVfQYwVLzyKrdhsDyNXfFQdMumIWW
-        rlTR4IqPwoeqMZmoIbBAQJP1ChIXchwIximjXGQlDoFrn+YUIpN4OxSN51Aiu+FI6LZmKySN
-        M7y7840U2WElRZnp9d90BN4COS9LCInd4fO3sr/HAM8qYKi2kZJiH4G6zmZSYheY7DApJN4M
-        y/VrhhwEo5ZKhfTIR/AhuxhJqv0wZFmQi9UIvAuqGvyl8UFYnh0kxDFgJxiYcpZCOMGN2tur
-        YyVcNagk9U4QOp79O9tq7SOuI7Wwrpqwro6wro7w/+49RFYgdz5Zp4nmdUEJfIqfjtPokhOi
-        /aISNdVo5cN1L3XMmFHDYmQbwjRSb1CmTurDVRR3SafXtCGgCbWr8lBP93mV8gKnT+O1ieHa
-        5Hhe14Y8aVLtrtz94Mc5FY7mkvg4nr/Ia9e2MtrBIxOB/lzdcGVaboxzb9R9t7FjXoHE3vQz
-        mzhbRCc6ZfN+tZFK79rQVdb3XGM6kBGit4e+9wqOaNlhy53Wjy0X5KecNoRVzsc9yLeZN+3r
-        X84zD76a2KwOOrEUN+s713qcv8xb0xubhJheLzu3LSv+pn3iC665ZZ66Gxf8MPnwZLCgJnUx
-        XKAPodVxfwANWa1qbAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFIsWRmVeSWpSXmKPExsVy+t/xu7oKS6viDdZfY7FYdukoo8XHxoes
-        Fl+m7mK2mH/kHKvFw6v+Fjd+tbFaPJh7k8li0+NrrBZdv1YyW8w4v4/J4k1bI6NF694j7BYv
-        tog78HrMm3WCxWPnrLvsHptWdbJ5bF5S77Hx3Q4mj/6/Bh59W1Yxeszq3sbo8XmTXABnlJ5N
-        UX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7G3NmdbAVL
-        lSr6Zp1jbWD8It3FyMkhIWAiceH5H5YuRi4OIYGljBIXzjxghUjISJyc1gBlC0v8udbFBlH0
-        llFiz5I2pi5GDg5hAQ+JfacqQGpEBFwlLq9/ygRiMwvMYpY4utEPxBYSaGeU6DhuCmKzCRhK
-        dL0FmcPJwStgJ9F9/Rs7iM0ioCIx9Vkz2C5RgSSJ7ktTmCBqBCVOznzCAmJzAh06f8thqPlm
-        EvM2P2SGsOUlmrfOhrLFJW49mc80gVFoFpL2WUhaZiFpmYWkZQEjyypGkdTS4tz03GJDveLE
-        3OLSvHS95PzcTYzAeN527OfmHYyXNgYfYhTgYFTi4a14VRkvxJpYVlyZe4hRgoNZSYTX6ezp
-        OCHelMTKqtSi/Pii0pzU4kOMpkDPTWSWEk3OB6aavJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFC
-        AumJJanZqakFqUUwfUwcnFINjJlPNm9ZvU9JbTJHhsd05mLGALuqWbcz1ov/mORgNkN6dkJZ
-        2XSJm18E7oU3nndoTX6xZVpCfnC38Lc3LfaVbFm2xXP2Fv3QqPhqUxezahVHrKJ0nWu5Dpu0
-        2H1LXY1yVlGbPNYQjWrTa9Gr1yVF9aZqfsrnOXov4gj3/8eXliZ7BOrfufpNiaU4I9FQi7mo
-        OBEAbC+Nrv0CAAA=
-X-CMS-MailID: 20201005044624eucas1p2c20673290b584e38d0a0c628c49ed95c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201003225029eucas1p1485d7e1d64350c688b03b598067d7959
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201003225029eucas1p1485d7e1d64350c688b03b598067d7959
-References: <CGME20201003225029eucas1p1485d7e1d64350c688b03b598067d7959@eucas1p1.samsung.com>
-        <20201003225020.164358-1-marex@denx.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200625052446.GF248110@dtor-ws>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 04.10.2020 00:50, Marek Vasut wrote:
-> This patch adds support for MIPI DPHY found in NXP i.MX8MM.
->
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> Cc: Abel Vesa <abel.vesa@nxp.com>
-> Cc: Dong Aisheng <aisheng.dong@nxp.com>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Guido Günther <agx@sigxcpu.org>
-> Cc: Jaehoon Chung <jh80.chung@samsung.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: NXP Linux Team <linux-imx@nxp.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
+On Wed, Jun 24, 2020 at 10:24:46PM -0700, Dmitry Torokhov wrote:
+> On Mon, Jun 08, 2020 at 01:22:08PM +0200, Andrzej Pietrasiewicz wrote:
+> > A new helper is available, so use it.
+> > 
+> > Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+> > ---
+> >  drivers/acpi/button.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
+> > index ff7ab291f678..4deb2b48d03c 100644
+> > --- a/drivers/acpi/button.c
+> > +++ b/drivers/acpi/button.c
+> > @@ -411,7 +411,7 @@ static void acpi_button_notify(struct acpi_device *device, u32 event)
+> >  		input = button->input;
+> >  		if (button->type == ACPI_BUTTON_TYPE_LID) {
+> >  			mutex_lock(&button->input->mutex);
+> > -			users = button->input->users;
+> > +			users = input_device_enabled(button->input);
+> >  			mutex_unlock(&button->input->mutex);
+> >  			if (users)
+> 
+> This chunk (pre-patch) is really wrong. 'users' value is obsolete and
+> can not be trusted the moment we unlocked the mutex. "if" needs to be
+> inside critical section.
 
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+So looking at this patch and the previous one again, I believe this
+driver is wrong to key the behavior off input->users and we should not
+apply either of the patches. I'll post another patch fixing this.
 
-> ---
->   .../devicetree/bindings/phy/samsung-phy.txt   |  7 ++++---
->   drivers/phy/samsung/Kconfig                   |  6 +++---
->   drivers/phy/samsung/phy-exynos-mipi-video.c   | 21 +++++++++++++++++++
->   3 files changed, 28 insertions(+), 6 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> index 7510830a79bd..7b9dc361ab0c 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> @@ -1,14 +1,15 @@
-> -Samsung S5P/Exynos SoC series MIPI CSIS/DSIM DPHY
-> --------------------------------------------------
-> +Samsung S5P/Exynos and NXP i.MX8MM SoC series MIPI CSIS/DSIM DPHY
-> +-----------------------------------------------------------------
->   
->   Required properties:
->   - compatible : should be one of the listed compatibles:
->   	- "samsung,s5pv210-mipi-video-phy"
->   	- "samsung,exynos5420-mipi-video-phy"
->   	- "samsung,exynos5433-mipi-video-phy"
-> +	- "fsl,imx8mm-mipi-video-phy"
->   - #phy-cells : from the generic phy bindings, must be 1;
->   
-> -In case of s5pv210 and exynos5420 compatible PHYs:
-> +In case of s5pv210, exynos5420, imx8mm compatible PHYs:
->   - syscon - phandle to the PMU system controller
->   
->   In case of exynos5433 compatible PHY:
-> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-> index e20d2fcc9fe7..342b75f6e4f6 100644
-> --- a/drivers/phy/samsung/Kconfig
-> +++ b/drivers/phy/samsung/Kconfig
-> @@ -12,14 +12,14 @@ config PHY_EXYNOS_DP_VIDEO
->   	  Support for Display Port PHY found on Samsung Exynos SoCs.
->   
->   config PHY_EXYNOS_MIPI_VIDEO
-> -	tristate "S5P/Exynos SoC series MIPI CSI-2/DSI PHY driver"
-> +	tristate "S5P/Exynos/i.MX8MM SoC series MIPI CSI-2/DSI PHY driver"
->   	depends on HAS_IOMEM
-> -	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
-> +	depends on ARCH_S5PV210 || ARCH_EXYNOS || ARCH_MXC || COMPILE_TEST
->   	select GENERIC_PHY
->   	default y if ARCH_S5PV210 || ARCH_EXYNOS
->   	help
->   	  Support for MIPI CSI-2 and MIPI DSI DPHY found on Samsung S5P
-> -	  and Exynos SoCs.
-> +	  and Exynos SoCs, and on NXP i.MX8MM SoCs.
->   
->   config PHY_EXYNOS_PCIE
->   	bool "Exynos PCIe PHY driver"
-> diff --git a/drivers/phy/samsung/phy-exynos-mipi-video.c b/drivers/phy/samsung/phy-exynos-mipi-video.c
-> index c1df1ef3ee3c..b735b8089cd7 100644
-> --- a/drivers/phy/samsung/phy-exynos-mipi-video.c
-> +++ b/drivers/phy/samsung/phy-exynos-mipi-video.c
-> @@ -214,6 +214,24 @@ static const struct mipi_phy_device_desc exynos5433_mipi_phy = {
->   	},
->   };
->   
-> +static const struct mipi_phy_device_desc imx8mm_mipi_phy = {
-> +	.num_regmaps = 1,
-> +	.regmap_names = {"syscon"},
-> +	.num_phys = 1,
-> +	.phys = {
-> +		{
-> +			/* EXYNOS_MIPI_PHY_ID_DSIM0 */
-> +			.coupled_phy_id = EXYNOS_MIPI_PHY_ID_NONE,
-> +			.enable_val = BIT(17),
-> +			.enable_reg = 8,
-> +			.enable_map = EXYNOS_MIPI_REGMAP_PMU,
-> +			.resetn_val = BIT(5),
-> +			.resetn_reg = 0,
-> +			.resetn_map = EXYNOS_MIPI_REGMAP_PMU,
-> +		},
-> +	},
-> +};
-> +
->   struct exynos_mipi_video_phy {
->   	struct regmap *regmaps[EXYNOS_MIPI_REGMAPS_NUM];
->   	int num_phys;
-> @@ -349,6 +367,9 @@ static const struct of_device_id exynos_mipi_video_phy_of_match[] = {
->   	}, {
->   		.compatible = "samsung,exynos5433-mipi-video-phy",
->   		.data = &exynos5433_mipi_phy,
-> +	}, {
-> +		.compatible = "fsl,imx8mm-mipi-video-phy",
-> +		.data = &imx8mm_mipi_phy,
->   	},
->   	{ /* sentinel */ },
->   };
+Thanks.
 
-Best regards
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Dmitry
