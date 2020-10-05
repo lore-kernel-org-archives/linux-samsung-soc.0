@@ -2,176 +2,128 @@ Return-Path: <SRS0=ELwQ=DM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-10.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C105C4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 17:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 181FEC4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 17:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA8EF2080A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 17:36:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C78932080A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 17:39:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKR/BTv4"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="C65HOUx2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbgJERgm (ORCPT
+        id S1726600AbgJERjN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Oct 2020 13:36:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40316 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727344AbgJERgk (ORCPT
+        Mon, 5 Oct 2020 13:39:13 -0400
+Received: from nat-hk.nvidia.com ([203.18.50.4]:21375 "EHLO nat-hk.nvidia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727033AbgJERjN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Oct 2020 13:36:40 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D99BC0613CE;
-        Mon,  5 Oct 2020 10:36:40 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id a1so214385pjd.1;
-        Mon, 05 Oct 2020 10:36:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=B12lNYkc01u2Acv3Am3wZ/68gfdostrz6Gt7LZK1x7k=;
-        b=MKR/BTv4LNrhfqNo4XlpjFnb0c2x51PifsjbEO214HVcZGvzE8qLV2HVIB03QyM9bM
-         wGhv67RSC8rlinm79Kn+LFvlJ0076i/B/7kSsNtLvElaZZx3yqXoQ7Ldv2WwRlGwgLhV
-         Bc5LLf4AT6wr8oOv+w5Y66k11jb1n0liBQD9IXPNEG3OMVEri2msg9gx6/9csPwtohoZ
-         YC6txZ/D21a/zRWysqQ/O+2Zenq4Ed5jnrzQ2PTj3e22zGIyIuHXtZR2jYs33S8kXrDV
-         4lCkeikuW/shAvAbzOi9v0DOul+ZuhtLGMmy22r7df6FmMvetng7sT0xfAAO1B9dMGOW
-         w5jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=B12lNYkc01u2Acv3Am3wZ/68gfdostrz6Gt7LZK1x7k=;
-        b=AqNuHQXPskNPJuHpSCyudBgK8lrOC6kBzq+MdbhIWmKkitHrwZOH6srpk3LAPsY+GF
-         uJtjhYb7ggYSzWJwoJYHeBgHEoI5C+KENVrD63+b7wHOTtzUOLjLdOSZPP6AMAGLs39H
-         1Km33NbRyg6bmSa1ZPjNwSoJ0PV8+uks2FOMDktr1xw5gR0MkA7BXWT0k59FWClLKpwH
-         f9muRAdQ6jpkotoip8viRDbToQkKfbkESYh4oiCGSlTI27Th7QVqqJkj12ier3I2kZzy
-         QsU+x3Dv5X9rH+UNvJ7eTzzYcw6efqvIPrmSD8ub7vCRFaU6cUHeaMVNIqEqFh2u/dbr
-         Jcjw==
-X-Gm-Message-State: AOAM531UdXHZ7gJWSvToT2PMtKO9iexVZC5E0d/kSp1+1jJIKWuyyr/R
-        Z8DyfVbyRNdAR6I3IJXjp07MfjHZwTA=
-X-Google-Smtp-Source: ABdhPJwr2w1fviKBXfG28+ZbJQGJp9t+0uOX4T5p5ap8qKHKxnRh7JamghPS+8V22u5orpZUml+m6w==
-X-Received: by 2002:a17:90a:e00e:: with SMTP id u14mr483317pjy.153.1601919399587;
-        Mon, 05 Oct 2020 10:36:39 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id y4sm157457pjc.53.2020.10.05.10.36.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2020 10:36:39 -0700 (PDT)
-Date:   Mon, 5 Oct 2020 10:36:36 -0700
-From:   dmitry.torokhov@gmail.com
-To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: exynos: do not rely on 'users' counter in ISR
-Message-ID: <20201005173636.GK1009802@dtor-ws>
-References: <20201005052420.GA3262631@dtor-ws>
- <20201005110908.GA3243@qmqm.qmqm.pl>
+        Mon, 5 Oct 2020 13:39:13 -0400
+Received: from HKMAIL102.nvidia.com (Not Verified[10.18.92.9]) by nat-hk.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f7b5a3e0000>; Tue, 06 Oct 2020 01:39:10 +0800
+Received: from HKMAIL103.nvidia.com (10.18.16.12) by HKMAIL102.nvidia.com
+ (10.18.16.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 5 Oct
+ 2020 17:38:58 +0000
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.104)
+ by HKMAIL103.nvidia.com (10.18.16.12) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3 via Frontend Transport; Mon, 5 Oct 2020 17:38:58 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jW8m/vx134I9COQ6t6Kr7JRTQESbBCkEuzc1wgrwxR0gB0y7/1zeWxRrW9L+vrtMdYcqke/tKQaa3RzjvoqUprvU+FP5mzd2r10+48m0xZitmuVNHNAfPLGfVf22aeL9byyGjeM321TodvP29OGOhQWVgQCMtTLOEMfD/ZB1af3P0oZEREKxB+9eDCkmzp3rHDk0GDYstiyLkXuznTVTBxQZu9Et+BsKQm0YPprBPLm1hyO31Nc8MZIobIxFRC9IccGQoqs7E/IYMqUfcxaQHjAHpsrECCPKbPGU8r6Cb44u0m7oohtzn4QN9J/W09NhyXKSYOmWeRQgMB1Xb+hpAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fSYl5KD7934AouZDNUKobCCSeGROG8RmBta0PxNC5ew=;
+ b=AyfWItsk0TOyFTxKRfB6+wbl7GR3LkEC4l2QTjkMZ7XFKyWLXpCVFGIvuFggiGmEBW3VDEwiyG4cIsVAWpZ9t5Tt7/fMLIyGiurEYy5XBwe3OlFB3FUlKcpBps+YXJT57Dcysz2hpv5ck1BsErmSExXMCx+JwpfguCRXYkYGNq5ovnBmUo9EAXbb8UU6CcpK2GAi5J/ouGyvDy8kjHjKWprq6Imq2TmhPwLHIoFHACQb65r3pfsmu9jNEgbJHUkQ2LQW/O8m76NQjH3FKtJwhN/HJuk7jueo4zBLFdb46JDVhpbEVnsBZ9iQWW36MsxCLeycZ9+23uhCuzz4d2zv5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+Received: from DM6PR12MB3834.namprd12.prod.outlook.com (2603:10b6:5:14a::12)
+ by DM6PR12MB3833.namprd12.prod.outlook.com (2603:10b6:5:1cf::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.32; Mon, 5 Oct
+ 2020 17:38:56 +0000
+Received: from DM6PR12MB3834.namprd12.prod.outlook.com
+ ([fe80::cdbe:f274:ad65:9a78]) by DM6PR12MB3834.namprd12.prod.outlook.com
+ ([fe80::cdbe:f274:ad65:9a78%7]) with mapi id 15.20.3433.044; Mon, 5 Oct 2020
+ 17:38:56 +0000
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     andrew Morton <akpm@linux-foundation.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>, <linux-mm@kvack.org>
+CC:     Hans Verkuil <hans.verkuil@cisco.com>, Jan Kara <jack@suse.cz>,
+        "Mauro Carvalho Chehab" <mchehab@osg.samsung.com>,
+        Mel Gorman <mgorman@suse.de>, <stable@vger.kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        John Hubbard <jhubbard@nvidia.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        <linux-media@vger.kernel.org>
+Subject: Re: [PATCH 2/2] mm/frame-vec: use FOLL_LONGTERM
+Date:   Mon, 5 Oct 2020 14:38:54 -0300
+Message-ID: <0-v1-447bb60c11dd+174-frame_vec_fix_jgg@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: MN2PR15CA0058.namprd15.prod.outlook.com
+ (2603:10b6:208:237::27) To DM6PR12MB3834.namprd12.prod.outlook.com
+ (2603:10b6:5:14a::12)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201005110908.GA3243@qmqm.qmqm.pl>
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from mlx.ziepe.ca (156.34.48.30) by MN2PR15CA0058.namprd15.prod.outlook.com (2603:10b6:208:237::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.34 via Frontend Transport; Mon, 5 Oct 2020 17:38:55 +0000
+Received: from jgg by mlx with local (Exim 4.94)        (envelope-from <jgg@nvidia.com>)        id 1kPURq-0003yS-3O; Mon, 05 Oct 2020 14:38:54 -0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1601919550; bh=EBBzMnzHdglFg4fc6Q+vYu+a20ACUXFYGuuOSwtJCqE=;
+        h=ARC-Seal:ARC-Message-Signature:ARC-Authentication-Results:From:To:
+         CC:Subject:Date:Message-ID:Content-Transfer-Encoding:Content-Type:
+         X-ClientProxiedBy:MIME-Version:
+         X-MS-Exchange-MessageSentRepresentingType;
+        b=C65HOUx2sQwA0Z9I/HyXi7Zoe3KWz2BvP970C8OBm0crjJnTlAQ9SwKEK9gCZ2JuJ
+         xsMHNVefxVm4z0kcNHciCuL3fCUmbzQfF0nmTHZMz3tur14QYYvpOLexv6QGM/VZYv
+         KoSBZo72nEDtXB7fLlMqU2qXAr98pxbePnvJ9c/QsofRl1hs/Kc0hj4At+mY/00pGF
+         5iJ15jO/Yg+195FUsBtZ9nyQbHi745UfgTQ3xdsFePRU9fE511l5uxZTQRVFMAIATu
+         K2smzSXW5xmuHxphoHyhxOye2XS0aTl6UiSK+ucwxNoILLw7aNa/Q4IdswsUHnMgL1
+         9gj6ae060YOrQ==
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Michał,
+When get_vaddr_frames() does its hacky follow_pfn() loop it should never
+be allowed to extract a struct page from a normal VMA. This could allow a
+serious use-after-free problem on any kernel memory.
 
-On Mon, Oct 05, 2020 at 01:09:08PM +0200, Michał Mirosław wrote:
-> On Sun, Oct 04, 2020 at 10:24:20PM -0700, dmitry.torokhov@gmail.com wrote:
-> > The order in which 'users' counter is decremented vs calling drivers'
-> > close() method is implementation specific, and we should not rely on
-> > it. Let's introduce driver private flag and use it to signal ISR
-> > to exit when device is being closed.
-> > 
-> > This has a side-effect of fixing issue of accessing inut->users
-> > outside of input->mutex protection.
-> > 
-> > Reported-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > ---
-> >  drivers/iio/adc/exynos_adc.c | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> > index 22131a677445..7eb2a5df6e98 100644
-> > --- a/drivers/iio/adc/exynos_adc.c
-> > +++ b/drivers/iio/adc/exynos_adc.c
-> > @@ -135,6 +135,8 @@ struct exynos_adc {
-> >  	u32			value;
-> >  	unsigned int            version;
-> >  
-> > +	bool			ts_enabled;
-> > +
-> >  	bool			read_ts;
-> >  	u32			ts_x;
-> >  	u32			ts_y;
-> > @@ -633,7 +635,7 @@ static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
-> >  	bool pressed;
-> >  	int ret;
-> >  
-> > -	while (info->input->users) {
-> > +	while (info->ts_enabled) {
-> >  		ret = exynos_read_s3c64xx_ts(dev, &x, &y);
-> >  		if (ret == -ETIMEDOUT)
-> >  			break;
-> > @@ -712,6 +714,8 @@ static int exynos_adc_ts_open(struct input_dev *dev)
-> >  {
-> >  	struct exynos_adc *info = input_get_drvdata(dev);
-> >  
-> > +	info->ts_enabled = true;
-> > +	mb();
-> >  	enable_irq(info->tsirq);
-> >  
-> >  	return 0;
-> > @@ -721,6 +725,8 @@ static void exynos_adc_ts_close(struct input_dev *dev)
-> >  {
-> >  	struct exynos_adc *info = input_get_drvdata(dev);
-> >  
-> > +	info->ts_enabled = false;
-> > +	mb();
-> >  	disable_irq(info->tsirq);
-> 
-> This should be WRITE_ONCE paired with READ_ONCE in the ISR.
+Restrict this to only work on VMA's with one of VM_IO | VM_PFNMAP
+set. This limits the use-after-free problem to only IO memory, which while
+still serious, is an improvement.
 
-Why? I can see that maybe full memory barrier is too heavy when we set
-the flag to true, but the only requirement is for the flag to be set
-before we disable IRQ, so any additional guarantees provided by
-WRITE_ONCE are not needed. On the read side we want the flag to be
-noticed eventually, and there is no additional dependencies on the data,
-so it is unclear what READ_ONCE() will give us here.
+Cc: stable@vger.kernel.org
+Fixes: 8025e5ddf9c1 ("[media] mm: Provide new get_vaddr_frames() helper")
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+---
+ mm/frame_vector.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> 
-> But is the check really needed? I see that this is to break waiting for
-> a touch release event, so I would assume this shouldn't wait forever
-> (unless the hardware is buggy)
+diff --git a/mm/frame_vector.c b/mm/frame_vector.c
+index 10f82d5643b6de..26cb20544b6c37 100644
+--- a/mm/frame_vector.c
++++ b/mm/frame_vector.c
+@@ -99,6 +99,10 @@ int get_vaddr_frames(unsigned long start, unsigned int n=
+r_frames,
+ 		if (ret >=3D nr_frames || start < vma->vm_end)
+ 			break;
+ 		vma =3D find_vma_intersection(mm, start, start + 1);
++		if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
++			ret =3D -EINVAL;
++			goto out;
++		}
+ 	} while (vma && vma->vm_flags & (VM_IO | VM_PFNMAP));
+ out:
+ 	if (locked)
+--=20
+2.28.0
 
-It is not hardware, it is user. Do you want to delay indefinitely
-close() just because user has a finger on the touchscreen?
-
-> and breaking the loop will desync touch
-> state (I would guess this would be noticable by next user).
-
-Upon next open driver will service the interrupt and provide new set of
-touch coordinates. Userspace is supposed to query current state of
-device when opening it before starting processing events. Or you are
-concerned about some other state?
-
-In any case, this is current driver behavior and if it needs to be
-changed it is a topic for a separate patch.
-
-Thanks.
-
--- 
-Dmitry
