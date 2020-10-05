@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E448CC4727D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4197C47420
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB5C212CC
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBEEF21534
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729886AbgJEUgq (ORCPT
+        id S1729883AbgJEUgp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Oct 2020 16:36:46 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:33113 "EHLO
+        Mon, 5 Oct 2020 16:36:45 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:43937 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729830AbgJEUg0 (ORCPT
+        with ESMTP id S1729828AbgJEUgZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Oct 2020 16:36:26 -0400
+        Mon, 5 Oct 2020 16:36:25 -0400
 Received: from methusalix.internal.home.lespocky.de ([92.117.55.152]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MJVY8-1k5oV82ZaK-00JqZm; Mon, 05 Oct 2020 22:35:46 +0200
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MUD7D-1jyPZM0wd9-00RHu7; Mon, 05 Oct 2020 22:35:51 +0200
 Received: from lemmy.internal.home.lespocky.de ([192.168.243.176] helo=lemmy.home.lespocky.de)
         by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <alex@home.lespocky.de>)
-        id 1kPXCw-0004VR-Ih; Mon, 05 Oct 2020 22:35:43 +0200
-Received: (nullmailer pid 10325 invoked by uid 2001);
-        Mon, 05 Oct 2020 20:35:37 -0000
+        id 1kPXD1-0004W6-To; Mon, 05 Oct 2020 22:35:49 +0200
+Received: (nullmailer pid 10343 invoked by uid 2001);
+        Mon, 05 Oct 2020 20:35:38 -0000
 From:   Alexander Dahl <post@lespocky.de>
 To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Rob Herring <robh+dt@kernel.org>
@@ -42,34 +42,34 @@ Cc:     Alexander Dahl <ada@thorsis.com>,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Jeff LaBundy <jeff@labundy.com>
-Subject: [PATCH v7 03/12] dt-bindings: mfd: Fix schema warnings for pwm-leds
-Date:   Mon,  5 Oct 2020 22:34:42 +0200
-Message-Id: <20201005203451.9985-4-post@lespocky.de>
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: [PATCH v7 06/12] ARM: dts: berlin: Fix schema warnings for pwm-leds
+Date:   Mon,  5 Oct 2020 22:34:45 +0200
+Message-Id: <20201005203451.9985-7-post@lespocky.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201005203451.9985-1-post@lespocky.de>
 References: <20201005203451.9985-1-post@lespocky.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 4b5898d038d1415590f3a2ccc7ce21d7
-X-Provags-ID: V03:K1:k0yiA9lyvy1/Zh9nh+0nofx8ISHoK3KZN7K2P4l768bFHrROa/O
- pwi2OA9dDAAdh+gXmQmP0vr4EtnzAiNh8Yslnw1T1V0Vv6ZPhJK0C2tTp4DqxQtaG27Tk3c
- +upi/Serv3087WaSsaFGKszSXwqNZvFniQ4W0uNIIk2AF92G48G515uvh/+htX+NW/+CPt4
- qtZBZo5LXWC3MSeOPaJLw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:pePHsAIg4/0=:6zFjBC1h9Q3yInlKRJzjXk
- GRvZrKsohZbuA9PZAJudVE3v6m7OUshdmj9zF5H82bmBZ6rm1oqDBJPO1sPkw28NkEL7Et/OP
- l9VImjVJlmYd2PN4bfc9xBqXJGMkW6FlGHBLUsIpVnOJBy8u2iC2s5uI+7Xqbp0zHXVBDWwE9
- thoMmf+V5bDhbQGb8j3R6HeqZQaMsZAg6QQpTO+hJbg0gN2MCKrJAipp6eijGtF6dKk98Hv1G
- GNqSYPtQsZlD5TD5Pk6IOHUrHVdyA8pT9BsKP9mZiXrMF6wgeplSktBEtRP7M2UA5NHN9KDSw
- aEsjeb2R2KP6xmLezzBh0uTl3G8LhhXT0KLqH7w0YNHPA9rhhFH0MCOh8bh1W8dah9kuDUgI4
- nR+ohcWZwuLboWOhglIY+5FT2iAyruZsyKP4PPNGkZm/lLAHqWAfb+ESTot3VxvyGeF7uK3zo
- lzBVG6LXHL+aW7CTfP0vIWugjs1KNL69CXEiyUy+hgEOlodWTfH6ydFjmdmeYv6y0gvpYiSEZ
- 7rSFQE/COJN9a0WKZWu+ROAlnp25ymEku+s9ngCETEe/rjHCYMeL2rDXrPdQ6mfAScdLnmTlL
- XXxJ6j6SjIPbxPKIDfShc09LtV1+HbUZNX6+Kx9RxZgvi07hQZLPGL8n1mhWnQ0y8KKW52Rv/
- 0B6D8lginTmCjvpHKXJbDPftBvI8BVDRe0ZD2IbC5Q3bMHtD3mNqTLQme3Bi3DZUZVvmgHegd
- ykG/07og7yADofWR1hO1eu0TXw+Wgd37WDhn1fT6WhBQDqsnBys3bgH36T3OkCEYu77Ye8BZN
- Skl5inys+DhbXebBsFzjz8XKe2/ilJeO/zANbw6fDkksuvrRHL5o0fP9kwPSQq2/4S5KnXr
+X-Scan-Signature: 08386759e7be537865a5b4fcb90d540e
+X-Provags-ID: V03:K1:guPzpHouZYsDItxJ2VwmbE1hLmLueuILeAA0xXEMRTr8ny0z7+r
+ M3VxkcQRzNq7TcNvxUTN44v398fyE6l1UwsNy+sOkJ55ADAi0UH+IZ1CLzNvc0TdFoNddbM
+ rSui4EMI2aeOPF4YWZqm3dTcuSii2/p926KHSS5wULYXMeaKLglCu/vTDZath05MJAqmrVX
+ XjDGCBaLmQBJgWppPaTpw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:4lr8xTdu67U=:hzBHJ/QNqSAwgrq3R+eD8H
+ WuPjw6nUaTamq6r5jFDNam3zhDEfNFKmVxHso0zTYy1EHtHXpuoNMzsyL7/x8Tubpeu5X624c
+ nBjBQ6acovXif9BSvybV5yl6EsbyoZvOnQi6A45UeM2FtsZF+XRwmAkH+NUFGl48QUtgycpuz
+ SvhAihSpmLNRGUY72PdMYqcV0c1W368GFdnA88Vm2x0Td4nukNtlzSC0UZOZ2F7EnCKZwaYJR
+ xu8L6eGfxpvwp8sEmBkEMKG0fXLPNw3GYEnPNuYXpCp2b25QCWDUJAL1K9T/evr5MRqBwXHBh
+ GvhO0vlcny96SWQMuCyGd5LMvTIbWbWMc75hO11QPPgVGLIn7HMK1SmRCNjuTdHxLv7YIg3zV
+ KVvz0Q7yk7bKuAnmNrNps93KCm7lNDaUlbN9PbGjaPg7N/KbnKeO3tmsIwScdtxneRhevCA7s
+ HceGkoxPWA+8tqiDqMCI5ApYARI+REun0fY5gU1pidOSFVeeoAVBtZxH2A0rPY50La3mwLr/e
+ 6zolFkFt9rbI8B+emPZK8gzOVHGbecnqj4oIHescM8K2cNBQ5zhbWQsyL8j1YN7j+Eni4Kiys
+ cbqc6miRKyUBwEkvt/4RPnVtBAz4nt0mEw5x0VSFI7mXjtRKmRq0QeNOVHpNlv2ubeUdvYPmQ
+ gzD8lOe52bfrVOVGkpRKiAdHxCE8rRNrt7LGgwZDSsDh3rWXQpD55Rkz9GCw1ahBhybicw62w
+ Mcbxs35mnFh92qROSR3s5dpEAdjmARpTXEDi1GezGvsP1kUWntamj7dt8ZSE3ykoWB30M7pKF
+ acFVedDXKtG17m/5RclNm5OMh4IqqVDy7Ivmo8JKPBZgydARKA9GHUG0xiT4S7VLGZVVHMh
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -78,9 +78,9 @@ The node names for devices using the pwm-leds driver follow a certain
 naming scheme (now).  Parent node name is not enforced, but recommended
 by DT project.
 
-  DTC     Documentation/devicetree/bindings/mfd/iqs62x.example.dt.yaml
-  CHECK   Documentation/devicetree/bindings/mfd/iqs62x.example.dt.yaml
-/home/alex/build/linux/Documentation/devicetree/bindings/mfd/iqs62x.example.dt.yaml: pwmleds: 'panel' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+  DTC     arch/arm/boot/dts/berlin2cd-google-chromecast.dt.yaml
+  CHECK   arch/arm/boot/dts/berlin2cd-google-chromecast.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/berlin2cd-google-chromecast.dt.yaml: leds: 'red', 'white' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
         From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
 
 Signed-off-by: Alexander Dahl <post@lespocky.de>
@@ -88,32 +88,39 @@ Signed-off-by: Alexander Dahl <post@lespocky.de>
 
 Notes:
     v6 -> v7:
-      * added warning message to commit message (Krzysztof Kozlowski)
-    
-    v6:
-      * added this patch to series
+      * split up patch (one per sub arch)
+      * added actual warnings to commit message
 
- Documentation/devicetree/bindings/mfd/iqs62x.yaml | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/berlin2cd-google-chromecast.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/iqs62x.yaml b/Documentation/devicetree/bindings/mfd/iqs62x.yaml
-index 541b06d80e73..92dc48a8dfa7 100644
---- a/Documentation/devicetree/bindings/mfd/iqs62x.yaml
-+++ b/Documentation/devicetree/bindings/mfd/iqs62x.yaml
-@@ -90,10 +90,11 @@ examples:
-             };
-     };
+diff --git a/arch/arm/boot/dts/berlin2cd-google-chromecast.dts b/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
+index 56fa951bc86f..c1d91424e658 100644
+--- a/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
++++ b/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
+@@ -34,19 +34,19 @@
+ 		linux,usable-memory = <0x00000000 0x20000000>; /* 512 MB */
+ 	};
  
--    pwmleds {
-+    led-controller {
-             compatible = "pwm-leds";
+-	leds {
++	led-controller {
+ 		compatible = "pwm-leds";
+ 		pinctrl-0 = <&ledpwm_pmux>;
+ 		pinctrl-names = "default";
  
--            panel {
-+            led-1 {
-+                    label = "panel";
-                     pwms = <&iqs620a_pwm 0 1000000>;
-                     max-brightness = <255>;
-             };
+-		white {
++		led-1 {
+ 			label = "white";
+ 			pwms = <&pwm 0 600000 0>;
+ 			max-brightness = <255>;
+ 			linux,default-trigger = "default-on";
+ 		};
+ 
+-		red {
++		led-2 {
+ 			label = "red";
+ 			pwms = <&pwm 1 600000 0>;
+ 			max-brightness = <255>;
 -- 
 2.20.1
 
