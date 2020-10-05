@@ -2,143 +2,162 @@ Return-Path: <SRS0=ELwQ=DM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A569BC47095
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B208C4727E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 22:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78CF720853
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:37:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C51142080A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 22:43:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="KVtqpLQo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbgJEUhe (ORCPT
+        id S1725872AbgJEWnq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Oct 2020 16:37:34 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:46417 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729196AbgJEUh3 (ORCPT
+        Mon, 5 Oct 2020 18:43:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59366 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725846AbgJEWno (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Oct 2020 16:37:29 -0400
-Received: from methusalix.internal.home.lespocky.de ([92.117.55.152]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MUGuZ-1jyPZb1tMx-00REKR; Mon, 05 Oct 2020 22:36:00 +0200
-Received: from lemmy.internal.home.lespocky.de ([192.168.243.176] helo=lemmy.home.lespocky.de)
-        by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-        (Exim 4.94)
-        (envelope-from <alex@home.lespocky.de>)
-        id 1kPXDC-0004XF-0c; Mon, 05 Oct 2020 22:35:58 +0200
-Received: (nullmailer pid 10388 invoked by uid 2001);
-        Mon, 05 Oct 2020 20:35:40 -0000
-From:   Alexander Dahl <post@lespocky.de>
-To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Alexander Dahl <ada@thorsis.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Alexander Dahl <post@lespocky.de>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH v7 10/12] ARM: dts: stm32: Fix schema warnings for pwm-leds
-Date:   Mon,  5 Oct 2020 22:34:49 +0200
-Message-Id: <20201005203451.9985-11-post@lespocky.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20201005203451.9985-1-post@lespocky.de>
-References: <20201005203451.9985-1-post@lespocky.de>
+        Mon, 5 Oct 2020 18:43:44 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1C74C0613A8
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Oct 2020 15:43:42 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id c13so10485467oiy.6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Oct 2020 15:43:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=N7Zi+bmxFeTPGGj1PxB9/MLlYHFoog+nnJcFYtwo0O8=;
+        b=KVtqpLQoesSPzYMWv+7UD1tFkDy5yyjPi/++9DOuPkCf87SQu/2kTZ3idGVZKfPwCd
+         pibU61WH7YP7EEL4itAZdaANj+S6XlMqVnXbtEak6sUMU90UHCO+zSFAMUExqUb1YOcT
+         JXHEL9SJtjDQ6Ed3u1L2W1biaZ1QQkU7lcDcg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N7Zi+bmxFeTPGGj1PxB9/MLlYHFoog+nnJcFYtwo0O8=;
+        b=l2RokCEsHxw7mV7FkAGxiW4YBvK+7OBh4fEP8lMA5MRi6ABP3nqnhSFAikjTjK8Ud6
+         VKQq/yChEFHpAaV2JsTXe76mhmqrzXj+EY2NR+u579WVljQaraw4lFB6ukl3791lqdhU
+         BWb2z3yLn/p09PeQXQ9SZpS8h5IsXEPz/K2SEolSgamEqQijCnSL7NUuFepVdyymaUsd
+         kz7VJ6kEjvMnC5/44fWUXLwVU9JpCZris4O44YArfGTVTfinUW4f77UCqR8sbDdeKWSV
+         drOX19Wk3BZUuSPO9XEFNFC8OBSfEynLPrbqZVbAF4e11hQT3lln8/zM7lCFQO5RaBvV
+         DYdg==
+X-Gm-Message-State: AOAM531JWa26vrrPfcCLt6OuARHbXaw733koLImIQGWbQV1YlcvsVfGo
+        ZyKlNb6g0GbCvJvecrljEIkilW+FAI3OjQvCb1xbqg==
+X-Google-Smtp-Source: ABdhPJyfoPYCOpkuTCOIXoCW2mDiwodpJmuvAJrKdJ2P/BzfZGqk4dj/BBdhzJ7DBqSgjSfRXX8X8v1vcNJVJjv0Yog=
+X-Received: by 2002:aca:52c4:: with SMTP id g187mr467717oib.101.1601937822236;
+ Mon, 05 Oct 2020 15:43:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 5d1699e822705c24f051c25a2c63fb4e
-X-Provags-ID: V03:K1:6ZKlG0rDZ5U1HQ7ILaIQAQNhKsTXV0TSWVRTzdpESm8fmO/tqwD
- iK4rNm/LJgtYztQSGYN9mW2xOwWJqbOhPMTtcK0uMXIKykp/wPaXJdVtzJPD9fS68IFAo13
- m8pjTU++ifqTH58lQckSCePhpI7rOcl9djtxrldlZORvq75IKTz+HyXe6R1Ro14yadqgFaT
- yWxI/4fKVjFWSsSAD+Scw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:HfmFjwagyQ0=:h4dYDYwyiy8+d8FNw1Tme/
- r9lDpQaopjx5uAFoZpCL/Sfgflnwwqv7WCVOingGfgSngvmlV8afjKAsdcbXb1invDLOs/m4o
- FRTZ0gcC2VNPdbdZ6gNpvxbSVQFyKlAIoDJstuxvz7C9Xia1cZwKeZQzvbpMOex8Iftfxb+ri
- pvBb/pE0O1Iy2okCv/W4sRx1kFtwJN6Qj2BAFuilTCk9M74ttuKlqRC3pGDq3wb4MuRO5nOhM
- bCrgUYF1thmP0ZWnlJQvAuu+XAlvbrlf0xBPtNaDnrCOG0bj3OfYsUnVw7Pl3ItulFUgoGjwR
- bTN6k+2rYXcKHYWWx7JTQEEJAJZ/v10n6Idw7NqrbwHlN/kAWMssThoV7eL56F3fIW9gi6fJr
- 7oz7b5beUetnfvzz8GKLKxZ71DYKKnyzdV6gOVKi/wXHq1IgJr9GaC/02nJJboX3QtNo+z8SD
- XPd6uZGSiq/M7DU4xiAomk8WVT3O/+gxRhpr0lIWm5Q1lt5RF8GJU/7ySadWVWtFTAXHb7R9f
- cWmfIPSLFqWbwuj3hf0Zma1sC55eMQ5NEvJA/00bE8hRE+gTXzZBBFUgxhaLkJXT0KkHfGRw6
- xBiTtP7BsZza7AMHilLGg07Dbji5b19SqrKQET728usCQvFHGjyecAjd41SPv6TzidPqNyojd
- ipJphF2BvRdYxHWsKqS0zDJbdxVZPOFftntG20ilDgZG/L0HyN3VCxm1cDYiNK4utBnpkNbDl
- 6d046gXSkxPW0BHlPdD5I0LSChWLPT+BEu4NZchrs5hwMzCHmaA87WM/b0WmUp9zMYoAT2xtM
- FXPk2j6rpzJswBRN3vrEoGBNNux4O4JMoZ17KgGvguzn9fZ6HoQA1AHShUJEtC/9W/vwvpN
+References: <20201002175303.390363-1-daniel.vetter@ffwll.ch>
+ <20201002175303.390363-2-daniel.vetter@ffwll.ch> <20201002180603.GL9916@ziepe.ca>
+ <CAKMK7uGF+y-r4swLXmodhduRMy0NPa=ASBY8JOXS_g=9Rq9XQw@mail.gmail.com>
+ <20201002233118.GM9916@ziepe.ca> <CAKMK7uFP-XQHUPYeRhPx7tjvjARQiF-os9z9jx6WANV6sgSf6g@mail.gmail.com>
+ <20201004125059.GP9916@ziepe.ca> <CAKMK7uF0AfuYGsHzKXhF=k-mAW=Wx_APf9fY9M9ormnwypoxZA@mail.gmail.com>
+ <20201005172854.GA5177@ziepe.ca> <CAKMK7uFzxWF7V=7vkeNC-8shsPZRgdz9fYTsn0ayENv2BpnFEg@mail.gmail.com>
+ <20201005183704.GC5177@ziepe.ca> <CAKMK7uH97Yb2JFviG_ynGC1hbQ69h9hcyFVFd2PFYHCDzfBN6g@mail.gmail.com>
+In-Reply-To: <CAKMK7uH97Yb2JFviG_ynGC1hbQ69h9hcyFVFd2PFYHCDzfBN6g@mail.gmail.com>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Tue, 6 Oct 2020 00:43:31 +0200
+Message-ID: <CAKMK7uHRxK3yNrvX=+n-XpSv7PDCz8w+mwof3pkUUJq3TpmiuQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm/frame-vec: use FOLL_LONGTERM
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>, Oded Gabbay <oded.gabbay@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The node names for devices using the pwm-leds driver follow a certain
-naming scheme (now).  Parent node name is not enforced, but recommended
-by DT project.
+On Mon, Oct 5, 2020 at 8:54 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>
+> On Mon, Oct 5, 2020 at 8:37 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >
+> > On Mon, Oct 05, 2020 at 08:16:33PM +0200, Daniel Vetter wrote:
+> >
+> > > > kvm is some similar hack added for P2P DMA, see commit
+> > > > add6a0cd1c5ba51b201e1361b05a5df817083618. It might be protected by notifiers..
+> > >
+> > > Yeah my thinking is that kvm (and I think also vfio, also seems to
+> > > have mmu notifier nearby) are ok because of the mmu notiifer. Assuming
+> > > that one works correctly.
+> >
+> > vfio doesn't have a notifier, Alex was looking to add a vfio private
+> > scheme in the vma->private_data:
+> >
+> > https://lore.kernel.org/kvm/159017449210.18853.15037950701494323009.stgit@gimli.home/
+> >
+> > Guess it never happened.
+>
+> I was mislead by the mmu notifier in drivers/vfio/vfio.c. But looking
+> closer, that's only used by some drivers, I guess to make sure their
+> device pagetables are kept in sync with reality. And not to make sure
+> the vfio pfn view is kept in sync with reality.
+>
+> This could get real nasty I think.
+>
+> > > > So, the answer really is that s390 and media need fixing, and this API
+> > > > should go away (or become kvm specific)
+> > >
+> > > I'm still not clear how you want fo fix this, since your vma->dma_buf
+> > > idea is kinda a decade long plan and so just not going to happen:
+> >
+> > Well, it doesn't mean we have to change every part of dma_buf to
+> > participate in this. Just the bits media cares about. Or maybe it is
+> > some higher level varient on top of dma_buf.
+> >
+> > Or don't use dma_buf for this, add a new object that just provides
+> > refcounts and P2P DMA connection for IO pfn ranges..
+>
+> So good news is, I dug some layers deeper in v4l, and there's only 2
+> users which do actually handle pfn and don't immediately convert to a
+> pages array:
+> - videbuf-dma-contig.c. Luckily videobuf 1 is deprecated since
+> forever, so I think we might get away with either just breaking this,
+> or at least tainting kernels and hiding it behind a nasty Kconfig.
+> This only uses follow_pfn, which we need to keep anyway for vfio in
+> the unsafe variant :-/
+> - videbuf2-vmalloc.c Digging through history this was added to support
+> import of v4l buffers from drivers that needed contig memory. And way
+> back before CMA, that meant carveout memory not backed by struct page
+> *. That should now all have struct pages and be managed by CMA (since
+> videbuf2-dma-contig.c just uses dma_alloc_coherent underneath), so I
+> think we can just switch to pin_user_pages(FOLL_LONGTERM here too).
+>
+> iow I think I can outright delete the frame vector stuff.
 
-  DTC     arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
-  CHECK   arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
-/home/alex/build/linux/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml: led-rgb: 'led-blue', 'led-green', 'led-red' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
-        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+Ok this doesn't work, because dma_mmap always uses a remap_pfn_range,
+which is a VM_IO | VM_PFNMAP vma and so even if it's cma backed and
+not a carveout, we can't get the pages. Plus trying to move the cma
+pages out of cma for FOLL_LONGTERM would be kinda bad when they've
+been allocated as a contig block by dma_alloc_coherent :-)
 
-Signed-off-by: Alexander Dahl <post@lespocky.de>
----
-
-Notes:
-    v6 -> v7:
-      * split up patch (one per sub arch)
-      * added actual warnings to commit message
-
- arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts b/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
-index 5700e6b700d3..25d548cb975b 100644
---- a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
-@@ -36,34 +36,34 @@
- 		stdout-path = &uart4;
- 	};
- 
--	led-act {
-+	led-controller-1 {
- 		compatible = "gpio-leds";
- 
--		led-green {
-+		led-1 {
- 			label = "mc1:green:act";
- 			gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
- 			linux,default-trigger = "heartbeat";
- 		};
- 	};
- 
--	led-rgb {
-+	led-controller-2 {
- 		compatible = "pwm-leds";
- 
--		led-red {
-+		led-2 {
- 			label = "mc1:red:rgb";
- 			pwms = <&leds_pwm 1 1000000 0>;
- 			max-brightness = <255>;
- 			active-low;
- 		};
- 
--		led-green {
-+		led-3 {
- 			label = "mc1:green:rgb";
- 			pwms = <&leds_pwm 2 1000000 0>;
- 			max-brightness = <255>;
- 			active-low;
- 		};
- 
--		led-blue {
-+		led-4 {
- 			label = "mc1:blue:rgb";
- 			pwms = <&leds_pwm 3 1000000 0>;
- 			max-brightness = <255>;
+So this idea of switching over to pup only is going to break zerocopy.
+I guess I'll need something else for this then.
+-Daniel
 -- 
-2.20.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
