@@ -4,33 +4,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F7EC4742B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA672C4727F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1101320853
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC94120853
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:36:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729888AbgJEUgq (ORCPT
+        id S1729842AbgJEUga (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Oct 2020 16:36:46 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:33407 "EHLO
+        Mon, 5 Oct 2020 16:36:30 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:51353 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbgJEUg2 (ORCPT
+        with ESMTP id S1729313AbgJEUgT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Oct 2020 16:36:28 -0400
+        Mon, 5 Oct 2020 16:36:19 -0400
 Received: from methusalix.internal.home.lespocky.de ([92.117.55.152]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MDhQt-1kH2ss02o3-00AnRe; Mon, 05 Oct 2020 22:35:57 +0200
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1Md6AP-1kxlZ32Jsp-00aH1b; Mon, 05 Oct 2020 22:35:46 +0200
 Received: from lemmy.internal.home.lespocky.de ([192.168.243.176] helo=lemmy.home.lespocky.de)
         by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <alex@home.lespocky.de>)
-        id 1kPXD8-0004Ws-Og; Mon, 05 Oct 2020 22:35:55 +0200
-Received: (nullmailer pid 10401 invoked by uid 2001);
-        Mon, 05 Oct 2020 20:35:41 -0000
+        id 1kPXCx-0004Vb-Sq; Mon, 05 Oct 2020 22:35:44 +0200
+Received: (nullmailer pid 10367 invoked by uid 2001);
+        Mon, 05 Oct 2020 20:35:39 -0000
 From:   Alexander Dahl <post@lespocky.de>
 To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Rob Herring <robh+dt@kernel.org>
@@ -42,35 +42,38 @@ Cc:     Alexander Dahl <ada@thorsis.com>,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        James Hartley <james.hartley@sondrel.com>,
-        Rahul Bedarkar <rahulbedarkar89@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Subject: [PATCH v7 12/12] MIPS: DTS: img: Fix schema warnings for pwm-leds
-Date:   Mon,  5 Oct 2020 22:34:51 +0200
-Message-Id: <20201005203451.9985-13-post@lespocky.de>
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v7 08/12] ARM: dts: imx: Fix schema warnings for pwm-leds
+Date:   Mon,  5 Oct 2020 22:34:47 +0200
+Message-Id: <20201005203451.9985-9-post@lespocky.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201005203451.9985-1-post@lespocky.de>
 References: <20201005203451.9985-1-post@lespocky.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 07736050a5de048e796b12253fbde497
-X-Provags-ID: V03:K1:p4vODZJGo9+t9tn9s8bm4upQ45uAf97K+kjoIIIPTinrUJiiStE
- rpcrEB7DJRk32pGB4QvhMU2kgfy+90tUnfDra74bIY6U6B04OzthKrpNFh7xKKN1Gylf3ML
- M3fkSZXJlDQJ5SC3TXFZ1Hzj09ektnkRJBP44ne1uXMx4Mhh69+N0DcUbRBP5wlygsn30tu
- hA0wVNMjT6H/AFtUGeUbQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:lKjCGNqN9aQ=:4OCCRZ6yOVkWOUuDTdYsdd
- 4ItDgizdlZGX+PKDphO+HBFjymNxyMfq5iQMT7m+y46EQz/WLOocZVFdys6DIc6yvFEBq8NkR
- 1PEPPIsQ+C/aPYgYDndLnparpbI87W9bD+5cdQ3RjkqO2kMhiYt9t/Cvfcn1j/QCUlltsHSIz
- H9+pqdrYEIBKuQJFbKU+zbmvwIO+T/0cJR9m1PY0nLXSJyj1fgVqiejlsQ+qVss4Z/92Ztw5o
- fTRSUJOBdXUAjKuevujspz5h9FF8MVKB4MAgYa0nz4TFeXq4o0SE8BZvbVt/xI6F8koLv75AD
- DIXSHxUS8oAGoV2iFIWtCBDlxINivP2hEO45HCrfbKGMiIlHr7uNdgY6VnRJecAd7oLovXw19
- wIflGa0BkD4W/l8gSP7zxisvaQZRoiy/Xk473WxxSTKHaJ4sBvju04Ye1bZNtccGuK886JNif
- whQBFSbiE4tM5jUXrzdcqCHOK0ug5T+24DJ2MxtMm9apcSV0teO3k02eeQOKOQBsViwG1GMnA
- Ewm9REB/gOkrmHqWwSHhMMkg7KnXpvQOVQ5bPlnHSt3tBdJbiuXX9qYbq45261ONAuenYT4gV
- OZryUDfGG6MI5PaTqRPLRsOZJ3MwaQWGvJ9Q0FqaMj0CI+vocuswaJaLW6v8h334y3DFv9HgI
- O2tvTNh1+2hkqLAsoI/KJHgNbSN/ee5aJUhLZtPgvLT+vkC0UDArgbbPHsf7/D3WY8YbU7Gsf
- x+MKhNdXBS+MXiW1YPe8fJ//KX6NC38CCmf2AavA/CxngY6yVnmJ5133JGz6n0S0xrzTHqzaa
- g1YTtDFMNZlmhVFKgmyRQiYmedSUiLJJOj/gSCLF41mChCXp+E8nZwK7qmRbYDSCiWl7BpQ
+X-Scan-Signature: 68681318e863c9f5270c704b7be598c0
+X-Provags-ID: V03:K1:lWn/Muqkqh4PPb1qlIzjSTvDw1aTRx7hjYe/2nooxhQ/hIT1n06
+ kdYYros5syyoKmfYgkwMvoyStyjCTqgrQNKE0tQpi1NlqX4bCwN8glJUUmKX/FvR9a1CG07
+ m0Ikhogvv0C4eK98r+nJ5dvcEOWSKt50vAaxIyznza7kqWKhBEvuXIW+AwDshdD+5vAVRMC
+ gr0fKbKzGUfSO9WV/CedA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:q5iI14eylOg=:UvTYIYQig8trsx5KyLUhMc
+ z5VOu5BFYQTkckWR1rCDxGi1B39SaYDfKVZOT71HwLJd9CNg3WkN8BA2cY3tBnSYig+3MXSa7
+ YQfY8R9pYVnpD3JLjAzqbahwLZpWUx5+Guo6sz+R6yXUGCQI9aZsvFIIFxEzJo7rPkIk3Zzvv
+ /XSTT2c+rYAmQoj6DWazJEcuZvzCv4atkQHyd4mpiSofsIYdTrTrOqZ7HnmtPEHwcqK9DrYXS
+ 0y0B25+xTRmYsR3PrIVSiDFns+8ky28WUzAQKPH+sslbk0f4epAI33KLhbwNArOfVUUSJVCW0
+ p89rocq16MPmP2VC10vfr2PfHtl3cucdKX6nzmGKXqm/Zf8BMjzP7hoN0XzA93jAp7jC+ZmTS
+ N/5T62WUWVPYKtX5vC5WqiEQbBJM2IgyyIRq9cRV34/Gc2tKNfJrjOU349A+ikpwyu0tsgkWJ
+ BvYPD2zPLHEDQmmTQHuuRh3dpXiMDggqrNWlGwYq3z/EO2mKfEjKTm8ySHdQjQYZo8UbGhH4R
+ ICRG+k4HRDLkQetcr0WZfhp4KmcTRSsibJqPCWosIOeWu5AyyLHymXE7wLP9s7eJTuqfaB/lt
+ PWUk2S2qi3RztwuJZBo8ykF1DTY60G+E3jfAKx+DFbuDAefEm6sffclPSISGb6ykab/rOipCi
+ ev9H86atvLoVFslwP80qGZLWfHW3QJWRdOaBMJD+ZwHwcjMZ6spOv6llleYrncMGxBRxgv227
+ 3BazHS2RQgDiC3AcnulVeGv982eHNj1j904MSba87OSL0WzFtYjxeqXg2VfEMttIzCCBKD8rK
+ 2FjAGfFGQS7uFzyoy1IwfiFlomts9kTGGSdzrBAnBeIcx2EJMoyKytoTl8watUfEzMPjLKk
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -79,36 +82,139 @@ The node names for devices using the pwm-leds driver follow a certain
 naming scheme (now).  Parent node name is not enforced, but recommended
 by DT project.
 
+  DTC     arch/arm/boot/dts/imx53-ppd.dt.yaml
+  CHECK   arch/arm/boot/dts/imx53-ppd.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/imx53-ppd.dt.yaml: leds-brightness: 'alarm-brightness' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/imx6dl-cubox-i.dt.yaml
+  CHECK   arch/arm/boot/dts/imx6dl-cubox-i.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/imx6dl-cubox-i.dt.yaml: pwmleds: 'front' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/imx6dl-cubox-i-emmc-som-v15.dt.yaml
+  CHECK   arch/arm/boot/dts/imx6dl-cubox-i-emmc-som-v15.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/imx6dl-cubox-i-emmc-som-v15.dt.yaml: pwmleds: 'front' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/imx6dl-cubox-i-som-v15.dt.yaml
+  CHECK   arch/arm/boot/dts/imx6dl-cubox-i-som-v15.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/imx6dl-cubox-i-som-v15.dt.yaml: pwmleds: 'front' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/imx6sx-softing-vining-2000.dt.yaml
+  CHECK   arch/arm/boot/dts/imx6sx-softing-vining-2000.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/imx6sx-softing-vining-2000.dt.yaml: pwmleds: 'blue', 'green', 'red' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+
 Signed-off-by: Alexander Dahl <post@lespocky.de>
 ---
 
 Notes:
     v6 -> v7:
-      * added another explaining sentence to commit message
-    
-    v6:
-      * added this patch to series
+      * split up patch (one per sub arch)
+      * added actual warnings to commit message
 
- arch/mips/boot/dts/img/pistachio_marduk.dts | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/imx53-ppd.dts                  | 15 ++++++++-------
+ arch/arm/boot/dts/imx6qdl-cubox-i.dtsi           |  4 ++--
+ arch/arm/boot/dts/imx6sx-softing-vining-2000.dts |  8 ++++----
+ 3 files changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/arch/mips/boot/dts/img/pistachio_marduk.dts b/arch/mips/boot/dts/img/pistachio_marduk.dts
-index bf69da96dc8b..a8708783f04b 100644
---- a/arch/mips/boot/dts/img/pistachio_marduk.dts
-+++ b/arch/mips/boot/dts/img/pistachio_marduk.dts
-@@ -46,9 +46,10 @@
- 		regulator-max-microvolt = <1800000>;
+diff --git a/arch/arm/boot/dts/imx53-ppd.dts b/arch/arm/boot/dts/imx53-ppd.dts
+index f7dcdf96e5c0..b480614efb30 100644
+--- a/arch/arm/boot/dts/imx53-ppd.dts
++++ b/arch/arm/boot/dts/imx53-ppd.dts
+@@ -176,36 +176,37 @@
+ 		power-supply = <&reg_3v3_lcd>;
+ 	};
+ 
+-	leds-brightness {
++	led-controller-1 {
+ 		compatible = "pwm-leds";
+ 
+-		alarm-brightness {
++		led-1 {
++			label = "alarm-brightness";
+ 			pwms = <&pwm1 0 100000>;
+ 			max-brightness = <255>;
+ 		};
  	};
  
 -	leds {
++	led-controller-2 {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_alarmled_pins>;
+ 
+-		alarm1 {
++		led-2 {
+ 			label = "alarm:red";
+ 			gpios = <&gpio7 3 GPIO_ACTIVE_HIGH>;
+ 		};
+ 
+-		alarm2 {
++		led-3 {
+ 			label = "alarm:yellow";
+ 			gpios = <&gpio7 7 GPIO_ACTIVE_HIGH>;
+ 		};
+ 
+-		alarm3 {
++		led-4 {
+ 			label = "alarm:blue";
+ 			gpios = <&gpio7 8 GPIO_ACTIVE_HIGH>;
+ 		};
+ 
+-		alarm4 {
++		led-5 {
+ 			label = "alarm:silenced";
+ 			gpios = <&gpio7 13 GPIO_ACTIVE_HIGH>;
+ 		};
+diff --git a/arch/arm/boot/dts/imx6qdl-cubox-i.dtsi b/arch/arm/boot/dts/imx6qdl-cubox-i.dtsi
+index 67042793b0ca..1e530d892b76 100644
+--- a/arch/arm/boot/dts/imx6qdl-cubox-i.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-cubox-i.dtsi
+@@ -55,12 +55,12 @@
+ 		pinctrl-0 = <&pinctrl_cubox_i_ir>;
+ 	};
+ 
+-	pwmleds {
 +	led-controller {
  		compatible = "pwm-leds";
--		heartbeat {
-+
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_cubox_i_pwm1>;
+ 
+-		front {
 +		led-1 {
- 			label = "marduk:red:heartbeat";
- 			pwms = <&pwm 3 300000>;
+ 			active-low;
+ 			label = "imx6:red:front";
+ 			max-brightness = <248>;
+diff --git a/arch/arm/boot/dts/imx6sx-softing-vining-2000.dts b/arch/arm/boot/dts/imx6sx-softing-vining-2000.dts
+index d25e27d0315f..83bff1a129ec 100644
+--- a/arch/arm/boot/dts/imx6sx-softing-vining-2000.dts
++++ b/arch/arm/boot/dts/imx6sx-softing-vining-2000.dts
+@@ -40,22 +40,22 @@
+ 		regulator-max-microvolt = <3300000>;
+ 	};
+ 
+-	pwmleds {
++	led-controller {
+ 		compatible = "pwm-leds";
+ 
+-		red {
++		led-1 {
+ 			label = "red";
  			max-brightness = <255>;
+ 			pwms = <&pwm6 0 50000>;
+ 		};
+ 
+-		green {
++		led-2 {
+ 			label = "green";
+ 			max-brightness = <255>;
+ 			pwms = <&pwm2 0 50000>;
+ 		};
+ 
+-		blue {
++		led-3 {
+ 			label = "blue";
+ 			max-brightness = <255>;
+ 			pwms = <&pwm1 0 50000>;
 -- 
 2.20.1
 
