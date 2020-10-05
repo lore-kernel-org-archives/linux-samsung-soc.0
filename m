@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D086CC47426
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6417DC47427
 	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:37:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7BA212CC
+	by mail.kernel.org (Postfix) with ESMTP id 34AE5204EA
 	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 20:37:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729921AbgJEUhB (ORCPT
+        id S1729917AbgJEUhB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
         Mon, 5 Oct 2020 16:37:01 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:35725 "EHLO
+Received: from mout.kundenserver.de ([217.72.192.74]:51187 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729849AbgJEUgf (ORCPT
+        with ESMTP id S1729835AbgJEUge (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Oct 2020 16:36:35 -0400
+        Mon, 5 Oct 2020 16:36:34 -0400
 Received: from methusalix.internal.home.lespocky.de ([92.117.55.152]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MdwRi-1kz9922frS-00b5yY; Mon, 05 Oct 2020 22:35:54 +0200
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MvrRB-1khLB50vep-00syjW; Mon, 05 Oct 2020 22:35:56 +0200
 Received: from lemmy.internal.home.lespocky.de ([192.168.243.176] helo=lemmy.home.lespocky.de)
         by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <alex@home.lespocky.de>)
-        id 1kPXD4-0004WP-KP; Mon, 05 Oct 2020 22:35:52 +0200
-Received: (nullmailer pid 10337 invoked by uid 2001);
-        Mon, 05 Oct 2020 20:35:38 -0000
+        id 1kPXD7-0004Wl-3i; Mon, 05 Oct 2020 22:35:54 +0200
+Received: (nullmailer pid 10382 invoked by uid 2001);
+        Mon, 05 Oct 2020 20:35:40 -0000
 From:   Alexander Dahl <post@lespocky.de>
 To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Rob Herring <robh+dt@kernel.org>
@@ -42,35 +42,34 @@ Cc:     Alexander Dahl <ada@thorsis.com>,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: [PATCH v7 05/12] ARM: dts: at91: Fix schema warnings for pwm-leds
-Date:   Mon,  5 Oct 2020 22:34:44 +0200
-Message-Id: <20201005203451.9985-6-post@lespocky.de>
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH v7 09/12] ARM: dts: omap: Fix schema warnings for pwm-leds
+Date:   Mon,  5 Oct 2020 22:34:48 +0200
+Message-Id: <20201005203451.9985-10-post@lespocky.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201005203451.9985-1-post@lespocky.de>
 References: <20201005203451.9985-1-post@lespocky.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scan-Signature: 5fde76b173404089831f025d7aa48043
-X-Provags-ID: V03:K1:X5984x5Mu6KOMVT8raz47lW3KsqCqdPqMZbE4qgc5W7KVXr0jy1
- CH2YvDaBph3KN0DNsoz23Pvf8KxfdsvsO4K5peRSNDq5NF+fUAY8FNPx+XoWP4fwymsy+Nt
- 3jvlyodVkxO5i4+6qCMJEadwuONX85U59RkMQrnT3SjRgOU/8FYlUwbBSedVDvHVZypybIY
- mf42H18AqHnNwyM84HbDQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:/zrJ9qxpvgo=:xigd7oe7ORlWmLXKg0ViLX
- tqes9NtZqSYmmQ7y0YYQE+SsBWBvfti0HAg1v65umwnsBXzpe3CPduch2Izat6lcnKHoi9VcN
- 55E2CLnpCxmH/ECvfnfr6aSTawQ50JtX0TvlB7/S6UT7OXLgb/RJF86i0SgRv+CIK4qjwrpmV
- PVSBIBCqQsZ4RC0VQyg71xIuL3JWIR44bKYjZT4Qj9kO8g0Gd/PHOstBJMm+im/UTwYUJxi0K
- ywP7C+BmxDmGEUZaRteqcgJiKqdnWFQ/qkXsK06w1b5l56FTFtBpVnNSwK5Af57RIGgJjZM5U
- eAvubOgMmJ/KFmr+XsA4SQDeoEDGHXKNnbGtj1/4nH+zOmP0HLXx7WpAMJwTSVcf/ogqGF5L6
- SOkM3h6p2xhEkF16IoDfHFTsvCRsBnv6cLjz1tnnVPAQQETg1YehfVgSZAF1J4tj1ssrVzUiV
- RqeaeCeHdJXxl/fwrEzUIb8Rgdrxu+CGDWgp7W75+Fsw7rDQUNddYVbhNph63wRsBjgYd8wAg
- /ET8+8lpPreITtTW8fBMF3KzGfjAYA5lYSjAafTM2DOdqNyoCQ6Du8VkjLRYxEmRiCk30yrzU
- laJ5CWOC/aapEAznciZgDfrQ4yFloFACOKkdmYUkPyCw87tZGUFxXPF3t7IPh0pDp+BeQ9Yer
- eyxj0OlfALcVFAyg6jmlUXFPF/yV7dr3moiTsrQEqkg8zkXNmWl6Ts6xHwcTrgJjDFIOxp+wd
- 4mInr8g7xGE9eCHhm2+h+3M5b1l7c/EyLLx+Pe6raAM3uyR/e7g87YoRREltUS14Z9OrWcdqb
- Ri4XI4SWgffUGeyYP0zfNTwbYVyWwbn6JEbxFRaRWD+DibbE8ndrimUoOQuSHcqCbsbvseP
+X-Scan-Signature: 45ec6910c78ac02328d2d17c1d0778f0
+X-Provags-ID: V03:K1:tj7egiK6AuNaQWepjgZvHcM6M5lfa7UAR2P9ioUJ3RlNB4jyF7v
+ evoYPhbCTvSeI8Op6s+vrsa+6ur+wHyp4SAMR3uXS+LOIsVmqJaZS9m1+Us1wtzVYWtjUUC
+ 7i1EcRWIR2GkZMhYamcXIZK5SXykWa4MAkqS1rtXB9aUaHPUHjC3rVEmOwCvUVZgBtd1Y4C
+ lfn3rw3Xxo1YAgCsLMWUg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:jvtlnEnNPm8=:+oNI0rux+CbT7gXthF0CTY
+ CDGiyW24Ps0ErOL3NWnOFJjIJCl9wHWn8AvEGroxKmzE2v5lzMtwXiK3i7y2d/Y3/1Yz8l4Xy
+ jy4tOMS2DUxviDSgY8WRVLHSWtk2lkPfDYzcSsC2Xma4wSwZG0HqjFWayp9WDn4RPKBQ0ERNn
+ pUIqGhFjy4Sh0SkuQ7koPP4CKABIVtRTLUyXHg3jgeBF6cn+ONCKtFChkwgow2EzaCPURLv3p
+ DYEebmgnQdCdkBs9R6BRIHGnvHltmQTCRw9Y3eXye5jdB/8ZwyWO6vGxVA938GxYxy51cYdEY
+ qow6U4UbcrZYjKabnE8D+Ib8QLgB5+qbDPG9HCRpLxVLyU1qnDVFjMD3aHCJNtggCnfNedxmg
+ PeRFrlUYJq8rwMto57vld4CnRVU+HkSso3wCALw+wOdxOesX5xJqZ+F6GCmJFzj2wruaWDr0Z
+ V3l+8MZDIquZq0/jZMH474O1k1V3TvlvARnkX8JdAU5VoGvtvd2NH2vorbQOulEODBuf8fMwZ
+ B1tu9LZ3OZgv258ZiWlrQuirX9nWpj0+/gZ6PnC/qxHCkq6fXTq2kZxKC6FrVAHjtszWKYqw5
+ M298G3+f80uNabZjs8DGjWGDTjK1gmJR3AV0E3pUGSiKyMvTv6RhMLkqBWS3d8UelKe3JPFNw
+ M9/g7wxuti2lihIa2kjeLUnUuJM2xZP6wEnDegOuyzgFc8k3RZVjBwHGgn1dTMnLWybvNx1iV
+ dyW96cGwYYLiJRzvm7peWiZr5Hn6DxuutMyNYoG8LHIaz8uwAm8+VoOs26by+LHJe+QFpbtsO
+ 9rn9nfnLt1OJLJxhJO4ZHk+CQp7uyGXEdEC5facXQ4rqxuGB4EXA8fcLSonblpkljvYH1x4
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -79,16 +78,90 @@ The node names for devices using the pwm-leds driver follow a certain
 naming scheme (now).  Parent node name is not enforced, but recommended
 by DT project.
 
-  DTC     arch/arm/boot/dts/at91-kizbox2-2.dt.yaml
-  CHECK   arch/arm/boot/dts/at91-kizbox2-2.dt.yaml
-/home/alex/build/linux/arch/arm/boot/dts/at91-kizbox2-2.dt.yaml: pwm_leds: 'blue', 'green', 'red' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+  DTC     arch/arm/boot/dts/omap3-beagle-xm.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-beagle-xm.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-beagle-xm.dt.yaml: pwmleds: 'pmu_stat' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
         From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
-  DTC     arch/arm/boot/dts/at91-kizbox3-hs.dt.yaml
-  CHECK   arch/arm/boot/dts/at91-kizbox3-hs.dt.yaml
-/home/alex/build/linux/arch/arm/boot/dts/at91-kizbox3-hs.dt.yaml: pwm_leds: 'blue', 'green', 'red', 'white' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+  DTC     arch/arm/boot/dts/omap3-beagle-xm-ab.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-beagle-xm-ab.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-beagle-xm-ab.dt.yaml: pwmleds: 'pmu_stat' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
         From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
-
-(Warnings above are for armv7 only, armv5 would produce similar warnings.)
+  DTC     arch/arm/boot/dts/omap3-overo-alto35.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-alto35.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-alto35.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-chestnut43.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-chestnut43.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-chestnut43.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-gallop43.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-gallop43.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-gallop43.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-palo35.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-palo35.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-palo35.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-palo43.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-palo43.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-palo43.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-storm-alto35.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-storm-alto35.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-storm-alto35.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-storm-chestnut43.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-storm-chestnut43.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-storm-chestnut43.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-storm-gallop43.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-storm-gallop43.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-storm-gallop43.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-storm-palo35.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-storm-palo35.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-storm-palo35.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-storm-palo43.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-storm-palo43.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-storm-palo43.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-storm-summit.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-storm-summit.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-storm-summit.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-storm-tobi.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-storm-tobi.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-storm-tobi.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-storm-tobiduo.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-storm-tobiduo.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-storm-tobiduo.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-summit.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-summit.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-summit.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-tobi.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-tobi.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-tobi.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap3-overo-tobiduo.dt.yaml
+  CHECK   arch/arm/boot/dts/omap3-overo-tobiduo.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap3-overo-tobiduo.dt.yaml: pwmleds: 'overo' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap4-kc1.dt.yaml
+  CHECK   arch/arm/boot/dts/omap4-kc1.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap4-kc1.dt.yaml: pwmleds: 'green', 'orange' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap4-sdp.dt.yaml
+  CHECK   arch/arm/boot/dts/omap4-sdp.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap4-sdp.dt.yaml: pwmleds: 'charging', 'kpad' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+  DTC     arch/arm/boot/dts/omap4-sdp-es23plus.dt.yaml
+  CHECK   arch/arm/boot/dts/omap4-sdp-es23plus.dt.yaml
+/home/alex/build/linux/arch/arm/boot/dts/omap4-sdp-es23plus.dt.yaml: pwmleds: 'charging', 'kpad' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+        From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
 
 Signed-off-by: Alexander Dahl <post@lespocky.de>
 ---
@@ -98,297 +171,166 @@ Notes:
       * split up patch (one per sub arch)
       * added actual warnings to commit message
 
- arch/arm/boot/dts/at91-kizbox.dts             | 10 +++++-----
- arch/arm/boot/dts/at91-kizbox2-common.dtsi    |  8 ++++----
- arch/arm/boot/dts/at91-kizbox3-hs.dts         | 16 ++++++++--------
- arch/arm/boot/dts/at91-kizbox3_common.dtsi    | 10 +++++-----
- arch/arm/boot/dts/at91-kizboxmini-common.dtsi |  8 ++++----
- arch/arm/boot/dts/at91sam9m10g45ek.dts        | 10 +++++-----
- arch/arm/boot/dts/at91sam9rlek.dts            | 10 +++++-----
- 7 files changed, 36 insertions(+), 36 deletions(-)
+ arch/arm/boot/dts/omap3-beagle-xm.dts   | 10 +++++-----
+ arch/arm/boot/dts/omap3-overo-base.dtsi |  4 ++--
+ arch/arm/boot/dts/omap4-kc1.dts         |  6 +++---
+ arch/arm/boot/dts/omap4-sdp.dts         | 26 +++++++++++++------------
+ 4 files changed, 24 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/at91-kizbox.dts b/arch/arm/boot/dts/at91-kizbox.dts
-index 7d938ccf71b0..6ea5e60d881d 100644
---- a/arch/arm/boot/dts/at91-kizbox.dts
-+++ b/arch/arm/boot/dts/at91-kizbox.dts
-@@ -48,31 +48,31 @@
- 		};
+diff --git a/arch/arm/boot/dts/omap3-beagle-xm.dts b/arch/arm/boot/dts/omap3-beagle-xm.dts
+index 05077f3c75cd..cbeab697b89f 100644
+--- a/arch/arm/boot/dts/omap3-beagle-xm.dts
++++ b/arch/arm/boot/dts/omap3-beagle-xm.dts
+@@ -34,26 +34,26 @@
+ 		clock-frequency = <26000000>;
  	};
  
--	pwm_leds {
-+	led-controller {
- 		compatible = "pwm-leds";
- 
--		network_green {
-+		led-1 {
- 			label = "pwm:green:network";
- 			pwms = <&tcb_pwm 2 10000000 PWM_POLARITY_INVERTED>;
- 			max-brightness = <255>;
- 			linux,default-trigger = "default-on";
- 		};
- 
--		network_red {
-+		led-2 {
- 			label = "pwm:red:network";
- 			pwms = <&tcb_pwm 4 10000000 PWM_POLARITY_INVERTED>;
- 			max-brightness = <255>;
- 			linux,default-trigger = "default-on";
- 		};
- 
--		user_green {
-+		led-3 {
- 			label = "pwm:green:user";
- 			pwms = <&tcb_pwm 0 10000000 PWM_POLARITY_INVERTED>;
- 			max-brightness = <255>;
- 			linux,default-trigger = "default-on";
- 		};
- 
--		user_red {
-+		led-4 {
- 			label = "pwm:red:user";
- 			pwms = <&tcb_pwm 1 10000000 PWM_POLARITY_INVERTED>;
- 			max-brightness = <255>;
-diff --git a/arch/arm/boot/dts/at91-kizbox2-common.dtsi b/arch/arm/boot/dts/at91-kizbox2-common.dtsi
-index af38253a6e7a..8dc880c6b9d0 100644
---- a/arch/arm/boot/dts/at91-kizbox2-common.dtsi
-+++ b/arch/arm/boot/dts/at91-kizbox2-common.dtsi
-@@ -58,24 +58,24 @@
- 		};
- 	};
- 
--	pwm_leds {
-+	led-controller {
- 		compatible = "pwm-leds";
- 
--		blue {
-+		led-1 {
- 			label = "pwm:blue:user";
- 			pwms = <&pwm0 2 10000000 0>;
- 			max-brightness = <255>;
- 			linux,default-trigger = "none";
- 		};
- 
--		green {
-+		led-2 {
- 			label = "pwm:green:user";
- 			pwms = <&pwm0 1 10000000 0>;
- 			max-brightness = <255>;
- 			linux,default-trigger = "default-on";
- 		};
- 
--		red {
-+		led-3 {
- 			label = "pwm:red:user";
- 			pwms = <&pwm0 0 10000000 0>;
- 			max-brightness = <255>;
-diff --git a/arch/arm/boot/dts/at91-kizbox3-hs.dts b/arch/arm/boot/dts/at91-kizbox3-hs.dts
-index 0da1f0557eaf..2799b2a1f4d2 100644
---- a/arch/arm/boot/dts/at91-kizbox3-hs.dts
-+++ b/arch/arm/boot/dts/at91-kizbox3-hs.dts
-@@ -15,40 +15,40 @@
- 	model = "Overkiz KIZBOX3-HS";
- 	compatible = "overkiz,kizbox3-hs", "atmel,sama5d2", "atmel,sama5";
- 
--	pwm_leds {
+-	leds {
 +	led-controller-1 {
- 		status = "okay";
+ 		compatible = "gpio-leds";
  
--		red {
+-		heartbeat {
 +		led-1 {
- 			status = "okay";
+ 			label = "beagleboard::usr0";
+ 			gpios = <&gpio5 22 GPIO_ACTIVE_HIGH>; /* 150 -> D6 LED */
+ 			linux,default-trigger = "heartbeat";
  		};
  
--		green {
+-		mmc {
 +		led-2 {
- 			status = "okay";
- 		};
- 
--		blue {
-+		led-3 {
- 			status = "okay";
- 		};
- 
--		white {
-+		led-4 {
- 			status = "okay";
+ 			label = "beagleboard::usr1";
+ 			gpios = <&gpio5 21 GPIO_ACTIVE_HIGH>; /* 149 -> D7 LED */
+ 			linux,default-trigger = "mmc0";
  		};
  	};
  
--	leds  {
-+	led-controller-2  {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinctrl_led_red
- 			     &pinctrl_led_white>;
- 		status = "okay";
+-	pwmleds {
++	led-controller-2 {
+ 		compatible = "pwm-leds";
  
--		red {
+-		pmu_stat {
++		led-3 {
+ 			label = "beagleboard::pmu_stat";
+ 			pwms = <&twl_pwmled 1 7812500>;
+ 			max-brightness = <127>;
+diff --git a/arch/arm/boot/dts/omap3-overo-base.dtsi b/arch/arm/boot/dts/omap3-overo-base.dtsi
+index 971d3e250515..006a6d97231c 100644
+--- a/arch/arm/boot/dts/omap3-overo-base.dtsi
++++ b/arch/arm/boot/dts/omap3-overo-base.dtsi
+@@ -14,10 +14,10 @@
+ 		reg = <0 0>;
+ 	};
+ 
+-	pwmleds {
++	led-controller {
+ 		compatible = "pwm-leds";
+ 
+-		overo {
++		led-1 {
+ 			label = "overo:blue:COM";
+ 			pwms = <&twl_pwmled 1 7812500>;
+ 			max-brightness = <127>;
+diff --git a/arch/arm/boot/dts/omap4-kc1.dts b/arch/arm/boot/dts/omap4-kc1.dts
+index 31d856b58f8a..e59d17b25a1d 100644
+--- a/arch/arm/boot/dts/omap4-kc1.dts
++++ b/arch/arm/boot/dts/omap4-kc1.dts
+@@ -15,16 +15,16 @@
+ 		reg = <0x80000000 0x20000000>; /* 512 MB */
+ 	};
+ 
+-	pwmleds {
++	led-controller {
+ 		compatible = "pwm-leds";
+ 
+-		green {
++		led-1 {
+ 			label = "green";
+ 			pwms = <&twl_pwm 0 7812500>;
+ 			max-brightness = <127>;
+ 		};
+ 
+-		orange {
++		led-2 {
+ 			label = "orange";
+ 			pwms = <&twl_pwm 1 7812500>;
+ 			max-brightness = <127>;
+diff --git a/arch/arm/boot/dts/omap4-sdp.dts b/arch/arm/boot/dts/omap4-sdp.dts
+index 79e7a41ecb7e..f5d7539a3668 100644
+--- a/arch/arm/boot/dts/omap4-sdp.dts
++++ b/arch/arm/boot/dts/omap4-sdp.dts
+@@ -45,58 +45,60 @@
+ 		regulator-boot-on;
+ 	};
+ 
+-	leds {
++	led-controller-1 {
+ 		compatible = "gpio-leds";
+-		debug0 {
++
++		led-1 {
+ 			label = "omap4:green:debug0";
+ 			gpios = <&gpio2 29 GPIO_ACTIVE_HIGH>; /* 61 */
+ 		};
+ 
+-		debug1 {
++		led-2 {
+ 			label = "omap4:green:debug1";
+ 			gpios = <&gpio1 30 GPIO_ACTIVE_HIGH>; /* 30 */
+ 		};
+ 
+-		debug2 {
++		led-3 {
+ 			label = "omap4:green:debug2";
+ 			gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>; /* 7 */
+ 		};
+ 
+-		debug3 {
++		led-4 {
+ 			label = "omap4:green:debug3";
+ 			gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>; /* 8 */
+ 		};
+ 
+-		debug4 {
 +		led-5 {
- 			label = "pio:red:user";
- 			gpios = <&pioA PIN_PB1 GPIO_ACTIVE_HIGH>;
- 			default-state = "off";
+ 			label = "omap4:green:debug4";
+ 			gpios = <&gpio2 18 GPIO_ACTIVE_HIGH>; /* 50 */
  		};
  
--		white {
+-		user1 {
 +		led-6 {
- 			label = "pio:white:user";
- 			gpios = <&pioA PIN_PB8 GPIO_ACTIVE_HIGH>;
- 			default-state = "off";
-diff --git a/arch/arm/boot/dts/at91-kizbox3_common.dtsi b/arch/arm/boot/dts/at91-kizbox3_common.dtsi
-index 7c3076e245ef..9ce513dd514b 100644
---- a/arch/arm/boot/dts/at91-kizbox3_common.dtsi
-+++ b/arch/arm/boot/dts/at91-kizbox3_common.dtsi
-@@ -62,7 +62,7 @@
- 		regulator-always-on;
- 	};
- 
--	pwm_leds {
-+	led-controller-1 {
- 		compatible = "pwm-leds";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinctrl_pwm0_pwm_h0
-@@ -71,7 +71,7 @@
- 			     &pinctrl_pwm0_pwm_h3>;
- 		status = "disabled";
- 
--		red {
-+		led-1 {
- 			label = "pwm:red:user";
- 			pwms = <&pwm0 0 10000000 0>;
- 			max-brightness = <255>;
-@@ -79,7 +79,7 @@
- 			status = "disabled";
+ 			label = "omap4:blue:user";
+ 			gpios = <&gpio6 9 GPIO_ACTIVE_HIGH>; /* 169 */
  		};
  
--		green {
-+		led-2 {
- 			label = "pwm:green:user";
- 			pwms = <&pwm0 1 10000000 0>;
- 			max-brightness = <255>;
-@@ -87,14 +87,14 @@
- 			status = "disabled";
+-		user2 {
++		led-7 {
+ 			label = "omap4:red:user";
+ 			gpios = <&gpio6 10 GPIO_ACTIVE_HIGH>; /* 170 */
  		};
  
--		blue {
-+		led-3 {
- 			label = "pwm:blue:user";
- 			pwms = <&pwm0 2 10000000 0>;
- 			max-brightness = <255>;
- 			status = "disabled";
- 		};
- 
--		white {
-+		led-4 {
- 			label = "pwm:white:user";
- 			pwms = <&pwm0 3 10000000 0>;
- 			max-brightness = <255>;
-diff --git a/arch/arm/boot/dts/at91-kizboxmini-common.dtsi b/arch/arm/boot/dts/at91-kizboxmini-common.dtsi
-index fddf267b2d17..5892f20f7b16 100644
---- a/arch/arm/boot/dts/at91-kizboxmini-common.dtsi
-+++ b/arch/arm/boot/dts/at91-kizboxmini-common.dtsi
-@@ -54,10 +54,10 @@
- 		};
- 	};
- 
--	leds: pwm_leds {
-+	leds: led-controller-1 {
- 		compatible = "pwm-leds";
- 
--		led_blue: pwm_blue {
-+		led_blue: led-1 {
- 			label = "pwm:blue:user";
- 			pwms = <&pwm0 2 10000000 0>;
- 			max-brightness = <255>;
-@@ -65,14 +65,14 @@
- 			status = "disabled";
- 		};
- 
--		led_green: pwm_green {
-+		led_green: led-2 {
- 			label = "pwm:green:user";
- 			pwms = <&pwm0 0 10000000 0>;
- 			max-brightness = <255>;
- 			linux,default-trigger = "default-on";
- 		};
- 
--		led_red: pwm_red {
-+		led_red: led-3 {
- 			label = "pwm:red:user";
- 			pwms = <&pwm0 1 10000000 0>;
- 			max-brightness = <255>;
-diff --git a/arch/arm/boot/dts/at91sam9m10g45ek.dts b/arch/arm/boot/dts/at91sam9m10g45ek.dts
-index a3a5c82d9f29..c50706b653d0 100644
---- a/arch/arm/boot/dts/at91sam9m10g45ek.dts
-+++ b/arch/arm/boot/dts/at91sam9m10g45ek.dts
-@@ -313,27 +313,27 @@
- 		};
- 	};
- 
--	leds {
-+	led-controller-1 {
- 		compatible = "gpio-leds";
- 
--		d8 {
-+		led-1 {
- 			label = "d8";
- 			gpios = <&pioD 30 GPIO_ACTIVE_HIGH>;
- 			linux,default-trigger = "heartbeat";
+-		user3 {
++		led-8 {
+ 			label = "omap4:green:user";
+ 			gpios = <&gpio5 11 GPIO_ACTIVE_HIGH>; /* 139 */
  		};
  	};
  
 -	pwmleds {
 +	led-controller-2 {
  		compatible = "pwm-leds";
- 
--		d6 {
-+		led-2 {
- 			label = "d6";
- 			pwms = <&pwm0 3 5000 PWM_POLARITY_INVERTED>;
- 			max-brightness = <255>;
- 			linux,default-trigger = "nand-disk";
+-		kpad {
++
++		led-9 {
+ 			label = "omap4::keypad";
+ 			pwms = <&twl_pwm 0 7812500>;
+ 			max-brightness = <127>;
  		};
  
--		d7 {
-+		led-3 {
- 			label = "d7";
- 			pwms = <&pwm0 1 5000 PWM_POLARITY_INVERTED>;
+-		charging {
++		led-10 {
+ 			label = "omap4:green:chrg";
+ 			pwms = <&twl_pwmled 0 7812500>;
  			max-brightness = <255>;
-diff --git a/arch/arm/boot/dts/at91sam9rlek.dts b/arch/arm/boot/dts/at91sam9rlek.dts
-index 0de75d3c4f18..035ce5dedff7 100644
---- a/arch/arm/boot/dts/at91sam9rlek.dts
-+++ b/arch/arm/boot/dts/at91sam9rlek.dts
-@@ -218,26 +218,26 @@
- 		};
- 	};
- 
--	pwmleds {
-+	led-controller-1 {
- 		compatible = "pwm-leds";
- 
--		ds1 {
-+		led-1 {
- 			label = "ds1";
- 			pwms = <&pwm0 1 5000 PWM_POLARITY_INVERTED>;
- 			max-brightness = <255>;
- 		};
- 
--		ds2 {
-+		led-2 {
- 			label = "ds2";
- 			pwms = <&pwm0 2 5000 PWM_POLARITY_INVERTED>;
- 			max-brightness = <255>;
- 		};
- 	};
- 
--	leds {
-+	led-controller-2 {
- 		compatible = "gpio-leds";
- 
--		ds3 {
-+		led-3 {
- 			label = "ds3";
- 			gpios = <&pioD 14 GPIO_ACTIVE_HIGH>;
- 			linux,default-trigger = "heartbeat";
 -- 
 2.20.1
 
