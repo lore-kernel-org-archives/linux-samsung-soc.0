@@ -2,115 +2,176 @@ Return-Path: <SRS0=ELwQ=DM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8F3C4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 17:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C105C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 17:36:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CE5D207EA
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 17:35:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA8EF2080A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Oct 2020 17:36:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Ogo60Itj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKR/BTv4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbgJERfe (ORCPT
+        id S1728151AbgJERgm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Oct 2020 13:35:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40132 "EHLO
+        Mon, 5 Oct 2020 13:36:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbgJERfd (ORCPT
+        with ESMTP id S1727344AbgJERgk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Oct 2020 13:35:33 -0400
-Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5570C0613A7
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Oct 2020 10:35:33 -0700 (PDT)
-Received: by mail-qk1-x743.google.com with SMTP id w16so12902307qkj.7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Oct 2020 10:35:33 -0700 (PDT)
+        Mon, 5 Oct 2020 13:36:40 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D99BC0613CE;
+        Mon,  5 Oct 2020 10:36:40 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id a1so214385pjd.1;
+        Mon, 05 Oct 2020 10:36:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dKlbhuywYV4trrm533av5g+rTKLjmfZBMKtZHffEpfg=;
-        b=Ogo60Itj+Op78dH8jXVJTtV1hFSvseMGAPGjIPJsWqBdL7wrA/UqdSqhsRz6b6AZDM
-         I9lloFYxDZt04k/RrwXKkkLdJMtxhJtNbj12+kE6LDkefxEQsCuRyrXoqt5kaQaq6WYb
-         TAJSecm4UNC7SEcfUU6PY9R+QlVJxVh8DUZlIM8VVCjCl2LyiL/ccw9cwG5QMQ2xTI44
-         Tsx7MrXatCC9vxW+HHqRf4BEp5WLpvB6gW+CUVpFiZvvvlnoDb5wXthNwJdpMlarLbeU
-         y3GuwL2OQtzoT2TdhVV09xynxfFdakx3hgKX1AnIaRavPLMbXV35KK2VeBNdbDGcrEVO
-         zBrg==
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=B12lNYkc01u2Acv3Am3wZ/68gfdostrz6Gt7LZK1x7k=;
+        b=MKR/BTv4LNrhfqNo4XlpjFnb0c2x51PifsjbEO214HVcZGvzE8qLV2HVIB03QyM9bM
+         wGhv67RSC8rlinm79Kn+LFvlJ0076i/B/7kSsNtLvElaZZx3yqXoQ7Ldv2WwRlGwgLhV
+         Bc5LLf4AT6wr8oOv+w5Y66k11jb1n0liBQD9IXPNEG3OMVEri2msg9gx6/9csPwtohoZ
+         YC6txZ/D21a/zRWysqQ/O+2Zenq4Ed5jnrzQ2PTj3e22zGIyIuHXtZR2jYs33S8kXrDV
+         4lCkeikuW/shAvAbzOi9v0DOul+ZuhtLGMmy22r7df6FmMvetng7sT0xfAAO1B9dMGOW
+         w5jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dKlbhuywYV4trrm533av5g+rTKLjmfZBMKtZHffEpfg=;
-        b=DFj+OcNPp+FMwCbNQCT6EeSRPFUMBYO11i3ZsBPPTU3VBFRUBE3a/1SDiC8UnuaJrc
-         9Aj+eIlBhbSWBNRbroDaiYnubspv+0c0LxEgoUNrOSS3lhC2Gg3CsbHbQy1XKotFewVn
-         w6l7aLkOSUbF6i8BPbhkOegNF1udomBvCrL90OxuDoc88hSUttciiT41AaoFLnDK5T4J
-         758QPdGb9ShLjP35jC3cVsxBOikynma/tXw22fYfqlEJux7Hg4t02v5qxNBo2vgd39M9
-         0Q2rpuB0735eVeGah5lMjYpRzarAr79m1VO9MY1uLybvAevm2xj7Fe1q3Yt8e9mbzRNU
-         JWkw==
-X-Gm-Message-State: AOAM531KgBR0U7K0zp6ddEpeRuMxkKEvTwoB8fYHKqtihhmUBoINnVUZ
-        pK+VqnbTgZXWiUk0g/MSfYUeCA==
-X-Google-Smtp-Source: ABdhPJxqFhDsb/GS5ATRJ1dE6t/BFvds0ofvMeomDoUgmoopjs8lj4GVNFEIhuceI6nxBgwZWdG7Tg==
-X-Received: by 2002:a37:9e87:: with SMTP id h129mr1161317qke.276.1601919332852;
-        Mon, 05 Oct 2020 10:35:32 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
-        by smtp.gmail.com with ESMTPSA id c13sm320627qtq.5.2020.10.05.10.35.32
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=B12lNYkc01u2Acv3Am3wZ/68gfdostrz6Gt7LZK1x7k=;
+        b=AqNuHQXPskNPJuHpSCyudBgK8lrOC6kBzq+MdbhIWmKkitHrwZOH6srpk3LAPsY+GF
+         uJtjhYb7ggYSzWJwoJYHeBgHEoI5C+KENVrD63+b7wHOTtzUOLjLdOSZPP6AMAGLs39H
+         1Km33NbRyg6bmSa1ZPjNwSoJ0PV8+uks2FOMDktr1xw5gR0MkA7BXWT0k59FWClLKpwH
+         f9muRAdQ6jpkotoip8viRDbToQkKfbkESYh4oiCGSlTI27Th7QVqqJkj12ier3I2kZzy
+         QsU+x3Dv5X9rH+UNvJ7eTzzYcw6efqvIPrmSD8ub7vCRFaU6cUHeaMVNIqEqFh2u/dbr
+         Jcjw==
+X-Gm-Message-State: AOAM531UdXHZ7gJWSvToT2PMtKO9iexVZC5E0d/kSp1+1jJIKWuyyr/R
+        Z8DyfVbyRNdAR6I3IJXjp07MfjHZwTA=
+X-Google-Smtp-Source: ABdhPJwr2w1fviKBXfG28+ZbJQGJp9t+0uOX4T5p5ap8qKHKxnRh7JamghPS+8V22u5orpZUml+m6w==
+X-Received: by 2002:a17:90a:e00e:: with SMTP id u14mr483317pjy.153.1601919399587;
+        Mon, 05 Oct 2020 10:36:39 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
+        by smtp.gmail.com with ESMTPSA id y4sm157457pjc.53.2020.10.05.10.36.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2020 10:35:32 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1kPUOZ-00020z-L7; Mon, 05 Oct 2020 14:35:31 -0300
-Date:   Mon, 5 Oct 2020 14:35:31 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mm/frame-vec: use FOLL_LONGTERM
-Message-ID: <20201005173531.GB5177@ziepe.ca>
-References: <20201002175303.390363-1-daniel.vetter@ffwll.ch>
- <20201002175303.390363-2-daniel.vetter@ffwll.ch>
- <cb56763e-4fda-a783-03ae-7f749ec55981@nvidia.com>
- <CAKMK7uGzZ2dBe040vP1BJmQ7cuhj_OQHL0ncyz5XyUcb=bPjmg@mail.gmail.com>
- <f5130c7f-eebe-7b21-62b8-68f08212b106@nvidia.com>
- <20201003232441.GO9916@ziepe.ca>
- <CAKMK7uFjGDiWMD+KeEFziY-nqWy_FtCpn0rekb70yVLaxzJHjA@mail.gmail.com>
+        Mon, 05 Oct 2020 10:36:39 -0700 (PDT)
+Date:   Mon, 5 Oct 2020 10:36:36 -0700
+From:   dmitry.torokhov@gmail.com
+To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: exynos: do not rely on 'users' counter in ISR
+Message-ID: <20201005173636.GK1009802@dtor-ws>
+References: <20201005052420.GA3262631@dtor-ws>
+ <20201005110908.GA3243@qmqm.qmqm.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAKMK7uFjGDiWMD+KeEFziY-nqWy_FtCpn0rekb70yVLaxzJHjA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201005110908.GA3243@qmqm.qmqm.pl>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Oct 04, 2020 at 01:20:31PM +0200, Daniel Vetter wrote:
+Hi Michał,
 
-> Yeah I think that works. I tried understanding gup.c code a bit more,
-> and it looks like FOLL_LONGTERM only works for the pup_fast variant
-> right now? All others seem to have this comment that it's somehow
-> incompatible with FAULT_FLAG_ALLOW_RETRY and daxfs. But grepping
-> around for that didn't show up anything, at least not nearby dax code.
-> For my understanding of all this, what's the hiccup there?
+On Mon, Oct 05, 2020 at 01:09:08PM +0200, Michał Mirosław wrote:
+> On Sun, Oct 04, 2020 at 10:24:20PM -0700, dmitry.torokhov@gmail.com wrote:
+> > The order in which 'users' counter is decremented vs calling drivers'
+> > close() method is implementation specific, and we should not rely on
+> > it. Let's introduce driver private flag and use it to signal ISR
+> > to exit when device is being closed.
+> > 
+> > This has a side-effect of fixing issue of accessing inut->users
+> > outside of input->mutex protection.
+> > 
+> > Reported-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> >  drivers/iio/adc/exynos_adc.c | 8 +++++++-
+> >  1 file changed, 7 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+> > index 22131a677445..7eb2a5df6e98 100644
+> > --- a/drivers/iio/adc/exynos_adc.c
+> > +++ b/drivers/iio/adc/exynos_adc.c
+> > @@ -135,6 +135,8 @@ struct exynos_adc {
+> >  	u32			value;
+> >  	unsigned int            version;
+> >  
+> > +	bool			ts_enabled;
+> > +
+> >  	bool			read_ts;
+> >  	u32			ts_x;
+> >  	u32			ts_y;
+> > @@ -633,7 +635,7 @@ static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
+> >  	bool pressed;
+> >  	int ret;
+> >  
+> > -	while (info->input->users) {
+> > +	while (info->ts_enabled) {
+> >  		ret = exynos_read_s3c64xx_ts(dev, &x, &y);
+> >  		if (ret == -ETIMEDOUT)
+> >  			break;
+> > @@ -712,6 +714,8 @@ static int exynos_adc_ts_open(struct input_dev *dev)
+> >  {
+> >  	struct exynos_adc *info = input_get_drvdata(dev);
+> >  
+> > +	info->ts_enabled = true;
+> > +	mb();
+> >  	enable_irq(info->tsirq);
+> >  
+> >  	return 0;
+> > @@ -721,6 +725,8 @@ static void exynos_adc_ts_close(struct input_dev *dev)
+> >  {
+> >  	struct exynos_adc *info = input_get_drvdata(dev);
+> >  
+> > +	info->ts_enabled = false;
+> > +	mb();
+> >  	disable_irq(info->tsirq);
+> 
+> This should be WRITE_ONCE paired with READ_ONCE in the ISR.
 
-IIRC it needs the VMA and various other flows can't return the vma
-list becuse they unlock the mmap_sem will running
+Why? I can see that maybe full memory barrier is too heavy when we set
+the flag to true, but the only requirement is for the flag to be set
+before we disable IRQ, so any additional guarantees provided by
+WRITE_ONCE are not needed. On the read side we want the flag to be
+noticed eventually, and there is no additional dependencies on the data,
+so it is unclear what READ_ONCE() will give us here.
 
-> For plans, I only started this for a bit of my own learning, but I
-> think I'll respin with the following changes:
-> - convert exynos and habanalabs to pin_user_pages_fast directly,
-> instead of going through this frame-vector detour
+> 
+> But is the check really needed? I see that this is to break waiting for
+> a touch release event, so I would assume this shouldn't wait forever
+> (unless the hardware is buggy)
 
-+1
+It is not hardware, it is user. Do you want to delay indefinitely
+close() just because user has a finger on the touchscreen?
 
-Jason
+> and breaking the loop will desync touch
+> state (I would guess this would be noticable by next user).
+
+Upon next open driver will service the interrupt and provide new set of
+touch coordinates. Userspace is supposed to query current state of
+device when opening it before starting processing events. Or you are
+concerned about some other state?
+
+In any case, this is current driver behavior and if it needs to be
+changed it is a topic for a separate patch.
+
+Thanks.
+
+-- 
+Dmitry
