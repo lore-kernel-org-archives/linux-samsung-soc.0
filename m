@@ -2,141 +2,128 @@ Return-Path: <SRS0=VHj3=DN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68500C41604
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 10:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6939C4363D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 11:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03CA0206D4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 10:17:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601979439;
-	bh=LjlbuXXwVZiOZnh4s8AiRFzOTD9ANSeAEjirAmE6Ijs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=NDqI3Hn+rytFFZRNXGCBOQONugzYYIe11/MEndDfUIsS5S6kWTG/7paUZ0+gWXPlA
-	 RQqOpGV7Vvz9pyGWH0Z8/R0802c4PPh3SBszQ9p+aZvelx4TaLgqdmVEpuEedZrHbs
-	 9hiRCkq7c6u9YMVrVxqEOYt4NndtYEm0K1QFPbLU=
+	by mail.kernel.org (Postfix) with ESMTP id 354462083B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 11:57:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="lLhpfE52"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725942AbgJFKRS (ORCPT
+        id S1726105AbgJFL5F (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 6 Oct 2020 06:17:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58236 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbgJFKRS (ORCPT
+        Tue, 6 Oct 2020 07:57:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40408 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbgJFL5F (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 6 Oct 2020 06:17:18 -0400
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45D0220870;
-        Tue,  6 Oct 2020 10:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601979437;
-        bh=LjlbuXXwVZiOZnh4s8AiRFzOTD9ANSeAEjirAmE6Ijs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=TNdguZjsASN3AhbyCcaIXFW6z4k/3XU5Hmc1yusVyUJx+Ho6rrIzvQM7KUvpKeGNQ
-         BTJW96WlaTEyY2T7WpQ5QozEknz60csXY/YjdG8qua52OXo8iXCQ6rHdCHU241BpUN
-         OGSBGdIVoZ86xv1cpozwyxSgPrFZ0HvXBhJVBxdc=
-Received: by mail-ej1-f44.google.com with SMTP id h24so10236188ejg.9;
-        Tue, 06 Oct 2020 03:17:17 -0700 (PDT)
-X-Gm-Message-State: AOAM530xwAYN+Rj5qFkbPHSajwUHyAtmfNXrm/NS6HPCWiW6M/FOnlqI
-        LWwMelqPMQfAOD0a5uMrHwXjppI0uumUBuqhhwg=
-X-Google-Smtp-Source: ABdhPJwlwRJfXM/fE2yWBLSzyxvAdx3iSTpcYDDZzKdj0oQdX9ZBfNiA7FQzsxHAYvDsj3Cf4ThgOgnubFLXNR4lgeA=
-X-Received: by 2002:a17:906:5247:: with SMTP id y7mr4228617ejm.503.1601979435624;
- Tue, 06 Oct 2020 03:17:15 -0700 (PDT)
+        Tue, 6 Oct 2020 07:57:05 -0400
+Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2053DC061755
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Oct 2020 04:57:05 -0700 (PDT)
+Received: by mail-ot1-x342.google.com with SMTP id s66so12020073otb.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Oct 2020 04:57:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0/v0p3FvFQy6vefIiWkN5sABT9yaRl0KmB4aTLtFJ80=;
+        b=lLhpfE52DsBTlXOZaNcfYtajrRM/cDqIwevRSBDcVW4qoPVbzEi7+sihe6YcHp2QOU
+         hnAD2eoXIOk84DvIqJ2RTZpXb49sc13g/2RKsA0kTklQEV+Sykz8QqnvTSECPTErHsRx
+         qsTQaNy+j6UOMtosFQSSws5ErF7y9aC00H4zo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0/v0p3FvFQy6vefIiWkN5sABT9yaRl0KmB4aTLtFJ80=;
+        b=inWt8SuuFAYlpaAO0ath3jPldoCqxnveJkf3BBL0W3KlcJK2fh13YztCixWUFzeSCh
+         W8sSwb/TYjJIi5Q1zxd26xF4MXd+VPkCrCx8ckmpVVPAhUljNvGvEP3Q5BN6b6f10eUz
+         qcoeUBMQU2nkWFxTDXiMBJFqocc5vECsRg4tKSwhaP0NKs7McKYuJm1HFPhT6LhfFOa5
+         tA8yAuWJguBQCJWIneZYOOF9wWXteGEjdOA8nLwYteIo/PWZI9FsRT3Z/SDXSyRUgxok
+         Umrgr2TGJXWsKclHqSoIc4gZPdQFKgNRsgv+IZ0fg/lDtCmsgkZJ7mIaEihuztVBoseK
+         oOaQ==
+X-Gm-Message-State: AOAM533pqiSr2j/DnkdUUs/oM3hfiZEmMZz+p5kcqKkLXpiy9lwXRWlL
+        yP2dJO+AleeFnNyjauvrm4FDxy0adXakDzhfB5E98Q==
+X-Google-Smtp-Source: ABdhPJyMG6+nB6zVd1RDfgIGK4/zu55vJ18yPOXo0KPUU4RdObE/Y3T3eJQEZZwVcpMDmw5VSMtR9OkGz5YHDq9+Jw8=
+X-Received: by 2002:a05:6830:1c3c:: with SMTP id f28mr2857746ote.188.1601985424516;
+ Tue, 06 Oct 2020 04:57:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <CGME20201006100556eucas1p2b69f76968a7a5901b5e9c66338c388d4@eucas1p2.samsung.com>
- <CAJKOXPfQHzFb8uUzu2_X=7Jvk9P-z-jahi6csggpZvGsEhNm6Q@mail.gmail.com> <dleftj362rekjw.fsf%l.stelmach@samsung.com>
-In-Reply-To: <dleftj362rekjw.fsf%l.stelmach@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 6 Oct 2020 12:17:02 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPePumx3-v7Odp8Fv65gzXFZw+EkZCaX-YE-CYrrmyr-8g@mail.gmail.com>
-Message-ID: <CAJKOXPePumx3-v7Odp8Fv65gzXFZw+EkZCaX-YE-CYrrmyr-8g@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] ARM: dts: exynos: Add Ethernet to Artik 5 board
-To:     Lukasz Stelmach <l.stelmach@samsung.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        =?UTF-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
+References: <0-v1-447bb60c11dd+174-frame_vec_fix_jgg@nvidia.com>
+ <20201005175308.GI4225@quack2.suse.cz> <20201005175746.GA4734@nvidia.com>
+In-Reply-To: <20201005175746.GA4734@nvidia.com>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Tue, 6 Oct 2020 13:56:53 +0200
+Message-ID: <CAKMK7uGrQq6tb2hMUSC-=JkTNMC2DvdQkcZncmVBKZ-0x6S61Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm/frame-vec: use FOLL_LONGTERM
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Mel Gorman <mgorman@suse.de>, stable <stable@vger.kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        John Hubbard <jhubbard@nvidia.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 6 Oct 2020 at 12:06, Lukasz Stelmach <l.stelmach@samsung.com> wrote=
-:
+On Mon, Oct 5, 2020 at 7:58 PM Jason Gunthorpe <jgg@nvidia.com> wrote:
 >
-> It was <2020-10-03 sob 12:13>, when Krzysztof Kozlowski wrote:
-> > On Fri, 2 Oct 2020 at 21:22, =C5=81ukasz Stelmach <l.stelmach@samsung.c=
-om> wrote:
-> >>
-> >> Add node for ax88796c ethernet chip.
-> >>
-> >> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
-> >> ---
-> >>  arch/arm/boot/dts/exynos3250-artik5-eval.dts | 21 +++++++++++++++++++=
-+
-> >>  1 file changed, 21 insertions(+)
-> >>
-> >> diff --git a/arch/arm/boot/dts/exynos3250-artik5-eval.dts b/arch/arm/b=
-oot/dts/exynos3250-artik5-eval.dts
-> >> index 20446a846a98..7f115c348a2a 100644
-> >> --- a/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-> >> +++ b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
-> >> @@ -37,3 +37,24 @@ &mshc_2 {
-> >>  &serial_2 {
-> >>         status =3D "okay";
-> >>  };
-> >> +
-> >> +&spi_0 {
-> >> +       status =3D "okay";
-> >> +       cs-gpios =3D <&gpx3 4 GPIO_ACTIVE_LOW>, <0>;
-> >> +
-> >> +       assigned-clocks        =3D <&cmu CLK_MOUT_MPLL>, <&cmu CLK_DIV=
-_MPLL_PRE>, <&cmu CLK_MOUT_SPI0>,    <&cmu CLK_DIV_SPI0>,  <&cmu CLK_DIV_SP=
-I0_PRE>, <&cmu CLK_SCLK_SPI0>;
+> On Mon, Oct 05, 2020 at 07:53:08PM +0200, Jan Kara wrote:
+> > On Mon 05-10-20 14:38:54, Jason Gunthorpe wrote:
+> > > When get_vaddr_frames() does its hacky follow_pfn() loop it should never
+> > > be allowed to extract a struct page from a normal VMA. This could allow a
+> > > serious use-after-free problem on any kernel memory.
+> > >
+> > > Restrict this to only work on VMA's with one of VM_IO | VM_PFNMAP
+> > > set. This limits the use-after-free problem to only IO memory, which while
+> > > still serious, is an improvement.
+> > >
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: 8025e5ddf9c1 ("[media] mm: Provide new get_vaddr_frames() helper")
+> > > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> > >  mm/frame_vector.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/mm/frame_vector.c b/mm/frame_vector.c
+> > > index 10f82d5643b6de..26cb20544b6c37 100644
+> > > +++ b/mm/frame_vector.c
+> > > @@ -99,6 +99,10 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+> > >             if (ret >= nr_frames || start < vma->vm_end)
+> > >                     break;
+> > >             vma = find_vma_intersection(mm, start, start + 1);
+> > > +           if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
+> > > +                   ret = -EINVAL;
+> > > +                   goto out;
+> > > +           }
+> > >     } while (vma && vma->vm_flags & (VM_IO | VM_PFNMAP));
 > >
-> > No spaces before or after '=3D'.
-> >
+> > Hum, I fail to see how this helps. If vma has no VM_IO or VM_PFNMAP flag,
+> > we'd exit the loop (to out: label) anyway due to the loop termination
+> > condition and why not return the frames we already have? Furthermore
+> > find_vma_intersection() can return NULL which would oops in your check
+> > then. What am I missing?
 >
-> You mean " =3D ", don't you?
+> Oh, nothing, you are right. It just didn't read naturally because
+> hitting the wrong kind of VMA should be an error condition :\
 
-Ah, of course.
-
->
-> >> + assigned-clock-parents =3D <&cmu CLK_FOUT_MPLL>, <&cmu
-> >> CLK_MOUT_MPLL>, <&cmu CLK_DIV_MPLL_PRE>, <&cmu CLK_MOUT_SPI0>, <&cmu
-> >> CLK_DIV_SPI0>, <&cmu CLK_DIV_SPI0_PRE>;
-> >
-> > This line is still too long. Please wrap it at 80. Checkpatch should
-> > complain about it... so it seems you did not run it. Please fix all
-> > checkpatch issues.
->
-> My idea was too keep assigned-clocks and assigned-clock-parrent lines
-> aligned, so it is clearly visible which parrent applies to which
-> clock. Is it inappropriate?
-
-The line gets too long and in the existing DTSes we wrapped item by
-item. Solution could be to add comments, e.g.:
-assigned-clock-parents =3D <&cmu CLK_FOUT_MPLL>,
-           <&cmu CLK_DIV_MPLL_PRE>, /* for: CLK_DIV_MPLL_PRE */
-           <&cmu CLK_MOUT_SPI0>, /* for: CLK_MOUT_SPI0 */
-
-but I am not sure if dtc allows such comments.
-
-Best regards,
-Krzysztof
+Also follow_pfn checks for this same conditionat already too, so this
+isn't really stopping anything bad from happening.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
