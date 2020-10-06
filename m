@@ -2,104 +2,128 @@ Return-Path: <SRS0=VHj3=DN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AA9C4363D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 21:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C56C4363D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 21:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A21D208B8
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 21:16:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602018967;
-	bh=T0/GhN/+kZwEkOkFiYjc6hrGX+zzEGXSqVUzdCQSe0Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=KmD940NAU4NLn75rVzKvavuZsPN5pCzPHQgPxaq1hvV6CsFbeDlGR8vVvI9fkDuPV
-	 uS0thc4oY/C/x43igb796Z8dVNfYGfDINh8xzbqIwa9gQ0i0AELh6+JjXPDxN85tQO
-	 O5nu6mvOnRUP51j4cwsuKkGj5LLHI+/TAoiUYsjk=
+	by mail.kernel.org (Postfix) with ESMTP id 53380208C7
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 21:50:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L9D8l+DM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbgJFVQH (ORCPT
+        id S1727382AbgJFVu4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 6 Oct 2020 17:16:07 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:43576 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727301AbgJFVQH (ORCPT
+        Tue, 6 Oct 2020 17:50:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47328 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726730AbgJFVuz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 6 Oct 2020 17:16:07 -0400
-Received: by mail-ot1-f65.google.com with SMTP id n61so175038ota.10;
-        Tue, 06 Oct 2020 14:16:06 -0700 (PDT)
+        Tue, 6 Oct 2020 17:50:55 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 991E8C061755;
+        Tue,  6 Oct 2020 14:50:55 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id k8so131686pfk.2;
+        Tue, 06 Oct 2020 14:50:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=8giwswfBxqLnHEu2oqSUvRPSaZxU1liNSS/lZSVFxsk=;
+        b=L9D8l+DMD8b3gpfHokXBq6EnkBSsCoHa1ex5FiK3YDyqD9csTKGz5X6SPG+z0pYZ9g
+         AbRmxL5SB6rspiy/0WAzZJfNasge3QsaBJGTV4YKmjIsuHhP39w+9vLx6keiMlSJ6JQL
+         2Y2Kgt35dkNonS79FVXRe7EhquAgADW7twnDV36+Zg4ijiZxd3xerE1StTwg9iqZGvpu
+         ZAulY4bu3xkIOKoqXMjO5PJmzoTDZLgWTm2aKfhhZhXERKk8wAgTYmbbrX6tKkxd0xYN
+         gj25QWgEvJ/bi5DQLZGRRI1AvXN9oCc8HFUkgn1WurUHQLdA0oAzErqubfOwCILMiDrO
+         cs/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=IbyeGvvWhzTHOAuw/P6MUaM6DrcIT8/THDuAFkHtSjU=;
-        b=jHXfcV9FJzbeYKMqET1GJkqt/7nryPNqRdVa/5OAn0yrYXh54uBa6SADUERaSz6VK+
-         W+qaWed2twjdMO7VIhPgFx1bQy9WaLoxDwLBVYiJ158VsHHTmkfkpuR7R7Shv2Zyoxls
-         wGwhKv1CcQefiWikcsHz1l4hQ3SF3B/9CvCWo1qeTW9ojaOpsC6LT8cOxvmS4J4+qfcz
-         9F2eDprkXiUylCPoMtCzN1KfR2pRhyyadj12c9mFyJtTKmCsQLplepYH5aZudUQLkV0R
-         VP4AvhsLaPRrd4WHVPcBrB/X4KqBnYbpv1tho1yr6U4OQ81cajcbRFMz6ei5PV1BTx7C
-         GAdA==
-X-Gm-Message-State: AOAM532oIhyk9L0G/cmfU+cephRah5L17s0icGmG49rRlJv7/RpdROa7
-        ku0SX4PEL6tDhDhWZQ892g==
-X-Google-Smtp-Source: ABdhPJzme7ICJfAh4x6/f5YZz4HcReSSoSxSjh2yih5oKdYeNR9pa2svBIHO/o1MslcSrhrmw6RfSw==
-X-Received: by 2002:a9d:2a88:: with SMTP id e8mr3980094otb.122.1602018966154;
-        Tue, 06 Oct 2020 14:16:06 -0700 (PDT)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v18sm115045ooq.11.2020.10.06.14.16.04
+        bh=8giwswfBxqLnHEu2oqSUvRPSaZxU1liNSS/lZSVFxsk=;
+        b=A+DHaiGxYzxATCvbqgigcm13YkZH54GOwfvFq8MhXAjOREoASwdOwBGDzu78fGSQww
+         lMX0Z4cN+13q/aUGPGSpqekekL1vCbRrz6BF3K6aDMX2Q6642eaS1Oi7Bt/VN8K4x/Vd
+         mMj2UjIJomoHAQKhgjMhdhy9OjfNEYspJD1n/qvA3EF1pJ7e0eN2LNSLWAs3v6EQCEOp
+         7eNH37tU3ioWGGdJu76kjuVILFvtU3vOJu3FQkUO6KhWty+DWDsacwzrH28hbmdMsXyA
+         t/Wx1HY9Hpui+Xe5JRJfQE02uG3ybhoGMRljo4s43UMUaI0RSlACgSZJAmpwgc4LMuXl
+         KbTA==
+X-Gm-Message-State: AOAM531UtPm+WJ/4NzmyHEZthEG1ul4hXkEAVN86pIKgM5Iw+y31vXyy
+        sWPrcKpms5yv/5sf8US/Y/o=
+X-Google-Smtp-Source: ABdhPJwZXFCK7tR/WRwAo960dzSlCK448GLKlYwVEJgpkwoOHU+Z6gdCqRzzRgnOSPzys+LCmVCKug==
+X-Received: by 2002:a63:d905:: with SMTP id r5mr202517pgg.300.1602021055063;
+        Tue, 06 Oct 2020 14:50:55 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
+        by smtp.gmail.com with ESMTPSA id mw11sm3594019pjb.57.2020.10.06.14.50.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Oct 2020 14:16:05 -0700 (PDT)
-Received: (nullmailer pid 2856256 invoked by uid 1000);
-        Tue, 06 Oct 2020 21:16:04 -0000
-Date:   Tue, 6 Oct 2020 16:16:04 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Marek Vasut <marex@denx.de>
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
-        devicetree@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH] phy: exynos-mipi-video: Add support for NXP i.MX8MM
-Message-ID: <20201006211604.GA2856199@bogus>
-References: <20201003225020.164358-1-marex@denx.de>
+        Tue, 06 Oct 2020 14:50:54 -0700 (PDT)
+Date:   Tue, 6 Oct 2020 14:50:51 -0700
+From:   dmitry.torokhov@gmail.com
+To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: adc: exynos: do not rely on 'users' counter in
+ ISR
+Message-ID: <20201006215051.GO1009802@dtor-ws>
+References: <20201006041214.GA4145870@dtor-ws>
+ <20201006193907.GA30199@qmqm.qmqm.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201003225020.164358-1-marex@denx.de>
+In-Reply-To: <20201006193907.GA30199@qmqm.qmqm.pl>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 04 Oct 2020 00:50:19 +0200, Marek Vasut wrote:
-> This patch adds support for MIPI DPHY found in NXP i.MX8MM.
+On Tue, Oct 06, 2020 at 09:39:07PM +0200, Michał Mirosław wrote:
+> On Mon, Oct 05, 2020 at 09:12:14PM -0700, dmitry.torokhov@gmail.com wrote:
+> > The order in which 'users' counter is decremented vs calling drivers'
+> > close() method is implementation specific, and we should not rely on
+> > it. Let's introduce driver private flag and use it to signal ISR
+> > to exit when device is being closed.
+> > 
+> > This has a side-effect of fixing issue of accessing inut->users
+> > outside of input->mutex protection.
+> [...]
 > 
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> Cc: Abel Vesa <abel.vesa@nxp.com>
-> Cc: Dong Aisheng <aisheng.dong@nxp.com>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Guido G�nther <agx@sigxcpu.org>
-> Cc: Jaehoon Chung <jh80.chung@samsung.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: NXP Linux Team <linux-imx@nxp.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> ---
->  .../devicetree/bindings/phy/samsung-phy.txt   |  7 ++++---
->  drivers/phy/samsung/Kconfig                   |  6 +++---
->  drivers/phy/samsung/phy-exynos-mipi-video.c   | 21 +++++++++++++++++++
->  3 files changed, 28 insertions(+), 6 deletions(-)
+> Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+> (after with a fix mentioned below)
 > 
+> > --- a/drivers/iio/adc/exynos_adc.c
+> > +++ b/drivers/iio/adc/exynos_adc.c
+> [...]
+> > @@ -712,6 +715,7 @@ static int exynos_adc_ts_open(struct input_dev *dev)
+> >  {
+> >  	struct exynos_adc *info = input_get_drvdata(dev);
+> >  
+> > +	WRITE_ONCE(info->ts_enabled, true);
+> >  	enable_irq(info->tsirq);
+> >  
+> >  	return 0;
+> > @@ -721,6 +725,7 @@ static void exynos_adc_ts_close(struct input_dev *dev)
+> >  {
+> >  	struct exynos_adc *info = input_get_drvdata(dev);
+> >  
+> > +	WRITE_ONCE(info->ts_enabled, true);
+> >  	disable_irq(info->tsirq);
+> 
+> Shouldn't 'true' be 'false' here?
 
-Acked-by: Rob Herring <robh@kernel.org>
+I swear if we disable cut-n-paste functionality there will be markable
+reduction in bug rates...
+
+Thanks for noticing this!
+
+-- 
+Dmitry
