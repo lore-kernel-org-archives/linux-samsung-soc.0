@@ -2,133 +2,155 @@ Return-Path: <SRS0=VHj3=DN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C2B9C4363D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 13:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD01C4727F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 13:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 545762075A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 13:04:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C65A220789
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 13:09:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="LIcR3mxl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726235AbgJFNEe (ORCPT
+        id S1726323AbgJFNJE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 6 Oct 2020 09:04:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50830 "EHLO
+        Tue, 6 Oct 2020 09:09:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725891AbgJFNEd (ORCPT
+        with ESMTP id S1725943AbgJFNJD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 6 Oct 2020 09:04:33 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A849C061755;
-        Tue,  6 Oct 2020 06:04:33 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: andrzej.p)
-        with ESMTPSA id 7ECB0299E5B
-Subject: Re: [PATCH v4 7/7] Input: Add "inhibited" property
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com, Patrik Fimml <patrikf@chromium.org>
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com>
- <20200608112211.12125-8-andrzej.p@collabora.com>
- <20201005181014.GL1009802@dtor-ws>
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Message-ID: <ac4eeab7-8333-b96b-707b-eb2d6d0d8139@collabora.com>
-Date:   Tue, 6 Oct 2020 15:04:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 6 Oct 2020 09:09:03 -0400
+Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18C35C061755
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Oct 2020 06:09:02 -0700 (PDT)
+Received: by mail-ot1-x342.google.com with SMTP id d28so5932450ote.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Oct 2020 06:09:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UIz7Ad1d8jfXlfMTcB0ZtI9qf0HUQ6fuKIJszWhIC+E=;
+        b=LIcR3mxlTUwN2cQS3JOV9OT3XWZSqNM8o2MXOXJGnXBlTjosIunp2xH+4xIx4TFcmX
+         bz9ZNBvOE+IWnnYFj2cRXRANjLRbYjiHsrPwgqT5Esz03Yaa5NJcAVZ84y6FBycdg5nl
+         9BP1OZjIaAgLdnUyieEXrQHDpl2wkajyftiXI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UIz7Ad1d8jfXlfMTcB0ZtI9qf0HUQ6fuKIJszWhIC+E=;
+        b=WCms3XdzF/yW8D05IGBb7h5xsvZz+mqOBHOM9tDqGR8OIlxuy10uzHd+k3fcOlPhrj
+         NBe160xBgBO/QVNVh+MQT70Rey3cL8uZvHmTXlfQ+HKVgbvIUNtU6Y+Pd7DWiOF4Imqz
+         t4JxFb54OaYTdEhJRMPZAuVE6ADxms2R8TOsv8Y98rKT73rNK9uYD5t7jH1Nn8FI0bvO
+         P4aia1cG57ZzRpepp1qOXOtPDaydz8raSGbOAE9bR7i96XaU+NtZBz9blAcRiMmud9Vp
+         JJMjbXQ+KUMFmXMdOE/bLSMhA+eMYrI6K91U0bKuCAQV955S1lmGdfo0OPozzAqQY+w+
+         fswA==
+X-Gm-Message-State: AOAM532aCRO1u1twnw0WwB7LdtfVW5TD1HjosDm20eYo+5kaQejv3wMM
+        r2dtwOx3jFabagK0OH2elczf/B2ecT0hnV+c0qPvjg==
+X-Google-Smtp-Source: ABdhPJzw1inwN+t+5foZtK0ezcoJPSOeTr206jyI3Yd7SrQuqlq6reZ+PEoA/n663vRpZhATnphV37mf6s0WcQ5NNFs=
+X-Received: by 2002:a05:6830:1647:: with SMTP id h7mr2992253otr.281.1601989741473;
+ Tue, 06 Oct 2020 06:09:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201005181014.GL1009802@dtor-ws>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <CAKMK7uFP-XQHUPYeRhPx7tjvjARQiF-os9z9jx6WANV6sgSf6g@mail.gmail.com>
+ <20201004125059.GP9916@ziepe.ca> <CAKMK7uF0AfuYGsHzKXhF=k-mAW=Wx_APf9fY9M9ormnwypoxZA@mail.gmail.com>
+ <20201005172854.GA5177@ziepe.ca> <CAKMK7uFzxWF7V=7vkeNC-8shsPZRgdz9fYTsn0ayENv2BpnFEg@mail.gmail.com>
+ <20201005183704.GC5177@ziepe.ca> <CAKMK7uH97Yb2JFviG_ynGC1hbQ69h9hcyFVFd2PFYHCDzfBN6g@mail.gmail.com>
+ <CAKMK7uHRxK3yNrvX=+n-XpSv7PDCz8w+mwof3pkUUJq3TpmiuQ@mail.gmail.com>
+ <20201005234104.GD5177@ziepe.ca> <CAKMK7uHt=kD=njZvMULy-k-bY4emn=u8__t7etQDq3_WUL7VAw@mail.gmail.com>
+ <20201006122655.GG5177@ziepe.ca>
+In-Reply-To: <20201006122655.GG5177@ziepe.ca>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Tue, 6 Oct 2020 15:08:50 +0200
+Message-ID: <CAKMK7uEsVOopEuWrjXOh+pjo=XZXkVf6Y6sC7WD7zr+t=rBdZg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm/frame-vec: use FOLL_LONGTERM
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>, Oded Gabbay <oded.gabbay@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Dmitry,
+On Tue, Oct 6, 2020 at 2:26 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Tue, Oct 06, 2020 at 08:23:23AM +0200, Daniel Vetter wrote:
+> > On Tue, Oct 6, 2020 at 1:41 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > >
+> > > On Tue, Oct 06, 2020 at 12:43:31AM +0200, Daniel Vetter wrote:
+> > >
+> > > > > iow I think I can outright delete the frame vector stuff.
+> > > >
+> > > > Ok this doesn't work, because dma_mmap always uses a remap_pfn_range,
+> > > > which is a VM_IO | VM_PFNMAP vma and so even if it's cma backed and
+> > > > not a carveout, we can't get the pages.
+> > >
+> > > If CMA memory has struct pages it probably should be mmap'd with
+> > > different flags, and the lifecycle of the CMA memory needs to respect
+> > > the struct page refcount?
+> >
+> > I guess yes and no. The problem is if there's pagecache in the cma
+> > region, pup(FOLL_LONGTERM) needs to first migrate those pages out of
+> > the cma range. Because all normal page allocation in cma regions must
+> > be migratable at all times.
+>
+> Eh? Then how are we doing follow_pfn() on this stuff and not being
+> completely broken?
+>
+> The entire point of this framevec API is to pin the memory and
+> preventing it from moving around.
+>
+> Sounds like it is fundamentally incompatible with CMA. Why is
+> something trying to mix the two?
 
-W dniu 05.10.2020 o 20:10, Dmitry Torokhov pisze:
-> Hi Andrzej,
-> 
-> On Mon, Jun 08, 2020 at 01:22:11PM +0200, Andrzej Pietrasiewicz wrote:
->> @@ -284,8 +284,11 @@ static int input_get_disposition(struct input_dev *dev,
->>   	case EV_KEY:
->>   		if (is_event_supported(code, dev->keybit, KEY_MAX)) {
->>   
->> -			/* auto-repeat bypasses state updates */
->> -			if (value == 2) {
->> +			/*
->> +			 * auto-repeat bypasses state updates but repeat
->> +			 * events are ignored if the key is not pressed
->> +			 */
->> +			if (value == 2 && test_bit(code, dev->key)) {
->>   				disposition = INPUT_PASS_TO_HANDLERS;
->>   				break;
->>   			}
-> 
-> Is this chunk really part of inhibit support? I'd think we cancel
-> autorepeat timer when we are releasing a key, no?
-> 
+I think the assumption way back when this started is that any VM_IO |
+VM_PFNMAP vma is perma-pinned because it's just a piece of carveout.
+Of course this ignored that it could also be a piece of iomem and
+peer2peer dma doens't Just Work, so could result in all kinds of
+hilarity and hw exceptions. But no leaks. Well, if you assume that the
+ownership of a device never changes after you've booted the system.
 
-When I look at it now it seems to me the chunk might be redundant.
-But let me explain what I had in mind when adding it.
+But now we have dynamic gpu memory management, a bunch of subsystems
+that fully support revoke semantics (in a subsystem specific way), and
+CMA trying really hard to make the old carveouts useable for the
+system at large when the memory isn't needed by the device. So all
+these assumptions behind follow_pfn are out of the window, and
+follow_pfn is pretty much broken.
 
-It is a matter of what we do with input events generated while a
-device is inhibited. If ->open()/->close() are not provided by the
-driver then inhibiting amounts to merely ignoring input events from
-a device while it remains active. What else can you do if the driver
-does not provide a method to prepare the device for generating events/
-to stop generating events?
+What's worse I noticed that even for static pfnmaps (for userspace
+drivers) we now revoke access to those mmaps. For example implemented
+for /dev/mem in 3234ac664a87 ("/dev/mem: Revoke mappings when a driver
+claims the region"). Which means follow_pfn isn't even working
+correctly anymore for that case, and it's all pretty much broken.
 
-In this special case a user might trigger a repeated event while the
-device is inhibited, then the user keeps holding the key down and the
-device is uninhibited. Do we pass anything to handlers then?
+> > This is actually worse than the gpu case I had in mind, where at most
+> > you can sneak access other gpu buffers. With cma you should be able to
+> > get at arbitrary pagecache (well anything that's GFP_MOVEABLE really).
+> > Nice :-(
+>
+> Ah, we have a winner :\
 
-In my opinion we should not. Such an event is "illegal" in a sense that it
-was generated at a time when nobody wanted any events from the device.
-Hence the test to let only those auto-repeat events through for which
-a key is actually pressed.
-
-However, what I see now is that if a device is inhibited, no key
-will ever reach neither the "1" nor "2" state because of the "if"
-in the very beginning of input_handle_event().
-
-Regards,
-
-Andrzej
+Cheers, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
