@@ -2,156 +2,173 @@ Return-Path: <SRS0=VHj3=DN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B5DC4363D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 21:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DBCC41604
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 22:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E053D208C3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 21:55:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/mD8rmb"
+	by mail.kernel.org (Postfix) with ESMTP id 7CD8E206FC
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 22:27:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1602023279;
+	bh=R1vQHshFKan1CrT9VsJaCtBguhg7j2mCG+x52h0O814=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=R2CPmkftuaV2pTv5SbnunDLdjRjMdxZKUdeTFkGNXaFY7JCujEH8pBLguINS3blO1
+	 XbyarvuRiMRxyKK1vsl5R9TwzS1XubXQioz6ejGQVLP56esPLAqDW9vemF9Fzjqar8
+	 n7lHHB/ofIbAENDZapIUV+5YEF6BnrEiHK2vkzac=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbgJFVzO (ORCPT
+        id S1727198AbgJFW15 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 6 Oct 2020 17:55:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48006 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726759AbgJFVzO (ORCPT
+        Tue, 6 Oct 2020 18:27:57 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33698 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbgJFW14 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 6 Oct 2020 17:55:14 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AADA8C061755;
-        Tue,  6 Oct 2020 14:55:13 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id 22so82834pgv.6;
-        Tue, 06 Oct 2020 14:55:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding;
-        bh=41YT6TynwC5ufFrllX6VSGwwbv2gFzlUh+XiHKPl8Cw=;
-        b=E/mD8rmbsDDo0cpmH1IH4aR36Q480W6RiT1EjMo0xNVCmJCrLqkyefbsVcFAPQ13wW
-         rfp6ynKON679HDFU5wV/6U9Kzspa4gC2XrcDlm8Wr88QtINQ3b/LZC+gj8jE6Zpb9ZZW
-         Gm9pFXYJOEIftZ+rXnxLlxWa0kJDsMxEuv6gFmUUDrHRY5RtQ0pSyDwLQHCYw1ge8q6D
-         gEtoBFyo9tpOjtAR935+wSy+zRHM9Y4yf9Na3O2rTcPMvH2DlMJUxZ4+cVaGvkvW86dI
-         eOIOenLZrUQ9bGrIWIYth6HNzmvbJYkWERKz98YDguzDrLpF16MWQhqQKo4MG7UrBpP9
-         JLlg==
+        Tue, 6 Oct 2020 18:27:56 -0400
+Received: by mail-ot1-f68.google.com with SMTP id t15so428098otk.0;
+        Tue, 06 Oct 2020 15:27:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding;
-        bh=41YT6TynwC5ufFrllX6VSGwwbv2gFzlUh+XiHKPl8Cw=;
-        b=negntRDU7oPY5/8C0Y3kbIJSfswdcQKVkgZYnCG00HgxCPDG9MohDNSETKu0qh8XKu
-         RwiKOMBFWg+RCVwPM0AW37iVmHnxx2zlOv6yCvMoIVWhfbI992mlkZNlh3fI/8IzyVzU
-         Dn6ip33EdBbsRRPQhHQYwkxqhrkWfqq6iXZWQ3Q1fv7cWTUvn+kXhOfmdqHwvAHqTJJ1
-         yL/I4gQnVlDGWEmePPz+MjO6mEJejaWbLT+YO9iaBXbo33vrp31KAFbpJEIw/7w4YxhR
-         BjE6H8XeAxT5A9a5ZU5ROqyEtGJsMNV34zvM0E6hqgaGCpK2QJ008t6cQjxpe0hkl++t
-         zIdA==
-X-Gm-Message-State: AOAM531fLSwaxrwj1sLULGQfobXNZqTFDwFWZUF9ZdhmENnCHVNRl2+H
-        ayXNmcW7gZbUHckDXqTtU3w=
-X-Google-Smtp-Source: ABdhPJzpyBKLQjvXEkHl4oYJaVQUu5wfHAeN9KmD8z/Sqd3e/fEN1+fU+i4L5I0H2iYxucDQe9nn0g==
-X-Received: by 2002:a62:7749:0:b029:152:9d3b:c85e with SMTP id s70-20020a6277490000b02901529d3bc85emr35858pfc.16.1602021313034;
-        Tue, 06 Oct 2020 14:55:13 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id c67sm148242pfa.209.2020.10.06.14.55.11
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=bIxfwcUKhwWi5PXEHY2oibtjWm53f5qOOJ6d+hhSij8=;
+        b=lQlcfl6ttx/kRd+oJdSUjrKcdM6Xo9OQEa/6y8r7y588RTWRMk5/KzZ5SFT32fBBGC
+         M2lmnQp5A12GD8nCUpe48V+AwesNiShKp70dwy2fcrOh/CJK+5CpNwPlG1hfTXdLQsWw
+         y+8Wel8UQLVLbnWdGbfW7FOZPIXCRJjm8i6+ZEBwGf9hdfu1V+VsMV1kKdyegJf/c6tx
+         2vvh6E/0w3pajSv82neWpsYALMZjJc7hOBC75YtafnC8BSo/2axzz2PV35/wcFimk5Db
+         5PaCCbRCD7JADFc9WFMN3AtUTuk2BmEYkNfIt1Dqv+w0xEk2hDSg3na5wsN6JKm8ch1B
+         ORfQ==
+X-Gm-Message-State: AOAM530lkJYn0fS7pnihxedg87TpjsFFx5BuQ8RCQEdTLbMBG3+UWa5u
+        2UoFCV5A6Tvp1tGBXloKxS3KMeAQ5eTZ
+X-Google-Smtp-Source: ABdhPJxRwMszI2DlfXiX8dwjERn3YfMK8ci9QTyyCK5c1CqJYSx11XCGap5FgjPbZZOpuJCAn1RIGg==
+X-Received: by 2002:a05:6830:138f:: with SMTP id d15mr85548otq.342.1602023275282;
+        Tue, 06 Oct 2020 15:27:55 -0700 (PDT)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t5sm96136otl.22.2020.10.06.15.27.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Oct 2020 14:55:12 -0700 (PDT)
-Date:   Tue, 6 Oct 2020 14:55:09 -0700
-From:   dmitry.torokhov@gmail.com
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] iio: adc: exynos: do not rely on 'users' counter in ISR
-Message-ID: <20201006215509.GA2556081@dtor-ws>
+        Tue, 06 Oct 2020 15:27:54 -0700 (PDT)
+Received: (nullmailer pid 2969307 invoked by uid 1000);
+        Tue, 06 Oct 2020 22:27:53 -0000
+Date:   Tue, 6 Oct 2020 17:27:53 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Alexander Dahl <ada@thorsis.com>
+Cc:     Jeff LaBundy <jeff@labundy.com>, Alexander Dahl <post@lespocky.de>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v7 03/12] dt-bindings: mfd: Fix schema warnings for
+ pwm-leds
+Message-ID: <20201006222753.GA2965477@bogus>
+References: <20201005203451.9985-1-post@lespocky.de>
+ <20201005203451.9985-4-post@lespocky.de>
+ <20201006021729.GA4822@labundy.com>
+ <3367098.sbkyfNuaKI@ada>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <3367098.sbkyfNuaKI@ada>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The order in which 'users' counter is decremented vs calling drivers'
-close() method is implementation specific, and we should not rely on
-it. Let's introduce driver private flag and use it to signal ISR
-to exit when device is being closed.
+On Tue, Oct 06, 2020 at 08:34:23AM +0200, Alexander Dahl wrote:
+> Hello Jeff,
+> 
+> Am Dienstag, 6. Oktober 2020, 04:17:29 CEST schrieb Jeff LaBundy:
+> > Hi Alexander,
+> > 
+> > On Mon, Oct 05, 2020 at 10:34:42PM +0200, Alexander Dahl wrote:
+> > > The node names for devices using the pwm-leds driver follow a certain
+> > > naming scheme (now).  Parent node name is not enforced, but recommended
+> > > by DT project.
+> > > 
+> > >   DTC     Documentation/devicetree/bindings/mfd/iqs62x.example.dt.yaml
+> > >   CHECK   Documentation/devicetree/bindings/mfd/iqs62x.example.dt.yaml
+> > > 
+> > > /home/alex/build/linux/Documentation/devicetree/bindings/mfd/iqs62x.exampl
+> > > e.dt.yaml: pwmleds: 'panel' does not match any of the regexes:
+> > > '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'> 
+> > >         From schema:
+> > >         /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/
+> > >         leds-pwm.yaml> 
+> > > Signed-off-by: Alexander Dahl <post@lespocky.de>
+> > > ---
+> > > 
+> > > Notes:
+> > >     v6 -> v7:
+> > >       * added warning message to commit message (Krzysztof Kozlowski)
+> > >     
+> > >     v6:
+> > >       * added this patch to series
+> > >  
+> > >  Documentation/devicetree/bindings/mfd/iqs62x.yaml | 5 +++--
+> > >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/mfd/iqs62x.yaml
+> > > b/Documentation/devicetree/bindings/mfd/iqs62x.yaml index
+> > > 541b06d80e73..92dc48a8dfa7 100644
+> > > --- a/Documentation/devicetree/bindings/mfd/iqs62x.yaml
+> > > +++ b/Documentation/devicetree/bindings/mfd/iqs62x.yaml
+> > > 
+> > > @@ -90,10 +90,11 @@ examples:
+> > >              };
+> > >      
+> > >      };
+> > > 
+> > > -    pwmleds {
+> > > +    led-controller {
+> > > 
+> > >              compatible = "pwm-leds";
+> > > 
+> > > -            panel {
+> > > +            led-1 {
+> > > +                    label = "panel";
+> > > 
+> > >                      pwms = <&iqs620a_pwm 0 1000000>;
+> > >                      max-brightness = <255>;
+> > >              
+> > >              };
+> > 
+> > I like the consistency this brings. My only feedback is that in the other
+> > examples I found (common.yaml and leds-gpio.yaml), the children count off
+> > from 0 (e.g. led-0) instead of 1 as your series appears to.
+> 
+> You're right.  And that's also the same in leds-lp50xx.yaml and … well I did 
+> not look close enough, maybe the numbering scheme on the PCB on my desk 
+> confused me.
 
-This has a side-effect of fixing issue of accessing inut->users
-outside of input->mutex protection.
+If you can tie the numbering to the PCB, then do that.
 
-Reported-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
+> Okay, we are already talking about starting index.  What about the parent 
+> node's "led-controller" then in case there are more than one?  IIRC Rob 
+> acknowledged starting from 1 like "led-controller-1", "led-controller-2" and 
+> so on.
 
-v3: fixed typo in exynos_adc_ts_close() per Michał Mirosław
-v2: switched from ordinary read/write to READ_ONCE/WRITE_ONCE per Michał
-Mirosław
+No, I'd assume we start at 0.
 
- drivers/iio/adc/exynos_adc.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index 22131a677445..908df4b9b93c 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -7,6 +7,7 @@
-  *  Copyright (C) 2013 Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-  */
- 
-+#include <linux/compiler.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/interrupt.h>
-@@ -135,6 +136,8 @@ struct exynos_adc {
- 	u32			value;
- 	unsigned int            version;
- 
-+	bool			ts_enabled;
-+
- 	bool			read_ts;
- 	u32			ts_x;
- 	u32			ts_y;
-@@ -633,7 +636,7 @@ static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
- 	bool pressed;
- 	int ret;
- 
--	while (info->input->users) {
-+	while (READ_ONCE(info->ts_enabled)) {
- 		ret = exynos_read_s3c64xx_ts(dev, &x, &y);
- 		if (ret == -ETIMEDOUT)
- 			break;
-@@ -712,6 +715,7 @@ static int exynos_adc_ts_open(struct input_dev *dev)
- {
- 	struct exynos_adc *info = input_get_drvdata(dev);
- 
-+	WRITE_ONCE(info->ts_enabled, true);
- 	enable_irq(info->tsirq);
- 
- 	return 0;
-@@ -721,6 +725,7 @@ static void exynos_adc_ts_close(struct input_dev *dev)
- {
- 	struct exynos_adc *info = input_get_drvdata(dev);
- 
-+	WRITE_ONCE(info->ts_enabled, false);
- 	disable_irq(info->tsirq);
- }
- 
--- 
-2.28.0.806.g8561365e88-goog
-
-
--- 
-Dmitry
+> > That's not a huge deal; it simply seems more consistent to count from the
+> > first index allowed by the regex (0). The patch is still fine, and so:
+> > 
+> > Acked-by: Jeff LaBundy <jeff@labundy.com>
+> 
+> Thanks.
+> 
+> I'm not sure how many more iterations of this series we will need, at least 
+> one for the binding license acks I guess, so I could also adapt the child node 
+> indexes in schema and actual dts files in v8 or so.
+> 
+> Greets
+> Alex
+> 
+> 
+> 
