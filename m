@@ -2,116 +2,163 @@ Return-Path: <SRS0=VHj3=DN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F821C4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 00:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 743C9C4727E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 02:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D40632074A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 00:34:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3737420874
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  6 Oct 2020 02:17:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKjsXNmS"
+	dkim=pass (1024-bit key) header.d=NETORG5796793.onmicrosoft.com header.i=@NETORG5796793.onmicrosoft.com header.b="eNFIMgmq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725917AbgJFAeE (ORCPT
+        id S1726588AbgJFCRk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Oct 2020 20:34:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48226 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbgJFAeE (ORCPT
+        Mon, 5 Oct 2020 22:17:40 -0400
+Received: from mail-dm6nam12on2049.outbound.protection.outlook.com ([40.107.243.49]:37344
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725870AbgJFCRk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Oct 2020 20:34:04 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 412DDC0613CE;
-        Mon,  5 Oct 2020 17:34:04 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id nl2so695950pjb.1;
-        Mon, 05 Oct 2020 17:34:04 -0700 (PDT)
+        Mon, 5 Oct 2020 22:17:40 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=D/h1BWTNuokU7YggvlMnVMq2m955hxdWbCPqWf2LsD7KrLaZvvnVIKl+P9dmiHtK/DJ6ES00//WFwpY/vMjYUG3IZslMEYEwY0k0Nw7uWcszSjid6Gu8WILxe1nFCVptuf85/IqLroZwFiTp+ppjfyr399EOYudkSWvhn80syI19Cb9JxBRMTBc2kO9fW859Q/e05rKmhYc/tnlGqgKHfS195RqyFxY9Do7dg4YtYLD1W8jpmLqb0y5arptJcN8F6ysWSbp+6BavLtZKyuGi0a/JM6cvRVldpGQzMbprStm//TQQK+KwbFZzOnSFcaoEdnuHp4W+coN6vwC8JGASUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wsgKR+uTTyEDf4YuDPnotldBpHzN9BpUWfW/G54U1YE=;
+ b=FjuQmlBqnTS1GD8mk2vtegtgqYV3qIW+Bb7uTLP2dI96BAluzxvbmLCZ81FxdpfHjk/m/Lk/y+ARrfKoYA3lRxBllImfiI5XtbHqV3PTSSYWyDYmjDpR8zT8zcCjI7Bfpz2TllBpgnbu+88FOB38uCe1ZWUdXVZf6m4gl1EuiYFIkoiUeSDn+a100uKq7SEpgIU6EtS6H4GmRDVjas0+icIFzj3OYFZ3my80mq7cBCRT83Hnona1GGL4oMhtsoDtNPZ7gkZvPreAHDdc0lr6x52LKrlWS4D5Ry5cc1JR4pQbmuC2ZdTITYAMrLYLDGyapkZO6YqjzomemtP7JXq/cw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=labundy.com; dmarc=pass action=none header.from=labundy.com;
+ dkim=pass header.d=labundy.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=IXQFOUHrH8bt86SLgjOWRJ9SpW6/8NcDU5WZWejyEGs=;
-        b=hKjsXNmSEgGgBUoiWA5tATc5pz3P+Ovdzi9HDFr3sc0TA8enS3QcMiPxn/v+TUayf0
-         OmpzJm6VdjN5mlJ1gU9VGj/WqZGlYW9ebrm/GsP4Ck3vQJOhZLBpSF2FZIQ5BC9QRrSz
-         FKcZ+spZs4tA6iPPafzLANU2JvQweRRfFMDLcVN/VuucH3T4J24EzRubHw39CbRLe6Ce
-         cazuuPmfbIB/IkPTqkNjTeVe753efXzo+njkx7o0uHSvOmLPqbamsAGHBz4JVHGemTTe
-         w+4zx7sgTaHNQuYMofsjiN2ftVAI38PxYHVmVDTWZ3l47HjffULLlFNB57QfGI7tGEBp
-         FY3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=IXQFOUHrH8bt86SLgjOWRJ9SpW6/8NcDU5WZWejyEGs=;
-        b=huMqdWxRoUG+mVhLJUfRh7ygtXT/Wkon3NFZUT3ayBrB/sYbzEWGMdy/iHlr1Z1DoH
-         JrOMQyX8oAFCGPbixmBstev0cFZzoS36buu5PIHBY1KloVoeV/fE4IQvfW11cuBVZWcG
-         OFz19E4EH1VLCcUZ5yh5UbR4lNKRDBW2j5+kCJKhX0aej2EjDRV8R/HxoRZ58tk9A66H
-         a1DIhyD1slvSl48gVecGchJcDTlIc8/mbaBEu9nDXevdutqwmWMIdi5VAWz4VFFx4DM0
-         Jhd5kYuOJBAa+5YuwIg9As4oBr3lsLTMPtdOzXoHr2tNN6WK6NQnxDQYz8DAp46UvDiM
-         nCiw==
-X-Gm-Message-State: AOAM533Biw9Lxu9L+qotWmynA9z2dxZEV7q7ymUUWObqXkyVU7iDTKxb
-        MZniKK2kQuqEbpnF20qRSlubdHMXJmQ=
-X-Google-Smtp-Source: ABdhPJx60QfTP8SkwhetSwFfjmOhuCp2Wgxwfoy0efqga5UqMXt7YfzCnEtpb1OAS6o5ZjHkUBbCuA==
-X-Received: by 2002:a17:90a:bf03:: with SMTP id c3mr1950157pjs.65.1601944443594;
-        Mon, 05 Oct 2020 17:34:03 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id v9sm763862pjh.2.2020.10.05.17.34.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2020 17:34:02 -0700 (PDT)
-Date:   Mon, 5 Oct 2020 17:34:00 -0700
-From:   dmitry.torokhov@gmail.com
-To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: exynos: do not rely on 'users' counter in ISR
-Message-ID: <20201006003400.GN1009802@dtor-ws>
-References: <20201005052420.GA3262631@dtor-ws>
- <20201005110908.GA3243@qmqm.qmqm.pl>
- <20201005173636.GK1009802@dtor-ws>
- <20201005190010.GA29936@qmqm.qmqm.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+ d=NETORG5796793.onmicrosoft.com; s=selector1-NETORG5796793-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wsgKR+uTTyEDf4YuDPnotldBpHzN9BpUWfW/G54U1YE=;
+ b=eNFIMgmqXXbaSCK/NyTw7LBI6PBX4/0P6kTqjt4uag0BQ7vaXkIDRjV8TM5lQx+V523x5KOjHLI5R/Wiht36U1p3OH6MmEao1AB2f5R7/pgsa3VIjE9lSRp2K8UaCUfcMURVALQh/Mx4uwmttDYKDCW/UGyN1kMQM4R8MHYHFWo=
+Authentication-Results: lespocky.de; dkim=none (message not signed)
+ header.d=none;lespocky.de; dmarc=none action=none header.from=labundy.com;
+Received: from SN6PR08MB5517.namprd08.prod.outlook.com (2603:10b6:805:fb::32)
+ by SN6PR08MB3856.namprd08.prod.outlook.com (2603:10b6:805:1e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.32; Tue, 6 Oct
+ 2020 02:17:36 +0000
+Received: from SN6PR08MB5517.namprd08.prod.outlook.com
+ ([fe80::c989:9cea:baa6:8254]) by SN6PR08MB5517.namprd08.prod.outlook.com
+ ([fe80::c989:9cea:baa6:8254%7]) with mapi id 15.20.3433.044; Tue, 6 Oct 2020
+ 02:17:36 +0000
+Date:   Mon, 5 Oct 2020 21:17:29 -0500
+From:   Jeff LaBundy <jeff@labundy.com>
+To:     Alexander Dahl <post@lespocky.de>
+Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Alexander Dahl <ada@thorsis.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v7 03/12] dt-bindings: mfd: Fix schema warnings for
+ pwm-leds
+Message-ID: <20201006021729.GA4822@labundy.com>
+References: <20201005203451.9985-1-post@lespocky.de>
+ <20201005203451.9985-4-post@lespocky.de>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201005190010.GA29936@qmqm.qmqm.pl>
+In-Reply-To: <20201005203451.9985-4-post@lespocky.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [136.49.227.119]
+X-ClientProxiedBy: DM5PR04CA0056.namprd04.prod.outlook.com
+ (2603:10b6:3:ef::18) To SN6PR08MB5517.namprd08.prod.outlook.com
+ (2603:10b6:805:fb::32)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from labundy.com (136.49.227.119) by DM5PR04CA0056.namprd04.prod.outlook.com (2603:10b6:3:ef::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.34 via Frontend Transport; Tue, 6 Oct 2020 02:17:35 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 42d59d84-e4bb-4172-853e-08d8699dfddf
+X-MS-TrafficTypeDiagnostic: SN6PR08MB3856:
+X-Microsoft-Antispam-PRVS: <SN6PR08MB3856E6365371B15C3BF3324FD30D0@SN6PR08MB3856.namprd08.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2512;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: yyWpBj2mKGtt8BKZ+zMzO4L2kPZS3zA88g8PWH8LfuNPWKz1+wUeQxsHi+ym11FuTnhdbYKCwZJiAO7y48XSViARLIj6dhX1LI6MWHiUOVtHhH5M5axL5LXzG+AvNaBKwv/kP8E22B0WeqpOpfC/DsmWI6sy5dzISQnwfzQTUidHUAMepCOAtL6zOvlovhsl1SbgQvjd+F8sIu2EmE8tn4BTWoPjREwEFpUV2zBM81p7IXG2inaGgMBDU+4IX49NFAmRj742UuVwX2bUu/nnaitB1HpVzn/S1FZVwDsQuP1hOq4iRjwPY0XTtILyfVxV
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR08MB5517.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(396003)(366004)(136003)(39830400003)(376002)(66556008)(7416002)(66476007)(66946007)(86362001)(54906003)(1076003)(36756003)(6666004)(5660300002)(2906002)(316002)(4326008)(8886007)(83380400001)(8676002)(2616005)(7696005)(55016002)(16526019)(186003)(6916009)(26005)(33656002)(8936002)(52116002)(956004)(478600001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: 1G4pMmpTRQhiz06Dk9nZXscYgIAY4eoGOeHpzrqRT6ls3Tqv6mCfPPv81RPhrIjxIXHbeSp2LqLWtFfO8I3ibA+TrJdDf682M08O5Gxhzb9vTaQob8oQsYffyv1IticXuPTP5RKhYun9VVEMzMTDF+hKP2f+QyMwuBGrenbBJIE8ipRAoF6GEeeijx0gCfIejQZCRvuDZApZcHXU/NCWvR4pq3mDhisGTU7rQiAgLmO2IQcZu6zlMKQR1ZPD8ltEloMiqCjq/iwWxP9d1RFZLr9/CHyp4RUchzpIXKtJr7RGixjDbO9WNr2QIcEjAPVQSXlqrcE+GJodeO0C+MwGxQ+YQLW3AEVV6ugT7oFs5bT+1+IX2df3ge46004vQonU0PB7rtJLY0/3ol785dRjROFfMt/1XDuxWqnSGo7Ll6GTz6RDNol6yBaR7ZPm4sE91VbA44N3PLZEB5cL9fTc850ZV/pzvg7lmvJ6fslOLHA8bw6qmE9F6tuxvUPDDA39nkX9HfH774quACmLhLzAKkUQv3YviZjOym6w4ugWx4qhyT+13lt10rhJMgZengDhlCS0JV/JBF0WFvIeh0cpoKgpHAzy35sd+vL07/El3l6DlvB5hpJRa3wxBfK+p3WhchFC22V2QUBOxOwvSgg9Zw==
+X-OriginatorOrg: labundy.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42d59d84-e4bb-4172-853e-08d8699dfddf
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR08MB5517.namprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2020 02:17:36.5979
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 00b69d09-acab-4585-aca7-8fb7c6323e6f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k2tWd4LckH+4fBsoSEKuig9Vj7+GHsRT7FGleNnuRf6jwF2ylZKHh13YSzxXrchqoaOKV4GFRfFw1ruxLCd7Kg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR08MB3856
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 05, 2020 at 09:00:10PM +0200, Michał Mirosław wrote:
-> On Mon, Oct 05, 2020 at 10:36:36AM -0700, dmitry.torokhov@gmail.com wrote:
-> > Hi Michał,
-> > 
-> > On Mon, Oct 05, 2020 at 01:09:08PM +0200, Michał Mirosław wrote:
-> > > and breaking the loop will desync touch
-> > > state (I would guess this would be noticable by next user).
-> > Upon next open driver will service the interrupt and provide new set of
-> > touch coordinates. Userspace is supposed to query current state of
-> > device when opening it before starting processing events. Or you are
-> > concerned about some other state?
+Hi Alexander,
+
+On Mon, Oct 05, 2020 at 10:34:42PM +0200, Alexander Dahl wrote:
+> The node names for devices using the pwm-leds driver follow a certain
+> naming scheme (now).  Parent node name is not enforced, but recommended
+> by DT project.
 > 
-> From the code I would expect that there is a slight window, wher when the
-> user releases the touch between close() and open(), the client that open()s
-> will see a 'pressed' state until the ISR runs again (probably immediately
-> because of pending interrupt). OTOH, maybe the app should be prepared
-> for that anyway?
+>   DTC     Documentation/devicetree/bindings/mfd/iqs62x.example.dt.yaml
+>   CHECK   Documentation/devicetree/bindings/mfd/iqs62x.example.dt.yaml
+> /home/alex/build/linux/Documentation/devicetree/bindings/mfd/iqs62x.example.dt.yaml: pwmleds: 'panel' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+>         From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+> 
+> Signed-off-by: Alexander Dahl <post@lespocky.de>
+> ---
+> 
+> Notes:
+>     v6 -> v7:
+>       * added warning message to commit message (Krzysztof Kozlowski)
+>     
+>     v6:
+>       * added this patch to series
+> 
+>  Documentation/devicetree/bindings/mfd/iqs62x.yaml | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/iqs62x.yaml b/Documentation/devicetree/bindings/mfd/iqs62x.yaml
+> index 541b06d80e73..92dc48a8dfa7 100644
+> --- a/Documentation/devicetree/bindings/mfd/iqs62x.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/iqs62x.yaml
+> @@ -90,10 +90,11 @@ examples:
+>              };
+>      };
+>  
+> -    pwmleds {
+> +    led-controller {
+>              compatible = "pwm-leds";
+>  
+> -            panel {
+> +            led-1 {
+> +                    label = "panel";
+>                      pwms = <&iqs620a_pwm 0 1000000>;
+>                      max-brightness = <255>;
+>              };
+> -- 
+> 2.20.1
+> 
 
-I think users should be prepared for it. There could be many users, so
-anyone opening interface device (evdev or similar) can not expect that
-the hardware device is in a quiesce state; it could just happen that
-finger was on the surface and will be released as someone is opening the
-device anyway.
+I like the consistency this brings. My only feedback is that in the other
+examples I found (common.yaml and leds-gpio.yaml), the children count off
+from 0 (e.g. led-0) instead of 1 as your series appears to.
 
-Thanks.
+That's not a huge deal; it simply seems more consistent to count from the
+first index allowed by the regex (0). The patch is still fine, and so:
 
--- 
-Dmitry
+Acked-by: Jeff LaBundy <jeff@labundy.com>
+
+Kind regards,
+Jeff LaBundy
