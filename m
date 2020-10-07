@@ -2,173 +2,118 @@ Return-Path: <SRS0=c76P=DO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A004C46466
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 01:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A69C4741F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 06:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B0272087E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 01:12:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZ5McIJk"
+	by mail.kernel.org (Postfix) with ESMTP id B5D1620B1F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 06:26:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1602051964;
+	bh=9J6pd4Urt8nLaYajtW0xX9CVZZNmrwIcH02wFm6GCzo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=H756AzimN2WsnFOQeos0jXfa2+CmUAY2vp7LRLVNE5TKcig2PmMqEFXvTwaqVJ5JI
+	 fn+Xmw+Uy2klnaUZMx2Ysgtjx3ES9TxxeaBRlc/p1W9g41ve+rGEtoBBToK2khG11p
+	 pSqK59y8lF0qgKEFh+MmUpAfDdBIBCYrqmystKpE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbgJGBMz (ORCPT
+        id S1727341AbgJGG0C (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 6 Oct 2020 21:12:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50074 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725996AbgJGBMy (ORCPT
+        Wed, 7 Oct 2020 02:26:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725970AbgJGG0C (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 6 Oct 2020 21:12:54 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF8F2C061755;
-        Tue,  6 Oct 2020 18:12:54 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id ds1so213522pjb.5;
-        Tue, 06 Oct 2020 18:12:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=mhoMukFtXUDnoxYBeSc1gCnHDJjh2RBWkCrpacxBvgc=;
-        b=BZ5McIJk7M9QpLpb5KoCQkdxJYiPrNQhgs5cl4vLLWytK5VF9kyh4DJe1g7PqgOdHJ
-         vi9SNcnbS6RVeKxhRm1gfXYW/1MobIU3emLb+keannjof0F62HLir3wvH+3R+JnKfDDw
-         hUuIq3r2W7hYuJwomu2PHIw9cHJh2bCarSSmPf2vcxlwhVYPy1B59pQCZh88VJfxM+SH
-         P3U1OKhTrqq3QQBPtMpZx/3RzdSMWOBjkBQktmI99bmH+2SMTqoB4KKC16f0DxyVah5V
-         LrrH+r9brZLGlfmZ2vd2w1S9l0EWtUIDgohzA1Ws4rcazlyeai7Bzg+4oBQf9+qgFD1f
-         D10A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=mhoMukFtXUDnoxYBeSc1gCnHDJjh2RBWkCrpacxBvgc=;
-        b=tS0Ml+Y0Dw5j/SRwEKUylvVONA0aagIP22QfpHoSXqFa8exJjA/tqhzLKB8yU9wct1
-         uYocjmb0NrgxGzIt5B6ymksQzt9M2YT22LUJ6MzZK8tUzE4xexOiWtDKgoHbgs/ImV2c
-         cuLiB0qoM/e6mLec82qEARigL5Q/t8om6XLMgYdSd79Uho4bKKt4GPgivgY01YypHxHq
-         20W3bNbKPla4VKtYgu3D1MYMFG50Ktg5G9aHRPCaX015QBvwdGFA0RMftu0ldlkTIrTU
-         sGh2imjbHZL5r0TwHXglLQGqWc2001aPQuMamSb0ZeF4c/YVtXb6n8KQj1BQPKjsGpsb
-         BsBQ==
-X-Gm-Message-State: AOAM533lTQL+SB9+qiMJ8Rlk6VQ2zDJElYD9jHKylAvSU3yedmxTbAjP
-        8oKY4HvzTy7UsrJ9vtOxzek=
-X-Google-Smtp-Source: ABdhPJy4dLisQACUERV0GxDAYvpdj82oBH4eI0zaGWCX8W7avrgYWVStQLex6A0apJQoB8lnZYPvuA==
-X-Received: by 2002:a17:90a:1a02:: with SMTP id 2mr708050pjk.201.1602033174099;
-        Tue, 06 Oct 2020 18:12:54 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id f17sm412371pgd.86.2020.10.06.18.12.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Oct 2020 18:12:53 -0700 (PDT)
-Date:   Tue, 6 Oct 2020 18:12:49 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com, Patrik Fimml <patrikf@chromium.org>
-Subject: Re: [PATCH v4 7/7] Input: Add "inhibited" property
-Message-ID: <20201007011249.GS1009802@dtor-ws>
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com>
- <20200608112211.12125-8-andrzej.p@collabora.com>
- <20201005181014.GL1009802@dtor-ws>
- <ac4eeab7-8333-b96b-707b-eb2d6d0d8139@collabora.com>
- <20201007011102.GR1009802@dtor-ws>
+        Wed, 7 Oct 2020 02:26:02 -0400
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC69221531;
+        Wed,  7 Oct 2020 06:26:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1602051961;
+        bh=9J6pd4Urt8nLaYajtW0xX9CVZZNmrwIcH02wFm6GCzo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=cjP10fipeHTdrU/XdlnBVJ7nEBd1DP/mHTZ4wefjHHoLp9lxNvYU9bP5xkqznMJxe
+         wdl3FjyjprNsFoIgfs4MvjUw8+2mX9yOGKdDx/q7PdKmPRqW4i18tmFXSJXv87xb/w
+         jYTrYjlyVbMDlYgJfvP/m4NxZ5TcwBYezWVwQrWs=
+Received: by mail-ed1-f53.google.com with SMTP id t21so925268eds.6;
+        Tue, 06 Oct 2020 23:26:00 -0700 (PDT)
+X-Gm-Message-State: AOAM530pnQbCX/Wfw4gFW4sJnl0D9pyL7OzzwdjDQTdcsuEfdSR6ObD4
+        oavjcPDY2io3rAY8m8nUo3P5JNDVPiUI/ffdeZo=
+X-Google-Smtp-Source: ABdhPJzlgSjYiE8Nro65NAUBEhu5or+8YJ/UtMdDrVp9y+cPmyFnaghXEP0Rg3rNv4h1igGfmvWPgDizOURlpLSk7PM=
+X-Received: by 2002:a50:a452:: with SMTP id v18mr1834674edb.143.1602051959063;
+ Tue, 06 Oct 2020 23:25:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201007011102.GR1009802@dtor-ws>
+References: <20201005203451.9985-1-post@lespocky.de> <20201005203451.9985-8-post@lespocky.de>
+In-Reply-To: <20201005203451.9985-8-post@lespocky.de>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 7 Oct 2020 08:25:47 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcGXpbJDxLZ1ygi+4c==Lbxt_QA+HZ0Kn7Aq3jjh2YHDg@mail.gmail.com>
+Message-ID: <CAJKOXPcGXpbJDxLZ1ygi+4c==Lbxt_QA+HZ0Kn7Aq3jjh2YHDg@mail.gmail.com>
+Subject: Re: [PATCH v7 07/12] ARM: dts: exynos: Fix schema warnings for pwm-leds
+To:     Alexander Dahl <post@lespocky.de>
+Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Alexander Dahl <ada@thorsis.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
+        Kukjin Kim <kgene@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 06, 2020 at 06:11:02PM -0700, Dmitry Torokhov wrote:
-> On Tue, Oct 06, 2020 at 03:04:28PM +0200, Andrzej Pietrasiewicz wrote:
-> > Hi Dmitry,
-> > 
-> > W dniu 05.10.2020 o 20:10, Dmitry Torokhov pisze:
-> > > Hi Andrzej,
-> > > 
-> > > On Mon, Jun 08, 2020 at 01:22:11PM +0200, Andrzej Pietrasiewicz wrote:
-> > > > @@ -284,8 +284,11 @@ static int input_get_disposition(struct input_dev *dev,
-> > > >   	case EV_KEY:
-> > > >   		if (is_event_supported(code, dev->keybit, KEY_MAX)) {
-> > > > -			/* auto-repeat bypasses state updates */
-> > > > -			if (value == 2) {
-> > > > +			/*
-> > > > +			 * auto-repeat bypasses state updates but repeat
-> > > > +			 * events are ignored if the key is not pressed
-> > > > +			 */
-> > > > +			if (value == 2 && test_bit(code, dev->key)) {
-> > > >   				disposition = INPUT_PASS_TO_HANDLERS;
-> > > >   				break;
-> > > >   			}
-> > > 
-> > > Is this chunk really part of inhibit support? I'd think we cancel
-> > > autorepeat timer when we are releasing a key, no?
-> > > 
-> > 
-> > When I look at it now it seems to me the chunk might be redundant.
-> > But let me explain what I had in mind when adding it.
-> > 
-> > It is a matter of what we do with input events generated while a
-> > device is inhibited. If ->open()/->close() are not provided by the
-> > driver then inhibiting amounts to merely ignoring input events from
-> > a device while it remains active. What else can you do if the driver
-> > does not provide a method to prepare the device for generating events/
-> > to stop generating events?
-> > 
-> > In this special case a user might trigger a repeated event while the
-> > device is inhibited, then the user keeps holding the key down and the
-> > device is uninhibited. Do we pass anything to handlers then?
-> > 
-> > In my opinion we should not. Such an event is "illegal" in a sense that it
-> > was generated at a time when nobody wanted any events from the device.
-> > Hence the test to let only those auto-repeat events through for which
-> > a key is actually pressed.
-> > 
-> > However, what I see now is that if a device is inhibited, no key
-> > will ever reach neither the "1" nor "2" state because of the "if"
-> > in the very beginning of input_handle_event().
-> 
-> OK, then let's drop it for now. We can revisit if we see that a problem.
+On Mon, 5 Oct 2020 at 22:36, Alexander Dahl <post@lespocky.de> wrote:
+>
+> The node names for devices using the pwm-leds driver follow a certain
+> naming scheme (now).  Parent node name is not enforced, but recommended
+> by DT project.
+>
+>   DTC     arch/arm/boot/dts/exynos5410-odroidxu.dt.yaml
+>   CHECK   arch/arm/boot/dts/exynos5410-odroidxu.dt.yaml
+> /home/alex/build/linux/arch/arm/boot/dts/exynos5410-odroidxu.dt.yaml: pwmleds: 'blueled', 'greenled' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+>         From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+>   DTC     arch/arm/boot/dts/exynos5422-odroidhc1.dt.yaml
+>   CHECK   arch/arm/boot/dts/exynos5422-odroidhc1.dt.yaml
+> /home/alex/build/linux/arch/arm/boot/dts/exynos5422-odroidhc1.dt.yaml: pwmleds: 'blueled' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+>         From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+>   DTC     arch/arm/boot/dts/exynos5422-odroidxu3.dt.yaml
+>   CHECK   arch/arm/boot/dts/exynos5422-odroidxu3.dt.yaml
+> /home/alex/build/linux/arch/arm/boot/dts/exynos5422-odroidxu3.dt.yaml: pwmleds: 'blueled', 'greenled' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+>         From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+>   DTC     arch/arm/boot/dts/exynos5422-odroidxu3-lite.dt.yaml
+>   CHECK   arch/arm/boot/dts/exynos5422-odroidxu3-lite.dt.yaml
+> /home/alex/build/linux/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dt.yaml: pwmleds: 'blueled', 'greenled' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+>         From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+>   DTC     arch/arm/boot/dts/exynos5422-odroidxu4.dt.yaml
+>   CHECK   arch/arm/boot/dts/exynos5422-odroidxu4.dt.yaml
+> /home/alex/build/linux/arch/arm/boot/dts/exynos5422-odroidxu4.dt.yaml: pwmleds: 'blueled' does not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+>         From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+>
+> Signed-off-by: Alexander Dahl <post@lespocky.de>
+> ---
+>
+> Notes:
+>     v6 -> v7:
+>       * split up patch (one per sub arch)
+>       * added actual warnings to commit message
+>
+>  arch/arm/boot/dts/exynos5422-odroidhc1.dts      |  4 ++--
+>  arch/arm/boot/dts/exynos5422-odroidxu4.dts      |  4 ++--
+>  arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi | 11 ++++++-----
+>  3 files changed, 10 insertions(+), 9 deletions(-)
 
-And by that I mean that I will drop it myself, no need to resend. I will
-be applying this shortly.
+Looks OK but it is too late for this cycle. I'll pick it up after merge window.
 
-Thanks.
-
--- 
-Dmitry
+Best regards,
+Krzysztof
