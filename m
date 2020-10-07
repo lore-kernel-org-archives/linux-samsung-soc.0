@@ -2,221 +2,297 @@ Return-Path: <SRS0=c76P=DO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1D8C4727E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 15:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6056EC47420
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 16:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92DDA21548
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 15:05:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08162215A4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 16:44:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GQuHp0If"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="i5NErQDA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbgJGPFi (ORCPT
+        id S1727948AbgJGQo4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 7 Oct 2020 11:05:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37296 "EHLO
+        Wed, 7 Oct 2020 12:44:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbgJGPFh (ORCPT
+        with ESMTP id S1728306AbgJGQoq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Oct 2020 11:05:37 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E6C7C061755
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Oct 2020 08:05:37 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id l24so2523600edj.8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Oct 2020 08:05:37 -0700 (PDT)
+        Wed, 7 Oct 2020 12:44:46 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BFA6C0613A8
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Oct 2020 09:44:46 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id v12so3138000wmh.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Oct 2020 09:44:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qomXKB9LTOxqFLlUD4Oklytq/bQfaT6n1NJQmGHOKPw=;
-        b=GQuHp0IfOJqhA6wU7mJvXeimN1VGvICbuBzTJeX8fXdXgvz+DrjhcqtOofhyX9/NY4
-         HMfgo+F9FVBNOZlXUgXeMbVrWYN+LfqH1bmUSPR0KO52FQno45bnDvvCtjz8zgHotyAQ
-         M425Efq5uAraBx3glB+yx/tJ0SMWlV8QVMXJg=
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=8QP2Wenq2GK6EY3ahrpWajGkuysCGV7MvFRxQ1vZo3s=;
+        b=i5NErQDABG3xyWhRS4Xp5UE+yc175cKBosuLwqs+5Zn8/i+6EDik/ClkH01I13hX0C
+         vHWn8ZQwXSRppGzO1ARSqAorvzmm5jdaYhrHwKoWTQQ7RJGkEeKz3LKPRWsgEBq8z632
+         MOPWrvux1Ic5Czns6RqQXDLB3M9PMsSLbSN64=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qomXKB9LTOxqFLlUD4Oklytq/bQfaT6n1NJQmGHOKPw=;
-        b=UxV+BmZ/v1uL6ixFX2cjWhUsVJS8RBWUvYzLtY7r9tazkks2UjniVC5iDQyE+E4CWF
-         rfe7uvoUi69eEPCeHpP+Unf42sYxFX/rY8tsWAbq/+3O98yCdzFDvn5hDuqneUQEsKQD
-         Zivm3i/4l50sTNwkmPJrUM8QGnhLRBzVYwpJqEzPaLbr0wSc0pOhRuwer2+pC5Z/0+KC
-         CZ49oCO3moxUpHE4Xn3tIot/Ox7minCyHfqzC/bLHugBoqd/h3Y3eqkVXtJO2Qp3WBKL
-         wEhhGQxrTjQdbgO67JdAUdJ5GUK6Vns7lh4ATk5aE5KLyi4L81hyd7bEzc2k1Hl0kai4
-         Xhjw==
-X-Gm-Message-State: AOAM533P0KZetAcfBF+bi/6g/3mI2Vd1OUewuq6RzYBDni6sgNh9TkbL
-        8P8+PoOd7iPsHEAv71mvstJvVh/MqpWPTQ==
-X-Google-Smtp-Source: ABdhPJxoKtU0/DlK+fj2DVPmRwJeX5dtP1B3Tgh6r28S9v0ACyNytsXvzglN6cBv4v6+lZeAijVdcw==
-X-Received: by 2002:a05:6402:890:: with SMTP id e16mr4027890edy.272.1602083135474;
-        Wed, 07 Oct 2020 08:05:35 -0700 (PDT)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
-        by smtp.gmail.com with ESMTPSA id w4sm1669409edr.72.2020.10.07.08.05.32
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Oct 2020 08:05:33 -0700 (PDT)
-Received: by mail-wr1-f41.google.com with SMTP id n6so2288983wrm.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Oct 2020 08:05:32 -0700 (PDT)
-X-Received: by 2002:adf:fe08:: with SMTP id n8mr3984098wrr.159.1602083132176;
- Wed, 07 Oct 2020 08:05:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAKMK7uGF+y-r4swLXmodhduRMy0NPa=ASBY8JOXS_g=9Rq9XQw@mail.gmail.com>
- <20201002233118.GM9916@ziepe.ca> <CGME20201003094038eucas1p12aaafe0f52a7747bc2ba95ccb91d1651@eucas1p1.samsung.com>
- <CAKMK7uFP-XQHUPYeRhPx7tjvjARQiF-os9z9jx6WANV6sgSf6g@mail.gmail.com>
- <d2f8e8a7-614d-18c8-9e2a-c604e5e54ce6@samsung.com> <CAKMK7uF+a1PSn+e-6F+YhkSXn9vC7etS-z0AFBMCU+Vzb2PwqA@mail.gmail.com>
- <725819e9-4f07-3f04-08f8-b6180406b339@samsung.com> <20201007124409.GN5177@ziepe.ca>
- <CAAFQd5D0ahP-3hp_vGEmJ2cyBOMXeW9HX5yKaVPcQTsFwwOE8Q@mail.gmail.com>
- <CAKMK7uG3fds79Yf9VhMstnJ2+UHYUEVdODkoOvtwFC28_+T6RA@mail.gmail.com>
- <20201007130610.GP5177@ziepe.ca> <CAAFQd5CH8ytmwfd_AD0e9C92xkW3fRPmqvi9_4UN6pw-y3f-sg@mail.gmail.com>
- <CAKMK7uFSTrULTE-o+vHU-81dJpKJ5cHAAb8qkpQtcz6KrhvPzg@mail.gmail.com>
- <CAAFQd5ArKWR8f4XO73UB7tyeq3ZCYJb4OD_K=2hxOgputRY=Rw@mail.gmail.com> <CAKMK7uGXvOjQ2BQWaMdgwGg+bLNCFF3sBLsUztLnPNnwJ+Wtqg@mail.gmail.com>
-In-Reply-To: <CAKMK7uGXvOjQ2BQWaMdgwGg+bLNCFF3sBLsUztLnPNnwJ+Wtqg@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 7 Oct 2020 17:05:19 +0200
-X-Gmail-Original-Message-ID: <CAAFQd5Dr850cbEoNLiGpCR91rjquSq0=TU4=CTVOyi+W0igVDw@mail.gmail.com>
-Message-ID: <CAAFQd5Dr850cbEoNLiGpCR91rjquSq0=TU4=CTVOyi+W0igVDw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm/frame-vec: use FOLL_LONGTERM
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=8QP2Wenq2GK6EY3ahrpWajGkuysCGV7MvFRxQ1vZo3s=;
+        b=MnBZc+URUsaFzmiJbIYg27A23LGW+xaix94u+cSu639+bFlbUiuuPheg6tg4DD2F58
+         vpb+yWIlfr3bdWihAWwlzWjXIHoa4w0Rsw7IPzLi1aryHZhQsPdZp9gtGqxGp81zkTQI
+         OIYRWlAACidu3ZEEZ6xnLAqjvXxqHgN5W7CY30ObFUzlmrS3kLkXsAsOica+KEnwh+hI
+         KZZcc81biMntWOaVtXphSjQT5J+vA+olsRu9z3CtOnD0amXU55hDppcBP0hXWxw6SwNU
+         DmPhI7vhHTA1B7ppNYtzGNq5HuR41YaV8KYv7kkRSIAZsMbDZVV1j3H3NrUAB3EoaCH+
+         gIUQ==
+X-Gm-Message-State: AOAM533rltRhshAH5OvyigHrhZglEmcecVu+7MaRiWQYysRBdBiIFoel
+        hvgC7NI9MbRPXvCc0NK5g6PbEg==
+X-Google-Smtp-Source: ABdhPJxWzivkD3PWGA++mhqeycKy3eCML2xayttch0jMto2/MWxaF4znXSjgUbtngV+YgelXTwteig==
+X-Received: by 2002:a7b:c847:: with SMTP id c7mr4407500wml.41.1602089084693;
+        Wed, 07 Oct 2020 09:44:44 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id z191sm3332280wme.40.2020.10.07.09.44.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Oct 2020 09:44:44 -0700 (PDT)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-s390@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
         Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Kees Cook <keescook@chromium.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Pawel Osciak <pawel@osciak.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>, Oded Gabbay <oded.gabbay@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Subject: [PATCH 08/13] s390/pci: Remove races against pte updates
+Date:   Wed,  7 Oct 2020 18:44:21 +0200
+Message-Id: <20201007164426.1812530-9-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201007164426.1812530-1-daniel.vetter@ffwll.ch>
+References: <20201007164426.1812530-1-daniel.vetter@ffwll.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 7, 2020 at 4:23 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->
-> On Wed, Oct 7, 2020 at 4:12 PM Tomasz Figa <tfiga@chromium.org> wrote:
-> >
-> > On Wed, Oct 7, 2020 at 4:09 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
-> > >
-> > > On Wed, Oct 7, 2020 at 3:34 PM Tomasz Figa <tfiga@chromium.org> wrote:
-> > > >
-> > > > On Wed, Oct 7, 2020 at 3:06 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > > >
-> > > > > On Wed, Oct 07, 2020 at 02:58:33PM +0200, Daniel Vetter wrote:
-> > > > > > On Wed, Oct 7, 2020 at 2:48 PM Tomasz Figa <tfiga@chromium.org> wrote:
-> > > > > > >
-> > > > > > > On Wed, Oct 7, 2020 at 2:44 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > > > > > >
-> > > > > > > > On Wed, Oct 07, 2020 at 02:33:56PM +0200, Marek Szyprowski wrote:
-> > > > > > > > > Well, it was in vb2_get_vma() function, but now I see that it has been
-> > > > > > > > > lost in fb639eb39154 and 6690c8c78c74 some time ago...
-> > > > > > > >
-> > > > > > > > There is no guarentee that holding a get on the file says anthing
-> > > > > > > > about the VMA. This needed to check that the file was some special
-> > > > > > > > kind of file that promised the VMA layout and file lifetime are
-> > > > > > > > connected.
-> > > > > > > >
-> > > > > > > > Also, cloning a VMA outside the mm world is just really bad. That
-> > > > > > > > would screw up many assumptions the drivers make.
-> > > > > > > >
-> > > > > > > > If it is all obsolete I say we hide it behind a default n config
-> > > > > > > > symbol and taint the kernel if anything uses it.
-> > > > > > > >
-> > > > > > > > Add a big comment above the follow_pfn to warn others away from this
-> > > > > > > > code.
-> > > > > > >
-> > > > > > > Sadly it's just verbally declared as deprecated and not formally noted
-> > > > > > > anyway. There are a lot of userspace applications relying on user
-> > > > > > > pointer support.
-> > > > > >
-> > > > > > userptr can stay, it's the userptr abuse for zerocpy buffer sharing
-> > > > > > which doesn't work anymore. At least without major surgery (you'd need
-> > > > > > an mmu notifier to zap mappings and recreate them, and that pretty
-> > > > > > much breaks the v4l model of preallocating all buffers to make sure we
-> > > > > > never underflow the buffer queue). And static mappings are not coming
-> > > > > > back I think, we'll go ever more into the direction of dynamic
-> > > > > > mappings and moving stuff around as needed.
-> > > > >
-> > > > > Right, and to be clear, the last time I saw a security flaw of this
-> > > > > magnitude from a subsystem badly mis-designing itself, Linus's
-> > > > > knee-jerk reaction was to propose to remove the whole subsystem.
-> > > > >
-> > > > > Please don't take status-quo as acceptable, V4L community has to work
-> > > > > to resolve this, uABI breakage or not. The follow_pfn related code
-> > > > > must be compiled out of normal distro kernel builds.
-> > > >
-> > > > I think the userptr zero-copy hack should be able to go away indeed,
-> > > > given that we now have CMA that allows having carveouts backed by
-> > > > struct pages and having the memory represented as DMA-buf normally.
-> > >
-> > > Not sure whether there's a confusion here: dma-buf supports memory not
-> > > backed by struct page.
-> > >
-> >
-> > That's new to me. The whole API relies on sg_tables a lot, which in
-> > turn rely on struct page pointers to describe the physical memory.
->
-> You're not allowed to look at struct page pointers from the importer
-> side, those might not be there. Which isn't the prettiest thing, but
-> it works. And even if there's a struct page, you're still not allowed
-> to look at it, since it's fully managed by the exporter under whatever
-> rules that might need. So no touching it, ever.
->
-> This is also not news, supporting this was in the design brief from
-> the kickoff session 10+ years ago at some linaro connect thing (in
-> Budapest iirc). And we have implementations doing that for almost as
-> long merged in upstream.
->
-> > > > How about the regular userptr use case, though?
-> > > >
-> > > > The existing code resolves the user pointer into pages by following
-> > > > the get_vaddr_frames() -> frame_vector_to_pages() ->
-> > > > sg_alloc_table_from_pages() / vm_map_ram() approach.
-> > > > get_vaddr_frames() seems to use pin_user_pages() behind the scenes if
-> > > > the vma is not an IO or a PFNMAP, falling back to follow_pfn()
-> > > > otherwise.
-> > >
-> > > Yeah pin_user_pages is fine, it's just the VM_IO | VM_PFNMAP vma that
-> > > don't work.
-> >
-> > Ack.
-> >
-> > > >
-> > > > Is your intention to drop get_vaddr_frames() or we could still keep
-> > > > using it and if vec->is_pfns is true:
-> > > > a) if CONFIG_VIDEO_LEGACY_PFN_USERPTR is set, taint the kernel
-> > > > b) otherwise just undo and fail?
-> > >
-> > > I'm typing that patch series (plus a pile more) right now.
-> >
-> > Cool, thanks!
-> >
-> > We also need to bring back the vma_open() that somehow disappeared
-> > around 4.2, as Marek found.
->
-> The vm_open isn't enough to stop the problems (it doesn't and cannot
-> protect against unmap_mapping_range), I don't think keeping an
-> incomplete solution around has much benefit. People who need this can
-> disable CONFIG_STRICT_FOLLOW_PFN to keep things working, everyone else
-> probably doesn't want these mm internals leaking into the media
-> subsystem.
+Way back it was a reasonable assumptions that iomem mappings never
+change the pfn range they point at. But this has changed:
 
-Okay, I think I mixed up the two different threads in the earlier
-discussion. Since pin_user_pages() would atomically look up and pin
-the underlying pages, we should be fine, so that vm_open() was only
-needed for the bad follow_pfn path.
+- gpu drivers dynamically manage their memory nowadays, invalidating
+ptes with unmap_mapping_range when buffers get moved
 
-Best regards,
-Tomasz
+- contiguous dma allocations have moved from dedicated carvetouts to
+cma regions. This means if we miss the unmap the pfn might contain
+pagecache or anon memory (well anything allocated with GFP_MOVEABLE)
+
+- even /dev/mem now invalidates mappings when the kernel requests that
+iomem region when CONFIG_IO_STRICT_DEVMEM is set, see 3234ac664a87
+("/dev/mem: Revoke mappings when a driver claims the region")
+
+Accessing pfns obtained from ptes without holding all the locks is
+therefore no longer a good idea. Fix this.
+
+Since zpci_memcpy_from|toio seems to not do anything nefarious with
+locks we just need to open code get_pfn and follow_pfn and make sure
+we drop the locks only after we've done. The write function also needs
+the copy_from_user move, since we can't take userspace faults while
+holding the mmap sem.
+
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-mm@kvack.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-media@vger.kernel.org
+Cc: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org
+---
+ arch/s390/pci/pci_mmio.c | 98 +++++++++++++++++++++++-----------------
+ 1 file changed, 57 insertions(+), 41 deletions(-)
+
+diff --git a/arch/s390/pci/pci_mmio.c b/arch/s390/pci/pci_mmio.c
+index 401cf670a243..4d194cb09372 100644
+--- a/arch/s390/pci/pci_mmio.c
++++ b/arch/s390/pci/pci_mmio.c
+@@ -119,33 +119,15 @@ static inline int __memcpy_toio_inuser(void __iomem *dst,
+ 	return rc;
+ }
+ 
+-static long get_pfn(unsigned long user_addr, unsigned long access,
+-		    unsigned long *pfn)
+-{
+-	struct vm_area_struct *vma;
+-	long ret;
+-
+-	mmap_read_lock(current->mm);
+-	ret = -EINVAL;
+-	vma = find_vma(current->mm, user_addr);
+-	if (!vma)
+-		goto out;
+-	ret = -EACCES;
+-	if (!(vma->vm_flags & access))
+-		goto out;
+-	ret = follow_pfn(vma, user_addr, pfn);
+-out:
+-	mmap_read_unlock(current->mm);
+-	return ret;
+-}
+-
+ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
+ 		const void __user *, user_buffer, size_t, length)
+ {
+ 	u8 local_buf[64];
+ 	void __iomem *io_addr;
+ 	void *buf;
+-	unsigned long pfn;
++	struct vm_area_struct *vma;
++	pte_t *ptep;
++	spinlock_t *ptl;
+ 	long ret;
+ 
+ 	if (!zpci_is_enabled())
+@@ -158,7 +140,7 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
+ 	 * We only support write access to MIO capable devices if we are on
+ 	 * a MIO enabled system. Otherwise we would have to check for every
+ 	 * address if it is a special ZPCI_ADDR and would have to do
+-	 * a get_pfn() which we don't need for MIO capable devices.  Currently
++	 * a pfn lookup which we don't need for MIO capable devices.  Currently
+ 	 * ISM devices are the only devices without MIO support and there is no
+ 	 * known need for accessing these from userspace.
+ 	 */
+@@ -176,21 +158,37 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
+ 	} else
+ 		buf = local_buf;
+ 
+-	ret = get_pfn(mmio_addr, VM_WRITE, &pfn);
++	ret = -EFAULT;
++	if (copy_from_user(buf, user_buffer, length))
++		goto out_free;
++
++	mmap_read_lock(current->mm);
++	ret = -EINVAL;
++	vma = find_vma(current->mm, mmio_addr);
++	if (!vma)
++		goto out_unlock_mmap;
++	ret = -EACCES;
++	if (!(vma->vm_flags & VM_WRITE))
++		goto out_unlock_mmap;
++	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
++		goto out_unlock_mmap;
++
++	ret = follow_pte_pmd(vma->vm_mm, mmio_addr, NULL, &ptep, NULL, &ptl);
+ 	if (ret)
+-		goto out;
+-	io_addr = (void __iomem *)((pfn << PAGE_SHIFT) |
++		goto out_unlock_mmap;
++
++	io_addr = (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
+ 			(mmio_addr & ~PAGE_MASK));
+ 
+-	ret = -EFAULT;
+ 	if ((unsigned long) io_addr < ZPCI_IOMAP_ADDR_BASE)
+-		goto out;
+-
+-	if (copy_from_user(buf, user_buffer, length))
+-		goto out;
++		goto out_unlock_pt;
+ 
+ 	ret = zpci_memcpy_toio(io_addr, buf, length);
+-out:
++out_unlock_pt:
++	pte_unmap_unlock(ptep, ptl);
++out_unlock_mmap:
++	mmap_read_unlock(current->mm);
++out_free:
+ 	if (buf != local_buf)
+ 		kfree(buf);
+ 	return ret;
+@@ -274,7 +272,9 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, mmio_addr,
+ 	u8 local_buf[64];
+ 	void __iomem *io_addr;
+ 	void *buf;
+-	unsigned long pfn;
++	struct vm_area_struct *vma;
++	pte_t *ptep;
++	spinlock_t *ptl;
+ 	long ret;
+ 
+ 	if (!zpci_is_enabled())
+@@ -287,7 +287,7 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, mmio_addr,
+ 	 * We only support read access to MIO capable devices if we are on
+ 	 * a MIO enabled system. Otherwise we would have to check for every
+ 	 * address if it is a special ZPCI_ADDR and would have to do
+-	 * a get_pfn() which we don't need for MIO capable devices.  Currently
++	 * a pfn lookup which we don't need for MIO capable devices.  Currently
+ 	 * ISM devices are the only devices without MIO support and there is no
+ 	 * known need for accessing these from userspace.
+ 	 */
+@@ -306,22 +306,38 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, mmio_addr,
+ 		buf = local_buf;
+ 	}
+ 
+-	ret = get_pfn(mmio_addr, VM_READ, &pfn);
++	mmap_read_lock(current->mm);
++	ret = -EINVAL;
++	vma = find_vma(current->mm, mmio_addr);
++	if (!vma)
++		goto out_unlock_mmap;
++	ret = -EACCES;
++	if (!(vma->vm_flags & VM_WRITE))
++		goto out_unlock_mmap;
++	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
++		goto out_unlock_mmap;
++
++	ret = follow_pte_pmd(vma->vm_mm, mmio_addr, NULL, &ptep, NULL, &ptl);
+ 	if (ret)
+-		goto out;
+-	io_addr = (void __iomem *)((pfn << PAGE_SHIFT) | (mmio_addr & ~PAGE_MASK));
++		goto out_unlock_mmap;
++
++	io_addr = (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
++			(mmio_addr & ~PAGE_MASK));
+ 
+ 	if ((unsigned long) io_addr < ZPCI_IOMAP_ADDR_BASE) {
+ 		ret = -EFAULT;
+-		goto out;
++		goto out_unlock_pt;
+ 	}
+ 	ret = zpci_memcpy_fromio(buf, io_addr, length);
+-	if (ret)
+-		goto out;
+-	if (copy_to_user(user_buffer, buf, length))
++
++out_unlock_pt:
++	pte_unmap_unlock(ptep, ptl);
++out_unlock_mmap:
++	mmap_read_unlock(current->mm);
++
++	if (!ret && copy_to_user(user_buffer, buf, length))
+ 		ret = -EFAULT;
+ 
+-out:
+ 	if (buf != local_buf)
+ 		kfree(buf);
+ 	return ret;
+-- 
+2.28.0
+
