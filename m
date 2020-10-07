@@ -2,68 +2,63 @@ Return-Path: <SRS0=c76P=DO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2165BC4363D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 12:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF9C3C4363D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 12:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 739A32083B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 12:01:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94384207EA
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 12:34:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="PyaZ/nvZ"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="T9nD/JuY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbgJGMB5 (ORCPT
+        id S1728196AbgJGMeB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 7 Oct 2020 08:01:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36996 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726219AbgJGMB4 (ORCPT
+        Wed, 7 Oct 2020 08:34:01 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:45845 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728193AbgJGMeA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Oct 2020 08:01:56 -0400
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4808BC0613D2
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Oct 2020 05:01:56 -0700 (PDT)
-Received: by mail-ot1-x344.google.com with SMTP id m11so1858368otk.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Oct 2020 05:01:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BPNKg367DCdKIY1liYpuVsKddqsM3ARJiczmrER9Tlk=;
-        b=PyaZ/nvZm2QUtaJTzV68PXra5E6nusMzfq2GtX+T4KHdWVm++EJydv/8XaGh5nYPu2
-         kpLCfkP523at8+kzTLYGiJF/U5HARJ4ZwyhXlTfgO1W6ZvOLzle/fawTahYRmxpmawyG
-         M2mKVfCZhp95638KHshmfZX9XnDxeTLsbzpOk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BPNKg367DCdKIY1liYpuVsKddqsM3ARJiczmrER9Tlk=;
-        b=MUIiwz9DMH497HWfA+tGjuh17ZvOLXYV5bwD6s9mi4wVeigTD6PQWOfnbQDG7g2gZG
-         RdxwGxc0JCQlno7k4NvHXy/+4EGHFLJpYeoMn3D8tFJmoppiZQpG4haB0NcVK169YKmY
-         dmyUTfj0ueov48BdyoTTyfGii8U6UMNUw23LtGFn3hYZ5nMDL4xiCwINw2HyEEeAtTMB
-         0h7mEjtRoGR/OXzMyMZn+mWhaw4P9RWhEk8JHUGNVF7nseJIddIV/oQHve6cuyHNGnoA
-         7jJhLjYdEXsoryFdkdXg4ERctK7bvUVQV67X3ZZyllBKKXCcDn6KqIwXac10qGSIh0uX
-         hMpA==
-X-Gm-Message-State: AOAM532aj5ISlx/4TFOOOqC7kBIULXKvHR5G3HFRXIRCQIc/x0bf8ma/
-        iYeCpRjNNPnpt863HYYmuh8SWSoxlFXKIwwU87fTug==
-X-Google-Smtp-Source: ABdhPJwz1+Mjs5/TsMc3YtWSj3uN1hN+EFq4HjqQKny0ZO2DNmwXaAg21800jfJ4gXIzTu9U81dtoIfG8VEkup1Khs8=
-X-Received: by 2002:a05:6830:1c3c:: with SMTP id f28mr1747283ote.188.1602072115550;
- Wed, 07 Oct 2020 05:01:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201002175303.390363-1-daniel.vetter@ffwll.ch>
- <20201002175303.390363-2-daniel.vetter@ffwll.ch> <20201002180603.GL9916@ziepe.ca>
- <CAKMK7uGF+y-r4swLXmodhduRMy0NPa=ASBY8JOXS_g=9Rq9XQw@mail.gmail.com>
- <20201002233118.GM9916@ziepe.ca> <CGME20201003094038eucas1p12aaafe0f52a7747bc2ba95ccb91d1651@eucas1p1.samsung.com>
- <CAKMK7uFP-XQHUPYeRhPx7tjvjARQiF-os9z9jx6WANV6sgSf6g@mail.gmail.com> <d2f8e8a7-614d-18c8-9e2a-c604e5e54ce6@samsung.com>
-In-Reply-To: <d2f8e8a7-614d-18c8-9e2a-c604e5e54ce6@samsung.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Wed, 7 Oct 2020 14:01:44 +0200
-Message-ID: <CAKMK7uF+a1PSn+e-6F+YhkSXn9vC7etS-z0AFBMCU+Vzb2PwqA@mail.gmail.com>
+        Wed, 7 Oct 2020 08:34:00 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201007123359euoutp023c2db3fd4881e39b3c2e25bdcc9f9fa4~7tdnDxOVN0082300823euoutp02I
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Oct 2020 12:33:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201007123359euoutp023c2db3fd4881e39b3c2e25bdcc9f9fa4~7tdnDxOVN0082300823euoutp02I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1602074039;
+        bh=UQMeR1GODVbXHmFZuWuyZokR6qZOsBzExFrdhaS6Ndk=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=T9nD/JuYrx9okPTJAMKaWvaZB/yFrwCfHkN/O23nVR8liwHOVrWkJjyMCLe4sWR8O
+         CkFRF7fvXqBNzoDkN+Fn9UvvcsawIJmlpsv+gY8qIpC78qRtRp68ENzC4CstywZ9xF
+         p5rqs9ClxKTpomUen3/SoC8rECZ5xHL0xzKypymQ=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20201007123358eucas1p2ae3f4000275eaece3b933ed61916259e~7tdmZ11Am1306413064eucas1p2m;
+        Wed,  7 Oct 2020 12:33:58 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 72.C4.06318.6B5BD7F5; Wed,  7
+        Oct 2020 13:33:58 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20201007123358eucas1p1eccb32143b09c921ae0a4f883164d17d~7tdl92x782127021270eucas1p1B;
+        Wed,  7 Oct 2020 12:33:58 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201007123358eusmtrp20e8118fbff683fe861d5416df68b7bd0~7tdl8v6W12794027940eusmtrp2k;
+        Wed,  7 Oct 2020 12:33:58 +0000 (GMT)
+X-AuditID: cbfec7f5-371ff700000018ae-67-5f7db5b6c34b
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 2D.22.06017.6B5BD7F5; Wed,  7
+        Oct 2020 13:33:58 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20201007123357eusmtip184b103ae04fa10810689f0e7a6bb7ac6~7tdk3fHzt2301623016eusmtip1T;
+        Wed,  7 Oct 2020 12:33:56 +0000 (GMT)
 Subject: Re: [PATCH 2/2] mm/frame-vec: use FOLL_LONGTERM
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
         DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>,
@@ -84,53 +79,97 @@ Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         "open list:DMA BUFFER SHARING FRAMEWORK" 
         <linux-media@vger.kernel.org>, Oded Gabbay <oded.gabbay@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <725819e9-4f07-3f04-08f8-b6180406b339@samsung.com>
+Date:   Wed, 7 Oct 2020 14:33:56 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.3.1
+MIME-Version: 1.0
+In-Reply-To: <CAKMK7uF+a1PSn+e-6F+YhkSXn9vC7etS-z0AFBMCU+Vzb2PwqA@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUzMcRz2vd9rty7fDuuzGHNTI5Twxxdp3saPzZY/bNjI0W8V3ZU7ReYl
+        RXEKC+uc0ivR6uJ0pUYjdKi4JOSltGJlruiwiZWun+i/5/N5nuf7PJ/ty1PKfNabj9TuFnVa
+        dZSKldPltT+fzi63Hgid8yt3KsksLWZJxjk7Irnt7yhSWG+myPPvvSxJbztNkwsZSTJy3vgQ
+        DaEuGbn+IY8jXa2NNGlI/MwRS8cLhjRVZbIk9ZqVIa3FgwwxPq2WEXvXG4acdfzkiPFMN0uc
+        RwfYJROECwmNtHD7Rw4tVJrecUL+rW6ZYOlL54SHxl+00HbCJhNuFBwS0pJ6WKGjv5sVequb
+        WeFkWRES6nPuc4LTMlmwOt/QIWM3yYPCxKjIOFEXELxVHvEgrxTF3HLf+6AlmUlAKXIDcuMB
+        z4eU1JPIgOS8El9BcM/ioFyEEn9D0NYcLxFOBG/7r7Ejjtb2r4xEFCIoKEhmpaEXwcUvVs6l
+        GocJ5GYny1x4PPaDY4NHaJeIwi0sPM9tHc5gcSAYHIbhZxU4GFIaK4fNNJ4GJqfUYwLeBnX2
+        RE7SeMKj8520C7vhddBSZmNcmMJToMKRSUnYC153ZstcYYDf85B5qhBJvVdAVlENJeFx8MlW
+        xkl4EgxWjhiSELQ/KeGkIRVBU6Lxr3sRvH3SP1SVH4qYAaVVAdJ6KVw63sO41oA94JXDUyrh
+        AenlGZS0VsCxZKWk9gWTzfwv9q79GXUaqUyjTjONOsc06hzT/9wcRBchLzFWrwkX9fO04h5/
+        vVqjj9WG+2+P1ljQ0NetG7B9v4mqf2+rQZhHKnfFhl37Q5WMOk4fr6lBwFOq8YplDXVblIow
+        dfw+URcdqouNEvU1aCJPq7wU8/K6NytxuHq3uFMUY0TdCCvj3bwTUEvf1vnxl/tNZuXMoE7z
+        x45dj1amVZQ0RHSsvH2wOXD1qmB3O6VZ89IncX3T3DLvoGjNywVTsf8d3ynLPSDycGfWwB1W
+        u2ojQ4+Z7pa22MCtrlp63KYeXLvQ2hfi3OkT0hNXXx1au+hq1uP6gB0R+5vnZB9cOyvGt6d2
+        cVig2V6holW0PkId6Efp9Oo/bu17QLYDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0zMYRzH93x/Xq3j6xSPZrJb2Npc7pJ7Is3MeNZimjGLnFPfdU3X5b53
+        rQxFyC5Z0Y/raqRY1lL0iyxNiQpFpSx2tfRDmatxtCWi69j677W936/n83m2j4iU1NCeouhY
+        A6+PVcdIGVfq5WyLdX1tzWnVhtE8ChVUlDEoN/sNQDcHrSQqeVVOorc/Jhl0dSCDQvm5KQTK
+        M7eCORoj0P2RIhaN9XdSqP3cFxZVDvXSqPtRAYMu36uhUX/ZHxqZXzcQ6M3YBxpl2aZZZL42
+        ziD7hVlmmwfOT+6k8OOpQgrXWawsLq4fJ3Dlt6ssbjXPUHggrYXAVbeScHrKBIOHfo4zeLKh
+        h8FXqksBflXYzGJ75SpcY/9A7V0cJgvU64wGfrVGJxi2Sg/JkUImD0AyxcYAmdxPGb5Z4S/1
+        DQqM5GOi43m9b9BRmeZZUQWIq3dLeNZ3kU4Gqa4m4CKC3EbYP/iVNgFXkYS7DaDFaiecwUrY
+        lpNMO3kp/NVrYpwlG4Avpp9SjmAph+DNGxfnBXfOB176c55ylEjOysCBzOL5QMJdo+C7Eexg
+        hpNDk83xkotIzAXB1M461sEU5w0tdhvpYA/uGEzryiKcnSWwLW94fpgLFwr7qlvmNyK5TfB6
+        1SDpZC/4wFbwj5fD98M3iAwgsSzQLQsUywLFskApBFQpcOeNgjZKKyhkglorGGOjZBE6bSWY
+        O5na59PVD4FpYl8T4ERA6iY+eOKUSkKr44VEbROAIlLqLt7e/vKIRBypTjzJ63UqvTGGF5qA
+        /9znMklPjwjd3AHGGlRyf7kSBciVfkq/TUi6XHyJazws4aLUBv44z8fx+v8eIXLxTAYRwd8P
+        1H+eXWYryZnR7CgIfhJCTqWH729LHDrzyWtP+miUuaksx12pqJioKon7mL1TnRHR09iVxG73
+        uFxYxlZL1w4ZX2xpLjffTZts9o4M8xfwrt7u4pC+Fao7qYHh3m/XZf3WJvidXdOxef2Oji91
+        Iz27VcbdraHjYYNB0bZFxaFSStCo5T6kXlD/BZ+7bo9IAwAA
+X-CMS-MailID: 20201007123358eucas1p1eccb32143b09c921ae0a4f883164d17d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20201003094038eucas1p12aaafe0f52a7747bc2ba95ccb91d1651
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201003094038eucas1p12aaafe0f52a7747bc2ba95ccb91d1651
+References: <20201002175303.390363-1-daniel.vetter@ffwll.ch>
+        <20201002175303.390363-2-daniel.vetter@ffwll.ch>
+        <20201002180603.GL9916@ziepe.ca>
+        <CAKMK7uGF+y-r4swLXmodhduRMy0NPa=ASBY8JOXS_g=9Rq9XQw@mail.gmail.com>
+        <20201002233118.GM9916@ziepe.ca>
+        <CGME20201003094038eucas1p12aaafe0f52a7747bc2ba95ccb91d1651@eucas1p1.samsung.com>
+        <CAKMK7uFP-XQHUPYeRhPx7tjvjARQiF-os9z9jx6WANV6sgSf6g@mail.gmail.com>
+        <d2f8e8a7-614d-18c8-9e2a-c604e5e54ce6@samsung.com>
+        <CAKMK7uF+a1PSn+e-6F+YhkSXn9vC7etS-z0AFBMCU+Vzb2PwqA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 7, 2020 at 12:47 PM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Hi Daniel,
->
-> On 03.10.2020 11:40, Daniel Vetter wrote:
-> >> After he three places above should use pin_user_pages_fast(), then
-> >> this whole broken API should be moved into videobuf2-memops.c and a
-> >> big fat "THIS DOESN'T WORK" stuck on it.
-> >>
-> >> videobuf2 should probably use P2P DMA buf for this instead.
-> > Yup this should be done with dma_buf instead, and v4l has that.
->
-> Yes, V4L2 has dma_buf support NOW. That days, using so called V4L2
-> USERPTR method was the only way to achieve zero copy buffer sharing
-> between devices, so this is just a historical baggage. I've been
-> actively involved in implementing that. I've tried to make it secure as
-> much as possible assuming the limitation of that approach. With a few
-> assumptions it works fine. Buffers are refcounted both by the
-> vm_ops->open or by incrementing the refcount of the vm->file. This
-> basically works with any sane driver, which doesn't free the mmaped
-> buffer until the file is released. This is true for V4L2 and FBdev devices.
+Hi Daniel,
 
-I'm not seeing any of that vm->file refcounting going on, so not
-seeing anything that prevents the mmap area from being removed. Can
-you pls give me some pointers about which code you're thinking of?
--Daniel
+On 07.10.2020 14:01, Daniel Vetter wrote:
+> On Wed, Oct 7, 2020 at 12:47 PM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> On 03.10.2020 11:40, Daniel Vetter wrote:
+>>>> After he three places above should use pin_user_pages_fast(), then
+>>>> this whole broken API should be moved into videobuf2-memops.c and a
+>>>> big fat "THIS DOESN'T WORK" stuck on it.
+>>>>
+>>>> videobuf2 should probably use P2P DMA buf for this instead.
+>>> Yup this should be done with dma_buf instead, and v4l has that.
+>> Yes, V4L2 has dma_buf support NOW. That days, using so called V4L2
+>> USERPTR method was the only way to achieve zero copy buffer sharing
+>> between devices, so this is just a historical baggage. I've been
+>> actively involved in implementing that. I've tried to make it secure as
+>> much as possible assuming the limitation of that approach. With a few
+>> assumptions it works fine. Buffers are refcounted both by the
+>> vm_ops->open or by incrementing the refcount of the vm->file. This
+>> basically works with any sane driver, which doesn't free the mmaped
+>> buffer until the file is released. This is true for V4L2 and FBdev devices.
+> I'm not seeing any of that vm->file refcounting going on, so not
+> seeing anything that prevents the mmap area from being removed. Can
+> you pls give me some pointers about which code you're thinking of?
 
-> This API is considered as deprecated in V4L2 world, so I think
-> supporting this hack can be removed one day as nowadays userspace should
-> use dma buf.
->
->  > ...
->
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
+Well, it was in vb2_get_vma() function, but now I see that it has been 
+lost in fb639eb39154 and 6690c8c78c74 some time ago...
 
+Best regards
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
