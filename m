@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E2C5C47423
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 22:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 519ADC4727F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 22:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3664B2137B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 22:24:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05FEC20872
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 22:29:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="QQSRcBFI"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="C9Ia3VCK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728782AbgJGWYK (ORCPT
+        id S1728275AbgJGW3e (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 7 Oct 2020 18:24:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49128 "EHLO
+        Wed, 7 Oct 2020 18:29:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728275AbgJGWYK (ORCPT
+        with ESMTP id S1728856AbgJGW3e (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Oct 2020 18:24:10 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAC4FC061755
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Oct 2020 15:24:09 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id x1so3857831eds.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Oct 2020 15:24:09 -0700 (PDT)
+        Wed, 7 Oct 2020 18:29:34 -0400
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 029BCC0613D6
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Oct 2020 15:29:33 -0700 (PDT)
+Received: by mail-ed1-x542.google.com with SMTP id dn5so3835942edb.10
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Oct 2020 15:29:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Zic23vwE4RxhL64QubFNAgrR6bPLwF/Sw808vPXOvcE=;
-        b=QQSRcBFI6KAV++JS9/GFj7Fmw4j7a/iMiUg1ZTuLmVxWhkZMKv0QD8k1ukWq7eq/is
-         aqhku7tesefyyeplMfP+uZ40G5Eu5h32eX3quWRsYX4t93t8hfPAksy+eKFnntLzh659
-         XKe6EgVkLvN8qFLGttYIbd5R75etFF329oIsGVg7tFamYwMf914oOqvj5Aj57gMZmmXn
-         BdX+R3HH+c0ZbeHsryryJmXxzi8LbxHVyDfXa28xyWATs9steaqxyt3ORz7tJ5iS3p0B
-         /C9lomlbRYU4nllCvXcMpiVBxaPdCxNSDAwt+Wnv7NkDlHC0AVoEJJmmbnIbcEEDMbkk
-         VNvg==
+        bh=CTESbqWcckMo/4i92TzIl4y3TmAuiek3Eq/3qJ27aVE=;
+        b=C9Ia3VCKylLvch2Mm4CFE1Tgnfv5R+vpt+Gkie2pCUYaMg+MkmANBvB5fv/6gLxHxE
+         bqKJ+r7mFS4NA8UmxE4KYJZ33h0CYTX0aZwWDh5/vd1BekkHTnqpnKypSF28zWn4K8H0
+         LKnkgKM1Z6rkuZBOAzYfh5nH/xOSDZ3VaVqsFGiTKhdbNpRTH5LDgJn++bCaD2RQJ9I2
+         b/yb82cHyyvSeJ6CHCNH7JIYmVCxoXypsBHBMmGij+CrG19A8lbexSM+QLvs1Sqc47pm
+         mzhEavRU8o1d5Wa2DTKdErhBCi8bj8r7+t/oYkUYIZbU0ZApbdX2cmoy5guFURB/fOut
+         NK3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Zic23vwE4RxhL64QubFNAgrR6bPLwF/Sw808vPXOvcE=;
-        b=Zhbg/ogeHzBKSYwc0YSeONzwlOZb0bJ4t28QP62+UFRHvasnWUVQS9u5f4RMbmdhVY
-         qzR6J4K/Hm+pGlQDfOD7G/QEyBe9DVvNWXMxJ3nY0cwFBnboIGXRE46+K7Lg2Kop5Zmf
-         hkUS9XeUt4YvzzA8SlyEuZy9PugivGYHg0AVYllAciH9HeLO++loDbn8X0eLQbdlyKym
-         vBRs7HrbAst3zqebgWLs9uxpeYOzdjyz5JUML8I/HZMzEOhDqGo3AgSSf87khPRJvsCj
-         CKV13lpDiiFh2oQlLkAzU6cc+tqHUkv94DDeFu1nUFz+UwJz2leILTaMOK3cakz8KZln
-         DLRw==
-X-Gm-Message-State: AOAM5302pZLN1xCne+p05JmNKJUP5jvxPfQj8gnmZI3AfGauDrsSGfQl
-        /FqWQaTU/7JoHy+4aNZZH2OLhnizsoZ6f7JaLkKlew==
-X-Google-Smtp-Source: ABdhPJyEbSoLmGrub89sZew46mtuYR5cC3wqZnDpHg2eEdBRv6ndP1ZtRmu/HFaFG/gOZx15NdgN0Q/4bhJSTz4VXAk=
-X-Received: by 2002:a50:d0d0:: with SMTP id g16mr5862132edf.18.1602109448239;
- Wed, 07 Oct 2020 15:24:08 -0700 (PDT)
+        bh=CTESbqWcckMo/4i92TzIl4y3TmAuiek3Eq/3qJ27aVE=;
+        b=mqxWkyQFqwYdBKox1C8JHWN3fytcnmnrZOS53/jTkKH3WeV8jVVlvdNnV9FC0FMVTR
+         3axJ0YkuNfkkADcIG2CDbcVyXFK/2oQex42vpF1kxdkJRdoZLtD0UV0rYCCq6GxqQJNW
+         gxRzis/kU0n8kWZuYRWxmnTCZpoHzhemWcStRYhXo1hmP0JfvJ6/tnAPDUnB4t2lkaeF
+         Ou5I5/qKCPPS/egVrSDP6515iTBzprR7wMKRmHbWmSxe5/P+7KeIc6n353Y6uaLYKlop
+         zo5PFArFPdhAgSuiyf7D1RWVWyxnxdez8tl9wGFVVMnB4sQrUG3gk8p80SH1aayINGsl
+         XHNw==
+X-Gm-Message-State: AOAM531+b5Cf40WzEZOlSGvDpyakHtup7cRo8+faDlcg+2LFrVFBb2/N
+        Jnk8kAvdIiVrdwTQTP0XPssYoBSpCQU1rfyqB5lT6g==
+X-Google-Smtp-Source: ABdhPJz1RyJuGe8nKXGB7ItsvvZPLSvoGDx42NmD5N6TVh8ahpXgSpJt+qJCvPDzRQV+I/1aLUWOgK4iRugm3Y5SJFU=
+X-Received: by 2002:a50:9ea6:: with SMTP id a35mr6269472edf.52.1602109772370;
+ Wed, 07 Oct 2020 15:29:32 -0700 (PDT)
 MIME-Version: 1.0
 References: <20201007164426.1812530-1-daniel.vetter@ffwll.ch>
  <20201007164426.1812530-11-daniel.vetter@ffwll.ch> <CAPcyv4hBL68A7CZa+YnooufDH2tevoxrx32DTJMQ6OHRnec7QQ@mail.gmail.com>
- <CAKMK7uFoxiPdjO-yhd-mKqumnTpjcENEReb1sOYhOwRRCL0wpQ@mail.gmail.com>
-In-Reply-To: <CAKMK7uFoxiPdjO-yhd-mKqumnTpjcENEReb1sOYhOwRRCL0wpQ@mail.gmail.com>
+ <CAKMK7uFoxiPdjO-yhd-mKqumnTpjcENEReb1sOYhOwRRCL0wpQ@mail.gmail.com> <CAPcyv4jGxsB5so8mKqYrsn2CEc7nO2yPvzZZ_mvM_-R=BZfKHg@mail.gmail.com>
+In-Reply-To: <CAPcyv4jGxsB5so8mKqYrsn2CEc7nO2yPvzZZ_mvM_-R=BZfKHg@mail.gmail.com>
 From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 7 Oct 2020 15:23:57 -0700
-Message-ID: <CAPcyv4jGxsB5so8mKqYrsn2CEc7nO2yPvzZZ_mvM_-R=BZfKHg@mail.gmail.com>
+Date:   Wed, 7 Oct 2020 15:29:21 -0700
+Message-ID: <CAPcyv4iN1q0LUVTO6igMKPe-8hnR5ULF+mBnWy6bdXfY2M6YmA@mail.gmail.com>
 Subject: Re: [PATCH 10/13] PCI: revoke mappings like devmem
 To:     Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
@@ -84,52 +84,57 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 7, 2020 at 12:49 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+On Wed, Oct 7, 2020 at 3:23 PM Dan Williams <dan.j.williams@intel.com> wrote:
 >
-> On Wed, Oct 7, 2020 at 9:33 PM Dan Williams <dan.j.williams@intel.com> wrote:
+> On Wed, Oct 7, 2020 at 12:49 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
 > >
-> > On Wed, Oct 7, 2020 at 11:11 AM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> > On Wed, Oct 7, 2020 at 9:33 PM Dan Williams <dan.j.williams@intel.com> wrote:
 > > >
-> > > Since 3234ac664a87 ("/dev/mem: Revoke mappings when a driver claims
-> > > the region") /dev/kmem zaps ptes when the kernel requests exclusive
-> > > acccess to an iomem region. And with CONFIG_IO_STRICT_DEVMEM, this is
-> > > the default for all driver uses.
+> > > On Wed, Oct 7, 2020 at 11:11 AM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> > > >
+> > > > Since 3234ac664a87 ("/dev/mem: Revoke mappings when a driver claims
+> > > > the region") /dev/kmem zaps ptes when the kernel requests exclusive
+> > > > acccess to an iomem region. And with CONFIG_IO_STRICT_DEVMEM, this is
+> > > > the default for all driver uses.
+> > > >
+> > > > Except there's two more ways to access pci bars: sysfs and proc mmap
+> > > > support. Let's plug that hole.
 > > >
-> > > Except there's two more ways to access pci bars: sysfs and proc mmap
-> > > support. Let's plug that hole.
+> > > Ooh, yes, lets.
+> > >
+> > > > For revoke_devmem() to work we need to link our vma into the same
+> > > > address_space, with consistent vma->vm_pgoff. ->pgoff is already
+> > > > adjusted, because that's how (io_)remap_pfn_range works, but for the
+> > > > mapping we need to adjust vma->vm_file->f_mapping. Usually that's done
+> > > > at ->open time, but that's a bit tricky here with all the entry points
+> > > > and arch code. So instead create a fake file and adjust vma->vm_file.
+> > >
+> > > I don't think you want to share the devmem inode for this, this should
+> > > be based off the sysfs inode which I believe there is already only one
+> > > instance per resource. In contrast /dev/mem can have multiple inodes
+> > > because anyone can just mknod a new character device file, the same
+> > > problem does not exist for sysfs.
 > >
-> > Ooh, yes, lets.
-> >
-> > > For revoke_devmem() to work we need to link our vma into the same
-> > > address_space, with consistent vma->vm_pgoff. ->pgoff is already
-> > > adjusted, because that's how (io_)remap_pfn_range works, but for the
-> > > mapping we need to adjust vma->vm_file->f_mapping. Usually that's done
-> > > at ->open time, but that's a bit tricky here with all the entry points
-> > > and arch code. So instead create a fake file and adjust vma->vm_file.
-> >
-> > I don't think you want to share the devmem inode for this, this should
-> > be based off the sysfs inode which I believe there is already only one
-> > instance per resource. In contrast /dev/mem can have multiple inodes
-> > because anyone can just mknod a new character device file, the same
-> > problem does not exist for sysfs.
+> > But then I need to find the right one, plus I also need to find the
+> > right one for the procfs side. That gets messy, and I already have no
+> > idea how to really test this. Shared address_space is the same trick
+> > we're using in drm (where we have multiple things all pointing to the
+> > same underlying resources, through different files), and it gets the
+> > job done. So that's why I figured the shared address_space is the
+> > cleaner solution since then unmap_mapping_range takes care of
+> > iterating over all vma for us. I guess I could reimplement that logic
+> > with our own locking and everything in revoke_devmem, but feels a bit
+> > silly. But it would also solve the problem of having mutliple
+> > different mknod of /dev/kmem with different address_space behind them.
+> > Also because of how remap_pfn_range works, all these vma do use the
+> > same pgoff already anyway.
 >
-> But then I need to find the right one, plus I also need to find the
-> right one for the procfs side. That gets messy, and I already have no
-> idea how to really test this. Shared address_space is the same trick
-> we're using in drm (where we have multiple things all pointing to the
-> same underlying resources, through different files), and it gets the
-> job done. So that's why I figured the shared address_space is the
-> cleaner solution since then unmap_mapping_range takes care of
-> iterating over all vma for us. I guess I could reimplement that logic
-> with our own locking and everything in revoke_devmem, but feels a bit
-> silly. But it would also solve the problem of having mutliple
-> different mknod of /dev/kmem with different address_space behind them.
-> Also because of how remap_pfn_range works, all these vma do use the
-> same pgoff already anyway.
+> True, remap_pfn_range() makes sure that ->pgoff is an absolute
+> physical address offset for all use cases. So you might be able to
+> just point proc_bus_pci_open() at the shared devmem address space. For
+> sysfs it's messier. I think you would need to somehow get the inode
+> from kernfs_fop_open() to adjust its address space, but only if the
+> bin_file will ultimately be used for PCI memory.
 
-True, remap_pfn_range() makes sure that ->pgoff is an absolute
-physical address offset for all use cases. So you might be able to
-just point proc_bus_pci_open() at the shared devmem address space. For
-sysfs it's messier. I think you would need to somehow get the inode
-from kernfs_fop_open() to adjust its address space, but only if the
-bin_file will ultimately be used for PCI memory.
+To me this seems like a new sysfs_create_bin_file() flavor that
+registers the file with the common devmem address_space.
