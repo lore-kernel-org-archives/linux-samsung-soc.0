@@ -2,205 +2,497 @@ Return-Path: <SRS0=c76P=DO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA18C4727E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 14:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 609DFC4363D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 14:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDC9421924
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 14:23:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD7662168B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Oct 2020 14:31:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="HxN9CeEl"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="NTYqZ7f5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbgJGOXJ (ORCPT
+        id S1728631AbgJGObI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 7 Oct 2020 10:23:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58936 "EHLO
+        Wed, 7 Oct 2020 10:31:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728582AbgJGOXI (ORCPT
+        with ESMTP id S1728053AbgJGObI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Oct 2020 10:23:08 -0400
-Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13167C0613D2
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Oct 2020 07:23:07 -0700 (PDT)
-Received: by mail-oi1-x243.google.com with SMTP id n2so2643773oij.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Oct 2020 07:23:07 -0700 (PDT)
+        Wed, 7 Oct 2020 10:31:08 -0400
+Received: from mail-oo1-xc42.google.com (mail-oo1-xc42.google.com [IPv6:2607:f8b0:4864:20::c42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56DF3C0613D2
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Oct 2020 07:31:08 -0700 (PDT)
+Received: by mail-oo1-xc42.google.com with SMTP id y127so666059ooa.5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Oct 2020 07:31:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C6FRvFu0sftzaO7u7hAn4jdJ4FF4CGkT7QzNcdFtRx0=;
-        b=HxN9CeEl6dg2fnJo70BaHxKXccc7EEzG66whVAVFPq4AH9BV/iG5k/B+RBQ74hh3Qh
-         vMBh897K/acdcVcspzwrD+Be0V1z7QbLcaLqhtoxu656rcFUTrqE+PYX+Jopp+M50JUE
-         1UpmjO7U9bHLA27shpixoevJKUgn1Y0vP2DSM=
+         :cc:content-transfer-encoding;
+        bh=NbLfbOo6rBgplKLLXUM/j+UjD/0nZV6znJNM3tEznfE=;
+        b=NTYqZ7f5B5Gq+gYWGOBHXox72i8QP8xJnVDXz/XMzy4PD5+aheXfQ9douo1x8qBJaA
+         t3MCm6+mQ2l2Te5LxUMufA52jrfxXGUuS3Ub9jWGPX7BUN7lOtXCgszdLolU9WucZHoq
+         TGkYA7/fPKQfpc9yG3h/xdIDNv02YJCEcWu2k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C6FRvFu0sftzaO7u7hAn4jdJ4FF4CGkT7QzNcdFtRx0=;
-        b=DyEryVP7B9QmTAOYOYkm6cxnhGJ22OUk1gppQHIbIWlMRTkWVcSYERcr+OUC2wR2ka
-         9K7kkfdt1JKDwHvycLnxc9C01w3b5k71bdFuRVy6yx0Ji4vMaMoWapE5D7Vl2U+uoEGZ
-         ENWMw8o6FMA5tDyuh6GChlLWt6+xL+K7gmO4W/MTpGn7pH8apiLL098X8FLw5AQ5NCLe
-         zfpSs1aiGi7jgvhLE6Iy2dc3N2n3bS8BkCuSjjFVRR8OvZvBoQoGcfmI4eCtvzS3ps1Z
-         2hyuN/bE8HqgrOHRmVEqmxjBCbTTJums8Y6NEVSsxqmOFTUkozVVIC1ICOIfmTsyyST4
-         H8WA==
-X-Gm-Message-State: AOAM531bETOdh5lW2HTzihmrA+ZoFae4SA2/qFkmq8YkBp5pFKtZnRCy
-        XLI/DrFGzoc/Mq0QOyQ5tFPZaqciiGGtcAp9oLxC2g==
-X-Google-Smtp-Source: ABdhPJykVRNPxZpjwtBJp2l3oQqrHTgzTF48u7oukqSME6wbdcmRxZ9GAc1QKmyX+l7NgyvInm/j9HuaUKL8z913hkQ=
-X-Received: by 2002:aca:6083:: with SMTP id u125mr2144090oib.14.1602080586311;
- Wed, 07 Oct 2020 07:23:06 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=NbLfbOo6rBgplKLLXUM/j+UjD/0nZV6znJNM3tEznfE=;
+        b=S2z051PLZKrYadK6bXsvMZsD0s8IqQTs9mez11J+z8qHSrIa/vsBKu1WNFiXOmie+f
+         6FgJhw/DAJyyn1Cbbv7n14j0uV2HdcTXhh5E+5GiyZd/TO2EvgLif+jC6DpiEBKEJr48
+         1RGFKkaztqWeKtqFarui1H6nTJgPIx6OdZs2fFoy/xFVDw1ELtILY9TqfyLAXJBjwj+F
+         kFyU3jkDsEM4aI0q1TC6zpSPKGU0YwQU1Br2yJfHkTjYlqN/rphmI5eGV+VFCCcBwfp1
+         StyVy9iPUjoEWLd2hOc1SmRcUD/wlwF/MT7yaE6P9qwxBQZh6C0cq48OgwOWaEI2vQTw
+         y3+A==
+X-Gm-Message-State: AOAM5326flRyF6j/DjTUq2BkXDS9bH680MqU9f+MC0vAt5KxjYHrHgnl
+        PSiXdQRG5aRGZaGiKgG2hea3GILMiO6Al+6BBn8+vw==
+X-Google-Smtp-Source: ABdhPJzZpewR2804aqDvAhxBrbs0NiPUuiLxDsRE6uB5xKlkNmt5x5H5vW7ze9MuHc5XJfLaMcC98vFOmMc7laRKCrA=
+X-Received: by 2002:a4a:e592:: with SMTP id o18mr2238606oov.28.1602081067392;
+ Wed, 07 Oct 2020 07:31:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAKMK7uGF+y-r4swLXmodhduRMy0NPa=ASBY8JOXS_g=9Rq9XQw@mail.gmail.com>
- <20201002233118.GM9916@ziepe.ca> <CGME20201003094038eucas1p12aaafe0f52a7747bc2ba95ccb91d1651@eucas1p1.samsung.com>
- <CAKMK7uFP-XQHUPYeRhPx7tjvjARQiF-os9z9jx6WANV6sgSf6g@mail.gmail.com>
- <d2f8e8a7-614d-18c8-9e2a-c604e5e54ce6@samsung.com> <CAKMK7uF+a1PSn+e-6F+YhkSXn9vC7etS-z0AFBMCU+Vzb2PwqA@mail.gmail.com>
- <725819e9-4f07-3f04-08f8-b6180406b339@samsung.com> <20201007124409.GN5177@ziepe.ca>
- <CAAFQd5D0ahP-3hp_vGEmJ2cyBOMXeW9HX5yKaVPcQTsFwwOE8Q@mail.gmail.com>
- <CAKMK7uG3fds79Yf9VhMstnJ2+UHYUEVdODkoOvtwFC28_+T6RA@mail.gmail.com>
- <20201007130610.GP5177@ziepe.ca> <CAAFQd5CH8ytmwfd_AD0e9C92xkW3fRPmqvi9_4UN6pw-y3f-sg@mail.gmail.com>
- <CAKMK7uFSTrULTE-o+vHU-81dJpKJ5cHAAb8qkpQtcz6KrhvPzg@mail.gmail.com> <CAAFQd5ArKWR8f4XO73UB7tyeq3ZCYJb4OD_K=2hxOgputRY=Rw@mail.gmail.com>
-In-Reply-To: <CAAFQd5ArKWR8f4XO73UB7tyeq3ZCYJb4OD_K=2hxOgputRY=Rw@mail.gmail.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Wed, 7 Oct 2020 16:22:54 +0200
-Message-ID: <CAKMK7uGXvOjQ2BQWaMdgwGg+bLNCFF3sBLsUztLnPNnwJ+Wtqg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm/frame-vec: use FOLL_LONGTERM
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Pawel Osciak <pawel@osciak.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
+References: <20200929151437.19717-1-tzimmermann@suse.de> <20200929151437.19717-3-tzimmermann@suse.de>
+ <8fad0114-064a-4ed5-c21d-d1b4294de0a1@amd.com> <2614314a-81f7-4722-c400-68d90e48e09a@suse.de>
+ <8a84f62b-33f3-f44c-52af-c859a0e0d1fb@gmail.com> <07972ada-9135-3743-a86b-487f610c509f@suse.de>
+ <b569b7e3-68f0-edcc-c8f4-170e9042d348@gmail.com> <20200930094712.GW438822@phenom.ffwll.local>
+ <8479d0aa-3826-4f37-0109-55daca515793@amd.com> <CAKMK7uH0U36NG8w98i0x6HVGeogiwnYDRiKquLW-8znLa7-0yg@mail.gmail.com>
+ <20201002095830.GH438822@phenom.ffwll.local> <5bf40546-8da9-1649-22da-a982f1e8d9c3@suse.de>
+ <CAKMK7uEu0vwiG9Uz0_Ysyus0ZAF-1HNxvPZjcG3xZS=gkKgJLw@mail.gmail.com>
+ <26ac0446-9e16-1ca1-7407-3d0cd7125e0e@suse.de> <09d634d0-f20a-e9a9-d8d2-b50e8aaf156f@amd.com>
+In-Reply-To: <09d634d0-f20a-e9a9-d8d2-b50e8aaf156f@amd.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Wed, 7 Oct 2020 16:30:56 +0200
+Message-ID: <CAKMK7uEPn=q1J50koveE+b49r=SE0eh5nTrxWOVRN2grdyNPTA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/7] drm/ttm: Add ttm_kmap_obj_to_dma_buf_map() for
+ type conversion
+To:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
+        Luben Tuikov <luben.tuikov@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        Nouveau Dev <nouveau@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "Wilson, Chris" <chris@chris-wilson.co.uk>,
+        Melissa Wen <melissa.srw@gmail.com>,
+        Huang Rui <ray.huang@amd.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Emil Velikov <emil.velikov@collabora.com>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        lima@lists.freedesktop.org,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        The etnaviv authors <etnaviv@lists.freedesktop.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "moderated list:DRM DRIVERS FOR XEN" <xen-devel@lists.xenproject.org>,
+        "open list:VIRTIO CORE, NET..." 
+        <virtualization@lists.linux-foundation.org>,
+        Sean Paul <sean@poorly.run>, apaneers@amd.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Qinglang Miao <miaoqinglang@huawei.com>,
+        Qiang Yu <yuq825@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>, Oded Gabbay <oded.gabbay@gmail.com>
+        <linux-media@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 7, 2020 at 4:12 PM Tomasz Figa <tfiga@chromium.org> wrote:
+On Wed, Oct 7, 2020 at 3:25 PM Christian K=C3=B6nig <christian.koenig@amd.c=
+om> wrote:
 >
-> On Wed, Oct 7, 2020 at 4:09 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> Am 07.10.20 um 15:20 schrieb Thomas Zimmermann:
+> > Hi
 > >
-> > On Wed, Oct 7, 2020 at 3:34 PM Tomasz Figa <tfiga@chromium.org> wrote:
-> > >
-> > > On Wed, Oct 7, 2020 at 3:06 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > >
-> > > > On Wed, Oct 07, 2020 at 02:58:33PM +0200, Daniel Vetter wrote:
-> > > > > On Wed, Oct 7, 2020 at 2:48 PM Tomasz Figa <tfiga@chromium.org> wrote:
-> > > > > >
-> > > > > > On Wed, Oct 7, 2020 at 2:44 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > > > > >
-> > > > > > > On Wed, Oct 07, 2020 at 02:33:56PM +0200, Marek Szyprowski wrote:
-> > > > > > > > Well, it was in vb2_get_vma() function, but now I see that it has been
-> > > > > > > > lost in fb639eb39154 and 6690c8c78c74 some time ago...
-> > > > > > >
-> > > > > > > There is no guarentee that holding a get on the file says anthing
-> > > > > > > about the VMA. This needed to check that the file was some special
-> > > > > > > kind of file that promised the VMA layout and file lifetime are
-> > > > > > > connected.
-> > > > > > >
-> > > > > > > Also, cloning a VMA outside the mm world is just really bad. That
-> > > > > > > would screw up many assumptions the drivers make.
-> > > > > > >
-> > > > > > > If it is all obsolete I say we hide it behind a default n config
-> > > > > > > symbol and taint the kernel if anything uses it.
-> > > > > > >
-> > > > > > > Add a big comment above the follow_pfn to warn others away from this
-> > > > > > > code.
-> > > > > >
-> > > > > > Sadly it's just verbally declared as deprecated and not formally noted
-> > > > > > anyway. There are a lot of userspace applications relying on user
-> > > > > > pointer support.
-> > > > >
-> > > > > userptr can stay, it's the userptr abuse for zerocpy buffer sharing
-> > > > > which doesn't work anymore. At least without major surgery (you'd need
-> > > > > an mmu notifier to zap mappings and recreate them, and that pretty
-> > > > > much breaks the v4l model of preallocating all buffers to make sure we
-> > > > > never underflow the buffer queue). And static mappings are not coming
-> > > > > back I think, we'll go ever more into the direction of dynamic
-> > > > > mappings and moving stuff around as needed.
-> > > >
-> > > > Right, and to be clear, the last time I saw a security flaw of this
-> > > > magnitude from a subsystem badly mis-designing itself, Linus's
-> > > > knee-jerk reaction was to propose to remove the whole subsystem.
-> > > >
-> > > > Please don't take status-quo as acceptable, V4L community has to work
-> > > > to resolve this, uABI breakage or not. The follow_pfn related code
-> > > > must be compiled out of normal distro kernel builds.
-> > >
-> > > I think the userptr zero-copy hack should be able to go away indeed,
-> > > given that we now have CMA that allows having carveouts backed by
-> > > struct pages and having the memory represented as DMA-buf normally.
-> >
-> > Not sure whether there's a confusion here: dma-buf supports memory not
-> > backed by struct page.
-> >
->
-> That's new to me. The whole API relies on sg_tables a lot, which in
-> turn rely on struct page pointers to describe the physical memory.
+> > Am 07.10.20 um 15:10 schrieb Daniel Vetter:
+> >> On Wed, Oct 7, 2020 at 2:57 PM Thomas Zimmermann <tzimmermann@suse.de>=
+ wrote:
+> >>> Hi
+> >>>
+> >>> Am 02.10.20 um 11:58 schrieb Daniel Vetter:
+> >>>> On Wed, Sep 30, 2020 at 02:51:46PM +0200, Daniel Vetter wrote:
+> >>>>> On Wed, Sep 30, 2020 at 2:34 PM Christian K=C3=B6nig
+> >>>>> <christian.koenig@amd.com> wrote:
+> >>>>>> Am 30.09.20 um 11:47 schrieb Daniel Vetter:
+> >>>>>>> On Wed, Sep 30, 2020 at 10:34:31AM +0200, Christian K=C3=B6nig wr=
+ote:
+> >>>>>>>> Am 30.09.20 um 10:19 schrieb Thomas Zimmermann:
+> >>>>>>>>> Hi
+> >>>>>>>>>
+> >>>>>>>>> Am 30.09.20 um 10:05 schrieb Christian K=C3=B6nig:
+> >>>>>>>>>> Am 29.09.20 um 19:49 schrieb Thomas Zimmermann:
+> >>>>>>>>>>> Hi Christian
+> >>>>>>>>>>>
+> >>>>>>>>>>> Am 29.09.20 um 17:35 schrieb Christian K=C3=B6nig:
+> >>>>>>>>>>>> Am 29.09.20 um 17:14 schrieb Thomas Zimmermann:
+> >>>>>>>>>>>>> The new helper ttm_kmap_obj_to_dma_buf() extracts address a=
+nd location
+> >>>>>>>>>>>>> from and instance of TTM's kmap_obj and initializes struct =
+dma_buf_map
+> >>>>>>>>>>>>> with these values. Helpful for TTM-based drivers.
+> >>>>>>>>>>>> We could completely drop that if we use the same structure i=
+nside TTM as
+> >>>>>>>>>>>> well.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Additional to that which driver is going to use this?
+> >>>>>>>>>>> As Daniel mentioned, it's in patch 3. The TTM-based drivers w=
+ill
+> >>>>>>>>>>> retrieve the pointer via this function.
+> >>>>>>>>>>>
+> >>>>>>>>>>> I do want to see all that being more tightly integrated into =
+TTM, but
+> >>>>>>>>>>> not in this series. This one is about fixing the bochs-on-spa=
+rc64
+> >>>>>>>>>>> problem for good. Patch 7 adds an update to TTM to the DRM TO=
+DO list.
+> >>>>>>>>>> I should have asked which driver you try to fix here :)
+> >>>>>>>>>>
+> >>>>>>>>>> In this case just keep the function inside bochs and only fix =
+it there.
+> >>>>>>>>>>
+> >>>>>>>>>> All other drivers can be fixed when we generally pump this thr=
+ough TTM.
+> >>>>>>>>> Did you take a look at patch 3? This function will be used by V=
+RAM
+> >>>>>>>>> helpers, nouveau, radeon, amdgpu and qxl. If we don't put it he=
+re, we
+> >>>>>>>>> have to duplicate the functionality in each if these drivers. B=
+ochs
+> >>>>>>>>> itself uses VRAM helpers and doesn't touch the function directl=
+y.
+> >>>>>>>> Ah, ok can we have that then only in the VRAM helpers?
+> >>>>>>>>
+> >>>>>>>> Alternative you could go ahead and use dma_buf_map in ttm_bo_kma=
+p_obj
+> >>>>>>>> directly and drop the hack with the TTM_BO_MAP_IOMEM_MASK.
+> >>>>>>>>
+> >>>>>>>> What I want to avoid is to have another conversion function in T=
+TM because
+> >>>>>>>> what happens here is that we already convert from ttm_bus_placem=
+ent to
+> >>>>>>>> ttm_bo_kmap_obj and then to dma_buf_map.
+> >>>>>>> Hm I'm not really seeing how that helps with a gradual conversion=
+ of
+> >>>>>>> everything over to dma_buf_map and assorted helpers for access? T=
+here's
+> >>>>>>> too many places in ttm drivers where is_iomem and related stuff i=
+s used to
+> >>>>>>> be able to convert it all in one go. An intermediate state with a=
+ bunch of
+> >>>>>>> conversions seems fairly unavoidable to me.
+> >>>>>> Fair enough. I would just have started bottom up and not top down.
+> >>>>>>
+> >>>>>> Anyway feel free to go ahead with this approach as long as we can =
+remove
+> >>>>>> the new function again when we clean that stuff up for good.
+> >>>>> Yeah I guess bottom up would make more sense as a refactoring. But =
+the
+> >>>>> main motivation to land this here is to fix the __mmio vs normal
+> >>>>> memory confusion in the fbdev emulation helpers for sparc (and
+> >>>>> anything else that needs this). Hence the top down approach for
+> >>>>> rolling this out.
+> >>>> Ok I started reviewing this a bit more in-depth, and I think this is=
+ a bit
+> >>>> too much of a de-tour.
+> >>>>
+> >>>> Looking through all the callers of ttm_bo_kmap almost everyone maps =
+the
+> >>>> entire object. Only vmwgfx uses to map less than that. Also, everyon=
+e just
+> >>>> immediately follows up with converting that full object map into a
+> >>>> pointer.
+> >>>>
+> >>>> So I think what we really want here is:
+> >>>> - new function
+> >>>>
+> >>>> int ttm_bo_vmap(struct ttm_buffer_object *bo, struct dma_buf_map *ma=
+p);
+> >>>>
+> >>>>    _vmap name since that's consistent with both dma_buf functions an=
+d
+> >>>>    what's usually used to implement this. Outside of the ttm world k=
+map
+> >>>>    usually just means single-page mappings using kmap() or it's iome=
+m
+> >>>>    sibling io_mapping_map* so rather confusing name for a function w=
+hich
+> >>>>    usually is just used to set up a vmap of the entire buffer.
+> >>>>
+> >>>> - a helper which can be used for the drm_gem_object_funcs vmap/vunma=
+p
+> >>>>    functions for all ttm drivers. We should be able to make this ful=
+ly
+> >>>>    generic because a) we now have dma_buf_map and b) drm_gem_object =
+is
+> >>>>    embedded in the ttm_bo, so we can upcast for everyone who's both =
+a ttm
+> >>>>    and gem driver.
+> >>>>
+> >>>>    This is maybe a good follow-up, since it should allow us to ditch=
+ quite
+> >>>>    a bit of the vram helper code for this more generic stuff. I also=
+ might
+> >>>>    have missed some special-cases here, but from a quick look everyt=
+hing
+> >>>>    just pins the buffer to the current location and that's it.
+> >>>>
+> >>>>    Also this obviously requires Christian's generic ttm_bo_pin rewor=
+k
+> >>>>    first.
+> >>>>
+> >>>> - roll the above out to drivers.
+> >>>>
+> >>>> Christian/Thomas, thoughts on this?
+> >>> I agree on the goals, but what is the immediate objective here?
+> >>>
+> >>> Adding ttm_bo_vmap() does not work out easily, as struct ttm_bo_kmap_=
+obj
+> >>> is a central part of the internals of TTM. struct ttm_bo_kmap_obj has
+> >>> more internal state that struct dma_buf_map, so they are not easily
+> >>> convertible either. What you propose seems to require a reimplementat=
+ion
+> >>> of the existing ttm_bo_kmap() code. That is it's own patch series.
+> >>>
+> >>> I'd rather go with some variant of the existing patch and add
+> >>> ttm_bo_vmap() in a follow-up.
+> >> ttm_bo_vmap would simply wrap what you currently open-code as
+> >> ttm_bo_kmap + ttm_kmap_obj_to_dma_buf_map. Removing ttm_kmap_obj would
+> >> be a much later step. Why do you think adding ttm_bo_vmap is not
+> >> possible?
+> > The calls to ttm_bo_kmap/_kunmap() require an instance of struct
+> > ttm_bo_kmap_obj that is stored in each driver's private bo structure
+> > (e.g., struct drm_gem_vram_object, struct radeon_bo, etc). When I made
+> > patch 3, I flirted with the idea of unifying the driver's _vmap code in
+> > a shared helper, but I couldn't find a simple way of doing it. That's
+> > why it's open-coded in the first place.
 
-You're not allowed to look at struct page pointers from the importer
-side, those might not be there. Which isn't the prettiest thing, but
-it works. And even if there's a struct page, you're still not allowed
-to look at it, since it's fully managed by the exporter under whatever
-rules that might need. So no touching it, ever.
+Yeah we'd need a ttm_bo_vunmap I guess to make this work. Which
+shouldn't be more than a few lines, but maybe too much to do in this
+series.
 
-This is also not news, supporting this was in the design brief from
-the kickoff session 10+ years ago at some linaro connect thing (in
-Budapest iirc). And we have implementations doing that for almost as
-long merged in upstream.
+> Well that makes kind of sense. Keep in mind that ttm_bo_kmap is
+> currently way to complicated.
 
-> > > How about the regular userptr use case, though?
-> > >
-> > > The existing code resolves the user pointer into pages by following
-> > > the get_vaddr_frames() -> frame_vector_to_pages() ->
-> > > sg_alloc_table_from_pages() / vm_map_ram() approach.
-> > > get_vaddr_frames() seems to use pin_user_pages() behind the scenes if
-> > > the vma is not an IO or a PFNMAP, falling back to follow_pfn()
-> > > otherwise.
-> >
-> > Yeah pin_user_pages is fine, it's just the VM_IO | VM_PFNMAP vma that
-> > don't work.
->
-> Ack.
->
-> > >
-> > > Is your intention to drop get_vaddr_frames() or we could still keep
-> > > using it and if vec->is_pfns is true:
-> > > a) if CONFIG_VIDEO_LEGACY_PFN_USERPTR is set, taint the kernel
-> > > b) otherwise just undo and fail?
-> >
-> > I'm typing that patch series (plus a pile more) right now.
->
-> Cool, thanks!
->
-> We also need to bring back the vma_open() that somehow disappeared
-> around 4.2, as Marek found.
-
-The vm_open isn't enough to stop the problems (it doesn't and cannot
-protect against unmap_mapping_range), I don't think keeping an
-incomplete solution around has much benefit. People who need this can
-disable CONFIG_STRICT_FOLLOW_PFN to keep things working, everyone else
-probably doesn't want these mm internals leaking into the media
-subsystem.
+Yeah, simplifying this into a ttm_bo_vmap on one side, and a simple
+1-page kmap helper on the other should help a lot.
 -Daniel
--- 
+
+>
+> Christian.
+>
+> >
+> > Best regards
+> > Thomas
+> >
+> >> -Daniel
+> >>
+> >>
+> >>> Best regards
+> >>> Thomas
+> >>>
+> >>>> I think for the immediate need of rolling this out for vram helpers =
+and
+> >>>> fbdev code we should be able to do this, but just postpone the drive=
+r wide
+> >>>> roll-out for now.
+> >>>>
+> >>>> Cheers, Daniel
+> >>>>
+> >>>>> -Daniel
+> >>>>>
+> >>>>>> Christian.
+> >>>>>>
+> >>>>>>> -Daniel
+> >>>>>>>
+> >>>>>>>> Thanks,
+> >>>>>>>> Christian.
+> >>>>>>>>
+> >>>>>>>>> Best regards
+> >>>>>>>>> Thomas
+> >>>>>>>>>
+> >>>>>>>>>> Regards,
+> >>>>>>>>>> Christian.
+> >>>>>>>>>>
+> >>>>>>>>>>> Best regards
+> >>>>>>>>>>> Thomas
+> >>>>>>>>>>>
+> >>>>>>>>>>>> Regards,
+> >>>>>>>>>>>> Christian.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> >>>>>>>>>>>>> ---
+> >>>>>>>>>>>>>      include/drm/ttm/ttm_bo_api.h | 24 ++++++++++++++++++++=
+++++
+> >>>>>>>>>>>>>      include/linux/dma-buf-map.h  | 20 ++++++++++++++++++++
+> >>>>>>>>>>>>>      2 files changed, 44 insertions(+)
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm=
+/ttm_bo_api.h
+> >>>>>>>>>>>>> index c96a25d571c8..62d89f05a801 100644
+> >>>>>>>>>>>>> --- a/include/drm/ttm/ttm_bo_api.h
+> >>>>>>>>>>>>> +++ b/include/drm/ttm/ttm_bo_api.h
+> >>>>>>>>>>>>> @@ -34,6 +34,7 @@
+> >>>>>>>>>>>>>      #include <drm/drm_gem.h>
+> >>>>>>>>>>>>>      #include <drm/drm_hashtab.h>
+> >>>>>>>>>>>>>      #include <drm/drm_vma_manager.h>
+> >>>>>>>>>>>>> +#include <linux/dma-buf-map.h>
+> >>>>>>>>>>>>>      #include <linux/kref.h>
+> >>>>>>>>>>>>>      #include <linux/list.h>
+> >>>>>>>>>>>>>      #include <linux/wait.h>
+> >>>>>>>>>>>>> @@ -486,6 +487,29 @@ static inline void *ttm_kmap_obj_virtu=
+al(struct
+> >>>>>>>>>>>>> ttm_bo_kmap_obj *map,
+> >>>>>>>>>>>>>          return map->virtual;
+> >>>>>>>>>>>>>      }
+> >>>>>>>>>>>>>      +/**
+> >>>>>>>>>>>>> + * ttm_kmap_obj_to_dma_buf_map
+> >>>>>>>>>>>>> + *
+> >>>>>>>>>>>>> + * @kmap: A struct ttm_bo_kmap_obj returned from ttm_bo_km=
+ap.
+> >>>>>>>>>>>>> + * @map: Returns the mapping as struct dma_buf_map
+> >>>>>>>>>>>>> + *
+> >>>>>>>>>>>>> + * Converts struct ttm_bo_kmap_obj to struct dma_buf_map. =
+If the memory
+> >>>>>>>>>>>>> + * is not mapped, the returned mapping is initialized to N=
+ULL.
+> >>>>>>>>>>>>> + */
+> >>>>>>>>>>>>> +static inline void ttm_kmap_obj_to_dma_buf_map(struct ttm_=
+bo_kmap_obj
+> >>>>>>>>>>>>> *kmap,
+> >>>>>>>>>>>>> +                           struct dma_buf_map *map)
+> >>>>>>>>>>>>> +{
+> >>>>>>>>>>>>> +    bool is_iomem;
+> >>>>>>>>>>>>> +    void *vaddr =3D ttm_kmap_obj_virtual(kmap, &is_iomem);
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +    if (!vaddr)
+> >>>>>>>>>>>>> +        dma_buf_map_clear(map);
+> >>>>>>>>>>>>> +    else if (is_iomem)
+> >>>>>>>>>>>>> +        dma_buf_map_set_vaddr_iomem(map, (void __force __i=
+omem *)vaddr);
+> >>>>>>>>>>>>> +    else
+> >>>>>>>>>>>>> +        dma_buf_map_set_vaddr(map, vaddr);
+> >>>>>>>>>>>>> +}
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>>      /**
+> >>>>>>>>>>>>>       * ttm_bo_kmap
+> >>>>>>>>>>>>>       *
+> >>>>>>>>>>>>> diff --git a/include/linux/dma-buf-map.h b/include/linux/dm=
+a-buf-map.h
+> >>>>>>>>>>>>> index fd1aba545fdf..2e8bbecb5091 100644
+> >>>>>>>>>>>>> --- a/include/linux/dma-buf-map.h
+> >>>>>>>>>>>>> +++ b/include/linux/dma-buf-map.h
+> >>>>>>>>>>>>> @@ -45,6 +45,12 @@
+> >>>>>>>>>>>>>       *
+> >>>>>>>>>>>>>       *    dma_buf_map_set_vaddr(&map. 0xdeadbeaf);
+> >>>>>>>>>>>>>       *
+> >>>>>>>>>>>>> + * To set an address in I/O memory, use dma_buf_map_set_va=
+ddr_iomem().
+> >>>>>>>>>>>>> + *
+> >>>>>>>>>>>>> + * .. code-block:: c
+> >>>>>>>>>>>>> + *
+> >>>>>>>>>>>>> + *    dma_buf_map_set_vaddr_iomem(&map. 0xdeadbeaf);
+> >>>>>>>>>>>>> + *
+> >>>>>>>>>>>>>       * Test if a mapping is valid with either dma_buf_map_=
+is_set() or
+> >>>>>>>>>>>>>       * dma_buf_map_is_null().
+> >>>>>>>>>>>>>       *
+> >>>>>>>>>>>>> @@ -118,6 +124,20 @@ static inline void dma_buf_map_set_vad=
+dr(struct
+> >>>>>>>>>>>>> dma_buf_map *map, void *vaddr)
+> >>>>>>>>>>>>>          map->is_iomem =3D false;
+> >>>>>>>>>>>>>      }
+> >>>>>>>>>>>>>      +/**
+> >>>>>>>>>>>>> + * dma_buf_map_set_vaddr_iomem - Sets a dma-buf mapping st=
+ructure to
+> >>>>>>>>>>>>> an address in I/O memory
+> >>>>>>>>>>>>> + * @map:        The dma-buf mapping structure
+> >>>>>>>>>>>>> + * @vaddr_iomem:    An I/O-memory address
+> >>>>>>>>>>>>> + *
+> >>>>>>>>>>>>> + * Sets the address and the I/O-memory flag.
+> >>>>>>>>>>>>> + */
+> >>>>>>>>>>>>> +static inline void dma_buf_map_set_vaddr_iomem(struct dma_=
+buf_map *map,
+> >>>>>>>>>>>>> +                           void __iomem *vaddr_iomem)
+> >>>>>>>>>>>>> +{
+> >>>>>>>>>>>>> +    map->vaddr_iomem =3D vaddr_iomem;
+> >>>>>>>>>>>>> +    map->is_iomem =3D true;
+> >>>>>>>>>>>>> +}
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>>      /**
+> >>>>>>>>>>>>>       * dma_buf_map_is_equal - Compares two dma-buf mapping=
+ structures
+> >>>>>>>>>>>>> for equality
+> >>>>>>>>>>>>>       * @lhs:    The dma-buf mapping structure
+> >>>>>>>>>>>> _______________________________________________
+> >>>>>>>>>>>> dri-devel mailing list
+> >>>>>>>>>>>> dri-devel@lists.freedesktop.org
+> >>>>>>>>>>>> https://nam11.safelinks.protection.outlook.com/?url=3Dhttps%=
+3A%2F%2Flists.freedesktop.org%2Fmailman%2Flistinfo%2Fdri-devel&amp;data=3D0=
+2%7C01%7Cchristian.koenig%40amd.com%7C472c3d655a61411deb6708d86525d1b8%7C3d=
+d8961fe4884e608e11a82d994e183d%7C0%7C0%7C637370560438965013&amp;sdata=3DHdH=
+OA%2F1VcIX%2F7YtfYTiAqYEvw7Ag%2FS%2BxS5VwJKOv5y0%3D&amp;reserved=3D0
+> >>>>>>>>>>> _______________________________________________
+> >>>>>>>>>>> amd-gfx mailing list
+> >>>>>>>>>>> amd-gfx@lists.freedesktop.org
+> >>>>>>>>>>> https://nam11.safelinks.protection.outlook.com/?url=3Dhttps%3=
+A%2F%2Flists.freedesktop.org%2Fmailman%2Flistinfo%2Famd-gfx&amp;data=3D02%7=
+C01%7Cchristian.koenig%40amd.com%7C472c3d655a61411deb6708d86525d1b8%7C3dd89=
+61fe4884e608e11a82d994e183d%7C0%7C0%7C637370560438965013&amp;sdata=3DH%2B5H=
+KCsTrksRV2EyEiFGSTyS79jsWCmJimSMoJYusx8%3D&amp;reserved=3D0
+> >>>>>>>>>> _______________________________________________
+> >>>>>>>>>> dri-devel mailing list
+> >>>>>>>>>> dri-devel@lists.freedesktop.org
+> >>>>>>>>>> https://nam11.safelinks.protection.outlook.com/?url=3Dhttps%3A=
+%2F%2Flists.freedesktop.org%2Fmailman%2Flistinfo%2Fdri-devel&amp;data=3D02%=
+7C01%7Cchristian.koenig%40amd.com%7C472c3d655a61411deb6708d86525d1b8%7C3dd8=
+961fe4884e608e11a82d994e183d%7C0%7C0%7C637370560438965013&amp;sdata=3DHdHOA=
+%2F1VcIX%2F7YtfYTiAqYEvw7Ag%2FS%2BxS5VwJKOv5y0%3D&amp;reserved=3D0
+> >>>>>>>>>>
+> >>>>>>>>> _______________________________________________
+> >>>>>>>>> amd-gfx mailing list
+> >>>>>>>>> amd-gfx@lists.freedesktop.org
+> >>>>>>>>> https://nam11.safelinks.protection.outlook.com/?url=3Dhttps%3A%=
+2F%2Flists.freedesktop.org%2Fmailman%2Flistinfo%2Famd-gfx&amp;data=3D02%7C0=
+1%7Cchristian.koenig%40amd.com%7C472c3d655a61411deb6708d86525d1b8%7C3dd8961=
+fe4884e608e11a82d994e183d%7C0%7C0%7C637370560438965013&amp;sdata=3DH%2B5HKC=
+sTrksRV2EyEiFGSTyS79jsWCmJimSMoJYusx8%3D&amp;reserved=3D0
+> >>>>>
+> >>>>> --
+> >>>>> Daniel Vetter
+> >>>>> Software Engineer, Intel Corporation
+> >>>>> http://blog.ffwll.ch
+> >>> --
+> >>> Thomas Zimmermann
+> >>> Graphics Driver Developer
+> >>> SUSE Software Solutions Germany GmbH
+> >>> Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+> >>> (HRB 36809, AG N=C3=BCrnberg)
+> >>> Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+> >>>
+> >>
+>
+
+
+--=20
 Daniel Vetter
 Software Engineer, Intel Corporation
 http://blog.ffwll.ch
