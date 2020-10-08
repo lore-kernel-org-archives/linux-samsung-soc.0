@@ -2,165 +2,187 @@ Return-Path: <SRS0=JmOj=DP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA0CC47095
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 00:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AC7C4727F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 05:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF798207EA
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 00:45:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21B9221D40
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 05:33:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bOv1zchI"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gGiVTnDK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbgJHApF (ORCPT
+        id S1728108AbgJHFdW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 7 Oct 2020 20:45:05 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:1211 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728023AbgJHAow (ORCPT
+        Thu, 8 Oct 2020 01:33:22 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:12999 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgJHFdW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Oct 2020 20:44:52 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f7e60960000>; Wed, 07 Oct 2020 17:43:02 -0700
-Received: from [10.2.85.86] (10.124.1.5) by HQMAIL107.nvidia.com
+        Thu, 8 Oct 2020 01:33:22 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f7ea4670000>; Wed, 07 Oct 2020 22:32:23 -0700
+Received: from [10.25.74.27] (172.20.13.39) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Oct
- 2020 00:44:46 +0000
-Subject: Re: [PATCH 07/13] mm: close race in generic_access_phys
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-CC:     <kvm@vger.kernel.org>, <linux-mm@kvack.org>,
+ 2020 05:32:58 +0000
+Subject: Re: [PATCH v2 0/5] PCI: dwc: improve msi handling
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+CC:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        "NXP Linux Team" <linux-imx@nxp.com>,
+        Yue Wang <yue.wang@Amlogic.com>,
+        "Kevin Hilman" <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Kunihiko Hayashi" <hayashi.kunihiko@socionext.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-s390@vger.kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Rik van Riel <riel@redhat.com>,
-        Benjamin Herrensmidt <benh@kernel.crashing.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Hugh Dickins <hugh@veritas.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>,
-        Daniel Vetter <daniel.vetter@intel.com>
-References: <20201007164426.1812530-1-daniel.vetter@ffwll.ch>
- <20201007164426.1812530-8-daniel.vetter@ffwll.ch>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <852a74ec-339b-4c7f-9e29-b9736111849a@nvidia.com>
-Date:   Wed, 7 Oct 2020 17:44:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-amlogic@lists.infradead.org" 
+        <linux-amlogic@lists.infradead.org>,
+        "linux-arm-kernel@axis.com" <linux-arm-kernel@axis.com>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20200924190421.549cb8fc@xhacker.debian>
+ <b977d9b4-cc98-e817-0d51-8f2c6ba1445d@nvidia.com>
+ <20201006143647.3f989340@xhacker.debian>
+From:   Vidya Sagar <vidyas@nvidia.com>
+Message-ID: <435c8cf8-8f4a-c491-4aca-3ec5b7abe49a@nvidia.com>
+Date:   Thu, 8 Oct 2020 11:02:54 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.2.1
 MIME-Version: 1.0
-In-Reply-To: <20201007164426.1812530-8-daniel.vetter@ffwll.ch>
+In-Reply-To: <20201006143647.3f989340@xhacker.debian>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
  HQMAIL107.nvidia.com (172.20.187.13)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1602117782; bh=5uceI5LiOq5+y7CKrEdS7/p/1zSG6F9z/ywEQqsl+0Q=;
+        t=1602135143; bh=J4CEG7z41t4fftMpaxkaa5Era9zth5z8jjZg7k+ZCts=;
         h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
          MIME-Version:In-Reply-To:Content-Type:Content-Language:
          Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=bOv1zchIGPZ4VmVobYy9ouKvwkK5z2iFx0tCygQStaL5H7jfVh0290LObbayaaJdS
-         WHEwgcF93dN/WBuw358p5ASUvd7jq2UVbYaEsfmxxLYQKm9SIHpvw1Azpcdj8EvlkO
-         +h0jsBZCIPOWXbnWZglvtlNPQ9RozMAAGu9n2l/aM37dTFHaW2PBaPyNHrvz3GBICy
-         9TRkHD5naSV5XLswp6NmgWYjti6DfG9Id8SNalhueNWQcUu+7yGRlg+spys2z8hb56
-         zeyo4ufqohIWRiSETZ13zhAJ7qYzaQsz7j6WHTgK/Hmqk/WB97CYrfy3hYU2QFR/25
-         OfakNOpxWk5cA==
+        b=gGiVTnDKnvH3IW3q8erfoIHhPlDmnbH2thdoY4rptWoPCwmwQxfo0RIcd6vK7za+a
+         qgXLjiuv+uk3BJx5tDpmSQbDqUWKoQT3pRifw4gmZgEkA3RCj+BkqAEyGD6U4bOMRW
+         7YyxCLCtjO6qbXeESHYlP9z93kG3O82AA69UQ3ntIr7k056NtyNn++sDetOOUG9on9
+         TLtrQofmOFFUqspaxJYSK34woIeLsROw+yztJ5/3W8Z0lg/zdHFQ7f3LuLDNI6K7bW
+         8eHbfb3P1ff5T55KfN3H8s00wH7Fd2T5ZOlcWCQii/0bU80nfxDTNlQkTNzGgPp5vF
+         Rmin14uLeUy0A==
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10/7/20 9:44 AM, Daniel Vetter wrote:
-> Way back it was a reasonable assumptions that iomem mappings never
-> change the pfn range they point at. But this has changed:
+
+
+On 10/6/2020 12:06 PM, Jisheng Zhang wrote:
+> External email: Use caution opening links or attachments
 > 
-> - gpu drivers dynamically manage their memory nowadays, invalidating
->    ptes with unmap_mapping_range when buffers get moved
 > 
-> - contiguous dma allocations have moved from dedicated carvetouts to
-
-s/carvetouts/carveouts/
-
->    cma regions. This means if we miss the unmap the pfn might contain
->    pagecache or anon memory (well anything allocated with GFP_MOVEABLE)
+> On Tue, 6 Oct 2020 11:56:34 +0530 Vidya Sagar wrote:
 > 
-> - even /dev/mem now invalidates mappings when the kernel requests that
->    iomem region when CONFIG_IO_STRICT_DEVMEM is set, see 3234ac664a87
->    ("/dev/mem: Revoke mappings when a driver claims the region")
+>>
+>>
+>> Hi,
+> 
+> Hi,
+> 
+>> I would like to verify this series along with the other series "PCI:
+>> dwc: fix two MSI issues" on Tegra194. I tried to apply these series on
+>> both linux-next and Lorenzo's pci/dwc branches but there seem to be non
+>> trivial conflicts. Could you please tell me which branch I can use and
+>> apply these series cleanly?
+> 
+> This is a fix, so I thought the series would be picked up in v5.9, so the
+> series is patched against v5.9-rcN
+> 
+> could you please try v5 https://lkml.org/lkml/2020/9/29/2511 on v5.9-rc7?
+I tried this series on top of v5.9-rc7 and it worked as expected on 
+Tegra194 platform. Also, I couldn't cleanly apply the other series 'PCI: 
+dwc: fix two MSI issues' on top. Could you please rebase them?
 
-Thanks for putting these references into the log, it's very helpful.
-...
-> diff --git a/mm/memory.c b/mm/memory.c
-> index fcfc4ca36eba..8d467e23b44e 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4873,28 +4873,68 @@ int follow_phys(struct vm_area_struct *vma,
->   	return ret;
->   }
->   
-> +/**
-> + * generic_access_phys - generic implementation for iomem mmap access
-> + * @vma: the vma to access
-> + * @addr: userspace addres, not relative offset within @vma
-> + * @buf: buffer to read/write
-> + * @len: length of transfer
-> + * @write: set to FOLL_WRITE when writing, otherwise reading
-> + *
-> + * This is a generic implementation for &vm_operations_struct.access for an
-> + * iomem mapping. This callback is used by access_process_vm() when the @vma is
-> + * not page based.
-> + */
->   int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
->   			void *buf, int len, int write)
->   {
->   	resource_size_t phys_addr;
->   	unsigned long prot = 0;
->   	void __iomem *maddr;
-> +	pte_t *ptep, pte;
-> +	spinlock_t *ptl;
->   	int offset = addr & (PAGE_SIZE-1);
-> +	int ret = -EINVAL;
-> +
-> +	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
-> +		return -EINVAL;
-> +
-> +retry:
-> +	if (follow_pte(vma->vm_mm, addr, &ptep, &ptl))
-> +		return -EINVAL;
-> +	pte = *ptep;
-> +	pte_unmap_unlock(ptep, ptl);
->   
-> -	if (follow_phys(vma, addr, write, &prot, &phys_addr))
-> +	prot = pgprot_val(pte_pgprot(pte));
-> +	phys_addr = (resource_size_t)pte_pfn(pte) << PAGE_SHIFT;
-> +
-> +	if ((write & FOLL_WRITE) && !pte_write(pte))
->   		return -EINVAL;
->   
->   	maddr = ioremap_prot(phys_addr, PAGE_ALIGN(len + offset), prot);
->   	if (!maddr)
->   		return -ENOMEM;
->   
-> +	if (follow_pte(vma->vm_mm, addr, &ptep, &ptl))
-> +		goto out_unmap;
-> +
-> +	if (pte_same(pte, *ptep)) {
-
-
-The ioremap area is something I'm sorta new to, so a newbie question:
-is it possible for the same pte to already be there, ever? If so, we
-be stuck in an infinite loop here.  I'm sure that's not the case, but
-it's not yet obvious to me why it's impossible. Resource reservations
-maybe?
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+Thanks,
+Vidya Sagar
+> 
+> 
+> Thanks
+> 
+>> FWIW, I acknowledge that the existing code does leak MSI target page
+>> every time system goes through suspend-resume sequence on Tegra194.
+>>
+>> Thanks,
+>> Vidya Sagar
+>>
+>> On 9/24/2020 4:35 PM, Jisheng Zhang wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> Improve the msi code:
+>>> 1. Add proper error handling.
+>>> 2. Move dw_pcie_msi_init() from each users to designware host to solve
+>>> msi page leakage in resume path.
+>>>
+>>> Since v1:
+>>>     - add proper error handling patches.
+>>>     - solve the msi page leakage by moving dw_pcie_msi_init() from each
+>>>       users to designware host
+>>>
+>>>
+>>> Jisheng Zhang (5):
+>>>     PCI: dwc: Call dma_unmap_page() before freeing the msi page
+>>>     PCI: dwc: Check alloc_page() return value
+>>>     PCI: dwc: Rename dw_pcie_free_msi to dw_pcie_msi_deinit
+>>>     PCI: dwc: Skip PCIE_MSI_INTR0* programming if MSI is disabled
+>>>     PCI: dwc: Move dw_pcie_msi_init() from each users to designware host
+>>>
+>>>    drivers/pci/controller/dwc/pci-dra7xx.c       |  1 +
+>>>    drivers/pci/controller/dwc/pci-exynos.c       |  2 -
+>>>    drivers/pci/controller/dwc/pci-imx6.c         |  3 --
+>>>    drivers/pci/controller/dwc/pci-meson.c        |  8 ----
+>>>    drivers/pci/controller/dwc/pcie-artpec6.c     | 10 -----
+>>>    .../pci/controller/dwc/pcie-designware-host.c | 43 +++++++++++++------
+>>>    .../pci/controller/dwc/pcie-designware-plat.c |  3 --
+>>>    drivers/pci/controller/dwc/pcie-designware.h  |  9 +++-
+>>>    drivers/pci/controller/dwc/pcie-histb.c       |  3 --
+>>>    drivers/pci/controller/dwc/pcie-kirin.c       |  3 --
+>>>    drivers/pci/controller/dwc/pcie-qcom.c        |  3 --
+>>>    drivers/pci/controller/dwc/pcie-spear13xx.c   |  1 -
+>>>    drivers/pci/controller/dwc/pcie-tegra194.c    |  2 -
+>>>    drivers/pci/controller/dwc/pcie-uniphier.c    |  9 +---
+>>>    14 files changed, 38 insertions(+), 62 deletions(-)
+>>>
+>>> --
+>>> 2.28.0
+>>>
+> 
