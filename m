@@ -2,108 +2,254 @@ Return-Path: <SRS0=JmOj=DP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EFCC4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 12:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2097C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 16:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3319E2083B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 12:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64EA1221F1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 16:48:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="i93YgqfP"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Wg15T8U9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730103AbgJHMlw (ORCPT
+        id S1730273AbgJHQsv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 8 Oct 2020 08:41:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39978 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730047AbgJHMlv (ORCPT
+        Thu, 8 Oct 2020 12:48:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59134 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728218AbgJHQsu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Oct 2020 08:41:51 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 837C1C0613D2
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Oct 2020 05:41:51 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id u24so4211377pgi.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Oct 2020 05:41:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=urluBRAZhemlAGNYR9JHz7//XtKVwD7KOsOnuK3XEvE=;
-        b=i93YgqfP2Qs8dlAx7dyQ+W0IRG7pAxhJwW9+eRHcvMVYP3djMki+CGM6zO0EVJGk6K
-         IbQzLSWJO3N1l0EX9JrKSfHEa7utNqIB47jME7UstUYw4VjXJ3eqfisu2Lv5k6vC2Rji
-         RXYD2ZA+lWznWQWoRqSMqejEaxBGkz94802iEmzJd0MCBP2cDlv790XzP6x1cW1hFd/9
-         VynwcCRsd9uDLYGf7l4gaVrI2jMIq7IhzjCPA4DTCHUEEBJWY9srCgIimdgBAYkzeSSZ
-         OrD77ImZWUgTRcr1HoKIi9uUAfbiDRf/QR54E/fTvbFXgKqiTQNN+jJNb/teyHBDz9PA
-         L6Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=urluBRAZhemlAGNYR9JHz7//XtKVwD7KOsOnuK3XEvE=;
-        b=glQzAq79Xt7/39QcWwnrH8VATMKcNsInX8xT3WGCOQhE481jDsGlij5sS23Y9aFaOa
-         HYTgvqCBhtA8huGVTqTtMUMjgIO8Ep8LkDUdyBs3tfhtR4cwUPpmr6u1JJ581LM2vHGW
-         Ms62+uYGs4UjKObF4acIhCIRPR2wIf/pS2G+B/V6xqHNWhO0J9ot7gA9ub6Xt7+VLhO8
-         fk4r61vLGwZRKtUcQDqg95pRIQkHBJxuHcCfPQFypMqHnd4WuxstCjA/SeVQQXzsGfJE
-         qYWl0HLlgYjy06/sgdyUGIXGq5E/LixsCTo72pHBX8eCf2szwz3K5KKDB53zTpoURx6s
-         gaZg==
-X-Gm-Message-State: AOAM53159a9Cr0T4oRmJ8Mta+yamugieHh43lWNFPD+kkffI4PnU9vA5
-        4PVFovQktmeNgs8XPrOY6uPTsw==
-X-Google-Smtp-Source: ABdhPJxnQ64uysYsu/F9BjeJkE2gf+57wvTrXl8yFyGGP/X1izZlhvOyXG/ViriTgaaOJPI9vrc0XQ==
-X-Received: by 2002:a17:90a:6787:: with SMTP id o7mr8072496pjj.125.1602160910911;
-        Thu, 08 Oct 2020 05:41:50 -0700 (PDT)
-Received: from ziepe.ca ([206.223.160.26])
-        by smtp.gmail.com with ESMTPSA id k11sm7411830pjs.18.2020.10.08.05.41.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2020 05:41:49 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1kQVEx-001U2l-UT; Thu, 08 Oct 2020 09:41:47 -0300
-Date:   Thu, 8 Oct 2020 09:41:47 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
+        Thu, 8 Oct 2020 12:48:50 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 098GWc25119610;
+        Thu, 8 Oct 2020 12:44:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=DOjfJtmqn0RgphxiIiG0Kv2UKoYLCpYcT9ErIqcce6E=;
+ b=Wg15T8U9KQDXgs4QwB8A79tlx7vkXl3sj9pFh/1cOPLlDjrtMPxkA1D6agqTMMOzRLf7
+ NUnasH/5LgKXjRmsfdo8cPf3xCzwhbuxs2Z8DTZRnSWg8WMLVLxLDsVASnHBlnfZGWD5
+ nrHVw4Mrev3JAPk1tZjw4hdG2ZoVozDpaXbDoW6prAYwvRRF53bIbj4IQ+PJoDUQZgJ/
+ f6GjUgeB+MO2nhKeRhvObJsiHly0uBtE1AQCa31NxixXKdyjB9iU/pTGQ4Mz3rer6W96
+ eRSBZOyfkkXDhLNgYJTHugguwBIeLDnByF/lWwzsCaKdh5SLKVgxMPNkdzNTGJCVQ2v3 1g== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 34263q8xd7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Oct 2020 12:44:48 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 098GgIad150220;
+        Thu, 8 Oct 2020 12:44:47 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 34263q8xbq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Oct 2020 12:44:47 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 098Gclfr009991;
+        Thu, 8 Oct 2020 16:44:45 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma03fra.de.ibm.com with ESMTP id 33xgx7tw34-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Oct 2020 16:44:45 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 098GigqX33817070
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 8 Oct 2020 16:44:42 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C9995A405F;
+        Thu,  8 Oct 2020 16:44:42 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 23192A4065;
+        Thu,  8 Oct 2020 16:44:42 +0000 (GMT)
+Received: from thinkpad (unknown [9.171.64.67])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Thu,  8 Oct 2020 16:44:42 +0000 (GMT)
+Date:   Thu, 8 Oct 2020 18:44:40 +0200
+From:   Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-s390@vger.kernel.org,
         Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
         Kees Cook <keescook@chromium.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 10/13] PCI: revoke mappings like devmem
-Message-ID: <20201008124147.GD5177@ziepe.ca>
+        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Niklas Schnelle <schnelle@linux.ibm.com>
+Subject: Re: [PATCH 08/13] s390/pci: Remove races against pte updates
+Message-ID: <20201008184440.4c3bebed@thinkpad>
+In-Reply-To: <20201007164426.1812530-9-daniel.vetter@ffwll.ch>
 References: <20201007164426.1812530-1-daniel.vetter@ffwll.ch>
- <20201007164426.1812530-11-daniel.vetter@ffwll.ch>
- <CAPcyv4hBL68A7CZa+YnooufDH2tevoxrx32DTJMQ6OHRnec7QQ@mail.gmail.com>
- <20201007232448.GC5177@ziepe.ca>
- <CAPcyv4jA9fe40r_2SfrCtOaeE85V88TA3NNQZOmQMNj=MdsPyw@mail.gmail.com>
+        <20201007164426.1812530-9-daniel.vetter@ffwll.ch>
+X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jA9fe40r_2SfrCtOaeE85V88TA3NNQZOmQMNj=MdsPyw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-10-08_11:2020-10-08,2020-10-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ spamscore=0 priorityscore=1501 suspectscore=2 mlxscore=0 impostorscore=0
+ clxscore=1011 phishscore=0 bulkscore=0 mlxlogscore=999 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2010080120
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 08, 2020 at 12:49:54AM -0700, Dan Williams wrote:
+On Wed,  7 Oct 2020 18:44:21 +0200
+Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
 
-> > This is what got me thinking maybe this needs to be a bit bigger
-> > generic infrastructure - eg enter this scheme from fops mmap and
-> > everything else is in mm/user_iomem.c
-> 
-> It still requires every file that can map physical memory to have its
-> ->open fop do
+> Way back it was a reasonable assumptions that iomem mappings never
+> change the pfn range they point at. But this has changed:
+>=20
+> - gpu drivers dynamically manage their memory nowadays, invalidating
+> ptes with unmap_mapping_range when buffers get moved
+>=20
+> - contiguous dma allocations have moved from dedicated carvetouts to
+> cma regions. This means if we miss the unmap the pfn might contain
+> pagecache or anon memory (well anything allocated with GFP_MOVEABLE)
+>=20
+> - even /dev/mem now invalidates mappings when the kernel requests that
+> iomem region when CONFIG_IO_STRICT_DEVMEM is set, see 3234ac664a87
+> ("/dev/mem: Revoke mappings when a driver claims the region")
+>=20
+> Accessing pfns obtained from ptes without holding all the locks is
+> therefore no longer a good idea. Fix this.
+>=20
+> Since zpci_memcpy_from|toio seems to not do anything nefarious with
+> locks we just need to open code get_pfn and follow_pfn and make sure
+> we drop the locks only after we've done. The write function also needs
+> the copy_from_user move, since we can't take userspace faults while
+> holding the mmap sem.
+>=20
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: Niklas Schnelle <schnelle@linux.ibm.com>
+> Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+> Cc: linux-s390@vger.kernel.org
+> ---
+>  arch/s390/pci/pci_mmio.c | 98 +++++++++++++++++++++++-----------------
+>  1 file changed, 57 insertions(+), 41 deletions(-)
 
-Common infrastructure would have to create a dummy struct file at mmap
-time with the global inode and attach that to the VMA.
+Looks good, thanks. Also survived some basic function test. Only some
+minor nitpick, see below.
 
-Jason
+Reviewed-by: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+
+>=20
+> diff --git a/arch/s390/pci/pci_mmio.c b/arch/s390/pci/pci_mmio.c
+> index 401cf670a243..4d194cb09372 100644
+> --- a/arch/s390/pci/pci_mmio.c
+> +++ b/arch/s390/pci/pci_mmio.c
+> @@ -119,33 +119,15 @@ static inline int __memcpy_toio_inuser(void __iomem=
+ *dst,
+>  	return rc;
+>  }
+> =20
+> -static long get_pfn(unsigned long user_addr, unsigned long access,
+> -		    unsigned long *pfn)
+> -{
+> -	struct vm_area_struct *vma;
+> -	long ret;
+> -
+> -	mmap_read_lock(current->mm);
+> -	ret =3D -EINVAL;
+> -	vma =3D find_vma(current->mm, user_addr);
+> -	if (!vma)
+> -		goto out;
+> -	ret =3D -EACCES;
+> -	if (!(vma->vm_flags & access))
+> -		goto out;
+> -	ret =3D follow_pfn(vma, user_addr, pfn);
+> -out:
+> -	mmap_read_unlock(current->mm);
+> -	return ret;
+> -}
+> -
+>  SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
+>  		const void __user *, user_buffer, size_t, length)
+>  {
+>  	u8 local_buf[64];
+>  	void __iomem *io_addr;
+>  	void *buf;
+> -	unsigned long pfn;
+> +	struct vm_area_struct *vma;
+> +	pte_t *ptep;
+> +	spinlock_t *ptl;
+>  	long ret;
+> =20
+>  	if (!zpci_is_enabled())
+> @@ -158,7 +140,7 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, m=
+mio_addr,
+>  	 * We only support write access to MIO capable devices if we are on
+>  	 * a MIO enabled system. Otherwise we would have to check for every
+>  	 * address if it is a special ZPCI_ADDR and would have to do
+> -	 * a get_pfn() which we don't need for MIO capable devices.  Currently
+> +	 * a pfn lookup which we don't need for MIO capable devices.  Currently
+>  	 * ISM devices are the only devices without MIO support and there is no
+>  	 * known need for accessing these from userspace.
+>  	 */
+> @@ -176,21 +158,37 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long,=
+ mmio_addr,
+>  	} else
+>  		buf =3D local_buf;
+> =20
+> -	ret =3D get_pfn(mmio_addr, VM_WRITE, &pfn);
+> +	ret =3D -EFAULT;
+> +	if (copy_from_user(buf, user_buffer, length))
+> +		goto out_free;
+> +
+> +	mmap_read_lock(current->mm);
+> +	ret =3D -EINVAL;
+> +	vma =3D find_vma(current->mm, mmio_addr);
+> +	if (!vma)
+> +		goto out_unlock_mmap;
+> +	ret =3D -EACCES;
+> +	if (!(vma->vm_flags & VM_WRITE))
+> +		goto out_unlock_mmap;
+> +	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
+> +		goto out_unlock_mmap;
+
+That check for VM_IO | VM_PFNMAP was previously hidden inside follow_pfn(),
+and that would have returned -EINVAL in this case. With your change, we
+now return -EACCES. Not sure how important that is, but it feels wrong.
+Maybe move the VM_IO | VM_PFNMAP check up, before the ret =3D -EACCES?
+
+[...]
+> @@ -306,22 +306,38 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, =
+mmio_addr,
+>  		buf =3D local_buf;
+>  	}
+> =20
+> -	ret =3D get_pfn(mmio_addr, VM_READ, &pfn);
+> +	mmap_read_lock(current->mm);
+> +	ret =3D -EINVAL;
+> +	vma =3D find_vma(current->mm, mmio_addr);
+> +	if (!vma)
+> +		goto out_unlock_mmap;
+> +	ret =3D -EACCES;
+> +	if (!(vma->vm_flags & VM_WRITE))
+> +		goto out_unlock_mmap;
+> +	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
+> +		goto out_unlock_mmap;
+
+Same here with VM_IO | VM_PFNMAP and -EINVAL.
