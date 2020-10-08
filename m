@@ -2,104 +2,167 @@ Return-Path: <SRS0=JmOj=DP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 138F2C433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 07:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 904ACC43467
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 08:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBC9221927
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 07:50:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE604208C7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 08:10:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="C53LylVZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbgJHHup (ORCPT
+        id S1728577AbgJHIKG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 8 Oct 2020 03:50:45 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:57236 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbgJHHup (ORCPT
+        Thu, 8 Oct 2020 04:10:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54616 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728479AbgJHIKG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Oct 2020 03:50:45 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 3146E1C0BA4; Thu,  8 Oct 2020 09:50:42 +0200 (CEST)
-Date:   Thu, 8 Oct 2020 09:50:40 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Alexander Dahl <post@lespocky.de>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Alexander Dahl <ada@thorsis.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        Jeff LaBundy <jeff@labundy.com>
-Subject: Re: [PATCH v7 03/12] dt-bindings: mfd: Fix schema warnings for
- pwm-leds
-Message-ID: <20201008075039.GA32424@amd>
-References: <20201005203451.9985-1-post@lespocky.de>
- <20201005203451.9985-4-post@lespocky.de>
- <20201007100359.GC12224@duo.ucw.cz>
- <20201008073337.GG1763265@dell>
+        Thu, 8 Oct 2020 04:10:06 -0400
+Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03319C0613D5
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Oct 2020 01:10:06 -0700 (PDT)
+Received: by mail-ot1-x341.google.com with SMTP id t15so4778672otk.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Oct 2020 01:10:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wCjCa64MStwiq1yR7OaeNvk7N1NN2BleqQckjLbhNYU=;
+        b=C53LylVZwMO0g2+JAqtSBtMgpBv+ulmsaRO6I2h41YCH/cKnnJ2tt3EfS3lZw6Rhw0
+         MUO4icylwPq5djGkpDWWyO5lhz5aT49NTtxjLsnsfxd1PvP6W6t98VP0roBxwIJCy+Bl
+         vpajr9+5TXFrcHadQv/pRUWTQ9v7fI3MyQ+kM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wCjCa64MStwiq1yR7OaeNvk7N1NN2BleqQckjLbhNYU=;
+        b=WCQfl/6r9fHtlr7wB5FgRR4e65xTsJUIFz+zlHIrRXo7/Zwyq4qjBg9/PizOIFQvuh
+         NyitS63ZGGmOu0jka+5pw3mrOXDnYaYpsaGPtSFecbp4BkgbA0EpUn/d9zpRrlsbf1MQ
+         jABoba0C/R5mVTUKWUC/IlKUmXHYXu2j+3uowK9hFLA4ImhUicHsX06WvRDfCANPt+IU
+         T+1xwSWeFQwcHPAnTHilc0WmYajOynbs6u6tXa+/fBB+nhe5q2JTzLqHsRxrqbWm+MF9
+         BS250Rp9zF9DjcpDyo3FpMzcvvdp7UMvaCslXYqQnzKdSXtQnJdu13Mq+pROcQHWZKiC
+         jUmA==
+X-Gm-Message-State: AOAM5328sFZYaQS0aQmKenbxNZRam1S2OnGDCXUpJHVKO7So/IkRqZFq
+        9imZ+B26AristOV5H0ZYCC14bsxAXUf4WHE7HTFZgg==
+X-Google-Smtp-Source: ABdhPJz2Aux80kUsEM7YHCXCuraur5IrUAmiithdZ9pp1HS0einrpaKxMEfTYuxGd6kEaO0zfYuPyPuQ741ZEEETeSg=
+X-Received: by 2002:a05:6830:1e56:: with SMTP id e22mr4190355otj.303.1602144605250;
+ Thu, 08 Oct 2020 01:10:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
-Content-Disposition: inline
-In-Reply-To: <20201008073337.GG1763265@dell>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20201007164426.1812530-1-daniel.vetter@ffwll.ch>
+ <20201007164426.1812530-11-daniel.vetter@ffwll.ch> <CAPcyv4hBL68A7CZa+YnooufDH2tevoxrx32DTJMQ6OHRnec7QQ@mail.gmail.com>
+ <CAKMK7uFoxiPdjO-yhd-mKqumnTpjcENEReb1sOYhOwRRCL0wpQ@mail.gmail.com>
+ <CAPcyv4jGxsB5so8mKqYrsn2CEc7nO2yPvzZZ_mvM_-R=BZfKHg@mail.gmail.com> <CAPcyv4iN1q0LUVTO6igMKPe-8hnR5ULF+mBnWy6bdXfY2M6YmA@mail.gmail.com>
+In-Reply-To: <CAPcyv4iN1q0LUVTO6igMKPe-8hnR5ULF+mBnWy6bdXfY2M6YmA@mail.gmail.com>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Thu, 8 Oct 2020 10:09:54 +0200
+Message-ID: <CAKMK7uEETcQrPBC=4URQZtD73nA9MvQpBx-TOv95bdwzNOOA2g@mail.gmail.com>
+Subject: Re: [PATCH 10/13] PCI: revoke mappings like devmem
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Bjorn Helgaas <bhelgaas@google.com>,
+        Linux PCI <linux-pci@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Thu, Oct 8, 2020 at 12:29 AM Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> On Wed, Oct 7, 2020 at 3:23 PM Dan Williams <dan.j.williams@intel.com> wrote:
+> >
+> > On Wed, Oct 7, 2020 at 12:49 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> > >
+> > > On Wed, Oct 7, 2020 at 9:33 PM Dan Williams <dan.j.williams@intel.com> wrote:
+> > > >
+> > > > On Wed, Oct 7, 2020 at 11:11 AM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> > > > >
+> > > > > Since 3234ac664a87 ("/dev/mem: Revoke mappings when a driver claims
+> > > > > the region") /dev/kmem zaps ptes when the kernel requests exclusive
+> > > > > acccess to an iomem region. And with CONFIG_IO_STRICT_DEVMEM, this is
+> > > > > the default for all driver uses.
+> > > > >
+> > > > > Except there's two more ways to access pci bars: sysfs and proc mmap
+> > > > > support. Let's plug that hole.
+> > > >
+> > > > Ooh, yes, lets.
+> > > >
+> > > > > For revoke_devmem() to work we need to link our vma into the same
+> > > > > address_space, with consistent vma->vm_pgoff. ->pgoff is already
+> > > > > adjusted, because that's how (io_)remap_pfn_range works, but for the
+> > > > > mapping we need to adjust vma->vm_file->f_mapping. Usually that's done
+> > > > > at ->open time, but that's a bit tricky here with all the entry points
+> > > > > and arch code. So instead create a fake file and adjust vma->vm_file.
+> > > >
+> > > > I don't think you want to share the devmem inode for this, this should
+> > > > be based off the sysfs inode which I believe there is already only one
+> > > > instance per resource. In contrast /dev/mem can have multiple inodes
+> > > > because anyone can just mknod a new character device file, the same
+> > > > problem does not exist for sysfs.
+> > >
+> > > But then I need to find the right one, plus I also need to find the
+> > > right one for the procfs side. That gets messy, and I already have no
+> > > idea how to really test this. Shared address_space is the same trick
+> > > we're using in drm (where we have multiple things all pointing to the
+> > > same underlying resources, through different files), and it gets the
+> > > job done. So that's why I figured the shared address_space is the
+> > > cleaner solution since then unmap_mapping_range takes care of
+> > > iterating over all vma for us. I guess I could reimplement that logic
+> > > with our own locking and everything in revoke_devmem, but feels a bit
+> > > silly. But it would also solve the problem of having mutliple
+> > > different mknod of /dev/kmem with different address_space behind them.
+> > > Also because of how remap_pfn_range works, all these vma do use the
+> > > same pgoff already anyway.
+> >
+> > True, remap_pfn_range() makes sure that ->pgoff is an absolute
+> > physical address offset for all use cases. So you might be able to
+> > just point proc_bus_pci_open() at the shared devmem address space. For
+> > sysfs it's messier. I think you would need to somehow get the inode
+> > from kernfs_fop_open() to adjust its address space, but only if the
+> > bin_file will ultimately be used for PCI memory.
 
---+QahgC5+KEYLbs62
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Just read the code  a bit more, and for proc it's impossible. There's
+only a single file, and before you mmap it you have to call a few
+ioctl to select the right pci resource on that device you want to
+mmap. Which includes legacy ioport stuff, and at least for now those
+don't get revoked (maybe they should, but I'm looking at iomem here
+now). Setting the mapping too early in ->open means that on
+architectures which can do ioport as mmaps (not many, but powerpc is
+among them) we'd shoot down these mmaps too.
 
-Hi!
+Looking at the code there's the generic implementation, which consults
+pci_iobar_pfn. And the only other implementation for sparc looks
+similar, they separate iomem vs ioport through different pfn. So I
+think this should indeed work.
 
-> > > The node names for devices using the pwm-leds driver follow a certain
-> > > naming scheme (now).  Parent node name is not enforced, but recommend=
-ed
-> > > by DT project.
-> > >=20
-> > >   DTC     Documentation/devicetree/bindings/mfd/iqs62x.example.dt.yaml
-> > >   CHECK   Documentation/devicetree/bindings/mfd/iqs62x.example.dt.yaml
-> > > /home/alex/build/linux/Documentation/devicetree/bindings/mfd/iqs62x.e=
-xample.dt.yaml: pwmleds: 'panel' does not match any of the regexes: '^led(-=
-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
-> > >         From schema: /home/alex/src/linux/leds/Documentation/devicetr=
-ee/bindings/leds/leds-pwm.yaml
-> > >=20
-> > > Signed-off-by: Alexander Dahl <post@lespocky.de>
-> >=20
-> > Okay, so I need Rob's ack here, I guess... and rest of the series is
-> > not really for my tree.
->=20
-> This patch is not for your tree either. ;)
+> To me this seems like a new sysfs_create_bin_file() flavor that
+> registers the file with the common devmem address_space.
 
-Ah, right. Usually we have one patch series for one maintainer...
+Hm I think we could just add a i_mapping member to bin_attributes and
+let the normal open code set that up for us. That should work.
+mmapable binary sysfs file is already a similar special case.
+-Daniel
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
 
---+QahgC5+KEYLbs62
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iEYEARECAAYFAl9+xM8ACgkQMOfwapXb+vJWHQCcCGr6snOGoT8t/94nyB5nrCBQ
-3PEAoL/19wb0n+FwjiISjFGYYOVWW1eO
-=WTE5
------END PGP SIGNATURE-----
-
---+QahgC5+KEYLbs62--
+--
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
