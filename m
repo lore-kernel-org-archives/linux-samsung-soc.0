@@ -5,65 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F6B7C4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 10:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F04C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 10:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 879CE222BA
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 10:14:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E86522284
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 10:34:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602238471;
-	bh=HLpDhcg7JCIZWffZIBZCvMxe2w6BmkPx1lvxzb/jlAA=;
+	s=default; t=1602239671;
+	bh=pRI4Tm1lG+Jblk58G1pSvqxmgDEZi2xS8IJzqwbJFvw=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=elkIiCK+wscK4ztTQIKSsB03EZhldcn3rpk2h6g4FzQoRVn13oWxOKN1lz5G/okUp
-	 P9A83UFxdAJkwKasOOZHzWwo8ZupywwMVPBovnIIK0iM7PE8gWeI9NMxyQa64fsQBn
-	 4IW41zbCmYWfPmHVwUeyUcfQaA8jujT0wUJAYVi8=
+	b=PpyNLuNM+ZEWdKs9LO2RBZ4+SPmO+uFRh2OitBZcZOORcTc3zyouF7gf29q8enqgT
+	 VQTp5TtZYBGHcrig7/ojQlhvOcZhTmXUjXigKT0inLhzlAJ34jMkjXAjnc/zpAfONQ
+	 XxH4LgmVZ9nAqbZvNMHDsCeKeOxRfe+AyaOIoiEU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387531AbgJIKO1 (ORCPT
+        id S2387718AbgJIKeb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 9 Oct 2020 06:14:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40444 "EHLO mail.kernel.org"
+        Fri, 9 Oct 2020 06:34:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726357AbgJIKO1 (ORCPT
+        id S1730763AbgJIKea (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Oct 2020 06:14:27 -0400
+        Fri, 9 Oct 2020 06:34:30 -0400
 Received: from coco.lan (ip5f5ad5d0.dynamic.kabel-deutschland.de [95.90.213.208])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEF062226B;
-        Fri,  9 Oct 2020 10:14:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DEF9221FC;
+        Fri,  9 Oct 2020 10:34:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602238465;
-        bh=HLpDhcg7JCIZWffZIBZCvMxe2w6BmkPx1lvxzb/jlAA=;
+        s=default; t=1602239669;
+        bh=pRI4Tm1lG+Jblk58G1pSvqxmgDEZi2xS8IJzqwbJFvw=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=entYTMU57H8h4pHlBfmfx61IZZz86qZXtKIa3/8kyOsu7AJtmiUWy0DpXZ8c355dF
-         oxwMgMeoIfe32cPPr8yifCD9zFte1J/ueRlcm5tjhBiUii2B/j6Ox0Z6+f+auAMpj9
-         zx6ZdvznIgHatn9Me42Sr1LkAeyYY1zjSs8WJ9mw=
-Date:   Fri, 9 Oct 2020 12:14:17 +0200
+        b=Z0ZZm8k90LDIkkwepgM63s827tTWfKOZRcqR7o+KzIwoiE1/gtsqyykPEtefC1BOJ
+         aqhxaJ85cRFHWn7mghZunfQqK4WizlHdY1AlS3galp81cAdVsdFebaWYB06Z1YG2jP
+         N7/7ovKPoZG++Py9RD5QO4Y+qb3C0vzKbhvXTkLw=
+Date:   Fri, 9 Oct 2020 12:34:21 +0200
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
         linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-s390@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        linux-s390@vger.kernel.org,
         Daniel Vetter <daniel.vetter@intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
         =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
         Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v2 06/17] media: videobuf2: Move frame_vector into media
- subsystem
-Message-ID: <20201009121417.115db7d9@coco.lan>
-In-Reply-To: <20201009075934.3509076-7-daniel.vetter@ffwll.ch>
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 09/17] mm: Add unsafe_follow_pfn
+Message-ID: <20201009123421.67a80d72@coco.lan>
+In-Reply-To: <20201009075934.3509076-10-daniel.vetter@ffwll.ch>
 References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
-        <20201009075934.3509076-7-daniel.vetter@ffwll.ch>
+        <20201009075934.3509076-10-daniel.vetter@ffwll.ch>
 X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -72,21 +70,59 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Em Fri,  9 Oct 2020 09:59:23 +0200
+Hi,
+
+Em Fri,  9 Oct 2020 09:59:26 +0200
 Daniel Vetter <daniel.vetter@ffwll.ch> escreveu:
 
-> It's the only user. This also garbage collects the CONFIG_FRAME_VECTOR
-> symbol from all over the tree (well just one place, somehow omap media
-> driver still had this in its Kconfig, despite not using it).
+> Way back it was a reasonable assumptions that iomem mappings never
+> change the pfn range they point at. But this has changed:
 >=20
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> - gpu drivers dynamically manage their memory nowadays, invalidating
+> ptes with unmap_mapping_range when buffers get moved
+>=20
+> - contiguous dma allocations have moved from dedicated carvetouts to
+> cma regions. This means if we miss the unmap the pfn might contain
+> pagecache or anon memory (well anything allocated with GFP_MOVEABLE)
+>=20
+> - even /dev/mem now invalidates mappings when the kernel requests that
+> iomem region when CONFIG_IO_STRICT_DEVMEM is set, see 3234ac664a87
+> ("/dev/mem: Revoke mappings when a driver claims the region")
+>=20
+> Accessing pfns obtained from ptes without holding all the locks is
+> therefore no longer a good idea.
+>=20
+> Unfortunately there's some users where this is not fixable (like v4l
+> userptr of iomem mappings) or involves a pile of work (vfio type1
+> iommu). For now annotate these as unsafe and splat appropriately.
+>=20
+> This patch adds an unsafe_follow_pfn, which later patches will then
+> roll out to all appropriate places.
+
+NACK, as this breaks an existing userspace API on media.
+
+While I agree that using the userptr on media is something that
+new drivers may not support, as DMABUF is a better way of
+handling it, changing this for existing ones is a big no,=20
+as it may break usersapace.
+
+The right approach here would be to be able to fine-tune
+support for it on a per-driver basis, e. g. disabling such
+feature only for drivers that would use a movable page.
+
+The media subsystem has already a way to disable USERPTR
+support from VB2. the right approach would be to ensure
+that newer drivers will only set this if they won't use
+movable pages.
+
+Regards,
+Mauro
+
+>=20
 > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 > Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Pawel Osciak <pawel@osciak.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Tomasz Figa <tfiga@chromium.org>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
 > Cc: Andrew Morton <akpm@linux-foundation.org>
 > Cc: John Hubbard <jhubbard@nvidia.com>
 > Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
@@ -96,220 +132,138 @@ Daniel Vetter <daniel.vetter@ffwll.ch> escreveu:
 > Cc: linux-arm-kernel@lists.infradead.org
 > Cc: linux-samsung-soc@vger.kernel.org
 > Cc: linux-media@vger.kernel.org
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: kvm@vger.kernel.org
 > ---
->  drivers/media/common/videobuf2/Kconfig        |  1 -
->  drivers/media/common/videobuf2/Makefile       |  1 +
->  .../media/common/videobuf2}/frame_vector.c    |  2 +
->  drivers/media/platform/omap/Kconfig           |  1 -
->  include/linux/mm.h                            | 42 -------------------
->  include/media/videobuf2-core.h                | 42 +++++++++++++++++++
->  mm/Kconfig                                    |  3 --
->  mm/Makefile                                   |  1 -
->  8 files changed, 45 insertions(+), 48 deletions(-)
->  rename {mm =3D> drivers/media/common/videobuf2}/frame_vector.c (99%)
+>  include/linux/mm.h |  2 ++
+>  mm/memory.c        | 32 +++++++++++++++++++++++++++++++-
+>  mm/nommu.c         | 17 +++++++++++++++++
+>  security/Kconfig   | 13 +++++++++++++
+>  4 files changed, 63 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/drivers/media/common/videobuf2/Kconfig b/drivers/media/commo=
-n/videobuf2/Kconfig
-> index edbc99ebba87..d2223a12c95f 100644
-> --- a/drivers/media/common/videobuf2/Kconfig
-> +++ b/drivers/media/common/videobuf2/Kconfig
-> @@ -9,7 +9,6 @@ config VIDEOBUF2_V4L2
-> =20
->  config VIDEOBUF2_MEMOPS
->  	tristate
-> -	select FRAME_VECTOR
-> =20
->  config VIDEOBUF2_DMA_CONTIG
->  	tristate
-> diff --git a/drivers/media/common/videobuf2/Makefile b/drivers/media/comm=
-on/videobuf2/Makefile
-> index 77bebe8b202f..54306f8d096c 100644
-> --- a/drivers/media/common/videobuf2/Makefile
-> +++ b/drivers/media/common/videobuf2/Makefile
-> @@ -1,5 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  videobuf2-common-objs :=3D videobuf2-core.o
-> +videobuf2-common-objs +=3D frame_vector.o
-> =20
->  ifeq ($(CONFIG_TRACEPOINTS),y)
->    videobuf2-common-objs +=3D vb2-trace.o
-> diff --git a/mm/frame_vector.c b/drivers/media/common/videobuf2/frame_vec=
-tor.c
-> similarity index 99%
-> rename from mm/frame_vector.c
-> rename to drivers/media/common/videobuf2/frame_vector.c
-> index d44779e56313..2b0b97761d15 100644
-> --- a/mm/frame_vector.c
-> +++ b/drivers/media/common/videobuf2/frame_vector.c
-> @@ -8,6 +8,8 @@
->  #include <linux/pagemap.h>
->  #include <linux/sched.h>
-> =20
-> +#include <media/videobuf2-core.h>
-> +
-
-See my comment below...
-
->  /**
->   * get_vaddr_frames() - map virtual addresses to pfns
->   * @start:	starting user address
-> diff --git a/drivers/media/platform/omap/Kconfig b/drivers/media/platform=
-/omap/Kconfig
-> index f73b5893220d..de16de46c0f4 100644
-> --- a/drivers/media/platform/omap/Kconfig
-> +++ b/drivers/media/platform/omap/Kconfig
-> @@ -12,6 +12,5 @@ config VIDEO_OMAP2_VOUT
->  	depends on VIDEO_V4L2
->  	select VIDEOBUF2_DMA_CONTIG
->  	select OMAP2_VRFB if ARCH_OMAP2 || ARCH_OMAP3
-> -	select FRAME_VECTOR
->  	help
->  	  V4L2 Display driver support for OMAP2/3 based boards.
 > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 16b799a0522c..acd60fbf1a5a 100644
+> index 2a16631c1fda..ec8c90928fc9 100644
 > --- a/include/linux/mm.h
 > +++ b/include/linux/mm.h
-> @@ -1743,48 +1743,6 @@ int account_locked_vm(struct mm_struct *mm, unsign=
-ed long pages, bool inc);
->  int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool =
-inc,
->  			struct task_struct *task, bool bypass_rlim);
-> =20
-> -/* Container for pinned pfns / pages */
-> -struct frame_vector {
-> -	unsigned int nr_allocated;	/* Number of frames we have space for */
-> -	unsigned int nr_frames;	/* Number of frames stored in ptrs array */
-> -	bool got_ref;		/* Did we pin pages by getting page ref? */
-> -	bool is_pfns;		/* Does array contain pages or pfns? */
-> -	void *ptrs[];		/* Array of pinned pfns / pages. Use
-> -				 * pfns_vector_pages() or pfns_vector_pfns()
-> -				 * for access */
-> -};
-> -
-> -struct frame_vector *frame_vector_create(unsigned int nr_frames);
-> -void frame_vector_destroy(struct frame_vector *vec);
-> -int get_vaddr_frames(unsigned long start, unsigned int nr_pfns,
-> -		     unsigned int gup_flags, struct frame_vector *vec);
-> -void put_vaddr_frames(struct frame_vector *vec);
-> -int frame_vector_to_pages(struct frame_vector *vec);
-> -void frame_vector_to_pfns(struct frame_vector *vec);
-> -
-> -static inline unsigned int frame_vector_count(struct frame_vector *vec)
-> -{
-> -	return vec->nr_frames;
-> -}
-> -
-> -static inline struct page **frame_vector_pages(struct frame_vector *vec)
-> -{
-> -	if (vec->is_pfns) {
-> -		int err =3D frame_vector_to_pages(vec);
-> -
-> -		if (err)
-> -			return ERR_PTR(err);
-> -	}
-> -	return (struct page **)(vec->ptrs);
-> -}
-> -
-> -static inline unsigned long *frame_vector_pfns(struct frame_vector *vec)
-> -{
-> -	if (!vec->is_pfns)
-> -		frame_vector_to_pfns(vec);
-> -	return (unsigned long *)(vec->ptrs);
-> -}
-> -
->  struct kvec;
->  int get_kernel_pages(const struct kvec *iov, int nr_pages, int write,
->  			struct page **pages);
-> diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-cor=
-e.h
-> index bbb3f26fbde9..a2e75ca0334f 100644
-> --- a/include/media/videobuf2-core.h
-> +++ b/include/media/videobuf2-core.h
-> @@ -1254,4 +1254,46 @@ bool vb2_request_object_is_buffer(struct media_req=
-uest_object *obj);
+> @@ -1653,6 +1653,8 @@ int follow_pte_pmd(struct mm_struct *mm, unsigned l=
+ong address,
+>  		   pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp);
+>  int follow_pfn(struct vm_area_struct *vma, unsigned long address,
+>  	unsigned long *pfn);
+> +int unsafe_follow_pfn(struct vm_area_struct *vma, unsigned long address,
+> +		      unsigned long *pfn);
+>  int follow_phys(struct vm_area_struct *vma, unsigned long address,
+>  		unsigned int flags, unsigned long *prot, resource_size_t *phys);
+>  int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
+> diff --git a/mm/memory.c b/mm/memory.c
+> index f7cbc4dde0ef..7c7b234ffb24 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4821,7 +4821,12 @@ EXPORT_SYMBOL(follow_pte_pmd);
+>   * @address: user virtual address
+>   * @pfn: location to store found PFN
+>   *
+> - * Only IO mappings and raw PFN mappings are allowed.
+> + * Only IO mappings and raw PFN mappings are allowed. Note that callers =
+must
+> + * ensure coherency with pte updates by using a &mmu_notifier to follow =
+updates.
+> + * If this is not feasible, or the access to the @pfn is only very short=
+ term,
+> + * use follow_pte_pmd() instead and hold the pagetable lock for the dura=
+tion of
+> + * the access instead. Any caller not following these requirements must =
+use
+> + * unsafe_follow_pfn() instead.
+>   *
+>   * Return: zero and the pfn at @pfn on success, -ve otherwise.
 >   */
->  unsigned int vb2_request_buffer_cnt(struct media_request *req);
+> @@ -4844,6 +4849,31 @@ int follow_pfn(struct vm_area_struct *vma, unsigne=
+d long address,
+>  }
+>  EXPORT_SYMBOL(follow_pfn);
 > =20
-> +/* Container for pinned pfns / pages in frame_vector.c */
-> +struct frame_vector {
-> +	unsigned int nr_allocated;	/* Number of frames we have space for */
-> +	unsigned int nr_frames;	/* Number of frames stored in ptrs array */
-> +	bool got_ref;		/* Did we pin pages by getting page ref? */
-> +	bool is_pfns;		/* Does array contain pages or pfns? */
-> +	void *ptrs[];		/* Array of pinned pfns / pages. Use
-> +				 * pfns_vector_pages() or pfns_vector_pfns()
-> +				 * for access */
-> +};
-> +
-> +struct frame_vector *frame_vector_create(unsigned int nr_frames);
-> +void frame_vector_destroy(struct frame_vector *vec);
-> +int get_vaddr_frames(unsigned long start, unsigned int nr_pfns,
-> +		     unsigned int gup_flags, struct frame_vector *vec);
-> +void put_vaddr_frames(struct frame_vector *vec);
-> +int frame_vector_to_pages(struct frame_vector *vec);
-> +void frame_vector_to_pfns(struct frame_vector *vec);
-> +
-> +static inline unsigned int frame_vector_count(struct frame_vector *vec)
+> +/**
+> + * unsafe_follow_pfn - look up PFN at a user virtual address
+> + * @vma: memory mapping
+> + * @address: user virtual address
+> + * @pfn: location to store found PFN
+> + *
+> + * Only IO mappings and raw PFN mappings are allowed.
+> + *
+> + * Returns zero and the pfn at @pfn on success, -ve otherwise.
+> + */
+> +int unsafe_follow_pfn(struct vm_area_struct *vma, unsigned long address,
+> +	unsigned long *pfn)
 > +{
-> +	return vec->nr_frames;
+> +#ifdef CONFIG_STRICT_FOLLOW_PFN
+> +	pr_info("unsafe follow_pfn usage rejected, see CONFIG_STRICT_FOLLOW_PFN=
+\n");
+> +	return -EINVAL;
+> +#else
+> +	WARN_ONCE(1, "unsafe follow_pfn usage\n");
+> +	add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+> +
+> +	return follow_pfn(vma, address, pfn);
+> +#endif
 > +}
+> +EXPORT_SYMBOL(unsafe_follow_pfn);
 > +
-> +static inline struct page **frame_vector_pages(struct frame_vector *vec)
-> +{
-> +	if (vec->is_pfns) {
-> +		int err =3D frame_vector_to_pages(vec);
-> +
-> +		if (err)
-> +			return ERR_PTR(err);
-> +	}
-> +	return (struct page **)(vec->ptrs);
-> +}
-> +
-> +static inline unsigned long *frame_vector_pfns(struct frame_vector *vec)
-> +{
-> +	if (!vec->is_pfns)
-> +		frame_vector_to_pfns(vec);
-> +	return (unsigned long *)(vec->ptrs);
-> +}
-> +
->  #endif /* _MEDIA_VIDEOBUF2_CORE_H */
-
-Please place those into a include/media/frame_vector.h file, instead of
-merging it directly at vb2 core header.
-
-Then include the new header at videobuf2-core.h and at frame_vector.c.
-
-With such changes:
-
-Acked-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 6c974888f86f..da6c943fe9f1 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -815,9 +815,6 @@ config DEVICE_PRIVATE
->  	  memory; i.e., memory that is only accessible from the device (or
->  	  group of devices). You likely also want to select HMM_MIRROR.
+>  #ifdef CONFIG_HAVE_IOREMAP_PROT
+>  int follow_phys(struct vm_area_struct *vma,
+>  		unsigned long address, unsigned int flags,
+> diff --git a/mm/nommu.c b/mm/nommu.c
+> index 75a327149af1..3db2910f0d64 100644
+> --- a/mm/nommu.c
+> +++ b/mm/nommu.c
+> @@ -132,6 +132,23 @@ int follow_pfn(struct vm_area_struct *vma, unsigned =
+long address,
+>  }
+>  EXPORT_SYMBOL(follow_pfn);
 > =20
-> -config FRAME_VECTOR
-> -	bool
-> -
->  config ARCH_USES_HIGH_VMA_FLAGS
->  	bool
->  config ARCH_HAS_PKEYS
-> diff --git a/mm/Makefile b/mm/Makefile
-> index d5649f1c12c0..a025fd6c6afd 100644
-> --- a/mm/Makefile
-> +++ b/mm/Makefile
-> @@ -111,7 +111,6 @@ obj-$(CONFIG_PAGE_EXTENSION) +=3D page_ext.o
->  obj-$(CONFIG_CMA_DEBUGFS) +=3D cma_debug.o
->  obj-$(CONFIG_USERFAULTFD) +=3D userfaultfd.o
->  obj-$(CONFIG_IDLE_PAGE_TRACKING) +=3D page_idle.o
-> -obj-$(CONFIG_FRAME_VECTOR) +=3D frame_vector.o
->  obj-$(CONFIG_DEBUG_PAGE_REF) +=3D debug_page_ref.o
->  obj-$(CONFIG_HARDENED_USERCOPY) +=3D usercopy.o
->  obj-$(CONFIG_PERCPU_STATS) +=3D percpu-stats.o
+> +/**
+> + * unsafe_follow_pfn - look up PFN at a user virtual address
+> + * @vma: memory mapping
+> + * @address: user virtual address
+> + * @pfn: location to store found PFN
+> + *
+> + * Only IO mappings and raw PFN mappings are allowed.
+> + *
+> + * Returns zero and the pfn at @pfn on success, -ve otherwise.
+> + */
+> +int unsafe_follow_pfn(struct vm_area_struct *vma, unsigned long address,
+> +	unsigned long *pfn)
+> +{
+> +	return follow_pfn(vma, address, pfn);
+> +}
+> +EXPORT_SYMBOL(unsafe_follow_pfn);
+> +
+>  LIST_HEAD(vmap_area_list);
+> =20
+>  void vfree(const void *addr)
+> diff --git a/security/Kconfig b/security/Kconfig
+> index 7561f6f99f1d..48945402e103 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -230,6 +230,19 @@ config STATIC_USERMODEHELPER_PATH
+>  	  If you wish for all usermode helper programs to be disabled,
+>  	  specify an empty string here (i.e. "").
+> =20
+> +config STRICT_FOLLOW_PFN
+> +	bool "Disable unsafe use of follow_pfn"
+> +	depends on MMU
+> +	help
+> +	  Some functionality in the kernel follows userspace mappings to iomem
+> +	  ranges in an unsafe matter. Examples include v4l userptr for zero-copy
+> +	  buffers sharing.
+> +
+> +	  If this option is switched on, such access is rejected. Only enable
+> +	  this option when you must run userspace which requires this.
+> +
+> +	  If in doubt, say Y.
+> +
+>  source "security/selinux/Kconfig"
+>  source "security/smack/Kconfig"
+>  source "security/tomoyo/Kconfig"
 
 
 
