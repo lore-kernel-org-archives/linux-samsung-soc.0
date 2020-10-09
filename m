@@ -2,211 +2,132 @@ Return-Path: <SRS0=q3lv=DQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28FB1C433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 14:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88985C4363D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 14:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85A16222B9
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 14:19:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58CBB222C3
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 14:25:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TXHPzxH9"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="YLM0g/4o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388689AbgJIOTG (ORCPT
+        id S2388822AbgJIOY7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 9 Oct 2020 10:19:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51728 "EHLO
+        Fri, 9 Oct 2020 10:24:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388687AbgJIOTG (ORCPT
+        with ESMTP id S2388338AbgJIOY6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Oct 2020 10:19:06 -0400
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0C4BC0613D9
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Oct 2020 07:19:05 -0700 (PDT)
-Received: by mail-ot1-x344.google.com with SMTP id t15so9176383otk.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Oct 2020 07:19:05 -0700 (PDT)
+        Fri, 9 Oct 2020 10:24:58 -0400
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2F9CC0613D7
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Oct 2020 07:24:57 -0700 (PDT)
+Received: by mail-oi1-x241.google.com with SMTP id x62so10342466oix.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Oct 2020 07:24:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MM70QuqTQsUBVq7gYXvXBZty2HeYwYo1AwlGqBndKzc=;
-        b=TXHPzxH9Da/xVr/PCQoDGy8c0zPWy+ggD3CN9+uIIarhuboqtJeD+WQppuYxHsd6Lw
-         Y7BHU63LYKcn8Q19C0ojPAIbHvLgUU7idHjBxl/cqvgWdtq9sYwq7aJadM3ewUTikvYS
-         Or+ZtapYPyo5QGIWg5F96VAf0fQY9D81hLV+0=
+         :cc;
+        bh=4j8VU4wpGDl6YV4vbFDWVWHEZCZz4TBGhbt0uuUGdBg=;
+        b=YLM0g/4oQLD0hu/Oa87scm3scHf+vbiPkLbDqUAnyXk3ER+QRam40zaijXvFBD6PRA
+         nzSbXcW7hn805lQbe6AX68hG76VYbA+coTzGsCT/QWJIzeeROcYpI8QHsxV9QNKX8ew0
+         Dn833fe+dPzpkngPWmhP7pgAZbKyHIAe+x52Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MM70QuqTQsUBVq7gYXvXBZty2HeYwYo1AwlGqBndKzc=;
-        b=tEfUhnt9DrBtFH7Mlr0RHHy1o0kMNaidsMNG0VgDAsYFMwY5m5CfPplRQL+WvM2taU
-         eulzySB535aOaV+b1IHADmRQCTuhWrt1TTsr5HteLq7zOjBG7oTMWIyMFxWBxGTb+tTK
-         y1/e6v4mhsgJB5PVLc7oWzIFPOieBoJglKWQZfVwoRVWNRNNMG14XozChC83dF6x3WPx
-         AbWwbbrWZqYLE/yCV9Ws93f0613Pp7+WYh/1cLPaUmXZptBsfiXVeTexmxV9vnj0MbRh
-         dT3LJR1tJ6T3mRfz4OZP9mFJjGkYYR0vRkBinUoo6Cy4mmUz39MtF1/mGGcQg6oAL2Yr
-         VqOg==
-X-Gm-Message-State: AOAM5311u2Ws9GCxFwo9zwxG6KEknDa/j4adL6ucCj94O9XMcEd/Xs/Z
-        2h3l6zY49XyBoVwb+7v8hxG7pgp/IVz9wlPhZ07p8A==
-X-Google-Smtp-Source: ABdhPJzNidxPOYe2uXf9i2kyX3nO4EFb7XRxsxlaQUOxC+n0ejMSsQdbIKmUu2me6/FBsUnaPi9FuwTaAIvXBztd7mE=
-X-Received: by 2002:a05:6830:1c3c:: with SMTP id f28mr9534834ote.188.1602253144991;
- Fri, 09 Oct 2020 07:19:04 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=4j8VU4wpGDl6YV4vbFDWVWHEZCZz4TBGhbt0uuUGdBg=;
+        b=AC+L1zwm0NWvdwTz8m/sb2v2E+xqy9rPdBWkpdu9Tx6Hujs/gnW1QxtoOqAD8IBx2R
+         RPsf4ploI7DXmNCIe+40nnnj/LlquAMF0KYo+oERPgt7W0CS2yc1NDOuo3M0eqoZkI1l
+         HdOP9Dpw0wY+f6Ei4bvjBUFty9CSdyuw9BKSW+wF6d5pexhaILOBGdv19+E/BbhZV1fr
+         4w7BjYJSeWq7laVDbT4XvUUjrBbsdXvS243pEZ0Ub+7C4joy/lOKQXY+3m0GroLSgabg
+         CNkrgUoYfWR3qpdPakGO+zd2Dz0ydok330v6fZocuzCY4Y0nvN35QyS3NBSgXXSd9We9
+         01Zg==
+X-Gm-Message-State: AOAM533BGLoX7SaLgQ1F26TiUsFBmHyDKxxTPb4KT5JbKHa74ZNfdoCk
+        nlaXwsth0JaoUwz79gA17CIWraoUk+GjOnN/d4RJIQ==
+X-Google-Smtp-Source: ABdhPJyHxT/6NZr88G54H2j+X8AAqjyafUNpDVmVkQQPYeZ/EXQjiOmXOOdqJRKMWvSSWVU71sVuY9YK0QkcwCetmpo=
+X-Received: by 2002:aca:6083:: with SMTP id u125mr2688783oib.14.1602253497033;
+ Fri, 09 Oct 2020 07:24:57 -0700 (PDT)
 MIME-Version: 1.0
 References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
- <20201009075934.3509076-18-daniel.vetter@ffwll.ch> <20201009094750.GQ6112@intel.com>
- <CAKMK7uH3o3hnRkTDqr93PR=wuRejpty+AbyMacoEFDDb6OgJeQ@mail.gmail.com> <20201009104154.GR6112@intel.com>
-In-Reply-To: <20201009104154.GR6112@intel.com>
+ <20201009075934.3509076-15-daniel.vetter@ffwll.ch> <20201009123109.GO5177@ziepe.ca>
+In-Reply-To: <20201009123109.GO5177@ziepe.ca>
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Fri, 9 Oct 2020 16:18:53 +0200
-Message-ID: <CAKMK7uEp71+B3EVTezog8U3VY=DUYAbe1QeqZH9NEG8T37M_Cw@mail.gmail.com>
-Subject: Re: [PATCH v2 17/17] drm/i915: Properly request PCI BARs
-To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Date:   Fri, 9 Oct 2020 16:24:45 +0200
+Message-ID: <CAKMK7uFpPP-Q0jC0vM7vYPEcg0m4NzTw+Ld=swdTF3BgMX5Qug@mail.gmail.com>
+Subject: Re: [PATCH v2 14/17] resource: Move devmem revoke code to resource framework
+To:     Jason Gunthorpe <jgg@ziepe.ca>
 Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Kees Cook <keescook@chromium.org>,
-        KVM list <kvm@vger.kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
         Daniel Vetter <daniel.vetter@intel.com>,
+        Kees Cook <keescook@chromium.org>,
         Dan Williams <dan.j.williams@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 9, 2020 at 12:42 PM Ville Syrj=C3=A4l=C3=A4
-<ville.syrjala@linux.intel.com> wrote:
+On Fri, Oct 9, 2020 at 2:31 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
 >
-> On Fri, Oct 09, 2020 at 12:01:39PM +0200, Daniel Vetter wrote:
-> > On Fri, Oct 9, 2020 at 11:47 AM Ville Syrj=C3=A4l=C3=A4
-> > <ville.syrjala@linux.intel.com> wrote:
-> > >
-> > > On Fri, Oct 09, 2020 at 09:59:34AM +0200, Daniel Vetter wrote:
-> > > > When trying to test my CONFIG_IO_STRICT_DEVMEM changes I realized t=
-hey
-> > > > do nothing for i915. Because i915 doesn't request any regions, like
-> > > > pretty much all drm pci drivers. I guess this is some very old
-> > > > remnants from the userspace modesetting days, when we wanted to
-> > > > co-exist with the fbdev driver. Which usually requested these
-> > > > resources.
-> > > >
-> > > > But makes me wonder why the pci subsystem doesn't just request
-> > > > resource automatically when we map a bar and a pci driver is bound?
-> > > >
-> > > > Knowledge about which pci bars we need kludged together from
-> > > > intel_uncore.c and intel_gtt.c from i915 and intel-gtt.c over in th=
-e
-> > > > fake agp driver.
-> > > >
-> > > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > > > Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> > > > Cc: Kees Cook <keescook@chromium.org>
-> > > > Cc: Dan Williams <dan.j.williams@intel.com>
-> > > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > > Cc: John Hubbard <jhubbard@nvidia.com>
-> > > > Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> > > > Cc: Jan Kara <jack@suse.cz>
-> > > > Cc: Dan Williams <dan.j.williams@intel.com>
-> > > > Cc: linux-mm@kvack.org
-> > > > Cc: linux-arm-kernel@lists.infradead.org
-> > > > Cc: linux-samsung-soc@vger.kernel.org
-> > > > Cc: linux-media@vger.kernel.org
-> > > > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > > > Cc: linux-pci@vger.kernel.org
-> > > > ---
-> > > >  drivers/gpu/drm/i915/intel_uncore.c | 25 +++++++++++++++++++++++--
-> > > >  1 file changed, 23 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/i915/intel_uncore.c b/drivers/gpu/drm/=
-i915/intel_uncore.c
-> > > > index 54e201fdeba4..ce39049d8919 100644
-> > > > --- a/drivers/gpu/drm/i915/intel_uncore.c
-> > > > +++ b/drivers/gpu/drm/i915/intel_uncore.c
-> > > > @@ -1692,10 +1692,13 @@ static int uncore_mmio_setup(struct intel_u=
-ncore *uncore)
-> > > >       struct pci_dev *pdev =3D i915->drm.pdev;
-> > > >       int mmio_bar;
-> > > >       int mmio_size;
-> > > > +     int bar_selection;
-> > >
-> > > Signed bitmasks always make me uneasy. But looks like
-> > > that's what it is in the pci api. So meh.
-> >
-> > Yeah it's surprising.
-> >
-> > > > +     int ret;
-> > > >
-> > > >       mmio_bar =3D IS_GEN(i915, 2) ? 1 : 0;
-> > > > +     bar_selection =3D BIT (2) | BIT(mmio_bar);
-> > >                            ^
-> > > spurious space
-> > >
-> > > That's also not correct for gen2 I think.
-> > >
-> > > gen2:
-> > > 0 =3D GMADR
-> > > 1 =3D MMADR
-> > > 2 =3D IOBAR
-> > >
-> > > gen3:
-> > > 0 =3D MMADR
-> > > 1 =3D IOBAR
-> > > 2 =3D GMADR
-> > > 3 =3D GTTADR
-> > >
-> > > gen4+:
-> > > 0+1 =3D GTTMMADR
-> > > 2+3 =3D GMADR
-> > > 4 =3D IOBAR
-> > >
-> > > Maybe we should just have an explicit list of bars like that in a
-> > > comment?
-> > >
-> > > I'd also suggest sucking this bitmask calculation into a small helper
-> > > so you can reuse it for the release.
-> >
-> > tbh I just hacked this up for testing. Given how almost no other drm
-> > driver does this, I'm wondering whether we should or not.
-> >
-> > Also the only reason why I didn't just use the pci_request_regions
-> > helper is to avoid the vga ioport range, since that's managed by
-> > vgaarbiter.
+> On Fri, Oct 09, 2020 at 09:59:31AM +0200, Daniel Vetter wrote:
 >
-> VGA io range isn't part of any bar. Or do you mean just the io decode
-> enable bit in the pci command register? That should be just a matter
-> or pci_enable_device() vs. pci_enable_device_mem() I think. So nothing
-> to do with which bars we've requested IIRC.
+> > +struct address_space *iomem_get_mapping(void)
+> > +{
+> > +     return iomem_inode->i_mapping;
 >
-> >
-> > So I think if we go for this for real we should:
-> > - register the vga ioport range in the vgaarbiter
-> > - have a pci_request_iomem_regions helper that grabs all mem bars
-> > - roll that out to all drm pci drivers
-> >
-> > Or something like that. The other complication is when we resize the
-> > iobar. So not really sure what to do here.
+> This should pair an acquire with the release below
 >
-> We resize it?
+> > +     /*
+> > +      * Publish /dev/mem initialized.
+> > +      * Pairs with smp_load_acquire() in revoke_iomem().
+> > +      */
+> > +     smp_store_release(&iomem_inode, inode);
+>
+> However, this seems abnormal, initcalls rarely do this kind of stuff
+> with global data..
+>
+> The kernel crashes if this fs_initcall is raced with
+> iomem_get_mapping() due to the unconditional dereference, so I think
+> it can be safely switched to a simple assignment.
 
-By default I thought firmware puts everything (well, squeezes) into
-the lower 32bit. Maybe they stopped doing that. So when we want the
-full bar (for discrete at least) we need to resize it and put it
-somewhere in the 64bit range above end of system memory.
+Ah yes I checked this all, but forgot to correctly annotate the
+iomem_get_mapping access. For reference, see b34e7e298d7a ("/dev/mem:
+Add missing memory barriers for devmem_inode").
 
-So I guess correct phrasing is "we will resize it" :-)
+The reasons for the annotations is that iomem requests can happen
+fairly early, way before fs_initcalls happen. That means revoke_iomem
+needs to check for that and bail out if we race - nothing bad can
+happen since userspace isn't running at this point anyway. And
+apparently it needs to be a full acquire fence since we don't just
+write a value, but need a barrier for the struct stuff.
+
+Now iomem_get_mapping otoh can only be called after userspace is up &
+running, so way after all the fs_initcalls are guaranteed to have
+fininshed. Hence we don't really need anything there. But I expect the
+kernel race checker thing to complain, plus that then gives me a good
+spot to explain why we can't race and don't have to check for a NULL
+iomem_inode.
+
+I'll add that in v3.
 -Daniel
---=20
+-- 
 Daniel Vetter
 Software Engineer, Intel Corporation
 http://blog.ffwll.ch
