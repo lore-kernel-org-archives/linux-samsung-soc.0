@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54482C4363D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 08:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 400B8C388CB
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 08:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E39AA222BA
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 08:00:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA76522280
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 08:00:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="SipLyVLu"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="U+vzUSar"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732758AbgJIIAP (ORCPT
+        id S1732702AbgJIIAR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 9 Oct 2020 04:00:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49458 "EHLO
+        Fri, 9 Oct 2020 04:00:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732745AbgJIIAN (ORCPT
+        with ESMTP id S1732770AbgJIIAR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Oct 2020 04:00:13 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B726C0613D4
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Oct 2020 01:00:13 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id t9so9227150wrq.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Oct 2020 01:00:13 -0700 (PDT)
+        Fri, 9 Oct 2020 04:00:17 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7EFFC0613D7
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Oct 2020 01:00:16 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id n18so9252512wrs.5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Oct 2020 01:00:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=H+w/Nn7YNzQtL1R8HRvtzmLcceEG02qI4DQoPSHvskY=;
-        b=SipLyVLu1maT+t1abz+yr4JywllfndSf6j6ENSrLq2AfSPXsjK05ajnSvbgqsompuC
-         1UhyDtuQjFpLpdHPLuaPJ1Y5re9PD8a0kaqxKFb6bu6P7peJGTnfxqpJ9GUn/cQVjw0m
-         wfneMt3tfvx7mL59KoMFPgFV7khypHJ1pv88Y=
+        bh=Mr0eqEhtLJlk9zvkUiO6msooid1XUy8va7iTFBhYa6o=;
+        b=U+vzUSar2wtID/EuVPMnsGQ3mvxbnZE/AtjkzSl4866cTqT0Bce/+YpSi3OFfqGOCz
+         +roCRyHkxz8LXBZQriCZTWPGyhTPs9bMUMnyXHelio94a0wfjayW85FaKxi67idHb1yM
+         MDFwdizaRRBaDwf6exvt8kTlK5W9sazGrwsv0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=H+w/Nn7YNzQtL1R8HRvtzmLcceEG02qI4DQoPSHvskY=;
-        b=UNGHFZcRhxlv21e50jZmvwEh6kt2wBhC3I95H3ZiFkXoynWeO59YyN/kgL70pBVRPY
-         zNVSrp2FCuY46VJgj0IzAkdUdrsadkpp00k86pB2HB9EphLBIkWR4h137BBb8BbftDVV
-         zdLMIwE5ZTbNAKWAonDBZzlMq3kDCyJdak84Mpcy2SJzqn45bjvyJ1b5cPeu6MQ2jBVQ
-         Wu08Ds0kTJCtv1UQC7uU9i1ELdixFbQmYpi3jyPiTBrnrLgFKWyAzQYqnmQUvD1WA+ch
-         ySpu2IJEf387F2A4mZGZ+mXid82Sq/iMzS5RYeDW9rRDyn4lKSICpUqayWEhlidDL8mX
-         Lyiw==
-X-Gm-Message-State: AOAM53129gpv7RbOdIr0NOyxRvsqm1Yw/jVWs1EcHBCj7JVgxA98ilee
-        xsp3vJ8G1hu1JVyKUBKb9w6clQ==
-X-Google-Smtp-Source: ABdhPJwb1srE61RQrgeCbJO2ZU0Hri/NPq8TLZEHtmQEdkQpUeTbudhLIlI6H1MTzcH4vFJipHM18Q==
-X-Received: by 2002:adf:df91:: with SMTP id z17mr5138518wrl.379.1602230412191;
-        Fri, 09 Oct 2020 01:00:12 -0700 (PDT)
+        bh=Mr0eqEhtLJlk9zvkUiO6msooid1XUy8va7iTFBhYa6o=;
+        b=lB1J+QSFKMpte1Q205kQFPU6v1dYz4g1vTn6Q7cnEViOjq1Oy7xt6n6Krx5ieSV+Ik
+         8PH1tmfuOW6gXzTVMWl/tVvl7uC184CEeIV3+FSve/LxWiEge63u87s0u5zK06Krf+Ep
+         SIV06bCxti6G3UDuBXkdVDKa18JWR8N35A8cXxUD+MoDimWxduY1lgrBw/eAYnnZqypT
+         YaPzXl2iGwouHwED6Mi982MFxkxkWrnp5ewA7aFbdSio37Ma8IYae8PWDgLQyDXo7yBd
+         tBTSBodNX2ZhnKkpvsH+7sjtv1iTk5aLupMISY5QQadfb6OucI6nK8A2ySXn3a4JmKBg
+         Z98A==
+X-Gm-Message-State: AOAM532o1v0w9BRCYPD4d90E24YS4RQVlrl/98XNZIH3b43e+Bgl285Z
+        eOm3i8fLnhN0NyaQfkq03Iza1Q==
+X-Google-Smtp-Source: ABdhPJyK6/zluwLchCVAu9wRdS90YK84DJ/TkLG0WrIGfx3gvXgwIQ2OcDSDDLV+etpfvi26XwXkuA==
+X-Received: by 2002:a5d:668b:: with SMTP id l11mr13032272wru.89.1602230415344;
+        Fri, 09 Oct 2020 01:00:15 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id u17sm11634118wri.45.2020.10.09.01.00.10
+        by smtp.gmail.com with ESMTPSA id u17sm11634118wri.45.2020.10.09.01.00.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2020 01:00:11 -0700 (PDT)
+        Fri, 09 Oct 2020 01:00:14 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>
@@ -70,13 +70,12 @@ Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
+        Jan Kara <jack@suse.cz>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH v2 14/17] resource: Move devmem revoke code to resource framework
-Date:   Fri,  9 Oct 2020 09:59:31 +0200
-Message-Id: <20201009075934.3509076-15-daniel.vetter@ffwll.ch>
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Subject: [PATCH v2 16/17] PCI: Revoke mappings like devmem
+Date:   Fri,  9 Oct 2020 09:59:33 +0200
+Message-Id: <20201009075934.3509076-17-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
 References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
@@ -87,13 +86,40 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-We want all iomem mmaps to consistently revoke ptes when the kernel
-takes over and CONFIG_IO_STRICT_DEVMEM is enabled. This includes the
-pci bar mmaps available through procfs and sysfs, which currently do
-not revoke mappings.
+Since 3234ac664a87 ("/dev/mem: Revoke mappings when a driver claims
+the region") /dev/kmem zaps ptes when the kernel requests exclusive
+acccess to an iomem region. And with CONFIG_IO_STRICT_DEVMEM, this is
+the default for all driver uses.
 
-To prepare for this, move the code from the /dev/kmem driver to
-kernel/resource.c.
+Except there's two more ways to access PCI BARs: sysfs and proc mmap
+support. Let's plug that hole.
+
+For revoke_devmem() to work we need to link our vma into the same
+address_space, with consistent vma->vm_pgoff. ->pgoff is already
+adjusted, because that's how (io_)remap_pfn_range works, but for the
+mapping we need to adjust vma->vm_file->f_mapping. The cleanest way is
+to adjust this at at ->open time:
+
+- for sysfs this is easy, now that binary attributes support this. We
+  just set bin_attr->mapping when mmap is supported
+- for procfs it's a bit more tricky, since procfs pci access has only
+  one file per device, and access to a specific resources first needs
+  to be set up with some ioctl calls. But mmap is only supported for
+  the same resources as sysfs exposes with mmap support, and otherwise
+  rejected, so we can set the mapping unconditionally at open time
+  without harm.
+
+A special consideration is for arch_can_pci_mmap_io() - we need to
+make sure that the ->f_mapping doesn't alias between ioport and iomem
+space. There's only 2 ways in-tree to support mmap of ioports: generic
+pci mmap (ARCH_GENERIC_PCI_MMAP_RESOURCE), and sparc as the single
+architecture hand-rolling. Both approach support ioport mmap through a
+special pfn range and not through magic pte attributes. Aliasing is
+therefore not a problem.
+
+The only difference in access checks left is that sysfs PCI mmap does
+not check for CAP_RAWIO. I'm not really sure whether that should be
+added or not.
 
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
@@ -104,293 +130,64 @@ Cc: John Hubbard <jhubbard@nvidia.com>
 Cc: Jérôme Glisse <jglisse@redhat.com>
 Cc: Jan Kara <jack@suse.cz>
 Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-mm@kvack.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-media@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org
+--
+v2:
+- Totally new approach: Adjust filp->f_mapping at open time. Note that
+  this now works on all architectures, not just those support
+  ARCH_GENERIC_PCI_MMAP_RESOURCE
 ---
- drivers/char/mem.c     | 85 +------------------------------------
- include/linux/ioport.h |  6 +--
- kernel/resource.c      | 95 +++++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 96 insertions(+), 90 deletions(-)
+ drivers/pci/pci-sysfs.c | 4 ++++
+ drivers/pci/proc.c      | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-index 5502f56f3655..53338aad8d28 100644
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -31,9 +31,6 @@
- #include <linux/uio.h>
- #include <linux/uaccess.h>
- #include <linux/security.h>
--#include <linux/pseudo_fs.h>
--#include <uapi/linux/magic.h>
--#include <linux/mount.h>
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index 6d78df981d41..cee38fcb4a86 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -928,6 +928,7 @@ void pci_create_legacy_files(struct pci_bus *b)
+ 	b->legacy_io->read = pci_read_legacy_io;
+ 	b->legacy_io->write = pci_write_legacy_io;
+ 	b->legacy_io->mmap = pci_mmap_legacy_io;
++	b->legacy_io->mapping = iomem_get_mapping();
+ 	pci_adjust_legacy_attr(b, pci_mmap_io);
+ 	error = device_create_bin_file(&b->dev, b->legacy_io);
+ 	if (error)
+@@ -940,6 +941,7 @@ void pci_create_legacy_files(struct pci_bus *b)
+ 	b->legacy_mem->size = 1024*1024;
+ 	b->legacy_mem->attr.mode = 0600;
+ 	b->legacy_mem->mmap = pci_mmap_legacy_mem;
++	b->legacy_io->mapping = iomem_get_mapping();
+ 	pci_adjust_legacy_attr(b, pci_mmap_mem);
+ 	error = device_create_bin_file(&b->dev, b->legacy_mem);
+ 	if (error)
+@@ -1155,6 +1157,8 @@ static int pci_create_attr(struct pci_dev *pdev, int num, int write_combine)
+ 			res_attr->mmap = pci_mmap_resource_uc;
+ 		}
+ 	}
++	if (res_attr->mmap)
++		res_attr->mapping = iomem_get_mapping();
+ 	res_attr->attr.name = res_attr_name;
+ 	res_attr->attr.mode = 0600;
+ 	res_attr->size = pci_resource_len(pdev, num);
+diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
+index 3a2f90beb4cb..9bab07302bbf 100644
+--- a/drivers/pci/proc.c
++++ b/drivers/pci/proc.c
+@@ -298,6 +298,7 @@ static int proc_bus_pci_open(struct inode *inode, struct file *file)
+ 	fpriv->write_combine = 0;
  
- #ifdef CONFIG_IA64
- # include <linux/efi.h>
-@@ -809,42 +806,6 @@ static loff_t memory_lseek(struct file *file, loff_t offset, int orig)
- 	return ret;
- }
- 
--static struct inode *devmem_inode;
--
--#ifdef CONFIG_IO_STRICT_DEVMEM
--void revoke_devmem(struct resource *res)
--{
--	/* pairs with smp_store_release() in devmem_init_inode() */
--	struct inode *inode = smp_load_acquire(&devmem_inode);
--
--	/*
--	 * Check that the initialization has completed. Losing the race
--	 * is ok because it means drivers are claiming resources before
--	 * the fs_initcall level of init and prevent /dev/mem from
--	 * establishing mappings.
--	 */
--	if (!inode)
--		return;
--
--	/*
--	 * The expectation is that the driver has successfully marked
--	 * the resource busy by this point, so devmem_is_allowed()
--	 * should start returning false, however for performance this
--	 * does not iterate the entire resource range.
--	 */
--	if (devmem_is_allowed(PHYS_PFN(res->start)) &&
--	    devmem_is_allowed(PHYS_PFN(res->end))) {
--		/*
--		 * *cringe* iomem=relaxed says "go ahead, what's the
--		 * worst that can happen?"
--		 */
--		return;
--	}
--
--	unmap_mapping_range(inode->i_mapping, res->start, resource_size(res), 1);
--}
--#endif
--
- static int open_port(struct inode *inode, struct file *filp)
- {
- 	int rc;
-@@ -864,7 +825,7 @@ static int open_port(struct inode *inode, struct file *filp)
- 	 * revocations when drivers want to take over a /dev/mem mapped
- 	 * range.
- 	 */
--	filp->f_mapping = inode->i_mapping;
-+	filp->f_mapping = iomem_get_mapping();
+ 	file->private_data = fpriv;
++	file->f_mapping = iomem_get_mapping();
  
  	return 0;
  }
-@@ -995,48 +956,6 @@ static char *mem_devnode(struct device *dev, umode_t *mode)
- 
- static struct class *mem_class;
- 
--static int devmem_fs_init_fs_context(struct fs_context *fc)
--{
--	return init_pseudo(fc, DEVMEM_MAGIC) ? 0 : -ENOMEM;
--}
--
--static struct file_system_type devmem_fs_type = {
--	.name		= "devmem",
--	.owner		= THIS_MODULE,
--	.init_fs_context = devmem_fs_init_fs_context,
--	.kill_sb	= kill_anon_super,
--};
--
--static int devmem_init_inode(void)
--{
--	static struct vfsmount *devmem_vfs_mount;
--	static int devmem_fs_cnt;
--	struct inode *inode;
--	int rc;
--
--	rc = simple_pin_fs(&devmem_fs_type, &devmem_vfs_mount, &devmem_fs_cnt);
--	if (rc < 0) {
--		pr_err("Cannot mount /dev/mem pseudo filesystem: %d\n", rc);
--		return rc;
--	}
--
--	inode = alloc_anon_inode(devmem_vfs_mount->mnt_sb);
--	if (IS_ERR(inode)) {
--		rc = PTR_ERR(inode);
--		pr_err("Cannot allocate inode for /dev/mem: %d\n", rc);
--		simple_release_fs(&devmem_vfs_mount, &devmem_fs_cnt);
--		return rc;
--	}
--
--	/*
--	 * Publish /dev/mem initialized.
--	 * Pairs with smp_load_acquire() in revoke_devmem().
--	 */
--	smp_store_release(&devmem_inode, inode);
--
--	return 0;
--}
--
- static int __init chr_dev_init(void)
- {
- 	int minor;
-@@ -1058,8 +977,6 @@ static int __init chr_dev_init(void)
- 		 */
- 		if ((minor == DEVPORT_MINOR) && !arch_has_dev_port())
- 			continue;
--		if ((minor == DEVMEM_MINOR) && devmem_init_inode() != 0)
--			continue;
- 
- 		device_create(mem_class, NULL, MKDEV(MEM_MAJOR, minor),
- 			      NULL, devlist[minor].name);
-diff --git a/include/linux/ioport.h b/include/linux/ioport.h
-index 6c2b06fe8beb..8ffb61b36606 100644
---- a/include/linux/ioport.h
-+++ b/include/linux/ioport.h
-@@ -302,11 +302,7 @@ struct resource *devm_request_free_mem_region(struct device *dev,
- struct resource *request_free_mem_region(struct resource *base,
- 		unsigned long size, const char *name);
- 
--#ifdef CONFIG_IO_STRICT_DEVMEM
--void revoke_devmem(struct resource *res);
--#else
--static inline void revoke_devmem(struct resource *res) { };
--#endif
-+extern struct address_space *iomem_get_mapping(void);
- 
- #endif /* __ASSEMBLY__ */
- #endif	/* _LINUX_IOPORT_H */
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 841737bbda9e..22153fdec4f5 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -18,12 +18,15 @@
- #include <linux/spinlock.h>
- #include <linux/fs.h>
- #include <linux/proc_fs.h>
-+#include <linux/pseudo_fs.h>
- #include <linux/sched.h>
- #include <linux/seq_file.h>
- #include <linux/device.h>
- #include <linux/pfn.h>
- #include <linux/mm.h>
-+#include <linux/mount.h>
- #include <linux/resource_ext.h>
-+#include <uapi/linux/magic.h>
- #include <asm/io.h>
- 
- 
-@@ -1112,6 +1115,52 @@ resource_size_t resource_alignment(struct resource *res)
- 
- static DECLARE_WAIT_QUEUE_HEAD(muxed_resource_wait);
- 
-+static struct inode *iomem_inode;
-+
-+#ifdef CONFIG_IO_STRICT_DEVMEM
-+static void revoke_iomem(struct resource *res)
-+{
-+	/* pairs with smp_store_release() in iomem_init_inode() */
-+	struct inode *inode = smp_load_acquire(&iomem_inode);
-+
-+	/*
-+	 * Check that the initialization has completed. Losing the race
-+	 * is ok because it means drivers are claiming resources before
-+	 * the fs_initcall level of init and prevent /dev/mem from
-+	 * establishing mappings.
-+	 */
-+	if (!inode)
-+		return;
-+
-+	/*
-+	 * The expectation is that the driver has successfully marked
-+	 * the resource busy by this point, so devmem_is_allowed()
-+	 * should start returning false, however for performance this
-+	 * does not iterate the entire resource range.
-+	 */
-+	if (devmem_is_allowed(PHYS_PFN(res->start)) &&
-+	    devmem_is_allowed(PHYS_PFN(res->end))) {
-+		/*
-+		 * *cringe* iomem=relaxed says "go ahead, what's the
-+		 * worst that can happen?"
-+		 */
-+		return;
-+	}
-+
-+	unmap_mapping_range(inode->i_mapping, res->start, resource_size(res), 1);
-+}
-+struct address_space *iomem_get_mapping(void)
-+{
-+	return iomem_inode->i_mapping;
-+}
-+#else
-+static void revoke_iomem(struct resource *res) {}
-+struct address_space *iomem_get_mapping(void)
-+{
-+	return NULL;
-+}
-+#endif
-+
- /**
-  * __request_region - create a new busy resource region
-  * @parent: parent resource descriptor
-@@ -1179,7 +1228,7 @@ struct resource * __request_region(struct resource *parent,
- 	write_unlock(&resource_lock);
- 
- 	if (res && orig_parent == &iomem_resource)
--		revoke_devmem(res);
-+		revoke_iomem(res);
- 
- 	return res;
- }
-@@ -1713,4 +1762,48 @@ static int __init strict_iomem(char *str)
- 	return 1;
- }
- 
-+static int iomem_fs_init_fs_context(struct fs_context *fc)
-+{
-+	return init_pseudo(fc, DEVMEM_MAGIC) ? 0 : -ENOMEM;
-+}
-+
-+static struct file_system_type iomem_fs_type = {
-+	.name		= "iomem",
-+	.owner		= THIS_MODULE,
-+	.init_fs_context = iomem_fs_init_fs_context,
-+	.kill_sb	= kill_anon_super,
-+};
-+
-+static int __init iomem_init_inode(void)
-+{
-+	static struct vfsmount *iomem_vfs_mount;
-+	static int iomem_fs_cnt;
-+	struct inode *inode;
-+	int rc;
-+
-+	rc = simple_pin_fs(&iomem_fs_type, &iomem_vfs_mount, &iomem_fs_cnt);
-+	if (rc < 0) {
-+		pr_err("Cannot mount iomem pseudo filesystem: %d\n", rc);
-+		return rc;
-+	}
-+
-+	inode = alloc_anon_inode(iomem_vfs_mount->mnt_sb);
-+	if (IS_ERR(inode)) {
-+		rc = PTR_ERR(inode);
-+		pr_err("Cannot allocate inode for iomem: %d\n", rc);
-+		simple_release_fs(&iomem_vfs_mount, &iomem_fs_cnt);
-+		return rc;
-+	}
-+
-+	/*
-+	 * Publish /dev/mem initialized.
-+	 * Pairs with smp_load_acquire() in revoke_iomem().
-+	 */
-+	smp_store_release(&iomem_inode, inode);
-+
-+	return 0;
-+}
-+
-+fs_initcall(iomem_init_inode);
-+
- __setup("iomem=", strict_iomem);
 -- 
 2.28.0
 
