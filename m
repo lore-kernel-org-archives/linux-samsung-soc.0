@@ -2,102 +2,150 @@ Return-Path: <SRS0=q3lv=DQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B6EC4363D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 10:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B315C433E7
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 12:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74ACD22277
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 10:58:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602241104;
-	bh=CMrGYTrcD+5IJHtI0bpuU46GnNpct5AbTTzXkmjepxA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PJ6xGqmDOtMUgVslTCOEgWk3vR/vn/3rGf+ifQ/T1QUVXrBK1EH2BmeXb8WUfzSPp
-	 4/MclGf+45+ckuYNAD9Oh1oHpLz15q9ut6qAZZbyjmazqmTvd3LU+rQAwWHb6hCtDi
-	 jUfuB22d3g7CK35nUV1aBJ1KqdZ+ZP/gH4yWKMdQ=
+	by mail.kernel.org (Postfix) with ESMTP id AAD07222BA
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 12:21:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="dRexUDY3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387827AbgJIK6V (ORCPT
+        id S1730965AbgJIMVO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 9 Oct 2020 06:58:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731963AbgJIK6U (ORCPT
+        Fri, 9 Oct 2020 08:21:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33486 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730978AbgJIMVN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Oct 2020 06:58:20 -0400
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 470C820709;
-        Fri,  9 Oct 2020 10:58:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602241099;
-        bh=CMrGYTrcD+5IJHtI0bpuU46GnNpct5AbTTzXkmjepxA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p/je5FkxMfgA01Da0Dm48bbhGhmQ/tk5Ko0y4QC81AKGWRm6/6PVltQIK3ChH/raX
-         vnNwpldAsv82zFBd7msHOjMz8e8LQfA2z+acOHddUxCfHeUYdNAiQhmqx2/qu92bLK
-         /Kd1J1KcDZHKqheFRLHCZ6ZB51Ssvbuv+icZxCz8=
-Date:   Fri, 9 Oct 2020 12:59:05 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Fri, 9 Oct 2020 08:21:13 -0400
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B444C0613D5
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Oct 2020 05:21:13 -0700 (PDT)
+Received: by mail-qt1-x843.google.com with SMTP id t9so6907739qtp.9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Oct 2020 05:21:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=GEBFnNzCc2Aa+VvpaaWfqgqAphuQOGzaQHxTmQfOeXI=;
+        b=dRexUDY3H8MczQ4QLPjINl81RcewsEJoOwrcRnS/wdN6+1ahY+3vJqHFQSRB3AKEat
+         Z5ZaXXZPosq4Wbd2jnV/U3qSyNEiSVNzFD8cJAswQl5FTJES+qJJJxPuS2/N1xstVsKE
+         DmLKmIoNq1PULtGkiX9+m6e1iqZaCGoeY5Z+TbjwSmpmk3vladKQnD3eC3IjfehfAuWk
+         OAoO3ZuMd+rz9DNMaLq4YRdS5/enCBHoI5KrUmpa+3FN6vqOFl+XYKf3xsXAEqCHUZGe
+         a3qzy4AHPVKLKT9jFp2Z0TSDspqDK1w0Z9U5mPCKkR2TBx/oNoqCaY/YIuclFEo3wtty
+         CzGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=GEBFnNzCc2Aa+VvpaaWfqgqAphuQOGzaQHxTmQfOeXI=;
+        b=q6rIaylIv6jWc+cbESaPrLMqzROo0qEqmH7SaOyadcpimFr1X0u+Dotkp9lNLwI8/R
+         6iCyWpPRQJom/FQFMFsgKb/zL34+531WpAqgKhtCQk5IeuQ2dpHLZhGqQwwVkbDUvMuF
+         QTQBbVn9l9DTgizSgNCeR0hAd1qtH96EUlJUtoWvTT3Ij29lJPwDIAZtrH6eDkdcWQ0Y
+         A63eE1W2LCkANbVqvqsgxFd8W2rMX5ArsyGKu0GyhLEwjRotJNWedhHYNNB9fHcI3yP3
+         0n2g3wJtPDaQob1HKbiXsMhP9Kbkm0ReuE8HUuWI4XsMcfiUx2i70RpuvKHaicVxz38E
+         AGNA==
+X-Gm-Message-State: AOAM533nb18cd8OWjdhQ9XmBaFzgUcj61sW3cIBsC9lF2XB9hSHyrpjv
+        YDwfF9z5KXHksDdF6gCYuT9Jbw==
+X-Google-Smtp-Source: ABdhPJxabis31V1ruCjg81xS+awnWmlIxScXs/iSYcl2LZthnsEHjAadouQof92mVKkzbF3fOMDQng==
+X-Received: by 2002:ac8:1910:: with SMTP id t16mr12554428qtj.351.1602246072505;
+        Fri, 09 Oct 2020 05:21:12 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
+        by smtp.gmail.com with ESMTPSA id x7sm3318061qkc.24.2020.10.09.05.21.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Oct 2020 05:21:11 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1kQrOZ-001xjJ-2z; Fri, 09 Oct 2020 09:21:11 -0300
+Date:   Fri, 9 Oct 2020 09:21:11 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
         linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
         linux-s390@vger.kernel.org,
         Daniel Vetter <daniel.vetter@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
         Kees Cook <keescook@chromium.org>,
         Dan Williams <dan.j.williams@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
-        David Hildenbrand <david@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH v2 14/17] resource: Move devmem revoke code to resource
- framework
-Message-ID: <20201009105905.GB505688@kroah.com>
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 09/17] mm: Add unsafe_follow_pfn
+Message-ID: <20201009122111.GN5177@ziepe.ca>
 References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
- <20201009075934.3509076-15-daniel.vetter@ffwll.ch>
+ <20201009075934.3509076-10-daniel.vetter@ffwll.ch>
+ <20201009123421.67a80d72@coco.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201009075934.3509076-15-daniel.vetter@ffwll.ch>
+In-Reply-To: <20201009123421.67a80d72@coco.lan>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 09, 2020 at 09:59:31AM +0200, Daniel Vetter wrote:
-> We want all iomem mmaps to consistently revoke ptes when the kernel
-> takes over and CONFIG_IO_STRICT_DEVMEM is enabled. This includes the
-> pci bar mmaps available through procfs and sysfs, which currently do
-> not revoke mappings.
+On Fri, Oct 09, 2020 at 12:34:21PM +0200, Mauro Carvalho Chehab wrote:
+> Hi,
 > 
-> To prepare for this, move the code from the /dev/kmem driver to
-> kernel/resource.c.
+> Em Fri,  9 Oct 2020 09:59:26 +0200
+> Daniel Vetter <daniel.vetter@ffwll.ch> escreveu:
 > 
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: linux-mm@kvack.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-media@vger.kernel.org
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+> > Way back it was a reasonable assumptions that iomem mappings never
+> > change the pfn range they point at. But this has changed:
+> > 
+> > - gpu drivers dynamically manage their memory nowadays, invalidating
+> > ptes with unmap_mapping_range when buffers get moved
+> > 
+> > - contiguous dma allocations have moved from dedicated carvetouts to
+> > cma regions. This means if we miss the unmap the pfn might contain
+> > pagecache or anon memory (well anything allocated with GFP_MOVEABLE)
+> > 
+> > - even /dev/mem now invalidates mappings when the kernel requests that
+> > iomem region when CONFIG_IO_STRICT_DEVMEM is set, see 3234ac664a87
+> > ("/dev/mem: Revoke mappings when a driver claims the region")
+> > 
+> > Accessing pfns obtained from ptes without holding all the locks is
+> > therefore no longer a good idea.
+> > 
+> > Unfortunately there's some users where this is not fixable (like v4l
+> > userptr of iomem mappings) or involves a pile of work (vfio type1
+> > iommu). For now annotate these as unsafe and splat appropriately.
+> > 
+> > This patch adds an unsafe_follow_pfn, which later patches will then
+> > roll out to all appropriate places.
+> 
+> NACK, as this breaks an existing userspace API on media.
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+It doesn't break it. You get a big warning the thing is broken and it
+keeps working.
+
+We can't leave such a huge security hole open - it impacts other
+subsystems, distros need to be able to run in a secure mode.
+
+> While I agree that using the userptr on media is something that
+> new drivers may not support, as DMABUF is a better way of
+> handling it, changing this for existing ones is a big no, 
+> as it may break usersapace.
+
+media community needs to work to fix this, not pretend it is OK to
+keep going as-is.
+
+Dealing with security issues is the one case where an uABI break might
+be acceptable.
+
+If you want to NAK it then you need to come up with the work to do
+something here correctly that will support the old drivers without the
+kernel taint.
+
+Unfortunately making things uncomfortable for the subsystem is the big
+hammer the core kernel needs to use to actually get this security work
+done by those responsible.
+
+Jason
