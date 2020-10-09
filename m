@@ -1,260 +1,157 @@
-Return-Path: <SRS0=JmOj=DP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=q3lv=DQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0802C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 17:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D56C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 08:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F88E22201
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Oct 2020 17:16:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFA5C222B8
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 08:00:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="MVbqu90h"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="DEazGm3/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731916AbgJHRQf (ORCPT
+        id S1732677AbgJIIAD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 8 Oct 2020 13:16:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54538 "EHLO
+        Fri, 9 Oct 2020 04:00:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730763AbgJHRQc (ORCPT
+        with ESMTP id S1732643AbgJIH7x (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Oct 2020 13:16:32 -0400
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8911DC061755
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Oct 2020 10:16:31 -0700 (PDT)
-Received: by mail-oi1-x244.google.com with SMTP id t77so7098718oie.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Oct 2020 10:16:31 -0700 (PDT)
+        Fri, 9 Oct 2020 03:59:53 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 131D6C0613D5
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Oct 2020 00:59:53 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id d3so8894825wma.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Oct 2020 00:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=cJwmJXmW0n/BmBUTL74IPviQIG2habiKD0MU6pN8zhU=;
-        b=MVbqu90hJmyrd+sPPkFw6E75unJ8rLwKVenxZgPlZQ0sDsjzqGtKeUBv82TcScacos
-         yekx36c3FkXtWDgWxhXXmugd3dPf2By3cV1JwiAspr3dL9gnVzSAVLnXNq7o/V7irYdI
-         7mZVqNu2dmuv8QMF1QlWFB/Rs/OIshbHRXrbM=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=immTPDdSm8V7ezbOteojXYm/j7WkY1f3P9Y0YpK7onQ=;
+        b=DEazGm3//HS7eifrtPTNpv9gPNwxpuxjM7cgzXbcLG0mO5e39cJ73eX9iQKQEkxr4Y
+         FwEAxZ/eknqujf87zOGqp6tESSOeL2I6VSIobgrZsNnXiWlr9VWW7WhVnV0GrVhO4vMj
+         1v4YtSGCDuC7IGf+ELUEOwyj9sMdI3c9bq3Xg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=cJwmJXmW0n/BmBUTL74IPviQIG2habiKD0MU6pN8zhU=;
-        b=kE4fbFifVJZyeAYRClYKQiKj97fNtgV0MesAFAFKXgCEx/HENBVqVXZ00KxZeMnsOf
-         bnnilbtZbYQoyy+6+ybGb6uwUCT1RFV5AR3NqWBNRVh6lmqufvDCKjMaRl48J23HEy6n
-         Sn68gcyj1MscX88TOTPQGBldHEcXasSdNZGyy1piESnjZVhY8CIkPI9Hlj+MKAzdoFhz
-         rCT9b6Gly0U5rDlJJT5qK5p2erEP/wHhH71Th8PkukUrTCM6eWFUc2iZppPzvHYwac1N
-         4QLheMOMt2QFzB7P4TSdS5nxTqnSDE/t7Y7V9LT05X3zFYGlwliFrWltp1lUg4QKBedM
-         vznw==
-X-Gm-Message-State: AOAM532CZY4LGsAVczaKljY3UE6K4gxjCppSG8emMv+7OBfwR7BNth+x
-        HZXQdokDGm0AC+8r/IyXdlp3bEqlGrlbD+NKagEfiA==
-X-Google-Smtp-Source: ABdhPJzf3e2p0tuIJ1xApDWpklSlKGyjhh7bQmds7tEcm9rrUTBDyTXsYZhQ+pIZOdsswK//Z2G6wQ7JuLDsqNpcK5Y=
-X-Received: by 2002:a05:6808:206:: with SMTP id l6mr5847034oie.128.1602177390724;
- Thu, 08 Oct 2020 10:16:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201007164426.1812530-1-daniel.vetter@ffwll.ch>
- <20201007164426.1812530-9-daniel.vetter@ffwll.ch> <20201008184440.4c3bebed@thinkpad>
-In-Reply-To: <20201008184440.4c3bebed@thinkpad>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=immTPDdSm8V7ezbOteojXYm/j7WkY1f3P9Y0YpK7onQ=;
+        b=XbzEBuYylKQCnSbOi0Bw7Pzd5mCoQscDZZFemHa8KzIh+PX2NFmXJwNP8jk9CDfesD
+         obrAcb35KVELebsiJy1pirHrIX4pmrpZ27YZc+6+h4CHviYMP2Jij6RuXzB44p5IMRFU
+         GLIAXHML+lEI7Y2Yu0urWKtUlyXhMdYFx+q9Koqvn/oboyVJsEibV8Nnmr8PWOQHIjqx
+         y2FiDClGVEUNFsLKWJb2Bn33t9duDY1nm6bXFLIkqaw4/LENKxh23KqnABaVGtQy0lq7
+         WF10TT7M07/hMo6DXpAhSAFYcBq4QkyHCufUCWgJsspTlNlW17BuW2oUoRmVlWFQJAZK
+         7S1w==
+X-Gm-Message-State: AOAM530GEDx1y573FR3T1xX56Tvw/nbhAFL6K8+gU/LQWf471obDlYWU
+        RSupD+Cn9x/G5ZKE8H/MswXsxg==
+X-Google-Smtp-Source: ABdhPJzyDJpFjA/Q+sv1RhX5gsGPQpkP/4WlxxT8RLqjQWQaBWIid1inU3iHz1dJQWF+W7VpBZ1zIA==
+X-Received: by 2002:a1c:f311:: with SMTP id q17mr13703008wmq.168.1602230391713;
+        Fri, 09 Oct 2020 00:59:51 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id u17sm11634118wri.45.2020.10.09.00.59.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Oct 2020 00:59:50 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Thu, 8 Oct 2020 19:16:19 +0200
-Message-ID: <CAKMK7uFFLB0gXcRt48Da30S+Mt8R+bhx=BGwcTg-b-MMVjcFGw@mail.gmail.com>
-Subject: Re: [PATCH 08/13] s390/pci: Remove races against pte updates
-To:     Gerald Schaefer <gerald.schaefer@linux.ibm.com>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>,
-        Niklas Schnelle <schnelle@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-s390@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH v2 00/17] follow_pfn and other iomap races
+Date:   Fri,  9 Oct 2020 09:59:17 +0200
+Message-Id: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.28.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 8, 2020 at 6:44 PM Gerald Schaefer
-<gerald.schaefer@linux.ibm.com> wrote:
->
-> On Wed,  7 Oct 2020 18:44:21 +0200
-> Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->
-> > Way back it was a reasonable assumptions that iomem mappings never
-> > change the pfn range they point at. But this has changed:
-> >
-> > - gpu drivers dynamically manage their memory nowadays, invalidating
-> > ptes with unmap_mapping_range when buffers get moved
-> >
-> > - contiguous dma allocations have moved from dedicated carvetouts to
-> > cma regions. This means if we miss the unmap the pfn might contain
-> > pagecache or anon memory (well anything allocated with GFP_MOVEABLE)
-> >
-> > - even /dev/mem now invalidates mappings when the kernel requests that
-> > iomem region when CONFIG_IO_STRICT_DEVMEM is set, see 3234ac664a87
-> > ("/dev/mem: Revoke mappings when a driver claims the region")
-> >
-> > Accessing pfns obtained from ptes without holding all the locks is
-> > therefore no longer a good idea. Fix this.
-> >
-> > Since zpci_memcpy_from|toio seems to not do anything nefarious with
-> > locks we just need to open code get_pfn and follow_pfn and make sure
-> > we drop the locks only after we've done. The write function also needs
-> > the copy_from_user move, since we can't take userspace faults while
-> > holding the mmap sem.
-> >
-> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: John Hubbard <jhubbard@nvidia.com>
-> > Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: linux-mm@kvack.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Cc: linux-media@vger.kernel.org
-> > Cc: Niklas Schnelle <schnelle@linux.ibm.com>
-> > Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
-> > Cc: linux-s390@vger.kernel.org
-> > ---
-> >  arch/s390/pci/pci_mmio.c | 98 +++++++++++++++++++++++-----------------
-> >  1 file changed, 57 insertions(+), 41 deletions(-)
->
-> Looks good, thanks. Also survived some basic function test. Only some
-> minor nitpick, see below.
->
-> Reviewed-by: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
->
-> >
-> > diff --git a/arch/s390/pci/pci_mmio.c b/arch/s390/pci/pci_mmio.c
-> > index 401cf670a243..4d194cb09372 100644
-> > --- a/arch/s390/pci/pci_mmio.c
-> > +++ b/arch/s390/pci/pci_mmio.c
-> > @@ -119,33 +119,15 @@ static inline int __memcpy_toio_inuser(void __iom=
-em *dst,
-> >       return rc;
-> >  }
-> >
-> > -static long get_pfn(unsigned long user_addr, unsigned long access,
-> > -                 unsigned long *pfn)
-> > -{
-> > -     struct vm_area_struct *vma;
-> > -     long ret;
-> > -
-> > -     mmap_read_lock(current->mm);
-> > -     ret =3D -EINVAL;
-> > -     vma =3D find_vma(current->mm, user_addr);
-> > -     if (!vma)
-> > -             goto out;
-> > -     ret =3D -EACCES;
-> > -     if (!(vma->vm_flags & access))
-> > -             goto out;
-> > -     ret =3D follow_pfn(vma, user_addr, pfn);
-> > -out:
-> > -     mmap_read_unlock(current->mm);
-> > -     return ret;
-> > -}
-> > -
-> >  SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
-> >               const void __user *, user_buffer, size_t, length)
-> >  {
-> >       u8 local_buf[64];
-> >       void __iomem *io_addr;
-> >       void *buf;
-> > -     unsigned long pfn;
-> > +     struct vm_area_struct *vma;
-> > +     pte_t *ptep;
-> > +     spinlock_t *ptl;
-> >       long ret;
-> >
-> >       if (!zpci_is_enabled())
-> > @@ -158,7 +140,7 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long,=
- mmio_addr,
-> >        * We only support write access to MIO capable devices if we are =
-on
-> >        * a MIO enabled system. Otherwise we would have to check for eve=
-ry
-> >        * address if it is a special ZPCI_ADDR and would have to do
-> > -      * a get_pfn() which we don't need for MIO capable devices.  Curr=
-ently
-> > +      * a pfn lookup which we don't need for MIO capable devices.  Cur=
-rently
-> >        * ISM devices are the only devices without MIO support and there=
- is no
-> >        * known need for accessing these from userspace.
-> >        */
-> > @@ -176,21 +158,37 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned lon=
-g, mmio_addr,
-> >       } else
-> >               buf =3D local_buf;
-> >
-> > -     ret =3D get_pfn(mmio_addr, VM_WRITE, &pfn);
-> > +     ret =3D -EFAULT;
-> > +     if (copy_from_user(buf, user_buffer, length))
-> > +             goto out_free;
-> > +
-> > +     mmap_read_lock(current->mm);
-> > +     ret =3D -EINVAL;
-> > +     vma =3D find_vma(current->mm, mmio_addr);
-> > +     if (!vma)
-> > +             goto out_unlock_mmap;
-> > +     ret =3D -EACCES;
-> > +     if (!(vma->vm_flags & VM_WRITE))
-> > +             goto out_unlock_mmap;
-> > +     if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
-> > +             goto out_unlock_mmap;
->
-> That check for VM_IO | VM_PFNMAP was previously hidden inside follow_pfn(=
-),
-> and that would have returned -EINVAL in this case. With your change, we
-> now return -EACCES. Not sure how important that is, but it feels wrong.
-> Maybe move the VM_IO | VM_PFNMAP check up, before the ret =3D -EACCES?
+Hi all,
 
-I tried to keep the errno unchanged, but fumbled this. Will fix in the
-next round, thanks a lot for reviewing and testing.
+Round two of my patch series to clamp down a bunch of races and gaps
+around follow_pfn and other access to iomem mmaps. Previous version:
 
-For merging I think this one here would be best through the s390 tree,
-since it can be merged without any of the others in here.
+v1: https://lore.kernel.org/dri-devel/20201007164426.1812530-1-daniel.vetter@ffwll.ch/
 
-Thanks, Daniel
+And the discussion that sparked this journey:
 
->
-> [...]
-> > @@ -306,22 +306,38 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long=
-, mmio_addr,
-> >               buf =3D local_buf;
-> >       }
-> >
-> > -     ret =3D get_pfn(mmio_addr, VM_READ, &pfn);
-> > +     mmap_read_lock(current->mm);
-> > +     ret =3D -EINVAL;
-> > +     vma =3D find_vma(current->mm, mmio_addr);
-> > +     if (!vma)
-> > +             goto out_unlock_mmap;
-> > +     ret =3D -EACCES;
-> > +     if (!(vma->vm_flags & VM_WRITE))
-> > +             goto out_unlock_mmap;
-> > +     if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
-> > +             goto out_unlock_mmap;
->
-> Same here with VM_IO | VM_PFNMAP and -EINVAL.
+https://lore.kernel.org/dri-devel/20201007164426.1812530-1-daniel.vetter@ffwll.ch/
 
+Changes in v2:
+- tons of small polish&fixes all over, thanks to all the reviewers who
+  spotted issues
+- I managed to test at least the generic_access_phys and pci mmap revoke
+  stuff with a few gdb sessions using our i915 debug tools (hence now also
+  the drm/i915 patch to properly request all the pci bar regions)
+- reworked approach for the pci mmap revoke: Infrastructure moved into
+  kernel/resource.c, address_space mapping is now set up at open time for
+  everyone (which required some sysfs changes). Does indeed look a lot
+  cleaner and a lot less invasive than I feared at first.
 
+The big thing I can't test are all the frame_vector changes in habanalbas,
+exynos and media. Gerald has given the s390 patch a spin already.
 
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Review, testing, feedback all very much welcome.
+
+Cheers, Daniel
+
+Daniel Vetter (17):
+  drm/exynos: Stop using frame_vector helpers
+  drm/exynos: Use FOLL_LONGTERM for g2d cmdlists
+  misc/habana: Stop using frame_vector helpers
+  misc/habana: Use FOLL_LONGTERM for userptr
+  mm/frame-vector: Use FOLL_LONGTERM
+  media: videobuf2: Move frame_vector into media subsystem
+  mm: Close race in generic_access_phys
+  s390/pci: Remove races against pte updates
+  mm: Add unsafe_follow_pfn
+  media/videbuf1|2: Mark follow_pfn usage as unsafe
+  vfio/type1: Mark follow_pfn as unsafe
+  PCI: Obey iomem restrictions for procfs mmap
+  /dev/mem: Only set filp->f_mapping
+  resource: Move devmem revoke code to resource framework
+  sysfs: Support zapping of binary attr mmaps
+  PCI: Revoke mappings like devmem
+  drm/i915: Properly request PCI BARs
+
+ arch/s390/pci/pci_mmio.c                      | 98 +++++++++++--------
+ drivers/char/mem.c                            | 86 +---------------
+ drivers/gpu/drm/exynos/Kconfig                |  1 -
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c       | 48 ++++-----
+ drivers/gpu/drm/i915/intel_uncore.c           | 25 ++++-
+ drivers/media/common/videobuf2/Kconfig        |  1 -
+ drivers/media/common/videobuf2/Makefile       |  1 +
+ .../media/common/videobuf2}/frame_vector.c    | 54 ++++------
+ drivers/media/platform/omap/Kconfig           |  1 -
+ drivers/media/v4l2-core/videobuf-dma-contig.c |  2 +-
+ drivers/misc/habanalabs/Kconfig               |  1 -
+ drivers/misc/habanalabs/common/habanalabs.h   |  3 +-
+ drivers/misc/habanalabs/common/memory.c       | 50 ++++------
+ drivers/pci/pci-sysfs.c                       |  4 +
+ drivers/pci/proc.c                            |  6 ++
+ drivers/vfio/vfio_iommu_type1.c               |  4 +-
+ fs/sysfs/file.c                               | 11 +++
+ include/linux/ioport.h                        |  6 +-
+ include/linux/mm.h                            | 47 +--------
+ include/linux/sysfs.h                         |  2 +
+ include/media/videobuf2-core.h                | 42 ++++++++
+ kernel/resource.c                             | 95 +++++++++++++++++-
+ mm/Kconfig                                    |  3 -
+ mm/Makefile                                   |  1 -
+ mm/memory.c                                   | 76 +++++++++++++-
+ mm/nommu.c                                    | 17 ++++
+ security/Kconfig                              | 13 +++
+ 27 files changed, 412 insertions(+), 286 deletions(-)
+ rename {mm => drivers/media/common/videobuf2}/frame_vector.c (85%)
+
+-- 
+2.28.0
+
