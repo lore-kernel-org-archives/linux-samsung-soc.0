@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 400B8C388CB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 08:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E87FC4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 08:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA76522280
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 08:00:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E982C22281
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Oct 2020 08:00:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="U+vzUSar"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="D1VJi6UD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732702AbgJIIAR (ORCPT
+        id S1732755AbgJIIAO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 9 Oct 2020 04:00:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49576 "EHLO
+        Fri, 9 Oct 2020 04:00:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732770AbgJIIAR (ORCPT
+        with ESMTP id S1732716AbgJIIAN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Oct 2020 04:00:17 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7EFFC0613D7
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Oct 2020 01:00:16 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id n18so9252512wrs.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Oct 2020 01:00:16 -0700 (PDT)
+        Fri, 9 Oct 2020 04:00:13 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 612C2C0610D4
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Oct 2020 01:00:09 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id j2so9240225wrx.7
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Oct 2020 01:00:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Mr0eqEhtLJlk9zvkUiO6msooid1XUy8va7iTFBhYa6o=;
-        b=U+vzUSar2wtID/EuVPMnsGQ3mvxbnZE/AtjkzSl4866cTqT0Bce/+YpSi3OFfqGOCz
-         +roCRyHkxz8LXBZQriCZTWPGyhTPs9bMUMnyXHelio94a0wfjayW85FaKxi67idHb1yM
-         MDFwdizaRRBaDwf6exvt8kTlK5W9sazGrwsv0=
+        bh=le1GUptU9JjBH114uU563JmUcYegKwYn9xh0zAQdRv8=;
+        b=D1VJi6UDBiQk2hO8dFve4gh+DKwL/4hvYIL5H14t+/WkC6EkC0QuzB+xVNaIVhimgb
+         u3J/6YYVnKsy9E3ATy/UWE+cLNXaPddTma9scUgc+w9imr71cIasK3qOPcYgE9YB/pK2
+         huXf9HsnQzVH0icRGFbigbp5CUz+XW5pf1/tI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Mr0eqEhtLJlk9zvkUiO6msooid1XUy8va7iTFBhYa6o=;
-        b=lB1J+QSFKMpte1Q205kQFPU6v1dYz4g1vTn6Q7cnEViOjq1Oy7xt6n6Krx5ieSV+Ik
-         8PH1tmfuOW6gXzTVMWl/tVvl7uC184CEeIV3+FSve/LxWiEge63u87s0u5zK06Krf+Ep
-         SIV06bCxti6G3UDuBXkdVDKa18JWR8N35A8cXxUD+MoDimWxduY1lgrBw/eAYnnZqypT
-         YaPzXl2iGwouHwED6Mi982MFxkxkWrnp5ewA7aFbdSio37Ma8IYae8PWDgLQyDXo7yBd
-         tBTSBodNX2ZhnKkpvsH+7sjtv1iTk5aLupMISY5QQadfb6OucI6nK8A2ySXn3a4JmKBg
-         Z98A==
-X-Gm-Message-State: AOAM532o1v0w9BRCYPD4d90E24YS4RQVlrl/98XNZIH3b43e+Bgl285Z
-        eOm3i8fLnhN0NyaQfkq03Iza1Q==
-X-Google-Smtp-Source: ABdhPJyK6/zluwLchCVAu9wRdS90YK84DJ/TkLG0WrIGfx3gvXgwIQ2OcDSDDLV+etpfvi26XwXkuA==
-X-Received: by 2002:a5d:668b:: with SMTP id l11mr13032272wru.89.1602230415344;
-        Fri, 09 Oct 2020 01:00:15 -0700 (PDT)
+        bh=le1GUptU9JjBH114uU563JmUcYegKwYn9xh0zAQdRv8=;
+        b=neQ2UBI7KJ0guIytTkTWa08Kr3i6WFG3WOiWhAZhAz5/AQZzYt1hyvMI+DEX6laYq9
+         XXKNkkXJBhkUhin91dbnbt2KOxQF3+ANXgOFopeOwAcKjTeLbI3o7TAnA5fS0cu75EVa
+         vlBNLnu+yUuaWsYksgHCNBfW+4+81Ik3WhSTiiyZ6cAWdZf9BhBmEECVeISw57TwcSft
+         WWicI+SK/ngNB/OrrnNCc8dngO4Gcf5hhXHa/XWcSjmGdyKciWJ5Uaz729VT1zN7q4TZ
+         D3hIu4R6laz2KAe3TbPLtiJ8wJNqdgKCzOUzAseV5jMKx95LuzdMscF1f7An7xZCTvm9
+         ZI7Q==
+X-Gm-Message-State: AOAM533LdU+DsHhgAcu0iGPzg0rj8MsY0ThA5QHGseoG2q4irhcneyoU
+        R52Xt/7tbqsDVrF165QvqQLb+g==
+X-Google-Smtp-Source: ABdhPJz4MKP5KGohAdR58eqqZNbRUjATksd5quRpBzCsMu6hT8STZxdOkUvTUNe8EYXb+jIiohIVBA==
+X-Received: by 2002:adf:bc14:: with SMTP id s20mr14299261wrg.220.1602230408064;
+        Fri, 09 Oct 2020 01:00:08 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id u17sm11634118wri.45.2020.10.09.01.00.13
+        by smtp.gmail.com with ESMTPSA id u17sm11634118wri.45.2020.10.09.01.00.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2020 01:00:14 -0700 (PDT)
+        Fri, 09 Oct 2020 01:00:07 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>
@@ -71,11 +71,11 @@ Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
         John Hubbard <jhubbard@nvidia.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jan Kara <jack@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Subject: [PATCH v2 16/17] PCI: Revoke mappings like devmem
-Date:   Fri,  9 Oct 2020 09:59:33 +0200
-Message-Id: <20201009075934.3509076-17-daniel.vetter@ffwll.ch>
+        Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Subject: [PATCH v2 11/17] vfio/type1: Mark follow_pfn as unsafe
+Date:   Fri,  9 Oct 2020 09:59:28 +0200
+Message-Id: <20201009075934.3509076-12-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
 References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
@@ -86,40 +86,16 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Since 3234ac664a87 ("/dev/mem: Revoke mappings when a driver claims
-the region") /dev/kmem zaps ptes when the kernel requests exclusive
-acccess to an iomem region. And with CONFIG_IO_STRICT_DEVMEM, this is
-the default for all driver uses.
+The code seems to stuff these pfns into iommu pts (or something like
+that, I didn't follow), but there's no mmu_notifier to ensure that
+access is synchronized with pte updates.
 
-Except there's two more ways to access PCI BARs: sysfs and proc mmap
-support. Let's plug that hole.
+Hence mark these as unsafe. This means that with
+CONFIG_STRICT_FOLLOW_PFN, these will be rejected.
 
-For revoke_devmem() to work we need to link our vma into the same
-address_space, with consistent vma->vm_pgoff. ->pgoff is already
-adjusted, because that's how (io_)remap_pfn_range works, but for the
-mapping we need to adjust vma->vm_file->f_mapping. The cleanest way is
-to adjust this at at ->open time:
-
-- for sysfs this is easy, now that binary attributes support this. We
-  just set bin_attr->mapping when mmap is supported
-- for procfs it's a bit more tricky, since procfs pci access has only
-  one file per device, and access to a specific resources first needs
-  to be set up with some ioctl calls. But mmap is only supported for
-  the same resources as sysfs exposes with mmap support, and otherwise
-  rejected, so we can set the mapping unconditionally at open time
-  without harm.
-
-A special consideration is for arch_can_pci_mmap_io() - we need to
-make sure that the ->f_mapping doesn't alias between ioport and iomem
-space. There's only 2 ways in-tree to support mmap of ioports: generic
-pci mmap (ARCH_GENERIC_PCI_MMAP_RESOURCE), and sparc as the single
-architecture hand-rolling. Both approach support ioport mmap through a
-special pfn range and not through magic pte attributes. Aliasing is
-therefore not a problem.
-
-The only difference in access checks left is that sysfs PCI mmap does
-not check for CAP_RAWIO. I'm not really sure whether that should be
-added or not.
+Real fix is to wire up an mmu_notifier ... somehow. Probably means any
+invalidate is a fatal fault for this vfio device, but then this
+shouldn't ever happen if userspace is reasonable.
 
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
@@ -130,64 +106,39 @@ Cc: John Hubbard <jhubbard@nvidia.com>
 Cc: Jérôme Glisse <jglisse@redhat.com>
 Cc: Jan Kara <jack@suse.cz>
 Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-mm@kvack.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-media@vger.kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org
---
-v2:
-- Totally new approach: Adjust filp->f_mapping at open time. Note that
-  this now works on all architectures, not just those support
-  ARCH_GENERIC_PCI_MMAP_RESOURCE
+Cc: Alex Williamson <alex.williamson@redhat.com>
+Cc: Cornelia Huck <cohuck@redhat.com>
+Cc: kvm@vger.kernel.org
 ---
- drivers/pci/pci-sysfs.c | 4 ++++
- drivers/pci/proc.c      | 1 +
- 2 files changed, 5 insertions(+)
+ drivers/vfio/vfio_iommu_type1.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 6d78df981d41..cee38fcb4a86 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -928,6 +928,7 @@ void pci_create_legacy_files(struct pci_bus *b)
- 	b->legacy_io->read = pci_read_legacy_io;
- 	b->legacy_io->write = pci_write_legacy_io;
- 	b->legacy_io->mmap = pci_mmap_legacy_io;
-+	b->legacy_io->mapping = iomem_get_mapping();
- 	pci_adjust_legacy_attr(b, pci_mmap_io);
- 	error = device_create_bin_file(&b->dev, b->legacy_io);
- 	if (error)
-@@ -940,6 +941,7 @@ void pci_create_legacy_files(struct pci_bus *b)
- 	b->legacy_mem->size = 1024*1024;
- 	b->legacy_mem->attr.mode = 0600;
- 	b->legacy_mem->mmap = pci_mmap_legacy_mem;
-+	b->legacy_io->mapping = iomem_get_mapping();
- 	pci_adjust_legacy_attr(b, pci_mmap_mem);
- 	error = device_create_bin_file(&b->dev, b->legacy_mem);
- 	if (error)
-@@ -1155,6 +1157,8 @@ static int pci_create_attr(struct pci_dev *pdev, int num, int write_combine)
- 			res_attr->mmap = pci_mmap_resource_uc;
- 		}
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 5fbf0c1f7433..a4d53f3d0a35 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -421,7 +421,7 @@ static int follow_fault_pfn(struct vm_area_struct *vma, struct mm_struct *mm,
+ {
+ 	int ret;
+ 
+-	ret = follow_pfn(vma, vaddr, pfn);
++	ret = unsafe_follow_pfn(vma, vaddr, pfn);
+ 	if (ret) {
+ 		bool unlocked = false;
+ 
+@@ -435,7 +435,7 @@ static int follow_fault_pfn(struct vm_area_struct *vma, struct mm_struct *mm,
+ 		if (ret)
+ 			return ret;
+ 
+-		ret = follow_pfn(vma, vaddr, pfn);
++		ret = unsafe_follow_pfn(vma, vaddr, pfn);
  	}
-+	if (res_attr->mmap)
-+		res_attr->mapping = iomem_get_mapping();
- 	res_attr->attr.name = res_attr_name;
- 	res_attr->attr.mode = 0600;
- 	res_attr->size = pci_resource_len(pdev, num);
-diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
-index 3a2f90beb4cb..9bab07302bbf 100644
---- a/drivers/pci/proc.c
-+++ b/drivers/pci/proc.c
-@@ -298,6 +298,7 @@ static int proc_bus_pci_open(struct inode *inode, struct file *file)
- 	fpriv->write_combine = 0;
  
- 	file->private_data = fpriv;
-+	file->f_mapping = iomem_get_mapping();
- 
- 	return 0;
- }
+ 	return ret;
 -- 
 2.28.0
 
