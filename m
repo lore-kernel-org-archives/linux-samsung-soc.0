@@ -2,277 +2,366 @@ Return-Path: <SRS0=3hxP=DR=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 636D2C433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 10 Oct 2020 23:08:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF13BC43457
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 10 Oct 2020 23:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2656B20760
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 10 Oct 2020 23:08:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdqGF5qe"
+	by mail.kernel.org (Postfix) with ESMTP id 7280D20829
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 10 Oct 2020 23:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1602371316;
+	bh=d3mTSqxjmIVv8pvjDnUxuO/wR4Ywg3sH+xwYDg3gKUY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=P+qAeTwbbiI+A8NhjVGqEjexZsnybJLwPtKGbMCzwTVw2Q3lhPOBfkYg0WwG8DPsW
+	 F5vKm5+56QsEEdxUPffFmDnzdz/sk34Abe91OkXzOFv0gagFiGa0QC/wVnwwVOyzv8
+	 +mlLEm2wf19Y6CiGvHDk/7Eo1xVwgNklYGRt8p3o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390447AbgJJW5N (ORCPT
+        id S1728548AbgJJW5M (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 10 Oct 2020 18:57:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47374 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387560AbgJJU1t (ORCPT
+        Sat, 10 Oct 2020 18:57:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57072 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732647AbgJJTyq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 10 Oct 2020 16:27:49 -0400
-Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95344C0613D0;
-        Sat, 10 Oct 2020 13:27:18 -0700 (PDT)
-Received: by mail-oi1-x243.google.com with SMTP id c13so14162509oiy.6;
-        Sat, 10 Oct 2020 13:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=oGo8IGgCZpTOoR3ZKZaP8e3qvIeXNb3yMrzl+Uani14=;
-        b=QdqGF5qe16vB4wlkB20OoDG5GsZXhkiu+V7PIg7gevT+li9s2YZrjhJjrGKFlhR8f2
-         S2dMeFOHFe2Vy3+ViSPQkUcTH6WgZSgyFemNPe3jkRa1BRJLmCIpjdAjfS+Z+fMYuuFc
-         J/zHg1WUv6YS6qXHyCbAbu2sfcz6kuW6fXvudSVSb/G2m0zjetF8vQarbaEqA1w5uj5C
-         1ytU+yCJQIoUFZyqLvf50g0rJYU5X+PHHN8XIpBwZ7Wgshsn/e8A5zDxqiYS9ZaCOgq0
-         +eTVZzOuHYBHFBmUTwz8gE0YQaPT+/D15xczuawlfzpKen+UVAP0g0nAO1GFs3+KLRMi
-         43mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=oGo8IGgCZpTOoR3ZKZaP8e3qvIeXNb3yMrzl+Uani14=;
-        b=jfRtHi8KOqCmT0Yp6rQ0+SoB/5Y6165/0CrxTAvRWxcE1GtYIF1ZGrRYi2MJIQTUof
-         dk6NusOkPAoYlotRnhPcxrp87AypG1VBydbU2IxKinqFvnXZkzGOBZF/A4DUsCOV/zC5
-         zgy0xaV3I82Y5Q3QdfBBP3RGupdsVCcCln7rpOXxCF3k+l8VrCtQXVgcHplUNpBD5aT5
-         X6fJavIqBzCvkKq0LaHn3d56xO1Cf9bZ6tfi3tEa5IiFkwPooBWNATSo/IG5IkPow099
-         PJkdoKyNtz9IOuFFeOEpcKyVTUtEuqDyLCUZ3bx+AL9S3SS5+qEyHNwLZz9OH2Bsriu6
-         LSlA==
-X-Gm-Message-State: AOAM530xTZ+4bvGW/ZlKTsz9c8crwmNzuwa3fwfO/R4kCyHD3/KipaMd
-        KHcNOCJj3N+nZaV/N3KafAAwQyJHd+PqYfhjJdo=
-X-Google-Smtp-Source: ABdhPJwowo80GWbqkm6ZkqR7gSgknWZHhpMAZMgkL8s88FI9XTRLJCjdHnJ8k2W5KFXN71VQforAtfzOFMwHNRWQMIg=
-X-Received: by 2002:a05:6808:3bb:: with SMTP id n27mr6204755oie.130.1602361637761;
- Sat, 10 Oct 2020 13:27:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch> <20201009075934.3509076-4-daniel.vetter@ffwll.ch>
-In-Reply-To: <20201009075934.3509076-4-daniel.vetter@ffwll.ch>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Sat, 10 Oct 2020 23:26:52 +0300
-Message-ID: <CAFCwf1194Ce98y8tWxKzXT1rsdHDkzEcnERiaU=3-=t7hygmXg@mail.gmail.com>
-Subject: Re: [PATCH v2 03/17] misc/habana: Stop using frame_vector helpers
+        Sat, 10 Oct 2020 15:54:46 -0400
+Received: from coco.lan (ip5f5ad5ce.dynamic.kabel-deutschland.de [95.90.213.206])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7E03207C4;
+        Sat, 10 Oct 2020 09:21:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1602321690;
+        bh=d3mTSqxjmIVv8pvjDnUxuO/wR4Ywg3sH+xwYDg3gKUY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=GvHeRr3ZUEwZJUKG634fF9Md5DIz1b6g+GzjmK/SnMBCaTfKY/Nv+1CfBU6hrZYex
+         JiYJ3TI4ntgmxVwSgIfd0LVLdi9AM0cRnqK4eOJqIWNfAQ2EIpbNiM2Z3niSGk9MmJ
+         mFn0WP4KLtQX9HyBi/TdwG6kikR3GKtxtj5/JmG8=
+Date:   Sat, 10 Oct 2020 11:21:22 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-s390@vger.kernel.org,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
         Daniel Vetter <daniel.vetter@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
         Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Omer Shpigelman <oshpigelman@habana.ai>,
-        Ofir Bitton <obitton@habana.ai>,
-        Tomer Tayar <ttayar@habana.ai>,
-        Moti Haimovski <mhaimovski@habana.ai>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pawel Piskorski <ppiskorski@habana.ai>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 09/17] mm: Add unsafe_follow_pfn
+Message-ID: <20201010112122.587f9945@coco.lan>
+In-Reply-To: <CAKMK7uF-hrSwzFQkp6qEP88hM1Qg8TMQOunuRHh=f2+D8MaMRg@mail.gmail.com>
+References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
+        <20201009075934.3509076-10-daniel.vetter@ffwll.ch>
+        <20201009123421.67a80d72@coco.lan>
+        <20201009122111.GN5177@ziepe.ca>
+        <20201009143723.45609bfb@coco.lan>
+        <20201009124850.GP5177@ziepe.ca>
+        <CAKMK7uF-hrSwzFQkp6qEP88hM1Qg8TMQOunuRHh=f2+D8MaMRg@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 9, 2020 at 10:59 AM Daniel Vetter <daniel.vetter@ffwll.ch> wrot=
-e:
->
-> All we need are a pages array, pin_user_pages_fast can give us that
-> directly. Plus this avoids the entire raw pfn side of get_vaddr_frames.
->
-Thanks for the patch Daniel.
+Em Fri, 9 Oct 2020 19:52:05 +0200
+Daniel Vetter <daniel.vetter@ffwll.ch> escreveu:
 
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: linux-mm@kvack.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-media@vger.kernel.org
-> Cc: Oded Gabbay <oded.gabbay@gmail.com>
-> Cc: Omer Shpigelman <oshpigelman@habana.ai>
-> Cc: Ofir Bitton <obitton@habana.ai>
-> Cc: Tomer Tayar <ttayar@habana.ai>
-> Cc: Moti Haimovski <mhaimovski@habana.ai>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Pawel Piskorski <ppiskorski@habana.ai>
-> --
-> v2: Use unpin_user_pages_dirty_lock (John)
-> ---
->  drivers/misc/habanalabs/Kconfig             |  1 -
->  drivers/misc/habanalabs/common/habanalabs.h |  3 +-
->  drivers/misc/habanalabs/common/memory.c     | 49 ++++++++-------------
->  3 files changed, 20 insertions(+), 33 deletions(-)
->
-> diff --git a/drivers/misc/habanalabs/Kconfig b/drivers/misc/habanalabs/Kc=
-onfig
-> index 8eb5d38c618e..2f04187f7167 100644
-> --- a/drivers/misc/habanalabs/Kconfig
-> +++ b/drivers/misc/habanalabs/Kconfig
-> @@ -6,7 +6,6 @@
->  config HABANA_AI
->         tristate "HabanaAI accelerators (habanalabs)"
->         depends on PCI && HAS_IOMEM
-> -       select FRAME_VECTOR
->         select DMA_SHARED_BUFFER
->         select GENERIC_ALLOCATOR
->         select HWMON
-> diff --git a/drivers/misc/habanalabs/common/habanalabs.h b/drivers/misc/h=
-abanalabs/common/habanalabs.h
-> index edbd627b29d2..c1b3ad613b15 100644
-> --- a/drivers/misc/habanalabs/common/habanalabs.h
-> +++ b/drivers/misc/habanalabs/common/habanalabs.h
-> @@ -881,7 +881,8 @@ struct hl_ctx_mgr {
->  struct hl_userptr {
->         enum vm_type_t          vm_type; /* must be first */
->         struct list_head        job_node;
-> -       struct frame_vector     *vec;
-> +       struct page             **pages;
-> +       unsigned int            npages;
-Can you please update the kerneldoc comment section of this structure
-according to your changes ?
+> On Fri, Oct 9, 2020 at 2:48 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >
+> > On Fri, Oct 09, 2020 at 02:37:23PM +0200, Mauro Carvalho Chehab wrote:
+> >  
+> > > I'm not a mm/ expert, but, from what I understood from Daniel's patch
+> > > description is that this is unsafe *only if*  __GFP_MOVABLE is used.  
+> >
+> > No, it is unconditionally unsafe. The CMA movable mappings are
+> > specific VMAs that will have bad issues here, but there are other
+> > types too.
 
->         struct sg_table         *sgt;
->         enum dma_data_direction dir;
->         struct list_head        debugfs_list;
-> diff --git a/drivers/misc/habanalabs/common/memory.c b/drivers/misc/haban=
-alabs/common/memory.c
-> index 5ff4688683fd..327b64479f97 100644
-> --- a/drivers/misc/habanalabs/common/memory.c
-> +++ b/drivers/misc/habanalabs/common/memory.c
-> @@ -1281,45 +1281,41 @@ static int get_user_memory(struct hl_device *hdev=
-, u64 addr, u64 size,
->                 return -EFAULT;
->         }
->
-> -       userptr->vec =3D frame_vector_create(npages);
-> -       if (!userptr->vec) {
-> +       userptr->pages =3D kvmalloc_array(npages, sizeof(*userptr->pages)=
-,
-> +                                       GFP_KERNEL);
-> +       if (!userptr->pages) {
->                 dev_err(hdev->dev, "Failed to create frame vector\n");
->                 return -ENOMEM;
->         }
->
-> -       rc =3D get_vaddr_frames(start, npages, FOLL_FORCE | FOLL_WRITE,
-> -                               userptr->vec);
-> +       rc =3D pin_user_pages_fast(start, npages, FOLL_FORCE | FOLL_WRITE=
-,
-> +                                userptr->pages);
->
->         if (rc !=3D npages) {
->                 dev_err(hdev->dev,
->                         "Failed to map host memory, user ptr probably wro=
-ng\n");
->                 if (rc < 0)
-> -                       goto destroy_framevec;
-> +                       goto destroy_pages;
-> +               npages =3D rc;
->                 rc =3D -EFAULT;
-> -               goto put_framevec;
-> -       }
-> -
-> -       if (frame_vector_to_pages(userptr->vec) < 0) {
-> -               dev_err(hdev->dev,
-> -                       "Failed to translate frame vector to pages\n");
-> -               rc =3D -EFAULT;
-> -               goto put_framevec;
-> +               goto put_pages;
->         }
-> +       userptr->npages =3D npages;
->
->         rc =3D sg_alloc_table_from_pages(userptr->sgt,
-> -                                       frame_vector_pages(userptr->vec),
-> -                                       npages, offset, size, GFP_ATOMIC)=
-;
-> +                                      userptr->pages,
-> +                                      npages, offset, size, GFP_ATOMIC);
-I think that because the call to kvmalloc_array() is done with
-GFP_KERNEL, there is no point in using GFP_ATOMIC here.
-And actually, this path only needs to avoid yielding when using a
-special debug mode.
-So I suggest putting here GFP_KERNEL.
+I didn't check the mm dirty details, but I strongly suspect that the mm
+code has a way to prevent moving a mmapped page while it is still in usage.
 
-In the meanwhile, I'll run this patch (coupled with the next patch) in
-our C/I to make sure there are no regressions.
+If not, then the entire movable pages concept sounds broken to me, and
+has to be fixed at mm subsystem.
+
+> >
+> > The only way to do something at a VMA level is to have a list of OK
+> > VMAs, eg because they were creatd via a special mmap helper from the
+> > media subsystem.
+
+I'm not sure if I'm following you on that. The media API can work with
+different ways of sending buffers to userspace:
+
+	- read();
+
+	- using the overlay mode. This interface is deprecated in
+	  practice, being replaced by DMABUF. Only a few older hardware
+	  supports it, and it depends on an special X11 helper driver
+	  for it to work.
+
+	- via DMABUF:
+		https://linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/dmabuf.html
+
+	- via mmap, using a mmap helper:
+		https://linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/mmap.html
+
+	- via mmap, using userspace-provided pointers:
+		https://linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/userp.html
+
+The existing open-source programs usually chose one or more of the above
+modes. if the Kernel driver returns -EINVAL when an mmapped streaming I/O
+mode is not supported, userspace has to select a different method.
+
+Most userspace open source programs have fallback support: if one
+mmap I/O method fails, it selects another one, although this is not
+a mandatory requirement. I found (and fixed) a few ones that were
+relying exclusively on userptr support, but I didn't make a 
+comprehensive check.
+
+Also there are a number of relevant closed-source apps that we have no 
+idea about what methods they use, like Skype, and other similar
+videoconferencing programs. Breaking support for those, specially at
+a time where people are relying on it in order to participate on
+conferences and doing internal meetings is a **very bad** idea.
+
+So, whatever solution is taken, it should not be dumping warning
+messages at the system and tainting the Kernel, but, instead, checking
+if the userspace request is valid or not. If it is invalid, return the
+proper error code via the right V4L2 ioctl, in order to let userspace
+choose a different method. I the request is valid, refcount the pages 
+for them to not be moved while they're still in usage.
+
+-
+
+Let me provide some background about how things work at the media
+subsytem. If you want to know more, the userspace-provided memory 
+mapped pointers work is described here:
+
+	https://linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/userp.html#userp
+
+Basically, userspace calls either one of those ioctls:
+
+	VIDIOC_CREATE_BUFS:
+		https://linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/vidioc-create-bufs.html
+
+Which is translated into a videobuf2 call to: vb2_ioctl_create_bufs()
+
+	VIDIOC_REQBUFS
+		https://linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/vidioc-reqbufs.html#vidioc-reqbufs
+
+Which is translated into a videobuf2 call to: vb2_ioctl_reqbufs()
+
+Both internally calls vb2_verify_memory_type(), which is responsible
+for checking if the provided pointers are OK for the usage and/or do
+all necessary page allocations, and taking care of any special 
+requirements. This could easily have some additional checks to
+verify if the requested VMA address has pages that are movable or
+not, ensuring that ensure that the VMA is OK, and locking them in
+order to prevent the mm code to move such pages while they are in
+usage by the media subsystem.
+
+Now, as I said before, I don't know the dirty details about how
+to lock those pages at the mm subsystem in order to avoid it
+to move the used pages. Yet, when vb2_create_framevec()
+is called, the check if VMA is OK should already be happened
+at vb2_verify_memory_type().
+
+-
+
+It should be noticed that the dirty hack added by patch 09/17
+and 10/17 affects *all* types of memory allocations at V4L2, 
+as this kAPI is called by the 3 different memory models
+supported at the media subsystem:
+
+	drivers/media/common/videobuf2/videobuf2-vmalloc.c
+	drivers/media/common/videobuf2/videobuf2-dma-contig.c
+	drivers/media/common/videobuf2/videobuf2-dma-sg.c
+
+In other words, with this code:
+
+	int unsafe_follow_pfn(struct vm_area_struct *vma, unsigned long address,
+		unsigned long *pfn)
+	{
+	#ifdef CONFIG_STRICT_FOLLOW_PFN
+		pr_info("unsafe follow_pfn usage rejected, see CONFIG_STRICT_FOLLOW_PFN\n");
+		return -EINVAL;
+	#else
+		WARN_ONCE(1, "unsafe follow_pfn usage\n");
+		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+
+		return follow_pfn(vma, address, pfn);
+	#endif
+
+you're unconditionally breaking the media userspace API support not
+only for embedded systems that could be using userptr instead of
+DMA_BUF, but also for *all* video devices, including USB cameras.
+
+This is **NOT** an acceptable solution. 
+
+So, I stand my NACK to this approach.
+
+> > > Well, no drivers inside the media subsystem uses such flag, although
+> > > they may rely on some infrastructure that could be using it behind
+> > > the bars.  
+> >
+> > It doesn't matter, nothing prevents the user from calling media APIs
+> > on mmaps it gets from other subsystems.  
+> 
+> I think a good first step would be to disable userptr of non struct
+> page backed storage going forward for any new hw support. Even on
+> existing drivers. dma-buf sharing has been around for long enough now
+> that this shouldn't be a problem. Unfortunately right now this doesn't
+> seem to exist, so the entire problem keeps getting perpetuated.
+
+Well, the media uAPI does support DMABUF (both import and export):
+
+	https://linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/dmabuf.html
+	https://linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/vidioc-expbuf.html#vidioc-expbuf
+
+And I fully agree that newer programs should use DMABUF when sharing
+buffers with DRM subsystem, but that's not my main concern.
+
+What I do want is to not break userspace support nor to taint the Kernel
+due to a valid uAPI call.
+
+A valid uAPI call should check if the parameters passed though it are
+valid. If they are, it should handle. Otherwise, it should return
+-EINVAL, without tainting the Kernel or printing warning messages.
+
+The approach took by patches 09/17 and 10/17 doesn't do that.
+Instead, they just unconditionally breaks the media uAPI.
+
+What should be done, instead, is to drop patch 10/17, and work on
+a way for the code inside vb2_create_framevec() to ensure that, if
+USERPTR is used, the memory pages will be properly locked while the
+driver is using, returning -EINVAL only if there's no way to proceed,
+without tainting the Kernel.
+
+> 
+> > > If this is the case, the proper fix seems to have a GFP_NOT_MOVABLE
+> > > flag that it would be denying the core mm code to set __GFP_MOVABLE.  
+> >
+> > We can't tell from the VMA these kinds of details..
+> >
+> > It has to go the other direction, evey mmap that might be used as a
+> > userptr here has to be found and the VMA specially created to allow
+> > its use. At least that is a kernel only change, but will need people
+> > with the HW to do this work.  
+> 
+> I think the only reasonable way to keep this working is:
+> - add a struct dma_buf *vma_tryget_dma_buf(struct vm_area_struct *vma);
+
+Not sure how an userspace buffer could be mapped to be using it,
+specially since the buffer may not even be imported/exported
+from the DRM subsystem, but it could simply be allocated
+via glibc calloc()/malloc().
+
+> - add dma-buf export support to fbdev and v4l
+
+V4L has support for it already.
+
+> - roll this out everywhere we still need it.
+
+That's where things are hard. This is not like DRM, where the APIs
+are called via some open source libraries that are also managed
+by DRM upstream developers.
+
+In the case of the media subsystem, while we added a libv4l sometime
+ago, not all userspace apps use it, as a large part of them used
+to exist before the addition of the libraries. Also, we're currently 
+trying to deprecate libv4l, at least for embedded systems, in favor
+of libcamera.
+
+On media, there are lots of closed source apps that uses the media API
+directly. Even talking about open source ones, there are lots of
+different apps, including not only media-specific apps, but also
+generic ones, like web browsers, which don't use the libraries we
+wrote.
+
+An userspace API breakage would take *huge* efforts and will take
+lots of time to have it merged everywhere. It will cause lots of
+troubles everywhere.
+
+> Realistically this just isn't going to happen. 
+
+Why not? Any app developer could already use DMA-BUF if required,
+as the upstream support was added several years ago.
+
+> And anything else just
+> reimplements half of dma-buf, 
+
+It is just the opposite: those uAPIs came years before dma-buf.
+In other words, it was dma-buf that re-implemented it ;-)
+
+Now, I agree with you that dma-buf is a way cooler than the past
+alternatives.
+
+-
+
+It sounds to me that you're considering on only one use case of 
+USERPTR: to pass a buffer created from DRM. As far as I'm aware,
+only embedded userspace applications actually do that.
+
+Yet, there are a number of other applications that do something like
+the userptr_capture() function on this code:
+
+	https://git.linuxtv.org/v4l-utils.git/tree/contrib/test/v4l2grab.c
+
+E. g. using glibc alloc functions like calloc() to allocate memory, 
+passing the user-allocated data to the Kernel via something like this:
+
+	struct v4l2_requestbuffers req;
+	struct v4l2_buffer buf;
+	int n_buffers = 2;
+
+	req.count  = 2;
+	req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	req.memory = V4L2_MEMORY_USERPTR;
+	if (ioctl(fd, VIDIOC_REQBUFS, &req))
+		return errno;
+
+	for (i = 0; i < req.count; ++i) {
+		buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+		buf.memory = V4L2_MEMORY_USERPTR;
+		buf.index = i;
+		buf.m.userptr = (unsigned long)buffers[i].start;
+		buf.length = buffers[i].length;
+		if (ioctl(fd, VIDIOC_QBUF, &buf))
+			return errno;
+	}
+	if (ioctl(fd, VIDIOC_STREAMON, &req.type))
+		return errno;
+
+	/* some capture loop */
+
+	ioctl(fd, VIDIOC_STREAMOFF, &req.type);
+
+I can't possibly see *any* security issues with the above code.
+
+As I said before, VIDIOC_REQBUFS should be checking if the userspace
+buffers are OK and ensure that their refcounts will be incremented,
+in order to avoid mm to move the pages used there, freeing the 
+refconts when VIDIOC_STREAMOFF - or close(fd) - is called.
+
+> which is kinda pointless (you need
+> minimally refcounting and some way to get at a promise of a permanent
+> sg list for dma. Plus probably the vmap for kernel cpu access.
+
+Yeah, refcounting needs to happen. 
+
 Thanks,
-Oded
-
->         if (rc < 0) {
->                 dev_err(hdev->dev, "failed to create SG table from pages\=
-n");
-> -               goto put_framevec;
-> +               goto put_pages;
->         }
->
->         return 0;
->
-> -put_framevec:
-> -       put_vaddr_frames(userptr->vec);
-> -destroy_framevec:
-> -       frame_vector_destroy(userptr->vec);
-> +put_pages:
-> +       unpin_user_pages(userptr->pages, npages);
-> +destroy_pages:
-> +       kvfree(userptr->pages);
->         return rc;
->  }
->
-> @@ -1405,8 +1401,6 @@ int hl_pin_host_memory(struct hl_device *hdev, u64 =
-addr, u64 size,
->   */
->  void hl_unpin_host_memory(struct hl_device *hdev, struct hl_userptr *use=
-rptr)
->  {
-> -       struct page **pages;
-> -
->         hl_debugfs_remove_userptr(hdev, userptr);
->
->         if (userptr->dma_mapped)
-> @@ -1414,15 +1408,8 @@ void hl_unpin_host_memory(struct hl_device *hdev, =
-struct hl_userptr *userptr)
->                                                         userptr->sgt->nen=
-ts,
->                                                         userptr->dir);
->
-> -       pages =3D frame_vector_pages(userptr->vec);
-> -       if (!IS_ERR(pages)) {
-> -               int i;
-> -
-> -               for (i =3D 0; i < frame_vector_count(userptr->vec); i++)
-> -                       set_page_dirty_lock(pages[i]);
-> -       }
-> -       put_vaddr_frames(userptr->vec);
-> -       frame_vector_destroy(userptr->vec);
-> +       unpin_user_pages_dirty_lock(userptr->pages, userptr->npages, true=
-);
-> +       kvfree(userptr->pages);
->
->         list_del(&userptr->job_node);
->
-> --
-> 2.28.0
->
+Mauro
