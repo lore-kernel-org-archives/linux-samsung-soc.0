@@ -5,59 +5,72 @@ X-Spam-Level:
 X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FAAC433DF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0DBC43457
 	for <linux-samsung-soc@archiver.kernel.org>; Sat, 10 Oct 2020 22:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E60A20795
+	by mail.kernel.org (Postfix) with ESMTP id 9CEBA207FB
 	for <linux-samsung-soc@archiver.kernel.org>; Sat, 10 Oct 2020 22:57:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1602370632;
-	bh=QORHMnmWSEjYd8YMjB0g1v/EbTLN970fmst2j2tRPfM=;
+	bh=/M97QDk4dmePHLGMz8L/1LDgfweGz0LFfE/UcKJE7Us=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=ZDDf/RWqk/rzVhDWYBWvgoJN/sk0Ecq1LSwH4w+6R+GubtVXWJwbTWm+dBt6wHHs9
-	 hcQnoHgAFysNoPfBiUBWd6Ya0rzp9x0sk1cS8aET/++HVtLuqL0xPOB+2eCahNI46b
-	 glhWbObABY+rfgeKXSE+/bfEb3U1wF2TZqSjVKy0=
+	b=1vxrMrcYkRMB/1rS2tH0m88pxS069BIAC+kovnkYEaB3xmsubjjbG/bh0gpD4rBnr
+	 y6cmD6GYPmZFFi2A8as3UMlbiwmZTWmh1u0xZn0V7E8PXIdQo6h+stx5byffq+rE86
+	 q5wWdty+j9bWYxRIH+y0PrDMUyz38Py6/WVrlbkQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390417AbgJJW5L (ORCPT
+        id S2390427AbgJJW5M (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 10 Oct 2020 18:57:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52034 "EHLO mail.kernel.org"
+        Sat, 10 Oct 2020 18:57:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731436AbgJJTW0 (ORCPT
+        id S1731025AbgJJTxO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 10 Oct 2020 15:22:26 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        Sat, 10 Oct 2020 15:53:14 -0400
+Received: from coco.lan (ip5f5ad5ce.dynamic.kabel-deutschland.de [95.90.213.206])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FCF922404;
-        Sat, 10 Oct 2020 16:51:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E166207CD;
+        Sat, 10 Oct 2020 09:24:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602348663;
-        bh=QORHMnmWSEjYd8YMjB0g1v/EbTLN970fmst2j2tRPfM=;
+        s=default; t=1602321866;
+        bh=/M97QDk4dmePHLGMz8L/1LDgfweGz0LFfE/UcKJE7Us=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BdKZKSbB1/KZzKiQy9HRaLRagU6gYw2wZ5P6B9weBcPigsRhwQOIICIdR+6NY93de
-         XdM5Kv70uWNgDWyVqa+haOBaVGxc+W6lZw+MhTYHD7WvAH7c58WFcO6yBjiB3V21Sj
-         hNj6td5defmDaHkzhGk173Vrz4v1ZmJ8miquhqM0=
-Date:   Sat, 10 Oct 2020 17:50:57 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     dmitry.torokhov@gmail.com
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] iio: adc: exynos: do not rely on 'users' counter in
- ISR
-Message-ID: <20201010175057.768fe3b3@archlinux>
-In-Reply-To: <20201006215509.GA2556081@dtor-ws>
-References: <20201006215509.GA2556081@dtor-ws>
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        b=0WfcGZ/NRaNLmDS+jOh+NTKZmtgBMPUVlTwtRgayCgG8fNqT9ga5dKdpSd17V6cdr
+         HukrmYrFiRiZHk4mzgeyyRmliXyLjN62NnFMnyCvZOm9KoAKj1aPSNb/0Gk/GRwb/0
+         cnkcKxRZlgiEC0lyCm9ojQx8D9uJxVDmS5Ffiehg=
+Date:   Sat, 10 Oct 2020 11:24:16 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Michel Lespinasse <walken@google.com>
+Subject: Re: [PATCH v2 10/17] media/videbuf1|2: Mark follow_pfn usage as
+ unsafe
+Message-ID: <20201010112416.4259249a@coco.lan>
+In-Reply-To: <20201009075934.3509076-11-daniel.vetter@ffwll.ch>
+References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
+        <20201009075934.3509076-11-daniel.vetter@ffwll.ch>
+X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,85 +78,87 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 6 Oct 2020 14:55:09 -0700
-dmitry.torokhov@gmail.com wrote:
+Em Fri,  9 Oct 2020 09:59:27 +0200
+Daniel Vetter <daniel.vetter@ffwll.ch> escreveu:
 
-> The order in which 'users' counter is decremented vs calling drivers'
-> close() method is implementation specific, and we should not rely on
-> it. Let's introduce driver private flag and use it to signal ISR
-> to exit when device is being closed.
+> The media model assumes that buffers are all preallocated, so that
+> when a media pipeline is running we never miss a deadline because the
+> buffers aren't allocated or available.
 >=20
-> This has a side-effect of fixing issue of accessing inut->users
-> outside of input->mutex protection.
+> This means we cannot fix the v4l follow_pfn usage through
+> mmu_notifier, without breaking how this all works. The only real fix
+> is to deprecate userptr support for VM_IO | VM_PFNMAP mappings and
+> tell everyone to cut over to dma-buf memory sharing for zerocopy.
 >=20
-> Reported-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to work their magic.
+> userptr for normal memory will keep working as-is.
 
-Given this doesn't have a fixes tag etc I'm assuming it isn't
-high priority etc.  Let me know if it is!
+I won't repeat here the discussions for patch 09/17, but
+just to be clear about this one:
+
+NACK.
+
+We need a better alternative to avoid breaking existing
+media applications.
+
+>=20
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: Pawel Osciak <pawel@osciak.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Tomasz Figa <tfiga@chromium.org>
+> Cc: Laurent Dufour <ldufour@linux.ibm.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+> Cc: Michel Lespinasse <walken@google.com>
+> ---
+>  drivers/media/common/videobuf2/frame_vector.c | 2 +-
+>  drivers/media/v4l2-core/videobuf-dma-contig.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/medi=
+a/common/videobuf2/frame_vector.c
+> index 2b0b97761d15..a1b85fe9e7c1 100644
+> --- a/drivers/media/common/videobuf2/frame_vector.c
+> +++ b/drivers/media/common/videobuf2/frame_vector.c
+> @@ -69,7 +69,7 @@ int get_vaddr_frames(unsigned long start, unsigned int =
+nr_frames,
+>  			break;
+> =20
+>  		while (ret < nr_frames && start + PAGE_SIZE <=3D vma->vm_end) {
+> -			err =3D follow_pfn(vma, start, &nums[ret]);
+> +			err =3D unsafe_follow_pfn(vma, start, &nums[ret]);
+>  			if (err) {
+>  				if (ret =3D=3D 0)
+>  					ret =3D err;
+> diff --git a/drivers/media/v4l2-core/videobuf-dma-contig.c b/drivers/medi=
+a/v4l2-core/videobuf-dma-contig.c
+> index 52312ce2ba05..821c4a76ab96 100644
+> --- a/drivers/media/v4l2-core/videobuf-dma-contig.c
+> +++ b/drivers/media/v4l2-core/videobuf-dma-contig.c
+> @@ -183,7 +183,7 @@ static int videobuf_dma_contig_user_get(struct videob=
+uf_dma_contig_memory *mem,
+>  	user_address =3D untagged_baddr;
+> =20
+>  	while (pages_done < (mem->size >> PAGE_SHIFT)) {
+> -		ret =3D follow_pfn(vma, user_address, &this_pfn);
+> +		ret =3D unsafe_follow_pfn(vma, user_address, &this_pfn);
+>  		if (ret)
+>  			break;
+> =20
+
+
 
 Thanks,
-
-Jonathan
-> ---
->=20
-> v3: fixed typo in exynos_adc_ts_close() per Micha=C5=82 Miros=C5=82aw
-> v2: switched from ordinary read/write to READ_ONCE/WRITE_ONCE per Micha=
-=C5=82
-> Miros=C5=82aw
->=20
->  drivers/iio/adc/exynos_adc.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index 22131a677445..908df4b9b93c 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -7,6 +7,7 @@
->   *  Copyright (C) 2013 Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->   */
-> =20
-> +#include <linux/compiler.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <linux/interrupt.h>
-> @@ -135,6 +136,8 @@ struct exynos_adc {
->  	u32			value;
->  	unsigned int            version;
-> =20
-> +	bool			ts_enabled;
-> +
->  	bool			read_ts;
->  	u32			ts_x;
->  	u32			ts_y;
-> @@ -633,7 +636,7 @@ static irqreturn_t exynos_ts_isr(int irq, void *dev_i=
-d)
->  	bool pressed;
->  	int ret;
-> =20
-> -	while (info->input->users) {
-> +	while (READ_ONCE(info->ts_enabled)) {
->  		ret =3D exynos_read_s3c64xx_ts(dev, &x, &y);
->  		if (ret =3D=3D -ETIMEDOUT)
->  			break;
-> @@ -712,6 +715,7 @@ static int exynos_adc_ts_open(struct input_dev *dev)
->  {
->  	struct exynos_adc *info =3D input_get_drvdata(dev);
-> =20
-> +	WRITE_ONCE(info->ts_enabled, true);
->  	enable_irq(info->tsirq);
-> =20
->  	return 0;
-> @@ -721,6 +725,7 @@ static void exynos_adc_ts_close(struct input_dev *dev)
->  {
->  	struct exynos_adc *info =3D input_get_drvdata(dev);
-> =20
-> +	WRITE_ONCE(info->ts_enabled, false);
->  	disable_irq(info->tsirq);
->  }
-> =20
-
+Mauro
