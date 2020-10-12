@@ -2,156 +2,119 @@ Return-Path: <SRS0=tHhX=DT=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06AAFC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 12 Oct 2020 10:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 531A0C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 12 Oct 2020 13:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78F4A208FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 12 Oct 2020 10:46:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 177582074F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 12 Oct 2020 13:50:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Bp7TuBEI"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="OxcKeNhv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387568AbgJLKqy (ORCPT
+        id S2389924AbgJLNuF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 12 Oct 2020 06:46:54 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37712 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387558AbgJLKqx (ORCPT
+        Mon, 12 Oct 2020 09:50:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60680 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389846AbgJLNtT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 12 Oct 2020 06:46:53 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201012104641euoutp0248e8bcce7fe48e60c8180f14dacee292~9OOWxs4H51936819368euoutp02i
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Oct 2020 10:46:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201012104641euoutp0248e8bcce7fe48e60c8180f14dacee292~9OOWxs4H51936819368euoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1602499601;
-        bh=FBmOg/5UhT/YwJB06QgXBxAcIx7JXNwKhGcqnotWc+k=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Bp7TuBEI+pXsgblT79ItPzUxFxEEI4cKzl4Ig+zNjE5HEMFOslsMkaVQjnhtGxB1n
-         5dK1HHAAh83a7gzs+gpDudm3XPyqyKgQ/MLQLryF3Q2Jw3tzl7kMlwxFN8Ngpe/DbK
-         8fctz2cbkSg8qrX6G4KN2shCGmGLuzwieguAyYCM=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201012104641eucas1p17f1275af0f512f70177adbd61d0c77ae~9OOWjmv2u0406004060eucas1p1O;
-        Mon, 12 Oct 2020 10:46:41 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 29.90.06456.114348F5; Mon, 12
-        Oct 2020 11:46:41 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201012104640eucas1p12399708a49a999b779fdce7e9e6204cc~9OOWGKOWa0406004060eucas1p1N;
-        Mon, 12 Oct 2020 10:46:40 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201012104640eusmtrp118dc9ecd8a25c4a1defe7637d1cabe04~9OOWFQWUJ3076730767eusmtrp1a;
-        Mon, 12 Oct 2020 10:46:40 +0000 (GMT)
-X-AuditID: cbfec7f2-7efff70000001938-c3-5f843411fe20
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id E6.DA.06314.014348F5; Mon, 12
-        Oct 2020 11:46:40 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201012104639eusmtip1bed2fa0e6bb06eea4bbd6376d06d96fa~9OOVGfB640624706247eusmtip1Q;
-        Mon, 12 Oct 2020 10:46:39 +0000 (GMT)
-Subject: Re: [PATCH v2 09/17] mm: Add unsafe_follow_pfn
-To:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-s390@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <ed68968b-27bc-d776-8da8-ef21d6b3c378@samsung.com>
-Date:   Mon, 12 Oct 2020 12:46:39 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.3.2
+        Mon, 12 Oct 2020 09:49:19 -0400
+Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 401B1C0613D6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Oct 2020 06:49:19 -0700 (PDT)
+Received: by mail-ot1-x341.google.com with SMTP id t15so15927413otk.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Oct 2020 06:49:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8X09Z4RduZw54E7UULyfcMVsq59sUX38yzJavXEvAuQ=;
+        b=OxcKeNhvQoR0L8nxbCn1cXzOLqpqQBDfywbnUKwin8fP1jeNNo8TXGjdlV3i/RFefc
+         kiDn5u8kWGFx2VxB985ageHcqSHKlzq4zLw3IXCA9ks8vIzNebZc3IQZx/DZrDgmJSXd
+         NsUKEksWwYQT7XMaHoiEwCdO/DkttVP0ejuaI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8X09Z4RduZw54E7UULyfcMVsq59sUX38yzJavXEvAuQ=;
+        b=Xkpox4TJghDRjvPJ9LOkudN3/b0hEcs6xZb89s0VYL/cK0h4QHMeHat3+Pnaj5EN4n
+         vQjetlgjxeyLVYDf11oCijSw8cRR/ovoVC1VZyiXYz0k/Mrk7onAHIPqFcVf4pHnkqx4
+         iXRI4RUVr1hya8VzyhT32Ed7Vii3Z+AiB1EHkY91NlLQhCZ6xHhXV6IP/fGI1Q9peXxR
+         vPBSBm2iSMZUc7mmrWDj6DnBTjxAAf+ySH9PZOPap4jkHoNBuzX6LU2DzRiQn5M4opYQ
+         KIsR3obNY+eKXCwB2+Mue3ijnCjS0hLQ9gi0wzraoL4QBpW50c9UWeiBQMjZ6bFHb2OR
+         hD0Q==
+X-Gm-Message-State: AOAM5303JeMjI5yjgQGZdkNW7Jdi/tAb3xeM6lQr4chz4L7ZQVt7KNl3
+        xQ56CYJZ5eJdP+N9vE7RukD5kc1dI7Ff+2smhi7cBg==
+X-Google-Smtp-Source: ABdhPJx2SbzoAtarumY1qTqnmUTVH9IgcM13EmZUSL9fGwCe3viWjRc3PXrzmY6z+PXG92wLIZXLR8i7oO5kJrgMePc=
+X-Received: by 2002:a05:6830:8b:: with SMTP id a11mr7008058oto.303.1602510558346;
+ Mon, 12 Oct 2020 06:49:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201009124850.GP5177@ziepe.ca>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHec85OzuOjhyn4oNFxbpRoCbdXrCiNOVQFH0LirKpB4vcss1p
-        2oekRdpcYUaoc6TTIhXNWl5CzWxZ02ZmZillmaag0hxoGtrV4+nit99z/f+fl5chlRfpQOa4
-        NknQadUJKlpB1T6d6Qjy2Xg+er2rTomtVRU0zr3WibBt4D2Jb7XfJnH3lIfGBblGAufntaI5
-        GiHw3eFiOW7P0mDrtVPY/umNDL+qt9LYfKdGhj9U/JLhbJuRxHkvmgg8UPAa4cHLbvkOX74g
-        /SXFP5guoviSxlGCt5dfpHn7RI6cb837RvH9WU6Cv3fjLH/JOE7znqbXNN9e1CLnJ+1L+ZrJ
-        d9R+9qBia5yQcDxZ0IVsP6o4NpHtpBN/0Kcflo4Q6ahRZkIMA9xGyOkMMyEvRsmVIpgdjzIh
-        xRx/QWAaKKGkwiSCjCmZyGL/cP1HWmq6haCizYOkwIPA0VkxP+HLbYG+J9OEyH7cASi6IW5S
-        MCRnlMHg9StysUBzoWBym2jRBstth8ruQ2Ka4laB2d2LRPbnYuCF7TspMsv5QFv+0Px+Ly4I
-        Zt1l83mSWwZ1busfDoC3Q4WEqAVcMwOjrW9JyfYuGB+zERL7wpizWi7xEnBdNVPSgBHBQEel
-        XArMCF6dy0NSVxj0dczOOyW5tVBVHyK93U543KCW0Bt63T6SB2/Iqc0lpTQLmReU0o7VYHHe
-        /qf6qLOLzEYqy4LLLAuusSy4xvJftghR5ShAMOg18YI+VCukBOvVGr1BGx8ce1JjR3Mf1PXT
-        OXEfTXXFOBDHINUiNjHCGK2UqZP1qRoHAoZU+bHhz11HlGycOjVN0J2M1hkSBL0DLWYoVQC7
-        oXj0sJKLVycJJwQhUdD9rRKMV2A6upxURpRfiE5xzbasfFmf2e248752RY/WusY+EcKzQa2b
-        yxo6DpcUbjhjWW77OtPbn6gtbTQwM9kz+5oViyKqlHt6qm8u3/Q55np3w7SqkoGowL4+7wB3
-        msF4IKs8rCXKHbkpvTh8d2FwV+xdT4H227Yll3qeP/PfmzEZWRlizo9QUfpj6tB1pE6v/g39
-        D1qlnAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPKsWRmVeSWpSXmKPExsVy+t/xu7oCJi3xBgd/61vMWb+GzWL61AuM
-        Fgsf3mW2WH5mHbPFla/v2SxmT29mspg54wQjkPWCyWLj00XsFme6cy3mTC202PT4GqvF5V1z
-        2Cx6Nmxltbi35j+rxYSFzcwWM87vY7J4OPsqo8WjvrfsDsIesxsusnjs/baAxWPxnpdMHptW
-        dbJ5bPo0id3jxIzfLB73u48zeWxeUu/R2/yOzeP9vqtsHmcWHGH3+LxJzmPr59ssAbxRejZF
-        +aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehmfJhxnK/jL
-        VrF/xQumBsY9rF2MnBwSAiYST3c9YOti5OIQEljKKPFpwUI2iISMxMlpDVBFwhJ/rnVBFb1l
-        lFiy/T1YkbCAucSdo9+YQGwRgXCJFde2sYAUMQu0skr0f3/FCtFxhUniw4YFLCBVbAKGEl1v
-        QUZxcPAK2EmsvRINEmYRUJXoeXuDEcQWFUiS+H61C8zmFRCUODnzCVgrp4CuxK+3K5lBbGYB
-        M4l5mx9C2fIS29/OgbLFJW49mc80gVFoFpL2WUhaZiFpmYWkZQEjyypGkdTS4tz03GJDveLE
-        3OLSvHS95PzcTYzAxLHt2M/NOxgvbQw+xCjAwajEw1vg3BwvxJpYVlyZe4hRgoNZSYTX6ezp
-        OCHelMTKqtSi/Pii0pzU4kOMpkDPTWSWEk3OBya1vJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFC
-        AumJJanZqakFqUUwfUwcnFINjBP0ZoqvvFqnv+FIxLrLR6OFHcN1rwTdnOzX5zrB1DyuYfJ7
-        MUWZ97vP7kiU7VA/cK/wtYheR8rURQ4x+QfW6kmrPtmxYj9DgOqPsG51GQmepY5KV14ZW/87
-        /PkNR9SjqFdGC1Y6Wq177rAmeInF1viLbUIcXOyhu1+eMVlW6+p6x/XeOZmd65VYijMSDbWY
-        i4oTAaq2ugIyAwAA
-X-CMS-MailID: 20201012104640eucas1p12399708a49a999b779fdce7e9e6204cc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201009124900eucas1p26c93caa29c9925f1eef9be9ff7c6c65c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201009124900eucas1p26c93caa29c9925f1eef9be9ff7c6c65c
 References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
-        <20201009075934.3509076-10-daniel.vetter@ffwll.ch>
-        <20201009123421.67a80d72@coco.lan> <20201009122111.GN5177@ziepe.ca>
-        <20201009143723.45609bfb@coco.lan>
-        <CGME20201009124900eucas1p26c93caa29c9925f1eef9be9ff7c6c65c@eucas1p2.samsung.com>
-        <20201009124850.GP5177@ziepe.ca>
+ <20201009075934.3509076-10-daniel.vetter@ffwll.ch> <20201009123421.67a80d72@coco.lan>
+ <20201009122111.GN5177@ziepe.ca> <20201009143723.45609bfb@coco.lan>
+ <CGME20201009124900eucas1p26c93caa29c9925f1eef9be9ff7c6c65c@eucas1p2.samsung.com>
+ <20201009124850.GP5177@ziepe.ca> <ed68968b-27bc-d776-8da8-ef21d6b3c378@samsung.com>
+In-Reply-To: <ed68968b-27bc-d776-8da8-ef21d6b3c378@samsung.com>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Mon, 12 Oct 2020 15:49:07 +0200
+Message-ID: <CAKMK7uGLOubJrr9A=usxkoVx+nXDW3bxhykfeU-TYXTUZyBoeQ@mail.gmail.com>
+Subject: Re: [PATCH v2 09/17] mm: Add unsafe_follow_pfn
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Kees Cook <keescook@chromium.org>,
+        KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux MM <linux-mm@kvack.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jason,
-
-On 09.10.2020 14:48, Jason Gunthorpe wrote:
-> On Fri, Oct 09, 2020 at 02:37:23PM +0200, Mauro Carvalho Chehab wrote:
+On Mon, Oct 12, 2020 at 12:47 PM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
 >
->> I'm not a mm/ expert, but, from what I understood from Daniel's patch
->> description is that this is unsafe *only if*  __GFP_MOVABLE is used.
-> No, it is unconditionally unsafe. The CMA movable mappings are
-> specific VMAs that will have bad issues here, but there are other
-> types too.
+> Hi Jason,
+>
+> On 09.10.2020 14:48, Jason Gunthorpe wrote:
+> > On Fri, Oct 09, 2020 at 02:37:23PM +0200, Mauro Carvalho Chehab wrote:
+> >
+> >> I'm not a mm/ expert, but, from what I understood from Daniel's patch
+> >> description is that this is unsafe *only if*  __GFP_MOVABLE is used.
+> > No, it is unconditionally unsafe. The CMA movable mappings are
+> > specific VMAs that will have bad issues here, but there are other
+> > types too.
+>
+> I'm trying to follow this thread, but I really wonder what do you mean
+> by CMA movable mappings? If a buffer has been allocated from CMA and
+> used for DMA, it won't be moved in the memory. It will stay at the same
+> physical memory address all the time until freed by the owner. It just a
+> matter of proper usage count tracking to delay freeing if it is still
+> used somewhere.
 
-I'm trying to follow this thread, but I really wonder what do you mean 
-by CMA movable mappings? If a buffer has been allocated from CMA and 
-used for DMA, it won't be moved in the memory. It will stay at the same 
-physical memory address all the time until freed by the owner. It just a 
-matter of proper usage count tracking to delay freeing if it is still 
-used somewhere.
-
-Best regards
-
+ Yup. The problem is that this usage count tracking doesn't exist. And
+drivers could at least in theory treat CMA like vram and swap buffers
+in&out of it, so just refcounting the userspace vma isn't enough. In
+practice, right now, it might be enough for CMA drivers though (but
+there's more that's possible here).
+-Daniel
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
