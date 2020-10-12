@@ -2,150 +2,156 @@ Return-Path: <SRS0=tHhX=DT=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BF6C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 12 Oct 2020 02:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06AAFC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 12 Oct 2020 10:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4BA2B2087D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 12 Oct 2020 02:33:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78F4A208FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 12 Oct 2020 10:46:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Bp7TuBEI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725941AbgJLCdM (ORCPT
+        id S2387568AbgJLKqy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 11 Oct 2020 22:33:12 -0400
-Received: from mail.loongson.cn ([114.242.206.163]:51520 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725882AbgJLCdM (ORCPT
+        Mon, 12 Oct 2020 06:46:54 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37712 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387558AbgJLKqx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 11 Oct 2020 22:33:12 -0400
-Received: from [10.130.0.80] (unknown [113.200.148.30])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dxr97yv4NfkbEcAA--.4007S3;
-        Mon, 12 Oct 2020 10:31:16 +0800 (CST)
-Subject: Re: [PATCH v5 00/14] irqchip: Fix potential resource leaks
-To:     Marc Zyngier <maz@kernel.org>
-References: <1593998365-25910-1-git-send-email-yangtiezhu@loongson.cn>
- <ab1cd9280c7892a0230945ef5ff0880c@kernel.org>
- <02e077df-7c4e-24a7-1640-5f17894bd252@loongson.cn>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        linux-kernel@vger.kernel.org, Alban Bedel <albeu@free.fr>,
-        Guo Ren <guoren@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        David Lechner <david@lechnology.com>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Jisheng Zhang <jszhang@marvell.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Grant Likely <grant.likely@secretlab.ca>,
-        u.kleine-koenig@pengutronix.de,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Tony Lindgren <tony@atomide.com>, Felipe Balbi <balbi@ti.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup.patel@wdc.com>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Rob Herring <rob.herring@calxeda.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
-        linux-csky@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-omap@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <4b18d030-76c7-1b83-3b0d-deb8ecd925dc@loongson.cn>
-Date:   Mon, 12 Oct 2020 10:31:14 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Mon, 12 Oct 2020 06:46:53 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201012104641euoutp0248e8bcce7fe48e60c8180f14dacee292~9OOWxs4H51936819368euoutp02i
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Oct 2020 10:46:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201012104641euoutp0248e8bcce7fe48e60c8180f14dacee292~9OOWxs4H51936819368euoutp02i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1602499601;
+        bh=FBmOg/5UhT/YwJB06QgXBxAcIx7JXNwKhGcqnotWc+k=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Bp7TuBEI+pXsgblT79ItPzUxFxEEI4cKzl4Ig+zNjE5HEMFOslsMkaVQjnhtGxB1n
+         5dK1HHAAh83a7gzs+gpDudm3XPyqyKgQ/MLQLryF3Q2Jw3tzl7kMlwxFN8Ngpe/DbK
+         8fctz2cbkSg8qrX6G4KN2shCGmGLuzwieguAyYCM=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201012104641eucas1p17f1275af0f512f70177adbd61d0c77ae~9OOWjmv2u0406004060eucas1p1O;
+        Mon, 12 Oct 2020 10:46:41 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 29.90.06456.114348F5; Mon, 12
+        Oct 2020 11:46:41 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20201012104640eucas1p12399708a49a999b779fdce7e9e6204cc~9OOWGKOWa0406004060eucas1p1N;
+        Mon, 12 Oct 2020 10:46:40 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20201012104640eusmtrp118dc9ecd8a25c4a1defe7637d1cabe04~9OOWFQWUJ3076730767eusmtrp1a;
+        Mon, 12 Oct 2020 10:46:40 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-c3-5f843411fe20
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id E6.DA.06314.014348F5; Mon, 12
+        Oct 2020 11:46:40 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20201012104639eusmtip1bed2fa0e6bb06eea4bbd6376d06d96fa~9OOVGfB640624706247eusmtip1Q;
+        Mon, 12 Oct 2020 10:46:39 +0000 (GMT)
+Subject: Re: [PATCH v2 09/17] mm: Add unsafe_follow_pfn
+To:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <ed68968b-27bc-d776-8da8-ef21d6b3c378@samsung.com>
+Date:   Mon, 12 Oct 2020 12:46:39 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.3.2
 MIME-Version: 1.0
-In-Reply-To: <02e077df-7c4e-24a7-1640-5f17894bd252@loongson.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20201009124850.GP5177@ziepe.ca>
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: AQAAf9Dxr97yv4NfkbEcAA--.4007S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJrW5Xw43tFyrCr4Duw47XFb_yoW8XF4DpF
-        13t3WYkr4kX34qyFnFkw47Xa4Iy3yDK3yUWryYgrs3Aw1q9F1DWrWrtFyFkw4DWw1rGF42
-        kws5t3s7Aw1jyaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUU9Eb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-        jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4
-        vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-        FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr
-        0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY
-        04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21lc2xSY4AK67AK6r4UMxAIw28IcxkI7VAKI48JMx
-        C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-        wI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
-        IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxK
-        x2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
-        AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8aYLPUUUUU==
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHec85OzuOjhyn4oNFxbpRoCbdXrCiNOVQFH0LirKpB4vcss1p
+        2oekRdpcYUaoc6TTIhXNWl5CzWxZ02ZmZillmaag0hxoGtrV4+nit99z/f+fl5chlRfpQOa4
+        NknQadUJKlpB1T6d6Qjy2Xg+er2rTomtVRU0zr3WibBt4D2Jb7XfJnH3lIfGBblGAufntaI5
+        GiHw3eFiOW7P0mDrtVPY/umNDL+qt9LYfKdGhj9U/JLhbJuRxHkvmgg8UPAa4cHLbvkOX74g
+        /SXFP5guoviSxlGCt5dfpHn7RI6cb837RvH9WU6Cv3fjLH/JOE7znqbXNN9e1CLnJ+1L+ZrJ
+        d9R+9qBia5yQcDxZ0IVsP6o4NpHtpBN/0Kcflo4Q6ahRZkIMA9xGyOkMMyEvRsmVIpgdjzIh
+        xRx/QWAaKKGkwiSCjCmZyGL/cP1HWmq6haCizYOkwIPA0VkxP+HLbYG+J9OEyH7cASi6IW5S
+        MCRnlMHg9StysUBzoWBym2jRBstth8ruQ2Ka4laB2d2LRPbnYuCF7TspMsv5QFv+0Px+Ly4I
+        Zt1l83mSWwZ1busfDoC3Q4WEqAVcMwOjrW9JyfYuGB+zERL7wpizWi7xEnBdNVPSgBHBQEel
+        XArMCF6dy0NSVxj0dczOOyW5tVBVHyK93U543KCW0Bt63T6SB2/Iqc0lpTQLmReU0o7VYHHe
+        /qf6qLOLzEYqy4LLLAuusSy4xvJftghR5ShAMOg18YI+VCukBOvVGr1BGx8ce1JjR3Mf1PXT
+        OXEfTXXFOBDHINUiNjHCGK2UqZP1qRoHAoZU+bHhz11HlGycOjVN0J2M1hkSBL0DLWYoVQC7
+        oXj0sJKLVycJJwQhUdD9rRKMV2A6upxURpRfiE5xzbasfFmf2e248752RY/WusY+EcKzQa2b
+        yxo6DpcUbjhjWW77OtPbn6gtbTQwM9kz+5oViyKqlHt6qm8u3/Q55np3w7SqkoGowL4+7wB3
+        msF4IKs8rCXKHbkpvTh8d2FwV+xdT4H227Yll3qeP/PfmzEZWRlizo9QUfpj6tB1pE6v/g39
+        D1qlnAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPKsWRmVeSWpSXmKPExsVy+t/xu7oCJi3xBgd/61vMWb+GzWL61AuM
+        Fgsf3mW2WH5mHbPFla/v2SxmT29mspg54wQjkPWCyWLj00XsFme6cy3mTC202PT4GqvF5V1z
+        2Cx6Nmxltbi35j+rxYSFzcwWM87vY7J4OPsqo8WjvrfsDsIesxsusnjs/baAxWPxnpdMHptW
+        dbJ5bPo0id3jxIzfLB73u48zeWxeUu/R2/yOzeP9vqtsHmcWHGH3+LxJzmPr59ssAbxRejZF
+        +aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehmfJhxnK/jL
+        VrF/xQumBsY9rF2MnBwSAiYST3c9YOti5OIQEljKKPFpwUI2iISMxMlpDVBFwhJ/rnVBFb1l
+        lFiy/T1YkbCAucSdo9+YQGwRgXCJFde2sYAUMQu0skr0f3/FCtFxhUniw4YFLCBVbAKGEl1v
+        QUZxcPAK2EmsvRINEmYRUJXoeXuDEcQWFUiS+H61C8zmFRCUODnzCVgrp4CuxK+3K5lBbGYB
+        M4l5mx9C2fIS29/OgbLFJW49mc80gVFoFpL2WUhaZiFpmYWkZQEjyypGkdTS4tz03GJDveLE
+        3OLSvHS95PzcTYzAxLHt2M/NOxgvbQw+xCjAwajEw1vg3BwvxJpYVlyZe4hRgoNZSYTX6ezp
+        OCHelMTKqtSi/Pii0pzU4kOMpkDPTWSWEk3OBya1vJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFC
+        AumJJanZqakFqUUwfUwcnFINjBP0ZoqvvFqnv+FIxLrLR6OFHcN1rwTdnOzX5zrB1DyuYfJ7
+        MUWZ97vP7kiU7VA/cK/wtYheR8rURQ4x+QfW6kmrPtmxYj9DgOqPsG51GQmepY5KV14ZW/87
+        /PkNR9SjqFdGC1Y6Wq177rAmeInF1viLbUIcXOyhu1+eMVlW6+p6x/XeOZmd65VYijMSDbWY
+        i4oTAaq2ugIyAwAA
+X-CMS-MailID: 20201012104640eucas1p12399708a49a999b779fdce7e9e6204cc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20201009124900eucas1p26c93caa29c9925f1eef9be9ff7c6c65c
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201009124900eucas1p26c93caa29c9925f1eef9be9ff7c6c65c
+References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
+        <20201009075934.3509076-10-daniel.vetter@ffwll.ch>
+        <20201009123421.67a80d72@coco.lan> <20201009122111.GN5177@ziepe.ca>
+        <20201009143723.45609bfb@coco.lan>
+        <CGME20201009124900eucas1p26c93caa29c9925f1eef9be9ff7c6c65c@eucas1p2.samsung.com>
+        <20201009124850.GP5177@ziepe.ca>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 09/02/2020 11:59 AM, Tiezhu Yang wrote:
-> On 07/06/2020 03:30 PM, Marc Zyngier wrote:
->> On 2020-07-06 02:19, Tiezhu Yang wrote:
->>> When I test the irqchip code of Loongson, I read the related code of 
->>> other
->>> chips in drivers/irqchip and I find some potential resource leaks in 
->>> the
->>> error path, I think it is better to fix them.
->>>
->>> v2:
->>>   - Split the first patch into a new patch series which
->>>     includes small patches and add "Fixes" tag
->>>   - Use "goto" label to handle error path in some patches
->>>
->>> v3:
->>>   - Add missed variable "ret" in the patch #5 and #13
->>>
->>> v4:
->>>   - Modify the commit message of each patch suggested by Markus Elfring
->>>   - Make "irq_domain_remove(root_domain)" under CONFIG_SMP in patch #3
->>>   - Add a return statement before goto label in patch #4
->>>
->>> v5:
->>>   - Modify the commit messages and do some code cleanups
->>
->> Please stop replying to Markus Elfring, and give people who actually
->> care a chance to review this code. Elfring will keep asking you to make
->> absolutely pointless changes until you are blue in the face
+Hi Jason,
+
+On 09.10.2020 14:48, Jason Gunthorpe wrote:
+> On Fri, Oct 09, 2020 at 02:37:23PM +0200, Mauro Carvalho Chehab wrote:
 >
-> Hi Marc,
->
-> Any comments?
-> Could you please apply this patch series?
+>> I'm not a mm/ expert, but, from what I understood from Daniel's patch
+>> description is that this is unsafe *only if*  __GFP_MOVABLE is used.
+> No, it is unconditionally unsafe. The CMA movable mappings are
+> specific VMAs that will have bad issues here, but there are other
+> types too.
 
-Hi all,
+I'm trying to follow this thread, but I really wonder what do you mean 
+by CMA movable mappings? If a buffer has been allocated from CMA and 
+used for DMA, it won't be moved in the memory. It will stay at the same 
+physical memory address all the time until freed by the owner. It just a 
+matter of proper usage count tracking to delay freeing if it is still 
+used somewhere.
 
-Maybe I should cc the related persons through ./scripts/get_maintainer.pl
-to get Acked-by or Reviewed-by.
+Best regards
 
-The cover letter link of this patch series is:
-[v5,00/14] irqchip: Fix potential resource leaks
-https://lore.kernel.org/patchwork/cover/1268043/
-
-Any comments will be much appreciated.
-
-Thanks,
-Tiezhu
-
->
-> Thanks,
-> Tiezhu
->
->>
->>
->> Thanks,
->>
->>         M.
->
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
