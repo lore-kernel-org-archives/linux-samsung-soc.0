@@ -2,49 +2,28 @@ Return-Path: <SRS0=VGRb=DV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9EB0C4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 16:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C088C43467
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 16:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D70C22246
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 16:27:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L+xCqI9G";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tcm1BnHk"
+	by mail.kernel.org (Postfix) with ESMTP id 50F4420B1F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 16:34:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbgJNQ1V (ORCPT
+        id S1731099AbgJNQe0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 14 Oct 2020 12:27:21 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59738 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727071AbgJNQ1S (ORCPT
+        Wed, 14 Oct 2020 12:34:26 -0400
+Received: from netrider.rowland.org ([192.131.102.5]:43633 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1731070AbgJNQe0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 14 Oct 2020 12:27:18 -0400
-Date:   Wed, 14 Oct 2020 18:27:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1602692836;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=iCzjYxqIDkmw4xzx1KXku7b0cbN/u38jxZbnzmQ3jN8=;
-        b=L+xCqI9GxpRCoP8PngWCWAQ9wkdzpZ5WodbiV80p51AGMLkCWCgkkJouSD5NDTKKaAroqH
-        bEi6bv6abvSonjh+1Y12R0IyATkDhSK/gIBIqmUccHFDatfo1IDsEiCXwj/KvxA6xcB969
-        +QvmLvKCGJH+ljJRLWshZ7jhABUTtdtr7oF3r534O+65KNP+5PElTQ4ZLtbTPMG9aD58PS
-        cDKitk7SPcV0bjRsHW8LaycZTd7vJ45QOKO9ZwUrJBaHGZ0duR9einY6Sx9lu0AsA6t7MA
-        d8RfzgrkXilE9GPgUHUD0YyBNnf1JF+Rhl06BFTBmLBY5d1iHAlG7C7OIEDXqQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1602692836;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=iCzjYxqIDkmw4xzx1KXku7b0cbN/u38jxZbnzmQ3jN8=;
-        b=Tcm1BnHk6fiDiswRFgM+Nea81sLWNx1RNxoZwpZ/WAKUDTLpiU48x1RzsOa3CKc7I7gjpu
-        NnAHKINmRZmU+DAw==
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Alan Stern <stern@rowland.harvard.edu>
+        Wed, 14 Oct 2020 12:34:26 -0400
+Received: (qmail 719817 invoked by uid 1000); 14 Oct 2020 12:34:25 -0400
+Date:   Wed, 14 Oct 2020 12:34:25 -0400
+From:   Alan Stern <stern@rowland.harvard.edu>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         LKML <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -62,25 +41,38 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         linux-samsung-soc@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
         Duncan Sands <duncan.sands@free.fr>
 Subject: Re: [patch 03/12] USB: serial: keyspan_pda: Consolidate room query
-Message-ID: <20201014162714.ctv5earlhwsp4iqs@linutronix.de>
+Message-ID: <20201014163425.GF712494@rowland.harvard.edu>
 References: <20201014145215.518912759@linutronix.de>
  <20201014145727.338773481@linutronix.de>
  <20201014161433.GB712494@rowland.harvard.edu>
+ <20201014162714.ctv5earlhwsp4iqs@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201014161433.GB712494@rowland.harvard.edu>
+In-Reply-To: <20201014162714.ctv5earlhwsp4iqs@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020-10-14 12:14:33 [-0400], Alan Stern wrote:
-> Instead, consider using the new usb_control_msg_recv() API.  But it 
-> might be better to allocate the buffer once and for all.
+On Wed, Oct 14, 2020 at 06:27:14PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2020-10-14 12:14:33 [-0400], Alan Stern wrote:
+> > Instead, consider using the new usb_control_msg_recv() API.  But it 
+> > might be better to allocate the buffer once and for all.
+> 
+> This will still allocate and free buffer on each invocation. What about
 
-This will still allocate and free buffer on each invocation. What about
-moving the query_buf to the begin of the struct / align it?
+Yes.  That's why I suggesting doing a single buffer allocation at the 
+start and using it for each I/O transfer.  (But I'm not familiar with 
+this code, and I don't know if there might be multiple transfers going 
+on concurrently.)
 
-> Alan Stern
+> moving the query_buf to the begin of the struct / align it?
 
-Sebastian
+No, thank won't work either.  The key to the issue is that while some 
+memory is mapped for DMA, the CPU must not touch it or anything else in 
+the same cache line.  If a field is a member of a data structure, the 
+CPU might very well access a neighboring member while this one is 
+mapped, thereby messing up the cache line.
+
+Alan Stern
