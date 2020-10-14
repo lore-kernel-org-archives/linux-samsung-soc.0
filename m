@@ -7,63 +7,66 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C700BC4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56428C4363D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CEBD22203
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:20:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2DBD21582
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:20:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FFxvjYWL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wnj1LJVP"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="frIAhV5z";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HKHZebV/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389057AbgJNPTu (ORCPT
+        id S2389177AbgJNPUH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 14 Oct 2020 11:19:50 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59264 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731817AbgJNPTD (ORCPT
+        Wed, 14 Oct 2020 11:20:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39128 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731801AbgJNPS7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 14 Oct 2020 11:19:03 -0400
-Message-Id: <20201014145728.318078828@linutronix.de>
+        Wed, 14 Oct 2020 11:18:59 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0671DC061755;
+        Wed, 14 Oct 2020 08:18:59 -0700 (PDT)
+Message-Id: <20201014145727.957664398@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1602688740;
+        s=2020; t=1602688736;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=kcowbMpvAqIB8vuk7SNsG8nZoygpkwt3f5P13wpvizw=;
-        b=FFxvjYWLwbUk/1uOGnH5OG7OnXpCijl+ZCGdtKvu+0IdJt8m0ApURx9AbgxzW+0cxyf+h0
-        HQ6L5fi/72G3obw8qmQnOPFuQbf9XxC9YmQXke4rOtd5DD4irfqy0n7i6y09WFw13/zOss
-        Xca5UCggCD1Uj3LSn1oGWofAB43fbEtW6UEUbrViNSce8MGHMBtXaaEzHpA219iWYrdIbR
-        QZrTnufEO+RIky0tUzTuV4+z3h+TMtf2flpZjxWDzr9rRF6+f73Buj86o0nZYT81eJyWgq
-        SXmBnISOg3+UG4fDau5N5YDNz936u/UI0YBXuFtiw9XbSyLHMnP56Nv/yMFNcg==
+        bh=vwW4ioJK9iO/olIrRXTRGmM3ltJD08Kl75Jr29q8k1c=;
+        b=frIAhV5zZRLyu3T3WeNS+86gEvbubYIX3DCA1EMG9dc6PZQ8/zJZ6mXGPll+enKHUU8nkq
+        xcVDhKkvocjjmIOY1XBkDAo9RNne1g5EFZ81THNW8Q9ZhN30lr+kirb5Xdw51lNOMnVt3f
+        xF91fW7Cm/IuiAm6AimnCv4pScxH9VZi6ZQM0l91yf9wIMvUICluUVu9V5Ie/fDKdG2Zic
+        DbLjL0JNo4n86hIgO4YMri7GJpHpz/CopeqMTUsbVX9TySkCbLGm/Hx9em4XAr4Zpry0/J
+        VKP7DyaiQucQhNxbQeISGqQkm8CCmG1H7sZqc1rHL9dMcQukLLo7T2jkHUCr4g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1602688740;
+        s=2020e; t=1602688736;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=kcowbMpvAqIB8vuk7SNsG8nZoygpkwt3f5P13wpvizw=;
-        b=Wnj1LJVPBcvB3/XtUI3Av3nod7hxMdjVYG0aPO72mqWvjayKntWqk4GomTBy1B28VIaQty
-        GXZr9nFqIId2MyDQ==
-Date:   Wed, 14 Oct 2020 16:52:26 +0200
+        bh=vwW4ioJK9iO/olIrRXTRGmM3ltJD08Kl75Jr29q8k1c=;
+        b=HKHZebV/VaTYhcE31MdsfD21ZcCC48DoK29bd201boCh/A3nNi6rLQZDAA4ytY36wApFt1
+        zQhnU3J+aNK8qODw==
+Date:   Wed, 14 Oct 2020 16:52:23 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         "Ahmed S. Darwish" <a.darwish@linutronix.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Alan Stern <stern@rowland.harvard.edu>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
         Thomas Winischhofer <thomas@winischhofer.net>,
         Johan Hovold <johan@kernel.org>,
         Mathias Nyman <mathias.nyman@intel.com>,
         Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-omap@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Shuah Khan <shuah@kernel.org>, Felipe Balbi <balbi@kernel.org>,
         Duncan Sands <duncan.sands@free.fr>
-Subject: [patch 11/12] usb: core: Replace in_interrupt() in comments
+Subject: [patch 08/12] usb: hosts: Remove in_interrupt() from comments
 References: <20201014145215.518912759@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -76,313 +79,236 @@ From: Ahmed S. Darwish <a.darwish@linutronix.de>
 
 The usage of in_interrupt() in drivers is phased out for various reasons.
 
-Various comments use !in_interrupt() to describe calling context for
-functions which might sleep. That's wrong because the calling context has
-to be preemptible task context, which is not what !in_interrupt()
-describes.
+Various comments use !in_interrupt() to describe calling context for probe()
+and remove() functions. That's wrong because the calling context has to be
+preemptible task context, which is not what !in_interrupt() describes.
 
-Replace !in_interrupt() with more accurate plain text descriptions.
-
-The comment for usb_hcd_poll_rh_status() is misleading as this function is
-called from all kinds of contexts including preemptible task
-context. Remove it as there is obviously no restriction.
+Cleanup the comments. While at it add the missing kernel doc argument
+descriptors and make usb_hcd_msp_remove() static.
 
 Signed-off-by: Ahmed S. Darwish <a.darwish@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Alan Stern <stern@rowland.harvard.edu>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-usb@vger.kernel.org
+Cc: linux-omap@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
 
 ---
- drivers/usb/core/buffer.c  |    6 ++++--
- drivers/usb/core/hcd-pci.c |    6 ++++--
- drivers/usb/core/hcd.c     |   21 +++++++++++----------
- drivers/usb/core/hub.c     |    3 ++-
- drivers/usb/core/message.c |   35 ++++++++++++++++++++++-------------
- drivers/usb/core/usb.c     |    4 ++--
- 6 files changed, 45 insertions(+), 30 deletions(-)
+ drivers/usb/host/ehci-fsl.c     |    9 ++++-----
+ drivers/usb/host/ehci-pmcmsp.c  |   15 +++++++++------
+ drivers/usb/host/ohci-at91.c    |   11 ++++++++---
+ drivers/usb/host/ohci-omap.c    |    7 ++++---
+ drivers/usb/host/ohci-pxa27x.c  |   11 ++++++-----
+ drivers/usb/host/ohci-s3c2410.c |   12 ++++++------
+ 6 files changed, 37 insertions(+), 28 deletions(-)
 
---- a/drivers/usb/core/buffer.c
-+++ b/drivers/usb/core/buffer.c
-@@ -51,7 +51,8 @@ void __init usb_init_pool_max(void)
- /**
-  * hcd_buffer_create - initialize buffer pools
-  * @hcd: the bus whose buffer pools are to be initialized
+--- a/drivers/usb/host/ehci-fsl.c
++++ b/drivers/usb/host/ehci-fsl.c
+@@ -39,10 +39,10 @@ static struct hc_driver __read_mostly fs
+ /*
+  * fsl_ehci_drv_probe - initialize FSL-based HCDs
+  * @pdev: USB Host Controller being probed
 - * Context: !in_interrupt()
-+ *
+  *
+- * Allocates basic resources for this USB host controller.
 + * Context: task context, might sleep
   *
-  * Call this as part of initializing a host controller that uses the dma
-  * memory allocators.  It initializes some pools of dma-coherent memory that
-@@ -88,7 +89,8 @@ int hcd_buffer_create(struct usb_hcd *hc
- /**
-  * hcd_buffer_destroy - deallocate buffer pools
-  * @hcd: the bus whose buffer pools are to be destroyed
-- * Context: !in_interrupt()
-+ *
-+ * Context: task context, might sleep
-  *
-  * This frees the buffer pools created by hcd_buffer_create().
++ * Allocates basic resources for this USB host controller.
   */
---- a/drivers/usb/core/hcd-pci.c
-+++ b/drivers/usb/core/hcd-pci.c
-@@ -160,7 +160,8 @@ static void ehci_wait_for_companions(str
-  * @dev: USB Host Controller being probed
-  * @id: pci hotplug id connecting controller to HCD framework
-  * @driver: USB HC driver handle
+ static int fsl_ehci_drv_probe(struct platform_device *pdev)
+ {
+@@ -684,12 +684,11 @@ static const struct ehci_driver_override
+ /**
+  * fsl_ehci_drv_remove - shutdown processing for FSL-based HCDs
+  * @pdev: USB Host Controller being removed
 - * Context: !in_interrupt()
+  *
+- * Reverses the effect of usb_hcd_fsl_probe().
++ * Context: task context, might sleep
+  *
++ * Reverses the effect of usb_hcd_fsl_probe().
+  */
+-
+ static int fsl_ehci_drv_remove(struct platform_device *pdev)
+ {
+ 	struct fsl_usb2_platform_data *pdata = dev_get_platdata(&pdev->dev);
+--- a/drivers/usb/host/ehci-pmcmsp.c
++++ b/drivers/usb/host/ehci-pmcmsp.c
+@@ -147,12 +147,14 @@ static int usb_hcd_msp_map_regs(struct m
+ 
+ /**
+  * usb_hcd_msp_probe - initialize PMC MSP-based HCDs
+- * Context: !in_interrupt()
++ * @driver:	Pointer to hc driver instance
++ * @dev:	USB controller to probe
 + *
 + * Context: task context, might sleep
   *
-  * Allocates basic PCI resources for this USB host controller, and
+  * Allocates basic resources for this USB host controller, and
   * then invokes the start() method for the HCD associated with it
-@@ -304,7 +305,8 @@ EXPORT_SYMBOL_GPL(usb_hcd_pci_probe);
+  * through the hotplug entry's driver_data.
+- *
+  */
+ int usb_hcd_msp_probe(const struct hc_driver *driver,
+ 			  struct platform_device *dev)
+@@ -223,8 +225,9 @@ int usb_hcd_msp_probe(const struct hc_dr
+ 
  /**
-  * usb_hcd_pci_remove - shutdown processing for PCI-based HCDs
+  * usb_hcd_msp_remove - shutdown processing for PMC MSP-based HCDs
+- * @dev: USB Host Controller being removed
+- * Context: !in_interrupt()
++ * @hcd: USB Host Controller being removed
++ *
++ * Context: task context, might sleep
+  *
+  * Reverses the effect of usb_hcd_msp_probe(), first invoking
+  * the HCD's stop() method.  It is always called from a thread
+@@ -233,7 +236,7 @@ int usb_hcd_msp_probe(const struct hc_dr
+  * may be called without controller electrically present
+  * may be called with controller, bus, and devices active
+  */
+-void usb_hcd_msp_remove(struct usb_hcd *hcd, struct platform_device *dev)
++static void usb_hcd_msp_remove(struct usb_hcd *hcd)
+ {
+ 	usb_remove_hcd(hcd);
+ 	iounmap(hcd->regs);
+@@ -306,7 +309,7 @@ static int ehci_hcd_msp_drv_remove(struc
+ {
+ 	struct usb_hcd *hcd = platform_get_drvdata(pdev);
+ 
+-	usb_hcd_msp_remove(hcd, pdev);
++	usb_hcd_msp_remove(hcd);
+ 
+ 	/* free TWI GPIO USB_HOST_DEV pin */
+ 	gpio_free(MSP_PIN_USB0_HOST_DEV);
+--- a/drivers/usb/host/ohci-at91.c
++++ b/drivers/usb/host/ohci-at91.c
+@@ -155,7 +155,10 @@ static struct regmap *at91_dt_syscon_sfr
+ 
+ /*
+  * usb_hcd_at91_probe - initialize AT91-based HCDs
+- * Context: !in_interrupt()
++ * @driver:	Pointer to hc driver instance
++ * @pdev:	USB controller to probe
++ *
++ * Context: task context, might sleep
+  *
+  * Allocates basic resources for this USB host controller, and
+  * then invokes the start() method for the HCD associated with it
+@@ -246,12 +249,14 @@ static int usb_hcd_at91_probe(const stru
+ 
+ /*
+  * usb_hcd_at91_remove - shutdown processing for AT91-based HCDs
+- * Context: !in_interrupt()
++ * @hcd:	USB controller to remove
++ * @pdev:	Platform device required for cleanup
++ *
++ * Context: task context, might sleep
+  *
+  * Reverses the effect of usb_hcd_at91_probe(), first invoking
+  * the HCD's stop() method.  It is always called from a thread
+  * context, "rmmod" or something similar.
+- *
+  */
+ static void usb_hcd_at91_remove(struct usb_hcd *hcd,
+ 				struct platform_device *pdev)
+--- a/drivers/usb/host/ohci-omap.c
++++ b/drivers/usb/host/ohci-omap.c
+@@ -285,7 +285,9 @@ static int ohci_omap_reset(struct usb_hc
+ 
+ /**
+  * ohci_hcd_omap_probe - initialize OMAP-based HCDs
+- * Context: !in_interrupt()
++ * @pdev:	USB controller to probe
++ *
++ * Context: task context, might sleep
+  *
+  * Allocates basic resources for this USB host controller, and
+  * then invokes the start() method for the HCD associated with it
+@@ -399,8 +401,7 @@ static int ohci_hcd_omap_probe(struct pl
+ 
+ /**
+  * ohci_hcd_omap_remove - shutdown processing for OMAP-based HCDs
+- * @dev: USB Host Controller being removed
+- * Context: !in_interrupt()
++ * @pdev: USB Host Controller being removed
+  *
+  * Reverses the effect of ohci_hcd_omap_probe(), first invoking
+  * the HCD's stop() method.  It is always called from a thread
+--- a/drivers/usb/host/ohci-pxa27x.c
++++ b/drivers/usb/host/ohci-pxa27x.c
+@@ -410,12 +410,13 @@ static int ohci_pxa_of_init(struct platf
+ 
+ /**
+  * ohci_hcd_pxa27x_probe - initialize pxa27x-based HCDs
+- * Context: !in_interrupt()
++ * @pdev:	USB Host controller to probe
++ *
++ * Context: task context, might sleep
+  *
+  * Allocates basic resources for this USB host controller, and
+  * then invokes the start() method for the HCD associated with it
+  * through the hotplug entry's driver_data.
+- *
+  */
+ static int ohci_hcd_pxa27x_probe(struct platform_device *pdev)
+ {
+@@ -509,13 +510,13 @@ static int ohci_hcd_pxa27x_probe(struct
+ 
+ /**
+  * ohci_hcd_pxa27x_remove - shutdown processing for pxa27x-based HCDs
+- * @dev: USB Host Controller being removed
+- * Context: !in_interrupt()
++ * @pdev: USB Host Controller being removed
++ *
++ * Context: task context, might sleep
+  *
+  * Reverses the effect of ohci_hcd_pxa27x_probe(), first invoking
+  * the HCD's stop() method.  It is always called from a thread
+  * context, normally "rmmod", "apmd", or something similar.
+- *
+  */
+ static int ohci_hcd_pxa27x_remove(struct platform_device *pdev)
+ {
+--- a/drivers/usb/host/ohci-s3c2410.c
++++ b/drivers/usb/host/ohci-s3c2410.c
+@@ -324,14 +324,13 @@ static void s3c2410_hcd_oc(struct s3c241
+ /*
+  * ohci_hcd_s3c2410_remove - shutdown processing for HCD
   * @dev: USB Host Controller being removed
 - * Context: !in_interrupt()
 + *
 + * Context: task context, might sleep
   *
-  * Reverses the effect of usb_hcd_pci_probe(), first invoking
+  * Reverses the effect of ohci_hcd_3c2410_probe(), first invoking
   * the HCD's stop() method.  It is always called from a thread
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -746,9 +746,6 @@ static int rh_call_control (struct usb_h
-  * Root Hub interrupt transfers are polled using a timer if the
-  * driver requests it; otherwise the driver is responsible for
-  * calling usb_hcd_poll_rh_status() when an event occurs.
+  * context, normally "rmmod", "apmd", or something similar.
 - *
-- * Completions are called in_interrupt(), but they may or may not
-- * be in_irq().
-  */
- void usb_hcd_poll_rh_status(struct usb_hcd *hcd)
+-*/
+-
++ */
+ static int
+ ohci_hcd_s3c2410_remove(struct platform_device *dev)
  {
-@@ -904,7 +901,8 @@ static void usb_bus_init (struct usb_bus
- /**
-  * usb_register_bus - registers the USB host controller with the usb core
-  * @bus: pointer to the bus to register
+@@ -345,12 +344,13 @@ ohci_hcd_s3c2410_remove(struct platform_
+ 
+ /*
+  * ohci_hcd_s3c2410_probe - initialize S3C2410-based HCDs
 - * Context: !in_interrupt()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * Assigns a bus number, and links the controller into usbcore data
-  * structures so that it can be seen by scanning the bus list.
-@@ -939,7 +937,8 @@ static int usb_register_bus(struct usb_b
- /**
-  * usb_deregister_bus - deregisters the USB host controller
-  * @bus: pointer to the bus to deregister
-- * Context: !in_interrupt()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * Recycles the bus number, and unlinks the controller from usbcore data
-  * structures so that it won't be seen by scanning the bus list.
-@@ -1691,7 +1690,6 @@ static void usb_giveback_urb_bh(unsigned
-  * @hcd: host controller returning the URB
-  * @urb: urb being returned to the USB device driver.
-  * @status: completion status code for the URB.
-- * Context: in_interrupt()
-  *
-  * This hands the URB from HCD to its USB device driver, using its
-  * completion function.  The HCD has freed all per-urb resources
-@@ -2268,7 +2266,7 @@ EXPORT_SYMBOL_GPL(usb_hcd_resume_root_hu
-  * usb_bus_start_enum - start immediate enumeration (for OTG)
-  * @bus: the bus (must use hcd framework)
-  * @port_num: 1-based number of port; usually bus->otg_port
-- * Context: in_interrupt()
-+ * Context: atomic
-  *
-  * Starts enumeration, with an immediate reset followed later by
-  * hub_wq identifying and possibly configuring the device.
-@@ -2474,7 +2472,8 @@ EXPORT_SYMBOL_GPL(__usb_create_hcd);
-  * @bus_name: value to store in hcd->self.bus_name
-  * @primary_hcd: a pointer to the usb_hcd structure that is sharing the
-  *              PCI device.  Only allocate certain resources for the primary HCD
-- * Context: !in_interrupt()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * Allocate a struct usb_hcd, with extra space at the end for the
-  * HC driver's private data.  Initialize the generic members of the
-@@ -2496,7 +2495,8 @@ EXPORT_SYMBOL_GPL(usb_create_shared_hcd)
-  * @driver: HC driver that will use this hcd
-  * @dev: device for this HC, stored in hcd->self.controller
-  * @bus_name: value to store in hcd->self.bus_name
-- * Context: !in_interrupt()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * Allocate a struct usb_hcd, with extra space at the end for the
-  * HC driver's private data.  Initialize the generic members of the
-@@ -2830,7 +2830,8 @@ EXPORT_SYMBOL_GPL(usb_add_hcd);
- /**
-  * usb_remove_hcd - shutdown processing for generic HCDs
-  * @hcd: the usb_hcd structure to remove
-- * Context: !in_interrupt()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * Disconnects the root hub, then reverses the effects of usb_add_hcd(),
-  * invoking the HCD's stop() method.
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -2171,7 +2171,8 @@ static void hub_disconnect_children(stru
- /**
-  * usb_disconnect - disconnect a device (usbcore-internal)
-  * @pdev: pointer to device being disconnected
-- * Context: !in_interrupt ()
++ * @dev: USB Host Controller to be probed
 + *
 + * Context: task context, might sleep
   *
-  * Something got disconnected. Get rid of it and all of its children.
-  *
---- a/drivers/usb/core/message.c
-+++ b/drivers/usb/core/message.c
-@@ -119,7 +119,7 @@ static int usb_internal_control_msg(stru
-  * @timeout: time in msecs to wait for the message to complete before timing
-  *	out (if 0 the wait is forever)
-  *
-- * Context: !in_interrupt ()
-+ * Context: task context, might sleep.
-  *
-  * This function sends a simple control message to a specified endpoint and
-  * waits for the message to complete, or timeout.
-@@ -173,7 +173,7 @@ EXPORT_SYMBOL_GPL(usb_control_msg);
-  * @timeout: time in msecs to wait for the message to complete before
-  *	timing out (if 0 the wait is forever)
-  *
-- * Context: !in_interrupt ()
-+ * Context: task context, might sleep.
-  *
-  * This function sends a simple interrupt message to a specified endpoint and
-  * waits for the message to complete, or timeout.
-@@ -206,7 +206,7 @@ EXPORT_SYMBOL_GPL(usb_interrupt_msg);
-  * @timeout: time in msecs to wait for the message to complete before
-  *	timing out (if 0 the wait is forever)
-  *
-- * Context: !in_interrupt ()
-+ * Context: task context, might sleep.
-  *
-  * This function sends a simple bulk message to a specified endpoint
-  * and waits for the message to complete, or timeout.
-@@ -473,7 +473,8 @@ EXPORT_SYMBOL_GPL(usb_sg_init);
-  * usb_sg_wait - synchronously execute scatter/gather request
-  * @io: request block handle, as initialized with usb_sg_init().
-  * 	some fields become accessible when this call returns.
-- * Context: !in_interrupt ()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * This function blocks until the specified I/O operation completes.  It
-  * leverages the grouping of the related I/O requests to get good transfer
-@@ -627,7 +628,8 @@ EXPORT_SYMBOL_GPL(usb_sg_cancel);
-  * @index: the number of the descriptor
-  * @buf: where to put the descriptor
-  * @size: how big is "buf"?
-- * Context: !in_interrupt ()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * Gets a USB descriptor.  Convenience functions exist to simplify
-  * getting some types of descriptors.  Use
-@@ -675,7 +677,8 @@ EXPORT_SYMBOL_GPL(usb_get_descriptor);
-  * @index: the number of the descriptor
-  * @buf: where to put the string
-  * @size: how big is "buf"?
-- * Context: !in_interrupt ()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * Retrieves a string, encoded using UTF-16LE (Unicode, 16 bits per character,
-  * in little-endian byte order).
-@@ -810,7 +813,8 @@ static int usb_get_langid(struct usb_dev
-  * @index: the number of the descriptor
-  * @buf: where to put the string
-  * @size: how big is "buf"?
-- * Context: !in_interrupt ()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * This converts the UTF-16LE encoded strings returned by devices, from
-  * usb_get_string_descriptor(), to null-terminated UTF-8 encoded ones
-@@ -899,7 +903,8 @@ char *usb_cache_string(struct usb_device
-  * usb_get_device_descriptor - (re)reads the device descriptor (usbcore)
-  * @dev: the device whose device descriptor is being updated
-  * @size: how much of the descriptor to read
-- * Context: !in_interrupt ()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * Updates the copy of the device descriptor stored in the device structure,
-  * which dedicates space for this purpose.
-@@ -934,7 +939,7 @@ int usb_get_device_descriptor(struct usb
- /*
-  * usb_set_isoch_delay - informs the device of the packet transmit delay
-  * @dev: the device whose delay is to be informed
-- * Context: !in_interrupt()
-+ * Context: can sleep
-  *
-  * Since this is an optional request, we don't bother if it fails.
+  * Allocates basic resources for this USB host controller, and
+  * then invokes the start() method for the HCD associated with it
+  * through the hotplug entry's driver_data.
+- *
   */
-@@ -962,7 +967,8 @@ int usb_set_isoch_delay(struct usb_devic
-  * @type: USB_STATUS_TYPE_*; for standard or PTM status types
-  * @target: zero (for device), else interface or endpoint number
-  * @data: pointer to two bytes of bitmap data
-- * Context: !in_interrupt ()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * Returns device, interface, or endpoint status.  Normally only of
-  * interest to see if the device is self powered, or has enabled the
-@@ -1039,7 +1045,8 @@ EXPORT_SYMBOL_GPL(usb_get_status);
-  * usb_clear_halt - tells device to clear endpoint halt/stall condition
-  * @dev: device whose endpoint is halted
-  * @pipe: endpoint "pipe" being cleared
-- * Context: !in_interrupt ()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * This is used to clear halt conditions for bulk and interrupt endpoints,
-  * as reported by URB completion status.  Endpoints that are halted are
-@@ -1343,7 +1350,8 @@ void usb_enable_interface(struct usb_dev
-  * @dev: the device whose interface is being updated
-  * @interface: the interface being updated
-  * @alternate: the setting being chosen.
-- * Context: !in_interrupt ()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * This is used to enable data transfers on interfaces that may not
-  * be enabled by default.  Not all devices support such configurability.
-@@ -1762,7 +1770,8 @@ static void __usb_queue_reset_device(str
-  * usb_set_configuration - Makes a particular device setting be current
-  * @dev: the device whose configuration is being updated
-  * @configuration: the configuration being chosen.
-- * Context: !in_interrupt(), caller owns the device lock
-+ *
-+ * Context: task context, might sleep. Caller holds device lock.
-  *
-  * This is used to enable non-default device modes.  Not all devices
-  * use this kind of configurability; many devices only have one
---- a/drivers/usb/core/usb.c
-+++ b/drivers/usb/core/usb.c
-@@ -28,7 +28,6 @@
- #include <linux/string.h>
- #include <linux/bitops.h>
- #include <linux/slab.h>
--#include <linux/interrupt.h>  /* for in_interrupt() */
- #include <linux/kmod.h>
- #include <linux/init.h>
- #include <linux/spinlock.h>
-@@ -561,7 +560,8 @@ static bool usb_dev_authorized(struct us
-  * @parent: hub to which device is connected; null to allocate a root hub
-  * @bus: bus used to access the device
-  * @port1: one-based index of port; ignored for root hubs
-- * Context: !in_interrupt()
-+ *
-+ * Context: task context, might sleep.
-  *
-  * Only hub drivers (including virtual root hub drivers for host
-  * controllers) should ever call this.
+ static int ohci_hcd_s3c2410_probe(struct platform_device *dev)
+ {
 
