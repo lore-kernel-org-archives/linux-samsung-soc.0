@@ -2,126 +2,108 @@ Return-Path: <SRS0=VGRb=DV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3854C41604
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 14:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FBDC433E7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68C7C212CC
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 14:37:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4896E22227
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:18:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Mkhg1oud";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J4cIGbxk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728454AbgJNOhe (ORCPT
+        id S1728247AbgJNPSs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 14 Oct 2020 10:37:34 -0400
-Received: from mail.baikalelectronics.com ([87.245.175.226]:48684 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726942AbgJNOhd (ORCPT
+        Wed, 14 Oct 2020 11:18:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39094 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726596AbgJNPSs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 14 Oct 2020 10:37:33 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 0C2A5803073E;
-        Wed, 14 Oct 2020 14:37:25 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at baikalelectronics.ru
-Received: from mail.baikalelectronics.ru ([127.0.0.1])
-        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id f5w4yWjMzAZv; Wed, 14 Oct 2020 17:37:23 +0300 (MSK)
-Date:   Wed, 14 Oct 2020 17:37:20 +0300
-From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Felipe Balbi <balbi@kernel.org>
-CC:     Serge Semin <fancer.lancer@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
+        Wed, 14 Oct 2020 11:18:48 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8475CC061755;
+        Wed, 14 Oct 2020 08:18:48 -0700 (PDT)
+Message-Id: <20201014145215.518912759@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1602688726;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Xqc0nGkuw0k9CjZpwvy2mNqALgS9zNAoil65HHXmBWw=;
+        b=Mkhg1oudooc1D7cLXeBlzAj7hV9tOJlOoUSWKfGCxcNRp6Akbl+i/CyTWi32vKAy7lg0HD
+        MpTNLo8j0c6EvQX5dPujKOlzMfsWpRC/IAGFbyB7J30kUlouGRQC6UxMvviMD1Xi9LI5Gc
+        /tUx+/iW5BkmL6l1c9DqG8PEMBYNYtnNrrLEc6+GyalxeR0rNtSyhrbWYjwHcPC/8G1wnD
+        CipGvLyocVhb8dITN9e/hA/hw4WxMuO9L+LWd7F5MTfY497KVJQTe6u+JI+03auxA5jaGZ
+        rWjukNONzdglu4DG3L22C67B3madfApoVOnOStsZF9GnCVFuDKsguAAGIFMFYw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1602688726;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Xqc0nGkuw0k9CjZpwvy2mNqALgS9zNAoil65HHXmBWw=;
+        b=J4cIGbxkYeb16Mx6vnpQGhkkmyjGQDefyDOdSDcFR6lkamlOV2UI4C4rPB+qkrPUWny9bY
+        +XT22bHmagnyoqAQ==
+Date:   Wed, 14 Oct 2020 16:52:15 +0200
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Thomas Winischhofer <thomas@winischhofer.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
+        linux-usb@vger.kernel.org,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Johan Hovold <johan@kernel.org>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Valentina Manea <valentina.manea.m@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-omap@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Wei Xu <xuwei5@hisilicon.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Roger Quadros <rogerq@ti.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-snps-arc@lists.infradead.org>, <linux-mips@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH 20/20] arch: dts: Fix DWC USB3 DT nodes name
-Message-ID: <20201014143720.yny3jco5pkb7dr4b@mobilestation>
-References: <20201014101402.18271-1-Sergey.Semin@baikalelectronics.ru>
- <20201014101402.18271-21-Sergey.Semin@baikalelectronics.ru>
- <878sc8lx0e.fsf@kernel.org>
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Duncan Sands <duncan.sands@free.fr>
+Subject: [patch 00/12] UBS: Cleanup in_interupt/in_irq/in_atomic() usage
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <878sc8lx0e.fsf@kernel.org>
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 05:09:37PM +0300, Felipe Balbi wrote:
-> 
-> Hi Serge,
-> 
-> Serge Semin <Sergey.Semin@baikalelectronics.ru> writes:
-> > In accordance with the DWC USB3 bindings the corresponding node name is
-> > suppose to comply with Generic USB HCD DT schema, which requires the USB
-> 
-
-> DWC3 is not a simple HDC, though.
-
-Yeah, strictly speaking it is equipped with a lot of vendor-specific stuff,
-which are tuned by the DWC USB3 driver in the kernel. But after that the
-controller is registered as xhci-hcd device so it's serviced by the xHCI driver,
-which then registers the HCD device so the corresponding DT node is supposed
-to be compatible with the next bindings: usb/usb-hcd.yaml, usb/usb-xhci.yaml
-and usb/snps,dwc3,yaml. I've created the later one so to validate the denoted
-compatibility.
-
-> 
-> > nodes to have the name acceptable by the regexp: "^usb(@.*)?" . But a lot
-> > of the DWC USB3-compatible nodes defined in the ARM/ARM64 DTS files have
-> > name as "^dwc3@.*" or "^usb[1-3]@.*" or even "^dwusb@.*", which will cause
-> > the dtbs_check procedure failure. Let's fix the nodes naming to be
-> > compatible with the DWC USB3 DT schema to make dtbs_check happy.
-> >
-> > Note we don't change the DWC USB3-compatible nodes names of
-> > arch/arm64/boot/dts/apm/{apm-storm.dtsi,apm-shadowcat.dtsi} since the
-> > in-source comment says that the nodes name need to be preserved as
-> > "^dwusb@.*" for some backward compatibility.
-> 
-
-> interesting, compatibility with what? Some debugfs files, perhaps? :-)
-
-Don't really know.) In my experience the worst type of such compatibility is
-connected with some bootloader magic, which may add/remove/modify properties
-to nodes with pre-defined names.
-
--Sergey
-
-> 
-> In any case, I don't have any problems with this, so I'll let other
-> folks comment.
-> 
-> -- 
-> balbi
-
-
+Rm9sa3MsCgppbiB0aGUgZGlzY3Vzc2lvbiBhYm91dCBwcmVlbXB0IGNvdW50IGNvbnNpc3RlbmN5
+IGFjY3Jvc3Mga2VybmVsIGNvbmZpZ3VyYXRpb25zOgoKICBodHRwczovL2xvcmUua2VybmVsLm9y
+Zy9yLzIwMjAwOTE0MjA0MjA5LjI1NjI2NjA5M0BsaW51dHJvbml4LmRlLwoKTGludXMgY2xlYXJs
+eSByZXF1ZXN0ZWQgdGhhdCBjb2RlIGluIGRyaXZlcnMgYW5kIGxpYnJhcmllcyB3aGljaCBjaGFu
+Z2VzCmJlaGF2aW91ciBiYXNlZCBvbiBleGVjdXRpb24gY29udGV4dCBzaG91bGQgZWl0aGVyIGJl
+IHNwbGl0IHVwIHNvIHRoYXQKZS5nLiB0YXNrIGNvbnRleHQgaW52b2NhdGlvbnMgYW5kIEJIIGlu
+dm9jYXRpb25zIGhhdmUgZGlmZmVyZW50IGludGVyZmFjZXMKb3IgaWYgdGhhdCdzIG5vdCBwb3Nz
+aWJsZSB0aGUgY29udGV4dCBpbmZvcm1hdGlvbiBoYXMgdG8gYmUgcHJvdmlkZWQgYnkgdGhlCmNh
+bGxlciB3aGljaCBrbm93cyBpbiB3aGljaCBjb250ZXh0IGl0IGlzIGV4ZWN1dGluZy4KClRoaXMg
+aW5jbHVkZXMgY29uZGl0aW9uYWwgbG9ja2luZywgYWxsb2NhdGlvbiBtb2RlIChHRlBfKikgZGVj
+aXNpb25zIGFuZAphdm9pZGFuY2Ugb2YgY29kZSBwYXRocyB3aGljaCBtaWdodCBzbGVlcC4KCklu
+IHRoZSBsb25nIHJ1biwgdXNhZ2Ugb2YgJ3ByZWVtcHRpYmxlLCBpbl8qaXJxIGV0Yy4nIHNob3Vs
+ZCBiZSBiYW5uZWQgZnJvbQpkcml2ZXIgY29kZSBjb21wbGV0ZWx5LgoKVGhlIHVzYWdlIG9mIHN1
+Y2ggY29uc3RydWN0cyBpbiBVU0IgaXMgcmF0aGVyIGxpbWl0ZWQuIE1vc3Qgb2YgaXQgaXMgaW4K
+ZGVidWcgY29kZSBhbmQgKG1pc2xlYWRpbmcpIGNvbW1lbnRzLiBCdXQgb2YgY291cnNlIHRoZXJl
+IGFyZSBhbHNvIGEgZmV3CmZldyBidWdzIGluY2x1ZGluZyBvbmUgdW5maXhhYmxlLgoKV2l0aCB0
+aGUgZm9sbG93aW5nIHNlcmllcyBhcHBsaWVkLCBVU0IgaXMgY2xlYW4uCgpUaGFua3MsCgoJdGds
+eAotLS0KIGF0bS91c2JhdG0uYyAgICAgICAgICAgICB8ICAgIDIgCiBjb3JlL2J1ZmZlci5jICAg
+ICAgICAgICAgfCAgICA2ICstCiBjb3JlL2hjZC1wY2kuYyAgICAgICAgICAgfCAgICA2ICstCiBj
+b3JlL2hjZC5jICAgICAgICAgICAgICAgfCAgIDIxICsrKystLS0tCiBjb3JlL2h1Yi5jICAgICAg
+ICAgICAgICAgfCAgICAzIC0KIGNvcmUvbWVzc2FnZS5jICAgICAgICAgICB8ICAgMzUgKysrKysr
+KysrLS0tLS0KIGNvcmUvdXNiLmMgICAgICAgICAgICAgICB8ICAgIDQgLQogZ2FkZ2V0L3VkYy9j
+b3JlLmMgICAgICAgIHwgICAgMiAKIGdhZGdldC91ZGMvZHVtbXlfaGNkLmMgICB8ICAgIDUgKy0K
+IGdhZGdldC91ZGMvcHhhMjd4X3VkYy5jICB8ICAgMTkgKysrKy0tLQogaG9zdC9laGNpLWZzbC5j
+ICAgICAgICAgIHwgICAgOSArLS0KIGhvc3QvZWhjaS1wbWNtc3AuYyAgICAgICB8ICAgMTUgKysr
+LS0tCiBob3N0L2lzcDEzNjIuaCAgICAgICAgICAgfCAgICA1ICstCiBob3N0L29oY2ktYXQ5MS5j
+ICAgICAgICAgfCAgIDExICsrKy0KIGhvc3Qvb2hjaS1vbWFwLmMgICAgICAgICB8ICAgIDcgKy0K
+IGhvc3Qvb2hjaS1weGEyN3guYyAgICAgICB8ICAgMTEgKystLQogaG9zdC9vaGNpLXMzYzI0MTAu
+YyAgICAgIHwgICAxMiArKy0tLQogaG9zdC94aGNpLW1lbS5jICAgICAgICAgIHwgICAgMiAKIGhv
+c3QveGhjaS5jICAgICAgICAgICAgICB8ICAgIDYgLS0KIG1pc2Mvc2lzdXNidmdhL0tjb25maWcg
+ICB8ICAgIDIgCiBzZXJpYWwvZGlnaV9hY2NlbGVwb3J0LmMgfCAgICA3ICstCiBzZXJpYWwva2V5
+c3Bhbl9wZGEuYyAgICAgfCAgMTEyICsrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tCiB1c2JpcC91c2JpcF9jb21tb24uYyAgICAgfCAgICA1IC0tCiAyMyBmaWxl
+cyBjaGFuZ2VkLCAxNTYgaW5zZXJ0aW9ucygrKSwgMTUxIGRlbGV0aW9ucygtKQo=
