@@ -7,55 +7,52 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D892CC43467
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E906C433E7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:19:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91AC722201
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:19:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E20D422203
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:19:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KuTToN1V";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I4dgr4cb"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BCtp/tx5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t45kh1y2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731739AbgJNPSv (ORCPT
+        id S2389070AbgJNPTa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 14 Oct 2020 11:18:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39096 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726596AbgJNPSu (ORCPT
+        Wed, 14 Oct 2020 11:19:30 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59078 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731769AbgJNPS4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 14 Oct 2020 11:18:50 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0D51C061755;
-        Wed, 14 Oct 2020 08:18:49 -0700 (PDT)
-Message-Id: <20201014145727.102895678@linutronix.de>
+        Wed, 14 Oct 2020 11:18:56 -0400
+Message-Id: <20201014145727.716783745@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1602688728;
+        s=2020; t=1602688734;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=ZKsj80ymynJu9n+vKl8hANyFjBXKxoMgZSnkilPgmtg=;
-        b=KuTToN1VvpQUXs32to1oL9yEvRSqsKVK4qRmQncPwyQyH0cbRLTdvwNI/EF2PhSEga3R/i
-        BloWNR888cauapc4ikFbY1Jr9MbnXS3QiFaL1787kNrimjSmO8S/DnSnqX6L01RMyzM4m7
-        hDt98E3Txy63I+KlpdyJ6n5MLwrPVMmAms55aaGQtaRo+ink3bBgGncDVc6gxnXgTYw5p+
-        1Opw4/09QqaBRnHEVPqRrOAfLa2ODYvpoxR2CXUgpLcQvFfzsCUvfN4EYU5Hm3yxdDFVOw
-        WwTc3m64UdJkmMuoOdAURJA1sCZmMn/ZQP7A8z4dgeWo+1+4/w27emBoJbHesA==
+        bh=YRLnsMWTgA0N3yLLMuOXyM/kVIqNO9yGhhpRz+ZaXvA=;
+        b=BCtp/tx5doemAWLb5iC9OVRcHbnuogVy3f/vuYPOvSqNaW/X5Q8jB1qg3FoN3uM5E/58RA
+        pqYA2gsxGvZW6sR+fr6C3qrU+H5mBKaU22Y5pbblwsaGmffC4xM5wbk49Zi8ZAkiW7t6w2
+        6pRMG8ROMjqjwy/hpuETtaL7VqBUJxqH+FREbAJJKb2Wp70oyk8wPRUMTVCJEd1Z1whbAa
+        U/3Tihha60iCGN5PzVqcPm7slLAIpL7XTA0a4HSdnEuvw/IXNuMBux1s8T0reAwCF8MqeB
+        //wT470mBRbV8K7KQVLlyvuhRNOImrVoKifY4ZgzkxPZ8J8LFQopvOlUHwf3Dg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1602688728;
+        s=2020e; t=1602688734;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=ZKsj80ymynJu9n+vKl8hANyFjBXKxoMgZSnkilPgmtg=;
-        b=I4dgr4cb6Tpgy6SE79KKi5KhiM4OWAwi+eCcNRnqXnqoFBbtoj200noBAovosqw68dctAH
-        3D4yxMwgfYoclyAw==
-Date:   Wed, 14 Oct 2020 16:52:16 +0200
+        bh=YRLnsMWTgA0N3yLLMuOXyM/kVIqNO9yGhhpRz+ZaXvA=;
+        b=t45kh1y2+bS05Q50y7DHkmJckkmOipCBS4TBTszpC5/b/9hcirTSa2fPOgTNVkasM+lTSr
+        5fXbkEG1bcSBXOAA==
+Date:   Wed, 14 Oct 2020 16:52:21 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Winischhofer <thomas@winischhofer.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, stable@vger.kernel.org,
         "Ahmed S. Darwish" <a.darwish@linutronix.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org,
+        Thomas Winischhofer <thomas@winischhofer.net>,
         Johan Hovold <johan@kernel.org>,
         Mathias Nyman <mathias.nyman@intel.com>,
         Valentina Manea <valentina.manea.m@gmail.com>,
@@ -66,7 +63,7 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
         Duncan Sands <duncan.sands@free.fr>
-Subject: [patch 01/12] USB: sisusbvga: Make console support depend on BROKEN
+Subject: [patch 06/12] usb: host: isp1362: Replace in_interrupt() usage
 References: <20201014145215.518912759@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -75,38 +72,46 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The console part of sisusbvga is broken vs. printk(). It uses in_atomic()
-to detect contexts in which it cannot sleep despite the big fat comment in
-preempt.h which says: Do not use in_atomic() in driver code.
+isp1362_show_regs() is a debugging-only function, with no call sites. It
+prints the cached value of the HCuPINTENB register if in_interupt() is
+true, otherwise it reads the actual register content.
 
-in_atomic() does not work on kernels with CONFIG_PREEMPT_COUNT=n which
-means that spin/rw_lock held regions are not detected by it.
+The usage of in_interrupt() in drivers is phased out and Linus clearly
+requested that code which changes behaviour depending on context should
+either be separated or the context be conveyed in an argument passed by the
+caller, which usually knows the context.
 
-There is no way to make this work by handing context information through to
-the driver and this only can be solved once the core printk infrastructure
-supports sleepable console drivers.
+Make the conditional based on a function argument.
 
-Make it depend on BROKEN for now.
-
-Fixes: 1bbb4f2035d9 ("[PATCH] USB: sisusb[vga] update")
+Signed-off-by: Ahmed S. Darwish <a.darwish@linutronix.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Winischhofer <thomas@winischhofer.net>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-usb@vger.kernel.org
-Cc: stable@vger.kernel.org
----
- drivers/usb/misc/sisusbvga/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/misc/sisusbvga/Kconfig
-+++ b/drivers/usb/misc/sisusbvga/Kconfig
-@@ -16,7 +16,7 @@ config USB_SISUSBVGA
+---
+ drivers/usb/host/isp1362.h |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/drivers/usb/host/isp1362.h
++++ b/drivers/usb/host/isp1362.h
+@@ -793,7 +793,8 @@ static void isp1362_write_fifo(struct is
+ 			ISP1362_REG_NO(ISP1362_REG_##r), isp1362_read_reg16(d, r));	\
+ }
  
- config USB_SISUSBVGA_CON
- 	bool "Text console and mode switching support" if USB_SISUSBVGA
--	depends on VT
-+	depends on VT && BROKEN
- 	select FONT_8x16
- 	help
- 	  Say Y here if you want a VGA text console via the USB dongle or
+-static void __attribute__((__unused__)) isp1362_show_regs(struct isp1362_hcd *isp1362_hcd)
++static void __attribute__((__unused__))
++isp1362_show_regs(struct isp1362_hcd *isp1362_hc, bool cached_inten)
+ {
+ 	isp1362_show_reg(isp1362_hcd, HCREVISION);
+ 	isp1362_show_reg(isp1362_hcd, HCCONTROL);
+@@ -815,7 +816,7 @@ static void __attribute__((__unused__))
+ 	isp1362_show_reg(isp1362_hcd, HCXFERCTR);
+ 	isp1362_show_reg(isp1362_hcd, HCuPINT);
+ 
+-	if (in_interrupt())
++	if (cached_inten)
+ 		DBG(0, "%-12s[%02x]:     %04x\n", "HCuPINTENB",
+ 			 ISP1362_REG_NO(ISP1362_REG_HCuPINTENB), isp1362_hcd->irqenb);
+ 	else
 
