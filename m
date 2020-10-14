@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF132C43457
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A817C43457
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:20:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B6902222C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:19:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29CAC22227
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Oct 2020 15:20:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bjMveFM/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="63oGqbLW"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UMYLaZSO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EIg7PRzW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389086AbgJNPTa (ORCPT
+        id S1731760AbgJNPTv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 14 Oct 2020 11:19:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39144 "EHLO
+        Wed, 14 Oct 2020 11:19:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731820AbgJNPTD (ORCPT
+        with ESMTP id S1731815AbgJNPTA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 14 Oct 2020 11:19:03 -0400
+        Wed, 14 Oct 2020 11:19:00 -0400
 Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBCBCC0613D4;
-        Wed, 14 Oct 2020 08:19:02 -0700 (PDT)
-Message-Id: <20201014145728.409787526@linutronix.de>
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D1A6C0613D3;
+        Wed, 14 Oct 2020 08:19:00 -0700 (PDT)
+Message-Id: <20201014145728.208701440@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1602688741;
+        s=2020; t=1602688738;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=CglHTuol1LH6Rq9Arw6I3q0kZXSSc/D44FpLqZfI5WA=;
-        b=bjMveFM/F/C/lk/mECJJ0S00n9OD6hXu0Q1tMIe9PE3A/VtjlB6lQCcGyccj6VzHIn38Vm
-        6RT8dOoVyShjVszTAyh2ApxHpx3pnF25R9YQTszfKSgS2s8t3FbLOYkcW9TdzdBGhTtDk2
-        2wmP6yFbDqtOXr9sATWU64YuWCj8DdG6VLprgt1Yz+o41DqsWqyq1/XLl/qQqGQN+Xq5FI
-        Nzl7QXRrvL/JODW0hdxCwFXOonaAP3jdjQACCtUGgzsVMwMZWSonr+7bK5d7fNPqO4D0MU
-        2Q9ekR+oeL27Nu6Caaq26FFfIdyNi0wqGL/s1fRMkDmYMQeeKrB7VONJqQM/zw==
+        bh=qs5N10ZLTGbjgyqw4BmEWE+XbOxUwK6mZBaXBjRANBo=;
+        b=UMYLaZSOy0GpTwQeHlY9AipRzXKOvrZZGM3yKp63B8UTfOYn2rYdMbfoXjBB4mXq0Ro39S
+        1vH35yUsVxfuFUGccdmhMdaXNyRgEYvecU7U+suliQvFPAs0hvf3rQSHBY89hERxb0VHsI
+        qLXOLI6t6YymlrMnRAp743PQ+HLacfEONNcyBw2ip1dGxjWtxK1Cc4yjBr2sY57WVNNPZM
+        phjr4vSEf1VDEVamzb54vNTPPR7F0gIXWmiOesaCtd7baeowmuXLhsFzm9djdjEDwPcUmx
+        gdLWFORMwtGnUTKl3SYq0kwfHzRrjfGUFnZdQp3bzmb5w/2qK73MRqk4We9d3A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1602688741;
+        s=2020e; t=1602688738;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=CglHTuol1LH6Rq9Arw6I3q0kZXSSc/D44FpLqZfI5WA=;
-        b=63oGqbLWxH0YKZmR1hR2khr5gJeYtd48W6BFdMaOQnxOOCDSW6iqewPaR90jPDCvghaqaX
-        zPEqCpaIroWOWQDg==
-Date:   Wed, 14 Oct 2020 16:52:27 +0200
+        bh=qs5N10ZLTGbjgyqw4BmEWE+XbOxUwK6mZBaXBjRANBo=;
+        b=EIg7PRzWKN6KgYm+QKT/5U+W602LPE6QV0rpvm503A0MvjtEEQaLo3mbotMG0QCa8XlUQI
+        +hARBem0/GFOKrCg==
+Date:   Wed, 14 Oct 2020 16:52:25 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         "Ahmed S. Darwish" <a.darwish@linutronix.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Duncan Sands <duncan.sands@free.fr>,
+        Felipe Balbi <balbi@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-usb@vger.kernel.org,
         Thomas Winischhofer <thomas@winischhofer.net>,
@@ -65,8 +65,9 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         linux-omap@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, Felipe Balbi <balbi@kernel.org>
-Subject: [patch 12/12] usb: atm: Replace in_interrupt() usage in comment
+        linux-samsung-soc@vger.kernel.org,
+        Duncan Sands <duncan.sands@free.fr>
+Subject: [patch 10/12] usb: gadget: udc: Remove in_interrupt()/in_irq() from comments
 References: <20201014145215.518912759@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -75,32 +76,53 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-in_interrupt() is a pretty vague context description as it means: hard
-interrupt, soft interrupt or bottom half disabled regions.
+From: Ahmed S. Darwish <a.darwish@linutronix.de>
 
-Replace the vague comment with a proper reasoning why spin_lock_irqsave()
-needs to be used.
+The usage of in_irq()/in_interrupt() in drivers is phased out for various
+reasons.
+
+The context description for usb_gadget_giveback_request() is misleading as
+in_interupt() means: hard interrupt or soft interrupt or bottom half
+disabled regions. But it's also invoked from task context when endpoints
+are torn down. Remove it as it's more confusing than helpful.
+
+Replace also the in_irq() comment with plain text.
 
 Signed-off-by: Ahmed S. Darwish <a.darwish@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Duncan Sands <duncan.sands@free.fr>
+Cc: Felipe Balbi <balbi@kernel.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-usb@vger.kernel.org
 
 ---
- drivers/usb/atm/usbatm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/udc/core.c      |    2 --
+ drivers/usb/gadget/udc/dummy_hcd.c |    5 +++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/atm/usbatm.c
-+++ b/drivers/usb/atm/usbatm.c
-@@ -249,7 +249,7 @@ static void usbatm_complete(struct urb *
- 	/* vdbg("%s: urb 0x%p, status %d, actual_length %d",
- 	     __func__, urb, status, urb->actual_length); */
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -894,8 +894,6 @@ EXPORT_SYMBOL_GPL(usb_gadget_unmap_reque
+  * @ep: the endpoint to be used with with the request
+  * @req: the request being given back
+  *
+- * Context: in_interrupt()
+- *
+  * This is called by device controller drivers in order to return the
+  * completed request back to the gadget layer.
+  */
+--- a/drivers/usb/gadget/udc/dummy_hcd.c
++++ b/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -1754,8 +1754,9 @@ static int handle_control_request(struct
+ 	return ret_val;
+ }
  
--	/* usually in_interrupt(), but not always */
-+	/* Can be invoked from task context, protect against interrupts */
- 	spin_lock_irqsave(&channel->lock, flags);
- 
- 	/* must add to the back when receiving; doesn't matter when sending */
+-/* drive both sides of the transfers; looks like irq handlers to
+- * both drivers except the callbacks aren't in_irq().
++/* drive both sides of the transfers; looks like irq handlers to both
++ * drivers except that the callbacks are invoked from soft interrupt
++ * context.
+  */
+ static void dummy_timer(struct timer_list *t)
+ {
 
