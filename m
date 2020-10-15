@@ -2,129 +2,173 @@ Return-Path: <SRS0=zMHd=DW=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E1E1C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 13:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5C3C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 13:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13EFE22254
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 13:53:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52ADC2223F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 13:57:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rWAhsjFj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388028AbgJONxb (ORCPT
+        id S1730026AbgJON52 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 15 Oct 2020 09:53:31 -0400
-Received: from mail.baikalelectronics.com ([87.245.175.226]:55510 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730211AbgJONx2 (ORCPT
+        Thu, 15 Oct 2020 09:57:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52292 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729498AbgJON52 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 15 Oct 2020 09:53:28 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 3DD5B803202B;
-        Thu, 15 Oct 2020 13:53:22 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at baikalelectronics.ru
-Received: from mail.baikalelectronics.ru ([127.0.0.1])
-        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id vPS-zxjKdsJk; Thu, 15 Oct 2020 16:53:21 +0300 (MSK)
-Date:   Thu, 15 Oct 2020 16:53:17 +0300
-From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Felipe Balbi <balbi@kernel.org>
-CC:     Serge Semin <fancer.lancer@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Wei Xu <xuwei5@hisilicon.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Roger Quadros <rogerq@ti.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-snps-arc@lists.infradead.org>, <linux-mips@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH 20/20] arch: dts: Fix DWC USB3 DT nodes name
-Message-ID: <20201015135317.5jsrrqmwmdz4lnzm@mobilestation>
-References: <20201014101402.18271-1-Sergey.Semin@baikalelectronics.ru>
- <20201014101402.18271-21-Sergey.Semin@baikalelectronics.ru>
- <878sc8lx0e.fsf@kernel.org>
- <20201014143720.yny3jco5pkb7dr4b@mobilestation>
- <875z7blrqu.fsf@kernel.org>
+        Thu, 15 Oct 2020 09:57:28 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C941EC061755;
+        Thu, 15 Oct 2020 06:57:26 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id p15so3766179ejm.7;
+        Thu, 15 Oct 2020 06:57:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=eqy7Jg2fPCw6JKPfho3FMkiXLNsZ2vOMeF3B2A8Mojc=;
+        b=rWAhsjFjxNV2tSGmRZgmV07f7lkrurQgCx9bPljwSM5dlr+cFdfNcNP8TqDYr6RpmV
+         kJKrteO6A0BWcah5RksBap2thah0f3FCug6g9rOyet2tvKS6wLurIXPy+sSprVRdDpXO
+         IOnftXETFpeSKiWgWdWvXjoSMVSdBSpoxhozwHThiDlqjFFzd9Q9u5Oejc6caqTfdyr4
+         wAOCXRStBQxEeLEOZzM3R4MwjLF5LE07MQ+q90DEXSJbdui7Ftt93dj8CphKOBSXE/1U
+         TA9yRTGiIYdnvyfGyrO3NxXvENUg3bN9B4wUskFws67k2dcY70IkWJVmV0uurT9DwBTX
+         hYoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=eqy7Jg2fPCw6JKPfho3FMkiXLNsZ2vOMeF3B2A8Mojc=;
+        b=ZiRcefnAtWU4dqlUXuA72SMS54KcNm9aDkHtBjGQ9wCyuupkluZilFFh9TPHScwi7W
+         8SNTDOl3RRuW0maYrpOkuoPfbsNSAyynIRpVjOSya1l/T141p/mrQAiLc2PZE4tJAbrU
+         PleDCY9lCIE/DiKkDK7b7d2It09OVTbrp5U/rctufoJPrD0/PaiNA5G0oOy7lSpEssYx
+         7nEj37bRSbsFYvcr33mCDlzy8Xb8O3ySkSSFEyW99X046CBWXWhXEqDZwv5pISg0SAhl
+         j9tN9Se8jtuS4nfAW0ng/bCHH2xFes9YFBOvwEqUQQ4z9n5S4zItP/rPLienkMstxwLF
+         4lIg==
+X-Gm-Message-State: AOAM531e1OGsbHjXTFwdukCBri7/gXbcXu0222VzyM8SPB1JANOeaDwZ
+        yHzFWCYirDcl6Gd88uEenJwcObVYidNAaw==
+X-Google-Smtp-Source: ABdhPJzF6r3Ll5i0gnC5JVk814gY1eCy0pl3+e4WV+JpVGbNy1VCb75/aaDOiQbf2OJV/MzOqd48ag==
+X-Received: by 2002:a17:906:f4f:: with SMTP id h15mr4501249ejj.17.1602770245105;
+        Thu, 15 Oct 2020 06:57:25 -0700 (PDT)
+Received: from [192.168.137.56] (tmo-123-114.customers.d1-online.com. [80.187.123.114])
+        by smtp.gmail.com with ESMTPSA id i8sm1619354ejg.84.2020.10.15.06.57.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Oct 2020 06:57:24 -0700 (PDT)
+Reply-To: christian.koenig@amd.com
+Subject: Re: [PATCH v4 01/10] drm/vram-helper: Remove invariant parameters
+ from internal kmap function
+To:     Thomas Zimmermann <tzimmermann@suse.de>,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
+        alexander.deucher@amd.com, christian.koenig@amd.com,
+        kraxel@redhat.com, l.stach@pengutronix.de,
+        linux+etnaviv@armlinux.org.uk, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, yuq825@gmail.com,
+        bskeggs@redhat.com, robh@kernel.org, tomeu.vizoso@collabora.com,
+        steven.price@arm.com, alyssa.rosenzweig@collabora.com,
+        hjc@rock-chips.com, heiko@sntech.de, hdegoede@redhat.com,
+        sean@poorly.run, eric@anholt.net, oleksandr_andrushchenko@epam.com,
+        ray.huang@amd.com, sumit.semwal@linaro.org,
+        emil.velikov@collabora.com, luben.tuikov@amd.com, apaneers@amd.com,
+        linus.walleij@linaro.org, melissa.srw@gmail.com,
+        chris@chris-wilson.co.uk, miaoqinglang@huawei.com
+Cc:     linux-samsung-soc@vger.kernel.org, lima@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        etnaviv@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linaro-mm-sig@lists.linaro.org, linux-rockchip@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+        spice-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <20201015123806.32416-1-tzimmermann@suse.de>
+ <20201015123806.32416-2-tzimmermann@suse.de>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <06cab96a-5224-46dc-dbd2-8eb4950946cc@gmail.com>
+Date:   Thu, 15 Oct 2020 15:57:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <875z7blrqu.fsf@kernel.org>
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+In-Reply-To: <20201015123806.32416-2-tzimmermann@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 15, 2020 at 01:15:37PM +0300, Felipe Balbi wrote:
-> Serge Semin <Sergey.Semin@baikalelectronics.ru> writes:
-> 
-> > On Wed, Oct 14, 2020 at 05:09:37PM +0300, Felipe Balbi wrote:
-> >> 
-> >> Hi Serge,
-> >> 
-> >> Serge Semin <Sergey.Semin@baikalelectronics.ru> writes:
-> >> > In accordance with the DWC USB3 bindings the corresponding node name is
-> >> > suppose to comply with Generic USB HCD DT schema, which requires the USB
-> >> 
-> >
-> >> DWC3 is not a simple HDC, though.
-> >
-> > Yeah, strictly speaking it is equipped with a lot of vendor-specific stuff,
-> > which are tuned by the DWC USB3 driver in the kernel. But after that the
-> > controller is registered as xhci-hcd device so it's serviced by the xHCI driver,
-> 
+Am 15.10.20 um 14:37 schrieb Thomas Zimmermann:
+> The parameters map and is_iomem are always of the same value. Removed them
+> to prepares the function for conversion to struct dma_buf_map.
+>
+> v4:
+> 	* don't check for !kmap->virtual; will always be false
+>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-> in Dual-role or host-only builds, that's correct. We can also have
-> peripheral-only builds (both SW or HW versions) which means xhci isn't
-> even in the picture.
+Reviewed-by: Christian König <christian.koenig@amd.com>
 
-Hm, good point. In that case perhaps we'll need to apply the xHCI DT schema
-conditionally. Like this:
-
-- allOf:
--   - $ref: usb-xhci.yaml#
-+ allOf:
-+   - if:
-+       properties:
-+         dr_mode:
-+           const: peripheral
-+     then:
-+       $ref: usb-hcd.yaml#
-+     else:
-+       $ref: usb-xhci.yaml#
-
-Note, we need to have the peripheral device being compatible with the
-usb-hcd.yaml schema to support the maximum-speed, dr_mode properties and to
-comply with the USB node naming constraint.
-
--Sergey
-
-> 
-> -- 
-> balbi
-
+> ---
+>   drivers/gpu/drm/drm_gem_vram_helper.c | 18 ++++--------------
+>   1 file changed, 4 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
+> index 3213429f8444..2d5ed30518f1 100644
+> --- a/drivers/gpu/drm/drm_gem_vram_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_vram_helper.c
+> @@ -382,32 +382,22 @@ int drm_gem_vram_unpin(struct drm_gem_vram_object *gbo)
+>   }
+>   EXPORT_SYMBOL(drm_gem_vram_unpin);
+>   
+> -static void *drm_gem_vram_kmap_locked(struct drm_gem_vram_object *gbo,
+> -				      bool map, bool *is_iomem)
+> +static void *drm_gem_vram_kmap_locked(struct drm_gem_vram_object *gbo)
+>   {
+>   	int ret;
+>   	struct ttm_bo_kmap_obj *kmap = &gbo->kmap;
+> +	bool is_iomem;
+>   
+>   	if (gbo->kmap_use_count > 0)
+>   		goto out;
+>   
+> -	if (kmap->virtual || !map)
+> -		goto out;
+> -
+>   	ret = ttm_bo_kmap(&gbo->bo, 0, gbo->bo.num_pages, kmap);
+>   	if (ret)
+>   		return ERR_PTR(ret);
+>   
+>   out:
+> -	if (!kmap->virtual) {
+> -		if (is_iomem)
+> -			*is_iomem = false;
+> -		return NULL; /* not mapped; don't increment ref */
+> -	}
+>   	++gbo->kmap_use_count;
+> -	if (is_iomem)
+> -		return ttm_kmap_obj_virtual(kmap, is_iomem);
+> -	return kmap->virtual;
+> +	return ttm_kmap_obj_virtual(kmap, &is_iomem);
+>   }
+>   
+>   static void drm_gem_vram_kunmap_locked(struct drm_gem_vram_object *gbo)
+> @@ -452,7 +442,7 @@ void *drm_gem_vram_vmap(struct drm_gem_vram_object *gbo)
+>   	ret = drm_gem_vram_pin_locked(gbo, 0);
+>   	if (ret)
+>   		goto err_ttm_bo_unreserve;
+> -	base = drm_gem_vram_kmap_locked(gbo, true, NULL);
+> +	base = drm_gem_vram_kmap_locked(gbo);
+>   	if (IS_ERR(base)) {
+>   		ret = PTR_ERR(base);
+>   		goto err_drm_gem_vram_unpin_locked;
 
