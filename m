@@ -2,418 +2,173 @@ Return-Path: <SRS0=zMHd=DW=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E674C4363D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 14:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18480C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 14:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B84482225B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 14:08:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="r6pk+dnZ"
+	by mail.kernel.org (Postfix) with ESMTP id AEA4922248
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 14:10:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730559AbgJOOIi (ORCPT
+        id S2388133AbgJOOK5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 15 Oct 2020 10:08:38 -0400
-Received: from mail-dm6nam12on2070.outbound.protection.outlook.com ([40.107.243.70]:58272
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726819AbgJOOIh (ORCPT
+        Thu, 15 Oct 2020 10:10:57 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:35727 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388046AbgJOOK4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 15 Oct 2020 10:08:37 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LVdBYlHA+ZZ+5Hh3DDrQxM7vxQE+6uYWnUoJx+JLeWkROSQrqHtebXxOONTGNcpSr2VdikKaW/t+6ExBHDQgqHQigrKXx1AneUpo55Paj61VDSK3uyWpOuhyQl7epJab0K8yPA2JAswjsjo692MvK8kZ7xMxsL0IwUSR5eYv9u8X/bTBQmv7p+y1CCJmRp4ujc+VOY6IWQdes609C82t/Nq07uAhrtcLc0vtHVwfaxxJe9UBykPoc7ANdAGaU+/PaQIQfAkj+vCQ5eG53FDuX8u0a9hnRsfCnme8AQ+ZEyBzkdehFbouloOMyDLM7GoFc9YTqSbltrg46Scz0IPdtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ElSABT3dzYVayvBI+cG0Ylje7BwHhTr2iqRweK77mNg=;
- b=WE/s9LqvzFrHOJjACjHySCn3BVo9HvogD3tfbqQfGN3SHuDVkyQexge6HQnbU4nAZaneflYPS9huYIF4Ej5YCJe0zO7TOSPbnr9Iui3s744Uosc6QzoVUjFVWP0Y3iR8vmhTJtOhTxAMxqAFYLkk/K1f7CGgSpU6EeqUE75tR1nOjpe0lfTdSrO3cowCi0NfKDW17woLaVxEUnRDGYXA4WIy4XpJ1zW0QXmdPMPNR+zs7/DX0kDPaAFGI56CJUTqPmJDfYqnyccY0V5sHKtDs8Mgp/H8vNKusiPk22box3aLg08lyC7qFCaW8H6OnrnMXVvaXEZBsmQd+GZaBUb7rA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ElSABT3dzYVayvBI+cG0Ylje7BwHhTr2iqRweK77mNg=;
- b=r6pk+dnZN73mOjvhDP5xuMOwdktd8SA3qRp5VnbFn+/BUZO/qrcsoOhfSw/aAFHVQTPPoRdZ42OAJKw7C0H5RBq0x/0EJY/MuW1hFPwlFSJs9SzDu2/FtI4wjkDZOvjlnd5e4Y6sHrmoAwwB1E/qPTWUQoYZy8W89HBUAJVCQhc=
-Authentication-Results: lists.linaro.org; dkim=none (message not signed)
- header.d=none;lists.linaro.org; dmarc=none action=none header.from=amd.com;
-Received: from MN2PR12MB3775.namprd12.prod.outlook.com (2603:10b6:208:159::19)
- by MN2PR12MB3951.namprd12.prod.outlook.com (2603:10b6:208:16b::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.21; Thu, 15 Oct
- 2020 14:08:29 +0000
-Received: from MN2PR12MB3775.namprd12.prod.outlook.com
- ([fe80::f8f7:7403:1c92:3a60]) by MN2PR12MB3775.namprd12.prod.outlook.com
- ([fe80::f8f7:7403:1c92:3a60%6]) with mapi id 15.20.3477.021; Thu, 15 Oct 2020
- 14:08:29 +0000
-Subject: Re: [PATCH v4 05/10] drm/ttm: Add vmap/vunmap to TTM and TTM GEM
- helpers
-To:     Thomas Zimmermann <tzimmermann@suse.de>,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
-        alexander.deucher@amd.com, kraxel@redhat.com,
-        l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
-        christian.gmeiner@gmail.com, inki.dae@samsung.com,
-        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
-        yuq825@gmail.com, bskeggs@redhat.com, robh@kernel.org,
-        tomeu.vizoso@collabora.com, steven.price@arm.com,
-        alyssa.rosenzweig@collabora.com, hjc@rock-chips.com,
-        heiko@sntech.de, hdegoede@redhat.com, sean@poorly.run,
-        eric@anholt.net, oleksandr_andrushchenko@epam.com,
-        ray.huang@amd.com, sumit.semwal@linaro.org,
-        emil.velikov@collabora.com, luben.tuikov@amd.com, apaneers@amd.com,
-        linus.walleij@linaro.org, melissa.srw@gmail.com,
-        chris@chris-wilson.co.uk, miaoqinglang@huawei.com
-Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        etnaviv@lists.freedesktop.org,
+        Thu, 15 Oct 2020 10:10:56 -0400
+X-Greylist: delayed 353 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Oct 2020 10:10:55 EDT
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id F0E285800F2;
+        Thu, 15 Oct 2020 10:05:01 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Thu, 15 Oct 2020 10:05:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=Z9xTzrKE90Xd3ra3VJfEuWMqFvx
+        8M30d0ikEN/YU2Q4=; b=VpK1rgiG7CnlzeiebRXiMWglDV7yzG7X5v1zpJiZUjW
+        NLjv4yySGF5TnuRaMaxipzyOynqWcM8LTNOhO1wLH3hbAE0bfb0lA3gpZtHjr9Vz
+        YXCcoOPeGg6Ytvw6qG7uR/e2oKIGnQQb+aXfmcCEcOF3DWjyPawRyaFc3CGg8gaO
+        3gaY7tXQ0AYcK3s1UumjHkOaTFNK4cbCEZjQj432SqGxsgs9sb4EWXiqcSTMo5op
+        8wVfX0yhhNFIPiMEcOPXF6NFZIQ3BPVfqhTLphS/0okhYqMCBXyhji6h4mn3RgTh
+        gjTWPcQktVK+tN/J31qLAPDt3MRtXF2fT/uiP9rkBGg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=Z9xTzr
+        KE90Xd3ra3VJfEuWMqFvx8M30d0ikEN/YU2Q4=; b=qkJfUAlRyppCWMNmdIsZDw
+        3wF9OAjW5ZbrOkPgof7keJFLQtMj7YVr1h8Ixeokwt+4QOD0AJxU7XxvJrRcXMu9
+        4JyW96/V2Yr7jUyGvhOvmNc4sgKccvhDzMR1HRV32Mah4CkH84nk5IF3Z1xWh6xN
+        IxrO4bgEAUwE4C6uXOZuvbuFAXjFrwrqW6LpDXmj+03vOtA9hsa5ixDd3c6NSdih
+        zZEV94Y3NKXlN8+GugHjVD7QJd8awD7nYz6W9BlA1HFLE5+qdzmzBwhBFWvU0qwh
+        BRDqF7I/d7C1sBvxLAxsRNXf/sGA/oKA+UgiCElmzu+i/6xXGQv5QhYQgpfgJPYw
+        ==
+X-ME-Sender: <xms:CFeIX8oKODlkVSjd0G1WqyqcdB9mZWzKnFunFnBn_DWbLvqoAWGGwA>
+    <xme:CFeIXyowvBx2DQ80yck3i4p8icsdU6-rcDtrc-c6xpj0q2_XcFwii78awaNP7k8eU
+    S4TxvM6DNP2Kj1fa-4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrieefgdejvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
+    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:CFeIXxOWfhkddmN7eJ-75GBKo7cSfZpcLWxJKPU5XhJ6hAeGQaeb3A>
+    <xmx:CFeIXz5kIq6_CTxLUEiN-M3kWq1KfGqOmEH6WR6oXN8MqSgVJzE9jg>
+    <xmx:CFeIX74mIHRmeGiDN8ZIlDsb_SGz1dkETC0lRDqgT1WPX51sTScQcg>
+    <xmx:DVeIX8OEcJRjikTroT85KOgZc0Ze9oIXDyey6A75lvN8S3rnYOu05A>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id E92303280065;
+        Thu, 15 Oct 2020 10:04:55 -0400 (EDT)
+Date:   Thu, 15 Oct 2020 16:04:54 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Chen-Yu Tsai <wens@csie.org>, Wei Xu <xuwei5@hisilicon.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Roger Quadros <rogerq@ti.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, lima@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, spice-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, xen-devel@lists.xenproject.org,
-        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-References: <20201015123806.32416-1-tzimmermann@suse.de>
- <20201015123806.32416-6-tzimmermann@suse.de>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <935d5771-5645-62a6-849c-31e286db1e30@amd.com>
-Date:   Thu, 15 Oct 2020 16:08:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-In-Reply-To: <20201015123806.32416-6-tzimmermann@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [80.187.123.114]
-X-ClientProxiedBy: AM0PR10CA0062.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:208:15::15) To MN2PR12MB3775.namprd12.prod.outlook.com
- (2603:10b6:208:159::19)
+        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 20/20] arch: dts: Fix DWC USB3 DT nodes name
+Message-ID: <20201015140454.mctkhgkhegwdnfxk@gilmour.lan>
+References: <20201014101402.18271-1-Sergey.Semin@baikalelectronics.ru>
+ <20201014101402.18271-21-Sergey.Semin@baikalelectronics.ru>
+ <878sc8lx0e.fsf@kernel.org>
+ <20201014143720.yny3jco5pkb7dr4b@mobilestation>
+ <875z7blrqu.fsf@kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.137.56] (80.187.123.114) by AM0PR10CA0062.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:15::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.20 via Frontend Transport; Thu, 15 Oct 2020 14:08:19 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 13dc04ab-0081-4173-237e-08d87113c9f4
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3951:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR12MB39516C6629AAF06CAD2C31B583020@MN2PR12MB3951.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: fDfIXr9/7X5kT1QrRcll0NCUVn6kZ8pGzIQQCJD48eLvwHgwtolumBsnTl8tYr9tkSi/N3CieMnkAAyeJepHo6/z+4WIRopBXoeGwyNCzI4zKnXqdL+yRPQ1PwOb7oVTFNjZ+Mc8g9yZHCZxbQf3MkD9QDXXLnWs3ZP/pl9hdtICYNkqzqvsawUK09jIOeVs0PSYzt9E2Sjx9VKeYI3GUSsq4gnkqmgZf/fPq2duqazk4l4Md4erwreo/2QJZ9qlQLEEy+AbJ8HDEyojAfuXRHASHmdzA3olwGP4QgUMnIv8lWx5JGeEdhkSBkgk5LS9bF81q9b3+z2/ss8JouKYD9MOil4qFhfdmzWqq0TfhfgxPiNf1x3PvUV8kJ/kJwCfSnu2IfWxKUIPFaLZhISOXTVmapL6F3TkjJ516wCoNeJvAHLsz8QSj9awQUzPY6Ar
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3775.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(346002)(136003)(396003)(366004)(39860400002)(83380400001)(86362001)(8936002)(6666004)(956004)(6486002)(34490700002)(7406005)(2906002)(2616005)(16576012)(16526019)(5660300002)(31696002)(316002)(36756003)(66476007)(66556008)(66946007)(186003)(8676002)(52116002)(26005)(4326008)(7416002)(478600001)(31686004)(921003)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: WFQveVdFhYq2o10uQNOnzM2DZpX9ODAzL3xVKiUrWXH9Sewxa5qPVTBHbCrzZeNwRUWPgaHrhvY3+Iu89O5vBnpPlQ4W8nLhzEHWk7tAlj4zRbJC9DWSU6MaKOc2vZZc2KVhsAmzW7s1rIhwy28V9jRrYltMyPr1dJZTSo34VEhdWUPY6sEa/pQHJKP7WmTG6Xb5wSm91jx1KoKdL1SRPUW1g3cAGPIMerhXDV6VBKAHCcPEo/JXMrhcG8H/Fdm4+s5KC3kTOAWuVkF+koZGy/uPSMpsDd4fRa8b4Cvd4jv+/Px/wLqr2FONG/EGeKHUOzvlu9LylkyHI8NAKWQG9vY39OzkaeYRfiZ53UKeWUGIT9m7xrbOK7t1cmeY8b4gW0ho5rKyYIU6qgWjii3eIVXaZWMS2xG7YLh8dgKu1fS+eFyQe1NfphHX5aXTEIsehsFsHuy+tu9IcloFZxbd8s2y6K+LV4CoUdSMjGvS8lTHNT05megqHOF1e0i99t/nup/iLImR001KBbm1muR2j064yvZ7xx+lSvrh3wD44pjZrZ+F9sXxoP4b7WBKbEVK/JBs/1KCUuZqOB0Kg8h+sUQQCDIfZiKVR+RbyEqAH6hultzvVfomRqIIsVEgiVitkdLZLD7yQT/LeTUr9mvm6g==
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13dc04ab-0081-4173-237e-08d87113c9f4
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3775.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2020 14:08:29.1475
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: foxGeDB2c3N7aCsaE2FooMCOwo6Uufe5wNMOP0BllgmW7Ma8XHm6bEp3UJWrPfjC
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3951
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7qefs4ajnodpk4f6"
+Content-Disposition: inline
+In-Reply-To: <875z7blrqu.fsf@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Am 15.10.20 um 14:38 schrieb Thomas Zimmermann:
-> The new functions ttm_bo_{vmap,vunmap}() map and unmap a TTM BO in kernel
-> address space. The mapping's address is returned as struct dma_buf_map.
-> Each function is a simplified version of TTM's existing kmap code. Both
-> functions respect the memory's location ani/or writecombine flags.
->
-> On top TTM's functions, GEM TTM helpers got drm_gem_ttm_{vmap,vunmap}(),
-> two helpers that convert a GEM object into the TTM BO and forward the call
-> to TTM's vmap/vunmap. These helpers can be dropped into the rsp GEM object
-> callbacks.
->
-> v4:
-> 	* drop ttm_kmap_obj_to_dma_buf() in favor of vmap helpers (Daniel,
-> 	  Christian)
 
-Bunch of minor comments below, but over all look very solid to me.
+--7qefs4ajnodpk4f6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
->   drivers/gpu/drm/drm_gem_ttm_helper.c | 38 +++++++++++++++
->   drivers/gpu/drm/ttm/ttm_bo_util.c    | 72 ++++++++++++++++++++++++++++
->   include/drm/drm_gem_ttm_helper.h     |  6 +++
->   include/drm/ttm/ttm_bo_api.h         | 28 +++++++++++
->   include/linux/dma-buf-map.h          | 20 ++++++++
->   5 files changed, 164 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_gem_ttm_helper.c b/drivers/gpu/drm/drm_gem_ttm_helper.c
-> index 0e4fb9ba43ad..db4c14d78a30 100644
-> --- a/drivers/gpu/drm/drm_gem_ttm_helper.c
-> +++ b/drivers/gpu/drm/drm_gem_ttm_helper.c
-> @@ -49,6 +49,44 @@ void drm_gem_ttm_print_info(struct drm_printer *p, unsigned int indent,
->   }
->   EXPORT_SYMBOL(drm_gem_ttm_print_info);
->   
-> +/**
-> + * drm_gem_ttm_vmap() - vmap &ttm_buffer_object
-> + * @gem: GEM object.
-> + * @map: [out] returns the dma-buf mapping.
-> + *
-> + * Maps a GEM object with ttm_bo_vmap(). This function can be used as
-> + * &drm_gem_object_funcs.vmap callback.
-> + *
-> + * Returns:
-> + * 0 on success, or a negative errno code otherwise.
-> + */
-> +int drm_gem_ttm_vmap(struct drm_gem_object *gem,
-> +		     struct dma_buf_map *map)
-> +{
-> +	struct ttm_buffer_object *bo = drm_gem_ttm_of_gem(gem);
-> +
-> +	return ttm_bo_vmap(bo, map);
-> +
-> +}
-> +EXPORT_SYMBOL(drm_gem_ttm_vmap);
-> +
-> +/**
-> + * drm_gem_ttm_vunmap() - vunmap &ttm_buffer_object
-> + * @gem: GEM object.
-> + * @map: dma-buf mapping.
-> + *
-> + * Unmaps a GEM object with ttm_bo_vunmap(). This function can be used as
-> + * &drm_gem_object_funcs.vmap callback.
-> + */
-> +void drm_gem_ttm_vunmap(struct drm_gem_object *gem,
-> +			struct dma_buf_map *map)
-> +{
-> +	struct ttm_buffer_object *bo = drm_gem_ttm_of_gem(gem);
-> +
-> +	ttm_bo_vunmap(bo, map);
-> +}
-> +EXPORT_SYMBOL(drm_gem_ttm_vunmap);
-> +
->   /**
->    * drm_gem_ttm_mmap() - mmap &ttm_buffer_object
->    * @gem: GEM object.
-> diff --git a/drivers/gpu/drm/ttm/ttm_bo_util.c b/drivers/gpu/drm/ttm/ttm_bo_util.c
-> index bdee4df1f3f2..80c42c774c7d 100644
-> --- a/drivers/gpu/drm/ttm/ttm_bo_util.c
-> +++ b/drivers/gpu/drm/ttm/ttm_bo_util.c
-> @@ -32,6 +32,7 @@
->   #include <drm/ttm/ttm_bo_driver.h>
->   #include <drm/ttm/ttm_placement.h>
->   #include <drm/drm_vma_manager.h>
-> +#include <linux/dma-buf-map.h>
->   #include <linux/io.h>
->   #include <linux/highmem.h>
->   #include <linux/wait.h>
-> @@ -526,6 +527,77 @@ void ttm_bo_kunmap(struct ttm_bo_kmap_obj *map)
->   }
->   EXPORT_SYMBOL(ttm_bo_kunmap);
->   
-> +int ttm_bo_vmap(struct ttm_buffer_object *bo, struct dma_buf_map *map)
-> +{
-> +	struct ttm_resource *mem = &bo->mem;
-> +	int ret;
-> +
-> +	ret = ttm_mem_io_reserve(bo->bdev, mem);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (mem->bus.is_iomem) {
-> +		void __iomem *vaddr_iomem;
-> +		unsigned long size = bo->num_pages << PAGE_SHIFT;
+On Thu, Oct 15, 2020 at 01:15:37PM +0300, Felipe Balbi wrote:
+> Serge Semin <Sergey.Semin@baikalelectronics.ru> writes:
+>=20
+> > On Wed, Oct 14, 2020 at 05:09:37PM +0300, Felipe Balbi wrote:
+> >>=20
+> >> Hi Serge,
+> >>=20
+> >> Serge Semin <Sergey.Semin@baikalelectronics.ru> writes:
+> >> > In accordance with the DWC USB3 bindings the corresponding node name=
+ is
+> >> > suppose to comply with Generic USB HCD DT schema, which requires the=
+ USB
+> >>=20
+> >
+> >> DWC3 is not a simple HDC, though.
+> >
+> > Yeah, strictly speaking it is equipped with a lot of vendor-specific st=
+uff,
+> > which are tuned by the DWC USB3 driver in the kernel. But after that the
+> > controller is registered as xhci-hcd device so it's serviced by the xHC=
+I driver,
+>=20
+> in Dual-role or host-only builds, that's correct. We can also have
+> peripheral-only builds (both SW or HW versions) which means xhci isn't
+> even in the picture.
 
-Please use uint64_t here and make sure to cast bo->num_pages before 
-shifting.
+It doesn't really matter though, or at least it does for what the new
+name might be, but the old one currently used is still pretty bad.
 
-We have an unit tests of allocating a 8GB BO and that should work on a 
-32bit machine as well :)
+The DT spec says that the node name is the class of the device. "usb" as
+the HCD binding mandates is one, but the current nodes currently have
+completely different names from one DT to another - which is already an
+issue - and most of them have dwc3 or some variant of it, which doesn't
+really qualify for a class name.
 
-> +
-> +		if (mem->bus.addr)
-> +			vaddr_iomem = (void *)(((u8 *)mem->bus.addr));
-> +		else if (mem->placement & TTM_PL_FLAG_WC)
+Maxime
 
-I've just nuked the TTM_PL_FLAG_WC flag in drm-misc-next. There is a new 
-mem->bus.caching enum as replacement.
+--7qefs4ajnodpk4f6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +			vaddr_iomem = ioremap_wc(mem->bus.offset, size);
-> +		else
-> +			vaddr_iomem = ioremap(mem->bus.offset, size);
-> +
-> +		if (!vaddr_iomem)
-> +			return -ENOMEM;
-> +
-> +		dma_buf_map_set_vaddr_iomem(map, vaddr_iomem);
-> +
-> +	} else {
-> +		struct ttm_operation_ctx ctx = {
-> +			.interruptible = false,
-> +			.no_wait_gpu = false
-> +		};
-> +		struct ttm_tt *ttm = bo->ttm;
-> +		pgprot_t prot;
-> +		void *vaddr;
-> +
-> +		BUG_ON(!ttm);
+-----BEGIN PGP SIGNATURE-----
 
-I think we can drop this, populate will just crash badly anyway.
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCX4hXBgAKCRDj7w1vZxhR
+xc/hAP46ODmwvjIPqwI5nlO3xwJrtwfpxoSlSPh1JvpLEN72cwEAjRtVXTcj4t09
+7kGf6xqLq3NWxWeo2Ic3p5EpiWIBzgA=
+=pGih
+-----END PGP SIGNATURE-----
 
-> +
-> +		ret = ttm_tt_populate(bo->bdev, ttm, &ctx);
-> +		if (ret)
-> +			return ret;
-> +
-> +		/*
-> +		 * We need to use vmap to get the desired page protection
-> +		 * or to make the buffer object look contiguous.
-> +		 */
-> +		prot = ttm_io_prot(mem->placement, PAGE_KERNEL);
-
-The calling convention has changed on drm-misc-next as well, but should 
-be trivial to adapt.
-
-Regards,
-Christian.
-
-> +		vaddr = vmap(ttm->pages, bo->num_pages, 0, prot);
-> +		if (!vaddr)
-> +			return -ENOMEM;
-> +
-> +		dma_buf_map_set_vaddr(map, vaddr);
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(ttm_bo_vmap);
-> +
-> +void ttm_bo_vunmap(struct ttm_buffer_object *bo, struct dma_buf_map *map)
-> +{
-> +	if (dma_buf_map_is_null(map))
-> +		return;
-> +
-> +	if (map->is_iomem)
-> +		iounmap(map->vaddr_iomem);
-> +	else
-> +		vunmap(map->vaddr);
-> +	dma_buf_map_clear(map);
-> +
-> +	ttm_mem_io_free(bo->bdev, &bo->mem);
-> +}
-> +EXPORT_SYMBOL(ttm_bo_vunmap);
-> +
->   static int ttm_bo_wait_free_node(struct ttm_buffer_object *bo,
->   				 bool dst_use_tt)
->   {
-> diff --git a/include/drm/drm_gem_ttm_helper.h b/include/drm/drm_gem_ttm_helper.h
-> index 118cef76f84f..7c6d874910b8 100644
-> --- a/include/drm/drm_gem_ttm_helper.h
-> +++ b/include/drm/drm_gem_ttm_helper.h
-> @@ -10,11 +10,17 @@
->   #include <drm/ttm/ttm_bo_api.h>
->   #include <drm/ttm/ttm_bo_driver.h>
->   
-> +struct dma_buf_map;
-> +
->   #define drm_gem_ttm_of_gem(gem_obj) \
->   	container_of(gem_obj, struct ttm_buffer_object, base)
->   
->   void drm_gem_ttm_print_info(struct drm_printer *p, unsigned int indent,
->   			    const struct drm_gem_object *gem);
-> +int drm_gem_ttm_vmap(struct drm_gem_object *gem,
-> +		     struct dma_buf_map *map);
-> +void drm_gem_ttm_vunmap(struct drm_gem_object *gem,
-> +			struct dma_buf_map *map);
->   int drm_gem_ttm_mmap(struct drm_gem_object *gem,
->   		     struct vm_area_struct *vma);
->   
-> diff --git a/include/drm/ttm/ttm_bo_api.h b/include/drm/ttm/ttm_bo_api.h
-> index 37102e45e496..2c59a785374c 100644
-> --- a/include/drm/ttm/ttm_bo_api.h
-> +++ b/include/drm/ttm/ttm_bo_api.h
-> @@ -48,6 +48,8 @@ struct ttm_bo_global;
->   
->   struct ttm_bo_device;
->   
-> +struct dma_buf_map;
-> +
->   struct drm_mm_node;
->   
->   struct ttm_placement;
-> @@ -494,6 +496,32 @@ int ttm_bo_kmap(struct ttm_buffer_object *bo, unsigned long start_page,
->    */
->   void ttm_bo_kunmap(struct ttm_bo_kmap_obj *map);
->   
-> +/**
-> + * ttm_bo_vmap
-> + *
-> + * @bo: The buffer object.
-> + * @map: pointer to a struct dma_buf_map representing the map.
-> + *
-> + * Sets up a kernel virtual mapping, using ioremap or vmap to the
-> + * data in the buffer object. The parameter @map returns the virtual
-> + * address as struct dma_buf_map. Unmap the buffer with ttm_bo_vunmap().
-> + *
-> + * Returns
-> + * -ENOMEM: Out of memory.
-> + * -EINVAL: Invalid range.
-> + */
-> +int ttm_bo_vmap(struct ttm_buffer_object *bo, struct dma_buf_map *map);
-> +
-> +/**
-> + * ttm_bo_vunmap
-> + *
-> + * @bo: The buffer object.
-> + * @map: Object describing the map to unmap.
-> + *
-> + * Unmaps a kernel map set up by ttm_bo_vmap().
-> + */
-> +void ttm_bo_vunmap(struct ttm_buffer_object *bo, struct dma_buf_map *map);
-> +
->   /**
->    * ttm_bo_mmap_obj - mmap memory backed by a ttm buffer object.
->    *
-> diff --git a/include/linux/dma-buf-map.h b/include/linux/dma-buf-map.h
-> index fd1aba545fdf..2e8bbecb5091 100644
-> --- a/include/linux/dma-buf-map.h
-> +++ b/include/linux/dma-buf-map.h
-> @@ -45,6 +45,12 @@
->    *
->    *	dma_buf_map_set_vaddr(&map. 0xdeadbeaf);
->    *
-> + * To set an address in I/O memory, use dma_buf_map_set_vaddr_iomem().
-> + *
-> + * .. code-block:: c
-> + *
-> + *	dma_buf_map_set_vaddr_iomem(&map. 0xdeadbeaf);
-> + *
->    * Test if a mapping is valid with either dma_buf_map_is_set() or
->    * dma_buf_map_is_null().
->    *
-> @@ -118,6 +124,20 @@ static inline void dma_buf_map_set_vaddr(struct dma_buf_map *map, void *vaddr)
->   	map->is_iomem = false;
->   }
->   
-> +/**
-> + * dma_buf_map_set_vaddr_iomem - Sets a dma-buf mapping structure to an address in I/O memory
-> + * @map:		The dma-buf mapping structure
-> + * @vaddr_iomem:	An I/O-memory address
-> + *
-> + * Sets the address and the I/O-memory flag.
-> + */
-> +static inline void dma_buf_map_set_vaddr_iomem(struct dma_buf_map *map,
-> +					       void __iomem *vaddr_iomem)
-> +{
-> +	map->vaddr_iomem = vaddr_iomem;
-> +	map->is_iomem = true;
-> +}
-> +
->   /**
->    * dma_buf_map_is_equal - Compares two dma-buf mapping structures for equality
->    * @lhs:	The dma-buf mapping structure
-
+--7qefs4ajnodpk4f6--
