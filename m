@@ -2,154 +2,142 @@ Return-Path: <SRS0=zMHd=DW=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 693F0C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 07:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82382C43467
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 10:15:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FECB22249
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 07:55:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="HQSl5QWf"
+	by mail.kernel.org (Postfix) with ESMTP id 24CF722260
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 10:15:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1602756958;
+	bh=Z6L85tl0hUzxc/Wf2yAWwRbRBy0g42YVSMNsAOso/ic=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
+	b=mQcsR3Z+eeNrxxAvX1vlLOJdk0HrX06EZN/nAqSfohpojaWPW7wCg02D5Fi2+VDYy
+	 8CaAQWgYJNvZBMeWxBFOleuZzR4WJ5V0r2Id7AfhY0wWYTfQ/tv1IsQjgaSglhvCYq
+	 XCLmTkdq7KuhJ0Q7z1lHcshjXV2Vftovqa6p9x5s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729752AbgJOHzu (ORCPT
+        id S2389205AbgJOKPy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 15 Oct 2020 03:55:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52516 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbgJOHzu (ORCPT
+        Thu, 15 Oct 2020 06:15:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389099AbgJOKPx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 15 Oct 2020 03:55:50 -0400
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E19CC061755
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Oct 2020 00:55:50 -0700 (PDT)
-Received: by mail-ot1-x342.google.com with SMTP id n15so2091088otl.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Oct 2020 00:55:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SKpQn0FDypcCkXIOygWWNsNfWX2lsbxOB8uCbMksAIA=;
-        b=HQSl5QWfcvPbV2pGTi/CgSYNE6yrm43VcrDZdZgXfpSEZAPIWhWUaC3Z9+19ZGIOT/
-         L1FwUAUuyIWjzwGqR/YpO/MiPOAvkTi9v6qcb2Wcm3bTcyjMzBlJxDT1/tZLBuBLm3mU
-         NDzd8Hc1lCeymtif5yx0kEE4DAlngk2j4kC84=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SKpQn0FDypcCkXIOygWWNsNfWX2lsbxOB8uCbMksAIA=;
-        b=ZantcMXb32/SX4WjPsQfpvJfAl/n4hir5bhC/qA3Rx6alUYxCbREYXiXidEKbZHGln
-         FvmvGAIWGNwi7nl8cKArllq5HNecUSy6KqnnMBx8WFQnGslfmXnWXhAFBQYZSfXUOMJb
-         vxtDOVT0Te6SqjvhHiPIDB5S9mJOhYNq0EJ5+AYHcNBKypX23fDjuv5y4j0MD3ovO+FF
-         VXgyHGVToZokHfZhdM5vxhNhKH/XQioDjRsAXZJcWKhTyu9u1SD2zrDbiuUyjaT/G0MH
-         CkwkLCfWHRquJGuqgmL2FPIhl0lzZb7/Ew7OvyA6MoXL1ZRyzm4dUCQUBuz5P0eLJZcq
-         AJ7w==
-X-Gm-Message-State: AOAM530LZ9B1gx9QcTSPlUrWURm2C3xO8bA4rqhII5Jb4qHslDf32p+T
-        DnqJirmYgmL8yFBkcs08k44qEeIOsgC0ZdKTmHYBww==
-X-Google-Smtp-Source: ABdhPJxdSyalRqLRcx8/tcfIkmtSxIfRSiuYpFEh1r0/JAJixM8EE3XAGRAgngn5UADgaJioF6PuXkNghwu1P0DfUPk=
-X-Received: by 2002:a05:6830:8b:: with SMTP id a11mr1751471oto.303.1602748549701;
- Thu, 15 Oct 2020 00:55:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
- <20201009075934.3509076-15-daniel.vetter@ffwll.ch> <20201009123109.GO5177@ziepe.ca>
- <CAKMK7uFpPP-Q0jC0vM7vYPEcg0m4NzTw+Ld=swdTF3BgMX5Qug@mail.gmail.com>
- <20201009143209.GS5177@ziepe.ca> <CAPcyv4j54O8ac6WB3LEeNud2r11V26gA0PRKK9bhyEMF67AXtQ@mail.gmail.com>
- <20201015000939.GD6763@ziepe.ca> <CAKMK7uGu8yWRAGZX-dz-sXHsGufXKm003J5zuQr2AwNMG4+DUw@mail.gmail.com>
-In-Reply-To: <CAKMK7uGu8yWRAGZX-dz-sXHsGufXKm003J5zuQr2AwNMG4+DUw@mail.gmail.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Thu, 15 Oct 2020 09:55:38 +0200
-Message-ID: <CAKMK7uHwi8_zurd59aX7ZDst+TGFB3TxyzPiWc8fmVvmomskMw@mail.gmail.com>
-Subject: Re: [PATCH v2 14/17] resource: Move devmem revoke code to resource framework
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
+        Thu, 15 Oct 2020 06:15:53 -0400
+Received: from saruman (88-113-213-94.elisa-laajakaista.fi [88.113.213.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2533920BED;
+        Thu, 15 Oct 2020 10:15:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1602756952;
+        bh=Z6L85tl0hUzxc/Wf2yAWwRbRBy0g42YVSMNsAOso/ic=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=WCURctuRAO7apKBpnigKSW4w0RrSEIpplBnDIjs+ve/o+8+46MlY5TmxYzakNSnGt
+         wshd18tKRcbQS+ist8JlaxoOpSixojILJcBphDceJNvzEVJ7nc77SPULh7DZu7zIN5
+         MdYW0FZqoioit4bvm377ZfhSD1iKvlH90Ra8372k=
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Cc:     Serge Semin <fancer.lancer@gmail.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Wei Xu <xuwei5@hisilicon.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Roger Quadros <rogerq@ti.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 20/20] arch: dts: Fix DWC USB3 DT nodes name
+In-Reply-To: <20201014143720.yny3jco5pkb7dr4b@mobilestation>
+References: <20201014101402.18271-1-Sergey.Semin@baikalelectronics.ru>
+ <20201014101402.18271-21-Sergey.Semin@baikalelectronics.ru>
+ <878sc8lx0e.fsf@kernel.org>
+ <20201014143720.yny3jco5pkb7dr4b@mobilestation>
+Date:   Thu, 15 Oct 2020 13:15:37 +0300
+Message-ID: <875z7blrqu.fsf@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 15, 2020 at 9:52 AM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+Serge Semin <Sergey.Semin@baikalelectronics.ru> writes:
+
+> On Wed, Oct 14, 2020 at 05:09:37PM +0300, Felipe Balbi wrote:
+>>=20
+>> Hi Serge,
+>>=20
+>> Serge Semin <Sergey.Semin@baikalelectronics.ru> writes:
+>> > In accordance with the DWC USB3 bindings the corresponding node name is
+>> > suppose to comply with Generic USB HCD DT schema, which requires the U=
+SB
+>>=20
 >
-> On Thu, Oct 15, 2020 at 2:09 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > On Fri, Oct 09, 2020 at 11:28:54AM -0700, Dan Williams wrote:
-> > > On Fri, Oct 9, 2020 at 7:32 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > >
-> > > > On Fri, Oct 09, 2020 at 04:24:45PM +0200, Daniel Vetter wrote:
-> > > > > On Fri, Oct 9, 2020 at 2:31 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > > > >
-> > > > > > On Fri, Oct 09, 2020 at 09:59:31AM +0200, Daniel Vetter wrote:
-> > > > > >
-> > > > > > > +struct address_space *iomem_get_mapping(void)
-> > > > > > > +{
-> > > > > > > +     return iomem_inode->i_mapping;
-> > > > > >
-> > > > > > This should pair an acquire with the release below
-> > > > > >
-> > > > > > > +     /*
-> > > > > > > +      * Publish /dev/mem initialized.
-> > > > > > > +      * Pairs with smp_load_acquire() in revoke_iomem().
-> > > > > > > +      */
-> > > > > > > +     smp_store_release(&iomem_inode, inode);
-> > > > > >
-> > > > > > However, this seems abnormal, initcalls rarely do this kind of stuff
-> > > > > > with global data..
-> > > > > >
-> > > > > > The kernel crashes if this fs_initcall is raced with
-> > > > > > iomem_get_mapping() due to the unconditional dereference, so I think
-> > > > > > it can be safely switched to a simple assignment.
-> > > > >
-> > > > > Ah yes I checked this all, but forgot to correctly annotate the
-> > > > > iomem_get_mapping access. For reference, see b34e7e298d7a ("/dev/mem:
-> > > > > Add missing memory barriers for devmem_inode").
-> > > >
-> > > > Oh yikes, so revoke_iomem can run concurrently during early boot,
-> > > > tricky.
-> > >
-> > > It runs early because request_mem_region() can run before fs_initcall.
-> > > Rather than add an unnecessary lock just arrange for the revoke to be
-> > > skipped before the inode is initialized. The expectation is that any
-> > > early resource reservations will block future userspace mapping
-> > > attempts.
-> >
-> > Actually, on this point a simple WRITE_ONCE/READ_ONCE pairing is OK,
-> > Paul once explained that the pointer chase on the READ_ONCE side is
-> > required to be like an acquire - this is why rcu_dereference is just
-> > READ_ONCE
+>> DWC3 is not a simple HDC, though.
 >
-> Indeed this changed with the sm_read_barrier_depends() removal a year
-> ago. Before that READ_ONCE and rcu_dereference where not actually the
-> same. I guess I'll throw a patch on top to switch that over too.
+> Yeah, strictly speaking it is equipped with a lot of vendor-specific stuf=
+f,
+> which are tuned by the DWC USB3 driver in the kernel. But after that the
+> controller is registered as xhci-hcd device so it's serviced by the xHCI =
+driver,
 
-Actually 2019 landed just the clean-up, the read change landed in 2017 already:
+in Dual-role or host-only builds, that's correct. We can also have
+peripheral-only builds (both SW or HW versions) which means xhci isn't
+even in the picture.
 
-commit 76ebbe78f7390aee075a7f3768af197ded1bdfbb
-Author: Will Deacon <will@kernel.org>
-Date:   Tue Oct 24 11:22:47 2017 +0100
+=2D-=20
+balbi
 
-   locking/barriers: Add implicit smp_read_barrier_depends() to READ_ONCE()
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+-----BEGIN PGP SIGNATURE-----
+
+iQJFBAEBCAAvFiEElLzh7wn96CXwjh2IzL64meEamQYFAl+IIUoRHGJhbGJpQGtl
+cm5lbC5vcmcACgkQzL64meEamQZO3Q//SiuQrPc8kbjk55HntU2Nq2ql7KHubHOj
+ZhrcegAbPbzA0vqIIasxjkXAC8Abbz3Bn59kDuu0ohRtTG1sKXMrN1aqkIo1tTh+
+zkF7t+k5cdunzJ19jb0lohFu/eDK0JPuXRoByJfUhbxIZfWbacO7bG8TkClU7zhL
+denO6pfQG1nOetdAaHZV9imMuTKJOrnl+bcHx5tNcV9sH02sC6OVXBn4dN5ZnABf
+/FdDd671tZMcz43t7jm1vNk7yxgZPSqQ6myBeXQ45ZL2mn9i0gyi4eEWy29vLwu9
+kVUhb9nrliaBsf/X/+oh05qRACLg/noIcuSpXMtu8tmR2DIcwDijYG8XOsBaDLEj
+ZYSJju7/JQ2XUmrS2s/xWtjcqQN0ZxVsJx0Vy4JZNRQ404qs2cqjDeUFdclP+fdJ
+90W74TKzXS1/t52pQyG84LSM648I/7PhUWara2RV9jds7XPgFuFCwWTxEKkyQCSW
+ayPWVASHrKX0Kzp77GW2UUILCIo+luyMMd7V/BraTI6L+PMBL6+etB/O72UUXdb9
+E2hQyJojMpg7BZ6dnpLcvbtHetLtW1hLisTOfD3NbPUyJzPJAgLt8D77SN5ncTUy
+nC8/57GA0Bs2uzYEB6TlPV4i7c9tLT3MJrlVE/p4uziQ7R/b34xbHDX3xNcspk9Q
+vO7uMM8lF9I=
+=XrV0
+-----END PGP SIGNATURE-----
+--=-=-=--
