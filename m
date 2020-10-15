@@ -2,219 +2,147 @@ Return-Path: <SRS0=zMHd=DW=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F67C43457
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 06:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B82FCC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 07:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B7562224A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 06:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602742494;
-	bh=eZe4GiPfDK+6w3hPv0E7nyig5v2sy4+tRzeeWgEY60Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bR/suKsT3AiSz37e1y4pW/FaCMQKsUyLTsUSKL33k3VtlgpwikcJ1y8waGxou/RwD
-	 GzEHGlMaGQivKyM6ETFAH70JmW4d+8kmgkIIXZAV8Z5CBnSmgaSvPzWh5zQpw47u2Z
-	 WUiHVAfVPv2WX0DHJSsMmriL6sBUE5umwU2mMeaE=
+	by mail.kernel.org (Postfix) with ESMTP id 1E07A22249
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Oct 2020 07:52:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="NQD+qENE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728153AbgJOGOu (ORCPT
+        id S1729756AbgJOHw5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 15 Oct 2020 02:14:50 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35371 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbgJOGOt (ORCPT
+        Thu, 15 Oct 2020 03:52:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52058 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728145AbgJOHw5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 15 Oct 2020 02:14:49 -0400
-Received: by mail-ed1-f68.google.com with SMTP id cq12so1877028edb.2;
-        Wed, 14 Oct 2020 23:14:45 -0700 (PDT)
+        Thu, 15 Oct 2020 03:52:57 -0400
+Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C177C0613D3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Oct 2020 00:52:57 -0700 (PDT)
+Received: by mail-oi1-x244.google.com with SMTP id w141so2187963oia.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Oct 2020 00:52:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dhgu0dLDhdQohJO0sNuXaA2MoyXlGux/K8QZDPyJw6s=;
+        b=NQD+qENEedFTKTlCD6h9DOFh4k6HLUd6xx7kkg5MeHaBwzG9gVFDzGcXE0xF2GmrJD
+         dLMqZcDoQnkhUjU4yMSE+zE4g//7Vq4+UQwWv9N7H2FoDKlMxRcCLi7ps+MFAHdaZ3wK
+         m9vmqDW1HLA7Gqj0yGcpzsjCUkgy10konM9bI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=1Yh1i1pVwz9B/Ey4Y4vzL4xLN24S+rgzxEnczu+jN+M=;
-        b=s4utGE2ldX5A4a0Pabye4aUFh+rodihSo5V90mq5TuaevguMq+1u+OQSYmOmJk2JqU
-         49hIzOVjeXRYk/QtASbnZ6Pf7kWu83V1UrrL6EQooJwfxkM95qbTBvZFfuNHVAEbVvyN
-         IPVey0yuwXxSkvm7YrMaeWAfO4KxnTqlHewg62mxtAE5k2uCDM6dxj+GMTg/MUdflP97
-         Invt/RQSdlsaJ7IV+icVE/FvbYsBeBJjnarv6lUVccdVFldA89Tvp7YMHFkYz6DjKZhs
-         pC8iYc3pno4Mx26keMSdaUJi8drgdpxIwdMKsSP3RCI/ftgEHi7gCEtlLCTim+G5ediw
-         xYbw==
-X-Gm-Message-State: AOAM531fWTaX2HbH0BqBWdxQKK1sFdjoAsWeatGcbkEvbuEVJQ/voDkl
-        Pt7I+WOJ80YPM2E5x2HjbRA=
-X-Google-Smtp-Source: ABdhPJx/0Dmc4LC7mLB//wjFSeMp2WMfJCq3UaAMSzV7yKFc9sP2yaW4576pAgucyVbatWtI1/sCow==
-X-Received: by 2002:a50:f613:: with SMTP id c19mr2718068edn.81.1602742484585;
-        Wed, 14 Oct 2020 23:14:44 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.171])
-        by smtp.googlemail.com with ESMTPSA id e7sm900601ejm.4.2020.10.14.23.14.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2020 23:14:43 -0700 (PDT)
-Date:   Thu, 15 Oct 2020 08:14:39 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Wei Xu <xuwei5@hisilicon.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Roger Quadros <rogerq@ti.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-omap@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 20/20] arch: dts: Fix DWC USB3 DT nodes name
-Message-ID: <20201015061439.GA2926@kozik-lap>
-References: <20201014101402.18271-1-Sergey.Semin@baikalelectronics.ru>
- <20201014101402.18271-21-Sergey.Semin@baikalelectronics.ru>
- <CAJKOXPeErocR5-3xCDqBR3-k3w_2EQ_768d71n229cbzeo4TtQ@mail.gmail.com>
- <20201014171640.bup52mgaz4jvhtsy@mobilestation>
- <CAJKOXPcHi_=jea=0YrPNo4dh6k03+63Tc2Uo+sd0u8+XPdQjOw@mail.gmail.com>
- <20201014235105.kj4rtwiidph7gyen@mobilestation>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dhgu0dLDhdQohJO0sNuXaA2MoyXlGux/K8QZDPyJw6s=;
+        b=e+SQA8FHre9y1rT0NYj/2E5jBQEeQhyS+1oWMbnxpF4ftF46fnfd89TXFYNlionDW9
+         l9yd3e0T0MTZc/2DXQ2gpet1KpiLN5LGhlUetJEcpRZn7mqdBTUY2Jc+1F7c9yH6ETsg
+         1OYnjlu72DC9eWHfVcGyGIMCZoRehLq2TDuZtYfLHuNZNITEIgRjfl/RO0HTDTfeJsyI
+         leq4dtls7b61dUh5pN45iP9Ok0Oz+XJv6clH1p4zDvZ2R41SS58yIJzq6qENGiMTtww/
+         9ktBghTp7vSa/K/8diSWGWxkzT2xwPy96yFGeY94d/M25gIeMf1iqwO4gTgGV/uYc9ia
+         wqeA==
+X-Gm-Message-State: AOAM531Oujp9ilfvQQTr/faPPfw8+f9zBZOed40svuf7LWBMp597E6fp
+        1JEqftUzCPppBSZvYmXWMF/vfq7QU+okzy1B0q8XIw==
+X-Google-Smtp-Source: ABdhPJwzY298KqMl0piyY6WC1v3Jsl2LfZBMZXpCc0fBF/BMSEZT1UgqTE6Ob3TXXLbgq4lcb2cTsJzeh8/K8Jd2l54=
+X-Received: by 2002:aca:6083:: with SMTP id u125mr1369147oib.14.1602748376570;
+ Thu, 15 Oct 2020 00:52:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201014235105.kj4rtwiidph7gyen@mobilestation>
+References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
+ <20201009075934.3509076-15-daniel.vetter@ffwll.ch> <20201009123109.GO5177@ziepe.ca>
+ <CAKMK7uFpPP-Q0jC0vM7vYPEcg0m4NzTw+Ld=swdTF3BgMX5Qug@mail.gmail.com>
+ <20201009143209.GS5177@ziepe.ca> <CAPcyv4j54O8ac6WB3LEeNud2r11V26gA0PRKK9bhyEMF67AXtQ@mail.gmail.com>
+ <20201015000939.GD6763@ziepe.ca>
+In-Reply-To: <20201015000939.GD6763@ziepe.ca>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Thu, 15 Oct 2020 09:52:45 +0200
+Message-ID: <CAKMK7uGu8yWRAGZX-dz-sXHsGufXKm003J5zuQr2AwNMG4+DUw@mail.gmail.com>
+Subject: Re: [PATCH v2 14/17] resource: Move devmem revoke code to resource framework
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 15, 2020 at 02:51:05AM +0300, Serge Semin wrote:
- > >
-> > > So to speak thanks for suggesting it. I'll try it to validate the proposed
-> > > changes.
+On Thu, Oct 15, 2020 at 2:09 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Fri, Oct 09, 2020 at 11:28:54AM -0700, Dan Williams wrote:
+> > On Fri, Oct 9, 2020 at 7:32 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
 > > >
-> > > Two questions:
-> > > 1) Any advise of a good inliner/command to compile all dtbs at once? Of course I
-> > > can get all the updated dtsi'es, then find out all the dts'es which include
-> > > them, then directly use dtc to compile the found dts'es... On the other hand I
-> > > can just compile all dts'es, then compare old and new ones. The diff of the
-> > > non-modified dtb'es will be just empty...
-> > 
-> 
-> > make dtbs
-> 
-> It's not that easy.) "make dtbs" will build dtbs only for enabled boards, which
-> first need to be enabled in the kernel config. So I'll need to have a config
-> with all the affected dts. The later is the same as if I just found all the
-> affected dts and built them one-by-one by directly calling dtc.
-
-True. Sometimes allyesconfig for given arch might be helpful but not
-always (e.g. for ARM it does not select all of ARMv4 and ARMv5 boards).
-Most likely your approach is actually faster/more reliable.
-
-> 
-> > touch your dts or git stash pop
-> > make dtbs
-> > compare
-> > diff for all unchanged will be simply empty, so easy to spot
-> > 
-> > > 2) What crosc64 is?
-> > 
-> > Ah, just an alias for cross compiling + ccache + kbuild out. I just
-> > copied you my helpers, so you need to tweak them.
-> > 
-> > >
+> > > On Fri, Oct 09, 2020 at 04:24:45PM +0200, Daniel Vetter wrote:
+> > > > On Fri, Oct 9, 2020 at 2:31 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > > > >
+> > > > > On Fri, Oct 09, 2020 at 09:59:31AM +0200, Daniel Vetter wrote:
+> > > > >
+> > > > > > +struct address_space *iomem_get_mapping(void)
+> > > > > > +{
+> > > > > > +     return iomem_inode->i_mapping;
+> > > > >
+> > > > > This should pair an acquire with the release below
+> > > > >
+> > > > > > +     /*
+> > > > > > +      * Publish /dev/mem initialized.
+> > > > > > +      * Pairs with smp_load_acquire() in revoke_iomem().
+> > > > > > +      */
+> > > > > > +     smp_store_release(&iomem_inode, inode);
+> > > > >
+> > > > > However, this seems abnormal, initcalls rarely do this kind of stuff
+> > > > > with global data..
+> > > > >
+> > > > > The kernel crashes if this fs_initcall is raced with
+> > > > > iomem_get_mapping() due to the unconditional dereference, so I think
+> > > > > it can be safely switched to a simple assignment.
 > > > >
-> > > > 2. Split it per arm architectures (and proper subject prefix - not
-> > > > "arch") and subarchitectures so maintainers can pick it up.
+> > > > Ah yes I checked this all, but forgot to correctly annotate the
+> > > > iomem_get_mapping access. For reference, see b34e7e298d7a ("/dev/mem:
+> > > > Add missing memory barriers for devmem_inode").
 > > >
-> > > Why? The changes are simple and can be formatted as a single patch. I've seen
-> > > tons of patches submitted like that, accepted and then merged. What you suggest
-> > > is just much more work, which I don't see quite required.
-> > 
-> 
-> > DTS changes go separate between arm64 and arm. There is nothing
-> > unusual here - all changes are submitted like this.
-> > Second topic is to split by subarchitectures which is necessary if you
-> > want it to be picked up by maintainers. It also makes it easier to
-> > review.
-> 
-> The current patches are easy enough for review. The last three patches of the
-> series is a collection of the one-type changes concerning the same type of
-> nodes. So reviewing them won't cause any difficulty. But I assume that's not
-> the main point in this discussion.
-> 
-> > Sure, without split ber subarchitectures this could be picked
-> > up by SoC folks but you did not even CC them. So if you do not want to
-> > split it per subarchitectures for maintainers and you do not CC SoC,
-> > then how do you believe this should be picked up? Out of the regular
-> > patch submission way? That's not how the changes are handled.
-> 
-> AFAIU there are another ways of merging comprehensive patches. If they get to collect
-> all the Acked-by tags, they could be merged in, for instance, through Greg' or Rob'
-> (for dts) repos, if of course they get to agree with doing that. Am I wrong?
-> 
-> My hope was to ask Rob or Greg to get the patches merged in when they get
-> to collect all the ackes, since I thought it was an option in such cases. So if
-> they refuse to do so I'll have no choice but to split the series up into a
-> smaller patches as you say.
+> > > Oh yikes, so revoke_iomem can run concurrently during early boot,
+> > > tricky.
+> >
+> > It runs early because request_mem_region() can run before fs_initcall.
+> > Rather than add an unnecessary lock just arrange for the revoke to be
+> > skipped before the inode is initialized. The expectation is that any
+> > early resource reservations will block future userspace mapping
+> > attempts.
+>
+> Actually, on this point a simple WRITE_ONCE/READ_ONCE pairing is OK,
+> Paul once explained that the pointer chase on the READ_ONCE side is
+> required to be like an acquire - this is why rcu_dereference is just
+> READ_ONCE
 
-This is neither Rob's nor Greg's patch to pick up, but ARM SoC (which was
-not CCed here). And most likely they won't pick it up because judging by
-contents it is obvious it should go via ARM SoC.
+Indeed this changed with the sm_read_barrier_depends() removal a year
+ago. Before that READ_ONCE and rcu_dereference where not actually the
+same. I guess I'll throw a patch on top to switch that over too.
+-Daniel
 
-Sure, if there are dependencies between some patches they can go with
-acks through unrelated trees, but this not the usual way. This is an
-exception in the process to solve particular dependency problem.  It has
-drawbacks - increases the chances of annoying conflicts.
 
-The case here does not fall into this criteria - there is no dependency
-of this patch on the others  Therefore there is no reason to use the
-unusual/exceptional way of handling patches.  There is no reason why
-this shouldn't go via either specific ARM subarchitecture maintainers or
-via ARM SoC.
 
-> > > > 3. The subject title could be more accurate - there is no fix here
-> > > > because there was no errors in the first place. Requirement of DWC
-> > > > node names comes recently, so it is more alignment with dtschema.
-> > > > Otherwise automatic-pickup-stable-bot might want to pick up... and it
-> > > > should not go to stable.
-> > >
-> > > Actually it is a fix, because the USB DT nodes should have been named with "usb"
-> > > prefix in the first place. Legacy DWC USB3 bindings didn't define the nodes
-> > > naming, but implied to be "usb"-prefixed by the USB HCD schema. The Qualcomm
-> > > DWC3 schema should have defined the sub-nodes as "dwc3@"-prefixed, which was
-> > > wrong in the first place.
-> > 
-> 
-> > Not following the naming convention of DT spec which was loosely
-> > enforced is not an error which should be "fixed". Simply wrong title.
-> > This is an alignment with dtschema or correcting naming convention.
-> > Not fixing errors.
-> 
-> From your perspective it wasn't an error, from mine and most likely Rob' it
-> was.) Anyway as I said I don't care that much about preserving the subject
-> wording, so what about the next one:
-> <arch>: <subarch>: Harmonize DWC USB3 nodes name with DT schema
-> ?
 
-Looks good.
-
-Best regards,
-Krzysztof
-
+--
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
