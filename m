@@ -2,106 +2,197 @@ Return-Path: <SRS0=SlmQ=DX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FCAAC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Oct 2020 15:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CAF2C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Oct 2020 18:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF6C5207C4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Oct 2020 15:34:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="nrSdxWcq"
+	by mail.kernel.org (Postfix) with ESMTP id AEC27208E4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Oct 2020 18:01:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408027AbgJPPeM (ORCPT
+        id S2390700AbgJPSBN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 16 Oct 2020 11:34:12 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.167]:22431 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404562AbgJPPeM (ORCPT
+        Fri, 16 Oct 2020 14:01:13 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:60142 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390128AbgJPSBN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Oct 2020 11:34:12 -0400
-X-Greylist: delayed 351 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Oct 2020 11:34:11 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1602862450;
-        s=strato-dkim-0002; d=gerhold.net;
-        h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=RHHm2GRiu7U5GkLRxa3++Z6B/X0hzwPc1UHjyWgcsfg=;
-        b=nrSdxWcqrD50uqIp2ndzW7e5EIk9QXJpHOlU2iNOpAgG8jtRXJJkY0FTB7lLF5Nf/w
-        jc/MGdbxWzJmq5dcuDGuFQYd4D1uLt0MoBA3TqtRa+KkOLNsv9dj/r9nRDflXqNESWar
-        Q6y55cDbL81y5wrQjFhbPkR44tRSwPj0bcK6SaH5Sa9dP7WGR4nVYRLtPDP+xMKgXh4p
-        0hR9Y28nsuHJ8tkFtdTAMO5s4mchEu5GSB+QYGcJU36d/iyUVNm0ubxcam1ROYi+Wubd
-        G9Cf9akgrGr+bPO+1OEKIUEIIHtvMPCTjNqBHC7GUMxPHkA3dtVP5vsTHQ6XCEjjMxLT
-        tmeg==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u26zEodhPgRDZ8jxIc2p"
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-        by smtp.strato.de (RZmta 47.2.1 DYNA|AUTH)
-        with ESMTPSA id 509a5aw9GFS7bjx
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Fri, 16 Oct 2020 17:28:07 +0200 (CEST)
-Date:   Fri, 16 Oct 2020 17:28:02 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, ulf.hansson@linaro.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Fri, 16 Oct 2020 14:01:13 -0400
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
+        (envelope-from <andrew@lunn.ch>)
+        id 1kTU2G-0021tA-Kf; Fri, 16 Oct 2020 20:01:00 +0200
+Date:   Fri, 16 Oct 2020 20:01:00 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Lukasz Stelmach <l.stelmach@samsung.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>, nks@flawful.org,
-        georgi.djakov@linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] opp: Allow dev_pm_opp_get_opp_table() to return
- -EPROBE_DEFER
-Message-ID: <20201016152802.GA3966@gerhold.net>
-References: <24ff92dd1b0ee1b802b45698520f2937418f8094.1598260050.git.viresh.kumar@linaro.org>
- <20201015180555.gacdzkofpibkdn2e@bogus>
- <20201016042434.org6ibdqsqbzcdww@vireshk-i7>
- <20201016060021.sotk72u4hioctg7o@bogus>
- <20201016111222.lvakbmjhlrocpogt@bogus>
+        Kukjin Kim <kgene@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, jim.cromie@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 2/4] net: ax88796c: ASIX AX88796C SPI Ethernet Adapter
+ Driver
+Message-ID: <20201016180100.GF139700@lunn.ch>
+References: <20201002203641.GI3996795@lunn.ch>
+ <CGME20201013200453eucas1p1b77c93275b518422429ff1481f88a4be@eucas1p1.samsung.com>
+ <dleftjd01l99jv.fsf%l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201016111222.lvakbmjhlrocpogt@bogus>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dleftjd01l99jv.fsf%l.stelmach@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 16, 2020 at 12:12:22PM +0100, Sudeep Holla wrote:
-> On Fri, Oct 16, 2020 at 07:00:21AM +0100, Sudeep Holla wrote:
-> > On Fri, Oct 16, 2020 at 09:54:34AM +0530, Viresh Kumar wrote:
-> > > On 15-10-20, 19:05, Sudeep Holla wrote:
-> > > > OK, this breaks with SCMI which doesn't provide clocks but manage OPPs
-> > > > directly. Before this change clk_get(dev..) was allowed to fail and
-> > > > --EPROBE_DEFER was not an error.
-> > >
-> > > I think the change in itself is fine. We should be returning from
-> > > there if we get EPROBE_DEFER. The question is rather why are you
-> > > getting EPROBE_DEFER here ?
-> > >
+> >> +static void
+> >> +ax88796c_get_regs(struct net_device *ndev, struct ethtool_regs *regs, void *_p)
+> >> +{
+> >> +	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
+> >> +	u16 *p = _p;
+> >> +	int offset, i;
+> >> +
+> >> +	memset(p, 0, AX88796C_REGDUMP_LEN);
+> >> +
+> >> +	for (offset = 0; offset < AX88796C_REGDUMP_LEN; offset += 2) {
+> >> +		if (!test_bit(offset / 2, ax88796c_no_regs_mask))
+> >> +			*p = AX_READ(&ax_local->ax_spi, offset);
+> >> +		p++;
+> >> +	}
+> >> +
+> >> +	for (i = 0; i < AX88796C_PHY_REGDUMP_LEN / 2; i++) {
+> >> +		*p = phy_read(ax_local->phydev, i);
+> >> +		p++;
 > >
-> > Ah OK, I didn't spend too much time, saw -EPROBE_DEFER, just reverted
-> > this patch and it worked. I need to check it in detail yet.
+> > Depending on the PHY, that can be dangerous.
+> 
+> This is a built-in generic PHY. The chip has no lines to attach any
+> other external one.
+> 
+> > phylib could be busy doing things with the PHY. It could be looking at
+> 
+> How does phylib prevent concurrent access to a PHY? 
+
+phydev->lock. All access to the PHY should go through the phylib,
+which will take the lock before calling into the driver.
+
+> > a different page for example.
+> 
+> Different page? 
+
+I was talking about the general case. A number of PHYs have more than
+32 registers. So they implement pages to give access to more
+registers. For that to work, you need to ensure you don't have
+concurrent access.
+
+> > miitool(1) can give you the same functionally without the MAC driver
+> > doing anything, other than forwarding the IOCTL call on.
+> 
+> No, I am afraid mii-tool is not able to dump registers.
+
+It should be able to.
+
+sudo mii-tool -vv eth0
+Using SIOCGMIIPHY=0x8947
+eth0: negotiated 1000baseT-FD flow-control, link ok
+  registers for MII PHY 0: 
+    1040 79ed 001c c800 0de1 c5e1 006d 0000
+    0000 0200 0800 0000 0000 0000 0000 2000
+    0000 0000 ffff 0000 0000 0400 0f00 0f00
+    318b 0053 31ec 8012 bf1f 0000 0000 0000
+  product info: vendor 00:07:32, model 0 rev 0
+  basic mode:   autonegotiation enabled
+  basic status: autonegotiation complete, link ok
+  capabilities: 1000baseT-FD 100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD
+  advertising:  1000baseT-FD 100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD flow-control
+  link partner: 1000baseT-FD 100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD flow-control
+
+> >> +ax88796c_mdio_write(struct mii_bus *mdiobus, int phy_id, int loc, u16 val)
+> >> +{
+> >> +	struct ax88796c_device *ax_local = mdiobus->priv;
+> >> +	int ret;
+> >> +
+> >> +	AX_WRITE(&ax_local->ax_spi, val, P2_MDIODR);
+> >> +
+> >> +	AX_WRITE(&ax_local->ax_spi,
+> >> +		 MDIOCR_RADDR(loc) | MDIOCR_FADDR(phy_id)
+> >> +		 | MDIOCR_WRITE, P2_MDIOCR);
+> >> +
+> >> +	ret = read_poll_timeout(AX_READ, ret,
+> >> +				((ret & MDIOCR_VALID) != 0), 0,
+> >> +				jiffies_to_usecs(HZ / 100), false,
+> >> +				&ax_local->ax_spi, P2_MDIOCR);
+> >> +	if (ret)
+> >> +		return -EIO;
+> >> +
+> >> +	if (loc == MII_ADVERTISE) {
+> >> +		AX_WRITE(&ax_local->ax_spi, (BMCR_FULLDPLX | BMCR_ANRESTART |
+> >> +			  BMCR_ANENABLE | BMCR_SPEED100), P2_MDIODR);
+> >> +		AX_WRITE(&ax_local->ax_spi, (MDIOCR_RADDR(MII_BMCR) |
+> >> +			  MDIOCR_FADDR(phy_id) | MDIOCR_WRITE),
+> >> +			  P2_MDIOCR);
+> >>
+> >
+> > What is this doing?
 > >
 > 
-> You confused me earlier. As I said there will be no clock provider
-> registered for SCMI CPU/Dev DVFS.
-> 	opp_table->clk = clk_get(dev, NULL);
-> will always return -EPROBE_DEFER as there is no clock provider for dev.
+> Well… it turns autonegotiation when changing advertised link modes. But
+> this is obvious. As to why this code is here, I will honestly say — I am
+> not sure (Reminder: this is a vendor driver I am porting, I am more than
+> happy to receive any comments, thank you). Apparently it is not required
+> and I am willing to remove it.
 
-Shouldn't it return -ENOENT if there is no clock for the SCMI case?
-With -EPROBE_DEFER I would expect that it shows up at some point.
+Please do remove it.
 
-I tried to avoid a situation like this by ignoring all errors
-!= -EPROBE_DEFER. So if clk_get(dev, NULL) would return -ENOENT
-everything should work as expected...
+> >> +
+> >> +	ret = devm_register_netdev(&spi->dev, ndev);
+> >> +	if (ret) {
+> >> +		dev_err(&spi->dev, "failed to register a network device\n");
+> >> +		destroy_workqueue(ax_local->ax_work_queue);
+> >> +		goto err;
+> >> +	}
+> >
+> > The device is not live. If this is being used for NFS root, the kernel
+> > will start using it. So what sort of mess will it get into, if there
+> > is no PHY yet? Nothing important should happen after register_netdev().
+> >
+> 
+> But, with an unregistered network device ndev_owner in
+> phy_attach_direct() is NULL. Thus, phy_connect_direct() below fails.
+> 
+> --8<---------------cut here---------------start------------->8---
+>    1332         if (dev)
+>    1333                 ndev_owner = dev->dev.parent->driver->owner;
+>    1334         if (ndev_owner != bus->owner &&  !try_module_get(bus->owner)) {
+>    1335                 phydev_err(phydev, "failed to get the bus  module\n");
+>    1336                 return -EIO;
+>    1337         }
+> --8<---------------cut here---------------end--------------->8---
 
-Thanks,
-Stephan
+Which is probably why most drivers actually attach the PHY in open()
+and detach it in close().
+
+It can be done in probe, just look around for a driver which does and
+copy it.
+
+> No problem. Do you have any recommendation how to express this
+> 
+>  #define PSR_RESET  (0 << 15)
+
+> I know it equals 0, but shows explicitly the bit number.
+
+Yes, that is useful for documentation. How about:
+
+#define PSR_NOT_RESET BIT(15)
+
+And then turn the logic around.
+
+    Andrew
