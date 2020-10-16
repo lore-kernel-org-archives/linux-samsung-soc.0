@@ -2,87 +2,194 @@ Return-Path: <SRS0=SlmQ=DX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA5BC433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Oct 2020 11:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F47C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Oct 2020 11:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 75B9F2084C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Oct 2020 11:12:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AD3E20FC3
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Oct 2020 11:31:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406793AbgJPLM2 (ORCPT
+        id S2406607AbgJPLbz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 16 Oct 2020 07:12:28 -0400
-Received: from foss.arm.com ([217.140.110.172]:34702 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406790AbgJPLM2 (ORCPT
+        Fri, 16 Oct 2020 07:31:55 -0400
+Received: from asavdk4.altibox.net ([109.247.116.15]:53482 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406599AbgJPLby (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Oct 2020 07:12:28 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1EBAD6E;
-        Fri, 16 Oct 2020 04:12:27 -0700 (PDT)
-Received: from bogus (unknown [10.57.17.164])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 174603F719;
-        Fri, 16 Oct 2020 04:12:24 -0700 (PDT)
-Date:   Fri, 16 Oct 2020 12:12:22 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>, nks@flawful.org,
-        georgi.djakov@linaro.org, Stephan Gerhold <stephan@gerhold.net>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] opp: Allow dev_pm_opp_get_opp_table() to return
- -EPROBE_DEFER
-Message-ID: <20201016111222.lvakbmjhlrocpogt@bogus>
-References: <24ff92dd1b0ee1b802b45698520f2937418f8094.1598260050.git.viresh.kumar@linaro.org>
- <20201015180555.gacdzkofpibkdn2e@bogus>
- <20201016042434.org6ibdqsqbzcdww@vireshk-i7>
- <20201016060021.sotk72u4hioctg7o@bogus>
+        Fri, 16 Oct 2020 07:31:54 -0400
+Received: from ravnborg.org (unknown [188.228.123.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 786F380735;
+        Fri, 16 Oct 2020 13:31:42 +0200 (CEST)
+Date:   Fri, 16 Oct 2020 13:31:41 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        airlied@linux.ie, daniel@ffwll.ch, alexander.deucher@amd.com,
+        christian.koenig@amd.com, kraxel@redhat.com,
+        l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
+        christian.gmeiner@gmail.com, inki.dae@samsung.com,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        yuq825@gmail.com, bskeggs@redhat.com, robh@kernel.org,
+        tomeu.vizoso@collabora.com, steven.price@arm.com,
+        alyssa.rosenzweig@collabora.com, hjc@rock-chips.com,
+        heiko@sntech.de, hdegoede@redhat.com, sean@poorly.run,
+        eric@anholt.net, oleksandr_andrushchenko@epam.com,
+        ray.huang@amd.com, sumit.semwal@linaro.org,
+        emil.velikov@collabora.com, luben.tuikov@amd.com, apaneers@amd.com,
+        linus.walleij@linaro.org, melissa.srw@gmail.com,
+        chris@chris-wilson.co.uk, miaoqinglang@huawei.com,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, lima@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, spice-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xenproject.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v4 09/10] dma-buf-map: Add memcpy and pointer-increment
+ interfaces
+Message-ID: <20201016113141.GA1125266@ravnborg.org>
+References: <20201015123806.32416-1-tzimmermann@suse.de>
+ <20201015123806.32416-10-tzimmermann@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201016060021.sotk72u4hioctg7o@bogus>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20201015123806.32416-10-tzimmermann@suse.de>
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=fu7ymmwf c=1 sm=1 tr=0
+        a=S6zTFyMACwkrwXSdXUNehg==:117 a=S6zTFyMACwkrwXSdXUNehg==:17
+        a=kj9zAlcOel0A:10 a=0A2xud3A4b7FAmx5SMIA:9 a=H9YgUdQFGw372Hqm:21
+        a=tLNtb35BjFYYr1pq:21 a=CjuIK1q_8ugA:10
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 16, 2020 at 07:00:21AM +0100, Sudeep Holla wrote:
-> On Fri, Oct 16, 2020 at 09:54:34AM +0530, Viresh Kumar wrote:
-> > On 15-10-20, 19:05, Sudeep Holla wrote:
-> > > OK, this breaks with SCMI which doesn't provide clocks but manage OPPs
-> > > directly. Before this change clk_get(dev..) was allowed to fail and
-> > > --EPROBE_DEFER was not an error.
-> >
-> > I think the change in itself is fine. We should be returning from
-> > there if we get EPROBE_DEFER. The question is rather why are you
-> > getting EPROBE_DEFER here ?
-> >
->
-> Ah OK, I didn't spend too much time, saw -EPROBE_DEFER, just reverted
-> this patch and it worked. I need to check it in detail yet.
->
+Hi Thomas.
 
-You confused me earlier. As I said there will be no clock provider
-registered for SCMI CPU/Dev DVFS.
-	opp_table->clk = clk_get(dev, NULL);
-will always return -EPROBE_DEFER as there is no clock provider for dev.
-But this change now propagates that error to caller of dev_pm_opp_add
-which means we can't add opp to a device if there are no clock providers.
-This breaks for DVFS which don't operate separately with clocks and
-regulators.
+On Thu, Oct 15, 2020 at 02:38:05PM +0200, Thomas Zimmermann wrote:
+> To do framebuffer updates, one needs memcpy from system memory and a
+> pointer-increment function. Add both interfaces with documentation.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>  include/linux/dma-buf-map.h | 72 +++++++++++++++++++++++++++++++------
+>  1 file changed, 62 insertions(+), 10 deletions(-)
+> 
+> diff --git a/include/linux/dma-buf-map.h b/include/linux/dma-buf-map.h
+> index 2e8bbecb5091..6ca0f304dda2 100644
+> --- a/include/linux/dma-buf-map.h
+> +++ b/include/linux/dma-buf-map.h
+> @@ -32,6 +32,14 @@
+>   * accessing the buffer. Use the returned instance and the helper functions
+>   * to access the buffer's memory in the correct way.
+>   *
+> + * The type :c:type:`struct dma_buf_map <dma_buf_map>` and its helpers are
+> + * actually independent from the dma-buf infrastructure. When sharing buffers
+> + * among devices, drivers have to know the location of the memory to access
+> + * the buffers in a safe way. :c:type:`struct dma_buf_map <dma_buf_map>`
+> + * solves this problem for dma-buf and its users. If other drivers or
+> + * sub-systems require similar functionality, the type could be generalized
+> + * and moved to a more prominent header file.
+> + *
+>   * Open-coding access to :c:type:`struct dma_buf_map <dma_buf_map>` is
+>   * considered bad style. Rather then accessing its fields directly, use one
+>   * of the provided helper functions, or implement your own. For example,
+> @@ -51,6 +59,14 @@
+>   *
+>   *	dma_buf_map_set_vaddr_iomem(&map. 0xdeadbeaf);
+>   *
+> + * Instances of struct dma_buf_map do not have to be cleaned up, but
+> + * can be cleared to NULL with dma_buf_map_clear(). Cleared mappings
+> + * always refer to system memory.
+> + *
+> + * .. code-block:: c
+> + *
+> + *	dma_buf_map_clear(&map);
+> + *
+>   * Test if a mapping is valid with either dma_buf_map_is_set() or
+>   * dma_buf_map_is_null().
+>   *
+> @@ -73,17 +89,19 @@
+>   *	if (dma_buf_map_is_equal(&sys_map, &io_map))
+>   *		// always false
+>   *
+> - * Instances of struct dma_buf_map do not have to be cleaned up, but
+> - * can be cleared to NULL with dma_buf_map_clear(). Cleared mappings
+> - * always refer to system memory.
+> + * A set up instance of struct dma_buf_map can be used to access or manipulate
+> + * the buffer memory. Depending on the location of the memory, the provided
+> + * helpers will pick the correct operations. Data can be copied into the memory
+> + * with dma_buf_map_memcpy_to(). The address can be manipulated with
+> + * dma_buf_map_incr().
+>   *
+> - * The type :c:type:`struct dma_buf_map <dma_buf_map>` and its helpers are
+> - * actually independent from the dma-buf infrastructure. When sharing buffers
+> - * among devices, drivers have to know the location of the memory to access
+> - * the buffers in a safe way. :c:type:`struct dma_buf_map <dma_buf_map>`
+> - * solves this problem for dma-buf and its users. If other drivers or
+> - * sub-systems require similar functionality, the type could be generalized
+> - * and moved to a more prominent header file.
+> + * .. code-block:: c
+> + *
+> + *	const void *src = ...; // source buffer
+> + *	size_t len = ...; // length of src
+> + *
+> + *	dma_buf_map_memcpy_to(&map, src, len);
+> + *	dma_buf_map_incr(&map, len); // go to first byte after the memcpy
+>   */
+>  
+>  /**
+> @@ -210,4 +228,38 @@ static inline void dma_buf_map_clear(struct dma_buf_map *map)
+>  	}
+>  }
+>  
+> +/**
+> + * dma_buf_map_memcpy_to - Memcpy into dma-buf mapping
+> + * @dst:	The dma-buf mapping structure
+> + * @src:	The source buffer
+> + * @len:	The number of byte in src
+> + *
+> + * Copies data into a dma-buf mapping. The source buffer is in system
+> + * memory. Depending on the buffer's location, the helper picks the correct
+> + * method of accessing the memory.
+> + */
+> +static inline void dma_buf_map_memcpy_to(struct dma_buf_map *dst, const void *src, size_t len)
+> +{
+> +	if (dst->is_iomem)
+> +		memcpy_toio(dst->vaddr_iomem, src, len);
+> +	else
+> +		memcpy(dst->vaddr, src, len);
 
---
-Regards,
-Sudeep
+sparc64 needs "#include <linux/string.h>" to build as is does not get
+this via io.h
+
+	Sam
+
+> +}
+> +
+> +/**
+> + * dma_buf_map_incr - Increments the address stored in a dma-buf mapping
+> + * @map:	The dma-buf mapping structure
+> + * @incr:	The number of bytes to increment
+> + *
+> + * Increments the address stored in a dma-buf mapping. Depending on the
+> + * buffer's location, the correct value will be updated.
+> + */
+> +static inline void dma_buf_map_incr(struct dma_buf_map *map, size_t incr)
+> +{
+> +	if (map->is_iomem)
+> +		map->vaddr_iomem += incr;
+> +	else
+> +		map->vaddr += incr;
+> +}
+> +
+>  #endif /* __DMA_BUF_MAP_H__ */
+> -- 
+> 2.28.0
