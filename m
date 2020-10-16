@@ -2,156 +2,243 @@ Return-Path: <SRS0=SlmQ=DX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8A7C433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Oct 2020 07:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA48CC4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Oct 2020 07:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 438A920848
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Oct 2020 07:03:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CD8420878
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Oct 2020 07:42:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="up3tNrQx"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qafhaKQk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394268AbgJPHDc (ORCPT
+        id S2404757AbgJPHm1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 16 Oct 2020 03:03:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41486 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391475AbgJPHDc (ORCPT
+        Fri, 16 Oct 2020 03:42:27 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:2632 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404710AbgJPHm1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Oct 2020 03:03:32 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8035DC061755;
-        Fri, 16 Oct 2020 00:03:32 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id x13so926975pfa.9;
-        Fri, 16 Oct 2020 00:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=content-transfer-encoding:mime-version:subject:from:in-reply-to
-         :date:cc:message-id:references:to;
-        bh=gZuqvmeZLiB4EetTt35Ahi6N1kjCZ4lqMWrOBCtfCBw=;
-        b=up3tNrQxBaE40+eqR/OR+ddHRuuz+YYuC7b7qxK7/TYAk0j4PiBoieKghL3hkrDtWo
-         HZpISr7SwtAJdn2lW/aVRBfH5NbGcYRr3tR4nbmP0AzxSKUi8PmQiHfwL4IKYaJ99tUM
-         k/wtnSc+InTj1VNBadeTBccPRWVCRVigfHt16YUUJpIoV4TjwKEveGtErheofOVbqn/h
-         oDo+Kj7rEWBXgWez2pwrQWfM19cUD71Wkzg2t7xCY1/SMWbktE402LXStCxtsvJhqVlh
-         r/BBJITIrmYBy+1pdxnBqr64PHRrA8Aqzfjo1aUMFYSXW05phnVIySlBxEFatUqJP70e
-         1zgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:mime-version:subject
-         :from:in-reply-to:date:cc:message-id:references:to;
-        bh=gZuqvmeZLiB4EetTt35Ahi6N1kjCZ4lqMWrOBCtfCBw=;
-        b=VwDbg4i2A7KI+W6LdqSC8ZZtn6SRM0MgZzI7cGUs06rnThn0Y7305tJ55zACaxdP+l
-         Z+yudciXhBYy32TtuRvnMZhEuYIIb6JzU1/5amvx1g9eQ8PsXS5r0J+eZh+119TVzJjv
-         steEBTHFWXuQo/1dNy/e88Dw5WDjhcOUfiYBfkCUsttexq/SU3MrDHX5gx1huF4Skd2F
-         NYwlxFTb1w/TIt3Vp/GajmA9sVCewuyzWGQ8h9LxO83LqV1dRP8/w9gJE41O1PnRhQQJ
-         2V/Ls9LGkcL3XRt8HdkZkh17fEGP5Sos2jor5Mh5ISofFagWWq4Ssb8a9ouYr2/pZu7J
-         2hdA==
-X-Gm-Message-State: AOAM531D9511dqQGYOLHyM/EvXInHi4aUv+BAoi9Goxi6FIRvLIVLo96
-        xlCxYTxGJMD2IOaUCfrSHcc=
-X-Google-Smtp-Source: ABdhPJz1CwgI2WS9NnLr3NQL/Qbp2ctqKJ8+y1sUimSFcDxbM+JFzvLgL2DBxP3iRIm7LnD/0ctNTw==
-X-Received: by 2002:a65:64cc:: with SMTP id t12mr2057175pgv.106.1602831811915;
-        Fri, 16 Oct 2020 00:03:31 -0700 (PDT)
-Received: from [102.164.189.252] ([175.223.34.209])
-        by smtp.gmail.com with ESMTPSA id g1sm1555127pfm.124.2020.10.16.00.03.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Oct 2020 00:03:30 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
+        Fri, 16 Oct 2020 03:42:27 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f894ed60000>; Fri, 16 Oct 2020 00:42:14 -0700
+Received: from [10.2.49.77] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 16 Oct
+ 2020 07:42:17 +0000
+Subject: Re: [PATCH v2 01/17] drm/exynos: Stop using frame_vector helpers
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+CC:     <kvm@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-s390@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        "Seung-Woo Kim" <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
+ <20201009075934.3509076-2-daniel.vetter@ffwll.ch>
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <b1529241-a645-6e03-2031-cb2d0a6de493@nvidia.com>
+Date:   Fri, 16 Oct 2020 00:42:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
+MIME-Version: 1.0
+In-Reply-To: <20201009075934.3509076-2-daniel.vetter@ffwll.ch>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 1/2] MAINTAINERS: Move Kukjin Kim to credits
-From:   Kukjin Kim <kgene.kim@gmail.com>
-In-Reply-To: <20201016061848.6258-1-krzk@kernel.org>
-Date:   Fri, 16 Oct 2020 16:03:28 +0900
-List-Id: <soc.lore.kernel.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, arm@kernel.org, soc@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Kukjin Kim <kgene@kernel.org>
-Message-Id: <4A6641A3-2D1A-47AE-8330-8E3F269145CB@gmail.com>
-References: <20201016061848.6258-1-krzk@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-X-Mailer: iPhone Mail (18A393)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1602834134; bh=0aE9d/+DUnCDZnC0MmsV9767F6olBrZ/z/bqT8CABIE=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=qafhaKQkqbDz6B1AQvEqkAlsZ2wvvxxy3liQgg/I2n/ULg20xCUiIlLAGKfOrDFbr
+         ceoOhJqnaFxeEBdV9ZyHoihaNP6Y7fwttq1CADxMzc02pGDu6VhiYT4r+niYN2SgmQ
+         uGmPACXn3SSz5j5dFYjRoZY/+Mrq7tjnF4FXvsh2m4wH2AH17u27/ZyvctCi5w00pi
+         0KLehFCXYJ589hr30t/KynvRtlNSSPHafzdq5WTQVzdi6M+21sKkrRvffEX2wbaeq0
+         VgPWKESwn1uBRAiy722SCSSUnBZPuT7/iCtsX1reQo7i7IUd5KtWfD+25tG5clM1pU
+         nny43JIsIiugw==
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-> 10/16/20 PM 3:19, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-
-Hi Krzysztof,
-
-Thanks for your maintaining :)
-I=E2=80=99m fine on this change.
-
-> =EF=BB=BFKukjin Kim has been maintaining the Samsung ARM architectures sin=
-ce 2010
-> up to 2016.  He contributed many patches for the S3C, S5P and Exynos
-> support.  However since 2016 there is little activity from him on the
-> LKML [1] so move his name to the CREDITS.
+On 10/9/20 12:59 AM, Daniel Vetter wrote:
+> All we need are a pages array, pin_user_pages_fast can give us that
+> directly. Plus this avoids the entire raw pfn side of get_vaddr_frames.
 >=20
-> Dear Kukjin, thank you for all the effort you put in to the upstream
-> Samsung support.
->=20
-> [1] https://lore.kernel.org/lkml/?q=3Df%3A%22Kukjin+Kim%22
->=20
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Inki Dae <inki.dae@samsung.com>
+> Cc: Joonyoung Shim <jy0922.shim@samsung.com>
+> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
 > Cc: Kukjin Kim <kgene@kernel.org>
-Acked-by: Kukjin Kim <kgene@kernel.org>
-
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Olof Johansson <olof@lixom.net>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> --
+> v2: Use unpin_user_pages_dirty_lock (John)
 > ---
-> CREDITS     | 4 ++++
-> MAINTAINERS | 2 --
-> 2 files changed, 4 insertions(+), 2 deletions(-)
+>   drivers/gpu/drm/exynos/Kconfig          |  1 -
+>   drivers/gpu/drm/exynos/exynos_drm_g2d.c | 47 +++++++++++--------------
+>   2 files changed, 20 insertions(+), 28 deletions(-)
 >=20
-> diff --git a/CREDITS b/CREDITS
-> index cb02b9923a52..5df027e12ff7 100644
-> --- a/CREDITS
-> +++ b/CREDITS
-> @@ -1910,6 +1910,10 @@ S: 660 Harvard Ave. #7
-> S: Santa Clara, CA 95051
-> S: USA
->=20
-> +N: Kukjin Kim
-> +E: kgene@kernel.org
-> +D: Samsung S3C, S5P and Exynos ARM architectures
-> +
-> N: Russell King
-> E: rmk@arm.linux.org.uk
-> D: Linux/arm integrator, maintainer & hacker
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 4538378de6f5..c3976803057c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2375,7 +2375,6 @@ F:    sound/soc/rockchip/
-> N:    rockchip
->=20
-> ARM/SAMSUNG EXYNOS ARM ARCHITECTURES
-> -M:    Kukjin Kim <kgene@kernel.org>
-> M:    Krzysztof Kozlowski <krzk@kernel.org>
-> L:    linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)=
 
-> L:    linux-samsung-soc@vger.kernel.org
-> @@ -15497,7 +15496,6 @@ F:    include/linux/clk/samsung.h
-> F:    include/linux/platform_data/clk-s3c2410.h
+Looks good.
+
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
+
+> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kcon=
+fig
+> index 6417f374b923..43257ef3c09d 100644
+> --- a/drivers/gpu/drm/exynos/Kconfig
+> +++ b/drivers/gpu/drm/exynos/Kconfig
+> @@ -88,7 +88,6 @@ comment "Sub-drivers"
+>   config DRM_EXYNOS_G2D
+>   	bool "G2D"
+>   	depends on VIDEO_SAMSUNG_S5P_G2D=3Dn || COMPILE_TEST
+> -	select FRAME_VECTOR
+>   	help
+>   	  Choose this option if you want to use Exynos G2D for DRM.
+>  =20
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/ex=
+ynos/exynos_drm_g2d.c
+> index 967a5cdc120e..ecede41af9b9 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> @@ -205,7 +205,8 @@ struct g2d_cmdlist_userptr {
+>   	dma_addr_t		dma_addr;
+>   	unsigned long		userptr;
+>   	unsigned long		size;
+> -	struct frame_vector	*vec;
+> +	struct page		**pages;
+> +	unsigned int		npages;
+>   	struct sg_table		*sgt;
+>   	atomic_t		refcount;
+>   	bool			in_pool;
+> @@ -378,7 +379,6 @@ static void g2d_userptr_put_dma_addr(struct g2d_data =
+*g2d,
+>   					bool force)
+>   {
+>   	struct g2d_cmdlist_userptr *g2d_userptr =3D obj;
+> -	struct page **pages;
+>  =20
+>   	if (!obj)
+>   		return;
+> @@ -398,15 +398,9 @@ static void g2d_userptr_put_dma_addr(struct g2d_data=
+ *g2d,
+>   	dma_unmap_sgtable(to_dma_dev(g2d->drm_dev), g2d_userptr->sgt,
+>   			  DMA_BIDIRECTIONAL, 0);
+>  =20
+> -	pages =3D frame_vector_pages(g2d_userptr->vec);
+> -	if (!IS_ERR(pages)) {
+> -		int i;
+> -
+> -		for (i =3D 0; i < frame_vector_count(g2d_userptr->vec); i++)
+> -			set_page_dirty_lock(pages[i]);
+> -	}
+> -	put_vaddr_frames(g2d_userptr->vec);
+> -	frame_vector_destroy(g2d_userptr->vec);
+> +	unpin_user_pages_dirty_lock(g2d_userptr->pages, g2d_userptr->npages,
+> +				    true);
+> +	kvfree(g2d_userptr->pages);
+>  =20
+>   	if (!g2d_userptr->out_of_list)
+>   		list_del_init(&g2d_userptr->list);
+> @@ -474,35 +468,34 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct =
+g2d_data *g2d,
+>   	offset =3D userptr & ~PAGE_MASK;
+>   	end =3D PAGE_ALIGN(userptr + size);
+>   	npages =3D (end - start) >> PAGE_SHIFT;
+> -	g2d_userptr->vec =3D frame_vector_create(npages);
+> -	if (!g2d_userptr->vec) {
+> +	g2d_userptr->pages =3D kvmalloc_array(npages, sizeof(*g2d_userptr->page=
+s),
+> +					    GFP_KERNEL);
+> +	if (!g2d_userptr->pages) {
+>   		ret =3D -ENOMEM;
+>   		goto err_free;
+>   	}
+>  =20
+> -	ret =3D get_vaddr_frames(start, npages, FOLL_FORCE | FOLL_WRITE,
+> -		g2d_userptr->vec);
+> +	ret =3D pin_user_pages_fast(start, npages, FOLL_FORCE | FOLL_WRITE,
+> +				  g2d_userptr->pages);
+>   	if (ret !=3D npages) {
+>   		DRM_DEV_ERROR(g2d->dev,
+>   			      "failed to get user pages from userptr.\n");
+>   		if (ret < 0)
+> -			goto err_destroy_framevec;
+> -		ret =3D -EFAULT;
+> -		goto err_put_framevec;
+> -	}
+> -	if (frame_vector_to_pages(g2d_userptr->vec) < 0) {
+> +			goto err_destroy_pages;
+> +		npages =3D ret;
+>   		ret =3D -EFAULT;
+> -		goto err_put_framevec;
+> +		goto err_unpin_pages;
+>   	}
+> +	g2d_userptr->npages =3D npages;
+>  =20
+>   	sgt =3D kzalloc(sizeof(*sgt), GFP_KERNEL);
+>   	if (!sgt) {
+>   		ret =3D -ENOMEM;
+> -		goto err_put_framevec;
+> +		goto err_unpin_pages;
+>   	}
+>  =20
+>   	ret =3D sg_alloc_table_from_pages(sgt,
+> -					frame_vector_pages(g2d_userptr->vec),
+> +					g2d_userptr->pages,
+>   					npages, offset, size, GFP_KERNEL);
+>   	if (ret < 0) {
+>   		DRM_DEV_ERROR(g2d->dev, "failed to get sgt from pages.\n");
+> @@ -538,11 +531,11 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct =
+g2d_data *g2d,
+>   err_free_sgt:
+>   	kfree(sgt);
+>  =20
+> -err_put_framevec:
+> -	put_vaddr_frames(g2d_userptr->vec);
+> +err_unpin_pages:
+> +	unpin_user_pages(g2d_userptr->pages, npages);
+>  =20
+> -err_destroy_framevec:
+> -	frame_vector_destroy(g2d_userptr->vec);
+> +err_destroy_pages:
+> +	kvfree(g2d_userptr->pages);
+>  =20
+>   err_free:
+>   	kfree(g2d_userptr);
 >=20
-> SAMSUNG SPI DRIVERS
-> -M:    Kukjin Kim <kgene@kernel.org>
-> M:    Krzysztof Kozlowski <krzk@kernel.org>
-> M:    Andi Shyti <andi@etezian.org>
-> L:    linux-spi@vger.kernel.org
-> --=20
-> 2.25.1
->=20
+
