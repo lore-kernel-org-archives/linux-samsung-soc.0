@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60269C43457
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3534C43457
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 20:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 244C522268
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:53:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F7F02226B
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 20:00:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603050812;
-	bh=Buv2dVNq0Tkli/0x+OUC2acHwZGGA/Z5YDjL+nyPK8I=;
+	s=default; t=1603051244;
+	bh=om6wxlB1/VxnZ4ZVJ9hqX/LgMe+u5XTM+cmXj2zooII=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sYbohFDHe+VTfv+3+yjgP9aEbJFrr40MtIKOQpmJ51jMlSShRxr5zgGVvu+CZjPAw
-	 Lq/AyVzUhE3Dgz6XZMplyFq2RIHzJYQgWPmRR5uHfxw4VgN+TRjmrn9Yf78SBdGbh0
-	 gTZWh0bTBKYK2nZib6n18LDqh7WWrROW8NOEYzdk=
+	b=ggbA3MZSLDtIWUrjv8rT4LH7tUwUdtaIWLPc212wvFxWqlC3oR/By1b2soscnDmUU
+	 M0xC93ptZtXGUz7TVtsxG/D6CddSOaLAM+n7VJzJQtsIc4TyGE8OmUzMGDZodEcdKR
+	 D/d4cKqTODT7Hhb5ZHciw0NnhtOGBUMWt5i19fsI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728977AbgJRTUm (ORCPT
+        id S2388676AbgJRUAk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 18 Oct 2020 15:20:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60502 "EHLO mail.kernel.org"
+        Sun, 18 Oct 2020 16:00:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728971AbgJRTUl (ORCPT
+        id S1727610AbgJRTS1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 18 Oct 2020 15:20:41 -0400
+        Sun, 18 Oct 2020 15:18:27 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23D02222E7;
-        Sun, 18 Oct 2020 19:20:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3274022274;
+        Sun, 18 Oct 2020 19:18:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603048841;
-        bh=Buv2dVNq0Tkli/0x+OUC2acHwZGGA/Z5YDjL+nyPK8I=;
+        s=default; t=1603048707;
+        bh=om6wxlB1/VxnZ4ZVJ9hqX/LgMe+u5XTM+cmXj2zooII=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LY1Ksod5gSTFV6b5qNVE9id6FWX3P9mijEa3Zl1d++jk823/b6CgwXaBGJCEKzV4b
-         QIm2ZImfpXox/etbdiwUTzAMHTpb3vfOtsDCDf6X8zJMxtGfgP4WRmyV1denFwRh+g
-         lmydbHih4kgSlO0e7WwjzI3YiymfNzWsE5isQrH0=
+        b=18kAFjRJ0kzU7J/B/YF3oAh+ARdasgYXKrSnKdX9+SHIz+X6CqRfbdPAXJsUz8uhf
+         vgy/CjMyaZRkYjZDzcxEOG4O2B0i5MTsKH7tMVTetJnJN0bLzPsaJw4YU0ipns1Sfe
+         vJ7Ok1OzXWy9igb8jC/kvn9V4WWhkuZP8DsbgFyw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qiushi Wu <wu000273@umn.edu>,
+Cc:     Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.8 011/101] media: exynos4-is: Fix several reference count leaks due to pm_runtime_get_sync
-Date:   Sun, 18 Oct 2020 15:18:56 -0400
-Message-Id: <20201018192026.4053674-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.9 015/111] media: platform: s3c-camif: Fix runtime PM imbalance on error
+Date:   Sun, 18 Oct 2020 15:16:31 -0400
+Message-Id: <20201018191807.4052726-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201018192026.4053674-1-sashal@kernel.org>
-References: <20201018192026.4053674-1-sashal@kernel.org>
+In-Reply-To: <20201018191807.4052726-1-sashal@kernel.org>
+References: <20201018191807.4052726-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -62,52 +62,51 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Qiushi Wu <wu000273@umn.edu>
+From: Dinghao Liu <dinghao.liu@zju.edu.cn>
 
-[ Upstream commit 7ef64ceea0008c17e94a8a2c60c5d6d46f481996 ]
+[ Upstream commit dafa3605fe60d5a61239d670919b2a36e712481e ]
 
-On calling pm_runtime_get_sync() the reference count of the device
-is incremented. In case of failure, decrement the
-reference count before returning the error.
+pm_runtime_get_sync() increments the runtime PM usage counter even
+when it returns an error code. Thus a pairing decrement is needed on
+the error handling path to keep the counter balanced.
 
-Signed-off-by: Qiushi Wu <wu000273@umn.edu>
+Also, call pm_runtime_disable() when pm_runtime_get_sync() returns
+an error code.
+
+Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+Reviewed-by: Sylwester Nawrocki <snawrocki@kernel.org>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/exynos4-is/fimc-isp.c  | 4 +++-
- drivers/media/platform/exynos4-is/fimc-lite.c | 2 +-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/media/platform/s3c-camif/camif-core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp.c b/drivers/media/platform/exynos4-is/fimc-isp.c
-index cde0d254ec1c4..a77c49b185115 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp.c
-@@ -305,8 +305,10 @@ static int fimc_isp_subdev_s_power(struct v4l2_subdev *sd, int on)
+diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
+index 92f43c0cbc0c0..422fd549e9c87 100644
+--- a/drivers/media/platform/s3c-camif/camif-core.c
++++ b/drivers/media/platform/s3c-camif/camif-core.c
+@@ -464,7 +464,7 @@ static int s3c_camif_probe(struct platform_device *pdev)
  
- 	if (on) {
- 		ret = pm_runtime_get_sync(&is->pdev->dev);
--		if (ret < 0)
-+		if (ret < 0) {
-+			pm_runtime_put(&is->pdev->dev);
- 			return ret;
-+		}
- 		set_bit(IS_ST_PWR_ON, &is->state);
- 
- 		ret = fimc_is_start_firmware(is);
-diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-index 394e0818f2d5c..92130d7791378 100644
---- a/drivers/media/platform/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-@@ -470,7 +470,7 @@ static int fimc_lite_open(struct file *file)
- 	set_bit(ST_FLITE_IN_USE, &fimc->state);
- 	ret = pm_runtime_get_sync(&fimc->pdev->dev);
+ 	ret = camif_media_dev_init(camif);
  	if (ret < 0)
--		goto unlock;
+-		goto err_alloc;
 +		goto err_pm;
  
- 	ret = v4l2_fh_open(file);
+ 	ret = camif_register_sensor(camif);
  	if (ret < 0)
+@@ -498,10 +498,9 @@ static int s3c_camif_probe(struct platform_device *pdev)
+ 	media_device_unregister(&camif->media_dev);
+ 	media_device_cleanup(&camif->media_dev);
+ 	camif_unregister_media_entities(camif);
+-err_alloc:
++err_pm:
+ 	pm_runtime_put(dev);
+ 	pm_runtime_disable(dev);
+-err_pm:
+ 	camif_clk_put(camif);
+ err_clk:
+ 	s3c_camif_unregister_subdev(camif);
 -- 
 2.25.1
 
