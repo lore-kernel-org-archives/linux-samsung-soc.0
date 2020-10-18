@@ -5,52 +5,52 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE8C3C43457
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 523EDC433E7
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7172137B
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:33:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16C2322280
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:33:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603049605;
-	bh=xV8v4HsfW/T/pSVmTp0YC8+BuJdwI81D8/nK9ImUFdk=;
+	s=default; t=1603049610;
+	bh=Vo+laG5Ggs6g5JM9vdCdYDWFcwDE4twWzBeZlukLv04=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dTliHYVMdcNP7PclWziQguDGaYrOXGfMK+B850/7vS/xU7aBkKXDXguNc1+n8jdK+
-	 wmvfg3UVl76oyXd5G7B9QqPsKuQh0c7mjFNU4LQeO9w5EoHsI10ioa5U3GbnHsiMu/
-	 e3XjIb33N70oo6g6FklaADE8KAInyfTRykq3jmjU=
+	b=12DdX81UEPAX9is8VrWKGY7x6SOqDQg0qUvEUjKpYkeWnWmq02UglIlg9ZndZlrMF
+	 Fy6A/vZXTN1GaXr5O2vFJDOE8a21VKFtJfIgza+rgrpkSsdMDcS1t4yP/ar6svAn6D
+	 B+3x6Tsv4/kHoYJJIASb0wPcbg1TVcLyvLzRQFvE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731842AbgJRTdY (ORCPT
+        id S1731820AbgJRT0s (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 18 Oct 2020 15:33:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42134 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731813AbgJRT0s (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
         Sun, 18 Oct 2020 15:26:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42010 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731796AbgJRT0n (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Sun, 18 Oct 2020 15:26:43 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A03E20791;
-        Sun, 18 Oct 2020 19:26:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2544C222EB;
+        Sun, 18 Oct 2020 19:26:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603049207;
-        bh=xV8v4HsfW/T/pSVmTp0YC8+BuJdwI81D8/nK9ImUFdk=;
+        s=default; t=1603049203;
+        bh=Vo+laG5Ggs6g5JM9vdCdYDWFcwDE4twWzBeZlukLv04=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eNE+MArCXnpH+3gWclpCbwMtv5O350iwunm/bx5KOFdjnsCidbaP6M6jd3++96HoE
-         p+AhQTugMduA1La43lQWIrIKDDJaSZc1nnj8Yv/i1g40xPos5x9AvH8CMaj/MkWB9Q
-         3g+2hc5YgafPxSB0Ic53jbZoMVq1f8gDJHOja5Sc=
+        b=xBAX41yIxnXKvFyIG/YDyPcYBdZR+HJeXP+SWZZOV5H4Q3kl+WLGaNuzY8A3//eHa
+         ts+S0lCpioV3HAaJJ0rQzZm0hb+oyVrvRTzGGUvCkzTVmWcQo24WAHz7hwpUfaj+6q
+         23CK5gLQ1rsqWazYMlDG4JtAhFjqQ0uJ1UI9sLGA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dinghao Liu <dinghao.liu@zju.edu.cn>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
+Cc:     Qiushi Wu <wu000273@umn.edu>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 08/41] media: platform: s3c-camif: Fix runtime PM imbalance on error
-Date:   Sun, 18 Oct 2020 15:26:02 -0400
-Message-Id: <20201018192635.4056198-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 05/41] media: exynos4-is: Fix a reference count leak due to pm_runtime_get_sync
+Date:   Sun, 18 Oct 2020 15:25:59 -0400
+Message-Id: <20201018192635.4056198-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201018192635.4056198-1-sashal@kernel.org>
 References: <20201018192635.4056198-1-sashal@kernel.org>
@@ -62,51 +62,38 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Dinghao Liu <dinghao.liu@zju.edu.cn>
+From: Qiushi Wu <wu000273@umn.edu>
 
-[ Upstream commit dafa3605fe60d5a61239d670919b2a36e712481e ]
+[ Upstream commit c47f7c779ef0458a58583f00c9ed71b7f5a4d0a2 ]
 
-pm_runtime_get_sync() increments the runtime PM usage counter even
-when it returns an error code. Thus a pairing decrement is needed on
-the error handling path to keep the counter balanced.
+On calling pm_runtime_get_sync() the reference count of the device
+is incremented. In case of failure, decrement the
+reference count before returning the error.
 
-Also, call pm_runtime_disable() when pm_runtime_get_sync() returns
-an error code.
-
-Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
-Reviewed-by: Sylwester Nawrocki <snawrocki@kernel.org>
+Signed-off-by: Qiushi Wu <wu000273@umn.edu>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/s3c-camif/camif-core.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/media/platform/exynos4-is/media-dev.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
-index ec40019703132..560e1ff236508 100644
---- a/drivers/media/platform/s3c-camif/camif-core.c
-+++ b/drivers/media/platform/s3c-camif/camif-core.c
-@@ -476,7 +476,7 @@ static int s3c_camif_probe(struct platform_device *pdev)
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index cdaf3a8e2555e..b0289fca854cd 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -477,8 +477,10 @@ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
+ 		return -ENXIO;
  
- 	ret = camif_media_dev_init(camif);
- 	if (ret < 0)
--		goto err_alloc;
-+		goto err_pm;
+ 	ret = pm_runtime_get_sync(fmd->pmf);
+-	if (ret < 0)
++	if (ret < 0) {
++		pm_runtime_put(fmd->pmf);
+ 		return ret;
++	}
  
- 	ret = camif_register_sensor(camif);
- 	if (ret < 0)
-@@ -510,10 +510,9 @@ static int s3c_camif_probe(struct platform_device *pdev)
- 	media_device_unregister(&camif->media_dev);
- 	media_device_cleanup(&camif->media_dev);
- 	camif_unregister_media_entities(camif);
--err_alloc:
-+err_pm:
- 	pm_runtime_put(dev);
- 	pm_runtime_disable(dev);
--err_pm:
- 	camif_clk_put(camif);
- err_clk:
- 	s3c_camif_unregister_subdev(camif);
+ 	fmd->num_sensors = 0;
+ 
 -- 
 2.25.1
 
