@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E57ADC43457
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:36:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C6CAC43457
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEB4E207DE
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:36:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F053D2137B
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:36:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603049783;
-	bh=ZitSMksXbVfPgwkJze5+eHFHGlpfyn+wvp3XZE9BNfE=;
+	s=default; t=1603049791;
+	bh=Cf5hZJ1OuNNK3oLI0/j/J8SLXiDMr90JtPLHcPIBgCo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s8FdoDRwyt29BjOGiQ5KNoGXrrRMyI+HkXVD/QnVvCTjQnZtKGWWnf7xYUssIixsg
-	 zybSGEHe9Bkg1sw82GUMVflEK3ftL64+cAkMrm6tV36i4qIWf954JtDhzO2qNQ5AA2
-	 x8PmySTdcxo7iARi4uoMH+0/qT9MbIO+gyJ3Z1r4=
+	b=FpIJl0KuJtrgMWVz3nmmiOIJ9Ej15imBOkArCqlLSKvGpx9F5ShwdkD2BUmkwGJ5G
+	 jGaFk4DF4xSvO0ZnUT3Dm6RkfU2UmlE8BfaN7+luT96+Xh1sWheD34vZumsqcgZdsc
+	 vWXAFIlyHPt7XwRo6vGLP1tzVIN4L7wPqWMr4DzI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731369AbgJRTZm (ORCPT
+        id S1731350AbgJRTZk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 18 Oct 2020 15:25:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40390 "EHLO mail.kernel.org"
+        Sun, 18 Oct 2020 15:25:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731358AbgJRTZl (ORCPT
+        id S1731335AbgJRTZk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 18 Oct 2020 15:25:41 -0400
+        Sun, 18 Oct 2020 15:25:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1453207DE;
-        Sun, 18 Oct 2020 19:25:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98163223AB;
+        Sun, 18 Oct 2020 19:25:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603049140;
-        bh=ZitSMksXbVfPgwkJze5+eHFHGlpfyn+wvp3XZE9BNfE=;
+        s=default; t=1603049139;
+        bh=Cf5hZJ1OuNNK3oLI0/j/J8SLXiDMr90JtPLHcPIBgCo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NWZzJuDqJ9BykbXaVT3NicbQyavebRBG66yFh1KLYyOTCS8DHA8ZHrAmbQ7OWLN3F
-         OeGfC6fLMQdufQ1eZgoDi52B62b/4g0FXEI1fYqH+qI5qhjwxZx5BR+FoJ/O7QQ9jZ
-         IUxonWLyvCi6MUyZQE75ibqwIDL3w60IS+N3ztvY=
+        b=Z3FIRKQg0zuwXM28HXx7w1s7zFVT+mfR8Ef597IezRSdT0nBfJvpUqUzXcjYAASZ3
+         9io0D78N5wbcE/o+Yzje++6K1pDKFBoPBx+4aellHjdQmL+Q//5hsuWSb2c9Nw/iEW
+         WRJmVW9P3gll1hDY733DMxi+rD3txZDSAXDRitpE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Qiushi Wu <wu000273@umn.edu>,
@@ -48,9 +48,9 @@ Cc:     Qiushi Wu <wu000273@umn.edu>,
         Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 08/52] media: exynos4-is: Fix a reference count leak
-Date:   Sun, 18 Oct 2020 15:24:45 -0400
-Message-Id: <20201018192530.4055730-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 07/52] media: exynos4-is: Fix a reference count leak due to pm_runtime_get_sync
+Date:   Sun, 18 Oct 2020 15:24:44 -0400
+Message-Id: <20201018192530.4055730-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201018192530.4055730-1-sashal@kernel.org>
 References: <20201018192530.4055730-1-sashal@kernel.org>
@@ -64,37 +64,36 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Qiushi Wu <wu000273@umn.edu>
 
-[ Upstream commit 64157b2cb1940449e7df2670e85781c690266588 ]
+[ Upstream commit c47f7c779ef0458a58583f00c9ed71b7f5a4d0a2 ]
 
-pm_runtime_get_sync() increments the runtime PM usage counter even
-when it returns an error code, causing incorrect ref count if
-pm_runtime_put_noidle() is not called in error handling paths.
-Thus call pm_runtime_put_noidle() if pm_runtime_get_sync() fails.
+On calling pm_runtime_get_sync() the reference count of the device
+is incremented. In case of failure, decrement the
+reference count before returning the error.
 
 Signed-off-by: Qiushi Wu <wu000273@umn.edu>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/exynos4-is/mipi-csis.c | 4 +++-
+ drivers/media/platform/exynos4-is/media-dev.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
-index 560aadabcb111..040d10df17c97 100644
---- a/drivers/media/platform/exynos4-is/mipi-csis.c
-+++ b/drivers/media/platform/exynos4-is/mipi-csis.c
-@@ -513,8 +513,10 @@ static int s5pcsis_s_stream(struct v4l2_subdev *sd, int enable)
- 	if (enable) {
- 		s5pcsis_clear_counters(state);
- 		ret = pm_runtime_get_sync(&state->pdev->dev);
--		if (ret && ret != 1)
-+		if (ret && ret != 1) {
-+			pm_runtime_put_noidle(&state->pdev->dev);
- 			return ret;
-+		}
- 	}
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index f772c9b92d9ba..1cab30578e166 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -479,8 +479,10 @@ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
+ 		return -ENXIO;
  
- 	mutex_lock(&state->lock);
+ 	ret = pm_runtime_get_sync(fmd->pmf);
+-	if (ret < 0)
++	if (ret < 0) {
++		pm_runtime_put(fmd->pmf);
+ 		return ret;
++	}
+ 
+ 	fmd->num_sensors = 0;
+ 
 -- 
 2.25.1
 
