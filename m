@@ -5,41 +5,41 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B255C433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 134CDC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1177322314
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:26:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7003207DE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:30:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603049209;
-	bh=qLE5NmCD35w4LiiZyJYMTASa1iYX0u+VkyhveGOJTBw=;
+	s=default; t=1603049442;
+	bh=/HqbitK00QkLIbbHhw5jTLcPPXOHnA8KQORgGAso0Bw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hrxciJaVTrVzoOy98dA3F3LB5o4XiTY9zrMvNDc6rvNY5qJgyKsijkdTg22xXKEFR
-	 eYhNYRwr0GG2lXy1eFkUIDTGwRJIYyeHBFeYBPWGV9OlHLzAgwEj7mW3Rjb1JbjTmd
-	 ryRgK7p/HmBunA+rh67LM2XQgTSPs6OllyemU9j4=
+	b=CRtyRTfkoXUJY5r5XmdCNLtTjbSpvCBXKHSQEqeOZTq5gEAQ6g5Qgu8bBXfvyvAyf
+	 P3E7v9V/ZMt+yCK7PRRzF3AOK7m8xSPCsyv3RoxqUvl6C6atmUDALp0cO1Y9vEnFDD
+	 pA3C/3ASLJFf5chnSVRtzXsT4zWeLTItNXC4wohw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731811AbgJRT0q (ORCPT
+        id S1732143AbgJRT1g (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 18 Oct 2020 15:26:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42054 "EHLO mail.kernel.org"
+        Sun, 18 Oct 2020 15:27:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731806AbgJRT0o (ORCPT
+        id S1732134AbgJRT1g (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 18 Oct 2020 15:26:44 -0400
+        Sun, 18 Oct 2020 15:27:36 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E6F8222E7;
-        Sun, 18 Oct 2020 19:26:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2A3922274;
+        Sun, 18 Oct 2020 19:27:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603049204;
-        bh=qLE5NmCD35w4LiiZyJYMTASa1iYX0u+VkyhveGOJTBw=;
+        s=default; t=1603049255;
+        bh=/HqbitK00QkLIbbHhw5jTLcPPXOHnA8KQORgGAso0Bw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pqKlBHw4DAb2X9rYWWTe7Zm+oYy1fbv6/VsQFXfJb0HggEWZyn+tSdsshPAsE24Qx
-         jmKCsEi48c6QGBOZqmJOT+RB9iJLq4y+10DJfVD5GC0tX3fVagm6MgAn1pJ6wUnT/A
-         PqmudO7mx5E2Q+TtijwdTGaI4snNL+0tZoH3iqGM=
+        b=sEBGh/03Uac2+9eU03LjjjSGm/eK7badB4EY6rArxrUxrh4NwOFO4HlLwcDeGiZhr
+         GajSz/Zae+RNF3nuWwaKB+FqNlhoowT4qq1xG0EqKWgfkXAunD+3OBQA9cSxyFu2MS
+         NG1fWnep6LlggkkjjD7On2AsIX6jAiFPzIryUFJE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Qiushi Wu <wu000273@umn.edu>,
@@ -48,12 +48,12 @@ Cc:     Qiushi Wu <wu000273@umn.edu>,
         Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 06/41] media: exynos4-is: Fix a reference count leak
-Date:   Sun, 18 Oct 2020 15:26:00 -0400
-Message-Id: <20201018192635.4056198-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 05/33] media: exynos4-is: Fix a reference count leak
+Date:   Sun, 18 Oct 2020 15:27:00 -0400
+Message-Id: <20201018192728.4056577-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201018192635.4056198-1-sashal@kernel.org>
-References: <20201018192635.4056198-1-sashal@kernel.org>
+In-Reply-To: <20201018192728.4056577-1-sashal@kernel.org>
+References: <20201018192728.4056577-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -80,7 +80,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
-index befd9fc0adc4a..dc87c9cfa52ff 100644
+index 4b85105dc159b..4f7a0f59f36c2 100644
 --- a/drivers/media/platform/exynos4-is/mipi-csis.c
 +++ b/drivers/media/platform/exynos4-is/mipi-csis.c
 @@ -513,8 +513,10 @@ static int s5pcsis_s_stream(struct v4l2_subdev *sd, int enable)
