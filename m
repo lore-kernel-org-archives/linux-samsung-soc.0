@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B9E1C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75969C433E7
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5DF5223AC
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:22:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A2E4223FD
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:25:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603048972;
-	bh=XiJLm7dJT4iYtMQfAyf59AS4prF8Kb681A/GW+JkWyM=;
+	s=default; t=1603049147;
+	bh=ESmYsFwdjMvGzq6UJYwPaDKEGd2RRZovAo1COkQR6ZA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=y/Zroh7htmBBBmIGIhaNaH1fZQiOW1E3+CQa+WavQKrgXSAXxjPvO4LUx9dbXgkFH
-	 4OdgcBsGJYhZpbKJ/jKLxqLH9fHQkShRkgLAfE05t5Kqc/J6+OYj74YDNvOvtbunNK
-	 nDxCf0xpz7jAP0JdvzL8ikNiAnkK6oiwAahZmIHI=
+	b=j1lSwCPN666nR6LhAyecIq/5jXwtr1ei0ShHcErztNaIQTVTaCEl6Zl4crSIC39l/
+	 34gpxn+PDcqBs/BTGzwdaCfstEFab2nMw9NwrwT0X7TxWxdh3aIt4qmXAw+nlMrwiG
+	 WOV7G7J+RAD1pX4qiPvwIBgwvEXbMJIK/W0xCT6c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730025AbgJRTWw (ORCPT
+        id S1731383AbgJRTZq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 18 Oct 2020 15:22:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35780 "EHLO mail.kernel.org"
+        Sun, 18 Oct 2020 15:25:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730006AbgJRTWv (ORCPT
+        id S1731376AbgJRTZo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 18 Oct 2020 15:22:51 -0400
+        Sun, 18 Oct 2020 15:25:44 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD61B207DE;
-        Sun, 18 Oct 2020 19:22:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1AAE2236F;
+        Sun, 18 Oct 2020 19:25:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603048970;
-        bh=XiJLm7dJT4iYtMQfAyf59AS4prF8Kb681A/GW+JkWyM=;
+        s=default; t=1603049143;
+        bh=ESmYsFwdjMvGzq6UJYwPaDKEGd2RRZovAo1COkQR6ZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ha1Ukp1HjOToAYNao53ydl848tckf2C5ORNRlvK6/5eOlJRMLU1QhrwUDh1AEQzzR
-         F2MmcAKD5Ab7ZQWjK+EQflqfY4iac/4JQLxn/SeCai/HYlz4DRyzhWyogjb/AOHI0x
-         VJwtrZfhgEwXnSUiUHX9l4PI3Sh1ckYQyFOz1Wvw=
+        b=xCi4OHWKHvd/k3cMatxh0jCLmivGiwcYEstJ6Sd/Pj0dtR8ebGYH/S1w3S9QoDbXA
+         N5PhS69q6Ql7AjU65FeiUx9W3coPfnjFN1+42m5imA/wPZUsr43uaRZwjd3XqSqtZs
+         diYoBZQjXjVUJ+pbzk+cuiKdt9/2o7FeSimv/7zU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dinghao Liu <dinghao.liu@zju.edu.cn>,
@@ -48,12 +48,12 @@ Cc:     Dinghao Liu <dinghao.liu@zju.edu.cn>,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 14/80] media: platform: s3c-camif: Fix runtime PM imbalance on error
-Date:   Sun, 18 Oct 2020 15:21:25 -0400
-Message-Id: <20201018192231.4054535-14-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 10/52] media: platform: s3c-camif: Fix runtime PM imbalance on error
+Date:   Sun, 18 Oct 2020 15:24:47 -0400
+Message-Id: <20201018192530.4055730-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201018192231.4054535-1-sashal@kernel.org>
-References: <20201018192231.4054535-1-sashal@kernel.org>
+In-Reply-To: <20201018192530.4055730-1-sashal@kernel.org>
+References: <20201018192530.4055730-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -83,10 +83,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
-index c6fbcd7036d6d..ee624804862e2 100644
+index c4ab63986c8f0..95b11f69555c3 100644
 --- a/drivers/media/platform/s3c-camif/camif-core.c
 +++ b/drivers/media/platform/s3c-camif/camif-core.c
-@@ -464,7 +464,7 @@ static int s3c_camif_probe(struct platform_device *pdev)
+@@ -475,7 +475,7 @@ static int s3c_camif_probe(struct platform_device *pdev)
  
  	ret = camif_media_dev_init(camif);
  	if (ret < 0)
@@ -95,7 +95,7 @@ index c6fbcd7036d6d..ee624804862e2 100644
  
  	ret = camif_register_sensor(camif);
  	if (ret < 0)
-@@ -498,10 +498,9 @@ static int s3c_camif_probe(struct platform_device *pdev)
+@@ -509,10 +509,9 @@ static int s3c_camif_probe(struct platform_device *pdev)
  	media_device_unregister(&camif->media_dev);
  	media_device_cleanup(&camif->media_dev);
  	camif_unregister_media_entities(camif);
