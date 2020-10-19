@@ -2,213 +2,82 @@ Return-Path: <SRS0=F6EI=D2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B9DC43457
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 13:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B014C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 14:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF6512223C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 13:38:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603114738;
-	bh=QLl//rSYnpjI4XjsLivmaRA2q702aMuao3NMwW0AZCU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=CrEqoo3Rgz8DBuuCAVI7sgD+yhstpeA+4KMOnp9ACKZ+aK/9E2b/E/C3S5gFGjOEG
-	 JJyNWYHy8QAqN/6be1Nyj0OpvWKxTFDJ/AmQXQKkvyGjaW811kgPpV8iAAAQORh2rh
-	 C50jwcBcyhuhjXTiIQ0j831IRcKo5JxYz+RxTDcw=
+	by mail.kernel.org (Postfix) with ESMTP id 0F8C122263
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 14:14:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbgJSNiz (ORCPT
+        id S1729061AbgJSOOO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 19 Oct 2020 09:38:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53872 "EHLO mail.kernel.org"
+        Mon, 19 Oct 2020 10:14:14 -0400
+Received: from foss.arm.com ([217.140.110.172]:58672 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728275AbgJSNiy (ORCPT
+        id S1728802AbgJSOOO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Oct 2020 09:38:54 -0400
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CDF42223C;
-        Mon, 19 Oct 2020 13:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603114733;
-        bh=QLl//rSYnpjI4XjsLivmaRA2q702aMuao3NMwW0AZCU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZJ0UeatYQoCfuwjODgSFqcdGke2T/VzdRlInpmZ8BW5LGWfYNWT6Us7AD7LSvghAw
-         ovGl1TIHvNQ1Sik3JLTWfyDAndg1U+svVh3VWmUaKrDtjgiTDSyC7LZJHgri7Y4Lum
-         sBVeb1uXisrOJIxuAsOY6PKTBBO7RZkwfiv/NJgs=
-Received: by mail-ot1-f44.google.com with SMTP id e20so10432464otj.11;
-        Mon, 19 Oct 2020 06:38:53 -0700 (PDT)
-X-Gm-Message-State: AOAM530TEX2PGRION19xoUwOSsLg6yhtDxFyg4kuwTBINxxZoPXRgCbB
-        zw+jg7fyyOYnANSDZ8amaF+RjCOhH5R/jHvdug==
-X-Google-Smtp-Source: ABdhPJxPScoNZrlBxS9IlCTidVRXbPv6VWkKWABPQ2lSmgTF04BwvvKmDYpcVnycQB3EFkkwQ2mstx5y1VG7XAji/kU=
-X-Received: by 2002:a9d:7993:: with SMTP id h19mr10559otm.129.1603114732682;
- Mon, 19 Oct 2020 06:38:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20201019094739eucas1p18cd4c7e5a0197393d2e7c5c6fcc2777d@eucas1p1.samsung.com>
- <20201019094715.15343-1-m.szyprowski@samsung.com> <20201019094715.15343-3-m.szyprowski@samsung.com>
-In-Reply-To: <20201019094715.15343-3-m.szyprowski@samsung.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 19 Oct 2020 08:38:40 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+X3w=1-_SpXPTdO_UGg5er9vU-XETT-NbS96LSfNLUVQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+X3w=1-_SpXPTdO_UGg5er9vU-XETT-NbS96LSfNLUVQ@mail.gmail.com>
-Subject: Re: [PATCH 2/6] Documetation: dt-bindings: add the
- samsung,exynos-pcie binding
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        PCI <linux-pci@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
+        Mon, 19 Oct 2020 10:14:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1BECD6E;
+        Mon, 19 Oct 2020 07:14:13 -0700 (PDT)
+Received: from bogus (unknown [10.57.12.17])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E23D63F66E;
+        Mon, 19 Oct 2020 07:14:10 -0700 (PDT)
+Date:   Mon, 19 Oct 2020 15:10:07 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>, nks@flawful.org,
+        georgi.djakov@linaro.org, Stephan Gerhold <stephan@gerhold.net>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH V2 1/2] opp: Allow dev_pm_opp_get_opp_table() to return
+ -EPROBE_DEFER
+Message-ID: <20201019141007.GA6358@bogus>
+References: <24ff92dd1b0ee1b802b45698520f2937418f8094.1598260050.git.viresh.kumar@linaro.org>
+ <20201015180555.gacdzkofpibkdn2e@bogus>
+ <20201016042434.org6ibdqsqbzcdww@vireshk-i7>
+ <20201016060021.sotk72u4hioctg7o@bogus>
+ <20201016111222.lvakbmjhlrocpogt@bogus>
+ <20201019045827.kl6qnx6gidhzjkrs@vireshk-i7>
+ <20201019091723.GA12087@bogus>
+ <20201019092411.b3znjxebay3puq2j@vireshk-i7>
+ <20201019101241.GB12908@bogus>
+ <20201019103535.ksp5ackoihamam4g@vireshk-i7>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201019103535.ksp5ackoihamam4g@vireshk-i7>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 19, 2020 at 4:47 AM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
+On Mon, Oct 19, 2020 at 04:05:35PM +0530, Viresh Kumar wrote:
+> On 19-10-20, 11:12, Sudeep Holla wrote:
+> > Yes it has clocks property but used by SCMI(for CPUFreq/DevFreq) and not
+> > by any clock provider driver. E.g. the issue you will see if "clocks"
+> > property is used instead of "qcom,freq-domain" on Qcom parts.
+> 
+> Okay, I understand. But what I still don't understand is why it fails
+> for you. You have a clocks property in DT for the CPU, the OPP core
+> tries to get it and will get deferred-probed, which will try probing
+> at a later point of time and it shall work then. Isn't it ?
 >
-> From: Jaehoon Chung <jh80.chung@samsung.com>
->
-> Add dt-bindings for the Samsung Exynos PCIe controller (Exynos5433
-> variant).
->
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> [mszyprow: updated the binding to latest driver changes, rewrote it in yaml,
->            rewrote commit message]
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  .../bindings/pci/samsung,exynos-pcie.yaml     | 106 ++++++++++++++++++
->  1 file changed, 106 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
->
-> diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
-> new file mode 100644
-> index 000000000000..48fb569c238c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
-> @@ -0,0 +1,104 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/samsung,exynos-pcie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung SoC series PCIe Host Controller Device Tree Bindings
-> +
-> +maintainers:
-> +  - Jaehoon Chung <jh80.chung@samsung.com>
-> +
-> +description: |+
-> +  Exynos5433 SoC PCIe host controller is based on the Synopsys DesignWare
-> +  PCIe IP and thus inherits all the common properties defined in
-> +  designware-pcie.txt.
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/pci-bus.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - samsung,exynos5433-pcie
-> +
-> +  reg:
-> +    items:
-> +      - description: External Local Bus interface (ELBI) registers.
-> +      - description: Data Bus Interface (DBI) registers.
-> +      - description: PCIe configuration space region.
-> +
-> +  reg-names:
-> +    items:
-> +      - const: elbi
-> +      - const: bdi
 
-dbi
+Nope unfortunately. We don't have clock provider, so clk_get will
+never succeed and always return -EPROBE_DEFER.
 
-> +      - const: config
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: PCIe bridge clock
-> +      - description: PCIe bus clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: pcie
-> +      - const: pcie_bus
-> +
-> +  phys:
-> +    maxItems: 1
-> +
-> +  phy-names:
-> +    const: pcie-phy
-
-Kind of a pointless name.
-
-> +
-> +  vdd10-supply:
-> +    description:
-> +      Phandle to a regulator that provides 1.0V power to the PCIe block.
-> +
-> +  vdd18-supply:
-> +    description:
-> +      Phandle to a regulator that provides 1.8V power to the PCIe block.
-> +
-> +required:
-> +  - reg
-> +  - reg-names
-> +  - interrupts
-> +  - interrupt-names
-> +  - clocks
-> +  - clock-names
-> +  - phys
-> +  - phy-names
-> +  - vdd10-supply
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/exynos5433.h>
-> +
-> +    pcie: pcie@15700000 {
-> +        compatible = "samsung,exynos5433-pcie";
-> +        reg = <0x156b0000 0x1000>, <0x15700000 0x1000>, <0x0c000000 0x1000>;
-> +        reg-names = "elbi", "dbi", "config";
-> +        #address-cells = <3>;
-> +        #size-cells = <2>;
-> +        #interrupt-cells = <1>;
-> +        device_type = "pci";
-> +        interrupts = <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&cmu_fsys CLK_PCIE>, <&cmu_fsys CLK_PCLK_PCIE_PHY>;
-> +        clock-names = "pcie", "pcie_bus";
-> +        phys = <&pcie_phy>;
-> +        phy-names = "pcie-phy";
-> +        pinctrl-names = "default";
-> +        pinctrl-0 = <&pcie_bus &pcie_wlanen>;
-> +        num-lanes = <1>;
-> +        bus-range = <0x00 0xff>;
-> +        ranges = <0x81000000 0 0         0x0c001000 0 0x00010000>,
-> +                 <0x82000000 0 0x0c011000 0x0c011000 0 0x03feefff>;
-> +        vdd10-supply = <&ldo6_reg>;
-> +        vdd18-supply = <&ldo7_reg>;
-> +        iterrupt-map-mask = <0 0 0 0>;
-
-typo
-
-> +        interrupt-map = <0 0 0 0 &gic GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>;
-> +    };
-> --
-> 2.17.1
->
+-- 
+Regards,
+Sudeep
