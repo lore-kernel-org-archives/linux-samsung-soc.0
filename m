@@ -2,123 +2,161 @@ Return-Path: <SRS0=F6EI=D2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F03AFC43457
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 04:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A35F2C433E7
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 05:30:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9BE522260
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 04:58:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26F3722260
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 05:30:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hFWsgeKI"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tEe/FqeR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728651AbgJSE6c (ORCPT
+        id S1726439AbgJSFal (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 19 Oct 2020 00:58:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36374 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726829AbgJSE6c (ORCPT
+        Mon, 19 Oct 2020 01:30:41 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:52778 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726199AbgJSFal (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Oct 2020 00:58:32 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E127FC0613CE
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Oct 2020 21:58:30 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id y14so5266032pfp.13
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Oct 2020 21:58:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6f/C91tZNh03qAAs3dj6+V8PcNIszWwYD5WiOJW/Er0=;
-        b=hFWsgeKIpyXv63TLxokl4C22aWQfvnpdVKlP9XwktpzygC+EIBOzHOeeG3fVitdSFF
-         LHJ6x/3/MqdVu9V+qpXe67o2VcWMH7XLwOncpvghPljed4FxRiMkLf2scwRSfmxL/rPA
-         3Tc+x2WVE76Y1Pxr0E1uiU5UE2Ou5NzNDWbz1ApMfKbkWXlRcsy4F9HYiJQ8NQXGMHrf
-         54GoMH95H2WrpiIzlI8LcJBzuifFJcXyanGESk5QEfJfybmhpzcK1buKfCjinbdQ0TfD
-         2vQI/gDFjA3SOdMTOKvhM71ScHfVKXEHIU3WNJ4xwtpjBU9A64G1MFJ68rcz9uSJUgpH
-         8S5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6f/C91tZNh03qAAs3dj6+V8PcNIszWwYD5WiOJW/Er0=;
-        b=P6/UF0aJZew2r2Nmo5BKjjyTIzT506s06laWfiUN3724kGkRJ3o/Q11s+OJbyEbXfT
-         T8e+KB8ElLa4ni8Xev97leCCC9pcwhku963bD1+vLfx4wxHEhUr6hDCsDT8KJg7NjBKC
-         NJ+yadT7aK4LdqzN+INzE4PpNkhU6xdp3d5eyHwUHuTe9lS5PKsnSA6Y4p3u56y4+/eT
-         IURISbHkuN0+/7soz51w+KcC2if53FG+0JRjx11al/xYXLTS2n2EzMz2cYrxoujaG5en
-         qP4duiv6MeSYVD3J2MmRXAeS8J88jyhIx1SpfRx0+VVIBCp1XlMKmQYc2Cnyw5U4Dr9R
-         bqGA==
-X-Gm-Message-State: AOAM5328ubyHTUZOeLHCoC8jhIQDZfzhpyZx5B68cWz9C3CDPrCWLGsg
-        oDmgO+aifj3LrsOm7Kd2rIMauw==
-X-Google-Smtp-Source: ABdhPJxWF9t4wYpgYzkSlSShupSIZhYevBl94ZD7xoiUcQVL/1GrfPReeWHV9QXxkcnbMeOGAXhmzA==
-X-Received: by 2002:a65:5785:: with SMTP id b5mr12436826pgr.44.1603083510308;
-        Sun, 18 Oct 2020 21:58:30 -0700 (PDT)
-Received: from localhost ([122.181.54.133])
-        by smtp.gmail.com with ESMTPSA id z16sm10342158pfr.116.2020.10.18.21.58.29
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 18 Oct 2020 21:58:29 -0700 (PDT)
-Date:   Mon, 19 Oct 2020 10:28:27 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>, nks@flawful.org,
-        georgi.djakov@linaro.org, Stephan Gerhold <stephan@gerhold.net>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] opp: Allow dev_pm_opp_get_opp_table() to return
- -EPROBE_DEFER
-Message-ID: <20201019045827.kl6qnx6gidhzjkrs@vireshk-i7>
-References: <24ff92dd1b0ee1b802b45698520f2937418f8094.1598260050.git.viresh.kumar@linaro.org>
- <20201015180555.gacdzkofpibkdn2e@bogus>
- <20201016042434.org6ibdqsqbzcdww@vireshk-i7>
- <20201016060021.sotk72u4hioctg7o@bogus>
- <20201016111222.lvakbmjhlrocpogt@bogus>
+        Mon, 19 Oct 2020 01:30:41 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20201019053039epoutp043f7bff581e4e708b53f16e0abf91500a~-Tba8RLTI1600116001epoutp047
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Oct 2020 05:30:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20201019053039epoutp043f7bff581e4e708b53f16e0abf91500a~-Tba8RLTI1600116001epoutp047
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1603085439;
+        bh=WeTTCzDpOQ7XbkeWqPVnTgIy6m9BJhORQyCxqSptRMI=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=tEe/FqeRV6go9ZdfDzlCJziW7GsU7qCNEGe3sCxSLRB2k9rNLFp5pmkRJLNoyd8tL
+         3OsXAq0tM4ZNd+98apIR8RRWTrN5ykYsT+wnaBxx2dZdc2IiecEHRCKK+t7UY+kEJl
+         tj6zOORzZ52C73CaZqPD01o8FG0/BwtQwEsSIC4o=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20201019053037epcas1p2013dd979619a6b5efce63af4de47feae~-TbZMGEI51360613606epcas1p2h;
+        Mon, 19 Oct 2020 05:30:37 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.157]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4CF5233HQ4zMqYkt; Mon, 19 Oct
+        2020 05:30:35 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        51.94.09918.B742D8F5; Mon, 19 Oct 2020 14:30:35 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20201019053034epcas1p4f0e7875ba34fb6ac270034e7520cec97~-TbVunWEJ2374623746epcas1p4e;
+        Mon, 19 Oct 2020 05:30:34 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201019053033epsmtrp25d0a8da8029c0cc621ed3d277916408b~-TbVuIP-f0823908239epsmtrp2G;
+        Mon, 19 Oct 2020 05:30:33 +0000 (GMT)
+X-AuditID: b6c32a36-713ff700000026be-81-5f8d247bcb15
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7E.1E.08745.9742D8F5; Mon, 19 Oct 2020 14:30:33 +0900 (KST)
+Received: from [10.113.221.211] (unknown [10.113.221.211]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20201019053033epsmtip208d2ba83f6aaf51c187ed0b7356431a5~-TbVl327g3161631616epsmtip2Y;
+        Mon, 19 Oct 2020 05:30:33 +0000 (GMT)
+Subject: Re: [PATCH] drm/exynos/hdmi: add support for 1920x1200@60Hz mode
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc:     Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>
+From:   Inki Dae <inki.dae@samsung.com>
+Message-ID: <2c460f28-96a6-d2c4-a6c1-9879036a4183@samsung.com>
+Date:   Mon, 19 Oct 2020 14:37:41 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+        Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201016111222.lvakbmjhlrocpogt@bogus>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <20201009130524.30828-1-m.szyprowski@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjk+LIzCtJLcpLzFFi42LZdlhTX7dapTfe4N12CYtb686xWlz5+p7N
+        Ysb5fUwWa4/cZbeYMfklmwOrx/3u40wefVtWMXp83iQXwByVbZORmpiSWqSQmpecn5KZl26r
+        5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDtFJJoSwxpxQoFJBYXKykb2dTlF9akqqQ
+        kV9cYquUWpCSU2BZoFecmFtcmpeul5yfa2VoYGBkClSYkJ3x4fQhxoLbnBWN668yNTA+Yu9i
+        5OSQEDCReLhtGWMXIxeHkMAORommO5eYIJxPjBI/T7WyQjifGSV+/VzKDNPyr+U4O0RiF6PE
+        gxmrofrfA/W3HQYbLCzgKXH2zEqwDhGBUom5/4+BxZkFAiVuz+wCs9kEVCUmrrjPBmLzCthJ
+        PH7yA8xmAYp3965iBbFFBSIkjndPZoeoEZQ4OfMJC4jNCVT//tsmZoiZ4hK3nsxngrDlJZq3
+        zmYGOUhC4CW7xO7GfqizXSQ+vLkAZQtLvDq+BRoCUhKf3+1lg2hoZpSYOOM0E4TTwShx9/F1
+        FogqY4n9SycDJTiAVmhKrN+lDxFWlNj5ey4jxGY+iXdfe1hBSiQEeCU62oQgSpQkjl28wQhh
+        S0hcWDKRDcL2kFh+4RzjBEbFWUh+m4Xkn1lI/pmFsHgBI8sqRrHUguLc9NRiwwIj5PjexAhO
+        kFpmOxgnvf2gd4iRiYPxEKMEB7OSCG+kYFe8EG9KYmVValF+fFFpTmrxIUZTYGhPZJYSTc4H
+        pui8knhDUyNjY2MLE0MzU0NDJXHeP9od8UIC6YklqdmpqQWpRTB9TBycUg1M08VfpITXlH2I
+        9Gn/unRV99mDvw5XXlzv5L2Z7dqmiG87/txIWchc2dTJvsM6fE2Sy9PNXuvsXwhf2bFtl+rx
+        TQu8yz2uvk9rZHr+bOprBbbV/R+PlARvUPWZterb8/4eq5cbn/X9ZDgqush78aawcL59xaYc
+        WdsSpKd/c9Fe2ig4yexEeOyjQ3vWaR6/n3mz8PZ7v8sV73h1TCzfpP9OWK51clnjxdeFdXF7
+        NfUm7AkNMeT4diNh3qowZqfPdnq3GvauLd257cvrk6tlWqWFeZz/L7Xdt+PcLcb0UuMk7s4L
+        LGGfljQ5WF902sZq3ur+r2ZGxv704wdC0pceKI27X/O0OcjM3TS+Zot8nOKRFCWW4oxEQy3m
+        ouJEAF3wSegZBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrELMWRmVeSWpSXmKPExsWy7bCSvG6lSm+8wby5Vha31p1jtbjy9T2b
+        xYzz+5gs1h65y24xY/JLNgdWj/vdx5k8+rasYvT4vEkugDmKyyYlNSezLLVI3y6BK+PD6UOM
+        Bbc5KxrXX2VqYHzE3sXIySEhYCLxr+U4kM3FISSwg1Hi5pKbLF2MHEAJCYktWzkgTGGJw4eL
+        IUreMkpMO3GVBaRXWMBT4uyZlcwgtohAqcSr/vuMIDazQKDE5w+bmSEaJjJKnH+1DmwZm4Cq
+        xMQV99lAbF4BO4nHT36A2SxA8e7eVawgtqhAhETL/T/sEDWCEidnPgFbxglU//7bJmaIBeoS
+        f+ZdgrLFJW49mc8EYctLNG+dzTyBUWgWkvZZSFpmIWmZhaRlASPLKkbJ1ILi3PTcYsMCo7zU
+        cr3ixNzi0rx0veT83E2M4GjQ0trBuGfVB71DjEwcjIcYJTiYlUR4IwW74oV4UxIrq1KL8uOL
+        SnNSiw8xSnOwKInzfp21ME5IID2xJDU7NbUgtQgmy8TBKdXAFHxAZNa0Z3rq74KO6vOYnFVb
+        d26PXueRZfFnVl0ojz1r7jKV8YvrgQ2veHZPOJp4oelvvabE3XX2Pvpm5Wcv7vdfwLNFbJV5
+        3tZjKR6s7C/X9SbHP7rY5q28UmQiz1fjFWwur/ljmS7Iv83Ju3/+41Hz7Q89Bb2uxssonnSy
+        N9pavir6W6uu2/8UtxuBUfceu+1darMz2lkxu+vGiSle3n/ennq0WjqNRenC82Oy88u5Gg8k
+        FBhW6lvZ/u7e/Sdd2aau5pezhcbelz8MphxQTBETnbTlYKF8zM/Pc8UmyrTlpm5d9HyG5wS2
+        o10a809avTAJnuN/Sef6k7V/t7gyml35WqdmNkPxR/Zb5qzsWCWW4oxEQy3mouJEACYmWmP1
+        AgAA
+X-CMS-MailID: 20201019053034epcas1p4f0e7875ba34fb6ac270034e7520cec97
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20201009130531eucas1p25ba0c17803bd0647c65603feb3180799
+References: <CGME20201009130531eucas1p25ba0c17803bd0647c65603feb3180799@eucas1p2.samsung.com>
+        <20201009130524.30828-1-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 16-10-20, 12:12, Sudeep Holla wrote:
-> On Fri, Oct 16, 2020 at 07:00:21AM +0100, Sudeep Holla wrote:
-> > On Fri, Oct 16, 2020 at 09:54:34AM +0530, Viresh Kumar wrote:
-> > > On 15-10-20, 19:05, Sudeep Holla wrote:
-> > > > OK, this breaks with SCMI which doesn't provide clocks but manage OPPs
-> > > > directly. Before this change clk_get(dev..) was allowed to fail and
-> > > > --EPROBE_DEFER was not an error.
-> > >
-> > > I think the change in itself is fine. We should be returning from
-> > > there if we get EPROBE_DEFER. The question is rather why are you
-> > > getting EPROBE_DEFER here ?
-> > >
-> >
-> > Ah OK, I didn't spend too much time, saw -EPROBE_DEFER, just reverted
-> > this patch and it worked. I need to check it in detail yet.
-> >
+
+
+20. 10. 9. 오후 10:05에 Marek Szyprowski 이(가) 쓴 글:
+> Add clock configuration for 154MHz pixelclock to Exynos542x HDMIPHY,
+> which is required for 1920x1200@60Hz mode. The PLL configuration data
+> has been taken from the vendor's kernel tree for the Odroid XU4 board.
+
+Merged.
+
+Thanks,
+Inki Dae
+
 > 
-> You confused me earlier. As I said there will be no clock provider
-> registered for SCMI CPU/Dev DVFS.
-> 	opp_table->clk = clk_get(dev, NULL);
-> will always return -EPROBE_DEFER as there is no clock provider for dev.
-> But this change now propagates that error to caller of dev_pm_opp_add
-> which means we can't add opp to a device if there are no clock providers.
-> This breaks for DVFS which don't operate separately with clocks and
-> regulators.
-
-The CPUs DT node shouldn't have a clock property in such a case and I
-would expect an error instead of EPROBE_DEFER then. Isn't it ?
-
--- 
-viresh
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_hdmi.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index dc01c188c0e0..39fa5d3b01ef 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -522,6 +522,15 @@ static const struct hdmiphy_config hdmiphy_5420_configs[] = {
+>  			0x54, 0x4B, 0x25, 0x03, 0x00, 0x80, 0x01, 0x80,
+>  		},
+>  	},
+> +	{
+> +		.pixel_clock = 154000000,
+> +		.conf = {
+> +			0x01, 0xD1, 0x20, 0x01, 0x40, 0x30, 0x08, 0xCC,
+> +			0x8C, 0xE8, 0xC1, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
+> +			0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x86,
+> +			0x54, 0x3F, 0x25, 0x03, 0x00, 0x00, 0x01, 0x80,
+> +		},
+> +	},
+>  };
+>  
+>  static const struct hdmiphy_config hdmiphy_5433_configs[] = {
+> 
