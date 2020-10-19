@@ -2,124 +2,151 @@ Return-Path: <SRS0=F6EI=D2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DB0C433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 19:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C32C43457
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 19:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EEE922365
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 19:21:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D31B422314
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 19:42:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sGQayWm2"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vqIoQqfP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731166AbgJSTVT (ORCPT
+        id S1731192AbgJSTmb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 19 Oct 2020 15:21:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59320 "EHLO
+        Mon, 19 Oct 2020 15:42:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730820AbgJSTVT (ORCPT
+        with ESMTP id S1731233AbgJSTm3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Oct 2020 15:21:19 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F6DBC0613CE;
-        Mon, 19 Oct 2020 12:21:19 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id g29so556407pgl.2;
-        Mon, 19 Oct 2020 12:21:19 -0700 (PDT)
+        Mon, 19 Oct 2020 15:42:29 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BB4C0613DD
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Oct 2020 12:42:28 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id h2so310530pll.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Oct 2020 12:42:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7U2DM+cXPUFwt0wdUBTyEbcuXwHQWZarnn8BUuaqz2w=;
-        b=sGQayWm2k91Spv4d2MxuhoIy5C8BSFoYi5ye+c/9fzD8sni5xZI24z9go78zH+CAi5
-         ENFg17zqvlPR8a9SOow47zVHG1FfFCipwAmZ5mAFwGFcFlajJdL/999WwklCZZZ6tNtq
-         IOH+g7GRrrIuHBui5dNfZ/I4Np2nNEGduhY62VvEIjxPTq2WGTokCPVzAg00jtpIKEA4
-         mZcGHBcUd0Jku+dtQOotucws8G5qbuNcNr3sbhX7wm2oAlUEFLL6B8lBoifTSCcAbw/r
-         US5DNZMocRqmgHWkeBF8+Mag3MSg/hT/+mJXt5f+1VstPNFAHmmKGz8yuPIIhuUA5lYR
-         78WQ==
+        bh=no6WOfZDuAXhTDfVia9Vunkz4L7BthY0F8m0jo4//vs=;
+        b=vqIoQqfPtCUD7ceHGEmbvFqqUZd/9dE0IpLQQ4p4nyONBXQMSFxBG5OzgCaJfT8eu8
+         Ez0DMwUntzcU9c2WJzs/WqMvxG3bzlj0mstlcz+E4fW0gt02sZNjrL1HdU6SHVwmCE5R
+         WFeHYzJRJuPZspqj8YJ2wlUmUN4Mc8MNrI6kLekCJ8yejCepkvkgEUeb7TbpDze1NnEh
+         TP2SjhqdakZDUedR00qYjd62k5W2m7FgfHIpcuS/rhjqMGxVL3Apppn+UDRO/ftdIfoh
+         duvoKavmXDacw9mysFV+xdp1Tg4QxCPiDxNSeCeZyO+34Y2S1kYSdX61NJzSKhmGsX5T
+         HLpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7U2DM+cXPUFwt0wdUBTyEbcuXwHQWZarnn8BUuaqz2w=;
-        b=uTB+yI+bVD2qRN+B7Pnpj8/AWu81bmdYxUyW7/AikrTE0/sS6pSJNk0hN3QCcUL9U+
-         TRDZU6Uo1mQ1h76hz38EGqJ/9Q55qD2zUDgS24zlhrhIXY/Sd/R6++NWjAP8wtiprZ04
-         YFGKllO0X6SAltnjeZSKkYypPgrWoxAO8keoeiukL506tHiK8EEP2UFdgCBN/gKZ9scX
-         4znI+2CozYnoyJxHUNh7JhKIhNJJ5v1pI3DQgPXpfZ/GoJsx13eCuk5mwqtqJl/4ffA2
-         PuggHgwVcZX3TY603IBC2+t9LfYaNQbYgYi5zthmQodEuth/RD0+0cCTVbpDwSxBEZWy
-         C0bw==
-X-Gm-Message-State: AOAM532TlZP/zrMrdjSpGte0mQeRP9m4I5E35uneprBQCndY1Zidp/u2
-        kkltNrNQYvno0WJgCx5rxdipVmOefSMOX6Yusx4=
-X-Google-Smtp-Source: ABdhPJze38nqZ9Ik6cQvqmnRK3SMVnAi1GdmpGV5byXnwSWfSNxpXGGeFSMEuZ52oiMHQJHU3W0lQCfagQu2ajKWST8=
-X-Received: by 2002:a63:f908:: with SMTP id h8mr1038383pgi.203.1603135278935;
- Mon, 19 Oct 2020 12:21:18 -0700 (PDT)
+        bh=no6WOfZDuAXhTDfVia9Vunkz4L7BthY0F8m0jo4//vs=;
+        b=JRwDg5T1VneNUxYzT74l9pSrZjr947ZaWwNe8wu1ib37mzEsX3yM/U7pRqrNMCCHuO
+         H5OxGy+URKaFpf1Fcx5xlq3GjMiylpRqGpKW98wQh2axb6RrFyft5NsdHiOqkT9qdIHI
+         OJZ335OjXOscSsi9nZWXQS+gvzsDnMjYJPJ0IF1mmyoQ814Bj0fzn5ZVMYz5EwC0FVrT
+         0btCL5Q08Y4ALP23C/ztVVFcHviLHCz9QXefndICcja8lAwqse3ahw+OJgkOlv/YH54R
+         VmhhP3REn3R2VuWYbiDy6LUpBOhFVCr5oY7aisJkpR360gbPPFYo717ZqhvbEhduSuLG
+         rN4Q==
+X-Gm-Message-State: AOAM530ERKYniZ5JvWMTNorQtfmURFuOkZYfaP4eOaX8TCAwJjmzZWlO
+        YIVHHPji1A33pQcoP1S+9y2a0AcIhT9bH+rsxcRaKg==
+X-Google-Smtp-Source: ABdhPJxy4K+2uRaBuhFTeTSlHPetqrP1uAAP7dKvm6UBZz10SCa23PJUxb54E5JJmlle9J/y892Qp+TTrKvO4GeNXIk=
+X-Received: by 2002:a17:90a:ee87:: with SMTP id i7mr921476pjz.25.1603136546933;
+ Mon, 19 Oct 2020 12:42:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201019190055.7371-1-trix@redhat.com>
-In-Reply-To: <20201019190055.7371-1-trix@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 19 Oct 2020 22:22:08 +0300
-Message-ID: <CAHp75VfwQB4hnDpk9uo2heWqNc2iv4AVZay4EacznY+why7nZQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: remove unneeded break
-To:     trix@redhat.com
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20201017160928.12698-1-trix@redhat.com> <20201018054332.GB593954@kroah.com>
+In-Reply-To: <20201018054332.GB593954@kroah.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 19 Oct 2020 12:42:15 -0700
+Message-ID: <CAKwvOdkR_Ttfo7_JKUiZFVqr=Uh=4b05KCPCSuzwk=zaWtA2_Q@mail.gmail.com>
+Subject: Re: [RFC] treewide: cleanup unreachable breaks
+To:     Tom Rix <trix@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-power@fi.rohmeurope.com, linux-gpio@vger.kernel.org,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org, linux-iio@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        industrypack-devel@lists.sourceforge.net,
+        linux-media@vger.kernel.org, MPT-FusionLinux.pdl@broadcom.com,
+        linux-scsi@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-can@vger.kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        intel-wired-lan@lists.osuosl.org, ath10k@lists.infradead.org,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com, linux-nfc@lists.01.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, patches@opensource.cirrus.com,
+        storagedev@microchip.com, devel@driverdev.osuosl.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        usb-storage@lists.one-eyed-alien.net,
+        linux-watchdog@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        bpf <bpf@vger.kernel.org>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        alsa-devel@alsa-project.org,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        George Burgess <gbiv@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 19, 2020 at 10:04 PM <trix@redhat.com> wrote:
+On Sat, Oct 17, 2020 at 10:43 PM Greg KH <gregkh@linuxfoundation.org> wrote:
 >
-> From: Tom Rix <trix@redhat.com>
+> On Sat, Oct 17, 2020 at 09:09:28AM -0700, trix@redhat.com wrote:
+> > From: Tom Rix <trix@redhat.com>
+> >
+> > This is a upcoming change to clean up a new warning treewide.
+> > I am wondering if the change could be one mega patch (see below) or
+> > normal patch per file about 100 patches or somewhere half way by collecting
+> > early acks.
 >
-> A break is not needed if it is preceded by a return
-
-When it's a single driver, use the proper prefix in the Subject line.
-
-Also use proper English punctuation, i.e. period at the end of commit message.
-
+> Please break it up into one-patch-per-subsystem, like normal, and get it
+> merged that way.
 >
-> Signed-off-by: Tom Rix <trix@redhat.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 5 -----
->  1 file changed, 5 deletions(-)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-> index 5e24838a582f..2223ead5bd72 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-> @@ -108,19 +108,14 @@ static int s3c24xx_eint_get_trigger(unsigned int type)
->         switch (type) {
->         case IRQ_TYPE_EDGE_RISING:
->                 return EINT_EDGE_RISING;
-> -               break;
->         case IRQ_TYPE_EDGE_FALLING:
->                 return EINT_EDGE_FALLING;
-> -               break;
->         case IRQ_TYPE_EDGE_BOTH:
->                 return EINT_EDGE_BOTH;
-> -               break;
->         case IRQ_TYPE_LEVEL_HIGH:
->                 return EINT_LEVEL_HIGH;
-> -               break;
->         case IRQ_TYPE_LEVEL_LOW:
->                 return EINT_LEVEL_LOW;
-> -               break;
->         default:
->                 return -EINVAL;
->         }
-> --
-> 2.18.1
->
+> Sending us a patch, without even a diffstat to review, isn't going to
+> get you very far...
 
+Tom,
+If you're able to automate this cleanup, I suggest checking in a
+script that can be run on a directory.  Then for each subsystem you
+can say in your commit "I ran scripts/fix_whatever.py on this subdir."
+ Then others can help you drive the tree wide cleanup.  Then we can
+enable -Wunreachable-code-break either by default, or W=2 right now
+might be a good idea.
 
+Ah, George (gbiv@, cc'ed), did an analysis recently of
+`-Wunreachable-code-loop-increment`, `-Wunreachable-code-break`, and
+`-Wunreachable-code-return` for Android userspace.  From the review:
+```
+Spoilers: of these, it seems useful to turn on
+-Wunreachable-code-loop-increment and -Wunreachable-code-return by
+default for Android
+...
+While these conventions about always having break arguably became
+obsolete when we enabled -Wfallthrough, my sample turned up zero
+potential bugs caught by this warning, and we'd need to put a lot of
+effort into getting a clean tree. So this warning doesn't seem to be
+worth it.
+```
+Looks like there's an order of magnitude of `-Wunreachable-code-break`
+than the other two.
+
+We probably should add all 3 to W=2 builds (wrapped in cc-option).
+I've filed https://github.com/ClangBuiltLinux/linux/issues/1180 to
+follow up on.
 -- 
-With Best Regards,
-Andy Shevchenko
+Thanks,
+~Nick Desaulniers
