@@ -2,131 +2,104 @@ Return-Path: <SRS0=F6EI=D2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C814FC4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 10:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EBD2C433E7
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 10:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF632231B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 10:19:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1y/pZhJx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EpF5wNFf"
+	by mail.kernel.org (Postfix) with ESMTP id 2D09E22283
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 10:21:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603102896;
+	bh=p6REE6bmGt7q8vLnOuvxYvoaHrXnsfwO/hApChalgfs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=YkL8z5bU2M4JKMZRvqO2Gu1OVRkkqDgHKmzf2Gy+goco0GsvpjO3W6PjF57cYCGSE
+	 uOuMBV3i6YrJPpsnx/v2NH9KpbQOXIztPH+rkSmaHhxt0fGxqG5Rd9Ydyv3QNrpVWv
+	 wez3q39VXdJvHpsm75v7zfBUzvzi+4vGbVu695fo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbgJSKT0 (ORCPT
+        id S1726376AbgJSKVf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 19 Oct 2020 06:19:26 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:58718 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727617AbgJSKSH (ORCPT
+        Mon, 19 Oct 2020 06:21:35 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36097 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbgJSKVf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Oct 2020 06:18:07 -0400
-Message-Id: <20201019101109.753597069@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1603102684;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=j+vN9MgqREoIPGzBU7B1IaC3gna3kE7EN539Nh0ClUU=;
-        b=1y/pZhJxP37rV0rJYULPo5TQOwi6HefvUHI6uFl3VyOzD/l9uItuaHM5eXK388fs3OFUXW
-        hSALKKpI69M2O4c+bSYlejPpYC6pICFSdC9DdfpTR/WtEqHVmyWlGZ+GOOBhf/+1M2nn29
-        K9Ga9SNsF0iu3YuoJ8ieIZOcFDNbs7crX5QWXNnnL8OkI9EqFafV4MUDr09pVBNkgyaTYq
-        lMqXxV5G1EGaMcFJEjIZDV+CwcdjhGM+KvQa1oyHADBQYrm2SkHPH1DvvUHpNr+AqEDlbz
-        kkjpapE1LHCy0rvx+yyCA+R3G4M6QCC3WbG4xLKPNBSZX+OXtuvTiN7HxJfL8Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1603102684;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=j+vN9MgqREoIPGzBU7B1IaC3gna3kE7EN539Nh0ClUU=;
-        b=EpF5wNFfU2q3Hnqoz5MF6cC6OkRPZavOxiE1H65l6nfC8pvMxSVoO1CNGgrw1X764TZuoK
-        DwpXwGIMneJN/sAQ==
-Date:   Mon, 19 Oct 2020 12:06:31 +0200
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org,
-        Thomas Winischhofer <thomas@winischhofer.net>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-omap@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
-        Duncan Sands <duncan.sands@free.fr>
-Subject: [patch V2 02/13] USB: serial: keyspan_pda: Replace in_interrupt() usage
-References: <20201019100629.419020859@linutronix.de>
+        Mon, 19 Oct 2020 06:21:35 -0400
+Received: by mail-wm1-f67.google.com with SMTP id e2so12229187wme.1;
+        Mon, 19 Oct 2020 03:21:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4Go03qU3Z4n7OqYXcuBkScogMQ8cBWutaeJI9eO7tzI=;
+        b=PXwiZrME3jUKfSxbvMZeK5E5YCTL7XpzkpGbK2MraPfKRLeFy/WatRgGE41wa60c7t
+         3j70nTCiBtSAtXwmtVfGReUTMk/iKm1TlxW8hXeziWe4U0deeJ+AOdDmpxKpsGeLk1Za
+         mnwt2z+iwc6eN9R4CKij6Ev4gTxY8drL1L1a697LuIRkRtkG/tLyXsvsOxMIueQjuXPw
+         82ePqd+gG9THxkEIumW1kRFVcWoIIGYEay+FaWgHA16GAEGHNNCW2NtfxxnK3CYtueaA
+         NvOyvDV0Po3i4gVIfXpJ6QI4YMxAQ25EjCzQLCrByVuYxE4A6ngRrdttIaQ4sdieTe/H
+         QpUw==
+X-Gm-Message-State: AOAM531SNWzplPkSr6yZ+CEefX9IdIt3QWjmoLIZUYm0JQIiJMPjOMn5
+        +eXTemt17JanxiUK7QIJPS8=
+X-Google-Smtp-Source: ABdhPJwEA4cu+ZUIHRN3FLZxaaKnCKY1tJx3Afb7XhAayPJfnYBwmsYRRTiSOs3aVt1G3TGXsPgKGg==
+X-Received: by 2002:a7b:c7c9:: with SMTP id z9mr17572921wmk.91.1603102893247;
+        Mon, 19 Oct 2020 03:21:33 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.171])
+        by smtp.googlemail.com with ESMTPSA id u5sm18902794wru.63.2020.10.19.03.21.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Oct 2020 03:21:32 -0700 (PDT)
+Date:   Mon, 19 Oct 2020 12:21:30 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH 5/6] pci: dwc: pci-exynos: rework the driver to support
+ Exynos5433 variant
+Message-ID: <20201019102130.GE51073@kozik-lap>
+References: <20201019094715.15343-1-m.szyprowski@samsung.com>
+ <CGME20201019094740eucas1p2cd873b29bc19708f9a712d955cba62fe@eucas1p2.samsung.com>
+ <20201019094715.15343-6-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-transfer-encoding: 8-bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201019094715.15343-6-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-keyspan_pda_write() uses in_interrupt() to check whether it is safe to
-invoke functions which might sleep.
+On Mon, Oct 19, 2020 at 11:47:14AM +0200, Marek Szyprowski wrote:
+> From: Jaehoon Chung <jh80.chung@samsung.com>
+> 
+> Exynos5440 SoC support has been dropped since commit 8c83315da1cf ("ARM:
+> dts: exynos: Remove Exynos5440"). Rework this driver to support DWC PCIe
+> variant found in the Exynos5433 SoCs.
+> 
+> The main difference in Exynos5433 variant is lack of the MSI support
+> (the MSI interrupt is not even routed to the CPU).
+> 
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> [mszyprow: reworked the driver to support only Exynos5433 variant,
+> 	   simplified code, rebased onto current kernel code, added
+> 	   regulator support, converted to the regular platform driver,
+> 	   removed MSI related code, rewrote commit message]
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/pci/controller/dwc/Kconfig      |   3 +-
+>  drivers/pci/controller/dwc/pci-exynos.c | 358 ++++++++++--------------
+>  drivers/pci/quirks.c                    |   1 +
+>  3 files changed, 145 insertions(+), 217 deletions(-)
+> 
 
-The usage of in_interrupt() in drivers is phased out and Linus clearly
-requested that code which changes behaviour depending on context should
-either be seperated or the context be conveyed in an argument passed by the
-caller, which usually knows the context.
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Aside of that it does not cover all contexts which cannot sleep,
-e.g. preempt disabled regions which cannot be reliably detected on all
-kernel configurations.
-
-With the current printk() implementation console->write() can be invoked
-from almost any context. The upcoming rework of the console core will
-provide thread context for console drivers which require to sleep.
-
-For now, restrict the room query which can sleep to tty writes which happen
-from preemptible task context.
-
-The usability for dmesg output is limited anyway because it's almost
-guaranteed to drop the 'LF' which is submitted after the dmesg line because
-the device supports only one transfer on flight. Same for any printk()
-which is coming in before the previous transfer has been done.
-
-This new restriction does not make it worse than before, but it makes the
-condition correct under all circumstances.
-
-Signed-off-by: Ahmed S. Darwish <a.darwish@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org
-
----
- drivers/usb/serial/keyspan_pda.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
---- a/drivers/usb/serial/keyspan_pda.c
-+++ b/drivers/usb/serial/keyspan_pda.c
-@@ -477,10 +477,12 @@ static int keyspan_pda_write(struct tty_
- 
- 	count = (count > port->bulk_out_size) ? port->bulk_out_size : count;
- 
--	/* Check if we might overrun the Tx buffer.   If so, ask the
--	   device how much room it really has.  This is done only on
--	   scheduler time, since usb_control_msg() sleeps. */
--	if (count > priv->tx_room && !in_interrupt()) {
-+	/*
-+	 * Check if we might overrun the Tx buffer. If so, ask the device
-+	 * how much room it really has. This can only be invoked for tty
-+	 * usage because the console write can't sleep.
-+	 */
-+	if (count > priv->tx_room && tty) {
- 		u8 *room;
- 
- 		room = kmalloc(1, GFP_KERNEL);
-
+Best regards,
+Krzysztof
