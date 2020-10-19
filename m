@@ -7,65 +7,63 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F322EC388F9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 10:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CEDC43467
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 10:19:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2E11222BA
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 10:19:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BB3522263
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 10:19:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JKowC+xz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u21yGgK+"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Er+PWHFh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FJr22QDO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbgJSKS7 (ORCPT
+        id S1729630AbgJSKTG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 19 Oct 2020 06:18:59 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:58926 "EHLO
+        Mon, 19 Oct 2020 06:19:06 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:58718 "EHLO
         galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729074AbgJSKSR (ORCPT
+        with ESMTP id S1729147AbgJSKSK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Oct 2020 06:18:17 -0400
-Message-Id: <20201019101110.744172050@linutronix.de>
+        Mon, 19 Oct 2020 06:18:10 -0400
+Message-Id: <20201019101110.148631116@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1603102695;
+        s=2020; t=1603102688;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=eU49tVESfPvybwx3L3Wh92XZvOJJ4zNGI0TkIeEUK1M=;
-        b=JKowC+xz19F02CLEO24JMjrb4u0kEcj+L8t99YbWx+w5UvTUx/WsjiX23lHjEfawj8L1Ai
-        MebzdHR9mnykV00sB05zLHuFW9/4veKDWkEkx9kzZPaz81vDGOIp1dnbjmBKpzlDo41RK0
-        rQdw6sMqR+l6kv313t8o5e9e2W0tlqh29gMfTPAV5RD0WA3MqD1E52hA7tRObbfCZaZpE8
-        2ZgdvQBM34e+Fvm3kh6wMfPTvxKazGLl/OF84W+pbbvB5RGCNTfqUorwbmPTrODOLv6ovg
-        U6DgzsG6ChAVATvkmPznkzqWwgVurjR4EtKfILDpR9kGCbSd4sv/8wgcljhzSw==
+        bh=Pe8CFmf0/CnRVhPeaGPKSnnUTmz8AJUU7taQJPbdbP8=;
+        b=Er+PWHFh2XhU2mRAPNNosWvUF3EK+wzX+2LAJgVyV0ju89RHA84spDu+zn4M3crzNSUFEU
+        NKSH3TS7s03F9XbXnoYUD/jzDdTB2RZaLV8d9AehueGw6+Z+xaP6gDSn2Dm9jVSH92erSQ
+        Um2zLnLMv0mN1w1rVYxoaQgst7iuKIsnfvaFiw5RNpYee14xKDwzVnro/0jviGYKBrN1+a
+        CJzMt9mpfmLpOb87dsgdAZdcGzyxa7dgC/4erhH81shqCKhFF0R/FLqLZYvFxNsHW+oCm0
+        550nGFrM83486LxByGE5+rIpmVA2E6jCZ9IOHFbTmVY0glelxuzDtjHleI3CoA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1603102695;
+        s=2020e; t=1603102688;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=eU49tVESfPvybwx3L3Wh92XZvOJJ4zNGI0TkIeEUK1M=;
-        b=u21yGgK+RD0O07+cg6Izujgy+wcxtgbrdd1zA0ikisQUXWnsPqdAxfppXCH+m5pMKOnvD+
-        vbuZ3HsJP3oH0yCA==
-Date:   Mon, 19 Oct 2020 12:06:40 +0200
+        bh=Pe8CFmf0/CnRVhPeaGPKSnnUTmz8AJUU7taQJPbdbP8=;
+        b=FJr22QDOzYwi+B9T9ZCc7LH0Grzvr7ZKTdDRMuC3HFO/93A24i5o/PmAPDhV1HSrHurI0s
+        lMM4DJ8Q9Df5n6CQ==
+Date:   Mon, 19 Oct 2020 12:06:34 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         "Ahmed S. Darwish" <a.darwish@linutronix.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Felipe Balbi <balbi@kernel.org>,
+        Mathias Nyman <mathias.nyman@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-usb@vger.kernel.org,
         Thomas Winischhofer <thomas@winischhofer.net>,
         Johan Hovold <johan@kernel.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
         Valentina Manea <valentina.manea.m@gmail.com>,
         Shuah Khan <shuah@kernel.org>,
         Alan Stern <stern@rowland.harvard.edu>,
         linux-omap@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
         Duncan Sands <duncan.sands@free.fr>
-Subject: [patch V2 11/13] usb: gadget: udc: Remove in_interrupt()/in_irq()
- from comments
+Subject: [patch V2 05/13] usb: xhci: Remove in_interrupt() checks
 References: <20201019100629.419020859@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -76,52 +74,53 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Ahmed S. Darwish <a.darwish@linutronix.de>
 
-The usage of in_irq()/in_interrupt() in drivers is phased out for various
-reasons.
+The usage of in_interrupt() in drivers is phased out for various reasons.
 
-The context description for usb_gadget_giveback_request() is misleading as
-in_interupt() means: hard interrupt or soft interrupt or bottom half
-disabled regions. But it's also invoked from task context when endpoints
-are torn down. Remove it as it's more confusing than helpful.
+xhci_set_hc_event_deq() has an !in_interrupt() check which is pointless
+because the function is only invoked from xhci_mem_init() which is clearly
+task context as it does GFP_KERNEL allocations. Remove it.
 
-Replace also the in_irq() comment with plain text.
+xhci_urb_enqueue() prints a debug message if an URB is submitted after the
+underlying hardware was suspended. But that warning is only issued when
+in_interrupt() is true, which makes no sense. Simply return -ESHUTDOWN and
+be done with it.
 
 Signed-off-by: Ahmed S. Darwish <a.darwish@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Felipe Balbi <balbi@kernel.org>
+Cc: Mathias Nyman <mathias.nyman@intel.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-usb@vger.kernel.org
-
 ---
- drivers/usb/gadget/udc/core.c      |    2 --
- drivers/usb/gadget/udc/dummy_hcd.c |    6 ++++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/host/xhci-mem.c |    2 +-
+ drivers/usb/host/xhci.c     |    6 ++----
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
---- a/drivers/usb/gadget/udc/core.c
-+++ b/drivers/usb/gadget/udc/core.c
-@@ -894,8 +894,6 @@ EXPORT_SYMBOL_GPL(usb_gadget_unmap_reque
-  * @ep: the endpoint to be used with with the request
-  * @req: the request being given back
-  *
-- * Context: in_interrupt()
-- *
-  * This is called by device controller drivers in order to return the
-  * completed request back to the gadget layer.
-  */
---- a/drivers/usb/gadget/udc/dummy_hcd.c
-+++ b/drivers/usb/gadget/udc/dummy_hcd.c
-@@ -1754,8 +1754,10 @@ static int handle_control_request(struct
- 	return ret_val;
- }
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -2110,7 +2110,7 @@ static void xhci_set_hc_event_deq(struct
  
--/* drive both sides of the transfers; looks like irq handlers to
-- * both drivers except the callbacks aren't in_irq().
-+/*
-+ * Drive both sides of the transfers; looks like irq handlers to both
-+ * drivers except that the callbacks are invoked from soft interrupt
-+ * context.
-  */
- static void dummy_timer(struct timer_list *t)
- {
+ 	deq = xhci_trb_virt_to_dma(xhci->event_ring->deq_seg,
+ 			xhci->event_ring->dequeue);
+-	if (deq == 0 && !in_interrupt())
++	if (!deq)
+ 		xhci_warn(xhci, "WARN something wrong with SW event ring "
+ 				"dequeue ptr.\n");
+ 	/* Update HC event ring dequeue pointer */
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -1473,11 +1473,9 @@ static int xhci_urb_enqueue(struct usb_h
+ 	ep_index = xhci_get_endpoint_index(&urb->ep->desc);
+ 	ep_state = &xhci->devs[slot_id]->eps[ep_index].ep_state;
+ 
+-	if (!HCD_HW_ACCESSIBLE(hcd)) {
+-		if (!in_interrupt())
+-			xhci_dbg(xhci, "urb submitted during PCI suspend\n");
++	if (!HCD_HW_ACCESSIBLE(hcd))
+ 		return -ESHUTDOWN;
+-	}
++
+ 	if (xhci->devs[slot_id]->flags & VDEV_PORT_ERROR) {
+ 		xhci_dbg(xhci, "Can't queue urb, port error, link inactive\n");
+ 		return -ENODEV;
 
