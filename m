@@ -2,108 +2,175 @@ Return-Path: <SRS0=F6EI=D2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DCBC433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 10:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273B0C43457
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 12:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 956CC222E7
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 10:35:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C517B222BA
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Oct 2020 12:56:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VNaztXtC"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VtroWjz0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbgJSKfj (ORCPT
+        id S1727332AbgJSM4o (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 19 Oct 2020 06:35:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33448 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727107AbgJSKfi (ORCPT
+        Mon, 19 Oct 2020 08:56:44 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42609 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbgJSM4o (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Oct 2020 06:35:38 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5406C0613CE
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Oct 2020 03:35:38 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id o7so5781014pgv.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Oct 2020 03:35:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YhPaPNCIO5FSJZBriQKSF+IuxfPwCsm7VFokt0CnL+E=;
-        b=VNaztXtC8Y03B0IU8S829gdBY44ZchWuTeRdB1LhcWMuUoKYJ4sv730+fjOYo7HigF
-         PVMsP3oYxJTivU/iFvXxm16VBF1W5/paFTZu23Ic/tL0PAc/jQXPi1FIh/aZLIQaqu/G
-         D+rNzsUzLG2avDdDdWB+/lsZQNThb+LCAj0IBCYAAM0FolrzfHnhy8FArRvY4r5n7R34
-         TDDUwyGbaRIyz0V0naM43Mc1nUDryK3YB8kRBJ6wVIhYcgYMyUe0Y0x8wEtEgrI0rJsa
-         dBR1lzxjl2j1fXmiro3CjgTCLawp+07f37iC/wbGPrB6NLHocbKq8LF5xVxWMm0h8/MS
-         sAGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YhPaPNCIO5FSJZBriQKSF+IuxfPwCsm7VFokt0CnL+E=;
-        b=bO2fpSKerkgyW2Slm8uFwTZVIaFNudsdkiPjVnuX0Yl34Xk7EIRZdTXRoNDvZmlvKI
-         L2zcIyRDhlV8SnTTgrf1QlGdJ6g8xjQixZIDqsm46nRl+bxuRqjfR+Xly3YaRJUKTMo6
-         e5IlywL0H1FJJsquLPA8XfCezpbA3eVQM21pPs+HxL1WDQexq9yGpVNejc0iOtQkKyu0
-         +bvr2vtKDwiHV4sato+6aQiXrOnQBEdE3HfFh0M5W9s7lSpjmBLaVvi8vvrA7oFqsNcf
-         qiVjtEma5zIy5ZXQ8F4cFdq8h2UVdKh5ImRP4ugox/VgmAr0bCjcSs+3AxWeh20YjPIc
-         8LRw==
-X-Gm-Message-State: AOAM533aMWbDB3N1MeKOHj+k9dyycXdWtlJun4u01HX6HgZ9eOmFIMbs
-        GN2VyfPLouUEYzPy8IuAUTJhXA==
-X-Google-Smtp-Source: ABdhPJy25FpvGdDGJLAa04A1rzAmyy2jzFb9NLLVt54RcvPtbPCk47gNCJTkkwRsu6zUjlFHQAsP2Q==
-X-Received: by 2002:a62:7609:0:b029:152:b31e:6aed with SMTP id r9-20020a6276090000b0290152b31e6aedmr16787726pfc.10.1603103738248;
-        Mon, 19 Oct 2020 03:35:38 -0700 (PDT)
-Received: from localhost ([122.181.54.133])
-        by smtp.gmail.com with ESMTPSA id a184sm5551617pfa.86.2020.10.19.03.35.36
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Oct 2020 03:35:37 -0700 (PDT)
-Date:   Mon, 19 Oct 2020 16:05:35 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Mon, 19 Oct 2020 08:56:44 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201019125625euoutp02490b262ea32d40fffdbac40e7b98f621~-ZgoXRrpu1067510675euoutp02l;
+        Mon, 19 Oct 2020 12:56:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201019125625euoutp02490b262ea32d40fffdbac40e7b98f621~-ZgoXRrpu1067510675euoutp02l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1603112185;
+        bh=xkkIZ2WKEiH+6i0SWyl/zj0g0D0FTIE+CVpB65/1Mv4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VtroWjz0j1P7JofRFEUABSYImiHJ8wfiT3a0EcHg4PKB4P0doBNsXiYMPoiCQgS/E
+         tM2P8DjFdr6C6+Ba77zc279NCqgHLa/rlufHDHO2FiWRWhWQGFf/wcwQ5xnGZudLY9
+         bUKiKvI9Z8heymD0GOFfNlEpt9uzqQqvVNtLaLo4=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20201019125625eucas1p25a7f40c1713455325383145cf85e4849~-Zgn5LHrz2903729037eucas1p2W;
+        Mon, 19 Oct 2020 12:56:25 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id AB.C5.05997.9FC8D8F5; Mon, 19
+        Oct 2020 13:56:25 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20201019125624eucas1p257a76c307adfb27202332658f93c9aba~-ZgngUZtl2167321673eucas1p2e;
+        Mon, 19 Oct 2020 12:56:24 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20201019125624eusmtrp185ca0dfae00e1b1d7a608c6d0f362274~-ZgnfRe8P0725207252eusmtrp1D;
+        Mon, 19 Oct 2020 12:56:24 +0000 (GMT)
+X-AuditID: cbfec7f4-65dff7000000176d-7a-5f8d8cf956fc
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 83.DD.06017.8FC8D8F5; Mon, 19
+        Oct 2020 13:56:24 +0100 (BST)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20201019125624eusmtip25102e04d6e00204d3e7ae194d80c5323~-ZgnS60Wg0413204132eusmtip2E;
+        Mon, 19 Oct 2020 12:56:24 +0000 (GMT)
+From:   Lukasz Stelmach <l.stelmach@samsung.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>, nks@flawful.org,
-        georgi.djakov@linaro.org, Stephan Gerhold <stephan@gerhold.net>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] opp: Allow dev_pm_opp_get_opp_table() to return
- -EPROBE_DEFER
-Message-ID: <20201019103535.ksp5ackoihamam4g@vireshk-i7>
-References: <24ff92dd1b0ee1b802b45698520f2937418f8094.1598260050.git.viresh.kumar@linaro.org>
- <20201015180555.gacdzkofpibkdn2e@bogus>
- <20201016042434.org6ibdqsqbzcdww@vireshk-i7>
- <20201016060021.sotk72u4hioctg7o@bogus>
- <20201016111222.lvakbmjhlrocpogt@bogus>
- <20201019045827.kl6qnx6gidhzjkrs@vireshk-i7>
- <20201019091723.GA12087@bogus>
- <20201019092411.b3znjxebay3puq2j@vireshk-i7>
- <20201019101241.GB12908@bogus>
+        Kukjin Kim <kgene@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, jim.cromie@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewi?= =?utf-8?Q?cz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 2/4] net: ax88796c: ASIX AX88796C SPI Ethernet
+ Adapter Driver
+Date:   Mon, 19 Oct 2020 14:56:08 +0200
+In-Reply-To: <20201002203641.GI3996795@lunn.ch> (Andrew Lunn's message of
+        "Fri, 2 Oct 2020 22:36:41 +0200")
+Message-ID: <dleftjh7qq4bo7.fsf%l.stelmach@samsung.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201019101241.GB12908@bogus>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SWUwTURSGvZ2lA6F4qdsRBUnVGDdwd4z78jAGo8aoQRPFUSeI0pZ0LIqJ
+        AY0oqyCgApKgBBTRAmKDhaDRigISGVwCLlRBSZBWRSwuJW7UqYlv3znn/89ycxlC7aL8mUjd
+        fsGg46M0tDdZdd/VPN2VmhY+I77Hj5VsVoK9llNOsfnSMZItqGum2NYP7RSb/tZBsJJUoWRb
+        qk5SbOXbVop9UpNPsznSLQVrPX0TsaY6m5K9f34km3CzTrlsKPek9RHBmS8/V3DVeTYlV1ma
+        RHPXi+K4aotTwZ00lyLOWRm4ntnqvWi3EBUZIxhCluzw3pNx9QYdnel7sNzagOJRuk8y8mIA
+        z4GGlAuKZOTNqHEJglu3n3qCfgSvT5lpOXAieNrjpP5Z2mzfkFy4hODTkXceVTcCqaVTmYwY
+        hsbBYDKFuQ3DcRBkN/6g3BoCXyXB4TIp3IVheDM8OvGMcDOJJ0KCpYN2sxfWwjmpCLlZhefD
+        e9vnvzwCLwDzu9dKOe8HjbldpJuJQX2u9P7vRoBzGSh+9cWz6iro60ykZR4G9nqzUuax0JSV
+        SroXBRwHWZnzZG8qgqr876SsWQjtzQMe73IoKC6kZb0vPPvgJ8/1hcyqs4ScVkHicbWsngBl
+        6bWeLv6QZi9BMnNwpyvd81ZHEaT1mokMFJT33zl5/52TN9iWwJOhvCZETk+FixcchMyLoays
+        lzyPqFI0SjCK2ghBnKUTDgSLvFY06iKCd+m1lWjwEzb9qu+3oJofO60IM0jjo+rQp4arKT5G
+        jNVa0YTBTm8qrrQgf1Kn1wma4aoVD5u2q1W7+dhDgkEfbjBGCaIVjWFIzSjV7MKebWocwe8X
+        9glCtGD4V1UwXv7xaK/RZHfOV3fm6PsHOiz2IuP4DQOavpd4+oLfjrlZgbrHrtJ7LwjH4cnf
+        tgfWn96YIq4JNZ6qHaBv20VLwbjchoVtd1cXPGgsyf65LsA4mozBv+ktSWuXZpyZlL2pKKBt
+        2kf2V/CZhMcO6WVXuH3IXp4P7T5+LG7aFbp1ZdjX/trNGlLcw8+cQhhE/g/BXg6QjAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPIsWRmVeSWpSXmKPExsVy+t/xe7o/enrjDV4fMLU4f/cQs8XGGetZ
+        Leacb2GxmH/kHKvFtbd3WC36H79mtjh/fgO7xYVtfawWmx5fY7W4vGsOm8WM8/uYLA5N3cto
+        sfbIXXaLYwvELFr3HmF34Pe4fO0is8eWlTeZPHbOusvusWlVJ5vH5iX1Hjt3fGby6NuyitHj
+        8ya5AI4oPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsE
+        vYwJa7azFUziq1h/6ARjA2M/TxcjJ4eEgInE9bvfGbsYuTiEBJYySrQcusHSxcgBlJCSWDk3
+        HaJGWOLPtS42iJqnjBLf/lxhA6lhE9CTWLs2AqRGREBBYsrJP6wgNrPAehaJ1ZM4QWxhgRCJ
+        hX2nmEBsIaDyR0vaWEBsFgFVidYdD9hAbE6BXInZ55cwgti8AuYSb+5+ArNFBSwltry4zw4R
+        F5Q4OfMJC8T8bImvq58zT2AUmIUkNQtJahbQdcwCmhLrd+lDhLUlli18zQxh20qsW/eeZQEj
+        6ypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzACN527OeWHYxd74IPMQpwMCrx8D7I74kXYk0s
+        K67MPcSoAjTm0YbVFxilWPLy81KVRHidzp6OE+JNSaysSi3Kjy8qzUktPsRoCvTnRGYp0eR8
+        YNLJK4k3NDU0t7A0NDc2NzazUBLn7RA4GCMkkJ5YkpqdmlqQWgTTx8TBKdXAaBtqeCf9/dGb
+        p9yXLfaKEPu+8mpvd1Nl7qvMq8+3Me/2TL1/ZNPvqfO0Tqv3zXBdr5S5YrJdtFd/9evnsWv0
+        Dh+49n+9Ud1OFbmERoHHbz7e7GWT4GFxz2vg0RZd5ef+suxstfEpYwW3HYG/D3Aqfc5osjXs
+        vV9Xusg5buGGP7yxj5iPNE9apcRSnJFoqMVcVJwIANDLPDcCAwAA
+X-CMS-MailID: 20201019125624eucas1p257a76c307adfb27202332658f93c9aba
+X-Msg-Generator: CA
+X-RootMTR: 20201019125624eucas1p257a76c307adfb27202332658f93c9aba
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201019125624eucas1p257a76c307adfb27202332658f93c9aba
+References: <20201002203641.GI3996795@lunn.ch>
+        <CGME20201019125624eucas1p257a76c307adfb27202332658f93c9aba@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 19-10-20, 11:12, Sudeep Holla wrote:
-> Yes it has clocks property but used by SCMI(for CPUFreq/DevFreq) and not
-> by any clock provider driver. E.g. the issue you will see if "clocks"
-> property is used instead of "qcom,freq-domain" on Qcom parts.
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Okay, I understand. But what I still don't understand is why it fails
-for you. You have a clocks property in DT for the CPU, the OPP core
-tries to get it and will get deferred-probed, which will try probing
-at a later point of time and it shall work then. Isn't it ?
+It was <2020-10-02 pi=C4=85 22:36>, when Andrew Lunn wrote:
+>> +static int
+>> +ax88796c_open(struct net_device *ndev)
+>> +{
+>> +	struct ax88796c_device *ax_local =3D to_ax88796c_device(ndev);
+>> +	int ret;
+>> +	unsigned long irq_flag =3D IRQF_SHARED;
+>> +
+>> +	mutex_lock(&ax_local->spi_lock);
+>> +
+>> +	ret =3D ax88796c_soft_reset(ax_local);
+>> +	if (ret < 0)
+>> +		return -ENODEV;
+>> +
+>> +	ret =3D request_irq(ndev->irq, ax88796c_interrupt,
+>> +			  irq_flag, ndev->name, ndev);
+>
+> Maybe look at using request_threaded_irq(). You can then remove your
+> work queue, and do the work in the thread_fn.
 
--- 
-viresh
+I looked and I looked and I didn't see how I could reasonably manage
+asynchronous start_xmit calls, the work queue also supports at the
+moment. Asynchronous start_xmit is important because data are
+transmitted via SPI which isn't very fast and it seems better not to
+block userspace processes that are sending data. Having both irq and
+xmit in the same place doesn't seem bad.
+
+Do you have any recommendations?
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl+NjOgACgkQsK4enJil
+gBBA0Qf+PVxyvqzj06gcyrR2PbXJ5rEPz3vOQjLa5BUTQ/GQlHKWnkp5bJ9OHD6F
+tQnzghbGzCkThRGwCaNwrHW7l8eAAu1Fx7640l/IOM/cKJycS1u4VlRCXtxx1QCI
+6UrlfKCJko3jAXT4eG181iG0mNgtIBW4q5cr4R/MM6DiiIZE4h3M8ZqA2lx2rQLh
+ydt5GEn/PsliruCmVe/P3eJBOzf6dgV+k85C9rKUZvXHroDtIByxVGbsHQn8MG8G
+CniTgsSuRxi6dFHmrmgLlmEVsFLCWymI0wFNrHGE2pdOpYxbFqyatGoDLcB0W7fD
+tpcskJ3f9cjx0Jt4uGGneGYJfvRUsQ==
+=Mq/e
+-----END PGP SIGNATURE-----
+--=-=-=--
