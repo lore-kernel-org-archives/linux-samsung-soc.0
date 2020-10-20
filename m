@@ -2,123 +2,160 @@ Return-Path: <SRS0=ufbU=D3=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E929C433E7
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Oct 2020 05:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E056C43467
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Oct 2020 08:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3CF5D22283
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Oct 2020 05:54:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1223D2237B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Oct 2020 08:49:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hTFFYg06"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="q8gn83IP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391778AbgJTFyg (ORCPT
+        id S2392128AbgJTItI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 20 Oct 2020 01:54:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44792 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391775AbgJTFyf (ORCPT
+        Tue, 20 Oct 2020 04:49:08 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:41530 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389490AbgJTItF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Oct 2020 01:54:35 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6948C0613D1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Oct 2020 22:54:35 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id lw2so400146pjb.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Oct 2020 22:54:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nxPLYxHdSRuqO69/xXr8NI7f9DVIeX37mXrRDJrlqP4=;
-        b=hTFFYg068bv/W8wuD+QXGdT0tMoV6sqmmj4MLZrSIA7P/6xmFIUQRjMjh5ixEuk9+s
-         bnL+AhKmOrliT6pyNsBC6gnLAROnpdS5jTPDG1uWo7jKcREf9Ef+g4w6ypu8Q4e2vKSi
-         WMXD01+vNIqSPzTbJ6r3aCTbzTeJ8xrzw6rckG4G/b87xYNnD9o8WTTf9Qse37xk0dpw
-         8lj66QqurDpcCyjh3V2xc3uoZN894smzqIMx6JTjJ0avH/v7VrmhSBNX9W4Ptc9epfUs
-         PUEncy4LDJq/ktDFWCXuQaG6BKsbM+i0lNT2ycElQvwdJcpPXIMIZYNrnNW4kI6bDO0H
-         Svfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nxPLYxHdSRuqO69/xXr8NI7f9DVIeX37mXrRDJrlqP4=;
-        b=M2gKykG7za8UU7vEo8eruRUN9dijlSVBmG6Ll81zWlb+JZvH8EVyxWyYIRk6GEdVuk
-         OA22CfSFgDEiXMwIO+jA4AxjXQjbnTP78aOKvIp4ET2481O5HyX9tlW45xFmzdw2+Yqw
-         l4J6ywOmrxvEIRvQE2ZwdG264NMwSUpvv+eCHPPB/6SJ+OdXhrhirXF1uvxFppuRfAgW
-         4WzY/M/nHocHnciZMT/4YhXMPySGpVFhIdev0cy1cchX1kn1r7230EHTz5P+7+6dc39W
-         PG9L2IWzaHd82uvyQkKq/8I1zlpeQMrbS51NLfI0YDGmv6cY0JrqA6z8Yz9gpnOQssq1
-         NBQw==
-X-Gm-Message-State: AOAM533nhs5Wv5wPkhqmXEfwpClarTXRHNp2UcxE9T8daI+qUa8Jk/XY
-        EPzX3jzP3eD+VVmq/8N/b8onHQ==
-X-Google-Smtp-Source: ABdhPJyo5+ib86HP6QctLhVLOcHST10R0jSm+p+v6mWQ6N+gPW2j3hELPp5nmsZQE2rwzQDKZp+OMQ==
-X-Received: by 2002:a17:90a:420b:: with SMTP id o11mr1392148pjg.142.1603173275044;
-        Mon, 19 Oct 2020 22:54:35 -0700 (PDT)
-Received: from localhost ([122.181.54.133])
-        by smtp.gmail.com with ESMTPSA id c12sm654902pgd.57.2020.10.19.22.54.33
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Oct 2020 22:54:34 -0700 (PDT)
-Date:   Tue, 20 Oct 2020 11:24:32 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>, nks@flawful.org,
-        georgi.djakov@linaro.org, Stephan Gerhold <stephan@gerhold.net>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] opp: Allow dev_pm_opp_get_opp_table() to return
- -EPROBE_DEFER
-Message-ID: <20201020055431.ln7d57x76f7z6j5k@vireshk-i7>
-References: <20201016042434.org6ibdqsqbzcdww@vireshk-i7>
- <20201016060021.sotk72u4hioctg7o@bogus>
- <20201016111222.lvakbmjhlrocpogt@bogus>
- <20201019045827.kl6qnx6gidhzjkrs@vireshk-i7>
- <20201019091723.GA12087@bogus>
- <20201019092411.b3znjxebay3puq2j@vireshk-i7>
- <20201019101241.GB12908@bogus>
- <20201019103535.ksp5ackoihamam4g@vireshk-i7>
- <20201019141007.GA6358@bogus>
- <20201020050557.a3b2nk33eeyxnvl2@vireshk-i7>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201020050557.a3b2nk33eeyxnvl2@vireshk-i7>
-User-Agent: NeoMutt/20180716-391-311a52
+        Tue, 20 Oct 2020 04:49:05 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09K8i7rI188082;
+        Tue, 20 Oct 2020 08:48:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : message-id :
+ content-type : mime-version : subject : date : in-reply-to : cc : to :
+ references; s=corp-2020-01-29;
+ bh=UBSvDuZX45rcdCwz1yIzvCzCqfd2joSCizhea4x+Xao=;
+ b=q8gn83IPPWdFm1HT3taLhd9DUF/VTUU+yXtsd8f9nD6wriupB19ul4FsqzWGdtIZMcde
+ GW+G9oeRVHaGmJfZ8muagtVwvuWLE6AywXuhak+OXkSgdFP6EIR2H2OqKDUhR7yIW2Vz
+ zpamQMFlTWRfwdWHBA7I0p8HYGgPlEg7NOi5pNpKeOCI5/Zqu82RI3DyvlSb3YeNhNvu
+ 1nAbi2LxPOnr/RtC4QoVHdNGHfdCdQB+x9xvmqx+BqjtbEr8lrxt1aMjIali/bjhTn7W
+ dzqjxrXdOv4FjsFo2kwRKNjQX5RScYby9/qqSUitUFXIKeMy4YBvXYVTZYkhax1TMfnU 0w== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 347s8msmp0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 20 Oct 2020 08:48:12 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09K8is45150623;
+        Tue, 20 Oct 2020 08:48:12 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3030.oracle.com with ESMTP id 348ahw07cp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 20 Oct 2020 08:48:12 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 09K8mAEe159753;
+        Tue, 20 Oct 2020 08:48:10 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 348ahw07bh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 20 Oct 2020 08:48:10 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 09K8lvTX021447;
+        Tue, 20 Oct 2020 08:47:58 GMT
+Received: from [10.175.164.120] (/10.175.164.120)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 20 Oct 2020 01:47:57 -0700
+From:   John Haxby <john.haxby@oracle.com>
+Message-Id: <27A23102-A7F5-48C5-8972-48CE4C283C6E@oracle.com>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_9F9749E9-79EA-41AB-B516-003ECE07BEE3";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.4\))
+Subject: Re: [Ocfs2-devel] [RFC] treewide: cleanup unreachable breaks
+Date:   Tue, 20 Oct 2020 09:47:45 +0100
+In-Reply-To: <CAKwvOdkR_Ttfo7_JKUiZFVqr=Uh=4b05KCPCSuzwk=zaWtA2_Q@mail.gmail.com>
+Cc:     Tom Rix <trix@redhat.com>, alsa-devel@alsa-project.org,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, nouveau@lists.freedesktop.org,
+        storagedev@microchip.com,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        virtualization@lists.linux-foundation.org,
+        keyrings@vger.kernel.org, linux-mtd@lists.infradead.org,
+        ath10k@lists.infradead.org, MPT-FusionLinux.pdl@broadcom.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        usb-storage@lists.one-eyed-alien.net,
+        linux-watchdog@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        linux-acpi@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+        industrypack-devel@lists.sourceforge.net,
+        linux-pci@vger.kernel.org, spice-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-nfc@lists.01.org, linux-pm@vger.kernel.org,
+        linux-can@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-gpio@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-amlogic@lists.infradead.org,
+        openipmi-developer@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-edac@vger.kernel.org, George Burgess <gbiv@google.com>,
+        Network Development <netdev@vger.kernel.org>,
+        linux-usb@vger.kernel.org,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, patches@opensource.cirrus.com,
+        bpf <bpf@vger.kernel.org>, ocfs2-devel@oss.oracle.com,
+        linux-power@fi.rohmeurope.com
+To:     Nick Desaulniers <ndesaulniers@google.com>
+References: <20201017160928.12698-1-trix@redhat.com>
+ <20201018054332.GB593954@kroah.com>
+ <CAKwvOdkR_Ttfo7_JKUiZFVqr=Uh=4b05KCPCSuzwk=zaWtA2_Q@mail.gmail.com>
+X-Mailer: Apple Mail (2.3608.120.23.2.4)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9779 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0
+ lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
+ phishscore=0 clxscore=1011 bulkscore=0 impostorscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2010200059
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20-10-20, 10:35, Viresh Kumar wrote:
-> On 19-10-20, 15:10, Sudeep Holla wrote:
-> > On Mon, Oct 19, 2020 at 04:05:35PM +0530, Viresh Kumar wrote:
-> > > On 19-10-20, 11:12, Sudeep Holla wrote:
-> > > > Yes it has clocks property but used by SCMI(for CPUFreq/DevFreq) and not
-> > > > by any clock provider driver. E.g. the issue you will see if "clocks"
-> > > > property is used instead of "qcom,freq-domain" on Qcom parts.
-> > > 
-> > > Okay, I understand. But what I still don't understand is why it fails
-> > > for you. You have a clocks property in DT for the CPU, the OPP core
-> > > tries to get it and will get deferred-probed, which will try probing
-> > > at a later point of time and it shall work then. Isn't it ?
-> > >
-> > 
-> > Nope unfortunately. We don't have clock provider, so clk_get will
-> > never succeed and always return -EPROBE_DEFER.
-> 
-> Now this is really bad, you have a fake clocks property, how is the
-> OPP core supposed to know it ? Damn.
 
-What about instead of fixing the OPP core, which really is doing the
-right thing, we fix your driver (as you can't fix the DT) and add a
-dummy CPU clk to make it all work ?
+--Apple-Mail=_9F9749E9-79EA-41AB-B516-003ECE07BEE3
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
--- 
-viresh
+
+
+> On 19 Oct 2020, at 20:42, Nick Desaulniers <ndesaulniers@google.com> =
+wrote:
+>=20
+> We probably should add all 3 to W=3D2 builds (wrapped in cc-option).
+> I've filed https://github.com/ClangBuiltLinux/linux/issues/1180 to
+> follow up on.
+
+It looks as though the URL mangling has been fixed.   If anyone sees =
+that specific URL mangled, please let me know.
+
+jch
+
+--Apple-Mail=_9F9749E9-79EA-41AB-B516-003ECE07BEE3
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iHUEAREIAB0WIQT+pxvb11CFWUkNSOVFC7t+lC+jyAUCX46kMQAKCRBFC7t+lC+j
+yBKiAP90JVXdPzuAwtRGkROpw1eVCo7wCaZ5nOa8Oo0sN6gC9gD/S0eGTqQhmg+n
+sXPJxPYqQsg09qmS6k/HX+AP5Oz2AMo=
+=xx66
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_9F9749E9-79EA-41AB-B516-003ECE07BEE3--
