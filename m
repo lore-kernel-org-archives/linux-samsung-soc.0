@@ -2,78 +2,132 @@ Return-Path: <SRS0=ufbU=D3=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D733FC43467
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Oct 2020 12:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A2EC433E7
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Oct 2020 12:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CD0322253
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Oct 2020 12:03:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBD7A2222F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Oct 2020 12:20:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394022AbgJTMC4 (ORCPT
+        id S2405824AbgJTMUw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 20 Oct 2020 08:02:56 -0400
-Received: from mail.baikalelectronics.com ([87.245.175.226]:51956 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393962AbgJTMAT (ORCPT
+        Tue, 20 Oct 2020 08:20:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53244 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405803AbgJTMUw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Oct 2020 08:00:19 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 6F67D803073D;
-        Tue, 20 Oct 2020 12:00:17 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at baikalelectronics.ru
-Received: from mail.baikalelectronics.ru ([127.0.0.1])
-        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Sg3fMQROG6FQ; Tue, 20 Oct 2020 15:00:17 +0300 (MSK)
-From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kukjin Kim <kgene@kernel.org>
-CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
-Subject: [PATCH 04/29] arm: dts: exynos: Correct DWC USB3 compatible string
-Date:   Tue, 20 Oct 2020 14:59:34 +0300
-Message-ID: <20201020115959.2658-5-Sergey.Semin@baikalelectronics.ru>
-In-Reply-To: <20201020115959.2658-1-Sergey.Semin@baikalelectronics.ru>
-References: <20201020115959.2658-1-Sergey.Semin@baikalelectronics.ru>
+        Tue, 20 Oct 2020 08:20:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 85ED1B1AC;
+        Tue, 20 Oct 2020 12:20:50 +0000 (UTC)
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
+        alexander.deucher@amd.com, christian.koenig@amd.com,
+        kraxel@redhat.com, l.stach@pengutronix.de,
+        linux+etnaviv@armlinux.org.uk, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, yuq825@gmail.com,
+        bskeggs@redhat.com, robh@kernel.org, tomeu.vizoso@collabora.com,
+        steven.price@arm.com, alyssa.rosenzweig@collabora.com,
+        hjc@rock-chips.com, heiko@sntech.de, hdegoede@redhat.com,
+        sean@poorly.run, eric@anholt.net, oleksandr_andrushchenko@epam.com,
+        ray.huang@amd.com, sumit.semwal@linaro.org,
+        emil.velikov@collabora.com, luben.tuikov@amd.com, apaneers@amd.com,
+        linus.walleij@linaro.org, melissa.srw@gmail.com,
+        chris@chris-wilson.co.uk, miaoqinglang@huawei.com
+Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, lima@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, spice-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xenproject.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH v5 01/10] drm/vram-helper: Remove invariant parameters from internal kmap function
+Date:   Tue, 20 Oct 2020 14:20:37 +0200
+Message-Id: <20201020122046.31167-2-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201020122046.31167-1-tzimmermann@suse.de>
+References: <20201020122046.31167-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Syonpsys IP cores are supposed to be defined with "snps" vendor-prefix.
-Use it instead of the deprecated "synopsys" one.
+The parameters map and is_iomem are always of the same value. Removed them
+to prepares the function for conversion to struct dma_buf_map.
 
-Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+v4:
+	* don't check for !kmap->virtual; will always be false
+
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Tested-by: Sam Ravnborg <sam@ravnborg.org>
 ---
- arch/arm/boot/dts/exynos5250.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/drm_gem_vram_helper.c | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index e3dbe4166836..6daeba7d6b49 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -630,7 +630,7 @@ usb_dwc3 {
- 			ranges;
+diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
+index 7aeb5daf2805..bfc059945e31 100644
+--- a/drivers/gpu/drm/drm_gem_vram_helper.c
++++ b/drivers/gpu/drm/drm_gem_vram_helper.c
+@@ -379,32 +379,22 @@ int drm_gem_vram_unpin(struct drm_gem_vram_object *gbo)
+ }
+ EXPORT_SYMBOL(drm_gem_vram_unpin);
  
- 			usbdrd_dwc3: dwc3@12000000 {
--				compatible = "synopsys,dwc3";
-+				compatible = "snps,dwc3";
- 				reg = <0x12000000 0x10000>;
- 				interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
- 				phys = <&usbdrd_phy 0>, <&usbdrd_phy 1>;
+-static void *drm_gem_vram_kmap_locked(struct drm_gem_vram_object *gbo,
+-				      bool map, bool *is_iomem)
++static void *drm_gem_vram_kmap_locked(struct drm_gem_vram_object *gbo)
+ {
+ 	int ret;
+ 	struct ttm_bo_kmap_obj *kmap = &gbo->kmap;
++	bool is_iomem;
+ 
+ 	if (gbo->kmap_use_count > 0)
+ 		goto out;
+ 
+-	if (kmap->virtual || !map)
+-		goto out;
+-
+ 	ret = ttm_bo_kmap(&gbo->bo, 0, gbo->bo.num_pages, kmap);
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+ out:
+-	if (!kmap->virtual) {
+-		if (is_iomem)
+-			*is_iomem = false;
+-		return NULL; /* not mapped; don't increment ref */
+-	}
+ 	++gbo->kmap_use_count;
+-	if (is_iomem)
+-		return ttm_kmap_obj_virtual(kmap, is_iomem);
+-	return kmap->virtual;
++	return ttm_kmap_obj_virtual(kmap, &is_iomem);
+ }
+ 
+ static void drm_gem_vram_kunmap_locked(struct drm_gem_vram_object *gbo)
+@@ -449,7 +439,7 @@ void *drm_gem_vram_vmap(struct drm_gem_vram_object *gbo)
+ 	ret = drm_gem_vram_pin_locked(gbo, 0);
+ 	if (ret)
+ 		goto err_ttm_bo_unreserve;
+-	base = drm_gem_vram_kmap_locked(gbo, true, NULL);
++	base = drm_gem_vram_kmap_locked(gbo);
+ 	if (IS_ERR(base)) {
+ 		ret = PTR_ERR(base);
+ 		goto err_drm_gem_vram_unpin_locked;
 -- 
-2.27.0
+2.28.0
 
