@@ -2,70 +2,70 @@ Return-Path: <SRS0=ufbU=D3=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59451C5517F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Oct 2020 13:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 544CFC54FB2
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Oct 2020 14:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03F2522282
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Oct 2020 13:56:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E76652224F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Oct 2020 14:09:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dqj1hqYp"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BSEQYZ6d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407637AbgJTN4I (ORCPT
+        id S2407874AbgJTOJj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 20 Oct 2020 09:56:08 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:30192 "EHLO
+        Tue, 20 Oct 2020 10:09:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:51781 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2407719AbgJTN4H (ORCPT
+        by vger.kernel.org with ESMTP id S2407885AbgJTOJi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Oct 2020 09:56:07 -0400
+        Tue, 20 Oct 2020 10:09:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603202165;
+        s=mimecast20190719; t=1603202976;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=HyQ28xr5/lapv6azTtFCvHFT5XQ1+OzeHk+84iEm66Y=;
-        b=dqj1hqYpU6/y2h8V+kIQptv0xhdOCg30nYjG0UuQPR4HzPGpwcXs8bTMbLhH/MZ4iyaOGe
-        bIsQLktd/HxsejJ6iD6T7AP53V0El8WD9AX/eQ5RKofX+tIH76o2/BtELPXTXNDVWD5wEg
-        LuY4RW3ZSsnbV2leAXQmqfUp5Xe8+Ec=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-136-L_ZAV1VJMZ-A-ZSoAk073Q-1; Tue, 20 Oct 2020 09:56:01 -0400
-X-MC-Unique: L_ZAV1VJMZ-A-ZSoAk073Q-1
-Received: by mail-qv1-f70.google.com with SMTP id d16so1429837qvy.16
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2020 06:56:01 -0700 (PDT)
+        bh=rOdQp2iOSkahNa0CfH1+VDlgH/zqWEjNOjN0qUXEes0=;
+        b=BSEQYZ6dgeP53VYWfuqdO4vlunhvx5fSuMWnmYzJDVYEhmD33VttM46pR3eQkTr/pJbjz5
+        zZx3YQE86iTNbbob+cjNQ0BnvBr+pLhephA1nFVaAugtTqZKNyw9VDqUGF9wQ8CoSqMWYt
+        3Z2574qby4TIpfc7aFQI3CcW10Qgp00=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-32-um77Kw_oMfmdUbEqt1uxzg-1; Tue, 20 Oct 2020 10:09:30 -0400
+X-MC-Unique: um77Kw_oMfmdUbEqt1uxzg-1
+Received: by mail-qk1-f200.google.com with SMTP id a81so1836072qkg.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2020 07:09:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=HyQ28xr5/lapv6azTtFCvHFT5XQ1+OzeHk+84iEm66Y=;
-        b=LhXrYmlJ/ZipPGBDplMI5H+Wjyz1OwevaRPj8W9A4oBnfpHwwVjYNKaRZXERYWq346
-         1uSj8u5R6NZTTmhBpsrt6w6E3c6boIarUgPZ1d40tZ5t7czfruRbQKij0RWBhtysDssP
-         pBpwxuG9sMyTlPAYUuUho5uz/LT9JdOtkLnqsCFaZYhfgov3JTXAWtoStnJquEts1Ku2
-         K2Nt1vksUWDK6YSzEUQlZdAnhtEC0tGHbMBx4MTiP/tqGxJR90Fu4kPBoF9khlo5XHcj
-         0m5vu+jW8rbseEiuDlOzRf5doaagYxrw1hYJVB4zMl4V7A5Bs9qa7YzYd3rL1sjn+X5a
-         iMqg==
-X-Gm-Message-State: AOAM5327JNnLCcv4U/i5hS5fczlRqBMYbGKvsKRP7e2h9SJWmnjf+ofC
-        U5GF0uoqZWDqe9Zs7DDf2rDRHovQLDhTO+RO19qn4H7iZrFvZUWc3gOjGQWF0lQq6awAI0HdMxi
-        SIV4YNYyvbN/DLov7Jo9PQRyRgvJTKUo=
-X-Received: by 2002:a05:6214:174f:: with SMTP id dc15mr3370447qvb.25.1603202160689;
-        Tue, 20 Oct 2020 06:56:00 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyLUAfqrAOJzxwKF3+voCBF5yQYNbMOvfOkDZhumkJj3bEnT15V4x8vUJ5iQ5pWt9KusIZtsQ==
-X-Received: by 2002:a05:6214:174f:: with SMTP id dc15mr3370377qvb.25.1603202160139;
-        Tue, 20 Oct 2020 06:56:00 -0700 (PDT)
+        bh=rOdQp2iOSkahNa0CfH1+VDlgH/zqWEjNOjN0qUXEes0=;
+        b=BHlifgHugiWgThBzfSeAnj4tdB9a/MTfETb6lTopf6WATN2OLvSR30+891npEvST0z
+         6VHRKPHEkiG9SwicGAd0rOIHrXMGeIUDzXWJyFoU7u8Ff3h5ni5SNk0DHX31Yb1F4yXA
+         BwINNOvqKDgxOufSMoSqW4NrVq+hw5KXYip0CpetBUgLmw/Tq7wcPXQHx838k+1kM8K5
+         uTiLo96GPGRfVX2NZ1QzyJqT16SiD1uRX/TqtKYsHXCMi4cx5a+TP64QEr9bEZHuavzl
+         jIngjK8M4srKm4dCuLc4nlnigkzVLwsKcqy01YWllso2v/U8HlnU4GjFY3LFxO+npugs
+         1KrQ==
+X-Gm-Message-State: AOAM531h0r6p3M22BrCvldQbPTiZ8j2mClOOFWDEZz0nFbHUsFcVmzyJ
+        ltykix91dIQmgnTRifoaCLB5kNppd7OWbIoi44HzJ9d+nb+OE4rx1SY073l3uPO0p+EBlDRbd3N
+        YQcLKD4Bp88G7YraMP+C2rpZdyb8GCOc=
+X-Received: by 2002:a05:620a:2195:: with SMTP id g21mr2990072qka.358.1603202969736;
+        Tue, 20 Oct 2020 07:09:29 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwKUy8N8weGLwzCzHDZ8oTBMtQsWbHEBLlPfZD5zpEfJ13ExA6QvxSe7FmqqHnm4D1jNxINeQ==
+X-Received: by 2002:a05:620a:2195:: with SMTP id g21mr2990039qka.358.1603202969497;
+        Tue, 20 Oct 2020 07:09:29 -0700 (PDT)
 Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
-        by smtp.gmail.com with ESMTPSA id b8sm775938qkn.133.2020.10.20.06.55.53
+        by smtp.gmail.com with ESMTPSA id o14sm785284qto.16.2020.10.20.07.09.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Oct 2020 06:55:59 -0700 (PDT)
+        Tue, 20 Oct 2020 07:09:28 -0700 (PDT)
 Subject: Re: [RFC] treewide: cleanup unreachable breaks
-To:     Nick Desaulniers <ndesaulniers@google.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Nick Desaulniers <ndesaulniers@google.com>
 Cc:     LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org,
         linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
@@ -100,17 +100,18 @@ Cc:     LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org,
         alsa-devel@alsa-project.org,
         clang-built-linux <clang-built-linux@googlegroups.com>,
         Greg KH <gregkh@linuxfoundation.org>,
-        George Burgess <gbiv@google.com>, Joe Perches <joe@perches.com>
+        George Burgess <gbiv@google.com>
 References: <20201017160928.12698-1-trix@redhat.com>
  <20201018054332.GB593954@kroah.com>
  <CAKwvOdkR_Ttfo7_JKUiZFVqr=Uh=4b05KCPCSuzwk=zaWtA2_Q@mail.gmail.com>
+ <20201019230546.GH36674@ziepe.ca>
 From:   Tom Rix <trix@redhat.com>
-Message-ID: <ca1f50d6-1005-8e3d-8d5c-98c82a704338@redhat.com>
-Date:   Tue, 20 Oct 2020 06:55:52 -0700
+Message-ID: <859ff6ff-3e10-195c-6961-7b2902b151d4@redhat.com>
+Date:   Tue, 20 Oct 2020 07:09:23 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdkR_Ttfo7_JKUiZFVqr=Uh=4b05KCPCSuzwk=zaWtA2_Q@mail.gmail.com>
+In-Reply-To: <20201019230546.GH36674@ziepe.ca>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -119,64 +120,49 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
-On 10/19/20 12:42 PM, Nick Desaulniers wrote:
-> On Sat, Oct 17, 2020 at 10:43 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->> On Sat, Oct 17, 2020 at 09:09:28AM -0700, trix@redhat.com wrote:
->>> From: Tom Rix <trix@redhat.com>
+On 10/19/20 4:05 PM, Jason Gunthorpe wrote:
+> On Mon, Oct 19, 2020 at 12:42:15PM -0700, Nick Desaulniers wrote:
+>> On Sat, Oct 17, 2020 at 10:43 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>>> On Sat, Oct 17, 2020 at 09:09:28AM -0700, trix@redhat.com wrote:
+>>>> From: Tom Rix <trix@redhat.com>
+>>>>
+>>>> This is a upcoming change to clean up a new warning treewide.
+>>>> I am wondering if the change could be one mega patch (see below) or
+>>>> normal patch per file about 100 patches or somewhere half way by collecting
+>>>> early acks.
+>>> Please break it up into one-patch-per-subsystem, like normal, and get it
+>>> merged that way.
 >>>
->>> This is a upcoming change to clean up a new warning treewide.
->>> I am wondering if the change could be one mega patch (see below) or
->>> normal patch per file about 100 patches or somewhere half way by collecting
->>> early acks.
->> Please break it up into one-patch-per-subsystem, like normal, and get it
->> merged that way.
->>
->> Sending us a patch, without even a diffstat to review, isn't going to
->> get you very far...
-> Tom,
-> If you're able to automate this cleanup, I suggest checking in a
-> script that can be run on a directory.  Then for each subsystem you
-> can say in your commit "I ran scripts/fix_whatever.py on this subdir."
->  Then others can help you drive the tree wide cleanup.  Then we can
-> enable -Wunreachable-code-break either by default, or W=2 right now
-> might be a good idea.
+>>> Sending us a patch, without even a diffstat to review, isn't going to
+>>> get you very far...
+>> Tom,
+>> If you're able to automate this cleanup, I suggest checking in a
+>> script that can be run on a directory.  Then for each subsystem you
+>> can say in your commit "I ran scripts/fix_whatever.py on this subdir."
+>>  Then others can help you drive the tree wide cleanup.  Then we can
+>> enable -Wunreachable-code-break either by default, or W=2 right now
+>> might be a good idea.
+> I remember using clang-modernize in the past to fix issues very
+> similar to this, if clang machinery can generate the warning, can't
+> something like clang-tidy directly generate the patch?
 
-I should have waited for Joe Perches's fixer addition to checkpatch :)
+Yes clang-tidy and similar are good tools.
 
-The easy fixes I did only cover about 1/2 of the problems.
+Sometimes they change too much and your time shifts
 
-Remaining are mostly nested switches, which from a complexity standpoint is bad.
+from editing to analyzing and dropping changes.
 
->
-> Ah, George (gbiv@, cc'ed), did an analysis recently of
-> `-Wunreachable-code-loop-increment`, `-Wunreachable-code-break`, and
-> `-Wunreachable-code-return` for Android userspace.  From the review:
-> ```
-> Spoilers: of these, it seems useful to turn on
-> -Wunreachable-code-loop-increment and -Wunreachable-code-return by
-> default for Android
 
-In my simple add-a-cflag bot, i see there are about 250
+I am looking at them for auto changing api.
 
-issues for -Wunreachable-code-return.
-
-I'll see about doing this one next.
-
-> ...
-> While these conventions about always having break arguably became
-> obsolete when we enabled -Wfallthrough, my sample turned up zero
-> potential bugs caught by this warning, and we'd need to put a lot of
-> effort into getting a clean tree. So this warning doesn't seem to be
-> worth it.
-> ```
-> Looks like there's an order of magnitude of `-Wunreachable-code-break`
-> than the other two.
->
-> We probably should add all 3 to W=2 builds (wrapped in cc-option).
-> I've filed https://github.com/ClangBuiltLinux/linux/issues/1180 to
-> follow up on.
-
-Yes, i think think these should be added.
+When i have something greater than half baked i will post.
 
 Tom
+
+>
+> You can send me a patch for drivers/infiniband/* as well
+>
+> Thanks,
+> Jason
+>
 
