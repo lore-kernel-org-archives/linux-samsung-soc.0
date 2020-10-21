@@ -2,118 +2,109 @@ Return-Path: <SRS0=kOvG=D4=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F36C56202
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 16:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A32C9C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 18:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EE8020872
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 16:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 436AE2246B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 18:21:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="c06LmWtB"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="aI4DCgQQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502988AbgJUQhH (ORCPT
+        id S2392087AbgJUSVa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 21 Oct 2020 12:37:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56748 "EHLO
+        Wed, 21 Oct 2020 14:21:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502978AbgJUQhG (ORCPT
+        with ESMTP id S2504039AbgJUSV3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 21 Oct 2020 12:37:06 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93371C0613D2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 09:37:04 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id k9so3099441qki.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 09:37:04 -0700 (PDT)
+        Wed, 21 Oct 2020 14:21:29 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DA1DC0613CE
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 11:21:29 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id w27so705192ejb.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 11:21:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=BzRdHxhoEjnpcVyZTB9k2I2+fkzcE70kBpksBajHHPg=;
-        b=c06LmWtB/eBV/fSiYmdEtL9GPYUkBEwiw6eScZ5dk4Sur880r0RUDUdOasWQ2KsUGe
-         bZgM/0p8jMLFa+ikbb0dWN5Ow5CevA+xGmpM9sZNHVumRdO1Tl6lKH78eEdBiQO/7MSc
-         SyBxogrPHboOf7N/zRQinZbDgCQncGQf+B3tCHdeRI6jhJnIAAoc2n5M0i1ORD3y+prI
-         vtMVVV6QAXuny3nyioqppKj86tWO1HhufpTOjkK/v2RsEfqLugKDikZxGHBEJZrzkhBg
-         lGNMu1/vnxQxiUuVEAydazAgNl/YziHidKE+BchWShczAu98wiVxpsNR+uw83dVIq+/q
-         VdCA==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=lBYBT2trM0zWLuScJPu/8MEsMxH22DaNGgcD4PxkzgM=;
+        b=aI4DCgQQ2pNgP8FJefkPAHWyeYDZ6gBOdUW5ASwTjCdJPt6/F0D5IUw+ryIpjQNXm7
+         gK4+rVdRij2UezhsYNKjky15pbLyx71SXm/fZWi7e8Q4m+RVncNlw0/EQHwWG71kG1jW
+         swatZpkYTu5yAZOXhuMbyP3n0EJyZ6Tj4Y/cuYa29u3olktUJdc4M4TJ2rd4I+0DOH8g
+         zGBna8sz6bZsljPuc9avDUo1nfa6ddJFnaen4gYQFZ8z/YYqPo9kDiLM1CATyUVyGmG8
+         pnWq4b5N/m5mvr9ZCnxufY7oD2D56MpGg2WZMNT6wzDAol9vlUAst1BSJiogsIkNya2g
+         yS+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BzRdHxhoEjnpcVyZTB9k2I2+fkzcE70kBpksBajHHPg=;
-        b=NGnvZIER8aLhvdarTuk+qp2T7jq3bZ4jLrMPT0diBP8+LLPFMGMLjijcUpabUF0Eqa
-         u5ZJlQRP1Aso0PVEClAYGbtexxldhGf0wFPZuAC8+zjoAtDWC95CDKd+ji8xFGUdVOUu
-         CgkAvJbAFa2KfR2/6GErRRlsoOA0qzv27yyuU7wLU8ahQUjj9GVEcdEU8/g3PEnfLpP/
-         U6StlVO7m1yu01ZGZpQ+MP+2h4GuYe3Oyw1x7zZXlqUtoeB+wC1j7Ih1Yaftxw2PaNYe
-         HJ2QvkjdhAHSdBy2H/S1hb6HwzR8SG0ceyJlmmtY342EO6Qd88ifhn11lGviClkMplL9
-         m0Ig==
-X-Gm-Message-State: AOAM530eGRbrgk8vhylI+phf4N7oDajMFET7Hae3ggkWuF9m9FEBAEQo
-        ynYspvkcUYUr3bWYx+eGItjhiA==
-X-Google-Smtp-Source: ABdhPJzGADmR3Upv87Rf5RxP6nvmSwt5ZnM0S0wnKL/4oE2AOzzQDQjF/MbwQajcSGEwpbzdpDuubQ==
-X-Received: by 2002:a37:4244:: with SMTP id p65mr3998477qka.141.1603298223560;
-        Wed, 21 Oct 2020 09:37:03 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
-        by smtp.gmail.com with ESMTPSA id r58sm1532749qte.94.2020.10.21.09.37.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2020 09:37:02 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1kVH6k-003YkE-3P; Wed, 21 Oct 2020 13:37:02 -0300
-Date:   Wed, 21 Oct 2020 13:37:02 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=lBYBT2trM0zWLuScJPu/8MEsMxH22DaNGgcD4PxkzgM=;
+        b=YQxpH5wkq/diCDm7O2pA6e0K8QYWQwyEMyuh0K4Pn7oX/6/nHnBqfcD+Msf5gTtKsN
+         Y7I0uiHSQCdLbEegIkeihDD+/Yv4rLBmwLwIMDXFoodq3jXe71lob+234Xz2A7ucBzpr
+         kcg7RZtDOIk+61slyeZi63muJLpqnBG3x0r5+vG12EqVqsraCqVhyjGcFXLwIR7aNr21
+         67iKqSzEDNkEhG/KUeVz3sXW+i90TQ8IXZzLuAYPN9rFnGcKRXSmMdBSyg4u7N3/Ac9t
+         3sZSh1oHaqdNBMI6vgF2KkASNCOsIQNnjsmJQ+rVXg5tWrGEjDY9Zg1BtPO8fjH47Eer
+         kC+A==
+X-Gm-Message-State: AOAM5331G7cmYUkgFuCl+EOd5EISG8RWbDkHHQTdNWy/cDynVdr2L7mm
+        x6m3ewEzPQfwTZZhz3excSfrGLJZcyJjZkHQ+XDg7g==
+X-Google-Smtp-Source: ABdhPJzA1jSls/Kx/Mwjc1+1+EpDhh/HoRUDuIKQ8K0ggJGziicPcEE6tEKertKBv/kwHwmxQELgJDflTG3MPc+CL3w=
+X-Received: by 2002:a17:906:c20f:: with SMTP id d15mr4627011ejz.341.1603304487981;
+ Wed, 21 Oct 2020 11:21:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20201021085655.1192025-1-daniel.vetter@ffwll.ch> <20201021085655.1192025-14-daniel.vetter@ffwll.ch>
+In-Reply-To: <20201021085655.1192025-14-daniel.vetter@ffwll.ch>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 21 Oct 2020 11:21:17 -0700
+Message-ID: <CAPcyv4jJTeH-PNjsXGrn=Ooz7=9rsZLdnFgwJ9xpQ6y14YoDrQ@mail.gmail.com>
+Subject: Re: [PATCH v3 13/16] /dev/mem: Only set filp->f_mapping
 To:     Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>,
         KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
         linux-s390 <linux-s390@vger.kernel.org>,
         Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
         Kees Cook <keescook@chromium.org>,
-        Dan Williams <dan.j.williams@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
         Daniel Vetter <daniel.vetter@ffwll.com>
-Subject: Re: [PATCH v3 12/16] PCI: Obey iomem restrictions for procfs mmap
-Message-ID: <20201021163702.GM36674@ziepe.ca>
-References: <20201021085655.1192025-1-daniel.vetter@ffwll.ch>
- <20201021085655.1192025-13-daniel.vetter@ffwll.ch>
- <20201021125030.GK36674@ziepe.ca>
- <CAKMK7uEWe8CaT7zjcZ6dJAKHxtxtqzjVB35fCFviwhcnqksDfw@mail.gmail.com>
- <20201021151352.GL36674@ziepe.ca>
- <CAKMK7uGq0=ks7Zj1Et44k7x9FwE9u_ua4zANSqrLRri0v01V+Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uGq0=ks7Zj1Et44k7x9FwE9u_ua4zANSqrLRri0v01V+Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 21, 2020 at 05:54:54PM +0200, Daniel Vetter wrote:
+On Wed, Oct 21, 2020 at 1:57 AM Daniel Vetter <daniel.vetter@ffwll.ch> wrot=
+e:
+>
+> When we care about pagecache maintenance, we need to make sure that
+> both f_mapping and i_mapping point at the right mapping.
+>
+> But for iomem mappings we only care about the virtual/pte side of
+> things, so f_mapping is enough. Also setting inode->i_mapping was
+> confusing me as a driver maintainer, since in e.g. drivers/gpu we
+> don't do that. Per Dan this seems to be copypasta from places which do
+> care about pagecache consistency, but not needed. Hence remove it for
+> slightly less confusion.
+>
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
 
-> The trouble is that io_remap_pfn adjust vma->pgoff, so we'd need to
-> split that. So ideally ->mmap would never set up any ptes.
-
-/dev/mem makes pgoff == pfn so it doesn't get changed by remap.
-
-pgoff doesn't get touched for MAP_SHARED either, so there are other
-users that could work like this - eg anyone mmaping IO memory is
-probably OK.
-
-> I guess one option would be if remap_pfn_range would steal the
-> vma->vm_ops pointer for itself, then it could set up the correct
-> ->install_ptes hook. But there's tons of callers for that, so not sure
-> that's a bright idea.
-
-The caller has to check that the mapping is still live, and I think
-hold a lock across the remap? Auto-defering it doesn't seem feasible.
-
-Jason
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
