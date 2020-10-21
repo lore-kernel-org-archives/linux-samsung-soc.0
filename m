@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25508C64E75
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 08:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4CAC61DD8
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 08:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBC3A22453
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 08:58:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAA3D2245C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 08:58:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TASte01L"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="AdOnfVRX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502353AbgJUI6c (ORCPT
+        id S2441164AbgJUI5P (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 21 Oct 2020 04:58:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41448 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2441172AbgJUI5P (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
         Wed, 21 Oct 2020 04:57:15 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DDE8C0613D7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 01:57:15 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id y12so2099211wrp.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 01:57:15 -0700 (PDT)
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41424 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502326AbgJUI5O (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 21 Oct 2020 04:57:14 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6157FC0613D4
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 01:57:12 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id h7so2130707wre.4
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 01:57:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=S+7ufuislqzXK0m1Ak/J4PVW8igwq369gehzbG0B91s=;
-        b=TASte01LfK3tJrNEskEJg0JBrkEwFReNqZJcsPAqw0ud/54iE3NFZPYAz4seclzObY
-         8qyaNJ7feKdYZc7R1FFJdgR6e4chx6xmBKBCGr9MetZUB65nJ+IYSxcj8fXdkIxAF9Wa
-         835vPJ0u8wjGgm4Lqk1+pFbsMYj81cW6UvpFg=
+        bh=xzdyc8sih5Z0jRADJV+ltVfvf6iEsLGUY40vg3gKdy4=;
+        b=AdOnfVRXK2jLUkWeysMwr5VnelegOvEuD42g4XQQ2o/HPbn3B45hScTlZrU405LEZA
+         /qgjz5i8D8WVC1BcUTGzrvj8J4olZ0cF/bn8uhrLNQKtgTOmzfug6laU3iQ56ZvGPvEs
+         d+u58HgNbzHUsZ31LXvTAwUzbDKivlYNkdGy0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=S+7ufuislqzXK0m1Ak/J4PVW8igwq369gehzbG0B91s=;
-        b=XV+S4YtkTZigEZVxNhFOUgMjoITpTFjbk+BPBHOY8dG2X8KfAU/b93cB4xtpU3Sizg
-         Wk5eaJpnRomflRkqwk8w0cAGEEf0Ch3VPqgLUVXsHNDlURUmn3BJJs7AqyII6oa/ApQM
-         U9I/Y3CqjX2h0uCVjA0Fhkwy2SDJNoS+uBk/yuZarcgkgzkZlZhbshntGCsNQTqHV1C9
-         CcKRXki6fRPKT/y2A/qb3OkC3S0MabwFja2m9ALrg84b39/6TInJ/90mKWCmhAV5yu/P
-         MOwUmO0eMlE8BX4i6VE1Pu4+GeydBI6915YqsVjADXJoiS4OKK+yatKU9NzftRZ1Nxn9
-         M2kA==
-X-Gm-Message-State: AOAM531kImTyB+YpwO2OV4Y8JZ7euaXs7tm0SSwwiumpAdmvqoCf3BpO
-        r0dhDAniVbvbHVFXW5CuJhv29Q==
-X-Google-Smtp-Source: ABdhPJzgdpJKzdh0Z7/Ixx6DmwTqWbM+l3YLKx7fvymTBFfXMek7eKSHLlh0kohA3cb0UMcaEODvqA==
-X-Received: by 2002:a5d:6a4f:: with SMTP id t15mr3390316wrw.126.1603270634157;
-        Wed, 21 Oct 2020 01:57:14 -0700 (PDT)
+        bh=xzdyc8sih5Z0jRADJV+ltVfvf6iEsLGUY40vg3gKdy4=;
+        b=c7uBlZk3NXj8Sufq76QISz8avYSr48LDBUcuG5cir+KjpxwfMCxBA5fGNv+SuLfL7w
+         bk1NUcDDCSPCQj2Wwf6S/uw2uIPGhn3yV6x8zWwlbgk7qPIB1ASBqkJnGg4Eu/FXxqhZ
+         ZS0Mbvc5ucu8NEgiKsubsZlx5EE3StgBNkihfkDAjsWMiwkOLVdm1dE+ydJJi8lAaGh/
+         +a3ltVSwwP/MoX4s1xtpbPoU0efhcisQSrFx0gK6kuDtMvotyL7EatXASweJ9jja1e8N
+         qciTYMz3BykdXE3f2HWCEi1HDP5kR4iea97OnO/fiDwn8cAfAWZUUFsqFhAx/a7G6hkY
+         wh5A==
+X-Gm-Message-State: AOAM531W8qNFhdSfr0s3VnvMrXq2BohwpJRpsbWDlsE1NR6c3GBq8XJn
+        Zp23yGHDyP4cTR/iE0/so+ehSg==
+X-Google-Smtp-Source: ABdhPJymCRzh/+xt/XeM4YX4g2ysALHdYKVSmfzFvh99kus6TTSD1sMWyRHhXQaDGTzJS3PH3CShCw==
+X-Received: by 2002:adf:cd0c:: with SMTP id w12mr3356719wrm.305.1603270631122;
+        Wed, 21 Oct 2020 01:57:11 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id q8sm2675939wro.32.2020.10.21.01.57.12
+        by smtp.gmail.com with ESMTPSA id q8sm2675939wro.32.2020.10.21.01.57.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2020 01:57:13 -0700 (PDT)
+        Wed, 21 Oct 2020 01:57:10 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>
@@ -63,20 +63,23 @@ Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
         linux-s390@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Daniel Vetter <daniel.vetter@intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Kees Cook <keescook@chromium.org>,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jan Kara <jack@suse.cz>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Daniel Vetter <daniel.vetter@ffwll.com>
-Subject: [PATCH v3 08/16] s390/pci: Remove races against pte updates
-Date:   Wed, 21 Oct 2020 10:56:47 +0200
-Message-Id: <20201021085655.1192025-9-daniel.vetter@ffwll.ch>
+Subject: [PATCH v3 06/16] media: videobuf2: Move frame_vector into media subsystem
+Date:   Wed, 21 Oct 2020 10:56:45 +0200
+Message-Id: <20201021085655.1192025-7-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201021085655.1192025-1-daniel.vetter@ffwll.ch>
 References: <20201021085655.1192025-1-daniel.vetter@ffwll.ch>
@@ -87,221 +90,241 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Way back it was a reasonable assumptions that iomem mappings never
-change the pfn range they point at. But this has changed:
+It's the only user. This also garbage collects the CONFIG_FRAME_VECTOR
+symbol from all over the tree (well just one place, somehow omap media
+driver still had this in its Kconfig, despite not using it).
 
-- gpu drivers dynamically manage their memory nowadays, invalidating
-ptes with unmap_mapping_range when buffers get moved
-
-- contiguous dma allocations have moved from dedicated carvetouts to
-cma regions. This means if we miss the unmap the pfn might contain
-pagecache or anon memory (well anything allocated with GFP_MOVEABLE)
-
-- even /dev/mem now invalidates mappings when the kernel requests that
-iomem region when CONFIG_IO_STRICT_DEVMEM is set, see commit
-3234ac664a87 ("/dev/mem: Revoke mappings when a driver claims the
-region")
-
-Accessing pfns obtained from ptes without holding all the locks is
-therefore no longer a good idea. Fix this.
-
-Since zpci_memcpy_from|toio seems to not do anything nefarious with
-locks we just need to open code get_pfn and follow_pfn and make sure
-we drop the locks only after we're done. The write function also needs
-the copy_from_user move, since we can't take userspace faults while
-holding the mmap sem.
-
-v2: Move VM_IO | VM_PFNMAP checks around so they keep returning EINVAL
-like before (Gerard)
-
-v3: Polish commit message (Niklas)
-
-Reviewed-by: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Acked-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
+Cc: Pawel Osciak <pawel@osciak.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Tomasz Figa <tfiga@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: John Hubbard <jhubbard@nvidia.com>
 Cc: Jérôme Glisse <jglisse@redhat.com>
 Cc: Jan Kara <jack@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: linux-mm@kvack.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-media@vger.kernel.org
-Cc: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org
-Cc: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
 Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.com>
+--
+v3:
+- Create a new frame_vector.h header for this (Mauro)
 ---
- arch/s390/pci/pci_mmio.c | 98 +++++++++++++++++++++++-----------------
- 1 file changed, 57 insertions(+), 41 deletions(-)
+ drivers/media/common/videobuf2/Kconfig        |  1 -
+ drivers/media/common/videobuf2/Makefile       |  1 +
+ .../media/common/videobuf2}/frame_vector.c    |  2 +
+ drivers/media/platform/omap/Kconfig           |  1 -
+ include/linux/mm.h                            | 42 -----------------
+ include/media/frame_vector.h                  | 47 +++++++++++++++++++
+ include/media/videobuf2-core.h                |  1 +
+ mm/Kconfig                                    |  3 --
+ mm/Makefile                                   |  1 -
+ 9 files changed, 51 insertions(+), 48 deletions(-)
+ rename {mm => drivers/media/common/videobuf2}/frame_vector.c (99%)
+ create mode 100644 include/media/frame_vector.h
 
-diff --git a/arch/s390/pci/pci_mmio.c b/arch/s390/pci/pci_mmio.c
-index 401cf670a243..1a6adbc68ee8 100644
---- a/arch/s390/pci/pci_mmio.c
-+++ b/arch/s390/pci/pci_mmio.c
-@@ -119,33 +119,15 @@ static inline int __memcpy_toio_inuser(void __iomem *dst,
- 	return rc;
- }
+diff --git a/drivers/media/common/videobuf2/Kconfig b/drivers/media/common/videobuf2/Kconfig
+index edbc99ebba87..d2223a12c95f 100644
+--- a/drivers/media/common/videobuf2/Kconfig
++++ b/drivers/media/common/videobuf2/Kconfig
+@@ -9,7 +9,6 @@ config VIDEOBUF2_V4L2
  
--static long get_pfn(unsigned long user_addr, unsigned long access,
--		    unsigned long *pfn)
--{
--	struct vm_area_struct *vma;
--	long ret;
+ config VIDEOBUF2_MEMOPS
+ 	tristate
+-	select FRAME_VECTOR
+ 
+ config VIDEOBUF2_DMA_CONTIG
+ 	tristate
+diff --git a/drivers/media/common/videobuf2/Makefile b/drivers/media/common/videobuf2/Makefile
+index 77bebe8b202f..54306f8d096c 100644
+--- a/drivers/media/common/videobuf2/Makefile
++++ b/drivers/media/common/videobuf2/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ videobuf2-common-objs := videobuf2-core.o
++videobuf2-common-objs += frame_vector.o
+ 
+ ifeq ($(CONFIG_TRACEPOINTS),y)
+   videobuf2-common-objs += vb2-trace.o
+diff --git a/mm/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
+similarity index 99%
+rename from mm/frame_vector.c
+rename to drivers/media/common/videobuf2/frame_vector.c
+index d44779e56313..6590987c14bd 100644
+--- a/mm/frame_vector.c
++++ b/drivers/media/common/videobuf2/frame_vector.c
+@@ -8,6 +8,8 @@
+ #include <linux/pagemap.h>
+ #include <linux/sched.h>
+ 
++#include <media/frame_vector.h>
++
+ /**
+  * get_vaddr_frames() - map virtual addresses to pfns
+  * @start:	starting user address
+diff --git a/drivers/media/platform/omap/Kconfig b/drivers/media/platform/omap/Kconfig
+index f73b5893220d..de16de46c0f4 100644
+--- a/drivers/media/platform/omap/Kconfig
++++ b/drivers/media/platform/omap/Kconfig
+@@ -12,6 +12,5 @@ config VIDEO_OMAP2_VOUT
+ 	depends on VIDEO_V4L2
+ 	select VIDEOBUF2_DMA_CONTIG
+ 	select OMAP2_VRFB if ARCH_OMAP2 || ARCH_OMAP3
+-	select FRAME_VECTOR
+ 	help
+ 	  V4L2 Display driver support for OMAP2/3 based boards.
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 16b799a0522c..acd60fbf1a5a 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1743,48 +1743,6 @@ int account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc);
+ int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
+ 			struct task_struct *task, bool bypass_rlim);
+ 
+-/* Container for pinned pfns / pages */
+-struct frame_vector {
+-	unsigned int nr_allocated;	/* Number of frames we have space for */
+-	unsigned int nr_frames;	/* Number of frames stored in ptrs array */
+-	bool got_ref;		/* Did we pin pages by getting page ref? */
+-	bool is_pfns;		/* Does array contain pages or pfns? */
+-	void *ptrs[];		/* Array of pinned pfns / pages. Use
+-				 * pfns_vector_pages() or pfns_vector_pfns()
+-				 * for access */
+-};
 -
--	mmap_read_lock(current->mm);
--	ret = -EINVAL;
--	vma = find_vma(current->mm, user_addr);
--	if (!vma)
--		goto out;
--	ret = -EACCES;
--	if (!(vma->vm_flags & access))
--		goto out;
--	ret = follow_pfn(vma, user_addr, pfn);
--out:
--	mmap_read_unlock(current->mm);
--	return ret;
+-struct frame_vector *frame_vector_create(unsigned int nr_frames);
+-void frame_vector_destroy(struct frame_vector *vec);
+-int get_vaddr_frames(unsigned long start, unsigned int nr_pfns,
+-		     unsigned int gup_flags, struct frame_vector *vec);
+-void put_vaddr_frames(struct frame_vector *vec);
+-int frame_vector_to_pages(struct frame_vector *vec);
+-void frame_vector_to_pfns(struct frame_vector *vec);
+-
+-static inline unsigned int frame_vector_count(struct frame_vector *vec)
+-{
+-	return vec->nr_frames;
 -}
 -
- SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
- 		const void __user *, user_buffer, size_t, length)
- {
- 	u8 local_buf[64];
- 	void __iomem *io_addr;
- 	void *buf;
--	unsigned long pfn;
-+	struct vm_area_struct *vma;
-+	pte_t *ptep;
-+	spinlock_t *ptl;
- 	long ret;
- 
- 	if (!zpci_is_enabled())
-@@ -158,7 +140,7 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
- 	 * We only support write access to MIO capable devices if we are on
- 	 * a MIO enabled system. Otherwise we would have to check for every
- 	 * address if it is a special ZPCI_ADDR and would have to do
--	 * a get_pfn() which we don't need for MIO capable devices.  Currently
-+	 * a pfn lookup which we don't need for MIO capable devices.  Currently
- 	 * ISM devices are the only devices without MIO support and there is no
- 	 * known need for accessing these from userspace.
- 	 */
-@@ -176,21 +158,37 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
- 	} else
- 		buf = local_buf;
- 
--	ret = get_pfn(mmio_addr, VM_WRITE, &pfn);
-+	ret = -EFAULT;
-+	if (copy_from_user(buf, user_buffer, length))
-+		goto out_free;
-+
-+	mmap_read_lock(current->mm);
-+	ret = -EINVAL;
-+	vma = find_vma(current->mm, mmio_addr);
-+	if (!vma)
-+		goto out_unlock_mmap;
-+	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
-+		goto out_unlock_mmap;
-+	ret = -EACCES;
-+	if (!(vma->vm_flags & VM_WRITE))
-+		goto out_unlock_mmap;
-+
-+	ret = follow_pte_pmd(vma->vm_mm, mmio_addr, NULL, &ptep, NULL, &ptl);
- 	if (ret)
--		goto out;
--	io_addr = (void __iomem *)((pfn << PAGE_SHIFT) |
-+		goto out_unlock_mmap;
-+
-+	io_addr = (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
- 			(mmio_addr & ~PAGE_MASK));
- 
--	ret = -EFAULT;
- 	if ((unsigned long) io_addr < ZPCI_IOMAP_ADDR_BASE)
--		goto out;
+-static inline struct page **frame_vector_pages(struct frame_vector *vec)
+-{
+-	if (vec->is_pfns) {
+-		int err = frame_vector_to_pages(vec);
 -
--	if (copy_from_user(buf, user_buffer, length))
--		goto out;
-+		goto out_unlock_pt;
- 
- 	ret = zpci_memcpy_toio(io_addr, buf, length);
--out:
-+out_unlock_pt:
-+	pte_unmap_unlock(ptep, ptl);
-+out_unlock_mmap:
-+	mmap_read_unlock(current->mm);
-+out_free:
- 	if (buf != local_buf)
- 		kfree(buf);
- 	return ret;
-@@ -274,7 +272,9 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, mmio_addr,
- 	u8 local_buf[64];
- 	void __iomem *io_addr;
- 	void *buf;
--	unsigned long pfn;
-+	struct vm_area_struct *vma;
-+	pte_t *ptep;
-+	spinlock_t *ptl;
- 	long ret;
- 
- 	if (!zpci_is_enabled())
-@@ -287,7 +287,7 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, mmio_addr,
- 	 * We only support read access to MIO capable devices if we are on
- 	 * a MIO enabled system. Otherwise we would have to check for every
- 	 * address if it is a special ZPCI_ADDR and would have to do
--	 * a get_pfn() which we don't need for MIO capable devices.  Currently
-+	 * a pfn lookup which we don't need for MIO capable devices.  Currently
- 	 * ISM devices are the only devices without MIO support and there is no
- 	 * known need for accessing these from userspace.
- 	 */
-@@ -306,22 +306,38 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, mmio_addr,
- 		buf = local_buf;
- 	}
- 
--	ret = get_pfn(mmio_addr, VM_READ, &pfn);
-+	mmap_read_lock(current->mm);
-+	ret = -EINVAL;
-+	vma = find_vma(current->mm, mmio_addr);
-+	if (!vma)
-+		goto out_unlock_mmap;
-+	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
-+		goto out_unlock_mmap;
-+	ret = -EACCES;
-+	if (!(vma->vm_flags & VM_WRITE))
-+		goto out_unlock_mmap;
+-		if (err)
+-			return ERR_PTR(err);
+-	}
+-	return (struct page **)(vec->ptrs);
+-}
+-
+-static inline unsigned long *frame_vector_pfns(struct frame_vector *vec)
+-{
+-	if (!vec->is_pfns)
+-		frame_vector_to_pfns(vec);
+-	return (unsigned long *)(vec->ptrs);
+-}
+-
+ struct kvec;
+ int get_kernel_pages(const struct kvec *iov, int nr_pages, int write,
+ 			struct page **pages);
+diff --git a/include/media/frame_vector.h b/include/media/frame_vector.h
+new file mode 100644
+index 000000000000..1ed0cd64510d
+--- /dev/null
++++ b/include/media/frame_vector.h
+@@ -0,0 +1,47 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef _MEDIA_FRAME_VECTOR_H
++#define _MEDIA_FRAME_VECTOR_H
 +
-+	ret = follow_pte_pmd(vma->vm_mm, mmio_addr, NULL, &ptep, NULL, &ptl);
- 	if (ret)
--		goto out;
--	io_addr = (void __iomem *)((pfn << PAGE_SHIFT) | (mmio_addr & ~PAGE_MASK));
-+		goto out_unlock_mmap;
++/* Container for pinned pfns / pages in frame_vector.c */
++struct frame_vector {
++	unsigned int nr_allocated;	/* Number of frames we have space for */
++	unsigned int nr_frames;	/* Number of frames stored in ptrs array */
++	bool got_ref;		/* Did we pin pages by getting page ref? */
++	bool is_pfns;		/* Does array contain pages or pfns? */
++	void *ptrs[];		/* Array of pinned pfns / pages. Use
++				 * pfns_vector_pages() or pfns_vector_pfns()
++				 * for access */
++};
 +
-+	io_addr = (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
-+			(mmio_addr & ~PAGE_MASK));
++struct frame_vector *frame_vector_create(unsigned int nr_frames);
++void frame_vector_destroy(struct frame_vector *vec);
++int get_vaddr_frames(unsigned long start, unsigned int nr_pfns,
++		     unsigned int gup_flags, struct frame_vector *vec);
++void put_vaddr_frames(struct frame_vector *vec);
++int frame_vector_to_pages(struct frame_vector *vec);
++void frame_vector_to_pfns(struct frame_vector *vec);
++
++static inline unsigned int frame_vector_count(struct frame_vector *vec)
++{
++	return vec->nr_frames;
++}
++
++static inline struct page **frame_vector_pages(struct frame_vector *vec)
++{
++	if (vec->is_pfns) {
++		int err = frame_vector_to_pages(vec);
++
++		if (err)
++			return ERR_PTR(err);
++	}
++	return (struct page **)(vec->ptrs);
++}
++
++static inline unsigned long *frame_vector_pfns(struct frame_vector *vec)
++{
++	if (!vec->is_pfns)
++		frame_vector_to_pfns(vec);
++	return (unsigned long *)(vec->ptrs);
++}
++
++#endif /* _MEDIA_FRAME_VECTOR_H */
+diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+index bbb3f26fbde9..d045e3a5a1d8 100644
+--- a/include/media/videobuf2-core.h
++++ b/include/media/videobuf2-core.h
+@@ -18,6 +18,7 @@
+ #include <linux/dma-buf.h>
+ #include <linux/bitops.h>
+ #include <media/media-request.h>
++#include <media/frame_vector.h>
  
- 	if ((unsigned long) io_addr < ZPCI_IOMAP_ADDR_BASE) {
- 		ret = -EFAULT;
--		goto out;
-+		goto out_unlock_pt;
- 	}
- 	ret = zpci_memcpy_fromio(buf, io_addr, length);
--	if (ret)
--		goto out;
--	if (copy_to_user(user_buffer, buf, length))
-+
-+out_unlock_pt:
-+	pte_unmap_unlock(ptep, ptl);
-+out_unlock_mmap:
-+	mmap_read_unlock(current->mm);
-+
-+	if (!ret && copy_to_user(user_buffer, buf, length))
- 		ret = -EFAULT;
+ #define VB2_MAX_FRAME	(32)
+ #define VB2_MAX_PLANES	(8)
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 6c974888f86f..da6c943fe9f1 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -815,9 +815,6 @@ config DEVICE_PRIVATE
+ 	  memory; i.e., memory that is only accessible from the device (or
+ 	  group of devices). You likely also want to select HMM_MIRROR.
  
--out:
- 	if (buf != local_buf)
- 		kfree(buf);
- 	return ret;
+-config FRAME_VECTOR
+-	bool
+-
+ config ARCH_USES_HIGH_VMA_FLAGS
+ 	bool
+ config ARCH_HAS_PKEYS
+diff --git a/mm/Makefile b/mm/Makefile
+index d5649f1c12c0..a025fd6c6afd 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -111,7 +111,6 @@ obj-$(CONFIG_PAGE_EXTENSION) += page_ext.o
+ obj-$(CONFIG_CMA_DEBUGFS) += cma_debug.o
+ obj-$(CONFIG_USERFAULTFD) += userfaultfd.o
+ obj-$(CONFIG_IDLE_PAGE_TRACKING) += page_idle.o
+-obj-$(CONFIG_FRAME_VECTOR) += frame_vector.o
+ obj-$(CONFIG_DEBUG_PAGE_REF) += debug_page_ref.o
+ obj-$(CONFIG_HARDENED_USERCOPY) += usercopy.o
+ obj-$(CONFIG_PERCPU_STATS) += percpu-stats.o
 -- 
 2.28.0
 
