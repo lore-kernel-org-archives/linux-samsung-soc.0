@@ -2,71 +2,86 @@ Return-Path: <SRS0=kOvG=D4=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A96C561F8
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 08:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BAEC561F8
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 08:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6C65223C7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 08:57:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83B22223C7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 08:57:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="VVnDgmxW"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="LHFf1nOp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441158AbgJUI5E (ORCPT
+        id S2502334AbgJUI5Q (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 21 Oct 2020 04:57:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41368 "EHLO
+        Wed, 21 Oct 2020 04:57:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2441048AbgJUI5D (ORCPT
+        with ESMTP id S2502314AbgJUI5L (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 21 Oct 2020 04:57:03 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DC53C0613D6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 01:57:03 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id d78so730632wmd.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 01:57:03 -0700 (PDT)
+        Wed, 21 Oct 2020 04:57:11 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3330C0613D5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 01:57:10 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id j7so2057867wrt.9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 01:57:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Gont0CCKnHMdGa6wrKlYRfieb2OHeQGvhAdNIYmokXs=;
-        b=VVnDgmxWGYk+ZwdNbZx6Qfo0t6kaRkEL0VNWUHATbLIt3jMjgaYOfdtnMpPlXBmHJZ
-         gFnQDrMYEk/gKZHAwJOELTKxwsgwZW/CWn+u6zaKjIMCN9lm18HqsVeG9jRC0MGVpVvf
-         8q8WCf23NrfOC9Q0xk18B4qoZ/OnP3rTMfyrA=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=OPi94I7u5TlT9ZMkfo3wd9G1XVf17ZOM76y2ie/UBYo=;
+        b=LHFf1nOpd9Yl+wPGLpl23bEIb0QE+8Hot8HPPyfFC6dPlkHm+Dy5yniNcp8HX0A/zw
+         lIEYHsUhRbf34d1PqRehF0XEoT/gzswXJzS/vHVbL/EyCnNOruKM6IjOpvFvTkma3oc3
+         x6t5IzbtOyzSuC7eyTfotP+gLU4tsrzFecuWM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Gont0CCKnHMdGa6wrKlYRfieb2OHeQGvhAdNIYmokXs=;
-        b=HDHbs5SAbZBwtJjEDeidxBE2XkMqyOD1y/OL6sS3nOyrlGO6MVbjKCi2rV1vPYWZ+g
-         y8b4M1ZVbY9rGbWmfMrtZj9vScjEtYtuq+LCuaZhL0r5+/W+CyNfeemkZvMd2V72qgnO
-         SYXuj1NkR7CHp6dqhaqmNeLVVs1HgPdntYjfPlvJGYNNQtKL1SD6ULv6W/fcRUVwQuaM
-         F8AjhEiOZhdK+IExwIsqCVU53U+QypWA8SHni1Q33yrewb/6QaDRsJkbMjpU14WLJvy2
-         zHwgmjo1Y1gVRIpH6H2TzC/vpFBtwTqCZ0Df4lT0cijLqO41YFm2PBUdKhtqtEfDGit7
-         TiNg==
-X-Gm-Message-State: AOAM533bJS4SNWstridRjVSUDLBmXY7KQFOuWtSLgpgfMouaESkYliK9
-        2YsXI983GjD7QXYutn59USbpKg==
-X-Google-Smtp-Source: ABdhPJyYzWpMyeyH5q5wodO7eI820GbpOZirLgvPnOfJ1Y9pegsPCbV57mxWuzvlDgRCukgCBprgLQ==
-X-Received: by 2002:a1c:dc8b:: with SMTP id t133mr2490486wmg.151.1603270621770;
-        Wed, 21 Oct 2020 01:57:01 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=OPi94I7u5TlT9ZMkfo3wd9G1XVf17ZOM76y2ie/UBYo=;
+        b=EQQQacomT9n1jaCaBSBODQj2jLInZuzXC29rYHe/0ZayvBvt4wN6orrWbAW9eV9nGl
+         6eVQTgU0SgaP3wlo1ZLYreiC/bqBeptpFX3ZE0nY3seuoDdSUmITOdFKoUZWfWvHNG8q
+         kNbKsg7DMuEXL/EdiLvexZolRsImc+QvGoQn/qDNF3LwZwpqHyxu3oxoYF0bhIA3lr+y
+         jkoSqgeQAadeTbSEcvDBMDJz25SrLl3KnJA5qyZYr6pcBAuIMN39VGDcW2PJQ78fgegi
+         gl9+BX0n7lKxDHrK5CMSTlYPTIiki6hXL/Rn2y+NwWne+4T3qhpQI31iz2xhu221lfbM
+         aicg==
+X-Gm-Message-State: AOAM531zs4/6UKK+pH7oKxKkSodXBl/naFFGKSQ22XvPELycREW7GIXe
+        uwd/HfRsh0G/iTWfRImZxFZgPw==
+X-Google-Smtp-Source: ABdhPJw9zQlQYxuU/CNLju53SaBbNIHKJyF+jiQvqzMWRBPWLPGowYaSPULBChwBYVyW5+HEPgaJwA==
+X-Received: by 2002:adf:cd87:: with SMTP id q7mr3373418wrj.169.1603270629486;
+        Wed, 21 Oct 2020 01:57:09 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id q8sm2675939wro.32.2020.10.21.01.57.00
+        by smtp.gmail.com with ESMTPSA id q8sm2675939wro.32.2020.10.21.01.57.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2020 01:57:00 -0700 (PDT)
+        Wed, 21 Oct 2020 01:57:08 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>
 Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-s390@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH v3 00/16] follow_pfn and other iomap races
-Date:   Wed, 21 Oct 2020 10:56:39 +0200
-Message-Id: <20201021085655.1192025-1-daniel.vetter@ffwll.ch>
+        linux-s390@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.com>
+Subject: [PATCH v3 05/16] mm/frame-vector: Use FOLL_LONGTERM
+Date:   Wed, 21 Oct 2020 10:56:44 +0200
+Message-Id: <20201021085655.1192025-6-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201021085655.1192025-1-daniel.vetter@ffwll.ch>
+References: <20201021085655.1192025-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -74,92 +89,126 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi all,
+This is used by media/videbuf2 for persistent dma mappings, not just
+for a single dma operation and then freed again, so needs
+FOLL_LONGTERM.
 
-Round 3 of my patch series to clamp down a bunch of races and gaps
-around follow_pfn and other access to iomem mmaps. Previous version:
+Unfortunately current pup_locked doesn't support FOLL_LONGTERM due to
+locking issues. Rework the code to pull the pup path out from the
+mmap_sem critical section as suggested by Jason.
 
-v1: https://lore.kernel.org/dri-devel/20201007164426.1812530-1-daniel.vetter@ffwll.ch/
-v2: https://lore.kernel.org/dri-devel/20201009075934.3509076-1-daniel.vetter@ffwll.ch
+By relying entirely on the vma checks in pin_user_pages and follow_pfn
+(for vm_flags and vma_is_fsdax) we can also streamline the code a lot.
 
-And the discussion that sparked this journey:
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Pawel Osciak <pawel@osciak.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Tomasz Figa <tfiga@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-mm@kvack.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-media@vger.kernel.org
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.com>
+--
+v2: Streamline the code and further simplify the loop checks (Jason)
+---
+ mm/frame_vector.c | 50 ++++++++++++++---------------------------------
+ 1 file changed, 15 insertions(+), 35 deletions(-)
 
-https://lore.kernel.org/dri-devel/20201007164426.1812530-1-daniel.vetter@ffwll.ch/
-
-I was waiting for the testing result for habanalabs from Oded, but I guess
-Oded was waiting for my v3.
-
-Changes in v3:
-- Bunch of polish all over, no functional changes aside from one barrier
-  in the resource code, for consistency.
-- A few more r-b tags.
-
-Changes in v2:
-- tons of small polish&fixes all over, thanks to all the reviewers who
-  spotted issues
-- I managed to test at least the generic_access_phys and pci mmap revoke
-  stuff with a few gdb sessions using our i915 debug tools (hence now also
-  the drm/i915 patch to properly request all the pci bar regions)
-- reworked approach for the pci mmap revoke: Infrastructure moved into
-  kernel/resource.c, address_space mapping is now set up at open time for
-  everyone (which required some sysfs changes). Does indeed look a lot
-  cleaner and a lot less invasive than I feared at first.
-
-The big thing I can't test are all the frame_vector changes in habanalbas,
-exynos and media. Gerald has given the s390 patch a spin already.
-
-Review, testing, feedback all very much welcome.
-
-Cheers, Daniel
-Daniel Vetter (16):
-  drm/exynos: Stop using frame_vector helpers
-  drm/exynos: Use FOLL_LONGTERM for g2d cmdlists
-  misc/habana: Stop using frame_vector helpers
-  misc/habana: Use FOLL_LONGTERM for userptr
-  mm/frame-vector: Use FOLL_LONGTERM
-  media: videobuf2: Move frame_vector into media subsystem
-  mm: Close race in generic_access_phys
-  s390/pci: Remove races against pte updates
-  mm: Add unsafe_follow_pfn
-  media/videbuf1|2: Mark follow_pfn usage as unsafe
-  vfio/type1: Mark follow_pfn as unsafe
-  PCI: Obey iomem restrictions for procfs mmap
-  /dev/mem: Only set filp->f_mapping
-  resource: Move devmem revoke code to resource framework
-  sysfs: Support zapping of binary attr mmaps
-  PCI: Revoke mappings like devmem
-
- arch/s390/pci/pci_mmio.c                      |  98 ++++++++++-------
- drivers/char/mem.c                            |  86 +--------------
- drivers/gpu/drm/exynos/Kconfig                |   1 -
- drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  48 ++++-----
- drivers/media/common/videobuf2/Kconfig        |   1 -
- drivers/media/common/videobuf2/Makefile       |   1 +
- .../media/common/videobuf2}/frame_vector.c    |  54 ++++------
- drivers/media/platform/omap/Kconfig           |   1 -
- drivers/media/v4l2-core/videobuf-dma-contig.c |   2 +-
- drivers/misc/habanalabs/Kconfig               |   1 -
- drivers/misc/habanalabs/common/habanalabs.h   |   6 +-
- drivers/misc/habanalabs/common/memory.c       |  50 ++++-----
- drivers/pci/pci-sysfs.c                       |   4 +
- drivers/pci/proc.c                            |   6 ++
- drivers/vfio/vfio_iommu_type1.c               |   4 +-
- fs/sysfs/file.c                               |  11 ++
- include/linux/ioport.h                        |   6 +-
- include/linux/mm.h                            |  47 +-------
- include/linux/sysfs.h                         |   2 +
- include/media/frame_vector.h                  |  47 ++++++++
- include/media/videobuf2-core.h                |   1 +
- kernel/resource.c                             | 101 +++++++++++++++++-
- mm/Kconfig                                    |   3 -
- mm/Makefile                                   |   1 -
- mm/memory.c                                   |  76 ++++++++++++-
- mm/nommu.c                                    |  17 +++
- security/Kconfig                              |  13 +++
- 27 files changed, 403 insertions(+), 285 deletions(-)
- rename {mm => drivers/media/common/videobuf2}/frame_vector.c (85%)
- create mode 100644 include/media/frame_vector.h
-
+diff --git a/mm/frame_vector.c b/mm/frame_vector.c
+index 10f82d5643b6..d44779e56313 100644
+--- a/mm/frame_vector.c
++++ b/mm/frame_vector.c
+@@ -38,7 +38,6 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+ 	struct vm_area_struct *vma;
+ 	int ret = 0;
+ 	int err;
+-	int locked;
+ 
+ 	if (nr_frames == 0)
+ 		return 0;
+@@ -48,40 +47,25 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+ 
+ 	start = untagged_addr(start);
+ 
+-	mmap_read_lock(mm);
+-	locked = 1;
+-	vma = find_vma_intersection(mm, start, start + 1);
+-	if (!vma) {
+-		ret = -EFAULT;
+-		goto out;
+-	}
+-
+-	/*
+-	 * While get_vaddr_frames() could be used for transient (kernel
+-	 * controlled lifetime) pinning of memory pages all current
+-	 * users establish long term (userspace controlled lifetime)
+-	 * page pinning. Treat get_vaddr_frames() like
+-	 * get_user_pages_longterm() and disallow it for filesystem-dax
+-	 * mappings.
+-	 */
+-	if (vma_is_fsdax(vma)) {
+-		ret = -EOPNOTSUPP;
+-		goto out;
+-	}
+-
+-	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
++	ret = pin_user_pages_fast(start, nr_frames,
++				  FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
++				  (struct page **)(vec->ptrs));
++	if (ret > 0) {
+ 		vec->got_ref = true;
+ 		vec->is_pfns = false;
+-		ret = pin_user_pages_locked(start, nr_frames,
+-			gup_flags, (struct page **)(vec->ptrs), &locked);
+-		goto out;
++		goto out_unlocked;
+ 	}
+ 
++	mmap_read_lock(mm);
+ 	vec->got_ref = false;
+ 	vec->is_pfns = true;
+ 	do {
+ 		unsigned long *nums = frame_vector_pfns(vec);
+ 
++		vma = find_vma_intersection(mm, start, start + 1);
++		if (!vma)
++			break;
++
+ 		while (ret < nr_frames && start + PAGE_SIZE <= vma->vm_end) {
+ 			err = follow_pfn(vma, start, &nums[ret]);
+ 			if (err) {
+@@ -92,17 +76,13 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+ 			start += PAGE_SIZE;
+ 			ret++;
+ 		}
+-		/*
+-		 * We stop if we have enough pages or if VMA doesn't completely
+-		 * cover the tail page.
+-		 */
+-		if (ret >= nr_frames || start < vma->vm_end)
++		/* Bail out if VMA doesn't completely cover the tail page. */
++		if (start < vma->vm_end)
+ 			break;
+-		vma = find_vma_intersection(mm, start, start + 1);
+-	} while (vma && vma->vm_flags & (VM_IO | VM_PFNMAP));
++	} while (ret < nr_frames);
+ out:
+-	if (locked)
+-		mmap_read_unlock(mm);
++	mmap_read_unlock(mm);
++out_unlocked:
+ 	if (!ret)
+ 		ret = -EFAULT;
+ 	if (ret > 0)
 -- 
 2.28.0
 
