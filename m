@@ -2,212 +2,121 @@ Return-Path: <SRS0=kOvG=D4=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C7FC2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 21:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B377C2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 23:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA2FA2417D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 21:50:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E72972225F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 23:20:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YqZP64Ms"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CZio0pvj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2506508AbgJUVuV (ORCPT
+        id S2507096AbgJUXU1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 21 Oct 2020 17:50:21 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:57566 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2506497AbgJUVuU (ORCPT
+        Wed, 21 Oct 2020 19:20:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34360 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2507098AbgJUXU1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 21 Oct 2020 17:50:20 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201021214951euoutp02569e0ed203665604336031bb0b04385b~AIE8byBfP2062820628euoutp020
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 21:49:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201021214951euoutp02569e0ed203665604336031bb0b04385b~AIE8byBfP2062820628euoutp020
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1603316991;
-        bh=mTsGxAzRRmkrxqoK+yjwAwQX/CZllg6Kpimdvem06c0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YqZP64MsyTfuOsWs/5VZ5CNZehS3GZNpmNjcoT3ej9lQgXUnuYl3ttuW2IfowfO24
-         aMiigdGi4EaZo1Ug7Lhq9nSMqF33c40ku8TkMnnKdlJUktxJYE30zj/QiXPJH53FtS
-         gTvwYtSCStdSJxKo9h4zPd8F4Alhhe3K+/dDSrfU=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201021214933eucas1p14eede2f86ff6bd0f210ed4d89ab21f76~AIEsIh6581896518965eucas1p1m;
-        Wed, 21 Oct 2020 21:49:33 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id FF.8C.06318.DECA09F5; Wed, 21
-        Oct 2020 22:49:33 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201021214933eucas1p152c8fc594793aca56a1cbf008f8415a4~AIErmcSgf1894818948eucas1p1o;
-        Wed, 21 Oct 2020 21:49:33 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201021214933eusmtrp2d46d0b3fc357575eed218d77f2067332~AIErlyhUV0512505125eusmtrp2a;
-        Wed, 21 Oct 2020 21:49:33 +0000 (GMT)
-X-AuditID: cbfec7f5-371ff700000018ae-c6-5f90aceda1e6
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 55.69.06314.DECA09F5; Wed, 21
-        Oct 2020 22:49:33 +0100 (BST)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20201021214933eusmtip2c063ebf98af7a720e9f3667d0f719d73~AIErbeReF1471314713eusmtip28;
-        Wed, 21 Oct 2020 21:49:33 +0000 (GMT)
-From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-To:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-Subject: [PATCH v3 2/5] dt-bindings: net: Add bindings for AX88796C SPI
- Ethernet Adapter
-Date:   Wed, 21 Oct 2020 23:49:07 +0200
-Message-Id: <20201021214910.20001-3-l.stelmach@samsung.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20201021214910.20001-1-l.stelmach@samsung.com>
+        Wed, 21 Oct 2020 19:20:27 -0400
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B18C0613D6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 16:20:24 -0700 (PDT)
+Received: by mail-qt1-x843.google.com with SMTP id r8so3651502qtp.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 16:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=b4cfx4QZgYz15NDTJwDbByQvqvRvpDxc8U181kXRfhk=;
+        b=CZio0pvjUOAZVmGpPYnoIJZ3k0VTIRDxHgnxsmYuQhsz2jEdpX7JlzXAa5B1lHI4hj
+         1dkeZm3vsuYQ0+al/4Q5F2/2IuJErhNsTuza+Audcu3R6UagNTTPFO2TOlLXvivwU2k/
+         TKA9JSMlFjnoXG+A2LL1MAujxpBHcxjoID0aD31L+i9KzL1iVOVlTBMfml1ncQpAA1Ef
+         K50QmLDH8932V/fZEd6cOcCwLbIUGXgj3Ry86gAn7SRneMoAL4zkD8ulKknh501sjbP8
+         vU0trDw7S+JXN+4tdtkGwNszgrrA7N4l+RnFY0GZRBBOKZJ2H2dSIxQhc+QJQE2SJt1m
+         cPcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=b4cfx4QZgYz15NDTJwDbByQvqvRvpDxc8U181kXRfhk=;
+        b=Ogjx/eLbfkaZbwCG3wO58qVnczFsAVXcaBedWuoqWOcKwX1jXgGvb6uBCTNIvCzxn8
+         hpm9mAJ779LGbAmbtpft+jejyXkjzXMylXN3ja3IWUEgMQ2nnLtJRNsSqEZ1VwDiMs9d
+         YQ9yywvyaRXrydsEOeBeEzgQpf8Kxe4c0PldxVs38wXBME+Hdv1zcearR5TSljDyLEIO
+         zqvewyhAGcv2Yg9VstS7fZrFWx4dE+HVUwCerOYe+aS6nPTzSEPUfjVjxSZxwWR10219
+         smNxahrLHtmkrVTIRfHYCd9v687Atjq8bEPIIJ0FN6leRMNQLjzhz8dQk3J1XiaH8kMo
+         ejoQ==
+X-Gm-Message-State: AOAM532J4PfCml1BnzEolZkd401Lu2Vr3YGK9kdJllRZcgHY8EqSzwhg
+        RY2AKJkfMy1/oO0zpR4g19LGEw==
+X-Google-Smtp-Source: ABdhPJylFppbCqYnSmCDnE4ueYGv0xNZzmWfiqeCGK69SNIht11gj1i8NPwvoXi//7kIPj5qPGxCVQ==
+X-Received: by 2002:ac8:1c39:: with SMTP id a54mr5530504qtk.344.1603322423832;
+        Wed, 21 Oct 2020 16:20:23 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
+        by smtp.gmail.com with ESMTPSA id n63sm2410770qka.45.2020.10.21.16.20.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Oct 2020 16:20:23 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1kVNP4-003k7m-9M; Wed, 21 Oct 2020 20:20:22 -0300
+Date:   Wed, 21 Oct 2020 20:20:22 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Bjorn Helgaas <bhelgaas@google.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.com>
+Subject: Re: [PATCH v3 12/16] PCI: Obey iomem restrictions for procfs mmap
+Message-ID: <20201021232022.GN36674@ziepe.ca>
+References: <20201021085655.1192025-1-daniel.vetter@ffwll.ch>
+ <20201021085655.1192025-13-daniel.vetter@ffwll.ch>
+ <20201021125030.GK36674@ziepe.ca>
+ <CAKMK7uEWe8CaT7zjcZ6dJAKHxtxtqzjVB35fCFviwhcnqksDfw@mail.gmail.com>
+ <20201021151352.GL36674@ziepe.ca>
+ <CAKMK7uGq0=ks7Zj1Et44k7x9FwE9u_ua4zANSqrLRri0v01V+Q@mail.gmail.com>
+ <20201021163702.GM36674@ziepe.ca>
+ <CAKMK7uEjE5sHUq0hV_bnYjPKRxYyBnty0sLre+owANGZjLJg9Q@mail.gmail.com>
 MIME-Version: 1.0
-Organization: Samsung R&D Institute Poland
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe3d2zo7S7GxpPlgkzK5Kahn1UlLaBfchyL4KZSc9meRMtlwa
-        hNdukhe81JrrQmjeZuoydZVDx9JK3JSVOdrsolApy0K7EpXbMfLb//8+v+f5Pw+8NCF1kUF0
-        avpJTpnOpskoX2FH3w/bBre+LDGyoGcbtrnMBG7TtJBYZysU4hsWK4lvTWtIPOJ2krh0fIrA
-        NlurCA91lJDYYa5H2DA+QmL7fR2FNTaTAJuruhFutrhEuO/mMny22yKKkcjtI8OEvL3BIZAb
-        tS6R3NB4kZLfrcmRG7tmBPKS9kYknzGsjKcTfKOTubRUNaeM2HHY95j99tGMGmnWxfo8KhcZ
-        /YqQDw3MZpj+2SkoQr60lKlH0FBeSPFmFkFTwwDBmxkEzr63wn8tPS7NfKEOwXPzUxFv3iF4
-        oC33UhQTC6W1j0lPwZ8ZI6Dl/GvkMQRjQmAcqyQ81FImAcrM30iPFjKr4WXe0BxE02JmO5Q4
-        d/NxwXC+rpPyaB8mGuwfW724mJHAk6sT3rAlTCjo8194NTHHF9yr9q4HTBUNVxt6ET9oD1yr
-        yZu/YSlM9reLeL0C/hhvCDy5wORARfkWvvcSgg7d93l+OzitPykPQzDroeV+BP8cC81NXUK+
-        1Q9G3RJ+BT8o77hC8M9iuHBOytOr4E7pw/mBQVA8WY/KkEy74BjtggO0/7NuIqIRBXKZKkUK
-        p4pK506Fq1iFKjM9JTzphMKA5j7dwO/+L13I9OuIGTE0ki0Wf9pXliglWbUqW2FGQBMyf/Gu
-        wYFDUnEym32aU55IVGamcSozWk4LZYHiqFsfDkqZFPYkd5zjMjjlv6qA9gnKRYEBS2I0vWNH
-        qIgsdnrNozeCFVnjnPXx3u5zBQdk9s+V6jhdpH/S2nyDKWKR5NFs72WycLi6e6t+wvHe0j+b
-        XxvSFvq9OHuDNvUzOVgUkNu1nrumu/6swtEcf+pZyG39qOBM1JQ1Ur//zwPTzrBNr6LDrq/L
-        FLIZ6gp33NPgr8m1MqHqGLsxlFCq2L9ZQJu6cAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLIsWRmVeSWpSXmKPExsVy+t/xe7pv10yIN/h5WNTi/N1DzBYbZ6xn
-        tZhzvoXFYv6Rc6wWi97PYLW49vYOq0X/49fMFufPb2C3uLCtj9Xi5qEVjBabHl9jtbi8aw6b
-        xYzz+5gsDk3dy2ix9shddotjC8QsWvceYXcQ9Lh87SKzx5aVN5k8ds66y+6xaVUnm8fmJfUe
-        O3d8ZvLo27KK0ePzJrkAjig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07
-        m5TUnMyy1CJ9uwS9jMvL0gqWCFV0rmhka2DcydfFyMkhIWAiceDuDOYuRi4OIYGljBIHTl5l
-        6WLkAEpISaycmw5RIyzx51oXG0TNU0aJ04t/sIMk2AQcJfqXnmAFSYgIvGGWaLr3lh3EYRbY
-        xyix/+hisCphgQiJzq4zTCA2i4CqxO3GC4wgG3gFrCX67jhDbJCXaF++nQ3E5hSwkbj8bgMr
-        iC0EVHLp3WRGEJtXQFDi5MwnYMcxC6hLrJ8nBBLmF9CSWNN0nQXEZgYa07x1NvMERqFZSDpm
-        IXTMQlK1gJF5FaNIamlxbnpusaFecWJucWleul5yfu4mRmBUbzv2c/MOxksbgw8xCnAwKvHw
-        fvCZEC/EmlhWXJl7iFGCg1lJhNfp7Ok4Id6UxMqq1KL8+KLSnNTiQ4ymQF9OZJYSTc4HJpy8
-        knhDU0NzC0tDc2NzYzMLJXHeDoGDMUIC6YklqdmpqQWpRTB9TBycUg2Mcc5RQUfsH1txMq9o
-        dRE3zJz56fXkaQ2c52tWZ7JJPnMwO/GfW/uaSmisRYPrp7T77yv3mD7lOVoWpnKn62OqM8e0
-        SSbiHI3rqiKMxX47rtdW+Ob9dX3721cLLSRK+o7E3+iS8JvkaJ0heuS0vpbuRGONT1MfC3Jw
-        bH+7xv/LWwXXhPaGw6FKLMUZiYZazEXFiQCHyQLZAAMAAA==
-X-CMS-MailID: 20201021214933eucas1p152c8fc594793aca56a1cbf008f8415a4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201021214933eucas1p152c8fc594793aca56a1cbf008f8415a4
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201021214933eucas1p152c8fc594793aca56a1cbf008f8415a4
-References: <20201021214910.20001-1-l.stelmach@samsung.com>
-        <CGME20201021214933eucas1p152c8fc594793aca56a1cbf008f8415a4@eucas1p1.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uEjE5sHUq0hV_bnYjPKRxYyBnty0sLre+owANGZjLJg9Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add bindings for AX88796C SPI Ethernet Adapter.
+On Wed, Oct 21, 2020 at 09:24:08PM +0200, Daniel Vetter wrote:
+> On Wed, Oct 21, 2020 at 6:37 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >
+> > On Wed, Oct 21, 2020 at 05:54:54PM +0200, Daniel Vetter wrote:
+> >
+> > > The trouble is that io_remap_pfn adjust vma->pgoff, so we'd need to
+> > > split that. So ideally ->mmap would never set up any ptes.
+> >
+> > /dev/mem makes pgoff == pfn so it doesn't get changed by remap.
+> >
+> > pgoff doesn't get touched for MAP_SHARED either, so there are other
+> > users that could work like this - eg anyone mmaping IO memory is
+> > probably OK.
+> 
+> I was more generally thinking for io_remap_pfn_users because of the
+> mkwrite use-case we might have in fbdev emulation in drm.
 
-Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
----
- .../bindings/net/asix,ax88796c.yaml           | 69 +++++++++++++++++++
- 1 file changed, 69 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/asix,ax88796c.yaml
+You have a use case for MAP_PRIVATE and io_remap_pfn_range()??
 
-diff --git a/Documentation/devicetree/bindings/net/asix,ax88796c.yaml b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
-new file mode 100644
-index 000000000000..6c4c49fcad66
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
-@@ -0,0 +1,69 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/asix,ax88796c-spi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ASIX AX88796C SPI Ethernet Adapter
-+
-+maintainers:
-+  - Łukasz Stelmach <l.stelmach@samsung.com>
-+
-+description: |
-+  ASIX AX88796C is an Ethernet controller with a built in PHY. This
-+  describes SPI mode of the chip.
-+
-+  The node for this driver must be a child node of an SPI controller,
-+  hence all mandatory properties described in
-+  ../spi/spi-controller.yaml must be specified.
-+
-+allOf:
-+  - $ref: ethernet-controller.yaml#
-+
-+properties:
-+  compatible:
-+    const: asix,ax88796c
-+
-+  reg:
-+    maxItems: 1
-+
-+  spi-max-frequency:
-+    maximum: 40000000
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reset-gpios:
-+    description:
-+      A GPIO line handling reset of the chip. As the line is active low,
-+      it should be marked GPIO_ACTIVE_LOW.
-+    maxItems: 1
-+
-+  local-mac-address: true
-+
-+  mac-address: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - spi-max-frequency
-+  - interrupts
-+  - interrupt-parrent
-+  - reset-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  # Artik5 eval board
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/interrupt-controller/gpio.h>
-+    ethernet@0 {
-+        compatible = "asix,ax88796c";
-+        reg = <0x0>;
-+        local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
-+        interrupt-parent = <&gpx2>;
-+        interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+        spi-max-frequency = <40000000>;
-+        reset-gpios = <&gpe0 2 GPIO_ACTIVE_LOW>;
-+    };
--- 
-2.26.2
-
+Jason
