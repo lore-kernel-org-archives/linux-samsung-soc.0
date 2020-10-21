@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E0EC63798
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 08:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BFAC83002
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 08:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F30262242F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 08:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D54C2245B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 08:57:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="UPG0GcaS"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="EE/91tuK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502338AbgJUI5R (ORCPT
+        id S2502431AbgJUI5h (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 21 Oct 2020 04:57:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41428 "EHLO
+        Wed, 21 Oct 2020 04:57:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436567AbgJUI5P (ORCPT
+        with ESMTP id S2502402AbgJUI51 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 21 Oct 2020 04:57:15 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB75EC0613DC
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 01:57:13 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id j7so2058092wrt.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 01:57:13 -0700 (PDT)
+        Wed, 21 Oct 2020 04:57:27 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D04ABC0613D4
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 01:57:25 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id c194so736251wme.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 01:57:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hPBU4fd0tsYMcwp3ePz/Ho5qxuZVtGOvHiVJ9lQm7jY=;
-        b=UPG0GcaSTYJzjNnzuql1oJmuf2ORiGcXQtqBG64S8CJ+9ZNvyS7CG072HrAMR+73AB
-         jB8MJNaRilWsUd4vS9zDKwBxbBP/BpyY0v72COGfai/Je6t+7CKMe5spgkDoEsWn64wK
-         NHlOVjp/UNJrgmhaKbuEgaJ1CW341WCoy+fng=
+        bh=oQvkweh0coyyHFs1+P/kZMwtZJPPWi3HClx7V6v1fv0=;
+        b=EE/91tuK+LnQ6Bg/BJZHq1+5OAQo6TOscz5wTlYQlFCOdrCXYSUlrYitteOGw9m+LY
+         STU6xM7NhAXVZvMrs/CddxhZ9Ce+pijIkJL18SFd1amKxNAH30F/FyM/bG8C+7+O+j11
+         /6ubZyozbslsGF1Lvd8CED3xyzh3w0GshGNLU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hPBU4fd0tsYMcwp3ePz/Ho5qxuZVtGOvHiVJ9lQm7jY=;
-        b=Ayoz45D9SkWKX7PTIy1ez4tD2GlTiXBU7erZwMhN6Dj9OhLLtVyv+yGNqEbW5U1k8z
-         sMqkr7gVkkxAyCrgREMx/tjU2s5DVeqepHsfyj/WWrM4Cw6EyBCCcyD9FJaVdh+wasMW
-         5IdLglo+oEN4h/88PlyuAJJu8EOLJHY8iGvIv20aeDPVeQ/oLQGQWEXaABUlnvE/9DHb
-         FlToWHkUDAoV4/OyMFWqfrLpipAEWNzsHgA6mLxsct8pj0dACTHpVLNf9ZY5ZQtd5Bn1
-         kxceFcCCP7EPe11fQvi1ls75TA+9wBUU6MrSXZwRVsuYC+7tLUzFQTic2ebACY4cD7rK
-         5ncg==
-X-Gm-Message-State: AOAM533zhxeZbyBc8XNfdQ/DjV2DdS5mT2QK1+2JRuMlqiI9uhBj3zVn
-        o7lOmZxeJVkAWjJAtc21QFDjkA==
-X-Google-Smtp-Source: ABdhPJxiUy0VPgMwBx+Gtgt9KHB4VMhTjzmZk29+O/BmQINbhNhalI0SnUGt8xo9L8gxRohjGILhBg==
-X-Received: by 2002:a5d:5009:: with SMTP id e9mr3539097wrt.104.1603270632595;
-        Wed, 21 Oct 2020 01:57:12 -0700 (PDT)
+        bh=oQvkweh0coyyHFs1+P/kZMwtZJPPWi3HClx7V6v1fv0=;
+        b=qposbzWWtTIUfF2ZoxNIwmlvHjaHkaFNPQlDJ6g55LnhSm3CQsCgra/l0uXaGgM7nB
+         Ivx2De1ACSGwHlwY8azLwC6JbFPNS0zAb4KF0YkyZodtUbNTg0lMja+/eKHC7QbkMkb8
+         rTKowt0lJccHY8r9SLQH0sc7kVrV7I65BmEfuQJ7rqDe/MusvPl8YMGHn6gnI2yRmc7F
+         kcDgYC16990O0ZXLqm3DJFwgMfCWDWwCH2pjziFw5Ss/JFaijXp7ijxT6Kq/Ssd/bZLj
+         dmk7eZ79K5W3nB/FjNe5M5rjLdQkCbRiXme5gxbovUjCUK/tozzV4AdJef8zFzDejatN
+         E0iA==
+X-Gm-Message-State: AOAM5337P4DiYrgN/Tnc85h5UHfzSXkhfjY4x4SPyaA+BJ17kOJ/9k/o
+        CKFVmwIzTYtx1EtkR0p/4iQDKMbZfath2KXF
+X-Google-Smtp-Source: ABdhPJxh5W+195BRlQ75jcVqoxSqHuITL1MkZ8kYhnwY/3GuozWB13g2bfVDwEcl3AUtRbmZy3j2Zw==
+X-Received: by 2002:a1c:e089:: with SMTP id x131mr2512477wmg.78.1603270644597;
+        Wed, 21 Oct 2020 01:57:24 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id q8sm2675939wro.32.2020.10.21.01.57.11
+        by smtp.gmail.com with ESMTPSA id q8sm2675939wro.32.2020.10.21.01.57.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2020 01:57:11 -0700 (PDT)
+        Wed, 21 Oct 2020 01:57:23 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>
@@ -63,20 +63,26 @@ Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
         linux-s390@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Daniel Vetter <daniel.vetter@intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
         Kees Cook <keescook@chromium.org>,
-        Benjamin Herrensmidt <benh@kernel.crashing.org>,
-        Dave Airlie <airlied@linux.ie>,
+        Dan Williams <dan.j.williams@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>,
+        Jan Kara <jack@suse.cz>, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sourabh Jain <sourabhjain@linux.ibm.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
         Daniel Vetter <daniel.vetter@ffwll.com>
-Subject: [PATCH v3 07/16] mm: Close race in generic_access_phys
-Date:   Wed, 21 Oct 2020 10:56:46 +0200
-Message-Id: <20201021085655.1192025-8-daniel.vetter@ffwll.ch>
+Subject: [PATCH v3 15/16] sysfs: Support zapping of binary attr mmaps
+Date:   Wed, 21 Oct 2020 10:56:54 +0200
+Message-Id: <20201021085655.1192025-16-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201021085655.1192025-1-daniel.vetter@ffwll.ch>
 References: <20201021085655.1192025-1-daniel.vetter@ffwll.ch>
@@ -87,38 +93,25 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Way back it was a reasonable assumptions that iomem mappings never
-change the pfn range they point at. But this has changed:
+We want to be able to revoke pci mmaps so that the same access rules
+applies as for /dev/kmem. Revoke support for devmem was added in
+3234ac664a87 ("/dev/mem: Revoke mappings when a driver claims the
+region").
 
-- gpu drivers dynamically manage their memory nowadays, invalidating
-  ptes with unmap_mapping_range when buffers get moved
+The simplest way to achieve this is by having the same filp->f_mapping
+for all mappings, so that unmap_mapping_range can find them all, no
+matter through which file they've been created. Since this must be set
+at open time we need sysfs support for this.
 
-- contiguous dma allocations have moved from dedicated carvetouts to
-  cma regions. This means if we miss the unmap the pfn might contain
-  pagecache or anon memory (well anything allocated with GFP_MOVEABLE)
+Add an optional mapping parameter bin_attr, which is only consulted
+when there's also an mmap callback, since without mmap support
+allowing to adjust the ->f_mapping makes no sense.
 
-- even /dev/mem now invalidates mappings when the kernel requests that
-  iomem region when CONFIG_IO_STRICT_DEVMEM is set, see 3234ac664a87
-  ("/dev/mem: Revoke mappings when a driver claims the region")
-
-Accessing pfns obtained from ptes without holding all the locks is
-therefore no longer a good idea. Fix this.
-
-Since ioremap might need to manipulate pagetables too we need to drop
-the pt lock and have a retry loop if we raced.
-
-While at it, also add kerneldoc and improve the comment for the
-vma_ops->access function. It's for accessing, not for moving the
-memory from iomem to system memory, as the old comment seemed to
-suggest.
-
-References: 28b2ee20c7cb ("access_process_vm device memory infrastructure")
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
-Cc: Benjamin Herrensmidt <benh@kernel.crashing.org>
-Cc: Dave Airlie <airlied@linux.ie>
+Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: John Hubbard <jhubbard@nvidia.com>
 Cc: Jérôme Glisse <jglisse@redhat.com>
@@ -128,103 +121,70 @@ Cc: linux-mm@kvack.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-media@vger.kernel.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Sourabh Jain <sourabhjain@linux.ibm.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Nayna Jain <nayna@linux.ibm.com>
 Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.com>
---
-v2: Fix inversion in the retry check (John).
 ---
- include/linux/mm.h |  3 ++-
- mm/memory.c        | 44 ++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 44 insertions(+), 3 deletions(-)
+ fs/sysfs/file.c       | 11 +++++++++++
+ include/linux/sysfs.h |  2 ++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index acd60fbf1a5a..2a16631c1fda 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -566,7 +566,8 @@ struct vm_operations_struct {
- 	vm_fault_t (*pfn_mkwrite)(struct vm_fault *vmf);
- 
- 	/* called by access_process_vm when get_user_pages() fails, typically
--	 * for use by special VMAs that can switch between memory and hardware
-+	 * for use by special VMAs. See also generic_access_phys() for a generic
-+	 * implementation useful for any iomem mapping.
- 	 */
- 	int (*access)(struct vm_area_struct *vma, unsigned long addr,
- 		      void *buf, int len, int write);
-diff --git a/mm/memory.c b/mm/memory.c
-index eeae590e526a..fff817608eb4 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4840,28 +4840,68 @@ int follow_phys(struct vm_area_struct *vma,
- 	return ret;
+diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+index eb6897ab78e7..9d8ccdb000e3 100644
+--- a/fs/sysfs/file.c
++++ b/fs/sysfs/file.c
+@@ -169,6 +169,16 @@ static int sysfs_kf_bin_mmap(struct kernfs_open_file *of,
+ 	return battr->mmap(of->file, kobj, battr, vma);
  }
  
-+/**
-+ * generic_access_phys - generic implementation for iomem mmap access
-+ * @vma: the vma to access
-+ * @addr: userspace addres, not relative offset within @vma
-+ * @buf: buffer to read/write
-+ * @len: length of transfer
-+ * @write: set to FOLL_WRITE when writing, otherwise reading
-+ *
-+ * This is a generic implementation for &vm_operations_struct.access for an
-+ * iomem mapping. This callback is used by access_process_vm() when the @vma is
-+ * not page based.
-+ */
- int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
- 			void *buf, int len, int write)
++static int sysfs_kf_bin_open(struct kernfs_open_file *of)
++{
++	struct bin_attribute *battr = of->kn->priv;
++
++	if (battr->mapping)
++		of->file->f_mapping = battr->mapping;
++
++	return 0;
++}
++
+ void sysfs_notify(struct kobject *kobj, const char *dir, const char *attr)
  {
- 	resource_size_t phys_addr;
- 	unsigned long prot = 0;
- 	void __iomem *maddr;
-+	pte_t *ptep, pte;
-+	spinlock_t *ptl;
- 	int offset = addr & (PAGE_SIZE-1);
-+	int ret = -EINVAL;
-+
-+	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
-+		return -EINVAL;
-+
-+retry:
-+	if (follow_pte(vma->vm_mm, addr, &ptep, &ptl))
-+		return -EINVAL;
-+	pte = *ptep;
-+	pte_unmap_unlock(ptep, ptl);
+ 	struct kernfs_node *kn = kobj->sd, *tmp;
+@@ -240,6 +250,7 @@ static const struct kernfs_ops sysfs_bin_kfops_mmap = {
+ 	.read		= sysfs_kf_bin_read,
+ 	.write		= sysfs_kf_bin_write,
+ 	.mmap		= sysfs_kf_bin_mmap,
++	.open		= sysfs_kf_bin_open,
+ };
  
--	if (follow_phys(vma, addr, write, &prot, &phys_addr))
-+	prot = pgprot_val(pte_pgprot(pte));
-+	phys_addr = (resource_size_t)pte_pfn(pte) << PAGE_SHIFT;
-+
-+	if ((write & FOLL_WRITE) && !pte_write(pte))
- 		return -EINVAL;
+ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
+diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+index 34e84122f635..a17a474d1601 100644
+--- a/include/linux/sysfs.h
++++ b/include/linux/sysfs.h
+@@ -164,11 +164,13 @@ __ATTRIBUTE_GROUPS(_name)
  
- 	maddr = ioremap_prot(phys_addr, PAGE_ALIGN(len + offset), prot);
- 	if (!maddr)
- 		return -ENOMEM;
+ struct file;
+ struct vm_area_struct;
++struct address_space;
  
-+	if (follow_pte(vma->vm_mm, addr, &ptep, &ptl))
-+		goto out_unmap;
-+
-+	if (!pte_same(pte, *ptep)) {
-+		pte_unmap_unlock(ptep, ptl);
-+		iounmap(maddr);
-+
-+		goto retry;
-+	}
-+
- 	if (write)
- 		memcpy_toio(maddr + offset, buf, len);
- 	else
- 		memcpy_fromio(buf, maddr + offset, len);
-+	ret = len;
-+	pte_unmap_unlock(ptep, ptl);
-+out_unmap:
- 	iounmap(maddr);
- 
--	return len;
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(generic_access_phys);
- #endif
+ struct bin_attribute {
+ 	struct attribute	attr;
+ 	size_t			size;
+ 	void			*private;
++	struct address_space	*mapping;
+ 	ssize_t (*read)(struct file *, struct kobject *, struct bin_attribute *,
+ 			char *, loff_t, size_t);
+ 	ssize_t (*write)(struct file *, struct kobject *, struct bin_attribute *,
 -- 
 2.28.0
 
