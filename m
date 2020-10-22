@@ -1,122 +1,91 @@
-Return-Path: <SRS0=kOvG=D4=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=b7Q7=D5=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B377C2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 23:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6C4C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 06:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E72972225F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Oct 2020 23:20:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CZio0pvj"
+	by mail.kernel.org (Postfix) with ESMTP id D9F4824196
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 06:54:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603349645;
+	bh=jfsXolUKeFrub+vG6qhSySk23ZvjpmdznqJGNizeS58=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hiDD4lSiIIYgyII9D9m5UVHqweAOLYw8UnW5KfDebZc/YruiuDuqvyCfmGFtzDFwJ
+	 WVNdsyB4AQVhgHrRh8HsXwufG0zwtgbqEwvOj6f/SFe4QJiktnQtKhXgzv3th6P4Zp
+	 o4WkgxGBvsQLke9aBrDCkAV7GmHsoLirnQB0g5CE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2507096AbgJUXU1 (ORCPT
+        id S2504394AbgJVGyF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 21 Oct 2020 19:20:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34360 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2507098AbgJUXU1 (ORCPT
+        Thu, 22 Oct 2020 02:54:05 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38129 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2504386AbgJVGyF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 21 Oct 2020 19:20:27 -0400
-Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B18C0613D6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 16:20:24 -0700 (PDT)
-Received: by mail-qt1-x843.google.com with SMTP id r8so3651502qtp.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2020 16:20:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=b4cfx4QZgYz15NDTJwDbByQvqvRvpDxc8U181kXRfhk=;
-        b=CZio0pvjUOAZVmGpPYnoIJZ3k0VTIRDxHgnxsmYuQhsz2jEdpX7JlzXAa5B1lHI4hj
-         1dkeZm3vsuYQ0+al/4Q5F2/2IuJErhNsTuza+Audcu3R6UagNTTPFO2TOlLXvivwU2k/
-         TKA9JSMlFjnoXG+A2LL1MAujxpBHcxjoID0aD31L+i9KzL1iVOVlTBMfml1ncQpAA1Ef
-         K50QmLDH8932V/fZEd6cOcCwLbIUGXgj3Ry86gAn7SRneMoAL4zkD8ulKknh501sjbP8
-         vU0trDw7S+JXN+4tdtkGwNszgrrA7N4l+RnFY0GZRBBOKZJ2H2dSIxQhc+QJQE2SJt1m
-         cPcg==
+        Thu, 22 Oct 2020 02:54:05 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n18so731527wrs.5;
+        Wed, 21 Oct 2020 23:54:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=b4cfx4QZgYz15NDTJwDbByQvqvRvpDxc8U181kXRfhk=;
-        b=Ogjx/eLbfkaZbwCG3wO58qVnczFsAVXcaBedWuoqWOcKwX1jXgGvb6uBCTNIvCzxn8
-         hpm9mAJ779LGbAmbtpft+jejyXkjzXMylXN3ja3IWUEgMQ2nnLtJRNsSqEZ1VwDiMs9d
-         YQ9yywvyaRXrydsEOeBeEzgQpf8Kxe4c0PldxVs38wXBME+Hdv1zcearR5TSljDyLEIO
-         zqvewyhAGcv2Yg9VstS7fZrFWx4dE+HVUwCerOYe+aS6nPTzSEPUfjVjxSZxwWR10219
-         smNxahrLHtmkrVTIRfHYCd9v687Atjq8bEPIIJ0FN6leRMNQLjzhz8dQk3J1XiaH8kMo
-         ejoQ==
-X-Gm-Message-State: AOAM532J4PfCml1BnzEolZkd401Lu2Vr3YGK9kdJllRZcgHY8EqSzwhg
-        RY2AKJkfMy1/oO0zpR4g19LGEw==
-X-Google-Smtp-Source: ABdhPJylFppbCqYnSmCDnE4ueYGv0xNZzmWfiqeCGK69SNIht11gj1i8NPwvoXi//7kIPj5qPGxCVQ==
-X-Received: by 2002:ac8:1c39:: with SMTP id a54mr5530504qtk.344.1603322423832;
-        Wed, 21 Oct 2020 16:20:23 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
-        by smtp.gmail.com with ESMTPSA id n63sm2410770qka.45.2020.10.21.16.20.22
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=wPazIwGxWZXLW6RoMakBTpiJ6QIbqx5NJ2Au3s+esQE=;
+        b=sojHn4W2OANVImZz5nQuPhhncC91a2aBMykroN5sQbl5s2VlJnRXtInbdihD3/sMAr
+         zwu7Tqj6t8ng3bGQB2KaOrUCqMO3Mh5wZVJB8lbCtMoZczhuYQmgZZEuRAQMKuBK1kul
+         lFheECk1UgXeFfEDWEDvJS//yhBLXrly47Dgy5FKplW5OfABF/spnc2hmd1DEZd0b5DR
+         ywb9QhWEhEdhEW1TibywCkmZY5GHr3gZVxz5n+lhUUOywGa7vDjE9gWg9nzOUVmv8uuR
+         frPLOisEPai8JMfnu772dgOJ4U9F9SX2Ul0wFfNol4kiaBZnwdIwaL0MODrc9I6VXEe7
+         UDlA==
+X-Gm-Message-State: AOAM5321bUi9BXxnThNKU5p6vW1Axz1vqHsxolHKsky5rncrVIRmRirB
+        4zh3Rb9gJ/U1mMM1d6Lp+jA=
+X-Google-Smtp-Source: ABdhPJzGbTTMEabPD/ovZyiwJ3eCr6uvy/ZtoLno4XMnWH0VbF/1tP44xnbU3HxS0ABcYBB5P1QdGg==
+X-Received: by 2002:a5d:4ed2:: with SMTP id s18mr1034136wrv.36.1603349642999;
+        Wed, 21 Oct 2020 23:54:02 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.171])
+        by smtp.googlemail.com with ESMTPSA id d30sm1804762wrc.19.2020.10.21.23.54.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2020 16:20:23 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1kVNP4-003k7m-9M; Wed, 21 Oct 2020 20:20:22 -0300
-Date:   Wed, 21 Oct 2020 20:20:22 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@ffwll.com>
-Subject: Re: [PATCH v3 12/16] PCI: Obey iomem restrictions for procfs mmap
-Message-ID: <20201021232022.GN36674@ziepe.ca>
-References: <20201021085655.1192025-1-daniel.vetter@ffwll.ch>
- <20201021085655.1192025-13-daniel.vetter@ffwll.ch>
- <20201021125030.GK36674@ziepe.ca>
- <CAKMK7uEWe8CaT7zjcZ6dJAKHxtxtqzjVB35fCFviwhcnqksDfw@mail.gmail.com>
- <20201021151352.GL36674@ziepe.ca>
- <CAKMK7uGq0=ks7Zj1Et44k7x9FwE9u_ua4zANSqrLRri0v01V+Q@mail.gmail.com>
- <20201021163702.GM36674@ziepe.ca>
- <CAKMK7uEjE5sHUq0hV_bnYjPKRxYyBnty0sLre+owANGZjLJg9Q@mail.gmail.com>
+        Wed, 21 Oct 2020 23:54:01 -0700 (PDT)
+Date:   Thu, 22 Oct 2020 08:53:59 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3 1/5] dt-bindings: vendor-prefixes: Add asix prefix
+Message-ID: <20201022065359.GA3829@kozik-lap>
+References: <20201021214910.20001-1-l.stelmach@samsung.com>
+ <CGME20201021214933eucas1p26e8ee82f237e977e8b3324145a929a1a@eucas1p2.samsung.com>
+ <20201021214910.20001-2-l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAKMK7uEjE5sHUq0hV_bnYjPKRxYyBnty0sLre+owANGZjLJg9Q@mail.gmail.com>
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20201021214910.20001-2-l.stelmach@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 21, 2020 at 09:24:08PM +0200, Daniel Vetter wrote:
-> On Wed, Oct 21, 2020 at 6:37 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > On Wed, Oct 21, 2020 at 05:54:54PM +0200, Daniel Vetter wrote:
-> >
-> > > The trouble is that io_remap_pfn adjust vma->pgoff, so we'd need to
-> > > split that. So ideally ->mmap would never set up any ptes.
-> >
-> > /dev/mem makes pgoff == pfn so it doesn't get changed by remap.
-> >
-> > pgoff doesn't get touched for MAP_SHARED either, so there are other
-> > users that could work like this - eg anyone mmaping IO memory is
-> > probably OK.
-> 
-> I was more generally thinking for io_remap_pfn_users because of the
-> mkwrite use-case we might have in fbdev emulation in drm.
+On Wed, Oct 21, 2020 at 11:49:06PM +0200, Łukasz Stelmach wrote:
+> Add the prefix for ASIX Electronics Corporation
 
-You have a use case for MAP_PRIVATE and io_remap_pfn_range()??
+End the sentence with a full stop.
 
-Jason
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
