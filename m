@@ -2,180 +2,223 @@ Return-Path: <SRS0=b7Q7=D5=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF762C4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 07:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FFBEC4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 07:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84590223FB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 07:16:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0186223C7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 07:39:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B2MCDDGI"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="E/MPYUGe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505913AbgJVHQU (ORCPT
+        id S2508705AbgJVHjs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 22 Oct 2020 03:16:20 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40442 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505818AbgJVHQS (ORCPT
+        Thu, 22 Oct 2020 03:39:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54662 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2508704AbgJVHjs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Oct 2020 03:16:18 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201022071559euoutp024e70c74a1d693b5e9d0ca4a06c14ed6f~APzP4WQce0274902749euoutp02h
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Oct 2020 07:15:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201022071559euoutp024e70c74a1d693b5e9d0ca4a06c14ed6f~APzP4WQce0274902749euoutp02h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1603350959;
-        bh=IsiwbCNVHp4hQUbN8T60nlFVyvfjwqsAD5hMA9e7xvE=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=B2MCDDGIpBLq2z8eh/+pyhwY470lMDwLS7cT2OnVbcJ4NDoNRjhB3vrui1i2xBYap
-         uuH4bn05VCaODZv3kvyabvyL8C3q4MG5MV18BYUG9KY8/lk9xEev/BY4VrPwM5x8+N
-         tIVyUCTa44L5WspuSGDfDNRHMy5y4+RyN3b46yTE=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201022071551eucas1p1f7e4b9d92075722100e61201b49e1fed~APzIHmFet1113211132eucas1p1r;
-        Thu, 22 Oct 2020 07:15:51 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id A8.A4.05997.7A1319F5; Thu, 22
-        Oct 2020 08:15:51 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201022071551eucas1p142dca6ac4cf010110f8f2684f8b96c78~APzHtgJsR0168601686eucas1p1q;
-        Thu, 22 Oct 2020 07:15:51 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201022071550eusmtrp20e218991ef4b2e28813275e4decef0ff~APzHslbPn2580825808eusmtrp2V;
-        Thu, 22 Oct 2020 07:15:50 +0000 (GMT)
-X-AuditID: cbfec7f4-677ff7000000176d-2d-5f9131a7e62a
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 98.F6.06017.6A1319F5; Thu, 22
-        Oct 2020 08:15:50 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201022071550eusmtip2ad8d94470ca9e7d3ec5291905255c710~APzG6UQAv2718927189eusmtip2d;
-        Thu, 22 Oct 2020 07:15:50 +0000 (GMT)
-Subject: Re: [PATCH v3 3/5] net: ax88796c: ASIX AX88796C SPI Ethernet
- Adapter Driver
-To:     =?UTF-8?Q?=c5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
-        Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     =?UTF-8?Q?Bart=c5=82omiej_=c5=bbolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <633bbf18-1aec-4b2a-7967-898cde1930aa@samsung.com>
-Date:   Thu, 22 Oct 2020 09:15:50 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.3.3
+        Thu, 22 Oct 2020 03:39:48 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C92C0613D4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Oct 2020 00:39:47 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id b8so882632wrn.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Oct 2020 00:39:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=FUnmmeK5QmN6I6X95NR6HhlReLcd0WiZp6VBOWMixY8=;
+        b=E/MPYUGexYpX5poBWZtyJ39mlDhFG9B6MQdMbkqfAlosbuXR0KbLsXkH8XsRroHwK0
+         /z7PTmxv54Le3uyVqgU2BJoYAcDBAKDf93cFoIPUObTp1nwUXkwW9LrbIa/QW11E9gxi
+         dUfc5MnZ1w7Z5dq/D5VWhQ+QyH68LGgtFOW8g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to;
+        bh=FUnmmeK5QmN6I6X95NR6HhlReLcd0WiZp6VBOWMixY8=;
+        b=fCsqHdCf/lzeZk413+k2dPNd8tEQg00kOWRWsaBXJ1aWcScFXofR6bY3kNQ293Ljq7
+         baf26Lx2h393nFSSoercUWww9B/+U4uN48mX1ClyFljByfJbMVWqXAOE2PCCUEyalhfS
+         3kEcV7elu5GHuTdkBeXpin2dTD0zdL+tiN9WY/Lq3VGwO1+HeT0/Mv7AcvBD2grH+pEP
+         iBakdakIwtyGMr4El5MFQYs66y7niHceMldeFgrz6rS0Qj0mff9dQ7ILNn4wMmQOSRzO
+         cYFGJx/3dPV59TUJFOL2NISNfOVkFm+UvS3PV9iLtB90PNK0TFH391oz5cKyO0TCPNTj
+         DLNA==
+X-Gm-Message-State: AOAM532m+ihLdDBV/d1S/XO962YC+2+0mwWtfYBGKRORJUyO1b1irMX8
+        qyI8gBO2L7DMeOCarrwOdld9ag==
+X-Google-Smtp-Source: ABdhPJw5HQV9NuUaTW2fOSG+4dZhqrMNCjk+Neg7/gkBYNKwDOO+9vGK8A43OgHPliV3xlB5PKsA7A==
+X-Received: by 2002:adf:f986:: with SMTP id f6mr1319485wrr.38.1603352386434;
+        Thu, 22 Oct 2020 00:39:46 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id j7sm2061526wrn.81.2020.10.22.00.39.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Oct 2020 00:39:45 -0700 (PDT)
+Date:   Thu, 22 Oct 2020 09:39:43 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Niklas Schnelle <schnelle@linux.ibm.com>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2 08/17] s390/pci: Remove races against pte updates
+Message-ID: <20201022073943.GS401619@phenom.ffwll.local>
+Mail-Followup-To: Niklas Schnelle <schnelle@linux.ibm.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>
+References: <20201009075934.3509076-1-daniel.vetter@ffwll.ch>
+ <20201009075934.3509076-9-daniel.vetter@ffwll.ch>
+ <6deb08dd-46f3-bf26-5362-fdc696f6fd74@linux.ibm.com>
+ <20201012141906.GX438822@phenom.ffwll.local>
+ <3594c115-541f-806a-ee33-e99a2d1d31e8@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20201021214910.20001-4-l.stelmach@samsung.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju2zln5ziaHDfLFwuDRUlBK7Pgi9LKFNYN/BFFQtnSg13cjE27
-        gWiaYcNbhjmnpGilLXK21toErYYpZW3qSrK0Ea4kw5QU7Wq5nSz/Pbf3e58XPoaQDFGhzFF1
-        OqdRK1NlQhFpbf/mWlUfcSlxzbdOKXYNOAh8R2+icJXrPImr25wUrh3VU7h3pJ/CxYOfCOxy
-        NdG4y1pE4T5HA8LmwV4Ku5urhFjvahVgR1kLwu01C3FeSxu9hVW4e7sJheVmn0BhNwzQCrPx
-        olBx91qWwm4bFyiKLEakGDeHxTMJok3JXOrRk5xmdfQh0ZG3jTbBiU/s6bwbD8lsdC9QhwIY
-        YNdBX6Gb1CERI2EbELz4XSjgyQSCNqflLxlH0GP3UrMj1u5qIW/UI/heMf2XjCIYHisX+lJS
-        di80V7QQPiOYrSRBP3TdbxBsPBRcniR9WMhGgG5E59fFbDR8flNL+zDJLoPpCw3Ihxewh6HH
-        k0PzmSB4UuH1zwawm+DW08c0/+YSyL1XSfA4BF57q/29gc1jID//moDvHQuTrVcJHkthuMNC
-        83gx/LbPDuQieOe8TfOkAIE7R4/41Ebod36fqcrMrFgBpubVvLwVnhXW+WVgA+HVSBBfIhBK
-        reUEL4sh/4KETy8HQ0fjv7WPunqIEiQzzDnNMOccw5xzDP/31iDSiEK4DK0qhdOuVXOn5Fql
-        SpuhTpEnpanMaOb7dU53TNhQ88/DDsQySDZfPLarJFFCKU9qz6gcCBhCFiyOed55UCJOVp45
-        y2nSEjUZqZzWgRYxpCxEHFn78YCETVGmc8c57gSnmXUFTEBoNprX/b6obJdtfaN5RUWcp3Ed
-        Nu7ecefc9SGpJkdm/DCauD8pt5TI2Fz+w92/8b7pSlv9toGpl7+y3iepPeejyvo83dWH5FOG
-        rxuOhfRmfqhzP5VHPtrcZPXQSyen9kwkmIRx5dunY3d/MRWH1yxK2+n0KsNLYp8PR0kz22PC
-        Hkztk8tI7RFlxEpCo1X+AX+YRzJ6AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJIsWRmVeSWpSXmKPExsVy+t/xe7rLDCfGG5z+ZWlx/u4hZouNM9az
-        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2px89AKRotNj6+xWlzeNYfN
-        Ysb5fUwWh6buZbQ4tkDMonXvEXYHAY/L1y4ye2xZeZPJY+esu+wem1Z1snlsXlLvsXPHZyaP
-        vi2rGD0+b5IL4IjSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcks
-        Sy3St0vQy7i3bgdTwWuBitZlB1gaGLfydTFyckgImEhsuzifrYuRi0NIYCmjxJtrn1ggEjIS
-        J6c1sELYwhJ/rnVBFb1llFj+9zYjSEJYIEzi74r9zCAJEYG5LBJtV36ygSSYBfwkOle+ZoLo
-        OMgosWTxfbAEm4ChRNfbLjCbV8BO4t3tRewgNouAqsS/thVgU0UFkiT2n7jJAlEjKHFy5hMw
-        m1PARmL1qaPsEAvMJOZtfsgMYctLNG+dDWWLS9x6Mp9pAqPQLCTts5C0zELSMgtJywJGllWM
-        IqmlxbnpucVGesWJucWleel6yfm5mxiB0b7t2M8tOxi73gUfYhTgYFTi4f3gMyFeiDWxrLgy
-        9xCjBAezkgiv09nTcUK8KYmVValF+fFFpTmpxYcYTYGem8gsJZqcD0xEeSXxhqaG5haWhubG
-        5sZmFkrivB0CB2OEBNITS1KzU1MLUotg+pg4OKUaGLurGXQshZW0xDjEeXcvqN/39aoPO/O+
-        6avZ5ra1xr0pXpPLLLsormuhfoX38cDEFyYnGOT7Hi+9zWJ48Myl6K4vzi18K+pWynnYBPDu
-        2L7ugWL+kgOP50xKWaNh/2+/v+H0fDHeSRuPPZGccM7ovEbf6oXP4jrV/Rlmf4uVnZHTHb9u
-        0RWxRiWW4oxEQy3mouJEAL34yv4MAwAA
-X-CMS-MailID: 20201022071551eucas1p142dca6ac4cf010110f8f2684f8b96c78
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201021214933eucas1p2fd4e5ccc172f3e22fe0d7009d8b2742d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201021214933eucas1p2fd4e5ccc172f3e22fe0d7009d8b2742d
-References: <20201021214910.20001-1-l.stelmach@samsung.com>
-        <CGME20201021214933eucas1p2fd4e5ccc172f3e22fe0d7009d8b2742d@eucas1p2.samsung.com>
-        <20201021214910.20001-4-l.stelmach@samsung.com>
+In-Reply-To: <3594c115-541f-806a-ee33-e99a2d1d31e8@linux.ibm.com>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Wed, Oct 21, 2020 at 09:55:57AM +0200, Niklas Schnelle wrote:
+> Hi Daniel,
+> 
+> friendly ping. I haven't seen a new version of this patch series,
+> as I said I think your change for s390/pci is generally useful so
+> I'm curious, are you planning on sending a new version soon?
+> If you want you can also just sent this patch with the last few
+> nitpicks (primarily the mail address) fixed and I'll happily apply.
 
-On 21.10.2020 23:49, Łukasz Stelmach wrote:
-> ASIX AX88796[1] is a versatile ethernet adapter chip, that can be
-> connected to a CPU with a 8/16-bit bus or with an SPI. This driver
-> supports SPI connection.
->
-> The driver has been ported from the vendor kernel for ARTIK5[2]
-> boards. Several changes were made to adapt it to the current kernel
-> which include:
->
-> + updated DT configuration,
-> + clock configuration moved to DT,
-> + new timer, ethtool and gpio APIs,
-> + dev_* instead of pr_* and custom printk() wrappers,
-> + removed awkward vendor power managemtn.
->
-> [1] https://www.asix.com.tw/products.php?op=pItemdetail&PItemID=104;65;86&PLine=65
-> [2] https://git.tizen.org/cgit/profile/common/platform/kernel/linux-3.10-artik/
->
-> The other ax88796 driver is for NE2000 compatible AX88796L chip. These
-> chips are not compatible. Hence, two separate drivers are required.
->
-> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+(I think this was stuck somewhere in moderation, only showed up just now)
 
-coś zaszalałeś, jak dobry koreański kod - push bez kompilacji ;)
+I was waiting for the testing result for the habana driver from Oded, but
+I guess Oded was waiting for v3. Hence the delay.
 
-drivers/net/ethernet/asix/ax88796c_main.c:758:13: error: static 
-declaration of ‘ax88796c_set_csums’ follows non-static declaration
-  static void ax88796c_set_csums(struct ax88796c_device *ax_local)
-              ^
-In file included from drivers/net/ethernet/asix/ax88796c_main.c:12:0:
-drivers/net/ethernet/asix/ax88796c_ioctl.h:24:6: note: previous 
-declaration of ‘ax88796c_set_csums’ was here
-  void ax88796c_set_csums(struct ax88796c_device *ax_local);
-       ^
-scripts/Makefile.build:283: recipe for target 
-'drivers/net/ethernet/asix/ax88796c_main.o' failed
-make[4]: *** [drivers/net/ethernet/asix/ax88796c_main.o] Error 1
-scripts/Makefile.build:500: recipe for target 
-'drivers/net/ethernet/asix' failed
-make[3]: *** [drivers/net/ethernet/asix] Error 2
-scripts/Makefile.build:500: recipe for target 'drivers/net/ethernet' failed
-make[2]: *** [drivers/net/ethernet] Error 2
-scripts/Makefile.build:500: recipe for target 'drivers/net' failed
-make[1]: *** [drivers/net] Error 2
+Cheers, Daniel
 
- > ...
+> 
+> Best regards,
+> Niklas Schnelle
+> 
+> On 10/12/20 4:19 PM, Daniel Vetter wrote:
+> > On Mon, Oct 12, 2020 at 04:03:28PM +0200, Niklas Schnelle wrote:
+> ... snip ....
+> >>> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> >>> Cc: Dan Williams <dan.j.williams@intel.com>
+> >>> Cc: Kees Cook <keescook@chromium.org>
+> >>> Cc: Andrew Morton <akpm@linux-foundation.org>
+> >>> Cc: John Hubbard <jhubbard@nvidia.com>
+> >>> Cc: J�r�me Glisse <jglisse@redhat.com>
+> >>> Cc: Jan Kara <jack@suse.cz>
+> >>> Cc: Dan Williams <dan.j.williams@intel.com>
+> >>
+> >> The above Cc: line for Dan Williams is a duplicate
+> >>
+> >>> Cc: linux-mm@kvack.org
+> >>> Cc: linux-arm-kernel@lists.infradead.org
+> >>> Cc: linux-samsung-soc@vger.kernel.org
+> >>> Cc: linux-media@vger.kernel.org
+> >>> Cc: Niklas Schnelle <schnelle@linux.ibm.com>
+> >>> Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+> >>> Cc: linux-s390@vger.kernel.org
+> >>> --
+> >>> v2: Move VM_IO | VM_PFNMAP checks around so they keep returning EINVAL
+> >>> like before (Gerard)
+> >>
+> >> I think the above should go before the CC/Signed-off/Reviewev block.
+> > 
+> > This is a per-subsystem bikeshed :-) drivers/gpu definitely wants it
+> > above, but most core subsystems want it below. I'll move it.
+> > 
+> >>> ---
+> >>>  arch/s390/pci/pci_mmio.c | 98 +++++++++++++++++++++++-----------------
+> >>>  1 file changed, 57 insertions(+), 41 deletions(-)
+> >>>
+> >>> diff --git a/arch/s390/pci/pci_mmio.c b/arch/s390/pci/pci_mmio.c
+> >>> index 401cf670a243..1a6adbc68ee8 100644
+> >>> --- a/arch/s390/pci/pci_mmio.c
+> >>> +++ b/arch/s390/pci/pci_mmio.c
+> >>> @@ -119,33 +119,15 @@ static inline int __memcpy_toio_inuser(void __iomem *dst,
+> >>>  	return rc;
+> >>>  }
+> >>>  
+> >>> -static long get_pfn(unsigned long user_addr, unsigned long access,
+> >>> -		    unsigned long *pfn)
+> >>> -{
+> >>> -	struct vm_area_struct *vma;
+> >>> -	long ret;
+> >>> -
+> >>> -	mmap_read_lock(current->mm);
+> >>> -	ret = -EINVAL;
+> >>> -	vma = find_vma(current->mm, user_addr);
+> >>> -	if (!vma)
+> >>> -		goto out;
+> >>> -	ret = -EACCES;
+> >>> -	if (!(vma->vm_flags & access))
+> >>> -		goto out;
+> >>> -	ret = follow_pfn(vma, user_addr, pfn);
+> >>> -out:
+> >>> -	mmap_read_unlock(current->mm);
+> >>> -	return ret;
+> >>> -}
+> >>> -
+> >>>  SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
+> >>>  		const void __user *, user_buffer, size_t, length)
+> >>>  {
+> >>>  	u8 local_buf[64];
+> >>>  	void __iomem *io_addr;
+> >>>  	void *buf;
+> >>> -	unsigned long pfn;
+> >>> +	struct vm_area_struct *vma;
+> >>> +	pte_t *ptep;
+> >>> +	spinlock_t *ptl;
+> >>
+> >> With checkpatch.pl --strict the above yields a complained
+> >> "CHECK: spinlock_t definition without comment" but I think
+> >> that's really okay since your commit description is very clear.
+> >> Same oin line 277.
+> > 
+> > I think this is a falls positive, checkpatch doesn't realize that
+> > SYSCALL_DEFINE3 is a function, not a structure. And in a structure I'd
+> > have added the kerneldoc or comment.
+> > 
+> > I'll fix up all the nits you've found for the next round. Thanks for
+> > taking a look.
+> > -Daniel
+> > 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-Best regards
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
