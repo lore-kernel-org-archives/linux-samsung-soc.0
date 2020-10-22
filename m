@@ -2,296 +2,204 @@ Return-Path: <SRS0=b7Q7=D5=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22745C4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 09:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E9DC4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 10:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B01472462E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 09:18:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BE5F2245F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 10:01:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MGViQhYp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2509575AbgJVJSp (ORCPT
+        id S2896252AbgJVKBx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 22 Oct 2020 05:18:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44336 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2505549AbgJVJSp (ORCPT
+        Thu, 22 Oct 2020 06:01:53 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:40363 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2896238AbgJVKBx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Oct 2020 05:18:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id E375DB240;
-        Thu, 22 Oct 2020 09:18:42 +0000 (UTC)
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     luben.tuikov@amd.com, airlied@linux.ie,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        chris@chris-wilson.co.uk, melissa.srw@gmail.com, ray.huang@amd.com,
-        kraxel@redhat.com, sam@ravnborg.org, emil.velikov@collabora.com,
-        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
-        lima@lists.freedesktop.org, oleksandr_andrushchenko@epam.com,
-        krzk@kernel.org, steven.price@arm.com,
-        linux-rockchip@lists.infradead.org, kgene@kernel.org,
-        bskeggs@redhat.com, linux+etnaviv@armlinux.org.uk,
-        spice-devel@lists.freedesktop.org, alyssa.rosenzweig@collabora.com,
-        etnaviv@lists.freedesktop.org, hdegoede@redhat.com,
-        xen-devel@lists.xenproject.org,
-        virtualization@lists.linux-foundation.org, sean@poorly.run,
-        apaneers@amd.com, linux-arm-kernel@lists.infradead.org,
-        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
-        tomeu.vizoso@collabora.com, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        sw0312.kim@samsung.com, hjc@rock-chips.com,
-        kyungmin.park@samsung.com, miaoqinglang@huawei.com,
-        yuq825@gmail.com, alexander.deucher@amd.com,
-        linux-media@vger.kernel.org, christian.koenig@amd.com
-References: <20201020122046.31167-1-tzimmermann@suse.de>
- <20201020122046.31167-9-tzimmermann@suse.de>
- <20201022084919.GU401619@phenom.ffwll.local>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH v5 08/10] drm/gem: Store client buffer mappings as struct
- dma_buf_map
-Message-ID: <f2d83a8b-91b3-ac64-b77f-2b1c78729014@suse.de>
-Date:   Thu, 22 Oct 2020 11:18:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.2
+        Thu, 22 Oct 2020 06:01:53 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201022100134euoutp025be691abde8c6062155d9a70b3f11a3a~ASD0upesq0814608146euoutp02Y;
+        Thu, 22 Oct 2020 10:01:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201022100134euoutp025be691abde8c6062155d9a70b3f11a3a~ASD0upesq0814608146euoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1603360895;
+        bh=YU1Fv/ttpEpVPZU+XlwguPCLHB55EOv3PdTxNJ0j1/M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MGViQhYppwuf0e36nOvToOgb0MHOWDkHDaPqTiw7/LObW7QBjRSciSfO8gRYDE7Zr
+         HsYAcSHVyJGH3CxyBZu7zhNpACD4O77aeR3GixNnUHpBx08hSwvfaJuKVOeeYiSyML
+         1m5f/O04soUCLRVFQKgPw9OV7excKVJHvLgoFCSY=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201022100134eucas1p133bcc1bdb7f80ad94a1a5b9208ad8b2b~ASD0TOYA71643516435eucas1p1r;
+        Thu, 22 Oct 2020 10:01:34 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id A6.B4.05997.E78519F5; Thu, 22
+        Oct 2020 11:01:34 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20201022100133eucas1p132ef97a9ac767bd357f50034c47d6d1a~ASDzv7eeb2303823038eucas1p1H;
+        Thu, 22 Oct 2020 10:01:33 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20201022100133eusmtrp116fa2defb18d1eff8c31c4f48b5578e9~ASDzu3t9-2212222122eusmtrp1r;
+        Thu, 22 Oct 2020 10:01:33 +0000 (GMT)
+X-AuditID: cbfec7f4-65dff7000000176d-48-5f91587e4396
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 40.78.06017.D78519F5; Thu, 22
+        Oct 2020 11:01:33 +0100 (BST)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20201022100133eusmtip2717fc66de10490e36b86b7891c78e5a6~ASDzifFn71262512625eusmtip2h;
+        Thu, 22 Oct 2020 10:01:33 +0000 (GMT)
+From:   Lukasz Stelmach <l.stelmach@samsung.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v3 3/5] net: ax88796c: ASIX AX88796C SPI Ethernet
+ Adapter Driver
+Date:   Thu, 22 Oct 2020 12:01:23 +0200
+In-Reply-To: <633bbf18-1aec-4b2a-7967-898cde1930aa@samsung.com> (Marek
+        Szyprowski's message of "Thu, 22 Oct 2020 09:15:50 +0200")
+Message-ID: <dleftjzh4ezij0.fsf%l.stelmach@samsung.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20201022084919.GU401619@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTURzHO7v3btfR6jin/VqiMQxSSXtI3Z6kGFxIoghEDbNlF125KZvL
+        B5Q9dFQutZmoY6iJmVk+srnSMm1JYpYzFFNRelhU2gu0yNRKdw3673t+v8/3+/udw6EJ6Qwl
+        p1WaZE6rUSYohGLS9niqe83JiEsxa5/XyRnHiJ1gbhXVUYzFkUkype3dFFP+tYhi+j8PU0zu
+        6DjBOBz1IqbHlkMxDaP9FNPbbBEyRY4HAsZe0IKYmvYREfO4zIPJamkX7cRsb/9zgrVeHxSw
+        TeYREdtQfV7I3q7IYJvuTgjYHGs1YicavPbSUeJtR7gE1XFOG7jjkDi+c3qKSGqHVFtb2inU
+        5H4BudCAg6DnfC9xAYlpKa5C8P1pCeIPkwjut3aQ85QUTyAoqdT/c8xOzwp46BqCn8aaBcd7
+        BD8qz851aFqIA6CmJmLeIMOBkG3oczIEvkPC4BOzM9UNh0NzcQsxr0m8CgYM35x7uOCzCCzd
+        X5yQBG8C44tywbx2x5vB+uGliK+7QmfxWydDYDUUOz45JwC+SkOpaci5BeBQuJyZzK/tBmMd
+        VhGvPaEr30jySAbkmzbyViMCm+UnyTNbYbj7l5DXwVD2xybi+SUw8NmVH7sETLZCgi9L4JxB
+        ytM+UJt7fyFFDhfHqhCvWbjX+HDhrUwIXhusgjy00vzfbcz/3cY8F0tgX6hrDuTL/lB5ZZzg
+        9Xaorf1KliGqGi3j9Dp1HKdbr+FSAnRKtU6viQuITVQ3oLl/2PW7Y/Iuap45bEeYRorFkm9h
+        eTFSSnlcl6a2I5+5pDf1N3qQnNQkajiFTBLyrOugVHJEmZbOaRNjtPoETmdHK2hSsUyyofxj
+        tBTHKZO5YxyXxGn/dQW0i/wU8q7llgb5rsBDsptcrNdE6XhxaKssN/JkeWrfoxAUlVa4qGBf
+        xrC1/uMhyeSDMO8SVUrF7jBDtD9q06vGxauP5s+oOrYEh8hls9aNo95+axo3x54+8MojuH66
+        bUwQG7mt8wSEx0eEJe16JwlYnn7Gc7Yx2/3ElNG0v3VPV1Yom6cgdfHKdX6EVqf8C723AH+P
+        AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKIsWRmVeSWpSXmKPExsVy+t/xe7q1ERPjDTatNLQ4f/cQs8XGGetZ
+        Leacb2GxmH/kHKvFovczWC2uvb3DatH/+DWzxfnzG9gtLmzrY7XY9Pgaq8XlXXPYLGac38dk
+        cWjqXkaLtUfuslscWyBm0br3CLuDgMflaxeZPbasvMnksXPWXXaPTas62Tw2L6n32LnjM5NH
+        35ZVjB6fN8kFcETp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSW
+        pRbp2yXoZZz8/ZO54IhExbYDlQ2MO0W7GDk5JARMJP7+/svUxcjFISSwlFHi3ucVjF2MHEAJ
+        KYmVc9MhaoQl/lzrYoOoecoosfTbNGaQGjYBPYm1ayNAakQE9CW6264wgtQwC+xikdj0cQE7
+        SEJYIETiTNtGVhBbSMBO4viUGSwgNouAqsSNtg/MIA2cAs2MEnPOvQNL8AqYS/RcX8QEYosK
+        WEpseXGfHSIuKHFy5hOwGmaBbImvq58zT2AUmIUkNQtJahbQfcwCmhLrd+lDhLUlli18zQxh
+        20qsW/eeZQEj6ypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzAaN527OeWHYxd74IPMQpwMCrx
+        8H7wmRAvxJpYVlyZe4hRBWjMow2rLzBKseTl56UqifA6nT0dJ8SbklhZlVqUH19UmpNafIjR
+        FOjRicxSosn5wASUVxJvaGpobmFpaG5sbmxmoSTO2yFwMEZIID2xJDU7NbUgtQimj4mDU6qB
+        cf5Ff6OUgpdGh3NWRmvUb16myVJqu0RrDrMQg9FGsY3fC9un+6Sl3t2SvJA7XEF1gv8mAXGe
+        KU9djih7FGS3tHhKJt6YmWAQyZPSufOZ3c1XVl844i6/eWc8V/7DpYC+veuNl4p/+TJjx8E9
+        b2zjS1bLavGwKU3MPvPdpjBi3/zXtWkz5uZNVmIpzkg01GIuKk4EAHc7BjoIAwAA
+X-CMS-MailID: 20201022100133eucas1p132ef97a9ac767bd357f50034c47d6d1a
+X-Msg-Generator: CA
+X-RootMTR: 20201022100133eucas1p132ef97a9ac767bd357f50034c47d6d1a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201022100133eucas1p132ef97a9ac767bd357f50034c47d6d1a
+References: <633bbf18-1aec-4b2a-7967-898cde1930aa@samsung.com>
+        <CGME20201022100133eucas1p132ef97a9ac767bd357f50034c47d6d1a@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22.10.20 10:49, Daniel Vetter wrote:
-> On Tue, Oct 20, 2020 at 02:20:44PM +0200, Thomas Zimmermann wrote:
->> Kernel DRM clients now store their framebuffer address in an instance
->> of struct dma_buf_map. Depending on the buffer's location, the address
->> refers to system or I/O memory.
+It was <2020-10-22 czw 09:15>, when Marek Szyprowski wrote:
+> On 21.10.2020 23:49, =C5=81ukasz Stelmach wrote:
+>> ASIX AX88796[1] is a versatile ethernet adapter chip, that can be
+>> connected to a CPU with a 8/16-bit bus or with an SPI. This driver
+>> supports SPI connection.
 >>
->> Callers of drm_client_buffer_vmap() receive a copy of the value in
->> the call's supplied arguments. It can be accessed and modified with
->> dma_buf_map interfaces.
+>> The driver has been ported from the vendor kernel for ARTIK5[2]
+>> boards. Several changes were made to adapt it to the current kernel
+>> which include:
 >>
->> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
->> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
->> Tested-by: Sam Ravnborg <sam@ravnborg.org>
->> ---
->>  drivers/gpu/drm/drm_client.c    | 34 +++++++++++++++++++--------------
->>  drivers/gpu/drm/drm_fb_helper.c | 23 +++++++++++++---------
->>  include/drm/drm_client.h        |  7 ++++---
->>  3 files changed, 38 insertions(+), 26 deletions(-)
+>> + updated DT configuration,
+>> + clock configuration moved to DT,
+>> + new timer, ethtool and gpio APIs,
+>> + dev_* instead of pr_* and custom printk() wrappers,
+>> + removed awkward vendor power managemtn.
 >>
->> diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
->> index ac0082bed966..fe573acf1067 100644
->> --- a/drivers/gpu/drm/drm_client.c
->> +++ b/drivers/gpu/drm/drm_client.c
->> @@ -235,7 +235,7 @@ static void drm_client_buffer_delete(struct drm_client_buffer *buffer)
->>  {
->>  	struct drm_device *dev = buffer->client->dev;
->>  
->> -	drm_gem_vunmap(buffer->gem, buffer->vaddr);
->> +	drm_gem_vunmap(buffer->gem, &buffer->map);
->>  
->>  	if (buffer->gem)
->>  		drm_gem_object_put(buffer->gem);
->> @@ -291,25 +291,31 @@ drm_client_buffer_create(struct drm_client_dev *client, u32 width, u32 height, u
->>  /**
->>   * drm_client_buffer_vmap - Map DRM client buffer into address space
->>   * @buffer: DRM client buffer
->> + * @map_copy: Returns the mapped memory's address
->>   *
->>   * This function maps a client buffer into kernel address space. If the
->> - * buffer is already mapped, it returns the mapping's address.
->> + * buffer is already mapped, it returns the existing mapping's address.
->>   *
->>   * Client buffer mappings are not ref'counted. Each call to
->>   * drm_client_buffer_vmap() should be followed by a call to
->>   * drm_client_buffer_vunmap(); or the client buffer should be mapped
->>   * throughout its lifetime.
->>   *
->> + * The returned address is a copy of the internal value. In contrast to
->> + * other vmap interfaces, you don't need it for the client's vunmap
->> + * function. So you can modify it at will during blit and draw operations.
->> + *
->>   * Returns:
->> - *	The mapped memory's address
->> + *	0 on success, or a negative errno code otherwise.
->>   */
->> -void *drm_client_buffer_vmap(struct drm_client_buffer *buffer)
->> +int
->> +drm_client_buffer_vmap(struct drm_client_buffer *buffer, struct dma_buf_map *map_copy)
->>  {
->> -	struct dma_buf_map map;
->> +	struct dma_buf_map *map = &buffer->map;
->>  	int ret;
->>  
->> -	if (buffer->vaddr)
->> -		return buffer->vaddr;
->> +	if (dma_buf_map_is_set(map))
->> +		goto out;
->>  
->>  	/*
->>  	 * FIXME: The dependency on GEM here isn't required, we could
->> @@ -319,13 +325,14 @@ void *drm_client_buffer_vmap(struct drm_client_buffer *buffer)
->>  	 * fd_install step out of the driver backend hooks, to make that
->>  	 * final step optional for internal users.
->>  	 */
->> -	ret = drm_gem_vmap(buffer->gem, &map);
->> +	ret = drm_gem_vmap(buffer->gem, map);
->>  	if (ret)
->> -		return ERR_PTR(ret);
->> +		return ret;
->>  
->> -	buffer->vaddr = map.vaddr;
->> +out:
->> +	*map_copy = *map;
->>  
->> -	return map.vaddr;
->> +	return 0;
->>  }
->>  EXPORT_SYMBOL(drm_client_buffer_vmap);
->>  
->> @@ -339,10 +346,9 @@ EXPORT_SYMBOL(drm_client_buffer_vmap);
->>   */
->>  void drm_client_buffer_vunmap(struct drm_client_buffer *buffer)
->>  {
->> -	struct dma_buf_map map = DMA_BUF_MAP_INIT_VADDR(buffer->vaddr);
->> +	struct dma_buf_map *map = &buffer->map;
->>  
->> -	drm_gem_vunmap(buffer->gem, &map);
->> -	buffer->vaddr = NULL;
->> +	drm_gem_vunmap(buffer->gem, map);
->>  }
->>  EXPORT_SYMBOL(drm_client_buffer_vunmap);
->>  
->> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
->> index c2f72bb6afb1..6212cd7cde1d 100644
->> --- a/drivers/gpu/drm/drm_fb_helper.c
->> +++ b/drivers/gpu/drm/drm_fb_helper.c
->> @@ -378,7 +378,7 @@ static void drm_fb_helper_dirty_blit_real(struct drm_fb_helper *fb_helper,
->>  	unsigned int cpp = fb->format->cpp[0];
->>  	size_t offset = clip->y1 * fb->pitches[0] + clip->x1 * cpp;
->>  	void *src = fb_helper->fbdev->screen_buffer + offset;
->> -	void *dst = fb_helper->buffer->vaddr + offset;
->> +	void *dst = fb_helper->buffer->map.vaddr + offset;
->>  	size_t len = (clip->x2 - clip->x1) * cpp;
->>  	unsigned int y;
->>  
->> @@ -400,7 +400,8 @@ static void drm_fb_helper_dirty_work(struct work_struct *work)
->>  	struct drm_clip_rect *clip = &helper->dirty_clip;
->>  	struct drm_clip_rect clip_copy;
->>  	unsigned long flags;
->> -	void *vaddr;
->> +	struct dma_buf_map map;
->> +	int ret;
->>  
->>  	spin_lock_irqsave(&helper->dirty_lock, flags);
->>  	clip_copy = *clip;
->> @@ -413,8 +414,8 @@ static void drm_fb_helper_dirty_work(struct work_struct *work)
->>  
->>  		/* Generic fbdev uses a shadow buffer */
->>  		if (helper->buffer) {
->> -			vaddr = drm_client_buffer_vmap(helper->buffer);
->> -			if (IS_ERR(vaddr))
->> +			ret = drm_client_buffer_vmap(helper->buffer, &map);
->> +			if (ret)
->>  				return;
->>  			drm_fb_helper_dirty_blit_real(helper, &clip_copy);
->>  		}
->> @@ -2060,7 +2061,8 @@ static int drm_fb_helper_generic_probe(struct drm_fb_helper *fb_helper,
->>  	struct drm_framebuffer *fb;
->>  	struct fb_info *fbi;
->>  	u32 format;
->> -	void *vaddr;
->> +	struct dma_buf_map map;
->> +	int ret;
->>  
->>  	drm_dbg_kms(dev, "surface width(%d), height(%d) and bpp(%d)\n",
->>  		    sizes->surface_width, sizes->surface_height,
->> @@ -2096,11 +2098,14 @@ static int drm_fb_helper_generic_probe(struct drm_fb_helper *fb_helper,
->>  		fb_deferred_io_init(fbi);
->>  	} else {
->>  		/* buffer is mapped for HW framebuffer */
->> -		vaddr = drm_client_buffer_vmap(fb_helper->buffer);
->> -		if (IS_ERR(vaddr))
->> -			return PTR_ERR(vaddr);
->> +		ret = drm_client_buffer_vmap(fb_helper->buffer, &map);
->> +		if (ret)
->> +			return ret;
->> +		if (map.is_iomem)
->> +			fbi->screen_base = map.vaddr_iomem;
->> +		else
->> +			fbi->screen_buffer = map.vaddr;
->>  
->> -		fbi->screen_buffer = vaddr;
->>  		/* Shamelessly leak the physical address to user-space */
->>  #if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
->>  		if (drm_leak_fbdev_smem && fbi->fix.smem_start == 0)
-> 
-> Just noticed a tiny thing here: I think this needs to be patched to only
-> set smem_start when the map is _not_ iomem. Since virt_to_page isn't
-> defined on iomem at all.
-> 
-> I guess it'd be neat if we can set this for iomem too, but I have no idea
-> how to convert an iomem pointer back to a bus_addr_t ...
-
-Not that I disagree, but that should be reviewed by the right people.
-The commit at 4be9bd10e22d ("drm/fb_helper: Allow leaking fbdev
-smem_start") appears to work around specific userspace drivers.
-
-Best regards
-Thomas
-
-> 
-> Cheers, Daniel
-> 
->> diff --git a/include/drm/drm_client.h b/include/drm/drm_client.h
->> index 7aaea665bfc2..f07f2fb02e75 100644
->> --- a/include/drm/drm_client.h
->> +++ b/include/drm/drm_client.h
->> @@ -3,6 +3,7 @@
->>  #ifndef _DRM_CLIENT_H_
->>  #define _DRM_CLIENT_H_
->>  
->> +#include <linux/dma-buf-map.h>
->>  #include <linux/lockdep.h>
->>  #include <linux/mutex.h>
->>  #include <linux/types.h>
->> @@ -141,9 +142,9 @@ struct drm_client_buffer {
->>  	struct drm_gem_object *gem;
->>  
->>  	/**
->> -	 * @vaddr: Virtual address for the buffer
->> +	 * @map: Virtual address for the buffer
->>  	 */
->> -	void *vaddr;
->> +	struct dma_buf_map map;
->>  
->>  	/**
->>  	 * @fb: DRM framebuffer
->> @@ -155,7 +156,7 @@ struct drm_client_buffer *
->>  drm_client_framebuffer_create(struct drm_client_dev *client, u32 width, u32 height, u32 format);
->>  void drm_client_framebuffer_delete(struct drm_client_buffer *buffer);
->>  int drm_client_framebuffer_flush(struct drm_client_buffer *buffer, struct drm_rect *rect);
->> -void *drm_client_buffer_vmap(struct drm_client_buffer *buffer);
->> +int drm_client_buffer_vmap(struct drm_client_buffer *buffer, struct dma_buf_map *map);
->>  void drm_client_buffer_vunmap(struct drm_client_buffer *buffer);
->>  
->>  int drm_client_modeset_create(struct drm_client_dev *client);
->> -- 
->> 2.28.0
+>> [1] https://www.asix.com.tw/products.php?op=3DpItemdetail&PItemID=3D104;=
+65;86&PLine=3D65
+>> [2] https://git.tizen.org/cgit/profile/common/platform/kernel/linux-3.10=
+-artik/
 >>
-> 
+>> The other ax88796 driver is for NE2000 compatible AX88796L chip. These
+>> chips are not compatible. Hence, two separate drivers are required.
+>>
+>> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+>
+> co=C5=9B zaszala=C5=82e=C5=9B, jak dobry korea=C5=84ski kod - push bez ko=
+mpilacji ;)
+>
+> drivers/net/ethernet/asix/ax88796c_main.c:758:13: error: static=20
+> declaration of =E2=80=98ax88796c_set_csums=E2=80=99 follows non-static de=
+claration
+>  =C2=A0static void ax88796c_set_csums(struct ax88796c_device *ax_local)
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ ^
+> In file included from drivers/net/ethernet/asix/ax88796c_main.c:12:0:
+> drivers/net/ethernet/asix/ax88796c_ioctl.h:24:6: note: previous=20
+> declaration of =E2=80=98ax88796c_set_csums=E2=80=99 was here
+>  =C2=A0void ax88796c_set_csums(struct ax88796c_device *ax_local);
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^
+> scripts/Makefile.build:283: recipe for target=20
+> 'drivers/net/ethernet/asix/ax88796c_main.o' failed
+> make[4]: *** [drivers/net/ethernet/asix/ax88796c_main.o] Error 1
+> scripts/Makefile.build:500: recipe for target=20
+> 'drivers/net/ethernet/asix' failed
+> make[3]: *** [drivers/net/ethernet/asix] Error 2
+> scripts/Makefile.build:500: recipe for target 'drivers/net/ethernet' fail=
+ed
+> make[2]: *** [drivers/net/ethernet] Error 2
+> scripts/Makefile.build:500: recipe for target 'drivers/net' failed
+> make[1]: *** [drivers/net] Error 2
 
--- 
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-(HRB 36809, AG Nürnberg)
-Geschäftsführer: Felix Imendörffer
+
+Fixed. Thanks.
+
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl+RWHMACgkQsK4enJil
+gBCTOAf8DDhl24aKJ6K/V2rIeZIbp78TQD8mv/HjBV8moWhi9TfOYwif3micRUfp
+qdKzM4+yIP6B5edSQtu6+/ErHkwXQpDzy7ik2qp28WF2F0HLofn7SyfJGR8JaGEv
+/fizTdjtNV7/zmWlyjZuTuHkhADGdiKJ+NLrfFLMmVWKdzttQDGkzBTs5khK2R9O
+5yXISyU68eIb3dcANLKlKpjRI31ICQq0IjsHwsaWt9VWxFJ0tDGM4BONc5hcNPsS
+aZR+hpm2ytGN8VYYcRd6MlV7WI5hm7X2rE43Hgzh/uwAbM8zrqY62bowtq2TZKM7
+mdjObq3VWQK+ZzA0uqmSkX0pW7bLWQ==
+=OwYK
+-----END PGP SIGNATURE-----
+--=-=-=--
