@@ -2,122 +2,180 @@ Return-Path: <SRS0=b7Q7=D5=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0557AC56202
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 07:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF762C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 07:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9BE3F2415A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 07:01:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84590223FB
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Oct 2020 07:16:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="et6ZBeQF"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B2MCDDGI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504805AbgJVHBA (ORCPT
+        id S2505913AbgJVHQU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 22 Oct 2020 03:01:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48668 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504801AbgJVHA5 (ORCPT
+        Thu, 22 Oct 2020 03:16:20 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:40442 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2505818AbgJVHQS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Oct 2020 03:00:57 -0400
-Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A91CC0613D6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Oct 2020 00:00:56 -0700 (PDT)
-Received: by mail-oi1-x243.google.com with SMTP id k27so668167oij.11
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Oct 2020 00:00:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2r/6zOf2kRDD4tSmvaZuCPU8DwfuIowf0YjaeLwP4Nk=;
-        b=et6ZBeQFHerVGVhgtgtRrYMM/XKZjx8P9HBSzQAYN1qwBLnRqWCR1692Hd2N6mG2QH
-         DRodjxUs0g/udks4HbxzEysdS3iPEQ/WX4sYQzu415V2h1QQT1XnQSq/3dWFguLdKkzI
-         zrJA18zci4a+rkwc8KCUbQtvVEViy3ghNPANM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2r/6zOf2kRDD4tSmvaZuCPU8DwfuIowf0YjaeLwP4Nk=;
-        b=c5PbPPkTMNUtbeVRrOENcsKESakUto9GT55fZgG+/+FQ9gZfnJe9nHFq56le8XzmCs
-         FJd6u2PcwPvWzMGCqceNi3u6/+YlqNvhJ1HgIf6+NmzS9M73/cgNYDVjGkA6RJIZx16U
-         rZeYrvqanLwmdoLYGTv/DI1ifcSMPHimo3VRHN7ZPPgHrJMjMQitJe5Il+2oDFjM8eu6
-         BEeu34jfSjRxGs0tR03oenYaVTeOlmN98DN2awNzptxyz0NLXpO/UPMFKDFeY9KR8VKf
-         XEoVPSnlUGgyKLbOkvlkOsbSUxHnup2/5T90JI0jQc1jS8WFNHHbd0E0IGHV0C8hztZo
-         xItA==
-X-Gm-Message-State: AOAM532tVvf6SqJiPYzN8ChBGQXBVdektu9PImJxTXhC8QSueZe0PGnj
-        viW93mZQJMA0w/cwmR3/8jhoZobSf3BDxjqlHMElsA==
-X-Google-Smtp-Source: ABdhPJw2FIAzZzMzBC6IGQ2084OMcZPDQegSMdZ1Ud1eEaxA84bu8yPrNPLWUQWDUUxTjx4XtxIOFs49Df+sZwbm0Kw=
-X-Received: by 2002:aca:cc01:: with SMTP id c1mr631463oig.128.1603350055185;
- Thu, 22 Oct 2020 00:00:55 -0700 (PDT)
+        Thu, 22 Oct 2020 03:16:18 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201022071559euoutp024e70c74a1d693b5e9d0ca4a06c14ed6f~APzP4WQce0274902749euoutp02h
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Oct 2020 07:15:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201022071559euoutp024e70c74a1d693b5e9d0ca4a06c14ed6f~APzP4WQce0274902749euoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1603350959;
+        bh=IsiwbCNVHp4hQUbN8T60nlFVyvfjwqsAD5hMA9e7xvE=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=B2MCDDGIpBLq2z8eh/+pyhwY470lMDwLS7cT2OnVbcJ4NDoNRjhB3vrui1i2xBYap
+         uuH4bn05VCaODZv3kvyabvyL8C3q4MG5MV18BYUG9KY8/lk9xEev/BY4VrPwM5x8+N
+         tIVyUCTa44L5WspuSGDfDNRHMy5y4+RyN3b46yTE=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201022071551eucas1p1f7e4b9d92075722100e61201b49e1fed~APzIHmFet1113211132eucas1p1r;
+        Thu, 22 Oct 2020 07:15:51 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id A8.A4.05997.7A1319F5; Thu, 22
+        Oct 2020 08:15:51 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20201022071551eucas1p142dca6ac4cf010110f8f2684f8b96c78~APzHtgJsR0168601686eucas1p1q;
+        Thu, 22 Oct 2020 07:15:51 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201022071550eusmtrp20e218991ef4b2e28813275e4decef0ff~APzHslbPn2580825808eusmtrp2V;
+        Thu, 22 Oct 2020 07:15:50 +0000 (GMT)
+X-AuditID: cbfec7f4-677ff7000000176d-2d-5f9131a7e62a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 98.F6.06017.6A1319F5; Thu, 22
+        Oct 2020 08:15:50 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20201022071550eusmtip2ad8d94470ca9e7d3ec5291905255c710~APzG6UQAv2718927189eusmtip2d;
+        Thu, 22 Oct 2020 07:15:50 +0000 (GMT)
+Subject: Re: [PATCH v3 3/5] net: ax88796c: ASIX AX88796C SPI Ethernet
+ Adapter Driver
+To:     =?UTF-8?Q?=c5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
+        Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     =?UTF-8?Q?Bart=c5=82omiej_=c5=bbolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <633bbf18-1aec-4b2a-7967-898cde1930aa@samsung.com>
+Date:   Thu, 22 Oct 2020 09:15:50 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.3.3
 MIME-Version: 1.0
-References: <20201021085655.1192025-1-daniel.vetter@ffwll.ch>
- <20201021085655.1192025-13-daniel.vetter@ffwll.ch> <20201021125030.GK36674@ziepe.ca>
- <CAKMK7uEWe8CaT7zjcZ6dJAKHxtxtqzjVB35fCFviwhcnqksDfw@mail.gmail.com>
- <20201021151352.GL36674@ziepe.ca> <CAKMK7uGq0=ks7Zj1Et44k7x9FwE9u_ua4zANSqrLRri0v01V+Q@mail.gmail.com>
- <20201021163702.GM36674@ziepe.ca> <CAKMK7uEjE5sHUq0hV_bnYjPKRxYyBnty0sLre+owANGZjLJg9Q@mail.gmail.com>
- <20201021232022.GN36674@ziepe.ca>
-In-Reply-To: <20201021232022.GN36674@ziepe.ca>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Thu, 22 Oct 2020 09:00:44 +0200
-Message-ID: <CAKMK7uEkAK42+19KRo06XzJFuMCVriEEg0jxqXq8oAdt2ExLsQ@mail.gmail.com>
-Subject: Re: [PATCH v3 12/16] PCI: Obey iomem restrictions for procfs mmap
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@ffwll.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201021214910.20001-4-l.stelmach@samsung.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju2zln5ziaHDfLFwuDRUlBK7Pgi9LKFNYN/BFFQtnSg13cjE27
+        gWiaYcNbhjmnpGilLXK21toErYYpZW3qSrK0Ea4kw5QU7Wq5nSz/Pbf3e58XPoaQDFGhzFF1
+        OqdRK1NlQhFpbf/mWlUfcSlxzbdOKXYNOAh8R2+icJXrPImr25wUrh3VU7h3pJ/CxYOfCOxy
+        NdG4y1pE4T5HA8LmwV4Ku5urhFjvahVgR1kLwu01C3FeSxu9hVW4e7sJheVmn0BhNwzQCrPx
+        olBx91qWwm4bFyiKLEakGDeHxTMJok3JXOrRk5xmdfQh0ZG3jTbBiU/s6bwbD8lsdC9QhwIY
+        YNdBX6Gb1CERI2EbELz4XSjgyQSCNqflLxlH0GP3UrMj1u5qIW/UI/heMf2XjCIYHisX+lJS
+        di80V7QQPiOYrSRBP3TdbxBsPBRcniR9WMhGgG5E59fFbDR8flNL+zDJLoPpCw3Ihxewh6HH
+        k0PzmSB4UuH1zwawm+DW08c0/+YSyL1XSfA4BF57q/29gc1jID//moDvHQuTrVcJHkthuMNC
+        83gx/LbPDuQieOe8TfOkAIE7R4/41Ebod36fqcrMrFgBpubVvLwVnhXW+WVgA+HVSBBfIhBK
+        reUEL4sh/4KETy8HQ0fjv7WPunqIEiQzzDnNMOccw5xzDP/31iDSiEK4DK0qhdOuVXOn5Fql
+        SpuhTpEnpanMaOb7dU53TNhQ88/DDsQySDZfPLarJFFCKU9qz6gcCBhCFiyOed55UCJOVp45
+        y2nSEjUZqZzWgRYxpCxEHFn78YCETVGmc8c57gSnmXUFTEBoNprX/b6obJdtfaN5RUWcp3Ed
+        Nu7ecefc9SGpJkdm/DCauD8pt5TI2Fz+w92/8b7pSlv9toGpl7+y3iepPeejyvo83dWH5FOG
+        rxuOhfRmfqhzP5VHPtrcZPXQSyen9kwkmIRx5dunY3d/MRWH1yxK2+n0KsNLYp8PR0kz22PC
+        Hkztk8tI7RFlxEpCo1X+AX+YRzJ6AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJIsWRmVeSWpSXmKPExsVy+t/xe7rLDCfGG5z+ZWlx/u4hZouNM9az
+        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2px89AKRotNj6+xWlzeNYfN
+        Ysb5fUwWh6buZbQ4tkDMonXvEXYHAY/L1y4ye2xZeZPJY+esu+wem1Z1snlsXlLvsXPHZyaP
+        vi2rGD0+b5IL4IjSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcks
+        Sy3St0vQy7i3bgdTwWuBitZlB1gaGLfydTFyckgImEhsuzifrYuRi0NIYCmjxJtrn1ggEjIS
+        J6c1sELYwhJ/rnVBFb1llFj+9zYjSEJYIEzi74r9zCAJEYG5LBJtV36ygSSYBfwkOle+ZoLo
+        OMgosWTxfbAEm4ChRNfbLjCbV8BO4t3tRewgNouAqsS/thVgU0UFkiT2n7jJAlEjKHFy5hMw
+        m1PARmL1qaPsEAvMJOZtfsgMYctLNG+dDWWLS9x6Mp9pAqPQLCTts5C0zELSMgtJywJGllWM
+        IqmlxbnpucVGesWJucWleel6yfm5mxiB0b7t2M8tOxi73gUfYhTgYFTi4f3gMyFeiDWxrLgy
+        9xCjBAezkgiv09nTcUK8KYmVValF+fFFpTmpxYcYTYGem8gsJZqcD0xEeSXxhqaG5haWhubG
+        5sZmFkrivB0CB2OEBNITS1KzU1MLUotg+pg4OKUaGLurGXQshZW0xDjEeXcvqN/39aoPO/O+
+        6avZ5ra1xr0pXpPLLLsormuhfoX38cDEFyYnGOT7Hi+9zWJ48Myl6K4vzi18K+pWynnYBPDu
+        2L7ugWL+kgOP50xKWaNh/2+/v+H0fDHeSRuPPZGccM7ovEbf6oXP4jrV/Rlmf4uVnZHTHb9u
+        0RWxRiWW4oxEQy3mouJEAL34yv4MAwAA
+X-CMS-MailID: 20201022071551eucas1p142dca6ac4cf010110f8f2684f8b96c78
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20201021214933eucas1p2fd4e5ccc172f3e22fe0d7009d8b2742d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201021214933eucas1p2fd4e5ccc172f3e22fe0d7009d8b2742d
+References: <20201021214910.20001-1-l.stelmach@samsung.com>
+        <CGME20201021214933eucas1p2fd4e5ccc172f3e22fe0d7009d8b2742d@eucas1p2.samsung.com>
+        <20201021214910.20001-4-l.stelmach@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 1:20 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
->
-> On Wed, Oct 21, 2020 at 09:24:08PM +0200, Daniel Vetter wrote:
-> > On Wed, Oct 21, 2020 at 6:37 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > >
-> > > On Wed, Oct 21, 2020 at 05:54:54PM +0200, Daniel Vetter wrote:
-> > >
-> > > > The trouble is that io_remap_pfn adjust vma->pgoff, so we'd need to
-> > > > split that. So ideally ->mmap would never set up any ptes.
-> > >
-> > > /dev/mem makes pgoff == pfn so it doesn't get changed by remap.
-> > >
-> > > pgoff doesn't get touched for MAP_SHARED either, so there are other
-> > > users that could work like this - eg anyone mmaping IO memory is
-> > > probably OK.
-> >
-> > I was more generally thinking for io_remap_pfn_users because of the
-> > mkwrite use-case we might have in fbdev emulation in drm.
->
-> You have a use case for MAP_PRIVATE and io_remap_pfn_range()??
 
-Uh no :-) But for ioremaps and keep track of which pages userspace has
-touched. Problem is that there's many displays where you need to
-explicitly upload the data, and in drm we have ioctl calls for that.
-fbdev mmap assumes this just magically happens. So you need to keep
-track of write faults, launch a delayed worker which first re-protects
-all ptes and then uploads the dirty pages. And ideally we wouldn't
-have to implement this everywhere just for fbdev, but could wrap it
-around an existing mmap implementation by just intercepting mkwrite.
--Daniel
+On 21.10.2020 23:49, Łukasz Stelmach wrote:
+> ASIX AX88796[1] is a versatile ethernet adapter chip, that can be
+> connected to a CPU with a 8/16-bit bus or with an SPI. This driver
+> supports SPI connection.
+>
+> The driver has been ported from the vendor kernel for ARTIK5[2]
+> boards. Several changes were made to adapt it to the current kernel
+> which include:
+>
+> + updated DT configuration,
+> + clock configuration moved to DT,
+> + new timer, ethtool and gpio APIs,
+> + dev_* instead of pr_* and custom printk() wrappers,
+> + removed awkward vendor power managemtn.
+>
+> [1] https://www.asix.com.tw/products.php?op=pItemdetail&PItemID=104;65;86&PLine=65
+> [2] https://git.tizen.org/cgit/profile/common/platform/kernel/linux-3.10-artik/
+>
+> The other ax88796 driver is for NE2000 compatible AX88796L chip. These
+> chips are not compatible. Hence, two separate drivers are required.
+>
+> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+
+coś zaszalałeś, jak dobry koreański kod - push bez kompilacji ;)
+
+drivers/net/ethernet/asix/ax88796c_main.c:758:13: error: static 
+declaration of ‘ax88796c_set_csums’ follows non-static declaration
+  static void ax88796c_set_csums(struct ax88796c_device *ax_local)
+              ^
+In file included from drivers/net/ethernet/asix/ax88796c_main.c:12:0:
+drivers/net/ethernet/asix/ax88796c_ioctl.h:24:6: note: previous 
+declaration of ‘ax88796c_set_csums’ was here
+  void ax88796c_set_csums(struct ax88796c_device *ax_local);
+       ^
+scripts/Makefile.build:283: recipe for target 
+'drivers/net/ethernet/asix/ax88796c_main.o' failed
+make[4]: *** [drivers/net/ethernet/asix/ax88796c_main.o] Error 1
+scripts/Makefile.build:500: recipe for target 
+'drivers/net/ethernet/asix' failed
+make[3]: *** [drivers/net/ethernet/asix] Error 2
+scripts/Makefile.build:500: recipe for target 'drivers/net/ethernet' failed
+make[2]: *** [drivers/net/ethernet] Error 2
+scripts/Makefile.build:500: recipe for target 'drivers/net' failed
+make[1]: *** [drivers/net] Error 2
+
+ > ...
+
+Best regards
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
