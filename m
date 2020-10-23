@@ -7,59 +7,60 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 496A5C8301F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 12:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D280C83023
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 12:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 00E2224650
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 12:23:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC6DB2466D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 12:23:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ZYi8sWlY"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="X9fvYwj+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S463695AbgJWMXN (ORCPT
+        id S463698AbgJWMXQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 23 Oct 2020 08:23:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38074 "EHLO
+        Fri, 23 Oct 2020 08:23:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S463688AbgJWMXM (ORCPT
+        with ESMTP id S463694AbgJWMXP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 23 Oct 2020 08:23:12 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44F08C0613CE
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2020 05:23:12 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id a72so1227077wme.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2020 05:23:12 -0700 (PDT)
+        Fri, 23 Oct 2020 08:23:15 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F763C0613D4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2020 05:23:15 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id l15so1299427wmi.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2020 05:23:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=r2DrHs8sznEAEmv81CQMiKCncSgZZXtZ6EFyoHCS3Oo=;
-        b=ZYi8sWlYqHhW266a7Wh4e6eQQ7DyJpqW3Nom0/Vr/JEW76wTqmHKXtiUU2akIxM9qE
-         8aR9Gox2HMVTwkNkPC+2hvbT31wupa4IhJNXHm/GZLFwhyKkoZlckNfJvIscTIBwTBdu
-         K9kLhfXuXSyNypnF/UEvOEGMAa8S7zhjmlrlI=
+        bh=kkmJ6ZmKgmcd6yJ6bv+WDWEfAJ+atBjrBRrq3Oi6xEA=;
+        b=X9fvYwj+CM1uPA1P8WC5HSgT+LzVZQ+OD1o+k+agSuOPsfZl3UPk7123oRH9IvG99j
+         GfkfDQWLVGKw2EbuNrvibQZy+U+qtkpV3YLZht2b4ThR9SdJpdsR19OQn6pLGfNk0QFs
+         ZOzs+xrJyUetOFvNliSHp5y1W0rt8j+J+9iN0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=r2DrHs8sznEAEmv81CQMiKCncSgZZXtZ6EFyoHCS3Oo=;
-        b=SsN3azstEPxQlJ/a7MeuTqIp00so2LgN/dkoHLQyGj5jLIav0QWc+CzylTXHR9DNhf
-         TovUu9WdHrC7yAqLMBqSl96VMjLGM0Ovh8XmRy9XFfK9N64o8kFmQXZRYVx40pb45Efa
-         fKmu6+M6PqcWyiGXjVnNdpPewTt0gUicw6XZTYLA6FjyYKM8IJTkGKUEV/qEngIokVCp
-         WWtX59ZUwuspp+lHcrvb+gbnCMcDH1X/plvIAL4Ug+pb0QBnWMkMT2LqQwDi/3t2BBJJ
-         ezEXq9No6Eo8w4nSbK+4BFR7xsHUNqPy0dh+OJ7xMIyCKr2YO10ENZZ4sgTbtBSBQ5JH
-         CFnQ==
-X-Gm-Message-State: AOAM532LZwulye6MPB4LfKAMs4I5/1etx50drIasgG2Jwgma0mDI1k/3
-        h7u3y188w0rsnhztkmURAYiugg==
-X-Google-Smtp-Source: ABdhPJxMGQvA/dZohSXbnMcyrWAeGFzAxThKHUObw664xzBQpaV3+wC1rwIhI7OjqV8yoZkn2jUtDA==
-X-Received: by 2002:a1c:4445:: with SMTP id r66mr2002851wma.140.1603455791088;
-        Fri, 23 Oct 2020 05:23:11 -0700 (PDT)
+        bh=kkmJ6ZmKgmcd6yJ6bv+WDWEfAJ+atBjrBRrq3Oi6xEA=;
+        b=UytvQufbWkI/pfvmYvjNsjjLefZQroAlikXRzyZPGqOhHYyvXP+NJoTuyDpginzFqA
+         0rbo/bOZtBHHQtOtZh5AB2+6oEkotnovFXnl95lR1biFhM4KfwZiw/24G/uyDXXANFip
+         yvBET/UC0aiuLO7om9YjPTPgoP5mQksyz4gXmtrTAZe+tHei1Hbjzq0gQuMEqLH/d5Ip
+         2ow8SWJ7n55ZphmpqKXZ0mBM7m8VowGMYwAhmOH6rOGAfa4a3SZFdc1OBbDwUN6bEDBM
+         3l/P99Dn+/egmbwFYDrgVwhHG2of+mtVadkmNBvLbwFF9Dg+oi+wub2vsMYrwhf8CJ3y
+         8kGQ==
+X-Gm-Message-State: AOAM530o5KSWALqPDY1rU+6cexzu5cbkvDtwnq3gpqCONIllWvfY6yk6
+        KZC1npuAERBJ/onH4F2R6Ati7g==
+X-Google-Smtp-Source: ABdhPJyAocM64pOIP3LBDQAV0GBJxakbq+ElmbOKnaH+G79tsDURZz/ywBYbGb5p2YID6L6RLw4GKg==
+X-Received: by 2002:a1c:9a93:: with SMTP id c141mr2199856wme.168.1603455793854;
+        Fri, 23 Oct 2020 05:23:13 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id y4sm3056484wrp.74.2020.10.23.05.23.10
+        by smtp.gmail.com with ESMTPSA id y4sm3056484wrp.74.2020.10.23.05.23.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Oct 2020 05:23:10 -0700 (PDT)
+        Fri, 23 Oct 2020 05:23:13 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>
 Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Daniel Vetter <daniel.vetter@intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         Kees Cook <keescook@chromium.org>,
@@ -69,10 +70,18 @@ Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH 41/65] /dev/mem: Only set filp->f_mapping
-Date:   Fri, 23 Oct 2020 14:21:52 +0200
-Message-Id: <20201023122216.2373294-41-daniel.vetter@ffwll.ch>
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sourabh Jain <sourabhjain@linux.ibm.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH 43/65] sysfs: Support zapping of binary attr mmaps
+Date:   Fri, 23 Oct 2020 14:21:54 +0200
+Message-Id: <20201023122216.2373294-43-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201023122216.2373294-1-daniel.vetter@ffwll.ch>
 References: <20201021163242.1458885-1-daniel.vetter@ffwll.ch>
@@ -84,16 +93,21 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-When we care about pagecache maintenance, we need to make sure that
-both f_mapping and i_mapping point at the right mapping.
+We want to be able to revoke pci mmaps so that the same access rules
+applies as for /dev/kmem. Revoke support for devmem was added in
+3234ac664a87 ("/dev/mem: Revoke mappings when a driver claims the
+region").
 
-But for iomem mappings we only care about the virtual/pte side of
-things, so f_mapping is enough. Also setting inode->i_mapping was
-confusing me as a driver maintainer, since in e.g. drivers/gpu we
-don't do that. Per Dan this seems to be copypasta from places which do
-care about pagecache consistency, but not needed. Hence remove it for
-slightly less confusion.
+The simplest way to achieve this is by having the same filp->f_mapping
+for all mappings, so that unmap_mapping_range can find them all, no
+matter through which file they've been created. Since this must be set
+at open time we need sysfs support for this.
 
+Add an optional mapping parameter bin_attr, which is only consulted
+when there's also an mmap callback, since without mmap support
+allowing to adjust the ->f_mapping makes no sense.
+
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
 Cc: Kees Cook <keescook@chromium.org>
@@ -107,24 +121,70 @@ Cc: linux-mm@kvack.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-media@vger.kernel.org
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Sourabh Jain <sourabhjain@linux.ibm.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Nayna Jain <nayna@linux.ibm.com>
 Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/char/mem.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/sysfs/file.c       | 11 +++++++++++
+ include/linux/sysfs.h |  2 ++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-index abd4ffdc8cde..5502f56f3655 100644
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -864,7 +864,6 @@ static int open_port(struct inode *inode, struct file *filp)
- 	 * revocations when drivers want to take over a /dev/mem mapped
- 	 * range.
- 	 */
--	inode->i_mapping = devmem_inode->i_mapping;
- 	filp->f_mapping = inode->i_mapping;
+diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+index eb6897ab78e7..9d8ccdb000e3 100644
+--- a/fs/sysfs/file.c
++++ b/fs/sysfs/file.c
+@@ -169,6 +169,16 @@ static int sysfs_kf_bin_mmap(struct kernfs_open_file *of,
+ 	return battr->mmap(of->file, kobj, battr, vma);
+ }
  
- 	return 0;
++static int sysfs_kf_bin_open(struct kernfs_open_file *of)
++{
++	struct bin_attribute *battr = of->kn->priv;
++
++	if (battr->mapping)
++		of->file->f_mapping = battr->mapping;
++
++	return 0;
++}
++
+ void sysfs_notify(struct kobject *kobj, const char *dir, const char *attr)
+ {
+ 	struct kernfs_node *kn = kobj->sd, *tmp;
+@@ -240,6 +250,7 @@ static const struct kernfs_ops sysfs_bin_kfops_mmap = {
+ 	.read		= sysfs_kf_bin_read,
+ 	.write		= sysfs_kf_bin_write,
+ 	.mmap		= sysfs_kf_bin_mmap,
++	.open		= sysfs_kf_bin_open,
+ };
+ 
+ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
+diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+index 34e84122f635..a17a474d1601 100644
+--- a/include/linux/sysfs.h
++++ b/include/linux/sysfs.h
+@@ -164,11 +164,13 @@ __ATTRIBUTE_GROUPS(_name)
+ 
+ struct file;
+ struct vm_area_struct;
++struct address_space;
+ 
+ struct bin_attribute {
+ 	struct attribute	attr;
+ 	size_t			size;
+ 	void			*private;
++	struct address_space	*mapping;
+ 	ssize_t (*read)(struct file *, struct kobject *, struct bin_attribute *,
+ 			char *, loff_t, size_t);
+ 	ssize_t (*write)(struct file *, struct kobject *, struct bin_attribute *,
 -- 
 2.28.0
 
