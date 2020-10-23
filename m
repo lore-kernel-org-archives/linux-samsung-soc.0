@@ -2,411 +2,337 @@ Return-Path: <SRS0=uz1o=D6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F14DC8302A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 12:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B37C56201
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 12:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F3A824650
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 12:23:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02272221F9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 12:26:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="e5hphnls"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="K/Mlvxqb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S463701AbgJWMXV (ORCPT
+        id S2897739AbgJWM0H (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 23 Oct 2020 08:23:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38084 "EHLO
+        Fri, 23 Oct 2020 08:26:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S463688AbgJWMXO (ORCPT
+        with ESMTP id S2898202AbgJWM0H (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 23 Oct 2020 08:23:14 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3F48C0613CE
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2020 05:23:13 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id g12so1563795wrp.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2020 05:23:13 -0700 (PDT)
+        Fri, 23 Oct 2020 08:26:07 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 515C0C0613D2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2020 05:26:06 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id e2so1316147wme.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2020 05:26:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Eh+QFd2rUGVvEdUIq62q2ZCwC5wIklTNSjxdtgUk2/Y=;
-        b=e5hphnlsMYsasyR/YI69NuX59uzEdX2qcimMYImOZm1M/LT2BHrGVpvWCoO3kcKnbz
-         Ov4evujMm+wUa0eaaQI03YI0d3JG8wQ5tVEwmAcc8BYd5ts9ASXWcikA5h+6IZPLJgkT
-         Q5UjRznd6tk9kE/aYdy5AZJulxidfuYuKArx4=
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=PAFtVAQ3tChjSUzKujX9wl7xWmpuDPW53yjWkRt+YX4=;
+        b=K/MlvxqbXxKBD7NtxzEVlnQQgEo8R7jzzQ6d8aTKu/t7mVOfhin25s4agcsW7aC9Fm
+         Dg+jn2+aY9gWuXi7wduTHjxE/oiqtUmeSjJS9d5bV3rltqi1wTiNFP2rJPUUFWgVs7E6
+         gRtIWzD7wrVKYbLUc6keZxA0hqL4l6D2l+jUk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Eh+QFd2rUGVvEdUIq62q2ZCwC5wIklTNSjxdtgUk2/Y=;
-        b=gKVx91w6zA5nSz2C2AYdkhXewPPKW8FUaE9X33mmdKVOtUi3jn6pD+MjfCj9AgYaAW
-         uKbETDiHcO9mAGmKnm9M05CTxF/0a66z5wVEg7kIaaz2rnMLTh9S86USZ1UurnwaD6K7
-         kdF56Dyns35k2bbMnf6mTlgilvPZ/I/PqEBgRJM5tiwMK4mAzyFyKYbfbVsf93oMCEEx
-         YI2KfvFVPt86salzfam1G749qIUk73q9lJD9I3eGSqkMFNDWpA6G0y0k/4SQfWzMp7dg
-         HXRYIcNc8mShCybrTQS6nfRjIkRRaZ0/fDkMKay8Rr3fPQ38sxHKRTCl0S+qbMxSWSz6
-         1R+w==
-X-Gm-Message-State: AOAM530+g0j459oWLZDyoHQGzMA45E/P36GgEsnWCNI4D0I5FcfDjjV4
-        nx2/RcrA6nhF3feJG3WREsULzg==
-X-Google-Smtp-Source: ABdhPJwnOL4dnmc6lyGNP0x67dHlVVixkc5nrJQk3+7ioO7moXdzTELeRqRSEuYEwVn0xorg8Qblnw==
-X-Received: by 2002:adf:e549:: with SMTP id z9mr2524031wrm.12.1603455792411;
-        Fri, 23 Oct 2020 05:23:12 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to;
+        bh=PAFtVAQ3tChjSUzKujX9wl7xWmpuDPW53yjWkRt+YX4=;
+        b=FyTQUOZNpeXxE41zRa4lylqxBCyygV35Zp9gy66rnhARmR7y5PzjkG5USw+vPlGHNq
+         +FxA+UNvP3r8Xq5WHPbZdHN341u/M4Em/tbunOvXnvT31PS2uLwmoNmBXUNGZXY9AEmH
+         4dy9eOzbiv7EUw9zJxFdILwk0kqBJLJhtUX74YOCsZqagc4xHdZdloFuVg/XEFLTzXzH
+         fKDolUeAOnCzx9o9VURS+iHEXFeWhGQcjDLsnJSPVrIlsFzg2pZD6f+PI8BxOIkuKWrX
+         TQZVZs6I0377JfS0xYgM1ORTLZHOLg0A7iUz/aZpNWpUU6Y68oYtdZ6Sv5ppPjas1O3S
+         /WBg==
+X-Gm-Message-State: AOAM530Qme38JbaWhY0eaKbEOPYXGTOJ7Ve8TGelg/fRC1Zlj2RTnz0E
+        ihc17lixF9FXLLIHPzQ1ND8JmQ==
+X-Google-Smtp-Source: ABdhPJzmCXFy0gj+CVwTI7L79a3sWTdS3hTTu9nmTWuT4VCd2/G9Mq4Y+61MqYgpQ+yiCjJ3FCfC5Q==
+X-Received: by 2002:a7b:c015:: with SMTP id c21mr2044322wmb.22.1603455964962;
+        Fri, 23 Oct 2020 05:26:04 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id y4sm3056484wrp.74.2020.10.23.05.23.11
+        by smtp.gmail.com with ESMTPSA id k203sm3232158wmb.37.2020.10.23.05.26.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Oct 2020 05:23:11 -0700 (PDT)
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+        Fri, 23 Oct 2020 05:26:04 -0700 (PDT)
+Date:   Fri, 23 Oct 2020 14:26:02 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>
 Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
         Daniel Vetter <daniel.vetter@intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        Kees Cook <keescook@chromium.org>,
         Dan Williams <dan.j.williams@intel.com>,
+        Kees Cook <keescook@chromium.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
         Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Hildenbrand <david@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 42/65] resource: Move devmem revoke code to resource framework
-Date:   Fri, 23 Oct 2020 14:21:53 +0200
-Message-Id: <20201023122216.2373294-42-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201023122216.2373294-1-daniel.vetter@ffwll.ch>
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH 29/65] s390/pci: Remove races against pte updates
+Message-ID: <20201023122602.GB401619@phenom.ffwll.local>
+Mail-Followup-To: DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        linux-s390@vger.kernel.org
 References: <20201021163242.1458885-1-daniel.vetter@ffwll.ch>
  <20201023122216.2373294-1-daniel.vetter@ffwll.ch>
+ <20201023122216.2373294-29-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201023122216.2373294-29-daniel.vetter@ffwll.ch>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-We want all iomem mmaps to consistently revoke ptes when the kernel
-takes over and CONFIG_IO_STRICT_DEVMEM is enabled. This includes the
-pci bar mmaps available through procfs and sysfs, which currently do
-not revoke mappings.
+On Fri, Oct 23, 2020 at 02:21:40PM +0200, Daniel Vetter wrote:
+> Way back it was a reasonable assumptions that iomem mappings never
+> change the pfn range they point at. But this has changed:
+> 
+> - gpu drivers dynamically manage their memory nowadays, invalidating
+> ptes with unmap_mapping_range when buffers get moved
+> 
+> - contiguous dma allocations have moved from dedicated carvetouts to
+> cma regions. This means if we miss the unmap the pfn might contain
+> pagecache or anon memory (well anything allocated with GFP_MOVEABLE)
+> 
+> - even /dev/mem now invalidates mappings when the kernel requests that
+> iomem region when CONFIG_IO_STRICT_DEVMEM is set, see commit
+> 3234ac664a87 ("/dev/mem: Revoke mappings when a driver claims the
+> region")
+> 
+> Accessing pfns obtained from ptes without holding all the locks is
+> therefore no longer a good idea. Fix this.
+> 
+> Since zpci_memcpy_from|toio seems to not do anything nefarious with
+> locks we just need to open code get_pfn and follow_pfn and make sure
+> we drop the locks only after we're done. The write function also needs
+> the copy_from_user move, since we can't take userspace faults while
+> holding the mmap sem.
+> 
+> v2: Move VM_IO | VM_PFNMAP checks around so they keep returning EINVAL
+> like before (Gerard)
+> 
+> v3: Polish commit message (Niklas)
+> 
+> Reviewed-by: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: Jérôme Glisse <jglisse@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: linux-mm@kvack.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: Niklas Schnelle <schnelle@linux.ibm.com>
+> Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+> Cc: linux-s390@vger.kernel.org
+> Cc: Niklas Schnelle <schnelle@linux.ibm.com>
+> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-To prepare for this, move the code from the /dev/kmem driver to
-kernel/resource.c.
+Apologies for this random patch bomb, typoed git send-email command :-/
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: JÃ©rÃ´me Glisse <jglisse@redhat.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-mm@kvack.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-media@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
---
-v3:
-- add barrier for consistency and document why we don't have to check
-  for NULL (Jason)
-v4
-- Adjust comments to reflect the general nature of this iomem revoke
-  code now (Dan)
----
- drivers/char/mem.c     |  85 +---------------------------------
- include/linux/ioport.h |   6 +--
- kernel/resource.c      | 101 ++++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 102 insertions(+), 90 deletions(-)
+v4 of this will come properly on Monday or so.
+-Daniel
 
-diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-index 5502f56f3655..53338aad8d28 100644
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -31,9 +31,6 @@
- #include <linux/uio.h>
- #include <linux/uaccess.h>
- #include <linux/security.h>
--#include <linux/pseudo_fs.h>
--#include <uapi/linux/magic.h>
--#include <linux/mount.h>
- 
- #ifdef CONFIG_IA64
- # include <linux/efi.h>
-@@ -809,42 +806,6 @@ static loff_t memory_lseek(struct file *file, loff_t offset, int orig)
- 	return ret;
- }
- 
--static struct inode *devmem_inode;
--
--#ifdef CONFIG_IO_STRICT_DEVMEM
--void revoke_devmem(struct resource *res)
--{
--	/* pairs with smp_store_release() in devmem_init_inode() */
--	struct inode *inode = smp_load_acquire(&devmem_inode);
--
--	/*
--	 * Check that the initialization has completed. Losing the race
--	 * is ok because it means drivers are claiming resources before
--	 * the fs_initcall level of init and prevent /dev/mem from
--	 * establishing mappings.
--	 */
--	if (!inode)
--		return;
--
--	/*
--	 * The expectation is that the driver has successfully marked
--	 * the resource busy by this point, so devmem_is_allowed()
--	 * should start returning false, however for performance this
--	 * does not iterate the entire resource range.
--	 */
--	if (devmem_is_allowed(PHYS_PFN(res->start)) &&
--	    devmem_is_allowed(PHYS_PFN(res->end))) {
--		/*
--		 * *cringe* iomem=relaxed says "go ahead, what's the
--		 * worst that can happen?"
--		 */
--		return;
--	}
--
--	unmap_mapping_range(inode->i_mapping, res->start, resource_size(res), 1);
--}
--#endif
--
- static int open_port(struct inode *inode, struct file *filp)
- {
- 	int rc;
-@@ -864,7 +825,7 @@ static int open_port(struct inode *inode, struct file *filp)
- 	 * revocations when drivers want to take over a /dev/mem mapped
- 	 * range.
- 	 */
--	filp->f_mapping = inode->i_mapping;
-+	filp->f_mapping = iomem_get_mapping();
- 
- 	return 0;
- }
-@@ -995,48 +956,6 @@ static char *mem_devnode(struct device *dev, umode_t *mode)
- 
- static struct class *mem_class;
- 
--static int devmem_fs_init_fs_context(struct fs_context *fc)
--{
--	return init_pseudo(fc, DEVMEM_MAGIC) ? 0 : -ENOMEM;
--}
--
--static struct file_system_type devmem_fs_type = {
--	.name		= "devmem",
--	.owner		= THIS_MODULE,
--	.init_fs_context = devmem_fs_init_fs_context,
--	.kill_sb	= kill_anon_super,
--};
--
--static int devmem_init_inode(void)
--{
--	static struct vfsmount *devmem_vfs_mount;
--	static int devmem_fs_cnt;
--	struct inode *inode;
--	int rc;
--
--	rc = simple_pin_fs(&devmem_fs_type, &devmem_vfs_mount, &devmem_fs_cnt);
--	if (rc < 0) {
--		pr_err("Cannot mount /dev/mem pseudo filesystem: %d\n", rc);
--		return rc;
--	}
--
--	inode = alloc_anon_inode(devmem_vfs_mount->mnt_sb);
--	if (IS_ERR(inode)) {
--		rc = PTR_ERR(inode);
--		pr_err("Cannot allocate inode for /dev/mem: %d\n", rc);
--		simple_release_fs(&devmem_vfs_mount, &devmem_fs_cnt);
--		return rc;
--	}
--
--	/*
--	 * Publish /dev/mem initialized.
--	 * Pairs with smp_load_acquire() in revoke_devmem().
--	 */
--	smp_store_release(&devmem_inode, inode);
--
--	return 0;
--}
--
- static int __init chr_dev_init(void)
- {
- 	int minor;
-@@ -1058,8 +977,6 @@ static int __init chr_dev_init(void)
- 		 */
- 		if ((minor == DEVPORT_MINOR) && !arch_has_dev_port())
- 			continue;
--		if ((minor == DEVMEM_MINOR) && devmem_init_inode() != 0)
--			continue;
- 
- 		device_create(mem_class, NULL, MKDEV(MEM_MAJOR, minor),
- 			      NULL, devlist[minor].name);
-diff --git a/include/linux/ioport.h b/include/linux/ioport.h
-index 6c2b06fe8beb..8ffb61b36606 100644
---- a/include/linux/ioport.h
-+++ b/include/linux/ioport.h
-@@ -302,11 +302,7 @@ struct resource *devm_request_free_mem_region(struct device *dev,
- struct resource *request_free_mem_region(struct resource *base,
- 		unsigned long size, const char *name);
- 
--#ifdef CONFIG_IO_STRICT_DEVMEM
--void revoke_devmem(struct resource *res);
--#else
--static inline void revoke_devmem(struct resource *res) { };
--#endif
-+extern struct address_space *iomem_get_mapping(void);
- 
- #endif /* __ASSEMBLY__ */
- #endif	/* _LINUX_IOPORT_H */
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 841737bbda9e..a800acbc578c 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -18,12 +18,15 @@
- #include <linux/spinlock.h>
- #include <linux/fs.h>
- #include <linux/proc_fs.h>
-+#include <linux/pseudo_fs.h>
- #include <linux/sched.h>
- #include <linux/seq_file.h>
- #include <linux/device.h>
- #include <linux/pfn.h>
- #include <linux/mm.h>
-+#include <linux/mount.h>
- #include <linux/resource_ext.h>
-+#include <uapi/linux/magic.h>
- #include <asm/io.h>
- 
- 
-@@ -1112,6 +1115,58 @@ resource_size_t resource_alignment(struct resource *res)
- 
- static DECLARE_WAIT_QUEUE_HEAD(muxed_resource_wait);
- 
-+static struct inode *iomem_inode;
-+
-+#ifdef CONFIG_IO_STRICT_DEVMEM
-+static void revoke_iomem(struct resource *res)
-+{
-+	/* pairs with smp_store_release() in iomem_init_inode() */
-+	struct inode *inode = smp_load_acquire(&iomem_inode);
-+
-+	/*
-+	 * Check that the initialization has completed. Losing the race
-+	 * is ok because it means drivers are claiming resources before
-+	 * the fs_initcall level of init and prevent iomem_get_mapping users
-+	 * from establishing mappings.
-+	 */
-+	if (!inode)
-+		return;
-+
-+	/*
-+	 * The expectation is that the driver has successfully marked
-+	 * the resource busy by this point, so devmem_is_allowed()
-+	 * should start returning false, however for performance this
-+	 * does not iterate the entire resource range.
-+	 */
-+	if (devmem_is_allowed(PHYS_PFN(res->start)) &&
-+	    devmem_is_allowed(PHYS_PFN(res->end))) {
-+		/*
-+		 * *cringe* iomem=relaxed says "go ahead, what's the
-+		 * worst that can happen?"
-+		 */
-+		return;
-+	}
-+
-+	unmap_mapping_range(inode->i_mapping, res->start, resource_size(res), 1);
-+}
-+struct address_space *iomem_get_mapping(void)
-+{
-+	/*
-+	 * This function is only called from file open paths, hence guaranteed
-+	 * that fs_initcalls have completed and no need to check for NULL. But
-+	 * since revoke_iomem can be called before the initcall we still need
-+	 * the barrier to appease checkers.
-+	 */
-+	return smp_load_acquire(&iomem_inode)->i_mapping;
-+}
-+#else
-+static void revoke_iomem(struct resource *res) {}
-+struct address_space *iomem_get_mapping(void)
-+{
-+	return NULL;
-+}
-+#endif
-+
- /**
-  * __request_region - create a new busy resource region
-  * @parent: parent resource descriptor
-@@ -1179,7 +1234,7 @@ struct resource * __request_region(struct resource *parent,
- 	write_unlock(&resource_lock);
- 
- 	if (res && orig_parent == &iomem_resource)
--		revoke_devmem(res);
-+		revoke_iomem(res);
- 
- 	return res;
- }
-@@ -1713,4 +1768,48 @@ static int __init strict_iomem(char *str)
- 	return 1;
- }
- 
-+static int iomem_fs_init_fs_context(struct fs_context *fc)
-+{
-+	return init_pseudo(fc, DEVMEM_MAGIC) ? 0 : -ENOMEM;
-+}
-+
-+static struct file_system_type iomem_fs_type = {
-+	.name		= "iomem",
-+	.owner		= THIS_MODULE,
-+	.init_fs_context = iomem_fs_init_fs_context,
-+	.kill_sb	= kill_anon_super,
-+};
-+
-+static int __init iomem_init_inode(void)
-+{
-+	static struct vfsmount *iomem_vfs_mount;
-+	static int iomem_fs_cnt;
-+	struct inode *inode;
-+	int rc;
-+
-+	rc = simple_pin_fs(&iomem_fs_type, &iomem_vfs_mount, &iomem_fs_cnt);
-+	if (rc < 0) {
-+		pr_err("Cannot mount iomem pseudo filesystem: %d\n", rc);
-+		return rc;
-+	}
-+
-+	inode = alloc_anon_inode(iomem_vfs_mount->mnt_sb);
-+	if (IS_ERR(inode)) {
-+		rc = PTR_ERR(inode);
-+		pr_err("Cannot allocate inode for iomem: %d\n", rc);
-+		simple_release_fs(&iomem_vfs_mount, &iomem_fs_cnt);
-+		return rc;
-+	}
-+
-+	/*
-+	 * Publish iomem revocation inode initialized.
-+	 * Pairs with smp_load_acquire() in revoke_iomem().
-+	 */
-+	smp_store_release(&iomem_inode, inode);
-+
-+	return 0;
-+}
-+
-+fs_initcall(iomem_init_inode);
-+
- __setup("iomem=", strict_iomem);
+> ---
+>  arch/s390/pci/pci_mmio.c | 98 +++++++++++++++++++++++-----------------
+>  1 file changed, 57 insertions(+), 41 deletions(-)
+> 
+> diff --git a/arch/s390/pci/pci_mmio.c b/arch/s390/pci/pci_mmio.c
+> index 401cf670a243..1a6adbc68ee8 100644
+> --- a/arch/s390/pci/pci_mmio.c
+> +++ b/arch/s390/pci/pci_mmio.c
+> @@ -119,33 +119,15 @@ static inline int __memcpy_toio_inuser(void __iomem *dst,
+>  	return rc;
+>  }
+>  
+> -static long get_pfn(unsigned long user_addr, unsigned long access,
+> -		    unsigned long *pfn)
+> -{
+> -	struct vm_area_struct *vma;
+> -	long ret;
+> -
+> -	mmap_read_lock(current->mm);
+> -	ret = -EINVAL;
+> -	vma = find_vma(current->mm, user_addr);
+> -	if (!vma)
+> -		goto out;
+> -	ret = -EACCES;
+> -	if (!(vma->vm_flags & access))
+> -		goto out;
+> -	ret = follow_pfn(vma, user_addr, pfn);
+> -out:
+> -	mmap_read_unlock(current->mm);
+> -	return ret;
+> -}
+> -
+>  SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
+>  		const void __user *, user_buffer, size_t, length)
+>  {
+>  	u8 local_buf[64];
+>  	void __iomem *io_addr;
+>  	void *buf;
+> -	unsigned long pfn;
+> +	struct vm_area_struct *vma;
+> +	pte_t *ptep;
+> +	spinlock_t *ptl;
+>  	long ret;
+>  
+>  	if (!zpci_is_enabled())
+> @@ -158,7 +140,7 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
+>  	 * We only support write access to MIO capable devices if we are on
+>  	 * a MIO enabled system. Otherwise we would have to check for every
+>  	 * address if it is a special ZPCI_ADDR and would have to do
+> -	 * a get_pfn() which we don't need for MIO capable devices.  Currently
+> +	 * a pfn lookup which we don't need for MIO capable devices.  Currently
+>  	 * ISM devices are the only devices without MIO support and there is no
+>  	 * known need for accessing these from userspace.
+>  	 */
+> @@ -176,21 +158,37 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
+>  	} else
+>  		buf = local_buf;
+>  
+> -	ret = get_pfn(mmio_addr, VM_WRITE, &pfn);
+> +	ret = -EFAULT;
+> +	if (copy_from_user(buf, user_buffer, length))
+> +		goto out_free;
+> +
+> +	mmap_read_lock(current->mm);
+> +	ret = -EINVAL;
+> +	vma = find_vma(current->mm, mmio_addr);
+> +	if (!vma)
+> +		goto out_unlock_mmap;
+> +	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
+> +		goto out_unlock_mmap;
+> +	ret = -EACCES;
+> +	if (!(vma->vm_flags & VM_WRITE))
+> +		goto out_unlock_mmap;
+> +
+> +	ret = follow_pte_pmd(vma->vm_mm, mmio_addr, NULL, &ptep, NULL, &ptl);
+>  	if (ret)
+> -		goto out;
+> -	io_addr = (void __iomem *)((pfn << PAGE_SHIFT) |
+> +		goto out_unlock_mmap;
+> +
+> +	io_addr = (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
+>  			(mmio_addr & ~PAGE_MASK));
+>  
+> -	ret = -EFAULT;
+>  	if ((unsigned long) io_addr < ZPCI_IOMAP_ADDR_BASE)
+> -		goto out;
+> -
+> -	if (copy_from_user(buf, user_buffer, length))
+> -		goto out;
+> +		goto out_unlock_pt;
+>  
+>  	ret = zpci_memcpy_toio(io_addr, buf, length);
+> -out:
+> +out_unlock_pt:
+> +	pte_unmap_unlock(ptep, ptl);
+> +out_unlock_mmap:
+> +	mmap_read_unlock(current->mm);
+> +out_free:
+>  	if (buf != local_buf)
+>  		kfree(buf);
+>  	return ret;
+> @@ -274,7 +272,9 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, mmio_addr,
+>  	u8 local_buf[64];
+>  	void __iomem *io_addr;
+>  	void *buf;
+> -	unsigned long pfn;
+> +	struct vm_area_struct *vma;
+> +	pte_t *ptep;
+> +	spinlock_t *ptl;
+>  	long ret;
+>  
+>  	if (!zpci_is_enabled())
+> @@ -287,7 +287,7 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, mmio_addr,
+>  	 * We only support read access to MIO capable devices if we are on
+>  	 * a MIO enabled system. Otherwise we would have to check for every
+>  	 * address if it is a special ZPCI_ADDR and would have to do
+> -	 * a get_pfn() which we don't need for MIO capable devices.  Currently
+> +	 * a pfn lookup which we don't need for MIO capable devices.  Currently
+>  	 * ISM devices are the only devices without MIO support and there is no
+>  	 * known need for accessing these from userspace.
+>  	 */
+> @@ -306,22 +306,38 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, mmio_addr,
+>  		buf = local_buf;
+>  	}
+>  
+> -	ret = get_pfn(mmio_addr, VM_READ, &pfn);
+> +	mmap_read_lock(current->mm);
+> +	ret = -EINVAL;
+> +	vma = find_vma(current->mm, mmio_addr);
+> +	if (!vma)
+> +		goto out_unlock_mmap;
+> +	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
+> +		goto out_unlock_mmap;
+> +	ret = -EACCES;
+> +	if (!(vma->vm_flags & VM_WRITE))
+> +		goto out_unlock_mmap;
+> +
+> +	ret = follow_pte_pmd(vma->vm_mm, mmio_addr, NULL, &ptep, NULL, &ptl);
+>  	if (ret)
+> -		goto out;
+> -	io_addr = (void __iomem *)((pfn << PAGE_SHIFT) | (mmio_addr & ~PAGE_MASK));
+> +		goto out_unlock_mmap;
+> +
+> +	io_addr = (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
+> +			(mmio_addr & ~PAGE_MASK));
+>  
+>  	if ((unsigned long) io_addr < ZPCI_IOMAP_ADDR_BASE) {
+>  		ret = -EFAULT;
+> -		goto out;
+> +		goto out_unlock_pt;
+>  	}
+>  	ret = zpci_memcpy_fromio(buf, io_addr, length);
+> -	if (ret)
+> -		goto out;
+> -	if (copy_to_user(user_buffer, buf, length))
+> +
+> +out_unlock_pt:
+> +	pte_unmap_unlock(ptep, ptl);
+> +out_unlock_mmap:
+> +	mmap_read_unlock(current->mm);
+> +
+> +	if (!ret && copy_to_user(user_buffer, buf, length))
+>  		ret = -EFAULT;
+>  
+> -out:
+>  	if (buf != local_buf)
+>  		kfree(buf);
+>  	return ret;
+> -- 
+> 2.28.0
+> 
+
 -- 
-2.28.0
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
