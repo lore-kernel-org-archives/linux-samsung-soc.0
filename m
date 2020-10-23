@@ -2,114 +2,242 @@ Return-Path: <SRS0=uz1o=D6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF393C388F9
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 06:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67532C388F9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 07:58:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AD812463C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 06:12:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEC6B2177B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 07:58:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KATlsInR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S372222AbgJWGMF (ORCPT
+        id S2896924AbgJWH6Q (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 23 Oct 2020 02:12:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37208 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S372213AbgJWGMF (ORCPT
+        Fri, 23 Oct 2020 03:58:16 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:49974 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S376035AbgJWH6Q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 23 Oct 2020 02:12:05 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15DD8C0613D2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Oct 2020 23:12:05 -0700 (PDT)
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kVqIe-00047x-IK; Fri, 23 Oct 2020 08:11:40 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kVqIc-0007Pm-9n; Fri, 23 Oct 2020 08:11:38 +0200
-Date:   Fri, 23 Oct 2020 08:11:36 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        Fri, 23 Oct 2020 03:58:16 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201023075758euoutp0124de75288cd25ab125adedad8338ce90~AkBLkZg2a2405124051euoutp01r
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2020 07:57:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201023075758euoutp0124de75288cd25ab125adedad8338ce90~AkBLkZg2a2405124051euoutp01r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1603439878;
+        bh=S5O6LWwdePmCBugN9ckOPo+WqEUNWiGX5m51w52Arq0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KATlsInRZUyb1Cgs5cYgf5YaceP6hzTBiqr+6z4L4+I6oU9kd9DJefnV5pXYciSFf
+         SfFT4vIrCPmUewqgWrrxASG8l4yK0igOTrhqPguyIsvbpcVqlDeAwvvZ/SKgg6XZoR
+         UiMvEQyBc/guvwtuuYQesXbaL1dkkBw6L2aBRRJ8=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20201023075757eucas1p253abbfe124256112a4f8029757f0253b~AkBLPccWM1556815568eucas1p2V;
+        Fri, 23 Oct 2020 07:57:57 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id DE.A8.06456.50D829F5; Fri, 23
+        Oct 2020 08:57:57 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20201023075757eucas1p13e4e7f5177bd3f789ac0d2a8aa57c86e~AkBK-dUF41766417664eucas1p1l;
+        Fri, 23 Oct 2020 07:57:57 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20201023075757eusmtrp11a5399733ded51bf3a06d545448f32ba~AkBK_tO7O0904209042eusmtrp1Y;
+        Fri, 23 Oct 2020 07:57:57 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-12-5f928d05cf74
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id A1.76.06314.50D829F5; Fri, 23
+        Oct 2020 08:57:57 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20201023075756eusmtip131722b6beff9be8fac6b44c0bd5d643b~AkBKa7XT92319023190eusmtip1f;
+        Fri, 23 Oct 2020 07:57:56 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Vinod Koul <vkoul@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Kamil Debski <kamil@wypas.org>
-Subject: Re: [PATCH 1/4] MAINTAINERS: move Kamil Debski to credits
-Message-ID: <20201023061136.cjhpuh5lye6sclf6@pengutronix.de>
-References: <20201016151528.7553-1-krzk@kernel.org>
- <20201022191314.plesyizmczgdmodr@pengutronix.de>
- <20201022200925.GA2525@kozik-lap>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="64of3vfnxriskdjj"
-Content-Disposition: inline
-In-Reply-To: <20201022200925.GA2525@kozik-lap>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v2 6/6] arm64: dts: exynos: add the WiFi/PCIe support to
+ TM2(e) boards
+Date:   Fri, 23 Oct 2020 09:57:44 +0200
+Message-Id: <20201023075744.26200-7-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201023075744.26200-1-m.szyprowski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSbUhTYRTHe3a33etocp3CnrRcDFMLckl9uPRiJgajCKS+SFC62kWlbcrm
+        zBeINVF0zFIrMokpUjnWXGOZpqHWGE6cOnE6V/mSQWE5bUxN02o5r9q33/mf/3n+h8ODIZwm
+        RiSWI8sn5TKRhM9k0dt6fzkPM6pqM470vhEQT9TZRINtiEF41soZhH7pEUoMf9EyCafTjBKu
+        zsdMYlBnZxJ1zm4a4V2fRYkW2yRKlHXZUKJjog9JZguNOiMQdtRPosJGi1JoMVQyhXdaDUBo
+        97TThIuW6DT0MuukmJTkFJByQVImK1tne4bkTfMKH7y6jarA+h4NCMEgfgz63+uABrAwDq4H
+        0Nw1zqCKJQC/9nxCqGIRwL7aKsb2iG5gFaUazQAG2sfoOyNzvnVm0MXEE6FmXrPBGBaBJ8PV
+        ZSLoQfAmBKru2kDQE46nw5+N42iQ6fgB6O9w0YPMxk/BmV41oNJ48Ln5LRLkEDwJLqimtnQD
+        ChteZlKcCn3e+1vbhcPv9laU4r3QcU+7uRzESwGcGWpBqUILoEtdt/XSCTgxtLa5KYIfhC86
+        BZR8Bo52u9GgDPFQ6JkPC8rIBta2PUQomQ0ryjmUOxbW2007se+GRxCKhdAe0DOp+9QAaP88
+        BqoBr/5/WCMABsAllQppFqlIlJE3ExQiqUIpy0q4niu1gI2f4/hr978GyyPXrADHAH83O7O6
+        JoPDEBUoiqRWADGEH8FOGXRc5bDFoqJiUp6bIVdKSIUVRGF0Ppd9tOnbFQ6eJconb5BkHinf
+        7tKwkEgVMEfxC91LUVJuv8E6rDP5uNKLleVhK2qs5/Tvnva4faFGrfhWeu7AtPGc3qE5Pqst
+        OYuXaONlfyafmmJcRRfiVkw2nzhVUCDlXcpjiWJHz+/n7nJH+0s/plRcKo4poQGDsaW5ujvN
+        u1DGxqbi+z+4A16sX6IKlP6Yc856+HRFtijxECJXiP4BkghVIjUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42I5/e/4XV3W3knxBq+fyVgsacqwmH/kHKvF
+        jV9trBYrvsxkt7jwtIfN4vz5DewWl3fNYbM4O+84m8WM8/uYLN78fsFusfbIXXaL1r1H2C12
+        3jnB7MDrsWbeGkaPnbPusnss2FTqsWlVJ5tH35ZVjB7Hb2xn8vi8SS6APUrPpii/tCRVISO/
+        uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEvY96RZcwF9+Urpm5tZG9g
+        /C3ZxcjJISFgIjHvzA92EFtIYCmjxIevFRBxGYmT0xpYIWxhiT/Xuti6GLmAaj4xSpz+cIAJ
+        JMEmYCjR9RYkwckhIuAk8X7yRWaQImaBNcwSjW3dYEXCAmESn5bvAytiEVCV+LTzMguIzStg
+        K/HwWBMjxAZ5idUbDjCD2JwCdhLvGu4xQlxkK3H40FXmCYx8CxgZVjGKpJYW56bnFhvqFSfm
+        Fpfmpesl5+duYgRGwLZjPzfvYLy0MfgQowAHoxIPb8KEifFCrIllxZW5hxglOJiVRHidzp6O
+        E+JNSaysSi3Kjy8qzUktPsRoCnTURGYp0eR8YHTmlcQbmhqaW1gamhubG5tZKInzdggcjBES
+        SE8sSc1OTS1ILYLpY+LglGpgNP/Bwzlj9qkDnEZq86qzTob7neCZ6HOa0cO0sXkfo+4Zvd8C
+        jV2Re39k6E/QfDHfd84Zz7RnRYo8TFeVwmJ8Iou1dYVuS7VsZNJ4eLCj5UlbkaLNgoTJCvM5
+        mqYcPfm6V5Jhn/ICE+49//f+33Xm6sXzc4tjl116+3K9q//vHrHiSZssvLUdlFiKMxINtZiL
+        ihMBcMrdu5YCAAA=
+X-CMS-MailID: 20201023075757eucas1p13e4e7f5177bd3f789ac0d2a8aa57c86e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20201023075757eucas1p13e4e7f5177bd3f789ac0d2a8aa57c86e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201023075757eucas1p13e4e7f5177bd3f789ac0d2a8aa57c86e
+References: <20201023075744.26200-1-m.szyprowski@samsung.com>
+        <CGME20201023075757eucas1p13e4e7f5177bd3f789ac0d2a8aa57c86e@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+From: Jaehoon Chung <jh80.chung@samsung.com>
 
---64of3vfnxriskdjj
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add the nodes relevant to PCIe PHY and PCIe support. PCIe is used for the
+WiFi interface (Broadcom Limited BCM4358 802.11ac Wireless LAN SoC).
 
-Hello Krzysztof,
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+[mszyprow: rewrote commit message, reworked board/generic dts/dtsi split]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ .../boot/dts/exynos/exynos5433-pinctrl.dtsi   |  2 +-
+ .../dts/exynos/exynos5433-tm2-common.dtsi     | 24 ++++++++++++-
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi    | 35 +++++++++++++++++++
+ 3 files changed, 59 insertions(+), 2 deletions(-)
 
-On Thu, Oct 22, 2020 at 10:09:25PM +0200, Krzysztof Kozlowski wrote:
-> On Thu, Oct 22, 2020 at 09:13:14PM +0200, Uwe Kleine-K=F6nig wrote:
-> > this series doesn't seem to be applied and looking at the list of people
-> > this mail was sent "To:" it's not obvious who is expected to take it. I
-> > assume it is not for us linux-pwm guys and will tag it as
-> > "not-applicable" in our patchwork.
->=20
-> All of the patches, including the one here, touch actually multiple
-> subsystems, so if this is OK with you, I could take them through
-> Samsung SoC.
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+index 9df7c65593a1..32a6518517e5 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+@@ -329,7 +329,7 @@
+ 	};
+ 
+ 	pcie_bus: pcie_bus {
+-		samsung,pins = "gpr3-4", "gpr3-5", "gpr3-6", "gpr3-7";
++		samsung,pins = "gpr3-4", "gpr3-5", "gpr3-6";
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
+ 	};
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 829fea23d4ab..6e45a42be562 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -969,6 +969,25 @@
+ 	bus-width = <4>;
+ };
+ 
++&pcie {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pcie_bus &pcie_wlanen>;
++	vdd10-supply = <&ldo6_reg>;
++	vdd18-supply = <&ldo7_reg>;
++	assigned-clocks = <&cmu_fsys CLK_MOUT_SCLK_PCIE_100_USER>,
++			  <&cmu_top CLK_MOUT_SCLK_PCIE_100>;
++	assigned-clock-parents = <&cmu_top CLK_SCLK_PCIE_100_FSYS>,
++				 <&cmu_top CLK_MOUT_BUS_PLL_USER>;
++	assigned-clock-rates = <0>, <100000000>;
++	interrupt-map-mask = <0 0 0 0>;
++	interrupt-map = <0 0 0 0 &gic GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&pcie_phy {
++	status = "okay";
++};
++
+ &ppmu_d0_general {
+ 	status = "okay";
+ 	events {
+@@ -1085,8 +1104,11 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&initial_ese>;
+ 
++	pcie_wlanen: pcie-wlanen {
++		PIN(INPUT, gpj2-0, UP, FAST_SR4);
++	};
++
+ 	initial_ese: initial-state {
+-		PIN(INPUT, gpj2-0, DOWN, FAST_SR1);
+ 		PIN(INPUT, gpj2-1, DOWN, FAST_SR1);
+ 		PIN(INPUT, gpj2-2, DOWN, FAST_SR1);
+ 	};
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 8eb4576da8f3..4d25b7d2486c 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -1029,6 +1029,11 @@
+ 			reg = <0x145f0000 0x1038>;
+ 		};
+ 
++		syscon_fsys: syscon@156f0000 {
++			compatible = "syscon";
++			reg = <0x156f0000 0x1044>;
++		};
++
+ 		gsc_0: video-scaler@13c00000 {
+ 			compatible = "samsung,exynos5433-gsc";
+ 			reg = <0x13c00000 0x1000>;
+@@ -1830,6 +1835,36 @@
+ 				status = "disabled";
+ 			};
+ 		};
++
++		pcie_phy: pcie-phy@15680000 {
++			compatible = "samsung,exynos5433-pcie-phy";
++			reg = <0x15680000 0x1000>;
++			samsung,pmu-syscon = <&pmu_system_controller>;
++			samsung,fsys-sysreg = <&syscon_fsys>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
++
++		pcie: pcie@15700000 {
++			compatible = "samsung,exynos5433-pcie";
++			reg = <0x15700000 0x1000>, <0x156b0000 0x1000>,
++			      <0x0c000000 0x1000>;
++			reg-names = "dbi", "elbi", "config";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			device_type = "pci";
++			interrupts = <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_fsys CLK_PCIE>,
++			         <&cmu_fsys CLK_PCLK_PCIE_PHY>;
++			clock-names = "pcie", "pcie_bus";
++			num-lanes = <1>;
++			bus-range = <0x00 0xff>;
++			phys = <&pcie_phy>;
++			ranges = <0x81000000 0 0	  0x0c001000 0 0x00010000>,
++				 <0x82000000 0 0x0c011000 0x0c011000 0 0x03feefff>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	timer: timer {
+-- 
+2.17.1
 
-I don't object. And I failed to find where pwm is touched (I assume I
-didn't look carefully enough).
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---64of3vfnxriskdjj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl+SdBUACgkQwfwUeK3K
-7AkxRQf7B5uGR0Tf8DzE82B5Uy0nOOhk7weuNjW+IHxy78ekhlyQxfjS0sJ0rYc9
-Z6G2m0AmEmMmDVq8u0FHZ9u6viBuXKfQ4CqlNd2UiR7olagr61pGbrSxjIwgIDA4
-zSEbNILuUqqenjp6m0FGSP6HUNfUbF6pNI0XWnZELus0wST2fdIUH508b4gtlTYX
-9wRzn7EMA1jzzZtqP1okoAa2C1B2CQvXXdD3YUByJruBhXGRpJ3rf26S6wW9r59x
-snDtRxeFWYxgPWbyehWse1Il0R5LgdBAYfdFK0NNFG2EltMzB8vstGKpd9AEI2ka
-Yn6pL8rsDumxeUoXxlK2dPArdLZwuw==
-=RZQR
------END PGP SIGNATURE-----
-
---64of3vfnxriskdjj--
