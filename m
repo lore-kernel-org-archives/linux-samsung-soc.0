@@ -2,337 +2,142 @@ Return-Path: <SRS0=uz1o=D6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B37C56201
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 12:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F1DC388F9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 13:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02272221F9
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 12:26:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="K/Mlvxqb"
+	by mail.kernel.org (Postfix) with ESMTP id 6BBBB208FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 13:37:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2897739AbgJWM0H (ORCPT
+        id S370824AbgJWNhi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 23 Oct 2020 08:26:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38544 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2898202AbgJWM0H (ORCPT
+        Fri, 23 Oct 2020 09:37:38 -0400
+Received: from mga01.intel.com ([192.55.52.88]:39937 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S371967AbgJWNhh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 23 Oct 2020 08:26:07 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 515C0C0613D2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2020 05:26:06 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id e2so1316147wme.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2020 05:26:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=PAFtVAQ3tChjSUzKujX9wl7xWmpuDPW53yjWkRt+YX4=;
-        b=K/MlvxqbXxKBD7NtxzEVlnQQgEo8R7jzzQ6d8aTKu/t7mVOfhin25s4agcsW7aC9Fm
-         Dg+jn2+aY9gWuXi7wduTHjxE/oiqtUmeSjJS9d5bV3rltqi1wTiNFP2rJPUUFWgVs7E6
-         gRtIWzD7wrVKYbLUc6keZxA0hqL4l6D2l+jUk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to;
-        bh=PAFtVAQ3tChjSUzKujX9wl7xWmpuDPW53yjWkRt+YX4=;
-        b=FyTQUOZNpeXxE41zRa4lylqxBCyygV35Zp9gy66rnhARmR7y5PzjkG5USw+vPlGHNq
-         +FxA+UNvP3r8Xq5WHPbZdHN341u/M4Em/tbunOvXnvT31PS2uLwmoNmBXUNGZXY9AEmH
-         4dy9eOzbiv7EUw9zJxFdILwk0kqBJLJhtUX74YOCsZqagc4xHdZdloFuVg/XEFLTzXzH
-         fKDolUeAOnCzx9o9VURS+iHEXFeWhGQcjDLsnJSPVrIlsFzg2pZD6f+PI8BxOIkuKWrX
-         TQZVZs6I0377JfS0xYgM1ORTLZHOLg0A7iUz/aZpNWpUU6Y68oYtdZ6Sv5ppPjas1O3S
-         /WBg==
-X-Gm-Message-State: AOAM530Qme38JbaWhY0eaKbEOPYXGTOJ7Ve8TGelg/fRC1Zlj2RTnz0E
-        ihc17lixF9FXLLIHPzQ1ND8JmQ==
-X-Google-Smtp-Source: ABdhPJzmCXFy0gj+CVwTI7L79a3sWTdS3hTTu9nmTWuT4VCd2/G9Mq4Y+61MqYgpQ+yiCjJ3FCfC5Q==
-X-Received: by 2002:a7b:c015:: with SMTP id c21mr2044322wmb.22.1603455964962;
-        Fri, 23 Oct 2020 05:26:04 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id k203sm3232158wmb.37.2020.10.23.05.26.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Oct 2020 05:26:04 -0700 (PDT)
-Date:   Fri, 23 Oct 2020 14:26:02 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     DRI Development <dri-devel@lists.freedesktop.org>
-Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+        Fri, 23 Oct 2020 09:37:37 -0400
+IronPort-SDR: cEPw7lSAdDgO0ESr099CstorpFDE5TBH5OzenwZ//zdI/YepF+kudumEwLtAV8aAeOofS8u7mK
+ 6Kv5fWHufbNQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9782"; a="185375265"
+X-IronPort-AV: E=Sophos;i="5.77,408,1596524400"; 
+   d="scan'208";a="185375265"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2020 06:37:33 -0700
+IronPort-SDR: XVFt1D6aj9rEcPEkp0bYJf6esqVIN4ROHFyJfGRDStJJvCkZBl0IH9Klh0v6Ples2rAMgiUG5W
+ X1+b3QpuR0Uw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.77,408,1596524400"; 
+   d="scan'208";a="302765196"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
+  by fmsmga007.fm.intel.com with ESMTP; 23 Oct 2020 06:37:29 -0700
+Subject: Re: [patch 05/12] usb: xhci: Remove in_interrupt() checks
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org,
+        Thomas Winischhofer <thomas@winischhofer.net>,
+        Johan Hovold <johan@kernel.org>,
+        Valentina Manea <valentina.manea.m@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-omap@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH 29/65] s390/pci: Remove races against pte updates
-Message-ID: <20201023122602.GB401619@phenom.ffwll.local>
-Mail-Followup-To: DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        linux-s390@vger.kernel.org
-References: <20201021163242.1458885-1-daniel.vetter@ffwll.ch>
- <20201023122216.2373294-1-daniel.vetter@ffwll.ch>
- <20201023122216.2373294-29-daniel.vetter@ffwll.ch>
+        linux-samsung-soc@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Duncan Sands <duncan.sands@free.fr>
+References: <20201014145215.518912759@linutronix.de>
+ <20201014145727.607191004@linutronix.de>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Autocrypt: addr=mathias.nyman@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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 fiD/
+Message-ID: <916bebd9-6d83-3fa9-5e8b-5ecaa65d799e@linux.intel.com>
+Date:   Fri, 23 Oct 2020 16:38:57 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201023122216.2373294-29-daniel.vetter@ffwll.ch>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+In-Reply-To: <20201014145727.607191004@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 23, 2020 at 02:21:40PM +0200, Daniel Vetter wrote:
-> Way back it was a reasonable assumptions that iomem mappings never
-> change the pfn range they point at. But this has changed:
+On 14.10.2020 17.52, Thomas Gleixner wrote:
+> From: Ahmed S. Darwish <a.darwish@linutronix.de>
 > 
-> - gpu drivers dynamically manage their memory nowadays, invalidating
-> ptes with unmap_mapping_range when buffers get moved
+> The usage of in_interrupt() in drivers is phased out for various reasons.
 > 
-> - contiguous dma allocations have moved from dedicated carvetouts to
-> cma regions. This means if we miss the unmap the pfn might contain
-> pagecache or anon memory (well anything allocated with GFP_MOVEABLE)
+> xhci_set_hc_event_deq() has an !in_interrupt() check which is pointless
+> because the function is only invoked from xhci_mem_init() which is clearly
+> task context as it does GFP_KERNEL allocations. Remove it.
 > 
-> - even /dev/mem now invalidates mappings when the kernel requests that
-> iomem region when CONFIG_IO_STRICT_DEVMEM is set, see commit
-> 3234ac664a87 ("/dev/mem: Revoke mappings when a driver claims the
-> region")
+> xhci_urb_enqueue() prints a debug message if an URB is submitted after the
+> underlying hardware was suspended. But that warning is only issued when
+> in_interrupt() is true, which makes no sense. Simply return -ESHUTDOWN and
+> be done with it.
 > 
-> Accessing pfns obtained from ptes without holding all the locks is
-> therefore no longer a good idea. Fix this.
-> 
-> Since zpci_memcpy_from|toio seems to not do anything nefarious with
-> locks we just need to open code get_pfn and follow_pfn and make sure
-> we drop the locks only after we're done. The write function also needs
-> the copy_from_user move, since we can't take userspace faults while
-> holding the mmap sem.
-> 
-> v2: Move VM_IO | VM_PFNMAP checks around so they keep returning EINVAL
-> like before (Gerard)
-> 
-> v3: Polish commit message (Niklas)
-> 
-> Reviewed-by: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-mm@kvack.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-media@vger.kernel.org
-> Cc: Niklas Schnelle <schnelle@linux.ibm.com>
-> Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
-> Cc: linux-s390@vger.kernel.org
-> Cc: Niklas Schnelle <schnelle@linux.ibm.com>
-> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-Apologies for this random patch bomb, typoed git send-email command :-/
-
-v4 of this will come properly on Monday or so.
--Daniel
-
+> Signed-off-by: Ahmed S. Darwish <a.darwish@linutronix.de>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Mathias Nyman <mathias.nyman@intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-usb@vger.kernel.org
 > ---
->  arch/s390/pci/pci_mmio.c | 98 +++++++++++++++++++++++-----------------
->  1 file changed, 57 insertions(+), 41 deletions(-)
-> 
-> diff --git a/arch/s390/pci/pci_mmio.c b/arch/s390/pci/pci_mmio.c
-> index 401cf670a243..1a6adbc68ee8 100644
-> --- a/arch/s390/pci/pci_mmio.c
-> +++ b/arch/s390/pci/pci_mmio.c
-> @@ -119,33 +119,15 @@ static inline int __memcpy_toio_inuser(void __iomem *dst,
->  	return rc;
->  }
->  
-> -static long get_pfn(unsigned long user_addr, unsigned long access,
-> -		    unsigned long *pfn)
-> -{
-> -	struct vm_area_struct *vma;
-> -	long ret;
-> -
-> -	mmap_read_lock(current->mm);
-> -	ret = -EINVAL;
-> -	vma = find_vma(current->mm, user_addr);
-> -	if (!vma)
-> -		goto out;
-> -	ret = -EACCES;
-> -	if (!(vma->vm_flags & access))
-> -		goto out;
-> -	ret = follow_pfn(vma, user_addr, pfn);
-> -out:
-> -	mmap_read_unlock(current->mm);
-> -	return ret;
-> -}
-> -
->  SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
->  		const void __user *, user_buffer, size_t, length)
->  {
->  	u8 local_buf[64];
->  	void __iomem *io_addr;
->  	void *buf;
-> -	unsigned long pfn;
-> +	struct vm_area_struct *vma;
-> +	pte_t *ptep;
-> +	spinlock_t *ptl;
->  	long ret;
->  
->  	if (!zpci_is_enabled())
-> @@ -158,7 +140,7 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
->  	 * We only support write access to MIO capable devices if we are on
->  	 * a MIO enabled system. Otherwise we would have to check for every
->  	 * address if it is a special ZPCI_ADDR and would have to do
-> -	 * a get_pfn() which we don't need for MIO capable devices.  Currently
-> +	 * a pfn lookup which we don't need for MIO capable devices.  Currently
->  	 * ISM devices are the only devices without MIO support and there is no
->  	 * known need for accessing these from userspace.
->  	 */
-> @@ -176,21 +158,37 @@ SYSCALL_DEFINE3(s390_pci_mmio_write, unsigned long, mmio_addr,
->  	} else
->  		buf = local_buf;
->  
-> -	ret = get_pfn(mmio_addr, VM_WRITE, &pfn);
-> +	ret = -EFAULT;
-> +	if (copy_from_user(buf, user_buffer, length))
-> +		goto out_free;
-> +
-> +	mmap_read_lock(current->mm);
-> +	ret = -EINVAL;
-> +	vma = find_vma(current->mm, mmio_addr);
-> +	if (!vma)
-> +		goto out_unlock_mmap;
-> +	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
-> +		goto out_unlock_mmap;
-> +	ret = -EACCES;
-> +	if (!(vma->vm_flags & VM_WRITE))
-> +		goto out_unlock_mmap;
-> +
-> +	ret = follow_pte_pmd(vma->vm_mm, mmio_addr, NULL, &ptep, NULL, &ptl);
->  	if (ret)
-> -		goto out;
-> -	io_addr = (void __iomem *)((pfn << PAGE_SHIFT) |
-> +		goto out_unlock_mmap;
-> +
-> +	io_addr = (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
->  			(mmio_addr & ~PAGE_MASK));
->  
-> -	ret = -EFAULT;
->  	if ((unsigned long) io_addr < ZPCI_IOMAP_ADDR_BASE)
-> -		goto out;
-> -
-> -	if (copy_from_user(buf, user_buffer, length))
-> -		goto out;
-> +		goto out_unlock_pt;
->  
->  	ret = zpci_memcpy_toio(io_addr, buf, length);
-> -out:
-> +out_unlock_pt:
-> +	pte_unmap_unlock(ptep, ptl);
-> +out_unlock_mmap:
-> +	mmap_read_unlock(current->mm);
-> +out_free:
->  	if (buf != local_buf)
->  		kfree(buf);
->  	return ret;
-> @@ -274,7 +272,9 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, mmio_addr,
->  	u8 local_buf[64];
->  	void __iomem *io_addr;
->  	void *buf;
-> -	unsigned long pfn;
-> +	struct vm_area_struct *vma;
-> +	pte_t *ptep;
-> +	spinlock_t *ptl;
->  	long ret;
->  
->  	if (!zpci_is_enabled())
-> @@ -287,7 +287,7 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, mmio_addr,
->  	 * We only support read access to MIO capable devices if we are on
->  	 * a MIO enabled system. Otherwise we would have to check for every
->  	 * address if it is a special ZPCI_ADDR and would have to do
-> -	 * a get_pfn() which we don't need for MIO capable devices.  Currently
-> +	 * a pfn lookup which we don't need for MIO capable devices.  Currently
->  	 * ISM devices are the only devices without MIO support and there is no
->  	 * known need for accessing these from userspace.
->  	 */
-> @@ -306,22 +306,38 @@ SYSCALL_DEFINE3(s390_pci_mmio_read, unsigned long, mmio_addr,
->  		buf = local_buf;
->  	}
->  
-> -	ret = get_pfn(mmio_addr, VM_READ, &pfn);
-> +	mmap_read_lock(current->mm);
-> +	ret = -EINVAL;
-> +	vma = find_vma(current->mm, mmio_addr);
-> +	if (!vma)
-> +		goto out_unlock_mmap;
-> +	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
-> +		goto out_unlock_mmap;
-> +	ret = -EACCES;
-> +	if (!(vma->vm_flags & VM_WRITE))
-> +		goto out_unlock_mmap;
-> +
-> +	ret = follow_pte_pmd(vma->vm_mm, mmio_addr, NULL, &ptep, NULL, &ptl);
->  	if (ret)
-> -		goto out;
-> -	io_addr = (void __iomem *)((pfn << PAGE_SHIFT) | (mmio_addr & ~PAGE_MASK));
-> +		goto out_unlock_mmap;
-> +
-> +	io_addr = (void __iomem *)((pte_pfn(*ptep) << PAGE_SHIFT) |
-> +			(mmio_addr & ~PAGE_MASK));
->  
->  	if ((unsigned long) io_addr < ZPCI_IOMAP_ADDR_BASE) {
->  		ret = -EFAULT;
-> -		goto out;
-> +		goto out_unlock_pt;
->  	}
->  	ret = zpci_memcpy_fromio(buf, io_addr, length);
-> -	if (ret)
-> -		goto out;
-> -	if (copy_to_user(user_buffer, buf, length))
-> +
-> +out_unlock_pt:
-> +	pte_unmap_unlock(ptep, ptl);
-> +out_unlock_mmap:
-> +	mmap_read_unlock(current->mm);
-> +
-> +	if (!ret && copy_to_user(user_buffer, buf, length))
->  		ret = -EFAULT;
->  
-> -out:
->  	if (buf != local_buf)
->  		kfree(buf);
->  	return ret;
-> -- 
-> 2.28.0
-> 
+>  drivers/usb/host/xhci-mem.c |    2 +-
+>  drivers/usb/host/xhci.c     |    6 ++----
+>  2 files changed, 3 insertions(+), 5 deletions(-)
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+
