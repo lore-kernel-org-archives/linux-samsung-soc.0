@@ -2,155 +2,92 @@ Return-Path: <SRS0=oj0V=D7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39638C388F9
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Oct 2020 03:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C183EC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Oct 2020 14:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE1F82075B
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Oct 2020 03:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F56222203
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Oct 2020 14:44:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZpZKjdJt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="raiHnbuY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759324AbgJXDMp (ORCPT
+        id S1762093AbgJXOow (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 23 Oct 2020 23:12:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35090 "EHLO
+        Sat, 24 Oct 2020 10:44:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759320AbgJXDMp (ORCPT
+        with ESMTP id S1762092AbgJXOov (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 23 Oct 2020 23:12:45 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48276C0613CE;
-        Fri, 23 Oct 2020 20:12:43 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id l2so236237pjt.5;
-        Fri, 23 Oct 2020 20:12:43 -0700 (PDT)
+        Sat, 24 Oct 2020 10:44:51 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A36EC0613CE;
+        Sat, 24 Oct 2020 07:44:50 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id a72so5454036wme.5;
+        Sat, 24 Oct 2020 07:44:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:thread-topic:thread-index:date:message-id
-         :references:in-reply-to:accept-language:content-language
-         :content-transfer-encoding:mime-version;
-        bh=zTBRtgT7pbWlqs1vi69+HR0XTTRLAETUhmExxew5NDo=;
-        b=ZpZKjdJtSqcsG89NdJQp0+s02MLtTNI1vpHpSP7oKzdakHEcSKkvY7CcHhj5zms+jS
-         l9y4mKUj4WTaUKiYUlGX5SdYjTKc3Aq4oSzUSPj3rdneVz3SyraFboXN4SX8mgI5XLLh
-         OPf15zn6cf/vEf1/lhFTbatI8uncx9PzX6wvpWEagn8Eo/3TPAoLoeBfyL03cgwEAft8
-         Ungpe1hhZmMvlxUyPODGJMX+hnlgfCXCSOKsoq2U+AYQbrz4AW3VesOhTKYzBWSnZ7JK
-         hVkUTsJbcnS/1qPyjMgloBhCg/zYdep+btUB7LEtGjiXQh6mi1pwh+s1+zhw6tCnGyy0
-         JAvQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PgkVxvJ0s336dC7TB70Wzfqbko+7EWqDu/F3TtxcrZQ=;
+        b=raiHnbuYWS90jAqkT8bnATQo7ZzxfT6QUa51h1QeyF1gIpajE9yJrS7tuq3goImohT
+         eh6kvkq55yH9wVKWi+gHUF+KuK7eJ+k8qIuqjL1Q3H/hofmGvqBTRimlMyr3h5rcSPgZ
+         g5RFA5910n/GVyk6VgxDkeVJRxfVTjoWSf57oDd/Rgo6v7sZhB5GhrG227kxQhZb/34q
+         liiUwljpq+CynwrxrLEdSniRG1+SXVeVJ0jKSqVnYXeu6vYhBI0Z2TzG0KihmKDXQd8m
+         kYW9+Uj9dQu7v4/uUEhH0Msc6wBkSQfqgyckXNe3qjDMiEgceKu8+C9cprwaPot0CoPN
+         Wg+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:thread-topic:thread-index
-         :date:message-id:references:in-reply-to:accept-language
-         :content-language:content-transfer-encoding:mime-version;
-        bh=zTBRtgT7pbWlqs1vi69+HR0XTTRLAETUhmExxew5NDo=;
-        b=h0NdEHSMPa8C39kL+8lG+TWvLiWu0Bx0KHDmgigpAQY1JIfakpNnuh0l4xsxeKqtf0
-         r3J/xHkeKlIDpOWpiNx/zFd6hNAdT3mYx9AWgv+JUOxebZArXM0ViIg+wcjL5iVDqFE8
-         le/W5W/dYfmwPUIMI7zWTCNn9/HF7oHozABXBtLMqtwSaeKdbbluc4Z8PAVUe3z1OZgJ
-         kHDTFxImthTxiQgl52ubOYP01VmKkSq1gPSBLHWKZm4dqDqnvFP/i+BIrASo2YNDnr/S
-         +Qoe/e2Ph8LeV8pw+FWI/a8KINiZfh5Y7hxPmMGn1JpRv7uX1zHbeQ/8V9GD+mdfYqnw
-         8c1A==
-X-Gm-Message-State: AOAM531gk+FA+gVpV3qFhfAkEGka7cPQIEfzpl56Z5bgES/dSe9y3Hhu
-        g4kBJwRMqWUGM058gIdPfOM=
-X-Google-Smtp-Source: ABdhPJzQmQEnxa9/l+9Lq4CzVsMG9+8m/ikAGTD954YrN3sd7D9wuPDi6xuu6zomPp9QihOAFq344g==
-X-Received: by 2002:a17:902:7c86:b029:d5:f680:f756 with SMTP id y6-20020a1709027c86b02900d5f680f756mr2165248pll.39.1603509162822;
-        Fri, 23 Oct 2020 20:12:42 -0700 (PDT)
-Received: from SLXP216MB0477.KORP216.PROD.OUTLOOK.COM ([2603:1046:100:9::5])
-        by smtp.gmail.com with ESMTPSA id j12sm4204812pjs.21.2020.10.23.20.12.38
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Oct 2020 20:12:41 -0700 (PDT)
-From:   Jingoo Han <jingoohan1@gmail.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Han Jingoo <jingoohan1@gmail.com>
-Subject: Re: [PATCH v2 5/6] pci: dwc: pci-exynos: rework the driver to support
- Exynos5433 variant
-Thread-Topic: [PATCH v2 5/6] pci: dwc: pci-exynos: rework the driver to
- support Exynos5433 variant
-Thread-Index: ATYzNHA3LqEW/SeHeSezfbTZ8+mXqGl5LTQyaXktNDK6VWtTUg==
-X-MS-Exchange-MessageSentRepresentingType: 1
-Date:   Sat, 24 Oct 2020 03:12:35 +0000
-Message-ID: <SLXP216MB047790A7FD4D1E7304493343AA1B0@SLXP216MB0477.KORP216.PROD.OUTLOOK.COM>
-References: <20201023075744.26200-1-m.szyprowski@samsung.com>
- <CGME20201023075756eucas1p18765653e747842eef4b438aff32ef136@eucas1p1.samsung.com>
- <20201023075744.26200-6-m.szyprowski@samsung.com>
-In-Reply-To: <20201023075744.26200-6-m.szyprowski@samsung.com>
-Accept-Language: ko-KR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-Exchange-Organization-SCL: -1
-X-MS-TNEF-Correlator: 
-X-MS-Exchange-Organization-RecordReviewCfmType: 0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PgkVxvJ0s336dC7TB70Wzfqbko+7EWqDu/F3TtxcrZQ=;
+        b=Y3vrBiBp1yDdvzdnjK/MDczn1Nng4o2MkjWiyBYc8Ii4TSe1GtTWcUYzcI1N03F8fa
+         5S55IMa/xOe2QROrs/xPKGc18Kv/U8PCxsdk41lohiPi4OvNDoExUDoCQbTjAjcuWkmf
+         AaCV6/FgSKR4fVU6QMFlEjmHcwGLO7xOSgMDLUgGUw0BehpiBsN49rwzcOx02/Yd7xL1
+         F1LEhyJiSwgCQvrGmK2i/nRr4YSSmi/0a1p+TFEAX2TJa8+pS+QFGAu/h5NekUHydnmd
+         a2k1OzUUmapFCEhVw/zwKkzZqoNfjaG+fF1iTqLSXYkCn5631Yv8UgR3IVqCIuHKe5zm
+         0z7A==
+X-Gm-Message-State: AOAM530OgY4UUaCSX64VnA9Q325KEaHyVEXEMv7l06yByfK1IyIylOAu
+        ZEdfyrLYF5IDvn4lV0pHCZ8=
+X-Google-Smtp-Source: ABdhPJwwdNWTm8qYg7a9ss+D6Yus5UpFx6L0Le6lJ+RoUVImitWw7cDfLfIqiGlFVTBB6LuzqUYgew==
+X-Received: by 2002:a7b:c3d3:: with SMTP id t19mr2476227wmj.139.1603550688664;
+        Sat, 24 Oct 2020 07:44:48 -0700 (PDT)
+Received: from adroid (165-170-184-091.ip-addr.vsenet.de. [91.184.170.165])
+        by smtp.gmail.com with ESMTPSA id n9sm12630891wrq.72.2020.10.24.07.44.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Oct 2020 07:44:48 -0700 (PDT)
+From:   =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>
+To:     linux-samsung-soc@vger.kernel.org
+Cc:     kgene@kernel.org, krzk@kernel.org, devicetree@vger.kernel.org,
+        martin.juecker@gmail.com
+Subject: [PATCH 0/5] add exynos4412-based p4note device family support
+Date:   Sat, 24 Oct 2020 16:44:16 +0200
+Message-Id: <20201024144421.34435-1-martin.juecker@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10/23/20, 3:58 AM, Marek Szyprowski wrote:
->=20
-> From: Jaehoon Chung <jh80.chung@samsung.com>
->
-> Exynos5440 SoC support has been dropped since commit 8c83315da1cf ("ARM:
-> dts: exynos: Remove Exynos5440"). Rework this driver to support DWC PCIe
-> variant found in the Exynos5433 SoCs.
->
-> The main difference in Exynos5433 variant is lack of the MSI support
-> (the MSI interrupt is not even routed to the CPU).
->
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> [mszyprow: reworked the driver to support only Exynos5433 variant,
->	   simplified code, rebased onto current kernel code, added
->	   regulator support, converted to the regular platform driver,
->	   removed MSI related code, rewrote commit message]
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/pci/controller/dwc/Kconfig      |   3 +-
->  drivers/pci/controller/dwc/pci-exynos.c | 358 ++++++++++--------------
->  drivers/pci/quirks.c                    |   1 +
->  3 files changed, 145 insertions(+), 217 deletions(-)
+Hello,
 
-[....]
+after lots of research and trial and error, this is my first
+contribution to the linux kernel.
 
-> diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/contro=
-ller/dwc/pci-exynos.c
-> index 242683cde04a..58056fbdc2fa 100644
-> --- a/drivers/pci/controller/dwc/pci-exynos.c
-> +++ b/drivers/pci/controller/dwc/pci-exynos.c
-> @@ -2,26 +2,23 @@
->  /*
->   * PCIe host controller driver for Samsung Exynos SoCs
->   *
-> - * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-> + * Copyright (C) 2013-2020 Samsung Electronics Co., Ltd.
->   *		https://www.samsung.com
->   *
->   * Author: Jingoo Han <jg1.han@samsung.com>
-> + *	   Jaehoon Chung <jh80.chung@samsung.com>
+These patches lay the foundation for supporting the Samsung Galaxy
+Note 10.1 device family. To the best of my knowledge there are around
+16 devices which use almost identical hardware inside with exceptions
+being the modem and one of the sensors. The first instance which I'm
+currently testing on is the N8010 which is the wifi only version that
+is identical to the N8013. There are some missing components still,
+but it's a start.
 
-Would you explain the reason why you add him as an author?
-If reasonable, I will accept it. Also, I want gentle discussion, not aggres=
-sive one.
-Thank you.
+Cheers
+Martin
 
-Best regards,
-Jingoo Han
 
->   */
-
-[....]
