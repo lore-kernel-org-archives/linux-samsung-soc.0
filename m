@@ -1,194 +1,124 @@
-Return-Path: <SRS0=uz1o=D6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=oj0V=D7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B452C4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 18:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A2BC55178
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Oct 2020 02:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E706222254
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Oct 2020 18:22:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 635812465E
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Oct 2020 02:59:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bjbw8tCF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I7VG7qH7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754609AbgJWSWG (ORCPT
+        id S1759208AbgJXC7p (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 23 Oct 2020 14:22:06 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:37260 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754606AbgJWSWF (ORCPT
+        Fri, 23 Oct 2020 22:59:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33072 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759179AbgJXC7o (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 23 Oct 2020 14:22:05 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201023182147euoutp016c6be17a9c294223d32c3b489b261f6d~Ash2Hu-Yf1136811368euoutp01F;
-        Fri, 23 Oct 2020 18:21:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201023182147euoutp016c6be17a9c294223d32c3b489b261f6d~Ash2Hu-Yf1136811368euoutp01F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1603477307;
-        bh=oMLuD5Wlc163X55ToCaD9F6Rp3haPPYODKde631RbUI=;
-        h=From:To:Cc:Subject:In-Reply-To:Date:References:From;
-        b=bjbw8tCFLdVKpMayoigm7twPIpeW5fYTSD4DQkQgLhu0iyvbxjBWWXItkSrsOGzha
-         EfaXJPvC/U0EQxVZEN5EetGp9g8Q6sx1qBYOA8WfJCMtzMpn75/OaEoDwe3n3l3TjD
-         XZ4LHsGOVJObovuObBW8gpjKP9oUdiPgEQ7XemfM=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201023182138eucas1p2547f9bb105780c316eff28635ce69a31~AshthqH502955929559eucas1p25;
-        Fri, 23 Oct 2020 18:21:38 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 46.44.06318.13F139F5; Fri, 23
-        Oct 2020 19:21:37 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20201023182136eucas1p28518b30e23ae4204840c3d5526bd3400~Ashsh8Fq72954729547eucas1p2r;
-        Fri, 23 Oct 2020 18:21:36 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201023182136eusmtrp1957cbd06d4b18261c94cfea214e22975~AshshN-b71506915069eusmtrp1q;
-        Fri, 23 Oct 2020 18:21:36 +0000 (GMT)
-X-AuditID: cbfec7f5-38bff700000018ae-29-5f931f31f0f9
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 4B.2D.06314.03F139F5; Fri, 23
-        Oct 2020 19:21:36 +0100 (BST)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20201023182136eusmtip1e9e6409348152c60d21f3b329a094456~AshsXFfXY0446104461eusmtip1j;
-        Fri, 23 Oct 2020 18:21:36 +0000 (GMT)
-From:   Lukasz Stelmach <l.stelmach@samsung.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewic?= =?utf-8?Q?z?= 
-        <b.zolnierkie@samsung.com>,
-        "linux-samsung-soc\@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, jim.cromie@gmail.com,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v3 2/5] dt-bindings: net: Add bindings for AX88796C SPI
- Ethernet Adapter
-In-Reply-To: <CAJKOXPeNhXrBa0ZK-k37uhs5izukrhHN-rkxgsjiQBHCMmZs7g@mail.gmail.com>
-        (Krzysztof Kozlowski's message of "Fri, 23 Oct 2020 18:27:18 +0200")
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-Date:   Fri, 23 Oct 2020 20:21:25 +0200
-Message-ID: <dleftjwnzgyfa2.fsf%l.stelmach@samsung.com>
+        Fri, 23 Oct 2020 22:59:44 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE0BC0613CE;
+        Fri, 23 Oct 2020 19:59:44 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id c17so239448pjo.5;
+        Fri, 23 Oct 2020 19:59:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:thread-topic:thread-index:date:message-id
+         :references:in-reply-to:accept-language:content-language
+         :content-transfer-encoding:mime-version;
+        bh=2vJO8R3lZs4KpedqI0G36Uf0dGNihvDZe+9D8dSAvUk=;
+        b=I7VG7qH7hear8+HL3g53OvCclOzwH7gXPbvPT/WUxwHwMD3X+GbmkqCTFRPzNAyVeQ
+         DX0RvRndxBeA9YhBydG8ozgPuPVuUKQjPEa/8x+lI5ZQMc1elYRH21P5PQIoIK1kCUMi
+         iQij/7A+rcEHPG6wWogvWQkzUVN8deObkgP08Q0i1t6Fz963lv+VTe0+V/DHNVkkEr3a
+         ZAyE0egbZiRss14Dhku387/VjTf3LLErXBTwc6Gcl1WFMQmnOGbBe7zfkj3UNkb24JiZ
+         w+D0E49oRVVLHQo1nlHGp6B38uwGfx4VfwS/nFxrpNmYy7rA3rG+lyaRgjsNyeY5Yqvw
+         r2nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:thread-topic:thread-index
+         :date:message-id:references:in-reply-to:accept-language
+         :content-language:content-transfer-encoding:mime-version;
+        bh=2vJO8R3lZs4KpedqI0G36Uf0dGNihvDZe+9D8dSAvUk=;
+        b=YWCU7IAXu3K1i6PeTxiqEHf/0jsCKplBL7X81Ch/ilkAzOGXV/cXRzMqs04lBaqOMC
+         JlE+C7viuv5cLGIt67dn+j+bPpkbz9qqbjcCYEib/8IqiWMtCvFtgW2W7z03AyFPjSZS
+         JwR+eJpiUDSQwaOTFAtOsjS/EqAaPo8lb4ygOvo6RBcd3k4x/3V+tvUz6HH/XI6hZhTg
+         3A5/xrb3+EIcfl+YVGA4vcY+WtfZsqOPPAjgPw6C8n1o8wsG1HFXfEOpt0ixntNkx6qy
+         F4tixDh8Aa/QmfB9IyhttamzE4mqAu8bEaDy90dl/h3qgrIlr7oygRHFkrJuNyPgidVg
+         zJ0g==
+X-Gm-Message-State: AOAM532dUOKo20IPj2lSstab/3+QM9fKl+gGs1Pg3tjMwDOItmDW9Rjd
+        nzZ+HFN8jf/GsKgkxp1Aruo=
+X-Google-Smtp-Source: ABdhPJwkxgR2TVQfNecLbsAXUk8T3HUXZTbebd82ieEDo/zraOq9nJnpjvY8yYOk1gNK39/xE9ZxuQ==
+X-Received: by 2002:a17:902:6bc7:b029:d5:f149:f2e0 with SMTP id m7-20020a1709026bc7b02900d5f149f2e0mr2306673plt.34.1603508384266;
+        Fri, 23 Oct 2020 19:59:44 -0700 (PDT)
+Received: from SLXP216MB0477.KORP216.PROD.OUTLOOK.COM ([2603:1046:100:9::5])
+        by smtp.gmail.com with ESMTPSA id 10sm4650998pjt.50.2020.10.23.19.59.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Oct 2020 19:59:43 -0700 (PDT)
+From:   Jingoo Han <jingoohan1@gmail.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Han Jingoo <jingoohan1@gmail.com>
+Subject: Re: [PATCH v2 1/6] dt-bindings: pci: drop samsung,exynos5440-pcie
+ binding
+Thread-Topic: [PATCH v2 1/6] dt-bindings: pci: drop samsung,exynos5440-pcie
+ binding
+Thread-Index: AWI0ZnA3zn//KNIhGksYxL11Iw2wX2l5LTQyaXktNDLiUwO1RQ==
+X-MS-Exchange-MessageSentRepresentingType: 1
+Date:   Sat, 24 Oct 2020 02:59:38 +0000
+Message-ID: <SLXP216MB0477DC8CC4B46200B69BDE86AA1B0@SLXP216MB0477.KORP216.PROD.OUTLOOK.COM>
+References: <20201023075744.26200-1-m.szyprowski@samsung.com>
+ <CGME20201023075754eucas1p2a4c9c5467f25a575bec34984fe6bb43b@eucas1p2.samsung.com>
+ <20201023075744.26200-2-m.szyprowski@samsung.com>
+In-Reply-To: <20201023075744.26200-2-m.szyprowski@samsung.com>
+Accept-Language: ko-KR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-Exchange-Organization-SCL: -1
+X-MS-TNEF-Correlator: 
+X-MS-Exchange-Organization-RecordReviewCfmType: 0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-        protocol="application/pgp-signature"
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SWUxTQRSGM70r1erQop6AWxo1rixujFGJ28ONTz6YaDSCVW5woa32CirG
-        gImgVqDKZimooLiAgdLaYDFiTEXQVKmKqYKiibghAho0LjEg14uJb9858/9n/jMZntIeYsP5
-        7aY9osVkSNazarqu6WfLnJhJ+QnRWWWxJNDho4jL7mRIaeAwTc42tjDkXJ+dIcGeFwyxdXZT
-        JBCo5cjDulyGuDuDDGm9XsoSe+CmivgKGxCpbuzgSFPZWJLZ0MiRwRteblmo0Bp8RAmeyjaV
-        UO/o4AR31TFWuFqRLtR7+1VCrqcKCf3uiWv4DeoliWLy9lTREhW3Wb3te/AeteuWbl+BY18G
-        6sVWFMIDng+Xmjs5K1LzWnwZwZliJ6MUXxGcrK9AStGPoKi1S/XP4uyzIpm1+BKCvMEwRfQe
-        wfny55QV8TyLI6G6er2sCcMC3C9ro2QNhYsYsL0rUckaHY4H/9OVcj8E2xFkt1tZ2TAGLwLP
-        h1eczDSeOsQ5f1mDY6HH2jXMoXCv+A0tM4WNUBz49Dcp4As82I6cRkrSVeDxBodT6+Bjs4dT
-        eDz487NpOQTgdMjPW6h4sxHUlf6gFc1ieNHyi1V4OfgLvnCKfhQ86wlV7h0FeXWnKKWtgaNZ
-        WkU9BWpsN4anhEPOx8vDaQQYeOJnlbeqQOCydVAn0GTHf+s4/lvHMTSWwjPAeT1Kac+Ci+Xd
-        lMJLoaamjy5DTBUaJ6ZIxiRRmmcS90ZKBqOUYkqK3Go2utHQZ/QPNH/zopu/t/gQ5pF+pCbj
-        WV6CljGkSvuNPjRlaNLr2isPUThtMptEfZhmxQN/vFaTaNifJlrMCZaUZFHyoQie1o/TzDvX
-        tUmLkwx7xJ2iuEu0/DtV8SHhGYibfrzXuLYTLWjSXTS70Oj4Qlfl27jbntg3pyOf3LUEdxRc
-        /exKLWyP5mYnR1Wpc67ZX5dMWxcqbXDuLH/nXs2OOBYzd+D34UmJI/iIruiaTG/mgqgE5uXB
-        C0fNG72lEw60rrnTMLtSeFrbJsbo2lNn7i4u0n/rH3lnVlvaY2jKOqGnpW2GmJmURTL8ARBq
-        cw6UAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJIsWRmVeSWpSXmKPExsVy+t/xu7oG8pPjDa4cM7M4f/cQs8XGGetZ
-        Leacb2GxmH/kHKvFovczWC2uvb3DatH/+DWzxfnzG9gtLmzrY7XY9Pgaq8XlXXPYLGac38dk
-        cWjqXkaLtUfuslscWyBm0br3CLvF/z072B0EPS5fu8jssWXlTSaPnbPusntsWtXJ5rF5Sb3H
-        zh2fmTz6tqxi9Pi8SS6AI0rPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/O
-        JiU1J7MstUjfLkEv4/u1k8wFB4QrpsyqaGB8J9DFyMkhIWAisf59F2MXIxeHkMBSRok1L78y
-        dTFyACWkJFbOTYeoEZb4c62LDcQWEnjKKNG0rAakhE1AT2Lt2giQsIiAh8SZBTeZQcYwC8xi
-        lbgz7QM7SEJYIEbi/b6nYPM5BWYwSvTcghkUIDH3yCFmEFtUwFJiy4v7YA0sAqpAdi+YzStg
-        LvG26yWULShxcuYTFhCbWSBb4uvq58wTGAVmIUnNQpKaBXQfs4CmxPpd+hBhbYllC18zQ9i2
-        EuvWvWdZwMi6ilEktbQ4Nz232FCvODG3uDQvXS85P3cTIzCqtx37uXkH46WNwYcYBTgYlXh4
-        da5NihdiTSwrrsw9xKgCNObRhtUXGKVY8vLzUpVEeJ3Ono4T4k1JrKxKLcqPLyrNSS0+xGgK
-        9M9EZinR5HxgIsoriTc0NTS3sDQ0NzY3NrNQEuftEDgYIySQnliSmp2aWpBaBNPHxMEp1cBY
-        sGsr28/pT/mbWC7UPj/8iddt842/dbduNtddKpZlnqPZG9JYGdAaZPBpwekfT0J5CxssGeWl
-        DX49ZuTm9lpmsPpDinhh3BFmlowmj9nbGH8vfSNeYyvYdXxjo3zjSu09TTNd7gid0GFndclV
-        OHOWvfv8q2W2Fk+f/k8W2n1a5/CkCR90M+SVWIozEg21mIuKEwE6zHgqDAMAAA==
-X-CMS-MailID: 20201023182136eucas1p28518b30e23ae4204840c3d5526bd3400
-X-Msg-Generator: CA
-X-RootMTR: 20201023182136eucas1p28518b30e23ae4204840c3d5526bd3400
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201023182136eucas1p28518b30e23ae4204840c3d5526bd3400
-References: <CAJKOXPeNhXrBa0ZK-k37uhs5izukrhHN-rkxgsjiQBHCMmZs7g@mail.gmail.com>
-        <CGME20201023182136eucas1p28518b30e23ae4204840c3d5526bd3400@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-It was <2020-10-23 pi=C4=85 18:27>, when Krzysztof Kozlowski wrote:
-> On Fri, 23 Oct 2020 at 18:05, Rob Herring <robh@kernel.org> wrote:
->>
->> On Wed, 21 Oct 2020 23:49:07 +0200, =C5=81ukasz Stelmach wrote:
->> > Add bindings for AX88796C SPI Ethernet Adapter.
->> >
->> > Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
->> > ---
->> >  .../bindings/net/asix,ax88796c.yaml           | 69 +++++++++++++++++++
->> >  1 file changed, 69 insertions(+)
->> >  create mode 100644 Documentation/devicetree/bindings/net/asix,ax88796=
-c.yaml
->> >
->>
->>
->> My bot found errors running 'make dt_binding_check' on your patch:
->>
->> yamllint warnings/errors:
->>
->> dtschema/dtc warnings/errors:
->> ./Documentation/devicetree/bindings/net/asix,ax88796c.yaml: $id:
->> relative path/filename doesn't match actual path or filename
->>         expected:
->> https://protect2.fireeye.com/v1/url?k=3Db676d09f-eb1194b9-b6775bd0-0cc47=
-a31384a-e1cc7da4db18c501&q=3D1&e=3Dea7ae062-8c39-4ee3-82fa-37d28062f086&u=
-=3Dhttp%3A%2F%2Fdevicetree.org%2Fschemas%2Fnet%2Fasix%2Cax88796c.yaml%23
->> Documentation/devicetree/bindings/net/asix,ax88796c.example.dts:20:18:
->> fatal error: dt-bindings/interrupt-controller/gpio.h: No such file
->> or directory
-
-Fixed.
-
-> =C5=81ukasz,
+On 10/23/20, 3:58 AM, Marek Szyprowski wrote:
+>=20
+> Exynos5440 SoC support has been dropped since commit 8c83315da1cf ("ARM:
+> dts: exynos: Remove Exynos5440"). Drop the obsolete bindings for
+> exynos5440-pcie.
 >
-> So you really did not compile/test these patches... It's the second
-> build failure in the patchset. All sent patches should at least be
-> compiled on the latest kernel, if you cannot test them. However this
-> patchset should be testable - Artik5 should boot on mainline kernel
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Yes, I messed up a bit. I made moved some code around without changing
-it just before sending and I didn't run dt_binding_check. My fault, I am
-sorry.
+Reviewed-by: Jingoo Han <jingoohan1@gmail.com>
 
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
+Best regards,
+Jingoo Han
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl+THyUACgkQsK4enJil
-gBDA3AgAgLMuK0JPBXpBA5PWakifRLC3bGtiJbKxSRzfNrHcVL0xFTwB5A0rs1Dl
-b61fHAO945x8XDB7j1Gp0Z2GycAuZVL0fuE63ia4H8gPBqwpEGIQ/1k1ZiDRVLTc
-5cGyy9zYazeJkX1+wNZAgnqZ9FgXxrn2vhgF6WzYwiUPnRILxbca82Tidezc88V0
-x64WkKpSwFXr4jE2g+aKpDhfI9UZjJ2sB6lzF1rlhg/ZcOg4Iq5WHj6IXIdJVrv2
-5NbmVY6JgQgHwCsVxanCWquhbi/DRLZnLuh+oD+VHFntVGKUwe2iYX5/rt8zbGBi
-yil22ZMJWOUfvOW/K+uBS7GDgIp+qg==
-=xBy1
------END PGP SIGNATURE-----
---=-=-=--
+> ---
+>  .../bindings/pci/samsung,exynos5440-pcie.txt  | 58 -------------------
+>  1 file changed, 58 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pci/samsung,exynos5=
+440-pcie.txt
+[.....]
