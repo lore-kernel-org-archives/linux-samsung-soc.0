@@ -8,68 +8,70 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C7E5C2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Oct 2020 14:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEFCC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Oct 2020 15:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 179FA22257
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Oct 2020 14:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E05502225F
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Oct 2020 15:44:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kdli18eH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvnx4TOK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1762101AbgJXOpG (ORCPT
+        id S1762042AbgJXPoa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 24 Oct 2020 10:45:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55780 "EHLO
+        Sat, 24 Oct 2020 11:44:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1762097AbgJXOpG (ORCPT
+        with ESMTP id S1756857AbgJXPo3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 24 Oct 2020 10:45:06 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A50FC0613CE;
-        Sat, 24 Oct 2020 07:45:06 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id n15so6212395wrq.2;
-        Sat, 24 Oct 2020 07:45:05 -0700 (PDT)
+        Sat, 24 Oct 2020 11:44:29 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2922AC0613CE;
+        Sat, 24 Oct 2020 08:44:29 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id h20so4875395lji.9;
+        Sat, 24 Oct 2020 08:44:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TChW8WOMVXGXBdvogebo5CK+FJsfavMI5G8Bx+oPNEE=;
-        b=Kdli18eHcRu3t52DS7Ra7vI8yJfHP2QF1ujjSnqRHgji6GkN/SfBj/qsJb5+lLm6Wa
-         FmSQjH8a7nmXJdi+sbhBWIGr2RX8N7Zm2JsUExhn6UtbLdq+VxQdOBA07jxNG2ADG5d4
-         Z3enBWcomrG69jheI7vMZyuL1DmF7PugaiuGKeyaMeseL0uX1d0BIKd3omqE/Kec0MFm
-         /wzyNdsnVViaeTpTbLd08yS9YRrjd06Wv8sJk1TOFnwp1ROr9i8jU4zAbihabxzTia+x
-         cUiEuthGuuwKH9qizWU0VWKzBTkIqeMsyhGcrG/t1SlKD9wCzKFfj6WHOSTS8D3HnLPG
-         wx4Q==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iVvngnWeIDGhbxLx06m+FoOELtVvu4vONgAX93A/tXY=;
+        b=kvnx4TOKigpxlEKazViL6WLSKKrbU0dOmb5zHP7dZbPHHdved9KAw96ScO0YXfUbBL
+         GWMcOZvfKBSte7uOI8XI+79DsSEDU+kukxn/3vHWgEJrM397fkjibfcIczl9akmjgoII
+         XwGNe7impjNc3/qRrYCgpprD0BDRXXPjYBPnZjF9Qgp/cHwOBebv/QCnoYNh3y3RWTzP
+         41HwRVcWSBJ4ojwoRWAMt/zZYBpN7UcTuoFJQe0bl42A83RmUNmDnihz18wCpUx1Av//
+         mD0S0NHOQpzevaYzpcSIGNTViExTnluNLcOqoeL3JonjEVjRVKI8Cwzi9/5MtGCmEqXN
+         3myg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TChW8WOMVXGXBdvogebo5CK+FJsfavMI5G8Bx+oPNEE=;
-        b=Xj94HwyFCJzgdkKt+ta+IgJN1Tckq11plUTHe/iCYHJy7dasbChKbr0cgA/yJTyeYC
-         1sei1AWMKf54YXFdic7YurA63s0av+y5yMeBOKxkPCexmSfky8P/wX0zBT18eudO9tSJ
-         PrOrnY+CV+DFdAXvedmUGVXLs7hA/4cMk6GgXCRvjmeOeUXrxO3SFDfrGhNzzT2f6aJ0
-         LEOYIvj8NyHRB6SUJGinN34GopaUWFIcHwiu2v6hTJN6IdvI14YmnhT6UdX0x26W/x+z
-         GyzYTbinKQR/oz0yM4b7mOgDEsP1HxbvgCHzg5oFZXKuQbP3n8Zy8GhbmNVq0k0QLLnD
-         n6UA==
-X-Gm-Message-State: AOAM532/jY6WiHIDcb7Sz9JDS9w2naBrlGDg5ws1gm2CzeqPF8tGKRFJ
-        i4EDsyFyrFGVhoYQAz2KhVQ=
-X-Google-Smtp-Source: ABdhPJwcAOhE602oLm12t8v9Dz+m/Q+ZD7KL3FxPb7kwvF91JvC160CenxH68RFyHlFr2bYvPw4pKw==
-X-Received: by 2002:adf:e685:: with SMTP id r5mr8632810wrm.340.1603550704816;
-        Sat, 24 Oct 2020 07:45:04 -0700 (PDT)
-Received: from adroid (165-170-184-091.ip-addr.vsenet.de. [91.184.170.165])
-        by smtp.gmail.com with ESMTPSA id u195sm11719482wmu.18.2020.10.24.07.45.03
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iVvngnWeIDGhbxLx06m+FoOELtVvu4vONgAX93A/tXY=;
+        b=HqAmHaLgOvf8THcbS2kLNpzBMHM7EimI0z86qShhw1z9PfJVQ+kCe9R9/V3xhoCM0B
+         wPKhmERvoooG3SHOdHt9/imgV5bf3Z2hQJjhkVDklzHCTbf3GQzHXOU+sTaontKYDfGj
+         B0r6VyAlFlH8MJDLnuvCmu6LijtA3JMbHEtj18/kQBTUapgdja6ahtGAwriWOYke9K1V
+         XJp/3d75qZRwbLkQARBHsMo2ZuVJBb7DhWsaGXdr7KOgWu44mtAlciG1wwO4nxkvIP1T
+         9K27xIDZrB7n5C66ekHP01JtxhqhjmrtswQgj33FDAdpcB3doey1iNkjsLz5iI6tA53f
+         OSQw==
+X-Gm-Message-State: AOAM530QzFlhQuzuFFJivuJ50rfTjjixFFRPrJ5IzIkcmY2vdxFRQuzV
+        phFGcfvRuW+fokpc36rzG7Z0alt3/48=
+X-Google-Smtp-Source: ABdhPJz/klHWcs3bRbKDkYASeDigVNP3nTTs5rtGYA7UaR3O9h/X1CTwcak2v4Vg9hMKBIhvW+fi3w==
+X-Received: by 2002:a2e:87cd:: with SMTP id v13mr2689614ljj.146.1603554266621;
+        Sat, 24 Oct 2020 08:44:26 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:e9e3:358e:a790:ce1c])
+        by smtp.googlemail.com with ESMTPSA id 76sm472536lfn.128.2020.10.24.08.44.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Oct 2020 07:45:04 -0700 (PDT)
-From:   =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>
-To:     linux-samsung-soc@vger.kernel.org
-Cc:     kgene@kernel.org, krzk@kernel.org, devicetree@vger.kernel.org,
-        martin.juecker@gmail.com
-Subject: [PATCH 5/5] ARM: exynos: extend cpuidle support to p4note boards
-Date:   Sat, 24 Oct 2020 16:44:21 +0200
-Message-Id: <20201024144421.34435-6-martin.juecker@gmail.com>
+        Sat, 24 Oct 2020 08:44:25 -0700 (PDT)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     kgene@kernel.org, krzk@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc:     s.nawrocki@samsung.com, tomasz.figa@gmail.com,
+        cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH] clk: exynos7: Mark aclk_fsys1_200 as critical
+Date:   Sat, 24 Oct 2020 17:43:46 +0200
+Message-Id: <20201024154346.9589-1-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201024144421.34435-1-martin.juecker@gmail.com>
-References: <20201024144421.34435-1-martin.juecker@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -77,28 +79,35 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The p4note family supports cpuidle, so allow it to make use of this
-feature.
+This clock must be always enabled to allow access to any registers in
+fsys1 CMU. Until proper solution based on runtime PM is applied
+(similar to what was done for Exynos5433), mark that clock as critical
+so it won't be disabled.
 
-Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
+It was observed on Samsung Galaxy S6 device (based on Exynos7420), where
+UFS module is probed before pmic used to power that device.
+In this case defer probe was happening and that clock was disabled by
+UFS driver, causing whole boot to hang on next CMU access.
+
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- arch/arm/mach-exynos/exynos.c | 3 ++-
+ drivers/clk/samsung/clk-exynos7.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 36c37444485a..093c7a99b8aa 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -164,7 +164,8 @@ static void __init exynos_dt_machine_init(void)
- 	if (of_machine_is_compatible("samsung,exynos4210") ||
- 	    (of_machine_is_compatible("samsung,exynos4412") &&
- 	     (of_machine_is_compatible("samsung,trats2") ||
--		  of_machine_is_compatible("samsung,midas"))) ||
-+		  of_machine_is_compatible("samsung,midas") ||
-+		  of_machine_is_compatible("samsung,p4note"))) ||
- 	    of_machine_is_compatible("samsung,exynos3250") ||
- 	    of_machine_is_compatible("samsung,exynos5250"))
- 		platform_device_register(&exynos_cpuidle);
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index c1ff715e960c..1048d83f097b 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -538,7 +538,8 @@ static const struct samsung_gate_clock top1_gate_clks[] __initconst = {
+ 		ENABLE_ACLK_TOP13, 28, CLK_SET_RATE_PARENT |
+ 		CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_FSYS1_200, "aclk_fsys1_200", "dout_aclk_fsys1_200",
+-		ENABLE_ACLK_TOP13, 24, CLK_SET_RATE_PARENT, 0),
++		ENABLE_ACLK_TOP13, 24, CLK_SET_RATE_PARENT |
++		CLK_IS_CRITICAL, 0),
+ 
+ 	GATE(CLK_SCLK_PHY_FSYS1_26M, "sclk_phy_fsys1_26m",
+ 		"dout_sclk_phy_fsys1_26m", ENABLE_SCLK_TOP1_FSYS11,
 -- 
 2.25.1
 
