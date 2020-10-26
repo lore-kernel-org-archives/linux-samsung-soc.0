@@ -2,309 +2,189 @@ Return-Path: <SRS0=YeST=EB=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B96AC4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 21:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CDEC4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 22:02:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03B3520829
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 21:48:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF4A6217A0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 22:02:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FnQXyFSg"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aNdxfyvH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390288AbgJZVsL (ORCPT
+        id S2391651AbgJZWCO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 17:48:11 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:52506 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390274AbgJZVsL (ORCPT
+        Mon, 26 Oct 2020 18:02:14 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54743 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391639AbgJZWCN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 26 Oct 2020 17:48:11 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201026214759euoutp01cd30e9fd8d27b7cb3ab84f4ad4601bb3~BqRvKAlns1111611116euoutp01a
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2020 21:47:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201026214759euoutp01cd30e9fd8d27b7cb3ab84f4ad4601bb3~BqRvKAlns1111611116euoutp01a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1603748879;
-        bh=U/Hht8e4he4QLVwftITH602ZO3nodR7cU1xCfqlvRIs=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=FnQXyFSg/Rksn5wCW4U03jDGUX3UP9T2ohSx5DSG4vMZiXh3dGkH9yLZMtgFKk6Ua
-         4N7Ky7VhMxSjpdDd4Kt0UqXuKBZAWtPJPTiwT8M+vSBN3bChe/zv3LKbCLaqJTsRpw
-         UrNbGdIfVgw4fudXkbD7+wNE8f7QUHguqCssWLfA=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201026214748eucas1p1a974b52567b5d03bdef134797df86ee8~BqRlGHURj0697506975eucas1p1N;
-        Mon, 26 Oct 2020 21:47:48 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 90.5E.05997.404479F5; Mon, 26
-        Oct 2020 21:47:48 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20201026214747eucas1p2791f92b9b7d82f337d1c8eb4546b8a76~BqRkt3-Mf2964029640eucas1p2S;
-        Mon, 26 Oct 2020 21:47:47 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201026214747eusmtrp130f93434fefae38bf3740f9dc92f7dd1~BqRktMPk91673716737eusmtrp1O;
-        Mon, 26 Oct 2020 21:47:47 +0000 (GMT)
-X-AuditID: cbfec7f4-677ff7000000176d-be-5f9744049a3a
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6D.8D.06314.304479F5; Mon, 26
-        Oct 2020 21:47:47 +0000 (GMT)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201026214747eusmtip25a916e23ca5c3d8be10d9ab8fb08f5db~BqRkIDFal3242432424eusmtip2Y;
-        Mon, 26 Oct 2020 21:47:47 +0000 (GMT)
-Subject: Re: [PATCH 08/12] ARM: dts: exynos: adjust node names to DT spec in
- Exynos542x boards
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <f14a69bc-bd8f-b0d7-2967-1e7582562d5e@samsung.com>
-Date:   Mon, 26 Oct 2020 22:47:47 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.4.0
+        Mon, 26 Oct 2020 18:02:13 -0400
+Received: by mail-wm1-f67.google.com with SMTP id w23so12059471wmi.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2020 15:02:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=nnyXk2pMcKjBK4+Fq7Fk4IbVXn2gczxbne31w99Uqrk=;
+        b=aNdxfyvHxW5EhJys38x8msSr36mwdr8ntNEXWK/+T2/MzKfU0VCnCWyghyZeK0cVeb
+         rA0iLh+uHuE4kyJ2TJC3GpOOr5wl+e2jm2smdq02RkePbEEuN++cEauu/TxifEzN74sA
+         tq59FL7KLoIUR9iPLa6VmUTM39rV8IcMJlYBc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=nnyXk2pMcKjBK4+Fq7Fk4IbVXn2gczxbne31w99Uqrk=;
+        b=MTJ9nxeYq6nbWXy6t1tIgYFYkY1Lqyw4xw53FVvFUa0E2er+ulgyxkhfuTmmkuX4IF
+         IPPHFudx5ZPiNRNf9RUrxo9B+Mpib2W+EqtkZo47Vm25couZCxLPjno/CTamqp0XLfjm
+         I0i1I3a+culz6ATZPPmBcG8ffoM7fcjhJjzctXud3ET4f8PY9THSy2NRqolO1hPnh5Ik
+         3LntqZkhCrm2tr1sw45tmjrwvIfRWtj2gDUlw3Z8D3wDbmabBobV43q3cFrSVoT+QgB1
+         uNhUk82u1zNm2HJxK/OZP6MklvS9ZU8lyxbpIzzzoOIi27G3y7E0auucQ1A3GxNWCMae
+         4SEQ==
+X-Gm-Message-State: AOAM532jZUjLsLj9RxAD+HtLb/LyVhc1zUb5lKKnFpiZq3g7MWBPIqFA
+        zH3N2LfcRFFVboJOaq15ViDDDg==
+X-Google-Smtp-Source: ABdhPJwXQQfk3H55i6k/BF7MPc09Wr29zTiROpPA8yChYSvzhbxp82tIcqHTWfVny/00bz/9GBIJdQ==
+X-Received: by 2002:a1c:bc06:: with SMTP id m6mr19364153wmf.68.1603749728982;
+        Mon, 26 Oct 2020 15:02:08 -0700 (PDT)
+Received: from chromium.org (216.131.76.34.bc.googleusercontent.com. [34.76.131.216])
+        by smtp.gmail.com with ESMTPSA id t7sm23634700wrx.42.2020.10.26.15.02.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Oct 2020 15:02:08 -0700 (PDT)
+Date:   Mon, 26 Oct 2020 22:02:06 +0000
+From:   Tomasz Figa <tfiga@chromium.org>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Michel Lespinasse <walken@google.com>
+Subject: Re: [PATCH v4 09/15] media/videbuf1|2: Mark follow_pfn usage as
+ unsafe
+Message-ID: <20201026220206.GA2802004@chromium.org>
+References: <20201026105818.2585306-1-daniel.vetter@ffwll.ch>
+ <20201026105818.2585306-10-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-In-Reply-To: <20201026181528.163143-9-krzk@kernel.org>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJKsWRmVeSWpSXmKPExsWy7djPc7osLtPjDQ428Vs8mLeNzWLjjPWs
-        Fte/PGe1mH/kHKtF/+PXzBbnz29gt9j0+BqrxeVdc9gsZpzfx2TRuvcIu0X705fMDtwem1Z1
-        snlsXlLv0bdlFaPH501yASxRXDYpqTmZZalF+nYJXBkXjr9gK/hqUHHw1V22BsZral2MHBwS
-        AiYS9645djFycQgJrGCUuL/iMBOE84VRYtKHpewQzmdGiYbtzWxdjJxgHS82zICqWs4ocffj
-        WRYI5z2jxKlbl9hB5goLJEhMXSsDEhcB6b48+RoziMMssIVRYuKXaWCj2AQMJbredoHZvAJ2
-        Eu/nHmQFsVkEVCVez7wAZosKJEn8/fyHGaJGUOLkzCcsIDangJnE7ottYDazgLzE9rdzmCFs
-        cYlbT+YzQZx6il1ix4pECNtFYuORo4wQtrDEq+Nb2CFsGYnTk3vAPpAQaGaUeHhuLTuE0wN0
-        dtMMqA5riTvnfrGBvMYsoCmxfpc+RNhR4tjc3eyQkOSTuPFWEOIGPolJ26YzQ4R5JTrahCCq
-        1SRmHV8Ht/bghUvMExiVZiH5bBaSb2Yh+WYWwt4FjCyrGMVTS4tz01OLjfJSy/WKE3OLS/PS
-        9ZLzczcxAhPU6X/Hv+xg3PUn6RCjAAejEg/vhbfT4oVYE8uKK3MPMUpwMCuJ8DqdPR0nxJuS
-        WFmVWpQfX1Sak1p8iFGag0VJnNd40ctYIYH0xJLU7NTUgtQimCwTB6dUA6P/pOTD9ww7hbfk
-        yAvOZ22quH/W7t/7H3cZftkevrR1eohCme3MsLiptWu2bF4qaKG/WzTxoful6Ybb9ojahnP/
-        fvnGeMvRdofwZsHfyVtnr1f3yKq6t01u/4+NcsvsnP74VBz6oG16XPFMv4xg5bTZz8MlUyat
-        CjyyPGXqkX8OUrKFh1plpjoosRRnJBpqMRcVJwIAhr0qOUwDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xe7rMLtPjDfoeGVs8mLeNzWLjjPWs
-        Fte/PGe1mH/kHKtF/+PXzBbnz29gt9j0+BqrxeVdc9gsZpzfx2TRuvcIu0X705fMDtwem1Z1
-        snlsXlLv0bdlFaPH501yASxRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6
-        djYpqTmZZalF+nYJehkXjr9gK/hqUHHw1V22BsZral2MnBwSAiYSLzbMYAKxhQSWMkr8P80I
-        EZeRODmtgRXCFpb4c62LrYuRC6jmLaPE7RPrgBIcHMICCRJT18qAxEUEPjNKPGvcxAziMAts
-        YZS4M2kbC0THVkaJNStWs4CMYhMwlOh6CzKKk4NXwE7i/dyDYCtYBFQlXs+8AGaLCiRJvLww
-        lQmiRlDi5MwnYL2cAmYSuy+2gdnMQPa8zQ+ZIWx5ie1v50DZ4hK3nsxnmsAoNAtJ+ywkLbOQ
-        tMxC0rKAkWUVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYExuO/Zz8w7GSxuDDzEKcDAq8fBe
-        eDstXog1say4MvcQowQHs5IIr9PZ03FCvCmJlVWpRfnxRaU5qcWHGE2BnpvILCWanA9MF3kl
-        8YamhuYWlobmxubGZhZK4rwdAgdjhATSE0tSs1NTC1KLYPqYODilGhgVnI13PP7Ctf1T8boP
-        dqICui90L25TrJrtKrJ3ypenGpbfCk453rk37cyy6DrditywXZbFbsd39Rnuqs7Z3TenqVlR
-        McV8SvC0y2uTH7y8O21D93xxfrcOazHpmMsqcVO33g9h/2ThNKlveXFMmOfhG2tnnw1JrDXX
-        s3r/XvI3n6114Dt3XSYlluKMREMt5qLiRABhbzIn3wIAAA==
-X-CMS-MailID: 20201026214747eucas1p2791f92b9b7d82f337d1c8eb4546b8a76
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201026181608eucas1p17927126482dc9ed2aefa2ff4c64491cd
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201026181608eucas1p17927126482dc9ed2aefa2ff4c64491cd
-References: <20201026181528.163143-1-krzk@kernel.org>
-        <CGME20201026181608eucas1p17927126482dc9ed2aefa2ff4c64491cd@eucas1p1.samsung.com>
-        <20201026181528.163143-9-krzk@kernel.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201026105818.2585306-10-daniel.vetter@ffwll.ch>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Hi Daniel,
 
-On 26.10.2020 19:15, Krzysztof Kozlowski wrote:
-> The Devicetree specification expects device node names to have a generic
-> name, representing the class of a device.  Also the convention for node
-> names is to use hyphens, not underscores.
->
-> No functional changes.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+On Mon, Oct 26, 2020 at 11:58:12AM +0100, Daniel Vetter wrote:
+> The media model assumes that buffers are all preallocated, so that
+> when a media pipeline is running we never miss a deadline because the
+> buffers aren't allocated or available.
+> 
+> This means we cannot fix the v4l follow_pfn usage through
+> mmu_notifier, without breaking how this all works. The only real fix
+> is to deprecate userptr support for VM_IO | VM_PFNMAP mappings and
+> tell everyone to cut over to dma-buf memory sharing for zerocopy.
+> 
+> userptr for normal memory will keep working as-is, this only affects
+> the zerocopy userptr usage enabled in 50ac952d2263 ("[media]
+> videobuf2-dma-sg: Support io userptr operations on io memory").
+
+Note that this is true only for the videobuf2 change. The videobuf1 code
+was like this all the time and does not support normal memory in the
+dma_contig variant (because normal memory is rarely physically contiguous).
+
+If my understanding is correct that the CONFIG_STRICT_FOLLOW_PFN is not
+enabled by default, we stay backwards compatible, with only whoever
+decides to turn it on risking a breakage.
+
+I agree that this is a good first step towards deprecating this legacy
+code, so:
+
+Acked-by: Tomasz Figa <tfiga@chromium.org>
+
+Of course the last word goes to Mauro. :)
+
+Best regards,
+Tomasz
+
+> 
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: Jérôme Glisse <jglisse@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: Pawel Osciak <pawel@osciak.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Tomasz Figa <tfiga@chromium.org>
+> Cc: Laurent Dufour <ldufour@linux.ibm.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+> Cc: Michel Lespinasse <walken@google.com>
+> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> --
+> v3:
+> - Reference the commit that enabled the zerocopy userptr use case to
+>   make it abundandtly clear that this patch only affects that, and not
+>   normal memory userptr. The old commit message already explained that
+>   normal memory userptr is unaffected, but I guess that was not clear
+>   enough.
 > ---
->   arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 4 ++--
->   arch/arm/boot/dts/exynos5420-peach-pit.dts         | 4 ++--
->   arch/arm/boot/dts/exynos5420-smdk5420.dts          | 2 +-
->   arch/arm/boot/dts/exynos5422-odroid-core.dtsi      | 2 +-
->   arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi  | 2 +-
->   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 4 ++--
->   arch/arm/boot/dts/exynos5422-odroidxu3.dts         | 8 ++++----
->   arch/arm/boot/dts/exynos5800-peach-pi.dts          | 4 ++--
->   8 files changed, 15 insertions(+), 15 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> index dd7f8385d81e..bf457d0c02eb 100644
-> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> @@ -39,7 +39,7 @@ oscclk {
->   		};
->   	};
->   
-> -	gpio_keys {
-> +	gpio-keys {
->   		compatible = "gpio-keys";
->   
->   		wakeup {
-> @@ -344,7 +344,7 @@ &hdmi {
->   &hsi2c_4 {
->   	status = "okay";
->   
-> -	s2mps11_pmic@66 {
-> +	pmic@66 {
->   		compatible = "samsung,s2mps11-pmic";
->   		reg = <0x66>;
->   
-> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> index 2bcbdf8a39bf..d54392fe6260 100644
-> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> @@ -138,7 +138,7 @@ panel_in: endpoint {
->   		};
->   	};
->   
-> -	mmc1_pwrseq: mmc1_pwrseq {
-> +	mmc1_pwrseq: mmc1-pwrseq {
->   		compatible = "mmc-pwrseq-simple";
->   		reset-gpios = <&gpx0 0 GPIO_ACTIVE_LOW>; /* WIFI_EN */
->   		clocks = <&max77802 MAX77802_CLK_32K_CP>;
-> @@ -205,7 +205,7 @@ &hsi2c_4 {
->   	status = "okay";
->   	clock-frequency = <400000>;
->   
-> -	max77802: max77802-pmic@9 {
-> +	max77802: pmic@9 {
->   		compatible = "maxim,max77802";
->   		interrupt-parent = <&gpx3>;
->   		interrupts = <1 IRQ_TYPE_NONE>;
-> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> index 4e49d8095b29..d506da9fa661 100644
-> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> @@ -129,7 +129,7 @@ &hdmi {
->   &hsi2c_4 {
->   	status = "okay";
->   
-> -	s2mps11_pmic@66 {
-> +	pmic@66 {
->   		compatible = "samsung,s2mps11-pmic";
->   		reg = <0x66>;
->   
-> diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> index b1cf9414ce17..25fb6331c75e 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> @@ -503,7 +503,7 @@ &dmc {
->   &hsi2c_4 {
->   	status = "okay";
->   
-> -	s2mps11_pmic@66 {
-> +	pmic@66 {
->   		compatible = "samsung,s2mps11-pmic";
->   		reg = <0x66>;
->   		samsung,s2mps11-acokb-ground;
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-> index b5ec4f47eb3a..f5f9c077df74 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-> @@ -40,7 +40,7 @@ codec {
->   
->   &hsi2c_5 {
->   	status = "okay";
-> -	max98090: max98090@10 {
-> +	max98090: codec@10 {
->   		compatible = "maxim,max98090";
->   		reg = <0x10>;
->   		interrupt-parent = <&gpx3>;
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index 5da2d81e3be2..e35af40a55cb 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -13,12 +13,12 @@
->   #include "exynos5422-odroid-core.dtsi"
->   
->   / {
-> -	gpio_keys {
-> +	gpio-keys {
->   		compatible = "gpio-keys";
->   		pinctrl-names = "default";
->   		pinctrl-0 = <&power_key>;
->   
-> -		power_key {
-> +		power-key {
->   			/*
->   			 * The power button (SW2) is connected to the PWRON
->   			 * pin (active high) of the S2MPS11 PMIC, which acts
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> index d0f6ac5fa79d..5ff493ecb6ff 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> @@ -21,28 +21,28 @@ &i2c_0 {
->   	status = "okay";
->   
->   	/* A15 cluster: VDD_ARM */
-> -	ina231@40 {
-> +	sensor@40 {
-power-sensor?
->   		compatible = "ti,ina231";
->   		reg = <0x40>;
->   		shunt-resistor = <10000>;
->   	};
->   
->   	/* memory: VDD_MEM */
-> -	ina231@41 {
-> +	sensor@41 {
->   		compatible = "ti,ina231";
->   		reg = <0x41>;
->   		shunt-resistor = <10000>;
->   	};
->   
->   	/* GPU: VDD_G3D */
-> -	ina231@44 {
-> +	sensor@44 {
->   		compatible = "ti,ina231";
->   		reg = <0x44>;
->   		shunt-resistor = <10000>;
->   	};
->   
->   	/* A7 cluster: VDD_KFC */
-> -	ina231@45 {
-> +	sensor@45 {
->   		compatible = "ti,ina231";
->   		reg = <0x45>;
->   		shunt-resistor = <10000>;
-> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> index 60ab0effe474..0ce3443d39a8 100644
-> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-> @@ -138,7 +138,7 @@ panel_in: endpoint {
->   		};
->   	};
->   
-> -	mmc1_pwrseq: mmc1_pwrseq {
-> +	mmc1_pwrseq: mmc1-pwrseq {
->   		compatible = "mmc-pwrseq-simple";
->   		reset-gpios = <&gpx0 0 GPIO_ACTIVE_LOW>; /* WIFI_EN */
->   		clocks = <&max77802 MAX77802_CLK_32K_CP>;
-> @@ -214,7 +214,7 @@ &hsi2c_4 {
->   	status = "okay";
->   	clock-frequency = <400000>;
->   
-> -	max77802: max77802-pmic@9 {
-> +	max77802: pmic@9 {
->   		compatible = "maxim,max77802";
->   		interrupt-parent = <&gpx3>;
->   		interrupts = <1 IRQ_TYPE_NONE>;
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+>  drivers/media/common/videobuf2/frame_vector.c | 2 +-
+>  drivers/media/v4l2-core/videobuf-dma-contig.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
+> index 6590987c14bd..e630494da65c 100644
+> --- a/drivers/media/common/videobuf2/frame_vector.c
+> +++ b/drivers/media/common/videobuf2/frame_vector.c
+> @@ -69,7 +69,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+>  			break;
+>  
+>  		while (ret < nr_frames && start + PAGE_SIZE <= vma->vm_end) {
+> -			err = follow_pfn(vma, start, &nums[ret]);
+> +			err = unsafe_follow_pfn(vma, start, &nums[ret]);
+>  			if (err) {
+>  				if (ret == 0)
+>  					ret = err;
+> diff --git a/drivers/media/v4l2-core/videobuf-dma-contig.c b/drivers/media/v4l2-core/videobuf-dma-contig.c
+> index 52312ce2ba05..821c4a76ab96 100644
+> --- a/drivers/media/v4l2-core/videobuf-dma-contig.c
+> +++ b/drivers/media/v4l2-core/videobuf-dma-contig.c
+> @@ -183,7 +183,7 @@ static int videobuf_dma_contig_user_get(struct videobuf_dma_contig_memory *mem,
+>  	user_address = untagged_baddr;
+>  
+>  	while (pages_done < (mem->size >> PAGE_SHIFT)) {
+> -		ret = follow_pfn(vma, user_address, &this_pfn);
+> +		ret = unsafe_follow_pfn(vma, user_address, &this_pfn);
+>  		if (ret)
+>  			break;
+>  
+> -- 
+> 2.28.0
+> 
