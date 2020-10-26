@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8263C6379D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 10:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9863DC64E7D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 10:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7FCB12240C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 10:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E42522282
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 10:59:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="BE6oxOGm"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Cr+pmJXJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1772805AbgJZK6m (ORCPT
+        id S1772809AbgJZK6l (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 06:58:42 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37640 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1772800AbgJZK6l (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
         Mon, 26 Oct 2020 06:58:41 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h7so11903160wre.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2020 03:58:39 -0700 (PDT)
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37725 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1772803AbgJZK6k (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Mon, 26 Oct 2020 06:58:40 -0400
+Received: by mail-wm1-f67.google.com with SMTP id c16so11967994wmd.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2020 03:58:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fFEiUvLl06c3j38++d5NzLL6L7leWWZ4E8u91rYq/3A=;
-        b=BE6oxOGm6LpmFehTBcLW4JPuAVn0ztXRRhPFdKmp1PBfZHMfOH6ZZMUim7N+RidGFG
-         0CE8UiBULFscc13H0ar8GrDLO4yJ1P0bnnkFlnldicZz6vS1PSOwsA2+DLJdMtAv2h85
-         Tg25hld8e9Oy330GCD/SQEbTeh0mowIk6eEfA=
+        bh=hp7lChw6Uow+58XPniSHemIeAoNErbB/sdK6im80Iug=;
+        b=Cr+pmJXJLsWocfKRIRa/5RHLA7hSR2O/V8a+9H+OfOBLfntuyYXq0XvJAi9z0VTfHT
+         o6muhLbGVgMDDFHz7pi7g0wbMI0xim0wkiLglb6gq1U7avKTlbLZaGt6brXdeBhZPYiG
+         7tcXzotmBBEhyDhg4r894G/MEQ31CzKNdntL0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fFEiUvLl06c3j38++d5NzLL6L7leWWZ4E8u91rYq/3A=;
-        b=hBOv7xslmLckzH3jmy+YbDePV1UvDG5Tgi+aJoag/ACzLMBRKPBjxPirkO9kVMfpAl
-         BUhD4wZoxiiwMqWMvosoTCfz1JlSbXDZFEWR25BODh55hyqtUgUxmITdQ5ioGOPrBZgb
-         lxRwgIL7hPjUkEuphgzO4hwMllC2KL04zq6sLj/KYLiHgXCANi956h1Kf54HqfRCObsd
-         GVk9U2JODh2yYJfLhzhB3ry3up3l3Zf3LKshk1Slr/ukJ7XyHjzUzftiaOEVy4oe4xzu
-         sNrzp5tDDXN8eEn27a/+YofOx9pSW9xNHHvZSZohDoroxlAXHMEvPCMmNYvyAGTOFnwq
-         lcPQ==
-X-Gm-Message-State: AOAM532Xk7EVlHFdwRutMx7EhsSKEGUaMCExKHebqQr0PkbZZ4Ql7I5e
-        QuESV8lmBz2KigFKoTwnvYFCCg==
-X-Google-Smtp-Source: ABdhPJyJPBqr4xzE4feUIHJFFKeriugShRo0uGRtLd+TVzcLzKKWgkZaYccYEU5/Oo10Zk0lMDMkEw==
-X-Received: by 2002:a05:6000:12c9:: with SMTP id l9mr16792055wrx.309.1603709918272;
-        Mon, 26 Oct 2020 03:58:38 -0700 (PDT)
+        bh=hp7lChw6Uow+58XPniSHemIeAoNErbB/sdK6im80Iug=;
+        b=fPmA1zQQ7aWbCe2FbUsbI09wzbFJRusf5HXCghnyJ/dxVo9v9dCfe1IJcmHxGdfmVS
+         gPtcLXrvpurKYnfsN3oZ/RQcXFdY198Dy/Hy+ek+zGIFM1DhianR3jlfN8rSf1dty5cB
+         p4QtYPTkfUIqCvbx3BXL8djPbTZitR2mTbzw0fHAYfzK+Pn+lNWm3OkgHZzEzoeukNLS
+         9vI7KK/mDcFAccWLov+1swkOKNNDDDKnNVdaBuOiEzzctmkpUzScAHpNc3fWo9T1VSvS
+         e/0Rv+/jrW+qY2S+YG8JCqCHAK1rsKub2BAdib56FtQvtlLFTGBFghGVryA4aQ1dPGTp
+         Kb9A==
+X-Gm-Message-State: AOAM5324iGUyk0ql4aZgMqk5agIWtZqmdUmImgPtHKJSWb5N0rhSv8V3
+        M2yZ5XZo6rGtUv+XpjNhHT7ocg==
+X-Google-Smtp-Source: ABdhPJyXE1xnVL9rMrbjHo2QW8UsY5WSv6Qb5ykdefmn1P9qttdIUjS9wMyJqMVtlrB26EUB1SiNdg==
+X-Received: by 2002:a05:600c:25a:: with SMTP id 26mr14957501wmj.39.1603709919599;
+        Mon, 26 Oct 2020 03:58:39 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id w83sm21165156wmg.48.2020.10.26.03.58.36
+        by smtp.gmail.com with ESMTPSA id w83sm21165156wmg.48.2020.10.26.03.58.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2020 03:58:37 -0700 (PDT)
+        Mon, 26 Oct 2020 03:58:38 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>
@@ -67,17 +67,12 @@ Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Laurent Dufour <ldufour@linux.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Michel Lespinasse <walken@google.com>
-Subject: [PATCH v4 09/15] media/videbuf1|2: Mark follow_pfn usage as unsafe
-Date:   Mon, 26 Oct 2020 11:58:12 +0100
-Message-Id: <20201026105818.2585306-10-daniel.vetter@ffwll.ch>
+        Jan Kara <jack@suse.cz>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Subject: [PATCH v4 10/15] vfio/type1: Mark follow_pfn as unsafe
+Date:   Mon, 26 Oct 2020 11:58:13 +0100
+Message-Id: <20201026105818.2585306-11-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201026105818.2585306-1-daniel.vetter@ffwll.ch>
 References: <20201026105818.2585306-1-daniel.vetter@ffwll.ch>
@@ -88,18 +83,16 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The media model assumes that buffers are all preallocated, so that
-when a media pipeline is running we never miss a deadline because the
-buffers aren't allocated or available.
+The code seems to stuff these pfns into iommu pts (or something like
+that, I didn't follow), but there's no mmu_notifier to ensure that
+access is synchronized with pte updates.
 
-This means we cannot fix the v4l follow_pfn usage through
-mmu_notifier, without breaking how this all works. The only real fix
-is to deprecate userptr support for VM_IO | VM_PFNMAP mappings and
-tell everyone to cut over to dma-buf memory sharing for zerocopy.
+Hence mark these as unsafe. This means that with
+CONFIG_STRICT_FOLLOW_PFN, these will be rejected.
 
-userptr for normal memory will keep working as-is, this only affects
-the zerocopy userptr usage enabled in 50ac952d2263 ("[media]
-videobuf2-dma-sg: Support io userptr operations on io memory").
+Real fix is to wire up an mmu_notifier ... somehow. Probably means any
+invalidate is a fatal fault for this vfio device, but then this
+shouldn't ever happen if userspace is reasonable.
 
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
@@ -114,53 +107,36 @@ Cc: linux-mm@kvack.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-media@vger.kernel.org
-Cc: Pawel Osciak <pawel@osciak.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Tomasz Figa <tfiga@chromium.org>
-Cc: Laurent Dufour <ldufour@linux.ibm.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: Michel Lespinasse <walken@google.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>
+Cc: Cornelia Huck <cohuck@redhat.com>
+Cc: kvm@vger.kernel.org
 Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
---
-v3:
-- Reference the commit that enabled the zerocopy userptr use case to
-  make it abundandtly clear that this patch only affects that, and not
-  normal memory userptr. The old commit message already explained that
-  normal memory userptr is unaffected, but I guess that was not clear
-  enough.
 ---
- drivers/media/common/videobuf2/frame_vector.c | 2 +-
- drivers/media/v4l2-core/videobuf-dma-contig.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/vfio/vfio_iommu_type1.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
-index 6590987c14bd..e630494da65c 100644
---- a/drivers/media/common/videobuf2/frame_vector.c
-+++ b/drivers/media/common/videobuf2/frame_vector.c
-@@ -69,7 +69,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
- 			break;
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 5fbf0c1f7433..a4d53f3d0a35 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -421,7 +421,7 @@ static int follow_fault_pfn(struct vm_area_struct *vma, struct mm_struct *mm,
+ {
+ 	int ret;
  
- 		while (ret < nr_frames && start + PAGE_SIZE <= vma->vm_end) {
--			err = follow_pfn(vma, start, &nums[ret]);
-+			err = unsafe_follow_pfn(vma, start, &nums[ret]);
- 			if (err) {
- 				if (ret == 0)
- 					ret = err;
-diff --git a/drivers/media/v4l2-core/videobuf-dma-contig.c b/drivers/media/v4l2-core/videobuf-dma-contig.c
-index 52312ce2ba05..821c4a76ab96 100644
---- a/drivers/media/v4l2-core/videobuf-dma-contig.c
-+++ b/drivers/media/v4l2-core/videobuf-dma-contig.c
-@@ -183,7 +183,7 @@ static int videobuf_dma_contig_user_get(struct videobuf_dma_contig_memory *mem,
- 	user_address = untagged_baddr;
+-	ret = follow_pfn(vma, vaddr, pfn);
++	ret = unsafe_follow_pfn(vma, vaddr, pfn);
+ 	if (ret) {
+ 		bool unlocked = false;
  
- 	while (pages_done < (mem->size >> PAGE_SHIFT)) {
--		ret = follow_pfn(vma, user_address, &this_pfn);
-+		ret = unsafe_follow_pfn(vma, user_address, &this_pfn);
+@@ -435,7 +435,7 @@ static int follow_fault_pfn(struct vm_area_struct *vma, struct mm_struct *mm,
  		if (ret)
- 			break;
+ 			return ret;
  
+-		ret = follow_pfn(vma, vaddr, pfn);
++		ret = unsafe_follow_pfn(vma, vaddr, pfn);
+ 	}
+ 
+ 	return ret;
 -- 
 2.28.0
 
