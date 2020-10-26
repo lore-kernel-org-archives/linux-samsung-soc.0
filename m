@@ -5,41 +5,41 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F21C4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 23:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60EF5C55178
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 23:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74DD420882
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 23:56:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3081520872
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 23:59:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603756609;
-	bh=pfdCMf3dQRuQhjmddesIWCZ6ggZcadzL9bVLe4KCI7A=;
+	s=default; t=1603756777;
+	bh=V91KBbYpMavFFniUmDmB4jcs7DA3/defCNYQauzeElc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cjVqRLR5JpEfWfKc1O9JjiUJqdTINWHzp9mBCZpaDnKxMYia5Y0DMU4SvFuNdj32w
-	 0MGliIuaHh1Uk8+kOLZsELZ+MIliaPZIbjZJ9C9uFc9qLSrqzYqZW0cqkIuBSodZlB
-	 +32oBCuNBfbWo7Pdbrq7mUu4SBUFezym0T/lzsvg=
+	b=Fe05PH4vbSE+Q6uuWTGlOT/phCMbmne8/arKQk+k9T8DVWbjA4nK6iEhElGD7aQC0
+	 0r3gnRkbjIXm2y/W3ecXQfmSxtuAGNbIbSIk8waF8JnqGXsmYOGIrH6oIYEL42F7td
+	 fqbX28DJtzLbxrqkZFTk4rSGOJQs2P/ASgpHJBrM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436602AbgJZX4r (ORCPT
+        id S2436628AbgJZX4x (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 19:56:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36660 "EHLO mail.kernel.org"
+        Mon, 26 Oct 2020 19:56:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436596AbgJZX4q (ORCPT
+        id S2436614AbgJZX4u (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 26 Oct 2020 19:56:46 -0400
+        Mon, 26 Oct 2020 19:56:50 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 540372224A;
-        Mon, 26 Oct 2020 23:56:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AD5120B1F;
+        Mon, 26 Oct 2020 23:56:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603756606;
-        bh=pfdCMf3dQRuQhjmddesIWCZ6ggZcadzL9bVLe4KCI7A=;
+        s=default; t=1603756609;
+        bh=V91KBbYpMavFFniUmDmB4jcs7DA3/defCNYQauzeElc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wHFH7afFMF1mTGfn0ZFLzoetaz9CJpZM/H5E7SJIPuMg+TOHk41nz4i1JdRe1e2jS
-         o2qM7uOtt+Y6cnW1oMPbYKGSzpPaC6lq9zucOwvWKFA8QjFWloparsyChA+4F3qn/p
-         98sCD3ykPMqSZ7PJwGYSlak8Bq6drvmLQC1BmYDA=
+        b=QLEl8LP4CjGgYU8ygmy2Tmk/6tLXHFOE+Ieb7W89kp3S+yYyF70MK4DBNw2lyp1Jw
+         aMUGFWv5bexN8hgwsvkC3xfMnY0/Y+fyrFKZ4A2O4Nowan/LW9dTOHE+Bqt00iHVlo
+         q2KV4YHHtRnxc+TBbGG97oYptbiKtP7M2z1sK7KQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
@@ -47,9 +47,9 @@ Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 74/80] ARM: dts: s5pv210: remove DMA controller bus node name to fix dtschema warnings
-Date:   Mon, 26 Oct 2020 19:55:10 -0400
-Message-Id: <20201026235516.1025100-74-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 77/80] ARM: dts: s5pv210: remove dedicated 'audio-subsystem' node
+Date:   Mon, 26 Oct 2020 19:55:13 -0400
+Message-Id: <20201026235516.1025100-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201026235516.1025100-1-sashal@kernel.org>
 References: <20201026235516.1025100-1-sashal@kernel.org>
@@ -63,82 +63,102 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Krzysztof Kozlowski <krzk@kernel.org>
 
-[ Upstream commit ea4e792f3c8931fffec4d700cf6197d84e9f35a6 ]
+[ Upstream commit 6c17a2974abf68a58517f75741b15c4aba42b4b8 ]
 
-There is no need to keep DMA controller nodes under AMBA bus node.
-Remove the "amba" node to fix dtschema warnings like:
+The 'audio-subsystem' node is an artificial creation, not representing
+real hardware.  The hardware is described by its nodes - AUDSS clock
+controller and I2S0.
 
-  amba: $nodename:0: 'amba' does not match '^([a-z][a-z0-9\\-]+-bus|bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
+Remove the 'audio-subsystem' node along with its undocumented compatible
+to fix dtbs_check warnings like:
+
+  audio-subsystem: $nodename:0: 'audio-subsystem' does not match '^([a-z][a-z0-9\\-]+-bus|bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Tested-by: Jonathan Bakker <xc-racer2@live.ca>
-Link: https://lore.kernel.org/r/20200907161141.31034-6-krzk@kernel.org
+Link: https://lore.kernel.org/r/20200907161141.31034-9-krzk@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/s5pv210.dtsi | 49 +++++++++++++++-------------------
- 1 file changed, 21 insertions(+), 28 deletions(-)
+ arch/arm/boot/dts/s5pv210.dtsi | 65 +++++++++++++++-------------------
+ 1 file changed, 29 insertions(+), 36 deletions(-)
 
 diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index 2ad642f51fd92..8b194da334a5c 100644
+index f10139bd80a53..61822afa30ab3 100644
 --- a/arch/arm/boot/dts/s5pv210.dtsi
 +++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -128,35 +128,28 @@ wakeup-interrupt-controller {
- 			};
+@@ -211,43 +211,36 @@ i2c2: i2c@e1a00000 {
+ 			status = "disabled";
  		};
  
--		amba {
+-		audio-subsystem {
+-			compatible = "samsung,s5pv210-audss", "simple-bus";
 -			#address-cells = <1>;
 -			#size-cells = <1>;
--			compatible = "simple-bus";
 -			ranges;
 -
--			pdma0: dma@e0900000 {
--				compatible = "arm,pl330", "arm,primecell";
--				reg = <0xe0900000 0x1000>;
--				interrupt-parent = <&vic0>;
--				interrupts = <19>;
--				clocks = <&clocks CLK_PDMA0>;
--				clock-names = "apb_pclk";
--				#dma-cells = <1>;
--				#dma-channels = <8>;
--				#dma-requests = <32>;
+-			clk_audss: clock-controller@eee10000 {
+-				compatible = "samsung,s5pv210-audss-clock";
+-				reg = <0xeee10000 0x1000>;
+-				clock-names = "hclk", "xxti",
+-						"fout_epll",
+-						"sclk_audio0";
+-				clocks = <&clocks DOUT_HCLKP>, <&xxti>,
+-						<&clocks FOUT_EPLL>,
+-						<&clocks SCLK_AUDIO0>;
+-				#clock-cells = <1>;
 -			};
-+		pdma0: dma@e0900000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0xe0900000 0x1000>;
-+			interrupt-parent = <&vic0>;
-+			interrupts = <19>;
-+			clocks = <&clocks CLK_PDMA0>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <32>;
++		clk_audss: clock-controller@eee10000 {
++			compatible = "samsung,s5pv210-audss-clock";
++			reg = <0xeee10000 0x1000>;
++			clock-names = "hclk", "xxti",
++				      "fout_epll",
++				      "sclk_audio0";
++			clocks = <&clocks DOUT_HCLKP>, <&xxti>,
++				 <&clocks FOUT_EPLL>,
++				 <&clocks SCLK_AUDIO0>;
++			#clock-cells = <1>;
 +		};
  
--			pdma1: dma@e0a00000 {
--				compatible = "arm,pl330", "arm,primecell";
--				reg = <0xe0a00000 0x1000>;
--				interrupt-parent = <&vic0>;
--				interrupts = <20>;
--				clocks = <&clocks CLK_PDMA1>;
--				clock-names = "apb_pclk";
--				#dma-cells = <1>;
--				#dma-channels = <8>;
--				#dma-requests = <32>;
+-			i2s0: i2s@eee30000 {
+-				compatible = "samsung,s5pv210-i2s";
+-				reg = <0xeee30000 0x1000>;
+-				interrupt-parent = <&vic2>;
+-				interrupts = <16>;
+-				dma-names = "rx", "tx", "tx-sec";
+-				dmas = <&pdma1 9>, <&pdma1 10>, <&pdma1 11>;
+-				clock-names = "iis",
+-						"i2s_opclk0",
+-						"i2s_opclk1";
+-				clocks = <&clk_audss CLK_I2S>,
+-						<&clk_audss CLK_I2S>,
+-						<&clk_audss CLK_DOUT_AUD_BUS>;
+-				samsung,idma-addr = <0xc0010000>;
+-				pinctrl-names = "default";
+-				pinctrl-0 = <&i2s0_bus>;
+-				#sound-dai-cells = <0>;
+-				status = "disabled";
 -			};
-+		pdma1: dma@e0a00000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0xe0a00000 0x1000>;
-+			interrupt-parent = <&vic0>;
-+			interrupts = <20>;
-+			clocks = <&clocks CLK_PDMA1>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <32>;
++		i2s0: i2s@eee30000 {
++			compatible = "samsung,s5pv210-i2s";
++			reg = <0xeee30000 0x1000>;
++			interrupt-parent = <&vic2>;
++			interrupts = <16>;
++			dma-names = "rx", "tx", "tx-sec";
++			dmas = <&pdma1 9>, <&pdma1 10>, <&pdma1 11>;
++			clock-names = "iis",
++				      "i2s_opclk0",
++				      "i2s_opclk1";
++			clocks = <&clk_audss CLK_I2S>,
++				 <&clk_audss CLK_I2S>,
++				 <&clk_audss CLK_DOUT_AUD_BUS>;
++			samsung,idma-addr = <0xc0010000>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2s0_bus>;
++			#sound-dai-cells = <0>;
++			status = "disabled";
  		};
  
- 		spi0: spi@e1300000 {
+ 		i2s1: i2s@e2100000 {
 -- 
 2.25.1
 
