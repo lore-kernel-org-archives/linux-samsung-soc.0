@@ -2,102 +2,126 @@ Return-Path: <SRS0=YeST=EB=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54AC4C2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 16:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52886C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 18:15:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A2E522409
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 16:02:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11C3A2224E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 18:15:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603728154;
-	bh=fKEZOvNGoIAwDBGIyJjXjPZCYCRM5l9Bf20qzPVgSmo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qbnyrj2q8e7zPt129uTI/A4wAR/YQwfeYYR5FEeLLZit5LGJxHrq3Jpt3GvNmDPXL
-	 UK9MarASbEUcQ9p3+YAvpUwb6XlLcHjx/hyE3NKJO0he/OErxmKNp8ZvzxTHrjpkDO
-	 FECr9/b4odg+clp6QBzxb8r4F8P+JWKgCC2dpEUM=
+	s=default; t=1603736139;
+	bh=XNkTurHxcTSdlJysblP2MMoMZiIHUkTVmgg0ibKLaq0=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=WxIDgh7OlXfkQ9LtONvw3We/tgKzkVbz/S1tm/JM54JzyrZJTMHR8pCmgoHK55Sgd
+	 qVkYL1FQEQ4GFEcicOrL2nE0zufn0+GToAWu7IanOKP4/v7npA4BgUUnG6Ew517NBj
+	 4vq12dBqr/zM+fTWRgy4bF2C36IPtuxsRWYitzck=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1771819AbgJZQCc convert rfc822-to-8bit (ORCPT
+        id S1789322AbgJZSPi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 12:02:32 -0400
-Received: from mail-ej1-f68.google.com ([209.85.218.68]:42598 "EHLO
-        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1784665AbgJZQAa (ORCPT
+        Mon, 26 Oct 2020 14:15:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59034 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1789318AbgJZSPi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 26 Oct 2020 12:00:30 -0400
-Received: by mail-ej1-f68.google.com with SMTP id h24so14339982ejg.9;
-        Mon, 26 Oct 2020 09:00:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=+2ilN7ald/i8qFIcZftd6gynJe1RkBbgFa1OiazdUr4=;
-        b=Wg5FqLgtCI51HsL827Hcld+cps/3dGS8gNO10OVJ49WBiXXX/skIgTnUAJKl/jQGcm
-         PjzOvgo6Ifx+pD7pCi7X0QmWxlNtV3pAYbUH6F6eoSoPLcvNV4QzcTZT5yVEA2AgYeNe
-         LSom/EQ2kk1Pdh19aXcxoJPlIGwFtAsEjlzmpibcJYZ7aED1E/gEp+D69tu3H9i6o4zE
-         7jTMiZbs9iYrmFSLo/sBBTcMOMZQ3NyI/VMhMcjv+p/oETR0qykO2NnSTiSerOR7hsPD
-         FadEZAObqHps6xkZHlb9KBRLTODafHxzZrdOHkjUE6jm0xhngWk/1pwF+vpnlvD+EUu2
-         qsXg==
-X-Gm-Message-State: AOAM532vIsclK026pzOt1bcxIpXn/Zwh7hIiNp7H7DtS+sqN95QILX9X
-        Drxoiq1glpA1FkYte0fmqxQ=
-X-Google-Smtp-Source: ABdhPJyvg6eEEIyV+jHpkCOg8YGyuyblnT8jUrG0+702LCySTgaupP8Ox2g50lJMwLg4I27bMT45RQ==
-X-Received: by 2002:a17:906:892:: with SMTP id n18mr3457787eje.1.1603728028166;
-        Mon, 26 Oct 2020 09:00:28 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.184])
-        by smtp.googlemail.com with ESMTPSA id n10sm5419248edo.55.2020.10.26.09.00.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2020 09:00:26 -0700 (PDT)
-Date:   Mon, 26 Oct 2020 17:00:23 +0100
+        Mon, 26 Oct 2020 14:15:38 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 352052087C;
+        Mon, 26 Oct 2020 18:15:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603736137;
+        bh=XNkTurHxcTSdlJysblP2MMoMZiIHUkTVmgg0ibKLaq0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SKaDfHKO6sHcYaKcllCDJt+l8POWAF21/mPD0TP20vC7Kf4uKwu3JZTh83RLanWGo
+         QzF+NrUG4dM2sRRlNpSuRqp/IN1u2BBH4zYfO8MmzrEzaXMCzVVt1Kkf+5rn7nt9r/
+         TUz0WAIXtoA6uKwf1bUlAgD64Zot59UHrp+60SrM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Martin =?utf-8?Q?J=C3=BCcker?= <martin.juecker@gmail.com>
-Cc:     linux-samsung-soc@vger.kernel.org, kgene@kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/5] ARM: dts: add Samsung's exynos4412-based p4note
- boards
-Message-ID: <20201026160023.GA120575@kozik-lap>
-References: <20201024144421.34435-1-martin.juecker@gmail.com>
- <20201024144421.34435-3-martin.juecker@gmail.com>
- <20201026144830.GA76312@kozik-lap>
+To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 00/12] ARM: dts: samsung: minor node name cleanups
+Date:   Mon, 26 Oct 2020 19:15:16 +0100
+Message-Id: <20201026181528.163143-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20201026144830.GA76312@kozik-lap>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 26, 2020 at 03:48:30PM +0100, Krzysztof Kozlowski wrote:
-> On Sat, Oct 24, 2020 at 04:44:18PM +0200, Martin Jücker wrote:
+Hi All,
 
-(...)
+A new Exynos4412 board was recently submitted and it (as expected)
+copied all not-the-best patterns from existing DTSes.  Let's fix few of
+them so any new boards will not copy old choices.
 
-> > +&i2c_7 {
-> > +	samsung,i2c-sda-delay = <100>;
-> > +	samsung,i2c-slave-addr = <0x10>;
-> > +	samsung,i2c-max-bus-freq = <400000>;
-> > +	pinctrl-0 = <&i2c7_bus>;
-> > +	pinctrl-names = "default";
-> > +	status = "okay";
-> > +
-> > +	max77686: max77686_pmic@9 {
-> > +		compatible = "maxim,max77686";
-> > +		interrupt-parent = <&gpx0>;
-> > +		interrupts = <7 IRQ_TYPE_NONE>;
-> > +		pinctrl-0 = <&max77686_irq>;
-> > +		pinctrl-names = "default";
-> > +		reg = <0x09>;
-> > +		#clock-cells = <1>;
-> > +
-> > +		voltage-regulators {
-> 
-> Just "regulators" and no empty line after this.
-
-Skip this comment, it's obviously wrong, as the regulator driver and
-bindings require the exact name "voltage-regulator".
+I plan to follow up on this and fix few of such naming and style issues.
 
 Best regards,
 Krzysztof
+
+Krzysztof Kozlowski (12):
+  ARM: dts: exynos: adjust node names to DT spec in Exynos3250 boards
+  ARM: dts: exynos: adjust node names to DT spec in Exynos4210 boards
+  ARM: dts: exynos: override GPIO keys node by label in Exynos4412
+    Odroid family
+  ARM: dts: exynos: adjust node names to DT spec in Exynos4412 boards
+  ARM: dts: exynos: remove redundant status=okay in Exynos4412 boards
+  ARM: dts: exynos: adjust node names to DT spec in Exynos5250 boards
+  ARM: dts: exynos: adjust node names to DT spec in Odroid XU
+  ARM: dts: exynos: adjust node names to DT spec in Exynos542x boards
+  ARM: dts: s5pv210: adjust node names to DT spec
+  arm64: dts: exynos: adjust node names to DT spec in Exynos5433 TM2
+  arm64: dts: exynos: adjust node names to DT spec in Exynos7 Espresso
+  arm64: dts: exynos: remove redundant status=okay in Exynos5433 TM2
+
+ arch/arm/boot/dts/exynos3250-artik5.dtsi      |  2 +-
+ arch/arm/boot/dts/exynos3250-monk.dts         |  8 +++---
+ arch/arm/boot/dts/exynos3250-rinato.dts       |  8 +++---
+ arch/arm/boot/dts/exynos4210-i9100.dts        |  6 ++--
+ arch/arm/boot/dts/exynos4210-origen.dts       |  4 +--
+ arch/arm/boot/dts/exynos4210-smdkv310.dts     | 22 +++++++--------
+ arch/arm/boot/dts/exynos4210-trats.dts        |  4 +--
+ arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi   |  9 +++---
+ arch/arm/boot/dts/exynos4412-itop-elite.dts   |  2 +-
+ .../boot/dts/exynos4412-itop-scp-core.dtsi    |  2 +-
+ arch/arm/boot/dts/exynos4412-midas.dtsi       | 15 ++++------
+ arch/arm/boot/dts/exynos4412-n710x.dts        |  2 +-
+ .../boot/dts/exynos4412-odroid-common.dtsi    | 10 +++----
+ arch/arm/boot/dts/exynos4412-odroidx.dts      | 28 +++++++++----------
+ arch/arm/boot/dts/exynos4412-origen.dts       | 14 +++++-----
+ arch/arm/boot/dts/exynos4412-smdk4412.dts     | 20 ++++++-------
+ arch/arm/boot/dts/exynos5250-arndale.dts      |  4 +--
+ arch/arm/boot/dts/exynos5250-smdk5250.dts     |  4 +--
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi |  4 +--
+ arch/arm/boot/dts/exynos5250-spring.dts       |  2 +-
+ arch/arm/boot/dts/exynos5410-odroidxu.dts     |  2 +-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |  4 +--
+ arch/arm/boot/dts/exynos5420-peach-pit.dts    |  4 +--
+ arch/arm/boot/dts/exynos5420-smdk5420.dts     |  2 +-
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  2 +-
+ .../boot/dts/exynos5422-odroidxu3-audio.dtsi  |  2 +-
+ .../boot/dts/exynos5422-odroidxu3-common.dtsi |  4 +--
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts    |  8 +++---
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     |  4 +--
+ arch/arm/boot/dts/s5pv210-aquila.dts          | 12 ++++----
+ arch/arm/boot/dts/s5pv210-aries.dtsi          |  4 +--
+ arch/arm/boot/dts/s5pv210-goni.dts            | 14 +++++-----
+ arch/arm/boot/dts/s5pv210-smdkv210.dts        | 20 ++++++-------
+ .../dts/exynos/exynos5433-tm2-common.dtsi     | 11 ++++----
+ .../boot/dts/exynos/exynos7-espresso.dts      |  2 +-
+ 35 files changed, 130 insertions(+), 135 deletions(-)
+
+-- 
+2.25.1
+
