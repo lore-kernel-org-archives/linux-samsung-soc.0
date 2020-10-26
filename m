@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1C2C56202
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 11:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DFEC55178
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 11:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF3D222EA
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 11:00:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A989222EA
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 11:00:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="MsS9QgRr"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="E/O7+voK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1772786AbgJZK6i (ORCPT
+        id S1772560AbgJZK6f (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 06:58:38 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40916 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1772609AbgJZK6h (ORCPT
+        Mon, 26 Oct 2020 06:58:35 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38806 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1772583AbgJZK6f (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 26 Oct 2020 06:58:37 -0400
-Received: by mail-wm1-f68.google.com with SMTP id k18so11940335wmj.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2020 03:58:34 -0700 (PDT)
+        Mon, 26 Oct 2020 06:58:35 -0400
+Received: by mail-wm1-f67.google.com with SMTP id l15so11983197wmi.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2020 03:58:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=6WV52rOTICG5gX8Y1zv7jCBKQNXPiDy4YHeczZNq5R8=;
-        b=MsS9QgRruwtj0Widu0UU53POHQhBX+El62ASHwLLGjvh0KmgSWdUAbgaQCn/b3XM8Z
-         dq0wX4vWB/XmX5sU9MzvzcEpGxVIn1beiCnuhkFdRUfR1pSIZWd8aaFDG5HqKKjhHTtz
-         Zz3x5Si5yORMNqpF745f9YMH0KJoUco3SjYMs=
+        bh=cXs1UvblKDwz1YQCIe37x2wwQ5T1EiKP8bli0y6YQUo=;
+        b=E/O7+voKlzMLNr1tMV7GRLom+PNYHCgDQ3OQYV/aWqFBixt9URXmul00B6LbSiurKm
+         FWBH3nEs3LtTvDZrOsKqWR6sU78g5LH1U1/DYzkNraEMVQf7DvkjdRanjf1DSeK2bJTj
+         IABPWNTOBt65UzvJe20ya2kIjM8TNoEQ70DME=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6WV52rOTICG5gX8Y1zv7jCBKQNXPiDy4YHeczZNq5R8=;
-        b=P6aGVPFxfw2TIS5AByvHCm2mpJHthTN1oegq0yz90uO3H8h8O260uNEoB3hX69mKIa
-         90/tc3saIZqA6E+80+9ITTKmuWdamcwlgVjR0myl5G3KWnfgvOpZhl1wfbumYQKa2UtZ
-         8B88QAPQVURFjeI0uq9OWeYDGlEdz+dGvZpOiVyuOZi8zQ8M9mOU20eiSGuQH5I/cBZ3
-         sj3tzugh3Oplm9JZiamcplrQwsqvpnX9JzssyGxBixhoJc9oEoikARA1oIujbO0LVIsa
-         ZWy4I07/TeiWvvt751fx+1pAFbt8fD0cKXXE5f2sAjij0mjov6FSUFw5hRjTDtzWxPQm
-         I01w==
-X-Gm-Message-State: AOAM533LVs+eUn8fdLRHPhNIo3xFb5P6SggPuk3g0P1XnZIPaAvZ/e4e
-        lcJt5rvLtHknYIaqF7kNczlRWg==
-X-Google-Smtp-Source: ABdhPJzVBsxwLZIMYGLD3DYWXu1bp4LaH7S6HY6WbjQnf7B+QAB79jbRqX/pwaaSVhOsBfxmWuo57g==
-X-Received: by 2002:a1c:59c3:: with SMTP id n186mr15451298wmb.32.1603709914185;
-        Mon, 26 Oct 2020 03:58:34 -0700 (PDT)
+        bh=cXs1UvblKDwz1YQCIe37x2wwQ5T1EiKP8bli0y6YQUo=;
+        b=ZwPU9TzfjNQabf3Mn9Sqf8H3U5ShvizAvHUjLsqf/sIYB712Sqn9c+jTLhNDV/q0SL
+         h2TVMCb7LB7psz17kAnnpbGU7L5bTBFUtlP0uEUXZymK4iP4jEQMb5TDFrs/5WoK/B/k
+         SzCj6WjBB8xCTtKZiZa7MCrGnlQRVXUyDugNTmVFSKSQiTg7qgKpRjE3wSRDL7vsamDJ
+         wdqX3pzqR9Zln5pWC8nU2uB6sbjmRlhmE3oguxTZ/Ep+pyXnpjNqS9YxgIWVt5M+/1PD
+         Tcv6kaBQNritQzXurmhQNOlqVJ6yzSB/nVtNari47JRuQ0W8oKt8VCDtIv0piPj0FITR
+         vHXw==
+X-Gm-Message-State: AOAM533W7oryDS5roM14HDJwO2cxpVQdaS/XkcseQ+d5nPkjkUs0xwNi
+        x3A0tAHKZxLHHNoLFsf88Siqcg==
+X-Google-Smtp-Source: ABdhPJxmBoKR8n4PO1pSYo1/0YhdisFijwUoQU4+g9izXaJK8ALrEJgk5lU4qb520qBwIoYy7NeuKA==
+X-Received: by 2002:a1c:2cc2:: with SMTP id s185mr15884686wms.77.1603709912789;
+        Mon, 26 Oct 2020 03:58:32 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id w83sm21165156wmg.48.2020.10.26.03.58.32
+        by smtp.gmail.com with ESMTPSA id w83sm21165156wmg.48.2020.10.26.03.58.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2020 03:58:33 -0700 (PDT)
+        Mon, 26 Oct 2020 03:58:32 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>
@@ -60,8 +60,6 @@ Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
         linux-s390@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Daniel Vetter <daniel.vetter@intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         Pawel Osciak <pawel@osciak.com>,
@@ -70,12 +68,13 @@ Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
         Tomasz Figa <tfiga@chromium.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jan Kara <jack@suse.cz>,
         Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH v4 06/15] media: videobuf2: Move frame_vector into media subsystem
-Date:   Mon, 26 Oct 2020 11:58:09 +0100
-Message-Id: <20201026105818.2585306-7-daniel.vetter@ffwll.ch>
+Subject: [PATCH v4 05/15] mm/frame-vector: Use FOLL_LONGTERM
+Date:   Mon, 26 Oct 2020 11:58:08 +0100
+Message-Id: <20201026105818.2585306-6-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201026105818.2585306-1-daniel.vetter@ffwll.ch>
 References: <20201026105818.2585306-1-daniel.vetter@ffwll.ch>
@@ -86,12 +85,17 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-It's the only user. This also garbage collects the CONFIG_FRAME_VECTOR
-symbol from all over the tree (well just one place, somehow omap media
-driver still had this in its Kconfig, despite not using it).
+This is used by media/videbuf2 for persistent dma mappings, not just
+for a single dma operation and then freed again, so needs
+FOLL_LONGTERM.
 
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-Acked-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Unfortunately current pup_locked doesn't support FOLL_LONGTERM due to
+locking issues. Rework the code to pull the pup path out from the
+mmap_sem critical section as suggested by Jason.
+
+By relying entirely on the vma checks in pin_user_pages and follow_pfn
+(for vm_flags and vma_is_fsdax) we can also streamline the code a lot.
+
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
 Cc: Pawel Osciak <pawel@osciak.com>
@@ -108,219 +112,99 @@ Cc: linux-mm@kvack.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-media@vger.kernel.org
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
 Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 --
-v3:
-- Create a new frame_vector.h header for this (Mauro)
+v2: Streamline the code and further simplify the loop checks (Jason)
 ---
- drivers/media/common/videobuf2/Kconfig        |  1 -
- drivers/media/common/videobuf2/Makefile       |  1 +
- .../media/common/videobuf2}/frame_vector.c    |  2 +
- drivers/media/platform/omap/Kconfig           |  1 -
- include/linux/mm.h                            | 42 -----------------
- include/media/frame_vector.h                  | 47 +++++++++++++++++++
- include/media/videobuf2-core.h                |  1 +
- mm/Kconfig                                    |  3 --
- mm/Makefile                                   |  1 -
- 9 files changed, 51 insertions(+), 48 deletions(-)
- rename {mm => drivers/media/common/videobuf2}/frame_vector.c (99%)
- create mode 100644 include/media/frame_vector.h
+ mm/frame_vector.c | 50 ++++++++++++++---------------------------------
+ 1 file changed, 15 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/media/common/videobuf2/Kconfig b/drivers/media/common/videobuf2/Kconfig
-index edbc99ebba87..d2223a12c95f 100644
---- a/drivers/media/common/videobuf2/Kconfig
-+++ b/drivers/media/common/videobuf2/Kconfig
-@@ -9,7 +9,6 @@ config VIDEOBUF2_V4L2
- 
- config VIDEOBUF2_MEMOPS
- 	tristate
--	select FRAME_VECTOR
- 
- config VIDEOBUF2_DMA_CONTIG
- 	tristate
-diff --git a/drivers/media/common/videobuf2/Makefile b/drivers/media/common/videobuf2/Makefile
-index 77bebe8b202f..54306f8d096c 100644
---- a/drivers/media/common/videobuf2/Makefile
-+++ b/drivers/media/common/videobuf2/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- videobuf2-common-objs := videobuf2-core.o
-+videobuf2-common-objs += frame_vector.o
- 
- ifeq ($(CONFIG_TRACEPOINTS),y)
-   videobuf2-common-objs += vb2-trace.o
-diff --git a/mm/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
-similarity index 99%
-rename from mm/frame_vector.c
-rename to drivers/media/common/videobuf2/frame_vector.c
-index d44779e56313..6590987c14bd 100644
+diff --git a/mm/frame_vector.c b/mm/frame_vector.c
+index 10f82d5643b6..d44779e56313 100644
 --- a/mm/frame_vector.c
-+++ b/drivers/media/common/videobuf2/frame_vector.c
-@@ -8,6 +8,8 @@
- #include <linux/pagemap.h>
- #include <linux/sched.h>
++++ b/mm/frame_vector.c
+@@ -38,7 +38,6 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+ 	struct vm_area_struct *vma;
+ 	int ret = 0;
+ 	int err;
+-	int locked;
  
-+#include <media/frame_vector.h>
-+
- /**
-  * get_vaddr_frames() - map virtual addresses to pfns
-  * @start:	starting user address
-diff --git a/drivers/media/platform/omap/Kconfig b/drivers/media/platform/omap/Kconfig
-index f73b5893220d..de16de46c0f4 100644
---- a/drivers/media/platform/omap/Kconfig
-+++ b/drivers/media/platform/omap/Kconfig
-@@ -12,6 +12,5 @@ config VIDEO_OMAP2_VOUT
- 	depends on VIDEO_V4L2
- 	select VIDEOBUF2_DMA_CONTIG
- 	select OMAP2_VRFB if ARCH_OMAP2 || ARCH_OMAP3
--	select FRAME_VECTOR
- 	help
- 	  V4L2 Display driver support for OMAP2/3 based boards.
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 16b799a0522c..acd60fbf1a5a 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1743,48 +1743,6 @@ int account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc);
- int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
- 			struct task_struct *task, bool bypass_rlim);
+ 	if (nr_frames == 0)
+ 		return 0;
+@@ -48,40 +47,25 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
  
--/* Container for pinned pfns / pages */
--struct frame_vector {
--	unsigned int nr_allocated;	/* Number of frames we have space for */
--	unsigned int nr_frames;	/* Number of frames stored in ptrs array */
--	bool got_ref;		/* Did we pin pages by getting page ref? */
--	bool is_pfns;		/* Does array contain pages or pfns? */
--	void *ptrs[];		/* Array of pinned pfns / pages. Use
--				 * pfns_vector_pages() or pfns_vector_pfns()
--				 * for access */
--};
--
--struct frame_vector *frame_vector_create(unsigned int nr_frames);
--void frame_vector_destroy(struct frame_vector *vec);
--int get_vaddr_frames(unsigned long start, unsigned int nr_pfns,
--		     unsigned int gup_flags, struct frame_vector *vec);
--void put_vaddr_frames(struct frame_vector *vec);
--int frame_vector_to_pages(struct frame_vector *vec);
--void frame_vector_to_pfns(struct frame_vector *vec);
--
--static inline unsigned int frame_vector_count(struct frame_vector *vec)
--{
--	return vec->nr_frames;
--}
--
--static inline struct page **frame_vector_pages(struct frame_vector *vec)
--{
--	if (vec->is_pfns) {
--		int err = frame_vector_to_pages(vec);
--
--		if (err)
--			return ERR_PTR(err);
+ 	start = untagged_addr(start);
+ 
+-	mmap_read_lock(mm);
+-	locked = 1;
+-	vma = find_vma_intersection(mm, start, start + 1);
+-	if (!vma) {
+-		ret = -EFAULT;
+-		goto out;
 -	}
--	return (struct page **)(vec->ptrs);
--}
 -
--static inline unsigned long *frame_vector_pfns(struct frame_vector *vec)
--{
--	if (!vec->is_pfns)
--		frame_vector_to_pfns(vec);
--	return (unsigned long *)(vec->ptrs);
--}
+-	/*
+-	 * While get_vaddr_frames() could be used for transient (kernel
+-	 * controlled lifetime) pinning of memory pages all current
+-	 * users establish long term (userspace controlled lifetime)
+-	 * page pinning. Treat get_vaddr_frames() like
+-	 * get_user_pages_longterm() and disallow it for filesystem-dax
+-	 * mappings.
+-	 */
+-	if (vma_is_fsdax(vma)) {
+-		ret = -EOPNOTSUPP;
+-		goto out;
+-	}
 -
- struct kvec;
- int get_kernel_pages(const struct kvec *iov, int nr_pages, int write,
- 			struct page **pages);
-diff --git a/include/media/frame_vector.h b/include/media/frame_vector.h
-new file mode 100644
-index 000000000000..1ed0cd64510d
---- /dev/null
-+++ b/include/media/frame_vector.h
-@@ -0,0 +1,47 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#ifndef _MEDIA_FRAME_VECTOR_H
-+#define _MEDIA_FRAME_VECTOR_H
-+
-+/* Container for pinned pfns / pages in frame_vector.c */
-+struct frame_vector {
-+	unsigned int nr_allocated;	/* Number of frames we have space for */
-+	unsigned int nr_frames;	/* Number of frames stored in ptrs array */
-+	bool got_ref;		/* Did we pin pages by getting page ref? */
-+	bool is_pfns;		/* Does array contain pages or pfns? */
-+	void *ptrs[];		/* Array of pinned pfns / pages. Use
-+				 * pfns_vector_pages() or pfns_vector_pfns()
-+				 * for access */
-+};
-+
-+struct frame_vector *frame_vector_create(unsigned int nr_frames);
-+void frame_vector_destroy(struct frame_vector *vec);
-+int get_vaddr_frames(unsigned long start, unsigned int nr_pfns,
-+		     unsigned int gup_flags, struct frame_vector *vec);
-+void put_vaddr_frames(struct frame_vector *vec);
-+int frame_vector_to_pages(struct frame_vector *vec);
-+void frame_vector_to_pfns(struct frame_vector *vec);
-+
-+static inline unsigned int frame_vector_count(struct frame_vector *vec)
-+{
-+	return vec->nr_frames;
-+}
-+
-+static inline struct page **frame_vector_pages(struct frame_vector *vec)
-+{
-+	if (vec->is_pfns) {
-+		int err = frame_vector_to_pages(vec);
-+
-+		if (err)
-+			return ERR_PTR(err);
-+	}
-+	return (struct page **)(vec->ptrs);
-+}
-+
-+static inline unsigned long *frame_vector_pfns(struct frame_vector *vec)
-+{
-+	if (!vec->is_pfns)
-+		frame_vector_to_pfns(vec);
-+	return (unsigned long *)(vec->ptrs);
-+}
-+
-+#endif /* _MEDIA_FRAME_VECTOR_H */
-diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
-index bbb3f26fbde9..d045e3a5a1d8 100644
---- a/include/media/videobuf2-core.h
-+++ b/include/media/videobuf2-core.h
-@@ -18,6 +18,7 @@
- #include <linux/dma-buf.h>
- #include <linux/bitops.h>
- #include <media/media-request.h>
-+#include <media/frame_vector.h>
+-	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
++	ret = pin_user_pages_fast(start, nr_frames,
++				  FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
++				  (struct page **)(vec->ptrs));
++	if (ret > 0) {
+ 		vec->got_ref = true;
+ 		vec->is_pfns = false;
+-		ret = pin_user_pages_locked(start, nr_frames,
+-			gup_flags, (struct page **)(vec->ptrs), &locked);
+-		goto out;
++		goto out_unlocked;
+ 	}
  
- #define VB2_MAX_FRAME	(32)
- #define VB2_MAX_PLANES	(8)
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 6c974888f86f..da6c943fe9f1 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -815,9 +815,6 @@ config DEVICE_PRIVATE
- 	  memory; i.e., memory that is only accessible from the device (or
- 	  group of devices). You likely also want to select HMM_MIRROR.
++	mmap_read_lock(mm);
+ 	vec->got_ref = false;
+ 	vec->is_pfns = true;
+ 	do {
+ 		unsigned long *nums = frame_vector_pfns(vec);
  
--config FRAME_VECTOR
--	bool
--
- config ARCH_USES_HIGH_VMA_FLAGS
- 	bool
- config ARCH_HAS_PKEYS
-diff --git a/mm/Makefile b/mm/Makefile
-index d5649f1c12c0..a025fd6c6afd 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -111,7 +111,6 @@ obj-$(CONFIG_PAGE_EXTENSION) += page_ext.o
- obj-$(CONFIG_CMA_DEBUGFS) += cma_debug.o
- obj-$(CONFIG_USERFAULTFD) += userfaultfd.o
- obj-$(CONFIG_IDLE_PAGE_TRACKING) += page_idle.o
--obj-$(CONFIG_FRAME_VECTOR) += frame_vector.o
- obj-$(CONFIG_DEBUG_PAGE_REF) += debug_page_ref.o
- obj-$(CONFIG_HARDENED_USERCOPY) += usercopy.o
- obj-$(CONFIG_PERCPU_STATS) += percpu-stats.o
++		vma = find_vma_intersection(mm, start, start + 1);
++		if (!vma)
++			break;
++
+ 		while (ret < nr_frames && start + PAGE_SIZE <= vma->vm_end) {
+ 			err = follow_pfn(vma, start, &nums[ret]);
+ 			if (err) {
+@@ -92,17 +76,13 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+ 			start += PAGE_SIZE;
+ 			ret++;
+ 		}
+-		/*
+-		 * We stop if we have enough pages or if VMA doesn't completely
+-		 * cover the tail page.
+-		 */
+-		if (ret >= nr_frames || start < vma->vm_end)
++		/* Bail out if VMA doesn't completely cover the tail page. */
++		if (start < vma->vm_end)
+ 			break;
+-		vma = find_vma_intersection(mm, start, start + 1);
+-	} while (vma && vma->vm_flags & (VM_IO | VM_PFNMAP));
++	} while (ret < nr_frames);
+ out:
+-	if (locked)
+-		mmap_read_unlock(mm);
++	mmap_read_unlock(mm);
++out_unlocked:
+ 	if (!ret)
+ 		ret = -EFAULT;
+ 	if (ret > 0)
 -- 
 2.28.0
 
