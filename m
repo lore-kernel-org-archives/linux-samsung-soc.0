@@ -2,91 +2,102 @@ Return-Path: <SRS0=YeST=EB=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AEB5C4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 15:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54AC4C2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 16:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44CF82224A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 15:16:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A2E522409
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 16:02:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603725393;
-	bh=tAcAz6PbSW/8UCabRYX74zXLXxJe0VJ0IQ20TF23f6E=;
+	s=default; t=1603728154;
+	bh=fKEZOvNGoIAwDBGIyJjXjPZCYCRM5l9Bf20qzPVgSmo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lHxzEM1i5Cmf8dp+W6OEz5NivOxanjYD6jWogjLPluF+IaAO8+MOjtMOi6sGSTnGv
-	 A+Uytpg+zDrjf0ZBmasBjOax7i30QeG6MSHyfWLmFdpNyPIJXAI7MuHc1wlMf/Ogsc
-	 zWl544HESnT0DlDwEpkBjDz5e/9UoXyMVHFKdAiA=
+	b=qbnyrj2q8e7zPt129uTI/A4wAR/YQwfeYYR5FEeLLZit5LGJxHrq3Jpt3GvNmDPXL
+	 UK9MarASbEUcQ9p3+YAvpUwb6XlLcHjx/hyE3NKJO0he/OErxmKNp8ZvzxTHrjpkDO
+	 FECr9/b4odg+clp6QBzxb8r4F8P+JWKgCC2dpEUM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1783552AbgJZPQc convert rfc822-to-8bit (ORCPT
+        id S1771819AbgJZQCc convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 11:16:32 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:38686 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404034AbgJZPQc (ORCPT
+        Mon, 26 Oct 2020 12:02:32 -0400
+Received: from mail-ej1-f68.google.com ([209.85.218.68]:42598 "EHLO
+        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1784665AbgJZQAa (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 26 Oct 2020 11:16:32 -0400
-Received: by mail-ej1-f67.google.com with SMTP id ce10so14116299ejc.5;
-        Mon, 26 Oct 2020 08:16:30 -0700 (PDT)
+        Mon, 26 Oct 2020 12:00:30 -0400
+Received: by mail-ej1-f68.google.com with SMTP id h24so14339982ejg.9;
+        Mon, 26 Oct 2020 09:00:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=ykn7mDr6IhgGPaHcJ3ODS02eBmjPYrOJE/dTqRU9Lm4=;
-        b=Icywda8CCtcospo/+MQz1jQ83jTDgkg4oHEpreSqxj13EQbRTl9IRYuDwhuZ4ivgM9
-         TkUjWYr0Ke0Ob6Wvl/YZlTsir8JCo7MqfTStRIOeCQgLLW8+PO0pO3s25AKfB/VTGtjt
-         s1bxGAoUr+94tyOahx+KQ+DNZOWiE+JlrigyH+tynswAeXRMQHEn/Kj9RtKslrQoOwQ0
-         cZ+NW7McivO3Mip85/BdtCZmKoWFTR3IpH/9LaNm4O/3QDxwpjg8oh3cajCu1ouxcjkN
-         c1OmUVcDetcFIu+w2cTf6fP8BWGLzLgxpye6FhSVr2z9IdMzedui5Ok4apPj4f5Mek9a
-         N4LQ==
-X-Gm-Message-State: AOAM532BiyWEtB/kPhDeKbQSlXXwK4bG1QpxHZomwiBaDhxxn9YrOqGj
-        2wUWADSiId2HQfsPH5wnE6k=
-X-Google-Smtp-Source: ABdhPJyFdl9tOTZ46nbpEA1jYNhgGin081i0VgSbLf/9INiPjEinm6ayfLrzWjebiXYrKUHhWfyciw==
-X-Received: by 2002:a17:906:430a:: with SMTP id j10mr15929122ejm.21.1603725389660;
-        Mon, 26 Oct 2020 08:16:29 -0700 (PDT)
+        bh=+2ilN7ald/i8qFIcZftd6gynJe1RkBbgFa1OiazdUr4=;
+        b=Wg5FqLgtCI51HsL827Hcld+cps/3dGS8gNO10OVJ49WBiXXX/skIgTnUAJKl/jQGcm
+         PjzOvgo6Ifx+pD7pCi7X0QmWxlNtV3pAYbUH6F6eoSoPLcvNV4QzcTZT5yVEA2AgYeNe
+         LSom/EQ2kk1Pdh19aXcxoJPlIGwFtAsEjlzmpibcJYZ7aED1E/gEp+D69tu3H9i6o4zE
+         7jTMiZbs9iYrmFSLo/sBBTcMOMZQ3NyI/VMhMcjv+p/oETR0qykO2NnSTiSerOR7hsPD
+         FadEZAObqHps6xkZHlb9KBRLTODafHxzZrdOHkjUE6jm0xhngWk/1pwF+vpnlvD+EUu2
+         qsXg==
+X-Gm-Message-State: AOAM532vIsclK026pzOt1bcxIpXn/Zwh7hIiNp7H7DtS+sqN95QILX9X
+        Drxoiq1glpA1FkYte0fmqxQ=
+X-Google-Smtp-Source: ABdhPJyvg6eEEIyV+jHpkCOg8YGyuyblnT8jUrG0+702LCySTgaupP8Ox2g50lJMwLg4I27bMT45RQ==
+X-Received: by 2002:a17:906:892:: with SMTP id n18mr3457787eje.1.1603728028166;
+        Mon, 26 Oct 2020 09:00:28 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.184])
-        by smtp.googlemail.com with ESMTPSA id a19sm5354005edb.84.2020.10.26.08.16.26
+        by smtp.googlemail.com with ESMTPSA id n10sm5419248edo.55.2020.10.26.09.00.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2020 08:16:27 -0700 (PDT)
-Date:   Mon, 26 Oct 2020 16:16:24 +0100
+        Mon, 26 Oct 2020 09:00:26 -0700 (PDT)
+Date:   Mon, 26 Oct 2020 17:00:23 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc:     kgene@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-        cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: exynos7: Mark aclk_fsys1_200 as critical
-Message-ID: <20201026151624.GB87050@kozik-lap>
-References: <20201024154346.9589-1-pawel.mikolaj.chmiel@gmail.com>
+To:     Martin =?utf-8?Q?J=C3=BCcker?= <martin.juecker@gmail.com>
+Cc:     linux-samsung-soc@vger.kernel.org, kgene@kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/5] ARM: dts: add Samsung's exynos4412-based p4note
+ boards
+Message-ID: <20201026160023.GA120575@kozik-lap>
+References: <20201024144421.34435-1-martin.juecker@gmail.com>
+ <20201024144421.34435-3-martin.juecker@gmail.com>
+ <20201026144830.GA76312@kozik-lap>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20201024154346.9589-1-pawel.mikolaj.chmiel@gmail.com>
+In-Reply-To: <20201026144830.GA76312@kozik-lap>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Oct 24, 2020 at 05:43:46PM +0200, Paweł Chmiel wrote:
-> This clock must be always enabled to allow access to any registers in
-> fsys1 CMU. Until proper solution based on runtime PM is applied
-> (similar to what was done for Exynos5433), mark that clock as critical
-> so it won't be disabled.
-> 
-> It was observed on Samsung Galaxy S6 device (based on Exynos7420), where
-> UFS module is probed before pmic used to power that device.
-> In this case defer probe was happening and that clock was disabled by
-> UFS driver, causing whole boot to hang on next CMU access.
-> 
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
->  drivers/clk/samsung/clk-exynos7.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+On Mon, Oct 26, 2020 at 03:48:30PM +0100, Krzysztof Kozlowski wrote:
+> On Sat, Oct 24, 2020 at 04:44:18PM +0200, Martin Jücker wrote:
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+(...)
+
+> > +&i2c_7 {
+> > +	samsung,i2c-sda-delay = <100>;
+> > +	samsung,i2c-slave-addr = <0x10>;
+> > +	samsung,i2c-max-bus-freq = <400000>;
+> > +	pinctrl-0 = <&i2c7_bus>;
+> > +	pinctrl-names = "default";
+> > +	status = "okay";
+> > +
+> > +	max77686: max77686_pmic@9 {
+> > +		compatible = "maxim,max77686";
+> > +		interrupt-parent = <&gpx0>;
+> > +		interrupts = <7 IRQ_TYPE_NONE>;
+> > +		pinctrl-0 = <&max77686_irq>;
+> > +		pinctrl-names = "default";
+> > +		reg = <0x09>;
+> > +		#clock-cells = <1>;
+> > +
+> > +		voltage-regulators {
+> 
+> Just "regulators" and no empty line after this.
+
+Skip this comment, it's obviously wrong, as the regulator driver and
+bindings require the exact name "voltage-regulator".
 
 Best regards,
 Krzysztof
