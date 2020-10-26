@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE3EC8300B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8106C56201
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3D072225C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:31:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C18021D42
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:31:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603758663;
-	bh=N0BVeFiAVWAn84bzGkJO2gZXy2BUUNVNqiDYYFADKHc=;
+	s=default; t=1603758664;
+	bh=vHmqrWTIMqBzgAYlU6EOeufQRlGj0rQsxtQb2ln9D7c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i3jTUvUDrVk1kweaBIHtHAAcV++PM7NIMu6o907W+dJcgibHbCfTAojz5i5xV+V4N
-	 FJ/jzJifeI+GdeEwJQAnhOzNhAsvuWHiS57+B3ZaH/FqfeHj15S3sZEC+XrjeOaHOO
-	 e9zxgjR4nq+HAEP/5bTBltE6LW5dac9RZS3iKVzw=
+	b=0jby1XaPdXREN48FBgC/GTZ2kGoD3WACqsXNd9OAoeJEYN9hD3ObUn6vgtSsdDOq2
+	 UyIUoH1D+j/rOYpvVIG83AjH5Rf7HRUa/WGGN8C+j68+JIJa+0HVNu1i+XFhsZcFV1
+	 7ys4nChEP0TzRHdI+R1CcOF/IDUmce3BoH73X0Xc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409557AbgJZXvx (ORCPT
+        id S2409546AbgJZXvv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 19:51:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53298 "EHLO mail.kernel.org"
+        Mon, 26 Oct 2020 19:51:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409404AbgJZXvw (ORCPT
+        id S2409537AbgJZXvt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 26 Oct 2020 19:51:52 -0400
+        Mon, 26 Oct 2020 19:51:49 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B7BD20882;
-        Mon, 26 Oct 2020 23:51:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25F6421655;
+        Mon, 26 Oct 2020 23:51:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603756311;
-        bh=N0BVeFiAVWAn84bzGkJO2gZXy2BUUNVNqiDYYFADKHc=;
+        s=default; t=1603756308;
+        bh=vHmqrWTIMqBzgAYlU6EOeufQRlGj0rQsxtQb2ln9D7c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FP1FA2IYgBZu1e8wCAGhxWoirxiiVFSF4L9A7dp5hlRn5QTDYuSthKVCrtvVgSOGA
-         5RFwRvJClFBQy6wbSBcYqmX3mjxpvIcFc70uV5Wr6htRMmAFT5fZKjou74zfSWnW3d
-         v1WM8XcmInKuvae57j/hKveBnCbdosqj9rsUUidc=
+        b=AafIE9dtQG841ubNWuYR4E4lnzut0uLo8WvAuRv0YABsF9iLIA6GQrN4n1jDHPfm6
+         SbIxGErfrmy7IfPq464B09IJDesVyfyrPzyZgb5bYcM9wj5sV0IUSTkyw61XY8TDEf
+         TBbSVFdZJYiLqtTWSKWjiugKyBBzspXu8uX0Gx2o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Bakker <xc-racer2@live.ca>,
+Cc:     Jonathan Bakker <xc-racer2@live.ca>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.9 135/147] ARM: dts: s5pv210: move fixed clocks under root node
-Date:   Mon, 26 Oct 2020 19:48:53 -0400
-Message-Id: <20201026234905.1022767-135-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.9 133/147] ARM: dts: s5pv210: Enable audio on Aries boards
+Date:   Mon, 26 Oct 2020 19:48:51 -0400
+Message-Id: <20201026234905.1022767-133-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201026234905.1022767-1-sashal@kernel.org>
 References: <20201026234905.1022767-1-sashal@kernel.org>
@@ -61,83 +61,290 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Jonathan Bakker <xc-racer2@live.ca>
 
-[ Upstream commit d38cae370e5f2094cbc38db3082b8e9509ae52ce ]
+[ Upstream commit cd972fe90008adf49de0790250c1275480ac5cdc ]
 
-The fixed clocks are kept under dedicated 'external-clocks' node, thus a
-fake 'reg' was added.  This is not correct with dtschema as fixed-clock
-binding does not have a 'reg' property.  Moving fixed clocks out of
-'soc' to root node fixes multiple dtbs_check warnings:
+Both the Galaxy S and the Fascinate4G have a WM8994 codec, but they
+differ slightly in their jack detection and micbias configuration.
 
-  external-clocks: $nodename:0: 'external-clocks' does not match '^([a-z][a-z0-9\\-]+-bus|bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
-  external-clocks: #size-cells:0:0: 0 is not one of [1, 2]
-  external-clocks: oscillator@0:reg:0: [0] is too short
-  external-clocks: oscillator@1:reg:0: [1] is too short
-  external-clocks: 'ranges' is a required property
-  oscillator@0: 'reg' does not match any of the regexes: 'pinctrl-[0-9]+'
-
+Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Jonathan Bakker <xc-racer2@live.ca>
-Link: https://lore.kernel.org/r/20200907161141.31034-7-krzk@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/s5pv210.dtsi | 36 +++++++++++++---------------------
- 1 file changed, 14 insertions(+), 22 deletions(-)
+ arch/arm/boot/dts/s5pv210-aries.dtsi      | 10 +++
+ arch/arm/boot/dts/s5pv210-fascinate4g.dts | 98 +++++++++++++++++++++++
+ arch/arm/boot/dts/s5pv210-galaxys.dts     | 85 ++++++++++++++++++++
+ 3 files changed, 193 insertions(+)
 
-diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index 84e4447931de5..5c760a6d79557 100644
---- a/arch/arm/boot/dts/s5pv210.dtsi
-+++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -52,34 +52,26 @@ cpu@0 {
+diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
+index 822207f63ee0a..a3f83f668ce14 100644
+--- a/arch/arm/boot/dts/s5pv210-aries.dtsi
++++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
+@@ -47,6 +47,11 @@ mfc_right: region@51000000 {
  		};
  	};
  
-+	xxti: oscillator-0 {
-+		compatible = "fixed-clock";
-+		clock-frequency = <0>;
-+		clock-output-names = "xxti";
-+		#clock-cells = <0>;
++	bt_codec: bt_sco {
++		compatible = "linux,bt-sco";
++		#sound-dai-cells = <0>;
 +	};
 +
-+	xusbxti: oscillator-1 {
-+		compatible = "fixed-clock";
-+		clock-frequency = <0>;
-+		clock-output-names = "xusbxti";
-+		#clock-cells = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges;
+ 	vibrator_pwr: regulator-fixed-0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vibrator-en";
+@@ -624,6 +629,11 @@ touchscreen@4a {
+ 	};
+ };
  
--		external-clocks {
--			compatible = "simple-bus";
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			xxti: oscillator@0 {
--				compatible = "fixed-clock";
--				reg = <0>;
--				clock-frequency = <0>;
--				clock-output-names = "xxti";
--				#clock-cells = <0>;
--			};
--
--			xusbxti: oscillator@1 {
--				compatible = "fixed-clock";
--				reg = <1>;
--				clock-frequency = <0>;
--				clock-output-names = "xusbxti";
--				#clock-cells = <0>;
--			};
--		};
--
- 		onenand: onenand@b0600000 {
- 			compatible = "samsung,s5pv210-onenand";
- 			reg = <0xb0600000 0x2000>,
++&i2s0 {
++	dmas = <&pdma0 9>, <&pdma0 10>, <&pdma0 11>;
++	status = "okay";
++};
++
+ &mfc {
+ 	memory-region = <&mfc_left>, <&mfc_right>;
+ };
+diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
+index 65eed01cfced1..ca064359dd308 100644
+--- a/arch/arm/boot/dts/s5pv210-fascinate4g.dts
++++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
+@@ -35,6 +35,80 @@ vol-up {
+ 			linux,code = <KEY_VOLUMEUP>;
+ 		};
+ 	};
++
++	headset_micbias_reg: regulator-fixed-3 {
++		compatible = "regulator-fixed";
++		regulator-name = "Headset_Micbias";
++		gpio = <&gpj2 5 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&headset_micbias_ena>;
++	};
++
++	main_micbias_reg: regulator-fixed-4 {
++		compatible = "regulator-fixed";
++		regulator-name = "Main_Micbias";
++		gpio = <&gpj4 2 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&main_micbias_ena>;
++	};
++
++	sound {
++		compatible = "samsung,fascinate4g-wm8994";
++
++		model = "Fascinate4G";
++
++		extcon = <&fsa9480>;
++
++		main-micbias-supply = <&main_micbias_reg>;
++		headset-micbias-supply = <&headset_micbias_reg>;
++
++		earpath-sel-gpios = <&gpj2 6 GPIO_ACTIVE_HIGH>;
++
++		io-channels = <&adc 3>;
++		io-channel-names = "headset-detect";
++		headset-detect-gpios = <&gph0 6 GPIO_ACTIVE_HIGH>;
++		headset-key-gpios = <&gph3 6 GPIO_ACTIVE_HIGH>;
++
++		samsung,audio-routing =
++			"HP", "HPOUT1L",
++			"HP", "HPOUT1R",
++
++			"SPK", "SPKOUTLN",
++			"SPK", "SPKOUTLP",
++
++			"RCV", "HPOUT2N",
++			"RCV", "HPOUT2P",
++
++			"LINE", "LINEOUT2N",
++			"LINE", "LINEOUT2P",
++
++			"IN1LP", "Main Mic",
++			"IN1LN", "Main Mic",
++
++			"IN1RP", "Headset Mic",
++			"IN1RN", "Headset Mic",
++
++			"Modem Out", "Modem TX",
++			"Modem RX", "Modem In",
++
++			"Bluetooth SPK", "TX",
++			"RX", "Bluetooth Mic";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&headset_det &earpath_sel>;
++
++		cpu {
++			sound-dai = <&i2s0>, <&bt_codec>;
++		};
++
++		codec {
++			sound-dai = <&wm8994>;
++		};
++	};
+ };
+ 
+ &fg {
+@@ -51,6 +125,12 @@ &pinctrl0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sleep_cfg>;
+ 
++	headset_det: headset-det {
++		samsung,pins = "gph0-6", "gph3-6";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++	};
++
+ 	fg_irq: fg-irq {
+ 		samsung,pins = "gph3-3";
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
+@@ -58,6 +138,24 @@ fg_irq: fg-irq {
+ 		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
++	headset_micbias_ena: headset-micbias-ena {
++		samsung,pins = "gpj2-5";
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
++	};
++
++	earpath_sel: earpath-sel {
++		samsung,pins = "gpj2-6";
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
++	};
++
++	main_micbias_ena: main-micbias-ena {
++		samsung,pins = "gpj4-2";
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
++	};
++
+ 	/* Based on vendor kernel v2.6.35.7 */
+ 	sleep_cfg: sleep-cfg {
+ 		PIN_SLP(gpa0-0, PREV, NONE);
+diff --git a/arch/arm/boot/dts/s5pv210-galaxys.dts b/arch/arm/boot/dts/s5pv210-galaxys.dts
+index 5d10dd67eacc5..560f830b6f6be 100644
+--- a/arch/arm/boot/dts/s5pv210-galaxys.dts
++++ b/arch/arm/boot/dts/s5pv210-galaxys.dts
+@@ -72,6 +72,73 @@ fmradio@10 {
+ 			pinctrl-0 = <&fm_irq &fm_rst>;
+ 		};
+ 	};
++
++	micbias_reg: regulator-fixed-3 {
++		compatible = "regulator-fixed";
++		regulator-name = "MICBIAS";
++		gpio = <&gpj4 2 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&micbias_reg_ena>;
++	};
++
++	sound {
++		compatible = "samsung,aries-wm8994";
++
++		model = "Aries";
++
++		extcon = <&fsa9480>;
++
++		main-micbias-supply = <&micbias_reg>;
++		headset-micbias-supply = <&micbias_reg>;
++
++		earpath-sel-gpios = <&gpj2 6 GPIO_ACTIVE_HIGH>;
++
++		io-channels = <&adc 3>;
++		io-channel-names = "headset-detect";
++		headset-detect-gpios = <&gph0 6 GPIO_ACTIVE_LOW>;
++		headset-key-gpios = <&gph3 6 GPIO_ACTIVE_HIGH>;
++
++		samsung,audio-routing =
++			"HP", "HPOUT1L",
++			"HP", "HPOUT1R",
++
++			"SPK", "SPKOUTLN",
++			"SPK", "SPKOUTLP",
++
++			"RCV", "HPOUT2N",
++			"RCV", "HPOUT2P",
++
++			"LINE", "LINEOUT2N",
++			"LINE", "LINEOUT2P",
++
++			"IN1LP", "Main Mic",
++			"IN1LN", "Main Mic",
++
++			"IN1RP", "Headset Mic",
++			"IN1RN", "Headset Mic",
++
++			"IN2LN", "FM In",
++			"IN2RN", "FM In",
++
++			"Modem Out", "Modem TX",
++			"Modem RX", "Modem In",
++
++			"Bluetooth SPK", "TX",
++			"RX", "Bluetooth Mic";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&headset_det &earpath_sel>;
++
++		cpu {
++			sound-dai = <&i2s0>, <&bt_codec>;
++		};
++
++		codec {
++			sound-dai = <&wm8994>;
++		};
++	};
+ };
+ 
+ &aliases {
+@@ -88,6 +155,12 @@ fm_i2c_pins: fm-i2c-pins {
+ 		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
++	headset_det: headset-det {
++		samsung,pins = "gph0-6", "gph3-6";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++	};
++
+ 	fm_irq: fm-irq {
+ 		samsung,pins = "gpj2-4";
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+@@ -102,6 +175,12 @@ fm_rst: fm-rst {
+ 		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
++	earpath_sel: earpath-sel {
++		samsung,pins = "gpj2-6";
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
++	};
++
+ 	massmemory_en: massmemory-en {
+ 		samsung,pins = "gpj2-7";
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
+@@ -109,6 +188,12 @@ massmemory_en: massmemory-en {
+ 		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
+ 
++	micbias_reg_ena: micbias-reg-ena {
++		samsung,pins = "gpj4-2";
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
++	};
++
+ 	/* Based on CyanogenMod 3.0.101 kernel */
+ 	sleep_cfg: sleep-cfg {
+ 		PIN_SLP(gpa0-0, PREV, NONE);
 -- 
 2.25.1
 
