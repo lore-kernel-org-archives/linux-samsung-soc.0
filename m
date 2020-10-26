@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7415DC388F9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 18:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 404B7C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 18:15:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B108223AB
+	by mail.kernel.org (Postfix) with ESMTP id 0312A2224E
 	for <linux-samsung-soc@archiver.kernel.org>; Mon, 26 Oct 2020 18:15:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603736146;
-	bh=uKlwMtS7TTsEWxyIlODC56yOb69+0cCNt3YdEyzgpbU=;
+	s=default; t=1603736147;
+	bh=+wmbKJLoYoY1BZmkHUGZukV0z4tuB3bsXsscZDPmXzU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Cmd4hVr1Hym7jNWAbfOz74SN1ij/XbSTHZF6lNCyYN6tsGr4ns511TnwqlrTzebrh
-	 K/GmvxKQ/LyG2rspU/RX3WobLgw0Ph0PycHt1y22Pgry/tqRdv7RqiaS82cW39kj8n
-	 zAXVCwIkcvFnqPVAw9FgsqtlzVwgsdkDY3qS/d/A=
+	b=l6vSBChB3r/XdRDJCs03tElW3vReVwmOxWXpdYDAhVcYKhebXx3YQfCcd0BeLJ9Vq
+	 xAiP155xYdK9u859DTwuHdxx3b09laebSInGgSuN3Lk3pe0vrsjjAKn2nrkRgLGeY0
+	 dRwHKc5MxK+pRmDr4SF4hdfR4GhQ2+qvHWA/IIcQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1789334AbgJZSPm (ORCPT
+        id S1789343AbgJZSPq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 14:15:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59104 "EHLO mail.kernel.org"
+        Mon, 26 Oct 2020 14:15:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405222AbgJZSPl (ORCPT
+        id S2405222AbgJZSPp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 26 Oct 2020 14:15:41 -0400
+        Mon, 26 Oct 2020 14:15:45 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.184])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2602222C8;
-        Mon, 26 Oct 2020 18:15:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4348222281;
+        Mon, 26 Oct 2020 18:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603736140;
-        bh=uKlwMtS7TTsEWxyIlODC56yOb69+0cCNt3YdEyzgpbU=;
+        s=default; t=1603736144;
+        bh=+wmbKJLoYoY1BZmkHUGZukV0z4tuB3bsXsscZDPmXzU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DCk7HjXaw0QQkNeesb9DopzsXOU6Kn7qxMYqFnU9dP5je3JfhqjiGo5E/9bgHLwaq
-         oTobhdIWM7atBGBLFChvxrzCjiV2/INLU1n3MJycZ8vJaR8+7S8ZNAT+8gxZc5R9fv
-         woNZfmdleU6ge5+OCwz71ZAppL0GWMnxzEM9bihU=
+        b=RWe70QjOUCt8/Ypl+UaePu6+/gluN/DyGsNItyxDhhZMaRh8Hlb3q5CAysNQQRBLe
+         jd+IpYj7AlMsB1Ukzk8tVfazMDItK0Aej/ZPG4Hee3fCPo2uJ0iFynEeHcco2O0Zqw
+         rSg4i5WEORzsduONrjFgeCkBCx7ALuG4HQJNZ81o=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -50,9 +50,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 01/12] ARM: dts: exynos: adjust node names to DT spec in Exynos3250 boards
-Date:   Mon, 26 Oct 2020 19:15:17 +0100
-Message-Id: <20201026181528.163143-2-krzk@kernel.org>
+Subject: [PATCH 02/12] ARM: dts: exynos: adjust node names to DT spec in Exynos4210 boards
+Date:   Mon, 26 Oct 2020 19:15:18 +0100
+Message-Id: <20201026181528.163143-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201026181528.163143-1-krzk@kernel.org>
 References: <20201026181528.163143-1-krzk@kernel.org>
@@ -70,94 +70,172 @@ No functional changes.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos3250-artik5.dtsi | 2 +-
- arch/arm/boot/dts/exynos3250-monk.dts    | 8 ++++----
- arch/arm/boot/dts/exynos3250-rinato.dts  | 8 ++++----
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/exynos4210-i9100.dts    |  6 +++---
+ arch/arm/boot/dts/exynos4210-origen.dts   |  4 ++--
+ arch/arm/boot/dts/exynos4210-smdkv310.dts | 22 +++++++++++-----------
+ arch/arm/boot/dts/exynos4210-trats.dts    |  4 ++--
+ 4 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-index 12887b3924af..04290ec4583a 100644
---- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-@@ -76,7 +76,7 @@ &i2c_0 {
- 	samsung,i2c-max-bus-freq = <100000>;
- 	status = "okay";
+diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
+index 5370ee477186..a0c3bab382ae 100644
+--- a/arch/arm/boot/dts/exynos4210-i9100.dts
++++ b/arch/arm/boot/dts/exynos4210-i9100.dts
+@@ -329,7 +329,7 @@ &i2c_3 {
+ 	pinctrl-0 = <&i2c3_bus>;
+ 	pinctrl-names = "default";
  
--	s2mps14_pmic@66 {
+-	mxt224-touchscreen@4a {
++	touchscreen@4a {
+ 		compatible = "atmel,maxtouch";
+ 		reg = <0x4a>;
+ 
+@@ -348,7 +348,7 @@ &i2c_5 {
+ 	pinctrl-0 = <&i2c5_bus>;
+ 	pinctrl-names = "default";
+ 
+-	max8997_pmic@66 {
 +	pmic@66 {
- 		compatible = "samsung,s2mps14-pmic";
- 		interrupt-parent = <&gpx3>;
- 		interrupts = <5 IRQ_TYPE_NONE>;
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index c1a68e612037..69451566945d 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -34,10 +34,10 @@ firmware@205f000 {
- 		reg = <0x0205F000 0x1000>;
+ 		compatible = "maxim,max8997-pmic";
+ 		reg = <0x66>;
+ 
+@@ -597,7 +597,7 @@ &i2c_7 {
+ 	pinctrl-0 = <&i2c7_bus>;
+ 	pinctrl-names = "default";
+ 
+-	ak8975@c {
++	magnetometer@c {
+ 		compatible = "asahi-kasei,ak8975";
+ 		reg = <0x0c>;
+ 
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index 7d2cfbafefb2..1c5394152561 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -43,7 +43,7 @@ mmc_reg: voltage-regulator {
+ 		enable-active-high;
  	};
  
 -	gpio_keys {
 +	gpio-keys {
  		compatible = "gpio-keys";
  
--		power_key {
-+		power-key {
- 			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
- 			label = "power key";
-@@ -62,7 +62,7 @@ i2c_max77836: i2c-gpio-0 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+ 		up {
+@@ -171,7 +171,7 @@ &i2c_0 {
+ 	pinctrl-0 = <&i2c0_bus>;
+ 	pinctrl-names = "default";
  
--		max77836: subpmic@25 {
-+		max77836: pmic@25 {
- 			compatible = "maxim,max77836";
- 			interrupt-parent = <&gpx1>;
- 			interrupts = <5 IRQ_TYPE_NONE>;
-@@ -197,7 +197,7 @@ &i2c_0 {
- 	samsung,i2c-max-bus-freq = <100000>;
+-	max8997_pmic@66 {
++	pmic@66 {
+ 		compatible = "maxim,max8997-pmic";
+ 		reg = <0x66>;
+ 		interrupt-parent = <&gpx0>;
+diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+index c5609afa6101..d5797a67bf48 100644
+--- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
++++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+@@ -90,61 +90,61 @@ &keypad {
+ 	pinctrl-0 = <&keypad_rows &keypad_cols>;
  	status = "okay";
  
--	s2mps14_pmic@66 {
-+	pmic@66 {
- 		compatible = "samsung,s2mps14-pmic";
- 		interrupt-parent = <&gpx0>;
- 		interrupts = <7 IRQ_TYPE_NONE>;
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index b55afaaa691e..a26e3e582a7e 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -38,10 +38,10 @@ firmware@205f000 {
- 		reg = <0x0205F000 0x1000>;
+-	key_1 {
++	key-1 {
+ 		keypad,row = <0>;
+ 		keypad,column = <3>;
+ 		linux,code = <2>;
  	};
  
--	gpio_keys {
-+	gpio-keys {
- 		compatible = "gpio-keys";
+-	key_2 {
++	key-2 {
+ 		keypad,row = <0>;
+ 		keypad,column = <4>;
+ 		linux,code = <3>;
+ 	};
  
--		power_key {
-+		power-key {
- 			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
- 			label = "power key";
-@@ -62,7 +62,7 @@ i2c_max77836: i2c-gpio-0 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+-	key_3 {
++	key-3 {
+ 		keypad,row = <0>;
+ 		keypad,column = <5>;
+ 		linux,code = <4>;
+ 	};
  
--		max77836: subpmic@25 {
-+		max77836: pmic@25 {
- 			compatible = "maxim,max77836";
- 			interrupt-parent = <&gpx1>;
- 			interrupts = <5 IRQ_TYPE_NONE>;
-@@ -267,7 +267,7 @@ &i2c_0 {
- 	samsung,i2c-max-bus-freq = <100000>;
+-	key_4 {
++	key-4 {
+ 		keypad,row = <0>;
+ 		keypad,column = <6>;
+ 		linux,code = <5>;
+ 	};
+ 
+-	key_5 {
++	key-5 {
+ 		keypad,row = <0>;
+ 		keypad,column = <7>;
+ 		linux,code = <6>;
+ 	};
+ 
+-	key_a {
++	key-a {
+ 		keypad,row = <1>;
+ 		keypad,column = <3>;
+ 		linux,code = <30>;
+ 	};
+ 
+-	key_b {
++	key-b {
+ 		keypad,row = <1>;
+ 		keypad,column = <4>;
+ 		linux,code = <48>;
+ 	};
+ 
+-	key_c {
++	key-c {
+ 		keypad,row = <1>;
+ 		keypad,column = <5>;
+ 		linux,code = <46>;
+ 	};
+ 
+-	key_d {
++	key-d {
+ 		keypad,row = <1>;
+ 		keypad,column = <6>;
+ 		linux,code = <32>;
+ 	};
+ 
+-	key_e {
++	key-e {
+ 		keypad,row = <1>;
+ 		keypad,column = <7>;
+ 		linux,code = <18>;
+@@ -200,7 +200,7 @@ &spi_2 {
+ 	cs-gpios = <&gpc1 2 GPIO_ACTIVE_HIGH>;
  	status = "okay";
  
--	s2mps14_pmic@66 {
-+	pmic@66 {
- 		compatible = "samsung,s2mps14-pmic";
+-	w25x80@0 {
++	flash@0 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		compatible = "w25x80";
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index a226bec56a45..f10c63ae9973 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -263,7 +263,7 @@ &i2c_3 {
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ 
+-	mms114-touchscreen@48 {
++	touchscreen@48 {
+ 		compatible = "melfas,mms114";
+ 		reg = <0x48>;
  		interrupt-parent = <&gpx0>;
- 		interrupts = <7 IRQ_TYPE_NONE>;
+@@ -283,7 +283,7 @@ &i2c_5 {
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ 
+-	max8997_pmic@66 {
++	pmic@66 {
+ 		compatible = "maxim,max8997-pmic";
+ 
+ 		reg = <0x66>;
 -- 
 2.25.1
 
