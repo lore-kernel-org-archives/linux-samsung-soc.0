@@ -2,64 +2,65 @@ Return-Path: <SRS0=zeks=EC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8F4C388F9
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 12:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BEC1C55179
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 13:25:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 298E32416E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 12:29:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F148520878
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 13:25:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="APFWvEkJ"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="K6LhHa/Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2899850AbgJ0M3X (ORCPT
+        id S2900645AbgJ0NZk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Oct 2020 08:29:23 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:50135 "EHLO
+        Tue, 27 Oct 2020 09:25:40 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:40264 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2899851AbgJ0M3X (ORCPT
+        with ESMTP id S2900637AbgJ0NZ2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Oct 2020 08:29:23 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201027122911euoutp0263a05d57a87915d1ef0bbd341d06e80e~B2TIGNntR2241222412euoutp02H
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2020 12:29:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201027122911euoutp0263a05d57a87915d1ef0bbd341d06e80e~B2TIGNntR2241222412euoutp02H
+        Tue, 27 Oct 2020 09:25:28 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201027132501euoutp02b47f7e807e174dc1a8b9c3f5b9cdf4f9~B3D36Rxxn2525925259euoutp02I
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2020 13:25:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201027132501euoutp02b47f7e807e174dc1a8b9c3f5b9cdf4f9~B3D36Rxxn2525925259euoutp02I
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1603801751;
-        bh=CjdMI1tmB90miqbqTksyvUXWDiO0ncL6v7W915kb7J4=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=APFWvEkJvSt8uoFS9HJf3PG/KjYDSUPqtsIH6nr95eBnbtjnBSIBqyMzgyUdtYhsr
-         AUBJ+QokOK6xSNSITkr8laxh9bTlansTVFdrWgZMkolgqmE/o5ikcO/yJVDDa6GkDx
-         GRaqImSvBSOUDA3iHT5SRp+dvR132AAyn9WK7B/M=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201027122906eucas1p194269e642811d06b63335e300de88ea4~B2TDRVZXo0881708817eucas1p1f;
-        Tue, 27 Oct 2020 12:29:06 +0000 (GMT)
+        s=mail20170921; t=1603805101;
+        bh=POwP+6ssYbGtjKbozvag9P4TjIzi8CJK2Df+yEQb2Lo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=K6LhHa/YWeddzq8aR7SmpSE3CPDmPj9oWRa4v+AHh4ANJUsYCXg7bOOx4ow9i6BbP
+         e3nLp+K7YiDuwdB956MT1447kMc3r8FKp2jAFMFVe5WM1oY+Smtro7hR03GFJoV49O
+         JGYw6mW58PsYmR8FanyyjoCSiGO4wFY9CxDYU7OY=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20201027132459eucas1p227059f617b7ec439b0071b35264f5440~B3D2evzFI1793017930eucas1p2B;
+        Tue, 27 Oct 2020 13:24:59 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id F6.6B.05997.192189F5; Tue, 27
-        Oct 2020 12:29:05 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 15.42.06456.BAF189F5; Tue, 27
+        Oct 2020 13:24:59 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201027122905eucas1p16ba9af9ea08ac43aed86970595a2ea78~B2TC95igX0038500385eucas1p1c;
-        Tue, 27 Oct 2020 12:29:05 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201027122905eusmtrp25c498067e019f40f47c5e34f8297eaa2~B2TC8SiH92828528285eusmtrp2b;
-        Tue, 27 Oct 2020 12:29:05 +0000 (GMT)
-X-AuditID: cbfec7f4-677ff7000000176d-e7-5f9812915051
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 65.C8.06314.882189F5; Tue, 27
-        Oct 2020 12:28:56 +0000 (GMT)
+        20201027132459eucas1p1e31c288a9939f751765a3b54d00adf22~B3D2CwpNp1791517915eucas1p17;
+        Tue, 27 Oct 2020 13:24:59 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20201027132459eusmtrp1d17108d75a4f8a3f4980d58d607b4437~B3D2BlawX1693416934eusmtrp1a;
+        Tue, 27 Oct 2020 13:24:59 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-6f-5f981fabde84
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 10.05.06017.AAF189F5; Tue, 27
+        Oct 2020 13:24:58 +0000 (GMT)
 Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201027122855eusmtip14adc70a2a031ac56fab75930dc378878~B2S5gyLQm2340823408eusmtip1V;
-        Tue, 27 Oct 2020 12:28:55 +0000 (GMT)
-Subject: Re: [PATCH v2 4/6] phy: samsung: phy-exynos-pcie: rework driver to
- support Exynos5433 PCIe PHY
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20201027132458eusmtip20ed65f267ccd092a632603c2fa3a3129~B3D1Z9p6B0052200522eusmtip2A;
+        Tue, 27 Oct 2020 13:24:58 +0000 (GMT)
+Subject: Re: [PATCH v2 5/6] pci: dwc: pci-exynos: rework the driver to
+ support Exynos5433 variant
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     Rob Herring <robh+dt@kernel.org>
 Cc:     linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         PCI <linux-pci@vger.kernel.org>, devicetree@vger.kernel.org,
@@ -71,170 +72,182 @@ Cc:     linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Vinod Koul <vkoul@kernel.org>,
         Kishon Vijay Abraham I <kishon@ti.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <e2ba43d4-3991-e98e-6ec0-6ff3ad5d954b@samsung.com>
-Date:   Tue, 27 Oct 2020 13:28:55 +0100
+Message-ID: <4cad3d12-e47b-18a3-7c9f-1947415a14b6@samsung.com>
+Date:   Tue, 27 Oct 2020 14:24:58 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
         Gecko/20100101 Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLUT7aLnQsLvcCOHCaoVAao9VSmEhoscBxu3ARXX33zrA@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <86df523b-cf3d-5a88-5ccc-c6f2ca9830a4@samsung.com>
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsWy7djPc7oThWbEG9x8aGWxpCnDYv6Rc6wW
-        N361sVqs+DKT3eLC0x42i/PnN7BbXN41h83i7LzjbBYzzu9jsnjz+wW7ReveI+wWO++cYHbg
-        8Vgzbw2jx85Zd9k9Fmwq9di0qpPNo2/LKkaP4ze2M3l83iQXwB7FZZOSmpNZllqkb5fAlTHz
-        zlzWgtPqFd9f3mRvYLwk28XIwSEhYCLxuDmki5GLQ0hgBaPElNuPWLsYOYGcL4wS97b6QyQ+
-        M0rcXX2OESQB0rBwxXI2iMRyRoknkzsZIZz3jBJXn9xiAxkrLJAp0bLXAKRBREBFYsPzW8wg
-        NcwC55gl9nx6zQKSYBMwlOh628UGYvMK2EnsOL0ZLM4ioCqxr2UemC0qkCTx9/MfZogaQYmT
-        M5+AxTkFAiXWv/oOZjMLyEtsfzuHGcIWl7j1ZD4TyDIJgUfsEjtvrWCGONtFYsXVmVC2sMSr
-        41vYIWwZif87YRqaGSUenlvLDuH0MEpcbpoB9bS1xJ1zv8BeYxbQlFi/Sx8i7Cix4eBZNkhA
-        8knceCsIcQSfxKRt05khwrwSHW1CENVqErOOr4Nbe/DCJeYJjEqzkLw2C8k7s5C8Mwth7wJG
-        llWM4qmlxbnpqcVGeanlesWJucWleel6yfm5mxiBSez0v+NfdjDu+pN0iFGAg1GJh/fC22nx
-        QqyJZcWVuYcYJTiYlUR4nc6ejhPiTUmsrEotyo8vKs1JLT7EKM3BoiTOa7zoZayQQHpiSWp2
-        ampBahFMlomDU6qBMSxDrlna9MIEpdWHs+cIXLbyfdSip1YlemXP5dP/vW5lbDi+qs7g833u
-        6BMsX2ID1FVKVm+O+Kj4Nv5ReON2/40N31bEc0n8k8q91GW3p9/o8u2ly687vquzNHM6+F5r
-        4oWPamv/BwWrf/n5zHGuyNmg2jCDK2+bPmxPXartfGK23rwi+9upuUosxRmJhlrMRcWJAM4R
-        oQheAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHIsWRmVeSWpSXmKPExsVy+t/xu7odQjPiDeZv4LJY0pRhMf/IOVaL
-        G7/aWC1WfJnJbnHhaQ+bxfnzG9gtLu+aw2Zxdt5xNosZ5/cxWbz5/YLdonXvEXaLnXdOMDvw
-        eKyZt4bRY+esu+weCzaVemxa1cnm0bdlFaPH8RvbmTw+b5ILYI/SsynKLy1JVcjILy6xVYo2
-        tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy5h5Zy5rwWn1iu8vb7I3MF6S7WLk
-        5JAQMJFYuGI5G4gtJLCUUaK/XwsiLiNxcloDK4QtLPHnWhdQDRdQzVtGiZs/9jB2MXJwCAtk
-        SrTsNQCpERFQkdjw/BYzSA2zwDlmiVNfLzBCNPQwSfTtegw2iU3AUKLrbRfYNl4BO4kdpzez
-        gNgsAqoS+1rmgdmiAkkSLy9MZYKoEZQ4OfMJWJxTIFBi/avvYDazgJnEvM0PmSFseYntb+dA
-        2eISt57MZ5rAKDQLSfssJC2zkLTMQtKygJFlFaNIamlxbnpusaFecWJucWleul5yfu4mRmDc
-        bjv2c/MOxksbgw8xCnAwKvHwXng7LV6INbGsuDL3EKMEB7OSCK/T2dNxQrwpiZVVqUX58UWl
-        OanFhxhNgZ6byCwlmpwPTCl5JfGGpobmFpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNTUwtSi2D6
-        mDg4pRoY03/0Wt9eJ/5IallTb9uktxtXqvYEFfjPM5X/H3PkaNa69e6Wa/YyuL2xvvJUvOXk
-        z8Lcf00+l859Mbzhy6Xa+7eroynNQIDJYurnTX2nNeMPyqi0CcuWqM7uirl+Jru0dtvcu13+
-        K3SPLwqa6f5/0aQ9fDqeJw80h4nWh3tUTjr2Wm2Z4NHrSizFGYmGWsxFxYkAtzVddvECAAA=
-X-CMS-MailID: 20201027122905eucas1p16ba9af9ea08ac43aed86970595a2ea78
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRjtt3t3791ydTcNPywyRhlJOa2wC8V616WkFyFR2Zx60cjN2m09
+        7B9rKLUsKqF0PiZlJHM+mI80LGlYSzY3syCRogdGrTTBZdB6er09/O983zmHcz74KEzlk8ZQ
+        B41HOZNRn6sm5Hjbw6/+JXWxpbrEdlssU3Mmh7F3+6XMQLhIytR+LiOZvrfFBBMINJHMkzsV
+        BNNb5SGY0sA9CTP87T3JFN7tJpmO54+wNRGss8qJ2A7bC5KtdplZl+McwV5scSDWM3BbwoZc
+        c3eQe+Wrsrjcg8c4k0abLs+5X59y+NWSE69DBWQBciy0IhkF9HIYLazErUhOqehaBAHrOBKH
+        zwga3HZSHEIIgnU+6V+Lr7KaEIlbCF7W3CAFQkWPIvC9yBRwJJ0Jdc9KJAIm6CSwjlgJAUfR
+        86Hp3SAmmDHaj0Hn2EdcIBS0Fty/nmICxukF8PHVg0nDLDoDfoS+Y6JGCT1lQ5N6Gb0a2q94
+        JoMxOhYsreWYiKNhcMguEQKAfkNCeaX7T+0NEAx9I0UcCR88LX/wHPCWFOOiwYLgtb+eFIdi
+        BE/OlCJRtRKe+8MTlaiJiEXQeEcjrtdCV6BVIqyBngEDI0qxxAy40nYNE9cKOFukEtVxYPM0
+        /Iu939ePXUJq25TTbFPOsU05x/Y/txrhDhTNmXlDNscnGbnjCbzewJuN2QmZeQYXmvgx70/P
+        WDsa789wI5pC6ghF38hVnUqqP8afNLgRUJg6SrGu13tApcjSn8znTHk6kzmX491oNoWroxXL
+        rgfTVHS2/ih3iOMOc6a/rISSxRQgV3xjxcjtVNCp+a7O7v3bNT3HY2Xs5ZhP6wuS/duah8fL
+        NNqb6x2WxRd2s9O1X4jiPHyopLNs5wrlvlPnPaDRNleE7V2J/VWp7yLTBsM/8A3OjlW8d9O0
+        mU5lum5efpp3z2nD5pQtccnDxq27vj82bvy5tCZ4pI23W95YLmuT1Tifo0+Kx0y8/jf4+QwJ
+        XwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHIsWRmVeSWpSXmKPExsVy+t/xe7qr5WfEG1xltVjSlGEx/8g5Vosb
+        v9pYLVZ8mcluceFpD5vF+fMb2C0u75rDZnF23nE2ixnn9zFZvPn9gt2ide8Rdoudd04wO/B4
+        rJm3htFj56y77B4LNpV6bFrVyebRt2UVo8fxG9uZPD5vkgtgj9KzKcovLUlVyMgvLrFVija0
+        MNIztLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3S9DLOLjWp+CBbsXDzw3sDYyr1LsYOTkk
+        BEwkzsxdwNbFyMUhJLCUUWLB1wdMEAkZiZPTGlghbGGJP9e6oIreMkoc//iIHSQhLJAs0T7h
+        OQuIzSZgKNH1FqSIk0NEQEViw/NbzCANzALnmCVOfb3ACNF9kEli1/SPYFW8AnYSh/5fYQax
+        WQRUJV4/OAoWFxVIknh5YSoTRI2gxMmZT8A2cArYS+yYdBxsM7OAmcS8zQ+ZIWx5ieats6Fs
+        cYlbT+YzTWAUmoWkfRaSlllIWmYhaVnAyLKKUSS1tDg3PbfYSK84Mbe4NC9dLzk/dxMjMG63
+        Hfu5ZQdj17vgQ4wCHIxKPLwX3k6LF2JNLCuuzD3EKMHBrCTC63T2dJwQb0piZVVqUX58UWlO
+        avEhRlOg5yYyS4km5wNTSl5JvKGpobmFpaG5sbmxmYWSOG+HwMEYIYH0xJLU7NTUgtQimD4m
+        Dk6pBkab/29mcxpUlC7USbAo7J0VLZZjrdUUcFAyLDvpn3XXomWfK+vvmy7++nBC7bfXRn4L
+        AsR6997NXahhHzBP+dBlpictC0uSNOR2sguuWjdt9p2jzb/Mze1OXuXY+e5PVlwb74fFPdrL
+        T4ULLvj53bL7kUPuw0JT1rjSzh9b/Xddte9g+nXxtq0SS3FGoqEWc1FxIgBLGhE48QIAAA==
+X-CMS-MailID: 20201027132459eucas1p1e31c288a9939f751765a3b54d00adf22
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201023075756eucas1p2c27cc3e6372127d107e5b84c810ba98f
+X-RootMTR: 20201023075756eucas1p18765653e747842eef4b438aff32ef136
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20201023075756eucas1p2c27cc3e6372127d107e5b84c810ba98f
-References: <CGME20201023075756eucas1p2c27cc3e6372127d107e5b84c810ba98f@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20201023075756eucas1p18765653e747842eef4b438aff32ef136
+References: <CGME20201023075756eucas1p18765653e747842eef4b438aff32ef136@eucas1p1.samsung.com>
         <20201023075744.26200-1-m.szyprowski@samsung.com>
-        <20201023075744.26200-5-m.szyprowski@samsung.com>
-        <CAL_JsqLUT7aLnQsLvcCOHCaoVAao9VSmEhoscBxu3ARXX33zrA@mail.gmail.com>
+        <20201023075744.26200-6-m.szyprowski@samsung.com>
+        <CAL_JsqK+kVOzLaYS6Xk9RoK8AOpVF+n5nNC1EBS-+UxR334d3g@mail.gmail.com>
+        <86df523b-cf3d-5a88-5ccc-c6f2ca9830a4@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Rob,
+Hi
 
-On 26.10.2020 19:50, Rob Herring wrote:
-> On Fri, Oct 23, 2020 at 2:58 AM Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> From: Jaehoon Chung <jh80.chung@samsung.com>
->>
->> Exynos5440 SoC support has been dropped since commit 8c83315da1cf ("ARM:
->> dts: exynos: Remove Exynos5440"). Rework this driver to support PCIe PHY
->> variant found in the Exynos5433 SoCs.
->>
->> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->> [mszyprow: reworked the driver to support only Exynos5433 variant, rebased
->>             onto current kernel code, rewrote commit message]
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
->> ---
->>   drivers/phy/samsung/phy-exynos-pcie.c | 304 ++++++++++----------------
->>   1 file changed, 112 insertions(+), 192 deletions(-)
->>
->> diff --git a/drivers/phy/samsung/phy-exynos-pcie.c b/drivers/phy/samsung/phy-exynos-pcie.c
->> index 7e28b1aea0d1..d91de323dd0e 100644
->> --- a/drivers/phy/samsung/phy-exynos-pcie.c
->> +++ b/drivers/phy/samsung/phy-exynos-pcie.c
->> @@ -4,70 +4,41 @@
->>    *
->>    * Phy provider for PCIe controller on Exynos SoC series
->>    *
->> - * Copyright (C) 2017 Samsung Electronics Co., Ltd.
->> + * Copyright (C) 2017-2020 Samsung Electronics Co., Ltd.
->>    * Jaehoon Chung <jh80.chung@samsung.com>
->>    */
->>
->> -#include <linux/delay.h>
->>   #include <linux/io.h>
->> -#include <linux/iopoll.h>
->> -#include <linux/init.h>
->>   #include <linux/mfd/syscon.h>
->> -#include <linux/of.h>
->> -#include <linux/of_address.h>
->>   #include <linux/of_platform.h>
->>   #include <linux/platform_device.h>
->>   #include <linux/phy/phy.h>
->>   #include <linux/regmap.h>
->>
->> -/* PCIe Purple registers */
->> -#define PCIE_PHY_GLOBAL_RESET          0x000
->> -#define PCIE_PHY_COMMON_RESET          0x004
->> -#define PCIE_PHY_CMN_REG               0x008
->> -#define PCIE_PHY_MAC_RESET             0x00c
->> -#define PCIE_PHY_PLL_LOCKED            0x010
->> -#define PCIE_PHY_TRSVREG_RESET         0x020
->> -#define PCIE_PHY_TRSV_RESET            0x024
->> -
->> -/* PCIe PHY registers */
->> -#define PCIE_PHY_IMPEDANCE             0x004
->> -#define PCIE_PHY_PLL_DIV_0             0x008
->> -#define PCIE_PHY_PLL_BIAS              0x00c
->> -#define PCIE_PHY_DCC_FEEDBACK          0x014
->> -#define PCIE_PHY_PLL_DIV_1             0x05c
->> -#define PCIE_PHY_COMMON_POWER          0x064
->> -#define PCIE_PHY_COMMON_PD_CMN         BIT(3)
->> -#define PCIE_PHY_TRSV0_EMP_LVL         0x084
->> -#define PCIE_PHY_TRSV0_DRV_LVL         0x088
->> -#define PCIE_PHY_TRSV0_RXCDR           0x0ac
->> -#define PCIE_PHY_TRSV0_POWER           0x0c4
->> -#define PCIE_PHY_TRSV0_PD_TSV          BIT(7)
->> -#define PCIE_PHY_TRSV0_LVCC            0x0dc
->> -#define PCIE_PHY_TRSV1_EMP_LVL         0x144
->> -#define PCIE_PHY_TRSV1_RXCDR           0x16c
->> -#define PCIE_PHY_TRSV1_POWER           0x184
->> -#define PCIE_PHY_TRSV1_PD_TSV          BIT(7)
->> -#define PCIE_PHY_TRSV1_LVCC            0x19c
->> -#define PCIE_PHY_TRSV2_EMP_LVL         0x204
->> -#define PCIE_PHY_TRSV2_RXCDR           0x22c
->> -#define PCIE_PHY_TRSV2_POWER           0x244
->> -#define PCIE_PHY_TRSV2_PD_TSV          BIT(7)
->> -#define PCIE_PHY_TRSV2_LVCC            0x25c
->> -#define PCIE_PHY_TRSV3_EMP_LVL         0x2c4
->> -#define PCIE_PHY_TRSV3_RXCDR           0x2ec
->> -#define PCIE_PHY_TRSV3_POWER           0x304
->> -#define PCIE_PHY_TRSV3_PD_TSV          BIT(7)
->> -#define PCIE_PHY_TRSV3_LVCC            0x31c
->> -
->> -struct exynos_pcie_phy_data {
->> -       const struct phy_ops    *ops;
->> -};
->> +#define PCIE_PHY_OFFSET(x)             ((x) * 0x4)
->> +
->> +/* Sysreg FSYS register offsets and bits for Exynos5433 */
->> +#define PCIE_EXYNOS5433_PHY_MAC_RESET          0x0208
->> +#define PCIE_MAC_RESET_MASK                    0xFF
->> +#define PCIE_MAC_RESET                         BIT(4)
->> +#define PCIE_EXYNOS5433_PHY_L1SUB_CM_CON       0x1010
->> +#define PCIE_REFCLK_GATING_EN                  BIT(0)
->> +#define PCIE_EXYNOS5433_PHY_COMMON_RESET       0x1020
->> +#define PCIE_PHY_RESET                         BIT(0)
->> +#define PCIE_EXYNOS5433_PHY_GLOBAL_RESET       0x1040
->> +#define PCIE_GLOBAL_RESET                      BIT(0)
-> Resets, why is this block not a reset provider?
+On 27.10.2020 13:04, Marek Szyprowski wrote:
+> On 26.10.2020 20:14, Rob Herring wrote:
+>> On Fri, Oct 23, 2020 at 2:58 AM Marek Szyprowski
+>> <m.szyprowski@samsung.com> wrote:
+>>> From: Jaehoon Chung <jh80.chung@samsung.com>
+>>>
+>>> Exynos5440 SoC support has been dropped since commit 8c83315da1cf 
+>>> ("ARM:
+>>> dts: exynos: Remove Exynos5440"). Rework this driver to support DWC 
+>>> PCIe
+>>> variant found in the Exynos5433 SoCs.
+>>>
+>>> The main difference in Exynos5433 variant is lack of the MSI support
+>>> (the MSI interrupt is not even routed to the CPU).
+>>>
+>>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>>> [mszyprow: reworked the driver to support only Exynos5433 variant,
+>>>             simplified code, rebased onto current kernel code, added
+>>>             regulator support, converted to the regular platform 
+>>> driver,
+>>>             removed MSI related code, rewrote commit message]
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>> ---
+>>>   drivers/pci/controller/dwc/Kconfig      |   3 +-
+>>>   drivers/pci/controller/dwc/pci-exynos.c | 358 
+>>> ++++++++++--------------
+>>>   drivers/pci/quirks.c                    |   1 +
+>>>   3 files changed, 145 insertions(+), 217 deletions(-) 
+...
+>>> +static int __maybe_unused exynos_pcie_suspend_noirq(struct device 
+>>> *dev)
+>>> +{
+>> Why noirq variant needed? Lot's of PCI host drivers do this and I've
+>> yet to get a reason...
+> Frankly, I have no idea, but switching to SET_LATE_SYSTEM_SLEEP_PM_OPS 
+> breaks system suspend/resume operation - the board doesn't resume from 
+> suspend. If this is really important I will add some more logs and try 
+> to find what happens between late/early and noirq phases.
 
-Because most of those registers need to be configured together with the 
-rest of the PHY registers. IMHO there is no simple "do the reset" logic 
-there. There is also PHY reference clock configuration there. This phy 
-driver is already Exynos5433 specific and I see no point in extracting 
-separate reset driver from it. Other Exynos PHY drivers also access PMU 
-and SYSREG via the respective regmaps and don't use any kind of reset 
-drivers.
+It looks that PCI framework does something with the device or controller 
+in noirq phase, so the driver cannot shutdown the controller earlier. 
+Here is a relevant part from the kernel log after system suspend/resume 
+cycle captured with init_calldebug enabled:
 
->> +#define PCIE_REFCLK                            BIT(1)
->> +#define PCIE_REFCLK_MASK                       0x16
->> +#define PCIE_APP_REQ_EXIT_L1_MODE              BIT(5)
+$ dmesg | grep pci
+brcmfmac 0000:01:00.0: calling pci_pm_suspend+0x0/0x248 @ 96, parent: 
+0000:00:00.0
+brcmfmac 0000:01:00.0: pci_pm_suspend+0x0/0x248 returned 0 after 650 usecs
+pcieport 0000:00:00.0: calling pci_pm_suspend+0x0/0x248 @ 7, parent: 
+pci0000:00
+pcieport 0000:00:00.0: pci_pm_suspend+0x0/0x248 returned 0 after 85 usecs
+exynos-pcie 15700000.pcie: calling platform_pm_suspend+0x0/0x68 @ 447, 
+parent: soc@0
+exynos-pcie 15700000.pcie: platform_pm_suspend+0x0/0x68 returned 0 after 
+4 usecs
+exynos_pcie_phy 15680000.pcie-phy: calling platform_pm_suspend+0x0/0x68 
+@ 447, parent: soc@0
+exynos_pcie_phy 15680000.pcie-phy: platform_pm_suspend+0x0/0x68 returned 
+0 after 3 usecs
+brcmfmac 0000:01:00.0: calling pci_pm_suspend_late+0x0/0x50 @ 448, 
+parent: 0000:00:00.0
+brcmfmac 0000:01:00.0: pci_pm_suspend_late+0x0/0x50 returned 0 after 4 usecs
+pcieport 0000:00:00.0: calling pci_pm_suspend_late+0x0/0x50 @ 449, 
+parent: pci0000:00
+pcieport 0000:00:00.0: pci_pm_suspend_late+0x0/0x50 returned 0 after 4 usecs
+exynos-pcie 15700000.pcie: calling exynos_pcie_suspend_late+0x0/0x30 @ 
+447, parent: soc@0
+exynos-pcie 15700000.pcie: exynos_pcie_suspend_late 439
+exynos-pcie 15700000.pcie: exynos_pcie_suspend_late+0x0/0x30 returned 0 
+after 17 usecs
+brcmfmac 0000:01:00.0: calling pci_pm_suspend_noirq+0x0/0x278 @ 449, 
+parent: 0000:00:00.0
+brcmfmac 0000:01:00.0: pci_pm_suspend_noirq+0x0/0x278 returned 0 after 
+24272 usecs
+pcieport 0000:00:00.0: calling pci_pm_suspend_noirq+0x0/0x278 @ 448, 
+parent: pci0000:00
+pcieport 0000:00:00.0: pci_pm_suspend_noirq+0x0/0x278 returned 0 after 
+196 usecs
+exynos-pcie 15700000.pcie: calling exynos_pcie_suspend_noirq+0x0/0x40 @ 
+447, parent: soc@0
+exynos-pcie 15700000.pcie: exynos_pcie_suspend_noirq+0x0/0x40 returned 0 
+after 653 usecs
+exynos-pcie 15700000.pcie: calling exynos_pcie_resume_noirq+0x0/0x38 @ 
+447, parent: soc@0
+exynos-pcie 15700000.pcie: Link up
+exynos-pcie 15700000.pcie: exynos_pcie_resume_noirq+0x0/0x38 returned 0 
+after 91433 usecs
+pcieport 0000:00:00.0: calling pci_pm_resume_noirq+0x0/0x140 @ 96, 
+parent: pci0000:00
+pcieport 0000:00:00.0: pci_pm_resume_noirq+0x0/0x140 returned 0 after 
+316 usecs
+brcmfmac 0000:01:00.0: calling pci_pm_resume_noirq+0x0/0x140 @ 143, 
+parent: 0000:00:00.0
+brcmfmac 0000:01:00.0: pci_pm_resume_noirq+0x0/0x140 returned 0 after 
+25470 usecs
+exynos-pcie 15700000.pcie: calling exynos_pcie_resume_late+0x0/0x30 @ 
+447, parent: soc@0
+exynos-pcie 15700000.pcie: exynos_pcie_resume_late 445
+exynos-pcie 15700000.pcie: exynos_pcie_resume_late+0x0/0x30 returned 0 
+after 24 usecs
+pcieport 0000:00:00.0: calling pci_pm_resume_early+0x0/0x48 @ 449, 
+parent: pci0000:00
+pcieport 0000:00:00.0: pci_pm_resume_early+0x0/0x48 returned 0 after 3 usecs
+brcmfmac 0000:01:00.0: calling pci_pm_resume_early+0x0/0x48 @ 448, 
+parent: 0000:00:00.0
+brcmfmac 0000:01:00.0: pci_pm_resume_early+0x0/0x48 returned 0 after 3 usecs
+exynos_pcie_phy 15680000.pcie-phy: calling platform_pm_resume+0x0/0x60 @ 
+447, parent: soc@0
+exynos_pcie_phy 15680000.pcie-phy: platform_pm_resume+0x0/0x60 returned 
+0 after 4 usecs
+exynos-pcie 15700000.pcie: calling platform_pm_resume+0x0/0x60 @ 447, 
+parent: soc@0
+exynos-pcie 15700000.pcie: platform_pm_resume+0x0/0x60 returned 0 after 
+4 usecs
+pcieport 0000:00:00.0: calling pci_pm_resume+0x0/0xe0 @ 96, parent: 
+pci0000:00
+pcieport 0000:00:00.0: pci_pm_resume+0x0/0xe0 returned 0 after 54 usecs
+brcmfmac 0000:01:00.0: calling pci_pm_resume+0x0/0xe0 @ 142, parent: 
+0000:00:00.0
+brcmfmac 0000:01:00.0: pci_pm_resume+0x0/0xe0 returned 0 after 554 usecs
+
 
 Best regards
 -- 
