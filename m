@@ -2,90 +2,92 @@ Return-Path: <SRS0=zeks=EC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A88C388F9
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E7FC55178
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A3F020809
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:21:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 762C3206DD
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603819311;
-	bh=sXVHnKGNfJmka3AKJsAEnCIAg9yWEv5oSthTVHBwoAo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=REv6wyennC3x8ZPd0/N6hxBkGMJYg3PyIgjqLMTDSVn/+IeNR/n7T2z3fHCWkN8K7
-	 6G9G8kX/FBu4chiH0jW0UD9Q0L6xmLdRUed5FwpCgnQdZHYOt94ce4+j2mceylSVm9
-	 i6+CI6wX1UR6rl+jtAKAq/gASr+2ouXS4ETdACqE=
+	s=default; t=1603820543;
+	bh=R49yMiJGJ3GceptzgyyC3aqHH1JHBzwsppaJ569egT8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DfehumLTUqxzlC9IgS8fi90SirFChlzlj+2kxbe76sOdRxNUD1a3PSQcFa3PSejq4
+	 HHGcBo+gi8rJ35q4oXern4x/7zEiZiyX2rAKG/QI8nDXU5+Rkj40T3Qctro8HUJoq+
+	 PHruUYgI27BfqftnWa7ISlzMFubTWrDLTTVNRoPo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1817975AbgJ0RQe (ORCPT
+        id S1821107AbgJ0Rka (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Oct 2020 13:16:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43196 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1817219AbgJ0ROr (ORCPT
+        Tue, 27 Oct 2020 13:40:30 -0400
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:39994 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1821101AbgJ0Rk1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Oct 2020 13:14:47 -0400
-Received: from localhost (170.sub-72-107-125.myvzw.com [72.107.125.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EAD920657;
-        Tue, 27 Oct 2020 17:14:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603818887;
-        bh=sXVHnKGNfJmka3AKJsAEnCIAg9yWEv5oSthTVHBwoAo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=GVjme1F+GqdaD1MbKtfFamLZZYO4rNNhDD9YRBoLgHkh6ERoJ9CKUMg1lAs4Y/Vwr
-         wjOdBhoRSdpxkuWofIOHBNfdyHwY1wv03UUCA/YPr5+4MFfZIhmj1ZpEogMOojcs1D
-         M3HxZiIweRd+cwcbSc2d4DjQkK+SGH8Htw43hStU=
-Date:   Tue, 27 Oct 2020 12:14:45 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: pci-exynos.c coverity issue #1437287
-Message-ID: <20201027171445.GA186716@bjorn-Precision-5520>
+        Tue, 27 Oct 2020 13:40:27 -0400
+Received: by mail-ej1-f66.google.com with SMTP id z5so3435110ejw.7
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2020 10:40:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=1TOHRATujw9fWV701bnbZEZLpgM7iJ17RwkKSiQR4Vw=;
+        b=DoJKYQBPvXmOLgmrBPy/zqhO0ePxKeTrCi+cgAJ6AbTYpCQAMPlM1RJvHJ4FrtKsbt
+         mmj3sqY9vTc8UwfqkS1gSDPRn1fl1Sdz4kwTbHbb8dKLMAwYQJbBrM+V9byTZmXiM9vC
+         kGHzMwuDk36vQZiR/B6do/1d9JJyTbvYACFDdVcLv9rMpJZKJ4FL/7LblqwA3DVnnkAh
+         Z+bhZQDCRppCii4I8FC9NF3E8YV7in+4RK8RBDLw6y4D49ucSW4+Qn0HSAUtjW/Mc4q+
+         11lUeQVpANiAhdQ3qACvoyeCyqskP6UN+/mGGb+wCkx5Q6e8VPWv+snyr6k5y66bR06X
+         htAg==
+X-Gm-Message-State: AOAM533YRwY4DNqrpzbMRrHbaHjlUdNfubCzl9PKlRPGCmsTEXJ/a+nv
+        6mHulGOEIb9J76fw38/DfTQ=
+X-Google-Smtp-Source: ABdhPJyugBC3zGjmPuJlmIN/WZRtHeTaQHbpqad5KJegWTCNUbWpmSm/azeX0fDhSBSqtpCoeSMImQ==
+X-Received: by 2002:a17:906:6a47:: with SMTP id n7mr3465941ejs.306.1603820425505;
+        Tue, 27 Oct 2020 10:40:25 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.184])
+        by smtp.googlemail.com with ESMTPSA id o3sm1350143edv.63.2020.10.27.10.40.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Oct 2020 10:40:24 -0700 (PDT)
+Date:   Tue, 27 Oct 2020 18:40:22 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Remove 'opp-shared' from Exynos3 bus
+ OPP-tables
+Message-ID: <20201027174022.GA135184@kozik-lap>
+References: <CGME20200911122231eucas1p2c0964f2dc4326522a87fc0571ae58c37@eucas1p2.samsung.com>
+ <20200911122220.13698-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201027164042.GA123158@kozik-lap>
+In-Reply-To: <20200911122220.13698-1-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 27, 2020 at 05:40:42PM +0100, Krzysztof Kozlowski wrote:
-> On Tue, Oct 27, 2020 at 11:34:46AM -0500, Bjorn Helgaas wrote:
-> > Hi Jingoo,
-> > 
-> > Please take a look at this issue reported by Coverity:
-> > 
-> > 222 static void exynos_pcie_assert_reset(struct exynos_pcie *ep)
-> > 223 {
-> > 224        struct dw_pcie *pci = ep->pci;
-> > 225        struct device *dev = pci->dev;
-> > 226
-> >    	1. Condition ep->reset_gpio >= 0, taking true branch.
-> > 227        if (ep->reset_gpio >= 0)
-> > 
-> > CID 1437287 (#1 of 1): Unchecked return value (CHECKED_RETURN) 2.
-> > check_return: Calling devm_gpio_request_one without checking return
-> > value (as is done elsewhere 112 out of 113 times).
-> > 
-> > 228                devm_gpio_request_one(dev, ep->reset_gpio,
-> > 229                                GPIOF_OUT_INIT_HIGH, "RESET");
-> > 
-> > 
-> > Maybe you can guarantee that it's safe to ignore the return value by
-> > doing a lot of code analysis, but I think it would be better to check
-> > like all the other callers do.
+On Fri, Sep 11, 2020 at 02:22:20PM +0200, Marek Szyprowski wrote:
+> Commits 1019fe2c7280 ("ARM: dts: exynos: Adjust bus related OPPs to the
+> values correct for Exynos5422 Odroids") and 9ff416cf45a0 ("ARM: dts:
+> exynos: Disable frequency scaling for FSYS bus on Odroid XU3 family")
+> revealed that 'opp-shared' property for the Exynos bus OPPs was used
+> incorrectly, what had the side-effect of disabling frequency scaling for
+> the second and latter buses sharing given OPP-table.
 > 
-> +Cc Marek,
+> Fix this by removing bogus 'opp-shared' properties from Exynos3 bus
+> OPP-tables. This restores frequency scaling for the following busses:
+> RightBus, LCD0, FSYS and MFC.
 > 
-> Hi Bjorn,
-> 
-> I think this is being removed by Marek's patchset:
-> https://lore.kernel.org/linux-samsung-soc/20201023075744.26200-1-m.szyprowski@samsung.com/
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos3250.dtsi | 5 -----
 
-Perfect, thanks!
+Thanks, applied.
+
+Best regards,
+Krzysztof
+
