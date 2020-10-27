@@ -8,58 +8,58 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 372B2C55178
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 12:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8F4C388F9
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 12:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E28A222281
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 12:04:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 298E32416E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 12:29:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LPlJmh6y"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="APFWvEkJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750520AbgJ0MEa (ORCPT
+        id S2899850AbgJ0M3X (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Oct 2020 08:04:30 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41321 "EHLO
+        Tue, 27 Oct 2020 08:29:23 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50135 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750509AbgJ0MEZ (ORCPT
+        with ESMTP id S2899851AbgJ0M3X (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Oct 2020 08:04:25 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201027120413euoutp024c061543e91b7ef06332eab7ecf07d72~B19VtqcXi0817508175euoutp02j
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2020 12:04:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201027120413euoutp024c061543e91b7ef06332eab7ecf07d72~B19VtqcXi0817508175euoutp02j
+        Tue, 27 Oct 2020 08:29:23 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201027122911euoutp0263a05d57a87915d1ef0bbd341d06e80e~B2TIGNntR2241222412euoutp02H
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2020 12:29:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201027122911euoutp0263a05d57a87915d1ef0bbd341d06e80e~B2TIGNntR2241222412euoutp02H
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1603800254;
-        bh=R5GF9wkvl9fbLJ2esq+T5tYoPnaeG1QG6EWQZalRxkc=;
+        s=mail20170921; t=1603801751;
+        bh=CjdMI1tmB90miqbqTksyvUXWDiO0ncL6v7W915kb7J4=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=LPlJmh6yhlWkhMmN70lsIzDVrUbz8EuAHKlI66vrABeP25M6n64ahpARhDqpnFduL
-         WSVJRFsez03ID25621wY47g25Z25tBXDluajIf23PwAkoYuxUrLkNM9HlMvfeNO48K
-         oeny0D0iFfm4lgxkBEqnNZbWZI1C8lCBY333tFp4=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201027120406eucas1p24ff1f72f661df8c969bd827c587a3b48~B19OSCJrU2567925679eucas1p2o;
-        Tue, 27 Oct 2020 12:04:06 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id E5.C2.06456.5BC089F5; Tue, 27
-        Oct 2020 12:04:05 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        b=APFWvEkJvSt8uoFS9HJf3PG/KjYDSUPqtsIH6nr95eBnbtjnBSIBqyMzgyUdtYhsr
+         AUBJ+QokOK6xSNSITkr8laxh9bTlansTVFdrWgZMkolgqmE/o5ikcO/yJVDDa6GkDx
+         GRaqImSvBSOUDA3iHT5SRp+dvR132AAyn9WK7B/M=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201027122906eucas1p194269e642811d06b63335e300de88ea4~B2TDRVZXo0881708817eucas1p1f;
+        Tue, 27 Oct 2020 12:29:06 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id F6.6B.05997.192189F5; Tue, 27
+        Oct 2020 12:29:05 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201027120405eucas1p12cf1c433b1747fcd66a463cfebe4bb67~B19N6rlBM2794727947eucas1p1o;
-        Tue, 27 Oct 2020 12:04:05 +0000 (GMT)
+        20201027122905eucas1p16ba9af9ea08ac43aed86970595a2ea78~B2TC95igX0038500385eucas1p1c;
+        Tue, 27 Oct 2020 12:29:05 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201027120405eusmtrp1ea5539df959d6a3a71bb56d94561deaa~B19N56fq70200102001eusmtrp1M;
-        Tue, 27 Oct 2020 12:04:05 +0000 (GMT)
-X-AuditID: cbfec7f2-7efff70000001938-23-5f980cb56f0b
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id BA.E5.06314.2BC089F5; Tue, 27
-        Oct 2020 12:04:05 +0000 (GMT)
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201027122905eusmtrp25c498067e019f40f47c5e34f8297eaa2~B2TC8SiH92828528285eusmtrp2b;
+        Tue, 27 Oct 2020 12:29:05 +0000 (GMT)
+X-AuditID: cbfec7f4-677ff7000000176d-e7-5f9812915051
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 65.C8.06314.882189F5; Tue, 27
+        Oct 2020 12:28:56 +0000 (GMT)
 Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201027120402eusmtip24b82ffe51834a1b0ee51489f53056cb5~B19KtOZ7W2259722597eusmtip2O;
-        Tue, 27 Oct 2020 12:04:02 +0000 (GMT)
-Subject: Re: [PATCH v2 5/6] pci: dwc: pci-exynos: rework the driver to
- support Exynos5433 variant
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20201027122855eusmtip14adc70a2a031ac56fab75930dc378878~B2S5gyLQm2340823408eusmtip1V;
+        Tue, 27 Oct 2020 12:28:55 +0000 (GMT)
+Subject: Re: [PATCH v2 4/6] phy: samsung: phy-exynos-pcie: rework driver to
+ support Exynos5433 PCIe PHY
 To:     Rob Herring <robh+dt@kernel.org>
 Cc:     linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         PCI <linux-pci@vger.kernel.org>, devicetree@vger.kernel.org,
@@ -72,392 +72,171 @@ Cc:     linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         Vinod Koul <vkoul@kernel.org>,
         Kishon Vijay Abraham I <kishon@ti.com>
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <86df523b-cf3d-5a88-5ccc-c6f2ca9830a4@samsung.com>
-Date:   Tue, 27 Oct 2020 13:04:01 +0100
+Message-ID: <e2ba43d4-3991-e98e-6ec0-6ff3ad5d954b@samsung.com>
+Date:   Tue, 27 Oct 2020 13:28:55 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
         Gecko/20100101 Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqK+kVOzLaYS6Xk9RoK8AOpVF+n5nNC1EBS-+UxR334d3g@mail.gmail.com>
+In-Reply-To: <CAL_JsqLUT7aLnQsLvcCOHCaoVAao9VSmEhoscBxu3ARXX33zrA@mail.gmail.com>
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfSxVYRzee8+59xx3rp0uzW8ybXdpqw1Ztk5jSrO6lvWx9U9KXBxfcXGP
-        j/QxUshNTRlxd0Oy+bo+JtwYicllcq9YY8JWY7lKyUeNQo7Th/+e93l+z/t7nncviUn7hHZk
-        hDKeUSkVUTKRGG/uWTE5NVkWBBzQz7vTZWnhdHG3UUiPrmYI6YqlQoIenM4W0SZTPUEPt2pF
-        9ECRQUQXmF4I6M8/Zwg6vb2boFvGe7GjlnJdkQ7JWzQThLykIUHeUJUlkt9vrEJyw6heIF9s
-        cDhD+Ik9QpioiERG5eIZKA6v/aIlYjtDr/Sla4WpaMpHjUgSKDeYWTqlRmJSSlUg6FkxEmpk
-        sXlYQvBq4SQvLCKYfzuEOIEzNN6dF/BCOYK1BysY7/iK4EdLHIetqWCoHskVcNiG2gP1H8cw
-        zoBRRgzaFj7hnCCiXEE9pxZxMSSUJ6TnWXM0TjlC3nLH1shOKgjWFn9t3S+hdkBf4RTOjVtQ
-        Z+Fm43GOxqjdoJ/TYjy2hbGp4q1sQJkJeJZ3G+dDe8NjvU7AY2uYNTQSPLaH/txsnDfcQvDe
-        WEPwh2wEw2kFfyq7w7hxdSsoRu2DulYXnvaCDlOTgH9GKxid28GHsIKHzY8wnpbAnQwpP70X
-        NIbaf2s7B4ewHCTTbGum2VZHs62O5v/eEoRXIVsmgY0OY1hXJZPkzCqi2QRlmHNwTHQD2vxg
-        /euGhedoeSioC1EkkllKBufyA6RCRSKbHN2FgMRkNpJjA/2XpJIQRfJVRhUToEqIYtgutIvE
-        ZbaSg6VmfykVpohnLjNMLKP6qwpIC7tUlCk61/rau3hK/y7N/8LixPrw9ciCtpQbk6mTIz69
-        0+01VnW+Lz+gN6Fu3zdKLyY7N9fFjIebT0TZe407Dfuy6zF0XErSkfrKwKfzC7o4ZXlfnOs3
-        QV71PZ195eHMtvzEayHmnPLZLEsP+bq9Q3dZUKRYTGrLN3r8DkXWOT5pPX9ahrPhCtf9mIpV
-        /Aa5QCCtXAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHIsWRmVeSWpSXmKPExsVy+t/xe7pbeWbEGxz4rWSxpCnDYv6Rc6wW
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsWy7djPc7oThWbEG9x8aGWxpCnDYv6Rc6wW
         N361sVqs+DKT3eLC0x42i/PnN7BbXN41h83i7LzjbBYzzu9jsnjz+wW7ReveI+wWO++cYHbg
-        8Vgzbw2jx85Zd9k9Fmwq9di0qpPNo2/LKkaP4ze2M3l83iQXwB6lZ1OUX1qSqpCRX1xiqxRt
-        aGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5egl7Hu3Rz2goNpFSdb57A2MD7x7GLk
-        5JAQMJHY0v2BqYuRi0NIYCmjxMXWm2wQCRmJk9MaWCFsYYk/17rYIIreMkocvr6dHSQhLJAs
-        0T7hOQuILSKgIrHh+S1mkCJmgXPMEqe+XmCE6Ohhkpi6uYcRpIpNwFCi6y3IKA4OXgE7idap
-        wiBhFgFVialf94MNEhVIknh5YSoTiM0rIChxcuYTFpByToFAicYtbiBhZgEziXmbHzJD2PIS
-        29/OgbLFJW49mc80gVFoFpLuWUhaZiFpmYWkZQEjyypGkdTS4tz03GJDveLE3OLSvHS95Pzc
-        TYzAuN127OfmHYyXNgYfYhTgYFTi4b3wdlq8EGtiWXFl7iFGCQ5mJRFep7On44R4UxIrq1KL
-        8uOLSnNSiw8xmgL9NpFZSjQ5H5hS8kriDU0NzS0sDc2NzY3NLJTEeTsEDsYICaQnlqRmp6YW
-        pBbB9DFxcEo1MNYHKHa52E53ehZ41iuM91dk5AKVuHvTpHfwbC4zTjrGc0Df8rDj2Y1Svxin
-        G3+tY5q072ncSbfg613G0yvnuM3mDeK71a22eBW3dEHbKpl168tFbntprjmacuFnU9W865x7
-        9Vp43n4rVk+OKv9w/cA5s6d3Hx7aEKKYOu/dgQXiaW2KNZFiokosxRmJhlrMRcWJAHIaf9jx
-        AgAA
-X-CMS-MailID: 20201027120405eucas1p12cf1c433b1747fcd66a463cfebe4bb67
+        8Vgzbw2jx85Zd9k9Fmwq9di0qpPNo2/LKkaP4ze2M3l83iQXwB7FZZOSmpNZllqkb5fAlTHz
+        zlzWgtPqFd9f3mRvYLwk28XIwSEhYCLxuDmki5GLQ0hgBaPElNuPWLsYOYGcL4wS97b6QyQ+
+        M0rcXX2OESQB0rBwxXI2iMRyRoknkzsZIZz3jBJXn9xiAxkrLJAp0bLXAKRBREBFYsPzW8wg
+        NcwC55gl9nx6zQKSYBMwlOh628UGYvMK2EnsOL0ZLM4ioCqxr2UemC0qkCTx9/MfZogaQYmT
+        M5+AxTkFAiXWv/oOZjMLyEtsfzuHGcIWl7j1ZD4TyDIJgUfsEjtvrWCGONtFYsXVmVC2sMSr
+        41vYIWwZif87YRqaGSUenlvLDuH0MEpcbpoB9bS1xJ1zv8BeYxbQlFi/Sx8i7Cix4eBZNkhA
+        8knceCsIcQSfxKRt05khwrwSHW1CENVqErOOr4Nbe/DCJeYJjEqzkLw2C8k7s5C8Mwth7wJG
+        llWM4qmlxbnpqcVGeanlesWJucWleel6yfm5mxiBSez0v+NfdjDu+pN0iFGAg1GJh/fC22nx
+        QqyJZcWVuYcYJTiYlUR4nc6ejhPiTUmsrEotyo8vKs1JLT7EKM3BoiTOa7zoZayQQHpiSWp2
+        ampBahFMlomDU6qBMSxDrlna9MIEpdWHs+cIXLbyfdSip1YlemXP5dP/vW5lbDi+qs7g833u
+        6BMsX2ID1FVKVm+O+Kj4Nv5ReON2/40N31bEc0n8k8q91GW3p9/o8u2ly687vquzNHM6+F5r
+        4oWPamv/BwWrf/n5zHGuyNmg2jCDK2+bPmxPXartfGK23rwi+9upuUosxRmJhlrMRcWJAM4R
+        oQheAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHIsWRmVeSWpSXmKPExsVy+t/xu7odQjPiDeZv4LJY0pRhMf/IOVaL
+        G7/aWC1WfJnJbnHhaQ+bxfnzG9gtLu+aw2Zxdt5xNosZ5/cxWbz5/YLdonXvEXaLnXdOMDvw
+        eKyZt4bRY+esu+weCzaVemxa1cnm0bdlFaPH8RvbmTw+b5ILYI/SsynKLy1JVcjILy6xVYo2
+        tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy5h5Zy5rwWn1iu8vb7I3MF6S7WLk
+        5JAQMJFYuGI5G4gtJLCUUaK/XwsiLiNxcloDK4QtLPHnWhdQDRdQzVtGiZs/9jB2MXJwCAtk
+        SrTsNQCpERFQkdjw/BYzSA2zwDlmiVNfLzBCNPQwSfTtegw2iU3AUKLrbRfYNl4BO4kdpzez
+        gNgsAqoS+1rmgdmiAkkSLy9MZYKoEZQ4OfMJWJxTIFBi/avvYDazgJnEvM0PmSFseYntb+dA
+        2eISt57MZ5rAKDQLSfssJC2zkLTMQtKygJFlFaNIamlxbnpusaFecWJucWleul5yfu4mRmDc
+        bjv2c/MOxksbgw8xCnAwKvHwXng7LV6INbGsuDL3EKMEB7OSCK/T2dNxQrwpiZVVqUX58UWl
+        OanFhxhNgZ6byCwlmpwPTCl5JfGGpobmFpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNTUwtSi2D6
+        mDg4pRoY03/0Wt9eJ/5IallTb9uktxtXqvYEFfjPM5X/H3PkaNa69e6Wa/YyuL2xvvJUvOXk
+        z8Lcf00+l859Mbzhy6Xa+7eroynNQIDJYurnTX2nNeMPyqi0CcuWqM7uirl+Jru0dtvcu13+
+        K3SPLwqa6f5/0aQ9fDqeJw80h4nWh3tUTjr2Wm2Z4NHrSizFGYmGWsxFxYkAtzVddvECAAA=
+X-CMS-MailID: 20201027122905eucas1p16ba9af9ea08ac43aed86970595a2ea78
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201023075756eucas1p18765653e747842eef4b438aff32ef136
+X-RootMTR: 20201023075756eucas1p2c27cc3e6372127d107e5b84c810ba98f
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20201023075756eucas1p18765653e747842eef4b438aff32ef136
-References: <CGME20201023075756eucas1p18765653e747842eef4b438aff32ef136@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20201023075756eucas1p2c27cc3e6372127d107e5b84c810ba98f
+References: <CGME20201023075756eucas1p2c27cc3e6372127d107e5b84c810ba98f@eucas1p2.samsung.com>
         <20201023075744.26200-1-m.szyprowski@samsung.com>
-        <20201023075744.26200-6-m.szyprowski@samsung.com>
-        <CAL_JsqK+kVOzLaYS6Xk9RoK8AOpVF+n5nNC1EBS-+UxR334d3g@mail.gmail.com>
+        <20201023075744.26200-5-m.szyprowski@samsung.com>
+        <CAL_JsqLUT7aLnQsLvcCOHCaoVAao9VSmEhoscBxu3ARXX33zrA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hi Rob,
 
-On 26.10.2020 20:14, Rob Herring wrote:
+On 26.10.2020 19:50, Rob Herring wrote:
 > On Fri, Oct 23, 2020 at 2:58 AM Marek Szyprowski
 > <m.szyprowski@samsung.com> wrote:
 >> From: Jaehoon Chung <jh80.chung@samsung.com>
 >>
 >> Exynos5440 SoC support has been dropped since commit 8c83315da1cf ("ARM:
->> dts: exynos: Remove Exynos5440"). Rework this driver to support DWC PCIe
+>> dts: exynos: Remove Exynos5440"). Rework this driver to support PCIe PHY
 >> variant found in the Exynos5433 SoCs.
 >>
->> The main difference in Exynos5433 variant is lack of the MSI support
->> (the MSI interrupt is not even routed to the CPU).
->>
 >> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->> [mszyprow: reworked the driver to support only Exynos5433 variant,
->>             simplified code, rebased onto current kernel code, added
->>             regulator support, converted to the regular platform driver,
->>             removed MSI related code, rewrote commit message]
+>> [mszyprow: reworked the driver to support only Exynos5433 variant, rebased
+>>             onto current kernel code, rewrote commit message]
 >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 >> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 >> ---
->>   drivers/pci/controller/dwc/Kconfig      |   3 +-
->>   drivers/pci/controller/dwc/pci-exynos.c | 358 ++++++++++--------------
->>   drivers/pci/quirks.c                    |   1 +
->>   3 files changed, 145 insertions(+), 217 deletions(-)
+>>   drivers/phy/samsung/phy-exynos-pcie.c | 304 ++++++++++----------------
+>>   1 file changed, 112 insertions(+), 192 deletions(-)
 >>
->> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
->> index bc049865f8e0..ade07abd23c9 100644
->> --- a/drivers/pci/controller/dwc/Kconfig
->> +++ b/drivers/pci/controller/dwc/Kconfig
->> @@ -84,8 +84,7 @@ config PCIE_DW_PLAT_EP
->>
->>   config PCI_EXYNOS
->>          bool "Samsung Exynos PCIe controller"
->> -       depends on SOC_EXYNOS5440 || COMPILE_TEST
->> -       depends on PCI_MSI_IRQ_DOMAIN
->> +       depends on ARCH_EXYNOS || COMPILE_TEST
->>          select PCIE_DW_HOST
->>
->>   config PCI_IMX6
->> diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
->> index 242683cde04a..58056fbdc2fa 100644
->> --- a/drivers/pci/controller/dwc/pci-exynos.c
->> +++ b/drivers/pci/controller/dwc/pci-exynos.c
->> @@ -2,26 +2,23 @@
->>   /*
->>    * PCIe host controller driver for Samsung Exynos SoCs
+>> diff --git a/drivers/phy/samsung/phy-exynos-pcie.c b/drivers/phy/samsung/phy-exynos-pcie.c
+>> index 7e28b1aea0d1..d91de323dd0e 100644
+>> --- a/drivers/phy/samsung/phy-exynos-pcie.c
+>> +++ b/drivers/phy/samsung/phy-exynos-pcie.c
+>> @@ -4,70 +4,41 @@
 >>    *
->> - * Copyright (C) 2013 Samsung Electronics Co., Ltd.
->> + * Copyright (C) 2013-2020 Samsung Electronics Co., Ltd.
->>    *             https://www.samsung.com
+>>    * Phy provider for PCIe controller on Exynos SoC series
 >>    *
->>    * Author: Jingoo Han <jg1.han@samsung.com>
->> + *        Jaehoon Chung <jh80.chung@samsung.com>
+>> - * Copyright (C) 2017 Samsung Electronics Co., Ltd.
+>> + * Copyright (C) 2017-2020 Samsung Electronics Co., Ltd.
+>>    * Jaehoon Chung <jh80.chung@samsung.com>
 >>    */
 >>
->>   #include <linux/clk.h>
->>   #include <linux/delay.h>
->> -#include <linux/gpio.h>
->>   #include <linux/interrupt.h>
->>   #include <linux/kernel.h>
->>   #include <linux/init.h>
->>   #include <linux/of_device.h>
->> -#include <linux/of_gpio.h>
->>   #include <linux/pci.h>
+>> -#include <linux/delay.h>
+>>   #include <linux/io.h>
+>> -#include <linux/iopoll.h>
+>> -#include <linux/init.h>
+>>   #include <linux/mfd/syscon.h>
+>> -#include <linux/of.h>
+>> -#include <linux/of_address.h>
+>>   #include <linux/of_platform.h>
 >>   #include <linux/platform_device.h>
 >>   #include <linux/phy/phy.h>
->> -#include <linux/resource.h>
->> -#include <linux/signal.h>
->> -#include <linux/types.h>
->> +#include <linux/regulator/consumer.h>
+>>   #include <linux/regmap.h>
 >>
->>   #include "pcie-designware.h"
->>
->> @@ -37,102 +34,47 @@
->>   #define PCIE_IRQ_SPECIAL               0x008
->>   #define PCIE_IRQ_EN_PULSE              0x00c
->>   #define PCIE_IRQ_EN_LEVEL              0x010
->> -#define IRQ_MSI_ENABLE                 BIT(2)
->>   #define PCIE_IRQ_EN_SPECIAL            0x014
->> -#define PCIE_PWR_RESET                 0x018
->> +#define PCIE_SW_WAKE                   0x018
->> +#define PCIE_BUS_EN                    BIT(1)
->>   #define PCIE_CORE_RESET                        0x01c
->>   #define PCIE_CORE_RESET_ENABLE         BIT(0)
->>   #define PCIE_STICKY_RESET              0x020
->>   #define PCIE_NONSTICKY_RESET           0x024
->>   #define PCIE_APP_INIT_RESET            0x028
->>   #define PCIE_APP_LTSSM_ENABLE          0x02c
->> -#define PCIE_ELBI_RDLH_LINKUP          0x064
->> +#define PCIE_ELBI_RDLH_LINKUP          0x074
->> +#define PCIE_ELBI_XMLH_LINKUP          BIT(4)
->>   #define PCIE_ELBI_LTSSM_ENABLE         0x1
->>   #define PCIE_ELBI_SLV_AWMISC           0x11c
->>   #define PCIE_ELBI_SLV_ARMISC           0x120
->>   #define PCIE_ELBI_SLV_DBI_ENABLE       BIT(21)
->>
->> -struct exynos_pcie_mem_res {
->> -       void __iomem *elbi_base;   /* DT 0th resource: PCIe CTRL */
+>> -/* PCIe Purple registers */
+>> -#define PCIE_PHY_GLOBAL_RESET          0x000
+>> -#define PCIE_PHY_COMMON_RESET          0x004
+>> -#define PCIE_PHY_CMN_REG               0x008
+>> -#define PCIE_PHY_MAC_RESET             0x00c
+>> -#define PCIE_PHY_PLL_LOCKED            0x010
+>> -#define PCIE_PHY_TRSVREG_RESET         0x020
+>> -#define PCIE_PHY_TRSV_RESET            0x024
+>> -
+>> -/* PCIe PHY registers */
+>> -#define PCIE_PHY_IMPEDANCE             0x004
+>> -#define PCIE_PHY_PLL_DIV_0             0x008
+>> -#define PCIE_PHY_PLL_BIAS              0x00c
+>> -#define PCIE_PHY_DCC_FEEDBACK          0x014
+>> -#define PCIE_PHY_PLL_DIV_1             0x05c
+>> -#define PCIE_PHY_COMMON_POWER          0x064
+>> -#define PCIE_PHY_COMMON_PD_CMN         BIT(3)
+>> -#define PCIE_PHY_TRSV0_EMP_LVL         0x084
+>> -#define PCIE_PHY_TRSV0_DRV_LVL         0x088
+>> -#define PCIE_PHY_TRSV0_RXCDR           0x0ac
+>> -#define PCIE_PHY_TRSV0_POWER           0x0c4
+>> -#define PCIE_PHY_TRSV0_PD_TSV          BIT(7)
+>> -#define PCIE_PHY_TRSV0_LVCC            0x0dc
+>> -#define PCIE_PHY_TRSV1_EMP_LVL         0x144
+>> -#define PCIE_PHY_TRSV1_RXCDR           0x16c
+>> -#define PCIE_PHY_TRSV1_POWER           0x184
+>> -#define PCIE_PHY_TRSV1_PD_TSV          BIT(7)
+>> -#define PCIE_PHY_TRSV1_LVCC            0x19c
+>> -#define PCIE_PHY_TRSV2_EMP_LVL         0x204
+>> -#define PCIE_PHY_TRSV2_RXCDR           0x22c
+>> -#define PCIE_PHY_TRSV2_POWER           0x244
+>> -#define PCIE_PHY_TRSV2_PD_TSV          BIT(7)
+>> -#define PCIE_PHY_TRSV2_LVCC            0x25c
+>> -#define PCIE_PHY_TRSV3_EMP_LVL         0x2c4
+>> -#define PCIE_PHY_TRSV3_RXCDR           0x2ec
+>> -#define PCIE_PHY_TRSV3_POWER           0x304
+>> -#define PCIE_PHY_TRSV3_PD_TSV          BIT(7)
+>> -#define PCIE_PHY_TRSV3_LVCC            0x31c
+>> -
+>> -struct exynos_pcie_phy_data {
+>> -       const struct phy_ops    *ops;
 >> -};
->> -
->> -struct exynos_pcie_clk_res {
->> -       struct clk *clk;
->> -       struct clk *bus_clk;
->> -};
->> +/* DBI register */
->> +#define PCIE_MISC_CONTROL_1_OFF                0x8BC
->> +#define DBI_RO_WR_EN                   BIT(0)
-> Standard DWC port logic register. The core already handles this
-> mostly. And provides a function to it where it doesn't. Looking at
-> your use, I think you can drop the access.
->
->> ...
->> @@ -243,19 +168,25 @@ static int exynos_pcie_establish_link(struct exynos_pcie *ep)
->>          exynos_pcie_assert_core_reset(ep);
->>
->>          phy_reset(ep->phy);
->> -
->> -       exynos_pcie_writel(ep->mem_res->elbi_base, 1,
->> -                       PCIE_PWR_RESET);
->> -
->>          phy_power_on(ep->phy);
->>          phy_init(ep->phy);
->>
->>          exynos_pcie_deassert_core_reset(ep);
+>> +#define PCIE_PHY_OFFSET(x)             ((x) * 0x4)
 >> +
->> +       val = exynos_pcie_readl(ep->elbi_base, PCIE_SW_WAKE);
->> +       val &= ~PCIE_BUS_EN;
->> +       exynos_pcie_writel(ep->elbi_base, val, PCIE_SW_WAKE);
->> +
->> +       /*
->> +        * Enable DBI_RO_WR_EN bit.
->> +        * - When set to 1, some RO and HWinit bits are wriatble from
->> +        *   the local application through the DBI.
->> +        */
->> +       dw_pcie_writel_dbi(pci, PCIE_MISC_CONTROL_1_OFF, DBI_RO_WR_EN);
->>          dw_pcie_setup_rc(pp);
-> First thing this function does is set DBI_RO_WR_EN.
+>> +/* Sysreg FSYS register offsets and bits for Exynos5433 */
+>> +#define PCIE_EXYNOS5433_PHY_MAC_RESET          0x0208
+>> +#define PCIE_MAC_RESET_MASK                    0xFF
+>> +#define PCIE_MAC_RESET                         BIT(4)
+>> +#define PCIE_EXYNOS5433_PHY_L1SUB_CM_CON       0x1010
+>> +#define PCIE_REFCLK_GATING_EN                  BIT(0)
+>> +#define PCIE_EXYNOS5433_PHY_COMMON_RESET       0x1020
+>> +#define PCIE_PHY_RESET                         BIT(0)
+>> +#define PCIE_EXYNOS5433_PHY_GLOBAL_RESET       0x1040
+>> +#define PCIE_GLOBAL_RESET                      BIT(0)
+> Resets, why is this block not a reset provider?
 
-Indeed, this has been added to dw_pcie_setup_rc() in commit 3924bc2fd1b6 
-("PCI: dwc: Group DBI registers writes requiring unlocking"), after 
-initial version of this patchset. Thanks for pointing this out. I will 
-remove this.
+Because most of those registers need to be configured together with the 
+rest of the PHY registers. IMHO there is no simple "do the reset" logic 
+there. There is also PHY reference clock configuration there. This phy 
+driver is already Exynos5433 specific and I see no point in extracting 
+separate reset driver from it. Other Exynos PHY drivers also access PMU 
+and SYSREG via the respective regmaps and don't use any kind of reset 
+drivers.
 
->> ...
->> @@ -450,42 +347,49 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
->>          if (!ep)
->>                  return -ENOMEM;
->>
->> -       pci = devm_kzalloc(dev, sizeof(*pci), GFP_KERNEL);
->> -       if (!pci)
->> -               return -ENOMEM;
->> -
->> -       pci->dev = dev;
->> -       pci->ops = &dw_pcie_ops;
->> +       ep->pci.dev = dev;
->> +       ep->pci.ops = &dw_pcie_ops;
->>
->> -       ep->pci = pci;
->> -       ep->ops = (const struct exynos_pcie_ops *)
->> -               of_device_get_match_data(dev);
->> +       ep->phy = devm_of_phy_get(dev, np, NULL);
->> +       if (IS_ERR(ep->phy))
->> +               return PTR_ERR(ep->phy);
->>
->> -       ep->reset_gpio = of_get_named_gpio(np, "reset-gpio", 0);
->> +       /* External Local Bus interface (ELBI) registers */
->> +       ep->elbi_base = devm_platform_ioremap_resource_byname(pdev, "elbi");
->> +       if (IS_ERR(ep->elbi_base))
->> +               return PTR_ERR(ep->elbi_base);
->>
->> -       ep->phy = devm_of_phy_get(dev, np, NULL);
->> -       if (IS_ERR(ep->phy)) {
->> -               if (PTR_ERR(ep->phy) != -ENODEV)
->> -                       return PTR_ERR(ep->phy);
->> +       /* Data Bus Interface (DBI) registers */
->> +       ep->pci.dbi_base = devm_platform_ioremap_resource_byname(pdev, "dbi");
->> +       if (IS_ERR(ep->pci.dbi_base))
->> +               return PTR_ERR(ep->pci.dbi_base);
-> This is going to get moved to the DWC core code.
-Well, so far it is not there yet and other dw-pci drivers do it on their 
-own. Could you point a patch that does this, so I can rebase onto it?
->
->> -               ep->phy = NULL;
->> +       ep->clk = devm_clk_get(dev, "pcie");
->> +       if (IS_ERR(ep->clk)) {
->> +               dev_err(dev, "Failed to get pcie rc clock\n");
->> +               return PTR_ERR(ep->clk);
->>          }
->>
->> -       if (ep->ops && ep->ops->get_mem_resources) {
->> -               ret = ep->ops->get_mem_resources(pdev, ep);
->> -               if (ret)
->> -                       return ret;
->> +       ep->bus_clk = devm_clk_get(dev, "pcie_bus");
->> +       if (IS_ERR(ep->bus_clk)) {
->> +               dev_err(dev, "Failed to get pcie bus clock\n");
->> +               return PTR_ERR(ep->bus_clk);
->>          }
->>
->> -       if (ep->ops && ep->ops->get_clk_resources &&
->> -                       ep->ops->init_clk_resources) {
->> -               ret = ep->ops->get_clk_resources(ep);
->> -               if (ret)
->> -                       return ret;
->> -               ret = ep->ops->init_clk_resources(ep);
->> -               if (ret)
->> -                       return ret;
->> -       }
->> +       ep->supplies[0].supply = "vdd18";
->> +       ep->supplies[1].supply = "vdd10";
->> +       ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ep->supplies),
->> +                                     ep->supplies);
->> +       if (ret)
->> +               return ret;
->> +
->> +       ret = exynos_pcie_init_clk_resources(ep);
->> +       if (ret)
->> +               return ret;
->> +
->> +       ret = regulator_bulk_enable(ARRAY_SIZE(ep->supplies), ep->supplies);
->> +       if (ret)
->> +               return ret;
->>
->>          platform_set_drvdata(pdev, ep);
->>
->> @@ -497,9 +401,9 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
->>
->>   fail_probe:
->>          phy_exit(ep->phy);
->> +       exynos_pcie_deinit_clk_resources(ep);
->> +       regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
->>
->> -       if (ep->ops && ep->ops->deinit_clk_resources)
->> -               ep->ops->deinit_clk_resources(ep);
->>          return ret;
->>   }
->>
->> @@ -507,32 +411,56 @@ static int __exit exynos_pcie_remove(struct platform_device *pdev)
->>   {
->>          struct exynos_pcie *ep = platform_get_drvdata(pdev);
->>
->> -       if (ep->ops && ep->ops->deinit_clk_resources)
->> -               ep->ops->deinit_clk_resources(ep);
->> +       phy_power_off(ep->phy);
->> +       phy_exit(ep->phy);
->> +       exynos_pcie_deinit_clk_resources(ep);
->> +       regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
->>
->>          return 0;
->>   }
->>
->> +static int __maybe_unused exynos_pcie_suspend_noirq(struct device *dev)
->> +{
-> Why noirq variant needed? Lot's of PCI host drivers do this and I've
-> yet to get a reason...
-Frankly, I have no idea, but switching to SET_LATE_SYSTEM_SLEEP_PM_OPS 
-breaks system suspend/resume operation - the board doesn't resume from 
-suspend. If this is really important I will add some more logs and try 
-to find what happens between late/early and noirq phases.
-> Adding suspend/resume should probably be a separate patch. What I'd
-> like to do here is have common DWC suspend/resume functions that the
-> platform drivers can use or wrap.
-
-Okay, I can move adding suspend/resume to the separate patch if You 
-want. However I probably know too little about PCI to extract some 
-common dwc suspend/resume functions.
-
->> +       struct exynos_pcie *ep = dev_get_drvdata(dev);
->> +
->> +       phy_power_off(ep->phy);
->> +       phy_exit(ep->phy);
->> +       regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
->> +
->> +       return 0;
->> +}
->> +
->> +static int __maybe_unused exynos_pcie_resume_noirq(struct device *dev)
->> +{
->> +       struct exynos_pcie *ep = dev_get_drvdata(dev);
->> +       struct dw_pcie *pci = &ep->pci;
->> +       struct pcie_port *pp = &pci->pp;
->> +       int ret;
->> +
->> +       ret = regulator_bulk_enable(ARRAY_SIZE(ep->supplies), ep->supplies);
->> +       if (ret)
->> +               return ret;
->> +       /* exynos_pcie_host_init controls ep->phy */
->> +       return exynos_pcie_host_init(pp);
->> +}
->> +
->> +static const struct dev_pm_ops exynos_pcie_pm_ops = {
->> +       SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(exynos_pcie_suspend_noirq,
->> +                                     exynos_pcie_resume_noirq)
->> +};
->> +
->>   static const struct of_device_id exynos_pcie_of_match[] = {
->> -       {
->> -               .compatible = "samsung,exynos5440-pcie",
->> -               .data = &exynos5440_pcie_ops
->> -       },
->> -       {},
->> +       { .compatible = "samsung,exynos5433-pcie", },
->> +       { },
->>   };
->>
->>   static struct platform_driver exynos_pcie_driver = {
->> +       .probe          = exynos_pcie_probe,
->>          .remove         = __exit_p(exynos_pcie_remove),
->>          .driver = {
->>                  .name   = "exynos-pcie",
->>                  .of_match_table = exynos_pcie_of_match,
->> +               .pm             = &exynos_pcie_pm_ops,
->>          },
->>   };
->> -
->> -/* Exynos PCIe driver does not allow module unload */
->> -
->> -static int __init exynos_pcie_init(void)
->> -{
->> -       return platform_driver_probe(&exynos_pcie_driver, exynos_pcie_probe);
->> -}
->> -subsys_initcall(exynos_pcie_init);
-> Good that this is gone, but...
->
->> +builtin_platform_driver(exynos_pcie_driver);
-> I would like to make all the host drivers modules.
-
-I can check if this can be easily done. If not, I would like to keep it 
-builtin in this patch and leave modularization for the future.
+>> +#define PCIE_REFCLK                            BIT(1)
+>> +#define PCIE_REFCLK_MASK                       0x16
+>> +#define PCIE_APP_REQ_EXIT_L1_MODE              BIT(5)
 
 Best regards
-
 -- 
 Marek Szyprowski, PhD
 Samsung R&D Institute Poland
