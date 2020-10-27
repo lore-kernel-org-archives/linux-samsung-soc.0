@@ -2,143 +2,145 @@ Return-Path: <SRS0=zeks=EC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB3CC64E7A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C91C55179
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 07:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 540F4218AC
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603758870;
-	bh=NNHRkHNwnAuoOXQ5XBDK/xGixqeP5LvrsDlGrNR8SLE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=E8TTMCv6ROEFEwnxcHWw9B5keRGPo11m09K+ojuzNhSLN24LeQP0V+so/eGvkAA1h
-	 0fXJwAdhIOa/YYB1nxFUi4tuHjRhBgVVO++RcoemBvKPTJAfpnPkDKjz9jUdc1/WtW
-	 ZrOqJ+QrRoBV0kPzvjuYYUA5c76oBRhjElw7mrS4=
+	by mail.kernel.org (Postfix) with ESMTP id 290CF22264
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 07:03:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2443525AbgJ0AbH (ORCPT
+        id S2507089AbgJ0HDv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 20:31:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53254 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409542AbgJZXvu (ORCPT
+        Tue, 27 Oct 2020 03:03:51 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36341 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2507080AbgJ0HDu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 26 Oct 2020 19:51:50 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 617C6221FC;
-        Mon, 26 Oct 2020 23:51:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603756310;
-        bh=NNHRkHNwnAuoOXQ5XBDK/xGixqeP5LvrsDlGrNR8SLE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KYOJOpCYSkIB93SBNkuaH7h8aXlPvazRnB2MWE6EsvquXFWa4RxYjzBkalZZFeGBB
-         OuZFoMlP6emT9RCClj3gT7jMtlyN9luGeCNybbAumGJjxg0+e/w6lOjVhV3bYNQ0eX
-         wwxqOlTGCjah5kNbZUgzpBQNRc481+wmraryRFJY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Bakker <xc-racer2@live.ca>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.9 134/147] ARM: dts: s5pv210: remove DMA controller bus node name to fix dtschema warnings
-Date:   Mon, 26 Oct 2020 19:48:52 -0400
-Message-Id: <20201026234905.1022767-134-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201026234905.1022767-1-sashal@kernel.org>
-References: <20201026234905.1022767-1-sashal@kernel.org>
+        Tue, 27 Oct 2020 03:03:50 -0400
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1kXJ1C-00019L-Kr; Tue, 27 Oct 2020 08:03:42 +0100
+Subject: Re: [Linux-stm32] [PATCH v7 10/12] ARM: dts: stm32: Fix schema
+ warnings for pwm-leds
+To:     Alexander Dahl <post@lespocky.de>, Pavel Machek <pavel@ucw.cz>,
+        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Alexander Dahl <ada@thorsis.com>, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-leds@vger.kernel.org
+References: <20201005203451.9985-1-post@lespocky.de>
+ <20201005203451.9985-11-post@lespocky.de>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <b387bda8-3643-1d27-4996-2aa4dc94d69f@pengutronix.de>
+Date:   Tue, 27 Oct 2020 08:03:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.1
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201005203451.9985-11-post@lespocky.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Hello Alexander,
 
-[ Upstream commit ea4e792f3c8931fffec4d700cf6197d84e9f35a6 ]
+On 10/5/20 10:34 PM, Alexander Dahl wrote:
+> The node names for devices using the pwm-leds driver follow a certain
+> naming scheme (now).  Parent node name is not enforced, but recommended
+> by DT project.
+> 
+>   DTC     arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
+>   CHECK   arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
+> /home/alex/build/linux/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml: led-rgb: 'led-blue', 'led-green', 'led-red' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
+>         From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+> 
+> Signed-off-by: Alexander Dahl <post@lespocky.de>
 
-There is no need to keep DMA controller nodes under AMBA bus node.
-Remove the "amba" node to fix dtschema warnings like:
+Acked-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-  amba: $nodename:0: 'amba' does not match '^([a-z][a-z0-9\\-]+-bus|bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
+But got two questions below:
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Jonathan Bakker <xc-racer2@live.ca>
-Link: https://lore.kernel.org/r/20200907161141.31034-6-krzk@kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm/boot/dts/s5pv210.dtsi | 49 +++++++++++++++-------------------
- 1 file changed, 21 insertions(+), 28 deletions(-)
+> ---
+> 
+> Notes:
+>     v6 -> v7:
+>       * split up patch (one per sub arch)
+>       * added actual warnings to commit message
+> 
+>  arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts b/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
+> index 5700e6b700d3..25d548cb975b 100644
+> --- a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
+> +++ b/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
+> @@ -36,34 +36,34 @@
+>  		stdout-path = &uart4;
+>  	};
+>  
+> -	led-act {
+> +	led-controller-1 {
+>  		compatible = "gpio-leds";
+>  
+> -		led-green {
+> +		led-1 {
+>  			label = "mc1:green:act";
+>  			gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
+>  			linux,default-trigger = "heartbeat";
+>  		};
+>  	};
+>  
+> -	led-rgb {
+> +	led-controller-2 {
 
-diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index 1b0ee884e91db..84e4447931de5 100644
---- a/arch/arm/boot/dts/s5pv210.dtsi
-+++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -128,35 +128,28 @@ wakeup-interrupt-controller {
- 			};
- 		};
- 
--		amba {
--			#address-cells = <1>;
--			#size-cells = <1>;
--			compatible = "simple-bus";
--			ranges;
--
--			pdma0: dma@e0900000 {
--				compatible = "arm,pl330", "arm,primecell";
--				reg = <0xe0900000 0x1000>;
--				interrupt-parent = <&vic0>;
--				interrupts = <19>;
--				clocks = <&clocks CLK_PDMA0>;
--				clock-names = "apb_pclk";
--				#dma-cells = <1>;
--				#dma-channels = <8>;
--				#dma-requests = <32>;
--			};
-+		pdma0: dma@e0900000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0xe0900000 0x1000>;
-+			interrupt-parent = <&vic0>;
-+			interrupts = <19>;
-+			clocks = <&clocks CLK_PDMA0>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <32>;
-+		};
- 
--			pdma1: dma@e0a00000 {
--				compatible = "arm,pl330", "arm,primecell";
--				reg = <0xe0a00000 0x1000>;
--				interrupt-parent = <&vic0>;
--				interrupts = <20>;
--				clocks = <&clocks CLK_PDMA1>;
--				clock-names = "apb_pclk";
--				#dma-cells = <1>;
--				#dma-channels = <8>;
--				#dma-requests = <32>;
--			};
-+		pdma1: dma@e0a00000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0xe0a00000 0x1000>;
-+			interrupt-parent = <&vic0>;
-+			interrupts = <20>;
-+			clocks = <&clocks CLK_PDMA1>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <32>;
- 		};
- 
- 		adc: adc@e1700000 {
+Is a single RGB LED really a controller?
+
+>  		compatible = "pwm-leds";
+>  
+> -		led-red {
+> +		led-2 {
+
+Shouldn't this have been led-1 as well or is the numbering "global" ?
+
+>  			label = "mc1:red:rgb";
+>  			pwms = <&leds_pwm 1 1000000 0>;
+>  			max-brightness = <255>;
+>  			active-low;
+>  		};
+>  
+> -		led-green {
+> +		led-3 {
+>  			label = "mc1:green:rgb";
+>  			pwms = <&leds_pwm 2 1000000 0>;
+>  			max-brightness = <255>;
+>  			active-low;
+>  		};
+>  
+> -		led-blue {
+> +		led-4 {
+>  			label = "mc1:blue:rgb";
+>  			pwms = <&leds_pwm 3 1000000 0>;
+>  			max-brightness = <255>;
+> 
+
 -- 
-2.25.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
