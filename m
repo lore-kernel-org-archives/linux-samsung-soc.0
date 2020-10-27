@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3335C56201
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4ABFC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:14:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFBCD20791
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:13:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6752220791
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:14:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603757582;
-	bh=1HucXQzPdNJm8JDwKdnAMbi7SMcuygrWRBhQq/qb5JA=;
+	s=default; t=1603757676;
+	bh=c02fB0Fjf6Kol2dCoFzl/Q+hiekUHB3ai2fX7DAxLfc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ldgJQ8XMXxdelyUEDqzBKno2xvjFTc/3YhKtPsjyp8Y1oH9FpSZBPd62QxDUyMmZj
-	 Z2yencTIbOu1BUIMintY3zpBIo4wCjCBCuDds67GoR2AkmPlGwWcctjtflhRWsS760
-	 lBEM22BdjwuvlcHeTTIXZkdzzDn6520GMkWDNL+o=
+	b=PPdtCE+Y+b73G/uItRFx0ip0yBpSR1ESUjUH7yZAGFXaLynzbS0ST2NjsOGs6lNpO
+	 heq2BkmuipXW968C/92UHcM2Y9NJzEud5YRhv19PE8CtFJaFuhsqE97cqnXfi9MMhk
+	 ZOurNQBqU9RleQN0UKAI/dS4gy2Al4W2PBvPrpCw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411863AbgJ0AL4 (ORCPT
+        id S2411729AbgJ0ALV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 20:11:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33932 "EHLO mail.kernel.org"
+        Mon, 26 Oct 2020 20:11:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2411851AbgJ0ALz (ORCPT
+        id S2411717AbgJ0ALT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 26 Oct 2020 20:11:55 -0400
+        Mon, 26 Oct 2020 20:11:19 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08D552087C;
-        Tue, 27 Oct 2020 00:11:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E40620882;
+        Tue, 27 Oct 2020 00:11:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603757515;
-        bh=1HucXQzPdNJm8JDwKdnAMbi7SMcuygrWRBhQq/qb5JA=;
+        s=default; t=1603757479;
+        bh=c02fB0Fjf6Kol2dCoFzl/Q+hiekUHB3ai2fX7DAxLfc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UMNkfGo2sTtjqa+n3EKQ7HwH5b+v6lJt6hpYwXdTblxDZmbK94Q/CAWrWbxNQzdcw
-         SfA16PlIjXHSOOuYcDivNVxXSWRyv/2sj0XBTL4u15z0A3S/JsE+8uLESW8UzfodFT
-         b2YqHPt0tlE8VfPAvK4Tjn1twxrUIIxZN5MtqX5A=
+        b=hDekogH7hDuXz5bQ8yEVF7zZMhULORI1XaVGQ74z1hzp7LZR0e2RHiGsD1YNPsUNl
+         O/u3sq1lp6UHuW8Bwt5L6MQzHRNAhIDRoZUvc0hnYkvBBCNBEWf8+AT1wZb/XSXOS3
+         MR2sTHtY/36mKXhZH1z2VnCi5lPIx3BXJmP0ueJ8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
@@ -47,12 +47,12 @@ Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 24/25] ARM: dts: s5pv210: move PMU node out of clock controller
-Date:   Mon, 26 Oct 2020 20:11:22 -0400
-Message-Id: <20201027001123.1027642-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 29/30] ARM: dts: s5pv210: move PMU node out of clock controller
+Date:   Mon, 26 Oct 2020 20:10:43 -0400
+Message-Id: <20201027001044.1027349-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201027001123.1027642-1-sashal@kernel.org>
-References: <20201027001123.1027642-1-sashal@kernel.org>
+In-Reply-To: <20201027001044.1027349-1-sashal@kernel.org>
+References: <20201027001044.1027349-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -82,10 +82,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index b03fe747b98ca..b78346d9c319e 100644
+index 57f64a7160290..afc3eac0aba78 100644
 --- a/arch/arm/boot/dts/s5pv210.dtsi
 +++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -99,19 +99,16 @@ chipid@e0000000 {
+@@ -101,19 +101,16 @@ chipid@e0000000 {
  		};
  
  		clocks: clock-controller@e0100000 {
