@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1431CC4363A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84EA5C55179
 	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B964721D24
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:10:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A54421D7B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:10:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603818622;
-	bh=tpenYGq8xvh7I5sdHua+iw+/Z5oTM/rhvS5aejvfafY=;
+	s=default; t=1603818623;
+	bh=P3GI9LWe497sjdA4d4F0jRX0TDKcgI7enO1f0pii/NE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VBVxshz+0bufto5QqHiEXCoDPjNaqKYo4/Yzn+ZmlwUHOJU//pNIRBjE6ZIiM+ZAz
-	 SdTEydgw/h5H4peEmH0OnWFmdUr+jVC9Az/nBUoN80I/198e0A8dBHz+YZgc+OPo3g
-	 +BbEIlvglHty4doohqzxoDhr6+57V84Aeix9uPzg=
+	b=ANitLNop3sxirnQDoZHe1VcveeGhFNFjXjknDVAo4gfrF5VOWWTdfHdZKPsEetrHJ
+	 Qu91hM6+GclYp7u7KTSyq6qk2wsLEJ3lzRkMCTYyahoo6P79IQx4qRknur84/eCZzP
+	 zju5WwgLXpu9lnzeJVDDKySVFGvkZLmK6xKKI31g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1816880AbgJ0RKT (ORCPT
+        id S1816886AbgJ0RKW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Oct 2020 13:10:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38408 "EHLO mail.kernel.org"
+        Tue, 27 Oct 2020 13:10:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1816877AbgJ0RKR (ORCPT
+        id S1816884AbgJ0RKV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Oct 2020 13:10:17 -0400
+        Tue, 27 Oct 2020 13:10:21 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.184])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBD4620809;
-        Tue, 27 Oct 2020 17:10:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D523A22202;
+        Tue, 27 Oct 2020 17:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603818616;
-        bh=tpenYGq8xvh7I5sdHua+iw+/Z5oTM/rhvS5aejvfafY=;
+        s=default; t=1603818620;
+        bh=P3GI9LWe497sjdA4d4F0jRX0TDKcgI7enO1f0pii/NE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KY/Etw4rl6U4yAYpCiSaUrshY3BldZO8lV2PfCLCYjZIVsgg1F09yKevIT/bCka8y
-         Mlud//bkoxI0Q7v4NGdFvDIQKPFQAclskrlDzi4ebq21z9p+6tNshEcV2q0rzEsLB3
-         67M9pGs8Fug06SyeSjhOHD0RBJVWZySq4htho0pk=
+        b=2BhYLErzqeYsJ5YOl6E9MG1l6D11/lW7n7yoAEOXk7UY+Ya1ROXoX6BcwWpVN9MOg
+         2wIjhruRfVv/f2rvyKjXLSwerrmpaOsCjga5vf8NrZWW3hbNmhvjFngkvbxV1mcXFY
+         qNObRRlowOQUB6FsC9AQnIzljF+nFvyZhGtg73+I=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -50,9 +50,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 07/12] ARM: dts: exynos: adjust node names to DT spec in Odroid XU
-Date:   Tue, 27 Oct 2020 18:09:42 +0100
-Message-Id: <20201027170947.132725-8-krzk@kernel.org>
+Subject: [PATCH v2 08/12] ARM: dts: exynos: adjust node names to DT spec in Exynos542x boards
+Date:   Tue, 27 Oct 2020 18:09:43 +0100
+Message-Id: <20201027170947.132725-9-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201027170947.132725-1-krzk@kernel.org>
 References: <20201027170947.132725-1-krzk@kernel.org>
@@ -70,22 +70,186 @@ No functional changes.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos5410-odroidxu.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 4 ++--
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         | 6 +++---
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          | 2 +-
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi      | 2 +-
+ arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi  | 2 +-
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 4 ++--
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts         | 8 ++++----
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          | 4 ++--
+ 8 files changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-index 75b4150c26d7..03dcd4e0a2f1 100644
---- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -498,7 +498,7 @@ ldo35_reg: LDO35 {
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index dd7f8385d81e..bf457d0c02eb 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -39,7 +39,7 @@ oscclk {
+ 		};
+ 	};
  
- &i2c_1 {
+-	gpio_keys {
++	gpio-keys {
+ 		compatible = "gpio-keys";
+ 
+ 		wakeup {
+@@ -344,7 +344,7 @@ &hdmi {
+ &hsi2c_4 {
+ 	status = "okay";
+ 
+-	s2mps11_pmic@66 {
++	pmic@66 {
+ 		compatible = "samsung,s2mps11-pmic";
+ 		reg = <0x66>;
+ 
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 2bcbdf8a39bf..315b3dc9c017 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -138,7 +138,7 @@ panel_in: endpoint {
+ 		};
+ 	};
+ 
+-	mmc1_pwrseq: mmc1_pwrseq {
++	mmc1_pwrseq: mmc1-pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+ 		reset-gpios = <&gpx0 0 GPIO_ACTIVE_LOW>; /* WIFI_EN */
+ 		clocks = <&max77802 MAX77802_CLK_32K_CP>;
+@@ -205,7 +205,7 @@ &hsi2c_4 {
+ 	status = "okay";
+ 	clock-frequency = <400000>;
+ 
+-	max77802: max77802-pmic@9 {
++	max77802: pmic@9 {
+ 		compatible = "maxim,max77802";
+ 		interrupt-parent = <&gpx3>;
+ 		interrupts = <1 IRQ_TYPE_NONE>;
+@@ -615,7 +615,7 @@ &hsi2c_7 {
+ 	status = "okay";
+ 	clock-frequency = <400000>;
+ 
+-	max98090: codec@10 {
++	max98090: audio-codec@10 {
+ 		compatible = "maxim,max98090";
+ 		reg = <0x10>;
+ 		interrupts = <2 IRQ_TYPE_NONE>;
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index 4e49d8095b29..d506da9fa661 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -129,7 +129,7 @@ &hdmi {
+ &hsi2c_4 {
+ 	status = "okay";
+ 
+-	s2mps11_pmic@66 {
++	pmic@66 {
+ 		compatible = "samsung,s2mps11-pmic";
+ 		reg = <0x66>;
+ 
+diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+index b1cf9414ce17..25fb6331c75e 100644
+--- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+@@ -503,7 +503,7 @@ &dmc {
+ &hsi2c_4 {
+ 	status = "okay";
+ 
+-	s2mps11_pmic@66 {
++	pmic@66 {
+ 		compatible = "samsung,s2mps11-pmic";
+ 		reg = <0x66>;
+ 		samsung,s2mps11-acokb-ground;
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+index b5ec4f47eb3a..86b96f9706db 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+@@ -40,7 +40,7 @@ codec {
+ 
+ &hsi2c_5 {
  	status = "okay";
 -	max98090: max98090@10 {
 +	max98090: audio-codec@10 {
  		compatible = "maxim,max98090";
  		reg = <0x10>;
- 		interrupt-parent = <&gpj3>;
+ 		interrupt-parent = <&gpx3>;
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index 5da2d81e3be2..e35af40a55cb 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -13,12 +13,12 @@
+ #include "exynos5422-odroid-core.dtsi"
+ 
+ / {
+-	gpio_keys {
++	gpio-keys {
+ 		compatible = "gpio-keys";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&power_key>;
+ 
+-		power_key {
++		power-key {
+ 			/*
+ 			 * The power button (SW2) is connected to the PWRON
+ 			 * pin (active high) of the S2MPS11 PMIC, which acts
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index d0f6ac5fa79d..53aee3d56f6a 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -21,28 +21,28 @@ &i2c_0 {
+ 	status = "okay";
+ 
+ 	/* A15 cluster: VDD_ARM */
+-	ina231@40 {
++	power-sensor@40 {
+ 		compatible = "ti,ina231";
+ 		reg = <0x40>;
+ 		shunt-resistor = <10000>;
+ 	};
+ 
+ 	/* memory: VDD_MEM */
+-	ina231@41 {
++	power-sensor@41 {
+ 		compatible = "ti,ina231";
+ 		reg = <0x41>;
+ 		shunt-resistor = <10000>;
+ 	};
+ 
+ 	/* GPU: VDD_G3D */
+-	ina231@44 {
++	power-sensor@44 {
+ 		compatible = "ti,ina231";
+ 		reg = <0x44>;
+ 		shunt-resistor = <10000>;
+ 	};
+ 
+ 	/* A7 cluster: VDD_KFC */
+-	ina231@45 {
++	power-sensor@45 {
+ 		compatible = "ti,ina231";
+ 		reg = <0x45>;
+ 		shunt-resistor = <10000>;
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 60ab0effe474..0ce3443d39a8 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -138,7 +138,7 @@ panel_in: endpoint {
+ 		};
+ 	};
+ 
+-	mmc1_pwrseq: mmc1_pwrseq {
++	mmc1_pwrseq: mmc1-pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+ 		reset-gpios = <&gpx0 0 GPIO_ACTIVE_LOW>; /* WIFI_EN */
+ 		clocks = <&max77802 MAX77802_CLK_32K_CP>;
+@@ -214,7 +214,7 @@ &hsi2c_4 {
+ 	status = "okay";
+ 	clock-frequency = <400000>;
+ 
+-	max77802: max77802-pmic@9 {
++	max77802: pmic@9 {
+ 		compatible = "maxim,max77802";
+ 		interrupt-parent = <&gpx3>;
+ 		interrupts = <1 IRQ_TYPE_NONE>;
 -- 
 2.25.1
 
