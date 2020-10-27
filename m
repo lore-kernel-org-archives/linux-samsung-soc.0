@@ -2,44 +2,44 @@ Return-Path: <SRS0=zeks=EC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C23C55178
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E01C388F9
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:11:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86FF421D24
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:11:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1299C21D42
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:11:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603818663;
-	bh=lrhujq5KpMP9Fmb1OrBbzUShMU5koHD8rqT0q4DGKf0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VGV1OaNXxhCRzhEiyprzt1zC2FRjZ1r0jmisOsKVfWZDHhUVmbA+2ph43lOEPeSRT
-	 PyIgKKOIVnjowgAm288jPLZTX/CIUnPNTvOLi/VdGsLBT/iB46wwPAgR9wo/5CExCn
-	 TQ5EKx8UNT6t8aItMquTAaFy+qV/o2fk8rJXRACQ=
+	s=default; t=1603818665;
+	bh=z6UP311joMNUI2Y3DIxTjxExmn5RPbWIOQuoidt8y3A=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=q3G2WAYCJKxHHPszznrX/hfJYaS0fzQCc+qmI37AOMB15WUiWkUAZkejpc22xC/9r
+	 6h25Rr1MV4BBuCKISn+DF1UqZYRs018C41oLtuRqMYAnCGpTDFW78R3Vubwk/2e6Ak
+	 Vmml0WgXS13wKg5eBYOiVCrx5ipR9Q4lAJY2jxQo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1816955AbgJ0RK7 (ORCPT
+        id S1816800AbgJ0RJz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Oct 2020 13:10:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38110 "EHLO mail.kernel.org"
+        Tue, 27 Oct 2020 13:09:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1816833AbgJ0RKD (ORCPT
+        id S1816706AbgJ0RJz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Oct 2020 13:10:03 -0400
+        Tue, 27 Oct 2020 13:09:55 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.184])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C64CA22264;
-        Tue, 27 Oct 2020 17:10:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9784820809;
+        Tue, 27 Oct 2020 17:09:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603818603;
-        bh=lrhujq5KpMP9Fmb1OrBbzUShMU5koHD8rqT0q4DGKf0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vE/Qrn9j6hm7Ca3+ifRtbF7FD/OoQq1ySzwdqU3aczXsZDCore14O8VUI4SsJhusS
-         0A1kwLrnD8K+pIsWW9mefQHN9l60o6Wclrph+w8Jdkg5X5MgC3owoCaIl0ijPzOk4F
-         zYnNHNJE9tR4Qw9nMi9LzXiDi++x2xmq4Mt0Wp/4=
+        s=default; t=1603818594;
+        bh=z6UP311joMNUI2Y3DIxTjxExmn5RPbWIOQuoidt8y3A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=1EMpNevVP5VuU3SS+WHzSzlR907CFo3D6f+K6/WjVq2QOv7V6kDucG91wER8FN2T3
+         wjrxO3HCDQi4+FdCHIujO5z+6CHDGRm7APM3gV15AOEDb2ip1WL85TbTdVmuUkCVJ6
+         H4Km3kJy2XRokOtNhLzYpWuZ+fsBg+8bpbzAaYos=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -50,87 +50,87 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 03/12] ARM: dts: exynos: override GPIO keys node by label in Exynos4412 Odroid family
-Date:   Tue, 27 Oct 2020 18:09:38 +0100
-Message-Id: <20201027170947.132725-4-krzk@kernel.org>
+Subject: [PATCH v2 00/12] ARM: dts: samsung: minor node name cleanups
+Date:   Tue, 27 Oct 2020 18:09:35 +0100
+Message-Id: <20201027170947.132725-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201027170947.132725-1-krzk@kernel.org>
-References: <20201027170947.132725-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Using full paths to extend or override a device tree node is error
-prone.  If there was a typo error, a new node will be created instead of
-extending the existing node.  This will lead to run-time errors that
-could be hard to detect.
+Hi All,
 
-A mistyped label on the other hand, will cause a dtc compile error
-(during build time).
+Changes since v1
+================
+1. Use names proposed by Marek (light-sensor, audio-codec, image-sensor,
+   power-sensor),
+2. Use amplifier in max98504 node name.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../boot/dts/exynos4412-odroid-common.dtsi    |  2 +-
- arch/arm/boot/dts/exynos4412-odroidx.dts      | 24 +++++++++----------
- 2 files changed, 13 insertions(+), 13 deletions(-)
+Description
+===========
+A new Exynos4412 board was recently submitted and it (as expected)
+copied all not-the-best patterns from existing DTSes.  Let's fix few of
+them so any new boards will not copy old choices.
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 2983e91bc7dd..c3b6e6d367ab 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -22,7 +22,7 @@ firmware@204f000 {
- 		reg = <0x0204F000 0x1000>;
- 	};
- 
--	gpio_keys {
-+	gpio_keys: gpio-keys {
- 		compatible = "gpio-keys";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&gpio_power_key>;
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index 3ea2a0101e80..68fe88074d1d 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -36,18 +36,6 @@ led2 {
- 		};
- 	};
- 
--	gpio_keys {
--		pinctrl-0 = <&gpio_power_key &gpio_home_key>;
--
--		home_key {
--			gpios = <&gpx2 2 GPIO_ACTIVE_HIGH>;
--			linux,code = <KEY_HOME>;
--			label = "home key";
--			debounce-interval = <10>;
--			wakeup-source;
--		};
--	};
--
- 	regulator_p3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "p3v3_en";
-@@ -76,6 +64,18 @@ &ehci {
- 	phy-names = "hsic0";
- };
- 
-+&gpio_keys {
-+	pinctrl-0 = <&gpio_power_key &gpio_home_key>;
-+
-+	home-key {
-+		gpios = <&gpx2 2 GPIO_ACTIVE_HIGH>;
-+		linux,code = <KEY_HOME>;
-+		label = "home key";
-+		debounce-interval = <10>;
-+		wakeup-source;
-+	};
-+};
-+
- &mshc_0 {
- 	vqmmc-supply = <&buck8_reg>;
- };
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (12):
+  ARM: dts: exynos: adjust node names to DT spec in Exynos3250 boards
+  ARM: dts: exynos: adjust node names to DT spec in Exynos4210 boards
+  ARM: dts: exynos: override GPIO keys node by label in Exynos4412
+    Odroid family
+  ARM: dts: exynos: adjust node names to DT spec in Exynos4412 boards
+  ARM: dts: exynos: remove redundant status=okay in Exynos4412 boards
+  ARM: dts: exynos: adjust node names to DT spec in Exynos5250 boards
+  ARM: dts: exynos: adjust node names to DT spec in Odroid XU
+  ARM: dts: exynos: adjust node names to DT spec in Exynos542x boards
+  ARM: dts: s5pv210: adjust node names to DT spec
+  arm64: dts: exynos: adjust node names to DT spec in Exynos5433 TM2
+  arm64: dts: exynos: adjust node names to DT spec in Exynos7 Espresso
+  arm64: dts: exynos: remove redundant status=okay in Exynos5433 TM2
+
+ arch/arm/boot/dts/exynos3250-artik5.dtsi      |  2 +-
+ arch/arm/boot/dts/exynos3250-monk.dts         |  8 +++---
+ arch/arm/boot/dts/exynos3250-rinato.dts       |  8 +++---
+ arch/arm/boot/dts/exynos4210-i9100.dts        |  6 ++--
+ arch/arm/boot/dts/exynos4210-origen.dts       |  4 +--
+ arch/arm/boot/dts/exynos4210-smdkv310.dts     | 22 +++++++--------
+ arch/arm/boot/dts/exynos4210-trats.dts        |  4 +--
+ arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi   |  9 +++---
+ arch/arm/boot/dts/exynos4412-itop-elite.dts   |  2 +-
+ .../boot/dts/exynos4412-itop-scp-core.dtsi    |  2 +-
+ arch/arm/boot/dts/exynos4412-midas.dtsi       | 17 +++++------
+ arch/arm/boot/dts/exynos4412-n710x.dts        |  2 +-
+ .../boot/dts/exynos4412-odroid-common.dtsi    | 10 +++----
+ arch/arm/boot/dts/exynos4412-odroidx.dts      | 28 +++++++++----------
+ arch/arm/boot/dts/exynos4412-origen.dts       | 14 +++++-----
+ arch/arm/boot/dts/exynos4412-smdk4412.dts     | 20 ++++++-------
+ arch/arm/boot/dts/exynos5250-arndale.dts      |  6 ++--
+ arch/arm/boot/dts/exynos5250-smdk5250.dts     |  4 +--
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi |  4 +--
+ arch/arm/boot/dts/exynos5250-snow-rev5.dts    |  2 +-
+ arch/arm/boot/dts/exynos5250-snow.dts         |  2 +-
+ arch/arm/boot/dts/exynos5250-spring.dts       |  2 +-
+ arch/arm/boot/dts/exynos5410-odroidxu.dts     |  2 +-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |  4 +--
+ arch/arm/boot/dts/exynos5420-peach-pit.dts    |  6 ++--
+ arch/arm/boot/dts/exynos5420-smdk5420.dts     |  2 +-
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  2 +-
+ .../boot/dts/exynos5422-odroidxu3-audio.dtsi  |  2 +-
+ .../boot/dts/exynos5422-odroidxu3-common.dtsi |  4 +--
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts    |  8 +++---
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     |  4 +--
+ arch/arm/boot/dts/s5pv210-aquila.dts          | 12 ++++----
+ arch/arm/boot/dts/s5pv210-aries.dtsi          |  4 +--
+ arch/arm/boot/dts/s5pv210-goni.dts            | 14 +++++-----
+ arch/arm/boot/dts/s5pv210-smdkv210.dts        | 20 ++++++-------
+ .../dts/exynos/exynos5433-tm2-common.dtsi     | 11 ++++----
+ .../boot/dts/exynos/exynos7-espresso.dts      |  2 +-
+ 37 files changed, 135 insertions(+), 140 deletions(-)
+
 -- 
 2.25.1
 
