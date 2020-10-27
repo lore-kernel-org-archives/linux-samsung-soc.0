@@ -2,222 +2,216 @@ Return-Path: <SRS0=zeks=EC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D6EC55179
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 10:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C49C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 10:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 372142225C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 10:06:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CDBF20829
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 10:38:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603795087;
+	bh=lyGFHrfHXVjnW2Mxj7Zqcw57LDQLT7QQrDOJDFE5rKc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OeWbTBDxB4oNr+rMGsTUZvqjqIYM+b9coRX9F1Pvd819yBXFy9ZMCvmHLG0ghto02
+	 q/vrqGuURSZ1s1QICBORVvxBeDMyIQDobHya1EA3TXs3yqaWWuoc5GvsyVwDsjWY1L
+	 RcOf2ouQyBgIo9m6COlFuOP2j0MYmcE8IdaSSqxY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2897324AbgJ0KGV (ORCPT
+        id S2436980AbgJ0Kh7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Oct 2020 06:06:21 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:49419 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2897315AbgJ0KGV (ORCPT
+        Tue, 27 Oct 2020 06:37:59 -0400
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:44710 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436596AbgJ0Khi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Oct 2020 06:06:21 -0400
-Received: from methusalix.internal.home.lespocky.de ([92.117.33.129]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MAwPZ-1ki3E72ZmD-00BOoU; Tue, 27 Oct 2020 11:05:50 +0100
-Received: from falbala.internal.home.lespocky.de ([192.168.243.94])
-        by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94)
-        (envelope-from <post@lespocky.de>)
-        id 1kXLrL-0000bl-4B; Tue, 27 Oct 2020 11:05:45 +0100
-Date:   Tue, 27 Oct 2020 11:05:38 +0100
-From:   Alexander Dahl <post@lespocky.de>
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Alexander Dahl <post@lespocky.de>, Pavel Machek <pavel@ucw.cz>,
-        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Alexander Dahl <ada@thorsis.com>, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-leds@vger.kernel.org
-Subject: Re: [Linux-stm32] [PATCH v7 10/12] ARM: dts: stm32: Fix schema
- warnings for pwm-leds
-Message-ID: <20201027100536.cpfizc67gwrolp2z@falbala.internal.home.lespocky.de>
-Mail-Followup-To: Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, Alexander Dahl <ada@thorsis.com>,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-leds@vger.kernel.org
-References: <20201005203451.9985-1-post@lespocky.de>
- <20201005203451.9985-11-post@lespocky.de>
- <b387bda8-3643-1d27-4996-2aa4dc94d69f@pengutronix.de>
+        Tue, 27 Oct 2020 06:37:38 -0400
+Received: by mail-ej1-f66.google.com with SMTP id d6so1449710ejb.11;
+        Tue, 27 Oct 2020 03:37:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=UCQxlKOKzQn6npHWL+chgiqrZv7e5KPLyCbYaVbyysg=;
+        b=FXe2lGus0CcETq/0NAZH8UCq17vj3Etk/oE0Rn8Ehqc6ciCstKd1uX3sIxY0aGEZn/
+         QQw61ccAJ7g0FEo77vxLJvEfjm0X2KAQ7wxESDHLhPs8/wgrJjC1D4llpP2Y5Zw6jIAq
+         LlZ+b+Xu/9Q5vi7fIDRn43Jzj3/KcNMGsersCfdrZ1ubGmVZsEYRNnWxF5l9If+zHt3e
+         5XTsR6mpu6/hH/WZs7pASDn7A2AuTfSUfMh7g28gD0jZA017szi978v80vQOtLK17A8I
+         ETM30TAURuU4m4Of9AqXwQO+/Ze8azputbkTiBDlS90GiLnOjP7qWracNDxlfF//zGYS
+         sprA==
+X-Gm-Message-State: AOAM530FnK42A+GkP0DpkoDOpL9oJu9NrPkBoSoaLkNNAiLL2p/KJwrN
+        OEY86ksIo+ZGIJwSZvx6bD0=
+X-Google-Smtp-Source: ABdhPJyDHPgPUFF8HO24yXsm5O+2et3SJH7AaZyv5j2kp7V8iKd5OFxvy1aK9EXyS3oSAdQ0tMhWJQ==
+X-Received: by 2002:a17:906:ca54:: with SMTP id jx20mr1775790ejb.541.1603795055225;
+        Tue, 27 Oct 2020 03:37:35 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.184])
+        by smtp.googlemail.com with ESMTPSA id pw17sm762269ejb.116.2020.10.27.03.37.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Oct 2020 03:37:34 -0700 (PDT)
+Date:   Tue, 27 Oct 2020 11:37:32 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 08/12] ARM: dts: exynos: adjust node names to DT spec in
+ Exynos542x boards
+Message-ID: <20201027103732.GA20429@kozik-lap>
+References: <20201026181528.163143-1-krzk@kernel.org>
+ <CGME20201026181608eucas1p17927126482dc9ed2aefa2ff4c64491cd@eucas1p1.samsung.com>
+ <20201026181528.163143-9-krzk@kernel.org>
+ <f14a69bc-bd8f-b0d7-2967-1e7582562d5e@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2ljgzjfbsktyrri5"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b387bda8-3643-1d27-4996-2aa4dc94d69f@pengutronix.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Scan-Signature: 1f50ff0161e86bf11bda3e1dba359304
-X-Provags-ID: V03:K1:Vw9aMrR0R/XXJTGOFUzp7IBcBAkiGMqAM1t7QjnnPJIB4tAv3Tf
- biGI/Y9Kx4IzMWVs8CTnpIVo6Rx8pNhfQMBsFdqSdhRF3/ZkK4UIpr2Ngy1dTMTNx3cIW49
- FPtefmmaTSx7dv/2+ImPa+ZELp4S8PH7JuTvgQeGjXJtT3vYwvawOACjeVAiyGTIDHvYR80
- Iy9TSDhI+aVB4SK0TjAoQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:HqZLSuoekkY=:SvZzN96a5ayfkn3Sd0dhcn
- 94L8r93QyLGiiU1GbFug9GWtryfQG4Q5JFULv8JY+KQRvrAO6pMaFuLes5ey2thR/0ibB9pCk
- MmOeFekZdHfjuQfFYnY+jtfEnE6qPQLzb+H9MHX62FYxDngNh4Na1R8nT3G6ZHbsr8ABNrpl6
- SP42oLbI2A0bQbWEhKgk2/MjAp85oA9yra4rK5i+VAv49w74vyEjdUHqLPmGHmawvRBT6/3nl
- qPRHT8Lr/BpYRQfu9WUEwf5v/Em76yuBL3JXS3MwcIahHa/2oYNYIGHt1qdyPrPIvr58+UimT
- IgPycdIeZabfgzg191w7d6yiM7Us3efJ6YzVAKl06d302L6jA2QoNLVEF5sCi6p9w/ITOosGD
- T77Ve7HB8kwsxhliXDSAUJRW/PpFGrR7mtQsWRg1T5TvKPgtvYU6iv44MgZ+3
+In-Reply-To: <f14a69bc-bd8f-b0d7-2967-1e7582562d5e@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
---2ljgzjfbsktyrri5
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hello Ahmad,
-
-thanks for your feedback, comments below.
-
-On Tue, Oct 27, 2020 at 08:03:40AM +0100, Ahmad Fatoum wrote:
-> Hello Alexander,
->=20
-> On 10/5/20 10:34 PM, Alexander Dahl wrote:
-> > The node names for devices using the pwm-leds driver follow a certain
-> > naming scheme (now).  Parent node name is not enforced, but recommended
-> > by DT project.
-> >=20
-> >   DTC     arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
-> >   CHECK   arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
-> > /home/alex/build/linux/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml: l=
-ed-rgb: 'led-blue', 'led-green', 'led-red' do not match any of the regexes:=
- '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
-> >         From schema: /home/alex/src/linux/leds/Documentation/devicetree=
-/bindings/leds/leds-pwm.yaml
-> >=20
-> > Signed-off-by: Alexander Dahl <post@lespocky.de>
->=20
-> Acked-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
->=20
-> But got two questions below:
->=20
+On Mon, Oct 26, 2020 at 10:47:47PM +0100, Marek Szyprowski wrote:
+> Hi Krzysztof,
+> 
+> On 26.10.2020 19:15, Krzysztof Kozlowski wrote:
+> > The Devicetree specification expects device node names to have a generic
+> > name, representing the class of a device.  Also the convention for node
+> > names is to use hyphens, not underscores.
+> >
+> > No functional changes.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > > ---
-> >=20
-> > Notes:
-> >     v6 -> v7:
-> >       * split up patch (one per sub arch)
-> >       * added actual warnings to commit message
-> >=20
-> >  arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> >=20
-> > diff --git a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts b/arch/arm/boot/=
-dts/stm32mp157c-lxa-mc1.dts
-> > index 5700e6b700d3..25d548cb975b 100644
-> > --- a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
-> > +++ b/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
-> > @@ -36,34 +36,34 @@
-> >  		stdout-path =3D &uart4;
-> >  	};
-> > =20
-> > -	led-act {
-> > +	led-controller-1 {
-> >  		compatible =3D "gpio-leds";
-> > =20
-> > -		led-green {
-> > +		led-1 {
-> >  			label =3D "mc1:green:act";
-> >  			gpios =3D <&gpioa 13 GPIO_ACTIVE_LOW>;
-> >  			linux,default-trigger =3D "heartbeat";
-> >  		};
-> >  	};
-> > =20
-> > -	led-rgb {
-> > +	led-controller-2 {
->=20
-> Is a single RGB LED really a controller?
+> >   arch/arm/boot/dts/exynos5420-arndale-octa.dts      | 4 ++--
+> >   arch/arm/boot/dts/exynos5420-peach-pit.dts         | 4 ++--
+> >   arch/arm/boot/dts/exynos5420-smdk5420.dts          | 2 +-
+> >   arch/arm/boot/dts/exynos5422-odroid-core.dtsi      | 2 +-
+> >   arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi  | 2 +-
+> >   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 4 ++--
+> >   arch/arm/boot/dts/exynos5422-odroidxu3.dts         | 8 ++++----
+> >   arch/arm/boot/dts/exynos5800-peach-pi.dts          | 4 ++--
+> >   8 files changed, 15 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> > index dd7f8385d81e..bf457d0c02eb 100644
+> > --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> > +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> > @@ -39,7 +39,7 @@ oscclk {
+> >   		};
+> >   	};
+> >   
+> > -	gpio_keys {
+> > +	gpio-keys {
+> >   		compatible = "gpio-keys";
+> >   
+> >   		wakeup {
+> > @@ -344,7 +344,7 @@ &hdmi {
+> >   &hsi2c_4 {
+> >   	status = "okay";
+> >   
+> > -	s2mps11_pmic@66 {
+> > +	pmic@66 {
+> >   		compatible = "samsung,s2mps11-pmic";
+> >   		reg = <0x66>;
+> >   
+> > diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> > index 2bcbdf8a39bf..d54392fe6260 100644
+> > --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> > +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> > @@ -138,7 +138,7 @@ panel_in: endpoint {
+> >   		};
+> >   	};
+> >   
+> > -	mmc1_pwrseq: mmc1_pwrseq {
+> > +	mmc1_pwrseq: mmc1-pwrseq {
+> >   		compatible = "mmc-pwrseq-simple";
+> >   		reset-gpios = <&gpx0 0 GPIO_ACTIVE_LOW>; /* WIFI_EN */
+> >   		clocks = <&max77802 MAX77802_CLK_32K_CP>;
+> > @@ -205,7 +205,7 @@ &hsi2c_4 {
+> >   	status = "okay";
+> >   	clock-frequency = <400000>;
+> >   
+> > -	max77802: max77802-pmic@9 {
+> > +	max77802: pmic@9 {
+> >   		compatible = "maxim,max77802";
+> >   		interrupt-parent = <&gpx3>;
+> >   		interrupts = <1 IRQ_TYPE_NONE>;
+> > diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> > index 4e49d8095b29..d506da9fa661 100644
+> > --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> > +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> > @@ -129,7 +129,7 @@ &hdmi {
+> >   &hsi2c_4 {
+> >   	status = "okay";
+> >   
+> > -	s2mps11_pmic@66 {
+> > +	pmic@66 {
+> >   		compatible = "samsung,s2mps11-pmic";
+> >   		reg = <0x66>;
+> >   
+> > diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> > index b1cf9414ce17..25fb6331c75e 100644
+> > --- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> > +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> > @@ -503,7 +503,7 @@ &dmc {
+> >   &hsi2c_4 {
+> >   	status = "okay";
+> >   
+> > -	s2mps11_pmic@66 {
+> > +	pmic@66 {
+> >   		compatible = "samsung,s2mps11-pmic";
+> >   		reg = <0x66>;
+> >   		samsung,s2mps11-acokb-ground;
+> > diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+> > index b5ec4f47eb3a..f5f9c077df74 100644
+> > --- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+> > +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+> > @@ -40,7 +40,7 @@ codec {
+> >   
+> >   &hsi2c_5 {
+> >   	status = "okay";
+> > -	max98090: max98090@10 {
+> > +	max98090: codec@10 {
+> >   		compatible = "maxim,max98090";
+> >   		reg = <0x10>;
+> >   		interrupt-parent = <&gpx3>;
+> > diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> > index 5da2d81e3be2..e35af40a55cb 100644
+> > --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> > +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> > @@ -13,12 +13,12 @@
+> >   #include "exynos5422-odroid-core.dtsi"
+> >   
+> >   / {
+> > -	gpio_keys {
+> > +	gpio-keys {
+> >   		compatible = "gpio-keys";
+> >   		pinctrl-names = "default";
+> >   		pinctrl-0 = <&power_key>;
+> >   
+> > -		power_key {
+> > +		power-key {
+> >   			/*
+> >   			 * The power button (SW2) is connected to the PWRON
+> >   			 * pin (active high) of the S2MPS11 PMIC, which acts
+> > diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> > index d0f6ac5fa79d..5ff493ecb6ff 100644
+> > --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> > +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> > @@ -21,28 +21,28 @@ &i2c_0 {
+> >   	status = "okay";
+> >   
+> >   	/* A15 cluster: VDD_ARM */
+> > -	ina231@40 {
+> > +	sensor@40 {
+> power-sensor?
 
-I just followed the recommendations by Rob here.=20
+Good point, thanks!
 
-> >  		compatible =3D "pwm-leds";
-> > =20
-> > -		led-red {
-> > +		led-2 {
->=20
-> Shouldn't this have been led-1 as well or is the numbering "global" ?
-
-Also good question. This numbering is for dts only, it usually does
-not correspond with LEDs on the board, so it could be numbered per
-led-controller as well?
-
-Greets
-Alex
-
->=20
-> >  			label =3D "mc1:red:rgb";
-> >  			pwms =3D <&leds_pwm 1 1000000 0>;
-> >  			max-brightness =3D <255>;
-> >  			active-low;
-> >  		};
-> > =20
-> > -		led-green {
-> > +		led-3 {
-> >  			label =3D "mc1:green:rgb";
-> >  			pwms =3D <&leds_pwm 2 1000000 0>;
-> >  			max-brightness =3D <255>;
-> >  			active-low;
-> >  		};
-> > =20
-> > -		led-blue {
-> > +		led-4 {
-> >  			label =3D "mc1:blue:rgb";
-> >  			pwms =3D <&leds_pwm 3 1000000 0>;
-> >  			max-brightness =3D <255>;
-> >=20
->=20
-> --=20
-> Pengutronix e.K.                           |                             |
-> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---=20
-/"\ ASCII RIBBON | =BBWith the first link, the chain is forged. The first
-\ / CAMPAIGN     | speech censured, the first thought forbidden, the
- X  AGAINST      | first freedom denied, chains us all irrevocably.=AB
-/ \ HTML MAIL    | (Jean-Luc Picard, quoting Judge Aaron Satie)
-
---2ljgzjfbsktyrri5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEwo7muQJjlc+Prwj6NK3NAHIhXMYFAl+X8OwACgkQNK3NAHIh
-XMZUCBAAppmo4xZ1dQjN/xRLRcEKPicklMKgdZM2Y7qXbj8/g/pLNccy0Bm8Te42
-+YhzNYJYedg+l+0zp9woMXHJXDHQhPR50Jb7e2guhZ8vw1kTGw4CUy7vbYDB4PN/
-dy4779zWgpc5623/kuRWUdMg/xY5vKbFXjlYbGxeg9WvjIkSgs4k99tofZS/S279
-0ehKX0l0T4RRge+RZBjj1wgrBFdSJEfgMqygeHNWIWgXBbZdlRe9Vp05wkKlfmZd
-llZiDT0CedpeUffQz3Bm4nSYS6awb874rAOukG3sdfIBs8BI7r42c3A2uUsNgtCT
-SFdaBoNc1XlUJgNfj6oH/KR0CUnJ65B0D+B64ZFU4WwhVXdcdjNOCgAUwOaGaWCA
-VFeoHJns9um5ObsiFS6BfW6lZxidSecOzI4NIMLuAnxD91PqwrQ3cmZYFrU2Cl41
-2kkqyV4OqbVmsYzNnASqeITTgJZ/v3QzYrNcpw1ORjR+gjkWS9qs7+97QYDEzgBD
-EpyXEAQIf3OMCaw3tLZX4hnYrZmlVEKxiqWoGcMN9QNg/ykB3CDMDi5CCwWN94xl
-sEi7LxQ6Boxl5p0xxkdhgbyzbDFp7ya+x3fbFnmQ09vGAfniT9/9QoMOl5aFJi79
-Tg6ONSx9fTN9zgbeXibeyB/+6e6Sqpu5vLMTnn+4KJ2ypZ8vQUs=
-=tczc
------END PGP SIGNATURE-----
-
---2ljgzjfbsktyrri5--
+Best regards,
+Krzysztof
