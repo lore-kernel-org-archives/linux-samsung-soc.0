@@ -2,102 +2,229 @@ Return-Path: <SRS0=zeks=EC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 454E3C388F9
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 16:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C6BC5517A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 16:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E165B2076A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 16:40:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603816852;
-	bh=OduZN8i9UGuPuVuff0G31JJbRdLPT6PQ7BBWcFVYTiA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xYRsHjyC3mHB1IDHaovesZZc3c0HZ1dVjEWyeMR+PeDwwICiVS+GlHSSnsrq0iv7Z
-	 0Z35XKLw6Ek2Nj9pS/n6mblxMQsjaWjswy9zaZrouakirVJJ/olLuAjdyAy7NNSmNT
-	 d0iwwyhjeRZ6VduVrDRltTVRKsn7iUcf7tOZnZtw=
+	by mail.kernel.org (Postfix) with ESMTP id 4B95521707
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 16:43:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SbUT6LrP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1811710AbgJ0Qku (ORCPT
+        id S1811898AbgJ0Qn0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Oct 2020 12:40:50 -0400
-Received: from mail-ej1-f68.google.com ([209.85.218.68]:39843 "EHLO
-        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1811702AbgJ0Qkt (ORCPT
+        Tue, 27 Oct 2020 12:43:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:25636 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1811888AbgJ0QnU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Oct 2020 12:40:49 -0400
-Received: by mail-ej1-f68.google.com with SMTP id bn26so3169935ejb.6;
-        Tue, 27 Oct 2020 09:40:47 -0700 (PDT)
+        Tue, 27 Oct 2020 12:43:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603816998;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=mj6uaiHROCag3uZJ/gHJroorYDnXKuN4EyYRFIYPu8Y=;
+        b=SbUT6LrPKSG/kjhEPSpbNL37X7EqS95pLWLFJN05U8T6IvmsgoI1621azrkHaUCQe2IU+4
+        A+8ip+R7TFhvfL2PFtA2YPAVSij+jMd+5zp3Ro8XdkS11BXJM1Rlv3U/dAVL3h95weU9IY
+        Ml5NELPo7a9T9EfhM60DKYJDO3/RVn0=
+Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com
+ [209.85.161.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-158-V3otsRpsPUG1s7a8tzeMRw-1; Tue, 27 Oct 2020 12:43:14 -0400
+X-MC-Unique: V3otsRpsPUG1s7a8tzeMRw-1
+Received: by mail-oo1-f71.google.com with SMTP id n5so1012322oov.16
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2020 09:43:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=m2aRmOUCB2iPCOZZsctRilB95j4DsikOC8ouZyPxqNk=;
-        b=kyhlaZbHKL+nh5H9HY7eKMiZxjQAQ1chGSskqKX7gecgc+K0rQXPzEqXccFuout6hc
-         X0kC34YfOvEInCHOGsh1dg25rE3T2/3rMMru8NssXNEWZs8iF3Fimu2olPs+uIwphuMy
-         iR3H6pNZW8JFDaC7mJDYDRK8M+t4YUkKY510kyLWR855Xih9VjdjLD4wCalk3w7obnoI
-         qfUco6fhvc0zeig/mbOoh78SHAtzffB7mgJQ55qc6MDaVV4YxEhqprVH2rHNAwSCCzcv
-         w4KwIDuUFJ7rRrjWMVnyPjdajFr3oDBAXD921Zwi23p6O2QB2QSUuYpokUlEUhaKapdV
-         ctug==
-X-Gm-Message-State: AOAM532iyhTLXBEE3On3/7MjdOwmGdyer28g+AkiZtxcwPYOPvi71Pv0
-        qDAhiVvDyUIYIG7p66JHe0Q=
-X-Google-Smtp-Source: ABdhPJwQjFWRXSb1bTPEz5eK20YG7cZ2g7qIInH9s4FcQn3HP9MbOrD2AX7NL2raHxRNET7/VYvpAQ==
-X-Received: by 2002:a17:906:e15:: with SMTP id l21mr3402723eji.509.1603816846280;
-        Tue, 27 Oct 2020 09:40:46 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.184])
-        by smtp.googlemail.com with ESMTPSA id z2sm1275593edr.64.2020.10.27.09.40.43
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mj6uaiHROCag3uZJ/gHJroorYDnXKuN4EyYRFIYPu8Y=;
+        b=r5M+CWUEa5hMxdO36lrmU50sYL0IbiaqDVn32goMgFE3NP5KIQyfyxQP0Nk9acgu0L
+         Y8SfqVTStu+UEyjYMJf24Qo3kUY2i/9xT5db1DZ48CXrXF1//xVOyVcSPkpAZDx7Xhky
+         XfR7DqvC6ljlhHEajPclJUFFQD6RrrUVQyRnP/WFwRTcQzFEX2REgxppB6hEUe7XQ8RJ
+         vwDjo+zhMQXIW7XkVBBmPiyYGmMXkVXM+1MTG5rFIKKveiHOxZDD1u9EHwQBPcr6J6Mr
+         IiOXqJrl8YOs2sAe5kyDwMmHH4m00CmA/qgCljt56F1P0SCIFYAWMVAjmVWqqcZrCJdZ
+         frvA==
+X-Gm-Message-State: AOAM53366FTEahirsyJX00BVPUeh8UJ1/mhkOuc2Na9BnO3ERMi/VzN+
+        Dic4NitpB8QSJU50ANUcF/qpAo3aObrEjVvKjjBow/9hcGj6O0EAGkBsIZbAhh+Eyix/DOkj4i8
+        DhZhQhc5R6B/QLmhMLm4Yf3vE9RbQewE=
+X-Received: by 2002:aca:ef03:: with SMTP id n3mr2048452oih.67.1603816993826;
+        Tue, 27 Oct 2020 09:43:13 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw7y1eCX7WfRNi9tkZnfLpiDio1qtG9FKTpwYlLMD9SlPYp6FIE57BquNUx5oTk2cs+UUc+WA==
+X-Received: by 2002:aca:ef03:: with SMTP id n3mr2048435oih.67.1603816993577;
+        Tue, 27 Oct 2020 09:43:13 -0700 (PDT)
+Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id l89sm90968otc.6.2020.10.27.09.43.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2020 09:40:45 -0700 (PDT)
-Date:   Tue, 27 Oct 2020 17:40:42 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: pci-exynos.c coverity issue #1437287
-Message-ID: <20201027164042.GA123158@kozik-lap>
-References: <20201027163446.GA184135@bjorn-Precision-5520>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201027163446.GA184135@bjorn-Precision-5520>
+        Tue, 27 Oct 2020 09:43:12 -0700 (PDT)
+From:   trix@redhat.com
+To:     linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Cc:     linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
+        qat-linux@intel.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-iio@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-mmc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-rtc@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net, alsa-devel@alsa-project.org,
+        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        =?UTF-8?q?=EF=BB=BFFrom=20=3A=20Tom=20Rix?= <trix@redhat.com>
+Subject: Subject: [RFC] clang tooling cleanups
+Date:   Tue, 27 Oct 2020 09:42:55 -0700
+Message-Id: <20201027164255.1573301-1-trix@redhat.com>
+X-Mailer: git-send-email 2.18.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 27, 2020 at 11:34:46AM -0500, Bjorn Helgaas wrote:
-> Hi Jingoo,
-> 
-> Please take a look at this issue reported by Coverity:
-> 
-> 222 static void exynos_pcie_assert_reset(struct exynos_pcie *ep)
-> 223 {
-> 224        struct dw_pcie *pci = ep->pci;
-> 225        struct device *dev = pci->dev;
-> 226
->    	1. Condition ep->reset_gpio >= 0, taking true branch.
-> 227        if (ep->reset_gpio >= 0)
-> 
-> CID 1437287 (#1 of 1): Unchecked return value (CHECKED_RETURN) 2.
-> check_return: Calling devm_gpio_request_one without checking return
-> value (as is done elsewhere 112 out of 113 times).
-> 
-> 228                devm_gpio_request_one(dev, ep->reset_gpio,
-> 229                                GPIOF_OUT_INIT_HIGH, "RESET");
-> 
-> 
-> Maybe you can guarantee that it's safe to ignore the return value by
-> doing a lot of code analysis, but I think it would be better to check
-> like all the other callers do.
+This rfc will describe
+An upcoming treewide cleanup.
+How clang tooling was used to programatically do the clean up.
+Solicit opinions on how to generally use clang tooling.
 
-+Cc Marek,
+The clang warning -Wextra-semi-stmt produces about 10k warnings.
+Reviewing these, a subset of semicolon after a switch looks safe to
+fix all the time.  An example problem
 
-Hi Bjorn,
+void foo(int a) {
+     switch(a) {
+     	       case 1:
+	       ...
+     }; <--- extra semicolon
+}
 
-I think this is being removed by Marek's patchset:
-https://lore.kernel.org/linux-samsung-soc/20201023075744.26200-1-m.szyprowski@samsung.com/
+Treewide, there are about 100 problems in 50 files for x86_64 allyesconfig.
+These fixes will be the upcoming cleanup.
 
-Best regards,
-Krzysztof
+clang already supports fixing this problem. Add to your command line
+
+  clang -c -Wextra-semi-stmt -Xclang -fixit foo.c
+
+  foo.c:8:3: warning: empty expression statement has no effect;
+    remove unnecessary ';' to silence this warning [-Wextra-semi-stmt]
+        };
+         ^
+  foo.c:8:3: note: FIX-IT applied suggested code changes
+  1 warning generated.
+
+The big problem is using this treewide is it will fix all 10k problems.
+10k changes to analyze and upstream is not practical.
+
+Another problem is the generic fixer only removes the semicolon.
+So empty lines with some tabs need to be manually cleaned.
+
+What is needed is a more precise fixer.
+
+Enter clang-tidy.
+https://clang.llvm.org/extra/clang-tidy/
+
+Already part of the static checker infrastructure, invoke on the clang
+build with
+  make clang-tidy
+
+It is only a matter of coding up a specific checker for the cleanup.
+Upstream this is review is happening here
+https://reviews.llvm.org/D90180
+
+The development of a checker/fixer is
+Start with a reproducer
+
+void foo (int a) {
+  switch (a) {};
+}
+
+Generate the abstract syntax tree (AST)
+
+  clang -Xclang -ast-dump foo.c
+
+`-FunctionDecl 
+  |-ParmVarDecl 
+  `-CompoundStmt 
+    |-SwitchStmt 
+    | |-ImplicitCastExpr
+    | | `-DeclRefExpr
+    | `-CompoundStmt
+    `-NullStmt
+
+Write a matcher to get you most of the way
+
+void SwitchSemiCheck::registerMatchers(MatchFinder *Finder) {
+  Finder->addMatcher(
+      compoundStmt(has(switchStmt().bind("switch"))).bind("comp"), this);
+}
+
+The 'bind' method is important, it allows a string to be associated
+with a node in the AST.  In this case these are
+
+`-FunctionDecl 
+  |-ParmVarDecl 
+  `-CompoundStmt <-------- comp
+    |-SwitchStmt <-------- switch
+    | |-ImplicitCastExpr
+    | | `-DeclRefExpr
+    | `-CompoundStmt
+    `-NullStmt
+
+When a match is made the 'check' method will be called.
+
+  void SwitchSemiCheck::check(const MatchFinder::MatchResult &Result) {
+    auto *C = Result.Nodes.getNodeAs<CompoundStmt>("comp");
+    auto *S = Result.Nodes.getNodeAs<SwitchStmt>("switch");
+
+This is where the string in the bind calls are changed to nodes
+
+`-FunctionDecl 
+  |-ParmVarDecl 
+  `-CompoundStmt <-------- comp, C
+    |-SwitchStmt <-------- switch, S
+    | |-ImplicitCastExpr
+    | | `-DeclRefExpr
+    | `-CompoundStmt
+    `-NullStmt <---------- looking for N
+
+And then more logic to find the NullStmt
+
+  auto Current = C->body_begin();
+  auto Next = Current;
+  Next++;
+  while (Next != C->body_end()) {
+    if (*Current == S) {
+      if (const auto *N = dyn_cast<NullStmt>(*Next)) {
+
+When it is found, a warning is printed and a FixItHint is proposed.
+
+  auto H = FixItHint::CreateReplacement(
+    SourceRange(S->getBody()->getEndLoc(), N->getSemiLoc()), "}");
+  diag(N->getSemiLoc(), "unneeded semicolon") << H;
+
+This fixit replaces from the end of switch to the semicolon with a
+'}'.  Because the end of the switch is '}' this has the effect of
+removing all the whitespace as well as the semicolon.
+
+Because of the checker's placement in clang-tidy existing linuxkernel
+checkers, all that was needed to fix the tree was to add a '-fix'to the
+build's clang-tidy call.
+
+I am looking for opinions on what we want to do specifically with
+cleanups and generally about other source-to-source programmatic
+changes to the code base.
+
+For cleanups, I think we need a new toplevel target
+
+clang-tidy-fix
+
+And an explicit list of fixers that have a very high (100%?) fix rate.
+
+Ideally a bot should make the changes, but a bot could also nag folks.
+Is there interest in a bot making the changes? Does one already exist?
+
+The general source-to-source is a bit blue sky.  Ex/ could automagicly
+refactor api, outline similar cut-n-pasted functions etc. Anything on
+someone's wishlist you want to try out ?
+
+Signed-off-by: Tom Rix <trix@redhat.com>
 
