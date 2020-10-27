@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D11F2C56201
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE204C61DD8
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99AAA20754
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:18:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E5F320723
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 00:20:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603757882;
-	bh=l98FxbX+DbYq933jizO7zXDuY9RYAGRApeEszqhCz2M=;
+	s=default; t=1603758025;
+	bh=Lp2xwrseE5WnFsU0jHEpe0ZRwzQFgONFTc+5WiDidNE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GjWFkxSni6F8pocWLXc4JiMxAwkxKG7d23qoGHe0FUEofsAYOT2Z061PSjVTLRrcq
-	 ODKuKV9y9bTzO95WLRQ1q137sBHK/IPKeBwgVEvVJCZKSH2kRMBeIqPvYe/Hlj4bbE
-	 XIpgugG53zs7qSUTitzZFNZVzQGaRhE+qyBBo4zE=
+	b=wesFAPlHLiH2HdiAsgy7fnVhL3rWkGS3rS8Fu0QMl24K5xxsskp6/8E8UUBSoRY2b
+	 oaXmuuum7w93kt9M4dDyt8u3E3PVWbgmPn51nBRrj93+3bSsy9YEugIi3LsT9DKqPj
+	 Y1SzS7ak0jCYESeJWlJ36wj63yf/rYp8NQIgpgVE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440503AbgJ0APo (ORCPT
+        id S2438795AbgJ0AGm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 20:15:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32818 "EHLO mail.kernel.org"
+        Mon, 26 Oct 2020 20:06:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407174AbgJ0ALV (ORCPT
+        id S2438241AbgJ0AFX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 26 Oct 2020 20:11:21 -0400
+        Mon, 26 Oct 2020 20:05:23 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6BC12087C;
-        Tue, 27 Oct 2020 00:11:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4080320754;
+        Tue, 27 Oct 2020 00:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603757480;
-        bh=l98FxbX+DbYq933jizO7zXDuY9RYAGRApeEszqhCz2M=;
+        s=default; t=1603757123;
+        bh=Lp2xwrseE5WnFsU0jHEpe0ZRwzQFgONFTc+5WiDidNE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V+Q0gdh1IfEjKT1GI1WQ7ieOhaq42i7dFK1lTZTWz+UKnmBh0dF9V9JZW6PSEX2sy
-         VDZhXsWQ1Tc+a9XsB7z2Wj1d4ttN1qGhsN0jz7LoSAVT5GbMBVDrW/XEwmxwLJX/2c
-         b4StOfppSVihHwCKPA0vQTt37XLWsKduuzzZ2N7k=
+        b=THQZOJxLkdbDm/xSvy5bPaRmcM8g539z5FFjK3mFru4oFCVXscOEzxO648bSplfz8
+         SG0Sn6yHRwi6jOcBCIQNfQstILn2eAvgU3WcDwGjxFYqBVgksloG6/vPfVKZQNu34V
+         0LBewymO2ZmsLuRSshPmKnqSOwBuvLqw/YeZMugM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
@@ -47,12 +47,12 @@ Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 30/30] ARM: dts: s5pv210: remove dedicated 'audio-subsystem' node
-Date:   Mon, 26 Oct 2020 20:10:44 -0400
-Message-Id: <20201027001044.1027349-30-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 57/60] ARM: dts: s5pv210: remove dedicated 'audio-subsystem' node
+Date:   Mon, 26 Oct 2020 20:04:12 -0400
+Message-Id: <20201027000415.1026364-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201027001044.1027349-1-sashal@kernel.org>
-References: <20201027001044.1027349-1-sashal@kernel.org>
+In-Reply-To: <20201027000415.1026364-1-sashal@kernel.org>
+References: <20201027000415.1026364-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -83,10 +83,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 29 insertions(+), 36 deletions(-)
 
 diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index afc3eac0aba78..798f676041e09 100644
+index 37d251b1f74a7..020a864623ff4 100644
 --- a/arch/arm/boot/dts/s5pv210.dtsi
 +++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -220,43 +220,36 @@ i2c2: i2c@e1a00000 {
+@@ -217,43 +217,36 @@ i2c2: i2c@e1a00000 {
  			status = "disabled";
  		};
  
