@@ -2,229 +2,162 @@ Return-Path: <SRS0=zeks=EC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C6BC5517A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 16:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2612BC388F9
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B95521707
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 16:43:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SbUT6LrP"
+	by mail.kernel.org (Postfix) with ESMTP id D0FF72224E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603818600;
+	bh=uKlwMtS7TTsEWxyIlODC56yOb69+0cCNt3YdEyzgpbU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=N5B+aFJyeJTyv52eWHHO6QkoThxGaMjQvAgAjBNpsRtOps+Nv3o9LcemCA6YUwfoR
+	 9j7wsXmmucTwzT81es/dscfP8loJfshHIAJr35ZHV560aoUviGi9SQautYLxJfGzTL
+	 ml5yNXAQOw3rUdsr0JbX1mAUgumVa8SSJNdXum/Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1811898AbgJ0Qn0 (ORCPT
+        id S1816815AbgJ0RJ7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Oct 2020 12:43:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:25636 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1811888AbgJ0QnU (ORCPT
+        Tue, 27 Oct 2020 13:09:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1816808AbgJ0RJ5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Oct 2020 12:43:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603816998;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=mj6uaiHROCag3uZJ/gHJroorYDnXKuN4EyYRFIYPu8Y=;
-        b=SbUT6LrPKSG/kjhEPSpbNL37X7EqS95pLWLFJN05U8T6IvmsgoI1621azrkHaUCQe2IU+4
-        A+8ip+R7TFhvfL2PFtA2YPAVSij+jMd+5zp3Ro8XdkS11BXJM1Rlv3U/dAVL3h95weU9IY
-        Ml5NELPo7a9T9EfhM60DKYJDO3/RVn0=
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com
- [209.85.161.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-158-V3otsRpsPUG1s7a8tzeMRw-1; Tue, 27 Oct 2020 12:43:14 -0400
-X-MC-Unique: V3otsRpsPUG1s7a8tzeMRw-1
-Received: by mail-oo1-f71.google.com with SMTP id n5so1012322oov.16
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2020 09:43:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mj6uaiHROCag3uZJ/gHJroorYDnXKuN4EyYRFIYPu8Y=;
-        b=r5M+CWUEa5hMxdO36lrmU50sYL0IbiaqDVn32goMgFE3NP5KIQyfyxQP0Nk9acgu0L
-         Y8SfqVTStu+UEyjYMJf24Qo3kUY2i/9xT5db1DZ48CXrXF1//xVOyVcSPkpAZDx7Xhky
-         XfR7DqvC6ljlhHEajPclJUFFQD6RrrUVQyRnP/WFwRTcQzFEX2REgxppB6hEUe7XQ8RJ
-         vwDjo+zhMQXIW7XkVBBmPiyYGmMXkVXM+1MTG5rFIKKveiHOxZDD1u9EHwQBPcr6J6Mr
-         IiOXqJrl8YOs2sAe5kyDwMmHH4m00CmA/qgCljt56F1P0SCIFYAWMVAjmVWqqcZrCJdZ
-         frvA==
-X-Gm-Message-State: AOAM53366FTEahirsyJX00BVPUeh8UJ1/mhkOuc2Na9BnO3ERMi/VzN+
-        Dic4NitpB8QSJU50ANUcF/qpAo3aObrEjVvKjjBow/9hcGj6O0EAGkBsIZbAhh+Eyix/DOkj4i8
-        DhZhQhc5R6B/QLmhMLm4Yf3vE9RbQewE=
-X-Received: by 2002:aca:ef03:: with SMTP id n3mr2048452oih.67.1603816993826;
-        Tue, 27 Oct 2020 09:43:13 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw7y1eCX7WfRNi9tkZnfLpiDio1qtG9FKTpwYlLMD9SlPYp6FIE57BquNUx5oTk2cs+UUc+WA==
-X-Received: by 2002:aca:ef03:: with SMTP id n3mr2048435oih.67.1603816993577;
-        Tue, 27 Oct 2020 09:43:13 -0700 (PDT)
-Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
-        by smtp.gmail.com with ESMTPSA id l89sm90968otc.6.2020.10.27.09.43.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2020 09:43:12 -0700 (PDT)
-From:   trix@redhat.com
-To:     linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Cc:     linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
-        qat-linux@intel.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-iio@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-mmc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-rtc@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        tipc-discussion@lists.sourceforge.net, alsa-devel@alsa-project.org,
-        linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        =?UTF-8?q?=EF=BB=BFFrom=20=3A=20Tom=20Rix?= <trix@redhat.com>
-Subject: Subject: [RFC] clang tooling cleanups
-Date:   Tue, 27 Oct 2020 09:42:55 -0700
-Message-Id: <20201027164255.1573301-1-trix@redhat.com>
-X-Mailer: git-send-email 2.18.1
+        Tue, 27 Oct 2020 13:09:57 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8E6F21D24;
+        Tue, 27 Oct 2020 17:09:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603818597;
+        bh=uKlwMtS7TTsEWxyIlODC56yOb69+0cCNt3YdEyzgpbU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ccQayzsz2hE7atEJ7X2RIIeYn7EoLbO+B1Es7EbUDdW3Az/zOdCO7Wr0ntD+H0P3X
+         vl9dI9DAnfKTsQkOYtNSLr5utEQsy97sT6Pl2nevrfdejSgNSepeepey7zZJ9c5yR0
+         zT2U88D+/T6y5CQp/7MyxOfvdNaasBVzA8u+gyV0=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2 01/12] ARM: dts: exynos: adjust node names to DT spec in Exynos3250 boards
+Date:   Tue, 27 Oct 2020 18:09:36 +0100
+Message-Id: <20201027170947.132725-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201027170947.132725-1-krzk@kernel.org>
+References: <20201027170947.132725-1-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This rfc will describe
-An upcoming treewide cleanup.
-How clang tooling was used to programatically do the clean up.
-Solicit opinions on how to generally use clang tooling.
+The Devicetree specification expects device node names to have a generic
+name, representing the class of a device.  Also the convention for node
+names is to use hyphens, not underscores.
 
-The clang warning -Wextra-semi-stmt produces about 10k warnings.
-Reviewing these, a subset of semicolon after a switch looks safe to
-fix all the time.  An example problem
+No functional changes.
 
-void foo(int a) {
-     switch(a) {
-     	       case 1:
-	       ...
-     }; <--- extra semicolon
-}
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos3250-artik5.dtsi | 2 +-
+ arch/arm/boot/dts/exynos3250-monk.dts    | 8 ++++----
+ arch/arm/boot/dts/exynos3250-rinato.dts  | 8 ++++----
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-Treewide, there are about 100 problems in 50 files for x86_64 allyesconfig.
-These fixes will be the upcoming cleanup.
-
-clang already supports fixing this problem. Add to your command line
-
-  clang -c -Wextra-semi-stmt -Xclang -fixit foo.c
-
-  foo.c:8:3: warning: empty expression statement has no effect;
-    remove unnecessary ';' to silence this warning [-Wextra-semi-stmt]
-        };
-         ^
-  foo.c:8:3: note: FIX-IT applied suggested code changes
-  1 warning generated.
-
-The big problem is using this treewide is it will fix all 10k problems.
-10k changes to analyze and upstream is not practical.
-
-Another problem is the generic fixer only removes the semicolon.
-So empty lines with some tabs need to be manually cleaned.
-
-What is needed is a more precise fixer.
-
-Enter clang-tidy.
-https://clang.llvm.org/extra/clang-tidy/
-
-Already part of the static checker infrastructure, invoke on the clang
-build with
-  make clang-tidy
-
-It is only a matter of coding up a specific checker for the cleanup.
-Upstream this is review is happening here
-https://reviews.llvm.org/D90180
-
-The development of a checker/fixer is
-Start with a reproducer
-
-void foo (int a) {
-  switch (a) {};
-}
-
-Generate the abstract syntax tree (AST)
-
-  clang -Xclang -ast-dump foo.c
-
-`-FunctionDecl 
-  |-ParmVarDecl 
-  `-CompoundStmt 
-    |-SwitchStmt 
-    | |-ImplicitCastExpr
-    | | `-DeclRefExpr
-    | `-CompoundStmt
-    `-NullStmt
-
-Write a matcher to get you most of the way
-
-void SwitchSemiCheck::registerMatchers(MatchFinder *Finder) {
-  Finder->addMatcher(
-      compoundStmt(has(switchStmt().bind("switch"))).bind("comp"), this);
-}
-
-The 'bind' method is important, it allows a string to be associated
-with a node in the AST.  In this case these are
-
-`-FunctionDecl 
-  |-ParmVarDecl 
-  `-CompoundStmt <-------- comp
-    |-SwitchStmt <-------- switch
-    | |-ImplicitCastExpr
-    | | `-DeclRefExpr
-    | `-CompoundStmt
-    `-NullStmt
-
-When a match is made the 'check' method will be called.
-
-  void SwitchSemiCheck::check(const MatchFinder::MatchResult &Result) {
-    auto *C = Result.Nodes.getNodeAs<CompoundStmt>("comp");
-    auto *S = Result.Nodes.getNodeAs<SwitchStmt>("switch");
-
-This is where the string in the bind calls are changed to nodes
-
-`-FunctionDecl 
-  |-ParmVarDecl 
-  `-CompoundStmt <-------- comp, C
-    |-SwitchStmt <-------- switch, S
-    | |-ImplicitCastExpr
-    | | `-DeclRefExpr
-    | `-CompoundStmt
-    `-NullStmt <---------- looking for N
-
-And then more logic to find the NullStmt
-
-  auto Current = C->body_begin();
-  auto Next = Current;
-  Next++;
-  while (Next != C->body_end()) {
-    if (*Current == S) {
-      if (const auto *N = dyn_cast<NullStmt>(*Next)) {
-
-When it is found, a warning is printed and a FixItHint is proposed.
-
-  auto H = FixItHint::CreateReplacement(
-    SourceRange(S->getBody()->getEndLoc(), N->getSemiLoc()), "}");
-  diag(N->getSemiLoc(), "unneeded semicolon") << H;
-
-This fixit replaces from the end of switch to the semicolon with a
-'}'.  Because the end of the switch is '}' this has the effect of
-removing all the whitespace as well as the semicolon.
-
-Because of the checker's placement in clang-tidy existing linuxkernel
-checkers, all that was needed to fix the tree was to add a '-fix'to the
-build's clang-tidy call.
-
-I am looking for opinions on what we want to do specifically with
-cleanups and generally about other source-to-source programmatic
-changes to the code base.
-
-For cleanups, I think we need a new toplevel target
-
-clang-tidy-fix
-
-And an explicit list of fixers that have a very high (100%?) fix rate.
-
-Ideally a bot should make the changes, but a bot could also nag folks.
-Is there interest in a bot making the changes? Does one already exist?
-
-The general source-to-source is a bit blue sky.  Ex/ could automagicly
-refactor api, outline similar cut-n-pasted functions etc. Anything on
-someone's wishlist you want to try out ?
-
-Signed-off-by: Tom Rix <trix@redhat.com>
+diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+index 12887b3924af..04290ec4583a 100644
+--- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
++++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+@@ -76,7 +76,7 @@ &i2c_0 {
+ 	samsung,i2c-max-bus-freq = <100000>;
+ 	status = "okay";
+ 
+-	s2mps14_pmic@66 {
++	pmic@66 {
+ 		compatible = "samsung,s2mps14-pmic";
+ 		interrupt-parent = <&gpx3>;
+ 		interrupts = <5 IRQ_TYPE_NONE>;
+diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+index c1a68e612037..69451566945d 100644
+--- a/arch/arm/boot/dts/exynos3250-monk.dts
++++ b/arch/arm/boot/dts/exynos3250-monk.dts
+@@ -34,10 +34,10 @@ firmware@205f000 {
+ 		reg = <0x0205F000 0x1000>;
+ 	};
+ 
+-	gpio_keys {
++	gpio-keys {
+ 		compatible = "gpio-keys";
+ 
+-		power_key {
++		power-key {
+ 			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_POWER>;
+ 			label = "power key";
+@@ -62,7 +62,7 @@ i2c_max77836: i2c-gpio-0 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		max77836: subpmic@25 {
++		max77836: pmic@25 {
+ 			compatible = "maxim,max77836";
+ 			interrupt-parent = <&gpx1>;
+ 			interrupts = <5 IRQ_TYPE_NONE>;
+@@ -197,7 +197,7 @@ &i2c_0 {
+ 	samsung,i2c-max-bus-freq = <100000>;
+ 	status = "okay";
+ 
+-	s2mps14_pmic@66 {
++	pmic@66 {
+ 		compatible = "samsung,s2mps14-pmic";
+ 		interrupt-parent = <&gpx0>;
+ 		interrupts = <7 IRQ_TYPE_NONE>;
+diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+index b55afaaa691e..a26e3e582a7e 100644
+--- a/arch/arm/boot/dts/exynos3250-rinato.dts
++++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+@@ -38,10 +38,10 @@ firmware@205f000 {
+ 		reg = <0x0205F000 0x1000>;
+ 	};
+ 
+-	gpio_keys {
++	gpio-keys {
+ 		compatible = "gpio-keys";
+ 
+-		power_key {
++		power-key {
+ 			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_POWER>;
+ 			label = "power key";
+@@ -62,7 +62,7 @@ i2c_max77836: i2c-gpio-0 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		max77836: subpmic@25 {
++		max77836: pmic@25 {
+ 			compatible = "maxim,max77836";
+ 			interrupt-parent = <&gpx1>;
+ 			interrupts = <5 IRQ_TYPE_NONE>;
+@@ -267,7 +267,7 @@ &i2c_0 {
+ 	samsung,i2c-max-bus-freq = <100000>;
+ 	status = "okay";
+ 
+-	s2mps14_pmic@66 {
++	pmic@66 {
+ 		compatible = "samsung,s2mps14-pmic";
+ 		interrupt-parent = <&gpx0>;
+ 		interrupts = <7 IRQ_TYPE_NONE>;
+-- 
+2.25.1
 
