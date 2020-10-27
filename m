@@ -2,145 +2,248 @@ Return-Path: <SRS0=zeks=EC=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.4 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C91C55179
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 07:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1859CC55179
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 08:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 290CF22264
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 07:03:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B228D20829
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 08:06:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Xy9/3e57"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2507089AbgJ0HDv (ORCPT
+        id S2508672AbgJ0IGz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Oct 2020 03:03:51 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36341 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2507080AbgJ0HDu (ORCPT
+        Tue, 27 Oct 2020 04:06:55 -0400
+Received: from mail-oo1-f68.google.com ([209.85.161.68]:42952 "EHLO
+        mail-oo1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2894389AbgJ0IFP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Oct 2020 03:03:50 -0400
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1kXJ1C-00019L-Kr; Tue, 27 Oct 2020 08:03:42 +0100
-Subject: Re: [Linux-stm32] [PATCH v7 10/12] ARM: dts: stm32: Fix schema
- warnings for pwm-leds
-To:     Alexander Dahl <post@lespocky.de>, Pavel Machek <pavel@ucw.cz>,
-        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Alexander Dahl <ada@thorsis.com>, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-leds@vger.kernel.org
-References: <20201005203451.9985-1-post@lespocky.de>
- <20201005203451.9985-11-post@lespocky.de>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <b387bda8-3643-1d27-4996-2aa4dc94d69f@pengutronix.de>
-Date:   Tue, 27 Oct 2020 08:03:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        Tue, 27 Oct 2020 04:05:15 -0400
+Received: by mail-oo1-f68.google.com with SMTP id l26so114740oop.9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2020 01:05:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=iRVTkxIJnHwaBLHokGGgZRE0TJVDnrQ64zJBBqMFGs0=;
+        b=Xy9/3e579FMjjTLWAuxWgipn5uXab1XIWYf2dD59Ue8ydsa3nziuf3dnpX6I3eKQXi
+         LX0Fhct8zwQ9LPuwvLWtj2sHUJJ3/cbghGd13edFhR4n655CEK2nlwMk9XgeGlojhrCH
+         MtcfG6S4mtBZzrOUEzua2bUtpL2rn4D1Bjj1E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=iRVTkxIJnHwaBLHokGGgZRE0TJVDnrQ64zJBBqMFGs0=;
+        b=KcixMx76Gs5YRoN0dl7awYt+oIfuicDt56VrbcTMKMlzxtEhUzvQhhhANJQ8sdqyDY
+         vlf1CaHVRNMNfeD9FS1hjwDe5ouJiwLHAirgF26Fd7VXwXtt/cacQIyC4L6ODvSSP6Kp
+         HgNTaLzFdo5zwVdFeRwyI4QMqIWxWeoPVsk64bvOGmyrgpOsY574t5M+VumLlrmGApFv
+         ThuOwwEU5KhjmWXKUUJM7JRHX7/GUJkwyU65AkCwDal8yDE1RyQqoaThSYPfClaqcxWD
+         SHwPts1O/dmKQxBObydCavWSrdfkrpD4JaPQgR04npArlr8hHG2VZpMR2IkD2SjR+F8j
+         iKiA==
+X-Gm-Message-State: AOAM532gT+MtmhFlalnCLK7WTtwN+CUGI5d1OT4Cj/39FvlbtpODQnq/
+        HseylzHNNZ8jSESWaUATWA+WVmTKXCVk+ZpDa6IAYw==
+X-Google-Smtp-Source: ABdhPJwUquARZelitGIpZLDuhwl8Qo3TUgFyzzaUCWDMIxNpoISTQyK7JTuU9JW1uR1xbLdlZOvSwHCimNolpOBBW1c=
+X-Received: by 2002:a4a:b503:: with SMTP id r3mr809275ooo.28.1603785913727;
+ Tue, 27 Oct 2020 01:05:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201005203451.9985-11-post@lespocky.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+References: <20201026105818.2585306-1-daniel.vetter@ffwll.ch>
+ <20201026105818.2585306-6-daniel.vetter@ffwll.ch> <20201026221520.GC2802004@chromium.org>
+In-Reply-To: <20201026221520.GC2802004@chromium.org>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Tue, 27 Oct 2020 09:05:01 +0100
+Message-ID: <CAKMK7uG4f_7=9VgdQ9AE876gzLTNsszicMD9pKqeqvQybDSDpQ@mail.gmail.com>
+Subject: Re: [PATCH v4 05/15] mm/frame-vector: Use FOLL_LONGTERM
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Alexander,
+On Mon, Oct 26, 2020 at 11:15 PM Tomasz Figa <tfiga@chromium.org> wrote:
+>
+> Hi Daniel,
+>
+> On Mon, Oct 26, 2020 at 11:58:08AM +0100, Daniel Vetter wrote:
+> > This is used by media/videbuf2 for persistent dma mappings, not just
+> > for a single dma operation and then freed again, so needs
+> > FOLL_LONGTERM.
+> >
+> > Unfortunately current pup_locked doesn't support FOLL_LONGTERM due to
+> > locking issues. Rework the code to pull the pup path out from the
+> > mmap_sem critical section as suggested by Jason.
+> >
+> > By relying entirely on the vma checks in pin_user_pages and follow_pfn
+> > (for vm_flags and vma_is_fsdax) we can also streamline the code a lot.
+> >
+> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> > Cc: Pawel Osciak <pawel@osciak.com>
+> > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> > Cc: Tomasz Figa <tfiga@chromium.org>
+> > Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: John Hubbard <jhubbard@nvidia.com>
+> > Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> > Cc: Jan Kara <jack@suse.cz>
+> > Cc: Dan Williams <dan.j.williams@intel.com>
+> > Cc: linux-mm@kvack.org
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: linux-samsung-soc@vger.kernel.org
+> > Cc: linux-media@vger.kernel.org
+> > Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > --
+> > v2: Streamline the code and further simplify the loop checks (Jason)
+> > ---
+> >  mm/frame_vector.c | 50 ++++++++++++++---------------------------------
+> >  1 file changed, 15 insertions(+), 35 deletions(-)
+> >
+>
+> Thank you for the patch. Please see my comments inline.
+>
+> > diff --git a/mm/frame_vector.c b/mm/frame_vector.c
+> > index 10f82d5643b6..d44779e56313 100644
+> > --- a/mm/frame_vector.c
+> > +++ b/mm/frame_vector.c
+> > @@ -38,7 +38,6 @@ int get_vaddr_frames(unsigned long start, unsigned in=
+t nr_frames,
+> >       struct vm_area_struct *vma;
+> >       int ret =3D 0;
+> >       int err;
+> > -     int locked;
+> >
+> >       if (nr_frames =3D=3D 0)
+> >               return 0;
+> > @@ -48,40 +47,25 @@ int get_vaddr_frames(unsigned long start, unsigned =
+int nr_frames,
+> >
+> >       start =3D untagged_addr(start);
+> >
+> > -     mmap_read_lock(mm);
+> > -     locked =3D 1;
+> > -     vma =3D find_vma_intersection(mm, start, start + 1);
+> > -     if (!vma) {
+> > -             ret =3D -EFAULT;
+> > -             goto out;
+> > -     }
+> > -
+> > -     /*
+> > -      * While get_vaddr_frames() could be used for transient (kernel
+> > -      * controlled lifetime) pinning of memory pages all current
+> > -      * users establish long term (userspace controlled lifetime)
+> > -      * page pinning. Treat get_vaddr_frames() like
+> > -      * get_user_pages_longterm() and disallow it for filesystem-dax
+> > -      * mappings.
+> > -      */
+> > -     if (vma_is_fsdax(vma)) {
+> > -             ret =3D -EOPNOTSUPP;
+> > -             goto out;
+> > -     }
+> > -
+> > -     if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
+> > +     ret =3D pin_user_pages_fast(start, nr_frames,
+> > +                               FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM=
+,
+> > +                               (struct page **)(vec->ptrs));
+> > +     if (ret > 0) {
+> >               vec->got_ref =3D true;
+> >               vec->is_pfns =3D false;
+> > -             ret =3D pin_user_pages_locked(start, nr_frames,
+> > -                     gup_flags, (struct page **)(vec->ptrs), &locked);
+>
+> Should we drop the gup_flags argument, since it's ignored now?
 
-On 10/5/20 10:34 PM, Alexander Dahl wrote:
-> The node names for devices using the pwm-leds driver follow a certain
-> naming scheme (now).  Parent node name is not enforced, but recommended
-> by DT project.
-> 
->   DTC     arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
->   CHECK   arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml
-> /home/alex/build/linux/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dt.yaml: led-rgb: 'led-blue', 'led-green', 'led-red' do not match any of the regexes: '^led(-[0-9a-f]+)?$', 'pinctrl-[0-9]+'
->         From schema: /home/alex/src/linux/leds/Documentation/devicetree/bindings/leds/leds-pwm.yaml
-> 
-> Signed-off-by: Alexander Dahl <post@lespocky.de>
+Hm right I think an earlier version even had that, but then I moved to
+inlining the functionality in all the places it's used.
 
-Acked-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+I'll drop the gup flag.
 
-But got two questions below:
+> > -             goto out;
+> > +             goto out_unlocked;
+> >       }
+> >
+>
+> Should we initialize ret with 0 here, since pin_user_pages_fast() can
+> return a negative error code, but below we use it as a counter for the
+> looked up frames?
 
-> ---
-> 
-> Notes:
->     v6 -> v7:
->       * split up patch (one per sub arch)
->       * added actual warnings to commit message
-> 
->  arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts b/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
-> index 5700e6b700d3..25d548cb975b 100644
-> --- a/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
-> +++ b/arch/arm/boot/dts/stm32mp157c-lxa-mc1.dts
-> @@ -36,34 +36,34 @@
->  		stdout-path = &uart4;
->  	};
->  
-> -	led-act {
-> +	led-controller-1 {
->  		compatible = "gpio-leds";
->  
-> -		led-green {
-> +		led-1 {
->  			label = "mc1:green:act";
->  			gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
->  			linux,default-trigger = "heartbeat";
->  		};
->  	};
->  
-> -	led-rgb {
-> +	led-controller-2 {
+Indeed, that's a bug. Will fix for v5.
+-Daniel
 
-Is a single RGB LED really a controller?
+> Best regards,
+> Tomasz
+>
+> > +     mmap_read_lock(mm);
+> >       vec->got_ref =3D false;
+> >       vec->is_pfns =3D true;
+> >       do {
+> >               unsigned long *nums =3D frame_vector_pfns(vec);
+> >
+> > +             vma =3D find_vma_intersection(mm, start, start + 1);
+> > +             if (!vma)
+> > +                     break;
+> > +
+> >               while (ret < nr_frames && start + PAGE_SIZE <=3D vma->vm_=
+end) {
+> >                       err =3D follow_pfn(vma, start, &nums[ret]);
+> >                       if (err) {
+> > @@ -92,17 +76,13 @@ int get_vaddr_frames(unsigned long start, unsigned =
+int nr_frames,
+> >                       start +=3D PAGE_SIZE;
+> >                       ret++;
+> >               }
+> > -             /*
+> > -              * We stop if we have enough pages or if VMA doesn't comp=
+letely
+> > -              * cover the tail page.
+> > -              */
+> > -             if (ret >=3D nr_frames || start < vma->vm_end)
+> > +             /* Bail out if VMA doesn't completely cover the tail page=
+. */
+> > +             if (start < vma->vm_end)
+> >                       break;
+> > -             vma =3D find_vma_intersection(mm, start, start + 1);
+> > -     } while (vma && vma->vm_flags & (VM_IO | VM_PFNMAP));
+> > +     } while (ret < nr_frames);
+> >  out:
+> > -     if (locked)
+> > -             mmap_read_unlock(mm);
+> > +     mmap_read_unlock(mm);
+> > +out_unlocked:
+> >       if (!ret)
+> >               ret =3D -EFAULT;
+> >       if (ret > 0)
+> > --
+> > 2.28.0
+> >
 
->  		compatible = "pwm-leds";
->  
-> -		led-red {
-> +		led-2 {
 
-Shouldn't this have been led-1 as well or is the numbering "global" ?
 
->  			label = "mc1:red:rgb";
->  			pwms = <&leds_pwm 1 1000000 0>;
->  			max-brightness = <255>;
->  			active-low;
->  		};
->  
-> -		led-green {
-> +		led-3 {
->  			label = "mc1:green:rgb";
->  			pwms = <&leds_pwm 2 1000000 0>;
->  			max-brightness = <255>;
->  			active-low;
->  		};
->  
-> -		led-blue {
-> +		led-4 {
->  			label = "mc1:blue:rgb";
->  			pwms = <&leds_pwm 3 1000000 0>;
->  			max-brightness = <255>;
-> 
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+--=20
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
