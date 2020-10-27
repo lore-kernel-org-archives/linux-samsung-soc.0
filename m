@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3CBC388F9
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DC3C55179
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1AACF21D42
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:10:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AA63221F8
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Oct 2020 17:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603818608;
-	bh=+wmbKJLoYoY1BZmkHUGZukV0z4tuB3bsXsscZDPmXzU=;
+	s=default; t=1603818609;
+	bh=+wz0j1//wiUh8f7iYyXGXqpkVKfjjYvX5BSuSIJZdcw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Auw6lcfLMK6G5395hC5X5mNYxQayRbu0gdSJMijQVUQ8+vUYSDi7coP6LUQKgBGhH
-	 89v68W94okvBwcp25JacxhPgbA3oG347dbdXMp1NwRFlhRIP1UhscW22MfwsipCp4X
-	 kXzUHws84kBDR7u20CJ2cFRrZbxbt9QnZAu4PnVY=
+	b=U9AoFpZAnfEW0PsKSxCYwBPH87lh+pcoRbMVdV7B6ikt+W4FKWfQzYFItyEm1E1r9
+	 LGwJCMA258bNZo3aGFlqLF3mBCAfJyyEvYen+BLK21krQWvL4l4ox6JKmYO2hIdvxq
+	 zMFEtMO5O/rznxTQuZOi/UNzK0tHk7Bftszk41co=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1816829AbgJ0RKC (ORCPT
+        id S1816847AbgJ0RKI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Oct 2020 13:10:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38036 "EHLO mail.kernel.org"
+        Tue, 27 Oct 2020 13:10:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1816820AbgJ0RKB (ORCPT
+        id S1816820AbgJ0RKH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Oct 2020 13:10:01 -0400
+        Tue, 27 Oct 2020 13:10:07 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.184])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABD6821D7B;
-        Tue, 27 Oct 2020 17:09:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBA7021D24;
+        Tue, 27 Oct 2020 17:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603818600;
-        bh=+wmbKJLoYoY1BZmkHUGZukV0z4tuB3bsXsscZDPmXzU=;
+        s=default; t=1603818606;
+        bh=+wz0j1//wiUh8f7iYyXGXqpkVKfjjYvX5BSuSIJZdcw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hetDw3Rf7CobgP7CDiUlB5XbAWk1jWXTgDvkCwJCg7jdLH5qcEA3TVQB5wW2/h+vN
-         /XGS8wc76mA9VAnu19+kmDLrR+wnDazT9eO/tKXoL9l2qP9vO2AG8UaZ6Cu2IhcL90
-         FMpjJpay1vTcSh8mYj84WQASBMRNABFliaOaQF5I=
+        b=bkcq+RgTw3hICNYlViLLZPp3yyaK00jzZp4HxM1wLbSZNzKjEdfuPL/G/gRA84oCD
+         3rHFZgeuGZz6+x1OZgVJZBy6hpicqCXW16ydTIwg5dscaUbCGmckWEn0sMhRvXtp7S
+         Je30UMyOeBYR09ocN+LBoUf+pfmmncmc0FOQAXlA=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -50,9 +50,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2 02/12] ARM: dts: exynos: adjust node names to DT spec in Exynos4210 boards
-Date:   Tue, 27 Oct 2020 18:09:37 +0100
-Message-Id: <20201027170947.132725-3-krzk@kernel.org>
+Subject: [PATCH v2 04/12] ARM: dts: exynos: adjust node names to DT spec in Exynos4412 boards
+Date:   Tue, 27 Oct 2020 18:09:39 +0100
+Message-Id: <20201027170947.132725-5-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201027170947.132725-1-krzk@kernel.org>
 References: <20201027170947.132725-1-krzk@kernel.org>
@@ -70,172 +70,358 @@ No functional changes.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos4210-i9100.dts    |  6 +++---
- arch/arm/boot/dts/exynos4210-origen.dts   |  4 ++--
- arch/arm/boot/dts/exynos4210-smdkv310.dts | 22 +++++++++++-----------
- arch/arm/boot/dts/exynos4210-trats.dts    |  4 ++--
- 4 files changed, 18 insertions(+), 18 deletions(-)
+ arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi   |  8 ++++----
+ arch/arm/boot/dts/exynos4412-itop-elite.dts   |  2 +-
+ .../boot/dts/exynos4412-itop-scp-core.dtsi    |  2 +-
+ arch/arm/boot/dts/exynos4412-midas.dtsi       | 14 ++++++-------
+ arch/arm/boot/dts/exynos4412-n710x.dts        |  2 +-
+ .../boot/dts/exynos4412-odroid-common.dtsi    |  8 ++++----
+ arch/arm/boot/dts/exynos4412-odroidx.dts      |  4 ++--
+ arch/arm/boot/dts/exynos4412-origen.dts       | 14 ++++++-------
+ arch/arm/boot/dts/exynos4412-smdk4412.dts     | 20 +++++++++----------
+ 9 files changed, 37 insertions(+), 37 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
-index 5370ee477186..a0c3bab382ae 100644
---- a/arch/arm/boot/dts/exynos4210-i9100.dts
-+++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -329,7 +329,7 @@ &i2c_3 {
- 	pinctrl-0 = <&i2c3_bus>;
- 	pinctrl-names = "default";
- 
--	mxt224-touchscreen@4a {
-+	touchscreen@4a {
- 		compatible = "atmel,maxtouch";
- 		reg = <0x4a>;
- 
-@@ -348,7 +348,7 @@ &i2c_5 {
- 	pinctrl-0 = <&i2c5_bus>;
- 	pinctrl-names = "default";
- 
--	max8997_pmic@66 {
-+	pmic@66 {
- 		compatible = "maxim,max8997-pmic";
- 		reg = <0x66>;
- 
-@@ -597,7 +597,7 @@ &i2c_7 {
- 	pinctrl-0 = <&i2c7_bus>;
- 	pinctrl-names = "default";
- 
--	ak8975@c {
-+	magnetometer@c {
- 		compatible = "asahi-kasei,ak8975";
- 		reg = <0x0c>;
- 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 7d2cfbafefb2..1c5394152561 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -43,7 +43,7 @@ mmc_reg: voltage-regulator {
- 		enable-active-high;
+diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+index 89ed81fb348d..912c78e9ce8c 100644
+--- a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
++++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+@@ -15,7 +15,7 @@ aliases {
+ 		i2c10 = &i2c_cm36651;
  	};
  
--	gpio_keys {
-+	gpio-keys {
- 		compatible = "gpio-keys";
+-	aat1290 {
++	led-controller {
+ 		compatible = "skyworks,aat1290";
+ 		flen-gpios = <&gpj1 1 GPIO_ACTIVE_HIGH>;
+ 		enset-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
+@@ -60,7 +60,7 @@ i2c_ak8975: i2c-gpio-0 {
+ 		#size-cells = <0>;
+ 		status = "okay";
  
- 		up {
-@@ -171,7 +171,7 @@ &i2c_0 {
- 	pinctrl-0 = <&i2c0_bus>;
+-		ak8975@c {
++		magnetometer@c {
+ 			compatible = "asahi-kasei,ak8975";
+ 			reg = <0x0c>;
+ 			gpios = <&gpj0 7 GPIO_ACTIVE_HIGH>;
+@@ -75,7 +75,7 @@ i2c_cm36651: i2c-gpio-2 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cm36651@18 {
++		light-sensor@18 {
+ 			compatible = "capella,cm36651";
+ 			reg = <0x18>;
+ 			interrupt-parent = <&gpx0>;
+@@ -133,7 +133,7 @@ timing-0 {
+ };
+ 
+ &i2c_3 {
+-	mms114-touchscreen@48 {
++	touchscreen@48 {
+ 		compatible = "melfas,mms114";
+ 		reg = <0x48>;
+ 		interrupt-parent = <&gpm2>;
+diff --git a/arch/arm/boot/dts/exynos4412-itop-elite.dts b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+index f6d0a5f5d339..47431307cb3c 100644
+--- a/arch/arm/boot/dts/exynos4412-itop-elite.dts
++++ b/arch/arm/boot/dts/exynos4412-itop-elite.dts
+@@ -175,7 +175,7 @@ &i2c_4 {
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ 
+-	codec: wm8960@1a {
++	codec: audio-codec@1a {
+ 		compatible = "wlf,wm8960";
+ 		reg = <0x1a>;
+ 		clocks = <&pmu_system_controller 0>;
+diff --git a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
+index dfceb155b3a7..4583d342af39 100644
+--- a/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
++++ b/arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
+@@ -134,7 +134,7 @@ &i2c_1 {
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ 
+-	s5m8767: s5m8767-pmic@66 {
++	s5m8767: pmic@66 {
+ 		compatible = "samsung,s5m8767-pmic";
+ 		reg = <0x66>;
+ 
+diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
+index 7e7c243ff196..62a8918c0ea5 100644
+--- a/arch/arm/boot/dts/exynos4412-midas.dtsi
++++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
+@@ -171,7 +171,7 @@ i2c_max77693: i2c-gpio-1 {
+ 		#size-cells = <0>;
+ 		status = "okay";
+ 
+-		max77693@66 {
++		pmic@66 {
+ 			compatible = "maxim,max77693";
+ 			interrupt-parent = <&gpx1>;
+ 			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
+@@ -220,7 +220,7 @@ i2c_max77693_fuel: i2c-gpio-3 {
+ 		#size-cells = <0>;
+ 		status = "okay";
+ 
+-		max77693-fuel-gauge@36 {
++		fuel-gauge@36 {
+ 			compatible = "maxim,max17047";
+ 			interrupt-parent = <&gpx2>;
+ 			interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
+@@ -550,7 +550,7 @@ &i2c_0 {
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ 
+-	s5c73m3: s5c73m3@3c {
++	s5c73m3: image-sensor@3c {
+ 		compatible = "samsung,s5c73m3";
+ 		reg = <0x3c>;
+ 		xshutdown-gpios = <&gpf1 3 GPIO_ACTIVE_LOW>; /* ISP_RESET */
+@@ -577,7 +577,7 @@ &i2c1_isp {
+ 	pinctrl-0 = <&fimc_is_i2c1>;
  	pinctrl-names = "default";
  
--	max8997_pmic@66 {
-+	pmic@66 {
- 		compatible = "maxim,max8997-pmic";
- 		reg = <0x66>;
+-	s5k6a3@10 {
++	image-sensor@10 {
+ 		compatible = "samsung,s5k6a3";
+ 		reg = <0x10>;
+ 		svdda-supply = <&cam_io_reg>;
+@@ -616,7 +616,7 @@ &i2c_4 {
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ 
+-	wm1811: wm1811@1a {
++	wm1811: audio-codec@1a {
+ 		compatible = "wlf,wm1811";
+ 		reg = <0x1a>;
+ 		clocks = <&pmu_system_controller 0>,
+@@ -665,7 +665,7 @@ &i2c_7 {
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ 
+-	max77686: max77686_pmic@9 {
++	max77686: pmic@9 {
+ 		compatible = "maxim,max77686";
  		interrupt-parent = <&gpx0>;
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index c5609afa6101..d5797a67bf48 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -90,61 +90,61 @@ &keypad {
- 	pinctrl-0 = <&keypad_rows &keypad_cols>;
+ 		interrupts = <7 IRQ_TYPE_NONE>;
+@@ -1407,7 +1407,7 @@ &spi_1 {
+ 	cs-gpios = <&gpb 5 GPIO_ACTIVE_HIGH>;
+ 	status = "okay";
+ 
+-	s5c73m3_spi: s5c73m3@0 {
++	s5c73m3_spi: image-sensor@0 {
+ 		compatible = "samsung,s5c73m3";
+ 		spi-max-frequency = <50000000>;
+ 		reg = <0>;
+diff --git a/arch/arm/boot/dts/exynos4412-n710x.dts b/arch/arm/boot/dts/exynos4412-n710x.dts
+index a47b7f35fc80..c49dbb7847b8 100644
+--- a/arch/arm/boot/dts/exynos4412-n710x.dts
++++ b/arch/arm/boot/dts/exynos4412-n710x.dts
+@@ -45,7 +45,7 @@ &i2c_3 {
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ 
+-	mms152-touchscreen@48 {
++	touchscreen@48 {
+ 		compatible = "melfas,mms152";
+ 		reg = <0x48>;
+ 		interrupt-parent = <&gpm2>;
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index c3b6e6d367ab..2a6f5b1d7645 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -27,7 +27,7 @@ gpio_keys: gpio-keys {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&gpio_power_key>;
+ 
+-		power_key {
++		power-key {
+ 			gpios = <&gpx1 3 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_POWER>;
+ 			label = "power key";
+@@ -171,7 +171,7 @@ cooling_map1: map1 {
+ };
+ 
+ &pinctrl_1 {
+-	gpio_power_key: power_key {
++	gpio_power_key: power-key {
+ 		samsung,pins = "gpx1-3";
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+ 	};
+@@ -266,7 +266,7 @@ &i2c_0 {
+ 	samsung,i2c-max-bus-freq = <400000>;
+ 	status = "okay";
+ 
+-	usb3503: usb3503@8 {
++	usb3503: usb-hub@8 {
+ 		compatible = "smsc,usb3503";
+ 		reg = <0x08>;
+ 
+@@ -492,7 +492,7 @@ buck8_reg: BUCK8 {
+ 
+ &i2c_1 {
+ 	status = "okay";
+-	max98090: max98090@10 {
++	max98090: audio-codec@10 {
+ 		compatible = "maxim,max98090";
+ 		reg = <0x10>;
+ 		interrupt-parent = <&gpx0>;
+diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
+index 68fe88074d1d..46381e9097f4 100644
+--- a/arch/arm/boot/dts/exynos4412-odroidx.dts
++++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
+@@ -36,7 +36,7 @@ led2 {
+ 		};
+ 	};
+ 
+-	regulator_p3v3 {
++	regulator-1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "p3v3_en";
+ 		regulator-min-microvolt = <3300000>;
+@@ -81,7 +81,7 @@ &mshc_0 {
+ };
+ 
+ &pinctrl_1 {
+-	gpio_home_key: home_key {
++	gpio_home_key: home-key {
+ 		samsung,pins = "gpx2-2";
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index c2e793b69e7d..e1f6de53e20e 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -116,7 +116,7 @@ &i2c_0 {
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ 
+-	s5m8767_pmic@66 {
++	pmic@66 {
+ 		compatible = "samsung,s5m8767-pmic";
+ 		reg = <0x66>;
+ 
+@@ -453,37 +453,37 @@ &keypad {
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ 
+-	key_home {
++	key-home {
+ 		keypad,row = <0>;
+ 		keypad,column = <0>;
+ 		linux,code = <KEY_HOME>;
+ 	};
+ 
+-	key_down {
++	key-down {
+ 		keypad,row = <0>;
+ 		keypad,column = <1>;
+ 		linux,code = <KEY_DOWN>;
+ 	};
+ 
+-	key_up {
++	key-up {
+ 		keypad,row = <1>;
+ 		keypad,column = <0>;
+ 		linux,code = <KEY_UP>;
+ 	};
+ 
+-	key_menu {
++	key-menu {
+ 		keypad,row = <1>;
+ 		keypad,column = <1>;
+ 		linux,code = <KEY_MENU>;
+ 	};
+ 
+-	key_back {
++	key-back {
+ 		keypad,row = <2>;
+ 		keypad,column = <0>;
+ 		linux,code = <KEY_BACK>;
+ 	};
+ 
+-	key_enter {
++	key-enter {
+ 		keypad,row = <2>;
+ 		keypad,column = <1>;
+ 		linux,code = <KEY_ENTER>;
+diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+index 49971203a8aa..cc99b955af0c 100644
+--- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
++++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+@@ -71,61 +71,61 @@ &keypad {
+ 	pinctrl-names = "default";
  	status = "okay";
  
 -	key_1 {
 +	key-1 {
- 		keypad,row = <0>;
+ 		keypad,row = <1>;
  		keypad,column = <3>;
  		linux,code = <2>;
  	};
  
 -	key_2 {
 +	key-2 {
- 		keypad,row = <0>;
+ 		keypad,row = <1>;
  		keypad,column = <4>;
  		linux,code = <3>;
  	};
  
 -	key_3 {
 +	key-3 {
- 		keypad,row = <0>;
+ 		keypad,row = <1>;
  		keypad,column = <5>;
  		linux,code = <4>;
  	};
  
 -	key_4 {
 +	key-4 {
- 		keypad,row = <0>;
+ 		keypad,row = <1>;
  		keypad,column = <6>;
  		linux,code = <5>;
  	};
  
 -	key_5 {
 +	key-5 {
- 		keypad,row = <0>;
+ 		keypad,row = <1>;
  		keypad,column = <7>;
  		linux,code = <6>;
  	};
  
--	key_a {
-+	key-a {
- 		keypad,row = <1>;
- 		keypad,column = <3>;
+-	key_A {
++	key-A {
+ 		keypad,row = <2>;
+ 		keypad,column = <6>;
  		linux,code = <30>;
  	};
  
--	key_b {
-+	key-b {
- 		keypad,row = <1>;
- 		keypad,column = <4>;
+-	key_B {
++	key-B {
+ 		keypad,row = <2>;
+ 		keypad,column = <7>;
  		linux,code = <48>;
  	};
  
--	key_c {
-+	key-c {
- 		keypad,row = <1>;
+-	key_C {
++	key-C {
+ 		keypad,row = <0>;
  		keypad,column = <5>;
  		linux,code = <46>;
  	};
  
--	key_d {
-+	key-d {
- 		keypad,row = <1>;
- 		keypad,column = <6>;
+-	key_D {
++	key-D {
+ 		keypad,row = <2>;
+ 		keypad,column = <5>;
  		linux,code = <32>;
  	};
  
--	key_e {
-+	key-e {
- 		keypad,row = <1>;
+-	key_E {
++	key-E {
+ 		keypad,row = <0>;
  		keypad,column = <7>;
  		linux,code = <18>;
-@@ -200,7 +200,7 @@ &spi_2 {
- 	cs-gpios = <&gpc1 2 GPIO_ACTIVE_HIGH>;
- 	status = "okay";
- 
--	w25x80@0 {
-+	flash@0 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		compatible = "w25x80";
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index a226bec56a45..f10c63ae9973 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -263,7 +263,7 @@ &i2c_3 {
- 	pinctrl-names = "default";
- 	status = "okay";
- 
--	mms114-touchscreen@48 {
-+	touchscreen@48 {
- 		compatible = "melfas,mms114";
- 		reg = <0x48>;
- 		interrupt-parent = <&gpx0>;
-@@ -283,7 +283,7 @@ &i2c_5 {
- 	pinctrl-names = "default";
- 	status = "okay";
- 
--	max8997_pmic@66 {
-+	pmic@66 {
- 		compatible = "maxim,max8997-pmic";
- 
- 		reg = <0x66>;
 -- 
 2.25.1
 
