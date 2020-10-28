@@ -7,78 +7,96 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E49C55179
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E1AC55179
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4940C2245A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:50:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3718B24743
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:53:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603921847;
-	bh=lRbFFqtr8SH4jEEaVtEeat87C4JtiT3c6FEQ82Tgvd8=;
+	s=default; t=1603921989;
+	bh=K48cIIhZQNhSWsoocqVS4LgqZsrNGMpoM4yybgeO0nA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GifRPcSTo6EVJmkuuSiK7BtK2rUqoveEIDqeM6ZdyDr05wRMOdjhDQI48Ho2vwgKE
-	 n01pDinwTxq/50R5r62el8nbYBhQ8E5yTWVEAtTXEb9yrZAqTAyUF9wuF/3zmQnyEJ
-	 Dsn/sMzBL7WZpjcvdVc1hLs5R8wTYp6um9Aik7dg=
+	b=DVjEgzkF9GhrDHkUR/c0FpSPbmnsi/ZT6gyciB0naj5zRKM/ayVuI0JRg4mo5jlNh
+	 s5HLE2mf+QwVeEqiJnWT5JtC3FVV21Wr5VIojsHZwSq2gCT75eC/aauANsLx9SzjgW
+	 M9LWmYEZJdVFAYdrl8ew9UVakBz1hO5OxFfgRFcw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbgJ1Vuq (ORCPT
+        id S1728360AbgJ1VxH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:50:46 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35539 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728059AbgJ1Vup (ORCPT
+        Wed, 28 Oct 2020 17:53:07 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33872 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728380AbgJ1VxE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:50:45 -0400
-Received: by mail-lj1-f194.google.com with SMTP id x16so898713ljh.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 14:50:44 -0700 (PDT)
+        Wed, 28 Oct 2020 17:53:04 -0400
+Received: by mail-wr1-f68.google.com with SMTP id i1so689709wro.1;
+        Wed, 28 Oct 2020 14:53:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=mEgti6gYJQiPiwWJ7KIXNJeGtUpIZ3SQDpuO+SIa5KI=;
-        b=QdoE3JO5v/Wk9Qkc28EOwlkT7UhLZl3SDiagwffrWMq1FiasWzdfe/NBQYm//710Vy
-         aUnBjp+HT6tpSIvbgWhw9vfa0y5p02o2AVzUWKJCZvJ6eqmnWnW1e7uwlNbqk7s9Va//
-         fmAb5zOMW+uXDByRqAyHec8PEQFs2mZJqpiYybHtGbqP/BW06i6tlj2P/Qim4M4D4n0K
-         HFA2d4fuu3qfJ/0Rgj1tIqUXDPhq3qV3x9wyNnz140y4CtYl0E2ZyhlzTyjnPsOqP+9t
-         e0hxTaDUhAaumLfMOug5SEsZQ9G9k3TmG0ZKD/R9lolQG9YFIjmlkmVAxdldGrPq74z2
-         vkZQ==
-X-Gm-Message-State: AOAM533fghEb/cOfsx6ZISVKAAaNCdXiuRGwNRA8z/LLgNXK0xZ1N709
-        mt0yuYJob78GIIns7Y6Dwns47p/p85UcGg==
-X-Google-Smtp-Source: ABdhPJwbmTpwK7f1E17+uQ0pBrs58ZVyUZ/wZK84Cf/52f9fwJ96BtyTk12yDORXHjwqs+ibDqW9cA==
-X-Received: by 2002:aa7:dc42:: with SMTP id g2mr365460edu.11.1603911927591;
-        Wed, 28 Oct 2020 12:05:27 -0700 (PDT)
+        bh=5ZnXxaz23SCoShQOgk04jnieqtpf5ln6p39aeLgtVB8=;
+        b=LKW9u5UBBiaiMvt1+yJ6p89g8Y0Vrto+YLj98F6E6vKMeTnt6b6rob47hBju4kLsaU
+         J2JArWFhNPXUYJcD8nvBMEy2Ae2pTchacut8ubTUQH9bmHwqKxpS86MdE7ZpFpD0Cd6U
+         ENnWKkSAvW0htcwWvpe5M3+9rH3xIGraGsPDwlkeHCSHdoApeIKE25rtKwDh6bcD3A7S
+         PpP11SO/mES9AZvAYwIPZYypEsbcKdMkWU3cmWeGgXjlT5L1JPUJQib04l7wUdCyHcmY
+         GgiVtm++VwyLSgVdjZuwm8AAIypD6+p6M7fgwhRc1UvxIiwRs3zS7eISM3uzjNKks6cj
+         oeug==
+X-Gm-Message-State: AOAM5325aa4CwuKey/lFPpv3kx6PPCuwqIwjxPFPB/FFnlX7kdZ2aRnX
+        v86ZZjUrxD0rxva8YxZ80yA=
+X-Google-Smtp-Source: ABdhPJx6PPpAmbXbui196s2L7gRKKwN9GgVw23nSKqFPGMzwAEuM+i4FQGV8bGHvzHBeLrjYddOkng==
+X-Received: by 2002:adf:a501:: with SMTP id i1mr1586091wrb.162.1603921981824;
+        Wed, 28 Oct 2020 14:53:01 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.184])
-        by smtp.googlemail.com with ESMTPSA id x22sm222472ejc.102.2020.10.28.12.05.24
+        by smtp.googlemail.com with ESMTPSA id x1sm1250159wrl.41.2020.10.28.14.52.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 12:05:24 -0700 (PDT)
-Date:   Wed, 28 Oct 2020 20:05:22 +0100
+        Wed, 28 Oct 2020 14:53:00 -0700 (PDT)
+Date:   Wed, 28 Oct 2020 22:52:57 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org,
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos: Enable BlueTooth support for Midas
- board family
-Message-ID: <20201028190522.GC159042@kozik-lap>
-References: <20201027142330.5121-1-m.szyprowski@samsung.com>
- <CGME20201027142342eucas1p18136ba60377ee2985b6bc123908a3c98@eucas1p1.samsung.com>
- <20201027142330.5121-3-m.szyprowski@samsung.com>
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-pwm@vger.kernel.org
+Cc:     Kamil Debski <kamil@wypas.org>
+Subject: Re: [PATCH 1/4] MAINTAINERS: move Kamil Debski to credits
+Message-ID: <20201028215257.GA269525@kozik-lap>
+References: <20201016151528.7553-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201027142330.5121-3-m.szyprowski@samsung.com>
+In-Reply-To: <20201016151528.7553-1-krzk@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 27, 2020 at 03:23:30PM +0100, Marek Szyprowski wrote:
-> Add a node for the BCM4334 Bluetooth chip on the serial bus #0 on
-> the Exynos4412-based Midas board family.
+On Fri, Oct 16, 2020 at 05:15:25PM +0200, Krzysztof Kozlowski wrote:
+> Kamil Debski has not been active on LKML since 2017:
+> https://lore.kernel.org/lkml/?q=f%3A%22Kamil+Debski%22
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Move Kamil Debski to the CREDITS file.  Thank you for the effort you put
+> in to the upstream Linux kernel work.
+> 
+> Cc: Kamil Debski <kamil@wypas.org>
+> Cc: Andrzej Hajda <a.hajda@samsung.com>
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  arch/arm/boot/dts/exynos4412-midas.dtsi | 28 +++++++++++++++++++++++++
+>  CREDITS     | 6 ++++++
+>  MAINTAINERS | 4 ----
 
-Thanks, applied.
+Applied.
 
 Best regards,
 Krzysztof
