@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCE4C388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3A4C388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BAC820724
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:30:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9CE92072C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:30:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603924241;
-	bh=4t8zrcPE4o8Nqeis7vmtHzncTzgCdna72xDyDxw631Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R1IG60v/L3AjxP4Alt76MOGrnVPYT6R/Wqt1YGdDi+JKkFTf4MWi4o4GmEGbzWFtZ
-	 3rmSuCn+uaOTlqNxl6O9a0RlmbpmJHa8ZlVv+9ljunHVLt7MquzmYQsPCxPp7jBMrV
-	 fGqSrKIu93GGbKxil6KezGpO4R0KCCM0n8DLScnQ=
+	s=default; t=1603924250;
+	bh=NcuGCp7psdo27lUEMs8BF/KiqmT2aaxB0ULJR4v6e7o=;
+	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=KmmmseiUsNcES74MhxpYP/leHdfgi8G7PWT9GBsirHc4kvhlfEmcP4WvGLMN4MbmQ
+	 LSGO5E6PrdlM7zsLXTzfJIlpQc8Rvr9u5AeFnJnwPGuQJfMf4j898WC/RAnrD8P+C6
+	 61ItToryFMA8KyoyjEOCO9cXtr4DTKO7BXaOMvgk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732937AbgJ1Wak (ORCPT
+        id S2387783AbgJ1Wat (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:30:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43936 "EHLO mail.kernel.org"
+        Wed, 28 Oct 2020 18:30:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387750AbgJ1Waj (ORCPT
+        id S2387770AbgJ1Wap (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:30:39 -0400
+        Wed, 28 Oct 2020 18:30:45 -0400
 Received: from kozik-lap.proceq-device.com (unknown [194.230.155.184])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4302320719;
-        Wed, 28 Oct 2020 22:30:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9752B2071A;
+        Wed, 28 Oct 2020 22:30:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603924239;
-        bh=4t8zrcPE4o8Nqeis7vmtHzncTzgCdna72xDyDxw631Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W+FvBYc4U/y9NdU0NTeySTkwuIqsuiLP9hupjAB7cQ9E2wkS55FRVoDbOWXOnyfac
-         WbozmzVobO0JS99BQ4Bsg6R5ty+BbJ9FEjawgVKbOnZPY0X6joSGuXCXaTiCsz7XAL
-         aPZPhaGrHsOpu2OFFEzIP5sc2wd2Xbnp8C0LQzv4=
+        s=default; t=1603924244;
+        bh=NcuGCp7psdo27lUEMs8BF/KiqmT2aaxB0ULJR4v6e7o=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=gPmiBVFZkjM8/PRhoi+g0DOY/qYr+lKQVs37NqNEDE/hbPWWta4wjmSb3gsXzFKFC
+         Kor22J9trrqBXevjrtm1BPwjgzj1KmmuLzsC4t2w9Xu8MG1lhMb4iJMdMLZR/OYeiL
+         7WwVBUsD2RSyKWZ5Mroke4aItrtxSQbjSHPGYuXw=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Lee Jones <lee.jones@linaro.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -61,10 +61,9 @@ To:     Lee Jones <lee.jones@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rpi-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [RESEND PATCH 05/42] mfd: axp20x: use PLATFORM_DEVID_NONE
-Date:   Wed, 28 Oct 2020 23:29:32 +0100
-Message-Id: <20201028223009.369824-5-krzk@kernel.org>
+Subject: [RESEND PATCH 06/42] mfd: bcm2835: use PLATFORM_DEVID_NONE
+Date:   Wed, 28 Oct 2020 23:29:33 +0100
+Message-Id: <20201028223009.369824-6-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201028223009.369824-1-krzk@kernel.org>
 References: <20201028223009.369824-1-krzk@kernel.org>
@@ -79,24 +78,34 @@ Use PLATFORM_DEVID_NONE define instead of "-1" value because:
  - it might point attention why auto device ID was not used.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- drivers/mfd/axp20x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/bcm2835-pm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-index aa59496e4376..70aa538a4b64 100644
---- a/drivers/mfd/axp20x.c
-+++ b/drivers/mfd/axp20x.c
-@@ -967,7 +967,7 @@ int axp20x_device_probe(struct axp20x_dev *axp20x)
- 		return ret;
- 	}
+diff --git a/drivers/mfd/bcm2835-pm.c b/drivers/mfd/bcm2835-pm.c
+index 42fe67f1538e..a76014512bde 100644
+--- a/drivers/mfd/bcm2835-pm.c
++++ b/drivers/mfd/bcm2835-pm.c
+@@ -44,7 +44,7 @@ static int bcm2835_pm_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pm->base))
+ 		return PTR_ERR(pm->base);
  
--	ret = mfd_add_devices(axp20x->dev, -1, axp20x->cells,
-+	ret = mfd_add_devices(axp20x->dev, PLATFORM_DEVID_NONE, axp20x->cells,
- 			      axp20x->nr_cells, NULL, 0, NULL);
+-	ret = devm_mfd_add_devices(dev, -1,
++	ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
+ 				   bcm2835_pm_devs, ARRAY_SIZE(bcm2835_pm_devs),
+ 				   NULL, 0, NULL);
+ 	if (ret)
+@@ -60,7 +60,7 @@ static int bcm2835_pm_probe(struct platform_device *pdev)
+ 		if (IS_ERR(pm->asb))
+ 			return PTR_ERR(pm->asb);
  
- 	if (ret) {
+-		ret = devm_mfd_add_devices(dev, -1,
++		ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
+ 					   bcm2835_power_devs,
+ 					   ARRAY_SIZE(bcm2835_power_devs),
+ 					   NULL, 0, NULL);
 -- 
 2.25.1
 
