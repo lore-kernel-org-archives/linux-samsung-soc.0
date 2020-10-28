@@ -2,226 +2,125 @@ Return-Path: <SRS0=zATP=EE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DC8C55179
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B170BC388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18CD3221F9
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:11:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603937505;
-	bh=9tWTy0cTI1lNCMQSEqQbwdTkS7i9759vvGAz9FjnCto=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kkr1sPFdYbJJhtkLtzezBKzkKm5flmoQ5iDGu7tANq2I2lyBa7ixVmaBE7gHnYjbP
-	 GSb04/Le2DzNGqb53HWmy1MvXyWpBZ3f9aToGk5PyINE7ZWwwXxEzLgB8YpbGIRpI5
-	 fF006m3e3v2ZMLavOeeLbL9MtyW/Bo4e6q/X8k+0=
+	by mail.kernel.org (Postfix) with ESMTP id 5B00420720
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:13:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iDIv2msW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbgJ2CLn (ORCPT
+        id S1726799AbgJ2CNZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 22:11:43 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:42976 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbgJ1Vgs (ORCPT
+        Wed, 28 Oct 2020 22:13:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46242 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726794AbgJ1VgL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:36:48 -0400
-Received: by mail-oi1-f196.google.com with SMTP id c72so1085835oig.9;
-        Wed, 28 Oct 2020 14:36:47 -0700 (PDT)
+        Wed, 28 Oct 2020 17:36:11 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E884C0613D1;
+        Wed, 28 Oct 2020 14:36:11 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id bn26so978011ejb.6;
+        Wed, 28 Oct 2020 14:36:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dOPkG51cqcEG4Loikdan84KA22neIPGBmd1iXgPOKvU=;
+        b=iDIv2msWfduRF2KUPmTlwpSPN7p2DRaRX3aZ5hTffZ/cqBxD9HXlc+D7ru4zK7oEdE
+         GK/1YB95Caxv7AYmph3nuO8X/nCYcRIVwU5YLPwJLsFr5LlcCwNHpD8TuuBGCiDBokPa
+         6gsvmVLuYS4RxWuUUatoEfqi3145ApZYC4n0n8l2WQfkbS/Sqz/dJtLsk0zvxOzEWo/O
+         Jq00xGMnE/sI/maF54/cVDUZdzJDSJEMP8kKq9bdMCljNkTDA8FJVa1VvGxvhOXVcmrS
+         icg8DaoKJzfTtIfUHRGnLRSJPmFA3k2Yx+PTmsfgHtxAnAX0xlZFs8Fp23GLWlQYNWUF
+         EJVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PxZqaaZeM9rn0EmiB2pyN8ld61KaiAeovfT1I1hXfhU=;
-        b=jbkO+wvKRRV3ikg+PXT6GNDQITwfA3vVwTdPYx0DX304QJLoL3iYGJU9kGkea4QsLg
-         GFosw2jnRLw76ggy/mlmZkKpbhFIvEtYd3iR9wt6s3GsVTirIXGDeNtcOkGr6cM80jjI
-         EDMTFO+7kKfERpJs+H+u6URrbYKFcWyVLwayn+RJ7CLP83iaH4Bq//LFLIxKUTvz+Cdi
-         ohl74w1RLlcr27TbwH9hSxv4xenBUZ8YF1TNQsLULpyDR0M1c+pEHjP3sjG/uHLKutaE
-         UDTM2E1N3Go8RrRoxGt71qSMddD6V74lyen002ctLOC8o3FSs5TNMH2MwcBT2mu5RBDq
-         A//w==
-X-Gm-Message-State: AOAM530w8M92wwaD28+mOG/gEsmLVsYB3Z1Y0tlQNNKxSyYYw5cXGrdU
-        BKgRLg7064v5/zwmr/0HQTptQ6Hogw==
-X-Google-Smtp-Source: ABdhPJyFp7QnoFosByRfbGom+wWmaa8T9lbdi9qswtTyff4qMNEAI9VDyjl5mqDEBjA5fFbiY8f1Ew==
-X-Received: by 2002:a54:4194:: with SMTP id 20mr606316oiy.137.1603918027560;
-        Wed, 28 Oct 2020 13:47:07 -0700 (PDT)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id t17sm116123oor.3.2020.10.28.13.47.05
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dOPkG51cqcEG4Loikdan84KA22neIPGBmd1iXgPOKvU=;
+        b=fIY7SJptVH+0TpRdqadIiWaYY3taw30RUFmsSkUia7fDLMBRuBlFvjVvmh4SzowCN4
+         BKq4SiGbpc1uCMf4K43c0m6AuOxXeUA0UfHOqb0oJvktJNoKtyhL4t1ooJjGrudL8n30
+         ta9yys7ycANaOk8Bt+cIQW21A6FdXGAskQmO0B4go1gucfjk2SwCAh1MKxESO8j2w8M1
+         hNa0Zx8caEgxIFDQtua69IZgfjppHKc98tbswNuiwTU9YVgWyLnHnxILJe8GDW1dpia3
+         sUrh6L12R6PxX+vzGm1D3TQjs2Q6A1EoobI1Agxb3yfRpVYNKhp7qmJeVi5Uc6GEKcM1
+         4ciw==
+X-Gm-Message-State: AOAM5323HKhgBEBfXWdHvpGUv+1HWy8i//g7HnuBOSnjCPTWgjwniPAF
+        /bbNsXfuYZmcWtl+6q3JF2nNei2LBR0=
+X-Google-Smtp-Source: ABdhPJz8U5e7kOuZlcVkoCb+Fk2dIbgZSZkC0ZmwrNSPTAHUTS1jsLlYq8a778c/jEL/XkeyVB5Umw==
+X-Received: by 2002:a05:6512:3fa:: with SMTP id n26mr319207lfq.199.1603919313380;
+        Wed, 28 Oct 2020 14:08:33 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:a6d2:8b6b:ef28:12ae])
+        by smtp.googlemail.com with ESMTPSA id x6sm67712lfn.185.2020.10.28.14.08.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 13:47:06 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     linux-pci@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Minghuan Lian <minghuan.Lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Yue Wang <yue.wang@Amlogic.com>
-Subject: [PATCH 07/13] PCI: dwc: Drop the .set_num_vectors() host op
-Date:   Wed, 28 Oct 2020 15:46:40 -0500
-Message-Id: <20201028204646.356535-8-robh@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201028204646.356535-1-robh@kernel.org>
-References: <20201028204646.356535-1-robh@kernel.org>
+        Wed, 28 Oct 2020 14:08:32 -0700 (PDT)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     kgene@kernel.org, krzk@kernel.org, alim.akhtar@samsung.com
+Cc:     robh+dt@kernel.org, a.kesavan@samsung.com,
+        naveenkrishna.ch@gmail.com, thomas.ab@samsung.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH] arm64: dts: exynos: Fix reboot/poweroff issues on Exynos7
+Date:   Wed, 28 Oct 2020 22:08:13 +0100
+Message-Id: <20201028210813.49874-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-There's no reason for the .set_num_vectors() host op. Drivers needing a
-non-default value can just initialize pcie_port.num_vectors directly.
+In vendor sources for Exynos 7420, psci is not used to reboot or
+poweroff device. Instead we should use syscon reboot/poweroff.
+Previously it was not possible to poweroff (no syscon poweroff node) or
+reboot (because it was handled by psci and this way is not working for
+Exynos).
 
-Cc: Jingoo Han <jingoohan1@gmail.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
+Fixes: fb026cb65247 ("arm64: dts: Add reboot node for exynos7")
+Fixes: b9024cbc937d ("arm64: dts: Add initial device tree support for exynos7")
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- .../pci/controller/dwc/pcie-designware-host.c | 19 ++++---------------
- .../pci/controller/dwc/pcie-designware-plat.c |  7 +------
- drivers/pci/controller/dwc/pcie-designware.h  |  1 -
- drivers/pci/controller/dwc/pcie-tegra194.c    |  7 +------
- 4 files changed, 6 insertions(+), 28 deletions(-)
+ arch/arm64/boot/dts/exynos/exynos7.dtsi | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 265a48f1a0ae..1bd6a9762426 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -365,22 +365,11 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 		pci->link_gen = of_pci_get_max_link_speed(np);
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index 959918f4ca45..47d54c369d03 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -117,8 +117,10 @@ cpu_atlas3: cpu@3 {
+ 	};
  
- 	if (pci_msi_enabled()) {
--		/*
--		 * If a specific SoC driver needs to change the
--		 * default number of vectors, it needs to implement
--		 * the set_num_vectors callback.
--		 */
--		if (!pp->ops->set_num_vectors) {
-+		if (!pp->num_vectors) {
- 			pp->num_vectors = MSI_DEF_NUM_VECTORS;
--		} else {
--			pp->ops->set_num_vectors(pp);
--
--			if (pp->num_vectors > MAX_MSI_IRQS ||
--			    pp->num_vectors == 0) {
--				dev_err(dev,
--					"Invalid number of vectors\n");
--				return -EINVAL;
--			}
-+		} else if (pp->num_vectors > MAX_MSI_IRQS) {
-+			dev_err(dev, "Invalid number of vectors\n");
-+			return -EINVAL;
- 		}
+ 	psci {
+-		compatible = "arm,psci-0.2";
++		compatible = "arm,psci";
+ 		method = "smc";
++		cpu_off = <0x84000002>;
++		cpu_on = <0xC4000003>;
+ 	};
  
- 		if (!pp->ops->msi_host_init) {
-diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
-index 562a05e07b1d..13fede1d4157 100644
---- a/drivers/pci/controller/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
-@@ -44,14 +44,8 @@ static int dw_plat_pcie_host_init(struct pcie_port *pp)
- 	return 0;
- }
+ 	soc: soc@0 {
+@@ -552,6 +554,13 @@ pmu_system_controller: system-controller@105c0000 {
+ 			compatible = "samsung,exynos7-pmu", "syscon";
+ 			reg = <0x105c0000 0x5000>;
  
--static void dw_plat_set_num_vectors(struct pcie_port *pp)
--{
--	pp->num_vectors = MAX_MSI_IRQS;
--}
--
- static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
- 	.host_init = dw_plat_pcie_host_init,
--	.set_num_vectors = dw_plat_set_num_vectors,
- };
- 
- static int dw_plat_pcie_establish_link(struct dw_pcie *pci)
-@@ -128,6 +122,7 @@ static int dw_plat_add_pcie_port(struct dw_plat_pcie *dw_plat_pcie,
- 			return pp->msi_irq;
- 	}
- 
-+	pp->num_vectors = MAX_MSI_IRQS;
- 	pp->ops = &dw_plat_pcie_host_ops;
- 
- 	ret = dw_pcie_host_init(pp);
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index ed19c34dd0fe..96382dcb2859 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -171,7 +171,6 @@ enum dw_pcie_device_mode {
- 
- struct dw_pcie_host_ops {
- 	int (*host_init)(struct pcie_port *pp);
--	void (*set_num_vectors)(struct pcie_port *pp);
- 	int (*msi_host_init)(struct pcie_port *pp);
- };
- 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index f8fca6794282..5e2841f58700 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -990,11 +990,6 @@ static int tegra_pcie_dw_link_up(struct dw_pcie *pci)
- 	return !!(val & PCI_EXP_LNKSTA_DLLLA);
- }
- 
--static void tegra_pcie_set_msi_vec_num(struct pcie_port *pp)
--{
--	pp->num_vectors = MAX_MSI_IRQS;
--}
--
- static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
- {
- 	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
-@@ -1019,7 +1014,6 @@ static const struct dw_pcie_ops tegra_dw_pcie_ops = {
- 
- static struct dw_pcie_host_ops tegra_pcie_dw_host_ops = {
- 	.host_init = tegra_pcie_dw_host_init,
--	.set_num_vectors = tegra_pcie_set_msi_vec_num,
- };
- 
- static void tegra_pcie_disable_phy(struct tegra_pcie_dw *pcie)
-@@ -1995,6 +1989,7 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
- 	pci->n_fts[1] = FTS_VAL;
- 
- 	pp = &pci->pp;
-+	pp->num_vectors = MAX_MSI_IRQS;
- 	pcie->dev = &pdev->dev;
- 	pcie->mode = (enum dw_pcie_device_mode)data->mode;
- 
++			poweroff: syscon-poweroff {
++				compatible = "syscon-poweroff";
++				regmap = <&pmu_system_controller>;
++				offset = <0x330C>; /* PS_HOLD_CONTROL */
++				mask = <0x5200>; /* reset value */
++			};
++
+ 			reboot: syscon-reboot {
+ 				compatible = "syscon-reboot";
+ 				regmap = <&pmu_system_controller>;
 -- 
-2.25.1
+2.27.0
 
