@@ -2,82 +2,106 @@ Return-Path: <SRS0=zATP=EE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A16C388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E44D9C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CA5E20790
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:32:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 949F1207E8
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:35:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603931557;
-	bh=GgFcdGcL+49QMihXTxsy8Fbu2wDPTAttcNQF2VAktlk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=R+3fvEIt7nh413pZYeNQdQz5fvYGE3ztid+NK2ew3G9A05ap66+lODnfqdRF8ENjz
-	 3plACcIW/c47FssnNtaXkKRS8H02g8z/a70oBk0FlHuYax6uMSedTTbXXVbKK/cf4I
-	 ghl8CuGbfcwmfumfFJC2ZRb6FasI80ujtVeXXrVE=
+	s=default; t=1603931714;
+	bh=dkbTH9Le4h56RNP77vJJswVlJA/MlUGBPK0NF5o7eyo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=YtC1AO1mRdDwIpIcCVpCSm7MQKkIUmfgvF7QmMW7X1S93MAKLtONGgTG3nc08GD1G
+	 xCx/m9jUycx9GKKo1BEP7nm4//JQBYf9M4Ia28K4tDNX0ROn5k1N8GxMpaAKgTzz+H
+	 ZYXulDEqPBhyBJnqvL2rp0GRO8PGrXIohWQlY/OU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387509AbgJ1W3H (ORCPT
+        id S1731942AbgJ1WT2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:29:07 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40473 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387508AbgJ1W3H (ORCPT
+        Wed, 28 Oct 2020 18:19:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731687AbgJ1WRl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:29:07 -0400
-Received: by mail-wr1-f67.google.com with SMTP id m13so723569wrj.7;
-        Wed, 28 Oct 2020 15:29:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=TuERzv+I0rpz7wGuytgD+7FYdwTEBi7hw79iaAsE+F4=;
-        b=btqzOokfPjt7hK371Su1Cq8JRNnPaZQdPkQhzKVPNRW5K/NnmOzcHTFtvQYXaq0tA2
-         qCVelsYrzMIe629X6wRHEAo4wyAQxC1kU47Ix3WPAMXWXCPQzJ5LL64WXKriQKbiw00N
-         rcnc17+BG7hZUaw4wjGL2SFNL8vEfjnUbRLE4VdMzYECbrDTdzeQTVUWOvM88JmuaZf8
-         eoxk0DuETyur54p2HqpPVwGEPbtFW9C1tzSVverhocN8CoPVfgnmhryPg99e37maPyG0
-         txn4jghMi9Tv2e/PLx9204TFJYRZuZDQJ6Oz2fSWlDXFE+5TuZxMG7BBNtO2K6XRzUpe
-         cZRg==
-X-Gm-Message-State: AOAM531z4OnbwuPkHRht3V9dRRscv2ckceIU0JXaEuWO6n8DgYEJGLEn
-        gMcnmqhBTd4cSEDiKCVEurLHl/8lh50mHw==
-X-Google-Smtp-Source: ABdhPJzqFo3mj4of5jE+IZvMiFxXULXKc0DG0DwWkOdEK2aXLgDE+YvMXSsMl4K4YrUuxRL82hp0jg==
-X-Received: by 2002:a17:906:c0d8:: with SMTP id bn24mr6127669ejb.480.1603869716907;
-        Wed, 28 Oct 2020 00:21:56 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.184])
-        by smtp.googlemail.com with ESMTPSA id q3sm2287534edv.17.2020.10.28.00.21.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 00:21:55 -0700 (PDT)
-Date:   Wed, 28 Oct 2020 08:21:54 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Martin Kaiser <martin@kaiser.cx>
-Cc:     Wolfram Sang <wsa@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>,
-        linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: exynos5: fix platform_get_irq error handling
-Message-ID: <20201028072154.GA3494@kozik-lap>
-References: <20201027214257.8099-1-martin@kaiser.cx>
+        Wed, 28 Oct 2020 18:17:41 -0400
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B58EA24740
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 13:04:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603890293;
+        bh=dkbTH9Le4h56RNP77vJJswVlJA/MlUGBPK0NF5o7eyo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tabdqm2aJplXzKMgJ4nEeAG7z+7hbXIKb28PV3gCParplhx60j6wyViEcvSEuo27Y
+         O4PIv86W0HscH+Q6f7Vx4j4bFY6j0C9Xa7OkWOSaa9ZjdPcDbS5g0xKbz1gNI9jXCk
+         MTzTVu9CMX5VX+Oh6Miz2yAkEq1IsphCCpJu+M3Y=
+Received: by mail-oi1-f173.google.com with SMTP id k65so4858475oih.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 06:04:53 -0700 (PDT)
+X-Gm-Message-State: AOAM533a4XMUUxPd8BJbkBM5DE2lwP+WqdTNa4X8TPboX0R3orUXf4gJ
+        QOG14tuiPRXrqsNSae3Fz+wSKvJWM0ahBBIrliM=
+X-Google-Smtp-Source: ABdhPJwDMaP1MChXtj96eDV5/lC/V7LA3nnYGs5OIihSuUHr4A+qiej0MBLIqCZ7zW4kHe/CabJxRTyy7vDTmA3xz1U=
+X-Received: by 2002:aca:2310:: with SMTP id e16mr4878752oie.47.1603890292927;
+ Wed, 28 Oct 2020 06:04:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201027214257.8099-1-martin@kaiser.cx>
+References: <20201007083944.27910-1-ardb@kernel.org> <CGME20201028091912eucas1p13fb9cd947faa6bfd79199ea79648b6af@eucas1p1.samsung.com>
+ <20201007083944.27910-3-ardb@kernel.org> <920965b8-6f87-3f82-9fce-d3051fc543ca@samsung.com>
+ <CACPK8XfNfqToFBe0GPFTGrnPhNTYhSDiEagpB7ayBSW1DC-THA@mail.gmail.com>
+ <CAMj1kXH90MzCUJ_DHZ_2=JcWBX=Qf1PT-A9PX9EeBTVx22EkaQ@mail.gmail.com> <20201028130050.GL1551@shell.armlinux.org.uk>
+In-Reply-To: <20201028130050.GL1551@shell.armlinux.org.uk>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Wed, 28 Oct 2020 14:04:41 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFWAr+-fnThgtY_jTg1_=kmhHRS5+X6jXAG9K7GegCchg@mail.gmail.com>
+Message-ID: <CAMj1kXFWAr+-fnThgtY_jTg1_=kmhHRS5+X6jXAG9K7GegCchg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] ARM: move device tree mapping out of linear region
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Joel Stanley <joel@jms.id.au>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 27, 2020 at 10:42:57PM +0100, Martin Kaiser wrote:
-> platform_get_irq already prints an error message if the requested irq
-> was not found. Don't print another message in the driver.
-> 
-> If platform_get_irq returns an error, relay this error to the caller of the
-> probe function. Don't change all errors to -EINVAL. This breaks the case
-> where platform_get_irq returns -EPROBE_DEFER.
-> 
-> platform_get_irq never returns 0. Don't check for this. Make it clear that
-> the error path always returns a negative error code.
+On Wed, 28 Oct 2020 at 14:01, Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+>
+> On Wed, Oct 28, 2020 at 01:52:48PM +0100, Ard Biesheuvel wrote:
+> > Does this help?
+> >
+> > diff --git a/arch/arm/include/asm/memory.h b/arch/arm/include/asm/memory.h
+> > index bb79e52aeb90..4f355bda872a 100644
+> > --- a/arch/arm/include/asm/memory.h
+> > +++ b/arch/arm/include/asm/memory.h
+> > @@ -68,8 +68,8 @@
+> >  #define XIP_VIRT_ADDR(physaddr)  (MODULES_VADDR + ((physaddr) & 0x000fffff))
+> >
+> >  #define FDT_FIXED_BASE         UL(0xff800000)
+> > -#define FDT_FIXED_SIZE         (2 * PMD_SIZE)
+> > -#define FDT_VIRT_ADDR(physaddr)        ((void *)(FDT_FIXED_BASE |
+> > (physaddr) % PMD_SIZE))
+> > +#define FDT_FIXED_SIZE         (2 * SECTION_SIZE)
+> > +#define FDT_VIRT_ADDR(physaddr)        ((void *)(FDT_FIXED_BASE |
+> > (physaddr) % SECTION_SIZE))
+>
+> Is this correct? If the FDT fixed size is 2x, why does FDT_VIRT_ADDR()
+> only work for half of it?
+>
 
-These should be three separate commits.
+Perhaps the naming is confusing. This is only used to obtain the start
+of the virtually mapped DT, which amounts to the virtual address of
+the section plus the physical address modulo the section size.
 
-Best regards,
-Krzysztof
+I will rename physaddr to physbase when I respin this as a patch.
+Shall I rename FDT_VIRT_ADDR to FDT_VIRT_BASE as well?
