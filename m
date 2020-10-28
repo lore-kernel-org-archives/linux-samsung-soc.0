@@ -2,180 +2,83 @@ Return-Path: <SRS0=zATP=EE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC05C5517A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 01:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D6EC388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF76F208C3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 01:54:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0F602076B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603936463;
-	bh=Kc1Pt3IpXFP5feW6kwUIgpZs+zlVPuknonalVvf5lyo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jh1ZDQMniFS51jbSCXb5TBEmt3fGP53iqz7mU8lvLZ0uYMJrSIbyoLAoG1jnz5ZWo
-	 1V1QCmaxqFtkOvum1flb9fhFUUt+ZZ2BfBl9lYZsVCOl0K5S6r8wQdgF78tVF0WziB
-	 Y4R8wS//IDHm0QGglG3d7Dj1uJJonLkz06UzrAqA=
+	s=default; t=1603936812;
+	bh=7mjZBKosQUeZPop8Boc7NWeh3mn01RNTF9OeLUzh6lY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=CheGEAb8QEKhL25Ia6CxuwF4hEpMSRTrva05pMZHVdPt/8KySSOA7tVkujoqMibMJ
+	 VG+lcOSjT65M7CuotjpOcq19RuGeqCBAw4bRzK/Lqud1fPRT6WNIgg6UWnwcx8OT+Y
+	 o8G2wNXVqkjjNy4LxJQOlGuXbKO6+lzIMQvPqwBU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728680AbgJ2ByI (ORCPT
+        id S1728361AbgJ2CAL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 21:54:08 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:36621 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727527AbgJ1V5M (ORCPT
+        Wed, 28 Oct 2020 22:00:11 -0400
+Received: from mail-ej1-f67.google.com ([209.85.218.67]:46510 "EHLO
+        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728247AbgJ1V4e (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:57:12 -0400
-Received: by mail-oi1-f193.google.com with SMTP id y186so1173243oia.3;
-        Wed, 28 Oct 2020 14:57:11 -0700 (PDT)
+        Wed, 28 Oct 2020 17:56:34 -0400
+Received: by mail-ej1-f67.google.com with SMTP id t25so980137ejd.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 14:56:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VL29XNIWkQpzNWyeVNn88/4OaIX3OCW0yaXdyYkNuo0=;
-        b=r7JCFs0kyEJoyA2q9VA96bO2BOjWhy/BzrrEb+WIw0HYSdfSYi4G8HuvEwRO31vyiG
-         h+aCRtbLoB/1N19eeeYXbJNMswuEYOhQsxZha9PkBYNG3BTmeFvtBDR1PEkFTzQ4eBSf
-         bZZXrxyHCXWZ1VLXmQIye2iD8f2sTVKpEIFcwqt1RCcEV9YmHLiQn3H3wE7sNEw+1h0U
-         3GXDNqPGci92ck0I7fcAdGgP7m0eZFrWHQz+uXcgtpHSOVroHButq0BfnbeTKC40N8Q4
-         flMTzxh1rKfSU8asfg+3BEFkv+kiW6jXc8rZiNeRyPOzwjdEgPfOnt+/ywd5RX2NphCA
-         Tx+Q==
-X-Gm-Message-State: AOAM530Pk+0b22PAJxeNnRv6eBLtH54n/GGQ8yREZH/lLadWMDCYPc/F
-        UBYe3S4XJHhS9ZtCVh41+ndqRfp72w==
-X-Google-Smtp-Source: ABdhPJzWQKewEzrujtGvqB3VBlyo68Oonm1AIwSq3hCnepRvY1VGBxkJqbAEBgM3kZQckSIDnyed7g==
-X-Received: by 2002:aca:f0c:: with SMTP id 12mr636990oip.9.1603918022402;
-        Wed, 28 Oct 2020 13:47:02 -0700 (PDT)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id t17sm116123oor.3.2020.10.28.13.47.00
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zEOPVnIriWnz7tz2sSdEz13BX2WjRTr9TsE2CM6SY4E=;
+        b=QgKen0TQ7mLnQ+GTmM4pmEeP2rMCitmwU4BR0ALeV7YhCW1IBCiGtR+p0G1FH/4lV7
+         /UahTo7tvLwJuwMH6ntvpNoTi9Rl1TkE8UmrkHRh9Rnx8wA8VuVEJmK1GR3vllpm2GeE
+         yLb7AVB4GUgEdQbwMQxjQ4VlZHfyiEL4X40fRrNPPX5fI3AIJ7lltD9X47zqinn7yzw+
+         xXCCOVgXX94QvFgyMoYQdHWPXA+llFlWbrAWTok2DSLEI37zMR3M9cRKnVQAIuoZIVVq
+         MFklvnsgvM3VoNTOjmDVb//dEn/CQaCUeqqgjCWvZ79szEYx3sf4LdAtpRT2OrdY9xkN
+         geRw==
+X-Gm-Message-State: AOAM5301/g0wo09PkPfxQlcYXU/uOlmeyXWP0Wm7ITmKZyxEXymvEzil
+        T46VMfp6wCNOtdeJQpRrt3/n25+3vTDfWQ==
+X-Google-Smtp-Source: ABdhPJypS4oXy3dtNcq5B8PBsziTWrOdzKHvfNldkli91T1BTz+Ki2y9XWOX1jtH/RIIC3VexfwQbw==
+X-Received: by 2002:a17:906:284b:: with SMTP id s11mr533571ejc.326.1603911397156;
+        Wed, 28 Oct 2020 11:56:37 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.184])
+        by smtp.googlemail.com with ESMTPSA id u13sm236587ejj.4.2020.10.28.11.56.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 13:47:01 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     linux-pci@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Minghuan Lian <minghuan.Lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Yue Wang <yue.wang@Amlogic.com>
-Subject: [PATCH 05/13] PCI: dwc: Ensure all outbound ATU windows are reset
-Date:   Wed, 28 Oct 2020 15:46:38 -0500
-Message-Id: <20201028204646.356535-6-robh@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201028204646.356535-1-robh@kernel.org>
-References: <20201028204646.356535-1-robh@kernel.org>
+        Wed, 28 Oct 2020 11:56:36 -0700 (PDT)
+Date:   Wed, 28 Oct 2020 19:56:34 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: dts: exynos: Enable BlueTooth support for Trats
+ board
+Message-ID: <20201028185634.GA159042@kozik-lap>
+References: <CGME20201027142341eucas1p16e42afed4cae1292ed72fcd631424562@eucas1p1.samsung.com>
+ <20201027142330.5121-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201027142330.5121-1-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Layerscape driver clears the ATU registers which may have been
-configured by the bootloader. Any driver could have the same issue
-and doing it for all drivers doesn't hurt, so let's move it into the
-common DWC code.
+On Tue, Oct 27, 2020 at 03:23:28PM +0100, Marek Szyprowski wrote:
+> Add a node for the BCM4334 Bluetooth chip on the serial bus #0 on
+> the Exynos4210-based Trats boards.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4210-trats.dts | 31 ++++++++++++++++++++++++++
 
-Cc: Minghuan Lian <minghuan.Lian@nxp.com>
-Cc: Mingkai Hu <mingkai.hu@nxp.com>
-Cc: Roy Zang <roy.zang@nxp.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: linuxppc-dev@lists.ozlabs.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/pci/controller/dwc/pci-layerscape.c       | 14 --------------
- drivers/pci/controller/dwc/pcie-designware-host.c |  5 +++++
- 2 files changed, 5 insertions(+), 14 deletions(-)
+Thanks, applied.
 
-diff --git a/drivers/pci/controller/dwc/pci-layerscape.c b/drivers/pci/controller/dwc/pci-layerscape.c
-index f24f79a70d9a..53e56d54c482 100644
---- a/drivers/pci/controller/dwc/pci-layerscape.c
-+++ b/drivers/pci/controller/dwc/pci-layerscape.c
-@@ -83,14 +83,6 @@ static void ls_pcie_drop_msg_tlp(struct ls_pcie *pcie)
- 	iowrite32(val, pci->dbi_base + PCIE_STRFMR1);
- }
- 
--static void ls_pcie_disable_outbound_atus(struct ls_pcie *pcie)
--{
--	int i;
--
--	for (i = 0; i < PCIE_IATU_NUM; i++)
--		dw_pcie_disable_atu(pcie->pci, i, DW_PCIE_REGION_OUTBOUND);
--}
--
- static int ls1021_pcie_link_up(struct dw_pcie *pci)
- {
- 	u32 state;
-@@ -136,12 +128,6 @@ static int ls_pcie_host_init(struct pcie_port *pp)
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 	struct ls_pcie *pcie = to_ls_pcie(pci);
- 
--	/*
--	 * Disable outbound windows configured by the bootloader to avoid
--	 * one transaction hitting multiple outbound windows.
--	 * dw_pcie_setup_rc() will reconfigure the outbound windows.
--	 */
--	ls_pcie_disable_outbound_atus(pcie);
- 	ls_pcie_fix_error_response(pcie);
- 
- 	dw_pcie_dbi_ro_wr_en(pci);
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index cde45b2076ee..265a48f1a0ae 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -534,6 +534,7 @@ static struct pci_ops dw_pcie_ops = {
- 
- void dw_pcie_setup_rc(struct pcie_port *pp)
- {
-+	int i;
- 	u32 val, ctrl, num_ctrls;
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 
-@@ -583,6 +584,10 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
- 		PCI_COMMAND_MASTER | PCI_COMMAND_SERR;
- 	dw_pcie_writel_dbi(pci, PCI_COMMAND, val);
- 
-+	/* Ensure all outbound windows are disabled so there are multiple matches */
-+	for (i = 0; i < pci->num_viewport; i++)
-+		dw_pcie_disable_atu(pci, i, DW_PCIE_REGION_OUTBOUND);
-+
- 	/*
- 	 * If the platform provides its own child bus config accesses, it means
- 	 * the platform uses its own address translation component rather than
--- 
-2.25.1
+Best regards,
+Krzysztof
 
