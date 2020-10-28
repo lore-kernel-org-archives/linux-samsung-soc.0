@@ -2,257 +2,208 @@ Return-Path: <SRS0=zATP=EE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB2BC4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4939EC388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5E36208C3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:04:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603937043;
-	bh=jH8W/oePKPi43bL6yAG5GFbWSEhAunP0eFCIQBIhYhs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1vIZwBBXX4z1NIZPtdkH5pdEuV41zmRKNIG+Dv8sEg7LnA+jqJGCQZHokhjgmWMrn
-	 V3kvXirpaOg7XDaCOlsNXI3ftj9WM4gBHjfVcDEmhkzWmc1KBAUJOxKQfSpXp4C8IM
-	 bJMI2gXQgBUuXgqsgusRuafMULPXlBji69EXFa0s=
+	by mail.kernel.org (Postfix) with ESMTP id E6B1F208C3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:04:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DStvbDMd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725914AbgJ1VnA (ORCPT
+        id S1727266AbgJ1Vky (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:43:00 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34756 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725300AbgJ1Vml (ORCPT
+        Wed, 28 Oct 2020 17:40:54 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:60059 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727274AbgJ1Vkw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:42:41 -0400
-Received: by mail-oi1-f196.google.com with SMTP id z23so1149207oic.1;
-        Wed, 28 Oct 2020 14:42:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=h0T8M9HFPja/Qcz5+OFxDy+3Ox865wq64TJqX0lZtiY=;
-        b=br26vZuT3zyqgPHw3wuWzevdniunBK+Fyf/fTksS+GCXareUxSdItYAJA231VK6wLd
-         UsyZ3KGU7Dv//xnFmRtPEzDtHJPh0h1qf2s15PoM/dG1354LCbmr4Q7OlkH+WDKtGlvK
-         8wdKGZ03PgY4W0lUbjxispdRgUoiWMXSSolSx5zhxQaQoyNMsUCQC/Nzca7G0TXRcyt7
-         fZ7Xl1sKm+YXL3QVN5uKGKYwpXolyBDrWpdXAP1ab5ub5AIxWgWfgOeq1hnT4/uBuA4y
-         vcML6h0UdBGw1KprHsWh5JxuWV7SMwn2wJ5pjV/WnM/TvHN7ckBkM/HVHkFZA4BpFN9D
-         Nz3g==
-X-Gm-Message-State: AOAM531EaeGPdmeRH1N/udanHU+LFl8s1uDDmD7CVeo5rK/S/jYxK7VF
-        JUVO9rJW6kw4NfLGSupUEvwVty59Hw==
-X-Google-Smtp-Source: ABdhPJzzLIwVb0GnrgftuCJ9zcN8udQxeppgVsd6r2Be66BDmlGrxb8/wZxghvtZTyC09OZtmCreNQ==
-X-Received: by 2002:aca:47cc:: with SMTP id u195mr630676oia.83.1603918024915;
-        Wed, 28 Oct 2020 13:47:04 -0700 (PDT)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id t17sm116123oor.3.2020.10.28.13.47.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 13:47:04 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     linux-pci@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Wed, 28 Oct 2020 17:40:52 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201028214029euoutp02403cf76b461d86c32416cbdce3f8f76e~CRdw4ilPC0334203342euoutp02R
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 21:40:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201028214029euoutp02403cf76b461d86c32416cbdce3f8f76e~CRdw4ilPC0334203342euoutp02R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1603921229;
+        bh=wGXPKJVb69pqXKx2ZIgRaFvmKeW6gzHu0+eGvJQYRIQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=DStvbDMdFn1CC16wNBuUKgxy5ljQrBBdVp9n6GntBNflNxDQhI/FUoTPY3uS9Bqc6
+         2TEWQnCx/26p6anb2TPmz79XtC4jrImbCclOGN5SXZ/LzGcnJfrfuSACV7nHvEoo7A
+         zxbQ/wmWtJijtauurYUs3LlNhIKE7tK92aWVe2E0=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201028214018eucas1p1c7366cff1bed104e95a7926d5941091f~CRdm-pLh_2052320523eucas1p1V;
+        Wed, 28 Oct 2020 21:40:18 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id F0.8F.06456.245E99F5; Wed, 28
+        Oct 2020 21:40:18 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20201028214017eucas1p21a93b489acce80ff8a2fd1adfc9c1649~CRdl0RlxO2075420754eucas1p2h;
+        Wed, 28 Oct 2020 21:40:17 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201028214017eusmtrp20aa630ac5af1f94ca829c4a5eea6a5f4~CRdlzgVSt3218532185eusmtrp2i;
+        Wed, 28 Oct 2020 21:40:17 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-fd-5f99e5425717
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 5F.8E.06314.F35E99F5; Wed, 28
+        Oct 2020 21:40:15 +0000 (GMT)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20201028214015eusmtip23525b6aea39a22a94207c9a0fa86248f~CRdkAn-cQ2585225852eusmtip2c;
+        Wed, 28 Oct 2020 21:40:15 +0000 (GMT)
+From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Minghuan Lian <minghuan.Lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Yue Wang <yue.wang@Amlogic.com>
-Subject: [PATCH 06/13] PCI: dwc/dra7xx: Use the common MSI irq_chip
-Date:   Wed, 28 Oct 2020 15:46:39 -0500
-Message-Id: <20201028204646.356535-7-robh@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201028204646.356535-1-robh@kernel.org>
-References: <20201028204646.356535-1-robh@kernel.org>
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH v4 0/5] AX88796C SPI Ethernet Adapter
+Date:   Wed, 28 Oct 2020 22:40:07 +0100
+Message-Id: <20201028214012.9712-1-l.stelmach@samsung.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
+Organization: Samsung R&D Institute Poland
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUhTYRTGe3fv3W7W9LosDxqTRl8KatIHb5+kFlyhP6IgIrA128UiN2PL
+        WkVallnit6bbFAyztJEfrbWapsQyy0qnraxMK1IJFftaSSpZbtfI/55zzu95z3PgpQnJeyqA
+        Pqg+wmnUigSZ0Iu0tow5QqMGDPIVDbmh2NFrJ/BNfS2FSx3nSFzW3E7h8i96CneN9FA4p2+Y
+        wA5HnQh3WLMp/MZehbC5r4vCzvpSIdY7mgTYfqkR4ermXhFuubwApzU2izb7ss6uToK1XH8j
+        YG3GXhFrNl0UsrcqUljbXZeAzbaYEOsyS7fTe7w2KLmEg0c5TfimfV4HJrvT0OFRqa4mtwKd
+        RgbIQLNpYFZBd/VnQQbyoiVMFYIrdWkEX/xAMDBYJOILFwLLnfvon8VkMlD8oBJBY8vEtOUT
+        gsmLDyg3JWQiIefqYw/lx7wjoDb9A3IXBNOEwPaukHBT85jVUFNZT7o1ySyBlx15Hi1m1oFl
+        Ypjg9wVBeuUdId/3hVZDv4fxYULgRuorjyammLO3SzwxgPktgl8PGwS8eQtk3SqbDj4Phh5Z
+        RLxeCH9sZVMMPaVToCB/De/NRGAt/UXyzHroaR8XuhmCCYba+nC+HQmDw4+FvNUbXo/48hG8
+        Id9aTPBtMVw4L+HpxVCTc2/6wQDIGqqaDsOC8VoBkYsWGWccZpxxjPH/3suIMCF/Lkmriue0
+        EWruWJhWodImqePD9ieqzGjq2z2dfPT9Lvr5PM6OGBrJ5oo73hrkEkpxVHtcZUdAEzI/cVTb
+        070SsVJx/ASnSZRrkhI4rR0F0qTMX7yyfDBWwsQrjnCHOO4wp/k3FdCzA06jQJ/tAVTPrCHd
+        l8gio+hjiTTIuS16zjNrcG6FevmyU/1LY4JpZerHjB2W1ogP9l3yct1a3bnR/uifK+cXJic3
+        k05j7Isz6gwb94R7nTKm3P1A2D3YmUSRxTF7t4YgfHLiW976mjzD155x5f2N4216fV1WWn5T
+        pmtnnNQiVoeOykjtAUVECKHRKv4CedJ48HIDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xe7qOT2fGG1xfJ2dx/u4hZouNM9az
+        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2px89AKRotNj6+xWlzeNYfN
+        Ysb5fUwWh6buZbRYe+Quu8WxBWIWrXuPsDsIely+dpHZY8vKm0weO2fdZffYtKqTzWPzknqP
+        nTs+M3n0bVnF6PF5k1wAR5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6d
+        TUpqTmZZapG+XYJexr9brYwF3+Qq1k1YwtjAOFOii5GTQ0LARGLVqpmsXYxcHEICSxklJmy8
+        z9LFyAGUkJJYOTcdokZY4s+1LjYQW0jgKaNE/9pyEJtNwFGif+kJsF4RgTfMEk333rKDOMwC
+        +xgl9h9dzA5SJSxgKrFu+S4WEJtFQFXi6oWJYDavgJXElt+vmSE2yEu0L9/OBhEXlDg58wnY
+        EcwC6hLr5wmBhPkFtCTWNF0Ha2UGKm/eOpt5AqPALCQdsxA6ZiGpWsDIvIpRJLW0ODc9t9hQ
+        rzgxt7g0L10vOT93EyMwTrcd+7l5B+OljcGHGAU4GJV4eC/cnhkvxJpYVlyZe4hRgoNZSYTX
+        6ezpOCHelMTKqtSi/Pii0pzU4kOMpkDvTGSWEk3OB6aQvJJ4Q1NDcwtLQ3Njc2MzCyVx3g6B
+        gzFCAumJJanZqakFqUUwfUwcnFINjE2TPKslrVliNjNcshXbts3xpH3z/xULjm32s14u61qS
+        1TxlxVfOVctFlnWd8BT+9OTZ9i0BTU7bN0Z89vji2LDn3dUJW5f9DVJxqPZh3xX+wGFH0JsP
+        h2U+VwScuF3HM5sjiMFp3j2Gjz/Kxfk/9/PvZJmsFnPrYdCf3SGnz/za7V11/9/rO5ZKLMUZ
+        iYZazEXFiQBr3XV56QIAAA==
+X-CMS-MailID: 20201028214017eucas1p21a93b489acce80ff8a2fd1adfc9c1649
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20201028214017eucas1p21a93b489acce80ff8a2fd1adfc9c1649
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201028214017eucas1p21a93b489acce80ff8a2fd1adfc9c1649
+References: <CGME20201028214017eucas1p21a93b489acce80ff8a2fd1adfc9c1649@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The dra7xx MSI irq_chip implementation is identical to the default DWC one.
-The only difference is the interrupt handler as the MSI interrupt is muxed
-with other interrupts, but that doesn't affect the irq_chip part of it.
+This is a driver for AX88796C Ethernet Adapter connected in SPI mode as
+found on ARTIK5 evaluation board. The driver has been ported from a
+v3.10.9 vendor kernel for ARTIK5 board.
 
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-omap@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/pci/controller/dwc/pci-dra7xx.c | 125 ------------------------
- 1 file changed, 125 deletions(-)
+Changes in v4:
+  - fixed compilation problems in asix,ax88796c.yaml and in
+  ax88796c_main.c introduced in v3
 
-diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-index a4aabc85dbb1..4d0c35a4aa59 100644
---- a/drivers/pci/controller/dwc/pci-dra7xx.c
-+++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-@@ -377,133 +377,8 @@ static int dra7xx_pcie_init_irq_domain(struct pcie_port *pp)
- 	return 0;
- }
- 
--static void dra7xx_pcie_setup_msi_msg(struct irq_data *d, struct msi_msg *msg)
--{
--	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
--	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
--	u64 msi_target;
--
--	msi_target = (u64)pp->msi_data;
--
--	msg->address_lo = lower_32_bits(msi_target);
--	msg->address_hi = upper_32_bits(msi_target);
--
--	msg->data = d->hwirq;
--
--	dev_dbg(pci->dev, "msi#%d address_hi %#x address_lo %#x\n",
--		(int)d->hwirq, msg->address_hi, msg->address_lo);
--}
--
--static int dra7xx_pcie_msi_set_affinity(struct irq_data *d,
--					const struct cpumask *mask,
--					bool force)
--{
--	return -EINVAL;
--}
--
--static void dra7xx_pcie_bottom_mask(struct irq_data *d)
--{
--	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
--	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
--	unsigned int res, bit, ctrl;
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&pp->lock, flags);
--
--	ctrl = d->hwirq / MAX_MSI_IRQS_PER_CTRL;
--	res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
--	bit = d->hwirq % MAX_MSI_IRQS_PER_CTRL;
--
--	pp->irq_mask[ctrl] |= BIT(bit);
--	dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK + res,
--			   pp->irq_mask[ctrl]);
--
--	raw_spin_unlock_irqrestore(&pp->lock, flags);
--}
--
--static void dra7xx_pcie_bottom_unmask(struct irq_data *d)
--{
--	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
--	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
--	unsigned int res, bit, ctrl;
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&pp->lock, flags);
--
--	ctrl = d->hwirq / MAX_MSI_IRQS_PER_CTRL;
--	res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
--	bit = d->hwirq % MAX_MSI_IRQS_PER_CTRL;
--
--	pp->irq_mask[ctrl] &= ~BIT(bit);
--	dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK + res,
--			   pp->irq_mask[ctrl]);
--
--	raw_spin_unlock_irqrestore(&pp->lock, flags);
--}
--
--static void dra7xx_pcie_bottom_ack(struct irq_data *d)
--{
--	struct pcie_port *pp  = irq_data_get_irq_chip_data(d);
--	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
--	unsigned int res, bit, ctrl;
--
--	ctrl = d->hwirq / MAX_MSI_IRQS_PER_CTRL;
--	res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
--	bit = d->hwirq % MAX_MSI_IRQS_PER_CTRL;
--
--	dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_STATUS + res, BIT(bit));
--}
--
--static struct irq_chip dra7xx_pci_msi_bottom_irq_chip = {
--	.name = "DRA7XX-PCI-MSI",
--	.irq_ack = dra7xx_pcie_bottom_ack,
--	.irq_compose_msi_msg = dra7xx_pcie_setup_msi_msg,
--	.irq_set_affinity = dra7xx_pcie_msi_set_affinity,
--	.irq_mask = dra7xx_pcie_bottom_mask,
--	.irq_unmask = dra7xx_pcie_bottom_unmask,
--};
--
--static int dra7xx_pcie_msi_host_init(struct pcie_port *pp)
--{
--	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
--	struct device *dev = pci->dev;
--	u32 ctrl, num_ctrls;
--	int ret;
--
--	pp->msi_irq_chip = &dra7xx_pci_msi_bottom_irq_chip;
--
--	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
--	/* Initialize IRQ Status array */
--	for (ctrl = 0; ctrl < num_ctrls; ctrl++) {
--		pp->irq_mask[ctrl] = ~0;
--		dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK +
--				    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
--				    pp->irq_mask[ctrl]);
--		dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_ENABLE +
--				    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
--				    ~0);
--	}
--
--	ret = dw_pcie_allocate_domains(pp);
--	if (ret)
--		return ret;
--
--	pp->msi_data = dma_map_single_attrs(dev, &pp->msi_msg,
--					   sizeof(pp->msi_msg),
--					   DMA_FROM_DEVICE,
--					   DMA_ATTR_SKIP_CPU_SYNC);
--	ret = dma_mapping_error(dev, pp->msi_data);
--	if (ret) {
--		dev_err(dev, "Failed to map MSI data\n");
--		pp->msi_data = 0;
--		dw_pcie_free_msi(pp);
--	}
--	return ret;
--}
--
- static const struct dw_pcie_host_ops dra7xx_pcie_host_ops = {
- 	.host_init = dra7xx_pcie_host_init,
--	.msi_host_init = dra7xx_pcie_msi_host_init,
- };
- 
- static void dra7xx_pcie_ep_init(struct dw_pcie_ep *ep)
+Changes in v3:
+  - modify vendor-prefixes.yaml in a separate patch
+  - fix several problems in the dt binding
+    - removed unnecessary descriptions and properties
+    - changed the order of entries
+    - fixed problems with missing defines in the example
+  - change (1 << N) to BIT(N), left a few (0 << N)
+  - replace ax88796c_get_link(), ax88796c_get_link_ksettings(),
+    ax88796c_set_link_ksettings(), ax88796c_nway_reset(),
+    ax88796c_set_mac_address() with appropriate kernel functions.
+  - disable PHY auto-polling in MAC and use PHYLIB to track the state
+    of PHY and configure MAC
+  - propagate return values instead of returning constants in several
+    places
+  - add WARN_ON() for unlocked mutex
+  - remove local work queue and use the system_wq
+  - replace phy_connect_direct() with phy_connect() and move
+    devm_register_netdev() to the end of ax88796c_probe()
+    (Unlike phy_connect_direct() phy_connect() does not crash if the
+    network device isn't registered yet.)
+  - remove error messages on ENOMEM
+  - move free_irq() to the end of ax88796c_close() to avoid race
+    condition
+  - implement flow-control
+
+Changes in v2:
+  - use phylib
+  - added DT bindings
+  - moved #includes to *.c files
+  - used mutex instead of a semaphore for locking
+  - renamed some constants
+  - added error propagation for several functions
+  - used ethtool for dumping registers
+  - added control over checksum offloading
+  - remove vendor specific PM
+  - removed macaddr module parameter and added support for reading a MAC
+    address from platform data (e.g. DT)
+  - removed dependency on SPI from NET_VENDOR_ASIX
+  - added an entry in the MAINTAINERS file
+  - simplified logging with appropriate netif_* and netdev_* helpers
+  - lots of style fixes
+
+Łukasz Stelmach (5):
+  dt-bindings: vendor-prefixes: Add asix prefix
+  dt-bindings: net: Add bindings for AX88796C SPI Ethernet Adapter
+  net: ax88796c: ASIX AX88796C SPI Ethernet Adapter Driver
+  ARM: dts: exynos: Add Ethernet to Artik 5 board
+  ARM: defconfig: Enable ax88796c driver
+
+ .../bindings/net/asix,ax88796c.yaml           |   69 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ MAINTAINERS                                   |    6 +
+ arch/arm/boot/dts/exynos3250-artik5-eval.dts  |   29 +
+ arch/arm/configs/exynos_defconfig             |    2 +
+ arch/arm/configs/multi_v7_defconfig           |    2 +
+ drivers/net/ethernet/Kconfig                  |    1 +
+ drivers/net/ethernet/Makefile                 |    1 +
+ drivers/net/ethernet/asix/Kconfig             |   22 +
+ drivers/net/ethernet/asix/Makefile            |    6 +
+ drivers/net/ethernet/asix/ax88796c_ioctl.c    |  197 +++
+ drivers/net/ethernet/asix/ax88796c_ioctl.h    |   26 +
+ drivers/net/ethernet/asix/ax88796c_main.c     | 1144 +++++++++++++++++
+ drivers/net/ethernet/asix/ax88796c_main.h     |  578 +++++++++
+ drivers/net/ethernet/asix/ax88796c_spi.c      |  111 ++
+ drivers/net/ethernet/asix/ax88796c_spi.h      |   69 +
+ 16 files changed, 2265 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/asix,ax88796c.yaml
+ create mode 100644 drivers/net/ethernet/asix/Kconfig
+ create mode 100644 drivers/net/ethernet/asix/Makefile
+ create mode 100644 drivers/net/ethernet/asix/ax88796c_ioctl.c
+ create mode 100644 drivers/net/ethernet/asix/ax88796c_ioctl.h
+ create mode 100644 drivers/net/ethernet/asix/ax88796c_main.c
+ create mode 100644 drivers/net/ethernet/asix/ax88796c_main.h
+ create mode 100644 drivers/net/ethernet/asix/ax88796c_spi.c
+ create mode 100644 drivers/net/ethernet/asix/ax88796c_spi.h
+
 -- 
-2.25.1
-
+2.26.2
