@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B56ACC56202
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D016C388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:36:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C1102072E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:36:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E372020714
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:36:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603924573;
-	bh=tAc+eA+rqS8xp2/W/3QiNS5pvqKD4MUkDIEkIoRC2/4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rd28UdV9dV4fgxsA6qo/tkHtjvPddvDV6Dr4NeAFHujkOHrUUdnQeAGT5ATKRzYts
-	 xha87DMZ+0vAa/OGUZP+b5DJkhfSKlhtkWJu+W7WUQLhk5niwtacc9/EPgATHLeHGF
-	 w94E7/pe3aeIrI/mwAuhbZuEye6v0XRfVlACCnqw=
+	s=default; t=1603924580;
+	bh=+3+rZMhFJYQcM+CPB1sCdkixsb4UcB1JJHItd8PmXwM=;
+	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=THtcTFbG4IYGwnByXj2MGHPDsnQ/pBPYHmr+SKZbveNPkXdeh7tGIzCv2HUDy6k+0
+	 JnACKXHYb/mXDD5J+TNrlLljpCO0k/RSSQsF48a2bCI0w2R55sJ15DesfxHsQEFV+h
+	 u0MfjGDAgBar3JcRZPxYa3omYRA5RBGxvs+9FLgw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388286AbgJ1WgB (ORCPT
+        id S1727157AbgJ1WgU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:36:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47674 "EHLO mail.kernel.org"
+        Wed, 28 Oct 2020 18:36:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388460AbgJ1Wdy (ORCPT
+        id S2388435AbgJ1Wds (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:33:54 -0400
+        Wed, 28 Oct 2020 18:33:48 -0400
 Received: from kozik-lap.proceq-device.com (unknown [194.230.155.184])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B7E520725;
-        Wed, 28 Oct 2020 22:33:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4657620714;
+        Wed, 28 Oct 2020 22:33:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603924433;
-        bh=tAc+eA+rqS8xp2/W/3QiNS5pvqKD4MUkDIEkIoRC2/4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pqBsuCqgbiEf3WsSOkYjz65L3imY2hUfGeuvz+k3riT6Fz9UjM+KTMUQ4AhlhywUp
-         D0uHsz4fMUeQK9X2UMUo1teYCyLAvINPyVAHwTW2smSx5sbzyAG2V97qejXip7O+hD
-         1+f8TjgOON/Wq73dnrObQpkBFvdhUpHCKv79tE9s=
+        s=default; t=1603924428;
+        bh=+3+rZMhFJYQcM+CPB1sCdkixsb4UcB1JJHItd8PmXwM=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=sTuzb6tdZMy1AfQS7NxlZ/N6cfGJf6l/SKb3F25+EwCANmCqJrjLPzv+wUi5l7/LL
+         4AxIUh8UtG3xD1uAv0oJ6EWiA5/nj9kyTRKqafPPQSMlQudwEfnS25wz0Xbm1zPZY2
+         ZaflMJoHfKeNOPUp6+SiZBTVZiRY87aqJbzmO2u4=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Lee Jones <lee.jones@linaro.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -61,10 +61,9 @@ To:     Lee Jones <lee.jones@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rpi-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: [RESEND PATCH 41/42] mfd: wm8400: use PLATFORM_DEVID_NONE
-Date:   Wed, 28 Oct 2020 23:30:08 +0100
-Message-Id: <20201028223009.369824-41-krzk@kernel.org>
+Subject: [RESEND PATCH 40/42] mfd: wl1273: use PLATFORM_DEVID_NONE
+Date:   Wed, 28 Oct 2020 23:30:07 +0100
+Message-Id: <20201028223009.369824-40-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201028223009.369824-1-krzk@kernel.org>
 References: <20201028223009.369824-1-krzk@kernel.org>
@@ -79,25 +78,23 @@ Use PLATFORM_DEVID_NONE define instead of "-1" value because:
  - it might point attention why auto device ID was not used.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- drivers/mfd/wm8400-core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mfd/wl1273-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/wm8400-core.c b/drivers/mfd/wm8400-core.c
-index 0fe32a05421b..9efca6f3fbb2 100644
---- a/drivers/mfd/wm8400-core.c
-+++ b/drivers/mfd/wm8400-core.c
-@@ -38,7 +38,8 @@ static int wm8400_register_codec(struct wm8400 *wm8400)
- 		.pdata_size = sizeof(*wm8400),
- 	};
+diff --git a/drivers/mfd/wl1273-core.c b/drivers/mfd/wl1273-core.c
+index 1ab5e15a65eb..0af1322fd393 100644
+--- a/drivers/mfd/wl1273-core.c
++++ b/drivers/mfd/wl1273-core.c
+@@ -214,7 +214,7 @@ static int wl1273_core_probe(struct i2c_client *client,
+ 	dev_dbg(&client->dev, "%s: number of children: %d.\n",
+ 		__func__, children);
  
--	return devm_mfd_add_devices(wm8400->dev, -1, &cell, 1, NULL, 0, NULL);
-+	return devm_mfd_add_devices(wm8400->dev, PLATFORM_DEVID_NONE, &cell, 1,
-+				    NULL, 0, NULL);
- }
- 
- /*
+-	r = devm_mfd_add_devices(&client->dev, -1, core->cells,
++	r = devm_mfd_add_devices(&client->dev, PLATFORM_DEVID_NONE, core->cells,
+ 				 children, NULL, 0, NULL);
+ 	if (r)
+ 		goto err;
 -- 
 2.25.1
 
