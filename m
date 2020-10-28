@@ -2,118 +2,102 @@ Return-Path: <SRS0=5Pkx=ED=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A611AC388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A856C56202
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B7D520709
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:23:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="tyC/p008"
+	by mail.kernel.org (Postfix) with ESMTP id B41402071A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:30:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603924225;
+	bh=GBQ0jA1UbDnOOxIlEwQgVuqIYDKm0O9dv+Q1uOL6pdA=;
+	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=dtKH+XzqrI0nPRiWjlwEKXUGqchz+TYHWSPPEGYRYpLVyi5p4tF5O9HNlFGOSGwfN
+	 Nl/q1JoX0TDcomzZ+csAtQ0hARo40SbJkL3rNf1eWwKx5yaDsz1ouVb10FJLMc3NOp
+	 Qv4I0lpr4iEPA9aBBfxm3L7+PNpXdFktJr6+s+qg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732791AbgJ1WXz (ORCPT
+        id S2387688AbgJ1WaZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:23:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54624 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732781AbgJ1WXy (ORCPT
+        Wed, 28 Oct 2020 18:30:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387665AbgJ1WaY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:23:54 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AEACC0613CF
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 15:23:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iGNt9q4u3C8iCvbvbTSQ7zegZDgrGY8gA6FD/mliiJc=; b=tyC/p008K/KhAYOxaqxcY7WRf
-        5fd3pS3xqetPeTmL0b93VSI2MlpnAwqZtW6ekD9Qb2qKYu+Voyqo8pxBPfsdwiascoBEqzXuqGXLZ
-        AypHNaBoN2W/6e2X2tKOmLh+wxKmCJ3NBuDB8pkLltSuCGSvNl4uzz29CcFAga9unjsPZea8mYXe8
-        WIxQaen2lEQi/QwA/9J4RSEgN2AYhlEHamqHC3XwKocJtEGUe1oOmuqkm94WGedUXAi2tnNGpqL3n
-        iJmtdXWinGZrypheUhf8+0T7dcyIWuUv8zqPOhOVYmJD9GnjRX8F8ag0JlnBk7xaFRuq/tjN0Wd1v
-        BiZgnztKw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52040)
-        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1kXlCv-0002pR-8e; Wed, 28 Oct 2020 13:09:41 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1kXlCt-00053q-Lp; Wed, 28 Oct 2020 13:09:39 +0000
-Date:   Wed, 28 Oct 2020 13:09:39 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     Joel Stanley <joel@jms.id.au>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Wed, 28 Oct 2020 18:30:24 -0400
+Received: from kozik-lap.proceq-device.com (unknown [194.230.155.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC70720720;
+        Wed, 28 Oct 2020 22:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603924223;
+        bh=GBQ0jA1UbDnOOxIlEwQgVuqIYDKm0O9dv+Q1uOL6pdA=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=tIn300E8Rzj6BZFs3bCXHp75IHLpBjGoOYIqtoovMUMHGn0FHLBGyVHUD48m7tUDX
+         /Za588QEIRJrpHNilXkNTADwp8hua11g9jS+fzjo9eQnezVpQrclTURxm+3+eL2hL1
+         5nG6mYSYxD3yprPQXPjmtMWOFeYbRLZIfCcgC/pY=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Chen-Yu Tsai <wens@csie.org>,
         Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        =?iso-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>
-Subject: Re: [PATCH v2 2/2] ARM: move device tree mapping out of linear region
-Message-ID: <20201028130939.GM1551@shell.armlinux.org.uk>
-References: <20201007083944.27910-1-ardb@kernel.org>
- <CGME20201028091912eucas1p13fb9cd947faa6bfd79199ea79648b6af@eucas1p1.samsung.com>
- <20201007083944.27910-3-ardb@kernel.org>
- <920965b8-6f87-3f82-9fce-d3051fc543ca@samsung.com>
- <CACPK8XfNfqToFBe0GPFTGrnPhNTYhSDiEagpB7ayBSW1DC-THA@mail.gmail.com>
- <CAMj1kXH90MzCUJ_DHZ_2=JcWBX=Qf1PT-A9PX9EeBTVx22EkaQ@mail.gmail.com>
- <20201028130050.GL1551@shell.armlinux.org.uk>
- <CAMj1kXFWAr+-fnThgtY_jTg1_=kmhHRS5+X6jXAG9K7GegCchg@mail.gmail.com>
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Andy Shevchenko <andy@kernel.org>, Milo Kim <milo.kim@ti.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tony Lindgren <tony@atomide.com>,
+        patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: [RESEND PATCH 02/42] mfd: as3711: use PLATFORM_DEVID_NONE
+Date:   Wed, 28 Oct 2020 23:29:29 +0100
+Message-Id: <20201028223009.369824-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201028223009.369824-1-krzk@kernel.org>
+References: <20201028223009.369824-1-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXFWAr+-fnThgtY_jTg1_=kmhHRS5+X6jXAG9K7GegCchg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-Sender: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 02:04:41PM +0100, Ard Biesheuvel wrote:
-> On Wed, 28 Oct 2020 at 14:01, Russell King - ARM Linux admin
-> <linux@armlinux.org.uk> wrote:
-> >
-> > On Wed, Oct 28, 2020 at 01:52:48PM +0100, Ard Biesheuvel wrote:
-> > > Does this help?
-> > >
-> > > diff --git a/arch/arm/include/asm/memory.h b/arch/arm/include/asm/memory.h
-> > > index bb79e52aeb90..4f355bda872a 100644
-> > > --- a/arch/arm/include/asm/memory.h
-> > > +++ b/arch/arm/include/asm/memory.h
-> > > @@ -68,8 +68,8 @@
-> > >  #define XIP_VIRT_ADDR(physaddr)  (MODULES_VADDR + ((physaddr) & 0x000fffff))
-> > >
-> > >  #define FDT_FIXED_BASE         UL(0xff800000)
-> > > -#define FDT_FIXED_SIZE         (2 * PMD_SIZE)
-> > > -#define FDT_VIRT_ADDR(physaddr)        ((void *)(FDT_FIXED_BASE |
-> > > (physaddr) % PMD_SIZE))
-> > > +#define FDT_FIXED_SIZE         (2 * SECTION_SIZE)
-> > > +#define FDT_VIRT_ADDR(physaddr)        ((void *)(FDT_FIXED_BASE |
-> > > (physaddr) % SECTION_SIZE))
-> >
-> > Is this correct? If the FDT fixed size is 2x, why does FDT_VIRT_ADDR()
-> > only work for half of it?
-> >
-> 
-> Perhaps the naming is confusing. This is only used to obtain the start
-> of the virtually mapped DT, which amounts to the virtual address of
-> the section plus the physical address modulo the section size.
-> 
-> I will rename physaddr to physbase when I respin this as a patch.
-> Shall I rename FDT_VIRT_ADDR to FDT_VIRT_BASE as well?
+Use PLATFORM_DEVID_NONE define instead of "-1" value because:
+ - it brings some meaning,
+ - it might point attention why auto device ID was not used.
 
-Yes please, I think that makes it clearer what is going on here.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/mfd/as3711.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/mfd/as3711.c b/drivers/mfd/as3711.c
+index 3adaec6c37df..5933f322ad52 100644
+--- a/drivers/mfd/as3711.c
++++ b/drivers/mfd/as3711.c
+@@ -184,8 +184,9 @@ static int as3711_i2c_probe(struct i2c_client *client,
+ 		as3711_subdevs[AS3711_BACKLIGHT].pdata_size = 0;
+ 	}
+ 
+-	ret = devm_mfd_add_devices(as3711->dev, -1, as3711_subdevs,
+-				   ARRAY_SIZE(as3711_subdevs), NULL, 0, NULL);
++	ret = devm_mfd_add_devices(as3711->dev, PLATFORM_DEVID_NONE,
++				   as3711_subdevs, ARRAY_SIZE(as3711_subdevs),
++				   NULL, 0, NULL);
+ 	if (ret < 0)
+ 		dev_err(&client->dev, "add mfd devices failed: %d\n", ret);
+ 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+2.25.1
+
