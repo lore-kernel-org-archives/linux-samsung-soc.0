@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53A0C6379D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 01:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9CEC388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 01:23:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D2E520796
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 01:23:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF2992075E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 01:23:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732970AbgJ2BXY (ORCPT
+        id S1732991AbgJ2BXZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 21:23:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47946 "EHLO mx2.suse.de"
+        Wed, 28 Oct 2020 21:23:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47924 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729806AbgJ1WDn (ORCPT
+        id S1729679AbgJ1WDn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Wed, 28 Oct 2020 18:03:43 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id BFC24B18A;
-        Wed, 28 Oct 2020 19:35:24 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 89E7FB91D;
+        Wed, 28 Oct 2020 19:35:30 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
         airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
@@ -50,84 +50,143 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         nouveau@lists.freedesktop.org, spice-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, xen-devel@lists.xenproject.org,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH v6 01/10] drm/vram-helper: Remove invariant parameters from internal kmap function
-Date:   Wed, 28 Oct 2020 20:35:12 +0100
-Message-Id: <20201028193521.2489-2-tzimmermann@suse.de>
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v6 09/10] dma-buf-map: Add memcpy and pointer-increment interfaces
+Date:   Wed, 28 Oct 2020 20:35:20 +0100
+Message-Id: <20201028193521.2489-10-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.29.0
 In-Reply-To: <20201028193521.2489-1-tzimmermann@suse.de>
 References: <20201028193521.2489-1-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The parameters map and is_iomem are always of the same value. Removed them
-to prepares the function for conversion to struct dma_buf_map.
+To do framebuffer updates, one needs memcpy from system memory and a
+pointer-increment function. Add both interfaces with documentation.
 
-v4:
-	* don't check for !kmap->virtual; will always be false
+v5:
+	* include <linux/string.h> to build on sparc64 (Sam)
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Reviewed-by: Christian König <christian.koenig@amd.com>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
 Tested-by: Sam Ravnborg <sam@ravnborg.org>
 ---
- drivers/gpu/drm/drm_gem_vram_helper.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+ include/linux/dma-buf-map.h | 73 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 63 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
-index 9da823eb0edd..f445b84c43c4 100644
---- a/drivers/gpu/drm/drm_gem_vram_helper.c
-+++ b/drivers/gpu/drm/drm_gem_vram_helper.c
-@@ -379,32 +379,22 @@ int drm_gem_vram_unpin(struct drm_gem_vram_object *gbo)
+diff --git a/include/linux/dma-buf-map.h b/include/linux/dma-buf-map.h
+index 2e8bbecb5091..583a3a1f9447 100644
+--- a/include/linux/dma-buf-map.h
++++ b/include/linux/dma-buf-map.h
+@@ -7,6 +7,7 @@
+ #define __DMA_BUF_MAP_H__
+ 
+ #include <linux/io.h>
++#include <linux/string.h>
+ 
+ /**
+  * DOC: overview
+@@ -32,6 +33,14 @@
+  * accessing the buffer. Use the returned instance and the helper functions
+  * to access the buffer's memory in the correct way.
+  *
++ * The type :c:type:`struct dma_buf_map <dma_buf_map>` and its helpers are
++ * actually independent from the dma-buf infrastructure. When sharing buffers
++ * among devices, drivers have to know the location of the memory to access
++ * the buffers in a safe way. :c:type:`struct dma_buf_map <dma_buf_map>`
++ * solves this problem for dma-buf and its users. If other drivers or
++ * sub-systems require similar functionality, the type could be generalized
++ * and moved to a more prominent header file.
++ *
+  * Open-coding access to :c:type:`struct dma_buf_map <dma_buf_map>` is
+  * considered bad style. Rather then accessing its fields directly, use one
+  * of the provided helper functions, or implement your own. For example,
+@@ -51,6 +60,14 @@
+  *
+  *	dma_buf_map_set_vaddr_iomem(&map. 0xdeadbeaf);
+  *
++ * Instances of struct dma_buf_map do not have to be cleaned up, but
++ * can be cleared to NULL with dma_buf_map_clear(). Cleared mappings
++ * always refer to system memory.
++ *
++ * .. code-block:: c
++ *
++ *	dma_buf_map_clear(&map);
++ *
+  * Test if a mapping is valid with either dma_buf_map_is_set() or
+  * dma_buf_map_is_null().
+  *
+@@ -73,17 +90,19 @@
+  *	if (dma_buf_map_is_equal(&sys_map, &io_map))
+  *		// always false
+  *
+- * Instances of struct dma_buf_map do not have to be cleaned up, but
+- * can be cleared to NULL with dma_buf_map_clear(). Cleared mappings
+- * always refer to system memory.
++ * A set up instance of struct dma_buf_map can be used to access or manipulate
++ * the buffer memory. Depending on the location of the memory, the provided
++ * helpers will pick the correct operations. Data can be copied into the memory
++ * with dma_buf_map_memcpy_to(). The address can be manipulated with
++ * dma_buf_map_incr().
+  *
+- * The type :c:type:`struct dma_buf_map <dma_buf_map>` and its helpers are
+- * actually independent from the dma-buf infrastructure. When sharing buffers
+- * among devices, drivers have to know the location of the memory to access
+- * the buffers in a safe way. :c:type:`struct dma_buf_map <dma_buf_map>`
+- * solves this problem for dma-buf and its users. If other drivers or
+- * sub-systems require similar functionality, the type could be generalized
+- * and moved to a more prominent header file.
++ * .. code-block:: c
++ *
++ *	const void *src = ...; // source buffer
++ *	size_t len = ...; // length of src
++ *
++ *	dma_buf_map_memcpy_to(&map, src, len);
++ *	dma_buf_map_incr(&map, len); // go to first byte after the memcpy
+  */
+ 
+ /**
+@@ -210,4 +229,38 @@ static inline void dma_buf_map_clear(struct dma_buf_map *map)
+ 	}
  }
- EXPORT_SYMBOL(drm_gem_vram_unpin);
  
--static void *drm_gem_vram_kmap_locked(struct drm_gem_vram_object *gbo,
--				      bool map, bool *is_iomem)
-+static void *drm_gem_vram_kmap_locked(struct drm_gem_vram_object *gbo)
- {
- 	int ret;
- 	struct ttm_bo_kmap_obj *kmap = &gbo->kmap;
-+	bool is_iomem;
- 
- 	if (gbo->kmap_use_count > 0)
- 		goto out;
- 
--	if (kmap->virtual || !map)
--		goto out;
--
- 	ret = ttm_bo_kmap(&gbo->bo, 0, gbo->bo.num_pages, kmap);
- 	if (ret)
- 		return ERR_PTR(ret);
- 
- out:
--	if (!kmap->virtual) {
--		if (is_iomem)
--			*is_iomem = false;
--		return NULL; /* not mapped; don't increment ref */
--	}
- 	++gbo->kmap_use_count;
--	if (is_iomem)
--		return ttm_kmap_obj_virtual(kmap, is_iomem);
--	return kmap->virtual;
-+	return ttm_kmap_obj_virtual(kmap, &is_iomem);
- }
- 
- static void drm_gem_vram_kunmap_locked(struct drm_gem_vram_object *gbo)
-@@ -449,7 +439,7 @@ void *drm_gem_vram_vmap(struct drm_gem_vram_object *gbo)
- 	ret = drm_gem_vram_pin_locked(gbo, 0);
- 	if (ret)
- 		goto err_ttm_bo_unreserve;
--	base = drm_gem_vram_kmap_locked(gbo, true, NULL);
-+	base = drm_gem_vram_kmap_locked(gbo);
- 	if (IS_ERR(base)) {
- 		ret = PTR_ERR(base);
- 		goto err_drm_gem_vram_unpin_locked;
++/**
++ * dma_buf_map_memcpy_to - Memcpy into dma-buf mapping
++ * @dst:	The dma-buf mapping structure
++ * @src:	The source buffer
++ * @len:	The number of byte in src
++ *
++ * Copies data into a dma-buf mapping. The source buffer is in system
++ * memory. Depending on the buffer's location, the helper picks the correct
++ * method of accessing the memory.
++ */
++static inline void dma_buf_map_memcpy_to(struct dma_buf_map *dst, const void *src, size_t len)
++{
++	if (dst->is_iomem)
++		memcpy_toio(dst->vaddr_iomem, src, len);
++	else
++		memcpy(dst->vaddr, src, len);
++}
++
++/**
++ * dma_buf_map_incr - Increments the address stored in a dma-buf mapping
++ * @map:	The dma-buf mapping structure
++ * @incr:	The number of bytes to increment
++ *
++ * Increments the address stored in a dma-buf mapping. Depending on the
++ * buffer's location, the correct value will be updated.
++ */
++static inline void dma_buf_map_incr(struct dma_buf_map *map, size_t incr)
++{
++	if (map->is_iomem)
++		map->vaddr_iomem += incr;
++	else
++		map->vaddr += incr;
++}
++
+ #endif /* __DMA_BUF_MAP_H__ */
 -- 
 2.29.0
 
