@@ -7,73 +7,75 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBBDC4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD26C388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A11A20724
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:55:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9874320724
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:55:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603932910;
-	bh=+zNrzC58AmTmQdxW/VhUY1K98MXF8eaS6GBLj+PjHAM=;
+	s=default; t=1603932912;
+	bh=vEUSwFAE65XSY/KkTJZAHsNmaobAHgJ+Pl4mcszuFfM=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=GeQmTl2zcPCYgEcHsdckNYiKxTeMm7gkMtEv2LkQSvt8R9QhR095wjcoAS5tCXFIL
-	 DQ87FJEro/MTe0zOmJsfY/rpj4JB5fCZL3W645WG2iJE2sAi/xnrEztmuT3UUEQQz0
-	 XqJekmWHjd+ZcPR839X4OkziobDFVNO4QcdjNPs4=
+	b=KmFCFFMAL8wOku4sjrFgFd8t912yH7m4CiMBhZD83lEFPsfW+J4qr4Ek6n+DO+rr6
+	 O4N9qXZ80HZS3/6JdAqqTrlCI7SFW34wHXGi7b7XRtZZPcxAdKMSf9git746cISnNl
+	 U9N31N8bV0iexabm53OqTh+QQX2Nq8cDNhu6hFwY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731726AbgJ1WSB (ORCPT
+        id S1731305AbgJ1WSA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:18:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60520 "EHLO mail.kernel.org"
+        Wed, 28 Oct 2020 18:18:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731731AbgJ1WRo (ORCPT
+        id S1731769AbgJ1WRo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Wed, 28 Oct 2020 18:17:44 -0400
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A19EC24695
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 09:24:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E447624737
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 12:53:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603877096;
-        bh=+zNrzC58AmTmQdxW/VhUY1K98MXF8eaS6GBLj+PjHAM=;
+        s=default; t=1603889581;
+        bh=vEUSwFAE65XSY/KkTJZAHsNmaobAHgJ+Pl4mcszuFfM=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=cUCOU0U1fgOwaUpVqDxwZZ0dkw5Jr0ufeRAb0VVaIfUEy0nUouPm86dAtkEpr81YR
-         c/lAe+sexDugUAaFIF2AAy3SLc3uN8SiEzD9JExXmqJIRV4yqLmYWeX3mPGPkraHGB
-         hKfk4HK5gEPrUil3qF9GIkhBv118Ow/Bxi7YRvIY=
-Received: by mail-oi1-f179.google.com with SMTP id c72so4281423oig.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 02:24:56 -0700 (PDT)
-X-Gm-Message-State: AOAM5304HsiakmZY8UUu0ohUmqVarUOHRBiuIjoWxoBKrK/RASXMxzdL
-        U6giF95RZWrUWUSjnmn6F1qQL5a9c1be9h/lseI=
-X-Google-Smtp-Source: ABdhPJyyRAmDQMdwC7t6Fqk/Fg6hl0XopTLtmRvhfLrsi/q1dX6Oc8I/m/OT565jJ+lRTC/tLDANpYzSq8aGCRj2gls=
-X-Received: by 2002:aca:5c82:: with SMTP id q124mr4450009oib.33.1603877095700;
- Wed, 28 Oct 2020 02:24:55 -0700 (PDT)
+        b=mVq/QxTeUBPlPu9fPHWjmdkM/LERQXaO0wVIv+yMZ/igTFIihEIW6CzCfTHRnsmNf
+         UQ8S95ajkpvKZr7cJUyHvcKXxc9S6Y4G/mYm4ihCXbjaW7X6l5MnsIBMvp7pFz99uF
+         HTGs/T8BnAWC5hXPrh6ueciSCiEhSKlOLgTRKUR0=
+Received: by mail-oi1-f175.google.com with SMTP id j7so4797627oie.12
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 05:53:00 -0700 (PDT)
+X-Gm-Message-State: AOAM533Hr0+J+bVhQHe486kmVxSbmfr3/ABf3msgt2A4SmLZ7BPUyvK8
+        a6dlSPuj9akcms0vTqYzz2l672eh9jbs57j2R3M=
+X-Google-Smtp-Source: ABdhPJyttFJYhfU6wb3hBcYeqITbXqCzFhSlN6XR76kEyb5fzFcHJGO6ObppcTFrZ0NAP1bH8dFmxNMdi+8pgZzjNUE=
+X-Received: by 2002:aca:2310:: with SMTP id e16mr4841703oie.47.1603889580109;
+ Wed, 28 Oct 2020 05:53:00 -0700 (PDT)
 MIME-Version: 1.0
 References: <20201007083944.27910-1-ardb@kernel.org> <CGME20201028091912eucas1p13fb9cd947faa6bfd79199ea79648b6af@eucas1p1.samsung.com>
  <20201007083944.27910-3-ardb@kernel.org> <920965b8-6f87-3f82-9fce-d3051fc543ca@samsung.com>
- <CAMj1kXG-HcwhX9UJz3L-RYeBYcBZWJAt_arD_i4iMNvFcogXSw@mail.gmail.com>
-In-Reply-To: <CAMj1kXG-HcwhX9UJz3L-RYeBYcBZWJAt_arD_i4iMNvFcogXSw@mail.gmail.com>
+ <CACPK8XfNfqToFBe0GPFTGrnPhNTYhSDiEagpB7ayBSW1DC-THA@mail.gmail.com>
+In-Reply-To: <CACPK8XfNfqToFBe0GPFTGrnPhNTYhSDiEagpB7ayBSW1DC-THA@mail.gmail.com>
 From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Wed, 28 Oct 2020 10:24:44 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGXcNydxXjNnbKcy3qSETuMbqWSwRrTLqZ7-p99P4c2Mg@mail.gmail.com>
-Message-ID: <CAMj1kXGXcNydxXjNnbKcy3qSETuMbqWSwRrTLqZ7-p99P4c2Mg@mail.gmail.com>
+Date:   Wed, 28 Oct 2020 13:52:48 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXH90MzCUJ_DHZ_2=JcWBX=Qf1PT-A9PX9EeBTVx22EkaQ@mail.gmail.com>
+Message-ID: <CAMj1kXH90MzCUJ_DHZ_2=JcWBX=Qf1PT-A9PX9EeBTVx22EkaQ@mail.gmail.com>
 Subject: Re: [PATCH v2 2/2] ARM: move device tree mapping out of linear region
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Nicolas Pitre <nico@fluxnic.net>,
         Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
-        Rob Herring <robh+dt@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 28 Oct 2020 at 10:22, Ard Biesheuvel <ardb@kernel.org> wrote:
+On Wed, 28 Oct 2020 at 13:05, Joel Stanley <joel@jms.id.au> wrote:
 >
-> On Wed, 28 Oct 2020 at 10:19, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> On Wed, 28 Oct 2020 at 09:19, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 > >
 > > Hi,
 > >
@@ -106,248 +108,50 @@ On Wed, 28 Oct 2020 at 10:22, Ard Biesheuvel <ardb@kernel.org> wrote:
 > > booted, used an appended device tree. I can provide more information if
 > > needed, just let me know what to check. "Starting kernel ..." is the
 > > last message I see here. No output from earlycon.
-> >
 >
-> Thanks for the report. I will have a look later today.
+> A bisection lead me to this patch after the next-20201028 failed to
+> boot on the aspeed systems in testing (aspeed_g5_defconfig).
 >
-> Do these platforms happen to have any static device mappings that may
-> collide with this mapping of the FDT? Also, could this be related to
-> device drivers making changes in memory to the FDT image? Because the
-> permanent mapping of the FDT is read-only now.
+> You can reproduce this with today's next and qemu 5.1:
+>
+> qemu-system-arm -M romulus-bmc -nographic \
+>  -kernel arch/arm/boot/zImage \
+>  -dtb arch/arm/boot/dts/aspeed-bmc-opp-romulus.dtb \
+>  -initrd any-old-file
+>
+> It requires the initrd option to reproduce, but the initrd doesn't
+> need to be valid as we don't make it that far.
+>
+> There is no output but attaching gdb shows the kernel is stuck in
+> setup_machine_tags. (If we enable CONFIG_ATAGS it is instead stuck in
+> calibrate_delay).
+>
+> (gdb) bt
+> #0  setup_machine_tags (machine_nr=<optimized out>,
+> __atags_vaddr=<optimized out>) at ../arch/arm/kernel/atags.h:12
+> #1  setup_arch (cmdline_p=0x80c01fc4) at ../arch/arm/kernel/setup.c:1100
+> #2  0x80b00d2c in start_kernel () at ../init/main.c:862
+> #3  0x00000000 in ?? ()
+>
+> Reverting 7a1be318f579 on top of next allowed the system to boot again.
 >
 
-IOW, does using MT_MEMORY_RW instead of MT_ROM for the mapping make a
-difference?
+Does this help?
 
->
->
-> > > ---
-> > >   Documentation/arm/memory.rst  |  7 ++++++-
-> > >   arch/arm/include/asm/fixmap.h |  2 +-
-> > >   arch/arm/include/asm/memory.h |  5 +++++
-> > >   arch/arm/kernel/head.S        |  5 ++---
-> > >   arch/arm/kernel/setup.c       | 11 ++++++++---
-> > >   arch/arm/mm/init.c            |  1 -
-> > >   arch/arm/mm/mmu.c             | 20 ++++++++++++++------
-> > >   arch/arm/mm/pv-fixup-asm.S    |  4 ++--
-> > >   8 files changed, 38 insertions(+), 17 deletions(-)
-> > >
-> > > diff --git a/Documentation/arm/memory.rst b/Documentation/arm/memory.rst
-> > > index 0521b4ce5c96..34bb23c44a71 100644
-> > > --- a/Documentation/arm/memory.rst
-> > > +++ b/Documentation/arm/memory.rst
-> > > @@ -45,9 +45,14 @@ fffe8000   fffeffff        DTCM mapping area for platforms with
-> > >   fffe0000    fffe7fff        ITCM mapping area for platforms with
-> > >                               ITCM mounted inside the CPU.
-> > >
-> > > -ffc00000     ffefffff        Fixmap mapping region.  Addresses provided
-> > > +ffc80000     ffefffff        Fixmap mapping region.  Addresses provided
-> > >                               by fix_to_virt() will be located here.
-> > >
-> > > +ffc00000     ffc7ffff        Guard region
-> > > +
-> > > +ff800000     ffbfffff        Permanent, fixed read-only mapping of the
-> > > +                             firmware provided DT blob
-> > > +
-> > >   fee00000    feffffff        Mapping of PCI I/O space. This is a static
-> > >                               mapping within the vmalloc space.
-> > >
-> > > diff --git a/arch/arm/include/asm/fixmap.h b/arch/arm/include/asm/fixmap.h
-> > > index fc56fc3e1931..9575b404019c 100644
-> > > --- a/arch/arm/include/asm/fixmap.h
-> > > +++ b/arch/arm/include/asm/fixmap.h
-> > > @@ -2,7 +2,7 @@
-> > >   #ifndef _ASM_FIXMAP_H
-> > >   #define _ASM_FIXMAP_H
-> > >
-> > > -#define FIXADDR_START                0xffc00000UL
-> > > +#define FIXADDR_START                0xffc80000UL
-> > >   #define FIXADDR_END         0xfff00000UL
-> > >   #define FIXADDR_TOP         (FIXADDR_END - PAGE_SIZE)
-> > >
-> > > diff --git a/arch/arm/include/asm/memory.h b/arch/arm/include/asm/memory.h
-> > > index 99035b5891ef..ad9dcf4f751d 100644
-> > > --- a/arch/arm/include/asm/memory.h
-> > > +++ b/arch/arm/include/asm/memory.h
-> > > @@ -67,6 +67,10 @@
-> > >    */
-> > >   #define XIP_VIRT_ADDR(physaddr)  (MODULES_VADDR + ((physaddr) & 0x000fffff))
-> > >
-> > > +#define FDT_FIXED_BASE               UL(0xff800000)
-> > > +#define FDT_FIXED_SIZE               (2 * PMD_SIZE)
-> > > +#define FDT_VIRT_ADDR(physaddr)      ((void *)(FDT_FIXED_BASE | (physaddr) % PMD_SIZE))
-> > > +
-> > >   #if !defined(CONFIG_SMP) && !defined(CONFIG_ARM_LPAE)
-> > >   /*
-> > >    * Allow 16MB-aligned ioremap pages
-> > > @@ -107,6 +111,7 @@ extern unsigned long vectors_base;
-> > >   #define MODULES_VADDR               PAGE_OFFSET
-> > >
-> > >   #define XIP_VIRT_ADDR(physaddr)  (physaddr)
-> > > +#define FDT_VIRT_ADDR(physaddr)  (physaddr)
-> > >
-> > >   #endif /* !CONFIG_MMU */
-> > >
-> > > diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
-> > > index f8904227e7fd..9b18d8c66129 100644
-> > > --- a/arch/arm/kernel/head.S
-> > > +++ b/arch/arm/kernel/head.S
-> > > @@ -275,9 +275,8 @@ __create_page_tables:
-> > >        */
-> > >       mov     r0, r2, lsr #SECTION_SHIFT
-> > >       movs    r0, r0, lsl #SECTION_SHIFT
-> > > -     subne   r3, r0, r8
-> > > -     addne   r3, r3, #PAGE_OFFSET
-> > > -     addne   r3, r4, r3, lsr #(SECTION_SHIFT - PMD_ORDER)
-> > > +     ldrne   r3, =FDT_FIXED_BASE >> (SECTION_SHIFT - PMD_ORDER)
-> > > +     addne   r3, r3, r4
-> > >       orrne   r6, r7, r0
-> > >       strne   r6, [r3], #1 << PMD_ORDER
-> > >       addne   r6, r6, #1 << SECTION_SHIFT
-> > > diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-> > > index 58e56e23a19a..c08574cad748 100644
-> > > --- a/arch/arm/kernel/setup.c
-> > > +++ b/arch/arm/kernel/setup.c
-> > > @@ -18,6 +18,7 @@
-> > >   #include <linux/of_platform.h>
-> > >   #include <linux/init.h>
-> > >   #include <linux/kexec.h>
-> > > +#include <linux/libfdt.h>
-> > >   #include <linux/of_fdt.h>
-> > >   #include <linux/cpu.h>
-> > >   #include <linux/interrupt.h>
-> > > @@ -90,7 +91,6 @@ unsigned int cacheid __read_mostly;
-> > >   EXPORT_SYMBOL(cacheid);
-> > >
-> > >   unsigned int __atags_pointer __initdata;
-> > > -void *atags_vaddr __initdata;
-> > >
-> > >   unsigned int system_rev;
-> > >   EXPORT_SYMBOL(system_rev);
-> > > @@ -1078,13 +1078,18 @@ void __init hyp_mode_check(void)
-> > >   void __init setup_arch(char **cmdline_p)
-> > >   {
-> > >       const struct machine_desc *mdesc = NULL;
-> > > +     void *atags_vaddr;
-> > >
-> > >       if (__atags_pointer)
-> > > -             atags_vaddr = phys_to_virt(__atags_pointer);
-> > > +             atags_vaddr = FDT_VIRT_ADDR(__atags_pointer);
-> > >
-> > >       setup_processor();
-> > > -     if (atags_vaddr)
-> > > +     if (atags_vaddr) {
-> > >               mdesc = setup_machine_fdt(atags_vaddr);
-> > > +             if (mdesc)
-> > > +                     memblock_reserve(__atags_pointer,
-> > > +                                      fdt_totalsize(atags_vaddr));
-> > > +     }
-> > >       if (!mdesc)
-> > >               mdesc = setup_machine_tags(atags_vaddr, __machine_arch_type);
-> > >       if (!mdesc) {
-> > > diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-> > > index 000c1b48e973..652a87bd065c 100644
-> > > --- a/arch/arm/mm/init.c
-> > > +++ b/arch/arm/mm/init.c
-> > > @@ -223,7 +223,6 @@ void __init arm_memblock_init(const struct machine_desc *mdesc)
-> > >       if (mdesc->reserve)
-> > >               mdesc->reserve();
-> > >
-> > > -     early_init_fdt_reserve_self();
-> > >       early_init_fdt_scan_reserved_mem();
-> > >
-> > >       /* reserve memory for DMA contiguous allocations */
-> > > diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-> > > index 0665a0dbd040..a7231d151c63 100644
-> > > --- a/arch/arm/mm/mmu.c
-> > > +++ b/arch/arm/mm/mmu.c
-> > > @@ -40,6 +40,8 @@
-> > >   #include "mm.h"
-> > >   #include "tcm.h"
-> > >
-> > > +extern unsigned long __atags_pointer;
-> > > +
-> > >   /*
-> > >    * empty_zero_page is a special page that is used for
-> > >    * zero-initialized data and COW.
-> > > @@ -947,7 +949,7 @@ static void __init create_mapping(struct map_desc *md)
-> > >               return;
-> > >       }
-> > >
-> > > -     if ((md->type == MT_DEVICE || md->type == MT_ROM) &&
-> > > +     if (md->type == MT_DEVICE &&
-> > >           md->virtual >= PAGE_OFFSET && md->virtual < FIXADDR_START &&
-> > >           (md->virtual < VMALLOC_START || md->virtual >= VMALLOC_END)) {
-> > >               pr_warn("BUG: mapping for 0x%08llx at 0x%08lx out of vmalloc space\n",
-> > > @@ -1343,6 +1345,15 @@ static void __init devicemaps_init(const struct machine_desc *mdesc)
-> > >       for (addr = VMALLOC_START; addr < (FIXADDR_TOP & PMD_MASK); addr += PMD_SIZE)
-> > >               pmd_clear(pmd_off_k(addr));
-> > >
-> > > +     if (__atags_pointer) {
-> > > +             /* create a read-only mapping of the device tree */
-> > > +             map.pfn = __phys_to_pfn(__atags_pointer & SECTION_MASK);
-> > > +             map.virtual = FDT_FIXED_BASE;
-> > > +             map.length = FDT_FIXED_SIZE;
-> > > +             map.type = MT_ROM;
-> > > +             create_mapping(&map);
-> > > +     }
-> > > +
-> > >       /*
-> > >        * Map the kernel if it is XIP.
-> > >        * It is always first in the modulearea.
-> > > @@ -1503,8 +1514,7 @@ static void __init map_lowmem(void)
-> > >   }
-> > >
-> > >   #ifdef CONFIG_ARM_PV_FIXUP
-> > > -extern void *atags_vaddr;
-> > > -typedef void pgtables_remap(long long offset, unsigned long pgd, void *bdata);
-> > > +typedef void pgtables_remap(long long offset, unsigned long pgd);
-> > >   pgtables_remap lpae_pgtables_remap_asm;
-> > >
-> > >   /*
-> > > @@ -1517,7 +1527,6 @@ static void __init early_paging_init(const struct machine_desc *mdesc)
-> > >       unsigned long pa_pgd;
-> > >       unsigned int cr, ttbcr;
-> > >       long long offset;
-> > > -     void *boot_data;
-> > >
-> > >       if (!mdesc->pv_fixup)
-> > >               return;
-> > > @@ -1534,7 +1543,6 @@ static void __init early_paging_init(const struct machine_desc *mdesc)
-> > >        */
-> > >       lpae_pgtables_remap = (pgtables_remap *)(unsigned long)__pa(lpae_pgtables_remap_asm);
-> > >       pa_pgd = __pa(swapper_pg_dir);
-> > > -     boot_data = atags_vaddr;
-> > >       barrier();
-> > >
-> > >       pr_info("Switching physical address space to 0x%08llx\n",
-> > > @@ -1570,7 +1578,7 @@ static void __init early_paging_init(const struct machine_desc *mdesc)
-> > >        * needs to be assembly.  It's fairly simple, as we're using the
-> > >        * temporary tables setup by the initial assembly code.
-> > >        */
-> > > -     lpae_pgtables_remap(offset, pa_pgd, boot_data);
-> > > +     lpae_pgtables_remap(offset, pa_pgd);
-> > >
-> > >       /* Re-enable the caches and cacheable TLB walks */
-> > >       asm volatile("mcr p15, 0, %0, c2, c0, 2" : : "r" (ttbcr));
-> > > diff --git a/arch/arm/mm/pv-fixup-asm.S b/arch/arm/mm/pv-fixup-asm.S
-> > > index 8eade0416739..5c5e1952000a 100644
-> > > --- a/arch/arm/mm/pv-fixup-asm.S
-> > > +++ b/arch/arm/mm/pv-fixup-asm.S
-> > > @@ -39,8 +39,8 @@ ENTRY(lpae_pgtables_remap_asm)
-> > >
-> > >       /* Update level 2 entries for the boot data */
-> > >       add     r7, r2, #0x1000
-> > > -     add     r7, r7, r3, lsr #SECTION_SHIFT - L2_ORDER
-> > > -     bic     r7, r7, #(1 << L2_ORDER) - 1
-> > > +     movw    r3, #FDT_FIXED_BASE >> (SECTION_SHIFT - L2_ORDER)
-> > > +     add     r7, r7, r3
-> > >       ldrd    r4, r5, [r7]
-> > >       adds    r4, r4, r0
-> > >       adc     r5, r5, r1
-> >
-> > Best regards
-> > --
-> > Marek Szyprowski, PhD
-> > Samsung R&D Institute Poland
-> >
+diff --git a/arch/arm/include/asm/memory.h b/arch/arm/include/asm/memory.h
+index bb79e52aeb90..4f355bda872a 100644
+--- a/arch/arm/include/asm/memory.h
++++ b/arch/arm/include/asm/memory.h
+@@ -68,8 +68,8 @@
+ #define XIP_VIRT_ADDR(physaddr)  (MODULES_VADDR + ((physaddr) & 0x000fffff))
+
+ #define FDT_FIXED_BASE         UL(0xff800000)
+-#define FDT_FIXED_SIZE         (2 * PMD_SIZE)
+-#define FDT_VIRT_ADDR(physaddr)        ((void *)(FDT_FIXED_BASE |
+(physaddr) % PMD_SIZE))
++#define FDT_FIXED_SIZE         (2 * SECTION_SIZE)
++#define FDT_VIRT_ADDR(physaddr)        ((void *)(FDT_FIXED_BASE |
+(physaddr) % SECTION_SIZE))
+
+ #if !defined(CONFIG_SMP) && !defined(CONFIG_ARM_LPAE)
+ /*
