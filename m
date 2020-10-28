@@ -4,97 +4,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07AA4C55179
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7BEC4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:32:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD3CF2080C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:32:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5561206BE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:32:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603931542;
-	bh=ntin2xDTkfek+9hEN28Uh4xls2Y0Qz++YiBXUELoDEs=;
-	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=giAuhItF00R2wNlh14w8TbqQGKnY3NkhsvGoDXnbHOIXR+pQPJU04rtl0SOE9ZTpT
-	 Z5QIOzXUJt1T69I/2uN7fBqBxVtpE1SuliUJ2PiKAnJ0dgqDfK5shJ5z0DjZVFX2FX
-	 IvEZ+wxA1FsGCLb/e7rrx6ZB+pCL1WXCjTplK1MU=
+	s=default; t=1603931550;
+	bh=2kWIOEH/KcIuHZlj3LQjGfE/KRmEsQxNgUBxZTqQXR0=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=f48lRCqawt1BmbrlSB3P53Ymd9zSXSkx2K3AM5ESfxipCNi+mHZOshbDBjdxa1N3R
+	 evKK0VnVYZ8EY4+qE+mZkkPG9hiw1JY7yYmPHDZeADPhA7+GQlZGSLT4vXkpWapuZx
+	 Qjn/Ve/nIuxMtGRK/iJmYLNE9TEEp9XyHzo7L5TQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728312AbgJ2AcS (ORCPT
+        id S2387538AbgJ1W3N (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 20:32:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43648 "EHLO mail.kernel.org"
+        Wed, 28 Oct 2020 18:29:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387665AbgJ1Wa3 (ORCPT
+        id S2387529AbgJ1W3M (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:30:29 -0400
+        Wed, 28 Oct 2020 18:29:12 -0400
 Received: from kozik-lap.proceq-device.com (unknown [194.230.155.184])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9BF320725;
-        Wed, 28 Oct 2020 22:30:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6461D2070E;
+        Wed, 28 Oct 2020 22:29:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603924228;
-        bh=ntin2xDTkfek+9hEN28Uh4xls2Y0Qz++YiBXUELoDEs=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=0V1FBsHK+nvjLRp126AH3+i2dyJb/rAa8ElL1i8ATwDXGztdqKPjBs3lYRwp9JVfw
-         piMxGGjfS11IlO3hM6zir4kgIQ3Wv5pLJCJFuRpSrXHXBUqFgXpmEPh1evvVnKPopm
-         nLImMBG8xwgdlnA2Ky31SUWgBqHQS0kH506ueuMA=
+        s=default; t=1603924152;
+        bh=2kWIOEH/KcIuHZlj3LQjGfE/KRmEsQxNgUBxZTqQXR0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=xAfMd+hX3L/aRRKqFpkAUWCsG/m9w8cTpR9m9a1o/TF2RBimn294+yDG9kUJb7G/S
+         VPQ/gvTiOU+OG8nT8jlREUW7t+qQpCCk7yDgQUsjxUgu1si7v3PF5V3VwHjo0mcthz
+         UoJvCtnhsG85n1LI9y6VaK6ZQ1/Z/CuSMGDWkxBg=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Andy Shevchenko <andy@kernel.org>, Milo Kim <milo.kim@ti.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tony Lindgren <tony@atomide.com>,
-        patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: [RESEND PATCH 03/42] mfd: as3722: use PLATFORM_DEVID_NONE
-Date:   Wed, 28 Oct 2020 23:29:30 +0100
-Message-Id: <20201028223009.369824-3-krzk@kernel.org>
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [RESEND PATCH] mfd: sec: initialize driver via module_platform_driver
+Date:   Wed, 28 Oct 2020 23:28:49 +0100
+Message-Id: <20201028222849.365998-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201028223009.369824-1-krzk@kernel.org>
-References: <20201028223009.369824-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use PLATFORM_DEVID_NONE define instead of "-1" value because:
- - it brings some meaning,
- - it might point attention why auto device ID was not used.
+The driver was using subsys_initcall() because in old times deferred
+probe was not supported everywhere and specific ordering was needed.
+Since probe deferral works fine and specific ordering is discouraged
+(hides dependencies between drivers and couples their boot order), the
+driver can be converted to regular module_platform_driver.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/mfd/as3722.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/sec-core.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/drivers/mfd/as3722.c b/drivers/mfd/as3722.c
-index 59dfeff71592..b2151f56f3d2 100644
---- a/drivers/mfd/as3722.c
-+++ b/drivers/mfd/as3722.c
-@@ -397,7 +397,7 @@ static int as3722_i2c_probe(struct i2c_client *i2c,
- 		return ret;
- 	}
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index 7bfab43b455e..804f32d0ae22 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -549,19 +549,7 @@ static struct i2c_driver sec_pmic_driver = {
+ 	.shutdown = sec_pmic_shutdown,
+ 	.id_table = sec_pmic_id,
+ };
+-
+-static int __init sec_pmic_init(void)
+-{
+-	return i2c_add_driver(&sec_pmic_driver);
+-}
+-
+-subsys_initcall(sec_pmic_init);
+-
+-static void __exit sec_pmic_exit(void)
+-{
+-	i2c_del_driver(&sec_pmic_driver);
+-}
+-module_exit(sec_pmic_exit);
++module_i2c_driver(sec_pmic_driver);
  
--	ret = devm_mfd_add_devices(&i2c->dev, -1, as3722_devs,
-+	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_NONE, as3722_devs,
- 				   ARRAY_SIZE(as3722_devs), NULL, 0,
- 				   regmap_irq_get_domain(as3722->irq_data));
- 	if (ret) {
+ MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
+ MODULE_DESCRIPTION("Core support for the S5M MFD");
 -- 
 2.25.1
 
