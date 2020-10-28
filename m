@@ -6,88 +6,89 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF52BC4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03832C388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FD8224759
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:00:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A704E20EDD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:02:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603922404;
-	bh=Uj7g3DMRK8LznkKzrwV0SCD7lT/uakY+h+XpQNoe8AQ=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=mEOnK2g72mgX9Fa7/3BStORRb/re6jm+ZhoRD/iJCVmy7fLJGdjG5PX88oihINF08
-	 0qZVDqmOndaGD2k/NL/wv7tSGtVfKToI0u5vdb2aVD0Za0vg/SMI//oG/OzXzBlLrp
-	 AqfudliTIvCVYn7TvWIzxZd0MfnapIrq8mD9rYQQ=
+	s=default; t=1603922563;
+	bh=pADFI+I4rTuP2uKARPn/R/jbLmiist+W1YMVm+62fvM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=EDOrrG+2HnzELNpVv5pxhWz+EiVSWEoKtjKsurFq3sH2ejtBYeBC8CuY40REskCJf
+	 rcQau8Znw6NZ+pa8ewqBZ/fQe2ztZ0xIrPeHk3o4uFgNkW2xgEenSYnufj2ukNZpf7
+	 0bE2FL3P+r5MJDvE0RCL3T/ylNeBhbHaiNWBlvUY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729371AbgJ1V75 (ORCPT
+        id S1729560AbgJ1WCm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:59:57 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:40271 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729309AbgJ1V73 (ORCPT
+        Wed, 28 Oct 2020 18:02:42 -0400
+Received: from mail-ej1-f68.google.com ([209.85.218.68]:46545 "EHLO
+        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729557AbgJ1WCl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:59:29 -0400
-Received: by mail-ej1-f67.google.com with SMTP id z5so1045181ejw.7;
-        Wed, 28 Oct 2020 14:59:28 -0700 (PDT)
+        Wed, 28 Oct 2020 18:02:41 -0400
+Received: by mail-ej1-f68.google.com with SMTP id t25so999278ejd.13;
+        Wed, 28 Oct 2020 15:02:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=IhJDr1KOFYKtq0dERU6JvhmpI21rDzVWNPeoxCOyP1g=;
-        b=tbGhUeim0JqJGZdMQyQxaDT9aWFfFODTsQFSdLkD8gzHmJdjC2LhrlzrKlOXZjAE7X
-         BGmNbLT2TsNwxadubr2OBZohm4EcTIddTGHgA/oxN4dx9TrGKeCXT/nbTOr2FDmyKvBh
-         rgpY3j+DZ5roYXfvpKr3J6j4KOXyjxPVde+xYnnLZAoanE7Dxg182BDFJc/4mnmmS8CS
-         GxfFOAHwwvAX6OkpJUsD3Y/A+2zJM4t4PqOU+/USkqDeyvJheuJ/EyZHCCDEBCARzBW0
-         FjLJBB/Z99FXcYApJ+zo8xnaqvB4pO6isN7teVJibHq6GpVDk06hBfebrgCY/77NjwYB
-         H20g==
-X-Gm-Message-State: AOAM533hGxwvguYn6sSe8kI/+GW0XF+Cy3nmvVM2bfVMtdlj+sgWOKVa
-        vexsGbWNiZeVb2A0R8YYUzo=
-X-Google-Smtp-Source: ABdhPJyaAY5hirP9AM9iwHk+7oGAO7czy2aUScLhsDaWHV8yGg0GD331nuyrXAgJnTfpCQ1We0SMKQ==
-X-Received: by 2002:a17:906:2ad3:: with SMTP id m19mr1116263eje.81.1603922367860;
-        Wed, 28 Oct 2020 14:59:27 -0700 (PDT)
+        bh=4gLV5jqZWEzx0kSjn0ZlymUAXJbYU1uMHL1QmYMs6LA=;
+        b=tOyvKkx5fXDVh0D91p75HxFMkGyqloOP+olWNATOeuM34+S65B6Tws9gmDMcZrIPUm
+         TupdtucY+YUg/kLIcAymQ/zvgQFCCCMN5z1qSxGxOWwAtuj4MhUDTTbYVKIJl+QMmfJj
+         ZUyfMHll0Wq86hWOzNNSMBJl7DbGZ/HutEn6h1EUgpQhq5AfaGoAQg2HDmi2QDu+K3ue
+         bF3Zo+diIrGmUbblTDD0VrMjHPVqWcP0JPITksBF02IvNGhXYN56M/cF5FLxWwdEEdqN
+         Jx/HonIGisKDmA5w4e4X0pH/WZbMUkqSNbvMJKpAeISEQCQAx67l+MgK9RRA17EOdZAK
+         4H/w==
+X-Gm-Message-State: AOAM532iKjfjtf4OP972YYSs7xD/g6l0Otn4kSsVj+XUf2Ryis3yZLWK
+        G1Cy0ARM7XswQaMVLbJNDxs=
+X-Google-Smtp-Source: ABdhPJzTVbBja1pgLqS76H5a7HJ4PpaZGt8w1wdce7Ox6yZdCWF/ZVkaaOZZrdWROtKTG3r7QsBafg==
+X-Received: by 2002:a17:906:c2d2:: with SMTP id ch18mr1159055ejb.446.1603922558697;
+        Wed, 28 Oct 2020 15:02:38 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.184])
-        by smtp.googlemail.com with ESMTPSA id c3sm464228edl.60.2020.10.28.14.59.25
+        by smtp.googlemail.com with ESMTPSA id oz18sm411058ejb.55.2020.10.28.15.02.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 14:59:26 -0700 (PDT)
-Date:   Wed, 28 Oct 2020 22:59:24 +0100
+        Wed, 28 Oct 2020 15:02:37 -0700 (PDT)
+Date:   Wed, 28 Oct 2020 23:02:35 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 4/4] CREDITS: remove trailing white spaces
-Message-ID: <20201028215924.GD269525@kozik-lap>
-References: <20201016151528.7553-1-krzk@kernel.org>
- <20201016151528.7553-4-krzk@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/2] soc: samsung: exynos-pmu: instantiate clkout driver
+ as MFD
+Message-ID: <20201028220235.GA271157@kozik-lap>
+References: <20201001165646.32279-1-krzk@kernel.org>
+ <20201001165646.32279-2-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201016151528.7553-4-krzk@kernel.org>
+In-Reply-To: <20201001165646.32279-2-krzk@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 16, 2020 at 05:15:28PM +0200, Krzysztof Kozlowski wrote:
-> Remove trailing white spaces.  No functional/substantive change.
+On Thu, Oct 01, 2020 at 06:56:45PM +0200, Krzysztof Kozlowski wrote:
+> The Exynos clock output (clkout) driver uses same register address space
+> (Power Management Unit address space) as Exynos PMU driver and same set
+> of compatibles.  It was modeled as clock provider instantiated with
+> CLK_OF_DECLARE_DRIVE().
+> 
+> This however brings ordering problems and lack of probe deferral,
+> therefore clkout driver should be converted to a regular module and
+> instantiated as a child of PMU driver to be able to use existing
+> compatibles and address space.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  CREDITS | 52 ++++++++++++++++++++++++++--------------------------
->  1 file changed, 26 insertions(+), 26 deletions(-)
+>  drivers/soc/samsung/exynos-pmu.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 
-Applied.
+Applied with all tags.
 
 Best regards,
 Krzysztof
