@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 096DEC55179
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCC4C5DF9E
 	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A70AC20728
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:33:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EE6620738
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:33:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603924383;
-	bh=zdRGMRVPKz9yuSK0z14f5hzpN6zstW986VAYTBfkvEs=;
+	s=default; t=1603924384;
+	bh=hVk9ja+3hAguuqm5mEhVctqclI+AabazSjJrPiDpUHs=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Pcb7DvKLw/lTT2a+ArHTLCFC9Llb01ENr6Fmamje/KxSLxxERZZrGQin4or62nfRq
-	 WIEAEIF3JqmwWKwLfKKqz+CVETM5B0j2vZC1VZM+4J3Cq5frRrewML9yosjIdwCd8w
-	 aZS6qn5WBCI7puCbffkvm2RNlu9i/2Sx9P4/MlyM=
+	b=rFHj/EJd6Fe1P66roazNuAVduFg0kFdzJJ+ht7zi10Wq695pAJunkpPVfyBE31AAT
+	 XELchAxQpYUV9Xi2/Az17GIugdgIS8ImBE1THSPqaLGJmtVX41iGToac+9GR9RXaMy
+	 wlV0RG6XPs7g17MDfIcuAnwhkzmKZbqyBZ8G9544=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388118AbgJ1Wci (ORCPT
+        id S2388059AbgJ1WcP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:32:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46660 "EHLO mail.kernel.org"
+        Wed, 28 Oct 2020 18:32:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388104AbgJ1Wch (ORCPT
+        id S2388053AbgJ1WcO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:32:37 -0400
+        Wed, 28 Oct 2020 18:32:14 -0400
 Received: from kozik-lap.proceq-device.com (unknown [194.230.155.184])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35BF720720;
-        Wed, 28 Oct 2020 22:32:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B6C120725;
+        Wed, 28 Oct 2020 22:32:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603924357;
-        bh=zdRGMRVPKz9yuSK0z14f5hzpN6zstW986VAYTBfkvEs=;
+        s=default; t=1603924334;
+        bh=hVk9ja+3hAguuqm5mEhVctqclI+AabazSjJrPiDpUHs=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=RfZYkWDkx++Ul+9GNRrNme4cHkWmu88+PBhjR2mrCidIpiD0LwtSa/2N18C9UfXX6
-         NCz/LW2EmpBMI0T0ekS/YcnEQYrYzOnG4PbGoWETyKATaz1gqriHH2o4Kt/OLSl4Uc
-         sXDDgGBacz+5GObB5a3o9nl+zzXNdYqXUJkErexc=
+        b=ITnvIR6aAyUxDwczOwSWg6/bTZ/Vbb90rVmIeqFB4rsGReTyoZdWyq6l9KYZKChPJ
+         YJyY4lKrfIKA4lMvwLoOWPIPGEjCval8zFbv0jk2xq7UpqEI8nd1K35J2MjQUVrx9y
+         M+cAutUVsmMsf7tW9i8VvQ9U6kP2E6HUf//HYFE8=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Lee Jones <lee.jones@linaro.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -61,9 +61,9 @@ To:     Lee Jones <lee.jones@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rpi-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: [RESEND PATCH 27/42] mfd: sec: use PLATFORM_DEVID_NONE
-Date:   Wed, 28 Oct 2020 23:29:54 +0100
-Message-Id: <20201028223009.369824-27-krzk@kernel.org>
+Subject: [RESEND PATCH 23/42] mfd: rc5t583: use PLATFORM_DEVID_NONE
+Date:   Wed, 28 Oct 2020 23:29:50 +0100
+Message-Id: <20201028223009.369824-23-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201028223009.369824-1-krzk@kernel.org>
 References: <20201028223009.369824-1-krzk@kernel.org>
@@ -79,24 +79,25 @@ Use PLATFORM_DEVID_NONE define instead of "-1" value because:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/mfd/sec-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mfd/rc5t583.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 95473ff9bb4b..7bfab43b455e 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -457,8 +457,8 @@ static int sec_pmic_probe(struct i2c_client *i2c,
- 			sec_pmic->device_type);
- 		return -ENODEV;
+diff --git a/drivers/mfd/rc5t583.c b/drivers/mfd/rc5t583.c
+index d0dc48f99096..a4915f411ee8 100644
+--- a/drivers/mfd/rc5t583.c
++++ b/drivers/mfd/rc5t583.c
+@@ -270,8 +270,9 @@ static int rc5t583_i2c_probe(struct i2c_client *i2c,
+ 			dev_warn(&i2c->dev, "IRQ init failed: %d\n", ret);
  	}
--	ret = devm_mfd_add_devices(sec_pmic->dev, -1, sec_devs, num_sec_devs,
--				   NULL, 0, NULL);
-+	ret = devm_mfd_add_devices(sec_pmic->dev, PLATFORM_DEVID_NONE,
-+				   sec_devs, num_sec_devs, NULL, 0, NULL);
- 	if (ret)
- 		return ret;
  
+-	ret = devm_mfd_add_devices(rc5t583->dev, -1, rc5t583_subdevs,
+-				   ARRAY_SIZE(rc5t583_subdevs), NULL, 0, NULL);
++	ret = devm_mfd_add_devices(rc5t583->dev, PLATFORM_DEVID_NONE,
++				   rc5t583_subdevs, ARRAY_SIZE(rc5t583_subdevs),
++				   NULL, 0, NULL);
+ 	if (ret) {
+ 		dev_err(&i2c->dev, "add mfd devices failed: %d\n", ret);
+ 		return ret;
 -- 
 2.25.1
 
