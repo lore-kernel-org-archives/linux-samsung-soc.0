@@ -2,74 +2,84 @@ Return-Path: <SRS0=5Pkx=ED=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90810C55179
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E49C55179
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 499AE246CD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:50:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4940C2245A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:50:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603921847;
+	bh=lRbFFqtr8SH4jEEaVtEeat87C4JtiT3c6FEQ82Tgvd8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GifRPcSTo6EVJmkuuSiK7BtK2rUqoveEIDqeM6ZdyDr05wRMOdjhDQI48Ho2vwgKE
+	 n01pDinwTxq/50R5r62el8nbYBhQ8E5yTWVEAtTXEb9yrZAqTAyUF9wuF/3zmQnyEJ
+	 Dsn/sMzBL7WZpjcvdVc1hLs5R8wTYp6um9Aik7dg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbgJ1Vub (ORCPT
+        id S1728068AbgJ1Vuq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:50:31 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:36222 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728003AbgJ1Vu3 (ORCPT
+        Wed, 28 Oct 2020 17:50:46 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35539 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728059AbgJ1Vup (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:50:29 -0400
-Received: from relay5-d.mail.gandi.net (unknown [217.70.183.197])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id BE50E3A7812;
-        Wed, 28 Oct 2020 18:57:03 +0000 (UTC)
-X-Originating-IP: 86.194.74.19
-Received: from localhost (lfbn-lyo-1-997-19.w86-194.abo.wanadoo.fr [86.194.74.19])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 5D5E81C0003;
-        Wed, 28 Oct 2020 18:56:37 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Pavel Machek <pavel@ucw.cz>, Alexander Dahl <post@lespocky.de>,
-        Rob Herring <robh+dt@kernel.org>, Dan Murphy <dmurphy@ti.com>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-leds@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        Alexander Dahl <ada@thorsis.com>
-Subject: Re: [PATCH v7 00/12] leds: pwm: Make automatic labels work
-Date:   Wed, 28 Oct 2020 19:56:14 +0100
-Message-Id: <160391135997.385141.5554228268638639718.b4-ty@bootlin.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20201005203451.9985-1-post@lespocky.de>
-References: <20201005203451.9985-1-post@lespocky.de>
+        Wed, 28 Oct 2020 17:50:45 -0400
+Received: by mail-lj1-f194.google.com with SMTP id x16so898713ljh.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 14:50:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=mEgti6gYJQiPiwWJ7KIXNJeGtUpIZ3SQDpuO+SIa5KI=;
+        b=QdoE3JO5v/Wk9Qkc28EOwlkT7UhLZl3SDiagwffrWMq1FiasWzdfe/NBQYm//710Vy
+         aUnBjp+HT6tpSIvbgWhw9vfa0y5p02o2AVzUWKJCZvJ6eqmnWnW1e7uwlNbqk7s9Va//
+         fmAb5zOMW+uXDByRqAyHec8PEQFs2mZJqpiYybHtGbqP/BW06i6tlj2P/Qim4M4D4n0K
+         HFA2d4fuu3qfJ/0Rgj1tIqUXDPhq3qV3x9wyNnz140y4CtYl0E2ZyhlzTyjnPsOqP+9t
+         e0hxTaDUhAaumLfMOug5SEsZQ9G9k3TmG0ZKD/R9lolQG9YFIjmlkmVAxdldGrPq74z2
+         vkZQ==
+X-Gm-Message-State: AOAM533fghEb/cOfsx6ZISVKAAaNCdXiuRGwNRA8z/LLgNXK0xZ1N709
+        mt0yuYJob78GIIns7Y6Dwns47p/p85UcGg==
+X-Google-Smtp-Source: ABdhPJwbmTpwK7f1E17+uQ0pBrs58ZVyUZ/wZK84Cf/52f9fwJ96BtyTk12yDORXHjwqs+ibDqW9cA==
+X-Received: by 2002:aa7:dc42:: with SMTP id g2mr365460edu.11.1603911927591;
+        Wed, 28 Oct 2020 12:05:27 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.184])
+        by smtp.googlemail.com with ESMTPSA id x22sm222472ejc.102.2020.10.28.12.05.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2020 12:05:24 -0700 (PDT)
+Date:   Wed, 28 Oct 2020 20:05:22 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 3/3] ARM: dts: exynos: Enable BlueTooth support for Midas
+ board family
+Message-ID: <20201028190522.GC159042@kozik-lap>
+References: <20201027142330.5121-1-m.szyprowski@samsung.com>
+ <CGME20201027142342eucas1p18136ba60377ee2985b6bc123908a3c98@eucas1p1.samsung.com>
+ <20201027142330.5121-3-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201027142330.5121-3-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 5 Oct 2020 22:34:39 +0200, Alexander Dahl wrote:
-> Hei hei,
+On Tue, Oct 27, 2020 at 03:23:30PM +0100, Marek Szyprowski wrote:
+> Add a node for the BCM4334 Bluetooth chip on the serial bus #0 on
+> the Exynos4412-based Midas board family.
 > 
-> for leds-gpio you can use the properties 'function' and 'color' in the
-> devicetree node and omit 'label', the label is constructed
-> automatically.  This is a common feature supposed to be working for all
-> LED drivers.  However it did not work until recently for the 'leds-pwm'
-> driver.
-> 
-> [...]
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4412-midas.dtsi | 28 +++++++++++++++++++++++++
 
-Applied, thanks!
-
-[1/2] ARM: dts: at91: smartkiz: Reference led node directly
-      commit: 02e46262af5db410da5a27783833d68e2bdfb352
-[2/2] ARM: dts: at91: Fix schema warnings for pwm-leds
-      commit: 997ebd64df39f3916c37ca67a6eff58e79a13c73
+Thanks, applied.
 
 Best regards,
--- 
-Alexandre Belloni <alexandre.belloni@bootlin.com>
+Krzysztof
+
