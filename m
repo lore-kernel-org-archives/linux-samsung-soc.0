@@ -2,83 +2,317 @@ Return-Path: <SRS0=zATP=EE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D6EC388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01323C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0F602076B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:00:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603936812;
-	bh=7mjZBKosQUeZPop8Boc7NWeh3mn01RNTF9OeLUzh6lY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CheGEAb8QEKhL25Ia6CxuwF4hEpMSRTrva05pMZHVdPt/8KySSOA7tVkujoqMibMJ
-	 VG+lcOSjT65M7CuotjpOcq19RuGeqCBAw4bRzK/Lqud1fPRT6WNIgg6UWnwcx8OT+Y
-	 o8G2wNXVqkjjNy4LxJQOlGuXbKO6+lzIMQvPqwBU=
+	by mail.kernel.org (Postfix) with ESMTP id A762E20791
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:00:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbgJ2CAL (ORCPT
+        id S1728984AbgJ2CAp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 22:00:11 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:46510 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728247AbgJ1V4e (ORCPT
+        Wed, 28 Oct 2020 22:00:45 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:48369 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728006AbgJ1Vvf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:56:34 -0400
-Received: by mail-ej1-f67.google.com with SMTP id t25so980137ejd.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 14:56:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zEOPVnIriWnz7tz2sSdEz13BX2WjRTr9TsE2CM6SY4E=;
-        b=QgKen0TQ7mLnQ+GTmM4pmEeP2rMCitmwU4BR0ALeV7YhCW1IBCiGtR+p0G1FH/4lV7
-         /UahTo7tvLwJuwMH6ntvpNoTi9Rl1TkE8UmrkHRh9Rnx8wA8VuVEJmK1GR3vllpm2GeE
-         yLb7AVB4GUgEdQbwMQxjQ4VlZHfyiEL4X40fRrNPPX5fI3AIJ7lltD9X47zqinn7yzw+
-         xXCCOVgXX94QvFgyMoYQdHWPXA+llFlWbrAWTok2DSLEI37zMR3M9cRKnVQAIuoZIVVq
-         MFklvnsgvM3VoNTOjmDVb//dEn/CQaCUeqqgjCWvZ79szEYx3sf4LdAtpRT2OrdY9xkN
-         geRw==
-X-Gm-Message-State: AOAM5301/g0wo09PkPfxQlcYXU/uOlmeyXWP0Wm7ITmKZyxEXymvEzil
-        T46VMfp6wCNOtdeJQpRrt3/n25+3vTDfWQ==
-X-Google-Smtp-Source: ABdhPJypS4oXy3dtNcq5B8PBsziTWrOdzKHvfNldkli91T1BTz+Ki2y9XWOX1jtH/RIIC3VexfwQbw==
-X-Received: by 2002:a17:906:284b:: with SMTP id s11mr533571ejc.326.1603911397156;
-        Wed, 28 Oct 2020 11:56:37 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.184])
-        by smtp.googlemail.com with ESMTPSA id u13sm236587ejj.4.2020.10.28.11.56.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 11:56:36 -0700 (PDT)
-Date:   Wed, 28 Oct 2020 19:56:34 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: dts: exynos: Enable BlueTooth support for Trats
- board
-Message-ID: <20201028185634.GA159042@kozik-lap>
-References: <CGME20201027142341eucas1p16e42afed4cae1292ed72fcd631424562@eucas1p1.samsung.com>
- <20201027142330.5121-1-m.szyprowski@samsung.com>
+        Wed, 28 Oct 2020 17:51:35 -0400
+Received: from methusalix.internal.home.lespocky.de ([92.117.45.118]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MT7ip-1kxPjS40Ip-00UcI8; Wed, 28 Oct 2020 21:40:02 +0100
+Received: from falbala.internal.home.lespocky.de ([192.168.243.94])
+        by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94)
+        (envelope-from <post@lespocky.de>)
+        id 1kXsEd-0002jR-O2; Wed, 28 Oct 2020 21:39:57 +0100
+Date:   Wed, 28 Oct 2020 21:39:54 +0100
+From:   Alexander Dahl <post@lespocky.de>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     Alexander Dahl <ada@thorsis.com>,
+        Alexander Dahl <post@lespocky.de>, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v7 02/12] dt-bindings: leds: Convert pwm to yaml
+Message-ID: <20201028203953.eafmzeqba76qjlf2@falbala.internal.home.lespocky.de>
+Mail-Followup-To: Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Alexander Dahl <ada@thorsis.com>, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>
+References: <20201005203451.9985-1-post@lespocky.de>
+ <20201005203451.9985-3-post@lespocky.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nwkumzirho5iba4d"
 Content-Disposition: inline
-In-Reply-To: <20201027142330.5121-1-m.szyprowski@samsung.com>
+In-Reply-To: <20201005203451.9985-3-post@lespocky.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Scan-Signature: e8e5211badca7b3e4c3721992337a85e
+X-Provags-ID: V03:K1:dFwaWUg7Hs1+6BjOpddvhs45I+5MLeawNEbLKR27jHnbgCj5ifc
+ gYT8HigTxAZrbMDX6/JPdfbDaFolzE8kEuGksu+jJMbNPJOki4vC4J8UisS9GY0wG28NRRz
+ NcInnsvPQVTBr/DWp2r63TtWmZWlMAONcdpEQLgqv5Ki0n2Oa80UXdCA4ZDNLFt5URfJug4
+ cxtSV54v9p6WgHStsK5mQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gzz3n95gjfs=:hHvez/4McHVrzL3OX0D32f
+ /mYm8rTxXToff+h1rKtHcZmgoklySxxk+XBCOUTtiY6mf9KZs6CPkdPtjCzBTHXEACewZfU8t
+ ZX92A/cg34hfSH/qLP6uHmyl3sm8rZgjhfmODNhtVRqSL1yBUt7VoFp4O+xMEAK5mz+yCu2Rm
+ iGklg0sn8jVVieyJf4ohBj0jpC00XckF2oSRO4FK0fFLDDT6iG356sR5IHySLVV8isMSMswNs
+ 7/QhXZyqSx8aKiVqtFSET6XbhPL/qNwVQ4M6SnKNnCOYcjQwin2ARag9znS70Gxf1KUX8wCoT
+ 3D22ySm/UzuqNW93z4dQGoKUTbs56eQ0t6QwGbzfLbL34QjGeMWvlLDxO4CsLndZij4zIiENB
+ BfPV7R5t+K4iT+G1wnWExjfTh3WI8pemTfpcwHbrxpE71hZybyIbsYFhIysPL
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 27, 2020 at 03:23:28PM +0100, Marek Szyprowski wrote:
-> Add a node for the BCM4334 Bluetooth chip on the serial bus #0 on
-> the Exynos4210-based Trats boards.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+--nwkumzirho5iba4d
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello,
+
+Peter, Russel, could you please give your Acked-by or Signed-off-by on
+this patch?  Your ack is needed, because the license is now explicitly
+set (it was not explicit before), and you were the contributors to
+this binding before the conversion to yaml.
+
+Thanks and Greets
+Alex
+
+On Mon, Oct 05, 2020 at 10:34:41PM +0200, Alexander Dahl wrote:
+> The example was adapted in the following ways:
+>=20
+> - make use of the now supported 'function' and 'color' properties
+> - remove pwm nodes, those are documented elsewhere
+> - align node names to new dt schema rules and dt recommendations
+>=20
+> License was not explicitly set before.  The license set now is
+> recommended by DT project.
+>=20
+> Suggested-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Signed-off-by: Alexander Dahl <post@lespocky.de>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> Cc: Russell King <linux@armlinux.org.uk>
 > ---
->  arch/arm/boot/dts/exynos4210-trats.dts | 31 ++++++++++++++++++++++++++
+>=20
+> Notes:
+>     NOTE: Due to license set/change this needs Acked-by or Signed-off-by =
+=66rom:
+>       * Peter Ujfalusi
+>       * Russell King
+>    =20
+>     That was discussed already with Peter (original author), still waiting
+>     for Acked-by though =E2=80=A6
+>    =20
+>     Changelog
+>     ---------
+>     v6 -> v7:
+>       * added Reviewed-by (Krzysztof Kozlowski)
+>       * reworded commit message (suggested by Krzysztof)
+>       * added Reviewed-by (Rob Herring)
+>    =20
+>     v5 -> v6:
+>       * removed pwm nodes from example (Rob)
+>       * renamed led-controller node in example (Rob)
+>    =20
+>     v4 -> v5:
+>       * updated based on feedback by Rob Herring
+>       * removed Acked-by
+>    =20
+>     v3 -> v4:
+>       * added Cc to original author of the binding
+>    =20
+>     v2 -> v3:
+>       * changed license identifier to recommended one
+>       * added Acked-by
+>    =20
+>     v2:
+>       * added this patch to series (Suggested-by: Jacek Anaszewski)
+>=20
+>  .../devicetree/bindings/leds/leds-pwm.txt     | 50 -------------
+>  .../devicetree/bindings/leds/leds-pwm.yaml    | 70 +++++++++++++++++++
+>  2 files changed, 70 insertions(+), 50 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/leds/leds-pwm.txt
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-pwm.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.txt b/Docume=
+ntation/devicetree/bindings/leds/leds-pwm.txt
+> deleted file mode 100644
+> index 6c6583c35f2f..000000000000
+> --- a/Documentation/devicetree/bindings/leds/leds-pwm.txt
+> +++ /dev/null
+> @@ -1,50 +0,0 @@
+> -LED connected to PWM
+> -
+> -Required properties:
+> -- compatible : should be "pwm-leds".
+> -
+> -Each LED is represented as a sub-node of the pwm-leds device.  Each
+> -node's name represents the name of the corresponding LED.
+> -
+> -LED sub-node properties:
+> -- pwms : PWM property to point to the PWM device (phandle)/port (id) and=
+ to
+> -  specify the period time to be used: <&phandle id period_ns>;
+> -- pwm-names : (optional) Name to be used by the PWM subsystem for the PW=
+M device
+> -  For the pwms and pwm-names property please refer to:
+> -  Documentation/devicetree/bindings/pwm/pwm.txt
+> -- max-brightness : Maximum brightness possible for the LED
+> -- active-low : (optional) For PWMs where the LED is wired to supply
+> -  rather than ground.
+> -- label :  (optional)
+> -  see Documentation/devicetree/bindings/leds/common.txt
+> -- linux,default-trigger :  (optional)
+> -  see Documentation/devicetree/bindings/leds/common.txt
+> -
+> -Example:
+> -
+> -twl_pwm: pwm {
+> -	/* provides two PWMs (id 0, 1 for PWM1 and PWM2) */
+> -	compatible =3D "ti,twl6030-pwm";
+> -	#pwm-cells =3D <2>;
+> -};
+> -
+> -twl_pwmled: pwmled {
+> -	/* provides one PWM (id 0 for Charing indicator LED) */
+> -	compatible =3D "ti,twl6030-pwmled";
+> -	#pwm-cells =3D <2>;
+> -};
+> -
+> -pwmleds {
+> -	compatible =3D "pwm-leds";
+> -	kpad {
+> -		label =3D "omap4::keypad";
+> -		pwms =3D <&twl_pwm 0 7812500>;
+> -		max-brightness =3D <127>;
+> -	};
+> -
+> -	charging {
+> -		label =3D "omap4:green:chrg";
+> -		pwms =3D <&twl_pwmled 0 7812500>;
+> -		max-brightness =3D <255>;
+> -	};
+> -};
+> diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.yaml b/Docum=
+entation/devicetree/bindings/leds/leds-pwm.yaml
+> new file mode 100644
+> index 000000000000..fe4d5fd25913
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+> @@ -0,0 +1,70 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/leds-pwm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: LEDs connected to PWM
+> +
+> +maintainers:
+> +  - Pavel Machek <pavel@ucw.cz>
+> +
+> +description:
+> +  Each LED is represented as a sub-node of the pwm-leds device.  Each
+> +  node's name represents the name of the corresponding LED.
+> +
+> +properties:
+> +  compatible:
+> +    const: pwm-leds
+> +
+> +patternProperties:
+> +  "^led(-[0-9a-f]+)?$":
+> +    type: object
+> +
+> +    $ref: common.yaml#
+> +
+> +    properties:
+> +      pwms:
+> +        maxItems: 1
+> +
+> +      pwm-names: true
+> +
+> +      max-brightness:
+> +        description:
+> +          Maximum brightness possible for the LED
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +      active-low:
+> +        description:
+> +          For PWMs where the LED is wired to supply rather than ground.
+> +        type: boolean
+> +
+> +    required:
+> +      - pwms
+> +      - max-brightness
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +
+> +    #include <dt-bindings/leds/common.h>
+> +
+> +    led-controller {
+> +        compatible =3D "pwm-leds";
+> +
+> +        led-1 {
+> +            label =3D "omap4::keypad";
+> +            pwms =3D <&twl_pwm 0 7812500>;
+> +            max-brightness =3D <127>;
+> +        };
+> +
+> +        led-2 {
+> +            color =3D <LED_COLOR_ID_GREEN>;
+> +            function =3D LED_FUNCTION_CHARGING;
+> +            pwms =3D <&twl_pwmled 0 7812500>;
+> +            max-brightness =3D <255>;
+> +        };
+> +    };
+> +
+> +...
+> --=20
+> 2.20.1
 
-Thanks, applied.
+--=20
+/"\ ASCII RIBBON | =C2=BBWith the first link, the chain is forged. The first
+\ / CAMPAIGN     | speech censured, the first thought forbidden, the
+ X  AGAINST      | first freedom denied, chains us all irrevocably.=C2=AB
+/ \ HTML MAIL    | (Jean-Luc Picard, quoting Judge Aaron Satie)
 
-Best regards,
-Krzysztof
+--nwkumzirho5iba4d
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEwo7muQJjlc+Prwj6NK3NAHIhXMYFAl+Z1xYACgkQNK3NAHIh
+XMa4dRAAwz5aGmTaCMVYq3Auo34qtLb+NsNbE0uPtTAJKafHT/YnSzgNgbf5urRz
+zKAeeoaiKjVICVDWeDrLdN607wylNBGn024FRat0tjDkZIOu08iMuyBvR9dOA8zd
+bp3xsK0f44DnZl+g0E/gIuuWe31PK/nY8h+etVAzcTqBsWVVDsT1zGBpXdYLpl6S
+DDjTaO+zUyK7gRBQt/qDUbmQAO1IIttfSy6qHUxxPgZliWI+/DpQgsFRdoZPV+QH
+bamaugY6vEaIkB5kr5O2QzHNmciUt/Jn7122YMMmVl7AE7ZPbGyVGtd/MXzQLXpQ
+IHz0CJKdh0SraLoDeeIOgWRdDD4qUgy4WuaxxIQB2VjnICRE3FHHZHM6BIOrNUjF
+sg+wsPXMnqRzAIa/ExjQCZBuhMrMLMNKRHLDwLTVgDz+qXb673vpHc0RyxrWC7YZ
+hhQpQkgaeSmCs23IgsI2jm0cKXMMq9yoDLGfVX+naP413sx/RiQPyKZNQnkXHOV/
+O48sd7eTz0BH6ZEBY6fSShd6SzQVUlYQGr2Ol4TXP1/Xa4LGlRzAvGvZOTiPukuX
+2kxyUpBKNHjR7+z9jJ0kAO6mIPiLgI0Ac698iEDWsLkKekuFyd1pYwAZLeMoFR8l
+J+PJ8ZiMqFxRQGr9QSHNwENi+KBFE4PweWPJ92XczoNxLhWyvBc=
+=tXqH
+-----END PGP SIGNATURE-----
+
+--nwkumzirho5iba4d--
