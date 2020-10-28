@@ -2,367 +2,156 @@ Return-Path: <SRS0=5Pkx=ED=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EB7C4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBAECC388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD9C024724
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:45:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603921524;
-	bh=Q6e6eK0XLVNLHrVLTGphbqM7GDd9t3mhlqpKUZ8TdmA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EE5yhCBNW8kclkuYfZuOfPpINNLmPgVLMHqt4oBc/Z1s2BxAHwjsnGQ3CCUc1k/6S
-	 GNarqCZexwlyPsGYxfRYr2QBtfEHFlYwGJWYoY9qC1LL6XUjChMNMZfcoR1Qfu92O3
-	 b89nLrD9q4dj01yXDtYubH+eK3Yy875fg4hxxeJg=
+	by mail.kernel.org (Postfix) with ESMTP id 889712475D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:45:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="jm63EXKg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbgJ1VpX (ORCPT
+        id S1726324AbgJ1Vpt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:45:23 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33670 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726906AbgJ1VpS (ORCPT
+        Wed, 28 Oct 2020 17:45:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47944 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbgJ1Vpt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:45:18 -0400
-Received: by mail-oi1-f196.google.com with SMTP id s21so1165415oij.0;
-        Wed, 28 Oct 2020 14:45:17 -0700 (PDT)
+        Wed, 28 Oct 2020 17:45:49 -0400
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEC95C0613CF
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 14:45:48 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id r9so1082780ioo.7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 14:45:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I9SAz1Nr0rbpfdGWAlkoW2b28vlFNuIq9ln5WxnlO4E=;
+        b=jm63EXKgY9yyp1UxuzjBCQD7lC3SlsBlciOvn/TyDTxBtCltv+kSg/7eppr8WRaovK
+         l7iZ03reiAJmpcGehqZlNkYlVfd9wO1TED09s1t7az9Ed7YH1kdYHNCFN4RqGe1IgEBN
+         AEXHW4PeYMNP2qUZ+TRbeOjL37UttB+8fbDgM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3f0Grh42ZXhkDcqsiWAcs+2warthhi55z2r1eiQ7l4U=;
-        b=dzh53Ba1a4wjEPNIm6hmVuEQ1r5ebdcHXkyiDX8l7kL4Ssz9Y6/itQyd5YxgqqKOOQ
-         +CZGes8FhmaFRpWKIA4k87g+fSYcc2vlfBjndmecUzB8vl9WsTdF8ttVzqZnj0DDhUBU
-         fdPN6JYemGwHWHpJnnIP4gtnjCLpLMZWZSECswO0cK7tNqFCbGC/Q6O5gRsIPYICuvWS
-         d25wFp1/bFczsJ83ubPwuJdeZc3zl3q71W8ce/dTpiG1wm43FXDk3MxFfTYfBAZhzQ5v
-         VAttw6t84tOawneY02l5wU38LpczvX0Y98hFxsMhSCXXaL7Kf3C8cS1a/qOF817I1/Mw
-         BnTg==
-X-Gm-Message-State: AOAM532SpXBaBJwyriZ4MJorjNCherPvTgeVSeoA+5vlaO6xAnOHwk8q
-        f0U/tQF0p5p4SVPLeJJr6Ms7ctT0xg==
-X-Google-Smtp-Source: ABdhPJzFXxcT0tFjUFgUe2veP94zpqVlbkMj7iwKYTjRdv+miSgd8eDz4naCuErppyRGeYwRvb3fGw==
-X-Received: by 2002:aca:37c5:: with SMTP id e188mr605435oia.159.1603918040453;
-        Wed, 28 Oct 2020 13:47:20 -0700 (PDT)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id t17sm116123oor.3.2020.10.28.13.47.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 13:47:19 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     linux-pci@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Minghuan Lian <minghuan.Lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Yue Wang <yue.wang@Amlogic.com>
-Subject: [PATCH 12/13] PCI: dwc: Move dw_pcie_setup_rc() to DWC common code
-Date:   Wed, 28 Oct 2020 15:46:45 -0500
-Message-Id: <20201028204646.356535-13-robh@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201028204646.356535-1-robh@kernel.org>
-References: <20201028204646.356535-1-robh@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I9SAz1Nr0rbpfdGWAlkoW2b28vlFNuIq9ln5WxnlO4E=;
+        b=dDpOAm0t2cmXPzEFXAW3KX4d6avwDC8KG2tcZO1cPrYt02y6guoWdF/Mo6D1w00nZF
+         L86vE2ZMaQLLE6jL+JhpjmxLbBzuULDvK/wX2BvKRL0JRsBhg9LikIAjv/tTJHYKZwop
+         ni7cF/Yuj9CZSgJvJnkJ9+FWssks7mizV7TObEGGnXEn1xhI7iqcknNJTj2D+nkdRR5G
+         72965gK70bWjzOnjFAODzZVZGqSNMCDjNcPduXgTBIpXplqBD2pA1tzVCIVBF2ddfkBn
+         AffDInBPO85beZD4Bqv86ffnanl7F+qwzIGY75RwaSLZ/KGk8cubtPRGRRhJC0RRVUxj
+         79hw==
+X-Gm-Message-State: AOAM533x/WSYBfoXudq9rnhDb4CCeqQnKJ37Ya0+3JZBhujGPnZwOf+a
+        Bawa6VdzthbzapLO2IFxCYK40tkqYwLKQ7AmQPLPkGD+Oscybw==
+X-Google-Smtp-Source: ABdhPJwAj/+NNjUkoBXwXq5DIu0VTgWJza/6mTiWtlwuzf8bHOQ4vuDIb6imlwzIdmboQTzZiA7uP7/f3oC4UgxCMI4=
+X-Received: by 2002:a37:a81:: with SMTP id 123mr6993857qkk.487.1603890401898;
+ Wed, 28 Oct 2020 06:06:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201007083944.27910-1-ardb@kernel.org> <CGME20201028091912eucas1p13fb9cd947faa6bfd79199ea79648b6af@eucas1p1.samsung.com>
+ <20201007083944.27910-3-ardb@kernel.org> <920965b8-6f87-3f82-9fce-d3051fc543ca@samsung.com>
+ <CACPK8XfNfqToFBe0GPFTGrnPhNTYhSDiEagpB7ayBSW1DC-THA@mail.gmail.com>
+ <CAMj1kXH90MzCUJ_DHZ_2=JcWBX=Qf1PT-A9PX9EeBTVx22EkaQ@mail.gmail.com>
+ <CACPK8Xfw0WYSxGf0PnVOF40+C-KOJnX2x_q2gXrf4JZPErKBDA@mail.gmail.com> <CAMj1kXFmvzEj4PRFsqfcuz_bi3jUYArvRXb4x3bHKhgX1p6y+A@mail.gmail.com>
+In-Reply-To: <CAMj1kXFmvzEj4PRFsqfcuz_bi3jUYArvRXb4x3bHKhgX1p6y+A@mail.gmail.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 28 Oct 2020 13:06:29 +0000
+Message-ID: <CACPK8XdyJrcxjM9q9BfBt5u7dcsAjNhGazjY9rF1UT3mj3cDNw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] ARM: move device tree mapping out of linear region
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-All RC complex drivers must call dw_pcie_setup_rc(). The ordering of the
-call shouldn't be too important other than being after any RC resets.
+On Wed, 28 Oct 2020 at 13:00, Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> On Wed, 28 Oct 2020 at 13:59, Joel Stanley <joel@jms.id.au> wrote:
+> >
+> > On Wed, 28 Oct 2020 at 12:53, Ard Biesheuvel <ardb@kernel.org> wrote:
+> > >
+> > > On Wed, 28 Oct 2020 at 13:05, Joel Stanley <joel@jms.id.au> wrote:
+> > > >
+> > > > On Wed, 28 Oct 2020 at 09:19, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> > > > > This patch landed in linux-next 20201028 as commit 7a1be318f579 ("ARM:
+> > > > > 9012/1: move device tree mapping out of linear region"). Sadly it broke
+> > > > > booting  almost all Samsung Exynos-based boards. The only one which
+> > > > > booted, used an appended device tree. I can provide more information if
+> > > > > needed, just let me know what to check. "Starting kernel ..." is the
+> > > > > last message I see here. No output from earlycon.
+> > > >
+> > > > A bisection lead me to this patch after the next-20201028 failed to
+> > > > boot on the aspeed systems in testing (aspeed_g5_defconfig).
+> > > >
+> > > > You can reproduce this with today's next and qemu 5.1:
+> > > >
+> > > > qemu-system-arm -M romulus-bmc -nographic \
+> > > >  -kernel arch/arm/boot/zImage \
+> > > >  -dtb arch/arm/boot/dts/aspeed-bmc-opp-romulus.dtb \
+> > > >  -initrd any-old-file
+> > > >
+> > > > It requires the initrd option to reproduce, but the initrd doesn't
+> > > > need to be valid as we don't make it that far.
+> > > >
+> > > > There is no output but attaching gdb shows the kernel is stuck in
+> > > > setup_machine_tags. (If we enable CONFIG_ATAGS it is instead stuck in
+> > > > calibrate_delay).
+> > > >
+> > > > (gdb) bt
+> > > > #0  setup_machine_tags (machine_nr=<optimized out>,
+> > > > __atags_vaddr=<optimized out>) at ../arch/arm/kernel/atags.h:12
+> > > > #1  setup_arch (cmdline_p=0x80c01fc4) at ../arch/arm/kernel/setup.c:1100
+> > > > #2  0x80b00d2c in start_kernel () at ../init/main.c:862
+> > > > #3  0x00000000 in ?? ()
+> > > >
+> > > > Reverting 7a1be318f579 on top of next allowed the system to boot again.
+> > > >
+> > >
+> > > Does this help?
+> >
+> > Yes, that boots to userspace.
+> >
+>
+> Thanks. I'll take that as a tested-by
 
-There's a few calls of dw_pcie_setup_rc() left as drivers implementing
-suspend/resume need it.
+Please do. Thanks for the quick fix.
 
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Cc: Murali Karicheri <m-karicheri2@ti.com>
-Cc: Minghuan Lian <minghuan.Lian@nxp.com>
-Cc: Mingkai Hu <mingkai.hu@nxp.com>
-Cc: Roy Zang <roy.zang@nxp.com>
-Cc: Yue Wang <yue.wang@Amlogic.com>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: Xiaowei Song <songxiaowei@hisilicon.com>
-Cc: Binghui Wang <wangbinghui@hisilicon.com>
-Cc: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Stanimir Varbanov <svarbanov@mm-sol.com>
-Cc: Pratyush Anand <pratyush.anand@gmail.com>
-Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-omap@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-amlogic@lists.infradead.org
-Cc: linux-arm-kernel@axis.com
-Cc: linux-arm-msm@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/pci/controller/dwc/pci-dra7xx.c           | 1 -
- drivers/pci/controller/dwc/pci-exynos.c           | 1 -
- drivers/pci/controller/dwc/pci-imx6.c             | 1 -
- drivers/pci/controller/dwc/pci-keystone.c         | 2 --
- drivers/pci/controller/dwc/pci-layerscape.c       | 2 --
- drivers/pci/controller/dwc/pci-meson.c            | 2 --
- drivers/pci/controller/dwc/pcie-armada8k.c        | 2 --
- drivers/pci/controller/dwc/pcie-artpec6.c         | 1 -
- drivers/pci/controller/dwc/pcie-designware-host.c | 1 +
- drivers/pci/controller/dwc/pcie-designware-plat.c | 8 --------
- drivers/pci/controller/dwc/pcie-histb.c           | 3 ---
- drivers/pci/controller/dwc/pcie-kirin.c           | 2 --
- drivers/pci/controller/dwc/pcie-qcom.c            | 1 -
- drivers/pci/controller/dwc/pcie-spear13xx.c       | 2 --
- drivers/pci/controller/dwc/pcie-uniphier.c        | 2 --
- 15 files changed, 1 insertion(+), 30 deletions(-)
+Cheers,
 
-diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-index 72a5a2bf933b..b105af63854a 100644
---- a/drivers/pci/controller/dwc/pci-dra7xx.c
-+++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-@@ -181,7 +181,6 @@ static int dra7xx_pcie_host_init(struct pcie_port *pp)
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
- 
--	dw_pcie_setup_rc(pp);
- 	dra7xx_pcie_enable_interrupts(dra7xx);
- 
- 	return 0;
-diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-index 3939fe22e8a2..5c10a5432896 100644
---- a/drivers/pci/controller/dwc/pci-exynos.c
-+++ b/drivers/pci/controller/dwc/pci-exynos.c
-@@ -372,7 +372,6 @@ static int exynos_pcie_host_init(struct pcie_port *pp)
- 	phy_init(ep->phy);
- 
- 	exynos_pcie_deassert_core_reset(ep);
--	dw_pcie_setup_rc(pp);
- 	exynos_pcie_assert_reset(ep);
- 
- 	exynos_pcie_enable_interrupts(ep);
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index c808b563486f..4ba0b1195ecf 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -834,7 +834,6 @@ static int imx6_pcie_host_init(struct pcie_port *pp)
- 	imx6_pcie_init_phy(imx6_pcie);
- 	imx6_pcie_deassert_core_reset(imx6_pcie);
- 	imx6_setup_phy_mpll(imx6_pcie);
--	dw_pcie_setup_rc(pp);
- 
- 	return 0;
- }
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index 90b222b020a3..5a4bcc2b1ddb 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -807,8 +807,6 @@ static int __init ks_pcie_host_init(struct pcie_port *pp)
- 	if (ret)
- 		return ret;
- 
--	dw_pcie_setup_rc(pp);
--
- 	ks_pcie_stop_link(pci);
- 	ks_pcie_setup_rc_app_regs(ks_pcie);
- 	writew(PCI_IO_RANGE_TYPE_32 | (PCI_IO_RANGE_TYPE_32 << 8),
-diff --git a/drivers/pci/controller/dwc/pci-layerscape.c b/drivers/pci/controller/dwc/pci-layerscape.c
-index 0d84986c4c16..400ebbebd00f 100644
---- a/drivers/pci/controller/dwc/pci-layerscape.c
-+++ b/drivers/pci/controller/dwc/pci-layerscape.c
-@@ -136,8 +136,6 @@ static int ls_pcie_host_init(struct pcie_port *pp)
- 
- 	ls_pcie_drop_msg_tlp(pcie);
- 
--	dw_pcie_setup_rc(pp);
--
- 	return 0;
- }
- 
-diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-index 2df0adcf0bf2..04589f0decb2 100644
---- a/drivers/pci/controller/dwc/pci-meson.c
-+++ b/drivers/pci/controller/dwc/pci-meson.c
-@@ -380,8 +380,6 @@ static int meson_pcie_host_init(struct pcie_port *pp)
- 	meson_set_max_payload(mp, MAX_PAYLOAD_SIZE);
- 	meson_set_max_rd_req_size(mp, MAX_READ_REQ_SIZE);
- 
--	dw_pcie_setup_rc(pp);
--
- 	return 0;
- }
- 
-diff --git a/drivers/pci/controller/dwc/pcie-armada8k.c b/drivers/pci/controller/dwc/pcie-armada8k.c
-index dd2926bbb901..4e2552dcf982 100644
---- a/drivers/pci/controller/dwc/pcie-armada8k.c
-+++ b/drivers/pci/controller/dwc/pcie-armada8k.c
-@@ -171,8 +171,6 @@ static int armada8k_pcie_host_init(struct pcie_port *pp)
- 	u32 reg;
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 
--	dw_pcie_setup_rc(pp);
--
- 	if (!dw_pcie_link_up(pci)) {
- 		/* Disable LTSSM state machine to enable configuration */
- 		reg = dw_pcie_readl_dbi(pci, PCIE_GLOBAL_CONTROL_REG);
-diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
-index 7ee8f3c83f8f..fcba9915a606 100644
---- a/drivers/pci/controller/dwc/pcie-artpec6.c
-+++ b/drivers/pci/controller/dwc/pcie-artpec6.c
-@@ -328,7 +328,6 @@ static int artpec6_pcie_host_init(struct pcie_port *pp)
- 	artpec6_pcie_init_phy(artpec6_pcie);
- 	artpec6_pcie_deassert_core_reset(artpec6_pcie);
- 	artpec6_pcie_wait_for_phy(artpec6_pcie);
--	dw_pcie_setup_rc(pp);
- 
- 	return 0;
- }
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 025514e00a42..785850a022c7 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -423,6 +423,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 			goto err_free_msi;
- 	}
- 
-+	dw_pcie_setup_rc(pp);
- 	dw_pcie_msi_init(pp);
- 
- 	if (!dw_pcie_link_up(pci) && pci->ops->start_link) {
-diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
-index dec24e595c3e..9b397c807261 100644
---- a/drivers/pci/controller/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
-@@ -33,15 +33,7 @@ struct dw_plat_pcie_of_data {
- 
- static const struct of_device_id dw_plat_pcie_of_match[];
- 
--static int dw_plat_pcie_host_init(struct pcie_port *pp)
--{
--	dw_pcie_setup_rc(pp);
--
--	return 0;
--}
--
- static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
--	.host_init = dw_plat_pcie_host_init,
- };
- 
- static int dw_plat_pcie_establish_link(struct dw_pcie *pci)
-diff --git a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
-index 210777c793ea..86f9d16c50d7 100644
---- a/drivers/pci/controller/dwc/pcie-histb.c
-+++ b/drivers/pci/controller/dwc/pcie-histb.c
-@@ -196,9 +196,6 @@ static int histb_pcie_host_init(struct pcie_port *pp)
- 	regval |= PCIE_WM_RC;
- 	histb_pcie_writel(hipcie, PCIE_SYS_CTRL0, regval);
- 
--	/* setup root complex */
--	dw_pcie_setup_rc(pp);
--
- 	return 0;
- }
- 
-diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
-index f84ac1b36b2c..ac4bbdaf5324 100644
---- a/drivers/pci/controller/dwc/pcie-kirin.c
-+++ b/drivers/pci/controller/dwc/pcie-kirin.c
-@@ -405,8 +405,6 @@ static int kirin_pcie_host_init(struct pcie_port *pp)
- {
- 	pp->bridge->ops = &kirin_pci_ops;
- 
--	dw_pcie_setup_rc(pp);
--
- 	return 0;
- }
- 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index eb107179d544..e49791c4f846 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -1280,7 +1280,6 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
- 			goto err_disable_phy;
- 	}
- 
--	dw_pcie_setup_rc(pp);
- 	qcom_ep_reset_deassert(pcie);
- 
- 	return 0;
-diff --git a/drivers/pci/controller/dwc/pcie-spear13xx.c b/drivers/pci/controller/dwc/pcie-spear13xx.c
-index 31475e4493a7..1a9e353bef55 100644
---- a/drivers/pci/controller/dwc/pcie-spear13xx.c
-+++ b/drivers/pci/controller/dwc/pcie-spear13xx.c
-@@ -130,8 +130,6 @@ static int spear13xx_pcie_host_init(struct pcie_port *pp)
- 
- 	spear13xx_pcie->app_base = pci->dbi_base + 0x2000;
- 
--	dw_pcie_setup_rc(pp);
--
- 	/*
- 	 * this controller support only 128 bytes read size, however its
- 	 * default value in capability register is 512 bytes. So force
-diff --git a/drivers/pci/controller/dwc/pcie-uniphier.c b/drivers/pci/controller/dwc/pcie-uniphier.c
-index e6616408a29c..2457e9dd098d 100644
---- a/drivers/pci/controller/dwc/pcie-uniphier.c
-+++ b/drivers/pci/controller/dwc/pcie-uniphier.c
-@@ -314,8 +314,6 @@ static int uniphier_pcie_host_init(struct pcie_port *pp)
- 
- 	uniphier_pcie_irq_enable(priv);
- 
--	dw_pcie_setup_rc(pp);
--
- 	return 0;
- }
- 
--- 
-2.25.1
+Joel
 
+>
+>
+> > >
+> > > diff --git a/arch/arm/include/asm/memory.h b/arch/arm/include/asm/memory.h
+> > > index bb79e52aeb90..4f355bda872a 100644
+> > > --- a/arch/arm/include/asm/memory.h
+> > > +++ b/arch/arm/include/asm/memory.h
+> > > @@ -68,8 +68,8 @@
+> > >  #define XIP_VIRT_ADDR(physaddr)  (MODULES_VADDR + ((physaddr) & 0x000fffff))
+> > >
+> > >  #define FDT_FIXED_BASE         UL(0xff800000)
+> > > -#define FDT_FIXED_SIZE         (2 * PMD_SIZE)
+> > > -#define FDT_VIRT_ADDR(physaddr)        ((void *)(FDT_FIXED_BASE |
+> > > (physaddr) % PMD_SIZE))
+> > > +#define FDT_FIXED_SIZE         (2 * SECTION_SIZE)
+> > > +#define FDT_VIRT_ADDR(physaddr)        ((void *)(FDT_FIXED_BASE |
+> > > (physaddr) % SECTION_SIZE))
+> > >
+> > >  #if !defined(CONFIG_SMP) && !defined(CONFIG_ARM_LPAE)
+> > >  /*
