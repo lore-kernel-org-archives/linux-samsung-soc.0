@@ -2,317 +2,257 @@ Return-Path: <SRS0=zATP=EE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01323C4363A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB2BC4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A762E20791
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:00:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5E36208C3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:04:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603937043;
+	bh=jH8W/oePKPi43bL6yAG5GFbWSEhAunP0eFCIQBIhYhs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=1vIZwBBXX4z1NIZPtdkH5pdEuV41zmRKNIG+Dv8sEg7LnA+jqJGCQZHokhjgmWMrn
+	 V3kvXirpaOg7XDaCOlsNXI3ftj9WM4gBHjfVcDEmhkzWmc1KBAUJOxKQfSpXp4C8IM
+	 bJMI2gXQgBUuXgqsgusRuafMULPXlBji69EXFa0s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbgJ2CAp (ORCPT
+        id S1725914AbgJ1VnA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 22:00:45 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:48369 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728006AbgJ1Vvf (ORCPT
+        Wed, 28 Oct 2020 17:43:00 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:34756 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725300AbgJ1Vml (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:51:35 -0400
-Received: from methusalix.internal.home.lespocky.de ([92.117.45.118]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MT7ip-1kxPjS40Ip-00UcI8; Wed, 28 Oct 2020 21:40:02 +0100
-Received: from falbala.internal.home.lespocky.de ([192.168.243.94])
-        by methusalix.internal.home.lespocky.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94)
-        (envelope-from <post@lespocky.de>)
-        id 1kXsEd-0002jR-O2; Wed, 28 Oct 2020 21:39:57 +0100
-Date:   Wed, 28 Oct 2020 21:39:54 +0100
-From:   Alexander Dahl <post@lespocky.de>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     Alexander Dahl <ada@thorsis.com>,
-        Alexander Dahl <post@lespocky.de>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v7 02/12] dt-bindings: leds: Convert pwm to yaml
-Message-ID: <20201028203953.eafmzeqba76qjlf2@falbala.internal.home.lespocky.de>
-Mail-Followup-To: Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Alexander Dahl <ada@thorsis.com>, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>
-References: <20201005203451.9985-1-post@lespocky.de>
- <20201005203451.9985-3-post@lespocky.de>
+        Wed, 28 Oct 2020 17:42:41 -0400
+Received: by mail-oi1-f196.google.com with SMTP id z23so1149207oic.1;
+        Wed, 28 Oct 2020 14:42:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=h0T8M9HFPja/Qcz5+OFxDy+3Ox865wq64TJqX0lZtiY=;
+        b=br26vZuT3zyqgPHw3wuWzevdniunBK+Fyf/fTksS+GCXareUxSdItYAJA231VK6wLd
+         UsyZ3KGU7Dv//xnFmRtPEzDtHJPh0h1qf2s15PoM/dG1354LCbmr4Q7OlkH+WDKtGlvK
+         8wdKGZ03PgY4W0lUbjxispdRgUoiWMXSSolSx5zhxQaQoyNMsUCQC/Nzca7G0TXRcyt7
+         fZ7Xl1sKm+YXL3QVN5uKGKYwpXolyBDrWpdXAP1ab5ub5AIxWgWfgOeq1hnT4/uBuA4y
+         vcML6h0UdBGw1KprHsWh5JxuWV7SMwn2wJ5pjV/WnM/TvHN7ckBkM/HVHkFZA4BpFN9D
+         Nz3g==
+X-Gm-Message-State: AOAM531EaeGPdmeRH1N/udanHU+LFl8s1uDDmD7CVeo5rK/S/jYxK7VF
+        JUVO9rJW6kw4NfLGSupUEvwVty59Hw==
+X-Google-Smtp-Source: ABdhPJzzLIwVb0GnrgftuCJ9zcN8udQxeppgVsd6r2Be66BDmlGrxb8/wZxghvtZTyC09OZtmCreNQ==
+X-Received: by 2002:aca:47cc:: with SMTP id u195mr630676oia.83.1603918024915;
+        Wed, 28 Oct 2020 13:47:04 -0700 (PDT)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id t17sm116123oor.3.2020.10.28.13.47.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2020 13:47:04 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     linux-pci@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Minghuan Lian <minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Yue Wang <yue.wang@Amlogic.com>
+Subject: [PATCH 06/13] PCI: dwc/dra7xx: Use the common MSI irq_chip
+Date:   Wed, 28 Oct 2020 15:46:39 -0500
+Message-Id: <20201028204646.356535-7-robh@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201028204646.356535-1-robh@kernel.org>
+References: <20201028204646.356535-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nwkumzirho5iba4d"
-Content-Disposition: inline
-In-Reply-To: <20201005203451.9985-3-post@lespocky.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Scan-Signature: e8e5211badca7b3e4c3721992337a85e
-X-Provags-ID: V03:K1:dFwaWUg7Hs1+6BjOpddvhs45I+5MLeawNEbLKR27jHnbgCj5ifc
- gYT8HigTxAZrbMDX6/JPdfbDaFolzE8kEuGksu+jJMbNPJOki4vC4J8UisS9GY0wG28NRRz
- NcInnsvPQVTBr/DWp2r63TtWmZWlMAONcdpEQLgqv5Ki0n2Oa80UXdCA4ZDNLFt5URfJug4
- cxtSV54v9p6WgHStsK5mQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:gzz3n95gjfs=:hHvez/4McHVrzL3OX0D32f
- /mYm8rTxXToff+h1rKtHcZmgoklySxxk+XBCOUTtiY6mf9KZs6CPkdPtjCzBTHXEACewZfU8t
- ZX92A/cg34hfSH/qLP6uHmyl3sm8rZgjhfmODNhtVRqSL1yBUt7VoFp4O+xMEAK5mz+yCu2Rm
- iGklg0sn8jVVieyJf4ohBj0jpC00XckF2oSRO4FK0fFLDDT6iG356sR5IHySLVV8isMSMswNs
- 7/QhXZyqSx8aKiVqtFSET6XbhPL/qNwVQ4M6SnKNnCOYcjQwin2ARag9znS70Gxf1KUX8wCoT
- 3D22ySm/UzuqNW93z4dQGoKUTbs56eQ0t6QwGbzfLbL34QjGeMWvlLDxO4CsLndZij4zIiENB
- BfPV7R5t+K4iT+G1wnWExjfTh3WI8pemTfpcwHbrxpE71hZybyIbsYFhIysPL
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+The dra7xx MSI irq_chip implementation is identical to the default DWC one.
+The only difference is the interrupt handler as the MSI interrupt is muxed
+with other interrupts, but that doesn't affect the irq_chip part of it.
 
---nwkumzirho5iba4d
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-omap@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/pci/controller/dwc/pci-dra7xx.c | 125 ------------------------
+ 1 file changed, 125 deletions(-)
 
-Hello,
+diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+index a4aabc85dbb1..4d0c35a4aa59 100644
+--- a/drivers/pci/controller/dwc/pci-dra7xx.c
++++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+@@ -377,133 +377,8 @@ static int dra7xx_pcie_init_irq_domain(struct pcie_port *pp)
+ 	return 0;
+ }
+ 
+-static void dra7xx_pcie_setup_msi_msg(struct irq_data *d, struct msi_msg *msg)
+-{
+-	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
+-	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+-	u64 msi_target;
+-
+-	msi_target = (u64)pp->msi_data;
+-
+-	msg->address_lo = lower_32_bits(msi_target);
+-	msg->address_hi = upper_32_bits(msi_target);
+-
+-	msg->data = d->hwirq;
+-
+-	dev_dbg(pci->dev, "msi#%d address_hi %#x address_lo %#x\n",
+-		(int)d->hwirq, msg->address_hi, msg->address_lo);
+-}
+-
+-static int dra7xx_pcie_msi_set_affinity(struct irq_data *d,
+-					const struct cpumask *mask,
+-					bool force)
+-{
+-	return -EINVAL;
+-}
+-
+-static void dra7xx_pcie_bottom_mask(struct irq_data *d)
+-{
+-	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
+-	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+-	unsigned int res, bit, ctrl;
+-	unsigned long flags;
+-
+-	raw_spin_lock_irqsave(&pp->lock, flags);
+-
+-	ctrl = d->hwirq / MAX_MSI_IRQS_PER_CTRL;
+-	res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
+-	bit = d->hwirq % MAX_MSI_IRQS_PER_CTRL;
+-
+-	pp->irq_mask[ctrl] |= BIT(bit);
+-	dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK + res,
+-			   pp->irq_mask[ctrl]);
+-
+-	raw_spin_unlock_irqrestore(&pp->lock, flags);
+-}
+-
+-static void dra7xx_pcie_bottom_unmask(struct irq_data *d)
+-{
+-	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
+-	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+-	unsigned int res, bit, ctrl;
+-	unsigned long flags;
+-
+-	raw_spin_lock_irqsave(&pp->lock, flags);
+-
+-	ctrl = d->hwirq / MAX_MSI_IRQS_PER_CTRL;
+-	res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
+-	bit = d->hwirq % MAX_MSI_IRQS_PER_CTRL;
+-
+-	pp->irq_mask[ctrl] &= ~BIT(bit);
+-	dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK + res,
+-			   pp->irq_mask[ctrl]);
+-
+-	raw_spin_unlock_irqrestore(&pp->lock, flags);
+-}
+-
+-static void dra7xx_pcie_bottom_ack(struct irq_data *d)
+-{
+-	struct pcie_port *pp  = irq_data_get_irq_chip_data(d);
+-	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+-	unsigned int res, bit, ctrl;
+-
+-	ctrl = d->hwirq / MAX_MSI_IRQS_PER_CTRL;
+-	res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
+-	bit = d->hwirq % MAX_MSI_IRQS_PER_CTRL;
+-
+-	dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_STATUS + res, BIT(bit));
+-}
+-
+-static struct irq_chip dra7xx_pci_msi_bottom_irq_chip = {
+-	.name = "DRA7XX-PCI-MSI",
+-	.irq_ack = dra7xx_pcie_bottom_ack,
+-	.irq_compose_msi_msg = dra7xx_pcie_setup_msi_msg,
+-	.irq_set_affinity = dra7xx_pcie_msi_set_affinity,
+-	.irq_mask = dra7xx_pcie_bottom_mask,
+-	.irq_unmask = dra7xx_pcie_bottom_unmask,
+-};
+-
+-static int dra7xx_pcie_msi_host_init(struct pcie_port *pp)
+-{
+-	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+-	struct device *dev = pci->dev;
+-	u32 ctrl, num_ctrls;
+-	int ret;
+-
+-	pp->msi_irq_chip = &dra7xx_pci_msi_bottom_irq_chip;
+-
+-	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
+-	/* Initialize IRQ Status array */
+-	for (ctrl = 0; ctrl < num_ctrls; ctrl++) {
+-		pp->irq_mask[ctrl] = ~0;
+-		dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK +
+-				    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
+-				    pp->irq_mask[ctrl]);
+-		dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_ENABLE +
+-				    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
+-				    ~0);
+-	}
+-
+-	ret = dw_pcie_allocate_domains(pp);
+-	if (ret)
+-		return ret;
+-
+-	pp->msi_data = dma_map_single_attrs(dev, &pp->msi_msg,
+-					   sizeof(pp->msi_msg),
+-					   DMA_FROM_DEVICE,
+-					   DMA_ATTR_SKIP_CPU_SYNC);
+-	ret = dma_mapping_error(dev, pp->msi_data);
+-	if (ret) {
+-		dev_err(dev, "Failed to map MSI data\n");
+-		pp->msi_data = 0;
+-		dw_pcie_free_msi(pp);
+-	}
+-	return ret;
+-}
+-
+ static const struct dw_pcie_host_ops dra7xx_pcie_host_ops = {
+ 	.host_init = dra7xx_pcie_host_init,
+-	.msi_host_init = dra7xx_pcie_msi_host_init,
+ };
+ 
+ static void dra7xx_pcie_ep_init(struct dw_pcie_ep *ep)
+-- 
+2.25.1
 
-Peter, Russel, could you please give your Acked-by or Signed-off-by on
-this patch?  Your ack is needed, because the license is now explicitly
-set (it was not explicit before), and you were the contributors to
-this binding before the conversion to yaml.
-
-Thanks and Greets
-Alex
-
-On Mon, Oct 05, 2020 at 10:34:41PM +0200, Alexander Dahl wrote:
-> The example was adapted in the following ways:
->=20
-> - make use of the now supported 'function' and 'color' properties
-> - remove pwm nodes, those are documented elsewhere
-> - align node names to new dt schema rules and dt recommendations
->=20
-> License was not explicitly set before.  The license set now is
-> recommended by DT project.
->=20
-> Suggested-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Signed-off-by: Alexander Dahl <post@lespocky.de>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> ---
->=20
-> Notes:
->     NOTE: Due to license set/change this needs Acked-by or Signed-off-by =
-=66rom:
->       * Peter Ujfalusi
->       * Russell King
->    =20
->     That was discussed already with Peter (original author), still waiting
->     for Acked-by though =E2=80=A6
->    =20
->     Changelog
->     ---------
->     v6 -> v7:
->       * added Reviewed-by (Krzysztof Kozlowski)
->       * reworded commit message (suggested by Krzysztof)
->       * added Reviewed-by (Rob Herring)
->    =20
->     v5 -> v6:
->       * removed pwm nodes from example (Rob)
->       * renamed led-controller node in example (Rob)
->    =20
->     v4 -> v5:
->       * updated based on feedback by Rob Herring
->       * removed Acked-by
->    =20
->     v3 -> v4:
->       * added Cc to original author of the binding
->    =20
->     v2 -> v3:
->       * changed license identifier to recommended one
->       * added Acked-by
->    =20
->     v2:
->       * added this patch to series (Suggested-by: Jacek Anaszewski)
->=20
->  .../devicetree/bindings/leds/leds-pwm.txt     | 50 -------------
->  .../devicetree/bindings/leds/leds-pwm.yaml    | 70 +++++++++++++++++++
->  2 files changed, 70 insertions(+), 50 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/leds/leds-pwm.txt
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-pwm.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.txt b/Docume=
-ntation/devicetree/bindings/leds/leds-pwm.txt
-> deleted file mode 100644
-> index 6c6583c35f2f..000000000000
-> --- a/Documentation/devicetree/bindings/leds/leds-pwm.txt
-> +++ /dev/null
-> @@ -1,50 +0,0 @@
-> -LED connected to PWM
-> -
-> -Required properties:
-> -- compatible : should be "pwm-leds".
-> -
-> -Each LED is represented as a sub-node of the pwm-leds device.  Each
-> -node's name represents the name of the corresponding LED.
-> -
-> -LED sub-node properties:
-> -- pwms : PWM property to point to the PWM device (phandle)/port (id) and=
- to
-> -  specify the period time to be used: <&phandle id period_ns>;
-> -- pwm-names : (optional) Name to be used by the PWM subsystem for the PW=
-M device
-> -  For the pwms and pwm-names property please refer to:
-> -  Documentation/devicetree/bindings/pwm/pwm.txt
-> -- max-brightness : Maximum brightness possible for the LED
-> -- active-low : (optional) For PWMs where the LED is wired to supply
-> -  rather than ground.
-> -- label :  (optional)
-> -  see Documentation/devicetree/bindings/leds/common.txt
-> -- linux,default-trigger :  (optional)
-> -  see Documentation/devicetree/bindings/leds/common.txt
-> -
-> -Example:
-> -
-> -twl_pwm: pwm {
-> -	/* provides two PWMs (id 0, 1 for PWM1 and PWM2) */
-> -	compatible =3D "ti,twl6030-pwm";
-> -	#pwm-cells =3D <2>;
-> -};
-> -
-> -twl_pwmled: pwmled {
-> -	/* provides one PWM (id 0 for Charing indicator LED) */
-> -	compatible =3D "ti,twl6030-pwmled";
-> -	#pwm-cells =3D <2>;
-> -};
-> -
-> -pwmleds {
-> -	compatible =3D "pwm-leds";
-> -	kpad {
-> -		label =3D "omap4::keypad";
-> -		pwms =3D <&twl_pwm 0 7812500>;
-> -		max-brightness =3D <127>;
-> -	};
-> -
-> -	charging {
-> -		label =3D "omap4:green:chrg";
-> -		pwms =3D <&twl_pwmled 0 7812500>;
-> -		max-brightness =3D <255>;
-> -	};
-> -};
-> diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.yaml b/Docum=
-entation/devicetree/bindings/leds/leds-pwm.yaml
-> new file mode 100644
-> index 000000000000..fe4d5fd25913
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-pwm.yaml
-> @@ -0,0 +1,70 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/leds-pwm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: LEDs connected to PWM
-> +
-> +maintainers:
-> +  - Pavel Machek <pavel@ucw.cz>
-> +
-> +description:
-> +  Each LED is represented as a sub-node of the pwm-leds device.  Each
-> +  node's name represents the name of the corresponding LED.
-> +
-> +properties:
-> +  compatible:
-> +    const: pwm-leds
-> +
-> +patternProperties:
-> +  "^led(-[0-9a-f]+)?$":
-> +    type: object
-> +
-> +    $ref: common.yaml#
-> +
-> +    properties:
-> +      pwms:
-> +        maxItems: 1
-> +
-> +      pwm-names: true
-> +
-> +      max-brightness:
-> +        description:
-> +          Maximum brightness possible for the LED
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +      active-low:
-> +        description:
-> +          For PWMs where the LED is wired to supply rather than ground.
-> +        type: boolean
-> +
-> +    required:
-> +      - pwms
-> +      - max-brightness
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +
-> +    #include <dt-bindings/leds/common.h>
-> +
-> +    led-controller {
-> +        compatible =3D "pwm-leds";
-> +
-> +        led-1 {
-> +            label =3D "omap4::keypad";
-> +            pwms =3D <&twl_pwm 0 7812500>;
-> +            max-brightness =3D <127>;
-> +        };
-> +
-> +        led-2 {
-> +            color =3D <LED_COLOR_ID_GREEN>;
-> +            function =3D LED_FUNCTION_CHARGING;
-> +            pwms =3D <&twl_pwmled 0 7812500>;
-> +            max-brightness =3D <255>;
-> +        };
-> +    };
-> +
-> +...
-> --=20
-> 2.20.1
-
---=20
-/"\ ASCII RIBBON | =C2=BBWith the first link, the chain is forged. The first
-\ / CAMPAIGN     | speech censured, the first thought forbidden, the
- X  AGAINST      | first freedom denied, chains us all irrevocably.=C2=AB
-/ \ HTML MAIL    | (Jean-Luc Picard, quoting Judge Aaron Satie)
-
---nwkumzirho5iba4d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEwo7muQJjlc+Prwj6NK3NAHIhXMYFAl+Z1xYACgkQNK3NAHIh
-XMa4dRAAwz5aGmTaCMVYq3Auo34qtLb+NsNbE0uPtTAJKafHT/YnSzgNgbf5urRz
-zKAeeoaiKjVICVDWeDrLdN607wylNBGn024FRat0tjDkZIOu08iMuyBvR9dOA8zd
-bp3xsK0f44DnZl+g0E/gIuuWe31PK/nY8h+etVAzcTqBsWVVDsT1zGBpXdYLpl6S
-DDjTaO+zUyK7gRBQt/qDUbmQAO1IIttfSy6qHUxxPgZliWI+/DpQgsFRdoZPV+QH
-bamaugY6vEaIkB5kr5O2QzHNmciUt/Jn7122YMMmVl7AE7ZPbGyVGtd/MXzQLXpQ
-IHz0CJKdh0SraLoDeeIOgWRdDD4qUgy4WuaxxIQB2VjnICRE3FHHZHM6BIOrNUjF
-sg+wsPXMnqRzAIa/ExjQCZBuhMrMLMNKRHLDwLTVgDz+qXb673vpHc0RyxrWC7YZ
-hhQpQkgaeSmCs23IgsI2jm0cKXMMq9yoDLGfVX+naP413sx/RiQPyKZNQnkXHOV/
-O48sd7eTz0BH6ZEBY6fSShd6SzQVUlYQGr2Ol4TXP1/Xa4LGlRzAvGvZOTiPukuX
-2kxyUpBKNHjR7+z9jJ0kAO6mIPiLgI0Ac698iEDWsLkKekuFyd1pYwAZLeMoFR8l
-J+PJ8ZiMqFxRQGr9QSHNwENi+KBFE4PweWPJ92XczoNxLhWyvBc=
-=tXqH
------END PGP SIGNATURE-----
-
---nwkumzirho5iba4d--
