@@ -2,124 +2,102 @@ Return-Path: <SRS0=5Pkx=ED=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-8.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A74C56202
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA609C388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9406206E9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:19:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603923541;
-	bh=4Vz9K5VWILkqVQVWRhlSP7/sa3Zk4U9Q0Nqg2nrhOcc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=fbAg5XeinOsUNY8qppDHgfQnrrv6alUvA/ZovuxuCHJGXJduLDC18FbrJ/ORy3zMa
-	 KrI1xPA9WDksCVb3/7MomXqpIaVOewcBKNvHpOJ6ktxcaw+WISarJDQnr55WSwyHwh
-	 VdZ37fCSR3mSSlbHAHp5/YaiQk5ElArQL92SQMCw=
+	by mail.kernel.org (Postfix) with ESMTP id 2F5D320704
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:23:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="VDQN8LNu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731754AbgJ1WRn (ORCPT
+        id S1732113AbgJ1WXS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:17:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731715AbgJ1WRm (ORCPT
+        Wed, 28 Oct 2020 18:23:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54246 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731746AbgJ1WVp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:17:42 -0400
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84796246BF;
-        Wed, 28 Oct 2020 11:26:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603884420;
-        bh=4Vz9K5VWILkqVQVWRhlSP7/sa3Zk4U9Q0Nqg2nrhOcc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZWcppmpESqFXU3Hg0RYaM8+OgGedONeP+ja3A+NsQ4iuMHP/cSCdIglAcGPUaQeQS
-         PAd5HVdFzbzPZeTAwuecuMpWvGHv0yrgnuXT6XkHETGQcH4ldJV8qCSGaZ5K6q1Drv
-         jw4UNBjUDtoi+nZuOL+PaVmMvj3p5s0VmetzCJsM=
-Date:   Wed, 28 Oct 2020 12:27:52 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-usb@vger.kernel.org,
-        Thomas Winischhofer <thomas@winischhofer.net>,
-        Johan Hovold <johan@kernel.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-omap@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Wed, 28 Oct 2020 18:21:45 -0400
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95E3EC0613CF
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 15:21:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=llnqtOUD5PjuWZRtuygvRGktMLBxoIHZ8Uu5EwB+W4s=; b=VDQN8LNuMh2lkdSja23JcySLy
+        EK3ZdQshwP15ZezmFQ4KK1Hj6IUtHF1ox0IUVTPdfJnugCZYJLboMH+E6n1KWvrnez9GfCKspNRa2
+        2dD4McYZCKpdohvK2s3KJU61S15ffJivLBr47a3nH9bNy27Dj8zYbGrMf7lestWWgde+u7B+OrSHa
+        mZbj/1Fh5cm6yBYv/Fv1pxJVQtINQWzjdV40MpOSSMCwF90IkUo8qep2Wy2mfj6P0VtaCiD7uygGP
+        rK9zWweV5BjyUHekQo/FEhhHk3VikuX912O+ZBk6McV5du6jdWphO6tZFq7udADtt23GXSSAZZcLW
+        +qiUhD4bQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52038)
+        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1kXl4Q-0002o5-8w; Wed, 28 Oct 2020 13:00:54 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1kXl4M-00052p-Pu; Wed, 28 Oct 2020 13:00:50 +0000
+Date:   Wed, 28 Oct 2020 13:00:50 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     Joel Stanley <joel@jms.id.au>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
-        Duncan Sands <duncan.sands@free.fr>
-Subject: Re: [patch V2 06/13] usb: host: isp1362: Replace in_interrupt() usage
-Message-ID: <20201028112752.GA1991431@kroah.com>
-References: <20201019100629.419020859@linutronix.de>
- <20201019101110.240285929@linutronix.de>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        =?iso-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>
+Subject: Re: [PATCH v2 2/2] ARM: move device tree mapping out of linear region
+Message-ID: <20201028130050.GL1551@shell.armlinux.org.uk>
+References: <20201007083944.27910-1-ardb@kernel.org>
+ <CGME20201028091912eucas1p13fb9cd947faa6bfd79199ea79648b6af@eucas1p1.samsung.com>
+ <20201007083944.27910-3-ardb@kernel.org>
+ <920965b8-6f87-3f82-9fce-d3051fc543ca@samsung.com>
+ <CACPK8XfNfqToFBe0GPFTGrnPhNTYhSDiEagpB7ayBSW1DC-THA@mail.gmail.com>
+ <CAMj1kXH90MzCUJ_DHZ_2=JcWBX=Qf1PT-A9PX9EeBTVx22EkaQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201019101110.240285929@linutronix.de>
+In-Reply-To: <CAMj1kXH90MzCUJ_DHZ_2=JcWBX=Qf1PT-A9PX9EeBTVx22EkaQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+Sender: Russell King - ARM Linux admin <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 19, 2020 at 12:06:35PM +0200, Thomas Gleixner wrote:
-> isp1362_show_regs() is a debugging-only function, with no call sites. It
-> prints the cached value of the HCuPINTENB register if in_interupt() is
-> true, otherwise it reads the actual register content.
+On Wed, Oct 28, 2020 at 01:52:48PM +0100, Ard Biesheuvel wrote:
+> Does this help?
 > 
-> The usage of in_interrupt() in drivers is phased out and Linus clearly
-> requested that code which changes behaviour depending on context should
-> either be separated or the context be conveyed in an argument passed by the
-> caller, which usually knows the context.
+> diff --git a/arch/arm/include/asm/memory.h b/arch/arm/include/asm/memory.h
+> index bb79e52aeb90..4f355bda872a 100644
+> --- a/arch/arm/include/asm/memory.h
+> +++ b/arch/arm/include/asm/memory.h
+> @@ -68,8 +68,8 @@
+>  #define XIP_VIRT_ADDR(physaddr)  (MODULES_VADDR + ((physaddr) & 0x000fffff))
 > 
-> Make the conditional based on a function argument.
-> 
-> Signed-off-by: Ahmed S. Darwish <a.darwish@linutronix.de>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: linux-usb@vger.kernel.org
-> ---
-> V2: Fix silly typo
-> ---
->  drivers/usb/host/isp1362.h |    5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> --- a/drivers/usb/host/isp1362.h
-> +++ b/drivers/usb/host/isp1362.h
-> @@ -793,7 +793,8 @@ static void isp1362_write_fifo(struct is
->  			ISP1362_REG_NO(ISP1362_REG_##r), isp1362_read_reg16(d, r));	\
->  }
->  
-> -static void __attribute__((__unused__)) isp1362_show_regs(struct isp1362_hcd *isp1362_hcd)
-> +static void __attribute__((__unused__))
-> +isp1362_show_regs(struct isp1362_hcd *isp1362_hcd, bool cached_inten)
->  {
->  	isp1362_show_reg(isp1362_hcd, HCREVISION);
->  	isp1362_show_reg(isp1362_hcd, HCCONTROL);
-> @@ -815,7 +816,7 @@ static void __attribute__((__unused__))
->  	isp1362_show_reg(isp1362_hcd, HCXFERCTR);
->  	isp1362_show_reg(isp1362_hcd, HCuPINT);
->  
-> -	if (in_interrupt())
-> +	if (cached_inten)
->  		DBG(0, "%-12s[%02x]:     %04x\n", "HCuPINTENB",
->  			 ISP1362_REG_NO(ISP1362_REG_HCuPINTENB), isp1362_hcd->irqenb);
->  	else
-> 
+>  #define FDT_FIXED_BASE         UL(0xff800000)
+> -#define FDT_FIXED_SIZE         (2 * PMD_SIZE)
+> -#define FDT_VIRT_ADDR(physaddr)        ((void *)(FDT_FIXED_BASE |
+> (physaddr) % PMD_SIZE))
+> +#define FDT_FIXED_SIZE         (2 * SECTION_SIZE)
+> +#define FDT_VIRT_ADDR(physaddr)        ((void *)(FDT_FIXED_BASE |
+> (physaddr) % SECTION_SIZE))
 
-Let's just delete this whole function, if no one is calling it, it
-should not be present.  I'll go make up a patch for that...
+Is this correct? If the FDT fixed size is 2x, why does FDT_VIRT_ADDR()
+only work for half of it?
 
-thanks,
-
-greg k-h
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
