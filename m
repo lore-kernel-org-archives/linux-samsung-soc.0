@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B69C388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4C6C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84A512080C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:32:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BD8F20829
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:32:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603931529;
-	bh=yrIDtrUhmYNv3dPSz7tBCP/xxyCCBmLUAke1TAMzkTs=;
+	s=default; t=1603931532;
+	bh=0ZjT6w62frwssv+4Ks9l2/OnlDfcFnkYb7WrZ7cRmdw=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wLe6fQegsYtDW496h2OBxnwhaycA/e4QIPtGOJqdWhU+DVtgLWNapdKEjKLD/gYxr
-	 MoMZ3Ro4UhkGwU+N+awe4XasJ+Wi4Qev7tkYdfOMwdjwJofx2nbp4h0Bkfp8v5E4Cn
-	 pt6ymaMo5Dq7lVALv4YanEEhe9/i8W5hFTFG3oxI=
+	b=qy7SpefhwTFB8eqX83Y+kwu6Rdn8phwJbcYcvgeWc3apIG6j7m4h1NlFdP+pXs+BF
+	 axO+LAzcK+b2d5ofg1xqUqETnWyRubcCTAzigBf/Y3GNkBLs+fKco44OnIVAysfs/H
+	 +ImiLTT+XGpKvUGDH0EetE8RrjIgWbsAeAlBg0vI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387799AbgJ1Way (ORCPT
+        id S2387736AbgJ1Wai (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:30:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44176 "EHLO mail.kernel.org"
+        Wed, 28 Oct 2020 18:30:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387785AbgJ1Wav (ORCPT
+        id S1732937AbgJ1Wae (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:30:51 -0400
+        Wed, 28 Oct 2020 18:30:34 -0400
 Received: from kozik-lap.proceq-device.com (unknown [194.230.155.184])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 290CF20719;
-        Wed, 28 Oct 2020 22:30:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 187AF20714;
+        Wed, 28 Oct 2020 22:30:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603924249;
-        bh=yrIDtrUhmYNv3dPSz7tBCP/xxyCCBmLUAke1TAMzkTs=;
+        s=default; t=1603924233;
+        bh=0ZjT6w62frwssv+4Ks9l2/OnlDfcFnkYb7WrZ7cRmdw=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=fThgRFzhG7hREyoN1dFzgfDBr8/saK8IOJlOAd2ZDKqo9NrM/J8Z7zjPtzlS+iUOe
-         Fy94aO3kHfGYhjnXuDitbKfip4sliWtWRVmMBluLOfZZdGQgcvGDRNUvFDJ0NVfF8q
-         WaXmVw9Lk7FB80MCRMIcpAz30W2AtUp+DfXOqdNc=
+        b=gdXf2TRB2cFgLK3RjJRUXTsicinW2NjNQp8VYMED099C67W/RHpcOER7hNp/CKizU
+         C5qhDjS5W8MPibbk14g+qhxWMDKRSjtEKSuA6Ut9c6h8RRHouhmDCyM831A+UXCKGJ
+         zpTBYP/asH7yg3E01pl3AOfLF/ckUAJS4noL6KzA=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Lee Jones <lee.jones@linaro.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -61,9 +61,9 @@ To:     Lee Jones <lee.jones@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rpi-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: [RESEND PATCH 07/42] mfd: bcm590xx: use PLATFORM_DEVID_NONE
-Date:   Wed, 28 Oct 2020 23:29:34 +0100
-Message-Id: <20201028223009.369824-7-krzk@kernel.org>
+Subject: [RESEND PATCH 04/42] mfd: atmel-hlcdc: use PLATFORM_DEVID_NONE
+Date:   Wed, 28 Oct 2020 23:29:31 +0100
+Message-Id: <20201028223009.369824-4-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201028223009.369824-1-krzk@kernel.org>
 References: <20201028223009.369824-1-krzk@kernel.org>
@@ -78,27 +78,24 @@ Use PLATFORM_DEVID_NONE define instead of "-1" value because:
  - it might point attention why auto device ID was not used.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/mfd/bcm590xx.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/mfd/atmel-hlcdc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/bcm590xx.c b/drivers/mfd/bcm590xx.c
-index bfac5dc091ca..2f7186a6f6c0 100644
---- a/drivers/mfd/bcm590xx.c
-+++ b/drivers/mfd/bcm590xx.c
-@@ -78,8 +78,9 @@ static int bcm590xx_i2c_probe(struct i2c_client *i2c_pri,
- 		goto err;
- 	}
+diff --git a/drivers/mfd/atmel-hlcdc.c b/drivers/mfd/atmel-hlcdc.c
+index 3c2414ba4b01..8ba13bc6fcf8 100644
+--- a/drivers/mfd/atmel-hlcdc.c
++++ b/drivers/mfd/atmel-hlcdc.c
+@@ -129,7 +129,7 @@ static int atmel_hlcdc_probe(struct platform_device *pdev)
  
--	ret = devm_mfd_add_devices(&i2c_pri->dev, -1, bcm590xx_devs,
--				   ARRAY_SIZE(bcm590xx_devs), NULL, 0, NULL);
-+	ret = devm_mfd_add_devices(&i2c_pri->dev, PLATFORM_DEVID_NONE,
-+				   bcm590xx_devs, ARRAY_SIZE(bcm590xx_devs),
-+				   NULL, 0, NULL);
- 	if (ret < 0) {
- 		dev_err(&i2c_pri->dev, "failed to add sub-devices: %d\n", ret);
- 		goto err;
+ 	dev_set_drvdata(dev, hlcdc);
+ 
+-	return devm_mfd_add_devices(dev, -1, atmel_hlcdc_cells,
++	return devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE, atmel_hlcdc_cells,
+ 				    ARRAY_SIZE(atmel_hlcdc_cells),
+ 				    NULL, 0, NULL);
+ }
 -- 
 2.25.1
 
