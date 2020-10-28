@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BFBC388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B21C0C388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BFF52071A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:31:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A6BB20720
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:31:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603924263;
-	bh=isBHM4+ny8b7IJ/F7UtgN3v5rFfF9HueJMr217mfu0c=;
+	s=default; t=1603924277;
+	bh=14PRgQ9ja2vhKOIYad9z8Ly4hH8wA/Mlt1rDuUMOPjg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TOWWO2Fk/z5/g4cXxchtG3bstCDoyE82Ue1alLJGxT7pyHB92fV3MM8xLI9tXavKR
-	 bR07pBUkCllHOJOhLkjF4B0Z+zlZKBtNB6BZDWlmUk4nvZFbEmsfYUFGMQp6aD89q8
-	 biYWiDjOKtWSbMihfMUOqInPAesuEAjJH0ljAiS0=
+	b=Bqjzb8C2DPNHjy4Lo/HhFGDRLd7z/4KE5OdaU1eS263XwTnsjM1ImnoCCNd9k+K0G
+	 jJYEH/8IHqoTKXoov3ugjSQLtbq433q/u4df9ltXFzdJ25KY/Os+Ke7w6jkmom+JCL
+	 82rq7t9n3lPHGC9sfZUMOSoEpxMudjbo8ci0L/r0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387827AbgJ1WbB (ORCPT
+        id S2387854AbgJ1WbN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:31:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44404 "EHLO mail.kernel.org"
+        Wed, 28 Oct 2020 18:31:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387821AbgJ1WbB (ORCPT
+        id S2387852AbgJ1WbL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:31:01 -0400
+        Wed, 28 Oct 2020 18:31:11 -0400
 Received: from kozik-lap.proceq-device.com (unknown [194.230.155.184])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B23DC2070E;
-        Wed, 28 Oct 2020 22:30:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B49220720;
+        Wed, 28 Oct 2020 22:31:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603924260;
-        bh=isBHM4+ny8b7IJ/F7UtgN3v5rFfF9HueJMr217mfu0c=;
+        s=default; t=1603924271;
+        bh=14PRgQ9ja2vhKOIYad9z8Ly4hH8wA/Mlt1rDuUMOPjg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fq0VbUh1BGpZL5v8S7rnDvmi6nfUO8wAu3dcVo1ZDwcGxhuW3nKgaeNqWiFglw8fO
-         fSO2cxU7z1ZA/U4mBO1xvlrsOKtRVPq7sI6RTRlwHXp/6zQ+/uQY2VdinfFmfJcTUb
-         5UU7ztI6SknI1JjBznGb/K/rzLvWq0VC+myUm7Ks=
+        b=j8/npGYSUb0iY//8SVCqzASzEAnBs8i2WfbO9p4J7yAEcKGRLkf5RFlyZQdSNADtc
+         VAE5arKxMxraOBA+JIaJ9x2E5q74ArET0IsrXiz64ZxLOKn10Tdlq8/tRe8ixcNEqr
+         UEzDIRe7UEMuvoIFpCBCb6o/LjrmymZWKsXgD3G8=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Lee Jones <lee.jones@linaro.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -61,10 +61,10 @@ To:     Lee Jones <lee.jones@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rpi-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-Cc:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Subject: [RESEND PATCH 09/42] mfd: da9150: use PLATFORM_DEVID_NONE
-Date:   Wed, 28 Oct 2020 23:29:36 +0100
-Message-Id: <20201028223009.369824-9-krzk@kernel.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [RESEND PATCH 11/42] mfd: intel_soc_pmic: use PLATFORM_DEVID_NONE
+Date:   Wed, 28 Oct 2020 23:29:38 +0100
+Message-Id: <20201028223009.369824-11-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201028223009.369824-1-krzk@kernel.org>
 References: <20201028223009.369824-1-krzk@kernel.org>
@@ -79,24 +79,24 @@ Use PLATFORM_DEVID_NONE define instead of "-1" value because:
  - it might point attention why auto device ID was not used.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/mfd/da9150-core.c | 2 +-
+ drivers/mfd/intel_soc_pmic_core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/da9150-core.c b/drivers/mfd/da9150-core.c
-index 7f0aa1e8db96..e335cf718442 100644
---- a/drivers/mfd/da9150-core.c
-+++ b/drivers/mfd/da9150-core.c
-@@ -453,7 +453,7 @@ static int da9150_probe(struct i2c_client *client,
+diff --git a/drivers/mfd/intel_soc_pmic_core.c b/drivers/mfd/intel_soc_pmic_core.c
+index ddd64f9e3341..b7bbe58dedcc 100644
+--- a/drivers/mfd/intel_soc_pmic_core.c
++++ b/drivers/mfd/intel_soc_pmic_core.c
+@@ -86,7 +86,7 @@ static int intel_soc_pmic_i2c_probe(struct i2c_client *i2c,
+ 	/* Add lookup table for crc-pwm */
+ 	pwm_add_table(crc_pwm_lookup, ARRAY_SIZE(crc_pwm_lookup));
  
- 	enable_irq_wake(da9150->irq);
- 
--	ret = mfd_add_devices(da9150->dev, -1, da9150_devs,
-+	ret = mfd_add_devices(da9150->dev, PLATFORM_DEVID_NONE, da9150_devs,
- 			      ARRAY_SIZE(da9150_devs), NULL,
- 			      da9150->irq_base, NULL);
- 	if (ret) {
+-	ret = mfd_add_devices(dev, -1, config->cell_dev,
++	ret = mfd_add_devices(dev, PLATFORM_DEVID_NONE, config->cell_dev,
+ 			      config->n_cell_devs, NULL, 0,
+ 			      regmap_irq_get_domain(pmic->irq_chip_data));
+ 	if (ret)
 -- 
 2.25.1
 
