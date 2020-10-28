@@ -1,121 +1,125 @@
-Return-Path: <SRS0=5Pkx=ED=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=zATP=EE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD217C388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 23:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF27C388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72E15207DE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 23:40:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD173207DE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:18:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="orPttfCJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725710AbgJ1Xkk (ORCPT
+        id S1725826AbgJ2ASu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 19:40:40 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59547 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725968AbgJ1XjG (ORCPT
+        Wed, 28 Oct 2020 20:18:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58374 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731856AbgJ1Wpu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 19:39:06 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1kXkCJ-0004HL-0u; Wed, 28 Oct 2020 12:04:59 +0000
-Subject: Re: PM / devfreq: map devfreq drivers to governor using name
-From:   Colin Ian King <colin.king@canonical.com>
-To:     Nishanth Menon <nm@ti.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        Wed, 28 Oct 2020 18:45:50 -0400
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB238C0613CF
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 15:45:50 -0700 (PDT)
+Received: by mail-oi1-x241.google.com with SMTP id y186so1294272oia.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 15:45:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KfnjVkSYavUZpAOuFxYL10A68Gk+riZcuOkpLm+UKsQ=;
+        b=orPttfCJNvUzyey7uOGV6qbycVKTL/tawKuMW0R4tXOU76W3N/0abqCNmDOmSmvRKN
+         L2JU10SN8to5CTiFxG5wFlRZ+x6UlUgMbOG7N/pua3fxvZBZCJS+EYHvE8FzLHr3047a
+         IusQdNKndPmJTL/Pn2PASNVNzQizL4HKrr9h8Sa4s9vTWSzUv1vWxJlLWL7qBwiNZZH0
+         NL3jimF1eAupDw4lp9obwTBpfo4tAMxacCG2xG9Ai03ir7HEjMODGsb6q1L4ESlUir48
+         MW4RzbQapeOS637/B5YLbaa26ZNLRjDyIkCnrRdrCVaqLf/6SiGLh23zR+zTIGWZ/xQI
+         LDIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KfnjVkSYavUZpAOuFxYL10A68Gk+riZcuOkpLm+UKsQ=;
+        b=Qk9fD8npGHPlJa/uRmMvnOJpvLisgpGIZ3DwuMUMTlP+pzzNr3KGreSicAOQYuo6/g
+         xi8aXHTypiEQgAAoNXvE+AhuMNanxOxv8OBx6fnHZoGOnwuvr/VCcgDqSlhdCTq9Jgp/
+         wjayaoTj6jY3Ft/wLoqunFQSMyKVB9cJA2d76YyzDGAn8xpxDE6dZKf17t7ZvXcm8dXU
+         ZW7GXWU26lE3J8l2+xzuzhkHEf+QKGmdcQdnwTqNTZ4JY3191x58zQrCMVrCEhfT33av
+         Plf22nUhsdeb5G47dinndtOKCJxgHXbAzaRe1maDcATi6USgI261LF3h8yQoMgEMXgsv
+         mtPA==
+X-Gm-Message-State: AOAM530A2/95s+qA80EE5m31FcgeVDKOqnriqZ9eHh3mkHsEfQ1ymhvb
+        TFZHdTznfbLPw6SPhQHW0J+NJ3xScvRkFg==
+X-Google-Smtp-Source: ABdhPJyMbjsKNL+0AaYE+74jjeyJZn6dVKEnUKfModkHmF8ww8t+Tpr9o99iUojODmy3PW8gk7wIdw==
+X-Received: by 2002:a17:90a:2c41:: with SMTP id p1mr4749376pjm.129.1603857999683;
+        Tue, 27 Oct 2020 21:06:39 -0700 (PDT)
+Received: from localhost ([122.181.54.133])
+        by smtp.gmail.com with ESMTPSA id q35sm3548111pja.28.2020.10.27.21.06.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Oct 2020 21:06:38 -0700 (PDT)
+Date:   Wed, 28 Oct 2020 09:36:37 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org
-References: <8aec701c-73d1-d2a1-c894-8dec844ed865@canonical.com>
-Message-ID: <e110c917-e65a-1e1b-925d-945cb99eef9a@canonical.com>
-Date:   Wed, 28 Oct 2020 12:04:58 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.2
+        linux-samsung-soc@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nks@flawful.org, georgi.djakov@linaro.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V2 1/2] opp: Allow dev_pm_opp_get_opp_table() to return
+ -EPROBE_DEFER
+Message-ID: <20201028040637.26kw2qk7digel6yb@vireshk-i7>
+References: <24ff92dd1b0ee1b802b45698520f2937418f8094.1598260050.git.viresh.kumar@linaro.org>
+ <20201027222428.GA125472@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <8aec701c-73d1-d2a1-c894-8dec844ed865@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201027222428.GA125472@roeck-us.net>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28/10/2020 12:00, Colin Ian King wrote:
-> Hi,
-> 
-> Static analysis of linux-next with Coverity has found a potential null
-> pointer dereference issue with the following commit:
-> 
-> commit 1b5c1be2c88e8445a20fa1929e26c37e7ca8c926
-> Author: Nishanth Menon <nm@ti.com>
-> Date:   Mon Oct 29 15:01:45 2012 -0500
-> 
->     PM / devfreq: map devfreq drivers to governor using name
-> 
-> 
-> The analysis is as follows for devfreq_remove_governor in
-> drivers/devfreq/devfreq.c
-> 
-> 1312
-> 
-> deref_ptr_in_call: Dereferencing pointer devfreq->governor.
-> 
-> 1313                if (!strncmp(devfreq->governor->name, governor->name,
-> 1314                             DEVFREQ_NAME_LEN)) {
-> 1315                        /* we should have a devfreq governor! */
-> 
-> Dereference before null check (REVERSE_INULL)
-> check_after_deref: Null-checking devfreq->governor suggests that it may
-> be null, but it has already been dereferenced on all paths leading to
-> the check.
-> 
-> 1316                        if (!devfreq->governor) {
-> 1317                                dev_warn(dev, "%s: Governor %s NOT
-> present\n",
-> 1318                                         __func__, governor->name);
-> 1319                                continue;
-> 1320                                /* Fall through */
-> 
-> So devfreq->governor->name is dereferencing devfreq->governor before a
-> null check on devfreq->governor
-> 
-> Colin
-> 
+On 27-10-20, 15:24, Guenter Roeck wrote:
+> Trying again through different e-mail provider. My previous e-mail
+> got stuck in spam filters. Apologies if this is received multiple
+> times.
 
-I forgot to mention, an identical issue also exists here:
+I received only once :)
 
-1247        list_for_each_entry(devfreq, &devfreq_list, node) {
-1248                int ret = 0;
-1249                struct device *dev = devfreq->dev.parent;
-1250
+> On Mon, Aug 24, 2020 at 02:39:32PM +0530, Viresh Kumar wrote:
+> > From: Stephan Gerhold <stephan@gerhold.net>
+> > 
+> [ ... ]
 
-deref_ptr_in_call: Dereferencing pointer devfreq->governor.
+You removed way too much and this lost the context. Keeping the
+routine's prototype line would have been useful.
 
-1251                if (!strncmp(devfreq->governor->name, governor->name,
-1252                             DEVFREQ_NAME_LEN)) {
-1253                        /* The following should never occur */
+> >  
+> >  	opp_table = dev_pm_opp_get_opp_table(dev);
+> > -	if (!opp_table)
+> > -		return ERR_PTR(-ENOMEM);
+> > +	if (!IS_ERR(opp_table))
+> > +		return opp_table;
+> 
+> This should have been
+> 
+> 	if (IS_ERR(opp_table))
+> 		return opp_table;
 
-Dereference before null check (REVERSE_INULL)
-check_after_deref: Null-checking devfreq->governor suggests that it may
-be null, but it has already been dereferenced on all paths leading to
-the check.
+I believe this is the delta from dev_pm_opp_register_set_opp_helper()
+?
 
-1254                        if (devfreq->governor) {
-1255                                dev_warn(dev,
-1256                                         "%s: Governor %s already
-present\n",
-1257                                         __func__,
-devfreq->governor->name);
+A proper fix is already pushed in linux-next for this yesterday.
 
+-- 
+viresh
