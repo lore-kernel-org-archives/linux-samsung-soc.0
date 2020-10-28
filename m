@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54041C56201
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74777C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 038E820725
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:31:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25CDA20720
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:31:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603924283;
-	bh=I4VGOHbyf0ZRqGHKiXOqgW6vQHTMxYY6OP7I4Na2/yM=;
+	s=default; t=1603924296;
+	bh=bAzQYXPPSF1YQMJRkip+nRq3EjwY9NYLDzxEihLOUV8=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aRkgLFtcheNXcbVdlynBuRJrhELZDGPpx0iKQJ7+nlr70EnoAqhoJu/wIjElD5ylP
-	 Qqr/Mg9mQcZvx7M0r6X2l0P0qBVKL1nI8VOfqsk3vZdzSEoF3twBrYBCKKHzl+gI1n
-	 NNXMeWVXdqmPdl22TzPaGAXtsRh58EyT+AkhBAuo=
+	b=IdaXlcqilS6umfABEPnRK9jPuczzlws3LePrTJs9MkK6VQ6q2st93xmlcrIQCrDZZ
+	 uX101HH5lDo/c61oe1ow5eiE1JUm2xRUwcmDE1YCzIH2OCCPUCgJ+u/AjCjzb5opuZ
+	 mHeM+kcF/Mp5gQ7wOt7subtMPcJV3xeidZBuY7Qk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387863AbgJ1WbS (ORCPT
+        id S2387922AbgJ1Wbe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:31:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44938 "EHLO mail.kernel.org"
+        Wed, 28 Oct 2020 18:31:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387849AbgJ1WbR (ORCPT
+        id S2387889AbgJ1Wbd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:31:17 -0400
+        Wed, 28 Oct 2020 18:31:33 -0400
 Received: from kozik-lap.proceq-device.com (unknown [194.230.155.184])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADD0820759;
-        Wed, 28 Oct 2020 22:31:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDE8120724;
+        Wed, 28 Oct 2020 22:31:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603924276;
-        bh=I4VGOHbyf0ZRqGHKiXOqgW6vQHTMxYY6OP7I4Na2/yM=;
+        s=default; t=1603924292;
+        bh=bAzQYXPPSF1YQMJRkip+nRq3EjwY9NYLDzxEihLOUV8=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=DYzF0MgFVHNDdAaWqVpK+bImrezk6zxBp0/5FtN57P6Yt368ppt24j7xZpwmepf//
-         2lH8h3qVFL0gvNbV2on5FezHEWHydkTm3g864JF6VCpsh1gsEWFBQrFdawZ+1WtOJq
-         CwtPX5uImnokeByCQMr+aDOm6g2FMtG0ex/SVdqs=
+        b=kkOBr0OEQzTTynRTwofE/ZNcVU1OacpfiI1wCSVQ+8fE69vj/75t8I/hzgfm7kfGV
+         htL50WNdXKcBm0rrJdsxT0yZ7GlBF/v/E14pecIUn4FusFvE//EJT7cUBVf087rV1c
+         Ru9UUPGPEbTO9D81X85WiWiknXGtGILeER1jSIPA=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Lee Jones <lee.jones@linaro.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -61,9 +61,9 @@ To:     Lee Jones <lee.jones@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rpi-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: [RESEND PATCH 12/42] mfd: kempld: use PLATFORM_DEVID_NONE
-Date:   Wed, 28 Oct 2020 23:29:39 +0100
-Message-Id: <20201028223009.369824-12-krzk@kernel.org>
+Subject: [RESEND PATCH 15/42] mfd: max14577: use PLATFORM_DEVID_NONE
+Date:   Wed, 28 Oct 2020 23:29:42 +0100
+Message-Id: <20201028223009.369824-15-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201028223009.369824-1-krzk@kernel.org>
 References: <20201028223009.369824-1-krzk@kernel.org>
@@ -78,24 +78,24 @@ Use PLATFORM_DEVID_NONE define instead of "-1" value because:
  - it might point attention why auto device ID was not used.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/mfd/kempld-core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mfd/max14577.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/kempld-core.c b/drivers/mfd/kempld-core.c
-index 2c9295953c11..d026013cbe77 100644
---- a/drivers/mfd/kempld-core.c
-+++ b/drivers/mfd/kempld-core.c
-@@ -106,7 +106,8 @@ static int kempld_register_cells_generic(struct kempld_device_data *pld)
- 	if (pld->feature_mask & KEMPLD_FEATURE_MASK_UART)
- 		devs[i++].name = kempld_dev_names[KEMPLD_UART];
+diff --git a/drivers/mfd/max14577.c b/drivers/mfd/max14577.c
+index be185e9d5f16..93df79748a45 100644
+--- a/drivers/mfd/max14577.c
++++ b/drivers/mfd/max14577.c
+@@ -445,7 +445,7 @@ static int max14577_i2c_probe(struct i2c_client *i2c,
+ 			goto err_max77836;
+ 	}
  
--	return mfd_add_devices(pld->dev, -1, devs, i, NULL, 0, NULL);
-+	return mfd_add_devices(pld->dev, PLATFORM_DEVID_NONE, devs, i, NULL, 0,
-+			       NULL);
- }
- 
- static struct resource kempld_ioresource = {
+-	ret = mfd_add_devices(max14577->dev, -1, mfd_devs,
++	ret = mfd_add_devices(max14577->dev, PLATFORM_DEVID_NONE, mfd_devs,
+ 			mfd_devs_size, NULL, 0, NULL);
+ 	if (ret < 0)
+ 		goto err_mfd;
 -- 
 2.25.1
 
