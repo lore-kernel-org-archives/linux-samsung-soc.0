@@ -2,211 +2,166 @@ Return-Path: <SRS0=5Pkx=ED=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 394B2C55179
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C742C388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2EAC24680
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:40:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fO6gSQpW"
+	by mail.kernel.org (Postfix) with ESMTP id E3E85246AB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:41:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbgJ1Vkx (ORCPT
+        id S1727270AbgJ1VlW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:40:53 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:34229 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727266AbgJ1Vkw (ORCPT
+        Wed, 28 Oct 2020 17:41:22 -0400
+Received: from mail.thorsis.com ([92.198.35.195]:57588 "EHLO mail.thorsis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725601AbgJ1VlT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:40:52 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201028214029euoutp015b74b06bf1a17102c2a96d7ba53909f4~CRdwuTEFC0541605416euoutp01P
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 21:40:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201028214029euoutp015b74b06bf1a17102c2a96d7ba53909f4~CRdwuTEFC0541605416euoutp01P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1603921229;
-        bh=I+o/56XtJST5vLryEFJ4j4MJlOOh9NA3qyon+YC57NM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fO6gSQpW7/t2aCmwaikTo7TEAEPzjxhN4x8tgLU495b1aWdbV9Z/S8HgqGnvTjwZe
-         sjTHCfsmEqiOAhDkqsK5hJe7i6RmupaoFTpk4wAvJg93AmcwzHkmrcj/s0jX5TkJKp
-         T8BAlKbzc1fP0JK73LNjlUi6KfAmKVXIVIwvTDYk=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201028214018eucas1p123197ce91702ead337ae9c1a01f95899~CRdm8nSlO3058230582eucas1p1h;
-        Wed, 28 Oct 2020 21:40:18 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id E2.5C.06318.245E99F5; Wed, 28
-        Oct 2020 21:40:18 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20201028214017eucas1p251d5bd9f5f9db68da4ccefe8ee5e7c13~CRdl4ckua2482524825eucas1p2c;
-        Wed, 28 Oct 2020 21:40:17 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201028214017eusmtrp1a59ef10948a3e87798153ce60a73992c~CRdl3enLh3223832238eusmtrp1k;
-        Wed, 28 Oct 2020 21:40:17 +0000 (GMT)
-X-AuditID: cbfec7f5-38bff700000018ae-03-5f99e54282a3
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 7F.8E.06314.145E99F5; Wed, 28
-        Oct 2020 21:40:17 +0000 (GMT)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20201028214016eusmtip238e663beef7e55250b77e6e510a55b27~CRdkqqha-2543225432eusmtip2n;
-        Wed, 28 Oct 2020 21:40:16 +0000 (GMT)
-From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-To:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
+        Wed, 28 Oct 2020 17:41:19 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.thorsis.com (Postfix) with ESMTP id E87BE1DAB;
+        Wed, 28 Oct 2020 08:34:49 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
+Received: from mail.thorsis.com ([127.0.0.1])
+        by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id GP4IZOfp6VRq; Wed, 28 Oct 2020 08:34:49 +0100 (CET)
+Received: by mail.thorsis.com (Postfix, from userid 109)
+        id C2C943F0C; Wed, 28 Oct 2020 08:34:48 +0100 (CET)
+From:   Alexander Dahl <ada@thorsis.com>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-Subject: [PATCH v4 2/5] dt-bindings: net: Add bindings for AX88796C SPI
- Ethernet Adapter
-Date:   Wed, 28 Oct 2020 22:40:09 +0100
-Message-Id: <20201028214012.9712-3-l.stelmach@samsung.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20201028214012.9712-1-l.stelmach@samsung.com>
-MIME-Version: 1.0
-Organization: Samsung R&D Institute Poland
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH+e3eu92NZtdpeVhSMQxSUXv3I8Myglb0h1L0h6A29aKSs9jU
-        NCLFd2ouNUmXlUmSzfem85FKLrHCaj5CjZxpapZiElpk2sPtGvXf95zz+Z4HHJqQjFJSOjI6
-        hlVFK6JkfBFp7F4yexyZKg7eMV7ngc0WE4Hri2opXGJOJfHdrlcULpsvovDg3AiFNROzBDab
-        6wS415hL4TemCoT1E4MUHmgt4eMicwcPmwrbEa7usghwd+lGnNbeJThsLx8Y7CPkDQ/f8OQt
-        WotArtdd5csN9xPlLc0LPHlugw7JF/Sb/egA0cEwNioyjlV5+ZwVRXxMS6UuXJfEZy8uUUmo
-        3C4LCWlg9kDn7WcoC4loCVOBoG92iuCCRQTvs+vXggUETeNG4q9luDVlrfAAgeVFNckF06v+
-        jj4bxWd8QVP+jLIWHJlRAmozxmxTCKYDQcvoDRvlwASALuX1KkXTJLMN2goOWdNi5gBczXmJ
-        uHFbIONBE9+qhYw3TC4+ojjGHp4XT5JWvZ5xg6rkIZsmVvmUxlu29YAppOHL8k8e1+golHV9
-        ozjtADNPGwScdoaeghzSugMwiVCQv4/z5iAwlnwnOcYbRl794FsZgnGF2lYvLu0Lv+cNPM5q
-        B8Nz9twKdpBvvElwaTFkpks42gVqNG1rDaVwbaYCXUcy7X/HaP87QPtvVikidMiJjVUrw1n1
-        7mj2oqdaoVTHRod7hp5X6tHq1/X8evq1GXWshJgQQyPZOnHv2+JgCaWIUycoTQhoQuYoPvKy
-        J0giDlMkXGJV54NVsVGs2oQ20aTMSby77FOghAlXxLDnWPYCq/pb5dFCaRIyBHxgQwOXXSzv
-        9uw9lrSSfM8+XFi0Paj25C3Xxv6YJ/Fvz/Tyc/THK09n1uwq98/qPVG5IXCoqVNb+jt9e0LE
-        aefmTkeFdEzXHyaedjcsKAurXDRS0anm4Pt5d1JbxpRBV8QbRsZZP6GPZutUiL9f/Oc8b+F+
-        Q8Bc/Q73uctuj91kpDpCsdONUKkVfwBOpoN6cQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHIsWRmVeSWpSXmKPExsVy+t/xe7qOT2fGG7yaoGhx/u4hZouNM9az
-        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2px89AKRotNj6+xWlzeNYfN
-        Ysb5fUwWh6buZbRYe+Quu8WxBWIWrXuPsDsIely+dpHZY8vKm0weO2fdZffYtKqTzWPzknqP
-        nTs+M3n0bVnF6PF5k1wAR5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6d
-        TUpqTmZZapG+XYJexovWFtaCCUIV3V9+sjYwLuXrYuTkkBAwkbixq5m5i5GLQ0hgKaPE06d7
-        WboYOYASUhIr56ZD1AhL/LnWxQZR85RR4uTTfcwgCTYBR4n+pSdYQRIiAm+YJZruvWUHcZgF
-        9jFK7D+6mB2kSlggQuLh1YOMIFNZBFQl9ky2BwnzClhJdPacZYTYIC/Rvnw7G4jNKWAt8eTL
-        blYQWwio5ue3NnaIekGJkzOfgB3HLKAusX6eEEiYX0BLYk3TdRYQmxloTPPW2cwTGIVmIemY
-        hdAxC0nVAkbmVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmbGIFxve3Yz807GC9tDD7EKMDBqMTD
-        e+H2zHgh1sSy4srcQ4wSHMxKIrxOZ0/HCfGmJFZWpRblxxeV5qQWH2I0BfpyIrOUaHI+MOXk
-        lcQbmhqaW1gamhubG5tZKInzdggcjBESSE8sSc1OTS1ILYLpY+LglGpgDCt9ZrtOvH6CgeyJ
-        Pxc7Umf0t4pUz1Se3P/xeL/j07OdR/x/XvNeJLwg63eVWt48Zd2PnU9lqsPC5/YvLvr5oOvl
-        19cvpeS229/k7HrkKyi3K+XKnI2COntDNk8/wcq3TGTPD+0e3YrAn29eaOyId4/nWmnAdHiN
-        3t9Ti6z3TOEOKn0THzvxuxJLcUaioRZzUXEiAMXn3HUBAwAA
-X-CMS-MailID: 20201028214017eucas1p251d5bd9f5f9db68da4ccefe8ee5e7c13
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201028214017eucas1p251d5bd9f5f9db68da4ccefe8ee5e7c13
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201028214017eucas1p251d5bd9f5f9db68da4ccefe8ee5e7c13
-References: <20201028214012.9712-1-l.stelmach@samsung.com>
-        <CGME20201028214017eucas1p251d5bd9f5f9db68da4ccefe8ee5e7c13@eucas1p2.samsung.com>
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-leds@vger.kernel.org
+Subject: Re: [Linux-stm32] [PATCH v7 10/12] ARM: dts: stm32: Fix schema warnings for pwm-leds
+Date:   Wed, 28 Oct 2020 08:34:38 +0100
+Message-ID: <5231529.NqohY00Rok@ada>
+In-Reply-To: <f6ed201d-51b6-f278-7a95-3e3e49dc19ee@pengutronix.de>
+References: <20201005203451.9985-1-post@lespocky.de> <20201027100536.cpfizc67gwrolp2z@falbala.internal.home.lespocky.de> <f6ed201d-51b6-f278-7a95-3e3e49dc19ee@pengutronix.de>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add bindings for AX88796C SPI Ethernet Adapter.
+Hello Ahmad,
 
-Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
----
- .../bindings/net/asix,ax88796c.yaml           | 69 +++++++++++++++++++
- 1 file changed, 69 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/asix,ax88796c.yaml
+Am Dienstag, 27. Oktober 2020, 11:58:10 CET schrieb Ahmad Fatoum:
+> Hello,
+>=20
+> On 10/27/20 11:05 AM, Alexander Dahl wrote:
+> > Hello Ahmad,
+> >=20
+> > thanks for your feedback, comments below.
+> >=20
+> >>> -	led-rgb {
+> >>> +	led-controller-2 {
+> >>=20
+> >> Is a single RGB LED really a controller?
+> >=20
+> > I just followed the recommendations by Rob here.
+>=20
+> Do you happen to know if the new multicolor LED support could be used her=
+e?
 
-diff --git a/Documentation/devicetree/bindings/net/asix,ax88796c.yaml b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
-new file mode 100644
-index 000000000000..05093c1ec509
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
-@@ -0,0 +1,69 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/asix,ax88796c.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ASIX AX88796C SPI Ethernet Adapter
-+
-+maintainers:
-+  - Łukasz Stelmach <l.stelmach@samsung.com>
-+
-+description: |
-+  ASIX AX88796C is an Ethernet controller with a built in PHY. This
-+  describes SPI mode of the chip.
-+
-+  The node for this driver must be a child node of an SPI controller,
-+  hence all mandatory properties described in
-+  ../spi/spi-controller.yaml must be specified.
-+
-+allOf:
-+  - $ref: ethernet-controller.yaml#
-+
-+properties:
-+  compatible:
-+    const: asix,ax88796c
-+
-+  reg:
-+    maxItems: 1
-+
-+  spi-max-frequency:
-+    maximum: 40000000
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reset-gpios:
-+    description:
-+      A GPIO line handling reset of the chip. As the line is active low,
-+      it should be marked GPIO_ACTIVE_LOW.
-+    maxItems: 1
-+
-+  local-mac-address: true
-+
-+  mac-address: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - spi-max-frequency
-+  - interrupts
-+  - interrupt-parrent
-+  - reset-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  # Artik5 eval board
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+    ethernet@0 {
-+        compatible = "asix,ax88796c";
-+        reg = <0x0>;
-+        local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
-+        interrupt-parent = <&gpx2>;
-+        interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+        spi-max-frequency = <40000000>;
-+        reset-gpios = <&gpe0 2 GPIO_ACTIVE_LOW>;
-+    };
--- 
-2.26.2
+AFAIK not yet. The multicolor class should be ready and it is used by some=
+=20
+drivers for I=B2C connected LED controllers, but if I understood Pavel=20
+correctly, additional work has to be done for a gpio and/or pwm multicolor=
+=20
+driver. See this thread from August for example:
+
+https://lore.kernel.org/linux-leds/2530787.iFCFyWWcSu@g550jk/
+
+>=20
+> I find it unfortunate that the device tree loses information relevant to
+> humans to adhere to a fixed nomenclature. Apparently led-controller isn't
+> even codified in the YAML binding (It's just in the examples). If you
+> respin, please add a comment that this is a single RGB led. I'd prefer to
+> keep the information in the DTB as well though.
+
+The "new" attributes 'function' and 'color' attributes should cover this=20
+information. IIRC those were introduced sometime before v5.4 and documentat=
+ion=20
+is in the leds/common.yaml binding. I don't see it in the scope of this pat=
+ch=20
+series, but if we would merge this warning fix first, the information is lo=
+st,=20
+so maybe those attributes should be added before?=20
+
+My heuristics on that would be looking at the label and if there's a distin=
+ct=20
+color in it, add the color property. I could do that for all pwm LEDs known=
+ to=20
+the tree currently. That would be a bigger task for GPIO leds though. ;-)
+
+>=20
+> >>>  		compatible =3D "pwm-leds";
+> >>>=20
+> >>> -		led-red {
+> >>> +		led-2 {
+> >>=20
+> >> Shouldn't this have been led-1 as well or is the numbering "global" ?
+> >=20
+> > Also good question. This numbering is for dts only, it usually does
+> > not correspond with LEDs on the board, so it could be numbered per
+> > led-controller as well?
+>=20
+> I'd prefer that it starts by 1. That way it's aligned with PWM channel
+> ID.
+
+Ack.
+
+>=20
+> Thanks for fixing the dtschema warnings by the way!
+
+Well, I "introduced" them by converting the leds-pwm binding to yaml (not=20
+merged yet), so I could as well fix the warnings then? ;-)
+
+Greets
+Alex
+
+>=20
+> Cheers,
+> Ahmad
+>=20
+> > Greets
+> > Alex
+> >=20
+> >>>  			label =3D "mc1:red:rgb";
+> >>>  			pwms =3D <&leds_pwm 1 1000000 0>;
+> >>>  			max-brightness =3D <255>;
+> >>>  			active-low;
+> >>>  	=09
+> >>>  		};
+> >>>=20
+> >>> -		led-green {
+> >>> +		led-3 {
+> >>>=20
+> >>>  			label =3D "mc1:green:rgb";
+> >>>  			pwms =3D <&leds_pwm 2 1000000 0>;
+> >>>  			max-brightness =3D <255>;
+> >>>  			active-low;
+> >>>  	=09
+> >>>  		};
+> >>>=20
+> >>> -		led-blue {
+> >>> +		led-4 {
+> >>>=20
+> >>>  			label =3D "mc1:blue:rgb";
+> >>>  			pwms =3D <&leds_pwm 3 1000000 0>;
+> >>>  			max-brightness =3D <255>;
+
+
+=2D-=20
+
+
 
