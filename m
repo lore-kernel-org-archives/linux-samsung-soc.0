@@ -2,124 +2,155 @@ Return-Path: <SRS0=zATP=EE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF27C388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE67C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD173207DE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:18:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4555207DE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:21:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="orPttfCJ"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="fBZNMVGf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725826AbgJ2ASu (ORCPT
+        id S2390782AbgJ2AV3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 20:18:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58374 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731856AbgJ1Wpu (ORCPT
+        Wed, 28 Oct 2020 20:21:29 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:44765 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727315AbgJ2AV1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:45:50 -0400
-Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB238C0613CF
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 15:45:50 -0700 (PDT)
-Received: by mail-oi1-x241.google.com with SMTP id y186so1294272oia.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2020 15:45:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KfnjVkSYavUZpAOuFxYL10A68Gk+riZcuOkpLm+UKsQ=;
-        b=orPttfCJNvUzyey7uOGV6qbycVKTL/tawKuMW0R4tXOU76W3N/0abqCNmDOmSmvRKN
-         L2JU10SN8to5CTiFxG5wFlRZ+x6UlUgMbOG7N/pua3fxvZBZCJS+EYHvE8FzLHr3047a
-         IusQdNKndPmJTL/Pn2PASNVNzQizL4HKrr9h8Sa4s9vTWSzUv1vWxJlLWL7qBwiNZZH0
-         NL3jimF1eAupDw4lp9obwTBpfo4tAMxacCG2xG9Ai03ir7HEjMODGsb6q1L4ESlUir48
-         MW4RzbQapeOS637/B5YLbaa26ZNLRjDyIkCnrRdrCVaqLf/6SiGLh23zR+zTIGWZ/xQI
-         LDIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KfnjVkSYavUZpAOuFxYL10A68Gk+riZcuOkpLm+UKsQ=;
-        b=Qk9fD8npGHPlJa/uRmMvnOJpvLisgpGIZ3DwuMUMTlP+pzzNr3KGreSicAOQYuo6/g
-         xi8aXHTypiEQgAAoNXvE+AhuMNanxOxv8OBx6fnHZoGOnwuvr/VCcgDqSlhdCTq9Jgp/
-         wjayaoTj6jY3Ft/wLoqunFQSMyKVB9cJA2d76YyzDGAn8xpxDE6dZKf17t7ZvXcm8dXU
-         ZW7GXWU26lE3J8l2+xzuzhkHEf+QKGmdcQdnwTqNTZ4JY3191x58zQrCMVrCEhfT33av
-         Plf22nUhsdeb5G47dinndtOKCJxgHXbAzaRe1maDcATi6USgI261LF3h8yQoMgEMXgsv
-         mtPA==
-X-Gm-Message-State: AOAM530A2/95s+qA80EE5m31FcgeVDKOqnriqZ9eHh3mkHsEfQ1ymhvb
-        TFZHdTznfbLPw6SPhQHW0J+NJ3xScvRkFg==
-X-Google-Smtp-Source: ABdhPJyMbjsKNL+0AaYE+74jjeyJZn6dVKEnUKfModkHmF8ww8t+Tpr9o99iUojODmy3PW8gk7wIdw==
-X-Received: by 2002:a17:90a:2c41:: with SMTP id p1mr4749376pjm.129.1603857999683;
-        Tue, 27 Oct 2020 21:06:39 -0700 (PDT)
-Received: from localhost ([122.181.54.133])
-        by smtp.gmail.com with ESMTPSA id q35sm3548111pja.28.2020.10.27.21.06.38
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Oct 2020 21:06:38 -0700 (PDT)
-Date:   Wed, 28 Oct 2020 09:36:37 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Wed, 28 Oct 2020 20:21:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CM5hY1c5jz9sTf;
+        Thu, 29 Oct 2020 11:21:17 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1603930883;
+        bh=1H+0lWYSxaRNRPccmOFzTYzYgErk8Jx3rJ+1kAphuRA=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=fBZNMVGf2DpDigzvlO5EFKrSfhcHEKaclKWRSpd0rMT3nijHNgh+K7YZaMcJgG+I1
+         Sqp0aSWWEEdsZy58/OpXsqjKdLh1Go0930GvCaNP/rPdkcm6jj8VLu+RtZAYju7Lwv
+         1OyJzCDTJEPo7fb3YVK+7vVSD947EigxRUEp47FaWl3boTdjoiwTlcbdL3lqCGS/Ir
+         HjS3q0q57c4NP98/lAG95E/PIIhVcbnSgznNbTvydd0ukv+wu90vIX/fgrejZmKL/x
+         fFgnf7BJJuzQ19szmCiiqO1GyzQ9nRbhKLLimDSXto/YVs3qcf351XsGaZm3WEkFCR
+         8YPZdn5UhcwWA==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Rob Herring <robh@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-pci@vger.kernel.org,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-arm-kernel@axis.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
         linux-samsung-soc@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nks@flawful.org, georgi.djakov@linaro.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V2 1/2] opp: Allow dev_pm_opp_get_opp_table() to return
- -EPROBE_DEFER
-Message-ID: <20201028040637.26kw2qk7digel6yb@vireshk-i7>
-References: <24ff92dd1b0ee1b802b45698520f2937418f8094.1598260050.git.viresh.kumar@linaro.org>
- <20201027222428.GA125472@roeck-us.net>
+        Minghuan Lian <minghuan.Lian@nxp.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-msm@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Yue Wang <yue.wang@Amlogic.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        linuxppc-dev@lists.ozlabs.org, Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH 01/13] PCI: dwc/imx6: Drop setting PCI_MSI_FLAGS_ENABLE
+In-Reply-To: <20201028204646.356535-2-robh@kernel.org>
+References: <20201028204646.356535-1-robh@kernel.org> <20201028204646.356535-2-robh@kernel.org>
+Date:   Thu, 29 Oct 2020 11:21:16 +1100
+Message-ID: <87h7qdx4oz.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201027222428.GA125472@roeck-us.net>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 27-10-20, 15:24, Guenter Roeck wrote:
-> Trying again through different e-mail provider. My previous e-mail
-> got stuck in spam filters. Apologies if this is received multiple
-> times.
+Rob Herring <robh@kernel.org> writes:
+> No other host driver sets the PCI_MSI_FLAGS_ENABLE bit, so it must not
+> be necessary. If it is, a comment is needed.
 
-I received only once :)
+Yeah, but git blame directly points to:
 
-> On Mon, Aug 24, 2020 at 02:39:32PM +0530, Viresh Kumar wrote:
-> > From: Stephan Gerhold <stephan@gerhold.net>
-> > 
-> [ ... ]
+  75cb8d20c112 ("PCI: imx: Enable MSI from downstream components")
 
-You removed way too much and this lost the context. Keeping the
-routine's prototype line would have been useful.
+Which has a pretty long explanation. The relevant bit probably being:
 
-> >  
-> >  	opp_table = dev_pm_opp_get_opp_table(dev);
-> > -	if (!opp_table)
-> > -		return ERR_PTR(-ENOMEM);
-> > +	if (!IS_ERR(opp_table))
-> > +		return opp_table;
-> 
-> This should have been
-> 
-> 	if (IS_ERR(opp_table))
-> 		return opp_table;
+  ... on i.MX6, the MSI Enable bit controls delivery of MSI interrupts
+  from components below the Root Port.
 
-I believe this is the delta from dev_pm_opp_register_set_opp_helper()
-?
 
-A proper fix is already pushed in linux-next for this yesterday.
+So it seems a little rash to just remove the code.
 
--- 
-viresh
+cheers
+
+
+> Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 8 --------
+>  1 file changed, 8 deletions(-)
+>
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 5cf1ef12fb9b..7dd137d62dca 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -1002,7 +1002,6 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>  	struct resource *dbi_base;
+>  	struct device_node *node = dev->of_node;
+>  	int ret;
+> -	u16 val;
+>  
+>  	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
+>  	if (!imx6_pcie)
+> @@ -1167,13 +1166,6 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	if (pci_msi_enabled()) {
+> -		u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_MSI);
+> -		val = dw_pcie_readw_dbi(pci, offset + PCI_MSI_FLAGS);
+> -		val |= PCI_MSI_FLAGS_ENABLE;
+> -		dw_pcie_writew_dbi(pci, offset + PCI_MSI_FLAGS, val);
+> -	}
+> -
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.25.1
