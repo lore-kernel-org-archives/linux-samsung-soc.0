@@ -2,125 +2,95 @@ Return-Path: <SRS0=zATP=EE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B170BC388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C95C388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B00420720
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:13:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iDIv2msW"
+	by mail.kernel.org (Postfix) with ESMTP id C3EEC2076B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 02:14:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbgJ2CNZ (ORCPT
+        id S1726777AbgJ2COX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 22:13:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46242 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726794AbgJ1VgL (ORCPT
+        Wed, 28 Oct 2020 22:14:23 -0400
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:39630 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbgJ2COW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:36:11 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E884C0613D1;
-        Wed, 28 Oct 2020 14:36:11 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id bn26so978011ejb.6;
-        Wed, 28 Oct 2020 14:36:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dOPkG51cqcEG4Loikdan84KA22neIPGBmd1iXgPOKvU=;
-        b=iDIv2msWfduRF2KUPmTlwpSPN7p2DRaRX3aZ5hTffZ/cqBxD9HXlc+D7ru4zK7oEdE
-         GK/1YB95Caxv7AYmph3nuO8X/nCYcRIVwU5YLPwJLsFr5LlcCwNHpD8TuuBGCiDBokPa
-         6gsvmVLuYS4RxWuUUatoEfqi3145ApZYC4n0n8l2WQfkbS/Sqz/dJtLsk0zvxOzEWo/O
-         Jq00xGMnE/sI/maF54/cVDUZdzJDSJEMP8kKq9bdMCljNkTDA8FJVa1VvGxvhOXVcmrS
-         icg8DaoKJzfTtIfUHRGnLRSJPmFA3k2Yx+PTmsfgHtxAnAX0xlZFs8Fp23GLWlQYNWUF
-         EJVQ==
+        Wed, 28 Oct 2020 22:14:22 -0400
+Received: by mail-ej1-f66.google.com with SMTP id bn26so1701127ejb.6;
+        Wed, 28 Oct 2020 19:14:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dOPkG51cqcEG4Loikdan84KA22neIPGBmd1iXgPOKvU=;
-        b=fIY7SJptVH+0TpRdqadIiWaYY3taw30RUFmsSkUia7fDLMBRuBlFvjVvmh4SzowCN4
-         BKq4SiGbpc1uCMf4K43c0m6AuOxXeUA0UfHOqb0oJvktJNoKtyhL4t1ooJjGrudL8n30
-         ta9yys7ycANaOk8Bt+cIQW21A6FdXGAskQmO0B4go1gucfjk2SwCAh1MKxESO8j2w8M1
-         hNa0Zx8caEgxIFDQtua69IZgfjppHKc98tbswNuiwTU9YVgWyLnHnxILJe8GDW1dpia3
-         sUrh6L12R6PxX+vzGm1D3TQjs2Q6A1EoobI1Agxb3yfRpVYNKhp7qmJeVi5Uc6GEKcM1
-         4ciw==
-X-Gm-Message-State: AOAM5323HKhgBEBfXWdHvpGUv+1HWy8i//g7HnuBOSnjCPTWgjwniPAF
-        /bbNsXfuYZmcWtl+6q3JF2nNei2LBR0=
-X-Google-Smtp-Source: ABdhPJz8U5e7kOuZlcVkoCb+Fk2dIbgZSZkC0ZmwrNSPTAHUTS1jsLlYq8a778c/jEL/XkeyVB5Umw==
-X-Received: by 2002:a05:6512:3fa:: with SMTP id n26mr319207lfq.199.1603919313380;
-        Wed, 28 Oct 2020 14:08:33 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:a315:5445:5300:a6d2:8b6b:ef28:12ae])
-        by smtp.googlemail.com with ESMTPSA id x6sm67712lfn.185.2020.10.28.14.08.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 14:08:32 -0700 (PDT)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     kgene@kernel.org, krzk@kernel.org, alim.akhtar@samsung.com
-Cc:     robh+dt@kernel.org, a.kesavan@samsung.com,
-        naveenkrishna.ch@gmail.com, thomas.ab@samsung.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH] arm64: dts: exynos: Fix reboot/poweroff issues on Exynos7
-Date:   Wed, 28 Oct 2020 22:08:13 +0100
-Message-Id: <20201028210813.49874-1-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.27.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6JQiZAd6xHyfMhhZq7AApTbGmmllgVW7w4+YOA//K7o=;
+        b=pM/ehFqPhBnTF7n94HFzmrLtOzTidHLcHQYllXxC2rg+Kz4CQEH+HAuO6tQfdPKxLi
+         7o0S0aDI32y2eHuRLdbir7yiT53oFlvunZF709AeEH/X77//gOJKzGZnlLvq0nYkHgnr
+         A3bT9iZlBWQdu0G2Wji61Lj4Gtr2OVTax5bPzOMcJJQY+yE7AjsZzKPlU7PNM4itid0L
+         XUi+DmEKeOthbPppaFfLauKAScoSu3juylWekjGCs5Ei/JeRXx38ydPddG8sRou8nhuJ
+         NYixx9LHFcYcUM6kfkRrKzaQtyQ+Iul6a7ZBnZTic09+WbCURouaDCpZODcADvo6FpWW
+         mhIQ==
+X-Gm-Message-State: AOAM531WBXgDzinSj3xJ9/HmRNwui4ue/DUD3XoZPCKCreqPBsuzhyJG
+        P93UkNYDYdAVZgq+/unCYHR/Lb7Z7oF7Uw==
+X-Google-Smtp-Source: ABdhPJzOsJM0Jg68AWxk3T2I+1KjCJLJGi21MgR+c0ixYAV4+m83fy11Yle3XjG5htkFRvECeSgPjQ==
+X-Received: by 2002:a17:906:b110:: with SMTP id u16mr1903481ejy.55.1603937660294;
+        Wed, 28 Oct 2020 19:14:20 -0700 (PDT)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id r11sm652310edi.91.2020.10.28.19.14.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Oct 2020 19:14:20 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id 7so1754738ejm.0;
+        Wed, 28 Oct 2020 19:14:20 -0700 (PDT)
+X-Received: by 2002:a2e:5049:: with SMTP id v9mr855703ljd.273.1603937238672;
+ Wed, 28 Oct 2020 19:07:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20201028223009.369824-1-krzk@kernel.org> <20201028223009.369824-5-krzk@kernel.org>
+In-Reply-To: <20201028223009.369824-5-krzk@kernel.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 29 Oct 2020 10:07:08 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67puSi_wu4BV2Jac23MJMxGj33YJnZxwkfy4jHGYue+WA@mail.gmail.com>
+Message-ID: <CAGb2v67puSi_wu4BV2Jac23MJMxGj33YJnZxwkfy4jHGYue+WA@mail.gmail.com>
+Subject: Re: [RESEND PATCH 05/42] mfd: axp20x: use PLATFORM_DEVID_NONE
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        "open list:BROADCOM BCM281XX..." 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Andy Shevchenko <andy@kernel.org>, Milo Kim <milo.kim@ti.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tony Lindgren <tony@atomide.com>,
+        patches@opensource.cirrus.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2835..." 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNO..." 
+        <linux-samsung-soc@vger.kernel.org>,
+        "open list:OMAP2+ SUPPORT" <linux-omap@vger.kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-In vendor sources for Exynos 7420, psci is not used to reboot or
-poweroff device. Instead we should use syscon reboot/poweroff.
-Previously it was not possible to poweroff (no syscon poweroff node) or
-reboot (because it was handled by psci and this way is not working for
-Exynos).
+On Thu, Oct 29, 2020 at 6:30 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> Use PLATFORM_DEVID_NONE define instead of "-1" value because:
+>  - it brings some meaning,
+>  - it might point attention why auto device ID was not used.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Fixes: fb026cb65247 ("arm64: dts: Add reboot node for exynos7")
-Fixes: b9024cbc937d ("arm64: dts: Add initial device tree support for exynos7")
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
- arch/arm64/boot/dts/exynos/exynos7.dtsi | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index 959918f4ca45..47d54c369d03 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -117,8 +117,10 @@ cpu_atlas3: cpu@3 {
- 	};
- 
- 	psci {
--		compatible = "arm,psci-0.2";
-+		compatible = "arm,psci";
- 		method = "smc";
-+		cpu_off = <0x84000002>;
-+		cpu_on = <0xC4000003>;
- 	};
- 
- 	soc: soc@0 {
-@@ -552,6 +554,13 @@ pmu_system_controller: system-controller@105c0000 {
- 			compatible = "samsung,exynos7-pmu", "syscon";
- 			reg = <0x105c0000 0x5000>;
- 
-+			poweroff: syscon-poweroff {
-+				compatible = "syscon-poweroff";
-+				regmap = <&pmu_system_controller>;
-+				offset = <0x330C>; /* PS_HOLD_CONTROL */
-+				mask = <0x5200>; /* reset value */
-+			};
-+
- 			reboot: syscon-reboot {
- 				compatible = "syscon-reboot";
- 				regmap = <&pmu_system_controller>;
--- 
-2.27.0
-
+Acked-by: Chen-Yu Tsai <wens@csie.org>
