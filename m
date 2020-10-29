@@ -2,102 +2,174 @@ Return-Path: <SRS0=zATP=EE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 937ECC55179
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDA8C4363A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 409E320838
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603931490;
-	bh=Br7/A1aJF5ODiCg0FsDq01zwMxR88GgRHrmoHNXqQC0=;
-	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KjycJwVEytr98OQiiOMTwMg3UXjnPIXXOxIbJh3lkMoETnHDXEbv0vcJ774CoSuoG
-	 smD6MBue7WVk8L/xNwOh/GWacpmWAoeSGEHDiI333irRyinkwZRxerM2NQbwtquczK
-	 aWZHjRRMFI2be2xOhDM3ARR14OlohjoEhLgoRUgk=
+	by mail.kernel.org (Postfix) with ESMTP id 8DE7A215A4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 00:31:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387900AbgJ2Ab0 (ORCPT
+        id S1728537AbgJ2Abl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 20:31:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45398 "EHLO mail.kernel.org"
+        Wed, 28 Oct 2020 20:31:41 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50850 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387935AbgJ1Wbi (ORCPT
+        id S1728272AbgJ2Abk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:31:38 -0400
-Received: from kozik-lap.proceq-device.com (unknown [194.230.155.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECC382072C;
-        Wed, 28 Oct 2020 22:31:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603924297;
-        bh=Br7/A1aJF5ODiCg0FsDq01zwMxR88GgRHrmoHNXqQC0=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=SaRkreUHbgK/buOR5NL6D7XZipzhovGbhAS3L6jxXD/Eintbf/pQMmgee5jFimnb5
-         J2vvEeFq52K4buneR3ZiHqha4N8E/q5qnAFHIRZ2yBmeaOdRwOS1IY0CPSHPrUbmYc
-         EppNgifIdTC05Y2PQN1Qjl1nBzocM/FxUdG7Ee2s=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Andy Shevchenko <andy@kernel.org>, Milo Kim <milo.kim@ti.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        Wed, 28 Oct 2020 20:31:40 -0400
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
+        (envelope-from <andrew@lunn.ch>)
+        id 1kXvqm-0043hO-06; Thu, 29 Oct 2020 01:31:32 +0100
+Date:   Thu, 29 Oct 2020 01:31:31 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
+Cc:     jim.cromie@gmail.com, Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tony Lindgren <tony@atomide.com>,
-        patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: [RESEND PATCH 16/42] mfd: max77686: use PLATFORM_DEVID_NONE
-Date:   Wed, 28 Oct 2020 23:29:43 +0100
-Message-Id: <20201028223009.369824-16-krzk@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201028223009.369824-1-krzk@kernel.org>
-References: <20201028223009.369824-1-krzk@kernel.org>
+        linux-samsung-soc@vger.kernel.org,
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v4 3/5] net: ax88796c: ASIX AX88796C SPI Ethernet Adapter
+ Driver
+Message-ID: <20201029003131.GF933237@lunn.ch>
+References: <20201028214012.9712-1-l.stelmach@samsung.com>
+ <CGME20201028214016eucas1p19d2049a4edb4461b2424358e206dc59c@eucas1p1.samsung.com>
+ <20201028214012.9712-4-l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201028214012.9712-4-l.stelmach@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use PLATFORM_DEVID_NONE define instead of "-1" value because:
- - it brings some meaning,
- - it might point attention why auto device ID was not used.
+> +static void
+> +ax88796c_get_regs(struct net_device *ndev, struct ethtool_regs *regs, void *_p)
+> +{
+> +	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
+> +	u16 *p = _p;
+> +	int offset, i;
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/mfd/max77686.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+You missed a reverse christmass tree fix here.
 
-diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
-index 71faf503844b..1f26d00fdd37 100644
---- a/drivers/mfd/max77686.c
-+++ b/drivers/mfd/max77686.c
-@@ -217,8 +217,8 @@ static int max77686_i2c_probe(struct i2c_client *i2c)
- 		return ret;
- 	}
- 
--	ret = devm_mfd_add_devices(max77686->dev, -1, cells, n_devs, NULL,
--				   0, NULL);
-+	ret = devm_mfd_add_devices(max77686->dev, PLATFORM_DEVID_NONE, cells,
-+				   n_devs, NULL, 0, NULL);
- 	if (ret < 0) {
- 		dev_err(&i2c->dev, "failed to add MFD devices: %d\n", ret);
- 		return ret;
--- 
-2.25.1
+> +static int comp;
+> +static int msg_enable = NETIF_MSG_PROBE |
+> +			NETIF_MSG_LINK |
+> +			/* NETIF_MSG_TIMER | */
+> +			/* NETIF_MSG_IFDOWN | */
+> +			/* NETIF_MSG_IFUP | */
+> +			NETIF_MSG_RX_ERR |
+> +			NETIF_MSG_TX_ERR |
+> +			/* NETIF_MSG_TX_QUEUED | */
+> +			/* NETIF_MSG_INTR | */
+> +			/* NETIF_MSG_TX_DONE | */
+> +			/* NETIF_MSG_RX_STATUS | */
+> +			/* NETIF_MSG_PKTDATA | */
+> +			/* NETIF_MSG_HW | */
+> +			/* NETIF_MSG_WOL | */
+> +			0;
 
+You should probably delete anything which is commented out.
+
+> +
+> +static char *no_regs_list = "80018001,e1918001,8001a001,fc0d0000";
+> +unsigned long ax88796c_no_regs_mask[AX88796C_REGDUMP_LEN / (sizeof(unsigned long) * 8)];
+> +
+> +module_param(comp, int, 0444);
+> +MODULE_PARM_DESC(comp, "0=Non-Compression Mode, 1=Compression Mode");
+
+I think you need to find a different way to configure this. How much
+does compression bring you anyway?
+
+> +module_param(msg_enable, int, 0444);
+> +MODULE_PARM_DESC(msg_enable, "Message mask (see linux/netdevice.h for bitmap)");
+
+I know a lot of drivers have msg_enable, but DaveM is generally
+against module parameters. So i would remove this.
+
+
+> +static void ax88796c_set_hw_multicast(struct net_device *ndev)
+> +{
+> +	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
+> +	u16 rx_ctl = RXCR_AB;
+> +	int mc_count = netdev_mc_count(ndev);
+
+reverse christmass tree.
+
+> +static struct sk_buff *
+> +ax88796c_tx_fixup(struct net_device *ndev, struct sk_buff_head *q)
+> +{
+> +	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
+> +	struct sk_buff *skb, *tx_skb;
+> +	struct tx_pkt_info *info;
+> +	struct skb_data *entry;
+> +	int headroom;
+> +	int tailroom;
+> +	u8 need_pages;
+> +	u16 tol_len, pkt_len;
+> +	u8 padlen, seq_num;
+> +	u8 spi_len = ax_local->ax_spi.comp ? 1 : 4;
+
+reverse christmass tree.
+
+> +static int ax88796c_receive(struct net_device *ndev)
+> +{
+> +	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
+> +	struct sk_buff *skb;
+> +	struct skb_data *entry;
+> +	u16 w_count, pkt_len;
+> +	u8 pkt_cnt;
+
+Reverse christmass tree
+
+> +
+> +static int ax88796c_process_isr(struct ax88796c_device *ax_local)
+> +{
+> +	u16 isr;
+> +	u8 done = 0;
+> +	struct net_device *ndev = ax_local->ndev;
+
+...
+
+> +static irqreturn_t ax88796c_interrupt(int irq, void *dev_instance)
+> +{
+> +	struct net_device *ndev = dev_instance;
+> +	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
+
+...
+
+> +static int
+> +ax88796c_open(struct net_device *ndev)
+> +{
+> +	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
+> +	int ret;
+> +	unsigned long irq_flag = IRQF_SHARED;
+> +	int fc = AX_FC_NONE;
+
+...
+
+
+> +static int ax88796c_probe(struct spi_device *spi)
+> +{
+> +	struct net_device *ndev;
+> +	struct ax88796c_device *ax_local;
+> +	char phy_id[MII_BUS_ID_SIZE + 3];
+> +	int ret;
+> +	u16 temp;
+
+...
+
+The mdio/phy/ethtool code looks O.K. now. I've not really looked at
+any of the frame transfer code, so i cannot comment on that.
+
+    Andrew
