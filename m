@@ -2,128 +2,178 @@ Return-Path: <SRS0=zATP=EE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D383FC2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 17:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4293C2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 20:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7633820790
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 17:50:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603993856;
-	bh=MnaEdVRvf+I6U9ck8odbApAyZg6+jPgyaOk9jAH/FlE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=twj5B/9htibkpekh1ZsHBJ/yTcYd2kEAUFFGvPFQbl0YYm4rQyWjoLkiWrKVU1ggm
-	 0SfqfD19QIlxGKlBhLUA0qVIr+W3tea/mKh1kjZRO152+r7y/VZSEqLq07vDjFfSLf
-	 YUF8onuH0XShcGntMIy2kWm2gzcux4vRWnd1RjSQ=
+	by mail.kernel.org (Postfix) with ESMTP id 5EE752083B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Oct 2020 20:07:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GqoXbywl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbgJ2Ruw convert rfc822-to-8bit (ORCPT
+        id S1726356AbgJ2UHW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 29 Oct 2020 13:50:52 -0400
-Received: from mail-ej1-f65.google.com ([209.85.218.65]:45137 "EHLO
-        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbgJ2Ruv (ORCPT
+        Thu, 29 Oct 2020 16:07:22 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36161 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbgJ2UHV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Oct 2020 13:50:51 -0400
-Received: by mail-ej1-f65.google.com with SMTP id dk16so4411346ejb.12;
-        Thu, 29 Oct 2020 10:50:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=JW5uUjpEncojW8FWdx8WUdmW9j1qeTAangqeBjgEKyQ=;
-        b=OQYSgtdOREABaN8zCbg77l5PiMcS0RXXL96/gVeEJV1bfB+QITOqG7xg1hB6MLH1/z
-         oPfNFC3TMS1O82OE8KlpJgAd+WoZJpUrx+Gh2Rb/BpRpZH4f37KpqOLH5QpFKhEXTtW3
-         rzyEnBm+Hz1S/hDmwV8x8QCTd3NGrRfTA8dv4nhxmml6pnkEKO+LfwcFr5bGfZ726LG7
-         aUfqVqq5VH1Y81qRZeixws+/A/WIhthQ/71zKQFLxwPNK6HjDSwso8/TVnIolGB1QfOQ
-         GG9X9wVpytluZCCoWWytgUGxzCkKbMqYDOce8j4Fifc78rWRIdqtFF+QtaeVzm1bAQdc
-         ETlQ==
-X-Gm-Message-State: AOAM530EuIU7s4iorvZmfkIql83XlJ8NsDvG9TqGheTKia3SUSP3q43l
-        sRqiK2FeyTKyAs2/3B8DJx4=
-X-Google-Smtp-Source: ABdhPJyl7xUB/nJc95o/DV+69jqaZrjMS6PW4fVoEdF/462KVKVNy5/ZWfPbKjUtMuzyYBjkZYG4eQ==
-X-Received: by 2002:a17:906:3689:: with SMTP id a9mr5136518ejc.403.1603993847561;
-        Thu, 29 Oct 2020 10:50:47 -0700 (PDT)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id z22sm1856419ejw.107.2020.10.29.10.50.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2020 10:50:45 -0700 (PDT)
-Date:   Thu, 29 Oct 2020 18:50:43 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc:     kgene@kernel.org, alim.akhtar@samsung.com, robh+dt@kernel.org,
-        a.kesavan@samsung.com, naveenkrishna.ch@gmail.com,
-        thomas.ab@samsung.com, devicetree@vger.kernel.org,
+        Thu, 29 Oct 2020 16:07:21 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201029200709euoutp014fdc5f215d799a6a598eb5850daa5344~Cj1jyXyMa2772627726euoutp01f;
+        Thu, 29 Oct 2020 20:07:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201029200709euoutp014fdc5f215d799a6a598eb5850daa5344~Cj1jyXyMa2772627726euoutp01f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1604002029;
+        bh=YuwLhAIFw/2V3cH63KEC8GpC0kRBCETejdjnWHvaNbg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GqoXbywluP7mPxNkcFqMYNzvflMgD1SdEjrxq76mkcmtKZPon1mR+TLVktYO5V63c
+         lK/zj8ySjxRjrxctG2Abca1qRDdVtkC4ppRaktuFuo19e3idux8fLWWFJVVbSWmLpQ
+         2A5igdNQ/8UqN6gdK2fnZVmQFoPWPbdHui8GvWgw=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20201029200708eucas1p216c9faabaac5ca74c134b948f6ac974c~Cj1jBw_mj0694306943eucas1p26;
+        Thu, 29 Oct 2020 20:07:08 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id AF.B5.06318.CE02B9F5; Thu, 29
+        Oct 2020 20:07:08 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20201029200708eucas1p1f00cdaf2c217056427dcd08f9d0d8bc9~Cj1irTHzI1525415254eucas1p1K;
+        Thu, 29 Oct 2020 20:07:08 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201029200708eusmtrp23d745a85010d803ecc9e1bf98848da9c~Cj1iqgaMV1271312713eusmtrp2n;
+        Thu, 29 Oct 2020 20:07:08 +0000 (GMT)
+X-AuditID: cbfec7f5-371ff700000018ae-d1-5f9b20ece31b
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id F7.11.06314.CE02B9F5; Thu, 29
+        Oct 2020 20:07:08 +0000 (GMT)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20201029200708eusmtip16a3a16dbc2e04b09113e25742b1325e5~Cj1ihDX9F0198001980eusmtip1Q;
+        Thu, 29 Oct 2020 20:07:08 +0000 (GMT)
+From:   Lukasz Stelmach <l.stelmach@samsung.com>
+To:     Marc Kleine-Budde <mkl@pengutronix.de>
+Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: exynos: Fix reboot/poweroff issues on Exynos7
-Message-ID: <20201029175043.GA88508@kozik-lap>
-References: <20201028210813.49874-1-pawel.mikolaj.chmiel@gmail.com>
+        linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?utf-8?Q?Bart=C5=82omiej?= =?utf-8?Q?_=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v4 2/5] dt-bindings: net: Add bindings for AX88796C SPI
+ Ethernet Adapter
+Date:   Thu, 29 Oct 2020 21:06:57 +0100
+In-Reply-To: <41ffa67f-54af-4a21-fedc-d9008be00e89@pengutronix.de> (Marc
+        Kleine-Budde's message of "Thu, 29 Oct 2020 18:06:42 +0100")
+Message-ID: <dleftjpn50vlsu.fsf%l.stelmach@samsung.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20201028210813.49874-1-pawel.mikolaj.chmiel@gmail.com>
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm2zln57iaHJfly4qypYKKlzLq62YmQod+9asiKp15MMlN2dSy
+        fliZWmJqdtGmoWmUGrqcY2roiCWuXDovIIsaYUaZaZpWaBdr80zo3/Nenud9no+PIWQFYjmT
+        os7gNWplqkIsIU09C/awSf/K+Mj53CBsd1oI3FKhp3CV/TKJq7v7KVw7XUHhkak3FC4Z+0xg
+        u/0xjQdMxRQ2jI1QePhJlRhX2M0ibLnVhXBTt5PG+tqbJO6pWYPzurrpGB9ueGSQ4IwNr0Rc
+        h85Jc4bGq2Ku9X4O19E+J+JK/kRyxcZGxM0Z1h/0OirZncSnpmTxmojoBMmpRkMDlV658uxs
+        +Sx5AfVICpEXA+xWsF1vExciCSNj6xE4ul+QQvENwZBtjBKKOQSzr4bEy5Rfiy1IGDxEsJB7
+        08P/iGC6V0cUIoYRs+HQ1HTETfBlQ+D117YlMsF+IyGvIcGNV7EnYG50nHZjkg2E3z/aabeO
+        F1uAoPVLL+EeSNnt4HhtXSKvZneAcfwtLfR94MWd96QgqoI79sklR8C2M9A31okEq3EwM2ET
+        CXgVTFiNtIDXwd+OapHbKLA5cKNsm8AtQmCqmieFnV3wpv+nJ/I+GC/I8+x7g2PKR7jrDWWm
+        ckJoS+FKvkzYDoDmkk6PihyuTdR73HAwq9d5XvSWK2PdPboU+ev+i6P7L47OJUuwwaB/EiG0
+        Q+HBvc+EgPdAc/M0WYOoRuTHZ2pVybw2Ss2fCdcqVdpMdXL4yTSVAbm+pG3R+r0dmX8nWhDL
+        IMVKacyGyngZpczSZqssKMCl9O7xowEkJ9Vpal7hK43ts52QSZOU2ed4TVq8JjOV11rQWoZU
+        +Emjaj8dl7HJygz+NM+n85rlqYjxkl9AoYMHfu25DFW5zBY5U5sXWHB9zdOyQ0XGheQ/85fK
+        o0OOOoqj91uDXrYVxe4t+j6scppLP1rL6s7n9FfWHQ7221sa4Lw4Exd4dRTbPujDKNvBwylZ
+        225nPH+maM1fseuvg44mj203UWeDgnck+i7Wvzcnju+8K8rSZVY33O3K37hJQWpPKTeHEBqt
+        8h8VP5aAmgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLIsWRmVeSWpSXmKPExsVy+t/xu7pvFGbHG7TP4Lc4f/cQs8XGGetZ
+        Leacb2GxmH/kHKvFovczWC2uvb3DatH/+DWzxfnzG9gtLmzrY7XY9Pgaq8XlXXPYLGac38dk
+        cWjqXkaLtUfuslusXzSFxeLYAjGL1r1H2B0EPS5fu8jssWXlTSaPnbPusntsWtXJ5rF5Sb3H
+        zh2fmTz6/xp49G1ZxejxeZNcAGeUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWR
+        qZK+nU1Kak5mWWqRvl2CXsaqTStZC2bzVHya/omlgfEYVxcjJ4eEgInE738bGbsYuTiEBJYy
+        Sly7OYeti5EDKCElsXJuOkSNsMSfa11sILaQwFNGiRMLlUBK2AT0JNaujQAJiwhoSdz+uJ0N
+        ZAyzwHcWiQsnL7GAJIQFYiTuzF/NClIvJOAo0TudHyTMIqAq8efbDnaQek6BdkaJze9OMYMk
+        eAXMJW7cPg62S1TAUmLLi/vsEHFBiZMzn4DNZBbIlvi6+jnzBEaBWUhSs5CkZgGtYxbQlFi/
+        Sx8irC2xbOFrZgjbVmLduvcsCxhZVzGKpJYW56bnFhvqFSfmFpfmpesl5+duYgRG97ZjPzfv
+        YLy0MfgQowAHoxIPr4P87Hgh1sSy4srcQ4wqQGMebVh9gVGKJS8/L1VJhNfp7Ok4Id6UxMqq
+        1KL8+KLSnNTiQ4ymQI9OZJYSTc4HJqS8knhDU0NzC0tDc2NzYzMLJXHeDoGDMUIC6Yklqdmp
+        qQWpRTB9TBycUg2MCcw5rBMf37dm2r0ypfqWKJ+K7Z6Wx/apXHcdS9o0DrYvc3sVXX48P3Sy
+        3KuzW7boL+zQZEswdXjgyZnlqfzd7+kr3SvLTp2+pMcuq7dnm4i42ZNOtYnOLar3Hl1gvthx
+        JEe2YDfn2l7/eRF+U7mr9yy5zHex1uia5t13rS3rS/i8MpyY1LYosRRnJBpqMRcVJwIA79tf
+        qRADAAA=
+X-CMS-MailID: 20201029200708eucas1p1f00cdaf2c217056427dcd08f9d0d8bc9
+X-Msg-Generator: CA
+X-RootMTR: 20201029200708eucas1p1f00cdaf2c217056427dcd08f9d0d8bc9
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201029200708eucas1p1f00cdaf2c217056427dcd08f9d0d8bc9
+References: <41ffa67f-54af-4a21-fedc-d9008be00e89@pengutronix.de>
+        <CGME20201029200708eucas1p1f00cdaf2c217056427dcd08f9d0d8bc9@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 10:08:13PM +0100, Paweł Chmiel wrote:
-> In vendor sources for Exynos 7420, psci is not used to reboot or
-> poweroff device. Instead we should use syscon reboot/poweroff.
-> Previously it was not possible to poweroff (no syscon poweroff node) or
-> reboot (because it was handled by psci and this way is not working for
-> Exynos).
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Do you want to say that PSCI cannot be used to power off or reboot?
+It was <2020-10-29 czw 18:06>, when Marc Kleine-Budde wrote:
+> On 10/28/20 10:40 PM, =C5=81ukasz Stelmach wrote:
+>> Add bindings for AX88796C SPI Ethernet Adapter.
+>>=20
+>> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+>> ---
+>>  .../bindings/net/asix,ax88796c.yaml           | 69 +++++++++++++++++++
+>>  1 file changed, 69 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/net/asix,ax88796c.=
+yaml
+>>=20
+>> diff --git
+>> a/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
+>> b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
+>> new file mode 100644
+>> index 000000000000..05093c1ec509
 
-> 
-> Fixes: fb026cb65247 ("arm64: dts: Add reboot node for exynos7")
-> Fixes: b9024cbc937d ("arm64: dts: Add initial device tree support for exynos7")
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos7.dtsi | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> index 959918f4ca45..47d54c369d03 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> @@ -117,8 +117,10 @@ cpu_atlas3: cpu@3 {
->  	};
->  
->  	psci {
-> -		compatible = "arm,psci-0.2";
-> +		compatible = "arm,psci";
+[...]
 
-Please explain how is it related to this issue? You onle mentioned
-a problem of lacking syscon-reboot node.
+>> +  - interrupts
+>> +  - interrupt-parrent
+>                    ^^
+>
+> typo?
 
->  		method = "smc";
-> +		cpu_off = <0x84000002>;
-> +		cpu_on = <0xC4000003>;
+Indeed, removing this but thanks anyway.
 
-The same question.
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
 
->  	};
->  
->  	soc: soc@0 {
-> @@ -552,6 +554,13 @@ pmu_system_controller: system-controller@105c0000 {
->  			compatible = "samsung,exynos7-pmu", "syscon";
->  			reg = <0x105c0000 0x5000>;
->  
-> +			poweroff: syscon-poweroff {
-> +				compatible = "syscon-poweroff";
-> +				regmap = <&pmu_system_controller>;
-> +				offset = <0x330C>; /* PS_HOLD_CONTROL */
-> +				mask = <0x5200>; /* reset value */
-> +			};
-> +
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Instead, please include arm/exynos-syscon-restart.dtsi.
+-----BEGIN PGP SIGNATURE-----
 
-Best regards,
-Krzysztof
+iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl+bIOEACgkQsK4enJil
+gBBYNgf/R/+BlHWdeKNjGdUGq9u9ScuX49zOkp4bP9gI70YuAry4sNcAPqnuFzx7
+/oiUp7xecHvU7z+KWfuU15oi5y0waMBjEmpYMTpuN070bv5s5EpEMH/zpp3Bo5zF
+6UjZZFbCfsxGclkstiRrHw42e5Kw5i+Z3fp/i67cMit1pgr0bplQ+HQi+uuC5lCE
+SCBMqYF7oJTb9ZM9382+vgJ5b+DwWm3DIiahPHg0JhI3U1UOwRlh/q/f/WoZ5MQA
+zavEyLZSgGnexzp6zTIC4J4bLOArWs+Ckzy9lneEG2f509bbgrTRyWuXcVc0Xpc2
+Wyp/HMbG1PRoVAfUQNrv28E6GMae7w==
+=egla
+-----END PGP SIGNATURE-----
+--=-=-=--
