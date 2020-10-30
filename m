@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E6BCC6369E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 10:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CBDC63697
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 10:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA59021734
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 10:10:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E160221FA
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 10:10:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Am/XHbgB"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="jVoJqWq4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbgJ3KIr (ORCPT
+        id S1726455AbgJ3KKm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 30 Oct 2020 06:08:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50312 "EHLO
+        Fri, 30 Oct 2020 06:10:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbgJ3KIo (ORCPT
+        with ESMTP id S1726312AbgJ3KIn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Oct 2020 06:08:44 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 329DFC0613D9
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 03:08:44 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id g12so5768924wrp.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 03:08:44 -0700 (PDT)
+        Fri, 30 Oct 2020 06:08:43 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B030BC0613D2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 03:08:42 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id i16so389473wrv.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 03:08:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/xcbsqH/weHsrxzIda3dt5bupXDON4brOfEy0okYN4I=;
-        b=Am/XHbgBGpMLJawb2JqmvzSTsl5Idglr/zrV0R2WIYVvQFNUw/J4oTVvZTPbUkLKhM
-         lisg+s8yzsUhGfWVPLerJpr5tTqFaD/XZZvYfTg7i69wyEACAvIYaBdn6yq9Md88eZbz
-         D9f7nozAItBqr8ql/UrBHwNAhXwzMj19GyTGg=
+        bh=LviVmALlSgblFMBLYwpV18ifgqJQyTuRFngxF2ueWqY=;
+        b=jVoJqWq4DFPoCMIuDC/TTFq838TwJoryu1vDg2f8eECd5NB93hIuiebO6nwtiPqJk2
+         PBNDqRZzpjAVPcXrmwI57kn0rzxUQFLXxtp1+7PALigEN2sBiDtyTHMwyCrgzu1jbMP7
+         ZEkSAoP/BL/ISsqH2EgmRIPYA3UlrbRAKUUGY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/xcbsqH/weHsrxzIda3dt5bupXDON4brOfEy0okYN4I=;
-        b=CVONcMe8ghyalvQ4fLpNf2vJtnIn/3137COiwUBx6D9SPGe8IAXFeKkv3Vwhs7DRbH
-         76Sv5oftJBg381dfWKnL3cxDrmJhkjs8r1SR4WNsxgpqxNjPEdyiaorjKT9eAoL8yAuA
-         LpbKD5KBqMEu8t3OAu1Q99PKdGQYTglAeRfUUcrW5ZqzNWF+CgcQsWLwGLBbBHpqSS3O
-         Pxt3BBqvPkn2EKo5qosGGwrT5Afen/Ktgmvmak5p8sMjlvvW3+pn/Mkw1m4yGqy79XOL
-         9F+1iPK/FkB7ZCna5sKu7GzlISrOLTUFFl7FYhuK/S/Z4fdGG4PzpHNZC5p2Zl97Z8HO
-         jPMg==
-X-Gm-Message-State: AOAM532DioV8NdIjKvLuVOfZnOklFOqI0r0u9uoMUQ5G0TqxZ/crz6T9
-        kqAtSOmc+ipdpuN1sO9Bm1WUuw==
-X-Google-Smtp-Source: ABdhPJw6XcDIp8KNlI20GqgC0ipGTSD1GbDnlhPI2pNQlmWj+LBBUtNHkeVn2IS0e8mSgO+Qt9vVtA==
-X-Received: by 2002:a5d:420b:: with SMTP id n11mr2059715wrq.218.1604052522912;
-        Fri, 30 Oct 2020 03:08:42 -0700 (PDT)
+        bh=LviVmALlSgblFMBLYwpV18ifgqJQyTuRFngxF2ueWqY=;
+        b=GfygIuLCjyd7A0kyGJO1rMS2LaxfFSKsdUHLVRZMYl563zGtS6ZPZhfaf/azIg4agt
+         6Wfcj+tajKczkkGKlxd++j7xzgnHVC6vFK0ODpMGBB7R/vd9icwbp7aMpkBKJymPjbGs
+         y/uPgHJf8pImN7Pexwf9fKGExEdLbPVUQneEEZdFJNPtDtFMyhMsLXJy6DM+yoeBj6op
+         Zo4kCUjnn/15k2/vsORiC81KWGY2JR6qhCY0qP0AuPA9L0efRAWa32iph7JKhVwXECVG
+         AppRp8JL4X8cNDO0YizftAK0WSMTjphRBs/IThAldhrguGb2itz0O0UsNzwy6w6bHVdj
+         ia3w==
+X-Gm-Message-State: AOAM532IAJPbAPBoFOu7yEl4f2DZPqGtc5Hxy1uDlK40UPgktx3N0y7D
+        IOH0x/KuupOPTdAh14DgcvQBNQ==
+X-Google-Smtp-Source: ABdhPJy80j36pVqL/FfPCmR4vFg8BYnMcSH66PK+Yxy9tBdWcTRFmNrh1EyMMQmo3IueEFvjyMOgnw==
+X-Received: by 2002:adf:80cb:: with SMTP id 69mr2023146wrl.325.1604052521488;
+        Fri, 30 Oct 2020 03:08:41 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id v189sm4430947wmg.14.2020.10.30.03.08.41
+        by smtp.gmail.com with ESMTPSA id v189sm4430947wmg.14.2020.10.30.03.08.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2020 03:08:42 -0700 (PDT)
+        Fri, 30 Oct 2020 03:08:40 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>
@@ -63,10 +63,10 @@ Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
+        John Hubbard <jhubbard@nvidia.com>,
         Daniel Vetter <daniel.vetter@intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jan Kara <jack@suse.cz>,
         Dan Williams <dan.j.williams@intel.com>,
@@ -77,9 +77,9 @@ Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
         Moti Haimovski <mhaimovski@habana.ai>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Pawel Piskorski <ppiskorski@habana.ai>
-Subject: [PATCH v5 04/15] misc/habana: Use FOLL_LONGTERM for userptr
-Date:   Fri, 30 Oct 2020 11:08:04 +0100
-Message-Id: <20201030100815.2269-5-daniel.vetter@ffwll.ch>
+Subject: [PATCH v5 03/15] misc/habana: Stop using frame_vector helpers
+Date:   Fri, 30 Oct 2020 11:08:03 +0100
+Message-Id: <20201030100815.2269-4-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201030100815.2269-1-daniel.vetter@ffwll.ch>
 References: <20201030100815.2269-1-daniel.vetter@ffwll.ch>
@@ -90,8 +90,10 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-These are persistent, not just for the duration of a dma operation.
+All we need are a pages array, pin_user_pages_fast can give us that
+directly. Plus this avoids the entire raw pfn side of get_vaddr_frames.
 
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -112,24 +114,144 @@ Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Pawel Piskorski <ppiskorski@habana.ai>
 Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+--
+v2: Use unpin_user_pages_dirty_lock (John)
+v3: Update kerneldoc (Oded)
 ---
- drivers/misc/habanalabs/common/memory.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/misc/habanalabs/Kconfig             |  1 -
+ drivers/misc/habanalabs/common/habanalabs.h |  6 ++-
+ drivers/misc/habanalabs/common/memory.c     | 49 ++++++++-------------
+ 3 files changed, 22 insertions(+), 34 deletions(-)
 
+diff --git a/drivers/misc/habanalabs/Kconfig b/drivers/misc/habanalabs/Kconfig
+index 1640340d3e62..293d79811372 100644
+--- a/drivers/misc/habanalabs/Kconfig
++++ b/drivers/misc/habanalabs/Kconfig
+@@ -6,7 +6,6 @@
+ config HABANA_AI
+ 	tristate "HabanaAI accelerators (habanalabs)"
+ 	depends on PCI && HAS_IOMEM
+-	select FRAME_VECTOR
+ 	select GENERIC_ALLOCATOR
+ 	select HWMON
+ 	help
+diff --git a/drivers/misc/habanalabs/common/habanalabs.h b/drivers/misc/habanalabs/common/habanalabs.h
+index 80d4d7385ffe..272aa3f29200 100644
+--- a/drivers/misc/habanalabs/common/habanalabs.h
++++ b/drivers/misc/habanalabs/common/habanalabs.h
+@@ -921,7 +921,8 @@ struct hl_ctx_mgr {
+  * struct hl_userptr - memory mapping chunk information
+  * @vm_type: type of the VM.
+  * @job_node: linked-list node for hanging the object on the Job's list.
+- * @vec: pointer to the frame vector.
++ * @pages: pointer to struct page array
++ * @npages: size of @pages array
+  * @sgt: pointer to the scatter-gather table that holds the pages.
+  * @dir: for DMA unmapping, the direction must be supplied, so save it.
+  * @debugfs_list: node in debugfs list of command submissions.
+@@ -932,7 +933,8 @@ struct hl_ctx_mgr {
+ struct hl_userptr {
+ 	enum vm_type_t		vm_type; /* must be first */
+ 	struct list_head	job_node;
+-	struct frame_vector	*vec;
++	struct page		**pages;
++	unsigned int		npages;
+ 	struct sg_table		*sgt;
+ 	enum dma_data_direction dir;
+ 	struct list_head	debugfs_list;
 diff --git a/drivers/misc/habanalabs/common/memory.c b/drivers/misc/habanalabs/common/memory.c
-index 0b220221873d..d08c41b90fec 100644
+index 84227819e4d1..0b220221873d 100644
 --- a/drivers/misc/habanalabs/common/memory.c
 +++ b/drivers/misc/habanalabs/common/memory.c
-@@ -1298,7 +1298,8 @@ static int get_user_memory(struct hl_device *hdev, u64 addr, u64 size,
+@@ -1291,45 +1291,41 @@ static int get_user_memory(struct hl_device *hdev, u64 addr, u64 size,
+ 		return -EFAULT;
+ 	}
+ 
+-	userptr->vec = frame_vector_create(npages);
+-	if (!userptr->vec) {
++	userptr->pages = kvmalloc_array(npages, sizeof(*userptr->pages),
++					GFP_KERNEL);
++	if (!userptr->pages) {
+ 		dev_err(hdev->dev, "Failed to create frame vector\n");
  		return -ENOMEM;
  	}
  
--	rc = pin_user_pages_fast(start, npages, FOLL_FORCE | FOLL_WRITE,
-+	rc = pin_user_pages_fast(start, npages,
-+				 FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
- 				 userptr->pages);
+-	rc = get_vaddr_frames(start, npages, FOLL_FORCE | FOLL_WRITE,
+-				userptr->vec);
++	rc = pin_user_pages_fast(start, npages, FOLL_FORCE | FOLL_WRITE,
++				 userptr->pages);
  
  	if (rc != npages) {
+ 		dev_err(hdev->dev,
+ 			"Failed to map host memory, user ptr probably wrong\n");
+ 		if (rc < 0)
+-			goto destroy_framevec;
++			goto destroy_pages;
++		npages = rc;
+ 		rc = -EFAULT;
+-		goto put_framevec;
+-	}
+-
+-	if (frame_vector_to_pages(userptr->vec) < 0) {
+-		dev_err(hdev->dev,
+-			"Failed to translate frame vector to pages\n");
+-		rc = -EFAULT;
+-		goto put_framevec;
++		goto put_pages;
+ 	}
++	userptr->npages = npages;
+ 
+ 	rc = sg_alloc_table_from_pages(userptr->sgt,
+-					frame_vector_pages(userptr->vec),
+-					npages, offset, size, GFP_ATOMIC);
++				       userptr->pages,
++				       npages, offset, size, GFP_ATOMIC);
+ 	if (rc < 0) {
+ 		dev_err(hdev->dev, "failed to create SG table from pages\n");
+-		goto put_framevec;
++		goto put_pages;
+ 	}
+ 
+ 	return 0;
+ 
+-put_framevec:
+-	put_vaddr_frames(userptr->vec);
+-destroy_framevec:
+-	frame_vector_destroy(userptr->vec);
++put_pages:
++	unpin_user_pages(userptr->pages, npages);
++destroy_pages:
++	kvfree(userptr->pages);
+ 	return rc;
+ }
+ 
+@@ -1415,8 +1411,6 @@ int hl_pin_host_memory(struct hl_device *hdev, u64 addr, u64 size,
+  */
+ void hl_unpin_host_memory(struct hl_device *hdev, struct hl_userptr *userptr)
+ {
+-	struct page **pages;
+-
+ 	hl_debugfs_remove_userptr(hdev, userptr);
+ 
+ 	if (userptr->dma_mapped)
+@@ -1424,15 +1418,8 @@ void hl_unpin_host_memory(struct hl_device *hdev, struct hl_userptr *userptr)
+ 							userptr->sgt->nents,
+ 							userptr->dir);
+ 
+-	pages = frame_vector_pages(userptr->vec);
+-	if (!IS_ERR(pages)) {
+-		int i;
+-
+-		for (i = 0; i < frame_vector_count(userptr->vec); i++)
+-			set_page_dirty_lock(pages[i]);
+-	}
+-	put_vaddr_frames(userptr->vec);
+-	frame_vector_destroy(userptr->vec);
++	unpin_user_pages_dirty_lock(userptr->pages, userptr->npages, true);
++	kvfree(userptr->pages);
+ 
+ 	list_del(&userptr->job_node);
+ 
 -- 
 2.28.0
 
