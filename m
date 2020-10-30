@@ -2,298 +2,83 @@ Return-Path: <SRS0=Y9I5=EF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 081A1C55178
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 14:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84964C4741F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 18:29:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A25DD221FF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 14:38:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="koZdGXG+"
+	by mail.kernel.org (Postfix) with ESMTP id 3192920729
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 18:29:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604082542;
+	bh=O6rdcfEvz4ITww5FaJ0fSskUmOSbdblO+Hsm8PGlhfI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=VB/gtSTrreT8A56oklDKe6sfaBcSMH/HkQP2LUxDKozgSo/+TXNsMA3pVd9mnSs6n
+	 MHxbCIZdKkj2Zcj/bUtJ4S10k32koHG7no45TaxLazUq4q5tGQ2RUmDC8BXSOwA4WD
+	 JnapnQlrKI7e3i+2Ru2VbNjTMfyeR5T5W3GF2XCI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbgJ3OiE (ORCPT
+        id S1727182AbgJ3S3B (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 30 Oct 2020 10:38:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35890 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbgJ3OiD (ORCPT
+        Fri, 30 Oct 2020 14:29:01 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39895 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbgJ3S3B (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Oct 2020 10:38:03 -0400
-Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAD8AC0613D4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 07:38:03 -0700 (PDT)
-Received: by mail-oi1-x243.google.com with SMTP id k27so6823809oij.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 07:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=SFdgvNNkKFB8SPaNCIOCQJISIgDBDMbDzScVAH9EDMM=;
-        b=koZdGXG+Ed4ZrGS9gYktSh+x1QwMrt0hVdgtd4bIPF04LbzITd0kgGqgPUBl5FakP+
-         0IPlU3GsFBiis2BGBWZ8Etau8IP6JGUudreHosPpOTayfP42rljDrS9OOvm9gkIsYPvS
-         XRK9qJaWRojvBDDnG6hf9KUPyRba0rCKMXbVM=
+        Fri, 30 Oct 2020 14:29:01 -0400
+Received: by mail-ot1-f66.google.com with SMTP id z16so1232160otq.6;
+        Fri, 30 Oct 2020 11:29:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SFdgvNNkKFB8SPaNCIOCQJISIgDBDMbDzScVAH9EDMM=;
-        b=KS9d2TL/waoxF2+X6Sh/mbnP9mn7LILFhw/dWw7ZtyV2Exjp8Mo4AwZWm9S3ZILodj
-         is/lSgSamJdPF5Dsq57bpuFdns3S5yD+tJmX8d+Fr3WVDk27TAQzQWvE8kFbcEsfe7Ye
-         Hbc9P57SvuaEONy7xslJXUbsxFrf5aUKx8eU9FIEL6zoJD1sTciBuDi8SQzUcKGpoKyB
-         DrKrbzoCQQxr25xy37dbXWlQIjZ5us3EkNhOMGNVj+Jd5S0KjGQ/8o2rQ6uqlSrse89x
-         ziqU8vWvyMcA2JkNwbUBo69IOGUuLRJ/HIA3Cl9uTVT2z7tmmiwNDMsWImL9yt1/fkZg
-         nngA==
-X-Gm-Message-State: AOAM532Gx419kttERgwggntq4QJx0SJ+geYBiOyR+DamFO2dOO0iH9tM
-        PkCg28lmF4cJ/byADtIvgpl1zQPxR8Q8eYjsyk7Bcw==
-X-Google-Smtp-Source: ABdhPJzRmIwZAJG+16lc3hpTwK/eoorAnaJg+RPUJ77L79AwZKhT5ZuLVu9x7ItY0hWudsBOQUnGYhpPZBYn26IA3Eg=
-X-Received: by 2002:aca:b141:: with SMTP id a62mr1673007oif.101.1604068683122;
- Fri, 30 Oct 2020 07:38:03 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=4NpsA5nA2wkUvE/qMbVrxKKcYwgaHmrECWmxhZM8s1g=;
+        b=EcexzSAQaN3At12/qsSeKBhD077+bKN6fKWhhKBZwOnSzHS2bsoLqmIqfvp4ptmNdY
+         yMfDbImz0rYI5p+QFpmrWW8C1VIWUuaJ8SbnY7LXfFfRmSqUi7mPu+0wLO4Zn/PjOT1b
+         Eqcu2h1wqE96uRewjvC+F6S5IoOkwle91e8FVga1uh7wWvOUeTe0J7GjOvI0RmuUcXSQ
+         KlOTX27TzIsThbngimMvMj5NAf0moA4WlMPeeHB8pteHchLa4d6n62PJdEBKOtlyODft
+         Zx1+HwpKKKcnztcWWPuKvtIesS4NzfJDPsY1FEYas1jiPD/ti/ww8OuHldpEMxRQzCbe
+         uNVw==
+X-Gm-Message-State: AOAM5302+fch0tPwRl2mdEmJij9CLfth7XIv2zbIJGf2Cwkbr8Q8udgv
+        tOfkafc+izOzBl+MSbD1zg==
+X-Google-Smtp-Source: ABdhPJynX3zltj5DTUoFZn8g6ziERx06loOaoDZTEmjUPTdlWKUz2rnW1APosznMybQVAYfB+WoXEA==
+X-Received: by 2002:a05:6830:1d4f:: with SMTP id p15mr2229214oth.16.1604082540657;
+        Fri, 30 Oct 2020 11:29:00 -0700 (PDT)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id b92sm1484287otc.70.2020.10.30.11.28.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2020 11:29:00 -0700 (PDT)
+Received: (nullmailer pid 4106236 invoked by uid 1000);
+        Fri, 30 Oct 2020 18:28:59 -0000
+Date:   Fri, 30 Oct 2020 13:28:59 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
+Cc:     krzk@kernel.org, linux-samsung-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, kgene@kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: samsung: document bindings for p4note
+ family boards
+Message-ID: <20201030182859.GA4106187@bogus>
+References: <20201024144421.34435-1-martin.juecker@gmail.com>
+ <20201024144421.34435-2-martin.juecker@gmail.com>
 MIME-Version: 1.0
-References: <20201030100815.2269-1-daniel.vetter@ffwll.ch> <20201030100815.2269-6-daniel.vetter@ffwll.ch>
- <CAAFQd5ANOAzVf+tC1iYKXeY0ALahtYrG7xtKHXHmvv1xh7si3g@mail.gmail.com>
-In-Reply-To: <CAAFQd5ANOAzVf+tC1iYKXeY0ALahtYrG7xtKHXHmvv1xh7si3g@mail.gmail.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Fri, 30 Oct 2020 15:37:52 +0100
-Message-ID: <CAKMK7uFFNNXtWh5CyDVGnXo+GYdhc-CgZN1pZSmYAhnyrDhXaQ@mail.gmail.com>
-Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>,
-        kvm <kvm@vger.kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201024144421.34435-2-martin.juecker@gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 30, 2020 at 3:11 PM Tomasz Figa <tfiga@chromium.org> wrote:
->
-> On Fri, Oct 30, 2020 at 11:08 AM Daniel Vetter <daniel.vetter@ffwll.ch> w=
-rote:
-> >
-> > This is used by media/videbuf2 for persistent dma mappings, not just
-> > for a single dma operation and then freed again, so needs
-> > FOLL_LONGTERM.
-> >
-> > Unfortunately current pup_locked doesn't support FOLL_LONGTERM due to
-> > locking issues. Rework the code to pull the pup path out from the
-> > mmap_sem critical section as suggested by Jason.
-> >
-> > By relying entirely on the vma checks in pin_user_pages and follow_pfn
-> > (for vm_flags and vma_is_fsdax) we can also streamline the code a lot.
-> >
-> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> > Cc: Pawel Osciak <pawel@osciak.com>
-> > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> > Cc: Tomasz Figa <tfiga@chromium.org>
-> > Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: John Hubbard <jhubbard@nvidia.com>
-> > Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: linux-mm@kvack.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Cc: linux-media@vger.kernel.org
-> > Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > --
-> > v2: Streamline the code and further simplify the loop checks (Jason)
-> >
-> > v5: Review from Tomasz:
-> > - fix page counting for the follow_pfn case by resetting ret
-> > - drop gup_flags paramater, now unused
-> > ---
-> >  .../media/common/videobuf2/videobuf2-memops.c |  3 +-
-> >  include/linux/mm.h                            |  2 +-
-> >  mm/frame_vector.c                             | 53 ++++++-------------
-> >  3 files changed, 19 insertions(+), 39 deletions(-)
-> >
->
-> Thanks, looks good to me now.
->
-> Acked-by: Tomasz Figa <tfiga@chromium.org>
->
-> From reading the code, this is quite unlikely to introduce any
-> behavior changes, but just to be safe, did you have a chance to test
-> this with some V4L2 driver?
+On Sat, 24 Oct 2020 16:44:17 +0200, Martin Jücker wrote:
+> Document the GT-N8010/GT-N8013 device binding and the p4note common
+> binding that it is based on.
+> 
+> Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
+> ---
+>  .../devicetree/bindings/arm/samsung/samsung-boards.yaml   | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
 
-Nah, unfortunately not.
--Daniel
-
->
-> Best regards,
-> Tomasz
->
-> > diff --git a/drivers/media/common/videobuf2/videobuf2-memops.c b/driver=
-s/media/common/videobuf2/videobuf2-memops.c
-> > index 6e9e05153f4e..9dd6c27162f4 100644
-> > --- a/drivers/media/common/videobuf2/videobuf2-memops.c
-> > +++ b/drivers/media/common/videobuf2/videobuf2-memops.c
-> > @@ -40,7 +40,6 @@ struct frame_vector *vb2_create_framevec(unsigned lon=
-g start,
-> >         unsigned long first, last;
-> >         unsigned long nr;
-> >         struct frame_vector *vec;
-> > -       unsigned int flags =3D FOLL_FORCE | FOLL_WRITE;
-> >
-> >         first =3D start >> PAGE_SHIFT;
-> >         last =3D (start + length - 1) >> PAGE_SHIFT;
-> > @@ -48,7 +47,7 @@ struct frame_vector *vb2_create_framevec(unsigned lon=
-g start,
-> >         vec =3D frame_vector_create(nr);
-> >         if (!vec)
-> >                 return ERR_PTR(-ENOMEM);
-> > -       ret =3D get_vaddr_frames(start & PAGE_MASK, nr, flags, vec);
-> > +       ret =3D get_vaddr_frames(start & PAGE_MASK, nr, vec);
-> >         if (ret < 0)
-> >                 goto out_destroy;
-> >         /* We accept only complete set of PFNs */
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index ef360fe70aaf..d6b8e30dce2e 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -1765,7 +1765,7 @@ struct frame_vector {
-> >  struct frame_vector *frame_vector_create(unsigned int nr_frames);
-> >  void frame_vector_destroy(struct frame_vector *vec);
-> >  int get_vaddr_frames(unsigned long start, unsigned int nr_pfns,
-> > -                    unsigned int gup_flags, struct frame_vector *vec);
-> > +                    struct frame_vector *vec);
-> >  void put_vaddr_frames(struct frame_vector *vec);
-> >  int frame_vector_to_pages(struct frame_vector *vec);
-> >  void frame_vector_to_pfns(struct frame_vector *vec);
-> > diff --git a/mm/frame_vector.c b/mm/frame_vector.c
-> > index 10f82d5643b6..f8c34b895c76 100644
-> > --- a/mm/frame_vector.c
-> > +++ b/mm/frame_vector.c
-> > @@ -32,13 +32,12 @@
-> >   * This function takes care of grabbing mmap_lock as necessary.
-> >   */
-> >  int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
-> > -                    unsigned int gup_flags, struct frame_vector *vec)
-> > +                    struct frame_vector *vec)
-> >  {
-> >         struct mm_struct *mm =3D current->mm;
-> >         struct vm_area_struct *vma;
-> >         int ret =3D 0;
-> >         int err;
-> > -       int locked;
-> >
-> >         if (nr_frames =3D=3D 0)
-> >                 return 0;
-> > @@ -48,40 +47,26 @@ int get_vaddr_frames(unsigned long start, unsigned =
-int nr_frames,
-> >
-> >         start =3D untagged_addr(start);
-> >
-> > -       mmap_read_lock(mm);
-> > -       locked =3D 1;
-> > -       vma =3D find_vma_intersection(mm, start, start + 1);
-> > -       if (!vma) {
-> > -               ret =3D -EFAULT;
-> > -               goto out;
-> > -       }
-> > -
-> > -       /*
-> > -        * While get_vaddr_frames() could be used for transient (kernel
-> > -        * controlled lifetime) pinning of memory pages all current
-> > -        * users establish long term (userspace controlled lifetime)
-> > -        * page pinning. Treat get_vaddr_frames() like
-> > -        * get_user_pages_longterm() and disallow it for filesystem-dax
-> > -        * mappings.
-> > -        */
-> > -       if (vma_is_fsdax(vma)) {
-> > -               ret =3D -EOPNOTSUPP;
-> > -               goto out;
-> > -       }
-> > -
-> > -       if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
-> > +       ret =3D pin_user_pages_fast(start, nr_frames,
-> > +                                 FOLL_FORCE | FOLL_WRITE | FOLL_LONGTE=
-RM,
-> > +                                 (struct page **)(vec->ptrs));
-> > +       if (ret > 0) {
-> >                 vec->got_ref =3D true;
-> >                 vec->is_pfns =3D false;
-> > -               ret =3D pin_user_pages_locked(start, nr_frames,
-> > -                       gup_flags, (struct page **)(vec->ptrs), &locked=
-);
-> > -               goto out;
-> > +               goto out_unlocked;
-> >         }
-> >
-> > +       mmap_read_lock(mm);
-> >         vec->got_ref =3D false;
-> >         vec->is_pfns =3D true;
-> > +       ret =3D 0;
-> >         do {
-> >                 unsigned long *nums =3D frame_vector_pfns(vec);
-> >
-> > +               vma =3D find_vma_intersection(mm, start, start + 1);
-> > +               if (!vma)
-> > +                       break;
-> > +
-> >                 while (ret < nr_frames && start + PAGE_SIZE <=3D vma->v=
-m_end) {
-> >                         err =3D follow_pfn(vma, start, &nums[ret]);
-> >                         if (err) {
-> > @@ -92,17 +77,13 @@ int get_vaddr_frames(unsigned long start, unsigned =
-int nr_frames,
-> >                         start +=3D PAGE_SIZE;
-> >                         ret++;
-> >                 }
-> > -               /*
-> > -                * We stop if we have enough pages or if VMA doesn't co=
-mpletely
-> > -                * cover the tail page.
-> > -                */
-> > -               if (ret >=3D nr_frames || start < vma->vm_end)
-> > +               /* Bail out if VMA doesn't completely cover the tail pa=
-ge. */
-> > +               if (start < vma->vm_end)
-> >                         break;
-> > -               vma =3D find_vma_intersection(mm, start, start + 1);
-> > -       } while (vma && vma->vm_flags & (VM_IO | VM_PFNMAP));
-> > +       } while (ret < nr_frames);
-> >  out:
-> > -       if (locked)
-> > -               mmap_read_unlock(mm);
-> > +       mmap_read_unlock(mm);
-> > +out_unlocked:
-> >         if (!ret)
-> >                 ret =3D -EFAULT;
-> >         if (ret > 0)
-> > --
-> > 2.28.0
-> >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
-
-
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Reviewed-by: Rob Herring <robh@kernel.org>
