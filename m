@@ -2,182 +2,290 @@ Return-Path: <SRS0=Y9I5=EF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B85C00A89
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 12:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AAC6C00A89
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 14:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28D252075E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 12:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDC532087E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 14:11:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VEUnSTdT"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LH6iU5G+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725975AbgJ3Mxo (ORCPT
+        id S1726801AbgJ3OLe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 30 Oct 2020 08:53:44 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:60857 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbgJ3Mx1 (ORCPT
+        Fri, 30 Oct 2020 10:11:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59962 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbgJ3OLe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Oct 2020 08:53:27 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201030125311euoutp023749d3139eee3673fedf870ad00d3641~Cxj8CjSD50291702917euoutp02d
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 12:53:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201030125311euoutp023749d3139eee3673fedf870ad00d3641~Cxj8CjSD50291702917euoutp02d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604062391;
-        bh=cRQaPfG8BF7tRwg45YbYTx6wg+Bhj1IaUDssAJxWNEY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VEUnSTdTM+9V7Ga6zuVMMncHSOCbpNfasW5wO5r3ZevfhQ1GRY7TLykuRunIThhiM
-         lbiwqp27rnKgaYyU9zaw4bWMcdPZlj52kp3k8DEyHB7nnuQiKAkOoelxomG438NIUM
-         hhMm3ki7zCnWkF8y7MskmtxAyio79ElJelV3x2CA=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201030125305eucas1p200f9fc11dbb07ba033d8b80accae8e0e~Cxj3JChtj0096900969eucas1p2I;
-        Fri, 30 Oct 2020 12:53:05 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 1F.02.06318.1BC0C9F5; Fri, 30
-        Oct 2020 12:53:05 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20201030125305eucas1p2d61ba397d77a72e0d1dce8d30b278e16~Cxj2rYcgx0100501005eucas1p2K;
-        Fri, 30 Oct 2020 12:53:05 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201030125305eusmtrp17870df56fb80be2752bd73c53af85b9c~Cxj2qsCNk0319303193eusmtrp16;
-        Fri, 30 Oct 2020 12:53:05 +0000 (GMT)
-X-AuditID: cbfec7f5-371ff700000018ae-dc-5f9c0cb1d384
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id FA.3A.06314.1BC0C9F5; Fri, 30
-        Oct 2020 12:53:05 +0000 (GMT)
-Received: from AMDC3061.digital.local (unknown [106.120.51.75]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201030125304eusmtip2528da988a0f7422cf8f75a53af6e05ba~Cxj1-vJID1609116091eusmtip2H;
-        Fri, 30 Oct 2020 12:53:04 +0000 (GMT)
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     georgi.djakov@linaro.org, cw00.choi@samsung.com, krzk@kernel.org
-Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
-        a.swigon@samsung.com, myungjoo.ham@samsung.com,
-        inki.dae@samsung.com, sw0312.kim@samsung.com,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        s.nawrocki@samsung.com
-Subject: [PATCH v7 4/6] ARM: dts: exynos: Add interconnect properties to
- Exynos4412 bus nodes
-Date:   Fri, 30 Oct 2020 13:51:47 +0100
-Message-Id: <20201030125149.8227-5-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201030125149.8227-1-s.nawrocki@samsung.com>
+        Fri, 30 Oct 2020 10:11:34 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDA87C0613CF
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 07:11:33 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id o21so1783948ejb.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 07:11:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fGLh8FE7n+kGnPiOSCfCu+B491Brb7ePqBRZY6cItBg=;
+        b=LH6iU5G+qAZ4T7sqXNGE44q/WiF+g2smHT8tK2NZZq846wCXnKZVs/i0NAbqwfc9xk
+         21Yj3MNkwi0ukryfrHB9hVgWhM+cdTTWfsDLp+g3D7Iig02N7iwYOeg6SfA5q4dylm2H
+         zlOSbk28N2b27zmw/TwjqgMUPI5sLxmAXsXzk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fGLh8FE7n+kGnPiOSCfCu+B491Brb7ePqBRZY6cItBg=;
+        b=Ea7A2+amCHkAlg9s5q1qbR57J292n7iZPLdpQ5USCcFmUQfXnn4n9dYcKxSFjq/6g5
+         phMGAjgBrq69C9hbLUtYIlOzpXoLS2hI8sdvRyYp/bk4D9W7tLHx9Y9oNRr3gLpekh+f
+         BvZv7J4M/jnZQdXMHot6fTxx14vqF2uqDu148tLJzK/qavpAPhNtenJoHadKkS55vRQ9
+         QIDpL0NQFL8KipQokIN50aGCUiw+1Vb8QkihvPUcifKe+mieike6ztowhJH8ySAf3Xq2
+         nyg4PFg0x5IkYEQ2ojCSxfMLIio+5oOqYHeV0AIbbk3e7PfNe/ebltDq7RU9xLMy2SD8
+         tX6Q==
+X-Gm-Message-State: AOAM530gIhg0UgP3XH2opTvCncBsK1kRDyS/XgjbWUJTevyULCtjXIuA
+        S2bqSn5f0C8hHFNFtXOth6ELj0hUFrZv1w==
+X-Google-Smtp-Source: ABdhPJxVYpeooU8ZBrfI8ghvpxAySQ6l9MMV5Qiti2iIYEpGvHdS+2S/9kte/IAlTEkQHM7rg2OuIg==
+X-Received: by 2002:a17:906:11db:: with SMTP id o27mr2712380eja.487.1604067091836;
+        Fri, 30 Oct 2020 07:11:31 -0700 (PDT)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
+        by smtp.gmail.com with ESMTPSA id b1sm2615108edw.27.2020.10.30.07.11.25
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Oct 2020 07:11:26 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id n15so6653307wrq.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 07:11:25 -0700 (PDT)
+X-Received: by 2002:adf:e892:: with SMTP id d18mr3615109wrm.103.1604067085454;
+ Fri, 30 Oct 2020 07:11:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0iTURjGOfv2XZRmpyn1Ypm1LmThraJOKaFhtIIgqL+iWks/VHImW1Z2
-        Ec003dRsBtq8rRXlJVGHqZiKOW2K5ahMI41VmGUpFkvCrMz1afnf733O85z3fQ+Ho6RdtCcX
-        HXuKV8cqY2SMq7ju0WSPb82CQkXA06KtxF6cikhNfhVN+r99oElJew9NeifGGZLXbGaI3p4j
-        JjZbNUueNxYyxJHVjki+rUVEKttfs2QguZQhqc3tLLGMXqFJfu4IE4Ll5vIMRj7Y18TI7Tqr
-        SJ5dW47kDvPy/fQh1+AIPib6NK/233HMNarvWT8dl4fPdt4oYJNQpkSLOA7wZriVJtYiV06K
-        SxEYpy20UHxD0J2SwQqFA8HN77dFc4mn9ZSg30Uwda+G+pewVZfNJFw4BgdCVkc2crIHDoO0
-        98ViJ1P4nQhSSignu2MFGBxvGCeL8RrIudTLOhtI8HbQ9rs7ZcDeUFHd+tfugoNAm/FS5GQJ
-        XgRdN4Zmr/SGlPsFlOAfYWG89bzAYaCzlCGB3eGTtZYVeBl052b+XRlwCoLMBwOsUOQgsFuN
-        s4kgGOz5wTgHorAPVDX6C3IoPLZUssJDuMHLsUXCDG6gr8ujBFkC6WlSwb0apsrzRAJ7gm5o
-        WiywHEymYSoHrTTM28YwbxvD/75GRJWjJXy8RhXJazbF8mf8NEqVJj420i/8pMqMZj5Y92/r
-        RANq+Xm8DWEOyRZIQrwLFFJaeVqToGpDwFEyD8nOJ91HpZIIZcI5Xn1SoY6P4TVtaCknli2R
-        bDKNHJHiSOUp/gTPx/HquVMR5+KZhDoXD392a6vdvXdyeKjk09T1w+u2Ne8LDzJdfrFMX/R1
-        8uHXLR87Es/oGscuKL0OGO58SWrCXtaE/cVdJHijUT9UZe5Y6X3loP7qqwB9j65+bXqoRXft
-        enJm4uf836vQHm1CyK9nB3ddtG1wwcM+vg0Vib9CPijsneMLV7yOe1sxNpolE2uilIHrKbVG
-        +Qepn62gXAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsVy+t/xe7obeebEG5zcI2Fxf14ro8XGGetZ
-        La5/ec5qMf/IOVaLK1/fs1lM37uJzWLS/QksFufPb2C3uLxrDpvF594jjBYzzu9jslh75C67
-        xe3GFWwWrXuPsFscftPOajFj8ks2BwGPTas62TzuXNvD5nG/+ziTR9+WVYwenzfJBbBG6dkU
-        5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GVcu3SdtWC6
-        QMWJmbPZGxh7eLsYOTgkBEwkLm5n7mLk4hASWMoocXbzJzaIuJTE/BalLkZOIFNY4s+1LjaI
-        mk9ANT/XMYMk2AQMJXqP9jGC2CICHhKnWteyghQxC3xgklj7oBcsISwQK/G2ewmYzSKgKjGh
-        6Qo7yAJeASuJruvCEAvkJVZvOAA2k1PAWqKr8wYTSIkQUMnbA1UgYV4BQYmTM5+wgISZBdQl
-        1s8TAgkzA3U2b53NPIFRcBaSqlkIVbOQVC1gZF7FKJJaWpybnltsqFecmFtcmpeul5yfu4kR
-        GJXbjv3cvIPx0sbgQ4wCHIxKPLwO8rPjhVgTy4orcw8xSnAwK4nwOp09HSfEm5JYWZValB9f
-        VJqTWnyI0RTosYnMUqLJ+cCEkVcSb2hqaG5haWhubG5sZqEkztshcDBGSCA9sSQ1OzW1ILUI
-        po+Jg1OqgbEz48M6/ckxU4SN45MXndu94cIi9qXvo74uaHLZmr3p9J5d9qxZyf1p9dv6eg1Y
-        misufCs1zfdfuGT7jAMK3x7WKb5kYTh342GreZrvY7YPCn0rp9QcyH8VqXPjnqezsNK3PVvM
-        5a9VZM44HTNnD4veS4trVYvWeVy8ZHTC3/biMze9NRlT9fYqsRRnJBpqMRcVJwIAVBPJbOAC
-        AAA=
-X-CMS-MailID: 20201030125305eucas1p2d61ba397d77a72e0d1dce8d30b278e16
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201030125305eucas1p2d61ba397d77a72e0d1dce8d30b278e16
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201030125305eucas1p2d61ba397d77a72e0d1dce8d30b278e16
-References: <20201030125149.8227-1-s.nawrocki@samsung.com>
-        <CGME20201030125305eucas1p2d61ba397d77a72e0d1dce8d30b278e16@eucas1p2.samsung.com>
+References: <20201030100815.2269-1-daniel.vetter@ffwll.ch> <20201030100815.2269-6-daniel.vetter@ffwll.ch>
+In-Reply-To: <20201030100815.2269-6-daniel.vetter@ffwll.ch>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Fri, 30 Oct 2020 15:11:14 +0100
+X-Gmail-Original-Message-ID: <CAAFQd5ANOAzVf+tC1iYKXeY0ALahtYrG7xtKHXHmvv1xh7si3g@mail.gmail.com>
+Message-ID: <CAAFQd5ANOAzVf+tC1iYKXeY0ALahtYrG7xtKHXHmvv1xh7si3g@mail.gmail.com>
+Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch adds the following properties for Exynos4412 interconnect
-bus nodes:
- - interconnects: to declare connections between nodes in order to
-   guarantee PM QoS requirements between nodes,
- - #interconnect-cells: required by the interconnect framework,
- - samsung,data-clk-ratio: which allows to specify minimum data clock
-   frequency corresponding to requested bandwidth for each bus.
+On Fri, Oct 30, 2020 at 11:08 AM Daniel Vetter <daniel.vetter@ffwll.ch> wro=
+te:
+>
+> This is used by media/videbuf2 for persistent dma mappings, not just
+> for a single dma operation and then freed again, so needs
+> FOLL_LONGTERM.
+>
+> Unfortunately current pup_locked doesn't support FOLL_LONGTERM due to
+> locking issues. Rework the code to pull the pup path out from the
+> mmap_sem critical section as suggested by Jason.
+>
+> By relying entirely on the vma checks in pin_user_pages and follow_pfn
+> (for vm_flags and vma_is_fsdax) we can also streamline the code a lot.
+>
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Pawel Osciak <pawel@osciak.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Tomasz Figa <tfiga@chromium.org>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> --
+> v2: Streamline the code and further simplify the loop checks (Jason)
+>
+> v5: Review from Tomasz:
+> - fix page counting for the follow_pfn case by resetting ret
+> - drop gup_flags paramater, now unused
+> ---
+>  .../media/common/videobuf2/videobuf2-memops.c |  3 +-
+>  include/linux/mm.h                            |  2 +-
+>  mm/frame_vector.c                             | 53 ++++++-------------
+>  3 files changed, 19 insertions(+), 39 deletions(-)
+>
 
-Note that #interconnect-cells is always zero and node IDs are not
-hardcoded anywhere.
+Thanks, looks good to me now.
 
-Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Changes for v7:
- - adjusted to the DT property changes: "interconnects" instead
-   of "samsung,interconnect-parent", "samsung,data-clk-ratio"
-   instead of "bus-width".
+Acked-by: Tomasz Figa <tfiga@chromium.org>
 
-Changes for v6:
- - added bus-width property in bus_dmc node.
+From reading the code, this is quite unlikely to introduce any
+behavior changes, but just to be safe, did you have a chance to test
+this with some V4L2 driver?
 
-Changes for v5:
- - adjust to renamed exynos,interconnect-parent-node property,
- - add properties in common exynos4412.dtsi file rather than
-   in Odroid specific odroid4412-odroid-common.dtsi.
----
- arch/arm/boot/dts/exynos4412.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Best regards,
+Tomasz
 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index e76881d..4999e68 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -383,6 +383,8 @@
- 			clocks = <&clock CLK_DIV_DMC>;
- 			clock-names = "bus";
- 			operating-points-v2 = <&bus_dmc_opp_table>;
-+			samsung,data-clock-ratio = <4>;
-+			#interconnect-cells = <0>;
- 			status = "disabled";
- 		};
- 
-@@ -452,6 +454,8 @@
- 			clocks = <&clock CLK_DIV_GDL>;
- 			clock-names = "bus";
- 			operating-points-v2 = <&bus_leftbus_opp_table>;
-+			interconnects = <&bus_dmc>;
-+			#interconnect-cells = <0>;
- 			status = "disabled";
- 		};
- 
-@@ -468,6 +472,8 @@
- 			clocks = <&clock CLK_ACLK160>;
- 			clock-names = "bus";
- 			operating-points-v2 = <&bus_display_opp_table>;
-+			interconnects = <&bus_leftbus &bus_dmc>;
-+			#interconnect-cells = <0>;
- 			status = "disabled";
- 		};
- 
--- 
-2.7.4
-
+> diff --git a/drivers/media/common/videobuf2/videobuf2-memops.c b/drivers/=
+media/common/videobuf2/videobuf2-memops.c
+> index 6e9e05153f4e..9dd6c27162f4 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-memops.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-memops.c
+> @@ -40,7 +40,6 @@ struct frame_vector *vb2_create_framevec(unsigned long =
+start,
+>         unsigned long first, last;
+>         unsigned long nr;
+>         struct frame_vector *vec;
+> -       unsigned int flags =3D FOLL_FORCE | FOLL_WRITE;
+>
+>         first =3D start >> PAGE_SHIFT;
+>         last =3D (start + length - 1) >> PAGE_SHIFT;
+> @@ -48,7 +47,7 @@ struct frame_vector *vb2_create_framevec(unsigned long =
+start,
+>         vec =3D frame_vector_create(nr);
+>         if (!vec)
+>                 return ERR_PTR(-ENOMEM);
+> -       ret =3D get_vaddr_frames(start & PAGE_MASK, nr, flags, vec);
+> +       ret =3D get_vaddr_frames(start & PAGE_MASK, nr, vec);
+>         if (ret < 0)
+>                 goto out_destroy;
+>         /* We accept only complete set of PFNs */
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index ef360fe70aaf..d6b8e30dce2e 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1765,7 +1765,7 @@ struct frame_vector {
+>  struct frame_vector *frame_vector_create(unsigned int nr_frames);
+>  void frame_vector_destroy(struct frame_vector *vec);
+>  int get_vaddr_frames(unsigned long start, unsigned int nr_pfns,
+> -                    unsigned int gup_flags, struct frame_vector *vec);
+> +                    struct frame_vector *vec);
+>  void put_vaddr_frames(struct frame_vector *vec);
+>  int frame_vector_to_pages(struct frame_vector *vec);
+>  void frame_vector_to_pfns(struct frame_vector *vec);
+> diff --git a/mm/frame_vector.c b/mm/frame_vector.c
+> index 10f82d5643b6..f8c34b895c76 100644
+> --- a/mm/frame_vector.c
+> +++ b/mm/frame_vector.c
+> @@ -32,13 +32,12 @@
+>   * This function takes care of grabbing mmap_lock as necessary.
+>   */
+>  int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+> -                    unsigned int gup_flags, struct frame_vector *vec)
+> +                    struct frame_vector *vec)
+>  {
+>         struct mm_struct *mm =3D current->mm;
+>         struct vm_area_struct *vma;
+>         int ret =3D 0;
+>         int err;
+> -       int locked;
+>
+>         if (nr_frames =3D=3D 0)
+>                 return 0;
+> @@ -48,40 +47,26 @@ int get_vaddr_frames(unsigned long start, unsigned in=
+t nr_frames,
+>
+>         start =3D untagged_addr(start);
+>
+> -       mmap_read_lock(mm);
+> -       locked =3D 1;
+> -       vma =3D find_vma_intersection(mm, start, start + 1);
+> -       if (!vma) {
+> -               ret =3D -EFAULT;
+> -               goto out;
+> -       }
+> -
+> -       /*
+> -        * While get_vaddr_frames() could be used for transient (kernel
+> -        * controlled lifetime) pinning of memory pages all current
+> -        * users establish long term (userspace controlled lifetime)
+> -        * page pinning. Treat get_vaddr_frames() like
+> -        * get_user_pages_longterm() and disallow it for filesystem-dax
+> -        * mappings.
+> -        */
+> -       if (vma_is_fsdax(vma)) {
+> -               ret =3D -EOPNOTSUPP;
+> -               goto out;
+> -       }
+> -
+> -       if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
+> +       ret =3D pin_user_pages_fast(start, nr_frames,
+> +                                 FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM=
+,
+> +                                 (struct page **)(vec->ptrs));
+> +       if (ret > 0) {
+>                 vec->got_ref =3D true;
+>                 vec->is_pfns =3D false;
+> -               ret =3D pin_user_pages_locked(start, nr_frames,
+> -                       gup_flags, (struct page **)(vec->ptrs), &locked);
+> -               goto out;
+> +               goto out_unlocked;
+>         }
+>
+> +       mmap_read_lock(mm);
+>         vec->got_ref =3D false;
+>         vec->is_pfns =3D true;
+> +       ret =3D 0;
+>         do {
+>                 unsigned long *nums =3D frame_vector_pfns(vec);
+>
+> +               vma =3D find_vma_intersection(mm, start, start + 1);
+> +               if (!vma)
+> +                       break;
+> +
+>                 while (ret < nr_frames && start + PAGE_SIZE <=3D vma->vm_=
+end) {
+>                         err =3D follow_pfn(vma, start, &nums[ret]);
+>                         if (err) {
+> @@ -92,17 +77,13 @@ int get_vaddr_frames(unsigned long start, unsigned in=
+t nr_frames,
+>                         start +=3D PAGE_SIZE;
+>                         ret++;
+>                 }
+> -               /*
+> -                * We stop if we have enough pages or if VMA doesn't comp=
+letely
+> -                * cover the tail page.
+> -                */
+> -               if (ret >=3D nr_frames || start < vma->vm_end)
+> +               /* Bail out if VMA doesn't completely cover the tail page=
+. */
+> +               if (start < vma->vm_end)
+>                         break;
+> -               vma =3D find_vma_intersection(mm, start, start + 1);
+> -       } while (vma && vma->vm_flags & (VM_IO | VM_PFNMAP));
+> +       } while (ret < nr_frames);
+>  out:
+> -       if (locked)
+> -               mmap_read_unlock(mm);
+> +       mmap_read_unlock(mm);
+> +out_unlocked:
+>         if (!ret)
+>                 ret =3D -EFAULT;
+>         if (ret > 0)
+> --
+> 2.28.0
+>
