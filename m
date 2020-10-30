@@ -2,238 +2,267 @@ Return-Path: <SRS0=Y9I5=EF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9251C63697
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 10:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FF7C00A89
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 12:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA65221FA
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 10:10:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 290542087E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 12:29:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="aKlzbno0"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XVIQ1hFI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725876AbgJ3KKy (ORCPT
+        id S1726545AbgJ3M32 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 30 Oct 2020 06:10:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50314 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725888AbgJ3KIk (ORCPT
+        Fri, 30 Oct 2020 08:29:28 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:55153 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbgJ3M3Y (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Oct 2020 06:08:40 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E52F1C0613D5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 03:08:39 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id k18so2387556wmj.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 03:08:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5HSDx6z2iUpxgLk7STJ2LBrJWLho+Vrj3pPui9pXoI8=;
-        b=aKlzbno033YLitqk2cu6P3GxwmA6KJS6TWty9sQ9M/iPUxDJOU1RZXpRtUUIGF7xnO
-         Swv3BBEn+EDEZ2SaP7J2IxU1yLczM6UZuRRDl5xraJR6v6/wOJB5FFwkxWAxwAC34NZq
-         IyAPMBXZG3141RKZo4/lB3rcCDQNXkL02GSOs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5HSDx6z2iUpxgLk7STJ2LBrJWLho+Vrj3pPui9pXoI8=;
-        b=ngUje8hJTfBCnBuqwNN6GpYK9l6ZSGVmVo3TxixIS7RyLM6jZ/b3mUmCzd6CsbenLX
-         2YzJUBAXMqahR95jD667b/hjwrJqplSZTw2FFvOCsyqosQVjmddbCkY0eLj4/T07ff3F
-         V/B+7f02YTHnjXblrR/OfH59MTvIQ7rYmhRHBErjOMeYRUv+RyYhmIahrM3Y8wOVwi9o
-         LbXVOVigtScFs2Bg+nz+N9AKI4ygS1ufHUT141HWIP+GHsslpMfvhsbvhPMqOuSzd/L9
-         uIumoeopUT3GOLstU36DjEmJoSOATuX3Ccgn2ps2Lx55vI8q239mBJYHwSAweH1+wXZA
-         CT7A==
-X-Gm-Message-State: AOAM531gZYq6i8ny/oCsM0ZBfAWw/rGgFterc/KeTJ+AraPYuP912mO0
-        h6t7C/6YCcw5XuY+tq7ARjRK4Q==
-X-Google-Smtp-Source: ABdhPJylI0KOMbymdWD4o/sLacOvb/pRDxaSEXtH+RKYbEbEetFTaDUFpNXr6iZ7QCn2hD5tBOFSzw==
-X-Received: by 2002:a1c:b486:: with SMTP id d128mr1694999wmf.164.1604052518673;
-        Fri, 30 Oct 2020 03:08:38 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id v189sm4430947wmg.14.2020.10.30.03.08.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2020 03:08:37 -0700 (PDT)
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-To:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH v5 01/15] drm/exynos: Stop using frame_vector helpers
-Date:   Fri, 30 Oct 2020 11:08:01 +0100
-Message-Id: <20201030100815.2269-2-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201030100815.2269-1-daniel.vetter@ffwll.ch>
-References: <20201030100815.2269-1-daniel.vetter@ffwll.ch>
+        Fri, 30 Oct 2020 08:29:24 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201030122910euoutp01a00490e040e5d5744982374e52eee8dd~CxO_PS_2Y1251112511euoutp01Z
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 12:29:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201030122910euoutp01a00490e040e5d5744982374e52eee8dd~CxO_PS_2Y1251112511euoutp01Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1604060950;
+        bh=YV+bUm/CiXD+OTt6gutAdWC1mleNGIQH/z9V1moP9ec=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=XVIQ1hFIBy+ppk4o7Zrqc/iyzD1Yalt3pzRtBe8luKI0nev58dhFle1DCKOSA/W4I
+         76K7rtrzs3ODNYuYf4k6kZBPbx+tKnNxL3SXQiRfdRssDQV17KLWoDdZINYzJZkPvs
+         JLgQtwS3IqlCnsIsfN/01OJG1IpqkgKvxDVbyhmQ=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20201030122909eucas1p21952a86630480186e4324a7d8a396064~CxO9sy9991469914699eucas1p2q;
+        Fri, 30 Oct 2020 12:29:09 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 7C.FD.06318.5170C9F5; Fri, 30
+        Oct 2020 12:29:09 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20201030122909eucas1p1f4b33f6fd724f174f96f1fe310c83fc1~CxO9TYFIa1809718097eucas1p1V;
+        Fri, 30 Oct 2020 12:29:09 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20201030122909eusmtrp1d1111caa7e8af0832da168a8dbcce695~CxO9SennR1994519945eusmtrp1h;
+        Fri, 30 Oct 2020 12:29:09 +0000 (GMT)
+X-AuditID: cbfec7f5-38bff700000018ae-0b-5f9c07152814
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id CE.33.06017.5170C9F5; Fri, 30
+        Oct 2020 12:29:09 +0000 (GMT)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20201030122908eusmtip1d4aac8f4553fc923ca43c5406b44949e~CxO8Ztr7R2036820368eusmtip14;
+        Fri, 30 Oct 2020 12:29:08 +0000 (GMT)
+Subject: Re: [PATCH RFC v6 1/6] dt-bindings: exynos-bus: Add documentation
+ for interconnect properties
+To:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Cc:     cw00.choi@samsung.com, krzk@kernel.org, devicetree@vger.kernel.org,
+        a.swigon@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <ca0417b2-fddf-cec5-c3b6-0ec80958d4c0@samsung.com>
+Date:   Fri, 30 Oct 2020 13:29:07 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <ae438269-fbb5-326a-aa97-f04033c2b3b6@linaro.org>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH+e3e3XtdTa4z8aRRtBLppYk9ftDLQmIUlBGEVGorL07aTLam
+        vcBqKeWcjvbHdM4UkbSFlOtltqzGdKTlJGM9nEnLiEVipgVmZW7XyP8+55zv+Z3zPfwYQuIT
+        xjC5ecc5dZ5cKaVE5N3OCc+qKNqatfpx+Vo8eKUY4ZbKG0L8avyTENe6eoT45fcRCpsf2il8
+        edBIYo/nJo3tH7xC3NdmpfCYwYVwpaddgJtdAzTuP9dE4SlHK40rTQEqhZXZbZcomc/roGSD
+        erdAdquhSFZ+24ZkY/aFadR+0cZsTplbwKkTNx8SKbwlVH7VyhOG4l/UWfRqSSliGGDXwNWR
+        2FIkYiRsEwLHRZ+QD8YRdH3U03wwhkD3zIlKUVioo1VvJflCI4JBk2kmGEVw7p2PCKoiWQVM
+        3CujgjyP3Qm99Q4iKCLYCwQYAtdDT1FsEhg6ykMsZjeDt7OZDjLJxkHJsJ8MchSbCcaWCySv
+        iYCnVUMhDpvWv2/pEgSZYKPh7VDtDC8C3Z3q0DBgf9MwPGmh+L1TIdCrE/AcCZ/dt2meF0C3
+        qYzkG3QIyh7003xgnDbnrptxvQF8PT+p4M0IdhncaEvk01vh5tR9AX/KcHg9HMEvEQ6X75oJ
+        Pi2GiyUSXr0UJm3mmRViQD80RRqR1DLLmmWWHcssO5b/c+sQaUPRnFajyuE0yXlcYYJGrtJo
+        83ISjhxT2dH0n+v+4/7eitp/HXYilkHSueKURdVZEqG8QHNS5UTAENJ54m3PuzMl4mz5yVOc
+        +liWWqvkNE4Uy5DSaHFyfSBDwubIj3NHOS6fU/+rCpiwmLNIG2NoSI+o8J/ybDHBt3WPyMNI
+        BoVfygV7VftZhenNfAdWzgnsyszdntPXEdX0Iz41rX8ytcbpPhNvO99jubbia+8SP6XbpN79
+        YUi9fkdRcfqTioo7DGF+MRK3R/87o+bA6IBo00rlGTN38JPt42LFPslwSrar0Tq69RF52v9W
+        SmoU8qTlhFoj/wu5bRvibwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHIsWRmVeSWpSXmKPExsVy+t/xu7qi7HPiDS5/k7S4P6+V0WLjjPWs
+        Fte/PGe1mH/kHKvFla/v2Sym793EZjHp/gQWi/PnN7BbbHp8jdXi8q45bBafe48wWsw4v4/J
+        Yu2Ru+wWtxtXsFn837OD3WLG5JdsDgIem1Z1snncubaHzeN+93Emj81L6j36tqxi9Pi8SS6A
+        LUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEv41ob
+        W8FMnYre1j9sDYzXlbsYOTkkBEwkdnTPYeli5OIQEljKKNHRvoqxi5EDKCElMb9FCaJGWOLP
+        tS42iJr3jBLb/v5jBUkIC2RILNv3ghHEFhHwlriwaA8zSBGzQAuzxNdJM5ggOl4wS+xe/xas
+        ik3AUKL3aB+YzStgJ3Ht2Fp2EJtFQFWi7e0jFhBbVCBO4sfEXjaIGkGJkzOfgMU5geofbjzF
+        BGIzC6hL/Jl3iRnCFpe49WQ+VFxeonnrbOYJjEKzkLTPQtIyC0nLLCQtCxhZVjGKpJYW56bn
+        FhvpFSfmFpfmpesl5+duYgTG9bZjP7fsYOx6F3yIUYCDUYmH10F+drwQa2JZcWXuIUYJDmYl
+        EV6ns6fjhHhTEiurUovy44tKc1KLDzGaAj03kVlKNDkfmHLySuINTQ3NLSwNzY3Njc0slMR5
+        OwQOxggJpCeWpGanphakFsH0MXFwSjUwTm6O+bJOM2d3XIIRw9KGyG+MP1yLYnbf6HgVLHpw
+        84otdT5f7X7HHoxQ2Xb9lPcz+4mnZzYsblv5yckxvqJ51dRbkxQVmNQ2v/9sdJO7uDKjRuDJ
+        6hWrTr7RFsxKYMkv/zM5USLdONOdVXyliTF7/qn2Z6rHv7CbvhVgKmb692WdTsnKqfsWKLEU
+        ZyQaajEXFScCAN3ChLMBAwAA
+X-CMS-MailID: 20201030122909eucas1p1f4b33f6fd724f174f96f1fe310c83fc1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3
+References: <20200702163724.2218-1-s.nawrocki@samsung.com>
+        <CGME20200702163748eucas1p2cf7eab70bc072dea9a95183018b38ad3@eucas1p2.samsung.com>
+        <20200702163724.2218-2-s.nawrocki@samsung.com>
+        <20200709210448.GA876103@bogus>
+        <65af1a5c-8f8a-ef65-07f8-e0b3d04c336c@samsung.com>
+        <35d9d396-b553-a815-1f3b-1af4dc37a2ca@samsung.com>
+        <b711257d-c34b-b609-3ada-312871967b98@linaro.org>
+        <e6e369fb-ccf2-09ed-ad6a-680e67198359@samsung.com>
+        <ae438269-fbb5-326a-aa97-f04033c2b3b6@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-All we need are a pages array, pin_user_pages_fast can give us that
-directly. Plus this avoids the entire raw pfn side of get_vaddr_frames.
+Hi Georgi,
 
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Jérôme Glisse <jglisse@redhat.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-mm@kvack.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-media@vger.kernel.org
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
---
-v2: Use unpin_user_pages_dirty_lock (John)
----
- drivers/gpu/drm/exynos/Kconfig          |  1 -
- drivers/gpu/drm/exynos/exynos_drm_g2d.c | 47 +++++++++++--------------
- 2 files changed, 20 insertions(+), 28 deletions(-)
+On 15.09.2020 23:40, Georgi Djakov wrote:
+> On 9/9/20 17:47, Sylwester Nawrocki wrote:
+>> On 09.09.2020 11:07, Georgi Djakov wrote:
+>>> On 8/28/20 17:49, Sylwester Nawrocki wrote:
+>>>> On 30.07.2020 14:28, Sylwester Nawrocki wrote:
+>>>>> On 09.07.2020 23:04, Rob Herring wrote:
+>>>>>> On Thu, Jul 02, 2020 at 06:37:19PM +0200, Sylwester Nawrocki wrote:
+>>>>>>> Add documentation for new optional properties in the exynos bus nodes:
+>>>>>>> samsung,interconnect-parent, #interconnect-cells, bus-width.
+>>>>>>> These properties allow to specify the SoC interconnect structure which
+>>>>>>> then allows the interconnect consumer devices to request specific
+>>>>>>> bandwidth requirements.
 
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 6417f374b923..43257ef3c09d 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -88,7 +88,6 @@ comment "Sub-drivers"
- config DRM_EXYNOS_G2D
- 	bool "G2D"
- 	depends on VIDEO_SAMSUNG_S5P_G2D=n || COMPILE_TEST
--	select FRAME_VECTOR
- 	help
- 	  Choose this option if you want to use Exynos G2D for DRM.
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-index 967a5cdc120e..ecede41af9b9 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -205,7 +205,8 @@ struct g2d_cmdlist_userptr {
- 	dma_addr_t		dma_addr;
- 	unsigned long		userptr;
- 	unsigned long		size;
--	struct frame_vector	*vec;
-+	struct page		**pages;
-+	unsigned int		npages;
- 	struct sg_table		*sgt;
- 	atomic_t		refcount;
- 	bool			in_pool;
-@@ -378,7 +379,6 @@ static void g2d_userptr_put_dma_addr(struct g2d_data *g2d,
- 					bool force)
- {
- 	struct g2d_cmdlist_userptr *g2d_userptr = obj;
--	struct page **pages;
- 
- 	if (!obj)
- 		return;
-@@ -398,15 +398,9 @@ static void g2d_userptr_put_dma_addr(struct g2d_data *g2d,
- 	dma_unmap_sgtable(to_dma_dev(g2d->drm_dev), g2d_userptr->sgt,
- 			  DMA_BIDIRECTIONAL, 0);
- 
--	pages = frame_vector_pages(g2d_userptr->vec);
--	if (!IS_ERR(pages)) {
--		int i;
--
--		for (i = 0; i < frame_vector_count(g2d_userptr->vec); i++)
--			set_page_dirty_lock(pages[i]);
--	}
--	put_vaddr_frames(g2d_userptr->vec);
--	frame_vector_destroy(g2d_userptr->vec);
-+	unpin_user_pages_dirty_lock(g2d_userptr->pages, g2d_userptr->npages,
-+				    true);
-+	kvfree(g2d_userptr->pages);
- 
- 	if (!g2d_userptr->out_of_list)
- 		list_del_init(&g2d_userptr->list);
-@@ -474,35 +468,34 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct g2d_data *g2d,
- 	offset = userptr & ~PAGE_MASK;
- 	end = PAGE_ALIGN(userptr + size);
- 	npages = (end - start) >> PAGE_SHIFT;
--	g2d_userptr->vec = frame_vector_create(npages);
--	if (!g2d_userptr->vec) {
-+	g2d_userptr->pages = kvmalloc_array(npages, sizeof(*g2d_userptr->pages),
-+					    GFP_KERNEL);
-+	if (!g2d_userptr->pages) {
- 		ret = -ENOMEM;
- 		goto err_free;
- 	}
- 
--	ret = get_vaddr_frames(start, npages, FOLL_FORCE | FOLL_WRITE,
--		g2d_userptr->vec);
-+	ret = pin_user_pages_fast(start, npages, FOLL_FORCE | FOLL_WRITE,
-+				  g2d_userptr->pages);
- 	if (ret != npages) {
- 		DRM_DEV_ERROR(g2d->dev,
- 			      "failed to get user pages from userptr.\n");
- 		if (ret < 0)
--			goto err_destroy_framevec;
--		ret = -EFAULT;
--		goto err_put_framevec;
--	}
--	if (frame_vector_to_pages(g2d_userptr->vec) < 0) {
-+			goto err_destroy_pages;
-+		npages = ret;
- 		ret = -EFAULT;
--		goto err_put_framevec;
-+		goto err_unpin_pages;
- 	}
-+	g2d_userptr->npages = npages;
- 
- 	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
- 	if (!sgt) {
- 		ret = -ENOMEM;
--		goto err_put_framevec;
-+		goto err_unpin_pages;
- 	}
- 
- 	ret = sg_alloc_table_from_pages(sgt,
--					frame_vector_pages(g2d_userptr->vec),
-+					g2d_userptr->pages,
- 					npages, offset, size, GFP_KERNEL);
- 	if (ret < 0) {
- 		DRM_DEV_ERROR(g2d->dev, "failed to get sgt from pages.\n");
-@@ -538,11 +531,11 @@ static dma_addr_t *g2d_userptr_get_dma_addr(struct g2d_data *g2d,
- err_free_sgt:
- 	kfree(sgt);
- 
--err_put_framevec:
--	put_vaddr_frames(g2d_userptr->vec);
-+err_unpin_pages:
-+	unpin_user_pages(g2d_userptr->pages, npages);
- 
--err_destroy_framevec:
--	frame_vector_destroy(g2d_userptr->vec);
-+err_destroy_pages:
-+	kvfree(g2d_userptr->pages);
- 
- err_free:
- 	kfree(g2d_userptr);
+>>>>>>> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+>>>>>>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+>>>>>>> +++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+
+>>>> Actually we could do without any new property if we used existing interconnect
+>>>> consumers binding to specify linking between the provider nodes. I think those
+>>>> exynos-bus nodes could well be considered both the interconnect providers 
+>>>> and consumers. The example would then be something along the lines 
+>>>> (yes, I know the bus node naming needs to be fixed):
+>>>>
+>>>> 	soc {
+>>>> 		bus_dmc: bus_dmc {
+>>>> 			compatible = "samsung,exynos-bus";
+>>>> 			/* ... */
+>>>> 			samsung,data-clock-ratio = <4>;
+>>>> 			#interconnect-cells = <0>;
+>>>> 		};
+>>>>
+>>>> 		bus_leftbus: bus_leftbus {
+>>>> 			compatible = "samsung,exynos-bus";
+>>>> 			/* ... */
+>>>> 			interconnects = <&bus_leftbus &bus_dmc>;
+>>>> 			#interconnect-cells = <0>;
+>>>> 		};
+>>>>
+>>>> 		bus_display: bus_display {
+>>>> 			compatible = "samsung,exynos-bus";
+>>>> 			/* ... */
+>>>> 			interconnects = <&bus_display &bus_leftbus>;
+>>>
+>>> Hmm, bus_display being a consumer of itself is a bit odd? Did you mean:
+>>>  			interconnects = <&bus_dmc &bus_leftbus>;
+>>
+>> Might be, but we would need to swap the phandles so <source, destination>
+>> order is maintained, i.e. interconnects = <&bus_leftbus &bus_dmc>;
+> 
+> Ok, i see. Thanks for clarifying! Currently the "interconnects" property is
+> defined as a pair of initiator and target nodes. You can keep it also as
+> interconnects = <&bus_display &bus_dmc>, but you will need to figure out
+> during probe that there is another node in the middle and defer. I assume
+> that if a provider is also an interconnect consumer, we will link it to
+> whatever nodes are specified in the "interconnects" property?
+
+My apologies for the delay.
+
+Yes, the "interconnect" property would be used (only) to determine what
+links should be created.
+
+>> My intention here was to describe the 'bus_display -> bus_leftbus' part 
+>> of data path 'bus_display -> bus_leftbus -> bus_dmc', bus_display is
+>> really a consumer of 'bus_leftbus -> bus_dmc' path.
+>>
+>> I'm not sure if it is allowed to specify only single phandle (and 
+>> interconnect provider specifier) in the interconnect property, that would
+>> be needed for the bus_leftbus node to define bus_dmc as the interconnect 
+>> destination port. There seems to be such a use case in arch/arm64/boot/
+>> dts/allwinner/sun50i-a64.dtsi.
+> 
+> In the general case you have to specify pairs. The "dma-mem" is a reserved
+> name for devices that perform DMA through another bus with separate address
+> translation rules.
+
+I see, thanks for clarifying.
+
+>>> I can't understand the above example with bus_display being it's own consumer.
+>>> This seems strange to me. Could you please clarify it?
+>>
+>>> Otherwise the interconnect consumer DT bindings are already well established
+>>> and i don't see anything preventing a node to be both consumer and provider.
+>>> So this should be okay in general.
+>>
+>> Thanks, below is an updated example according to your suggestions. 
+>> Does it look better now?
+>>
+>> ---------------------------8<------------------------------
+>> soc {
+>> 	bus_dmc: bus_dmc {
+>> 		compatible = "samsung,exynos-bus";
+>> 		/* ... */
+>> 		samsung,data-clock-ratio = <4>;
+>> 		#interconnect-cells = <0>;
+>> 	};
+>>
+>> 	bus_leftbus: bus_leftbus {
+>> 		compatible = "samsung,exynos-bus";
+>> 		/* ... */
+>> 		interconnects = <&bus_dmc>;
+>> 		#interconnect-cells = <0>;
+>> 	};
+>>
+>> 	bus_display: bus_display {
+>> 		compatible = "samsung,exynos-bus";
+>> 		/* ... */
+>> 		interconnects = <&bus_leftbus &bus_dmc>;
+>> 		#interconnect-cells = <0>;
+>> 	};
+>>
+>> 	&mixer {
+>> 		compatible = "samsung,exynos4212-mixer";
+>> 		interconnects = <&bus_display &bus_dmc>;
+>> 		/* ... */
+>> 	};
+>> };
+>> ---------------------------8<------------------------------
+> 
+> It's difficult to have a common way to describe all the different kinds of
+> topologies in DT, as some SoCs are very complex, having multi-tiered topologies
+> with hundreds of nodes, with multiple links between them etc. Currently, the
+> idea is to have the topology as platform data, but i guess that you want to
+> avoid this. I hope that we will be able to describe simpler topologies in DT in
+> the future, but we don't have such support in the framework yet.
+> 
+> So maybe we could try your proposal and see how it will work for exynos.
+
+I suppose for any new Exynos SoCs with more complex interconnects exposed
+for software control an approach with topology definition as platform data 
+would also be used. The generic interconnect driver would likely only be 
+used on existing platforms where the interconnects are somewhat abstracted 
+by the devfreq.   
+
 -- 
-2.28.0
-
+Regards,
+Sylwester
