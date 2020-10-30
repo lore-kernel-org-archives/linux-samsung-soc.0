@@ -2,171 +2,170 @@ Return-Path: <SRS0=Y9I5=EF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C32C56201
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 07:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB0FC00A89
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 10:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCC7D22228
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 07:50:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D68B72083B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 10:08:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="R98yFfuA"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Ghb99Upr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725784AbgJ3Hue (ORCPT
+        id S1726019AbgJ3KIj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 30 Oct 2020 03:50:34 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51795 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbgJ3Hue (ORCPT
+        Fri, 30 Oct 2020 06:08:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50296 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725801AbgJ3KIi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Oct 2020 03:50:34 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201030074131euoutp01f159325a16f68b1c9d417d56b1851b2f~CtT0-tLMF1227612276euoutp01B
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 07:41:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201030074131euoutp01f159325a16f68b1c9d417d56b1851b2f~CtT0-tLMF1227612276euoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604043692;
-        bh=XDGR6dKj73W1X+O2hoViONA9zRpX1Uo9ZrDI+gJiWcU=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=R98yFfuAyip6VttOrTQJvBWBUT9Yu6d638gZAEqUOvmNj23zGCZL5OLS4jeKf1uVr
-         HyfyeqHheQQfZigU2f2Q3m2NN63CNmtBb0hoDtt1hZgXqGk6LrZiWVOEw+8UsOKif2
-         0sn92vrZIQdCH+RZmsPEeOE4f4x6Z6MZIyQdaRvI=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201030074126eucas1p2ba5c28c4717b305ad248b49da23c5e2d~CtTwNw6mc2090620906eucas1p2e;
-        Fri, 30 Oct 2020 07:41:26 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 12.FF.06456.6A3CB9F5; Fri, 30
-        Oct 2020 07:41:26 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20201030074126eucas1p2a8421b621aba14b104f5b0e5cf40a1c8~CtTv5qEYt2090620906eucas1p2d;
-        Fri, 30 Oct 2020 07:41:26 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201030074126eusmtrp2ae3cd682ae00977f8c7943c47c93782f~CtTv5FL_n1449914499eusmtrp2R;
-        Fri, 30 Oct 2020 07:41:26 +0000 (GMT)
-X-AuditID: cbfec7f2-809ff70000001938-3a-5f9bc3a6dcbf
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id A2.13.06017.6A3CB9F5; Fri, 30
-        Oct 2020 07:41:26 +0000 (GMT)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201030074126eusmtip1674faf3b14573191bfb1e50cdb13dc8a~CtTvgPv_c0497204972eusmtip1J;
-        Fri, 30 Oct 2020 07:41:26 +0000 (GMT)
-Subject: Re: [PATCH 2/5] ARM: dts: add Samsung's exynos4412-based p4note
- boards
-To:     Martin Juecker <martin.juecker@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-samsung-soc@vger.kernel.org, kgene@kernel.org,
-        devicetree@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <21eb4ba3-ec58-fba7-48cc-99e0c4024463@samsung.com>
-Date:   Fri, 30 Oct 2020 08:41:28 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.4.0
+        Fri, 30 Oct 2020 06:08:38 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 661B0C0613CF
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 03:08:38 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id n15so5828000wrq.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 03:08:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oyVNIJTztKiRHheNSQoUfnLRDya4SJw9IE1Vxl86s7c=;
+        b=Ghb99UprNaKvFH2nWksoxxcjJMtuQ7UBnEvdaqQ2Xt27pEUza+n/3VR0T/qCjTsgrw
+         pnOgvc7R/Us4ABF8mAoJmL0AdohhbtFrlQIZHCXvlxhr3ShQwZsUCHMdPOY4nT2sPNV2
+         3n2sDDQkLekRqiTyUq6gRYR6GdNDanQomtL14=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oyVNIJTztKiRHheNSQoUfnLRDya4SJw9IE1Vxl86s7c=;
+        b=nYBweE0MRX1FoVQ8hvCQUjjxYe71o7XGrJV1ZAgJjfAG3bvqBEnsmDp50EPYd86zWu
+         hRMzKps7Dpp2H5DLy8DiEU66Cjn2Z/fpgJp4XC3zBCNqqHJqH4sw4i9ImDyz9Bxz0K7B
+         I6TlbuxMirB5NC/uZ1q5g/TAepm1GJ/UuVZukIRQanf5ZqE/4kjEpTcChtGRXGnnQ+Bb
+         iuNnqYhxgMtMNuQy8ImIz+YfK2fqlXFsvfDRiaBBE7sGAwQtbiMxjVLILdBqXAskb5m/
+         4JKKqAzve0i6Sh8Jr30DnFsk2ldpnURgK1XABb4bJDMsDNCPuYEQD8ny3Zzxo/gLrXZm
+         JGNA==
+X-Gm-Message-State: AOAM532DkfkGPnZ2TSiSvfoftqv7JAyxwjnW3KyTb4c8BarWICDI+/+g
+        e9DMvEOSepDGFl4NbTXDNERifQ==
+X-Google-Smtp-Source: ABdhPJw0H9VR4VRiDyzFX/cH5pwaV8XuDt6bBdU2cQb4UZ7RdbthoCu2zTbDyFJZiy6ZQIc6vY++Ww==
+X-Received: by 2002:adf:f80a:: with SMTP id s10mr2082685wrp.275.1604052517093;
+        Fri, 30 Oct 2020 03:08:37 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id v189sm4430947wmg.14.2020.10.30.03.08.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2020 03:08:35 -0700 (PDT)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH v5 00/15] follow_pfn and other iomap races
+Date:   Fri, 30 Oct 2020 11:08:00 +0100
+Message-Id: <20201030100815.2269-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <20201029214030.GA72802@adroid>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKKsWRmVeSWpSXmKPExsWy7djP87rLDs+ONzh5U9di/pFzrBb9j18z
-        W5w/v4HdYsb5fUwWZ/5NZXFg9dg56y67x6ZVnWwenzfJBTBHcdmkpOZklqUW6dslcGVcvnCO
-        veCKUMXmmwfYGhg/8nUxcnJICJhILN5ygBHEFhJYwSjx8LdDFyMXkP2FUaL3Tw8zhPOZUeLu
-        6YNMMB1XGi+zQCSWM0rMa70EVfWeUWJzQxMbSJWwQKDE810fwTpEBMIkVkx6DWRzcDALhErs
-        BlnBycEmYCjR9bYLrJxXwE5i4fPDYDaLgKrEj2WtLCC2qECSxN/Pf5ghagQlTs58wgIyhlNA
-        R+LPx1iQMLOAvMT2t3OYIWxxiVtP5jOBnCMhMJldYvfsnewQR7sAHX2YBcIWlnh1fAtUXEbi
-        /06Yhmag98+tZYdwehglLjfNYISospa4c+4XG8QDmhLrd+lDhB0lzrVuBAtLCPBJ3HgrCHEE
-        n8SkbdOZIcK8Eh1tQhDVahKzjq+DW3vwwiXmCYxKs5B8NgvJO7OQvDMLYe8CRpZVjOKppcW5
-        6anFhnmp5XrFibnFpXnpesn5uZsYgYnl9L/jn3Ywfr2UdIhRgINRiYfXQX52vBBrYllxZe4h
-        RgkOZiURXqezp+OEeFMSK6tSi/Lji0pzUosPMUpzsCiJ8xovehkrJJCeWJKanZpakFoEk2Xi
-        4JRqYJx/vi/AY/nDz099HhwoblkbXHlH+emlbxUbYr1+dPy7tnHt6/1TxRO315m92v270Lkw
-        6XZ8QK73DMOYlPQ7Vu/nJZnM2/Rhxd5dCosX/GxbybC6/ybftPc74l9+Lq+fn3Di8LSpEyOC
-        D2ga/K3jnG3flr515npPq5e7Yhctv/j8q38gg1LOptlXlFiKMxINtZiLihMB4Klz3CgDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsVy+t/xu7rLDs+ON1jxRdxi/pFzrBb9j18z
-        W5w/v4HdYsb5fUwWZ/5NZXFg9dg56y67x6ZVnWwenzfJBTBH6dkU5ZeWpCpk5BeX2CpFG1oY
-        6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GVcvnCOveCKUMXmmwfYGhg/8nUxcnJI
-        CJhIXGm8zNLFyMUhJLCUUWLaydvsEAkZiZPTGlghbGGJP9e62CCK3jJKbN10GiwhLBAo8XzX
-        RyYQW0QgTGJ/WycjiM0sECqxZPoFFhBbSKBeouNxK1icTcBQoustyCBODl4BO4mFzw+D2SwC
-        qhI/lrWC1YsKJEm8vDCVCaJGUOLkzCdAcQ4OTgEdiT8fYyHGm0nM2/yQGcKWl9j+dg6ULS5x
-        68l8pgmMQrOQdM9C0jILScssJC0LGFlWMYqklhbnpucWG+kVJ+YWl+al6yXn525iBMbStmM/
-        t+xg7HoXfIhRgINRiYfXQX52vBBrYllxZe4hRgkOZiURXqezp+OEeFMSK6tSi/Lji0pzUosP
-        MZoC/TaRWUo0OR8Y53kl8YamhuYWlobmxubGZhZK4rwdAgdjhATSE0tSs1NTC1KLYPqYODil
-        GhiNzPtKLj7ae/lj8omzjpJLDroc5XtuunbCk7RPpwpOFOQ2Vx7y4pnp7d1euSNe8K76F7Zc
-        i4x/S08eWdmz7I5oSodU5faFzfuuHnHJTP37fo/X6c4FfnkK8TozTWW492reP+E59eGJ4Ne6
-        F2aXi3UwPtMU19gfM597fn9quEh+P2uqvm/xUX4lluKMREMt5qLiRADS6l6xuwIAAA==
-X-CMS-MailID: 20201030074126eucas1p2a8421b621aba14b104f5b0e5cf40a1c8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201029214038eucas1p28c6a8ff78a7d1ec26648bccb950031b3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201029214038eucas1p28c6a8ff78a7d1ec26648bccb950031b3
-References: <CGME20201029214038eucas1p28c6a8ff78a7d1ec26648bccb950031b3@eucas1p2.samsung.com>
-        <20201029214030.GA72802@adroid>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Martin,
+Hi all
 
-On 29.10.2020 22:40, Martin Juecker wrote:
-> On Tue, Oct 27, 2020 at 09:17:51AM +0100, Krzysztof Kozlowski wrote:
->> On Tue, Oct 27, 2020 at 12:27:09AM +0100, Martin Juecker wrote:
->>>>> +
->>>>> +	max77686: max77686_pmic@9 {
->>>>> +		compatible = "maxim,max77686";
->>>>> +		interrupt-parent = <&gpx0>;
->>>>> +		interrupts = <7 IRQ_TYPE_NONE>;
->>>>> +		pinctrl-0 = <&max77686_irq>;
->>>>> +		pinctrl-names = "default";
->>>>> +		reg = <0x09>;
->>>>> +		#clock-cells = <1>;
->>>>> +
->>>>> +		voltage-regulators {
->>>> Just "regulators" and no empty line after this.
->>>>
->>>> You should define all regulators here. If some are unknown, keep the
->>>> min-max the same as in driver.
->>>>
->>> I used the driver to read all the voltages, it also reads values for
->>> the LDOs that are not defined in the DT, so I have values for all of
->>> them setup by the bootloader. What I don't know is their name and what
->>> they are used for. Interestingly apart from two LDOs, the voltages did
->>> match exactly with those from the midas DT, so it could be very
->>> similar. The two non-matching were only off by 0.1V. How should I go
->>> about this?
->> Actually, let's skip the constraints (min-max) for unknown regulators.
->> Just add the entries with generic names, like:
->> arch/arm/boot/dts/exynos5410-odroidxu.dts
->>
->> I would not put here min-max constraints from bootloader because pretty
->> often it has only an initial setup for specific frequency - just to make
->> it booting.
->>
->> If you have the constraints (min-max, always on) from vendor sources,
->> you could add them.
->>
->> Best regards,
->> Krzysztof
-> As all the missing regulators are not defined in the vendor sources, I
-> have no constraints to work with.
->
-> What I noticed when all the LDOs are defined, the device reboot
-> behaviour is different. Instead of the usual 1-2 seconds for screen off
-> and on again, it's now more like 10 seconds.
+Another update of my patch series to clamp down a bunch of races and gaps
+around follow_pfn and other access to iomem mmaps. Previous version:
 
-Then it looks that some regulators get turned off too early and shutdown 
-sequence encounters timeout. You can try to find which regulator is 
-responsible for that by adding 'always-on' property to those regulators 
-and doing the reboot test. Once found you may either keep it as always 
-on, or check in if its consumers are properly defined.
+v1: https://lore.kernel.org/dri-devel/20201007164426.1812530-1-daniel.vetter@ffwll.ch/
+v2: https://lore.kernel.org/dri-devel/20201009075934.3509076-1-daniel.vetter@ffwll.ch
+v3: https://lore.kernel.org/dri-devel/20201021085655.1192025-1-daniel.vetter@ffwll.ch/
+v4: https://lore.kernel.org/dri-devel/20201026105818.2585306-1-daniel.vetter@ffwll.ch/
 
-Best regards
+And the discussion that sparked this journey:
+
+https://lore.kernel.org/dri-devel/20201007164426.1812530-1-daniel.vetter@ffwll.ch/
+
+Changes in v5:
+- Tomasz found some issues in the media patches
+- Polish suggested by Christoph for the unsafe_follow_pfn patch
+
+Changes in v4:
+- Drop the s390 patch, that was very stand-alone and now queued up to land
+  through s390 trees.
+- Comment polish per Dan's review.
+
+Changes in v3:
+- Bunch of polish all over, no functional changes aside from one barrier
+  in the resource code, for consistency.
+- A few more r-b tags.
+
+Changes in v2:
+- tons of small polish&fixes all over, thanks to all the reviewers who
+  spotted issues
+- I managed to test at least the generic_access_phys and pci mmap revoke
+  stuff with a few gdb sessions using our i915 debug tools (hence now also
+  the drm/i915 patch to properly request all the pci bar regions)
+- reworked approach for the pci mmap revoke: Infrastructure moved into
+  kernel/resource.c, address_space mapping is now set up at open time for
+  everyone (which required some sysfs changes). Does indeed look a lot
+  cleaner and a lot less invasive than I feared at first.
+
+I feel like this is ready for some wider soaking. Since the remaining bits
+are all kinda connnected probably simplest if it all goes through -mm.
+
+Cheers, Daniel
+
+Daniel Vetter (15):
+  drm/exynos: Stop using frame_vector helpers
+  drm/exynos: Use FOLL_LONGTERM for g2d cmdlists
+  misc/habana: Stop using frame_vector helpers
+  misc/habana: Use FOLL_LONGTERM for userptr
+  mm/frame-vector: Use FOLL_LONGTERM
+  media: videobuf2: Move frame_vector into media subsystem
+  mm: Close race in generic_access_phys
+  mm: Add unsafe_follow_pfn
+  media/videbuf1|2: Mark follow_pfn usage as unsafe
+  vfio/type1: Mark follow_pfn as unsafe
+  PCI: Obey iomem restrictions for procfs mmap
+  /dev/mem: Only set filp->f_mapping
+  resource: Move devmem revoke code to resource framework
+  sysfs: Support zapping of binary attr mmaps
+  PCI: Revoke mappings like devmem
+
+ drivers/char/mem.c                            |  86 +--------------
+ drivers/gpu/drm/exynos/Kconfig                |   1 -
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  48 ++++-----
+ drivers/media/common/videobuf2/Kconfig        |   1 -
+ drivers/media/common/videobuf2/Makefile       |   1 +
+ .../media/common/videobuf2}/frame_vector.c    |  57 ++++------
+ .../media/common/videobuf2/videobuf2-memops.c |   3 +-
+ drivers/media/platform/omap/Kconfig           |   1 -
+ drivers/media/v4l2-core/videobuf-dma-contig.c |   2 +-
+ drivers/misc/habanalabs/Kconfig               |   1 -
+ drivers/misc/habanalabs/common/habanalabs.h   |   6 +-
+ drivers/misc/habanalabs/common/memory.c       |  50 ++++-----
+ drivers/pci/pci-sysfs.c                       |   4 +
+ drivers/pci/proc.c                            |   6 ++
+ drivers/vfio/vfio_iommu_type1.c               |   4 +-
+ fs/sysfs/file.c                               |  11 ++
+ include/linux/ioport.h                        |   6 +-
+ include/linux/mm.h                            |  47 +-------
+ include/linux/sysfs.h                         |   2 +
+ include/media/frame_vector.h                  |  47 ++++++++
+ include/media/videobuf2-core.h                |   1 +
+ kernel/resource.c                             | 101 +++++++++++++++++-
+ mm/Kconfig                                    |   3 -
+ mm/Makefile                                   |   1 -
+ mm/memory.c                                   |  80 +++++++++++++-
+ mm/nommu.c                                    |  27 ++++-
+ security/Kconfig                              |  13 +++
+ 27 files changed, 360 insertions(+), 250 deletions(-)
+ rename {mm => drivers/media/common/videobuf2}/frame_vector.c (84%)
+ create mode 100644 include/media/frame_vector.h
 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.28.0
 
