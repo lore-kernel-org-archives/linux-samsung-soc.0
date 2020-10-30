@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CEDC8300A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 10:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A579C64E75
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 10:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99876221FA
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 10:09:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 738DF2083B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Oct 2020 10:09:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="OzUM7mbx"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dxM96SNj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbgJ3KI6 (ORCPT
+        id S1726413AbgJ3KJq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 30 Oct 2020 06:08:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50404 "EHLO
+        Fri, 30 Oct 2020 06:09:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726454AbgJ3KIz (ORCPT
+        with ESMTP id S1726199AbgJ3KI5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Oct 2020 06:08:55 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11034C0613DA
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 03:08:55 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id c9so764561wml.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 03:08:54 -0700 (PDT)
+        Fri, 30 Oct 2020 06:08:57 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62BBAC0613DD
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 03:08:56 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id e2so2407030wme.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2020 03:08:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5W4UqFTJMoDRzu7XpmV7m/mIx7tbXZK4TFNNVek8jNg=;
-        b=OzUM7mbx2/F/oW9bbPe7In3qrMb9VgdikqTSY/EoMsPyXGAHuRv65Nms3OB0mjtIqw
-         GVQCRCl/bcb/ABRytGNQRec8qj5WedF9qpRoNXq/7Q2qAH3BZRTXvZHES4rNIMYTppYX
-         ZyoeN/ZtxE8PEeZM/6gBTeLfJXnqEXHLZdrKg=
+        bh=hYtD23zGFyk5SkoZ8Qy484gfhnfpPBoQxtIsb4hwfhU=;
+        b=dxM96SNjKrz++dQI6nbYMpp0lgo4kombqxOQcsk0+Rr26Gjt4jZCAR7NrxXYBaL4Gt
+         ciMLkoVPTe5jXiAE6U7PJ/lXl4lOODvv2PDbRNQpoc0XY8bg2W2yWyL0s4IubrhPOqRs
+         MM/7ILoPjrs3y3smah6nhmkHpELJG2CofpcBI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5W4UqFTJMoDRzu7XpmV7m/mIx7tbXZK4TFNNVek8jNg=;
-        b=BpuRv6xC0RZt/IHysctAi+OhUb2lL1TC3DdICeoKazIUi31g6l8Dxk13QslcpfXHS/
-         ZYXzJ7MFclf3P3o4z0NgA6xWCKCM/vL4d8MTtDKh0cFTSYJKU7JTnyOZG9oAFaPA9EVz
-         2LVs0SibJ5mfxNEAq4uuZ/GEaX5j5ztPkXLQ1OOjFOFAbwh/26V2W62p/4rM6ZYuCZe9
-         8txaMHmKCRwFjevWEgFONNjMo7SUISvPRonvhJyZ9opD4SdVGe2Cj2/5tUWhd8B186MO
-         DVwuMrR2Y45u9IVm/ISPZXKyXb2NMgyUKeYsmKDGjmK3y223mv8ySdn4DXH1OXq2sypp
-         2v1w==
-X-Gm-Message-State: AOAM533CzGHZaUrdlxZ10m9tNB3VuBPhDE7+ua9Xhp6UjPRXWLa7VW6p
-        XNP6fO1DUumb3c+BDhapAaoM1w==
-X-Google-Smtp-Source: ABdhPJwkuxWq70OZDDHUvlvKxagck9TRjPZKU3g23XqCmDUUZEe9Y01RmcL6G8BKldTXxtndJYt3iA==
-X-Received: by 2002:a7b:c085:: with SMTP id r5mr1669161wmh.17.1604052533716;
-        Fri, 30 Oct 2020 03:08:53 -0700 (PDT)
+        bh=hYtD23zGFyk5SkoZ8Qy484gfhnfpPBoQxtIsb4hwfhU=;
+        b=QJFL9IZXfYgfaW6n9SW2Bys6KcZ93i5udYv+ChTCXpFi0TgEzxlaKMKBNIisVZ6qnG
+         qHifum0KmHnel5MZ9w3KoWMS8/cwp69jmNbARJTiiZa99E6qoe54VN77I7soDHK3CQiG
+         Y35S6hZsmSwCbSbAD8l5HBaerCj/YyZ2aRpP9KpKqnVfUKrbS/t1rYnBOE8gk4mZD9DO
+         GAlzIF383NsOnid8xpaNj5dBfYj2zfIu+ULkPJZpGkwMXWzEsMrMQc0NZIQdH+VCrhtY
+         LDBq38VHgsUfQJM6/XmyvCS2u49PKTUykSg+PPmv2hgDAyDFGdp+xUXVAYswX6uVrnHX
+         0Gvg==
+X-Gm-Message-State: AOAM532MZZU5KvrUrGXXP3PsEWr5C6PFsbIJtE+qWZvqC/XsGooJ2sg1
+        kVvKXMjFPOZmcbwJYmfXbdA1eA==
+X-Google-Smtp-Source: ABdhPJxJNJWAWneS8VYn10NUR8/I6zkSTsf0oneE03BSKkG7X9czQ0Ovv165ofVPIIOneyQeBiKzag==
+X-Received: by 2002:a1c:6408:: with SMTP id y8mr1794948wmb.51.1604052535179;
+        Fri, 30 Oct 2020 03:08:55 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id v189sm4430947wmg.14.2020.10.30.03.08.52
+        by smtp.gmail.com with ESMTPSA id v189sm4430947wmg.14.2020.10.30.03.08.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2020 03:08:52 -0700 (PDT)
+        Fri, 30 Oct 2020 03:08:54 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>
@@ -70,11 +70,10 @@ Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci@vger.kernel.org
-Subject: [PATCH v5 11/15] PCI: Obey iomem restrictions for procfs mmap
-Date:   Fri, 30 Oct 2020 11:08:11 +0100
-Message-Id: <20201030100815.2269-12-daniel.vetter@ffwll.ch>
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH v5 12/15] /dev/mem: Only set filp->f_mapping
+Date:   Fri, 30 Oct 2020 11:08:12 +0100
+Message-Id: <20201030100815.2269-13-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201030100815.2269-1-daniel.vetter@ffwll.ch>
 References: <20201030100815.2269-1-daniel.vetter@ffwll.ch>
@@ -85,16 +84,16 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-There's three ways to access PCI BARs from userspace: /dev/mem, sysfs
-files, and the old proc interface. Two check against
-iomem_is_exclusive, proc never did. And with CONFIG_IO_STRICT_DEVMEM,
-this starts to matter, since we don't want random userspace having
-access to PCI BARs while a driver is loaded and using it.
+When we care about pagecache maintenance, we need to make sure that
+both f_mapping and i_mapping point at the right mapping.
 
-Fix this by adding the same iomem_is_exclusive() check we already have
-on the sysfs side in pci_mmap_resource().
+But for iomem mappings we only care about the virtual/pte side of
+things, so f_mapping is enough. Also setting inode->i_mapping was
+confusing me as a driver maintainer, since in e.g. drivers/gpu we
+don't do that. Per Dan this seems to be copypasta from places which do
+care about pagecache consistency, but not needed. Hence remove it for
+slightly less confusion.
 
-References: 90a545e98126 ("restrict /dev/mem to idle io memory ranges")
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
 Cc: Kees Cook <keescook@chromium.org>
@@ -108,31 +107,24 @@ Cc: linux-mm@kvack.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-media@vger.kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
---
-v2: Improve commit message (Bjorn)
 ---
- drivers/pci/proc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/char/mem.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
-index d35186b01d98..3a2f90beb4cb 100644
---- a/drivers/pci/proc.c
-+++ b/drivers/pci/proc.c
-@@ -274,6 +274,11 @@ static int proc_bus_pci_mmap(struct file *file, struct vm_area_struct *vma)
- 		else
- 			return -EINVAL;
- 	}
-+
-+	if (dev->resource[i].flags & IORESOURCE_MEM &&
-+	    iomem_is_exclusive(dev->resource[i].start))
-+		return -EINVAL;
-+
- 	ret = pci_mmap_page_range(dev, i, vma,
- 				  fpriv->mmap_state, write_combine);
- 	if (ret < 0)
+diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+index 94c2b556cf97..7dcf9e4ea79d 100644
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -891,7 +891,6 @@ static int open_port(struct inode *inode, struct file *filp)
+ 	 * revocations when drivers want to take over a /dev/mem mapped
+ 	 * range.
+ 	 */
+-	inode->i_mapping = devmem_inode->i_mapping;
+ 	filp->f_mapping = inode->i_mapping;
+ 
+ 	return 0;
 -- 
 2.28.0
 
