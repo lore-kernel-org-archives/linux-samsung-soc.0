@@ -2,70 +2,74 @@ Return-Path: <SRS0=vFf2=EG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D762FC388F9
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Oct 2020 17:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D534EC388F9
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Oct 2020 17:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73513206E3
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Oct 2020 17:59:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 905B0206E3
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Oct 2020 17:59:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p3R5GoIZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kux4FYd3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726254AbgJaR7P (ORCPT
+        id S1727967AbgJaR7z (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 31 Oct 2020 13:59:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35192 "EHLO
+        Sat, 31 Oct 2020 13:59:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbgJaR7P (ORCPT
+        with ESMTP id S1725648AbgJaR7y (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 31 Oct 2020 13:59:15 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31B61C0617A6;
-        Sat, 31 Oct 2020 10:59:15 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id s9so9874515wro.8;
-        Sat, 31 Oct 2020 10:59:15 -0700 (PDT)
+        Sat, 31 Oct 2020 13:59:54 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A78C0C0617A6;
+        Sat, 31 Oct 2020 10:59:54 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id p22so5625189wmg.3;
+        Sat, 31 Oct 2020 10:59:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XuTCe1Ga7B/KAhhJYgdOU12EeqWH5EWDhu4LYbG296k=;
-        b=p3R5GoIZnRY7IMYfE46w/s5zrehdhY1Dk84vycn6zwYIamjBis0mDWwLgnxU8gljtA
-         qDiGhhoUrYHi8sLZ7t/mU2iZK9AWwdv2Qro7ZZp6SatLrN3t6MHWxJOUMk3WoV8EAfDF
-         YNJ3QN/m/ICngijeRhDUNrUA6g5U2/QzBbG4WgtlaharTc4ZC4e+LT5uwEgxW/SiC51D
-         7BlXmj+oSJA9QfT2KHyV702DtaHw49CrnanyeaIqqNYp/fjRCbSv7kqdBxbddRDCbYC0
-         kx+Z/AqapWhioQdhIi5Ffh7H6mXgEIfO0cp4wHWzUJxSMBebTeX836n7cOt3mOg86aq8
-         +LCA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=z815WCX7lT6IHfytZFBVz2wfZcp8KbpYChqBbxS+J9w=;
+        b=kux4FYd3XpiQMKkcrMhdEhca8/Mn9su2LV0z83W+Jm9XyhxV7mLkpaNSjEJZNyPkjr
+         lJszQ6aIYO7Ihk5rgCXhwdChlLL5u5CbDHKlWykUernPTBSBil3IGeJmUXmpoXEgzllD
+         y/HXxjwfqyytS5CRnAsMus+fSUg4HRn3MSRE138PZjLJt8/4mfanCEkcFgE9BhX7Ua7g
+         HNBCEl1oFAJNecTRZSlkIbm1+qRVlWEIBxwVfyshkg3kx979w5btiTucWUBOjmaIPz67
+         QRB6aL3rH73En1HJdQaFekjb1PV61+l+OPgWli1NBBVb6ofBNZouKAEzbpTKZnxzqrqs
+         luaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XuTCe1Ga7B/KAhhJYgdOU12EeqWH5EWDhu4LYbG296k=;
-        b=kbOwJdPUAIbUY7O7abuLbkFLqFghVV/wDQ8eqWLmK34BDeONLftzxwMIBaxzJOseLr
-         4Z20wyzIEJGAgDGtPsW/KBfcSe7Rt03ehnleuv2ekmCqFS/eqfTtQGKuKjZEKfGCzn1U
-         HQklqXY5L9AOwOjAEGr949jFmPfFN/hbPhyMQceJ1zpTHfT7dyVEyrB58UurxGabN5B8
-         2rPzVDD/13dxPVqsysoGJZ4hvuq6DzPH5ENc935S/mR7KCDmpMV3xNVo9k8QZvf1XluK
-         kFxinKRO2YVExpteirlNDCQicAjPjy9yksTFKmZ6kM2ahcMgKmE3zn/IOtdm7xlbbRPs
-         etSQ==
-X-Gm-Message-State: AOAM532tiEyBZrN1gsMeDOeldeWNuZCXZpUq0eglIiajGRjXevoOAlqL
-        phfP50Dsv3hzHjEg0XPdT7Y=
-X-Google-Smtp-Source: ABdhPJxyZRwzLh2ljnuEEqy+pjAmqTudm7BJkSkPEQHoPL0xdiniPrtpc9uSCr3wiH/cDZeB7fsSAQ==
-X-Received: by 2002:a5d:4ed2:: with SMTP id s18mr10485961wrv.36.1604167153599;
-        Sat, 31 Oct 2020 10:59:13 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=z815WCX7lT6IHfytZFBVz2wfZcp8KbpYChqBbxS+J9w=;
+        b=XDocUDdI+R1eEBx2yciT0I00xEEfHUO+rBTBeOcXdmgDaDr79/eLGj0JRBo2wsPuMV
+         B+YWSKXOqwGKUWvuypZoojwshmqFruF5A9c31cDSBv74L4GFH8Q3sS95MOfqnXqTbEps
+         /JoL6p43NJcB1Xb+Cx6yVDBK++waXKHvaf5uWXnPWw6nTneAZVEg26kNbySyg26aK+51
+         b8rHQKs7B2h4dHD3H/+zSa/5oP7H4HgDCZJt9vzBXztUa+LRiT1onjN2S3hkAocEbuFY
+         Q0B/4RBQ2hdYqk5sGTxgj8+bCHToG6AoDbs1rPpjD8gHDkn9dUJfBHj3TCjO6aEBMhj4
+         L4zA==
+X-Gm-Message-State: AOAM5318Kplx7COThkM3tzaZdhBGu8or4wuQivr9RajnU4fxZ6NtpINe
+        XaW2rHpNXguuO40G3YjzyBVQHpM5eh2dXBON
+X-Google-Smtp-Source: ABdhPJz2xZHpm1/8OVawC4SRquEmMtJJZQlwaQAgLpF85dawDwz7NP5LYGgGjLcQUOw37YfHHoejPw==
+X-Received: by 2002:a7b:c741:: with SMTP id w1mr9410342wmk.67.1604167193468;
+        Sat, 31 Oct 2020 10:59:53 -0700 (PDT)
 Received: from adroid (165-170-184-091.ip-addr.vsenet.de. [91.184.170.165])
-        by smtp.gmail.com with ESMTPSA id l26sm9068456wmi.41.2020.10.31.10.59.12
+        by smtp.gmail.com with ESMTPSA id n17sm8154823wrw.69.2020.10.31.10.59.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Oct 2020 10:59:12 -0700 (PDT)
+        Sat, 31 Oct 2020 10:59:52 -0700 (PDT)
 From:   =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>
 To:     linux-samsung-soc@vger.kernel.org
-Cc:     kgene@kernel.org, krzk@kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v2 0/5] add exynos4412-based p4note device family support
-Date:   Sat, 31 Oct 2020 18:58:32 +0100
-Message-Id: <20201031175836.47745-1-martin.juecker@gmail.com>
+Cc:     kgene@kernel.org, krzk@kernel.org, devicetree@vger.kernel.org,
+        =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>
+Subject: [PATCH 1/5] dt-bindings: samsung: document bindings for p4note family boards
+Date:   Sat, 31 Oct 2020 18:58:33 +0100
+Message-Id: <20201031175836.47745-2-martin.juecker@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201031175836.47745-1-martin.juecker@gmail.com>
+References: <20201031175836.47745-1-martin.juecker@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -73,37 +77,33 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Document the GT-N8010/GT-N8013 device binding and the p4note common
+binding that it is based on.
 
-after lots of research and trial and error, this is my first
-contribution to the linux kernel.
+Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
+---
+ .../devicetree/bindings/arm/samsung/samsung-boards.yaml   | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-These patches lay the foundation for supporting the Samsung Galaxy
-Note 10.1 device family. To the best of my knowledge there are around
-16 devices which use almost identical hardware inside with exceptions
-being the modem and one of the sensors. The first instance which I'm
-currently testing on is the N8010 which is the wifi only version that
-is identical to the N8013. There are some missing components still,
-but it's a start.
-
-v1: https://lore.kernel.org/linux-samsung-soc/20201024144421.34435-1-martin.juecker@gmail.com/
-
-Changes in v2 (proposed by Marek and Krzysztof)
-- lots of label adjustments, some removed
-- unused ehci node removed
-- unused serials removed
-- compatible string is now samsung,n8010 instead of samsung,n801x
-- removed unused imports
-- voltage regulator name for TSP changed to match vendor kernel
-- i2c numbering starting from 1 now
-- two missing gpio configurations added
-- added vdd supply to adc node
-- added all regulators to max77686 node
-- pinctrl configs sorted by pin name
-
-
-Cheers
-Martin
-
-
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+index eb92f9eefaba..dbc401984152 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+@@ -83,6 +83,14 @@ properties:
+           - const: samsung,exynos4412
+           - const: samsung,exynos4
+ 
++      - description: Samsung p4note family boards
++        items:
++          - enum:
++              - samsung,n8010                   # Samsung GT-N8010/GT-N8013
++          - const: samsung,p4note
++          - const: samsung,exynos4412
++          - const: samsung,exynos4
++
+       - description: Exynos5250 based boards
+         items:
+           - enum:
+-- 
+2.25.1
 
