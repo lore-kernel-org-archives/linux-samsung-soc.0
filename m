@@ -1,102 +1,125 @@
-Return-Path: <SRS0=vFf2=EG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=0bY/=EH=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB92FC55178
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Oct 2020 19:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05DAFC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  1 Nov 2020 05:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8F6520706
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Oct 2020 19:01:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604170890;
-	bh=2kLF3qEgXyoiu7HPQnNsNJf4XpPEJLk24R5tLi6zJcc=;
-	h=Date:From:To:Subject:List-ID:From;
-	b=YRQSqSDUTWp9/o5V8MRMOHmNjMyvlucIf13cYoxrIlxtg3q2nb+86vAv4gjbxveQh
-	 iXzu7+hMb4d+gEwmXH/qGAHiH31GMPUdOn0OwNWbqAzVFIde5HW4JTEI4+l2bJknaK
-	 NJRlkRzPnnjm43940fkPPsqRc1KcvSW5w66M6Vnk=
+	by mail.kernel.org (Postfix) with ESMTP id A64AB208A9
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  1 Nov 2020 05:22:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="GDRHpOkp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbgJaTBa (ORCPT
+        id S1726858AbgKAFWU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 31 Oct 2020 15:01:30 -0400
-Received: from mail-wr1-f46.google.com ([209.85.221.46]:44374 "EHLO
-        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbgJaTBa (ORCPT
+        Sun, 1 Nov 2020 01:22:20 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:8613 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726117AbgKAFWS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 31 Oct 2020 15:01:30 -0400
-Received: by mail-wr1-f46.google.com with SMTP id b3so4092138wrx.11;
-        Sat, 31 Oct 2020 12:01:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition;
-        bh=fo1vLw7uqzM0/HVmudKwwfC5LAehVsjoosFf5UWA8y0=;
-        b=uAzRAJdvrzSFruVaBlWcp+QtmdOAo4cIHTy2W6P6A1PJTkgkizaIzzNYKnKg8+wbo7
-         Omchg07xbP/KJzAtjBmN0Kg9lLSYON0WUeqUjGBbc02Vs4im631BJlkN8IEENCKrXQzU
-         hJjH/nQimpOade3cg7wSfJQaoMxc16vImF42xcI+2hrQ5Brgw2lh0uT1PG14IHnNOAET
-         A0YTkd2YVVIma8D4pxTi0fXVggIMgUXZ/p5RUNE/GfFLrembKykis+gJI9tdTI7+OeJm
-         X/KWWJFACSECoSkznafUF8oikmUyDSnwOD5ens7yVa+wDQh2y/fuDwSCcmUuCIsaL7za
-         tCsA==
-X-Gm-Message-State: AOAM531Ypw7Xo2F+qTnvZjAk0sIuQ4xV5he17IsiZ9XbtKcUGOES1/YI
-        VsJSyHZV9wwq2IxZeidJaAp4hgqzvccs+w==
-X-Google-Smtp-Source: ABdhPJxAoD+lJVSovF6LGZWjGAOGZSs5Ew9Xk7ScBo+AW4SrynsiHyTcb0Qsb6SAn5qAndIgOwcexg==
-X-Received: by 2002:adf:fc8b:: with SMTP id g11mr10785093wrr.300.1604170887339;
-        Sat, 31 Oct 2020 12:01:27 -0700 (PDT)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id e7sm15597705wrm.6.2020.10.31.12.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Oct 2020 12:01:26 -0700 (PDT)
-Date:   Sat, 31 Oct 2020 20:01:24 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sun, 1 Nov 2020 01:22:18 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f9e460b0000>; Sat, 31 Oct 2020 22:22:19 -0800
+Received: from [10.2.59.55] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 1 Nov
+ 2020 05:22:12 +0000
+Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+CC:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Pawel Osciak <pawel@osciak.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-Subject: dmaengine: pl330 rare NULL pointer dereference in pl330_tasklet
-Message-ID: <20201031190124.GA486187@kozik-lap>
+        "Kyungmin Park" <kyungmin.park@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20201030100815.2269-1-daniel.vetter@ffwll.ch>
+ <20201030100815.2269-6-daniel.vetter@ffwll.ch>
+ <446b2d5b-a1a1-a408-f884-f17a04b72c18@nvidia.com>
+ <CAKMK7uGDW2f0oOvwgryCHxQFHyh3Tsk6ENsMGmtZ-EnH57tMSA@mail.gmail.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <1f7cf690-35e2-c56f-6d3f-94400633edd2@nvidia.com>
+Date:   Sat, 31 Oct 2020 22:22:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <CAKMK7uGDW2f0oOvwgryCHxQFHyh3Tsk6ENsMGmtZ-EnH57tMSA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1604208139; bh=BviMObXYl4DBSbzSpkoK8hvibl+1Fsc4El3qoj9SER4=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=GDRHpOkpxs1Ufq2SOGdgYR/E9XR+fbuJ8LSdEQnzZVakY5/3RHLrlV0EUPacqB1hx
+         sgcaxSS6kL92YgOCYxV61/vKgMeyJzWv3pbsiGOiPG2yzztyrS+M509X+WJsspP0iX
+         eGYfmD7CUw9Sc7vfW/dXMJFEk0m7LtD6SNXFGO5vEh2idfKwEVzJ6ZAWx2tcCRv74B
+         z9sCh7r8+3axv5dd8sfK1ThmV84FPNw8fCBM1IYOZ3eSLI6P+VCNYX5tGFWyGGRpnN
+         ra2SHoMsB7AY6QbBfc+xZFCAcf9OI3Wzgrvev7r6iT4kkq15E1JGpS1HdFytcI+8SG
+         6LGq3w3+17JOQ==
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi all,
-
-I hit quite rare issue with pl330 DMA driver, difficult to reproduce
-(actually failed to do so):
-
-Happened during early reboot
-
-[  OK  ] Stopped target Graphical Interface.
-[  OK  ] Stopped target Multi-User System.
-[  OK  ] Stopped target RPC Port Mapper.
-         Stopping OpenSSH Daemonti[   75.447904] 8<--- cut here ---
-[   75.449506] Unable to handle kernel NULL pointer dereference at virtual address 0000000c
+On 10/31/20 7:45 AM, Daniel Vetter wrote:
+> On Sat, Oct 31, 2020 at 3:55 AM John Hubbard <jhubbard@nvidia.com> wrote:
+>> On 10/30/20 3:08 AM, Daniel Vetter wrote:
 ...
-[   75.690850] [<c0902f70>] (pl330_tasklet) from [<c034d460>] (tasklet_action_common+0x88/0x1f4)
-[   75.699340] [<c034d460>] (tasklet_action_common) from [<c03013f8>] (__do_softirq+0x108/0x428)
-[   75.707850] [<c03013f8>] (__do_softirq) from [<c034dadc>] (run_ksoftirqd+0x2c/0x4c)
-[   75.715486] [<c034dadc>] (run_ksoftirqd) from [<c036fbfc>] (smpboot_thread_fn+0x13c/0x24c)
-[   75.723693] [<c036fbfc>] (smpboot_thread_fn) from [<c036c18c>] (kthread+0x13c/0x16c)
-[   75.731390] [<c036c18c>] (kthread) from [<c03001a8>] (ret_from_fork+0x14/0x2c)
+>> By removing this check from this location, and changing from
+>> pin_user_pages_locked() to pin_user_pages_fast(), I *think* we end up
+>> losing the check entirely. Is that intended? If so it could use a comment
+>> somewhere to explain why.
+> 
+> Yeah this wasn't intentional. I think I needed to drop the _locked
+> version to prep for FOLL_LONGTERM, and figured _fast is always better.
+> But I didn't realize that _fast doesn't have the vma checks, gup.c got
+> me a bit confused.
 
-Full log:
-https://krzk.eu/#/builders/20/builds/954/steps/22/logs/serial0
+Actually, I thought that the change to _fast was a very nice touch, btw.
 
-1. Arch ARM Linux
-2. multi_v7_defconfig
-3. Odroid HC1, ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC
-4. systemd, boot up with static IP set in kernel command line
-5. No swap
-6. Kernel, DTB and initramfs are downloaded with TFTP
-7. NFS root (NFS client) mounted from a NFSv4 server
+> 
+> I'll remedy this in all the patches where this applies (because a
+> VM_IO | VM_PFNMAP can point at struct page backed memory, and that
+> exact use-case is what we want to stop with the unsafe_follow_pfn work
+> since it wreaks things like cma or security).
+> 
+> Aside: I do wonder whether the lack for that check isn't a problem.
+> VM_IO | VM_PFNMAP generally means driver managed, which means the
+> driver isn't going to consult the page pin count or anything like that
+> (at least not necessarily) when revoking or moving that memory, since
+> we're assuming it's totally under driver control. So if pup_fast can
+> get into such a mapping, we might have a problem.
+> -Daniel
+>
 
-Since I was not able to reproduce it, obviously I did not run bisect. If
-anyone has ideas, please share.
+Yes. I don't know why that check is missing from the _fast path.
+Probably just an oversight, seeing as how it's in the slow path. Maybe
+the appropriate response here is to add a separate patch that adds the
+check.
 
-Best regards,
-Krzysztof
+I wonder if I'm overlooking something, but it certainly seems correct to
+do that.
 
+  thanks,
+-- 
+John Hubbard
+NVIDIA
