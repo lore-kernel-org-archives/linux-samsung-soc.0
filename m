@@ -2,143 +2,135 @@ Return-Path: <SRS0=0bY/=EH=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA402C55178
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  1 Nov 2020 10:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B9F1C55179
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  1 Nov 2020 14:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A535920709
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  1 Nov 2020 10:31:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0D2820706
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  1 Nov 2020 14:07:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="PXdr311j"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vSN179H1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbgKAKbH (ORCPT
+        id S1726710AbgKAOHM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 1 Nov 2020 05:31:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45282 "EHLO
+        Sun, 1 Nov 2020 09:07:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726392AbgKAKbC (ORCPT
+        with ESMTP id S1726458AbgKAOHL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 1 Nov 2020 05:31:02 -0500
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A95C061A48
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  1 Nov 2020 02:31:01 -0800 (PST)
-Received: by mail-ot1-x343.google.com with SMTP id i18so5129459ots.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Nov 2020 02:31:01 -0800 (PST)
+        Sun, 1 Nov 2020 09:07:11 -0500
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3915C0617A6;
+        Sun,  1 Nov 2020 06:07:09 -0800 (PST)
+Received: by mail-ed1-x544.google.com with SMTP id a15so2662432edy.1;
+        Sun, 01 Nov 2020 06:07:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cMohUdqA3mHu1aHkJyF+q3c+LPomnH+bJbyOS5Pjj34=;
-        b=PXdr311jw4o1TK1cA/6mrlvkDVtMBlyy1XYbMpIt3vJC7ClXj7DZJYo+vKllfO49H/
-         YgcjzcGc1VpCnfRMFbloI4quCQ5ndPF+idmxEJoWrUJWkpgS76TUc1DHlMSxRDqofJvd
-         l2sKUL2WW0wKA2NYOf2SZx1Y6sFEl/LXBFDeg=
+         :cc:content-transfer-encoding;
+        bh=Xf3D8wv1rqteE4VdQEnZxsLYc9H1mqo+m29RsmKEQs4=;
+        b=vSN179H1wTvGdNjfwlyQSo6njiUyGzjBy/UvzXxP+3/eBT8hEKmFEpQmTcVFcQC0B0
+         BMDRvMsZ/X7W5a1KgIVdVbnyVZSQz1fFZHIOf7OIe7WemX0J2dDiE9Uut7XvxWnqwu+R
+         SGBTVUBXOELJzQvbI5rQ8vCLg/gtCmOX5g+1lsm4qOFMo1wuYnRhskb7rpVS9RPFIdve
+         j90oS1UN6QXv0qZKHVfYPJx1IeQRbOvlgW2elZlvg8R0mtLoy7LDIyR2102AI7qe8vEX
+         ekFZyjQd56wdf+rEKKrB0vTleViUqsOF+om7QxDPr+c4PP9iTswsiyeNOkOjQA4vj9RJ
+         8+VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cMohUdqA3mHu1aHkJyF+q3c+LPomnH+bJbyOS5Pjj34=;
-        b=BobR1zD3GMgbcqMZrp9L0hl4t5AcbdR1UnMzbJMf/ZdURDVBy5ruKEYkIJbxt7/DoB
-         pL5EGyeIRUOI77Yx0TVGfh2bn1b3oSusnMBwodUjnZLwvNrvbBlrrC3GTh62GrB0Lkzs
-         jPMW0TS6G/BqfGjxbLiwp+uSV3tinW5SO4AmHknUeOiHtNezLrDIq0AL1w3zeF4daWCT
-         1+Tvof6WFkO2Y7kU6ShzGSQgHr8ikvaE9KVtweLoOYKb6ZWNmE9uUr9re1+6JmdktZf3
-         0z6Tl0sk8jePDtU8sZ6b9cpodPVlVtG8JIp9B7nRcnapSnWxOwlVqDuZPFuE+yVpGOG5
-         G8sw==
-X-Gm-Message-State: AOAM5325D94BfSgmTe0qYGhxyIpJDtkxSesZIB1ixCiKgEt7nYhBQJEl
-        NwyXEpFix72M8TNJAutPXZZgxJ9MOtpuDNYEYZ89JA==
-X-Google-Smtp-Source: ABdhPJxxfl/j7Y56O7SvvjDInbgd1Huz0SnDjNzTDNqX3oHxJ8qJKEvsr7nAV6GfCrUUP0r8bqY++IYBOL0aDpBKvjo=
-X-Received: by 2002:a05:6830:1647:: with SMTP id h7mr8739299otr.281.1604226660644;
- Sun, 01 Nov 2020 02:31:00 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Xf3D8wv1rqteE4VdQEnZxsLYc9H1mqo+m29RsmKEQs4=;
+        b=YvBj/BDY6B7yC2A/fJafrKSquKrypmQkys7wd/5sok2lDDBJxkoXOyxK+UPH+tW7gI
+         JS36SQtolneQdqgfngvjkqxoDxtBFsPQTlVPTeQafwdWsxcGC9LX0kYNEHUG8yAORIta
+         sMp1AzVLLtopbKHHGawAZoBQ71VSJJSJLAFzSB2ZVcv1OS/3Sy89w9UvXOcNt5xygl3+
+         Zfx0IcBKeq6iHWc4sBaUBmYBynKF+4+yWOOL3VwrMpj/2tUe2jPO3t5HwlAuykgSxhH9
+         FNA6+VaR49uFT4RIn5paW3EeUnhcnC7Di4kXgVtbKuxc67Jb7QjoA6EDrEr7kiLEQqwJ
+         ROCg==
+X-Gm-Message-State: AOAM5325QZ0QranSpN1xhXVa3LRCpUQpzldTnpfa/wA6P5JDnHMl4+VA
+        FaVoJSqaV+raCicV03QZZAm3kWzylorBuJW4JaU=
+X-Google-Smtp-Source: ABdhPJxfPte/UcWPSAWV9nUFL+MCnlriAEwjQ2AlUwDnRd4no/D6kw6JwybiH7ZH+HZ10I1FBxl2QF149/8NU4NtYRk=
+X-Received: by 2002:aa7:c597:: with SMTP id g23mr3184502edq.184.1604239628710;
+ Sun, 01 Nov 2020 06:07:08 -0800 (PST)
 MIME-Version: 1.0
-References: <20201030100815.2269-1-daniel.vetter@ffwll.ch> <20201030100815.2269-6-daniel.vetter@ffwll.ch>
- <446b2d5b-a1a1-a408-f884-f17a04b72c18@nvidia.com> <CAKMK7uGDW2f0oOvwgryCHxQFHyh3Tsk6ENsMGmtZ-EnH57tMSA@mail.gmail.com>
- <1f7cf690-35e2-c56f-6d3f-94400633edd2@nvidia.com>
-In-Reply-To: <1f7cf690-35e2-c56f-6d3f-94400633edd2@nvidia.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Sun, 1 Nov 2020 11:30:49 +0100
-Message-ID: <CAKMK7uFYDSqnNp_xpohzCEidw_iLufNSoX4v55sNZj-nwTckSg@mail.gmail.com>
-Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>
+References: <CGME20201001135310eucas1p273e3799cec0ebb29891c1b7db38685e0@eucas1p2.samsung.com>
+ <20200930143151.23961-1-l.stelmach@samsung.com> <20201001135254.28178-1-l.stelmach@samsung.com>
+In-Reply-To: <20201001135254.28178-1-l.stelmach@samsung.com>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Sun, 1 Nov 2020 19:37:04 +0530
+Message-ID: <CANAwSgSvH+q21Tj9NijPa87ju+1LOJ07-is1Sucx1y5ggT6zCA@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos: Add a placeholder for a MAC address
+To:     =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Nov 1, 2020 at 6:22 AM John Hubbard <jhubbard@nvidia.com> wrote:
->
-> On 10/31/20 7:45 AM, Daniel Vetter wrote:
-> > On Sat, Oct 31, 2020 at 3:55 AM John Hubbard <jhubbard@nvidia.com> wrote:
-> >> On 10/30/20 3:08 AM, Daniel Vetter wrote:
-> ...
-> >> By removing this check from this location, and changing from
-> >> pin_user_pages_locked() to pin_user_pages_fast(), I *think* we end up
-> >> losing the check entirely. Is that intended? If so it could use a comment
-> >> somewhere to explain why.
-> >
-> > Yeah this wasn't intentional. I think I needed to drop the _locked
-> > version to prep for FOLL_LONGTERM, and figured _fast is always better.
-> > But I didn't realize that _fast doesn't have the vma checks, gup.c got
-> > me a bit confused.
->
-> Actually, I thought that the change to _fast was a very nice touch, btw.
->
-> >
-> > I'll remedy this in all the patches where this applies (because a
-> > VM_IO | VM_PFNMAP can point at struct page backed memory, and that
-> > exact use-case is what we want to stop with the unsafe_follow_pfn work
-> > since it wreaks things like cma or security).
-> >
-> > Aside: I do wonder whether the lack for that check isn't a problem.
-> > VM_IO | VM_PFNMAP generally means driver managed, which means the
-> > driver isn't going to consult the page pin count or anything like that
-> > (at least not necessarily) when revoking or moving that memory, since
-> > we're assuming it's totally under driver control. So if pup_fast can
-> > get into such a mapping, we might have a problem.
-> > -Daniel
-> >
->
-> Yes. I don't know why that check is missing from the _fast path.
-> Probably just an oversight, seeing as how it's in the slow path. Maybe
-> the appropriate response here is to add a separate patch that adds the
-> check.
->
-> I wonder if I'm overlooking something, but it certainly seems correct to
-> do that.
+Hi Lukasz,
 
-You'll need the mmap_sem to get at the vma to be able to do this
-check. If you add that to _fast, you made it as fast as the slow one.
-Plus there's _fast_only due to locking recurion issues in fast-paths
-(I assume, I didn't check all the callers).
+On Thu, 1 Oct 2020 at 19:25, =C5=81ukasz Stelmach <l.stelmach@samsung.com> =
+wrote:
+>
+> Add a placeholder for a MAC address. A bootloader may fill it
+> to set the MAC address and override EEPROM settings.
+>
+> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+> ---
+> Changes in v2:
+>  - use local-mac-address and leave mac-address to be added by a bootloade=
+r
+>
+>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/d=
+ts/exynos5422-odroidxu3.dts
+> index db0bc17a667b..d0f6ac5fa79d 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> @@ -70,3 +70,21 @@ &pwm {
+>  &usbdrd_dwc3_1 {
+>         dr_mode =3D "peripheral";
+>  };
+> +
+> +&usbhost2 {
+> +       #address-cells =3D <1>;
+> +       #size-cells =3D <0>;
+> +
+> +       hub@1 {
+> +               compatible =3D "usb8087,0024";
+> +               reg =3D <1>;
+> +               #address-cells =3D <1>;
+> +               #size-cells =3D <0>;
+> +
+> +               ethernet: usbether@1 {
+> +                       compatible =3D "usb0c45,6310";
+> +                       reg =3D <1>;
+> +                       local-mac-address =3D [00 00 00 00 00 00]; /* Fil=
+led in by a bootloader */
+> +               };
+> +       };
+> +};
+> --
+> 2.26.2
+>
 
-I'm just wondering whether we have a bug somewhere with device
-drivers. For CMA regions we always check in try_grab_page, but for dax
-I'm not seeing where the checks in the _fast fastpaths are, and that
-all still leaves random device driver mappings behind which aren't
-backed by CMA but still point to something with a struct page behind
-it. I'm probably just missing something, but no idea what.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Thanks for this patch, can you share some example on how to set the
+mac address via u-boot bootargs
+also can you update this patch for exynos5422-odroidxu3-lite.dts and
+exynos4412-odroidu3.dts.
+
+Best Regards
+-Anand
