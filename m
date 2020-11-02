@@ -2,139 +2,113 @@ Return-Path: <SRS0=jHm+=EI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF10C00A89
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 12:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1D2C00A89
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 12:41:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D400522400
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 12:40:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GnVqcu/n"
+	by mail.kernel.org (Postfix) with ESMTP id 800D922403
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 12:41:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604320891;
+	bh=qt9zBsoc3VVGk50l/yuGhQoHArbKCfg2VFIG3hjAjpc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=FAOrOHmozjLgpBbYHlH3mFc/rsBs9uVKqetNhcENMbIVmw15eCn8nzPL07sBCwOr3
+	 ObCjgtm7elFuqTRlFn7xmLcWY41Zyo1egZbu0asj0gSZ7msy+oBwdPgetZ7rhqkQfT
+	 hKQa7IuTrJbo2NRhOiTk0LtxIfNYbTIIBF2pza/w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728696AbgKBMk7 (ORCPT
+        id S1728675AbgKBMlb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 2 Nov 2020 07:40:59 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53632 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728687AbgKBMk7 (ORCPT
+        Mon, 2 Nov 2020 07:41:31 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43462 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728631AbgKBMla (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Nov 2020 07:40:59 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201102124047euoutp020144649f4a7b68c13a37dc760404f99e~DsU_R7UwN1365413654euoutp02L
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2020 12:40:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201102124047euoutp020144649f4a7b68c13a37dc760404f99e~DsU_R7UwN1365413654euoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604320847;
-        bh=bWbmHJ8Du94K7fAcUqgi6AZ5cA8+sLowwwXH4NkGAxM=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=GnVqcu/nFACV2HlqwVURVZNxUhaTWOO5aSumoYAmTFoOUpoyJBB1LxbywKVzsGB+5
-         lMLzjL+Is4vbKTrz0u4U9Qvx0poP/ulEPmpQOMBJiVj5mh2QI4hv1lu3HTPBbvC6s8
-         hAfYPbJLuKTByn52zmljRmFcK+9JOj856CURf2Vo=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201102124046eucas1p1b9b691bb50e03c6c36d273e1f8a2b2d1~DsU9XoFHn2519725197eucas1p1i;
-        Mon,  2 Nov 2020 12:40:46 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id EC.B1.05997.E4EFF9F5; Mon,  2
-        Nov 2020 12:40:46 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201102124046eucas1p15cd9e163dbab72cdc639f5e71d8b6a18~DsU83Ov3w2548025480eucas1p1o;
-        Mon,  2 Nov 2020 12:40:46 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201102124046eusmtrp1d756f9fc75e6d18bf544860bd2a2610d~DsU82a0VW0712107121eusmtrp1d;
-        Mon,  2 Nov 2020 12:40:46 +0000 (GMT)
-X-AuditID: cbfec7f4-677ff7000000176d-77-5f9ffe4e1cde
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 55.76.06017.D4EFF9F5; Mon,  2
-        Nov 2020 12:40:45 +0000 (GMT)
-Received: from [106.210.123.115] (unknown [106.210.123.115]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201102124044eusmtip29d092f9ae4a62c942b57db01db98d466~DsU73NJjF2594525945eusmtip2q;
-        Mon,  2 Nov 2020 12:40:44 +0000 (GMT)
-Subject: Re: [PATCH v7 6/6] drm: exynos: mixer: Add interconnect support
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     georgi.djakov@linaro.org, cw00.choi@samsung.com,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        a.swigon@samsung.com, myungjoo.ham@samsung.com,
-        inki.dae@samsung.com, sw0312.kim@samsung.com,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <f8f4dce0-9da2-30d6-32bf-4b6ec9f11f5e@samsung.com>
-Date:   Mon, 2 Nov 2020 13:40:44 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.12.1
+        Mon, 2 Nov 2020 07:41:30 -0500
+Received: by mail-wr1-f65.google.com with SMTP id g12so14392560wrp.10;
+        Mon, 02 Nov 2020 04:41:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=vE+PH3YLHOhOeLKgAfBwuoHNLUQzsqJV1bKYObjVQTA=;
+        b=QS6Neq/l0P62NHvyviWNsUdPCpguqOJXlopZjqOd1Rw2HTA0Kv91o6ytLA+SwG8kMv
+         229tkQyEzju38QW1HVqIgNFB0a9XeIFSL8x7QUpabUWArVVkVP32EX8j3kLZjA3zE+pj
+         gs0Uhh3O/EpykcSRrPx2eBM3OtOOxPsFkJdzMoowlEmYFHAT1WphsPme66JyZlDXQhCi
+         LqRvLrGaKz+uoHGz6zmyGUz2oLc8DwJqni5FTffXzjomvohAqqXodhOlgec7QroLB+BB
+         wnYpZ3VpE6fiuU/1pdxgKB80AJPSoDH+2Z8NDo1Gh/PRkaNTgQDjD6bHn6+k9zKe+eEv
+         0k/A==
+X-Gm-Message-State: AOAM532GAZf3VCbmfLhxNtJCjIRPZSsZbwTvdkORdXNGMyuJ+VnzNjHM
+        9TsyyV9FSJuJqcMaSbTK8aQ=
+X-Google-Smtp-Source: ABdhPJxO96MjaHNz8VC1k9cRxHvlW6BeV6r7uvMv+QRAZP+NenJAbJ9TbyqjTJjr4zWYDBgKznzRcA==
+X-Received: by 2002:adf:dc4b:: with SMTP id m11mr6564318wrj.328.1604320888114;
+        Mon, 02 Nov 2020 04:41:28 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id b8sm1396420wmj.9.2020.11.02.04.41.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Nov 2020 04:41:26 -0800 (PST)
+Date:   Mon, 2 Nov 2020 13:41:25 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     vigneshr@ti.com, linux-kernel@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Kukjin Kim <kgene@kernel.org>, Ben Dooks <ben@simtec.co.uk>,
+        linux-mtd@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 17/23] mtd: nand: raw: s3c2410: Add documentation for 2
+ missing struct members
+Message-ID: <20201102124125.GA437900@kozik-lap>
+References: <20201102115406.1074327-1-lee.jones@linaro.org>
+ <20201102115406.1074327-18-lee.jones@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20201031124717.GE9399@kozik-lap>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+3YuO46OHafpyxKDUwQVapbQCaUbQQuirP+6aSc9qKhTdubK
-        EFqUXczFMkhbl2lZ2ULUY1hpy7U0CdERXdXVoFZRYRc2E8s0j6fI/37v877v9z4PfBSmfUzo
-        qFyDSTAa+HyW1OCtD0e98ZvGHRlL3lrncf6LZYhrrm4kuBehDwTn6OwjuKfDX0muyiWRXKXf
-        hnNeb5Oae9J2nuSC1k7EVXvvqbiGzldqbvBgPcmVuTrVXPXpj+TqWXrJeZzU+57fJfX+E90q
-        /cmbTqQPSnFpxHZNapaQn2sWjIkrd2ty+m/EFVnxfRcHjhIWdAErR2EUMMlgc7lQOdJQWqYe
-        wYPW46pyRE0WIQRjWxQ9iGD4/QD5b6HO1YUpjWsILkgtuFJ8R3Dd0oHLU5GMHvraapHMUcxC
-        ePF7hJCHMOaXCg45e9Vyg2SSwNp1EsnnaGYl+B6ysowz8+H+m6NT78xm0sHWfHiKaSYCHp0N
-        THEYkwDfzlwmZMaYGBgIOFQKz4VbQ+en3AEzqoYflZJKsb0OWjwVSOFI+NR9U61wLPScrsCV
-        hUMIKtoH1UphQ+Dvrvm7kQK+vp+k7BSbjNPYlqjIa6Cjzq2WZWDC4eVQhGIiHCpbqzBFpuHY
-        Ea0yPR9+Oav+2tHBicAEbkOsfVo0+7Q49mlx7P/v1iDciWKEYrEgWxCXGoS9CSJfIBYbshMy
-        CwskNPnResa7Q7dR29geD2IoxM6k3ZGODC3Bm8WSAg8CCmOj6LW9PelaOosv2S8YCzOMxfmC
-        6EFzKJyNoZdd+rhLy2TzJiFPEIoE47+uigrTWVApH5Nhi3drDrCm6NI7vlVNqVIa5kqqvbrZ
-        seNU0djMFaGlQ/cbC83JXa4rn2fcpk3E4Jdnktulz5szsbGD4Ps3pC0fqZcmzKOJmeu9seGv
-        U7ac6zWP77TkZOrcDZ7+x7ZAe9a2rXuDP9+lL4gcWRzlN5SIOz0LnzdwmUfKtkWzuJjDJy3C
-        jCL/BzLy3AtkAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsVy+t/xe7q+/+bHG6xfZm1xf14ro8XGGetZ
-        La5/ec5qMf/IOVaLK1/fs1lM37uJzWLS/QksFufPb2C3uLxrDpvF594jjBYzzu9jslh75C67
-        xe3GFWwWrXuPsFvMmPySzYHfY9OqTjaPO9f2sHnc7z7O5NG3ZRWjx+dNcgGsUXo2RfmlJakK
-        GfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZN1fLFfSyVMy71c7a
-        wDiXuYuRk0NCwERiyd6jYLaQwFJGiUVv47sYOYDiUhLzW5QgSoQl/lzrYuti5AIqec8o8Wbp
-        IyaQhLCAh8S5XQsZQWwRAU2J63+/s4IUMQv8ZpI4cO8yC0THY0aJ40/62UGq2AQMJXqP9jGC
-        bOAVsJO4cwxsA4uAisTBR+0sILaoQJzEj4m9bCA2r4CgxMmZT8DinAJ6Eh+mLWYFsZkF1CX+
-        zLvEDGGLS9x6Mp8JwpaX2P52DvMERqFZSNpnIWmZhaRlFpKWBYwsqxhFUkuLc9Nzi430ihNz
-        i0vz0vWS83M3MQIjeNuxn1t2MHa9Cz7EKMDBqMTDe0B4frwQa2JZcWXuIUYJDmYlEV6ns6fj
-        hHhTEiurUovy44tKc1KLDzGaAj03kVlKNDkfmFzySuINTQ3NLSwNzY3Njc0slMR5OwQOxggJ
-        pCeWpGanphakFsH0MXFwSjUwrmrQyajdsuaVsrPCly7bSVN3vfnsfPBFqXJ6+qHJ59uuFM/u
-        SxLLblm1X0Ykwu366tXxbm7p7KyLr81VZa4ObV3lf33OgdcZi0sXt2+fMC/xnH+PUtij2S7T
-        Jm7dUGHLwfR9TerVarGXRkoHM9M4HhuZH55u/ufcxYZ1rZMuHDj2b2XIks+HbyuxFGckGmox
-        FxUnAgDqsO3P9gIAAA==
-X-CMS-MailID: 20201102124046eucas1p15cd9e163dbab72cdc639f5e71d8b6a18
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201030125308eucas1p14ae969ae1d5549d422c478aa54d3311e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201030125308eucas1p14ae969ae1d5549d422c478aa54d3311e
-References: <20201030125149.8227-1-s.nawrocki@samsung.com>
-        <CGME20201030125308eucas1p14ae969ae1d5549d422c478aa54d3311e@eucas1p1.samsung.com>
-        <20201030125149.8227-7-s.nawrocki@samsung.com>
-        <20201031124717.GE9399@kozik-lap>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201102115406.1074327-18-lee.jones@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 31.10.2020 13:47, Krzysztof Kozlowski wrote:
->> @@ -1223,19 +1330,33 @@ static int mixer_probe(struct platform_device *pdev)
->>  	struct device *dev = &pdev->dev;
->>  	const struct mixer_drv_data *drv;
->>  	struct mixer_context *ctx;
->> +	struct icc_path *path;
->>  	int ret;
->>  
->> +	/*
->> +	 * Returns NULL if CONFIG_INTERCONNECT is disabled.
+On Mon, Nov 02, 2020 at 11:54:00AM +0000, Lee Jones wrote:
+> Fixes the following W=1 kernel build warning(s):
+> 
+>  drivers/mtd/nand/raw/s3c2410.c:172: warning: Function parameter or member 'controller' not described in 's3c2410_nand_info'
+>  drivers/mtd/nand/raw/s3c2410.c:172: warning: Function parameter or member 'freq_transition' not described in 's3c2410_nand_info'
 
-> You could add here:
-> or if "interconnects" property does not exist.
+It took me some time to spot why the "mtds" change is there, so maybe
+add to the commit msg:
+"Correct also typo controoler -> controller."
 
-Right, thanks for pointing out, I will update that comment.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
--- 
-Regards,
-Sylwester
+Best regards,
+Krzysztof
+
+
+> 
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: Vignesh Raghavendra <vigneshr@ti.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Ben Dooks <ben@simtec.co.uk>
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/mtd/nand/raw/s3c2410.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/s3c2410.c b/drivers/mtd/nand/raw/s3c2410.c
+> index cb2d1b4e278cb..f0a4535c812aa 100644
+> --- a/drivers/mtd/nand/raw/s3c2410.c
+> +++ b/drivers/mtd/nand/raw/s3c2410.c
+> @@ -133,7 +133,8 @@ enum s3c_nand_clk_state {
+>  
+>  /**
+>   * struct s3c2410_nand_info - NAND controller state.
+> - * @mtds: An array of MTD instances on this controoler.
+> + * @controller: Base controller structure.
+> + * @mtds: An array of MTD instances on this controller.
