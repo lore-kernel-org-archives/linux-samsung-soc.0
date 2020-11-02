@@ -2,123 +2,184 @@ Return-Path: <SRS0=jHm+=EI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 666ADC388F2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 08:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D67C388F9
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 10:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A6972074F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 08:41:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604306493;
-	bh=34Jf7o+qHk5FjL6nJoXbgTheqmSuM4Y5gzETlHKd2ag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=cyRXPmcmGgQJuqWGjMFS1vT9OLLeooyPXtarSnKCv8+agWifG4wXgi74zef6UmsIA
-	 JZZXtfp7YYKjmOPj6zn49jbF0xSJaxqW5DJMFTmRq7Ic1RoISPTza0UuRfJUgZ2Y1K
-	 QQP9UYfMfMrgQmEr1mo4JS5uf/hMG+60fCud2E94=
+	by mail.kernel.org (Postfix) with ESMTP id 65080223BF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 10:47:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727960AbgKBIl3 (ORCPT
+        id S1728450AbgKBKrR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 2 Nov 2020 03:41:29 -0500
-Received: from mail-wr1-f47.google.com ([209.85.221.47]:38415 "EHLO
-        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727806AbgKBIl2 (ORCPT
+        Mon, 2 Nov 2020 05:47:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728288AbgKBKrP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Nov 2020 03:41:28 -0500
-Received: by mail-wr1-f47.google.com with SMTP id n18so13515447wrs.5;
-        Mon, 02 Nov 2020 00:41:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=LE6jfeBaedNtUOiZilvHvmLOozgEEEYdnPDcbbq+vus=;
-        b=my/WtJycsWZ9yj1SIHdsdh1NQZ813UEVAITpjlOVN6D15ldRlpigzUqfsBAbd7c2Gx
-         O/2Dc5GlWY8q7yQi8lwiZQ94fM+NiXWDf+xH4g+5xZ7m4wOAzpR7toYedk7THcUyrEGg
-         TXeyMGhzbtKSjJkFEse8RJBKJFD91aDMHkd5nsDimtnuNBG3nqAoeGJr50JztBimxQHz
-         8A8ouMAhxclU3g1Me+Hrp8loDG0CgnI61s4HEGI4fd1ubsqdkVVvZqkHJPIyy6mJsgj8
-         l5GC8cJZ6+ljgubXhWQV5FGMk1PxWOX7XGUZPNnWJMwGsvLGwwZH+mI9y5wMSMQqz6Z0
-         nlDg==
-X-Gm-Message-State: AOAM532Eqh9Nf9wF3LOge+vwd/+13JtcGUOmsuSsNmoVG7Xapl2Zfz+3
-        lnm8q99rM3LEdCq7VOOXBrANwHzn+A26ZQ==
-X-Google-Smtp-Source: ABdhPJxEntbrtRvffSWB2E3xhXP8aL9tfpqwwm0A3s92KIa06PgNflQihgMrxmliDhgFc5ONdad7cg==
-X-Received: by 2002:a5d:5106:: with SMTP id s6mr18215180wrt.51.1604306485033;
-        Mon, 02 Nov 2020 00:41:25 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id n8sm1907613wmc.11.2020.11.02.00.41.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2020 00:41:23 -0800 (PST)
-Date:   Mon, 2 Nov 2020 09:41:22 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-Subject: Re: dmaengine: pl330 rare NULL pointer dereference in pl330_tasklet
-Message-ID: <20201102084122.GA7331@kozik-lap>
-References: <CGME20201031190133eucas1p2a90b3a7a1e39f4e778e288bb11a3ff9d@eucas1p2.samsung.com>
- <20201031190124.GA486187@kozik-lap>
- <a4bbe5e8-dd3d-d66f-a9fe-012bf7910943@samsung.com>
+        Mon, 2 Nov 2020 05:47:15 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ACEAC0617A6
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2020 02:47:15 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1kZXMj-0002mr-0j; Mon, 02 Nov 2020 11:47:09 +0100
+Subject: Re: [Linux-stm32] [PATCH v7 10/12] ARM: dts: stm32: Fix schema
+ warnings for pwm-leds
+To:     Alexander Dahl <ada@thorsis.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-leds@vger.kernel.org
+References: <20201005203451.9985-1-post@lespocky.de>
+ <20201027100536.cpfizc67gwrolp2z@falbala.internal.home.lespocky.de>
+ <f6ed201d-51b6-f278-7a95-3e3e49dc19ee@pengutronix.de>
+ <5231529.NqohY00Rok@ada>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <cba67329-d79d-b474-c4b4-77b19aebe52f@pengutronix.de>
+Date:   Mon, 2 Nov 2020 11:47:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.1
 MIME-Version: 1.0
+In-Reply-To: <5231529.NqohY00Rok@ada>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a4bbe5e8-dd3d-d66f-a9fe-012bf7910943@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Nov 02, 2020 at 08:38:14AM +0100, Marek Szyprowski wrote:
-> Hi Krzysztof,
+Hello Alexander,
+
+On 10/28/20 8:34 AM, Alexander Dahl wrote:
+> Hello Ahmad,
 > 
-> On 31.10.2020 20:01, Krzysztof Kozlowski wrote:
-> > I hit quite rare issue with pl330 DMA driver, difficult to reproduce
-> > (actually failed to do so):
-> >
-> > Happened during early reboot
-> >
-> > [  OK  ] Stopped target Graphical Interface.
-> > [  OK  ] Stopped target Multi-User System.
-> > [  OK  ] Stopped target RPC Port Mapper.
-> >           Stopping OpenSSH Daemonti[   75.447904] 8<--- cut here ---
-> > [   75.449506] Unable to handle kernel NULL pointer dereference at virtual address 0000000c
-> > ...
-> > [   75.690850] [<c0902f70>] (pl330_tasklet) from [<c034d460>] (tasklet_action_common+0x88/0x1f4)
-> > [   75.699340] [<c034d460>] (tasklet_action_common) from [<c03013f8>] (__do_softirq+0x108/0x428)
-> > [   75.707850] [<c03013f8>] (__do_softirq) from [<c034dadc>] (run_ksoftirqd+0x2c/0x4c)
-> > [   75.715486] [<c034dadc>] (run_ksoftirqd) from [<c036fbfc>] (smpboot_thread_fn+0x13c/0x24c)
-> > [   75.723693] [<c036fbfc>] (smpboot_thread_fn) from [<c036c18c>] (kthread+0x13c/0x16c)
-> > [   75.731390] [<c036c18c>] (kthread) from [<c03001a8>] (ret_from_fork+0x14/0x2c)
-> >
-> > Full log:
-> > https://protect2.fireeye.com/v1/url?k=7445a1ab-2bde98a7-74442ae4-000babff3563-a368d542db0c5500&q=1&e=62e4887b-e224-48e5-80a2-71163caeeec8&u=https%3A%2F%2Fkrzk.eu%2F%23%2Fbuilders%2F20%2Fbuilds%2F954%2Fsteps%2F22%2Flogs%2Fserial0
-> >
-> > 1. Arch ARM Linux
-> > 2. multi_v7_defconfig
-> > 3. Odroid HC1, ARMv7, octa-core (Cortex-A7+A15), Exynos5422 SoC
-> > 4. systemd, boot up with static IP set in kernel command line
-> > 5. No swap
-> > 6. Kernel, DTB and initramfs are downloaded with TFTP
-> > 7. NFS root (NFS client) mounted from a NFSv4 server
-> >
-> > Since I was not able to reproduce it, obviously I did not run bisect. If
-> > anyone has ideas, please share.
+> Am Dienstag, 27. Oktober 2020, 11:58:10 CET schrieb Ahmad Fatoum:
+>> Hello,
+>>
+>> On 10/27/20 11:05 AM, Alexander Dahl wrote:
+>>> Hello Ahmad,
+>>>
+>>> thanks for your feedback, comments below.
+>>>
+>>>>> -	led-rgb {
+>>>>> +	led-controller-2 {
+>>>>
+>>>> Is a single RGB LED really a controller?
+>>>
+>>> I just followed the recommendations by Rob here.
+>>
+>> Do you happen to know if the new multicolor LED support could be used here?
 > 
-> Well, I've also observed it a few times. IMHO it is related to the 
-> broken UART (in DMA mode) shutdown procedure. Usually it can be easily 
-> observed by flushing some random parts of the previously transmitted 
-> data to the UART console during the system shutdown. This also depends 
-> on the board and used system (especially the presence of systemd, which 
-> plays with UART differently than the old sysv init). IMHO there is a 
-> kind of use-after-free issue there, so the above pl330 stacktrace can be 
-> also observed depending on the timing and system load. This issue is 
-> there from the beginning of the DMA support. I have it on my todo list, 
-> but it had too low priority to take a look into it. I only briefly 
-> checked the related code a few years ago and noticed that the UART 
-> shutdown is not really synchronized with DMA. However that time I didn't 
-> find any simple fix, so I gave up.
+> AFAIK not yet. The multicolor class should be ready and it is used by some 
+> drivers for I²C connected LED controllers, but if I understood Pavel 
+> correctly, additional work has to be done for a gpio and/or pwm multicolor 
+> driver. See this thread from August for example:
+> 
+> https://lore.kernel.org/linux-leds/2530787.iFCFyWWcSu@g550jk/
 
-Thanks for the explanation.
+I see. Thanks for the info.
 
-Best regards,
-Krzysztof
+>> I find it unfortunate that the device tree loses information relevant to
+>> humans to adhere to a fixed nomenclature. Apparently led-controller isn't
+>> even codified in the YAML binding (It's just in the examples). If you
+>> respin, please add a comment that this is a single RGB led. I'd prefer to
+>> keep the information in the DTB as well though.
+> 
+> The "new" attributes 'function' and 'color' attributes should cover this 
+> information. IIRC those were introduced sometime before v5.4 and documentation 
+> is in the leds/common.yaml binding. I don't see it in the scope of this patch 
+> series, but if we would merge this warning fix first, the information is lost, 
+> so maybe those attributes should be added before?
 
+Does it? The label already says it's a green LED, but the information that
+it's a single physical LED 'bulb' is lost.
+
+> 
+> My heuristics on that would be looking at the label and if there's a distinct 
+> color in it, add the color property. I could do that for all pwm LEDs known to 
+> the tree currently. That would be a bigger task for GPIO leds though. ;-)
+
+I would be ok with just the led-containing node hinting that it's a single RGB led.
+
+Cheers,
+Ahmad
+
+> 
+>>
+>>>>>  		compatible = "pwm-leds";
+>>>>>
+>>>>> -		led-red {
+>>>>> +		led-2 {
+>>>>
+>>>> Shouldn't this have been led-1 as well or is the numbering "global" ?
+>>>
+>>> Also good question. This numbering is for dts only, it usually does
+>>> not correspond with LEDs on the board, so it could be numbered per
+>>> led-controller as well?
+>>
+>> I'd prefer that it starts by 1. That way it's aligned with PWM channel
+>> ID.
+> 
+> Ack.
+> 
+>>
+>> Thanks for fixing the dtschema warnings by the way!
+> 
+> Well, I "introduced" them by converting the leds-pwm binding to yaml (not 
+> merged yet), so I could as well fix the warnings then? ;-)
+> 
+> Greets
+> Alex
+> 
+>>
+>> Cheers,
+>> Ahmad
+>>
+>>> Greets
+>>> Alex
+>>>
+>>>>>  			label = "mc1:red:rgb";
+>>>>>  			pwms = <&leds_pwm 1 1000000 0>;
+>>>>>  			max-brightness = <255>;
+>>>>>  			active-low;
+>>>>>  		
+>>>>>  		};
+>>>>>
+>>>>> -		led-green {
+>>>>> +		led-3 {
+>>>>>
+>>>>>  			label = "mc1:green:rgb";
+>>>>>  			pwms = <&leds_pwm 2 1000000 0>;
+>>>>>  			max-brightness = <255>;
+>>>>>  			active-low;
+>>>>>  		
+>>>>>  		};
+>>>>>
+>>>>> -		led-blue {
+>>>>> +		led-4 {
+>>>>>
+>>>>>  			label = "mc1:blue:rgb";
+>>>>>  			pwms = <&leds_pwm 3 1000000 0>;
+>>>>>  			max-brightness = <255>;
+> 
+> 
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
