@@ -2,184 +2,124 @@ Return-Path: <SRS0=jHm+=EI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D67C388F9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 10:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6581EC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 11:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65080223BF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 10:47:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 070CA223BD
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 11:55:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vwo7Yx4V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728450AbgKBKrR (ORCPT
+        id S1728878AbgKBLyh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 2 Nov 2020 05:47:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42132 "EHLO
+        Mon, 2 Nov 2020 06:54:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728288AbgKBKrP (ORCPT
+        with ESMTP id S1728872AbgKBLyg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Nov 2020 05:47:15 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ACEAC0617A6
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2020 02:47:15 -0800 (PST)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1kZXMj-0002mr-0j; Mon, 02 Nov 2020 11:47:09 +0100
-Subject: Re: [Linux-stm32] [PATCH v7 10/12] ARM: dts: stm32: Fix schema
- warnings for pwm-leds
-To:     Alexander Dahl <ada@thorsis.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-leds@vger.kernel.org
-References: <20201005203451.9985-1-post@lespocky.de>
- <20201027100536.cpfizc67gwrolp2z@falbala.internal.home.lespocky.de>
- <f6ed201d-51b6-f278-7a95-3e3e49dc19ee@pengutronix.de>
- <5231529.NqohY00Rok@ada>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <cba67329-d79d-b474-c4b4-77b19aebe52f@pengutronix.de>
-Date:   Mon, 2 Nov 2020 11:47:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        Mon, 2 Nov 2020 06:54:36 -0500
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FE35C061A04
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2020 03:54:36 -0800 (PST)
+Received: by mail-wr1-x441.google.com with SMTP id s9so14231149wro.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Nov 2020 03:54:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=OFnrCj5AUw9J2PyEpjsbtv1aDV1Keh7odnMYGn7YCNQ=;
+        b=vwo7Yx4VybkS5xn8u6PYPuQ4vL2I2xyS/vM7Rci9CN9TrePI7gqUUmpdwqpJ2bmzb6
+         WYOgVYZ7Ze2JUYdDxCy9KLuhR1t7GoLZdc2ueTppoeskmcwktxyRN44zXc39dDTKy82T
+         O6WoTMUlElpFyNXzv70tLq+vUYF4OTKSE16+10jdao440d3hLFThjLDBCRnAwz/HHYsW
+         wROXrUvMRkbkhprsH6TkynQH/ogmIBTCZHrLecMX0K13OzKsAtjcljydmv4kQqQmFYHO
+         a+LqJVfSEnKkg0xGyDdf78sFjjUX5liYVsZr8+peyzW+G1UwqwMeXndUu0T37Flbb6pP
+         JMwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=OFnrCj5AUw9J2PyEpjsbtv1aDV1Keh7odnMYGn7YCNQ=;
+        b=VvvI0hsoEF45Vpxu9cNo/P+qJV/fjOpFqAjmmMyBTsYkevkOC+SgSen1voPJAFkEbj
+         Q3fhcrZCgxmoiLPQMqy5Q3kYmzRLFMcoChjX+/iD1sbBvAjNShBRBJey0wIVUbse91d2
+         GgQ9ssn43Y66sPNj3wE3ZVTQFp5Xo9cy/SbHOKS3jyDqEi22Mv8ifqy3265pu0MinC/O
+         mcIOFqlgPnkVbRGa9VPIE4Idl9rrf3Xj8qrBOt1f1hiZXxh3OhKma4+iL1vJKzGq5z5i
+         ZxHaza4V5uxVRqUTNZL2cnaXEHa8FeAA8rRubYivSv231+gBstB6lhOm7TlO4htl6D+4
+         ZZcA==
+X-Gm-Message-State: AOAM53353qua2xYRfX3Pb+qYGHvR/X23EQKQ9muKONyYz//xizWeKd/o
+        ScIRV4DZtJx7RvcAt9H00tmsng==
+X-Google-Smtp-Source: ABdhPJy5ZtHSIVaace5Co/vTqGEHfDVDCDQ5NYXntVwU3E1kI4P6xLWriuJnDUaxbUwOLSIDWL+Y8Q==
+X-Received: by 2002:adf:ab02:: with SMTP id q2mr11069577wrc.320.1604318074911;
+        Mon, 02 Nov 2020 03:54:34 -0800 (PST)
+Received: from dell.default ([91.110.221.242])
+        by smtp.gmail.com with ESMTPSA id t23sm14284010wmn.13.2020.11.02.03.54.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Nov 2020 03:54:34 -0800 (PST)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     vigneshr@ti.com
+Cc:     linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Ben Dooks <ben@simtec.co.uk>, linux-mtd@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 17/23] mtd: nand: raw: s3c2410: Add documentation for 2 missing struct members
+Date:   Mon,  2 Nov 2020 11:54:00 +0000
+Message-Id: <20201102115406.1074327-18-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201102115406.1074327-1-lee.jones@linaro.org>
+References: <20201102115406.1074327-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <5231529.NqohY00Rok@ada>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Alexander,
+Fixes the following W=1 kernel build warning(s):
 
-On 10/28/20 8:34 AM, Alexander Dahl wrote:
-> Hello Ahmad,
-> 
-> Am Dienstag, 27. Oktober 2020, 11:58:10 CET schrieb Ahmad Fatoum:
->> Hello,
->>
->> On 10/27/20 11:05 AM, Alexander Dahl wrote:
->>> Hello Ahmad,
->>>
->>> thanks for your feedback, comments below.
->>>
->>>>> -	led-rgb {
->>>>> +	led-controller-2 {
->>>>
->>>> Is a single RGB LED really a controller?
->>>
->>> I just followed the recommendations by Rob here.
->>
->> Do you happen to know if the new multicolor LED support could be used here?
-> 
-> AFAIK not yet. The multicolor class should be ready and it is used by some 
-> drivers for I²C connected LED controllers, but if I understood Pavel 
-> correctly, additional work has to be done for a gpio and/or pwm multicolor 
-> driver. See this thread from August for example:
-> 
-> https://lore.kernel.org/linux-leds/2530787.iFCFyWWcSu@g550jk/
+ drivers/mtd/nand/raw/s3c2410.c:172: warning: Function parameter or member 'controller' not described in 's3c2410_nand_info'
+ drivers/mtd/nand/raw/s3c2410.c:172: warning: Function parameter or member 'freq_transition' not described in 's3c2410_nand_info'
 
-I see. Thanks for the info.
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ben Dooks <ben@simtec.co.uk>
+Cc: linux-mtd@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/mtd/nand/raw/s3c2410.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
->> I find it unfortunate that the device tree loses information relevant to
->> humans to adhere to a fixed nomenclature. Apparently led-controller isn't
->> even codified in the YAML binding (It's just in the examples). If you
->> respin, please add a comment that this is a single RGB led. I'd prefer to
->> keep the information in the DTB as well though.
-> 
-> The "new" attributes 'function' and 'color' attributes should cover this 
-> information. IIRC those were introduced sometime before v5.4 and documentation 
-> is in the leds/common.yaml binding. I don't see it in the scope of this patch 
-> series, but if we would merge this warning fix first, the information is lost, 
-> so maybe those attributes should be added before?
-
-Does it? The label already says it's a green LED, but the information that
-it's a single physical LED 'bulb' is lost.
-
-> 
-> My heuristics on that would be looking at the label and if there's a distinct 
-> color in it, add the color property. I could do that for all pwm LEDs known to 
-> the tree currently. That would be a bigger task for GPIO leds though. ;-)
-
-I would be ok with just the led-containing node hinting that it's a single RGB led.
-
-Cheers,
-Ahmad
-
-> 
->>
->>>>>  		compatible = "pwm-leds";
->>>>>
->>>>> -		led-red {
->>>>> +		led-2 {
->>>>
->>>> Shouldn't this have been led-1 as well or is the numbering "global" ?
->>>
->>> Also good question. This numbering is for dts only, it usually does
->>> not correspond with LEDs on the board, so it could be numbered per
->>> led-controller as well?
->>
->> I'd prefer that it starts by 1. That way it's aligned with PWM channel
->> ID.
-> 
-> Ack.
-> 
->>
->> Thanks for fixing the dtschema warnings by the way!
-> 
-> Well, I "introduced" them by converting the leds-pwm binding to yaml (not 
-> merged yet), so I could as well fix the warnings then? ;-)
-> 
-> Greets
-> Alex
-> 
->>
->> Cheers,
->> Ahmad
->>
->>> Greets
->>> Alex
->>>
->>>>>  			label = "mc1:red:rgb";
->>>>>  			pwms = <&leds_pwm 1 1000000 0>;
->>>>>  			max-brightness = <255>;
->>>>>  			active-low;
->>>>>  		
->>>>>  		};
->>>>>
->>>>> -		led-green {
->>>>> +		led-3 {
->>>>>
->>>>>  			label = "mc1:green:rgb";
->>>>>  			pwms = <&leds_pwm 2 1000000 0>;
->>>>>  			max-brightness = <255>;
->>>>>  			active-low;
->>>>>  		
->>>>>  		};
->>>>>
->>>>> -		led-blue {
->>>>> +		led-4 {
->>>>>
->>>>>  			label = "mc1:blue:rgb";
->>>>>  			pwms = <&leds_pwm 3 1000000 0>;
->>>>>  			max-brightness = <255>;
-> 
-> 
-
+diff --git a/drivers/mtd/nand/raw/s3c2410.c b/drivers/mtd/nand/raw/s3c2410.c
+index cb2d1b4e278cb..f0a4535c812aa 100644
+--- a/drivers/mtd/nand/raw/s3c2410.c
++++ b/drivers/mtd/nand/raw/s3c2410.c
+@@ -133,7 +133,8 @@ enum s3c_nand_clk_state {
+ 
+ /**
+  * struct s3c2410_nand_info - NAND controller state.
+- * @mtds: An array of MTD instances on this controoler.
++ * @controller: Base controller structure.
++ * @mtds: An array of MTD instances on this controller.
+  * @platform: The platform data for this board.
+  * @device: The platform device we bound to.
+  * @clk: The clock resource for this controller.
+@@ -145,6 +146,7 @@ enum s3c_nand_clk_state {
+  * @clk_rate: The clock rate from @clk.
+  * @clk_state: The current clock state.
+  * @cpu_type: The exact type of this controller.
++ * @freq_transition: CPUFreq notifier block
+  */
+ struct s3c2410_nand_info {
+ 	/* mtd info */
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.25.1
+
