@@ -2,207 +2,73 @@ Return-Path: <SRS0=jHm+=EI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 148E4C00A89
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 04:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 203AAC55179
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 07:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69D5A2224E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 04:14:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D587A22275
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 07:29:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="K3Ps0qpd"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Erkn5URR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbgKBEOx (ORCPT
+        id S1728126AbgKBH3i (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 1 Nov 2020 23:14:53 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:15986 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727690AbgKBEOx (ORCPT
+        Mon, 2 Nov 2020 02:29:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39932 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728064AbgKBH3h (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 1 Nov 2020 23:14:53 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20201102041450epoutp04df3f8b159f04f58554d80130b1ca3baf~DlbNq1DSK0822608226epoutp049
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2020 04:14:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20201102041450epoutp04df3f8b159f04f58554d80130b1ca3baf~DlbNq1DSK0822608226epoutp049
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604290490;
-        bh=QrYoo1YX7FHmf+Kv5UEhq7+nJg391RDzNt24HpV8KFg=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=K3Ps0qpdPxuSehG3t8XN8jcbgcu5IfROf+snAswv1URw+2fQTSPBaLVIKqZWgYtjb
-         4IQYq8WYX/OEbQHVcu2fpjpF1LXmIK7GDJ4Q6Xq0emY0zEe7+IGXCpgd9c0Pnv2duD
-         5vKcNeP9Jxxi6y3YS6+VZ9gHgQ3pO55nJtCyU4Pw=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201102041448epcas1p2e347635f4c5398898faa036804abd693~DlbMbcAdK1593815938epcas1p2Q;
-        Mon,  2 Nov 2020 04:14:48 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.157]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4CPfh56xZZzMqYkY; Mon,  2 Nov
-        2020 04:14:45 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        41.33.02418.5B78F9F5; Mon,  2 Nov 2020 13:14:45 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20201102041444epcas1p21c489ffe14af8f6d59668f30464b4013~DlbIFNufI1593815938epcas1p2E;
-        Mon,  2 Nov 2020 04:14:44 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201102041444epsmtrp282ec2e07137c3b3e0d660a4670510688~DlbH-f62O3084230842epsmtrp2G;
-        Mon,  2 Nov 2020 04:14:44 +0000 (GMT)
-X-AuditID: b6c32a35-c0dff70000010972-b7-5f9f87b58177
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        63.92.13470.3B78F9F5; Mon,  2 Nov 2020 13:14:43 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201102041443epsmtip26c19e1ac087a0d9fbaaa7294fff58fad~DlbHvB0rC2803928039epsmtip2L;
-        Mon,  2 Nov 2020 04:14:43 +0000 (GMT)
-Subject: Re: [PATCH v7 3/6] PM / devfreq: exynos-bus: Add registration of
- interconnect child device
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        georgi.djakov@linaro.org, krzk@kernel.org
-Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
-        a.swigon@samsung.com, myungjoo.ham@samsung.com,
-        inki.dae@samsung.com, sw0312.kim@samsung.com,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <943ea4d9-72a9-347c-87ee-e2e7e02a8920@samsung.com>
-Date:   Mon, 2 Nov 2020 13:28:43 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Mon, 2 Nov 2020 02:29:37 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79640C0617A6;
+        Sun,  1 Nov 2020 23:29:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=7kqil5vrmEb2Nddp3OQTQBXQGkc9niPiGcaNE67tBY8=; b=Erkn5URR+wSGh9C0rgWsbo+p9y
+        ppm6PQDbDGHOGGA2h3Hrj/hAaUJmZb7bckVW0bAUthsA1/1XR/stYVsLsHGSL+0cUvzAzwZBKG4Z+
+        1X+JPSn7x/00wDea9bTorvr41bTNvJ1tZplphwfSACELJOmWElB84jaIHXnye8gKSTw7PYtIkp+cK
+        WGyQCz7gr/AM/kILQY6/E3kR8Ur/Rw382iwx+IpLcP8isCw9xGb2Ye7bH/QCr3P+yArX+AJnphOaO
+        aU9VCRUV9hCMajGMKNzrOpgkRoBtDaIgpUmG5ro2Cv7DaRGobrM3PjNsUJlNDtS1sygQt/v3/GLna
+        efXx4F/w==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kZUHU-0004O4-0T; Mon, 02 Nov 2020 07:29:32 +0000
+Date:   Mon, 2 Nov 2020 07:29:31 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        J??r??me Glisse <jglisse@redhat.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v5 08/15] mm: Add unsafe_follow_pfn
+Message-ID: <20201102072931.GA16419@infradead.org>
+References: <20201030100815.2269-1-daniel.vetter@ffwll.ch>
+ <20201030100815.2269-9-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-In-Reply-To: <20201030125149.8227-4-s.nawrocki@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPJsWRmVeSWpSXmKPExsWy7bCmnu7W9vnxBq/nslvcn9fKaLFxxnpW
-        i/lHzrFaXPn6ns1i+t5NbBaT7k9gsTh/fgO7xeVdc9gsPvceYbSYcX4fk8XaI3fZLW43rmCz
-        aN17hN3i8Jt2VosZk1+yOfB7bFrVyeZx59oeNo/73ceZPPq2rGL0+LxJLoA1KtsmIzUxJbVI
-        ITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+hcJYWyxJxSoFBAYnGx
-        kr6dTVF+aUmqQkZ+cYmtUmpBSk6BZYFecWJucWleul5yfq6VoYGBkSlQYUJ2xr+tJ1kKfgtV
-        LHy+kbmBcQJ/FyMHh4SAicSBPyVdjFwcQgI7GCU2HNjHDuF8YpS4/2MqE4TzjVFi7+JFzF2M
-        nGAdH9/MYoNI7GWU2Hr9NQuE855RYsvHySwgVcICqRJLp3czguwQEYiRWP8uAiTMLHCCSeLI
-        HUEQm01AS2L/ixtsIDa/gKLE1R+PGUFsXgE7iV0bf4MtYxFQkfiy/BxYXFQgTOLkthaoGkGJ
-        kzOfgK3iFLCWOL3uLzvEfHGJW0/mM0HY8hLb385hBrlNQuAGh8TZx0eZID5wkeg58ZQFwhaW
-        eHV8CzuELSXx+d1eNgi7WmLlySNsEM0dQI/tv8AKkTCW2L90MhPIY8wCmhLrd+lDhBUldv6e
-        ywixmE/i3dceVkj48kp0tAlBlChLXH5wF+oESYnF7Z1sExiVZiF5ZxaSF2YheWEWwrIFjCyr
-        GMVSC4pz01OLDQsMkSN7EyM4JWuZ7mCc+PaD3iFGJg7GQ4wSHMxKIrw1kfPihXhTEiurUovy
-        44tKc1KLDzGaAgN4IrOUaHI+MCvklcQbmhoZGxtbmBiamRoaKonz/tHuiBcSSE8sSc1OTS1I
-        LYLpY+LglGpgkr4dUOlzUEAuZ6Kq5BmZaWv2hdsv3nS84Wn3midHcnzNYt6Fb/OSK5rxUoAr
-        dMr29E39eT1+RZaPH1r9bj8uL+U0YWOv4tfGv+a/fbr2bXn54XcLJ2eie12C9LJVQsF7dyXm
-        z3Ba8kvp67ntUgue9n6M0cla174q127N+x0/Ms2SvJ6fuLxp/nIpm9yrG+42G0/RCCtYeuY0
-        Y3bjtoMfstJmmlZVM/Pt6yt7N2f9jLcPVgbWnuoP4PvNycgYLKp+33zaog3hP/87/pvPenu5
-        /9nJ3PNMpki+CPvNLqTd33c95vr+q20Sy04VasbM8y/9Lh4WYbZByD4h7Z7x7uDtdfoxRxIm
-        vt36/Jf14dmv45VYijMSDbWYi4oTAXurVKZSBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7bCSvO7m9vnxBid7zS3uz2tltNg4Yz2r
-        xfwj51gtrnx9z2Yxfe8mNotJ9yewWJw/v4Hd4vKuOWwWn3uPMFrMOL+PyWLtkbvsFrcbV7BZ
-        tO49wm5x+E07q8WMyS/ZHPg9Nq3qZPO4c20Pm8f97uNMHn1bVjF6fN4kF8AaxWWTkpqTWZZa
-        pG+XwJXxb+tJloLfQhULn29kbmCcwN/FyMkhIWAi8fHNLLYuRi4OIYHdjBKrdxxhh0hISky7
-        eJS5i5EDyBaWOHy4GKLmLaPE1/3b2EBqhAVSJZZO72YEsUUEYiROTZ7FAlLELHCCSeLjqgdM
-        EB37GSU+rt0PVsUmoCWx/8UNsG5+AUWJqz8eg8V5Bewkdm38zQxiswioSHxZfg4sLioQJrFz
-        yWMmiBpBiZMzn7CA2JwC1hKn1/0Fu5RZQF3iz7xLzBC2uMStJ/OZIGx5ie1v5zBPYBSehaR9
-        FpKWWUhaZiFpWcDIsopRMrWgODc9t9iwwDAvtVyvODG3uDQvXS85P3cTIzhCtTR3MG5f9UHv
-        ECMTB+MhRgkOZiUR3prIefFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeW8ULowTEkhPLEnNTk0t
-        SC2CyTJxcEo1MAXtPJEcdTHNYkKdrVfzY8G1x8+Lsf34s1ZgUdPKk1VBC0Vfam7ODC3hudx5
-        3iRy1gaG5XM+q72S61ObfmCPSOq30l1nbIP13Lc9eib5tJSry+nDw1wtoT2O1/yv1/yL3hu2
-        SuFypkXVpI4drB/PX7M+LS7+tPh4vIjnigXmRZIuNp11O5V8Mr5N1JT0vr2m+n6IeXJyvYzw
-        0hfZRpOb0woyddK4ldOuXt8pxXfD+2LxNKWXU2rDiwOko49FdSeUK+Y/t2C7GVG4okF6y+37
-        j/4ckvj/9+F57ks/JooWOBnv03mp+V1BueLvxRDlGKPbZ+1FFu46f2S3//XWD1WnrTfnrHnl
-        tSkwPCHVyra5UYmlOCPRUIu5qDgRALFFK9Q/AwAA
-X-CMS-MailID: 20201102041444epcas1p21c489ffe14af8f6d59668f30464b4013
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201030125303eucas1p14a9de4111ffafc1870527abdea0994c9
-References: <20201030125149.8227-1-s.nawrocki@samsung.com>
-        <CGME20201030125303eucas1p14a9de4111ffafc1870527abdea0994c9@eucas1p1.samsung.com>
-        <20201030125149.8227-4-s.nawrocki@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201030100815.2269-9-daniel.vetter@ffwll.ch>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
+On Fri, Oct 30, 2020 at 11:08:08AM +0100, Daniel Vetter wrote:
+> Also mark up follow_pfn as EXPORT_SYMBOL_GPL. The only safe way to use
+> that by drivers/modules is together with an mmu_notifier, and that's
+> all _GPL stuff.
 
-On 10/30/20 9:51 PM, Sylwester Nawrocki wrote:
-> This patch adds registration of a child platform device for the exynos
-> interconnect driver. It is assumed that the interconnect provider will
-> only be needed when #interconnect-cells property is present in the bus
-> DT node, hence the child device will be created only when such a property
-> is present.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes for v7, v6:
->  - none.
-> 
-> Changes for v5:
->  - new patch.
-> ---
->  drivers/devfreq/exynos-bus.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index 1e684a4..ee300ee 100644
-> --- a/drivers/devfreq/exynos-bus.c
-> +++ b/drivers/devfreq/exynos-bus.c
-> @@ -24,6 +24,7 @@
->  
->  struct exynos_bus {
->  	struct device *dev;
-> +	struct platform_device *icc_pdev;
->  
->  	struct devfreq *devfreq;
->  	struct devfreq_event_dev **edev;
-> @@ -156,6 +157,8 @@ static void exynos_bus_exit(struct device *dev)
->  	if (ret < 0)
->  		dev_warn(dev, "failed to disable the devfreq-event devices\n");
->  
-> +	platform_device_unregister(bus->icc_pdev);
-> +
->  	dev_pm_opp_of_remove_table(dev);
->  	clk_disable_unprepare(bus->clk);
->  	if (bus->opp_table) {
-> @@ -168,6 +171,8 @@ static void exynos_bus_passive_exit(struct device *dev)
->  {
->  	struct exynos_bus *bus = dev_get_drvdata(dev);
->  
-> +	platform_device_unregister(bus->icc_pdev);
-> +
->  	dev_pm_opp_of_remove_table(dev);
->  	clk_disable_unprepare(bus->clk);
->  }
-> @@ -432,6 +437,18 @@ static int exynos_bus_probe(struct platform_device *pdev)
->  	if (ret < 0)
->  		goto err;
->  
-> +	/* Create child platform device for the interconnect provider */
-> +	if (of_get_property(dev->of_node, "#interconnect-cells", NULL)) {
-> +		    bus->icc_pdev = platform_device_register_data(
-> +						dev, "exynos-generic-icc",
-> +						PLATFORM_DEVID_AUTO, NULL, 0);
-> +
-> +		    if (IS_ERR(bus->icc_pdev)) {
-> +			    ret = PTR_ERR(bus->icc_pdev);
-> +			    goto err;
-> +		    }
-> +	}
-> +
->  	max_state = bus->devfreq->profile->max_state;
->  	min_freq = (bus->devfreq->profile->freq_table[0] / 1000);
->  	max_freq = (bus->devfreq->profile->freq_table[max_state - 1] / 1000);
-> 
-
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+I also think it also needs to be renamed to explicitly break any existing
+users out of tree or int the submission queue.
