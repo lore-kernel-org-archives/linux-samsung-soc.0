@@ -2,113 +2,101 @@ Return-Path: <SRS0=jHm+=EI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1D2C00A89
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 12:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C47C4742C
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 12:56:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 800D922403
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 12:41:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604320891;
-	bh=qt9zBsoc3VVGk50l/yuGhQoHArbKCfg2VFIG3hjAjpc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FAOrOHmozjLgpBbYHlH3mFc/rsBs9uVKqetNhcENMbIVmw15eCn8nzPL07sBCwOr3
-	 ObCjgtm7elFuqTRlFn7xmLcWY41Zyo1egZbu0asj0gSZ7msy+oBwdPgetZ7rhqkQfT
-	 hKQa7IuTrJbo2NRhOiTk0LtxIfNYbTIIBF2pza/w=
+	by mail.kernel.org (Postfix) with ESMTP id 97BC322273
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 12:56:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="T3p+MSLR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728675AbgKBMlb (ORCPT
+        id S1728746AbgKBM4X (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 2 Nov 2020 07:41:31 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43462 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728631AbgKBMla (ORCPT
+        Mon, 2 Nov 2020 07:56:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34244 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728253AbgKBM4W (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Nov 2020 07:41:30 -0500
-Received: by mail-wr1-f65.google.com with SMTP id g12so14392560wrp.10;
-        Mon, 02 Nov 2020 04:41:28 -0800 (PST)
+        Mon, 2 Nov 2020 07:56:22 -0500
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F49EC0617A6
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2020 04:56:22 -0800 (PST)
+Received: by mail-ot1-x343.google.com with SMTP id i18so7750004ots.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Nov 2020 04:56:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U5ses3L4S0EGFIO147NO/jaN4EloOqduj8AeaQfFuV8=;
+        b=T3p+MSLRVTQeTCxHlv2KtbWAgQXYXjF/NQ5vZEZ56cGWMPWmhzeFc9ZhAf24TyMNJy
+         X8ZVYO+h7DmQjzrCGnwO7PCiNeRaaOGSFYoXqqakqdoymjMzjnu9kMLe6DLLbyq0pqc5
+         IQ0xty7dRJBPKhniovuUncjzErvz8QtDqXg1c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=vE+PH3YLHOhOeLKgAfBwuoHNLUQzsqJV1bKYObjVQTA=;
-        b=QS6Neq/l0P62NHvyviWNsUdPCpguqOJXlopZjqOd1Rw2HTA0Kv91o6ytLA+SwG8kMv
-         229tkQyEzju38QW1HVqIgNFB0a9XeIFSL8x7QUpabUWArVVkVP32EX8j3kLZjA3zE+pj
-         gs0Uhh3O/EpykcSRrPx2eBM3OtOOxPsFkJdzMoowlEmYFHAT1WphsPme66JyZlDXQhCi
-         LqRvLrGaKz+uoHGz6zmyGUz2oLc8DwJqni5FTffXzjomvohAqqXodhOlgec7QroLB+BB
-         wnYpZ3VpE6fiuU/1pdxgKB80AJPSoDH+2Z8NDo1Gh/PRkaNTgQDjD6bHn6+k9zKe+eEv
-         0k/A==
-X-Gm-Message-State: AOAM532GAZf3VCbmfLhxNtJCjIRPZSsZbwTvdkORdXNGMyuJ+VnzNjHM
-        9TsyyV9FSJuJqcMaSbTK8aQ=
-X-Google-Smtp-Source: ABdhPJxO96MjaHNz8VC1k9cRxHvlW6BeV6r7uvMv+QRAZP+NenJAbJ9TbyqjTJjr4zWYDBgKznzRcA==
-X-Received: by 2002:adf:dc4b:: with SMTP id m11mr6564318wrj.328.1604320888114;
-        Mon, 02 Nov 2020 04:41:28 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id b8sm1396420wmj.9.2020.11.02.04.41.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2020 04:41:26 -0800 (PST)
-Date:   Mon, 2 Nov 2020 13:41:25 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     vigneshr@ti.com, linux-kernel@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Kukjin Kim <kgene@kernel.org>, Ben Dooks <ben@simtec.co.uk>,
-        linux-mtd@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 17/23] mtd: nand: raw: s3c2410: Add documentation for 2
- missing struct members
-Message-ID: <20201102124125.GA437900@kozik-lap>
-References: <20201102115406.1074327-1-lee.jones@linaro.org>
- <20201102115406.1074327-18-lee.jones@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U5ses3L4S0EGFIO147NO/jaN4EloOqduj8AeaQfFuV8=;
+        b=WGMXJuWEH76IiMd/zXD95+Z+5FJ6mgM1Zq8WCP/JLs2qCGGHdwNc30wnuMGVR89pll
+         0Fr91yuw4qoM40ngixJr5Y4AX3fH+1Fw7Nb5hwWBiXAzovDlwobHxLps5Zp6yMx2gVS5
+         q9oRca5zMtqRpgtVNQRWT8cXHaszMnUWB1nsRIVqDNYad7cJE0qct9xSzQNeXnIAEpFo
+         cx/+GL/EXiQB+imPSayENTk1FdBhcVsRkZEcxj1YA2/g9hBiLH2H3eDg1B1oHF5HI714
+         /W6NAMJl+byzgJzEUawtkLNw0bbiDFlwng0EKI7LKQxoCAk0VdJeqGDl2OArodimJFPK
+         0aIQ==
+X-Gm-Message-State: AOAM531OjKUgrKBP0quWY0+TqkRx2BS+E3enQjTB05NTzlZZg9B5n0bG
+        qDEUV3VV13Qc1yJ72T2YJdPzvEZ1nBTFLjT8in/r/g==
+X-Google-Smtp-Source: ABdhPJxuikM8EweOBXPqOBWXx8bGKhMyIqIExlZHbYHppkEx5/UodSudDdaWfAmFL8eR0NFLmbTm21/CfypVpUHeCk4=
+X-Received: by 2002:a05:6830:1647:: with SMTP id h7mr12585840otr.281.1604321781980;
+ Mon, 02 Nov 2020 04:56:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201102115406.1074327-18-lee.jones@linaro.org>
+References: <20201030100815.2269-1-daniel.vetter@ffwll.ch> <20201030100815.2269-9-daniel.vetter@ffwll.ch>
+ <20201102072931.GA16419@infradead.org>
+In-Reply-To: <20201102072931.GA16419@infradead.org>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Mon, 2 Nov 2020 13:56:10 +0100
+Message-ID: <CAKMK7uEe5FQuukYU7RhL90ttC9XyWw6wvdQrZ2JpP0jpbYTO6g@mail.gmail.com>
+Subject: Re: [PATCH v5 08/15] mm: Add unsafe_follow_pfn
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "J??r??me Glisse" <jglisse@redhat.com>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Nov 02, 2020 at 11:54:00AM +0000, Lee Jones wrote:
-> Fixes the following W=1 kernel build warning(s):
-> 
->  drivers/mtd/nand/raw/s3c2410.c:172: warning: Function parameter or member 'controller' not described in 's3c2410_nand_info'
->  drivers/mtd/nand/raw/s3c2410.c:172: warning: Function parameter or member 'freq_transition' not described in 's3c2410_nand_info'
+On Mon, Nov 2, 2020 at 8:29 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Fri, Oct 30, 2020 at 11:08:08AM +0100, Daniel Vetter wrote:
+> > Also mark up follow_pfn as EXPORT_SYMBOL_GPL. The only safe way to use
+> > that by drivers/modules is together with an mmu_notifier, and that's
+> > all _GPL stuff.
+>
+> I also think it also needs to be renamed to explicitly break any existing
+> users out of tree or int the submission queue.
 
-It took me some time to spot why the "mtds" change is there, so maybe
-add to the commit msg:
-"Correct also typo controoler -> controller."
-
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
-
-
-> 
-> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: Vignesh Raghavendra <vigneshr@ti.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Ben Dooks <ben@simtec.co.uk>
-> Cc: linux-mtd@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/mtd/nand/raw/s3c2410.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/s3c2410.c b/drivers/mtd/nand/raw/s3c2410.c
-> index cb2d1b4e278cb..f0a4535c812aa 100644
-> --- a/drivers/mtd/nand/raw/s3c2410.c
-> +++ b/drivers/mtd/nand/raw/s3c2410.c
-> @@ -133,7 +133,8 @@ enum s3c_nand_clk_state {
->  
->  /**
->   * struct s3c2410_nand_info - NAND controller state.
-> - * @mtds: An array of MTD instances on this controoler.
-> + * @controller: Base controller structure.
-> + * @mtds: An array of MTD instances on this controller.
+Ok I looked at the mmu notifier locking again and noticed that
+mm->subscriptions has its own spinlock. Since there usually shouldn't
+be a huge pile of these I think it's feasible to check for the mmu
+notifier in follow_pfn. And that would stuff this gap for good. I'll
+throw that on top as a final patch and see what people think.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
