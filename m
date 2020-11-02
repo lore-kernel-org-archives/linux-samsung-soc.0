@@ -2,124 +2,152 @@ Return-Path: <SRS0=jHm+=EI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6581EC2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 11:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B161AC00A89
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 12:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 070CA223BD
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 11:55:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60177223C6
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 12:23:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vwo7Yx4V"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ARJiFvFi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728878AbgKBLyh (ORCPT
+        id S1728604AbgKBMXe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 2 Nov 2020 06:54:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52930 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728872AbgKBLyg (ORCPT
+        Mon, 2 Nov 2020 07:23:34 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47984 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728484AbgKBMXe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Nov 2020 06:54:36 -0500
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FE35C061A04
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2020 03:54:36 -0800 (PST)
-Received: by mail-wr1-x441.google.com with SMTP id s9so14231149wro.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Nov 2020 03:54:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OFnrCj5AUw9J2PyEpjsbtv1aDV1Keh7odnMYGn7YCNQ=;
-        b=vwo7Yx4VybkS5xn8u6PYPuQ4vL2I2xyS/vM7Rci9CN9TrePI7gqUUmpdwqpJ2bmzb6
-         WYOgVYZ7Ze2JUYdDxCy9KLuhR1t7GoLZdc2ueTppoeskmcwktxyRN44zXc39dDTKy82T
-         O6WoTMUlElpFyNXzv70tLq+vUYF4OTKSE16+10jdao440d3hLFThjLDBCRnAwz/HHYsW
-         wROXrUvMRkbkhprsH6TkynQH/ogmIBTCZHrLecMX0K13OzKsAtjcljydmv4kQqQmFYHO
-         a+LqJVfSEnKkg0xGyDdf78sFjjUX5liYVsZr8+peyzW+G1UwqwMeXndUu0T37Flbb6pP
-         JMwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OFnrCj5AUw9J2PyEpjsbtv1aDV1Keh7odnMYGn7YCNQ=;
-        b=VvvI0hsoEF45Vpxu9cNo/P+qJV/fjOpFqAjmmMyBTsYkevkOC+SgSen1voPJAFkEbj
-         Q3fhcrZCgxmoiLPQMqy5Q3kYmzRLFMcoChjX+/iD1sbBvAjNShBRBJey0wIVUbse91d2
-         GgQ9ssn43Y66sPNj3wE3ZVTQFp5Xo9cy/SbHOKS3jyDqEi22Mv8ifqy3265pu0MinC/O
-         mcIOFqlgPnkVbRGa9VPIE4Idl9rrf3Xj8qrBOt1f1hiZXxh3OhKma4+iL1vJKzGq5z5i
-         ZxHaza4V5uxVRqUTNZL2cnaXEHa8FeAA8rRubYivSv231+gBstB6lhOm7TlO4htl6D+4
-         ZZcA==
-X-Gm-Message-State: AOAM53353qua2xYRfX3Pb+qYGHvR/X23EQKQ9muKONyYz//xizWeKd/o
-        ScIRV4DZtJx7RvcAt9H00tmsng==
-X-Google-Smtp-Source: ABdhPJy5ZtHSIVaace5Co/vTqGEHfDVDCDQ5NYXntVwU3E1kI4P6xLWriuJnDUaxbUwOLSIDWL+Y8Q==
-X-Received: by 2002:adf:ab02:: with SMTP id q2mr11069577wrc.320.1604318074911;
-        Mon, 02 Nov 2020 03:54:34 -0800 (PST)
-Received: from dell.default ([91.110.221.242])
-        by smtp.gmail.com with ESMTPSA id t23sm14284010wmn.13.2020.11.02.03.54.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2020 03:54:34 -0800 (PST)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     vigneshr@ti.com
-Cc:     linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ben Dooks <ben@simtec.co.uk>, linux-mtd@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 17/23] mtd: nand: raw: s3c2410: Add documentation for 2 missing struct members
-Date:   Mon,  2 Nov 2020 11:54:00 +0000
-Message-Id: <20201102115406.1074327-18-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201102115406.1074327-1-lee.jones@linaro.org>
-References: <20201102115406.1074327-1-lee.jones@linaro.org>
+        Mon, 2 Nov 2020 07:23:34 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201102122321euoutp02f09b95eee8b2c96630dd2a0eb64e2a94~DsFwaTGn00252902529euoutp02S
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2020 12:23:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201102122321euoutp02f09b95eee8b2c96630dd2a0eb64e2a94~DsFwaTGn00252902529euoutp02S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1604319801;
+        bh=q7+ilGGLT18/vuSxWDQthCN3467HY9jEgT+ik8brKQk=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=ARJiFvFiYYtta5r+89uqI9tP2+vV6t1WYvggxljl4WBCplNcFyVP31BLU0LMqEbhQ
+         kC+H6cOyyrYruM3F6qxnWZ6Bor0zFLeNJJe+MuMqQYuBL3zUFhoCZW6lgMjRPyBa89
+         fQwti8+2vxU+DsFRVhNwuxwtO0vi1OSQ7P8Eiky4=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201102122311eucas1p10c5ad39eb4e356d254f268fbda6ad4b4~DsFmsUMu80490104901eucas1p1R;
+        Mon,  2 Nov 2020 12:23:11 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 77.30.06456.F2AFF9F5; Mon,  2
+        Nov 2020 12:23:11 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20201102122311eucas1p1805e9f745babaa133d80418bddf108a7~DsFmSwRB-2982429824eucas1p1e;
+        Mon,  2 Nov 2020 12:23:11 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201102122311eusmtrp2d1c125a97c0549688cb333b9b5616db6~DsFmRWqTd2919729197eusmtrp2G;
+        Mon,  2 Nov 2020 12:23:11 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-eb-5f9ffa2f975d
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 85.B2.06314.E2AFF9F5; Mon,  2
+        Nov 2020 12:23:10 +0000 (GMT)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20201102122309eusmtip27199189c706b9bdf043f5960224f430e~DsFlQd0A40348203482eusmtip2a;
+        Mon,  2 Nov 2020 12:23:09 +0000 (GMT)
+Subject: Re: [PATCH v7 2/6] interconnect: Add generic interconnect driver
+ for Exynos SoCs
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     georgi.djakov@linaro.org, cw00.choi@samsung.com,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        a.swigon@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <9ef1cf71-0729-d4f7-6a15-eb4ba1ffbefc@samsung.com>
+Date:   Mon, 2 Nov 2020 13:23:09 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.1
 MIME-Version: 1.0
+In-Reply-To: <20201031121747.GB9399@kozik-lap>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRTm3e7ursPZdSo7zFKY/iihmSVxyTATi0EU/q3IufKmK522qaUQ
+        +JGl+cFwhbrMjQK1lZjDWX5iMlshurBIScWyofkxxKaFWpp3V8l/z3PO85xznpeX4IqGeRJC
+        pc6kNWplqhQXYG1vVx0Hw9eMikNl0xJqsq4IUS3VzTxqZHmGRxltQzzq08oiTlV1W3CqclKH
+        UQ7HSz71saMWp9zlNkRVO3o4VJNtgk+N5TfiVFG3jU9V62fxmD1yi7kEl49/7sLlk6V2jryi
+        1YzkbktQPO+C4HgSnarKpjXh0YmClM6pN5yM7163GrosvDzk5t9HXgSQkbDont/CAkJENiJY
+        sM/xWLKM4GFPPZclbgQlw1P4jsX1dHVb1YBgetyJsWQJgaG316PyIy/CN30Hl8H+5AEY+fvb
+        4+CS6xwoNA96tuNkBJT3VyAGC8lo6P9T66ljZCg4n1V5zAFkAuha7mCsxhfe1zDbCMKLlMEL
+        61GmzCXF8MVp5LA4GAqtjzxnA7nEhy5dDWL0QMZB04SCTeAHc/bW7QfYC5vtjJfRFyIo6xzj
+        s0SHYNJuQqwqCsaH1nBmEHcrTXNHODvzJAzb9rPQB0ZdvuwJPlDZxlzPlIVQfFfEzgiFdXMV
+        h8USKHVuYjokNezKZdgVxrArjOH/WhPCzEhMZ2nTkmlthJq+KdMq07RZ6mTZlfQ0C9r6aQMb
+        9p+v0crw5T5EEkjqLez1MypEPGW2NietDwHBlfoLYwcHEkTCJGVOLq1JV2iyUmltHwokMKlY
+        eOTJ7CURmazMpK/TdAat2elyCC9JHuoOmLlmDBtzxmwcjiwMOX2GPmtNVp9vedBW8UGc5Doh
+        vl3T/C6GLtgXJ5Wd+iHo94uOqss6duPVeEHfdL2+4B6uShxMUKktgbEb0K6vQ93eY7+C1kcf
+        W0OCu75GufV6k8l17mp121pxfMBa8fPR3IWm+WJBTcGm0wTL+fcVzVJMm6KMCONqtMp/5Yoh
+        qWUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsVy+t/xe7p6v+bHG/x9ZWlxf14ro8XGGetZ
+        La5/ec5qMf/IOVaLK1/fs1lM37uJzWLS/QksFufPb2C3uLxrDpvF594jjBYzzu9jslh75C67
+        xe3GFWwWrXuPsFvMmPySzYHfY9OqTjaPO9f2sHnc7z7O5NG3ZRWjx+dNcgGsUXo2RfmlJakK
+        GfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZux8dZCp4zFmxfM8m
+        1gbGz+xdjJwcEgImEm8X/2TtYuTiEBJYyiixv3sqWxcjB1BCSmJ+ixJEjbDEn2tdbBA17xkl
+        JixZyQJSIywQLTH1gyNIjYiApsT1v9/B5jAL/GaSOHDvMgtEw2NGibVzj4BtYxMwlOg92scI
+        YvMK2Ekc/TMHLM4ioCLxZOV0ZhBbVCBO4sfEXjaIGkGJkzOfgC3jFNCTWLPVDCTMLKAu8Wfe
+        JWYIW1zi1pP5TBC2vETz1tnMExiFZiHpnoWkZRaSlllIWhYwsqxiFEktLc5Nzy021CtOzC0u
+        zUvXS87P3cQIjOFtx35u3sF4aWPwIUYBDkYlHt4DwvPjhVgTy4orcw8xSnAwK4nwOp09HSfE
+        m5JYWZValB9fVJqTWnyI0RTot4nMUqLJ+cD0klcSb2hqaG5haWhubG5sZqEkztshcDBGSCA9
+        sSQ1OzW1ILUIpo+Jg1OqgVFaYvOjLJ00Fn9z52VvVtq+ZPEvP/6Wx/q2QHrLFfcdZsI7Zj/6
+        djMzcNr9yRZX381ill9aZlY70ex3QlVLzKHQL7+KPu5YG6cm7PV/37uQ5Pr7cTZxlgw1LMmh
+        sWsy+Ga9vTJHVFeyKu5uPcfsFbav7qst71yQK71cwOOK4lFW4d0e9ak5lkosxRmJhlrMRcWJ
+        AHWDOub3AgAA
+X-CMS-MailID: 20201102122311eucas1p1805e9f745babaa133d80418bddf108a7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20201030125301eucas1p218b0e654cb4c826b05280f28836da8d9
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201030125301eucas1p218b0e654cb4c826b05280f28836da8d9
+References: <20201030125149.8227-1-s.nawrocki@samsung.com>
+        <CGME20201030125301eucas1p218b0e654cb4c826b05280f28836da8d9@eucas1p2.samsung.com>
+        <20201030125149.8227-3-s.nawrocki@samsung.com>
+        <20201031121747.GB9399@kozik-lap>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Fixes the following W=1 kernel build warning(s):
+On 31.10.2020 13:17, Krzysztof Kozlowski wrote:
+> On Fri, Oct 30, 2020 at 01:51:45PM +0100, Sylwester Nawrocki wrote:
+>> This patch adds a generic interconnect driver for Exynos SoCs in order
+>> to provide interconnect functionality for each "samsung,exynos-bus"
+>> compatible device.
 
- drivers/mtd/nand/raw/s3c2410.c:172: warning: Function parameter or member 'controller' not described in 's3c2410_nand_info'
- drivers/mtd/nand/raw/s3c2410.c:172: warning: Function parameter or member 'freq_transition' not described in 's3c2410_nand_info'
+>> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Ben Dooks <ben@simtec.co.uk>
-Cc: linux-mtd@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/mtd/nand/raw/s3c2410.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>>  drivers/interconnect/Kconfig         |   1 +
+>>  drivers/interconnect/Makefile        |   1 +
+>>  drivers/interconnect/exynos/Kconfig  |   6 ++
+>>  drivers/interconnect/exynos/Makefile |   4 +
+>>  drivers/interconnect/exynos/exynos.c | 198 +++++++++++++++++++++++++++++++++++
+> 
+> How about naming the directory as "samsung"? I don't expect interconnect
+> drivers for the old Samsung S3C or S5P platforms, but it would be
+> consisteny with other names (memory, clk, pinctrl).
 
-diff --git a/drivers/mtd/nand/raw/s3c2410.c b/drivers/mtd/nand/raw/s3c2410.c
-index cb2d1b4e278cb..f0a4535c812aa 100644
---- a/drivers/mtd/nand/raw/s3c2410.c
-+++ b/drivers/mtd/nand/raw/s3c2410.c
-@@ -133,7 +133,8 @@ enum s3c_nand_clk_state {
- 
- /**
-  * struct s3c2410_nand_info - NAND controller state.
-- * @mtds: An array of MTD instances on this controoler.
-+ * @controller: Base controller structure.
-+ * @mtds: An array of MTD instances on this controller.
-  * @platform: The platform data for this board.
-  * @device: The platform device we bound to.
-  * @clk: The clock resource for this controller.
-@@ -145,6 +146,7 @@ enum s3c_nand_clk_state {
-  * @clk_rate: The clock rate from @clk.
-  * @clk_state: The current clock state.
-  * @cpu_type: The exact type of this controller.
-+ * @freq_transition: CPUFreq notifier block
-  */
- struct s3c2410_nand_info {
- 	/* mtd info */
+Sure, I will rename the directory.
+
+> How about adding separate maintainers entry for the driver with you and
+> Artur (if he still works on this)?
+
+I'm not sure what's the preference in the subsystem, I'm going to add
+a patch introducing such a maintainers entry as it might be helpful 
+for reviews/testing.  
+
 -- 
-2.25.1
-
+Regards,
+Sylwester
