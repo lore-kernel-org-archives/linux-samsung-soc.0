@@ -1,349 +1,200 @@
-Return-Path: <SRS0=jHm+=EI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=6Xyg=EJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 088B3C00A89
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 23:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3700FC55179
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 06:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87EB022268
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Nov 2020 23:50:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF3CA222B9
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 06:15:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qaI7B3nj"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JwOwCwij"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725942AbgKBXut (ORCPT
+        id S1726018AbgKCGPo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 2 Nov 2020 18:50:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52184 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725841AbgKBXut (ORCPT
+        Tue, 3 Nov 2020 01:15:44 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15892 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbgKCGPn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Nov 2020 18:50:49 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4874AC0617A6
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2020 15:50:49 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id i6so19795684lfd.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Nov 2020 15:50:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pRhVAyGxamkXMTZVwBvqaH1guNz2K3S+XuNI42B/nPk=;
-        b=qaI7B3njeyPGT52AKe4jbsXQJKF5Sumuem5E62IJYk2x8Wa0oELLhwKALZHw0byg8P
-         TwmsomD2d2Sv5ilz9vxnqBojV7YvLfmY9NT8CR93nrw7oKDY1SamYFVqA0FaumQHXfcQ
-         rJ5FhOBc3J/s9ayUoT/4d+MbASpv1wyecxWpG23j5TzSeSSMWlR6u6ACuLQyx824dvEl
-         eEZaXDltgwl3LFePSOY/tGQMcFNbrdrlfnOJB4UBo/z2s9C3o+9YvQAUv7hN+velRDUu
-         XHAVIQ8ojQRZ97u9wa8A8KkX04EyMk+ptWoJSnmto7tn2t+PCi1mEp0VDX+xPjbPi9n/
-         WrYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pRhVAyGxamkXMTZVwBvqaH1guNz2K3S+XuNI42B/nPk=;
-        b=kUxDqfhQf9SnLAplVCkbfSu4SSSJd9yjodF74LhHjzBg6zNjZWbrP3PI9lDLrzoMdC
-         HhWgN9XHjy/UVgrWYoU7GTbVmCDp90cv62HfuoBdl3ub7aIxVfbZUOxPmnK7opHZnNZa
-         oXrBlbjOIhrGlAMvki2s06ahPtZK3YWpwEGFmLehzjWqgZnvY0ZxDXpqk+izubCN6qfT
-         dpYYEEP4oKXw38QYwcApCAA/TNWdBGImRd9mKp/RTTieHqN/TeNObtgRUBLhVdhHCBtC
-         fyWN00Jv7QasADCdzw2RMQDnIj8K02RBFX4l5dqd5KjhFcgpIzLb4mx2pWZUuorD0JjS
-         LeJg==
-X-Gm-Message-State: AOAM531T4hTq+OLRtRdzoVDi0iyOPHe9KZNWYCPrBY0kUoyZhEWN+Wyc
-        BreHtU9mRTKko0ZZGQPFVOUTHsGhxifiqp+t
-X-Google-Smtp-Source: ABdhPJzcmnKoAu5O1rHAbuP8IUyrLFn85G4ut17ogJSuDEFLxBer1UEBE1TszBvd909Jsbq2CDMIkw==
-X-Received: by 2002:ac2:5b52:: with SMTP id i18mr7017461lfp.227.1604361047733;
-        Mon, 02 Nov 2020 15:50:47 -0800 (PST)
-Received: from localhost.localdomain (c-92d7225c.014-348-6c756e10.bbcust.telenor.se. [92.34.215.146])
-        by smtp.gmail.com with ESMTPSA id v9sm2894410lfb.203.2020.11.02.15.50.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2020 15:50:47 -0800 (PST)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     linux-pm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Sergiy Kibrik <sakib@darkstar.site>
-Subject: [PATCH] power: supply: s3c-adc-battery: Convert to GPIO descriptors
-Date:   Tue,  3 Nov 2020 00:48:44 +0100
-Message-Id: <20201102234844.322939-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.26.2
+        Tue, 3 Nov 2020 01:15:43 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fa0f5910000>; Mon, 02 Nov 2020 22:15:45 -0800
+Received: from [10.2.49.167] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 3 Nov
+ 2020 06:15:40 +0000
+Subject: Re: [resource] 22b17dc667: Kernel panic - not syncing: Fatal
+ exception
+To:     lkp <lkp@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
+CC:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
+        David Hildenbrand <david@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        <lkp@lists.01.org>
+References: <20201103060649.GA30210@xsang-OptiPlex-9020>
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <1ec0dee9-e1bb-9cf1-a8c2-ad1e294c5acf@nvidia.com>
+Date:   Mon, 2 Nov 2020 22:15:40 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201103060649.GA30210@xsang-OptiPlex-9020>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1604384145; bh=HHKB/RdS8zOAOPLdFEq5BHCD+y3I+0AFVJdR07v4b2Y=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=JwOwCwijT1kVCiMMH7uWO3V38VR6sMEcYyvq67pbbu3hJ+DPHKUtnJqETyaxHWRIT
+         m2xUbsYFpKxlfg5ce1M6aG2etyTc++fQlJpwIDZWLn2afx9gbk7WaClnMP3sVhQoZ8
+         6GX9VHqqwD16fLg9I8hpx/8ZVIUAUWLvE6NhWo/ec4JhNV5HDtMZvF+W1nUgdeeJgj
+         Lf169WBQDhKmaXdFsKjUUEguegA0pS0aJO/LCDltQmzs+qKxkCMXJuxbSt9jQh2/0J
+         MeNCr8rseweUGqS7xAMB0+C5n0ZbF66TmR81JNS1sc11HJPPRlRgDtnh3xYDv/DVXI
+         oKrB4bDrDJhGw==
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This converts the S3C ADC battery to use GPIO descriptors
-instead of a global GPIO number for the charging completed
-GPIO. Using the pattern from the GPIO charger we name this
-GPIO line "charge-status" in the board file.
+On 11/2/20 10:06 PM, lkp wrote:
+> Greeting,
+> 
+> FYI, we noticed the following commit (built with gcc-9):
+> 
+> commit: 22b17dc667d36418ccabb9c668c4b489185fb40a ("[PATCH v5 13/15] resource: Move devmem revoke code to resource framework")
+> url: https://github.com/0day-ci/linux/commits/Daniel-Vetter/follow_pfn-and-other-iomap-races/20201030-181112
+> base: git://linuxtv.org/media_tree.git master
+> 
+> in testcase: fsmark
+> version: fsmark-x86_64-3.3-1_20201007
+> with following parameters:
+> 
+> 	iterations: 1x
+> 	nr_threads: 1t
+> 	disk: 1BRD_48G
+> 	fs: f2fs
+> 	fs2: nfsv4
+> 	filesize: 4M
+> 	test_size: 40G
+> 	sync_method: NoSync
+> 	cpufreq_governor: performance
+> 	ucode: 0x5002f01
+> 
+> test-description: The fsmark is a file system benchmark to test synchronous write workloads, for example, mail servers workload.
+> test-url: https://sourceforge.net/projects/fsmark/
+> 
+> 
+> on test machine: 192 threads Intel(R) Xeon(R) Platinum 9242 CPU @ 2.30GHz with 192G memory
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> 
+> 
 
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: Sergiy Kibrik <sakib@darkstar.site>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- arch/arm/mach-s3c/mach-h1940.c         | 12 +++++-
- arch/arm/mach-s3c/mach-rx1950.c        | 11 ++++-
- drivers/power/supply/s3c_adc_battery.c | 57 +++++++++++++-------------
- include/linux/s3c_adc_battery.h        |  3 --
- 4 files changed, 49 insertions(+), 34 deletions(-)
+Yep, this is the same crash that I saw. And the .config also has
 
-diff --git a/arch/arm/mach-s3c/mach-h1940.c b/arch/arm/mach-s3c/mach-h1940.c
-index 53d51aa83200..8a43ed1c4c4d 100644
---- a/arch/arm/mach-s3c/mach-h1940.c
-+++ b/arch/arm/mach-s3c/mach-h1940.c
-@@ -297,6 +297,15 @@ static const struct s3c_adc_bat_thresh bat_lut_acin[] = {
- 	{ .volt = 3841, .cur = 0, .level = 0},
- };
- 
-+static struct gpiod_lookup_table h1940_bat_gpio_table = {
-+	.dev_id = "s3c-adc-battery",
-+	.table = {
-+		/* Charge status S3C2410_GPF(3) */
-+		GPIO_LOOKUP("GPIOF", 3, "charge-status", GPIO_ACTIVE_LOW),
-+		{ },
-+	},
-+};
-+
- static int h1940_bat_init(void)
- {
- 	int ret;
-@@ -330,8 +339,6 @@ static struct s3c_adc_bat_pdata h1940_bat_cfg = {
- 	.exit = h1940_bat_exit,
- 	.enable_charger = h1940_enable_charger,
- 	.disable_charger = h1940_disable_charger,
--	.gpio_charge_finished = S3C2410_GPF(3),
--	.gpio_inverted = 1,
- 	.lut_noac = bat_lut_noac,
- 	.lut_noac_cnt = ARRAY_SIZE(bat_lut_noac),
- 	.lut_acin = bat_lut_acin,
-@@ -720,6 +727,7 @@ static void __init h1940_init(void)
- 	s3c24xx_fb_set_platdata(&h1940_fb_info);
- 	gpiod_add_lookup_table(&h1940_mmc_gpio_table);
- 	gpiod_add_lookup_table(&h1940_audio_gpio_table);
-+	gpiod_add_lookup_table(&h1940_bat_gpio_table);
- 	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
- 	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
- 			      S3C_GPIO_PULL_NONE);
-diff --git a/arch/arm/mach-s3c/mach-rx1950.c b/arch/arm/mach-s3c/mach-rx1950.c
-index b9758f0a9a14..6e19add158a9 100644
---- a/arch/arm/mach-s3c/mach-rx1950.c
-+++ b/arch/arm/mach-s3c/mach-rx1950.c
-@@ -206,6 +206,15 @@ static const struct s3c_adc_bat_thresh bat_lut_acin[] = {
- 	{ .volt = 3820, .cur = 0, .level = 0},
- };
- 
-+static struct gpiod_lookup_table rx1950_bat_gpio_table = {
-+	.dev_id = "s3c-adc-battery",
-+	.table = {
-+		/* Charge status S3C2410_GPF(3) */
-+		GPIO_LOOKUP("GPIOF", 3, "charge-status", GPIO_ACTIVE_HIGH),
-+		{ },
-+	},
-+};
-+
- static int rx1950_bat_init(void)
- {
- 	int ret;
-@@ -331,7 +340,6 @@ static struct s3c_adc_bat_pdata rx1950_bat_cfg = {
- 	.exit = rx1950_bat_exit,
- 	.enable_charger = rx1950_enable_charger,
- 	.disable_charger = rx1950_disable_charger,
--	.gpio_charge_finished = S3C2410_GPF(3),
- 	.lut_noac = bat_lut_noac,
- 	.lut_noac_cnt = ARRAY_SIZE(bat_lut_noac),
- 	.lut_acin = bat_lut_acin,
-@@ -840,6 +848,7 @@ static void __init rx1950_init_machine(void)
- 
- 	pwm_add_table(rx1950_pwm_lookup, ARRAY_SIZE(rx1950_pwm_lookup));
- 	gpiod_add_lookup_table(&rx1950_audio_gpio_table);
-+	gpiod_add_lookup_table(&rx1950_bat_gpio_table);
- 	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
- 	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
- 			      S3C_GPIO_PULL_NONE);
-diff --git a/drivers/power/supply/s3c_adc_battery.c b/drivers/power/supply/s3c_adc_battery.c
-index 60b7f41ab063..a2addc24ee8b 100644
---- a/drivers/power/supply/s3c_adc_battery.c
-+++ b/drivers/power/supply/s3c_adc_battery.c
-@@ -13,7 +13,7 @@
- #include <linux/platform_device.h>
- #include <linux/power_supply.h>
- #include <linux/leds.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/err.h>
- #include <linux/timer.h>
- #include <linux/jiffies.h>
-@@ -31,6 +31,7 @@ struct s3c_adc_bat {
- 	struct power_supply		*psy;
- 	struct s3c_adc_client		*client;
- 	struct s3c_adc_bat_pdata	*pdata;
-+	struct gpio_desc		*charge_finished;
- 	int				volt_value;
- 	int				cur_value;
- 	unsigned int			timestamp;
-@@ -132,9 +133,7 @@ static int calc_full_volt(int volt_val, int cur_val, int impedance)
- 
- static int charge_finished(struct s3c_adc_bat *bat)
- {
--	return bat->pdata->gpio_inverted ?
--		!gpio_get_value(bat->pdata->gpio_charge_finished) :
--		gpio_get_value(bat->pdata->gpio_charge_finished);
-+	return gpiod_get_value(bat->charge_finished);
- }
- 
- static int s3c_adc_bat_get_property(struct power_supply *psy,
-@@ -169,7 +168,7 @@ static int s3c_adc_bat_get_property(struct power_supply *psy,
- 	}
- 
- 	if (bat->cable_plugged &&
--		((bat->pdata->gpio_charge_finished < 0) ||
-+		(!bat->charge_finished ||
- 		!charge_finished(bat))) {
- 		lut = bat->pdata->lut_acin;
- 		lut_size = bat->pdata->lut_acin_cnt;
-@@ -206,7 +205,7 @@ static int s3c_adc_bat_get_property(struct power_supply *psy,
- 
- 	switch (psp) {
- 	case POWER_SUPPLY_PROP_STATUS:
--		if (bat->pdata->gpio_charge_finished < 0)
-+		if (!bat->charge_finished)
- 			val->intval = bat->level == 100000 ?
- 				POWER_SUPPLY_STATUS_FULL : bat->status;
- 		else
-@@ -265,7 +264,7 @@ static void s3c_adc_bat_work(struct work_struct *work)
- 			bat->status = POWER_SUPPLY_STATUS_DISCHARGING;
- 		}
- 	} else {
--		if ((bat->pdata->gpio_charge_finished >= 0) && is_plugged) {
-+		if (bat->charge_finished && is_plugged) {
- 			is_charged = charge_finished(&main_bat);
- 			if (is_charged) {
- 				if (bat->pdata->disable_charger)
-@@ -294,6 +293,7 @@ static int s3c_adc_bat_probe(struct platform_device *pdev)
- 	struct s3c_adc_client	*client;
- 	struct s3c_adc_bat_pdata *pdata = pdev->dev.platform_data;
- 	struct power_supply_config psy_cfg = {};
-+	struct gpio_desc *gpiod;
- 	int ret;
- 
- 	client = s3c_adc_register(pdev, NULL, NULL, 0);
-@@ -304,8 +304,17 @@ static int s3c_adc_bat_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, client);
- 
-+	gpiod = devm_gpiod_get_optional(&pdev->dev, "charge-status", GPIOD_IN);
-+	if (IS_ERR(gpiod)) {
-+		/* Could be probe deferral etc */
-+		ret = PTR_ERR(gpiod);
-+		dev_err(&pdev->dev, "no GPIO %d\n", ret);
-+		return ret;
-+	}
-+
- 	main_bat.client = client;
- 	main_bat.pdata = pdata;
-+	main_bat.charge_finished = gpiod;
- 	main_bat.volt_value = -1;
- 	main_bat.cur_value = -1;
- 	main_bat.cable_plugged = 0;
-@@ -323,6 +332,7 @@ static int s3c_adc_bat_probe(struct platform_device *pdev)
- 
- 		backup_bat.client = client;
- 		backup_bat.pdata = pdev->dev.platform_data;
-+		backup_bat.charge_finished = gpiod;
- 		backup_bat.volt_value = -1;
- 		backup_bat.psy = power_supply_register(&pdev->dev,
- 						       &backup_bat_desc,
-@@ -335,12 +345,8 @@ static int s3c_adc_bat_probe(struct platform_device *pdev)
- 
- 	INIT_DELAYED_WORK(&bat_work, s3c_adc_bat_work);
- 
--	if (pdata->gpio_charge_finished >= 0) {
--		ret = gpio_request(pdata->gpio_charge_finished, "charged");
--		if (ret)
--			goto err_gpio;
--
--		ret = request_irq(gpio_to_irq(pdata->gpio_charge_finished),
-+	if (gpiod) {
-+		ret = request_irq(gpiod_to_irq(gpiod),
- 				s3c_adc_bat_charged,
- 				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
- 				"battery charged", NULL);
-@@ -364,12 +370,9 @@ static int s3c_adc_bat_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_platform:
--	if (pdata->gpio_charge_finished >= 0)
--		free_irq(gpio_to_irq(pdata->gpio_charge_finished), NULL);
-+	if (gpiod)
-+		free_irq(gpiod_to_irq(gpiod), NULL);
- err_irq:
--	if (pdata->gpio_charge_finished >= 0)
--		gpio_free(pdata->gpio_charge_finished);
--err_gpio:
- 	if (pdata->backup_volt_mult)
- 		power_supply_unregister(backup_bat.psy);
- err_reg_backup:
-@@ -389,10 +392,8 @@ static int s3c_adc_bat_remove(struct platform_device *pdev)
- 
- 	s3c_adc_release(client);
- 
--	if (pdata->gpio_charge_finished >= 0) {
--		free_irq(gpio_to_irq(pdata->gpio_charge_finished), NULL);
--		gpio_free(pdata->gpio_charge_finished);
--	}
-+	if (main_bat.charge_finished)
-+		free_irq(gpiod_to_irq(main_bat.charge_finished), NULL);
- 
- 	cancel_delayed_work(&bat_work);
- 
-@@ -408,12 +409,12 @@ static int s3c_adc_bat_suspend(struct platform_device *pdev,
- {
- 	struct s3c_adc_bat_pdata *pdata = pdev->dev.platform_data;
- 
--	if (pdata->gpio_charge_finished >= 0) {
-+	if (main_bat.charge_finished) {
- 		if (device_may_wakeup(&pdev->dev))
- 			enable_irq_wake(
--				gpio_to_irq(pdata->gpio_charge_finished));
-+				gpiod_to_irq(main_bat.charge_finished));
- 		else {
--			disable_irq(gpio_to_irq(pdata->gpio_charge_finished));
-+			disable_irq(gpiod_to_irq(main_bat.charge_finished));
- 			main_bat.pdata->disable_charger();
- 		}
- 	}
-@@ -425,12 +426,12 @@ static int s3c_adc_bat_resume(struct platform_device *pdev)
- {
- 	struct s3c_adc_bat_pdata *pdata = pdev->dev.platform_data;
- 
--	if (pdata->gpio_charge_finished >= 0) {
-+	if (main_bat.charge_finished) {
- 		if (device_may_wakeup(&pdev->dev))
- 			disable_irq_wake(
--				gpio_to_irq(pdata->gpio_charge_finished));
-+				gpiod_to_irq(main_bat.charge_finished));
- 		else
--			enable_irq(gpio_to_irq(pdata->gpio_charge_finished));
-+			enable_irq(gpiod_to_irq(main_bat.charge_finished));
- 	}
- 
- 	/* Schedule timer to check current status */
-diff --git a/include/linux/s3c_adc_battery.h b/include/linux/s3c_adc_battery.h
-index 833871dcf6fd..57f982c375f8 100644
---- a/include/linux/s3c_adc_battery.h
-+++ b/include/linux/s3c_adc_battery.h
-@@ -14,9 +14,6 @@ struct s3c_adc_bat_pdata {
- 	void (*enable_charger)(void);
- 	void (*disable_charger)(void);
- 
--	int gpio_charge_finished;
--	int gpio_inverted;
--
- 	const struct s3c_adc_bat_thresh *lut_noac;
- 	unsigned int lut_noac_cnt;
- 	const struct s3c_adc_bat_thresh *lut_acin;
+   # CONFIG_IO_STRICT_DEVMEM is not set
+
+so it all makes sense.
+
+
+> If you fix the issue, kindly add following tag
+> Reported-by: kernel test robot <lkp@intel.com>
+> 
+> 
+> [   28.644165] systemd[1]: RTC configured in localtime, applying delta of 0 minutes to system time.
+> 
+> [   28.699473] #PF: supervisor read access in kernel mode
+> [   28.704611] #PF: error_code(0x0000) - not-present page
+> [   28.709749] PGD 0 P4D 0
+> [   28.712291] Oops: 0000 [#1] SMP NOPTI
+> [   28.715956] CPU: 0 PID: 1 Comm: systemd Not tainted 5.10.0-rc1-00015-g22b17dc667d3 #1
+> [   28.723793] RIP: 0010:do_dentry_open+0x1c9/0x360
+> [   28.728410] Code: 84 82 01 00 00 81 ca 00 00 04 00 89 53 44 48 8b 83 f0 00 00 00 81 63 40 3f fc ff ff 48 8d bb 98 00 00 00 c7 43 34 00 00 00 00 <48> 8b 00 48 8b 70 30 e8 2b cb f4 ff f6 43 41 40 74 5a 48 8b 83 f0
+> [   28.747157] RSP: 0018:ffffc9000006fcc8 EFLAGS: 00010206
+> [   28.752380] RAX: 0000000000000000 RBX: ffff8881502ad400 RCX: 0000000000000000
+> [   28.759506] RDX: 00000000000a201d RSI: ffffffff8284d260 RDI: ffff8881502ad498
+> [   28.766639] RBP: ffff88a485a06490 R08: 0000000000000000 R09: ffffffff8284d260
+> [   28.773769] R10: ffffc9000006fcc8 R11: 756c6176006d656d R12: 0000000000000000
+> [   28.780895] R13: ffffffff8133ddc0 R14: ffff8881502ad410 R15: ffff8881502ad400
+> [   28.788028] FS:  00007ff54afa1940(0000) GS:ffff888c4f600000(0000) knlGS:0000000000000000
+> [   28.796113] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   28.801858] CR2: 0000000000000000 CR3: 0000000100120003 CR4: 00000000007706f0
+> [   28.808983] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [   28.816114] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [   28.823239] PKRU: 55555554
+> [   28.825952] Call Trace:
+> [   28.828412]  path_openat+0xaa8/0x10a0
+> [   28.832073]  do_filp_open+0x91/0x100
+> [   28.835653]  ? acpi_os_wait_semaphore+0x48/0x80
+> [   28.840186]  ? __check_object_size+0x136/0x160
+> [   28.844631]  do_sys_openat2+0x20d/0x2e0
+> [   28.848470]  do_sys_open+0x44/0x80
+> [   28.851878]  do_syscall_64+0x33/0x40
+> [   28.855457]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [   28.860509] RIP: 0033:0x7ff54c1521ae
+> [   28.864086] Code: 25 00 00 41 00 3d 00 00 41 00 74 48 48 8d 05 59 65 0d 00 8b 00 85 c0 75 69 89 f2 b8 01 01 00 00 48 89 fe bf 9c ff ff ff 0f 05 <48> 3d 00 f0 ff ff 0f 87 a6 00 00 00 48 8b 4c 24 28 64 48 33 0c 25
+> [   28.882833] RSP: 002b:00007ffd1c9586d0 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+> [   28.890399] RAX: ffffffffffffffda RBX: 00007ffd1c9587d0 RCX: 00007ff54c1521ae
+> [   28.897531] RDX: 0000000000080000 RSI: 00007ff54bfa0e5a RDI: 00000000ffffff9c
+> [   28.904662] RBP: 00007ffd1c9587d8 R08: 000000000000021f R09: 000055f837cf4290
+> [   28.911796] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000056dd9000
+> [   28.918927] R13: 00000000ffffffff R14: 00007ffd1c9587d0 R15: 0000000000000002
+> [   28.926060] Modules linked in: ip_tables
+> [   28.929986] CR2: 0000000000000000
+> mDebian GNU/Linu
+> [   28.933416] ---[ end trace 94e4f9aa3df66098 ]---
+> [   28.939355] RIP: 0010:do_dentry_open+0x1c9/0x360
+> [   28.943975] Code: 84 82 01 00 00 81 ca 00 00 04 00 89 53 44 48 8b 83 f0 00 00 00 81 63 40 3f fc ff ff 48 8d bb 98 00 00 00 c7 43 34 00 00 00 00 <48> 8b 00 48 8b 70 30 e8 2b cb f4 ff f6 43 41 40 74 5a 48 8b 83 f0
+> [   28.962721] RSP: 0018:ffffc9000006fcc8 EFLAGS: 00010206
+> [   28.967948] RAX: 0000000000000000 RBX: ffff8881502ad400 RCX: 0000000000000000
+> [   28.975079] RDX: 00000000000a201d RSI: ffffffff8284d260 RDI: ffff8881502ad498
+> [   28.982211] RBP: ffff88a485a06490 R08: 0000000000000000 R09: ffffffff8284d260
+> [   28.989337] R10: ffffc9000006fcc8 R11: 756c6176006d656d R12: 0000000000000000
+> [   28.996467] R13: ffffffff8133ddc0 R14: ffff8881502ad410 R15: ffff8881502ad400
+> [   29.003592] FS:  00007ff54afa1940(0000) GS:ffff888c4f600000(0000) knlGS:0000000000000000
+> [   29.011668] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   29.017409] CR2: 0000000000000000 CR3: 0000000100120003 CR4: 00000000007706f0
+> [   29.024539] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [   29.031671] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [   29.038804] PKRU: 55555554
+> [   29.041508] Kernel panic - not syncing: Fatal exception
+> ACPI MEMORY or I/O RESET_REG.
+> 
+> 
+> To reproduce:
+> 
+>          git clone https://github.com/intel/lkp-tests.git
+>          cd lkp-tests
+>          bin/lkp install job.yaml  # job file is attached in this email
+>          bin/lkp run     job.yaml
+> 
+> 
+> 
+> Thanks,
+> oliver.sang@intel.com
+> 
+
+thanks,
 -- 
-2.26.2
-
+John Hubbard
+NVIDIA
