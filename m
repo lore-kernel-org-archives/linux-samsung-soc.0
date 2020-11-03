@@ -2,199 +2,321 @@ Return-Path: <SRS0=6Xyg=EJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3700FC55179
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 06:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E1DC388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 07:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF3CA222B9
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 06:15:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB0082222B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 07:40:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JwOwCwij"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kYwMd2kY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726018AbgKCGPo (ORCPT
+        id S1727933AbgKCHkY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 01:15:44 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15892 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbgKCGPn (ORCPT
+        Tue, 3 Nov 2020 02:40:24 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:30317 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727929AbgKCHkX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 01:15:43 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fa0f5910000>; Mon, 02 Nov 2020 22:15:45 -0800
-Received: from [10.2.49.167] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 3 Nov
- 2020 06:15:40 +0000
-Subject: Re: [resource] 22b17dc667: Kernel panic - not syncing: Fatal
- exception
-To:     lkp <lkp@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
-CC:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>,
-        Kees Cook <keescook@chromium.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
-        David Hildenbrand <david@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        <lkp@lists.01.org>
-References: <20201103060649.GA30210@xsang-OptiPlex-9020>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <1ec0dee9-e1bb-9cf1-a8c2-ad1e294c5acf@nvidia.com>
-Date:   Mon, 2 Nov 2020 22:15:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        Tue, 3 Nov 2020 02:40:23 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20201103074019epoutp02c389325d6f0c41f474d7a6c4044b49ac~D736LBnvH0688006880epoutp02j
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2020 07:40:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20201103074019epoutp02c389325d6f0c41f474d7a6c4044b49ac~D736LBnvH0688006880epoutp02j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1604389219;
+        bh=CpF6fCF9Ej0ij/j844g6OegZ8bzLWvldVIAiixTTzuk=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=kYwMd2kYj/NbacFbm14RcKCzzulfYCis7n5bXogy/ZLAsveI3oplGEKbP9UsGBY2c
+         qlnUjl9NzIukhMTFIKLYJg8lraTESoyVu4OR271Kd7NZhdTLpl0NhlLXHY1Hg7ud+v
+         Tx+Hav5vyQeWqHo80aNvFOBayNiT5ON8KfoQCwiU=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201103074017epcas1p1b207204cd37afa270e8a46facd41e4be~D734TStBW0499404994epcas1p1u;
+        Tue,  3 Nov 2020 07:40:17 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4CQMBk4HnTzMqYkZ; Tue,  3 Nov
+        2020 07:40:14 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4C.E5.09582.E5901AF5; Tue,  3 Nov 2020 16:40:14 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20201103074012epcas1p1b0711cfde3b20238de9aaf0b1db41551~D730ZK_l_2387723877epcas1p1L;
+        Tue,  3 Nov 2020 07:40:12 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20201103074012epsmtrp1a6ff7644cedb15b2e7b251b8f1a27e0e~D730YVpGB1889518895epsmtrp1c;
+        Tue,  3 Nov 2020 07:40:12 +0000 (GMT)
+X-AuditID: b6c32a37-e2fb8a800000256e-78-5fa1095e8fbd
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D8.28.13470.C5901AF5; Tue,  3 Nov 2020 16:40:12 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20201103074012epsmtip1a2909f0f02ca079f4e5362d7a0f3512f~D73z96PRA0898008980epsmtip1p;
+        Tue,  3 Nov 2020 07:40:12 +0000 (GMT)
+Subject: Re: [PATCH v7 0/6] Exynos: Simple QoS for exynos-bus using
+ interconnect
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        georgi.djakov@linaro.org, krzk@kernel.org
+Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
+        a.swigon@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <b586c2b7-9ca1-e641-b70c-27493ffd05e0@samsung.com>
+Date:   Tue, 3 Nov 2020 16:54:10 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <20201103060649.GA30210@xsang-OptiPlex-9020>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <20201030125149.8227-1-s.nawrocki@samsung.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1604384145; bh=HHKB/RdS8zOAOPLdFEq5BHCD+y3I+0AFVJdR07v4b2Y=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=JwOwCwijT1kVCiMMH7uWO3V38VR6sMEcYyvq67pbbu3hJ+DPHKUtnJqETyaxHWRIT
-         m2xUbsYFpKxlfg5ce1M6aG2etyTc++fQlJpwIDZWLn2afx9gbk7WaClnMP3sVhQoZ8
-         6GX9VHqqwD16fLg9I8hpx/8ZVIUAUWLvE6NhWo/ec4JhNV5HDtMZvF+W1nUgdeeJgj
-         Lf169WBQDhKmaXdFsKjUUEguegA0pS0aJO/LCDltQmzs+qKxkCMXJuxbSt9jQh2/0J
-         MeNCr8rseweUGqS7xAMB0+C5n0ZbF66TmR81JNS1sc11HJPPRlRgDtnh3xYDv/DVXI
-         oKrB4bDrDJhGw==
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPJsWRmVeSWpSXmKPExsWy7bCmnm4c58J4g0Odihb357UyWmycsZ7V
+        Yv6Rc6wWV76+Z7OYvncTm8Wk+xNYLM6f38BucXnXHDaLz71HGC1mnN/HZLH2yF12i9uNK9gs
+        WvceYbc4/Kad1WLG5JdsDvwem1Z1snncubaHzeN+93Emj74tqxg9Pm+SC2CNyrbJSE1MSS1S
+        SM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMATpXSaEsMacUKBSQWFys
+        pG9nU5RfWpKqkJFfXGKrlFqQklNgWaBXnJhbXJqXrpecn2tlaGBgZApUmJCdsebxIuaCbR4V
+        CxZ+YGtgbDPuYuTkkBAwkZixdjJbFyMXh5DADkaJPYfXskI4nxglJn35DpX5xijx+MscRpiW
+        RX/+QlXtZZSYc/orE4TznlFi3+wfbCBVwgJBEmsntgN1cHCICMRIrH8XARJmFjjBJHHkjiCI
+        zSagJbH/xQ2wcn4BRYmrPx6DLeAVsJM4secBE0gri4CKxJ1JtiBhUYEwiZPbWqBKBCVOznzC
+        AmJzClhLdHXeYIIYLy5x68l8KFteonnrbGaQ0yQEbnBIvD20hQniAReJNYtOs0LYwhKvjm9h
+        h7ClJF72t0HZ1RIrTx5hg2juYJTYsv8CVIOxxP6lk8GOYxbQlFi/Sx8irCix8/dcRojFfBLv
+        vvawgpRICPBKdLQJQZQoS1x+cBfqBEmJxe2dbBMYlWYheWcWkhdmIXlhFsKyBYwsqxjFUguK
+        c9NTiw0LjJEjexMjOCVrme9gnPb2g94hRiYOxkOMEhzMSiK8NZHz4oV4UxIrq1KL8uOLSnNS
+        iw8xmgLDdyKzlGhyPjAr5JXEG5oaGRsbW5gYmpkaGiqJ8/7R7ogXEkhPLEnNTk0tSC2C6WPi
+        4JRqYLp1OfzSuhWqtz+curU5h0U/VSsh9mSgXsHDT7EMO7hzb1in53w7t+hC9lodlfYt598l
+        svrO0vtjHKlscZGph22N5FUX4eQ1Qqwe7Oa2aawWclcf1yZ1Tz93/+oquUP3NzdFy2vwRj8r
+        jitp6Ob5srT4ompr7V2R6Debr9jO5vM3S8ws+u/gXWjuzXBrtn8c04sboq3HH3C92z7tSONz
+        eYXQZ793Mt7bUWl5Rb7OtH0787S0jjdRJREqFyNvq2tGb5D83e33RuHJvC2PdnSpflqQf/9z
+        f91rh4JrncwyD/Pfp4osaEi8P+H0jZ7rbSHbmvj6TAU5zfZVXUhoqd7wg5GhY2XY98/OT98V
+        uXV8UmIpzkg01GIuKk4EAFo40gBSBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNIsWRmVeSWpSXmKPExsWy7bCSnG4M58J4g7e3NCzuz2tltNg4Yz2r
+        xfwj51gtrnx9z2Yxfe8mNotJ9yewWJw/v4Hd4vKuOWwWn3uPMFrMOL+PyWLtkbvsFrcbV7BZ
+        tO49wm5x+E07q8WMyS/ZHPg9Nq3qZPO4c20Pm8f97uNMHn1bVjF6fN4kF8AaxWWTkpqTWZZa
+        pG+XwJWx5vEi5oJtHhULFn5ga2BsM+5i5OSQEDCRWPTnL2sXIxeHkMBuRokPB9pYIRKSEtMu
+        HmXuYuQAsoUlDh8uhqh5yyixrOcjI0iNsECQxNqJ7WC2iECMxKnJs1hAipgFTjBJfFz1gAmi
+        o49RYnvXHhaQKjYBLYn9L26wgdj8AooSV388BuvmFbCTOLEHpIGDg0VAReLOJFuQsKhAmMTO
+        JY+ZIEoEJU7OfAI2hlPAWqKr8wZYnFlAXeLPvEvMELa4xK0n86Hi8hLNW2czT2AUnoWkfRaS
+        lllIWmYhaVnAyLKKUTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4PrU0dzBuX/VB7xAj
+        EwfjIUYJDmYlEd6ayHnxQrwpiZVVqUX58UWlOanFhxilOViUxHlvFC6MExJITyxJzU5NLUgt
+        gskycXBKNTCxcn+a6BVo+bN+JrPiXdGrX7cc3qUx5X5e6EzLsNNMxw5Jn/dalafSuLdhXktI
+        ybs7lSL/VrU9L5ufbld9IOQP74/Y2C2z89nOPrsz625i1tbZkwsuz22Ocj93efmtEmMji+ll
+        lb1a658nsj35su5bLFfJ8wzR0uI3i6OiV5tEdM/+c917se4ehj0/l/LfVY9sybuvs7Z26S6z
+        my+3l5hMbZg2d+/U03tcTYX8fi+qnMZQu+nBK0km+1+xmgLmEZ6eHjXt1ptW6oU4tpXtP8nC
+        ppMs6/f9bMLtfFvn6adkBUrEU9zjt39bOu8n52aupm81jydybVG+5LitlrvBaeqao2JfDhZu
+        kp4mMPPKu3XmSizFGYmGWsxFxYkAafLqjT4DAAA=
+X-CMS-MailID: 20201103074012epcas1p1b0711cfde3b20238de9aaf0b1db41551
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20201030125221eucas1p14e525f75c4b8dadae04144ce7684d776
+References: <CGME20201030125221eucas1p14e525f75c4b8dadae04144ce7684d776@eucas1p1.samsung.com>
+        <20201030125149.8227-1-s.nawrocki@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/2/20 10:06 PM, lkp wrote:
-> Greeting,
+Hi Sylwester,
+
+When I tested this patchset on Odroid-U3,
+After setting 0 bps by interconnect[1][2],
+the frequency of devfreq devs sustain the high frequency
+according to the pm qos request.
+
+So, I try to find the cause of this situation.
+In result, it seems that interconnect exynos driver
+updates the pm qos request to devfreq device
+during the kernel booting. Do you know why the exynos
+interconnect driver request the pm qos during probe
+without the mixer request?
+
+PS. The passive governor has a bug related to PM_QOS interface.
+So, I posted the patch[4].
+
+
+[1] interconnect_graph
+root@localhost:~# cat /sys/kernel/debug/interconnect/interconnect_graph 
+digraph {
+        rankdir = LR
+        node [shape = record]
+        subgraph cluster_1 {
+                label = "soc:bus_dmc"
+                "2:bus_dmc" [label="2:bus_dmc
+                        |avg_bw=0kBps
+                        |peak_bw=0kBps"]
+        }
+        subgraph cluster_2 {
+                label = "soc:bus_leftbus"
+                "3:bus_leftbus" [label="3:bus_leftbus
+                        |avg_bw=0kBps
+                        |peak_bw=0kBps"]
+        }
+        subgraph cluster_3 {
+                label = "soc:bus_display"
+                "4:bus_display" [label="4:bus_display
+                        |avg_bw=0kBps
+                        |peak_bw=0kBps"]
+        }
+        "3:bus_leftbus" -> "2:bus_dmc"
+        "4:bus_display" -> "3:bus_leftbus"
+
+
+[2] interconnect_summary
+root@localhost:~# cat /sys/kernel/debug/interconnect/interconnect_summary 
+ node                                  tag          avg         peak
+--------------------------------------------------------------------
+bus_dmc                                               0            0
+  12c10000.mixer                         0            0            0
+bus_leftbus                                           0            0
+  12c10000.mixer                         0            0            0
+bus_display                                           0            0
+  12c10000.mixer                         0            0            0
+
+
+[3] devfreq_summary
+root@localhost:~# cat /sys/kernel/debug/devfreq/devfreq_summary 
+dev                            parent_dev                     governor        timer      polling_ms  cur_freq_Hz  min_freq_Hz  max_freq_Hz
+------------------------------ ------------------------------ --------------- ---------- ---------- ------------ ------------ ------------
+soc:bus_dmc                    null                           simple_ondemand deferrable         50    400000000    400000000    400000000
+soc:bus_acp                    soc:bus_dmc                    passive         null                0    267000000    100000000    267000000
+soc:bus_c2c                    soc:bus_dmc                    passive         null                0    400000000    100000000    400000000
+soc:bus_leftbus                null                           simple_ondemand deferrable         50    200000000    200000000    200000000
+soc:bus_rightbus               soc:bus_leftbus                passive         null                0    200000000    100000000    200000000
+soc:bus_display                soc:bus_leftbus                passive         null                0    200000000    200000000    200000000
+soc:bus_fsys                   soc:bus_leftbus                passive         null                0    134000000    100000000    134000000
+soc:bus_peri                   soc:bus_leftbus                passive         null                0    100000000     50000000    100000000
+soc:bus_mfc                    soc:bus_leftbus                passive         null                0    200000000    100000000    200000000
+
+
+[4] PM / devfreq: passive: Update frequency when start governor
+https://patchwork.kernel.org/project/linux-pm/patch/20201103070646.18687-1-cw00.choi@samsung.com/
+
+
+On 10/30/20 9:51 PM, Sylwester Nawrocki wrote:
 > 
-> FYI, we noticed the following commit (built with gcc-9):
+> This patchset adds interconnect API support for the Exynos SoC "samsung,
+> exynos-bus" compatible devices, which already have their corresponding
+> exynos-bus driver in the devfreq subsystem.  Complementing the devfreq
+> driver with an interconnect functionality allows to ensure the QoS
+> requirements of devices accessing the system memory (e.g. video processing
+> devices) are fulfilled and aallows to avoid issues like the one discussed
+> in thread [1].
 > 
-> commit: 22b17dc667d36418ccabb9c668c4b489185fb40a ("[PATCH v5 13/15] resource: Move devmem revoke code to resource framework")
-> url: https://github.com/0day-ci/linux/commits/Daniel-Vetter/follow_pfn-and-other-iomap-races/20201030-181112
-> base: git://linuxtv.org/media_tree.git master
+> This patch series adds implementation of the interconnect provider per each
+> "samsung,exynos-bus" compatible DT node, with one interconnect node per
+> provider.  The interconnect code which was previously added as a part of
+> the devfreq driver has been converted to a separate platform driver.
+> In the devfreq a corresponding virtual child platform device is registered.
+> Integration of devfreq and interconnect frameworks is achieved through
+> the PM QoS API.
 > 
-> in testcase: fsmark
-> version: fsmark-x86_64-3.3-1_20201007
-> with following parameters:
+> A sample interconnect consumer for exynos-mixer is added in patches 5/6,
+> 6/6, it is currently added only for exynos4412 and allows to address the
+> mixer DMA underrun error issues [1].
 > 
-> 	iterations: 1x
-> 	nr_threads: 1t
-> 	disk: 1BRD_48G
-> 	fs: f2fs
-> 	fs2: nfsv4
-> 	filesize: 4M
-> 	test_size: 40G
-> 	sync_method: NoSync
-> 	cpufreq_governor: performance
-> 	ucode: 0x5002f01
+> Changes since v6:
+>  - the interconnect consumer DT bindings are now used to describe dependencies
+>    of the interconnects (samsung,exynos-bus nodes),
+>  - bus-width property replaced with samsung,data-clk-ratio,
+>  - adaptation to recent changes in the interconnect code
+>    (of_icc_get_from_provider(), icc_node_add()).
 > 
-> test-description: The fsmark is a file system benchmark to test synchronous write workloads, for example, mail servers workload.
-> test-url: https://sourceforge.net/projects/fsmark/
+> The series has been tested on Odroid U3 board. It is based on v5.10-rc1.
+> 
+> --
+> Regards,
+> Sylwester
 > 
 > 
-> on test machine: 192 threads Intel(R) Xeon(R) Platinum 9242 CPU @ 2.30GHz with 192G memory
+> Changes since v5:
+>  - addition of "bus-width: DT property, which specifies data width
+>    of the interconnect bus (patches 1...2/6),
+>  - addition of synchronization of the interconnect bandwidth setting
+>    with VSYNC (patch 6/6).
 > 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> Changes since v3 [4] (v4 skipped to align with patchset [1]), detailed
+> changes are listed in each patch:
+>  - conversion to a separate interconnect (platform) driver,
+>  - an update of the DT binding documenting new optional properties:
+>    #interconnect-cells, samsung,interconnect-parent in "samsung,exynos-bus"
+>    nodes,
+>  - new DT properties added to the SoC, rather than to the board specific
+>    files.
+> 
+> Changes since v2 [5]:
+>  - Use icc_std_aggregate().
+>  - Implement a different modification of apply_constraints() in
+>    drivers/interconnect/core.c (patch 03).
+>  - Use 'exynos,interconnect-parent-node' in the DT instead of
+>    'devfreq'/'parent', depending on the bus.
+>  - Rebase on DT patches that deprecate the 'devfreq' DT property.
+>  - Improve error handling, including freeing generated IDs on failure.
+>  - Remove exynos_bus_icc_connect() and add exynos_bus_icc_get_parent().
+> 
+> Changes since v1 [6]:
+>  - Rebase on coupled regulators patches.
+>  - Use dev_pm_qos_*() API instead of overriding frequency in
+>    exynos_bus_target().
+>  - Use IDR for node ID allocation.
+>  - Reverse order of multiplication and division in
+>    mixer_set_memory_bandwidth() (patch 07) to avoid integer overflow.
+> 
+> 
+> References:
+> [1] https://patchwork.kernel.org/patch/10861757/ (original issue)
+> [2] https://protect2.fireeye.com/v1/url?k=383efc40-67a5c559-383f770f-000babff3793-a505fcd0b7477e5e&q=1&e=ad8ffb9f-f90b-49a7-a3df-2ab066a8c4ee&u=https%3A%2F%2Fwww.spinics.net%2Flists%2Flinux-samsung-soc%2Fmsg70014.html
+> [3] https://protect2.fireeye.com/v1/url?k=13f0c488-4c6bfd91-13f14fc7-000babff3793-98a59bf1c5c6f1fb&q=1&e=ad8ffb9f-f90b-49a7-a3df-2ab066a8c4ee&u=https%3A%2F%2Fwww.spinics.net%2Flists%2Farm-kernel%2Fmsg810722.html
+> [4] https://lore.kernel.org/linux-pm/20191220115653.6487-1-a.swigon@samsung.com
+> [5] https://patchwork.kernel.org/cover/11054417/ (v1 of this RFC)
+> [6] https://patchwork.kernel.org/cover/11152595/ (v2 of this RFC)
+> 
+> 
+> Artur Świgoń (1):
+>   ARM: dts: exynos: Add interconnects to Exynos4412 mixer
+> 
+> Sylwester Nawrocki (5):
+>   dt-bindings: devfreq: Add documentation for the interconnect
+>     properties
+>   interconnect: Add generic interconnect driver for Exynos SoCs
+>   PM / devfreq: exynos-bus: Add registration of interconnect child
+>     device
+>   ARM: dts: exynos: Add interconnect properties to Exynos4412 bus nodes
+>   drm: exynos: mixer: Add interconnect support
+> 
+>  .../devicetree/bindings/devfreq/exynos-bus.txt     |  68 ++++++-
+>  arch/arm/boot/dts/exynos4412.dtsi                  |   7 +
+>  drivers/devfreq/exynos-bus.c                       |  17 ++
+>  drivers/gpu/drm/exynos/exynos_mixer.c              | 146 ++++++++++++++-
+>  drivers/interconnect/Kconfig                       |   1 +
+>  drivers/interconnect/Makefile                      |   1 +
+>  drivers/interconnect/exynos/Kconfig                |   6 +
+>  drivers/interconnect/exynos/Makefile               |   4 +
+>  drivers/interconnect/exynos/exynos.c               | 198 +++++++++++++++++++++
+>  9 files changed, 438 insertions(+), 10 deletions(-)
+>  create mode 100644 drivers/interconnect/exynos/Kconfig
+>  create mode 100644 drivers/interconnect/exynos/Makefile
+>  create mode 100644 drivers/interconnect/exynos/exynos.c
+> 
+> --
+> 2.7.4
+> 
 > 
 > 
 
-Yep, this is the same crash that I saw. And the .config also has
 
-   # CONFIG_IO_STRICT_DEVMEM is not set
-
-so it all makes sense.
-
-
-> If you fix the issue, kindly add following tag
-> Reported-by: kernel test robot <lkp@intel.com>
-> 
-> 
-> [   28.644165] systemd[1]: RTC configured in localtime, applying delta of 0 minutes to system time.
-> 
-> [   28.699473] #PF: supervisor read access in kernel mode
-> [   28.704611] #PF: error_code(0x0000) - not-present page
-> [   28.709749] PGD 0 P4D 0
-> [   28.712291] Oops: 0000 [#1] SMP NOPTI
-> [   28.715956] CPU: 0 PID: 1 Comm: systemd Not tainted 5.10.0-rc1-00015-g22b17dc667d3 #1
-> [   28.723793] RIP: 0010:do_dentry_open+0x1c9/0x360
-> [   28.728410] Code: 84 82 01 00 00 81 ca 00 00 04 00 89 53 44 48 8b 83 f0 00 00 00 81 63 40 3f fc ff ff 48 8d bb 98 00 00 00 c7 43 34 00 00 00 00 <48> 8b 00 48 8b 70 30 e8 2b cb f4 ff f6 43 41 40 74 5a 48 8b 83 f0
-> [   28.747157] RSP: 0018:ffffc9000006fcc8 EFLAGS: 00010206
-> [   28.752380] RAX: 0000000000000000 RBX: ffff8881502ad400 RCX: 0000000000000000
-> [   28.759506] RDX: 00000000000a201d RSI: ffffffff8284d260 RDI: ffff8881502ad498
-> [   28.766639] RBP: ffff88a485a06490 R08: 0000000000000000 R09: ffffffff8284d260
-> [   28.773769] R10: ffffc9000006fcc8 R11: 756c6176006d656d R12: 0000000000000000
-> [   28.780895] R13: ffffffff8133ddc0 R14: ffff8881502ad410 R15: ffff8881502ad400
-> [   28.788028] FS:  00007ff54afa1940(0000) GS:ffff888c4f600000(0000) knlGS:0000000000000000
-> [   28.796113] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   28.801858] CR2: 0000000000000000 CR3: 0000000100120003 CR4: 00000000007706f0
-> [   28.808983] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [   28.816114] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [   28.823239] PKRU: 55555554
-> [   28.825952] Call Trace:
-> [   28.828412]  path_openat+0xaa8/0x10a0
-> [   28.832073]  do_filp_open+0x91/0x100
-> [   28.835653]  ? acpi_os_wait_semaphore+0x48/0x80
-> [   28.840186]  ? __check_object_size+0x136/0x160
-> [   28.844631]  do_sys_openat2+0x20d/0x2e0
-> [   28.848470]  do_sys_open+0x44/0x80
-> [   28.851878]  do_syscall_64+0x33/0x40
-> [   28.855457]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [   28.860509] RIP: 0033:0x7ff54c1521ae
-> [   28.864086] Code: 25 00 00 41 00 3d 00 00 41 00 74 48 48 8d 05 59 65 0d 00 8b 00 85 c0 75 69 89 f2 b8 01 01 00 00 48 89 fe bf 9c ff ff ff 0f 05 <48> 3d 00 f0 ff ff 0f 87 a6 00 00 00 48 8b 4c 24 28 64 48 33 0c 25
-> [   28.882833] RSP: 002b:00007ffd1c9586d0 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-> [   28.890399] RAX: ffffffffffffffda RBX: 00007ffd1c9587d0 RCX: 00007ff54c1521ae
-> [   28.897531] RDX: 0000000000080000 RSI: 00007ff54bfa0e5a RDI: 00000000ffffff9c
-> [   28.904662] RBP: 00007ffd1c9587d8 R08: 000000000000021f R09: 000055f837cf4290
-> [   28.911796] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000056dd9000
-> [   28.918927] R13: 00000000ffffffff R14: 00007ffd1c9587d0 R15: 0000000000000002
-> [   28.926060] Modules linked in: ip_tables
-> [   28.929986] CR2: 0000000000000000
-> mDebian GNU/Linu
-> [   28.933416] ---[ end trace 94e4f9aa3df66098 ]---
-> [   28.939355] RIP: 0010:do_dentry_open+0x1c9/0x360
-> [   28.943975] Code: 84 82 01 00 00 81 ca 00 00 04 00 89 53 44 48 8b 83 f0 00 00 00 81 63 40 3f fc ff ff 48 8d bb 98 00 00 00 c7 43 34 00 00 00 00 <48> 8b 00 48 8b 70 30 e8 2b cb f4 ff f6 43 41 40 74 5a 48 8b 83 f0
-> [   28.962721] RSP: 0018:ffffc9000006fcc8 EFLAGS: 00010206
-> [   28.967948] RAX: 0000000000000000 RBX: ffff8881502ad400 RCX: 0000000000000000
-> [   28.975079] RDX: 00000000000a201d RSI: ffffffff8284d260 RDI: ffff8881502ad498
-> [   28.982211] RBP: ffff88a485a06490 R08: 0000000000000000 R09: ffffffff8284d260
-> [   28.989337] R10: ffffc9000006fcc8 R11: 756c6176006d656d R12: 0000000000000000
-> [   28.996467] R13: ffffffff8133ddc0 R14: ffff8881502ad410 R15: ffff8881502ad400
-> [   29.003592] FS:  00007ff54afa1940(0000) GS:ffff888c4f600000(0000) knlGS:0000000000000000
-> [   29.011668] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   29.017409] CR2: 0000000000000000 CR3: 0000000100120003 CR4: 00000000007706f0
-> [   29.024539] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [   29.031671] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [   29.038804] PKRU: 55555554
-> [   29.041508] Kernel panic - not syncing: Fatal exception
-> ACPI MEMORY or I/O RESET_REG.
-> 
-> 
-> To reproduce:
-> 
->          git clone https://github.com/intel/lkp-tests.git
->          cd lkp-tests
->          bin/lkp install job.yaml  # job file is attached in this email
->          bin/lkp run     job.yaml
-> 
-> 
-> 
-> Thanks,
-> oliver.sang@intel.com
-> 
-
-thanks,
 -- 
-John Hubbard
-NVIDIA
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
