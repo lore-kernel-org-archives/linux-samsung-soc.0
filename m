@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D6BC61DD8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFCAC5DF9D
 	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 09:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C411422464
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 09:30:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CA4322450
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 09:30:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbgKCJaV (ORCPT
+        id S1727570AbgKCJaX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 04:30:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36900 "EHLO mx2.suse.de"
+        Tue, 3 Nov 2020 04:30:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37260 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726690AbgKCJaU (ORCPT
+        id S1725988AbgKCJaW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 04:30:20 -0500
+        Tue, 3 Nov 2020 04:30:22 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 7528AACF5;
-        Tue,  3 Nov 2020 09:30:18 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id A7AA5B135;
+        Tue,  3 Nov 2020 09:30:20 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     maarten.lankhorst@linux.intel.com, mripard@kernel.org,
         airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
@@ -50,11 +50,10 @@ Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         nouveau@lists.freedesktop.org, spice-devel@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, xen-devel@lists.xenproject.org,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH v7 01/10] drm/vram-helper: Remove invariant parameters from internal kmap function
-Date:   Tue,  3 Nov 2020 10:30:06 +0100
-Message-Id: <20201103093015.1063-2-tzimmermann@suse.de>
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v7 04/10] drm/exynos: Remove empty exynos_drm_gem_prime_{vmap,vunmap}()
+Date:   Tue,  3 Nov 2020 10:30:09 +0100
+Message-Id: <20201103093015.1063-5-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.29.0
 In-Reply-To: <20201103093015.1063-1-tzimmermann@suse.de>
 References: <20201103093015.1063-1-tzimmermann@suse.de>
@@ -65,69 +64,62 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The parameters map and is_iomem are always of the same value. Removed them
-to prepares the function for conversion to struct dma_buf_map.
-
-v4:
-	* don't check for !kmap->virtual; will always be false
+The functions exynos_drm_gem_prime_{vmap,vunmap}() are empty. Remove
+them before changing the interface to use struct drm_buf_map. As a side
+effect of removing drm_gem_prime_vmap(), the error code changes from
+ENOMEM to EOPNOTSUPP.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Reviewed-by: Christian König <christian.koenig@amd.com>
+Acked-by: Christian König <christian.koenig@amd.com>
 Tested-by: Sam Ravnborg <sam@ravnborg.org>
 ---
- drivers/gpu/drm/drm_gem_vram_helper.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_gem.c | 12 ------------
+ drivers/gpu/drm/exynos/exynos_drm_gem.h |  2 --
+ 2 files changed, 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
-index 16d68c04ea5d..e305fadb8bc8 100644
---- a/drivers/gpu/drm/drm_gem_vram_helper.c
-+++ b/drivers/gpu/drm/drm_gem_vram_helper.c
-@@ -378,32 +378,22 @@ int drm_gem_vram_unpin(struct drm_gem_vram_object *gbo)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index 4afbf5109cbf..4396224227d1 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -135,8 +135,6 @@ static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
+ static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs = {
+ 	.free = exynos_drm_gem_free_object,
+ 	.get_sg_table = exynos_drm_gem_prime_get_sg_table,
+-	.vmap = exynos_drm_gem_prime_vmap,
+-	.vunmap	= exynos_drm_gem_prime_vunmap,
+ 	.vm_ops = &exynos_drm_gem_vm_ops,
+ };
+ 
+@@ -469,16 +467,6 @@ exynos_drm_gem_prime_import_sg_table(struct drm_device *dev,
+ 	return &exynos_gem->base;
  }
- EXPORT_SYMBOL(drm_gem_vram_unpin);
  
--static void *drm_gem_vram_kmap_locked(struct drm_gem_vram_object *gbo,
--				      bool map, bool *is_iomem)
-+static void *drm_gem_vram_kmap_locked(struct drm_gem_vram_object *gbo)
- {
- 	int ret;
- 	struct ttm_bo_kmap_obj *kmap = &gbo->kmap;
-+	bool is_iomem;
- 
- 	if (gbo->kmap_use_count > 0)
- 		goto out;
- 
--	if (kmap->virtual || !map)
--		goto out;
+-void *exynos_drm_gem_prime_vmap(struct drm_gem_object *obj)
+-{
+-	return NULL;
+-}
 -
- 	ret = ttm_bo_kmap(&gbo->bo, 0, gbo->bo.num_pages, kmap);
- 	if (ret)
- 		return ERR_PTR(ret);
+-void exynos_drm_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
+-{
+-	/* Nothing to do */
+-}
+-
+ int exynos_drm_gem_prime_mmap(struct drm_gem_object *obj,
+ 			      struct vm_area_struct *vma)
+ {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.h b/drivers/gpu/drm/exynos/exynos_drm_gem.h
+index 74e926abeff0..a23272fb96fb 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.h
+@@ -107,8 +107,6 @@ struct drm_gem_object *
+ exynos_drm_gem_prime_import_sg_table(struct drm_device *dev,
+ 				     struct dma_buf_attachment *attach,
+ 				     struct sg_table *sgt);
+-void *exynos_drm_gem_prime_vmap(struct drm_gem_object *obj);
+-void exynos_drm_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
+ int exynos_drm_gem_prime_mmap(struct drm_gem_object *obj,
+ 			      struct vm_area_struct *vma);
  
- out:
--	if (!kmap->virtual) {
--		if (is_iomem)
--			*is_iomem = false;
--		return NULL; /* not mapped; don't increment ref */
--	}
- 	++gbo->kmap_use_count;
--	if (is_iomem)
--		return ttm_kmap_obj_virtual(kmap, is_iomem);
--	return kmap->virtual;
-+	return ttm_kmap_obj_virtual(kmap, &is_iomem);
- }
- 
- static void drm_gem_vram_kunmap_locked(struct drm_gem_vram_object *gbo)
-@@ -448,7 +438,7 @@ void *drm_gem_vram_vmap(struct drm_gem_vram_object *gbo)
- 	ret = drm_gem_vram_pin_locked(gbo, 0);
- 	if (ret)
- 		goto err_ttm_bo_unreserve;
--	base = drm_gem_vram_kmap_locked(gbo, true, NULL);
-+	base = drm_gem_vram_kmap_locked(gbo);
- 	if (IS_ERR(base)) {
- 		ret = PTR_ERR(base);
- 		goto err_drm_gem_vram_unpin_locked;
 -- 
 2.29.0
 
