@@ -2,130 +2,163 @@ Return-Path: <SRS0=6Xyg=EJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 686A6C388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 17:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2FFC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 17:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18A18216C4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 17:22:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604424178;
-	bh=nuhB/4sintLQzxwxCT17pYI6UZJrHoBwz0+DQysykcU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=qjb+1eGfuNw73LPMTRMVn71Br1mpMbr44Y+4FdwnU0dnbdR0DXpEeF30ZqDO8XCKH
-	 3Q6iculNt75rZkrS+gHfEC8iXTROqZQNc3cklmx9FuSqyJ7pBnHv/DxwBTcVVqA5m/
-	 TLAGX+9KCzNbx627tbm0ogXuaJH35KMiNEJcgqC8=
+	by mail.kernel.org (Postfix) with ESMTP id 4707C22226
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 17:30:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B16P3B4y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbgKCRWy (ORCPT
+        id S1728241AbgKCRaz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 12:22:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45358 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727323AbgKCRWy (ORCPT
+        Tue, 3 Nov 2020 12:30:55 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:33507 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727901AbgKCRaz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 12:22:54 -0500
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CC8922264;
-        Tue,  3 Nov 2020 17:22:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604424173;
-        bh=nuhB/4sintLQzxwxCT17pYI6UZJrHoBwz0+DQysykcU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=B20/5fh25nwLzmTpD5b9hwR2s1AoKsI4d8mSqOJiae5rj9+zXJhV7hOcTb1W3tHRX
-         6aSpQoEHR2qW+Q06enA9bT0sb3ikeKGVoBjvsBSmSL0BA1SdDcdpl74ILitvwBCFJY
-         9CxEwCZ0ulKY4Hh9JzjczNrIPMszTZx9kIAb3pJU=
-Received: by mail-ej1-f41.google.com with SMTP id w13so11855845eju.13;
-        Tue, 03 Nov 2020 09:22:53 -0800 (PST)
-X-Gm-Message-State: AOAM533KUgJeTx3Tfrp8zIq4vqRttnDNCFZMM1D/vTmgVQ30P3YiJDWY
-        QpBdCa8KHlaf9rBP1tn529vHOJ0SK1LI73I9GtQ=
-X-Google-Smtp-Source: ABdhPJzp1lyF41abtZbU7xkRpbqw9yIv88mVCATEX/AZrjpQkucHXAEjzpUgFOFgt3xOMhgVymGjlQjXeXMTCKDx3rM=
-X-Received: by 2002:a17:906:c0c1:: with SMTP id bn1mr1239098ejb.454.1604424171757;
- Tue, 03 Nov 2020 09:22:51 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20201103171326eucas1p25d2ea836878fb2e4f56f31c166243c40@eucas1p2.samsung.com>
- <20201103164423.GE14739@kozik-lap> <dleftjsg9qs6ss.fsf%l.stelmach@samsung.com>
-In-Reply-To: <dleftjsg9qs6ss.fsf%l.stelmach@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 3 Nov 2020 18:22:39 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPdTU74P6PDqPqoW-qF3QkvK_0wXCVSUeuExfQyHZdvcpg@mail.gmail.com>
-Message-ID: <CAJKOXPdTU74P6PDqPqoW-qF3QkvK_0wXCVSUeuExfQyHZdvcpg@mail.gmail.com>
-Subject: Re: [PATCH 5/5] ARM: dts: exynos: Add Ethernet interface description
- for Odroid X/X2
-To:     Lukasz Stelmach <l.stelmach@samsung.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>,
+        Tue, 3 Nov 2020 12:30:55 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201103173043euoutp017928fbc2ee65e3e56161e44d4acd3b41~ED7Z6d81G2406124061euoutp01M
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2020 17:30:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201103173043euoutp017928fbc2ee65e3e56161e44d4acd3b41~ED7Z6d81G2406124061euoutp01M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1604424643;
+        bh=FvqSgYlnEFpwlpU+wYR8aeZGcpfordNaAzo8m3V9k1Y=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=B16P3B4yZ4PwZe4DAHbIVBzZH6QC3vbsujjmIwz+7cVFYP3i7bdhAo14VhyPJK29N
+         orJaX4IRyd0v9xk4A9PS2KKswdJ8bDAJcDQqy7ROUzi7e9O/iXYtG2t0vz8ta44RkQ
+         ATUUmzc3zqqPn3yUrW1wkW1Fb69FVDVdnQqaJavk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201103173042eucas1p11d5610d3ebc068bbe49607afd374e33e~ED7ZSVmqO0494704947eucas1p18;
+        Tue,  3 Nov 2020 17:30:42 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id D0.CD.05997.2C391AF5; Tue,  3
+        Nov 2020 17:30:42 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20201103173042eucas1p2035478a24d6104b5782214d89e1fffd2~ED7Y5y9Zt0590405904eucas1p2J;
+        Tue,  3 Nov 2020 17:30:42 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201103173042eusmtrp2412383902ac65b5e457be582d2c19af7~ED7Y5FUaq2312523125eusmtrp2j;
+        Tue,  3 Nov 2020 17:30:42 +0000 (GMT)
+X-AuditID: cbfec7f4-677ff7000000176d-c9-5fa193c2218e
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id E8.C7.06314.2C391AF5; Tue,  3
+        Nov 2020 17:30:42 +0000 (GMT)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20201103173041eusmtip1884fcdf07c829fed3a1c237954131935~ED7XtsfOD1391313913eusmtip1F;
+        Tue,  3 Nov 2020 17:30:41 +0000 (GMT)
+Subject: Re: [PATCH v7 2/6] interconnect: Add generic interconnect driver
+ for Exynos SoCs
+To:     cwchoi00@gmail.com
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <9081148f-5ed4-97a3-84a9-4ea3eb157b73@samsung.com>
+Date:   Tue, 3 Nov 2020 18:30:40 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.1
+MIME-Version: 1.0
+In-Reply-To: <CAGTfZH3seoTUd68pq+RCSs9BfnmkUaeoipML=85aUPyvcWZ6fw@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA03SfUhTURQA8O7e29tmzZ7T2kFDcRiUomaGPErMInBQ0Af9EUbazIdabsqe
+        mhaRMee3JgrOhukKIhuKKaI5P8Axm2VqWpikMsVRKonKlvhRmttT8r/fveece86By8dEo1xP
+        fpIijVYqZMkSwgVvfb82FGiseBF74vNIGGWpUSOqqaqRS32z/+RSP3oDqFrTIJf6+nuRoDRd
+        zQQ1NPSWR30xVBOUrcSEqKqhbg7VYJrkUeNP6ghK3WXiUVUVc0TkQWm7dpInbdYXENKJ0U5C
+        aikyc6SlLXoktTV7XyGiXcLj6eSkDFoZHHHbJbFrqQBL7dqfuaxZ4GSjekEhEvCBPAXDlk7k
+        sIisQzDWLmdtR9C+hRUil23bEPwa03F3CzT5+Tw28BpB0V/9TtYyAvvwDObIcidvwnSFwWkP
+        8jC0VVqRIwkjN3FYNeQ5+xFkCJT0ljotJCOgbmOa4zBO+kH5RDfu8CEyBsqacnA2xw0+PLM6
+        LSCvwpv5PKcxUgzfrbUc1j7QtlDtnAjINR6MVU7i7NwXoEKlQqzdYd7cwmN9BLbaHcWOAhWC
+        4o5xHnsoQ2Ax63YqzsDE4DpRiPjbLY5DoyHYQSDPwYjpGEtXGFtwY2dwhfJWDcZeCyE/V8S+
+        4Qcbeg2HtScUWbfwMiTR7tlMu2cb7Z5ttP/b6hCuR2I6nZEn0MxJBX0/iJHJmXRFQtCdFHkz
+        2v5t/Ztm+ztk+BNnRCQfSQ4II2ldrIgry2Cy5EYEfEziITw/0B8jEsbLsh7QypRYZXoyzRiR
+        Fx+XiIWhL+duicgEWRp9j6ZTaeVulMMXeGajhIc5i30+hhbPlKnis7ZQIxb4uMbDPqPySlcq
+        1JcyVa711/vXOzL1I3FRPasd488brklCWtOii3r2zQas9PkuLJE6dV0YFTZrm7KPJnoP2AM8
+        knz1wxdFi1nGT0+jHl2+y0nRCl9FhByN+5gbu+nvusL4hQdor6j9025YTou9JTiTKAvxx5SM
+        7B+rFaUcaQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJIsWRmVeSWpSXmKPExsVy+t/xu7qHJi+MN1i8UM7i/rxWRouNM9az
+        Wlz/8pzV4tlRbYv5R86xWlz5+p7NYvreTWwW589vYLe4vGsOm8Xn3iOMFjPO72OyWHvkLrvF
+        7cYVbBate4+wW8yY/JLNgd9j56y77B6bVnWyedy5tofN4373cSaPvi2rGD0+b5ILYIvSsynK
+        Ly1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy9j7oZO5YC93
+        xcfpb5kaGNdwdjFyckgImEhM7+hg72Lk4hASWMoosaf1G0sXIwdQQkpifosSRI2wxJ9rXWwQ
+        Ne8ZJZ58uw5WIywQLTH1gyNIjYiAmMT2aU8YQWqYBVpYJW6feMEE0fCBSWLtjX5WkCo2AUOJ
+        3qN9jCA2r4CdxIrfD5lAbBYBFYlJd/axgNiiAnESPyb2skHUCEqcnPkELM4pECix8lU7mM0s
+        oC7xZ94lZghbXOLWk/lMELa8xPa3c5gnMArNQtI+C0nLLCQts5C0LGBkWcUoklpanJueW2yo
+        V5yYW1yal66XnJ+7iREYzduO/dy8g/HSxuBDjAIcjEo8vA6pC+KFWBPLiitzDzFKcDArifA6
+        nT0dJ8SbklhZlVqUH19UmpNafIjRFOi5icxSosn5wESTVxJvaGpobmFpaG5sbmxmoSTO2yFw
+        MEZIID2xJDU7NbUgtQimj4mDU6qBcZbX0orpmRZaKTuYy/U3fVNjf/aUS1Hz7+PpvxMyYrpm
+        XL146Laon9UkHhvjpcy7OzkfNFy+eWtSbYHFwSjRwmzVhdzsjFcazYMiBNil7nm8y0tOMEy3
+        1skyYf5icCLxTbzH1eNLvu9ru7/saV7jnUaWfyeFTZZ13p4lEr+O6+wKX/3f3/snKbEUZyQa
+        ajEXFScCAHCh7nv8AgAA
+X-CMS-MailID: 20201103173042eucas1p2035478a24d6104b5782214d89e1fffd2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20201030125301eucas1p218b0e654cb4c826b05280f28836da8d9
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201030125301eucas1p218b0e654cb4c826b05280f28836da8d9
+References: <20201030125149.8227-1-s.nawrocki@samsung.com>
+        <CGME20201030125301eucas1p218b0e654cb4c826b05280f28836da8d9@eucas1p2.samsung.com>
+        <20201030125149.8227-3-s.nawrocki@samsung.com>
+        <88af4e53-6c7a-c2e6-ad28-a9d6bb5bf623@samsung.com>
+        <6cc9a2f8-9d9a-68b7-9f47-e16fefb18d88@samsung.com>
+        <CAGTfZH3seoTUd68pq+RCSs9BfnmkUaeoipML=85aUPyvcWZ6fw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 3 Nov 2020 at 18:13, Lukasz Stelmach <l.stelmach@samsung.com> wrote=
-:
->
-> It was <2020-11-03 wto 17:44>, when Krzysztof Kozlowski wrote:
-> > On Tue, Nov 03, 2020 at 01:46:18PM +0100, =C5=81ukasz Stelmach wrote:
-> >> Add Ethernet interface description for Odroid X/X2.
-> >>
-> >> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
-> >> ---
-> >>  arch/arm/boot/dts/exynos4412-odroidx.dts | 28 +++++++++++++++++++++++=
-+
-> >>  1 file changed, 28 insertions(+)
-> >>
-> >> diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/=
-dts/exynos4412-odroidx.dts
-> >> index 3ea2a0101e80..8f154f431f6c 100644
-> >> --- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-> >> +++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-> >> @@ -15,6 +15,10 @@ / {
-> >>      model =3D "Hardkernel ODROID-X board based on Exynos4412";
-> >>      compatible =3D "hardkernel,odroid-x", "samsung,exynos4412", "sams=
-ung,exynos4";
-> >>
-> >> +    aliases {
-> >> +            ethernet =3D &ethernet;
-> >> +    };
-> >> +
-> >>      memory@40000000 {
-> >>              device_type =3D "memory";
-> >>              reg =3D <0x40000000 0x3FF00000>;
-> >> @@ -72,8 +76,32 @@ &buck8_reg {
-> >>  };
-> >>
-> >>  &ehci {
-> >> +    #address-cells =3D <1>;
-> >> +    #size-cells =3D <0>;
-> >>      phys =3D <&exynos_usbphy 2>;
-> >>      phy-names =3D "hsic0";
-> >> +
-> >> +    hub@2 {
-> >> +            compatible =3D "usb0424,3503";
-> >> +            reg =3D <2>;
-> >> +            #address-cells =3D <1>;
-> >> +            #size-cells =3D <0>;
-> >> +
-> >> +            hub@1 {
-> >> +                    compatible =3D "usb0424:9514";
-> >
-> > Does not look like correct compatible.
->
-> As odd as it may seem (and considering my mistakes) this is correct.
+On 03.11.2020 15:12, Chanwoo Choi wrote:
+>>> I have a question about exynos_icc_get_parent().
+>>> As I checked, this function returns the only one icc_node
+>>> as parent node. But, bus_display dt node in the exynos4412.dtsi
+>>> specifies the two interconnect node as following with bus_leftbus, bus_dmc,
+>>>
+>>> When I checked the return value of exynos_icc_get_parent()
+>>> during probing for bus_display device, exynos_icc_get_parent() function
+>>> only returns 'bus_leftbus' icc_node. Do you need to add two phandle
+>>> of icc node?
+>> Yes, as we use the interconnect consumer bindings we need to specify a path,
+>> i.e. a <initiator, target> pair. When the provider node initializes it will
+>> link itself to that path. Currently the provider driver uses just the first
+>> phandle.
 
-Not the numbers, the format. Comma is needed.
+> As I knew, the interconnect consumer bindings use the two phandles
+> in the interconnect core as you commented. But, in case of this,
+> even if add two phandles with interconnect consuming binding style,
+> the exynos interconnect driver only uses the first phandle.
+> 
+> Instead, I think we better explain this case into a dt-binding
+> document for users.
 
-Best regards,
-Krzysztof
+Fair enough, I'll try to improve the description, do you perhaps have 
+any suggestions?
+
+The DT binding reflects how the hardware structure looks like and the
+fact that the driver currently uses only one of the phandles could be
+considered an implementation detail.
+
+-- 
+Regards,
+Sylwester
