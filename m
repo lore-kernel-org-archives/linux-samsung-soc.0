@@ -2,225 +2,106 @@ Return-Path: <SRS0=6Xyg=EJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F611C388F9
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 15:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1AD4C2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 15:29:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DFCB20757
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 15:18:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D71D223EA
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 15:29:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iCSvQaRc"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="doDInUww"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbgKCPSd (ORCPT
+        id S1728534AbgKCP3a (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 10:18:33 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55083 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728173AbgKCPPx (ORCPT
+        Tue, 3 Nov 2020 10:29:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56700 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728523AbgKCP3a (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 10:15:53 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201103151542euoutp01170820a3afa8875ff7821cbc395a26ff~ECFhE7K0D2034720347euoutp01y
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2020 15:15:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201103151542euoutp01170820a3afa8875ff7821cbc395a26ff~ECFhE7K0D2034720347euoutp01y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604416542;
-        bh=ZTba4AdOdPYDi8vp/FOZDz4jSiA/NsyY2ZVYuq+hr7Y=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=iCSvQaRc2SQDUP2T9k70JjmYuZPKEbDYyUFed0qSavmbaoKYpfpRN8bqyImZiLakN
-         DpIT5vQDPtGbINrND2p3RjDj3OsG+EiahPmMbleCsunjqURR3FAsOILLxhwk600hpe
-         96xqBIh9Yl6dgAQaym0rNIN8w0ndV4Ndckqcniz0=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201103151539eucas1p2a2bbb79dc79d75f19dae42bd2ec83e62~ECFeHxH2l2454424544eucas1p2F;
-        Tue,  3 Nov 2020 15:15:39 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 7A.BB.06456.B1471AF5; Tue,  3
-        Nov 2020 15:15:39 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20201103151538eucas1p2682c895caedc83638c9a99e7f307e42b~ECFdth0NI3058530585eucas1p2x;
-        Tue,  3 Nov 2020 15:15:38 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201103151538eusmtrp2c9ae7f00da49232c784f957f88b735e8~ECFdssTMG0549405494eusmtrp2e;
-        Tue,  3 Nov 2020 15:15:38 +0000 (GMT)
-X-AuditID: cbfec7f2-7efff70000001938-3b-5fa1741b3422
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 0E.8D.06017.A1471AF5; Tue,  3
-        Nov 2020 15:15:38 +0000 (GMT)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20201103151538eusmtip11380aae5dc705f13cbd7f4fea160e325~ECFdiKCUV0103701037eusmtip1O;
-        Tue,  3 Nov 2020 15:15:38 +0000 (GMT)
-From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-To:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
+        Tue, 3 Nov 2020 10:29:30 -0500
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7C73C061A04
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2020 07:29:29 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id b3so13090767wrx.11
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Nov 2020 07:29:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=KAOtHAc1bsJpW+rLliOxjaTckSKYVoP83N5QdT3qSsE=;
+        b=doDInUwwodLhGXQs8awNNS8kXdhdZIg/tUhIdyz9t4xqY/0Mm/CcWlW4ckUbGn63PM
+         nkZKOLW37j2rDl9MyotYFUDWfXtNZQ75o3MbwJ7H3xixJdrQHv0oNn0Lq9pNBCAQ7n7h
+         0EE68rUTJuLMPHJgUkt1zmz2dG6K/4IlcfiC/kd9FUmWn3xD5iWrTE3dFm6HS/ADLV9t
+         1woLUC5MSyOmhYkRCGrGvd+ZLNGAl3aMqCQsppZeegy/sw1+CUg5pugsgGh45ENGXOQ7
+         TBdBtMAiD2bwi4YZjlqLr6KrHWoorUy0Ow7zXD6U04GhFYSQmnT12/sN6/bLqIEJg7qK
+         t7rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=KAOtHAc1bsJpW+rLliOxjaTckSKYVoP83N5QdT3qSsE=;
+        b=o2ndYZ96EiwyjUrPD9718hmum6Tg0fiUyfAo1+k4/AT029GeF7aWPZOanHSsrKUI/b
+         NFfskGxggFuKMKgzt2MKKlHFE3M3uOCUPrCcHhnAKJQH8YfNdhBq/AnxSL3B0JdVQirY
+         4uWLT7RawGQtlo0XO8/U/3UZDnmi7vct0MYEQVwCrEIpMOIG934aFz/5SLkFWnAhSh2l
+         Usl9pNSNGWlpeqlScK+qGvPtIE1hFdEhErODqVZ2QZJkoogL3X54RAabwezC36U5D81o
+         gmogH61gwUJNPU6AjyYprW3gtEho9y0Ppqq8Z7XGw+ED9Ewm/KGaEuM7E/gPL/d0rS5M
+         UX1Q==
+X-Gm-Message-State: AOAM5328iXhpVhU1KJlqVx4huKmqnuZpMr9JL7ZrJn7eAGdUrg4sKsRb
+        5SBhMHi1cJz94j/VNJQRrVzA4g==
+X-Google-Smtp-Source: ABdhPJzjZkSv+KzIvPwjWBSTfMSDm6x9636dav/awqODx24ADwz3jbCIg5PoHjTLCYH52ivoPVhyPA==
+X-Received: by 2002:adf:c101:: with SMTP id r1mr25706240wre.87.1604417368565;
+        Tue, 03 Nov 2020 07:29:28 -0800 (PST)
+Received: from dell.default ([91.110.221.242])
+        by smtp.gmail.com with ESMTPSA id j127sm3491779wma.31.2020.11.03.07.29.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Nov 2020 07:29:27 -0800 (PST)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     lee.jones@linaro.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-Subject: [PATCH v5 0/5] AX88796C SPI Ethernet Adapter
-Date:   Tue,  3 Nov 2020 16:15:31 +0100
-Message-Id: <20201103151536.26472-1-l.stelmach@samsung.com>
-X-Mailer: git-send-email 2.26.2
+        Ben Dooks <ben@simtec.co.uk>, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 14/25] soc: samsung: s3c-pm-check: Fix incorrectly named variable 'val'
+Date:   Tue,  3 Nov 2020 15:28:27 +0000
+Message-Id: <20201103152838.1290217-15-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201103152838.1290217-1-lee.jones@linaro.org>
+References: <20201103152838.1290217-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-Organization: Samsung R&D Institute Poland
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURTldWY6Q7U4jI3eAEJsahSi4s6LKCDRZD4w0fhhggsWmODCZgso
-        +sGmrRKhFlkrUdwC1gWoWAEBY4O4oFQFUVTcUIkIMYoYxLhQpkT+zj33nHfOTR5DcK8pD2ZH
-        fJKgiVfHKqUy0trys22eZ9KpiAX6x67Y3m0jcHVxJYVL7QdIfLK5jcKnvxRTuHPgJYUNPZ8J
-        bLdX0fihNZfCXbYKhC09nRRury+V4mJ7kwTbChoRvtTcTeOWsmn4YGMzHeLOt3c+Ivia810S
-        vs7UTfMW82Epf+VsGl9XOyjhc2vMiB+0eK9jwmUrooXYHSmCxj9om2x7QWsLnVit2ntDN0Km
-        o0KvbOTKALsEWnqvSrKRjOHYCgRVb384h+8IdCcyaHEYRPDk11c0bhka0kvFRTmC9udfnJZe
-        BFn3+0mHSsquAsO5O5RjoWBfEVCpf4McA8E2Iah7lU84VFPZpdBrbKIdmGRnwXWTcYyXs4Hw
-        4mYJKeb5gL78mlTk3eFuyfsxfgrrBxczn45hYlSTdfU44QgA9icNw+YMp3k1GNPtzuJToe92
-        DS1iL/hbd3K0NzOK0+BY3jLRewSBtXTY6Q2El20jUoeGYH2hst5fpFfBBVMOKVrd4NmAu1jB
-        DfKsRYRIy+GQjhPVKrhsaHA+6AE5fRXOMjzYDbXUUTTTNOEw04RjTP9zyxBhRtOFZG1cjKBd
-        GC/sma9Vx2mT42PmRyXEWdDot2v9c/tbLRp6HGlDLIOUk+UhQlkER6lTtKlxNgQMoVTIQx+0
-        buXk0erUfYImIUKTHCtobciTIZXT5YtPf9rCsTHqJGGXICQKmvGthHH1SEem+tCNHQkf+70j
-        j6bOCtt8pYNzPVB/IzMqXGEMbthdVR00V+G2PGBN/7tIlzB9+gfT2g3yb/nVbO33UzN6nw3c
-        8u8pMM/Wd27UuQQMsJbfVqMQNnJuk4HNl6n87uWXqIJ9zkzS6LiuXYtUf2w7AwvDpykqnxft
-        n7OeW4kHd/pKPJWkdrt6oR+h0ar/AXdxEWtyAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xu7pSJQvjDdZ917c4f/cQs8XGGetZ
-        Leacb2GxmH/kHKvFovczWC2uvb3DatH/+DWzxfnzG9gtLmzrY7W4eWgFo8Wmx9dYLS7vmsNm
-        MeP8PiaLQ1P3MlqsPXKX3eLYAjGL1r1H2B0EPS5fu8jssWXlTSaPnbPusntsWtXJ5rF5Sb3H
-        zh2fmTz6tqxi9Pi8SS6AI0rPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/O
-        JiU1J7MstUjfLkEvY+rpY+wFG1Uq9rf9YmlgnCbTxcjJISFgIvH1aztbFyMXh5DAUkaJ45vW
-        ADkcQAkpiZVz0yFqhCX+XOtiA7GFBJ4ySlxsMwSx2QQcJfqXnmAF6RUReMMs0XTvLTuIwyyw
-        j1Fi/9HF7CBVwgKmEs8n7gOzWQRUJXbPmsgMYvMKWEvcPjiTBWKDvET78u1sEHFBiZMzn7CA
-        HMEsoC6xfp4QSJhfQEtiTdN1sHJmoPLmrbOZJzAKzELSMQuhYxaSqgWMzKsYRVJLi3PTc4uN
-        9IoTc4tL89L1kvNzNzEC43TbsZ9bdjB2vQs+xCjAwajEw+uQuiBeiDWxrLgy9xCjBAezkgiv
-        09nTcUK8KYmVValF+fFFpTmpxYcYTYHemcgsJZqcD0wheSXxhqaG5haWhubG5sZmFkrivB0C
-        B2OEBNITS1KzU1MLUotg+pg4OKUaGNfpKD/+ciq187bsevFJ4tlrL2XvdzgZeJb1tbPRuVVP
-        r7xa2NzHv3nhzQL/8g0bLi1r4gzZsK7t46/f1nnb47v6jaWluFgM2BtNhb92RGYdW7BB7Vtd
-        +RHFylf+D/XO1s3b0Obyt2zr1ZLSVWkJa3mNTWd84uu6W32yJWtjZ/96i4OTZX20ApVYijMS
-        DbWYi4oTAVJOnwHpAgAA
-X-CMS-MailID: 20201103151538eucas1p2682c895caedc83638c9a99e7f307e42b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201103151538eucas1p2682c895caedc83638c9a99e7f307e42b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201103151538eucas1p2682c895caedc83638c9a99e7f307e42b
-References: <CGME20201103151538eucas1p2682c895caedc83638c9a99e7f307e42b@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is a driver for AX88796C Ethernet Adapter connected in SPI mode as
-found on ARTIK5 evaluation board. The driver has been ported from a
-v3.10.9 vendor kernel for ARTIK5 board.
+Fixes the following W=1 kernel build warning(s):
 
-Changes in v5:
-  - coding style (local variable declarations)
-  - added spi0 node in the DT binding example and removed
-    interrupt-parent
-  - removed comp module parameter
-  - added CONFIG_SPI_AX88796C_COMPRESSION option to set the initial
-    state of SPI compression
-  - introduced new ethtool tunable "spi-compression" to controll SPI
-    transfer compression
-  - removed unused fields in struct ax88796c_device
-  - switched from using buffers allocated on stack for SPI transfers
-    to DMA safe ones embedded in struct ax_spi and allocated with
-    kmalloc()
+ drivers/soc/samsung/s3c-pm-check.c:162: warning: Function parameter or member 'val' not described in 's3c_pm_runcheck'
+ drivers/soc/samsung/s3c-pm-check.c:162: warning: Excess function parameter 'vak' description in 's3c_pm_runcheck'
 
-Changes in v4:
-  - fixed compilation problems in asix,ax88796c.yaml and in
-  ax88796c_main.c introduced in v3
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ben Dooks <ben@simtec.co.uk>
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/soc/samsung/s3c-pm-check.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v3:
-  - modify vendor-prefixes.yaml in a separate patch
-  - fix several problems in the dt binding
-    - removed unnecessary descriptions and properties
-    - changed the order of entries
-    - fixed problems with missing defines in the example
-  - change (1 << N) to BIT(N), left a few (0 << N)
-  - replace ax88796c_get_link(), ax88796c_get_link_ksettings(),
-    ax88796c_set_link_ksettings(), ax88796c_nway_reset(),
-    ax88796c_set_mac_address() with appropriate kernel functions.
-  - disable PHY auto-polling in MAC and use PHYLIB to track the state
-    of PHY and configure MAC
-  - propagate return values instead of returning constants in several
-    places
-  - add WARN_ON() for unlocked mutex
-  - remove local work queue and use the system_wq
-  - replace phy_connect_direct() with phy_connect() and move
-    devm_register_netdev() to the end of ax88796c_probe()
-    (Unlike phy_connect_direct() phy_connect() does not crash if the
-    network device isn't registered yet.)
-  - remove error messages on ENOMEM
-  - move free_irq() to the end of ax88796c_close() to avoid race
-    condition
-  - implement flow-control
-
-Changes in v2:
-  - use phylib
-  - added DT bindings
-  - moved #includes to *.c files
-  - used mutex instead of a semaphore for locking
-  - renamed some constants
-  - added error propagation for several functions
-  - used ethtool for dumping registers
-  - added control over checksum offloading
-  - remove vendor specific PM
-  - removed macaddr module parameter and added support for reading a MAC
-    address from platform data (e.g. DT)
-  - removed dependency on SPI from NET_VENDOR_ASIX
-  - added an entry in the MAINTAINERS file
-  - simplified logging with appropriate netif_* and netdev_* helpers
-  - lots of style fixes
-
-Łukasz Stelmach (5):
-  dt-bindings: vendor-prefixes: Add asix prefix
-  dt-bindings: net: Add bindings for AX88796C SPI Ethernet Adapter
-  net: ax88796c: ASIX AX88796C SPI Ethernet Adapter Driver
-  ARM: dts: exynos: Add Ethernet to Artik 5 board
-  ARM: defconfig: Enable ax88796c driver
-
- .../bindings/net/asix,ax88796c.yaml           |   73 ++
- .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
- MAINTAINERS                                   |    6 +
- arch/arm/boot/dts/exynos3250-artik5-eval.dts  |   29 +
- arch/arm/configs/exynos_defconfig             |    2 +
- arch/arm/configs/multi_v7_defconfig           |    2 +
- drivers/net/ethernet/Kconfig                  |    1 +
- drivers/net/ethernet/Makefile                 |    1 +
- drivers/net/ethernet/asix/Kconfig             |   35 +
- drivers/net/ethernet/asix/Makefile            |    6 +
- drivers/net/ethernet/asix/ax88796c_ioctl.c    |  235 ++++
- drivers/net/ethernet/asix/ax88796c_ioctl.h    |   26 +
- drivers/net/ethernet/asix/ax88796c_main.c     | 1132 +++++++++++++++++
- drivers/net/ethernet/asix/ax88796c_main.h     |  561 ++++++++
- drivers/net/ethernet/asix/ax88796c_spi.c      |  109 ++
- drivers/net/ethernet/asix/ax88796c_spi.h      |   70 +
- include/uapi/linux/ethtool.h                  |    1 +
- net/ethtool/common.c                          |    1 +
- 18 files changed, 2292 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/asix,ax88796c.yaml
- create mode 100644 drivers/net/ethernet/asix/Kconfig
- create mode 100644 drivers/net/ethernet/asix/Makefile
- create mode 100644 drivers/net/ethernet/asix/ax88796c_ioctl.c
- create mode 100644 drivers/net/ethernet/asix/ax88796c_ioctl.h
- create mode 100644 drivers/net/ethernet/asix/ax88796c_main.c
- create mode 100644 drivers/net/ethernet/asix/ax88796c_main.h
- create mode 100644 drivers/net/ethernet/asix/ax88796c_spi.c
- create mode 100644 drivers/net/ethernet/asix/ax88796c_spi.h
-
+diff --git a/drivers/soc/samsung/s3c-pm-check.c b/drivers/soc/samsung/s3c-pm-check.c
+index ff3e099fc2080..439d5c3725125 100644
+--- a/drivers/soc/samsung/s3c-pm-check.c
++++ b/drivers/soc/samsung/s3c-pm-check.c
+@@ -151,7 +151,7 @@ static inline int in_region(void *ptr, int size, void *what, size_t whatsz)
+ /**
+  * s3c_pm_runcheck() - helper to check a resource on restore.
+  * @res: The resource to check
+- * @vak: Pointer to list of CRC32 values to check.
++ * @val: Pointer to list of CRC32 values to check.
+  *
+  * Called from the s3c_pm_check_restore() via s3c_pm_run_sysram(), this
+  * function runs the given memory resource checking it against the stored
 -- 
-2.26.2
+2.25.1
 
