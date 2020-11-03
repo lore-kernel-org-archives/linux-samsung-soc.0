@@ -2,321 +2,453 @@ Return-Path: <SRS0=6Xyg=EJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E1DC388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 07:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EF7C2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 07:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB0082222B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 07:40:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kYwMd2kY"
+	by mail.kernel.org (Postfix) with ESMTP id 1105F2222B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 07:53:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604390028;
+	bh=IcBOJsZTM9IvkZ2UlKKAmsnTdjFjbpiJIHI4UJNzZ6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=TKvYa3My9nL533Pc2xOOtRI0VQjDwlIpk4HmALZX7yEzNRMRyqaMXdJYHp48Vb9WS
+	 lSsl0iQskqjEQryfRkGoIg/0Diyu1JYnUNTFFanIRdPsWaj+WIiynquditI4F2GXwA
+	 U4FpNXqPBKNmBv4zqlhxLk9762jA5SaDgGZQ8e9s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727933AbgKCHkY (ORCPT
+        id S1727567AbgKCHxr convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 02:40:24 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:30317 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727929AbgKCHkX (ORCPT
+        Tue, 3 Nov 2020 02:53:47 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39195 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbgKCHxr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 02:40:23 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20201103074019epoutp02c389325d6f0c41f474d7a6c4044b49ac~D736LBnvH0688006880epoutp02j
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2020 07:40:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20201103074019epoutp02c389325d6f0c41f474d7a6c4044b49ac~D736LBnvH0688006880epoutp02j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604389219;
-        bh=CpF6fCF9Ej0ij/j844g6OegZ8bzLWvldVIAiixTTzuk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=kYwMd2kYj/NbacFbm14RcKCzzulfYCis7n5bXogy/ZLAsveI3oplGEKbP9UsGBY2c
-         qlnUjl9NzIukhMTFIKLYJg8lraTESoyVu4OR271Kd7NZhdTLpl0NhlLXHY1Hg7ud+v
-         Tx+Hav5vyQeWqHo80aNvFOBayNiT5ON8KfoQCwiU=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201103074017epcas1p1b207204cd37afa270e8a46facd41e4be~D734TStBW0499404994epcas1p1u;
-        Tue,  3 Nov 2020 07:40:17 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.153]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4CQMBk4HnTzMqYkZ; Tue,  3 Nov
-        2020 07:40:14 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4C.E5.09582.E5901AF5; Tue,  3 Nov 2020 16:40:14 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201103074012epcas1p1b0711cfde3b20238de9aaf0b1db41551~D730ZK_l_2387723877epcas1p1L;
-        Tue,  3 Nov 2020 07:40:12 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201103074012epsmtrp1a6ff7644cedb15b2e7b251b8f1a27e0e~D730YVpGB1889518895epsmtrp1c;
-        Tue,  3 Nov 2020 07:40:12 +0000 (GMT)
-X-AuditID: b6c32a37-e2fb8a800000256e-78-5fa1095e8fbd
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D8.28.13470.C5901AF5; Tue,  3 Nov 2020 16:40:12 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201103074012epsmtip1a2909f0f02ca079f4e5362d7a0f3512f~D73z96PRA0898008980epsmtip1p;
-        Tue,  3 Nov 2020 07:40:12 +0000 (GMT)
-Subject: Re: [PATCH v7 0/6] Exynos: Simple QoS for exynos-bus using
- interconnect
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        georgi.djakov@linaro.org, krzk@kernel.org
-Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
-        a.swigon@samsung.com, myungjoo.ham@samsung.com,
-        inki.dae@samsung.com, sw0312.kim@samsung.com,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <b586c2b7-9ca1-e641-b70c-27493ffd05e0@samsung.com>
-Date:   Tue, 3 Nov 2020 16:54:10 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Tue, 3 Nov 2020 02:53:47 -0500
+Received: by mail-wr1-f66.google.com with SMTP id y12so17367573wrp.6;
+        Mon, 02 Nov 2020 23:53:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=N9gY5Gecsj+pVHqsKvO/SJ65W0y0uTMLHo/A36xtoSE=;
+        b=IGRSLnEgA1fNFA4wmDLcqZUhiRFU71o3xXfSuZDj8MOJvtHA0c66OrNYrstPBD3Jgr
+         mUuBWL9gYqhX0aIAijzWwj6pN81cpI19LW0B4kx/Sq1egUOE7FmyqaNXSttnybdUXfkl
+         kS0/TqMqkUyrZLbPzwcVtAXh7NiGdWf2m/7uFM6bAv1uy7g/tTEK/xWHnGCy7bcc+83S
+         JjRkx8AEhGkCut7kFoRbJCQpiy9tn/ge3ShRBqJ7De9ue8j+XSIU4LlcRw2k1Sd9jNc9
+         hiIjN30638avzmy/NyTlndIt40S8gdcuIgS1Rco0h4Iitd605gwKPMnTJ6FynpIneST5
+         s6fg==
+X-Gm-Message-State: AOAM532F6ZNbH9w8zlqsNsXH0OnGIqof5q7xoNbFi7CG1rGqUpaOIfx5
+        IgEjojZy9tbXTERLoaI7saRWWeKzKOsZiA==
+X-Google-Smtp-Source: ABdhPJz9sr/1DgPnfkl3B81x1iD1CY7saTYctJN/PkUMql8gBCzydYvCiAL+bQQB7R/3Z32m6F0ehg==
+X-Received: by 2002:a5d:4d8b:: with SMTP id b11mr24302557wru.110.1604390023333;
+        Mon, 02 Nov 2020 23:53:43 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id m4sm25482667wrr.47.2020.11.02.23.53.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Nov 2020 23:53:42 -0800 (PST)
+Date:   Tue, 3 Nov 2020 08:53:40 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Martin Juecker <martin.juecker@gmail.com>
+Cc:     linux-samsung-soc@vger.kernel.org, kgene@kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/5] ARM: dts: add Samsung's exynos4412-based p4note
+ boards
+Message-ID: <20201103075340.GB3599@kozik-lap>
+References: <20201031175836.47745-1-martin.juecker@gmail.com>
+ <20201031175836.47745-3-martin.juecker@gmail.com>
+ <20201102191845.GA64695@kozik-lap>
+ <20201102212118.GA2366@adroid>
 MIME-Version: 1.0
-In-Reply-To: <20201030125149.8227-1-s.nawrocki@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPJsWRmVeSWpSXmKPExsWy7bCmnm4c58J4g0Odihb357UyWmycsZ7V
-        Yv6Rc6wWV76+Z7OYvncTm8Wk+xNYLM6f38BucXnXHDaLz71HGC1mnN/HZLH2yF12i9uNK9gs
-        WvceYbc4/Kad1WLG5JdsDvwem1Z1snncubaHzeN+93Emj74tqxg9Pm+SC2CNyrbJSE1MSS1S
-        SM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMATpXSaEsMacUKBSQWFys
-        pG9nU5RfWpKqkJFfXGKrlFqQklNgWaBXnJhbXJqXrpecn2tlaGBgZApUmJCdsebxIuaCbR4V
-        CxZ+YGtgbDPuYuTkkBAwkZixdjJbFyMXh5DADkaJPYfXskI4nxglJn35DpX5xijx+MscRpiW
-        RX/+QlXtZZSYc/orE4TznlFi3+wfbCBVwgJBEmsntgN1cHCICMRIrH8XARJmFjjBJHHkjiCI
-        zSagJbH/xQ2wcn4BRYmrPx6DLeAVsJM4secBE0gri4CKxJ1JtiBhUYEwiZPbWqBKBCVOznzC
-        AmJzClhLdHXeYIIYLy5x68l8KFteonnrbGaQ0yQEbnBIvD20hQniAReJNYtOs0LYwhKvjm9h
-        h7ClJF72t0HZ1RIrTx5hg2juYJTYsv8CVIOxxP6lk8GOYxbQlFi/Sx8irCix8/dcRojFfBLv
-        vvawgpRICPBKdLQJQZQoS1x+cBfqBEmJxe2dbBMYlWYheWcWkhdmIXlhFsKyBYwsqxjFUguK
-        c9NTiw0LjJEjexMjOCVrme9gnPb2g94hRiYOxkOMEhzMSiK8NZHz4oV4UxIrq1KL8uOLSnNS
-        iw8xmgLDdyKzlGhyPjAr5JXEG5oaGRsbW5gYmpkaGiqJ8/7R7ogXEkhPLEnNTk0tSC2C6WPi
-        4JRqYLp1OfzSuhWqtz+curU5h0U/VSsh9mSgXsHDT7EMO7hzb1in53w7t+hC9lodlfYt598l
-        svrO0vtjHKlscZGph22N5FUX4eQ1Qqwe7Oa2aawWclcf1yZ1Tz93/+oquUP3NzdFy2vwRj8r
-        jitp6Ob5srT4ompr7V2R6Debr9jO5vM3S8ws+u/gXWjuzXBrtn8c04sboq3HH3C92z7tSONz
-        eYXQZ793Mt7bUWl5Rb7OtH0787S0jjdRJREqFyNvq2tGb5D83e33RuHJvC2PdnSpflqQf/9z
-        f91rh4JrncwyD/Pfp4osaEi8P+H0jZ7rbSHbmvj6TAU5zfZVXUhoqd7wg5GhY2XY98/OT98V
-        uXV8UmIpzkg01GIuKk4EAFo40gBSBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNIsWRmVeSWpSXmKPExsWy7bCSnG4M58J4g7e3NCzuz2tltNg4Yz2r
-        xfwj51gtrnx9z2Yxfe8mNotJ9yewWJw/v4Hd4vKuOWwWn3uPMFrMOL+PyWLtkbvsFrcbV7BZ
-        tO49wm5x+E07q8WMyS/ZHPg9Nq3qZPO4c20Pm8f97uNMHn1bVjF6fN4kF8AaxWWTkpqTWZZa
-        pG+XwJWx5vEi5oJtHhULFn5ga2BsM+5i5OSQEDCRWPTnL2sXIxeHkMBuRokPB9pYIRKSEtMu
-        HmXuYuQAsoUlDh8uhqh5yyixrOcjI0iNsECQxNqJ7WC2iECMxKnJs1hAipgFTjBJfFz1gAmi
-        o49RYnvXHhaQKjYBLYn9L26wgdj8AooSV388BuvmFbCTOLEHpIGDg0VAReLOJFuQsKhAmMTO
-        JY+ZIEoEJU7OfAI2hlPAWqKr8wZYnFlAXeLPvEvMELa4xK0n86Hi8hLNW2czT2AUnoWkfRaS
-        lllIWmYhaVnAyLKKUTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4PrU0dzBuX/VB7xAj
-        EwfjIUYJDmYlEd6ayHnxQrwpiZVVqUX58UWlOanFhxilOViUxHlvFC6MExJITyxJzU5NLUgt
-        gskycXBKNTCxcn+a6BVo+bN+JrPiXdGrX7cc3qUx5X5e6EzLsNNMxw5Jn/dalafSuLdhXktI
-        ybs7lSL/VrU9L5ufbld9IOQP74/Y2C2z89nOPrsz625i1tbZkwsuz22Ocj93efmtEmMji+ll
-        lb1a658nsj35su5bLFfJ8wzR0uI3i6OiV5tEdM/+c917se4ehj0/l/LfVY9sybuvs7Z26S6z
-        my+3l5hMbZg2d+/U03tcTYX8fi+qnMZQu+nBK0km+1+xmgLmEZ6eHjXt1ptW6oU4tpXtP8nC
-        ppMs6/f9bMLtfFvn6adkBUrEU9zjt39bOu8n52aupm81jydybVG+5LitlrvBaeqao2JfDhZu
-        kp4mMPPKu3XmSizFGYmGWsxFxYkAafLqjT4DAAA=
-X-CMS-MailID: 20201103074012epcas1p1b0711cfde3b20238de9aaf0b1db41551
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201030125221eucas1p14e525f75c4b8dadae04144ce7684d776
-References: <CGME20201030125221eucas1p14e525f75c4b8dadae04144ce7684d776@eucas1p1.samsung.com>
-        <20201030125149.8227-1-s.nawrocki@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20201102212118.GA2366@adroid>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
+On Mon, Nov 02, 2020 at 10:21:18PM +0100, Martin Juecker wrote:
+> On Mon, Nov 02, 2020 at 08:18:45PM +0100, Krzysztof Kozlowski wrote:
+> > On Sat, Oct 31, 2020 at 06:58:34PM +0100, Martin Jücker wrote:
+> > > The p4note family contains a couple of variants of the Galaxy Note 10.1
+> > > tablet with mainly different modems. The GT-N8010/GT-N8013 is the wifi
+> > > only version.
+> > 
+> > The subject is v1. Did you send correct patch?
+> 
+> I probably messed up with git send-email here. I need some more time to
+> get used to it. The patch is indeed v2.
+> 
+> > 
+> > > 
+> > > Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
+> > > ---
+> > >  arch/arm/boot/dts/Makefile                    |    1 +
+> > >  arch/arm/boot/dts/exynos4412-p4note-n8010.dts |   16 +
+> > >  arch/arm/boot/dts/exynos4412-p4note.dtsi      | 1128 +++++++++++++++++
+> > >  3 files changed, 1145 insertions(+)
+> > >  create mode 100644 arch/arm/boot/dts/exynos4412-p4note-n8010.dts
+> > >  create mode 100644 arch/arm/boot/dts/exynos4412-p4note.dtsi
+> > > 
+> > > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> > > index 4572db3fa5ae..951853e55edb 100644
+> > > --- a/arch/arm/boot/dts/Makefile
+> > > +++ b/arch/arm/boot/dts/Makefile
+> > > @@ -195,6 +195,7 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
+> > >  	exynos4412-odroidx.dtb \
+> > >  	exynos4412-odroidx2.dtb \
+> > >  	exynos4412-origen.dtb \
+> > > +	exynos4412-p4note-n8010.dtb \
+> > >  	exynos4412-smdk4412.dtb \
+> > >  	exynos4412-tiny4412.dtb \
+> > >  	exynos4412-trats2.dtb
+> > > diff --git a/arch/arm/boot/dts/exynos4412-p4note-n8010.dts b/arch/arm/boot/dts/exynos4412-p4note-n8010.dts
+> > > new file mode 100644
+> > > index 000000000000..f99358750e01
+> > > --- /dev/null
+> > > +++ b/arch/arm/boot/dts/exynos4412-p4note-n8010.dts
+> > > @@ -0,0 +1,16 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Samsung's Galaxy Note 10.1 - N801x (wifi only version)
+> > > + *
+> > > + * Copyright (c) 2020 Martin Jücker <martin.juecker@gmail.com>
+> > > + */
+> > > +
+> > > +/dts-v1/;
+> > > +#include "exynos4412-p4note.dtsi"
+> > > +
+> > > +/ {
+> > > +	model = "Samsung Galaxy Note 10.1 (GT-N8010/N8013) based on Exynos4412";
+> > > +	compatible = "samsung,n8010", "samsung,p4note", "samsung,exynos4412", "samsung,exynos4";
+> > > +
+> > > +	/* this is the base variant without any kind of modem */
+> > > +};
+> > > diff --git a/arch/arm/boot/dts/exynos4412-p4note.dtsi b/arch/arm/boot/dts/exynos4412-p4note.dtsi
+> > > new file mode 100644
+> > > index 000000000000..15b6acbbecb2
+> > > --- /dev/null
+> > > +++ b/arch/arm/boot/dts/exynos4412-p4note.dtsi
+> > > @@ -0,0 +1,1128 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Samsung's Exynos4412 based p4note device family base DT
+> > > + *
+> > > + * Copyright (c) 2020 Martin Jücker <martin.juecker@gmail.com>
+> > 
+> > Multiple parts of this file look like copied from the existing ones. Few
+> > comments are the same. The v1 duplicated even few minor issues like not
+> > that good naming of nodes.  It looks like it is not only based on
+> > existing sources, but uses parts of them directly.  If it is true, then
+> > include the copyright of original work as well.
+> > https://www.gnu.org/prep/maintain/html_node/Copyright-Notices.html
+> > 
+> 
+> I had a look through multiple files and ended up with a mix of copying
+> and writing nodes myself. Most if not all of the copying is from the
+> midas dt, is it enough to add a note that this file is based on the
+> midas dt or should I go with the same approach like midas and only add
+> the samsung copyright here? I don't care too much what's in the header.
 
-When I tested this patchset on Odroid-U3,
-After setting 0 bps by interconnect[1][2],
-the frequency of devfreq devs sustain the high frequency
-according to the pm qos request.
+In such case we mention that works is based on the file, as you
+suggest, and usually we keep the copyright of original file.
 
-So, I try to find the cause of this situation.
-In result, it seems that interconnect exynos driver
-updates the pm qos request to devfreq device
-during the kernel booting. Do you know why the exynos
-interconnect driver request the pm qos during probe
-without the mixer request?
+> > 
+> > > + */
+> > > +
+> > > +/dts-v1/;
+> > > +#include "exynos4412.dtsi"
+> > > +#include "exynos4412-ppmu-common.dtsi"
+> > > +
+> > > +#include <dt-bindings/clock/maxim,max77686.h>
+> > > +#include <dt-bindings/gpio/gpio.h>
+> > > +#include <dt-bindings/input/linux-event-codes.h>
+> > > +#include <dt-bindings/interrupt-controller/irq.h>
+> > > +#include <dt-bindings/pinctrl/samsung.h>
+> > > +
+> > > +/ {
+> > > +	compatible = "samsung,p4note", "samsung,exynos4412", "samsung,exynos4";
+> > > +
+> > > +	memory@40000000 {
+> > > +		device_type = "memory";
+> > > +		reg = <0x40000000 0x80000000>;
+> > > +	};
+> > > +
+> > > +	chosen {
+> > > +		stdout-path = &serial_2;
+> > > +	};
+> > > +
+> > > +	firmware@204f000 {
+> > > +		compatible = "samsung,secure-firmware";
+> > > +		reg = <0x0204F000 0x1000>;
+> > > +	};
+> > > +
+> > > +	fixed-rate-clocks {
+> > > +		xxti {
+> > > +			compatible = "samsung,clock-xxti";
+> > > +			clock-frequency = <0>;
+> > > +		};
+> > > +
+> > > +		xusbxti {
+> > > +			compatible = "samsung,clock-xusbxti";
+> > > +			clock-frequency = <24000000>;
+> > > +		};
+> > > +	};
+> > > +
+> > > +	gpio-keys {
+> > > +		compatible = "gpio-keys";
+> > > +		pinctrl-names = "default";
+> > > +		pinctrl-0 = <&gpio_keys>;
+> > > +
+> > > +		key-down {
+> > > +			gpios = <&gpx2 2 GPIO_ACTIVE_LOW>;
+> > > +			linux,code = <KEY_VOLUMEDOWN>;
+> > > +			label = "volume down";
+> > > +			debounce-interval = <10>;
+> > > +		};
+> > > +
+> > > +		key-up {
+> > > +			gpios = <&gpx3 3 GPIO_ACTIVE_LOW>;
+> > > +			linux,code = <KEY_VOLUMEUP>;
+> > > +			label = "volume up";
+> > > +			debounce-interval = <10>;
+> > > +		};
+> > > +
+> > > +		key-power {
+> > > +			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
+> > > +			linux,code = <KEY_POWER>;
+> > > +			label = "power";
+> > > +			debounce-interval = <10>;
+> > > +			wakeup-source;
+> > > +		};
+> > > +	};
+> > > +
+> > > +	voltage-regulator-1 {
+> > > +		compatible = "regulator-fixed";
+> > > +		regulator-name = "TSP_LDO1";
+> > > +		pinctrl-names = "default";
+> > > +		pinctrl-0 = <&tsp_reg_gpio_1>;
+> > > +		gpios = <&gpm4 5 GPIO_ACTIVE_HIGH>;
+> > > +		enable-active-high;
+> > > +		regulator-always-on;
+> > > +	};
+> > > +
+> > > +	voltage-regulator-2 {
+> > > +		compatible = "regulator-fixed";
+> > > +		regulator-name = "TSP_LDO2";
+> > > +		pinctrl-names = "default";
+> > > +		pinctrl-0 = <&tsp_reg_gpio_2>;
+> > > +		gpios = <&gpb 5 GPIO_ACTIVE_HIGH>;
+> > > +		enable-active-high;
+> > > +		regulator-always-on;
+> > > +	};
+> > > +
+> > > +	voltage-regulator-3 {
+> > > +		compatible = "regulator-fixed";
+> > > +		regulator-name = "TSP_LDO3";
+> > > +		pinctrl-names = "default";
+> > > +		pinctrl-0 = <&tsp_reg_gpio_3>;
+> > > +		gpios = <&gpb 7 GPIO_ACTIVE_HIGH>;
+> > > +		startup-delay-us = <20000>;
+> > > +		enable-active-high;
+> > > +		regulator-always-on;
+> > > +	};
+> > > +
+> > > +	wlan_pwrseq: sdhci3-pwrseq {
+> > > +		compatible = "mmc-pwrseq-simple";
+> > > +		reset-gpios = <&gpm3 5 GPIO_ACTIVE_LOW>;
+> > > +		pinctrl-0 = <&wifi_reset>;
+> > > +		pinctrl-names = "default";
+> > > +		clocks = <&max77686 MAX77686_CLK_PMIC>;
+> > > +		clock-names = "ext_clock";
+> > > +	};
+> > > +
+> > > +	i2c-gpio-1 {
+> > > +		compatible = "i2c-gpio";
+> > > +		sda-gpios = <&gpy2 4 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> > > +		scl-gpios = <&gpy2 5 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> > > +		i2c-gpio,delay-us = <2>;
+> > > +		#address-cells = <1>;
+> > > +		#size-cells = <0>;
+> > > +
+> > > +		magnetometer@c {
+> > > +			compatible = "asahi-kasei,ak8975";
+> > > +			reg = <0x0c>;
+> > > +			pinctrl-0 = <&ak8975_irq>;
+> > > +			pinctrl-names = "default";
+> > > +			interrupt-parent = <&gpm4>;
+> > > +			interrupts = <7 IRQ_TYPE_EDGE_RISING>;
+> > > +		};
+> > > +	};
+> > > +
+> > > +	i2c-gpio-2 {
+> > > +		compatible = "i2c-gpio";
+> > > +		sda-gpios = <&gpy0 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> > > +		scl-gpios = <&gpy0 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> > > +		i2c-gpio,delay-us = <2>;
+> > > +		#address-cells = <1>;
+> > > +		#size-cells = <0>;
+> > > +
+> > > +		fuel-gauge@36 {
+> > > +			compatible = "maxim,max17042";
+> > > +			reg = <0x36>;
+> > > +			pinctrl-0 = <&fuel_alert_irq>;
+> > > +			pinctrl-names = "default";
+> > > +			interrupt-parent = <&gpx2>;
+> > > +			interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
+> > > +			maxim,rsns-microohm = <10000>;
+> > > +			maxim,over-heat-temp = <600>;
+> > > +			maxim,over-volt = <4300>;
+> > > +		};
+> > > +	};
+> > > +
+> > > +	i2c-gpio-3 {
+> > > +		compatible = "i2c-gpio";
+> > > +		sda-gpios = <&gpm4 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> > > +		scl-gpios = <&gpm4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> > > +		i2c-gpio,delay-us = <5>;
+> > > +		#address-cells = <1>;
+> > > +		#size-cells = <0>;
+> > > +
+> > > +		adc@41 {
+> > > +			compatible = "st,stmpe811";
+> > > +			reg = <0x41>;
+> > > +			pinctrl-0 = <&stmpe_adc_irq>;
+> > > +			pinctrl-names = "default";
+> > > +			interrupt-parent = <&gpx0>;
+> > > +			interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
+> > > +			interrupt-controller;
+> > > +			irq-trigger = <0x1>;
+> > > +			st,adc-freq = <3>;
+> > > +			st,mod-12b = <1>;
+> > > +			st,ref-sel = <0>;
+> > > +			st,sample-time = <3>;
+> > > +
+> > > +			stmpe_adc {
+> > > +				compatible = "st,stmpe-adc";
+> > > +				#io-channel-cells = <1>;
+> > > +				st,norequest-mask = <0x2F>;
+> > > +			};
+> > > +		};
+> > > +	};
+> > > +};
+> > > +
+> > > +&adc {
+> > > +	vdd-supply = <&ldo3_reg>;
+> > > +	/* not verified */
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&bus_dmc {
+> > > +	devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
+> > > +	vdd-supply = <&buck1_reg>;
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&bus_acp {
+> > > +	devfreq = <&bus_dmc>;
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&bus_c2c {
+> > > +	devfreq = <&bus_dmc>;
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&bus_leftbus {
+> > > +	devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
+> > > +	vdd-supply = <&buck3_reg>;
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&bus_rightbus {
+> > > +	devfreq = <&bus_leftbus>;
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&bus_display {
+> > > +	devfreq = <&bus_leftbus>;
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&bus_fsys {
+> > > +	devfreq = <&bus_leftbus>;
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&bus_peri {
+> > > +	devfreq = <&bus_leftbus>;
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&bus_mfc {
+> > > +	devfreq = <&bus_leftbus>;
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&cpu0 {
+> > > +	cpu0-supply = <&buck2_reg>;
+> > > +};
+> > > +
+> > > +&cpu_thermal {
+> > > +	cooling-maps {
+> > > +		map0 {
+> > > +			/* Corresponds to 800MHz at freq_table */
+> > > +			cooling-device = <&cpu0 7 7>, <&cpu1 7 7>, <&cpu2 7 7>, <&cpu3 7 7>;
+> > > +		};
+> > > +		map1 {
+> > > +			/* Corresponds to 200MHz at freq_table */
+> > > +			cooling-device = <&cpu0 13 13>, <&cpu1 13 13>, <&cpu2 13 13>, <&cpu3 13 13>;
+> > 
+> > This is too long. Please split it at 80 with indentation of next line
+> > starting at < from the previous one.
+> > 
+> 
+> Okay
+> 
+> > 
+> > > +		};
+> > > +	};
+> > > +};
+> > > +
+> > > +&exynos_usbphy {
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&fimd {
+> > > +	pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
+> > > +	pinctrl-names = "default";
+> > > +	status = "okay";
+> > > +
+> > > +	display-timings {
+> > > +		timing0 {
+> > > +			clock-frequency = <66666666>;
+> > > +			hactive = <1280>;
+> > > +			vactive = <800>;
+> > > +			hfront-porch = <18>;
+> > > +			hback-porch = <36>;
+> > > +			hsync-len = <16>;
+> > > +			vback-porch = <16>;
+> > > +			vfront-porch = <4>;
+> > > +			vsync-len = <3>;
+> > > +			hsync-active = <1>;
+> > > +		};
+> > > +	};
+> > 
+> > What happened with Marek's comment about this?
+> > 
+> 
+> Should have mentioned it in the introduction mail. I had a look at the
+> simple panel driver and it's not enough for the display in the p4note. I
+> asked Marek in IRC whether it's ok to have this in a separate patch set
+> to have a fully working display and he agreed.
 
-PS. The passive governor has a bug related to PM_QOS interface.
-So, I posted the patch[4].
+Ah, ok.
 
-
-[1] interconnect_graph
-root@localhost:~# cat /sys/kernel/debug/interconnect/interconnect_graph 
-digraph {
-        rankdir = LR
-        node [shape = record]
-        subgraph cluster_1 {
-                label = "soc:bus_dmc"
-                "2:bus_dmc" [label="2:bus_dmc
-                        |avg_bw=0kBps
-                        |peak_bw=0kBps"]
-        }
-        subgraph cluster_2 {
-                label = "soc:bus_leftbus"
-                "3:bus_leftbus" [label="3:bus_leftbus
-                        |avg_bw=0kBps
-                        |peak_bw=0kBps"]
-        }
-        subgraph cluster_3 {
-                label = "soc:bus_display"
-                "4:bus_display" [label="4:bus_display
-                        |avg_bw=0kBps
-                        |peak_bw=0kBps"]
-        }
-        "3:bus_leftbus" -> "2:bus_dmc"
-        "4:bus_display" -> "3:bus_leftbus"
-
-
-[2] interconnect_summary
-root@localhost:~# cat /sys/kernel/debug/interconnect/interconnect_summary 
- node                                  tag          avg         peak
---------------------------------------------------------------------
-bus_dmc                                               0            0
-  12c10000.mixer                         0            0            0
-bus_leftbus                                           0            0
-  12c10000.mixer                         0            0            0
-bus_display                                           0            0
-  12c10000.mixer                         0            0            0
-
-
-[3] devfreq_summary
-root@localhost:~# cat /sys/kernel/debug/devfreq/devfreq_summary 
-dev                            parent_dev                     governor        timer      polling_ms  cur_freq_Hz  min_freq_Hz  max_freq_Hz
------------------------------- ------------------------------ --------------- ---------- ---------- ------------ ------------ ------------
-soc:bus_dmc                    null                           simple_ondemand deferrable         50    400000000    400000000    400000000
-soc:bus_acp                    soc:bus_dmc                    passive         null                0    267000000    100000000    267000000
-soc:bus_c2c                    soc:bus_dmc                    passive         null                0    400000000    100000000    400000000
-soc:bus_leftbus                null                           simple_ondemand deferrable         50    200000000    200000000    200000000
-soc:bus_rightbus               soc:bus_leftbus                passive         null                0    200000000    100000000    200000000
-soc:bus_display                soc:bus_leftbus                passive         null                0    200000000    200000000    200000000
-soc:bus_fsys                   soc:bus_leftbus                passive         null                0    134000000    100000000    134000000
-soc:bus_peri                   soc:bus_leftbus                passive         null                0    100000000     50000000    100000000
-soc:bus_mfc                    soc:bus_leftbus                passive         null                0    200000000    100000000    200000000
-
-
-[4] PM / devfreq: passive: Update frequency when start governor
-https://patchwork.kernel.org/project/linux-pm/patch/20201103070646.18687-1-cw00.choi@samsung.com/
-
-
-On 10/30/20 9:51 PM, Sylwester Nawrocki wrote:
-> 
-> This patchset adds interconnect API support for the Exynos SoC "samsung,
-> exynos-bus" compatible devices, which already have their corresponding
-> exynos-bus driver in the devfreq subsystem.  Complementing the devfreq
-> driver with an interconnect functionality allows to ensure the QoS
-> requirements of devices accessing the system memory (e.g. video processing
-> devices) are fulfilled and aallows to avoid issues like the one discussed
-> in thread [1].
-> 
-> This patch series adds implementation of the interconnect provider per each
-> "samsung,exynos-bus" compatible DT node, with one interconnect node per
-> provider.  The interconnect code which was previously added as a part of
-> the devfreq driver has been converted to a separate platform driver.
-> In the devfreq a corresponding virtual child platform device is registered.
-> Integration of devfreq and interconnect frameworks is achieved through
-> the PM QoS API.
-> 
-> A sample interconnect consumer for exynos-mixer is added in patches 5/6,
-> 6/6, it is currently added only for exynos4412 and allows to address the
-> mixer DMA underrun error issues [1].
-> 
-> Changes since v6:
->  - the interconnect consumer DT bindings are now used to describe dependencies
->    of the interconnects (samsung,exynos-bus nodes),
->  - bus-width property replaced with samsung,data-clk-ratio,
->  - adaptation to recent changes in the interconnect code
->    (of_icc_get_from_provider(), icc_node_add()).
-> 
-> The series has been tested on Odroid U3 board. It is based on v5.10-rc1.
-> 
-> --
-> Regards,
-> Sylwester
-> 
-> 
-> Changes since v5:
->  - addition of "bus-width: DT property, which specifies data width
->    of the interconnect bus (patches 1...2/6),
->  - addition of synchronization of the interconnect bandwidth setting
->    with VSYNC (patch 6/6).
-> 
-> Changes since v3 [4] (v4 skipped to align with patchset [1]), detailed
-> changes are listed in each patch:
->  - conversion to a separate interconnect (platform) driver,
->  - an update of the DT binding documenting new optional properties:
->    #interconnect-cells, samsung,interconnect-parent in "samsung,exynos-bus"
->    nodes,
->  - new DT properties added to the SoC, rather than to the board specific
->    files.
-> 
-> Changes since v2 [5]:
->  - Use icc_std_aggregate().
->  - Implement a different modification of apply_constraints() in
->    drivers/interconnect/core.c (patch 03).
->  - Use 'exynos,interconnect-parent-node' in the DT instead of
->    'devfreq'/'parent', depending on the bus.
->  - Rebase on DT patches that deprecate the 'devfreq' DT property.
->  - Improve error handling, including freeing generated IDs on failure.
->  - Remove exynos_bus_icc_connect() and add exynos_bus_icc_get_parent().
-> 
-> Changes since v1 [6]:
->  - Rebase on coupled regulators patches.
->  - Use dev_pm_qos_*() API instead of overriding frequency in
->    exynos_bus_target().
->  - Use IDR for node ID allocation.
->  - Reverse order of multiplication and division in
->    mixer_set_memory_bandwidth() (patch 07) to avoid integer overflow.
-> 
-> 
-> References:
-> [1] https://patchwork.kernel.org/patch/10861757/ (original issue)
-> [2] https://protect2.fireeye.com/v1/url?k=383efc40-67a5c559-383f770f-000babff3793-a505fcd0b7477e5e&q=1&e=ad8ffb9f-f90b-49a7-a3df-2ab066a8c4ee&u=https%3A%2F%2Fwww.spinics.net%2Flists%2Flinux-samsung-soc%2Fmsg70014.html
-> [3] https://protect2.fireeye.com/v1/url?k=13f0c488-4c6bfd91-13f14fc7-000babff3793-98a59bf1c5c6f1fb&q=1&e=ad8ffb9f-f90b-49a7-a3df-2ab066a8c4ee&u=https%3A%2F%2Fwww.spinics.net%2Flists%2Farm-kernel%2Fmsg810722.html
-> [4] https://lore.kernel.org/linux-pm/20191220115653.6487-1-a.swigon@samsung.com
-> [5] https://patchwork.kernel.org/cover/11054417/ (v1 of this RFC)
-> [6] https://patchwork.kernel.org/cover/11152595/ (v2 of this RFC)
-> 
-> 
-> Artur Świgoń (1):
->   ARM: dts: exynos: Add interconnects to Exynos4412 mixer
-> 
-> Sylwester Nawrocki (5):
->   dt-bindings: devfreq: Add documentation for the interconnect
->     properties
->   interconnect: Add generic interconnect driver for Exynos SoCs
->   PM / devfreq: exynos-bus: Add registration of interconnect child
->     device
->   ARM: dts: exynos: Add interconnect properties to Exynos4412 bus nodes
->   drm: exynos: mixer: Add interconnect support
-> 
->  .../devicetree/bindings/devfreq/exynos-bus.txt     |  68 ++++++-
->  arch/arm/boot/dts/exynos4412.dtsi                  |   7 +
->  drivers/devfreq/exynos-bus.c                       |  17 ++
->  drivers/gpu/drm/exynos/exynos_mixer.c              | 146 ++++++++++++++-
->  drivers/interconnect/Kconfig                       |   1 +
->  drivers/interconnect/Makefile                      |   1 +
->  drivers/interconnect/exynos/Kconfig                |   6 +
->  drivers/interconnect/exynos/Makefile               |   4 +
->  drivers/interconnect/exynos/exynos.c               | 198 +++++++++++++++++++++
->  9 files changed, 438 insertions(+), 10 deletions(-)
->  create mode 100644 drivers/interconnect/exynos/Kconfig
->  create mode 100644 drivers/interconnect/exynos/Makefile
->  create mode 100644 drivers/interconnect/exynos/exynos.c
-> 
-> --
-> 2.7.4
-> 
-> 
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Best regards,
+Krzysztof
