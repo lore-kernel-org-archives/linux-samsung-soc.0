@@ -2,158 +2,238 @@ Return-Path: <SRS0=6Xyg=EJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3D7C2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 09:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B172AC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 10:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8B89223BD
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 09:51:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 262522240C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 10:10:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="P3mG97mX"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="K24Si8Uc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbgKCJv1 (ORCPT
+        id S1727742AbgKCKKk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 04:51:27 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:55801 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726058AbgKCJv0 (ORCPT
+        Tue, 3 Nov 2020 05:10:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34814 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbgKCKKj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 04:51:26 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201103095115euoutp029e2395512bf3389d1f673b15fb2eceee~D9qOqWaAh0378703787euoutp02V
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2020 09:51:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201103095115euoutp029e2395512bf3389d1f673b15fb2eceee~D9qOqWaAh0378703787euoutp02V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604397075;
-        bh=MnhYUgRiyVn2RU1Qy2Y4w9InTkQhtgs6BrcRHBGSfoM=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=P3mG97mXQdN5hJ/jgvIht7ryV7s+5qFQafWhNin9cZNMu4OOXRnPSpwKus9bbAG0d
-         I7K5eZJFvOzGisxXS3WhwQMNpUGFdQ7RGiDK9DZka/S8W4M8/V63MxGmF1AzliLbta
-         AUmnliD/5N+EDCCF1X3jQSp1V5fXbvijaMV7RcmA=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201103095109eucas1p2afb98fb92380eda0c5ebd4dfbb1b097d~D9qJ5E-1b2911529115eucas1p2a;
-        Tue,  3 Nov 2020 09:51:09 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id EE.6A.06318.D0821AF5; Tue,  3
-        Nov 2020 09:51:09 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201103095109eucas1p10f5c14bde52af8ecea147d4dac80f906~D9qJh0xKB3011530115eucas1p17;
-        Tue,  3 Nov 2020 09:51:09 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201103095109eusmtrp1f768dc1ec1bcb83dd3c7f2214129cb4b~D9qJdR4YP1634016340eusmtrp1S;
-        Tue,  3 Nov 2020 09:51:09 +0000 (GMT)
-X-AuditID: cbfec7f5-38bff700000018ae-89-5fa1280d6e98
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E2.60.06017.D0821AF5; Tue,  3
-        Nov 2020 09:51:09 +0000 (GMT)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201103095109eusmtip2062283a33ff507be950ec43d9dc2e29d~D9qJI7H4m3072330723eusmtip2T;
-        Tue,  3 Nov 2020 09:51:09 +0000 (GMT)
-Subject: Re: [PATCH 2/5] ARM: dts: add Samsung's exynos4412-based p4note
- boards
-To:     Martin Juecker <martin.juecker@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-samsung-soc@vger.kernel.org, kgene@kernel.org,
-        devicetree@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <0af4946e-a573-ad5a-5558-de439d49434f@samsung.com>
-Date:   Tue, 3 Nov 2020 10:51:08 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.4.0
+        Tue, 3 Nov 2020 05:10:39 -0500
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CD95C0617A6
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2020 02:10:39 -0800 (PST)
+Received: by mail-wm1-x343.google.com with SMTP id e2so12174492wme.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Nov 2020 02:10:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Q2iVGDvwbSqChDq0/dkBgvJIDSId9+GFlKdyib2L0EU=;
+        b=K24Si8Uc6vQVSy2wlsndOGZEAW8lic4H3kV0FS3sCzoC3jFlNL0S24fbajY9u6/nxD
+         Luku4EoBis5RU0AmT8SRcPZZc5CnfDngM4g/vp/C91xUrNYDvT12+5vlX1NlPjqhF5rB
+         TmCMcIbL6x+h3tHMFhL+6PI9Shhb3BavQyU3I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=Q2iVGDvwbSqChDq0/dkBgvJIDSId9+GFlKdyib2L0EU=;
+        b=DU5dt+kgpEiURzQUoAv7Wxz12pY3WXnc1TZwDCH0VQDo1aYj391o9GZLXDCUcwhwxN
+         LxBsMSLNFWtUhF8hLViUo/yht6oj8dAaWVinrjfffYRM3lWL2xIp1Yn3Ba9f09n+k6UT
+         ufO9akjjbA+lySmS61iagsCcTq7FvWZlh0xfiVbRRtq9qg9ZY4Bv7pQeJMMCP+vm1blo
+         nJZDxsXN65IKMPY+a6NbXwFxtlsNLGwaMO4D4nNaRzPC+40F2wYz5LIC2XCmileTMI5+
+         wpvXQGRYS6PAfovcLmDwXO9UnlnfmXobxx1rBhJyt/WsrMyTmhHwzl8iaLJF4vcIKFIV
+         8k3A==
+X-Gm-Message-State: AOAM533B94oHdvajA5Z5B5gGzyDfgZPf/2o0pbMVOax3MTIl51a64jSf
+        EkzhadeK99Iap2IkEAe3/zY+VA==
+X-Google-Smtp-Source: ABdhPJycR/JZ1/gOnvBPq07Mwf/ndUJhwgkvn6thQFrHMA/88c0D6XAXjSnHPMiTxsU1QZfQKO6neA==
+X-Received: by 2002:a1c:1d51:: with SMTP id d78mr2690418wmd.60.1604398237863;
+        Tue, 03 Nov 2020 02:10:37 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id f13sm26122520wrp.12.2020.11.03.02.10.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Nov 2020 02:10:37 -0800 (PST)
+Date:   Tue, 3 Nov 2020 11:10:35 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     lkp <lkp@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
+        David Hildenbrand <david@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, lkp@lists.01.org
+Subject: Re: [resource] 22b17dc667: Kernel panic - not syncing: Fatal
+ exception
+Message-ID: <20201103101035.GY401619@phenom.ffwll.local>
+Mail-Followup-To: John Hubbard <jhubbard@nvidia.com>, lkp <lkp@intel.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
+        David Hildenbrand <david@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, lkp@lists.01.org
+References: <20201103060649.GA30210@xsang-OptiPlex-9020>
+ <1ec0dee9-e1bb-9cf1-a8c2-ad1e294c5acf@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20201102212118.GA2366@adroid>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKKsWRmVeSWpSXmKPExsWy7djPc7q8GgvjDdY/MrWYf+Qcq0X/49fM
-        FufPb2C3mHF+H5PFmX9TWRxYPXbOusvusWlVJ5vH501yAcxRXDYpqTmZZalF+nYJXBnbN7Uy
-        FXzjrOhaf5ypgfEwexcjJ4eEgInEtbv3mLoYuTiEBFYwSqyesJINJCEk8IVR4vhraYjEZ0aJ
-        Z9faWboYOcA6FlyFalgOFH/9jRHCec8oce7nDFaQbmGBQInnuz4ygdgiAmESKya9ZgJpZhYI
-        ldj92wEkzCZgKNH1tgtsGa+AncSTL6vBWlkEVCR23FgKFhcVSJL4+/kPM0SNoMTJmU9YQGxO
-        AW2JF69PM4LYzALyEtvfzmGGsMUlbj2ZD3achMBkdomzq5uZId50kVi36DorhC0s8er4Fqj3
-        ZSROT+5hgWhoZpR4eG4tO4TTwyhxuWkGI0SVtcSdc7/YID7QlFi/Sx8i7Chx/edjdkio8Enc
-        eCsIcQSfxKRt05khwrwSHW1CENVqErOOr4Nbe/DCJeYJjEqzkLw2C8k7s5C8Mwth7wJGllWM
-        4qmlxbnpqcXGeanlesWJucWleel6yfm5mxiBieX0v+NfdzDu+5N0iFGAg1GJh9chdUG8EGti
-        WXFl7iFGCQ5mJRFep7On44R4UxIrq1KL8uOLSnNSiw8xSnOwKInzGi96GSskkJ5YkpqdmlqQ
-        WgSTZeLglGpgLPbf+vHNj+AJxRrTQpW/hbCx3PyhIF8SqFgZ3a9qvfppcvqRW0Z6YXvm3Xc4
-        3LNrV/yNfyG9MTIBPwTVe/oYjATXyte+28WsxCV36AvTpgMcu1L8b19sUvjBExPhcM1s7t6e
-        0l25jIKiy+6cVqtLK4m3lGe/wpne1qZluDWsWi9e0ShgxmMlluKMREMt5qLiRACXeL/AKAMA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsVy+t/xe7q8GgvjDZ41yFjMP3KO1aL/8Wtm
-        i/PnN7BbzDi/j8nizL+pLA6sHjtn3WX32LSqk83j8ya5AOYoPZui/NKSVIWM/OISW6VoQwsj
-        PUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYztm1qZCr5xVnStP87UwHiYvYuRg0NC
-        wERiwVWmLkYuDiGBpYwSc+51MHYxcgLFZSROTmtghbCFJf5c62KDKHrLKPFqwTt2kISwQKDE
-        810fmUBsEYEwif1tnWDNzAKhEkumX2ABsYUEupkkZuzgA7HZBAwlut6CDOLk4BWwk3jyZTXY
-        AhYBFYkdN5aCxUUFkiReXpjKBFEjKHFy5hOwOZwC2hIvXp+Gmm8mMW/zQ2YIW15i+9s5ULa4
-        xK0n85kmMArNQtI+C0nLLCQts5C0LGBkWcUoklpanJueW2ykV5yYW1yal66XnJ+7iREYS9uO
-        /dyyg7HrXfAhRgEORiUeXofUBfFCrIllxZW5hxglOJiVRHidzp6OE+JNSaysSi3Kjy8qzUkt
-        PsRoCvTcRGYp0eR8YJznlcQbmhqaW1gamhubG5tZKInzdggcjBESSE8sSc1OTS1ILYLpY+Lg
-        lGpgnHyBJSypfmm13ufGCQET+mXdDl5/8cJrv/ZKXfPXbOc3lFXfz3dbGuSufCVsW3d+VvV2
-        41+XyvXZp91qEX4pYzY7K8SHe6H5nt7NL6aueTE/yN5708Xu20rmv71jH6+8rC9xff/ryH81
-        b5WfPVdtLln0NO31yW3T+y/9PGQvriHzLdbwj5Z/vhJLcUaioRZzUXEiABTvj+a7AgAA
-X-CMS-MailID: 20201103095109eucas1p10f5c14bde52af8ecea147d4dac80f906
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201102212129eucas1p1957c9dd5d6c1ebf7c340271a5e501c5b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201102212129eucas1p1957c9dd5d6c1ebf7c340271a5e501c5b
-References: <20201031175836.47745-1-martin.juecker@gmail.com>
-        <20201031175836.47745-3-martin.juecker@gmail.com>
-        <20201102191845.GA64695@kozik-lap>
-        <CGME20201102212129eucas1p1957c9dd5d6c1ebf7c340271a5e501c5b@eucas1p1.samsung.com>
-        <20201102212118.GA2366@adroid>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ec0dee9-e1bb-9cf1-a8c2-ad1e294c5acf@nvidia.com>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Martin,
+On Mon, Nov 02, 2020 at 10:15:40PM -0800, John Hubbard wrote:
+> On 11/2/20 10:06 PM, lkp wrote:
+> > Greeting,
+> > 
+> > FYI, we noticed the following commit (built with gcc-9):
+> > 
+> > commit: 22b17dc667d36418ccabb9c668c4b489185fb40a ("[PATCH v5 13/15] resource: Move devmem revoke code to resource framework")
+> > url: https://github.com/0day-ci/linux/commits/Daniel-Vetter/follow_pfn-and-other-iomap-races/20201030-181112
+> > base: git://linuxtv.org/media_tree.git master
+> > 
+> > in testcase: fsmark
+> > version: fsmark-x86_64-3.3-1_20201007
+> > with following parameters:
+> > 
+> > 	iterations: 1x
+> > 	nr_threads: 1t
+> > 	disk: 1BRD_48G
+> > 	fs: f2fs
+> > 	fs2: nfsv4
+> > 	filesize: 4M
+> > 	test_size: 40G
+> > 	sync_method: NoSync
+> > 	cpufreq_governor: performance
+> > 	ucode: 0x5002f01
+> > 
+> > test-description: The fsmark is a file system benchmark to test synchronous write workloads, for example, mail servers workload.
+> > test-url: https://sourceforge.net/projects/fsmark/
+> > 
+> > 
+> > on test machine: 192 threads Intel(R) Xeon(R) Platinum 9242 CPU @ 2.30GHz with 192G memory
+> > 
+> > caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> > 
+> > 
+> 
+> Yep, this is the same crash that I saw. And the .config also has
+> 
+>   # CONFIG_IO_STRICT_DEVMEM is not set
+> 
+> so it all makes sense.
 
-On 02.11.2020 22:21, Martin Juecker wrote:
-> > ...
->>> +
->>> +&fimd {
->>> +	pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
->>> +	pinctrl-names = "default";
->>> +	status = "okay";
->>> +
->>> +	display-timings {
->>> +		timing0 {
->>> +			clock-frequency = <66666666>;
->>> +			hactive = <1280>;
->>> +			vactive = <800>;
->>> +			hfront-porch = <18>;
->>> +			hback-porch = <36>;
->>> +			hsync-len = <16>;
->>> +			vback-porch = <16>;
->>> +			vfront-porch = <4>;
->>> +			vsync-len = <3>;
->>> +			hsync-active = <1>;
->>> +		};
->>> +	};
->> What happened with Marek's comment about this?
->>
-> Should have mentioned it in the introduction mail. I had a look at the
-> simple panel driver and it's not enough for the display in the p4note. I
-> asked Marek in IRC whether it's ok to have this in a separate patch set
-> to have a fully working display and he agreed.
+New version is on its way, I "just" need to setup ppc cross compiler for
+the kvm part and figure out how to test the media side with the sketch
+tfiga provided ...
+-Daniel
 
-Yes, I agreed that the display can be added later in a separate patch. 
-However in such case I would simply remove the whole fimd node now. 
-Without a panel it is a bit useless imho. With a proper panel driver you 
-will also get rid of the timings subnode, so there is no point adding it 
-now.
-
-Best regards
+> 
+> 
+> > If you fix the issue, kindly add following tag
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > 
+> > 
+> > [   28.644165] systemd[1]: RTC configured in localtime, applying delta of 0 minutes to system time.
+> > 
+> > [   28.699473] #PF: supervisor read access in kernel mode
+> > [   28.704611] #PF: error_code(0x0000) - not-present page
+> > [   28.709749] PGD 0 P4D 0
+> > [   28.712291] Oops: 0000 [#1] SMP NOPTI
+> > [   28.715956] CPU: 0 PID: 1 Comm: systemd Not tainted 5.10.0-rc1-00015-g22b17dc667d3 #1
+> > [   28.723793] RIP: 0010:do_dentry_open+0x1c9/0x360
+> > [   28.728410] Code: 84 82 01 00 00 81 ca 00 00 04 00 89 53 44 48 8b 83 f0 00 00 00 81 63 40 3f fc ff ff 48 8d bb 98 00 00 00 c7 43 34 00 00 00 00 <48> 8b 00 48 8b 70 30 e8 2b cb f4 ff f6 43 41 40 74 5a 48 8b 83 f0
+> > [   28.747157] RSP: 0018:ffffc9000006fcc8 EFLAGS: 00010206
+> > [   28.752380] RAX: 0000000000000000 RBX: ffff8881502ad400 RCX: 0000000000000000
+> > [   28.759506] RDX: 00000000000a201d RSI: ffffffff8284d260 RDI: ffff8881502ad498
+> > [   28.766639] RBP: ffff88a485a06490 R08: 0000000000000000 R09: ffffffff8284d260
+> > [   28.773769] R10: ffffc9000006fcc8 R11: 756c6176006d656d R12: 0000000000000000
+> > [   28.780895] R13: ffffffff8133ddc0 R14: ffff8881502ad410 R15: ffff8881502ad400
+> > [   28.788028] FS:  00007ff54afa1940(0000) GS:ffff888c4f600000(0000) knlGS:0000000000000000
+> > [   28.796113] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   28.801858] CR2: 0000000000000000 CR3: 0000000100120003 CR4: 00000000007706f0
+> > [   28.808983] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > [   28.816114] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > [   28.823239] PKRU: 55555554
+> > [   28.825952] Call Trace:
+> > [   28.828412]  path_openat+0xaa8/0x10a0
+> > [   28.832073]  do_filp_open+0x91/0x100
+> > [   28.835653]  ? acpi_os_wait_semaphore+0x48/0x80
+> > [   28.840186]  ? __check_object_size+0x136/0x160
+> > [   28.844631]  do_sys_openat2+0x20d/0x2e0
+> > [   28.848470]  do_sys_open+0x44/0x80
+> > [   28.851878]  do_syscall_64+0x33/0x40
+> > [   28.855457]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > [   28.860509] RIP: 0033:0x7ff54c1521ae
+> > [   28.864086] Code: 25 00 00 41 00 3d 00 00 41 00 74 48 48 8d 05 59 65 0d 00 8b 00 85 c0 75 69 89 f2 b8 01 01 00 00 48 89 fe bf 9c ff ff ff 0f 05 <48> 3d 00 f0 ff ff 0f 87 a6 00 00 00 48 8b 4c 24 28 64 48 33 0c 25
+> > [   28.882833] RSP: 002b:00007ffd1c9586d0 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+> > [   28.890399] RAX: ffffffffffffffda RBX: 00007ffd1c9587d0 RCX: 00007ff54c1521ae
+> > [   28.897531] RDX: 0000000000080000 RSI: 00007ff54bfa0e5a RDI: 00000000ffffff9c
+> > [   28.904662] RBP: 00007ffd1c9587d8 R08: 000000000000021f R09: 000055f837cf4290
+> > [   28.911796] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000056dd9000
+> > [   28.918927] R13: 00000000ffffffff R14: 00007ffd1c9587d0 R15: 0000000000000002
+> > [   28.926060] Modules linked in: ip_tables
+> > [   28.929986] CR2: 0000000000000000
+> > mDebian GNU/Linu
+> > [   28.933416] ---[ end trace 94e4f9aa3df66098 ]---
+> > [   28.939355] RIP: 0010:do_dentry_open+0x1c9/0x360
+> > [   28.943975] Code: 84 82 01 00 00 81 ca 00 00 04 00 89 53 44 48 8b 83 f0 00 00 00 81 63 40 3f fc ff ff 48 8d bb 98 00 00 00 c7 43 34 00 00 00 00 <48> 8b 00 48 8b 70 30 e8 2b cb f4 ff f6 43 41 40 74 5a 48 8b 83 f0
+> > [   28.962721] RSP: 0018:ffffc9000006fcc8 EFLAGS: 00010206
+> > [   28.967948] RAX: 0000000000000000 RBX: ffff8881502ad400 RCX: 0000000000000000
+> > [   28.975079] RDX: 00000000000a201d RSI: ffffffff8284d260 RDI: ffff8881502ad498
+> > [   28.982211] RBP: ffff88a485a06490 R08: 0000000000000000 R09: ffffffff8284d260
+> > [   28.989337] R10: ffffc9000006fcc8 R11: 756c6176006d656d R12: 0000000000000000
+> > [   28.996467] R13: ffffffff8133ddc0 R14: ffff8881502ad410 R15: ffff8881502ad400
+> > [   29.003592] FS:  00007ff54afa1940(0000) GS:ffff888c4f600000(0000) knlGS:0000000000000000
+> > [   29.011668] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   29.017409] CR2: 0000000000000000 CR3: 0000000100120003 CR4: 00000000007706f0
+> > [   29.024539] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > [   29.031671] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > [   29.038804] PKRU: 55555554
+> > [   29.041508] Kernel panic - not syncing: Fatal exception
+> > ACPI MEMORY or I/O RESET_REG.
+> > 
+> > 
+> > To reproduce:
+> > 
+> >          git clone https://github.com/intel/lkp-tests.git
+> >          cd lkp-tests
+> >          bin/lkp install job.yaml  # job file is attached in this email
+> >          bin/lkp run     job.yaml
+> > 
+> > 
+> > 
+> > Thanks,
+> > oliver.sang@intel.com
+> > 
+> 
+> thanks,
+> -- 
+> John Hubbard
+> NVIDIA
 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
