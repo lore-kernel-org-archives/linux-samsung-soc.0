@@ -2,146 +2,164 @@ Return-Path: <SRS0=6Xyg=EJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A58DFC2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 12:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA55FC388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 12:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 306CD22243
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 12:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B681208B6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 12:46:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fu23NQB5"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Mjx2skEt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbgKCMcx (ORCPT
+        id S1728721AbgKCMqe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 07:32:53 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:57065 "EHLO
+        Tue, 3 Nov 2020 07:46:34 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:33569 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728217AbgKCMcw (ORCPT
+        with ESMTP id S1729032AbgKCMqe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 07:32:52 -0500
+        Tue, 3 Nov 2020 07:46:34 -0500
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201103123241euoutp01c28e6a2ae78bcb75c92e8904c32e4ea3~D-3LtZ53O2104721047euoutp013
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2020 12:32:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201103123241euoutp01c28e6a2ae78bcb75c92e8904c32e4ea3~D-3LtZ53O2104721047euoutp013
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201103124622euoutp0113e6a5ee6f0cd9516cf480a069c475b8~EADII99tF3052430524euoutp01a
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2020 12:46:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201103124622euoutp0113e6a5ee6f0cd9516cf480a069c475b8~EADII99tF3052430524euoutp01a
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604406761;
-        bh=FO7mAP7Ekq36BgVKWcUVqtN7q1o4bEIIQcIDwWwaRx4=;
-        h=Subject:Cc:From:To:Date:In-Reply-To:References:From;
-        b=fu23NQB5xwNS0jqs+Cj6WiAM8WCfnBZWPqzS12EZXPgbT8sWI0ecbiP1q6QlN+/hI
-         glZJPtfB0puMoWZI9Ly480hLRdSg3teCi0VLc8vLwEtvOrd5A8gzUbICX1lzwsF6N2
-         4/i1hKkw+TSa5sxcGhhjb2jh/BD//zCPt3vdekqg=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        s=mail20170921; t=1604407582;
+        bh=ELym5phWgP/cljX2n2rFypr5040wIE4gOG3SDAyZoOM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Mjx2skEtqYd17F9ut9K6iyCO1nkvyhDmZ6RSUjOGbuZwExnZAoRm2mrMKV/fqZKiK
+         GRcf3Ral6gQMfUz3KMbpbUGPXNRBu+bK9CzfDwuud9bTXdepNCCAzB6m6B99v8Fm7J
+         3g4Q+pCJDwkQUbN+sTHVMWkJ9wQb+oaynQBq4hrQ=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201103123236eucas1p1ef6be4ee65d9ab3a2d788be6351db717~D-3G2J9dY1675116751eucas1p1r;
-        Tue,  3 Nov 2020 12:32:36 +0000 (GMT)
+        20201103124621eucas1p1b58c3f91cdd4447f359cb3157a8f48dc~EADHjzUA10135001350eucas1p1w;
+        Tue,  3 Nov 2020 12:46:21 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 34.CB.05997.4ED41AF5; Tue,  3
-        Nov 2020 12:32:36 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 5B.DF.06456.D1151AF5; Tue,  3
+        Nov 2020 12:46:21 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201103123235eucas1p110028a2f0f30846dee371df800ee8f54~D-3GbcMzp0176001760eucas1p1b;
-        Tue,  3 Nov 2020 12:32:35 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201103123235eusmtrp16a0d8cc5933c0e1279e9633a4007d815~D-3Gao3m-2396223962eusmtrp18;
-        Tue,  3 Nov 2020 12:32:35 +0000 (GMT)
-X-AuditID: cbfec7f4-677ff7000000176d-8a-5fa14de4a036
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id BE.BE.06017.3ED41AF5; Tue,  3
-        Nov 2020 12:32:35 +0000 (GMT)
-Received: from [106.210.123.115] (unknown [106.210.123.115]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201103123234eusmtip1acdebe7c896600084ac2d92c87ab912f~D-3FVXay92408524085eusmtip1f;
-        Tue,  3 Nov 2020 12:32:34 +0000 (GMT)
-Subject: Re: [PATCH v7 3/6] PM / devfreq: exynos-bus: Add registration of
- interconnect child device
-Cc:     georgi.djakov@linaro.org, krzk@kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        a.swigon@samsung.com, myungjoo.ham@samsung.com,
-        inki.dae@samsung.com, sw0312.kim@samsung.com,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Message-ID: <20bc744b-bbb1-8803-3844-97d59f708f43@samsung.com>
-Date:   Tue, 3 Nov 2020 13:32:33 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.12.1
+        20201103124621eucas1p1e447d6d2eb3f29ecd657f0705f15960d~EADHHinP70134101341eucas1p1n;
+        Tue,  3 Nov 2020 12:46:21 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201103124621eusmtrp2a3374651e658a81423c3f4de149da465~EADHG6LXf1121611216eusmtrp2X;
+        Tue,  3 Nov 2020 12:46:21 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-74-5fa1511d84a3
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 77.C4.06314.C1151AF5; Tue,  3
+        Nov 2020 12:46:20 +0000 (GMT)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20201103124620eusmtip2df1e2115b660cfc2ff7dfb9f689a5950~EADG7wlFC1103711037eusmtip2F;
+        Tue,  3 Nov 2020 12:46:20 +0000 (GMT)
+From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH 2/5] ARM: dts: exynos: Add Ethernet interface description
+ for Odroid X3 Lite
+Date:   Tue,  3 Nov 2020 13:46:15 +0100
+Message-Id: <20201103124618.21358-3-l.stelmach@samsung.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20201103124618.21358-1-l.stelmach@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <522dd3d8-7c76-92c6-ab1e-7e04797b3e9f@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SW0hUURSG23OuimPb0XCpZTGKdLXMoB1GXoiYHkyrl+7TWAcVr81RyyBR
-        NMsrk2LjXSsqHRAviIZmhFljWQ6ilaRloSCTipn60FiZM6fIt+9f699rrR82TykGGXc+Oj5J
-        0MZrYpWsPd324odpx0ToHfWu5WKGjFVfR6S5tJEh7xcmGVLT08+QocVZlui7WlhSNKajicnU
-        xJHBjkqWzBf0IFJqeiIjDT0fOTKSUceS6109HCktNrNBa1UthhxWNfruMasayzPKVIWtBqSa
-        b/EMZ07Z778oxEanCNqdB87bRzVNVcoSLeyV+rf9VDrqZ3KRHQ94D0x/ekrlIntegesQvB18
-        wkpiAcGIIf+vmEeQoSuh/j2ZL8ngrKzADxEM5IRLpjkEvbUjNpMzFuC+Pg9ZGxRelEGOqRZZ
-        Gyz2g4LnhTZ2wZuh7NeQjeX4ANzNvUVbmcbeUG0et/E6fA50zVm05HGCl2UTNrbDgWCetdiW
-        UdgVPkzUyCTeCO0zlbZAgOc4GKrIXknKr4iDYGy+JiVwhq/GVk7i9dBXnE9L/kwE+Z0jnCR0
-        CMaM0tWAA2C038JaB1F4CzR27JTKwfBsuIGW5jvC8IyTdIMjFLXpKaksh5vZCsntDUsGvUxi
-        d8ibWKZ1SFm+Kln5qjTlq9KU/99bi2gDchWSxbhIQdwdL1z2FTVxYnJ8pO+FhLgWtPLV+n4b
-        Fx6hjp8R3QjzSOkgDxJq1QpGkyKmxnUj4CmlizzkTd85hfyiJvWqoE1Qa5NjBbEbefC00lXu
-        f9d8VoEjNUlCjCAkCtp/XRlv556OUh68SOKOq0/v868yVw+SNb2RHn6mNFOVe6h4z1vh43Ak
-        7Jn/0b31Sxad1+3R3uCAjM+jERsucdEh+ll2uiJ4uMJn/Ixy0q0jwtmz+UZsoMM2t8xDAzkJ
-        X2IetoXbvbJETb/Oqmz3+s5s6lSHnXCaRh5kKu3kpCf37evh7cdCS5KVtBil8dtKaUXNH4os
-        SmdmAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsVy+t/xu7qPfRfGG0zer2pxf14ro8XGGetZ
-        La5/ec5qMf/IOVaLK1/fs1lM37uJzWLS/QksFufPb2C3uLxrDpvF594jjBYzzu9jslh75C67
-        xe3GFWwWrXuPsFvMmPySzYHfY9OqTjaPO9f2sHnc7z7O5NG3ZRWjx+dNcgGsUXo2RfmlJakK
-        GfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZG17PYSr4xVax8uo5
-        5gbGc6xdjJwcEgImEp+nNrJ3MXJxCAksZZTYsm8mYxcjB1BCSmJ+ixJEjbDEn2tdbBA17xkl
-        Hl38xgySEBZIlVg6vZsRJMEs8JVJ4vL+K1BVXxglvje9A6tiEzCU6D3axwhiiwhoSMz8ewXM
-        5hWwk1jUNZEFxGYRUJGY9/IxmC0qECfxY2IvG0SNoMTJmU/A4pwC9hIv3/8Cm8ksoC7xZ94l
-        KFtc4taT+UwQtrzE9rdzmCcwCs1C0j4LScssJC2zkLQsYGRZxSiSWlqcm55bbKRXnJhbXJqX
-        rpecn7uJERjH24793LKDsetd8CFGAQ5GJR5eh9QF8UKsiWXFlbmHGCU4mJVEeJ3Ono4T4k1J
-        rKxKLcqPLyrNSS0+xGgK9NxEZinR5HxgiskriTc0NTS3sDQ0NzY3NrNQEuftEDgYIySQnliS
-        mp2aWpBaBNPHxMEp1cDo+vB0+Nl0V0/5Z9H3/n04NLFx6unmVs6byRfzVnzJez07y+3C9Ahr
-        M+4zOetiJCbfrOV3unHpuI3YKpO1EzVkK1VXzI+dW9wRk9a/1P9lzFOZJfmiHhJT1t4/llP7
-        2Tfvb/I3rkrBmT7LVB8+mnp//po1bbzV8UnZkYqi7+sOF1wr/xYklrlPiaU4I9FQi7moOBEA
-        qBtu9/kCAAA=
-X-CMS-MailID: 20201103123235eucas1p110028a2f0f30846dee371df800ee8f54
+Organization: Samsung R&D Institute Poland
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIKsWRmVeSWpSXmKPExsWy7djP87qygQvjDe5dkrbYOGM9q8X8I+dY
+        Lfofv2a2OH9+A7vFzUMrGC02Pb7GanF51xw2ixnn9zFZrNt4i91i7ZG77Bate4+wO3B77Jx1
+        l91j06pONo/NS+o9+rasYvT4vEkugDWKyyYlNSezLLVI3y6BK+Pc8l7Wgj7OivtbWxkbGNex
+        dzFyckgImEi82dbE3MXIxSEksIJR4uuWLYwQzhdGiR1bG9ggnM+MEu+3LGaDaZnzeysjiC0k
+        sJxRYtVWG4ii54wSk1bvYQVJsAk4SvQvPcEKkhARmM4ksXTPfLAlzAL7GCV23pvCDFIlLBAn
+        8fbqVbAOFgFVifMPG8Cu4hWwlrjY+RdqnbxE+/LtYDangI3Ei7e/mSBqBCVOznzCAmLzC2hJ
+        rGm6DmYzA9U3b50NtkxC4By7xMPO26wQg1wkTt7vYIGwhSVeHd8CDQIZif875wMN5QCy6yUm
+        TzKD6O1hlNg25wdUvbXEnXO/2EBqmAU0Jdbv0ocoB/rylSWEySdx460gxAV8EpO2TWeGCPNK
+        dLQJQcxQkVjXvwdqnpRE76sVjBMYlWYh+WUWkvtnIaxawMi8ilE8tbQ4Nz212DAvtVyvODG3
+        uDQvXS85P3cTIzAhnf53/NMOxq+Xkg4xCnAwKvHwOqQuiBdiTSwrrsw9xCjBwawkwut09nSc
+        EG9KYmVValF+fFFpTmrxIUZpDhYlcV7jRS9jhQTSE0tSs1NTC1KLYLJMHJxSDYw+MZPOWc9d
+        8kvZUSR7woHi+94is8IWnPlxwkv26xnpQufpO0/GVOU3vdh4/Vg1Y/+RCS+Fq4Uj/nccej/t
+        7EyWtCfiGpJHRAt1cjJdv2WuMZWcuP3hsRsdWis8LIIO3Lp5b8LDvv0HY/Z8lItPlVDcLDLx
+        WM7KvBrBdzmVBw4+VIhikdgspVCqxFKckWioxVxUnAgAkLcuEEQDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xe7oygQvjDc7dtrbYOGM9q8X8I+dY
+        Lfofv2a2OH9+A7vFzUMrGC02Pb7GanF51xw2ixnn9zFZrNt4i91i7ZG77Bate4+wO3B77Jx1
+        l91j06pONo/NS+o9+rasYvT4vEkugDVKz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng8
+        1srIVEnfziYlNSezLLVI3y5BL+Pc8l7Wgj7OivtbWxkbGNexdzFyckgImEjM+b2VEcQWEljK
+        KLHuS0wXIwdQXEpi5dx0iBJhiT/Xuti6GLmASp4ySqycuIMZJMEm4CjRv/QEK0hCRGA+k8Sp
+        2R1gDrPAPkaJ/UcXg20QFoiRODShAayDRUBV4vzDBrA4r4C1xMXOv2wQK+Ql2pdvB7M5BWwk
+        Xrz9zQRyhRBQzb3/ChDlghInZz5hAQkzC6hLrJ8nBBLmF9CSWNN0nQXEZgaa0rx1NvMERqFZ
+        SDpmIXTMQlK1gJF5FaNIamlxbnpusaFecWJucWleul5yfu4mRmD0bTv2c/MOxksbgw8xCnAw
+        KvHwOqQuiBdiTSwrrsw9xCjBwawkwut09nScEG9KYmVValF+fFFpTmrxIUZToC8nMkuJJucD
+        E0NeSbyhqaG5haWhubG5sZmFkjhvh8DBGCGB9MSS1OzU1ILUIpg+Jg5OqQZG5cvv8o4crq/9
+        +urRL+8X9pH+trMTNwvNqDMW6rz+7N75IOOJwXWG+xIOcBzduUSx4At3SE7k8Vub2fdN/sHy
+        Y798p9L7qIjwdXtLpstVz3+VWn7E84RMSr/d5i8fNDIcGNYc5au73KPzX8S9JrVfq1l72+lO
+        rjN7Y7xkz4lb97BK39umLFOlxFKckWioxVxUnAgA6gENW9QCAAA=
+X-CMS-MailID: 20201103124621eucas1p1e447d6d2eb3f29ecd657f0705f15960d
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201030125303eucas1p14a9de4111ffafc1870527abdea0994c9
+X-RootMTR: 20201103124621eucas1p1e447d6d2eb3f29ecd657f0705f15960d
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20201030125303eucas1p14a9de4111ffafc1870527abdea0994c9
-References: <20201030125149.8227-1-s.nawrocki@samsung.com>
-        <CGME20201030125303eucas1p14a9de4111ffafc1870527abdea0994c9@eucas1p1.samsung.com>
-        <20201030125149.8227-4-s.nawrocki@samsung.com>
-        <522dd3d8-7c76-92c6-ab1e-7e04797b3e9f@samsung.com>
+X-CMS-RootMailID: 20201103124621eucas1p1e447d6d2eb3f29ecd657f0705f15960d
+References: <20201103124618.21358-1-l.stelmach@samsung.com>
+        <CGME20201103124621eucas1p1e447d6d2eb3f29ecd657f0705f15960d@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Chanwoo,
+Add Ethernet interface description for Odroid X3 Lite.
 
-On 03.11.2020 11:45, Chanwoo Choi wrote:
-> On 10/30/20 9:51 PM, Sylwester Nawrocki wrote:
->> This patch adds registration of a child platform device for the exynos
->> interconnect driver. It is assumed that the interconnect provider will
->> only be needed when #interconnect-cells property is present in the bus
->> DT node, hence the child device will be created only when such a property
->> is present.
->>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+---
+ .../boot/dts/exynos5422-odroidxu3-lite.dts    | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
->>  drivers/devfreq/exynos-bus.c | 17 +++++++++++++++++
-
-> We don't need to  add 'select INTERCONNECT_EXYNOS' in Kconfig?
-
-I think by doing so we could run into some dependency issues.
-
-> Do you want to remain it as optional according to user?
-Yes, I would prefer to keep it selectable through defconfig. 
-Currently it's only needed by one 32-bit ARM board.
-
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+index 98feecad5489..62c5928aa994 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
+@@ -16,6 +16,10 @@
+ / {
+ 	model = "Hardkernel Odroid XU3 Lite";
+ 	compatible = "hardkernel,odroid-xu3-lite", "samsung,exynos5800", "samsung,exynos5";
++
++	aliases {
++		ethernet = &ethernet;
++	};
+ };
+ 
+ &arm_a7_pmu {
+@@ -103,3 +107,21 @@ &pwm {
+ &usbdrd_dwc3_1 {
+ 	dr_mode = "peripheral";
+ };
++
++&usbhost2 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	hub@1 {
++		compatible = "usb0424,9514";
++		reg = <1>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ethernet: usbether@1 {
++			compatible = "usb0424,ec00";
++			reg = <1>;
++			local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
++		};
++	};
++};
 -- 
-Regards,
-Sylwester
+2.26.2
+
