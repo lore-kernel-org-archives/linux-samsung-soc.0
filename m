@@ -2,181 +2,120 @@ Return-Path: <SRS0=6Xyg=EJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 842FEC2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 14:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B57C388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 14:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E51E22264
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 14:05:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17F4B22226
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 14:08:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="P1oSSwQ4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+YTXLaJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729391AbgKCODH (ORCPT
+        id S1729429AbgKCOIj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 09:03:07 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58573 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729375AbgKCOCj (ORCPT
+        Tue, 3 Nov 2020 09:08:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43836 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729361AbgKCOIN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 09:02:39 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201103140227euoutp025f30d9e7dcafffa7759744b1a8b2285a~EBFkQG1zh2844228442euoutp02b
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2020 14:02:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201103140227euoutp025f30d9e7dcafffa7759744b1a8b2285a~EBFkQG1zh2844228442euoutp02b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604412147;
-        bh=tJfgu1SkaVfjsc886pjn1u73kdx29LwbGBpYZWEiaws=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=P1oSSwQ43sOK7ho0pw9yL6HDenY3OgUcm+RF8Hy3V+n8w7D5QO2egJdBvVo8XBnQ7
-         LlwuAroRS8I+ddSQexvoBsO+bGEobvWy3uK8vwI2IrGoV0JAdFLVI7ZxfnVJChdr8s
-         lmxL+z0mdYue2HW6l0ecDnNrsYfg6sG7EFtLJgY4=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201103140222eucas1p20f873e6a3fd8c02bd8f3b54c1be04c8d~EBFfW99Hz0816408164eucas1p2P;
-        Tue,  3 Nov 2020 14:02:22 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 78.EC.05997.EE261AF5; Tue,  3
-        Nov 2020 14:02:22 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201103140221eucas1p1c4479a8a89e7e9a05c7582462d79e5c7~EBFeow0qP3147931479eucas1p14;
-        Tue,  3 Nov 2020 14:02:21 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201103140221eusmtrp27fda68fe12ab16ca40f956678baf4655~EBFeoPmJE2587725877eusmtrp2g;
-        Tue,  3 Nov 2020 14:02:21 +0000 (GMT)
-X-AuditID: cbfec7f4-677ff7000000176d-aa-5fa162ee5d72
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 1B.6E.06314.DE261AF5; Tue,  3
-        Nov 2020 14:02:21 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201103140221eusmtip11eaf3924f4e782b03034b62498c53143~EBFeT8mwY0957909579eusmtip17;
-        Tue,  3 Nov 2020 14:02:21 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tue, 3 Nov 2020 09:08:13 -0500
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9B88C0613D1;
+        Tue,  3 Nov 2020 06:08:12 -0800 (PST)
+Received: by mail-lj1-x241.google.com with SMTP id v19so14241198lji.5;
+        Tue, 03 Nov 2020 06:08:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=0w+rja1f0+G0RfOXnBBK3uQA6RuMQSPbDSi88HYNgNM=;
+        b=R+YTXLaJT5LRB3SDG2U3aax6E3yLKCcwuhgc0epoTouJXakmiduZUDKre0YfVNipLB
+         Mwo2Jud2dYkQ/ZvFyfwGQOa6VTksioP5O29eQUPcXYMfyTLG+qSt324jyOPAf6hojUgh
+         d9aT6C3bEvljUsUbYxF23i/Ti2xq+/SX0kgdra6S6LqjDmXzTp6pWEWrI21oEP6ycB/N
+         uhcmT2bbDWO37G7PDyxVu3/4Cm8DoiYal6vtkHGLqM+dfZudapXDtZGkcApEENYCRTTY
+         a50ZzOaTiyjnGvI73R8A0Nar0VXQWXec+3G5X/gxeP9SsU7Zl7Fy4GAR5ADMg3Kjex8f
+         m2jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=0w+rja1f0+G0RfOXnBBK3uQA6RuMQSPbDSi88HYNgNM=;
+        b=csC10LQkqtU5JDn0p9rNsqcOC6buIuvHZ6jDJXGshVYKAWXU16ziznTz7zGN+5UiZl
+         fooB5EcBDRFy8ZVe/ze6xewIoWliSneGiTwooyJySqy44/QnX4X5YEjW+fvDcDgkTKij
+         3egKOzR/rro6TbJvf/C3YxntQk/PVt6V+/AkGVDhBOnM5+clo01QC2tFc43O6eHrpuWX
+         yqKTt8lAqgxfBrz5toF0BTaSBkV4CjYZkPZi+TbzsTCPqtmWklLFWrVbfsysfcmvHqKa
+         iS4eV1S69DESAVruMHLzGGsTWsdkn3wVHVmfCY5QTN12fzv9xWFVUO7Wk9c4LmQWQu9O
+         Oljw==
+X-Gm-Message-State: AOAM530dQL8fZm7lLjA3bkPBDHHk8hfPMfWbxt4rzpgcUK0ZzKj2tRgv
+        8GuKfKbm7JY+ODcnFbl7GjIycKd4wGy/RKDaGEKpOMBSer0=
+X-Google-Smtp-Source: ABdhPJwl8ry5bPgxL7i4vb9WG0Em25+04gn0ilBPCIMhAiAHYx2hDHAioJBclKwKX5YWNigaffZFyk2LI5y4hopgEH8=
+X-Received: by 2002:a2e:7815:: with SMTP id t21mr8217735ljc.217.1604412491411;
+ Tue, 03 Nov 2020 06:08:11 -0800 (PST)
+MIME-Version: 1.0
+References: <20201030125149.8227-1-s.nawrocki@samsung.com> <CGME20201030125303eucas1p14a9de4111ffafc1870527abdea0994c9@eucas1p1.samsung.com>
+ <20201030125149.8227-4-s.nawrocki@samsung.com> <522dd3d8-7c76-92c6-ab1e-7e04797b3e9f@samsung.com>
+ <20bc744b-bbb1-8803-3844-97d59f708f43@samsung.com>
+In-Reply-To: <20bc744b-bbb1-8803-3844-97d59f708f43@samsung.com>
+Reply-To: cwchoi00@gmail.com
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Date:   Tue, 3 Nov 2020 23:07:34 +0900
+Message-ID: <CAGTfZH1wsdoFki1nUJ73DFvgOMDhTTXfx-Bmt=kUHxfpKDJ3rQ@mail.gmail.com>
+Subject: Re: [PATCH v7 3/6] PM / devfreq: exynos-bus: Add registration of
+ interconnect child device
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Enable DWC2 dual-role support on
- OdroidU3+ boards
-Date:   Tue,  3 Nov 2020 15:02:14 +0100
-Message-Id: <20201103140214.21690-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBIsWRmVeSWpSXmKPExsWy7djP87rvkhbGG1xaImOxccZ6Vovz5zew
-        W8w4v4/JYu2Ru+wOLB6bVnWyefRtWcXo8XmTXABzFJdNSmpOZllqkb5dAlfGglPfmAtOC1U8
-        2P6euYFxN38XIyeHhICJxNzeCexdjFwcQgIrGCUOb2hjhXC+MErs/7GfBcL5zChxcOsjdpiW
-        3p+zmCESyxklZtzZyATX8uZXBwtIFZuAoUTX2y42EFtEQFXic9sCsCXMAn2MEtf3zmUGSQgL
-        hElsXDCDEcRmASo6e246E4jNK2ArcfTLPhaIdfISqzccAFsnIbCBTeLglu9QCReJXU9hbGGJ
-        V8e3QN0nI/F/53wmiIZmRomH59ayQzg9jBKXmyDWSQhYS9w59wvoPg6gmzQl1u/Shwg7Spxf
-        dQIsLCHAJ3HjrSBImBnInLRtOjNEmFeio00IolpNYtbxdXBrD164xAxhe0g873gFdpqQQKzE
-        tzONbBMY5WYh7FrAyLiKUTy1tDg3PbXYKC+1XK84Mbe4NC9dLzk/dxMjML5P/zv+ZQfjrj9J
-        hxgFOBiVeHgdUhfEC7EmlhVX5h5ilOBgVhLhdTp7Ok6INyWxsiq1KD++qDQntfgQozQHi5I4
-        r/Gil7FCAumJJanZqakFqUUwWSYOTqkGRrHiQv3oJx6vOkrD5/+803RXy1xnhvi2yoh1Rz+n
-        71T1nS185V3a3Un7fuXvEd11IaDcdZP7c69py5aWzmvxvZ3Qkvn+6u0Jfkr1vt3bKvM6tHX5
-        LB5oLJVdteiPu2TFhv70QoWLnVeeFrPn7j8QW9ykpBR1YqXJ21naRRfnblry48nRtR6PNyux
-        FGckGmoxFxUnAgCQB8hb6wIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsVy+t/xu7pvkxbGG9zcqmWxccZ6Vovz5zew
-        W8w4v4/JYu2Ru+wOLB6bVnWyefRtWcXo8XmTXABzlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWe
-        kYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7GglPfmAtOC1U82P6euYFxN38XIyeHhICJRO/P
-        WcwgtpDAUkaJLY2iEHEZiZPTGlghbGGJP9e62LoYuYBqPjFK3L89nQkkwSZgKNH1FiTBySEi
-        oCrxuW0BO0gRs8AERonznTOAEhwcwgIhEpe3CYLUsADVnD0H0csrYCtx9Ms+FogF8hKrNxxg
-        nsDIs4CRYRWjSGppcW56brGhXnFibnFpXrpecn7uJkZgQG079nPzDsZLG4MPMQpwMCrx8Dqk
-        LogXYk0sK67MPcQowcGsJMLrdPZ0nBBvSmJlVWpRfnxRaU5q8SFGU6DlE5mlRJPzgcGeVxJv
-        aGpobmFpaG5sbmxmoSTO2yFwMEZIID2xJDU7NbUgtQimj4mDU6qBsSNt+rSH95VmChxSPCx7
-        5IOMpfmPi50Ci/Q3beBhuvTh1R4hJpMZ1kXTKnnmcLKc+zVx2nUDycVtsnP/PFmZt/2Gb7Kf
-        47JeS69G986Y6y1GkwxV9rV+2aLPkRfUEjK79NjMYscs86fOhb+ThF4u7U7avzKu2GtFsXPc
-        1+mtLKlzzVPj2zb7K7EUZyQaajEXFScCAPvJngI+AgAA
-X-CMS-MailID: 20201103140221eucas1p1c4479a8a89e7e9a05c7582462d79e5c7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201103140221eucas1p1c4479a8a89e7e9a05c7582462d79e5c7
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201103140221eucas1p1c4479a8a89e7e9a05c7582462d79e5c7
-References: <CGME20201103140221eucas1p1c4479a8a89e7e9a05c7582462d79e5c7@eucas1p1.samsung.com>
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-MicroUSB port on OdroidU3+ boards can operate both as peripheral or as
-host port. Till now it was configured as pheriperal only port, but it
-turned out that the DWC2 driver code already handles everything needed to
-support USB role-switch, so switch it to dual-role (OTG) mode. This has
-no effect on OdroidU3 (with 'plus') and OdroidX2, which doesn't have USB
-needed ID pin and VBUS wiring. Those will still operate correctly in
-pheriperal mode only.
+Hi Sylwester,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  1 -
- arch/arm/boot/dts/exynos4412-odroidu3.dts       | 14 ++++++++++++++
- arch/arm/boot/dts/exynos4412-odroidx.dts        |  4 ++++
- 3 files changed, 18 insertions(+), 1 deletion(-)
+On Tue, Nov 3, 2020 at 9:32 PM Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+>
+> Hi Chanwoo,
+>
+> On 03.11.2020 11:45, Chanwoo Choi wrote:
+> > On 10/30/20 9:51 PM, Sylwester Nawrocki wrote:
+> >> This patch adds registration of a child platform device for the exynos
+> >> interconnect driver. It is assumed that the interconnect provider will
+> >> only be needed when #interconnect-cells property is present in the bus
+> >> DT node, hence the child device will be created only when such a property
+> >> is present.
+> >>
+> >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>
+> >>  drivers/devfreq/exynos-bus.c | 17 +++++++++++++++++
+>
+> > We don't need to  add 'select INTERCONNECT_EXYNOS' in Kconfig?
+>
+> I think by doing so we could run into some dependency issues.
+>
+> > Do you want to remain it as optional according to user?
+> Yes, I would prefer to keep it selectable through defconfig.
+> Currently it's only needed by one 32-bit ARM board.
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 2a6f5b1d7645..2b20d9095d9f 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -255,7 +255,6 @@
- };
- 
- &hsotg {
--	dr_mode = "peripheral";
- 	status = "okay";
- 	vusb_d-supply = <&ldo15_reg>;
- 	vusb_a-supply = <&ldo12_reg>;
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index b8549d846f86..746c2a99a83c 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -21,6 +21,15 @@
- 		reg = <0x40000000 0x7FF00000>;
- 	};
- 
-+	vbus_otg_reg: voltage-regulator-1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VBUS_VDD_5.0V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpl2 0 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 		led1 {
-@@ -105,6 +114,11 @@
- 	phy-names = "hsic0", "hsic1";
- };
- 
-+&hsotg {
-+	dr_mode = "otg";
-+	vbus-supply = <&vbus_otg_reg>;
-+};
-+
- &sound {
- 	model = "Odroid-U3";
- 	samsung,audio-widgets =
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index 46381e9097f4..d6ee62bf336c 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -76,6 +76,10 @@
- 	};
- };
- 
-+&hsotg {
-+	dr_mode = "peripheral";
-+};
-+
- &mshc_0 {
- 	vqmmc-supply = <&buck8_reg>;
- };
+OK.
+
 -- 
-2.17.1
-
+Best Regards,
+Chanwoo Choi
