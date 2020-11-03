@@ -2,144 +2,232 @@ Return-Path: <SRS0=6Xyg=EJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0131DC2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 10:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A48CEC388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 11:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A24022242A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 10:39:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AA8D2242F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 11:32:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4Jd+CDT"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="i8x5TOUH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbgKCKjD (ORCPT
+        id S1728249AbgKCLc4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 05:39:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39352 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbgKCKjC (ORCPT
+        Tue, 3 Nov 2020 06:32:56 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36031 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727323AbgKCLc4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 05:39:02 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B7F2C0613D1;
-        Tue,  3 Nov 2020 02:39:01 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id h62so7442893wme.3;
-        Tue, 03 Nov 2020 02:39:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=lKQ17IPb7XkEk9VmHe7lbOl+kucSR/sl5DThRohkCuY=;
-        b=Z4Jd+CDTZwzwUOLQmJelyH3HZ647W8lXM4NB+GuFKxVHVrBSoDznGpQOQ805SiLWTr
-         QfNL0HP5V6LVFBMPr0EzKlfjQwD1eJxiL5smpBxIasjtDb2mx242Z3sc1mGOgCAHAhMp
-         2vtWRv5e2KS37x0G3f/63XaenLOr0TQqOrT0mB6JbZv4DJms+v1pESxqYb/B9lV7EBy1
-         EDKNZZqd+fI1kyKWUDWXMO0bIq8o3QXKiyEwi5ze1+szjTu3fYaWhThpQMrfkoJuLOxo
-         4ZGy27ti8Lep8I7VYjgrFA9lhmTjtr8yvodyBuqSgkuqAn85xJO704iZIzsPoHUYc4pA
-         WTaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lKQ17IPb7XkEk9VmHe7lbOl+kucSR/sl5DThRohkCuY=;
-        b=qKj/FifoaadRxY/vVrcOlactLzZ66DZUO4GsUPnpS9yExx82j7IdZSOGSfHbte8vWh
-         FkIk3o/zMtGPnmI5ouzapVFIA9vbc7stHli8LPJ1VkzQiADHC2pP6iFnprSXEteaPMnz
-         Iyt6XgBZ5xyoBCqseXvcCBWver7aqVh7S50SyGu209tXEOSYkBh723Hyev3OtaDHCGFi
-         5ek84COyD/rsFjzGrY0zsEQF6IfD7JAycBiNll194hKLqVKYa3Wlo4+pSWo17GVxz4DS
-         EbSuZTKoRd3X7x9D/rqYXzOUxVgtMzs/n4pL0R+obIe7PoBXKaGkXWyGBL+pdTMcnYHS
-         w9hg==
-X-Gm-Message-State: AOAM533OmMkirhMndGJGFq3jP+A+kG//W9Fx6QLt1I+0pzXWxwjQ9Aji
-        TH8/YWFSvlhT3YW2IkB51ffqfs+EuzNrgpB+
-X-Google-Smtp-Source: ABdhPJyouNt9H5SUaT0tXZRhK9LqTSBuP9bSfjs2EE9ur1RqX83VQ4v/WZkeZAfDjtJ3pNhr9Q75YA==
-X-Received: by 2002:a1c:2e0d:: with SMTP id u13mr2807042wmu.179.1604399939907;
-        Tue, 03 Nov 2020 02:38:59 -0800 (PST)
-Received: from adroid (165-170-184-091.ip-addr.vsenet.de. [91.184.170.165])
-        by smtp.gmail.com with ESMTPSA id z14sm2606514wmc.15.2020.11.03.02.38.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2020 02:38:59 -0800 (PST)
-Date:   Tue, 3 Nov 2020 11:38:56 +0100
-From:   Martin Juecker <martin.juecker@gmail.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, kgene@kernel.org,
-        devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/5] ARM: dts: add Samsung's exynos4412-based p4note
- boards
-Message-ID: <20201103103856.GA7770@adroid>
-References: <20201031175836.47745-1-martin.juecker@gmail.com>
- <20201031175836.47745-3-martin.juecker@gmail.com>
- <20201102191845.GA64695@kozik-lap>
- <CGME20201102212129eucas1p1957c9dd5d6c1ebf7c340271a5e501c5b@eucas1p1.samsung.com>
- <20201102212118.GA2366@adroid>
- <0af4946e-a573-ad5a-5558-de439d49434f@samsung.com>
+        Tue, 3 Nov 2020 06:32:56 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201103113243euoutp01dc52e5f5b20b70371026a820bc394d81~D-C1KSVWl0676906769euoutp01B
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2020 11:32:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201103113243euoutp01dc52e5f5b20b70371026a820bc394d81~D-C1KSVWl0676906769euoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1604403163;
+        bh=fReq/5gleB0cci52KJ0pEExEhZgxvPuj7W3jQgkJdxw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=i8x5TOUHnU8xa5Ck6fEa0cVA+SMV1W0JbEi3Bnl2asUlyTC8+qp8WxzIPe+kc+FPB
+         b0IEShTPAu6YnhJ688l1mcRFvbZ4rEVkIvICWL7f7q/T1bt32+EnE8PrrteTaoTy6x
+         pqn3kyXbTaUF1xBOXFKzaaknHRD0scbd6sJpHGIE=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20201103113236eucas1p25c4317debfce3dd093e24503f4a02295~D-CuDkbNN0380303803eucas1p25;
+        Tue,  3 Nov 2020 11:32:36 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id AB.82.06456.4DF31AF5; Tue,  3
+        Nov 2020 11:32:36 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20201103113235eucas1p282f0b782b066ea7aea385c0d85b53951~D-CtrFiAq0380303803eucas1p24;
+        Tue,  3 Nov 2020 11:32:35 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201103113235eusmtrp2154c224a1b462956fbf31e688ec94053~D-CtqTkmS3132631326eusmtrp2K;
+        Tue,  3 Nov 2020 11:32:35 +0000 (GMT)
+X-AuditID: cbfec7f2-809ff70000001938-7c-5fa13fd4f2d7
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 26.14.06017.3DF31AF5; Tue,  3
+        Nov 2020 11:32:35 +0000 (GMT)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20201103113234eusmtip1455972894957538c7a51aa7381fdf5ff~D-CsrFtLb2256922569eusmtip1i;
+        Tue,  3 Nov 2020 11:32:34 +0000 (GMT)
+Subject: Re: [PATCH v7 2/6] interconnect: Add generic interconnect driver
+ for Exynos SoCs
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     georgi.djakov@linaro.org, krzk@kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        a.swigon@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <6cc9a2f8-9d9a-68b7-9f47-e16fefb18d88@samsung.com>
+Date:   Tue, 3 Nov 2020 12:32:33 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0af4946e-a573-ad5a-5558-de439d49434f@samsung.com>
+In-Reply-To: <88af4e53-6c7a-c2e6-ad28-a9d6bb5bf623@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SWUwTURSGc2fa6VApXgqkh4qCDYnFKEjEOIkr6kPji5j4YCQsFUdQaSUd
+        QNAHF8CFijag7NLKTiOiiERBBEkBEVkiiAuQxogoGiFYwH2hHY28fef+57/n/MmhSWm/UE4f
+        0MazOq06VkGJBfXtX3tWDmy6GrGqroRkrEVpiLmZWyNknk2/FTJGS4+QGZiZpJicplqKybQa
+        BExv7w0R099QSDG2DAticnvvE0y1ZUTEDJ2spJi0JouIyc0apzYvVNWaz1Gq4cF7lMqq7yBU
+        F+rMSGWrXRIi3CNev4+NPZDI6gI2Ropj2nrKUNygT9KHG53oBHrhmY6caMBBkJ3xk0hHYlqK
+        KxG0XG8n7IIUTyOoNnvygg3BrE1P/nNUlhdTvFCBoG+6QsgXUwjyClJF9i43HAqvshocDnes
+        hLyfA8jeROIZAs71mpBdoHAgZLRdcLAEb4SipwaHQYB9oe3NFcceHjgcDDdTBXyPK3TmjTrY
+        CW+CiR+FDiaxDF6OGgmevSHldgFpHwZ4RgRlD8YQv/c2aDGf/pvBDd531Il49oLfd40Eb0hB
+        cL5xSMQXBgTWDtNf9zoY7vk2l5qeG+EHNQ0BdgQcDE8sSh5d4PlHV34HF8iszyH5ZwmcPS3l
+        //CF7+Ycgmc56Ed/CwxIkT8vWf68NPnz0uT/H2tCAjOSsQmcJprlArXsEX9OreEStNH+UYc1
+        tWju1Lp+dXy6g2ae7G1FmEYKZ8lm1hQhFaoTuWRNKwKaVLhLtnR3hUsl+9TJR1nd4QhdQizL
+        taJFtEAhk6wuHg+T4mh1PHuIZeNY3T+VoJ3kJ5BHbHBpNldapN+fZ6uWT+0yPgoJqpI1R0VG
+        JqWPfCNWXi6R5nQLv5TLtT7iYpOLUTbW/Liy+bUrFR/Vdejaw3bnY96iGr/ZrXc2rAlfrjy4
+        ULn9YOaOuDC9327/UC9j1YK1k+6XPh9bEdNcZT3l0nAmzPtWfcI7vLRv8cTFnY3By44rBFyM
+        OnA5qePUfwDMfoauZgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsVy+t/xu7qX7RfGG5xYpmpxf14ro8XGGetZ
+        La5/ec5qMf/IOVaLK1/fs1lM37uJzWLS/QksFufPb2C3uLxrDpvF594jjBYzzu9jslh75C67
+        xe3GFWwWrXuPsFvMmPySzYHfY9OqTjaPO9f2sHnc7z7O5NG3ZRWjx+dNcgGsUXo2RfmlJakK
+        GfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZR88tZSy4plDxesNJ
+        xgbGm5JdjJwcEgImEiuWLWLrYuTiEBJYyijxvuswaxcjB1BCSmJ+ixJEjbDEn2tdUDXvGSWO
+        nt7OBlIjLBAtMfWDI0iNiICGxMy/VxhBapgFvjJJXN5/BarhC6PE7+uTGUGq2AQMJXqP9oHZ
+        vAJ2EvOuTmAGsVkEVCSOPp3LBGKLCsRJ/JjYywZRIyhxcuYTFhCbU8Be4t2fOWA2s4C6xJ95
+        l5ghbHGJW0/mM0HY8hLNW2czT2AUmoWkfRaSlllIWmYhaVnAyLKKUSS1tDg3PbfYSK84Mbe4
+        NC9dLzk/dxMjMIq3Hfu5ZQdj17vgQ4wCHIxKPLwOqQvihVgTy4orcw8xSnAwK4nwOp09HSfE
+        m5JYWZValB9fVJqTWnyI0RTouYnMUqLJ+cAEk1cSb2hqaG5haWhubG5sZqEkztshcDBGSCA9
+        sSQ1OzW1ILUIpo+Jg1OqgfEQX843rliR7mvVoS3Vsnf1D189Z2/KJBy6oz/IksdysWEMs0FP
+        cmaZ+KQvs1z2eN3NvXzveMDPhdGfF+/9lGDe5LjL2k3o+vxTVVdXHr31LnimoX/Fnrvz7pzU
+        WSNwvmydxZ3om+fEjFY6F7sdM3M4daVNtWTjwcXqLo3H8o1OXdiRy8KXslOJpTgj0VCLuag4
+        EQC6appF+AIAAA==
+X-CMS-MailID: 20201103113235eucas1p282f0b782b066ea7aea385c0d85b53951
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20201030125301eucas1p218b0e654cb4c826b05280f28836da8d9
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201030125301eucas1p218b0e654cb4c826b05280f28836da8d9
+References: <20201030125149.8227-1-s.nawrocki@samsung.com>
+        <CGME20201030125301eucas1p218b0e654cb4c826b05280f28836da8d9@eucas1p2.samsung.com>
+        <20201030125149.8227-3-s.nawrocki@samsung.com>
+        <88af4e53-6c7a-c2e6-ad28-a9d6bb5bf623@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 03, 2020 at 10:51:08AM +0100, Marek Szyprowski wrote:
-> Hi Martin,
+On 03.11.2020 10:37, Chanwoo Choi wrote:
+> On 10/30/20 9:51 PM, Sylwester Nawrocki wrote:
+>> This patch adds a generic interconnect driver for Exynos SoCs in order
+>> to provide interconnect functionality for each "samsung,exynos-bus"
+>> compatible device.
+>>
+>> The SoC topology is a graph (or more specifically, a tree) and its
+>> edges are specified using the 'samsung,interconnect-parent' in the
 > 
-> On 02.11.2020 22:21, Martin Juecker wrote:
-> > > ...
-> >>> +
-> >>> +&fimd {
-> >>> +	pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
-> >>> +	pinctrl-names = "default";
-> >>> +	status = "okay";
-> >>> +
-> >>> +	display-timings {
-> >>> +		timing0 {
-> >>> +			clock-frequency = <66666666>;
-> >>> +			hactive = <1280>;
-> >>> +			vactive = <800>;
-> >>> +			hfront-porch = <18>;
-> >>> +			hback-porch = <36>;
-> >>> +			hsync-len = <16>;
-> >>> +			vback-porch = <16>;
-> >>> +			vfront-porch = <4>;
-> >>> +			vsync-len = <3>;
-> >>> +			hsync-active = <1>;
-> >>> +		};
-> >>> +	};
-> >> What happened with Marek's comment about this?
-> >>
-> > Should have mentioned it in the introduction mail. I had a look at the
-> > simple panel driver and it's not enough for the display in the p4note. I
-> > asked Marek in IRC whether it's ok to have this in a separate patch set
-> > to have a fully working display and he agreed.
+> samsung,interconnect-parent -> interconnects?
+
+Yes, I will rephrase the whole commit message as it's a bit outdated now.
+
+I've changed the sentence to:
+"The SoC topology is a graph (or more specifically, a tree) and its
+edges are described by specifying in the 'interconnects' property
+the interconnect consumer path for each interconnect provider DT node."
+
+>> DT. Due to unspecified relative probing order, -EPROBE_DEFER may be
+>> propagated to ensure that the parent is probed before its children.
+>>
+>> Each bus is now an interconnect provider and an interconnect node as
+>> well (cf. Documentation/interconnect/interconnect.rst), i.e. every bus
+>> registers itself as a node. Node IDs are not hardcoded but rather
+>> assigned dynamically at runtime. This approach allows for using this
+>> driver with various Exynos SoCs.
+>>
+>> Frequencies requested via the interconnect API for a given node are
+>> propagated to devfreq using dev_pm_qos_update_request(). Please note
+>> that it is not an error when CONFIG_INTERCONNECT is 'n', in which
+>> case all interconnect API functions are no-op.
+>>
+>> The bus-width DT property is to determine the interconnect data
+>> width and traslate requested bandwidth to clock frequency for each
+>> bus.
+>>
+>> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+>> +++ b/drivers/interconnect/exynos/exynos.c
+
+>> +struct exynos_icc_priv {
+>> +	struct device *dev;
+>> +
+>> +	/* One interconnect node per provider */
+>> +	struct icc_provider provider;
+>> +	struct icc_node *node;
+>> +
+>> +	struct dev_pm_qos_request qos_req;
+>> +	u32 bus_clk_ratio;
+>> +};
+>> +
+>> +static struct icc_node *exynos_icc_get_parent(struct device_node *np)
+>> +{
+>> +	struct of_phandle_args args;
+>> +	struct icc_node_data *icc_node_data;
+>> +	struct icc_node *icc_node;
+>> +	int num, ret;
+>> +
+>> +	num = of_count_phandle_with_args(np, "interconnects",
+>> +					 "#interconnect-cells");
+>> +	if (num < 1)
+>> +		return NULL; /* parent nodes are optional */
+>> +
+>> +	/* Get the interconnect target node */
+>> +	ret = of_parse_phandle_with_args(np, "interconnects",
+>> +					"#interconnect-cells", 0, &args);
+>> +	if (ret < 0)
+>> +		return ERR_PTR(ret);
+>> +
+>> +	icc_node_data = of_icc_get_from_provider(&args);
+>> +	of_node_put(args.np);
+>> +
+>> +	if (IS_ERR(icc_node_data))
+>> +		return ERR_CAST(icc_node_data);
+>> +
+>> +	icc_node = icc_node_data->node;
+>> +	kfree(icc_node_data);
+>> +
+>> +	return icc_node;
+>> +}
 > 
-> Yes, I agreed that the display can be added later in a separate patch. 
-> However in such case I would simply remove the whole fimd node now. 
-> Without a panel it is a bit useless imho. With a proper panel driver you 
-> will also get rid of the timings subnode, so there is no point adding it 
-> now.
->
-
-Removing the fimd node (or the display timings) would break the DRM and
-display output though. The display is working but missing proper GPIO
-handling and the possibility to adjust brightness right now. As it is
-connected to the LCD power domain, it's still turning on and off as
-expected as it is setup by the bootloader. I know this isn't a great
-solution, but I'm already working on the LCD driver. Not sure when it
-will be done though.
-
-The display timings are read in exynos_drm_dpi.c in the exynos_dpi_probe
-method. As far as I understand, you can either provide the timings in
-the fimd node itself or in a connected panel.
-
-If this is not intended, I can of course remove the configuration.
-
-> Best regards
+> I have a question about exynos_icc_get_parent().
+> As I checked, this function returns the only one icc_node
+> as parent node. But, bus_display dt node in the exynos4412.dtsi
+> specifies the two interconnect node as following with bus_leftbus, bus_dmc,
 > 
-> -- 
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
-> 
+> When I checked the return value of exynos_icc_get_parent()
+> during probing for bus_display device, exynos_icc_get_parent() function
+> only returns 'bus_leftbus' icc_node. Do you need to add two phandle
+> of icc node?
 
-Cheers
-Martin
+Yes, as we use the interconnect consumer bindings we need to specify a path,
+i.e. a <initiator, target> pair. When the provider node initializes it will
+link itself to that path. Currently the provider driver uses just the first 
+phandle.
+
+> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+> @@ -472,7 +472,7 @@
+>                         clocks = <&clock CLK_ACLK160>;
+>                         clock-names = "bus";
+>                         operating-points-v2 = <&bus_display_opp_table>;
+>                         interconnects = <&bus_leftbus &bus_dmc>;
+>                         #interconnect-cells = <0>;
+>                         status = "disabled";
+>                 };
+
+-- 
+Regards,
+Sylwester
