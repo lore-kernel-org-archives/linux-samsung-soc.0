@@ -2,77 +2,76 @@ Return-Path: <SRS0=6Xyg=EJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2CF5C388F2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 08:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E1AC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 08:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A572122275
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 08:11:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F331522275
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 08:29:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o/lYcogs"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oQKT3A1G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725993AbgKCILC (ORCPT
+        id S1726460AbgKCI3d (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 03:11:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44452 "EHLO
+        Tue, 3 Nov 2020 03:29:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbgKCILB (ORCPT
+        with ESMTP id S1725988AbgKCI3d (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 03:11:01 -0500
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2374EC0617A6
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2020 00:11:01 -0800 (PST)
-Received: by mail-wm1-x344.google.com with SMTP id d142so3130398wmd.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Nov 2020 00:11:00 -0800 (PST)
+        Tue, 3 Nov 2020 03:29:33 -0500
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAB5DC061A48
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2020 00:29:32 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id v5so11803604wmh.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Nov 2020 00:29:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:autocrypt:message-id:date
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IdpvY3vnaHaD1F97XwauJjhuWBuAAnyJbZWUZsOfYIU=;
-        b=o/lYcogsCxglhqmUdOWe0mVbuMYgm+696ln9cDs0FwKWIQToTKL+VTH57ieU/ATbYG
-         WVorhWY5rLIFydEs2Cc9bHf/ORwndSoLCL3b9Z8y6u3vZLohzRq8BGKj/n74RlX9ILVP
-         HHcP2wpFHpjVD8TAQy1ysGwNxbB0AVGXGPUoXiUtA7hI6FzjVZjIopfHsrUl3eh+uw8y
-         MnokL/RLQRmtnKMxfrANV6K6/hqjnSn15XsjqnXpPGDpdirZCWKYpZhkT2xHr8E7zuh4
-         +/Mpe0crtfFnLK7qHBhT7bm9xpL1ptDV1IkmMkgvD8WdrDzqqHrRbRc+bYGm1pBM8EIT
-         yPIA==
+        bh=wORoPEJyqMGn3vtLbYDCbkYsPLmForeYHOgaBK21yhA=;
+        b=oQKT3A1GYk56SnBqLXlaHM2gkXQbMt+5LzOsXKkPe7f5iT+ommKDvr29trOE+HWtpL
+         khfpzrlSZdTjkkVV0W4dSprwdmQzFceuAdsnQW6RFsWvBcPJ6nvvk6v5kvOEl3a/40Ab
+         Et19n4498gNc6appXAmiCqCuxMv59Ck0S8twpWaEVwnbtkRLID37AB0gRacovLUW7xMK
+         NIEAeA0DISixUQs4a/1DLJ+naj8UnJPXxHvIU7SubcLZDIqkYylFSA+X2n6jzAgRm9kA
+         MdwHIDeqojeWl7QbBnO+OPeUWkO7NTCkWpVBW2HjFm949tN0yVinkj/ERrw+Lo4/GsyY
+         JZ9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=IdpvY3vnaHaD1F97XwauJjhuWBuAAnyJbZWUZsOfYIU=;
-        b=BREM1dyNCOy2Noq5M3s8GGT97uiWLKrutkt2w8d++DvQZXTnXCoGDDT0AL+pPgI51+
-         Kj8Q13qroiLucddjSHFvhfuoyZqgsTBg0hSlBbGEwhNYrnS1HBcWz5TA1d9Z39gWXEa6
-         fEuzgc2yol1ao3/Rra7K7GmnAHChBUFR6bX5E9IVpZ46KRSyfjrAgn6/iEIjk8ONJd+o
-         4LTvJWyiRwJeJu6My4s6qMiShUAnevZS1mcLq07AUjiYaplH6TLZUN5qGejz2CkyeCon
-         zxRDsvwXH6lWw3YxsK+xunnLXlh3OtfnCWZ7CmnGs6oW4KmnO+tvP5WJXHS1MNRjglrb
-         cKWQ==
-X-Gm-Message-State: AOAM5318hMCTcBhtpXS58jW+kCpffLsZ1gFfx6y9sHihB4Q3kT1CcnE2
-        Qi/Yh/5Z/ROT4RA0HeYdxV5fFg==
-X-Google-Smtp-Source: ABdhPJznyfH5Fysxc+b+rJCGR0FORQrMIC5CSZyZl0VHqCzJY5ZMpqAAP02BQlCEerKUyIxg4RHemg==
-X-Received: by 2002:a1c:b346:: with SMTP id c67mr2181585wmf.60.1604391059673;
-        Tue, 03 Nov 2020 00:10:59 -0800 (PST)
+        bh=wORoPEJyqMGn3vtLbYDCbkYsPLmForeYHOgaBK21yhA=;
+        b=SM2k76aoTJw7Qb7nHEFyGU5p85mENzFTV0GQsARV4M71Hgs4GdnEjK+td8rOcQzzwJ
+         FnrEQRt12U24mTj49GXRUC4SEMzG1KzO+R4MfLnSdnzqYB5lm2Z9eTo69V/rDaV+CbW+
+         //7IMGvE27QFDopSXg94uTZMBAGBOedTbUrm4fxXhSDlFSeOHk4Xjv3b24udjbtP0Eis
+         76vdtEZ+vzWzFcH6sRZpFyOzvc1eEgjrxB3lNeuqJ/QCBfv2jkGwhvKl2BhD8xfcUiPR
+         1jL0ElYmtVpVwgWl9TU7slRC+Qa6eV1V5RROyasMZSJOHpnJxleeCejL43uuu8jDuYpK
+         iv9Q==
+X-Gm-Message-State: AOAM531fsHssBPd85PPjmpm2f22QFHnrKjc90lp9Z0Z99MBv84Bcm6dm
+        vFTiWjQ+9IQXJqfZXoxjcKmyyA==
+X-Google-Smtp-Source: ABdhPJyuCr4bpmvzRQ+OyNyar0XW6jAidB2r0Vx7Hc9VycIyrAEpHv4hQX0NBBSmEJRjFmvMlxz8BA==
+X-Received: by 2002:a1c:5f42:: with SMTP id t63mr2195051wmb.19.1604392171229;
+        Tue, 03 Nov 2020 00:29:31 -0800 (PST)
 Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id h7sm25054331wrt.45.2020.11.03.00.10.57
+        by smtp.googlemail.com with ESMTPSA id k22sm2121288wmi.34.2020.11.03.00.29.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Nov 2020 00:10:59 -0800 (PST)
-Subject: Re: [PATCH v7 2/6] interconnect: Add generic interconnect driver for
- Exynos SoCs
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>, cw00.choi@samsung.com,
-        krzk@kernel.org
-Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
+        Tue, 03 Nov 2020 00:29:30 -0800 (PST)
+Subject: Re: [PATCH v7 0/6] Exynos: Simple QoS for exynos-bus using
+ interconnect
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     krzk@kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org,
         a.swigon@samsung.com, myungjoo.ham@samsung.com,
         inki.dae@samsung.com, sw0312.kim@samsung.com,
         b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20201030125149.8227-1-s.nawrocki@samsung.com>
- <CGME20201030125301eucas1p218b0e654cb4c826b05280f28836da8d9@eucas1p2.samsung.com>
- <20201030125149.8227-3-s.nawrocki@samsung.com>
+References: <CGME20201030125221eucas1p14e525f75c4b8dadae04144ce7684d776@eucas1p1.samsung.com>
+ <20201030125149.8227-1-s.nawrocki@samsung.com>
+ <b586c2b7-9ca1-e641-b70c-27493ffd05e0@samsung.com>
 From:   Georgi Djakov <georgi.djakov@linaro.org>
 Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
  xsFNBFjTuRcBEACyAOVzghvyN19Sa/Nit4LPBWkICi5W20p6bwiZvdjhtuh50H5q4ktyxJtp
@@ -117,105 +116,109 @@ Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
  7ayYJIXFqjl/X0KBcCbiAl4vbdBw1bqFnO4zd1lMXKVoa29UHqby4MPbQhjWNVv9kqp8A39+
  E9xw890l1xdERkjVKX6IEJu2hf7X3MMl9tOjBK6MvdOUxvh1bNNmXh7OlBL1MpJYY/ydIm3B
  KEmKjLDvB0pePJkdTw==
-Message-ID: <2f243097-7b8c-9b39-989d-a36d226ecd23@linaro.org>
-Date:   Tue, 3 Nov 2020 10:11:00 +0200
+Message-ID: <9285e2d4-f2fa-92f2-ba25-832f32f77d78@linaro.org>
+Date:   Tue, 3 Nov 2020 10:29:32 +0200
 MIME-Version: 1.0
-In-Reply-To: <20201030125149.8227-3-s.nawrocki@samsung.com>
+In-Reply-To: <b586c2b7-9ca1-e641-b70c-27493ffd05e0@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
+Hi Chanwoo and Sylwester,
 
-Thank you for refreshing the patchset!
+On 11/3/20 09:54, Chanwoo Choi wrote:
+> Hi Sylwester,
+> 
+> When I tested this patchset on Odroid-U3,
+> After setting 0 bps by interconnect[1][2],
+> the frequency of devfreq devs sustain the high frequency
+> according to the pm qos request.
+> 
+> So, I try to find the cause of this situation.
+> In result, it seems that interconnect exynos driver
+> updates the pm qos request to devfreq device
+> during the kernel booting. Do you know why the exynos
+> interconnect driver request the pm qos during probe
+> without the mixer request?
 
-On 10/30/20 14:51, Sylwester Nawrocki wrote:
-> This patch adds a generic interconnect driver for Exynos SoCs in order
-> to provide interconnect functionality for each "samsung,exynos-bus"
-> compatible device.
-> 
-> The SoC topology is a graph (or more specifically, a tree) and its
-> edges are specified using the 'samsung,interconnect-parent' in the
-> DT. Due to unspecified relative probing order, -EPROBE_DEFER may be
-> propagated to ensure that the parent is probed before its children.
-> 
-> Each bus is now an interconnect provider and an interconnect node as
-> well (cf. Documentation/interconnect/interconnect.rst), i.e. every bus
-> registers itself as a node. Node IDs are not hardcoded but rather
-> assigned dynamically at runtime. This approach allows for using this
-> driver with various Exynos SoCs.
-> 
-> Frequencies requested via the interconnect API for a given node are
-> propagated to devfreq using dev_pm_qos_update_request(). Please note
-> that it is not an error when CONFIG_INTERCONNECT is 'n', in which
-> case all interconnect API functions are no-op.
-> 
-> The bus-width DT property is to determine the interconnect data
-> width and traslate requested bandwidth to clock frequency for each
-> bus.
-> 
-> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes for v7:
->  - adjusted to the DT property changes: "interconnects" instead
->    of "samsung,interconnect-parent", "samsung,data-clk-ratio"
->    instead of "bus-width",
->  - adaptation to of_icc_get_from_provider() function changes
->    in v5.10-rc1.
-> 
-> Changes for v6:
->  - corrected of_node dereferencing in exynos_icc_get_parent()
->    function,
->  - corrected initialization of icc_node->name so as to avoid
->    direct of_node->name dereferencing,
->  - added parsing of bus-width DT property.
-> 
-> Changes for v5:
->  - adjust to renamed exynos,interconnect-parent-node property,
->  - use automatically generated platform device id as the interconect
->    node id instead of a now unavailable devfreq->id field,
->  - add icc_ prefix to some variables to make the code more self-commenting,
->  - use icc_nodes_remove() instead of icc_node_del() + icc_node_destroy(),
->  - adjust to exynos,interconnect-parent-node property rename to
->    samsung,interconnect-parent,
->  - converted to a separate platform driver in drivers/interconnect.
-> 
-> ---
->  drivers/interconnect/Kconfig         |   1 +
->  drivers/interconnect/Makefile        |   1 +
->  drivers/interconnect/exynos/Kconfig  |   6 ++
->  drivers/interconnect/exynos/Makefile |   4 +
->  drivers/interconnect/exynos/exynos.c | 198 +++++++++++++++++++++++++++++++++++
->  5 files changed, 210 insertions(+)
->  create mode 100644 drivers/interconnect/exynos/Kconfig
->  create mode 100644 drivers/interconnect/exynos/Makefile
->  create mode 100644 drivers/interconnect/exynos/exynos.c
-> 
-[..]
-> +
-> +static struct platform_driver exynos_generic_icc_driver = {
-> +	.driver = {
-> +		.name = "exynos-generic-icc",
+That's probably because of the sync_state support, that was introduced
+recently. The icc_sync_state callback needs to be added to the driver
+(i just left a comment on that patch), and then check again if it works.
 
-I think that you will need this:
-		.sync_state = icc_sync_state,
+The idea of the sync_state is that there could be multiple users of a
+path and we must wait for all consumers to tell their bandwidth needs.
+Otherwise the first consumer may lower the bandwidth or disable a path
+needed for another consumer (driver), which has not probed yet. So we
+maintain a floor bandwidth until everyone has probed. By default the floor
+bandwidth is INT_MAX, but can be overridden by implementing the get_bw()
+callback.
 
 Thanks,
 Georgi
 
-> +	},
-> +	.probe = exynos_generic_icc_probe,
-> +	.remove = exynos_generic_icc_remove,
-> +};
-> +module_platform_driver(exynos_generic_icc_driver);
-> +
-> +MODULE_DESCRIPTION("Exynos generic interconnect driver");
-> +MODULE_AUTHOR("Artur Świgoń <a.swigon@samsung.com>");
-> +MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:exynos-generic-icc");
+> 
+> PS. The passive governor has a bug related to PM_QOS interface.
+> So, I posted the patch[4].
+> 
+> 
+> [1] interconnect_graph
+> root@localhost:~# cat /sys/kernel/debug/interconnect/interconnect_graph 
+> digraph {
+>         rankdir = LR
+>         node [shape = record]
+>         subgraph cluster_1 {
+>                 label = "soc:bus_dmc"
+>                 "2:bus_dmc" [label="2:bus_dmc
+>                         |avg_bw=0kBps
+>                         |peak_bw=0kBps"]
+>         }
+>         subgraph cluster_2 {
+>                 label = "soc:bus_leftbus"
+>                 "3:bus_leftbus" [label="3:bus_leftbus
+>                         |avg_bw=0kBps
+>                         |peak_bw=0kBps"]
+>         }
+>         subgraph cluster_3 {
+>                 label = "soc:bus_display"
+>                 "4:bus_display" [label="4:bus_display
+>                         |avg_bw=0kBps
+>                         |peak_bw=0kBps"]
+>         }
+>         "3:bus_leftbus" -> "2:bus_dmc"
+>         "4:bus_display" -> "3:bus_leftbus"
+> 
+> 
+> [2] interconnect_summary
+> root@localhost:~# cat /sys/kernel/debug/interconnect/interconnect_summary 
+>  node                                  tag          avg         peak
+> --------------------------------------------------------------------
+> bus_dmc                                               0            0
+>   12c10000.mixer                         0            0            0
+> bus_leftbus                                           0            0
+>   12c10000.mixer                         0            0            0
+> bus_display                                           0            0
+>   12c10000.mixer                         0            0            0
+> 
+> 
+> [3] devfreq_summary
+> root@localhost:~# cat /sys/kernel/debug/devfreq/devfreq_summary 
+> dev                            parent_dev                     governor        timer      polling_ms  cur_freq_Hz  min_freq_Hz  max_freq_Hz
+> ------------------------------ ------------------------------ --------------- ---------- ---------- ------------ ------------ ------------
+> soc:bus_dmc                    null                           simple_ondemand deferrable         50    400000000    400000000    400000000
+> soc:bus_acp                    soc:bus_dmc                    passive         null                0    267000000    100000000    267000000
+> soc:bus_c2c                    soc:bus_dmc                    passive         null                0    400000000    100000000    400000000
+> soc:bus_leftbus                null                           simple_ondemand deferrable         50    200000000    200000000    200000000
+> soc:bus_rightbus               soc:bus_leftbus                passive         null                0    200000000    100000000    200000000
+> soc:bus_display                soc:bus_leftbus                passive         null                0    200000000    200000000    200000000
+> soc:bus_fsys                   soc:bus_leftbus                passive         null                0    134000000    100000000    134000000
+> soc:bus_peri                   soc:bus_leftbus                passive         null                0    100000000     50000000    100000000
+> soc:bus_mfc                    soc:bus_leftbus                passive         null                0    200000000    100000000    200000000
+> 
+> 
+> [4] PM / devfreq: passive: Update frequency when start governor
+> https://patchwork.kernel.org/project/linux-pm/patch/20201103070646.18687-1-cw00.choi@samsung.com/
+> 
 > 
