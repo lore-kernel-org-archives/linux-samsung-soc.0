@@ -2,87 +2,145 @@ Return-Path: <SRS0=6Xyg=EJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8329C4742C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 22:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B35C55178
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 22:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 867A72080D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 22:09:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AF9421534
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 22:44:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604441396;
-	bh=HMA2x7Om27X63Oj+MvQ2qbE9HUnnDSm8wTt5fnV84Nc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lkkL7Ro7kAhyUgPrWTv7ABYRjkp2CiY0wFxoyJC9dOqbNdwSrcY1sG+S99NeFKVOs
-	 u2FsyFOfiYnscigl2S9QwjQxbrkmJiO3Mq0WipQy5o881bNPZaKv/IO0/dmwTA0l0e
-	 6P/fFKw7JHVTTYtpqaq0SFApQclaHXzRDRX6sHJk=
+	s=default; t=1604443484;
+	bh=B0hofVyjbIarQN5JcfzWbRMadJujwsK3/oEFwLCaHaE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
+	b=j9SpI4jLPdtawSDuKsi3JGC8/V7RVj6MPKil2yL4mcnazgjcOXtUGpLtQf9TV+anP
+	 rFXbE1/82sZVf6j1t0GuF2zNODlK/uEiDhqxh/EpAbE8hRTfasKhLT3uKMrieKzdGx
+	 InFxK7RAjz85kUGN9u8XAyhNSoEHqqxKovp9ttbA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729862AbgKCWJz (ORCPT
+        id S1730693AbgKCWok (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 17:09:55 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52517 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729886AbgKCUiL (ORCPT
+        Tue, 3 Nov 2020 17:44:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35078 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730606AbgKCWok (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 15:38:11 -0500
-Received: by mail-wm1-f67.google.com with SMTP id c18so545080wme.2;
-        Tue, 03 Nov 2020 12:38:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=s8q+3f361Qn+Zk0StgkDu+b9A9+awh+DJqyxzKTC3JY=;
-        b=pn6PYw3UFrn0GlCQ5kqIh0OhUTUzUWB69yTcQjKn6r88HDnJ0EYkAtyMDtMcWgeGXO
-         b99Dyupf1mXzDkqSoinS+iDBPwVkR7fS2biLJDLGKv0ldbz9dsFn3kOUk6oAm34x1kp7
-         KIUufGk+cj8DKKO0QnbD4OAZhPiYPxiAXqsoYrC4FvXJ6Cv7nix54Ldu+UEeAC5c5gGf
-         UfiBHet1eHNV+YUyAMQNiTLOenXOEgDb+7l1OqGSHMd29y5SFAZIn6wYjJxixkCWbIiJ
-         BIM1bYXxXnwqIACbpI4gTo0pxpEFhyQY3YKenFP3KsPdksHQ2ImHxfjeaXBeK04997v+
-         J38A==
-X-Gm-Message-State: AOAM532J80SNyUudPmrENlAarMQaYj6I4BpabD9LxOAVkdWJiiKd1u12
-        F5K7P78j9ECzviDMK4A07cr9K4i1KW0=
-X-Google-Smtp-Source: ABdhPJyMEX5UOKo7cQ48A++FW9cv9b6mSl8seA9YOqX4V2JJkFsbBV7UDuOSri1wP6FCg4sRdxO0vg==
-X-Received: by 2002:a1c:2d8f:: with SMTP id t137mr993227wmt.26.1604435889599;
-        Tue, 03 Nov 2020 12:38:09 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id v19sm3918675wmj.31.2020.11.03.12.38.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2020 12:38:08 -0800 (PST)
-Date:   Tue, 3 Nov 2020 21:38:07 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Ben Dooks <ben@simtec.co.uk>, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 14/25] soc: samsung: s3c-pm-check: Fix incorrectly named
- variable 'val'
-Message-ID: <20201103203807.GA10800@kozik-lap>
-References: <20201103152838.1290217-1-lee.jones@linaro.org>
- <20201103152838.1290217-15-lee.jones@linaro.org>
+        Tue, 3 Nov 2020 17:44:40 -0500
+Received: from localhost (230.sub-72-107-127.myvzw.com [72.107.127.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4779F21534;
+        Tue,  3 Nov 2020 22:44:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604443479;
+        bh=B0hofVyjbIarQN5JcfzWbRMadJujwsK3/oEFwLCaHaE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=aGJthRPHhGnUHt1ZdKqRmEtO85M2aHQ0EeBOkvpHEdxgqcV5i3Ard2wiJ81JAWc/6
+         kqheh439OJUiLwEjikfrm/596btquk1VT+KMzM6CPVKq/RwToIlXTv8sbNUy6UTy0i
+         BatF/rWkEZdP538Vqd3i+3FwP4h+TInyIqmAjSB8=
+Date:   Tue, 3 Nov 2020 16:44:37 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 0/6] Add DW PCIe support for Exynos5433 SoCs
+Message-ID: <20201103224437.GA271545@bjorn-Precision-5520>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201103152838.1290217-15-lee.jones@linaro.org>
+In-Reply-To: <20201029134017.27400-1-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 03, 2020 at 03:28:27PM +0000, Lee Jones wrote:
-> Fixes the following W=1 kernel build warning(s):
+On Thu, Oct 29, 2020 at 02:40:11PM +0100, Marek Szyprowski wrote:
+> Dear All,
 > 
->  drivers/soc/samsung/s3c-pm-check.c:162: warning: Function parameter or member 'val' not described in 's3c_pm_runcheck'
->  drivers/soc/samsung/s3c-pm-check.c:162: warning: Excess function parameter 'vak' description in 's3c_pm_runcheck'
+> This patchset is a resurrection of the DW PCIe support for the Exynos5433
+> SoCs posted long time ago here: https://lkml.org/lkml/2016/12/26/6 and
+> later here: https://lkml.org/lkml/2017/12/21/296 .
 > 
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Ben Dooks <ben@simtec.co.uk>
-> Cc: linux-samsung-soc@vger.kernel.org
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/soc/samsung/s3c-pm-check.c | 2 +-
+> In meantime the support for the Exynos5440 SoCs has been completely
+> dropped from mainline kernel, as those SoCs never reached the market. The
+> PCIe driver for Exynos5440 variant however has not been removed yet. This
+> patchset simply reworks it to support the Exynos5433 variant. The lack of
+> the need to support both variants significantly simplifies the driver
+> code.
+> 
+> This patchset is based on the following branch:
+> git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git pci-more-dwc-cleanup
+> 
+> Best regards,
+> Marek Szyprowski
+> 
+> 
+> Changelog:
+> 
+> v3:
+> - rebased onto "[00/13] PCI: dwc: Another round of clean-ups" patchset:
+>   https://patchwork.kernel.org/project/linux-samsung-soc/cover/20201028204646.356535-1-robh@kernel.org/
+> - fixed issues pointed by Rob in the driver logic:
+>   * removed DBI_RO_WR_EN register poking
+>   * made driver a standard module
+> - fixed section mismatch issue
+> - added "num-viewport = <3>" property to dts and bindings to fix warning
+> 
+> v2: https://lore.kernel.org/linux-samsung-soc/20201023075744.26200-1-m.szyprowski@samsung.com/
+> - fixed issues in dt-bindings pointed by Krzysztof and Rob
+> 
+> v1: https://lore.kernel.org/linux-samsung-soc/20201019094715.15343-1-m.szyprowski@samsung.com/
+> - initial version of this resurrected patchset
+> 
+> 
+> Patch summary:
 
-Thanks, applied.
+Please follow the subject line convention:
 
-Best regards,
-Krzysztof
+  PCI: exynos: Rework to support Exynos5433 variant
+  arm64: dts: exynos: Add WiFi/PCIe support to TM2(e) boards
+  dt-bindings: PCI: exynos: Drop samsung,exynos5440-pcie binding
+  dt-bindings: PCI: exynos: Add samsung,exynos-pcie binding
+  dt-bindings: phy: exynos: Add samsung,exynos-pcie-phy binding
 
+You can save this trouble by running "git log --oneline" on the file
+(or directory, for new files) and copying the style.
+
+> Jaehoon Chung (3):
+>   phy: samsung: phy-exynos-pcie: rework driver to support Exynos5433
+>     PCIe PHY
+>   pci: dwc: pci-exynos: rework the driver to support Exynos5433 variant
+>   arm64: dts: exynos: add the WiFi/PCIe support to TM2(e) boards
+> 
+> Marek Szyprowski (3):
+>   dt-bindings: pci: drop samsung,exynos5440-pcie binding
+>   dt-bindings: pci: add the samsung,exynos-pcie binding
+>   dt-bindings: phy: add the samsung,exynos-pcie-phy binding
+> 
+>  .../bindings/pci/samsung,exynos-pcie.yaml     | 119 ++++++
+>  .../bindings/pci/samsung,exynos5440-pcie.txt  |  58 ---
+>  .../bindings/phy/samsung,exynos-pcie-phy.yaml |  51 +++
+>  .../boot/dts/exynos/exynos5433-pinctrl.dtsi   |   2 +-
+>  .../dts/exynos/exynos5433-tm2-common.dtsi     |  24 +-
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi    |  36 ++
+>  drivers/pci/controller/dwc/Kconfig            |  10 +-
+>  drivers/pci/controller/dwc/pci-exynos.c       | 353 +++++++-----------
+>  drivers/pci/quirks.c                          |   1 +
+>  drivers/phy/samsung/phy-exynos-pcie.c         | 304 ++++++---------
+>  10 files changed, 489 insertions(+), 469 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
+>  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
+> 
+> -- 
+> 2.17.1
+> 
