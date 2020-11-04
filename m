@@ -2,162 +2,114 @@ Return-Path: <SRS0=OVUx=EK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B37FC2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 12:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7CDC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 12:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12E2C2236F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 12:24:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ts1jCrco"
+	by mail.kernel.org (Postfix) with ESMTP id 24ACA223AB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 12:25:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604492723;
+	bh=KkQBo/I33K6kMMDBFq6LOr9LXBXK/87vaELoZIxDMvc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=IyMX/LdzKJJ/Yr2yy+Pd2aJ4PJu3/5FPJYgKvcsaciCVnzh0CefewZl1VkV2EE4am
+	 cQmgff/2Aa5Jj/vYJ/5rXa13y8NALVo8+QQiJ2qzwnI+GsD5caFpMlm4r1PnXVeSoK
+	 eOb8s5sXtoQxuXZ0OHgLJCW4IzD+nnXqEZIwwCJo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729089AbgKDMYQ (ORCPT
+        id S1729811AbgKDMZT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 07:24:16 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:53060 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728066AbgKDMYQ (ORCPT
+        Wed, 4 Nov 2020 07:25:19 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54849 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729778AbgKDMZT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Nov 2020 07:24:16 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201104122404euoutp01ddc5b657bd848224b8f7c2394c0f1c81~ETY8sWywQ2621226212euoutp01Z
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Nov 2020 12:24:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201104122404euoutp01ddc5b657bd848224b8f7c2394c0f1c81~ETY8sWywQ2621226212euoutp01Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604492644;
-        bh=gNAVfzFmOeobVChNyMtYG+v5xd03G54CGeOD9WGCmLI=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Ts1jCrcoBawR9K/Mfhx1IUGXfIT4InPuQbFUYWKFZld5Vdo7sq5Ebn146LQud8MBN
-         KP+2R0rhVCXNTg4dBRwURPgVFFSWocVqibUaxPQDLKjevqEtyNyQ0Wzw531k821WJn
-         6wxwj8Sy7AmIQHbv5s9so7ix1jTWeldwpS9snYlg=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201104122403eucas1p2ce65adcd61df8984a196e8af8b093254~ETY75KKpQ2571425714eucas1p24;
-        Wed,  4 Nov 2020 12:24:03 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 59.3C.06318.36D92AF5; Wed,  4
-        Nov 2020 12:24:03 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201104122403eucas1p1d3c5bb3e42ef306c6b9b46a5d30cb475~ETY7h43nR0150101501eucas1p1s;
-        Wed,  4 Nov 2020 12:24:03 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201104122403eusmtrp10eebf657a62c6fac526661b357c353ca~ETY7hSN5u0837908379eusmtrp1B;
-        Wed,  4 Nov 2020 12:24:03 +0000 (GMT)
-X-AuditID: cbfec7f5-371ff700000018ae-86-5fa29d63c7eb
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 3F.56.06017.36D92AF5; Wed,  4
-        Nov 2020 12:24:03 +0000 (GMT)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201104122402eusmtip17ed41908c69de8265f61076ec6ec0aff~ETY7FehHM3263732637eusmtip1X;
-        Wed,  4 Nov 2020 12:24:02 +0000 (GMT)
-Subject: Re: [PATCH] ARM: dts: exynos: Assign a fixed index to mmc devices
- on ODROID XU3/4 boards
-To:     Markus Reichl <m.reichl@fivetechno.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <4ac01b71-e806-18c8-13ce-6acdcc1a3b41@samsung.com>
-Date:   Wed, 4 Nov 2020 13:24:02 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.4.0
+        Wed, 4 Nov 2020 07:25:19 -0500
+Received: by mail-wm1-f65.google.com with SMTP id d142so2142655wmd.4;
+        Wed, 04 Nov 2020 04:25:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=HuTwun2Dnd4h1S4X8KEOzU34Qd2VWJJ944RQvE10wwg=;
+        b=CkRA4RYBe3wfhNh8vKIjOuPytIPr70lD03GExpVux5ezXlXIhVlUnrIeFV75GUTQTy
+         TKOSv5AmhC0DyWPZstRoLlVqN7ndkdbAYyXez7BYO4TwC9h+Yab8HjEmsILtcfyUJEEe
+         Xx0Wf3tmRH1C3/Wks4gxPY11ajTwzn0S96K8LKQtWLuMf92JTkxGxQjbPjRoN0wOX0NU
+         4yW0S0DDGabrMvOExiawC+2bdFtGh146MXNAaXJ6ML7E67W7U2b8M82OwLCVEacyhRAa
+         3/CGzCwAnYDKKfJkEzIR28HYVA1jTF19FvjB2SCE+V3s0wjEn27zS1a5P4dvqe5u8Wv2
+         Vf9g==
+X-Gm-Message-State: AOAM530xyoMQ6EE5XApfo0QIUNJIhFM7pXmU9jR3xwcrIaIVIxHtFaUE
+        PaCnZ1oWFWSa4YJJd9zNcBo=
+X-Google-Smtp-Source: ABdhPJwBZQBsDfz4trT0usXpkjYiPOZwSlK8h5bhMyUCxVi8CreHalUXc9dIF1MFkOTWPFzwF6p2Zw==
+X-Received: by 2002:a1c:b387:: with SMTP id c129mr4540134wmf.66.1604492716841;
+        Wed, 04 Nov 2020 04:25:16 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id n4sm2017844wmi.32.2020.11.04.04.25.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2020 04:25:15 -0800 (PST)
+Date:   Wed, 4 Nov 2020 13:25:14 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     georgi.djakov@linaro.org, cw00.choi@samsung.com,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        a.swigon@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v8 1/7] dt-bindings: devfreq: Add documentation for the
+ interconnect properties
+Message-ID: <20201104122514.GA10157@kozik-lap>
+References: <20201104103657.18007-1-s.nawrocki@samsung.com>
+ <CGME20201104103718eucas1p1c103f1a96499b03c72e5457ac2542c3d@eucas1p1.samsung.com>
+ <20201104103657.18007-2-s.nawrocki@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20201104100855.2337-1-m.reichl@fivetechno.de>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKKsWRmVeSWpSXmKPExsWy7djPc7rJcxfFG6y9r2Ex/8g5Vovz5zew
-        W2x6fI3V4vKuOWwWM87vY7J4eeQHo0Xr3iPsDuwet+7Ue2xa1cnmsXlJvcfnTXIBLFFcNimp
-        OZllqUX6dglcGQ3b5zMV/OeueLbgD1MD41XOLkZODgkBE4k1N3YzdzFycQgJrGCUWH3xIyOE
-        84VRYkrfFBYI5zOjxLZdtxlhWp68PwiVWM4o8fj2TyYI5z2jxNS5DewgVcICyRI72iczgdgi
-        AqUS7bO+gC1hFmhnlDg15wZYEZuAoUTX2y42EJtXwE7i2sEnYCtYBFQkjn84B2aLCiRJ/P38
-        hxmiRlDi5MwnLCA2p4C1xOq3m8DizALyEtvfzoGyxSVuPZkPdpGEwDJ2ibezTgM1cAA5LhJ3
-        N2pDvCAs8er4FnYIW0bi9OQeFoj6ZkaJh+fWskM4PYwSl5tmQD1tLXHn3C82kEHMApoS63fp
-        Q4QdJdafewc1n0/ixltBiBv4JCZtm84MEeaV6GgTgqhWk5h1fB3c2oMXLjFPYFSaheSzWUi+
-        mYXkm1kIexcwsqxiFE8tLc5NTy02zkst1ytOzC0uzUvXS87P3cQITDyn/x3/uoNx35+kQ4wC
-        HIxKPLwHti2MF2JNLCuuzD3EKMHBrCTC63T2dJwQb0piZVVqUX58UWlOavEhRmkOFiVxXuNF
-        L2OFBNITS1KzU1MLUotgskwcnFINjKuMpTP8OvkL50VmGqZ32kpPXekxtzPkmJ5u6bNPFSsu
-        i0+fsWL9l7BvMmJ6LDMba9m93mzdcYNXOGv1CZZ9m5ub3i3vLT1Znmczh/+Nn87qYuODBttS
-        l4mnN921a1N4urD7XmBXzOq3QZW/N7ozcIo7NX7gPJXb8O6F3uwJysHOay40hEVPV2Ipzkg0
-        1GIuKk4EAOFm7r44AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsVy+t/xu7rJcxfFGxzdwmcx/8g5Vovz5zew
-        W2x6fI3V4vKuOWwWM87vY7J4eeQHo0Xr3iPsDuwet+7Ue2xa1cnmsXlJvcfnTXIBLFF6NkX5
-        pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6GQ3b5zMV/Oeu
-        eLbgD1MD41XOLkZODgkBE4kn7w+ydDFycQgJLGWUOLVwDwtEQkbi5LQGVghbWOLPtS42iKK3
-        jBKHrsxgBkkICyRLTN90CaxIRKBUYteeNWCTmAXaGSXuvJ0N1dHHKPFn0TmwsWwChhJdb0FG
-        cXLwCthJXDv4hBHEZhFQkTj+4RyYLSqQJPHywlQmiBpBiZMzn4D1cgpYS6x+uwlsM7OAmcS8
-        zQ+hbHmJ7W/nQNniEreezGeawCg0C0n7LCQts5C0zELSsoCRZRWjSGppcW56brGRXnFibnFp
-        Xrpecn7uJkZgrG079nPLDsaud8GHGAU4GJV4eA9sWxgvxJpYVlyZe4hRgoNZSYTX6ezpOCHe
-        lMTKqtSi/Pii0pzU4kOMpkDPTWSWEk3OB6aBvJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFCAumJ
-        JanZqakFqUUwfUwcnFINjB1bTjoy22lssPxXlSGX8W8R89Z7zRJqUxXXbDN+ukvs2ecjdSwe
-        Af2bAled+MZ859RyHx7DlLOKZundrxsLUkryBMzXd3mp+Ni73mRV/qf/80fTEonI10mhM6/c
-        cTi265ZFmzjr+SONigHNCz4pedz+wh2TklN+hOFfTV5148bFIeLh2QxBSizFGYmGWsxFxYkA
-        8WalVcsCAAA=
-X-CMS-MailID: 20201104122403eucas1p1d3c5bb3e42ef306c6b9b46a5d30cb475
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201104105152eucas1p28eb6ca629a685f24a2463c72898fdbc5
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201104105152eucas1p28eb6ca629a685f24a2463c72898fdbc5
-References: <CGME20201104105152eucas1p28eb6ca629a685f24a2463c72898fdbc5@eucas1p2.samsung.com>
-        <20201104100855.2337-1-m.reichl@fivetechno.de>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20201104103657.18007-2-s.nawrocki@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Markus,
-
-On 04.11.2020 11:08, Markus Reichl wrote:
-> Recently introduced async probe on mmc devices can shuffle block IDs.
-> Pin them to fixed values to ease booting in evironments where UUIDs
-> are not practical. Use newly introduced aliases for mmcblk devices from [1].
->
-> [1]
-> https://patchwork.kernel.org/patch/11747669/
-
-Wow, this is a long standing issue, called by others 'a feature'. Good 
-that this has been finally solved.
-
-> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+On Wed, Nov 04, 2020 at 11:36:51AM +0100, Sylwester Nawrocki wrote:
+> Add documentation for new optional properties in the exynos bus nodes:
+> interconnects, #interconnect-cells, samsung,data-clock-ratio.
+> These properties allow to specify the SoC interconnect structure which
+> then allows the interconnect consumer devices to request specific
+> bandwidth requirements.
+> 
+> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 5 +++++
->   1 file changed, 5 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> index e35af40a55cb..91d2840ac8ca 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> @@ -13,6 +13,11 @@
->   #include "exynos5422-odroid-core.dtsi"
->   
->   / {
-> +	aliases {
-> +		mmc0 = &mmc_2;
-> +		mmc1 = &mmc_0;
+> Changes for v8:
+>  - updated description of the interconnects property,
+>  - fixed typo in samsung,data-clk-ratio property description.
+> 
+> Changes for v7:
+>  - bus-width property replaced with samsung,data-clock-ratio,
+>  - the interconnect consumer bindings used instead of vendor specific
+>    properties
+> 
+> Changes for v6:
+>  - added dts example of bus hierarchy definition and the interconnect
+>    consumer,
+>  - added new bus-width property.
+> 
+> Changes for v5:
+>  - exynos,interconnect-parent-node renamed to samsung,interconnect-parent
+> ---
+>  .../devicetree/bindings/devfreq/exynos-bus.txt     | 71 +++++++++++++++++++++-
+>  1 file changed, 69 insertions(+), 2 deletions(-)
 
-Frankly, I would keep the MMC numbers the same as in u-boot and 
-datasheets. 0 for the build-in eMMC and 2 for the SD-card. This would be 
-much more natural. On the other hand, I would agree to do it differently 
-only on Odroid HC1/HD2/MC1, which don't have build-in eMMC - just use 0 
-there for the SD-card.
+I already acked it and there are no signigicant changes from v7.
 
-> +	};
-> +
->   	gpio-keys {
->   		compatible = "gpio-keys";
->   		pinctrl-names = "default";
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Best regards,
+Krzysztof
