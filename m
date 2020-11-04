@@ -2,115 +2,159 @@ Return-Path: <SRS0=OVUx=EK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE372C2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 14:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61732C388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 14:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5514521734
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 14:00:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Wan5zLNC"
+	by mail.kernel.org (Postfix) with ESMTP id 124A321734
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 14:06:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604498783;
+	bh=JS18P5Vmv/ogokwwrZqBp4vzsjrUDcL/VbHqQIbu6bc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bqJ6sJ004mmJJ3f+E1lY6Q6CNjYjaHlZ8/sfVX5werWcqN1piUdeG2jmJQ6WhfQhf
+	 6bBTCtat8aguZfuH3dzoS5CTdZEEj9X96sHpTtkfUjl8BRYzsYLt/Xvw1ZJBjoP2vE
+	 xrL2MlAqtQ+2og5kRyHrPH19kzk4HgaLvsq6E7+8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729833AbgKDOA1 (ORCPT
+        id S1726527AbgKDOGW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 09:00:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40148 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727018AbgKDOA0 (ORCPT
+        Wed, 4 Nov 2020 09:06:22 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40414 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbgKDOGW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Nov 2020 09:00:26 -0500
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ABB1C061A4C
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Nov 2020 06:00:26 -0800 (PST)
-Received: by mail-qk1-x741.google.com with SMTP id i21so18565276qka.12
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Nov 2020 06:00:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=J6Nw3097qL1FGBO59AefdNEIbSIDtL/HHl1l69CFDp8=;
-        b=Wan5zLNCc03uOg3crmJFeRaNbOEA+qwrbKwCY9LDkg1fZnFvzGEBwk4V+VLFOn5oKx
-         tmcyGIKCw4+CD/juWp2ijPQPLgAyQG0AhFaLumt8mFw7D817cQkKUY2w7oYalFQSRaiQ
-         Vb/ptf8IpP3WfnK3UuZPUxBAXkXY6PqsAqGNVYoZolg0yUEgsR1Di4PcNN7C/aUr2Q/R
-         O0ZcNPr6tO0Ab4yQ9aVnuDw44g3gsPath6hDrZSj4xe9Loas/o/6/OXlQjyqG2MFoi+n
-         R3zy4MV988W7+StxSAydki/+D4rJ/lZx0EB7vwQbsli0N+fpB6onleBpY6HTFL+CpY9E
-         jiFA==
+        Wed, 4 Nov 2020 09:06:22 -0500
+Received: by mail-wm1-f66.google.com with SMTP id k18so2423915wmj.5;
+        Wed, 04 Nov 2020 06:06:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=J6Nw3097qL1FGBO59AefdNEIbSIDtL/HHl1l69CFDp8=;
-        b=tX7QRefiZcy1rPttRq5d55zkx171X3BUPEI/VTTJpZAlrtAxeXydaG5rlubrzUn/JV
-         sDPf42q3sn/seY6WiLWlGt0iFZZDROpAq7nx6NOTcDnh+cF00c0/g6S51ix2j2zT7WNa
-         rqwCpDR5S+oaqoSvDAJAJI/LDGLguZf54rdFR6O2S2a98dquycJWUt3jgt/KLgmUJNiI
-         qlqH9At/xGdV8kQUHFYVqFgxUoo4rXBOBkE2zGYZPKbTLvLwjSk064eO2rMH+3Sdtizh
-         8pFq4veMZFQMyRvpuXyNi976/PppjTqfbpo8B0IiiP8p4gC+SV6bi6xjWtD4hFLILcbU
-         B8XA==
-X-Gm-Message-State: AOAM530akF3P7V1GV5E6Nz0YcOIntHNVmvlswOhLLDMubrJ9wKmB2aBa
-        bAjkUf3JWEWVAsDzXFPTPsDV7w==
-X-Google-Smtp-Source: ABdhPJz06+PUPTCOD5MO6YcYJfu8e1guRGyarj130cNdAlQFDKce0Oko/G5bRBr5wbl0qK0lrF7Apg==
-X-Received: by 2002:a37:4ccf:: with SMTP id z198mr26929935qka.348.1604498425743;
-        Wed, 04 Nov 2020 06:00:25 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
-        by smtp.gmail.com with ESMTPSA id y3sm131855qto.2.2020.11.04.06.00.23
+        bh=S41teLRLSZ7isGd7nFyvP35fxvOeeax7aZ66a+ME5Ss=;
+        b=cK1aHpaSQh6BAEvBb0+cEMuC6ob/HqGktSYGqM0a6ChzjoBj17USMkgNj/YXmM0zwf
+         bMWC4hoFiMyzIKIUN8guRldlieXgRnapU2nK9nal7ShhSc6pIaOhOUD49XTLPdEZf9ke
+         3UAWlFzdI5n9pPW7O7T9VYdeG/Np95gjDBXTsJnbIgcTmx0Xp11vcSiEkspMpWVcrsuI
+         7H6F5vVNg03OHB12cvP+pca3gEB9ev84bFsx7UKxN3STCvGlTTk1mqjVPECvYQ1PTMxP
+         0fZOo4Bg4xuGE5T706pO3ceTLS7vhSAVj8E831F52DnfFgYzf5MwMFUk9S3aKGrxJ5kR
+         7sUg==
+X-Gm-Message-State: AOAM530JNMiL6Qnpf8mOvDqWfsxwX9uayvl8PNypn6VUry8J3G6EoRNp
+        a0NkpewYotWOtHHg7qJ/O+W0SAl07QQ=
+X-Google-Smtp-Source: ABdhPJzub2Qdl39XwePCwW5f4Na1s1gFDl9l1dWju07Y2lOINxiR82U83DMQ2PjXZBKrxm2EzbTIJg==
+X-Received: by 2002:a05:600c:2282:: with SMTP id 2mr5089187wmf.154.1604498779470;
+        Wed, 04 Nov 2020 06:06:19 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id g186sm6885889wma.1.2020.11.04.06.06.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 06:00:24 -0800 (PST)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1kaJKp-00GVgS-9E; Wed, 04 Nov 2020 10:00:23 -0400
-Date:   Wed, 4 Nov 2020 10:00:23 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
-Message-ID: <20201104140023.GQ36674@ziepe.ca>
-References: <20201030100815.2269-1-daniel.vetter@ffwll.ch>
- <20201030100815.2269-6-daniel.vetter@ffwll.ch>
- <446b2d5b-a1a1-a408-f884-f17a04b72c18@nvidia.com>
- <CAKMK7uGDW2f0oOvwgryCHxQFHyh3Tsk6ENsMGmtZ-EnH57tMSA@mail.gmail.com>
- <1f7cf690-35e2-c56f-6d3f-94400633edd2@nvidia.com>
- <CAKMK7uFYDSqnNp_xpohzCEidw_iLufNSoX4v55sNZj-nwTckSg@mail.gmail.com>
- <7f29a42a-c408-525d-90b7-ef3c12b5826c@nvidia.com>
- <CAKMK7uEw701AWXNJbRNM8Z+FkyUB5FbWegmSzyWPy9cG4W7OLA@mail.gmail.com>
+        Wed, 04 Nov 2020 06:06:17 -0800 (PST)
+Date:   Wed, 4 Nov 2020 15:06:16 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     georgi.djakov@linaro.org, cw00.choi@samsung.com,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        a.swigon@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v8 2/7] interconnect: Add generic interconnect driver for
+ Exynos SoCs
+Message-ID: <20201104140616.GA3024@kozik-lap>
+References: <20201104103657.18007-1-s.nawrocki@samsung.com>
+ <CGME20201104103720eucas1p1014217e751a681796ed508af22c6bb12@eucas1p1.samsung.com>
+ <20201104103657.18007-3-s.nawrocki@samsung.com>
+ <20201104123729.GA13371@kozik-lap>
+ <346da718-2340-c862-9a1a-c5f64aae19c2@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAKMK7uEw701AWXNJbRNM8Z+FkyUB5FbWegmSzyWPy9cG4W7OLA@mail.gmail.com>
+In-Reply-To: <346da718-2340-c862-9a1a-c5f64aae19c2@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Nov 01, 2020 at 11:50:39PM +0100, Daniel Vetter wrote:
+On Wed, Nov 04, 2020 at 02:22:37PM +0100, Sylwester Nawrocki wrote:
+> On 04.11.2020 13:37, Krzysztof Kozlowski wrote:
+> > On Wed, Nov 04, 2020 at 11:36:52AM +0100, Sylwester Nawrocki wrote:
+> 
+> >> diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
+> >> index d203520..c2f9e9d 100644
+> >> --- a/drivers/interconnect/Makefile
+> >> +++ b/drivers/interconnect/Makefile
+> >> @@ -6,3 +6,4 @@ icc-core-objs				:= core.o bulk.o
+> >>  obj-$(CONFIG_INTERCONNECT)		+= icc-core.o
+> >>  obj-$(CONFIG_INTERCONNECT_IMX)		+= imx/
+> >>  obj-$(CONFIG_INTERCONNECT_QCOM)		+= qcom/
+> >> +obj-$(CONFIG_INTERCONNECT_SAMSUNG)	+= samsung/
+> >> \ No newline at end of file
+> > 
+> > This needs a fix.
+> 
+> Corrected, thanks for pointing out.
+>  
+> >> diff --git a/drivers/interconnect/samsung/Kconfig b/drivers/interconnect/samsung/Kconfig
+> >> new file mode 100644
+> >> index 0000000..508ed64
+> >> --- /dev/null
+> >> +++ b/drivers/interconnect/samsung/Kconfig
+> >> @@ -0,0 +1,13 @@
+> >> +# SPDX-License-Identifier: GPL-2.0-only
+> >> +config INTERCONNECT_SAMSUNG
+> >> +	bool "Samsung interconnect drivers"
+> > 
+> > "Samsung SoC interconnect drivers"
+> 
+> Changed.
+> 
+> >> +	depends on ARCH_EXYNOS || COMPILE_TEST
+> > 
+> > Don't the depend on INTERCONNECT?
+> 
+> This file gets included only if INTERCONNECT is enabled, see
+> higher level Kconfig file.
 
-> It's not device drivers, but everyone else. At least my understanding
-> is that VM_IO | VM_PFNMAP means "even if it happens to be backed by a
-> struct page, do not treat it like normal memory". And gup/pup_fast
-> happily break that. I tried to chase the history of that test, didn't
-> turn up anything I understood much:
+I missed the include part, looks good.
 
-VM_IO isn't suppose do thave struct pages, so how can gup_fast return
-them?
+>  
+> >> +	help
+> >> +	  Interconnect drivers for Samsung SoCs.
+> >> +
+> >> +
+> > 
+> > One line break
+> 
+> Fixed.
+> 
+> >> +config INTERCONNECT_EXYNOS
+> >> +	tristate "Exynos generic interconnect driver"
+> >> +	depends on INTERCONNECT_SAMSUNG
+> > 
+> > How about:
+> > default y if ARCH_EXYNOS
+> 
+> OK, added.
+> 
+> >> +	help
+> >> +	  Generic interconnect driver for Exynos SoCs.
+> >> diff --git a/drivers/interconnect/samsung/Makefile b/drivers/interconnect/samsung/Makefile
+> >> new file mode 100644
+> >> index 0000000..e19d1df
+> >> --- /dev/null
+> >> +++ b/drivers/interconnect/samsung/Makefile
+> >> @@ -0,0 +1,4 @@
+> >> +# SPDX-License-Identifier: GPL-2.0
+> >> +exynos-interconnect-objs		:= exynos.o
+> > 
+> > What is this line for?
+>  
+> That allows to change the module name, so it's exynos-interconnect.ko
+> rather than just exynos.c. It's done similarly for other SoCs in 
+> the subsystem.
 
-I thought some magic in the PTE flags excluded this?
+Thanks, makes sense.
 
-Jason
+Best regards,
+Krzysztof
