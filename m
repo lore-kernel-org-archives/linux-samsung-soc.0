@@ -2,96 +2,129 @@ Return-Path: <SRS0=OVUx=EK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18858C4742C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 02:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0483C55178
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 08:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D22DB223BD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 02:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D080208C7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 08:44:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="SO6a9eIH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730622AbgKDCm0 (ORCPT
+        id S1728029AbgKDIoT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 21:42:26 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:33914 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730153AbgKDCm0 (ORCPT
+        Wed, 4 Nov 2020 03:44:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47688 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727787AbgKDIoT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 21:42:26 -0500
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
-        (envelope-from <andrew@lunn.ch>)
-        id 1ka8kV-0058ru-C2; Wed, 04 Nov 2020 03:42:11 +0100
-Date:   Wed, 4 Nov 2020 03:42:11 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
-Cc:     jim.cromie@gmail.com, Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v5 3/5] net: ax88796c: ASIX AX88796C SPI Ethernet Adapter
- Driver
-Message-ID: <20201104024211.GS933237@lunn.ch>
-References: <20201103151536.26472-1-l.stelmach@samsung.com>
- <CGME20201103151540eucas1p1d45bc7fdc9ddb07607b5268d50f567ca@eucas1p1.samsung.com>
- <20201103151536.26472-4-l.stelmach@samsung.com>
+        Wed, 4 Nov 2020 03:44:19 -0500
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE4C4C0613D3
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Nov 2020 00:44:15 -0800 (PST)
+Received: by mail-oi1-x242.google.com with SMTP id u127so21389307oib.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Nov 2020 00:44:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ycqoIkcF9lPtiJBVMgjq7zwCX8Gyu6JCtVXT12jKTV8=;
+        b=SO6a9eIH6r+EzFThZ6MTARjwHEtx6LFHOpOvFgwKmnw7LjZXHcgycyhZfUmdSwXoni
+         9VPCbgc6ODqmZSPJVN4eXwn3IqpRr3uXKNjrMKGfBOBHLutZLHhso+mS3OiPqxM7Q6/l
+         K5a5NNqZWoxju2yJSN+OURI61y0XID3dk0Roo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ycqoIkcF9lPtiJBVMgjq7zwCX8Gyu6JCtVXT12jKTV8=;
+        b=iLFfAJ/SK0E55ZGyxTxICUTZfiYfyYxICo2GDYZ84HrdNiiK9ydg0WFuutYDlGnA0b
+         pVjwEUNQ60Ym32yoRqjRjCSTsUbhHfFo9ncHHY+lPBhS5pkEqU8u4Ybuziwp1tafCoNE
+         mM0xhxUKxshmU5WDpwv/Pf/QthNzHlqd2OLnWvMWZPgQdiZiuWdvCeHqYnEyjk+NgC+m
+         d/sDRIRDz06XuTMBjw9CJCLNPwpt++4pi5cxCGFQaAN2fMNV5HWM1zh/mTNhxr1AbKZ/
+         cSjxLOlcn9OekESL3WY0EDOfmCtS/HklYT5Gze6yU00bFd01m0v/O6w+VW4jHtDwUgH1
+         e08A==
+X-Gm-Message-State: AOAM530S9rsD+n+WrihITxAyoZnD4LegL3kk+mMsiAFZ2wnbM/goOP+8
+        UIY/jOfPo3+cI2pPW8GNUc95pIdlvqjTMCx7kCUbbw==
+X-Google-Smtp-Source: ABdhPJzFeuCQlV5NJZ+3HUxdvXgtCAFGX/0rEF7qnn1uI6qUI3Z5/MsHqFAcH2CxUPAQE20CBPAAF7SeJ5phPHzYaRc=
+X-Received: by 2002:aca:b141:: with SMTP id a62mr1813813oif.101.1604479455139;
+ Wed, 04 Nov 2020 00:44:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201103151536.26472-4-l.stelmach@samsung.com>
+References: <20201030100815.2269-12-daniel.vetter@ffwll.ch>
+ <20201103212840.GA266427@bjorn-Precision-5520> <CAPcyv4jCGxWG0opLv4VzBRk5iLwu6CRse4DwF-otWkfXoGWe6A@mail.gmail.com>
+In-Reply-To: <CAPcyv4jCGxWG0opLv4VzBRk5iLwu6CRse4DwF-otWkfXoGWe6A@mail.gmail.com>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Wed, 4 Nov 2020 09:44:04 +0100
+Message-ID: <CAKMK7uF0QjesaNs97N-G8cZkXuAmFgcmTfHvoCP94br_WVcV6Q@mail.gmail.com>
+Subject: Re: [PATCH v5 11/15] PCI: Obey iomem restrictions for procfs mmap
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Bjorn Helgaas <bhelgaas@google.com>,
+        Linux PCI <linux-pci@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> +config SPI_AX88796C_COMPRESSION
-> +	bool "SPI transfer compression"
-> +	default n
-> +	depends on SPI_AX88796C
-> +	help
-> +	  Say Y here to enable SPI transfer compression. It saves up
-> +	  to 24 dummy cycles during each transfer which may noticably
-> +	  speed up short transfers. This sets the default value that is
-> +	  inherited by network interfecase during probe. It can be
+On Tue, Nov 3, 2020 at 11:09 PM Dan Williams <dan.j.williams@intel.com> wrote:
+> On Tue, Nov 3, 2020 at 1:28 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Fri, Oct 30, 2020 at 11:08:11AM +0100, Daniel Vetter wrote:
+> > > There's three ways to access PCI BARs from userspace: /dev/mem, sysfs
+> > > files, and the old proc interface. Two check against
+> > > iomem_is_exclusive, proc never did. And with CONFIG_IO_STRICT_DEVMEM,
+> > > this starts to matter, since we don't want random userspace having
+> > > access to PCI BARs while a driver is loaded and using it.
+> > >
+> > > Fix this by adding the same iomem_is_exclusive() check we already have
+> > > on the sysfs side in pci_mmap_resource().
+> > >
+> > > References: 90a545e98126 ("restrict /dev/mem to idle io memory ranges")
+> > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> >
+> > This is OK with me but it looks like IORESOURCE_EXCLUSIVE is currently
+> > only used in a few places:
+> >
+> >   e1000_probe() calls pci_request_selected_regions_exclusive(),
+> >   ne_pci_probe() calls pci_request_regions_exclusive(),
+> >   vmbus_allocate_mmio() calls request_mem_region_exclusive()
+> >
+> > which raises the question of whether it's worth keeping
+> > IORESOURCE_EXCLUSIVE at all.  I'm totally fine with removing it
+> > completely.
+>
+> Now that CONFIG_IO_STRICT_DEVMEM upgrades IORESOURCE_BUSY to
+> IORESOURCE_EXCLUSIVE semantics the latter has lost its meaning so I'd
+> be in favor of removing it as well.
 
-interface
+Still has some value since it enforces exclusive access even if the
+config isn't enabled, and iirc e1000 had some fun with userspace tools
+clobbering the firmware and bricking the chip.
 
-
-> +	  changed in run time via spi-compression ethtool tunable.
-
-changed _at_ run time...
-
-> +static int
-> +ax88796c_set_tunable(struct net_device *ndev, const struct ethtool_tunable *tuna,
-> +		     const void *data)
-> +{
-> +	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
-> +
-> +	switch (tuna->id) {
-> +	case ETHTOOL_SPI_COMPRESSION:
-> +		if (netif_running(ndev))
-> +			return -EBUSY;
-> +		ax_local->capabilities &= ~AX_CAP_COMP;
-> +		ax_local->capabilities |= *(u32 *)data ? AX_CAP_COMP : 0;
-
-You should probably validate here that data is 0 or 1. That is what
-ax88796c_get_tunable() will return.
-
-It seems like this controls two hardware bits:
-
-SPICR_RCEN | SPICR_QCEN
-
-Maybe at some point it would make sense to allow these bits to be set
-individually? If you never validate the tunable, you cannot make use
-of other values to control the bits individually.
-
-   Andrew
+Another thing I kinda wondered, since pci maintainer is here: At least
+in drivers/gpu I see very few drivers explicitly requestion regions
+(this might be a historical artifact due to the shadow attach stuff
+before we had real modesetting drivers). And pci core doesn't do that
+either, even when a driver is bound. Is this intentional, or
+should/could we do better? Since drivers work happily without
+reserving regions I don't think "the drivers need to remember to do
+this" will ever really work out well.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
