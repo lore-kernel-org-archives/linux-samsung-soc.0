@@ -1,146 +1,97 @@
-Return-Path: <SRS0=6Xyg=EJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=OVUx=EK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B35C55178
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 22:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18858C4742C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 02:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF9421534
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Nov 2020 22:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604443484;
-	bh=B0hofVyjbIarQN5JcfzWbRMadJujwsK3/oEFwLCaHaE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=j9SpI4jLPdtawSDuKsi3JGC8/V7RVj6MPKil2yL4mcnazgjcOXtUGpLtQf9TV+anP
-	 rFXbE1/82sZVf6j1t0GuF2zNODlK/uEiDhqxh/EpAbE8hRTfasKhLT3uKMrieKzdGx
-	 InFxK7RAjz85kUGN9u8XAyhNSoEHqqxKovp9ttbA=
+	by mail.kernel.org (Postfix) with ESMTP id D22DB223BD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 02:42:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730693AbgKCWok (ORCPT
+        id S1730622AbgKDCm0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 17:44:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35078 "EHLO mail.kernel.org"
+        Tue, 3 Nov 2020 21:42:26 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:33914 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730606AbgKCWok (ORCPT
+        id S1730153AbgKDCm0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 17:44:40 -0500
-Received: from localhost (230.sub-72-107-127.myvzw.com [72.107.127.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4779F21534;
-        Tue,  3 Nov 2020 22:44:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604443479;
-        bh=B0hofVyjbIarQN5JcfzWbRMadJujwsK3/oEFwLCaHaE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=aGJthRPHhGnUHt1ZdKqRmEtO85M2aHQ0EeBOkvpHEdxgqcV5i3Ard2wiJ81JAWc/6
-         kqheh439OJUiLwEjikfrm/596btquk1VT+KMzM6CPVKq/RwToIlXTv8sbNUy6UTy0i
-         BatF/rWkEZdP538Vqd3i+3FwP4h+TInyIqmAjSB8=
-Date:   Tue, 3 Nov 2020 16:44:37 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
+        Tue, 3 Nov 2020 21:42:26 -0500
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
+        (envelope-from <andrew@lunn.ch>)
+        id 1ka8kV-0058ru-C2; Wed, 04 Nov 2020 03:42:11 +0100
+Date:   Wed, 4 Nov 2020 03:42:11 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
+Cc:     jim.cromie@gmail.com, Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 0/6] Add DW PCIe support for Exynos5433 SoCs
-Message-ID: <20201103224437.GA271545@bjorn-Precision-5520>
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v5 3/5] net: ax88796c: ASIX AX88796C SPI Ethernet Adapter
+ Driver
+Message-ID: <20201104024211.GS933237@lunn.ch>
+References: <20201103151536.26472-1-l.stelmach@samsung.com>
+ <CGME20201103151540eucas1p1d45bc7fdc9ddb07607b5268d50f567ca@eucas1p1.samsung.com>
+ <20201103151536.26472-4-l.stelmach@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201029134017.27400-1-m.szyprowski@samsung.com>
+In-Reply-To: <20201103151536.26472-4-l.stelmach@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 29, 2020 at 02:40:11PM +0100, Marek Szyprowski wrote:
-> Dear All,
-> 
-> This patchset is a resurrection of the DW PCIe support for the Exynos5433
-> SoCs posted long time ago here: https://lkml.org/lkml/2016/12/26/6 and
-> later here: https://lkml.org/lkml/2017/12/21/296 .
-> 
-> In meantime the support for the Exynos5440 SoCs has been completely
-> dropped from mainline kernel, as those SoCs never reached the market. The
-> PCIe driver for Exynos5440 variant however has not been removed yet. This
-> patchset simply reworks it to support the Exynos5433 variant. The lack of
-> the need to support both variants significantly simplifies the driver
-> code.
-> 
-> This patchset is based on the following branch:
-> git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git pci-more-dwc-cleanup
-> 
-> Best regards,
-> Marek Szyprowski
-> 
-> 
-> Changelog:
-> 
-> v3:
-> - rebased onto "[00/13] PCI: dwc: Another round of clean-ups" patchset:
->   https://patchwork.kernel.org/project/linux-samsung-soc/cover/20201028204646.356535-1-robh@kernel.org/
-> - fixed issues pointed by Rob in the driver logic:
->   * removed DBI_RO_WR_EN register poking
->   * made driver a standard module
-> - fixed section mismatch issue
-> - added "num-viewport = <3>" property to dts and bindings to fix warning
-> 
-> v2: https://lore.kernel.org/linux-samsung-soc/20201023075744.26200-1-m.szyprowski@samsung.com/
-> - fixed issues in dt-bindings pointed by Krzysztof and Rob
-> 
-> v1: https://lore.kernel.org/linux-samsung-soc/20201019094715.15343-1-m.szyprowski@samsung.com/
-> - initial version of this resurrected patchset
-> 
-> 
-> Patch summary:
+> +config SPI_AX88796C_COMPRESSION
+> +	bool "SPI transfer compression"
+> +	default n
+> +	depends on SPI_AX88796C
+> +	help
+> +	  Say Y here to enable SPI transfer compression. It saves up
+> +	  to 24 dummy cycles during each transfer which may noticably
+> +	  speed up short transfers. This sets the default value that is
+> +	  inherited by network interfecase during probe. It can be
 
-Please follow the subject line convention:
+interface
 
-  PCI: exynos: Rework to support Exynos5433 variant
-  arm64: dts: exynos: Add WiFi/PCIe support to TM2(e) boards
-  dt-bindings: PCI: exynos: Drop samsung,exynos5440-pcie binding
-  dt-bindings: PCI: exynos: Add samsung,exynos-pcie binding
-  dt-bindings: phy: exynos: Add samsung,exynos-pcie-phy binding
 
-You can save this trouble by running "git log --oneline" on the file
-(or directory, for new files) and copying the style.
+> +	  changed in run time via spi-compression ethtool tunable.
 
-> Jaehoon Chung (3):
->   phy: samsung: phy-exynos-pcie: rework driver to support Exynos5433
->     PCIe PHY
->   pci: dwc: pci-exynos: rework the driver to support Exynos5433 variant
->   arm64: dts: exynos: add the WiFi/PCIe support to TM2(e) boards
-> 
-> Marek Szyprowski (3):
->   dt-bindings: pci: drop samsung,exynos5440-pcie binding
->   dt-bindings: pci: add the samsung,exynos-pcie binding
->   dt-bindings: phy: add the samsung,exynos-pcie-phy binding
-> 
->  .../bindings/pci/samsung,exynos-pcie.yaml     | 119 ++++++
->  .../bindings/pci/samsung,exynos5440-pcie.txt  |  58 ---
->  .../bindings/phy/samsung,exynos-pcie-phy.yaml |  51 +++
->  .../boot/dts/exynos/exynos5433-pinctrl.dtsi   |   2 +-
->  .../dts/exynos/exynos5433-tm2-common.dtsi     |  24 +-
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi    |  36 ++
->  drivers/pci/controller/dwc/Kconfig            |  10 +-
->  drivers/pci/controller/dwc/pci-exynos.c       | 353 +++++++-----------
->  drivers/pci/quirks.c                          |   1 +
->  drivers/phy/samsung/phy-exynos-pcie.c         | 304 ++++++---------
->  10 files changed, 489 insertions(+), 469 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pci/samsung,exynos5440-pcie.txt
->  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> 
-> -- 
-> 2.17.1
-> 
+changed _at_ run time...
+
+> +static int
+> +ax88796c_set_tunable(struct net_device *ndev, const struct ethtool_tunable *tuna,
+> +		     const void *data)
+> +{
+> +	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
+> +
+> +	switch (tuna->id) {
+> +	case ETHTOOL_SPI_COMPRESSION:
+> +		if (netif_running(ndev))
+> +			return -EBUSY;
+> +		ax_local->capabilities &= ~AX_CAP_COMP;
+> +		ax_local->capabilities |= *(u32 *)data ? AX_CAP_COMP : 0;
+
+You should probably validate here that data is 0 or 1. That is what
+ax88796c_get_tunable() will return.
+
+It seems like this controls two hardware bits:
+
+SPICR_RCEN | SPICR_QCEN
+
+Maybe at some point it would make sense to allow these bits to be set
+individually? If you never validate the tunable, you cannot make use
+of other values to control the bits individually.
+
+   Andrew
