@@ -2,130 +2,137 @@ Return-Path: <SRS0=OVUx=EK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD04C4741F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 16:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FEEC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 18:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD252206ED
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 16:51:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604508698;
-	bh=KzXcQsv6oXQiPT6pQbTFR35Ks2A09AmGg4NdOMxDZU4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=aoiW1s6d7sVbnzbmCraHYrczYfobWV0SX99shWg7qWsNZXqWYtPlS5zWejp0JwVqO
-	 6lRHXC9bQILbONvbC6xYswOsqLjyasTg4Uwz5e2QdutdH9H1QY94WO2lERsqkqNFuk
-	 IxASL17qYijLDk7fMizRce5ihTYLPg2gJDISzsgI=
+	by mail.kernel.org (Postfix) with ESMTP id CDC702071A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 18:17:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="nBv9S+jw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731856AbgKDQvf (ORCPT
+        id S1732253AbgKDSRL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 11:51:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731683AbgKDQuU (ORCPT
+        Wed, 4 Nov 2020 13:17:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53406 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730611AbgKDSRK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Nov 2020 11:50:20 -0500
-Received: from localhost (230.sub-72-107-127.myvzw.com [72.107.127.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01712206CA;
-        Wed,  4 Nov 2020 16:50:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604508619;
-        bh=KzXcQsv6oXQiPT6pQbTFR35Ks2A09AmGg4NdOMxDZU4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=C3pX6cmo6q8mwyEj5GO30o1K3DmrMhjsd197OHFiySwAIRZVIm3gcmWDrE+eCPQYz
-         sPh4rcY/+zTADvqe8t10fQKgN6B/uva7r/Rm33jjbBhTlqD9gCI3SGCFFhZSFec0de
-         QvdkQtLCYpZ8r9E77lkRpGYf+6s0+xBDMYsFK0NQ=
-Date:   Wed, 4 Nov 2020 10:50:17 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Wed, 4 Nov 2020 13:17:10 -0500
+Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65974C0613D4
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Nov 2020 10:17:10 -0800 (PST)
+Received: by mail-qt1-x841.google.com with SMTP id i7so12860497qti.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Nov 2020 10:17:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=0IlAXzxWFTQTUuhmHtEVnKs2xhR6KwI7WPZxiLpUe5M=;
+        b=nBv9S+jwc5JdfLlq4RL/YRGMRQsYfNmjawGrU9GxIfERfAzcpQgZP7hrv69Mesc6M+
+         quTXVEbUxyGRkpm9rbsP8azSm9DhVnbhxJgRfZltG0yrlTEb9tUc276PX/VzeI4+sRFb
+         4r/IU25uiRBU2ueg3BK2D1b5dzTlQrhsuR29PTFyGpgIBwSarkIUR8LSQBS70hi2P/nX
+         3m9r9pQVhoUF1DKe/otBAG1Rv7Kcrglv3VfUI2ehd7bNrMEt5ljYuJ0XfoYPWDc7w4EG
+         xr2aRwLmdjA9s+hlno1U0yOoQqyB/mpuAfQuUyKvK6M+DNWEL6fkUm6gwdGKM5MFyxPD
+         3ciQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=0IlAXzxWFTQTUuhmHtEVnKs2xhR6KwI7WPZxiLpUe5M=;
+        b=JIzHlkqe4YV8Y9rQwTrSrecHHkYl14f2fcfVldVYNSBEB+EQX8yo1qbxLbFzJ5obPz
+         PwzTmTCfEAFH+uYua2U62z+aPXpQ6GfuuFYnCN7N9hZZCTeSbktZtr43dULx2i6EcTDZ
+         q1HCtRqcmtKJvPsrmidqoBYgo5rVIzXbbydhr/Cmlr2WID49lb96fcejIJhyLoXmSNTp
+         fyDXD1asNLiHmvbTXIhCMxDCXxPZy9xq5V/AZVx5RXkOnxDbceYcUURd56xUDMmqk1B+
+         cW4XMXDjDyHtgO01HjgPPtQoRZjOvVZYjC/WYcd5elr6i7iu4AczkrXTgHszh0DRw2Ep
+         0njQ==
+X-Gm-Message-State: AOAM531kmykVOMLkCTqAmcvlubasKkyn6brCwoXvPzSEEQxBelb1Xge8
+        SlC4xKE8VmcSqGQE3MLvZ+7tNQ==
+X-Google-Smtp-Source: ABdhPJzbeLbokY3xWw1ad4Wlq96Bw2Ur+AXtnppBcNVDAcKLM++yGsaQXPWFUe04HeoITS7ilZQ2EA==
+X-Received: by 2002:ac8:590c:: with SMTP id 12mr12840139qty.28.1604513829572;
+        Wed, 04 Nov 2020 10:17:09 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
+        by smtp.gmail.com with ESMTPSA id a30sm701698qtn.55.2020.11.04.10.17.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2020 10:17:08 -0800 (PST)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1kaNLI-00GaUi-BN; Wed, 04 Nov 2020 14:17:08 -0400
+Date:   Wed, 4 Nov 2020 14:17:08 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        J??r??me Glisse <jglisse@redhat.com>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>,
+        KVM list <kvm@vger.kernel.org>,
         John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v5 11/15] PCI: Obey iomem restrictions for procfs mmap
-Message-ID: <20201104165017.GA352206@bjorn-Precision-5520>
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>
+Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
+Message-ID: <20201104181708.GU36674@ziepe.ca>
+References: <1f7cf690-35e2-c56f-6d3f-94400633edd2@nvidia.com>
+ <CAKMK7uFYDSqnNp_xpohzCEidw_iLufNSoX4v55sNZj-nwTckSg@mail.gmail.com>
+ <7f29a42a-c408-525d-90b7-ef3c12b5826c@nvidia.com>
+ <CAKMK7uEw701AWXNJbRNM8Z+FkyUB5FbWegmSzyWPy9cG4W7OLA@mail.gmail.com>
+ <20201104140023.GQ36674@ziepe.ca>
+ <CAKMK7uH69hsFjYUkjg1aTh5f=q_3eswMSS5feFs6+ovz586+0A@mail.gmail.com>
+ <20201104162125.GA13007@infradead.org>
+ <CAKMK7uH=0+3FSR4LxP7bJUB4BsCcnCzfK2=D+2Am9QNmfZEmfw@mail.gmail.com>
+ <20201104163758.GA17425@infradead.org>
+ <20201104164119.GA18218@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKMK7uF0QjesaNs97N-G8cZkXuAmFgcmTfHvoCP94br_WVcV6Q@mail.gmail.com>
+In-Reply-To: <20201104164119.GA18218@infradead.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 09:44:04AM +0100, Daniel Vetter wrote:
-> On Tue, Nov 3, 2020 at 11:09 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> > On Tue, Nov 3, 2020 at 1:28 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > > On Fri, Oct 30, 2020 at 11:08:11AM +0100, Daniel Vetter wrote:
-> > > > There's three ways to access PCI BARs from userspace: /dev/mem, sysfs
-> > > > files, and the old proc interface. Two check against
-> > > > iomem_is_exclusive, proc never did. And with CONFIG_IO_STRICT_DEVMEM,
-> > > > this starts to matter, since we don't want random userspace having
-> > > > access to PCI BARs while a driver is loaded and using it.
-> > > >
-> > > > Fix this by adding the same iomem_is_exclusive() check we already have
-> > > > on the sysfs side in pci_mmap_resource().
-> > > >
-> > > > References: 90a545e98126 ("restrict /dev/mem to idle io memory ranges")
-> > > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > >
-> > > This is OK with me but it looks like IORESOURCE_EXCLUSIVE is currently
-> > > only used in a few places:
-> > >
-> > >   e1000_probe() calls pci_request_selected_regions_exclusive(),
-> > >   ne_pci_probe() calls pci_request_regions_exclusive(),
-> > >   vmbus_allocate_mmio() calls request_mem_region_exclusive()
-> > >
-> > > which raises the question of whether it's worth keeping
-> > > IORESOURCE_EXCLUSIVE at all.  I'm totally fine with removing it
-> > > completely.
-> >
-> > Now that CONFIG_IO_STRICT_DEVMEM upgrades IORESOURCE_BUSY to
-> > IORESOURCE_EXCLUSIVE semantics the latter has lost its meaning so I'd
-> > be in favor of removing it as well.
+On Wed, Nov 04, 2020 at 04:41:19PM +0000, Christoph Hellwig wrote:
+> On Wed, Nov 04, 2020 at 04:37:58PM +0000, Christoph Hellwig wrote:
+> > On Wed, Nov 04, 2020 at 05:26:58PM +0100, Daniel Vetter wrote:
+> > > What we're discussing is whether gup_fast and pup_fast also obey this,
+> > > or fall over and can give you the struct page that's backing the
+> > > dma_mmap_* memory. Since the _fast variant doesn't check for
+> > > vma->vm_flags, and afaict that's the only thing which closes this gap.
+> > > And like you restate, that would be a bit a problem. So where's that
+> > > check which Jason&me aren't spotting?
+> > 
+> > remap_pte_range uses pte_mkspecial to set up the PTEs, and gup_pte_range
+> > errors out on pte_special.  Of course this only works for the
+> > CONFIG_ARCH_HAS_PTE_SPECIAL case, for other architectures we do have
+> > a real problem.
 > 
-> Still has some value since it enforces exclusive access even if the
-> config isn't enabled, and iirc e1000 had some fun with userspace tools
-> clobbering the firmware and bricking the chip.
+> Except that we don't really support pte-level gup-fast without
+> CONFIG_ARCH_HAS_PTE_SPECIAL, and in fact all architectures selecting
+> HAVE_FAST_GUP also select ARCH_HAS_PTE_SPECIAL, so we should be fine.
 
-There's *some* value; I'm just skeptical since only three drivers use
-it.
+Mm, I thought it was probably the special flag..
 
-IORESOURCE_EXCLUSIVE is from e8de1481fd71 ("resource: allow MMIO
-exclusivity for device drivers"), and the commit message says this is
-only active when CONFIG_STRICT_DEVMEM is set.  I didn't check to see
-whether that's still true.
+Knowing that CONFIG_HAVE_FAST_GUP can't be set without
+CONFIG_ARCH_HAS_PTE_SPECIAL is pretty insightful, can we put that in
+the Kconfig?
 
-That commit adds a bunch of wrappers and "__"-prefixed functions to
-pass the IORESOURCE_EXCLUSIVE flag around.  That's a fair bit of
-uglification for three drivers.
+config HAVE_FAST_GUP
+        depends on MMU
+        depends on ARCH_HAS_PTE_SPECIAL
+        bool
 
-> Another thing I kinda wondered, since pci maintainer is here: At least
-> in drivers/gpu I see very few drivers explicitly requestion regions
-> (this might be a historical artifact due to the shadow attach stuff
-> before we had real modesetting drivers). And pci core doesn't do that
-> either, even when a driver is bound. Is this intentional, or
-> should/could we do better? Since drivers work happily without
-> reserving regions I don't think "the drivers need to remember to do
-> this" will ever really work out well.
+?
 
-You're right, many drivers don't call pci_request_regions().  Maybe we
-could do better, but I haven't looked into that recently.  There is a
-related note in Documentation/PCI/pci.rst that's been there for a long
-time (it refers to "pci_request_resources()", which has never existed
-AFAICT).  I'm certainly open to proposals.
+Jason
