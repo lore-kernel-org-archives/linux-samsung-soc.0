@@ -2,222 +2,116 @@ Return-Path: <SRS0=OVUx=EK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7285C2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 12:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3636AC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 12:42:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CF99223C7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 12:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604493455;
-	bh=JDPyNAihFgN6S0g4sp3/gG0IcRymhSG5T8zt/uUsCvs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GlevzrX9327qYVoGqVCmN2+45nmg4IwtLvdtsd9CVP1xR4KrVNCVp7w3OMHtq1H3K
-	 s+mS2jK/+bu1j7akRBJzYP9UzUfAe/CIB9wUswW6wLNEe8Xa4PBnU7vH/fFOrzWNqO
-	 Z+BHXTBTR4dtU07ymzohY16dx3dMy/LaVcl082JQ=
+	by mail.kernel.org (Postfix) with ESMTP id C4905221F8
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 12:42:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729787AbgKDMhe convert rfc822-to-8bit (ORCPT
+        id S1729089AbgKDMmZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 07:37:34 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41483 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728523AbgKDMhe (ORCPT
+        Wed, 4 Nov 2020 07:42:25 -0500
+Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:56112 "EHLO
+        wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726527AbgKDMmZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Nov 2020 07:37:34 -0500
-Received: by mail-wr1-f65.google.com with SMTP id s9so21858483wro.8;
-        Wed, 04 Nov 2020 04:37:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=aPE6BsDWzXc+KakR/ZtGTT7r35e3EQiLtx1b9EAe820=;
-        b=jtQ2K2mTBJgXgtWJMf9Inmj3mfyb4OFXFvaxgpCqNnzwdFOwuCs4GVuL0QqfyDYB46
-         8TosRjGqO9d9I2yJxbGGvOhoiRD0cSML6Eo82ZPNmpS/w66ezrIO5vliooY9jW/ZBfk4
-         bR8eIYJckS+fFXapw5IFdvVDRt13pDF7bXwBqmmK79Gbu7X2scwyEZdlrAJZn5nX42tg
-         JNH2QSC7vxKApsYUSlTZgbXhruczMQeQAYImtjALKsA2d36fa8X7LouSWpPBgIKtyq+I
-         bNPz3/6fBSG7OnXspVxqPEGRd1PDKxXwiv2whsEbHQ/taneTXc4+qDhUO18cRWhy4pf1
-         y8Xw==
-X-Gm-Message-State: AOAM531V4TcEh2gk3SnRNZvBZe55KlsZL82TmsnCt940jj92A+ORDBTo
-        RuwyP8LTKuquVHbsRs+lckw=
-X-Google-Smtp-Source: ABdhPJwKfOeqc27FocjtFaKOEUlce8qKmIPqr9gDR9kjQdHt6UJEC263ArSfSMQTdZgIlgZbwI+wRg==
-X-Received: by 2002:adf:fd49:: with SMTP id h9mr33638867wrs.115.1604493451973;
-        Wed, 04 Nov 2020 04:37:31 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id a12sm2352845wrr.31.2020.11.04.04.37.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 04:37:30 -0800 (PST)
-Date:   Wed, 4 Nov 2020 13:37:29 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     georgi.djakov@linaro.org, cw00.choi@samsung.com,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        a.swigon@samsung.com, myungjoo.ham@samsung.com,
-        inki.dae@samsung.com, sw0312.kim@samsung.com,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 2/7] interconnect: Add generic interconnect driver for
- Exynos SoCs
-Message-ID: <20201104123729.GA13371@kozik-lap>
-References: <20201104103657.18007-1-s.nawrocki@samsung.com>
- <CGME20201104103720eucas1p1014217e751a681796ed508af22c6bb12@eucas1p1.samsung.com>
- <20201104103657.18007-3-s.nawrocki@samsung.com>
+        Wed, 4 Nov 2020 07:42:25 -0500
+Received: from [2003:a:659:3f00:1e6f:65ff:fe31:d1d5] (helo=hermes.fivetechno.de); authenticated
+        by wp126.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1kaI7G-0007Zz-II; Wed, 04 Nov 2020 13:42:18 +0100
+X-Virus-Scanned: by amavisd-new 2.11.1 using newest ClamAV at
+        linuxbbg.five-lan.de
+Received: from [192.168.34.101] (p5098d998.dip0.t-ipconnect.de [80.152.217.152])
+        (authenticated bits=0)
+        by hermes.fivetechno.de (8.15.2/8.14.5/SuSE Linux 0.8) with ESMTPSA id 0A4CgHFC013236
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+        Wed, 4 Nov 2020 13:42:17 +0100
+Subject: Re: [PATCH] ARM: dts: exynos: Assign a fixed index to mmc devices on
+ ODROID XU3/4 boards
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20201104105152eucas1p28eb6ca629a685f24a2463c72898fdbc5@eucas1p2.samsung.com>
+ <20201104100855.2337-1-m.reichl@fivetechno.de>
+ <4ac01b71-e806-18c8-13ce-6acdcc1a3b41@samsung.com>
+From:   Markus Reichl <m.reichl@fivetechno.de>
+Organization: five technologies GmbH
+Message-ID: <28660119-ffe3-cd01-0daa-8c0994e29571@fivetechno.de>
+Date:   Wed, 4 Nov 2020 13:42:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20201104103657.18007-3-s.nawrocki@samsung.com>
+In-Reply-To: <4ac01b71-e806-18c8-13ce-6acdcc1a3b41@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;m.reichl@fivetechno.de;1604493744;183e66c4;
+X-HE-SMSGID: 1kaI7G-0007Zz-II
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 11:36:52AM +0100, Sylwester Nawrocki wrote:
-> This patch adds a generic interconnect driver for Exynos SoCs in order
-> to provide interconnect functionality for each "samsung,exynos-bus"
-> compatible device.
+Hi Marek,
+
+Am 04.11.20 um 13:24 schrieb Marek Szyprowski:
+> Hi Markus,
 > 
-> The SoC topology is a graph (or more specifically, a tree) and its
-> edges are described by specifying in the 'interconnects' property
-> the interconnect consumer path for each interconnect provider DT node.
+> On 04.11.2020 11:08, Markus Reichl wrote:
+>> Recently introduced async probe on mmc devices can shuffle block IDs.
+>> Pin them to fixed values to ease booting in evironments where UUIDs
+>> are not practical. Use newly introduced aliases for mmcblk devices from [1].
+>>
+>> [1]
+>> https://patchwork.kernel.org/patch/11747669/
 > 
-> Each bus is now an interconnect provider and an interconnect node as
-> well (cf. Documentation/interconnect/interconnect.rst), i.e. every bus
-> registers itself as a node. Node IDs are not hard coded but rather
-> assigned dynamically at runtime. This approach allows for using this
-> driver with various Exynos SoCs.
+> Wow, this is a long standing issue, called by others 'a feature'. Good
+> that this has been finally solved.
 > 
-> Frequencies requested via the interconnect API for a given node are
-> propagated to devfreq using dev_pm_qos_update_request(). Please note
-> that it is not an error when CONFIG_INTERCONNECT is 'n', in which
-> case all interconnect API functions are no-op.
+>> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+>> ---
+>>   arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>> index e35af40a55cb..91d2840ac8ca 100644
+>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+>> @@ -13,6 +13,11 @@
+>>   #include "exynos5422-odroid-core.dtsi"
+>>   
+>>   / {
+>> +	aliases {
+>> +		mmc0 = &mmc_2;
+>> +		mmc1 = &mmc_0;
 > 
-> The samsung,data-clk-ratio DT property is used to specify the ratio
-> of the interconect bandwidth to the minimum data clock frequency
-> for each bus.
+> Frankly, I would keep the MMC numbers the same as in u-boot and
+> datasheets. 0 for the build-in eMMC and 2 for the SD-card. This would be
+> much more natural. On the other hand, I would agree to do it differently
+> only on Odroid HC1/HD2/MC1, which don't have build-in eMMC - just use 0
+> there for the SD-card.
+
+This would break present and long standing  boot ordering in mainline, which is
+mmcblk0 = SD-card and
+mmcblk1 = eMMC
+
+Still desired?
 > 
-> Due to unspecified relative probing order, -EPROBE_DEFER may be
-> propagated to ensure that the parent is probed before its children.
+>> +	};
+>> +
+>>   	gpio-keys {
+>>   		compatible = "gpio-keys";
+>>   		pinctrl-names = "default";
 > 
-> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes for v8:
->  - renamed drivers/interconnect/exynos to drivers/interconnect/samsung,
->  - added missing driver sync_state callback assignment.
+> Best regards
 > 
-> Changes for v7:
->  - adjusted to the DT property changes: "interconnects" instead
->    of "samsung,interconnect-parent", "samsung,data-clk-ratio"
->    instead of "bus-width",
->  - adaptation to of_icc_get_from_provider() function changes
->    in v5.10-rc1.
-> 
-> Changes for v6:
->  - corrected of_node dereferencing in exynos_icc_get_parent()
->    function,
->  - corrected initialization of icc_node->name so as to avoid
->    direct of_node->name dereferencing,
->  - added parsing of bus-width DT property.
-> 
-> Changes for v5:
->  - adjust to renamed exynos,interconnect-parent-node property,
->  - use automatically generated platform device id as the interconect
->    node id instead of a now unavailable devfreq->id field,
->  - add icc_ prefix to some variables to make the code more self-commenting,
->  - use icc_nodes_remove() instead of icc_node_del() + icc_node_destroy(),
->  - adjust to exynos,interconnect-parent-node property rename to
->    samsung,interconnect-parent,
->  - converted to a separate platform driver in drivers/interconnect.
-> ---
->  drivers/interconnect/Kconfig          |   1 +
->  drivers/interconnect/Makefile         |   1 +
->  drivers/interconnect/samsung/Kconfig  |  13 +++
->  drivers/interconnect/samsung/Makefile |   4 +
->  drivers/interconnect/samsung/exynos.c | 199 ++++++++++++++++++++++++++++++++++
->  5 files changed, 218 insertions(+)
->  create mode 100644 drivers/interconnect/samsung/Kconfig
->  create mode 100644 drivers/interconnect/samsung/Makefile
->  create mode 100644 drivers/interconnect/samsung/exynos.c
-> 
-> diff --git a/drivers/interconnect/Kconfig b/drivers/interconnect/Kconfig
-> index 5b7204e..d637a89 100644
-> --- a/drivers/interconnect/Kconfig
-> +++ b/drivers/interconnect/Kconfig
-> @@ -13,5 +13,6 @@ if INTERCONNECT
->  
->  source "drivers/interconnect/imx/Kconfig"
->  source "drivers/interconnect/qcom/Kconfig"
-> +source "drivers/interconnect/samsung/Kconfig"
->  
->  endif
-> diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
-> index d203520..c2f9e9d 100644
-> --- a/drivers/interconnect/Makefile
-> +++ b/drivers/interconnect/Makefile
-> @@ -6,3 +6,4 @@ icc-core-objs				:= core.o bulk.o
->  obj-$(CONFIG_INTERCONNECT)		+= icc-core.o
->  obj-$(CONFIG_INTERCONNECT_IMX)		+= imx/
->  obj-$(CONFIG_INTERCONNECT_QCOM)		+= qcom/
-> +obj-$(CONFIG_INTERCONNECT_SAMSUNG)	+= samsung/
-> \ No newline at end of file
 
-This needs a fix.
-
-> diff --git a/drivers/interconnect/samsung/Kconfig b/drivers/interconnect/samsung/Kconfig
-> new file mode 100644
-> index 0000000..508ed64
-> --- /dev/null
-> +++ b/drivers/interconnect/samsung/Kconfig
-> @@ -0,0 +1,13 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config INTERCONNECT_SAMSUNG
-> +	bool "Samsung interconnect drivers"
-
-"Samsung SoC interconnect drivers"
-
-> +	depends on ARCH_EXYNOS || COMPILE_TEST
-
-Don't the depend on INTERCONNECT?
-
-> +	help
-> +	  Interconnect drivers for Samsung SoCs.
-> +
-> +
-
-One line break
-
-> +config INTERCONNECT_EXYNOS
-> +	tristate "Exynos generic interconnect driver"
-> +	depends on INTERCONNECT_SAMSUNG
-
-How about:
-default y if ARCH_EXYNOS
-
-> +	help
-> +	  Generic interconnect driver for Exynos SoCs.
-> diff --git a/drivers/interconnect/samsung/Makefile b/drivers/interconnect/samsung/Makefile
-> new file mode 100644
-> index 0000000..e19d1df
-> --- /dev/null
-> +++ b/drivers/interconnect/samsung/Makefile
-> @@ -0,0 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +exynos-interconnect-objs		:= exynos.o
-
-What is this line for?
-
-Best regards,
-Krzysztof
-
-
-> +
-> +obj-$(CONFIG_INTERCONNECT_EXYNOS)	+= exynos-interconnect.o
-> diff --git a/drivers/interconnect/samsung/exynos.c b/drivers/interconnect/samsung/exynos.c
-> new file mode 100644
-> index 0000000..6559d8c
+Gruß,
+-- 
+Markus Reichl
