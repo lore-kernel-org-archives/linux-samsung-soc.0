@@ -2,285 +2,124 @@ Return-Path: <SRS0=OVUx=EK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24677C4742C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 15:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCA7C55179
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 15:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC01C2075E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 15:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E56F12242A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 15:54:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bXlLO0NX"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="PitcG0uA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730407AbgKDPal (ORCPT
+        id S1731313AbgKDPyd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 10:30:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55322 "EHLO
+        Wed, 4 Nov 2020 10:54:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726919AbgKDPal (ORCPT
+        with ESMTP id S1731111AbgKDPyb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Nov 2020 10:30:41 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29F99C061A4A
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Nov 2020 07:30:39 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id 184so27650245lfd.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Nov 2020 07:30:39 -0800 (PST)
+        Wed, 4 Nov 2020 10:54:31 -0500
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18D00C0613D4
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Nov 2020 07:54:31 -0800 (PST)
+Received: by mail-ot1-x343.google.com with SMTP id g19so10281211otp.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Nov 2020 07:54:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YNFDsq3jdFeZpaeOwpSCxm4JgaISSNLS4vXfstt0P40=;
-        b=bXlLO0NXI0YW5FyhJt/6D0zer1CIrqMjMu1qSTvBRQ/uDJ+2lMUgQsA4BFHEhkOO2W
-         RRCIovq5cXE3g5BqvsSrpI9CUNFCUvHYNohtZkxO25RV9OkbY9Nw6NKo6bR6lWUDD5c/
-         VLiolvagyMsZtO2/EjBgGw0yXGONzErKjmS7F4mHPDUDdEBmK12oNWiVaCc5mTu+OCx1
-         Q7tc2DEsX8GKOQbdrr7sCCwcWs4ES0I+OMBkxxG3krZD8RIFrCMW7RUI57yS8gk4dAPw
-         tMPwnjg2sphdarBSo29xSHENM8tBeldgnIpre+heXEnOpf32lGe+ILByA+yoHtnRPDA5
-         nVsg==
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y5iSM0n3L7+OTVROVCVTwu3uWAzU5mN6qUkDTEIh4do=;
+        b=PitcG0uAHrmeOMZWf07+5nFovh7kr7Adgn3pV0IjFTvWK31RX96qNAX9Ks5Dh/x/M1
+         BTJhllHwgJtYkqu+DoGQVr+zvfuKEAes8E2EKiqu7lnWd/wgVh9ipY9g1P/exu8Ll0XH
+         MlM5Nev4kEpw3fiAkWDQeeOa/AbBbn0nfEjrM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YNFDsq3jdFeZpaeOwpSCxm4JgaISSNLS4vXfstt0P40=;
-        b=gou6XSY6v2BefSM/VugXjDvP2X0/CjQL9/D/DI1IDkLNHf4+SqD7/uvg/XSjln7ASz
-         z1MYe7ylKqj8bmPrN9HGXFM85Nl1TKZN4hQRiJy2YHIr1pEfFGPoEDFSFNTwBkcrZhCI
-         gtAbUr+TanlPHCq6xh90CVOzXUR2PD+7VEaxp6jcekvdP8wfVbmL8LBIAjV9mmW3x9yz
-         LTxeIxoFwwP9kyCgG/Skv6Z06zh0Nwuki6C1SfdJFFM0R/bWizbE+6orjVabns15PZKU
-         /ZeZKVh+B87gxPw1SHJsivRAZeZSRPd6JiuDdHHkvaLsFhrg78fuEMdTovME+csurycb
-         w6Vg==
-X-Gm-Message-State: AOAM531zbu5qQYGNwCQZXaFi6864Ae/lJoWMHDafOsMY1/QVUpQoPfJS
-        32sXv5h3cdEJrl/A71ZBHswjB1W/uLj+lmtP
-X-Google-Smtp-Source: ABdhPJxXz5qmnMaPo34MezQWw7phiLpCq1thIFEfq4Xw4KAApl5oyPHGgPVnj4QleHnf3fI/M9Ry/A==
-X-Received: by 2002:a05:6512:47b:: with SMTP id x27mr10120260lfd.157.1604503837512;
-        Wed, 04 Nov 2020 07:30:37 -0800 (PST)
-Received: from localhost.bredbandsbolaget (c-92d7225c.014-348-6c756e10.bbcust.telenor.se. [92.34.215.146])
-        by smtp.gmail.com with ESMTPSA id c131sm440453lfg.110.2020.11.04.07.30.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 07:30:36 -0800 (PST)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PATCH 1/3 v2] Input: atmel_mxt_ts - Fix up inverted RESET handler
-Date:   Wed,  4 Nov 2020 16:30:30 +0100
-Message-Id: <20201104153032.1387747-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.26.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y5iSM0n3L7+OTVROVCVTwu3uWAzU5mN6qUkDTEIh4do=;
+        b=SPVyBgmIx7C8YhYZL2oonMQNMW8D2YM4KrU0yCO3kZXYcmVc9NaFbQBMo38BbutUEj
+         mU8Y21JTXAPgyF9a7urxj015HbNf83dzKGPVK7Kh2zXAb3NOVDdesO4FxCnTM57W+1qD
+         v7VaCNCvYoWAbSEz1rrONQNH2hZABivSb8SUQzC8gihPxIX7lNL3oB2T3zm2h1/477VG
+         jwKzlythe9uXBLdR5vd42xfz+G3wD3WyrdkaEVALy7pjQzIZWCyMrNiStWq7u/SPj+ud
+         iGaBuL6Tp/2fp1FCHQxiX3pMF86HHjFHP6U+cy0UjCuD5fowM3ckJGN+3gDkfm9GN+sI
+         Labw==
+X-Gm-Message-State: AOAM530MOk5H8ZK2VoUVcg0CW/fb7MZR9HzCLzRI9q1Jh3jJoUoO9rH1
+        mZcGQLN+60vBLsgyvzMXfJ3YPBDP51x4O3KKaa8kiA==
+X-Google-Smtp-Source: ABdhPJwFTZ6h8d4LZSz0ZdASZtc67ts9b22F6yGqx4swNCRA+uz1tGrz0fV1z6m2B8vN3lXuyoPJEYkFgolkB9M18jE=
+X-Received: by 2002:a9d:3b4:: with SMTP id f49mr18846565otf.188.1604505270511;
+ Wed, 04 Nov 2020 07:54:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201030100815.2269-1-daniel.vetter@ffwll.ch> <20201030100815.2269-6-daniel.vetter@ffwll.ch>
+ <446b2d5b-a1a1-a408-f884-f17a04b72c18@nvidia.com> <CAKMK7uGDW2f0oOvwgryCHxQFHyh3Tsk6ENsMGmtZ-EnH57tMSA@mail.gmail.com>
+ <1f7cf690-35e2-c56f-6d3f-94400633edd2@nvidia.com> <CAKMK7uFYDSqnNp_xpohzCEidw_iLufNSoX4v55sNZj-nwTckSg@mail.gmail.com>
+ <7f29a42a-c408-525d-90b7-ef3c12b5826c@nvidia.com> <CAKMK7uEw701AWXNJbRNM8Z+FkyUB5FbWegmSzyWPy9cG4W7OLA@mail.gmail.com>
+ <20201104140023.GQ36674@ziepe.ca>
+In-Reply-To: <20201104140023.GQ36674@ziepe.ca>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Wed, 4 Nov 2020 16:54:19 +0100
+Message-ID: <CAKMK7uH69hsFjYUkjg1aTh5f=q_3eswMSS5feFs6+ovz586+0A@mail.gmail.com>
+Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This driver uses GPIO descriptors to drive the touchscreen
-RESET line. In the existing device trees this has in
-conflict with intution been flagged as GPIO_ACTIVE_HIGH
-and the driver then applies the reverse action by
-driving the line low (setting to 0) to enter
-reset state and driving the line high (setting to 1) to
-get out of reset state.
+On Wed, Nov 4, 2020 at 3:00 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Sun, Nov 01, 2020 at 11:50:39PM +0100, Daniel Vetter wrote:
+>
+> > It's not device drivers, but everyone else. At least my understanding
+> > is that VM_IO | VM_PFNMAP means "even if it happens to be backed by a
+> > struct page, do not treat it like normal memory". And gup/pup_fast
+> > happily break that. I tried to chase the history of that test, didn't
+> > turn up anything I understood much:
+>
+> VM_IO isn't suppose do thave struct pages, so how can gup_fast return
+> them?
+>
+> I thought some magic in the PTE flags excluded this?
 
-The correct way to handle active low GPIO lines is to
-provide the GPIO_ACTIVE_LOW in the device tree (thus
-properly describing the hardware) and letting the GPIO
-framework invert the assertion (driving high) to a low
-level and vice versa.
+I don't really have a box here, but dma_mmap_attrs() and friends to
+mmap dma_alloc_coherent memory is set up as VM_IO | VM_PFNMAP (it's
+actually enforced since underneath it uses remap_pfn_range), and
+usually (except if it's pre-cma carveout) that's just normal struct
+page backed memory. Sometimes from a cma region (so will be caught by
+the cma page check), but if you have an iommu to make it
+device-contiguous, that's not needed.
 
-This is considered a bug since the device trees are
-incorrectly mis-specifying the line as active high.
+I think only some architectures have a special io pte flag, and those
+are only used for real mmio access. And I think the popular ones all
+don't. But that stuff is really not my expertise, just some drive-by
+reading I've done to understand how the pci mmap stuff works (which is
+special in yet other ways I think).
 
-Fix the driver and all device trees specifying a reset
-line.
-
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- New patch fixing this confusion before adding the
-  new YAML bindings.
-- CC some misc maintainers and mailing lists that should
-  be aware that we do this change.
----
- arch/arm/boot/dts/imx53-ppd.dts                 | 2 +-
- arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts    | 2 +-
- arch/arm/boot/dts/imx6q-apalis-eval.dts         | 2 +-
- arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts   | 2 +-
- arch/arm/boot/dts/imx6q-apalis-ixora.dts        | 2 +-
- arch/arm/boot/dts/imx7-colibri-aster.dtsi       | 2 +-
- arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi     | 2 +-
- arch/arm/boot/dts/motorola-mapphone-common.dtsi | 2 +-
- arch/arm/boot/dts/s5pv210-aries.dtsi            | 2 +-
- arch/arm/boot/dts/tegra20-acer-a500-picasso.dts | 2 +-
- drivers/input/touchscreen/atmel_mxt_ts.c        | 6 ++++--
- 11 files changed, 14 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/boot/dts/imx53-ppd.dts b/arch/arm/boot/dts/imx53-ppd.dts
-index f7dcdf96e5c0..8f4a63ea912e 100644
---- a/arch/arm/boot/dts/imx53-ppd.dts
-+++ b/arch/arm/boot/dts/imx53-ppd.dts
-@@ -589,7 +589,7 @@ &i2c2 {
- 
- 	touchscreen@4b {
- 		compatible = "atmel,maxtouch";
--		reset-gpio = <&gpio5 19 GPIO_ACTIVE_HIGH>;
-+		reset-gpio = <&gpio5 19 GPIO_ACTIVE_LOW>;
- 		reg = <0x4b>;
- 		interrupt-parent = <&gpio5>;
- 		interrupts = <4 IRQ_TYPE_LEVEL_LOW>;
-diff --git a/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts b/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
-index 65359aece950..7da74e6f46d9 100644
---- a/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
-+++ b/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
-@@ -143,7 +143,7 @@ touchscreen@4a {
- 		reg = <0x4a>;
- 		interrupt-parent = <&gpio1>;
- 		interrupts = <9 IRQ_TYPE_EDGE_FALLING>;		/* SODIMM 28 */
--		reset-gpios = <&gpio2 10 GPIO_ACTIVE_HIGH>;	/* SODIMM 30 */
-+		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;	/* SODIMM 30 */
- 		status = "disabled";
- 	};
- 
-diff --git a/arch/arm/boot/dts/imx6q-apalis-eval.dts b/arch/arm/boot/dts/imx6q-apalis-eval.dts
-index fab83abb6466..a0683b4aeca1 100644
---- a/arch/arm/boot/dts/imx6q-apalis-eval.dts
-+++ b/arch/arm/boot/dts/imx6q-apalis-eval.dts
-@@ -140,7 +140,7 @@ touchscreen@4a {
- 		reg = <0x4a>;
- 		interrupt-parent = <&gpio6>;
- 		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
--		reset-gpios = <&gpio6 9 GPIO_ACTIVE_HIGH>; /* SODIMM 13 */
-+		reset-gpios = <&gpio6 9 GPIO_ACTIVE_LOW>; /* SODIMM 13 */
- 		status = "disabled";
- 	};
- 
-diff --git a/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts b/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
-index 1614b1ae501d..86e84781cf5d 100644
---- a/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
-+++ b/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
-@@ -145,7 +145,7 @@ touchscreen@4a {
- 		reg = <0x4a>;
- 		interrupt-parent = <&gpio6>;
- 		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
--		reset-gpios = <&gpio6 9 GPIO_ACTIVE_HIGH>; /* SODIMM 13 */
-+		reset-gpios = <&gpio6 9 GPIO_ACTIVE_LOW>; /* SODIMM 13 */
- 		status = "disabled";
- 	};
- 
-diff --git a/arch/arm/boot/dts/imx6q-apalis-ixora.dts b/arch/arm/boot/dts/imx6q-apalis-ixora.dts
-index fa9f98dd15ac..62e72773e53b 100644
---- a/arch/arm/boot/dts/imx6q-apalis-ixora.dts
-+++ b/arch/arm/boot/dts/imx6q-apalis-ixora.dts
-@@ -144,7 +144,7 @@ touchscreen@4a {
- 		reg = <0x4a>;
- 		interrupt-parent = <&gpio6>;
- 		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
--		reset-gpios = <&gpio6 9 GPIO_ACTIVE_HIGH>; /* SODIMM 13 */
-+		reset-gpios = <&gpio6 9 GPIO_ACTIVE_LOW>; /* SODIMM 13 */
- 		status = "disabled";
- 	};
- 
-diff --git a/arch/arm/boot/dts/imx7-colibri-aster.dtsi b/arch/arm/boot/dts/imx7-colibri-aster.dtsi
-index 9fa701bec2ec..139188eb9f40 100644
---- a/arch/arm/boot/dts/imx7-colibri-aster.dtsi
-+++ b/arch/arm/boot/dts/imx7-colibri-aster.dtsi
-@@ -99,7 +99,7 @@ touchscreen@4a {
- 		reg = <0x4a>;
- 		interrupt-parent = <&gpio2>;
- 		interrupts = <15 IRQ_TYPE_EDGE_FALLING>;	/* SODIMM 107 */
--		reset-gpios = <&gpio2 28 GPIO_ACTIVE_HIGH>;	/* SODIMM 106 */
-+		reset-gpios = <&gpio2 28 GPIO_ACTIVE_LOW>;	/* SODIMM 106 */
- 	};
- 
- 	/* M41T0M6 real time clock on carrier board */
-diff --git a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
-index 97601375f264..3caf450735d7 100644
---- a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
-+++ b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
-@@ -124,7 +124,7 @@ touchscreen@4a {
- 		reg = <0x4a>;
- 		interrupt-parent = <&gpio1>;
- 		interrupts = <9 IRQ_TYPE_EDGE_FALLING>;		/* SODIMM 28 */
--		reset-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;	/* SODIMM 30 */
-+		reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;	/* SODIMM 30 */
- 		status = "disabled";
- 	};
- 
-diff --git a/arch/arm/boot/dts/motorola-mapphone-common.dtsi b/arch/arm/boot/dts/motorola-mapphone-common.dtsi
-index d5ded4f794df..5f8f77cfbe59 100644
---- a/arch/arm/boot/dts/motorola-mapphone-common.dtsi
-+++ b/arch/arm/boot/dts/motorola-mapphone-common.dtsi
-@@ -430,7 +430,7 @@ touchscreen@4a {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&touchscreen_pins>;
- 
--		reset-gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>; /* gpio173 */
-+		reset-gpios = <&gpio6 13 GPIO_ACTIVE_LOW>; /* gpio173 */
- 
- 		/* gpio_183 with sys_nirq2 pad as wakeup */
- 		interrupts-extended = <&gpio6 23 IRQ_TYPE_LEVEL_LOW>,
-diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
-index bd4450dbdcb6..4da33d0f2748 100644
---- a/arch/arm/boot/dts/s5pv210-aries.dtsi
-+++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
-@@ -632,7 +632,7 @@ touchscreen@4a {
- 		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&ts_irq>;
--		reset-gpios = <&gpj1 3 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&gpj1 3 GPIO_ACTIVE_LOW>;
- 	};
- };
- 
-diff --git a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-index a0b829738e8f..10794a870776 100644
---- a/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-+++ b/arch/arm/boot/dts/tegra20-acer-a500-picasso.dts
-@@ -446,7 +446,7 @@ touchscreen@4c {
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(V, 6) IRQ_TYPE_LEVEL_LOW>;
- 
--			reset-gpios = <&gpio TEGRA_GPIO(Q, 7) GPIO_ACTIVE_HIGH>;
-+			reset-gpios = <&gpio TEGRA_GPIO(Q, 7) GPIO_ACTIVE_LOW>;
- 
- 			avdd-supply = <&vdd_3v3_sys>;
- 			vdd-supply  = <&vdd_3v3_sys>;
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 98f17fa3a892..ef7915400c9f 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -3134,8 +3134,9 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	if (error)
- 		return error;
- 
-+	/* Request the RESET line as asserted so we go into reset */
- 	data->reset_gpio = devm_gpiod_get_optional(&client->dev,
--						   "reset", GPIOD_OUT_LOW);
-+						   "reset", GPIOD_OUT_HIGH);
- 	if (IS_ERR(data->reset_gpio)) {
- 		error = PTR_ERR(data->reset_gpio);
- 		dev_err(&client->dev, "Failed to get reset gpio: %d\n", error);
-@@ -3153,8 +3154,9 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	disable_irq(client->irq);
- 
- 	if (data->reset_gpio) {
-+		/* Wait a while and then de-assert the RESET GPIO line */
- 		msleep(MXT_RESET_GPIO_TIME);
--		gpiod_set_value(data->reset_gpio, 1);
-+		gpiod_set_value(data->reset_gpio, 0);
- 		msleep(MXT_RESET_INVALID_CHG);
- 	}
- 
+So probably I'm missing something, but I'm not seeing anything that
+prevents this from coming out of a  pup/gup_fast.
+-Daniel
 -- 
-2.26.2
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
