@@ -8,58 +8,58 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA284C55178
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 23:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B544C55178
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 23:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60B3320825
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 23:47:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDF2B20867
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 23:47:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knwY4qld"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lIEXO/La"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733218AbgKDXqd (ORCPT
+        id S2387415AbgKDXrV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 18:46:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48330 "EHLO
+        Wed, 4 Nov 2020 18:47:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733167AbgKDXpf (ORCPT
+        with ESMTP id S1733143AbgKDXpZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Nov 2020 18:45:35 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BC86C0613CF;
-        Wed,  4 Nov 2020 15:45:35 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id l28so143023lfp.10;
-        Wed, 04 Nov 2020 15:45:35 -0800 (PST)
+        Wed, 4 Nov 2020 18:45:25 -0500
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85234C0613CF;
+        Wed,  4 Nov 2020 15:45:25 -0800 (PST)
+Received: by mail-lf1-x141.google.com with SMTP id 74so174428lfo.5;
+        Wed, 04 Nov 2020 15:45:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=g8x6egXvkoE7IlVITDMjG68sqFxmck8iG4cXdT5aClY=;
-        b=knwY4qldgRz85xN7wHG8/t/Hk+TrlyqYB5yOrIfHcDq2L83ZKYnXp52uopxa2aPau+
-         GGiXRS0kkgWn5s8ZKZvNRdqVUsXRK9kQnTUTFEbvU1YAMqNm+lhpGdFlAxsxM1vjZGXC
-         gR/raJPLvVdXo04Mi9NHtGHCza8FOnDMmEFMu+g/PEvx23qqmh4Yb/kg91yo0kxMhBQI
-         TqvorWHpnTxBKT6rm3Gy60P7q74O7AER0fd8RuIq8B7gjuFTHDHSAOdZWeAhSh7tCCYs
-         +qREBrXAnJcIpPh5txx1lR2W6vQJm0AXsdEYxiVWGVo/jpLVPSiro6atqsJfUXYFp4vt
-         Xpdg==
+        bh=bYI1lTU0u9qugSWMqSGv5A3HDa8DCxBYBbaISJenZIs=;
+        b=lIEXO/La7Zc0VwM0c4dDJ9vgZF6JXEGcQnUDRRMwyyD10nK8kcgrNp9DgX3Du75IIT
+         OzpoO+2Bl7PIc8Pyh1aBFhzzFuhxYw/EGzxr89Ll+MHvnacmt4aq+occ46DdFWbChWkL
+         izUIyLqX6Bqr0wRpJMiCGaqg2/bML9hVkLcegcNewXvrIjcjdirU/fjw5hxKasYetBF0
+         ag405LakLuvWIXmezrX37MwwgCR2hLz4ZwMbHvpDRnPUc1zYptM9IAdfmP4GvSqjJHt3
+         DpNnOKNZjLv+kBhz26qVrZFveREsWzpQVEUcELKxB05MXwMJE6kz+wM2C0LgbHfqMsKs
+         A2gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=g8x6egXvkoE7IlVITDMjG68sqFxmck8iG4cXdT5aClY=;
-        b=dxhNfQyxxaSIT8NjdUim3xiTnPt3u7G1TWmcG3tV7TaXp+QEuf6+zW0NTB2po7YpYI
-         mDjTCBdApiDA8iwH0vKDYJNLCopALHURDrWXCZVlZrAkwR8tRAb1WZsIQXfy40F4Ari4
-         vqqeR1B6cEqVsJ0Plf6thUwhsFDi/Ja3MXcbqy5FBhx2l5FhYBiC5P6w61hbsbPoC4/R
-         nY6+TCpRl1/Tw4M+BRv+MoYy7gWYR57HhYZlAT8Vm5Ck26hXU2Zi80+7ggHWeyBHUMdv
-         1Gc9b9iELaNz0INdKI0oLiXK9NKd5QElBdYc+JkDIxFrj3dGkNiux3rK7uMqnE3+n1WX
-         VQKA==
-X-Gm-Message-State: AOAM532SIlgUg9tVlisNFQyqAWTr8Hj4pvjL02z2HLVFdRh+6uQtI7nl
-        R7xacN8hKBzw6Yl9xFMjYMY=
-X-Google-Smtp-Source: ABdhPJz8N2Oz+8UFGJPk7QbDn5k2EBCL7Q+SAg+CeNKJVu1D596H0D056BGluC+KaAm7RZocVmHpuw==
-X-Received: by 2002:ac2:52b9:: with SMTP id r25mr52667lfm.274.1604533533673;
-        Wed, 04 Nov 2020 15:45:33 -0800 (PST)
+        bh=bYI1lTU0u9qugSWMqSGv5A3HDa8DCxBYBbaISJenZIs=;
+        b=VD23WUI/Iw9+s38Vg7zoOyUSj77CJTkl4oqVOeQuEVNk41Cr4W+AxINkEnY1yuBbK/
+         hMipYrDvC8bu1GWehfik3MJ7B2y5lCsu10ccyDIqJ5sONdz3WdF8RmWXGRFLFaR700mJ
+         426bTVx0DwyjSP9RLp9ZNgyKugM6L6YAwiOxkHfPcMuyiPnKcFD/yjT5tml4u9NAeyYL
+         EGA/dXqDnnD0gLZBcq74udmM+X23BQkmnSdmKZLFcNfGN9u1P5GW9270gs8qs2ejJa/9
+         LGCKqrvkKTqAHXGjg6jKZDRR83oXyNBlLC5pcbfM9nFOx0owMPnk/Fl4QvxuGeE6C2I9
+         P1xw==
+X-Gm-Message-State: AOAM532/a1dHDvUt+Fs3ZJ3azm+6o9KuzK28puFwj+akkEAj2pRJxnM4
+        VpzEfNqsZnKmwP/R6397MI0=
+X-Google-Smtp-Source: ABdhPJzQf9TUjFglxLujGELvxqeC4uglPytS2wsivLSpqjwqfzVF8NSmMtie4mgdOemR7ln3Z7XqDQ==
+X-Received: by 2002:a19:7409:: with SMTP id v9mr59130lfe.402.1604533524002;
+        Wed, 04 Nov 2020 15:45:24 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
-        by smtp.gmail.com with ESMTPSA id m6sm640725ljc.112.2020.11.04.15.45.32
+        by smtp.gmail.com with ESMTPSA id m6sm640725ljc.112.2020.11.04.15.45.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 15:45:33 -0800 (PST)
+        Wed, 04 Nov 2020 15:45:23 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -84,9 +84,9 @@ Cc:     linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v1 27/30] ARM: tegra: paz00: Add voltage supplies to DVFS-capable devices
-Date:   Thu,  5 Nov 2020 02:44:24 +0300
-Message-Id: <20201104234427.26477-28-digetx@gmail.com>
+Subject: [PATCH v1 20/30] usb: chipidea: tegra: Support OPP and SoC core voltage scaling
+Date:   Thu,  5 Nov 2020 02:44:17 +0300
+Message-Id: <20201104234427.26477-21-digetx@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201104234427.26477-1-digetx@gmail.com>
 References: <20201104234427.26477-1-digetx@gmail.com>
@@ -96,143 +96,133 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add voltage supplies to DVFS-capable devices in order to enable
-system-wide voltage scaling and allow CORE/RTC regulators to go lower.
+Add initial OPP and SoC CORE voltage scaling support to the Tegra UDC
+driver. This is required for enabling system-wide DVFS on older Tegra
+SoCs.
 
-Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+Tested-by: Peter Geis <pgwipeout@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra20-paz00.dts | 40 ++++++++++++++++++++++++-----
- 1 file changed, 33 insertions(+), 7 deletions(-)
+ drivers/usb/chipidea/Kconfig         |  1 +
+ drivers/usb/chipidea/ci_hdrc_tegra.c | 79 ++++++++++++++++++++++++++++
+ 2 files changed, 80 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index 52a81d888424..d497eb149fba 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -26,7 +26,19 @@ memory@0 {
- 	};
+diff --git a/drivers/usb/chipidea/Kconfig b/drivers/usb/chipidea/Kconfig
+index 8bafcfc6080d..6a5bc08711d6 100644
+--- a/drivers/usb/chipidea/Kconfig
++++ b/drivers/usb/chipidea/Kconfig
+@@ -56,6 +56,7 @@ config USB_CHIPIDEA_TEGRA
+ 	tristate "Enable Tegra UDC glue driver" if EMBEDDED
+ 	depends on OF
+ 	depends on USB_CHIPIDEA_UDC
++	select PM_OPP
+ 	default USB_CHIPIDEA
  
- 	host1x@50000000 {
-+		core-supply = <&core_vdd_reg>;
+ endif
+diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
+index 7455df0ede49..7f0403e810fe 100644
+--- a/drivers/usb/chipidea/ci_hdrc_tegra.c
++++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+@@ -6,6 +6,7 @@
+ #include <linux/clk.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
++#include <linux/pm_opp.h>
+ #include <linux/reset.h>
+ 
+ #include <linux/usb/chipidea.h>
+@@ -47,6 +48,79 @@ static const struct of_device_id tegra_udc_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, tegra_udc_of_match);
+ 
++static void tegra_udc_deinit_opp_table(void *data)
++{
++	struct device *dev = data;
++	struct opp_table *opp_table;
 +
-+		gr2d@54140000 {
-+			core-supply = <&core_vdd_reg>;
-+		};
++	opp_table = dev_pm_opp_get_opp_table(dev);
++	dev_pm_opp_of_remove_table(dev);
++	dev_pm_opp_put_regulators(opp_table);
++	dev_pm_opp_put_opp_table(opp_table);
++}
 +
-+		gr3d@54180000 {
-+			core-supply = <&core_vdd_reg>;
-+		};
++static int devm_tegra_udc_init_opp_table(struct device *dev)
++{
++	unsigned long rate = ULONG_MAX;
++	struct opp_table *opp_table;
++	const char *rname = "core";
++	struct dev_pm_opp *opp;
++	int err;
 +
- 		dc@54200000 {
-+			core-supply = <&core_vdd_reg>;
++	/* legacy device-trees don't have OPP table */
++	if (!device_property_present(dev, "operating-points-v2"))
++		return 0;
 +
- 			rgb {
- 				status = "okay";
- 
-@@ -34,11 +46,16 @@ rgb {
- 			};
- 		};
- 
-+		dc@54240000 {
-+			core-supply = <&core_vdd_reg>;
-+		};
++	/* voltage scaling is optional */
++	if (device_property_present(dev, "core-supply"))
++		opp_table = dev_pm_opp_set_regulators(dev, &rname, 1);
++	else
++		opp_table = dev_pm_opp_get_opp_table(dev);
 +
- 		hdmi@54280000 {
- 			status = "okay";
- 
- 			vdd-supply = <&hdmi_vdd_reg>;
- 			pll-supply = <&hdmi_pll_reg>;
-+			core-supply = <&core_vdd_reg>;
- 
- 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
- 			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
-@@ -46,6 +63,10 @@ hdmi@54280000 {
- 		};
- 	};
- 
-+	vde@6001a000 {
-+		core-supply = <&core_vdd_reg>;
-+	};
++	if (IS_ERR(opp_table))
++		return dev_err_probe(dev, PTR_ERR(opp_table),
++				     "failed to prepare OPP table\n");
 +
- 	pinmux@70000014 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&state_default>;
-@@ -389,10 +410,10 @@ sys_reg: sys {
++	err = dev_pm_opp_of_add_table(dev);
++	if (err) {
++		dev_err(dev, "failed to add OPP table: %d\n", err);
++		goto put_table;
++	}
++
++	/* find suitable OPP for the maximum clock rate */
++	opp = dev_pm_opp_find_freq_floor(dev, &rate);
++	err = PTR_ERR_OR_ZERO(opp);
++	if (err) {
++		dev_err(dev, "failed to get OPP: %d\n", err);
++		goto remove_table;
++	}
++
++	dev_pm_opp_put(opp);
++
++	/*
++	 * First dummy rate-set initializes voltage vote by setting voltage
++	 * in accordance to the clock rate.
++	 */
++	err = dev_pm_opp_set_rate(dev, rate);
++	if (err) {
++		dev_err(dev, "failed to initialize OPP clock: %d\n", err);
++		goto remove_table;
++	}
++
++	err = devm_add_action(dev, tegra_udc_deinit_opp_table, dev);
++	if (err)
++		goto remove_table;
++
++	return 0;
++
++remove_table:
++	dev_pm_opp_of_remove_table(dev);
++put_table:
++	dev_pm_opp_put_regulators(opp_table);
++
++	return err;
++}
++
+ static int tegra_udc_probe(struct platform_device *pdev)
+ {
+ 	const struct tegra_udc_soc_info *soc;
+@@ -77,6 +151,11 @@ static int tegra_udc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
  
- 				core_vdd_reg: sm0 {
- 					regulator-name = "+1.2vs_sm0,vdd_core";
--					regulator-min-microvolt = <1200000>;
--					regulator-max-microvolt = <1225000>;
-+					regulator-min-microvolt = <950000>;
-+					regulator-max-microvolt = <1300000>;
- 					regulator-coupled-with = <&rtc_vdd_reg &cpu_vdd_reg>;
--					regulator-coupled-max-spread = <170000 450000>;
-+					regulator-coupled-max-spread = <170000 550000>;
- 					regulator-always-on;
- 
- 					nvidia,tegra-core-regulator;
-@@ -403,7 +424,7 @@ cpu_vdd_reg: sm1 {
- 					regulator-min-microvolt = <750000>;
- 					regulator-max-microvolt = <1100000>;
- 					regulator-coupled-with = <&core_vdd_reg &rtc_vdd_reg>;
--					regulator-coupled-max-spread = <450000 450000>;
-+					regulator-coupled-max-spread = <550000 550000>;
- 					regulator-always-on;
- 
- 					nvidia,tegra-cpu-regulator;
-@@ -427,10 +448,10 @@ ldo1 {
- 
- 				rtc_vdd_reg: ldo2 {
- 					regulator-name = "+1.2vs_ldo2,vdd_rtc";
--					regulator-min-microvolt = <1200000>;
--					regulator-max-microvolt = <1225000>;
-+					regulator-min-microvolt = <950000>;
-+					regulator-max-microvolt = <1300000>;
- 					regulator-coupled-with = <&core_vdd_reg &cpu_vdd_reg>;
--					regulator-coupled-max-spread = <170000 450000>;
-+					regulator-coupled-max-spread = <170000 550000>;
- 					regulator-always-on;
- 
- 					nvidia,tegra-rtc-regulator;
-@@ -519,6 +540,7 @@ usb@c5000000 {
- 		compatible = "nvidia,tegra20-udc";
- 		status = "okay";
- 		dr_mode = "peripheral";
-+		core-supply = <&core_vdd_reg>;
- 	};
- 
- 	usb-phy@c5000000 {
-@@ -529,6 +551,7 @@ usb@c5004000 {
- 		status = "okay";
- 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 0)
- 			GPIO_ACTIVE_LOW>;
-+		core-supply = <&core_vdd_reg>;
- 	};
- 
- 	usb-phy@c5004000 {
-@@ -539,6 +562,7 @@ usb-phy@c5004000 {
- 
- 	usb@c5008000 {
- 		status = "okay";
-+		core-supply = <&core_vdd_reg>;
- 	};
- 
- 	usb-phy@c5008000 {
-@@ -551,12 +575,14 @@ mmc@c8000000 {
- 		wp-gpios = <&gpio TEGRA_GPIO(H, 1) GPIO_ACTIVE_HIGH>;
- 		power-gpios = <&gpio TEGRA_GPIO(V, 1) GPIO_ACTIVE_HIGH>;
- 		bus-width = <4>;
-+		core-supply = <&core_vdd_reg>;
- 	};
- 
- 	mmc@c8000600 {
- 		status = "okay";
- 		bus-width = <8>;
- 		non-removable;
-+		core-supply = <&core_vdd_reg>;
- 	};
- 
- 	backlight: backlight {
++	err = devm_tegra_udc_init_opp_table(&pdev->dev);
++	if (err)
++		return dev_err_probe(&pdev->dev, err,
++				     "failed to initialize OPP\n");
++
+ 	err = clk_prepare_enable(udc->clk);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to enable clock: %d\n", err);
 -- 
 2.27.0
 
