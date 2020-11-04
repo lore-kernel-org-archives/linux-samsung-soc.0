@@ -2,118 +2,115 @@ Return-Path: <SRS0=OVUx=EK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC4FC2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 13:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE372C2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 14:00:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 884262236F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 13:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5514521734
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 14:00:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Wan5zLNC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729787AbgKDNuw (ORCPT
+        id S1729833AbgKDOA1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 08:50:52 -0500
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:40526 "EHLO
-        wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726608AbgKDNuw (ORCPT
+        Wed, 4 Nov 2020 09:00:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40148 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727018AbgKDOA0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Nov 2020 08:50:52 -0500
-Received: from [2003:a:659:3f00:1e6f:65ff:fe31:d1d5] (helo=hermes.fivetechno.de); authenticated
-        by wp126.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1kaJBY-0000QJ-Qg; Wed, 04 Nov 2020 14:50:48 +0100
-X-Virus-Scanned: by amavisd-new 2.11.1 using newest ClamAV at
-        linuxbbg.five-lan.de
-Received: from [192.168.34.101] (p5098d998.dip0.t-ipconnect.de [80.152.217.152])
-        (authenticated bits=0)
-        by hermes.fivetechno.de (8.15.2/8.14.5/SuSE Linux 0.8) with ESMTPSA id 0A4DolqS015853
-        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-        Wed, 4 Nov 2020 14:50:47 +0100
-Subject: Re: [PATCH] ARM: dts: exynos: Assign a fixed index to mmc devices on
- exynos4412 based ODROID boards
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20201104102634eucas1p2ec7b705dd5092afa25d9877d1014f46a@eucas1p2.samsung.com>
- <20201104102558.11070-1-m.reichl@fivetechno.de>
- <efe8a911-6072-59fb-8a8e-d5cdb4352cab@samsung.com>
- <5800260a-5332-f627-eb36-32df4fbf05e3@fivetechno.de>
- <c1040872-0ae1-3988-29d0-60c8a711cdb1@samsung.com>
- <71e4ecca-b980-e224-0fbe-b30330e490fb@samsung.com>
-From:   Markus Reichl <m.reichl@fivetechno.de>
-Organization: five technologies GmbH
-Message-ID: <14ebf07b-54cb-64a5-fa34-9ad82da72bd2@fivetechno.de>
-Date:   Wed, 4 Nov 2020 14:50:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        Wed, 4 Nov 2020 09:00:26 -0500
+Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ABB1C061A4C
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Nov 2020 06:00:26 -0800 (PST)
+Received: by mail-qk1-x741.google.com with SMTP id i21so18565276qka.12
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Nov 2020 06:00:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=J6Nw3097qL1FGBO59AefdNEIbSIDtL/HHl1l69CFDp8=;
+        b=Wan5zLNCc03uOg3crmJFeRaNbOEA+qwrbKwCY9LDkg1fZnFvzGEBwk4V+VLFOn5oKx
+         tmcyGIKCw4+CD/juWp2ijPQPLgAyQG0AhFaLumt8mFw7D817cQkKUY2w7oYalFQSRaiQ
+         Vb/ptf8IpP3WfnK3UuZPUxBAXkXY6PqsAqGNVYoZolg0yUEgsR1Di4PcNN7C/aUr2Q/R
+         O0ZcNPr6tO0Ab4yQ9aVnuDw44g3gsPath6hDrZSj4xe9Loas/o/6/OXlQjyqG2MFoi+n
+         R3zy4MV988W7+StxSAydki/+D4rJ/lZx0EB7vwQbsli0N+fpB6onleBpY6HTFL+CpY9E
+         jiFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=J6Nw3097qL1FGBO59AefdNEIbSIDtL/HHl1l69CFDp8=;
+        b=tX7QRefiZcy1rPttRq5d55zkx171X3BUPEI/VTTJpZAlrtAxeXydaG5rlubrzUn/JV
+         sDPf42q3sn/seY6WiLWlGt0iFZZDROpAq7nx6NOTcDnh+cF00c0/g6S51ix2j2zT7WNa
+         rqwCpDR5S+oaqoSvDAJAJI/LDGLguZf54rdFR6O2S2a98dquycJWUt3jgt/KLgmUJNiI
+         qlqH9At/xGdV8kQUHFYVqFgxUoo4rXBOBkE2zGYZPKbTLvLwjSk064eO2rMH+3Sdtizh
+         8pFq4veMZFQMyRvpuXyNi976/PppjTqfbpo8B0IiiP8p4gC+SV6bi6xjWtD4hFLILcbU
+         B8XA==
+X-Gm-Message-State: AOAM530akF3P7V1GV5E6Nz0YcOIntHNVmvlswOhLLDMubrJ9wKmB2aBa
+        bAjkUf3JWEWVAsDzXFPTPsDV7w==
+X-Google-Smtp-Source: ABdhPJz06+PUPTCOD5MO6YcYJfu8e1guRGyarj130cNdAlQFDKce0Oko/G5bRBr5wbl0qK0lrF7Apg==
+X-Received: by 2002:a37:4ccf:: with SMTP id z198mr26929935qka.348.1604498425743;
+        Wed, 04 Nov 2020 06:00:25 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
+        by smtp.gmail.com with ESMTPSA id y3sm131855qto.2.2020.11.04.06.00.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2020 06:00:24 -0800 (PST)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1kaJKp-00GVgS-9E; Wed, 04 Nov 2020 10:00:23 -0400
+Date:   Wed, 4 Nov 2020 10:00:23 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
+Message-ID: <20201104140023.GQ36674@ziepe.ca>
+References: <20201030100815.2269-1-daniel.vetter@ffwll.ch>
+ <20201030100815.2269-6-daniel.vetter@ffwll.ch>
+ <446b2d5b-a1a1-a408-f884-f17a04b72c18@nvidia.com>
+ <CAKMK7uGDW2f0oOvwgryCHxQFHyh3Tsk6ENsMGmtZ-EnH57tMSA@mail.gmail.com>
+ <1f7cf690-35e2-c56f-6d3f-94400633edd2@nvidia.com>
+ <CAKMK7uFYDSqnNp_xpohzCEidw_iLufNSoX4v55sNZj-nwTckSg@mail.gmail.com>
+ <7f29a42a-c408-525d-90b7-ef3c12b5826c@nvidia.com>
+ <CAKMK7uEw701AWXNJbRNM8Z+FkyUB5FbWegmSzyWPy9cG4W7OLA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <71e4ecca-b980-e224-0fbe-b30330e490fb@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;m.reichl@fivetechno.de;1604497852;bff4b310;
-X-HE-SMSGID: 1kaJBY-0000QJ-Qg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uEw701AWXNJbRNM8Z+FkyUB5FbWegmSzyWPy9cG4W7OLA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+On Sun, Nov 01, 2020 at 11:50:39PM +0100, Daniel Vetter wrote:
 
-Am 04.11.20 um 14:44 schrieb Marek Szyprowski:
-> On 04.11.2020 14:13, Marek Szyprowski wrote:
->> On 04.11.2020 14:06, Markus Reichl wrote:
->>> Am 04.11.20 um 13:25 schrieb Marek Szyprowski:
->>>> On 04.11.2020 11:25, Markus Reichl wrote:
->>>>> Recently introduced async probe on mmc devices can shuffle block IDs.
->>>>> Pin them to fixed values to ease booting in evironments where UUIDs
->>>>> ar not practical.
->>>>> Use newly introduced aliases for mmcblk devices from [1].
->>>>>
->>>>> [1]
->>>>> https://patchwork.kernel.org/patch/11747669/
->>>>>
->>>>> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
->>>>> ---
->>>>>    arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 5 +++++
->>>>>    1 file changed, 5 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>>>> b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>>>> index a5c1ce1e396c..aa10d5bc7e1c 100644
->>>>> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>>>> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>>>> @@ -13,6 +13,11 @@
->>>>>    #include "exynos-mfc-reserved-memory.dtsi"
->>>>>      / {
->>>>> +    aliases {
->>>>> +        mmc0 = &sdhci_2;
->>>>> +        mmc1 = &mshc_0;
->>>> Like in the OdroidXU3-family patch, I would use 0 for the eMMC (mshc_0)
->>>> and 2 for the SD-card (sdhci_2).
->>> How to deal then with sdhci_0 (from exynos4.dtsi) vc. mshc_0 (from
->>> exynos4412.dts)?
->> sdhci_0 and mshc_0 both operate on the same physical MMC0 bus, so this
->> is not an issue. They cannot be used simultaneously. The latter is just
->> faster, the first one has been left there mainly for the software
->> compatibility.
-> 
-> I've thought a bit more on this and I would simply prefer to add generic
-> MMC aliases to the top-level Exynos dtsi files (3250, 4210, 4412, 5250,
-> 5410, 5420) to keep Linux logical MMC bus numbers in sync with the HW
-> bus numbers on all boards.
+> It's not device drivers, but everyone else. At least my understanding
+> is that VM_IO | VM_PFNMAP means "even if it happens to be backed by a
+> struct page, do not treat it like normal memory". And gup/pup_fast
+> happily break that. I tried to chase the history of that test, didn't
+> turn up anything I understood much:
 
-Ok, fine with me.
-As this is beyond my knowledge I would like leave this task with you.
+VM_IO isn't suppose do thave struct pages, so how can gup_fast return
+them?
 
-> 
-> Best regards
-> 
+I thought some magic in the PTE flags excluded this?
 
-Gruß,
--- 
-Markus Reichl
+Jason
