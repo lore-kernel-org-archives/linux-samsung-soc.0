@@ -2,150 +2,226 @@ Return-Path: <SRS0=OVUx=EK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F8AC2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 21:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 652ADC388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 21:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 469E820936
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 21:14:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tChP/moP"
+	by mail.kernel.org (Postfix) with ESMTP id 128D620825
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 21:35:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604525746;
+	bh=ZamixHAWHAngcRIkMUqqjPJDqF/T86BVvUJ4wPcHmqY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=WhmELhHGyjF5qjv5pGFj0FdJVaR/Pxz1IADhVYvx0NPEgrdVdXUnFcjFxxI9mk8jC
+	 FAhB4qvuUcB2OBNQR0gh3drNsdqMhhK2s94Uaph5a0xapqlMTxk+K/kOsToI1Yoh33
+	 Y/XNEMr9KaJI9+vgg9YDBsqYjmSWpu7qhnI+BHLg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbgKDVOw (ORCPT
+        id S1727748AbgKDVfm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 16:14:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52910 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbgKDVOw (ORCPT
+        Wed, 4 Nov 2020 16:35:42 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44392 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbgKDVfm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Nov 2020 16:14:52 -0500
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5462CC0613D3;
-        Wed,  4 Nov 2020 13:14:52 -0800 (PST)
-Received: by mail-lf1-x141.google.com with SMTP id y184so27122547lfa.12;
-        Wed, 04 Nov 2020 13:14:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vIcP7q9UQt158YstCq+OZIif2g9QHgNcw0nmgclkL4w=;
-        b=tChP/moPaZVaLTzz6HxN6ChzDNHozKx3OZQi71Norv8jnlMTrVoyY2p5d+5SFTMA3O
-         FPLd3cw2ve+cjaQCpCCkfuq40T3KGXJ5OSC38HPyYCRyMufhSastjpFISP6q8O344Qa+
-         5RMW7ZYt82kJ8/DLRlOZ4dChJhe0BPwEStpTStPO3MqzDKPkfKBL8JqOL1Czd8Xkwjey
-         qpDzErVKxHQhDYlNw+hCaLKhNFrz2/gxYBXsmhKyMhkjGUVGup2qfBuAenBuev172R7G
-         Jrcco71piHT0kB7DdyFfWJMmAFA3vhQLCLUHsMc6/zy2K9IPDhTf/dlMTCWapcy4F78a
-         D1qg==
+        Wed, 4 Nov 2020 16:35:42 -0500
+Received: by mail-oi1-f193.google.com with SMTP id t16so6418451oie.11;
+        Wed, 04 Nov 2020 13:35:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vIcP7q9UQt158YstCq+OZIif2g9QHgNcw0nmgclkL4w=;
-        b=OlFF+/zMxE0Z92xdRPsAUVJI9TazAdpMvZIghTYMuCDHznnm0l6DZDJK0sj+dEThkg
-         VCYkgs7UVq8UiLPZa8YddGeyu6rbaB+hZFwxbA12p+81KCHNj6AuFkYAycUemDWET67i
-         vlpLRTVjvca4SllXALWJYn765O7HITD/97tNXvwEWrmD4gVHLyqK/qT6WlBsVfqeedk2
-         7ZsM8mi+fkFpnKm9PvCzAqOBLsEMRdiAz3QWHqohrOF1IQGejdUwUxck+Bqu5Nyg/FTB
-         h+XQn1Kpj5I+Qk0n9FOulKcMqsF3y9oYd5aLyUOL7JRp6d8L6ILcjyhLjOAygDeOQulB
-         lCLA==
-X-Gm-Message-State: AOAM533UrBeq4sQGSXFoj7TfFRjmW7m/UaYQrG7M2RQHs5Z0UoCSkPVK
-        yekEo5RodEFpcgmgz4YJ5wwrRB5hEhs=
-X-Google-Smtp-Source: ABdhPJx/XTxo/21gPGdbGRdUiEcv1vpaApyF7SK6Jyz5hhnCH1q+t1nUZUbP17HTaazEwzgnWhDKuw==
-X-Received: by 2002:a19:c78c:: with SMTP id x134mr1307041lff.319.1604524490565;
-        Wed, 04 Nov 2020 13:14:50 -0800 (PST)
-Received: from ?IPv6:2a02:a315:5445:5300:10:cd12:3307:e8d7? ([2a02:a315:5445:5300:10:cd12:3307:e8d7])
-        by smtp.gmail.com with ESMTPSA id l9sm619423ljc.86.2020.11.04.13.14.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Nov 2020 13:14:49 -0800 (PST)
-Subject: Re: [PATCH] arm64: dts: exynos: Fix reboot/poweroff issues on Exynos7
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     kgene@kernel.org, alim.akhtar@samsung.com, robh+dt@kernel.org,
-        a.kesavan@samsung.com, naveenkrishna.ch@gmail.com,
-        thomas.ab@samsung.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20201028210813.49874-1-pawel.mikolaj.chmiel@gmail.com>
- <20201029175043.GA88508@kozik-lap>
-From:   =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Message-ID: <f00edc18-0dc7-f254-3edb-751e606ab857@gmail.com>
-Date:   Wed, 4 Nov 2020 22:14:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XsTIGAagzOnMRm7sMHojCYBN2wI108e8FrvxB5eYOtQ=;
+        b=hPpUyyjscPGGM2LvgcZ/VaZBiN4cLDDSM02uc9jUYG1jP+SePWZbSQq/wl05D5Osve
+         JTJ+pMNy1O5V129ItJO3BPdnqTTPWSV6GICI8a3ja40KPFJfyDIZyTJRZxviJ7UHPOkM
+         9GWjpIkl/1pjXXXIzE6/BDAqojvxpit+165Dxuy9mWRtGOUWkBePYe0NAbVZIyqGscls
+         xmlUiIn4siZ1GH7qKmutt5nJriNWh3Q4mX7mA8PlueAdaUC7sFHebcv//wFQNj7YvDJ1
+         Rlv8wGYkCX3oPVlYlfhtRo96Lmel39wo24HY1Ro1xUtiRiC8hUVJ/xwfsc5ep2FZ0EGo
+         876g==
+X-Gm-Message-State: AOAM531RVb13hU3FcTb2yvxCLhxzxyx0HHl3d4DBRpVrw1muRA4VSKXh
+        +pGt4T9VsKhacZ5TdYvifA==
+X-Google-Smtp-Source: ABdhPJyNHCIleN5pdM4VTuW7A8t+EwS1FMDVPZZfBh64Vpq2rBA54/k5ISX86pTWQ4vqWPhYl1VYag==
+X-Received: by 2002:aca:2111:: with SMTP id 17mr3648355oiz.139.1604525740674;
+        Wed, 04 Nov 2020 13:35:40 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m65sm769596otc.36.2020.11.04.13.35.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2020 13:35:40 -0800 (PST)
+Received: (nullmailer pid 4163321 invoked by uid 1000);
+        Wed, 04 Nov 2020 21:35:39 -0000
+Date:   Wed, 4 Nov 2020 15:35:39 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH v3 2/6] dt-bindings: pci: add the samsung,exynos-pcie
+ binding
+Message-ID: <20201104213539.GA4144654@bogus>
+References: <20201029134017.27400-1-m.szyprowski@samsung.com>
+ <CGME20201029134038eucas1p28d9bd33bc9e36b960b021a40ef299b47@eucas1p2.samsung.com>
+ <20201029134017.27400-3-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20201029175043.GA88508@kozik-lap>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201029134017.27400-3-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi
+On Thu, Oct 29, 2020 at 02:40:13PM +0100, Marek Szyprowski wrote:
+> Add dt-bindings for the Samsung Exynos PCIe controller (Exynos5433
+> variant). Based on the text dt-binding posted by Jaehoon Chung.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  .../bindings/pci/samsung,exynos-pcie.yaml     | 119 ++++++++++++++++++
+>  1 file changed, 119 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+> new file mode 100644
+> index 000000000000..1810bf722350
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+> @@ -0,0 +1,119 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/samsung,exynos-pcie.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung SoC series PCIe Host Controller Device Tree Bindings
+> +
+> +maintainers:
+> +  - Marek Szyprowski <m.szyprowski@samsung.com>
+> +  - Jaehoon Chung <jh80.chung@samsung.com>
+> +
+> +description: |+
+> +  Exynos5433 SoC PCIe host controller is based on the Synopsys DesignWare
+> +  PCIe IP and thus inherits all the common properties defined in
+> +  designware-pcie.txt.
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/pci-bus.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: samsung,exynos5433-pcie
+> +
+> +  reg:
+> +    items:
+> +      - description: Data Bus Interface (DBI) registers.
+> +      - description: External Local Bus interface (ELBI) registers.
+> +      - description: PCIe configuration space region.
+> +
+> +  reg-names:
+> +    items:
+> +      - const: dbi
+> +      - const: elbi
+> +      - const: config
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: PCIe bridge clock
+> +      - description: PCIe bus clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: pcie
+> +      - const: pcie_bus
+> +
+> +  phys:
+> +    maxItems: 1
+> +
+> +  vdd10-supply:
+> +    description:
+> +      Phandle to a regulator that provides 1.0V power to the PCIe block.
+> +
+> +  vdd18-supply:
+> +    description:
+> +      Phandle to a regulator that provides 1.8V power to the PCIe block.
+> +
+> +  num-lanes:
+> +    const: 1
+> +
+> +  num-viewport:
+> +    const: 3
 
-On 29.10.2020 18:50, Krzysztof Kozlowski wrote:
-> On Wed, Oct 28, 2020 at 10:08:13PM +0100, Paweł Chmiel wrote:
->> In vendor sources for Exynos 7420, psci is not used to reboot or
->> poweroff device. Instead we should use syscon reboot/poweroff.
->> Previously it was not possible to poweroff (no syscon poweroff node) or
->> reboot (because it was handled by psci and this way is not working for
->> Exynos).
-> 
-> Do you want to say that PSCI cannot be used to power off or reboot?
-Yes
-> 
->>
->> Fixes: fb026cb65247 ("arm64: dts: Add reboot node for exynos7")
->> Fixes: b9024cbc937d ("arm64: dts: Add initial device tree support for exynos7")
->> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
->> ---
->>  arch/arm64/boot/dts/exynos/exynos7.dtsi | 11 ++++++++++-
->>  1 file changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
->> index 959918f4ca45..47d54c369d03 100644
->> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
->> @@ -117,8 +117,10 @@ cpu_atlas3: cpu@3 {
->>  	};
->>  
->>  	psci {
->> -		compatible = "arm,psci-0.2";
->> +		compatible = "arm,psci";
-> 
-> Please explain how is it related to this issue? You onle mentioned
-> a problem of lacking syscon-reboot node.
-> 
->>  		method = "smc";
->> +		cpu_off = <0x84000002>;
->> +		cpu_on = <0xC4000003>;
-> 
-> The same question.
-Thanks for feedback. I'll split this patch into two - one for inclusion
-of exynos-syscon-restart.dtsi and second one fixing psci compatible (so
-syscon-poweroff/restart will be working).
-> 
->>  	};
->>  
->>  	soc: soc@0 {
->> @@ -552,6 +554,13 @@ pmu_system_controller: system-controller@105c0000 {
->>  			compatible = "samsung,exynos7-pmu", "syscon";
->>  			reg = <0x105c0000 0x5000>;
->>  
->> +			poweroff: syscon-poweroff {
->> +				compatible = "syscon-poweroff";
->> +				regmap = <&pmu_system_controller>;
->> +				offset = <0x330C>; /* PS_HOLD_CONTROL */
->> +				mask = <0x5200>; /* reset value */
->> +			};
->> +
-> 
-> Instead, please include arm/exynos-syscon-restart.dtsi.
-Will do this.
-> 
-> Best regards,
-> Krzysztof
+I'm confused why you need this. This is only used with the iATU except 
+for keystone. Platforms like Exynos with their own child bus config 
+space accessors don't have an iATU. 
+
+BTW, for cases with an iATU, I'm working on making the number of 
+viewports runtime detected.
+
+> +
+> +required:
+> +  - reg
+> +  - reg-names
+> +  - interrupts
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - "#interrupt-cells"
+> +  - interrupt-map
+> +  - interrupt-map-mask
+> +  - ranges
+> +  - bus-range
+> +  - device_type
+> +  - num-lanes
+> +  - num-viewport
+> +  - clocks
+> +  - clock-names
+> +  - phys
+> +  - vdd10-supply
+> +  - vdd18-supply
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/exynos5433.h>
+> +
+> +    pcie: pcie@15700000 {
+> +        compatible = "samsung,exynos5433-pcie";
+> +        reg = <0x15700000 0x1000>, <0x156b0000 0x1000>, <0x0c000000 0x1000>;
+> +        reg-names = "dbi", "elbi", "config";
+> +        #address-cells = <3>;
+> +        #size-cells = <2>;
+> +        #interrupt-cells = <1>;
+> +        device_type = "pci";
+> +        interrupts = <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&cmu_fsys CLK_PCIE>, <&cmu_fsys CLK_PCLK_PCIE_PHY>;
+> +        clock-names = "pcie", "pcie_bus";
+> +        phys = <&pcie_phy>;
+> +        pinctrl-0 = <&pcie_bus &pcie_wlanen>;
+> +        pinctrl-names = "default";
+> +        num-lanes = <1>;
+> +        num-viewport = <3>;
+> +        bus-range = <0x00 0xff>;
+> +        ranges = <0x81000000 0 0	  0x0c001000 0 0x00010000>,
+> +                 <0x82000000 0 0x0c011000 0x0c011000 0 0x03feefff>;
+> +        vdd10-supply = <&ldo6_reg>;
+> +        vdd18-supply = <&ldo7_reg>;
+> +        interrupt-map-mask = <0 0 0 0>;
+> +        interrupt-map = <0 0 0 0 &gic GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>;
+> +    };
+> +...
+> -- 
+> 2.17.1
 > 
