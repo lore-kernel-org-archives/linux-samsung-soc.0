@@ -2,155 +2,150 @@ Return-Path: <SRS0=OVUx=EK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC10C5517A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 20:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F8AC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 21:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5DAED2087D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 20:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 469E820936
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 21:14:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="DLnfeD9J"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tChP/moP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731443AbgKDUM3 (ORCPT
+        id S1726777AbgKDVOw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 15:12:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43160 "EHLO
+        Wed, 4 Nov 2020 16:14:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731390AbgKDUM3 (ORCPT
+        with ESMTP id S1726434AbgKDVOw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Nov 2020 15:12:29 -0500
-Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 918F7C061A4D
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Nov 2020 12:12:28 -0800 (PST)
-Received: by mail-qt1-x843.google.com with SMTP id r8so13114321qtp.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Nov 2020 12:12:28 -0800 (PST)
+        Wed, 4 Nov 2020 16:14:52 -0500
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5462CC0613D3;
+        Wed,  4 Nov 2020 13:14:52 -0800 (PST)
+Received: by mail-lf1-x141.google.com with SMTP id y184so27122547lfa.12;
+        Wed, 04 Nov 2020 13:14:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rEEEXt1os4uvlr5FpRnmuBcc7L7msKpqjcsUXwjQF/c=;
-        b=DLnfeD9J1ORdQ1bfs5+3AntXSfjpW/03OlgMKpfMczcb0Yo31gAQmfKmU/MxwQ17Tz
-         p8ZagfXHFsC1dHS6FW5fSkhChMKNOPBoZuaf0P1ssilDHMYkmfYcvMK/N4bu0vQXK3wy
-         c2tGk1nId5n4tetbAX3T+IoXKixnSiRJU2P+RgF0i9/MzM9vLJQC4pR4SHkQIDhJjOCm
-         nI9uYdoL8DUDIOHzXzueS+XUGj/Xv/0E4OLEq6oqPKUHmkx/sfooqnKn5e06EiNpsCvu
-         pIeS4Ja9kfYHVEpTmDFGZ6rRJqSaQZ+CUMbWPT9DrPeXAPhB8c08+nN3zrd9Xy424Dsr
-         vK5Q==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vIcP7q9UQt158YstCq+OZIif2g9QHgNcw0nmgclkL4w=;
+        b=tChP/moPaZVaLTzz6HxN6ChzDNHozKx3OZQi71Norv8jnlMTrVoyY2p5d+5SFTMA3O
+         FPLd3cw2ve+cjaQCpCCkfuq40T3KGXJ5OSC38HPyYCRyMufhSastjpFISP6q8O344Qa+
+         5RMW7ZYt82kJ8/DLRlOZ4dChJhe0BPwEStpTStPO3MqzDKPkfKBL8JqOL1Czd8Xkwjey
+         qpDzErVKxHQhDYlNw+hCaLKhNFrz2/gxYBXsmhKyMhkjGUVGup2qfBuAenBuev172R7G
+         Jrcco71piHT0kB7DdyFfWJMmAFA3vhQLCLUHsMc6/zy2K9IPDhTf/dlMTCWapcy4F78a
+         D1qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rEEEXt1os4uvlr5FpRnmuBcc7L7msKpqjcsUXwjQF/c=;
-        b=k/DzOh9knLOvFybctjM0BL3Ph/pIdCTPCj4iluUSWNBGVbdldIA8/7iIjUMfshGpr6
-         qzYfed53PETiVj1I4Ql/mKvT1hSXNZOYlgsHyFoy1yu68l5jyrchq65TkBmrTt0XjNy5
-         Sl/RLpR58SW3wb//z7JK3QOaGcHqCd+mXxJR7zlJmlbEhQ6S76NtS9LxGx6K5/daSFbY
-         2TZ5cOAHOmut/krkgsMghPxLDuM0oQFp1yMA056Yumm3ORG/wUqjyf1C8pQrpGGbrww3
-         QORkcJ83dTP//YxaKxiHifOJSZxjMTIapCNZqzIrF6tFSDX1uZjv+pliFku7vU8ORjlC
-         usGA==
-X-Gm-Message-State: AOAM531BwVHzEyUuXpERdoy6DYqrrwj/QTy/tprFKjvaNPA+iWTw//b4
-        WzuGA9NkopOkyya820wodAyxlJcpiyrx+xov+bq2Ow==
-X-Google-Smtp-Source: ABdhPJyImQ0VMkgJ13gDdAbq5pEtNIjA5jffxfB/P+jRlJioL0jIF2z8jDtJ1zF31+FQiHcdLBXSWIzDRip6n19HrNg=
-X-Received: by 2002:ac8:4b79:: with SMTP id g25mr21823130qts.19.1604520747497;
- Wed, 04 Nov 2020 12:12:27 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vIcP7q9UQt158YstCq+OZIif2g9QHgNcw0nmgclkL4w=;
+        b=OlFF+/zMxE0Z92xdRPsAUVJI9TazAdpMvZIghTYMuCDHznnm0l6DZDJK0sj+dEThkg
+         VCYkgs7UVq8UiLPZa8YddGeyu6rbaB+hZFwxbA12p+81KCHNj6AuFkYAycUemDWET67i
+         vlpLRTVjvca4SllXALWJYn765O7HITD/97tNXvwEWrmD4gVHLyqK/qT6WlBsVfqeedk2
+         7ZsM8mi+fkFpnKm9PvCzAqOBLsEMRdiAz3QWHqohrOF1IQGejdUwUxck+Bqu5Nyg/FTB
+         h+XQn1Kpj5I+Qk0n9FOulKcMqsF3y9oYd5aLyUOL7JRp6d8L6ILcjyhLjOAygDeOQulB
+         lCLA==
+X-Gm-Message-State: AOAM533UrBeq4sQGSXFoj7TfFRjmW7m/UaYQrG7M2RQHs5Z0UoCSkPVK
+        yekEo5RodEFpcgmgz4YJ5wwrRB5hEhs=
+X-Google-Smtp-Source: ABdhPJx/XTxo/21gPGdbGRdUiEcv1vpaApyF7SK6Jyz5hhnCH1q+t1nUZUbP17HTaazEwzgnWhDKuw==
+X-Received: by 2002:a19:c78c:: with SMTP id x134mr1307041lff.319.1604524490565;
+        Wed, 04 Nov 2020 13:14:50 -0800 (PST)
+Received: from ?IPv6:2a02:a315:5445:5300:10:cd12:3307:e8d7? ([2a02:a315:5445:5300:10:cd12:3307:e8d7])
+        by smtp.gmail.com with ESMTPSA id l9sm619423ljc.86.2020.11.04.13.14.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Nov 2020 13:14:49 -0800 (PST)
+Subject: Re: [PATCH] arm64: dts: exynos: Fix reboot/poweroff issues on Exynos7
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     kgene@kernel.org, alim.akhtar@samsung.com, robh+dt@kernel.org,
+        a.kesavan@samsung.com, naveenkrishna.ch@gmail.com,
+        thomas.ab@samsung.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20201028210813.49874-1-pawel.mikolaj.chmiel@gmail.com>
+ <20201029175043.GA88508@kozik-lap>
+From:   =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Message-ID: <f00edc18-0dc7-f254-3edb-751e606ab857@gmail.com>
+Date:   Wed, 4 Nov 2020 22:14:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.2
 MIME-Version: 1.0
-References: <CAKMK7uF0QjesaNs97N-G8cZkXuAmFgcmTfHvoCP94br_WVcV6Q@mail.gmail.com>
- <20201104165017.GA352206@bjorn-Precision-5520>
-In-Reply-To: <20201104165017.GA352206@bjorn-Precision-5520>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 4 Nov 2020 12:12:15 -0800
-Message-ID: <CAPcyv4idORJzHVD2vCOnO3REqWHKVn_-otOzTBf0HhcWq4iJRQ@mail.gmail.com>
-Subject: Re: [PATCH v5 11/15] PCI: Obey iomem restrictions for procfs mmap
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201029175043.GA88508@kozik-lap>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 4, 2020 at 8:50 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> On Wed, Nov 04, 2020 at 09:44:04AM +0100, Daniel Vetter wrote:
-> > On Tue, Nov 3, 2020 at 11:09 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> > > On Tue, Nov 3, 2020 at 1:28 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > > > On Fri, Oct 30, 2020 at 11:08:11AM +0100, Daniel Vetter wrote:
-> > > > > There's three ways to access PCI BARs from userspace: /dev/mem, sysfs
-> > > > > files, and the old proc interface. Two check against
-> > > > > iomem_is_exclusive, proc never did. And with CONFIG_IO_STRICT_DEVMEM,
-> > > > > this starts to matter, since we don't want random userspace having
-> > > > > access to PCI BARs while a driver is loaded and using it.
-> > > > >
-> > > > > Fix this by adding the same iomem_is_exclusive() check we already have
-> > > > > on the sysfs side in pci_mmap_resource().
-> > > > >
-> > > > > References: 90a545e98126 ("restrict /dev/mem to idle io memory ranges")
-> > > > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > > >
-> > > > This is OK with me but it looks like IORESOURCE_EXCLUSIVE is currently
-> > > > only used in a few places:
-> > > >
-> > > >   e1000_probe() calls pci_request_selected_regions_exclusive(),
-> > > >   ne_pci_probe() calls pci_request_regions_exclusive(),
-> > > >   vmbus_allocate_mmio() calls request_mem_region_exclusive()
-> > > >
-> > > > which raises the question of whether it's worth keeping
-> > > > IORESOURCE_EXCLUSIVE at all.  I'm totally fine with removing it
-> > > > completely.
-> > >
-> > > Now that CONFIG_IO_STRICT_DEVMEM upgrades IORESOURCE_BUSY to
-> > > IORESOURCE_EXCLUSIVE semantics the latter has lost its meaning so I'd
-> > > be in favor of removing it as well.
-> >
-> > Still has some value since it enforces exclusive access even if the
-> > config isn't enabled, and iirc e1000 had some fun with userspace tools
-> > clobbering the firmware and bricking the chip.
->
-> There's *some* value; I'm just skeptical since only three drivers use
-> it.
->
-> IORESOURCE_EXCLUSIVE is from e8de1481fd71 ("resource: allow MMIO
-> exclusivity for device drivers"), and the commit message says this is
-> only active when CONFIG_STRICT_DEVMEM is set.  I didn't check to see
-> whether that's still true.
->
-> That commit adds a bunch of wrappers and "__"-prefixed functions to
-> pass the IORESOURCE_EXCLUSIVE flag around.  That's a fair bit of
-> uglification for three drivers.
->
-> > Another thing I kinda wondered, since pci maintainer is here: At least
-> > in drivers/gpu I see very few drivers explicitly requestion regions
-> > (this might be a historical artifact due to the shadow attach stuff
-> > before we had real modesetting drivers). And pci core doesn't do that
-> > either, even when a driver is bound. Is this intentional, or
-> > should/could we do better? Since drivers work happily without
-> > reserving regions I don't think "the drivers need to remember to do
-> > this" will ever really work out well.
->
-> You're right, many drivers don't call pci_request_regions().  Maybe we
-> could do better, but I haven't looked into that recently.  There is a
-> related note in Documentation/PCI/pci.rst that's been there for a long
-> time (it refers to "pci_request_resources()", which has never existed
-> AFAICT).  I'm certainly open to proposals.
+Hi
 
-It seems a bug that the kernel permits MMIO regions with side effects
-to be ioremap()'ed without request_mem_region() on the resource. I
-wonder how much log spam would happen if ioremap() reported whenever a
-non-IORESOURE_BUSY range was passed to it? The current state of
-affairs to trust *remap users to have claimed their remap target seems
-too ingrained to unwind now.
+On 29.10.2020 18:50, Krzysztof Kozlowski wrote:
+> On Wed, Oct 28, 2020 at 10:08:13PM +0100, Paweł Chmiel wrote:
+>> In vendor sources for Exynos 7420, psci is not used to reboot or
+>> poweroff device. Instead we should use syscon reboot/poweroff.
+>> Previously it was not possible to poweroff (no syscon poweroff node) or
+>> reboot (because it was handled by psci and this way is not working for
+>> Exynos).
+> 
+> Do you want to say that PSCI cannot be used to power off or reboot?
+Yes
+> 
+>>
+>> Fixes: fb026cb65247 ("arm64: dts: Add reboot node for exynos7")
+>> Fixes: b9024cbc937d ("arm64: dts: Add initial device tree support for exynos7")
+>> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+>> ---
+>>  arch/arm64/boot/dts/exynos/exynos7.dtsi | 11 ++++++++++-
+>>  1 file changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> index 959918f4ca45..47d54c369d03 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> @@ -117,8 +117,10 @@ cpu_atlas3: cpu@3 {
+>>  	};
+>>  
+>>  	psci {
+>> -		compatible = "arm,psci-0.2";
+>> +		compatible = "arm,psci";
+> 
+> Please explain how is it related to this issue? You onle mentioned
+> a problem of lacking syscon-reboot node.
+> 
+>>  		method = "smc";
+>> +		cpu_off = <0x84000002>;
+>> +		cpu_on = <0xC4000003>;
+> 
+> The same question.
+Thanks for feedback. I'll split this patch into two - one for inclusion
+of exynos-syscon-restart.dtsi and second one fixing psci compatible (so
+syscon-poweroff/restart will be working).
+> 
+>>  	};
+>>  
+>>  	soc: soc@0 {
+>> @@ -552,6 +554,13 @@ pmu_system_controller: system-controller@105c0000 {
+>>  			compatible = "samsung,exynos7-pmu", "syscon";
+>>  			reg = <0x105c0000 0x5000>;
+>>  
+>> +			poweroff: syscon-poweroff {
+>> +				compatible = "syscon-poweroff";
+>> +				regmap = <&pmu_system_controller>;
+>> +				offset = <0x330C>; /* PS_HOLD_CONTROL */
+>> +				mask = <0x5200>; /* reset value */
+>> +			};
+>> +
+> 
+> Instead, please include arm/exynos-syscon-restart.dtsi.
+Will do this.
+> 
+> Best regards,
+> Krzysztof
+> 
