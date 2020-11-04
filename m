@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 653CAC55179
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 10:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86331C55179
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 10:38:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B53F223AB
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 10:38:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DCA3223C7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Nov 2020 10:38:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HNQcZCe0"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lyL1nUWR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729718AbgKDKiL (ORCPT
+        id S1729529AbgKDKhk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Nov 2020 05:38:11 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47673 "EHLO
+        Wed, 4 Nov 2020 05:37:40 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47647 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729568AbgKDKhm (ORCPT
+        with ESMTP id S1729516AbgKDKhi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Nov 2020 05:37:42 -0500
+        Wed, 4 Nov 2020 05:37:38 -0500
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201104103727euoutp01cccd440b99659388834253a193166c01~ER73CUwri0589805898euoutp01U
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Nov 2020 10:37:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201104103727euoutp01cccd440b99659388834253a193166c01~ER73CUwri0589805898euoutp01U
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201104103724euoutp01b6e1d8530bb48ed9130c8dfb1faa1743~ER70YoS6M0749007490euoutp01M
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Nov 2020 10:37:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201104103724euoutp01b6e1d8530bb48ed9130c8dfb1faa1743~ER70YoS6M0749007490euoutp01M
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604486247;
-        bh=/FRHhipH0++LZ7DwDFHNxX1ifPoUb6bj7wyOz1N82q4=;
+        s=mail20170921; t=1604486244;
+        bh=4jDdkOF9KeaEav3yECAHUsBxo9tM3wtiBUfvzdDFRkI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HNQcZCe0y2+pAHCThcumYv9rCGue5y3A5TbQNAZ3KHewmWhnIY50IbVEWgvDDM+UC
-         M16I9OvnLUa5wP7fIPhfiJYPIYKi7qPqYceBfN6SJgzC4InYauMzOD8A56tuFWW/Uu
-         Uc0aigxZrFvaYXnwgkIBTvS18b+sMuBVGriOgKMc=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201104103727eucas1p1419756f7d67f72df4b1596005e515ba6~ER72xAL3m2673626736eucas1p11;
-        Wed,  4 Nov 2020 10:37:27 +0000 (GMT)
+        b=lyL1nUWR6947aKNv8qUlW5DBXHxQZQu95Cd+l26ywZIWYsGBH7LSBgmCExUa5UjxQ
+         Khjqv1Loiprl2p/QioOqfnnqhQho0/jB+GiKFiZN/7s64QgQlW7D8jsJ4ZDP8QIPKS
+         /vOhZqr6SXpKm3wIaOcz1b9mGFNbeknewZrJL0Dw=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20201104103719eucas1p2198ed14bf3f225a0c2098e5aa63a9e96~ER7vSYIQ41146911469eucas1p2i;
+        Wed,  4 Nov 2020 10:37:19 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 4A.8F.06456.76482AF5; Wed,  4
-        Nov 2020 10:37:27 +0000 (GMT)
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id D3.0A.06318.F5482AF5; Wed,  4
+        Nov 2020 10:37:19 +0000 (GMT)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20201104103726eucas1p248b51b25f5ee42898bf03e9cb2229c5d~ER72YMUwJ1141511415eucas1p2m;
-        Wed,  4 Nov 2020 10:37:26 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20201104103718eucas1p1c103f1a96499b03c72e5457ac2542c3d~ER7vAzdL91562315623eucas1p1I;
+        Wed,  4 Nov 2020 10:37:18 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201104103726eusmtrp15b3c784d0eb581c0cc5c77f1693c7036~ER72XcegN0620706207eusmtrp1C;
-        Wed,  4 Nov 2020 10:37:26 +0000 (GMT)
-X-AuditID: cbfec7f2-809ff70000001938-1c-5fa28467056e
+        20201104103718eusmtrp187d459d3c57732985efa60614a7bcab6~ER7vAHWqL0575105751eusmtrp1J;
+        Wed,  4 Nov 2020 10:37:18 +0000 (GMT)
+X-AuditID: cbfec7f5-38bff700000018ae-7d-5fa2845f005e
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 67.64.06017.66482AF5; Wed,  4
-        Nov 2020 10:37:26 +0000 (GMT)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 3A.75.06314.E5482AF5; Wed,  4
+        Nov 2020 10:37:18 +0000 (GMT)
 Received: from AMDC3061.digital.local (unknown [106.120.51.75]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201104103726eusmtip2cbd0e037625fc6dd810c4dccea497dee~ER71orAeJ1010110101eusmtip2k;
-        Wed,  4 Nov 2020 10:37:26 +0000 (GMT)
+        20201104103718eusmtip25006f9bb88eff50476c174c7a16ba0f7~ER7uR07EW1402114021eusmtip2F;
+        Wed,  4 Nov 2020 10:37:18 +0000 (GMT)
 From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
 To:     georgi.djakov@linaro.org, cw00.choi@samsung.com, krzk@kernel.org
 Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
@@ -67,120 +67,185 @@ Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com
-Subject: [PATCH v8 5/7] ARM: dts: exynos: Add interconnect properties to
- Exynos4412 bus nodes
-Date:   Wed,  4 Nov 2020 11:36:55 +0100
-Message-Id: <20201104103657.18007-6-s.nawrocki@samsung.com>
+Subject: [PATCH v8 1/7] dt-bindings: devfreq: Add documentation for the
+ interconnect properties
+Date:   Wed,  4 Nov 2020 11:36:51 +0100
+Message-Id: <20201104103657.18007-2-s.nawrocki@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201104103657.18007-1-s.nawrocki@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjmO7cdpSPHdXuxSBoFJZVKBR8k5Q0ZUhj96EdWa9VhWZvGjmYa
-        ZLE00xTRUDM1KytbpDbXkJUybF7KG1prmdWE7F5aeQEzZs6j5b/nfZ/n+d7ngY8l5Q7aj42L
-        TxT08WqtgvGmLC0TXes1566rgmqzOOwqT0f4fnENjZ2jH2l81d5F4+djwwwuajAxON+VR+Hu
-        7loZNr17QeNn1lIGj+TYES7ubiTwPfsbGe4/W8Xg9Aa7DD/+dp7GxQWfmVBfpcl4gVG+fvGI
-        UbqyWwllXWWaMtdsRMoR04qdzB7vkMOCNu6EoA/cesD7SKejmj5u5k8WOHLRGXSVy0JeLPCb
-        oM5pIzxYzlchaCk9lYW8p/EogrIiKyENIwh+ljvQnGPyxx2ZRNxGYO2tYP5ZpqqHZB4VwwdD
-        TnPujGMRHwkZ78spj4jkM0mw1OeTHmIhrwK30zljoPjVcNv8kM5CLMvxW6DUcFS65g93a20z
-        ci8+BHpGDDNyjveFJ5cHKQ8mpzWGB1dIz/vAT8igwXSfksyR0DjQQUt4IXxpNcskvBzaCy5S
-        ksGA4OLDfpk05CFwtVbMFt0Cr7t+M55EJL8WaqyB0joM6ly3CM8aeB94+d1XCuED+ZYiUlpz
-        kJkhl9SrYNJYREjYD7IHp2ajKeHmuJvIQytL5tUpmVen5P/dCkQa0VIhSdRpBDE4XkjeIKp1
-        YlK8ZsOhBJ0JTX+2dnfrr3o01nuwCfEsUizgbJZrKjmtPiGm6JoQsKRiERfe2b5fzh1Wp6QK
-        +gSVPkkriE1oGUsplnIbr3/eJ+c16kThmCAcF/RzLMF6+Z1B/lXhm2sSYx2X0t3bQqkYy9Nh
-        +3Cnue90yPvnjd8jOnw0bW557GDI28pCh/FVik/dx7KvkRG2gcaYxLxB07qAnvpo7ZrJHanj
-        0bvD+nqT28Kao2452e3ronQZv7q3HgpojnpcUVhdMrQkaPEH8QvRZ/WLTN2bVvZn1yctydy4
-        m71aQYlH1MEBpF5U/wXJ/8veaAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xe7ppLYviDS5t1re4P6+V0WLjjPWs
-        Fte/PGe1mH/kHKvFla/v2Sym793EZjHp/gQWi/PnN7BbbHp8jdXi8q45bBafe48wWsw4v4/J
-        Yu2Ru+wWtxtXsFm07j3CbnH4TTurxYzJL9kcBD02repk87hzbQ+bx/3u40wem5fUe/RtWcXo
-        8XmTXABblJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5d
-        gl7G2avrWAu2CFRMvtrH2MA4n7eLkZNDQsBE4veHlexdjFwcQgJLGSV2nX0K5HAAJaQk5rco
-        QdQIS/y51sUGUfOJUeLH2YdsIAk2AUOJ3qN9jCC2iICHxKnWtawgNrPADGaJ07NMQeYIC8RK
-        7NzGBxJmEVCVWL5lNytImFfAWmJOcxbEeHmJ1RsOMIPYnAI2Ehc/N7OD2EJAJYufn2MCsXkF
-        BCVOznzCAtLKLKAusX6eEMQieYnmrbOZJzAKzkJSNQuhahaSqgWMzKsYRVJLi3PTc4uN9IoT
-        c4tL89L1kvNzNzEC43TbsZ9bdjB2vQs+xCjAwajEw3tg28J4IdbEsuLK3EOMEhzMSiK8TmdP
-        xwnxpiRWVqUW5ccXleakFh9iNAX6bCKzlGhyPjCF5JXEG5oamltYGpobmxubWSiJ83YIHIwR
-        EkhPLEnNTk0tSC2C6WPi4JRqYFzukXgt4eepbzcY9A75r+7WMqzYsjvwgKJK7x7NF7/M78o9
-        MWtZ5PrHKNN+lqlT/sTdgW0Rd4oyz6p+//g2oMtQYQKn7NrI0g1K1bPn7lvVxVO4W2gG/xUH
-        jodvfLp/1y3cqX5T4l1HfuqK5knHuvwiv1zkq3q+72ZK6OJFngvm/ecRqfbQUFNiKc5INNRi
-        LipOBADta0Q06QIAAA==
-X-CMS-MailID: 20201104103726eucas1p248b51b25f5ee42898bf03e9cb2229c5d
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0iTYRTHefZeN5q9m5IHu+HoQkVesA9PaVlisE8h9CGyy3rTF610k71e
+        i0hbZnnDlJqXULMr66bzgl3UmssVkjMVE1xpaJRWSE0JKzLna+W3/znn93/+58DDEup+yo89
+        ok8WjHo+QUMryKaO6a6NujM1uqCnjV54qDIb4brS+xR+PfmBwlX2Lgr3TU3Q2NxipXHxUBGJ
+        nc5aBltH+inc+/Ayjd0FdoRLna0yfNf+hsGDWbdonN1iZ3D75xwKl5aM0dtVWqvlPK119T+m
+        tUN5Dpm2/topbWGDBWnd1hVRdLQiLFZIOJIqGAO3HVLEl1W8pZKcq9I7Gkx0JnItz0VyFrhN
+        UND/nc5FClbN3ULQVvFgvphEUHW1kpEKN4Lv9c3kX8sFp2ueuomgp+AB+c9S3WOSeSiaC4aC
+        Z4XIo324SDj7vnIOIrhzBDQ1FxOegTfHw6fuccajSW41PHcOz5mVXChk17XPx62E27VP5ng5
+        Fwav3CZGYlTwomx0jiFmGVNjBeEJAG6KgYnJe7RkjgRHVhkhaW8YdzQwkl4GnSX5pGQwIch/
+        NMhIRRGCIUc1kqhQcHX9mH2JnY1YB/cfBkrtHTDcNkx52sB5wcAXlbSEFxQ3mQmprYRzZ9US
+        vQp+WswySftB3ugMKSFasJdQRci/fME15QuuKf8fW40IC/IVUsTEOEEM0QtpASKfKKbo4wJi
+        DIlWNPvbOn87pppR66/DNsSxSLNI+aTpik5N8aliRqINAUtofJQRLzsPqpWxfMZxwWjQGVMS
+        BNGGlrKkxlcZUjN2QM3F8cnCMUFIEox/pzJW7peJws3Rqq/hRzdndH8cPZC5VkGc2DJyI5Sk
+        OqpMIUi193bfkqLcwobpb7ssOq/p63tOm6JTgE9tt23tvTRp2OMjbojx9zFU5uxzsYuXhlVc
+        zD5pHovyLvXVr07TybtbttbY3qULY9Gve2Z2a3f6uyPagmuLQ4O61+z/MXDqzo3LzbEaUozn
+        g9cTRpH/A8myVXFpAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsVy+t/xe7pxLYviDdrXmVrcn9fKaLFxxnpW
+        i+tfnrNazD9yjtXiytf3bBbT925is5h0fwKLxfnzG9gtNj2+xmpxedccNovPvUcYLWac38dk
+        sfbIXXaL240r2Cxa9x5htzj8pp3VYsbkl2wOgh6bVnWyedy5tofN4373cSaPzUvqPfq2rGL0
+        +LxJLoAtSs+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1SN8u
+        QS9j5ux7rAXnVSqObWlma2C8I9vFyMkhIWAiMfH8HbYuRi4OIYGljBKPT+xn7WLkAEpIScxv
+        UYKoEZb4c62LDcQWEvjEKHH5BFicTcBQovdoHyOILSLgIXGqdS0riM0sMINZ4vQsUxBbWCBe
+        Yu+302BxFgFViRPnHzCB2LwC1hKtGw+zQMyXl1i94QAziM0pYCNx8XMzO8Qua4nFz89B1QtK
+        nJz5hAXkNGYBdYn184QgVslLNG+dzTyBUXAWkqpZCFWzkFQtYGRexSiSWlqcm55bbKhXnJhb
+        XJqXrpecn7uJERip24793LyD8dLG4EOMAhyMSjy8B7YtjBdiTSwrrsw9xCjBwawkwut09nSc
+        EG9KYmVValF+fFFpTmrxIUZToNcmMkuJJucDk0heSbyhqaG5haWhubG5sZmFkjhvh8DBGCGB
+        9MSS1OzU1ILUIpg+Jg5OqQbGyJwjvcysdZWHF0/ZI/lv11nnek+H45NFM2dt25LC1nstYYuw
+        hNbNkmmi535eqrt7OOSvaJLocwajGce3JKZcODtb48LpvDnfFUUlFzx4flnif+ZEkfwZ7w8s
+        9q9/Nj9wj4vJ1Em/11ybxiZ8eXaSSb935pKGuWtXLvbetTAs9nGdY5z9pXXFT5RYijMSDbWY
+        i4oTAfJNaOnqAgAA
+X-CMS-MailID: 20201104103718eucas1p1c103f1a96499b03c72e5457ac2542c3d
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201104103726eucas1p248b51b25f5ee42898bf03e9cb2229c5d
+X-RootMTR: 20201104103718eucas1p1c103f1a96499b03c72e5457ac2542c3d
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20201104103726eucas1p248b51b25f5ee42898bf03e9cb2229c5d
+X-CMS-RootMailID: 20201104103718eucas1p1c103f1a96499b03c72e5457ac2542c3d
 References: <20201104103657.18007-1-s.nawrocki@samsung.com>
-        <CGME20201104103726eucas1p248b51b25f5ee42898bf03e9cb2229c5d@eucas1p2.samsung.com>
+        <CGME20201104103718eucas1p1c103f1a96499b03c72e5457ac2542c3d@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch adds the following properties for Exynos4412 interconnect
-bus nodes:
- - interconnects: to declare connections between nodes in order to
-   guarantee PM QoS requirements between nodes,
- - #interconnect-cells: required by the interconnect framework,
- - samsung,data-clk-ratio: which allows to specify minimum data clock
-   frequency corresponding to requested bandwidth for each bus.
-
-Note that #interconnect-cells is always zero and node IDs are not
-hardcoded anywhere.
+Add documentation for new optional properties in the exynos bus nodes:
+interconnects, #interconnect-cells, samsung,data-clock-ratio.
+These properties allow to specify the SoC interconnect structure which
+then allows the interconnect consumer devices to request specific
+bandwidth requirements.
 
 Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
 Changes for v8:
- - none.
+ - updated description of the interconnects property,
+ - fixed typo in samsung,data-clk-ratio property description.
 
 Changes for v7:
- - adjusted to the DT property changes: "interconnects" instead
-   of "samsung,interconnect-parent", "samsung,data-clk-ratio"
-   instead of "bus-width".
+ - bus-width property replaced with samsung,data-clock-ratio,
+ - the interconnect consumer bindings used instead of vendor specific
+   properties
 
 Changes for v6:
- - added bus-width property in bus_dmc node.
+ - added dts example of bus hierarchy definition and the interconnect
+   consumer,
+ - added new bus-width property.
 
 Changes for v5:
- - adjust to renamed exynos,interconnect-parent-node property,
- - add properties in common exynos4412.dtsi file rather than
-   in Odroid specific odroid4412-odroid-common.dtsi.
+ - exynos,interconnect-parent-node renamed to samsung,interconnect-parent
 ---
- arch/arm/boot/dts/exynos4412.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../devicetree/bindings/devfreq/exynos-bus.txt     | 71 +++++++++++++++++++++-
+ 1 file changed, 69 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index e76881d..4999e68 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -383,6 +383,8 @@
- 			clocks = <&clock CLK_DIV_DMC>;
- 			clock-names = "bus";
- 			operating-points-v2 = <&bus_dmc_opp_table>;
+diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+index e71f752..bcaa2c0 100644
+--- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
++++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+@@ -51,6 +51,19 @@ Optional properties only for parent bus device:
+ - exynos,saturation-ratio: the percentage value which is used to calibrate
+ 			the performance count against total cycle count.
+ 
++Optional properties for the interconnect functionality (QoS frequency
++constraints):
++- #interconnect-cells: should be 0.
++- interconnects: as documented in ../interconnect.txt, describes a path at the
++  higher level interconnects used by this interconnect provider.
++  If this interconnect provider is directly linked to a top level interconnect
++  provider the property contains only one phandle. The provider extends
++  the interconnect graph by linking its node to a node registered by provider
++  pointed to by first phandle in the 'interconnects' property.
++
++- samsung,data-clock-ratio: ratio of the data throughput in B/s to minimum data
++   clock frequency in Hz, default value is 8 when this property is missing.
++
+ Detailed correlation between sub-blocks and power line according to Exynos SoC:
+ - In case of Exynos3250, there are two power line as following:
+ 	VDD_MIF |--- DMC
+@@ -135,7 +148,7 @@ Detailed correlation between sub-blocks and power line according to Exynos SoC:
+ 		|--- PERIC (Fixed clock rate)
+ 		|--- FSYS  (Fixed clock rate)
+ 
+-Example1:
++Example 1:
+ 	Show the AXI buses of Exynos3250 SoC. Exynos3250 divides the buses to
+ 	power line (regulator). The MIF (Memory Interface) AXI bus is used to
+ 	transfer data between DRAM and CPU and uses the VDD_MIF regulator.
+@@ -184,7 +197,7 @@ Example1:
+ 	|L5   |200000 |200000  |400000 |300000 |       ||1000000 |
+ 	----------------------------------------------------------
+ 
+-Example2 :
++Example 2:
+ 	The bus of DMC (Dynamic Memory Controller) block in exynos3250.dtsi
+ 	is listed below:
+ 
+@@ -419,3 +432,57 @@ Example2 :
+ 		devfreq = <&bus_leftbus>;
+ 		status = "okay";
+ 	};
++
++Example 3:
++	An interconnect path "bus_display -- bus_leftbus -- bus_dmc" on
++	Exynos4412 SoC with video mixer as an interconnect consumer device.
++
++	soc {
++		bus_dmc: bus_dmc {
++			compatible = "samsung,exynos-bus";
++			clocks = <&clock CLK_DIV_DMC>;
++			clock-names = "bus";
++			operating-points-v2 = <&bus_dmc_opp_table>;
 +			samsung,data-clock-ratio = <4>;
 +			#interconnect-cells = <0>;
- 			status = "disabled";
- 		};
- 
-@@ -452,6 +454,8 @@
- 			clocks = <&clock CLK_DIV_GDL>;
- 			clock-names = "bus";
- 			operating-points-v2 = <&bus_leftbus_opp_table>;
++		};
++
++		bus_leftbus: bus_leftbus {
++			compatible = "samsung,exynos-bus";
++			clocks = <&clock CLK_DIV_GDL>;
++			clock-names = "bus";
++			operating-points-v2 = <&bus_leftbus_opp_table>;
++			#interconnect-cells = <0>;
 +			interconnects = <&bus_dmc>;
++		};
++
++		bus_display: bus_display {
++			compatible = "samsung,exynos-bus";
++			clocks = <&clock CLK_ACLK160>;
++			clock-names = "bus";
++			operating-points-v2 = <&bus_display_opp_table>;
 +			#interconnect-cells = <0>;
- 			status = "disabled";
- 		};
- 
-@@ -468,6 +472,8 @@
- 			clocks = <&clock CLK_ACLK160>;
- 			clock-names = "bus";
- 			operating-points-v2 = <&bus_display_opp_table>;
 +			interconnects = <&bus_leftbus &bus_dmc>;
-+			#interconnect-cells = <0>;
- 			status = "disabled";
- 		};
- 
++		};
++
++		bus_dmc_opp_table: opp_table1 {
++			compatible = "operating-points-v2";
++			/* ... */
++		}
++
++		bus_leftbus_opp_table: opp_table3 {
++			compatible = "operating-points-v2";
++			/* ... */
++		};
++
++		bus_display_opp_table: opp_table4 {
++			compatible = "operating-points-v2";
++			/* .. */
++		};
++
++		&mixer {
++			compatible = "samsung,exynos4212-mixer";
++			interconnects = <&bus_display &bus_dmc>;
++			/* ... */
++		};
++	};
 -- 
 2.7.4
 
