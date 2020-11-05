@@ -2,209 +2,212 @@ Return-Path: <SRS0=idU0=EL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F48C00A89
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 12:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 449B2C4741F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 13:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C06B920936
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 12:54:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="bPPrnh4B"
+	by mail.kernel.org (Postfix) with ESMTP id DE4A42151B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 13:50:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604584248;
+	bh=QhSpAqc+JI6iEP/gvXgklZw5qTJq5ZUzZ9hmMY56PxQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=z4jV4gTw7JrduuBYm1tw5YPhJ8ZR32TT8whstv57suN6U2+LPXWt1vX91Hew1pVBR
+	 /Lbfw+Vfs6q9JcQ98SLzHkByLJCUgkOICLjO+U3yH5nCrJYeueTWCBjKJVZ9JEwgF7
+	 Zkvx5ukvC5UexZ58TId00M9TyTy1gXKelUtwWous=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730244AbgKEMyh (ORCPT
+        id S1730759AbgKENus (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 07:54:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57812 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726777AbgKEMyg (ORCPT
+        Thu, 5 Nov 2020 08:50:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51682 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725468AbgKENus (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 07:54:36 -0500
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D899C0613D2
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2020 04:54:36 -0800 (PST)
-Received: by mail-wm1-x344.google.com with SMTP id a65so1163640wme.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2020 04:54:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=iR+CVMR9Igk+i7q6zQ360QpQoQUWwq9hKMxFO8Y7cGA=;
-        b=bPPrnh4BjIGHxssI9in0eI8avIf6lVSA1Fd+jmaHNuJRYj4GLesWwatvAf+cWdJ1Gn
-         +T1a9zT5WiAc7uq+YkZ1UAi9uQqINJcLFkN5pbawGR6HDSkkCEunVz0GKT5BPbCo522L
-         G94YF8sd+EF3xMH5d9NYF5qFQjmBr4VXc5pXs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=iR+CVMR9Igk+i7q6zQ360QpQoQUWwq9hKMxFO8Y7cGA=;
-        b=J2A7U/RMlHvrPcxOUxmegpHoxMB6EPUsX7Dwsr6Twx6E0o5HGNedANgl6epXa9dl+g
-         WeFuDT0Z54yuvEXbGuAJlUuEmSsFcrYl/B3NIteCpZIv4hckQIZyNkSHtYQ0vgF5d5A3
-         t6eoo13040RzypYJqsxsVl87YjAOESpriP7AbKf6wh3RmDE4IqqnjsekPCxdpO1tGmYq
-         FM5ZILk70HS6VOABi3MwbHxcs7DqGhl+IsTE8DNZBrHPjFJqD+kv35veGpy7lx0Dg50j
-         cr3fFQOmDW/lEZWi0xb+T3G7L2vZqxDaVA4dxwe7M5FA4F0CaN0QSlyhtUqSspyurSZW
-         y/1g==
-X-Gm-Message-State: AOAM533nUdlngZL6eNxnLZAGxJ2MGf+U6ss3bvNZL18pkawIZYd0TgkM
-        g6eH7hr22DWn+NVMPYVHP5usqg==
-X-Google-Smtp-Source: ABdhPJwrW3OjL7kR/bAr74WjxI8azvpsj46DeaIlccjHcQq2wan765xbIbWOOKK6+3jptMrcJuyztQ==
-X-Received: by 2002:a1c:6843:: with SMTP id d64mr2670603wmc.131.1604580875284;
-        Thu, 05 Nov 2020 04:54:35 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id m12sm2468188wrs.92.2020.11.05.04.54.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2020 04:54:34 -0800 (PST)
-Date:   Thu, 5 Nov 2020 13:54:31 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        linux+etnaviv@armlinux.org.uk,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>, yuq825@gmail.com,
-        Ben Skeggs <bskeggs@redhat.com>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        steven.price@arm.com, alyssa.rosenzweig@collabora.com,
-        Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sean Paul <sean@poorly.run>, Eric Anholt <eric@anholt.net>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        ray.huang@amd.com, Sumit Semwal <sumit.semwal@linaro.org>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        luben.tuikov@amd.com, apaneers@amd.com, melissa.srw@gmail.com,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Qinglang Miao <miaoqinglang@huawei.com>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        amd-gfx@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        etnaviv@lists.freedesktop.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        lima@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        spice-devel@lists.freedesktop.org,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        xen-devel@lists.xenproject.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v5 09/10] dma-buf-map: Add memcpy and pointer-increment
- interfaces
-Message-ID: <20201105125431.GW401619@phenom.ffwll.local>
-References: <20201020122046.31167-1-tzimmermann@suse.de>
- <20201020122046.31167-10-tzimmermann@suse.de>
- <CACRpkdbvGWKo8y323actUJn9xXmxpgDw1EKLiPH4RqB_kFx=XQ@mail.gmail.com>
- <27acbd7e-d72e-4e05-c147-b50f56e21589@suse.de>
+        Thu, 5 Nov 2020 08:50:48 -0500
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E699E206B6;
+        Thu,  5 Nov 2020 13:50:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604584247;
+        bh=QhSpAqc+JI6iEP/gvXgklZw5qTJq5ZUzZ9hmMY56PxQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=aeDVCuYDBm5ybOxqE9hZvmcySKgIJYzAQRWIv2CTS9HvUSmxqRnHeNaOU5lbcUmCX
+         pavpZdRzRbP3f3/LXJ4fwrlEwVg51nc99YlC1dRmK7fhQMZfP/1dh1QPWVN6Q7J+t1
+         IlFyZcAkjxgO7Kz0iRebQBMLA/K6RGSa8Xx1tUzg=
+Received: by mail-oi1-f179.google.com with SMTP id m17so1725548oie.4;
+        Thu, 05 Nov 2020 05:50:46 -0800 (PST)
+X-Gm-Message-State: AOAM5328SoCf3+HmnlgrWN8LRhtZUMDaCEcuea3qgk19BR2G1C95O3eR
+        LXA8HIKJM09QrjOpzYIbOJqI3pjpcTqb1E0H0Q==
+X-Google-Smtp-Source: ABdhPJwlLmVul9osQoOmAYcll5ZdLwQnv0cOCpb55EEmIiGva2JHFnzJmvuYRje/DB8hxEKpkeNR1O4Z3zfeZXa8Hcg=
+X-Received: by 2002:a54:4588:: with SMTP id z8mr1649677oib.147.1604584246048;
+ Thu, 05 Nov 2020 05:50:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <27acbd7e-d72e-4e05-c147-b50f56e21589@suse.de>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+References: <CGME20201105114814eucas1p18d9f11c44eec68738d929ad1a0263482@eucas1p1.samsung.com>
+ <20201105114804.18326-1-m.szyprowski@samsung.com>
+In-Reply-To: <20201105114804.18326-1-m.szyprowski@samsung.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 5 Nov 2020 07:50:34 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKTrUTHr4=ZDNfaf-mZE3wgfzkV=CRgb7yGzKg1oH7zvg@mail.gmail.com>
+Message-ID: <CAL_JsqKTrUTHr4=ZDNfaf-mZE3wgfzkV=CRgb7yGzKg1oH7zvg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Use fixed index for the MMC devices
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Markus Reichl <m.reichl@fivetechno.de>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 05, 2020 at 11:37:08AM +0100, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 05.11.20 um 11:07 schrieb Linus Walleij:
-> > Overall I like this, just an inline question:
-> > 
-> > On Tue, Oct 20, 2020 at 2:20 PM Thomas Zimmermann <tzimmermann@suse.de> wrote:
-> > 
-> >> To do framebuffer updates, one needs memcpy from system memory and a
-> >> pointer-increment function. Add both interfaces with documentation.
-> > 
-> > (...)
-> >> +/**
-> >> + * dma_buf_map_memcpy_to - Memcpy into dma-buf mapping
-> >> + * @dst:       The dma-buf mapping structure
-> >> + * @src:       The source buffer
-> >> + * @len:       The number of byte in src
-> >> + *
-> >> + * Copies data into a dma-buf mapping. The source buffer is in system
-> >> + * memory. Depending on the buffer's location, the helper picks the correct
-> >> + * method of accessing the memory.
-> >> + */
-> >> +static inline void dma_buf_map_memcpy_to(struct dma_buf_map *dst, const void *src, size_t len)
-> >> +{
-> >> +       if (dst->is_iomem)
-> >> +               memcpy_toio(dst->vaddr_iomem, src, len);
-> >> +       else
-> >> +               memcpy(dst->vaddr, src, len);
-> >> +}
-> > 
-> > Are these going to be really big memcpy() operations?
-> 
-> Individually, each could be a scanline, so a few KiB. (4 bytes *
-> horizontal resolution). Updating a full framebuffer can sum up to
-> several MiB.
-> 
-> > 
-> > Some platforms have DMA offload engines that can perform memcpy(),They could be
-> > drivers/dma, include/linux/dmaengine.h
-> > especially if the CPU doesn't really need to touch the contents
-> > and flush caches etc.
-> > An example exist in some MTD drivers that move large quantities of
-> > data off flash memory like this:
-> > drivers/mtd/nand/raw/cadence-nand-controller.c
-> > 
-> > Notice that DMAengine and DMAbuf does not have much in common,
-> > the names can be deceiving.
-> > 
-> > The value of this varies with the system architecture. It is not just
-> > a question about performance but also about power and the CPU
-> > being able to do other stuff in parallel for large transfers. So *when*
-> > to use this facility to accelerate memcpy() is a delicate question.
-> > 
-> > What I'm after here is if these can be really big, do we want
-> > (in the long run, not now) open up to the idea to slot in
-> > hardware-accelerated memcpy() here?
-> 
-> We currently use this functionality for the graphical framebuffer
-> console that most DRM drivers provide. It's non-accelerated and slow,
-> but this has not been much of a problem so far.
-> 
-> Within DRM, we're more interested in removing console code from drivers
-> and going for the generic implementation.
-> 
-> Most of the graphics HW allocates framebuffers from video RAM, system
-> memory or CMA pools and does not really need these memcpys. Only a few
-> systems with small video RAM require a shadow buffer, which we flush
-> into VRAM as needed. Those might benefit.
-> 
-> OTOH, off-loading memcpys to hardware sounds reasonable if we can hide
-> it from the DRM code. I think it all depends on how invasive that change
-> would be.
+On Thu, Nov 5, 2020 at 5:48 AM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> Recently introduced asynchronous probe on the MMC devices can shuffle
+> block IDs in the system. Pin them to values equal to the physical MMC bus
+> number to ease booting in environments where UUIDs are not practical.
 
-I wouldn't, all the additional locks this would pull in sound like
-nightmare. And when an oops happens, this might be the only thing that
-manages to get the oops to the user.
+How's that going to help for existing DTs?
 
-Unless someone really starts caring about fbcon acceleration I really
-wouldn't bother. Ok maybe it also matters for fbdev, but the problem is
-that the page fault intercepting alone is already expensive, so the only
-real solution if you care about performance in that case is to use kms
-natively, and use a dirty rectangle flip (or the DIRTY syscall).
+> Use newly introduced aliases for mmcblk devices from commit fa2d0aa96941
+> ("mmc: core: Allow setting slot index via device tree alias").
+>
+> Suggested-by: Markus Reichl <m.reichl@fivetechno.de>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos3250.dtsi | 3 +++
+>  arch/arm/boot/dts/exynos4.dtsi    | 2 ++
+>  arch/arm/boot/dts/exynos4210.dtsi | 1 +
+>  arch/arm/boot/dts/exynos4412.dtsi | 1 +
+>  arch/arm/boot/dts/exynos5250.dtsi | 4 ++++
+>  arch/arm/boot/dts/exynos5260.dtsi | 3 +++
+>  arch/arm/boot/dts/exynos5410.dtsi | 3 +++
+>  arch/arm/boot/dts/exynos5420.dtsi | 3 +++
+>  8 files changed, 20 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+> index 75ed82600ec8..510080bb4102 100644
+> --- a/arch/arm/boot/dts/exynos3250.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+> @@ -28,6 +28,9 @@
+>         aliases {
+>                 pinctrl0 = &pinctrl_0;
+>                 pinctrl1 = &pinctrl_1;
+> +               mmc0 = &mshc_0;
+> +               mmc1 = &mshc_1;
+> +               mmc2 = &mshc_2;
+>                 mshc0 = &mshc_0;
 
-And in there drivers should (and do) use any dma engines they have to
-upload the frames already.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Then what's this for? Do you need multiple aliases to the same device?
+And pinctrl aliases are odd too and should be removed.
+
+>                 mshc1 = &mshc_1;
+>                 mshc2 = &mshc_2;
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index a1e54449f33f..e266f890eea4 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -45,6 +45,8 @@
+>                 fimc1 = &fimc_1;
+>                 fimc2 = &fimc_2;
+>                 fimc3 = &fimc_3;
+
+Another odd one...
+
+> +               mmc1 = &sdhci_1;
+> +               mmc2 = &sdhci_2;
+>                 serial0 = &serial_0;
+>                 serial1 = &serial_1;
+>                 serial2 = &serial_2;
+> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+> index fddc661ded28..f1d0d5959b7f 100644
+> --- a/arch/arm/boot/dts/exynos4210.dtsi
+> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+> @@ -23,6 +23,7 @@
+>         compatible = "samsung,exynos4210", "samsung,exynos4";
+>
+>         aliases {
+> +               mmc0 = &sdhci_0;
+>                 pinctrl0 = &pinctrl_0;
+>                 pinctrl1 = &pinctrl_1;
+>                 pinctrl2 = &pinctrl_2;
+> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+> index fa8e8d6bc4d5..9fcf7383eb9d 100644
+> --- a/arch/arm/boot/dts/exynos4412.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+> @@ -28,6 +28,7 @@
+>                 pinctrl3 = &pinctrl_3;
+>                 fimc-lite0 = &fimc_lite_0;
+>                 fimc-lite1 = &fimc_lite_1;
+> +               mmc0 = &mshc_0;
+>                 mshc0 = &mshc_0;
+>         };
+>
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 84677332a5a2..0a0436f92fac 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -30,6 +30,10 @@
+>                 gsc1 = &gsc_1;
+>                 gsc2 = &gsc_2;
+>                 gsc3 = &gsc_3;
+> +               mmc0 = &mmc_0;
+> +               mmc1 = &mmc_1;
+> +               mmc2 = &mmc_2;
+> +               mmc3 = &mmc_3;
+>                 mshc0 = &mmc_0;
+>                 mshc1 = &mmc_1;
+>                 mshc2 = &mmc_2;
+> diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
+> index 973448c4ad93..64bf1d8dc33b 100644
+> --- a/arch/arm/boot/dts/exynos5260.dtsi
+> +++ b/arch/arm/boot/dts/exynos5260.dtsi
+> @@ -21,6 +21,9 @@
+>                 i2c1 = &hsi2c_1;
+>                 i2c2 = &hsi2c_2;
+>                 i2c3 = &hsi2c_3;
+> +               mmc0 = &mmc_0;
+> +               mmc1 = &mmc_1;
+> +               mmc2 = &mmc_2;
+>                 pinctrl0 = &pinctrl_0;
+>                 pinctrl1 = &pinctrl_1;
+>                 pinctrl2 = &pinctrl_2;
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> index 584ce62361b1..503859153769 100644
+> --- a/arch/arm/boot/dts/exynos5410.dtsi
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -24,6 +24,9 @@
+>                 pinctrl1 = &pinctrl_1;
+>                 pinctrl2 = &pinctrl_2;
+>                 pinctrl3 = &pinctrl_3;
+> +               mmc0 = &mmc_0;
+> +               mmc1 = &mmc_1;
+> +               mmc2 = &mmc_2;
+>         };
+>
+>         cpus {
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 23a8fd5c8a6e..3a3eadd890fb 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -19,6 +19,9 @@
+>         compatible = "samsung,exynos5420", "samsung,exynos5";
+>
+>         aliases {
+> +               mmc0 = &mmc_0;
+> +               mmc1 = &mmc_1;
+> +               mmc2 = &mmc_2;
+>                 mshc0 = &mmc_0;
+>                 mshc1 = &mmc_1;
+>                 mshc2 = &mmc_2;
+> --
+> 2.17.1
+>
