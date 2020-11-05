@@ -2,163 +2,131 @@ Return-Path: <SRS0=idU0=EL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD442C5517A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 11:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFCDC388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 11:26:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 588CE20782
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 11:13:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u8YwcS6h"
+	by mail.kernel.org (Postfix) with ESMTP id 3E4C320759
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 11:26:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729748AbgKELNH (ORCPT
+        id S1729113AbgKEL0D (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 06:13:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42060 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730099AbgKELNF (ORCPT
+        Thu, 5 Nov 2020 06:26:03 -0500
+Received: from foss.arm.com ([217.140.110.172]:57968 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726715AbgKEL0D (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 06:13:05 -0500
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDC7EC0613D4
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2020 03:13:04 -0800 (PST)
-Received: by mail-pg1-x541.google.com with SMTP id i7so1206731pgh.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2020 03:13:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BcYYFtNRltYDE4hy/KAkGjdjtprJ1Trm7OKV+MnN8cU=;
-        b=u8YwcS6hVr8BwxXTTAlNESEmEgsS3lF6OTr1XaUbam4I/edC3qndBdjg6Uy8iz2Q4Q
-         hYlNAs1/XTw3soHv/si3tXmCczuo3mNDte6nlbwM878k4WF91kDK1iYVRDtibkoROSKj
-         yjfCZIqB3MO3ncbEJATqL58LXrnls4IqwABwbbGOdNIV9RGTDrMZptXqbnjj+V1N6WqI
-         HBRHng10F8RPuKJ6CJ1uCINPNb6xUgsC8CsubJFIRFcKAf9XUt6Zu0y7tcW3MCJO9JyS
-         huRJpus5BnMDQprBpyeMBR2Zh8O7Sqy9/tsu93YAUw3ok0YtILTEkI4ZmB3ZgeuvMkLC
-         Ze4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BcYYFtNRltYDE4hy/KAkGjdjtprJ1Trm7OKV+MnN8cU=;
-        b=enO/k65aK1MJwLzcf6oltqrNDsk+tNafilPFO9iw4eqktYrwtAHvhM0ZPBfkJuDCz6
-         FH1h3GQySZeK0dCT8IfiznE0QhU9Qd2Wip5+HvGnsDmr2FeZG+O1xTr54V+cMmheX5Or
-         GA59Ws9FFz7mw3X8nLQs//VoN+36mqRAnynMSfLd8E8lfeE3VII9gHYbvNeZnJ858HHn
-         LP7E2+TL7VlMxs+3qfqZMDhj6Yuoy9Qgmojd6+rP1IZFpLKarpFLtQNag7MA9yL/bbho
-         1q+UfxHLReDlIgMelCVDa36UtffPcL3yFeMypqBNrN1KD+q7UXeSBcvz/r4vp7ZI9GYf
-         nGDA==
-X-Gm-Message-State: AOAM533V+AnPVLM4Hwf6gDo1M1vjtmC8I2GBy/hoVbZC7JJgemRGVUYu
-        Sx/fv619/PpAoODvdkRRxb68ug==
-X-Google-Smtp-Source: ABdhPJwnuuk4daHbZCdYn/aCWQKiS7cX8bO0eWv5v6ODss+cRR8E8lvUDPwS9VwogQBWTDgNXP1wow==
-X-Received: by 2002:a17:90a:e391:: with SMTP id b17mr1925329pjz.209.1604574784247;
-        Thu, 05 Nov 2020 03:13:04 -0800 (PST)
-Received: from localhost ([122.172.12.172])
-        by smtp.gmail.com with ESMTPSA id f204sm2296698pfa.189.2020.11.05.03.13.02
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Nov 2020 03:13:03 -0800 (PST)
-Date:   Thu, 5 Nov 2020 16:43:01 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Thu, 5 Nov 2020 06:26:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A1C7142F;
+        Thu,  5 Nov 2020 03:26:02 -0800 (PST)
+Received: from [10.57.54.223] (unknown [10.57.54.223])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 221F63F719;
+        Thu,  5 Nov 2020 03:26:00 -0800 (PST)
+Subject: Re: [PATCH] ARM: dts: exynos: Assign a fixed index to mmc devices on
+ exynos4412 based ODROID boards
+To:     Markus Reichl <m.reichl@fivetechno.de>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-pwm@vger.kernel.org,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
-Message-ID: <20201105111301.2hxfx2tnmf2saakp@vireshk-i7>
-References: <20201104234427.26477-1-digetx@gmail.com>
- <CAPDyKFr7qTU2RPhA_ZrbCayoTTNUEno1zdmvmv+8HBe-Owrfeg@mail.gmail.com>
- <20201105100603.skrirm7uke4s2xyl@vireshk-i7>
- <CAPDyKFoCJt5MBSKBJ8n1OAMdVsWHdwXTx0zFEcZw_F_gQ6Ug0w@mail.gmail.com>
- <20201105104009.oo4dc6a2gdcwduhk@vireshk-i7>
- <CAPDyKFpQG98d6foc1U6fp3YEBdZ1vLqY9cmWxpUwXoKgDn+ojQ@mail.gmail.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <CGME20201104102634eucas1p2ec7b705dd5092afa25d9877d1014f46a@eucas1p2.samsung.com>
+ <20201104102558.11070-1-m.reichl@fivetechno.de>
+ <efe8a911-6072-59fb-8a8e-d5cdb4352cab@samsung.com>
+ <5800260a-5332-f627-eb36-32df4fbf05e3@fivetechno.de>
+ <c1040872-0ae1-3988-29d0-60c8a711cdb1@samsung.com>
+ <71e4ecca-b980-e224-0fbe-b30330e490fb@samsung.com>
+ <2ddf7343-799b-418b-bb00-a926f1030db7@fivetechno.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <be911d41-c707-f482-4966-476b9330bde7@arm.com>
+Date:   Thu, 5 Nov 2020 11:26:00 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFpQG98d6foc1U6fp3YEBdZ1vLqY9cmWxpUwXoKgDn+ojQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <2ddf7343-799b-418b-bb00-a926f1030db7@fivetechno.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 05-11-20, 11:56, Ulf Hansson wrote:
-> On Thu, 5 Nov 2020 at 11:40, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > Btw, how do we identify if it is a power domain or a regulator ?
+On 2020-11-05 08:31, Markus Reichl wrote:
+> Hi Marek,
+> 
+> on rk3399 the proposed ordering [1] is according to base address in DT.
 
-To be honest, I was a bit afraid and embarrassed to ask this question,
-and was hoping people to make fun of me in return :)
+FWIW, note that in RK3399's case the SoC itself provides no logical 
+numbering to follow - the pin groups are named "EMMC", "SDIO0" and 
+"SDMMC0" in the datasheet, while the TRM uses "emmc", "sdio" and "sdmmc" 
+in signal and register names.
 
-> Good question. It's not a crystal clear line in between them, I think.
+If the SoC *does* have an inherent notion of numbered interfaces, I 
+would agree that following that numbering is the most logical thing to do.
 
-And I was relieved after reading this :)
+Robin.
 
-> A power domain to me, means that some part of a silicon (a group of
-> controllers or just a single piece, for example) needs some kind of
-> resource (typically a power rail) to be enabled to be functional, to
-> start with.
-
-Isn't this what a part of regulator does as well ? i.e.
-enabling/disabling of the regulator or power to a group of
-controllers.
-
-Over that the regulator does voltage/current scaling as well, which
-normally the power domains don't do (though we did that in
-performance-state case).
-
-> If there are operating points involved, that's also a
-> clear indication to me, that it's not a regular regulator.
-
-Is there any example of that? I hope by OPP you meant both freq and
-voltage here. I am not sure if I know of a case where a power domain
-handles both of them.
-
-> Maybe we should try to specify this more exactly in some
-> documentation, somewhere.
-
-I think yes, it is very much required. And in absence of that I think,
-many (or most) of the platforms that also need to scale the voltage
-would have modeled their hardware as a regulator and not a PM domain.
-
-What I always thought was:
-
-- Module that can just enable/disable power to a block of SoC is a
-  power domain.
-
-- Module that can enable/disable as well as scale voltage is a
-  regulator.
-
-And so I thought that this patchset has done the right thing. This
-changed a bit with the qcom stuff where the IP to be configured was in
-control of RPM and not Linux and so we couldn't add it as a regulator.
-If it was controlled by Linux, it would have been a regulator in
-kernel for sure :)
-
--- 
-viresh
+> 
+> [1]
+> https://patchwork.kernel.org/patch/11881427
+> 
+> Am 04.11.20 um 14:44 schrieb Marek Szyprowski:
+>> On 04.11.2020 14:13, Marek Szyprowski wrote:
+>>> On 04.11.2020 14:06, Markus Reichl wrote:
+>>>> Am 04.11.20 um 13:25 schrieb Marek Szyprowski:
+>>>>> On 04.11.2020 11:25, Markus Reichl wrote:
+>>>>>> Recently introduced async probe on mmc devices can shuffle block IDs.
+>>>>>> Pin them to fixed values to ease booting in evironments where UUIDs
+>>>>>> ar not practical.
+>>>>>> Use newly introduced aliases for mmcblk devices from [1].
+>>>>>>
+>>>>>> [1]
+>>>>>> https://patchwork.kernel.org/patch/11747669/
+>>>>>>
+>>>>>> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
+>>>>>> ---
+>>>>>>    arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 5 +++++
+>>>>>>    1 file changed, 5 insertions(+)
+>>>>>>
+>>>>>> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>>>>>> b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>>>>>> index a5c1ce1e396c..aa10d5bc7e1c 100644
+>>>>>> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>>>>>> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>>>>>> @@ -13,6 +13,11 @@
+>>>>>>    #include "exynos-mfc-reserved-memory.dtsi"
+>>>>>>      / {
+>>>>>> +    aliases {
+>>>>>> +        mmc0 = &sdhci_2;
+>>>>>> +        mmc1 = &mshc_0;
+>>>>> Like in the OdroidXU3-family patch, I would use 0 for the eMMC 
+>>>>> (mshc_0)
+>>>>> and 2 for the SD-card (sdhci_2).
+>>>> How to deal then with sdhci_0 (from exynos4.dtsi) vc. mshc_0 (from
+>>>> exynos4412.dts)?
+>>> sdhci_0 and mshc_0 both operate on the same physical MMC0 bus, so this
+>>> is not an issue. They cannot be used simultaneously. The latter is just
+>>> faster, the first one has been left there mainly for the software
+>>> compatibility.
+>>
+>> I've thought a bit more on this and I would simply prefer to add generic
+>> MMC aliases to the top-level Exynos dtsi files (3250, 4210, 4412, 5250,
+>> 5410, 5420) to keep Linux logical MMC bus numbers in sync with the HW
+>> bus numbers on all boards.
+>>
+>> Best regards
+>>
+> 
+> Gruß,
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
