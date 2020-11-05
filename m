@@ -2,191 +2,237 @@ Return-Path: <SRS0=idU0=EL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE44C00A89
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 09:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29023C00A89
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 09:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C52002083B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 09:34:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B25202151B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 09:46:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ST87g3bo"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uufJzy4G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731090AbgKEJeP (ORCPT
+        id S1726214AbgKEJqB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 04:34:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54768 "EHLO
+        Thu, 5 Nov 2020 04:46:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730933AbgKEJeO (ORCPT
+        with ESMTP id S1725827AbgKEJqA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 04:34:14 -0500
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11576C0613D3
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2020 01:34:14 -0800 (PST)
-Received: by mail-wm1-x342.google.com with SMTP id c16so880995wmd.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2020 01:34:13 -0800 (PST)
+        Thu, 5 Nov 2020 04:46:00 -0500
+Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60CFAC0613CF
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2020 01:46:00 -0800 (PST)
+Received: by mail-ua1-x942.google.com with SMTP id t15so336211ual.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2020 01:46:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dhezt058VYAXUzsmT6wFAloMyt6Frs+cE6TCkSAcHPs=;
-        b=ST87g3boTQObR5JxsvDJGIfMAlcgsXvr+F3JKuft7VsNKm+GuZmFkRWYBz/N9m+nP5
-         gUOFOdjErnnQz3ZNReWuFokDdnl7uPc7ZMOj6kqNide21CEbt+Pus48kXLDRURvnNC2N
-         3RAKhoWa6Hje1zG3vURpcraCOdJW7Q+XZ+t28=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BPeVC0/yyKKsuDCRa2ABd9prVUPUc34ioExCTRmKEHc=;
+        b=uufJzy4G7ts1PiE/L3wJVNCw2wP3NSOmawqIi/e2dVMD4Xd21IBA/Vm2yEuo3NRkIO
+         5RTFPkxoUZgZvRGL3uCJhgSw/HE6fmf+IDx190dCfUqR+JPH8zXGsd6gelceLKdsJg6T
+         W9tmGvZtl0GRilR/Tesuwpo7+anWJCeo6NBiNViKTK2V8/GqdsDZTq11ps7gJlbfeY+i
+         pSoDKrE7a3V1srakOPqPG22Jy7SHWsEgoGIWEGTN0Htlxp1Nhn/YPfKpypwxo8uOWeve
+         gx03c3qbD5se6hfduEKaO+xHmrhlxJQp6xOVJi1NkwG4/qLyzw5ZIE/FCeeFdhAUNOiH
+         Ddqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=dhezt058VYAXUzsmT6wFAloMyt6Frs+cE6TCkSAcHPs=;
-        b=dBuLQEFbGQXURUq5aZtdZdEcFJYMI2lksxxlm4wRDHNMH9I5L1c7a/LOFmVBgT6x9s
-         c9bn0VjiEmtp9wCMtoczLx4PlQmzzJFHsQgfCtAMX7f2TmTP91WlHmcOpJ/g7HmlFVEn
-         hQBmBRovUN6Uafg1g9e3x3IFHx2aoKm46u2EZnb+k3oP5O9MX0wXDvDPKOH7n9CW2cxS
-         sx23ah7uVOOpbOL0mW8ZRZLgQpxX9a8/ewsHVx0RBlnWeflWIq2rBNzaBrkS64NR8fCV
-         mZJzqmOaYvZomn7V37dKl18Uz7HF5/B4wfEWjMsgIS/b+DdEb7GRwzbItkL/9xPCoj+p
-         UeKw==
-X-Gm-Message-State: AOAM533FBsOslzJPQ05cY1EV/cNjUg1QkCkE5OIox5UeEgvaVef/W86W
-        vQbwnLPcY2sfb0ZYAUTd6G/78A==
-X-Google-Smtp-Source: ABdhPJwBx2+thaZ4Z7KLrdw1GbhrDGTHyh3vgC78jGbXnmbFtcgLmot8B2SlqilS+tbAOr47w4H/Mg==
-X-Received: by 2002:a1c:21c1:: with SMTP id h184mr1802586wmh.106.1604568852772;
-        Thu, 05 Nov 2020 01:34:12 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id s202sm1648809wme.39.2020.11.05.01.34.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2020 01:34:11 -0800 (PST)
-Date:   Thu, 5 Nov 2020 10:34:09 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v5 11/15] PCI: Obey iomem restrictions for procfs mmap
-Message-ID: <20201105093409.GR401619@phenom.ffwll.local>
-Mail-Followup-To: Dan Williams <dan.j.williams@intel.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, KVM list <kvm@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>
-References: <CAKMK7uF0QjesaNs97N-G8cZkXuAmFgcmTfHvoCP94br_WVcV6Q@mail.gmail.com>
- <20201104165017.GA352206@bjorn-Precision-5520>
- <CAPcyv4idORJzHVD2vCOnO3REqWHKVn_-otOzTBf0HhcWq4iJRQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BPeVC0/yyKKsuDCRa2ABd9prVUPUc34ioExCTRmKEHc=;
+        b=VNYSqT+hOSfydEHaqdZMEct9U1hWvduk6kWKFo0dP1zrg2o51TMmWuRtg9KdZQy2db
+         TXqI5qremHEeKLZ5rjY/5teZ5DDSUS1WKfdo9iFnutm5H5cjr8rcVS0Pq067W22g0Hm/
+         d0EfGI+sBQos9R0BCFFTVT62YNvGSNerOfhKdQV0ktm5dMgMpCKbLDOelYSrr9AQsq7P
+         2E/DK2n1QwdytVSYaFFGzWISDQSOCvClCJOS1iRx82VeAsiYGeEBm/bp7zb3B+jn/nun
+         h9uUVN7gIgnvg40GC/wUbpifcgXOCS3qnDIL/9+JxlZUhn8aZSiegX6yX9ieWM2Foc9V
+         9OSg==
+X-Gm-Message-State: AOAM532ISDjCjF+f2BSVj83mLYdCGla6sdJ0/UO0AqnD8ziviw9Urqji
+        21dgK8zl+P4X+l4SDjEdYXi8PdkmlDzoj4nvg/yILg==
+X-Google-Smtp-Source: ABdhPJyQXmDq3VGXwDr0haDHSXpl4JtWo+uo7sQGY6XWLUZgE6Tj9Jyk5i5lU0labVUxd8mL5Fh6Hi6T+EuKK3uFWNY=
+X-Received: by 2002:ab0:23d5:: with SMTP id c21mr548021uan.129.1604569559528;
+ Thu, 05 Nov 2020 01:45:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4idORJzHVD2vCOnO3REqWHKVn_-otOzTBf0HhcWq4iJRQ@mail.gmail.com>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+References: <20201104234427.26477-1-digetx@gmail.com>
+In-Reply-To: <20201104234427.26477-1-digetx@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 5 Nov 2020 10:45:23 +0100
+Message-ID: <CAPDyKFr7qTU2RPhA_ZrbCayoTTNUEno1zdmvmv+8HBe-Owrfeg@mail.gmail.com>
+Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
+ Tegra20/30 SoCs
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-pwm@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 12:12:15PM -0800, Dan Williams wrote:
-> On Wed, Nov 4, 2020 at 8:50 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> >
-> > On Wed, Nov 04, 2020 at 09:44:04AM +0100, Daniel Vetter wrote:
-> > > On Tue, Nov 3, 2020 at 11:09 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> > > > On Tue, Nov 3, 2020 at 1:28 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > > > > On Fri, Oct 30, 2020 at 11:08:11AM +0100, Daniel Vetter wrote:
-> > > > > > There's three ways to access PCI BARs from userspace: /dev/mem, sysfs
-> > > > > > files, and the old proc interface. Two check against
-> > > > > > iomem_is_exclusive, proc never did. And with CONFIG_IO_STRICT_DEVMEM,
-> > > > > > this starts to matter, since we don't want random userspace having
-> > > > > > access to PCI BARs while a driver is loaded and using it.
-> > > > > >
-> > > > > > Fix this by adding the same iomem_is_exclusive() check we already have
-> > > > > > on the sysfs side in pci_mmap_resource().
-> > > > > >
-> > > > > > References: 90a545e98126 ("restrict /dev/mem to idle io memory ranges")
-> > > > > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > > > >
-> > > > > This is OK with me but it looks like IORESOURCE_EXCLUSIVE is currently
-> > > > > only used in a few places:
-> > > > >
-> > > > >   e1000_probe() calls pci_request_selected_regions_exclusive(),
-> > > > >   ne_pci_probe() calls pci_request_regions_exclusive(),
-> > > > >   vmbus_allocate_mmio() calls request_mem_region_exclusive()
-> > > > >
-> > > > > which raises the question of whether it's worth keeping
-> > > > > IORESOURCE_EXCLUSIVE at all.  I'm totally fine with removing it
-> > > > > completely.
-> > > >
-> > > > Now that CONFIG_IO_STRICT_DEVMEM upgrades IORESOURCE_BUSY to
-> > > > IORESOURCE_EXCLUSIVE semantics the latter has lost its meaning so I'd
-> > > > be in favor of removing it as well.
-> > >
-> > > Still has some value since it enforces exclusive access even if the
-> > > config isn't enabled, and iirc e1000 had some fun with userspace tools
-> > > clobbering the firmware and bricking the chip.
-> >
-> > There's *some* value; I'm just skeptical since only three drivers use
-> > it.
-> >
-> > IORESOURCE_EXCLUSIVE is from e8de1481fd71 ("resource: allow MMIO
-> > exclusivity for device drivers"), and the commit message says this is
-> > only active when CONFIG_STRICT_DEVMEM is set.  I didn't check to see
-> > whether that's still true.
-> >
-> > That commit adds a bunch of wrappers and "__"-prefixed functions to
-> > pass the IORESOURCE_EXCLUSIVE flag around.  That's a fair bit of
-> > uglification for three drivers.
-> >
-> > > Another thing I kinda wondered, since pci maintainer is here: At least
-> > > in drivers/gpu I see very few drivers explicitly requestion regions
-> > > (this might be a historical artifact due to the shadow attach stuff
-> > > before we had real modesetting drivers). And pci core doesn't do that
-> > > either, even when a driver is bound. Is this intentional, or
-> > > should/could we do better? Since drivers work happily without
-> > > reserving regions I don't think "the drivers need to remember to do
-> > > this" will ever really work out well.
-> >
-> > You're right, many drivers don't call pci_request_regions().  Maybe we
-> > could do better, but I haven't looked into that recently.  There is a
-> > related note in Documentation/PCI/pci.rst that's been there for a long
-> > time (it refers to "pci_request_resources()", which has never existed
-> > AFAICT).  I'm certainly open to proposals.
-> 
-> It seems a bug that the kernel permits MMIO regions with side effects
-> to be ioremap()'ed without request_mem_region() on the resource. I
-> wonder how much log spam would happen if ioremap() reported whenever a
-> non-IORESOURE_BUSY range was passed to it? The current state of
-> affairs to trust *remap users to have claimed their remap target seems
-> too ingrained to unwind now.
++ Viresh
 
-Yeah I think that's hopeless. I think the only feasible approach is if bus
-drivers claim resources by default when a driver is bound (it should nest,
-so if the driver claims again, I think that should all keep working), just
-using the driver name. Probably with some special casing for legacy io
-(vgaarb.c should claim these I guess). Still probably tons of fallout.
+On Thu, 5 Nov 2020 at 00:44, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> Introduce core voltage scaling for NVIDIA Tegra20/30 SoCs, which reduces
+> power consumption and heating of the Tegra chips. Tegra SoC has multiple
+> hardware units which belong to a core power domain of the SoC and share
+> the core voltage. The voltage must be selected in accordance to a minimum
+> requirement of every core hardware unit.
+>
+> The minimum core voltage requirement depends on:
+>
+>   1. Clock enable state of a hardware unit.
+>   2. Clock frequency.
+>   3. Unit's internal idling/active state.
+>
+> This series is tested on Acer A500 (T20), AC100 (T20), Nexus 7 (T30) and
+> Ouya (T30) devices. I also added voltage scaling to the Ventana (T20) and
+> Cardhu (T30) boards which are tested by NVIDIA's CI farm. Tegra30 is now up
+> to 5C cooler on Nexus 7 and stays cool on Ouya (instead of becoming burning
+> hot) while system is idling. It should be possible to improve this further
+> by implementing a more advanced power management features for the kernel
+> drivers.
+>
+> The DVFS support is opt-in for all boards, meaning that older DTBs will
+> continue to work like they did it before this series. It should be possible
+> to easily add the core voltage scaling support for Tegra114+ SoCs based on
+> this grounding work later on, if anyone will want to implement it.
+>
+> WARNING(!) This series is made on top of the memory interconnect patches
+>            which are currently under review [1]. The Tegra EMC driver
+>            and devicetree-related patches need to be applied on top of
+>            the ICC series.
+>
+> [1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=212196
+>
+> Dmitry Osipenko (30):
+>   dt-bindings: host1x: Document OPP and voltage regulator properties
+>   dt-bindings: mmc: tegra: Document OPP and voltage regulator properties
+>   dt-bindings: pwm: tegra: Document OPP and voltage regulator properties
+>   media: dt: bindings: tegra-vde: Document OPP and voltage regulator
+>     properties
+>   dt-binding: usb: ci-hdrc-usb2:  Document OPP and voltage regulator
+>     properties
+>   dt-bindings: usb: tegra-ehci: Document OPP and voltage regulator
+>     properties
+>   soc/tegra: Add sync state API
+>   soc/tegra: regulators: Support Tegra SoC device sync state API
+>   soc/tegra: regulators: Fix lockup when voltage-spread is out of range
+>   regulator: Allow skipping disabled regulators in
+>     regulator_check_consumers()
+>   drm/tegra: dc: Support OPP and SoC core voltage scaling
+>   drm/tegra: gr2d: Correct swapped device-tree compatibles
+>   drm/tegra: gr2d: Support OPP and SoC core voltage scaling
+>   drm/tegra: gr3d: Support OPP and SoC core voltage scaling
+>   drm/tegra: hdmi: Support OPP and SoC core voltage scaling
+>   gpu: host1x: Support OPP and SoC core voltage scaling
+>   mmc: sdhci-tegra: Support OPP and core voltage scaling
+>   pwm: tegra: Support OPP and core voltage scaling
+>   media: staging: tegra-vde: Support OPP and SoC core voltage scaling
+>   usb: chipidea: tegra: Support OPP and SoC core voltage scaling
+>   usb: host: ehci-tegra: Support OPP and SoC core voltage scaling
+>   memory: tegra20-emc: Support Tegra SoC device state syncing
+>   memory: tegra30-emc: Support Tegra SoC device state syncing
+>   ARM: tegra: Add OPP tables for Tegra20 peripheral devices
+>   ARM: tegra: Add OPP tables for Tegra30 peripheral devices
+>   ARM: tegra: ventana: Add voltage supplies to DVFS-capable devices
+>   ARM: tegra: paz00: Add voltage supplies to DVFS-capable devices
+>   ARM: tegra: acer-a500: Add voltage supplies to DVFS-capable devices
+>   ARM: tegra: cardhu-a04: Add voltage supplies to DVFS-capable devices
+>   ARM: tegra: nexus7: Add voltage supplies to DVFS-capable devices
+>
+>  .../display/tegra/nvidia,tegra20-host1x.txt   |  56 +++
+>  .../bindings/media/nvidia,tegra-vde.txt       |  12 +
+>  .../bindings/mmc/nvidia,tegra20-sdhci.txt     |  12 +
+>  .../bindings/pwm/nvidia,tegra20-pwm.txt       |  13 +
+>  .../devicetree/bindings/usb/ci-hdrc-usb2.txt  |   4 +
+>  .../bindings/usb/nvidia,tegra20-ehci.txt      |   2 +
+>  .../boot/dts/tegra20-acer-a500-picasso.dts    |  30 +-
+>  arch/arm/boot/dts/tegra20-paz00.dts           |  40 +-
+>  .../arm/boot/dts/tegra20-peripherals-opp.dtsi | 386 ++++++++++++++++
+>  arch/arm/boot/dts/tegra20-ventana.dts         |  65 ++-
+>  arch/arm/boot/dts/tegra20.dtsi                |  14 +
+>  .../tegra30-asus-nexus7-grouper-common.dtsi   |  23 +
+>  arch/arm/boot/dts/tegra30-cardhu-a04.dts      |  44 ++
+>  .../arm/boot/dts/tegra30-peripherals-opp.dtsi | 415 ++++++++++++++++++
+>  arch/arm/boot/dts/tegra30.dtsi                |  13 +
+>  drivers/gpu/drm/tegra/Kconfig                 |   1 +
+>  drivers/gpu/drm/tegra/dc.c                    | 138 +++++-
+>  drivers/gpu/drm/tegra/dc.h                    |   5 +
+>  drivers/gpu/drm/tegra/gr2d.c                  | 140 +++++-
+>  drivers/gpu/drm/tegra/gr3d.c                  | 136 ++++++
+>  drivers/gpu/drm/tegra/hdmi.c                  |  63 ++-
+>  drivers/gpu/host1x/Kconfig                    |   1 +
+>  drivers/gpu/host1x/dev.c                      |  87 ++++
+>  drivers/memory/tegra/tegra20-emc.c            |   8 +-
+>  drivers/memory/tegra/tegra30-emc.c            |   8 +-
+>  drivers/mmc/host/Kconfig                      |   1 +
+>  drivers/mmc/host/sdhci-tegra.c                |  70 ++-
+>  drivers/pwm/Kconfig                           |   1 +
+>  drivers/pwm/pwm-tegra.c                       |  84 +++-
+>  drivers/regulator/core.c                      |  12 +-
+>  .../soc/samsung/exynos-regulator-coupler.c    |   2 +-
+>  drivers/soc/tegra/common.c                    | 152 ++++++-
+>  drivers/soc/tegra/regulators-tegra20.c        |  25 +-
+>  drivers/soc/tegra/regulators-tegra30.c        |  30 +-
+>  drivers/staging/media/tegra-vde/Kconfig       |   1 +
+>  drivers/staging/media/tegra-vde/vde.c         | 127 ++++++
+>  drivers/staging/media/tegra-vde/vde.h         |   1 +
+>  drivers/usb/chipidea/Kconfig                  |   1 +
+>  drivers/usb/chipidea/ci_hdrc_tegra.c          |  79 ++++
+>  drivers/usb/host/Kconfig                      |   1 +
+>  drivers/usb/host/ehci-tegra.c                 |  79 ++++
+>  include/linux/regulator/coupler.h             |   6 +-
+>  include/soc/tegra/common.h                    |  22 +
+>  43 files changed, 2360 insertions(+), 50 deletions(-)
+>
+> --
+> 2.27.0
+>
 
-Once that's rolled out to all bus drivers we could perhaps add the ioremap
-check without drowning in log spam. Still a multi-year project I think :-/
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+I need some more time to review this, but just a quick check found a
+few potential issues...
+
+The "core-supply", that you specify as a regulator for each
+controller's device node, is not the way we describe power domains.
+Instead, it seems like you should register a power-domain provider
+(with the help of genpd) and implement the ->set_performance_state()
+callback for it. Each device node should then be hooked up to this
+power-domain, rather than to a "core-supply". For DT bindings, please
+have a look at Documentation/devicetree/bindings/power/power-domain.yaml
+and Documentation/devicetree/bindings/power/power_domain.txt.
+
+In regards to the "sync state" problem (preventing to change
+performance states until all consumers have been attached), this can
+then be managed by the genpd provider driver instead.
+
+Kind regards
+Uffe
