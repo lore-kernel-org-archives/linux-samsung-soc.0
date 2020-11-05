@@ -7,184 +7,204 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E105C4742C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 12:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F48C00A89
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 12:54:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21C4F20BED
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 12:53:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C06B920936
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 12:54:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y6DX4cMU"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="bPPrnh4B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730501AbgKEMxS (ORCPT
+        id S1730244AbgKEMyh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 07:53:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57608 "EHLO
+        Thu, 5 Nov 2020 07:54:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730484AbgKEMxR (ORCPT
+        with ESMTP id S1726777AbgKEMyg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 07:53:17 -0500
-Received: from mail-ua1-x944.google.com (mail-ua1-x944.google.com [IPv6:2607:f8b0:4864:20::944])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3D71C061A4C
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2020 04:53:16 -0800 (PST)
-Received: by mail-ua1-x944.google.com with SMTP id h26so469451uan.10
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2020 04:53:16 -0800 (PST)
+        Thu, 5 Nov 2020 07:54:36 -0500
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D899C0613D2
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2020 04:54:36 -0800 (PST)
+Received: by mail-wm1-x344.google.com with SMTP id a65so1163640wme.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2020 04:54:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L6TCLuc1aSDhvBsEh/oyOKoJFVXSTFCOXAYW2AUTtHo=;
-        b=y6DX4cMUVCgpxUKuGqoEligLjI7mP0FgyJ97c7sIUUHZxJlTwtRRakXekgH7YsuigB
-         Na2QU2xZN4x2PfpN6omerSdhzPwwGn9bDYKeR2k6MuBaUl4m5dH4WWWTdnhpeJeXb0wO
-         XSZFej4dNy5nb1iC9xr8tfwJeCBjFjlTzg4qI2DAs6FEDqJOv7dGIgx54zxdVZ6kpJNY
-         qEEM8136+KYXcHo4ba8akOcRfEEQa2WPh8DybrHFK+sabZgBhMR36tCVRG83K7vH1cW2
-         +tAvD7+11Tiw9WmdBdchM838Ksuv8W7UHq8LoeYHHVZz9EZWz0CY4hFIKH9bgfZDnoHM
-         MkFw==
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=iR+CVMR9Igk+i7q6zQ360QpQoQUWwq9hKMxFO8Y7cGA=;
+        b=bPPrnh4BjIGHxssI9in0eI8avIf6lVSA1Fd+jmaHNuJRYj4GLesWwatvAf+cWdJ1Gn
+         +T1a9zT5WiAc7uq+YkZ1UAi9uQqINJcLFkN5pbawGR6HDSkkCEunVz0GKT5BPbCo522L
+         G94YF8sd+EF3xMH5d9NYF5qFQjmBr4VXc5pXs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L6TCLuc1aSDhvBsEh/oyOKoJFVXSTFCOXAYW2AUTtHo=;
-        b=SjlEAv2MY9S+PhKlGwFPapb8q6zJ+WTWYK0ioJXPUogrYyYQnEcBzyvJklrjocqakr
-         DTYAQ9Wodox7XAKRmZtjZjJi6cHfKSYyiIv5EH4LJ+2hGBxsG56ZYBZWcZBo7xS+icIg
-         P6evQxHs3Y8/tZhacxCKIy1+BvDXIrRp/F6ToifMfpzZGPG/ZpvXr/isRMvkBnY6lXug
-         xVKJUuilcAkF7Byl75S3rY+1VsW/t0o3y7urJO+PCfEF8CskXlbeQOzBTHPDYXyuPGvr
-         ZCxzvQiCEP4Rm7hUU+M1EXrUbRRmb9yhukywtq0sERgA2HtZbU2QS+PGJ+efVLYD8Yyw
-         FX1g==
-X-Gm-Message-State: AOAM5339O7Y0jVQLmfr6kQYIo/bB53h2Pp2TuCOEsDr7q7ujLroHSarM
-        jjytGg74T79PbZib4bWQc6b92W2w0FHkao+PsAyYYQ==
-X-Google-Smtp-Source: ABdhPJycxdGkrda5dU9htxc/OSwm7s+GQAoBTPW1YXOO/bE03Yfcq+QBohkR+LMOwjYHynIUz7nEwPk/k/ZMFVtVBnc=
-X-Received: by 2002:a9f:2f15:: with SMTP id x21mr833961uaj.104.1604580795669;
- Thu, 05 Nov 2020 04:53:15 -0800 (PST)
-MIME-Version: 1.0
-References: <20201104234427.26477-1-digetx@gmail.com> <CAPDyKFr7qTU2RPhA_ZrbCayoTTNUEno1zdmvmv+8HBe-Owrfeg@mail.gmail.com>
- <20201105100603.skrirm7uke4s2xyl@vireshk-i7> <CAPDyKFoCJt5MBSKBJ8n1OAMdVsWHdwXTx0zFEcZw_F_gQ6Ug0w@mail.gmail.com>
- <20201105104009.oo4dc6a2gdcwduhk@vireshk-i7> <CAPDyKFpQG98d6foc1U6fp3YEBdZ1vLqY9cmWxpUwXoKgDn+ojQ@mail.gmail.com>
- <20201105111301.2hxfx2tnmf2saakp@vireshk-i7>
-In-Reply-To: <20201105111301.2hxfx2tnmf2saakp@vireshk-i7>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 5 Nov 2020 13:52:39 +0100
-Message-ID: <CAPDyKFr3LhrnK9mm=RzhZvcnfeAKez3Yzm6HU_oP1bnPokh9vg@mail.gmail.com>
-Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=iR+CVMR9Igk+i7q6zQ360QpQoQUWwq9hKMxFO8Y7cGA=;
+        b=J2A7U/RMlHvrPcxOUxmegpHoxMB6EPUsX7Dwsr6Twx6E0o5HGNedANgl6epXa9dl+g
+         WeFuDT0Z54yuvEXbGuAJlUuEmSsFcrYl/B3NIteCpZIv4hckQIZyNkSHtYQ0vgF5d5A3
+         t6eoo13040RzypYJqsxsVl87YjAOESpriP7AbKf6wh3RmDE4IqqnjsekPCxdpO1tGmYq
+         FM5ZILk70HS6VOABi3MwbHxcs7DqGhl+IsTE8DNZBrHPjFJqD+kv35veGpy7lx0Dg50j
+         cr3fFQOmDW/lEZWi0xb+T3G7L2vZqxDaVA4dxwe7M5FA4F0CaN0QSlyhtUqSspyurSZW
+         y/1g==
+X-Gm-Message-State: AOAM533nUdlngZL6eNxnLZAGxJ2MGf+U6ss3bvNZL18pkawIZYd0TgkM
+        g6eH7hr22DWn+NVMPYVHP5usqg==
+X-Google-Smtp-Source: ABdhPJwrW3OjL7kR/bAr74WjxI8azvpsj46DeaIlccjHcQq2wan765xbIbWOOKK6+3jptMrcJuyztQ==
+X-Received: by 2002:a1c:6843:: with SMTP id d64mr2670603wmc.131.1604580875284;
+        Thu, 05 Nov 2020 04:54:35 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id m12sm2468188wrs.92.2020.11.05.04.54.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Nov 2020 04:54:34 -0800 (PST)
+Date:   Thu, 5 Nov 2020 13:54:31 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux+etnaviv@armlinux.org.uk,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>, yuq825@gmail.com,
+        Ben Skeggs <bskeggs@redhat.com>, Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        steven.price@arm.com, alyssa.rosenzweig@collabora.com,
+        Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sean Paul <sean@poorly.run>, Eric Anholt <eric@anholt.net>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        ray.huang@amd.com, Sumit Semwal <sumit.semwal@linaro.org>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        luben.tuikov@amd.com, apaneers@amd.com, melissa.srw@gmail.com,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Qinglang Miao <miaoqinglang@huawei.com>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        amd-gfx@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-pwm@vger.kernel.org,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+        lima@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        spice-devel@lists.freedesktop.org,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        xen-devel@lists.xenproject.org,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v5 09/10] dma-buf-map: Add memcpy and pointer-increment
+ interfaces
+Message-ID: <20201105125431.GW401619@phenom.ffwll.local>
+References: <20201020122046.31167-1-tzimmermann@suse.de>
+ <20201020122046.31167-10-tzimmermann@suse.de>
+ <CACRpkdbvGWKo8y323actUJn9xXmxpgDw1EKLiPH4RqB_kFx=XQ@mail.gmail.com>
+ <27acbd7e-d72e-4e05-c147-b50f56e21589@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27acbd7e-d72e-4e05-c147-b50f56e21589@suse.de>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 5 Nov 2020 at 12:13, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 05-11-20, 11:56, Ulf Hansson wrote:
-> > On Thu, 5 Nov 2020 at 11:40, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > > Btw, how do we identify if it is a power domain or a regulator ?
->
-> To be honest, I was a bit afraid and embarrassed to ask this question,
-> and was hoping people to make fun of me in return :)
->
-> > Good question. It's not a crystal clear line in between them, I think.
->
-> And I was relieved after reading this :)
->
-> > A power domain to me, means that some part of a silicon (a group of
-> > controllers or just a single piece, for example) needs some kind of
-> > resource (typically a power rail) to be enabled to be functional, to
-> > start with.
->
-> Isn't this what a part of regulator does as well ? i.e.
-> enabling/disabling of the regulator or power to a group of
-> controllers.
+On Thu, Nov 05, 2020 at 11:37:08AM +0100, Thomas Zimmermann wrote:
+> Hi
+> 
+> Am 05.11.20 um 11:07 schrieb Linus Walleij:
+> > Overall I like this, just an inline question:
+> > 
+> > On Tue, Oct 20, 2020 at 2:20 PM Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> > 
+> >> To do framebuffer updates, one needs memcpy from system memory and a
+> >> pointer-increment function. Add both interfaces with documentation.
+> > 
+> > (...)
+> >> +/**
+> >> + * dma_buf_map_memcpy_to - Memcpy into dma-buf mapping
+> >> + * @dst:       The dma-buf mapping structure
+> >> + * @src:       The source buffer
+> >> + * @len:       The number of byte in src
+> >> + *
+> >> + * Copies data into a dma-buf mapping. The source buffer is in system
+> >> + * memory. Depending on the buffer's location, the helper picks the correct
+> >> + * method of accessing the memory.
+> >> + */
+> >> +static inline void dma_buf_map_memcpy_to(struct dma_buf_map *dst, const void *src, size_t len)
+> >> +{
+> >> +       if (dst->is_iomem)
+> >> +               memcpy_toio(dst->vaddr_iomem, src, len);
+> >> +       else
+> >> +               memcpy(dst->vaddr, src, len);
+> >> +}
+> > 
+> > Are these going to be really big memcpy() operations?
+> 
+> Individually, each could be a scanline, so a few KiB. (4 bytes *
+> horizontal resolution). Updating a full framebuffer can sum up to
+> several MiB.
+> 
+> > 
+> > Some platforms have DMA offload engines that can perform memcpy(),They could be
+> > drivers/dma, include/linux/dmaengine.h
+> > especially if the CPU doesn't really need to touch the contents
+> > and flush caches etc.
+> > An example exist in some MTD drivers that move large quantities of
+> > data off flash memory like this:
+> > drivers/mtd/nand/raw/cadence-nand-controller.c
+> > 
+> > Notice that DMAengine and DMAbuf does not have much in common,
+> > the names can be deceiving.
+> > 
+> > The value of this varies with the system architecture. It is not just
+> > a question about performance but also about power and the CPU
+> > being able to do other stuff in parallel for large transfers. So *when*
+> > to use this facility to accelerate memcpy() is a delicate question.
+> > 
+> > What I'm after here is if these can be really big, do we want
+> > (in the long run, not now) open up to the idea to slot in
+> > hardware-accelerated memcpy() here?
+> 
+> We currently use this functionality for the graphical framebuffer
+> console that most DRM drivers provide. It's non-accelerated and slow,
+> but this has not been much of a problem so far.
+> 
+> Within DRM, we're more interested in removing console code from drivers
+> and going for the generic implementation.
+> 
+> Most of the graphics HW allocates framebuffers from video RAM, system
+> memory or CMA pools and does not really need these memcpys. Only a few
+> systems with small video RAM require a shadow buffer, which we flush
+> into VRAM as needed. Those might benefit.
+> 
+> OTOH, off-loading memcpys to hardware sounds reasonable if we can hide
+> it from the DRM code. I think it all depends on how invasive that change
+> would be.
 
-It could, but it shouldn't.
+I wouldn't, all the additional locks this would pull in sound like
+nightmare. And when an oops happens, this might be the only thing that
+manages to get the oops to the user.
 
->
-> Over that the regulator does voltage/current scaling as well, which
-> normally the power domains don't do (though we did that in
-> performance-state case).
->
-> > If there are operating points involved, that's also a
-> > clear indication to me, that it's not a regular regulator.
->
-> Is there any example of that? I hope by OPP you meant both freq and
-> voltage here. I am not sure if I know of a case where a power domain
-> handles both of them.
+Unless someone really starts caring about fbcon acceleration I really
+wouldn't bother. Ok maybe it also matters for fbdev, but the problem is
+that the page fault intercepting alone is already expensive, so the only
+real solution if you care about performance in that case is to use kms
+natively, and use a dirty rectangle flip (or the DIRTY syscall).
 
-It may be both voltage and frequency - but in some cases only voltage.
-From HW point of view, many ARM legacy platforms have power domains
-that work like this.
-
-As you know, the DVFS case has in many years not been solved in a
-generic way, but mostly via platform specific hacks.
-
-The worst ones are probably those hacking clock drivers (which myself
-also have contributed to). Have a look at clk_prcmu_opp_prepare(), for
-example, which is used by the UX500 platform. Another option has been
-to use the devfreq framework, but it has limitations in regards to
-this too.
-
-That said, I am hoping that people start moving towards the
-deploying/implementing DVFS through the power-domain approach,
-together with the OPPs. Maybe there are still some pieces missing from
-an infrastructure point of view, but that should become more evident
-as more starts using it.
-
->
-> > Maybe we should try to specify this more exactly in some
-> > documentation, somewhere.
->
-> I think yes, it is very much required. And in absence of that I think,
-> many (or most) of the platforms that also need to scale the voltage
-> would have modeled their hardware as a regulator and not a PM domain.
->
-> What I always thought was:
->
-> - Module that can just enable/disable power to a block of SoC is a
->   power domain.
->
-> - Module that can enable/disable as well as scale voltage is a
->   regulator.
->
-> And so I thought that this patchset has done the right thing. This
-> changed a bit with the qcom stuff where the IP to be configured was in
-> control of RPM and not Linux and so we couldn't add it as a regulator.
-> If it was controlled by Linux, it would have been a regulator in
-> kernel for sure :)
-
-In my view, DT bindings have consistently been pushed back during the
-year, if they have tried to model power domains as regulator supplies
-from consumer device nodes. Hence, people have tried other things, as
-I mentioned above.
-
-I definitely agree that we need to update some documentations,
-explaining things more exactly. Additionally, it seems like a talk at
-some conferences should make sense, as a way to spread the word.
-
-Kind regards
-Uffe
+And in there drivers should (and do) use any dma engines they have to
+upload the frames already.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
