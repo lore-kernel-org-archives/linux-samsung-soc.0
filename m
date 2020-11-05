@@ -2,123 +2,189 @@ Return-Path: <SRS0=idU0=EL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A5FC388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 12:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E105C4742C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 12:53:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86CAC22261
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 12:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21C4F20BED
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 12:53:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ey9/JXPq"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y6DX4cMU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725468AbgKEMtz (ORCPT
+        id S1730501AbgKEMxS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 07:49:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57012 "EHLO
+        Thu, 5 Nov 2020 07:53:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730501AbgKEMty (ORCPT
+        with ESMTP id S1730484AbgKEMxR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 07:49:54 -0500
-Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B2FFC0613D4
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2020 04:49:52 -0800 (PST)
-Received: by mail-qt1-x842.google.com with SMTP id t5so945554qtp.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2020 04:49:52 -0800 (PST)
+        Thu, 5 Nov 2020 07:53:17 -0500
+Received: from mail-ua1-x944.google.com (mail-ua1-x944.google.com [IPv6:2607:f8b0:4864:20::944])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3D71C061A4C
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2020 04:53:16 -0800 (PST)
+Received: by mail-ua1-x944.google.com with SMTP id h26so469451uan.10
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2020 04:53:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=c/75nGkQrQ26C3oLWTOAYAjfB1zI6lLeh7OxDvBkYU4=;
-        b=ey9/JXPqLzTLqSC0JUXYcVxUXf6bgAVzYD4I4rO+pMYwL+MZhAaGFEUE/+P8Locz8v
-         LJ+RhibI0qf9gLCV/mRJ83hORIvqSMnJCg5JZJzCh+xHF7VIlIbjuRPAp0C63CSZuqsG
-         vYgc5f9BkYulbWJWSx8NN3DJBDW1+TKWxoIWvVybUSqXDpV2fkacRRICo8Tgpy2bpeGk
-         Ltiq/5WP3OM3AF7WaYqeeBRq6dKQGJ/PL2Qyomfzz0Quj8y3hj/F49F0vpFao5oEjJKE
-         yviSyey2jqX+EBs1TWKrdjoCX5L1qgaPHh/4yTZi2biI/4T2G6/5ZjvS2T05bvZ3lDtu
-         PdhQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L6TCLuc1aSDhvBsEh/oyOKoJFVXSTFCOXAYW2AUTtHo=;
+        b=y6DX4cMUVCgpxUKuGqoEligLjI7mP0FgyJ97c7sIUUHZxJlTwtRRakXekgH7YsuigB
+         Na2QU2xZN4x2PfpN6omerSdhzPwwGn9bDYKeR2k6MuBaUl4m5dH4WWWTdnhpeJeXb0wO
+         XSZFej4dNy5nb1iC9xr8tfwJeCBjFjlTzg4qI2DAs6FEDqJOv7dGIgx54zxdVZ6kpJNY
+         qEEM8136+KYXcHo4ba8akOcRfEEQa2WPh8DybrHFK+sabZgBhMR36tCVRG83K7vH1cW2
+         +tAvD7+11Tiw9WmdBdchM838Ksuv8W7UHq8LoeYHHVZz9EZWz0CY4hFIKH9bgfZDnoHM
+         MkFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=c/75nGkQrQ26C3oLWTOAYAjfB1zI6lLeh7OxDvBkYU4=;
-        b=AxPi5bJShEoSm/QmsE6RyjPCimPh23h5p1arUBGBCGdR/1TQhRKyzTAoTslNiLKPQp
-         ArjSkjakcrMPtwR06IKKvoRWbhH7AqbTbgajg29Azb2BOo58k/W9FG9deIU2KjWHOoYT
-         IBBzOpqLKMn2ihSfhRAVmii005s/Uvl5TBLXNPfAmwC5N/EtImrTTXvr3/2ZqJWgArl3
-         3hCRhtrPzjLYjl0HC9gaAnGPmVIv4tQPVvdctrEdwvfweG4gKBv6dsmqYexolws66YT3
-         G3abEsAGrF9VIj+kcKX+I/v+unRt96wlcpzJ1YSPxPpjoFZaAUhL47wDweNaTW2oFiPO
-         glrg==
-X-Gm-Message-State: AOAM532I5XsjS3TI1g86/JGeEYm4YBqeUtYLERFrzRtMiBte2L3TnqYq
-        cE/oF9w9L19XAd2uJzJLqhSCTg==
-X-Google-Smtp-Source: ABdhPJyp3xdvhiGf3T//L8CChJ12FUSiNzGQbei5PswIE841BlFiQ3KzgYdb3JVW6KR7+PP7QIWQow==
-X-Received: by 2002:ac8:46c1:: with SMTP id h1mr1733189qto.361.1604580591377;
-        Thu, 05 Nov 2020 04:49:51 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
-        by smtp.gmail.com with ESMTPSA id u31sm763588qtu.87.2020.11.05.04.49.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2020 04:49:50 -0800 (PST)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1kaei6-00H0yJ-2m; Thu, 05 Nov 2020 08:49:50 -0400
-Date:   Thu, 5 Nov 2020 08:49:50 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     John Hubbard <jhubbard@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        J??r??me Glisse <jglisse@redhat.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>,
-        KVM list <kvm@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>
-Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
-Message-ID: <20201105124950.GZ36674@ziepe.ca>
-References: <CAKMK7uEw701AWXNJbRNM8Z+FkyUB5FbWegmSzyWPy9cG4W7OLA@mail.gmail.com>
- <20201104140023.GQ36674@ziepe.ca>
- <CAKMK7uH69hsFjYUkjg1aTh5f=q_3eswMSS5feFs6+ovz586+0A@mail.gmail.com>
- <20201104162125.GA13007@infradead.org>
- <CAKMK7uH=0+3FSR4LxP7bJUB4BsCcnCzfK2=D+2Am9QNmfZEmfw@mail.gmail.com>
- <20201104163758.GA17425@infradead.org>
- <20201104164119.GA18218@infradead.org>
- <20201104181708.GU36674@ziepe.ca>
- <d3497583-2338-596e-c764-8c571b7d22cf@nvidia.com>
- <20201105092524.GQ401619@phenom.ffwll.local>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L6TCLuc1aSDhvBsEh/oyOKoJFVXSTFCOXAYW2AUTtHo=;
+        b=SjlEAv2MY9S+PhKlGwFPapb8q6zJ+WTWYK0ioJXPUogrYyYQnEcBzyvJklrjocqakr
+         DTYAQ9Wodox7XAKRmZtjZjJi6cHfKSYyiIv5EH4LJ+2hGBxsG56ZYBZWcZBo7xS+icIg
+         P6evQxHs3Y8/tZhacxCKIy1+BvDXIrRp/F6ToifMfpzZGPG/ZpvXr/isRMvkBnY6lXug
+         xVKJUuilcAkF7Byl75S3rY+1VsW/t0o3y7urJO+PCfEF8CskXlbeQOzBTHPDYXyuPGvr
+         ZCxzvQiCEP4Rm7hUU+M1EXrUbRRmb9yhukywtq0sERgA2HtZbU2QS+PGJ+efVLYD8Yyw
+         FX1g==
+X-Gm-Message-State: AOAM5339O7Y0jVQLmfr6kQYIo/bB53h2Pp2TuCOEsDr7q7ujLroHSarM
+        jjytGg74T79PbZib4bWQc6b92W2w0FHkao+PsAyYYQ==
+X-Google-Smtp-Source: ABdhPJycxdGkrda5dU9htxc/OSwm7s+GQAoBTPW1YXOO/bE03Yfcq+QBohkR+LMOwjYHynIUz7nEwPk/k/ZMFVtVBnc=
+X-Received: by 2002:a9f:2f15:: with SMTP id x21mr833961uaj.104.1604580795669;
+ Thu, 05 Nov 2020 04:53:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201105092524.GQ401619@phenom.ffwll.local>
+References: <20201104234427.26477-1-digetx@gmail.com> <CAPDyKFr7qTU2RPhA_ZrbCayoTTNUEno1zdmvmv+8HBe-Owrfeg@mail.gmail.com>
+ <20201105100603.skrirm7uke4s2xyl@vireshk-i7> <CAPDyKFoCJt5MBSKBJ8n1OAMdVsWHdwXTx0zFEcZw_F_gQ6Ug0w@mail.gmail.com>
+ <20201105104009.oo4dc6a2gdcwduhk@vireshk-i7> <CAPDyKFpQG98d6foc1U6fp3YEBdZ1vLqY9cmWxpUwXoKgDn+ojQ@mail.gmail.com>
+ <20201105111301.2hxfx2tnmf2saakp@vireshk-i7>
+In-Reply-To: <20201105111301.2hxfx2tnmf2saakp@vireshk-i7>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 5 Nov 2020 13:52:39 +0100
+Message-ID: <CAPDyKFr3LhrnK9mm=RzhZvcnfeAKez3Yzm6HU_oP1bnPokh9vg@mail.gmail.com>
+Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
+ Tegra20/30 SoCs
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-pwm@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 05, 2020 at 10:25:24AM +0100, Daniel Vetter wrote:
-> > /*
-> >  * If we can't determine whether or not a pte is special, then fail immediately
-> >  * for ptes. Note, we can still pin HugeTLB and THP as these are guaranteed not
-> >  * to be special.
-> >  *
-> >  * For a futex to be placed on a THP tail page, get_futex_key requires a
-> >  * get_user_pages_fast_only implementation that can pin pages. Thus it's still
-> >  * useful to have gup_huge_pmd even if we can't operate on ptes.
-> >  */
-> 
-> We support hugepage faults in gpu drivers since recently, and I'm not
-> seeing a pud_mkhugespecial anywhere. So not sure this works, but probably
-> just me missing something again.
+On Thu, 5 Nov 2020 at 12:13, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 05-11-20, 11:56, Ulf Hansson wrote:
+> > On Thu, 5 Nov 2020 at 11:40, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > Btw, how do we identify if it is a power domain or a regulator ?
+>
+> To be honest, I was a bit afraid and embarrassed to ask this question,
+> and was hoping people to make fun of me in return :)
+>
+> > Good question. It's not a crystal clear line in between them, I think.
+>
+> And I was relieved after reading this :)
+>
+> > A power domain to me, means that some part of a silicon (a group of
+> > controllers or just a single piece, for example) needs some kind of
+> > resource (typically a power rail) to be enabled to be functional, to
+> > start with.
+>
+> Isn't this what a part of regulator does as well ? i.e.
+> enabling/disabling of the regulator or power to a group of
+> controllers.
 
-It means ioremap can't create an IO page PUD, it has to be broken up.
+It could, but it shouldn't.
 
-Does ioremap even create anything larger than PTEs?
+>
+> Over that the regulator does voltage/current scaling as well, which
+> normally the power domains don't do (though we did that in
+> performance-state case).
+>
+> > If there are operating points involved, that's also a
+> > clear indication to me, that it's not a regular regulator.
+>
+> Is there any example of that? I hope by OPP you meant both freq and
+> voltage here. I am not sure if I know of a case where a power domain
+> handles both of them.
 
-Jason
+It may be both voltage and frequency - but in some cases only voltage.
+From HW point of view, many ARM legacy platforms have power domains
+that work like this.
+
+As you know, the DVFS case has in many years not been solved in a
+generic way, but mostly via platform specific hacks.
+
+The worst ones are probably those hacking clock drivers (which myself
+also have contributed to). Have a look at clk_prcmu_opp_prepare(), for
+example, which is used by the UX500 platform. Another option has been
+to use the devfreq framework, but it has limitations in regards to
+this too.
+
+That said, I am hoping that people start moving towards the
+deploying/implementing DVFS through the power-domain approach,
+together with the OPPs. Maybe there are still some pieces missing from
+an infrastructure point of view, but that should become more evident
+as more starts using it.
+
+>
+> > Maybe we should try to specify this more exactly in some
+> > documentation, somewhere.
+>
+> I think yes, it is very much required. And in absence of that I think,
+> many (or most) of the platforms that also need to scale the voltage
+> would have modeled their hardware as a regulator and not a PM domain.
+>
+> What I always thought was:
+>
+> - Module that can just enable/disable power to a block of SoC is a
+>   power domain.
+>
+> - Module that can enable/disable as well as scale voltage is a
+>   regulator.
+>
+> And so I thought that this patchset has done the right thing. This
+> changed a bit with the qcom stuff where the IP to be configured was in
+> control of RPM and not Linux and so we couldn't add it as a regulator.
+> If it was controlled by Linux, it would have been a regulator in
+> kernel for sure :)
+
+In my view, DT bindings have consistently been pushed back during the
+year, if they have tried to model power domains as regulator supplies
+from consumer device nodes. Hence, people have tried other things, as
+I mentioned above.
+
+I definitely agree that we need to update some documentations,
+explaining things more exactly. Additionally, it seems like a talk at
+some conferences should make sense, as a way to spread the word.
+
+Kind regards
+Uffe
