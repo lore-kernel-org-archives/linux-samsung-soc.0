@@ -2,150 +2,114 @@ Return-Path: <SRS0=idU0=EL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B702EC55178
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 17:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09614C5517A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 17:54:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B0362083B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 17:15:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A376C2072E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 17:54:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DG1/lsxD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XXHF9HTK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729980AbgKERO4 (ORCPT
+        id S1731234AbgKERyy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 12:14:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42380 "EHLO
+        Thu, 5 Nov 2020 12:54:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727851AbgKERO4 (ORCPT
+        with ESMTP id S1726214AbgKERyx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 12:14:56 -0500
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D3E9C0613CF;
-        Thu,  5 Nov 2020 09:14:56 -0800 (PST)
-Received: by mail-pl1-x642.google.com with SMTP id t18so1098275plo.0;
-        Thu, 05 Nov 2020 09:14:56 -0800 (PST)
+        Thu, 5 Nov 2020 12:54:53 -0500
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CD3EC0613CF;
+        Thu,  5 Nov 2020 09:54:53 -0800 (PST)
+Received: by mail-lf1-x141.google.com with SMTP id u18so3540928lfd.9;
+        Thu, 05 Nov 2020 09:54:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:thread-topic:thread-index:date:message-id
-         :references:in-reply-to:accept-language:content-language
-         :content-transfer-encoding:mime-version;
-        bh=XwV+aW6cGJGYI4Hbmxr8mO8vep5QW19zw8MT/QMQ6J4=;
-        b=DG1/lsxD23Zu+0xI8p/fT1yZLzBJNXRnYUDHkUck+eLYeRFbk4eXtEmsz7xBKo2Ubn
-         Hu6yCzfK8qI6JviVQz93AubOVaYEPuH1fZ6sPAyc/ZkquR6ezD1qFjK4krRwCLW0A8af
-         lg+SP8gLg0Sz/WO8279RyUkHSPBmmK/pofiry13zeLJfedyE2BN66A91HScPYRfLXZaQ
-         kHMSztIL7quITa0DoQJMbipKMz/bySBpD48UDr042jBR7ByVY0/1mZTTMChSWxWY3UAE
-         99QZ++p4KP3eJkOw4Rgde0tAk0NP7OeMBH4S6ejdFDE58pUkHBtnX8d+g/g0mzoPLgw7
-         VJRQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=gA6OLdD6ilrl1MlK7OiJsrdds83PpowmxPmjVFzKPLU=;
+        b=XXHF9HTK2ugJChM+FIFMCW2E53QGEH1yguNWVVsZT4/1tb/wA72NsMDzQdgSY44iRC
+         mV3oLf1MLXH5haz2YuP1CDRT8aUuzPTl7F2/RMHftpwIeYEBCAs3NG+BR4dNeGs187mI
+         XbuGXQroBJTTOWAvgupbT5YRyuuxAIsIhg4fLFlZAAdVH++d1JBlqRiVgDhJ8kvrw9/J
+         CoeoXoFGkh8y4iwGjCRTehbz/gI/F1PorRz0eVlctXoG9S08Uk7T6RBaUSdPCHSWuFmU
+         /CTWZV/yrLcMfC8ZqzKcUNZKBSSDhWAWRgAsWN1XiInqnWC0QIShxySn34YF6hnFOplx
+         3LEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:thread-topic:thread-index
-         :date:message-id:references:in-reply-to:accept-language
-         :content-language:content-transfer-encoding:mime-version;
-        bh=XwV+aW6cGJGYI4Hbmxr8mO8vep5QW19zw8MT/QMQ6J4=;
-        b=NHlEVamGaB3Hep5J5u+8zwjanu64T+++iHMjub3h+XLQjIsp2shxWfqqzcxVA23SGV
-         bISldDNMZvaurACD7XlxipmUijAYii3su+J6TM2/8rHJroEXFPuwUymr9tpALtL4Vfu1
-         nknkT++SIaA20HTQ4/UU+hIxF/hUzkfQJZvYo0BtyDbg3XdQ1H2afnQVXKu9MQXoM0YC
-         UwIAzHbwKx0qYCZaH9V7h+5RTfmjrUYJ805IA3Hg/pLPikjnSvshjWFcF+OvI8ShXY6+
-         /JaKkOl88h9QPZDbbvxpGzzmsv/XrRky0emaUlPweKiNW2BLZOGKviabPGy/2aD4VRN0
-         bMzA==
-X-Gm-Message-State: AOAM5313PI7z1NDvy5EznGUbvch3/oXmVOgVXXFZQ4DY1qi1aeJ/ePxw
-        JRKAlul3RxrNa2vaS2khffs=
-X-Google-Smtp-Source: ABdhPJxizlMCIeICyyJrLiuwB6GA88j9xik3qp0bMTx1JoaNIFQ0rtun87LTzJD3xGIYvUKTpGB7EQ==
-X-Received: by 2002:a17:902:c383:b029:d6:991c:671b with SMTP id g3-20020a170902c383b02900d6991c671bmr3058728plg.51.1604596495770;
-        Thu, 05 Nov 2020 09:14:55 -0800 (PST)
-Received: from SLXP216MB0477.KORP216.PROD.OUTLOOK.COM ([2603:1046:100:9::5])
-        by smtp.gmail.com with ESMTPSA id w131sm3236826pfd.14.2020.11.05.09.14.51
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Nov 2020 09:14:54 -0800 (PST)
-From:   Jingoo Han <jingoohan1@gmail.com>
-To:     Rob Herring <robh@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-CC:     linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        PCI <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gA6OLdD6ilrl1MlK7OiJsrdds83PpowmxPmjVFzKPLU=;
+        b=LpDc8mD5HHiK/05L6j9SILjUW7kl9ImPU9DSX3knUp05nIak7YsZwvidw7C966nsEK
+         cF4Qy+7FdJIxKoTJhgwJ9D+6TQFmgJYlS3xa3+yA+4JL0hy2i34V4iXKj94W2oUt8mbj
+         rh+l4iY3ZEhvKP5hwzfenDxIRuc5CFcnstLIFAjv+mJmC8P+hLON9jIOPng+KzO32LtB
+         3CbRN2FONZ+luJ42achnO+4YMRTY1dsl0CZIuZpvdYmbAN4pk6D7G+qGzdNMO7cAVzMO
+         mBYSC/TfUrsELzEauD2eB5bcbs0DHu7GLSQhxv6El7ep4Rpy3fE4Py5x1CprltFrmSEC
+         Xqdg==
+X-Gm-Message-State: AOAM531ZyCewGlIdzS6sTCisd6Xp2UHLMSR55AKBKnHEG9tPyrKYdonF
+        gGAwbsai3pqckEqlLshyKCvBnFQ7tEs=
+X-Google-Smtp-Source: ABdhPJyehz6KeITPmKFKw6lYd3zXe4BcIJiDjnQqHKJZPRp9Z41GNG8/Y3X7JzcgSQn251Z5j8SlyQ==
+X-Received: by 2002:a19:4206:: with SMTP id p6mr1372241lfa.151.1604598890223;
+        Thu, 05 Nov 2020 09:54:50 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
+        by smtp.googlemail.com with ESMTPSA id v20sm248899lfd.178.2020.11.05.09.54.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Nov 2020 09:54:49 -0800 (PST)
+Subject: Re: [PATCH v1 21/30] usb: host: ehci-tegra: Support OPP and SoC core
+ voltage scaling
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Han Jingoo <jingoohan1@gmail.com>
-Subject: Re: [PATCH v3 2/6] dt-bindings: pci: add the samsung,exynos-pcie
- binding
-Thread-Topic: [PATCH v3 2/6] dt-bindings: pci: add the samsung,exynos-pcie
- binding
-Thread-Index: AQHWrfkxmqu5u2BfXUOgfEcMUhWpwKm4iO6AgAC3vwCAAHO+AIAAHfWn
-X-MS-Exchange-MessageSentRepresentingType: 1
-Date:   Thu, 5 Nov 2020 17:14:49 +0000
-Message-ID: <SLXP216MB0477D362203645C619958647AAEE0@SLXP216MB0477.KORP216.PROD.OUTLOOK.COM>
-References: <20201029134017.27400-1-m.szyprowski@samsung.com>
- <CGME20201029134038eucas1p28d9bd33bc9e36b960b021a40ef299b47@eucas1p2.samsung.com>
- <20201029134017.27400-3-m.szyprowski@samsung.com>
- <20201104213539.GA4144654@bogus>
- <d89f5f0a-c45e-0bda-4db7-7b0cf9cd49fe@samsung.com>
- <CAL_JsqKQstKa7_0pjcODyyLCwMiGF9zB4_+x=GhcSUOyvuLRmw@mail.gmail.com>
-In-Reply-To: <CAL_JsqKQstKa7_0pjcODyyLCwMiGF9zB4_+x=GhcSUOyvuLRmw@mail.gmail.com>
-Accept-Language: ko-KR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-Exchange-Organization-SCL: -1
-X-MS-TNEF-Correlator: 
-X-MS-Exchange-Organization-RecordReviewCfmType: 0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20201104234427.26477-1-digetx@gmail.com>
+ <20201104234427.26477-22-digetx@gmail.com>
+ <20201105160743.GA1613614@rowland.harvard.edu>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <cbc6bf1f-eccb-dee5-d2aa-2c60f1d365e2@gmail.com>
+Date:   Thu, 5 Nov 2020 20:54:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20201105160743.GA1613614@rowland.harvard.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/5/20, 10:27 AM, Rob Herring wrote:
->=20
-> On Thu, Nov 5, 2020 at 2:33 AM Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
-> >
-> > Hi Rob,
-> >
-> > On 04.11.2020 22:35, Rob Herring wrote:
-> > > On Thu, Oct 29, 2020 at 02:40:13PM +0100, Marek Szyprowski wrote:
-> > >> Add dt-bindings for the Samsung Exynos PCIe controller (Exynos5433
-> > >> variant). Based on the text dt-binding posted by Jaehoon Chung.
-> > >>
-> > >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > >> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > >> ---
-> > >>   .../bindings/pci/samsung,exynos-pcie.yaml     | 119 ++++++++++++++=
-++++
-> > >>   1 file changed, 119 insertions(+)
-> > >>   create mode 100644 Documentation/devicetree/bindings/pci/samsung,e=
-xynos-pcie.yaml
-> >
-> > >> ...
-> >
-> > >> +  num-viewport:
-> > >> +    const: 3
-> > > I'm confused why you need this. This is only used with the iATU excep=
-t
-> > > for keystone. Platforms like Exynos with their own child bus config
-> > > space accessors don't have an iATU.
-> >
-> > Frankly I have no idea, I don't know much about the PCI internals.
->
-> Sorry, I was confused. It's fine.
+05.11.2020 19:07, Alan Stern пишет:
+> Do you really want to use the same error unwinding for opp_table values 
+> obtained from dev_pm_opp_set_regulators() as from 
+> dev_pm_opp_get_opp_table()?
 
-I was confused, too. But, as far as I remember, I also think that viewpoint=
--related
-setting was necessary for Exynos PCIe.
-Thank you.
+They both are pointing at the same opp_table, which is refcounted.
 
-Best regards,
-Jingoo Han
+The dev_pm_opp_set_regulators() is dev_pm_opp_get_opp_table() + it sets
+regulator for the table.
 
->
-> Reviewed-by: Rob Herring <robh@kernel.org>
->
-> Rob
+https://elixir.bootlin.com/linux/v5.10-rc2/source/drivers/opp/core.c#L1756
