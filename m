@@ -2,167 +2,410 @@ Return-Path: <SRS0=idU0=EL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 935B4C4741F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 21:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEF5C6369E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 21:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 36D4B20782
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 21:12:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B3D621D81
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 21:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604610725;
-	bh=VLyrmT1iH4Ei/KWYjhg08uJLNUrwetxL9NZY3GRcBNI=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=P5X631+QvC5FCwfAnVI5UvuX2AQlw8zFcfSWfi7wU/cdiZyu3B6jrS4dZvzGKJRYq
-	 2ZApKYgCtr5wnraYbWX6/S7oYPB+9Tl4QJwQcz1ROsfAonMTenrF10YGjdCpclYwfj
-	 woFhsS2KzKm5yUsoLPuXC0Q9ZpKIqEu5rS5AkfCY=
+	s=default; t=1604610737;
+	bh=kxXKuk3PEd6tWuv3MBbIPmUTpxwYVAUK6zuyS0SSpQg=;
+	h=From:Cc:Subject:Date:In-Reply-To:References:To:List-ID:From;
+	b=HYqL0utk9unF/fjPpClIXFbCRT6IW+lSkWAJ96htJtW5b+ITJsY4/auUewcAyBFEg
+	 ezTgo8Ng5sUCld89+H7/EQnIvWWe8WZg8GjN6/qwdGBAZuNF9sFLZrHqT+RDiNbH+s
+	 iTMP1tMJcmsT0cncaY9/UL1YuGKhEeANCfPybEg0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732210AbgKEVME (ORCPT
+        id S1732319AbgKEVMQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 16:12:04 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37072 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbgKEVME (ORCPT
+        Thu, 5 Nov 2020 16:12:16 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36205 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbgKEVMP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 16:12:04 -0500
-Received: by mail-ot1-f66.google.com with SMTP id l36so2784555ota.4;
-        Thu, 05 Nov 2020 13:12:03 -0800 (PST)
+        Thu, 5 Nov 2020 16:12:15 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 32so2792969otm.3;
+        Thu, 05 Nov 2020 13:12:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6kX9EfPGIe+vgEipGeuVSOOPuy47rKZgDC38PEky6/I=;
-        b=CrRfm9C5yK84aNS9TNuLdEnYRU0jVjTMmVteuSPDoRqnawZbMBmL2GwfLVFggx2p5f
-         3HV1iTZgxGbna50RyNsTwPQTPaTns0NK6EOQ4Gs12Y9RiduJvGNp72W1omqfnlmlWjdC
-         PBxAU9Mnjangp50Lb6y/XTaNYgQI+GN1na+Ep6sZnSoun0wsUG+sad5y31N9/6o7nrrQ
-         B2YrWxWbe68wbslxqHJibKXOAilgKlD7zHtSAl2egXJv4HfFg6ZcOIirkplgaYlPtda3
-         rV4RKHAf73aLI2pWBFCuETcqCmY3hEPe+k4n3hWqYr1QG+x7qncx5ATNuHLumdy488A8
-         gpZQ==
-X-Gm-Message-State: AOAM533JSSiLT+yYKOUVl1Kfv4Ie0Q5mqoDMNmZR+fo2v6qpMVAlYum2
-        P4ffGjTvK3tSNWticWi7fw==
-X-Google-Smtp-Source: ABdhPJxfRm6a7WlZFra36M/W0cF8B4tklW/+2/U/J4e/fwp/StQ3JtLqn3HUrYnVIqGDvSo8N+eI0w==
-X-Received: by 2002:a05:6830:22c9:: with SMTP id q9mr3230515otc.48.1604610722735;
-        Thu, 05 Nov 2020 13:12:02 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=lnhMaY/Om8bkbXx5Q25npCa4me/sCmFqOfqZ2/6QdQo=;
+        b=a+xjvooyd3LHfD8SXM+u5LKLZijy+TubFFsbk4fzL19r9KKWjHTPoaVvc+iYxGa4BD
+         yvoyIyibkJuIfJ7UXsa8BCvCPmn8z/HDg5G15sDFUisMBEF1+dsagjOlhRoXZUVU9fLN
+         6jK0u0Kd76SkgX+J2EqpfavSHib1EAPHIE5KVhvHn/LfTnRJF+ucOu4Ll80/dIgACSfm
+         FqOAt1gp45pTfkKTcJAdVdOPP+XnF69gk1kvYxl2jHg9Wl3oxUPIAAEx9nL6PRzSLxBn
+         wRGwiaFMxFP2a2eovC88FTah05D9Zy5cNYA3k2j1zYoEeXlR2Ej1MHKXpVaB9q9tprnF
+         jW4w==
+X-Gm-Message-State: AOAM533i+H7PcM09UNiQbidBGCFB9LCYM9CGhxceTriboLDjJudEhcMf
+        mLnGOYcTkcsX9NzXVdrzYgn74GU/xNlU
+X-Google-Smtp-Source: ABdhPJwTVyUI98fP/uRAplOkV3HVRJldydQAdCJx8LRooqVWsI6RHiswK5cAKqhbh81rw+jirNZmjQ==
+X-Received: by 2002:a05:6830:359:: with SMTP id h25mr2903256ote.184.1604610733868;
+        Thu, 05 Nov 2020 13:12:13 -0800 (PST)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id z19sm622549ooi.32.2020.11.05.13.12.00
+        by smtp.googlemail.com with ESMTPSA id z19sm622549ooi.32.2020.11.05.13.12.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2020 13:12:01 -0800 (PST)
+        Thu, 05 Nov 2020 13:12:13 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc:     linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Andy Gross <agross@kernel.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Minghuan Lian <minghuan.Lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Richard Zhu <hongxing.zhu@nxp.com>,
-        Roy Zang <roy.zang@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
         Shawn Guo <shawnguo@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
         Yue Wang <yue.wang@Amlogic.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Vidya Sagar <vidyas@nvidia.com>
-Subject: [PATCH v2 00/16] PCI: dwc: Another round of clean-ups
-Date:   Thu,  5 Nov 2020 15:11:43 -0600
-Message-Id: <20201105211159.1814485-1-robh@kernel.org>
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Jingoo Han <jingoohan1@gmail.com>
+Subject: [PATCH v2 08/16] PCI: dwc: Move MSI interrupt setup into DWC common code
+Date:   Thu,  5 Nov 2020 15:11:51 -0600
+Message-Id: <20201105211159.1814485-9-robh@kernel.org>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201105211159.1814485-1-robh@kernel.org>
+References: <20201105211159.1814485-1-robh@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Here's another batch of DWC PCI host refactoring. This series primarily
-moves more of the MSI, link up, and resource handling to the core
-code. Beyond a couple of minor fixes, new in this version is runtime
-detection of iATU regions instead of using DT properties.
+Platforms using the built-in DWC MSI controller all have a dedicated
+interrupt with "msi" name or at index 0, so let's move setting up the
+interrupt to the common DWC code.
 
-No doubt I've probably broken something. Please test. I've run this thru
-kernelci and checked boards with DWC PCI which currently is just
-Layerscape boards (hint: add boards and/or enable PCI). A git branch is
-here[1].
+spear13xx and dra7xx are the 2 oddballs with muxed interrupts, so
+we need to prevent configuring the MSI interrupt by setting msi_irq
+to negative.
 
-This is dependent on "PCI: dwc: Restore ATU memory resource setup to use
-last entry" which will be in v5.10-rc3.
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Yue Wang <yue.wang@Amlogic.com>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Jesper Nilsson <jesper.nilsson@axis.com>
+Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: Xiaowei Song <songxiaowei@hisilicon.com>
+Cc: Binghui Wang <wangbinghui@hisilicon.com>
+Cc: Stanimir Varbanov <svarbanov@mm-sol.com>
+Cc: Andy Gross <agross@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Pratyush Anand <pratyush.anand@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-amlogic@lists.infradead.org
+Cc: linux-arm-kernel@axis.com
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+v2:
+ - Make get_irq optional to avoid error message
+---
+ drivers/pci/controller/dwc/pci-dra7xx.c       |  3 +++
+ drivers/pci/controller/dwc/pci-exynos.c       |  6 -----
+ drivers/pci/controller/dwc/pci-imx6.c         |  6 -----
+ drivers/pci/controller/dwc/pci-meson.c        |  6 -----
+ drivers/pci/controller/dwc/pcie-artpec6.c     |  6 -----
+ .../pci/controller/dwc/pcie-designware-host.c | 11 +++++++++-
+ .../pci/controller/dwc/pcie-designware-plat.c |  6 -----
+ drivers/pci/controller/dwc/pcie-histb.c       |  6 -----
+ drivers/pci/controller/dwc/pcie-kirin.c       | 22 -------------------
+ drivers/pci/controller/dwc/pcie-qcom.c        |  8 -------
+ drivers/pci/controller/dwc/pcie-spear13xx.c   |  1 +
+ drivers/pci/controller/dwc/pcie-tegra194.c    |  8 -------
+ drivers/pci/controller/dwc/pcie-uniphier.c    |  6 -----
+ 13 files changed, 14 insertions(+), 81 deletions(-)
 
-Rob
-
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git pci-more-dwc-cleanup
-
-Rob Herring (16):
-  PCI: dwc: Support multiple ATU memory regions
-  PCI: dwc/intel-gw: Move ATU offset out of driver match data
-  PCI: dwc: Move "dbi", "dbi2", and "addr_space" resource setup into
-    common code
-  PCI: dwc/intel-gw: Remove some unneeded function wrappers
-  PCI: dwc: Ensure all outbound ATU windows are reset
-  PCI: dwc/dra7xx: Use the common MSI irq_chip
-  PCI: dwc: Drop the .set_num_vectors() host op
-  PCI: dwc: Move MSI interrupt setup into DWC common code
-  PCI: dwc: Rework MSI initialization
-  PCI: dwc: Move link handling into common code
-  PCI: dwc: Move dw_pcie_msi_init() into core
-  PCI: dwc: Move dw_pcie_setup_rc() to DWC common code
-  PCI: dwc: Remove unnecessary wrappers around dw_pcie_host_init()
-  Revert "PCI: dwc/keystone: Drop duplicated 'num-viewport'"
-  PCI: dwc: Move inbound and outbound windows to common struct
-  PCI: dwc: Detect number of iATU windows
-
- drivers/pci/controller/dwc/pci-dra7xx.c       | 141 +-----------------
- drivers/pci/controller/dwc/pci-exynos.c       |  50 ++-----
- drivers/pci/controller/dwc/pci-imx6.c         |  39 +----
- drivers/pci/controller/dwc/pci-keystone.c     |  79 ++--------
- .../pci/controller/dwc/pci-layerscape-ep.c    |  37 +----
- drivers/pci/controller/dwc/pci-layerscape.c   |  67 +--------
- drivers/pci/controller/dwc/pci-meson.c        |  53 ++-----
- drivers/pci/controller/dwc/pcie-al.c          |  29 +---
- drivers/pci/controller/dwc/pcie-armada8k.c    |  37 ++---
- drivers/pci/controller/dwc/pcie-artpec6.c     |  76 +---------
- .../pci/controller/dwc/pcie-designware-ep.c   |  58 +++----
- .../pci/controller/dwc/pcie-designware-host.c | 139 ++++++++++-------
- .../pci/controller/dwc/pcie-designware-plat.c |  70 +--------
- drivers/pci/controller/dwc/pcie-designware.c  |  93 +++++++++++-
- drivers/pci/controller/dwc/pcie-designware.h  |  24 +--
- drivers/pci/controller/dwc/pcie-histb.c       |  37 ++---
- drivers/pci/controller/dwc/pcie-intel-gw.c    |  67 ++-------
- drivers/pci/controller/dwc/pcie-kirin.c       |  62 +-------
- drivers/pci/controller/dwc/pcie-qcom.c        |  38 +----
- drivers/pci/controller/dwc/pcie-spear13xx.c   |  62 +++-----
- drivers/pci/controller/dwc/pcie-tegra194.c    |  41 +----
- drivers/pci/controller/dwc/pcie-uniphier-ep.c |  38 +----
- drivers/pci/controller/dwc/pcie-uniphier.c    |  51 +------
- 23 files changed, 356 insertions(+), 1032 deletions(-)
-
---
+diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+index 4d0c35a4aa59..6b75c68dddb5 100644
+--- a/drivers/pci/controller/dwc/pci-dra7xx.c
++++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+@@ -489,6 +489,9 @@ static int __init dra7xx_add_pcie_port(struct dra7xx_pcie *dra7xx,
+ 	if (pp->irq < 0)
+ 		return pp->irq;
+ 
++	/* MSI IRQ is muxed */
++	pp->msi_irq = -ENODEV;
++
+ 	ret = dra7xx_pcie_init_irq_domain(pp);
+ 	if (ret < 0)
+ 		return ret;
+diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+index 242683cde04a..7734394953e5 100644
+--- a/drivers/pci/controller/dwc/pci-exynos.c
++++ b/drivers/pci/controller/dwc/pci-exynos.c
+@@ -415,12 +415,6 @@ static int __init exynos_add_pcie_port(struct exynos_pcie *ep,
+ 		return ret;
+ 	}
+ 
+-	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+-		pp->msi_irq = platform_get_irq(pdev, 0);
+-		if (pp->msi_irq < 0)
+-			return pp->msi_irq;
+-	}
+-
+ 	pp->ops = &exynos_pcie_host_ops;
+ 
+ 	ret = dw_pcie_host_init(pp);
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index 5cf1ef12fb9b..95e7cf06863d 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -853,12 +853,6 @@ static int imx6_add_pcie_port(struct imx6_pcie *imx6_pcie,
+ 	struct device *dev = &pdev->dev;
+ 	int ret;
+ 
+-	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+-		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
+-		if (pp->msi_irq < 0)
+-			return pp->msi_irq;
+-	}
+-
+ 	pp->ops = &imx6_pcie_host_ops;
+ 
+ 	ret = dw_pcie_host_init(pp);
+diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
+index 1913dc2c8fa0..10d65b3093e4 100644
+--- a/drivers/pci/controller/dwc/pci-meson.c
++++ b/drivers/pci/controller/dwc/pci-meson.c
+@@ -405,12 +405,6 @@ static int meson_add_pcie_port(struct meson_pcie *mp,
+ 	struct device *dev = &pdev->dev;
+ 	int ret;
+ 
+-	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+-		pp->msi_irq = platform_get_irq(pdev, 0);
+-		if (pp->msi_irq < 0)
+-			return pp->msi_irq;
+-	}
+-
+ 	pp->ops = &meson_pcie_host_ops;
+ 
+ 	ret = dw_pcie_host_init(pp);
+diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
+index 52ad7909cd0c..a5239a58cee0 100644
+--- a/drivers/pci/controller/dwc/pcie-artpec6.c
++++ b/drivers/pci/controller/dwc/pcie-artpec6.c
+@@ -348,12 +348,6 @@ static int artpec6_add_pcie_port(struct artpec6_pcie *artpec6_pcie,
+ 	struct device *dev = pci->dev;
+ 	int ret;
+ 
+-	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+-		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
+-		if (pp->msi_irq < 0)
+-			return pp->msi_irq;
+-	}
+-
+ 	pp->ops = &artpec6_pcie_host_ops;
+ 
+ 	ret = dw_pcie_host_init(pp);
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 1bd6a9762426..95deef0eaadf 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -373,13 +373,22 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 		}
+ 
+ 		if (!pp->ops->msi_host_init) {
++			if (!pp->msi_irq) {
++				pp->msi_irq = platform_get_irq_byname_optional(pdev, "msi");
++				if (pp->msi_irq < 0) {
++					pp->msi_irq = platform_get_irq(pdev, 0);
++					if (pp->msi_irq < 0)
++						return pp->msi_irq;
++				}
++			}
++
+ 			pp->msi_irq_chip = &dw_pci_msi_bottom_irq_chip;
+ 
+ 			ret = dw_pcie_allocate_domains(pp);
+ 			if (ret)
+ 				return ret;
+ 
+-			if (pp->msi_irq)
++			if (pp->msi_irq > 0)
+ 				irq_set_chained_handler_and_data(pp->msi_irq,
+ 							    dw_chained_msi_isr,
+ 							    pp);
+diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
+index 13fede1d4157..3da38ac6a87a 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-plat.c
++++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
+@@ -116,12 +116,6 @@ static int dw_plat_add_pcie_port(struct dw_plat_pcie *dw_plat_pcie,
+ 	if (pp->irq < 0)
+ 		return pp->irq;
+ 
+-	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+-		pp->msi_irq = platform_get_irq(pdev, 0);
+-		if (pp->msi_irq < 0)
+-			return pp->msi_irq;
+-	}
+-
+ 	pp->num_vectors = MAX_MSI_IRQS;
+ 	pp->ops = &dw_plat_pcie_host_ops;
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
+index afc1abbe49aa..777e24902afb 100644
+--- a/drivers/pci/controller/dwc/pcie-histb.c
++++ b/drivers/pci/controller/dwc/pcie-histb.c
+@@ -400,12 +400,6 @@ static int histb_pcie_probe(struct platform_device *pdev)
+ 		return PTR_ERR(hipcie->bus_reset);
+ 	}
+ 
+-	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+-		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
+-		if (pp->msi_irq < 0)
+-			return pp->msi_irq;
+-	}
+-
+ 	hipcie->phy = devm_phy_get(dev, "phy");
+ 	if (IS_ERR(hipcie->phy)) {
+ 		dev_info(dev, "no pcie-phy found\n");
+diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+index 3042a23cf09a..ba03dbca7885 100644
+--- a/drivers/pci/controller/dwc/pcie-kirin.c
++++ b/drivers/pci/controller/dwc/pcie-kirin.c
+@@ -439,31 +439,9 @@ static const struct dw_pcie_host_ops kirin_pcie_host_ops = {
+ 	.host_init = kirin_pcie_host_init,
+ };
+ 
+-static int kirin_pcie_add_msi(struct dw_pcie *pci,
+-				struct platform_device *pdev)
+-{
+-	int irq;
+-
+-	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+-		irq = platform_get_irq(pdev, 0);
+-		if (irq < 0)
+-			return irq;
+-
+-		pci->pp.msi_irq = irq;
+-	}
+-
+-	return 0;
+-}
+-
+ static int kirin_add_pcie_port(struct dw_pcie *pci,
+ 			       struct platform_device *pdev)
+ {
+-	int ret;
+-
+-	ret = kirin_pcie_add_msi(pci, pdev);
+-	if (ret)
+-		return ret;
+-
+ 	pci->pp.ops = &kirin_pcie_host_ops;
+ 
+ 	return dw_pcie_host_init(&pci->pp);
+diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+index 3b4f70b9f3f0..7ac08f0cae17 100644
+--- a/drivers/pci/controller/dwc/pcie-qcom.c
++++ b/drivers/pci/controller/dwc/pcie-qcom.c
+@@ -1424,14 +1424,6 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+ 
+ 	pp->ops = &qcom_pcie_dw_ops;
+ 
+-	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+-		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
+-		if (pp->msi_irq < 0) {
+-			ret = pp->msi_irq;
+-			goto err_pm_runtime_put;
+-		}
+-	}
+-
+ 	ret = phy_init(pcie->phy);
+ 	if (ret) {
+ 		pm_runtime_disable(&pdev->dev);
+diff --git a/drivers/pci/controller/dwc/pcie-spear13xx.c b/drivers/pci/controller/dwc/pcie-spear13xx.c
+index 1ed7e3501ff1..800c34a60a33 100644
+--- a/drivers/pci/controller/dwc/pcie-spear13xx.c
++++ b/drivers/pci/controller/dwc/pcie-spear13xx.c
+@@ -185,6 +185,7 @@ static int spear13xx_add_pcie_port(struct spear13xx_pcie *spear13xx_pcie,
+ 	}
+ 
+ 	pp->ops = &spear13xx_pcie_host_ops;
++	pp->msi_irq = -ENODEV;
+ 
+ 	ret = dw_pcie_host_init(pp);
+ 	if (ret) {
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 5e2841f58700..77fc3ba3dec1 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -1554,14 +1554,6 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
+ 	char *name;
+ 	int ret;
+ 
+-	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+-		pp->msi_irq = of_irq_get_byname(dev->of_node, "msi");
+-		if (!pp->msi_irq) {
+-			dev_err(dev, "Failed to get MSI interrupt\n");
+-			return -ENODEV;
+-		}
+-	}
+-
+ 	pm_runtime_enable(dev);
+ 
+ 	ret = pm_runtime_get_sync(dev);
+diff --git a/drivers/pci/controller/dwc/pcie-uniphier.c b/drivers/pci/controller/dwc/pcie-uniphier.c
+index 33130fb4af90..6198bd106b8a 100644
+--- a/drivers/pci/controller/dwc/pcie-uniphier.c
++++ b/drivers/pci/controller/dwc/pcie-uniphier.c
+@@ -341,12 +341,6 @@ static int uniphier_add_pcie_port(struct uniphier_pcie_priv *priv,
+ 
+ 	pp->ops = &uniphier_pcie_host_ops;
+ 
+-	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+-		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
+-		if (pp->msi_irq < 0)
+-			return pp->msi_irq;
+-	}
+-
+ 	ret = dw_pcie_host_init(pp);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to initialize host (%d)\n", ret);
+-- 
 2.25.1
+
