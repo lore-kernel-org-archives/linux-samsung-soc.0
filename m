@@ -2,269 +2,194 @@ Return-Path: <SRS0=idU0=EL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD9CC4741F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 08:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3352EC4741F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 08:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 880C32080D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 08:31:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC77A2083B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 08:33:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="e6dj/FcZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729604AbgKEIb6 (ORCPT
+        id S1727018AbgKEIdf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 03:31:58 -0500
-Received: from wp126.webpack.hosteurope.de ([80.237.132.133]:44272 "EHLO
-        wp126.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726400AbgKEIb5 (ORCPT
+        Thu, 5 Nov 2020 03:33:35 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58829 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbgKEIde (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 03:31:57 -0500
-Received: from [2003:a:659:3f00:1e6f:65ff:fe31:d1d5] (helo=hermes.fivetechno.de); authenticated
-        by wp126.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1kaagS-0003sI-O9; Thu, 05 Nov 2020 09:31:52 +0100
-X-Virus-Scanned: by amavisd-new 2.11.1 using newest ClamAV at
-        linuxbbg.five-lan.de
-Received: from [192.168.34.101] (p5098d998.dip0.t-ipconnect.de [80.152.217.152])
-        (authenticated bits=0)
-        by hermes.fivetechno.de (8.15.2/8.14.5/SuSE Linux 0.8) with ESMTPSA id 0A58Vp93016259
-        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-        Thu, 5 Nov 2020 09:31:51 +0100
-Subject: Re: [PATCH] ARM: dts: exynos: Assign a fixed index to mmc devices on
- exynos4412 based ODROID boards
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20201104102634eucas1p2ec7b705dd5092afa25d9877d1014f46a@eucas1p2.samsung.com>
- <20201104102558.11070-1-m.reichl@fivetechno.de>
- <efe8a911-6072-59fb-8a8e-d5cdb4352cab@samsung.com>
- <5800260a-5332-f627-eb36-32df4fbf05e3@fivetechno.de>
- <c1040872-0ae1-3988-29d0-60c8a711cdb1@samsung.com>
- <71e4ecca-b980-e224-0fbe-b30330e490fb@samsung.com>
-From:   Markus Reichl <m.reichl@fivetechno.de>
-Organization: five technologies GmbH
-Message-ID: <2ddf7343-799b-418b-bb00-a926f1030db7@fivetechno.de>
-Date:   Thu, 5 Nov 2020 09:31:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        Thu, 5 Nov 2020 03:33:34 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201105083322euoutp01e32256c1cacbacbb33de7b3a9ea2fa9d~Ej4z5-kQe1121111211euoutp01k
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2020 08:33:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201105083322euoutp01e32256c1cacbacbb33de7b3a9ea2fa9d~Ej4z5-kQe1121111211euoutp01k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1604565202;
+        bh=7Yz8J6GZTwbfNKCQ4mFOSvlotdtwPM6/q1PO3xxI4iw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=e6dj/FcZNTo52348Olyufro+2qbMm3FNHDOWVogItiHsWUIE9o2gzto0gzWFfqfJd
+         LPsiMuo4JCY32pbB6IeufTBxnj+286JHw9MTMawW7r8/r1YTCkrCH6p91WBYDq/OMX
+         qz7ZRaxu1ftxvZh5Xwcxw9hpd23wlQR91wj8d4eo=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201105083317eucas1p144d27fd0ea27ff048b0f65b712b53a12~Ej4vEIQQa0043600436eucas1p1E;
+        Thu,  5 Nov 2020 08:33:17 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 3C.CB.05997.DC8B3AF5; Thu,  5
+        Nov 2020 08:33:17 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20201105083317eucas1p22ce3b1760115a67f790cc61fd56afdb1~Ej4uvJe4j0538005380eucas1p2F;
+        Thu,  5 Nov 2020 08:33:17 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20201105083317eusmtrp1301749a1feb3fdea4905284f7e361490~Ej4uuKHsq0914309143eusmtrp1C;
+        Thu,  5 Nov 2020 08:33:17 +0000 (GMT)
+X-AuditID: cbfec7f4-65dff7000000176d-03-5fa3b8cd67e8
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E0.23.06017.DC8B3AF5; Thu,  5
+        Nov 2020 08:33:17 +0000 (GMT)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20201105083316eusmtip27c1d22eb07c5b02a50a517b3ef230789~Ej4uGymFp3232832328eusmtip2b;
+        Thu,  5 Nov 2020 08:33:16 +0000 (GMT)
+Subject: Re: [PATCH v3 2/6] dt-bindings: pci: add the samsung,exynos-pcie
+ binding
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <d89f5f0a-c45e-0bda-4db7-7b0cf9cd49fe@samsung.com>
+Date:   Thu, 5 Nov 2020 09:33:18 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <71e4ecca-b980-e224-0fbe-b30330e490fb@samsung.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="SUOzVV9nJY38FvPCPZJ5I9yRe11nBH3HE"
-X-bounce-key: webpack.hosteurope.de;m.reichl@fivetechno.de;1604565116;6a36cebd;
-X-HE-SMSGID: 1kaagS-0003sI-O9
+In-Reply-To: <20201104213539.GA4144654@bogus>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUyMcRz3u+f1jodfV/SVl3RrXqI3mj0bWhFu/vJuM+TSo6Iuu+sif7Wa
+        xrmlmLquVJPtEqX1er0s06yLdEVMkhrLVBOmzJxcunuK/vt8P5/vy+fz248l5B2UFxunThI0
+        alW8gpaRdW2/uvw7LSWRQZNf1vB30mL5osc2iu+1Z1B86UQew3d/NNB8V1clw/c0FtB8Z6GV
+        5o1dLRL+8+9hhp9qtjB8Q387EbZAeb/wPlI2mN4xyuIqnbKq7AqtzKwpQ0prb71EOV61ci9z
+        VLY1WoiPSxY0gaEnZbGZDjs6d2vJhabyVjIVtcn1SMoCDoGpthFGj2SsHJciKMhtYZyCHE8g
+        eD4VIArjCO60VEpmJ8zFzZQomBHUmK/RYvEVgf5LNu3scscHYKR8wLXKA/vA74wc1wSBswm4
+        O2CgnAKNg0E/pp8eYFkOh0KOhXXSJPaFBvOAa89iHAV/xicJJ+awGzzJGyKdWIr9wTJ6yYUJ
+        7A3ptfmEiD2hb6hoxukHBoae7hZxBGTdvEeJ2B1GrTWMiJdDxw0D6fQGOB3Be1s5IxYGBD1p
+        RiR2bYF+m91llMDr4EFjoEiHg7H0ocRJA14IvWNuooeFcL0ulxBpDi5nzDz1ajBZK/6dfdT9
+        gshCCtOcZKY5aUxz0pj+3y1GZBnyFHTahBhBu1EtnA/QqhK0OnVMwKnEhCo0/cU6HNYJC2qc
+        jGpFmEWKBVwYWxIpp1TJ2pSEVgQsofDgtnd2nJBz0aqUi4ImMVKjixe0rWgZSyo8uU23R47L
+        cYwqSTgrCOcEzawqYaVeqUi29luON3eLzH198rvHPqnviMlAcZtTdsf57BwM33De8WqsXZBk
+        BdfWN/muP5jacPjMIb8AqzFihS7wk7/SsaPvx9KSdNqQZHtbkXngWfi2vvmWq7tOp/3UbWl/
+        WW0s378o5Fj1kpjm2GEPu4+X40jpaP7gh8c1qeT4mz1BftSeeasUpDZWFexHaLSqvxUuWrhe
+        AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPIsWRmVeSWpSXmKPExsVy+t/xe7pndyyON+iaImyxpCnDYv6Rc6wW
+        N361sVqs+DKT3eLC0x42i/PnN7BbXN41h83i7LzjbBYzzu9jsnjz+wW7xf89O9gtdt45wezA
+        47Fm3hpGj52z7rJ7LNhU6rFpVSebR9+WVYwex29sZ/L4vEkugD1Kz6Yov7QkVSEjv7jEVina
+        0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL6Pv3y/GgrliFbvXHmJpYDwm1MXI
+        ySEhYCKxfMEe1i5GLg4hgaWMErO6X7FCJGQkTk5rgLKFJf5c62KDKHrLKNHTdRcsISwQLPFy
+        7T12EFtEQFHid9s0sEnMAhOZJS7vvcoM0fGCUWLNx2dsIFVsAoYSXW9BRnFw8ArYSUzbwQES
+        ZhFQkdi5/B5YiahAksTLC1OZQGxeAUGJkzOfsIDYnAK6EjtetYLZzAJmEvM2P2SGsOUlmrfO
+        hrLFJW49mc80gVFoFpL2WUhaZiFpmYWkZQEjyypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzA
+        yN127OeWHYxd74IPMQpwMCrx8DpwLI4XYk0sK67MPcQowcGsJMLrdPZ0nBBvSmJlVWpRfnxR
+        aU5q8SFGU6DnJjJLiSbnA5NKXkm8oamhuYWlobmxubGZhZI4b4fAwRghgfTEktTs1NSC1CKY
+        PiYOTqkGRoPgeEGDgoanHPyebcF7r3HPFMyZMrH92LJ/vvo21pyL3FdN4zeymimWfiaxNozl
+        vinvD/Mvm7q8fZ5pc376e191mQRnXqq79t7Fb67Ncn7DNv++aN6sYIXjl5MPtB1X0fscYfWz
+        Ra8n033v67OdkvyNznHGn18rdpo2ZSefC35+O0nsvVW1EktxRqKhFnNRcSIAUwLToPICAAA=
+X-CMS-MailID: 20201105083317eucas1p22ce3b1760115a67f790cc61fd56afdb1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20201029134038eucas1p28d9bd33bc9e36b960b021a40ef299b47
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201029134038eucas1p28d9bd33bc9e36b960b021a40ef299b47
+References: <20201029134017.27400-1-m.szyprowski@samsung.com>
+        <CGME20201029134038eucas1p28d9bd33bc9e36b960b021a40ef299b47@eucas1p2.samsung.com>
+        <20201029134017.27400-3-m.szyprowski@samsung.com>
+        <20201104213539.GA4144654@bogus>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---SUOzVV9nJY38FvPCPZJ5I9yRe11nBH3HE
-Content-Type: multipart/mixed; boundary="zHl1cYUM9exYlpHUjGV70Khy7z5FjhCli";
- protected-headers="v1"
-From: Markus Reichl <m.reichl@fivetechno.de>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <2ddf7343-799b-418b-bb00-a926f1030db7@fivetechno.de>
-Subject: Re: [PATCH] ARM: dts: exynos: Assign a fixed index to mmc devices on
- exynos4412 based ODROID boards
-References: <CGME20201104102634eucas1p2ec7b705dd5092afa25d9877d1014f46a@eucas1p2.samsung.com>
- <20201104102558.11070-1-m.reichl@fivetechno.de>
- <efe8a911-6072-59fb-8a8e-d5cdb4352cab@samsung.com>
- <5800260a-5332-f627-eb36-32df4fbf05e3@fivetechno.de>
- <c1040872-0ae1-3988-29d0-60c8a711cdb1@samsung.com>
- <71e4ecca-b980-e224-0fbe-b30330e490fb@samsung.com>
-In-Reply-To: <71e4ecca-b980-e224-0fbe-b30330e490fb@samsung.com>
+Hi Rob,
 
---zHl1cYUM9exYlpHUjGV70Khy7z5FjhCli
-Content-Type: multipart/mixed;
- boundary="------------23F30937D93758DE7E7441DB"
-Content-Language: de-DE
+On 04.11.2020 22:35, Rob Herring wrote:
+> On Thu, Oct 29, 2020 at 02:40:13PM +0100, Marek Szyprowski wrote:
+>> Add dt-bindings for the Samsung Exynos PCIe controller (Exynos5433
+>> variant). Based on the text dt-binding posted by Jaehoon Chung.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> ---
+>>   .../bindings/pci/samsung,exynos-pcie.yaml     | 119 ++++++++++++++++++
+>>   1 file changed, 119 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
 
-This is a multi-part message in MIME format.
---------------23F30937D93758DE7E7441DB
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+>> ...
 
-Hi Marek,
+>> +  num-viewport:
+>> +    const: 3
+> I'm confused why you need this. This is only used with the iATU except
+> for keystone. Platforms like Exynos with their own child bus config
+> space accessors don't have an iATU.
 
-on rk3399 the proposed ordering [1] is according to base address in DT.
+Frankly I have no idea, I don't know much about the PCI internals. After 
+rebasing onto your latest DW PCI changes I've noticed a following 
+warning message:
 
-[1]
-https://patchwork.kernel.org/patch/11881427
+exynos-pcie 15700000.pcie: Resources exceed number of ATU entries (2)
 
-Am 04.11.20 um 14:44 schrieb Marek Szyprowski:
-> On 04.11.2020 14:13, Marek Szyprowski wrote:
->> On 04.11.2020 14:06, Markus Reichl wrote:
->>> Am 04.11.20 um 13:25 schrieb Marek Szyprowski:
->>>> On 04.11.2020 11:25, Markus Reichl wrote:
->>>>> Recently introduced async probe on mmc devices can shuffle block ID=
-s.
->>>>> Pin them to fixed values to ease booting in evironments where UUIDs=
+Here is a complete log:
 
->>>>> ar not practical.
->>>>> Use newly introduced aliases for mmcblk devices from [1].
->>>>>
->>>>> [1]
->>>>> https://patchwork.kernel.org/patch/11747669/
->>>>>
->>>>> Signed-off-by: Markus Reichl <m.reichl@fivetechno.de>
->>>>> ---
->>>>>  =C2=A0 arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 5 +++++
->>>>>  =C2=A0 1 file changed, 5 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>>>> b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>>>> index a5c1ce1e396c..aa10d5bc7e1c 100644
->>>>> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>>>> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>>>> @@ -13,6 +13,11 @@
->>>>>  =C2=A0 #include "exynos-mfc-reserved-memory.dtsi"
->>>>>  =C2=A0 =C2=A0 / {
->>>>> +=C2=A0=C2=A0=C2=A0 aliases {
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mmc0 =3D &sdhci_2;
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mmc1 =3D &mshc_0;
->>>> Like in the OdroidXU3-family patch, I would use 0 for the eMMC (mshc=
-_0)
->>>> and 2 for the SD-card (sdhci_2).
->>> How to deal then with sdhci_0 (from exynos4.dtsi) vc. mshc_0 (from
->>> exynos4412.dts)?
->> sdhci_0 and mshc_0 both operate on the same physical MMC0 bus, so this=
+# dmesg | grep pci
+ehci-pci: EHCI PCI platform driver
+ohci-pci: OHCI PCI platform driver
+exynos-pcie 15700000.pcie: host bridge /soc@0/pcie@15700000 ranges:
+exynos-pcie 15700000.pcie:       IO 0x000c001000..0x000c010fff -> 
+0x0000000000
+exynos-pcie 15700000.pcie:      MEM 0x000c011000..0x000ffffffe -> 
+0x000c011000
+exynos-pcie 15700000.pcie: Resources exceed number of ATU entries (2)
+exynos-pcie 15700000.pcie: Link up
+exynos-pcie 15700000.pcie: PCI host bridge to bus 0000:00
+pci_bus 0000:00: root bus resource [bus 00-ff]
+pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+pci_bus 0000:00: root bus resource [mem 0x0c011000-0x0ffffffe]
+pci 0000:00:00.0: [144d:a5e3] type 01 class 0x060400
+pci 0000:00:00.0: PME# supported from D0 D3hot D3cold
+pci 0000:01:00.0: [14e4:43e9] type 00 class 0x028000
+pci 0000:01:00.0: reg 0x10: [mem 0x00000000-0x00007fff 64bit]
+pci 0000:01:00.0: reg 0x18: [mem 0x00000000-0x003fffff 64bit]
+pci 0000:01:00.0: supports D1 D2
+pci 0000:01:00.0: PME# supported from D0 D1 D2 D3hot D3cold
+pci 0000:00:00.0: BAR 14: assigned [mem 0x0c200000-0x0c7fffff]
+pci 0000:01:00.0: BAR 2: assigned [mem 0x0c400000-0x0c7fffff 64bit]
+pci 0000:01:00.0: BAR 0: assigned [mem 0x0c200000-0x0c207fff 64bit]
+pci 0000:00:00.0: PCI bridge to [bus 01-ff]
+pci 0000:00:00.0:   bridge window [mem 0x0c200000-0x0c7fffff]
+pci 0000:00:00.0: MSI quirk detected; MSI disabled
+pcieport 0000:00:00.0: PME: Signaling with IRQ 97
+brcmfmac: brcmf_fw_alloc_request: using brcm/brcmfmac4358-pcie for chip 
+BCM4358/1
 
->> is not an issue. They cannot be used simultaneously. The latter is jus=
-t
->> faster, the first one has been left there mainly for the software
->> compatibility.
->=20
-> I've thought a bit more on this and I would simply prefer to add generi=
-c
-> MMC aliases to the top-level Exynos dtsi files (3250, 4210, 4412, 5250,=
+When I've increased the numer of viewports it has gone.
 
-> 5410, 5420) to keep Linux logical MMC bus numbers in sync with the HW
-> bus numbers on all boards.
->=20
-> Best regards
->=20
+If this is not the proper solution, I will removed it.
 
-Gru=C3=9F,
---=20
-Markus Reichl
+Best regards
 
---------------23F30937D93758DE7E7441DB
-Content-Type: application/pgp-keys;
- name="OpenPGP_0x3A25DE0E6B1AFDB2.asc"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename="OpenPGP_0x3A25DE0E6B1AFDB2.asc"
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xsDNBFs02GcBDADRBOYE75/gs54okjHfQ1LK8FfNH5yMq1/3MxhqP7gsCol5ZGbdNhJ7lnxXj=
-IEI
-lYfd6EgJMJV6E69uHe4JF9RO0BDdIy79ruoxnYaurxB40qPtb+YyTy3YjeNF3NBRE+4EffvY5=
-AQv
-t3aIUP83u7xbNzMfV4JuxaopB+yiQkGo0eIAYqdy+L+5sHkxj/MptMAfDKvM8rvT4LaeqiGG4=
-b8x
-sQRQNqbfIq1VbNEx/sPXFv6XDYMehYcbppMW6Zpowd46aZ5/CqP6neQYiCu2rT1pf/s3hIJ6h=
-dau
-k3V5U8GH/vupCNKA2M2inrnsRDVsYfrGHC59JAB545/Vt8VNJT5BAPKPka4lgIofVmErILAhL=
-txu
-3iSH6gnHWTroccM/j0kHOmrMrAmCcLrenLMmB6a/m7Xve5J7F96zLAWW6niQyN757MpgVQWsD=
-kY2
-c5tQeTIHRlsZ5AXxOFzA44IuDNIS7pa603AJWC+ZVqujr80orChE99LDPe1zZUd2Une43jEAE=
-QEA
-Ac0iTWFya3VzIFJlaWNobCA8cmVpY2hsQHQtb25saW5lLmRlPsLA8AQTAQoAGgQLCQgHAhUKA=
-hYB
-AhkBBYJbNNhnAp4BApsDAAoJEDol3g5rGv2ygaMMAMuGjrnzf6BOeXQvadxcZTVas9HJv7Y0T=
-RgS
-hl4ItT6u63+mvOSrns/w6iNpwZxzhlP9OIrbv2gorWDvW8VUXaCpA81EEz7LTrq+PYFEfIdtG=
-gKX
-COqn0Om8AHx5EmEuPF+dvUjESVoG85hLQ6r6PJUh8xhYGMUYMer/ka2jAu2hT1sLpmPijXnw9=
-TvC
-2K9W3paouf4u5ZtG32fegvUeoQ1Rt30k0bYRNqX8xboD1mMKgc4IWLsH6I0MROwTF7JvarkC9=
-rU/
-M6OL6dwnNuauLvGVs/aXLrn2UYxas9erPOwr+M45f8OR7O8xxvKoP5WSU6qWB/EExfm/ZBUkD=
-Kq8
-nDgItEpm+UUxpS9EpyvCTIQ3qkqHGn1cf2+XRUjaCGsRG6fyY7XM4v5ariuMrg8RV7ec2jxIs=
-354
-6pXx4GFP6rBcZZoWf6y2A6h47rWGHAhbZ6cnJp/PMDIQrnVkzQHYBkTuhTp1bzUGhCfKLhz2M=
-/UA
-Io+4VNUicJ56PgDT5NYvvc0mTWFya3VzIFJlaWNobCA8bS5yZWljaGxAZml2ZXRlY2huby5kZ=
-T7C
-wPAEEwEKABoECwkIBwIVCgIWAQIZAAWCWzTYZwKeAQKbAwAKCRA6Jd4Oaxr9snO7DAC/0qxsF=
-cwX
-7ZfEz0oVkOTBPFOElMfx0/YSyznTCbqjgrKtQgTNXUtlKUNFI3xhMHRVGGybOUUNw37RZ5K3t=
-daO
-9RE7TiKjzetMeaCVBULoUU2Hho5/EavESnfCmfmtqvwWRJ7haE7ccxvMZFPfcDq6XJyz5ZBKG=
-yCM
-xOiYETmWRFgHIenIfyptGxw40tvuLNbUkw5DaiuifPem55EI/K5drO7xEIt+E9HnhiOX6++fY=
-YBl
-OvHxIeXNalNbZU09HEYozZgqnaFa6a4Gy7oC1sbzHUtRktkR9X/RvBWWLFp177ZM2u431WqC0=
-Yt4
-CYKDkGhNMu/vGwDFssmGtz33bn+PNkCQeGjo0yHLsFM2zLmwsGFp183AMn8m1H6Znc0DSaTTG=
-zEv
-pU4GWp7iPQcdQ8mwTi43cyfREC+CIRAdX8xwON3gXGiOS09Eg3CCUYdCv2+hySEs+HqHCkzjq=
-c+G
-lasyeX50hGRcxLjcuYBcjBG8F/hcIjDy2FRe/bKA4ErfOp/OwM0EWzTYZwEMAJm5mH5FezwN8=
-67L
-3qq2lCK8+U3jXSNxjzv5AVjxV3vxAmgqFyFX2nE1fJoh78alPdla/+2cO5ZWp3flIB2uzBpSX=
-zR6
-KlyFS/GVgI/phn+IzKNNkvl7VL3S+y7QC0MF5U+xg9HvRH8pPwFfby/GorHk/0pluvrAIbPUO=
-1z7
-2VhPzBNTP1kZQ7It9oNOJpLzsxv2xjfQ3vi6EoJ/9ttLnU4C6atmiRGBoL4GUVQynjhknj/XA=
-CmE
-D47FtKJBX1cns2bmzRy8Hco1RcRgdlyB/1yFaNdxNkhb1h63Y5gnGXpN+5OLn7XWBvdIgV0tw=
-7ad
-LvO8ojiKC9j1zPKi1NvhYV6YY3HuhH995ykKXpVi18Za11K9ZTpjUwB31SLCphrEQakQZqYSz=
-CTn
-8g+np2EdAf3/rC1Q7ShazM4ZI6r2p8JXEJG6Teg7w+NPUEWlMMUIlGgnKZVKh5ybynYzu8wiO=
-Luk
-+oY73Iga4BAQfrjdebhoPizg0WeFHtCmlqIh+p9SMQARAQABwsDfBBgBCgAJBYJbNNhnApsMA=
-AoJ
-EDol3g5rGv2ylhYMAMN4XNQRguuQYYXGMopKkTSOo5x0FQtvWsdUU4owtjyWeQLfrgEmAMvew=
-Nlo
-wi91HS1PwesoXBLd1OoMEIEG362zzm43mYvF0kMz9qmSPLq45yD1Bu1mAyvIKxaqY7wFjwYaU=
-geQ
-njGiAovaaWZ6pBN/3fzTFxwlP6mwEaQEyRjg5OuBpyRJ5Ulg21n04BFHfpZ1EFSgGX8uWeaGG=
-m6R
-qRubQzOPS8bguGaU5Col/nk9WMbCh/XwkhZxE0eeGVQkuzUAzk7aRwwNkM9ont7DQh+2Mh+fN=
-Ivc
-58Hj8oQhUEHl/o6Nq9hkNL/pDkKy/cMJblusTVgWpIS2p0Bax8qZ+2s6TgmiK6Vn8TpvQjxJO=
-Mxo
-0JhO7FtR3yHWAt/TnhBJ6D3ZzRsZ+7H+hbr/n2oQLPJbN9yQXbRADy4kfA5uNx2cEwVz8GrBR=
-5xp
-BddDe2l396/FmKXLW2WJXE+RFfZvYuI31qBsx0uVeA15r+jgZnS2JHg/17+ErCtiUzuJ5EGMP=
-A=3D=3D
-=3DDTVP
------END PGP PUBLIC KEY BLOCK-----
-
---------------23F30937D93758DE7E7441DB--
-
---zHl1cYUM9exYlpHUjGV70Khy7z5FjhCli--
-
---SUOzVV9nJY38FvPCPZJ5I9yRe11nBH3HE
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsD5BAABCAAjFiEEVKeIeBh0ZWJOldzLOiXeDmsa/bIFAl+juHcFAwAAAAAACgkQOiXeDmsa/bKp
-4gwAvnEmlxU5+Q57h825prxCTjmipq0/4HA9AyLh8wOHMZBI6qoHhKWp4+cZkcADc0KfayFMj5x3
-HXVgLD+mw2Qn0kjvjSmEU56uUYqs3J9gB2qdcgRQ+LJrbDYzM1DLfjR0FDdUkD4jQ0nVD3jpFPe7
-sbI9dz0/Ct8Nai8bcr9yHzOLXAYecZ6hXuwJd2p1eG3Lj3lYHvraEeNFJUbMd1DpxHekuf7ZF5qx
-/mLfMwVT1noXJOV8kFGRRA3UnUG/QP6p5UdOyW29pg7/2Ezf3BSW1DOMdSXK0mTnDj9/XrQeyP8E
-35RQw2+yqE/7F9AC1BD148ef0Rp1/3zxh4/VNq6SzPAEq7kH/p3+HzhN74ey9mUI8qT6VtvmJ9zp
-xSaIZIgXNufAfFIpHZzw+5vAG2MNEhActbaZO+xxr2+54b8FZ9YEKoh86dDvxqrRQx/wHXRmnqF5
-HXjbj9yiZgZ8Xtn9IodVS0PoBCrDdcohZaAXNk0fGIlX8g2JvjYGLdJm8sfv
-=rerr
------END PGP SIGNATURE-----
-
---SUOzVV9nJY38FvPCPZJ5I9yRe11nBH3HE--
