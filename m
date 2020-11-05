@@ -2,212 +2,119 @@ Return-Path: <SRS0=idU0=EL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 449B2C4741F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 13:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF738C56201
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 13:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE4A42151B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 13:50:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604584248;
-	bh=QhSpAqc+JI6iEP/gvXgklZw5qTJq5ZUzZ9hmMY56PxQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=z4jV4gTw7JrduuBYm1tw5YPhJ8ZR32TT8whstv57suN6U2+LPXWt1vX91Hew1pVBR
-	 /Lbfw+Vfs6q9JcQ98SLzHkByLJCUgkOICLjO+U3yH5nCrJYeueTWCBjKJVZ9JEwgF7
-	 Zkvx5ukvC5UexZ58TId00M9TyTy1gXKelUtwWous=
+	by mail.kernel.org (Postfix) with ESMTP id 9D1122078E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 13:58:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k7qYU/S7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730759AbgKENus (ORCPT
+        id S1730859AbgKEN5b (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 08:50:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51682 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725468AbgKENus (ORCPT
+        Thu, 5 Nov 2020 08:57:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39422 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730676AbgKEN5a (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 08:50:48 -0500
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E699E206B6;
-        Thu,  5 Nov 2020 13:50:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604584247;
-        bh=QhSpAqc+JI6iEP/gvXgklZw5qTJq5ZUzZ9hmMY56PxQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=aeDVCuYDBm5ybOxqE9hZvmcySKgIJYzAQRWIv2CTS9HvUSmxqRnHeNaOU5lbcUmCX
-         pavpZdRzRbP3f3/LXJ4fwrlEwVg51nc99YlC1dRmK7fhQMZfP/1dh1QPWVN6Q7J+t1
-         IlFyZcAkjxgO7Kz0iRebQBMLA/K6RGSa8Xx1tUzg=
-Received: by mail-oi1-f179.google.com with SMTP id m17so1725548oie.4;
-        Thu, 05 Nov 2020 05:50:46 -0800 (PST)
-X-Gm-Message-State: AOAM5328SoCf3+HmnlgrWN8LRhtZUMDaCEcuea3qgk19BR2G1C95O3eR
-        LXA8HIKJM09QrjOpzYIbOJqI3pjpcTqb1E0H0Q==
-X-Google-Smtp-Source: ABdhPJwlLmVul9osQoOmAYcll5ZdLwQnv0cOCpb55EEmIiGva2JHFnzJmvuYRje/DB8hxEKpkeNR1O4Z3zfeZXa8Hcg=
-X-Received: by 2002:a54:4588:: with SMTP id z8mr1649677oib.147.1604584246048;
- Thu, 05 Nov 2020 05:50:46 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20201105114814eucas1p18d9f11c44eec68738d929ad1a0263482@eucas1p1.samsung.com>
- <20201105114804.18326-1-m.szyprowski@samsung.com>
-In-Reply-To: <20201105114804.18326-1-m.szyprowski@samsung.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 5 Nov 2020 07:50:34 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKTrUTHr4=ZDNfaf-mZE3wgfzkV=CRgb7yGzKg1oH7zvg@mail.gmail.com>
-Message-ID: <CAL_JsqKTrUTHr4=ZDNfaf-mZE3wgfzkV=CRgb7yGzKg1oH7zvg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Use fixed index for the MMC devices
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Thu, 5 Nov 2020 08:57:30 -0500
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14A9DC0613CF;
+        Thu,  5 Nov 2020 05:57:30 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id v144so2385762lfa.13;
+        Thu, 05 Nov 2020 05:57:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+oB95VM8Zw9gIAt2FC+TShAF+0gIWo5rt3Q41RXJdtg=;
+        b=k7qYU/S7xIQk2jr0RN0b4YX8DQl0u0bLGIF7BIO03i9ysBwBpKDn2MliLppMdD912h
+         r6BgWfzuRYtSE1eLkUMnbUB/BLsLo+YvOQfwlkgKibkMcVVi1isY/5BggTofJ/y1r0Hm
+         YXTNppZyodPQYF16UO3KTj5p7F89cfzPcpONsMTDz0kZoeDG8Fx0XGembDMrW3FuOzXM
+         jio/WB6mh7LmvjaKoQD27SeVDVB1tKJaInHuJOCXUkAdoOyzgiBYOsX/YjAtCKwJlQaR
+         K889lN9RvZfHHalw/0sSwWgdKgiFdf9q8dpTy6GIkWbl3kBPpBC5N6gEirv5uxbLGA/i
+         qy4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+oB95VM8Zw9gIAt2FC+TShAF+0gIWo5rt3Q41RXJdtg=;
+        b=LAkh9c++vmxJSnAXiB1xqhPTXTn4TfINks8xtjJrUNHlePux9cmmeS4SC1vlOwc8l/
+         ehqkGpMEQX+IQm1iXV93wYKT4g4sTMvY60FrJe8GisSeHEAngbYqqpvV3MtBmp8fZ4J7
+         rzjoeOT5Dmr9wWWtre/PV2Ua/rOK+hPSvcemCCVAn4pda4AVGHA2BFLQGSEiRjjort9V
+         VBq1zEshzON1llta0pWrh3y7lgWwncfabTlglAHjaqJBjpUgl9on4O27cfQwdL4eTTr2
+         5pcSalCBNF5vNYUrjiMVoSpFN8+5Yjqe4k3eUl6R+da2N/yt98idovbJguXX7SHXvXuT
+         SkGQ==
+X-Gm-Message-State: AOAM532INXx3qDpNEcKJGdVzbINt3P4Kv0OXpx6pJnrFHLljH6WpoIjg
+        D++7dtqY1W3HwUcF/z1IO/DUgke/eBg=
+X-Google-Smtp-Source: ABdhPJy8aDH+pQWACig1gxUeRAo9xbkzKXDLndcNZHc3MgeMS7MQorfWYcYeqkisehyHHQbAhHZsRw==
+X-Received: by 2002:ac2:522a:: with SMTP id i10mr1023516lfl.128.1604584648429;
+        Thu, 05 Nov 2020 05:57:28 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-83.dynamic.spd-mgts.ru. [109.252.192.83])
+        by smtp.googlemail.com with ESMTPSA id h10sm158920ljj.116.2020.11.05.05.57.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Nov 2020 05:57:27 -0800 (PST)
+Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
+ Tegra20/30 SoCs
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Markus Reichl <m.reichl@fivetechno.de>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20201104234427.26477-1-digetx@gmail.com>
+ <20201105014502.GB17266@qmqm.qmqm.pl>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <60e6ea6b-3a02-30a1-f0c9-d33ef7906ed6@gmail.com>
+Date:   Thu, 5 Nov 2020 16:57:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20201105014502.GB17266@qmqm.qmqm.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 5, 2020 at 5:48 AM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Recently introduced asynchronous probe on the MMC devices can shuffle
-> block IDs in the system. Pin them to values equal to the physical MMC bus
-> number to ease booting in environments where UUIDs are not practical.
+05.11.2020 04:45, Michał Mirosław пишет:
+> On Thu, Nov 05, 2020 at 02:43:57AM +0300, Dmitry Osipenko wrote:
+>> Introduce core voltage scaling for NVIDIA Tegra20/30 SoCs, which reduces
+>> power consumption and heating of the Tegra chips. Tegra SoC has multiple
+>> hardware units which belong to a core power domain of the SoC and share
+>> the core voltage. The voltage must be selected in accordance to a minimum
+>> requirement of every core hardware unit.
+> [...]
+> 
+> Just looked briefly through the series - it looks like there is a lot of
+> code duplication in *_init_opp_table() functions. Could this be made
+> more generic / data-driven?
 
-How's that going to help for existing DTs?
-
-> Use newly introduced aliases for mmcblk devices from commit fa2d0aa96941
-> ("mmc: core: Allow setting slot index via device tree alias").
->
-> Suggested-by: Markus Reichl <m.reichl@fivetechno.de>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos3250.dtsi | 3 +++
->  arch/arm/boot/dts/exynos4.dtsi    | 2 ++
->  arch/arm/boot/dts/exynos4210.dtsi | 1 +
->  arch/arm/boot/dts/exynos4412.dtsi | 1 +
->  arch/arm/boot/dts/exynos5250.dtsi | 4 ++++
->  arch/arm/boot/dts/exynos5260.dtsi | 3 +++
->  arch/arm/boot/dts/exynos5410.dtsi | 3 +++
->  arch/arm/boot/dts/exynos5420.dtsi | 3 +++
->  8 files changed, 20 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> index 75ed82600ec8..510080bb4102 100644
-> --- a/arch/arm/boot/dts/exynos3250.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> @@ -28,6 +28,9 @@
->         aliases {
->                 pinctrl0 = &pinctrl_0;
->                 pinctrl1 = &pinctrl_1;
-> +               mmc0 = &mshc_0;
-> +               mmc1 = &mshc_1;
-> +               mmc2 = &mshc_2;
->                 mshc0 = &mshc_0;
-
-Then what's this for? Do you need multiple aliases to the same device?
-And pinctrl aliases are odd too and should be removed.
-
->                 mshc1 = &mshc_1;
->                 mshc2 = &mshc_2;
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index a1e54449f33f..e266f890eea4 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -45,6 +45,8 @@
->                 fimc1 = &fimc_1;
->                 fimc2 = &fimc_2;
->                 fimc3 = &fimc_3;
-
-Another odd one...
-
-> +               mmc1 = &sdhci_1;
-> +               mmc2 = &sdhci_2;
->                 serial0 = &serial_0;
->                 serial1 = &serial_1;
->                 serial2 = &serial_2;
-> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-> index fddc661ded28..f1d0d5959b7f 100644
-> --- a/arch/arm/boot/dts/exynos4210.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> @@ -23,6 +23,7 @@
->         compatible = "samsung,exynos4210", "samsung,exynos4";
->
->         aliases {
-> +               mmc0 = &sdhci_0;
->                 pinctrl0 = &pinctrl_0;
->                 pinctrl1 = &pinctrl_1;
->                 pinctrl2 = &pinctrl_2;
-> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-> index fa8e8d6bc4d5..9fcf7383eb9d 100644
-> --- a/arch/arm/boot/dts/exynos4412.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412.dtsi
-> @@ -28,6 +28,7 @@
->                 pinctrl3 = &pinctrl_3;
->                 fimc-lite0 = &fimc_lite_0;
->                 fimc-lite1 = &fimc_lite_1;
-> +               mmc0 = &mshc_0;
->                 mshc0 = &mshc_0;
->         };
->
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 84677332a5a2..0a0436f92fac 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -30,6 +30,10 @@
->                 gsc1 = &gsc_1;
->                 gsc2 = &gsc_2;
->                 gsc3 = &gsc_3;
-> +               mmc0 = &mmc_0;
-> +               mmc1 = &mmc_1;
-> +               mmc2 = &mmc_2;
-> +               mmc3 = &mmc_3;
->                 mshc0 = &mmc_0;
->                 mshc1 = &mmc_1;
->                 mshc2 = &mmc_2;
-> diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
-> index 973448c4ad93..64bf1d8dc33b 100644
-> --- a/arch/arm/boot/dts/exynos5260.dtsi
-> +++ b/arch/arm/boot/dts/exynos5260.dtsi
-> @@ -21,6 +21,9 @@
->                 i2c1 = &hsi2c_1;
->                 i2c2 = &hsi2c_2;
->                 i2c3 = &hsi2c_3;
-> +               mmc0 = &mmc_0;
-> +               mmc1 = &mmc_1;
-> +               mmc2 = &mmc_2;
->                 pinctrl0 = &pinctrl_0;
->                 pinctrl1 = &pinctrl_1;
->                 pinctrl2 = &pinctrl_2;
-> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-> index 584ce62361b1..503859153769 100644
-> --- a/arch/arm/boot/dts/exynos5410.dtsi
-> +++ b/arch/arm/boot/dts/exynos5410.dtsi
-> @@ -24,6 +24,9 @@
->                 pinctrl1 = &pinctrl_1;
->                 pinctrl2 = &pinctrl_2;
->                 pinctrl3 = &pinctrl_3;
-> +               mmc0 = &mmc_0;
-> +               mmc1 = &mmc_1;
-> +               mmc2 = &mmc_2;
->         };
->
->         cpus {
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 23a8fd5c8a6e..3a3eadd890fb 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -19,6 +19,9 @@
->         compatible = "samsung,exynos5420", "samsung,exynos5";
->
->         aliases {
-> +               mmc0 = &mmc_0;
-> +               mmc1 = &mmc_1;
-> +               mmc2 = &mmc_2;
->                 mshc0 = &mmc_0;
->                 mshc1 = &mmc_1;
->                 mshc2 = &mmc_2;
-> --
-> 2.17.1
->
+Indeed, it should be possible to add a common helper. I had a quick
+thought about doing it too, but then decided to defer for the starter
+since there were some differences among the needs of the drivers. I'll
+take a closer look for the v2, thanks!
