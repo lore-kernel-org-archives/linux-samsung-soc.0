@@ -7,156 +7,143 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13352C00A89
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 10:08:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 572D5C4742C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 10:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 847382151B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 10:08:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A6582151B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 10:35:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rvffOctS"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BiAiD4e1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725998AbgKEKIM (ORCPT
+        id S1726715AbgKEKfE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 05:08:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60116 "EHLO
+        Thu, 5 Nov 2020 05:35:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbgKEKIL (ORCPT
+        with ESMTP id S1726874AbgKEKfD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 05:08:11 -0500
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60C0AC0613D2
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2020 02:08:11 -0800 (PST)
-Received: by mail-lj1-x242.google.com with SMTP id o13so938990ljj.11
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2020 02:08:11 -0800 (PST)
+        Thu, 5 Nov 2020 05:35:03 -0500
+Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A332DC0613D2
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2020 02:35:03 -0800 (PST)
+Received: by mail-vs1-xe44.google.com with SMTP id b129so496778vsb.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2020 02:35:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=eEue8Bau+pupF7CyTGHXC2yqWeY8Sj18qJXhmeK0+qY=;
-        b=rvffOctSKYH+6isvUsZ6vjuDGiRiPXrriws2tYpmxIOJoDbVaUBBLJZNLsZfPTViCm
-         OB7UJ7kJVc74V/wH1kAJWs50qUWe8BxYk+3Bh0Ntwrn4R80Kw+RHuzDoPIDkFuxVKOMP
-         awvWPavfta6vj9AUR/6i26T0t+QGvBOviGEDNRn+gsaMK+rwApX3VuBwIy6OffxGwIGI
-         Q9ElrJtiii5nM3Ug/hNAa7sMnYOfnIMkNbbQWWsd9e9E4LqYfoNACefZyIQWVQxYvven
-         erCA3D+b6EoRTgIG3bxLlMg5PeozREFm5ydwy7sAu7xfjUKeSkZzmy6N/j40DftaLQPo
-         OSmw==
+        bh=ZdAvLjoOXomWCs8t6TmIL4j/I5mepz3FWTuHztdBTlc=;
+        b=BiAiD4e1h7itpTTBhs3DR4K8CfgZymL8qj1e7tZjDyvL22TAbVaJrB6OdCOJ9dCgt8
+         uMo1WI+cg7RQpxF0bBlJEyznK83VkivtEouWpjXE0uDzswIn9ngEEIWZkBVtGoJKPI5a
+         3gYONlFV9O8ISMzu91uUEboniTdwBNNIgS1GVf+ZVCHpgeExfkJ3HUKHZ4pHVFwQwMtx
+         5vGFFB38gJyFP7FBlRczIoGJ/8EUs8e6gc59Rm7O/sKD+Kj4+eFQl2/7R5M52mOjdRQY
+         23FqbRx5TWg7iDot8DaIDKVfEKsFUNqqGSEPkpoltdKL/CwkFxGm9pZGSMzsaqx/PW9N
+         dskg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eEue8Bau+pupF7CyTGHXC2yqWeY8Sj18qJXhmeK0+qY=;
-        b=YHMN/Yt5HSJwtI597HF4pFTXvGjJxLh3jTsXfnqaJe7W4yZ2hS6qQwmSrrm48ub/A2
-         bmGPZrMEgDP8Tqf586k4TfoCrLpeqWvCX/PcK+niHuSmshmNXlSs5c6UhB9VM92/Q7yC
-         A1ViduipUwbYqP8bNeMsT2aGns2xnPhjRdZYjjyuKIm+LFqD1/OvdQhdwt6XLEoRdKSX
-         A12usNaB5OZEow06q5XLZJeVv/HeC2KtKDG1bWplO+uRdIjWtXZNKedZTwvlV54njcDU
-         MpaasRQ6nsilPZbJptz9vbgW/ADjGYjmlK/NBRLrxcnj8hoOnSE9/SB8pqQ+tnuSIECo
-         6ltA==
-X-Gm-Message-State: AOAM530eQ0yP3oeigSVmU96r0ZUc3nScKbXknzNWPuPZNuO/gJgBg/fx
-        yrkhbfVvCKfMme4A7d3ZzrLJCztlgWoW1gBYJrCpOg==
-X-Google-Smtp-Source: ABdhPJzTsAT/B7g6yG/tiOPWkhIyiq+coc///CuocOp+hPojlZHj2TddLjwWNxDtJai798d/HI10cYYk95MMhchsZzo=
-X-Received: by 2002:a05:651c:1205:: with SMTP id i5mr658065lja.283.1604570889728;
- Thu, 05 Nov 2020 02:08:09 -0800 (PST)
+        bh=ZdAvLjoOXomWCs8t6TmIL4j/I5mepz3FWTuHztdBTlc=;
+        b=lUX6uBUrGcrLybP/euX7vwuuyYy+dTQYgA8eoozrppwFmkXlHUqhKGPkneVeCfWnWq
+         VP3FaotLo8pnYXHD2EAVMk4MqDj3mIUbS8HhBjg+YTAHVjhA7ZYZ655ccgeLTupiShgf
+         Eq2DVl9ZL3MJBueYDxlArj3WunU56XmyiCgXA9WqRlnlT5k9BTrdfSBLyDyUEH00DA3y
+         h7Q3zg2gNJR55XiqiKsRSZTUymH26uBtrSaX83d0pk2Xd36tJ1giHsBbf3HheaFs7fV3
+         mQ/FClbcXB25n05nQ6rQn4/Puz6FUSyNUHyUsRrsRC1BL67LmfDcu1d2N1ydYkbyrJH9
+         TvSQ==
+X-Gm-Message-State: AOAM532skoc6oGR7xrCSL/2SEPWGKLx/742t3A1dgOXYzx/JQZJJAa/w
+        Nz3TeMlTiwOSk7M6GgZlI3H+lkR2L85BLmB3PtnCiA==
+X-Google-Smtp-Source: ABdhPJxVfapO8HtgRahAnJ4wz7s9HOgbHIAKW7gtu7MmcNt2t4MXd/COFLbP0begvsat+FQbNQGgY8Hv6gEHSKm9IGw=
+X-Received: by 2002:a67:f417:: with SMTP id p23mr725992vsn.42.1604572502741;
+ Thu, 05 Nov 2020 02:35:02 -0800 (PST)
 MIME-Version: 1.0
-References: <20201020122046.31167-1-tzimmermann@suse.de> <20201020122046.31167-10-tzimmermann@suse.de>
-In-Reply-To: <20201020122046.31167-10-tzimmermann@suse.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 5 Nov 2020 11:07:59 +0100
-Message-ID: <CACRpkdbvGWKo8y323actUJn9xXmxpgDw1EKLiPH4RqB_kFx=XQ@mail.gmail.com>
-Subject: Re: [PATCH v5 09/10] dma-buf-map: Add memcpy and pointer-increment interfaces
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        linux+etnaviv@armlinux.org.uk,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>, yuq825@gmail.com,
-        Ben Skeggs <bskeggs@redhat.com>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        steven.price@arm.com, alyssa.rosenzweig@collabora.com,
-        Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sean Paul <sean@poorly.run>, Eric Anholt <eric@anholt.net>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        ray.huang@amd.com, Sumit Semwal <sumit.semwal@linaro.org>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        luben.tuikov@amd.com, apaneers@amd.com, melissa.srw@gmail.com,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Qinglang Miao <miaoqinglang@huawei.com>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        amd-gfx@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        etnaviv@lists.freedesktop.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+References: <20201104234427.26477-1-digetx@gmail.com> <CAPDyKFr7qTU2RPhA_ZrbCayoTTNUEno1zdmvmv+8HBe-Owrfeg@mail.gmail.com>
+ <20201105100603.skrirm7uke4s2xyl@vireshk-i7>
+In-Reply-To: <20201105100603.skrirm7uke4s2xyl@vireshk-i7>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 5 Nov 2020 11:34:26 +0100
+Message-ID: <CAPDyKFoCJt5MBSKBJ8n1OAMdVsWHdwXTx0zFEcZw_F_gQ6Ug0w@mail.gmail.com>
+Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
+ Tegra20/30 SoCs
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        lima@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        spice-devel@lists.freedesktop.org,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        xen-devel@lists.xenproject.org,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-pwm@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linaro-mm-sig@lists.linaro.org
+        linux-tegra <linux-tegra@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Overall I like this, just an inline question:
+On Thu, 5 Nov 2020 at 11:06, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 05-11-20, 10:45, Ulf Hansson wrote:
+> > + Viresh
+>
+> Thanks Ulf. I found a bug in OPP core because you cc'd me here :)
 
-On Tue, Oct 20, 2020 at 2:20 PM Thomas Zimmermann <tzimmermann@suse.de> wrote:
+Happy to help. :-)
 
-> To do framebuffer updates, one needs memcpy from system memory and a
-> pointer-increment function. Add both interfaces with documentation.
+>
+> > On Thu, 5 Nov 2020 at 00:44, Dmitry Osipenko <digetx@gmail.com> wrote:
+> > I need some more time to review this, but just a quick check found a
+> > few potential issues...
+> >
+> > The "core-supply", that you specify as a regulator for each
+> > controller's device node, is not the way we describe power domains.
+>
+> Maybe I misunderstood your comment here, but there are two ways of
+> scaling the voltage of a device depending on if it is a regulator (and
+> can be modeled as one in the kernel) or a power domain.
 
-(...)
-> +/**
-> + * dma_buf_map_memcpy_to - Memcpy into dma-buf mapping
-> + * @dst:       The dma-buf mapping structure
-> + * @src:       The source buffer
-> + * @len:       The number of byte in src
-> + *
-> + * Copies data into a dma-buf mapping. The source buffer is in system
-> + * memory. Depending on the buffer's location, the helper picks the correct
-> + * method of accessing the memory.
-> + */
-> +static inline void dma_buf_map_memcpy_to(struct dma_buf_map *dst, const void *src, size_t len)
-> +{
-> +       if (dst->is_iomem)
-> +               memcpy_toio(dst->vaddr_iomem, src, len);
-> +       else
-> +               memcpy(dst->vaddr, src, len);
-> +}
+I am not objecting about scaling the voltage through a regulator,
+that's fine to me. However, encoding a power domain as a regulator
+(even if it may seem like a regulator) isn't. Well, unless Mark Brown
+has changed his mind about this.
 
-Are these going to be really big memcpy() operations?
+In this case, it seems like the regulator supply belongs in the
+description of the power domain provider.
 
-Some platforms have DMA offload engines that can perform memcpy(),
-drivers/dma, include/linux/dmaengine.h
-especially if the CPU doesn't really need to touch the contents
-and flush caches etc.
-An example exist in some MTD drivers that move large quantities of
-data off flash memory like this:
-drivers/mtd/nand/raw/cadence-nand-controller.c
+>
+> In case of Qcom earlier (when we added the performance-state stuff),
+> the eventual hardware was out of kernel's control and we didn't wanted
+> (allowed) to model it as a virtual regulator just to pass the votes to
+> the RPM. And so we did what we did.
+>
+> But if the hardware (where the voltage is required to be changed) is
+> indeed a regulator and is modeled as one, then what Dmitry has done
+> looks okay. i.e. add a supply in the device's node and microvolt
+> property in the DT entries.
 
-Notice that DMAengine and DMAbuf does not have much in common,
-the names can be deceiving.
+I guess I haven't paid enough attention how power domain regulators
+are being described then. I was under the impression that the CPUfreq
+case was a bit specific - and we had legacy bindings to stick with.
 
-The value of this varies with the system architecture. It is not just
-a question about performance but also about power and the CPU
-being able to do other stuff in parallel for large transfers. So *when*
-to use this facility to accelerate memcpy() is a delicate question.
+Can you point me to some other existing examples of where power domain
+regulators are specified as a regulator in each device's node?
 
-What I'm after here is if these can be really big, do we want
-(in the long run, not now) open up to the idea to slot in
-hardware-accelerated memcpy() here?
-
-Yours,
-Linus Walleij
+Kind regards
+Uffe
