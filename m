@@ -2,139 +2,167 @@ Return-Path: <SRS0=idU0=EL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66874C4741F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 19:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 935B4C4741F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 21:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2E5220728
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 19:30:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36D4B20782
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 21:12:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604604652;
-	bh=5QEet2sYOT/h+CaS1S7UoMcTtDG1XCqc8RhfIUiH+LA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=L9GWpIX8b1fyyNLNgW9TGlBIidbJTUpjQhH50r9BwQvfdVmicVaF/iHNXsBAkmJfQ
-	 KDZy4mQ6equtWPLzHKgmRquHFk12SmjnvBzjVH9uJl1B90JmwLFt2//mTmW6j9T66p
-	 eDDJ7xn+pvJDh56VxdBH6btsRhzbNpjJdFMMhsEA=
+	s=default; t=1604610725;
+	bh=VLyrmT1iH4Ei/KWYjhg08uJLNUrwetxL9NZY3GRcBNI=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=P5X631+QvC5FCwfAnVI5UvuX2AQlw8zFcfSWfi7wU/cdiZyu3B6jrS4dZvzGKJRYq
+	 2ZApKYgCtr5wnraYbWX6/S7oYPB+9Tl4QJwQcz1ROsfAonMTenrF10YGjdCpclYwfj
+	 woFhsS2KzKm5yUsoLPuXC0Q9ZpKIqEu5rS5AkfCY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbgKETas convert rfc822-to-8bit (ORCPT
+        id S1732210AbgKEVME (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 14:30:48 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41019 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729783AbgKETas (ORCPT
+        Thu, 5 Nov 2020 16:12:04 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37072 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbgKEVME (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 14:30:48 -0500
-Received: by mail-ed1-f65.google.com with SMTP id j20so2801712edt.8;
-        Thu, 05 Nov 2020 11:30:45 -0800 (PST)
+        Thu, 5 Nov 2020 16:12:04 -0500
+Received: by mail-ot1-f66.google.com with SMTP id l36so2784555ota.4;
+        Thu, 05 Nov 2020 13:12:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=jkvlXuPqC8y5EfIuBYLbV4uMlj4O4TTGdEEKTKXMswY=;
-        b=SH7lzVs0a0PM0B/MJ/RNx9eg02zq58opG3T9+Eo8CNdIcN2Ek47cQvl4vfObbmkucm
-         z5clin9itcPTgv2Krlzs5rE1jJaaI4KsZdY7kfvPJGwYVF/eKTH5cf/CkTzxGPBtD1PW
-         FzrgR6Zn/PcLP3e3yrK49vsx0Lmh3g9tCWbgSB47vaULBnvCubafY1A/dq7vDTu2IAep
-         TVkfEqQtImyJWCeXJaN+0MoHF1B8VgKsqx9bR4AFC5IKrCNF3EacG1XdsIDRn0jb0L2O
-         edspxtsuLiRlzg55kRQsjvQo/s+e56psaY8Kspkip6hN9aTq4oj5XIiqUUBCVADvGiju
-         OVag==
-X-Gm-Message-State: AOAM530LhnXg6AUHxgOBiN4rB4yuQRfEMS1SmkmZghtK/+GF/+MfP2xp
-        K/66osBtTQhv1W+oXkymAKU=
-X-Google-Smtp-Source: ABdhPJzzn1JoPqCV7F9XEL8duFvf2H+tVM4z+uH73ppCiFaanh09usM87fdjvMdTEYS0dkeJZGaurA==
-X-Received: by 2002:a05:6402:1585:: with SMTP id c5mr4131676edv.372.1604604644988;
-        Thu, 05 Nov 2020 11:30:44 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id s25sm1510710ejc.29.2020.11.05.11.30.43
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6kX9EfPGIe+vgEipGeuVSOOPuy47rKZgDC38PEky6/I=;
+        b=CrRfm9C5yK84aNS9TNuLdEnYRU0jVjTMmVteuSPDoRqnawZbMBmL2GwfLVFggx2p5f
+         3HV1iTZgxGbna50RyNsTwPQTPaTns0NK6EOQ4Gs12Y9RiduJvGNp72W1omqfnlmlWjdC
+         PBxAU9Mnjangp50Lb6y/XTaNYgQI+GN1na+Ep6sZnSoun0wsUG+sad5y31N9/6o7nrrQ
+         B2YrWxWbe68wbslxqHJibKXOAilgKlD7zHtSAl2egXJv4HfFg6ZcOIirkplgaYlPtda3
+         rV4RKHAf73aLI2pWBFCuETcqCmY3hEPe+k4n3hWqYr1QG+x7qncx5ATNuHLumdy488A8
+         gpZQ==
+X-Gm-Message-State: AOAM533JSSiLT+yYKOUVl1Kfv4Ie0Q5mqoDMNmZR+fo2v6qpMVAlYum2
+        P4ffGjTvK3tSNWticWi7fw==
+X-Google-Smtp-Source: ABdhPJxfRm6a7WlZFra36M/W0cF8B4tklW/+2/U/J4e/fwp/StQ3JtLqn3HUrYnVIqGDvSo8N+eI0w==
+X-Received: by 2002:a05:6830:22c9:: with SMTP id q9mr3230515otc.48.1604610722735;
+        Thu, 05 Nov 2020 13:12:02 -0800 (PST)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id z19sm622549ooi.32.2020.11.05.13.12.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2020 11:30:43 -0800 (PST)
-Date:   Thu, 5 Nov 2020 20:30:42 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 6/6] ARM: dts: exynos: Add Ethernet interface
- description for Odroid X/X2
-Message-ID: <20201105193042.GE236732@kozik-lap>
-References: <20201103184412.18874-1-l.stelmach@samsung.com>
- <CGME20201103184419eucas1p1e5f855727fae95d992f8e95c7dbda787@eucas1p1.samsung.com>
- <20201103184412.18874-7-l.stelmach@samsung.com>
+        Thu, 05 Nov 2020 13:12:01 -0800 (PST)
+From:   Rob Herring <robh@kernel.org>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Andy Gross <agross@kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Minghuan Lian <minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Roy Zang <roy.zang@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Yue Wang <yue.wang@Amlogic.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Vidya Sagar <vidyas@nvidia.com>
+Subject: [PATCH v2 00/16] PCI: dwc: Another round of clean-ups
+Date:   Thu,  5 Nov 2020 15:11:43 -0600
+Message-Id: <20201105211159.1814485-1-robh@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20201103184412.18874-7-l.stelmach@samsung.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 03, 2020 at 07:44:12PM +0100, Łukasz Stelmach wrote:
-> Add Ethernet interface description for Odroid X/X2.
-> 
-> Add an alias to enable bootloaders to find the Ethernet
-> interface and assign a MAC address.
-> 
-> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4412-odroidx.dts | 28 ++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-> index 3ea2a0101e80..2da220102883 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-> +++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-> @@ -15,6 +15,10 @@ / {
->  	model = "Hardkernel ODROID-X board based on Exynos4412";
->  	compatible = "hardkernel,odroid-x", "samsung,exynos4412", "samsung,exynos4";
->  
-> +	aliases {
-> +		ethernet = &ethernet;
-> +	};
-> +
->  	memory@40000000 {
->  		device_type = "memory";
->  		reg = <0x40000000 0x3FF00000>;
-> @@ -72,8 +76,32 @@ &buck8_reg {
->  };
->  
->  &ehci {
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
->  	phys = <&exynos_usbphy 2>;
->  	phy-names = "hsic0";
-> +
-> +	hub@2 {
-> +		compatible = "usb0424,3503";
-> +		reg = <2>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		hub@1 {
-> +			compatible = "usb0424,9514";
-> +			reg = <1>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			ethernet: usbether@1 {
-> +				compatible = "usb0424,ec00";
-> +				reg = <1>;
-> +				local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
-> +			};
-> +		};
-> +	};
-> +
-> +
+Here's another batch of DWC PCI host refactoring. This series primarily
+moves more of the MSI, link up, and resource handling to the core
+code. Beyond a couple of minor fixes, new in this version is runtime
+detection of iATU regions instead of using DT properties.
 
-Thanks, applied with space fixup.
+No doubt I've probably broken something. Please test. I've run this thru
+kernelci and checked boards with DWC PCI which currently is just
+Layerscape boards (hint: add boards and/or enable PCI). A git branch is
+here[1].
 
-Best regards,
-Krzysztof
+This is dependent on "PCI: dwc: Restore ATU memory resource setup to use
+last entry" which will be in v5.10-rc3.
 
+Rob
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git pci-more-dwc-cleanup
+
+Rob Herring (16):
+  PCI: dwc: Support multiple ATU memory regions
+  PCI: dwc/intel-gw: Move ATU offset out of driver match data
+  PCI: dwc: Move "dbi", "dbi2", and "addr_space" resource setup into
+    common code
+  PCI: dwc/intel-gw: Remove some unneeded function wrappers
+  PCI: dwc: Ensure all outbound ATU windows are reset
+  PCI: dwc/dra7xx: Use the common MSI irq_chip
+  PCI: dwc: Drop the .set_num_vectors() host op
+  PCI: dwc: Move MSI interrupt setup into DWC common code
+  PCI: dwc: Rework MSI initialization
+  PCI: dwc: Move link handling into common code
+  PCI: dwc: Move dw_pcie_msi_init() into core
+  PCI: dwc: Move dw_pcie_setup_rc() to DWC common code
+  PCI: dwc: Remove unnecessary wrappers around dw_pcie_host_init()
+  Revert "PCI: dwc/keystone: Drop duplicated 'num-viewport'"
+  PCI: dwc: Move inbound and outbound windows to common struct
+  PCI: dwc: Detect number of iATU windows
+
+ drivers/pci/controller/dwc/pci-dra7xx.c       | 141 +-----------------
+ drivers/pci/controller/dwc/pci-exynos.c       |  50 ++-----
+ drivers/pci/controller/dwc/pci-imx6.c         |  39 +----
+ drivers/pci/controller/dwc/pci-keystone.c     |  79 ++--------
+ .../pci/controller/dwc/pci-layerscape-ep.c    |  37 +----
+ drivers/pci/controller/dwc/pci-layerscape.c   |  67 +--------
+ drivers/pci/controller/dwc/pci-meson.c        |  53 ++-----
+ drivers/pci/controller/dwc/pcie-al.c          |  29 +---
+ drivers/pci/controller/dwc/pcie-armada8k.c    |  37 ++---
+ drivers/pci/controller/dwc/pcie-artpec6.c     |  76 +---------
+ .../pci/controller/dwc/pcie-designware-ep.c   |  58 +++----
+ .../pci/controller/dwc/pcie-designware-host.c | 139 ++++++++++-------
+ .../pci/controller/dwc/pcie-designware-plat.c |  70 +--------
+ drivers/pci/controller/dwc/pcie-designware.c  |  93 +++++++++++-
+ drivers/pci/controller/dwc/pcie-designware.h  |  24 +--
+ drivers/pci/controller/dwc/pcie-histb.c       |  37 ++---
+ drivers/pci/controller/dwc/pcie-intel-gw.c    |  67 ++-------
+ drivers/pci/controller/dwc/pcie-kirin.c       |  62 +-------
+ drivers/pci/controller/dwc/pcie-qcom.c        |  38 +----
+ drivers/pci/controller/dwc/pcie-spear13xx.c   |  62 +++-----
+ drivers/pci/controller/dwc/pcie-tegra194.c    |  41 +----
+ drivers/pci/controller/dwc/pcie-uniphier-ep.c |  38 +----
+ drivers/pci/controller/dwc/pcie-uniphier.c    |  51 +------
+ 23 files changed, 356 insertions(+), 1032 deletions(-)
+
+--
+2.25.1
