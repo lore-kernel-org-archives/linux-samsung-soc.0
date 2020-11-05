@@ -2,107 +2,184 @@ Return-Path: <SRS0=idU0=EL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB261C55178
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 15:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD41C55179
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 16:07:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AF7822203
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 15:27:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604590072;
-	bh=UK19I8OglCaJWHUkFRwd3fmiZffaNCjpPaqyNqKgbJI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=itxZmiomKEeM6M20UyCUj3HsjYGzsPKU3/qm5P9ic4MkzfMzcrUihWSiZEAglJHma
-	 6Hlc1VB4A43oa5NLsSQjdyBIMm6A1Hc0c3PLkdhFIJ1vOYBZvI1c3qzuP2Ewwg2bHw
-	 mYGRs/gwcDAwqe+77+E5H/bchQR5dQxZ8G62gpS4=
+	by mail.kernel.org (Postfix) with ESMTP id 34B7320936
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 16:07:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730938AbgKEP1s (ORCPT
+        id S1729862AbgKEQHp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 10:27:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59644 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730660AbgKEP1s (ORCPT
+        Thu, 5 Nov 2020 11:07:45 -0500
+Received: from netrider.rowland.org ([192.131.102.5]:49103 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726557AbgKEQHo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 10:27:48 -0500
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3557522203;
-        Thu,  5 Nov 2020 15:27:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604590067;
-        bh=UK19I8OglCaJWHUkFRwd3fmiZffaNCjpPaqyNqKgbJI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=J5cWUrPLaQLNIbe0c5w98I8ZtT02bfs4Rol32WMQdCMT4RpEHRTMVvL8pSqs7UNOM
-         Nat4d8ad9XcYqPsT7bLpl7ksJU3ZkU5HvJA8hKdN7Vtl5gy7LZ3NTMb9BbR/YxjRBK
-         rZw2m8yx9gSg1kaZSFy3/WJ+bzA37pEY6XHt8NTI=
-Received: by mail-ot1-f53.google.com with SMTP id i18so1786147ots.0;
-        Thu, 05 Nov 2020 07:27:47 -0800 (PST)
-X-Gm-Message-State: AOAM532/rZ3jDSFtRLqlmYAbO6P2AsWr3yLzLfmEqTfEtnWd2Yp8gP0G
-        DLrblVFHbyLCmJvoQFZL+rH80f0ufzr+Hzz9yA==
-X-Google-Smtp-Source: ABdhPJwKfqNyaCuCxyGQthoSqbrcvdbcm7lr5Y+wBARMUUWapINuOrnTTlkPS19mnYTSVopMJI/IzduZeD4wthDYe5E=
-X-Received: by 2002:a9d:6e0c:: with SMTP id e12mr2049771otr.129.1604590066346;
- Thu, 05 Nov 2020 07:27:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20201029134017.27400-1-m.szyprowski@samsung.com>
- <CGME20201029134038eucas1p28d9bd33bc9e36b960b021a40ef299b47@eucas1p2.samsung.com>
- <20201029134017.27400-3-m.szyprowski@samsung.com> <20201104213539.GA4144654@bogus>
- <d89f5f0a-c45e-0bda-4db7-7b0cf9cd49fe@samsung.com>
-In-Reply-To: <d89f5f0a-c45e-0bda-4db7-7b0cf9cd49fe@samsung.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 5 Nov 2020 09:27:34 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKQstKa7_0pjcODyyLCwMiGF9zB4_+x=GhcSUOyvuLRmw@mail.gmail.com>
-Message-ID: <CAL_JsqKQstKa7_0pjcODyyLCwMiGF9zB4_+x=GhcSUOyvuLRmw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] dt-bindings: pci: add the samsung,exynos-pcie binding
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        PCI <linux-pci@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
+        Thu, 5 Nov 2020 11:07:44 -0500
+Received: (qmail 1615519 invoked by uid 1000); 5 Nov 2020 11:07:43 -0500
+Date:   Thu, 5 Nov 2020 11:07:43 -0500
+From:   Alan Stern <stern@rowland.harvard.edu>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 21/30] usb: host: ehci-tegra: Support OPP and SoC core
+ voltage scaling
+Message-ID: <20201105160743.GA1613614@rowland.harvard.edu>
+References: <20201104234427.26477-1-digetx@gmail.com>
+ <20201104234427.26477-22-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201104234427.26477-22-digetx@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 5, 2020 at 2:33 AM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Hi Rob,
->
-> On 04.11.2020 22:35, Rob Herring wrote:
-> > On Thu, Oct 29, 2020 at 02:40:13PM +0100, Marek Szyprowski wrote:
-> >> Add dt-bindings for the Samsung Exynos PCIe controller (Exynos5433
-> >> variant). Based on the text dt-binding posted by Jaehoon Chung.
-> >>
-> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >> ---
-> >>   .../bindings/pci/samsung,exynos-pcie.yaml     | 119 ++++++++++++++++++
-> >>   1 file changed, 119 insertions(+)
-> >>   create mode 100644 Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
->
-> >> ...
->
-> >> +  num-viewport:
-> >> +    const: 3
-> > I'm confused why you need this. This is only used with the iATU except
-> > for keystone. Platforms like Exynos with their own child bus config
-> > space accessors don't have an iATU.
->
-> Frankly I have no idea, I don't know much about the PCI internals.
+On Thu, Nov 05, 2020 at 02:44:18AM +0300, Dmitry Osipenko wrote:
+> Add initial OPP and SoC core voltage scaling support to the Tegra EHCI
+> driver. This is required for enabling system-wide DVFS on older Tegra
+> SoCs.
+> 
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-Sorry, I was confused. It's fine.
+I'm no expert on OPP stuff, but some of what you have done here looks 
+peculiar.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+> index 869d9c4de5fc..0976577f54b4 100644
+> --- a/drivers/usb/host/ehci-tegra.c
+> +++ b/drivers/usb/host/ehci-tegra.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/of_device.h>
+>  #include <linux/of_gpio.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/pm_opp.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/reset.h>
+>  #include <linux/slab.h>
+> @@ -364,6 +365,79 @@ static void tegra_ehci_unmap_urb_for_dma(struct usb_hcd *hcd, struct urb *urb)
+>  	free_dma_aligned_buffer(urb);
+>  }
+>  
+> +static void tegra_ehci_deinit_opp_table(void *data)
+> +{
+> +	struct device *dev = data;
+> +	struct opp_table *opp_table;
+> +
+> +	opp_table = dev_pm_opp_get_opp_table(dev);
+> +	dev_pm_opp_of_remove_table(dev);
+> +	dev_pm_opp_put_regulators(opp_table);
+> +	dev_pm_opp_put_opp_table(opp_table);
+> +}
+> +
+> +static int devm_tegra_ehci_init_opp_table(struct device *dev)
+> +{
+> +	unsigned long rate = ULONG_MAX;
+> +	struct opp_table *opp_table;
+> +	const char *rname = "core";
+> +	struct dev_pm_opp *opp;
+> +	int err;
+> +
+> +	/* legacy device-trees don't have OPP table */
+> +	if (!device_property_present(dev, "operating-points-v2"))
+> +		return 0;
+> +
+> +	/* voltage scaling is optional */
+> +	if (device_property_present(dev, "core-supply"))
+> +		opp_table = dev_pm_opp_set_regulators(dev, &rname, 1);
+> +	else
+> +		opp_table = dev_pm_opp_get_opp_table(dev);
+> +
+> +	if (IS_ERR(opp_table))
+> +		return dev_err_probe(dev, PTR_ERR(opp_table),
+> +				     "failed to prepare OPP table\n");
+> +
+> +	err = dev_pm_opp_of_add_table(dev);
+> +	if (err) {
+> +		dev_err(dev, "failed to add OPP table: %d\n", err);
+> +		goto put_table;
+> +	}
+> +
+> +	/* find suitable OPP for the maximum clock rate */
+> +	opp = dev_pm_opp_find_freq_floor(dev, &rate);
+> +	err = PTR_ERR_OR_ZERO(opp);
+> +	if (err) {
+> +		dev_err(dev, "failed to get OPP: %d\n", err);
+> +		goto remove_table;
+> +	}
+> +
+> +	dev_pm_opp_put(opp);
+> +
+> +	/*
+> +	 * First dummy rate-set initializes voltage vote by setting voltage
+> +	 * in accordance to the clock rate.
+> +	 */
+> +	err = dev_pm_opp_set_rate(dev, rate);
+> +	if (err) {
+> +		dev_err(dev, "failed to initialize OPP clock: %d\n", err);
+> +		goto remove_table;
+> +	}
+> +
+> +	err = devm_add_action(dev, tegra_ehci_deinit_opp_table, dev);
+> +	if (err)
+> +		goto remove_table;
+> +
+> +	return 0;
+> +
+> +remove_table:
+> +	dev_pm_opp_of_remove_table(dev);
+> +put_table:
+> +	dev_pm_opp_put_regulators(opp_table);
 
-Rob
+Do you really want to use the same error unwinding for opp_table values 
+obtained from dev_pm_opp_set_regulators() as from 
+dev_pm_opp_get_opp_table()?
+
+> +
+> +	return err;
+> +}
+> +
+>  static const struct tegra_ehci_soc_config tegra30_soc_config = {
+>  	.has_hostpc = true,
+>  };
+> @@ -431,6 +505,11 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+>  		goto cleanup_hcd_create;
+>  	}
+>  
+> +	err = devm_tegra_ehci_init_opp_table(&pdev->dev);
+> +	if (err)
+> +		return dev_err_probe(&pdev->dev, err,
+> +				     "Failed to initialize OPP\n");
+
+Why log a second error message?  Just return err.
+
+Alan Stern
