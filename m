@@ -2,197 +2,127 @@ Return-Path: <SRS0=C3hI=EM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B95E4C388F2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 06:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97846C2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 07:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 509A422201
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 06:15:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C23C208FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 07:05:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HzLmr6Ja"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x7tyrPda"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbgKFGPU (ORCPT
+        id S1725828AbgKFHFT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Nov 2020 01:15:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51060 "EHLO
+        Fri, 6 Nov 2020 02:05:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726309AbgKFGPS (ORCPT
+        with ESMTP id S1726121AbgKFHFT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Nov 2020 01:15:18 -0500
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE7BCC0613D6
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2020 22:15:17 -0800 (PST)
-Received: by mail-pl1-x641.google.com with SMTP id z1so177283plo.12
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2020 22:15:17 -0800 (PST)
+        Fri, 6 Nov 2020 02:05:19 -0500
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42638C0613D6
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2020 23:05:19 -0800 (PST)
+Received: by mail-pf1-x442.google.com with SMTP id q10so486511pfn.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2020 23:05:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=F6tmY/1EFEb7yGiRngVYTKYYAOLMtuHBKlHb/X3FBro=;
-        b=HzLmr6JaFIcMravMY3wIPry/F1073BkN3VM3cd8Gi2O7jw7et61EBNfNlEzqqyIEDr
-         O9QiSB84NaObwQzvoVVuxKeOGt8VndPGxRzphlfH+7cLMvRgCXLb/PtEMTpcP1H83oxY
-         b+191SXYF8ylE2gKUBgugVqSge7yMZjugqqrlBWgxtA673su21UfCt+IML3oDpN4vxti
-         8gs+7/IuMoCGcBYg+3V7fWv1iCZUsugnMa0A4fQsRR3hvDwRfUGjQ+Urs3m1MNcObuQw
-         SCG2Y8JOLZc95bYGIDT0kkK9vrovP4jkrz7oM7qStmXfzFjQgjgOi7MZJht8PgCtGzrM
-         RfPg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=X+vlFfwXaQyT67tNUyi81s2s5dR5xJEgy0PknD0rbz4=;
+        b=x7tyrPdaqh682SqGflCsojgjTQx+BXzkcw1rNmmcDJ4f1/CcNFqWsU2TeslilqRYW6
+         zc5/q2J7DYA6GaZpIl9YJEuw5A+2BygaKtcNZGbiJXmhxkSHLYjjXBFUVrm/3kU2FfxF
+         HOpl09BHz7pxQM1vSb758PMQEHgdQo7a0vFwzSK04ezcCvy5z2tN77zFwQKb0oCEVS7Z
+         5Wf5xaSLDOcwVEQi6x3vCm1v9HcJ36wHsCS7oCefyqpWqoytt13+6MJpeHbxPKWMFUZ8
+         7D71Y1LBl2lTl2Ui7t2WW7/HoEOYoPNzVDuHeqlnp7Y7cKSpCWRT/VBoOVOVT9t0JXT2
+         P84Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=F6tmY/1EFEb7yGiRngVYTKYYAOLMtuHBKlHb/X3FBro=;
-        b=BvvUoafZOd9kIa7J4DRfzSeT8KHBKDKrGR/pJXpAudwMmxK/+P60YMxEPLqgACYrka
-         Mtl8+9bL16K2Dv97tI8NXI2XEjBC4rOJyI5i0tdmMZuUwDXEOu2IajUdCilr1JGHOFSM
-         n9ygVtrFoUnc4FDDXk6VmY7p84GDd1L2ACMO4GTBdtvi+FOayqo3Sw81BSOIJho1aFrH
-         dhi327sRElpXaiwhn/sEUkoP+BTJNnamJyAztpX5UQSjULpACj3f/xSUMp8LqQ1WlaGs
-         iBEOM9is4EAlXuMsF6m7vMDrC17zXZsNTO/Ot3fwqHa6Hh/LI7KKBqECchRdirxdHQ+7
-         O9Yw==
-X-Gm-Message-State: AOAM531lQlX6RiwZNBZ2T2iSglREFmk6jm/T5l1Xd1K4ropBxDpuKi7p
-        UO0EBE3SIwQttwU4pi8po93zRQ==
-X-Google-Smtp-Source: ABdhPJxg63tT7kf2/vWsP55uyoDC2lQuTRCTVcejh0K/L0eGZvU7H1zdtru1IjirtMh06PtAF/i6Ug==
-X-Received: by 2002:a17:902:9a83:b029:d6:e05e:c7e9 with SMTP id w3-20020a1709029a83b02900d6e05ec7e9mr430546plp.49.1604643317224;
-        Thu, 05 Nov 2020 22:15:17 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=X+vlFfwXaQyT67tNUyi81s2s5dR5xJEgy0PknD0rbz4=;
+        b=gUhESH6lpJPFLxHAGhsYfvIPx7c2QiDy7pFCfAMvDhZweqIvf28v0k3OnKekDCqSSJ
+         gib48Y4jtMbElqjK0mizTsHTRvQ/QvsDjmHsXZbDgec1r/adQ7nRwX0wx7RYnfhTLi+9
+         hsRuiRRUx7Ck9yzCTvIju9/YhyIeHtaqkV/iOOU7vEOVaZ/nTmPw4vYNHcgipl9ruu6D
+         SKdWReoE2UM20BuQAsrkvs9U3rSK7g8i1Ddfy9Sh9g/j3TZ3oOW8fIXlywtnyT34u0Td
+         sujOm4HEFyOoxE9FSPkbH4LBdILh1YQ5njyB9oFN2ViS5nRIWhvooyfNrzhsd3So6nyU
+         Vq0w==
+X-Gm-Message-State: AOAM530o2D/NLJA2T5d4mZOciL6s2TN98tMx726hM4a70xdsBMsz7Xc6
+        BoaZbq2jQAbCmeHU7LkXp/5twQ==
+X-Google-Smtp-Source: ABdhPJwjHQpNsy+GXHXCwxvkwHWtDNd475+Vq8i4kMmtZzheVVRcd/hAft+93Mx61nTSrMPFd3mZ/Q==
+X-Received: by 2002:a17:90a:af89:: with SMTP id w9mr989921pjq.72.1604646318621;
+        Thu, 05 Nov 2020 23:05:18 -0800 (PST)
 Received: from localhost ([122.172.12.172])
-        by smtp.gmail.com with ESMTPSA id h16sm703800pjz.10.2020.11.05.22.15.14
+        by smtp.gmail.com with ESMTPSA id r3sm1023098pjl.23.2020.11.05.23.05.17
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Nov 2020 22:15:15 -0800 (PST)
-Date:   Fri, 6 Nov 2020 11:45:13 +0530
+        Thu, 05 Nov 2020 23:05:17 -0800 (PST)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
+To:     Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Ilia Lin <ilia.lin@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        driver-dev <devel@driverdev.osuosl.org>,
-        linux-pwm@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, linux-usb@vger.kernel.org,
-        "open list:SECURE DIGITAL HO..." <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v1 17/30] mmc: sdhci-tegra: Support OPP and core voltage
- scaling
-Message-ID: <20201106061513.uyys7njcqcdlah67@vireshk-i7>
-References: <20201104234427.26477-1-digetx@gmail.com>
- <20201104234427.26477-18-digetx@gmail.com>
- <CAOh2x==sy1w7_oEV8=toC6uQnSN44wyOixbP_X0BrMsnm1AUFg@mail.gmail.com>
- <6fa54ce6-d5ae-d04f-7c77-b62c148d92b7@gmail.com>
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Nishanth Menon <nm@ti.com>, Qiang Yu <yuq825@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh@kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>, digetx@gmail.com,
+        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 0/7] opp: Allow dev_pm_opp_put_*() APIs to accept NULL opp_table
+Date:   Fri,  6 Nov 2020 12:33:20 +0530
+Message-Id: <cover.1604646059.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.25.0.rc1.19.g042ed3e048af
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6fa54ce6-d5ae-d04f-7c77-b62c148d92b7@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 05-11-20, 17:18, Dmitry Osipenko wrote:
-> 05.11.2020 12:58, Viresh Kumar пишет:
-> >> +static void sdhci_tegra_deinit_opp_table(void *data)
-> >> +{
-> >> +       struct device *dev = data;
-> >> +       struct opp_table *opp_table;
-> >> +
-> >> +       opp_table = dev_pm_opp_get_opp_table(dev);
-> > So you need to get an OPP table to put one :)
-> > You need to save the pointer returned by dev_pm_opp_set_regulators() instead.
-> 
-> This is intentional because why do we need to save the pointer if we're
-> not using it and we know that we could get this pointer using OPP API?
+Hello,
 
-Because it is highly inefficient and it doesn't follow the rules set
-by the OPP core. Hypothetically speaking, the OPP core is free to
-allocate the OPP table structure as much as it wants, and if you don't
-use the value returned back to you earlier (think of it as a cookie
-assigned to your driver), then it will eventually lead to memory leak.
+This patchset updates the dev_pm_opp_put_*() helpers to accept a NULL
+pointer for the OPP table, in order to allow the callers to drop the
+unnecessary checks they had to carry.
 
-> This is exactly the same what I did for the CPUFreq driver [1] :)
+All these must get merged upstream through the OPP tree as there is a
+hard dependency on the first patch here. Thanks.
 
-I will strongly suggest you to save the pointer here and do the same
-in the cpufreq driver as well.
+Viresh Kumar (7):
+  opp: Allow dev_pm_opp_put_*() APIs to accept NULL opp_table
+  cpufreq: dt: dev_pm_opp_put_regulators() accepts NULL argument
+  cpufreq: qcom-cpufreq-nvmem: dev_pm_opp_put_*() accepts NULL argument
+  devfreq: exynos: dev_pm_opp_put_*() accepts NULL argument
+  drm/lima: dev_pm_opp_put_*() accepts NULL argument
+  drm/panfrost: dev_pm_opp_put_*() accepts NULL argument
+  media: venus: dev_pm_opp_put_*() accepts NULL argument
 
-> >> +static int devm_sdhci_tegra_init_opp_table(struct device *dev)
-> >> +{
-> >> +       struct opp_table *opp_table;
-> >> +       const char *rname = "core";
-> >> +       int err;
-> >> +
-> >> +       /* voltage scaling is optional */
-> >> +       if (device_property_present(dev, "core-supply"))
-> >> +               opp_table = dev_pm_opp_set_regulators(dev, &rname, 1);
-> >> +       else
-> > 
-> >> +               opp_table = dev_pm_opp_get_opp_table(dev);
-
-To make it further clear, this will end up allocating an OPP table for
-you, which it shouldn't have.
-
-> > Nice. I didn't think that someone will end up abusing this API and so made it
-> > available for all, but someone just did that. I will fix that in the OPP core.
-
-To be fair, I allowed the cpufreq-dt driver to abuse it too, which I
-am going to fix shortly.
-
-> The dev_pm_opp_put_regulators() handles the case where regulator is
-> missing by acting as dev_pm_opp_get_opp_table(), but the
-> dev_pm_opp_set_regulators() doesn't do it. Hence I don't think this is
-> an abuse, but the OPP API drawback.
-
-I am not sure what you meant here. Normally you are required to call
-dev_pm_opp_put_regulators() only if you have called
-dev_pm_opp_set_regulators() earlier. And the refcount stays in
-balance.
-
-> > Any idea why you are doing what you are doing here ?
-> 
-> Two reasons:
-> 
-> 1. Voltage regulator is optional, but dev_pm_opp_set_regulators()
-> doesn't support optional regulators.
-> 
-> 2. We need to balance the opp_table refcount in order to use OPP API
-> without polluting code with if(have_regulator), hence the
-> dev_pm_opp_get_opp_table() is needed for taking the opp_table reference
-> to have the same refcount as in the case of the dev_pm_opp_set_regulators().
-
-I am going to send a patchset shortly after which this call to
-dev_pm_opp_get_opp_table() will fail, if it is called before adding
-the OPP table.
-
-> I guess we could make dev_pm_opp_set_regulators(dev, count) to accept
-> regulators count=0 and then act as dev_pm_opp_get_opp_table(dev), will
-> it be acceptable?
-
-Setting regulators for count as 0 doesn't sound good to me.
-
-But, I understand that you don't want to have that if (have_regulator)
-check, and it is a fair request. What I will instead do is, allow all
-dev_pm_opp_put*() API to start accepting a NULL pointer for the OPP
-table and fail silently. And so you won't be required to have this
-unwanted check. But you will be required to save the pointer returned
-back by dev_pm_opp_set_regulators(), which is the right thing to do
-anyways.
+ drivers/cpufreq/cpufreq-dt.c                   |  6 ++----
+ drivers/cpufreq/qcom-cpufreq-nvmem.c           | 15 ++++++---------
+ drivers/devfreq/exynos-bus.c                   | 12 ++++--------
+ drivers/gpu/drm/lima/lima_devfreq.c            | 13 ++++---------
+ drivers/gpu/drm/panfrost/panfrost_devfreq.c    |  6 ++----
+ drivers/media/platform/qcom/venus/pm_helpers.c |  3 +--
+ drivers/opp/core.c                             | 18 ++++++++++++++++++
+ 7 files changed, 37 insertions(+), 36 deletions(-)
 
 -- 
-viresh
+2.25.0.rc1.19.g042ed3e048af
+
