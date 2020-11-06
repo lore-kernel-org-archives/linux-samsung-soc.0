@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E14C2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 10:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4D6C388F2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 10:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E5A721707
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 10:02:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3C4121707
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 10:28:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="JxYI6LDo"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="bzj83Mf9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbgKFKCJ (ORCPT
+        id S1726692AbgKFK2N (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Nov 2020 05:02:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58264 "EHLO
+        Fri, 6 Nov 2020 05:28:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbgKFKCJ (ORCPT
+        with ESMTP id S1727037AbgKFK2M (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Nov 2020 05:02:09 -0500
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B0E8C0613D2
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Nov 2020 02:02:09 -0800 (PST)
-Received: by mail-ot1-x344.google.com with SMTP id f16so736741otl.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Nov 2020 02:02:09 -0800 (PST)
+        Fri, 6 Nov 2020 05:28:12 -0500
+Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 455D8C0613D3
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Nov 2020 02:28:11 -0800 (PST)
+Received: by mail-oi1-x243.google.com with SMTP id u127so855642oib.6
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Nov 2020 02:28:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Pk2kOuIDyNkJ29R6DHQ3ZwTfwhAfAev58wxOeRlEcVQ=;
-        b=JxYI6LDoYBIyKAFkO0mmU5GO0vKXW+XCgfB3nhMPB/96K75h8XEzFsF5vfwoI9o4Aa
-         YXO5ScRni4mdNnVG7TEPzZnkXGbky0dU2v6WgMTgqxnDpBRtAtlXHbhIcZNyR+EoGosa
-         88KCvZizdR0CJdRqQAGfzd4+9xfkExbEg2qoA=
+        bh=GZSvjJXJ5NeS3xeVpOYrkTBUqUJmeylcGC99/vSxMgE=;
+        b=bzj83Mf9zM2hSbE8EWsBjDPrQihAyugYzXs6/XtzMk42mlteKogf38yikrIVtP0YIp
+         1PpqGJ83G8CMqUOSy0c+3J2x07vzzrc1y+f0AiA/gsD366OU8Q4TqDzYqRuPe+cWSz/V
+         V9A5M3N3kUQY2mHkFVy5IQrEsMOk51+osCoGc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Pk2kOuIDyNkJ29R6DHQ3ZwTfwhAfAev58wxOeRlEcVQ=;
-        b=MhkXeJSPt0oh2tIeS1LAa2ANnOkh8oz2PItPJU/M6F3bexxiBAYo9go/0KuinqTNIK
-         ATLao/dvlqHwgXE30avg+Zc8ZSayjgrgi8p3WrMkvSVC3tofcLXIGzw5FMG9UHuzmD1s
-         dAadIsupdL/rP+QwZ+QhzebHKS+Yk30+JfYOKW165aH4GryQghiiZd0KomaEhkl7qJM6
-         nGkm4voB4XKKS1XyfATVNE/ePO5B7dGsWT0OAmXk8GHDHl1ddrEFlhON+KO4xkYWVRp0
-         1rEeyxpMbSC1SH9gfCqDxxR7BH+gnp7mNeTNefglJfjTdXCRvw8BpW4Pq9rCloybXlLG
-         hpIA==
-X-Gm-Message-State: AOAM531nYxyU9XGLP1i8Kkjx1c31Cc3YoHigIiwB25yu6UMzOY1T43yT
-        exv0mlgp4EjFuEsf2fwMTvqT7fOkW80lY5DE6Iv0MQ==
-X-Google-Smtp-Source: ABdhPJy9+JOeNi7tvqFhbCecRqz/u5D2Qj576z0eBlCGtTEM4NmQBII1FIZeWz8GCbRUxBcA/Ididy+MZpD88l6oJcg=
-X-Received: by 2002:a9d:6a19:: with SMTP id g25mr586779otn.303.1604656928858;
- Fri, 06 Nov 2020 02:02:08 -0800 (PST)
+        bh=GZSvjJXJ5NeS3xeVpOYrkTBUqUJmeylcGC99/vSxMgE=;
+        b=tEO2zNv9hfwBL6J9Rfpm57ziSHeIsJhb7KCuuQTcb+o41wr1cHupObHULdqiBTOekA
+         TETaSNKGA/R3riyokX9AqdhhkZ9vUC9FzHpqogM2/OOacWXNe/Ykx0dG0iCKZ7+pwhh/
+         75UPcskQLnwEN102hEptdjzOifN2TBStmS2F897VXHJUYgolTwLIgRT3x5dAzf1pfN6z
+         KFG0gADkHYeRJZv0qnRwji0KVL0sexHMGZudmWE8jnob4QwHh9zsfH5DBBiHyvAEmuH0
+         rJ9pNsBz3H9EI2ua0DGP/QxFoDYhxSXQzPmrdn7JcJUAsGgij7WXBkqMJQV8u57BOnNz
+         1P7g==
+X-Gm-Message-State: AOAM533kBkC9CxSOGDnE4ucZKX9hQkdeMDid0q0S1453DLBoeiQ79cv6
+        Pmj1bfdbshNsNCMs6VR9iZHzx9RF9Oi8PjIZheWonw==
+X-Google-Smtp-Source: ABdhPJxaH0jX6R8wLLVMSL6X5ZRgt3aYM2nGlRnlOOpo51kJ5ZLuq1XuS09rdAP7rLsL8i/ky1hkd4FCo7S1HBbLmlY=
+X-Received: by 2002:aca:b141:: with SMTP id a62mr626467oif.101.1604658490602;
+ Fri, 06 Nov 2020 02:28:10 -0800 (PST)
 MIME-Version: 1.0
 References: <CAKMK7uEw701AWXNJbRNM8Z+FkyUB5FbWegmSzyWPy9cG4W7OLA@mail.gmail.com>
  <20201104140023.GQ36674@ziepe.ca> <CAKMK7uH69hsFjYUkjg1aTh5f=q_3eswMSS5feFs6+ovz586+0A@mail.gmail.com>
@@ -59,13 +59,14 @@ References: <CAKMK7uEw701AWXNJbRNM8Z+FkyUB5FbWegmSzyWPy9cG4W7OLA@mail.gmail.com>
  <20201104163758.GA17425@infradead.org> <20201104164119.GA18218@infradead.org>
  <20201104181708.GU36674@ziepe.ca> <d3497583-2338-596e-c764-8c571b7d22cf@nvidia.com>
  <20201105092524.GQ401619@phenom.ffwll.local> <20201105124950.GZ36674@ziepe.ca>
- <7ae3486d-095e-cf4e-6b0f-339d99709996@nvidia.com>
-In-Reply-To: <7ae3486d-095e-cf4e-6b0f-339d99709996@nvidia.com>
+ <7ae3486d-095e-cf4e-6b0f-339d99709996@nvidia.com> <CAKMK7uGRw=xXE+D=JJsNeRav9+hdO4tcDSvDbAuWfc3T4VkoJw@mail.gmail.com>
+In-Reply-To: <CAKMK7uGRw=xXE+D=JJsNeRav9+hdO4tcDSvDbAuWfc3T4VkoJw@mail.gmail.com>
 From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Fri, 6 Nov 2020 11:01:57 +0100
-Message-ID: <CAKMK7uGRw=xXE+D=JJsNeRav9+hdO4tcDSvDbAuWfc3T4VkoJw@mail.gmail.com>
+Date:   Fri, 6 Nov 2020 11:27:59 +0100
+Message-ID: <CAKMK7uFb2uhfRCwe1y5Kafd-WWqE_F3_FfpHR9f8-X-aHhgjOQ@mail.gmail.com>
 Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
-To:     John Hubbard <jhubbard@nvidia.com>
+To:     John Hubbard <jhubbard@nvidia.com>,
+        Thomas Hellstrom <thomas.hellstrom@intel.com>
 Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
         Christoph Hellwig <hch@infradead.org>,
         "J??r??me Glisse" <jglisse@redhat.com>,
@@ -90,41 +91,61 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Nov 6, 2020 at 5:08 AM John Hubbard <jhubbard@nvidia.com> wrote:
+On Fri, Nov 6, 2020 at 11:01 AM Daniel Vetter <daniel@ffwll.ch> wrote:
 >
-> On 11/5/20 4:49 AM, Jason Gunthorpe wrote:
-> > On Thu, Nov 05, 2020 at 10:25:24AM +0100, Daniel Vetter wrote:
-> >>> /*
-> >>>   * If we can't determine whether or not a pte is special, then fail immediately
-> >>>   * for ptes. Note, we can still pin HugeTLB and THP as these are guaranteed not
-> >>>   * to be special.
-> >>>   *
-> >>>   * For a futex to be placed on a THP tail page, get_futex_key requires a
-> >>>   * get_user_pages_fast_only implementation that can pin pages. Thus it's still
-> >>>   * useful to have gup_huge_pmd even if we can't operate on ptes.
-> >>>   */
-> >>
-> >> We support hugepage faults in gpu drivers since recently, and I'm not
-> >> seeing a pud_mkhugespecial anywhere. So not sure this works, but probably
-> >> just me missing something again.
+> On Fri, Nov 6, 2020 at 5:08 AM John Hubbard <jhubbard@nvidia.com> wrote:
 > >
-> > It means ioremap can't create an IO page PUD, it has to be broken up.
-> >
-> > Does ioremap even create anything larger than PTEs?
+> > On 11/5/20 4:49 AM, Jason Gunthorpe wrote:
+> > > On Thu, Nov 05, 2020 at 10:25:24AM +0100, Daniel Vetter wrote:
+> > >>> /*
+> > >>>   * If we can't determine whether or not a pte is special, then fail immediately
+> > >>>   * for ptes. Note, we can still pin HugeTLB and THP as these are guaranteed not
+> > >>>   * to be special.
+> > >>>   *
+> > >>>   * For a futex to be placed on a THP tail page, get_futex_key requires a
+> > >>>   * get_user_pages_fast_only implementation that can pin pages. Thus it's still
+> > >>>   * useful to have gup_huge_pmd even if we can't operate on ptes.
+> > >>>   */
+> > >>
+> > >> We support hugepage faults in gpu drivers since recently, and I'm not
+> > >> seeing a pud_mkhugespecial anywhere. So not sure this works, but probably
+> > >> just me missing something again.
+> > >
+> > > It means ioremap can't create an IO page PUD, it has to be broken up.
+> > >
+> > > Does ioremap even create anything larger than PTEs?
+>
+> gpu drivers also tend to use vmf_insert_pfn* directly, so we can do
+> on-demand paging and move buffers around. From what I glanced for
+> lowest level we to the pte_mkspecial correctly (I think I convinced
+> myself that vm_insert_pfn does that), but for pud/pmd levels it seems
+> just yolo.
 
-gpu drivers also tend to use vmf_insert_pfn* directly, so we can do
-on-demand paging and move buffers around. From what I glanced for
-lowest level we to the pte_mkspecial correctly (I think I convinced
-myself that vm_insert_pfn does that), but for pud/pmd levels it seems
-just yolo.
+So I dug around a bit more and ttm sets PFN_DEV | PFN_MAP to get past
+the various pft_t_devmap checks (see e.g. vmf_insert_pfn_pmd_prot()).
+x86-64 has ARCH_HAS_PTE_DEVMAP, and gup.c seems to handle these
+specially, but frankly I got totally lost in what this does.
 
-remap_pfn_range seems to indeed split down to pte level always.
+The comment above the pfn_t_devmap check makes me wonder whether doing
+this is correct or not.
 
->  From my reading, yes. See ioremap_try_huge_pmd().
-
-The ioremap here shouldn't matter, since this is for kernel-internal
-mappings. So that's all fine I think.
+Also adding Thomas Hellstrom, who implemented the huge map support in ttm.
 -Daniel
+
+> remap_pfn_range seems to indeed split down to pte level always.
+>
+> >  From my reading, yes. See ioremap_try_huge_pmd().
+>
+> The ioremap here shouldn't matter, since this is for kernel-internal
+> mappings. So that's all fine I think.
+> -Daniel
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
+
+
+
 -- 
 Daniel Vetter
 Software Engineer, Intel Corporation
