@@ -8,60 +8,60 @@ X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AEBC388F2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 06:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A50AC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 06:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4313208B8
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 06:00:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0B792087D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 06:00:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rqaaKC7R"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="imHvIeHW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbgKFGAb (ORCPT
+        id S1726142AbgKFGAn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Nov 2020 01:00:31 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:29208 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbgKFGAb (ORCPT
+        Fri, 6 Nov 2020 01:00:43 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:58349 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726156AbgKFGAm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Nov 2020 01:00:31 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20201106060027epoutp03f9ee0d0462f3ed169dadd67a1f5949ad~E1clASJCV2061020610epoutp03H
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Nov 2020 06:00:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20201106060027epoutp03f9ee0d0462f3ed169dadd67a1f5949ad~E1clASJCV2061020610epoutp03H
+        Fri, 6 Nov 2020 01:00:42 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20201106060039epoutp0228084b28755a1a86dfbf0c894b965fe7~E1cwDm65t1031010310epoutp02G
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Nov 2020 06:00:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20201106060039epoutp0228084b28755a1a86dfbf0c894b965fe7~E1cwDm65t1031010310epoutp02G
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604642427;
-        bh=+EW2Qh6aDW9Cz16ccO5hd5cFPApV0wbo+wt3sex+PnA=;
+        s=mail20170921; t=1604642439;
+        bh=H6UyVEDtCUHutc84XrkVe7KQjCGhQT8Emejis+MlvaA=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=rqaaKC7RATRCF7VscGqLkCtAL1AsUQ93D8s32FugYT+0C5z36h0um8phRtKWbO3Mq
-         xWzQ+qxuwHOAXJm1alNTRsbfiEhkzxxtMQPopij0onC2qF1m6kTYdIQtQtqVRmv8Kl
-         yU3kIU5jvxrLvsFIQ3mELx95KqibojvOwMLSA/CA=
+        b=imHvIeHWyByp3cLFqKoT5koFaDxwA3tn7MeyskUPrAR7pgPihpiVgye2JKVfTkD+u
+         bNdev3nOWI5L8hN+qWb+sdbdnC5V5t0NwV2uGRM0a2hv0Up4JkEuL54YNyVPTEXT/C
+         kaNwFBgDJlDckSXSAii00px9J0+2ikn5rvl17i1U=
 Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20201106060027epcas1p4559d5d5178940af60ea06c71da805334~E1ckigEFH1260212602epcas1p4Q;
-        Fri,  6 Nov 2020 06:00:27 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4CS8r76bXtzMqYkn; Fri,  6 Nov
-        2020 06:00:23 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3F.A2.09582.776E4AF5; Fri,  6 Nov 2020 15:00:23 +0900 (KST)
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201106060039epcas1p1ad827682f90809735fdfef8d26f623b2~E1cvqcOXO0239002390epcas1p1v;
+        Fri,  6 Nov 2020 06:00:39 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4CS8rN3Vc0zMqYkf; Fri,  6 Nov
+        2020 06:00:36 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C0.21.10463.186E4AF5; Fri,  6 Nov 2020 15:00:33 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
         epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201106060022epcas1p194674202e436cf7001c5dcd74c131b85~E1cgY39AA1471114711epcas1p1S;
-        Fri,  6 Nov 2020 06:00:22 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        20201106060033epcas1p159f05b54fba9c097bbebec428fdc98a4~E1cqcZ4zm3209832098epcas1p1X;
+        Fri,  6 Nov 2020 06:00:33 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201106060022epsmtrp1b26b9af321914e438b72e6641c153aa5~E1cgYA2as1867918679epsmtrp1b;
-        Fri,  6 Nov 2020 06:00:22 +0000 (GMT)
-X-AuditID: b6c32a37-e2fb8a800000256e-2e-5fa4e67705f2
+        20201106060033epsmtrp1888c4120a2e9e898a7cb9ca93620b01d~E1cqbvk4N1867918679epsmtrp1i;
+        Fri,  6 Nov 2020 06:00:33 +0000 (GMT)
+X-AuditID: b6c32a38-efbff700000028df-63-5fa4e681ec4a
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C3.08.13470.676E4AF5; Fri,  6 Nov 2020 15:00:22 +0900 (KST)
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        46.87.08745.186E4AF5; Fri,  6 Nov 2020 15:00:33 +0900 (KST)
 Received: from [10.113.113.235] (unknown [10.113.113.235]) by
         epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201106060022epsmtip27e188fc2591cf3fc1d2ffa50b17f74b4~E1cf95ryn1236512365epsmtip2U;
-        Fri,  6 Nov 2020 06:00:22 +0000 (GMT)
-Subject: Re: [PATCH] ARM: dts: exynos: Use fixed index for the MMC devices
+        20201106060033epsmtip2653cd362ba0840d7aef61cd280c48c44~E1cqO1s4R1025010250epsmtip2E;
+        Fri,  6 Nov 2020 06:00:33 +0000 (GMT)
+Subject: Re: [PATCH] arm64: dts: exynos: Use fixed index for the MMC devices
 To:     Marek Szyprowski <m.szyprowski@samsung.com>,
         linux-samsung-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
@@ -71,56 +71,56 @@ Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         linux-kernel@vger.kernel.org
 From:   Jaehoon Chung <jh80.chung@samsung.com>
-Message-ID: <2a14c8fe-9fb0-13d5-0dd1-8c39ae2bd17e@samsung.com>
-Date:   Fri, 6 Nov 2020 15:00:43 +0900
+Message-ID: <119c90b2-7157-ed07-5ef2-ec64d98c8823@samsung.com>
+Date:   Fri, 6 Nov 2020 15:00:54 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
         Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201105114804.18326-1-m.szyprowski@samsung.com>
+In-Reply-To: <20201105114814.18372-1-m.szyprowski@samsung.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGJsWRmVeSWpSXmKPExsWy7bCmrm75syXxBm/mG1tsnLGe1eL6l+es
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJJsWRmVeSWpSXmKPExsWy7bCmgW7jsyXxBm8valtsnLGe1eL6l+es
         FufPb2C3uLxrDpvFjPP7mCxeHvnBaLH2yF12i9a9R9gdODxu3an32LSqk82jb8sqRo/Pm+QC
         WKKybTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOArlBS
         KEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFFgW6BUn5haX5qXrJefnWhkaGBiZAhUm
-        ZGd0N+xmLGhSrnj/cgprA+NEmS5GTg4JAROJlTe2s4PYQgI7GCWWTBbvYuQCsj8xShxdvoQZ
-        wvnGKNGwYC8rTMefTd/ZIDr2Mko8XRYDUfSeUeLbja3MIAlhAS+JL5tesYDYIgIhEvefvmAF
-        KWIW+Mwo8fjINbBJbAI6Etu/HWcCsXkF7CT+XV8HFmcRUJHYsbQNzBYViJTY+fQlO0SNoMTJ
-        mU/AhnIC1R/a9ggsziwgLnHryXwmCFteYvvbOWBnSwj0ckgsuv4TqIgDyHGRWDIhFOIDYYlX
-        x7ewQ9hSEi/726DsaoldzWegejsYJW5ta2KCSBhL7F86mQlkDrOApsT6XfoQYUWJnb/nMkLs
-        5ZN497WHFWIVr0RHmxBEiYrEpdcvmWBW3X3yHxqIHhK3Fzxnm8CoOAvJZ7OQfDMLyTezEBYv
-        YGRZxSiWWlCcm55abFhgjBzZmxjBCVTLfAfjtLcf9A4xMnEwHmKU4GBWEuG94LcoXog3JbGy
-        KrUoP76oNCe1+BCjKTCsJzJLiSbnA1N4Xkm8oamRsbGxhYmhmamhoZI47x/tjnghgfTEktTs
-        1NSC1CKYPiYOTqkGJpuPR9/r2bGHfFvK27Hwb1qxTYn8n7/hKsbC8h/e9bVMrjk15Z5JWaW7
-        9nZ/ZT57x8vPNXvnBYitydDR0Ik6xn2+3nTas67Hfxtt+lj5TKOje1Zwrws+ZBhgzq5Yblco
-        kHd4Zu/FcqaJPFPXnOVf4ewyffHXbF82nrNddu71nyUYG+o5Jn9LFiuQXWmZoLp1wuqDzglL
-        dJ48LeATO5ZqExAnLb037vzHr/9dpi6c6WrNwqjwqvzk+pvrjBwEpz086dvzXfP/njybO8Xv
-        T0denaQ+9ekvy88Kq39b/dB4U1lRviVt11vWZ6+CjmzcvSLoSQyz1mz3XFeDFhOHr3Oa3bOf
-        uz4zzE6vqRFT/cGixFKckWioxVxUnAgAaZG7nikEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsWy7bCSvG7ZsyXxBpdfKlhsnLGe1eL6l+es
-        FufPb2C3uLxrDpvFjPP7mCxeHvnBaLH2yF12i9a9R9gdODxu3an32LSqk82jb8sqRo/Pm+QC
-        WKK4bFJSczLLUov07RK4MrobdjMWNClXvH85hbWBcaJMFyMnh4SAicSfTd/Zuhi5OIQEdjNK
-        zPzbyQqRkJL4/HQqUIIDyBaWOHy4GKLmLaPE6aNLWEBqhAW8JL5sesUCUiMiECKx8L0eSA2z
-        wGdGiatTu1ghGiYySiw69oEZpIFNQEdi+7fjTCA2r4CdxL/r68CWsQioSOxY2sYKMkhUIFJi
-        5w5LiBJBiZMzn4Dt4gQqP7TtETuIzSygLvFn3iVmCFtc4taT+UwQtrzE9rdzmCcwCs1C0j4L
-        ScssJC2zkLQsYGRZxSiZWlCcm55bbFhgmJdarlecmFtcmpeul5yfu4kRHDNamjsYt6/6oHeI
-        kYmD8RCjBAezkgjvBb9F8UK8KYmVValF+fFFpTmpxYcYpTlYlMR5bxQujBMSSE8sSc1OTS1I
-        LYLJMnFwSjUwNVevU5pn/SZ7Sd/GC9tnHNhoVb7Zta0++4P55/+L9ESltuQ3q570qklS3Z6Y
-        zWHksrPYUX3Pr2LvdTu5bu4p7mJgDV11LsGtfMIOZ56E0qyG1YbRWfY1E/9bOZVbhknynDjK
-        Hx9162EL28aSc/vVi5ruzRS2yq6+/4JH+vu9+jXJ05dzyvWZLOoUyvwtd3GKe25B1/ygON/T
-        h4Xs5m3acCLFVlIuJPTxxdNx3cyL5m3jTJBi45eavee2hd117tLtL5uq8t8u0v7Ur25d0Drr
-        Ru59x4UhB6vdI3cdvmvwcPvbT//P2exOzt8huCigjEcw22+Jr9/p8CnbDkbZpqec4pI2F5B6
-        KS3sPPWg7jYlluKMREMt5qLiRAA5D8YdCAMAAA==
-X-CMS-MailID: 20201106060022epcas1p194674202e436cf7001c5dcd74c131b85
+        ZGdMvv2IqeAzb8WH21vYGhhXcHcxcnJICJhIXJjymbWLkYtDSGAHo8S1s7+hnE+MEve+zmOG
+        cD4zShxr2MsO09Jw8w5UYhejxKyNk1ggnPeMEs1PN7OBVAkL+EgsffSLFcQWEQiRuP/0Bdhc
+        ZpBRj49cA0uwCehIbP92nAnE5hWwk/hy7T4LiM0ioCLR9n0t2CBRgUiJnU9fskPUCEqcnPkE
+        rIYTqP7JqX3MIDazgLjErSfzmSBseYntb+eAnSch0MshMXfpF0aIu10kHm64yAphC0u8Or4F
+        6h8piZf9bVB2tcSu5jNQzR2MEre2NTFBJIwl9i+dDGRzAG3QlFi/Sx8irCix8/dcRojFfBLv
+        vvawgpRICPBKdLQJQZSoSFx6/ZIJZtXdJ/+hTvCQ+DltG9sERsVZSF6bheSdWUjemYWweAEj
+        yypGsdSC4tz01GLDAhPk+N7ECE6jWhY7GOe+/aB3iJGJg/EQowQHs5II7wW/RfFCvCmJlVWp
+        RfnxRaU5qcWHGE2BgT2RWUo0OR+YyPNK4g1NjYyNjS1MDM1MDQ2VxHn/aHfECwmkJ5akZqem
+        FqQWwfQxcXBKNTDlb7g5S5NjVqL47WkNit3tnItCLmZ6yO+Sd1s1cfvllE/rzaburNosaGlh
+        O2VHTMs3huUsOzvcXz/ce9h7ifCEvqsCaVf6PON0JyuHzLzadu1Ii45N5+H7uTenb31Y+eD/
+        zhpt78+vCsKzkryYZ55k8d2Qr9md0jK7d1+whr7mtzTDfqlPGxy3iU94m+h5+m7wepGNbIbs
+        POYTLqrJP9My4L1w+tP1V66e1XLFH+0eXvoo/YH99Jxt/r//1PL5Ll5wltmhX3vzBPtKlqS0
+        5bJ+uuLKkaYbJm5ZIXtoXsczz18L/3NfWmq48+bWj3ubLjQefR+3Sk/q3+uJiQ8ufhCI6Zn+
+        bM6WRXuUbqUeenk7X4mlOCPRUIu5qDgRALwHm44sBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsWy7bCSvG7jsyXxBt2bRSw2zljPanH9y3NW
+        i/PnN7BbXN41h81ixvl9TBYvj/xgtFh75C67ReveI+wOHB637tR7bFrVyebRt2UVo8fnTXIB
+        LFFcNimpOZllqUX6dglcGZNvP2Iq+Mxb8eH2FrYGxhXcXYycHBICJhINN+8wdzFycQgJ7GCU
+        OLB3EjtEQkri89OpbF2MHEC2sMThw8UQNW8ZJRZ0rAerERbwkVj66BcrSI2IQIjEwvd6IDXM
+        Ap8ZJa5O7WKFaJjIKHHoczcrSAObgI7E9m/HmUBsXgE7iS/X7rOA2CwCKhJt39eCLRMViJTY
+        ucMSokRQ4uTMJ2AlnEDlT07tYwaxmQXUJf7MuwRli0vcejKfCcKWl9j+dg7zBEahWUjaZyFp
+        mYWkZRaSlgWMLKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz0vWS83M3MYJjRktrB+OeVR/0DjEy
+        cTAeYpTgYFYS4b3gtyheiDclsbIqtSg/vqg0J7X4EKM0B4uSOO/XWQvjhATSE0tSs1NTC1KL
+        YLJMHJxSDUwyEkGZOzqfJWxfclh1r2mF7n6LtyGaumLbLV9q/stknd/COXP6i4Rn62YtXiQg
+        e/W25jYXxtX/HKa8T4oo/bGq+sPZWaev3lW3Pz1LPs3RabPzpoq+e3t0xOab8/yR3yqw8YTB
+        EacHtpWti9tv85S2s33825Y2R7rlZNv6rN9XVnYEb34cIGBRJ3hDxDLm4Z35nEvOecQKx09l
+        2LEuROJu1XsO5zk7Vv539b7R2sh9Z3f2etbVn2Mb2w0uLe8o/nk1orBqe8iKHSELDdZYCgi0
+        tb28sFJkzc+1G+puzs689NA28eePgp1iLXNCbpcIXVgqFCoRnOEiz/HEtY5tgfBmpvl52Y6s
+        7u9ZTm2T2hqpxFKckWioxVxUnAgAehOUTAgDAAA=
+X-CMS-MailID: 20201106060033epcas1p159f05b54fba9c097bbebec428fdc98a4
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201105114814eucas1p18d9f11c44eec68738d929ad1a0263482
-References: <CGME20201105114814eucas1p18d9f11c44eec68738d929ad1a0263482@eucas1p1.samsung.com>
-        <20201105114804.18326-1-m.szyprowski@samsung.com>
+X-CMS-RootMailID: 20201105114823eucas1p26250751a232cf55e39d2452e8bb83e46
+References: <CGME20201105114823eucas1p26250751a232cf55e39d2452e8bb83e46@eucas1p2.samsung.com>
+        <20201105114814.18372-1-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -136,129 +136,47 @@ On 11/5/20 8:48 PM, Marek Szyprowski wrote:
 > Suggested-by: Markus Reichl <m.reichl@fivetechno.de>
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
+
 Reviewed-by: Jaehoon Chung <jh80.chung@samsung.com>
 
 Best Regards,
 Jaehoon Chung
 
 > ---
->  arch/arm/boot/dts/exynos3250.dtsi | 3 +++
->  arch/arm/boot/dts/exynos4.dtsi    | 2 ++
->  arch/arm/boot/dts/exynos4210.dtsi | 1 +
->  arch/arm/boot/dts/exynos4412.dtsi | 1 +
->  arch/arm/boot/dts/exynos5250.dtsi | 4 ++++
->  arch/arm/boot/dts/exynos5260.dtsi | 3 +++
->  arch/arm/boot/dts/exynos5410.dtsi | 3 +++
->  arch/arm/boot/dts/exynos5420.dtsi | 3 +++
->  8 files changed, 20 insertions(+)
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 6 ++++++
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi    | 3 +++
+>  2 files changed, 9 insertions(+)
 > 
-> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> index 75ed82600ec8..510080bb4102 100644
-> --- a/arch/arm/boot/dts/exynos3250.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> @@ -28,6 +28,9 @@
->  	aliases {
->  		pinctrl0 = &pinctrl_0;
->  		pinctrl1 = &pinctrl_1;
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> index 0a886bb6c806..3a37ad97fcdb 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -23,6 +23,12 @@
+>  
+>  	interrupt-parent = <&gic>;
+>  
+> +	aliases {
 > +		mmc0 = &mshc_0;
 > +		mmc1 = &mshc_1;
 > +		mmc2 = &mshc_2;
->  		mshc0 = &mshc_0;
->  		mshc1 = &mshc_1;
->  		mshc2 = &mshc_2;
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index a1e54449f33f..e266f890eea4 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -45,6 +45,8 @@
->  		fimc1 = &fimc_1;
->  		fimc2 = &fimc_2;
->  		fimc3 = &fimc_3;
-> +		mmc1 = &sdhci_1;
-> +		mmc2 = &sdhci_2;
->  		serial0 = &serial_0;
->  		serial1 = &serial_1;
->  		serial2 = &serial_2;
-> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-> index fddc661ded28..f1d0d5959b7f 100644
-> --- a/arch/arm/boot/dts/exynos4210.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> @@ -23,6 +23,7 @@
->  	compatible = "samsung,exynos4210", "samsung,exynos4";
->  
->  	aliases {
-> +		mmc0 = &sdhci_0;
->  		pinctrl0 = &pinctrl_0;
->  		pinctrl1 = &pinctrl_1;
->  		pinctrl2 = &pinctrl_2;
-> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-> index fa8e8d6bc4d5..9fcf7383eb9d 100644
-> --- a/arch/arm/boot/dts/exynos4412.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412.dtsi
-> @@ -28,6 +28,7 @@
->  		pinctrl3 = &pinctrl_3;
->  		fimc-lite0 = &fimc_lite_0;
->  		fimc-lite1 = &fimc_lite_1;
-> +		mmc0 = &mshc_0;
->  		mshc0 = &mshc_0;
->  	};
->  
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 84677332a5a2..0a0436f92fac 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -30,6 +30,10 @@
->  		gsc1 = &gsc_1;
->  		gsc2 = &gsc_2;
->  		gsc3 = &gsc_3;
-> +		mmc0 = &mmc_0;
-> +		mmc1 = &mmc_1;
-> +		mmc2 = &mmc_2;
-> +		mmc3 = &mmc_3;
->  		mshc0 = &mmc_0;
->  		mshc1 = &mmc_1;
->  		mshc2 = &mmc_2;
-> diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
-> index 973448c4ad93..64bf1d8dc33b 100644
-> --- a/arch/arm/boot/dts/exynos5260.dtsi
-> +++ b/arch/arm/boot/dts/exynos5260.dtsi
-> @@ -21,6 +21,9 @@
->  		i2c1 = &hsi2c_1;
->  		i2c2 = &hsi2c_2;
->  		i2c3 = &hsi2c_3;
-> +		mmc0 = &mmc_0;
-> +		mmc1 = &mmc_1;
-> +		mmc2 = &mmc_2;
->  		pinctrl0 = &pinctrl_0;
->  		pinctrl1 = &pinctrl_1;
->  		pinctrl2 = &pinctrl_2;
-> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-> index 584ce62361b1..503859153769 100644
-> --- a/arch/arm/boot/dts/exynos5410.dtsi
-> +++ b/arch/arm/boot/dts/exynos5410.dtsi
-> @@ -24,6 +24,9 @@
->  		pinctrl1 = &pinctrl_1;
->  		pinctrl2 = &pinctrl_2;
->  		pinctrl3 = &pinctrl_3;
-> +		mmc0 = &mmc_0;
-> +		mmc1 = &mmc_1;
-> +		mmc2 = &mmc_2;
->  	};
->  
->  	cpus {
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 23a8fd5c8a6e..3a3eadd890fb 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -19,6 +19,9 @@
->  	compatible = "samsung,exynos5420", "samsung,exynos5";
+> +	};
+> +
+>  	arm_a53_pmu {
+>  		compatible = "arm,cortex-a53-pmu";
+>  		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> index 48cd3a04fd07..3e319ec64997 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> @@ -16,6 +16,9 @@
+>  	#size-cells = <2>;
 >  
 >  	aliases {
 > +		mmc0 = &mmc_0;
 > +		mmc1 = &mmc_1;
 > +		mmc2 = &mmc_2;
->  		mshc0 = &mmc_0;
->  		mshc1 = &mmc_1;
->  		mshc2 = &mmc_2;
+>  		pinctrl0 = &pinctrl_alive;
+>  		pinctrl1 = &pinctrl_bus0;
+>  		pinctrl2 = &pinctrl_nfc;
 > 
 
