@@ -2,146 +2,227 @@ Return-Path: <SRS0=C3hI=EM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4131AC2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 21:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4ADC55179
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 21:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBB98208C7
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 21:10:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604697044;
-	bh=zxPsbWop/KgQvUD2CQb19OgmCyQzVoWVPSb5m99nCYQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=B3l6qG9d0P8wxJlLP8gVvxEI0dyFFifk0PA59cxZ+Z7yiyNSDIpnuNbTP9YAqlHmn
-	 NE8GwZkpt84rjLCVlmqYOiNcf361EFyyuKSquXcS507ntqtSc2X/gDlpjSuAxjRZ+C
-	 iRLaqir/rGXlfMGWr1E0AFherpZuns7Adjw6Wcw4=
+	by mail.kernel.org (Postfix) with ESMTP id B15952087E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 21:37:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="giuuga+S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbgKFVKo convert rfc822-to-8bit (ORCPT
+        id S1728269AbgKFVhD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Nov 2020 16:10:44 -0500
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:46354 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbgKFVKn (ORCPT
+        Fri, 6 Nov 2020 16:37:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54830 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728258AbgKFVhD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Nov 2020 16:10:43 -0500
-Received: by mail-ej1-f67.google.com with SMTP id w13so3788478eju.13;
-        Fri, 06 Nov 2020 13:10:42 -0800 (PST)
+        Fri, 6 Nov 2020 16:37:03 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3907C0613D2
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Nov 2020 13:37:02 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id c17so2753397wrc.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Nov 2020 13:37:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sWMhK/OvncM3wrg/l2R/3oqz+FYOuFfnAnN4zZZG95g=;
+        b=giuuga+Subtfjj4L06B+sRGS3UP4NSvhfj3Dy96cBZOlbr2uIBvVAviwtIhKtM88Oc
+         cbGk73Rqe9eUV8XEoW6PRC3Hq0/qxrPOtNJY+y9bTkZ1H4h0mKEFG28iBAIVmBMvK/TT
+         DKMvwZVy7/6hnyGbWAA+0+Lx3Ufj+y7so197DYDn6aY2KqlJL0fLvmGfGVaybffQBwK/
+         XgpkRd1j/mfFbFkNUr4FkrhZUeQXdyWesLk0vrwqwc28m1BvpQM5ROsMUbdQ3bKKFxxl
+         lqG8l4wNNr2nb6nviGQI1WSj51WqGQL4g6hM2WXRfBblkxKdax614UM/3LpGUT1S/JJs
+         WHYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=eiZHqrS2vIdOh+bg/DLjfX4/blxwd3aT047goVvJGNY=;
-        b=NyuHs/xmG/4hSr0l5mjwf5waw5BuoK5Mwd5NRx5GX9W18PKQk7+wAnrf4r3mBwS9kY
-         ikFC9X2YMEPqVpsHyN6coNcqIdtwkL84lg5MGetS6w0RfgDcjdpxswX/oTiSD16rVyxj
-         Zq3yNzi9EIxLxiYvdraqz6aSwn8aVnAlDgUVQ1HlwTx1Xrc5P8YhyCAtpBGs6DhUAGkw
-         FolUbDh+TZLCN+Zlne+GVs0zA9zgTPSP/pM6a6gUeTXMvqnu3j1lZ4ZSzYZ15I+m4vg/
-         qL0UruWCMu1Eu4NNVUyofCU1rH9ctZHOxJRIgOKjiDmnCQJfuYSBIXmHr6KRc2QbLpNs
-         OmPA==
-X-Gm-Message-State: AOAM532NpT73dokHbmL9uK6iajFFt0Tt2Ksysd6/yIVTVAAbrA6XvXXz
-        rEerpfUsqK2IzEzFq+/KLa0=
-X-Google-Smtp-Source: ABdhPJxQN4FDTjfZ6IhFz4o1c2N+k57l0Ao8qrl2+/TRNku7RGnVgsej4wIE055vscPuAtAWgc8knQ==
-X-Received: by 2002:a17:906:c1ce:: with SMTP id bw14mr3953266ejb.302.1604697041377;
-        Fri, 06 Nov 2020 13:10:41 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id z18sm1701282ejf.41.2020.11.06.13.10.39
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sWMhK/OvncM3wrg/l2R/3oqz+FYOuFfnAnN4zZZG95g=;
+        b=WIeaHNn3DylgYwo00SC0MGRjFvI02Mqg+PUbM6u9Pi+06+QSQht0hL730zMchAx3sy
+         77DNPG9LzWqwTxWfoCeQo5q/qbAAM7T0sE4fv+wvpxJ8qU01tnO9dF4g9liKqEJXbCnT
+         kVH8QZECJF81C7c45DTTcc7dY/8L3Q35v+Z8LmskRQPRe/QdipLkmX4QJSl1nWHHVZ3q
+         NQloKy+kQR3pRl2GdNZZsAjd42HGRJEawzfRJ2LubkR410vHag0ZHsj+UzqSbxwIozPQ
+         cFMwF8wxwc0eAYnJLnPKbrCi4BEqtO9eiJixffQEE9SG4dP97sB7bhYROyuT+WkW+7lk
+         gS4A==
+X-Gm-Message-State: AOAM531eLtSondMjqPQmVZrT4lT/Qe2Jog4DRWZJATjtqStyQlW6FhnY
+        Zx+ZtxbPGcyTQA9gA8601ZsavA==
+X-Google-Smtp-Source: ABdhPJwYbbeGzfNSZK1/UV+MifV9QDrLVlkETYPhmljhd2e2p7ph7BVoQ2I52W0yiGbOkeQrcS1TNA==
+X-Received: by 2002:a5d:66c3:: with SMTP id k3mr108958wrw.123.1604698619742;
+        Fri, 06 Nov 2020 13:36:59 -0800 (PST)
+Received: from dell.default ([91.110.221.236])
+        by smtp.gmail.com with ESMTPSA id d16sm3984942wrw.17.2020.11.06.13.36.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2020 13:10:40 -0800 (PST)
-Date:   Fri, 6 Nov 2020 22:10:38 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Jonathan Bakker <xc-racer2@live.ca>,
-        Sasha Levin <sashal@kernel.org>,
-        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 4.19 107/191] ARM: dts: s5pv210: move PMU node out of
- clock controller
-Message-ID: <20201106211038.GA400980@kozik-lap>
-References: <20201103203232.656475008@linuxfoundation.org>
- <20201103203243.594174920@linuxfoundation.org>
- <20201105114648.GB9009@duo.ucw.cz>
- <CAJKOXPeexYuH1_9HZUGn4Q80QBtKmqCKiEd=hNd46VKTM4kGgA@mail.gmail.com>
- <20201105195508.GB19957@duo.ucw.cz>
- <20201106201245.GA332560@kozik-lap>
+        Fri, 06 Nov 2020 13:36:58 -0800 (PST)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     lee.jones@linaro.org
+Cc:     linux-kernel@vger.kernel.org,
+        Adrian Hunter <ext-adrian.hunter@nokia.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Ben Dooks <ben@simtec.co.uk>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Boris BREZILLON <b.brezillon.dev@gmail.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Choudary Kalluri <punnaia@xilinx.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Dan Brown <dan_brown@ieee.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Dmitriy B <rzk333@gmail.com>, dri-devel@lists.freedesktop.org,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Jian Zhang <jzhang@ti.com>,
+        =?UTF-8?q?Jochen=20Sch=C3=A4uble?= <psionic@psionic.de>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-samsung-soc@vger.kernel.org,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Paul Mackerras <paulus@samba.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiang Yu <yuq825@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Sergey Lapin <slapin@ossfans.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Thomas Gleixner <gleixner@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
+Subject: [PATCH v2 00/23] Rid W=1 warnings in MTD
+Date:   Fri,  6 Nov 2020 21:36:32 +0000
+Message-Id: <20201106213655.1838861-1-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20201106201245.GA332560@kozik-lap>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Nov 06, 2020 at 09:12:45PM +0100, Krzysztof Kozlowski wrote:
-> On Thu, Nov 05, 2020 at 08:55:08PM +0100, Pavel Machek wrote:
-> > Hi!
-> > 
-> > > > > The Power Management Unit (PMU) is a separate device which has little
-> > > > > common with clock controller.  Moving it to one level up (from clock
-> > > > > controller child to SoC) allows to remove fake simple-bus compatible and
-> > > > > dtbs_check warnings like:
-> > > > >
-> > > > >   clock-controller@e0100000: $nodename:0:
-> > > > >     'clock-controller@e0100000' does not match '^([a-z][a-z0-9\\-]+-bus|bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
-> > > >
-> > > > > +++ b/arch/arm/boot/dts/s5pv210.dtsi
-> > > > > @@ -98,19 +98,16 @@
-> > > > >               };
-> > > > >
-> > > > >               clocks: clock-controller@e0100000 {
-> > > > > -                     compatible = "samsung,s5pv210-clock", "simple-bus";
-> > > > > +                     compatible = "samsung,s5pv210-clock";
-> > > > >                       reg = <0xe0100000 0x10000>;
-> > > > ...
-> > > > > +             pmu_syscon: syscon@e0108000 {
-> > > > > +                     compatible = "samsung-s5pv210-pmu", "syscon";
-> > > > > +                     reg = <0xe0108000 0x8000>;
-> > > > >               };
-> > > >
-> > > > Should clock-controller@e0100000's reg be shortened to 0x8000 so that
-> > > > the ranges do not overlap?
-> > > >
-> > > > Signed-off-by: Pavel Machek (CIP) <pavel@denx.de>
-> > > 
-> > > I don't think this commit should be backported to stable. It is simple
-> > > dtbs_check - checking whether Devicetree source matches device tree
-> > > schema. Neither the schema nor the warning existed in v4.19. I think
-> > > dtbs_check fixes should not be backported, unless a real issue is
-> > > pointed out.
-> > 
-> > I agree with you about the backporting. Hopefully Greg drops the
-> > commit.
-> > 
-> > But the other issue is: should mainline be fixed so that ranges do not overlap?
-> 
-> Yes, it should be. This should fail on mapping resources...
-> 
-> I'll take a look, thanks for the report.
+This set is part of a larger effort attempting to clean-up W=1
+kernel builds, which are currently overwhelmingly riddled with
+niggly little warnings.
 
-+Cc Paweł and Marek,
+v1 => v2:
+  - Added tags
+  - Satisfied Miquel's review comments
 
-The IO memory mappings overlap unfortunately on purpose. Most of the
-clock driver registers are in the first range of 0x3000 but it also uses
-two registers at offset 0xe000.
+Lee Jones (23):
+  mtd: mtdpart: Fix misdocumented function parameter 'mtd'
+  mtd: devices: phram: File headers are not good candidates for
+    kernel-doc
+  mtd: nand: onenand: onenand_base: Fix expected kernel-doc formatting
+  mtd: devices: docg3: Fix kernel-doc 'bad line' and 'excessive doc'
+    issues
+  mtd: mtdcore: Fix misspelled function parameter 'section'
+  mtd: nand: onenand: onenand_bbt: Fix expected kernel-doc formatting
+  mtd: spi-nor: controllers: hisi-sfc: Demote non-conformant kernel-doc
+  mtd: ubi: build: Document 'ubi_num' in struct mtd_dev_param
+  mtd: nand: spi: toshiba: Demote non-conformant kernel-doc header
+  mtd: ubi: kapi: Correct documentation for 'ubi_leb_read_sg's 'sgl'
+    parameter
+  mtd: ubi: eba: Fix a couple of misdocumentation issues
+  mtd: ubi: wl: Fix a couple of kernel-doc issues
+  mtd: nand: raw: brcmnand: brcmnand: Demote non-conformant kernel-doc
+    headers
+  mtd: ubi: gluebi: Fix misnamed function parameter documentation
+  mtd: nand: raw: diskonchip: Marking unused variables as
+    __always_unused
+  mtd: nand: raw: cafe_nand: Remove superfluous param doc and add
+    another
+  mtd: nand: raw: s3c2410: Add documentation for 2 missing struct
+    members
+  mtd: nand: raw: omap_elm: Finish half populated function header,
+    demote empty ones
+  mtd: nand: raw: omap2: Fix a bunch of kernel-doc misdemeanours
+  mtd: nand: raw: sunxi_nand: Document 'sunxi_nfc's 'caps' member
+  mtd: nand: raw: arasan-nand-controller: Document 'anfc_op's 'buf'
+    member
+  mtd: nand: onenand: onenand_base: Fix some kernel-doc misdemeanours
+  mtd: devices: powernv_flash: Add function names to headers and fix
+    'dev'
 
-The samsung-s5pv210-pmu is used only as a syscon by phy-s5pv210-usb2.c
-which wants to play with 0x680c.
+ drivers/mtd/devices/docg3.c                   |   5 +-
+ drivers/mtd/devices/phram.c                   |   2 +-
+ drivers/mtd/devices/powernv_flash.c           |   5 +-
+ drivers/mtd/mtdcore.c                         |   2 +-
+ drivers/mtd/mtdpart.c                         |   2 +-
+ drivers/mtd/nand/onenand/onenand_base.c       | 444 +++++++++---------
+ drivers/mtd/nand/onenand/onenand_bbt.c        |  32 +-
+ drivers/mtd/nand/raw/arasan-nand-controller.c |   1 +
+ drivers/mtd/nand/raw/brcmnand/brcmnand.c      |   6 +-
+ drivers/mtd/nand/raw/cafe_nand.c              |   2 +-
+ drivers/mtd/nand/raw/diskonchip.c             |   4 +-
+ drivers/mtd/nand/raw/omap2.c                  |  18 +-
+ drivers/mtd/nand/raw/omap_elm.c               |   7 +-
+ drivers/mtd/nand/raw/s3c2410.c                |   4 +-
+ drivers/mtd/nand/raw/sunxi_nand.c             |   1 +
+ drivers/mtd/nand/spi/toshiba.c                |   2 +-
+ drivers/mtd/spi-nor/controllers/hisi-sfc.c    |   2 +-
+ drivers/mtd/ubi/build.c                       |   1 +
+ drivers/mtd/ubi/eba.c                         |   3 +-
+ drivers/mtd/ubi/gluebi.c                      |   2 +-
+ drivers/mtd/ubi/kapi.c                        |   2 +-
+ drivers/mtd/ubi/wl.c                          |   3 +-
+ 22 files changed, 278 insertions(+), 272 deletions(-)
 
-The solution could be to split the mapping into two parts but I don't
-want to do this. I don't have the hardware so there is a chance I will
-break things.
-
-However if Paweł, Jonathan or Marek want to improve it - patches are
-welcomed. :)
-
-Best regards,
-Krzysztof
+Cc: Adrian Hunter <ext-adrian.hunter@nokia.com>
+Cc: bcm-kernel-feedback-list@broadcom.com
+Cc: Ben Dooks <ben@simtec.co.uk>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Boris BREZILLON <b.brezillon.dev@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Brian Norris <computersforpeace@gmail.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Choudary Kalluri <punnaia@xilinx.com>
+Cc: "Christian König" <christian.koenig@amd.com>
+Cc: Dan Brown <dan_brown@ieee.org>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Dmitriy B <rzk333@gmail.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>
+Cc: Jian Zhang <jzhang@ti.com>
+Cc: "Jochen Schäuble" <psionic@psionic.de>
+Cc: Kamal Dasu <kdasu.kdev@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linaro-mm-sig@lists.linaro.org
+Cc: linux-media@vger.kernel.org
+Cc: linux-mtd@lists.infradead.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Naga Sureshkumar Relli <nagasure@xilinx.com>
+Cc: Nicolas Pitre <nico@fluxnic.net>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Qiang Yu <yuq825@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Sergey Lapin <slapin@ossfans.org>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Thomas Gleixner <gleixner@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tudor Ambarus <tudor.ambarus@microchip.com>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
+-- 
+2.25.1
 
