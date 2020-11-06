@@ -1,95 +1,115 @@
-Return-Path: <SRS0=idU0=EL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=C3hI=EM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C27C388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 22:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88131C2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 04:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 432FF20936
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Nov 2020 22:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604615215;
-	bh=Ub9MjqTN0H8sY/ZNlqXlz/dgTZXlgT+JtTSNLTQgNOs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=IK+Inb7PwYZ0EjeQg5KPk8kgF1fS1EvXxyLk1G2j+QycG1yQi+RpMlgEWsV+u+azo
-	 mqIe1CDU71ZbHdy8aWs4z9VSJNE2FffoZLOm3TYK/c7zJiPTMGf0hri8EQzFE9eO06
-	 e7q3PrtRp/m2B4OvzxifBTqf2Zz8gjA3ZTKVUpfQ=
+	by mail.kernel.org (Postfix) with ESMTP id 1BC322080D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 04:08:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XUcqFVIT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731965AbgKEW0y (ORCPT
+        id S1726003AbgKFEIT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 17:26:54 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44108 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbgKEW0y (ORCPT
+        Thu, 5 Nov 2020 23:08:19 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:16193 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725616AbgKFEIT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 17:26:54 -0500
-Received: by mail-ot1-f65.google.com with SMTP id f16so2866098otl.11;
-        Thu, 05 Nov 2020 14:26:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=UB3JnZ8ZO2WhkCksk0bd/Ph2fVdk0d46PH2fs96dUDM=;
-        b=LV2q1fjYkneGaXDQUcOFvMyA2uiMtu1YtrExDW5WiN1vtZV2+P6d7q55ZakKhiXN9S
-         Oi9R72CSLl/1nyVxNvHsW9LVUSg4yxzz8YALw2dtcyzr91Krz5H0NYknNAO567uMaY7T
-         O6+qZEvhp2yeTvlqUSB6/RetedZH7YskzRrruhAT6Uwed1Q/NvDQ48cgdXi9ZZNkD1yo
-         YMBMMI74MH5AuLVSvtkxlEeCWalwzY5NZ0GI7FhB8R1kwdBXyzG2nHatJGUaXwJL5U7c
-         OdOmpuTBVMZ5O9+bk9inWjCN8p/q1fLxtbYsI1nUPyYvb5OUsi1DNxhvwSafkg5IfWva
-         jPzQ==
-X-Gm-Message-State: AOAM530pOFzUoeGynPpbqNFk/mDQt++5Z+YGUQoIDG14qG48UaWjmQx5
-        9OYokSVcL8bC3O6ddLCACg==
-X-Google-Smtp-Source: ABdhPJw+B0xyUSen1aJS+VSkyCAjmi3h3Ui8u7d2MZ50yhm/Xda7Hgl0eduKXYsAlGvM6EostU/GKg==
-X-Received: by 2002:a9d:20a8:: with SMTP id x37mr3290682ota.94.1604615213562;
-        Thu, 05 Nov 2020 14:26:53 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r184sm692177oie.20.2020.11.05.14.26.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2020 14:26:52 -0800 (PST)
-Received: (nullmailer pid 1913256 invoked by uid 1000);
-        Thu, 05 Nov 2020 22:26:51 -0000
-Date:   Thu, 5 Nov 2020 16:26:51 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, jim.cromie@gmail.com,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        Thu, 5 Nov 2020 23:08:19 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5fa4cc360002>; Thu, 05 Nov 2020 20:08:22 -0800
+Received: from [10.2.49.167] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Nov
+ 2020 04:08:11 +0000
+Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
+To:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Christoph Hellwig <hch@infradead.org>,
+        J??r??me Glisse <jglisse@redhat.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        "Daniel Vetter" <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>, Heiner Kallweit <hkallweit1@gmail.com>,
-        netdev@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5 2/5] dt-bindings: net: Add bindings for AX88796C SPI
- Ethernet Adapter
-Message-ID: <20201105222651.GA1913164@bogus>
-References: <20201103151536.26472-1-l.stelmach@samsung.com>
- <CGME20201103151539eucas1p234b5fe43c6f26272560a7d2ac791202f@eucas1p2.samsung.com>
- <20201103151536.26472-3-l.stelmach@samsung.com>
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>
+References: <CAKMK7uEw701AWXNJbRNM8Z+FkyUB5FbWegmSzyWPy9cG4W7OLA@mail.gmail.com>
+ <20201104140023.GQ36674@ziepe.ca>
+ <CAKMK7uH69hsFjYUkjg1aTh5f=q_3eswMSS5feFs6+ovz586+0A@mail.gmail.com>
+ <20201104162125.GA13007@infradead.org>
+ <CAKMK7uH=0+3FSR4LxP7bJUB4BsCcnCzfK2=D+2Am9QNmfZEmfw@mail.gmail.com>
+ <20201104163758.GA17425@infradead.org> <20201104164119.GA18218@infradead.org>
+ <20201104181708.GU36674@ziepe.ca>
+ <d3497583-2338-596e-c764-8c571b7d22cf@nvidia.com>
+ <20201105092524.GQ401619@phenom.ffwll.local>
+ <20201105124950.GZ36674@ziepe.ca>
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <7ae3486d-095e-cf4e-6b0f-339d99709996@nvidia.com>
+Date:   Thu, 5 Nov 2020 20:08:10 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201103151536.26472-3-l.stelmach@samsung.com>
+In-Reply-To: <20201105124950.GZ36674@ziepe.ca>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1604635702; bh=Zxaf2o6Bf8KCt8GGVyqkabRsYvK65I+alpkY1bpXUj4=;
+        h=Subject:To:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=XUcqFVIT6wpyCLo/7MIMA70nfnEAQlMnvxS6BpI49u8niHEonhjOFRr5jpKAiDgSb
+         NruirMHJ0lklnJPVstdxDDpsNeDoRzXNbc/ZwNiwsnyeDHnXN2zye8BykFo4BmM8pn
+         eb+ONcJpKqq41slnim2JQO2fNKWYRjv2D8SW2MtwUNBsIi33cxfub4Kh3D4Qd5ngz+
+         xrhVX4XmfgwdyAZcB6p78K3Qsl/oPr5iUR4d6pKEmurex3ZAnsYGQ2ya0g2Vdsm1vi
+         TmzogOYW7iQNIRy5mgIxCPwKcT0KL2pFOmPHkECsQklCGjQEZmxD/3b/wK/ZG9ox5k
+         l2KSFxiaOUvow==
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 03 Nov 2020 16:15:33 +0100, Łukasz Stelmach wrote:
-> Add bindings for AX88796C SPI Ethernet Adapter.
+On 11/5/20 4:49 AM, Jason Gunthorpe wrote:
+> On Thu, Nov 05, 2020 at 10:25:24AM +0100, Daniel Vetter wrote:
+>>> /*
+>>>   * If we can't determine whether or not a pte is special, then fail immediately
+>>>   * for ptes. Note, we can still pin HugeTLB and THP as these are guaranteed not
+>>>   * to be special.
+>>>   *
+>>>   * For a futex to be placed on a THP tail page, get_futex_key requires a
+>>>   * get_user_pages_fast_only implementation that can pin pages. Thus it's still
+>>>   * useful to have gup_huge_pmd even if we can't operate on ptes.
+>>>   */
+>>
+>> We support hugepage faults in gpu drivers since recently, and I'm not
+>> seeing a pud_mkhugespecial anywhere. So not sure this works, but probably
+>> just me missing something again.
 > 
-> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-> ---
->  .../bindings/net/asix,ax88796c.yaml           | 73 +++++++++++++++++++
->  1 file changed, 73 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/asix,ax88796c.yaml
+> It means ioremap can't create an IO page PUD, it has to be broken up.
+> 
+> Does ioremap even create anything larger than PTEs?
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+ From my reading, yes. See ioremap_try_huge_pmd().
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
