@@ -2,125 +2,95 @@ Return-Path: <SRS0=C3hI=EM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 795D3C4741F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 13:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0DC8C5517A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 19:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2025F208B3
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 13:41:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bNf+JFTJ"
+	by mail.kernel.org (Postfix) with ESMTP id 6D44221D7F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Nov 2020 19:39:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604691558;
+	bh=cECY+Wc7xUBo/QZAwrh5a1EMpiqRtrIA5RybZ0RkHpA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=c1ilUH4dsWlHpc+hGG4Ks5i9QayK/obytGtb5pl5LFJxAjVbd+HBYRp42iNtK04Qg
+	 CWAtJTx89TVK65VWIvv/xh+jY2yDByXEk8XhldyGOZ0gIluhvfxOPc7GC9FPU4O5Ig
+	 FfDgAFy7WNm7frABkudzirBbD9LENfuUwM+CcE8U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbgKFNlT (ORCPT
+        id S1728140AbgKFTjS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Nov 2020 08:41:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36418 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbgKFNlS (ORCPT
+        Fri, 6 Nov 2020 14:39:18 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38472 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727356AbgKFTjR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Nov 2020 08:41:18 -0500
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C823C0613CF;
-        Fri,  6 Nov 2020 05:41:18 -0800 (PST)
-Received: by mail-ej1-x644.google.com with SMTP id k3so1952187ejj.10;
-        Fri, 06 Nov 2020 05:41:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=YxlySBEtfM8plnPwR3qjjCyIfVvwbfiGqCyLIXMcAVY=;
-        b=bNf+JFTJi7loW9QoZYLAj1mxw3CAaxrBETbasN+Ksr6IIFCVZiJMenzWRn6BdIG2XL
-         LE/DALyZRKTHE60zpb6rAGkpZS6ag4kod9Asip/bpyt1ceCPadTaepJK+Gfa90DfJA+K
-         4kyTY7NRg33tum1uhTSN3RxZYArP87cMPJc/Ey8qgbT4UjgPCbUkb2txF28Io8BM66m0
-         QJg9/oupqK9QNybaSr+lQoGE6U7DltDxFzsFb2C5GdrkTTaolp386Psm1DmeKWJOkDYo
-         T+6SOSVHbmE67mhYkgbO2p1yXjMNl7d7gmvfb/yWOBvoTyT0IQeOw7ugR5S1p/uEdY3h
-         0fJQ==
+        Fri, 6 Nov 2020 14:39:17 -0500
+Received: by mail-ed1-f67.google.com with SMTP id k9so2430316edo.5;
+        Fri, 06 Nov 2020 11:39:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=YxlySBEtfM8plnPwR3qjjCyIfVvwbfiGqCyLIXMcAVY=;
-        b=cvKnb1r469TwJzl4GFVmKxS6wXLC90/AQ15XpREwMzO40N8o05KBlS9v0cIgYED9W+
-         YekD3JZTlrcEIba/Sh96uuiHTPnb6MDNbltMmlQTwoJuOW8ltb+7Wq2IzmiQMWJDxxvf
-         Whj6B7qwmaJ+5wjVuM/9iUgKdztQU0e5nE3ufRIu9HJ8Gwl4LgIkYv4Ipo9+tQyyYL8Q
-         ndcg8jrDU+PMVb/IS5l4rFjg7XeAkmLhLfKFG+YrX9w1Fhl65+jeOxA0suYZWoFFQJ5M
-         Z8NTubrIanwGtjM9xjUMokBu78E79dNAJp+hIKvMGQjpi43ztZJabUh8dRQviT7KxqOk
-         suSg==
-X-Gm-Message-State: AOAM5339TKOxzNcnh24+IVjzt/TBZUMZBkKj25VlRjm9CQSaQe7+kMqf
-        0Goxf3+fyAo7eRCAqlJORF2JC2rvjrGwris+WzU=
-X-Google-Smtp-Source: ABdhPJwedRmD3YJS+mk5L/dYqDNvjdIvAR1tRZGg45jYDZepuD2Hi9ud9Rcyv7zuPeXIuZjSxTVK7dd4xN347lIHCio=
-X-Received: by 2002:a17:906:6d83:: with SMTP id h3mr2014952ejt.481.1604670076814;
- Fri, 06 Nov 2020 05:41:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20201104234427.26477-1-digetx@gmail.com> <20201104234427.26477-18-digetx@gmail.com>
- <CAOh2x==sy1w7_oEV8=toC6uQnSN44wyOixbP_X0BrMsnm1AUFg@mail.gmail.com>
- <6fa54ce6-d5ae-d04f-7c77-b62c148d92b7@gmail.com> <20201106061513.uyys7njcqcdlah67@vireshk-i7>
- <a6926456-8bce-a438-bfaa-be334208f004@gmail.com>
-In-Reply-To: <a6926456-8bce-a438-bfaa-be334208f004@gmail.com>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Fri, 6 Nov 2020 21:41:05 +0800
-Message-ID: <CAEExFWsp0DWw1yO84e3vzr_YZkqkd+pyPfQQR3J2W6n3wTX4Jw@mail.gmail.com>
-Subject: Re: [PATCH v1 17/30] mmc: sdhci-tegra: Support OPP and core voltage scaling
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Gv0cSdVc7Eg5peQhu/XCzN6FvfZ7oplCo0L4j+dSzX0=;
+        b=ti1B+baq/CqCyN1gvYxfqYp4l2Y+dg9FuoqlQ/QOry9QS46RphdAHVkfP6fRC47bvb
+         cK2mvgHo66kaPWwTGk/Z/iL4jMICWs9slkx0CgZ18/9S2WpYaLoLTsT0JpxcY9dcX8v0
+         xKxk9DPp5JnQUnBmPsZn9niPKog0QEfxWZ3iQFNKdqjY4Oev6utjO2JJNzYu6WOV2POG
+         mjYJiQyqce26VHrdpbauGop8mj/59cHspii43PhukgyF4ELkNl/vNwcx4Wc6pNdb2MOq
+         dBgOWQsJAtCQ+3HteDQlyHEwoVwPsLzDjI2vMfycZJiaKHr/aWqm0YWXbYrirUj/IDRo
+         Iblw==
+X-Gm-Message-State: AOAM532/sfV3w5PbS4CPkQNI1dNe+gI9+/TzOW6T4sNYmwx1NtsZYZE8
+        Y6pnCXAEV/gSI5gGhlRFy3U=
+X-Google-Smtp-Source: ABdhPJy7AxqfdYuRa4DJO40CTepe9842ZbaB3uaP3tz30Fk7svP62F/AC6y9tTPgkLU1WuergwJldg==
+X-Received: by 2002:a50:9993:: with SMTP id m19mr3560762edb.99.1604691555563;
+        Fri, 06 Nov 2020 11:39:15 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id y2sm1697348edu.48.2020.11.06.11.39.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Nov 2020 11:39:14 -0800 (PST)
+Date:   Fri, 6 Nov 2020 20:39:12 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        driver-dev <devel@driverdev.osuosl.org>,
-        linux-pwm@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, linux-usb@vger.kernel.org,
-        "open list:SECURE DIGITAL HO..." <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-tegra@vger.kernel.org, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Kukjin Kim <kgene@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v5 4/5] ARM: dts: exynos: Add Ethernet to Artik 5 board
+Message-ID: <20201106193912.GA329187@kozik-lap>
+References: <20201103151536.26472-1-l.stelmach@samsung.com>
+ <CGME20201103151540eucas1p2750cffe062d6abff42ee479a218c8eb8@eucas1p2.samsung.com>
+ <20201103151536.26472-5-l.stelmach@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20201103151536.26472-5-l.stelmach@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Nov 6, 2020 at 9:18 PM Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> 06.11.2020 09:15, Viresh Kumar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Setting regulators for count as 0 doesn't sound good to me.
-> >
-> > But, I understand that you don't want to have that if (have_regulator)
-> > check, and it is a fair request. What I will instead do is, allow all
-> > dev_pm_opp_put*() API to start accepting a NULL pointer for the OPP
-> > table and fail silently. And so you won't be required to have this
-> > unwanted check. But you will be required to save the pointer returned
-> > back by dev_pm_opp_set_regulators(), which is the right thing to do
-> > anyways.
->
-> Perhaps even a better variant could be to add a devm versions of the OPP
-> API functions, then drivers won't need to care about storing the
-> opp_table pointer if it's unused by drivers.
+On Tue, Nov 03, 2020 at 04:15:35PM +0100, Łukasz Stelmach wrote:
+> Add node for ax88796c ethernet chip.
+> 
+> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos3250-artik5-eval.dts | 29 ++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
 
-I think so. The consumer may not be so concerned about the status of
-these OPP tables.
-If the driver needs to manage the release, it needs to add a pointer
-to their driver global structure.
+Thanks, applied.
 
-Maybe it's worth having these devm interfaces for opp.
+Best regards,
+Krzysztof
 
-Yangtao
