@@ -5,72 +5,71 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B38C388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Nov 2020 12:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A103C4742C
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Nov 2020 13:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B099E20888
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Nov 2020 12:15:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB2C0206ED
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Nov 2020 13:39:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F46HQ1XI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pp3Nijb3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbgKGMPH (ORCPT
+        id S1728063AbgKGNjl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 7 Nov 2020 07:15:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49198 "EHLO
+        Sat, 7 Nov 2020 08:39:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbgKGMPG (ORCPT
+        with ESMTP id S1727084AbgKGNjl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 7 Nov 2020 07:15:06 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFA39C0613CF;
-        Sat,  7 Nov 2020 04:15:04 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id s30so5677572lfc.4;
-        Sat, 07 Nov 2020 04:15:04 -0800 (PST)
+        Sat, 7 Nov 2020 08:39:41 -0500
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5AE0C0613CF;
+        Sat,  7 Nov 2020 05:39:40 -0800 (PST)
+Received: by mail-lj1-x231.google.com with SMTP id y16so4609144ljk.1;
+        Sat, 07 Nov 2020 05:39:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=8+Mm44weplld/dSNNRNUy7NBfXXfQxTylZi90l7dWis=;
-        b=F46HQ1XI/INYQ7QCgO/1nFtEUip8UcNsw77sK+EOHgPoA37xQiKMI1YEg9yGHvVP1L
-         NXSNEFJLV9uiBbUklfUWAD7/K2vgab61sY/NtQk48GcY9lrVdYqxqvR+TQsin3r2ldpn
-         QuBit5fdNORZoTL9hOoKfQLZ8/UlqWdkQLkE103KiaMSoiK/c231lcvqz5bMjD+Gh2Uu
-         0X5OUJWK/KgZ/fzXki016xj79F4dxkn8rgFy69DUVIWc6RL033U43v5QSOvolZ4UB49Y
-         DtiJuMHXrMn8FyWPSAz3rD+quEdxxq1ZzAeo8lOQJuvN9m8kB6L+CETuF75WKg4jvJKz
-         6BGQ==
+        bh=c5vk1HU4LMO05/HvLhuFLID0YfaxsQiSjHZGb3JZL+k=;
+        b=pp3Nijb3qelAlJYoXTJYgO4SDTsvHQB1JVzF89P6cF7PNLT/RAQs2CvY4zJ2L+s657
+         Rncm1TbS0AhZp5RWhK17AA9nfGkJuPjqOuiTzG5SUXR0X/CBwILioM5AcJwIQfNT3oNi
+         6l3Iz82nm4lT7T+93ohGSnSSQK2e0WzReQZ6oDBR1YsM0b2OGWCkPUBtqGJXh4R/zsbe
+         KIFr52Gn7obgs+qgg1HXxFe3Q+6Ig0nlw89gQ2rUe1ccXEJ9GVn4GcREF7Z1huS2l5MB
+         wGPvhOufbRsForGk7jLelkIHSAe/hKG7VFQ3BOthkkFnmdb6qq1eWE5eUd9JYdKtVV+w
+         mESg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=8+Mm44weplld/dSNNRNUy7NBfXXfQxTylZi90l7dWis=;
-        b=hBFpGfcmIE6fraZwkOzIULljpIpMaRV/6GDoWB5A00wEKKTKF9Rn0gSrtm3raCFx3c
-         p9a14PD5DMxDWtYrVh7DRwdavv2Qbi9TPIqvdgpRiDYF6QmfaNdjz5rR83T/b/nHCZZ8
-         jhTCOgrqUMTEJ6kAnoGtwpZZ0i9mp2ijkBf8pkllgtGgBpEWMAk7VqA1L3pnPhhkNu9b
-         uTMovFrf2axMMVOSS/ASzVNF+Z1K37WYnPQVFeftM6CAbeGIUEjfIQF/k1Tc7BrIEKM1
-         X7Vc8wKS8chMA4FOeV4xCEIlG/oDKxhPjHXpqQSmWj7oUCzjJ2olh9x195mmh1vfowRp
-         WJtA==
-X-Gm-Message-State: AOAM530QfP3Q8o22qvrIkJzlYyDOSaU70YlBSCJa4PfBeZr1r+00SJ9g
-        ytO351WrmL8xa/9AoGqXjUk=
-X-Google-Smtp-Source: ABdhPJyXSihKMIVg9TRTUqhHcpHCcsdtTm44JJEMUD1eZcPni5jfyGby+/1mUJWfiSZK+7QD+mGl1g==
-X-Received: by 2002:ac2:5e91:: with SMTP id b17mr2392285lfq.442.1604751303425;
-        Sat, 07 Nov 2020 04:15:03 -0800 (PST)
+        bh=c5vk1HU4LMO05/HvLhuFLID0YfaxsQiSjHZGb3JZL+k=;
+        b=aT+9E0ex+1rgp4p+UufwbYMQ5EHxD0GLtqyhf2/eooOm5yECywHKRf4NUCBZj/4DQO
+         INwxfEmvivFDx9uFOLy6EPpJ0XA7fPyuaT+x0Uqeahy9co7Mkx0Lc9SB9sIyok6c1iCN
+         ll9HW47ZxQrSqJVj5j+DKXebntosDVHpM4OMqnCmYmqxpF90q4l+rZ6aJj4CwgXTASNo
+         VOjh3fBZ70EmdAhpcOn3x+tRGW4EGptbyxn8bqxbjQXmBbwmKALrX03I2oSAfvWngIz7
+         TeIdPMqDT52U/WZXyl02o0a5RST48dm1YpAFyRhZXT3rswbf0mooYVZXS8aeOzvrtbCa
+         7SUQ==
+X-Gm-Message-State: AOAM531RI9Ki1QqIEE9mQYuRanFJkgGo1VuHcuMUv8ryN9ND++kYeI+F
+        mYzLh8Do5aLFSUvgGN/No1c=
+X-Google-Smtp-Source: ABdhPJykwd8X4etetyGtEH9KC2jai7rgshQmz5xZq3TNNHZcMixp/o1ZAsTHgBT0IRpaPnjMLSR6FQ==
+X-Received: by 2002:a2e:9ac4:: with SMTP id p4mr2412087ljj.247.1604756379480;
+        Sat, 07 Nov 2020 05:39:39 -0800 (PST)
 Received: from localhost.localdomain ([2a02:a315:5445:5300:d646:fcbb:9c5e:1da1])
-        by smtp.googlemail.com with ESMTPSA id y26sm489828lfe.164.2020.11.07.04.15.01
+        by smtp.googlemail.com with ESMTPSA id y27sm524189ljm.74.2020.11.07.05.39.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Nov 2020 04:15:02 -0800 (PST)
+        Sat, 07 Nov 2020 05:39:38 -0800 (PST)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     kgene@kernel.org, krzk@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-        cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
+To:     kgene@kernel.org, krzk@kernel.org, alim.akhtar@samsung.com
+Cc:     robh+dt@kernel.org, a.kesavan@samsung.com,
+        naveenkrishna.ch@gmail.com, thomas.ab@samsung.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v2] clk: exynos7: Keep aclk_fsys1_200 enabled
-Date:   Sat,  7 Nov 2020 13:14:56 +0100
-Message-Id: <20201107121456.25562-1-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v2 1/2] arm64: dts: exynos: Include common syscon restart/poweroff for Exynos7
+Date:   Sat,  7 Nov 2020 14:39:25 +0100
+Message-Id: <20201107133926.37187-1-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -79,47 +78,48 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This clock must be always enabled to allow access to any registers in
-fsys1 CMU. Until proper solution based on runtime PM is applied
-(similar to what was done for Exynos5433), fix this by calling
-clk_prepare_enable() directly from clock provider driver.
+Exynos7 uses the same syscon reboot and poweroff nodes as other Exynos
+SoCs, so instead of duplicating code we can just include common dtsi
+file, which already contains definitions of them. After this change,
+poweroff node will be also available, previously this dts file did
+contain only reboot node.
 
-It was observed on Samsung Galaxy S6 device (based on Exynos7420), where
-UFS module is probed before pmic used to power that device.
-In this case defer probe was happening and that clock was disabled by
-UFS driver, causing whole boot to hang on next CMU access.
-
+Fixes: fb026cb65247 ("arm64: dts: Add reboot node for exynos7")
+Fixes: b9024cbc937d ("arm64: dts: Add initial device tree support for exynos7")
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
 Changes from v1:
-  - Instead of marking clock as critical, enable it manually in driver.
+  - Split into two separate patches.
+  - Include existing exynos-syscon-restart.dtsi to avoid code
+    duplication.
 ---
- drivers/clk/samsung/clk-exynos7.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos7.dtsi | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index c1ff715e960c..e05b673e277f 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -6,6 +6,7 @@
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index 7a2cba4220d9..723f5d5fcf00 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -624,13 +624,6 @@ hsi2c_11: hsi2c@136a0000 {
+ 		pmu_system_controller: system-controller@105c0000 {
+ 			compatible = "samsung,exynos7-pmu", "syscon";
+ 			reg = <0x105c0000 0x5000>;
+-
+-			reboot: syscon-reboot {
+-				compatible = "syscon-reboot";
+-				regmap = <&pmu_system_controller>;
+-				offset = <0x0400>;
+-				mask = <0x1>;
+-			};
+ 		};
  
- #include <linux/clk-provider.h>
- #include <linux/of.h>
-+#include <linux/clk.h>
+ 		rtc: rtc@10590000 {
+@@ -818,3 +811,5 @@ atlas_thermal: cluster0-thermal {
+ };
  
- #include "clk.h"
- #include <dt-bindings/clock/exynos7-clk.h>
-@@ -571,6 +572,10 @@ static const struct samsung_cmu_info top1_cmu_info __initconst = {
- static void __init exynos7_clk_top1_init(struct device_node *np)
- {
- 	samsung_cmu_register_one(np, &top1_cmu_info);
-+	/*
-+	 * Keep top FSYS1 aclk enabled permanently. It's required for CMU register access.
-+	 */
-+	clk_prepare_enable(__clk_lookup("aclk_fsys1_200"));
- }
- 
- CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
+ #include "exynos7-pinctrl.dtsi"
++#include "arm/exynos-syscon-restart.dtsi"
++
 -- 
 2.27.0
 
