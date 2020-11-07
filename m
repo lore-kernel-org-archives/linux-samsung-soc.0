@@ -2,119 +2,119 @@ Return-Path: <SRS0=3dq4=EN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE299C388F9
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Nov 2020 13:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBCD3C55178
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Nov 2020 15:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73C7F207C3
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Nov 2020 13:39:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B660420719
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Nov 2020 15:07:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhDiTzaq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UiaG9MkC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbgKGNjo (ORCPT
+        id S1727084AbgKGPHc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 7 Nov 2020 08:39:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33972 "EHLO
+        Sat, 7 Nov 2020 10:07:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbgKGNjn (ORCPT
+        with ESMTP id S1726301AbgKGPHc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 7 Nov 2020 08:39:43 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 940E2C0613CF;
-        Sat,  7 Nov 2020 05:39:42 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id 126so5846293lfi.8;
-        Sat, 07 Nov 2020 05:39:42 -0800 (PST)
+        Sat, 7 Nov 2020 10:07:32 -0500
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A14BC0613CF
+        for <linux-samsung-soc@vger.kernel.org>; Sat,  7 Nov 2020 07:07:31 -0800 (PST)
+Received: by mail-io1-xd44.google.com with SMTP id u21so5158917iol.12
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 07 Nov 2020 07:07:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lAR/h1wV/mVrmRlM3JEvsi3/vv0tMjOOYCctIjXs1fA=;
-        b=AhDiTzaqcIBZB/kD/hlamzvzQ/LFTFLzK2Ti4G+IBZg9/+yDi5Mw2INNbxyzhei+lu
-         G0EvTSygiRODFHWPQJW70UBEGeCEGtL7TOXZR85U6Sl65Pc/wZmfY2Gs/iOsbyZ9toOg
-         26gI68BDpXhyRpQMGhGLDbOmvAJgFk76xSeRhYTq4zn2FPR1lH8lGm4tbIjNoBrDmGZN
-         nBdkXRqVyK9qa73nHLG8TPyaoeT4isYOR1iT6cQnJXzUPGpz8EytJH+zgtgH6E6vlXCR
-         UjXKSLU/vFpGAmi46NVNjgH2Sn5kyi0do8wkLWim659Op9OS3hIJYOXUdQaU/TY3lSH5
-         1DrA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Kx47WtaQ7WMa9LVtSdFy9W14nJBrLgdMQNIJm3qYLSc=;
+        b=UiaG9MkCCu9LY8D5CjnR2038+tnnSIDjmVdZ1bHC/qG0u8uriWxKmbcr7XuQd3di/l
+         D+uxux2qejbKsJ5TxLpRqx0P5iH7sfalNyTop4Kk7t4TKuJpBmDgBskhhc12SD5okBi8
+         cvv9zpNP1Km9VPxdNoaXdrXu+0iW9fZC/FdeztqO8Mv/OaYl5FmqpWGTNbvJ4MykUHrJ
+         ooEIIawdi0lzLWE9jPOqqAsJ9RWdiiOClKBWqXzKYpXHnvqM7Urr+s8Afeb/ytUg7ifH
+         LNGJ10+m6Trcjl4Vrm4ncXu/e52URQIOPb5EwNIkbE/BGsx4gd6unjeh7kbG8iW5AcVh
+         tdHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lAR/h1wV/mVrmRlM3JEvsi3/vv0tMjOOYCctIjXs1fA=;
-        b=fOn8M6iIvLFKLGVGYn660Kdr+GsrQnp0iZLA7XEpOpMxFI0FXxA+bwNKYDlCyBKZ9T
-         0MEsOTmW7Pt8WPXBiJNKvVGGsJa3awK4JNyoeKuWx7Bs0nhD6hJDKDbfY/dmn3YBpxJl
-         0M9a7krsnIdjySElzOfsHamqLoOmoHHXreAN8EnpdeJ9RYuzg4WaaY8qcR8GpFXAUXwi
-         ezXrxlRjYq+yuLw/yEVstzLSwuK6sKjrNUUdPIhTFuVDYDPLwpIR+TDoRnPZBTPCVeqB
-         aZJ79XAHbBYK5of/jEuSVujEtu8fY7CZJ6+mGJGTACMXPgJ7rR+VrLVMtASMkovKXXsm
-         nUyg==
-X-Gm-Message-State: AOAM5304d96C0Vy3j699ArS1QAsd3rtYAvjH06zPR61wTRP+YLB6Iksc
-        3pmGn7VE4WlELJkciQSDD/E=
-X-Google-Smtp-Source: ABdhPJxGEb/igDJY7FFYn1Atx88+hv86yhzhEjECh4F4QIcwxm/ZUYV/HiIyeNiwwYfb9+TtVWFh0w==
-X-Received: by 2002:ac2:533b:: with SMTP id f27mr2495942lfh.57.1604756381108;
-        Sat, 07 Nov 2020 05:39:41 -0800 (PST)
-Received: from localhost.localdomain ([2a02:a315:5445:5300:d646:fcbb:9c5e:1da1])
-        by smtp.googlemail.com with ESMTPSA id y27sm524189ljm.74.2020.11.07.05.39.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Nov 2020 05:39:40 -0800 (PST)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     kgene@kernel.org, krzk@kernel.org, alim.akhtar@samsung.com
-Cc:     robh+dt@kernel.org, a.kesavan@samsung.com,
-        naveenkrishna.ch@gmail.com, thomas.ab@samsung.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v2 2/2] arm64: dts: exynos: Correct psci compatible used on Exynos7
-Date:   Sat,  7 Nov 2020 14:39:26 +0100
-Message-Id: <20201107133926.37187-2-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201107133926.37187-1-pawel.mikolaj.chmiel@gmail.com>
-References: <20201107133926.37187-1-pawel.mikolaj.chmiel@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Kx47WtaQ7WMa9LVtSdFy9W14nJBrLgdMQNIJm3qYLSc=;
+        b=cNKyX4CWXDeLIi70PGJtMT6CLFi1IGxfQFugycKXqYDrpS7isVCzNC2FK7MtW0P56i
+         Nlak/JwCB5XJbLPD6B+GqrCbTbsvSirn8TnXndmtstwlNZNVdbWTxedeVV7GKm3GYBDk
+         kFSeeZGH0tn5edr3Nbco5MxjGFlcSI+x3FmXCIrkK27LyAGkvtNPYXHXM9u7hs7JyazJ
+         89dJIeiU5NFQ/lUIdpF4MbKQGuFp7dHHJkYq+S8wTqWEH25RtIaJ7elateWAGlyWOLaG
+         mHGiVWVS62glufex3He4o7A4Tfswh+8RX8cqhw2gqfg8lIu+hsX7PNQSidNaDDby8mt8
+         YDBw==
+X-Gm-Message-State: AOAM530Oz4rZxhRLnbNGQgnXd2rDhA6WJAYXffNsKahvdJ9fMVaCHR8f
+        rK6Np/tzCfZ9GpyrfrAgFFlT8CGAoa8SaCFxACs=
+X-Google-Smtp-Source: ABdhPJxcVFJfnIwNIdKPVZY+opxPhNqa/evtovhSadn6b7zDc0zmiXU7HJLpIvaAZCXbeDlFo7UteerVH719gLk2tQE=
+X-Received: by 2002:a6b:d00c:: with SMTP id x12mr5039748ioa.10.1604761650411;
+ Sat, 07 Nov 2020 07:07:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20200911135413.3654800-1-m.tretter@pengutronix.de> <20200911135413.3654800-2-m.tretter@pengutronix.de>
+In-Reply-To: <20200911135413.3654800-2-m.tretter@pengutronix.de>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Sat, 7 Nov 2020 09:07:19 -0600
+Message-ID: <CAHCN7xKAHm0cvh+7rb1wxF+UqE2Fs48nYF7=rWm7E9ipy2Jtmw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/16] drm/encoder: remove obsolete documentation of bridge
+To:     Michael Tretter <m.tretter@pengutronix.de>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        sw0312.kim@samsung.com, Krzysztof Kozlowski <krzk@kernel.org>,
+        a.hajda@samsung.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        sylvester.nawrocki@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-It's not possible to reboot or poweroff Exynos7420 using PSCI. Instead
-we need to use syscon reboot/poweroff drivers, like it's done for other
-Exynos SoCs. This was confirmed by checking vendor source and testing it
-on Samsung Galaxy S6 device based on this SoC.
+On Fri, Sep 11, 2020 at 8:54 AM Michael Tretter
+<m.tretter@pengutronix.de> wrote:
+>
+> In commit 05193dc38197 ("drm/bridge: Make the bridge chain a
+> double-linked list") the bridge has been removed and replaced by a
+> private field. Remove the leftover documentation of the removed field.
+>
+> Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-To be able to use custom restart/poweroff handlers instead of PSCI
-functions, we need to correct psci compatible. This also requires us to
-provide function ids for CPU_ON and CPU_OFF.
+What is the status of this series?  I know of at least one other patch
+series depending on this.
 
-Fixes: fb026cb65247 ("arm64: dts: Add reboot node for exynos7")
-Fixes: b9024cbc937d ("arm64: dts: Add initial device tree support for exynos7")
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
-Changes from v1:
-  - Split into two separate patches.
----
- arch/arm64/boot/dts/exynos/exynos7.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+adam
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index 723f5d5fcf00..fff383206545 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -117,8 +117,10 @@ cpu_atlas3: cpu@3 {
- 	};
- 
- 	psci {
--		compatible = "arm,psci-0.2";
-+		compatible = "arm,psci";
- 		method = "smc";
-+		cpu_off = <0x84000002>;
-+		cpu_on = <0xC4000003>;
- 	};
- 
- 	soc: soc@0 {
--- 
-2.27.0
-
+> ---
+> v2: none
+> ---
+>  include/drm/drm_encoder.h | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/include/drm/drm_encoder.h b/include/drm/drm_encoder.h
+> index a60f5f1555ac..5dfa5f7a80a7 100644
+> --- a/include/drm/drm_encoder.h
+> +++ b/include/drm/drm_encoder.h
+> @@ -89,7 +89,6 @@ struct drm_encoder_funcs {
+>   * @head: list management
+>   * @base: base KMS object
+>   * @name: human readable name, can be overwritten by the driver
+> - * @bridge: bridge associated to the encoder
+>   * @funcs: control functions
+>   * @helper_private: mid-layer private data
+>   *
+> --
+> 2.20.1
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
