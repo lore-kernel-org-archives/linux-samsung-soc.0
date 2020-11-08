@@ -1,83 +1,124 @@
-Return-Path: <SRS0=3dq4=EN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=YEUN=EO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F9FC388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Nov 2020 22:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD5AC388F2
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  8 Nov 2020 09:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB7232087E
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Nov 2020 22:39:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03FE8206ED
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  8 Nov 2020 09:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604827544;
+	bh=0Re+BH04OjvQtiodOP0PAVO/kqbxE/PMUbtENeeHUCU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=et6vJsBIEyCLya8iT7EIVTMkD2T3Y/HySGC5Zc7U+NVAPYS+gujF54yKruE+NLokz
+	 EgpWAb8FfBsAg1EED9oziM5C9r6zgNz5piLWjUGbXTGlT6d1r9Zg/Ocwu+l87ZtC/G
+	 1J5wU4d2+XThpje9j21Gdv84PsRAgN39qjP7iSY4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726021AbgKGWjf (ORCPT
+        id S1728153AbgKHJZk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 7 Nov 2020 17:39:35 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:47594 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbgKGWjf (ORCPT
+        Sun, 8 Nov 2020 04:25:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51886 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726099AbgKHJZh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 7 Nov 2020 17:39:35 -0500
-Received: from ravnborg.org (unknown [188.228.123.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sun, 8 Nov 2020 04:25:37 -0500
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 227242001E;
-        Sat,  7 Nov 2020 23:39:32 +0100 (CET)
-Date:   Sat, 7 Nov 2020 23:39:30 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Michael Tretter <m.tretter@pengutronix.de>
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        jy0922.shim@samsung.com, b.zolnierkie@samsung.com,
-        narmstrong@baylibre.com, sw0312.kim@samsung.com, krzk@kernel.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        kernel@pengutronix.de, sylvester.nawrocki@gmail.com,
-        Adrian Ratiu <adrian.ratiu@collabora.com>
-Subject: Re: [PATCH v2 06/16] drm/exynos: shift register values to fields on
- write
-Message-ID: <20201107223930.GE1052534@ravnborg.org>
-References: <20200911135413.3654800-1-m.tretter@pengutronix.de>
- <20200911135413.3654800-7-m.tretter@pengutronix.de>
+        by mail.kernel.org (Postfix) with ESMTPSA id D0D0720719;
+        Sun,  8 Nov 2020 09:25:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604827536;
+        bh=0Re+BH04OjvQtiodOP0PAVO/kqbxE/PMUbtENeeHUCU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=T8aftoYJoOfJoY2D59wtyqCFPrcSPDuCqBe6z9Y88z18itxLZYrLQQoUiySYprX/w
+         CeltL21788RGxrGqCPGHjUWJsuUW/aiyLgkfQF5xQteJWVIw4gGxwp93kbsT47/9ed
+         KFVVrs14i0T/haKa/knwEHH/Xo7Crf9KJaPhdmXY=
+Received: by mail-lj1-f171.google.com with SMTP id r17so693827ljg.5;
+        Sun, 08 Nov 2020 01:25:35 -0800 (PST)
+X-Gm-Message-State: AOAM5335wt3uT3SLq365qpcyGeMWT4K9imATGHktiEFQSWv9lqgxs+Pk
+        re73Q0gs2V+w/MHHyiwkoNSjw5m3HQY3g0MvC+g=
+X-Google-Smtp-Source: ABdhPJyddR8brDR4uTwLcrWRTsQ0eYz6SRGBrDUoAv5c7VKMt2AwiBlznvTTelNyXgQ/X1oyJ30XbCrkOlR4o4w9iyo=
+X-Received: by 2002:a2e:b536:: with SMTP id z22mr4077018ljm.177.1604827534166;
+ Sun, 08 Nov 2020 01:25:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200911135413.3654800-7-m.tretter@pengutronix.de>
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=VbvZwmh9 c=1 sm=1 tr=0
-        a=S6zTFyMACwkrwXSdXUNehg==:117 a=S6zTFyMACwkrwXSdXUNehg==:17
-        a=kj9zAlcOel0A:10 a=QX4gbG5DAAAA:8 a=vnREMb7VAAAA:8 a=VwQbUJbxAAAA:8
-        a=p7nbUh97NmR1ihCDxR4A:9 a=CjuIK1q_8ugA:10 a=AbAUZ8qAyYyZVLSsDulk:22
-        a=AjGcO6oz07-iQ99wixmX:22
+References: <cover.1604646059.git.viresh.kumar@linaro.org>
+In-Reply-To: <cover.1604646059.git.viresh.kumar@linaro.org>
+From:   Ilia Lin <ilia.lin@kernel.org>
+Date:   Sun, 8 Nov 2020 11:25:22 +0200
+X-Gmail-Original-Message-ID: <CA+5LGR0UwGUeXPw3Jbd7=VkY7fY_rKV_YjLpWV4GbHnvP23Ejg@mail.gmail.com>
+Message-ID: <CA+5LGR0UwGUeXPw3Jbd7=VkY7fY_rKV_YjLpWV4GbHnvP23Ejg@mail.gmail.com>
+Subject: Re: [PATCH 0/7] opp: Allow dev_pm_opp_put_*() APIs to accept NULL opp_table
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Nishanth Menon <nm@ti.com>, Qiang Yu <yuq825@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh@kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        "open list:QUALCOMM CPUFREQ DRIVER MSM8996/APQ8096" 
+        <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>, digetx@gmail.com,
+        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Michael.
+Reviewed-by: Ilia Lin <ilia.lin@kernel.org>
 
-On Fri, Sep 11, 2020 at 03:54:03PM +0200, Michael Tretter wrote:
-> The phy timings are already shifted to the field position. If the driver
-> is reused on multiple platforms, this exposes the field positions to the
-> platform code.
-> 
-> Store only the timing values in the platform data and shift the value to
-> the field when writing the fields to the registers.
-> 
-> Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
 
-This and the following patch smells like the regmap functionality is
-partly open coded. regmaps supports defining different register layouts
-and select the correct layout at runtime.
-
-See for example:
-https://www.collabora.com/news-and-blog/blog/2020/05/27/using-regmaps-to-make-linux-drivers-more-generic/
-or
-https://www.youtube.com/watch?v=0RPDGANArFc
-
-Some parts is not a perfect fit - but using regmaps will make it better
-as a general and well-known solution is used.
-
-@Adrian - see https://lore.kernel.org/dri-devel/20200911135413.3654800-1-m.tretter@pengutronix.de/T/#m8e211c8cce915168cf2b8c4eef1c7ec9b8447af8
-for the original patch.
-
-	Sam
+On Fri, Nov 6, 2020 at 9:05 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> Hello,
+>
+> This patchset updates the dev_pm_opp_put_*() helpers to accept a NULL
+> pointer for the OPP table, in order to allow the callers to drop the
+> unnecessary checks they had to carry.
+>
+> All these must get merged upstream through the OPP tree as there is a
+> hard dependency on the first patch here. Thanks.
+>
+> Viresh Kumar (7):
+>   opp: Allow dev_pm_opp_put_*() APIs to accept NULL opp_table
+>   cpufreq: dt: dev_pm_opp_put_regulators() accepts NULL argument
+>   cpufreq: qcom-cpufreq-nvmem: dev_pm_opp_put_*() accepts NULL argument
+>   devfreq: exynos: dev_pm_opp_put_*() accepts NULL argument
+>   drm/lima: dev_pm_opp_put_*() accepts NULL argument
+>   drm/panfrost: dev_pm_opp_put_*() accepts NULL argument
+>   media: venus: dev_pm_opp_put_*() accepts NULL argument
+>
+>  drivers/cpufreq/cpufreq-dt.c                   |  6 ++----
+>  drivers/cpufreq/qcom-cpufreq-nvmem.c           | 15 ++++++---------
+>  drivers/devfreq/exynos-bus.c                   | 12 ++++--------
+>  drivers/gpu/drm/lima/lima_devfreq.c            | 13 ++++---------
+>  drivers/gpu/drm/panfrost/panfrost_devfreq.c    |  6 ++----
+>  drivers/media/platform/qcom/venus/pm_helpers.c |  3 +--
+>  drivers/opp/core.c                             | 18 ++++++++++++++++++
+>  7 files changed, 37 insertions(+), 36 deletions(-)
+>
+> --
+> 2.25.0.rc1.19.g042ed3e048af
+>
