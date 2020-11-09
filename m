@@ -2,93 +2,125 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 322C0C5517A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 19:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44AF7C388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 20:19:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E36CF206E3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 19:01:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEA5520731
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 20:19:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="JXgaaqDO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730603AbgKITB5 (ORCPT
+        id S1729871AbgKIUTw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Nov 2020 14:01:57 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37916 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729491AbgKITB4 (ORCPT
+        Mon, 9 Nov 2020 15:19:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32904 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729854AbgKIUTs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Nov 2020 14:01:56 -0500
-Received: by mail-ot1-f65.google.com with SMTP id a15so8280466otf.5;
-        Mon, 09 Nov 2020 11:01:55 -0800 (PST)
+        Mon, 9 Nov 2020 15:19:48 -0500
+Received: from mail-qv1-xf41.google.com (mail-qv1-xf41.google.com [IPv6:2607:f8b0:4864:20::f41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27792C0613D4
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2020 12:19:47 -0800 (PST)
+Received: by mail-qv1-xf41.google.com with SMTP id ed14so4737711qvb.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Nov 2020 12:19:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=HHHYB1ExYLieT1XHJGJI8HPhRjnPWnLekqDHsJKHIQY=;
+        b=JXgaaqDOW62GJeK6LF9p9QXp4arZzjT+9gOkdgDMbbBoFO+8sUD00sB0JqVlcQZSxV
+         vl2psYZJGXUFO5mwdAm7RkY4hAKaDkxQqxt9cCodVKzEWjgN2Avsu8bajD/+E6QYqqdC
+         A1tRfbBTXbInfICRoJGTOSrrECkpnxpkzxbI7e/1OJCxzWq7kFD95wrfiSB8nZ6UecOk
+         dClV/5rDLoThnRxwB0KwY4Vkv6oNJCO+A0hAlZU2ZqdpITWBVjpnAPdneJ9qCIAXfZVP
+         ty/uyz1FELwQ29ayrN7FVG+4y3r6CEdfAZ6dA9hGacXCCPrSnv8g+b6mYWP6EPJDPMhi
+         BDZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XU7y3c5jKQwTRFURlMcdIsjUqbBQIJvi2dRnhrHPP2E=;
-        b=Ww0jOIwc1D4fFERXaqYJ2yPGK6UXnk0+uHzjxUsSkVOdw6LatOUnbnUBRg1jRPss2y
-         7T/PEeZzlcX1XMhb36FTwQXLVkmFOnOYS5imdaxor4jROAhdYjoMN2g1SkUx9bNHc9IE
-         UMNcDqdgr8o5c2SAJKkfsQcUq4JPINbKsK8aagz6VsA8/xL7NIfO8eo85O1P0ako4pwj
-         a4UdG65QStOsnqv5fJFoP0WjupV+k6bYRtIo/ZSpL1RchvSawigCpPW+/Ra3EE69WRD+
-         CmEe37yW+dXGfgO0qNd/xLbOUF7cZM+wdFr7oi5nwFSi6+s2hSGxhsvyI+XScIA9U1uT
-         DRXA==
-X-Gm-Message-State: AOAM531WwmhVlxk6wXRR9VSPTrdktCRsjIP4pLOfw1HZ+WWnoMglkcDh
-        TAxtzhBYsdFvvfVPg85ptg==
-X-Google-Smtp-Source: ABdhPJw681tHcSTTGqGgpXlkNWmd92BhhZoG61LbluCCQbsQRzYEPiujcl6g2HrH1OOy41T/D++2Fw==
-X-Received: by 2002:a9d:6c11:: with SMTP id f17mr11473992otq.208.1604948515112;
-        Mon, 09 Nov 2020 11:01:55 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w18sm2383935oti.61.2020.11.09.11.01.53
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=HHHYB1ExYLieT1XHJGJI8HPhRjnPWnLekqDHsJKHIQY=;
+        b=Ye5PYujQRSQ17w4TvmqD/H2iYkSFCQPMqg836XPpdS3/jlZJIfnGx2MzujiWFKhywD
+         NgLpbNYkN1VwxXsLwpjC5ILGbWMpPbv2zL+dLYVZDaY3cR0kVmKnK4ltwnvCLKlGVilj
+         IhLjKXi2t2mJQ1JK0Tun+3pcinMsroQY+TOq0Z8BarhsHrxpAVLCE5UeBqUarN8h4TtS
+         X10uIRviYyyqcUPt9uptseAoZn87pw1GsnLUr2eUaxm9dPUwIxh4ePYFob8GqtsedcTe
+         K9pf/ifyY/pyaVmTGOuwNstFp/VkAzgIntmlF/5VdwAcPMZGJ8bbGo85buvMatQeivvM
+         HAug==
+X-Gm-Message-State: AOAM531CYd6bqZ96esoqcCobaTqRq/SQ9+JGLT17A4644PIU5EsBPTjc
+        CRnu+0pybZ7x1jIBRg0SlMBm8Q==
+X-Google-Smtp-Source: ABdhPJzK9dM3acw0STrCk9csKCfXW/JXgGf/mN+se1YyATHnQetQCofOE1QIpslDFg5IZrWXLNthmQ==
+X-Received: by 2002:a0c:edb1:: with SMTP id h17mr15177616qvr.7.1604953186119;
+        Mon, 09 Nov 2020 12:19:46 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
+        by smtp.gmail.com with ESMTPSA id l28sm6916468qkl.7.2020.11.09.12.19.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2020 11:01:54 -0800 (PST)
-Received: (nullmailer pid 1592966 invoked by uid 1000);
-        Mon, 09 Nov 2020 19:01:51 -0000
-Date:   Mon, 9 Nov 2020 13:01:51 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Peter Chen <Peter.Chen@nxp.com>, linux-kernel@vger.kernel.org,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, devicetree@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-tegra@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Mon, 09 Nov 2020 12:19:45 -0800 (PST)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1kcDdg-0026FV-KT; Mon, 09 Nov 2020 16:19:44 -0400
+Date:   Mon, 9 Nov 2020 16:19:44 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Thomas =?utf-8?Q?Hellstr=C3=B6m?= 
+        <thomas.hellstrom@linux.intel.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        J??r??me Glisse <jglisse@redhat.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>,
+        KVM list <kvm@vger.kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        devel@driverdev.osuosl.org, Lee Jones <lee.jones@linaro.org>,
-        linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v1 06/30] dt-bindings: usb: tegra-ehci: Document OPP and
- voltage regulator properties
-Message-ID: <20201109190151.GA1592922@bogus>
-References: <20201104234427.26477-1-digetx@gmail.com>
- <20201104234427.26477-7-digetx@gmail.com>
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>
+Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
+Message-ID: <20201109201944.GG244516@ziepe.ca>
+References: <20201104164119.GA18218@infradead.org>
+ <20201104181708.GU36674@ziepe.ca>
+ <d3497583-2338-596e-c764-8c571b7d22cf@nvidia.com>
+ <20201105092524.GQ401619@phenom.ffwll.local>
+ <20201105124950.GZ36674@ziepe.ca>
+ <7ae3486d-095e-cf4e-6b0f-339d99709996@nvidia.com>
+ <CAKMK7uGRw=xXE+D=JJsNeRav9+hdO4tcDSvDbAuWfc3T4VkoJw@mail.gmail.com>
+ <CAKMK7uFb2uhfRCwe1y5Kafd-WWqE_F3_FfpHR9f8-X-aHhgjOQ@mail.gmail.com>
+ <20201106125505.GO36674@ziepe.ca>
+ <504d77b87c81b7027157e0c7b5286e17123c59d9.camel@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201104234427.26477-7-digetx@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <504d77b87c81b7027157e0c7b5286e17123c59d9.camel@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 05 Nov 2020 02:44:03 +0300, Dmitry Osipenko wrote:
-> Document new DVFS OPP table and voltage regulator properties of the
-> Tegra EHCI controller.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+On Mon, Nov 09, 2020 at 09:44:02AM +0100, Thomas Hellström wrote:
+> static inline bool vma_is_special_huge(const struct vm_area_struct
+> *vma)
+> {
+> 	return vma_is_dax(vma) || (vma->vm_file &&
+> 				   (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP)));
+> }
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+That is testing a VMA, not a PTE, which doesn't help protect
+get_user_pages_fast.
+
+Sounds like is has opened a big user crashy problem in DRM and the
+huge page stuff needs to be revereted..
+
+Dan?
+
+Jason
