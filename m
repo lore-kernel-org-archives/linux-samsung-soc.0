@@ -2,181 +2,195 @@ Return-Path: <SRS0=H6Ng=EP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F11C4741F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 08:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B27C4741F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 08:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF18720E65
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 08:29:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB34220731
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 08:44:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbgKII3O convert rfc822-to-8bit (ORCPT
+        id S1729765AbgKIIoq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Nov 2020 03:29:14 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:37255 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbgKII3O (ORCPT
+        Mon, 9 Nov 2020 03:44:46 -0500
+Received: from mga06.intel.com ([134.134.136.31]:5481 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726127AbgKIIop (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Nov 2020 03:29:14 -0500
-X-Originating-IP: 91.224.148.103
-Received: from xps13 (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 3DCAD6000C;
-        Mon,  9 Nov 2020 08:28:57 +0000 (UTC)
-Date:   Mon, 9 Nov 2020 09:28:55 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Adrian Hunter <ext-adrian.hunter@nokia.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Ben Dooks <ben@simtec.co.uk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boris BREZILLON <b.brezillon.dev@gmail.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Choudary Kalluri <punnaia@xilinx.com>,
-        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        Dan Brown <dan_brown@ieee.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Dmitriy B <rzk333@gmail.com>, dri-devel@lists.freedesktop.org,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Jian Zhang <jzhang@ti.com>,
-        Jochen =?UTF-8?B?U2Now6R1Ymxl?= <psionic@psionic.de>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
+        Mon, 9 Nov 2020 03:44:45 -0500
+IronPort-SDR: Qs8cHwYvmGnic3fcikFX1xyYzk+48O3hIDKyyHuMP/R7n6yYh3j7A6Y/9L2c1W6sMXAXbBUBl+
+ fosXP9MpGzrA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9799"; a="231401659"
+X-IronPort-AV: E=Sophos;i="5.77,463,1596524400"; 
+   d="scan'208";a="231401659"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 00:44:45 -0800
+IronPort-SDR: IfG8q/sA5EMlyMjSvfUVNc+EaAlzDVZgRGJpX0K7ztOK0lomesX1KEuchnWCGhkYW9POxwry58
+ wHJVsBh0G9fA==
+X-IronPort-AV: E=Sophos;i="5.77,463,1596524400"; 
+   d="scan'208";a="540750920"
+Received: from sfhansen-mobl.ger.corp.intel.com ([10.249.254.141])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 00:44:40 -0800
+Message-ID: <504d77b87c81b7027157e0c7b5286e17123c59d9.camel@linux.intel.com>
+Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
+From:   Thomas =?ISO-8859-1?Q?Hellstr=F6m?= 
+        <thomas.hellstrom@linux.intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>, Daniel Vetter <daniel@ffwll.ch>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        J??r??me Glisse <jglisse@redhat.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Linux MM <linux-mm@kvack.org>,
         Kyungmin Park <kyungmin.park@samsung.com>,
-        linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        linux-samsung-soc@vger.kernel.org,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Naga Sureshkumar Relli <nagasure@xilinx.com>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Paul Mackerras <paulus@samba.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Qiang Yu <yuq825@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Sergey Lapin <slapin@ossfans.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Thomas Gleixner <gleixner@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Yoshio Furuyama <ytc-mb-yfuruyama7@kioxia.com>
-Subject: Re: [PATCH v2 00/23] Rid W=1 warnings in MTD
-Message-ID: <20201109092855.495174dc@xps13>
-In-Reply-To: <20201106213655.1838861-1-lee.jones@linaro.org>
-References: <20201106213655.1838861-1-lee.jones@linaro.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>
+Date:   Mon, 09 Nov 2020 09:44:02 +0100
+In-Reply-To: <20201106125505.GO36674@ziepe.ca>
+References: <CAKMK7uH=0+3FSR4LxP7bJUB4BsCcnCzfK2=D+2Am9QNmfZEmfw@mail.gmail.com>
+         <20201104163758.GA17425@infradead.org>
+         <20201104164119.GA18218@infradead.org> <20201104181708.GU36674@ziepe.ca>
+         <d3497583-2338-596e-c764-8c571b7d22cf@nvidia.com>
+         <20201105092524.GQ401619@phenom.ffwll.local>
+         <20201105124950.GZ36674@ziepe.ca>
+         <7ae3486d-095e-cf4e-6b0f-339d99709996@nvidia.com>
+         <CAKMK7uGRw=xXE+D=JJsNeRav9+hdO4tcDSvDbAuWfc3T4VkoJw@mail.gmail.com>
+         <CAKMK7uFb2uhfRCwe1y5Kafd-WWqE_F3_FfpHR9f8-X-aHhgjOQ@mail.gmail.com>
+         <20201106125505.GO36674@ziepe.ca>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Lee,
-
-Lee Jones <lee.jones@linaro.org> wrote on Fri,  6 Nov 2020 21:36:32
-+0000:
-
-> This set is part of a larger effort attempting to clean-up W=1
-> kernel builds, which are currently overwhelmingly riddled with
-> niggly little warnings.
+On Fri, 2020-11-06 at 08:55 -0400, Jason Gunthorpe wrote:
+> On Fri, Nov 06, 2020 at 11:27:59AM +0100, Daniel Vetter wrote:
+> > On Fri, Nov 6, 2020 at 11:01 AM Daniel Vetter <daniel@ffwll.ch>
+> > wrote:
+> > > On Fri, Nov 6, 2020 at 5:08 AM John Hubbard <jhubbard@nvidia.com>
+> > > wrote:
+> > > > On 11/5/20 4:49 AM, Jason Gunthorpe wrote:
+> > > > > On Thu, Nov 05, 2020 at 10:25:24AM +0100, Daniel Vetter
+> > > > > wrote:
+> > > > > > > /*
+> > > > > > >   * If we can't determine whether or not a pte is
+> > > > > > > special, then fail immediately
+> > > > > > >   * for ptes. Note, we can still pin HugeTLB and THP as
+> > > > > > > these are guaranteed not
+> > > > > > >   * to be special.
+> > > > > > >   *
+> > > > > > >   * For a futex to be placed on a THP tail page,
+> > > > > > > get_futex_key requires a
+> > > > > > >   * get_user_pages_fast_only implementation that can pin
+> > > > > > > pages. Thus it's still
+> > > > > > >   * useful to have gup_huge_pmd even if we can't operate
+> > > > > > > on ptes.
+> > > > > > >   */
+> > > > > > 
+> > > > > > We support hugepage faults in gpu drivers since recently,
+> > > > > > and I'm not
+> > > > > > seeing a pud_mkhugespecial anywhere. So not sure this
+> > > > > > works, but probably
+> > > > > > just me missing something again.
+> > > > > 
+> > > > > It means ioremap can't create an IO page PUD, it has to be
+> > > > > broken up.
+> > > > > 
+> > > > > Does ioremap even create anything larger than PTEs?
+> > > 
+> > > gpu drivers also tend to use vmf_insert_pfn* directly, so we can
+> > > do
+> > > on-demand paging and move buffers around. From what I glanced for
+> > > lowest level we to the pte_mkspecial correctly (I think I
+> > > convinced
+> > > myself that vm_insert_pfn does that), but for pud/pmd levels it
+> > > seems
+> > > just yolo.
+> > 
+> > So I dug around a bit more and ttm sets PFN_DEV | PFN_MAP to get
+> > past
+> > the various pft_t_devmap checks (see e.g.
+> > vmf_insert_pfn_pmd_prot()).
+> > x86-64 has ARCH_HAS_PTE_DEVMAP, and gup.c seems to handle these
+> > specially, but frankly I got totally lost in what this does.
 > 
-> v1 => v2:
->   - Added tags
->   - Satisfied Miquel's review comments
+> The fact vmf_insert_pfn_pmd_prot() has all those BUG_ON's to prevent
+> putting VM_PFNMAP pages into the page tables seems like a big red
+> flag.
 > 
+> The comment seems to confirm what we are talking about here:
+> 
+> 	/*
+> 	 * If we had pmd_special, we could avoid all these
+> restrictions,
+> 	 * but we need to be consistent with PTEs and architectures
+> that
+> 	 * can't support a 'special' bit.
+> 	 */
+> 
+> ie without the ability to mark special we can't block fast gup and
+> anyone who does O_DIRECT on these ranges will crash the kernel when
+> it
+> tries to convert a IO page into a struct page.
+> 
+> Should be easy enough to directly test?
+> 
+> Putting non-struct page PTEs into a VMA without setting VM_PFNMAP
+> just
+> seems horribly wrong to me.
 
-You probably missed my request to update the titles. That's why I
-wanted the entire series to be resent. Anyway, as I forgot a few,
-please find below the prefixes that should be used:
+Although core mm special huge-page support is currently quite limited,
+some time ago, I extended the pre-existing vma_is_dax() to
+vma_is_special_huge():
 
-> Lee Jones (23):
->   mtd: mtdpart: Fix misdocumented function parameter 'mtd'
->   mtd: devices: phram: File headers are not good candidates for
->     kernel-doc
->   mtd: nand: onenand: onenand_base: Fix expected kernel-doc formatting
+/**
+ * vma_is_special_huge - Are transhuge page-table entries considered
+special?
+ * @vma: Pointer to the struct vm_area_struct to consider
+ *
+ * Whether transhuge page-table entries are considered "special"
+following
+ * the definition in vm_normal_page().
+ *
+ * Return: true if transhuge page-table entries should be considered
+special,
+ * false otherwise.
+ */
+static inline bool vma_is_special_huge(const struct vm_area_struct
+*vma)
+{
+	return vma_is_dax(vma) || (vma->vm_file &&
+				   (vma->vm_flags & (VM_PFNMAP |
+VM_MIXEDMAP)));
+}
 
-mtd: onenand: Fix...
+meaning that currently all transhuge page-table-entries in a PFNMAP or
+MIXEDMAP vma are considered "special". The number of calls to this
+function (mainly in the page-splitting code) is quite limited so
+replacing it with a more elaborate per-page-table-entry scheme would, I
+guess, definitely be possible. Although all functions using it would
+need to require a fallback path for architectures not supporting it.
 
->   mtd: devices: docg3: Fix kernel-doc 'bad line' and 'excessive doc'
->     issues
->   mtd: mtdcore: Fix misspelled function parameter 'section'
+/Thomas
 
-mtd: Fix...
 
->   mtd: nand: onenand: onenand_bbt: Fix expected kernel-doc formatting
 
-mtd: onenand: Fix...
+> 
+> Jason
 
->   mtd: spi-nor: controllers: hisi-sfc: Demote non-conformant kernel-doc
-
-mtd: spi-nor: hisi-sfc: Demote...
-
->   mtd: ubi: build: Document 'ubi_num' in struct mtd_dev_param
->   mtd: nand: spi: toshiba: Demote non-conformant kernel-doc header
-
-mtd: spinand: toshiba: Demote...
-
->   mtd: ubi: kapi: Correct documentation for 'ubi_leb_read_sg's 'sgl'
->     parameter
->   mtd: ubi: eba: Fix a couple of misdocumentation issues
->   mtd: ubi: wl: Fix a couple of kernel-doc issues
->   mtd: nand: raw: brcmnand: brcmnand: Demote non-conformant kernel-doc
->     headers
-
-mtd: rawnand: brcmnand: Demote...
-
->   mtd: ubi: gluebi: Fix misnamed function parameter documentation
->   mtd: nand: raw: diskonchip: Marking unused variables as
->     __always_unused
-
-mtd: rawnand: diskonchip: Marking...
-
->   mtd: nand: raw: cafe_nand: Remove superfluous param doc and add
->     another
-
-mtd: rawnand: cafe: Remove
-
->   mtd: nand: raw: s3c2410: Add documentation for 2 missing struct
->     members
-
-mtd: rawnand: s3c2410: Add...
-
->   mtd: nand: raw: omap_elm: Finish half populated function header,
->     demote empty ones
-
-mtd: rawnand: omap_elm: Finish
-
->   mtd: nand: raw: omap2: Fix a bunch of kernel-doc misdemeanours
-
-mtd:r rawnand: omap2: Fix
-
->   mtd: nand: raw: sunxi_nand: Document 'sunxi_nfc's 'caps' member
-
-mtd: rawnand: sunxi: Document
-
->   mtd: nand: raw: arasan-nand-controller: Document 'anfc_op's 'buf'
->     member
-
-mtd: rawnand: arasan: Document
-
->   mtd: nand: onenand: onenand_base: Fix some kernel-doc misdemeanours
-
-mtd: onenand: Fix
-
->   mtd: devices: powernv_flash: Add function names to headers and fix
->     'dev'
-
-Otherwise the content of the series looks good to me.
-
-Thanks,
-Miquèl
