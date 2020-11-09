@@ -2,146 +2,210 @@ Return-Path: <SRS0=H6Ng=EP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A424BC4742C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 02:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B89E7C388F9
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 03:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E224B206F4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 02:45:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6999B206E3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 03:08:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JR+QkZIg"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oB8NI/co"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbgKICpD (ORCPT
+        id S1728802AbgKIDIZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 8 Nov 2020 21:45:03 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:14778 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727979AbgKICpD (ORCPT
+        Sun, 8 Nov 2020 22:08:25 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:55058 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728038AbgKIDIZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 8 Nov 2020 21:45:03 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20201109024500epoutp022ced26c951af2d840f9110027ae5536e~Fttx_XIpI1584515845epoutp023
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2020 02:45:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20201109024500epoutp022ced26c951af2d840f9110027ae5536e~Fttx_XIpI1584515845epoutp023
+        Sun, 8 Nov 2020 22:08:25 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20201109030821epoutp04ea256a37d91721a6335aad4200088662~FuCLKQeSq2875328753epoutp04f
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2020 03:08:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20201109030821epoutp04ea256a37d91721a6335aad4200088662~FuCLKQeSq2875328753epoutp04f
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1604889900;
-        bh=6UJlkGa7vzbhC6EukK95zM4t99mD0NybVzLLJulFczc=;
+        s=mail20170921; t=1604891301;
+        bh=iN175+o25AiyeTOhQpKmUZPL8SS5wnrxAwJKHaxIXo4=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=JR+QkZIgi2cnm0lTjwhLHYPZbj6IaZDZk+CaDjK+4EW5Ak7mK1cU7uaT4mVOrUsSG
-         d8gh7pep/rNSDtE5p1/G8YYlldQ4DIryVCzHoIGMA7Ot5ufF/3I4z4qpFMHyymPBtI
-         SZSOJ/2/ihpTckiUxD5/WX7prrEH/1J8kR04j/5s=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201109024459epcas1p223f106ff4dd74f6be6c749fb7cc6aa81~FttwvBvFL0473704737epcas1p2O;
-        Mon,  9 Nov 2020 02:44:59 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.156]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4CTwMD5QZSzMqYlt; Mon,  9 Nov
-        2020 02:44:56 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        71.5F.09582.82DA8AF5; Mon,  9 Nov 2020 11:44:56 +0900 (KST)
+        b=oB8NI/cog6sY8cLrz+MSULBvrsgCKiKlRlxNZHfAcWL/lpZ/Loq8G7+tKGsZFrlVf
+         oPQ07y00eYj9eO4wNz/0tqyrUEDclWEAhGvnOReMa9dMUSGIX2e2c+7sokX5RAYqv4
+         9qhrKyX912jkYBFCwyrjE4oXn36u7syauJ2YjmuM=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201109030821epcas1p1cef846a4d200995e59e808005e078a26~FuCKeeGQa0100501005epcas1p11;
+        Mon,  9 Nov 2020 03:08:21 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4CTwtB1pdnzMqYkV; Mon,  9 Nov
+        2020 03:08:18 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        70.63.63458.2A2B8AF5; Mon,  9 Nov 2020 12:08:18 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201109024456epcas1p167ed228ca19931089dbd923eef8aeaa0~FttuI3bp-3242532425epcas1p1B;
-        Mon,  9 Nov 2020 02:44:56 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20201109030817epcas1p2a192d63831b5f69ae881d21a771d35b2~FuCHZR4xR1273612736epcas1p2P;
+        Mon,  9 Nov 2020 03:08:17 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201109024456epsmtrp131a5b815a1f1b2106ccc2e762497340b~FttuIC1dv2564625646epsmtrp1B;
-        Mon,  9 Nov 2020 02:44:56 +0000 (GMT)
-X-AuditID: b6c32a37-899ff7000000256e-27-5fa8ad2828ac
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        91.DE.13470.72DA8AF5; Mon,  9 Nov 2020 11:44:56 +0900 (KST)
+        20201109030817epsmtrp1bf3aa7489878c95cd7338d79ca033e69~FuCHYgyIY0554005540epsmtrp1J;
+        Mon,  9 Nov 2020 03:08:17 +0000 (GMT)
+X-AuditID: b6c32a36-6c9ff7000000f7e2-30-5fa8b2a28b1e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        48.D1.08745.1A2B8AF5; Mon,  9 Nov 2020 12:08:17 +0900 (KST)
 Received: from [10.113.221.211] (unknown [10.113.221.211]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201109024455epsmtip1587082fc9d6a8bb43761b83133cadd96~Fttt0A1hv3235732357epsmtip11;
-        Mon,  9 Nov 2020 02:44:55 +0000 (GMT)
-Subject: Re: [PATCH v2 04/16] drm/exynos: extract helper functions for probe
-To:     Sam Ravnborg <sam@ravnborg.org>,
-        Michael Tretter <m.tretter@pengutronix.de>
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        jy0922.shim@samsung.com, b.zolnierkie@samsung.com,
-        narmstrong@baylibre.com, sw0312.kim@samsung.com, krzk@kernel.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        kernel@pengutronix.de, sylvester.nawrocki@gmail.com
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20201109030817epsmtip241a264b23edf2feb9cab0e41a4d479f4~FuCHJl94n1670516705epsmtip2h;
+        Mon,  9 Nov 2020 03:08:17 +0000 (GMT)
+Subject: Re: [PATCH v2 00/16] drm/exynos: Convert driver to drm bridge
+To:     Michael Tretter <m.tretter@pengutronix.de>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc:     kernel@pengutronix.de, Laurent.pinchart@ideasonboard.com,
+        krzk@kernel.org, narmstrong@baylibre.com, b.zolnierkie@samsung.com,
+        sylvester.nawrocki@gmail.com, a.hajda@samsung.com,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com
 From:   Inki Dae <inki.dae@samsung.com>
-Message-ID: <ad146fc8-166a-b126-3e0c-617c2ed97561@samsung.com>
-Date:   Mon, 9 Nov 2020 11:52:17 +0900
+Message-ID: <fa535450-cd68-415f-5c48-a4f753b2b70b@samsung.com>
+Date:   Mon, 9 Nov 2020 12:15:39 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
         Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <20201107222749.GD1052534@ravnborg.org>
+In-Reply-To: <20200911135413.3654800-1-m.tretter@pengutronix.de>
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJJsWRmVeSWpSXmKPExsWy7bCmnq7G2hXxBv2ntSxurTvHarFxxnpW
-        iytf37NZvLh3kcVi1dSdLBbnz29gt+icuITdYsb5fUwW21YA1R3qi7ZY8XMro8WMyS/ZLOZ9
-        3snkwOvx/kYru8fOWXfZPWZ3zGT12LSqk83jfvdxJo/+vwYeS6ZdZfPo27KK0ePzJrkAzqhs
-        m4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygs5UUyhJz
-        SoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BZYFesWJucWleel6yfm5VoYGBkamQIUJ2RkH
-        byxkK9jPWvG8vYu9gXEnSxcjJ4eEgInElVfHWLsYuTiEBHYwSqx9uYgdwvnEKNG6rgEq841R
-        on/jZkaYliXb9kMl9jJKLJ93mgnCec8oseHoPnaQKmEBH4mPlyeC2SICgRKnHt9iBrGZBTYw
-        SWy+ZgFiswmoSkxccZ8NxOYVsJNYeLcT7CgWARWJp33vmEBsUYEIiePdk9khagQlTs58AlbD
-        CXTFm4tLWSFmikvcejKfCcKWl2jeOpsZ5CAJgTMcEn+PbGCGONtF4s7TVnYIW1ji1fEtULaU
-        xMv+NnaIhmZGiYkzIN6REOhglLj7+Do0nIwl9i+dDJTgAFqhKbF+lz5EWFFi5++5jBCb+STe
-        fe1hBSmREOCV6GgTgihRkjh28QY06CQkLiyZyAZR4iGxcGPJBEbFWUhem4XknVlI3pmFsHcB
-        I8sqRrHUguLc9NRiwwJj5OjexAhO01rmOxinvf2gd4iRiYPxEKMEB7OSCG+Ly7J4Id6UxMqq
-        1KL8+KLSnNTiQ4ymwMCeyCwlmpwPzBR5JfGGpkbGxsYWJoZmpoaGSuK8f7Q74oUE0hNLUrNT
-        UwtSi2D6mDg4pRqYztn/OyG46uukwCfuDM6pUw275x6x6eYT/XVlyrdpRmWMUl9rJ676PHv5
-        DLZLm37tDnpilz5vXw97ZNjNy257XzEU/d5nbGXs0rF0W5fajKNzPl7/5dHn/O51Z+VmCdvC
-        SIUkK7Njn+5U77rymHn5je1iHXW/+7SEH1vvV9VUSn77szlpJ2fx59RnTrccIpct2rB++SRO
-        VpXlTmG+d988MHaoreouv5mytK0rPSlTVv/VnA+v+V9bWO8VOXNvS3v+Lm7GAF75hGoFORGm
-        r7q3t9gYmjseOGAiPtP2/ZfuE7KGGfWfr5k0bRQN6Ln5wzFqMUdfUsf+ndPkTZ7tOFBwZKnY
-        CpV+0Y7neyyPH2TbqsRSnJFoqMVcVJwIAHXrpcBcBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsWy7bCSnK7G2hXxBtsvMVvcWneO1WLjjPWs
-        Fle+vmezeHHvIovFqqk7WSzOn9/AbtE5cQm7xYzz+5gstq0AqjvUF22x4udWRosZk1+yWcz7
-        vJPJgdfj/Y1Wdo+ds+6ye8zumMnqsWlVJ5vH/e7jTB79fw08lky7yubRt2UVo8fnTXIBnFFc
-        NimpOZllqUX6dglcGQdvLGQr2M9a8by9i72BcSdLFyMnh4SAicSSbftZuxi5OIQEdjNKnD63
-        mbmLkQMoISGxZSsHhCkscfhwMUTJW0aJ5tnnGUF6hQV8JD5ensgOYosIBEq0NF0Gm8kssIFJ
-        Yv+KVIiGz4wSP293gCXYBFQlJq64zwZi8wrYSSy82wkWZxFQkXja944JxBYViJBouf+HHaJG
-        UOLkzCdgNZxAh765uJQVYoG6xJ95l5ghbHGJW0/mM0HY8hLNW2czT2AUmoWkfRaSlllIWmYh
-        aVnAyLKKUTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4KrU0dzBuX/VB7xAjEwfjIUYJ
-        DmYlEd4Wl2XxQrwpiZVVqUX58UWlOanFhxilOViUxHlvFC6MExJITyxJzU5NLUgtgskycXBK
-        NTApTBXN2S+jq5L8WMrvdj/fGf63P+qvVu0M+cvS3HtiT8o93j3njlzWmtqx4eAZ5UobL981
-        M5jDpntPDT32PMBbrfXDqyku/BZvXiUU3czLq+J8+SBe7Kkn7wZe/dbvb5dlpj6afMd3Wqxw
-        g2jVt4kri4JWeT1zNV62NUKVt/DIpf3cgY2F3gytHzfE+FW+ya913Zmr62Xo3DbZ9t3Etcek
-        FHv8GTq3TshWsXn1ZXbe/lTj5Jk/qnZ+22o+n/uI0pH24Pm5a24Ff1M7E6X058eWDwkPk6K+
-        x5/nvfsv+ICFR32ndbVdnsV88ag/v1v8nfQ/G6nPz69S9RTn+MYu9mfWIpO3ki/yUnxYmGzV
-        SpRYijMSDbWYi4oTAXjaOHY5AwAA
-X-CMS-MailID: 20201109024456epcas1p167ed228ca19931089dbd923eef8aeaa0
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHJsWRmVeSWpSXmKPExsWy7bCmge6iTSviDf4fYLW4te4cq8XGGetZ
+        La58fc9m8eLeRRaLVVN3slicP7+B3aJz4hJ2ixnn9zFZbFsBVHeoL9pixuSXbBbzPu9kcuDx
+        eH+jld1j56y77B6zO2ayemxa1cnmcb/7OJNH/18Dj74tqxg9Pm+SC+CIyrbJSE1MSS1SSM1L
+        zk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMATpWSaEsMacUKBSQWFyspG9n
+        U5RfWpKqkJFfXGKrlFqQklNgWaBXnJhbXJqXrpecn2tlaGBgZApUmJCdMaVrN2PBObmKHSv6
+        WBsYF0t0MXJySAiYSEy+9Jiti5GLQ0hgB6PErgfTWSGcT4wS1xetY4ZwPjNK7GzvYodpuXxt
+        GZgtJLCLUWLy5SqIoveMEr8vrmMCSQgLuEk8OXMcyObgEBEokXjzyBukhlngFaPEjsWtLCA1
+        bAKqEhNX3GcDsXkF7CSmPr0E1ssioCJxr3EumC0qECFxvHsyO0SNoMTJmU/AejkFHCR2z30C
+        VsMsIC5x68l8KFteonnrbGaIQ49wSCybbgBhu0hMWHQP6gFhiVfHt0DZUhIv+9vYQY6TEGhm
+        lJg44zQThNPBKHH38XUWiCpjif1LJ4N9wyygKbF+lz5EWFFi5++5jBCL+STefe1hBSmREOCV
+        6GgTgihRkjh28QYjhC0hcWHJRDYI20Pi0PJXbBMYFWcheW0WkndmIXlnFsLiBYwsqxjFUguK
+        c9NTiw0LjJBjexMjOCFrme1gnPT2g94hRiYOxkOMEhzMSiK8LS7L4oV4UxIrq1KL8uOLSnNS
+        iw8xmgIDeyKzlGhyPjAn5JXEG5oaGRsbW5gYmpkaGiqJ8/7R7ogXEkhPLEnNTk0tSC2C6WPi
+        4JRqYJr9em3LSqtHjcdXqczzlnRSOmqzskVDvWlSad6fSf5MU+ZF8Ji+Fi1rzwm9F7a9Pumk
+        4aJlyuFGXSwy0rv3V91U/6bGYfb2fWXam2TmY7Nl5ldr+5ydM/v8RvlzrYqm0YotZZ1xBfWS
+        597t89RbUJ9Xt7erYfUpcWbmj2kSnIyMYRxzC5WqOE3FHGs+PTt2ft5re6HVy5X9l9fWRf27
+        HG7dtk945RcJqQd/QqQ3iO3eUN7D+cY7zC/klZL0zAX77p1JzW77rv8l5v0NhkdPv5/dfLxw
+        MYPqp5OTMp5su7J0YaTEt9BLRy5W6990nlv9zfLwoQhnz/Pu0RVmmUbX6xl19DXV0sJlnkzg
+        mlGjp8RSnJFoqMVcVJwIAIpXLVBRBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsWy7bCSvO7CTSviDfoeqlvcWneO1WLjjPWs
+        Fle+vmezeHHvIovFqqk7WSzOn9/AbtE5cQm7xYzz+5gstq0AqjvUF20xY/JLNot5n3cyOfB4
+        vL/Ryu6xc9Zddo/ZHTNZPTat6mTzuN99nMmj/6+BR9+WVYwenzfJBXBEcdmkpOZklqUW6dsl
+        cGVM6drNWHBOrmLHij7WBsbFEl2MnBwSAiYSl68tY+9i5OIQEtjBKLF9zh2WLkYOoISExJat
+        HBCmsMThw8UQJW8ZJe4v/cUC0iss4Cbx5MxxJhBbRKBE4tO5R0wgRcwCrxgl9ne+ZoPomMwo
+        8X7VUXaQKjYBVYmJK+6zgdi8AnYSU59eAutmEVCRuNc4F8wWFYiQaLn/hx2iRlDi5MwnYNs4
+        BRwkds99AlbDLKAu8WfeJWYIW1zi1pP5UHF5ieats5knMArNQtI+C0nLLCQts5C0LGBkWcUo
+        mVpQnJueW2xYYJSXWq5XnJhbXJqXrpecn7uJERyDWlo7GPes+qB3iJGJg/EQowQHs5IIb4vL
+        sngh3pTEyqrUovz4otKc1OJDjNIcLErivF9nLYwTEkhPLEnNTk0tSC2CyTJxcEo1MBXmXGF2
+        KjIOW2j03oElTHvq3Kl9C1MZj1jkqp9MvNHEKjTx/F7f9jqOxJtLrTkWbBCx6LhTGcAf18y2
+        SXW5wqLS7pqjvWwCi4NPNZu03t2i5bTK6byQK+csb2Fdu/dKT0ME13dztj5NfGz2fP+7qv/r
+        1p013rBDI662IUHDrvKxqUXG563v2eVs9e4u+T2J73nad+7f6aHPgxZ8suX5eVlV/b23QmTr
+        kmeaFcvm50wOu5N8vMcx5rXMBLvVVk56S/WtVva1Pltu5ti0N7HgzCyvR3Iuu5X7JznO6TGY
+        qPg98FHl58xZTzh5Kr9JXrBkXHPagaWra9Yb28ra+wKewcqKOab5OvMbl3BeYf2nxFKckWio
+        xVxUnAgANtsQhDADAAA=
+X-CMS-MailID: 20201109030817epcas1p2a192d63831b5f69ae881d21a771d35b2
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201107222757epcas1p4633e7287b326567a8e944a5b4f4a6273
-References: <20200911135413.3654800-1-m.tretter@pengutronix.de>
-        <20200911135413.3654800-5-m.tretter@pengutronix.de>
-        <CGME20201107222757epcas1p4633e7287b326567a8e944a5b4f4a6273@epcas1p4.samsung.com>
-        <20201107222749.GD1052534@ravnborg.org>
+X-CMS-RootMailID: 20200911165401epcas1p3c7ee84dd01db93f472d6fa21c1100f29
+References: <CGME20200911165401epcas1p3c7ee84dd01db93f472d6fa21c1100f29@epcas1p3.samsung.com>
+        <20200911135413.3654800-1-m.tretter@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Michael,
 
+Thanks for your contribution.
 
-20. 11. 8. 오전 7:27에 Sam Ravnborg 이(가) 쓴 글:
-> On Fri, Sep 11, 2020 at 03:54:01PM +0200, Michael Tretter wrote:
->> As the driver shall be usable with drivers that use the component
->> framework and drivers that don't, split the common probing code into a
->> separate function that can be called from different locations.
->>
->> Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
-> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+20. 9. 11. 오후 10:53에 Michael Tretter 이(가) 쓴 글:
+> This is v2 of the series to convert the Exynos MIPI DSI driver into a drm
+> bridge and make it usable with other drivers. Although the driver is
+> converted, it still supports the component framework API to stay compliant
+> with the Exynos DRM driver.
+> 
+> The Exynos MIPI DSI Phy is also found on the i.MX8M Mini. However, on the
+> i.MX8M Mini, the bridge is driven by an LCDIF display controller instead of
+> the Exynos Decon. The driver for the LCDIF does not use the component
+> framework, but uses drm bridges.
+> 
+> I don't have any Exynos SoC to actually test the series. I build a dummy to
+> test the bridge with a component driver, to make sure that at least the
+> initialization is working. Furthermore, tested the driver as a bridge with a
+> few additional unfinished patches on the i.MX8M Mini EVK. However, somebody
+> should verify that the driver is still working on Exynos hardware.
+> 
+> I also changed the order of the patches to first make the driver more platform
+> independent (patches 2 to 8), then convert to a drm bridge driver (patches 10
 
-This patch and other are related to what this patch series do. However, this patch makes Exynos board not working yet.
-So excepting patches 2 to 3, I will wait for that this patch series will be fixed and reviewed more.
+Just a fundamental question,
+A MIPI-DSI(Display Serial Interface) bus device would be one of an encoder type of devices not bridge such as DSI to LVDS and LVDS to DSI bridge devices, and also image enhancer and image compressor in case of Exynos.
+Why do you want to convert such MIPI-DSI driver to bridge type of driver? Seems not sensible. The reason would be just to share MIPI-DSI phy driver for Exynos with i.MX8M Mini?
 
 Thanks,
 Inki Dae
 
+
+> to 13) and finally expose the API, split the code and move the platform
+> independent driver to the bridges (patches 14 - 16). Hopefully this simplifies
+> testing/bisecting and helps me to understand potential error reports.
+> 
+> Also I added host_ops for attach/detach and the tearing effect handler to make
+> the calls into the platform code more visible.
+> 
+> Furthermore, the series should now apply to linux-next and correctly build the
+> exynos_defconfig.
+> 
+> Thanks,
+> 
+> Michael
+> 
+> Changelog:
+> 
+> v2:
+> - rebase on linux-next
+> - verify with exynos_defconfig
+> - fix crashes reported by Marek Szyprowski Exynos3250-based Rinato
+> - reorder patches
+> - add host_ops for platform specific code
+> - roughly test component framework integration with dummy
+> 
+> Michael Tretter (16):
+>   drm/encoder: remove obsolete documentation of bridge
+>   drm/exynos: remove in_bridge_node from exynos_dsi
+>   drm/exynos: use exynos_dsi as drvdata
+>   drm/exynos: extract helper functions for probe
+>   drm/exynos: move dsi host registration to probe
+>   drm/exynos: shift register values to fields on write
+>   drm/exynos: use identifier instead of register offsets
+>   drm/exynos: add host_ops callback for platform drivers
+>   drm/exynos: add callback for tearing effect handler
+>   drm/exynos: implement a drm bridge
+>   drm/exynos: convert encoder functions to bridge function
+>   drm/exynos: configure mode on drm bridge
+>   drm/exynos: get encoder from bridge whenever possible
+>   drm/exynos: add API functions for platform drivers
+>   drm/exynos: split out platform specific code
+>   drm/exynos: move bridge driver to bridges
+> 
+>  drivers/gpu/drm/bridge/Kconfig          |    9 +
+>  drivers/gpu/drm/bridge/Makefile         |    1 +
+>  drivers/gpu/drm/bridge/samsung-dsim.c   | 1790 +++++++++++++++++++++
+>  drivers/gpu/drm/exynos/Kconfig          |    5 +-
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 1927 ++---------------------
+>  include/drm/bridge/samsung-dsim.h       |   64 +
+>  include/drm/drm_encoder.h               |    1 -
+>  7 files changed, 2027 insertions(+), 1770 deletions(-)
+>  create mode 100644 drivers/gpu/drm/bridge/samsung-dsim.c
+>  create mode 100644 include/drm/bridge/samsung-dsim.h
 > 
