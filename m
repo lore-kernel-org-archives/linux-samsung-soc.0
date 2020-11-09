@@ -2,276 +2,149 @@ Return-Path: <SRS0=H6Ng=EP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE977C56202
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 02:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4CFC56202
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 02:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8AD41206E3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 02:00:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D71A206E3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 02:17:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="FbrmHzP0"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CESyEzoW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbgKICAM (ORCPT
+        id S1729349AbgKICRa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 8 Nov 2020 21:00:12 -0500
-Received: from mail-bn8nam11on2064.outbound.protection.outlook.com ([40.107.236.64]:2272
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728006AbgKICAM (ORCPT
+        Sun, 8 Nov 2020 21:17:30 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:56084 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729360AbgKICR3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 8 Nov 2020 21:00:12 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=b+m1Jg4qdOuqv5ChNGF/muB/aS5p6nyfY737yYDdfgp7Dtgw/xOhNXSmDB7v/Wa+w5555ARO2yEVzGopAYvTm7bSnsOAy2tEQLxWcOGbPQG+OZsalaFaqkSiMv3UIu9QAT3vm+6PMWAKlZPPaN7SrLJgQ9kTiAHPNu/2Go5JGfshiHg2EXnetVKLeIHmEVbo4xgpnOvpkSNYcX5b7gI9TXIeSumdStEC0+8FW+MOKjawUFNfnSO6n4+o1LlX1Qs2ezycWU0/7GBmoAsr83oeKpr4Ek6lX3Y11DLRQIbPSbtjz8jiN65L4RHl3A+SosS2VB76o55RybCZykEMtKONeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x/6qidCU8HCYN8iCrmdgB9fVq4wAkDYE6DXfnJSTwlI=;
- b=L6eT8ZG+lpsvTrcRcEAupyXRIutp8GDGX//ulUyUveM2wKBP8JkmzgUPjR3KUS3Lbqc+gkaD4FFnNp57DG4GNoU8Dzv814y7Br5CS/FuE8G7GR3xB4RFeRc7sQhdbeevjS92/53OGGJsq9k8mS+vPxl54e42h/vxY6aiE5U8dTLP3ETO+nK8Oi3dZOa5k4RaqJgH2ZfdtsyKlbrqRR9IIDE8Iaf9aCAe+OEaYYWST+jVO4vCAzmk5ttOMqD9AIKiVCPJ51owhpjpdjdSNvlcUx0uMcoQ7/CqkzbmXQx1Pn/Ak1yU4Hs10f3dK1BYVFHcvMpaPcGFQncI60hA/ziHBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synaptics.com; dmarc=pass action=none
- header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x/6qidCU8HCYN8iCrmdgB9fVq4wAkDYE6DXfnJSTwlI=;
- b=FbrmHzP0cldX9vrS6b9vSdOPVcrer9reAo37NsK/m9bJgazC93iEFAvOzeZ1j5/CJtptewTUUnAXq23Yw69Wj1C1v+5MZlAT3SfBh2YoRP31FPcQ1Z9t2pzv//KeGKrGOFtwYNbx5XN1LVWt2WAH6OTWLY7V4ESVBzMd62Y1HGE=
-Authentication-Results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=synaptics.com;
-Received: from SN2PR03MB2383.namprd03.prod.outlook.com (2603:10b6:804:d::23)
- by SN6PR03MB3488.namprd03.prod.outlook.com (2603:10b6:805:40::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3541.25; Mon, 9 Nov
- 2020 02:00:06 +0000
-Received: from SN2PR03MB2383.namprd03.prod.outlook.com
- ([fe80::49be:5ea3:8961:a22]) by SN2PR03MB2383.namprd03.prod.outlook.com
- ([fe80::49be:5ea3:8961:a22%6]) with mapi id 15.20.3541.024; Mon, 9 Nov 2020
- 02:00:06 +0000
-Date:   Mon, 9 Nov 2020 09:59:53 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Patrice Chotard <patrice.chotard@st.com>
-Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH usb-next] usb: dwc3: Use devm_of_platform_populate
-Message-ID: <20201109095953.7f810239@xhacker.debian>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.147.44.204]
-X-ClientProxiedBy: BYAPR07CA0016.namprd07.prod.outlook.com
- (2603:10b6:a02:bc::29) To SN2PR03MB2383.namprd03.prod.outlook.com
- (2603:10b6:804:d::23)
+        Sun, 8 Nov 2020 21:17:29 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20201109021726epoutp0183f91c2ffaf34050e920c25590b41d4f~FtVtTRKP12015320153epoutp01Z
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2020 02:17:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20201109021726epoutp0183f91c2ffaf34050e920c25590b41d4f~FtVtTRKP12015320153epoutp01Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1604888246;
+        bh=GdZ3kpFsfFHZgYVX7DnIRuZtVyD7hKJ6UCvQcYxuNHo=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=CESyEzoWyDgc1Aa/yWE4Yv06MyxarxttfdLH932c2ymRhzTLmJVa487MO3CkuEwix
+         iexDvKWAseRUM3aVmsjSow0GOgEMkU2vzr9GpM4/80vT9buJ4GzymP/QTxQlnSMPVR
+         Lw7OX/c6sZo8TkSXxRRWf0qjyDuZfzuKVj7Ew0tI=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20201109021724epcas1p21ee4582e75ec42f1c9780efc743de7a2~FtVsPtGOy1901519015epcas1p2C;
+        Mon,  9 Nov 2020 02:17:24 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.152]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4CTvlR0d9qzMqYkg; Mon,  9 Nov
+        2020 02:17:23 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        36.A5.09582.0B6A8AF5; Mon,  9 Nov 2020 11:17:20 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20201109021720epcas1p1ad062afcbb0f4542933298bbd4fdf74a~FtVn602dv1912019120epcas1p1s;
+        Mon,  9 Nov 2020 02:17:20 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20201109021720epsmtrp1a2a547b68720a702aee663b713a58900~FtVn6CgEG1135411354epsmtrp1u;
+        Mon,  9 Nov 2020 02:17:20 +0000 (GMT)
+X-AuditID: b6c32a37-899ff7000000256e-e7-5fa8a6b07017
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B5.BB.08745.0B6A8AF5; Mon,  9 Nov 2020 11:17:20 +0900 (KST)
+Received: from [10.113.221.211] (unknown [10.113.221.211]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20201109021720epsmtip190846264496f8a2443971f13d8f429ef~FtVnqLMyT1779217792epsmtip1y;
+        Mon,  9 Nov 2020 02:17:20 +0000 (GMT)
+Subject: Re: [PATCH v2 03/16] drm/exynos: use exynos_dsi as drvdata
+To:     Sam Ravnborg <sam@ravnborg.org>,
+        Michael Tretter <m.tretter@pengutronix.de>
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        jy0922.shim@samsung.com, b.zolnierkie@samsung.com,
+        narmstrong@baylibre.com, sw0312.kim@samsung.com, krzk@kernel.org,
+        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        kernel@pengutronix.de, sylvester.nawrocki@gmail.com
+From:   Inki Dae <inki.dae@samsung.com>
+Message-ID: <cce25c2b-5902-d267-4b1e-fd95b6f8a091@samsung.com>
+Date:   Mon, 9 Nov 2020 11:24:41 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+        Thunderbird/68.8.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from xhacker.debian (192.147.44.204) by BYAPR07CA0016.namprd07.prod.outlook.com (2603:10b6:a02:bc::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.18 via Frontend Transport; Mon, 9 Nov 2020 02:00:00 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 44c8004b-f22a-48b6-1f46-08d884532e0c
-X-MS-TrafficTypeDiagnostic: SN6PR03MB3488:
-X-Microsoft-Antispam-PRVS: <SN6PR03MB348822E48A9331DC6CE6734FEDEA0@SN6PR03MB3488.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:256;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: pz6q4Scy7kSOEoPJoTKTEN1QyJ8wuhasmLYYr0FK9X1nWwR5sRanT8ZbHUvCr34KKQs/LfZLlpkspG5v5Jdu8oEfKInxpoJMACcL7JpfXHqZQKfRKsBbXUTP7wv4P0pAHwAJLqYy3k5EL1Dc7yJZXvLbxN+fp1djjrkMcbfjUxNMHdzo2Oc0dk2kprFXkdsIUN+4aZnBnZWFGPTHA6TVMOrVX5u4XeUF1CHJ/GuEXP7AI/vWIbVcNd2jk6KdkAkNuliZYhJWQM3Q+YqJXA4ODG9SrV+KHMMi2rHDKLy83lNejzhLBsXUy3XscrA7PjkOfsACiWwagJ1lFj5jAsk3GOfERzZcfCqOLKlfPM8JtjXZoA6TcuFKyF6eIyct3K5D
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN2PR03MB2383.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39850400004)(366004)(136003)(376002)(396003)(346002)(6506007)(110136005)(186003)(86362001)(26005)(16526019)(316002)(956004)(7696005)(52116002)(8676002)(8936002)(4326008)(7416002)(478600001)(2906002)(9686003)(55016002)(5660300002)(66946007)(83380400001)(1076003)(66476007)(66556008)(6666004)(921003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: 1Q1xHlRU8kpfURj/DX4KGduQplaxw1CYM5qqyLgNOqoYhOp+9sc1ei4yRKNL3C3LUayE6yIG7feHiGRsnXpygYCvU7KTOlA/nZsjmBxYVvLu2fImxTqdhvWfYJeAH20OIgCOH3vJb1ju/+hQAmf4vPj/JfaoScWpPnsWkVcmIyLzFcayZF8BisjCkv28yiIFa9cmjqox9R2Z1hf+EWHhlyseu7m5/vcDCZyiWctYx1OpACj4AXPhk61asIF5rGSZzkaDP8ZeC5cW9BnaWMtNdCUX88VwKfEirZO0UZkw4tN0IyYtkxItrENrzYZ2F0M0eEn3XDSLlhz59EqsIbf8atXMZKtNF0cwhiXXPAlFeL93oxlNZUWGscOCsRbe5LUoVakBRg+JeMQTFcexV5dvdb+fA4sxwwZ3ywaW27MwcNxOoHA7Cz62RCxPv/VEOVMVUEan85TAO707FFRqdbBN/LzH5PH0YWDVW4rFlWkJSCfqODJFUtG04RVBuiM8vTrLADMg5oI/0uFvG0QnHa69HDwYhciBgX+FY3VUfu+VC6TipFBe0TN3zN3Br8hVq7vWh3SR8DsgoC3JPiYBivyijOYAPl7Ei6cUqznLGKl2aqTa9cX994TvQEhV9zYNHrAmFv4B4QwIu6RDzrl7qtWrRA==
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44c8004b-f22a-48b6-1f46-08d884532e0c
-X-MS-Exchange-CrossTenant-AuthSource: SN2PR03MB2383.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2020 02:00:06.4372
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dMYB2hv/U8iOC13y/GxxLjLyMCNSASkO6zaSXf9hu2t+uwe0g4rD8FUuDBvbwdfHj6/gNuUjIVG2ZUPJQNRz/w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR03MB3488
+In-Reply-To: <20201107222425.GC1052534@ravnborg.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJJsWRmVeSWpSXmKPExsWy7bCmru6GZSviDY7eUra4te4cq8XGGetZ
+        La58fc9m8eLeRRaLVVN3slicP7+B3aJz4hJ2ixnn9zFZbFsBVHeoL9pixc+tjBYzJr9ks5j3
+        eSeTA6/H+xut7B47Z91l95jdMZPVY9OqTjaP+93HmTz6/xp4LJl2lc2jb8sqRo/Pm+QCOKOy
+        bTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOAzlZSKEvM
+        KQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFFgW6BUn5haX5qXrJefnWhkaGBiZAhUmZGf8
+        fd/DVPCKueLTjqtsDYxNzF2MnBwSAiYSZ5+8BrK5OIQEdjBKHJjfBeV8YpT4NmkFlPOZUWJ1
+        fzs7TMuRCa+ZIBK7GCWaH9+Ect4zSuw8NZsRpEpYwFli1f1eMFtEIFDi1ONbYAuZBTYwSWy+
+        ZgFiswmoSkxccZ+ti5GDg1fATqJrhiRImEVAReLbo/tgraICERLHuyeDLeYVEJQ4OfMJC4jN
+        CXTEq8O3GCFGikvcejKfCcKWl2jeOhvsagmBCxwSvTO6WCCudpGYcHwyK4QtLPHq+Baob6Qk
+        Xva3sUM0NDNKTJxxmgnC6WCUuPv4OlS3scT+pZOZQC5lFtCUWL9LHyKsKLHz91yoK/gk3n3t
+        YQUpkRDglehoE4IoUZI4dvEGI4QtIXFhyUQ2CNtD4uaZzYwTGBVnIfltFpJ/ZiH5ZxbC4gWM
+        LKsYxVILinPTU4sNC4yRo3sTIzhNa5nvYJz29oPeIUYmDsZDjBIczEoivC0uy+KFeFMSK6tS
+        i/Lji0pzUosPMZoCQ3sis5Rocj4wU+SVxBuaGhkbG1uYGJqZGhoqifP+0e6IFxJITyxJzU5N
+        LUgtgulj4uCUamB6kB+w3npPwQppw8Mdxds3ftCPPOXInXsw5OOsCvXbiRdLShfl3OXO/73N
+        9k5L59ZFh6ztvexCmw5uX3xIZr/7Blatd4bsnheXyXxse/eYyVFkW3mbxZtNvfeuc1517q/2
+        CtDn55norcx3a9srv5CrzVLnEpasVCje+5hRasrZtM1HynfXhPE22Zd8EmN4EpvhEHdxzQKW
+        x0dc1Vd/Y1OPuPLar3DCLqvvO1v4ewxy8ow/H7rDpujZ+6SIhW1m0pJc3XzBXv+1YUIzDga8
+        3a94ueO6RdaC/YZFLTNzTNJ051kFh7UqTC46EvWz3OOvq5208aSPBgdDmi4HvF/evzqpLL1a
+        a+Msvh9J9dvUlyixFGckGmoxFxUnAgCT+xYJXAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsWy7bCSnO6GZSviDbbf5ba4te4cq8XGGetZ
+        La58fc9m8eLeRRaLVVN3slicP7+B3aJz4hJ2ixnn9zFZbFsBVHeoL9pixc+tjBYzJr9ks5j3
+        eSeTA6/H+xut7B47Z91l95jdMZPVY9OqTjaP+93HmTz6/xp4LJl2lc2jb8sqRo/Pm+QCOKO4
+        bFJSczLLUov07RK4Mv6+72EqeMVc8WnHVbYGxibmLkZODgkBE4kjE14zdTFycQgJ7GCU6F8y
+        l6WLkQMoISGxZSsHhCkscfhwMUTJW0aJdw0TWUB6hQWcJVbd72UEsUUEAiVami6DxZkFNjBJ
+        7F+RCtHwmVHi5edesGVsAqoSE1fcZwMZyitgJ9E1QxIkzCKgIvHt0X2wOaICERIt9/+wg9i8
+        AoISJ2c+AZvJCXTnq8O3GCHmq0v8mXeJGcIWl7j1ZD4ThC0v0bx1NvMERqFZSNpnIWmZhaRl
+        FpKWBYwsqxglUwuKc9Nziw0LjPJSy/WKE3OLS/PS9ZLzczcxgmNSS2sH455VH/QOMTJxMB5i
+        lOBgVhLhbXFZFi/Em5JYWZValB9fVJqTWnyIUZqDRUmc9+ushXFCAumJJanZqakFqUUwWSYO
+        TqkGptzqyRLvXkxXnLTxjk+jrnLFJYmjMW93GVgc1gp7v/ezneeJ9ynbHv2xt/cUKor/+n2y
+        52x+k9fXBEUeX53y89wXo0nvlB0nRGs5Zs6tPNHQ1LbwcensY43Gpt+neTJP1phqkc8x8/jE
+        ewHNz2YJMin8czJ/F5Dtb8M4Rf128CaZdT3KXB/TDsZlTZ69OMFHyJeLLcQge/VTVeFAh6Y7
+        sTpTD1mdCJ7MGFAS8jEs2+2Lx3POSK5TfyecX7AyjKU8L0Ol9ZL8g4C7U1ZPj92f4/Ric//t
+        /DMsR5TX8nXYH7F6dYCpwtnYVqHT+uiidjkxId/QI7GLVTqvLN5xOEgq1Chi4YKvTo+lcvwc
+        XnRxKbEUZyQaajEXFScCAN8M3eI4AwAA
+X-CMS-MailID: 20201109021720epcas1p1ad062afcbb0f4542933298bbd4fdf74a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20201107222432epcas1p3fa1c76cd2a4f4687e117cbcbf7bd90d6
+References: <20200911135413.3654800-1-m.tretter@pengutronix.de>
+        <20200911135413.3654800-4-m.tretter@pengutronix.de>
+        <CGME20201107222432epcas1p3fa1c76cd2a4f4687e117cbcbf7bd90d6@epcas1p3.samsung.com>
+        <20201107222425.GC1052534@ravnborg.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use managed API devm_of_platform_populate() to simplify error and exit
-code path.
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
----
- drivers/usb/dwc3/dwc3-exynos.c     | 2 +-
- drivers/usb/dwc3/dwc3-keystone.c   | 2 +-
- drivers/usb/dwc3/dwc3-meson-g12a.c | 5 +----
- drivers/usb/dwc3/dwc3-of-simple.c  | 4 +---
- drivers/usb/dwc3/dwc3-omap.c       | 3 +--
- drivers/usb/dwc3/dwc3-qcom.c       | 8 ++------
- drivers/usb/dwc3/dwc3-st.c         | 4 +---
- 7 files changed, 8 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index 90bb022737da..f567d1e63c05 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -110,7 +110,7 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
- 	}
- 
- 	if (node) {
--		ret = of_platform_populate(node, NULL, NULL, dev);
-+		ret = devm_of_platform_populate(dev);
- 		if (ret) {
- 			dev_err(dev, "failed to add dwc3 core\n");
- 			goto populate_err;
-diff --git a/drivers/usb/dwc3/dwc3-keystone.c b/drivers/usb/dwc3/dwc3-keystone.c
-index 9a99253d5ba3..626b16c46688 100644
---- a/drivers/usb/dwc3/dwc3-keystone.c
-+++ b/drivers/usb/dwc3/dwc3-keystone.c
-@@ -157,7 +157,7 @@ static int kdwc3_probe(struct platform_device *pdev)
- 	kdwc3_enable_irqs(kdwc);
- 
- skip_irq:
--	error = of_platform_populate(node, NULL, NULL, dev);
-+	error = devm_of_platform_populate(dev);
- 	if (error) {
- 		dev_err(&pdev->dev, "failed to create dwc3 core\n");
- 		goto err_core;
-diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3-meson-g12a.c
-index 417e05381b5d..83015bb7b926 100644
---- a/drivers/usb/dwc3/dwc3-meson-g12a.c
-+++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
-@@ -702,7 +702,6 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
- {
- 	struct dwc3_meson_g12a	*priv;
- 	struct device		*dev = &pdev->dev;
--	struct device_node	*np = dev->of_node;
- 	void __iomem *base;
- 	int ret, i;
- 
-@@ -794,7 +793,7 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
- 			goto err_phys_power;
- 	}
- 
--	ret = of_platform_populate(np, NULL, NULL, dev);
-+	ret = devm_of_platform_populate(dev);
- 	if (ret)
- 		goto err_phys_power;
- 
-@@ -832,8 +831,6 @@ static int dwc3_meson_g12a_remove(struct platform_device *pdev)
- 	if (priv->drvdata->otg_switch_supported)
- 		usb_role_switch_unregister(priv->role_switch);
- 
--	of_platform_depopulate(dev);
--
- 	for (i = 0 ; i < PHY_COUNT ; ++i) {
- 		phy_power_off(priv->phys[i]);
- 		phy_exit(priv->phys[i]);
-diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
-index e62ecd22b3ed..f1c267e39d62 100644
---- a/drivers/usb/dwc3/dwc3-of-simple.c
-+++ b/drivers/usb/dwc3/dwc3-of-simple.c
-@@ -73,7 +73,7 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_resetc_assert;
- 
--	ret = of_platform_populate(np, NULL, NULL, dev);
-+	ret = devm_of_platform_populate(dev);
- 	if (ret)
- 		goto err_clk_put;
- 
-@@ -97,8 +97,6 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
- 
- static void __dwc3_of_simple_teardown(struct dwc3_of_simple *simple)
- {
--	of_platform_depopulate(simple->dev);
--
- 	clk_bulk_disable_unprepare(simple->num_clocks, simple->clks);
- 	clk_bulk_put_all(simple->num_clocks, simple->clks);
- 	simple->num_clocks = 0;
-diff --git a/drivers/usb/dwc3/dwc3-omap.c b/drivers/usb/dwc3/dwc3-omap.c
-index 3db17806e92e..46e7a1dd7c50 100644
---- a/drivers/usb/dwc3/dwc3-omap.c
-+++ b/drivers/usb/dwc3/dwc3-omap.c
-@@ -505,7 +505,7 @@ static int dwc3_omap_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err1;
- 
--	ret = of_platform_populate(node, NULL, NULL, dev);
-+	ret = devm_of_platform_populate(dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to create dwc3 core\n");
- 		goto err1;
-@@ -535,7 +535,6 @@ static int dwc3_omap_remove(struct platform_device *pdev)
- 
- 	dwc3_omap_disable_irqs(omap);
- 	disable_irq(omap->irq);
--	of_platform_depopulate(omap->dev);
- 	pm_runtime_put_sync(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 
-diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-index c703d552bbcf..8f5714c3d379 100644
---- a/drivers/usb/dwc3/dwc3-qcom.c
-+++ b/drivers/usb/dwc3/dwc3-qcom.c
-@@ -636,7 +636,7 @@ static int dwc3_qcom_of_register_core(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	ret = of_platform_populate(np, NULL, NULL, dev);
-+	ret = devm_of_platform_populate(dev);
- 	if (ret) {
- 		dev_err(dev, "failed to register dwc3 core - %d\n", ret);
- 		return ret;
-@@ -775,9 +775,7 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
- interconnect_exit:
- 	dwc3_qcom_interconnect_exit(qcom);
- depopulate:
--	if (np)
--		of_platform_depopulate(&pdev->dev);
--	else
-+	if (!np)
- 		platform_device_put(pdev);
- clk_disable:
- 	for (i = qcom->num_clocks - 1; i >= 0; i--) {
-@@ -796,8 +794,6 @@ static int dwc3_qcom_remove(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	int i;
- 
--	of_platform_depopulate(dev);
--
- 	for (i = qcom->num_clocks - 1; i >= 0; i--) {
- 		clk_disable_unprepare(qcom->clks[i]);
- 		clk_put(qcom->clks[i]);
-diff --git a/drivers/usb/dwc3/dwc3-st.c b/drivers/usb/dwc3/dwc3-st.c
-index e733be840545..9ec2ecf8d81f 100644
---- a/drivers/usb/dwc3/dwc3-st.c
-+++ b/drivers/usb/dwc3/dwc3-st.c
-@@ -259,7 +259,7 @@ static int st_dwc3_probe(struct platform_device *pdev)
- 	}
- 
- 	/* Allocate and initialize the core */
--	ret = of_platform_populate(node, NULL, NULL, dev);
-+	ret = devm_of_platform_populate(dev);
- 	if (ret) {
- 		dev_err(dev, "failed to add dwc3 core\n");
- 		goto err_node_put;
-@@ -309,8 +309,6 @@ static int st_dwc3_remove(struct platform_device *pdev)
- {
- 	struct st_dwc3 *dwc3_data = platform_get_drvdata(pdev);
- 
--	of_platform_depopulate(&pdev->dev);
--
- 	reset_control_assert(dwc3_data->rstc_pwrdn);
- 	reset_control_assert(dwc3_data->rstc_rst);
- 
--- 
-2.29.2
+20. 11. 8. 오전 7:24에 Sam Ravnborg 이(가) 쓴 글:
+> On Fri, Sep 11, 2020 at 03:54:00PM +0200, Michael Tretter wrote:
+>> Use the exynos_dsi as drvdata instead of the encoder to further decouple
+>> the driver from the encoder.
+>>
+>> Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+> 
+> Likewise, the exynos people are expected to pick this up.
 
+Cleanup patch so picked it up.
+
+Thanks,
+Inki Dae
+
+
+> 
+> 	Sam
+> 
