@@ -2,195 +2,147 @@ Return-Path: <SRS0=H6Ng=EP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B27C4741F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 08:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CFF0C56202
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 10:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB34220731
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 08:44:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD42A2083B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Nov 2020 10:34:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="gGrvZ5xB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729765AbgKIIoq (ORCPT
+        id S1729005AbgKIKej (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Nov 2020 03:44:46 -0500
-Received: from mga06.intel.com ([134.134.136.31]:5481 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726127AbgKIIop (ORCPT
+        Mon, 9 Nov 2020 05:34:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54360 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726176AbgKIKej (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Nov 2020 03:44:45 -0500
-IronPort-SDR: Qs8cHwYvmGnic3fcikFX1xyYzk+48O3hIDKyyHuMP/R7n6yYh3j7A6Y/9L2c1W6sMXAXbBUBl+
- fosXP9MpGzrA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9799"; a="231401659"
-X-IronPort-AV: E=Sophos;i="5.77,463,1596524400"; 
-   d="scan'208";a="231401659"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 00:44:45 -0800
-IronPort-SDR: IfG8q/sA5EMlyMjSvfUVNc+EaAlzDVZgRGJpX0K7ztOK0lomesX1KEuchnWCGhkYW9POxwry58
- wHJVsBh0G9fA==
-X-IronPort-AV: E=Sophos;i="5.77,463,1596524400"; 
-   d="scan'208";a="540750920"
-Received: from sfhansen-mobl.ger.corp.intel.com ([10.249.254.141])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 00:44:40 -0800
-Message-ID: <504d77b87c81b7027157e0c7b5286e17123c59d9.camel@linux.intel.com>
-Subject: Re: [PATCH v5 05/15] mm/frame-vector: Use FOLL_LONGTERM
-From:   Thomas =?ISO-8859-1?Q?Hellstr=F6m?= 
-        <thomas.hellstrom@linux.intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>, Daniel Vetter <daniel@ffwll.ch>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        J??r??me Glisse <jglisse@redhat.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>,
-        KVM list <kvm@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>
-Date:   Mon, 09 Nov 2020 09:44:02 +0100
-In-Reply-To: <20201106125505.GO36674@ziepe.ca>
-References: <CAKMK7uH=0+3FSR4LxP7bJUB4BsCcnCzfK2=D+2Am9QNmfZEmfw@mail.gmail.com>
-         <20201104163758.GA17425@infradead.org>
-         <20201104164119.GA18218@infradead.org> <20201104181708.GU36674@ziepe.ca>
-         <d3497583-2338-596e-c764-8c571b7d22cf@nvidia.com>
-         <20201105092524.GQ401619@phenom.ffwll.local>
-         <20201105124950.GZ36674@ziepe.ca>
-         <7ae3486d-095e-cf4e-6b0f-339d99709996@nvidia.com>
-         <CAKMK7uGRw=xXE+D=JJsNeRav9+hdO4tcDSvDbAuWfc3T4VkoJw@mail.gmail.com>
-         <CAKMK7uFb2uhfRCwe1y5Kafd-WWqE_F3_FfpHR9f8-X-aHhgjOQ@mail.gmail.com>
-         <20201106125505.GO36674@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        Mon, 9 Nov 2020 05:34:39 -0500
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B724C0613CF;
+        Mon,  9 Nov 2020 02:34:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qH9b1O1m9yVoEB6n8QkB/6TaJXHCxIPP32Fq1mFfWKE=; b=gGrvZ5xBLQtSpNi2uSB0ANIyt
+        afY6SWLthCnmt6Eeq9iZZax1/dyotilgV7RwYmDtVPVh7RwXnEAYDGAtLsa727gWFqK5CzSIwzblw
+        DaYTkWl5eVU2agK0Wy6hnKjxer6VycAEWpMtm1NwlVYP8n9kJucFn6RRJt2oQiqC+/YAOq4k6TXTo
+        dYesdPUt9+kdk2famskEu8KnvAp6sqlxtQTkKiPG+IohXg8HNv0sKPXA55oJI+hF72r+UriKjmSUr
+        sydSD86p/UZ7m2nM8/IM9hJ+KGVUGO+/ml+2PkrHYDWyWW/YYlOyIF6iLw25zd+4lV3cvHJvnHiJX
+        ZcxHuRLig==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56980)
+        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1kc4V7-000858-1A; Mon, 09 Nov 2020 10:34:17 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1kc4V4-0000KD-S1; Mon, 09 Nov 2020 10:34:14 +0000
+Date:   Mon, 9 Nov 2020 10:34:14 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH usb-next] usb: dwc3: Use devm_of_platform_populate
+Message-ID: <20201109103414.GF1559@shell.armlinux.org.uk>
+References: <20201109095953.7f810239@xhacker.debian>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201109095953.7f810239@xhacker.debian>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+Sender: Russell King - ARM Linux admin <linux@armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 2020-11-06 at 08:55 -0400, Jason Gunthorpe wrote:
-> On Fri, Nov 06, 2020 at 11:27:59AM +0100, Daniel Vetter wrote:
-> > On Fri, Nov 6, 2020 at 11:01 AM Daniel Vetter <daniel@ffwll.ch>
-> > wrote:
-> > > On Fri, Nov 6, 2020 at 5:08 AM John Hubbard <jhubbard@nvidia.com>
-> > > wrote:
-> > > > On 11/5/20 4:49 AM, Jason Gunthorpe wrote:
-> > > > > On Thu, Nov 05, 2020 at 10:25:24AM +0100, Daniel Vetter
-> > > > > wrote:
-> > > > > > > /*
-> > > > > > >   * If we can't determine whether or not a pte is
-> > > > > > > special, then fail immediately
-> > > > > > >   * for ptes. Note, we can still pin HugeTLB and THP as
-> > > > > > > these are guaranteed not
-> > > > > > >   * to be special.
-> > > > > > >   *
-> > > > > > >   * For a futex to be placed on a THP tail page,
-> > > > > > > get_futex_key requires a
-> > > > > > >   * get_user_pages_fast_only implementation that can pin
-> > > > > > > pages. Thus it's still
-> > > > > > >   * useful to have gup_huge_pmd even if we can't operate
-> > > > > > > on ptes.
-> > > > > > >   */
-> > > > > > 
-> > > > > > We support hugepage faults in gpu drivers since recently,
-> > > > > > and I'm not
-> > > > > > seeing a pud_mkhugespecial anywhere. So not sure this
-> > > > > > works, but probably
-> > > > > > just me missing something again.
-> > > > > 
-> > > > > It means ioremap can't create an IO page PUD, it has to be
-> > > > > broken up.
-> > > > > 
-> > > > > Does ioremap even create anything larger than PTEs?
-> > > 
-> > > gpu drivers also tend to use vmf_insert_pfn* directly, so we can
-> > > do
-> > > on-demand paging and move buffers around. From what I glanced for
-> > > lowest level we to the pte_mkspecial correctly (I think I
-> > > convinced
-> > > myself that vm_insert_pfn does that), but for pud/pmd levels it
-> > > seems
-> > > just yolo.
-> > 
-> > So I dug around a bit more and ttm sets PFN_DEV | PFN_MAP to get
-> > past
-> > the various pft_t_devmap checks (see e.g.
-> > vmf_insert_pfn_pmd_prot()).
-> > x86-64 has ARCH_HAS_PTE_DEVMAP, and gup.c seems to handle these
-> > specially, but frankly I got totally lost in what this does.
-> 
-> The fact vmf_insert_pfn_pmd_prot() has all those BUG_ON's to prevent
-> putting VM_PFNMAP pages into the page tables seems like a big red
-> flag.
-> 
-> The comment seems to confirm what we are talking about here:
-> 
-> 	/*
-> 	 * If we had pmd_special, we could avoid all these
-> restrictions,
-> 	 * but we need to be consistent with PTEs and architectures
-> that
-> 	 * can't support a 'special' bit.
-> 	 */
-> 
-> ie without the ability to mark special we can't block fast gup and
-> anyone who does O_DIRECT on these ranges will crash the kernel when
-> it
-> tries to convert a IO page into a struct page.
-> 
-> Should be easy enough to directly test?
-> 
-> Putting non-struct page PTEs into a VMA without setting VM_PFNMAP
-> just
-> seems horribly wrong to me.
+On Mon, Nov 09, 2020 at 09:59:53AM +0800, Jisheng Zhang wrote:
+> diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3-meson-g12a.c
+> index 417e05381b5d..83015bb7b926 100644
+> --- a/drivers/usb/dwc3/dwc3-meson-g12a.c
+> +++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
+> @@ -702,7 +702,6 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+>  {
+>  	struct dwc3_meson_g12a	*priv;
+>  	struct device		*dev = &pdev->dev;
+> -	struct device_node	*np = dev->of_node;
+>  	void __iomem *base;
+>  	int ret, i;
+>  
+> @@ -794,7 +793,7 @@ static int dwc3_meson_g12a_probe(struct platform_device *pdev)
+>  			goto err_phys_power;
+>  	}
+>  
+> -	ret = of_platform_populate(np, NULL, NULL, dev);
+> +	ret = devm_of_platform_populate(dev);
+>  	if (ret)
+>  		goto err_phys_power;
+>  
+> @@ -832,8 +831,6 @@ static int dwc3_meson_g12a_remove(struct platform_device *pdev)
+>  	if (priv->drvdata->otg_switch_supported)
+>  		usb_role_switch_unregister(priv->role_switch);
+>  
+> -	of_platform_depopulate(dev);
+> -
+>  	for (i = 0 ; i < PHY_COUNT ; ++i) {
+>  		phy_power_off(priv->phys[i]);
+>  		phy_exit(priv->phys[i]);
 
-Although core mm special huge-page support is currently quite limited,
-some time ago, I extended the pre-existing vma_is_dax() to
-vma_is_special_huge():
+Does it matter that the order that things happen in
+dwc3_meson_g12a_remove() is changed as a result of your patch? Was
+the code relying on the platform devices being depopulated before
+powering off the PHYs?
 
-/**
- * vma_is_special_huge - Are transhuge page-table entries considered
-special?
- * @vma: Pointer to the struct vm_area_struct to consider
- *
- * Whether transhuge page-table entries are considered "special"
-following
- * the definition in vm_normal_page().
- *
- * Return: true if transhuge page-table entries should be considered
-special,
- * false otherwise.
- */
-static inline bool vma_is_special_huge(const struct vm_area_struct
-*vma)
-{
-	return vma_is_dax(vma) || (vma->vm_file &&
-				   (vma->vm_flags & (VM_PFNMAP |
-VM_MIXEDMAP)));
-}
+> diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
+> index e62ecd22b3ed..f1c267e39d62 100644
+> --- a/drivers/usb/dwc3/dwc3-of-simple.c
+> +++ b/drivers/usb/dwc3/dwc3-of-simple.c
+> @@ -73,7 +73,7 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_resetc_assert;
+>  
+> -	ret = of_platform_populate(np, NULL, NULL, dev);
+> +	ret = devm_of_platform_populate(dev);
+>  	if (ret)
+>  		goto err_clk_put;
+>  
+> @@ -97,8 +97,6 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+>  
+>  static void __dwc3_of_simple_teardown(struct dwc3_of_simple *simple)
+>  {
+> -	of_platform_depopulate(simple->dev);
+> -
+>  	clk_bulk_disable_unprepare(simple->num_clocks, simple->clks);
+>  	clk_bulk_put_all(simple->num_clocks, simple->clks);
+>  	simple->num_clocks = 0;
 
-meaning that currently all transhuge page-table-entries in a PFNMAP or
-MIXEDMAP vma are considered "special". The number of calls to this
-function (mainly in the page-splitting code) is quite limited so
-replacing it with a more elaborate per-page-table-entry scheme would, I
-guess, definitely be possible. Although all functions using it would
-need to require a fallback path for architectures not supporting it.
+Same here... and for anywhere else in this patch that you're deleting
+a of_platform_depopulate().
 
-/Thomas
+You effectively are moving the call to of_platform_depopulate() *after*
+the driver's .remove function has been called.
 
-
-
-> 
-> Jason
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
