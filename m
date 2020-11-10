@@ -2,57 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2328C4742C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Nov 2020 13:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C03C388F7
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Nov 2020 14:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 96D82207BB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Nov 2020 13:25:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 914D6206C0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Nov 2020 14:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730766AbgKJNZc (ORCPT
+        id S1730744AbgKJO0P (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 10 Nov 2020 08:25:32 -0500
-Received: from muru.com ([72.249.23.125]:47948 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbgKJNZb (ORCPT
+        Tue, 10 Nov 2020 09:26:15 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:34943 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730059AbgKJO0P (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Nov 2020 08:25:31 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id F409180BA;
-        Tue, 10 Nov 2020 13:25:34 +0000 (UTC)
-Date:   Tue, 10 Nov 2020 15:25:25 +0200
-From:   Tony Lindgren <tony@atomide.com>
-To:     Alexander Dahl <post@lespocky.de>
-Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Alexander Dahl <ada@thorsis.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org, linux-mips@vger.kernel.org,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>
-Subject: Re: [PATCH v7 09/12] ARM: dts: omap: Fix schema warnings for pwm-leds
-Message-ID: <20201110132525.GK26857@atomide.com>
-References: <20201005203451.9985-1-post@lespocky.de>
- <20201005203451.9985-10-post@lespocky.de>
+        Tue, 10 Nov 2020 09:26:15 -0500
+Received: by mail-oi1-f196.google.com with SMTP id c80so14507637oib.2;
+        Tue, 10 Nov 2020 06:26:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=I6eINwgPGvryXHeca8G+4NRiZwWs6cwo0lxUCGUsnnM=;
+        b=PDirRAStIMa4VK87ur1eXW+HxdYLTp3veN5PPtGWpTaeFKqJ8DSCP9RlrmN427wTmL
+         i+xNUO0vZNro8rE8nB4LUSrSzNL8oJ7kEnjFtMSzxxIlTdcYAZlrEdZbMIbaiBF+Nvji
+         N+aisTLlQ0RuwkcV5Vqd4sdKIj3Dp8DShbXie+uH+UF2LTGMVCtsPyWARwOIxaadAFRn
+         4GGvMOK1y6B385Jmf5HQWhEb8ld8EJ6skFLbP48yjRnCplWXIqfyStweXvx3wvekcczT
+         I9kIJjks60qp3QUgvJW9iQZ4Gm9t9k7B/JUXddIIiMfMHwPZ0zwhmth1OIMMjS/Wa/S8
+         9UWQ==
+X-Gm-Message-State: AOAM533T0gnDGq7UbhcrQZDzJg2bSuDaJry2Tsp0jIltZcIkRBl81oON
+        wv1z3o4qXGJ+Q3ZisO/DMw==
+X-Google-Smtp-Source: ABdhPJxmEBz2DgpgaTJfUBpq6k0kGF8zZgE3ZaEHQ0GkfG/X/Rq/tzCx9MOVxL5mhsN1tNj0erLv8A==
+X-Received: by 2002:aca:ea54:: with SMTP id i81mr2775381oih.48.1605018374555;
+        Tue, 10 Nov 2020 06:26:14 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 33sm3265678otr.25.2020.11.10.06.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Nov 2020 06:26:13 -0800 (PST)
+Received: (nullmailer pid 3120474 invoked by uid 1000);
+        Tue, 10 Nov 2020 14:26:12 -0000
+Date:   Tue, 10 Nov 2020 08:26:12 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     krzk@kernel.org, sw0312.kim@samsung.com, myungjoo.ham@samsung.com,
+        devicetree@vger.kernel.org, georgi.djakov@linaro.org,
+        dri-devel@lists.freedesktop.org, cw00.choi@samsung.com,
+        b.zolnierkie@samsung.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com,
+        a.swigon@samsung.com
+Subject: Re: [PATCH v8 1/7] dt-bindings: devfreq: Add documentation for the
+ interconnect properties
+Message-ID: <20201110142612.GA3120426@bogus>
+References: <20201104103657.18007-1-s.nawrocki@samsung.com>
+ <CGME20201104103718eucas1p1c103f1a96499b03c72e5457ac2542c3d@eucas1p1.samsung.com>
+ <20201104103657.18007-2-s.nawrocki@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201005203451.9985-10-post@lespocky.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201104103657.18007-2-s.nawrocki@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-* Alexander Dahl <post@lespocky.de> [201005 23:36]:
-> The node names for devices using the pwm-leds driver follow a certain
-> naming scheme (now).  Parent node name is not enforced, but recommended
-> by DT project.
+On Wed, 04 Nov 2020 11:36:51 +0100, Sylwester Nawrocki wrote:
+> Add documentation for new optional properties in the exynos bus nodes:
+> interconnects, #interconnect-cells, samsung,data-clock-ratio.
+> These properties allow to specify the SoC interconnect structure which
+> then allows the interconnect consumer devices to request specific
+> bandwidth requirements.
+> 
+> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+> Changes for v8:
+>  - updated description of the interconnects property,
+>  - fixed typo in samsung,data-clk-ratio property description.
+> 
+> Changes for v7:
+>  - bus-width property replaced with samsung,data-clock-ratio,
+>  - the interconnect consumer bindings used instead of vendor specific
+>    properties
+> 
+> Changes for v6:
+>  - added dts example of bus hierarchy definition and the interconnect
+>    consumer,
+>  - added new bus-width property.
+> 
+> Changes for v5:
+>  - exynos,interconnect-parent-node renamed to samsung,interconnect-parent
+> ---
+>  .../devicetree/bindings/devfreq/exynos-bus.txt     | 71 +++++++++++++++++++++-
+>  1 file changed, 69 insertions(+), 2 deletions(-)
+> 
 
-Applying into omap-for-v5.11/dt thanks.
-
-Tony
+Acked-by: Rob Herring <robh@kernel.org>
