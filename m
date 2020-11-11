@@ -2,173 +2,214 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1610C388F9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Nov 2020 10:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A838C56201
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Nov 2020 11:39:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44C5220795
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Nov 2020 10:18:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F23A72075A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Nov 2020 11:39:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eHuOUIaS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbgKKKSM (ORCPT
+        id S1725949AbgKKLjG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 11 Nov 2020 05:18:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51282 "EHLO
+        Wed, 11 Nov 2020 06:39:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbgKKKSM (ORCPT
+        with ESMTP id S1726352AbgKKLjC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Nov 2020 05:18:12 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46171C0613D1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Nov 2020 02:18:12 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1kcnCc-0007WQ-QQ; Wed, 11 Nov 2020 11:18:10 +0100
-Received: from mtr by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1kcnCa-0004L6-H0; Wed, 11 Nov 2020 11:18:08 +0100
-Date:   Wed, 11 Nov 2020 11:18:08 +0100
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     Inki Dae <inki.dae@samsung.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        kernel@pengutronix.de, Laurent.pinchart@ideasonboard.com,
-        krzk@kernel.org, narmstrong@baylibre.com, b.zolnierkie@samsung.com,
-        sylvester.nawrocki@gmail.com, a.hajda@samsung.com,
-        jy0922.shim@samsung.com, sw0312.kim@samsung.com
-Subject: Re: [PATCH v2 00/16] drm/exynos: Convert driver to drm bridge
-Message-ID: <20201111101808.GA16630@pengutronix.de>
-References: <CGME20200911165401epcas1p3c7ee84dd01db93f472d6fa21c1100f29@epcas1p3.samsung.com>
- <20200911135413.3654800-1-m.tretter@pengutronix.de>
- <fa535450-cd68-415f-5c48-a4f753b2b70b@samsung.com>
- <20201110081336.GB13669@pengutronix.de>
- <fd177674-b22e-6743-9886-5590ccade2f5@samsung.com>
- <c56586b0-f616-6a57-3628-5840a99f6c1a@samsung.com>
+        Wed, 11 Nov 2020 06:39:02 -0500
+Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7CF4C0613D6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Nov 2020 03:39:01 -0800 (PST)
+Received: by mail-vs1-xe44.google.com with SMTP id b129so984551vsb.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Nov 2020 03:39:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=T0V5oiWQkvHXwmhtDU+OoF9iMxPj6y0LTly2Lqt4DuE=;
+        b=eHuOUIaS6IQ/Oqu0OgOBN3unkL3XIi+Fk4dITGJA16P8o+NlqUHYybky26m5NVdFR3
+         nEj77IcCvuVVn+06U+bT8lGz7uajjKyyW7FwNmgKPtbnVhkVbc/cbaQN9K5iNZEDqwN8
+         nVQaDyp75O3xA21xpf2HF2/4nmB5ZZWZ4qIBAUAFOV005XJOvP7dFdsSa13fRian8kWs
+         nlTaeO+OWJaahsba2PoUYHfcaaNFyOAgkVI/2smnCnTClDA1XqlICigzABWFlOngodfE
+         4zfFtHsuUV8spOrU42OjsyzgiiWT7pqurb12j6T+fkPcno/GvbG0zKznsHZsamzHUppY
+         mnLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=T0V5oiWQkvHXwmhtDU+OoF9iMxPj6y0LTly2Lqt4DuE=;
+        b=fEovyjIKjDrWdsFEgel17YeEzX0811OZq5R61BntWsJE7Gig+p1S06TpAPx1INo9WF
+         OqfJn8UVY1nPZ8GCXSjb4Hko+CY4UYGUnMUgsfnkjEDSm3WP4kU7ipGXlCTatPj2ZkBe
+         E+3luogG4uQm2i8LObITlvCR4szODJnUFVazsHrt8VZ+ohzfVPzpRWr3++ebIeS3wimc
+         51CjbPVZKNdfwlfCxpfZa/Ijye12EF4AMpr9A5sdFkq8fGih0z+IpI6htL2O+vI3r+Nd
+         sVIEWm182OyNu00T6RuGrRIjDIvQWthT9FdxVQMlTsp+MpjLpOLdG9F5fhCXiNT65yZG
+         /guA==
+X-Gm-Message-State: AOAM531gX0KdwoKpldXlxTwD7Vv0UPMS/L43m842eaDMh9L8ch5q4Bh1
+        e1un+vYXrk6WSMyBkeB60JIKA/xIZyv2EFgb+yIZ9w==
+X-Google-Smtp-Source: ABdhPJycXgZgkNrggh2D47nvGhRFVQi/de+PIfj6XhXa1n8Wfiv9NfQ9xufbyRB0WVwWMZQ6Ct+Whjrl/7D/IIfrgqM=
+X-Received: by 2002:a67:f417:: with SMTP id p23mr14435741vsn.42.1605094740774;
+ Wed, 11 Nov 2020 03:39:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c56586b0-f616-6a57-3628-5840a99f6c1a@samsung.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 11:17:33 up 265 days, 17:48, 92 users,  load average: 0.20, 0.28,
- 0.27
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+References: <20201104234427.26477-1-digetx@gmail.com> <CAPDyKFr7qTU2RPhA_ZrbCayoTTNUEno1zdmvmv+8HBe-Owrfeg@mail.gmail.com>
+ <cd147ab0-1304-a491-7a56-ee6199c02d32@gmail.com> <2716c195-083a-112f-f1e5-2f6b7152a4b5@gmail.com>
+In-Reply-To: <2716c195-083a-112f-f1e5-2f6b7152a4b5@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 11 Nov 2020 12:38:23 +0100
+Message-ID: <CAPDyKFqUMsH9dCZ=OYqfdLt==+-8NjK9n=S5jGGNXZu6Y9q=2w@mail.gmail.com>
+Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
+ Tegra20/30 SoCs
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-pwm@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 11 Nov 2020 12:11:15 +0900, Inki Dae wrote:
-> 20. 11. 11. 오후 12:04에 Inki Dae 이(가) 쓴 글:
-> > 20. 11. 10. 오후 5:13에 Michael Tretter 이(가) 쓴 글:
-> >> On Mon, 09 Nov 2020 12:15:39 +0900, Inki Dae wrote:
-> >>> 20. 9. 11. 오후 10:53에 Michael Tretter 이(가) 쓴 글:
-> >>>> This is v2 of the series to convert the Exynos MIPI DSI driver into a drm
-> >>>> bridge and make it usable with other drivers. Although the driver is
-> >>>> converted, it still supports the component framework API to stay compliant
-> >>>> with the Exynos DRM driver.
-> >>>>
-> >>>> The Exynos MIPI DSI Phy is also found on the i.MX8M Mini. However, on the
-> >>>> i.MX8M Mini, the bridge is driven by an LCDIF display controller instead of
-> >>>> the Exynos Decon. The driver for the LCDIF does not use the component
-> >>>> framework, but uses drm bridges.
-> >>>>
-> >>>> I don't have any Exynos SoC to actually test the series. I build a dummy to
-> >>>> test the bridge with a component driver, to make sure that at least the
-> >>>> initialization is working. Furthermore, tested the driver as a bridge with a
-> >>>> few additional unfinished patches on the i.MX8M Mini EVK. However, somebody
-> >>>> should verify that the driver is still working on Exynos hardware.
-> >>>>
-> >>>> I also changed the order of the patches to first make the driver more platform
-> >>>> independent (patches 2 to 8), then convert to a drm bridge driver (patches 10
-> >>>
-> >>> Just a fundamental question, A MIPI-DSI(Display Serial Interface) bus device
-> >>> would be one of an encoder type of devices not bridge such as DSI to LVDS
-> >>> and LVDS to DSI bridge devices, and also image enhancer and image compressor
-> >>> in case of Exynos.
-> >>
-> >> I don't understand, why the MIPI-DSI bus device would be an encoder type and
-> >> DSI to LVDS or MIPI-DSI to HDMI would be bridges. For example, the device tree
-> >> documentation for the DSIM states that the DSIM receives RGB video as input
-> >> and produces MIPI-DSI as output. Thus, the DSIM is basically a parallel RGB to
-> > 
-> > MIPI-DSI receives RGB video as input and encodes it to MIPI packet and then transfers the packet to MIPI panel.
-> > And finally, MIPI panel decodes the packet and updates it - RGB data - on its SRAM.
-> > 
-> > MIPI-DSI driver programs how the RGB video should be made as MIPI packet. For more detail, you could refer to MIPI-DSI spec.
-> > This would be why we handle MIPI-DSI driver as an encoder like other ARM SoC DRM drivers did.
-> > 
-> >> MIPI-DSI bridge and the encoder is the LCD controller that encodes the video
-> >> data as parallel RGB.
-> >>
-> >> On the i.MX8MM, the LCDIF is already the encoder. On Exynos, the series
-> >> implements the encoder in the platform glue, but in the end the encoder can
-> >> probably be moved to the DECON.
-> > 
-> > As you know, Display controller can transfer RGB video to various devices such as RGB panel, CPU panel, LVDS panel via LVDS bridge, MIPI panel via MIPI-DSI bus device, and so on like below,
-> > 
-> > Display Controller --> RGB panel or CPU panel.
-> > Display Controller --> LVDS bridge --> LVDS panel.
-> > Display Controller --> MIPI DSI bus device --> MIPI Panel.
+On Sun, 8 Nov 2020 at 13:19, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 05.11.2020 18:22, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > 05.11.2020 12:45, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 > > ...
-> > 
-> > Display controller drivers such as FIMD and DECON series in case of Exynos don't create an encoder driver-internally instead of it depends on Display pipeline configuration - what kind of Display panel is used.
-> > In fact, if the Display pipeline uses RGB panel or CPU panel without Display bus device such as MIPI-DSI, then FIMD and DECON drivers create an encoder for it internally - just we separated the code to consider other type of panels.
-
-What happens if I add a MIPI-DSI --> HDMI bridge to the Display pipeline? Then
-the Pipeline is
-
-Display Controller --> MIPI DSI bus device --> HDMI bridge --> HDMI Panel
-
-If the type of the Display panel decides which part of the pipeline provides
-the encoder, the HDMI bridge driver would be responsible for creating the
-encoder, right? Thus, the MIPI-DSI driver would not be responsible for
-creating the encoder and would also get the encoder from another driver.
-Therefore, I prefer to think of the Display Controller as the encoder and
-other bridges are just bridges.
-
-BTW, this is exactly the Display pipeline that is used on the i.MX8MM EVK.
-
-> > 
-> > On the I.MX8MM, could you share how to handle an encoder if some board has only MIPI-DSI panel, and in this case, where is an encoder for it created? I looked into I.MX8MM DRM driver but didn't find MIPI-DSI driver.
-> > Seems that they support only parallel display, HDMI and LVDS panel.
-> 
-> One more thing, If I saw correctly, the LVDS driver of IMX DRM - lmx_ldb - creates an encoder internally like MIPI-DSI driver of Exynos DRM did.
-
-Yes, but the IMX DRM driver is not used on the i.MX8MM. The i.MX8MM uses the
-LCDIF display controller instead of the IPU of the i.MX6. The driver for the
-LCDIF is the mxsfb driver, which in turn uses the drm_simple_display_pipe,
-which already provides the encoder. Therefore, to use a bridge driver with a
-driver based on a drm_simple_display_pipe, the bridge driver must accept other
-encoders.
-
-Michael
-
-> 
-> > 
-> > Thanks,
-> > Inki Dae
-> > 
+> >> I need some more time to review this, but just a quick check found a
+> >> few potential issues...
+> >
+> > Thank you for starting the review! I'm pretty sure it will take a coupl=
+e
+> > revisions until all the questions will be resolved :)
+> >
+> >> The "core-supply", that you specify as a regulator for each
+> >> controller's device node, is not the way we describe power domains.
+> >> Instead, it seems like you should register a power-domain provider
+> >> (with the help of genpd) and implement the ->set_performance_state()
+> >> callback for it. Each device node should then be hooked up to this
+> >> power-domain, rather than to a "core-supply". For DT bindings, please
+> >> have a look at Documentation/devicetree/bindings/power/power-domain.ya=
+ml
+> >> and Documentation/devicetree/bindings/power/power_domain.txt.
 > >>
-> >>> Why do you want to convert such MIPI-DSI driver to bridge type of driver?
-> >>> Seems not sensible. The reason would be just to share MIPI-DSI phy driver
-> >>> for Exynos with i.MX8M Mini?
-> >>
-> >> Yes, the reason is that the driver should be shared between Exynos and
-> >> i.MX8MM. It is the same IP and I don't see a reason why we should introduce
-> >> another driver for the same IP if the driver works for both SoCs.
-> >>
-> >> Michael
-> >>
-> > 
-> 
+> >> In regards to the "sync state" problem (preventing to change
+> >> performance states until all consumers have been attached), this can
+> >> then be managed by the genpd provider driver instead.
+> >
+> > I'll need to take a closer look at GENPD, thank you for the suggestion.
+> >
+> > Sounds like a software GENPD driver which manages clocks and voltages
+> > could be a good idea, but it also could be an unnecessary
+> > over-engineering. Let's see..
+> >
+>
+> Hello Ulf and all,
+>
+> I took a detailed look at the GENPD and tried to implement it. Here is
+> what was found:
+>
+> 1. GENPD framework doesn't aggregate performance requests from the
+> attached devices. This means that if deviceA requests performance state
+> 10 and then deviceB requests state 3, then framework will set domain's
+> state to 3 instead of 10.
+>
+> https://elixir.bootlin.com/linux/v5.10-rc2/source/drivers/base/power/doma=
+in.c#L376
+
+As Viresh also stated, genpd does aggregate the votes. It even
+performs aggregation hierarchy (a genpd is allowed to have parent(s)
+to model a topology).
+
+>
+> 2. GENPD framework has a sync() callback in the genpd.domain structure,
+> but this callback isn't allowed to be used by the GENPD implementation.
+> The GENPD framework always overrides that callback for its own needs.
+> Hence GENPD doesn't allow to solve the bootstrapping
+> state-synchronization problem in a nice way.
+>
+> https://elixir.bootlin.com/linux/v5.10-rc2/source/drivers/base/power/doma=
+in.c#L2606
+
+That ->sync() callback isn't the callback you are looking for, it's a
+PM domain specific callback - and has other purposes.
+
+To solve the problem you refer to, your genpd provider driver (a
+platform driver) should assign its ->sync_state() callback. The
+->sync_state() callback will be invoked, when all consumer devices
+have been attached (and probed) to their corresponding provider.
+
+You may have a look at drivers/cpuidle/cpuidle-psci-domain.c, to see
+an example of how this works. If there is anything unclear, just tell
+me and I will try to help.
+
+>
+> 3. Tegra doesn't have a dedicated hardware power-controller for the core
+> domain, instead there is only an external voltage regulator. Hence we
+> will need to create a phony device-tree node for the virtual power
+> domain, which is probably a wrong thing to do.
+
+No, this is absolutely the correct thing to do.
+
+This isn't a virtual power domain, it's a real power domain. You only
+happen to model the control of it as a regulator, as it fits nicely
+with that for *this* SoC. Don't get me wrong, that's fine as long as
+the supply is specified only in the power-domain provider node.
+
+On another SoC, you might have a different FW interface for the power
+domain provider that doesn't fit well with the regulator. When that
+happens, all you need to do is to implement a new power domain
+provider and potentially re-define the power domain topology. More
+importantly, you don't need to re-invent yet another slew of device
+specific bindings - for each SoC.
+
+>
+> =3D=3D=3D
+>
+> Perhaps it should be possible to create some hacks to work around
+> bullets 2 and 3 in order to achieve what we need for DVFS on Tegra, but
+> bullet 1 isn't solvable without changing how the GENPD core works.
+>
+> Altogether, the GENPD in its current form is a wrong abstraction for a
+> system-wide DVFS in a case where multiple devices share power domain and
+> this domain is a voltage regulator. The regulator framework is the
+> correct abstraction in this case for today.
+
+Well, I admit it's a bit complex. But it solves the problem in a
+nicely abstracted way that should work for everybody, at least in my
+opinion.
+
+Although, let's not exclude that there are pieces missing in genpd or
+the opp layer, as this DVFS feature is rather new - but then we should
+just extend/fix it.
+
+Kind regards
+Uffe
