@@ -2,116 +2,176 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FA7C2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Nov 2020 11:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6993EC56201
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Nov 2020 11:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E060922241
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Nov 2020 11:16:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A9E52222B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Nov 2020 11:51:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Fu3mff+T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbgKLLQO (ORCPT
+        id S1728176AbgKLLvd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 12 Nov 2020 06:16:14 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:49094 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725902AbgKLLQO (ORCPT
+        Thu, 12 Nov 2020 06:51:33 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42285 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727920AbgKLLvX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 12 Nov 2020 06:16:14 -0500
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=phil.lan)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1kdAaB-0000QA-9Q; Thu, 12 Nov 2020 12:16:03 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Scott Wood <scottwood@freescale.com>,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Li Yang <leoyang.li@nxp.com>, Qiang Zhao <qiang.zhao@nxp.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Roy Pledge <Roy.Pledge@nxp.com>,
-        Dan Malek <dan@embeddedalley.com>,
-        Cyril Chemparathy <cyril@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Vitaly Bordug <vbordug@ru.mvista.com>,
-        YueHaibing <yuehaibing@huawei.com>,
+        Thu, 12 Nov 2020 06:51:23 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201112115110euoutp0220b8666f777c8c1422ce3713da1c9d38~GwGgIJWoO2639726397euoutp02U
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Nov 2020 11:51:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201112115110euoutp0220b8666f777c8c1422ce3713da1c9d38~GwGgIJWoO2639726397euoutp02U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1605181870;
+        bh=TmlrcraEmN6nS3uE2s6DB5WImBH1BqSTgR395EFEKMo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Fu3mff+TZd9M68qRi3uxMwdWbsC2B6TamXCpELi3Dq54bQSVjN9VuwDBc1fRitsIE
+         aQx4YlKoai5r3uPRSb5wtp9j+LT4ovPTdplu52TAiO/Vds6+wSOaErHXBaFMVuQ6Iy
+         J0uVVyfuYO9ey4l1tpI2y1/grBlodjBvbe1U8hMA=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20201112115109eucas1p212b1f5d5094d1afb2986373e0efd5ac1~GwGfw3JCo2193821938eucas1p2l;
+        Thu, 12 Nov 2020 11:51:09 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id BC.BF.44805.DA12DAF5; Thu, 12
+        Nov 2020 11:51:09 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20201112115109eucas1p2dfd5fbfd76c28ef07f637bcc40f420cd~GwGfPgR2b1221412214eucas1p2l;
+        Thu, 12 Nov 2020 11:51:09 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201112115109eusmtrp2043840acf8f77b8d0c038c27ce1c77ef~GwGfO10Fq2331023310eusmtrp2j;
+        Thu, 12 Nov 2020 11:51:09 +0000 (GMT)
+X-AuditID: cbfec7f4-b37ff7000000af05-6d-5fad21ad9ae4
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 71.89.21957.DA12DAF5; Thu, 12
+        Nov 2020 11:51:09 +0000 (GMT)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20201112115109eusmtip281f72d804fdbfbe5064e4939c54c7970~GwGfCkHW11189511895eusmtip2V;
+        Thu, 12 Nov 2020 11:51:09 +0000 (GMT)
+From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Dave Gerlach <d-gerlach@ti.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-rockchip@lists.infradead.org, Ben Dooks <ben@simtec.co.uk>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Andy Gross <agross@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sandeep Nair <sandeep_n@ti.com>,
-        Mark Brown <broonie@kernel.org>, act <dmalek@jlc.net>,
-        "Software, Inc" <source@mvista.com>
-Subject: Re: [PATCH 00/25] Rid W=1 warnings in SoC
-Date:   Thu, 12 Nov 2020 12:16:00 +0100
-Message-Id: <160517975455.81506.16289432612279089945.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201103152838.1290217-1-lee.jones@linaro.org>
-References: <20201103152838.1290217-1-lee.jones@linaro.org>
+        linux-samsung-soc@vger.kernel.org
+Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH v6 4/5] ARM: dts: exynos: Add Ethernet to Artik 5 board
+Date:   Thu, 12 Nov 2020 12:51:05 +0100
+Message-Id: <20201112115106.16224-5-l.stelmach@samsung.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20201112115106.16224-1-l.stelmach@samsung.com>
 MIME-Version: 1.0
+Organization: Samsung R&D Institute Poland
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEKsWRmVeSWpSXmKPExsWy7djP87prFdfGG3ydoG9x/u4hZouNM9az
+        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2px89AKRotNj6+xWlzeNYfN
+        Ysb5fUwWh6buZbRYe+Quu8WxBWIWrXuPsDsIely+dpHZY8vKm0weO2fdZffYtKqTzWPzknqP
+        nTs+M3n0bVnF6PF5k1wARxSXTUpqTmZZapG+XQJXxqmjTxkL/nJXNGydztrA+JGzi5GTQ0LA
+        ROLR2+nMXYxcHEICKxglJv7/zgThfGGU2PjmMSOE85lRYtXJUywwLU0TvrNCJJYzSvQ/fsoO
+        4TxnlPh/dy4TSBWbgKNE/9ITYFUiAveYJda3PwCbxSywj1Fi570pzCBVwgLuEh+WdLCC2CwC
+        qhJvp/5nB7F5BawlTv9pZoPYJy/Rvnw7mM0pYCOx9OZFqBpBiZMzn4DdxC+gJbGm6TqYzQxU
+        37x1NthLEgLbOSW69i9nghjkInGq+RMrhC0s8er4FnYIW0bi/875QDUcQHa9xORJZhC9PYwS
+        2+b8gHraWuLOuV9sIDXMApoS63fpQ4QdJR7MmMcC0conceOtIMQJfBKTtoFCFSTMK9HRJgRR
+        rSKxrn8P1EApid5XKxgnMCrNQvLMLCQPzELYtYCReRWjeGppcW56arFRXmq5XnFibnFpXrpe
+        cn7uJkZgsjv97/iXHYzLX33UO8TIxMF4iFGCg1lJhFfZYU28EG9KYmVValF+fFFpTmrxIUZp
+        DhYlcd6kLUApgfTEktTs1NSC1CKYLBMHp1QDk/TctPzSvsjHE9sX+frmnTbKY5h/eKntFEuv
+        Z7VLvwTH8L8v0Ww0fnLf5eaCSe2hb5rTfGedyDxTlvO8fe6GvrLcNytMFhgovm6aesa6f8lK
+        n+m6+QWfC243sF4+HbPtfOPdR4sKfdVW3XcoCGWZmBbesuri8/ef889NKJkgv2hPFtPFaSGh
+        1zyyPFcwSrVfU/U4NLFKfqsqv29v6ymb+/9vP1yxc5HRndOhoYxb+tWECvWfHWC7FB69ueOl
+        69F/fbE7vF1e7Tj6K0LIfXNhobKLRUZjwmWOySazfSWPLdw1tW/f0Qqndf84n99kOy7yfWax
+        jmzeswC1df5um8LjJE6yHD3QeLDk721FeSHtH0osxRmJhlrMRcWJAEwhtzXlAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEIsWRmVeSWpSXmKPExsVy+t/xe7prFdfGG7w+xmtx/u4hZouNM9az
+        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2px89AKRotNj6+xWlzeNYfN
+        Ysb5fUwWh6buZbRYe+Quu8WxBWIWrXuPsDsIely+dpHZY8vKm0weO2fdZffYtKqTzWPzknqP
+        nTs+M3n0bVnF6PF5k1wAR5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6d
+        TUpqTmZZapG+XYJexqmjTxkL/nJXNGydztrA+JGzi5GTQ0LARKJpwnfWLkYuDiGBpYwSzbd2
+        s3UxcgAlpCRWzk2HqBGW+HOtiw2i5imjxJ1vi1hBEmwCjhL9S0+ANYsIvGGWaLr3lh3EYRbY
+        xyix/+hidpAqYQF3iQ9LOsA6WARUJd5O/Q8W5xWwljj9p5kNYoW8RPvy7WA2p4CNxNKbF8Fq
+        hIBqWmd+hqoXlDg58wkLyHXMAuoS6+cJgYT5BbQk1jRdZwGxmYHGNG+dzTyBUWgWko5ZCB2z
+        kFQtYGRexSiSWlqcm55bbKhXnJhbXJqXrpecn7uJERjZ24793LyDcd6rj3qHGJk4GA8xSnAw
+        K4nwKjusiRfiTUmsrEotyo8vKs1JLT7EaAr02URmKdHkfGBqySuJNzQzMDU0MbM0MLU0M1YS
+        5906F6hJID2xJDU7NbUgtQimj4mDU6qBqXT75TKV7UrVaq1K7alHSp+EPu6I1HusuYNpE8cO
+        hVsiTiWvNrMlvffQjmq0XNVfFvnzXrS42U+uG+/q5cUWuHKnn433PL5Y7V3eqy9bHUQrM6VF
+        uGszGV5zPPmsuGCvYKnfh8R/yx4Hmzeyn11m/1/tfvWklZsUJn+b4D9zRwePtsrOjKInGZFP
+        CnbPjdbfJZ9jc/HpTm2/7oI3RQZNDYt6f+f4vf3VO8Hz7YGslqwTe6aLCatVb1sus663/8vW
+        +5sOzlMQ2xbeF8N8kEOv6rFtl1jBvNSqOUv2cFrJ3LRcWqSkrLB37ipt+UTNIvu0+/u+xQmL
+        iR5YZPA8YH/l+YfyzNOUxMK3vNDOVJuvxFKckWioxVxUnAgA2NVdaXUDAAA=
+X-CMS-MailID: 20201112115109eucas1p2dfd5fbfd76c28ef07f637bcc40f420cd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20201112115109eucas1p2dfd5fbfd76c28ef07f637bcc40f420cd
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201112115109eucas1p2dfd5fbfd76c28ef07f637bcc40f420cd
+References: <20201112115106.16224-1-l.stelmach@samsung.com>
+        <CGME20201112115109eucas1p2dfd5fbfd76c28ef07f637bcc40f420cd@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 3 Nov 2020 15:28:13 +0000, Lee Jones wrote:
-> This set is part of a larger effort attempting to clean-up W=1
-> kernel builds, which are currently overwhelmingly riddled with
-> niggly little warnings.
-> 
-> Lee Jones (25):
->   soc: bcm: brcmstb: pm: pm-arm: Provide prototype for
->     brcmstb_pm_s3_finish()
->   soc: qcom: qcom_aoss: Remove set but unused variable 'tlen'
->   soc: qcom: qcom_aoss: Add missing description for 'cooling_devs'
->   soc: fsl: dpio: qbman-portal: Fix a bunch of kernel-doc misdemeanours
->   soc: rockchip: io-domain: Remove incorrect and incomplete comment
->     header
->   soc: ti: knav_qmss_queue: Remove set but unchecked variable 'ret'
->   soc: ti: knav_qmss_queue: Fix a whole host of function documentation
->     issues
->   soc: ti: knav_dma: Fix a kernel function doc formatting issue
->   soc: ti: pm33xx: Remove set but unused variable 'ret'
->   soc: ti: wkup_m3_ipc: Document 'm3_ipc' parameter throughout
->   soc: fsl: qe: qe_common: Fix misnamed function attribute 'addr'
->   soc: qcom: qcom-geni-se: Fix misnamed function parameter 'rx_rfr'
->   soc: tegra: fuse: speedo-tegra124: Remove some set but unused
->     variables
->   soc: samsung: s3c-pm-check: Fix incorrectly named variable 'val'
->   soc: qcom: rpmh: Fix possible doc-rot in rpmh_write()'s header
->   soc: qcom: smem: Fix formatting and missing documentation issues
->   soc: qcom: smsm: Fix some kernel-doc formatting and naming problems
->   soc: qcom: wcnss_ctrl: Demote non-conformant struct header and fix
->     function headers
->   soc: qcom: smp2p: Remove unused struct attribute provide another
->   soc: qcom: llcc-qcom: Fix expected kernel-doc formatting
->   soc: qcom: rpmhpd: Provide some missing struct member descriptions
->   soc: qcom: kryo-l2-accessors: Fix misnaming of 'val'
->   soc: ti: k3-ringacc: Provide documentation for 'k3_ring's 'state'
->   soc: tegra: fuse: speedo-tegra210: Remove a group of set but unused
->     variables
->   soc: fsl: qbman: qman: Remove unused variable 'dequeue_wq'
-> 
-> [...]
+Add node for ax88796c ethernet chip.
 
-Applied, thanks!
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+---
+ arch/arm/boot/dts/exynos3250-artik5-eval.dts | 29 ++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-[1/1] soc: rockchip: io-domain: Remove incorrect and incomplete comment header
-      commit: a6a3a24c129d229a0eb26b329ab617e2a04245dd
-
-Best regards,
+diff --git a/arch/arm/boot/dts/exynos3250-artik5-eval.dts b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
+index 20446a846a98..a91e09a7d3fa 100644
+--- a/arch/arm/boot/dts/exynos3250-artik5-eval.dts
++++ b/arch/arm/boot/dts/exynos3250-artik5-eval.dts
+@@ -37,3 +37,32 @@ &mshc_2 {
+ &serial_2 {
+ 	status = "okay";
+ };
++
++&spi_0 {
++	status = "okay";
++	cs-gpios = <&gpx3 4 GPIO_ACTIVE_LOW>, <0>;
++
++	assigned-clocks = <&cmu CLK_MOUT_MPLL>, <&cmu CLK_DIV_MPLL_PRE>,
++		<&cmu CLK_MOUT_SPI0>, <&cmu CLK_DIV_SPI0>,
++		<&cmu CLK_DIV_SPI0_PRE>, <&cmu CLK_SCLK_SPI0>;
++	assigned-clock-parents =
++		<&cmu CLK_FOUT_MPLL>,    /* for: CLK_MOUT_MPLL */
++		<&cmu CLK_MOUT_MPLL>,	 /* for: CLK_DIV_MPLL_PRE */
++		<&cmu CLK_DIV_MPLL_PRE>, /* for: CLK_MOUT_SPI0 */
++		<&cmu CLK_MOUT_SPI0>,    /* for: CLK_DIV_SPI0 */
++		<&cmu CLK_DIV_SPI0>,     /* for: CLK_DIV_SPI0_PRE */
++		<&cmu CLK_DIV_SPI0_PRE>; /* for: CLK_SCLK_SPI0 */
++
++	ethernet@0 {
++		compatible = "asix,ax88796c";
++		reg = <0x0>;
++		local-mac-address = [00 00 00 00 00 00]; /* Filled in by a boot-loader */
++		interrupt-parent = <&gpx2>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		spi-max-frequency = <40000000>;
++		reset-gpios = <&gpe0 2 GPIO_ACTIVE_LOW>;
++		controller-data {
++			samsung,spi-feedback-delay = <2>;
++		};
++	};
++};
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.26.2
+
