@@ -2,94 +2,66 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.6 required=3.0 tests=BAYES_50,DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FREEMAIL_REPLYTO_END_DIGIT,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF472C2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Nov 2020 19:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3229C63798
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Nov 2020 07:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69A0B20829
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Nov 2020 19:54:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90D392463B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Nov 2020 07:37:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbgKPTyW convert rfc822-to-8bit (ORCPT
+        id S1726642AbgKQHhV convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 16 Nov 2020 14:54:22 -0500
-Received: from aposti.net ([89.234.176.197]:54660 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726575AbgKPTyV (ORCPT
+        Tue, 17 Nov 2020 02:37:21 -0500
+Received: from tigeramira.ro ([88.158.78.30]:35448 "EHLO mail.tigeramira.ro"
+        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1725771AbgKQHhV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 16 Nov 2020 14:54:21 -0500
-Date:   Mon, 16 Nov 2020 19:54:03 +0000
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 2/2] drm/ingenic: depend on COMMON_CLK to fix compile
- tests
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
-Message-Id: <3ANWJQ.LV5B6V47KTYS2@crapouillou.net>
-In-Reply-To: <20201116175301.402787-2-krzk@kernel.org>
-References: <20201116175301.402787-1-krzk@kernel.org>
-        <20201116175301.402787-2-krzk@kernel.org>
+        Tue, 17 Nov 2020 02:37:21 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.tigeramira.ro (Postfix) with ESMTP id 0A406AFF86D
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Nov 2020 16:47:36 +0200 (EET)
+Received: from mail.tigeramira.ro ([127.0.0.1])
+        by localhost (mail.tigeramira.ro [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 9r3CJTuVS8xX for <linux-samsung-soc@vger.kernel.org>;
+        Sat, 14 Nov 2020 16:47:35 +0200 (EET)
+Received: from mail.tigeramira.ro (localhost [127.0.0.1])
+        by mail.tigeramira.ro (Postfix) with ESMTP id 3CDD99BBE9F
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Nov 2020 03:38:41 +0200 (EET)
+Received: from [156.96.44.214] (unknown [192.168.12.254])
+        by mail.tigeramira.ro (Postfix) with ESMTP id E0327998B23
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2020 19:07:38 +0200 (EET)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Corporate and Personal Loan::,
+To:     linux-samsung-soc@vger.kernel.org
+From:   "Investment  Corporate" <financialcapability6@gmail.com>
+Date:   Fri, 13 Nov 2020 08:07:52 -0800
+Reply-To: hmurrah39@gmail.com
+Message-Id: <20201113170739.E0327998B23@mail.tigeramira.ro>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-Le lun. 16 nov. 2020 à 18:53, Krzysztof Kozlowski <krzk@kernel.org> a 
-écrit :
-> The Ingenic DRM uses Common Clock Framework thus it cannot be built on
-> platforms without it (e.g. compile test on MIPS with RALINK and
-> SOC_RT305X):
-> 
->     /usr/bin/mips-linux-gnu-ld: 
-> drivers/gpu/drm/ingenic/ingenic-drm-drv.o: in function 
-> `ingenic_drm_bind.isra.0':
->     ingenic-drm-drv.c:(.text+0x1600): undefined reference to 
-> `clk_get_parent'
->     /usr/bin/mips-linux-gnu-ld: ingenic-drm-drv.c:(.text+0x16b0): 
-> undefined reference to `clk_get_parent'
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Acked-by: Paul Cercueil <paul@crapouillou.net>
-
-Cheers,
--Paul
-
-> ---
->  drivers/gpu/drm/ingenic/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/ingenic/Kconfig 
-> b/drivers/gpu/drm/ingenic/Kconfig
-> index 477d5387e43e..3b57f8be007c 100644
-> --- a/drivers/gpu/drm/ingenic/Kconfig
-> +++ b/drivers/gpu/drm/ingenic/Kconfig
-> @@ -4,6 +4,7 @@ config DRM_INGENIC
->  	depends on DRM
->  	depends on CMA
->  	depends on OF
-> +	depends on COMMON_CLK
->  	select DRM_BRIDGE
->  	select DRM_PANEL_BRIDGE
->  	select DRM_KMS_HELPER
-> --
-> 2.25.1
-> 
+Hello linux-samsung-soc@vger.kernel.org
 
 
+We are Base Investment Company offering Corporate and Personal Loan at 3% Interest Rate for a duration of 10Years.
+
+
+We also pay 1% commission to brokers, who introduce project owners for finance or other opportunities.
+
+
+Please get back to me if you are interested for more
+
+details.
+
+
+Yours faithfully,
+
+Hashim Murrah
