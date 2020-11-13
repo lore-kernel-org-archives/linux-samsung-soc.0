@@ -2,137 +2,105 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65688C388F7
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Nov 2020 14:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A10C4742C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Nov 2020 14:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1738122240
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Nov 2020 14:46:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 534C32222F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Nov 2020 14:51:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oI7Irk60"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3fMTtxI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbgKMOqW (ORCPT
+        id S1726437AbgKMOvZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Nov 2020 09:46:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33206 "EHLO
+        Fri, 13 Nov 2020 09:51:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726432AbgKMOqV (ORCPT
+        with ESMTP id S1726278AbgKMOvZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Nov 2020 09:46:21 -0500
-Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31F02C0617A6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2020 06:46:21 -0800 (PST)
-Received: by mail-vs1-xe41.google.com with SMTP id l22so5322140vsa.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2020 06:46:21 -0800 (PST)
+        Fri, 13 Nov 2020 09:51:25 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46CB6C0613D1;
+        Fri, 13 Nov 2020 06:51:25 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id f38so7264491pgm.2;
+        Fri, 13 Nov 2020 06:51:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Aa2pPBMOldZH+yQGH0UrveON65rZ08/cb06MQFHGa0E=;
-        b=oI7Irk60nS8p8IJ9aebTfBT8tKh0VFGTFn4N+jHvPSrvutUGz4HDN9F2eXGWUFLUJO
-         pztkL1zvJJMqmmqAU4axiDuUUDb7ZZEfZv/0TZRBLjwcw3/kbFA/Hx96JgrITvvr02pZ
-         P9ohzUknb4wDMFPoki9mO18MI2KcxcBOr1dFLBdisyT0QQlXZ092Oz52zVXzS4AIl6nm
-         U8S/pCXL5v33Tp7vs3/soInXrThDoA5cbxXaCLXchnNuLPv28h5iBteaaK6ficGI1j82
-         XTk7m3rfU//IdaFvmbs97w3+GVYDzQv+iWKbaHXieTVM3M0QznSjPWGv6+xYuZCuLvZr
-         7YfA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=FeQh4FdOZwVhx4i39hlguo34HgLhuLiBD0/DOQQq4rI=;
+        b=R3fMTtxIF543Ih5YOs+n3v5kt1uVu6ewdLPwgczWBuGSJfOhwmfZiQfCHlaz2+OeQE
+         nnYOwy71jqOodTVzkTszDyxcCDm5i4Bryf++//u2YyXwtjw6jBCD39PayLkmI4aihFrk
+         3xNkhZqdUVSms+ssnsGbgfPF12JbAsrvYs0MjEqwYSN8IOZFGfXl20ibyHdpeQhwiUNd
+         cGJWBv+Gr6q0I5ynGKbMeIs9iBLkE4kxH0S7B6z6wjsPmwjrYuTyqNA0QzrUNo1hNgsM
+         9BEwlZ7tRTz6n2ML4TMokaV9hyc5BzLch7SVYXvend25kRyA3kE5w0qKux0lxXzCEGme
+         sHiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Aa2pPBMOldZH+yQGH0UrveON65rZ08/cb06MQFHGa0E=;
-        b=V1WZDYlcVmznZLIXMsdxROqmOxuFkkPINWhV0U0NkQZxITQG5fFIldFpk6JefJCR6Q
-         mIvDj0wiZAgtCDu2zkFw6bTnuOzrIkFh+eSvsfVG8E/QEnBGeqb0uJWatXLg5ww+JH1p
-         bOBqjI1bN50+C8WRRGxYRdTIhsjCQakyTsyyN5FYhwcD5xgjVk5vpw/ymAqh1lsqshfV
-         WsAveejG4NPVCmtEugIqLtL6sE3nB7NeNO/HmuCqTD4DgUJkXsdttfq1kc5ZrS9bqlIu
-         ZRfqrTPaOpLu4yIIotPTpD2DGhY05wFKNoWizjB3F78fuSrGd6Yw+WhYmB2DMP8Fjbq1
-         zBOg==
-X-Gm-Message-State: AOAM5327iDO76YEQM5fB4XJaUoQmXi+n4OZpY7BSVwR60MH7s22H6ZDJ
-        /xbUc7apv657Z7XCZErf4eSz9Jh811s3Mnhr/tULiA==
-X-Google-Smtp-Source: ABdhPJwkbgKSdaTWhgIsxWjShz+Kw+ub2606C3A/AwjkR07HCOjuCnqip2AUmLV/UBcfKhNInvgSpQVBCTAIPmGnX5w=
-X-Received: by 2002:a67:3256:: with SMTP id y83mr1567875vsy.48.1605278780301;
- Fri, 13 Nov 2020 06:46:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20201104234427.26477-1-digetx@gmail.com> <CAPDyKFr7qTU2RPhA_ZrbCayoTTNUEno1zdmvmv+8HBe-Owrfeg@mail.gmail.com>
- <cd147ab0-1304-a491-7a56-ee6199c02d32@gmail.com> <2716c195-083a-112f-f1e5-2f6b7152a4b5@gmail.com>
- <CAPDyKFqUMsH9dCZ=OYqfdLt==+-8NjK9n=S5jGGNXZu6Y9q=2w@mail.gmail.com>
- <1f7e90c4-6134-2e2b-4869-5afbda18ead3@gmail.com> <20201112204358.GA1027187@ulmo>
- <25942da9-b527-c0aa-5403-53c9cc34ad93@gmail.com>
-In-Reply-To: <25942da9-b527-c0aa-5403-53c9cc34ad93@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 13 Nov 2020 15:45:43 +0100
-Message-ID: <CAPDyKFomk7mw7-wpZFPOfT27CEXuCbzRiBoicH5-k7QF_pphVw@mail.gmail.com>
-Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-pwm@vger.kernel.org,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FeQh4FdOZwVhx4i39hlguo34HgLhuLiBD0/DOQQq4rI=;
+        b=q6d9Vo9N4jE0EjQpbKWwXrg+87+f7U/o+qA/hJNHbLlrYPgNp63AT51go3HI/bL47q
+         Lv0JE795SYJu/KPcC7zEJmNOhsKkLMVWB4Dtepbcq0KgJR3U82FXDS9Wn3GsB0C0cK0M
+         jsyvGq085ds01P7TpvsA535BdFeVE23xjD3tnbxARrV3p3rS9awtvWWwRQ3XV4MXfHYt
+         ojnjyr8jDfv6N9T4c3Rd+gDCXv/udbOuLCCPPInm/KNYc3ailxTSmsrXeD+feUg7Cz0j
+         uz1aVUu/pZzt0PPBk3N4GXLXeyQnuagGmIhIMCXEyYNzPgNuiFU/zsz8xMwrjTHS3C8D
+         C6tA==
+X-Gm-Message-State: AOAM532ssUP3EbOipRLq9MvUHN0/SpGfaDDBJKGCxBnqPfTY5k0BVzBV
+        caPsEhcImA3Dp576c5Xu8ew4mVfjpcoL
+X-Google-Smtp-Source: ABdhPJy16wOevtvij+fqDb1WHcMwi+goNOVnFva8Xzhl90PTNfWe+5pi0V/uwYGgWXjDZXxe/ARIGQ==
+X-Received: by 2002:a17:90a:f189:: with SMTP id bv9mr3571491pjb.174.1605279084911;
+        Fri, 13 Nov 2020 06:51:24 -0800 (PST)
+Received: from he-cluster.localdomain (67.216.221.250.16clouds.com. [67.216.221.250])
+        by smtp.gmail.com with ESMTPSA id t9sm12818965pje.1.2020.11.13.06.51.23
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Nov 2020 06:51:24 -0800 (PST)
+From:   xiakaixu1987@gmail.com
+X-Google-Original-From: kaixuxia@tencent.com
+To:     krzk@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kaixu Xia <kaixuxia@tencent.com>
+Subject: [PATCH] ASoC: samsung: remove the unused variable value assignment
+Date:   Fri, 13 Nov 2020 22:51:19 +0800
+Message-Id: <1605279079-6416-1-git-send-email-kaixuxia@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 12 Nov 2020 at 23:14, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> 12.11.2020 23:43, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >> The difference in comparison to using voltage regulator directly is
-> >> minimal, basically the core-supply phandle is replaced is replaced wit=
-h
-> >> a power-domain phandle in a device tree.
-> > These new power-domain handles would have to be added to devices that
-> > potentially already have a power-domain handle, right? Isn't that going
-> > to cause issues? I vaguely recall that we already have multiple power
-> > domains for the XUSB controller and we have to jump through extra hoops
-> > to make that work.
->
-> I modeled the core PD as a parent of the PMC sub-domains, which
-> presumably is a correct way to represent the domains topology.
->
-> https://gist.github.com/digetx/dfd92c7f7e0aa6cef20403c4298088d7
+From: Kaixu Xia <kaixuxia@tencent.com>
 
-That could make sense, it seems.
+The value of variable ret is overwritten by the following call
+devm_snd_soc_register_card(), so here the value assignment is useless.
+Remove it.
 
-Anyway, this made me realize that
-dev_pm_genpd_set_performance_state(dev) returns -EINVAL, in case the
-device's genpd doesn't have the ->set_performance_state() assigned.
-This may not be correct. Instead we should likely consider an empty
-callback as okay and continue to walk the topology upwards to the
-parent domain, etc.
+Reported-by: Tosk Robot <tencent_os_robot@tencent.com>
+Signed-off-by: Kaixu Xia <kaixuxia@tencent.com>
+---
+ sound/soc/samsung/smdk_wm8994.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Just wanted to point this out. I intend to post a patch as soon as I
-can for this.
+diff --git a/sound/soc/samsung/smdk_wm8994.c b/sound/soc/samsung/smdk_wm8994.c
+index 64a1a64..1db5b59 100644
+--- a/sound/soc/samsung/smdk_wm8994.c
++++ b/sound/soc/samsung/smdk_wm8994.c
+@@ -160,11 +160,9 @@ static int smdk_audio_probe(struct platform_device *pdev)
+ 		smdk_dai[0].cpus->dai_name = NULL;
+ 		smdk_dai[0].cpus->of_node = of_parse_phandle(np,
+ 				"samsung,i2s-controller", 0);
+-		if (!smdk_dai[0].cpus->of_node) {
++		if (!smdk_dai[0].cpus->of_node)
+ 			dev_err(&pdev->dev,
+ 			   "Property 'samsung,i2s-controller' missing or invalid\n");
+-			ret = -EINVAL;
+-		}
+ 
+ 		smdk_dai[0].platforms->name = NULL;
+ 		smdk_dai[0].platforms->of_node = smdk_dai[0].cpus->of_node;
+-- 
+1.8.3.1
 
-[...]
-
-Kind regards
-Uffe
