@@ -2,167 +2,158 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A26C61DD8
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Nov 2020 15:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE0FC55ABD
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Nov 2020 15:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A14322277
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Nov 2020 15:29:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 369E920759
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Nov 2020 15:55:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VPxMojce"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EmXWyr9g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbgKMP3v (ORCPT
+        id S1726827AbgKMPzi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Nov 2020 10:29:51 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:43196 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbgKMP3u (ORCPT
+        Fri, 13 Nov 2020 10:55:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44316 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbgKMPzh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Nov 2020 10:29:50 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201113152938euoutp021491a10fa16dda2f84df24f07d0d0f6d~HGuiyh8iB1497214972euoutp02I
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2020 15:29:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201113152938euoutp021491a10fa16dda2f84df24f07d0d0f6d~HGuiyh8iB1497214972euoutp02I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1605281378;
-        bh=eXpFxQiDPbPJzGcl99AjzmWcz7lTSBvAvdVyGn0Rj1U=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=VPxMojcexDFhRQ7ZYtGMYr3o6bO0LX1DtgqGvcuFEAGCtPV6HeOiAcKIFsD/CLOFD
-         /vNI5XHCLpTxsVrLQqYilXBVf93bu34uThTH6FNtA0zK0rViprxxMY260jpJC94QTg
-         pEdQ7I2mRsbdIsErDSHcSRCNY+0KUFa0NZDsfUfY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201113152938eucas1p1b570c141f19acdecb63bfe129c6adb63~HGuin2vpJ2614326143eucas1p1_;
-        Fri, 13 Nov 2020 15:29:38 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id A3.F5.44805.266AEAF5; Fri, 13
-        Nov 2020 15:29:38 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20201113152938eucas1p2c8500d9d3d0c892c7c2a2d56b32fedc0~HGuiIvQBl1201512015eucas1p2c;
-        Fri, 13 Nov 2020 15:29:38 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201113152938eusmtrp1fa3d047e86f51e4669042f00c951ff79~HGuiCRAn41760917609eusmtrp1E;
-        Fri, 13 Nov 2020 15:29:38 +0000 (GMT)
-X-AuditID: cbfec7f4-b37ff7000000af05-8c-5faea662d954
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 59.46.16282.166AEAF5; Fri, 13
-        Nov 2020 15:29:38 +0000 (GMT)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201113152937eusmtip2cf56823ab93846d53b49d0f325c5b72d~HGuhhrN3C2784427844eusmtip2D;
-        Fri, 13 Nov 2020 15:29:37 +0000 (GMT)
-Subject: Re: [PATCH net-next v2 RESEND] net/usb/r8153_ecm: support ECM mode
- for RTL8153
-To:     Hayes Wang <hayeswang@realtek.com>, netdev@vger.kernel.org
-Cc:     nic_swsd@realtek.com, linux-kernel@vger.kernel.org,
-        oliver@neukum.org, linux-usb@vger.kernel.org,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <7fd014f2-c9a5-e7ec-f1c6-b3e4bb0f6eb6@samsung.com>
-Date:   Fri, 13 Nov 2020 16:29:37 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.4.3
+        Fri, 13 Nov 2020 10:55:37 -0500
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D450BC0613D1;
+        Fri, 13 Nov 2020 07:55:36 -0800 (PST)
+Received: by mail-lf1-x141.google.com with SMTP id z21so14481633lfe.12;
+        Fri, 13 Nov 2020 07:55:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4/bF4c42U9QIMTb1QGxEpNjGgqxOXHed/9Sju++TrnQ=;
+        b=EmXWyr9gx7KS0zwcEBEAYUaxurDUV3ESqpMaCg9JaE9hKPHdsMyptRiU0PhucAJg57
+         sWNit+5QfNq8tNVIqx46BqCocNtjeJXbt4jKtikifYsjkdUQbLjXrnxr9qkxjgZRyZHq
+         TXlCW0/ciAaZVvMnyVhuZxC2ijNcNkBjiAcv9bDzbBMXnusu37wDsDL7NY0jYqQtA3vp
+         PIgR17yr3IOJzvWiye1+iRzAfcIGWQeDEi+egnXgCSnrSt/IzJcPeOgFOq4e5cJTdOLu
+         hhiAHxxwDWXN0pyDhoMxZJHVC4zrdnmiTI5ssYzWwy6ojWuvzKDNpVu8jf2LV7apAlp+
+         bE+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4/bF4c42U9QIMTb1QGxEpNjGgqxOXHed/9Sju++TrnQ=;
+        b=jLRCFJSC4LVQ9WUs0yyiPmszK0QoY8YTndx9qxhP7JieDaEOoVb7/5Q4bm9Ixtw234
+         Dmv8ZtdjxT/weu7ooPJ5y3z4mQZ+snejT4TCqfrUaLr/rOpV1ToXrKAMZNByJtBrfCtl
+         rXNIS995/TntlTPElbGrtLPiqud00YolaGtAG36hdxiKfVHdX6C2m5kulga60M/ENZht
+         ghOP4O+oZSkGg6i3KhvqLQSgtTWG4SlWr4c3xbFIE7+AV3VcZjY3J2pcF624IsSnvgjF
+         1tDyhJhlUb4Rl6bZad2Bg7MQCorE1nw5/sY7C8eIymiAqu1GQAFUfzXyuGL7jSFGL61u
+         pYHg==
+X-Gm-Message-State: AOAM533NWPiXoKqarqfKC62EiffB3h7RIxxrSOL1pfzP4Ku0h7RXCAfl
+        X+vxbkC0cs0b8oKwmuOwzJOzBxp0/FE=
+X-Google-Smtp-Source: ABdhPJw1/12loswbdkPkD8Zhl2Yvb+Tjd/1tqW0mRR71ohF0rznxZ7TNEV0H6NcysfGbIqHPuGQf6Q==
+X-Received: by 2002:ac2:5503:: with SMTP id j3mr1281724lfk.94.1605282930190;
+        Fri, 13 Nov 2020 07:55:30 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
+        by smtp.googlemail.com with ESMTPSA id v12sm1474128lji.3.2020.11.13.07.55.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Nov 2020 07:55:29 -0800 (PST)
+Subject: Re: [PATCH v1 11/30] drm/tegra: dc: Support OPP and SoC core voltage
+ scaling
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20201104234427.26477-12-digetx@gmail.com>
+ <20201110202945.GF2375022@ulmo> <20201110203257.GC5957@sirena.org.uk>
+ <72ae6462-13df-9fcb-510e-8e57eee0f035@gmail.com>
+ <20201111115534.GA4847@sirena.org.uk>
+ <dd26eb18-8ac4-22a6-29b0-dbbe5fa6075b@gmail.com>
+ <20201112171600.GD4742@sirena.org.uk>
+ <b4b06c1d-c9d4-43b2-c6eb-93f8cb6c677d@gmail.com>
+ <20201112200123.GF4742@sirena.org.uk>
+ <ce9e2d9f-917e-fb8a-7323-f3bf1a367e9d@gmail.com>
+ <20201113142937.GB4828@sirena.org.uk>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <7f066805-97d9-088f-e89d-a554fe478574@gmail.com>
+Date:   Fri, 13 Nov 2020 18:55:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-In-Reply-To: <1394712342-15778-392-Taiwan-albertk@realtek.com>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20201113142937.GB4828@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7djPc7pJy9bFG/zvVrfYOGM9q8W0gz2M
-        FufPb2C3uLxrDpvFjPP7mCwWLWtltji2QMziS+8sVovvlz8xOXB6bFrVyebx+ssDJo/Hbzez
-        e/RtWcXo8XmTXABrFJdNSmpOZllqkb5dAlfG4a5e9oJzfBW3dj9gamD8zN3FyMkhIWAisa3h
-        FmMXIxeHkMAKRombVxZAOV8YJQ4tu8gE4XxmlOie/p8VpmVO82yoxHJGiRPTZ7BAOO8ZJWbf
-        WcAEUiUsECkx81EPI4gtImAnMf3lBbC5zAINTBLTZ7xkAUmwCRhKdL3tYgOxeYGKTvz9BtbM
-        IqAq8aVxHVhcVCBJYvuW7awQNYISJ2c+Aerl4OAEqj9+rg4kzCwgL7H97RxmCFtc4taT+WDX
-        SQi84ZA4uGoBO8TZLhKN+5+yQdjCEq+Ob4GKy0icntzDAtHQzCjx8Nxadginh1HictMMRogq
-        a4k7536xgWxmFtCUWL9LHyLsKPH4zwRGkLCEAJ/EjbeCEEfwSUzaNp0ZIswr0dEmBFGtJjHr
-        +Dq4tQcvXGKewKg0C8lns5C8MwvJO7MQ9i5gZFnFKJ5aWpybnlpslJdarlecmFtcmpeul5yf
-        u4kRmJhO/zv+ZQfj8lcf9Q4xMnEwHmKU4GBWEuFVdlgTL8SbklhZlVqUH19UmpNafIhRmoNF
-        SZw3aQtQSiA9sSQ1OzW1ILUIJsvEwSnVwCRvLLREeH9N+duF2pfXLVqooR3abxhxrnT30WyF
-        E51vefXffbW+pcmZ8k922YOWye7hRllB3vHNayyeVycvMYgrkRe295WacjpjW7Tdomju5Uae
-        GXmfbB+qHFvfc/9pfPCj5JW86rcEP6lJy15qX7lte0yRu9a7OolkmVexOtm8mzTS5kwxTF5p
-        +W71er8Sng83Ohb3REaE/7zgoJ34Lif175aeQyFcoY9lpnwO67WIOvlx6taEz7Ht2X0hpzVs
-        rN6odJfpXHt5i/V0xZVPz5tbvdumTXKa+zvEs+RY7SVDxeBtWgvdv0gYXJ+jWmuw8N7ftt4C
-        tg874v2bbwhVPKuT/L3m/YE756btSvlxVomlOCPRUIu5qDgRAAAzPem7AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsVy+t/xe7pJy9bFG1zbwmixccZ6VotpB3sY
-        Lc6f38BucXnXHDaLGef3MVksWtbKbHFsgZjFl95ZrBbfL39icuD02LSqk83j9ZcHTB6P325m
-        9+jbsorR4/MmuQDWKD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSc
-        zLLUIn27BL2Mw1297AXn+Cpu7X7A1MD4mbuLkZNDQsBEYk7zbKYuRi4OIYGljBLrrj9mh0jI
-        SJyc1sAKYQtL/LnWxQZR9JZR4lzLVLAiYYFIiZmPehhBbBEBO4npLy8wghQxCzQxSXzve8UC
-        khASKJQ49GU+M4jNJmAo0fUWZBInBy9Qw4m/35hAbBYBVYkvjevA4qICSRIzj59lh6gRlDg5
-        8wnQHA4OTqD64+fqQMLMAmYS8zY/ZIaw5SW2v50DZYtL3Hoyn2kCo9AsJN2zkLTMQtIyC0nL
-        AkaWVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIFxuO3Yzy07GFe++qh3iJGJg/EQowQHs5II
-        r7LDmngh3pTEyqrUovz4otKc1OJDjKZA70xklhJNzgcmgrySeEMzA1NDEzNLA1NLM2MlcV6T
-        I0BNAumJJanZqakFqUUwfUwcnFINTBsu6hYI3Fyzd6nXsWn+Dwvqd4q+E1iu+C+pfItg3o1P
-        +07vZYsVKbxtqjpv08yCRqUPps3euauluN07b3Vc5U+YmRWfrN0s97jB0v2X4bYHV+/6pbXP
-        Pab8aVvqVv7IcGfmN/J7ji92EdOWWfR/2fXYRql73m43DaMfTGWV1fIwFF6+YTp7eYyId1f7
-        iWt7nl8RPRW815VFZ9Ox+IeParK2uT3ojjuwZmdMbvP8Yxs7uC2z0++vTa+MvMuqejbP7/DW
-        NU9V3KxM+Cpt/78pWiq398jFgsZdzIYLub2qvE8+EG7ZrSFxjTX2qrDk3zesUw8+7pjzq6n5
-        XtK+9N0Hv2+4wnF6xQax6DM2dp9O1yixFGckGmoxFxUnAgBm23OcTAMAAA==
-X-CMS-MailID: 20201113152938eucas1p2c8500d9d3d0c892c7c2a2d56b32fedc0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201113152938eucas1p2c8500d9d3d0c892c7c2a2d56b32fedc0
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201113152938eucas1p2c8500d9d3d0c892c7c2a2d56b32fedc0
-References: <1394712342-15778-387-Taiwan-albertk@realtek.com>
-        <1394712342-15778-392-Taiwan-albertk@realtek.com>
-        <CGME20201113152938eucas1p2c8500d9d3d0c892c7c2a2d56b32fedc0@eucas1p2.samsung.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Hayes,
+13.11.2020 17:29, Mark Brown пишет:
+> On Fri, Nov 13, 2020 at 01:37:01AM +0300, Dmitry Osipenko wrote:
+>> 12.11.2020 23:01, Mark Brown пишет:
+>>>> But it's not allowed to change voltage of a dummy regulator, is it
+>>>> intentional?
+> 
+>>> Of course not, we can't know if the requested new voltage is valid - the
+>>> driver would have to have explict support for handling situations where
+>>> it's not possible to change the voltage (which it can detect through
+>>> enumerating the values it wants to set at startup).
+> 
+>>> [Requesting the same supply multiple times]
+> 
+>> But how driver is supposed to recognize that it's a dummy or buggy
+>> regulator if it rejects all voltages?
+> 
+> It's not clear if it matters - it's more a policy decision on the part
+> of the driver about what it thinks safe error handling is.  If it's not
+> possible to read voltages from the regulator the consumer driver has to
+> decide what it thinks it's safe for it to do, either way it has no idea
+> what the actual current voltage is.  It could assume that it's something
+> that supports all the use cases it wants to use and just carry on with
+> no configuration of voltages, it could decide that it might not support
+> everything and not make any changes to be safe, or do something like
+> try to figure out that if we're currently at a given OPP that's the top
+> OPP possible.  Historically when we've not had regulator control in
+> these drivers so they have effectively gone with the first option of
+> just assuming it's a generally safe value, this often aligns with what
+> the power on requirements for SoCs are so it's not unreasonable.
 
-On 04.11.2020 03:19, Hayes Wang wrote:
-> Support ECM mode based on cdc_ether with relative mii functions,
-> when CONFIG_USB_RTL8152 is not set, or the device is not supported
-> by r8152 driver.
->
-> Both r8152 and r8153_ecm would check the return value of
-> rtl8152_get_version() in porbe(). If rtl8152_get_version()
-> return none zero value, the r8152 is used for the device
-> with vendor mode. Otherwise, the r8153_ecm is used for the
-> device with ECM mode.
->
-> Signed-off-by: Hayes Wang <hayeswang@realtek.com>
+I don't think that in a case of this particular driver there is a way to
+make any decisions other than to assume that all changes are safe to be
+done if regulator isn't specified in a device-tree.
 
-This patch landed recently in linux-next and breaks ethernet operation 
-on Samsung Exynos5422 Odroid XU4/HC1 boards when kernel is compiled from 
-arm/configs/multi_v7_defconfig. The main problem is that the hardware is 
-bound to r8153_ecm driver, not to the r8152. Manually switching the 
-drivers by "echo 4-1:2.0 >/sys/bus/usb/drivers/r8153_ecm/unbind && echo 
-4-1:2.0 >/sys/bus/usb/drivers/r8152/bind" fixes ethernet operation.
+If regulator_get() returns a dummy regulator, then this means that
+regulator isn't specified in a device-tree. But then the only way for a
+consumer driver to check whether regulator is dummy, is to check
+presence of the supply property in a device-tree.
 
-This is because in multi_v7_defconfig r8153_ecm driver is built-in (as 
-it is tied to CONFIG_USB_NET_CDCETHER), while the r8152 driver is 
-compiled as module and loaded when r8153_ecm has already bound.
+We want to emit error messages when something goes wrong, for example
+when regulator voltage fails to change. It's fine that voltage changes
+are failing for a dummy regulator, but then consumer driver shouldn't
+recognize it as a error condition.
 
-I think that r8153_ecm driver should have a separate Kconfig symbol, 
-which matches the r8152 driver (either both are built-in or both as 
-modules), otherwise those 2 drivers cannot properly detect their cases.
-
-> ---
->   drivers/net/usb/Makefile    |   2 +-
->   drivers/net/usb/r8152.c     |  30 +------
->   drivers/net/usb/r8153_ecm.c | 162 ++++++++++++++++++++++++++++++++++++
->   include/linux/usb/r8152.h   |  37 ++++++++
->   4 files changed, 204 insertions(+), 27 deletions(-)
->   create mode 100644 drivers/net/usb/r8153_ecm.c
->   create mode 100644 include/linux/usb/r8152.h
->
-> > ...
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+The regulator_get_optional() provides a more consistent and
+straightforward way for consumer drivers to check presence of a physical
+voltage regulator in comparison to dealing with a regulator_get(). The
+dummy regulator is nice to use when there is no need to change
+regulator's voltage, which doesn't work for a dummy regulator.
