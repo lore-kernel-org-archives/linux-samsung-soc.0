@@ -2,103 +2,89 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9168FC61DD8
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Nov 2020 17:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46ACC2D0A3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Nov 2020 17:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39D5E20B80
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Nov 2020 17:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6611A22370
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Nov 2020 17:53:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbdvB2ak"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zS+S3MTA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387905AbgKPRqR (ORCPT
+        id S1733304AbgKPRxM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 16 Nov 2020 12:46:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56424 "EHLO mail.kernel.org"
+        Mon, 16 Nov 2020 12:53:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733186AbgKPRqQ (ORCPT
+        id S1731169AbgKPRxL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 16 Nov 2020 12:46:16 -0500
-Received: from kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com (unknown [163.114.132.5])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 16 Nov 2020 12:53:11 -0500
+Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch [84.226.167.205])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 239CE20B80;
-        Mon, 16 Nov 2020 17:46:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F8C620B80;
+        Mon, 16 Nov 2020 17:53:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605548776;
-        bh=Tcn07ajoqucV5eEbmU3nljgc9tKlfP7RCs7GJrg2B2w=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=JbdvB2akOije2Z4LDxW1zvExnXlyuWhD/NWUlL0JoLwMNlNsWYF0dSDsdYPkRInck
-         MrdqDMLxsq8cEMdIMb3nb278Mnu+uoZ4QgZ4LEpowKsF+WEwQwKjyyePUHs3vb9++Y
-         h/P7Rxm51RBXoPek59A7pOmV89qqGDSc7AbHSD/E=
-Date:   Mon, 16 Nov 2020 09:46:14 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Lukasz Stelmach <l.stelmach@samsung.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
+        s=default; t=1605549191;
+        bh=gXkAVVfhKlBRZeGN1vo60mFg/83uv/RSUw/Yb5OPKmY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=zS+S3MTAc9DFNrksaWP1zBb5BRJE13H9luLS1j5ItIX2MKb+QZ5+gwqiNjgftgjPK
+         7tr0KIBrS4UwRykX5AHx/Z5phP3NsFKwGNkpd4CBdWxKwNeq37Z8vAqOlxH1u0EzAG
+         Uw9+pl86xWkAIKHhn4rasoIZqm7vt01SwD5Tu4RA=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>,
+        dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvbG5pZXJr?= =?UTF-8?B?aWV3aWN6?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v6 3/5] net: ax88796c: ASIX AX88796C SPI Ethernet
- Adapter Driver
-Message-ID: <20201116094614.035ceffa@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <dleftjblfxl3jt.fsf%l.stelmach@samsung.com>
-References: <20201113123508.3920de4b@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-        <CGME20201116153345eucas1p24790148b7fd52a7ae1c055cc7b832bd7@eucas1p2.samsung.com>
-        <dleftjblfxl3jt.fsf%l.stelmach@samsung.com>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     kernel test robot <lkp@intel.com>
+Subject: [PATCH 1/2] drm/exynos: depend on COMMON_CLK to fix compile tests
+Date:   Mon, 16 Nov 2020 18:53:00 +0100
+Message-Id: <20201116175301.402787-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 16 Nov 2020 16:33:26 +0100 Lukasz Stelmach wrote:
-> > Please make sure the new code builds cleanly with W=3D1 C=3D1
-> >
-> > ../drivers/net/ethernet/asix/ax88796c_ioctl.c:221:19: warning: initiali=
-zed field overwritten [-Woverride-init]
-> >   221 |  .get_msglevel  =3D ax88796c_ethtool_getmsglevel,
-> >       |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > ../drivers/net/ethernet/asix/ax88796c_ioctl.c:221:19: note: (near initi=
-alization for =E2=80=98ax88796c_ethtool_ops.get_msglevel=E2=80=99)
-> > ../drivers/net/ethernet/asix/ax88796c_ioctl.c:222:19: warning: initiali=
-zed field overwritten [-Woverride-init]
-> >   222 |  .set_msglevel  =3D ax88796c_ethtool_setmsglevel,
-> >       |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > ../drivers/net/ethernet/asix/ax88796c_ioctl.c:222:19: note: (near initi=
-alization for =E2=80=98ax88796c_ethtool_ops.set_msglevel=E2=80=99)
-> > In file included from ../drivers/net/ethernet/asix/ax88796c_main.h:15,
-> >                  from ../drivers/net/ethernet/asix/ax88796c_ioctl.c:16:
-> > ../drivers/net/ethernet/asix/ax88796c_spi.h:25:17: warning: =E2=80=98tx=
-_cmd_buf=E2=80=99 defined but not used [-Wunused-const-variable=3D]
-> >    25 | static const u8 tx_cmd_buf[4] =3D {AX_SPICMD_WRITE_TXQ, 0xFF, 0=
-xFF, 0xFF};
-> >       |                 ^~~~~~~~~~ =20
->=20
-> I fixed the problems reported by W=3D1, but I am afraid I can't do
-> anything about C=3D1. sparse is is reporting
->=20
-> [...]
-> ./include/linux/atomic-fallback.h:266:16: error: Expected ; at end ofdecl=
-aration
-> ./include/linux/atomic-fallback.h:266:16: error: got ret
-> ./include/linux/atomic-fallback.h:267:1: error: Expected ; at the end of =
-type declaration
-> ./include/linux/atomic-fallback.h:267:1: error: too many errors
-> Segmentation fault
->=20
-> in the headers and gets killed.
+The Exynos DRM uses Common Clock Framework thus it cannot be built on
+platforms without it (e.g. compile test on MIPS with RALINK and
+SOC_RT305X):
 
-That's fine, sparse is wobbly at times, thanks!
+    /usr/bin/mips-linux-gnu-ld: drivers/gpu/drm/exynos/exynos_mixer.o: in function `mixer_bind':
+    exynos_mixer.c:(.text+0x958): undefined reference to `clk_set_parent'
+
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/gpu/drm/exynos/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index 6417f374b923..951d5f708e92 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -1,7 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config DRM_EXYNOS
+ 	tristate "DRM Support for Samsung SoC Exynos Series"
+-	depends on OF && DRM && (ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || ARCH_MULTIPLATFORM || COMPILE_TEST)
++	depends on OF && DRM && COMMON_CLK
++	depends on ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || ARCH_MULTIPLATFORM || COMPILE_TEST
+ 	depends on MMU
+ 	select DRM_KMS_HELPER
+ 	select VIDEOMODE_HELPERS
+-- 
+2.25.1
+
