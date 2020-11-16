@@ -2,122 +2,303 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50525C2D0A3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Nov 2020 17:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DBDC64E8A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Nov 2020 17:44:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 004C820B80
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Nov 2020 17:44:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B59722265
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Nov 2020 17:44:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K0L/9SHj"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bSNQfgvG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387704AbgKPRlh (ORCPT
+        id S1730202AbgKPRlX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 16 Nov 2020 12:41:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46458 "EHLO
+        Mon, 16 Nov 2020 12:41:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387632AbgKPRl0 (ORCPT
+        with ESMTP id S1733288AbgKPRlW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 16 Nov 2020 12:41:26 -0500
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D99B1C0613D2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2020 09:41:25 -0800 (PST)
-Received: by mail-wr1-x441.google.com with SMTP id k2so19701004wrx.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2020 09:41:25 -0800 (PST)
+        Mon, 16 Nov 2020 12:41:22 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B37BC0613D3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2020 09:41:20 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id l1so19642811wrb.9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2020 09:41:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OKxekprTcNWz9+T5s0dM8zcd4eG/OHSFQB40CDP13bg=;
-        b=K0L/9SHj1TE4qgK/G74Ybc4BmPXgT70P/+LQzzWk7FqljjPYxDyFVBlO0hyHH3Eok5
-         WcZKuIqWcNwV8S4EUwH8l7RzxNih5aR0EM9Hs7pODYsYMs9n9Ayv2dDmr2WyL5Hr0Nld
-         dK8/Amdzuk+cPNmMGrkSlM8MIBabHVMUy5c81Qg4eiMjJsSH2tSlQAKiNc57EqDo4THe
-         F8MYpIg2VS50N2/OpByLFDpRhEJA99set0DNg+4TdqFgqNC3Fh+c+vyJfI12wmxxqxyF
-         VZsyoC+ZHhP+ZbBgejKK9jahMArlb3Rd3uDqr691znFoNLsleg8+x+2A6ar0ZLvs1tAK
-         9g+g==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/LTrKOUrLFuEcCD+0qSyoyROqjXWEQVgXyT4kGkUYyc=;
+        b=bSNQfgvG0kx2bJ3swdtQ7xdZw/M07CVrB5auNpw5N9xDQefGM7DuWMHQx5RREQJCLo
+         lOZf8TeYpGpjkv9yP4evqDMYMPjqcWSAPVGExp8J3ps0dwMpt/2gp0KBOA+efQ1sUJrO
+         T8jGjkC4Hu0fok/vy4qLbnPYMivzd5YeYExvVosrFA8zFVOFK1wKKLsW/Tw1U+U5jcC+
+         QJ1SpegD6UObPK1wAX6Fam4adxSixAcmKc3mC7P5doHt6IHhLzoMi3RbISFgkkdM4zIM
+         WpU2fWQV85ZDZi7wmLzgzCbUyclK7n4r7+BwL7HrJENBNMyKVmRyyK9WQAR5PoLoRaYJ
+         yX6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OKxekprTcNWz9+T5s0dM8zcd4eG/OHSFQB40CDP13bg=;
-        b=sjSo+gPakouh7+zGu04whiMqucNwgNvBSnPDbvCRT5vk3cZu/d03G9SV4XSECTjjoZ
-         T057FDsOKARGoKBWIkwuhYUfzeQX+twNigCgTNoU50e5lwXQAeXH1bk1rUwn8uaL3fzs
-         h8cz2Avd2wpXvWKKLcWPLBAdpQ+QhSSdRgjIkBv4cZTmgKmqOhrq6EtV2coJYmBB4IIP
-         NOb/ZYoZMaUfl2Iqv9IG8AB2yMeAJyAqs6o7QwbYo+DsgAJ4wM51Ic2kXtVDm2lT21+y
-         mER/HjpPAdo2InWhjlQJp2QG9IqKQ50YQL32mM80KnTg80JZjXlc6R2yiLY0S0b3H6a0
-         tTjg==
-X-Gm-Message-State: AOAM533eSryb6nG5XrGLlj0WG4oIKoEDHjW6LRIdbAdRknr+s8qFOsvp
-        msLR/lUp56n8H8+YfxTnBL7zyg==
-X-Google-Smtp-Source: ABdhPJyumUoV2OiCGOmwstnxb6PtqFSofQ2hgjkU4IZojdi/6zntKSiyOYzsOrC7hc8z/Pjmvb2eVw==
-X-Received: by 2002:a05:6000:110c:: with SMTP id z12mr20265161wrw.214.1605548484458;
-        Mon, 16 Nov 2020 09:41:24 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/LTrKOUrLFuEcCD+0qSyoyROqjXWEQVgXyT4kGkUYyc=;
+        b=hHqFom1O5qW/HDnhcX8zSuUd4Cw8vnXYWwPiHU6HD9z5vjv9b/GEDFoAhD+m1qCzn+
+         VzFx87yV0C9toXyhaEoJiYS23pRuZJgiCYRPsF7zHCth8Ed0NJAyZG8XtV2bxe5PJHYn
+         fD0IUmzEuJuPjmjKU6KZhnT+3OBKMUTsMEuTXqMfc2Cl+8lV6VjBHFtvZgc2wQCrbGXN
+         /hTSzbwSg0sYYuxZ7WoeVf9KQPY2Z8si1fOlzCOSiX/4r7vftvZR8lgxqa+D2XocyvGH
+         4psmdUH6HZbfMQVyrLPdZs19uUell/NFUvS3bQXoffQqXl7lcYMHmUqpub5kGA7rPo9V
+         Vpnw==
+X-Gm-Message-State: AOAM53267/c+hrZJ0XSJN2IZ50SamLz5YKe4nm/iPL9fEssWisXYX7iz
+        sRio7GRCr17DSJsCPQ4ZEbVq2Q==
+X-Google-Smtp-Source: ABdhPJyDFVFMQrl7eVTFnZgbd/avuNh+k8fjT7OAUOT9aPaRfJnSoLW2zT7JeIfuvKSpByqNZUhxZQ==
+X-Received: by 2002:a5d:6411:: with SMTP id z17mr21001758wru.112.1605548479277;
+        Mon, 16 Nov 2020 09:41:19 -0800 (PST)
 Received: from dell.default ([91.110.221.159])
-        by smtp.gmail.com with ESMTPSA id n10sm24667224wrx.9.2020.11.16.09.41.23
+        by smtp.gmail.com with ESMTPSA id n10sm24667224wrx.9.2020.11.16.09.41.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2020 09:41:23 -0800 (PST)
+        Mon, 16 Nov 2020 09:41:18 -0800 (PST)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Akshu Agarwal <akshua@gmail.com>,
+Cc:     linux-kernel@vger.kernel.org,
         Ajay Kumar <ajaykumar.rs@samsung.com>,
-        dri-devel@lists.freedesktop.org,
+        Akshu Agarwal <akshua@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        amd-gfx@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Chris Zhong <zyw@rock-chips.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        David Francis <David.Francis@amd.com>,
+        dri-devel@lists.freedesktop.org, Eric Anholt <eric@anholt.net>,
+        Eunchul Kim <chulspro.kim@samsung.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        freedreno@lists.freedesktop.org,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Huang Rui <ray.huang@amd.com>, Inki Dae <inki.dae@samsung.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jie Qiu <jie.qiu@mediatek.com>,
+        Jinyoung Jeon <jy0.jeon@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Kalyan Thota <kalyan_t@codeaurora.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linaro-mm-sig@lists.linaro.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 04/42] drm/exynos/exynos7_drm_decon: Supply missing description for  param 'ctx'
-Date:   Mon, 16 Nov 2020 17:40:34 +0000
-Message-Id: <20201116174112.1833368-5-lee.jones@linaro.org>
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Luben Tuikov <luben.tuikov@amd.com>,
+        Lyude Paul <lyude@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Mark Yao <mark.yao@rock-chips.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Nirmoy Das <nirmoy.aiemd@gmail.com>,
+        nouveau@lists.freedesktop.org, NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Clark <robdclark@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Sangmin Lee <lsmin.lee@samsung.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sean Paul <sean@poorly.run>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        YT SHEN <yt.shen@mediatek.com>
+Subject: [PATCH v2 00/42] Rid W=1 warnings from GPU (non-Radeon)
+Date:   Mon, 16 Nov 2020 17:40:30 +0000
+Message-Id: <20201116174112.1833368-1-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201116174112.1833368-1-lee.jones@linaro.org>
-References: <20201116174112.1833368-1-lee.jones@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Fixes the following W=1 kernel build warning(s):
+[sending again, as `git send-email` crashed!]
 
- drivers/gpu/drm/exynos/exynos7_drm_decon.c:354: warning: Function parameter or member 'ctx' not described in 'decon_shadow_protect_win'
+This set contains fixes for some "wouldn't it be nice if" issues,
+however most of the patches seen here have been on the MLs, but
+were left unreviewed.
 
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Akshu Agarwal <akshua@gmail.com>
+Lee Jones (42):
+  drm/amd/amdgpu/atombios_encoders: Remove set but unused variable
+    'backlight_level'
+  drm/armada/armada_overlay: Staticify local function
+    'armada_overlay_duplicate_state'
+  drm/drm_dp_mst_topology: Remove set but never used variable 'len'
+  drm/exynos/exynos7_drm_decon: Supply missing description for  param
+    'ctx'
+  drm/exynos/exynos_drm_fimd: Add missing description for param 'ctx'
+  drm/exynos/exynos_drm_gsc: Supply missing description for 'num_limits'
+  drm/mediatek/mtk_dpi: Remove unused struct definition
+    'mtk_dpi_encoder_funcs'
+  drm/mediatek/mtk_disp_color: Fix formatting and provide missing member
+    description
+  drm/mediatek/mtk_disp_ovl: Fix formatting and provide missing member
+    description
+  drm/mediatek/mtk_disp_rdma: Fix formatting and supply missing struct
+    member description
+  drm/mediatek/mtk_drm_crtc: Demote seriously out-of-date struct header
+  drm/mediatek/mtk_drm_drv: Staticise local function invoked by
+    reference
+  drm/meson/meson_venc: Make local function
+    'meson_venc_hdmi_get_dmt_vmode' static
+  drm/meson/meson_vclk: Make two local functions static
+  drm/msm/adreno/a6xx_gpu: Staticise local function 'a6xx_idle'
+  drm/msm/disp/mdp5/mdp5_crtc: Make local function
+    'mdp5_crtc_setup_pipeline()' static
+  drm/msm/disp/mdp5/mdp5_ctl: Demote non-conformant kernel-doc headers
+  drm/msm/disp/mdp5/mdp5_kms: Make local functions 'mdp5_{en,dis}able()'
+    static
+  drm/msm/disp/dpu1/dpu_core_perf: Remove set but unused variable
+    'dpu_cstate'
+  drm/msm/disp/dpu1/dpu_encoder: Remove a bunch of unused variables
+  drm/nouveau/nvkm/core/firmware: Fix formatting, provide missing param
+    description
+  drm/pl111/pl111_display: Make local function static
+  drm/pl111/pl111_debugfs: Make local function 'pl111_debugfs_regs()'
+    static
+  drm/rockchip/dw-mipi-dsi-rockchip: Demote non-conformant kernel-doc
+    headers
+  drm/rockchip/rockchip_rgb: Consume our own header
+  drm/rockchip/rockchip_lvds: Fix struct document formatting
+  drm/selftests/test-drm_mm: Mark 'hole_end' as always_unused
+  drm/selftests/test-drm_framebuffer: Remove set but unused variable
+    'fb'
+  drm/selftests/test-drm_dp_mst_helper: Place 'struct
+    drm_dp_sideband_msg_req_body' onto the heap
+  drm/selftests/test-drm_dp_mst_helper: Move
+    'sideband_msg_req_encode_decode' onto the heap
+  drm/ttm/ttm_bo: Fix one function header - demote lots of kernel-doc
+    abuses
+  drm/ttm/ttm_tt: Demote kernel-doc header format abuses
+  drm/ttm/ttm_range_manager: Demote non-conformant kernel-doc header
+  drm/v3d/v3d_drv: Remove unused static variable 'v3d_v3d_pm_ops'
+  drm/v3d/v3d_gem: Provide descriptions for 'v3d_lookup_bos's params
+  drm/v3d/v3d_sched: Demote non-conformant kernel-doc header
+  drm/vc4/vc4_hdmi_regs: Mark some data sets as __maybe_unused
+  drm/vc4/vc4_hdmi: Remove set but unused variable 'ret'
+  drm/vc4/vc4_v3d: Demote non-conformant kernel-doc headers
+  drm/vc4/vc4_debugfs: Demote non-conformant kernel-doc headers
+  gpu/ipu-v3/ipu-di: Strip out 2 unused 'di_sync_config' entries
+  include/drm/drm_atomic: Make use of 'new_crtc_state'
+
+ .../gpu/drm/amd/amdgpu/atombios_encoders.c    |  3 --
+ drivers/gpu/drm/armada/armada_overlay.c       |  2 +-
+ drivers/gpu/drm/drm_dp_mst_topology.c         |  4 +-
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  1 +
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  1 +
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c       |  1 +
+ drivers/gpu/drm/mediatek/mtk_disp_color.c     |  5 ++-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c       |  5 ++-
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c      |  5 ++-
+ drivers/gpu/drm/mediatek/mtk_dpi.c            |  9 -----
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c       |  4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        |  4 +-
+ drivers/gpu/drm/meson/meson_vclk.c            |  8 ++--
+ drivers/gpu/drm/meson/meson_venc.c            |  4 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c         |  2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c |  3 --
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c   | 12 +-----
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c     |  6 +--
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c      |  6 +--
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c      |  4 +-
+ drivers/gpu/drm/nouveau/nvkm/core/firmware.c  |  9 +++--
+ drivers/gpu/drm/pl111/pl111_debugfs.c         |  2 +-
+ drivers/gpu/drm/pl111/pl111_display.c         |  2 +-
+ .../gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   |  4 +-
+ drivers/gpu/drm/rockchip/rockchip_lvds.c      |  2 +-
+ drivers/gpu/drm/rockchip/rockchip_rgb.c       |  1 +
+ .../drm/selftests/test-drm_dp_mst_helper.c    | 40 +++++++++++++------
+ .../gpu/drm/selftests/test-drm_framebuffer.c  |  3 +-
+ drivers/gpu/drm/selftests/test-drm_mm.c       |  2 +-
+ drivers/gpu/drm/ttm/ttm_bo.c                  | 23 ++++++-----
+ drivers/gpu/drm/ttm/ttm_range_manager.c       |  2 +-
+ drivers/gpu/drm/ttm/ttm_tt.c                  |  4 +-
+ drivers/gpu/drm/v3d/v3d_drv.c                 | 36 -----------------
+ drivers/gpu/drm/v3d/v3d_gem.c                 |  2 +
+ drivers/gpu/drm/v3d/v3d_sched.c               |  2 +-
+ drivers/gpu/drm/vc4/vc4_debugfs.c             |  4 +-
+ drivers/gpu/drm/vc4/vc4_hdmi.c                |  3 +-
+ drivers/gpu/drm/vc4/vc4_hdmi_regs.h           |  6 +--
+ drivers/gpu/drm/vc4/vc4_v3d.c                 |  4 +-
+ drivers/gpu/ipu-v3/ipu-di.c                   |  4 --
+ include/drm/drm_atomic.h                      |  3 +-
+ 41 files changed, 105 insertions(+), 142 deletions(-)
+
 Cc: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: Akshu Agarwal <akshua@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: amd-gfx@lists.freedesktop.org
+Cc: Ben Skeggs <bskeggs@redhat.com>
+Cc: Christian Koenig <christian.koenig@amd.com>
+Cc: "Christian König" <christian.koenig@amd.com>
+Cc: Chris Zhong <zyw@rock-chips.com>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: David Airlie <airlied@linux.ie>
+Cc: David Francis <David.Francis@amd.com>
 Cc: dri-devel@lists.freedesktop.org
+Cc: Eric Anholt <eric@anholt.net>
+Cc: Eunchul Kim <chulspro.kim@samsung.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: freedreno@lists.freedesktop.org
+Cc: "Heiko Stübner" <heiko@sntech.de>
+Cc: Huang Rui <ray.huang@amd.com>
+Cc: Inki Dae <inki.dae@samsung.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Jie Qiu <jie.qiu@mediatek.com>
+Cc: Jinyoung Jeon <jy0.jeon@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Kalyan Thota <kalyan_t@codeaurora.org>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linaro-mm-sig@lists.linaro.org
+Cc: linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-mediatek@lists.infradead.org
+Cc: linux-media@vger.kernel.org
+Cc: linux-rockchip@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/gpu/drm/exynos/exynos7_drm_decon.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index f2d87a7445c73..431c5d32f9a47 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -346,6 +346,7 @@ static void decon_win_set_colkey(struct decon_context *ctx, unsigned int win)
- /**
-  * shadow_protect_win() - disable updating values from shadow registers at vsync
-  *
-+ * @ctx: display and enhancement controller context
-  * @win: window to protect registers for
-  * @protect: 1 to protect (disable updates)
-  */
+Cc: Luben Tuikov <luben.tuikov@amd.com>
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Mark Yao <mark.yao@rock-chips.com>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Nickey Yang <nickey.yang@rock-chips.com>
+Cc: Nirmoy Das <nirmoy.aiemd@gmail.com>
+Cc: nouveau@lists.freedesktop.org
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Rob Clark <robdclark@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Sandy Huang <hjc@rock-chips.com>
+Cc: Sangmin Lee <lsmin.lee@samsung.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Sean Paul <sean@poorly.run>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: YT SHEN <yt.shen@mediatek.com>
 -- 
 2.25.1
 
