@@ -2,95 +2,135 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC7CC63697
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Nov 2020 01:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D740CC2D0E4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Nov 2020 11:02:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 630FA208CA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Nov 2020 01:39:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="prPzbxB8"
+	by mail.kernel.org (Postfix) with ESMTP id 77F90246CE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Nov 2020 11:02:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbgKRBi7 (ORCPT
+        id S1725931AbgKSLCN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 17 Nov 2020 20:38:59 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:41203 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725767AbgKRBi7 (ORCPT
+        Thu, 19 Nov 2020 06:02:13 -0500
+Received: from foss.arm.com ([217.140.110.172]:53128 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725843AbgKSLCM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 17 Nov 2020 20:38:59 -0500
-X-UUID: 630185640108402a83ff2c8a81bef551-20201118
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=VQSP1sH4CqMAhG3prd+7/b/qG6Nz5rZr5wJPtTA6ytA=;
-        b=prPzbxB8X79spbx4u3Y3tAouEp30AENJqm6rlTVLRN1wGwg5kXiB7WzqfJIfPzGn1auqofhq8g0WiGg4tyuA479gQpruShQYS1EVQdEYQa6J24IzQTq2RdM4k1nbTt1sqpZUbD5xK4dZ5nckjiLy6T1+Y0rgwwgA31I9agzLiKk=;
-X-UUID: 630185640108402a83ff2c8a81bef551-20201118
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1400451792; Wed, 18 Nov 2020 09:38:53 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N2.mediatek.inc
- (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 18 Nov
- 2020 09:38:48 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 18 Nov 2020 09:38:50 +0800
-Message-ID: <1605663530.31607.40.camel@mhfsdcap03>
-Subject: Re: [PATCH] dt-bindings: arm: add additionalProperties
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        <linux-unisoc@lists.infradead.org>,
-        <linux-realtek-soc@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Wed, 18 Nov 2020 09:38:50 +0800
-In-Reply-To: <CAMuHMdXVXqj9k4FMFH5aiqKwNrWocJpjahYKA8k2e3Z2ji2hvQ@mail.gmail.com>
-References: <20201117103123.3938-1-chunfeng.yun@mediatek.com>
-         <CAMuHMdXVXqj9k4FMFH5aiqKwNrWocJpjahYKA8k2e3Z2ji2hvQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Thu, 19 Nov 2020 06:02:12 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 627981396;
+        Thu, 19 Nov 2020 03:02:11 -0800 (PST)
+Received: from red-moon.arm.com (unknown [10.57.61.203])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02D183F718;
+        Thu, 19 Nov 2020 03:02:03 -0800 (PST)
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-msm@vger.kernel.org,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        linux-tegra@vger.kernel.org, Roy Zang <roy.zang@nxp.com>,
+        linux-amlogic@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-arm-kernel@axis.com, Jerome Brunet <jbrunet@baylibre.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, Shawn Guo <shawnguo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pci@vger.kernel.org, Mingkai Hu <mingkai.hu@nxp.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        linux-omap@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-samsung-soc@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Minghuan Lian <minghuan.Lian@nxp.com>,
+        Yue Wang <yue.wang@Amlogic.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v2 00/16] PCI: dwc: Another round of clean-ups
+Date:   Thu, 19 Nov 2020 11:01:58 +0000
+Message-Id: <160578351748.1677.14217204071434748520.b4-ty@arm.com>
+X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20201105211159.1814485-1-robh@kernel.org>
+References: <20201105211159.1814485-1-robh@kernel.org>
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: 5DF35A84F2346C88C9B1BA1AEF6C513A344973A569469D1148B07A014C4095D62000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-T24gVHVlLCAyMDIwLTExLTE3IGF0IDExOjM3ICswMTAwLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3Jv
-dGU6DQo+IEhpIENodW5mZW5nLA0KPiANCj4gT24gVHVlLCBOb3YgMTcsIDIwMjAgYXQgMTE6MzIg
-QU0gQ2h1bmZlbmcgWXVuIDxjaHVuZmVuZy55dW5AbWVkaWF0ZWsuY29tPiB3cm90ZToNCj4gPiBB
-ZGQgYW4gZXhwbGljaXQgImFkZGl0aW9uYWxQcm9wZXJ0aWVzOiB0cnVlIiB0byBhdm9pZA0KPiA+
-IGR0X2JpbmRpbmdfY2hlY2sgZXJyb3IgY2F1c2VkIGJ5Og0KPiA+ICdhZGRpdGlvbmFsUHJvcGVy
-dGllcycgaXMgYSByZXF1aXJlZCBwcm9wZXJ0eQ0KPiA+DQo+ID4gVGhpcyB3aWxsIG5vdCBjaGFu
-Z2UgZnVuY3Rpb24sIGR1ZSB0byBhZGRpdGlvbmFsUHJvcGVydGllcw0KPiA+IGlzIHRydWUgYnkg
-ZGVmYXVsdC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IENodW5mZW5nIFl1biA8Y2h1bmZlbmcu
-eXVuQG1lZGlhdGVrLmNvbT4NCj4gDQo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCj4gDQo+ID4g
-LS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9hY3Rpb25zLnlhbWwN
-Cj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL2FjdGlvbnMu
-eWFtbA0KPiA+IEBAIC00OSwzICs0OSw1IEBAIHByb3BlcnRpZXM6DQo+ID4gICAgICAgICAgICAt
-IGVudW06DQo+ID4gICAgICAgICAgICAgICAgLSB1Y3JvYm90aWNzLGJ1YmJsZWd1bS05NiAjIHVD
-Um9ib3RpY3MgQnViYmxlZ3VtLTk2DQo+ID4gICAgICAgICAgICAtIGNvbnN0OiBhY3Rpb25zLHM5
-MDANCj4gPiArDQo+ID4gK2FkZGl0aW9uYWxQcm9wZXJ0aWVzOiB0cnVlDQo+IA0KPiBMb29rcyB2
-ZXJ5IHNpbWlsYXIgdG8gY29tbWl0IDYyMjk4MzY0YmQ0ODliMDYgKCJkdC1iaW5kaW5nczogRXhw
-bGljaXRseQ0KPiBhbGxvdyBhZGRpdGlvbmFsIHByb3BlcnRpZXMgaW4gYm9hcmQvU29DIHNjaGVt
-YXMiKSBpbiB2NS4xMC1yYzI/DQpZZXMsIGluZGVlZCwgdGhhbmtzIGZvciB5b3VyIGluZm8uDQoN
-Cj4gDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAg
-R2VlcnQNCj4gDQoNCg==
+On Thu, 5 Nov 2020 15:11:43 -0600, Rob Herring wrote:
+> Here's another batch of DWC PCI host refactoring. This series primarily
+> moves more of the MSI, link up, and resource handling to the core
+> code. Beyond a couple of minor fixes, new in this version is runtime
+> detection of iATU regions instead of using DT properties.
+> 
+> No doubt I've probably broken something. Please test. I've run this thru
+> kernelci and checked boards with DWC PCI which currently is just
+> Layerscape boards (hint: add boards and/or enable PCI). A git branch is
+> here[1].
+> 
+> [...]
 
+Applied to pci/dwc, thanks!
+
+[01/16] PCI: dwc: Support multiple ATU memory regions
+        https://git.kernel.org/lpieralisi/pci/c/9f9e59a480
+[02/16] PCI: dwc/intel-gw: Move ATU offset out of driver match data
+        https://git.kernel.org/lpieralisi/pci/c/1d567aac46
+[03/16] PCI: dwc: Move "dbi", "dbi2", and "addr_space" resource setup into common code
+        https://git.kernel.org/lpieralisi/pci/c/a0fd361db8
+[04/16] PCI: dwc/intel-gw: Remove some unneeded function wrappers
+        https://git.kernel.org/lpieralisi/pci/c/1cc9a55999
+[05/16] PCI: dwc: Ensure all outbound ATU windows are reset
+        https://git.kernel.org/lpieralisi/pci/c/458ad06c4c
+[06/16] PCI: dwc/dra7xx: Use the common MSI irq_chip
+        https://git.kernel.org/lpieralisi/pci/c/7f170d35f5
+[07/16] PCI: dwc: Drop the .set_num_vectors() host op
+        https://git.kernel.org/lpieralisi/pci/c/331e9bcead
+[08/16] PCI: dwc: Move MSI interrupt setup into DWC common code
+        https://git.kernel.org/lpieralisi/pci/c/5bcb1757e6
+[09/16] PCI: dwc: Rework MSI initialization
+        https://git.kernel.org/lpieralisi/pci/c/f78f02638a
+[10/16] PCI: dwc: Move link handling into common code
+        https://git.kernel.org/lpieralisi/pci/c/886a9c1347
+[11/16] PCI: dwc: Move dw_pcie_msi_init() into core
+        https://git.kernel.org/lpieralisi/pci/c/59fbab1ae4
+[12/16] PCI: dwc: Move dw_pcie_setup_rc() to DWC common code
+        https://git.kernel.org/lpieralisi/pci/c/b9ac0f9dc8
+[13/16] PCI: dwc: Remove unnecessary wrappers around dw_pcie_host_init()
+        https://git.kernel.org/lpieralisi/pci/c/60f5b73fa0
+[14/16] Revert "PCI: dwc/keystone: Drop duplicated 'num-viewport'"
+        https://git.kernel.org/lpieralisi/pci/c/fcde397422
+[15/16] PCI: dwc: Move inbound and outbound windows to common struct
+        https://git.kernel.org/lpieralisi/pci/c/9ca17af552
+[16/16] PCI: dwc: Detect number of iATU windows
+        https://git.kernel.org/lpieralisi/pci/c/281f1f99cf
+
+Thanks,
+Lorenzo
