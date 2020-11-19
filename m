@@ -2,84 +2,71 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDC6C64E7D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Nov 2020 14:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E389C6369E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Nov 2020 14:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BEEC22261
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Nov 2020 14:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3882722253
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Nov 2020 14:45:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="kT5hHVz2"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="QsUGwdze"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728233AbgKSOnu (ORCPT
+        id S1728200AbgKSOl4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 Nov 2020 09:43:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37446 "EHLO
+        Thu, 19 Nov 2020 09:41:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728258AbgKSOmF (ORCPT
+        with ESMTP id S1728192AbgKSOlz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Nov 2020 09:42:05 -0500
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECBB7C061A55
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2020 06:42:03 -0800 (PST)
-Received: by mail-wr1-x442.google.com with SMTP id j7so6722967wrp.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2020 06:42:03 -0800 (PST)
+        Thu, 19 Nov 2020 09:41:55 -0500
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C460C0617A7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2020 06:41:54 -0800 (PST)
+Received: by mail-wr1-x441.google.com with SMTP id o15so6702946wru.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2020 06:41:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cz4UxMzNPVXjZbnTyayh/NWh/vgndlicpyEK5kDfcUM=;
-        b=kT5hHVz20ZLA+wBbKO3AP8hJ8BchOZR37nQ+YhO2rKi/6Q/B4Gn4706qqA1K6mIwSI
-         MFWvY5ZFFxn0TyGFSMyq3gKB0RpHwjt9N1XtWYNdrxgTqsw7d1hgXiNMXbWgkM4GTzuj
-         KaKJWvNU1jsezPYMJ/bMmUiAXzfdYlmUL0ggI=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0+QV0eroCOghP6iF2qF6VQojb/qmwXTdLdxbXgSm38Q=;
+        b=QsUGwdzetI9prZKoeP2iAhcymfOD+I5vw5uQlsYPHXPJ6OfnoBMufDTFzZUJjNMLZ9
+         Yxrnkb3r0QOgb8tbJN+frKR3E7076su7FmADL1RedADyOMYsxHMJ1LuezxqfJ+4zvmNr
+         w6i7QaH+qoovsm/gkgX6mzTZtHLEyBkDPfyDk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cz4UxMzNPVXjZbnTyayh/NWh/vgndlicpyEK5kDfcUM=;
-        b=My60H4fp26buErBgIboG61iPn/CMF84Wa+2wfU0oqg4KjhgVSM60oXQG1oAyu9Otq4
-         hvYjDUzqyJhrqCz4XBW4qSrjDSoRuyUZ1hBGFqweL2vfF2DaDdlUtHUcBbTsriKlxKLQ
-         0GFUpHLhptjlJ4TmAHT5EDulKlgGRj456rdv+/UdIMb/3Z5pEZU/xXyD4FBaRBwDeT4g
-         +XXa1vd9JqgxZVtw7IO7EyPlWJPev1zeyoieK6wHvoCIwTs4yCD+Tk31QKeYVMh7JfAg
-         6i5mdgEd1kLFsjOOQ4JepXdRbZ4/z7ZKEFgPUBASZhvMvPYdt2iLhutPj8qtnXZPPIFN
-         yGOQ==
-X-Gm-Message-State: AOAM533zA8knJA9sKIDgylGnYCH0yzkUbdal1TzojIjcbvsdWTZMvUrk
-        DNwdU7iCUrHxWV7HWLSO0FGFiQ==
-X-Google-Smtp-Source: ABdhPJxdsnsKzIuN2DUGJztGT0GV3a40Dr4oWXaxmmy2SFvUCuLgCZjxA+UGLe180VGQQN2m8xQoLQ==
-X-Received: by 2002:adf:a3c1:: with SMTP id m1mr10245147wrb.28.1605796922738;
-        Thu, 19 Nov 2020 06:42:02 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0+QV0eroCOghP6iF2qF6VQojb/qmwXTdLdxbXgSm38Q=;
+        b=niQis4EmSesJ4JS/RDYeX8M8hdys4Hi7YttPUwfQEsjkqKdxqH0kcdAjxTKKucNfSA
+         J0o4e8/1cPKGTERbyUbNBstnXP7mprCy1PTZcJm8nB7PJe7SA5VF1tBS0nt5DNq/Taz0
+         f+Q26hYSXVsuct6T12BCbSHyirtkYO8a+WzXcnlWDZWQTqVV7azuCdJDFVdZhX+OOALA
+         yw/byB6vit/I04oCFU3LT0w3t345mC4gjkMs4MPMNr/xMV32iS76tj7+umJrlrm5i3d2
+         As2dH1/rxTfExR7/O/3cM4h151MM/sioPG5NUd0ZX4Sj6rdb3CoQgiB1joTZLDyM/aTm
+         A9bg==
+X-Gm-Message-State: AOAM5304G3sKqZ3EWgknWeIDpAniJGlsab0gZCgXdyrwz18vCbdC1Ih0
+        q7Nji/pNvGxti1NAzxazWLGDwA==
+X-Google-Smtp-Source: ABdhPJwEr0+MWxW25HcjQdBlrf+fNcxCL3BoIHGbwL4k+zwCdrQxRdMboyjz6DNXtMlDrKrjaCEFzw==
+X-Received: by 2002:a5d:4947:: with SMTP id r7mr9987226wrs.50.1605796912703;
+        Thu, 19 Nov 2020 06:41:52 -0800 (PST)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id x63sm51292wmb.48.2020.11.19.06.42.01
+        by smtp.gmail.com with ESMTPSA id x63sm51292wmb.48.2020.11.19.06.41.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Nov 2020 06:42:02 -0800 (PST)
+        Thu, 19 Nov 2020 06:41:51 -0800 (PST)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>
 Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Benjamin Herrensmidt <benh@kernel.crashing.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Subject: [PATCH v6 07/17] mm: Close race in generic_access_phys
-Date:   Thu, 19 Nov 2020 15:41:36 +0100
-Message-Id: <20201119144146.1045202-8-daniel.vetter@ffwll.ch>
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH v6 00/17] follow_pfn and other iomap races
+Date:   Thu, 19 Nov 2020 15:41:29 +0100
+Message-Id: <20201119144146.1045202-1-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201119144146.1045202-1-daniel.vetter@ffwll.ch>
-References: <20201119144146.1045202-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -87,148 +74,119 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Way back it was a reasonable assumptions that iomem mappings never
-change the pfn range they point at. But this has changed:
+Hi all
 
-- gpu drivers dynamically manage their memory nowadays, invalidating
-  ptes with unmap_mapping_range when buffers get moved
+Another update of my patch series to clamp down a bunch of races and gaps
+around follow_pfn and other access to iomem mmaps. Previous version:
 
-- contiguous dma allocations have moved from dedicated carvetouts to
-  cma regions. This means if we miss the unmap the pfn might contain
-  pagecache or anon memory (well anything allocated with GFP_MOVEABLE)
+v1: https://lore.kernel.org/dri-devel/20201007164426.1812530-1-daniel.vetter@ffwll.ch/
+v2: https://lore.kernel.org/dri-devel/20201009075934.3509076-1-daniel.vetter@ffwll.ch
+v3: https://lore.kernel.org/dri-devel/20201021085655.1192025-1-daniel.vetter@ffwll.ch/
+v4: https://lore.kernel.org/dri-devel/20201026105818.2585306-1-daniel.vetter@ffwll.ch/
+v5: https://lore.kernel.org/dri-devel/20201030100815.2269-1-daniel.vetter@ffwll.ch/
 
-- even /dev/mem now invalidates mappings when the kernel requests that
-  iomem region when CONFIG_IO_STRICT_DEVMEM is set, see 3234ac664a87
-  ("/dev/mem: Revoke mappings when a driver claims the region")
+And the discussion that sparked this journey:
 
-Accessing pfns obtained from ptes without holding all the locks is
-therefore no longer a good idea. Fix this.
+https://lore.kernel.org/dri-devel/20201007164426.1812530-1-daniel.vetter@ffwll.ch/
 
-Since ioremap might need to manipulate pagetables too we need to drop
-the pt lock and have a retry loop if we raced.
+Unfortunately took way longer to update than I hoped, I got sidetracked
+with a few things.
 
-While at it, also add kerneldoc and improve the comment for the
-vma_ops->access function. It's for accessing, not for moving the
-memory from iomem to system memory, as the old comment seemed to
-suggest.
+Changes in v6:
+- Tested v4l userptr as Tomasz suggested. No boom observed
+- Added RFC for locking down follow_pfn, per discussion with Christoph and
+  Jason.
+- Explain why pup_fast is safe in relevant patches, there was a bit a
+  confusion when discussing v5.
+- Fix up the resource patch, with CONFIG_IO_STRICT_DEVMEM it crashed on
+  boot due to an unintended change (reported by John)
 
-References: 28b2ee20c7cb ("access_process_vm device memory infrastructure")
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Benjamin Herrensmidt <benh@kernel.crashing.org>
-Cc: Dave Airlie <airlied@linux.ie>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Jérôme Glisse <jglisse@redhat.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-mm@kvack.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-media@vger.kernel.org
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
---
-v2: Fix inversion in the retry check (John).
+Changes in v5:
+- Tomasz found some issues in the media patches
+- Polish suggested by Christoph for the unsafe_follow_pfn patch
 
-v4: While at it, use offset_in_page (Chris Wilson)
----
- include/linux/mm.h |  3 ++-
- mm/memory.c        | 46 +++++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 45 insertions(+), 4 deletions(-)
+Changes in v4:
+- Drop the s390 patch, that was very stand-alone and now queued up to land
+  through s390 trees.
+- Comment polish per Dan's review.
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index b1a4a140863d..06cc6f30fc78 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -574,7 +574,8 @@ struct vm_operations_struct {
- 	vm_fault_t (*pfn_mkwrite)(struct vm_fault *vmf);
- 
- 	/* called by access_process_vm when get_user_pages() fails, typically
--	 * for use by special VMAs that can switch between memory and hardware
-+	 * for use by special VMAs. See also generic_access_phys() for a generic
-+	 * implementation useful for any iomem mapping.
- 	 */
- 	int (*access)(struct vm_area_struct *vma, unsigned long addr,
- 		      void *buf, int len, int write);
-diff --git a/mm/memory.c b/mm/memory.c
-index c48f8df6e502..ac32039ce941 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4847,28 +4847,68 @@ int follow_phys(struct vm_area_struct *vma,
- 	return ret;
- }
- 
-+/**
-+ * generic_access_phys - generic implementation for iomem mmap access
-+ * @vma: the vma to access
-+ * @addr: userspace addres, not relative offset within @vma
-+ * @buf: buffer to read/write
-+ * @len: length of transfer
-+ * @write: set to FOLL_WRITE when writing, otherwise reading
-+ *
-+ * This is a generic implementation for &vm_operations_struct.access for an
-+ * iomem mapping. This callback is used by access_process_vm() when the @vma is
-+ * not page based.
-+ */
- int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
- 			void *buf, int len, int write)
- {
- 	resource_size_t phys_addr;
- 	unsigned long prot = 0;
- 	void __iomem *maddr;
--	int offset = addr & (PAGE_SIZE-1);
-+	pte_t *ptep, pte;
-+	spinlock_t *ptl;
-+	int offset = offset_in_page(addr);
-+	int ret = -EINVAL;
-+
-+	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
-+		return -EINVAL;
-+
-+retry:
-+	if (follow_pte(vma->vm_mm, addr, &ptep, &ptl))
-+		return -EINVAL;
-+	pte = *ptep;
-+	pte_unmap_unlock(ptep, ptl);
- 
--	if (follow_phys(vma, addr, write, &prot, &phys_addr))
-+	prot = pgprot_val(pte_pgprot(pte));
-+	phys_addr = (resource_size_t)pte_pfn(pte) << PAGE_SHIFT;
-+
-+	if ((write & FOLL_WRITE) && !pte_write(pte))
- 		return -EINVAL;
- 
- 	maddr = ioremap_prot(phys_addr, PAGE_ALIGN(len + offset), prot);
- 	if (!maddr)
- 		return -ENOMEM;
- 
-+	if (follow_pte(vma->vm_mm, addr, &ptep, &ptl))
-+		goto out_unmap;
-+
-+	if (!pte_same(pte, *ptep)) {
-+		pte_unmap_unlock(ptep, ptl);
-+		iounmap(maddr);
-+
-+		goto retry;
-+	}
-+
- 	if (write)
- 		memcpy_toio(maddr + offset, buf, len);
- 	else
- 		memcpy_fromio(buf, maddr + offset, len);
-+	ret = len;
-+	pte_unmap_unlock(ptep, ptl);
-+out_unmap:
- 	iounmap(maddr);
- 
--	return len;
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(generic_access_phys);
- #endif
+Changes in v3:
+- Bunch of polish all over, no functional changes aside from one barrier
+  in the resource code, for consistency.
+- A few more r-b tags.
+
+Changes in v2:
+- tons of small polish&fixes all over, thanks to all the reviewers who
+  spotted issues
+- I managed to test at least the generic_access_phys and pci mmap revoke
+  stuff with a few gdb sessions using our i915 debug tools (hence now also
+  the drm/i915 patch to properly request all the pci bar regions)
+- reworked approach for the pci mmap revoke: Infrastructure moved into
+  kernel/resource.c, address_space mapping is now set up at open time for
+  everyone (which required some sysfs changes). Does indeed look a lot
+  cleaner and a lot less invasive than I feared at first.
+
+I feel like this is ready for some wider soaking. Since the remaining bits
+are all kinda connnected probably simplest if it all goes through -mm.
+
+Cheers, Daniel
+
+Daniel Vetter (17):
+  drm/exynos: Stop using frame_vector helpers
+  drm/exynos: Use FOLL_LONGTERM for g2d cmdlists
+  misc/habana: Stop using frame_vector helpers
+  misc/habana: Use FOLL_LONGTERM for userptr
+  mm/frame-vector: Use FOLL_LONGTERM
+  media: videobuf2: Move frame_vector into media subsystem
+  mm: Close race in generic_access_phys
+  mm: Add unsafe_follow_pfn
+  media/videbuf1|2: Mark follow_pfn usage as unsafe
+  vfio/type1: Mark follow_pfn as unsafe
+  PCI: Obey iomem restrictions for procfs mmap
+  /dev/mem: Only set filp->f_mapping
+  resource: Move devmem revoke code to resource framework
+  sysfs: Support zapping of binary attr mmaps
+  PCI: Revoke mappings like devmem
+  RFC: kvm: pass kvm argument to follow_pfn callsites
+  RFC: mm: add mmu_notifier argument to follow_pfn
+
+ arch/powerpc/kvm/book3s_64_mmu_hv.c           |   2 +-
+ arch/powerpc/kvm/book3s_64_mmu_radix.c        |   2 +-
+ arch/powerpc/kvm/e500_mmu_host.c              |   2 +-
+ arch/x86/kvm/mmu/mmu.c                        |   8 +-
+ drivers/char/mem.c                            |  86 +------------
+ drivers/gpu/drm/exynos/Kconfig                |   1 -
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  48 ++++----
+ drivers/media/common/videobuf2/Kconfig        |   1 -
+ drivers/media/common/videobuf2/Makefile       |   1 +
+ .../media/common/videobuf2}/frame_vector.c    |  57 +++------
+ .../media/common/videobuf2/videobuf2-memops.c |   3 +-
+ drivers/media/platform/omap/Kconfig           |   1 -
+ drivers/media/v4l2-core/videobuf-dma-contig.c |   2 +-
+ drivers/misc/habanalabs/Kconfig               |   1 -
+ drivers/misc/habanalabs/common/habanalabs.h   |   6 +-
+ drivers/misc/habanalabs/common/memory.c       |  50 +++-----
+ drivers/pci/pci-sysfs.c                       |   4 +
+ drivers/pci/proc.c                            |   6 +
+ drivers/vfio/vfio_iommu_type1.c               |   4 +-
+ fs/sysfs/file.c                               |  11 ++
+ include/linux/ioport.h                        |   6 +-
+ include/linux/kvm_host.h                      |   9 +-
+ include/linux/mm.h                            |  50 +-------
+ include/linux/sysfs.h                         |   2 +
+ include/media/frame_vector.h                  |  47 +++++++
+ include/media/videobuf2-core.h                |   1 +
+ kernel/resource.c                             |  98 ++++++++++++++-
+ mm/Kconfig                                    |   3 -
+ mm/Makefile                                   |   1 -
+ mm/memory.c                                   | 115 +++++++++++++++---
+ mm/nommu.c                                    |  48 +++++++-
+ security/Kconfig                              |  13 ++
+ virt/kvm/kvm_main.c                           |  56 +++++----
+ 33 files changed, 447 insertions(+), 298 deletions(-)
+ rename {mm => drivers/media/common/videobuf2}/frame_vector.c (84%)
+ create mode 100644 include/media/frame_vector.h
+
 -- 
 2.29.2
 
