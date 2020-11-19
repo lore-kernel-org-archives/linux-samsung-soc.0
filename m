@@ -2,165 +2,271 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6D5C64E75
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Nov 2020 14:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22482C8300C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Nov 2020 14:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD7B7246F9
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Nov 2020 14:23:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C98BE246E1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Nov 2020 14:42:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y21dZRMZ"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="PjfsKwdN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbgKSOWt (ORCPT
+        id S1728270AbgKSOmH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 Nov 2020 09:22:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34442 "EHLO
+        Thu, 19 Nov 2020 09:42:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727106AbgKSOWt (ORCPT
+        with ESMTP id S1728245AbgKSOmB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Nov 2020 09:22:49 -0500
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5A62C0613CF;
-        Thu, 19 Nov 2020 06:22:47 -0800 (PST)
-Received: by mail-lf1-x143.google.com with SMTP id e139so8515559lfd.1;
-        Thu, 19 Nov 2020 06:22:47 -0800 (PST)
+        Thu, 19 Nov 2020 09:42:01 -0500
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C22EC061A4B
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2020 06:42:01 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id p8so6702885wrx.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2020 06:42:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZvOd3z2dVnB5SZQwK/dvDpMXJ4eITwmefRvuKa9tb0Q=;
-        b=Y21dZRMZ+kNYHUNLiNCHQoS5QxGFMKf7KaEd+6a06G/hQ1bejJXAcijD6xiDcBiBUn
-         JS4yWyB2+zZqqxEzarQ7y2NC3cKCRKUZ2CchFnZU6Kn5vLrutkvXtu+Lq1OFhxgn8Epp
-         UuLT88qmv67A3sWVg1l8Ws05tNM98wJWDlT1hgGfbwXfCiTxIVlprvN48xiVZLuFi3Cn
-         KI3oT4rlzLRHtD8EKwZRS29BsqsZh07SrjWWBHtLowX/toS83Dhlqd9OCn9mvofvfXic
-         DHhrzPVHyIWzxM0YW/p1ZFuzvZaox6YeG/KIcRnpB6NKJzCgXsklV6r9OCr7nnEUUhRd
-         hptw==
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=VCOCkwLloQd1Jjxit0YSASxEdkNocUHfWMxbpfF8b5s=;
+        b=PjfsKwdNEGWlzJ0oZZljMSdOMbKjGBjzoVTnrHy2eYtUJG6UIH6wLwDmbjcnqbYIqZ
+         uzT70E9Cm0qEAAuXOxs7ohIpmLhgzEj7vkZjH7S7JX3k9DbTQGY9UdCAZXIjE7+kxW1y
+         PTFbm80XlBWzqfIf6XRMhiSyDH83HLJrjtns8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZvOd3z2dVnB5SZQwK/dvDpMXJ4eITwmefRvuKa9tb0Q=;
-        b=i7ba6A/r1lx38CySMfQ+TDUl7Ug5P1w27iAO+JNLA3mdxNi6OJU0Dyqalbxsw01iB0
-         VAsNVwAXW1PqPUXXSjGz0epzuBBCbtyiUFWhin0O2XLXgQRzlY1akQvQtW/ko39PobAl
-         YqRKgEYYe3YFDLqG9cjS0d36YmKabjvOpUI6c76OKGdqYg3fS5LkGKk6O+yUnTz3eRHz
-         PWSciz9HMFkctnmfRE7e4I7307OLnlqaz8QPpkNVd/aym1Zj/CRTKjfv3D9eULG/nYuE
-         2fZ5e3RZt0B5qhOLiz610v07pBXK8W2tBlr9mbSx1CHjsYAJC6p0df7hm4FpmuX71rKU
-         978w==
-X-Gm-Message-State: AOAM530du4USguA/p3pLaUicqA2meLa3ozpjxZ7O2FXF+na2ZDg6G4DO
-        96bNH1Rf87fJcnpUjW52tmsWQdbw810=
-X-Google-Smtp-Source: ABdhPJyUwmqVByndGgJFiM7woqjbf8UJz72yW3W4B1Jv93hEMk1YatxireTGBSQxqAyLLyxkuXCkKw==
-X-Received: by 2002:a19:844a:: with SMTP id g71mr6446029lfd.414.1605795766096;
-        Thu, 19 Nov 2020 06:22:46 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.googlemail.com with ESMTPSA id m16sm3851652lfa.57.2020.11.19.06.22.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Nov 2020 06:22:45 -0800 (PST)
-Subject: Re: [PATCH v1 11/30] drm/tegra: dc: Support OPP and SoC core voltage
- scaling
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=VCOCkwLloQd1Jjxit0YSASxEdkNocUHfWMxbpfF8b5s=;
+        b=MdXUj0wjvAewV97deVK0txxB/VkjvGyyeAbrZnrADU+rYq2f1XVEyaz4h7Y5lQzu/A
+         Sji3RU71BLtzDZRt3YvppIRYHIzohdXDHLA0hzUf0z2ygY02m/bn96nscAHJLYBGoJ7I
+         h+vw8z9gMfa5p26PriNVHiO1UF18GUPZh0hoh0iMuM+qUVY+VP3PTDborthGwiI6KL0t
+         3vKqGQ8gg4pUP0fLVWgDcdrka2BkmD0TDVgoHftnYGtDV31YKqB94fOVF+nwv9Z7JfHH
+         VCC/XncKMUAjvUTdW4Vw/Wgjcu6M9AEP+++J+aHCmHh4t1ElEKgEiGt/cIU9EQzNNMD2
+         gJ/w==
+X-Gm-Message-State: AOAM533/WdZGtC5BvvOWCxwswhmULj5pcwTu0jTIjBj9ET3QAXvZku0m
+        tZRz5mzOsbAdGgBE9cML31MDwA==
+X-Google-Smtp-Source: ABdhPJwPuEbRJrKHwQdu+to05E78v8U1IybJIWAUQpBKF8EM0GrUlnUi4R2Sio3EPNDQjCUhJzb9IA==
+X-Received: by 2002:adf:a343:: with SMTP id d3mr10676992wrb.91.1605796919953;
+        Thu, 19 Nov 2020 06:41:59 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id x63sm51292wmb.48.2020.11.19.06.41.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Nov 2020 06:41:59 -0800 (PST)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Pawel Osciak <pawel@osciak.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        linux-samsung-soc@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-usb@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20201112171600.GD4742@sirena.org.uk>
- <b4b06c1d-c9d4-43b2-c6eb-93f8cb6c677d@gmail.com>
- <20201112200123.GF4742@sirena.org.uk>
- <ce9e2d9f-917e-fb8a-7323-f3bf1a367e9d@gmail.com>
- <20201113142937.GB4828@sirena.org.uk>
- <7f066805-97d9-088f-e89d-a554fe478574@gmail.com>
- <20201113161550.GC4828@sirena.org.uk>
- <3beaa12b-4a50-a3b6-fc43-ebb5ce7a8db7@gmail.com>
- <20201113172859.GF4828@sirena.org.uk>
- <74cfc6a9-3f59-d679-14b7-51102a6f11b3@gmail.com>
- <20201116133311.GB4739@sirena.org.uk>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <332ab946-daee-bb83-24ab-0bda4fd8e1ef@gmail.com>
-Date:   Thu, 19 Nov 2020 17:22:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH v6 05/17] mm/frame-vector: Use FOLL_LONGTERM
+Date:   Thu, 19 Nov 2020 15:41:34 +0100
+Message-Id: <20201119144146.1045202-6-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201119144146.1045202-1-daniel.vetter@ffwll.ch>
+References: <20201119144146.1045202-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-In-Reply-To: <20201116133311.GB4739@sirena.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-16.11.2020 16:33, Mark Brown пишет:
-> On Sun, Nov 15, 2020 at 08:42:10PM +0300, Dmitry Osipenko wrote:
->> 13.11.2020 20:28, Mark Brown пишет:
-> 
->>>> What should we do?
-> 
->>> As I keep saying the consumer driver should be enumerating the voltages
->>> it can set, if it can't find any and wants to continue then it can just
->>> skip setting voltages later on.  If only some are unavailable then it
->>> probably wants to eliminate those specific OPPs instead.
-> 
->> I'm seeing a dummy regulator as a helper for consumer drivers which
->> removes burden of handling an absent (optional) regulator. Is this a
->> correct understanding of a dummy regulator?
-> 
->> Older DTBs don't have a regulator and we want to keep them working. This
->> is equal to a physically absent regulator and in this case it's an
->> optional regulator, IMO.
-> 
-> No, you are failing to understand the purpose of this code.  To
-> reiterate unless the device supports operating with the supply
-> physically absent then the driver should not be attempting to use
-> regulator_get_optional().  That exists specifically for the case where
-> the supply may be absent, nothing else.  The dummy regulator is there
-> precisely for the case where the system does not describe supplies that
-> we know are required for the device to function, it fixes up that
-> omission so we don't need to open code handling of this in every single
-> consumer driver.
+This is used by media/videbuf2 for persistent dma mappings, not just
+for a single dma operation and then freed again, so needs
+FOLL_LONGTERM.
 
-The original intention of regulator_get_optional() is clear to me, but
-nothing really stops drivers from slightly re-purposing this API, IMO.
+Unfortunately current pup_locked doesn't support FOLL_LONGTERM due to
+locking issues. Rework the code to pull the pup path out from the
+mmap_sem critical section as suggested by Jason.
 
-Drivers should be free to assume that if regulator isn't defined by
-firmware, then it's physically absent if this doesn't break anything. Of
-course in some cases it's unsafe to make such assumptions. I think it's
-a bit unpractical to artificially limit API usage without a good reason,
-i.e. if nothing breaks underneath of a driver.
+By relying entirely on the vma checks in pin_user_pages and follow_pfn
+(for vm_flags and vma_is_fsdax) we can also streamline the code a lot.
 
-> Regulators that are present but not described by the firmware are a
-> clearly different case to regulators that are not physically there,
-> hardware with actually optional regulators will generally require some
-> configuration for this case.
-> 
+Note that pin_user_pages_fast is a safe replacement despite the
+seeming lack of checking for vma->vm_flasg & (VM_IO | VM_PFNMAP). Such
+ptes are marked with pte_mkspecial (which pup_fast rejects in the
+fastpath), and only architectures supporting that support the
+pin_user_pages_fast fastpath.
 
-I have good news. After spending some more time on trying out different
-things, I found that my previous assumption about the fixed-regulator
-was wrong, it actually accepts voltage changes, i.e. regulator consumer
-doesn't get a error on a voltage-change. This is exactly what is needed
-for the OPP core to work properly.
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Pawel Osciak <pawel@osciak.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Tomasz Figa <tfiga@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-mm@kvack.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-media@vger.kernel.org
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+--
+v2: Streamline the code and further simplify the loop checks (Jason)
 
-This means that there is no need to add special quirks to work around
-absent regulators, we will just add a fixed regulator to the DTs which
-don't specify a real regulator. The OPP core will perform voltage
-checking and filter out unsupported OPPs. The older DTBs will continue
-to work as well.
+v5: Review from Tomasz:
+- fix page counting for the follow_pfn case by resetting ret
+- drop gup_flags paramater, now unused
+
+v6: Explain why pup_fast is safe, after discussions with John and
+Christoph.
+---
+ .../media/common/videobuf2/videobuf2-memops.c |  3 +-
+ include/linux/mm.h                            |  2 +-
+ mm/frame_vector.c                             | 53 ++++++-------------
+ 3 files changed, 19 insertions(+), 39 deletions(-)
+
+diff --git a/drivers/media/common/videobuf2/videobuf2-memops.c b/drivers/media/common/videobuf2/videobuf2-memops.c
+index 6e9e05153f4e..9dd6c27162f4 100644
+--- a/drivers/media/common/videobuf2/videobuf2-memops.c
++++ b/drivers/media/common/videobuf2/videobuf2-memops.c
+@@ -40,7 +40,6 @@ struct frame_vector *vb2_create_framevec(unsigned long start,
+ 	unsigned long first, last;
+ 	unsigned long nr;
+ 	struct frame_vector *vec;
+-	unsigned int flags = FOLL_FORCE | FOLL_WRITE;
+ 
+ 	first = start >> PAGE_SHIFT;
+ 	last = (start + length - 1) >> PAGE_SHIFT;
+@@ -48,7 +47,7 @@ struct frame_vector *vb2_create_framevec(unsigned long start,
+ 	vec = frame_vector_create(nr);
+ 	if (!vec)
+ 		return ERR_PTR(-ENOMEM);
+-	ret = get_vaddr_frames(start & PAGE_MASK, nr, flags, vec);
++	ret = get_vaddr_frames(start & PAGE_MASK, nr, vec);
+ 	if (ret < 0)
+ 		goto out_destroy;
+ 	/* We accept only complete set of PFNs */
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index db6ae4d3fb4e..efb8c39bc933 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1765,7 +1765,7 @@ struct frame_vector {
+ struct frame_vector *frame_vector_create(unsigned int nr_frames);
+ void frame_vector_destroy(struct frame_vector *vec);
+ int get_vaddr_frames(unsigned long start, unsigned int nr_pfns,
+-		     unsigned int gup_flags, struct frame_vector *vec);
++		     struct frame_vector *vec);
+ void put_vaddr_frames(struct frame_vector *vec);
+ int frame_vector_to_pages(struct frame_vector *vec);
+ void frame_vector_to_pfns(struct frame_vector *vec);
+diff --git a/mm/frame_vector.c b/mm/frame_vector.c
+index 10f82d5643b6..f8c34b895c76 100644
+--- a/mm/frame_vector.c
++++ b/mm/frame_vector.c
+@@ -32,13 +32,12 @@
+  * This function takes care of grabbing mmap_lock as necessary.
+  */
+ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+-		     unsigned int gup_flags, struct frame_vector *vec)
++		     struct frame_vector *vec)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma;
+ 	int ret = 0;
+ 	int err;
+-	int locked;
+ 
+ 	if (nr_frames == 0)
+ 		return 0;
+@@ -48,40 +47,26 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+ 
+ 	start = untagged_addr(start);
+ 
+-	mmap_read_lock(mm);
+-	locked = 1;
+-	vma = find_vma_intersection(mm, start, start + 1);
+-	if (!vma) {
+-		ret = -EFAULT;
+-		goto out;
+-	}
+-
+-	/*
+-	 * While get_vaddr_frames() could be used for transient (kernel
+-	 * controlled lifetime) pinning of memory pages all current
+-	 * users establish long term (userspace controlled lifetime)
+-	 * page pinning. Treat get_vaddr_frames() like
+-	 * get_user_pages_longterm() and disallow it for filesystem-dax
+-	 * mappings.
+-	 */
+-	if (vma_is_fsdax(vma)) {
+-		ret = -EOPNOTSUPP;
+-		goto out;
+-	}
+-
+-	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
++	ret = pin_user_pages_fast(start, nr_frames,
++				  FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
++				  (struct page **)(vec->ptrs));
++	if (ret > 0) {
+ 		vec->got_ref = true;
+ 		vec->is_pfns = false;
+-		ret = pin_user_pages_locked(start, nr_frames,
+-			gup_flags, (struct page **)(vec->ptrs), &locked);
+-		goto out;
++		goto out_unlocked;
+ 	}
+ 
++	mmap_read_lock(mm);
+ 	vec->got_ref = false;
+ 	vec->is_pfns = true;
++	ret = 0;
+ 	do {
+ 		unsigned long *nums = frame_vector_pfns(vec);
+ 
++		vma = find_vma_intersection(mm, start, start + 1);
++		if (!vma)
++			break;
++
+ 		while (ret < nr_frames && start + PAGE_SIZE <= vma->vm_end) {
+ 			err = follow_pfn(vma, start, &nums[ret]);
+ 			if (err) {
+@@ -92,17 +77,13 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+ 			start += PAGE_SIZE;
+ 			ret++;
+ 		}
+-		/*
+-		 * We stop if we have enough pages or if VMA doesn't completely
+-		 * cover the tail page.
+-		 */
+-		if (ret >= nr_frames || start < vma->vm_end)
++		/* Bail out if VMA doesn't completely cover the tail page. */
++		if (start < vma->vm_end)
+ 			break;
+-		vma = find_vma_intersection(mm, start, start + 1);
+-	} while (vma && vma->vm_flags & (VM_IO | VM_PFNMAP));
++	} while (ret < nr_frames);
+ out:
+-	if (locked)
+-		mmap_read_unlock(mm);
++	mmap_read_unlock(mm);
++out_unlocked:
+ 	if (!ret)
+ 		ret = -EFAULT;
+ 	if (ret > 0)
+-- 
+2.29.2
+
