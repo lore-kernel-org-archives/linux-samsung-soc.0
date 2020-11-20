@@ -2,247 +2,76 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274F6C5519F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Nov 2020 09:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39248C63777
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Nov 2020 09:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 724A522403
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Nov 2020 09:18:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC02A223B0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Nov 2020 09:42:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="H9pmf4ta"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCRPqje2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbgKTJSm (ORCPT
+        id S1727649AbgKTJmH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Nov 2020 04:18:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40230 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726460AbgKTJSk (ORCPT
+        Fri, 20 Nov 2020 04:42:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52332 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727160AbgKTJmG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Nov 2020 04:18:40 -0500
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09587C0617A7
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Nov 2020 01:18:40 -0800 (PST)
-Received: by mail-ot1-x342.google.com with SMTP id y22so8107567oti.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Nov 2020 01:18:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=OtrYQoEiROvCqqv4Jka4JIhMwLKRXKEHuB2b3PjkDRI=;
-        b=H9pmf4taWGwhJj0TCPHRqUSjU70cWnKJjp7fPbvY9crHvLcESWQq3LyuXCxK4oLrKU
-         cE0KMzfuWCfbRfL+I6J1/V6V741Gq4+hcyfquL+KRX7CcWHTILWoG6kc2xEtShyJEd6T
-         7BjZeDAZNI4WxIxvtHfYIUlI9hmefqlvmBIDQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OtrYQoEiROvCqqv4Jka4JIhMwLKRXKEHuB2b3PjkDRI=;
-        b=aHt/R8woz0IqRem/7/dX2kzVwl3c5wm2iZSsSaFhaYpobHVZM+MFGc4dyLcZb6vfWW
-         VROAn18+119/XE0+cIzfxnltarQ9KCS6f7JtP0SEpkalNDwwlO8Vs28FHO+ezyDHPtGN
-         LHbu29zVCM0A7oW8q0niu2Vi48389SK4+3mCH1trsbk7scKMDLGYTjJ6jrkjZtzMzoz9
-         YRDblW4MUqP2wddLtQyFP6lQ8bpnYy8gtazxdoejp6J3M1YVOYxWiL6+dXDFAI5UIIZH
-         RF9Gi/ar6q9RKhOmFkpas4l3zV/Ye1686fsk4fj7HpQb2JVAcoVDUlKsWYdi+bbrYPLc
-         YSsQ==
-X-Gm-Message-State: AOAM5326n8pkb/P4CrzpSxVqn5LWpNwzizvyO22nGOme0VOTbF+4fREq
-        0Fk/2VOhdqq7j5y+ugYdSboZWad/ccLrLD/WnRBGFg==
-X-Google-Smtp-Source: ABdhPJwRO5d84BxTeYThG2QPCXAsJdc+1sEa8OQumtyte52NF7Ay2wUea1iF99xa2TqGcNyZBAN0DrcCHGfwp68L+Co=
-X-Received: by 2002:a05:6830:3155:: with SMTP id c21mr13756463ots.281.1605863919326;
- Fri, 20 Nov 2020 01:18:39 -0800 (PST)
+        Fri, 20 Nov 2020 04:42:06 -0500
+Received: from localhost (unknown [122.171.203.152])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28CD7223B0;
+        Fri, 20 Nov 2020 09:42:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605865326;
+        bh=XLxancgRgYpetl+23BnIP7WdgIKeWO32EF7mXEcNHJA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZCRPqje2mvonSCEr0psJ0aJHBWvQqNjhGk63jIYaQJnJnesIbfkxphhSJ0kNOlBD2
+         0VWha/Gg3P2L80zsigzGuzHdGQkjsiTl3kJv3hgBAwufyQWIDNEbp+hUH8iALq5Qv7
+         02krMiW8R8ku3U7BY1LteHGEiLnuJuflxxERBg/g=
+Date:   Fri, 20 Nov 2020 15:11:52 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v4 4/5] phy: samsung: phy-exynos-pcie: rework driver to
+ support Exynos5433 PCIe PHY
+Message-ID: <20201120094152.GC2925@vkoul-mobl>
+References: <20201113170139.29956-1-m.szyprowski@samsung.com>
+ <CGME20201113170158eucas1p14b9e58e35f929e14aeb4f533071c8a47@eucas1p1.samsung.com>
+ <20201113170139.29956-5-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-References: <20201119144146.1045202-1-daniel.vetter@ffwll.ch>
- <20201119144146.1045202-10-daniel.vetter@ffwll.ch> <f1f3a1d8-d62a-6e93-afc1-87a8e51081e9@xs4all.nl>
- <e1f7d30b-2012-0249-66c7-cf9d7d6246ad@xs4all.nl>
-In-Reply-To: <e1f7d30b-2012-0249-66c7-cf9d7d6246ad@xs4all.nl>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Fri, 20 Nov 2020 10:18:27 +0100
-Message-ID: <CAKMK7uEzFAtr9yxjaxi-kiuZhb+hWT3q6E41OegJr+J2-zkT8w@mail.gmail.com>
-Subject: Re: [PATCH v6 09/17] media/videbuf1|2: Mark follow_pfn usage as unsafe
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>, Tomasz Figa <tfiga@chromium.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Kees Cook <keescook@chromium.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Laurent Dufour <ldufour@linux.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Michel Lespinasse <walken@google.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201113170139.29956-5-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 9:28 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> On 20/11/2020 09:06, Hans Verkuil wrote:
-> > On 19/11/2020 15:41, Daniel Vetter wrote:
-> >> The media model assumes that buffers are all preallocated, so that
-> >> when a media pipeline is running we never miss a deadline because the
-> >> buffers aren't allocated or available.
-> >>
-> >> This means we cannot fix the v4l follow_pfn usage through
-> >> mmu_notifier, without breaking how this all works. The only real fix
-> >> is to deprecate userptr support for VM_IO | VM_PFNMAP mappings and
-> >> tell everyone to cut over to dma-buf memory sharing for zerocopy.
-> >>
-> >> userptr for normal memory will keep working as-is, this only affects
-> >> the zerocopy userptr usage enabled in 50ac952d2263 ("[media]
-> >> videobuf2-dma-sg: Support io userptr operations on io memory").
-> >>
-> >> Acked-by: Tomasz Figa <tfiga@chromium.org>
-> >
-> > Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
->
-> Actually, cancel this Acked-by.
->
-> So let me see if I understand this right: VM_IO | VM_PFNMAP mappings can
-> move around. There is a mmu_notifier that can be used to be notified when
-> that happens, but that can't be used with media buffers since those buffe=
-rs
-> must always be available and in the same place.
->
-> So follow_pfn is replaced by unsafe_follow_pfn to signal that what is att=
-empted
-> is unsafe and unreliable.
->
-> If CONFIG_STRICT_FOLLOW_PFN is set, then unsafe_follow_pfn will fail, if =
-it
-> is unset, then it writes a warning to the kernel log but just continues w=
-hile
-> still unsafe.
->
-> I am very much inclined to just drop VM_IO | VM_PFNMAP support in the med=
-ia
-> subsystem. For vb2 there is a working alternative in the form of dmabuf, =
-and
-> frankly for vb1 I don't care. If someone really needs this for a vb1 driv=
-er,
-> then they can do the work to convert that driver to vb2.
->
-> I've added Mauro to the CC list and I'll ping a few more people to see wh=
-at
-> they think, but in my opinion support for USERPTR + VM_IO | VM_PFNMAP
-> should just be killed off.
->
-> If others would like to keep it, then frame_vector.c needs a comment befo=
-re
-> the 'while' explaining why the unsafe_follow_pfn is there and that using
-> dmabuf is the proper alternative to use. That will make it easier for
-> developers to figure out why they see a kernel warning and what to do to
-> fix it, rather than having to dig through the git history for the reason.
+On 13-11-20, 18:01, Marek Szyprowski wrote:
+> From: Jaehoon Chung <jh80.chung@samsung.com>
+> 
+> Exynos5440 SoC support has been dropped since commit 8c83315da1cf ("ARM:
+> dts: exynos: Remove Exynos5440"). Rework this driver to support PCIe PHY
+> variant found in the Exynos5433 SoCs.
 
-I'm happy to add a comment, but otherwise if you all want to ditch
-this, can we do this as a follow up on top? There's quite a bit of
-code that can be deleted and I'd like to not hold up this patch set
-here on that - it's already a fairly sprawling pain touching about 7
-different subsystems (ok only 6-ish now since the s390 patch landed).
-For the comment, is the explanation next to unsafe_follow_pfn not good
-enough?
+I am expecting this series to go thru PCI tree, so:
 
-So ... can I get you to un-cancel your ack?
+Acked-By: Vinod Koul <vkoul@kernel.org>
 
-Thanks, Daniel
-
->
-> Regards,
->
->         Hans
->
-> >
-> > Thanks!
-> >
-> >       Hans
-> >
-> >> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> >> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> >> Cc: Kees Cook <keescook@chromium.org>
-> >> Cc: Dan Williams <dan.j.williams@intel.com>
-> >> Cc: Andrew Morton <akpm@linux-foundation.org>
-> >> Cc: John Hubbard <jhubbard@nvidia.com>
-> >> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> >> Cc: Jan Kara <jack@suse.cz>
-> >> Cc: Dan Williams <dan.j.williams@intel.com>
-> >> Cc: linux-mm@kvack.org
-> >> Cc: linux-arm-kernel@lists.infradead.org
-> >> Cc: linux-samsung-soc@vger.kernel.org
-> >> Cc: linux-media@vger.kernel.org
-> >> Cc: Pawel Osciak <pawel@osciak.com>
-> >> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> >> Cc: Tomasz Figa <tfiga@chromium.org>
-> >> Cc: Laurent Dufour <ldufour@linux.ibm.com>
-> >> Cc: Vlastimil Babka <vbabka@suse.cz>
-> >> Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-> >> Cc: Michel Lespinasse <walken@google.com>
-> >> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> >> --
-> >> v3:
-> >> - Reference the commit that enabled the zerocopy userptr use case to
-> >>   make it abundandtly clear that this patch only affects that, and not
-> >>   normal memory userptr. The old commit message already explained that
-> >>   normal memory userptr is unaffected, but I guess that was not clear
-> >>   enough.
-> >> ---
-> >>  drivers/media/common/videobuf2/frame_vector.c | 2 +-
-> >>  drivers/media/v4l2-core/videobuf-dma-contig.c | 2 +-
-> >>  2 files changed, 2 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/m=
-edia/common/videobuf2/frame_vector.c
-> >> index a0e65481a201..1a82ec13ea00 100644
-> >> --- a/drivers/media/common/videobuf2/frame_vector.c
-> >> +++ b/drivers/media/common/videobuf2/frame_vector.c
-> >> @@ -70,7 +70,7 @@ int get_vaddr_frames(unsigned long start, unsigned i=
-nt nr_frames,
-> >>                      break;
-> >>
-> >>              while (ret < nr_frames && start + PAGE_SIZE <=3D vma->vm_=
-end) {
-> >> -                    err =3D follow_pfn(vma, start, &nums[ret]);
-> >> +                    err =3D unsafe_follow_pfn(vma, start, &nums[ret])=
-;
-> >>                      if (err) {
-> >>                              if (ret =3D=3D 0)
-> >>                                      ret =3D err;
-> >> diff --git a/drivers/media/v4l2-core/videobuf-dma-contig.c b/drivers/m=
-edia/v4l2-core/videobuf-dma-contig.c
-> >> index 52312ce2ba05..821c4a76ab96 100644
-> >> --- a/drivers/media/v4l2-core/videobuf-dma-contig.c
-> >> +++ b/drivers/media/v4l2-core/videobuf-dma-contig.c
-> >> @@ -183,7 +183,7 @@ static int videobuf_dma_contig_user_get(struct vid=
-eobuf_dma_contig_memory *mem,
-> >>      user_address =3D untagged_baddr;
-> >>
-> >>      while (pages_done < (mem->size >> PAGE_SHIFT)) {
-> >> -            ret =3D follow_pfn(vma, user_address, &this_pfn);
-> >> +            ret =3D unsafe_follow_pfn(vma, user_address, &this_pfn);
-> >>              if (ret)
-> >>                      break;
-> >>
-> >>
-> >
->
-
-
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+-- 
+~Vinod
