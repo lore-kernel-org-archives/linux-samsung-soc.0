@@ -2,293 +2,519 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AA4C5519F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Nov 2020 10:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F841C5519F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Nov 2020 10:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B025422255
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Nov 2020 10:25:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EFF522255
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Nov 2020 10:27:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="P34G2Tt1"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ul5G8v7F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbgKTKZK (ORCPT
+        id S1727649AbgKTK1I (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Nov 2020 05:25:10 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:43073 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727527AbgKTKZK (ORCPT
+        Fri, 20 Nov 2020 05:27:08 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44368 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbgKTK1H (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Nov 2020 05:25:10 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20201120102504epoutp03071e5392d78b309814ddcd4010398ce3~JMFnsjVmb0241402414epoutp03Z
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Nov 2020 10:25:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20201120102504epoutp03071e5392d78b309814ddcd4010398ce3~JMFnsjVmb0241402414epoutp03Z
+        Fri, 20 Nov 2020 05:27:07 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201120102655euoutp02deff9a41989c84a91360f294d112581f~JMHOPC92T1834318343euoutp02I
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Nov 2020 10:26:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201120102655euoutp02deff9a41989c84a91360f294d112581f~JMHOPC92T1834318343euoutp02I
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1605867904;
-        bh=7RujST5AViMMbyJUqfeZKhDggko2Fuju3w5K5L+MkuQ=;
-        h=Subject:To:From:Date:In-Reply-To:References:From;
-        b=P34G2Tt11Lyki9Vrs/xxl3QQmqllhrPBdPKQlq7dptpE2qXchgNj1oVHfm7+gYMRW
-         39bPpgiSK6Rt92/AWjJ7MHbgPSwben87tUeiWBEu26P5ujZC+viUiNWNFTEnjoq3X1
-         Qn/T1L9803Nupz9gjZo/dOlmE5tb5LfIFgv8741A=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201120102504epcas1p229c6ed101e12441813ae3ba9d2a9d67b~JMFnS1cmp1037610376epcas1p2d;
-        Fri, 20 Nov 2020 10:25:04 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4Cct3220XszMqYlp; Fri, 20 Nov
-        2020 10:25:02 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F3.41.09582.E7997BF5; Fri, 20 Nov 2020 19:25:02 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20201120102500epcas1p44ed3f23e6a965e2dd22789f020804b73~JMFjzXaH90677506775epcas1p4Q;
-        Fri, 20 Nov 2020 10:25:00 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201120102500epsmtrp15352bd6a1f1e0d937ff0c539a022b7ce~JMFjypxVY2548025480epsmtrp1C;
-        Fri, 20 Nov 2020 10:25:00 +0000 (GMT)
-X-AuditID: b6c32a37-8afff7000000256e-c1-5fb7997e0c8b
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        91.D4.13470.C7997BF5; Fri, 20 Nov 2020 19:25:00 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201120102500epsmtip28db34feb69ff9ad5c0a3f287207568ab~JMFjn8u0E2039220392epsmtip20;
-        Fri, 20 Nov 2020 10:25:00 +0000 (GMT)
-Subject: Re: [PATCH] clk: samsung: allow compile testing of Exynos, S3C64xx
- and S5Pv210
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <b09cd44c-8ec0-f0cc-d566-64c16f54b008@samsung.com>
-Date:   Fri, 20 Nov 2020 19:39:23 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
-MIME-Version: 1.0
-In-Reply-To: <20201119164509.754851-1-krzk@kernel.org>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmvm7dzO3xBh9eclucP7+B3eJjzz1W
-        i8u75rBZzDi/j8ni4ilXi8Nv2lkt/l3byGKxatcfRgcOj/c3Wtk9ds66y+6xaVUnm0ffllWM
-        Hp83yQWwRmXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl
-        5gCdoqRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpsCzQK07MLS7NS9dLzs+1MjQw
-        MDIFKkzIzthz7BNjwR2Liof/J7M2MC7Q72Lk4JAQMJHYdCO3i5GLQ0hgB6PEsSNPmCCcT4wS
-        TY/uMkI43xglph44wdrFyAnW8fLaS1aIxF5GiV97bkC1vAfqv7uDDWSusECkxMHvNiBxEYG1
-        TBJvX81mBOlmE9CS2P/iBhuIzS+gKHH1x2OwOK+AncTm/YuZQGwWAVWJGTdOMYPYogJhEie3
-        tUDVCEqcnPmEBcTmFDCT2DBhF5jNLCAucevJfCYIW15i+9s5zCCLJQSmcki0vG5mgTjbReL/
-        t4+MELawxKvjW9ghbCmJl/1tUHa1xMqTR9ggmjsYJbbsvwD1s7HE/qWTmUA+YxbQlFi/Sx8i
-        rCix8/dcRojFfBLvvvawQgKVV6KjTQiiRFni8oO7TBC2pMTi9k42CNtD4ujyZqYJjIqzkLw2
-        C8k7s5C8Mwth8QJGllWMYqkFxbnpqcWGBcbIsb2JEZxMtcx3ME57+0HvECMTB+MhRgkOZiUR
-        3rWaW+OFeFMSK6tSi/Lji0pzUosPMZoCA3sis5Rocj4wneeVxBuaGhkbG1uYGJqZGhoqifP+
-        0e6IFxJITyxJzU5NLUgtgulj4uCUamBi75nl8TaTZ8Pc7/t/z6y62nn8oMar/yzZ83Y2X1TY
-        W7l4Tpa1x6L69bOc/n/fyR32lnPl34n9er3GUntC/jkKVkvcVNm7WbLwROaCxuZ10R7J7Psn
-        /lne+LpU/tbTpiu7H/ZNcVCad5NzSp7lyz/rZy78dDs4L/ptsMOU60Fl9RmzvGIaev2bwhS0
-        jB6J+L+471kj8WNy2tcrPPwb2Nh1Koon3f1q3LzR+4PMeqMDkaxubBqXby10uGm4act2uf5N
-        SvJm+2b8+rC3+/JKz5WeptfDLPw+SHv89j4Stih+QXb/vzWO8yZPKG2PuBO89anl7+4cK8P1
-        yU9nn9Kqn3LWV2fhxw62N3siAtdtEwnYp8RSnJFoqMVcVJwIABkqnSEvBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNLMWRmVeSWpSXmKPExsWy7bCSvG7NzO3xBlsaNCzOn9/AbvGx5x6r
-        xeVdc9gsZpzfx2Rx8ZSrxeE37awW/65tZLFYtesPowOHx/sbreweO2fdZffYtKqTzaNvyypG
-        j8+b5AJYo7hsUlJzMstSi/TtErgy9hz7xFhwx6Li4f/JrA2MC/S7GDk5JARMJF5ee8naxcjF
-        ISSwm1Hi9v+97BAJSYlpF48ydzFyANnCEocPF0PUvGWUOPntE1hcWCBS4uB3G5C4iMB6JomW
-        1aeYIIo6GSWWXH7KBDKITUBLYv+LG2wgNr+AosTVH48ZQWxeATuJzfsXg9WwCKhKzLhxihnE
-        FhUIk9i55DETRI2gxMmZT1hAbE4BM4kNE3aB2cwC6hJ/5l1ihrDFJW49mc8EYctLbH87h3kC
-        o9AsJO2zkLTMQtIyC0nLAkaWVYySqQXFuem5xYYFhnmp5XrFibnFpXnpesn5uZsYwfGjpbmD
-        cfuqD3qHGJk4GA8xSnAwK4nwrtXcGi/Em5JYWZValB9fVJqTWnyIUZqDRUmc90bhwjghgfTE
-        ktTs1NSC1CKYLBMHp1QDU6avdx+HUuxjv0Unzqmld31km1v5zGqu9c/JSmXHPDkmBPS++rO+
-        y+PAhzpl/vfWti4bHoifP2YZo/Ug6tBpxiVvzlUwv2VhkhNZ5WFibcSi7LOpksVmyYy0no9P
-        75xWWMUSL9x46vG0r5vtHsyVnlwQ+qOOI+RWVKasZ3fLYr6yFbNO7VPrPHDs3uzYyx23l8ie
-        SchaJu7NbbJx0dqzzHH/eDgMPOfevN10qYizrrfp0Od79uEJgt0ZdU2xUzLeb+dfzM9nuXg2
-        m7V2gZTc8VKr2yrhT7evYH2naPXY8/XTGyv8QiJjPqw4Vftu59FJOurc8xaeF1rv6xK1w8z9
-        70mzrkXbG3o/J7AYuL49pMRSnJFoqMVcVJwIABXf8cgOAwAA
-X-CMS-MailID: 20201120102500epcas1p44ed3f23e6a965e2dd22789f020804b73
+        s=mail20170921; t=1605868015;
+        bh=4mw3nHzFZwP6Nf+X3tv8Vexa2lTwfIIZFvFFjCrXNm4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ul5G8v7FedM24gI35nezyrWfiI/MV5ba3Dd9wyncqrChBZ4PS2opk3IGvgP4yGWfu
+         g5NnRFbdCgvqs+s1sQ6vQYYNXpaePokAe27rGxBwKlwP60oaOtjWjIslJGQydw30+e
+         J1uC27ZpVa7Zrf9UP0jamtrht1QdIksm461udbcQ=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20201120102654eucas1p27c1da664481415e7cf9fcd6c3832e1d0~JMHN9ZGMl1024710247eucas1p2w;
+        Fri, 20 Nov 2020 10:26:54 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id CB.EB.27958.EE997BF5; Fri, 20
+        Nov 2020 10:26:54 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20201120102654eucas1p2f7395e14632a019a58f0ed5002eff556~JMHNliW-b1429214292eucas1p2I;
+        Fri, 20 Nov 2020 10:26:54 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201120102654eusmtrp2af82ddf8caa4eb4f229eaf7b1d08efc1~JMHNkx7-21132911329eusmtrp2W;
+        Fri, 20 Nov 2020 10:26:54 +0000 (GMT)
+X-AuditID: cbfec7f2-f15ff70000006d36-21-5fb799ee825d
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 84.ED.21957.EE997BF5; Fri, 20
+        Nov 2020 10:26:54 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20201120102653eusmtip1ba2f10a85eb6df3e6b185ab68ef6ba43~JMHM66UsR1922519225eusmtip1k;
+        Fri, 20 Nov 2020 10:26:53 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     Vinod Koul <vkoul@kernel.org>, linux-samsung-soc@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v4 4/5 REBASED RESEND] phy: samsung: phy-exynos-pcie: rework
+ driver to support Exynos5433 PCIe PHY
+Date:   Fri, 20 Nov 2020 11:26:27 +0100
+Message-Id: <20201120102627.14450-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201120101138.GI2925@vkoul-mobl>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNKsWRmVeSWpSXmKPExsWy7djPc7rvZm6PN3i7TN1i44z1rBZLmjIs
+        5h85x2px41cbq8WKLzPZLS487WGzOH9+A7vF5V1z2CzOzjvOZjHj/D4mize/X7BbrD1yl93i
+        /54d7BY775xgduDzWDNvDaPHzll32T0WbCr12LSqk82jb8sqRo/jN7YzeXzeJBfAHsVlk5Ka
+        k1mWWqRvl8CVsWDOJdaCZWUVzy/tZmlgPJnWxcjJISFgInFoyTGWLkYuDiGBFYwSC7feZoJw
+        vjBKzH63jg3C+cwo8eHVbWaYlo+3/0O1LGeUaJo4gxmu5eeu1ywgVWwChhJdb7vYQGwRgUSJ
+        1gkr2UGKmAV2MEtcPf0DqIODQ1igROLu+nyQGhYBVYmtn5+A1fMK2EqsvXmXDWKbvMTqDQfA
+        NnMK6Es8fHAQ7CQJgTscEj2HFrNAFLlIXHxwggnCFpZ4dXwLO4QtI/F/53wmiIZmRomH59ay
+        Qzg9jBKXm2YwQlRZS9w594sN5CJmAU2J9bv0IcKOEl8fHAE7VEKAT+LGW0GQMDOQOWnbdKgw
+        r0RHmxBEtZrErOPr4NYevHAJGloeEvfvHISGVhOjxMH1TawTGOVnISxbwMi4ilE8tbQ4Nz21
+        2DAvtVyvODG3uDQvXS85P3cTIzD9nP53/NMOxrmvPuodYmTiYDzEKMHBrCTCu1Zza7wQb0pi
+        ZVVqUX58UWlOavEhRmkOFiVx3lWz18QLCaQnlqRmp6YWpBbBZJk4OKUamPi4v26bMDvlUILv
+        5wjbL4whAVt/f5h8jWfmC+bv0T1Toi/tt7VqWbk+fKHfAdakLT63/294tMXhTPGdr0ntdgtu
+        lM5fM7Hnzm2fd1+3r55TmO9T15m0LeOvhMgXDWY+Ue798/S+7vdbraF+at7R3IBbc98+8q07
+        ufKXXN0GWZtt88sST+WyMAjMqTJ5UezSunBBqQdzSn3TnbPG7yYbh6i+vfnJ+rn93cUti9en
+        O31P3n7z1CmH/dv7t2aZz30Rr9ysmb21b6KV+fG9Cw7uubBl4ooFZ6Yc5OZ0ylcQnp0y32KV
+        RH16i97UW1NyuN8XLuC8xe3pb3l5z50/Cq9uh03QNbXyEsg7eONS8aKeouccSizFGYmGWsxF
+        xYkAPc3aJa4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNLMWRmVeSWpSXmKPExsVy+t/xu7rvZm6PNzi+gddi44z1rBZLmjIs
+        5h85x2px41cbq8WKLzPZLS487WGzOH9+A7vF5V1z2CzOzjvOZjHj/D4mize/X7BbrD1yl93i
+        /54d7BY775xgduDzWDNvDaPHzll32T0WbCr12LSqk82jb8sqRo/jN7YzeXzeJBfAHqVnU5Rf
+        WpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CXsWDOJdaCZWUV
+        zy/tZmlgPJnWxcjJISFgIvHx9n8WEFtIYCmjxLuTPBBxGYmT0xpYIWxhiT/Xuti6GLmAaj4x
+        Skye940ZJMEmYCjR9RYkwckhIpAscfH8ORaQImaBA8wSs39uBpsqLFAk0Xj0E5jNIqAqsfXz
+        E7AGXgFbibU377JBbJCXWL3hANhQTgF9iYcPDrJBXKQnsbpnC/MERr4FjAyrGEVSS4tz03OL
+        DfWKE3OLS/PS9ZLzczcxAmNh27Gfm3cwznv1Ue8QIxMH4yFGCQ5mJRHetZpb44V4UxIrq1KL
+        8uOLSnNSiw8xmgLdMZFZSjQ5HxiNeSXxhmYGpoYmZpYGppZmxkrivFvnrokXEkhPLEnNTk0t
+        SC2C6WPi4JRqYNL7oWu/6YTy0awD4o1fl/h8uXDfYcGpwzsbO6IneBf+fmdbkr5tzaLPPPaM
+        L46pLp6qcEa2atljiWlvmuXzI51VIrtlnjqL2AUdmRhRxH71/YQNb08X/DF/sUD1WanpZA+2
+        R9Mepli+3vTF7v2VbTMvhVsYzl5crsRwLpNH1m0nw/THb7a/CZnqmb10Qt+Fn2KvXMIOMkRv
+        lt/w9b1+c6PNBmHZhV46WjG+S/ufKZSfN9r+Sej7wQbGCNGwNV9nPPiqsbLieKmCDpdGXG6b
+        lj33K7Wp0zQOqjGm7HjBubKp2Slgg3kHj8+eN+HMzCdvZM3uUQq9mWsekvnOKrd2Gtv92Uv7
+        T3edtni37K7UEWUlluKMREMt5qLiRACWYaBcDgMAAA==
+X-CMS-MailID: 20201120102654eucas1p2f7395e14632a019a58f0ed5002eff556
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201119164614epcas1p23b1a2b17bf89f6396b7979fff623bdee
-References: <CGME20201119164614epcas1p23b1a2b17bf89f6396b7979fff623bdee@epcas1p2.samsung.com>
-        <20201119164509.754851-1-krzk@kernel.org>
+X-RootMTR: 20201120102654eucas1p2f7395e14632a019a58f0ed5002eff556
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201120102654eucas1p2f7395e14632a019a58f0ed5002eff556
+References: <20201120101138.GI2925@vkoul-mobl>
+        <CGME20201120102654eucas1p2f7395e14632a019a58f0ed5002eff556@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/20/20 1:45 AM, Krzysztof Kozlowski wrote:
-> So far all Exynos, S3C64xx and S5Pv210 clock units were selected by
-> respective SOC/ARCH Kconfig option.  On a kernel built for selected
-> SoCs, this allowed to build only limited set of matching clock drivers.
-> However compile testing was not possible in such case as Makefile object
-> depent on SOC/ARCH option.
-> 
-> Add separate Kconfig options for each of them to be able to compile
-> test.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/clk/samsung/Kconfig  | 67 ++++++++++++++++++++++++++++++++++--
->  drivers/clk/samsung/Makefile | 22 ++++++------
->  include/linux/clk/samsung.h  |  4 +--
->  3 files changed, 78 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-> index 7e9c186e57ef..0441c4f73ac9 100644
-> --- a/drivers/clk/samsung/Kconfig
-> +++ b/drivers/clk/samsung/Kconfig
-> @@ -2,10 +2,73 @@
->  # Recent Exynos platforms should just select COMMON_CLK_SAMSUNG:
->  config COMMON_CLK_SAMSUNG
->  	bool "Samsung Exynos clock controller support" if COMPILE_TEST
-> -	# Clocks on ARM64 SoCs (e.g. Exynos5433, Exynos7) are chosen by
-> -	# EXYNOS_ARM64_COMMON_CLK to avoid building them on ARMv7:
-> +	select S3C64XX_COMMON_CLK if ARM && ARCH_S3C64XX
-> +	select S5PV210_COMMON_CLK if ARM && ARCH_S5PV210
-> +	select EXYNOS_3250_COMMON_CLK if ARM && SOC_EXYNOS3250
-> +	select EXYNOS_4_COMMON_CLK if ARM && ARCH_EXYNOS4
-> +	select EXYNOS_5250_COMMON_CLK if ARM && SOC_EXYNOS5250
-> +	select EXYNOS_5260_COMMON_CLK if ARM && SOC_EXYNOS5260
-> +	select EXYNOS_5410_COMMON_CLK if ARM && SOC_EXYNOS5410
-> +	select EXYNOS_5420_COMMON_CLK if ARM && SOC_EXYNOS5420
->  	select EXYNOS_ARM64_COMMON_CLK if ARM64 && ARCH_EXYNOS
->  
-> +config S3C64XX_COMMON_CLK
-> +	bool "Samsung S3C64xx clock controller support" if COMPILE_TEST
-> +	depends on COMMON_CLK_SAMSUNG
-> +	help
-> +	  Support for the clock controller present on the Samsung S3C64xx SoCs.
-> +	  Choose Y here only if you build for this SoC.
-> +
-> +config S5PV210_COMMON_CLK
-> +	bool "Samsung S5Pv210 clock controller support" if COMPILE_TEST
-> +	depends on COMMON_CLK_SAMSUNG
-> +	help
-> +	  Support for the clock controller present on the Samsung S5Pv210 SoCs.
-> +	  Choose Y here only if you build for this SoC.
-> +
-> +config EXYNOS_3250_COMMON_CLK
-> +	bool "Samsung Exynos3250 clock controller support" if COMPILE_TEST
-> +	depends on COMMON_CLK_SAMSUNG
-> +	help
-> +	  Support for the clock controller present on the Samsung
-> +	  Exynos3250 SoCs. Choose Y here only if you build for this SoC.
-> +
-> +config EXYNOS_4_COMMON_CLK
-> +	bool "Samsung Exynos4 clock controller support" if COMPILE_TEST
-> +	depends on COMMON_CLK_SAMSUNG
-> +	help
-> +	  Support for the clock controller present on the Samsung
-> +	  Exynos4212 and Exynos4412 SoCs. Choose Y here only if you build for
-> +	  this SoC.
-> +
-> +config EXYNOS_5250_COMMON_CLK
-> +	bool "Samsung Exynos5250 clock controller support" if COMPILE_TEST
-> +	depends on COMMON_CLK_SAMSUNG
-> +	help
-> +	  Support for the clock controller present on the Samsung
-> +	  Exynos5250 SoCs. Choose Y here only if you build for this SoC.
-> +
-> +config EXYNOS_5260_COMMON_CLK
-> +	bool "Samsung Exynos5260 clock controller support" if COMPILE_TEST
-> +	depends on COMMON_CLK_SAMSUNG
-> +	help
-> +	  Support for the clock controller present on the Samsung
-> +	  Exynos5260 SoCs. Choose Y here only if you build for this SoC.
-> +
-> +config EXYNOS_5410_COMMON_CLK
-> +	bool "Samsung Exynos5410 clock controller support" if COMPILE_TEST
-> +	depends on COMMON_CLK_SAMSUNG
-> +	help
-> +	  Support for the clock controller present on the Samsung
-> +	  Exynos5410 SoCs. Choose Y here only if you build for this SoC.
-> +
-> +config EXYNOS_5420_COMMON_CLK
-> +	bool "Samsung Exynos5420 clock controller support" if COMPILE_TEST
-> +	depends on COMMON_CLK_SAMSUNG
-> +	help
-> +	  Support for the clock controller present on the Samsung
-> +	  Exynos5420 SoCs. Choose Y here only if you build for this SoC.
-> +
->  config EXYNOS_ARM64_COMMON_CLK
->  	bool "Samsung Exynos ARMv8-family clock controller support" if COMPILE_TEST
->  	depends on COMMON_CLK_SAMSUNG
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index 6891b087acff..028b2e27a37e 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -4,15 +4,15 @@
->  #
->  
->  obj-$(CONFIG_COMMON_CLK)	+= clk.o clk-pll.o clk-cpu.o
-> -obj-$(CONFIG_SOC_EXYNOS3250)	+= clk-exynos3250.o
-> -obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4.o
-> -obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4412-isp.o
-> -obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
-> -obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5-subcmu.o
-> -obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
-> -obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
-> -obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
-> -obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5-subcmu.o
-> +obj-$(CONFIG_EXYNOS_3250_COMMON_CLK)	+= clk-exynos3250.o
-> +obj-$(CONFIG_EXYNOS_4_COMMON_CLK)	+= clk-exynos4.o
-> +obj-$(CONFIG_EXYNOS_4_COMMON_CLK)	+= clk-exynos4412-isp.o
-> +obj-$(CONFIG_EXYNOS_5250_COMMON_CLK)	+= clk-exynos5250.o
-> +obj-$(CONFIG_EXYNOS_5250_COMMON_CLK)	+= clk-exynos5-subcmu.o
-> +obj-$(CONFIG_EXYNOS_5260_COMMON_CLK)	+= clk-exynos5260.o
-> +obj-$(CONFIG_EXYNOS_5410_COMMON_CLK)	+= clk-exynos5410.o
-> +obj-$(CONFIG_EXYNOS_5420_COMMON_CLK)	+= clk-exynos5420.o
-> +obj-$(CONFIG_EXYNOS_5420_COMMON_CLK)	+= clk-exynos5-subcmu.o
->  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
->  obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) += clk-exynos-audss.o
->  obj-$(CONFIG_EXYNOS_CLKOUT)	+= clk-exynos-clkout.o
-> @@ -21,5 +21,5 @@ obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
->  obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
->  obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
->  obj-$(CONFIG_S3C2443_COMMON_CLK)+= clk-s3c2443.o
-> -obj-$(CONFIG_ARCH_S3C64XX)	+= clk-s3c64xx.o
-> -obj-$(CONFIG_ARCH_S5PV210)	+= clk-s5pv210.o clk-s5pv210-audss.o
-> +obj-$(CONFIG_S3C64XX_COMMON_CLK)	+= clk-s3c64xx.o
-> +obj-$(CONFIG_S5PV210_COMMON_CLK)	+= clk-s5pv210.o clk-s5pv210-audss.o
-> diff --git a/include/linux/clk/samsung.h b/include/linux/clk/samsung.h
-> index 79097e365f7f..38b774001712 100644
-> --- a/include/linux/clk/samsung.h
-> +++ b/include/linux/clk/samsung.h
-> @@ -10,7 +10,7 @@
->  
->  struct device_node;
->  
-> -#ifdef CONFIG_ARCH_S3C64XX
-> +#ifdef CONFIG_S3C64XX_COMMON_CLK
->  void s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
->  		      unsigned long xusbxti_f, bool s3c6400,
->  		      void __iomem *base);
-> @@ -19,7 +19,7 @@ static inline void s3c64xx_clk_init(struct device_node *np,
->  				    unsigned long xtal_f,
->  				    unsigned long xusbxti_f,
->  				    bool s3c6400, void __iomem *base) { }
-> -#endif /* CONFIG_ARCH_S3C64XX */
-> +#endif /* CONFIG_S3C64XX_COMMON_CLK */
->  
->  #ifdef CONFIG_S3C2410_COMMON_CLK
->  void s3c2410_common_clk_init(struct device_node *np, unsigned long xti_f,
-> 
+From: Jaehoon Chung <jh80.chung@samsung.com>
 
-It looks good to me for compile testing. Thanks.
+Exynos5440 SoC support has been dropped since commit 8c83315da1cf ("ARM:
+dts: exynos: Remove Exynos5440"). Rework this driver to support PCIe PHY
+variant found in the Exynos5433 SoCs.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+[mszyprow: reworked the driver to support only Exynos5433 variant, rebased
+	   onto current kernel code, rewrote commit message]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Jingoo Han <jingoohan1@gmail.com>
+---
+Resend reason: rebased onto current -next branch
+---
+ drivers/phy/samsung/phy-exynos-pcie.c | 301 ++++++++++----------------
+ 1 file changed, 112 insertions(+), 189 deletions(-)
 
+diff --git a/drivers/phy/samsung/phy-exynos-pcie.c b/drivers/phy/samsung/phy-exynos-pcie.c
+index c98fff5c1ac8..d91de323dd0e 100644
+--- a/drivers/phy/samsung/phy-exynos-pcie.c
++++ b/drivers/phy/samsung/phy-exynos-pcie.c
+@@ -4,70 +4,41 @@
+  *
+  * Phy provider for PCIe controller on Exynos SoC series
+  *
+- * Copyright (C) 2017 Samsung Electronics Co., Ltd.
++ * Copyright (C) 2017-2020 Samsung Electronics Co., Ltd.
+  * Jaehoon Chung <jh80.chung@samsung.com>
+  */
+ 
+-#include <linux/delay.h>
+ #include <linux/io.h>
+-#include <linux/iopoll.h>
+-#include <linux/init.h>
+ #include <linux/mfd/syscon.h>
+-#include <linux/of.h>
+-#include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/phy/phy.h>
+ #include <linux/regmap.h>
+ 
+-/* PCIe Purple registers */
+-#define PCIE_PHY_GLOBAL_RESET		0x000
+-#define PCIE_PHY_COMMON_RESET		0x004
+-#define PCIE_PHY_CMN_REG		0x008
+-#define PCIE_PHY_MAC_RESET		0x00c
+-#define PCIE_PHY_PLL_LOCKED		0x010
+-#define PCIE_PHY_TRSVREG_RESET		0x020
+-#define PCIE_PHY_TRSV_RESET		0x024
+-
+-/* PCIe PHY registers */
+-#define PCIE_PHY_IMPEDANCE		0x004
+-#define PCIE_PHY_PLL_DIV_0		0x008
+-#define PCIE_PHY_PLL_BIAS		0x00c
+-#define PCIE_PHY_DCC_FEEDBACK		0x014
+-#define PCIE_PHY_PLL_DIV_1		0x05c
+-#define PCIE_PHY_COMMON_POWER		0x064
+-#define PCIE_PHY_COMMON_PD_CMN		BIT(3)
+-#define PCIE_PHY_TRSV0_EMP_LVL		0x084
+-#define PCIE_PHY_TRSV0_DRV_LVL		0x088
+-#define PCIE_PHY_TRSV0_RXCDR		0x0ac
+-#define PCIE_PHY_TRSV0_POWER		0x0c4
+-#define PCIE_PHY_TRSV0_PD_TSV		BIT(7)
+-#define PCIE_PHY_TRSV0_LVCC		0x0dc
+-#define PCIE_PHY_TRSV1_EMP_LVL		0x144
+-#define PCIE_PHY_TRSV1_RXCDR		0x16c
+-#define PCIE_PHY_TRSV1_POWER		0x184
+-#define PCIE_PHY_TRSV1_PD_TSV		BIT(7)
+-#define PCIE_PHY_TRSV1_LVCC		0x19c
+-#define PCIE_PHY_TRSV2_EMP_LVL		0x204
+-#define PCIE_PHY_TRSV2_RXCDR		0x22c
+-#define PCIE_PHY_TRSV2_POWER		0x244
+-#define PCIE_PHY_TRSV2_PD_TSV		BIT(7)
+-#define PCIE_PHY_TRSV2_LVCC		0x25c
+-#define PCIE_PHY_TRSV3_EMP_LVL		0x2c4
+-#define PCIE_PHY_TRSV3_RXCDR		0x2ec
+-#define PCIE_PHY_TRSV3_POWER		0x304
+-#define PCIE_PHY_TRSV3_PD_TSV		BIT(7)
+-#define PCIE_PHY_TRSV3_LVCC		0x31c
+-
+-struct exynos_pcie_phy_data {
+-	const struct phy_ops	*ops;
+-};
++#define PCIE_PHY_OFFSET(x)		((x) * 0x4)
++
++/* Sysreg FSYS register offsets and bits for Exynos5433 */
++#define PCIE_EXYNOS5433_PHY_MAC_RESET		0x0208
++#define PCIE_MAC_RESET_MASK			0xFF
++#define PCIE_MAC_RESET				BIT(4)
++#define PCIE_EXYNOS5433_PHY_L1SUB_CM_CON	0x1010
++#define PCIE_REFCLK_GATING_EN			BIT(0)
++#define PCIE_EXYNOS5433_PHY_COMMON_RESET	0x1020
++#define PCIE_PHY_RESET				BIT(0)
++#define PCIE_EXYNOS5433_PHY_GLOBAL_RESET	0x1040
++#define PCIE_GLOBAL_RESET			BIT(0)
++#define PCIE_REFCLK				BIT(1)
++#define PCIE_REFCLK_MASK			0x16
++#define PCIE_APP_REQ_EXIT_L1_MODE		BIT(5)
++
++/* PMU PCIE PHY isolation control */
++#define EXYNOS5433_PMU_PCIE_PHY_OFFSET		0x730
+ 
+ /* For Exynos pcie phy */
+ struct exynos_pcie_phy {
+-	const struct exynos_pcie_phy_data *drv_data;
+-	void __iomem *phy_base;
+-	void __iomem *blk_base; /* For exynos5440 */
++	void __iomem *base;
++	struct regmap *pmureg;
++	struct regmap *fsysreg;
+ };
+ 
+ static void exynos_pcie_phy_writel(void __iomem *base, u32 val, u32 offset)
+@@ -75,153 +46,103 @@ static void exynos_pcie_phy_writel(void __iomem *base, u32 val, u32 offset)
+ 	writel(val, base + offset);
+ }
+ 
+-static u32 exynos_pcie_phy_readl(void __iomem *base, u32 offset)
+-{
+-	return readl(base + offset);
+-}
+-
+-/* For Exynos5440 specific functions */
+-static int exynos5440_pcie_phy_init(struct phy *phy)
++/* Exynos5433 specific functions */
++static int exynos5433_pcie_phy_init(struct phy *phy)
+ {
+ 	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+ 
+-	/* DCC feedback control off */
+-	exynos_pcie_phy_writel(ep->phy_base, 0x29, PCIE_PHY_DCC_FEEDBACK);
+-
+-	/* set TX/RX impedance */
+-	exynos_pcie_phy_writel(ep->phy_base, 0xd5, PCIE_PHY_IMPEDANCE);
+-
+-	/* set 50Mhz PHY clock */
+-	exynos_pcie_phy_writel(ep->phy_base, 0x14, PCIE_PHY_PLL_DIV_0);
+-	exynos_pcie_phy_writel(ep->phy_base, 0x12, PCIE_PHY_PLL_DIV_1);
+-
+-	/* set TX Differential output for lane 0 */
+-	exynos_pcie_phy_writel(ep->phy_base, 0x7f, PCIE_PHY_TRSV0_DRV_LVL);
+-
+-	/* set TX Pre-emphasis Level Control for lane 0 to minimum */
+-	exynos_pcie_phy_writel(ep->phy_base, 0x0, PCIE_PHY_TRSV0_EMP_LVL);
+-
+-	/* set RX clock and data recovery bandwidth */
+-	exynos_pcie_phy_writel(ep->phy_base, 0xe7, PCIE_PHY_PLL_BIAS);
+-	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV0_RXCDR);
+-	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV1_RXCDR);
+-	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV2_RXCDR);
+-	exynos_pcie_phy_writel(ep->phy_base, 0x82, PCIE_PHY_TRSV3_RXCDR);
+-
+-	/* change TX Pre-emphasis Level Control for lanes */
+-	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV0_EMP_LVL);
+-	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV1_EMP_LVL);
+-	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV2_EMP_LVL);
+-	exynos_pcie_phy_writel(ep->phy_base, 0x39, PCIE_PHY_TRSV3_EMP_LVL);
+-
+-	/* set LVCC */
+-	exynos_pcie_phy_writel(ep->phy_base, 0x20, PCIE_PHY_TRSV0_LVCC);
+-	exynos_pcie_phy_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV1_LVCC);
+-	exynos_pcie_phy_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV2_LVCC);
+-	exynos_pcie_phy_writel(ep->phy_base, 0xa0, PCIE_PHY_TRSV3_LVCC);
+-
+-	/* pulse for common reset */
+-	exynos_pcie_phy_writel(ep->blk_base, 1, PCIE_PHY_COMMON_RESET);
+-	udelay(500);
+-	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_COMMON_RESET);
+-
++	regmap_update_bits(ep->fsysreg,	PCIE_EXYNOS5433_PHY_COMMON_RESET,
++			   PCIE_PHY_RESET, 1);
++	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_MAC_RESET,
++			   PCIE_MAC_RESET, 0);
++
++	/* PHY refclk 24MHz */
++	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_GLOBAL_RESET,
++			   PCIE_REFCLK_MASK, PCIE_REFCLK);
++	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_GLOBAL_RESET,
++			   PCIE_GLOBAL_RESET, 0);
++
++
++	exynos_pcie_phy_writel(ep->base, 0x11, PCIE_PHY_OFFSET(0x3));
++
++	/* band gap reference on */
++	exynos_pcie_phy_writel(ep->base, 0, PCIE_PHY_OFFSET(0x20));
++	exynos_pcie_phy_writel(ep->base, 0, PCIE_PHY_OFFSET(0x4b));
++
++	/* jitter tunning */
++	exynos_pcie_phy_writel(ep->base, 0x34, PCIE_PHY_OFFSET(0x4));
++	exynos_pcie_phy_writel(ep->base, 0x02, PCIE_PHY_OFFSET(0x7));
++	exynos_pcie_phy_writel(ep->base, 0x41, PCIE_PHY_OFFSET(0x21));
++	exynos_pcie_phy_writel(ep->base, 0x7F, PCIE_PHY_OFFSET(0x14));
++	exynos_pcie_phy_writel(ep->base, 0xC0, PCIE_PHY_OFFSET(0x15));
++	exynos_pcie_phy_writel(ep->base, 0x61, PCIE_PHY_OFFSET(0x36));
++
++	/* D0 uninit.. */
++	exynos_pcie_phy_writel(ep->base, 0x44, PCIE_PHY_OFFSET(0x3D));
++
++	/* 24MHz */
++	exynos_pcie_phy_writel(ep->base, 0x94, PCIE_PHY_OFFSET(0x8));
++	exynos_pcie_phy_writel(ep->base, 0xA7, PCIE_PHY_OFFSET(0x9));
++	exynos_pcie_phy_writel(ep->base, 0x93, PCIE_PHY_OFFSET(0xA));
++	exynos_pcie_phy_writel(ep->base, 0x6B, PCIE_PHY_OFFSET(0xC));
++	exynos_pcie_phy_writel(ep->base, 0xA5, PCIE_PHY_OFFSET(0xF));
++	exynos_pcie_phy_writel(ep->base, 0x34, PCIE_PHY_OFFSET(0x16));
++	exynos_pcie_phy_writel(ep->base, 0xA3, PCIE_PHY_OFFSET(0x17));
++	exynos_pcie_phy_writel(ep->base, 0xA7, PCIE_PHY_OFFSET(0x1A));
++	exynos_pcie_phy_writel(ep->base, 0x71, PCIE_PHY_OFFSET(0x23));
++	exynos_pcie_phy_writel(ep->base, 0x4C, PCIE_PHY_OFFSET(0x24));
++
++	exynos_pcie_phy_writel(ep->base, 0x0E, PCIE_PHY_OFFSET(0x26));
++	exynos_pcie_phy_writel(ep->base, 0x14, PCIE_PHY_OFFSET(0x7));
++	exynos_pcie_phy_writel(ep->base, 0x48, PCIE_PHY_OFFSET(0x43));
++	exynos_pcie_phy_writel(ep->base, 0x44, PCIE_PHY_OFFSET(0x44));
++	exynos_pcie_phy_writel(ep->base, 0x03, PCIE_PHY_OFFSET(0x45));
++	exynos_pcie_phy_writel(ep->base, 0xA7, PCIE_PHY_OFFSET(0x48));
++	exynos_pcie_phy_writel(ep->base, 0x13, PCIE_PHY_OFFSET(0x54));
++	exynos_pcie_phy_writel(ep->base, 0x04, PCIE_PHY_OFFSET(0x31));
++	exynos_pcie_phy_writel(ep->base, 0, PCIE_PHY_OFFSET(0x32));
++
++	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_COMMON_RESET,
++			   PCIE_PHY_RESET, 0);
++	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_MAC_RESET,
++			   PCIE_MAC_RESET_MASK, PCIE_MAC_RESET);
+ 	return 0;
+ }
+ 
+-static int exynos5440_pcie_phy_power_on(struct phy *phy)
++static int exynos5433_pcie_phy_power_on(struct phy *phy)
+ {
+ 	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+-	u32 val;
+-
+-	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_COMMON_RESET);
+-	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_CMN_REG);
+-	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_TRSVREG_RESET);
+-	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_TRSV_RESET);
+-
+-	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_COMMON_POWER);
+-	val &= ~PCIE_PHY_COMMON_PD_CMN;
+-	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_COMMON_POWER);
+-
+-	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV0_POWER);
+-	val &= ~PCIE_PHY_TRSV0_PD_TSV;
+-	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV0_POWER);
+-
+-	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV1_POWER);
+-	val &= ~PCIE_PHY_TRSV1_PD_TSV;
+-	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV1_POWER);
+-
+-	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV2_POWER);
+-	val &= ~PCIE_PHY_TRSV2_PD_TSV;
+-	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV2_POWER);
+-
+-	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV3_POWER);
+-	val &= ~PCIE_PHY_TRSV3_PD_TSV;
+-	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV3_POWER);
+ 
++	regmap_update_bits(ep->pmureg, EXYNOS5433_PMU_PCIE_PHY_OFFSET,
++			   BIT(0), 1);
++	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_GLOBAL_RESET,
++			   PCIE_APP_REQ_EXIT_L1_MODE, 0);
++	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_L1SUB_CM_CON,
++			   PCIE_REFCLK_GATING_EN, 0);
+ 	return 0;
+ }
+ 
+-static int exynos5440_pcie_phy_power_off(struct phy *phy)
++static int exynos5433_pcie_phy_power_off(struct phy *phy)
+ {
+ 	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+-	u32 val;
+-
+-	if (readl_poll_timeout(ep->phy_base + PCIE_PHY_PLL_LOCKED, val,
+-				(val != 0), 1, 500)) {
+-		dev_err(&phy->dev, "PLL Locked: 0x%x\n", val);
+-		return -ETIMEDOUT;
+-	}
+-
+-	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_COMMON_POWER);
+-	val |= PCIE_PHY_COMMON_PD_CMN;
+-	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_COMMON_POWER);
+-
+-	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV0_POWER);
+-	val |= PCIE_PHY_TRSV0_PD_TSV;
+-	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV0_POWER);
+-
+-	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV1_POWER);
+-	val |= PCIE_PHY_TRSV1_PD_TSV;
+-	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV1_POWER);
+-
+-	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV2_POWER);
+-	val |= PCIE_PHY_TRSV2_PD_TSV;
+-	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV2_POWER);
+-
+-	val = exynos_pcie_phy_readl(ep->phy_base, PCIE_PHY_TRSV3_POWER);
+-	val |= PCIE_PHY_TRSV3_PD_TSV;
+-	exynos_pcie_phy_writel(ep->phy_base, val, PCIE_PHY_TRSV3_POWER);
+ 
++	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_L1SUB_CM_CON,
++			   PCIE_REFCLK_GATING_EN, PCIE_REFCLK_GATING_EN);
++	regmap_update_bits(ep->pmureg, EXYNOS5433_PMU_PCIE_PHY_OFFSET,
++			   BIT(0), 0);
+ 	return 0;
+ }
+ 
+-static int exynos5440_pcie_phy_reset(struct phy *phy)
+-{
+-	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+-
+-	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_MAC_RESET);
+-	exynos_pcie_phy_writel(ep->blk_base, 1, PCIE_PHY_GLOBAL_RESET);
+-	exynos_pcie_phy_writel(ep->blk_base, 0, PCIE_PHY_GLOBAL_RESET);
+-
+-	return 0;
+-}
+-
+-static const struct phy_ops exynos5440_phy_ops = {
+-	.init		= exynos5440_pcie_phy_init,
+-	.power_on	= exynos5440_pcie_phy_power_on,
+-	.power_off	= exynos5440_pcie_phy_power_off,
+-	.reset		= exynos5440_pcie_phy_reset,
++static const struct phy_ops exynos5433_phy_ops = {
++	.init		= exynos5433_pcie_phy_init,
++	.power_on	= exynos5433_pcie_phy_power_on,
++	.power_off	= exynos5433_pcie_phy_power_off,
+ 	.owner		= THIS_MODULE,
+ };
+ 
+-static const struct exynos_pcie_phy_data exynos5440_pcie_phy_data = {
+-	.ops		= &exynos5440_phy_ops,
+-};
+-
+ static const struct of_device_id exynos_pcie_phy_match[] = {
+ 	{
+-		.compatible = "samsung,exynos5440-pcie-phy",
+-		.data = &exynos5440_pcie_phy_data,
++		.compatible = "samsung,exynos5433-pcie-phy",
+ 	},
+ 	{},
+ };
+@@ -232,27 +153,30 @@ static int exynos_pcie_phy_probe(struct platform_device *pdev)
+ 	struct exynos_pcie_phy *exynos_phy;
+ 	struct phy *generic_phy;
+ 	struct phy_provider *phy_provider;
+-	const struct exynos_pcie_phy_data *drv_data;
+-
+-	drv_data = of_device_get_match_data(dev);
+-	if (!drv_data)
+-		return -ENODEV;
+ 
+ 	exynos_phy = devm_kzalloc(dev, sizeof(*exynos_phy), GFP_KERNEL);
+ 	if (!exynos_phy)
+ 		return -ENOMEM;
+ 
+-	exynos_phy->phy_base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(exynos_phy->phy_base))
+-		return PTR_ERR(exynos_phy->phy_base);
++	exynos_phy->base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(exynos_phy->base))
++		return PTR_ERR(exynos_phy->base);
+ 
+-	exynos_phy->blk_base = devm_platform_ioremap_resource(pdev, 1);
+-	if (IS_ERR(exynos_phy->blk_base))
+-		return PTR_ERR(exynos_phy->blk_base);
++	exynos_phy->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
++							"samsung,pmu-syscon");
++	if (IS_ERR(exynos_phy->pmureg)) {
++		dev_err(&pdev->dev, "PMU regmap lookup failed.\n");
++		return PTR_ERR(exynos_phy->pmureg);
++	}
+ 
+-	exynos_phy->drv_data = drv_data;
++	exynos_phy->fsysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
++							 "samsung,fsys-sysreg");
++	if (IS_ERR(exynos_phy->fsysreg)) {
++		dev_err(&pdev->dev, "FSYS sysreg regmap lookup failed.\n");
++		return PTR_ERR(exynos_phy->fsysreg);
++	}
+ 
+-	generic_phy = devm_phy_create(dev, dev->of_node, drv_data->ops);
++	generic_phy = devm_phy_create(dev, dev->of_node, &exynos5433_phy_ops);
+ 	if (IS_ERR(generic_phy)) {
+ 		dev_err(dev, "failed to create PHY\n");
+ 		return PTR_ERR(generic_phy);
+@@ -272,5 +196,4 @@ static struct platform_driver exynos_pcie_phy_driver = {
+ 		.suppress_bind_attrs = true,
+ 	}
+ };
+-
+ builtin_platform_driver(exynos_pcie_phy_driver);
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.17.1
+
