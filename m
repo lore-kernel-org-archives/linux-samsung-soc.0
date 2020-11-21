@@ -2,113 +2,147 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0679C64E75
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Nov 2020 18:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C84BC63697
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Nov 2020 10:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93F882415A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Nov 2020 18:31:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1931022202
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Nov 2020 10:16:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="DrFYWt+1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JF3p/OCN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730504AbgKTSac (ORCPT
+        id S1727473AbgKUKQ1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Nov 2020 13:30:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41300 "EHLO
+        Sat, 21 Nov 2020 05:16:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729407AbgKTSab (ORCPT
+        with ESMTP id S1727217AbgKUKQZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Nov 2020 13:30:31 -0500
-Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EA27C0613CF
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Nov 2020 10:30:31 -0800 (PST)
-Received: by mail-qk1-x744.google.com with SMTP id d9so9805481qke.8
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Nov 2020 10:30:31 -0800 (PST)
+        Sat, 21 Nov 2020 05:16:25 -0500
+Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD1D0C0613CF;
+        Sat, 21 Nov 2020 02:16:25 -0800 (PST)
+Received: by mail-ot1-x342.google.com with SMTP id j14so11278045ots.1;
+        Sat, 21 Nov 2020 02:16:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=qS9ZqheXF3qXlYveFf6+vMdNm1LP9a7sCRmU5tIj0vQ=;
-        b=DrFYWt+1hb4WfINS92U5IVQMCB6WKF5xEz75W+ZSkpzKVYZw8JxEaaLRhFgpFsX1Rs
-         XUxXlb8HtK40tSfGjjunkX8SU199oPuB/G80+Ihj5S6pCKGr2HFJlL7MHo65gDiv8c23
-         ofoLjjtqKLcM53/YSHMQnD2n64U/s4LGFx0MXmrxSwtmydzCFFOGbOgl5AefevNt9z4B
-         /AzLhrlEIRoOx3a/FI6xZiykdYU/2XpV/SH5UXKmuao5MFBbsI3vKTIdga3hvHSW64qo
-         Z/90o2IZQUfzW0ooGr7K6UIiRhh4E1F7jHOF81fznndZO1wpQBiuooGayp0HJjzgftiB
-         hUzA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CfD4qCQ+49oMsxdJc7IK/6WOEpohcQtenHzH8FlfyRE=;
+        b=JF3p/OCNodcLdDTJcqO7kRZDP5iwZv+x0xXQK41LiD+SZKTO1SnD9F9TC3ONOFKuZG
+         U4kABs3ZPIz7naEfwag/JiTvqG/9+wKV3HIQM/JyXRXZbLmnr9VNbqi6La5leghgCv9w
+         TsG6VVC+LRSJW222Wda3AxWmLqjBK2bKcBCkoqvrKE2qLqoz1EGwEU5hPuDEqagSt5iA
+         5GZdeoJmodruZrfdZjri+bhkm7p/XQP78OfvW0H3afh1XJQlnJl6JCYE84SwDTPFNinm
+         50CwSd9Ln5buo9sziidETyMtEhq6hsXmLswyKqfmg3EGTVLJAjzxlfk7jIDsfMipzhuo
+         xcsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qS9ZqheXF3qXlYveFf6+vMdNm1LP9a7sCRmU5tIj0vQ=;
-        b=cGxxOhieZeXySknRet2LPwFiy5lw3DWDfJCQx3GRPDcOtxV6Dx32MnF5YvHP5Vwls0
-         naXjbTWkO87xx82z1gsJ/vBx5Ke5JzsfAzMh9s2t2vC4Rt7wZDO5ZDFiR5fgko2MLQkh
-         i5AFFGCI70VYlm+3918P6QI1ghNZzqqHjgTrgXUKdYCVVdV2sjD4vQIF7OUnqw8e+rJJ
-         VIGiZYksaGPaPqV9aDnFVUWI49Qjujw8iyAd7AAoa9bayC1ImsOAuC3U8bOGHCL7awNn
-         QJzKcQBnt2emedhgWHoJOm+0RxpJ9PcyUTTZC4ZNZblsgsocOeyCIyolfgioOp0/1qQI
-         B4kg==
-X-Gm-Message-State: AOAM530T0jzC77+aXUGW8dVkst5jhLrc3xUpDHJl1W7GGMbWroRTWKtc
-        chR4GEcIPaaczeFC7jK5B4lCfg==
-X-Google-Smtp-Source: ABdhPJz9SdUwITc+pZGgA9oQw0nYR0dAsKTieY7dxiA1OR9ilvjUimdkoUQjm+gMpnpYWVeoTDxPfg==
-X-Received: by 2002:a37:9441:: with SMTP id w62mr17877583qkd.474.1605897030779;
-        Fri, 20 Nov 2020 10:30:30 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
-        by smtp.gmail.com with ESMTPSA id f14sm2400142qkk.89.2020.11.20.10.30.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Nov 2020 10:30:30 -0800 (PST)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1kgBAz-008ujM-Ig; Fri, 20 Nov 2020 14:30:29 -0400
-Date:   Fri, 20 Nov 2020 14:30:29 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CfD4qCQ+49oMsxdJc7IK/6WOEpohcQtenHzH8FlfyRE=;
+        b=SB3gkbxUnuvQCp9+2rJgeCxJx/kEXHIjybwvk44exEDgReoeb0hd/pP+lbks3YFQsH
+         8JuTo+qMFIwHwHq6iEaBwwdpdyAkRUyKhfU9ZLyvpSV7oh/loGlzqfYc2JWX4MnkI1RU
+         PqN2sgCltPs28Tv0Ptt4ev92YGpmZQ54agkcVd3nl8ejLjWcRByyBk9jW7HLNnten+se
+         /01ZC1sV0wHlYWY7vdmUuHWoPabkqul1FVVIQIhL9w6RMGP/PCu8Tk9cFdsV8MWKpkOl
+         87giozbO2ZWm1GXi90R3SkZVWYyxOIL5p4MLzON7q/enFFA/Ofv37DH1rthA5jgIQsgT
+         cjLA==
+X-Gm-Message-State: AOAM531P4u7LZJX/qimnsC3FUfyldSzvuU/Kv4ZsCXlaqXHMhWcdh/kx
+        ofA2zirhRtKZ5A8JeIbjIoRb4m1JDhxwFHIXiQc=
+X-Google-Smtp-Source: ABdhPJwbWqIY6E2BNtMA32fQAIHCjlUN6aHKKi/wWDD0jzHnOSkXJPtriY6z17kkUPmnf3jQjaq/XzOLnrNEouBrIQ0=
+X-Received: by 2002:a05:6830:210a:: with SMTP id i10mr16558234otc.145.1605953785126;
+ Sat, 21 Nov 2020 02:16:25 -0800 (PST)
+MIME-Version: 1.0
+References: <20201119144146.1045202-1-daniel.vetter@ffwll.ch> <20201119144146.1045202-5-daniel.vetter@ffwll.ch>
+In-Reply-To: <20201119144146.1045202-5-daniel.vetter@ffwll.ch>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Sat, 21 Nov 2020 12:15:58 +0200
+Message-ID: <CAFCwf12vUjaUAKYYnXSOFeB_yYzjnChNSWyx+FopGXS0W-1rGQ@mail.gmail.com>
+Subject: Re: [PATCH v6 04/17] misc/habana: Use FOLL_LONGTERM for userptr
 To:     Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
         Daniel Vetter <daniel.vetter@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v6 17/17] RFC: mm: add mmu_notifier argument to follow_pfn
-Message-ID: <20201120183029.GQ244516@ziepe.ca>
-References: <20201119144146.1045202-1-daniel.vetter@ffwll.ch>
- <20201119144146.1045202-18-daniel.vetter@ffwll.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201119144146.1045202-18-daniel.vetter@ffwll.ch>
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Omer Shpigelman <oshpigelman@habana.ai>,
+        Ofir Bitton <obitton@habana.ai>,
+        Tomer Tayar <ttayar@habana.ai>,
+        Moti Haimovski <mhaimovski@habana.ai>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pawel Piskorski <ppiskorski@habana.ai>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 19, 2020 at 03:41:46PM +0100, Daniel Vetter wrote:
-> @@ -4805,21 +4824,15 @@ EXPORT_SYMBOL(follow_pte_pmd);
->   * Return: zero and the pfn at @pfn on success, -ve otherwise.
->   */
->  int follow_pfn(struct vm_area_struct *vma, unsigned long address,
-> -	unsigned long *pfn)
-> +	unsigned long *pfn, struct mmu_notifier *subscription)
->  {
-> -	int ret = -EINVAL;
-> -	spinlock_t *ptl;
-> -	pte_t *ptep;
-> +	if (WARN_ON(!subscription->mm))
-> +		return -EINVAL;
->  
-> +	if (WARN_ON(subscription->mm != vma->vm_mm))
-> +		return -EINVAL;
+On Thu, Nov 19, 2020 at 4:41 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrot=
+e:
+>
+> These are persistent, not just for the duration of a dma operation.
+>
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: Oded Gabbay <oded.gabbay@gmail.com>
+> Cc: Omer Shpigelman <oshpigelman@habana.ai>
+> Cc: Ofir Bitton <obitton@habana.ai>
+> Cc: Tomer Tayar <ttayar@habana.ai>
+> Cc: Moti Haimovski <mhaimovski@habana.ai>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Pawel Piskorski <ppiskorski@habana.ai>
+> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> ---
+>  drivers/misc/habanalabs/common/memory.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/misc/habanalabs/common/memory.c b/drivers/misc/haban=
+alabs/common/memory.c
+> index 0b220221873d..d08c41b90fec 100644
+> --- a/drivers/misc/habanalabs/common/memory.c
+> +++ b/drivers/misc/habanalabs/common/memory.c
+> @@ -1298,7 +1298,8 @@ static int get_user_memory(struct hl_device *hdev, =
+u64 addr, u64 size,
+>                 return -ENOMEM;
+>         }
+>
+> -       rc =3D pin_user_pages_fast(start, npages, FOLL_FORCE | FOLL_WRITE=
+,
+> +       rc =3D pin_user_pages_fast(start, npages,
+> +                                FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
+>                                  userptr->pages);
+>
+>         if (rc !=3D npages) {
+> --
+> 2.29.2
+>
 
-These two things are redundant right? vma->vm_mm != NULL?
+This patch and the previous one (03/17 misc/habana: Stop using
+frame_vector helpers) are both:
+Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
 
-BTW, why do we even have this for nommu? If the only caller is kvm,
-can you even compile kvm on nommu??
-
-Jason
+Thanks,
+Oded
