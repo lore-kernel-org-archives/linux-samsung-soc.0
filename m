@@ -2,114 +2,82 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24165C63697
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Nov 2020 06:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E9CC63798
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Nov 2020 09:53:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C992520773
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Nov 2020 06:48:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYMS5tzY"
+	by mail.kernel.org (Postfix) with ESMTP id EBBA82078E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Nov 2020 09:53:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbgKWGsf (ORCPT
+        id S1726912AbgKWJxS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Nov 2020 01:48:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59696 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726626AbgKWGsf (ORCPT
+        Mon, 23 Nov 2020 04:53:18 -0500
+Received: from foss.arm.com ([217.140.110.172]:39082 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725843AbgKWJxS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Nov 2020 01:48:35 -0500
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4A2DC0613CF;
-        Sun, 22 Nov 2020 22:48:34 -0800 (PST)
-Received: by mail-pl1-x643.google.com with SMTP id l1so126266pld.5;
-        Sun, 22 Nov 2020 22:48:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=PJ6JaHRxor/ka0JdqIrqxbD/WGFaxB9On6PE/7mwuFQ=;
-        b=XYMS5tzYB1db+4HRLPGMZ6FL5f1juIfSv/FApljURg0meQvGkiDEuFZ54vN5rtTgEj
-         rKKcf25pAoLQEKlcFKjsYOpw21tUMZgdY/WqxMyiDNf0wfDyjHju0OMSm56n4Sfq6pA/
-         nt1BmRy2l5WXG5fmjeaBP80o8M4/dz29UbJn6atWupWnL+lZGVbd6cgfF3NUfYbRGuMD
-         G2cYiAUh1mK/WxX9PW8VZD5SOmE5MCWhji+AYddIo9aeOpR5pls5YyOoVyWPpTgU1R5f
-         1kSOmRSEGs8TW6Wojj6NS13uktjjbeWPfjNzDOqZdM1v6n8yLhgeKj6ebdT8rvQp8wag
-         HpPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=PJ6JaHRxor/ka0JdqIrqxbD/WGFaxB9On6PE/7mwuFQ=;
-        b=XVU5SdrLC/yWBlCTVD4Em60lglUQICdPZnGSICQv/xVdeaiLmwEkVVS7RN2em9GnWV
-         uRDCtRLW1RLiBELzc8wIBQ2n7IybUo41lus85KA7fU534ppz9EdH6Hc+ZzFgB2A7x2wW
-         HLAqPvuWFdduwgfwUAN5jDQHcPIcrCmsSv34fau1qNciPCY9L8VBXYCSmJTixSP+gBpH
-         aANR07NuDJcGFmwNB/KiiSR+Wvrqg6LNHdk+Cc/lM2EJVPR73SRLToQBu0HZJKim9DCv
-         xJWqMPFtmmx1z+CRaDuOQz2GXzetuqYtoRPR7I3cAAbGnCNv5bbYjD1+njVTxHHZx/BX
-         9SJA==
-X-Gm-Message-State: AOAM530fzXbPpyW8z0IL/09wZ6nQnoerJrmxmL5NxBziFyku4Oj71WY+
-        tfZgCEJ0mjn1n8t4Jmr5Cx1Fit6Fe1M=
-X-Google-Smtp-Source: ABdhPJy/4jDe0Ku9Pn49P4SSO2HrfayI73kSBKrChviAZvZl4QhUhlWxRpjvJa9Ahc8AwXb0XUbvDQ==
-X-Received: by 2002:a17:902:a9c7:b029:d6:da66:253c with SMTP id b7-20020a170902a9c7b02900d6da66253cmr22954681plr.19.1606114114340;
-        Sun, 22 Nov 2020 22:48:34 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id b29sm9660730pgn.87.2020.11.22.22.48.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2020 22:48:33 -0800 (PST)
-Date:   Sun, 22 Nov 2020 22:48:31 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-input@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH 1/3 v2] Input: atmel_mxt_ts - Fix up inverted RESET
- handler
-Message-ID: <20201123064831.GZ2034289@dtor-ws>
-References: <20201104153032.1387747-1-linus.walleij@linaro.org>
+        Mon, 23 Nov 2020 04:53:18 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EDF18101E;
+        Mon, 23 Nov 2020 01:53:17 -0800 (PST)
+Received: from red-moon.arm.com (unknown [10.57.62.101])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D8EA23F70D;
+        Mon, 23 Nov 2020 01:53:14 -0800 (PST)
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-pci@vger.kernel.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 0/5] Add DW PCIe support for Exynos5433 SoCs
+Date:   Mon, 23 Nov 2020 09:53:08 +0000
+Message-Id: <160612514814.21459.9917651424181472858.b4-ty@arm.com>
+X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20201113170139.29956-1-m.szyprowski@samsung.com>
+References: <CGME20201113170156eucas1p176314e4076c593d1f2e68159be880f86@eucas1p1.samsung.com> <20201113170139.29956-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201104153032.1387747-1-linus.walleij@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 04:30:30PM +0100, Linus Walleij wrote:
-> This driver uses GPIO descriptors to drive the touchscreen
-> RESET line. In the existing device trees this has in
-> conflict with intution been flagged as GPIO_ACTIVE_HIGH
-> and the driver then applies the reverse action by
-> driving the line low (setting to 0) to enter
-> reset state and driving the line high (setting to 1) to
-> get out of reset state.
+On Fri, 13 Nov 2020 18:01:34 +0100, Marek Szyprowski wrote:
+> This patchset is a resurrection of the DW PCIe support for the Exynos5433
+> SoCs posted long time ago here: https://lkml.org/lkml/2016/12/26/6 and
+> later here: https://lkml.org/lkml/2017/12/21/296 .
 > 
-> The correct way to handle active low GPIO lines is to
-> provide the GPIO_ACTIVE_LOW in the device tree (thus
-> properly describing the hardware) and letting the GPIO
-> framework invert the assertion (driving high) to a low
-> level and vice versa.
+> In meantime the support for the Exynos5440 SoCs has been completely
+> dropped from mainline kernel, as those SoCs never reached the market. The
+> PCIe driver for Exynos5440 variant however has not been removed yet. This
+> patchset simply reworks it to support the Exynos5433 variant. The lack of
+> the need to support both variants significantly simplifies the driver
+> code.
 > 
-> This is considered a bug since the device trees are
-> incorrectly mis-specifying the line as active high.
-> 
-> Fix the driver and all device trees specifying a reset
-> line.
-> 
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: NXP Linux Team <linux-imx@nxp.com>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> [...]
 
-Applied, thank you.
+Applied to pci/dwc, thanks!
 
--- 
-Dmitry
+[1/5] dt-bindings: PCI: exynos: drop samsung,exynos5440-pcie binding
+      https://git.kernel.org/lpieralisi/pci/c/83fbffcd13
+[2/5] dt-bindings: PCI: exynos: add the samsung,exynos-pcie binding
+      https://git.kernel.org/lpieralisi/pci/c/eea23e4a00
+[3/5] dt-bindings: phy: exynos: add the samsung,exynos-pcie-phy binding
+      https://git.kernel.org/lpieralisi/pci/c/a7b4dba9a7
+[4/5] phy: samsung: phy-exynos-pcie: rework driver to support Exynos5433 PCIe PHY
+      https://git.kernel.org/lpieralisi/pci/c/46bc965df0
+[5/5] PCI: dwc: exynos: Rework the driver to support Exynos5433 variant
+      https://git.kernel.org/lpieralisi/pci/c/f0a6743028
+
+Thanks,
+Lorenzo
