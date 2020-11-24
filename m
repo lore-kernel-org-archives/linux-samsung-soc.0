@@ -2,143 +2,347 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB91C64E7B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 12:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FB5C2D0E4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 14:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D06A62076B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 12:18:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 317542063A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 14:17:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Jqu3MmOx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733194AbgKXMRt convert rfc822-to-8bit (ORCPT
+        id S2388754AbgKXOQ7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 24 Nov 2020 07:17:49 -0500
-Received: from mail-ej1-f68.google.com ([209.85.218.68]:43275 "EHLO
-        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729172AbgKXMRs (ORCPT
+        Tue, 24 Nov 2020 09:16:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41154 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388751AbgKXOQ6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 24 Nov 2020 07:17:48 -0500
-Received: by mail-ej1-f68.google.com with SMTP id k27so28112790ejs.10;
-        Tue, 24 Nov 2020 04:17:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        Tue, 24 Nov 2020 09:16:58 -0500
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C72EFC061A4D
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Nov 2020 06:16:57 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id r17so22536404wrw.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Nov 2020 06:16:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=VUOwed7/avy6Sfz8h2pEiBST+7n37x1MRVNbS7uJ1/c=;
-        b=AUIz8s49eJQg6vWRozBalrD4GfY8DTzT7qzUNiqapb9+0o7yAJ3f98gu5asTYww4ml
-         5flgpeG2wrNOfNfqcHOWWBSC5/zfPjAHooaWHr5nF2PXz8RxFvgGYrV5L9o/RpQn7Scn
-         mDcNa+TYklb0SEkFSbaO4Ga9yxXm0Gt1hpMhKkNC7cYMGxx60S1i+M7IdlUaL5nMuGe6
-         2ZrlAheHbN+NLR9tRTDkK5RIrQPmh+G1AsOUyk6UPaOzZy4OA6CYh1okPH7yl2u7jn1Q
-         4Hm+I3rInHmrsqoAU7mNell8ai8epY98wgWc07g4n3aVHY+Qtqy3TSPApD//14bjRmFB
-         /FLw==
-X-Gm-Message-State: AOAM530BCpN2ybaGuL++cUQ91ASS9xg7kiQMohB9ZQCfgJ+6CI+zw7Dv
-        3whNC+j8g1xlOSpjfmDY1/k=
-X-Google-Smtp-Source: ABdhPJyFvPWTFflUiBH2trFrIJCnrRiTpXbadgQlvJnJj6jm3c56JHDp0y58SUwUeKMKS2nz+qlf9A==
-X-Received: by 2002:a17:906:a856:: with SMTP id dx22mr4164864ejb.134.1606220266162;
-        Tue, 24 Nov 2020 04:17:46 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id g20sm6898192ejk.3.2020.11.24.04.17.43
+        bh=lxaE8Not9jvLvGdPE1uCtN/cVkn9pPEtSLdbQyT9QXw=;
+        b=Jqu3MmOxKtv9AEVJ44kKeuVO3gO1NOKfm+ACsbPcrxj2eHlEcRRMnE0TnNyC+zJYnI
+         MKrPTvaoz4din/kg4k7SyOw5E6Rymxd/rfxXl/XrvCFIkFNXPpHJXYjcLwa+ea5x8oiU
+         SW2i+f/oPr9w2wLEKdEgW7VtTgihlydGLaYjg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to;
+        bh=lxaE8Not9jvLvGdPE1uCtN/cVkn9pPEtSLdbQyT9QXw=;
+        b=PhaScNa7KIX1dElZwAL87cQ47/3tple81fmglIU1mSATYZvYZkWfi7Ad4A56tfYqUv
+         EfEiWl6r3RkpQQdkRm4WoqleISWp1zCXOZfHBKLtviSG0WR0cskYcUTl+4AW30j61N3K
+         elXn3Pp0RvwlkMMQm4CYI6m/70dFw9dn/1DSJDiwH0Y6nM96opl7hlT+tckO+bzP6J6g
+         GKQT01IyGQgP64ngt8cBmsdPCTqTvOVNuek1f1f7/7q6kkDv6el1pNOoq0S17Admwz6x
+         Xqv8UwpYOGnPT9c8zQkEX3lkD++SOx/tQmos+qxH7gE2hq3RsR7DNDg7kj89dC2q9ZhZ
+         gVNg==
+X-Gm-Message-State: AOAM531BK8DPgMGzY8H08PCSanVRIHc5cOkxPCdzb/eykzImcjhffTQZ
+        f0Zg7JZiL9tb6kIvRWBmY104uA==
+X-Google-Smtp-Source: ABdhPJyvnAcNxBa7hPAnh3R0lC3dqHK5F5aliN5y0/6utGHWrgRKu8r7ObJFr2IEqd22MvzLgTn5ig==
+X-Received: by 2002:adf:9cc6:: with SMTP id h6mr5554394wre.341.1606227416430;
+        Tue, 24 Nov 2020 06:16:56 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id h2sm6243879wme.45.2020.11.24.06.16.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2020 04:17:44 -0800 (PST)
-Date:   Tue, 24 Nov 2020 13:17:42 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v7 3/3] net: ax88796c: ASIX AX88796C SPI Ethernet Adapter
- Driver
-Message-ID: <20201124121742.GA35334@kozik-lap>
-References: <20201124120330.32445-1-l.stelmach@samsung.com>
- <CGME20201124120337eucas1p268c7e3147ea36e62d40d252278c5dcb7@eucas1p2.samsung.com>
- <20201124120330.32445-4-l.stelmach@samsung.com>
+        Tue, 24 Nov 2020 06:16:55 -0800 (PST)
+Date:   Tue, 24 Nov 2020 15:16:52 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH v6 09/17] media/videbuf1|2: Mark follow_pfn usage as
+ unsafe
+Message-ID: <20201124141652.GL401619@phenom.ffwll.local>
+Mail-Followup-To: Tomasz Figa <tfiga@chromium.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, KVM list <kvm@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Michel Lespinasse <walken@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20201119144146.1045202-1-daniel.vetter@ffwll.ch>
+ <20201119144146.1045202-10-daniel.vetter@ffwll.ch>
+ <f1f3a1d8-d62a-6e93-afc1-87a8e51081e9@xs4all.nl>
+ <e1f7d30b-2012-0249-66c7-cf9d7d6246ad@xs4all.nl>
+ <CAKMK7uEzFAtr9yxjaxi-kiuZhb+hWT3q6E41OegJr+J2-zkT8w@mail.gmail.com>
+ <9035555a-af6b-e2dd-dbad-41ca70235e21@xs4all.nl>
+ <CAKMK7uFrXJh9jc5-v02A=JE8B3aThbYtTxFN-CGQUB=0TGmKgQ@mail.gmail.com>
+ <d44c6518-bd9c-87e0-dce4-2b63890e0f7e@xs4all.nl>
+ <CAAFQd5DMTwUKE0B5L-WC5ehrrQVeRD_af+TG0FpYiPg0g=89Hg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20201124120330.32445-4-l.stelmach@samsung.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAFQd5DMTwUKE0B5L-WC5ehrrQVeRD_af+TG0FpYiPg0g=89Hg@mail.gmail.com>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 01:03:30PM +0100, ≈Åukasz Stelmach wrote:
-> ASIX AX88796[1] is a versatile ethernet adapter chip, that can be
-> connected to a CPU with a 8/16-bit bus or with an SPI. This driver
-> supports SPI connection.
+On Fri, Nov 20, 2020 at 09:23:12PM +0900, Tomasz Figa wrote:
+> On Fri, Nov 20, 2020 at 9:08 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> >
+> > On 20/11/2020 11:51, Daniel Vetter wrote:
+> > > On Fri, Nov 20, 2020 at 11:39 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> > >>
+> > >> On 20/11/2020 10:18, Daniel Vetter wrote:
+> > >>> On Fri, Nov 20, 2020 at 9:28 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> > >>>>
+> > >>>> On 20/11/2020 09:06, Hans Verkuil wrote:
+> > >>>>> On 19/11/2020 15:41, Daniel Vetter wrote:
+> > >>>>>> The media model assumes that buffers are all preallocated, so that
+> > >>>>>> when a media pipeline is running we never miss a deadline because the
+> > >>>>>> buffers aren't allocated or available.
+> > >>>>>>
+> > >>>>>> This means we cannot fix the v4l follow_pfn usage through
+> > >>>>>> mmu_notifier, without breaking how this all works. The only real fix
+> > >>>>>> is to deprecate userptr support for VM_IO | VM_PFNMAP mappings and
+> > >>>>>> tell everyone to cut over to dma-buf memory sharing for zerocopy.
+> > >>>>>>
+> > >>>>>> userptr for normal memory will keep working as-is, this only affects
+> > >>>>>> the zerocopy userptr usage enabled in 50ac952d2263 ("[media]
+> > >>>>>> videobuf2-dma-sg: Support io userptr operations on io memory").
+> > >>>>>>
+> > >>>>>> Acked-by: Tomasz Figa <tfiga@chromium.org>
+> > >>>>>
+> > >>>>> Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> > >>>>
+> > >>>> Actually, cancel this Acked-by.
+> > >>>>
+> > >>>> So let me see if I understand this right: VM_IO | VM_PFNMAP mappings can
+> > >>>> move around. There is a mmu_notifier that can be used to be notified when
+> > >>>> that happens, but that can't be used with media buffers since those buffers
+> > >>>> must always be available and in the same place.
+> > >>>>
+> > >>>> So follow_pfn is replaced by unsafe_follow_pfn to signal that what is attempted
+> > >>>> is unsafe and unreliable.
+> > >>>>
+> > >>>> If CONFIG_STRICT_FOLLOW_PFN is set, then unsafe_follow_pfn will fail, if it
+> > >>>> is unset, then it writes a warning to the kernel log but just continues while
+> > >>>> still unsafe.
+> > >>>>
+> > >>>> I am very much inclined to just drop VM_IO | VM_PFNMAP support in the media
+> > >>>> subsystem. For vb2 there is a working alternative in the form of dmabuf, and
+> > >>>> frankly for vb1 I don't care. If someone really needs this for a vb1 driver,
+> > >>>> then they can do the work to convert that driver to vb2.
+> > >>>>
+> > >>>> I've added Mauro to the CC list and I'll ping a few more people to see what
+> > >>>> they think, but in my opinion support for USERPTR + VM_IO | VM_PFNMAP
+> > >>>> should just be killed off.
+> > >>>>
+> > >>>> If others would like to keep it, then frame_vector.c needs a comment before
+> > >>>> the 'while' explaining why the unsafe_follow_pfn is there and that using
+> > >>>> dmabuf is the proper alternative to use. That will make it easier for
+> > >>>> developers to figure out why they see a kernel warning and what to do to
+> > >>>> fix it, rather than having to dig through the git history for the reason.
+> > >>>
+> > >>> I'm happy to add a comment, but otherwise if you all want to ditch
+> > >>> this, can we do this as a follow up on top? There's quite a bit of
+> > >>> code that can be deleted and I'd like to not hold up this patch set
+> > >>> here on that - it's already a fairly sprawling pain touching about 7
+> > >>> different subsystems (ok only 6-ish now since the s390 patch landed).
+> > >>> For the comment, is the explanation next to unsafe_follow_pfn not good
+> > >>> enough?
+> > >>
+> > >> No, because that doesn't mention that you should use dma-buf as a replacement.
+> > >> That's really the critical piece of information I'd like to see. That doesn't
+> > >> belong in unsafe_follow_pfn, it needs to be in frame_vector.c since it's
+> > >> vb2 specific.
+> > >
+> > > Ah makes sense, I'll add that.
+> > >
+> > >>>
+> > >>> So ... can I get you to un-cancel your ack?
+> > >>
+> > >> Hmm, I really would like to see support for this to be dropped completely.
+> > >>
+> > >> How about this: just replace follow_pfn() by -EINVAL instead of unsafe_follow_pfn().
+> > >>
+> > >> Add a TODO comment that this code now can be cleaned up a lot. Such a clean up patch
+> > >> can be added on top later, and actually that is something that I can do once this
+> > >> series has landed.
+> > >>
+> > >> Regardless, frame_vector.c should mention dma-buf as a replacement in a comment
+> > >> since I don't want users who hit this issue to have to dig through git logs
+> > >> to find that dma-buf is the right approach.
+> > >>
+> > >> BTW, nitpick: the subject line of this patch says 'videbuf' instead of 'videobuf'.
+> > >
+> > > Will fix to, and next round will have the additional -EINVAL on top.
+> > > Iirc Mauro was pretty clear that we can't just delete this, so I kinda
+> > > don't want to get stuck in this discussion with my patches :-)
+> >
+> > Ah, I found that discussion for the v2 of this series.
+> >
+> > Yes, add that on top and we can discuss whether to Ack that -EINVAL patch or
+> > not.
+> >
+> > I don't see why we would want to continue supporting a broken model that is
+> > also a security risk, as I understand it.
+> >
+> > Tomasz, can you look at the discussion for this old RFC patch of mine:
+> >
+> > https://patchwork.linuxtv.org/project/linux-media/patch/20200221084531.576156-9-hverkuil-cisco@xs4all.nl/
+> >
+> > Specifically, if we just drop support for follow_pfn(), would that cause
+> > problems for Chromium since that is apparently still using USERPTR for encoders?
+> >
 > 
-> The driver has been ported from the vendor kernel for ARTIK5[2]
-> boards. Several changes were made to adapt it to the current kernel
-> which include:
+> Nope, we use regular page-backed user pointers and not IO/PFNMAP ones.
 > 
-> + updated DT configuration,
-> + clock configuration moved to DT,
-> + new timer, ethtool and gpio APIs,
-> + dev_* instead of pr_* and custom printk() wrappers,
-> + removed awkward vendor power managemtn.
-> + introduced ethtool tunable to control SPI compression
-> 
-> [1] https://www.asix.com.tw/products.php?op=pItemdetail&PItemID=104;65;86&PLine=65
-> [2] https://git.tizen.org/cgit/profile/common/platform/kernel/linux-3.10-artik/
-> 
-> The other ax88796 driver is for NE2000 compatible AX88796L chip. These
-> chips are not compatible. Hence, two separate drivers are required.
-> 
-> Signed-off-by: ≈Åukasz Stelmach <l.stelmach@samsung.com>
-> ---
->  MAINTAINERS                                |    6 +
->  drivers/net/ethernet/Kconfig               |    1 +
->  drivers/net/ethernet/Makefile              |    1 +
->  drivers/net/ethernet/asix/Kconfig          |   35 +
->  drivers/net/ethernet/asix/Makefile         |    6 +
->  drivers/net/ethernet/asix/ax88796c_ioctl.c |  221 ++++
->  drivers/net/ethernet/asix/ax88796c_ioctl.h |   26 +
->  drivers/net/ethernet/asix/ax88796c_main.c  | 1132 ++++++++++++++++++++
->  drivers/net/ethernet/asix/ax88796c_main.h  |  561 ++++++++++
->  drivers/net/ethernet/asix/ax88796c_spi.c   |  112 ++
->  drivers/net/ethernet/asix/ax88796c_spi.h   |   69 ++
->  include/uapi/linux/ethtool.h               |    1 +
->  net/ethtool/common.c                       |    1 +
->  13 files changed, 2172 insertions(+)
->  create mode 100644 drivers/net/ethernet/asix/Kconfig
->  create mode 100644 drivers/net/ethernet/asix/Makefile
->  create mode 100644 drivers/net/ethernet/asix/ax88796c_ioctl.c
->  create mode 100644 drivers/net/ethernet/asix/ax88796c_ioctl.h
->  create mode 100644 drivers/net/ethernet/asix/ax88796c_main.c
->  create mode 100644 drivers/net/ethernet/asix/ax88796c_main.h
->  create mode 100644 drivers/net/ethernet/asix/ax88796c_spi.c
->  create mode 100644 drivers/net/ethernet/asix/ax88796c_spi.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 14b8ec0bb58b..930dc859d4f7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2812,6 +2812,12 @@ S:	Maintained
->  F:	Documentation/hwmon/asc7621.rst
->  F:	drivers/hwmon/asc7621.c
->  
-> +ASIX AX88796C SPI ETHERNET ADAPTER
-> +M:	≈Åukasz Stelmach <l.stelmach@samsung.com>
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/net/asix,ax99706c-spi.yaml
+> By the way, for any inter-device sharing we're using DMABUF. USERPTR
+> is left only in case of the data coming from the CPU, e.g. network.
 
-Wrong file name.
+Yeah Mauro wasn't too enthusiastic even about this patch here, so I think
+I'll just leave it as-is. I fixed the typo in the commit message subject.
+-Daniel
 
-Best regards,
-Krzysztof
+> 
+> > Regards,
+> >
+> >         Hans
+> >
+> > > -Daniel
+> > >
+> > >>
+> > >> Regards,
+> > >>
+> > >>         Hans
+> > >>
+> > >>>
+> > >>> Thanks, Daniel
+> > >>>
+> > >>>>
+> > >>>> Regards,
+> > >>>>
+> > >>>>         Hans
+> > >>>>
+> > >>>>>
+> > >>>>> Thanks!
+> > >>>>>
+> > >>>>>       Hans
+> > >>>>>
+> > >>>>>> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > >>>>>> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> > >>>>>> Cc: Kees Cook <keescook@chromium.org>
+> > >>>>>> Cc: Dan Williams <dan.j.williams@intel.com>
+> > >>>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+> > >>>>>> Cc: John Hubbard <jhubbard@nvidia.com>
+> > >>>>>> Cc: JÈrÙme Glisse <jglisse@redhat.com>
+> > >>>>>> Cc: Jan Kara <jack@suse.cz>
+> > >>>>>> Cc: Dan Williams <dan.j.williams@intel.com>
+> > >>>>>> Cc: linux-mm@kvack.org
+> > >>>>>> Cc: linux-arm-kernel@lists.infradead.org
+> > >>>>>> Cc: linux-samsung-soc@vger.kernel.org
+> > >>>>>> Cc: linux-media@vger.kernel.org
+> > >>>>>> Cc: Pawel Osciak <pawel@osciak.com>
+> > >>>>>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> > >>>>>> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> > >>>>>> Cc: Tomasz Figa <tfiga@chromium.org>
+> > >>>>>> Cc: Laurent Dufour <ldufour@linux.ibm.com>
+> > >>>>>> Cc: Vlastimil Babka <vbabka@suse.cz>
+> > >>>>>> Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+> > >>>>>> Cc: Michel Lespinasse <walken@google.com>
+> > >>>>>> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > >>>>>> --
+> > >>>>>> v3:
+> > >>>>>> - Reference the commit that enabled the zerocopy userptr use case to
+> > >>>>>>   make it abundandtly clear that this patch only affects that, and not
+> > >>>>>>   normal memory userptr. The old commit message already explained that
+> > >>>>>>   normal memory userptr is unaffected, but I guess that was not clear
+> > >>>>>>   enough.
+> > >>>>>> ---
+> > >>>>>>  drivers/media/common/videobuf2/frame_vector.c | 2 +-
+> > >>>>>>  drivers/media/v4l2-core/videobuf-dma-contig.c | 2 +-
+> > >>>>>>  2 files changed, 2 insertions(+), 2 deletions(-)
+> > >>>>>>
+> > >>>>>> diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
+> > >>>>>> index a0e65481a201..1a82ec13ea00 100644
+> > >>>>>> --- a/drivers/media/common/videobuf2/frame_vector.c
+> > >>>>>> +++ b/drivers/media/common/videobuf2/frame_vector.c
+> > >>>>>> @@ -70,7 +70,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+> > >>>>>>                      break;
+> > >>>>>>
+> > >>>>>>              while (ret < nr_frames && start + PAGE_SIZE <= vma->vm_end) {
+> > >>>>>> -                    err = follow_pfn(vma, start, &nums[ret]);
+> > >>>>>> +                    err = unsafe_follow_pfn(vma, start, &nums[ret]);
+> > >>>>>>                      if (err) {
+> > >>>>>>                              if (ret == 0)
+> > >>>>>>                                      ret = err;
+> > >>>>>> diff --git a/drivers/media/v4l2-core/videobuf-dma-contig.c b/drivers/media/v4l2-core/videobuf-dma-contig.c
+> > >>>>>> index 52312ce2ba05..821c4a76ab96 100644
+> > >>>>>> --- a/drivers/media/v4l2-core/videobuf-dma-contig.c
+> > >>>>>> +++ b/drivers/media/v4l2-core/videobuf-dma-contig.c
+> > >>>>>> @@ -183,7 +183,7 @@ static int videobuf_dma_contig_user_get(struct videobuf_dma_contig_memory *mem,
+> > >>>>>>      user_address = untagged_baddr;
+> > >>>>>>
+> > >>>>>>      while (pages_done < (mem->size >> PAGE_SHIFT)) {
+> > >>>>>> -            ret = follow_pfn(vma, user_address, &this_pfn);
+> > >>>>>> +            ret = unsafe_follow_pfn(vma, user_address, &this_pfn);
+> > >>>>>>              if (ret)
+> > >>>>>>                      break;
+> > >>>>>>
+> > >>>>>>
+> > >>>>>
+> > >>>>
+> > >>>
+> > >>>
+> > >>
+> > >
+> > >
+> >
 
-
-> +F:	drivers/net/ethernet/asix/ax88796c_*
-> +
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
