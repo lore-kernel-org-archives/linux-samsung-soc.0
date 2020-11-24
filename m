@@ -2,151 +2,76 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B23C63777
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 08:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD825C56202
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 09:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4ED0F206FA
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 08:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5990520857
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 09:21:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SiGJWTBW"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KALKaqVi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730763AbgKXImG (ORCPT
+        id S1729872AbgKXJVU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 24 Nov 2020 03:42:06 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:54174 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730770AbgKXImC (ORCPT
+        Tue, 24 Nov 2020 04:21:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34932 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727131AbgKXJVU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 24 Nov 2020 03:42:02 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201124084151euoutp0117c603821d525c8e3e42904c02a6e578~KZQo40dwH2590525905euoutp01x
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Nov 2020 08:41:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201124084151euoutp0117c603821d525c8e3e42904c02a6e578~KZQo40dwH2590525905euoutp01x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1606207311;
-        bh=BRDBz/1PXQEFYqUjnMgE/6S1ClYJEu5jXDZwdIJ0phs=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=SiGJWTBWDag0j6twfemfnPJItDPRhNUhKyPG8m6HUY9IFsBe91AAn8HEWjznK0bly
-         Sm1QX5lp/qy/rb7dpQuJfkQ3PyYXtlbrnZoHjSOga3uhrrEt1Z4UsNHSmG/+uqeEv/
-         4GceH6mPpaUM3yHoK7vbpiBpH9ZpWaRoL0PP6gyk=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201124084151eucas1p18e310da7b81e8d84bf5303fc04860561~KZQoqfchb2223222232eucas1p18;
-        Tue, 24 Nov 2020 08:41:51 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 78.55.45488.F47CCBF5; Tue, 24
-        Nov 2020 08:41:51 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201124084151eucas1p1040de475ecccbe9bff2d6bcac17e000d~KZQoZ1RCJ0675406754eucas1p1N;
-        Tue, 24 Nov 2020 08:41:51 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201124084151eusmtrp14f981bf0bc44bfc9f7a00f9dc614bf39~KZQoZNEyJ0767707677eusmtrp1j;
-        Tue, 24 Nov 2020 08:41:51 +0000 (GMT)
-X-AuditID: cbfec7f5-c5fff7000000b1b0-fc-5fbcc74f8307
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id C7.56.16282.F47CCBF5; Tue, 24
-        Nov 2020 08:41:51 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201124084150eusmtip262a0ce7d0d58dbc8401cc7a27394253e~KZQn5Mopk2307123071eusmtip2i;
-        Tue, 24 Nov 2020 08:41:50 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Tue, 24 Nov 2020 04:21:20 -0500
+Received: from [192.168.0.50] (89-70-52-201.dynamic.chello.pl [89.70.52.201])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C6172073C;
+        Tue, 24 Nov 2020 09:21:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606209679;
+        bh=oKt7lzKJIRzdykgXOv/jC03dAAOGoozvRQH79n/UDYM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=KALKaqVitfJzX6OKPc7V/NtJ9SDSTEchUb0hztjVmmH3wc0/LtpQY5Zm7HUURuTrH
+         okD5QqjL40FeByHsjO2kKvNzFNBe0chpS93wi/zuuX7fQtv4UWyMW+NuRmPzyKj2G1
+         FMlnYcLLKoTzl05Luv5IM1Fa41OvDtx2tXOf1des=
+Subject: Re: [PATCH] media: platform: exynos4-is: remove all references to
+ physicall addresses
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCH] media: platform: s5p-mfc: properly assign device to both
- vb2 queues
-Date:   Tue, 24 Nov 2020 09:41:43 +0100
-Message-Id: <20201124084143.12545-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIIsWRmVeSWpSXmKPExsWy7djPc7r+x/fEG5z8L26xccZ6VotTk58x
-        WZw/v4HdomfDVlaLGef3MVmsPXKX3WLZpj9MFu1PXzI7cHhsWtXJ5tG3ZRWjx+dNch6nvn5m
-        D2CJ4rJJSc3JLEst0rdL4Mr48n0ie8Fl7orFv1YwNjC+4+xi5OSQEDCRuPH8PCOILSSwglHi
-        xuQICPsLo8TRg/pdjFxA9mdGiZn3HrLANLTfa2WCSCxnlHh2+jsLhAPUsfTIAbAqNgFDia63
-        XWwgtoiAk8TCWX/ZQYqYBXqYJDbd2QK2T1ggTOL9ys1gRSwCqhJH73UxdzFycPAK2Erc7JaA
-        2CYvsXrDAWaQXgmBRg6JJbN/M0EkXCQW3j3KBmELS7w6voUdwpaROD25hwWioZlR4uG5tewQ
-        Tg+jxOWmGYwQVdYSd879YgPZxiygKbF+lz5E2FHi8b+l7CBhCQE+iRtvBUHCzEDmpG3TmSHC
-        vBIdbUIQ1WoSs46vg1t78MIlZgjbQ2L21MvMkGCMleg4f5ZpAqPcLIRdCxgZVzGKp5YW56an
-        FhvnpZbrFSfmFpfmpesl5+duYgSmgtP/jn/dwbji1Ue9Q4xMHIyHGCU4mJVEeFvldsYL8aYk
-        VlalFuXHF5XmpBYfYpTmYFES5921dU28kEB6YklqdmpqQWoRTJaJg1OqgSnGJGjNhLR6SZY9
-        mfb/ozRFriWr3f35O/q5Se2D/KWbTgduura6LOjG2vUMJ44e2b1qW5VNzu+cT85fpfMUWTu/
-        /85b1je9ZcadGo6d4ge7XZKf8JZqcXtWG5m/f7Ln67NPzmkNrY3ta8zLTySoPI29NiNqzeNj
-        eiUPWdSf31fnXh+X0r6xoa4t7hfT1sl2i8z1/iYdNTuX7Bi84OSD7rc6mW55HGduJ+d5W54q
-        XHXrFE+Cp3loa/NN0e/zdimUT+EzvH48LT7Geur0i1tnTXEzm8xZuvdSwKLGgIKaB47/nwqs
-        stxmW31T9af/tZp7Nokfjq9dxlMlsU3geUFnZ61By79jyks1Hf4EVYY4aymxFGckGmoxFxUn
-        AgDEELOldAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBLMWRmVeSWpSXmKPExsVy+t/xe7r+x/fEG2zbz2axccZ6VotTk58x
-        WZw/v4HdomfDVlaLGef3MVmsPXKX3WLZpj9MFu1PXzI7cHhsWtXJ5tG3ZRWjx+dNch6nvn5m
-        D2CJ0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Mv4
-        8n0ie8Fl7orFv1YwNjC+4+xi5OSQEDCRaL/XytTFyMUhJLCUUWLRv8UsEAkZiZPTGlghbGGJ
-        P9e62CCKPjFK3H4zhwkkwSZgKNH1FiTBySEi4CKxf89TZpAiZoEJTBITVl1lBkkIC4RIbP+1
-        C8xmEVCVOHqvC8jm4OAVsJW42S0BsUBeYvWGA8wTGHkWMDKsYhRJLS3OTc8tNtIrTswtLs1L
-        10vOz93ECAzCbcd+btnBuPLVR71DjEwcjIcYJTiYlUR4W+V2xgvxpiRWVqUW5ccXleakFh9i
-        NAVaN5FZSjQ5HxgHeSXxhmYGpoYmZpYGppZmxkrivCZH1sQLCaQnlqRmp6YWpBbB9DFxcEo1
-        MHUunSa8cy3bu5YS4WWZhsGuV7Xkv+1/HHeJ3Ta+7nHw+pppvDsUNBc3i1zsn79pk7nTdhmD
-        C4a/b7As+TzxUZTQUeO7HJVGtU//qOWY7D3dJ3xZYvvy607JOgxr6//83cJ379zGQwcd65f/
-        SMtamC/WkyhivZPdW/KKbIfHm62TInLVVQTMPLm/q6jmfzjFemN7URvzi0yVNfP79yfUPT/x
-        YvKenc/Krjg7zWXVPOcuFp1Q+OCPX3jZ3sdh2jMYd7TsXnNonVBodaOhLseZV3V/t28MMzFP
-        So1g8BL5Yum8tzTf9Gf8nbBln9M9LpxPV5Y9aLPhhcILFz7D1C5zMf7fO9hf5dw/Kc+/bP7R
-        NCWW4oxEQy3mouJEAFZtEGnLAgAA
-X-CMS-MailID: 20201124084151eucas1p1040de475ecccbe9bff2d6bcac17e000d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201124084151eucas1p1040de475ecccbe9bff2d6bcac17e000d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201124084151eucas1p1040de475ecccbe9bff2d6bcac17e000d
-References: <CGME20201124084151eucas1p1040de475ecccbe9bff2d6bcac17e000d@eucas1p1.samsung.com>
+References: <CGME20201124084139eucas1p1f8a0e5c782b5706868bb3b5ea5de25e7@eucas1p1.samsung.com>
+ <20201124084128.12496-1-m.szyprowski@samsung.com>
+From:   Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <e00f36da-d838-f2d6-ee23-1ad189f85e2b@kernel.org>
+Date:   Tue, 24 Nov 2020 10:21:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20201124084128.12496-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Properly set device pointers in videobuf2 queues, so the videobuf2
-debugging messages will be prefixed with the respective device name.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-This patch was previously sent as part of "[PATCH v2 0/4] Exynos4 media
-drivers: adapt for the planned ARM IOMMU-DMA changes" patchset:
-https://lore.kernel.org/linux-samsung-soc/20200918144833.14618-1-m.szyprowski@samsung.com/
-The IOMMU related changes are still under review, but this change is
-unrelated and it makes sense to aplly it separately.
----
- drivers/media/platform/s5p-mfc/s5p_mfc.c | 2 ++
- 1 file changed, 2 insertions(+)
+On 11/24/20 09:41, Marek Szyprowski wrote:
+> This driver always operates on the DMA/IOVA addresses, so calling them
+> physicall addresses is misleading, although when no IOMMU is used they
+> equal each other. Fix this by renaming all such entries to 'addr' and
+> adjusting comments.
+> 
+> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
+> ---
+> This patch was previously sent as part of "[PATCH 0/8] IOMMU-DMA -
+> support old allocation algorithm used on ARM" patchset:
+> https://lore.kernel.org/linux-samsung-soc/20200925141218.13550-1-m.szyprowski@samsung.com/
+> The IOMMU related changes are still under review, but this change is
+> unrelated and it makes sense to aplly it separately.
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index eba2b9f040df..4e50c342b322 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -844,6 +844,7 @@ static int s5p_mfc_open(struct file *file)
- 	q->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
- 	q->drv_priv = &ctx->fh;
- 	q->lock = &dev->mfc_mutex;
-+	q->dev = &dev->plat_dev->dev;
- 	if (vdev == dev->vfd_dec) {
- 		q->io_modes = VB2_MMAP;
- 		q->ops = get_dec_queue_ops();
-@@ -871,6 +872,7 @@ static int s5p_mfc_open(struct file *file)
- 	q->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
- 	q->drv_priv = &ctx->fh;
- 	q->lock = &dev->mfc_mutex;
-+	q->dev = &dev->plat_dev->dev;
- 	if (vdev == dev->vfd_dec) {
- 		q->io_modes = VB2_MMAP;
- 		q->ops = get_dec_queue_ops();
--- 
-2.17.1
-
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
