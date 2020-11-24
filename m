@@ -2,137 +2,83 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6225EC2D0E4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 15:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C72C2D0E4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 22:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFB1C206FA
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 15:55:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="O5+yyy3u"
+	by mail.kernel.org (Postfix) with ESMTP id C4F052087D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 22:33:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389815AbgKXPza (ORCPT
+        id S1728869AbgKXWdL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 24 Nov 2020 10:55:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56578 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389344AbgKXPz3 (ORCPT
+        Tue, 24 Nov 2020 17:33:11 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:48390 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728844AbgKXWdL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 24 Nov 2020 10:55:29 -0500
-Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C7F3C0613D6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Nov 2020 07:55:29 -0800 (PST)
-Received: by mail-qk1-x744.google.com with SMTP id l2so20913415qkf.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Nov 2020 07:55:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=oaa+hWx1KaHAmS3DtMmmCm5kDyFbE+baLseZRB4QB5M=;
-        b=O5+yyy3ugn3/JU8d8MzJuhxMQSAXmFG+K4qLwFzZz9R/0yzGmphek8afsqJ5XmaX7K
-         QFgr2UTIeMkWtrEUfgUgKbsoR4KB1EzCADhT2doRjFOEg0XNrQLFT7UfegvU6LtETQdH
-         BNfxI2uepF2ckC2z3Hg3jdCWPASQ46yKLRwg1QiNwPCb0sAmz1+AfFialcU6UizGRLb/
-         cFkrXVxqj0abamYnuOiwNBjY7IEIegPAbiNZQupZKDH6jzAd8pc/L3Rexp2KSypUx3WN
-         r58Z5/hOA1lt5wCiVxmAus+J+0CeYWzJLI1kYadqPB7BHX4GvlOoLo7sQ3sz3WRenNdb
-         j0ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=oaa+hWx1KaHAmS3DtMmmCm5kDyFbE+baLseZRB4QB5M=;
-        b=FsbRtOgvJr1RHeehtuPlw8aclkdeYVx7nOk0FB5tJcN7b210dqpZCxOlaAE0n6Dtcv
-         zRGGeo/2fDoBBNsKpn4sgK6vSG0zBxfT/rcOXAgzMUC4mbnx01n26wsCTAcioaoNk8Vm
-         QfVhFnEtZfoqR8+GwOZpu/muRmUvtpvw4B2+PgXhDw8iKpu28OaSnZGtUa5fApPU23J/
-         YFE5IfnhUkZ75JFG9TfnjGZl90j5t0fOI3NvUTsDne5o/XUeME8msBrw0o59Oj6dxVFf
-         kxufzk2Km7FzvaHEYb6GREhBBciLjso8+eml9l2iWSU75jwq67LgGSl3qZO6B+wb/nDT
-         uRjg==
-X-Gm-Message-State: AOAM5308ilk7dbIQtjo1LwiEK2t4i2yI03p3jxHNgVkmAoWq41lo8Oqs
-        Ava0dUaGlqhhJ7IE6/Un2xNw/g==
-X-Google-Smtp-Source: ABdhPJzKvpnJwdDviRxMRDTdGK9+HHkdY7h1hzFeJT5r8VTnR/8g0865BSrf5PrqIcB8Qlf6akZbcQ==
-X-Received: by 2002:a05:620a:2106:: with SMTP id l6mr5371085qkl.302.1606233328732;
-        Tue, 24 Nov 2020 07:55:28 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
-        by smtp.gmail.com with ESMTPSA id x24sm12795492qkx.23.2020.11.24.07.55.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2020 07:55:27 -0800 (PST)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1khaf8-000pJU-UM; Tue, 24 Nov 2020 11:55:26 -0400
-Date:   Tue, 24 Nov 2020 11:55:26 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v6 17/17] RFC: mm: add mmu_notifier argument to follow_pfn
-Message-ID: <20201124155526.GH5487@ziepe.ca>
-References: <20201119144146.1045202-1-daniel.vetter@ffwll.ch>
- <20201119144146.1045202-18-daniel.vetter@ffwll.ch>
- <20201120183029.GQ244516@ziepe.ca>
- <20201124142814.GM401619@phenom.ffwll.local>
+        Tue, 24 Nov 2020 17:33:11 -0500
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
+        (envelope-from <andrew@lunn.ch>)
+        id 1khgrs-008h2D-6H; Tue, 24 Nov 2020 23:33:00 +0100
+Date:   Tue, 24 Nov 2020 23:33:00 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
+Cc:     jim.cromie@gmail.com, Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v7 3/3] net: ax88796c: ASIX AX88796C SPI Ethernet Adapter
+ Driver
+Message-ID: <20201124223300.GJ2036992@lunn.ch>
+References: <20201124120330.32445-1-l.stelmach@samsung.com>
+ <CGME20201124120337eucas1p268c7e3147ea36e62d40d252278c5dcb7@eucas1p2.samsung.com>
+ <20201124120330.32445-4-l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201124142814.GM401619@phenom.ffwll.local>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201124120330.32445-4-l.stelmach@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 03:28:14PM +0100, Daniel Vetter wrote:
-> On Fri, Nov 20, 2020 at 02:30:29PM -0400, Jason Gunthorpe wrote:
-> > On Thu, Nov 19, 2020 at 03:41:46PM +0100, Daniel Vetter wrote:
-> > > @@ -4805,21 +4824,15 @@ EXPORT_SYMBOL(follow_pte_pmd);
-> > >   * Return: zero and the pfn at @pfn on success, -ve otherwise.
-> > >   */
-> > >  int follow_pfn(struct vm_area_struct *vma, unsigned long address,
-> > > -	unsigned long *pfn)
-> > > +	unsigned long *pfn, struct mmu_notifier *subscription)
-> > >  {
-> > > -	int ret = -EINVAL;
-> > > -	spinlock_t *ptl;
-> > > -	pte_t *ptep;
-> > > +	if (WARN_ON(!subscription->mm))
-> > > +		return -EINVAL;
-> > >  
-> > > +	if (WARN_ON(subscription->mm != vma->vm_mm))
-> > > +		return -EINVAL;
-> > 
-> > These two things are redundant right? vma->vm_mm != NULL?
+On Tue, Nov 24, 2020 at 01:03:30PM +0100, Łukasz Stelmach wrote:
+> ASIX AX88796[1] is a versatile ethernet adapter chip, that can be
+> connected to a CPU with a 8/16-bit bus or with an SPI. This driver
+> supports SPI connection.
 > 
-> Yup, will remove.
+> The driver has been ported from the vendor kernel for ARTIK5[2]
+> boards. Several changes were made to adapt it to the current kernel
+> which include:
 > 
-> > BTW, why do we even have this for nommu? If the only caller is kvm,
-> > can you even compile kvm on nommu??
+> + updated DT configuration,
+> + clock configuration moved to DT,
+> + new timer, ethtool and gpio APIs,
+> + dev_* instead of pr_* and custom printk() wrappers,
+> + removed awkward vendor power managemtn.
+> + introduced ethtool tunable to control SPI compression
 > 
-> Kinda makes sense, but I have no idea how to make sure with compile
-> testing this is really the case. And I didn't see any hard evidence in
-> Kconfig or Makefile that mmu notifiers requires CONFIG_MMU. So not sure
-> what to do here.
+> [1] https://www.asix.com.tw/products.php?op=pItemdetail&PItemID=104;65;86&PLine=65
+> [2] https://git.tizen.org/cgit/profile/common/platform/kernel/linux-3.10-artik/
+> 
+> The other ax88796 driver is for NE2000 compatible AX88796L chip. These
+> chips are not compatible. Hence, two separate drivers are required.
+> 
+> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
 
-It looks like only some arches have selectable CONFIG_MMU: arm,
-m68k, microblaze, riscv, sh
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-If we look at arches that work with HAVE_KVM, I only see: arm64, mips,
-powerpc, s390, x86
-
-So my conclusion is there is no intersection between !MMU and HAVE_KVM?
-
-> Should I just remove the nommu version of follow_pfn and see what happens?
-> We can't remove it earlier since it's still used by other
-> subsystems.
-
-This is what I was thinking might work
-
-Jason
+    Andrew
