@@ -2,227 +2,137 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240A3C6379D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 14:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6225EC2D0E4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 15:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEC7120674
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 14:30:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFB1C206FA
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Nov 2020 15:55:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="H7g8J3nm"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="O5+yyy3u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388911AbgKXOa2 (ORCPT
+        id S2389815AbgKXPza (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 24 Nov 2020 09:30:28 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45322 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388856AbgKXOa0 (ORCPT
+        Tue, 24 Nov 2020 10:55:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56578 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389344AbgKXPz3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 24 Nov 2020 09:30:26 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201124143012euoutp02023c4026e0e3db5f6b20a34e0ebb7f58~KeAyRI5Zi1512315123euoutp02i;
-        Tue, 24 Nov 2020 14:30:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201124143012euoutp02023c4026e0e3db5f6b20a34e0ebb7f58~KeAyRI5Zi1512315123euoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1606228212;
-        bh=MFrMbI1rTLy+znrLbraiNi/eB7zLJ2EZB/1abpHAgnc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H7g8J3nmHe0gUqcO8MjeaMxGUBPoON0om8/Ohsv2FwybXvKuPV+MkKFP0nPM8oIHw
-         F09I7mUoGp1x3juj103q+w6MkLDBKyb8P+cHsTCcPkO1jWuvYnXmELxe8TEXwynP6m
-         xmsZAzwkUbhnWG649t7xRv0q4tBtvy0/3U++RBuY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201124143012eucas1p1c853cee302f51305077f6250e0cb7a76~KeAx4xgOT2700127001eucas1p1D;
-        Tue, 24 Nov 2020 14:30:12 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 18.0E.44805.3F81DBF5; Tue, 24
-        Nov 2020 14:30:11 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201124143011eucas1p182d53a872283904341ed4038d457d817~KeAxODL-y2693126931eucas1p1E;
-        Tue, 24 Nov 2020 14:30:11 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201124143011eusmtrp23afa4305320a0a730958d87c766267cc~KeAxNJHJL2167521675eusmtrp27;
-        Tue, 24 Nov 2020 14:30:11 +0000 (GMT)
-X-AuditID: cbfec7f4-b4fff7000000af05-8c-5fbd18f36195
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id EB.96.21957.3F81DBF5; Tue, 24
-        Nov 2020 14:30:11 +0000 (GMT)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20201124143011eusmtip12e6f9dbc616d59211a9c6473bc9f06c3~KeAw5dbwv0236502365eusmtip1e;
-        Tue, 24 Nov 2020 14:30:10 +0000 (GMT)
-From:   Lukasz Stelmach <l.stelmach@samsung.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolni?= =?utf-8?Q?erkiewicz?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v7 3/3] net: ax88796c: ASIX AX88796C SPI Ethernet
- Adapter Driver
-Date:   Tue, 24 Nov 2020 15:29:50 +0100
-In-Reply-To: <20201124121742.GA35334@kozik-lap> (Krzysztof Kozlowski's
-        message of "Tue, 24 Nov 2020 13:17:42 +0100")
-Message-ID: <dleftj8saqj09t.fsf%l.stelmach@samsung.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 24 Nov 2020 10:55:29 -0500
+Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C7F3C0613D6
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Nov 2020 07:55:29 -0800 (PST)
+Received: by mail-qk1-x744.google.com with SMTP id l2so20913415qkf.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Nov 2020 07:55:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=oaa+hWx1KaHAmS3DtMmmCm5kDyFbE+baLseZRB4QB5M=;
+        b=O5+yyy3ugn3/JU8d8MzJuhxMQSAXmFG+K4qLwFzZz9R/0yzGmphek8afsqJ5XmaX7K
+         QFgr2UTIeMkWtrEUfgUgKbsoR4KB1EzCADhT2doRjFOEg0XNrQLFT7UfegvU6LtETQdH
+         BNfxI2uepF2ckC2z3Hg3jdCWPASQ46yKLRwg1QiNwPCb0sAmz1+AfFialcU6UizGRLb/
+         cFkrXVxqj0abamYnuOiwNBjY7IEIegPAbiNZQupZKDH6jzAd8pc/L3Rexp2KSypUx3WN
+         r58Z5/hOA1lt5wCiVxmAus+J+0CeYWzJLI1kYadqPB7BHX4GvlOoLo7sQ3sz3WRenNdb
+         j0ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=oaa+hWx1KaHAmS3DtMmmCm5kDyFbE+baLseZRB4QB5M=;
+        b=FsbRtOgvJr1RHeehtuPlw8aclkdeYVx7nOk0FB5tJcN7b210dqpZCxOlaAE0n6Dtcv
+         zRGGeo/2fDoBBNsKpn4sgK6vSG0zBxfT/rcOXAgzMUC4mbnx01n26wsCTAcioaoNk8Vm
+         QfVhFnEtZfoqR8+GwOZpu/muRmUvtpvw4B2+PgXhDw8iKpu28OaSnZGtUa5fApPU23J/
+         YFE5IfnhUkZ75JFG9TfnjGZl90j5t0fOI3NvUTsDne5o/XUeME8msBrw0o59Oj6dxVFf
+         kxufzk2Km7FzvaHEYb6GREhBBciLjso8+eml9l2iWSU75jwq67LgGSl3qZO6B+wb/nDT
+         uRjg==
+X-Gm-Message-State: AOAM5308ilk7dbIQtjo1LwiEK2t4i2yI03p3jxHNgVkmAoWq41lo8Oqs
+        Ava0dUaGlqhhJ7IE6/Un2xNw/g==
+X-Google-Smtp-Source: ABdhPJzKvpnJwdDviRxMRDTdGK9+HHkdY7h1hzFeJT5r8VTnR/8g0865BSrf5PrqIcB8Qlf6akZbcQ==
+X-Received: by 2002:a05:620a:2106:: with SMTP id l6mr5371085qkl.302.1606233328732;
+        Tue, 24 Nov 2020 07:55:28 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
+        by smtp.gmail.com with ESMTPSA id x24sm12795492qkx.23.2020.11.24.07.55.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Nov 2020 07:55:27 -0800 (PST)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1khaf8-000pJU-UM; Tue, 24 Nov 2020 11:55:26 -0400
+Date:   Tue, 24 Nov 2020 11:55:26 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v6 17/17] RFC: mm: add mmu_notifier argument to follow_pfn
+Message-ID: <20201124155526.GH5487@ziepe.ca>
+References: <20201119144146.1045202-1-daniel.vetter@ffwll.ch>
+ <20201119144146.1045202-18-daniel.vetter@ffwll.ch>
+ <20201120183029.GQ244516@ziepe.ca>
+ <20201124142814.GM401619@phenom.ffwll.local>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-        protocol="application/pgp-signature"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIKsWRmVeSWpSXmKPExsWy7djPc7qfJfbGGxxYZW1x/u4hZouNM9az
-        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2qx6fE1VovLu+awWcw4v4/J
-        4tDUvYwWa4/cZbc4tkDMonXvEXYHAY/L1y4ye2xZeZPJY+esu+wem1Z1snlsXlLvsXPHZyaP
-        vi2rGD0+b5IL4IjisklJzcksSy3St0vgymh73s5SMFGh4vH7z+wNjH3SXYycHBICJhIvL19m
-        72Lk4hASWMEo8fLSCjYI5wujxIStJ5ggnM+MEr++NrLAtOx78Q4qsZxR4tm3o6wQznNGiZMb
-        dwM5HBxsAnoSa9dGgDSICGhKXP/7HayGWeAMi8TvDQvBJgkLhElM+rWWFcRmEVCVWHH4MFic
-        U6BM4tubl2wgNq+AuUTLtuPsILaogKXElhf32SHighInZz4Bq2cWyJWYef4NI8gCCYFznBK3
-        XxyBOtVFomXfTSYIW1ji1fEt7BC2jMT/nfOZQA6VEKiXmDzJDKK3h1Fi25wfUL3WEnfO/WKD
-        sB0l5k//zQpRzydx460gxF4+iUnbpjNDhHklOtqEIKpVJNb174GaIiXR+2oFI4TtIXF/634W
-        SFg1MUp8vb+IdQKjwiwk78xC8s4soLHMwLBbv0sfIqwtsWzha2YI21Zi3br3LAsYWVcxiqeW
-        FuempxYb5aWW6xUn5haX5qXrJefnbmIEpsTT/45/2cG4/NVHvUOMTByMhxhVgJofbVh9gVGK
-        JS8/L1VJhNddeG+8EG9KYmVValF+fFFpTmrxIUZpDhYlcd6kLWvihQTSE0tSs1NTC1KLYLJM
-        HJxSDUxrzSN8u3k/xU7w21PSqvrnmayCD5fi9HC1O+WsN85prnhrvEO5cHnawp+3diyduuyK
-        tPeNimu6XAHTfDa+1jS/Z1rzvShX1e3e/+9x/somy1yerVjHUN29+Ww34yaJ735pjfqpcnsi
-        7pQXF7QtP3tpykdLpkLO6rAbkYdmXuW3/W/2P2PDcUfnoIe8/1zdj3hEhl7wEnC03lH3MDXX
-        5c+LHI2y4+quGyrDflcrWS8SXfZI+Ij0K8as/yd5dr5R1045y+wjPq3Wi3FWF9uR+Q4vJCdx
-        M8gdmKuobZFuaFkeM//YgtqAU+zXNQp3Lftp8LUmb3LCl8XP7q9TLe+5MI37TcXXKWvvzJCp
-        evz29gclluKMREMt5qLiRADuRCPmBAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRmVeSWpSXmKPExsVy+t/xu7qfJfbGG5zcxmlx/u4hZouNM9az
-        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2qx6fE1VovLu+awWcw4v4/J
-        4tDUvYwWa4/cZbc4tkDMonXvEXYHAY/L1y4ye2xZeZPJY+esu+wem1Z1snlsXlLvsXPHZyaP
-        vi2rGD0+b5IL4IjSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcks
-        Sy3St0vQy2h73s5SMFGh4vH7z+wNjH3SXYycHBICJhL7Xrxj6mLk4hASWMooMfvgWfYuRg6g
-        hJTEyrnpEDXCEn+udbFB1DxllJh7cyUbSA2bgJ7E2rURIDUiApoS1/9+ZwWpYRY4zyIx8fAZ
-        ZpCEsECIxIbGdkYQWwiovn3STXYQm0VAVWLF4cMsIHM4Bcok5n3mAAnzCphLtGw7DlYiKmAp
-        seXFfXaIuKDEyZlPWEBsZoFsia+rnzNPYBSYhSQ1C0lqFtBUZqCT1u/ShwhrSyxb+JoZwraV
-        WLfuPcsCRtZVjCKppcW56bnFhnrFibnFpXnpesn5uZsYgbG87djPzTsY5736qHeIkYmD8RCj
-        ClDnow2rLzBKseTl56UqifC6C++NF+JNSaysSi3Kjy8qzUktPsRoCvTZRGYp0eR8YJLJK4k3
-        NDMwNTQxszQwtTQzVhLn3Tp3TbyQQHpiSWp2ampBahFMHxMHp1QDU4+g/ZHT7NZMT0wC95Qt
-        ezEnL2y1zOffWZknu6P+hMrq6culedwTqXuqbTxPwfjMo9czC9XixCMTM6vWin+ROj+pVtUm
-        YuWD36KvdbONT8qUdIeonWfOTNU/sCVizkaN4pj6ZYKrX656w/Ru/oITb2Z8eNfG6N78nT2i
-        Y/Oz9ftcTPiN2XdJM/Te7lpgcHefcdC1IvF5Fz5dfVDKmHH35MGLFidl9mwPL90UHyXs+fy4
-        zTXuqg3BLk9lvd0ntSiXnW+MmKF9JPbn+p371tVLxj1+ylwt+jfsWK5lduaui3pG3c9t6y6X
-        nHqnUHF9z4+ER2te1xy4frNddW7ywgNyQnVHy7T32+/v57rj+HZ1gBJLcUaioRZzUXEiAF7W
-        ZYh6AwAA
-X-CMS-MailID: 20201124143011eucas1p182d53a872283904341ed4038d457d817
-X-Msg-Generator: CA
-X-RootMTR: 20201124143011eucas1p182d53a872283904341ed4038d457d817
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201124143011eucas1p182d53a872283904341ed4038d457d817
-References: <20201124121742.GA35334@kozik-lap>
-        <CGME20201124143011eucas1p182d53a872283904341ed4038d457d817@eucas1p1.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201124142814.GM401619@phenom.ffwll.local>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+On Tue, Nov 24, 2020 at 03:28:14PM +0100, Daniel Vetter wrote:
+> On Fri, Nov 20, 2020 at 02:30:29PM -0400, Jason Gunthorpe wrote:
+> > On Thu, Nov 19, 2020 at 03:41:46PM +0100, Daniel Vetter wrote:
+> > > @@ -4805,21 +4824,15 @@ EXPORT_SYMBOL(follow_pte_pmd);
+> > >   * Return: zero and the pfn at @pfn on success, -ve otherwise.
+> > >   */
+> > >  int follow_pfn(struct vm_area_struct *vma, unsigned long address,
+> > > -	unsigned long *pfn)
+> > > +	unsigned long *pfn, struct mmu_notifier *subscription)
+> > >  {
+> > > -	int ret = -EINVAL;
+> > > -	spinlock_t *ptl;
+> > > -	pte_t *ptep;
+> > > +	if (WARN_ON(!subscription->mm))
+> > > +		return -EINVAL;
+> > >  
+> > > +	if (WARN_ON(subscription->mm != vma->vm_mm))
+> > > +		return -EINVAL;
+> > 
+> > These two things are redundant right? vma->vm_mm != NULL?
+> 
+> Yup, will remove.
+> 
+> > BTW, why do we even have this for nommu? If the only caller is kvm,
+> > can you even compile kvm on nommu??
+> 
+> Kinda makes sense, but I have no idea how to make sure with compile
+> testing this is really the case. And I didn't see any hard evidence in
+> Kconfig or Makefile that mmu notifiers requires CONFIG_MMU. So not sure
+> what to do here.
 
-It was <2020-11-24 wto 13:17>, when Krzysztof Kozlowski wrote:
-> On Tue, Nov 24, 2020 at 01:03:30PM +0100, =C5=81ukasz Stelmach wrote:
->> ASIX AX88796[1] is a versatile ethernet adapter chip, that can be
->> connected to a CPU with a 8/16-bit bus or with an SPI. This driver
->> supports SPI connection.
->>=20
->> The driver has been ported from the vendor kernel for ARTIK5[2]
->> boards. Several changes were made to adapt it to the current kernel
->> which include:
->>=20
->> + updated DT configuration,
->> + clock configuration moved to DT,
->> + new timer, ethtool and gpio APIs,
->> + dev_* instead of pr_* and custom printk() wrappers,
->> + removed awkward vendor power managemtn.
->> + introduced ethtool tunable to control SPI compression
->>=20
->> [1]
->> https://protect2.fireeye.com/v1/url?k=3D400e2614-1f951ecd-400fad5b-0cc47=
-a3356b2-10d6caf77ede1dd5&q=3D1&e=3D8ef355b1-1777-4137-878d-2b11d6ef0003&u=
-=3Dhttps%3A%2F%2Fwww.asix.com.tw%2Fproducts.php%3Fop%3DpItemdetail%26PItemI=
-D%3D104%3B65%3B86%26PLine%3D65
->> [2]
->> https://protect2.fireeye.com/v1/url?k=3D519692a9-0e0daa70-519719e6-0cc47=
-a3356b2-b5daaace05887741&q=3D1&e=3D8ef355b1-1777-4137-878d-2b11d6ef0003&u=
-=3Dhttps%3A%2F%2Fgit.tizen.org%2Fcgit%2Fprofile%2Fcommon%2Fplatform%2Fkerne=
-l%2Flinux-3.10-artik%2F
->>=20
->> The other ax88796 driver is for NE2000 compatible AX88796L chip. These
->> chips are not compatible. Hence, two separate drivers are required.
->>=20
->> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
->> ---
->>  MAINTAINERS                                |    6 +
->>  drivers/net/ethernet/Kconfig               |    1 +
->>  drivers/net/ethernet/Makefile              |    1 +
->>  drivers/net/ethernet/asix/Kconfig          |   35 +
->>  drivers/net/ethernet/asix/Makefile         |    6 +
->>  drivers/net/ethernet/asix/ax88796c_ioctl.c |  221 ++++
->>  drivers/net/ethernet/asix/ax88796c_ioctl.h |   26 +
->>  drivers/net/ethernet/asix/ax88796c_main.c  | 1132 ++++++++++++++++++++
->>  drivers/net/ethernet/asix/ax88796c_main.h  |  561 ++++++++++
->>  drivers/net/ethernet/asix/ax88796c_spi.c   |  112 ++
->>  drivers/net/ethernet/asix/ax88796c_spi.h   |   69 ++
->>  include/uapi/linux/ethtool.h               |    1 +
->>  net/ethtool/common.c                       |    1 +
->>  13 files changed, 2172 insertions(+)
->>  create mode 100644 drivers/net/ethernet/asix/Kconfig
->>  create mode 100644 drivers/net/ethernet/asix/Makefile
->>  create mode 100644 drivers/net/ethernet/asix/ax88796c_ioctl.c
->>  create mode 100644 drivers/net/ethernet/asix/ax88796c_ioctl.h
->>  create mode 100644 drivers/net/ethernet/asix/ax88796c_main.c
->>  create mode 100644 drivers/net/ethernet/asix/ax88796c_main.h
->>  create mode 100644 drivers/net/ethernet/asix/ax88796c_spi.c
->>  create mode 100644 drivers/net/ethernet/asix/ax88796c_spi.h
->>=20
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 14b8ec0bb58b..930dc859d4f7 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -2812,6 +2812,12 @@ S:	Maintained
->>  F:	Documentation/hwmon/asc7621.rst
->>  F:	drivers/hwmon/asc7621.c
->>=20=20
->> +ASIX AX88796C SPI ETHERNET ADAPTER
->> +M:	=C5=81ukasz Stelmach <l.stelmach@samsung.com>
->> +S:	Maintained
->> +F:	Documentation/devicetree/bindings/net/asix,ax99706c-spi.yaml
->
-> Wrong file name.
+It looks like only some arches have selectable CONFIG_MMU: arm,
+m68k, microblaze, riscv, sh
 
-Fixed. Thanks.
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
+If we look at arches that work with HAVE_KVM, I only see: arm64, mips,
+powerpc, s390, x86
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+So my conclusion is there is no intersection between !MMU and HAVE_KVM?
 
------BEGIN PGP SIGNATURE-----
+> Should I just remove the nommu version of follow_pfn and see what happens?
+> We can't remove it earlier since it's still used by other
+> subsystems.
 
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl+9GN4ACgkQsK4enJil
-gBAGFgf/ak6IDh+/N0xhkzX51vmK3op/V+9xfXS6DG1baHq9lrnatqAbogHBxmxU
-XAR6NXrabPEstRxxlSwqBzblZnkm7hNGfutE2smAqPAiJJ7CgvGrB6/++zH8NTgy
-2pY7hnVyfRyoY/vThI58gf0uwmo6cxmkwxoFXiLK1Iu3X4xHc/gUCLWJaLwHvVKO
-8vCdZXyCnQhBHrNzLpkPzv23iXgP3jYca5JlYlXbcz1jbPImx2fthzYc7EVhiNR5
-gKQ+femXLMvxi/FQQUDbDkB68CWjiMeIKE7iqUyPtnApb4+sJipMHokzeZnImy3H
-ZgN218Toukd+O8h0ZJmMSRUdzz2RQw==
-=/N8t
------END PGP SIGNATURE-----
---=-=-=--
+This is what I was thinking might work
+
+Jason
