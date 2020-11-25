@@ -2,78 +2,132 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD03EC56202
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Nov 2020 18:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B433C63777
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Nov 2020 21:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53B7820656
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Nov 2020 18:34:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7AE5207BC
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Nov 2020 21:26:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyoD/7pa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731484AbgKYSdo (ORCPT
+        id S1732001AbgKYV0Y (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Nov 2020 13:33:44 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34210 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730929AbgKYSdo (ORCPT
+        Wed, 25 Nov 2020 16:26:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54972 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731413AbgKYV0Y (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Nov 2020 13:33:44 -0500
-Received: by mail-wr1-f67.google.com with SMTP id k14so912502wrn.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2020 10:33:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=l/zOGeNXCN51LEZhOWDyBpjN4QyhvByAFUcnC9FU/o0=;
-        b=efV/66wjn7k4gA9x+aMCx8w7Zkw0R1z4lFr0JaB69ldpxg2hP6miI02jUvy/L4yvyV
-         YD9E78CBOx5nY2vqcI607fljbSissvl5CUAzJde4U4pxLVVXobJGpRjyajCG+yQT3bdW
-         F5BLKluTsH+k5kZduOkmLf4bazAVQt/LH6lgKrWdTKGaA7WEY9Xjcpq1pTa8+ndwv5/9
-         W1ntGPVl6zBg0yVUEyudoCOmBxygGXNumFeqasjZyvPi6FpMj2vTRkp3dRWwp/SBDIna
-         E60Gt9zJl4H9xlNtvf6djhSrBq0wwjnGj4tWhZ00Q8N7ha35JuGAQCuKMxSe9rmpS3SO
-         qJ5A==
-X-Gm-Message-State: AOAM533kYnYjV5+aSPx4psW+p9nCxpk5jjhwwq65Ykn0EnMMXHi+xGoI
-        in9swVfxgTKTWmuctSJouB8=
-X-Google-Smtp-Source: ABdhPJyh6A8o8fovjjMbX237gx0i6FRf2slUY/iCPTs7DU7pR8Ulk35HS0KLn5dVhnuA3o9+s/3rUA==
-X-Received: by 2002:a5d:4046:: with SMTP id w6mr5768252wrp.51.1606329222851;
-        Wed, 25 Nov 2020 10:33:42 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id n126sm5383486wmn.21.2020.11.25.10.33.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2020 10:33:41 -0800 (PST)
-Date:   Wed, 25 Nov 2020 19:33:40 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: make Samsung Exynos EHCI driver
- a module
-Message-ID: <20201125183340.GA4113@kozik-lap>
-References: <CGME20201124083321eucas1p2303f28fc17736bcdc5e626f463ed74c6@eucas1p2.samsung.com>
- <20201124083312.12356-1-m.szyprowski@samsung.com>
+        Wed, 25 Nov 2020 16:26:24 -0500
+Received: from kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com (unknown [163.114.132.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 028FD206E0;
+        Wed, 25 Nov 2020 21:26:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606339583;
+        bh=xlVmgI/1tuUDmjoHsU+bOocWXs+9aWQwye1zxmYacjk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=NyoD/7pacUiN/UOWdzqe1A3IRmDDGJIE48q22IVgs3ZeI+St4evp56IeLhFGJuYiR
+         eqElZ2a+vQZRRL9aUJWvy10WHK4HW8Pta1O8t+f+V1dyudQSNOHiUig0/jaWYG6UgN
+         Ys72PSONPAFk3EXitvS01IHUWm0ICZ+8Vt8833tU=
+Date:   Wed, 25 Nov 2020 13:26:21 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     =?UTF-8?B?xYF1a2Fzeg==?= Stelmach <l.stelmach@samsung.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvbG5pZXJr?= =?UTF-8?B?aWV3aWN6?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v7 3/3] net: ax88796c: ASIX AX88796C SPI Ethernet
+ Adapter Driver
+Message-ID: <20201125132621.628ac98b@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <20201124120330.32445-4-l.stelmach@samsung.com>
+References: <20201124120330.32445-1-l.stelmach@samsung.com>
+        <CGME20201124120337eucas1p268c7e3147ea36e62d40d252278c5dcb7@eucas1p2.samsung.com>
+        <20201124120330.32445-4-l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201124083312.12356-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 09:33:12AM +0100, Marek Szyprowski wrote:
-> Exynos EHCI driver is compiled as kernel built-in, but it requires Samsung
-> USB2 Generic PHY driver to operate properly, which is compiled as module.
-> Make the Exynos EHCI driver also a module, because having it built-in
-> makes no sense. Exynos OHCI, which also uses that PHY driver, is already
-> compiled as a module.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/configs/multi_v7_defconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, 24 Nov 2020 13:03:30 +0100 =C5=81ukasz Stelmach wrote:
+> +static int
+> +ax88796c_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+> +{
+> +	struct ax88796c_device *ax_local =3D to_ax88796c_device(ndev);
+> +
+> +	skb_queue_tail(&ax_local->tx_wait_q, skb);
+> +	if (skb_queue_len(&ax_local->tx_wait_q) > TX_QUEUE_HIGH_WATER) {
+> +		netif_err(ax_local, tx_queued, ndev,
+> +			  "Too many TX packets in queue %d\n",
+> +			  skb_queue_len(&ax_local->tx_wait_q));
 
-Thanks, applied.
+This will probably happen under heavy traffic. No need to print errors,
+it's normal to back pressure.
 
-Best regards,
-Krzysztof
+> +		netif_stop_queue(ndev);
+> +	}
+> +
+> +	set_bit(EVENT_TX, &ax_local->flags);
+> +	schedule_work(&ax_local->ax_work);
+> +
+> +	return NETDEV_TX_OK;
+> +}
+> +
+> +static void
+> +ax88796c_skb_return(struct ax88796c_device *ax_local, struct sk_buff *sk=
+b,
+> +		    struct rx_header *rxhdr)
+> +{
+> +	struct net_device *ndev =3D ax_local->ndev;
+> +	int status;
+> +
+> +	do {
+> +		if (!(ndev->features & NETIF_F_RXCSUM))
+> +			break;
+> +
+> +		/* checksum error bit is set */
+> +		if ((rxhdr->flags & RX_HDR3_L3_ERR) ||
+> +		    (rxhdr->flags & RX_HDR3_L4_ERR))
+> +			break;
+> +
+> +		/* Other types may be indicated by more than one bit. */
+> +		if ((rxhdr->flags & RX_HDR3_L4_TYPE_TCP) ||
+> +		    (rxhdr->flags & RX_HDR3_L4_TYPE_UDP))
+> +			skb->ip_summed =3D CHECKSUM_UNNECESSARY;
+> +	} while (0);
+> +
+> +	ax_local->stats.rx_packets++;
+> +	ax_local->stats.rx_bytes +=3D skb->len;
+> +	skb->dev =3D ndev;
+> +
+> +	skb->truesize =3D skb->len + sizeof(struct sk_buff);
+> +	skb->protocol =3D eth_type_trans(skb, ax_local->ndev);
+> +
+> +	netif_info(ax_local, rx_status, ndev, "< rx, len %zu, type 0x%x\n",
+> +		   skb->len + sizeof(struct ethhdr), skb->protocol);
+> +
+> +	status =3D netif_rx(skb);
 
+If I'm reading things right this is in process context, so netif_rx_ni()
+
+> +	if (status !=3D NET_RX_SUCCESS)
+> +		netif_info(ax_local, rx_err, ndev,
+> +			   "netif_rx status %d\n", status);
+
+Again, it's inadvisable to put per packet prints without any rate
+limiting in the data path.
