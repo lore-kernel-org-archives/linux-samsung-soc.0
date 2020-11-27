@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BAEC83035
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB932C83038
 	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Nov 2020 16:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52EA022240
+	by mail.kernel.org (Postfix) with ESMTP id 93BBE221F7
 	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Nov 2020 16:43:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="KobUOV0h"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="eM72GLPv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731917AbgK0Qm4 (ORCPT
+        id S1731734AbgK0QmJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Nov 2020 11:42:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54042 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731748AbgK0QmJ (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
         Fri, 27 Nov 2020 11:42:09 -0500
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E38BC061A48
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Nov 2020 08:42:09 -0800 (PST)
-Received: by mail-wm1-x343.google.com with SMTP id v14so50560wml.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Nov 2020 08:42:09 -0800 (PST)
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54004 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731325AbgK0QmI (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Fri, 27 Nov 2020 11:42:08 -0500
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49CCBC0613D2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Nov 2020 08:42:08 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id 23so6209889wrc.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Nov 2020 08:42:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rOg+qp39SVj5WC86VkdFnTzL9jP06PEcpQhmqKQ3t14=;
-        b=KobUOV0hD77WVAdN6sE1FCbuddcx+Y7JofzkUlxRd9nWy9jlHdO1T8SsUttmc9LdEH
-         18FkNkVd0nL6VbYr5rOcMNJq8lcpuHF9LitOz/7CtQcZOgTCuvVk9HlpE337IvJ3CeQo
-         TbfkBVcsC/WpwsEsC3qnjZtZkVocnIVEGrM9Q=
+        bh=5mwQ6o8DhdhcroL4LW9wEcv777ijL/zuzq6//0vwABs=;
+        b=eM72GLPvRb0+NA69AcDpHC3F4eppz8RzSuVRvWvj6NYFddTDwM0wR2gA/ig5q0vSbf
+         vXbbdD9UJ1Ta3z794xTEdxGiXL3gVBc0stoXbWnWWa173wMg5uqTTolryg9S7FbD60Up
+         U4+K/3S25bDJqLD/pWRVNKRCeFhX+cA0aQDgA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rOg+qp39SVj5WC86VkdFnTzL9jP06PEcpQhmqKQ3t14=;
-        b=KLc/FzCX9pKxLN1izdoHHmIBNkHYp9sPZXZ8zCxStZ79Xf2mrhp38vo0lsr2Ow+iA2
-         YA6mH5HbkWFzOkspWvIxk4BshhL7U5v9WUDcg/Mk8IwX2FLAINhmyFDejslfxSDNqmK3
-         OuvG5QN5UU9lXTgLfD7nXZ9IMCRfiIO4Crq+KmRzZvY1UUb7ztb/D6qFxzwAovY94Uhu
-         1PLirLDJP/LZrJ8KbVVOEGWsvm7ICI5XO4OwRps4JhpGIzrcTtpX/gSNul3IC8m+cQ3D
-         rCMbEFabxAAyAJ6VIyqGsiMPUeMTxExTw3RIrCSJeXZarZSF+/dOScoTGDMagEHOjNtz
-         DlkA==
-X-Gm-Message-State: AOAM530BvrvfnjYcdTaDKmEfMoni/FMssbthgVkSV4mhWfcPD3Nvy9CP
-        kBTZuj81wpXo7JgdF5dMU4vjPg==
-X-Google-Smtp-Source: ABdhPJzZvF4udC7vFRIpQiicdsquYnu262AHQt4sYjvK76p1I545qbyBbBNxGngNqssLcpNV9573Nw==
-X-Received: by 2002:a1c:4944:: with SMTP id w65mr10125938wma.50.1606495328317;
-        Fri, 27 Nov 2020 08:42:08 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id q12sm14859078wrx.86.2020.11.27.08.42.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=5mwQ6o8DhdhcroL4LW9wEcv777ijL/zuzq6//0vwABs=;
+        b=Ey60cHY4lkZQsMrMdInJgMPvRpOpI9W9J0qC54GaEO2KB5boRmBJZQ8Nc+guQoKHcP
+         bRDsnud46Hd2DxExt5xhx9p9Vrn+I7JyQuS3HP9qsnu4IQPogNmV6NGLVY00oZ338xVT
+         WECI37wTfCpFyUPzTgAPrA/qMzfZFNimHFU4QzseAA5TUmvYHqxXmvqgEEqavVKpc8eU
+         HuFfSYU6eRLRR8imgwYKvMct4sar1E7Dw/icsI1imwPjT40mRmjpIkmHLMNwBj5Gfi4T
+         DYpDLXlXtc4sTXJ1Bx4xlDhU1Mzi32ER6YEqLrZbwdXCAUO9xdfQgzJCAD9j5jGNEslv
+         +Haw==
+X-Gm-Message-State: AOAM530W6m1kSPObrqbZed/vbdKNxsAv1f40U1ImxU7Leme6ipGzNbTr
+        dlXac2WeV0nJEqn5JmX/7Z0Y/Q==
+X-Google-Smtp-Source: ABdhPJzXeZy21QC9Hw6PEXLMq1p5UY22aoFAupO7CL+myn2UqrybcS7gEaEayX4JMT1GuwWyf+ZKyg==
+X-Received: by 2002:a5d:6310:: with SMTP id i16mr11734297wru.284.1606495327078;
         Fri, 27 Nov 2020 08:42:07 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id q12sm14859078wrx.86.2020.11.27.08.42.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Nov 2020 08:42:06 -0800 (PST)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>
@@ -63,18 +63,20 @@ Cc:     kvm@vger.kernel.org, linux-mm@kvack.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Bjorn Helgaas <bhelgaas@google.com>,
         Daniel Vetter <daniel.vetter@intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        Kees Cook <keescook@chromium.org>,
         Dan Williams <dan.j.williams@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Benjamin Herrensmidt <benh@kernel.crashing.org>,
+        Dave Airlie <airlied@linux.ie>,
         Andrew Morton <akpm@linux-foundation.org>,
         John Hubbard <jhubbard@nvidia.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, linux-pci@vger.kernel.org
-Subject: [PATCH v7 08/17] PCI: Obey iomem restrictions for procfs mmap
-Date:   Fri, 27 Nov 2020 17:41:22 +0100
-Message-Id: <20201127164131.2244124-9-daniel.vetter@ffwll.ch>
+        Jan Kara <jack@suse.cz>,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Subject: [PATCH v7 07/17] mm: Close race in generic_access_phys
+Date:   Fri, 27 Nov 2020 17:41:21 +0100
+Message-Id: <20201127164131.2244124-8-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201127164131.2244124-1-daniel.vetter@ffwll.ch>
 References: <20201127164131.2244124-1-daniel.vetter@ffwll.ch>
@@ -85,21 +87,38 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-There's three ways to access PCI BARs from userspace: /dev/mem, sysfs
-files, and the old proc interface. Two check against
-iomem_is_exclusive, proc never did. And with CONFIG_IO_STRICT_DEVMEM,
-this starts to matter, since we don't want random userspace having
-access to PCI BARs while a driver is loaded and using it.
+Way back it was a reasonable assumptions that iomem mappings never
+change the pfn range they point at. But this has changed:
 
-Fix this by adding the same iomem_is_exclusive() check we already have
-on the sysfs side in pci_mmap_resource().
+- gpu drivers dynamically manage their memory nowadays, invalidating
+  ptes with unmap_mapping_range when buffers get moved
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-References: 90a545e98126 ("restrict /dev/mem to idle io memory ranges")
+- contiguous dma allocations have moved from dedicated carvetouts to
+  cma regions. This means if we miss the unmap the pfn might contain
+  pagecache or anon memory (well anything allocated with GFP_MOVEABLE)
+
+- even /dev/mem now invalidates mappings when the kernel requests that
+  iomem region when CONFIG_IO_STRICT_DEVMEM is set, see 3234ac664a87
+  ("/dev/mem: Revoke mappings when a driver claims the region")
+
+Accessing pfns obtained from ptes without holding all the locks is
+therefore no longer a good idea. Fix this.
+
+Since ioremap might need to manipulate pagetables too we need to drop
+the pt lock and have a retry loop if we raced.
+
+While at it, also add kerneldoc and improve the comment for the
+vma_ops->access function. It's for accessing, not for moving the
+memory from iomem to system memory, as the old comment seemed to
+suggest.
+
+References: 28b2ee20c7cb ("access_process_vm device memory infrastructure")
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Kees Cook <keescook@chromium.org>
 Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Benjamin Herrensmidt <benh@kernel.crashing.org>
+Cc: Dave Airlie <airlied@linux.ie>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: John Hubbard <jhubbard@nvidia.com>
 Cc: Jérôme Glisse <jglisse@redhat.com>
@@ -109,31 +128,107 @@ Cc: linux-mm@kvack.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-media@vger.kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
 Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 --
-v2: Improve commit message (Bjorn)
----
- drivers/pci/proc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+v2: Fix inversion in the retry check (John).
 
-diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
-index d35186b01d98..3a2f90beb4cb 100644
---- a/drivers/pci/proc.c
-+++ b/drivers/pci/proc.c
-@@ -274,6 +274,11 @@ static int proc_bus_pci_mmap(struct file *file, struct vm_area_struct *vma)
- 		else
- 			return -EINVAL;
- 	}
+v4: While at it, use offset_in_page (Chris Wilson)
+---
+ include/linux/mm.h |  3 ++-
+ mm/memory.c        | 46 +++++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 45 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c4cc8ea1402c..b50cbb33d0f3 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -574,7 +574,8 @@ struct vm_operations_struct {
+ 	vm_fault_t (*pfn_mkwrite)(struct vm_fault *vmf);
+ 
+ 	/* called by access_process_vm when get_user_pages() fails, typically
+-	 * for use by special VMAs that can switch between memory and hardware
++	 * for use by special VMAs. See also generic_access_phys() for a generic
++	 * implementation useful for any iomem mapping.
+ 	 */
+ 	int (*access)(struct vm_area_struct *vma, unsigned long addr,
+ 		      void *buf, int len, int write);
+diff --git a/mm/memory.c b/mm/memory.c
+index c48f8df6e502..ac32039ce941 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4847,28 +4847,68 @@ int follow_phys(struct vm_area_struct *vma,
+ 	return ret;
+ }
+ 
++/**
++ * generic_access_phys - generic implementation for iomem mmap access
++ * @vma: the vma to access
++ * @addr: userspace addres, not relative offset within @vma
++ * @buf: buffer to read/write
++ * @len: length of transfer
++ * @write: set to FOLL_WRITE when writing, otherwise reading
++ *
++ * This is a generic implementation for &vm_operations_struct.access for an
++ * iomem mapping. This callback is used by access_process_vm() when the @vma is
++ * not page based.
++ */
+ int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
+ 			void *buf, int len, int write)
+ {
+ 	resource_size_t phys_addr;
+ 	unsigned long prot = 0;
+ 	void __iomem *maddr;
+-	int offset = addr & (PAGE_SIZE-1);
++	pte_t *ptep, pte;
++	spinlock_t *ptl;
++	int offset = offset_in_page(addr);
++	int ret = -EINVAL;
 +
-+	if (dev->resource[i].flags & IORESOURCE_MEM &&
-+	    iomem_is_exclusive(dev->resource[i].start))
++	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
 +		return -EINVAL;
 +
- 	ret = pci_mmap_page_range(dev, i, vma,
- 				  fpriv->mmap_state, write_combine);
- 	if (ret < 0)
++retry:
++	if (follow_pte(vma->vm_mm, addr, &ptep, &ptl))
++		return -EINVAL;
++	pte = *ptep;
++	pte_unmap_unlock(ptep, ptl);
+ 
+-	if (follow_phys(vma, addr, write, &prot, &phys_addr))
++	prot = pgprot_val(pte_pgprot(pte));
++	phys_addr = (resource_size_t)pte_pfn(pte) << PAGE_SHIFT;
++
++	if ((write & FOLL_WRITE) && !pte_write(pte))
+ 		return -EINVAL;
+ 
+ 	maddr = ioremap_prot(phys_addr, PAGE_ALIGN(len + offset), prot);
+ 	if (!maddr)
+ 		return -ENOMEM;
+ 
++	if (follow_pte(vma->vm_mm, addr, &ptep, &ptl))
++		goto out_unmap;
++
++	if (!pte_same(pte, *ptep)) {
++		pte_unmap_unlock(ptep, ptl);
++		iounmap(maddr);
++
++		goto retry;
++	}
++
+ 	if (write)
+ 		memcpy_toio(maddr + offset, buf, len);
+ 	else
+ 		memcpy_fromio(buf, maddr + offset, len);
++	ret = len;
++	pte_unmap_unlock(ptep, ptl);
++out_unmap:
+ 	iounmap(maddr);
+ 
+-	return len;
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(generic_access_phys);
+ #endif
 -- 
 2.29.2
 
