@@ -2,100 +2,82 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EC0C56201
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Nov 2020 21:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 588CFC64E7B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Nov 2020 09:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B54B206E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Nov 2020 21:28:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJkrg8GI"
+	by mail.kernel.org (Postfix) with ESMTP id 18B8C21527
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Nov 2020 09:41:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732068AbgKYV2B (ORCPT
+        id S1728727AbgK0Jkl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Nov 2020 16:28:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55526 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732060AbgKYV2B (ORCPT
+        Fri, 27 Nov 2020 04:40:41 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:7999 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728493AbgK0Jkj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Nov 2020 16:28:01 -0500
-Received: from kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com (unknown [163.114.132.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 020EB206E0;
-        Wed, 25 Nov 2020 21:27:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606339680;
-        bh=yEcWykMhdTmveduVtuMvF2XnF4rc1S8SYqqjK1rp9k4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dJkrg8GItUQKlYAcWSAVHfZsBt88Yp3U2B8V8VwhEKfHkDEXjGhHpx8C3BjoYKwP/
-         Tzz5CFy5twTGW5i8YM5NYtOA+Utuky+TPGTsWxMF1y0R9u5C47mRJ+dle9A4dOg2b1
-         ojrb27UXPWnVMNCt57S+nC66GRdufnxjX9+xfRAw=
-Date:   Wed, 25 Nov 2020 13:27:58 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     =?UTF-8?B?xYF1a2Fzeg==?= Stelmach <l.stelmach@samsung.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvbG5pZXJr?= =?UTF-8?B?aWV3aWN6?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v7 3/3] net: ax88796c: ASIX AX88796C SPI Ethernet
- Adapter Driver
-Message-ID: <20201125132758.4554afe8@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <20201124120330.32445-4-l.stelmach@samsung.com>
-References: <20201124120330.32445-1-l.stelmach@samsung.com>
-        <CGME20201124120337eucas1p268c7e3147ea36e62d40d252278c5dcb7@eucas1p2.samsung.com>
-        <20201124120330.32445-4-l.stelmach@samsung.com>
+        Fri, 27 Nov 2020 04:40:39 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Cj8kD2DQTzhjF1;
+        Fri, 27 Nov 2020 17:40:20 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.487.0; Fri, 27 Nov 2020 17:40:30 +0800
+From:   Qinglang Miao <miaoqinglang@huawei.com>
+To:     =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
+        "Krzysztof Kozlowski" <krzk@kernel.org>
+CC:     <linux-samsung-soc@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Qinglang Miao <miaoqinglang@huawei.com>
+Subject: [PATCH] hwrng: exynos - fix reference leak in exynos_trng_probe
+Date:   Fri, 27 Nov 2020 17:44:46 +0800
+Message-ID: <20201127094446.121277-1-miaoqinglang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 24 Nov 2020 13:03:30 +0100 =C5=81ukasz Stelmach wrote:
-> ASIX AX88796[1] is a versatile ethernet adapter chip, that can be
-> connected to a CPU with a 8/16-bit bus or with an SPI. This driver
-> supports SPI connection.
->=20
-> The driver has been ported from the vendor kernel for ARTIK5[2]
-> boards. Several changes were made to adapt it to the current kernel
-> which include:
->=20
-> + updated DT configuration,
-> + clock configuration moved to DT,
-> + new timer, ethtool and gpio APIs,
-> + dev_* instead of pr_* and custom printk() wrappers,
-> + removed awkward vendor power managemtn.
-> + introduced ethtool tunable to control SPI compression
->=20
-> [1] https://www.asix.com.tw/products.php?op=3DpItemdetail&PItemID=3D104;6=
-5;86&PLine=3D65
-> [2] https://git.tizen.org/cgit/profile/common/platform/kernel/linux-3.10-=
-artik/
->=20
-> The other ax88796 driver is for NE2000 compatible AX88796L chip. These
-> chips are not compatible. Hence, two separate drivers are required.
->=20
-> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+pm_runtime_get_sync will increment pm usage counter even it
+failed. Forgetting to putting operation will result in a
+reference leak here.
 
-drivers/net/ethernet/asix/ax88796c_main.c: In function =E2=80=98ax88796c_pr=
-obe=E2=80=99:
-drivers/net/ethernet/asix/ax88796c_main.c:966:32: warning: conversion from =
-=E2=80=98long unsigned int=E2=80=99 to =E2=80=98u32=E2=80=99 {aka =E2=80=98=
-unsigned int=E2=80=99} changes value from =E2=80=9818446744073709486079=E2=
-=80=99 to =E2=80=984294901759=E2=80=99 [-Woverflow]
-  966 |  ax_local->mdiobus->phy_mask =3D ~BIT(AX88796C_PHY_ID);
-      |                                ^
+A new function pm_runtime_resume_and_get is introduced in
+[0] to keep usage counter balanced. So We fix the reference
+leak by replacing it with new funtion.
+
+[0] dd8088d5a896 ("PM: runtime: Add  pm_runtime_resume_and_get to deal with usage counter")
+
+Fixes: 6cd225cc5d8a ("hwrng: exynos - add Samsung Exynos True RNG driver")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
+---
+ drivers/char/hw_random/exynos-trng.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
+index 8e1fe3f8d..666246bc8 100644
+--- a/drivers/char/hw_random/exynos-trng.c
++++ b/drivers/char/hw_random/exynos-trng.c
+@@ -132,7 +132,7 @@ static int exynos_trng_probe(struct platform_device *pdev)
+ 		return PTR_ERR(trng->mem);
+ 
+ 	pm_runtime_enable(&pdev->dev);
+-	ret = pm_runtime_get_sync(&pdev->dev);
++	ret = pm_runtime_resume_and_get(&pdev->dev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Could not get runtime PM.\n");
+ 		goto err_pm_get;
+-- 
+2.23.0
+
