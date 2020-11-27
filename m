@@ -2,99 +2,118 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C9DC64E7D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Nov 2020 09:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CACC64E7C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Nov 2020 13:12:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF9421D91
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Nov 2020 09:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 874472222C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Nov 2020 13:12:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="QeSI7USz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbgK0JoU (ORCPT
+        id S1730041AbgK0NMa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Nov 2020 04:44:20 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:33542 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbgK0JoT (ORCPT
+        Fri, 27 Nov 2020 08:12:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49548 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729913AbgK0NM3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Nov 2020 04:44:19 -0500
-Received: by mail-wm1-f68.google.com with SMTP id u10so1331195wmm.0;
-        Fri, 27 Nov 2020 01:44:17 -0800 (PST)
+        Fri, 27 Nov 2020 08:12:29 -0500
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35BD3C0613D1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Nov 2020 05:12:28 -0800 (PST)
+Received: by mail-qt1-x843.google.com with SMTP id z3so3162132qtw.9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Nov 2020 05:12:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4mUb8VH3/zjOcaB0prxZNOCyhHeWL/oDXOLcVhlQukA=;
+        b=QeSI7USzNR/Hc9luEaErhq6plcg4go9/B0jTyGRabKffYek2H3en767PronC7EqjDo
+         tCgS7Jhbq/jTPd1JA2RC1+NR/OOvLrIacAkIJ8YKjPzi8TLM6jIUDyYleoGFJMsnGrIu
+         IkwSC4rBqYzreESJdoFCcmxCf1KhL7Q804smgB8quH8Lf/75GJJiLoa5Nyr5e5mYAfKc
+         BcJqfQSAdhbk0lurSwVxP1bn9QGb2WJl7XxF1jN6gZXVhgcnF3O6YoOPMR6yE6JH8Sn7
+         ++ZYzAAOIahg0CheN04AL1LTyUHtoiYaRgOesk1MY6c0vUqUuhIhc2liMY8W6WQhHlvA
+         76tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=0rcaXN0DZqE7YXIm9z0wb34aVoGoLqt6Pi2bXEDuuYM=;
-        b=dB3RawjokfsPRLTP29G3EU4Ngjw3pnL3yXZTnbUCiR0hDNQoqMo9yJh9aTmy2w+VZv
-         1dsfx4dMf3R4ybMsrbsS7y4p+y5v8BcxkPpiJ/0yJKO+609kM052YrOE25EpFIZ0n5qo
-         XEXF60HrZ7v0kAKNC+B5zN+N0WiJjU8VTci3wYPzPp549a+n41tA6zHEFFTc+s5ip8ck
-         PI3ZkPft0SFUqGcgTPLaIazMPD56WM4FQV4HXOLJEuGiZO9AD8YjkKEOCw7u59CCOMiu
-         UV/oiGmcKOIejXjdaIVowqEsYxvlf6kUm5PRqtvk1kylz7ZqbVUqBySE+5QbiM4h35Sb
-         GB7g==
-X-Gm-Message-State: AOAM53021ZbUd51uwsWo4w2PNMGp5J3wfJn4pYV63zeguMev3+tI5XUK
-        amqukWSpIvGrl6/nz/8CfG8=
-X-Google-Smtp-Source: ABdhPJzpw84z6c9Q6BcltT41XlX4adRZ0eiDKEb26LyiIg2prGdDUJwUQfyb5jqSAJL7qmnxzepTrg==
-X-Received: by 2002:a1c:9dd7:: with SMTP id g206mr8199701wme.49.1606470256949;
-        Fri, 27 Nov 2020 01:44:16 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id o13sm12131106wmc.44.2020.11.27.01.44.15
+        bh=4mUb8VH3/zjOcaB0prxZNOCyhHeWL/oDXOLcVhlQukA=;
+        b=r7LNsS+WlFe5kW5mgbuoTG6tvol0qhVOPOgBRqSnRZjbZu5RLrFguHnZ7FHz49BHJP
+         lkRSx+0Jmz7MPeMi+yVwzwJH5SQ9iS6NgfwoIAwf8SsQ+ghfE2fHN5d7rddGrMyZABAF
+         92KShKm415fv022KuPEuiMRzEashAOdLXMZH9CbE1JhWc0TAMATcshZ8vQGbMhUPgkLB
+         IvDZdVEbcXoeFARbz9YQZJsK6lMRDtL6zl2igANI9UxPXPfmXuBslwN79c1Dwe6+nmEw
+         8CowglCnYxm9WdpwgIcpIGDtX2eYBOru3WY+paQ/F/A39+VG8HF51iMN8haXgf3OcrC5
+         wNaQ==
+X-Gm-Message-State: AOAM530n6/PuEoE2gTHZSSrmUKG0pmulIFvzIhTlmYQddYitaOk+7Hqa
+        y2hJ2/14yaTGK3Ds0bD3O6DQlA==
+X-Google-Smtp-Source: ABdhPJwdT9CaiC8171EVRdtYjL9xHQSUnZ3qtSTbobXQaW4gNhkgGlUa+eUk68y2VsuHP79oL1WzOg==
+X-Received: by 2002:ac8:130d:: with SMTP id e13mr8308084qtj.3.1606482747424;
+        Fri, 27 Nov 2020 05:12:27 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
+        by smtp.gmail.com with ESMTPSA id t205sm6026453qke.35.2020.11.27.05.12.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2020 01:44:15 -0800 (PST)
-Date:   Fri, 27 Nov 2020 10:44:14 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Qinglang Miao <miaoqinglang@huawei.com>
-Cc:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwrng: exynos - fix reference leak in exynos_trng_probe
-Message-ID: <20201127094414.GA10679@kozik-lap>
-References: <20201127094446.121277-1-miaoqinglang@huawei.com>
+        Fri, 27 Nov 2020 05:12:26 -0800 (PST)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1kidY1-002Xfv-SN; Fri, 27 Nov 2020 09:12:25 -0400
+Date:   Fri, 27 Nov 2020 09:12:25 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v6 00/17] follow_pfn and other iomap races
+Message-ID: <20201127131225.GX5487@ziepe.ca>
+References: <20201119144146.1045202-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201127094446.121277-1-miaoqinglang@huawei.com>
+In-Reply-To: <20201119144146.1045202-1-daniel.vetter@ffwll.ch>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Nov 27, 2020 at 05:44:46PM +0800, Qinglang Miao wrote:
-> pm_runtime_get_sync will increment pm usage counter even it
-> failed. Forgetting to putting operation will result in a
-> reference leak here.
-> 
-> A new function pm_runtime_resume_and_get is introduced in
-> [0] to keep usage counter balanced. So We fix the reference
-> leak by replacing it with new funtion.
-> 
-> [0] dd8088d5a896 ("PM: runtime: Add  pm_runtime_resume_and_get to deal with usage counter")
+On Thu, Nov 19, 2020 at 03:41:29PM +0100, Daniel Vetter wrote:
+> I feel like this is ready for some wider soaking. Since the remaining bits
+> are all kinda connnected probably simplest if it all goes through -mm.
 
-Do not put such dependencies into the commit message - it does not bring
-useful information to the history. Store it under '---' separator.
+Did you figure out a sumbission plan for this stuff?
 
-> 
-> Fixes: 6cd225cc5d8a ("hwrng: exynos - add Samsung Exynos True RNG driver")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
-> ---
->  drivers/char/hw_random/exynos-trng.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
-> index 8e1fe3f8d..666246bc8 100644
-> --- a/drivers/char/hw_random/exynos-trng.c
-> +++ b/drivers/char/hw_random/exynos-trng.c
-> @@ -132,7 +132,7 @@ static int exynos_trng_probe(struct platform_device *pdev)
->  		return PTR_ERR(trng->mem);
->  
->  	pm_runtime_enable(&pdev->dev);
-> -	ret = pm_runtime_get_sync(&pdev->dev);
-> +	ret = pm_runtime_resume_and_get(&pdev->dev);
+> Daniel Vetter (17):
+>   drm/exynos: Stop using frame_vector helpers
+>   drm/exynos: Use FOLL_LONGTERM for g2d cmdlists
+>   misc/habana: Stop using frame_vector helpers
+>   misc/habana: Use FOLL_LONGTERM for userptr
+>   mm/frame-vector: Use FOLL_LONGTERM
+>   media: videobuf2: Move frame_vector into media subsystem
 
-This cannot be applied. Fix it by replacing err_clock label with this
-one.
+At the very least it would be good to get those in right away.
 
-Best regards,
-Krzysztof
+>   mm: Add unsafe_follow_pfn
+>   media/videbuf1|2: Mark follow_pfn usage as unsafe
+>   vfio/type1: Mark follow_pfn as unsafe
 
+I'm surprised nobody from VFIO has remarked on this, I think thety
+won't like it
+
+>   mm: Close race in generic_access_phys
+>   PCI: Obey iomem restrictions for procfs mmap
+>   /dev/mem: Only set filp->f_mapping
+>   resource: Move devmem revoke code to resource framework
+>   sysfs: Support zapping of binary attr mmaps
+>   PCI: Revoke mappings like devmem
+
+This sequence seems fairly stand alone, and in good shape as well
+
+My advice is to put the done things on a branch and get Stephen to put
+them in linux-next. You can send a PR to Lins. There is very little mm
+stuff in here, and cross subsystem stuff works better in git land,
+IMHO.
+
+Jason
