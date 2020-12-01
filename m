@@ -2,152 +2,146 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-25.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A78BC64E7A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Dec 2020 04:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123BCC83012
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Dec 2020 14:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2F6F206E9
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Dec 2020 04:43:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD73B2084C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Dec 2020 14:18:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Rp4nOVH7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NFS1gJ6q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728257AbgLAEnj (ORCPT
+        id S2388722AbgLAOSF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 Nov 2020 23:43:39 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:41534 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728143AbgLAEnj (ORCPT
+        Tue, 1 Dec 2020 09:18:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44224 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728702AbgLAOSE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Nov 2020 23:43:39 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20201201044255epoutp04d6f24f3177ab04ccb9333f8fd0783a41~MfhBk24yI2538925389epoutp046
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Dec 2020 04:42:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20201201044255epoutp04d6f24f3177ab04ccb9333f8fd0783a41~MfhBk24yI2538925389epoutp046
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1606797775;
-        bh=18SaJaUnsne8hTcyft4kfCXmpIn437aEwoES1PGlRvg=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=Rp4nOVH7dD0wf17z3+jSlH00L6o8DJ6S8lPdqjpNNkUzea5b7U6zxtI+nvh4KybCM
-         kYd7Mjs31RVl+VTO202YXn5rN/mFAvKMAZPoAwX1wbhSwq0mDpdmale0ito5H+/Vm3
-         RsUpXiqpjUN5gHQ7HX5oI1P0LvnPSE8BdyaJ3rf8=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201201044255epcas1p142edb8324fa20f96e77225ad63f2f52e~MfhBZkiP52308723087epcas1p1W;
-        Tue,  1 Dec 2020 04:42:55 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.153]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4ClTx81NhXzMqYkf; Tue,  1 Dec
-        2020 04:42:52 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4C.F0.09582.7C9C5CF5; Tue,  1 Dec 2020 13:42:48 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20201201044247epcas1p321782889404edc13c2a8bdea2800e9a0~Mfg5yjJJR1184611846epcas1p3L;
-        Tue,  1 Dec 2020 04:42:47 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201201044247epsmtrp2f027e444b6098e4a25c7425741a0bd8c~Mfg5x5Eix1672316723epsmtrp24;
-        Tue,  1 Dec 2020 04:42:47 +0000 (GMT)
-X-AuditID: b6c32a37-8afff7000000256e-aa-5fc5c9c7bed0
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        87.A6.13470.7C9C5CF5; Tue,  1 Dec 2020 13:42:47 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.211]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201201044247epsmtip1cbbab507383b55f817b5c8b9f6aaac67~Mfg5k713A0263202632epsmtip1s;
-        Tue,  1 Dec 2020 04:42:47 +0000 (GMT)
-From:   Inki Dae <inki.dae@samsung.com>
-To:     airlied@linux.ie
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date:   Tue,  1 Dec 2020 13:50:27 +0900
-Message-Id: <1606798227-31967-1-git-send-email-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCKsWRmVeSWpSXmKPExsWy7bCmru6Jk0fjDS4cYrToPXeSyeLK1/ds
-        FjPO72NyYPbY/u0Bq8f97uNMHp83yQUwR2XbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjq
-        GlpamCsp5CXmptoqufgE6Lpl5gAtUlIoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUWpOQU
-        WBboFSfmFpfmpesl5+daGRoYGJkCFSZkZ8yePYOl4BZXxdMzu9kaGL9xdDFyckgImEj83juX
-        tYuRi0NIYAejxNfHi5kgnE+MEnu2bWaEcL4xSvw7/JwZpuXJziMsEIm9QIlPE6BavjBKrFv0
-        ng2kik1AVWLiivtgtoiAiMTxZX/BbGYBN4k/S8+ygNjCAsoSu6/vYwWxWYDqN0xYCbaBV8BF
-        4u7uRWwQ2+Qkbp7rZAZZICHQzC4xs+EwO0TCReLDy/VQRcISr45vgYpLSXx+t5cNqoFRYuKM
-        00wQTgejxN3H11kgqowl9i+dDJTgADpJU2L9Ln2IsKLEzt9zGSEu5ZN497WHFaREQoBXoqNN
-        CKJESeLYxRuMELaExIUlE6Fu8JA48H0VWFxIIFai8+ta5gmMsrMQFixgZFzFKJZaUJybnlps
-        WGCMHE+bGMHJR8t8B+O0tx/0DjEycTAeYpTgYFYS4WX5dyReiDclsbIqtSg/vqg0J7X4EKMp
-        MMQmMkuJJucD019eSbyhqZGxsbGFiaGZqaGhkjjvH+2OeCGB9MSS1OzU1ILUIpg+Jg5OqQam
-        Lbt90udesU1en2N8JJJnxvbM/Z/+N9jlL6w/18yhmn1sRstzjw1aTK8q++e9PHx058RHjd5H
-        e7XNUnXemp0X/f/j+o7Wrrsz7LtMfu+/GPGm5+jBC2t3f9Lf7M71OvayiZ74NrVN4Tt/zzi3
-        1+kKy1TRvXeuP//Xo7hon6Tf5urprlU67edflCdm773wqGgnD7dCzeOIymv8n/RYNe4+3dy+
-        YyNrZVrsg8k87ukiVYfCN39IfbV6Zs7GC3Mfi967Iia02zjtWG1anXFvzcr13Ck2yvNycv5d
-        t5R68X2OxjHXhQfW+327ke3TeVPpms1OEaeFvR4L0m1qYsQWHVqjZrn4oU+ZWtdHmd15vQ4V
-        bkosxRmJhlrMRcWJAA0yvH/HAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHJMWRmVeSWpSXmKPExsWy7bCSnO7xk0fjDSb/kLLoPXeSyeLK1/ds
-        FjPO72NyYPbY/u0Bq8f97uNMHp83yQUwR3HZpKTmZJalFunbJXBlzJ49g6XgFlfF0zO72RoY
-        v3F0MXJySAiYSDzZeYSli5GLQ0hgN6PE7P5pQA4HUEJCYstWDghTWOLw4WKQciGBT4wSK5Yl
-        g9hsAqoSE1fcZwOxRQREJI4v+wtmMwt4SLzfs5odxBYWUJbYfX0fK4jNAlS/YcJKZhCbV8BF
-        4u7uRWwQJ8hJ3DzXyTyBkWcBI8MqRsnUguLc9NxiwwLDvNRyveLE3OLSvHS95PzcTYzgINDS
-        3MG4fdUHvUOMTByMhxglOJiVRHhZ/h2JF+JNSaysSi3Kjy8qzUktPsQozcGiJM57o3BhnJBA
-        emJJanZqakFqEUyWiYNTqoHp1M2y9qOflGLtwidtefx7f7zfsZtXNhilPYn+qq61/7B8w9e9
-        547tPik1JVbY7GLukvhV6Tl+/UZfeLYmRGfxqltv3fVyZylLj+VhL9NrH9SFOfm87tybW3JX
-        LC5mtYn9nl0ljJ0cDP9e3yqZyzE7wnJ3Jeu8k0v/Oh71qxU6aeX3VeMrd8Caz8qdqltYO/ov
-        tdzznr1gew3HOZNrrp+eHExgLzvZqxViG1hRve/0u+8u7l8uHplxxFnrWuraXb1uRYJpmzn7
-        X6jFPJnKZfe35K4v472GtzPt2b9xr+dXarEOMTvNcMbryYxeT9+w94dbznH/+hotnM6rraD3
-        trN13gyXxY+qPjI+41D7rHlKiaU4I9FQi7moOBEATu41fnECAAA=
-X-CMS-MailID: 20201201044247epcas1p321782889404edc13c2a8bdea2800e9a0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201201044247epcas1p321782889404edc13c2a8bdea2800e9a0
-References: <CGME20201201044247epcas1p321782889404edc13c2a8bdea2800e9a0@epcas1p3.samsung.com>
+        Tue, 1 Dec 2020 09:18:04 -0500
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6302C0613D4;
+        Tue,  1 Dec 2020 06:17:23 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id j205so4441170lfj.6;
+        Tue, 01 Dec 2020 06:17:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+/VDVLzOBDjqiEu/N1C0eMmuynbTWK2RMfkKzr3b440=;
+        b=NFS1gJ6qIMEM0tjrCNFlTLXIiKzLUz8Gnm9RoDkDgAGoOrAmFH665FazAn65xfep9j
+         q1MzYJOj3Zlv/6l+94KjbYlkwVpip2977xGSaKfNO/trDYc5k7c4/WcDtCzjHhJivaw4
+         R3wSqZQpSfK8urUC+KUWSI03zjKLD2qUjSA1Sh36Vv3gkEPtGffag2dP6CvSTvSq3UKY
+         YylNKX7Dx4eifs+51m341bLnClw1F91DSN9xMT666b1NKXE2m8BabsDyn4Az/aDh03d7
+         EAnoQKdNqE2iVos9mifhxROnB6lM4QDKR2vwmfs0SCZYZPWhyhwrUHdSXnF5Z6q3a5OU
+         KfeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+/VDVLzOBDjqiEu/N1C0eMmuynbTWK2RMfkKzr3b440=;
+        b=LdNCmRtHMzL2CqWs+Cppu8mR/wz1IRS+Q3HJ6rWJ4WI1lx9muj5HlNQJ974cTIIXgD
+         AFb/Rwop+vGgpCExbZLizRj4hdcjyLrPmrVptyWgLLd5FO472G4U4dmpg/bRIThDT/tz
+         lJCHymwruUxKSZD4uk7zIWt5Yb1GHUlGwcl5TgMn39C79RhCX0ori5L5je3JdROGWnzB
+         awLwEMYRElFPSpi+OeEjEPwmAYiP8aJRgzUNKOLnUH6AbqtkzzoPjSk3GoSclkIiof6P
+         81wBEar6Zb2y+leq85hAgHPfW1xQMUTi8+nfr/yqMni7mmp1vNj0lXm2tNqIIz5NXLDX
+         JL5g==
+X-Gm-Message-State: AOAM530E8mB5IY9b0+f5BrpGPt4Ed00Qk19r7ox/PNJzObu5RUHGXCiI
+        IKifSrFP1lWbaplpkpllVzWjOsdpv+M=
+X-Google-Smtp-Source: ABdhPJy45twU6WKpFARyvJXmOYuPohM+PTgEg36doZmYuxa+KLwfB3LOW5+S25YIdNCijAJHOc0fgg==
+X-Received: by 2002:ac2:5503:: with SMTP id j3mr1305836lfk.94.1606832242037;
+        Tue, 01 Dec 2020 06:17:22 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-53.dynamic.spd-mgts.ru. [109.252.192.53])
+        by smtp.googlemail.com with ESMTPSA id p16sm214803lfe.255.2020.12.01.06.17.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Dec 2020 06:17:21 -0800 (PST)
+Subject: Re: [PATCH v1 00/30] Introduce core voltage scaling for NVIDIA
+ Tegra20/30 SoCs
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     linux-mmc@vger.kernel.org, devel@driverdev.osuosl.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+References: <20201104234427.26477-1-digetx@gmail.com>
+ <160683107675.35139.13466076210885462180.b4-ty@kernel.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <858e4183-5064-084f-9b80-870e118c3edc@gmail.com>
+Date:   Tue, 1 Dec 2020 17:17:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
+MIME-Version: 1.0
+In-Reply-To: <160683107675.35139.13466076210885462180.b4-ty@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Dave,
+01.12.2020 16:57, Mark Brown пишет:
+> On Thu, 5 Nov 2020 02:43:57 +0300, Dmitry Osipenko wrote:
+>> Introduce core voltage scaling for NVIDIA Tegra20/30 SoCs, which reduces
+>> power consumption and heating of the Tegra chips. Tegra SoC has multiple
+>> hardware units which belong to a core power domain of the SoC and share
+>> the core voltage. The voltage must be selected in accordance to a minimum
+>> requirement of every core hardware unit.
+>>
+>> The minimum core voltage requirement depends on:
+>>
+>> [...]
+> 
+> Applied to
+> 
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+> 
+> Thanks!
+> 
+> [1/1] regulator: Allow skipping disabled regulators in regulator_check_consumers()
+>       (no commit info)
+> 
+> All being well this means that it will be integrated into the linux-next
+> tree (usually sometime in the next 24 hours) and sent to Linus during
+> the next merge window (or sooner if it is a bug fix), however if
+> problems are discovered then the patch may be dropped or reverted.
+> 
+> You may get further e-mails resulting from automated or manual testing
+> and review of the tree, please engage with people reporting problems and
+> send followup patches addressing any issues that are reported if needed.
+> 
+> If any updates are required or you are submitting further changes they
+> should be sent as incremental updates against current git, existing
+> patches will not be replaced.
+> 
+> Please add any relevant lists and maintainers to the CCs when replying
+> to this mail.
 
-   Just a new mode support for HDMI and two clenups.
+Hello Mark,
 
-   Please kindly let me know if there is any problem.
+Could you please hold on this patch? It won't be needed in a v2, which
+will use power domains.
 
-Thanks,
-Inki Dae
-
-
-The following changes since commit 22f8c80566c4a29a0d8b5ebf24aa1fd1679b39e5:
-
-  Merge tag 'drm-misc-next-2020-11-18' of ssh://git.freedesktop.org/git/drm/drm-misc into drm-next (2020-11-27 09:36:33 +1000)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v5.11
-
-for you to fetch changes up to e11e6df2a86779cfc73c4fb2e957ff7a70d89f68:
-
-  drm/exynos: use exynos_dsi as drvdata (2020-12-01 11:38:29 +0900)
-
-----------------------------------------------------------------
-Add a new mode support for HDMI
-- support for 1920x1200x60Hz mode.
-
-Cleanups
-- Drop in_bridge_node from exynos_dsi
-- Use a exynos_dsi object instead of a encoder object as drvdata.
-
-----------------------------------------------------------------
-Marek Szyprowski (1):
-      drm/exynos/hdmi: add support for 1920x1200@60Hz mode
-
-Michael Tretter (2):
-      drm/exynos: remove in_bridge_node from exynos_dsi
-      drm/exynos: use exynos_dsi as drvdata
-
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 31 ++++++++++++-------------------
- drivers/gpu/drm/exynos/exynos_hdmi.c    |  9 +++++++++
- 2 files changed, 21 insertions(+), 19 deletions(-)
+Also, I'm not sure whether the "sound" tree is suitable for any of the
+patches in this series.
