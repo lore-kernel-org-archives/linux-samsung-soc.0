@@ -2,316 +2,152 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-25.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8303CC83016
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Nov 2020 18:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A78BC64E7A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Dec 2020 04:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 41CCA20789
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Nov 2020 18:04:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2F6F206E9
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Dec 2020 04:43:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WJN/cBII"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Rp4nOVH7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729473AbgK3SEc (ORCPT
+        id S1728257AbgLAEnj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 Nov 2020 13:04:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53012 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729429AbgK3SEb (ORCPT
+        Mon, 30 Nov 2020 23:43:39 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:41534 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728143AbgLAEnj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Nov 2020 13:04:31 -0500
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE439C0613D4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Nov 2020 10:03:51 -0800 (PST)
-Received: by mail-pj1-x1042.google.com with SMTP id hk16so49468pjb.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Nov 2020 10:03:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=q4aiUo+R2FBXYOJi5Lz6koIizaWvK7CXEvnPP0gtkHY=;
-        b=WJN/cBIIUk6MohKQRQk8JObz3Y9LIRoDzY/g4r9a3kx9ncZpcSl9Ijsv5SCGIzibSh
-         0TlyUwNA6WUTeVaDji0unOXv2cdZvhXuvxjCnwjIn3x+0V8XE3TAIDrJzsrpNG+3aDf4
-         O64vuJ+VwNbyqtWnGvDLZtyNBklkHcD86NkM+4KIgWOyxWehIcHAbicMIjz8UVVfaNdu
-         3KCfphu4L9CefgQu1LAF6kGWwy5dKyguiC1tYJR9q8cvgpGxIPIYuSAgf5my0+GwTpWT
-         jRZr3rRQ0PbEFDMRsQGjs3CEbCzRbcnlGqc5b5xAzkV8ryWyPL0pCFk54q9NH+Gmr1KI
-         NhYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=q4aiUo+R2FBXYOJi5Lz6koIizaWvK7CXEvnPP0gtkHY=;
-        b=D/9bRD1fBa6BC1vm7jrNL7LHQG2ceR5PTPggGlsK4JgcfKn1Kzq7nWDIW0vv71jYq0
-         S9DSm9A+R/xNj6SwtCXrJFf3b6JJaB0ReQbSyRuJw4VIKhENqUZY8t78N8wYyuRZIMgj
-         miz7VFcSyg8hV//ms7utPNVZj7E/L/wLUqE/w07LLOBopM6sRII5G07tcjhBQ8JXJjuW
-         VuYzauwrE5sjjiDAN97wVVM8gf289rK+5v9XnpZ22QUdhWwG2PvheK/BhgqlReDLm2sD
-         OhTqwahhKytcZV1w3Za7430R8ARqNkncCs8EvuzVMv2TidBlhqnYyf0EwHJ3Ru+GRcA+
-         vuOw==
-X-Gm-Message-State: AOAM531GwQajkfmeXHqSyqb4jum1CFAqfurN9ZKzL+55K3rKw/suk0M1
-        Icp2h8UprjUFxh47jHYZ4Z91FLgwuHbcB4owRn80sg==
-X-Google-Smtp-Source: ABdhPJxHm++0XMttvWDRWWKqxHdfZjFoymYvLuXf+7L3uOgrG9s2Gg6KNpvokgO5TP6MqRad6jHADnjuLxLnCan07K8=
-X-Received: by 2002:a17:90a:2e8c:: with SMTP id r12mr27529821pjd.101.1606759430885;
- Mon, 30 Nov 2020 10:03:50 -0800 (PST)
-MIME-Version: 1.0
-References: <20201127164131.2244124-18-daniel.vetter@ffwll.ch>
- <202011280356.rPWHFNW4-lkp@intel.com> <20201130142820.GN401619@phenom.ffwll.local>
-In-Reply-To: <20201130142820.GN401619@phenom.ffwll.local>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 30 Nov 2020 10:03:40 -0800
-Message-ID: <CAKwvOdnSrsnTgPEuQJyaOTSkTP2dR9208Y66HQG_h1e2LKfqtw@mail.gmail.com>
-Subject: Re: [PATCH v7 17/17] mm: add mmu_notifier argument to follow_pfn
-To:     Vasily Gorbik <gor@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, kbuild-all@lists.01.org,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        kvm <kvm@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 30 Nov 2020 23:43:39 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20201201044255epoutp04d6f24f3177ab04ccb9333f8fd0783a41~MfhBk24yI2538925389epoutp046
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Dec 2020 04:42:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20201201044255epoutp04d6f24f3177ab04ccb9333f8fd0783a41~MfhBk24yI2538925389epoutp046
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1606797775;
+        bh=18SaJaUnsne8hTcyft4kfCXmpIn437aEwoES1PGlRvg=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=Rp4nOVH7dD0wf17z3+jSlH00L6o8DJ6S8lPdqjpNNkUzea5b7U6zxtI+nvh4KybCM
+         kYd7Mjs31RVl+VTO202YXn5rN/mFAvKMAZPoAwX1wbhSwq0mDpdmale0ito5H+/Vm3
+         RsUpXiqpjUN5gHQ7HX5oI1P0LvnPSE8BdyaJ3rf8=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201201044255epcas1p142edb8324fa20f96e77225ad63f2f52e~MfhBZkiP52308723087epcas1p1W;
+        Tue,  1 Dec 2020 04:42:55 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4ClTx81NhXzMqYkf; Tue,  1 Dec
+        2020 04:42:52 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4C.F0.09582.7C9C5CF5; Tue,  1 Dec 2020 13:42:48 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20201201044247epcas1p321782889404edc13c2a8bdea2800e9a0~Mfg5yjJJR1184611846epcas1p3L;
+        Tue,  1 Dec 2020 04:42:47 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201201044247epsmtrp2f027e444b6098e4a25c7425741a0bd8c~Mfg5x5Eix1672316723epsmtrp24;
+        Tue,  1 Dec 2020 04:42:47 +0000 (GMT)
+X-AuditID: b6c32a37-8afff7000000256e-aa-5fc5c9c7bed0
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        87.A6.13470.7C9C5CF5; Tue,  1 Dec 2020 13:42:47 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.211]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20201201044247epsmtip1cbbab507383b55f817b5c8b9f6aaac67~Mfg5k713A0263202632epsmtip1s;
+        Tue,  1 Dec 2020 04:42:47 +0000 (GMT)
+From:   Inki Dae <inki.dae@samsung.com>
+To:     airlied@linux.ie
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-next
+Date:   Tue,  1 Dec 2020 13:50:27 +0900
+Message-Id: <1606798227-31967-1-git-send-email-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCKsWRmVeSWpSXmKPExsWy7bCmru6Jk0fjDS4cYrToPXeSyeLK1/ds
+        FjPO72NyYPbY/u0Bq8f97uNMHp83yQUwR2XbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjq
+        GlpamCsp5CXmptoqufgE6Lpl5gAtUlIoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUWpOQU
+        WBboFSfmFpfmpesl5+daGRoYGJkCFSZkZ8yePYOl4BZXxdMzu9kaGL9xdDFyckgImEj83juX
+        tYuRi0NIYAejxNfHi5kgnE+MEnu2bWaEcL4xSvw7/JwZpuXJziMsEIm9QIlPE6BavjBKrFv0
+        ng2kik1AVWLiivtgtoiAiMTxZX/BbGYBN4k/S8+ygNjCAsoSu6/vYwWxWYDqN0xYCbaBV8BF
+        4u7uRWwQ2+Qkbp7rZAZZICHQzC4xs+EwO0TCReLDy/VQRcISr45vgYpLSXx+t5cNqoFRYuKM
+        00wQTgejxN3H11kgqowl9i+dDJTgADpJU2L9Ln2IsKLEzt9zGSEu5ZN497WHFaREQoBXoqNN
+        CKJESeLYxRuMELaExIUlE6Fu8JA48H0VWFxIIFai8+ta5gmMsrMQFixgZFzFKJZaUJybnlps
+        WGCMHE+bGMHJR8t8B+O0tx/0DjEycTAeYpTgYFYS4WX5dyReiDclsbIqtSg/vqg0J7X4EKMp
+        MMQmMkuJJucD019eSbyhqZGxsbGFiaGZqaGhkjjvH+2OeCGB9MSS1OzU1ILUIpg+Jg5OqQam
+        Lbt90udesU1en2N8JJJnxvbM/Z/+N9jlL6w/18yhmn1sRstzjw1aTK8q++e9PHx058RHjd5H
+        e7XNUnXemp0X/f/j+o7Wrrsz7LtMfu+/GPGm5+jBC2t3f9Lf7M71OvayiZ74NrVN4Tt/zzi3
+        1+kKy1TRvXeuP//Xo7hon6Tf5urprlU67edflCdm773wqGgnD7dCzeOIymv8n/RYNe4+3dy+
+        YyNrZVrsg8k87ukiVYfCN39IfbV6Zs7GC3Mfi967Iia02zjtWG1anXFvzcr13Ck2yvNycv5d
+        t5R68X2OxjHXhQfW+327ke3TeVPpms1OEaeFvR4L0m1qYsQWHVqjZrn4oU+ZWtdHmd15vQ4V
+        bkosxRmJhlrMRcWJAA0yvH/HAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHJMWRmVeSWpSXmKPExsWy7bCSnO7xk0fjDSb/kLLoPXeSyeLK1/ds
+        FjPO72NyYPbY/u0Bq8f97uNMHp83yQUwR3HZpKTmZJalFunbJXBlzJ49g6XgFlfF0zO72RoY
+        v3F0MXJySAiYSDzZeYSli5GLQ0hgN6PE7P5pQA4HUEJCYstWDghTWOLw4WKQciGBT4wSK5Yl
+        g9hsAqoSE1fcZwOxRQREJI4v+wtmMwt4SLzfs5odxBYWUJbYfX0fK4jNAlS/YcJKZhCbV8BF
+        4u7uRWwQJ8hJ3DzXyTyBkWcBI8MqRsnUguLc9NxiwwLDvNRyveLE3OLSvHS95PzcTYzgINDS
+        3MG4fdUHvUOMTByMhxglOJiVRHhZ/h2JF+JNSaysSi3Kjy8qzUktPsQozcGiJM57o3BhnJBA
+        emJJanZqakFqEUyWiYNTqoHp1M2y9qOflGLtwidtefx7f7zfsZtXNhilPYn+qq61/7B8w9e9
+        547tPik1JVbY7GLukvhV6Tl+/UZfeLYmRGfxqltv3fVyZylLj+VhL9NrH9SFOfm87tybW3JX
+        LC5mtYn9nl0ljJ0cDP9e3yqZyzE7wnJ3Jeu8k0v/Oh71qxU6aeX3VeMrd8Caz8qdqltYO/ov
+        tdzznr1gew3HOZNrrp+eHExgLzvZqxViG1hRve/0u+8u7l8uHplxxFnrWuraXb1uRYJpmzn7
+        X6jFPJnKZfe35K4v472GtzPt2b9xr+dXarEOMTvNcMbryYxeT9+w94dbznH/+hotnM6rraD3
+        trN13gyXxY+qPjI+41D7rHlKiaU4I9FQi7moOBEATu41fnECAAA=
+X-CMS-MailID: 20201201044247epcas1p321782889404edc13c2a8bdea2800e9a0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20201201044247epcas1p321782889404edc13c2a8bdea2800e9a0
+References: <CGME20201201044247epcas1p321782889404edc13c2a8bdea2800e9a0@epcas1p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Nov 30, 2020 at 6:28 AM Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> So I guess kvm platforms that don't set KVM_ARCH_WANT_MMU_NOTIFIER exist,
-> and at least on powerpc they're consistent with KVM_CAP_SYNC_MMU
-> signalling that the guest pagetables stays in sync automatically with any
-> updates. So for that case I guess we could use unsafe_follow_pfn.
->
-> But on s390 this seems different: No mmu notifier, but KVM_CAP_SYNC_MMU is
-> set. So I guess there's some hardware magic on s390 that I don't know
-> about.
+Hi Dave,
 
-+ Vasily + Heiko +s390
+   Just a new mode support for HDMI and two clenups.
 
->
-> Not sure what to do with this now here ...
-> -Daniel
->
->
-> On Sat, Nov 28, 2020 at 03:10:40AM +0800, kernel test robot wrote:
-> > Hi Daniel,
-> >
-> > I love your patch! Yet something to improve:
-> >
-> > [auto build test ERROR on linuxtv-media/master]
-> > [also build test ERROR on char-misc/char-misc-testing v5.10-rc5]
-> > [cannot apply to hnaz-linux-mm/master next-20201127]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch]
-> >
-> > url:    https://github.com/0day-ci/linux/commits/Daniel-Vetter/follow_pfn-and-other-iomap-races/20201128-004421
-> > base:   git://linuxtv.org/media_tree.git master
-> > config: s390-randconfig-r032-20201127 (attached as .config)
-> > compiler: clang version 12.0.0 (https://github.com/llvm/llvm-project f095ac11a9550530a4a54298debb8b04b36422be)
-> > reproduce (this is a W=1 build):
-> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> >         chmod +x ~/bin/make.cross
-> >         # install s390 cross compiling tool for clang build
-> >         # apt-get install binutils-s390x-linux-gnu
-> >         # https://github.com/0day-ci/linux/commit/d76a3489433ce67d45da86aa12953385427f0ac9
-> >         git remote add linux-review https://github.com/0day-ci/linux
-> >         git fetch --no-tags linux-review Daniel-Vetter/follow_pfn-and-other-iomap-races/20201128-004421
-> >         git checkout d76a3489433ce67d45da86aa12953385427f0ac9
-> >         # save the attached .config to linux build tree
-> >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross ARCH=s390
-> >
-> > If you fix the issue, kindly add following tag as appropriate
-> > Reported-by: kernel test robot <lkp@intel.com>
-> >
-> > All errors (new ones prefixed by >>):
-> >
-> >    In file included from arch/s390/include/asm/kvm_para.h:25:
-> >    In file included from arch/s390/include/asm/diag.h:12:
-> >    In file included from include/linux/if_ether.h:19:
-> >    In file included from include/linux/skbuff.h:31:
-> >    In file included from include/linux/dma-mapping.h:10:
-> >    In file included from include/linux/scatterlist.h:9:
-> >    In file included from arch/s390/include/asm/io.h:80:
-> >    include/asm-generic/io.h:490:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >            val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-> >                                                            ~~~~~~~~~~ ^
-> >    include/uapi/linux/byteorder/big_endian.h:34:59: note: expanded from macro '__le32_to_cpu'
-> >    #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-> >                                                              ^
-> >    include/uapi/linux/swab.h:119:21: note: expanded from macro '__swab32'
-> >            ___constant_swab32(x) :                 \
-> >                               ^
-> >    include/uapi/linux/swab.h:21:12: note: expanded from macro '___constant_swab32'
-> >            (((__u32)(x) & (__u32)0x00ff0000UL) >>  8) |            \
-> >                      ^
-> >    In file included from arch/s390/kvm/../../../virt/kvm/kvm_main.c:18:
-> >    In file included from include/linux/kvm_host.h:32:
-> >    In file included from include/linux/kvm_para.h:5:
-> >    In file included from include/uapi/linux/kvm_para.h:36:
-> >    In file included from arch/s390/include/asm/kvm_para.h:25:
-> >    In file included from arch/s390/include/asm/diag.h:12:
-> >    In file included from include/linux/if_ether.h:19:
-> >    In file included from include/linux/skbuff.h:31:
-> >    In file included from include/linux/dma-mapping.h:10:
-> >    In file included from include/linux/scatterlist.h:9:
-> >    In file included from arch/s390/include/asm/io.h:80:
-> >    include/asm-generic/io.h:490:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >            val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-> >                                                            ~~~~~~~~~~ ^
-> >    include/uapi/linux/byteorder/big_endian.h:34:59: note: expanded from macro '__le32_to_cpu'
-> >    #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-> >                                                              ^
-> >    include/uapi/linux/swab.h:119:21: note: expanded from macro '__swab32'
-> >            ___constant_swab32(x) :                 \
-> >                               ^
-> >    include/uapi/linux/swab.h:22:12: note: expanded from macro '___constant_swab32'
-> >            (((__u32)(x) & (__u32)0xff000000UL) >> 24)))
-> >                      ^
-> >    In file included from arch/s390/kvm/../../../virt/kvm/kvm_main.c:18:
-> >    In file included from include/linux/kvm_host.h:32:
-> >    In file included from include/linux/kvm_para.h:5:
-> >    In file included from include/uapi/linux/kvm_para.h:36:
-> >    In file included from arch/s390/include/asm/kvm_para.h:25:
-> >    In file included from arch/s390/include/asm/diag.h:12:
-> >    In file included from include/linux/if_ether.h:19:
-> >    In file included from include/linux/skbuff.h:31:
-> >    In file included from include/linux/dma-mapping.h:10:
-> >    In file included from include/linux/scatterlist.h:9:
-> >    In file included from arch/s390/include/asm/io.h:80:
-> >    include/asm-generic/io.h:490:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >            val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-> >                                                            ~~~~~~~~~~ ^
-> >    include/uapi/linux/byteorder/big_endian.h:34:59: note: expanded from macro '__le32_to_cpu'
-> >    #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-> >                                                              ^
-> >    include/uapi/linux/swab.h:120:12: note: expanded from macro '__swab32'
-> >            __fswab32(x))
-> >                      ^
-> >    In file included from arch/s390/kvm/../../../virt/kvm/kvm_main.c:18:
-> >    In file included from include/linux/kvm_host.h:32:
-> >    In file included from include/linux/kvm_para.h:5:
-> >    In file included from include/uapi/linux/kvm_para.h:36:
-> >    In file included from arch/s390/include/asm/kvm_para.h:25:
-> >    In file included from arch/s390/include/asm/diag.h:12:
-> >    In file included from include/linux/if_ether.h:19:
-> >    In file included from include/linux/skbuff.h:31:
-> >    In file included from include/linux/dma-mapping.h:10:
-> >    In file included from include/linux/scatterlist.h:9:
-> >    In file included from arch/s390/include/asm/io.h:80:
-> >    include/asm-generic/io.h:501:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >            __raw_writeb(value, PCI_IOBASE + addr);
-> >                                ~~~~~~~~~~ ^
-> >    include/asm-generic/io.h:511:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >            __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-> >                                                          ~~~~~~~~~~ ^
-> >    include/asm-generic/io.h:521:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >            __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-> >                                                          ~~~~~~~~~~ ^
-> >    include/asm-generic/io.h:609:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >            readsb(PCI_IOBASE + addr, buffer, count);
-> >                   ~~~~~~~~~~ ^
-> >    include/asm-generic/io.h:617:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >            readsw(PCI_IOBASE + addr, buffer, count);
-> >                   ~~~~~~~~~~ ^
-> >    include/asm-generic/io.h:625:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >            readsl(PCI_IOBASE + addr, buffer, count);
-> >                   ~~~~~~~~~~ ^
-> >    include/asm-generic/io.h:634:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >            writesb(PCI_IOBASE + addr, buffer, count);
-> >                    ~~~~~~~~~~ ^
-> >    include/asm-generic/io.h:643:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >            writesw(PCI_IOBASE + addr, buffer, count);
-> >                    ~~~~~~~~~~ ^
-> >    include/asm-generic/io.h:652:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >            writesl(PCI_IOBASE + addr, buffer, count);
-> >                    ~~~~~~~~~~ ^
-> > >> arch/s390/kvm/../../../virt/kvm/kvm_main.c:1894:40: error: no member named 'mmu_notifier' in 'struct kvm'
-> >            r = follow_pfn(vma, addr, &pfn, &kvm->mmu_notifier);
-> >                                             ~~~  ^
-> >    arch/s390/kvm/../../../virt/kvm/kvm_main.c:1909:41: error: no member named 'mmu_notifier' in 'struct kvm'
-> >                    r = follow_pfn(vma, addr, &pfn, &kvm->mmu_notifier);
-> >                                                     ~~~  ^
-> >    20 warnings and 2 errors generated.
-> >
-> > vim +1894 arch/s390/kvm/../../../virt/kvm/kvm_main.c
-> >
-> >   1885
-> >   1886        static int hva_to_pfn_remapped(struct kvm *kvm, struct vm_area_struct *vma,
-> >   1887                                       unsigned long addr, bool *async,
-> >   1888                                       bool write_fault, bool *writable,
-> >   1889                                       kvm_pfn_t *p_pfn)
-> >   1890        {
-> >   1891                unsigned long pfn;
-> >   1892                int r;
-> >   1893
-> > > 1894                r = follow_pfn(vma, addr, &pfn, &kvm->mmu_notifier);
-> >   1895                if (r) {
-> >   1896                        /*
-> >   1897                         * get_user_pages fails for VM_IO and VM_PFNMAP vmas and does
-> >   1898                         * not call the fault handler, so do it here.
-> >   1899                         */
-> >   1900                        bool unlocked = false;
-> >   1901                        r = fixup_user_fault(current->mm, addr,
-> >   1902                                             (write_fault ? FAULT_FLAG_WRITE : 0),
-> >   1903                                             &unlocked);
-> >   1904                        if (unlocked)
-> >   1905                                return -EAGAIN;
-> >   1906                        if (r)
-> >   1907                                return r;
-> >   1908
-> >   1909                        r = follow_pfn(vma, addr, &pfn, &kvm->mmu_notifier);
-> >   1910                        if (r)
-> >   1911                                return r;
-> >   1912
-> >   1913                }
-> >   1914
-> >   1915                if (writable)
-> >   1916                        *writable = true;
-> >   1917
-> >   1918                /*
-> >   1919                 * Get a reference here because callers of *hva_to_pfn* and
-> >   1920                 * *gfn_to_pfn* ultimately call kvm_release_pfn_clean on the
-> >   1921                 * returned pfn.  This is only needed if the VMA has VM_MIXEDMAP
-> >   1922                 * set, but the kvm_get_pfn/kvm_release_pfn_clean pair will
-> >   1923                 * simply do nothing for reserved pfns.
-> >   1924                 *
-> >   1925                 * Whoever called remap_pfn_range is also going to call e.g.
-> >   1926                 * unmap_mapping_range before the underlying pages are freed,
-> >   1927                 * causing a call to our MMU notifier.
-> >   1928                 */
-> >   1929                kvm_get_pfn(pfn);
-> >   1930
-> >   1931                *p_pfn = pfn;
-> >   1932                return 0;
-> >   1933        }
-> >   1934
-> >
-> > ---
-> > 0-DAY CI Kernel Test Service, Intel Corporation
-> > https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
->
->
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20201130142820.GN401619%40phenom.ffwll.local.
+   Please kindly let me know if there is any problem.
 
-
-
--- 
 Thanks,
-~Nick Desaulniers
+Inki Dae
+
+
+The following changes since commit 22f8c80566c4a29a0d8b5ebf24aa1fd1679b39e5:
+
+  Merge tag 'drm-misc-next-2020-11-18' of ssh://git.freedesktop.org/git/drm/drm-misc into drm-next (2020-11-27 09:36:33 +1000)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v5.11
+
+for you to fetch changes up to e11e6df2a86779cfc73c4fb2e957ff7a70d89f68:
+
+  drm/exynos: use exynos_dsi as drvdata (2020-12-01 11:38:29 +0900)
+
+----------------------------------------------------------------
+Add a new mode support for HDMI
+- support for 1920x1200x60Hz mode.
+
+Cleanups
+- Drop in_bridge_node from exynos_dsi
+- Use a exynos_dsi object instead of a encoder object as drvdata.
+
+----------------------------------------------------------------
+Marek Szyprowski (1):
+      drm/exynos/hdmi: add support for 1920x1200@60Hz mode
+
+Michael Tretter (2):
+      drm/exynos: remove in_bridge_node from exynos_dsi
+      drm/exynos: use exynos_dsi as drvdata
+
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 31 ++++++++++++-------------------
+ drivers/gpu/drm/exynos/exynos_hdmi.c    |  9 +++++++++
+ 2 files changed, 21 insertions(+), 19 deletions(-)
