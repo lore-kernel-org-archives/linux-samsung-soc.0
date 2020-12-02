@@ -2,222 +2,280 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41FA4C64E7B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 21:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA71C6369E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 21:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E978521D7A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 21:49:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EF5A221FD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 21:51:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbgLBVtH (ORCPT
+        id S1726188AbgLBVvm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Dec 2020 16:49:07 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35750 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbgLBVtG (ORCPT
+        Wed, 2 Dec 2020 16:51:42 -0500
+Received: from mail-ej1-f65.google.com ([209.85.218.65]:44145 "EHLO
+        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgLBVvm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Dec 2020 16:49:06 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201202214722euoutp01aa4d936ab114639c7f0d2d75cf5fcd68~NBIxMGkB61827618276euoutp01E
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Dec 2020 21:47:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201202214722euoutp01aa4d936ab114639c7f0d2d75cf5fcd68~NBIxMGkB61827618276euoutp01E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1606945642;
-        bh=27homzhxtOgQquKIw/0+3LoypE6+9O9g4fIKMDgjxBE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ROd0RZpZnfv/QXVFW9BVCESlENcM8/uYeo21pKIKM7+Q9uFKjoq/rpPCe/1akyz+W
-         k01w1hcU/xwhpL2MqQO1fEMFUnJ38wzCs/zVlHdlUXi8QKLLhW2slYuwXpUxzBJMzC
-         kz9G82YN/RaX8+6xOVGYvQnknCYn246XmYNop5KY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201202214713eucas1p174c8325466b270d59a865ea696378352~NBIoN2tyH0122201222eucas1p1V;
-        Wed,  2 Dec 2020 21:47:13 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id BF.0A.44805.06B08CF5; Wed,  2
-        Dec 2020 21:47:12 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201202214712eucas1p123a11da20004b01c0d906a0d3d3f947c~NBInYH0e50122101221eucas1p1W;
-        Wed,  2 Dec 2020 21:47:12 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201202214712eusmtrp2d1f7f9abd0672115c4a37758a23454b9~NBInXc61e2207722077eusmtrp2l;
-        Wed,  2 Dec 2020 21:47:12 +0000 (GMT)
-X-AuditID: cbfec7f4-b4fff7000000af05-d5-5fc80b60937b
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2F.2E.21957.F5B08CF5; Wed,  2
-        Dec 2020 21:47:11 +0000 (GMT)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20201202214711eusmtip2907b75f3d54e0e267ed7f8ef7fb0e141~NBInIlA7l2839428394eusmtip2U;
-        Wed,  2 Dec 2020 21:47:11 +0000 (GMT)
-From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-To:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Wed, 2 Dec 2020 16:51:42 -0500
+Received: by mail-ej1-f65.google.com with SMTP id m19so289938ejj.11;
+        Wed, 02 Dec 2020 13:51:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=tUAab35rF6lnneOH96CQNbNoct6bAobczRr2vD0hIU0=;
+        b=NY/gy1KpfzGKryXwfG9+KOgJZYoCjjP6yv2FpSszjg6yWcnGVa2JPfUZkvQbRQtzOP
+         PsP776r274sR2cwnAZ5sZKKMq8nbrhMZjY98ZkofivnzBzTSFGNOTx6nuEADvG+7TbhZ
+         8SiyVdtSSEHQP/ta9vdzeqPqz9w0Kt3dIV/HzSZ/tzrxRo51LbiCTatTE2dglKRMSVwA
+         jxH0n1ia83JOBndNf1K8ujpzpr9u7OCMlvCfDPYL300ifC8RObG4stjwUG9EAzZRNS3F
+         9elpWv58PMtfxZ82+eOuIPJYbhhvtyx5OqF+lQV5ZXArl46dOz1bpttuGoHarENkR+sC
+         Sh2A==
+X-Gm-Message-State: AOAM532EuCdf8eo8WZz2VrNJaY4pv92T2Zn62s5WDTjsU7wEoXtFIIqi
+        UCo3KvsxDs9WsSw0eod5mcQ=
+X-Google-Smtp-Source: ABdhPJxFJdNekGxJGIwPUEqa1Ok5VRdnDf1X4lIvst0vcnSvkiomAogFk8Sojcuq0Hngndpn+8Gx2A==
+X-Received: by 2002:a17:906:451:: with SMTP id e17mr1699790eja.228.1606945859840;
+        Wed, 02 Dec 2020 13:50:59 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id i2sm9199edk.93.2020.12.02.13.50.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Dec 2020 13:50:58 -0800 (PST)
+Date:   Wed, 2 Dec 2020 23:50:57 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Timon Baetz <timon.baetz@protonmail.com>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
         Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v8 2/3] dt-bindings: net: Add bindings for AX88796C SPI
- Ethernet Adapter
-Date:   Wed,  2 Dec 2020 22:47:08 +0100
-Message-Id: <20201202214709.16192-3-l.stelmach@samsung.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20201202214709.16192-1-l.stelmach@samsung.com>
+        Rob Herring <robh+dt@kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH 2/3] power: supply: max8997_charger: Set CHARGER current
+ limit
+Message-ID: <20201202215057.GA135888@kozik-lap>
+References: <20201202203516.43053-1-timon.baetz@protonmail.com>
+ <20201202203516.43053-2-timon.baetz@protonmail.com>
 MIME-Version: 1.0
-Organization: Samsung R&D Institute Poland
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCKsWRmVeSWpSXmKPExsWy7djPc7oJ3CfiDfYdNrE4f/cQs8XGGetZ
-        Leacb2GxmH/kHKvFovczWC2uvb3DatH/+DWzxfnzG9gtLmzrY7W4eWgFo8Wmx9dYLS7vmsNm
-        MeP8PiaLQ1P3MlqsPXKX3eLYAjGL1r1H2C3+79nB7iDkcfnaRWaPLStvMnnsnHWX3WPTqk42
-        j81L6j127vjM5NG3ZRWjx+dNcgEcUVw2Kak5mWWpRfp2CVwZV4+ZFZwXrljQ+5OpgXEKfxcj
-        J4eEgInEn033WboYuTiEBFYwSmzfeo4JwvnCKPH21Dk2COczo8T33cuYYFo+zTrMCmILCSxn
-        lDi3WAyi6DmjxIvHL8CK2AQcJfqXnmAFSYgI3GOWWN/+gBHEYRa4zyhx7/lqZpAqYYEoidtr
-        N4ONYhFQlZi4+xmQzcHBK2At0fpLHGKbvET78u1sIDangI3Emxfnwcp5BQQlTs58wgJi8wto
-        Saxpug5mMwPVN2+dzQyyS0LgMKdEx5wprBCDXCROrV8I9YKwxKvjW9ghbBmJ/zvnM4HslRCo
-        l5g8yQyit4dRYtucHywQNdYSd879YgOpYRbQlFi/Sx8i7CixrfEMG0Qrn8SNt4IQJ/BJTNo2
-        nRkizCvR0SYEUa0isa5/D9RAKYneVysYJzAqzULyzCwkD8xC2LWAkXkVo3hqaXFuemqxUV5q
-        uV5xYm5xaV66XnJ+7iZGYMI7/e/4lx2My1991DvEyMTBeIhRgoNZSYSX5d+ReCHelMTKqtSi
-        /Pii0pzU4kOM0hwsSuK8SVvWxAsJpCeWpGanphakFsFkmTg4pRqYpk1ccPFhXSWX87+j2ow9
-        X74Vv26J67q755uIvmiGvRt//aZ/vt9Skh56a3NXTbq67bX4hElZgnwOvXobQnn3ML5naGrn
-        fDlp9iZTb1v2Ev2Xrx9Z5rNaaLaJ/jhbH5k7y+Pi1Ud7b6YK+6rW/Xc4/27usUl2nfvkJebd
-        W2ewtvuqTp9SyaHbFQo8mlfO/T6/zqMqt9b09vZE7ukbe27NVFQ1+HT2CDNj8evTB0UONX0+
-        myd8lzHswDMTlu/vfprq89h9yyjtmbTjlYjax5Si6d4Tkrdb+c1+qqQWsem5Zu/ku7fSnLVO
-        7bI1yHlVuowr+1/wpoKYxT95T5vtsZjy6vLkygftooLbF9bqMlbEKbEUZyQaajEXFScCAKS3
-        1MDnAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsVy+t/xe7rx3CfiDd79sbE4f/cQs8XGGetZ
-        Leacb2GxmH/kHKvFovczWC2uvb3DatH/+DWzxfnzG9gtLmzrY7W4eWgFo8Wmx9dYLS7vmsNm
-        MeP8PiaLQ1P3MlqsPXKX3eLYAjGL1r1H2C3+79nB7iDkcfnaRWaPLStvMnnsnHWX3WPTqk42
-        j81L6j127vjM5NG3ZRWjx+dNcgEcUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFW
-        RqZK+nY2Kak5mWWpRfp2CXoZV4+ZFZwXrljQ+5OpgXEKfxcjJ4eEgInEp1mHWbsYuTiEBJYy
-        StzZM5upi5EDKCElsXJuOkSNsMSfa11sEDVPGSUO7f3OApJgE3CU6F96AqxZROANs0TTvbfs
-        IA6zwH1GiV+fXjCCVAkLREj83fQXzGYRUJWYuPsZK8gGXgFridZf4hAb5CXal29nA7E5BWwk
-        3rw4zwpiCwGV7H+1EqyVV0BQ4uTMJywgrcwC6hLr5wmBhPkFtCTWNF0Hu4cZaEzz1tnMExiF
-        ZiHpmIXQMQtJ1QJG5lWMIqmlxbnpucWGesWJucWleel6yfm5mxiB8b3t2M/NOxjnvfqod4iR
-        iYPxEKMEB7OSCC/LvyPxQrwpiZVVqUX58UWlOanFhxhNgR6byCwlmpwPTDB5JfGGZgamhiZm
-        lgamlmbGSuK8W+euiRcSSE8sSc1OTS1ILYLpY+LglGpgmusUbNPU+ir5q/yPkAu3/dtfGOWa
-        paqWpnbPmP2n8vlhQd+XfTvYQ+22rjHKF5DS3+9xbcX50FpLiRtLF2h6CWiLu9fWdwomcZzo
-        lPwhukj14tLJGf2vWzcau5t+sLx7M+hQcu/1Q+vmHVixrJhT7FXmosrv7e9iPOdN+iruZHdW
-        M+b4PNv1qVunf2K2un5jZXsgM890cSPV7VqXjpfZuN8NmSrqO+sJY4mNUrv2QuZpFS9uXuyr
-        /7LCmylh6tnbYrIWnI1fBZ/MO6lpXlLYmXS2ZqbyyaY1gfN6rZenLpmgf8z76KTph643hlhK
-        XyrhWL/gauSUC5ndh58wfzApP/S9/YyB+dxVCflL1t6rU2Ipzkg01GIuKk4EAKtVSqF4AwAA
-X-CMS-MailID: 20201202214712eucas1p123a11da20004b01c0d906a0d3d3f947c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201202214712eucas1p123a11da20004b01c0d906a0d3d3f947c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201202214712eucas1p123a11da20004b01c0d906a0d3d3f947c
-References: <20201202214709.16192-1-l.stelmach@samsung.com>
-        <CGME20201202214712eucas1p123a11da20004b01c0d906a0d3d3f947c@eucas1p1.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201202203516.43053-2-timon.baetz@protonmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add bindings for AX88796C SPI Ethernet Adapter.
+On Wed, Dec 02, 2020 at 09:07:19PM +0000, Timon Baetz wrote:
+> Register for extcon notification and set charging current depending on
+> the detected cable type. Current values are taken from i9100 kernel
+> fork.
+> 
+> Enable and disable the CHARGER regulator based on extcon events and
+> remove regulator-always-on from the device tree.
+> 
+> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
+> ---
+>  arch/arm/boot/dts/exynos4210-i9100.dts |  1 -
+>  drivers/power/supply/max8997_charger.c | 92 ++++++++++++++++++++++++++
+>  2 files changed, 92 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
+> index 6d0c04d77a39..9f8d927e0d21 100644
+> --- a/arch/arm/boot/dts/exynos4210-i9100.dts
+> +++ b/arch/arm/boot/dts/exynos4210-i9100.dts
+> @@ -560,7 +560,6 @@ charger_reg: CHARGER {
+>  				regulator-name = "CHARGER";
+>  				regulator-min-microamp = <60000>;
+>  				regulator-max-microamp = <2580000>;
+> -				regulator-always-on;
 
-Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../bindings/net/asix,ax88796c.yaml           | 73 +++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/asix,ax88796c.yaml
+Thanks for the patch.
 
-diff --git a/Documentation/devicetree/bindings/net/asix,ax88796c.yaml b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
-new file mode 100644
-index 000000000000..699ebf452479
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
-@@ -0,0 +1,73 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/asix,ax88796c.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ASIX AX88796C SPI Ethernet Adapter
-+
-+maintainers:
-+  - Łukasz Stelmach <l.stelmach@samsung.com>
-+
-+description: |
-+  ASIX AX88796C is an Ethernet controller with a built in PHY. This
-+  describes SPI mode of the chip.
-+
-+  The node for this driver must be a child node of an SPI controller,
-+  hence all mandatory properties described in
-+  ../spi/spi-controller.yaml must be specified.
-+
-+allOf:
-+  - $ref: ethernet-controller.yaml#
-+
-+properties:
-+  compatible:
-+    const: asix,ax88796c
-+
-+  reg:
-+    maxItems: 1
-+
-+  spi-max-frequency:
-+    maximum: 40000000
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reset-gpios:
-+    description:
-+      A GPIO line handling reset of the chip. As the line is active low,
-+      it should be marked GPIO_ACTIVE_LOW.
-+    maxItems: 1
-+
-+  local-mac-address: true
-+
-+  mac-address: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - spi-max-frequency
-+  - interrupts
-+  - reset-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  # Artik5 eval board
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+    spi0 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        ethernet@0 {
-+            compatible = "asix,ax88796c";
-+            reg = <0x0>;
-+            local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
-+            interrupt-parent = <&gpx2>;
-+            interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+            spi-max-frequency = <40000000>;
-+            reset-gpios = <&gpe0 2 GPIO_ACTIVE_LOW>;
-+        };
-+    };
--- 
-2.26.2
+The DTS changes always go separately.
 
+>  			};
+>  
+>  			chargercv_reg: CHARGER_CV {
+> diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/supply/max8997_charger.c
+> index 1947af25879a..26cd271576ec 100644
+> --- a/drivers/power/supply/max8997_charger.c
+> +++ b/drivers/power/supply/max8997_charger.c
+> @@ -6,6 +6,7 @@
+>  //  MyungJoo Ham <myungjoo.ham@samsung.com>
+>  
+>  #include <linux/err.h>
+> +#include <linux/extcon.h>
+>  #include <linux/module.h>
+>  #include <linux/slab.h>
+>  #include <linux/platform_device.h>
+> @@ -31,6 +32,12 @@ struct charger_data {
+>  	struct device *dev;
+>  	struct max8997_dev *iodev;
+>  	struct power_supply *battery;
+> +	struct regulator *reg;
+
+You need to include regulator consumer.h.
+
+> +	struct {
+
+It makes all dereferences longer. Just add a comment that these are
+related to the extcon.
+
+> +		struct extcon_dev *edev;
+> +		struct notifier_block nb;
+> +		struct work_struct work;
+> +	} extcon;
+>  };
+>  
+>  static enum power_supply_property max8997_battery_props[] = {
+> @@ -88,6 +95,63 @@ static int max8997_battery_get_property(struct power_supply *psy,
+>  	return 0;
+>  }
+>  
+> +static void max8997_battery_extcon_evt_stop_work(void *data)
+> +{
+> +	struct charger_data *charger = data;
+> +
+> +	cancel_work_sync(&charger->extcon.work);
+> +}
+> +
+> +static void max8997_battery_extcon_evt_worker(struct work_struct *work)
+> +{
+> +	struct charger_data *charger =
+> +	    container_of(work, struct charger_data, extcon.work);
+> +	int ret, current_limit;
+> +	struct extcon_dev *edev = charger->extcon.edev;
+> +
+
+It would be useful to report the current with POWER_SUPPLY_PROP_* but
+it is a different patch.
+
+> +	if (extcon_get_state(edev, EXTCON_CHG_USB_SDP) > 0) {
+> +		dev_dbg(charger->dev, "USB SDP charger is connected\n");
+> +		current_limit = 450000;
+> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_DCP) > 0) {
+> +		dev_dbg(charger->dev, "USB DCP charger is connected\n");
+> +		current_limit = 650000;
+> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_FAST) > 0) {
+> +		dev_dbg(charger->dev, "USB FAST charger is connected\n");
+> +		current_limit = 650000;
+> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_SLOW) > 0) {
+> +		dev_dbg(charger->dev, "USB SLOW charger is connected\n");
+> +		current_limit = 650000;
+
+The charger provides 500 mA, so I wonder whether 650 here is correct. Is
+it at different voltage?
+
+> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_CDP) > 0) {
+> +		dev_dbg(charger->dev, "USB CDP charger is connected\n");
+> +		current_limit = 650000;
+> +	} else {
+> +		dev_dbg(charger->dev, "USB charger is diconnected\n");
+> +		current_limit = -1;
+> +	}
+> +
+> +	if (current_limit > 0) {
+
+ret should be declared here.
+
+> +		ret = regulator_set_current_limit(charger->reg, current_limit, current_limit);
+> +		if (ret)
+> +			dev_err(charger->dev, "failed to set current limit: %d\n", ret);
+
+Failure of setting the current should rather disable the charging.
+
+> +		ret = regulator_enable(charger->reg);
+> +		if (ret)
+> +			dev_err(charger->dev, "failed to enable regulator: %d\n", ret);
+> +	} else {
+
+ret should be declared here.
+
+> +		ret = regulator_disable(charger->reg);
+> +		if (ret)
+> +			dev_err(charger->dev, "failed to disable regulator: %d\n", ret);
+> +	}
+
+What about top-off charging?
+
+> +}
+> +
+> +static int max8997_battery_extcon_evt(struct notifier_block *nb,
+> +				unsigned long event, void *param)
+> +{
+> +	struct charger_data *charger =
+> +		container_of(nb, struct charger_data, extcon.nb);
+> +	schedule_work(&charger->extcon.work);
+> +	return NOTIFY_OK;
+> +}
+> +
+>  static const struct power_supply_desc max8997_battery_desc = {
+>  	.name		= "max8997_pmic",
+>  	.type		= POWER_SUPPLY_TYPE_BATTERY,
+> @@ -104,6 +168,7 @@ static int max8997_battery_probe(struct platform_device *pdev)
+>  	struct i2c_client *i2c = iodev->i2c;
+>  	struct max8997_platform_data *pdata = iodev->pdata;
+>  	struct power_supply_config psy_cfg = {};
+> +	struct extcon_dev *edev;
+>  
+>  	if (!pdata) {
+>  		dev_err(&pdev->dev, "No platform data supplied.\n");
+> @@ -151,6 +216,12 @@ static int max8997_battery_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> +	edev = extcon_get_extcon_dev("max8997-muic");
+
+Store it directly under charger->edev.
+
+> +	if (edev == NULL) {
+
+if (!edev) {
+
+> +		dev_info(&pdev->dev, "extcon is not ready, probe deferred\n");
+
+Do not print anything on deferrals.
+
+> +		return -EPROBE_DEFER;
+> +	}
+> +
+>  	charger = devm_kzalloc(&pdev->dev, sizeof(*charger), GFP_KERNEL);
+>  	if (!charger)
+>  		return -ENOMEM;
+> @@ -170,6 +241,27 @@ static int max8997_battery_probe(struct platform_device *pdev)
+>  		return PTR_ERR(charger->battery);
+>  	}
+>  
+> +	charger->reg = regulator_get(&pdev->dev, "CHARGER");
+
+Here and in extcon_get_extcon_dev() - you make all these devices tightly
+coupled. It will work, but I am afraid it's easy to break later.
+
+Instead you should have a device node in DTS to which the charger could
+bind and where the driver will find regulator supply and extcon
+phandles (with extcon_get_edev_by_phandle() for example).
+
+> +	if (IS_ERR(charger->reg)) {
+> +		dev_err(&pdev->dev, "couldn't get CHARGER regulator\n");
+> +		return PTR_ERR(charger->reg);
+> +	}
+> +
+> +	INIT_WORK(&charger->extcon.work, max8997_battery_extcon_evt_worker);
+> +	ret = devm_add_action(&pdev->dev, max8997_battery_extcon_evt_stop_work, charger);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "failed to add extcon evt stop action: %d\n", ret);
+
+Missing regulator_put() here and in other places. Use devm-().
+
+> +		return ret;
+> +	}
+> +	charger->extcon.edev = edev;
+> +	charger->extcon.nb.notifier_call = max8997_battery_extcon_evt;
+> +	ret = devm_extcon_register_notifier_all(&pdev->dev, charger->extcon.edev,
+> +			&charger->extcon.nb);
+
+Align the arguments with opening '('.
+
+Best regards,
+Krzysztof
