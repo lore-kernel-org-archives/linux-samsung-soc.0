@@ -2,104 +2,206 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E804C83016
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 08:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F32CC83014
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 10:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 149B2221FB
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 08:48:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37F06221FA
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 10:15:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387938AbgLBIru (ORCPT
+        id S1729405AbgLBKPS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Dec 2020 03:47:50 -0500
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:39337 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729216AbgLBIru (ORCPT
+        Wed, 2 Dec 2020 05:15:18 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:56581 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727623AbgLBKPR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Dec 2020 03:47:50 -0500
-Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id kNmykxdtjkGBYkNn1kZSlW; Wed, 02 Dec 2020 09:47:07 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
-        t=1606898827; bh=elqksiKShYm5pfpk7EDKJ3P5YUyt5ZDreS9w7/1NNhM=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=wGgfutOlnPx5c/HnT2q+PzMHv2jg2HXEo43Y7v2ywXBNJbLEOMfu9Jt+fp+m8pNRt
-         /TSc/+702xaFFvLqhiLpeFwYWS6yzD5GGCPdHkI6JdYQg+GvUgyRsFws/FcVTry7z2
-         Beogu35zdxMKZd1Ceet3/K9ymAWRopunh3wHVhRSZ0XnSZ3AVcPg4Yqph4XAOnlUi0
-         AFhmpNlQLxJJARmbD9AyWQKomgDihtxXI+RLiqFAUBDhPT2S4qME960voLbhFKcWRB
-         ul18yUohzxfmQR1/Do4SNk6vDGNce7/P9gzKgtp8FodnPdsswh7ZqMVV705JbMi4G3
-         S0l1v4BbOOKDQ==
-Subject: Re: [PATCH] media: platform: s5p-mfc: properly assign device to both
- vb2 queues
-To:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-References: <CGME20201124084151eucas1p1040de475ecccbe9bff2d6bcac17e000d@eucas1p1.samsung.com>
- <20201124084143.12545-1-m.szyprowski@samsung.com>
- <6e2409df-52f2-54b5-89b3-c9d6587160a4@kernel.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <48d0b1e6-293c-79b4-a07c-8730892b3824@xs4all.nl>
-Date:   Wed, 2 Dec 2020 09:47:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        Wed, 2 Dec 2020 05:15:17 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201202101425euoutp02b70d6009f25ac7399b144b96418db465~M3rvZdphc1121611216euoutp025;
+        Wed,  2 Dec 2020 10:14:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201202101425euoutp02b70d6009f25ac7399b144b96418db465~M3rvZdphc1121611216euoutp025
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1606904065;
+        bh=Mhxdc+RzUSvcSCv//OZka0Ay0RwlIDIhuS+44sjTf7k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=S5tTCk+bwGR4HPBAm1p1ps0hLEYME5vyTt39oc2Vr8q99JGDnGmZ1NCRZmTDcBy5n
+         3IAHXtqPeA2RACpf2NuqwbNW16lwaTVZlA36T1yCgEYa4YEAbWSLcQ0piQJteQpGl/
+         7T6EfcdiLbpKT4WeTsVOxFcAwUrtIY+BBcoyj7EI=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201202101425eucas1p1e1e9584730137c6dcfec9b6dde55239d~M3rvIyUP71416114161eucas1p1_;
+        Wed,  2 Dec 2020 10:14:25 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 34.79.44805.10967CF5; Wed,  2
+        Dec 2020 10:14:25 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20201202101424eucas1p103b713a5fe6faae36ce32180570c46c4~M3rujVEJd2988729887eucas1p1e;
+        Wed,  2 Dec 2020 10:14:24 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20201202101424eusmtrp105fbc6ba246abf42114737ed8e163b0d~M3ruirw6H1847018470eusmtrp1S;
+        Wed,  2 Dec 2020 10:14:24 +0000 (GMT)
+X-AuditID: cbfec7f4-b37ff7000000af05-bd-5fc7690142d6
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 24.62.16282.00967CF5; Wed,  2
+        Dec 2020 10:14:24 +0000 (GMT)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20201202101424eusmtip1a77e8cad8f71f5e611c47bcda6822d67~M3ruSbrc11249712497eusmtip1S;
+        Wed,  2 Dec 2020 10:14:24 +0000 (GMT)
+From:   Lukasz Stelmach <l.stelmach@samsung.com>
+To:     Qinglang Miao <miaoqinglang@huawei.com>
+Cc:     "Krzysztof Kozlowski" <krzk@kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] hwrng: exynos - fix reference leak in
+ exynos_trng_probe
+Date:   Wed, 02 Dec 2020 11:14:10 +0100
+In-Reply-To: <20201130130118.51339-1-miaoqinglang@huawei.com> (Qinglang
+        Miao's message of "Mon, 30 Nov 2020 21:01:18 +0800")
+Message-ID: <dleftjczzsecr1.fsf%l.stelmach@samsung.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <6e2409df-52f2-54b5-89b3-c9d6587160a4@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfFtMELUcEcqeit9zcxZ9qS6+jDRoc85i4fRW55GN30vDI28VRzSAsNAfoGQ8HRd/KrmcXWSkdHb8FGcliKj2v+Daq4WWEAoLKgHCnNKDiuCSY+11kHAA
- Xy5Buou1f70yTcIT3M0hHYx87WiEvRUZZjNhcdmO4VbFoTatbFXnE7WVCB2EbdMgji7+YdaHHyD2wyh+m4Hdoh9WSXXA0PjQagFl0A7h8IUYpITLjT8l9rCz
- rluPh/ptdvmmp5uiZzyqI/tSv4F8uNzp90tMeu7oFTS3ioDpLWLqUof4fDaoTdeWP+JbpWGVo+fwNrSaj0eqYG++uBrHrAXuvAVsZ5c0wg9mrLi/WlucF2a0
- wplgUueOVu8kxeagA5jsIzfZIo9ZPD6Z8XgY2V+N2epiUJemYJk=
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7djPc7qMmcfjDY7cYbE4f34Du8Wmx9dY
+        Le7f+8lkcXnXHDaLGef3MVkcbPV0YPNoOfKW1WPTqk42j81L6j0+b5ILYInisklJzcksSy3S
+        t0vgyuiZtZm9YIN4xeKpvewNjG+Euxg5OSQETCTOrPjI3sXIxSEksIJR4sC0OawQzhcg5+ZZ
+        qMxnRolbtx6zwbT833GKBSKxnFFiWetzKOc5o8SmPTOB+jk42AT0JNaujQBpEBHQlmi52Q02
+        iVlgP6NE94t/YJOEBQIllpy/zgpiswioSqzbd5sJpJdToE5i9mFfkDCvgLnEz/XLwUpEBSwl
+        try4zw4RF5Q4OfMJC4jNLJArMfP8G0aQ+RICLzgk/n1/DTZHQsBFYs4tPoijhSVeHd/CDmHL
+        SJye3MMCUVIvMXmSGURrD6PEtjk/WCBqrCXunPsF9bCjxJe1EG9JCPBJ3HgrCLGWT2LStunM
+        EGFeiY42IYhqFYl1/XugpkhJ9L5awQhR4iGxd3Y6JKAmMEo8PTqFdQKjwiwkz8xC8swsoBZm
+        AU2J9bv0IcLaEssWvmaGsG0l1q17z7KAkXUVo3hqaXFuemqxUV5quV5xYm5xaV66XnJ+7iZG
+        YAI6/e/4lx2My1991DvEyMTBeIhRBaj50YbVFxilWPLy81KVRHhZ/h2JF+JNSaysSi3Kjy8q
+        zUktPsQozcGiJM6btGVNvJBAemJJanZqakFqEUyWiYNTqoFJRGTxLvfdXIZaUvcYT2ZdlOU+
+        pLaX5bqd4QstPq5KVvcXK67Lx0yJyD6kZ8jiUCkYxR5x/LZPcPjHqQs4dszuaDDk6LKe0l9z
+        ZAND8a965TqljpebbqYrZe099WzPgr9XfDtPlbOdaA/k3GuYeHLRPTcn2Tsvbk9mSu6Y+y/r
+        YLRylufVVw7vpm2YPuvyXuP/R2brPgoyjNfSsGt3UVBoPbj7UnfAk30vdExXKeQLTjm75F2d
+        5Vtllm9LHx85el1x7y7xRV+vLSl45dRd3+aqLXpjG0ebe9nplh1v4yb/Zp9XtcHqd6fSry+/
+        GcSNZlw6XWAa9kz8yv3O2JXzDl/s+shQnGDygCdr4v3FljpdSizFGYmGWsxFxYkAlWwmz7sD
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsVy+t/xu7oMmcfjDS6cl7A4f34Du8Wmx9dY
+        Le7f+8lkcXnXHDaLGef3MVkcbPV0YPNoOfKW1WPTqk42j81L6j0+b5ILYInSsynKLy1JVcjI
+        Ly6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy+iZtZm9YIN4xeKpvewN
+        jG+Euxg5OSQETCT+7zjF0sXIxSEksJRRYtmuWYxdjBxACSmJlXPTIWqEJf5c62KDqHnKKHH0
+        /H92kBo2AT2JtWsjQGpEBLQlWm52s4PUMAvsYZToXvOIGaRGWMBf4u1mT5AaIQEbiTkXpjKC
+        2CwCqhLr9t1mAinhFKiT2PeAHSTMK2Au8XP9clYQW1TAUmLLi/tQcUGJkzOfsIDYzALZEl9X
+        P2eewCgwC0lqFpLULKCpzAKaEut36UOEtSWWLXzNDGHbSqxb955lASPrKkaR1NLi3PTcYiO9
+        4sTc4tK8dL3k/NxNjMDo2Xbs55YdjCtffdQ7xMjEwXiIUQWo89GG1RcYpVjy8vNSlUR4Wf4d
+        iRfiTUmsrEotyo8vKs1JLT7EaAr02URmKdHkfGBc55XEG5oZmBqamFkamFqaGSuJ85ocWRMv
+        JJCeWJKanZpakFoE08fEwSnVwJRkWLL0qWzuMr5P8yU+F3Avcs8qv/OcXeJfi1nsu90XmIK/
+        /P0e9sZ52yG9c0orPFamyHj+kepaejzA+MavxCOPDtzSO9944Z2W0YyMa9q2okwzEg09NllW
+        XVxw8LNV3Bve/LN8e7pyPl25uPOr4d87fevtG0uvcJX/ydq714134enFdxmUC+sDxe+YZ7N8
+        ec7+7Ojn7T4eh7b1TZ12UDqF+2ihy0KjnYeuxr5M37NuWs7uw8yy2XLhIkVp29oT2G2lPof1
+        /bhmKC/vMTez4eo+hvOCnFNa9yiI2mVZ8CwUNum02Nb08s1z6wn135muctfHcmZqmBmta3M5
+        ePfh6VaXox36DbW9s/dqsrwTL1NiKc5INNRiLipOBAAwKvXBMwMAAA==
+X-CMS-MailID: 20201202101424eucas1p103b713a5fe6faae36ce32180570c46c4
+X-Msg-Generator: CA
+X-RootMTR: 20201202101424eucas1p103b713a5fe6faae36ce32180570c46c4
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201202101424eucas1p103b713a5fe6faae36ce32180570c46c4
+References: <20201130130118.51339-1-miaoqinglang@huawei.com>
+        <CGME20201202101424eucas1p103b713a5fe6faae36ce32180570c46c4@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 24/11/2020 12:32, Sylwester Nawrocki wrote:
-> On 11/24/20 09:41, Marek Szyprowski wrote:
->> Properly set device pointers in videobuf2 queues, so the videobuf2
->> debugging messages will be prefixed with the respective device name.
->>
->> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
->> ---
->> This patch was previously sent as part of "[PATCH v2 0/4] Exynos4 media
->> drivers: adapt for the planned ARM IOMMU-DMA changes" patchset:
->> https://lore.kernel.org/linux-samsung-soc/20200918144833.14618-1-m.szyprowski@samsung.com/
->> The IOMMU related changes are still under review, but this change is
->> unrelated and it makes sense to aplly it separately.
->> ---
->>   drivers/media/platform/s5p-mfc/s5p_mfc.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
->> index eba2b9f040df..4e50c342b322 100644
->> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
->> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
->> @@ -844,6 +844,7 @@ static int s5p_mfc_open(struct file *file)
->>   	q->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
->>   	q->drv_priv = &ctx->fh;
->>   	q->lock = &dev->mfc_mutex;
->> +	q->dev = &dev->plat_dev->dev;
-> 
-> I can't see where q->dev is used for debug logs, shouldn't we use
-> v4l2_queue_init_name() instead?
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-And also you don't need to set q->dev: this driver sets alloc_devs[],
-and q->dev is only used if alloc_devs is not set. q->dev should probably
-be renamed to alloc_dev since that's what it is used for: the device for
-the allocation context.
+It was <2020-11-30 pon 21:01>, when Qinglang Miao wrote:
+> pm_runtime_get_sync will increment pm usage counter even
+> failed. Forgetting to putting operation will result in a
+> reference leak here.
+>
+> Replace it with pm_runtime_resume_and_get to keep usage
+> counter balanced. I remove err_clock label at the same.
+>
+> Fixes: 6cd225cc5d8a ("hwrng: exynos - add Samsung Exynos True RNG driver")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Suggested-by: Lukasz Stelmach <l.stelmach@samsung.com>
+> Signed-off-by: Qinglang Miao <miaoqinglang@huawei.com>
+> ---
+>  v2: remobe useless label as Lukasz suggested.
 
-To help debugging using v4l2_queue_init_name would probably be a better
-approach.
+That is good too, but I meant using pm_runtime_resume_and_get() in
+exynos_trng_resume() too. Please take a look at that function.
 
-Regards,
+>
+>  drivers/char/hw_random/exynos-trng.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_rando=
+m/exynos-trng.c
+> index 8e1fe3f8d..ffebb72e4 100644
+> --- a/drivers/char/hw_random/exynos-trng.c
+> +++ b/drivers/char/hw_random/exynos-trng.c
+> @@ -132,7 +132,7 @@ static int exynos_trng_probe(struct platform_device *=
+pdev)
+>  		return PTR_ERR(trng->mem);
+>=20=20
+>  	pm_runtime_enable(&pdev->dev);
+> -	ret =3D pm_runtime_get_sync(&pdev->dev);
+> +	ret =3D pm_runtime_resume_and_get(&pdev->dev);
+>  	if (ret < 0) {
+>  		dev_err(&pdev->dev, "Could not get runtime PM.\n");
+>  		goto err_pm_get;
+> @@ -142,13 +142,13 @@ static int exynos_trng_probe(struct platform_device=
+ *pdev)
+>  	if (IS_ERR(trng->clk)) {
+>  		ret =3D PTR_ERR(trng->clk);
+>  		dev_err(&pdev->dev, "Could not get clock.\n");
+> -		goto err_clock;
+> +		goto err_pm_get;
+>  	}
+>=20=20
+>  	ret =3D clk_prepare_enable(trng->clk);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Could not enable the clk.\n");
+> -		goto err_clock;
+> +		goto err_pm_get;
+>  	}
+>=20=20
+>  	ret =3D devm_hwrng_register(&pdev->dev, &trng->rng);
+> @@ -164,9 +164,6 @@ static int exynos_trng_probe(struct platform_device *=
+pdev)
+>  err_register:
+>  	clk_disable_unprepare(trng->clk);
+>=20=20
+> -err_clock:
+> -	pm_runtime_put_sync(&pdev->dev);
+> -
+>  err_pm_get:
+>  	pm_runtime_disable(&pdev->dev);
 
-	Hans
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl/HaPIACgkQsK4enJil
+gBD+uQf8D9x1XK5zm+GHPDtFS0L7rBggFvKmJhqXqVoDhLFX4QFJZO9M7MsDwUPT
+FqPOYA5nmHr0m/YfqEFGhKnF89eJv9us+PkBGfm0YjAHUmbwBeb5Mp1TH6zJ2v2n
+FWsHenglG6gRY6I4V1p1caRBtbtzgxadequIluMDBlZqM7bdbhGD1WDZ+P+y92wP
+nBO/FECD2S6S5m0St7pUEsK+ZpXtvn2bo9UgvNx2ZCKe9T4yNwJCpdLyeQSKxdnZ
+RYesge7F9MeJiex6/BrUMYlYXmWSu+SzDHBgGJdHUm3egHN86SR0NkWxRwSxcyux
+uRWLL7UcmConTpEac3QaCN1mlB0pYw==
+=IU3L
+-----END PGP SIGNATURE-----
+--=-=-=--
