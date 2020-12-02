@@ -2,91 +2,86 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF3BFC64E8A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 12:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B14A0C64E7B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 17:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A5F42223C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 12:57:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B9F2221E9
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 17:19:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729910AbgLBM5E (ORCPT
+        id S2389074AbgLBRTf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Dec 2020 07:57:04 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34446 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729854AbgLBM5D (ORCPT
+        Wed, 2 Dec 2020 12:19:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38520 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389070AbgLBRTf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Dec 2020 07:57:03 -0500
-Received: by mail-ed1-f68.google.com with SMTP id y22so3798383edv.1;
-        Wed, 02 Dec 2020 04:56:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VtuwDJsit3T3xgKBsoLXND8jeW1ZGNw+BTf0+WVcI8I=;
-        b=BLrrCZpY1snXrEJqbkFenJ5eip4bmuHSB04XapdT9TY7Ma66Q7yqEaZRLWoGSruj2l
-         u+GG2UDVVXeG0b+TBkamRAJegdmcDeMgUOf3sqetGkuuRj81Xrp7K0hmu1tS/w5HbXiG
-         yCeRH+9v3L9lw59NuOK4TYH9S0KpM0VpW106ttsZy7NAYTPzM/Ba6BTT9Clnk6/eoN7s
-         Gnm0pnAJxc0ozoFynknwrEvekCODRPp/xeVcFX0id3Po24u8W77WaNuRyTdHf6t0Walv
-         JjdeAgNJWziBrmT4rg+tRdMIueT8jklE0Mgfgqhc/3vKP9FbfFJHbc9ICCPsbfIjuXtr
-         NtvA==
-X-Gm-Message-State: AOAM531ZFjF4NCsScyVSkZpRHft3BUl64yqmHbc54kn4I0VX6LDQfGyz
-        c9ndrC0m0T+X05HdfBpW8VU=
-X-Google-Smtp-Source: ABdhPJztSHHvmB+B8TdxpT1fQBf2YKFVFozZWrKJjdolYeThkAvTszRFVp7noI+F0lL/dt4YnSMz1Q==
-X-Received: by 2002:a05:6402:1c90:: with SMTP id cy16mr2412161edb.73.1606913781562;
-        Wed, 02 Dec 2020 04:56:21 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id g15sm1146158edj.49.2020.12.02.04.56.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Dec 2020 04:56:19 -0800 (PST)
-Date:   Wed, 2 Dec 2020 14:56:18 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-rtc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 2/2] rtc: s3c: Remove dead code related to periodic tick
- handling
-Message-ID: <20201202125618.GC36340@kozik-lap>
-References: <20201202111318.5353-1-m.szyprowski@samsung.com>
- <CGME20201202111328eucas1p1e6fff3706b790d104b76f95085dbb0c1@eucas1p1.samsung.com>
- <20201202111318.5353-2-m.szyprowski@samsung.com>
- <20201202124904.GB36340@kozik-lap>
- <6f29a418-6a96-4b4b-c2c4-3722f3ad9895@samsung.com>
+        Wed, 2 Dec 2020 12:19:35 -0500
+Date:   Wed, 2 Dec 2020 09:18:52 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606929534;
+        bh=gdrIoUwM4Jc/bJ/Co4EbSzcZQeThPm4Zexr4TFqA+CM=;
+        h=From:To:Cc:Subject:In-Reply-To:References:From;
+        b=oBN3nitMLZKbd6AWlOeY3V9jesJoJpzC+hiz6NaZY21ZoXjGC+0jhss9M1MNakmaw
+         K0jlcJAPBGJP5evgjM8/V6GCtJ4sAAzwUrsBQ8Fg5lE+nh+jK32xSWsT5ABnAJ2ggl
+         /TvUmkv9rnLcfbTgbcezyUFVU2ZWFxJ6b6z+KM7E=
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Lukasz Stelmach <l.stelmach@samsung.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvbG5pZXJr?= =?UTF-8?B?aWV3aWN6?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v7 3/3] net: ax88796c: ASIX AX88796C SPI Ethernet
+ Adapter Driver
+Message-ID: <20201202091852.69a02069@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
+In-Reply-To: <dleftj8sageb97.fsf%l.stelmach@samsung.com>
+References: <20201125132621.628ac98b@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+        <CGME20201202104645eucas1p25335c0b07b106f932006f2a5bce88b6e@eucas1p2.samsung.com>
+        <dleftj8sageb97.fsf%l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6f29a418-6a96-4b4b-c2c4-3722f3ad9895@samsung.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 02, 2020 at 01:54:32PM +0100, Marek Szyprowski wrote:
-> Hi Krzysztof,
-> 
-> On 02.12.2020 13:49, Krzysztof Kozlowski wrote:
-> > On Wed, Dec 02, 2020 at 12:13:18PM +0100, Marek Szyprowski wrote:
-> >> Support for periodic tick interrupts has been moved from the RTC class to
-> >> the HR-timers long time ago. Then it has been removed from this driver by
-> >> commits 80d4bb515b78 ("RTC: Cleanup rtc_class_ops->irq_set_state") and
-> >> 696160fec162 ("RTC: Cleanup rtc_class_ops->irq_set_freq()"). They however
-> >> did not remove all the code related to the tick handling. Do it now then.
-> >>
-> > Update also the bindings (one IRQ less), please.
+On Wed, 02 Dec 2020 11:46:28 +0100 Lukasz Stelmach wrote:
+> >> +	status = netif_rx(skb);  
 > >
-> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > If I'm reading things right this is in process context, so netif_rx_ni()
+> >  
 > 
-> Well, in theory bindings describe the hardware not the drivers. Hardware 
-> is still capable of triggering the periodic tick interrupt. It is just a 
-> Linux kernel policy not to use it at all...
+> Is it? The stack looks as follows
+> 
+>     ax88796c_skb_return()
+>     ax88796c_rx_fixup()
+>     ax88796c_receive()
+>     ax88796c_process_isr()
+>     ax88796c_work()
+> 
+> and ax88796c_work() is a scheduled in the system_wq.
 
-Good point. It will however mean that all DTS (including new) will still
-have to provide the tick IRQ. I am fine with this.
+Are you asking if work queue gets run in process context? It does.
 
-Best regards,
-Krzysztof
+> >> +	if (status != NET_RX_SUCCESS)
+> >> +		netif_info(ax_local, rx_err, ndev,
+> >> +			   "netif_rx status %d\n", status);  
+> >
+> > Again, it's inadvisable to put per packet prints without any rate
+> > limiting in the data path.  
+> 
+> Even if limmited by the msglvl flag, which is off by default?
 
+I'd err on the side of caution, but up to you.
