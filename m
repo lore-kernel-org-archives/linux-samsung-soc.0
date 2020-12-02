@@ -2,67 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B44CAC64E7C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 07:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E804C83016
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 08:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EB19221FB
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 07:06:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 149B2221FB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 08:48:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbgLBHGL (ORCPT
+        id S2387938AbgLBIru (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Dec 2020 02:06:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbgLBHGL (ORCPT
+        Wed, 2 Dec 2020 03:47:50 -0500
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:39337 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729216AbgLBIru (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Dec 2020 02:06:11 -0500
-Date:   Wed, 2 Dec 2020 12:35:25 +0530
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606892730;
-        bh=9qn0NrdWjruLyUWQ7XKn10OO1oc80uMd+sP+D93H81M=;
-        h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DJFWp43l5knvrzrbXohnGTBjFN3K0dhOwNm9OA0KVjY6VFFkklgG084t9jnxbsenx
-         YhF35Siizh0PChYwdRZj3mX6nKjUov0N0QW9BCv+ohpNqLZKOpquVpnLLDEj+wyot7
-         UPcCBUiCXm7Q1unL8flLC5wOF4bpSZUrYGrd/rSw=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Wed, 2 Dec 2020 03:47:50 -0500
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id kNmykxdtjkGBYkNn1kZSlW; Wed, 02 Dec 2020 09:47:07 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
+        t=1606898827; bh=elqksiKShYm5pfpk7EDKJ3P5YUyt5ZDreS9w7/1NNhM=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=wGgfutOlnPx5c/HnT2q+PzMHv2jg2HXEo43Y7v2ywXBNJbLEOMfu9Jt+fp+m8pNRt
+         /TSc/+702xaFFvLqhiLpeFwYWS6yzD5GGCPdHkI6JdYQg+GvUgyRsFws/FcVTry7z2
+         Beogu35zdxMKZd1Ceet3/K9ymAWRopunh3wHVhRSZ0XnSZ3AVcPg4Yqph4XAOnlUi0
+         AFhmpNlQLxJJARmbD9AyWQKomgDihtxXI+RLiqFAUBDhPT2S4qME960voLbhFKcWRB
+         ul18yUohzxfmQR1/Do4SNk6vDGNce7/P9gzKgtp8FodnPdsswh7ZqMVV705JbMi4G3
+         S0l1v4BbOOKDQ==
+Subject: Re: [PATCH] media: platform: s5p-mfc: properly assign device to both
+ vb2 queues
+To:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Willy Wolff <willy.mh.wolff.ml@gmail.com>,
-        Marian Mihailescu <mihailescu2m@gmail.com>,
-        Markus Reichl <m.reichl@fivetechno.de>
-Subject: Re: [PATCH v2] phy: samsung: Merge Kconfig for Exynos5420 and
- Exynos5250
-Message-ID: <20201202070525.GF8403@vkoul-mobl>
-References: <CGME20201202064807eucas1p124fbd6237538e9ba01c7981891e7a082@eucas1p1.samsung.com>
- <20201202064759.24300-1-m.szyprowski@samsung.com>
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <CGME20201124084151eucas1p1040de475ecccbe9bff2d6bcac17e000d@eucas1p1.samsung.com>
+ <20201124084143.12545-1-m.szyprowski@samsung.com>
+ <6e2409df-52f2-54b5-89b3-c9d6587160a4@kernel.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <48d0b1e6-293c-79b4-a07c-8730892b3824@xs4all.nl>
+Date:   Wed, 2 Dec 2020 09:47:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201202064759.24300-1-m.szyprowski@samsung.com>
+In-Reply-To: <6e2409df-52f2-54b5-89b3-c9d6587160a4@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfFtMELUcEcqeit9zcxZ9qS6+jDRoc85i4fRW55GN30vDI28VRzSAsNAfoGQ8HRd/KrmcXWSkdHb8FGcliKj2v+Daq4WWEAoLKgHCnNKDiuCSY+11kHAA
+ Xy5Buou1f70yTcIT3M0hHYx87WiEvRUZZjNhcdmO4VbFoTatbFXnE7WVCB2EbdMgji7+YdaHHyD2wyh+m4Hdoh9WSXXA0PjQagFl0A7h8IUYpITLjT8l9rCz
+ rluPh/ptdvmmp5uiZzyqI/tSv4F8uNzp90tMeu7oFTS3ioDpLWLqUof4fDaoTdeWP+JbpWGVo+fwNrSaj0eqYG++uBrHrAXuvAVsZ5c0wg9mrLi/WlucF2a0
+ wplgUueOVu8kxeagA5jsIzfZIo9ZPD6Z8XgY2V+N2epiUJemYJk=
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 02-12-20, 07:47, Marek Szyprowski wrote:
-> Exynos5420 variant of USB2 PHY is handled by the same code as the
-> Exynos5250 one. Introducing a separate Kconfig symbol for it was an
-> over-engineering, which turned out to cause build break for certain
-> configurations:
+On 24/11/2020 12:32, Sylwester Nawrocki wrote:
+> On 11/24/20 09:41, Marek Szyprowski wrote:
+>> Properly set device pointers in videobuf2 queues, so the videobuf2
+>> debugging messages will be prefixed with the respective device name.
+>>
+>> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
+>> ---
+>> This patch was previously sent as part of "[PATCH v2 0/4] Exynos4 media
+>> drivers: adapt for the planned ARM IOMMU-DMA changes" patchset:
+>> https://lore.kernel.org/linux-samsung-soc/20200918144833.14618-1-m.szyprowski@samsung.com/
+>> The IOMMU related changes are still under review, but this change is
+>> unrelated and it makes sense to aplly it separately.
+>> ---
+>>   drivers/media/platform/s5p-mfc/s5p_mfc.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> index eba2b9f040df..4e50c342b322 100644
+>> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+>> @@ -844,6 +844,7 @@ static int s5p_mfc_open(struct file *file)
+>>   	q->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+>>   	q->drv_priv = &ctx->fh;
+>>   	q->lock = &dev->mfc_mutex;
+>> +	q->dev = &dev->plat_dev->dev;
 > 
-> ERROR: modpost: "exynos5420_usb2_phy_config" [drivers/phy/samsung/phy-exynos-usb2.ko] undefined!
-> 
-> Fix this by removing PHY_EXYNOS5420_USB2 symbol and using
-> PHY_EXYNOS5250_USB2 also for Exynos5420 SoCs.
+> I can't see where q->dev is used for debug logs, shouldn't we use
+> v4l2_queue_init_name() instead?
 
-Applied, thanks
+And also you don't need to set q->dev: this driver sets alloc_devs[],
+and q->dev is only used if alloc_devs is not set. q->dev should probably
+be renamed to alloc_dev since that's what it is used for: the device for
+the allocation context.
 
--- 
-~Vinod
+To help debugging using v4l2_queue_init_name would probably be a better
+approach.
+
+Regards,
+
+	Hans
