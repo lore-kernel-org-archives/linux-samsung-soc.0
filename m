@@ -2,75 +2,190 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA06C83016
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 20:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E840CC64E7C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 20:08:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEDD721527
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 20:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92E0821527
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Dec 2020 20:08:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731254AbgLBUEX (ORCPT
+        id S2387658AbgLBUI3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Dec 2020 15:04:23 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45787 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731253AbgLBUEX (ORCPT
+        Wed, 2 Dec 2020 15:08:29 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:54015 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387621AbgLBUI2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Dec 2020 15:04:23 -0500
-Received: by mail-ed1-f66.google.com with SMTP id r5so5295121eda.12;
-        Wed, 02 Dec 2020 12:04:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3H+/Pk1vdtBMbkvkEWzPL8rGYs8KMTBkqJOiGXFAT3Q=;
-        b=tBy6VxcH1Ikj73anh+ivLNdOR3qNMV1WJ02+5iTnUHvaERIlMI/Rt/zyiK/NifINWj
-         ctt7l/DyjkZ2ucvniURAOwel/9h9AnzX3s7c3fHdPKVELPxLomAjDnY/+hTHfHffvGQK
-         YESUtaoTmOdyam191QiZIeKWcAMBSmKH3QOGqZZSMWw98AVOBV7JVLyuRbbXYHKjwxoL
-         urtT9wVFKR40vdu/5opteiikY0Nz+vBkYRik0Yks4rxX8cxDVhQmTXd/sfsjdm8AabeR
-         UQGLiGjXMCeW5ukf4dNMOe2yVMQbBPBmw3kzneYwyUQiG8nVdPaDlF+YHpLcTACF309c
-         K7+Q==
-X-Gm-Message-State: AOAM533XTjX5CtwhuUp1bVz9QVtXyfQoV8cSVm0LrgXoNh94Ut/8cnkU
-        pz9Mc6CiVOLJ+auQvVDk3LzUaakFPb4=
-X-Google-Smtp-Source: ABdhPJzO0jbYldQ2/2+yVGNdxtARvimDdd5sq6FNqXdRkYf0ADzfizL7+23C8Dv2bEJgzmQg3Ns3lA==
-X-Received: by 2002:a50:fc96:: with SMTP id f22mr1713481edq.162.1606939421359;
-        Wed, 02 Dec 2020 12:03:41 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id e21sm631481edv.96.2020.12.02.12.03.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Dec 2020 12:03:40 -0800 (PST)
-Date:   Wed, 2 Dec 2020 22:03:38 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>,
+        Wed, 2 Dec 2020 15:08:28 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201202200733euoutp011cbf8b5d60a9279fa6d249170b237383~M-xnctH3Q1427914279euoutp01K;
+        Wed,  2 Dec 2020 20:07:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201202200733euoutp011cbf8b5d60a9279fa6d249170b237383~M-xnctH3Q1427914279euoutp01K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1606939653;
+        bh=nX1/s9F4j0opypv7MLT+Sr3+JETZciJL/oqqq3Yqqxc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=a+YdXyyTUz8KPN5IAsgsIENqV7HhcqXlfAYvQ2zQrtRjpo7GNxfg4cBiEt8f2dzyU
+         PxjpZLmCXin8TJR5f3+utLjNtK41szXlqv+VbfI70UXFqAateJxFtb9BBiJXWvsmDn
+         AtToMVjXd1Vnrq+uDkCX5V0JXFL6F89jGjt+bKKU=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20201202200728eucas1p1676c086b1d900ebb9eee9506c9b5d92b~M-xilRsLK1724917249eucas1p1i;
+        Wed,  2 Dec 2020 20:07:28 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 53.F6.45488.004F7CF5; Wed,  2
+        Dec 2020 20:07:28 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20201202200727eucas1p18311ed19904e8a0c7b8c28cde87f155b~M-xiG0E3P2979929799eucas1p1n;
+        Wed,  2 Dec 2020 20:07:27 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20201202200727eusmtrp2ac27b6bb7c81afe0e7dd81e663911d7f~M-xiGAnuu2900929009eusmtrp2_;
+        Wed,  2 Dec 2020 20:07:27 +0000 (GMT)
+X-AuditID: cbfec7f5-c5fff7000000b1b0-c7-5fc7f40041f0
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 37.9C.21957.FF3F7CF5; Wed,  2
+        Dec 2020 20:07:27 +0000 (GMT)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20201202200727eusmtip2a27d2352fcd1a034d76327ce441c0f26~M-xh1xuRB0034800348eusmtip2r;
+        Wed,  2 Dec 2020 20:07:27 +0000 (GMT)
+From:   Lukasz Stelmach <l.stelmach@samsung.com>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] ARM: dts: s3c6410: correct SMDK6410 board compatible
-Message-ID: <20201202200338.GD128771@kozik-lap>
-References: <20201117201106.128813-1-krzk@kernel.org>
- <20201117201106.128813-4-krzk@kernel.org>
+        linux-samsung-soc@vger.kernel.org,
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolni?= =?utf-8?Q?erkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v7 3/3] net: ax88796c: ASIX AX88796C SPI Ethernet
+ Adapter Driver
+Date:   Wed, 02 Dec 2020 21:07:11 +0100
+In-Reply-To: <20201202091852.69a02069@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
+        (Jakub Kicinski's message of "Wed, 2 Dec 2020 09:18:52 -0800")
+Message-ID: <dleftjsg8oc6q8.fsf%l.stelmach@samsung.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201117201106.128813-4-krzk@kernel.org>
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxbVRjGPfejvVRbzzqEk24RRzCxmhY2YdzhXLaEwJUlygwyBBWb7QqL
+        UEgL+yAuG646RCgIEtta0sm3sJbZQkOpKHQFMpbRIhO2CI4BBgYsBLolSEIn5bK4/57zvL/3
+        M4fCxcukhDqlLGBVSkVOOE9A2Af+9cieezSYGaUzCGnPpAunf9G1k7TRoyFok3uYpOuWdSQ9
+        9nCCpCtmFnHa47nGp712LUlbZ8ZIerTbyKN1nt8w2lXTA2ize5JPD1wJob/qcfMPQ2Z0bARn
+        On6+izEOwySfsbZ+w2NsDRcYR5cPY7QdrYDxWV9OptIFB0+yOadOs6rIQ58Ksi977+D5FtHZ
+        SuMSuAg2ni8FQRSC0WjFu8QvBQJKDFsA8msdgHs8AujG7138ACWGPoBG7iU8zehZGyY4qBkg
+        a4Mb46A5gO5OiUoBRfGgHJnNaQE7GEYgjU2/xeNwhEDt3/qIQGAnTEVV62YywBPwVTR0fVeA
+        CYI1AJmGekGAEcJYZHa68IB+CR5AHfP3+Jy/A93Qz27VwWEu0nuWtqZG8I8gZCkrxrlJ41FD
+        2wyf0zvRwmDHtt6NnjhMWKAxghdQddV+LrcMILtxjeCYt9DE8DqP00dQf6VjmxehOw93cH1F
+        qMr+A87ZQlTytZijI5Cl4tftKhJUvtACOM2gNfvG/3cr0cySleAVwzPrGJ5Zx7BZFodS1N4d
+        ydlvoKafFnFOv40slmXiCiBbQShbqM7NYtVvKtkzcrUiV12ozJKfyMu1gs1/eNM/+LgLtCys
+        yF0Ao4ALRGwmT19r8wIJocxTsuHBQsLvzhQLTyrOFbGqvExVYQ6rdoFdFBEeKuzuvJophlmK
+        AvZzls1nVU+jGBUkuYh95JV9TNZGFhx8p276smy8bn+n4Pat7158YYxwfpH6lz3U666K9h++
+        9P7R8RPSL28tmhS6xxlRvfV1jbFt523vmtrde9MylsIU2vQfGzZqeufmMDJfxzbKju+JTkrP
+        CbHbkqupB3Hzs5ZzenHiob6UlcHqVkdCnDOufPWAP+WYMz6q7L3TA3/HXC2Knijvq5l33l+u
+        5eU9SUr5UPrPkaL+EGPFWdCZJjNlVzrXRX8KNM0J17XZGtWDjGmfNGX3eKpt31T9sU+ap47G
+        1MqZxKGB28FNhVbRqsSdv+ezsH3mpsaYkvqk+PsfFE/0Hb85Gnb+THFiv8ab7HxNqo+9lFz7
+        /Wo4oc5W7H0dV6kV/wEdMbJxAgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRmVeSWpSXmKPExsVy+t/xe7r/Px+PN5jQoWtx/u4hZouNM9az
+        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2qx6fE1VovLu+awWcw4v4/J
+        4tDUvYwWa4/cZbc4tkDMonXvEXYHAY/L1y4ye2xZeZPJY+esu+wem1Z1snlsXlLvsXPHZyaP
+        vi2rGD0+b5IL4IjSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcks
+        Sy3St0vQy2i/cIO5YB1fxYQ5bxgbGP9ydzFyckgImEjs/XGOpYuRi0NIYCmjRNOnz4xdjBxA
+        CSmJlXPTIWqEJf5c62KDqHnKKNFycy0bSA2bgJ7E2rURIDUiAioSLZtngs1hFrjCIrHqYwsr
+        SEJYIERiQ2M7I4gtJBAssXpeD1gvi4CqxKnD0iD1nAJTGSXmnzoAVsMrYC6xdvchZhBbVMBS
+        YsuL++wQcUGJkzOfsIDYzALZEl9XP2eewCgwC0lqFpLULKAVzAKaEut36UOEtSWWLXzNDGHb
+        Sqxb955lASPrKkaR1NLi3PTcYkO94sTc4tK8dL3k/NxNjMBo3nbs5+YdjPNefdQ7xMjEwXiI
+        UQWo89GG1RcYpVjy8vNSlUR4Wf4diRfiTUmsrEotyo8vKs1JLT7EaAr02kRmKdHkfGCaySuJ
+        NzQzMDU0MbM0MLU0M1YS5906d028kEB6YklqdmpqQWoRTB8TB6dUAxPzCo33y6NjX087ZtLa
+        9GDNnrd3939YfbPKsfbCcdeAt3uv3bz2665qpNAj5jqhJ30ZDz2i95ZwMR2/KGGtEjLbjzlc
+        aTrT8uogn+VyntOPcS76tcm22krAIvvI1j4HsQex92qk/Zx5rt424fdRDstzcbny7UrHocRW
+        bpum14Lqh3bNOjI5Wbnl788zfoW7k19c3V4vumu++YP893merhmSD1ziYnV8dS7M5D9+0zGw
+        4tn3gLnBuvdCrgU07Ji1dKlD+hwf1621ylXtAmphF/9JzfltX+TLckxcLc/rhlf9SreJCu33
+        alcea/l4w7ByWdFZrS+f1c7tL5x5wKtcpElW49EbW/tJsy7mMVaa7VBiKc5INNRiLipOBADe
+        rt/RewMAAA==
+X-CMS-MailID: 20201202200727eucas1p18311ed19904e8a0c7b8c28cde87f155b
+X-Msg-Generator: CA
+X-RootMTR: 20201202200727eucas1p18311ed19904e8a0c7b8c28cde87f155b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20201202200727eucas1p18311ed19904e8a0c7b8c28cde87f155b
+References: <20201202091852.69a02069@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
+        <CGME20201202200727eucas1p18311ed19904e8a0c7b8c28cde87f155b@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 17, 2020 at 09:11:06PM +0100, Krzysztof Kozlowski wrote:
-> The SMDK6410 DTS was incorrectly called mini6410, probably copy-paste
-> from FriendlyARM Mini6410 board.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/boot/dts/s3c6410-smdk6410.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Applied.
+It was <2020-12-02 =C5=9Bro 09:18>, when Jakub Kicinski wrote:
+> On Wed, 02 Dec 2020 11:46:28 +0100 Lukasz Stelmach wrote:
+>> >> +	status =3D netif_rx(skb);=20=20
+>> >
+>> > If I'm reading things right this is in process context, so netif_rx_ni=
+()
+>> >=20=20
+>>=20
+>> Is it? The stack looks as follows
+>>=20
+>>     ax88796c_skb_return()
+>>     ax88796c_rx_fixup()
+>>     ax88796c_receive()
+>>     ax88796c_process_isr()
+>>     ax88796c_work()
+>>=20
+>> and ax88796c_work() is a scheduled in the system_wq.
+>
+> Are you asking if work queue gets run in process context? It does.
+>
 
-Best regards,
-Krzysztof
+Thanks. Changed.
 
+>> >> +	if (status !=3D NET_RX_SUCCESS)
+>> >> +		netif_info(ax_local, rx_err, ndev,
+>> >> +			   "netif_rx status %d\n", status);=20=20
+>> >
+>> > Again, it's inadvisable to put per packet prints without any rate
+>> > limiting in the data path.=20=20
+>>=20
+>> Even if limmited by the msglvl flag, which is off by default?
+>
+> I'd err on the side of caution, but up to you.
+>
+
+It isn't very common, but a few drivers do this.
+
+Thank you.
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl/H8+8ACgkQsK4enJil
+gBAukAgAkQTRQG/TV08hxbnOYPNIUZApxZjUBbwMUF6alZVmWZFrc85AxK9+d6xs
+gUPMlb86ylXmRX25dZ2dDCEoUgFOk+GrjLQbLyZTWl3dIIGiDvYJhf09P7qHuPD5
+xbScoNohZrPAHxPlvciWexsAZLyboSunzdwiKGWGxpsWLrqz/Pb/x4DIUadv9QGA
+siJUkTD0ZVKmO0kXjwBFVlqd1UDUpabwpafIgIr0SNMZT4shawKb8hFUtf3zPyZm
+T5de0kdg01XISwJdq9ZnwaN3F4j4Pp2cQGfjPo4rRaztzOm+WytpdudbigmgbhpI
+7PS3/QBVB46BH18tTQbHGLdAfBj0Kg==
+=8UEH
+-----END PGP SIGNATURE-----
+--=-=-=--
