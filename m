@@ -2,95 +2,81 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E83AFC63777
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Dec 2020 13:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F5E6C8302E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Dec 2020 13:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 951952086A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Dec 2020 13:18:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E18DA20449
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Dec 2020 13:39:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730608AbgLCNSM (ORCPT
+        id S2436557AbgLCNht (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Dec 2020 08:18:12 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:18091 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726220AbgLCNSM (ORCPT
+        Thu, 3 Dec 2020 08:37:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2436509AbgLCNaP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Dec 2020 08:18:12 -0500
-X-Greylist: delayed 363 seconds by postgrey-1.27 at vger.kernel.org; Thu, 03 Dec 2020 08:18:11 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1607001319;
-        s=strato-dkim-0002; d=gerhold.net;
-        h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=3Nu1/KDXbZdCZ8mVmAWptPuNQf7opDwxYPcP4pkq9T4=;
-        b=H6noW9ajdeK0DlyZxXty58KEbgSVZ+YIs7zi091B4ifX5oLUB4tU9cJI5J5R39g6/t
-        6aKfa3BFsTbyJrZROaqTWJKR04xGB9BYiNXtd0Pgyt72f5nCSihG6IlrgsFf31LNzTmG
-        S1CGfSKdFtvv2XmraBdKQDTA0pBqw1nycHp9l+1QE7Z/GQEHuW5p1FTMlf4sSv7AXVB5
-        UT5owN1+7mCa+wWCEp7hSu2AyBygXSe9RoibqVirmThVDrPGIiU5D4TBriWrE4Pk5rK4
-        4/rISjnwSd50yTsD+6w0kB7lQbM2kiz0IO/dz95f8lmrpCAA7l/eAaU1OrF8V3C2beJP
-        Cgzg==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u26zEodhPgRDZ8j+IcvFBg=="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-        by smtp.strato.de (RZmta 47.3.4 DYNA|AUTH)
-        with ESMTPSA id Z061efwB3D95qef
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Thu, 3 Dec 2020 14:09:05 +0100 (CET)
-Date:   Thu, 3 Dec 2020 14:08:59 +0100
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Timon =?iso-8859-1?Q?B=E4tz?= <timon.baetz@protonmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "~postmarketos/upstreaming@lists.sr.ht" 
-        <~postmarketos/upstreaming@lists.sr.ht>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos: Fix charging regulator voltage and
- current for i9100
-Message-ID: <X8jja0JGDjwQ9hnA@gerhold.net>
-References: <20201202203516.43053-1-timon.baetz@protonmail.com>
- <20201202203516.43053-3-timon.baetz@protonmail.com>
- <20201202220430.GB135888@kozik-lap>
- <dDjo3R2SJ6CBCjg0YhsCPdh5JfEGhA--DHNNDqbWjVtTjZC5v7g7_523vqAzu_Ybf1Q-xfKeK47H483YQoVtpO3DI83OaR6c6mbvtC9S1Us=@protonmail.com>
- <20201203082301.GA3999@kozik-lap>
- <20201203095041.GA14508@kozik-lap>
+        Thu, 3 Dec 2020 08:30:15 -0500
+From:   Sasha Levin <sashal@kernel.org>
+Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        kernel test robot <lkp@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.9 20/39] drm/exynos: depend on COMMON_CLK to fix compile tests
+Date:   Thu,  3 Dec 2020 08:28:14 -0500
+Message-Id: <20201203132834.930999-20-sashal@kernel.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201203132834.930999-1-sashal@kernel.org>
+References: <20201203132834.930999-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201203095041.GA14508@kozik-lap>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 03, 2020 at 11:50:41AM +0200, Krzysztof Kozlowski wrote:
-> 
-> Unfortunately it seems Samsung started to remove most of older
-> kernel source code from their OS compliance page. S1, S2 and S3 are
-> mostly gone. I was able to find just few remaining sources and I am now
-> updating my vendor-dump with them. I'll upload them later to
-> https://github.com/krzk/linux-vendor-backup .
-> 
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-I don't know why they keep removing older kernel sources (it's pretty
-stupid), but so far they added all of them back within a couple of days
-after I made an inquiry on https://opensource.samsung.com/requestInquiry
-(Note: They remove them again after a while so backups are always
- necessary...)
+[ Upstream commit e2d3d2e904ad3d381753798dcd5cae03e3c47242 ]
 
-Might be worth a try if you need some of them :)
+The Exynos DRM uses Common Clock Framework thus it cannot be built on
+platforms without it (e.g. compile test on MIPS with RALINK and
+SOC_RT305X):
 
-Stephan
+    /usr/bin/mips-linux-gnu-ld: drivers/gpu/drm/exynos/exynos_mixer.o: in function `mixer_bind':
+    exynos_mixer.c:(.text+0x958): undefined reference to `clk_set_parent'
+
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/exynos/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index 6417f374b923a..951d5f708e92b 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -1,7 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config DRM_EXYNOS
+ 	tristate "DRM Support for Samsung SoC Exynos Series"
+-	depends on OF && DRM && (ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || ARCH_MULTIPLATFORM || COMPILE_TEST)
++	depends on OF && DRM && COMMON_CLK
++	depends on ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || ARCH_MULTIPLATFORM || COMPILE_TEST
+ 	depends on MMU
+ 	select DRM_KMS_HELPER
+ 	select VIDEOMODE_HELPERS
+-- 
+2.27.0
+
