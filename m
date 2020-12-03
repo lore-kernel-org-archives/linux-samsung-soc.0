@@ -2,81 +2,65 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD91EC4361A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Dec 2020 22:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B87C4361B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Dec 2020 22:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5986B22482
+	by mail.kernel.org (Postfix) with ESMTP id B193C224B0
 	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Dec 2020 22:54:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387474AbgLCWyC (ORCPT
+        id S1727533AbgLCWyD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Dec 2020 17:54:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727533AbgLCWyC (ORCPT
+        Thu, 3 Dec 2020 17:54:03 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:40590 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727760AbgLCWyD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Dec 2020 17:54:02 -0500
-From:   Arnd Bergmann <arnd@kernel.org>
-Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Thu, 3 Dec 2020 17:54:03 -0500
+Received: from relay8-d.mail.gandi.net (unknown [217.70.183.201])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 9B92F3A5787
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Dec 2020 22:53:20 +0000 (UTC)
+X-Originating-IP: 86.194.74.19
+Received: from localhost (lfbn-lyo-1-997-19.w86-194.abo.wanadoo.fr [86.194.74.19])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 64A4C1BF208;
+        Thu,  3 Dec 2020 22:52:18 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: samsung: mark PM functions as __maybe_unused
-Date:   Thu,  3 Dec 2020 23:53:11 +0100
-Message-Id: <20201203225315.1477137-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.27.0
+Subject: Re: [PATCH 1/2] rtc: s3c: Disable all enable (RTC, tick) bits in the probe
+Date:   Thu,  3 Dec 2020 23:52:17 +0100
+Message-Id: <160703593364.102627.6281695169536420119.b4-ty@bootlin.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201202111318.5353-1-m.szyprowski@samsung.com>
+References: <CGME20201202111328eucas1p25b7a68b4fe94addf6088cc3ad4bedcf1@eucas1p2.samsung.com> <20201202111318.5353-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Wed, 2 Dec 2020 12:13:17 +0100, Marek Szyprowski wrote:
+> Bootloader might use RTC hardware and leave it in the enabled state. Ensure
+> that the potentially enabled periodic tick interrupts are disabled before
+> enabling the driver, because they might cause lockup if tick interrupt
+> happens after disabling RTC gate clock.
 
-drivers/clk/samsung/clk-exynos-clkout.c:219:12: error: 'exynos_clkout_resume' defined but not used [-Werror=unused-function]
-  219 | static int exynos_clkout_resume(struct device *dev)
-      |            ^~~~~~~~~~~~~~~~~~~~
-drivers/clk/samsung/clk-exynos-clkout.c:210:12: error: 'exynos_clkout_suspend' defined but not used [-Werror=unused-function]
-  210 | static int exynos_clkout_suspend(struct device *dev)
-      |            ^~~~~~~~~~~~~~~~~~~~~
+Applied, thanks!
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/samsung/clk-exynos-clkout.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[1/2] rtc: s3c: Disable all enable (RTC, tick) bits in the probe
+      commit: 31b16d978f902bd9ac7fdc20738f67e39959cd5c
+[2/2] rtc: s3c: Remove dead code related to periodic tick handling
+      commit: ce9af89392024f57247187afc345991b784f9bae
 
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index 9ec2f40cc400..e6d6cbf8c4e6 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -207,7 +207,7 @@ static int exynos_clkout_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int exynos_clkout_suspend(struct device *dev)
-+static int __maybe_unused exynos_clkout_suspend(struct device *dev)
- {
- 	struct exynos_clkout *clkout = dev_get_drvdata(dev);
- 
-@@ -216,7 +216,7 @@ static int exynos_clkout_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int exynos_clkout_resume(struct device *dev)
-+static int __maybe_unused exynos_clkout_resume(struct device *dev)
- {
- 	struct exynos_clkout *clkout = dev_get_drvdata(dev);
- 
+Best regards,
 -- 
-2.27.0
-
+Alexandre Belloni <alexandre.belloni@bootlin.com>
