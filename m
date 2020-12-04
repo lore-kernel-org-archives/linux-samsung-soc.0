@@ -2,79 +2,212 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CF4C4361A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Dec 2020 15:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3538C4361A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Dec 2020 16:12:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15E2922C7E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Dec 2020 15:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE7A52223E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Dec 2020 16:12:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729337AbgLDPhL (ORCPT
+        id S1726755AbgLDQM1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 4 Dec 2020 10:37:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39670 "EHLO mail.kernel.org"
+        Fri, 4 Dec 2020 11:12:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbgLDPhL (ORCPT
+        id S1726125AbgLDQM1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Dec 2020 10:37:11 -0500
-Subject: Re: [PATCH] [v2] clk: samsung: mark PM functions as __maybe_unused
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607096191;
-        bh=/Cxi3igk0xF11OqK3oul234Dno+5ZCOdHZS2viwOIOE=;
-        h=To:Cc:References:From:Date:In-Reply-To:From;
-        b=I/VLYv/cgfPtmc/fZ6kYpUzmLWpev16erMeKmMPG70YgvA+Rqmus77UbFRD8LU1k2
-         rxSsrNvDj/66Rj5rtEkVO+ucQmMsFNbwnYIsqDXVG1u4qJQUiEra15joe+Q6WCub+a
-         HiEUuRn2QmuB7wc8MWXd6wsvLH30c1ZWxZSfh0Jjv4D3CtFmCkbkxB4JFpYs8mXQ5B
-         lP7Vsw7OQlNkF4KzD4girI0KA8aWWxZeRBsTLJDp1fTpjY4q5RWOXepBrnf1DOwPMS
-         pWkPi0szjUjk7852BYW5XOdEUVVJ5XKtvgG52bE8RO3t/dz0T452XB5Sqp6UOvU53o
-         Q86+5ZEFstwgg==
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        Fri, 4 Dec 2020 11:12:27 -0500
+From:   Arnd Bergmann <arnd@kernel.org>
+Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
+To:     linux-mtd@lists.infradead.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20201204091616.4128366-1-arnd@kernel.org>
-From:   Sylwester Nawrocki <snawrocki@kernel.org>
-Message-ID: <72f6b613-b4c1-a570-d4cc-74540467280f@kernel.org>
-Date:   Fri, 4 Dec 2020 16:36:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [for NAND] ARM: s3c: gta02: fix for missing linux/mtd/nand_ecc.h
+Date:   Fri,  4 Dec 2020 17:10:12 +0100
+Message-Id: <20201204161137.2729220-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <20201204091616.4128366-1-arnd@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12/4/20 10:16, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The use of SIMPLE_DEV_PM_OPS() means that the suspend/resume
-> functions are now unused when CONFIG_PM is disabled:
-> 
-> drivers/clk/samsung/clk-exynos-clkout.c:219:12: error: 'exynos_clkout_resume' defined but not used [-Werror=unused-function]
->    219 | static int exynos_clkout_resume(struct device *dev)
->        |            ^~~~~~~~~~~~~~~~~~~~
-> drivers/clk/samsung/clk-exynos-clkout.c:210:12: error: 'exynos_clkout_suspend' defined but not used [-Werror=unused-function]
->    210 | static int exynos_clkout_suspend(struct device *dev)
->        |            ^~~~~~~~~~~~~~~~~~~~~
-> 
-> Mark them as __maybe_unused to shut up the otherwise harmless warning.
-> 
-> Fixes: 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to module driver")
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2: add proper changelog text
+From: Arnd Bergmann <arnd@arndb.de>
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+The header file got renamed, so any file including it needs to
+be adapted to avoid:
+
+arch/arm/mach-s3c/mach-gta02.c:40:10: fatal error: 'linux/mtd/nand_ecc.h' file not found
+
+Fixes: 3f27bb3e3777 ("mtd: nand: ecc-hamming: Move Hamming code to the generic NAND layer")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+It's currently broken in -next because of the change in the
+MTD NAND driver. Please add this patch to the same branch or
+fold it into the patch that broke it.
+---
+ arch/arm/mach-s3c/common-smdk-s3c24xx.c | 2 +-
+ arch/arm/mach-s3c/mach-anubis.c         | 2 +-
+ arch/arm/mach-s3c/mach-at2440evb.c      | 2 +-
+ arch/arm/mach-s3c/mach-bast.c           | 2 +-
+ arch/arm/mach-s3c/mach-gta02.c          | 2 +-
+ arch/arm/mach-s3c/mach-jive.c           | 2 +-
+ arch/arm/mach-s3c/mach-mini2440.c       | 2 +-
+ arch/arm/mach-s3c/mach-osiris.c         | 2 +-
+ arch/arm/mach-s3c/mach-qt2410.c         | 2 +-
+ arch/arm/mach-s3c/mach-rx3715.c         | 2 +-
+ arch/arm/mach-s3c/mach-vstms.c          | 2 +-
+ 11 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm/mach-s3c/common-smdk-s3c24xx.c b/arch/arm/mach-s3c/common-smdk-s3c24xx.c
+index f860d8bcba0e..6d124bbd384c 100644
+--- a/arch/arm/mach-s3c/common-smdk-s3c24xx.c
++++ b/arch/arm/mach-s3c/common-smdk-s3c24xx.c
+@@ -20,7 +20,7 @@
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+-#include <linux/mtd/nand_ecc.h>
++#include <linux/mtd/nand-ecc-sw-hamming.h>
+ #include <linux/mtd/partitions.h>
+ #include <linux/io.h>
+ 
+diff --git a/arch/arm/mach-s3c/mach-anubis.c b/arch/arm/mach-s3c/mach-anubis.c
+index 90e3fd98a3ac..04147cc0adcc 100644
+--- a/arch/arm/mach-s3c/mach-anubis.c
++++ b/arch/arm/mach-s3c/mach-anubis.c
+@@ -34,7 +34,7 @@
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+-#include <linux/mtd/nand_ecc.h>
++#include <linux/mtd/nand-ecc-sw-hamming.h>
+ #include <linux/mtd/partitions.h>
+ 
+ #include <net/ax88796.h>
+diff --git a/arch/arm/mach-s3c/mach-at2440evb.c b/arch/arm/mach-s3c/mach-at2440evb.c
+index 5fa49d4e2650..c6a5a51d84aa 100644
+--- a/arch/arm/mach-s3c/mach-at2440evb.c
++++ b/arch/arm/mach-s3c/mach-at2440evb.c
+@@ -35,7 +35,7 @@
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+-#include <linux/mtd/nand_ecc.h>
++#include <linux/mtd/nand-ecc-sw-hamming.h>
+ #include <linux/mtd/partitions.h>
+ 
+ #include "devs.h"
+diff --git a/arch/arm/mach-s3c/mach-bast.c b/arch/arm/mach-s3c/mach-bast.c
+index 328f5d9ae9f9..27e8d5950228 100644
+--- a/arch/arm/mach-s3c/mach-bast.c
++++ b/arch/arm/mach-s3c/mach-bast.c
+@@ -24,7 +24,7 @@
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+-#include <linux/mtd/nand_ecc.h>
++#include <linux/mtd/nand-ecc-sw-hamming.h>
+ #include <linux/mtd/partitions.h>
+ 
+ #include <linux/platform_data/asoc-s3c24xx_simtec.h>
+diff --git a/arch/arm/mach-s3c/mach-gta02.c b/arch/arm/mach-s3c/mach-gta02.c
+index 3c75c7d112ea..aec8b451c016 100644
+--- a/arch/arm/mach-s3c/mach-gta02.c
++++ b/arch/arm/mach-s3c/mach-gta02.c
+@@ -37,7 +37,7 @@
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+-#include <linux/mtd/nand_ecc.h>
++#include <linux/mtd/nand-ecc-sw-hamming.h>
+ #include <linux/mtd/partitions.h>
+ #include <linux/mtd/physmap.h>
+ 
+diff --git a/arch/arm/mach-s3c/mach-jive.c b/arch/arm/mach-s3c/mach-jive.c
+index 2a29c3eca559..0785638a9069 100644
+--- a/arch/arm/mach-s3c/mach-jive.c
++++ b/arch/arm/mach-s3c/mach-jive.c
+@@ -40,7 +40,7 @@
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+-#include <linux/mtd/nand_ecc.h>
++#include <linux/mtd/nand-ecc-sw-hamming.h>
+ #include <linux/mtd/partitions.h>
+ 
+ #include "gpio-cfg.h"
+diff --git a/arch/arm/mach-s3c/mach-mini2440.c b/arch/arm/mach-s3c/mach-mini2440.c
+index dc22ab839b95..4100905dfbd0 100644
+--- a/arch/arm/mach-s3c/mach-mini2440.c
++++ b/arch/arm/mach-s3c/mach-mini2440.c
+@@ -44,7 +44,7 @@
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+-#include <linux/mtd/nand_ecc.h>
++#include <linux/mtd/nand-ecc-sw-hamming.h>
+ #include <linux/mtd/partitions.h>
+ 
+ #include "gpio-cfg.h"
+diff --git a/arch/arm/mach-s3c/mach-osiris.c b/arch/arm/mach-s3c/mach-osiris.c
+index 81744ca67d1d..3aefb9d22340 100644
+--- a/arch/arm/mach-s3c/mach-osiris.c
++++ b/arch/arm/mach-s3c/mach-osiris.c
+@@ -33,7 +33,7 @@
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+-#include <linux/mtd/nand_ecc.h>
++#include <linux/mtd/nand-ecc-sw-hamming.h>
+ #include <linux/mtd/partitions.h>
+ 
+ #include "cpu.h"
+diff --git a/arch/arm/mach-s3c/mach-qt2410.c b/arch/arm/mach-s3c/mach-qt2410.c
+index 151e8e373d40..f88b961798fd 100644
+--- a/arch/arm/mach-s3c/mach-qt2410.c
++++ b/arch/arm/mach-s3c/mach-qt2410.c
+@@ -21,7 +21,7 @@
+ #include <linux/io.h>
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+-#include <linux/mtd/nand_ecc.h>
++#include <linux/mtd/nand-ecc-sw-hamming.h>
+ #include <linux/mtd/partitions.h>
+ 
+ #include <asm/mach/arch.h>
+diff --git a/arch/arm/mach-s3c/mach-rx3715.c b/arch/arm/mach-s3c/mach-rx3715.c
+index a03662a47b38..9fd2d9dc3689 100644
+--- a/arch/arm/mach-s3c/mach-rx3715.c
++++ b/arch/arm/mach-s3c/mach-rx3715.c
+@@ -22,7 +22,7 @@
+ #include <linux/io.h>
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+-#include <linux/mtd/nand_ecc.h>
++#include <linux/mtd/nand-ecc-sw-hamming.h>
+ #include <linux/mtd/partitions.h>
+ 
+ #include <asm/mach/arch.h>
+diff --git a/arch/arm/mach-s3c/mach-vstms.c b/arch/arm/mach-s3c/mach-vstms.c
+index 05f19f5ffabb..ec024af7b0ce 100644
+--- a/arch/arm/mach-s3c/mach-vstms.c
++++ b/arch/arm/mach-s3c/mach-vstms.c
+@@ -16,7 +16,7 @@
+ #include <linux/io.h>
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+-#include <linux/mtd/nand_ecc.h>
++#include <linux/mtd/nand-ecc-sw-hamming.h>
+ #include <linux/mtd/partitions.h>
+ #include <linux/memblock.h>
+ 
+-- 
+2.27.0
+
