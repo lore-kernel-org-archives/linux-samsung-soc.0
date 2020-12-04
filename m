@@ -2,65 +2,102 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B87C4361B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Dec 2020 22:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2005DC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Dec 2020 08:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B193C224B0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Dec 2020 22:54:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B866722573
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Dec 2020 08:19:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbgLCWyD (ORCPT
+        id S1727056AbgLDITE convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Dec 2020 17:54:03 -0500
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:40590 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbgLCWyD (ORCPT
+        Fri, 4 Dec 2020 03:19:04 -0500
+Received: from mail-ej1-f68.google.com ([209.85.218.68]:35691 "EHLO
+        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbgLDITE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Dec 2020 17:54:03 -0500
-Received: from relay8-d.mail.gandi.net (unknown [217.70.183.201])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 9B92F3A5787
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Dec 2020 22:53:20 +0000 (UTC)
-X-Originating-IP: 86.194.74.19
-Received: from localhost (lfbn-lyo-1-997-19.w86-194.abo.wanadoo.fr [86.194.74.19])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 64A4C1BF208;
-        Thu,  3 Dec 2020 22:52:18 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/2] rtc: s3c: Disable all enable (RTC, tick) bits in the probe
-Date:   Thu,  3 Dec 2020 23:52:17 +0100
-Message-Id: <160703593364.102627.6281695169536420119.b4-ty@bootlin.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201202111318.5353-1-m.szyprowski@samsung.com>
-References: <CGME20201202111328eucas1p25b7a68b4fe94addf6088cc3ad4bedcf1@eucas1p2.samsung.com> <20201202111318.5353-1-m.szyprowski@samsung.com>
+        Fri, 4 Dec 2020 03:19:04 -0500
+Received: by mail-ej1-f68.google.com with SMTP id f23so7449447ejk.2;
+        Fri, 04 Dec 2020 00:18:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=VemDQ6EGsBsmNy3s9ek1G18QMI3vy92u8aJPDPxveeg=;
+        b=QGE20SG9uC4742ZZ3Ri0Ex++TH4TM//6WPsZk3bI5exQq0lrbqpZMF1p8s9S8rhhTR
+         tLbtTx+uZotXoQcxBwkNLQLyfb4dA8GGsBge0n5uVDVBsk90GBmS5VqsWksqTUgZFXiM
+         tSUd/SeVPF/ZqTSYVizz4n3dzyJHMpffA2QYgvPUw1OU9LFWdvniV7erZN7uU9yo+zht
+         skIRgGCqEUOIcx5gW9qq5Bb6OJlkhRHD9ORvyNkwcPv9h8Pkf/6O/hbeK//nIOZQrQd6
+         VygSp5WscnZZVeAkkW1KlK052F3PgHo4TJqzGeVKNeqW/FA8NlNXEHz/IuuraNKsfo5A
+         TZDA==
+X-Gm-Message-State: AOAM530eWSaBCnvTF9/dqiSD53DJ7SMVNNcaAz/o3c679pDHCFJxk6BZ
+        RfigG8rnRJRQ/qyEFGxbONE=
+X-Google-Smtp-Source: ABdhPJwL0al19RhXuOfgb8PeQPspdUlFB4mwc2b7uxWixr+3jMaX8oS7lNdpsirID5U93f3GAg7S4A==
+X-Received: by 2002:a17:906:c046:: with SMTP id bm6mr5770776ejb.436.1607069902146;
+        Fri, 04 Dec 2020 00:18:22 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id z22sm2504364eji.91.2020.12.04.00.18.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Dec 2020 00:18:20 -0800 (PST)
+Date:   Fri, 4 Dec 2020 10:18:19 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH 2/2] drm/ingenic: depend on COMMON_CLK to fix compile
+ tests
+Message-ID: <20201204081819.GA3891@kozik-lap>
+References: <20201116175301.402787-1-krzk@kernel.org>
+ <20201116175301.402787-2-krzk@kernel.org>
+ <3ANWJQ.LV5B6V47KTYS2@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <3ANWJQ.LV5B6V47KTYS2@crapouillou.net>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 2 Dec 2020 12:13:17 +0100, Marek Szyprowski wrote:
-> Bootloader might use RTC hardware and leave it in the enabled state. Ensure
-> that the potentially enabled periodic tick interrupts are disabled before
-> enabling the driver, because they might cause lockup if tick interrupt
-> happens after disabling RTC gate clock.
+On Mon, Nov 16, 2020 at 07:54:03PM +0000, Paul Cercueil wrote:
+> Hi Krzysztof,
+> 
+> Le lun. 16 nov. 2020 à 18:53, Krzysztof Kozlowski <krzk@kernel.org> a écrit
+> :
+> > The Ingenic DRM uses Common Clock Framework thus it cannot be built on
+> > platforms without it (e.g. compile test on MIPS with RALINK and
+> > SOC_RT305X):
+> > 
+> >     /usr/bin/mips-linux-gnu-ld:
+> > drivers/gpu/drm/ingenic/ingenic-drm-drv.o: in function
+> > `ingenic_drm_bind.isra.0':
+> >     ingenic-drm-drv.c:(.text+0x1600): undefined reference to
+> > `clk_get_parent'
+> >     /usr/bin/mips-linux-gnu-ld: ingenic-drm-drv.c:(.text+0x16b0):
+> > undefined reference to `clk_get_parent'
+> > 
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> Acked-by: Paul Cercueil <paul@crapouillou.net>
 
-Applied, thanks!
+Thanks for the ack.
 
-[1/2] rtc: s3c: Disable all enable (RTC, tick) bits in the probe
-      commit: 31b16d978f902bd9ac7fdc20738f67e39959cd5c
-[2/2] rtc: s3c: Remove dead code related to periodic tick handling
-      commit: ce9af89392024f57247187afc345991b784f9bae
+David and Daniel,
+I think there is no dedicated maintainer for Ingenic DRM, so can you
+pick it up directly?
 
 Best regards,
--- 
-Alexandre Belloni <alexandre.belloni@bootlin.com>
+Krzysztof
