@@ -2,123 +2,107 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7747AC0018C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Dec 2020 15:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77044C4361B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Dec 2020 16:56:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 483EC23731
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Dec 2020 15:51:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 351B923888
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Dec 2020 16:56:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbgLGPuw (ORCPT
+        id S1727290AbgLGQ4J (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Dec 2020 10:50:52 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51704 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbgLGPuv (ORCPT
+        Mon, 7 Dec 2020 11:56:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48948 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725774AbgLGQ4J (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Dec 2020 10:50:51 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: andrzej.p)
-        with ESMTPSA id 79D0D1F44D66
-Subject: Re: [PATCH v4 2/7] Input: use input_device_enabled()
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
+        Mon, 7 Dec 2020 11:56:09 -0500
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com>
- <20200608112211.12125-3-andrzej.p@collabora.com>
- <CGME20201207133237eucas1p26f8484944760a14e51dc7353ed33cd28@eucas1p2.samsung.com>
- <27ce1176-6318-45aa-4e22-3dec9f3df15d@samsung.com>
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Message-ID: <9c784a23-eade-eacd-3e67-d344a5758b83@collabora.com>
-Date:   Mon, 7 Dec 2020 16:50:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+Subject: [PATCH] MAINTAINERS: crypto: s5p-sss: drop Kamil Konieczny
+Date:   Mon,  7 Dec 2020 17:55:20 +0100
+Message-Id: <20201207165521.125129-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <27ce1176-6318-45aa-4e22-3dec9f3df15d@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+E-mails to Kamil Konieczny to his Samsung address bounce with 550 (User
+unknown).  Kamil no longer takes care about Samsung S5P SSS driver so
+remove the invalid email address from:
+ - mailmap,
+ - bindings maintainer entries,
+ - maintainers entry for S5P Security Subsystem crypto accelerator.
 
-W dniu 07.12.2020 o 14:32, Marek Szyprowski pisze:
-> Hi Andrzej,
-> 
-> On 08.06.2020 13:22, Andrzej Pietrasiewicz wrote:
->> Use the newly added helper in relevant input drivers.
->>
->> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> 
-> This patch landed recently in linux-next as commit d69f0a43c677 ("Input:
-> use input_device_enabled()"). Sadly it causes following warning during
-> system suspend/resume cycle on ARM 32bit Samsung Exynos5250-based Snow
-> Chromebook with kernel compiled from exynos_defconfig:
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 1777 at drivers/input/input.c:2230
-> input_device_enabled+0x68/0x6c
-> Modules linked in: cmac bnep mwifiex_sdio mwifiex sha256_generic
-> libsha256 sha256_arm cfg80211 btmrvl_sdio btmrvl bluetooth s5p_mfc
-> exynos_gsc v4l2_mem2mem videob
-> CPU: 0 PID: 1777 Comm: rtcwake Not tainted
-> 5.10.0-rc6-next-20201207-00001-g49a0dc04c46d-dirty #9902
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> [<c0111718>] (unwind_backtrace) from [<c010d050>] (show_stack+0x10/0x14)
-> [<c010d050>] (show_stack) from [<c0b32810>] (dump_stack+0xb4/0xd4)
-> [<c0b32810>] (dump_stack) from [<c0126e24>] (__warn+0xd8/0x11c)
-> [<c0126e24>] (__warn) from [<c0126f18>] (warn_slowpath_fmt+0xb0/0xb8)
-> [<c0126f18>] (warn_slowpath_fmt) from [<c07fa2fc>]
-> (input_device_enabled+0x68/0x6c)
-> [<c07fa2fc>] (input_device_enabled) from [<c080a0f8>]
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ .mailmap                                                      | 1 -
+ Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml | 1 -
+ Documentation/devicetree/bindings/crypto/samsung-sss.yaml     | 1 -
+ MAINTAINERS                                                   | 1 -
+ 4 files changed, 4 deletions(-)
 
-Apparently you are hitting this line of code in drivers/input/input.c:
+diff --git a/.mailmap b/.mailmap
+index 225546cc8028..ff2699f60a03 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -172,7 +172,6 @@ Juha Yrjola <at solidboot.com>
+ Juha Yrjola <juha.yrjola@nokia.com>
+ Juha Yrjola <juha.yrjola@solidboot.com>
+ Julien Thierry <julien.thierry.kdev@gmail.com> <julien.thierry@arm.com>
+-Kamil Konieczny <k.konieczny@samsung.com> <k.konieczny@partner.samsung.com>
+ Kay Sievers <kay.sievers@vrfy.org>
+ Kees Cook <keescook@chromium.org> <kees.cook@canonical.com>
+ Kees Cook <keescook@chromium.org> <keescook@google.com>
+diff --git a/Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml b/Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
+index 7743eae049ab..676950bb7b37 100644
+--- a/Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
++++ b/Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
+@@ -8,7 +8,6 @@ title: Samsung Exynos SoC SlimSSS (Slim Security SubSystem) module
+ 
+ maintainers:
+   - Krzysztof Kozlowski <krzk@kernel.org>
+-  - Kamil Konieczny <k.konieczny@partner.samsung.com>
+ 
+ description: |+
+   The SlimSSS module in Exynos5433 SoC supports the following:
+diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.yaml b/Documentation/devicetree/bindings/crypto/samsung-sss.yaml
+index cf1c47a81d7f..6d62b0e42fc9 100644
+--- a/Documentation/devicetree/bindings/crypto/samsung-sss.yaml
++++ b/Documentation/devicetree/bindings/crypto/samsung-sss.yaml
+@@ -8,7 +8,6 @@ title: Samsung Exynos SoC SSS (Security SubSystem) module
+ 
+ maintainers:
+   - Krzysztof Kozlowski <krzk@kernel.org>
+-  - Kamil Konieczny <k.konieczny@partner.samsung.com>
+ 
+ description: |+
+   The SSS module in S5PV210 SoC supports the following:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 12dd1fff2a39..c45d4a3be2e4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15620,7 +15620,6 @@ F:	drivers/media/i2c/s5k5baf.c
+ SAMSUNG S5P Security SubSystem (SSS) DRIVER
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ M:	Vladimir Zapolskiy <vz@mleia.com>
+-M:	Kamil Konieczny <k.konieczny@samsung.com>
+ L:	linux-crypto@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+-- 
+2.25.1
 
-lockdep_assert_held(&dev->mutex);
-
-Inspecting input device's "users" member should happen under dev's lock.
-
-Regards,
-
-Andrzej
