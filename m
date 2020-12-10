@@ -6,57 +6,85 @@ X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF0EDC4361B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 21:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA98C4361B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 21:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C7AB23340
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 21:20:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54E2723F27
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 21:27:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404769AbgLJVTu (ORCPT
+        id S2394054AbgLJV0s (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Dec 2020 16:19:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35450 "EHLO mail.kernel.org"
+        Thu, 10 Dec 2020 16:26:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404774AbgLJVTp (ORCPT
+        id S2404864AbgLJV0r (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Dec 2020 16:19:45 -0500
+        Thu, 10 Dec 2020 16:26:47 -0500
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
-To:     Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org,
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Bongsu Jeon <bongsu.jeon@samsung.com>
-Subject: [PATCH] arm64: dts: exynos: correct S3FWRN5 NFC interrupt trigger level on TM2
-Date:   Thu, 10 Dec 2020 22:18:58 +0100
-Message-Id: <20201210211859.215047-1-krzk@kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Cc:     Iskren Chernev <iskren.chernev@gmail.com>,
+        Matheus Castello <matheus@castello.eng.br>,
+        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+        Angus Ainslie <angus@akkea.ca>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH 05/18] ARM: dts: exynos: correct PMIC interrupt trigger level on Midas family
+Date:   Thu, 10 Dec 2020 22:25:21 +0100
+Message-Id: <20201210212534.216197-5-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201210212534.216197-1-krzk@kernel.org>
+References: <20201210212534.216197-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The S3FWRN5 datasheet describe the interrupt line as rising edge.  The
-current configuration as level high, could cause spurious interrupts.
+The Maxim PMIC datasheets describe the interrupt line as active low
+with a requirement of acknowledge from the CPU.  Without specifying the
+interrupt type in Devicetree, kernel might apply some fixed
+configuration, not necessarily working for this hardware.
 
+Additionally, the interrupt line is shared so using level sensitive
+interrupt is here especially important to avoid races.
+
+Fixes: 15dfdfad2d4a ("ARM: dts: Add basic dts for Exynos4412-based Trats 2 board")
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 +-
+ arch/arm/boot/dts/exynos4412-midas.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index 03486a8ffc67..174ea507192d 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -793,7 +793,7 @@ s3fwrn5: nfc@27 {
- 		compatible = "samsung,s3fwrn5-i2c";
- 		reg = <0x27>;
- 		interrupt-parent = <&gpa1>;
--		interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <3 IRQ_TYPE_EDGE_RISING>;
- 		en-gpios = <&gpf1 4 GPIO_ACTIVE_HIGH>;
- 		wake-gpios = <&gpj0 2 GPIO_ACTIVE_HIGH>;
- 	};
+diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
+index d75f554efde0..fc77c1bfd844 100644
+--- a/arch/arm/boot/dts/exynos4412-midas.dtsi
++++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
+@@ -665,7 +665,7 @@ &i2c_7 {
+ 	max77686: pmic@9 {
+ 		compatible = "maxim,max77686";
+ 		interrupt-parent = <&gpx0>;
+-		interrupts = <7 IRQ_TYPE_NONE>;
++		interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
+ 		pinctrl-0 = <&max77686_irq>;
+ 		pinctrl-names = "default";
+ 		reg = <0x09>;
 -- 
 2.25.1
 
