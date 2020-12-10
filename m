@@ -6,20 +6,20 @@ X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7199C4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 21:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CF4C2BB48
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 21:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 717D623F27
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 21:27:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 454C523F34
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 21:28:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404908AbgLJV1d (ORCPT
+        id S2404919AbgLJV2H (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Dec 2020 16:27:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38458 "EHLO mail.kernel.org"
+        Thu, 10 Dec 2020 16:28:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404881AbgLJV1T (ORCPT
+        id S2404944AbgLJV1l (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Dec 2020 16:27:19 -0500
+        Thu, 10 Dec 2020 16:27:41 -0500
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
 To:     Chanwoo Choi <cw00.choi@samsung.com>,
@@ -46,9 +46,9 @@ Cc:     Iskren Chernev <iskren.chernev@gmail.com>,
         Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
         Angus Ainslie <angus@akkea.ca>,
         Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 08/18] ARM: dts: exynos: correct PMIC interrupt trigger level on SMDK5250
-Date:   Thu, 10 Dec 2020 22:25:24 +0100
-Message-Id: <20201210212534.216197-8-krzk@kernel.org>
+Subject: [RFC 18/18] power: supply: max17040: Do not enforce (incorrect) interrupt trigger type
+Date:   Thu, 10 Dec 2020 22:25:34 +0100
+Message-Id: <20201210212534.216197-18-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201210212534.216197-1-krzk@kernel.org>
 References: <20201210212534.216197-1-krzk@kernel.org>
@@ -58,33 +58,51 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Maxim PMIC datasheets describe the interrupt line as active low
-with a requirement of acknowledge from the CPU.  Without specifying the
-interrupt type in Devicetree, kernel might apply some fixed
-configuration, not necessarily working for this hardware.
+Interrupt line can be configured on different hardware in different way,
+even inverted.  Therefore driver should not enforce specific trigger
+type - edge falling - but instead rely on Devicetree to configure it.
 
-Additionally, the interrupt line is shared so using level sensitive
-interrupt is here especially important to avoid races.
+The Maxim 14577/77836 datasheets describe the interrupt line as active
+low with a requirement of acknowledge from the CPU therefore the edge
+falling is not correct.
 
-Fixes: 47580e8d94c2 ("ARM: dts: Specify MAX77686 pmic interrupt for exynos5250-smdk5250")
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos5250-smdk5250.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 8b5a79a8720c..39bbe18145cf 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -134,7 +134,7 @@ max77686: pmic@9 {
- 		compatible = "maxim,max77686";
- 		reg = <0x09>;
- 		interrupt-parent = <&gpx3>;
--		interrupts = <2 IRQ_TYPE_NONE>;
+---
+
+This patch should wait till DTS changes are merged, as it relies on
+proper Devicetree.
+---
+ .../devicetree/bindings/power/supply/max17040_battery.txt       | 2 +-
+ drivers/power/supply/max17040_battery.c                         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/power/supply/max17040_battery.txt b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
+index c802f664b508..194eb9fe574d 100644
+--- a/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
++++ b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
+@@ -39,7 +39,7 @@ Example:
+ 		reg = <0x36>;
+ 		maxim,alert-low-soc-level = <10>;
+ 		interrupt-parent = <&gpio7>;
+-		interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
 +		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&max77686_irq>;
- 		#clock-cells = <1>;
+ 		wakeup-source;
+ 	};
+ 
+diff --git a/drivers/power/supply/max17040_battery.c b/drivers/power/supply/max17040_battery.c
+index d956c67d5155..f737de0470de 100644
+--- a/drivers/power/supply/max17040_battery.c
++++ b/drivers/power/supply/max17040_battery.c
+@@ -367,7 +367,7 @@ static int max17040_enable_alert_irq(struct max17040_chip *chip)
+ 
+ 	flags = IRQF_TRIGGER_FALLING | IRQF_ONESHOT;
+ 	ret = devm_request_threaded_irq(&client->dev, client->irq, NULL,
+-					max17040_thread_handler, flags,
++					max17040_thread_handler, IRQF_ONESHOT,
+ 					chip->battery->desc->name, chip);
+ 
+ 	return ret;
 -- 
 2.25.1
 
