@@ -6,20 +6,20 @@ X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 489EBC4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 21:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64054C4361B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 21:45:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B0E123DE3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 21:43:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CD0C23E23
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 21:45:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405043AbgLJVmp (ORCPT
+        id S2404777AbgLJVoV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Dec 2020 16:42:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38528 "EHLO mail.kernel.org"
+        Thu, 10 Dec 2020 16:44:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404890AbgLJV1Z (ORCPT
+        id S2404883AbgLJV1T (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Dec 2020 16:27:25 -0500
+        Thu, 10 Dec 2020 16:27:19 -0500
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
 To:     Chanwoo Choi <cw00.choi@samsung.com>,
@@ -46,9 +46,9 @@ Cc:     Iskren Chernev <iskren.chernev@gmail.com>,
         Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
         Angus Ainslie <angus@akkea.ca>,
         Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 10/18] ARM: dts: s5pv210: correct fuel gauge interrupt trigger level on Fascinate family
-Date:   Thu, 10 Dec 2020 22:25:26 +0100
-Message-Id: <20201210212534.216197-10-krzk@kernel.org>
+Subject: [PATCH 06/18] ARM: dts: exynos: correct PMIC interrupt trigger level on Odroid X/U3 family
+Date:   Thu, 10 Dec 2020 22:25:22 +0100
+Message-Id: <20201210212534.216197-6-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201210212534.216197-1-krzk@kernel.org>
 References: <20201210212534.216197-1-krzk@kernel.org>
@@ -58,29 +58,33 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Maxim fuel gauge datasheets describe the interrupt line as active
-low with a requirement of acknowledge from the CPU.  The falling edge
-interrupt will mostly work but it's not correct.
+The Maxim PMIC datasheets describe the interrupt line as active low
+with a requirement of acknowledge from the CPU.  Without specifying the
+interrupt type in Devicetree, kernel might apply some fixed
+configuration, not necessarily working for this hardware.
 
-Fixes: 99bb20321f0e ("ARM: dts: s5pv210: Correct fuelgauge definition on Aries")
+Additionally, the interrupt line is shared so using level sensitive
+interrupt is here especially important to avoid races.
+
+Fixes: eea6653aae7b ("ARM: dts: Enable PMIC interrupts for exynos4412-odroid-common")
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/s5pv210-fascinate4g.dts | 2 +-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-index ca064359dd30..b47d8300e536 100644
---- a/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-+++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-@@ -115,7 +115,7 @@ &fg {
- 	compatible = "maxim,max77836-battery";
- 
- 	interrupt-parent = <&gph3>;
--	interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-+	interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
- 
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&fg_irq>;
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index 2b20d9095d9f..eebe6a3952ce 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -278,7 +278,7 @@ usb3503: usb-hub@8 {
+ 	max77686: pmic@9 {
+ 		compatible = "maxim,max77686";
+ 		interrupt-parent = <&gpx3>;
+-		interrupts = <2 IRQ_TYPE_NONE>;
++		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&max77686_irq>;
+ 		reg = <0x09>;
 -- 
 2.25.1
 
