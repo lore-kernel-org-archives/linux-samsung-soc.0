@@ -2,241 +2,193 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 299F0C4361B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 09:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4390CC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 15:02:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6FD323C43
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 09:19:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D86532310D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Dec 2020 15:02:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388115AbgLJJS7 (ORCPT
+        id S1726489AbgLJPCa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Dec 2020 04:18:59 -0500
-Received: from ns2.baikalchip.com ([94.125.187.42]:36788 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729642AbgLJJSx (ORCPT
+        Thu, 10 Dec 2020 10:02:30 -0500
+Received: from mail-eopbgr50125.outbound.protection.outlook.com ([40.107.5.125]:15174
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730966AbgLJPC1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Dec 2020 04:18:53 -0500
-From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
-        Rafal Milecki <zajec5@gmail.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Benoit Cousson <bcousson@baylibre.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Andy Gross <agross@kernel.org>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Tony Lindgren <tony@atomide.com>, Chen-Yu Tsai <wens@csie.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jun Li <lijun.kernel@gmail.com>,
-        <linux-snps-arc@lists.infradead.org>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mips@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linuxppc-dev@lists.ozlabs.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: [PATCH RESEND v4 00/10] dt-bindings: usb: Harmonize xHCI/EHCI/OHCI/DWC3 nodes name
-Date:   Thu, 10 Dec 2020 12:17:45 +0300
-Message-ID: <20201210091756.18057-1-Sergey.Semin@baikalelectronics.ru>
+        Thu, 10 Dec 2020 10:02:27 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kyb8XB/sHzQgWUcRq4fdVIVO71WzFHUz6r+kWMejzviJwNEEIokjg2aRN7mKRM5bMKrxx37u5Vka0TY8OmVs/6HuOYhE31eU+TsNiO3JV6ysDqx2FELDu/arMjNWjYNWyCf2qxVxcjUV17UymVoWj00fYpf9RCl0yWBrecppT1+noKPeEPW7sMxVd+OITQ1efdafcAC0kQaLXZKWftAu/Cu/Kd5Be7QseLg/V4+Yn/cWJOYIHgrC0Y6tkuuh14qCtiixMLrwWLpxYQenWDx6YS5oOYYnL6qwCJ06vmMYXikmTs2mwhU+1nfoWgh1oxkz/DjjZ1IdfoEa+xTpAD/gig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9/w6DGfBZaqRXK0w0HB0dcft/3aTxTOjArxX/m39zMw=;
+ b=XQoBAhOVK+oqkF0WgLXXs4aVrO8s5/ywa9ObJPxauudnrCFG0HYkTSSUSmojZv2p97chyzTuAT6wMaV11L9KTQ4Wq/DOALhjmvhq/HJ9kAAYSm12V/mX0LlOck3oP70y2kMeYMvofkJ4vWndMfquOZMMjIi0PsYbgqFAYLmKoHg78vDeKAquWK2Vi9u0+Qq37axaPKEKElP+su8n0zRl4ENWEZ6K9CZy0wqBLrMZXOr2T75Sl0Ni7I8T5KJG6uCVqcuyeQ6SKvJqgMRCC06U09PjLYMuu2ffXIGm/X6kR2JlsDyN+5e4wRBnNhrotbOuOjEoSmaQ6TZzr8FmuPi1ow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
+ dkim=pass header.d=kontron.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
+ s=selector2-mysnt-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9/w6DGfBZaqRXK0w0HB0dcft/3aTxTOjArxX/m39zMw=;
+ b=BBhxecqd5CPPW5WbTpcj2AZWdDyU926JqLJGLhAlbnUVvhZEP2EbFz9p4iy/YE5YaG5vVKm8tDfo6L4KmR/jUr3ESwoq6fwo2QZtbBdEjcRpuYL2hU+nkJWHSwWvuxLVS96AU7x17DNNXBXefASl5KN5Tkg2wFi/7jg3YI4UHck=
+Authentication-Results: samsung.com; dkim=none (message not signed)
+ header.d=none;samsung.com; dmarc=none action=none header.from=kontron.de;
+Received: from AM0PR10MB2963.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:157::14)
+ by AM9PR10MB4312.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f5::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3654.12; Thu, 10 Dec
+ 2020 15:01:38 +0000
+Received: from AM0PR10MB2963.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::9d5:953d:42a3:f862]) by AM0PR10MB2963.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::9d5:953d:42a3:f862%7]) with mapi id 15.20.3654.012; Thu, 10 Dec 2020
+ 15:01:38 +0000
+Subject: Re: [PATCH 2/3] drm/exynos: Scale the DSIM PHY HFP/HBP/HSA to lanes
+ and bpp
+To:     Marek Vasut <marex@denx.de>, dri-devel@lists.freedesktop.org
+Cc:     linux-samsung-soc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        =?UTF-8?Q?Guido_G=c3=bcnther?= <agx@sigxcpu.org>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20201005134250.527153-1-marex@denx.de>
+ <20201005134250.527153-2-marex@denx.de>
+From:   Frieder Schrempf <frieder.schrempf@kontron.de>
+Message-ID: <117ac9a9-3355-7d00-8e2b-2af05157b2f7@kontron.de>
+Date:   Thu, 10 Dec 2020 16:01:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+In-Reply-To: <20201005134250.527153-2-marex@denx.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [109.250.142.243]
+X-ClientProxiedBy: AM0PR04CA0050.eurprd04.prod.outlook.com
+ (2603:10a6:208:1::27) To AM0PR10MB2963.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:208:157::14)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.10.27] (109.250.142.243) by AM0PR04CA0050.eurprd04.prod.outlook.com (2603:10a6:208:1::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3654.12 via Frontend Transport; Thu, 10 Dec 2020 15:01:37 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 77236acf-2444-42f0-f47a-08d89d1c7e8f
+X-MS-TrafficTypeDiagnostic: AM9PR10MB4312:
+X-Microsoft-Antispam-PRVS: <AM9PR10MB4312B27FC8B6778159521539E9CB0@AM9PR10MB4312.EURPRD10.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:341;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0J480A/kGGycpDr/nL05Ige0p0rglvlzHvCaja0+civagTPRVDJ3zh8xzw4yGskKJYgmHpPECVoYf1GzTYIXd+ijIbA0Ex7TP/v4OcRjhWk0xDRckqUwRIG7pX/c9HsjDOZq9Rb9aRxSNvdgQ7qOHJuXe3g1pdRRC4vvaLIfPCR63WMc+HDD/syUpYaypnLwXOKxbgU96Lj1iru6X88C9PBSPKc+3EM94iZ6aQoTK+VRL6DCCzYogOIaBjoXO0F441Z0QSn42VAGVxUDFZi63KREs/SMHLt7S3+mmDM5j4TUioUQmhKKzOxR+XkO8cud5c6NbupkeGCO5TRJDyuBNGmomr5pRagg24UGQP9MCkXieZEDjZc7YGAHR3eYdJtFnLUZ2ZTezNZpZgWxSBQJT4qi7Ua6OLgxFqhLNr4UZmagtXCZo7UvXSp6cHiUjVKlBgPveDgvboSPwAW248LW+8Jf0Vbzo6ONYP+le9VgFps=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR10MB2963.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(4636009)(136003)(396003)(366004)(39860400002)(376002)(346002)(31696002)(52116002)(53546011)(5660300002)(66476007)(31686004)(7416002)(44832011)(8936002)(66946007)(66556008)(956004)(86362001)(478600001)(2616005)(4326008)(26005)(45080400002)(36756003)(16526019)(16576012)(316002)(66574015)(966005)(83380400001)(2906002)(8676002)(6486002)(54906003)(186003)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?VTRQM3NycW5CMmRTendIZWs3MUg0aGtnSGpJdC81eURRc0hoUWJZUXp1b2lC?=
+ =?utf-8?B?KzliUklnM1lGNklMRk5Mci9ab25sWDBKRFFGMW5XcU4zOUZsTElzVWkwNEJ3?=
+ =?utf-8?B?UndoTVkxYlhPcjVWanBkbFltM2hFM0Fva2NDWFFXYlI1SURaeVVFMVBqb1pX?=
+ =?utf-8?B?aElYc0x6anlHT0sxSnZVSFJPcUUyWjdVSlcyRDQxaWgzdlhMS3JBQnNDcnVt?=
+ =?utf-8?B?eElhL1hVWExRQ3lzVmIyY0J1TXJ2ck83TmZXcWVOcjZYSVhDN2lwb0V3akZx?=
+ =?utf-8?B?cDRyck1QTFBQQmtuWXkrK0tLdE94VHYybGkxbHB2UDJpZDh1K1BvWnJrKzJD?=
+ =?utf-8?B?UlozcjNFOFJ4OC9sOEg1d1hDMWVpK3dEWkx0Y1EySENPNS93bHhIY3c1c2Vz?=
+ =?utf-8?B?SXZTcWduTjIyb2oycXdkc3NIRStwN3laZmpVQ3dseHBDYXE4UktZcnA3S1Bi?=
+ =?utf-8?B?eks1VXp6Z1FFMHI4OUZrMEZGQ3RRSG50WUpRWW5aMW4wc20xSXJDWHFsdTJK?=
+ =?utf-8?B?YVMwdDRoZXdGWk5mSWV0K28yZmh2MnF5RVk2RTk5RS9SODZsaktDajFUR3lU?=
+ =?utf-8?B?VWRzWUNlZFVlak50VUcreVpDZUFXVzUzYzFMVlcvRGFSNkpxNlMxUEE0eVJz?=
+ =?utf-8?B?ckcrTnJtUk9GYTdHUHluUjVnT3ord3VSS0ppcTJQQWJLMjJjbFFNM1Q1a1lP?=
+ =?utf-8?B?UE42ci9pSU13S2gwQms2bHJ6WCtENStoWlFHeGFaUFN0TS9yckhSUW9RYW0v?=
+ =?utf-8?B?dVFmTlBhcGJsSE9VWXkzYmVaT3JLeXNOY2hoeWdWSFZmeGxpUkpXVklIY21W?=
+ =?utf-8?B?cUlLd09VNXgvczcySFlNL2QxYTNURzRtSWtxTHNLMytIbDE2emhkOEFkNU4v?=
+ =?utf-8?B?alMzQ2oxZVdhV2MvVDk3RFY1UEZrc3pRUXNHb1I0a0h1cmpTc2JIOGhuYndv?=
+ =?utf-8?B?UXZsemdIa2hBbFk2U3NWbFlub1BWZUtRcTNPdnUza3A4ZEJmU2djSjJIOUtW?=
+ =?utf-8?B?dS9Kd0xsYWhzU3V5MSt4cm5Ya3Z6SmZZOVE2aU9NZ2RQSmxTWnZOdmtoeXRl?=
+ =?utf-8?B?RHlVa05rU1NGeGI3ZXkzbWFjR3pQcmFhdlNGU2lDeHBDalBZdkk0eXRCUEpq?=
+ =?utf-8?B?KzkrNjh3eEI1RXFuR2RZRHdWM2prTDRseUVDZkVXV250NnpDVW9XTHozaEVw?=
+ =?utf-8?B?eHIvbS9pL0g4QlR2WXhmZUFaL1F5b0N5MVRFc211Q3VMWTlEQy9aWVQ2R29j?=
+ =?utf-8?B?c3FyaEFkMk9vWGY5SWZCZ01mQTBrbjhFUUZxWDBJSXlQR3V2UmdLWURSTUxQ?=
+ =?utf-8?Q?uooKBFvmZFCG6TztGdHHtF4CmRT9LZBt5i?=
+X-OriginatorOrg: kontron.de
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR10MB2963.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2020 15:01:38.0214
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77236acf-2444-42f0-f47a-08d89d1c7e8f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RPlvN5OkAuBgbJn3hRPMcBagt9czi2kxVnYLrMO7mtZ2tvdsdNHwPIjgFOV/+JVXJAjX79E1xsWavV3vz9D0P55zduv/uc974qF5fp0eN28=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR10MB4312
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-As the subject states this series is an attempt to harmonize the xHCI,
-EHCI, OHCI and DWC USB3 DT nodes with the DT schema introduced in the
-framework of the patchset [1].
+On 05.10.20 15:42, Marek Vasut wrote:
+> The value programmed into horizontal porch and sync registers must be
+> scaled to the correct number of DSI lanes and bpp, make it so.
+> 
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Guido Günther <agx@sigxcpu.org>
+> Cc: Jaehoon Chung <jh80.chung@samsung.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Michael Tretter <m.tretter@pengutronix.de>
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> To: dri-devel@lists.freedesktop.org
+> --
+> NOTE: This depends on https://eur04.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatchwork.kernel.org%2Fproject%2Fdri-devel%2Flist%2F%3Fseries%3D347439&amp;data=02%7C01%7Cfrieder.schrempf%40kontron.de%7Ca88f0cdec137451033ab08d86934dbe6%7C8c9d3c973fd941c8a2b1646f3942daf1%7C0%7C0%7C637375023034158708&amp;sdata=l2pnC0dfueaAGSfwHOK3OpBUJ%2FxnbFKrlpRWlBakVvo%3D&amp;reserved=0
+> ---
+>   drivers/gpu/drm/bridge/samsung-dsim.c | 9 ++++++---
+>   1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+> index fbd87a74eb9f..42b49546dd00 100644
+> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> @@ -740,20 +740,23 @@ static void samsung_dsim_set_display_mode(struct samsung_dsim *dsi)
+>   {
+>   	struct drm_display_mode *m = &dsi->mode;
+>   	unsigned int num_bits_resol = dsi->driver_data->num_bits_resol;
+> +	int bpp;
+>   	u32 reg;
+>   
+>   	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO) {
+> +		bpp = mipi_dsi_pixel_format_to_bpp(dsi->format) / 8;
+> +
+>   		reg = DSIM_CMD_ALLOW(0xf)
+>   			| DSIM_STABLE_VFP(m->vsync_start - m->vdisplay)
+>   			| DSIM_MAIN_VBP(m->vtotal - m->vsync_end);
+>   		samsung_dsim_write(dsi, DSIM_MVPORCH_REG, reg);
+>   
+> -		reg = DSIM_MAIN_HFP(m->hsync_start - m->hdisplay)
+> -			| DSIM_MAIN_HBP(m->htotal - m->hsync_end);
+> +		reg = DSIM_MAIN_HFP((m->hsync_start - m->hdisplay) * bpp / dsi->lanes)
+> +			| DSIM_MAIN_HBP((m->htotal - m->hsync_end) * bpp / dsi->lanes);
+>   		samsung_dsim_write(dsi, DSIM_MHPORCH_REG, reg);
+>   
+>   		reg = DSIM_MAIN_VSA(m->vsync_end - m->vsync_start)
+> -			| DSIM_MAIN_HSA(m->hsync_end - m->hsync_start);
+> +			| DSIM_MAIN_HSA((m->hsync_end - m->hsync_start) * bpp / dsi->lanes);
+>   		samsung_dsim_write(dsi, DSIM_MSYNC_REG, reg);
 
-Firstly as Krzysztof suggested we've deprecated a support of DWC USB3
-controllers with "synopsys,"-vendor prefix compatible string in favor of
-the ones with valid "snps,"-prefix. It's done in all the DTS files,
-which have been unfortunate to define such nodes.
+I did a bit of testing with the DSIM and BLK-CTL on i.MX8MM and I'm 
+seeing some issues with these settings. I think your changes are 
+correct, but to get my display configuration working I still need to add 
+this [1] ported from the downstream driver [2]. Though, I can't really 
+tell if this is a correct fix or something else is wrong.
 
-Secondly we suggest to fix the snps,quirk-frame-length-adjustment property
-declaration in the Amlogic meson-g12-common.dtsi DTS file, since it has
-been erroneously declared as boolean while having uint32 type. Neil said
-it was ok to init that property with 0x20 value.
+[1] 
+https://github.com/fschrempf/linux/commit/65e50ebc38706ca9b5b3dec8a6ab9b28907f5d3a
+[2] 
+https://source.codeaurora.org/external/imx/linux-imx/tree/drivers/gpu/drm/bridge/sec-dsim.c?h=imx_5.4.47_2.2.0#n932
 
-Thirdly the main part of the patchset concern fixing the xHCI, EHCI/OHCI
-and DWC USB3 DT nodes name as in accordance with their DT schema the
-corresponding node name is suppose to comply with the Generic USB HCD DT
-schema, which requires the USB nodes to have the name acceptable by the
-regexp: "^usb(@.*)?". Such requirement had been applicable even before we
-introduced the new DT schema in [1], but as we can see it hasn't been
-strictly implemented for a lot the DTS files. Since DT schema is now
-available the automated DTS validation shall make sure that the rule isn't
-violated.
-
-Note most of these patches have been a part of the last three patches of
-[1]. But since there is no way to have them merged in in a combined
-manner, I had to move them to the dedicated series and split them up so to
-be accepted by the corresponding subsystem maintainers one-by-one.
-
-[1] Link: https://lore.kernel.org/linux-usb/20201014101402.18271-1-Sergey.Semin@baikalelectronics.ru/
-Changelog v1:
-- As Krzysztof suggested I've created a script which checked whether the
-  node names had been also updated in all the depended dts files. As a
-  result I found two more files which should have been also modified:
-  arch/arc/boot/dts/{axc003.dtsi,axc003_idu.dtsi}
-- Correct the USB DWC3 nodes name found in
-  arch/arm64/boot/dts/apm/{apm-storm.dtsi,apm-shadowcat.dtsi} too.
-
-Link: https://lore.kernel.org/linux-usb/20201020115959.2658-1-Sergey.Semin@baikalelectronics.ru
-Changelog v2:
-- Drop the patch:
-  [PATCH 01/29] usb: dwc3: Discard synopsys,dwc3 compatibility string
-  and get back the one which marks the "synopsys,dwc3" compatible string
-  as deprecated into the DT schema related series.
-- Drop the patches:
-  [PATCH 03/29] arm: dts: am437x: Correct DWC USB3 compatible string
-  [PATCH 04/29] arm: dts: exynos: Correct DWC USB3 compatible string
-  [PATCH 07/29] arm: dts: bcm53x: Harmonize EHCI/OHCI DT nodes name
-  [PATCH 08/29] arm: dts: stm32: Harmonize EHCI/OHCI DT nodes name
-  [PATCH 16/29] arm: dts: bcm5301x: Harmonize xHCI DT nodes name
-  [PATCH 19/29] arm: dts: exynos: Harmonize DWC USB3 DT nodes name
-  [PATCH 21/29] arm: dts: ls1021a: Harmonize DWC USB3 DT nodes name
-  [PATCH 22/29] arm: dts: omap5: Harmonize DWC USB3 DT nodes name
-  [PATCH 24/29] arm64: dts: allwinner: h6: Harmonize DWC USB3 DT nodes name
-  [PATCH 26/29] arm64: dts: exynos: Harmonize DWC USB3 DT nodes name
-  [PATCH 27/29] arm64: dts: layerscape: Harmonize DWC USB3 DT nodes name
-  since they have been applied to the corresponding maintainers repos.
-- Fix drivers/usb/dwc3/dwc3-qcom.c to be looking for the "usb@"-prefixed
-  sub-node and falling back to the "dwc3@"-prefixed one on failure.
-
-Link: https://lore.kernel.org/linux-usb/20201111091552.15593-1-Sergey.Semin@baikalelectronics.ru
-Changelog v3:
-- Drop the patches:
-  [PATCH v2 04/18] arm: dts: hisi-x5hd2: Harmonize EHCI/OHCI DT nodes name
-  [PATCH v2 06/18] arm64: dts: hisi: Harmonize EHCI/OHCI DT nodes name
-  [PATCH v2 07/18] mips: dts: jz47x: Harmonize EHCI/OHCI DT nodes name
-  [PATCH v2 08/18] mips: dts: sead3: Harmonize EHCI/OHCI DT nodes name
-  [PATCH v2 09/18] mips: dts: ralink: mt7628a: Harmonize EHCI/OHCI DT nodes name
-  [PATCH v2 11/18] arm64: dts: marvell: cp11x: Harmonize xHCI DT nodes name
-  [PATCH v2 12/18] arm: dts: marvell: armada-375: Harmonize DWC USB3 DT nodes name
-  [PATCH v2 16/18] arm64: dts: hi3660: Harmonize DWC USB3 DT nodes name
-  since they have been applied to the corresponding maintainers repos.
-
-Link: https://lore.kernel.org/linux-usb/20201205155621.3045-1-Sergey.Semin@baikalelectronics.ru
-Changelog v4:
-- Just resend.
-
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Cc: Rafal Milecki <zajec5@gmail.com>
-Cc: Wei Xu <xuwei5@hisilicon.com>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Benoit Cousson <bcousson@baylibre.com>
-Cc: Patrice Chotard <patrice.chotard@st.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Khuong Dinh <khuong@os.amperecomputing.com>
-Cc: Andy Gross <agross@kernel.org>
-Cc: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Amelie Delaunay <amelie.delaunay@st.com>
-Cc: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Gregory Clement <gregory.clement@bootlin.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Li Yang <leoyang.li@nxp.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Jun Li <lijun.kernel@gmail.com>
-Cc: linux-snps-arc@lists.infradead.org
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-
-Serge Semin (10):
-  arm: dts: keystone: Correct DWC USB3 compatible string
-  arm64: dts: amlogic: meson-g12: Set FL-adj property value
-  arc: dts: Harmonize EHCI/OHCI DT nodes name
-  arm: dts: lpc18xx: Harmonize EHCI/OHCI DT nodes name
-  powerpc: dts: akebono: Harmonize EHCI/OHCI DT nodes name
-  arm: dts: keystone: Harmonize DWC USB3 DT nodes name
-  arm: dts: stih407-family: Harmonize DWC USB3 DT nodes name
-  arm64: dts: apm: Harmonize DWC USB3 DT nodes name
-  usb: dwc3: qcom: Detect DWC3 DT-nodes with "usb"-prefixed names
-  arm64: dts: qcom: Harmonize DWC USB3 DT nodes name
-
- arch/arc/boot/dts/axc003.dtsi                     | 4 ++--
- arch/arc/boot/dts/axc003_idu.dtsi                 | 4 ++--
- arch/arc/boot/dts/axs10x_mb.dtsi                  | 4 ++--
- arch/arc/boot/dts/hsdk.dts                        | 4 ++--
- arch/arc/boot/dts/vdk_axs10x_mb.dtsi              | 2 +-
- arch/arm/boot/dts/keystone-k2e.dtsi               | 6 +++---
- arch/arm/boot/dts/keystone.dtsi                   | 4 ++--
- arch/arm/boot/dts/lpc18xx.dtsi                    | 4 ++--
- arch/arm/boot/dts/stih407-family.dtsi             | 2 +-
- arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 2 +-
- arch/arm64/boot/dts/apm/apm-shadowcat.dtsi        | 4 ++--
- arch/arm64/boot/dts/apm/apm-storm.dtsi            | 6 +++---
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi      | 4 ++--
- arch/arm64/boot/dts/qcom/ipq8074.dtsi             | 4 ++--
- arch/arm64/boot/dts/qcom/msm8996.dtsi             | 4 ++--
- arch/arm64/boot/dts/qcom/msm8998.dtsi             | 2 +-
- arch/arm64/boot/dts/qcom/qcs404-evb.dtsi          | 2 +-
- arch/arm64/boot/dts/qcom/qcs404.dtsi              | 4 ++--
- arch/arm64/boot/dts/qcom/sc7180.dtsi              | 2 +-
- arch/arm64/boot/dts/qcom/sdm845.dtsi              | 4 ++--
- arch/arm64/boot/dts/qcom/sm8150.dtsi              | 2 +-
- arch/powerpc/boot/dts/akebono.dts                 | 6 +++---
- drivers/usb/dwc3/dwc3-qcom.c                      | 3 ++-
- 23 files changed, 42 insertions(+), 41 deletions(-)
-
--- 
-2.29.2
-
+>   	}
+>   	reg =  DSIM_MAIN_HRESOL(m->hdisplay, num_bits_resol) |
+> 
