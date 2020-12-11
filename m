@@ -2,153 +2,150 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3F0C4361B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Dec 2020 16:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B20C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Dec 2020 16:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9D6523106
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Dec 2020 16:50:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 644642310E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Dec 2020 16:52:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393159AbgLKPud (ORCPT
+        id S2393586AbgLKPwo convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 11 Dec 2020 10:50:33 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:48681 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393144AbgLKPuS (ORCPT
+        Fri, 11 Dec 2020 10:52:44 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41969 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388637AbgLKPwe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 11 Dec 2020 10:50:18 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20201211154926euoutp02ebb8656562335ab885ac1ffe20b418de~PtDz_ta3t1165211652euoutp02a
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Dec 2020 15:49:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20201211154926euoutp02ebb8656562335ab885ac1ffe20b418de~PtDz_ta3t1165211652euoutp02a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1607701766;
-        bh=eiKoUfJOSAjV/F3zyRNsA6hgRZkJZixmeT8RGGwUIQw=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=iHqDBfArPkYdh8Adg0EXdEOnJ3Iseg+8adQzWuo2CXK9UFob/Cv0Glw9sAxnK1A6x
-         InW/8nLV8Jj+1D456cWyklXsxXwI81jIz/XLTvKAULeONXklAy0Yyi/HfZcnYrG3sM
-         tsEx4LYCUeyvhHHGDASn/dekzmQTqwcUupPLZ+do=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201211154915eucas1p2383bdedb6ab8c65b61a0205840248003~PtDqM1K973270532705eucas1p2p;
-        Fri, 11 Dec 2020 15:49:15 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 45.53.27958.BF493DF5; Fri, 11
-        Dec 2020 15:49:15 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201211154915eucas1p127e8cf673bca639cb2e8a07d2985fd63~PtDp4LO8o2253322533eucas1p16;
-        Fri, 11 Dec 2020 15:49:15 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201211154915eusmtrp1c3c741945ad1f7260cd6971856eea7dc~PtDp3fdI82293422934eusmtrp1x;
-        Fri, 11 Dec 2020 15:49:15 +0000 (GMT)
-X-AuditID: cbfec7f2-f15ff70000006d36-33-5fd394fb8e43
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id D3.7A.16282.BF493DF5; Fri, 11
-        Dec 2020 15:49:15 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20201211154914eusmtip164d1138cb1e6fd73ae7ad7eb73e2d72a~PtDpRCR7S1399913999eusmtip1f;
-        Fri, 11 Dec 2020 15:49:14 +0000 (GMT)
-Subject: Re: [PATCH 3/9] ARM: dts: exynos: correct PMIC interrupt trigger
- level on Rinato
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Fri, 11 Dec 2020 10:52:34 -0500
+Received: by mail-wr1-f66.google.com with SMTP id a12so9502291wrv.8;
+        Fri, 11 Dec 2020 07:52:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=J7fcE0FENj78WD0WD0FAW2QvhAhKSbHLyC4gTCtkJlw=;
+        b=Dnv0/f0W92D/tj1hHIMIlhCVF5erZIEWcz2BDHVkwc6FgcJhejKsI1dYYSvNNMA6TR
+         UN0RWihNcxItvlA5Iqfm2ar2yShM3RMbK/JMGk6gImEm5N4Hwj1WrBnHqEX+RpIbNFLc
+         IXmcDaOhFzga5VRfYX+mVhgXRPvk/qoSE/5OAekMqDHk0dx50lU/xvjLDU8D+LoyR7En
+         VBZswG7Q8WPd7r2k334SfXCaSmIxM8JF/mQWPRy08cimjchRTH/rv2J9pxFkzAGzdRtT
+         wFPZetq2b81dfMZIEMaVKLgtOTB78XWD37fTnWhPKWjzpzOf7PA4wxcMXxGydjlt9XSi
+         +KwA==
+X-Gm-Message-State: AOAM533b1MeAVzeZ4faYynEsTdmriql1g5M/AFBjXfpJDMAfVKoV5dlM
+        vFiKNRcaaDXFMMd6P/JV3Bk=
+X-Google-Smtp-Source: ABdhPJz7D8U+j4gEfci2HdyqdoNrhC+P/LecmgdYR4fAygHIEvJvMXFU+xo1bWvYdsuq5i6Z4xJvgQ==
+X-Received: by 2002:adf:f94b:: with SMTP id q11mr14872438wrr.351.1607701910528;
+        Fri, 11 Dec 2020 07:51:50 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id h2sm15998667wme.45.2020.12.11.07.51.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Dec 2020 07:51:49 -0800 (PST)
+Date:   Fri, 11 Dec 2020 16:51:47 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Iskren Chernev <iskren.chernev@gmail.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Lee Jones <lee.jones@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <611b44f2-759a-35f9-bc72-a8d6c1c9c60f@samsung.com>
-Date:   Fri, 11 Dec 2020 16:49:14 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.5.1
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-rtc@vger.kernel.org,
+        Matheus Castello <matheus@castello.eng.br>,
+        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+        Angus Ainslie <angus@akkea.ca>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [RFC 18/18] power: supply: max17040: Do not enforce (incorrect)
+ interrupt trigger type
+Message-ID: <20201211155147.GA9732@kozik-lap>
+References: <20201210212534.216197-1-krzk@kernel.org>
+ <20201210212534.216197-18-krzk@kernel.org>
+ <20201211074755.GA4346@kozik-lap>
+ <6f1cd4f0-21a7-ed8c-aafa-ba217c05ea5f@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201210212903.216728-3-krzk@kernel.org>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7djPc7q/p1yON9g2V9pi44z1rBbXvzxn
-        tZh/5ByrxfnzG9gt7n89ymix6fE1VovLu+awWcw4v4/JonXvEXaL9qcvmR24PDat6mTzuHNt
-        D5vH5iX1Hn1bVjF6fN4kF8AaxWWTkpqTWZZapG+XwJVx8dwF9oL1nBW9U16wNDDeYe9i5OSQ
-        EDCR6Jt0Gcjm4hASWMEosWfeYjYI5wujxIOv/5ghnM+MEm/3bWeBaXl99ANUYjmjxIaVK6Cc
-        j4wSHacXMIJUCQtES2zqeMkCkhARuMIkcWRnLxtIgllAV2L6uzfMIDabgKFE19suoDgHB6+A
-        ncTbO9kgYRYBVYlNtz+ClYgKJEms7/oB1sorIChxcuYTsCs4BcwkFvZMYYQYKS+x/e0cZghb
-        XOLWk/lMIHslBD5wSFz9Mg3qbBeJzxevMELYwhKvjm+BhoCMxOnJPSwQDc2MEg/PrWWHcHoY
-        JS43zYDqsJa4c+4X2KXMApoS63fpQ4QdJVb37WcCCUsI8EnceCsIcQSfxKRt05khwrwSHW1C
-        ENVqErOOr4Nbe/DCJeYJjEqzkLw2C8k7s5C8Mwth7wJGllWM4qmlxbnpqcWGeanlesWJucWl
-        eel6yfm5mxiBKer0v+OfdjDOffVR7xAjEwfjIUYJDmYlEd7f9ZfjhXhTEiurUovy44tKc1KL
-        DzFKc7AoifOumr0mXkggPbEkNTs1tSC1CCbLxMEp1cA07fv/qkkP/px/s7vGZOPZNfW66son
-        k25yXDmj3+9qHnB4g+rev5L3th+axNB6t1VNK/VzbPoVyTXVkuenm/ufCf4SvCRA1aJD9NPn
-        cv4T39YnCP+OU3ExbGA6Hty31W5/xdLf3lMDrMqnWX6evaHt7OUzpx5ErhB3nrBOLOMiq3tE
-        j721Iqtzn5Us1/J5P3USxHietPy7tKl5lf0Ws6pdCg/9Lf5c+7DR34TDwz0osZD70plJxs73
-        K3ZNu/fr+pXbrWpZB+SSlf1vRH3dpyJwfPlVzuje0ubC54Jr/FtjN3POfRh67PvN1i9aTsff
-        +GkdZNtnxJly9fLqTaHufoJ3J96c9en2PeagA6fel4gzKrEUZyQaajEXFScCAEb5EiDAAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHIsWRmVeSWpSXmKPExsVy+t/xu7q/p1yON3h8kdVi44z1rBbXvzxn
-        tZh/5ByrxfnzG9gt7n89ymix6fE1VovLu+awWcw4v4/JonXvEXaL9qcvmR24PDat6mTzuHNt
-        D5vH5iX1Hn1bVjF6fN4kF8AapWdTlF9akqqQkV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqk
-        b2eTkpqTWZZapG+XoJdx8dwF9oL1nBW9U16wNDDeYe9i5OSQEDCReH30A3MXIxeHkMBSRonX
-        Pb9YIBIyEienNbBC2MISf651sUEUvWeUmPHmJDNIQlggWmJTx0sWkISIwBUmidZLVxhBEswC
-        uhLT372BGruVUWLHj6dgo9gEDCW63oKM4uDgFbCTeHsnGyTMIqAqsen2R2aQsKhAksTZ04Ig
-        YV4BQYmTM5+AHcQpYCaxsGcK1HgziXmbHzJD2PIS29/OgbLFJW49mc80gVFoFpL2WUhaZiFp
-        mYWkZQEjyypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzAiNx27OeWHYwrX33UO8TIxMF4iFGC
-        g1lJhPd3/eV4Id6UxMqq1KL8+KLSnNTiQ4ymQO9MZJYSTc4HpoS8knhDMwNTQxMzSwNTSzNj
-        JXFekyNr4oUE0hNLUrNTUwtSi2D6mDg4pRqYQuVvthu7zZi0u2TOdP/ssxVz9bInmjZPn/b2
-        y/H9AamHeH6y8yif6WWpYZyvIay388LCyil7a6S0pDgdeA5wzu44kZHXraLP4Xr60lW3j8KN
-        E/ViTsaedlvwdauOVWfqeWHBtP66lRn8aXr8nvsDD+/iWKM/d/+KM6k7pr9hXrrU+O4LruML
-        ri7nD2qvt1tc2ZPJdqumg22m0Lo++7Klvdd9QlpulvldP8jdtmtN6XO+Hz5zN15ITnmVV284
-        /YLCk2m2jBmrfjot8r4aff/L7sMbVz9geBiSeSR+mWCNx9Kf6QmvnrzoXqN74JRIHJN9Qzab
-        wy4lt3t/JaY99N0m87ErPCRoy5clrBxqhy6xKbEUZyQaajEXFScCAAsdQjNRAwAA
-X-CMS-MailID: 20201211154915eucas1p127e8cf673bca639cb2e8a07d2985fd63
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201210212922eucas1p117b0b0d2295642062dcdd98f2de18d76
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201210212922eucas1p117b0b0d2295642062dcdd98f2de18d76
-References: <20201210212903.216728-1-krzk@kernel.org>
-        <CGME20201210212922eucas1p117b0b0d2295642062dcdd98f2de18d76@eucas1p1.samsung.com>
-        <20201210212903.216728-3-krzk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <6f1cd4f0-21a7-ed8c-aafa-ba217c05ea5f@gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10.12.2020 22:28, Krzysztof Kozlowski wrote:
-> The Samsung PMIC datasheets describe the interrupt line as active low
-> with a requirement of acknowledge from the CPU.  Without specifying the
-> interrupt type in Devicetree, kernel might apply some fixed
-> configuration, not necessarily working for this hardware.
->
-> Fixes: faaf348ef468 ("ARM: dts: Add board dts file for exynos3250-rinato")
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->   arch/arm/boot/dts/exynos3250-rinato.dts | 2 +-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-> index a26e3e582a7e..d64ccf4b7d32 100644
-> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
-> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-> @@ -270,7 +270,7 @@ &i2c_0 {
->   	pmic@66 {
->   		compatible = "samsung,s2mps14-pmic";
->   		interrupt-parent = <&gpx0>;
-> -		interrupts = <7 IRQ_TYPE_NONE>;
-> +		interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
->   		reg = <0x66>;
->   		wakeup-source;
->   
+On Fri, Dec 11, 2020 at 05:44:26PM +0200, Iskren Chernev wrote:
+> 
+> On 12/11/20 9:47 AM, Krzysztof Kozlowski wrote:
+> > On Thu, Dec 10, 2020 at 10:25:34PM +0100, Krzysztof Kozlowski wrote:
+> >> Interrupt line can be configured on different hardware in different way,
+> >> even inverted.  Therefore driver should not enforce specific trigger
+> >> type - edge falling - but instead rely on Devicetree to configure it.
+> >>
+> >> The Maxim 14577/77836 datasheets describe the interrupt line as active
+> >> low with a requirement of acknowledge from the CPU therefore the edge
+> >> falling is not correct.
+> >>
+> >> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >>
+> >> ---
+> >>
+> >> This patch should wait till DTS changes are merged, as it relies on
+> >> proper Devicetree.
+> >> ---
+> >> .../devicetree/bindings/power/supply/max17040_battery.txt       | 2 +-
+> >> drivers/power/supply/max17040_battery.c                         | 2 +-
+> >>  2 files changed, 2 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git
+> a/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
+> b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
+> >> index c802f664b508..194eb9fe574d 100644
+> >> --- a/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
+> >> +++ b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
+> >> @@ -39,7 +39,7 @@ Example:
+> >>          reg = <0x36>;
+> >>          maxim,alert-low-soc-level = <10>;
+> >>          interrupt-parent = <&gpio7>;
+> >> -        interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
+> >> +        interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+> >>          wakeup-source;
+> >>      };
+> >>
+> >> diff --git a/drivers/power/supply/max17040_battery.c
+> b/drivers/power/supply/max17040_battery.c
+> >> index d956c67d5155..f737de0470de 100644
+> >> --- a/drivers/power/supply/max17040_battery.c
+> >> +++ b/drivers/power/supply/max17040_battery.c
+> >> @@ -367,7 +367,7 @@ static int max17040_enable_alert_irq(struct
+> max17040_chip *chip)
+> >>
+> >>      flags = IRQF_TRIGGER_FALLING | IRQF_ONESHOT;
+> >
+> > This has to be removed. I will fix it in v2.
+> >
+> > Best regards,
+> > Krzysztof
+> 
+> I removed the IRQF_TRIGGER_FALLING, tweaked the DT as per the DT patch, and
+> it worked on the samsung klte.
+> 
+> I don't understand how the DT irq flag ends up being used by the kernel. It
+> is never explicitly read from DT or passed to interrupt API, only i2c->irq,
+> which is a pure int.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+The core __setup_irq() calls irqd_get_trigger_type() on IRQ data
+matching the IRQ.
 
+Best regards,
+Krzysztof
