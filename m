@@ -2,76 +2,69 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83CCCC4361B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Dec 2020 16:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87183C2BB9A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Dec 2020 10:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4742123104
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Dec 2020 16:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 517C423884
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Dec 2020 10:15:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725846AbgLPQNm (ORCPT
+        id S1727810AbgLQKPG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Dec 2020 11:13:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50070 "EHLO mail.kernel.org"
+        Thu, 17 Dec 2020 05:15:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725287AbgLPQNm (ORCPT
+        id S1727784AbgLQKPG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Dec 2020 11:13:42 -0500
-Date:   Wed, 16 Dec 2020 08:13:00 -0800
+        Thu, 17 Dec 2020 05:15:06 -0500
+Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608135182;
-        bh=81uhZT7DVpYjdCreLCbeivUB0qv7WJTZEUE+d3HMhPQ=;
-        h=From:To:Cc:Subject:In-Reply-To:References:From;
-        b=CS9n6LgOFxRxJJKD8UykFv4WPBIK6VPZ1ifpmCAHqYrBHUDjJFoTZpA21uyfogBUC
-         iccS+Z4Mun1ToW6FjrqWQo28EmNs9gtRgsniTkyXQWE8DoEDkoda4EaaC63Wbth+w9
-         Ilkmgj7SRaZVWLzGaBYRFx5Y3xnp2w6Fn/au9GRbOphPj5X5sQNGQP8D9GZQ+KHgyl
-         Diu4iNG1UgY9F6GGZoI8162MAB5Zh8ODuEt9S260UqtFW/NT4fGrimre0+ogxEXlgI
-         1mMzL4XchcxpZvF453pHAjYH4AVzAP1Crs9GgIjzqSVnw1usbTNP7pn59dkLCnArE9
-         1SjlLygImfT+Q==
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Lukasz Stelmach <l.stelmach@samsung.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvbG5pZXJr?= =?UTF-8?B?aWV3aWN6?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v8 3/3] net: ax88796c: ASIX AX88796C SPI Ethernet
- Adapter Driver
-Message-ID: <20201216081300.3477c3fb@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <dleftjczza7xgf.fsf%l.stelmach@samsung.com>
-References: <20201215174615.17c08e88@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-        <CGME20201216122211eucas1p22314f0e8a28774545d168290ed57b355@eucas1p2.samsung.com>
-        <dleftjczza7xgf.fsf%l.stelmach@samsung.com>
+        s=k20201202; t=1608200065;
+        bh=ozxZ6dxZmbFUVTMgivXPIwZxuBc4okdgQUn15Mxin2Q=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=BW7ao28soZBekex1gecvum8HLhayaBnoeFjBUpcIUrfXdz0hMOFdKRzkCHXEIsOOZ
+         umcEjROyg/+BVIU6DaQFgMNB6RnATP0n9W/fQ4Jx8NBvZFF9wlNAOh+N8B3SOpDAxN
+         BOPcBBPr4XLrSTzd4JG0/iRWNdv+KUyK24SIIRSA+Atbzkm4cxBdgRv/pM3Iy+FWc1
+         KjVTvZFb/AgcDaXVMDxqcsRZn1ihupWrRVJVV0Cyc6dTGZPcliBnQ/sOJgm9tbqaQf
+         zvBjk2rBSNl4c9miJPek6g2nsOcKM9C12q0Cjoli0CpgjhChAZnVufQ3ofmb5ssqrk
+         r1sie8IyiNrkA==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20201024154346.9589-1-pawel.mikolaj.chmiel@gmail.com>
+References: <20201024154346.9589-1-pawel.mikolaj.chmiel@gmail.com>
+Subject: Re: [PATCH] clk: exynos7: Mark aclk_fsys1_200 as critical
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     s.nawrocki@samsung.com, tomasz.figa@gmail.com,
+        cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, pawel.mikolaj.chmiel@gmail.com
+To:     pawel.mikolaj.chmiel@gmail.com, kgene@kernel.org, krzk@kernel.org,
+        mturquette@baylibre.com
+Date:   Thu, 17 Dec 2020 02:14:24 -0800
+Message-ID: <160820006410.1580929.8444804722224099547@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 16 Dec 2020 13:21:52 +0100 Lukasz Stelmach wrote:
-> So, the only thing that's left is pskb_expand_head(). I need to wrap my
-> head around it. Can you tell me how a cloned skb is different and why
-> there may be separate branch for it?
+Not sure why this wasn't picked up in the samsung PR. Can you resend?
 
-I think this driver needs to prepend and append some info to the packet
-data, right? Cloned skb is sharing the data with another skb, the
-metadata is separate but the packet data is shared, so you can't modify
-the data, you need to do a copy of the data. pskb_expand_head() should
-take care of cloned skbs so you can just call it upfront and it will
-make sure the skb is the right geometry for you.
+> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-=
+exynos7.c
+> index c1ff715e960c..1048d83f097b 100644
+> --- a/drivers/clk/samsung/clk-exynos7.c
+> +++ b/drivers/clk/samsung/clk-exynos7.c
+> @@ -538,7 +538,8 @@ static const struct samsung_gate_clock top1_gate_clks=
+[] __initconst =3D {
+>                 ENABLE_ACLK_TOP13, 28, CLK_SET_RATE_PARENT |
+>                 CLK_IS_CRITICAL, 0),
+>         GATE(CLK_ACLK_FSYS1_200, "aclk_fsys1_200", "dout_aclk_fsys1_200",
+> -               ENABLE_ACLK_TOP13, 24, CLK_SET_RATE_PARENT, 0),
+> +               ENABLE_ACLK_TOP13, 24, CLK_SET_RATE_PARENT |
+> +               CLK_IS_CRITICAL, 0),
+> =20
 
-BTW you should set netdev->needed_headroom and netdev->needed_tailroom
-to the correct values so the stack pre-allocates the needed spaces,
-when it can.
+Please put a comment in the code why a clk is critical.
