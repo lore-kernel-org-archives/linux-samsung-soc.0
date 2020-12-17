@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA146C2BB48
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Dec 2020 17:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44CDCC4361B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Dec 2020 19:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B8C7233A2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Dec 2020 17:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC7BE239EE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Dec 2020 19:09:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728487AbgLQRHd (ORCPT
+        id S1727063AbgLQTIh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 17 Dec 2020 12:07:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35646 "EHLO mail.kernel.org"
+        Thu, 17 Dec 2020 14:08:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727368AbgLQRHd (ORCPT
+        id S1725468AbgLQTIh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 17 Dec 2020 12:07:33 -0500
-Date:   Thu, 17 Dec 2020 09:06:51 -0800
+        Thu, 17 Dec 2020 14:08:37 -0500
+Date:   Thu, 17 Dec 2020 11:07:54 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608224812;
-        bh=JCgs6Gbs/ppNLtmihKsU7u8Ehtj1qIyP3rFDBAXBx54=;
+        s=k20201202; t=1608232076;
+        bh=+dRzdq8awJ0/1o0rLgSQkpay+Vk7ovTPqC3kYo+boG8=;
         h=From:To:Cc:Subject:In-Reply-To:References:From;
-        b=rdWG7XtYC2PM50mhm0SpxcNAJs2LPfnM4y9f5Rt7Yq5RZFZGcwMcxjCAYWAvN0oot
-         Hp06QoTV+L/0jeGpUTUuitDcrmLffUiiIjc7MSkBnNmiXZ0Rn27pK/ij/Z8HT91OkV
-         0nRxcqgJvDP04e7uW3H7WCmc8SNnP8w3gcyFOa1zySWTzNt7vJ1UB655OVAzofVDup
-         ReSnGqq2H/AUIe8pOid3b16CCCnIpQuS9G0EZJzV3Av88hwvgQ5HkppmR75JFyCZ6r
-         OnqRmFnfs0l948811405P8A8/0ntJR02zVWE++8sSRkhkPVy+QgdFX1dK7c2uXtIpa
-         FhGMl6Pt93ArQ==
+        b=GTGQnXcVbdz2nfgFZg859yyPH/zauxBwumjTnpAVCfAp0xGcD0s/UdUbjugkimSEH
+         PO2DmmJiznRmm/u+HRaOlddyY9pW1vsbfrCNwlO0pOH5x8ep1l73HMgQ2lsetsdZt+
+         GmirCp5NSBf0l7j7q2jsIoXO+5TmOzq5tHFDfGmF25tPoChrTrJ3AvCxuhPmt2fUzC
+         K1C1GKbcOiFxxdvSJ3ay6ZxPbiwhnyxfEPVR6VODWY8MTRt3LpPp8D3JFoFlCjL65q
+         4V+cdNrb14p/qpAmOjjOuPqVkXqv4VA7MTyL71ybKESFozi9QpdHx6G0X2AgPtNl69
+         2RBwhhkQciuyQ==
 From:   Jakub Kicinski <kuba@kernel.org>
-To:     Lukasz Stelmach <l.stelmach@samsung.com>
+To:     =?UTF-8?B?xYF1a2Fzeg==?= Stelmach <l.stelmach@samsung.com>
 Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
         Heiner Kallweit <hkallweit1@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -46,39 +46,32 @@ Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
         =?UTF-8?B?QmFydMWCb21pZWogxbtvbG5pZXJr?= =?UTF-8?B?aWV3aWN6?= 
         <b.zolnierkie@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v8 3/3] net: ax88796c: ASIX AX88796C SPI Ethernet
- Adapter Driver
-Message-ID: <20201217090651.0912a035@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <dleftjv9d07iz2.fsf%l.stelmach@samsung.com>
-References: <20201216081300.3477c3fb@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-        <CGME20201217114714eucas1p1aea2208877de2a39feb692fe795e6d3e@eucas1p1.samsung.com>
-        <dleftjv9d07iz2.fsf%l.stelmach@samsung.com>
+Subject: Re: [PATCH v9 0/3] AX88796C SPI Ethernet Adapter
+Message-ID: <20201217110754.179466f6@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <20201217115330.28431-1-l.stelmach@samsung.com>
+References: <CGME20201217115341eucas1p11b7d1ffe89f9411223523eb5b5da170a@eucas1p1.samsung.com>
+        <20201217115330.28431-1-l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 17 Dec 2020 12:46:57 +0100 Lukasz Stelmach wrote:
-> > to the correct values so the stack pre-allocates the needed spaces,
-> > when it can.  
-> 
-> Yes, I fonud these. However, I am not sure setting needed_tailroom has
-> any effect. In many places where alloc_skb() is called needed_headrom
-> and hard_header_len are refered to via the LL_RESERVED_SPACE macro. But
-> the macro does not refer to needed_tailroom. Once (f5184d267c1a ("net:
-> Allow netdevices to specify needed head/tailroom") there was
-> LL_ALLOCATED_SPACE macro, but but it was removed in 56c978f1da1f ("net:
-> Remove LL_ALLOCATED_SPACE"). And now only some protocols refer to
-> needet_tailroom.
+On Thu, 17 Dec 2020 12:53:27 +0100 =C5=81ukasz Stelmach wrote:
+> This is a driver for AX88796C Ethernet Adapter connected in SPI mode as
+> found on ARTIK5 evaluation board. The driver has been ported from a
+> v3.10.9 vendor kernel for ARTIK5 board.
 
-Yeah, tailroom is used a lot less often. Only really crappy HW requires
-it.
+# Form letter - net-next is closed
 
-> BTW. What is hard_header_len for? Is it the length of the link layer
-> header? Considering "my" hardware requires some headers with each
-> packet, I find hard_headr_len name a bit confusing.
+We have already sent the networking pull request for 5.11 and therefore
+net-next is closed for new drivers, features, code refactoring and
+optimizations. We are currently accepting bug fixes only.
 
-Yup, L2 headers, not hardware. Not sure why "hard" was chosen, that must
-have happened way back.
+Please repost when net-next reopens after 5.11-rc1 is cut.
+
+Look out for the announcement on the mailing list or check:
+http://vger.kernel.org/~davem/net-next.html
+
+RFC patches sent for review only are obviously welcome at any time.
