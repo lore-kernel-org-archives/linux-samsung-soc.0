@@ -2,104 +2,112 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD772C43603
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 09:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3277EC4332E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 10:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B375A22CAE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 09:54:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1842722A85
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 10:07:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725825AbgLUJyv (ORCPT
+        id S1726652AbgLUKHo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Dec 2020 04:54:51 -0500
-Received: from mail-02.mail-europe.com ([51.89.119.103]:40278 "EHLO
-        mail-02.mail-europe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbgLUJyu (ORCPT
+        Mon, 21 Dec 2020 05:07:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58150 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbgLUKHn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Dec 2020 04:54:50 -0500
-Date:   Mon, 21 Dec 2020 09:53:22 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1608544406;
-        bh=vfs23eRe1B2euttqwNepMExSTax5VDUqw5jRVX+9eao=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
-        b=RTRzeet18LG+pdMgKotRHUuEfoq0nuLRm9XEbOvcuY50sjnnV7yoov8IV2IAdXZPF
-         KLCBuoov43UaUs7vQGTOKUa8FW7dj/5qS3f95XmTU6fWk7xGF6ON02WjAjDfIzl2lQ
-         PXQJeiX8hMJNi3UXmeHmSQqEWce3RiSF6iBPlIcs=
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-From:   Timon Baetz <timon.baetz@protonmail.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mon, 21 Dec 2020 05:07:43 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A553C0613D3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Dec 2020 02:06:34 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id 3so10361262wmg.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Dec 2020 02:06:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=0Vv2JbmBAjngC3pMRGSx1cPuMWHtt6tiXQKcY+Kelgw=;
+        b=TLglt5AQvjZgZmdtnh/EyevOANMYsHXzcV/JGMkqoYtFMBAB4kYQ/FqDpNBbyLj48D
+         YFxH24jMq6+64MYkJlnI6seNq47sfrXEI+5MhdutCJwZVSkm48VuGXPf1v1VNOJsdxlv
+         iHthvFWR/wkc83nv1NiMeo2ZqObxpNRmpONRObi9+XxrKHLCmAkJ/phEI4ldc2oInkdo
+         JUHNZwIT9NV6u4DS+PMxv7l3sd8oxRa1+zUHbr+0w0Qmq4tLYEe2EE/qyUhhFL/1NBbX
+         Ay/tfe9NA/6jbseLr44dJdVM/Q9g5/cYjg5ReXw9X+mdgjkMjyKP0GxowkASkcKWE3Ii
+         DiIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=0Vv2JbmBAjngC3pMRGSx1cPuMWHtt6tiXQKcY+Kelgw=;
+        b=OTZtc0f3H7CTBSU0IatXM+F5F1HZ4i4Q9WPBL2gScIQQTl3h8IC1zbMXOeTr42hP4f
+         XVHyEiXt95t3+X4yUBxk/zzWl1smRRbuT0elXBx2GRcSEiE2x4AOmU+O1Avpnf9k1olF
+         xvWJ3Ak+bvOitaXf/v6GEUoFrd+B5ABa1xuoEZoMN5yimkoKtFLLjg680Yfn0hDfV5OY
+         afHc1dVue9lDo2YnmDWZoOs8lsCuapiI8F2H97wzCxWLHY1iHwcO+Dpt7ImLuhMdEvac
+         wu9tdQCic+ahMxmeRQbwaUV8eL9+BRblniDkY2S7ijhGi22v4xCa3thSu2ln4KAmvRql
+         Zhxw==
+X-Gm-Message-State: AOAM533CN3pb+3UUzgnLrSEnUW6Qgv6eIaztAMaFH2WdAMlq4Bo3oqSO
+        3TcjkV4Mj8HJXWzU3cfiMLkY4E5rNdrUcElJ
+X-Google-Smtp-Source: ABdhPJwV1UaD4rwmRRKU3eYSK2VySTMJPM9TCAXi8auRr8LxcUXt/74B0bP1dkXBIbzejKLTyh/UWg==
+X-Received: by 2002:a1c:7d58:: with SMTP id y85mr5910588wmc.50.1608544757077;
+        Mon, 21 Dec 2020 01:59:17 -0800 (PST)
+Received: from dell ([91.110.221.144])
+        by smtp.gmail.com with ESMTPSA id e16sm27858733wra.94.2020.12.21.01.59.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Dec 2020 01:59:16 -0800 (PST)
+Date:   Mon, 21 Dec 2020 09:59:12 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Timon Baetz <timon.baetz@protonmail.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         MyungJoo Ham <myungjoo.ham@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
         Sebastian Reichel <sre@kernel.org>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Timon Baetz <timon.baetz@protonmail.com>
-Reply-To: Timon Baetz <timon.baetz@protonmail.com>
-Subject: [PATCH v2 3/6] ARM: dts: exynos: Fix charging regulator voltage and current for i9100
-Message-ID: <20201221095001.595366-3-timon.baetz@protonmail.com>
-In-Reply-To: <20201221095001.595366-1-timon.baetz@protonmail.com>
-References: <20201202203516.43053-1-timon.baetz@protonmail.com> <20201221095001.595366-1-timon.baetz@protonmail.com>
+        ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v2 2/6] power: supply: max8997_charger: Set CHARGER
+ current limit
+Message-ID: <20201221095912.GB53991@dell>
+References: <20201202203516.43053-1-timon.baetz@protonmail.com>
+ <20201221095001.595366-1-timon.baetz@protonmail.com>
+ <20201221095001.595366-2-timon.baetz@protonmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201221095001.595366-2-timon.baetz@protonmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Set CHARGER current and CHARGER_CV voltage according to Galaxy S2 vendor
-sources [0,1].
+On Mon, 21 Dec 2020, Timon Baetz wrote:
 
-Remove regulator-always-on. The regulator can be enabled and disabled
-based on extcon events.
+> Register for extcon notification and set charging current depending on
+> the detected cable type. Current values are taken from vendor kernel,
+> where most charger types end up setting 650mA [0].
+> 
+> Also enable and disable the CHARGER regulator based on extcon events.
+> 
+> [0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-epic-4g-touch-sph-d710-exynos4210-dump/drivers/misc/max8997-muic.c#L1675-L1678
+> 
+> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
+> ---
+>  drivers/mfd/max8997.c                  |  4 +-
 
-[0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-epic=
--4g-touch-sph-d710-exynos4210-dump/drivers/power/max8997_charger_u1.c#L169-=
-L170
-[1] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-epic=
--4g-touch-sph-d710-exynos4210-dump/drivers/power/max8997_charger_u1.c#L390-=
-L391
+Please split this out into a separate patch.
 
-Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
----
- arch/arm/boot/dts/exynos4210-i9100.dts | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+>  drivers/power/supply/max8997_charger.c | 94 ++++++++++++++++++++++++++
+>  2 files changed, 96 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exy=
-nos4210-i9100.dts
-index 5370ee477186..56ae534402bb 100644
---- a/arch/arm/boot/dts/exynos4210-i9100.dts
-+++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -562,15 +562,14 @@ safe2_sreg: ESAFEOUT2 {
-=20
- =09=09=09charger_reg: CHARGER {
- =09=09=09=09regulator-name =3D "CHARGER";
--=09=09=09=09regulator-min-microamp =3D <60000>;
--=09=09=09=09regulator-max-microamp =3D <2580000>;
--=09=09=09=09regulator-always-on;
-+=09=09=09=09regulator-min-microamp =3D <200000>;
-+=09=09=09=09regulator-max-microamp =3D <950000>;
- =09=09=09};
-=20
- =09=09=09chargercv_reg: CHARGER_CV {
- =09=09=09=09regulator-name =3D "CHARGER_CV";
--=09=09=09=09regulator-min-microvolt =3D <3800000>;
--=09=09=09=09regulator-max-microvolt =3D <4100000>;
-+=09=09=09=09regulator-min-microvolt =3D <4200000>;
-+=09=09=09=09regulator-max-microvolt =3D <4200000>;
- =09=09=09=09regulator-always-on;
- =09=09=09};
-=20
---=20
-2.25.1
-
-
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
