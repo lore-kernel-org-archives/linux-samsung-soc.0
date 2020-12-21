@@ -2,167 +2,231 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4718C433E9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 08:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 301B4C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 09:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90A1822CAF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 08:26:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0204D22CAE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 09:54:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbgLUI0T (ORCPT
+        id S1725949AbgLUJyH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Dec 2020 03:26:19 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:49893 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727093AbgLUI0T (ORCPT
+        Mon, 21 Dec 2020 04:54:07 -0500
+Received: from mail-40133.protonmail.ch ([185.70.40.133]:30994 "EHLO
+        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbgLUJyD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Dec 2020 03:26:19 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20201221082527euoutp0117c6407cd73205ffe774e57abbdd1860~SrdByoPco0430204302euoutp01Q
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Dec 2020 08:25:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20201221082527euoutp0117c6407cd73205ffe774e57abbdd1860~SrdByoPco0430204302euoutp01Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1608539127;
-        bh=aXYOZaoJwEphzZdnF8VsSwt3JU/V9YyroOepbj1WWl4=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=CqH8ots+7j1g38YGknbBMtsFEioqIDl8+c4kOwnJqyFrT/OO9o/1dksImGM+WVsvh
-         iYWEqlIKjCX3HPr1JB2rnr6LOHpPtr4yn/bxpMStu0y/H8PGvxJ4HME6u7nDjx0zbJ
-         Wj9meJ51Gxe0Tel3g4jY5AD+ueBESB9IBuM0/cZU=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20201221082520eucas1p1ad2f5624bdf307d304398b52504429af~Src6zmK0n0284802848eucas1p1N;
-        Mon, 21 Dec 2020 08:25:20 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id F9.8D.44805.0FB50EF5; Mon, 21
-        Dec 2020 08:25:20 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201221082519eucas1p194b4112f452aad59054656bca7b7680d~Src6V8hOt2280822808eucas1p1B;
-        Mon, 21 Dec 2020 08:25:19 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20201221082519eusmtrp25c7b09b5855be28f8dc327ca0839cc3b~Src6VPWuq0863008630eusmtrp2A;
-        Mon, 21 Dec 2020 08:25:19 +0000 (GMT)
-X-AuditID: cbfec7f4-b4fff7000000af05-55-5fe05bf0076e
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 60.9B.16282.FEB50EF5; Mon, 21
-        Dec 2020 08:25:19 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20201221082519eusmtip2983f22edeba8fe361a544a9160520007~Src5yFWzx0091300913eusmtip2N;
-        Mon, 21 Dec 2020 08:25:19 +0000 (GMT)
-Subject: Re: [PATCH 9/9] mfd: sec-irq: Do not enforce (incorrect) interrupt
- trigger type
+        Mon, 21 Dec 2020 04:54:03 -0500
+Date:   Mon, 21 Dec 2020 09:53:15 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail; t=1608544399;
+        bh=/38lsRLJe7/5z9BV9jp6fBn9SOkHHXYE+qEIe93Wcbs=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=rCNOqQlxlvhtebc7ArWf8Zb6IwxqNnNanwO6DlKLZyq2VmS2fdHgq/WNzx3BD98jh
+         Mclt3fK9uTBLmsoKaWEK6LJxzFXDTX0hxICico2u+CDOCfgWL8kjb2bAa/yK47Bsut
+         ZZIRXEyAuzrUQyp6mackbOvsq7fowhLv7AprR8bk=
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
+From:   Timon Baetz <timon.baetz@protonmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <04ff52f6-a3e7-10cd-5d19-e953d1e158d7@samsung.com>
-Date:   Mon, 21 Dec 2020 09:25:18 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.5.1
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Timon Baetz <timon.baetz@protonmail.com>
+Reply-To: Timon Baetz <timon.baetz@protonmail.com>
+Subject: [PATCH v2 2/6] power: supply: max8997_charger: Set CHARGER current limit
+Message-ID: <20201221095001.595366-2-timon.baetz@protonmail.com>
+In-Reply-To: <20201221095001.595366-1-timon.baetz@protonmail.com>
+References: <20201202203516.43053-1-timon.baetz@protonmail.com> <20201221095001.595366-1-timon.baetz@protonmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201221075500.GA3386@kozik-lap>
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFKsWRmVeSWpSXmKPExsWy7djPc7ofoh/EG9z+w26xccZ6VovrX56z
-        Wsw/co7V4vz5DewW978eZbTY9Pgaq8XlXXPYLGac38dk0br3CLtF+9OXzA5cHptWdbJ53Lm2
-        h81j85J6j74tqxg9Pm+SC2CN4rJJSc3JLEst0rdL4Mo4dpuz4ABfxde9b9gaGL9ydzFyckgI
-        mEj8+f+RpYuRi0NIYAWjxNmWE+wgCSGBL4wSy095QyQ+M0r8erCfDabjwKWnzBBFyxklXt6s
-        gbA/Mkqs3AbWLCwQJfH19QKwGhEBTYnrf7+zggxiFrjBJLH05C9GkASbgKFE19susKG8AnYS
-        azZ/ZwGxWQRUJe5PXgcWFxVIkljf9QOqRlDi5MwnYDWcAnoSz49cALOZBeQlmrfOZoawxSVu
-        PZnPBLJMQuANh8S/pw+YIK52kbj4sosZwhaWeHV8CzuELSPxfydMQzOjxMNza9khnB5GictN
-        Mxghqqwl7pz7BXQGB9AKTYn1u/Qhwo4Sh0/0MYGEJQT4JG68FYQ4gk9i0rbpzBBhXomONiGI
-        ajWJWcfXwa09eOES8wRGpVlIXpuF5J1ZSN6ZhbB3ASPLKkbx1NLi3PTUYqO81HK94sTc4tK8
-        dL3k/NxNjMDkdPrf8S87GJe/+qh3iJGJg/EQowQHs5IIr5nU/Xgh3pTEyqrUovz4otKc1OJD
-        jNIcLErivElb1sQLCaQnlqRmp6YWpBbBZJk4OKUamHzMJTeIJkZJf0jaeOVh/uQ3hadu8X2x
-        CWacHLDUXsJ55l+XIKeyDZPa5dacW/Wi+HlETPyMje9WTT/0aLrc5N5lhrJf7j6Yzu7kPk0/
-        7XLoNalH4v36246FRX6/culefPZRNmUG19SJAduELCdM3pGuf+CB0TE5xQAbt++Fcn/KXRd1
-        OLDsf//p56ucO+rH5+3nb/0+Q/Pm9iQTYU25pL9lLVf2/JZe6ftB9ofZy3R/6ZBvxku3rl3/
-        9VSTZuiHefqmW3pMHCS+dZV/KI8MX250Xkrt3aPfvaqVp/iXS94z+LDxWHC1uVZe/VJTd8/l
-        9qHPXyqu6pqlXHDyavdeKwMfgZ74xOqE99K9nz/Pk1ViKc5INNRiLipOBAC1fanCvQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLIsWRmVeSWpSXmKPExsVy+t/xe7rvox/EG0zuVrfYOGM9q8X1L89Z
-        LeYfOcdqcf78BnaL+1+PMlpsenyN1eLyrjlsFjPO72OyaN17hN2i/elLZgcuj02rOtk87lzb
-        w+axeUm9R9+WVYwenzfJBbBG6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp
-        29mkpOZklqUW6dsl6GUcu81ZcICv4uveN2wNjF+5uxg5OSQETCQOXHrK3MXIxSEksJRR4vnk
-        3cwQCRmJk9MaWCFsYYk/17rYIIreM0r8+f4bLCEsECXx9fUCsAYRAU2J63+/g8WZBW4xSRw/
-        JQLR8JxJomHSBLAEm4ChRNdbkEmcHLwCdhJrNn9nAbFZBFQl7k9eBxTn4BAVSJI4e1oQokRQ
-        4uTMJ2AlnAJ6Es+PXGCBmG8mMW/zQ2YIW16ieetsKFtc4taT+UwTGIVmIWmfhaRlFpKWWUha
-        FjCyrGIUSS0tzk3PLTbSK07MLS7NS9dLzs/dxAiMx23Hfm7Zwbjy1Ue9Q4xMHIyHGCU4mJVE
-        eM2k7scL8aYkVlalFuXHF5XmpBYfYjQFemcis5Rocj4wIeSVxBuaGZgamphZGphamhkrifOa
-        HFkTLySQnliSmp2aWpBaBNPHxMEp1cDEvnfn06UOab6WjvuSX98w6xaeysPq+mNP+KeMXacs
-        Wde8yM1+l5LzZBLfMol93LPmPMkSV4+orM1gdHjp90fLdu+LGa3n1l16NUtx0Q2psx29ud/v
-        av5p82vhb3y87mJ8i9HpeMMSyUS1h0kb+7qqlm1waHnomP8r79Jrt1uX74Rs/+ZY2LBeLXLR
-        5ImrJp7QEp+7sSrznM2eW+ZLT5jzB2/+G3LG3FRtsUyqmPQ+iZMy17bkGG+y1ipqkPXeUbTI
-        pct+uXfN+vTEiZZV+ZWP7m2b/lhQs+PC9lfT27IY/i8+O2Pjte8PZXTjN+9hj5VmmrnFXu/H
-        vmcXStzXb5ff5dZq8XntWjlznqffzyxtV2Ipzkg01GIuKk4EAIBdJhpQAwAA
-X-CMS-MailID: 20201221082519eucas1p194b4112f452aad59054656bca7b7680d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20201210212938eucas1p1297b8503e9c059f2bc77c3a429a9114e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20201210212938eucas1p1297b8503e9c059f2bc77c3a429a9114e
-References: <20201210212903.216728-1-krzk@kernel.org>
-        <CGME20201210212938eucas1p1297b8503e9c059f2bc77c3a429a9114e@eucas1p1.samsung.com>
-        <20201210212903.216728-9-krzk@kernel.org>
-        <0f1509ef-9ae7-7a77-84b7-360b8f0071c7@samsung.com>
-        <20201218142247.GA2847@kozik-lap>
-        <52a1b7c6-c7f1-f5eb-09f6-d84663912db8@samsung.com>
-        <20201221075500.GA3386@kozik-lap>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 21.12.2020 08:55, Krzysztof Kozlowski wrote:
-> On Mon, Dec 21, 2020 at 08:36:02AM +0100, Marek Szyprowski wrote:
->> On 18.12.2020 15:22, Krzysztof Kozlowski wrote:
->>> On Fri, Dec 18, 2020 at 02:25:39PM +0100, Marek Szyprowski wrote:
->>>> On 10.12.2020 22:29, Krzysztof Kozlowski wrote:
->>>>> Interrupt line can be configured on different hardware in different way,
->>>>> even inverted.  Therefore driver should not enforce specific trigger
->>>>> type - edge falling - but instead rely on Devicetree to configure it.
->>>>>
->>>>> The Samsung PMIC drivers are used only on Devicetree boards.
->>>>>
->>>>> Additionally, the PMIC datasheets describe the interrupt line as active
->>>>> low with a requirement of acknowledge from the CPU therefore the edge
->>>>> falling is not correct.
->>>>>
->>>>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->>>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>>
->>>> It looks that this together with DTS change fixes RTC alarm failure that
->>>> I've observed from time to time on TM2e board!
->>> Great! I'll add this to the commit msg.
->>>
->>> Thanks for testing.
->> BTW, while playing with this, maybe it would make sense to fix the
->> reported interrupt type for the PMIC sub-interrupts:
->>
->> # grep s2mps /proc/interrupts
->> 120:          0      gpa0   7 Level     s2mps13
->> 121:          0   s2mps13  10 Edge      rtc-alarm0
-> I also spotted this. It's a virtual interrupt and I am not sure whether
-> we can actually configure it when the hardware does not allow to set the
-> type (the regmap_irq_type requires register offsets).
+Register for extcon notification and set charging current depending on
+the detected cable type. Current values are taken from vendor kernel,
+where most charger types end up setting 650mA [0].
 
-I know that it is virtual, but maybe the regmap code could simply copy 
-the interrupt type from its parent interrupt?
+Also enable and disable the CHARGER regulator based on extcon events.
 
-Best regards
+[0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-epic=
+-4g-touch-sph-d710-exynos4210-dump/drivers/misc/max8997-muic.c#L1675-L1678
 
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
+---
+ drivers/mfd/max8997.c                  |  4 +-
+ drivers/power/supply/max8997_charger.c | 94 ++++++++++++++++++++++++++
+ 2 files changed, 96 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mfd/max8997.c b/drivers/mfd/max8997.c
+index 68d8f2b95287..55d3a6f97783 100644
+--- a/drivers/mfd/max8997.c
++++ b/drivers/mfd/max8997.c
+@@ -29,9 +29,9 @@
+ static const struct mfd_cell max8997_devs[] =3D {
+ =09{ .name =3D "max8997-pmic", },
+ =09{ .name =3D "max8997-rtc", },
+-=09{ .name =3D "max8997-battery", },
++=09{ .name =3D "max8997-battery", .of_compatible =3D "maxim,max8997-batter=
+y", },
+ =09{ .name =3D "max8997-haptic", },
+-=09{ .name =3D "max8997-muic", },
++=09{ .name =3D "max8997-muic", .of_compatible =3D "maxim,max8997-muic", },
+ =09{ .name =3D "max8997-led", .id =3D 1 },
+ =09{ .name =3D "max8997-led", .id =3D 2 },
+ };
+diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/supply/=
+max8997_charger.c
+index 1947af25879a..6e8750e455ea 100644
+--- a/drivers/power/supply/max8997_charger.c
++++ b/drivers/power/supply/max8997_charger.c
+@@ -6,12 +6,14 @@
+ //  MyungJoo Ham <myungjoo.ham@samsung.com>
+=20
+ #include <linux/err.h>
++#include <linux/extcon.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
+ #include <linux/power_supply.h>
+ #include <linux/mfd/max8997.h>
+ #include <linux/mfd/max8997-private.h>
++#include <linux/regulator/consumer.h>
+=20
+ /* MAX8997_REG_STATUS4 */
+ #define DCINOK_SHIFT=09=091
+@@ -31,6 +33,10 @@ struct charger_data {
+ =09struct device *dev;
+ =09struct max8997_dev *iodev;
+ =09struct power_supply *battery;
++=09struct regulator *reg;
++=09struct extcon_dev *edev;
++=09struct notifier_block extcon_nb;
++=09struct work_struct extcon_work;
+ };
+=20
+ static enum power_supply_property max8997_battery_props[] =3D {
+@@ -88,6 +94,67 @@ static int max8997_battery_get_property(struct power_sup=
+ply *psy,
+ =09return 0;
+ }
+=20
++static void max8997_battery_extcon_evt_stop_work(void *data)
++{
++=09struct charger_data *charger =3D data;
++
++=09cancel_work_sync(&charger->extcon_work);
++}
++
++static void max8997_battery_extcon_evt_worker(struct work_struct *work)
++{
++=09struct charger_data *charger =3D
++=09    container_of(work, struct charger_data, extcon_work);
++=09struct extcon_dev *edev =3D charger->edev;
++=09int current_limit, ret;
++
++=09if (extcon_get_state(edev, EXTCON_CHG_USB_SDP) > 0) {
++=09=09dev_dbg(charger->dev, "USB SDP charger is connected\n");
++=09=09current_limit =3D 450000;
++=09} else if (extcon_get_state(edev, EXTCON_CHG_USB_DCP) > 0) {
++=09=09dev_dbg(charger->dev, "USB DCP charger is connected\n");
++=09=09current_limit =3D 650000;
++=09} else if (extcon_get_state(edev, EXTCON_CHG_USB_FAST) > 0) {
++=09=09dev_dbg(charger->dev, "USB FAST charger is connected\n");
++=09=09current_limit =3D 650000;
++=09} else if (extcon_get_state(edev, EXTCON_CHG_USB_SLOW) > 0) {
++=09=09dev_dbg(charger->dev, "USB SLOW charger is connected\n");
++=09=09current_limit =3D 650000;
++=09} else if (extcon_get_state(edev, EXTCON_CHG_USB_CDP) > 0) {
++=09=09dev_dbg(charger->dev, "USB CDP charger is connected\n");
++=09=09current_limit =3D 650000;
++=09} else {
++=09=09dev_dbg(charger->dev, "USB charger is diconnected\n");
++=09=09current_limit =3D -1;
++=09}
++
++=09if (current_limit > 0) {
++=09=09ret =3D regulator_set_current_limit(charger->reg, current_limit, cur=
+rent_limit);
++=09=09if (ret) {
++=09=09=09dev_err(charger->dev, "failed to set current limit: %d\n", ret);
++=09=09=09goto regulator_disable;
++=09=09}
++=09=09ret =3D regulator_enable(charger->reg);
++=09=09if (ret)
++=09=09=09dev_err(charger->dev, "failed to enable regulator: %d\n", ret);
++=09=09return;
++=09}
++
++regulator_disable:
++=09ret  =3D regulator_disable(charger->reg);
++=09if (ret)
++=09=09dev_err(charger->dev, "failed to disable regulator: %d\n", ret);
++}
++
++static int max8997_battery_extcon_evt(struct notifier_block *nb,
++=09=09=09=09unsigned long event, void *param)
++{
++=09struct charger_data *charger =3D
++=09=09container_of(nb, struct charger_data, extcon_nb);
++=09schedule_work(&charger->extcon_work);
++=09return NOTIFY_OK;
++}
++
+ static const struct power_supply_desc max8997_battery_desc =3D {
+ =09.name=09=09=3D "max8997_pmic",
+ =09.type=09=09=3D POWER_SUPPLY_TYPE_BATTERY,
+@@ -170,6 +237,33 @@ static int max8997_battery_probe(struct platform_devic=
+e *pdev)
+ =09=09return PTR_ERR(charger->battery);
+ =09}
+=20
++=09charger->reg =3D devm_regulator_get(&pdev->dev, "charger");
++=09if (IS_ERR(charger->reg)) {
++=09=09dev_err(&pdev->dev, "couldn't get charger regulator\n");
++=09=09return PTR_ERR(charger->reg);
++=09}
++
++=09charger->edev =3D extcon_get_edev_by_phandle(&pdev->dev, 0);
++=09if (IS_ERR(charger->edev)) {
++=09=09if (PTR_ERR(charger->edev) !=3D -EPROBE_DEFER)
++=09=09=09dev_err(charger->dev, "couldn't get extcon device\n");
++=09=09return PTR_ERR(charger->edev);
++=09}
++
++=09INIT_WORK(&charger->extcon_work, max8997_battery_extcon_evt_worker);
++=09ret =3D devm_add_action(&pdev->dev, max8997_battery_extcon_evt_stop_wor=
+k, charger);
++=09if (ret) {
++=09=09dev_err(&pdev->dev, "failed to add extcon evt stop action: %d\n", re=
+t);
++=09=09return ret;
++=09}
++=09charger->extcon_nb.notifier_call =3D max8997_battery_extcon_evt;
++=09ret =3D devm_extcon_register_notifier_all(&pdev->dev, charger->edev,
++=09=09=09=09=09=09&charger->extcon_nb);
++=09if (ret) {
++=09=09dev_err(&pdev->dev, "failed to register extcon notifier\n");
++=09=09return ret;
++=09};
++
+ =09return 0;
+ }
+=20
+--=20
+2.25.1
+
 
