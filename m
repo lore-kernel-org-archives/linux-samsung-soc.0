@@ -2,112 +2,84 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3277EC4332E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 10:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B12FC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 14:11:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1842722A85
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 10:07:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB93E22BED
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 14:11:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbgLUKHo (ORCPT
+        id S1726699AbgLUOLy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Dec 2020 05:07:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58150 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbgLUKHn (ORCPT
+        Mon, 21 Dec 2020 09:11:54 -0500
+Received: from mail-wr1-f48.google.com ([209.85.221.48]:36688 "EHLO
+        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726499AbgLUOLy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Dec 2020 05:07:43 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A553C0613D3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Dec 2020 02:06:34 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id 3so10361262wmg.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Dec 2020 02:06:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=0Vv2JbmBAjngC3pMRGSx1cPuMWHtt6tiXQKcY+Kelgw=;
-        b=TLglt5AQvjZgZmdtnh/EyevOANMYsHXzcV/JGMkqoYtFMBAB4kYQ/FqDpNBbyLj48D
-         YFxH24jMq6+64MYkJlnI6seNq47sfrXEI+5MhdutCJwZVSkm48VuGXPf1v1VNOJsdxlv
-         iHthvFWR/wkc83nv1NiMeo2ZqObxpNRmpONRObi9+XxrKHLCmAkJ/phEI4ldc2oInkdo
-         JUHNZwIT9NV6u4DS+PMxv7l3sd8oxRa1+zUHbr+0w0Qmq4tLYEe2EE/qyUhhFL/1NBbX
-         Ay/tfe9NA/6jbseLr44dJdVM/Q9g5/cYjg5ReXw9X+mdgjkMjyKP0GxowkASkcKWE3Ii
-         DiIA==
+        Mon, 21 Dec 2020 09:11:54 -0500
+Received: by mail-wr1-f48.google.com with SMTP id t16so11216170wra.3;
+        Mon, 21 Dec 2020 06:11:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=0Vv2JbmBAjngC3pMRGSx1cPuMWHtt6tiXQKcY+Kelgw=;
-        b=OTZtc0f3H7CTBSU0IatXM+F5F1HZ4i4Q9WPBL2gScIQQTl3h8IC1zbMXOeTr42hP4f
-         XVHyEiXt95t3+X4yUBxk/zzWl1smRRbuT0elXBx2GRcSEiE2x4AOmU+O1Avpnf9k1olF
-         xvWJ3Ak+bvOitaXf/v6GEUoFrd+B5ABa1xuoEZoMN5yimkoKtFLLjg680Yfn0hDfV5OY
-         afHc1dVue9lDo2YnmDWZoOs8lsCuapiI8F2H97wzCxWLHY1iHwcO+Dpt7ImLuhMdEvac
-         wu9tdQCic+ahMxmeRQbwaUV8eL9+BRblniDkY2S7ijhGi22v4xCa3thSu2ln4KAmvRql
-         Zhxw==
-X-Gm-Message-State: AOAM533CN3pb+3UUzgnLrSEnUW6Qgv6eIaztAMaFH2WdAMlq4Bo3oqSO
-        3TcjkV4Mj8HJXWzU3cfiMLkY4E5rNdrUcElJ
-X-Google-Smtp-Source: ABdhPJwV1UaD4rwmRRKU3eYSK2VySTMJPM9TCAXi8auRr8LxcUXt/74B0bP1dkXBIbzejKLTyh/UWg==
-X-Received: by 2002:a1c:7d58:: with SMTP id y85mr5910588wmc.50.1608544757077;
-        Mon, 21 Dec 2020 01:59:17 -0800 (PST)
-Received: from dell ([91.110.221.144])
-        by smtp.gmail.com with ESMTPSA id e16sm27858733wra.94.2020.12.21.01.59.15
+         :mime-version:content-disposition:in-reply-to;
+        bh=dRfOKrfA9+95u+JXeBdqaPk9bb6AjAjfiGZH9/kyq2c=;
+        b=M0QOpyz/8oKG+z7q63bM+70j1zVSh03FIt3UYxATetsdhc/ijqoJ1llBLjQPrRyHYu
+         0J8nGlLvzrCVjHMe/7r+jHoqz7wL1jsP7duS97Iwqy5B5lPPMRG0E1jI2XGhkcT4AZB+
+         wZPEW94Ib1XfK7O2l7vj+1RmJJUVjvtSb3bGhrFlsohZ9YiDA0VtubyqIA1FgDkPBSDt
+         6mG77HrK2Yd1R7wraBAkD6QVqKxxQMUAiYBHzMtswzXnBIBt48sOT0fzqUEB390Hbo7g
+         UuKgn48275vlSJDsq3HHx9q6n6L4LRz23PjKfMLObe5pHWSl/GiXsbpAvJ9FsOQLTVs2
+         W+JA==
+X-Gm-Message-State: AOAM533yB8cxrXxTQ81vn08BZfPk/GOHK8eOnR4zr4ow8hENdblN3wuX
+        IHeidVPZEWcaNsFd0yx8bhc=
+X-Google-Smtp-Source: ABdhPJyFLbp2yFuolPYyYG9a3FRmCo6x2YzonajYXCyggm4h4pdL5U1JaFWZ8VXC5yerC0BwjDtKoQ==
+X-Received: by 2002:adf:ee90:: with SMTP id b16mr18953642wro.221.1608559871621;
+        Mon, 21 Dec 2020 06:11:11 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id j59sm28021679wrj.13.2020.12.21.06.11.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Dec 2020 01:59:16 -0800 (PST)
-Date:   Mon, 21 Dec 2020 09:59:12 +0000
-From:   Lee Jones <lee.jones@linaro.org>
+        Mon, 21 Dec 2020 06:11:10 -0800 (PST)
+Date:   Mon, 21 Dec 2020 15:11:09 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Timon Baetz <timon.baetz@protonmail.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         MyungJoo Ham <myungjoo.ham@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sebastian Reichel <sre@kernel.org>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v2 2/6] power: supply: max8997_charger: Set CHARGER
- current limit
-Message-ID: <20201221095912.GB53991@dell>
+Subject: Re: [PATCH v2 1/6] extcon: max8997: Add CHGINS and CHGRM interrupt
+ handling
+Message-ID: <20201221141109.GA33797@kozik-lap>
 References: <20201202203516.43053-1-timon.baetz@protonmail.com>
  <20201221095001.595366-1-timon.baetz@protonmail.com>
- <20201221095001.595366-2-timon.baetz@protonmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201221095001.595366-2-timon.baetz@protonmail.com>
+In-Reply-To: <20201221095001.595366-1-timon.baetz@protonmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 21 Dec 2020, Timon Baetz wrote:
-
-> Register for extcon notification and set charging current depending on
-> the detected cable type. Current values are taken from vendor kernel,
-> where most charger types end up setting 650mA [0].
-> 
-> Also enable and disable the CHARGER regulator based on extcon events.
-> 
-> [0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-epic-4g-touch-sph-d710-exynos4210-dump/drivers/misc/max8997-muic.c#L1675-L1678
+On Mon, Dec 21, 2020 at 09:53:08AM +0000, Timon Baetz wrote:
+> This allows the MAX8997 charger to set the current limit depending on
+> the detected extcon charger type.
 > 
 > Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
-> ---
->  drivers/mfd/max8997.c                  |  4 +-
 
-Please split this out into a separate patch.
+Don't do this:
+	In-Reply-To: <20201202203516.43053-1-timon.baetz@protonmail.com>
 
->  drivers/power/supply/max8997_charger.c | 94 ++++++++++++++++++++++++++
->  2 files changed, 96 insertions(+), 2 deletions(-)
+It's a v2, so new thread. If you want to reference previous work, paste
+a link from lore.kernel.org.
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Best regards,
+Krzysztof
