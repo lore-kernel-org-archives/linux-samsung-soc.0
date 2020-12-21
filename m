@@ -2,49 +2,37 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7227EC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 14:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CC3C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 15:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A01D22B3B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 14:25:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 900AD22C97
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 15:35:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbgLUOZF (ORCPT
+        id S1725790AbgLUPf6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Dec 2020 09:25:05 -0500
-Received: from mail-wm1-f50.google.com ([209.85.128.50]:53070 "EHLO
-        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbgLUOZF (ORCPT
+        Mon, 21 Dec 2020 10:35:58 -0500
+Received: from mail1.protonmail.ch ([185.70.40.18]:40689 "EHLO
+        mail1.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbgLUPf6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Dec 2020 09:25:05 -0500
-Received: by mail-wm1-f50.google.com with SMTP id a6so10036947wmc.2;
-        Mon, 21 Dec 2020 06:24:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CvRMCV104BD8xk88qQjQ5BDp5+7YcRca/1Tu6Fd7bvY=;
-        b=m4qYkM/DwJIvFdzus7SPmGCPBZ9NuC77CcYWbNHWRRyM+ALPSOxME8nmFAwBPhVdf7
-         EarG7zr5FQUr4MeW5wSJfRsomgQFeqwurtKbuAO+cq2jlmINYUPDt93Ttg+oYPQ+Trsz
-         1jLCz8FG+KIuUe36gCPgNZ15FwUDwuSkXHjBmqt2pdsqpE3mfL3LI8uerNOgn/YS7T2o
-         /m7XlG09VE+WsdYtff+Vhkzr7LpXjlCmUmtbahWPw7ltwk9ch05xDwUKDTbS3huuiL5S
-         pS+/D28zBSNt7opmQYIbYgtS/9nsZotDT7GnFmjq6YhCMqtVnZLRZMmyLoqHu+i+PZrX
-         T+tw==
-X-Gm-Message-State: AOAM533FvX2DY07+3LjtXZNPNXJ60PvLV2uRWN/CTzXzTA+B9wKGlTFM
-        b7IPS+jr5Vx0EA86FkvR4cjwlM/cjuFxfg==
-X-Google-Smtp-Source: ABdhPJyPBUzATeJBJykCZRmee7Zw/sZ8T3De+W4xUN7Ps8ZAZqWKQhG90ksjbFHhx3GLLj1wzRno1w==
-X-Received: by 2002:a7b:cb93:: with SMTP id m19mr17309053wmi.45.1608560663609;
-        Mon, 21 Dec 2020 06:24:23 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id h5sm28216030wrp.56.2020.12.21.06.24.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Dec 2020 06:24:22 -0800 (PST)
-Date:   Mon, 21 Dec 2020 15:24:20 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Timon Baetz <timon.baetz@protonmail.com>
+        Mon, 21 Dec 2020 10:35:58 -0500
+X-Greylist: delayed 20521 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Dec 2020 10:35:56 EST
+Date:   Mon, 21 Dec 2020 15:35:07 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail; t=1608564914;
+        bh=QlvYjnjuTAtkMuwvMNdku+ZoqZhVDZ+Fm2DxZu8MGUs=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=xgYRsrC+ZlmB1pEaPNW9V9voN7GmhNjvXm2i9mFT+hH0CYvPqUsO3QemYdsPS7f+M
+         bB6pO64IRpZ/V8MuytTlKiGNknX8MnqpsGA54FYCK/ecBJuqTSo3wx71F/pmxtWm+j
+         ks55MUJs8MnwS8K72sCOwfaw3t/TzEMmgPgpfpsM=
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+From:   Timon Baetz <timon.baetz@protonmail.com>
 Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -56,30 +44,147 @@ Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v2 6/6] regulator: dt-bindings: Document max8997-pmic
- nodes
-Message-ID: <20201221142420.GF33797@kozik-lap>
-References: <20201202203516.43053-1-timon.baetz@protonmail.com>
- <20201221095001.595366-1-timon.baetz@protonmail.com>
- <20201221095001.595366-6-timon.baetz@protonmail.com>
+Reply-To: Timon Baetz <timon.baetz@protonmail.com>
+Subject: Re: [PATCH v2 2/6] power: supply: max8997_charger: Set CHARGER current limit
+Message-ID: <20201221163455.2c3f095d.timon.baetz@protonmail.com>
+In-Reply-To: <20201221141627.GB33797@kozik-lap>
+References: <20201202203516.43053-1-timon.baetz@protonmail.com> <20201221095001.595366-1-timon.baetz@protonmail.com> <20201221095001.595366-2-timon.baetz@protonmail.com> <20201221141627.GB33797@kozik-lap>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201221095001.595366-6-timon.baetz@protonmail.com>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Dec 21, 2020 at 09:53:41AM +0000, Timon Baetz wrote:
-> Add maxim,max8997-battery and maxim,max8997-muic optional nodes.
-> 
-> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
-> ---
->  .../bindings/regulator/max8997-regulator.txt          | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+On Mon, 21 Dec 2020 15:16:27 +0100, Krzysztof Kozlowski wrote:
+> On Mon, Dec 21, 2020 at 09:53:15AM +0000, Timon Baetz wrote:
+> > Register for extcon notification and set charging current depending on
+> > the detected cable type. Current values are taken from vendor kernel,
+> > where most charger types end up setting 650mA [0].
+> >
+> > Also enable and disable the CHARGER regulator based on extcon events.
+> >
+> > [0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-=
+epic-4g-touch-sph-d710-exynos4210-dump/drivers/misc/max8997-muic.c#L1675-L1=
+678
+> >
+> > Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
+> > ---
+> >  drivers/mfd/max8997.c                  |  4 +-
+> >  drivers/power/supply/max8997_charger.c | 94 ++++++++++++++++++++++++++
+> >  2 files changed, 96 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/mfd/max8997.c b/drivers/mfd/max8997.c
+> > index 68d8f2b95287..55d3a6f97783 100644
+> > --- a/drivers/mfd/max8997.c
+> > +++ b/drivers/mfd/max8997.c
+> > @@ -29,9 +29,9 @@
+> >  static const struct mfd_cell max8997_devs[] =3D {
+> >  =09{ .name =3D "max8997-pmic", },
+> >  =09{ .name =3D "max8997-rtc", },
+> > -=09{ .name =3D "max8997-battery", },
+> > +=09{ .name =3D "max8997-battery", .of_compatible =3D "maxim,max8997-ba=
+ttery", },
+> >  =09{ .name =3D "max8997-haptic", },
+> > -=09{ .name =3D "max8997-muic", },
+> > +=09{ .name =3D "max8997-muic", .of_compatible =3D "maxim,max8997-muic"=
+, }, =20
+>=20
+> Undocumented bindings. The checkpatch should complain about it, so I
+> assume you did not run it. Please run the checkpatch.
+>=20
+> >  =09{ .name =3D "max8997-led", .id =3D 1 },
+> >  =09{ .name =3D "max8997-led", .id =3D 2 },
+> >  };
+> > diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/sup=
+ply/max8997_charger.c
+> > index 1947af25879a..6e8750e455ea 100644
+> > --- a/drivers/power/supply/max8997_charger.c
+> > +++ b/drivers/power/supply/max8997_charger.c
+> > @@ -6,12 +6,14 @@
+> >  //  MyungJoo Ham <myungjoo.ham@samsung.com>
+> >
+> >  #include <linux/err.h>
+> > +#include <linux/extcon.h>
+> >  #include <linux/module.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/power_supply.h>
+> >  #include <linux/mfd/max8997.h>
+> >  #include <linux/mfd/max8997-private.h>
+> > +#include <linux/regulator/consumer.h>
+> >
+> >  /* MAX8997_REG_STATUS4 */
+> >  #define DCINOK_SHIFT=09=091
+> > @@ -31,6 +33,10 @@ struct charger_data {
+> >  =09struct device *dev;
+> >  =09struct max8997_dev *iodev;
+> >  =09struct power_supply *battery;
+> > +=09struct regulator *reg;
+> > +=09struct extcon_dev *edev;
+> > +=09struct notifier_block extcon_nb;
+> > +=09struct work_struct extcon_work;
+> >  };
+> >
+> >  static enum power_supply_property max8997_battery_props[] =3D {
+> > @@ -88,6 +94,67 @@ static int max8997_battery_get_property(struct power=
+_supply *psy,
+> >  =09return 0;
+> >  }
+> >
+> > +static void max8997_battery_extcon_evt_stop_work(void *data)
+> > +{
+> > +=09struct charger_data *charger =3D data;
+> > +
+> > +=09cancel_work_sync(&charger->extcon_work);
+> > +}
+> > +
+> > +static void max8997_battery_extcon_evt_worker(struct work_struct *work=
+)
+> > +{
+> > +=09struct charger_data *charger =3D
+> > +=09    container_of(work, struct charger_data, extcon_work);
+> > +=09struct extcon_dev *edev =3D charger->edev;
+> > +=09int current_limit, ret;
+> > +
+> > +=09if (extcon_get_state(edev, EXTCON_CHG_USB_SDP) > 0) {
+> > +=09=09dev_dbg(charger->dev, "USB SDP charger is connected\n");
+> > +=09=09current_limit =3D 450000;
+> > +=09} else if (extcon_get_state(edev, EXTCON_CHG_USB_DCP) > 0) {
+> > +=09=09dev_dbg(charger->dev, "USB DCP charger is connected\n");
+> > +=09=09current_limit =3D 650000;
+> > +=09} else if (extcon_get_state(edev, EXTCON_CHG_USB_FAST) > 0) {
+> > +=09=09dev_dbg(charger->dev, "USB FAST charger is connected\n");
+> > +=09=09current_limit =3D 650000;
+> > +=09} else if (extcon_get_state(edev, EXTCON_CHG_USB_SLOW) > 0) {
+> > +=09=09dev_dbg(charger->dev, "USB SLOW charger is connected\n");
+> > +=09=09current_limit =3D 650000;
+> > +=09} else if (extcon_get_state(edev, EXTCON_CHG_USB_CDP) > 0) {
+> > +=09=09dev_dbg(charger->dev, "USB CDP charger is connected\n");
+> > +=09=09current_limit =3D 650000;
+> > +=09} else {
+> > +=09=09dev_dbg(charger->dev, "USB charger is diconnected\n");
+> > +=09=09current_limit =3D -1;
+> > +=09}
+> > +
+> > +=09if (current_limit > 0) {
+> > +=09=09ret =3D regulator_set_current_limit(charger->reg, current_limit,=
+ current_limit);
+> > +=09=09if (ret) {
+> > +=09=09=09dev_err(charger->dev, "failed to set current limit: %d\n", re=
+t);
+> > +=09=09=09goto regulator_disable; =20
+>=20
+> Unusual error path... if regulator was not enabled before and
+> regulator_set_current_limit() failed, you disable the regulator? Why?
+> Wasn't it already disabled?
 
-I see you updated the bindings. However if you run scripts/checkpatch,
-it would say that bindings go as first patch, so please re-order.
+Because I thought you asked me to in v1 of this patch:
+> Failure of setting the current should rather disable the charging.
 
-Best regards,
-Krzysztof
+I probably misunderstood you comment then. So I guess it should just
+return?
+
+Thanks for reviewing,
+Timon
+
