@@ -2,110 +2,96 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FA2C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 18:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD941C4332D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Dec 2020 07:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9334229C4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Dec 2020 18:48:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5B0D23159
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Dec 2020 07:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbgLUSrw (ORCPT
+        id S1726176AbgLVHcI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Dec 2020 13:47:52 -0500
-Received: from mail-oo1-f53.google.com ([209.85.161.53]:38575 "EHLO
-        mail-oo1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727055AbgLUSrv (ORCPT
+        Tue, 22 Dec 2020 02:32:08 -0500
+Received: from mail2.protonmail.ch ([185.70.40.22]:41324 "EHLO
+        mail2.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbgLVHcH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Dec 2020 13:47:51 -0500
-Received: by mail-oo1-f53.google.com with SMTP id i18so2441935ooh.5;
-        Mon, 21 Dec 2020 10:47:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9c4Z1cR0okEDOva6ZJZicR2jBIUZ+5XrWMqkg7M3kpw=;
-        b=hz3KlOPy99wyUWikmU8eY5avjkr6YqZ/MHNscLb8qTxnR5ow5mZQfkEp1BQhK9yvDD
-         QkvcBmjUMi1/Yd+yP+tGSDbHIGoAnTFW27ANdXx3mMbDS9ZYatSOFtQGKbnrsmvjW+K2
-         /dT870LPVAWhfhuDQEsiobUPs5+cuxn+1DViJZMhGjbBolk5+UJmlN2bkikgU22OTGhZ
-         4K9O8X7+l0yzF5d0s+mv1Xmy5d8gKGrooib30gPj42QqB2s3Vqb8ObvT9oPrLazGUg+x
-         aZCAnyWBnwY7KWt/vbq6CexJOUSZeN0646BBLp5MDT+2HuZH9qiP+eqjr3MdTaMxJMLE
-         rNcw==
-X-Gm-Message-State: AOAM5319kvPhdn1bD84KFShpOD53RplkYw4wKjIF+sSAW9e6/6kPqGCf
-        fLMjmbf1FU3L+7hCdBfblQ==
-X-Google-Smtp-Source: ABdhPJxHtxtQavMpTMYOeQXfbwlNAzcd18hUq1nv29288DdMCrjnzy/vnMDlD21MGqurHNxrq5tuvg==
-X-Received: by 2002:a4a:8353:: with SMTP id q19mr7538448oog.40.1608576430556;
-        Mon, 21 Dec 2020 10:47:10 -0800 (PST)
-Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id t72sm3697688oie.47.2020.12.21.10.47.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Dec 2020 10:47:09 -0800 (PST)
-Received: (nullmailer pid 344465 invoked by uid 1000);
-        Mon, 21 Dec 2020 18:47:07 -0000
-Date:   Mon, 21 Dec 2020 11:47:07 -0700
-From:   Rob Herring <robh@kernel.org>
+        Tue, 22 Dec 2020 02:32:07 -0500
+Date:   Tue, 22 Dec 2020 07:31:21 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail; t=1608622284;
+        bh=zj7BLVma6bwTDbkNV2OP9sFWg/3xvXVUsybje3al6Cg=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=r3C02VT9/wOS5O5ImAMG6zrfSVRoM5vFDZBuCezPuMsu6pdjTrzqkn2jDZK+uJHd1
+         lZNL6nkOL/VUT00XD60ghn6SL7eXHl2N1RZACf5FTonRmdPBYWF9jQpJXHRmfJ99Yk
+         uSDES7TeCE7GFRdoqK8+aMGckY/dVzkAatDTVCVk=
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        devicetree@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-        Matheus Castello <matheus@castello.eng.br>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
-        Iskren Chernev <iskren.chernev@gmail.com>,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
+From:   Timon Baetz <timon.baetz@protonmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Lee Jones <lee.jones@linaro.org>,
-        Angus Ainslie <angus@akkea.ca>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-pm@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC 17/18] mfd: max14577: Do not enforce (incorrect) interrupt
- trigger type
-Message-ID: <20201221184707.GA344409@robh.at.kernel.org>
-References: <20201210212534.216197-1-krzk@kernel.org>
- <20201210212534.216197-17-krzk@kernel.org>
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Timon Baetz <timon.baetz@protonmail.com>
+Reply-To: Timon Baetz <timon.baetz@protonmail.com>
+Subject: [PATCH v3 2/7] regulator: dt-bindings: Document max8997-pmic nodes
+Message-ID: <20201222070520.710096-2-timon.baetz@protonmail.com>
+In-Reply-To: <20201222070520.710096-1-timon.baetz@protonmail.com>
+References: <20201222070520.710096-1-timon.baetz@protonmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201210212534.216197-17-krzk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 10 Dec 2020 22:25:33 +0100, Krzysztof Kozlowski wrote:
-> Interrupt line can be configured on different hardware in different way,
-> even inverted.  Therefore driver should not enforce specific trigger
-> type - edge falling - but instead rely on Devicetree to configure it.
-> 
-> The Maxim 14577/77836 datasheets describe the interrupt line as active
-> low with a requirement of acknowledge from the CPU therefore the edge
-> falling is not correct.
-> 
-> The interrupt line is shared between PMIC and charger driver, so using
-> level sensitive interrupt is here especially important to avoid races.
-> With an edge configuration in case if first PMIC signals interrupt
-> followed shortly after by the RTC, the interrupt might not be yet
-> cleared/acked thus the second one would not be noticed.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> This patch should wait till DTS changes are merged, as it relies on
-> proper Devicetree.
-> ---
->  Documentation/devicetree/bindings/mfd/max14577.txt | 4 ++--
->  drivers/mfd/max14577.c                             | 6 +++---
->  2 files changed, 5 insertions(+), 5 deletions(-)
-> 
+Add maxim,max8997-battery and maxim,max8997-muic optional nodes.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
+---
+ .../bindings/regulator/max8997-regulator.txt          | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/regulator/max8997-regulator.=
+txt b/Documentation/devicetree/bindings/regulator/max8997-regulator.txt
+index 6fe825b8ac1b..f969fc09fe29 100644
+--- a/Documentation/devicetree/bindings/regulator/max8997-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/max8997-regulator.txt
+@@ -53,6 +53,17 @@ Additional properties required if either of the optional=
+ properties are used:
+ - max8997,pmic-buck125-dvs-gpios: GPIO specifiers for three host gpio's us=
+ed
+   for dvs. The format of the gpio specifier depends in the gpio controller=
+.
+=20
++Optional nodes:
++- charger: Node for configuring the charger driver.
++  Required properties:
++  - compatible: "maxim,max8997-battery"
++  - extcon: extcon specifier for charging events
++  - charger-supply: regulator node for charging current
++
++- muic: Node used only by extcon consumers.
++  Required properties:
++  - compatible: "maxim,max8997-muic"
++
+ Regulators: The regulators of max8997 that have to be instantiated should =
+be
+ included in a sub-node named 'regulators'. Regulator nodes included in thi=
+s
+ sub-node should be of the format as listed below.
+--=20
+2.25.1
+
+
