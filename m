@@ -2,199 +2,137 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D688C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Dec 2020 08:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCEEC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Dec 2020 08:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 665E02311D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Dec 2020 08:41:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0CFF23124
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Dec 2020 08:56:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726016AbgLVIkt (ORCPT
+        id S1726187AbgLVI4b (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Dec 2020 03:40:49 -0500
-Received: from mail-wr1-f51.google.com ([209.85.221.51]:45271 "EHLO
-        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbgLVIkt (ORCPT
+        Tue, 22 Dec 2020 03:56:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44906 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726176AbgLVI4b (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Dec 2020 03:40:49 -0500
-Received: by mail-wr1-f51.google.com with SMTP id d26so13651078wrb.12;
-        Tue, 22 Dec 2020 00:40:32 -0800 (PST)
+        Tue, 22 Dec 2020 03:56:31 -0500
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F559C061248
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Dec 2020 00:55:11 -0800 (PST)
+Received: by mail-io1-xd2c.google.com with SMTP id r9so11322571ioo.7
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Dec 2020 00:55:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=cL6fs/TC+AbTrexoVx8lc3glF76LL/64P3jqDOubqOU=;
+        b=p3FaLdyA6wmA6mGKW1iwHZA4ndWfgjKfkiFbsqbgmkPhf9kbrHDYXaUXj/UHpqPOXz
+         xKvfDKYwnoHivFcCrjy/OsKQhIrWrVnfMZVD6aSEQc0iJYvWZlMaPbWXZPBVRUo1DguN
+         tc8H5RUL8YwPJScAZ40XpjLRF5kZpCZq+0CojwWmHcmYzopiuoqFZCJSM7Q7U1mwXHd0
+         LbS0KzUzfZei7GmSL5fm7eUWiQXN6yn7oR1igzb7mwSXXLeEcbJlyR2iRSEPCVdsZ0+N
+         en5MqOLGoU2PuBx0e0BxXUFOLDWc6ahV/suAGeElCchCVDSApjHIw8VunNtIQVlphsGI
+         5XEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mc9YlhklgHyo+ZWWiXFF+G5IvrUtXxS5OoPxIUrgAi8=;
-        b=i/yaw8YvaLzDey8ctzS7W2RHMfHwGuZCmUq4wlz1cplDf9xfY4yQPf3ZecnpUiZHHn
-         Gn/uIeIPJ/RbIHzOaID3Ylp6BPcTaP0msc/DzuaXTcmSYDPUSDLYiFHbMKkwLj8VVOmv
-         k4tlBGdrVbhwPSNoaRfcB3KTRSJSsCVODYmnONHio6K1sKRwPY0mkMsjvbSp+oKZ6ey4
-         huwG9GCmqq4PWxLCcr+yU06cCWjcs6zD8itFNUpokmADcZHuMudG/ggoIUueq1VWGJQa
-         XORFmcEcin4tad20kkcnWKIEXqLh2kxcsFPBRPLNTga5CHEb2VxPbD9mD4VbYOYxIb7K
-         vEhw==
-X-Gm-Message-State: AOAM532fOaEKUNkiOQ3ukmDz16LHzN/VHXLclw6zrpAT1z6viSO17xHU
-        SoS7j5YlfOLLYx7P+vPsxW0=
-X-Google-Smtp-Source: ABdhPJxlDP78lehfTDWIpBPpCIU0VDik+63U+FbSYlT6DrBR8XdQpBIIFnmsnOXGe61CfTe9azDZOw==
-X-Received: by 2002:adf:f401:: with SMTP id g1mr22765242wro.258.1608626406804;
-        Tue, 22 Dec 2020 00:40:06 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id h13sm29700988wrm.28.2020.12.22.00.40.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Dec 2020 00:40:05 -0800 (PST)
-Date:   Tue, 22 Dec 2020 09:40:04 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Timon Baetz <timon.baetz@protonmail.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v3 4/7] power: supply: max8997_charger: Set CHARGER
- current limit
-Message-ID: <20201222084004.GD5026@kozik-lap>
-References: <20201222070520.710096-1-timon.baetz@protonmail.com>
- <20201222070520.710096-4-timon.baetz@protonmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cL6fs/TC+AbTrexoVx8lc3glF76LL/64P3jqDOubqOU=;
+        b=lZekq7+fVlaxsQ//srMT+CkePOimXkgFuPaPlm1pXNeN0b8Cxn/z5BxcH5bkNUJPZP
+         Cy/hE+tLuiX5CPPzfnDwo4naZJsGefuUGkXN3GoaasMS+3HNR/eImYa6cELhfhMJ9kNq
+         P1o3tuDA4pRW3pt0+3H6sN46Nji5IrlvfaR3dDTF321Eh7MTxToTarL/vwSXx5qN9D0q
+         nOg6vXhnm4F55+JZv7Xrp/fX6Xj5W8PMQ+6lpuzLTZxLTTBgzLWqK8sGmlYFgFkaKTjD
+         p9cGakmJ6/32PApfqaZzFviH3o51x9jlsdfL+XB20p/5GqTY4p+TJkMlSEojlXZqsGlt
+         kxYw==
+X-Gm-Message-State: AOAM531/i/WfGW7iDCSjUWb9Xz/Cf6uoW3jRulQW2wyS9kfmPtThroIc
+        VV+FoOgXmQW2GoqUbBio+mSQ6G5Qd6GXWq7AxB5qOg==
+X-Google-Smtp-Source: ABdhPJwuNazpKAOATKE0nNMW3rBUfq40/YWGzdym8cpzWqRYRMeOtvTbqo19OaXgrOTKauto0Mlknyht6Q0bCPx/Xog=
+X-Received: by 2002:a6b:1454:: with SMTP id 81mr17362520iou.96.1608627309948;
+ Tue, 22 Dec 2020 00:55:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201222070520.710096-4-timon.baetz@protonmail.com>
+References: <6fa54ce6-d5ae-d04f-7c77-b62c148d92b7@gmail.com>
+ <20201106061513.uyys7njcqcdlah67@vireshk-i7> <a6926456-8bce-a438-bfaa-be334208f004@gmail.com>
+ <CAEExFWsp0DWw1yO84e3vzr_YZkqkd+pyPfQQR3J2W6n3wTX4Jw@mail.gmail.com>
+ <20201109050010.g47zojh6wafvwqva@vireshk-i7> <c584b301-e052-7f01-335d-8f9160865198@gmail.com>
+ <20201109051014.oa6bt4g3ctm2hnuy@vireshk-i7> <4476fed9-a356-b7f1-32ee-935343e23038@gmail.com>
+ <20201109053546.xupmmsx5qccn46tr@vireshk-i7> <33a7ad95-a8cf-7b88-0f78-09086c1a4adf@gmail.com>
+ <20201109055320.5y5gf2whwast2mi4@vireshk-i7> <CAEExFWuF82B3bPn8T8_vkHODNwP89MDrNOqu-MhObzqTfiYODw@mail.gmail.com>
+In-Reply-To: <CAEExFWuF82B3bPn8T8_vkHODNwP89MDrNOqu-MhObzqTfiYODw@mail.gmail.com>
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+Date:   Tue, 22 Dec 2020 14:24:59 +0530
+Message-ID: <CAKohpokBHcv34Qh1csHOF5w7utSNy8F_umMzv--pFuPTP9D4wg@mail.gmail.com>
+Subject: Re: [PATCH v1 17/30] mmc: sdhci-tegra: Support OPP and core voltage scaling
+To:     Frank Lee <tiny.windzz@gmail.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        driver-dev <devel@driverdev.osuosl.org>,
+        linux-pwm@vger.kernel.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "open list:ULTRA-WIDEBAND (UWB) SUBSYSTEM:" 
+        <linux-usb@vger.kernel.org>,
+        "open list:SECURE DIGITAL HO..." <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Dec 22, 2020 at 07:31:40AM +0000, Timon Baetz wrote:
-> Register for extcon notification and set charging current depending on
-> the detected cable type. Current values are taken from vendor kernel,
-> where most charger types end up setting 650mA [0].
-> 
-> Also enable and disable the CHARGER regulator based on extcon events.
-> 
-> [0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-epic-4g-touch-sph-d710-exynos4210-dump/drivers/misc/max8997-muic.c#L1675-L1678
-> 
-> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
-> ---
->  drivers/power/supply/max8997_charger.c | 94 ++++++++++++++++++++++++++
->  1 file changed, 94 insertions(+)
-> 
-> diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/supply/max8997_charger.c
-> index 1947af25879a..673ffff14ae0 100644
-> --- a/drivers/power/supply/max8997_charger.c
-> +++ b/drivers/power/supply/max8997_charger.c
-> @@ -6,12 +6,14 @@
->  //  MyungJoo Ham <myungjoo.ham@samsung.com>
->  
->  #include <linux/err.h>
-> +#include <linux/extcon.h>
->  #include <linux/module.h>
->  #include <linux/slab.h>
->  #include <linux/platform_device.h>
->  #include <linux/power_supply.h>
->  #include <linux/mfd/max8997.h>
->  #include <linux/mfd/max8997-private.h>
-> +#include <linux/regulator/consumer.h>
->  
->  /* MAX8997_REG_STATUS4 */
->  #define DCINOK_SHIFT		1
-> @@ -31,6 +33,10 @@ struct charger_data {
->  	struct device *dev;
->  	struct max8997_dev *iodev;
->  	struct power_supply *battery;
-> +	struct regulator *reg;
-> +	struct extcon_dev *edev;
-> +	struct notifier_block extcon_nb;
-> +	struct work_struct extcon_work;
->  };
->  
->  static enum power_supply_property max8997_battery_props[] = {
-> @@ -88,6 +94,67 @@ static int max8997_battery_get_property(struct power_supply *psy,
->  	return 0;
->  }
->  
-> +static void max8997_battery_extcon_evt_stop_work(void *data)
-> +{
-> +	struct charger_data *charger = data;
-> +
-> +	cancel_work_sync(&charger->extcon_work);
-> +}
-> +
-> +static void max8997_battery_extcon_evt_worker(struct work_struct *work)
-> +{
-> +	struct charger_data *charger =
-> +	    container_of(work, struct charger_data, extcon_work);
-> +	struct extcon_dev *edev = charger->edev;
-> +	int current_limit;
-> +
-> +	if (extcon_get_state(edev, EXTCON_CHG_USB_SDP) > 0) {
-> +		dev_dbg(charger->dev, "USB SDP charger is connected\n");
-> +		current_limit = 450000;
-> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_DCP) > 0) {
-> +		dev_dbg(charger->dev, "USB DCP charger is connected\n");
-> +		current_limit = 650000;
-> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_FAST) > 0) {
-> +		dev_dbg(charger->dev, "USB FAST charger is connected\n");
-> +		current_limit = 650000;
-> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_SLOW) > 0) {
-> +		dev_dbg(charger->dev, "USB SLOW charger is connected\n");
-> +		current_limit = 650000;
-> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_CDP) > 0) {
-> +		dev_dbg(charger->dev, "USB CDP charger is connected\n");
-> +		current_limit = 650000;
-> +	} else {
-> +		dev_dbg(charger->dev, "USB charger is diconnected\n");
-> +		current_limit = -1;
-> +	}
-> +
-> +	if (current_limit > 0) {
-> +		int ret = regulator_set_current_limit(charger->reg, current_limit, current_limit);
-> +
-> +		if (ret) {
-> +			dev_err(charger->dev, "failed to set current limit: %d\n", ret);
-> +			return;
-> +		}
-> +		ret = regulator_enable(charger->reg);
-> +		if (ret)
-> +			dev_err(charger->dev, "failed to enable regulator: %d\n", ret);
-> +	} else {
-> +		int ret  = regulator_disable(charger->reg);
-> +
-> +		if (ret)
-> +			dev_err(charger->dev, "failed to disable regulator: %d\n", ret);
-> +	}
-> +}
-> +
-> +static int max8997_battery_extcon_evt(struct notifier_block *nb,
-> +				unsigned long event, void *param)
-> +{
-> +	struct charger_data *charger =
-> +		container_of(nb, struct charger_data, extcon_nb);
-> +	schedule_work(&charger->extcon_work);
-> +	return NOTIFY_OK;
-> +}
-> +
->  static const struct power_supply_desc max8997_battery_desc = {
->  	.name		= "max8997_pmic",
->  	.type		= POWER_SUPPLY_TYPE_BATTERY,
-> @@ -170,6 +237,33 @@ static int max8997_battery_probe(struct platform_device *pdev)
->  		return PTR_ERR(charger->battery);
->  	}
->  
-> +	charger->reg = devm_regulator_get(&pdev->dev, "charger");
+On Mon, 9 Nov 2020 at 16:51, Frank Lee <tiny.windzz@gmail.com> wrote:
+> On Mon, Nov 9, 2020 at 1:53 PM Viresh Kumar <viresh.kumar@linaro.org> wro=
+te:
 
-The code looks good but isn't it breaking all existing platforms?
+> > > devm_pm_opp_set_supported_hw()
+> > > devm_pm_opp_set_regulators() [if we won't use GENPD]
+> > > devm_pm_opp_set_clkname()
+> > > devm_pm_opp_of_add_table()
+> >
+> > I tried to look earlier for the stuff already merged in and didn't
+> > find a lot of stuff where the devm_* could be used, maybe I missed
+> > some of it.
+> >
+> > Frank, would you like to refresh your series based on suggestions from
+> > Dmitry and make other drivers adapt to the new APIs ?
+>
+> I am glad to do this.=EF=BC=9A=EF=BC=89
 
-Best regards,
-Krzysztof
+Frank,
 
+Dmitry has submitted a series with a patch that does stuff like this since =
+you
+never resent your patches.
 
-> +	if (IS_ERR(charger->reg)) {
-> +		dev_err(&pdev->dev, "couldn't get charger regulator\n");
-> +		return PTR_ERR(charger->reg);
-> +	}
-> +
+http://lore.kernel.org/lkml/20201217180638.22748-14-digetx@gmail.com
+
+Since you were the first one to get to this, I would still like to
+give you a chance
+to get these patches merged under your authorship, otherwise I would be goi=
+ng
+to pick patches from Dmitry.
+
+--
+viresh
