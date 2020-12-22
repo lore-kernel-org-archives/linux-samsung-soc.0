@@ -2,137 +2,107 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCEEC433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Dec 2020 08:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA64C433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Dec 2020 09:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0CFF23124
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Dec 2020 08:56:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DECAC23130
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Dec 2020 09:56:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726187AbgLVI4b (ORCPT
+        id S1726282AbgLVJ4H (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Dec 2020 03:56:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44906 "EHLO
+        Tue, 22 Dec 2020 04:56:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbgLVI4b (ORCPT
+        with ESMTP id S1725985AbgLVJ4H (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Dec 2020 03:56:31 -0500
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F559C061248
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Dec 2020 00:55:11 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id r9so11322571ioo.7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Dec 2020 00:55:11 -0800 (PST)
+        Tue, 22 Dec 2020 04:56:07 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85C49C061793
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Dec 2020 01:55:26 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id d13so13858340wrc.13
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Dec 2020 01:55:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=cL6fs/TC+AbTrexoVx8lc3glF76LL/64P3jqDOubqOU=;
-        b=p3FaLdyA6wmA6mGKW1iwHZA4ndWfgjKfkiFbsqbgmkPhf9kbrHDYXaUXj/UHpqPOXz
-         xKvfDKYwnoHivFcCrjy/OsKQhIrWrVnfMZVD6aSEQc0iJYvWZlMaPbWXZPBVRUo1DguN
-         tc8H5RUL8YwPJScAZ40XpjLRF5kZpCZq+0CojwWmHcmYzopiuoqFZCJSM7Q7U1mwXHd0
-         LbS0KzUzfZei7GmSL5fm7eUWiQXN6yn7oR1igzb7mwSXXLeEcbJlyR2iRSEPCVdsZ0+N
-         en5MqOLGoU2PuBx0e0BxXUFOLDWc6ahV/suAGeElCchCVDSApjHIw8VunNtIQVlphsGI
-         5XEw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=H+z35rTiT8LMBG/frBLrxfpbjjUOH9PhJev+n4Wms8Q=;
+        b=aMyEnbMn+8VCWNQPFDSE6JZrN89hgzp75tsGrUyynWrT3j6S1PuhNGAOMrb/gCLeqn
+         4rAP3YMV8iQNqckFNd1/t74vH2C+/lODBskKcGkfY5V2fyO/qnVkx673ljHKcNRPWVtW
+         kAwo+oTCeSHZU5pdfGbaISPZcfMQhmjFuHq4A0nRtLm2fTy6cKg2fKtAYPqiZv/jOH9Y
+         B30QpCMjoEOLXg4HX37tOZCVRJeq4fyBwi8VuPsFuIrprBZWqZeUqfb+IjG3lF+zcSBH
+         VdL95GmQKl0WMsXMmO1hULAmt+kHtSAEi6AooOvEYvjctETHa4dmfurt133YeGOOD38m
+         ZIbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=cL6fs/TC+AbTrexoVx8lc3glF76LL/64P3jqDOubqOU=;
-        b=lZekq7+fVlaxsQ//srMT+CkePOimXkgFuPaPlm1pXNeN0b8Cxn/z5BxcH5bkNUJPZP
-         Cy/hE+tLuiX5CPPzfnDwo4naZJsGefuUGkXN3GoaasMS+3HNR/eImYa6cELhfhMJ9kNq
-         P1o3tuDA4pRW3pt0+3H6sN46Nji5IrlvfaR3dDTF321Eh7MTxToTarL/vwSXx5qN9D0q
-         nOg6vXhnm4F55+JZv7Xrp/fX6Xj5W8PMQ+6lpuzLTZxLTTBgzLWqK8sGmlYFgFkaKTjD
-         p9cGakmJ6/32PApfqaZzFviH3o51x9jlsdfL+XB20p/5GqTY4p+TJkMlSEojlXZqsGlt
-         kxYw==
-X-Gm-Message-State: AOAM531/i/WfGW7iDCSjUWb9Xz/Cf6uoW3jRulQW2wyS9kfmPtThroIc
-        VV+FoOgXmQW2GoqUbBio+mSQ6G5Qd6GXWq7AxB5qOg==
-X-Google-Smtp-Source: ABdhPJwuNazpKAOATKE0nNMW3rBUfq40/YWGzdym8cpzWqRYRMeOtvTbqo19OaXgrOTKauto0Mlknyht6Q0bCPx/Xog=
-X-Received: by 2002:a6b:1454:: with SMTP id 81mr17362520iou.96.1608627309948;
- Tue, 22 Dec 2020 00:55:09 -0800 (PST)
-MIME-Version: 1.0
-References: <6fa54ce6-d5ae-d04f-7c77-b62c148d92b7@gmail.com>
- <20201106061513.uyys7njcqcdlah67@vireshk-i7> <a6926456-8bce-a438-bfaa-be334208f004@gmail.com>
- <CAEExFWsp0DWw1yO84e3vzr_YZkqkd+pyPfQQR3J2W6n3wTX4Jw@mail.gmail.com>
- <20201109050010.g47zojh6wafvwqva@vireshk-i7> <c584b301-e052-7f01-335d-8f9160865198@gmail.com>
- <20201109051014.oa6bt4g3ctm2hnuy@vireshk-i7> <4476fed9-a356-b7f1-32ee-935343e23038@gmail.com>
- <20201109053546.xupmmsx5qccn46tr@vireshk-i7> <33a7ad95-a8cf-7b88-0f78-09086c1a4adf@gmail.com>
- <20201109055320.5y5gf2whwast2mi4@vireshk-i7> <CAEExFWuF82B3bPn8T8_vkHODNwP89MDrNOqu-MhObzqTfiYODw@mail.gmail.com>
-In-Reply-To: <CAEExFWuF82B3bPn8T8_vkHODNwP89MDrNOqu-MhObzqTfiYODw@mail.gmail.com>
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-Date:   Tue, 22 Dec 2020 14:24:59 +0530
-Message-ID: <CAKohpokBHcv34Qh1csHOF5w7utSNy8F_umMzv--pFuPTP9D4wg@mail.gmail.com>
-Subject: Re: [PATCH v1 17/30] mmc: sdhci-tegra: Support OPP and core voltage scaling
-To:     Frank Lee <tiny.windzz@gmail.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=H+z35rTiT8LMBG/frBLrxfpbjjUOH9PhJev+n4Wms8Q=;
+        b=AALg2H8fGNC6aZun21c9RAG4DjZdWqJAm8MLj12nbNwDAkf16r2/FQtf2ZBaRhDATu
+         dQjrfZngZbdpypcID3L8IEHWgFzRbLGonAH1YgRX9na6fsMInugACRetnKBmPeG9yrJ3
+         Weh29jd0b01GyunzD9X77dP+h9I4ajecy6hPPUVDrU2f4sdYPaDv1IeEWe0iSVBKqpYb
+         RHqUjBAaUdB7PwW1VgWyYK7bR5LL1234a6Wcq8GGKlEGYU2F4rCKNGqUd93zGXCVPxmB
+         8p2wZFR1qOCoHWsYalbykU6G0xt1yumfxrTslvqvtXpxZR5uNOAZ+pfX804AF0QbiDUR
+         1ceg==
+X-Gm-Message-State: AOAM530j5ASYcpP3X+9nl2PVH8kcdJRpUC01IeBJxp+3cjidZJ7sUUwT
+        oxKVT0Pzy4+jyV62XmKGpXSxHQ==
+X-Google-Smtp-Source: ABdhPJyQdEkR3oAhu7594tToVjHFVhiTjvNcUitYf22iGjFsC13l1RWfySnSLjYD4ZQpNL6AhOOxsg==
+X-Received: by 2002:adf:828b:: with SMTP id 11mr22690551wrc.180.1608630925193;
+        Tue, 22 Dec 2020 01:55:25 -0800 (PST)
+Received: from dell ([91.110.221.175])
+        by smtp.gmail.com with ESMTPSA id g191sm28554581wmg.39.2020.12.22.01.55.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Dec 2020 01:55:24 -0800 (PST)
+Date:   Tue, 22 Dec 2020 09:55:22 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Timon Baetz <timon.baetz@protonmail.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        driver-dev <devel@driverdev.osuosl.org>,
-        linux-pwm@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "open list:ULTRA-WIDEBAND (UWB) SUBSYSTEM:" 
-        <linux-usb@vger.kernel.org>,
-        "open list:SECURE DIGITAL HO..." <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v3 3/7] mfd: max8997: Add of_compatible to extcon and
+ charger mfd_cell
+Message-ID: <20201222095522.GC53991@dell>
+References: <20201222070520.710096-1-timon.baetz@protonmail.com>
+ <20201222070520.710096-3-timon.baetz@protonmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201222070520.710096-3-timon.baetz@protonmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 9 Nov 2020 at 16:51, Frank Lee <tiny.windzz@gmail.com> wrote:
-> On Mon, Nov 9, 2020 at 1:53 PM Viresh Kumar <viresh.kumar@linaro.org> wro=
-te:
+On Tue, 22 Dec 2020, Timon Baetz wrote:
 
-> > > devm_pm_opp_set_supported_hw()
-> > > devm_pm_opp_set_regulators() [if we won't use GENPD]
-> > > devm_pm_opp_set_clkname()
-> > > devm_pm_opp_of_add_table()
-> >
-> > I tried to look earlier for the stuff already merged in and didn't
-> > find a lot of stuff where the devm_* could be used, maybe I missed
-> > some of it.
-> >
-> > Frank, would you like to refresh your series based on suggestions from
-> > Dmitry and make other drivers adapt to the new APIs ?
->
-> I am glad to do this.=EF=BC=9A=EF=BC=89
+> Add of_compatible ("maxim,max8997-muic") to the mfd_cell to have a
+> of_node set in the extcon driver.
+> 
+> Add of_compatible ("maxim,max8997-battery") to the mfd_cell to configure
+> the charger driver.
+> 
+> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
+> ---
+>  drivers/mfd/max8997.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Frank,
+Applied, thanks.
 
-Dmitry has submitted a series with a patch that does stuff like this since =
-you
-never resent your patches.
-
-http://lore.kernel.org/lkml/20201217180638.22748-14-digetx@gmail.com
-
-Since you were the first one to get to this, I would still like to
-give you a chance
-to get these patches merged under your authorship, otherwise I would be goi=
-ng
-to pick patches from Dmitry.
-
---
-viresh
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
