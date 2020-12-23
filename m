@@ -2,49 +2,36 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDBBFC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Dec 2020 08:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3819C433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Dec 2020 13:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 838F320C56
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Dec 2020 08:28:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8337422B51
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Dec 2020 13:43:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbgLWI2E (ORCPT
+        id S1728565AbgLWNn2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Dec 2020 03:28:04 -0500
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:35728 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727719AbgLWI2D (ORCPT
+        Wed, 23 Dec 2020 08:43:28 -0500
+Received: from mail1.protonmail.ch ([185.70.40.18]:44784 "EHLO
+        mail1.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728449AbgLWNn1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Dec 2020 03:28:03 -0500
-Received: by mail-wr1-f48.google.com with SMTP id r3so17757876wrt.2;
-        Wed, 23 Dec 2020 00:27:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mUVBf1H4BZsLh5EiHS+l8aTe/qKRYRM0fwXYQnOuMno=;
-        b=HIQaBD1sU+67Bvzp3J4WY3IkgOsnxH89ELXHMyhMziirZlTjtol3/O7ldRMaBM68A3
-         NI9s1O3MCroFCIOqQVn4+PPHDA4eQUiHj5nXDIImhrWvw9TQw1T3OpR1pOcDBBoQKoEv
-         1c6h8wtqEpGp6aEpk2AMGrYqeThUANulvYfQ96ovuizwPyAhmnc6IZOJDYxL0FUz5ANV
-         +17dBzTACENmwozwXUCrUf2GSgP1SJBerOJ9A7tm0zppnWlnGedkQLWT64DTh40Qc3qE
-         JfTxShTcrbzLt6FXOnvTWB1Ycq/fprfGZ5XgLxfXxqPRT9XJ0DPGLp935HGgioxRrngI
-         EOnQ==
-X-Gm-Message-State: AOAM5320tVERD8ZJPMie8dlK+XqdVFYCBXusvutOfLKrOSxom1n5dR0D
-        pDOsbz0+yGCwp0jTiEk5sCM=
-X-Google-Smtp-Source: ABdhPJz5X6Cf0bT7wSFl1EyCVBJePEFERj0lAztwVNT4Nv4+gegPgh9sxDuQYcJ9POAVur3wpM3Ldw==
-X-Received: by 2002:a5d:684b:: with SMTP id o11mr28315130wrw.157.1608712041535;
-        Wed, 23 Dec 2020 00:27:21 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id c81sm31699679wmd.6.2020.12.23.00.27.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Dec 2020 00:27:20 -0800 (PST)
-Date:   Wed, 23 Dec 2020 09:27:18 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Timon Baetz <timon.baetz@protonmail.com>
+        Wed, 23 Dec 2020 08:43:27 -0500
+Date:   Wed, 23 Dec 2020 13:42:36 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail; t=1608730965;
+        bh=uD0o1RGxUdohZwqEit8GaCkXhH2zAclkKXfTpSwZqmA=;
+        h=Date:To:From:Cc:Reply-To:Subject:From;
+        b=WIkDn5kFXqS8/edjTH+tgQkmaw5smZ3INaZ6dBX0cmabKxd+dF3tuIFiZ6T64KWUQ
+         KWVVcU2V3anrFhWZNqFb2ByOCPraiXHuuWXz6hOLY3yuSDS7tFNf2dfZConLPtoovG
+         UzqIZZPmGMDLku6ydDpe74JR6+vCQH/s1NaFTsN0=
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+From:   Timon Baetz <timon.baetz@protonmail.com>
 Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -55,58 +42,51 @@ Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v3 4/7] power: supply: max8997_charger: Set CHARGER
- current limit
-Message-ID: <20201223082718.GA5472@kozik-lap>
-References: <20201222070520.710096-1-timon.baetz@protonmail.com>
- <20201222070520.710096-4-timon.baetz@protonmail.com>
- <20201222084004.GD5026@kozik-lap>
- <20201223090114.750664cd.timon.baetz@protonmail.com>
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Timon Baetz <timon.baetz@protonmail.com>
+Reply-To: Timon Baetz <timon.baetz@protonmail.com>
+Subject: [PATCH v4 1/7] extcon: max8997: Add CHGINS and CHGRM interrupt handling
+Message-ID: <20201223134221.804943-1-timon.baetz@protonmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201223090114.750664cd.timon.baetz@protonmail.com>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 23, 2020 at 08:09:55AM +0000, Timon Baetz wrote:
-> On Tue, 22 Dec 2020 09:40:04 +0100, Krzysztof Kozlowski wrote:
+This allows the MAX8997 charger to set the current limit depending on
+the detected extcon charger type.
 
-(...)
-> > >  	.name		= "max8997_pmic",
-> > >  	.type		= POWER_SUPPLY_TYPE_BATTERY,
-> > > @@ -170,6 +237,33 @@ static int max8997_battery_probe(struct platform_device *pdev)
-> > >  		return PTR_ERR(charger->battery);
-> > >  	}
-> > >
-> > > +	charger->reg = devm_regulator_get(&pdev->dev, "charger");  
-> > 
-> > The code looks good but isn't it breaking all existing platforms?
-> 
-> So there is 2 other DTS in the kernel sources that are using MAX8997
-> pmic:
->  - Insignal Origen evaluation board
->  - Samsung Trats
-> Non of them have charging regulators.
+Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
+---
+ drivers/extcon/extcon-max8997.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-But still the power supply was probing on them (if not the error you
-mentioned).  Now, the charger will fail.
+diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max899=
+7.c
+index 337b0eea4e62..e1408075ef7d 100644
+--- a/drivers/extcon/extcon-max8997.c
++++ b/drivers/extcon/extcon-max8997.c
+@@ -44,6 +44,8 @@ static struct max8997_muic_irq muic_irqs[] =3D {
+ =09{ MAX8997_MUICIRQ_ChgDetRun,=09"muic-CHGDETRUN" },
+ =09{ MAX8997_MUICIRQ_ChgTyp,=09"muic-CHGTYP" },
+ =09{ MAX8997_MUICIRQ_OVP,=09=09"muic-OVP" },
++=09{ MAX8997_PMICIRQ_CHGINS,=09"pmic-CHGINS" },
++=09{ MAX8997_PMICIRQ_CHGRM,=09"pmic-CHGRM" },
+ };
+=20
+ /* Define supported cable type */
+@@ -538,6 +540,8 @@ static void max8997_muic_irq_work(struct work_struct *w=
+ork)
+ =09case MAX8997_MUICIRQ_DCDTmr:
+ =09case MAX8997_MUICIRQ_ChgDetRun:
+ =09case MAX8997_MUICIRQ_ChgTyp:
++=09case MAX8997_PMICIRQ_CHGINS:
++=09case MAX8997_PMICIRQ_CHGRM:
+ =09=09/* Handle charger cable */
+ =09=09ret =3D max8997_muic_chg_handler(info);
+ =09=09break;
+--=20
+2.25.1
 
-> Also probing of the charger has been failing for long time because of 
-> https://lore.kernel.org/lkml/20201109194251.562203-2-timon.baetz@protonmail.com/
-> but that seems to land in 5.11.
-
-That's a good argument supporting introduced breakage. Use it in commit
-message. Don't hide such information.
-
-> That being said, I guess I could make extcon and charger-supply
-> optional if you prefer.
-
-Since at least two boards will loose now power supply, I don't think you
-have a choice.
-
-Best regards,
-Krzysztof
 
