@@ -2,49 +2,35 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF32C43381
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Dec 2020 14:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 620D8C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Dec 2020 11:34:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3A07223DB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Dec 2020 14:01:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38C0022512
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Dec 2020 11:34:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbgLXOBX (ORCPT
+        id S1729266AbgLYLeK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 24 Dec 2020 09:01:23 -0500
-Received: from mail-wr1-f51.google.com ([209.85.221.51]:40715 "EHLO
-        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbgLXOBX (ORCPT
+        Fri, 25 Dec 2020 06:34:10 -0500
+Received: from mail-40134.protonmail.ch ([185.70.40.134]:23401 "EHLO
+        mail-40134.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729254AbgLYLeJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Dec 2020 09:01:23 -0500
-Received: by mail-wr1-f51.google.com with SMTP id 91so2249157wrj.7;
-        Thu, 24 Dec 2020 06:01:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=JXPJKdw80z+OB5yk21y07mm+iviqQpsWpPbSM4Th92c=;
-        b=a3bk5Ge0c2s7QYmcVI8Fb81Uz5JLoN1CMXkJBV/ayV8BYxIYTrhhCCmoEIOrPpWfLT
-         VWXCDWFuYTJTXVwJvGbsNk9dr45Lo1rLZD+nkMZVl65U5+y8fAGyWYjxPxuGku7nGoM4
-         7zJb60Hl3oDxAmMvjDhjiq0gwiKGdM0qiY9oFXBGZp8M+Liyw84VKL9m8Yq4Jftqfgxg
-         /nwPC91r0ZrVcJVD7gBf6Dpc4S43kzF8EimP9v2KXwDYpw4VRqFUhl2IUqOeYpnCntg0
-         1BwI0k+wqdft5aSVgJUjARD1EX53O14iuPB+YhVlPuyHWGgShI7w85n5aGs6OGT4/BDB
-         G0ug==
-X-Gm-Message-State: AOAM5322Ixeq35UekeLYyY3aCc6cjY43fqWnmPLXiUaeK2B+3MBtghuN
-        NQyQWQ+zp9zBdToaFxydPJg=
-X-Google-Smtp-Source: ABdhPJznCRPR6sm397ISThve5dgEO81eDZPCPfAysBrZ8OHDU8wWmjjYYLQ5mpdB4e0gR8EizOqiLw==
-X-Received: by 2002:a5d:4e89:: with SMTP id e9mr34110095wru.201.1608818440801;
-        Thu, 24 Dec 2020 06:00:40 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id h9sm38246689wre.24.2020.12.24.06.00.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Dec 2020 06:00:39 -0800 (PST)
-Date:   Thu, 24 Dec 2020 15:00:38 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Timon Baetz <timon.baetz@protonmail.com>
+        Fri, 25 Dec 2020 06:34:09 -0500
+Date:   Fri, 25 Dec 2020 11:33:21 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail; t=1608896006;
+        bh=AZddA3E2efwA1g+qUEHAnTmghSFKPKy2RpOAJ63m37w=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=CulIJ8pTiO+N29SlJ4WYYiLNR/jgDe/D8X0fj6eDY0Mpd9ZD8w5goQnRBthx7a56E
+         bMRJe30Fi6oZbhZ+23cwDQBLeS/2vM//Ys2koHBXTWoC3O4c+ExG7nPJhGbXIEm2gz
+         eietdbr2GeFARhMuxFDn4X9V5v029lPKckzKNGGc=
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+From:   Timon Baetz <timon.baetz@protonmail.com>
 Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -57,69 +43,87 @@ Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht,
         Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v4 4/7] power: supply: max8997_charger: Set CHARGER
- current limit
-Message-ID: <20201224140038.GA48009@kozik-lap>
-References: <20201223134221.804943-1-timon.baetz@protonmail.com>
- <20201223134221.804943-4-timon.baetz@protonmail.com>
- <20201224095559.GB10937@kozik-lap>
- <20201224141246.7ad0ffc4.timon.baetz@protonmail.com>
- <20201224133706.GA22856@kozik-lap>
+Reply-To: Timon Baetz <timon.baetz@protonmail.com>
+Subject: Re: [PATCH v4 4/7] power: supply: max8997_charger: Set CHARGER current limit
+Message-ID: <20201225123300.07c84dd8.timon.baetz@protonmail.com>
+In-Reply-To: <20201224140038.GA48009@kozik-lap>
+References: <20201223134221.804943-1-timon.baetz@protonmail.com> <20201223134221.804943-4-timon.baetz@protonmail.com> <20201224095559.GB10937@kozik-lap> <20201224141246.7ad0ffc4.timon.baetz@protonmail.com> <20201224133706.GA22856@kozik-lap> <20201224140038.GA48009@kozik-lap>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201224133706.GA22856@kozik-lap>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 24, 2020 at 02:37:06PM +0100, Krzysztof Kozlowski wrote:
-> On Thu, Dec 24, 2020 at 01:13:02PM +0000, Timon Baetz wrote:
-> > On Thu, 24 Dec 2020 10:55:59 +0100, Krzysztof Kozlowski wrote:
-> > > > @@ -170,6 +237,28 @@ static int max8997_battery_probe(struct platform_device *pdev)
-> > > >  		return PTR_ERR(charger->battery);
-> > > >  	}
+On Thu, 24 Dec 2020 15:00:38 +0100, Krzysztof Kozlowski wrote:
+> On Thu, Dec 24, 2020 at 02:37:06PM +0100, Krzysztof Kozlowski wrote:
+> > On Thu, Dec 24, 2020 at 01:13:02PM +0000, Timon Baetz wrote: =20
+> > > On Thu, 24 Dec 2020 10:55:59 +0100, Krzysztof Kozlowski wrote: =20
+> > > > > @@ -170,6 +237,28 @@ static int max8997_battery_probe(struct plat=
+form_device *pdev)
+> > > > >  =09=09return PTR_ERR(charger->battery);
+> > > > >  =09}
+> > > > >
+> > > > > +=09charger->reg =3D devm_regulator_get(&pdev->dev, "charger"); =
+=20
 > > > >
-> > > > +	charger->reg = devm_regulator_get(&pdev->dev, "charger");  
-> > > 
-> > > Since you do not use get_optional, you will always get a dummy
-> > > regulator. In case of error, you should either print it or entirely fail
-> > > the probe. Silently continuing makes it difficult to spot errors.
-> > > 
-> > > Since the driver could operate in case of extcon/regulator error, just
-> > > dev_err() so failure will be spotted with dmesg.
-> > 
-> > I will switch to devm_regulator_get_optional() and print an error on 
-> > failure, thanks.
-> > 
-> > > It will complain on older DTBs because you are introducing incompatible
-> > > change, but that's expected. Just correct all other in-tree DTS.
-> > 
-> > The other 2 in-tree DTS don't have CHARGER regulators. Not sure
-> > how to correct those. Should I add muic and charger nodes without a
-> > charger-supply? It will still complain in that case.
-> 
-> +Cc Marek,
-> 
-> This is why leaving the code as is - devm_regulator_get(), not optional
-> - makes sense. Core would provide dummy regulator, so you only have to
-> provide MUIC node.
-> 
-> If you change the code to devm_regulator_get_optional(), you need to add
-> everything: the charger regulator, the charger node and MUIC node.
-> 
-> For Trats, the configuration should be similar as i9100, although I
-> don't know the exact values of chargign voltage.
-> 
-> For Origen, there is no battery, so the power supply should not bind.
-> Maybe this could be achieved with "status disabled" for charger node? It
-> depends whether MFD will respect such field... If it disables the
-> charger, you're done.
+> > > > Since you do not use get_optional, you will always get a dummy
+> > > > regulator. In case of error, you should either print it or entirely=
+ fail
+> > > > the probe. Silently continuing makes it difficult to spot errors.
+> > > >
+> > > > Since the driver could operate in case of extcon/regulator error, j=
+ust
+> > > > dev_err() so failure will be spotted with dmesg. =20
+> > >
+> > > I will switch to devm_regulator_get_optional() and print an error on
+> > > failure, thanks.
+> > > =20
+> > > > It will complain on older DTBs because you are introducing incompat=
+ible
+> > > > change, but that's expected. Just correct all other in-tree DTS. =
+=20
+> > >
+> > > The other 2 in-tree DTS don't have CHARGER regulators. Not sure
+> > > how to correct those. Should I add muic and charger nodes without a
+> > > charger-supply? It will still complain in that case. =20
+> >
+> > +Cc Marek,
+> >
+> > This is why leaving the code as is - devm_regulator_get(), not optional
+> > - makes sense. Core would provide dummy regulator, so you only have to
+> > provide MUIC node.
+> >
+> > If you change the code to devm_regulator_get_optional(), you need to ad=
+d
+> > everything: the charger regulator, the charger node and MUIC node.
+> >
+> > For Trats, the configuration should be similar as i9100, although I
+> > don't know the exact values of chargign voltage.
+> >
+> > For Origen, there is no battery, so the power supply should not bind.
+> > Maybe this could be achieved with "status disabled" for charger node? I=
+t
+> > depends whether MFD will respect such field... If it disables the
+> > charger, you're done. =20
+>=20
+> I just looked at the MFD code and tested it - it nicely skips disabled
+> devices. Therefore, for Origen I propose to add disabled nodes for
+> charger and MUIC because these pins are not connected. No need to add
+> regulators in such case.
 
-I just looked at the MFD code and tested it - it nicely skips disabled
-devices. Therefore, for Origen I propose to add disabled nodes for
-charger and MUIC because these pins are not connected. No need to add
-regulators in such case.
+With a dummy regulator regulator_set_current_limit() fails with -EINVAL.
+Isn't it better to just skip charging control (and dev_info()) when there=
+=20
+is no extcon or regulator? The charger driver would still probe
+without those 2 properties and work as before.
 
-Best regards,
-Krzysztof
+Adding disabled nodes for Origen would probably still makes sense.
+
+I also noticed that adding nodes for those MFD cells prints "DMA mask
+not set" which seems to be related to https://lkml.org/lkml/2020/4/23/873.
+Any suggestions on how to handle that?
+
+Thanks,
+Timon
+
