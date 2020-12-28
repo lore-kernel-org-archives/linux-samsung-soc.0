@@ -8,28 +8,28 @@ X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 203D3C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 553E9C433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB489229C4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:37:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32874207B6
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:37:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727292AbgL1LhW (ORCPT
+        id S1727701AbgL1Lhg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Dec 2020 06:37:22 -0500
-Received: from mail-40134.protonmail.ch ([185.70.40.134]:53716 "EHLO
-        mail-40134.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727670AbgL1LhW (ORCPT
+        Mon, 28 Dec 2020 06:37:36 -0500
+Received: from mail-40133.protonmail.ch ([185.70.40.133]:11622 "EHLO
+        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727687AbgL1Lhf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Dec 2020 06:37:22 -0500
-Date:   Mon, 28 Dec 2020 11:36:38 +0000
+        Mon, 28 Dec 2020 06:37:35 -0500
+Date:   Mon, 28 Dec 2020 11:36:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1609155400;
-        bh=2J2HkMO1x6s17YhUEXyxsyS33PdVMCQ5VOjC6KfqhmA=;
+        s=protonmail; t=1609155412;
+        bh=CZAYsRHV593ZQXe0ik2Cb4E+1qQpPIw5P6nDjWNCENA=;
         h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
-        b=XeP9P8mcFRdkxyyBSQzAcImwVRJ4dAjLoHw1FxVR0z66Y6NJhOBio0kWAmBy8udhu
-         QXfXsVfvw3YrZHXB/SrD6x/b9y0+LRquTKIBE3u4yI16Fldd7gitEIDQtABnczGfHS
-         lXpi7Uh+gacCxWiJLlNT1+FhOSFs2Dy58cXIVX28=
+        b=T5QRNkrVknFl/NZvyShMfN4uPOo/8G0Hw408aOu9v0WXGxb6j6jsvujKAlCn9rv8k
+         A/MJMamuDfyszoLsOZch5+enNsIqlw5sa5aXnJX7kIzbCS+kuVHe2ynW2Od+7FR40f
+         Dn3C4CQNzta7VpFKxwgBXvMc8qN2ky3QXMjOKsWM=
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 From:   Timon Baetz <timon.baetz@protonmail.com>
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -46,8 +46,8 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         ~postmarketos/upstreaming@lists.sr.ht,
         Timon Baetz <timon.baetz@protonmail.com>
 Reply-To: Timon Baetz <timon.baetz@protonmail.com>
-Subject: [PATCH v5 7/8] ARM: dts: exynos: Fix charging regulator voltage and current for I9100
-Message-ID: <20201228113507.1292506-7-timon.baetz@protonmail.com>
+Subject: [PATCH v5 8/8] ARM: dts: exynos: Add top-off charging regulator node for I9100
+Message-ID: <20201228113507.1292506-8-timon.baetz@protonmail.com>
 In-Reply-To: <20201228113507.1292506-1-timon.baetz@protonmail.com>
 References: <20201228113507.1292506-1-timon.baetz@protonmail.com>
 MIME-Version: 1.0
@@ -57,49 +57,59 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Set CHARGER current and CHARGER_CV voltage according to Galaxy S2 Epic
-4G Touch SPH-D710 Android vendor sources [0,1].
+Value taken from Galaxy S2 Epic 4G Touch SPH-D710 Android vendor
+kernel [0] which always sets 200mA.
 
-Remove regulator-always-on. The regulator can be enabled and disabled
-based on extcon events.
+Also rearrange regulators based on definition in max8997.h.
 
 [0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-epic=
--4g-touch-sph-d710-exynos4210-dump/drivers/power/max8997_charger_u1.c#L169-=
-L170
-[1] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-epic=
--4g-touch-sph-d710-exynos4210-dump/drivers/power/max8997_charger_u1.c#L390-=
-L391
+-4g-touch-sph-d710-exynos4210-dump/drivers/power/sec_battery_u1.c#L1525
 
 Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
 ---
- arch/arm/boot/dts/exynos4210-i9100.dts | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/exynos4210-i9100.dts | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
 diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exy=
 nos4210-i9100.dts
-index 8fa704babd5e..586d801af0b5 100644
+index 586d801af0b5..e702adb69670 100644
 --- a/arch/arm/boot/dts/exynos4210-i9100.dts
 +++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -562,15 +562,14 @@ safe2_sreg: ESAFEOUT2 {
-=20
- =09=09=09charger_reg: CHARGER {
- =09=09=09=09regulator-name =3D "CHARGER";
--=09=09=09=09regulator-min-microamp =3D <60000>;
--=09=09=09=09regulator-max-microamp =3D <2580000>;
--=09=09=09=09regulator-always-on;
-+=09=09=09=09regulator-min-microamp =3D <200000>;
-+=09=09=09=09regulator-max-microamp =3D <950000>;
+@@ -560,6 +560,16 @@ safe2_sreg: ESAFEOUT2 {
+ =09=09=09=09regulator-boot-on;
  =09=09=09};
 =20
- =09=09=09chargercv_reg: CHARGER_CV {
- =09=09=09=09regulator-name =3D "CHARGER_CV";
--=09=09=09=09regulator-min-microvolt =3D <3800000>;
--=09=09=09=09regulator-max-microvolt =3D <4100000>;
-+=09=09=09=09regulator-min-microvolt =3D <4200000>;
-+=09=09=09=09regulator-max-microvolt =3D <4200000>;
++=09=09=09EN32KHZ_AP {
++=09=09=09=09regulator-name =3D "EN32KHZ_AP";
++=09=09=09=09regulator-always-on;
++=09=09=09};
++
++=09=09=09EN32KHZ_CP {
++=09=09=09=09regulator-name =3D "EN32KHZ_CP";
++=09=09=09=09regulator-always-on;
++=09=09=09};
++
+ =09=09=09charger_reg: CHARGER {
+ =09=09=09=09regulator-name =3D "CHARGER";
+ =09=09=09=09regulator-min-microamp =3D <200000>;
+@@ -573,13 +583,10 @@ chargercv_reg: CHARGER_CV {
  =09=09=09=09regulator-always-on;
  =09=09=09};
 =20
+-=09=09=09EN32KHZ_AP {
+-=09=09=09=09regulator-name =3D "EN32KHZ_AP";
+-=09=09=09=09regulator-always-on;
+-=09=09=09};
+-
+-=09=09=09EN32KHZ_CP {
+-=09=09=09=09regulator-name =3D "EN32KHZ_CP";
++=09=09=09CHARGER_TOPOFF {
++=09=09=09=09regulator-name =3D "CHARGER_TOPOFF";
++=09=09=09=09regulator-min-microamp =3D <200000>;
++=09=09=09=09regulator-max-microamp =3D <200000>;
+ =09=09=09=09regulator-always-on;
+ =09=09=09};
+ =09=09};
 --=20
 2.25.1
 
