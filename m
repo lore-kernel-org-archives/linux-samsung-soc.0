@@ -5,31 +5,31 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5A9C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6122C4332E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B7CF221F0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:37:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9963D221F0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:37:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbgL1LhA (ORCPT
+        id S1727645AbgL1LhL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Dec 2020 06:37:00 -0500
-Received: from mail-40133.protonmail.ch ([185.70.40.133]:35159 "EHLO
-        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727181AbgL1LhA (ORCPT
+        Mon, 28 Dec 2020 06:37:11 -0500
+Received: from mail-40136.protonmail.ch ([185.70.40.136]:31810 "EHLO
+        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727620AbgL1LhK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Dec 2020 06:37:00 -0500
-Date:   Mon, 28 Dec 2020 11:36:11 +0000
+        Mon, 28 Dec 2020 06:37:10 -0500
+Date:   Mon, 28 Dec 2020 11:36:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1609155378;
-        bh=LoywmZ2m8EV1hoMLF9riPIBEq49S02Dp5TOP/fNI2z8=;
+        s=protonmail; t=1609155388;
+        bh=mEKKFahaecgG/O2uWHVS+MnqiaE2ZNEu6BmGundO7+w=;
         h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
-        b=SwXmZqq2YdgZ5pSE5W6RWAdLRAxdqqhLdvQ9GV0aBKOhyOGOjyRFBGDZaleoTYgQJ
-         WASLXVMYmjAs1we/p89BBUWsh6BgFNypcqNd4FHqroUE7TM6lyJF0XQAQ83zDps3R+
-         yF03Ch527Zf/sEHN7D4xsdgPKtgbfhXoAwTUeQSc=
+        b=ie4cJL5tXhHnoDSSouuXH48/ZlkAvR6tRWr640pFiYU+68cDOkZM+kreg2fyYIj4/
+         BLG5ar1ELo0gSW3bfwOcSoWVERgzoSJx3cPgZQcYpvYTeP5h4sTwSxnuKk86TstC7l
+         4uugp+grNP7xn2ufUNr1Ji0/GweMllc6A8s1p6D8=
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 From:   Timon Baetz <timon.baetz@protonmail.com>
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -46,8 +46,8 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         ~postmarketos/upstreaming@lists.sr.ht,
         Timon Baetz <timon.baetz@protonmail.com>
 Reply-To: Timon Baetz <timon.baetz@protonmail.com>
-Subject: [PATCH v5 4/8] ARM: dts: exynos: Add muic and charger nodes for I9100
-Message-ID: <20201228113507.1292506-4-timon.baetz@protonmail.com>
+Subject: [PATCH v5 6/8] ARM: dts: exynos: Add muic and charger nodes for Trats
+Message-ID: <20201228113507.1292506-6-timon.baetz@protonmail.com>
 In-Reply-To: <20201228113507.1292506-1-timon.baetz@protonmail.com>
 References: <20201228113507.1292506-1-timon.baetz@protonmail.com>
 MIME-Version: 1.0
@@ -58,19 +58,21 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 muic node is only used for extcon consumers.
-charger node is used to point to muic and regulator.
+charger node is used to point to muic.
+
+Note: charging control is not working as we don't have a charger-supply.
 
 Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
 ---
- arch/arm/boot/dts/exynos4210-i9100.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/exynos4210-trats.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exy=
-nos4210-i9100.dts
-index 5370ee477186..8fa704babd5e 100644
---- a/arch/arm/boot/dts/exynos4210-i9100.dts
-+++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -584,6 +584,16 @@ EN32KHZ_CP {
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exy=
+nos4210-trats.dts
+index a226bec56a45..686465f0044b 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -459,6 +459,15 @@ EN32KHZ_CP {
  =09=09=09=09regulator-always-on;
  =09=09=09};
  =09=09};
@@ -81,7 +83,6 @@ index 5370ee477186..8fa704babd5e 100644
 +
 +=09=09charger {
 +=09=09=09compatible =3D "maxim,max8997-battery";
-+=09=09=09charger-supply =3D <&charger_reg>;
 +=09=09=09extcon =3D <&muic>;
 +=09=09};
  =09};
