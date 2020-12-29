@@ -2,115 +2,120 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 553E9C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8DFC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Dec 2020 15:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32874207B6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:37:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7221621D1B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Dec 2020 15:33:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbgL1Lhg (ORCPT
+        id S1726144AbgL2Pdm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Dec 2020 06:37:36 -0500
-Received: from mail-40133.protonmail.ch ([185.70.40.133]:11622 "EHLO
-        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727687AbgL1Lhf (ORCPT
+        Tue, 29 Dec 2020 10:33:42 -0500
+Received: from mail-wr1-f48.google.com ([209.85.221.48]:34563 "EHLO
+        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbgL2Pdl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Dec 2020 06:37:35 -0500
-Date:   Mon, 28 Dec 2020 11:36:46 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1609155412;
-        bh=CZAYsRHV593ZQXe0ik2Cb4E+1qQpPIw5P6nDjWNCENA=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
-        b=T5QRNkrVknFl/NZvyShMfN4uPOo/8G0Hw408aOu9v0WXGxb6j6jsvujKAlCn9rv8k
-         A/MJMamuDfyszoLsOZch5+enNsIqlw5sa5aXnJX7kIzbCS+kuVHe2ynW2Od+7FR40f
-         Dn3C4CQNzta7VpFKxwgBXvMc8qN2ky3QXMjOKsWM=
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-From:   Timon Baetz <timon.baetz@protonmail.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Timon Baetz <timon.baetz@protonmail.com>
-Reply-To: Timon Baetz <timon.baetz@protonmail.com>
-Subject: [PATCH v5 8/8] ARM: dts: exynos: Add top-off charging regulator node for I9100
-Message-ID: <20201228113507.1292506-8-timon.baetz@protonmail.com>
-In-Reply-To: <20201228113507.1292506-1-timon.baetz@protonmail.com>
-References: <20201228113507.1292506-1-timon.baetz@protonmail.com>
+        Tue, 29 Dec 2020 10:33:41 -0500
+Received: by mail-wr1-f48.google.com with SMTP id q18so15010692wrn.1;
+        Tue, 29 Dec 2020 07:33:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=KbxC8BUslXOi2nw16TW+JiMMsQR/dWR1trqbXcDMTy8=;
+        b=APpSlc5qPON6m+qWjYdb1XguvWo0Q2SATXRRGQul8G4VMsQZrCMkmMvEZgl9JI+Sa4
+         SUr3oqlfDPpCqgcxNqPmPCuYHBhRZSVaGgVAWUtw5b1x7W40KVRKJfXcNmc4Qd5kU0CG
+         WJedweP9CndMO9/MPO88aZr7u64Lqff8Ai97Ueq0bvAuI5UK2LBHq+ZeSAkwMcfOwSEa
+         5s4jbcsyQyA/vSU6H6VSdHXdDyhTcDd0qGTv8y4AKWKoNDqHkxi+doGSrGRZri6ntb4G
+         vJAS2YXPdQ1Wpz1OwBYdlS1eFBGiJ4iqMJE3pgkuOgV6EruMi/Ye04sJNmquTtfFQWwK
+         mIwg==
+X-Gm-Message-State: AOAM5307EOnILw0kgSpa0p0CltCeFlOEy770hXCyaaSacAspmpBh1r6t
+        SLQWGk6uRaN7WUxA8ZI+oFQ=
+X-Google-Smtp-Source: ABdhPJyV8W1AL7evIbfda+5yo8u6Xg5PPPkbBYn2kwFU5kwjyv1m5dIh/uuNcHNlKhwZ910s8iV2+Q==
+X-Received: by 2002:adf:e5c7:: with SMTP id a7mr56580714wrn.300.1609255979314;
+        Tue, 29 Dec 2020 07:32:59 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id h16sm60513836wrq.29.2020.12.29.07.31.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Dec 2020 07:32:58 -0800 (PST)
+Date:   Tue, 29 Dec 2020 16:31:58 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Willy Wolff <willy.mh.wolff.ml@gmail.com>,
+        Marian Mihailescu <mihailescu2m@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: exynos: use Exynos5420 dedicated USB2 PHY
+ compatible
+Message-ID: <20201229153158.GA11658@kozik-lap>
+References: <20201120085637.7299-1-m.szyprowski@samsung.com>
+ <CGME20201120085652eucas1p1da360ab03f5b5b02a197d0f1ee435737@eucas1p1.samsung.com>
+ <20201120085637.7299-3-m.szyprowski@samsung.com>
+ <20201120110503.GB26836@kozik-lap>
+ <14102bab-33a1-45e0-0faf-883c7b1133a5@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <14102bab-33a1-45e0-0faf-883c7b1133a5@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Value taken from Galaxy S2 Epic 4G Touch SPH-D710 Android vendor
-kernel [0] which always sets 200mA.
+On Fri, Nov 20, 2020 at 12:07:44PM +0100, Marek Szyprowski wrote:
+> Hi Krzysztof,
+> 
+> On 20.11.2020 12:05, Krzysztof Kozlowski wrote:
+> > On Fri, Nov 20, 2020 at 09:56:37AM +0100, Marek Szyprowski wrote:
+> >> USB2.0 PHY in Exynos5420 differs from Exynos5250 variant a bit, so use the
+> >> recently introduced dedicated compatible for Exynos5420.
+> >>
+> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> ---
+> >>   arch/arm/boot/dts/exynos54xx.dtsi | 6 +++---
+> >>   1 file changed, 3 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+> >> index fe9d34c23374..2ddb7a5f12b3 100644
+> >> --- a/arch/arm/boot/dts/exynos54xx.dtsi
+> >> +++ b/arch/arm/boot/dts/exynos54xx.dtsi
+> >> @@ -188,7 +188,7 @@
+> >>   			compatible = "samsung,exynos4210-ehci";
+> >>   			reg = <0x12110000 0x100>;
+> >>   			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+> >> -			phys = <&usb2_phy 1>;
+> >> +			phys = <&usb2_phy 0>;
+> >>   			phy-names = "host";
+> >>   		};
+> >>   
+> >> @@ -196,12 +196,12 @@
+> >>   			compatible = "samsung,exynos4210-ohci";
+> >>   			reg = <0x12120000 0x100>;
+> >>   			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+> >> -			phys = <&usb2_phy 1>;
+> >> +			phys = <&usb2_phy 0>;
+> >>   			phy-names = "host";
+> >>   		};
+> >>   
+> >>   		usb2_phy: phy@12130000 {
+> >> -			compatible = "samsung,exynos5250-usb2-phy";
+> >> +			compatible = "samsung,exynos5420-usb2-phy";
+> > The DTS change will wait till PHY driver adjustements get merged... or
+> > if the difference is not critical, maybe using both compatibles (5420
+> > and 5250) would have sense?
+> 
+> It won't work easily with both compatibles, because in the 5420 variant 
+> I've also changed the PHY indices (5420 has no device and second hsic 
+> phy). IMHO the dts change can wait for the next release.
 
-Also rearrange regulators based on definition in max8997.h.
+Thanks, applied.
 
-[0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-epic=
--4g-touch-sph-d710-exynos4210-dump/drivers/power/sec_battery_u1.c#L1525
-
-Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
----
- arch/arm/boot/dts/exynos4210-i9100.dts | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exy=
-nos4210-i9100.dts
-index 586d801af0b5..e702adb69670 100644
---- a/arch/arm/boot/dts/exynos4210-i9100.dts
-+++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -560,6 +560,16 @@ safe2_sreg: ESAFEOUT2 {
- =09=09=09=09regulator-boot-on;
- =09=09=09};
-=20
-+=09=09=09EN32KHZ_AP {
-+=09=09=09=09regulator-name =3D "EN32KHZ_AP";
-+=09=09=09=09regulator-always-on;
-+=09=09=09};
-+
-+=09=09=09EN32KHZ_CP {
-+=09=09=09=09regulator-name =3D "EN32KHZ_CP";
-+=09=09=09=09regulator-always-on;
-+=09=09=09};
-+
- =09=09=09charger_reg: CHARGER {
- =09=09=09=09regulator-name =3D "CHARGER";
- =09=09=09=09regulator-min-microamp =3D <200000>;
-@@ -573,13 +583,10 @@ chargercv_reg: CHARGER_CV {
- =09=09=09=09regulator-always-on;
- =09=09=09};
-=20
--=09=09=09EN32KHZ_AP {
--=09=09=09=09regulator-name =3D "EN32KHZ_AP";
--=09=09=09=09regulator-always-on;
--=09=09=09};
--
--=09=09=09EN32KHZ_CP {
--=09=09=09=09regulator-name =3D "EN32KHZ_CP";
-+=09=09=09CHARGER_TOPOFF {
-+=09=09=09=09regulator-name =3D "CHARGER_TOPOFF";
-+=09=09=09=09regulator-min-microamp =3D <200000>;
-+=09=09=09=09regulator-max-microamp =3D <200000>;
- =09=09=09=09regulator-always-on;
- =09=09=09};
- =09=09};
---=20
-2.25.1
-
+Best regards,
+Krzysztof
 
