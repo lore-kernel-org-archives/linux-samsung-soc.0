@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF310C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Dec 2020 15:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5090BC433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Dec 2020 15:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9883321D1B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Dec 2020 15:51:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2538E21D1B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Dec 2020 15:59:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbgL2PvM (ORCPT
+        id S1726388AbgL2P7t (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Dec 2020 10:51:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48888 "EHLO mail.kernel.org"
+        Tue, 29 Dec 2020 10:59:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726511AbgL2PvM (ORCPT
+        id S1726126AbgL2P7s (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Dec 2020 10:51:12 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4D92420825;
-        Tue, 29 Dec 2020 15:50:30 +0000 (UTC)
+        Tue, 29 Dec 2020 10:59:48 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 30B0F20825;
+        Tue, 29 Dec 2020 15:59:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609257032;
-        bh=idGHe6XgGrHrozlc5y1HPIckvhMG9YuWl1lvsglwhz8=;
+        s=k20201202; t=1609257548;
+        bh=v/VmxBfST1VNE2KH/YayabS5pElscBAieF5iBl52QOQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TAi10HZxlh4JvE6fYT9TDJ0pHxU5GT7r8p0bBUvlz1wEJEUCxBhnk+kenRazJmZ2G
-         f+GEUAzurFkyDHoj8j0VuH/5A6OqHKpYoTxvQpJVVb91FAdSgRIBQWyowG6RkQ3HT2
-         PrmsZk29tuX+i8emiWw+n3VrX2B00kU9pqhRHDUZ5os+gAtJQzRAQ8OeA6+35JPbcK
-         81pU/Ux9zGZlWCJlM1ik6gzsa6Y4MLcfhpehHakAOk5Ne0xKnQTHfjt2RNj/BW5n9w
-         AvuhpzOZ8/Z06J/fLpOq5YsoNs1nd2hb5W9uPa6oyoNtTFPLZNeLPr7mOrp+P4o0sU
-         jNG/t6e40K4jg==
+        b=cLOe2tRB2e4b2BeVjA8CZNRcD+f1BgBT4jDWA7fg7xYKAKkwNhoiKxq8yRiYFOAwj
+         t5dmYiV6LETIyGWTgqp5BAmxSt9VOpF96kakS4LfMyk5+bQhQf+zju9hgtM98yavrD
+         xnc7zF1UuA2iZDvZ3oIFvz5RVmvZFNNaIp2shHB4kEIE/Y8qv9Rcvd8YB0fLzYauKO
+         ytAHbQEpssz4lEGx/p4DiJwGFATPJju/KEXdQbOWh7bF30gRTvhI5zRibJ96WV0LKA
+         kXS2VuMv74P42y1DvRUiIXNYCeUZ4uy0woDbVGcHTVnU9ys/0F277XJ1hQVHdgetGl
+         TKiiU7vLhXH+w==
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Marian Mihailescu <mihailescu2m@gmail.com>,
+To:     linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Willy Wolff <willy.mh.wolff.ml@gmail.com>
-Subject: Re: (subset) [PATCH 0/2] Fix USB2 PHY operation on Exynos542x
-Date:   Tue, 29 Dec 2020 16:50:21 +0100
-Message-Id: <160925691513.14694.5573678403811317177.b4-ty@kernel.org>
+        Lee Jones <lee.jones@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/9] ARM: dts: exynos: correct PMIC interrupt trigger level on Artik 5
+Date:   Tue, 29 Dec 2020 16:59:03 +0100
+Message-Id: <160925752160.16584.10559520648834741759.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201120085637.7299-1-m.szyprowski@samsung.com>
-References: <CGME20201120085651eucas1p1382e2677b29af0fc94a0b6c1f8d7da12@eucas1p1.samsung.com> <20201120085637.7299-1-m.szyprowski@samsung.com>
+In-Reply-To: <20201210212903.216728-1-krzk@kernel.org>
+References: <20201210212903.216728-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -56,23 +56,30 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 20 Nov 2020 09:56:35 +0100, Marek Szyprowski wrote:
-> This patchset finally fixes the last remaining issue related to the
-> system suspend/resume on Odroid XU3/XU4/HC1 board family. It can be
-> observed that system suspend/resume fails on XU4/HC1 when kernel is
-> compiled from multi_v7_defconfig. Chaning the configuration a bit -
-> switching Exynos USB2 PHY driver to be built-in surprisingly fixed that
-> issue. An investigation revealed that the Exynos USB2 PHY driver poked
-> wrong registers in the PMU area on Exynos5420 SoCs breaking the USB3.0
-> DRD PHY operation, what caused the suspend failure. Fix this by learning
-> the Exynos USB2 PHY driver about the Exynos5420 variant.
-> 
-> [...]
+On Thu, 10 Dec 2020 22:28:55 +0100, Krzysztof Kozlowski wrote:
+> The Samsung PMIC datasheets describe the interrupt line as active low
+> with a requirement of acknowledge from the CPU.  Without specifying the
+> interrupt type in Devicetree, kernel might apply some fixed
+> configuration, not necessarily working for this hardware.
 
 Applied, thanks!
 
-[2/2] ARM: dts: exynos: use Exynos5420 dedicated USB2 PHY compatible
-      commit: 75681980c4e3d89c55b5b8f20b8f4c1aace601be
+[1/9] ARM: dts: exynos: correct PMIC interrupt trigger level on Artik 5
+      commit: 58139a7837133538099dc59447f33765b61f5c27
+[2/9] ARM: dts: exynos: correct PMIC interrupt trigger level on Monk
+      commit: c9b260c91ab61d4094a3c152546d88d41259d647
+[3/9] ARM: dts: exynos: correct PMIC interrupt trigger level on Rinato
+      commit: 2c9f52d2b09abd25bd00ef2a5a35d9246fc92d88
+[4/9] ARM: dts: exynos: correct PMIC interrupt trigger level on Spring
+      commit: 1d6f6eee94da4f60ddb2107ffcf55629083711df
+[5/9] ARM: dts: exynos: correct PMIC interrupt trigger level on Arndale Octa
+      commit: 4a96ea5cf0550766397f5e9221c4f2a949492ee6
+[6/9] ARM: dts: exynos: correct PMIC interrupt trigger level on Odroid XU3 family
+      commit: 0274326ce6796813842998141174bd5a0e9ff908
+[7/9] arm64: dts: exynos: correct PMIC interrupt trigger level on TM2
+      commit: 9fd8f10d119c6c48899ace33ff0f7e8702ad1d66
+[8/9] arm64: dts: exynos: correct PMIC interrupt trigger level on Espresso
+      commit: acdd83e384c41d20d66bc0045f5eb67b6d67ed69
 
 Best regards,
 -- 
