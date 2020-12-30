@@ -2,34 +2,34 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D2E4C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E04C43381
 	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Dec 2020 20:53:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16B3B206F6
+	by mail.kernel.org (Postfix) with ESMTP id 8A22B221FA
 	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Dec 2020 20:53:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbgL3Uwm (ORCPT
+        id S1726292AbgL3UxD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Dec 2020 15:52:42 -0500
-Received: from mail-40131.protonmail.ch ([185.70.40.131]:41342 "EHLO
-        mail-40131.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbgL3Uwm (ORCPT
+        Wed, 30 Dec 2020 15:53:03 -0500
+Received: from mail1.protonmail.ch ([185.70.40.18]:21711 "EHLO
+        mail1.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbgL3UxB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Dec 2020 15:52:42 -0500
-Date:   Wed, 30 Dec 2020 20:51:53 +0000
+        Wed, 30 Dec 2020 15:53:01 -0500
+Date:   Wed, 30 Dec 2020 20:52:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1609361519;
-        bh=+xD2FarfshYIV4IW9XFPK6r4Ai4Fr6Cddj2HlgicqZs=;
-        h=Date:To:From:Cc:Reply-To:Subject:From;
-        b=o2FlyKVrdCTja9nVGQGaMcfgmmLjHu07ijKp5Qp6yEzyWX+p5BPljRmQqljzVzpcm
-         pPXOv3Bde2PPNTO1+QJkJau12D2QUCNEx0w8VfuKDT3U1hEl3mBGarpIom9FTswvsq
-         ixTrWNNc6CwIe9LTgZSp0iw8ZRRhLDYncNksrK/o=
+        s=protonmail; t=1609361537;
+        bh=UxHJgzvxLBvgzIBtDDuqwhFJdVNTbPAqh4otZLsJ9dk=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=hkRAFSrlGTbmMgk/e1mAV1wImgUVq8I7SiB8CQFJNJlvi/o7lPBCfRhu7hSrU0IfF
+         ujVbJmRnpUPI29nHaSHGkUVZsdVELM6UpuOSU/O1562S04KV1HgaE3dIuJkUJUjilb
+         rBsR7JP4JtZg5ileV+GWwODsjKGV1gurdOiFoCw4=
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 From:   Timon Baetz <timon.baetz@protonmail.com>
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -46,8 +46,10 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         ~postmarketos/upstreaming@lists.sr.ht,
         Timon Baetz <timon.baetz@protonmail.com>
 Reply-To: Timon Baetz <timon.baetz@protonmail.com>
-Subject: [PATCH v6 1/8] extcon: max8997: Add CHGINS and CHGRM interrupt handling
-Message-ID: <20201230205139.1812366-1-timon.baetz@protonmail.com>
+Subject: [PATCH v6 3/8] power: supply: max8997_charger: Set CHARGER current limit
+Message-ID: <20201230205139.1812366-3-timon.baetz@protonmail.com>
+In-Reply-To: <20201230205139.1812366-1-timon.baetz@protonmail.com>
+References: <20201230205139.1812366-1-timon.baetz@protonmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
@@ -55,44 +57,177 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This allows the MAX8997 charger to set the current limit depending on
-the detected extcon charger type.
+Register for extcon notification and set charging current depending on
+the detected cable type. Current values are taken from vendor kernel,
+where most charger types end up setting 650mA [0].
+
+Also enable and disable the CHARGER regulator based on extcon events.
+
+[0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-epic=
+-4g-touch-sph-d710-exynos4210-dump/drivers/misc/max8997-muic.c#L1675-L1678
 
 Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
 ---
-v6: No change.
-v5: No change.
-v4: No change.
-v3: No change.
-v2: Remove empty line.
+v6: dev_info() instead of dev_err().
+v5: Use devm_regulator_get_optional(), dev_err() on failure.
+    dev_err() on extcon_get_edev_by_phandle() failure.
+v4: Make extcon and charger-supply optional.
+v3: Split MFD change.
+    return on regulator_set_current_limit() failure.
+v2: Split DTS changes.
+    Add missing include.
+    Rename charger_data members.
+    Disable regulator on regulator_set_current_limit() failure.
+    Fix ret declaration.
+    Remove unneeded variables.
+    Don't dev_err() on deferral.
+    Get regulator and extcon from DTS.
+    Use devm_regulator_get().=20
+    Fix indentation.
 
- drivers/extcon/extcon-max8997.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/power/supply/max8997_charger.c | 96 ++++++++++++++++++++++++++
+ 1 file changed, 96 insertions(+)
 
-diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max899=
-7.c
-index 337b0eea4e62..e1408075ef7d 100644
---- a/drivers/extcon/extcon-max8997.c
-+++ b/drivers/extcon/extcon-max8997.c
-@@ -44,6 +44,8 @@ static struct max8997_muic_irq muic_irqs[] =3D {
- =09{ MAX8997_MUICIRQ_ChgDetRun,=09"muic-CHGDETRUN" },
- =09{ MAX8997_MUICIRQ_ChgTyp,=09"muic-CHGTYP" },
- =09{ MAX8997_MUICIRQ_OVP,=09=09"muic-OVP" },
-+=09{ MAX8997_PMICIRQ_CHGINS,=09"pmic-CHGINS" },
-+=09{ MAX8997_PMICIRQ_CHGRM,=09"pmic-CHGRM" },
+diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/supply/=
+max8997_charger.c
+index 1947af25879a..23df91ed2c72 100644
+--- a/drivers/power/supply/max8997_charger.c
++++ b/drivers/power/supply/max8997_charger.c
+@@ -6,12 +6,14 @@
+ //  MyungJoo Ham <myungjoo.ham@samsung.com>
+=20
+ #include <linux/err.h>
++#include <linux/extcon.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
+ #include <linux/power_supply.h>
+ #include <linux/mfd/max8997.h>
+ #include <linux/mfd/max8997-private.h>
++#include <linux/regulator/consumer.h>
+=20
+ /* MAX8997_REG_STATUS4 */
+ #define DCINOK_SHIFT=09=091
+@@ -31,6 +33,10 @@ struct charger_data {
+ =09struct device *dev;
+ =09struct max8997_dev *iodev;
+ =09struct power_supply *battery;
++=09struct regulator *reg;
++=09struct extcon_dev *edev;
++=09struct notifier_block extcon_nb;
++=09struct work_struct extcon_work;
  };
 =20
- /* Define supported cable type */
-@@ -538,6 +540,8 @@ static void max8997_muic_irq_work(struct work_struct *w=
-ork)
- =09case MAX8997_MUICIRQ_DCDTmr:
- =09case MAX8997_MUICIRQ_ChgDetRun:
- =09case MAX8997_MUICIRQ_ChgTyp:
-+=09case MAX8997_PMICIRQ_CHGINS:
-+=09case MAX8997_PMICIRQ_CHGRM:
- =09=09/* Handle charger cable */
- =09=09ret =3D max8997_muic_chg_handler(info);
- =09=09break;
+ static enum power_supply_property max8997_battery_props[] =3D {
+@@ -88,6 +94,67 @@ static int max8997_battery_get_property(struct power_sup=
+ply *psy,
+ =09return 0;
+ }
+=20
++static void max8997_battery_extcon_evt_stop_work(void *data)
++{
++=09struct charger_data *charger =3D data;
++
++=09cancel_work_sync(&charger->extcon_work);
++}
++
++static void max8997_battery_extcon_evt_worker(struct work_struct *work)
++{
++=09struct charger_data *charger =3D
++=09    container_of(work, struct charger_data, extcon_work);
++=09struct extcon_dev *edev =3D charger->edev;
++=09int current_limit;
++
++=09if (extcon_get_state(edev, EXTCON_CHG_USB_SDP) > 0) {
++=09=09dev_dbg(charger->dev, "USB SDP charger is connected\n");
++=09=09current_limit =3D 450000;
++=09} else if (extcon_get_state(edev, EXTCON_CHG_USB_DCP) > 0) {
++=09=09dev_dbg(charger->dev, "USB DCP charger is connected\n");
++=09=09current_limit =3D 650000;
++=09} else if (extcon_get_state(edev, EXTCON_CHG_USB_FAST) > 0) {
++=09=09dev_dbg(charger->dev, "USB FAST charger is connected\n");
++=09=09current_limit =3D 650000;
++=09} else if (extcon_get_state(edev, EXTCON_CHG_USB_SLOW) > 0) {
++=09=09dev_dbg(charger->dev, "USB SLOW charger is connected\n");
++=09=09current_limit =3D 650000;
++=09} else if (extcon_get_state(edev, EXTCON_CHG_USB_CDP) > 0) {
++=09=09dev_dbg(charger->dev, "USB CDP charger is connected\n");
++=09=09current_limit =3D 650000;
++=09} else {
++=09=09dev_dbg(charger->dev, "USB charger is diconnected\n");
++=09=09current_limit =3D -1;
++=09}
++
++=09if (current_limit > 0) {
++=09=09int ret =3D regulator_set_current_limit(charger->reg, current_limit,=
+ current_limit);
++
++=09=09if (ret) {
++=09=09=09dev_err(charger->dev, "failed to set current limit: %d\n", ret);
++=09=09=09return;
++=09=09}
++=09=09ret =3D regulator_enable(charger->reg);
++=09=09if (ret)
++=09=09=09dev_err(charger->dev, "failed to enable regulator: %d\n", ret);
++=09} else {
++=09=09int ret  =3D regulator_disable(charger->reg);
++
++=09=09if (ret)
++=09=09=09dev_err(charger->dev, "failed to disable regulator: %d\n", ret);
++=09}
++}
++
++static int max8997_battery_extcon_evt(struct notifier_block *nb,
++=09=09=09=09unsigned long event, void *param)
++{
++=09struct charger_data *charger =3D
++=09=09container_of(nb, struct charger_data, extcon_nb);
++=09schedule_work(&charger->extcon_work);
++=09return NOTIFY_OK;
++}
++
+ static const struct power_supply_desc max8997_battery_desc =3D {
+ =09.name=09=09=3D "max8997_pmic",
+ =09.type=09=09=3D POWER_SUPPLY_TYPE_BATTERY,
+@@ -170,6 +237,35 @@ static int max8997_battery_probe(struct platform_devic=
+e *pdev)
+ =09=09return PTR_ERR(charger->battery);
+ =09}
+=20
++=09charger->reg =3D devm_regulator_get_optional(&pdev->dev, "charger");
++=09if (IS_ERR(charger->reg)) {
++=09=09if (PTR_ERR(charger->reg) =3D=3D -EPROBE_DEFER)
++=09=09=09return -EPROBE_DEFER;
++=09=09dev_info(&pdev->dev, "couldn't get charger regulator\n");
++=09}
++=09charger->edev =3D extcon_get_edev_by_phandle(&pdev->dev, 0);
++=09if (IS_ERR(charger->edev)) {
++=09=09if (PTR_ERR(charger->edev) =3D=3D -EPROBE_DEFER)
++=09=09=09return -EPROBE_DEFER;
++=09=09dev_info(charger->dev, "couldn't get extcon device\n");
++=09}
++
++=09if (!IS_ERR(charger->reg) && !IS_ERR(charger->edev)) {
++=09=09INIT_WORK(&charger->extcon_work, max8997_battery_extcon_evt_worker);
++=09=09ret =3D devm_add_action(&pdev->dev, max8997_battery_extcon_evt_stop_=
+work, charger);
++=09=09if (ret) {
++=09=09=09dev_err(&pdev->dev, "failed to add extcon evt stop action: %d\n",=
+ ret);
++=09=09=09return ret;
++=09=09}
++=09=09charger->extcon_nb.notifier_call =3D max8997_battery_extcon_evt;
++=09=09ret =3D devm_extcon_register_notifier_all(&pdev->dev, charger->edev,
++=09=09=09=09=09=09=09&charger->extcon_nb);
++=09=09if (ret) {
++=09=09=09dev_err(&pdev->dev, "failed to register extcon notifier\n");
++=09=09=09return ret;
++=09=09};
++=09}
++
+ =09return 0;
+ }
+=20
 --=20
 2.25.1
 
