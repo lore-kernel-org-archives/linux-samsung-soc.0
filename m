@@ -2,36 +2,49 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0603EC433E9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Dec 2020 20:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B9BC433E9
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 31 Dec 2020 08:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8D0B22227
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Dec 2020 20:54:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDBE1224BD
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 31 Dec 2020 08:56:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbgL3UyA (ORCPT
+        id S1726261AbgLaIzw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Dec 2020 15:54:00 -0500
-Received: from mail2.protonmail.ch ([185.70.40.22]:53241 "EHLO
-        mail2.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbgL3Ux7 (ORCPT
+        Thu, 31 Dec 2020 03:55:52 -0500
+Received: from mail-ed1-f46.google.com ([209.85.208.46]:43601 "EHLO
+        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbgLaIzw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Dec 2020 15:53:59 -0500
-Date:   Wed, 30 Dec 2020 20:53:11 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1609361597;
-        bh=uYDyTYEISn/6Dn56ySZ1G8C+g1webIBwDMuMSIUTjPM=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
-        b=AsELXTqyVYE4EDeDlC04hCVT4g0IYLBL71lOWBBL8nVi94pY+dqqmQ7mF2JpSiy7n
-         8o9xedGqF9lLl5rDEYfggsQXwRFJT8B9iJkD6+tblc+kK9wp22apF2XmqkaaWnEXB7
-         6oZuXNkdmbz3AWB/dvDhuAhtQbcq/xfp0W0FF+EU=
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-From:   Timon Baetz <timon.baetz@protonmail.com>
+        Thu, 31 Dec 2020 03:55:52 -0500
+Received: by mail-ed1-f46.google.com with SMTP id y24so17605171edt.10;
+        Thu, 31 Dec 2020 00:55:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uNA2f0Y9klhzKIC9fDHc8HD2Ytoultdhg1JorPCx44o=;
+        b=OGqrSWYHkNQV1GHCVrxJKAsvtEUTtmE5W6WEkZzit7FY5vqCrR3X1oK3uWzEM0T26D
+         BPORzGVM/UnQ8kucxGzPqTIXo5jP9Ynzuwa1jCd7DmbRytbNkrcbhAJBM8g/wZC3NU2r
+         SURuu5tUDsYgj5WZr+LCQPtP/6xnM+RHLillFiAcSF3pAtNhAmyXeNmJNvc+qLktbNgm
+         pw0XzJLTV+a3sQc6+nLJItBc7qUXgsRpRM5wKZwc8QT7VakvNednbAl4UP4iPHjvDJ8i
+         NflYolwgID00LGtt6zuQGs8fprixKmD+ZTkVqFMvSADcs/0gCEe6aK5sdN5p9btivzkb
+         L1dQ==
+X-Gm-Message-State: AOAM533duvYcAQfnEDYcQ1I+p50wJdQoJdJ7oynelqUEkigYWExjra9e
+        n68VM5rqemAS0F1yrPrZanc=
+X-Google-Smtp-Source: ABdhPJwP5cE4L9i7CK/EJFSuSBeru/Isv9KRT+5KTAwu+XyBMrUwDAHsHT581iTxZHa5NEOez33YGg==
+X-Received: by 2002:aa7:c543:: with SMTP id s3mr53448874edr.88.1609404909896;
+        Thu, 31 Dec 2020 00:55:09 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id dk16sm19933758ejb.85.2020.12.31.00.55.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Dec 2020 00:55:08 -0800 (PST)
+Date:   Thu, 31 Dec 2020 09:55:07 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Timon Baetz <timon.baetz@protonmail.com>
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -43,81 +56,51 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Timon Baetz <timon.baetz@protonmail.com>
-Reply-To: Timon Baetz <timon.baetz@protonmail.com>
-Subject: [PATCH v6 8/8] ARM: dts: exynos: Add top-off charging regulator node for I9100
-Message-ID: <20201230205139.1812366-8-timon.baetz@protonmail.com>
-In-Reply-To: <20201230205139.1812366-1-timon.baetz@protonmail.com>
+        ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v6 3/8] power: supply: max8997_charger: Set CHARGER
+ current limit
+Message-ID: <20201231085507.GA69707@kozik-lap>
 References: <20201230205139.1812366-1-timon.baetz@protonmail.com>
+ <20201230205139.1812366-3-timon.baetz@protonmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20201230205139.1812366-3-timon.baetz@protonmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Value taken from Galaxy S2 Epic 4G Touch SPH-D710 Android vendor
-kernel [0] which always sets 200mA.
-
-Also rearrange regulators based on definition in max8997.h.
-
-[0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-epic=
--4g-touch-sph-d710-exynos4210-dump/drivers/power/sec_battery_u1.c#L1525
-
-Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
----
-v6: No change.
-v5: No change.
-v4: No change.
-v3: Remove label.=20
-    Fix commit message.
-v2: Add patch.
-
- arch/arm/boot/dts/exynos4210-i9100.dts | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exy=
-nos4210-i9100.dts
-index 586d801af0b5..e702adb69670 100644
---- a/arch/arm/boot/dts/exynos4210-i9100.dts
-+++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -560,6 +560,16 @@ safe2_sreg: ESAFEOUT2 {
- =09=09=09=09regulator-boot-on;
- =09=09=09};
-=20
-+=09=09=09EN32KHZ_AP {
-+=09=09=09=09regulator-name =3D "EN32KHZ_AP";
-+=09=09=09=09regulator-always-on;
-+=09=09=09};
-+
-+=09=09=09EN32KHZ_CP {
-+=09=09=09=09regulator-name =3D "EN32KHZ_CP";
-+=09=09=09=09regulator-always-on;
-+=09=09=09};
-+
- =09=09=09charger_reg: CHARGER {
- =09=09=09=09regulator-name =3D "CHARGER";
- =09=09=09=09regulator-min-microamp =3D <200000>;
-@@ -573,13 +583,10 @@ chargercv_reg: CHARGER_CV {
- =09=09=09=09regulator-always-on;
- =09=09=09};
-=20
--=09=09=09EN32KHZ_AP {
--=09=09=09=09regulator-name =3D "EN32KHZ_AP";
--=09=09=09=09regulator-always-on;
--=09=09=09};
--
--=09=09=09EN32KHZ_CP {
--=09=09=09=09regulator-name =3D "EN32KHZ_CP";
-+=09=09=09CHARGER_TOPOFF {
-+=09=09=09=09regulator-name =3D "CHARGER_TOPOFF";
-+=09=09=09=09regulator-min-microamp =3D <200000>;
-+=09=09=09=09regulator-max-microamp =3D <200000>;
- =09=09=09=09regulator-always-on;
- =09=09=09};
- =09=09};
---=20
-2.25.1
+On Wed, Dec 30, 2020 at 08:52:15PM +0000, Timon Baetz wrote:
+> Register for extcon notification and set charging current depending on
+> the detected cable type. Current values are taken from vendor kernel,
+> where most charger types end up setting 650mA [0].
+> 
+> Also enable and disable the CHARGER regulator based on extcon events.
+> 
+> [0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-epic-4g-touch-sph-d710-exynos4210-dump/drivers/misc/max8997-muic.c#L1675-L1678
+> 
+> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
+> ---
+> v6: dev_info() instead of dev_err().
+> v5: Use devm_regulator_get_optional(), dev_err() on failure.
+>     dev_err() on extcon_get_edev_by_phandle() failure.
+> v4: Make extcon and charger-supply optional.
+> v3: Split MFD change.
+>     return on regulator_set_current_limit() failure.
+> v2: Split DTS changes.
+>     Add missing include.
+>     Rename charger_data members.
+>     Disable regulator on regulator_set_current_limit() failure.
+>     Fix ret declaration.
+>     Remove unneeded variables.
+>     Don't dev_err() on deferral.
+>     Get regulator and extcon from DTS.
+>     Use devm_regulator_get(). 
+>     Fix indentation.
 
 
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
