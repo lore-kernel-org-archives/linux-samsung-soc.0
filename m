@@ -2,105 +2,182 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B9BC433E9
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 31 Dec 2020 08:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E46C4332B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Jan 2021 16:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDBE1224BD
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 31 Dec 2020 08:56:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3372722241
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Jan 2021 16:56:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbgLaIzw (ORCPT
+        id S1727226AbhAAQ4S (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 31 Dec 2020 03:55:52 -0500
-Received: from mail-ed1-f46.google.com ([209.85.208.46]:43601 "EHLO
-        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbgLaIzw (ORCPT
+        Fri, 1 Jan 2021 11:56:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35812 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727115AbhAAQ4R (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 31 Dec 2020 03:55:52 -0500
-Received: by mail-ed1-f46.google.com with SMTP id y24so17605171edt.10;
-        Thu, 31 Dec 2020 00:55:35 -0800 (PST)
+        Fri, 1 Jan 2021 11:56:17 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BC9AC061573;
+        Fri,  1 Jan 2021 08:55:37 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id n3so3609507pjm.1;
+        Fri, 01 Jan 2021 08:55:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=L/gCv/bt29Lids4NqNMCGnupZanWu1rzMA+oLszbsEM=;
+        b=fVzoGZOLGPB0P1BXu3jr26HnZLLXZ13i/G70DkLSPqNdxyinjBjU2Z8rq8j/or/Jtd
+         5Wz6/lOt1FPHGcNde6aIj752AwkaDDx3J2kknebedpgJ7gQ0V/NsaWEGSpQQOVNUXVih
+         wwYz3C6VExmF+lZLOK6aeAI12qICJZIhU8BuyY26XSkzoxpVMzofKBuzflyIx7zLelwa
+         NQvI/r5l33gJXaVEf7d4Q4CAFP19BcG8onF0cung1F4sC1rauOMV5Qx3MaIynva9rwF+
+         j04ivImQN7RBpI+8+1wBd6KJmOcVJzQwveKuzrrJfTHq8f5ZifRWTZ/qQKLqNpzkggRm
+         qT/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uNA2f0Y9klhzKIC9fDHc8HD2Ytoultdhg1JorPCx44o=;
-        b=OGqrSWYHkNQV1GHCVrxJKAsvtEUTtmE5W6WEkZzit7FY5vqCrR3X1oK3uWzEM0T26D
-         BPORzGVM/UnQ8kucxGzPqTIXo5jP9Ynzuwa1jCd7DmbRytbNkrcbhAJBM8g/wZC3NU2r
-         SURuu5tUDsYgj5WZr+LCQPtP/6xnM+RHLillFiAcSF3pAtNhAmyXeNmJNvc+qLktbNgm
-         pw0XzJLTV+a3sQc6+nLJItBc7qUXgsRpRM5wKZwc8QT7VakvNednbAl4UP4iPHjvDJ8i
-         NflYolwgID00LGtt6zuQGs8fprixKmD+ZTkVqFMvSADcs/0gCEe6aK5sdN5p9btivzkb
-         L1dQ==
-X-Gm-Message-State: AOAM533duvYcAQfnEDYcQ1I+p50wJdQoJdJ7oynelqUEkigYWExjra9e
-        n68VM5rqemAS0F1yrPrZanc=
-X-Google-Smtp-Source: ABdhPJwP5cE4L9i7CK/EJFSuSBeru/Isv9KRT+5KTAwu+XyBMrUwDAHsHT581iTxZHa5NEOez33YGg==
-X-Received: by 2002:aa7:c543:: with SMTP id s3mr53448874edr.88.1609404909896;
-        Thu, 31 Dec 2020 00:55:09 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id dk16sm19933758ejb.85.2020.12.31.00.55.08
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=L/gCv/bt29Lids4NqNMCGnupZanWu1rzMA+oLszbsEM=;
+        b=Vjevyd/Z85zlTI6Dw1FRBwlz6/ozG3UwE5ErGOXbOwPD5r1G98S7/+8dupeuqB3OJd
+         0rc9vTdsVoyfeT2xo0R1emClT1pjjuMt7ENhl9gsnbUNBRLCG81dD0CNzSeey3thMVZp
+         /TsTSAPXHpldWNd0CpZt1OQyxLfTGmw7GO2exzfHMhzUeBT6tpXE25epKl+Lrbyybe15
+         2tdwIfuP3d+ZBLhgL8bG4Xe8TEQDQn8Ke7BpnRgUZ3P8Camw3kjaHZHC80qGtvrdsaAb
+         96IbLN/kEZbj37tAEyKBRt8OJuB4VMTbV2TmrbBO/jNVmmczVrrPZfB+0jMv5tOD5I5/
+         cudQ==
+X-Gm-Message-State: AOAM5320o8nrv9oApfPAm0bPJiS+C/DavB/KHNdIf6fFvEEwOd5x+pdn
+        hGlqzqcxEcXyzGDcva2FUaM=
+X-Google-Smtp-Source: ABdhPJxs/i/JADyQO9mxNRl6CW47gkY51PoANWqV9w//PRy+AIWEsNQMMeMTfC1dzEsLBpruFAB/bw==
+X-Received: by 2002:a17:90a:c396:: with SMTP id h22mr18709651pjt.84.1609520136798;
+        Fri, 01 Jan 2021 08:55:36 -0800 (PST)
+Received: from localhost.localdomain ([43.255.31.23])
+        by smtp.gmail.com with ESMTPSA id 84sm50002729pfy.9.2021.01.01.08.55.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Dec 2020 00:55:08 -0800 (PST)
-Date:   Thu, 31 Dec 2020 09:55:07 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Timon Baetz <timon.baetz@protonmail.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v6 3/8] power: supply: max8997_charger: Set CHARGER
- current limit
-Message-ID: <20201231085507.GA69707@kozik-lap>
-References: <20201230205139.1812366-1-timon.baetz@protonmail.com>
- <20201230205139.1812366-3-timon.baetz@protonmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201230205139.1812366-3-timon.baetz@protonmail.com>
+        Fri, 01 Jan 2021 08:55:35 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        cw00.choi@samsung.com, krzk@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, digetx@gmail.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, yuq825@gmail.com, airlied@linux.ie,
+        daniel@ffwll.ch, robdclark@gmail.com, sean@poorly.run,
+        robh@kernel.org, tomeu.vizoso@collabora.com, steven.price@arm.com,
+        alyssa.rosenzweig@collabora.com, stanimir.varbanov@linaro.org,
+        agross@kernel.org, bjorn.andersson@linaro.org, mchehab@kernel.org,
+        lukasz.luba@arm.com, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org, vireshk@kernel.org, nm@ti.com,
+        sboyd@kernel.org, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, rjw@rjwysocki.net, jcrouse@codeaurora.org,
+        hoegsberg@google.com, eric@anholt.net, tzimmermann@suse.de,
+        marijn.suijten@somainline.org, gustavoars@kernel.org,
+        emil.velikov@collabora.com, jonathan@marek.ca,
+        akhilpo@codeaurora.org, smasetty@codeaurora.org,
+        airlied@redhat.com, masneyb@onstation.org, kalyan_t@codeaurora.org,
+        tanmay@codeaurora.org, tiny.windzz@gmail.com,
+        ddavenport@chromium.org, jsanka@codeaurora.org,
+        rnayak@codeaurora.org, tongtiangen@huawei.com,
+        miaoqinglang@huawei.com, khsieh@codeaurora.org,
+        abhinavk@codeaurora.org, chandanu@codeaurora.org,
+        groeck@chromium.org, varar@codeaurora.org, mka@chromium.org,
+        harigovi@codeaurora.org, rikard.falkeborn@gmail.com,
+        natechancellor@gmail.com, georgi.djakov@linaro.org,
+        akashast@codeaurora.org, parashar@codeaurora.org,
+        dianders@chromium.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [PATCH 00/31] Introduce devm_pm_opp_* API
+Date:   Fri,  1 Jan 2021 16:54:36 +0000
+Message-Id: <20210101165507.19486-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 30, 2020 at 08:52:15PM +0000, Timon Baetz wrote:
-> Register for extcon notification and set charging current depending on
-> the detected cable type. Current values are taken from vendor kernel,
-> where most charger types end up setting 650mA [0].
-> 
-> Also enable and disable the CHARGER regulator based on extcon events.
-> 
-> [0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-epic-4g-touch-sph-d710-exynos4210-dump/drivers/misc/max8997-muic.c#L1675-L1678
-> 
-> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
-> ---
-> v6: dev_info() instead of dev_err().
-> v5: Use devm_regulator_get_optional(), dev_err() on failure.
->     dev_err() on extcon_get_edev_by_phandle() failure.
-> v4: Make extcon and charger-supply optional.
-> v3: Split MFD change.
->     return on regulator_set_current_limit() failure.
-> v2: Split DTS changes.
->     Add missing include.
->     Rename charger_data members.
->     Disable regulator on regulator_set_current_limit() failure.
->     Fix ret declaration.
->     Remove unneeded variables.
->     Don't dev_err() on deferral.
->     Get regulator and extcon from DTS.
->     Use devm_regulator_get(). 
->     Fix indentation.
+Hi,
 
+This patchset add devm_pm_opp_set_clkname, devm_pm_opp_put_clkname,
+devm_pm_opp_set_regulators, devm_pm_opp_put_regulators,
+devm_pm_opp_set_supported_hw, devm_pm_opp_of_add_table and
+devm_pm_opp_register_notifier.
 
+Yangtao Li (31):
+  opp: Add devres wrapper for dev_pm_opp_set_clkname and
+    dev_pm_opp_put_clkname
+  opp: Add devres wrapper for dev_pm_opp_set_regulators and
+    dev_pm_opp_put_regulators
+  opp: Add devres wrapper for dev_pm_opp_set_supported_hw
+  opp: Add devres wrapper for dev_pm_opp_of_add_table
+  opp: Add devres wrapper for dev_pm_opp_register_notifier
+  serial: qcom_geni_serial: fix potential mem leak in
+    qcom_geni_serial_probe()
+  serial: qcom_geni_serial: convert to use devm_pm_opp_* API
+  spi: spi-qcom-qspi: fix potential mem leak in spi_geni_probe()
+  spi: spi-qcom-qspi: fix potential mem leak in spi_geni_probe()
+  qcom-geni-se: remove opp_table
+  mmc: sdhci-msm: fix potential mem leak in sdhci_msm_probe()
+  mmc: sdhci-msm: convert to use devm_pm_opp_* API
+  spi: spi-qcom-qspi: fix potential mem leak in qcom_qspi_probe()
+  spi: spi-qcom-qspi: convert to use devm_pm_opp_* API
+  drm/msm: fix potential mem leak
+  drm/msm: convert to use devm_pm_opp_* API and remove dp_ctrl_put
+  drm/lima: convert to use devm_pm_opp_* API
+  drm/lima: remove unneeded devm_devfreq_remove_device()
+  drm/panfrost: convert to use devm_pm_opp_* API
+  media: venus: fix error check in core_get_v4()
+  media: venus: convert to use devm_pm_opp_* API
+  memory: samsung: exynos5422-dmc: fix return error in
+    exynos5_init_freq_table
+  memory: samsung: exynos5422-dmc: convert to use devm_pm_opp_* API
+  memory: tegra20: convert to use devm_pm_opp_* API
+  memory: tegra30: convert to use devm_pm_opp_* API
+  PM / devfreq: tegra30: convert to use devm_pm_opp_* API
+  PM / devfreq: rk3399_dmc: convert to use devm_pm_opp_* API
+  PM / devfreq: imx8m-ddrc: convert to use devm_pm_opp_* API
+  PM / devfreq: imx-bus: convert to use devm_pm_opp_* API
+  PM / devfreq: exynos: convert to use devm_pm_opp_* API
+  PM / devfreq: convert to devm_pm_opp_register_notifier and remove
+    unused API
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+ drivers/devfreq/devfreq.c                     |  66 +------
+ drivers/devfreq/exynos-bus.c                  |  42 +----
+ drivers/devfreq/imx-bus.c                     |  14 +-
+ drivers/devfreq/imx8m-ddrc.c                  |  15 +-
+ drivers/devfreq/rk3399_dmc.c                  |  22 +--
+ drivers/devfreq/tegra30-devfreq.c             |  21 +--
+ drivers/gpu/drm/lima/lima_devfreq.c           |  45 +----
+ drivers/gpu/drm/lima/lima_devfreq.h           |   2 -
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c         |   2 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c         |   2 +-
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c       |   2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |  31 ++--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h       |   2 -
+ drivers/gpu/drm/msm/dp/dp_ctrl.c              |  29 +--
+ drivers/gpu/drm/msm/dp/dp_ctrl.h              |   1 -
+ drivers/gpu/drm/msm/dp/dp_display.c           |   5 +-
+ drivers/gpu/drm/msm/dsi/dsi_host.c            |  23 ++-
+ drivers/gpu/drm/panfrost/panfrost_devfreq.c   |  34 +---
+ drivers/gpu/drm/panfrost/panfrost_devfreq.h   |   1 -
+ .../media/platform/qcom/venus/pm_helpers.c    |  22 +--
+ drivers/memory/samsung/exynos5422-dmc.c       |  13 +-
+ drivers/memory/tegra/tegra20-emc.c            |  29 +--
+ drivers/memory/tegra/tegra30-emc.c            |  29 +--
+ drivers/mmc/host/sdhci-msm.c                  |  27 ++-
+ drivers/opp/core.c                            | 173 ++++++++++++++++++
+ drivers/opp/of.c                              |  36 ++++
+ drivers/spi/spi-geni-qcom.c                   |  23 ++-
+ drivers/spi/spi-qcom-qspi.c                   |  25 ++-
+ drivers/tty/serial/qcom_geni_serial.c         |  31 ++--
+ include/linux/devfreq.h                       |  23 ---
+ include/linux/pm_opp.h                        |  38 ++++
+ include/linux/qcom-geni-se.h                  |   2 -
+ 32 files changed, 402 insertions(+), 428 deletions(-)
 
-Best regards,
-Krzysztof
+-- 
+2.25.1
+
