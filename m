@@ -2,266 +2,176 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB578C43381
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Jan 2021 01:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B733C4332B
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Jan 2021 03:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C03D7208C3
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Jan 2021 01:54:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0591E20B1F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Jan 2021 03:55:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbhACBy1 (ORCPT
+        id S1726333AbhACDzQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 2 Jan 2021 20:54:27 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48456 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbhACBy1 (ORCPT
+        Sat, 2 Jan 2021 22:55:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51948 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbhACDzQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 2 Jan 2021 20:54:27 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id E4D231F410AD
-Received: by earth.universe (Postfix, from userid 1000)
-        id DC47C3C0C94; Sun,  3 Jan 2021 02:53:41 +0100 (CET)
-Date:   Sun, 3 Jan 2021 02:53:41 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Timon Baetz <timon.baetz@protonmail.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v6 3/8] power: supply: max8997_charger: Set CHARGER
- current limit
-Message-ID: <20210103015341.atzgzdk4orcp2nrx@earth.universe>
-References: <20201230205139.1812366-1-timon.baetz@protonmail.com>
- <20201230205139.1812366-3-timon.baetz@protonmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hgoeyxu2tkjevfuo"
-Content-Disposition: inline
-In-Reply-To: <20201230205139.1812366-3-timon.baetz@protonmail.com>
+        Sat, 2 Jan 2021 22:55:16 -0500
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C21E9C061573;
+        Sat,  2 Jan 2021 19:54:35 -0800 (PST)
+Received: by mail-pg1-x529.google.com with SMTP id p18so16569340pgm.11;
+        Sat, 02 Jan 2021 19:54:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=upHhoKMhwNycSsUSkWTDTZGGHEnMJMcgkEoZXl3LtcE=;
+        b=A0sZKpRKEBmumkd+j40q8l8w0e6Orse8JgJFhy/apGOP6iLFx6yB45mUGQ3MmclC6c
+         aR+upeNFhOcGYl2SuGmLC68lbqb66N0Luch93M4VZnz8y5nA00724FAkKZ1GsUFgn0nE
+         NttE5XTiTT1LJDurD4XhqCx9pZKnjMKKbMWWWzDaztkfl9FH/OLZzkkJjrTjif7SmuJK
+         KzOZuPdeTHhfLh7oOVF89U3FWwLKk8mSCnt6MluhZWT6iu9SQ12bBD08gr36rkuw8W46
+         d1TIUxb/h0PXu/rb0qbgH/H7X84Yw1SMEI+bJzPaLWqdLFW97uTXRl+bkRgHCgr4s43Y
+         Mg0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=upHhoKMhwNycSsUSkWTDTZGGHEnMJMcgkEoZXl3LtcE=;
+        b=lCfONExwz5ZRx9vWIjiR0CEDym+ESHPXT+evZyTlXfg31hFJZhLVF4NljcThy0I25C
+         A48JlCz2vtv5HfTeXo0CG8CDLAEoGUgGCFxGvkrgLTarAhevTWsl9NS0h+AbFYI6u5yX
+         1/0e1MU0Pogn31FucBX2CE+LybV89a7cx8sojTzZKRT+itzM6eMOZg7mAPaL5T0x6Vt4
+         EolqO8gQzq2kJHdtfHr2xDzikbfndl3uAYMhepcLgB/wwYPRiegZQPfmysugAf41E6cQ
+         s+X8zIhKxRFIFuELDZuGj0sM3X4TEUo7vWJEbGb1/YEiKjNaPExSKT9r3W1s8r2QVYna
+         FFzw==
+X-Gm-Message-State: AOAM533o6zj1c8az8GMplQMRTv1MwdDUXEFSk6uzGOMjtgEVSzU2WQO1
+        Uh0uyOt5mqMx+H3bgTg+fwU=
+X-Google-Smtp-Source: ABdhPJxv/KIPydC4rwftQy4xrCraXrrFy9P+M3m1ZoKozY9r6GNMFOiNFe7kIU7sHqxKl0WT+nK2fw==
+X-Received: by 2002:a65:6a09:: with SMTP id m9mr37744699pgu.51.1609646075302;
+        Sat, 02 Jan 2021 19:54:35 -0800 (PST)
+Received: from localhost.localdomain ([43.255.31.23])
+        by smtp.gmail.com with ESMTPSA id s67sm14054605pgb.60.2021.01.02.19.54.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Jan 2021 19:54:34 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        cw00.choi@samsung.com, krzk@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, digetx@gmail.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, yuq825@gmail.com, airlied@linux.ie,
+        daniel@ffwll.ch, robdclark@gmail.com, sean@poorly.run,
+        robh@kernel.org, tomeu.vizoso@collabora.com, steven.price@arm.com,
+        alyssa.rosenzweig@collabora.com, stanimir.varbanov@linaro.org,
+        agross@kernel.org, bjorn.andersson@linaro.org, mchehab@kernel.org,
+        lukasz.luba@arm.com, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org, vireshk@kernel.org, nm@ti.com,
+        sboyd@kernel.org, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, rjw@rjwysocki.net, jcrouse@codeaurora.org,
+        hoegsberg@google.com, eric@anholt.net, tzimmermann@suse.de,
+        marijn.suijten@somainline.org, gustavoars@kernel.org,
+        emil.velikov@collabora.com, jonathan@marek.ca,
+        akhilpo@codeaurora.org, smasetty@codeaurora.org,
+        airlied@redhat.com, masneyb@onstation.org, kalyan_t@codeaurora.org,
+        tanmay@codeaurora.org, tiny.windzz@gmail.com,
+        ddavenport@chromium.org, jsanka@codeaurora.org,
+        rnayak@codeaurora.org, tongtiangen@huawei.com,
+        miaoqinglang@huawei.com, khsieh@codeaurora.org,
+        abhinavk@codeaurora.org, chandanu@codeaurora.org,
+        groeck@chromium.org, varar@codeaurora.org, mka@chromium.org,
+        harigovi@codeaurora.org, rikard.falkeborn@gmail.com,
+        natechancellor@gmail.com, georgi.djakov@linaro.org,
+        akashast@codeaurora.org, parashar@codeaurora.org,
+        dianders@chromium.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [PATCH 25/31] memory: tegra30: convert to use devm_pm_opp_* API
+Date:   Sun,  3 Jan 2021 03:54:15 +0000
+Message-Id: <20210103035415.23600-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Use devm_pm_opp_* API to simplify code.
 
---hgoeyxu2tkjevfuo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/memory/tegra/tegra30-emc.c | 29 +++++++++--------------------
+ 1 file changed, 9 insertions(+), 20 deletions(-)
 
-Hi,
+diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
+index 44ac155936aa..a93d8c3629fe 100644
+--- a/drivers/memory/tegra/tegra30-emc.c
++++ b/drivers/memory/tegra/tegra30-emc.c
+@@ -1483,31 +1483,31 @@ static int tegra_emc_interconnect_init(struct tegra_emc *emc)
+ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
+ {
+ 	u32 hw_version = BIT(tegra_sku_info.soc_speedo_id);
+-	struct opp_table *clk_opp_table, *hw_opp_table;
++	struct opp_table *opp_table;
+ 	int err;
+ 
+-	clk_opp_table = dev_pm_opp_set_clkname(emc->dev, NULL);
+-	err = PTR_ERR_OR_ZERO(clk_opp_table);
++	opp_table = devm_pm_opp_set_clkname(emc->dev, NULL);
++	err = PTR_ERR_OR_ZERO(opp_table);
+ 	if (err) {
+ 		dev_err(emc->dev, "failed to set OPP clk: %d\n", err);
+ 		return err;
+ 	}
+ 
+-	hw_opp_table = dev_pm_opp_set_supported_hw(emc->dev, &hw_version, 1);
+-	err = PTR_ERR_OR_ZERO(hw_opp_table);
++	opp_table = devm_pm_opp_set_supported_hw(emc->dev, &hw_version, 1);
++	err = PTR_ERR_OR_ZERO(opp_table);
+ 	if (err) {
+ 		dev_err(emc->dev, "failed to set OPP supported HW: %d\n", err);
+-		goto put_clk_table;
++		return err;
+ 	}
+ 
+-	err = dev_pm_opp_of_add_table(emc->dev);
++	err = devm_pm_opp_of_add_table(emc->dev);
+ 	if (err) {
+ 		if (err == -ENODEV)
+ 			dev_err(emc->dev, "OPP table not found, please update your device tree\n");
+ 		else
+ 			dev_err(emc->dev, "failed to add OPP table: %d\n", err);
+ 
+-		goto put_hw_table;
++		return err;
+ 	}
+ 
+ 	dev_info(emc->dev, "OPP HW ver. 0x%x, current clock rate %lu MHz\n",
+@@ -1515,19 +1515,8 @@ static int tegra_emc_opp_table_init(struct tegra_emc *emc)
+ 
+ 	/* first dummy rate-set initializes voltage state */
+ 	err = dev_pm_opp_set_rate(emc->dev, clk_get_rate(emc->clk));
+-	if (err) {
++	if (err)
+ 		dev_err(emc->dev, "failed to initialize OPP clock: %d\n", err);
+-		goto remove_table;
+-	}
+-
+-	return 0;
+-
+-remove_table:
+-	dev_pm_opp_of_remove_table(emc->dev);
+-put_hw_table:
+-	dev_pm_opp_put_supported_hw(hw_opp_table);
+-put_clk_table:
+-	dev_pm_opp_put_clkname(clk_opp_table);
+ 
+ 	return err;
+ }
+-- 
+2.25.1
 
-On Wed, Dec 30, 2020 at 08:52:15PM +0000, Timon Baetz wrote:
-> Register for extcon notification and set charging current depending on
-> the detected cable type. Current values are taken from vendor kernel,
-> where most charger types end up setting 650mA [0].
->=20
-> Also enable and disable the CHARGER regulator based on extcon events.
->=20
-> [0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-ep=
-ic-4g-touch-sph-d710-exynos4210-dump/drivers/misc/max8997-muic.c#L1675-L1678
->=20
-> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
-> ---
-
-Thanks, queued to power-supply's for-next branch.
-
--- Sebastian
-
-> v6: dev_info() instead of dev_err().
-> v5: Use devm_regulator_get_optional(), dev_err() on failure.
->     dev_err() on extcon_get_edev_by_phandle() failure.
-> v4: Make extcon and charger-supply optional.
-> v3: Split MFD change.
->     return on regulator_set_current_limit() failure.
-> v2: Split DTS changes.
->     Add missing include.
->     Rename charger_data members.
->     Disable regulator on regulator_set_current_limit() failure.
->     Fix ret declaration.
->     Remove unneeded variables.
->     Don't dev_err() on deferral.
->     Get regulator and extcon from DTS.
->     Use devm_regulator_get().=20
->     Fix indentation.
->=20
->  drivers/power/supply/max8997_charger.c | 96 ++++++++++++++++++++++++++
->  1 file changed, 96 insertions(+)
->=20
-> diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/suppl=
-y/max8997_charger.c
-> index 1947af25879a..23df91ed2c72 100644
-> --- a/drivers/power/supply/max8997_charger.c
-> +++ b/drivers/power/supply/max8997_charger.c
-> @@ -6,12 +6,14 @@
->  //  MyungJoo Ham <myungjoo.ham@samsung.com>
-> =20
->  #include <linux/err.h>
-> +#include <linux/extcon.h>
->  #include <linux/module.h>
->  #include <linux/slab.h>
->  #include <linux/platform_device.h>
->  #include <linux/power_supply.h>
->  #include <linux/mfd/max8997.h>
->  #include <linux/mfd/max8997-private.h>
-> +#include <linux/regulator/consumer.h>
-> =20
->  /* MAX8997_REG_STATUS4 */
->  #define DCINOK_SHIFT		1
-> @@ -31,6 +33,10 @@ struct charger_data {
->  	struct device *dev;
->  	struct max8997_dev *iodev;
->  	struct power_supply *battery;
-> +	struct regulator *reg;
-> +	struct extcon_dev *edev;
-> +	struct notifier_block extcon_nb;
-> +	struct work_struct extcon_work;
->  };
-> =20
->  static enum power_supply_property max8997_battery_props[] =3D {
-> @@ -88,6 +94,67 @@ static int max8997_battery_get_property(struct power_s=
-upply *psy,
->  	return 0;
->  }
-> =20
-> +static void max8997_battery_extcon_evt_stop_work(void *data)
-> +{
-> +	struct charger_data *charger =3D data;
-> +
-> +	cancel_work_sync(&charger->extcon_work);
-> +}
-> +
-> +static void max8997_battery_extcon_evt_worker(struct work_struct *work)
-> +{
-> +	struct charger_data *charger =3D
-> +	    container_of(work, struct charger_data, extcon_work);
-> +	struct extcon_dev *edev =3D charger->edev;
-> +	int current_limit;
-> +
-> +	if (extcon_get_state(edev, EXTCON_CHG_USB_SDP) > 0) {
-> +		dev_dbg(charger->dev, "USB SDP charger is connected\n");
-> +		current_limit =3D 450000;
-> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_DCP) > 0) {
-> +		dev_dbg(charger->dev, "USB DCP charger is connected\n");
-> +		current_limit =3D 650000;
-> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_FAST) > 0) {
-> +		dev_dbg(charger->dev, "USB FAST charger is connected\n");
-> +		current_limit =3D 650000;
-> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_SLOW) > 0) {
-> +		dev_dbg(charger->dev, "USB SLOW charger is connected\n");
-> +		current_limit =3D 650000;
-> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_CDP) > 0) {
-> +		dev_dbg(charger->dev, "USB CDP charger is connected\n");
-> +		current_limit =3D 650000;
-> +	} else {
-> +		dev_dbg(charger->dev, "USB charger is diconnected\n");
-> +		current_limit =3D -1;
-> +	}
-> +
-> +	if (current_limit > 0) {
-> +		int ret =3D regulator_set_current_limit(charger->reg, current_limit, c=
-urrent_limit);
-> +
-> +		if (ret) {
-> +			dev_err(charger->dev, "failed to set current limit: %d\n", ret);
-> +			return;
-> +		}
-> +		ret =3D regulator_enable(charger->reg);
-> +		if (ret)
-> +			dev_err(charger->dev, "failed to enable regulator: %d\n", ret);
-> +	} else {
-> +		int ret  =3D regulator_disable(charger->reg);
-> +
-> +		if (ret)
-> +			dev_err(charger->dev, "failed to disable regulator: %d\n", ret);
-> +	}
-> +}
-> +
-> +static int max8997_battery_extcon_evt(struct notifier_block *nb,
-> +				unsigned long event, void *param)
-> +{
-> +	struct charger_data *charger =3D
-> +		container_of(nb, struct charger_data, extcon_nb);
-> +	schedule_work(&charger->extcon_work);
-> +	return NOTIFY_OK;
-> +}
-> +
->  static const struct power_supply_desc max8997_battery_desc =3D {
->  	.name		=3D "max8997_pmic",
->  	.type		=3D POWER_SUPPLY_TYPE_BATTERY,
-> @@ -170,6 +237,35 @@ static int max8997_battery_probe(struct platform_dev=
-ice *pdev)
->  		return PTR_ERR(charger->battery);
->  	}
-> =20
-> +	charger->reg =3D devm_regulator_get_optional(&pdev->dev, "charger");
-> +	if (IS_ERR(charger->reg)) {
-> +		if (PTR_ERR(charger->reg) =3D=3D -EPROBE_DEFER)
-> +			return -EPROBE_DEFER;
-> +		dev_info(&pdev->dev, "couldn't get charger regulator\n");
-> +	}
-> +	charger->edev =3D extcon_get_edev_by_phandle(&pdev->dev, 0);
-> +	if (IS_ERR(charger->edev)) {
-> +		if (PTR_ERR(charger->edev) =3D=3D -EPROBE_DEFER)
-> +			return -EPROBE_DEFER;
-> +		dev_info(charger->dev, "couldn't get extcon device\n");
-> +	}
-> +
-> +	if (!IS_ERR(charger->reg) && !IS_ERR(charger->edev)) {
-> +		INIT_WORK(&charger->extcon_work, max8997_battery_extcon_evt_worker);
-> +		ret =3D devm_add_action(&pdev->dev, max8997_battery_extcon_evt_stop_wo=
-rk, charger);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "failed to add extcon evt stop action: %d\n", ret=
-);
-> +			return ret;
-> +		}
-> +		charger->extcon_nb.notifier_call =3D max8997_battery_extcon_evt;
-> +		ret =3D devm_extcon_register_notifier_all(&pdev->dev, charger->edev,
-> +							&charger->extcon_nb);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "failed to register extcon notifier\n");
-> +			return ret;
-> +		};
-> +	}
-> +
->  	return 0;
->  }
-> =20
-> --=20
-> 2.25.1
->=20
->=20
-
---hgoeyxu2tkjevfuo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl/xI5wACgkQ2O7X88g7
-+pqLHhAAobZV0Wjf5ejo2tYNf+W2Qlmvls8NMsmSk7/X2kmiAN7FbHbWVq0SGeGX
-IX6ja3niIS1NTPlR8DpOYPVGIY7Z8KHvFKSXX8JkEqj9e9lXM1DnfQ1Od0tGiwpl
-9B5xSRk4kAUK9l/+GGxiP1jCHhSK+x/uboNrwMmcJV5mUAXoGtM7OxXQ2jnnUoEE
-Ya0G5+bJ/XM7OZkHApVmBcuHZa0g8ih3SVPbSi7petnt2aLDWypDBwAWvrxuTq4Q
-jSATQ1G7qMlrWNk6ybJzktBGvolnM+hnTLTFFHMYo7USP8aH5E/bVBDrnxvD0bpk
-c+l2W2OjUhQxHIg7p8zbibexOndDZmGEgky7buHs/o5y8gAPR8C3req5uJYw4cIs
-/CjceYG5RXzaGNgjHR9/5mWGPasz/gq7F4qDeVtOT9/rkHHfRjOOquyhrkizhamh
-S6ZxRhLN1tSUCyt38CZLfClUac8gt/8Y3ahrIEEmU8WfSS/XJCiT/uoemnYZCedy
-ioA9Z8DqxXioFKRXYp+7EuPDFqzSU0pCa/0KBGG+A5BLvlf+VCRLVtA6u58US2ul
-n1qRxlcyam3p6Kf6xIR+pkD7fDYGfN3R7wupjAIbOrpApoGfQV1ONdYZdjB0VyNI
-A9FXjBuC52XV8N4Vwk6rYbb6n7KAI6inYpBXbMmp4h35b5dIehg=
-=Qfsr
------END PGP SIGNATURE-----
-
---hgoeyxu2tkjevfuo--
