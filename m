@@ -2,77 +2,86 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9123FC433E9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF82C433E0
 	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Jan 2021 16:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67FD022211
+	by mail.kernel.org (Postfix) with ESMTP id 451C321D93
 	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Jan 2021 16:11:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbhACQLb (ORCPT
+        id S1726563AbhACQLR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 3 Jan 2021 11:11:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54670 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbhACQLb (ORCPT
+        Sun, 3 Jan 2021 11:11:17 -0500
+Received: from mail-wm1-f51.google.com ([209.85.128.51]:35517 "EHLO
+        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbhACQLR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 3 Jan 2021 11:11:31 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 69C18208D5;
-        Sun,  3 Jan 2021 16:10:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609690250;
-        bh=7pwVwcDWI1J8DYef1FtdS8qF4NjeZGVQwVyJQpkNTrU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mKtyvKfDJHlG44T9INOu7vi8An13YGcuMRTwR/BOldkmG2G+rOWIKDxi1adEtr8Jx
-         BZ8mQe0xZ3QTd7QrcoCN9HIlQ/aivwvynqaapPJxPS5cHHn54oY4X8PQ1Fx28WCdLy
-         C0nolhe1mJzk2OIxhluV3xYCYfMLVaiiTou25AkVWPG1OSYwMcLy4sOf0FWZdxeftU
-         DaJ8fiWTqp4LFxRFS78Ec9DLEAv32/UXuL7M+KeRDsyyaRvvPOs4zQ7lpTENxZjU7Z
-         /5sFtRWCrIuvRPDK66SX6EHhq7pyZcsEzw/9ZgaAtnbBwPysBZX2/R/w2cM6nQ2HOa
-         tguBaEhG/iJkw==
+        Sun, 3 Jan 2021 11:11:17 -0500
+Received: by mail-wm1-f51.google.com with SMTP id e25so15625082wme.0;
+        Sun, 03 Jan 2021 08:11:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=L/ciLi8sFKw3kDB1t38D/+A3+H6/u8IDPE39NSlBYpI=;
+        b=ADM46zbgMx4p1rWMyQG08DhDtY+yxJib7Doar+FFKLo175OIS6drAIbvk0oRvxOwH/
+         vEPNAyv7T/fc4GCA8o4oYGxVATn/k+2A3PHmDl458S7JlSZjVyLnd7LcU1xj6XXmm9hp
+         jYaBX1Bf9s3I6mOp0ZrkzV1nAvSKKglXGGFB9b9n/7946TJGxQsC5Tb+fGh0U0GLeON/
+         rU07GaM/vxwPVDsxLY8gEiTZXj74E7L6dINX8dTjRAGzF2guJPL+IV+c4X3q8OG2oSJC
+         /SQwiv3EtSvTWUyWRoV6IcAKI/euuk/7LPigIm5t0v6u0rf+F3M3RF0Trur/96xaRJ8u
+         mkgA==
+X-Gm-Message-State: AOAM53208pphRTCtp5b2p5MDThRl5dBpBIIIrK7SXkGRtvkGgmzCwnxt
+        MRuW6UjX8pG/IlI5T7WlI04=
+X-Google-Smtp-Source: ABdhPJzc41yNQwH32ukm4bbyuQMc9Fj8WDh5NhtQItcsvZZNTBiwYSmi5iJAVgaXezDzVkN1gS2NcQ==
+X-Received: by 2002:a1c:a9cc:: with SMTP id s195mr23495854wme.97.1609690234844;
+        Sun, 03 Jan 2021 08:10:34 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id e17sm84923543wrw.84.2021.01.03.08.10.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Jan 2021 08:10:33 -0800 (PST)
+Date:   Sun, 3 Jan 2021 17:10:32 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Pankaj Dubey <pankaj.dubey@samsung.com>,
+To:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Arnd Bergmann <arnd@arndb.de>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: (subset) [PATCH v2 0/4] soc: samsung: exynos-chipid and asv improvements
-Date:   Sun,  3 Jan 2021 17:10:44 +0100
-Message-Id: <160969021293.28081.2430913792988475716.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201207190517.262051-1-krzk@kernel.org>
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] soc: samsung: exynos-asv: don't defer early on
+ not-supported SoCs
+Message-ID: <20210103161032.GA7799@kozik-lap>
 References: <20201207190517.262051-1-krzk@kernel.org>
+ <20201207190517.262051-2-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201207190517.262051-2-krzk@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 7 Dec 2020 20:05:13 +0100, Krzysztof Kozlowski wrote:
-> Changes since v1:
-> 1. Drop patch "soc: samsung: exynos-chipid: initialize later - with
->    arch_initcall" which is now superseded by convertin to a driver.
-> 2. Include Marek's patch, just for the reference and rebase.
-> 3. Add patch "soc: samsung: exynos-asv: handle reading revision register
->    error".
-> 4. Add patch "soc: samsung: exynos-chipid: convert to driver and merge
->    exynos-asv".
+On Mon, Dec 07, 2020 at 08:05:14PM +0100, Krzysztof Kozlowski wrote:
+> From: Marek Szyprowski <m.szyprowski@samsung.com>
 > 
-> [...]
+> Check if the SoC is really supported before gathering the needed
+> resources. This fixes endless deferred probe on some SoCs other than
+> Exynos5422 (like Exynos5410).
+> 
+> Fixes: 5ea428595cc5 ("soc: samsung: Add Exynos Adaptive Supply Voltage driver")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/soc/samsung/exynos-asv.c | 10 +++++-----
 
-Applied, thanks!
-
-[4/4] soc: samsung: exynos-chipid: convert to driver and merge exynos-asv
-      commit: 352bfbb3e0230c96b2bce00d2ac3f0de303cc7b6
+Thanks, applied.
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzk@kernel.org>
+Krzysztof
+
