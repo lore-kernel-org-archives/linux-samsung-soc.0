@@ -2,68 +2,266 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3303BC433E9
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  2 Jan 2021 22:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB578C43381
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Jan 2021 01:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04D1F207A1
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  2 Jan 2021 22:01:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C03D7208C3
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Jan 2021 01:54:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbhABWBV (ORCPT
+        id S1726948AbhACBy1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 2 Jan 2021 17:01:21 -0500
-Received: from helcar.hmeau.com ([216.24.177.18]:37252 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726678AbhABWBU (ORCPT
+        Sat, 2 Jan 2021 20:54:27 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48456 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbhACBy1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 2 Jan 2021 17:01:20 -0500
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
-        id 1kvowk-0000U0-Ie; Sun, 03 Jan 2021 09:00:27 +1100
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sun, 03 Jan 2021 09:00:26 +1100
-Date:   Sun, 3 Jan 2021 09:00:26 +1100
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Vladimir Zapolskiy <vz@mleia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        Sat, 2 Jan 2021 20:54:27 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id E4D231F410AD
+Received: by earth.universe (Postfix, from userid 1000)
+        id DC47C3C0C94; Sun,  3 Jan 2021 02:53:41 +0100 (CET)
+Date:   Sun, 3 Jan 2021 02:53:41 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Timon Baetz <timon.baetz@protonmail.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] MAINTAINERS: crypto: s5p-sss: drop Kamil Konieczny
-Message-ID: <20210102220026.GB12767@gondor.apana.org.au>
-References: <20201207165521.125129-1-krzk@kernel.org>
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v6 3/8] power: supply: max8997_charger: Set CHARGER
+ current limit
+Message-ID: <20210103015341.atzgzdk4orcp2nrx@earth.universe>
+References: <20201230205139.1812366-1-timon.baetz@protonmail.com>
+ <20201230205139.1812366-3-timon.baetz@protonmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="hgoeyxu2tkjevfuo"
 Content-Disposition: inline
-In-Reply-To: <20201207165521.125129-1-krzk@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20201230205139.1812366-3-timon.baetz@protonmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Dec 07, 2020 at 05:55:20PM +0100, Krzysztof Kozlowski wrote:
-> E-mails to Kamil Konieczny to his Samsung address bounce with 550 (User
-> unknown).  Kamil no longer takes care about Samsung S5P SSS driver so
-> remove the invalid email address from:
->  - mailmap,
->  - bindings maintainer entries,
->  - maintainers entry for S5P Security Subsystem crypto accelerator.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .mailmap                                                      | 1 -
->  Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml | 1 -
->  Documentation/devicetree/bindings/crypto/samsung-sss.yaml     | 1 -
->  MAINTAINERS                                                   | 1 -
->  4 files changed, 4 deletions(-)
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--hgoeyxu2tkjevfuo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Wed, Dec 30, 2020 at 08:52:15PM +0000, Timon Baetz wrote:
+> Register for extcon notification and set charging current depending on
+> the detected cable type. Current values are taken from vendor kernel,
+> where most charger types end up setting 650mA [0].
+>=20
+> Also enable and disable the CHARGER regulator based on extcon events.
+>=20
+> [0] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-s2-ep=
+ic-4g-touch-sph-d710-exynos4210-dump/drivers/misc/max8997-muic.c#L1675-L1678
+>=20
+> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
+> ---
+
+Thanks, queued to power-supply's for-next branch.
+
+-- Sebastian
+
+> v6: dev_info() instead of dev_err().
+> v5: Use devm_regulator_get_optional(), dev_err() on failure.
+>     dev_err() on extcon_get_edev_by_phandle() failure.
+> v4: Make extcon and charger-supply optional.
+> v3: Split MFD change.
+>     return on regulator_set_current_limit() failure.
+> v2: Split DTS changes.
+>     Add missing include.
+>     Rename charger_data members.
+>     Disable regulator on regulator_set_current_limit() failure.
+>     Fix ret declaration.
+>     Remove unneeded variables.
+>     Don't dev_err() on deferral.
+>     Get regulator and extcon from DTS.
+>     Use devm_regulator_get().=20
+>     Fix indentation.
+>=20
+>  drivers/power/supply/max8997_charger.c | 96 ++++++++++++++++++++++++++
+>  1 file changed, 96 insertions(+)
+>=20
+> diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/suppl=
+y/max8997_charger.c
+> index 1947af25879a..23df91ed2c72 100644
+> --- a/drivers/power/supply/max8997_charger.c
+> +++ b/drivers/power/supply/max8997_charger.c
+> @@ -6,12 +6,14 @@
+>  //  MyungJoo Ham <myungjoo.ham@samsung.com>
+> =20
+>  #include <linux/err.h>
+> +#include <linux/extcon.h>
+>  #include <linux/module.h>
+>  #include <linux/slab.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/power_supply.h>
+>  #include <linux/mfd/max8997.h>
+>  #include <linux/mfd/max8997-private.h>
+> +#include <linux/regulator/consumer.h>
+> =20
+>  /* MAX8997_REG_STATUS4 */
+>  #define DCINOK_SHIFT		1
+> @@ -31,6 +33,10 @@ struct charger_data {
+>  	struct device *dev;
+>  	struct max8997_dev *iodev;
+>  	struct power_supply *battery;
+> +	struct regulator *reg;
+> +	struct extcon_dev *edev;
+> +	struct notifier_block extcon_nb;
+> +	struct work_struct extcon_work;
+>  };
+> =20
+>  static enum power_supply_property max8997_battery_props[] =3D {
+> @@ -88,6 +94,67 @@ static int max8997_battery_get_property(struct power_s=
+upply *psy,
+>  	return 0;
+>  }
+> =20
+> +static void max8997_battery_extcon_evt_stop_work(void *data)
+> +{
+> +	struct charger_data *charger =3D data;
+> +
+> +	cancel_work_sync(&charger->extcon_work);
+> +}
+> +
+> +static void max8997_battery_extcon_evt_worker(struct work_struct *work)
+> +{
+> +	struct charger_data *charger =3D
+> +	    container_of(work, struct charger_data, extcon_work);
+> +	struct extcon_dev *edev =3D charger->edev;
+> +	int current_limit;
+> +
+> +	if (extcon_get_state(edev, EXTCON_CHG_USB_SDP) > 0) {
+> +		dev_dbg(charger->dev, "USB SDP charger is connected\n");
+> +		current_limit =3D 450000;
+> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_DCP) > 0) {
+> +		dev_dbg(charger->dev, "USB DCP charger is connected\n");
+> +		current_limit =3D 650000;
+> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_FAST) > 0) {
+> +		dev_dbg(charger->dev, "USB FAST charger is connected\n");
+> +		current_limit =3D 650000;
+> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_SLOW) > 0) {
+> +		dev_dbg(charger->dev, "USB SLOW charger is connected\n");
+> +		current_limit =3D 650000;
+> +	} else if (extcon_get_state(edev, EXTCON_CHG_USB_CDP) > 0) {
+> +		dev_dbg(charger->dev, "USB CDP charger is connected\n");
+> +		current_limit =3D 650000;
+> +	} else {
+> +		dev_dbg(charger->dev, "USB charger is diconnected\n");
+> +		current_limit =3D -1;
+> +	}
+> +
+> +	if (current_limit > 0) {
+> +		int ret =3D regulator_set_current_limit(charger->reg, current_limit, c=
+urrent_limit);
+> +
+> +		if (ret) {
+> +			dev_err(charger->dev, "failed to set current limit: %d\n", ret);
+> +			return;
+> +		}
+> +		ret =3D regulator_enable(charger->reg);
+> +		if (ret)
+> +			dev_err(charger->dev, "failed to enable regulator: %d\n", ret);
+> +	} else {
+> +		int ret  =3D regulator_disable(charger->reg);
+> +
+> +		if (ret)
+> +			dev_err(charger->dev, "failed to disable regulator: %d\n", ret);
+> +	}
+> +}
+> +
+> +static int max8997_battery_extcon_evt(struct notifier_block *nb,
+> +				unsigned long event, void *param)
+> +{
+> +	struct charger_data *charger =3D
+> +		container_of(nb, struct charger_data, extcon_nb);
+> +	schedule_work(&charger->extcon_work);
+> +	return NOTIFY_OK;
+> +}
+> +
+>  static const struct power_supply_desc max8997_battery_desc =3D {
+>  	.name		=3D "max8997_pmic",
+>  	.type		=3D POWER_SUPPLY_TYPE_BATTERY,
+> @@ -170,6 +237,35 @@ static int max8997_battery_probe(struct platform_dev=
+ice *pdev)
+>  		return PTR_ERR(charger->battery);
+>  	}
+> =20
+> +	charger->reg =3D devm_regulator_get_optional(&pdev->dev, "charger");
+> +	if (IS_ERR(charger->reg)) {
+> +		if (PTR_ERR(charger->reg) =3D=3D -EPROBE_DEFER)
+> +			return -EPROBE_DEFER;
+> +		dev_info(&pdev->dev, "couldn't get charger regulator\n");
+> +	}
+> +	charger->edev =3D extcon_get_edev_by_phandle(&pdev->dev, 0);
+> +	if (IS_ERR(charger->edev)) {
+> +		if (PTR_ERR(charger->edev) =3D=3D -EPROBE_DEFER)
+> +			return -EPROBE_DEFER;
+> +		dev_info(charger->dev, "couldn't get extcon device\n");
+> +	}
+> +
+> +	if (!IS_ERR(charger->reg) && !IS_ERR(charger->edev)) {
+> +		INIT_WORK(&charger->extcon_work, max8997_battery_extcon_evt_worker);
+> +		ret =3D devm_add_action(&pdev->dev, max8997_battery_extcon_evt_stop_wo=
+rk, charger);
+> +		if (ret) {
+> +			dev_err(&pdev->dev, "failed to add extcon evt stop action: %d\n", ret=
+);
+> +			return ret;
+> +		}
+> +		charger->extcon_nb.notifier_call =3D max8997_battery_extcon_evt;
+> +		ret =3D devm_extcon_register_notifier_all(&pdev->dev, charger->edev,
+> +							&charger->extcon_nb);
+> +		if (ret) {
+> +			dev_err(&pdev->dev, "failed to register extcon notifier\n");
+> +			return ret;
+> +		};
+> +	}
+> +
+>  	return 0;
+>  }
+> =20
+> --=20
+> 2.25.1
+>=20
+>=20
+
+--hgoeyxu2tkjevfuo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl/xI5wACgkQ2O7X88g7
++pqLHhAAobZV0Wjf5ejo2tYNf+W2Qlmvls8NMsmSk7/X2kmiAN7FbHbWVq0SGeGX
+IX6ja3niIS1NTPlR8DpOYPVGIY7Z8KHvFKSXX8JkEqj9e9lXM1DnfQ1Od0tGiwpl
+9B5xSRk4kAUK9l/+GGxiP1jCHhSK+x/uboNrwMmcJV5mUAXoGtM7OxXQ2jnnUoEE
+Ya0G5+bJ/XM7OZkHApVmBcuHZa0g8ih3SVPbSi7petnt2aLDWypDBwAWvrxuTq4Q
+jSATQ1G7qMlrWNk6ybJzktBGvolnM+hnTLTFFHMYo7USP8aH5E/bVBDrnxvD0bpk
+c+l2W2OjUhQxHIg7p8zbibexOndDZmGEgky7buHs/o5y8gAPR8C3req5uJYw4cIs
+/CjceYG5RXzaGNgjHR9/5mWGPasz/gq7F4qDeVtOT9/rkHHfRjOOquyhrkizhamh
+S6ZxRhLN1tSUCyt38CZLfClUac8gt/8Y3ahrIEEmU8WfSS/XJCiT/uoemnYZCedy
+ioA9Z8DqxXioFKRXYp+7EuPDFqzSU0pCa/0KBGG+A5BLvlf+VCRLVtA6u58US2ul
+n1qRxlcyam3p6Kf6xIR+pkD7fDYGfN3R7wupjAIbOrpApoGfQV1ONdYZdjB0VyNI
+A9FXjBuC52XV8N4Vwk6rYbb6n7KAI6inYpBXbMmp4h35b5dIehg=
+=Qfsr
+-----END PGP SIGNATURE-----
+
+--hgoeyxu2tkjevfuo--
