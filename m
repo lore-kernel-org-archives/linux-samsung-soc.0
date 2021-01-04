@@ -2,133 +2,101 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06589C4332B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 10:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B84C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 13:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DAB7A221F9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 10:27:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C63221BE5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 13:53:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbhADK1U (ORCPT
+        id S1726896AbhADNxE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Jan 2021 05:27:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50112 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbhADK1U (ORCPT
+        Mon, 4 Jan 2021 08:53:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40322 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726029AbhADNxE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Jan 2021 05:27:20 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4290C061794;
-        Mon,  4 Jan 2021 02:26:39 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id o19so63176893lfo.1;
-        Mon, 04 Jan 2021 02:26:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=Et4nxJuio4ZNTBtPlqRIFRZRUkaFWNJHBrb9tgeeeJc=;
-        b=qfqpLaDd16YyzQqx2QvpDrp+6se71QDteD8pteZxfq7GPL9UDayKnrFSnACESCR3vY
-         6NFiRNhr+9pa2+oqzHSdzyFV1wVgAireNDBuNjf5CRoyf8QqS7cd7KI+HLQOfAUdXOT6
-         CcUJSDWSjbrsvIhjcbU6OBqe8o7O4lsqY5rkGb0XzF7i5i7dS+3BehPAPe9Ke+w2/slA
-         nckodocSocGYhHsyF2TpLjAdcn0Mdvhoacl+f86Zg5JZthpl/z/UAcixm5IIHKWFIakG
-         5E0dK8qUp88WJ6wmwIsSENrS4g7BOcXyo/vI+g5foXwfP4k01JYO9gkjfsw6xtgGOq1F
-         AxeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=Et4nxJuio4ZNTBtPlqRIFRZRUkaFWNJHBrb9tgeeeJc=;
-        b=PQkPgz3NtEo8r9E4vPpeO5vhDV1PtiZ++5mDAWpXzz6VYwBaWoz52t8swSPFYpwi0P
-         aCB6x8hqp9fdIPXRsmxrBiylKQSqvC9XEFEbf6Fy6UBIIiG6zzOnylhgOjcQgHKrhnyy
-         Z28n5O3EbGkOcnO1NWnbPD8EzsauRjfw4q4QD3z+z5EzZ6bYVcDUOZXBq4WQgKoN8GQ0
-         0xjZFdJhpCC2NK0ahZoPaDKp23gOb1qOBSkIH5WdNiGQ2iH94tqfje5TsU1KWrR6isO3
-         7QpII41o7OFIUWPQm+ri9klOXHglP18A9g2rW9iECKou5pY5e/y+CPsBahIb3sLzzQfE
-         QJ6g==
-X-Gm-Message-State: AOAM5300RbMkWogYvsoShBM1aRqQKWX1pe+JLukMsePpPvkx/4MwLVku
-        USwkp8yy4QYJohWNQ+ofxdpcOroketbxOgreSbusCd9yP1Q=
-X-Google-Smtp-Source: ABdhPJwrAY/Wb2Zq4TlZIihhl3On2eBpe9OQ90H5lTfXBVG3owYbx3F8E7q1iRtIY9G7ahLsLqBtDHkKFUg309Tr01k=
-X-Received: by 2002:a2e:8084:: with SMTP id i4mr37333079ljg.291.1609755998142;
- Mon, 04 Jan 2021 02:26:38 -0800 (PST)
-MIME-Version: 1.0
-References: <20201230205139.1812366-1-timon.baetz@protonmail.com>
-In-Reply-To: <20201230205139.1812366-1-timon.baetz@protonmail.com>
-Reply-To: cwchoi00@gmail.com
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-Date:   Mon, 4 Jan 2021 19:26:01 +0900
-Message-ID: <CAGTfZH2WCamOtih1Gk5W8uJ2ewEfdFQegsPeWp0dSNYcUt7QLw@mail.gmail.com>
-Subject: Re: [PATCH v6 1/8] extcon: max8997: Add CHGINS and CHGRM interrupt handling
+        Mon, 4 Jan 2021 08:53:04 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9B481207B1;
+        Mon,  4 Jan 2021 13:52:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1609768343;
+        bh=WGYF7SlhXlucOWrieoYG3cJVW6/AxFwCogu0WarBMJU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=d/wYJk7SVuVVAtZC7qLGTgDaw11H1+rJfcvI8K7vJiAXWKIii/jsSsDFnpG/THXED
+         IpCeA+ZxKspqCrCBdzoGyZKXECvByHrrnOnbjTdxwuNGh+uQtOgAUE9IbKj1CL0Jve
+         /qo5lYEyKgBZIXIfacQtJHylkpBtSneFoFECP3NtfrbAD+0so+6R6GVw/KB652h0wy
+         RJU+FfEbpKXFWhbUSKk+iaTM/OPqmQH5ku9uZ4XbM4OiCUXYqhpRpVsRfzNcv5nvqE
+         VQvCb5PoQd6li7omJ45xXKfsFSGIq+fMLy55UWXTMteVy49YV7564ItNoSRTYuf3h4
+         xDaZEOb3D0SHw==
+Date:   Mon, 4 Jan 2021 13:51:56 +0000
+From:   Mark Brown <broonie@kernel.org>
 To:     Timon Baetz <timon.baetz@protonmail.com>
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         MyungJoo Ham <myungjoo.ham@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Lee Jones <lee.jones@linaro.org>,
         Sebastian Reichel <sre@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v6 2/8] regulator: dt-bindings: Document max8997-pmic
+ nodes
+Message-ID: <20210104135156.GB5645@sirena.org.uk>
+References: <20201230205139.1812366-1-timon.baetz@protonmail.com>
+ <20201230205139.1812366-2-timon.baetz@protonmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="uQr8t48UFsdbeI+V"
+Content-Disposition: inline
+In-Reply-To: <20201230205139.1812366-2-timon.baetz@protonmail.com>
+X-Cookie: Stupidity is its own reward.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 31, 2020 at 5:54 AM Timon Baetz <timon.baetz@protonmail.com> wrote:
->
-> This allows the MAX8997 charger to set the current limit depending on
-> the detected extcon charger type.
->
-> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
-> ---
-> v6: No change.
-> v5: No change.
-> v4: No change.
-> v3: No change.
-> v2: Remove empty line.
->
->  drivers/extcon/extcon-max8997.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
-> index 337b0eea4e62..e1408075ef7d 100644
-> --- a/drivers/extcon/extcon-max8997.c
-> +++ b/drivers/extcon/extcon-max8997.c
-> @@ -44,6 +44,8 @@ static struct max8997_muic_irq muic_irqs[] = {
->         { MAX8997_MUICIRQ_ChgDetRun,    "muic-CHGDETRUN" },
->         { MAX8997_MUICIRQ_ChgTyp,       "muic-CHGTYP" },
->         { MAX8997_MUICIRQ_OVP,          "muic-OVP" },
-> +       { MAX8997_PMICIRQ_CHGINS,       "pmic-CHGINS" },
-> +       { MAX8997_PMICIRQ_CHGRM,        "pmic-CHGRM" },
->  };
->
->  /* Define supported cable type */
-> @@ -538,6 +540,8 @@ static void max8997_muic_irq_work(struct work_struct *work)
->         case MAX8997_MUICIRQ_DCDTmr:
->         case MAX8997_MUICIRQ_ChgDetRun:
->         case MAX8997_MUICIRQ_ChgTyp:
-> +       case MAX8997_PMICIRQ_CHGINS:
-> +       case MAX8997_PMICIRQ_CHGRM:
->                 /* Handle charger cable */
->                 ret = max8997_muic_chg_handler(info);
->                 break;
-> --
-> 2.25.1
->
->
 
-Applied it. Thans.
+--uQr8t48UFsdbeI+V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Wed, Dec 30, 2020 at 08:52:07PM +0000, Timon Baetz wrote:
 
--- 
-Best Regards,
-Chanwoo Choi
+> +- charger: Node for configuring the charger driver.
+> +  Required properties:
+> +  - compatible: "maxim,max8997-battery"
+> +  Optional properties:
+> +  - extcon: extcon specifier for charging events
+> +  - charger-supply: regulator node for charging current
+> +
+> +- muic: Node used only by extcon consumers.
+> +  Required properties:
+> +  - compatible: "maxim,max8997-muic"
+
+Why do these need to appear in the DT binding?  We know these features
+are there simply from knowing this is a max8997.
+
+--uQr8t48UFsdbeI+V
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/zHXsACgkQJNaLcl1U
+h9Bpuwf+Lbwwbn3A88GywPIb5p6fVae+jvfJHuyrCmnosfLzRuc3P72FyihL2Ssk
+d8+57ttupGJ+sZqgJK+Ih9Eu4mMrsJbScy4O5WyFQfGJ3PQPpWlsHIq8DEUDlEy/
+Ltf5HzGezxfmsC2nhapHNzFE2cbnn+AKmeK+rN2DxeYvuHFlfXNEdWSdeNK/zDeF
+aUNAik0aInnufO7MOE1cqfgWfFxEnin6wxCGKOu2aCdcdli9aE536mwYz9WZc34j
+vNbTxOcLDqWo+dtNtp1aOuRqX3kMO+X1SCBEYPymOwwgqt5Yo9179LOZNvqMN2E9
+E+FL/m5IwwLbH06CDjp/ZT+aoF4psw==
+=tIIA
+-----END PGP SIGNATURE-----
+
+--uQr8t48UFsdbeI+V--
