@@ -2,82 +2,133 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3921EC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 10:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06589C4332B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 10:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D179420780
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 10:03:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAB7A221F9
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 10:27:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbhADKDF (ORCPT
+        id S1726525AbhADK1U (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Jan 2021 05:03:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47302 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726465AbhADKDE (ORCPT
+        Mon, 4 Jan 2021 05:27:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50112 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726258AbhADK1U (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Jan 2021 05:03:04 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AC53B20780;
-        Mon,  4 Jan 2021 10:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1609754544;
-        bh=DTQgfinQxH3xCqywDfhY454jpPb5ATM8H7eYA7h4GXk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WWT0quJnpKJqNAm4nX+AAQTwVQrJWVBZv+YuI81WWr07jSpyESECSAPQ+0VkOnair
-         lujVi/C2OSKQRhdbVLq8aLrCd4VKHpaikcwUWypNfK/aNfQfIchbD/KpwB60qyvqLf
-         rcYl4Dy2McyP6wEMdkKey1k23Irij6Ky0xiAPXBI=
-Date:   Mon, 4 Jan 2021 11:03:50 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Tamseel Shams <m.shams@samsung.com>
-Cc:     kgene@kernel.org, krzk@kernel.org, jslaby@suse.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alim.akhtar@samsung.com
-Subject: Re: [PATCH] serial: samsung: Checks the return value of function
-Message-ID: <X/LoBqoVf9H6wI8U@kroah.com>
-References: <CGME20210104082958epcas5p12c5c0e78dec7f106375b4f507a3b152b@epcas5p1.samsung.com>
- <20210104083551.1393-1-m.shams@samsung.com>
+        Mon, 4 Jan 2021 05:27:20 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4290C061794;
+        Mon,  4 Jan 2021 02:26:39 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id o19so63176893lfo.1;
+        Mon, 04 Jan 2021 02:26:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=Et4nxJuio4ZNTBtPlqRIFRZRUkaFWNJHBrb9tgeeeJc=;
+        b=qfqpLaDd16YyzQqx2QvpDrp+6se71QDteD8pteZxfq7GPL9UDayKnrFSnACESCR3vY
+         6NFiRNhr+9pa2+oqzHSdzyFV1wVgAireNDBuNjf5CRoyf8QqS7cd7KI+HLQOfAUdXOT6
+         CcUJSDWSjbrsvIhjcbU6OBqe8o7O4lsqY5rkGb0XzF7i5i7dS+3BehPAPe9Ke+w2/slA
+         nckodocSocGYhHsyF2TpLjAdcn0Mdvhoacl+f86Zg5JZthpl/z/UAcixm5IIHKWFIakG
+         5E0dK8qUp88WJ6wmwIsSENrS4g7BOcXyo/vI+g5foXwfP4k01JYO9gkjfsw6xtgGOq1F
+         AxeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=Et4nxJuio4ZNTBtPlqRIFRZRUkaFWNJHBrb9tgeeeJc=;
+        b=PQkPgz3NtEo8r9E4vPpeO5vhDV1PtiZ++5mDAWpXzz6VYwBaWoz52t8swSPFYpwi0P
+         aCB6x8hqp9fdIPXRsmxrBiylKQSqvC9XEFEbf6Fy6UBIIiG6zzOnylhgOjcQgHKrhnyy
+         Z28n5O3EbGkOcnO1NWnbPD8EzsauRjfw4q4QD3z+z5EzZ6bYVcDUOZXBq4WQgKoN8GQ0
+         0xjZFdJhpCC2NK0ahZoPaDKp23gOb1qOBSkIH5WdNiGQ2iH94tqfje5TsU1KWrR6isO3
+         7QpII41o7OFIUWPQm+ri9klOXHglP18A9g2rW9iECKou5pY5e/y+CPsBahIb3sLzzQfE
+         QJ6g==
+X-Gm-Message-State: AOAM5300RbMkWogYvsoShBM1aRqQKWX1pe+JLukMsePpPvkx/4MwLVku
+        USwkp8yy4QYJohWNQ+ofxdpcOroketbxOgreSbusCd9yP1Q=
+X-Google-Smtp-Source: ABdhPJwrAY/Wb2Zq4TlZIihhl3On2eBpe9OQ90H5lTfXBVG3owYbx3F8E7q1iRtIY9G7ahLsLqBtDHkKFUg309Tr01k=
+X-Received: by 2002:a2e:8084:: with SMTP id i4mr37333079ljg.291.1609755998142;
+ Mon, 04 Jan 2021 02:26:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210104083551.1393-1-m.shams@samsung.com>
+References: <20201230205139.1812366-1-timon.baetz@protonmail.com>
+In-Reply-To: <20201230205139.1812366-1-timon.baetz@protonmail.com>
+Reply-To: cwchoi00@gmail.com
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Date:   Mon, 4 Jan 2021 19:26:01 +0900
+Message-ID: <CAGTfZH2WCamOtih1Gk5W8uJ2ewEfdFQegsPeWp0dSNYcUt7QLw@mail.gmail.com>
+Subject: Re: [PATCH v6 1/8] extcon: max8997: Add CHGINS and CHGRM interrupt handling
+To:     Timon Baetz <timon.baetz@protonmail.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 04, 2021 at 02:05:51PM +0530, Tamseel Shams wrote:
-> "uart_add_one_port" function call may fail and return
-> some error code, so adding a check for return value.
-> If it is returning some error code, then displaying the
-> result and returning back from there.
-> 
-> Signed-off-by: Tamseel Shams <m.shams@samsung.com>
+On Thu, Dec 31, 2020 at 5:54 AM Timon Baetz <timon.baetz@protonmail.com> wrote:
+>
+> This allows the MAX8997 charger to set the current limit depending on
+> the detected extcon charger type.
+>
+> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
 > ---
->  drivers/tty/serial/samsung_tty.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> index 6ef614d8648c..a220ba166ffe 100644
-> --- a/drivers/tty/serial/samsung_tty.c
-> +++ b/drivers/tty/serial/samsung_tty.c
-> @@ -2072,7 +2072,11 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
->  	}
->  
->  	dev_dbg(&pdev->dev, "%s: adding port\n", __func__);
-> -	uart_add_one_port(&s3c24xx_uart_drv, &ourport->port);
-> +	ret = uart_add_one_port(&s3c24xx_uart_drv, &ourport->port);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "Failed to add uart port, err %d\n", ret);
-> +		return ret;
+> v6: No change.
+> v5: No change.
+> v4: No change.
+> v3: No change.
+> v2: Remove empty line.
+>
+>  drivers/extcon/extcon-max8997.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
+> index 337b0eea4e62..e1408075ef7d 100644
+> --- a/drivers/extcon/extcon-max8997.c
+> +++ b/drivers/extcon/extcon-max8997.c
+> @@ -44,6 +44,8 @@ static struct max8997_muic_irq muic_irqs[] = {
+>         { MAX8997_MUICIRQ_ChgDetRun,    "muic-CHGDETRUN" },
+>         { MAX8997_MUICIRQ_ChgTyp,       "muic-CHGTYP" },
+>         { MAX8997_MUICIRQ_OVP,          "muic-OVP" },
+> +       { MAX8997_PMICIRQ_CHGINS,       "pmic-CHGINS" },
+> +       { MAX8997_PMICIRQ_CHGRM,        "pmic-CHGRM" },
+>  };
+>
+>  /* Define supported cable type */
+> @@ -538,6 +540,8 @@ static void max8997_muic_irq_work(struct work_struct *work)
+>         case MAX8997_MUICIRQ_DCDTmr:
+>         case MAX8997_MUICIRQ_ChgDetRun:
+>         case MAX8997_MUICIRQ_ChgTyp:
+> +       case MAX8997_PMICIRQ_CHGINS:
+> +       case MAX8997_PMICIRQ_CHGRM:
+>                 /* Handle charger cable */
+>                 ret = max8997_muic_chg_handler(info);
+>                 break;
+> --
+> 2.25.1
+>
+>
 
-Why are you not unwinding the other logic that happened above?  If this
-fails, you need to properly do that as well, otherwise the driver is
-still registered, right?
+Applied it. Thans.
 
-thanks,
 
-greg k-h
+-- 
+Best Regards,
+Chanwoo Choi
