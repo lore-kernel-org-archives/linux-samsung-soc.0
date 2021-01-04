@@ -2,62 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5439C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 07:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A766C43381
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 07:34:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94B1721D93
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 07:34:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 490392087E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 07:34:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725616AbhADHeL (ORCPT
+        id S1726019AbhADHeX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Jan 2021 02:34:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51400 "EHLO
+        Mon, 4 Jan 2021 02:34:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726019AbhADHeK (ORCPT
+        with ESMTP id S1727349AbhADHeW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Jan 2021 02:34:10 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE0EC0617A0
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  3 Jan 2021 23:32:50 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id w6so15991305pfu.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Jan 2021 23:32:49 -0800 (PST)
+        Mon, 4 Jan 2021 02:34:22 -0500
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA267C061798
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  3 Jan 2021 23:33:41 -0800 (PST)
+Received: by mail-pj1-x1033.google.com with SMTP id lb18so9570906pjb.5
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Jan 2021 23:33:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=iRXPtY20D9orDIjb5tCwjmiIuDnS2goRBPjGMkiKUgk=;
-        b=pYf9Tvqk/nYS1dsljbZYs4vnYyryXc1zZ8aFgpievKkuU/vwdqhMSLPp187p4iUzvk
-         x97na1Zr5IZqGb1yry5b1l7NH6i0R3i19c2LMJof78NSIQ7AWfPL3L1gxGcKVpgpzzsW
-         4LeiX2fUqlrZ4Lz3w8Dvgi/c43rEQRfyiHraEypHkBhucquIxrMWVhKoMbQkiMYxph+J
-         cm/G2VFuGAfBI4oP322CJDvK17BbrTSHsAmuYQ8CKg2k9eDvZbTP5bqMJUpiEY7/iJSv
-         p3pG+kTNMXRK2Yb9ytNFinssZq3pA2LVDEgeVCk9ox/hswNS46iqvElLD/oJZH9VD7bG
-         d23w==
+        bh=QTXH4ZBabQXPlZIujQgKbnRJD3TC6IE68x9pqFmtBcY=;
+        b=phkZiroMjb2C8up3DUYIfoVF7kCXntKeedQ4qiwCI2pD9K7VSJidQcWn23Gd36gRLu
+         /fWMAiXKOorzKGEcjKxgRVN69jmsgCswRLd1PZHJk2DO3LA7ti3Q1douYtKd7/7hD7kq
+         gcTuSPuDvuz9zV5Zlw+xtChK4dRUnNdcroRf7ZCeJguS/gqE6p5/O4ufMsDKo5VLRviX
+         Uh23VTBAvWR/YeCE+EP7fpoAj/MUUaaecGERL8h5TkFysk5tH8zVhxlSGE3eSfTqz/tP
+         VGyt/7c6LbkOdrgf+A/oTrrpiKQcBJZhRojOMrajKCCk0d9mtZve3Kkj+Z6i6yEtP6DC
+         V4SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iRXPtY20D9orDIjb5tCwjmiIuDnS2goRBPjGMkiKUgk=;
-        b=YzQZ+qvWWO2IaZRdj71tI/8ERVlxjOXtM7yxdXZW/o8a3A94JXuaoDfNyruVXn6Wnh
-         /reixhQpM8nKdT6gcrIw09uL320A8J7j/m2yiv/13p4/R97OQ6FpE5wHHwMdLWhQDcQ4
-         rk5dF2mqDBjeUJ9ogwZAc/xantotHYjZtxEEACtzOyqtBrpsArK0+jwv21uyV2MjVdO5
-         u7kxRz6icl2gNRT58Ai02SnhToLgzJ0m0YHrj7zmGV41Ws6sOZCd9TCRb3INSZMw8AiK
-         uZmC5P/+2T4Vx0vVuRIv776J3rTCkUwjbYpHISvbD4Nu1d/lnvehU9x0uvVEP8x0d9Zn
-         umgg==
-X-Gm-Message-State: AOAM531pI53wskqeiSdj1haviqsylEBiZ7Mh44Q2O1W/zbXcFWfnkmS0
-        PpCW/3UGUunK6/Q6mMaynjLjFg==
-X-Google-Smtp-Source: ABdhPJxg1RuXm4l0IeX5T2nfNwUfb9eKCIJWL14v0Jtf8jWZLkym1C7f5dh7jOgWjIh5IRoQRH0klg==
-X-Received: by 2002:aa7:9388:0:b029:19e:648:6480 with SMTP id t8-20020aa793880000b029019e06486480mr39127516pfe.21.1609745569526;
-        Sun, 03 Jan 2021 23:32:49 -0800 (PST)
+        bh=QTXH4ZBabQXPlZIujQgKbnRJD3TC6IE68x9pqFmtBcY=;
+        b=J6StNWOYRlcAOV/fTy6knkKuDB61uqi41m3aAjxD3F7ziXt4W0V9CckqL9aCtYsUad
+         lE7+/IKtkgMkzI/f/hTnH0CE+gUF6xgPXuZmw35lndRdT5WFEoGKJIh15KvMOc2ZBr7Q
+         ELs9RedLUL6zVBMOGBQZrnRxG9tSd8jK1oreMPnncXVFNwBG2JdpfY6AuLZeL5/HoIQZ
+         b+GjBWqdH5enPyN/m9E9PxdpaJIDG2tF/6eBhBoM09db3nvRb80oNCF/27tL9C+3pOTv
+         ci1uXHDUoj4LUDO/5ikYhQSTwSZOtgbD1Ne+3OyCNF7LUNpPg+rEPrdld5zDSNBomOBn
+         ohLg==
+X-Gm-Message-State: AOAM5338G179jsNTzXeSUyGAi05U3BD97q+M81S13/j0peNsA1aZXZmc
+        gwnU4lBIy6SrBDQpAd8tud/GcA==
+X-Google-Smtp-Source: ABdhPJyjI2QljyiTHpicHkoa93QDvCtchRU1S1nSROelwSY5UUcsp+hu6LfLrqtbg1mOM7IFq7YKxg==
+X-Received: by 2002:a17:90a:6a48:: with SMTP id d8mr27589269pjm.130.1609745621425;
+        Sun, 03 Jan 2021 23:33:41 -0800 (PST)
 Received: from localhost ([122.172.20.109])
-        by smtp.gmail.com with ESMTPSA id e5sm54143912pfc.76.2021.01.03.23.32.48
+        by smtp.gmail.com with ESMTPSA id a31sm59966345pgb.93.2021.01.03.23.33.40
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 03 Jan 2021 23:32:48 -0800 (PST)
-Date:   Mon, 4 Jan 2021 13:02:46 +0530
+        Sun, 03 Jan 2021 23:33:40 -0800 (PST)
+Date:   Mon, 4 Jan 2021 13:03:38 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Yangtao Li <tiny.windzz@gmail.com>
 Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
@@ -94,44 +94,29 @@ Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 18/31] drm/lima: remove unneeded
- devm_devfreq_remove_device()
-Message-ID: <20210104073246.vub5fhfwfdbwxkdx@vireshk-i7>
+Subject: Re: [PATCH 00/31] Introduce devm_pm_opp_* API
+Message-ID: <20210104073338.bbswxbewuxpj4ad2@vireshk-i7>
 References: <20210101165507.19486-1-tiny.windzz@gmail.com>
- <20210101165507.19486-19-tiny.windzz@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210101165507.19486-19-tiny.windzz@gmail.com>
+In-Reply-To: <20210101165507.19486-1-tiny.windzz@gmail.com>
 User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 01-01-21, 16:54, Yangtao Li wrote:
-> There is no need to manually release devm related resources.
+> Hi,
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/gpu/drm/lima/lima_devfreq.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/lima/lima_devfreq.c b/drivers/gpu/drm/lima/lima_devfreq.c
-> index d5937cf86504..7690c5c69f9f 100644
-> --- a/drivers/gpu/drm/lima/lima_devfreq.c
-> +++ b/drivers/gpu/drm/lima/lima_devfreq.c
-> @@ -94,11 +94,6 @@ void lima_devfreq_fini(struct lima_device *ldev)
->  		devfreq_cooling_unregister(devfreq->cooling);
->  		devfreq->cooling = NULL;
->  	}
-> -
-> -	if (devfreq->devfreq) {
-> -		devm_devfreq_remove_device(ldev->dev, devfreq->devfreq);
-> -		devfreq->devfreq = NULL;
-> -	}
->  }
+> This patchset add devm_pm_opp_set_clkname, devm_pm_opp_put_clkname,
+> devm_pm_opp_set_regulators, devm_pm_opp_put_regulators,
+> devm_pm_opp_set_supported_hw, devm_pm_opp_of_add_table and
+> devm_pm_opp_register_notifier.
 
-Why is this part of this patchset ?
+Please also mention next time to all the maintainers that you need
+their Acks for their patches and that all these patches should get
+merged via the OPP tree.
 
 -- 
 viresh
