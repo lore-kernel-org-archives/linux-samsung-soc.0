@@ -2,72 +2,153 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C845C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Jan 2021 16:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B794C433E9
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 07:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 228C3207FB
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Jan 2021 16:35:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60890224D2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jan 2021 07:03:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbhACQey (ORCPT
+        id S1727765AbhADHDW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 3 Jan 2021 11:34:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59250 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726555AbhACQey (ORCPT
+        Mon, 4 Jan 2021 02:03:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46516 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727761AbhADHDV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 3 Jan 2021 11:34:54 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3B5D6207FB;
-        Sun,  3 Jan 2021 16:34:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609691653;
-        bh=1Xh0kJRjsC6msrYqP8J5e1S//63sIFqo7WNBprGaGq8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GQ84APNGGuHPZM7DhlNyQvsTmUgXUOmP4dBofRfFaIjBw56KeffghZWQgEpD8ga1q
-         a3ppMI00fB/i4F0rxEvYn0XDUyxeMCacsx8WYveu9vvIfRryheg0xI9QKY2eCaOW5/
-         MibBEXOh5ONORJ52+VAE4dZD7sZk1ztXQfOiJ+W49XnPoljcsgI39jzxAIPYRFMCx9
-         R9S9ldOEWjpeCCwthtERJKTVnSF7/6hWsYDGFhqVaTummyLk1hzHtRGMIMOsKQfR1J
-         eutLUh4/4OBQlDPCn97JgMBNfwnnyOHb+bFfnQDbaSlsC/Vuf3VT5efbzGkhxgFM9x
-         7WZw7xglKavBQ==
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Timon Baetz <timon.baetz@protonmail.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        Sebastian Reichel <sre@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mon, 4 Jan 2021 02:03:21 -0500
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 975B2C061794
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  3 Jan 2021 23:02:40 -0800 (PST)
+Received: by mail-pj1-x1033.google.com with SMTP id n3so4849515pjm.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Jan 2021 23:02:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dlLWZrIy6R69T+0RxdKISUof18f+oj7qL0+rpwclI9Q=;
+        b=RWiath2GV29Ceq29YV4Eo/YDxoleBkI6KhvmDVrM13P6i6WvXBHLB3NL03EuF0d5Ig
+         k3jN3V9R8TYaSIt0OajxpW6UaB9wqaf4kbP7YRvdeIkVNd/vE7mO5sxPJfWGQEcfV0TJ
+         gZMIffKXxGkcLQZpqzBpYXnzYhYnVd/wNwl9DW3PspXwbZWlquvU8ndq1l6zzm/9Z2Ms
+         jHlU/V+Cj9z2qjgPbAipggERD7vN+mLZJD88oCTUGrPBT9eVKuPbKuZBrtt01Y1UYPbg
+         OtJCP+3nernL266el36h94jVbwk98vXd2vQnjhu4QVdYXhTe+6c+dYRx2+Up2YsN7xvd
+         a9Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dlLWZrIy6R69T+0RxdKISUof18f+oj7qL0+rpwclI9Q=;
+        b=msxgNshOhhDTe6SVtTpsIUVTjy2rgNRmWUfM2Hk6MRMw6m5iwW8IocVDjF03CuZIha
+         H27DWpPgSTExnZzrghrCRM3q/4OMFCXN3fekdqB+31aZ+pTFQ83U0n76aDcQ622u/zQP
+         J9xkuIlyoDHLN66KD68ZjGoZKtgF+nA616UXaZY1884JKICpNRvPOxlRDAUOyNOG2bVs
+         HXC9XieDlmg5dMs/HML4vSCDJthKDlbJBQ+LpV/0cxYGlx1tYmqFIAGK30eEfpoYj2++
+         JWrJ4v8RQsMa4X8hy7zG4I0CbTFkk4/5mrz+M+CZOuzioMsM0KTZD6+3LO3Hg0zJ1vCb
+         qbLw==
+X-Gm-Message-State: AOAM532zk7u9XEtZBgcdmQwEsUWrg0x8+45fgL+g72u2Vz/U1F2Fcrjh
+        Qv0w0ICIrM560518afKFbU0a4g==
+X-Google-Smtp-Source: ABdhPJxTIG1l0JLV+LUHEFjwB/9ntN9aIbvjRCJKn3vjHJRyQgMGHUy/WB5LS59Xy8aTKPshWnMfsA==
+X-Received: by 2002:a17:90b:14d3:: with SMTP id jz19mr28643076pjb.196.1609743760002;
+        Sun, 03 Jan 2021 23:02:40 -0800 (PST)
+Received: from localhost ([122.172.20.109])
+        by smtp.gmail.com with ESMTPSA id n195sm55117950pfd.169.2021.01.03.23.02.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 03 Jan 2021 23:02:38 -0800 (PST)
+Date:   Mon, 4 Jan 2021 12:32:36 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        cw00.choi@samsung.com, krzk@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, digetx@gmail.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, yuq825@gmail.com, airlied@linux.ie,
+        daniel@ffwll.ch, robdclark@gmail.com, sean@poorly.run,
+        robh@kernel.org, tomeu.vizoso@collabora.com, steven.price@arm.com,
+        alyssa.rosenzweig@collabora.com, stanimir.varbanov@linaro.org,
+        agross@kernel.org, bjorn.andersson@linaro.org, mchehab@kernel.org,
+        lukasz.luba@arm.com, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org, vireshk@kernel.org, nm@ti.com,
+        sboyd@kernel.org, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, rjw@rjwysocki.net, jcrouse@codeaurora.org,
+        hoegsberg@google.com, eric@anholt.net, tzimmermann@suse.de,
+        marijn.suijten@somainline.org, gustavoars@kernel.org,
+        emil.velikov@collabora.com, jonathan@marek.ca,
+        akhilpo@codeaurora.org, smasetty@codeaurora.org,
+        airlied@redhat.com, masneyb@onstation.org, kalyan_t@codeaurora.org,
+        tanmay@codeaurora.org, ddavenport@chromium.org,
+        jsanka@codeaurora.org, rnayak@codeaurora.org,
+        tongtiangen@huawei.com, miaoqinglang@huawei.com,
+        khsieh@codeaurora.org, abhinavk@codeaurora.org,
+        chandanu@codeaurora.org, groeck@chromium.org, varar@codeaurora.org,
+        mka@chromium.org, harigovi@codeaurora.org,
+        rikard.falkeborn@gmail.com, natechancellor@gmail.com,
+        georgi.djakov@linaro.org, akashast@codeaurora.org,
+        parashar@codeaurora.org, dianders@chromium.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: (subset) [PATCH v6 1/8] extcon: max8997: Add CHGINS and CHGRM interrupt handling
-Date:   Sun,  3 Jan 2021 17:34:07 +0100
-Message-Id: <160969163064.69953.7111810036827620312.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201230205139.1812366-1-timon.baetz@protonmail.com>
-References: <20201230205139.1812366-1-timon.baetz@protonmail.com>
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 06/31] serial: qcom_geni_serial: fix potential mem leak
+ in qcom_geni_serial_probe()
+Message-ID: <20210104070236.mnnj3frjtxka7emu@vireshk-i7>
+References: <20210101165507.19486-1-tiny.windzz@gmail.com>
+ <20210101165507.19486-7-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210101165507.19486-7-tiny.windzz@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 30 Dec 2020 20:51:53 +0000, Timon Baetz wrote:
-> This allows the MAX8997 charger to set the current limit depending on
-> the detected extcon charger type.
+On 01-01-21, 16:54, Yangtao Li wrote:
+> We should use dev_pm_opp_put_clkname() to free opp table each time
+> dev_pm_opp_of_add_table() got error.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/tty/serial/qcom_geni_serial.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+> index 291649f02821..5aada7ebae35 100644
+> --- a/drivers/tty/serial/qcom_geni_serial.c
+> +++ b/drivers/tty/serial/qcom_geni_serial.c
+> @@ -1438,9 +1438,12 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
+>  		return PTR_ERR(port->se.opp_table);
+>  	/* OPP table is optional */
+>  	ret = dev_pm_opp_of_add_table(&pdev->dev);
+> -	if (ret && ret != -ENODEV) {
+> -		dev_err(&pdev->dev, "invalid OPP table in device tree\n");
+> -		goto put_clkname;
+> +	if (ret) {
+> +		dev_pm_opp_put_clkname(port->se.opp_table);
+> +		if (ret != -ENODEV) {
+> +			dev_err(&pdev->dev, "invalid OPP table in device tree\n");
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	port->private_data.drv = drv;
+> @@ -1482,7 +1485,6 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
+>  	return 0;
+>  err:
+>  	dev_pm_opp_of_remove_table(&pdev->dev);
+> -put_clkname:
+>  	dev_pm_opp_put_clkname(port->se.opp_table);
+>  	return ret;
+>  }
 
-Applied, thanks!
+Since put_clkname is always done in remove(), I don't think there is
+any memleak here. Over that with your patch we will do put_clkname
+twice now, once in probe and once in remove. And that is a bug AFAICT.
 
-[8/8] ARM: dts: exynos: Add top-off charging regulator node for I9100
-      commit: 3803f461bd28c1c817281348509399778633e82f
-
-Best regards,
 -- 
-Krzysztof Kozlowski <krzk@kernel.org>
+viresh
