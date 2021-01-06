@@ -2,210 +2,163 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94004C4332D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Jan 2021 20:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C50C43381
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jan 2021 06:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 75ADC22D6F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Jan 2021 20:00:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C64823104
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jan 2021 06:35:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730975AbhAEUAY (ORCPT
+        id S1726006AbhAFGfc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 5 Jan 2021 15:00:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52500 "EHLO
+        Wed, 6 Jan 2021 01:35:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728383AbhAEUAW (ORCPT
+        with ESMTP id S1725815AbhAFGfc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 5 Jan 2021 15:00:22 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 395B7C061793;
-        Tue,  5 Jan 2021 11:59:42 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id l11so1395884lfg.0;
-        Tue, 05 Jan 2021 11:59:42 -0800 (PST)
+        Wed, 6 Jan 2021 01:35:32 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1AB8C06134D
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Jan 2021 22:34:51 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id x16so3664136ejj.7
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Jan 2021 22:34:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=w3y172ugq1A8+DfHjAatLK3oOwXsMQTLgHeUXaHnUCU=;
-        b=tBCWlgeIGyCHy0ayfKSb2hKeKiEoFzcgiAtzEEfHQ70m4TqSwGsZqX3Xnx4VJJnvbt
-         n0OP+1QygM+MIfVv5A7Ue/siY9qUR3JrwvKGHP2W3QTyiHhYMLJ6zdE5Ged8pj1n+RjK
-         Bb3lYAmgD2urDHD+97GcmaR9/cYTYUc3lvg36iKQWZkukTkf+xsDRudzvwcq2WaBpdlE
-         x0mE68kMXoFvZrIZWNkF8AnSu3p+LzNJVWTcYgez90NbFkWXHh7/NpKY2fPkuOEA7ZKB
-         w1aIj7VtjxtrBSQz6IaOTRs86szJNL8Gutp0tvolPIaAjingl3R6BlglT66Kk2USW+JA
-         gNew==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0BSeqRkCM+aoGwHCkguo5YisOBwQa8OgLWvbVoLYyH0=;
+        b=gJLV5vbxf1a/179odUydFTH8lmjKqtF0d7/aFz8xmjKorL8UNk0CHofsZEYltf2T66
+         pXup4EWeBM/dd5H0rvzwl20rQ/uWhBmSDb5rjYaJizSw1OK42trxPs4FIQkKtzwpJUZ/
+         q4AqggkZm96L2FTWsRIaDlyzkq7nRHkiroSOl0+wMBCmtOQC3v1cPAcNE447q1gggmH2
+         IUJwwU4VzI5Z+o1JznT2H/gPLb0z80PBNwYje1P92nMuPAhSGNWqmrWdD3fvjZ9wu5am
+         kHhqkh5I9ZNGbgi3g2ID7qj5TR6Noe3hf8jZIEDJk5xvmgN89m8xSPZsoyCLEUICQe98
+         ofkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=w3y172ugq1A8+DfHjAatLK3oOwXsMQTLgHeUXaHnUCU=;
-        b=Uf/I3Ff5O/z44dopGdFH8VxMEy+ps1lg2RbF8K2iK1xaV9636T3q/i+iYVyUz8Zyni
-         MsWVVGYV317Br2hWF051LgKpCrQQHDELvspCXtbGdThQCYNy+XtsQDRrPIJHCE5g2CUn
-         EagliKp6DMlD8opHoL7k/2bqsP9vcJr1BCDiroubtkJJaVmWaBeRsHN0Jm3ieCOWOift
-         6nSBgguqmLI1KVE3C4wzsqu/PCVOGNE41U6sbkHn1ZVoa1V25290yMCYinIrSgxKAUHF
-         zqz0xqumSuZ+BLm4+C5wp2VZPA+3fhGmqSIl5xmiwImFBlPW7nSMEWmyg0JG3x92wW04
-         LYaQ==
-X-Gm-Message-State: AOAM531POKnTvTZAfrh/y7+Go/Vz1dUBRj/f9Vi+j6ruoHUjl8lYn95s
-        mLb00hDHWBa72lE/jSkb+1QGupnzOYrpw4F6szU=
-X-Google-Smtp-Source: ABdhPJxefm71gCAP6d5oS17blFAwFnEd9spoEWiCV79bTaAMdk7JG8QCTPTs9zQB67DoNESWvQ4nEkOaTe/eEP/zqxs=
-X-Received: by 2002:a2e:8156:: with SMTP id t22mr509678ljg.263.1609876780665;
- Tue, 05 Jan 2021 11:59:40 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0BSeqRkCM+aoGwHCkguo5YisOBwQa8OgLWvbVoLYyH0=;
+        b=iBtAZAi++o5YfGiX5sCk1I2HIr6iMlutzmFqDRmK0gZJnnyoB495Tf3jNAZoznV6xZ
+         zHNDZLr6heJG7vJ2pMZ6rYXVa5LNen0Kv6uH1h9wSaMwHWOGeUDx+wdNHABitWxTJ6Fg
+         Xg3q+PRnA2RhTyAs3izHikxC50o22M1LxPjyc3SF23M778VlcR+nW7TNlzZx/UUTAr33
+         qRtosIURYOryDttYQSVSrDKLOOAppMwgtfGgHiQ6TCsYIcxrdfUlFcmyKFjaKPbJwn8R
+         BqC7NaoUV3e9MLQkcENm58Ts/iRV/0HosjU5k0IkeimElXI8RBIRV5bKOT/FSaVicr8D
+         wftw==
+X-Gm-Message-State: AOAM533er5EAQhJM3SAphUSogT0RztOPMuLUKPzkgOcydGsGvf59E2OJ
+        IMIBEUdMxJWg8YBkfoeX73Nodqbk10DpnqIcnpvpKIDCmEI=
+X-Google-Smtp-Source: ABdhPJyUqauHu3c/ORqQX039FTkRPFkAHZrIWHwoKd95sfGeNU1t0nioq+caOBkVHhjlOxs45IZEoOf2QQ3Xhv6HYAk=
+X-Received: by 2002:a17:906:5912:: with SMTP id h18mr1875139ejq.261.1609914890538;
+ Tue, 05 Jan 2021 22:34:50 -0800 (PST)
 MIME-Version: 1.0
-References: <20210103035540.23886-1-tiny.windzz@gmail.com> <CAGTfZH37=e4RgdR4xg-3s9-pRjqunHi2jfPQqQgVWkxW94GwOA@mail.gmail.com>
-In-Reply-To: <CAGTfZH37=e4RgdR4xg-3s9-pRjqunHi2jfPQqQgVWkxW94GwOA@mail.gmail.com>
-Reply-To: cwchoi00@gmail.com
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-Date:   Wed, 6 Jan 2021 04:59:04 +0900
-Message-ID: <CAGTfZH0kg=-MLrvEb+oHkaAuS3mV+o+Oia=wUCf=n2v7s1oXMg@mail.gmail.com>
-Subject: Re: [PATCH 28/31] PM / devfreq: imx8m-ddrc: convert to use
- devm_pm_opp_* API
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, yuq825@gmail.com,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, robdclark@gmail.com,
-        sean@poorly.run, Rob Herring <robh@kernel.org>,
-        tomeu.vizoso@collabora.com, steven.price@arm.com,
-        alyssa.rosenzweig@collabora.com,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        agross@kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
-        mchehab@kernel.org, Lukasz Luba <lukasz.luba@arm.com>,
-        adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>, jirislaby@kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, jcrouse@codeaurora.org,
-        hoegsberg@google.com, eric@anholt.net, tzimmermann@suse.de,
-        marijn.suijten@somainline.org, gustavoars@kernel.org,
-        emil.velikov@collabora.com, Jonathan Marek <jonathan@marek.ca>,
-        akhilpo@codeaurora.org, smasetty@codeaurora.org,
-        airlied@redhat.com, masneyb@onstation.org, kalyan_t@codeaurora.org,
-        tanmay@codeaurora.org, ddavenport@chromium.org,
-        jsanka@codeaurora.org, rnayak@codeaurora.org,
-        tongtiangen@huawei.com, miaoqinglang@huawei.com,
-        khsieh@codeaurora.org, abhinavk@codeaurora.org,
-        chandanu@codeaurora.org, Guenter Roeck <groeck@chromium.org>,
-        varar@codeaurora.org, Matthias Kaehlcke <mka@chromium.org>,
-        harigovi@codeaurora.org, rikard.falkeborn@gmail.com,
-        natechancellor@gmail.com, Georgi Djakov <georgi.djakov@linaro.org>,
-        akashast@codeaurora.org, parashar@codeaurora.org,
-        Doug Anderson <dianders@chromium.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-tegra@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        lima@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org
+References: <20210105134424.30632-1-brgl@bgdev.pl> <20210105165014.GA20401@kozik-lap>
+In-Reply-To: <20210105165014.GA20401@kozik-lap>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 6 Jan 2021 07:34:39 +0100
+Message-ID: <CAMRc=MeEbDJMxoF6Pyfj6GKPVR6eRLd+2oh1ZJUWsz2L6j-Ymg@mail.gmail.com>
+Subject: Re: [PATCH] rtc: s5m: use devm_i2c_new_dummy_device()
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Yangtao,
-
-On Tue, Jan 5, 2021 at 1:13 PM Chanwoo Choi <cwchoi00@gmail.com> wrote:
+On Tue, Jan 5, 2021 at 5:50 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> On Sun, Jan 3, 2021 at 12:58 PM Yangtao Li <tiny.windzz@gmail.com> wrote:
+> On Tue, Jan 05, 2021 at 02:44:24PM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > >
-> > Use devm_pm_opp_* API to simplify code.
+> > Use the managed variant of i2c_new_dummy_device() to shrink code and
+> > remove the goto label.
 > >
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > > ---
-> >  drivers/devfreq/imx8m-ddrc.c | 15 ++-------------
-> >  1 file changed, 2 insertions(+), 13 deletions(-)
+> >  drivers/rtc/rtc-s5m.c | 24 ++++++++----------------
+> >  1 file changed, 8 insertions(+), 16 deletions(-)
 > >
-> > diff --git a/drivers/devfreq/imx8m-ddrc.c b/drivers/devfreq/imx8m-ddrc.c
-> > index bc82d3653bff..9383d6e5538b 100644
-> > --- a/drivers/devfreq/imx8m-ddrc.c
-> > +++ b/drivers/devfreq/imx8m-ddrc.c
-> > @@ -370,11 +370,6 @@ static int imx8m_ddrc_check_opps(struct device *dev)
-> >         return 0;
-> >  }
+> > diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+> > index eb9dde4095a9..3432c6213b4c 100644
+> > --- a/drivers/rtc/rtc-s5m.c
+> > +++ b/drivers/rtc/rtc-s5m.c
+> > @@ -760,7 +760,8 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+> >               return -ENODEV;
+> >       }
 > >
-> > -static void imx8m_ddrc_exit(struct device *dev)
-> > -{
-> > -       dev_pm_opp_of_remove_table(dev);
-> > -}
-> > -
-> >  static int imx8m_ddrc_probe(struct platform_device *pdev)
-> >  {
-> >         struct device *dev = &pdev->dev;
-> > @@ -419,7 +414,7 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
-> >                 return ret;
-> >         }
+> > -     info->i2c = i2c_new_dummy_device(s5m87xx->i2c->adapter, RTC_I2C_ADDR);
+> > +     info->i2c = devm_i2c_new_dummy_device(&pdev->dev, s5m87xx->i2c->adapter,
+> > +                                           RTC_I2C_ADDR);
+> >       if (IS_ERR(info->i2c)) {
+> >               dev_err(&pdev->dev, "Failed to allocate I2C for RTC\n");
+> >               return PTR_ERR(info->i2c);
+> > @@ -768,10 +769,9 @@ static int s5m_rtc_probe(struct platform_device *pdev)
 > >
-> > -       ret = dev_pm_opp_of_add_table(dev);
-> > +       ret = devm_pm_opp_of_add_table(dev);
-> >         if (ret < 0) {
-> >                 dev_err(dev, "failed to get OPP table\n");
-> >                 return ret;
-> > @@ -427,12 +422,11 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
+> >       info->regmap = devm_regmap_init_i2c(info->i2c, regmap_cfg);
+> >       if (IS_ERR(info->regmap)) {
+> > -             ret = PTR_ERR(info->regmap);
+> >               dev_err(&pdev->dev, "Failed to allocate RTC register map: %d\n",
+> > -                             ret);
+> > -             goto err;
+> > +                     ret);
+> > +             return PTR_ERR(info->regmap);
+> >       }
 > >
-> >         ret = imx8m_ddrc_check_opps(dev);
-> >         if (ret < 0)
-> > -               goto err;
-> > +               return ret;
+> >       info->dev = &pdev->dev;
+> > @@ -781,10 +781,9 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+> >       if (s5m87xx->irq_data) {
+> >               info->irq = regmap_irq_get_virq(s5m87xx->irq_data, alarm_irq);
+> >               if (info->irq <= 0) {
+> > -                     ret = -EINVAL;
+> >                       dev_err(&pdev->dev, "Failed to get virtual IRQ %d\n",
+> >                               alarm_irq);
+> > -                     goto err;
+> > +                     return -EINVAL;
+> >               }
+> >       }
 > >
-> >         priv->profile.polling_ms = 1000;
-> >         priv->profile.target = imx8m_ddrc_target;
-> >         priv->profile.get_dev_status = imx8m_ddrc_get_dev_status;
-> > -       priv->profile.exit = imx8m_ddrc_exit;
-> >         priv->profile.get_cur_freq = imx8m_ddrc_get_cur_freq;
-> >         priv->profile.initial_freq = clk_get_rate(priv->dram_core);
+> > @@ -797,10 +796,8 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+> >       info->rtc_dev = devm_rtc_device_register(&pdev->dev, "s5m-rtc",
+> >                                                &s5m_rtc_ops, THIS_MODULE);
 > >
-> > @@ -441,13 +435,8 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
-> >         if (IS_ERR(priv->devfreq)) {
-> >                 ret = PTR_ERR(priv->devfreq);
-> >                 dev_err(dev, "failed to add devfreq device: %d\n", ret);
-> > -               goto err;
-> >         }
+> > -     if (IS_ERR(info->rtc_dev)) {
+> > -             ret = PTR_ERR(info->rtc_dev);
+> > -             goto err;
+> > -     }
+> > +     if (IS_ERR(info->rtc_dev))
+> > +             return PTR_ERR(info->rtc_dev);
 > >
-> > -       return 0;
+> >       if (!info->irq) {
+> >               dev_info(&pdev->dev, "Alarm IRQ not available\n");
+> > @@ -813,15 +810,10 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+> >       if (ret < 0) {
+> >               dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
+> >                       info->irq, ret);
+> > -             goto err;
+> > +             return ret;
+> >       }
+> >
+> >       return 0;
 > > -
 > > -err:
-> > -       dev_pm_opp_of_remove_table(dev);
-> >         return ret;
+> > -     i2c_unregister_device(info->i2c);
+> > -
+> > -     return ret;
+> >  }
+> >
+> >  static int s5m_rtc_remove(struct platform_device *pdev)
 >
-> devm_devfreq_add_device() doesn't return any integer value.
-> Even if devm_devfreq_add_device() returns the right devfreq instance,
-> the 'ret' value  is not the return value of  devm_devfreq_add_device().
->
-> On this patch, 'ret' value of 'return ret' is from imx8m_ddrc_check_opps().
-> Surely, it is well working with this modification. But, it is not code
-> for exception handling.
-> So, we need to remain the following codes:
->
->     return 0;
-> err:
->     return ret;
+> Unbind should OOPS now.
 >
 
-'err' is not necessary. You better to edit it as following:
+Yes... Yes it should. And it won't in v2. :)
 
-if (IS_ERR(priv->devfreq)) {
-    dev_err(dev, "failed to add devfreq device: %d\n", ret);
-    return PTR_ERR(priv->devfreq);
-}
-
-return 0;
-
--- 
-Best Regards,
-Chanwoo Choi
+Thanks!
+Bart
