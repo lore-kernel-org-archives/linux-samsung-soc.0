@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E898DC43332
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Jan 2021 13:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB4AC433E9
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Jan 2021 13:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2F8322D75
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Jan 2021 13:42:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0686E22D6F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Jan 2021 13:43:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbhAGNmt (ORCPT
+        id S1728026AbhAGNn3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Jan 2021 08:42:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49094 "EHLO
+        Thu, 7 Jan 2021 08:43:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728735AbhAGNms (ORCPT
+        with ESMTP id S1728371AbhAGNn3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Jan 2021 08:42:48 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 117EEC0612F4
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Jan 2021 05:42:08 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id i9so5701162wrc.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Jan 2021 05:42:07 -0800 (PST)
+        Thu, 7 Jan 2021 08:43:29 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35158C0612FA
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Jan 2021 05:42:10 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id d13so5627371wrc.13
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Jan 2021 05:42:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v3qbp3ZMuwuzWhmCass4IRAk8ZAQ/ACJDj2q433vAbg=;
-        b=rZXJ+p7nRYeGl9SWPfS1whanzVkdZoIbBxEWvnNvDx/P/T0FRcoy/6H3OM1Frz/1nx
-         FGRs5WxCLAFOz+d3ap5a+xHiHJQD2cWlqY4yVKXYrNzLqpg3RnnIJt6LT8ApD8Az3bQj
-         u2besmmV3asVZJMii9cWrsryRvCpxgytlYSBlxswLNANwutC01QhPpzXGitSwWh/SjPU
-         TZJIcYYqyWT35SBhhjUnFOInUGdeiQ312TAL/EM6cwWnyOLROZxRXoQtLHqCSCymLyG6
-         zcYVQ83WNbjUOk1j2HifRpdEzc4SKVFMrBfOsWF0yCzIquI0NwYUyKHcS4q7zK6AFU+O
-         oxzQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=IJJO5LSRqwbf8XDwJHkWx390vk3Q5Ggb8kvvqef+rMI=;
+        b=dX+vbyPKWR8RNhLFFIbBiSru05sQDU+e9a57ZFF6LiDoL81FlcFXLa8NJit1Qm6KKA
+         Qosp5wnMKtuQJoUpZYVTV9GHDsMiMbcRRmflRBtL2OcHvqfTMYeXcPLK6Md0dCne8BKw
+         4h44t7upRd9VwgoB2JEO6fC+EnG+KXbngas15z5mwtju21qbzsW18SaGlkcFZ6eJnsT+
+         na0AomIjCGE/3V4zbNbA7vwW8GxFENeK8aFWy0LztiKLROLSJ9HXtJHdVDHjcVcTeCqq
+         TGIx2P7EHO9BtlE2xlSlVPW5rXqbYFJTaRzMsdFsCYXdbMKfq7ps07OYm3pDCtacWJab
+         Kx2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v3qbp3ZMuwuzWhmCass4IRAk8ZAQ/ACJDj2q433vAbg=;
-        b=pbXj34rXQBp+M5V2h4SkdVK9mlesmuGDprRbEMxAbVUOdqgVEAiFajhbW1bmKI5QeB
-         Xtu9SedwIwEmzppf9azIDDBdnBSlZ9Qbpr+gicsfd+Ozo9nGUYLgPdwbVbpKCDsoQoMb
-         z2MxynskWxgLl10d0BIqDe67LD7DHkickcqEtGtV3ktrhSEnKaSTfDLxXdV4A3Uy2lUG
-         dKnMOzPWxu/jwBZKDxSA5Y3y6u2Lyu4i40GX75f5r6PsMAbj9fK8/cUw628YNN2aNu6L
-         /v50QWdUfW3Dvq4pqOWzPG3PqHj+LOWy4onbrPNp9icA8Gz8MqxRQKnU9jpkKzpAemmL
-         4iaQ==
-X-Gm-Message-State: AOAM533Dy5UY+Ft48/Pb3mPjisOCOBLeEjd2Wx35yv2Px6cCs9eCVAYm
-        mwl6yekRv7b5TbINAwMydlEVrw==
-X-Google-Smtp-Source: ABdhPJyoOYIbXOl7BaXgxmBR2MYncdd+LZgqtPeWdOiP64bRsHmgX+TEX8fh5IC7i0elOaJDb61gew==
-X-Received: by 2002:a5d:4dc6:: with SMTP id f6mr9216369wru.336.1610026926883;
-        Thu, 07 Jan 2021 05:42:06 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=IJJO5LSRqwbf8XDwJHkWx390vk3Q5Ggb8kvvqef+rMI=;
+        b=MQym5Qu0c61iRD642quPQvMTIvO+dXuvPrKaWZw7wEWTNOFSJb/eNoJ0QrmB/RVXc1
+         Yd9jbloBzO0LTWg3Sp87OuPZXCaT/9lT7EJCAQWa+39RJSbDvQ6GMagaU6Kwdci6PGOo
+         M2sCMm9Lbz4CW8YJMi8wYUHMW+jMJ0DvlLi4V3vruT1UCUIvPqV/uigp/mKUGLJBDmrI
+         v1+eHmV8/sAyTMJOhHUoZ9iAMu23jDPEo4sRFHueLk59sw4XcN8wLdFw6CuXkSyxsJNg
+         gJJpYlZTDfZPWf2zpkfwS25TNumid/VJ7jPGJ+Bbabr6eRnTJRA/Wzn4IB8X6iie/Goq
+         npEQ==
+X-Gm-Message-State: AOAM533RIarB70Z2JxAdYfWqeGLETl52PQXI1hvQWFetVUopdihpWOfD
+        +u1xNAakZIi5pWNxxSJ9G0dPww==
+X-Google-Smtp-Source: ABdhPJwuAyQKURaBKiPXvoLrzSLaHsIXX9sVzhwQ4s04puXoUHiDAw70gHHWZ2k4zQTW1P8s+ChtvA==
+X-Received: by 2002:a5d:6852:: with SMTP id o18mr8808119wrw.371.1610026928953;
+        Thu, 07 Jan 2021 05:42:08 -0800 (PST)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id g184sm7852710wma.16.2021.01.07.05.42.06
+        by smtp.gmail.com with ESMTPSA id g184sm7852710wma.16.2021.01.07.05.42.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jan 2021 05:42:06 -0800 (PST)
+        Thu, 07 Jan 2021 05:42:08 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
@@ -65,10 +65,12 @@ To:     Krzysztof Kozlowski <krzk@kernel.org>,
 Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-rtc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 1/2] rtc: s5m: check the return value of s5m8767_rtc_init_reg()
-Date:   Thu,  7 Jan 2021 14:42:02 +0100
-Message-Id: <20210107134203.9388-1-brgl@bgdev.pl>
+Subject: [PATCH v3 2/2] rtc: s5m: use devm_i2c_new_dummy_device()
+Date:   Thu,  7 Jan 2021 14:42:03 +0100
+Message-Id: <20210107134203.9388-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
+In-Reply-To: <20210107134203.9388-1-brgl@bgdev.pl>
+References: <20210107134203.9388-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -77,26 +79,104 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This function can fail if regmap operations fail so check its return
-value in probe().
+Use the managed variant of i2c_new_dummy_device() to shrink code and
+remove the goto label. We can drop the remove callback now too.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/rtc/rtc-s5m.c | 2 ++
- 1 file changed, 2 insertions(+)
+v1 -> v2:
+- remove the remove() callback
+
+v2 -> v3:
+- fix an error pointed out by the build robot
+
+ drivers/rtc/rtc-s5m.c | 34 ++++++++--------------------------
+ 1 file changed, 8 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-index eb9dde4095a9..e0011d3cf61b 100644
+index e0011d3cf61b..b492070afe6a 100644
 --- a/drivers/rtc/rtc-s5m.c
 +++ b/drivers/rtc/rtc-s5m.c
-@@ -791,6 +791,8 @@ static int s5m_rtc_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, info);
+@@ -760,7 +760,8 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
  
- 	ret = s5m8767_rtc_init_reg(info);
-+	if (ret)
+-	info->i2c = i2c_new_dummy_device(s5m87xx->i2c->adapter, RTC_I2C_ADDR);
++	info->i2c = devm_i2c_new_dummy_device(&pdev->dev, s5m87xx->i2c->adapter,
++					      RTC_I2C_ADDR);
+ 	if (IS_ERR(info->i2c)) {
+ 		dev_err(&pdev->dev, "Failed to allocate I2C for RTC\n");
+ 		return PTR_ERR(info->i2c);
+@@ -768,10 +769,9 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+ 
+ 	info->regmap = devm_regmap_init_i2c(info->i2c, regmap_cfg);
+ 	if (IS_ERR(info->regmap)) {
+-		ret = PTR_ERR(info->regmap);
+ 		dev_err(&pdev->dev, "Failed to allocate RTC register map: %d\n",
+-				ret);
+-		goto err;
++			PTR_ERR(info->regmap));
++		return PTR_ERR(info->regmap);
+ 	}
+ 
+ 	info->dev = &pdev->dev;
+@@ -781,10 +781,9 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+ 	if (s5m87xx->irq_data) {
+ 		info->irq = regmap_irq_get_virq(s5m87xx->irq_data, alarm_irq);
+ 		if (info->irq <= 0) {
+-			ret = -EINVAL;
+ 			dev_err(&pdev->dev, "Failed to get virtual IRQ %d\n",
+ 				alarm_irq);
+-			goto err;
++			return -EINVAL;
+ 		}
+ 	}
+ 
+@@ -799,10 +798,8 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+ 	info->rtc_dev = devm_rtc_device_register(&pdev->dev, "s5m-rtc",
+ 						 &s5m_rtc_ops, THIS_MODULE);
+ 
+-	if (IS_ERR(info->rtc_dev)) {
+-		ret = PTR_ERR(info->rtc_dev);
+-		goto err;
+-	}
++	if (IS_ERR(info->rtc_dev))
++		return PTR_ERR(info->rtc_dev);
+ 
+ 	if (!info->irq) {
+ 		dev_info(&pdev->dev, "Alarm IRQ not available\n");
+@@ -815,23 +812,9 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
+ 			info->irq, ret);
+-		goto err;
 +		return ret;
+ 	}
  
- 	device_init_wakeup(&pdev->dev, 1);
+-	return 0;
+-
+-err:
+-	i2c_unregister_device(info->i2c);
+-
+-	return ret;
+-}
+-
+-static int s5m_rtc_remove(struct platform_device *pdev)
+-{
+-	struct s5m_rtc_info *info = platform_get_drvdata(pdev);
+-
+-	i2c_unregister_device(info->i2c);
+-
+ 	return 0;
+ }
+ 
+@@ -876,7 +859,6 @@ static struct platform_driver s5m_rtc_driver = {
+ 		.pm	= &s5m_rtc_pm_ops,
+ 	},
+ 	.probe		= s5m_rtc_probe,
+-	.remove		= s5m_rtc_remove,
+ 	.id_table	= s5m_rtc_id,
+ };
  
 -- 
 2.29.1
