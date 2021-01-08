@@ -2,100 +2,66 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 623A3C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Jan 2021 16:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7BDC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Jan 2021 17:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C6D92333E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Jan 2021 16:18:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDA7F22E02
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Jan 2021 17:12:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbhAHQSE (ORCPT
+        id S1727919AbhAHRL4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 Jan 2021 11:18:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37262 "EHLO mail.kernel.org"
+        Fri, 8 Jan 2021 12:11:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727884AbhAHQSE (ORCPT
+        id S1727118AbhAHRL4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 Jan 2021 11:18:04 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C2A6D2333E;
-        Fri,  8 Jan 2021 16:17:22 +0000 (UTC)
+        Fri, 8 Jan 2021 12:11:56 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2220222E02;
+        Fri,  8 Jan 2021 17:11:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610122643;
-        bh=9fRyQu8uYFa7h3cUZz3MMpHk6GCetpc3R4IJdyxZytI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rGlBTzuo4+3lbmj5uzGwUyA9RiJ+oXV7++NC+iKEtjOMkrO3J/xVM6cjBI1nghCFq
-         sm+bhdfvyXiWq0jvyUsgOpqMDI/u5JByMoQcUh+TKwlc8CHbqfIQeiz49x7MHrP5uw
-         xRxQZtyGo2behH4Z1kAeUjKBdIkRz1yw5Af0cyV0iTidmAMv3zsPXKJgOZlxkUlCbL
-         KY1H+ng88THoLRia4zT9T17xJrpDjeqiZB8LGOXilPiZQaAyLoFX7D7XM7p5BAvSrs
-         jNv7jgtsYd4m5O0t0Tc4YF1b+YzCOLBEq5ZFmAotzg5w8MZPutANKY61Mu3JxeKAMP
-         iZBcr7nJL+9wg==
-Date:   Fri, 8 Jan 2021 16:16:53 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Timon Baetz <timon.baetz@protonmail.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v6 2/8] regulator: dt-bindings: Document max8997-pmic
- nodes
-Message-ID: <20210108161653.GA4554@sirena.org.uk>
-References: <20201230205139.1812366-1-timon.baetz@protonmail.com>
- <20201230205139.1812366-2-timon.baetz@protonmail.com>
- <20210104135156.GB5645@sirena.org.uk>
- <20210104181825.GB27043@kozik-lap>
- <20210104182734.GH5645@sirena.org.uk>
- <20210104183821.GA29033@kozik-lap>
- <20210104212449.GJ5645@sirena.org.uk>
- <20210105165529.GB20401@kozik-lap>
- <20210106145931.GE4752@sirena.org.uk>
- <20210108161635.1b9303c8.timon.baetz@protonmail.com>
+        s=k20201202; t=1610125876;
+        bh=O8Jj0E2Gix3QcpU/BCY9Uf8hcbZbG5qRLMVt2212s9M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HjZZF7Er4MBIRTyWuEiSQe0w2Cf+MxYfrsdJGkqhTVvwEeLyM7PTZ1tBTgFTKdEJE
+         7XSCGjdZdVAWmIuU99kfbFtmLN9x6N9QZwlRnoQNNAZkm6uVRC/iDPW7G89wRssjDJ
+         nEta94jq1u4TKjA/qtglcGcWk/jo8k74R3DBXfOuykk+KJiHKcCyaH0klrZ4G999pp
+         1iUPqO7/8uqsZWS/l+lz730bM17bRFaLdS4fW03UJK9bduV37ZQN1WByjinHtQFSWz
+         ucemqHlw/VtK8+27sO5RqJyowWBbvcOwajReZofgyK1CAoTsp+NIwgyq9ifO3MzMWb
+         xD5uHFJt8V4dg==
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     kernel test robot <lkp@intel.com>
+Subject: Re: (subset) [PATCH] soc: samsung: exynos-chipid: correct helpers __init annotation
+Date:   Fri,  8 Jan 2021 18:11:10 +0100
+Message-Id: <161012586381.12469.7110956465883090487.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210105174440.120041-1-krzk@kernel.org>
+References: <20210105174440.120041-1-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
-Content-Disposition: inline
-In-Reply-To: <20210108161635.1b9303c8.timon.baetz@protonmail.com>
-X-Cookie: Should I do my BOBBIE VINTON medley?
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Tue, 5 Jan 2021 18:44:40 +0100, Krzysztof Kozlowski wrote:
+> After converting to builtin driver, the probe function should not call
+> __init functions anymore:
+> 
+>   >> WARNING: modpost: vmlinux.o(.text+0x8884d4):
+>     Section mismatch in reference from the function exynos_chipid_probe() to the function .init.text:product_id_to_soc_id()
 
---jRHKVT23PllUwdXP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied, thanks!
 
-On Fri, Jan 08, 2021 at 03:16:48PM +0000, Timon Baetz wrote:
+[1/1] soc: samsung: exynos-chipid: correct helpers __init annotation
+      commit: 6166174afc2bc74ca550af388508384b57d5163d
 
-> Muic needs a node to be used with extcon_get_edev_by_phandle().
-> Charger needs a node to reference a regulator.
-
-The pattern is to use the parent device's node.
-
---jRHKVT23PllUwdXP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/4hXQACgkQJNaLcl1U
-h9D1Kgf9FdFEaCB21a+mhIY1QWeD08qM2lyq1/GCIzsj4p/ssGdqVnpGAJhLWZqn
-nf9Uvf3q/dHc8o07Wvwh9s0zWde4kF56AyBrBbUdBwVONek4vGgb7tTfMIyTbZUR
-O/SW1Uj9CodqLzfJz/5Z+zhsa+HXi5Jeroi7oGHe57U+2SGv/gYIfx/aLBIMbz3s
-85OyLGL2c41FOTtB4IZYAsdag/eDCAC9B0UfvP2vu3Winr9RHIQlAKs4KZ/wGnQ3
-4JTI7pCAlao2ZIKUAuwNvGLAnCIxqNWAvTUfwc0SMGnZkYGpNWB59vhrEd35jiYN
-uWvieVoEAZtYG/ygcGXyN/uIcN1w4Q==
-=pp/6
------END PGP SIGNATURE-----
-
---jRHKVT23PllUwdXP--
+Best regards,
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
