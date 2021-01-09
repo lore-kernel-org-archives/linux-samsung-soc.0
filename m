@@ -2,66 +2,92 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7BDC433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Jan 2021 17:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A06C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Jan 2021 12:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDA7F22E02
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Jan 2021 17:12:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9515823A03
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Jan 2021 12:44:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbhAHRL4 (ORCPT
+        id S1726416AbhAIMoL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 Jan 2021 12:11:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49802 "EHLO mail.kernel.org"
+        Sat, 9 Jan 2021 07:44:11 -0500
+Received: from www.zeus03.de ([194.117.254.33]:50290 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727118AbhAHRL4 (ORCPT
+        id S1725890AbhAIMoL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 Jan 2021 12:11:56 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2220222E02;
-        Fri,  8 Jan 2021 17:11:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610125876;
-        bh=O8Jj0E2Gix3QcpU/BCY9Uf8hcbZbG5qRLMVt2212s9M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HjZZF7Er4MBIRTyWuEiSQe0w2Cf+MxYfrsdJGkqhTVvwEeLyM7PTZ1tBTgFTKdEJE
-         7XSCGjdZdVAWmIuU99kfbFtmLN9x6N9QZwlRnoQNNAZkm6uVRC/iDPW7G89wRssjDJ
-         nEta94jq1u4TKjA/qtglcGcWk/jo8k74R3DBXfOuykk+KJiHKcCyaH0klrZ4G999pp
-         1iUPqO7/8uqsZWS/l+lz730bM17bRFaLdS4fW03UJK9bduV37ZQN1WByjinHtQFSWz
-         ucemqHlw/VtK8+27sO5RqJyowWBbvcOwajReZofgyK1CAoTsp+NIwgyq9ifO3MzMWb
-         xD5uHFJt8V4dg==
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     kernel test robot <lkp@intel.com>
-Subject: Re: (subset) [PATCH] soc: samsung: exynos-chipid: correct helpers __init annotation
-Date:   Fri,  8 Jan 2021 18:11:10 +0100
-Message-Id: <161012586381.12469.7110956465883090487.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210105174440.120041-1-krzk@kernel.org>
-References: <20210105174440.120041-1-krzk@kernel.org>
+        Sat, 9 Jan 2021 07:44:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=zD9cPRZyEaGEmq3k0za/7gpfIJU
+        vc5uCoXoOde/5/F4=; b=e2VeYFuS0iXUn9uQpg26v+5ScyE7HsCtvjVv2rqjCgc
+        ERgSCZBLj9PGIPt2NLFgBvaLT9c9oxpYpr60CVtZWmbwalZU2I+8TpwvoDJ0lsFS
+        pPWdjHtjX8BVKLgcb9opPYW+hBdgfmWUnnVROyb20JiqL5r3qmldnPyrZNyB7aT0
+        =
+Received: (qmail 1724998 invoked from network); 9 Jan 2021 13:43:28 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Jan 2021 13:43:28 +0100
+X-UD-Smtp-Session: l3s3148p1@EOH5BHe4RpYgAwDPXyBeAD+yeC5KBZLe
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 0/8] i2c: improve RECV_LEN documentation & usage
+Date:   Sat,  9 Jan 2021 13:43:04 +0100
+Message-Id: <20210109124314.27466-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 5 Jan 2021 18:44:40 +0100, Krzysztof Kozlowski wrote:
-> After converting to builtin driver, the probe function should not call
-> __init functions anymore:
-> 
->   >> WARNING: modpost: vmlinux.o(.text+0x8884d4):
->     Section mismatch in reference from the function exynos_chipid_probe() to the function .init.text:product_id_to_soc_id()
+Because I want to clarify I2C_M_RECV len usage, this series updates the
+documentation and some of its users. Patch 1 refactors the whole
+documentation of 'i2c_msg', so all usage of I2C_M_* flags and their
+conditions hopefully become clearer. Patch 2+3 remove some obvious
+boilerplate in the UAPI headers while here. Patch 4 is a driver fix I
+found while working on this series. Patch 5 introduces a new convenience
+macro to enable SMBus transfers which need I2C_M_RECV_LEN. Then, some
+drivers use the new macro, sometimes to remove boilerplate, sometimes
+because these SMBus transfers have been forgotten before.
 
-Applied, thanks!
+This series is the first part of a larger work to extend I2C_M_RECV_LEN
+to allow larger transfer sizes (as specified in the SMBus 3.0 standard)
+and to enable this on Renesas R-Car hardware.
 
-[1/1] soc: samsung: exynos-chipid: correct helpers __init annotation
-      commit: 6166174afc2bc74ca550af388508384b57d5163d
+Looking forward to comments and/or reviews; the driver patches are only
+build-tested.
 
-Best regards,
+Happy hacking,
+
+   Wolfram
+
+
+Wolfram Sang (8):
+  i2c: refactor documentation of struct i2c_msg
+  i2c: remove licence boilerplate from main UAPI header
+  i2c: remove licence boilerplate from i2c-dev UAPI header
+  i2c: octeon: check correct size of maximum RECV_LEN packet
+  i2c: uapi: add macro to describe support for all SMBus transfers
+  i2c: algo: bit: use new macro to specifiy capabilities
+  i2c: qup: advertise SMBus transfers using RECV_LEN
+  i2c: s3c2410: advertise SMBus transfers using RECV_LEN
+
+ drivers/i2c/algos/i2c-algo-bit.c     |   4 +-
+ drivers/i2c/busses/i2c-octeon-core.c |   2 +-
+ drivers/i2c/busses/i2c-qup.c         |   2 +-
+ drivers/i2c/busses/i2c-s3c2410.c     |   2 +-
+ include/uapi/linux/i2c-dev.h         |  25 ++----
+ include/uapi/linux/i2c.h             | 128 ++++++++++++++-------------
+ 6 files changed, 76 insertions(+), 87 deletions(-)
+
 -- 
-Krzysztof Kozlowski <krzk@kernel.org>
+2.29.2
+
