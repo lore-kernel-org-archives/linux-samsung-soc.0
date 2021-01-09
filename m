@@ -2,92 +2,76 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A06C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Jan 2021 12:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E010C4332B
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Jan 2021 12:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9515823A03
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Jan 2021 12:44:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51D0C23A03
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Jan 2021 12:45:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbhAIMoL (ORCPT
+        id S1726777AbhAIMo5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 9 Jan 2021 07:44:11 -0500
-Received: from www.zeus03.de ([194.117.254.33]:50290 "EHLO mail.zeus03.de"
+        Sat, 9 Jan 2021 07:44:57 -0500
+Received: from www.zeus03.de ([194.117.254.33]:50740 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbhAIMoL (ORCPT
+        id S1726756AbhAIMo4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 9 Jan 2021 07:44:11 -0500
+        Sat, 9 Jan 2021 07:44:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=zD9cPRZyEaGEmq3k0za/7gpfIJU
-        vc5uCoXoOde/5/F4=; b=e2VeYFuS0iXUn9uQpg26v+5ScyE7HsCtvjVv2rqjCgc
-        ERgSCZBLj9PGIPt2NLFgBvaLT9c9oxpYpr60CVtZWmbwalZU2I+8TpwvoDJ0lsFS
-        pPWdjHtjX8BVKLgcb9opPYW+hBdgfmWUnnVROyb20JiqL5r3qmldnPyrZNyB7aT0
-        =
-Received: (qmail 1724998 invoked from network); 9 Jan 2021 13:43:28 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Jan 2021 13:43:28 +0100
-X-UD-Smtp-Session: l3s3148p1@EOH5BHe4RpYgAwDPXyBeAD+yeC5KBZLe
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=FNgj15D3k91S4V
+        PodKXKk0mfMNri6JlDcD9jzLuY7is=; b=jG9LZex9OCBy9LoWiwc1v1/z2Fc58F
+        1zSNXBam222mZH/BMojcb4NVcImikoid5/ydJwnIRvkhEF+C3II2AP57DGdnzGbF
+        rAT/WNOUxj5GQx2w8h9zSZZgYdau0MePyWHPlkPfGcUUnqHnAQ9yhRg0OF6jiZOC
+        +XyXh6zboWCEw=
+Received: (qmail 1725205 invoked from network); 9 Jan 2021 13:43:33 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Jan 2021 13:43:33 +0100
+X-UD-Smtp-Session: l3s3148p1@CqFLBXe4VpYgAwDPXyBeAD+yeC5KBZLe
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 0/8] i2c: improve RECV_LEN documentation & usage
-Date:   Sat,  9 Jan 2021 13:43:04 +0100
-Message-Id: <20210109124314.27466-1-wsa+renesas@sang-engineering.com>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 8/8] i2c: s3c2410: advertise SMBus transfers using RECV_LEN
+Date:   Sat,  9 Jan 2021 13:43:12 +0100
+Message-Id: <20210109124314.27466-9-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210109124314.27466-1-wsa+renesas@sang-engineering.com>
+References: <20210109124314.27466-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Because I want to clarify I2C_M_RECV len usage, this series updates the
-documentation and some of its users. Patch 1 refactors the whole
-documentation of 'i2c_msg', so all usage of I2C_M_* flags and their
-conditions hopefully become clearer. Patch 2+3 remove some obvious
-boilerplate in the UAPI headers while here. Patch 4 is a driver fix I
-found while working on this series. Patch 5 introduces a new convenience
-macro to enable SMBus transfers which need I2C_M_RECV_LEN. Then, some
-drivers use the new macro, sometimes to remove boilerplate, sometimes
-because these SMBus transfers have been forgotten before.
+This driver implements I2C_M_RECV_LEN, so it can advertise the SMBus
+transfers needing it. This also enables client devices to check for the
+RECV_LEN capability.
 
-This series is the first part of a larger work to extend I2C_M_RECV_LEN
-to allow larger transfer sizes (as specified in the SMBus 3.0 standard)
-and to enable this on Renesas R-Car hardware.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looking forward to comments and/or reviews; the driver patches are only
-build-tested.
-
-Happy hacking,
-
-   Wolfram
-
-
-Wolfram Sang (8):
-  i2c: refactor documentation of struct i2c_msg
-  i2c: remove licence boilerplate from main UAPI header
-  i2c: remove licence boilerplate from i2c-dev UAPI header
-  i2c: octeon: check correct size of maximum RECV_LEN packet
-  i2c: uapi: add macro to describe support for all SMBus transfers
-  i2c: algo: bit: use new macro to specifiy capabilities
-  i2c: qup: advertise SMBus transfers using RECV_LEN
-  i2c: s3c2410: advertise SMBus transfers using RECV_LEN
-
- drivers/i2c/algos/i2c-algo-bit.c     |   4 +-
- drivers/i2c/busses/i2c-octeon-core.c |   2 +-
- drivers/i2c/busses/i2c-qup.c         |   2 +-
- drivers/i2c/busses/i2c-s3c2410.c     |   2 +-
- include/uapi/linux/i2c-dev.h         |  25 ++----
- include/uapi/linux/i2c.h             | 128 ++++++++++++++-------------
- 6 files changed, 76 insertions(+), 87 deletions(-)
-
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 3eafe0eb3e4c..62a903fbe912 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -781,7 +781,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
+ /* declare our i2c functionality */
+ static u32 s3c24xx_i2c_func(struct i2c_adapter *adap)
+ {
+-	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_NOSTART |
++	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL_ALL | I2C_FUNC_NOSTART |
+ 		I2C_FUNC_PROTOCOL_MANGLING;
+ }
+ 
 -- 
 2.29.2
 
