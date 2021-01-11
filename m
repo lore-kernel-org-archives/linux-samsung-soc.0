@@ -2,172 +2,82 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92118C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Jan 2021 12:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21269C433E9
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Jan 2021 13:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64BF62251F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Jan 2021 12:42:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5400221FD
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Jan 2021 13:34:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbhAKMl7 (ORCPT
+        id S1730298AbhAKNeT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Jan 2021 07:41:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727073AbhAKMl6 (ORCPT
+        Mon, 11 Jan 2021 08:34:19 -0500
+Received: from mail-ed1-f51.google.com ([209.85.208.51]:33620 "EHLO
+        mail-ed1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732133AbhAKNeO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Jan 2021 07:41:58 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1A06C0617A9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Jan 2021 04:40:39 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id g185so14932917wmf.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Jan 2021 04:40:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=iLQSMu4kyOWwZDRuRCxs8aoK2DhXG2sbIHqKebgLZs8=;
-        b=YtHZifkBaY0OPg54db/1GEuBl6VpUDZZNAf4YQVSyEgPjRg25raahc/YvwMJ0nvVnx
-         6V/vWalce3AnXvu7lqT5zQ8X+tW8TmHheC1EpP/njLVKre8dGO2rzPdBuva5n3CYaU9v
-         m3xKBt7F68+9mV4hDNyqj10kkiZUPJLMVv3ImgU73RtgzfYCf4LUwYL2ChS2HOy/1UX0
-         6qJ3KhL0F0DpStRKvMXxFdW5BtfqZ4lCW1nOxcsQpeiKV0DCPZpfNWJgaoWkU4w5IqGn
-         zIIBf/HHj/7r6aZLpYOAMV1dsuFnM2b7g5Uz8d4mXxQ0b2lAYDywqQ7MScdjzsvfPGff
-         pMfg==
+        Mon, 11 Jan 2021 08:34:14 -0500
+Received: by mail-ed1-f51.google.com with SMTP id j16so18879216edr.0;
+        Mon, 11 Jan 2021 05:33:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iLQSMu4kyOWwZDRuRCxs8aoK2DhXG2sbIHqKebgLZs8=;
-        b=LznkBSfLQpfa6MxuK0HyU6hfBj5DSHDPloBta0h0cbTKNyhuMeIA1Yi1HdfvgBLAvH
-         GtgFLSRscmDzI4acKvWYAr5Aw5LC0LLboLRblEO7SjAioDdgC447tqGLqmAw48fShTtb
-         2hwWcsz7sH4gXv1azcE7qEDZV6Hr/IPwW2oRVUmM3nsyVWdeJgXUZwZi8veL+9gySUOh
-         VflSIB4BfAIxNLWiy+auv4YLIVLlZu3hVbfu2AfvW27J4/+6O+mfan1RuPAldvV8Vbo0
-         xpCP0MPNuUqMmzAGmfuwYbs32p1phJjQOpjoukgWJDeuWddUQS4cgou3xcw+11TcrLLY
-         +HlQ==
-X-Gm-Message-State: AOAM5328DaGKnqgGrPMM6u13cDi8wfZAqiABj4dvlqOZCJaP69sFO8AZ
-        0LMC1NsZS+7mQMdtVXCGqsLjzw==
-X-Google-Smtp-Source: ABdhPJy7IwW7rqicRJkE+1lyoV7lllzeWL26215H1ry1DCRVDrmCZu4Y2vJ0uDYfSxjfCx2mNGo6Lw==
-X-Received: by 2002:a1c:6208:: with SMTP id w8mr14496011wmb.96.1610368838524;
-        Mon, 11 Jan 2021 04:40:38 -0800 (PST)
-Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id l8sm26492362wrb.73.2021.01.11.04.40.37
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9LXcLQjLFUIZwVreL9T4LwAn0Ka22u3rRcDfj0mv29s=;
+        b=mPFgJF/Da5WqbAfNGkKhs0dOlIi0Lh9+HC1rYL6XXrBQJ6XJrrbsDxiHYG3iBCbJXy
+         TtvWx4P6mhZ6qRU+aDzBZCQQK/8r9CwYWfYcEvKwDW5VH4FqXp5fzEpeDHE9pT1Mtsre
+         1e25dkuq+4iUnbXyZUrjzOHx6isiH/lY9AnyHXnh8y1SHsBZp2qqIzzcvXgN/rK2bQmv
+         lBt7TRlXrW5rlB/dkzaov1u98u+ngtCoLasXpaxLJNUdJ69ABAi1E6KLPLZ7OxY4SalX
+         pS4PM0APbN53v3g0J5+2WTXICxkU3a4MYOwejcdQtzLEpuJeWRIo56aHYll1X2jswiXh
+         p1nQ==
+X-Gm-Message-State: AOAM532q+iGl67zWDXVUXFwaCcxqd+hPMZ/RqdBACdRgqfLCyKG1iTVz
+        RDOyRtDhQosZZybiDYaePLo=
+X-Google-Smtp-Source: ABdhPJzcO4R3XJgyHaTn67pp9BxEeB1a9oXk0gmETOpMRyDWZfAG+7U8td7yKEnnIP4Uy4GAAy0zOA==
+X-Received: by 2002:a50:fc8b:: with SMTP id f11mr14123754edq.11.1610372012763;
+        Mon, 11 Jan 2021 05:33:32 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id rs27sm7116396ejb.21.2021.01.11.05.33.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jan 2021 04:40:38 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Mon, 11 Jan 2021 05:33:31 -0800 (PST)
+Date:   Mon, 11 Jan 2021 14:33:30 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-rtc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 3/3] rtc: s5m: use devm_i2c_new_dummy_device()
-Date:   Mon, 11 Jan 2021 13:40:27 +0100
-Message-Id: <20210111124027.21586-4-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.29.1
-In-Reply-To: <20210111124027.21586-1-brgl@bgdev.pl>
+Subject: Re: [PATCH v4 1/3] rtc: s5m: select REGMAP_I2C
+Message-ID: <20210111133330.GA34341@kozik-lap>
 References: <20210111124027.21586-1-brgl@bgdev.pl>
+ <20210111124027.21586-2-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210111124027.21586-2-brgl@bgdev.pl>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Jan 11, 2021 at 01:40:25PM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> The rtc-s5m uses the I2C regmap but doesn't select it in Kconfig so
+> depending on the configuration the build may fail. Fix it.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/rtc/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Use the managed variant of i2c_new_dummy_device() to shrink code and
-remove the goto label. We can drop the remove callback now too.
+Fixes: 959df7778bbd ("rtc: Enable compile testing for Maxim and Samsung drivers")
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/rtc/rtc-s5m.c | 31 +++++++------------------------
- 1 file changed, 7 insertions(+), 24 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-index e0011d3cf61b..80b66f16db89 100644
---- a/drivers/rtc/rtc-s5m.c
-+++ b/drivers/rtc/rtc-s5m.c
-@@ -760,7 +760,8 @@ static int s5m_rtc_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	info->i2c = i2c_new_dummy_device(s5m87xx->i2c->adapter, RTC_I2C_ADDR);
-+	info->i2c = devm_i2c_new_dummy_device(&pdev->dev, s5m87xx->i2c->adapter,
-+					      RTC_I2C_ADDR);
- 	if (IS_ERR(info->i2c)) {
- 		dev_err(&pdev->dev, "Failed to allocate I2C for RTC\n");
- 		return PTR_ERR(info->i2c);
-@@ -771,7 +772,7 @@ static int s5m_rtc_probe(struct platform_device *pdev)
- 		ret = PTR_ERR(info->regmap);
- 		dev_err(&pdev->dev, "Failed to allocate RTC register map: %d\n",
- 				ret);
--		goto err;
-+		return ret;
- 	}
- 
- 	info->dev = &pdev->dev;
-@@ -781,10 +782,9 @@ static int s5m_rtc_probe(struct platform_device *pdev)
- 	if (s5m87xx->irq_data) {
- 		info->irq = regmap_irq_get_virq(s5m87xx->irq_data, alarm_irq);
- 		if (info->irq <= 0) {
--			ret = -EINVAL;
- 			dev_err(&pdev->dev, "Failed to get virtual IRQ %d\n",
- 				alarm_irq);
--			goto err;
-+			return -EINVAL;
- 		}
- 	}
- 
-@@ -799,10 +799,8 @@ static int s5m_rtc_probe(struct platform_device *pdev)
- 	info->rtc_dev = devm_rtc_device_register(&pdev->dev, "s5m-rtc",
- 						 &s5m_rtc_ops, THIS_MODULE);
- 
--	if (IS_ERR(info->rtc_dev)) {
--		ret = PTR_ERR(info->rtc_dev);
--		goto err;
--	}
-+	if (IS_ERR(info->rtc_dev))
-+		return PTR_ERR(info->rtc_dev);
- 
- 	if (!info->irq) {
- 		dev_info(&pdev->dev, "Alarm IRQ not available\n");
-@@ -815,23 +813,9 @@ static int s5m_rtc_probe(struct platform_device *pdev)
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
- 			info->irq, ret);
--		goto err;
-+		return ret;
- 	}
- 
--	return 0;
--
--err:
--	i2c_unregister_device(info->i2c);
--
--	return ret;
--}
--
--static int s5m_rtc_remove(struct platform_device *pdev)
--{
--	struct s5m_rtc_info *info = platform_get_drvdata(pdev);
--
--	i2c_unregister_device(info->i2c);
--
- 	return 0;
- }
- 
-@@ -876,7 +860,6 @@ static struct platform_driver s5m_rtc_driver = {
- 		.pm	= &s5m_rtc_pm_ops,
- 	},
- 	.probe		= s5m_rtc_probe,
--	.remove		= s5m_rtc_remove,
- 	.id_table	= s5m_rtc_id,
- };
- 
--- 
-2.29.1
-
+Best regards,
+Krzysztof
