@@ -2,171 +2,159 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95598C4332D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jan 2021 00:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A89C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jan 2021 01:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 748FF22D5A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jan 2021 00:27:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0CE722E01
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jan 2021 01:47:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404135AbhALA0F (ORCPT
+        id S1732727AbhALBrt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Jan 2021 19:26:05 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:53447 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404217AbhAKX70 (ORCPT
+        Mon, 11 Jan 2021 20:47:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42596 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727708AbhALBrt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Jan 2021 18:59:26 -0500
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id A37455C0199;
-        Mon, 11 Jan 2021 18:58:12 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 11 Jan 2021 18:58:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdrag0n.dev; h=
-        from:to:cc:subject:date:message-id:mime-version:content-type
-        :content-transfer-encoding; s=fm3; bh=QJyc8uMExPnjvCSQaDC9bp9jZW
-        tmdd8pCdXh/3fwRSs=; b=thkTohomJd4BWoaPxwekTk6xWZT/gKc3aCdHzAbbhU
-        o/lZlmyOOmzCUPvuiWQNsCXv0ccSw3jeP4awfftBbuyvUdGwlZgkKm6tbfUrBiAp
-        y9UjkW7Vyf8BW7p1if0KjH/2LyvcY4yfRb9ua2MPvJX+1vmDZESjhEhheaSF5VyU
-        LDxn4JD8ow+5sMpvyUwxshKaIccUZoHNJl87xGNkkL5I7/k/KB/wW1mvOV3XqEuG
-        JSUxDjSbh0GzZSzmSd6z+JwmHlyUgrmDFRyUReRGpel5G0ctqIRZ7oeTkCetkmMu
-        GtrSqS8IRyXXhgeEpCo3WouTfqPXgsiEnOv6skZjGTAw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=QJyc8u
-        MExPnjvCSQaDC9bp9jZWtmdd8pCdXh/3fwRSs=; b=BR5Ic2zNeyZpk53iscZKnU
-        pCcaFO2HrRuCDgzb4CMKfrF1S1LhkoG/M3A8g3OqxuDWSGPdYZ6EHlDK08bO8Dv3
-        Jw4PJSFFXWKUAS5s14GqNJ9uVdV8ADwyA8lhpyxBa40pC0A629KRuWuhFLWxVJln
-        /pKlqyndhJh69EDGVxHXlNusgJNrLj1ifg/yHV9Dl6dZZLTn65Uiz9l55VcL4Dzy
-        bs6oHXAVk9YRRdY5OQ0+hMRvpn/+aQfsnSHNVApCcyvJHv99w319+e5hUOXaag1n
-        oAWaDQvQ3Zdea+u09pP7Nppudom210dwIpbiac3SgrxgMv/5nbVtVvwp/l8LxFew
-        ==
-X-ME-Sender: <xms:E-b8XyqgxKg-BQGcQmSRYOXZTpDoOJuLTm65tA07tRhPyaTX1ifrug>
-    <xme:E-b8XwoKTN7PQwf2QV9rUsyS2Jx6PPnUT5katzgiFwmCnpayVCUSEXMsTUw7zfK3f
-    8gO9GPbaXEVdxlKF1M>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdehvddgudehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    hmihhsshhinhhgucfvqfcufhhivghlugculdeftddmnegoteeftdduqddtudculdduhedm
-    necujfgurhephffvufffkffogggtgfesthekredtredtjeenucfhrhhomhepffgrnhhnhi
-    cunfhinhcuoegurghnnhihsehkughrrghgtdhnrdguvghvqeenucggtffrrghtthgvrhhn
-    pefhudevudfftdejkeejgefhleffteefkedtveevieefveeggeduiefflefgheelteenuc
-    ffohhmrghinhepghhithhhuhgsrdgtohhmpdgvvghmsggtrdhorhhgnecukfhppedutdeg
-    rddvtddtrdduvdelrddvuddvnecuufhprghmkfhppfgvthifohhrkhepuddtgedrvddttd
-    druddvledrvdduvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpegurghnnhihsehkughrrghgtdhnrdguvghv
-X-ME-Proxy: <xmx:E-b8X3Oa_dvQLJx9_3Si5OpT_HiJN6TeK8Ti0cc0xddS3Q5ClnZ1Yw>
-    <xmx:E-b8Xx6BpeSOjMP8v_ZaxBta_gCSv7fdRL1VfZhN6jf2FxMw3AhQPA>
-    <xmx:E-b8Xx6yZFRh4Gn8KvlU4-UwHQidjz5YkAchi5btGo7xhWbw7Lb9ew>
-    <xmx:FOb8X01vMvLnUnHnomVmjECT2ijs_xVnvygo9km3J_sNpy3OKMDfmw>
-Received: from pinwheel.localdomain (unknown [104.200.129.212])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 24F2A24005A;
-        Mon, 11 Jan 2021 18:58:11 -0500 (EST)
-From:   Danny Lin <danny@kdrag0n.dev>
-Cc:     Danny Lin <danny@kdrag0n.dev>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: exynos: Add energy model for Exynos 5250
-Date:   Mon, 11 Jan 2021 15:57:16 -0800
-Message-Id: <20210111235717.321153-1-danny@kdrag0n.dev>
-X-Mailer: git-send-email 2.29.2
+        Mon, 11 Jan 2021 20:47:49 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83320C061575;
+        Mon, 11 Jan 2021 17:47:08 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id lj6so636814pjb.0;
+        Mon, 11 Jan 2021 17:47:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zW9C/QxorEMeUx+kFawitRLf1fte/47nwM4QFK+urs8=;
+        b=Xw2j31dYa7SMPypEzYJZYF8wY0mLXfYFnRrVxcJlbSxF0zGLpHLPR6T6Bg8zzujGzJ
+         zaZiUQXiIkayvjga5aPESuNkqGgWOFFQpJvEybATylzQpZ1xIRuXQptih/ZGWPZzoaPR
+         ksMLZwGXjGMwxnDyUNshkicHq9mDWY/odzVyLVRpqHtax39dopg5O5T6oZn4UeIJavJQ
+         TuYKiMhudim7g3ptvZWU4FM6sz6hGq1jm8ByHFlPS/ilmXxTkAbVFmJLfnhFkZbemzgV
+         VyDxLpCOCcE2sGfaOcuwmcxO4XHau8P9gKSGlganrQfq+Ttb+SvZ3EL4WDtL30hcfyL2
+         dRtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zW9C/QxorEMeUx+kFawitRLf1fte/47nwM4QFK+urs8=;
+        b=sotTJUN1J/2af6pHSR5M1O5QO3QdFpuWHrNHLS5z7isGHmWJ3j4YNu2jfsUkdnPWPV
+         O6I+Jdv+2li/CSX0zjEdy2PNT0JgJH8bGJWpo5vlTKIFjIU1HsSUdAQ6faIidJ6E7FQ/
+         KQdsx1aVKGTPQLezxvip2d+WkBdT1AZZHVu45uUd0JA0OpwiDngyKbXYFUfDiT6N8StR
+         SdR+TES1CAtok8LWSzGVUXJVOWr540rnvKTsiOdyY+mW9xHYlUPw25mwWtpYPRt/o0y4
+         46dg9SnDh30CaSYiIwhpDm4vqguXgloxGsk+rNFeuCqRZxSA6O2/I/T5Pnub0Xt5h/NQ
+         fDpg==
+X-Gm-Message-State: AOAM532EFowHtX+6L7LWTVpUhKUUF/Vx1iezfwudBeswE8jnUgKaPpVO
+        h+/hF7C0ThqK7mzdjs4r5Jg=
+X-Google-Smtp-Source: ABdhPJyxFPcLuVKER4Bl8+KtGfVHh/4AqA6sL49fG/uOu5r42FeKYv+0+bdSG/fKKm4dJGHuwUnqxw==
+X-Received: by 2002:a17:902:d202:b029:da:d86b:78be with SMTP id t2-20020a170902d202b02900dad86b78bemr2264745ply.0.1610416027902;
+        Mon, 11 Jan 2021 17:47:07 -0800 (PST)
+Received: from localhost.localdomain ([49.207.194.207])
+        by smtp.gmail.com with ESMTPSA id 14sm904376pfy.55.2021.01.11.17.46.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Jan 2021 17:47:07 -0800 (PST)
+From:   Allen Pais <allen.lkml@gmail.com>
+To:     herbert@gondor.apana.org.au
+Cc:     davem@davemloft.net, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
+        jesper.nilsson@axis.com, lars.persson@axis.com,
+        horia.geanta@nxp.com, aymen.sghaier@nxp.com, gcherian@marvell.com,
+        thomas.lendacky@amd.com, john.allen@amd.com, gilad@benyossef.com,
+        bbrezillon@kernel.org, arno@natisbad.org, schalla@marvell.com,
+        matthias.bgg@gmail.com, jamie@jamieiles.com,
+        giovanni.cabiddu@intel.com, heiko@sntech.de, krzk@kernel.org,
+        vz@mleia.com, k.konieczny@samsung.com,
+        linux-crypto@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        qat-linux@intel.com, linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Allen Pais <apais@linux.microsoft.com>
+Subject: [PATCH v3 00/19]crypto: convert tasklets to use new tasklet_setup API()
+Date:   Tue, 12 Jan 2021 07:16:31 +0530
+Message-Id: <20210112014650.10887-1-allen.lkml@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This energy model enables the use of energy- and capacity-aware CPU
-frequency scaling.
+From: Allen Pais <apais@linux.microsoft.com>
 
-Power and performance measurements were made using my freqbench [1]
-benchmark coordinator, which uses EEMBC CoreMark [2] as the workload
-and measures power usage using the integrated PMIC's fuel gauge (DS2784
-in this case).
+Commit 12cc923f1ccc ("tasklet: Introduce new initialization API")
+introduced a new tasklet initialization API. This series converts
+all the crypto modules to use the new tasklet_setup() API
 
-The energy model dynamic-power-coefficient values were calculated with
-    DPC = µW / MHz / V^2
-for each OPP, and averaged across all OPPs within each cluster for the
-final coefficient.
+The series is based on v5.11-rc2 (e71ba9452f0b)
 
-A Google Nexus 10 device running a downstream 3.4 kernel was used for
-benchmarking to ensure proper frequency scaling and other low-level
-controls.
+v3:
+  - fixed rockchip driver(Emil Renner Berthing)
 
-Raw benchmark results can be found in the freqbench repository [3].
-Below is a human-readable summary:
+v2:
+  - added acks
+  - addressed comments [Krzysztof and Gilad]
 
-===== CPU 1 =====
-Frequencies: 200 300 400 500 600 700 800 900 1000 1100 1200 1300 1400 1500 1600 1700
+Allen Pais (19):
+  crypto: amcc: convert tasklets to use new tasklet_setup() API
+  crypto: atmel: convert tasklets to use new tasklet_setup() API
+  crypto: axis: convert tasklets to use new tasklet_setup() API
+  crypto: caam: convert tasklets to use new tasklet_setup() API
+  crypto: cavium: convert tasklets to use new tasklet_setup() API
+  crypto: ccp: convert tasklets to use new tasklet_setup() API
+  crypto: ccree: convert tasklets to use new tasklet_setup() API
+  crypto: hifn_795x: convert tasklets to use new tasklet_setup() API
+  crypto: img-hash: convert tasklets to use new tasklet_setup() API
+  crypto: ixp4xx: convert tasklets to use new tasklet_setup() API
+  crypto: mediatek: convert tasklets to use new tasklet_setup() API
+  crypto: omap: convert tasklets to use new tasklet_setup() API
+  crypto: picoxcell: convert tasklets to use new tasklet_setup() API
+  crypto: qat: convert tasklets to use new tasklet_setup() API
+  crypto: qce: convert tasklets to use new tasklet_setup() API
+  crypto: rockchip: convert tasklets to use new tasklet_setup() API
+  crypto: s5p: convert tasklets to use new tasklet_setup() API
+  crypto: talitos: convert tasklets to use new tasklet_setup() API
+  crypto: octeontx: convert tasklets to use new tasklet_setup() API
 
- 200:   909     4.5 C/MHz    132 mW   36.2 J    6.9 I/mJ   275.0 s
- 300:  1366     4.6 C/MHz    212 mW   38.7 J    6.5 I/mJ   183.0 s
- 400:  1821     4.6 C/MHz    286 mW   39.3 J    6.4 I/mJ   137.3 s
- 500:  2253     4.5 C/MHz    375 mW   41.7 J    6.0 I/mJ   111.0 s
- 600:  2740     4.6 C/MHz    446 mW   40.7 J    6.1 I/mJ    91.2 s
- 700:  3199     4.6 C/MHz    513 mW   40.1 J    6.2 I/mJ    78.2 s
- 800:  3673     4.6 C/MHz    678 mW   46.1 J    5.4 I/mJ    68.1 s
- 900:  4090     4.5 C/MHz    764 mW   46.7 J    5.4 I/mJ    61.1 s
-1000:  4586     4.6 C/MHz    878 mW   47.9 J    5.2 I/mJ    54.5 s
-1100:  5060     4.6 C/MHz   1084 mW   53.6 J    4.7 I/mJ    49.4 s
-1200:  5515     4.6 C/MHz   1225 mW   55.5 J    4.5 I/mJ    45.3 s
-1300:  5933     4.6 C/MHz   1396 mW   58.9 J    4.2 I/mJ    42.1 s
-1400:  6395     4.6 C/MHz   1662 mW   65.0 J    3.8 I/mJ    39.1 s
-1500:  6897     4.6 C/MHz   1895 mW   68.7 J    3.6 I/mJ    36.3 s
-1600:  7332     4.6 C/MHz   2198 mW   75.0 J    3.3 I/mJ    34.1 s
-1700:  7826     4.6 C/MHz   2497 mW   79.8 J    3.1 I/mJ    31.9 s
+ drivers/crypto/amcc/crypto4xx_core.c          |  7 ++--
+ drivers/crypto/atmel-aes.c                    | 14 +++----
+ drivers/crypto/atmel-sha.c                    | 14 +++----
+ drivers/crypto/atmel-tdes.c                   | 14 +++----
+ drivers/crypto/axis/artpec6_crypto.c          |  7 ++--
+ drivers/crypto/caam/jr.c                      |  9 ++--
+ drivers/crypto/cavium/cpt/cptvf_main.c        |  9 ++--
+ drivers/crypto/cavium/nitrox/nitrox_common.h  |  2 +-
+ drivers/crypto/cavium/nitrox/nitrox_isr.c     | 13 +++---
+ drivers/crypto/cavium/nitrox/nitrox_reqmgr.c  |  4 +-
+ drivers/crypto/ccp/ccp-dev-v3.c               |  9 ++--
+ drivers/crypto/ccp/ccp-dev-v5.c               |  9 ++--
+ drivers/crypto/ccp/ccp-dmaengine.c            |  7 ++--
+ drivers/crypto/ccree/cc_fips.c                |  8 ++--
+ drivers/crypto/ccree/cc_request_mgr.c         | 12 +++---
+ drivers/crypto/hifn_795x.c                    |  6 +--
+ drivers/crypto/img-hash.c                     | 12 +++---
+ drivers/crypto/ixp4xx_crypto.c                |  4 +-
+ .../crypto/marvell/octeontx/otx_cptvf_main.c  | 12 +++---
+ drivers/crypto/mediatek/mtk-aes.c             | 14 +++----
+ drivers/crypto/mediatek/mtk-sha.c             | 14 +++----
+ drivers/crypto/omap-aes.c                     |  6 +--
+ drivers/crypto/omap-des.c                     |  6 +--
+ drivers/crypto/omap-sham.c                    |  6 +--
+ drivers/crypto/picoxcell_crypto.c             |  7 ++--
+ drivers/crypto/qat/qat_common/adf_isr.c       |  5 +--
+ drivers/crypto/qat/qat_common/adf_sriov.c     | 10 ++---
+ drivers/crypto/qat/qat_common/adf_transport.c |  4 +-
+ .../qat/qat_common/adf_transport_internal.h   |  2 +-
+ drivers/crypto/qat/qat_common/adf_vf_isr.c    | 11 +++--
+ drivers/crypto/qce/core.c                     |  7 ++--
+ drivers/crypto/rockchip/rk3288_crypto.c       | 14 +++----
+ drivers/crypto/s5p-sss.c                      | 13 +++---
+ drivers/crypto/talitos.c                      | 42 +++++++++----------
+ 34 files changed, 152 insertions(+), 181 deletions(-)
 
-[1] https://github.com/kdrag0n/freqbench
-[2] https://www.eembc.org/coremark/
-[3] https://github.com/kdrag0n/freqbench/tree/master/results/exynos5250/main
-
-Signed-off-by: Danny Lin <danny@kdrag0n.dev>
----
- arch/arm/boot/dts/exynos5250.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 2ea2caaca4e2..cc2fe0afcfc7 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -58,6 +58,8 @@ cpu0: cpu@0 {
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			#cooling-cells = <2>; /* min followed by max */
-+			capacity-dmips-mhz = <1024>;
-+			dynamic-power-coefficient = <800>;
- 		};
- 		cpu1: cpu@1 {
- 			device_type = "cpu";
-@@ -67,6 +69,20 @@ cpu1: cpu@1 {
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			#cooling-cells = <2>; /* min followed by max */
-+			capacity-dmips-mhz = <1024>;
-+			dynamic-power-coefficient = <800>;
-+		};
-+
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&cpu0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cpu1>;
-+				};
-+			};
- 		};
- 	};
- 
 -- 
-2.29.2
+2.25.1
 
