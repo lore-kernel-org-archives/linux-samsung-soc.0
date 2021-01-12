@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DCDC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jan 2021 01:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CB1C4332D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jan 2021 01:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF25522E01
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jan 2021 01:50:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27E3822E03
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jan 2021 01:50:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbhALBto (ORCPT
+        id S1728273AbhALBuC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Jan 2021 20:49:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43026 "EHLO
+        Mon, 11 Jan 2021 20:50:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726701AbhALBtn (ORCPT
+        with ESMTP id S1726701AbhALBuC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Jan 2021 20:49:43 -0500
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DF8EC061794;
-        Mon, 11 Jan 2021 17:49:03 -0800 (PST)
-Received: by mail-pf1-x436.google.com with SMTP id c12so402011pfo.10;
-        Mon, 11 Jan 2021 17:49:03 -0800 (PST)
+        Mon, 11 Jan 2021 20:50:02 -0500
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A413C0617A2;
+        Mon, 11 Jan 2021 17:49:22 -0800 (PST)
+Received: by mail-pg1-x529.google.com with SMTP id n7so385913pgg.2;
+        Mon, 11 Jan 2021 17:49:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+2LJpncxdzSbb/JP/0XuErEHxZj6Pmh4iBBisr0kOG4=;
-        b=HmuAnrp1Otc9OjAqpif+aX+kkYFKS0Ir7QviklhzZ29YoEms4u10Ovm2XiE7pDImye
-         /CYXpA3TYKw0n/zMCKi0n4aOdVE4tQmV/vQ0N9+Bd7TEA2Hk0uWFNMi82FoK7Hk+dvPb
-         T+tQHYuEgVZdqj2dHocHnJitlKRxmizltWQWC99wQAV2a+DrmiGnWlrxlh+Iu1dSYncG
-         EPxXmSoP0bbTqAOobAyT8KJHeAkIiRO1/doH9hlkMJVuPoTrzVUc6hxhAJUC2YYGEj8X
-         +94OyAYBDk83//wonv/pxzBXkvrlIrt3/Y749csA1GdhgOqN4LVVD3phP4D4OL1cp7js
-         2YwQ==
+        bh=OtP2Q83ql8pOj4Inc9JGr9jKNcuTQBZobhx5BHnHH/g=;
+        b=YBC1yQjH8TXjngxP/qOpGQOeT8UFI3EfWZf6v8+12cI+z8pgLG0+ii6bgWIYoBvYfq
+         eyyK2D0PFMwsk0eeXU5NQjnsqV1lcHmI/SU+/JgDjHemst5DfX0AS/YjnlEXUGxHmnQF
+         3tt0ext4GTdJoV7nBRRS99AuKZHBvlzIYvBOLBzYyBqKQl/dQqThoiCYe50MH3NdAGcc
+         8hkI/sI/IC+phUcD5AFvguqO3eR7RSe1h0jEBd8vivFwCdJBYl79kNr0Q5MJbKAnzxdV
+         xebj8hG5WiQ566cxHzDggzbIpIiA7PrzoAT7MQ8vGrR603pXUTE+aD+Q297yTRutBYWl
+         1r0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+2LJpncxdzSbb/JP/0XuErEHxZj6Pmh4iBBisr0kOG4=;
-        b=iEkGlYfK5SVspAXcc59SPARCtGytEvlMMFWqw4FOsHDu3JxbLT85ORafsNqNBIRVzL
-         7VgFx6LVJIfUk/rTmPDqbXfYtwxpVAEToE3GQhaqkicKfguokI4To7P1iqZdZoye2OPV
-         QVYeslXrIMrugFGfRT2Ks81Rep3YC1tLD+vlNJJSUzyAeEJnuBdWicBFF7SA6HvuEwUj
-         6pICE9r+sx0ohWjXMwhdm+F6KxXW5SS6GK/7Z/+oAqSDjwpSlLPxFeqUDP9UAUc4iCYz
-         APNF7+psgRZ0USrKA8/DtxfkcnTc6saIlN3BSOeXAnKO7+Rl2o07xfxisdysiBJqX2iR
-         7wfQ==
-X-Gm-Message-State: AOAM531YCfmQhmnDHx7y4zqzFLgacnqkp2ufHnXMrxG6zkJA+swIT4pe
-        xP7vNBJH9m040hTudPcRD40=
-X-Google-Smtp-Source: ABdhPJwAVkTGU7VdKnWpjWrkka7l9NUTpAilXCO9WBxYiB3USQqO2rUoRU2hsywCWx8+oJRHIvI+tg==
-X-Received: by 2002:a63:ec4d:: with SMTP id r13mr2276375pgj.53.1610416143044;
-        Mon, 11 Jan 2021 17:49:03 -0800 (PST)
+        bh=OtP2Q83ql8pOj4Inc9JGr9jKNcuTQBZobhx5BHnHH/g=;
+        b=nj/c6APMByQDl9zaC4uL5tjrXIYeQiFHsHVSXll1YxSvZf9kU3qYkLNS0QjzbEUM+J
+         h0wzkH+vxhtzRPoPq2NY39/npKPFLSOGKTRB+yEpOlFJAeK+euDa9Zh+tCTthJKQMSEm
+         5iqaR94b2sb+FDVVHllTUsSCPakQyONKRCYfbI/AmGZFNOXTPj5Wf6QS4rJ2m+hgF+dN
+         NmfyxTSB+TPF8sbd6dLR9prglmEqcl2df1r75MmJWET6FSsfRS0T0tckBvZGW91hEDR5
+         Zt3snJ+Vg7mpp3wccAf38BYxtBaAp3WDngLqHbbYGUOx3BRJ80ydWyjzPfyHTRtUUJCs
+         6vsQ==
+X-Gm-Message-State: AOAM532Iw3ZHM1UVkot5Gch+aDkBuN9NBBJ4pY+hlHEmXuWxfvKS3A7+
+        ji4gsKY88pkaAwuPqmYasOA=
+X-Google-Smtp-Source: ABdhPJxWyRij3haa1spWTpg4Y2dOKAQzvgqWX9I/ALksySu/d/6UfpmZJDPTx8OGtFt6Z9FmNg1LHQ==
+X-Received: by 2002:aa7:8517:0:b029:19d:d70f:86ec with SMTP id v23-20020aa785170000b029019dd70f86ecmr2217270pfn.19.1610416161691;
+        Mon, 11 Jan 2021 17:49:21 -0800 (PST)
 Received: from localhost.localdomain ([49.207.194.207])
-        by smtp.gmail.com with ESMTPSA id 14sm904376pfy.55.2021.01.11.17.48.54
+        by smtp.gmail.com with ESMTPSA id 14sm904376pfy.55.2021.01.11.17.49.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jan 2021 17:49:02 -0800 (PST)
+        Mon, 11 Jan 2021 17:49:21 -0800 (PST)
 From:   Allen Pais <allen.lkml@gmail.com>
 To:     herbert@gondor.apana.org.au
 Cc:     davem@davemloft.net, nicolas.ferre@microchip.com,
@@ -74,9 +74,9 @@ Cc:     davem@davemloft.net, nicolas.ferre@microchip.com,
         linux-samsung-soc@vger.kernel.org,
         Allen Pais <apais@linux.microsoft.com>,
         Romain Perier <romain.perier@gmail.com>
-Subject: [PATCH v3 12/19] crypto: omap: convert tasklets to use new tasklet_setup() API
-Date:   Tue, 12 Jan 2021 07:16:43 +0530
-Message-Id: <20210112014650.10887-13-allen.lkml@gmail.com>
+Subject: [PATCH v3 14/19] crypto: qat: convert tasklets to use new tasklet_setup() API
+Date:   Tue, 12 Jan 2021 07:16:45 +0530
+Message-Id: <20210112014650.10887-15-allen.lkml@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210112014650.10887-1-allen.lkml@gmail.com>
 References: <20210112014650.10887-1-allen.lkml@gmail.com>
@@ -96,86 +96,124 @@ and from_tasklet() to pass the tasklet pointer explicitly.
 Signed-off-by: Romain Perier <romain.perier@gmail.com>
 Signed-off-by: Allen Pais <apais@linux.microsoft.com>
 ---
- drivers/crypto/omap-aes.c  | 6 +++---
- drivers/crypto/omap-des.c  | 6 +++---
- drivers/crypto/omap-sham.c | 6 +++---
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/crypto/qat/qat_common/adf_isr.c               |  5 ++---
+ drivers/crypto/qat/qat_common/adf_sriov.c             | 10 +++++-----
+ drivers/crypto/qat/qat_common/adf_transport.c         |  4 ++--
+ .../crypto/qat/qat_common/adf_transport_internal.h    |  2 +-
+ drivers/crypto/qat/qat_common/adf_vf_isr.c            | 11 +++++------
+ 5 files changed, 15 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/crypto/omap-aes.c b/drivers/crypto/omap-aes.c
-index a45bdcf3026d..7e4223716620 100644
---- a/drivers/crypto/omap-aes.c
-+++ b/drivers/crypto/omap-aes.c
-@@ -503,9 +503,9 @@ static void omap_aes_copy_ivout(struct omap_aes_dev *dd, u8 *ivbuf)
- 		((u32 *)ivbuf)[i] = omap_aes_read(dd, AES_REG_IV(dd, i));
- }
- 
--static void omap_aes_done_task(unsigned long data)
-+static void omap_aes_done_task(struct tasklet_struct *t)
- {
--	struct omap_aes_dev *dd = (struct omap_aes_dev *)data;
-+	struct omap_aes_dev *dd = from_tasklet(dd, t, done_task);
- 
- 	pr_debug("enter done_task\n");
- 
-@@ -1151,7 +1151,7 @@ static int omap_aes_probe(struct platform_device *pdev)
- 		 (reg & dd->pdata->major_mask) >> dd->pdata->major_shift,
- 		 (reg & dd->pdata->minor_mask) >> dd->pdata->minor_shift);
- 
--	tasklet_init(&dd->done_task, omap_aes_done_task, (unsigned long)dd);
-+	tasklet_setup(&dd->done_task, omap_aes_done_task);
- 
- 	err = omap_aes_dma_init(dd);
- 	if (err == -EPROBE_DEFER) {
-diff --git a/drivers/crypto/omap-des.c b/drivers/crypto/omap-des.c
-index c9d38bcfd1c7..fddcfc3ba57b 100644
---- a/drivers/crypto/omap-des.c
-+++ b/drivers/crypto/omap-des.c
-@@ -594,9 +594,9 @@ static int omap_des_crypt_req(struct crypto_engine *engine,
- 	return omap_des_crypt_dma_start(dd);
- }
- 
--static void omap_des_done_task(unsigned long data)
-+static void omap_des_done_task(struct tasklet_struct *t)
- {
--	struct omap_des_dev *dd = (struct omap_des_dev *)data;
-+	struct omap_des_dev *dd = from_tasklet(dd, t, done_task);
+diff --git a/drivers/crypto/qat/qat_common/adf_isr.c b/drivers/crypto/qat/qat_common/adf_isr.c
+index c45853463530..bb5251d587eb 100644
+--- a/drivers/crypto/qat/qat_common/adf_isr.c
++++ b/drivers/crypto/qat/qat_common/adf_isr.c
+@@ -244,9 +244,8 @@ static int adf_setup_bh(struct adf_accel_dev *accel_dev)
  	int i;
  
- 	pr_debug("enter done_task\n");
-@@ -1011,7 +1011,7 @@ static int omap_des_probe(struct platform_device *pdev)
- 		 (reg & dd->pdata->major_mask) >> dd->pdata->major_shift,
- 		 (reg & dd->pdata->minor_mask) >> dd->pdata->minor_shift);
+ 	for (i = 0; i < hw_data->num_banks; i++)
+-		tasklet_init(&priv_data->banks[i].resp_handler,
+-			     adf_response_handler,
+-			     (unsigned long)&priv_data->banks[i]);
++		tasklet_setup(&priv_data->banks[i].resp_handler,
++			     adf_response_handler);
+ 	return 0;
+ }
  
--	tasklet_init(&dd->done_task, omap_des_done_task, (unsigned long)dd);
-+	tasklet_setup(&dd->done_task, omap_des_done_task);
+diff --git a/drivers/crypto/qat/qat_common/adf_sriov.c b/drivers/crypto/qat/qat_common/adf_sriov.c
+index 8c822c2861c2..591537399edb 100644
+--- a/drivers/crypto/qat/qat_common/adf_sriov.c
++++ b/drivers/crypto/qat/qat_common/adf_sriov.c
+@@ -24,9 +24,10 @@ static void adf_iov_send_resp(struct work_struct *work)
+ 	kfree(pf2vf_resp);
+ }
  
- 	err = omap_des_dma_init(dd);
- 	if (err == -EPROBE_DEFER) {
-diff --git a/drivers/crypto/omap-sham.c b/drivers/crypto/omap-sham.c
-index ae0d320d3c60..5dc7e23879a5 100644
---- a/drivers/crypto/omap-sham.c
-+++ b/drivers/crypto/omap-sham.c
-@@ -1725,9 +1725,9 @@ static struct ahash_alg algs_sha384_sha512[] = {
- },
+-static void adf_vf2pf_bh_handler(void *data)
++static void adf_vf2pf_bh_handler(struct tasklet_struct *t)
+ {
+-	struct adf_accel_vf_info *vf_info = (struct adf_accel_vf_info *)data;
++	struct adf_accel_vf_info *vf_info =
++				from_tasklet(vf_info, t, vf2pf_bh_tasklet);
+ 	struct adf_pf2vf_resp *pf2vf_resp;
+ 
+ 	pf2vf_resp = kzalloc(sizeof(*pf2vf_resp), GFP_ATOMIC);
+@@ -52,9 +53,8 @@ static int adf_enable_sriov(struct adf_accel_dev *accel_dev)
+ 		vf_info->accel_dev = accel_dev;
+ 		vf_info->vf_nr = i;
+ 
+-		tasklet_init(&vf_info->vf2pf_bh_tasklet,
+-			     (void *)adf_vf2pf_bh_handler,
+-			     (unsigned long)vf_info);
++		tasklet_setup(&vf_info->vf2pf_bh_tasklet,
++			     adf_vf2pf_bh_handler);
+ 		mutex_init(&vf_info->pf2vf_lock);
+ 		ratelimit_state_init(&vf_info->vf2pf_ratelimit,
+ 				     DEFAULT_RATELIMIT_INTERVAL,
+diff --git a/drivers/crypto/qat/qat_common/adf_transport.c b/drivers/crypto/qat/qat_common/adf_transport.c
+index 5a7030acdc33..03dcbeac25d7 100644
+--- a/drivers/crypto/qat/qat_common/adf_transport.c
++++ b/drivers/crypto/qat/qat_common/adf_transport.c
+@@ -324,9 +324,9 @@ static void adf_ring_response_handler(struct adf_etr_bank_data *bank)
+ 		adf_handle_response(&bank->rings[i]);
+ }
+ 
+-void adf_response_handler(uintptr_t bank_addr)
++void adf_response_handler(struct tasklet_struct *t)
+ {
+-	struct adf_etr_bank_data *bank = (void *)bank_addr;
++	struct adf_etr_bank_data *bank = from_tasklet(bank, t, resp_handler);
+ 	struct adf_hw_csr_ops *csr_ops = GET_CSR_OPS(bank->accel_dev);
+ 
+ 	/* Handle all the responses and reenable IRQs */
+diff --git a/drivers/crypto/qat/qat_common/adf_transport_internal.h b/drivers/crypto/qat/qat_common/adf_transport_internal.h
+index 501bcf0f1809..aaec7b2bc220 100644
+--- a/drivers/crypto/qat/qat_common/adf_transport_internal.h
++++ b/drivers/crypto/qat/qat_common/adf_transport_internal.h
+@@ -46,7 +46,7 @@ struct adf_etr_data {
+ 	struct dentry *debug;
  };
  
--static void omap_sham_done_task(unsigned long data)
-+static void omap_sham_done_task(struct tasklet_struct *t)
+-void adf_response_handler(uintptr_t bank_addr);
++void adf_response_handler(struct tasklet_struct *t);
+ #ifdef CONFIG_DEBUG_FS
+ #include <linux/debugfs.h>
+ int adf_bank_debugfs_add(struct adf_etr_bank_data *bank);
+diff --git a/drivers/crypto/qat/qat_common/adf_vf_isr.c b/drivers/crypto/qat/qat_common/adf_vf_isr.c
+index 38d316a42ba6..1d0ff58fd9b5 100644
+--- a/drivers/crypto/qat/qat_common/adf_vf_isr.c
++++ b/drivers/crypto/qat/qat_common/adf_vf_isr.c
+@@ -68,9 +68,10 @@ static void adf_dev_stop_async(struct work_struct *work)
+ 	kfree(stop_data);
+ }
+ 
+-static void adf_pf2vf_bh_handler(void *data)
++static void adf_pf2vf_bh_handler(struct tasklet_struct *t)
  {
--	struct omap_sham_dev *dd = (struct omap_sham_dev *)data;
-+	struct omap_sham_dev *dd = from_tasklet(dd, t, done_task);
- 	int err = 0;
+-	struct adf_accel_dev *accel_dev = data;
++	struct adf_accel_dev *accel_dev = from_tasklet(accel_dev, t,
++						       vf.pf2vf_bh_tasklet);
+ 	struct adf_hw_device_data *hw_data = accel_dev->hw_device;
+ 	struct adf_bar *pmisc =
+ 			&GET_BARS(accel_dev)[hw_data->get_misc_bar_id(hw_data)];
+@@ -138,8 +139,7 @@ static void adf_pf2vf_bh_handler(void *data)
  
- 	dev_dbg(dd->dev, "%s: flags=%lx\n", __func__, dd->flags);
-@@ -2084,7 +2084,7 @@ static int omap_sham_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, dd);
+ static int adf_setup_pf2vf_bh(struct adf_accel_dev *accel_dev)
+ {
+-	tasklet_init(&accel_dev->vf.pf2vf_bh_tasklet,
+-		     (void *)adf_pf2vf_bh_handler, (unsigned long)accel_dev);
++	tasklet_setup(&accel_dev->vf.pf2vf_bh_tasklet, adf_pf2vf_bh_handler);
  
- 	INIT_LIST_HEAD(&dd->list);
--	tasklet_init(&dd->done_task, omap_sham_done_task, (unsigned long)dd);
-+	tasklet_setup(&dd->done_task, omap_sham_done_task);
- 	crypto_init_queue(&dd->queue, OMAP_SHAM_QUEUE_LENGTH);
+ 	mutex_init(&accel_dev->vf.vf2pf_lock);
+ 	return 0;
+@@ -216,8 +216,7 @@ static int adf_setup_bh(struct adf_accel_dev *accel_dev)
+ {
+ 	struct adf_etr_data *priv_data = accel_dev->transport;
  
- 	err = (dev->of_node) ? omap_sham_get_res_of(dd, dev, &res) :
+-	tasklet_init(&priv_data->banks[0].resp_handler, adf_response_handler,
+-		     (unsigned long)priv_data->banks);
++	tasklet_setup(&priv_data->banks[0].resp_handler, adf_response_handler);
+ 	return 0;
+ }
+ 
 -- 
 2.25.1
 
