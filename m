@@ -2,291 +2,244 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7800C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 11:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F843C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 16:18:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC0D229CA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 11:04:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC83D22D05
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 16:18:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbhAMLEN (ORCPT
+        id S1727521AbhAMQSk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Jan 2021 06:04:13 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53352 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727184AbhAMLEN (ORCPT
+        Wed, 13 Jan 2021 11:18:40 -0500
+Received: from mail-dm6nam11on2047.outbound.protection.outlook.com ([40.107.223.47]:27320
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727109AbhAMQSj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Jan 2021 06:04:13 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210113110330euoutp0217fb639ba71aa241e63a4de7097a9927~Zxcl38mgw2654626546euoutp02O
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Jan 2021 11:03:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210113110330euoutp0217fb639ba71aa241e63a4de7097a9927~Zxcl38mgw2654626546euoutp02O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1610535810;
-        bh=Uo6jrO8DBDSkS3Y0Ve8teV9q8aaM7a3EWBz7zktp2eY=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=cpt/4B9wLSghNC19JSSdirFIdsKktDt3QvU/E1D81P/Z2JW7OFj0a2cyoLEjOiFXz
-         ZAdUZGI0ynxZqLRN7B92AMdarJwwR1dsZDlWMqxxRGpRtTu1ue6RFIUYTno0KqqORr
-         wJgdkcWekk/MdPbhYu0HZGCz0eivNU6D3yhF5D+A=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210113110330eucas1p2cf371210a27cf68b5ead04f9cac94fcb~Zxcld-fOL2206022060eucas1p25;
-        Wed, 13 Jan 2021 11:03:30 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 66.B1.27958.283DEFF5; Wed, 13
-        Jan 2021 11:03:30 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210113110330eucas1p1e7efa719b5db55ccf3774450a8c1e452~ZxclF4f_x2717427174eucas1p1Q;
-        Wed, 13 Jan 2021 11:03:30 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210113110330eusmtrp14e815edc48ef62f1aa21f856e7d4c631~ZxclFKheU1279812798eusmtrp10;
-        Wed, 13 Jan 2021 11:03:30 +0000 (GMT)
-X-AuditID: cbfec7f2-efdff70000006d36-f2-5ffed382ad61
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id AA.C5.16282.183DEFF5; Wed, 13
-        Jan 2021 11:03:29 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210113110329eusmtip2d220e279a5de6b96d4b58a92bce2ab9a~Zxckp4Go22757327573eusmtip2Q;
-        Wed, 13 Jan 2021 11:03:29 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Saravana Kannan <saravanak@google.com>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>
-Subject: [PATCH] soc: samsung: pm_domains: Convert to regular platform
- driver
-Date:   Wed, 13 Jan 2021 12:03:20 +0100
-Message-Id: <20210113110320.13149-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsWy7djP87pNl//FG5w9JGKxccZ6Vovz5zew
-        W1zeNYfNYsb5fUwWa4/cZbeY+2Uqs0XXob9sDuweCzaVemxa1cnm0bdlFaPH501yASxRXDYp
-        qTmZZalF+nYJXBlzHh9hLDioV3FrQjt7A+M6tS5GTg4JAROJy0svsXQxcnEICaxglNi3YS8r
-        hPOFUeLq8V1sEM5nRonWay8Yuxg5wFp27DEC6RYSWM4o8XGGAlzDyhnr2UESbAKGEl1vu9hA
-        bBEBVYnPbQvYQYqYBZqYJC5eXgJWJCzgL7Hz8RmwIhagojOP17CC2LwCthKnb6xlhrhPXmL1
-        hgPMIM0SAj/ZJVY/XsEEkXCRuPVhMRuELSzx6vgWdghbRuL05B4WiIZmRomH59ayQzg9jBKX
-        m2YwQlRZS9w594sN5B9mAU2J9bv0IcKOEqevr2eCeJNP4sZbQZAwM5A5adt0Zogwr0RHmxBE
-        tZrErOPr4NYevHAJ6mYPiYcdc9kgIRQrMfFjD9MERrlZCLsWMDKuYhRPLS3OTU8tNsxLLdcr
-        TswtLs1L10vOz93ECEwAp/8d/7SDce6rj3qHGJk4GA8xSnAwK4nwFnX/jRfiTUmsrEotyo8v
-        Ks1JLT7EKM3BoiTOu2r2mnghgfTEktTs1NSC1CKYLBMHp1QDU0JEzzK1VzmeN6/+XTP/SeaP
-        7zMannDf/3tHJ/3IGrFd5vanrhW78gTJXvpU85PXvqlvksjJUs+AkxmKdspR4Z8Kdjd5Gkep
-        Mh688XjSDf5rjXMf/zCuur38DHu15V8phbP3Jmh/FCzJ3MZRufDHkey8feKBCTITeTx+/5BT
-        1/mTaTH9c32iRS+b/7w38guXac+fJlSSOlf9V6CNpN0MiU/Pz2rnlz1uWhXf8Nq87bHl+YXH
-        reP4T9vG2D3a9ei25A7bFMuCmuRfsy5Wvv7v7LzlEc8dYbfrV7qOCrpkbTqcIppdOrP6xJ+C
-        a40vqzWKZvLsUitNaptV/DNoonNh4KklkgLdj0qu7zCcoFgSosRSnJFoqMVcVJwIADi8p8Vv
-        AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrELMWRmVeSWpSXmKPExsVy+t/xe7qNl//FG1zZZ2axccZ6Vovz5zew
-        W1zeNYfNYsb5fUwWa4/cZbeY+2Uqs0XXob9sDuweCzaVemxa1cnm0bdlFaPH501yASxRejZF
-        +aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlzHh9hLDio
-        V3FrQjt7A+M6tS5GDg4JAROJHXuMuhi5OIQEljJK/Fz7lL2LkRMoLiNxcloDK4QtLPHnWhcb
-        RNEnRokHR4+AJdgEDCW63oIkODlEBFQlPrctYAcpYhZoY5JYdWs2WEJYwFfixu27YDYLUNGZ
-        x2vAmnkFbCVO31jLDLFBXmL1hgPMExh5FjAyrGIUSS0tzk3PLTbSK07MLS7NS9dLzs/dxAgM
-        vG3Hfm7Zwbjy1Ue9Q4xMHIyHGCU4mJVEeIu6/8YL8aYkVlalFuXHF5XmpBYfYjQF2jeRWUo0
-        OR8Y+nkl8YZmBqaGJmaWBqaWZsZK4rwmR9bECwmkJ5akZqemFqQWwfQxcXBKNTB19Kj82XFl
-        buzi5qBjVXN2zxG1idDIC9k2OahD4/1a46oHOoUrmSclO8z53n5/6YbWxnlSz7RWb4iwe1h8
-        78BThfh7FuddahbJ59tP4JmUyN0zOXGu6M6NRsdnqdydmSaQOHvVxYufcz7tO7tl451tv6Nf
-        eN5z8P+up//0x+vNJ67GHY7MDt/kf0/MW1SGSeKY7U8GDq8gTQvnuzl+9279aPZRC9T+16Du
-        zP2rcbbl5eWr/E7xHuF7K7/39/YPV1S1Nl62+Xm6epfE/dL0hHM+G0M/fTM+uW/prPuMO9PC
-        vXTvrLp0ca7Eu3QH1bSs2C2vF7PqvdzLcWuCu7fKuXfNxw7mHT91awb3m4B2Yd0ZoUosxRmJ
-        hlrMRcWJANBbuNTFAgAA
-X-CMS-MailID: 20210113110330eucas1p1e7efa719b5db55ccf3774450a8c1e452
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210113110330eucas1p1e7efa719b5db55ccf3774450a8c1e452
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210113110330eucas1p1e7efa719b5db55ccf3774450a8c1e452
-References: <CGME20210113110330eucas1p1e7efa719b5db55ccf3774450a8c1e452@eucas1p1.samsung.com>
+        Wed, 13 Jan 2021 11:18:39 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nzsxKkNNn9ZDNUdS6Pby4S4aCjT3UqJSQOIqBwbBKefR0xc4+RbydnJ97ECzy99aRAKFDRyodDjoxvIWr8hp3VEt498/zJSHpWHlxBqDvi3TdonXvABhwNolst0VFaxZDepxTyrBUwaUu/TVn3boj+TGfXhGh3xtjDdI2gzcEFVMvPGt4Qf/kMnfuZEWK53P8GJwJK8l5cJBNdUSX4B3LtGPT5JgBXbGG6M9xXYG1rbieKnTccFPpHdye5KPBKlkmEn6YsLG0GwH6xtf4ggQC2LzVm+kIYKVaRcxj5ycS3F2DERDEUcghBSpso8GaNRM5e2oaso8nvbOczYeYQK6hg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9kIIlKzLqdTPtllnWtxcIvEI2c7vtdqiCI7fQ2NlhWE=;
+ b=CCrADieO/KDtQYbCKKLc9Sg18p0taWCMTpnt//pNVbWDXmdCCooWgPMHBe4AkGGuhINCURmBZet62eFCc3H/B+3eT2WB9VlA4aUCSaaS4acpQy/qaQeU6gKMZJm0s+upKeWCrGxYq3gzLzLxGveXBYy0dRH/92KmTYtJo1K3x59mm9ROLBf85Cz9fKIGziyi+C0u+hSGIzK+M5NYEdH4lcRFcEEzKtyCjB1xsfQkg/fiw2dVwiGAmPl9EkqrAjcqiqqhPzP9lyurC8g2eLF87vLhE02RRTp1g7JWnbVhoEksO7Q5nQi4CRKWIrJhvTbrS226JTAvm4xe4Kw4JA1whA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9kIIlKzLqdTPtllnWtxcIvEI2c7vtdqiCI7fQ2NlhWE=;
+ b=3sil8yglTjDVxpMVGbxDsfqwxm57wFNk4++7IRXJALoF42sgV8NnwhM9YIPBaLxwIa/kKWlSXuV2taQAB/S6JFAQ80oqQeE3LVHZneFQvQ1vQuEHFPLRIar/3zdlUsTr3YH5U6DeJCxNh9rnsj2k+s1dTe3/wBnpAJByIgCIRCM=
+Authentication-Results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none header.from=amd.com;
+Received: from SN1PR12MB2590.namprd12.prod.outlook.com (2603:10b6:802:2e::17)
+ by SN6PR12MB2607.namprd12.prod.outlook.com (2603:10b6:805:6d::30) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3742.12; Wed, 13 Jan
+ 2021 16:17:45 +0000
+Received: from SN1PR12MB2590.namprd12.prod.outlook.com
+ ([fe80::21ed:fdce:2ba8:2179]) by SN1PR12MB2590.namprd12.prod.outlook.com
+ ([fe80::21ed:fdce:2ba8:2179%7]) with mapi id 15.20.3742.012; Wed, 13 Jan 2021
+ 16:17:44 +0000
+Date:   Wed, 13 Jan 2021 10:17:34 -0600
+From:   John Allen <john.allen@amd.com>
+To:     Allen Pais <allen.lkml@gmail.com>
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ludovic.desroches@microchip.com, jesper.nilsson@axis.com,
+        lars.persson@axis.com, horia.geanta@nxp.com, aymen.sghaier@nxp.com,
+        gcherian@marvell.com, thomas.lendacky@amd.com, gilad@benyossef.com,
+        bbrezillon@kernel.org, arno@natisbad.org, schalla@marvell.com,
+        matthias.bgg@gmail.com, jamie@jamieiles.com,
+        giovanni.cabiddu@intel.com, heiko@sntech.de, krzk@kernel.org,
+        vz@mleia.com, k.konieczny@samsung.com,
+        linux-crypto@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        qat-linux@intel.com, linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Allen Pais <apais@linux.microsoft.com>,
+        Romain Perier <romain.perier@gmail.com>
+Subject: Re: [PATCH v3 06/19] crypto: ccp: convert tasklets to use new
+ tasklet_setup() API
+Message-ID: <20210113161734.GA31464@theseus>
+References: <20210112014650.10887-1-allen.lkml@gmail.com>
+ <20210112014650.10887-7-allen.lkml@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210112014650.10887-7-allen.lkml@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [165.204.53.104]
+X-ClientProxiedBy: BY3PR04CA0017.namprd04.prod.outlook.com
+ (2603:10b6:a03:217::22) To SN1PR12MB2590.namprd12.prod.outlook.com
+ (2603:10b6:802:2e::17)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from theseus (165.204.53.104) by BY3PR04CA0017.namprd04.prod.outlook.com (2603:10b6:a03:217::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3742.7 via Frontend Transport; Wed, 13 Jan 2021 16:17:41 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: cf883aea-651b-4a21-21d0-08d8b7dec2ac
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2607:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <SN6PR12MB26073FD23BA1FA51CBF03B669AA90@SN6PR12MB2607.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:283;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HmDSsuhwi7tPic/nP3AvfdiltUfETj9oI8fzXurnPH5ZWc42m7yhg46ei8u5JSAwwCfTwx1NEimukJd8ejbGdJqNZ/mMKyMwk0hECTpLO7+KsZ79A/BcMozFdzqPzm64nVgBa8M1CTmy1om5hw8JO9ou5qpLUUUKHE0N8VBsjYXVHugLkmxd+E67F5vKWXDN1B6IsPN9IRnKnOwYoQPoajKc4hvNF4NXIXojtJTumKbTrsHbBalFYLZk8dWgy2rJt0f+uFT6qww0aE1lXDSkvBw0fDctj4aRuIZr/3kTd2fZehA1WL6ELQfs4g7ftTMuzp9Gnze2qHU7AhXkzFtlDUCDIUzmfNXVUE9JhrJDeFnZQnKt9lPYABLhbIfpfNklAHhqnLoc+jK+VtSIYvVRag==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN1PR12MB2590.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(366004)(376002)(39860400002)(136003)(396003)(83380400001)(1076003)(86362001)(8936002)(54906003)(9576002)(44832011)(316002)(9686003)(52116002)(186003)(478600001)(7416002)(66946007)(66476007)(2906002)(8676002)(6496006)(33716001)(26005)(6916009)(33656002)(66556008)(16526019)(956004)(5660300002)(4326008)(55016002)(6666004);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?rPtbvQ4ZuSmm1/nmvLO1XCeM/GOEfb7w2JUTvSemBSZgyktwLsm/dHeX7Kdc?=
+ =?us-ascii?Q?1WDWv3ts3wjfM3BoG4kxPHGx3gATRF9yCmbDsB6HPrGfkI0j3iZ9cFnb0FJb?=
+ =?us-ascii?Q?ssNqGnr15n74+76bI7900G/2mE83Ve5JIb19bB4w8wER3qjK1rwCrzXMsjIk?=
+ =?us-ascii?Q?eKSKJYWdQWXYgYdDZQpebZj42cbT7n4VcFUnoZZuiMq3o6A8SocnGPhSA1Qr?=
+ =?us-ascii?Q?hxKsBib7y6yJsEEvlo6aDdvRU/sB6yeyxku9ZfC80DjnxW5W527C/6AfhAxc?=
+ =?us-ascii?Q?quTpcYI9RPhfudeCgvwMctf0tYq+p6gjGPj3oETl4LBGa+cl0XFwoiNOkQPX?=
+ =?us-ascii?Q?nO0DWkx6gRlELFRfHTmvvPGs4k0SHVihI/W1R+nDdem+i+qfbbrRLfEhIEgN?=
+ =?us-ascii?Q?iHJQ92oSbahT/rDXdLkIH9yRuiY+qjQwWInzVymU9uhGBUdqZX0Kfu35OarJ?=
+ =?us-ascii?Q?To+ES7ZFcZGvWEnt2yCm959Vw0nITduNpngrTZWiorbRtPNbp4uNiKe8IH4N?=
+ =?us-ascii?Q?Bdbqe46Qx07y1O+jQ8P47kage6v4yURSsvkW8CZvuhSXHL6iLxHahhR5KknY?=
+ =?us-ascii?Q?6u9V8s82KL8F640TqQeWBm7K7UQLkoeSb0icP2ZAdxeTwFqcWlj6hjXSHPPN?=
+ =?us-ascii?Q?LItqTTxyh5VmBe6pK6SLfxlWYXqdTqUgWccEGvoY/lJKdf0uBaPlU7UgcimM?=
+ =?us-ascii?Q?bGLaX4mFoXVYKotgIhizhHDUj3UewOeTKtPw7A6LKlG9R6iNLrs0mLR8JLw4?=
+ =?us-ascii?Q?LWVvmXdq+3t/vabo6EflNNvzfJsGA+XLrMC/+SN9bAVgz9pOAU6j81GoDnXy?=
+ =?us-ascii?Q?lgO3T+5ijmVm0PgUoTzLqWuHVR9kBdP2ernxN+QsUStnrb0vDAzaGnr4pyKP?=
+ =?us-ascii?Q?v4fI2vODcDZTI2V64EX+Sj8yg7a1A81tpJMehWydui2tZVh2HORGqnz2D9V5?=
+ =?us-ascii?Q?JPgpLgcBCk4LwKfyAql2QFjtmMYAVq1G4SdrpHQEFJP3lbOrcNz54+Kggf2M?=
+ =?us-ascii?Q?KciC?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthSource: SN1PR12MB2590.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jan 2021 16:17:44.7669
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf883aea-651b-4a21-21d0-08d8b7dec2ac
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CGrEbJ6lNh2Dnxqf1yX8NiKDDEXbGZTXULUarTV/3H9WEVNwJZ4z3sAQG98wGUoWYy231zEL/YgBLOS3B70VUA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2607
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-When Exynos power domain driver was introduced, the only way to ensure
-that power domains will be instantiated before the devices which belongs
-to them was to initialize them early enough, before the devices are
-instantiated in the system. This in turn required not to use any platform
-device infrastructure at all, as there have been no way to ensure proper
-probe order between devices.
+On Tue, Jan 12, 2021 at 07:16:37AM +0530, Allen Pais wrote:
+> From: Allen Pais <apais@linux.microsoft.com>
+> 
+> In preparation for unconditionally passing the
+> struct tasklet_struct pointer to all tasklet
+> callbacks, switch to using the new tasklet_setup()
+> and from_tasklet() to pass the tasklet pointer explicitly.
+> 
+> Signed-off-by: Romain Perier <romain.perier@gmail.com>
+> Signed-off-by: Allen Pais <apais@linux.microsoft.com>
 
-This has been finally changed and patch e590474768f1 ("driver core: Set
-fw_devlink=on by default") ensures that each device will be probbed only
-when its resource providers are ready. This allows to convert Exynos
-power domain driver to regular platform driver.
+Acked-by: John Allen <john.allen@amd.com>
 
-This is also required by the mentioned commit to enable probing any
-device which belongs to the Exynos power domains, as otherwise the core
-won't notice that the power domains are in fact available.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-Some more comments are in the following thread:
-https://lore.kernel.org/lkml/2556a69b-5da5-bf80-e051-df2d02fbc40f@samsung.com/
----
- drivers/soc/samsung/pm_domains.c | 97 ++++++++++++++++----------------
- 1 file changed, 48 insertions(+), 49 deletions(-)
-
-diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
-index ab8582971bfc..5ec0c13f0aaf 100644
---- a/drivers/soc/samsung/pm_domains.c
-+++ b/drivers/soc/samsung/pm_domains.c
-@@ -16,7 +16,7 @@
- #include <linux/delay.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
--#include <linux/sched.h>
-+#include <linux/pm_runtime.h>
- 
- struct exynos_pm_domain_config {
- 	/* Value for LOCAL_PWR_CFG and STATUS fields for each domain */
-@@ -73,15 +73,15 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
- 	return exynos_pd_power(domain, false);
- }
- 
--static const struct exynos_pm_domain_config exynos4210_cfg __initconst = {
-+static const struct exynos_pm_domain_config exynos4210_cfg = {
- 	.local_pwr_cfg		= 0x7,
- };
- 
--static const struct exynos_pm_domain_config exynos5433_cfg __initconst = {
-+static const struct exynos_pm_domain_config exynos5433_cfg = {
- 	.local_pwr_cfg		= 0xf,
- };
- 
--static const struct of_device_id exynos_pm_domain_of_match[] __initconst = {
-+static const struct of_device_id exynos_pm_domain_of_match[] = {
- 	{
- 		.compatible = "samsung,exynos4210-pd",
- 		.data = &exynos4210_cfg,
-@@ -92,7 +92,7 @@ static const struct of_device_id exynos_pm_domain_of_match[] __initconst = {
- 	{ },
- };
- 
--static __init const char *exynos_get_domain_name(struct device_node *node)
-+static const char *exynos_get_domain_name(struct device_node *node)
- {
- 	const char *name;
- 
-@@ -101,60 +101,44 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
- 	return kstrdup_const(name, GFP_KERNEL);
- }
- 
--static __init int exynos4_pm_init_power_domain(void)
-+static int exynos_pd_probe(struct platform_device *pdev)
- {
--	struct device_node *np;
--	const struct of_device_id *match;
--
--	for_each_matching_node_and_match(np, exynos_pm_domain_of_match, &match) {
--		const struct exynos_pm_domain_config *pm_domain_cfg;
--		struct exynos_pm_domain *pd;
--		int on;
-+	const struct exynos_pm_domain_config *pm_domain_cfg;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct of_phandle_args child, parent;
-+	struct exynos_pm_domain *pd;
-+	int on, ret;
- 
--		pm_domain_cfg = match->data;
-+	pm_domain_cfg = of_device_get_match_data(dev);
-+	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
-+	if (!pd)
-+		return -ENOMEM;
- 
--		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
--		if (!pd) {
--			of_node_put(np);
--			return -ENOMEM;
--		}
--		pd->pd.name = exynos_get_domain_name(np);
--		if (!pd->pd.name) {
--			kfree(pd);
--			of_node_put(np);
--			return -ENOMEM;
--		}
-+	pd->pd.name = exynos_get_domain_name(np);
-+	if (!pd->pd.name)
-+		return -ENOMEM;
- 
--		pd->base = of_iomap(np, 0);
--		if (!pd->base) {
--			pr_warn("%s: failed to map memory\n", __func__);
--			kfree_const(pd->pd.name);
--			kfree(pd);
--			continue;
--		}
--
--		pd->pd.power_off = exynos_pd_power_off;
--		pd->pd.power_on = exynos_pd_power_on;
--		pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
-+	pd->base = of_iomap(np, 0);
-+	if (!pd->base) {
-+		kfree_const(pd->pd.name);
-+		return -ENODEV;
-+	}
- 
--		on = readl_relaxed(pd->base + 0x4) & pd->local_pwr_cfg;
-+	pd->pd.power_off = exynos_pd_power_off;
-+	pd->pd.power_on = exynos_pd_power_on;
-+	pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
- 
--		pm_genpd_init(&pd->pd, NULL, !on);
--		of_genpd_add_provider_simple(np, &pd->pd);
--	}
-+	on = readl_relaxed(pd->base + 0x4) & pd->local_pwr_cfg;
- 
--	/* Assign the child power domains to their parents */
--	for_each_matching_node(np, exynos_pm_domain_of_match) {
--		struct of_phandle_args child, parent;
-+	pm_genpd_init(&pd->pd, NULL, !on);
-+	ret = of_genpd_add_provider_simple(np, &pd->pd);
- 
-+	if (ret == 0 && of_parse_phandle_with_args(np, "power-domains",
-+				      "#power-domain-cells", 0, &parent) == 0) {
- 		child.np = np;
- 		child.args_count = 0;
- 
--		if (of_parse_phandle_with_args(np, "power-domains",
--					       "#power-domain-cells", 0,
--					       &parent) != 0)
--			continue;
--
- 		if (of_genpd_add_subdomain(&parent, &child))
- 			pr_warn("%pOF failed to add subdomain: %pOF\n",
- 				parent.np, child.np);
-@@ -163,6 +147,21 @@ static __init int exynos4_pm_init_power_domain(void)
- 				parent.np, child.np);
- 	}
- 
--	return 0;
-+	pm_runtime_enable(dev);
-+	return ret;
-+}
-+
-+static struct platform_driver exynos_pd_driver = {
-+	.probe	= exynos_pd_probe,
-+	.driver	= {
-+		.name		= "exynos-pd",
-+		.of_match_table	= exynos_pm_domain_of_match,
-+		.suppress_bind_attrs = true,
-+	}
-+};
-+
-+static __init int exynos4_pm_init_power_domain(void)
-+{
-+	return platform_driver_register(&exynos_pd_driver);
- }
- core_initcall(exynos4_pm_init_power_domain);
--- 
-2.17.1
-
+> ---
+>  drivers/crypto/ccp/ccp-dev-v3.c    | 9 ++++-----
+>  drivers/crypto/ccp/ccp-dev-v5.c    | 9 ++++-----
+>  drivers/crypto/ccp/ccp-dmaengine.c | 7 +++----
+>  3 files changed, 11 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/crypto/ccp/ccp-dev-v3.c b/drivers/crypto/ccp/ccp-dev-v3.c
+> index 0d5576f6ad21..858566867fa3 100644
+> --- a/drivers/crypto/ccp/ccp-dev-v3.c
+> +++ b/drivers/crypto/ccp/ccp-dev-v3.c
+> @@ -321,9 +321,9 @@ static void ccp_enable_queue_interrupts(struct ccp_device *ccp)
+>  	iowrite32(ccp->qim, ccp->io_regs + IRQ_MASK_REG);
+>  }
+>  
+> -static void ccp_irq_bh(unsigned long data)
+> +static void ccp_irq_bh(struct tasklet_struct *t)
+>  {
+> -	struct ccp_device *ccp = (struct ccp_device *)data;
+> +	struct ccp_device *ccp = from_tasklet(ccp, t, irq_tasklet);
+>  	struct ccp_cmd_queue *cmd_q;
+>  	u32 q_int, status;
+>  	unsigned int i;
+> @@ -361,7 +361,7 @@ static irqreturn_t ccp_irq_handler(int irq, void *data)
+>  	if (ccp->use_tasklet)
+>  		tasklet_schedule(&ccp->irq_tasklet);
+>  	else
+> -		ccp_irq_bh((unsigned long)ccp);
+> +		ccp_irq_bh(&ccp->irq_tasklet);
+>  
+>  	return IRQ_HANDLED;
+>  }
+> @@ -457,8 +457,7 @@ static int ccp_init(struct ccp_device *ccp)
+>  
+>  	/* Initialize the ISR tasklet? */
+>  	if (ccp->use_tasklet)
+> -		tasklet_init(&ccp->irq_tasklet, ccp_irq_bh,
+> -			     (unsigned long)ccp);
+> +		tasklet_setup(&ccp->irq_tasklet, ccp_irq_bh);
+>  
+>  	dev_dbg(dev, "Starting threads...\n");
+>  	/* Create a kthread for each queue */
+> diff --git a/drivers/crypto/ccp/ccp-dev-v5.c b/drivers/crypto/ccp/ccp-dev-v5.c
+> index 7838f63bab32..e68b05a3169b 100644
+> --- a/drivers/crypto/ccp/ccp-dev-v5.c
+> +++ b/drivers/crypto/ccp/ccp-dev-v5.c
+> @@ -733,9 +733,9 @@ static void ccp5_enable_queue_interrupts(struct ccp_device *ccp)
+>  		iowrite32(SUPPORTED_INTERRUPTS, ccp->cmd_q[i].reg_int_enable);
+>  }
+>  
+> -static void ccp5_irq_bh(unsigned long data)
+> +static void ccp5_irq_bh(struct tasklet_struct *t)
+>  {
+> -	struct ccp_device *ccp = (struct ccp_device *)data;
+> +	struct ccp_device *ccp = from_tasklet(ccp, t, irq_tasklet);
+>  	u32 status;
+>  	unsigned int i;
+>  
+> @@ -772,7 +772,7 @@ static irqreturn_t ccp5_irq_handler(int irq, void *data)
+>  	if (ccp->use_tasklet)
+>  		tasklet_schedule(&ccp->irq_tasklet);
+>  	else
+> -		ccp5_irq_bh((unsigned long)ccp);
+> +		ccp5_irq_bh(&ccp->irq_tasklet);
+>  	return IRQ_HANDLED;
+>  }
+>  
+> @@ -894,8 +894,7 @@ static int ccp5_init(struct ccp_device *ccp)
+>  	}
+>  	/* Initialize the ISR tasklet */
+>  	if (ccp->use_tasklet)
+> -		tasklet_init(&ccp->irq_tasklet, ccp5_irq_bh,
+> -			     (unsigned long)ccp);
+> +		tasklet_setup(&ccp->irq_tasklet, ccp5_irq_bh);
+>  
+>  	dev_dbg(dev, "Loading LSB map...\n");
+>  	/* Copy the private LSB mask to the public registers */
+> diff --git a/drivers/crypto/ccp/ccp-dmaengine.c b/drivers/crypto/ccp/ccp-dmaengine.c
+> index 0770a83bf1a5..a85690866b05 100644
+> --- a/drivers/crypto/ccp/ccp-dmaengine.c
+> +++ b/drivers/crypto/ccp/ccp-dmaengine.c
+> @@ -121,9 +121,9 @@ static void ccp_cleanup_desc_resources(struct ccp_device *ccp,
+>  	}
+>  }
+>  
+> -static void ccp_do_cleanup(unsigned long data)
+> +static void ccp_do_cleanup(struct tasklet_struct *t)
+>  {
+> -	struct ccp_dma_chan *chan = (struct ccp_dma_chan *)data;
+> +	struct ccp_dma_chan *chan = from_tasklet(chan, t, cleanup_tasklet);
+>  	unsigned long flags;
+>  
+>  	dev_dbg(chan->ccp->dev, "%s - chan=%s\n", __func__,
+> @@ -712,8 +712,7 @@ int ccp_dmaengine_register(struct ccp_device *ccp)
+>  		INIT_LIST_HEAD(&chan->active);
+>  		INIT_LIST_HEAD(&chan->complete);
+>  
+> -		tasklet_init(&chan->cleanup_tasklet, ccp_do_cleanup,
+> -			     (unsigned long)chan);
+> +		tasklet_setup(&chan->cleanup_tasklet, ccp_do_cleanup);
+>  
+>  		dma_chan->device = dma_dev;
+>  		dma_cookie_init(dma_chan);
+> -- 
+> 2.25.1
+> 
