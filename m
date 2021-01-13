@@ -8,255 +8,260 @@ X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F9CC433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 19:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13697C433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 20:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2102523102
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 19:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B154522ADF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 20:28:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbhAMTY1 (ORCPT
+        id S1728828AbhAMU2b (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Jan 2021 14:24:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44592 "EHLO
+        Wed, 13 Jan 2021 15:28:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbhAMTY1 (ORCPT
+        with ESMTP id S1728760AbhAMU2a (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Jan 2021 14:24:27 -0500
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D40B6C061794
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Jan 2021 11:23:46 -0800 (PST)
-Received: by mail-qk1-x736.google.com with SMTP id f26so3533191qka.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Jan 2021 11:23:46 -0800 (PST)
+        Wed, 13 Jan 2021 15:28:30 -0500
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BE70C061786
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Jan 2021 12:27:50 -0800 (PST)
+Received: by mail-qk1-x731.google.com with SMTP id d14so3845036qkc.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Jan 2021 12:27:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=xZK7xbWMVIIVESqf5LVXtb0lV4vuYCkGC89dQ6hpCg4=;
-        b=K3e+EkOEpZjjDAKoU/C/ghf009JjItzqZ6/q9O59fcDElWxaIPcYFlJ5cU71vRXeLK
-         KiTTZQRjiYtFWBr3t10lPbr51Gwdw4m0SKjsgvLTWu2DZdKuuPLAeUvBjwg9FI7z3xxT
-         ZZLHkS4n5AXCuyHM3fTQ6HWNbDKqQL4DtcUDn1fPvYW6wypiZGNaOKNeeZnMOeyo/6uS
-         p0OlIL+dhsKA/OD0wqfpM7cFljMNgfBXDRnWShGXLXJtHrSUBRtsyO2nEtHDVhnHWK2n
-         xf7E1MhIF3KHkGVrMyycSVFOAr+2UclE+5WIfciU7f9wTB5jCk2kc0Po/bM5siyq0ruF
-         TCyA==
+        bh=xiamiSWwbUOBjKmwyIt3ehtGjp/ZFC9e/lMyYQA0nWE=;
+        b=YnS79eg/YVThThuU6byk2NX5zo/4P8xogbontQ0MTW+mA1V3OS2cNVMGOilMZ8P/QB
+         JfFxvzlvh2xr/01Ska9As6SjBrgAtCuOT1xS5giNFPCboeUm2KlBlN61RFeLJEgNhOXc
+         23ZbnHn60oYDrK8cgUI/aja7f4gEIX9j6dMWwzr9s3grYk3MKsFFE1ZnOQ4GFJNc0J10
+         qucblVVGFS3CtkHCN+YVkocK1RUjaFx5j1Hadj5WkJ/xJ1aLMJMIYrp9nxG6I+FsEfxp
+         NnpQ+ywUBGfOXsU/vdWvJ2Q9wisWICqjUZjc+bqNiklp1VY+hJaWgUrSxNEeRLuDAkuX
+         rkkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xZK7xbWMVIIVESqf5LVXtb0lV4vuYCkGC89dQ6hpCg4=;
-        b=YUFxEM0Z9aPcHw/9SQuTo+pQK3Fit88QsuZUsPNwFj2tfsH6OEMHDWSwWyRBz0k4sX
-         kbGQSosG+K/XPdH4tyTWVg1KZyctQGnLWd8qA3BvuhIO/wyM9qdkaP0Vd2PDO0DQ1hAC
-         rSqvthaOqeTJBOaUvIkbSw5QTF5+4M/jW1UK412sJb+6xdmQ97jq4X2148Mb4WWHme1I
-         /19mDnMp2g3/7vE3Vv4G52w9DmFFrEs+cCcO//cVASIcwPG42yTNTtMpOBrgmgcnjQbj
-         UxD19EEiWS7vlT3uKybSgsPfd2iqj3+42jUDTcFcelTbbal9IrV09k/tvzbzFvgRzUH9
-         D9HQ==
-X-Gm-Message-State: AOAM530Icacfj7FPZ8dvDptXH+dVEhSJN5IBELPB/UBvL/2za4QgNpL1
-        ekl9hSuotQuV6BozBfdGtZGZybCv4M7+LwA1N8NUwQ==
-X-Google-Smtp-Source: ABdhPJzoRALpFi9nInRmlFotMPbNrAMKM5BnfE0JHEkeg52Fo9HGnH2GpIwiie2AiCG/hHQAsF2YBLHwjQ/SxI035L0=
-X-Received: by 2002:a25:8b8b:: with SMTP id j11mr2751241ybl.310.1610565825798;
- Wed, 13 Jan 2021 11:23:45 -0800 (PST)
+        bh=xiamiSWwbUOBjKmwyIt3ehtGjp/ZFC9e/lMyYQA0nWE=;
+        b=EjV5aokVExOgUR/57bYm0hVT8fK4ZGjYQJo4+L1jwKycIkVxhckqFsWltd2eIWfcc8
+         iFEU7uzij5Ikm/pxdgt2iOO5vvs329XYqlX9n53fihAZUj28j9HBUf9wzIb/WfLqf8ib
+         mdvg7bXkzyaQuEYnBYAuQQSp3zQfaFLKhEdrWS+GciBnx8AmEYT//z6pDNtKYXODy98m
+         sOzckdRAN0mbQFd9nNLiUPyEBpvAChyjr2l1QYFkhVfSLlPzlPGKxtzjOGdnbv8p2M9o
+         tqYW3qo3Ni66ageuetkjMoCaBP1LF3qxPqfgkE7Qc3f1gi4ugHBMuTki/F40etnqnd//
+         qJXQ==
+X-Gm-Message-State: AOAM5321ArrX7nQqYnRLJ/osgbzftxhP1RupQ2NPCOgrJoDgQUUOrWL0
+        sF5fXDWSM+Fdp7xBEOQRqQ4uuZNVwxIVfbdnGou54w==
+X-Google-Smtp-Source: ABdhPJywwDejpVSaJdUM6+6orUxiKAFn3B6GDdOK1Nz/ZM/oTA2mO3ZQAuW2uvs2m5cv9WXQXf98YZZMZYjfqRtpXPw=
+X-Received: by 2002:a25:b703:: with SMTP id t3mr6383967ybj.96.1610569669365;
+ Wed, 13 Jan 2021 12:27:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20201218031703.3053753-1-saravanak@google.com>
- <20201218031703.3053753-6-saravanak@google.com> <CGME20210111141814eucas1p1f388df07b789693a999042b27f0d8c2a@eucas1p1.samsung.com>
- <5484316b-0f27-6c36-9259-5c765bb6b96c@samsung.com> <2556a69b-5da5-bf80-e051-df2d02fbc40f@samsung.com>
- <CAGETcx8-1YzF2Br0sszJROLAWo3DSm27K071Md9wY5SOwUeLdw@mail.gmail.com>
- <fde65185-fd00-1f79-0f80-245eaa6c95cb@samsung.com> <CAGETcx_QY3h83q1fSr=h_vMQdH-TMhVYPozPuSr=q4uv2Lr48w@mail.gmail.com>
- <ed32b9c7-b6d6-bf86-5e43-fd0c4aa75dd6@samsung.com>
-In-Reply-To: <ed32b9c7-b6d6-bf86-5e43-fd0c4aa75dd6@samsung.com>
+References: <CGME20210113110330eucas1p1e7efa719b5db55ccf3774450a8c1e452@eucas1p1.samsung.com>
+ <20210113110320.13149-1-m.szyprowski@samsung.com>
+In-Reply-To: <20210113110320.13149-1-m.szyprowski@samsung.com>
 From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 13 Jan 2021 11:23:09 -0800
-Message-ID: <CAGETcx-aEitKpU0r-iYG-AaKMd4bZmNFWKfKeUNeq3m+TKjtjA@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] driver core: Set fw_devlink=on by default
+Date:   Wed, 13 Jan 2021 12:27:13 -0800
+Message-ID: <CAGETcx9wJVnBAe6mKxfi9DC9YFf6DLzAyxBC8DxhQUqpfTDR3A@mail.gmail.com>
+Subject: Re: [PATCH] soc: samsung: pm_domains: Convert to regular platform driver
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+Cc:     Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 12, 2021 at 11:04 PM Marek Szyprowski
+On Wed, Jan 13, 2021 at 3:03 AM Marek Szyprowski
 <m.szyprowski@samsung.com> wrote:
 >
-> Hi Saravana,
+> When Exynos power domain driver was introduced, the only way to ensure
+> that power domains will be instantiated before the devices which belongs
+> to them was to initialize them early enough, before the devices are
+> instantiated in the system. This in turn required not to use any platform
+> device infrastructure at all, as there have been no way to ensure proper
+> probe order between devices.
 >
-> On 12.01.2021 21:51, Saravana Kannan wrote:
-> > On Mon, Jan 11, 2021 at 11:11 PM Marek Szyprowski
-> > <m.szyprowski@samsung.com> wrote:
-> >> On 11.01.2021 22:47, Saravana Kannan wrote:
-> >>> On Mon, Jan 11, 2021 at 6:18 AM Marek Szyprowski
-> >>> <m.szyprowski@samsung.com> wrote:
-> >>>> On 11.01.2021 12:12, Marek Szyprowski wrote:
-> >>>>> On 18.12.2020 04:17, Saravana Kannan wrote:
-> >>>>>> Cyclic dependencies in some firmware was one of the last remaining
-> >>>>>> reasons fw_devlink=on couldn't be set by default. Now that cyclic
-> >>>>>> dependencies don't block probing, set fw_devlink=on by default.
-> >>>>>>
-> >>>>>> Setting fw_devlink=on by default brings a bunch of benefits (currently,
-> >>>>>> only for systems with device tree firmware):
-> >>>>>> * Significantly cuts down deferred probes.
-> >>>>>> * Device probe is effectively attempted in graph order.
-> >>>>>> * Makes it much easier to load drivers as modules without having to
-> >>>>>>      worry about functional dependencies between modules (depmod is still
-> >>>>>>      needed for symbol dependencies).
-> >>>>>>
-> >>>>>> If this patch prevents some devices from probing, it's very likely due
-> >>>>>> to the system having one or more device drivers that "probe"/set up a
-> >>>>>> device (DT node with compatible property) without creating a struct
-> >>>>>> device for it.  If we hit such cases, the device drivers need to be
-> >>>>>> fixed so that they populate struct devices and probe them like normal
-> >>>>>> device drivers so that the driver core is aware of the devices and their
-> >>>>>> status. See [1] for an example of such a case.
-> >>>>>>
-> >>>>>> [1] -
-> >>>>>> https://lore.kernel.org/lkml/CAGETcx9PiX==mLxB9PO8Myyk6u2vhPVwTMsA5NkD-ywH5xhusw@mail.gmail.com/
-> >>>>>> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> >>>>> This patch landed recently in linux next-20210111 as commit
-> >>>>> e590474768f1 ("driver core: Set fw_devlink=on by default"). Sadly it
-> >>>>> breaks Exynos IOMMU operation, what causes lots of devices being
-> >>>>> deferred and not probed at all. I've briefly checked and noticed that
-> >>>>> exynos_sysmmu_probe() is never called after this patch. This is really
-> >>>>> strange for me, as the SYSMMU controllers on Exynos platform are
-> >>>>> regular platform devices registered by the OF code. The driver code is
-> >>>>> here: drivers/iommu/exynos-iommu.c, example dts:
-> >>>>> arch/arm/boot/dts/exynos3250.dtsi (compatible = "samsung,exynos-sysmmu").
-> >>>> Okay, I found the source of this problem. It is caused by Exynos power
-> >>>> domain driver, which is not platform driver yet. I will post a patch,
-> >>>> which converts it to the platform driver.
-> >>> Thanks Marek! Hopefully the debug logs I added were sufficient to
-> >>> figure out the reason.
-> >> Frankly, it took me a while to figure out that device core waits for the
-> >> power domain devices. Maybe it would be possible to add some more debug
-> >> messages or hints? Like the reason of the deferred probe in
-> >> /sys/kernel/debug/devices_deferred ?
-> > There's already a /sys/devices/.../<device>/waiting_for_supplier file
-> > that tells you if the device is waiting for a supplier device to be
-> > added. That file goes away once the device probes. If the file has 1,
-> > then it's waiting for the supplier device to be added (like your
-> > case). If it's 0, then the device is just waiting on one of the
-> > existing suppliers to probe. You can find the existing suppliers
-> > through /sys/devices/.../<device>/supplier:*/supplier. Also, flip
-> > these dev_dbg() to dev_info() if you need more details about deferred
-> > probing.
+> This has been finally changed and patch e590474768f1 ("driver core: Set
+> fw_devlink=on by default") ensures that each device will be probbed only
+> when its resource providers are ready. This allows to convert Exynos
+> power domain driver to regular platform driver.
 >
-> Frankly speaking I doubt that anyone will find those. Even experienced
-> developer might need some time to figure it out.
+> This is also required by the mentioned commit to enable probing any
+> device which belongs to the Exynos power domains, as otherwise the core
+> won't notice that the power domains are in fact available.
 >
-> I expect that such information will be at least in the mentioned
-> /sys/kernel/debug/devices_deferred file. We already have infrastructure
-> for putting the deferred probe reason there, see dev_err_probe()
-> function. Even such a simple change makes the debugging this issue much
-> easier:
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> Some more comments are in the following thread:
+> https://lore.kernel.org/lkml/2556a69b-5da5-bf80-e051-df2d02fbc40f@samsung.com/
+> ---
+>  drivers/soc/samsung/pm_domains.c | 97 ++++++++++++++++----------------
+>  1 file changed, 48 insertions(+), 49 deletions(-)
 >
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index cd8e518fadd6..ceb5aed5a84c 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -937,12 +937,13 @@ int device_links_check_suppliers(struct device *dev)
->          mutex_lock(&fwnode_link_lock);
->          if (dev->fwnode && !list_empty(&dev->fwnode->suppliers) &&
->              !fw_devlink_is_permissive()) {
-> -               dev_dbg(dev, "probe deferral - wait for supplier %pfwP\n",
-> +               ret = dev_err_probe(dev, -EPROBE_DEFER,
-> +                       "probe deferral - wait for supplier %pfwP\n",
-> list_first_entry(&dev->fwnode->suppliers,
->                          struct fwnode_link,
->                          c_hook)->supplier);
->                  mutex_unlock(&fwnode_link_lock);
-> -               return -EPROBE_DEFER;
-> +               return ret;
->          }
->          mutex_unlock(&fwnode_link_lock);
+> diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
+> index ab8582971bfc..5ec0c13f0aaf 100644
+> --- a/drivers/soc/samsung/pm_domains.c
+> +++ b/drivers/soc/samsung/pm_domains.c
+> @@ -16,7 +16,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_platform.h>
+> -#include <linux/sched.h>
+> +#include <linux/pm_runtime.h>
 >
-> @@ -955,9 +956,9 @@ int device_links_check_suppliers(struct device *dev)
->                  if (link->status != DL_STATE_AVAILABLE &&
->                      !(link->flags & DL_FLAG_SYNC_STATE_ONLY)) {
->                          device_links_missing_supplier(dev);
-> -                       dev_dbg(dev, "probe deferral - supplier %s not
-> ready\n",
-> +                       ret = dev_err_probe(dev, -EPROBE_DEFER,
-> +                               "probe deferral - supplier %s not ready\n",
->                                  dev_name(link->supplier));
-> -                       ret = -EPROBE_DEFER;
->                          break;
->                  }
->                  WRITE_ONCE(link->status, DL_STATE_CONSUMER_PROBE);
+>  struct exynos_pm_domain_config {
+>         /* Value for LOCAL_PWR_CFG and STATUS fields for each domain */
+> @@ -73,15 +73,15 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
+>         return exynos_pd_power(domain, false);
+>  }
 >
+> -static const struct exynos_pm_domain_config exynos4210_cfg __initconst = {
+> +static const struct exynos_pm_domain_config exynos4210_cfg = {
+>         .local_pwr_cfg          = 0x7,
+>  };
 >
-> After such change:
+> -static const struct exynos_pm_domain_config exynos5433_cfg __initconst = {
+> +static const struct exynos_pm_domain_config exynos5433_cfg = {
+>         .local_pwr_cfg          = 0xf,
+>  };
 >
-> # cat /sys/kernet/debug/devices_deferred
+> -static const struct of_device_id exynos_pm_domain_of_match[] __initconst = {
+> +static const struct of_device_id exynos_pm_domain_of_match[] = {
+>         {
+>                 .compatible = "samsung,exynos4210-pd",
+>                 .data = &exynos4210_cfg,
+> @@ -92,7 +92,7 @@ static const struct of_device_id exynos_pm_domain_of_match[] __initconst = {
+>         { },
+>  };
+>
+> -static __init const char *exynos_get_domain_name(struct device_node *node)
+> +static const char *exynos_get_domain_name(struct device_node *node)
+>  {
+>         const char *name;
+>
+> @@ -101,60 +101,44 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
+>         return kstrdup_const(name, GFP_KERNEL);
+>  }
+>
+> -static __init int exynos4_pm_init_power_domain(void)
+> +static int exynos_pd_probe(struct platform_device *pdev)
+>  {
+> -       struct device_node *np;
+> -       const struct of_device_id *match;
+> -
+> -       for_each_matching_node_and_match(np, exynos_pm_domain_of_match, &match) {
+> -               const struct exynos_pm_domain_config *pm_domain_cfg;
+> -               struct exynos_pm_domain *pd;
+> -               int on;
+> +       const struct exynos_pm_domain_config *pm_domain_cfg;
+> +       struct device *dev = &pdev->dev;
+> +       struct device_node *np = dev->of_node;
+> +       struct of_phandle_args child, parent;
+> +       struct exynos_pm_domain *pd;
+> +       int on, ret;
+>
+> -               pm_domain_cfg = match->data;
+> +       pm_domain_cfg = of_device_get_match_data(dev);
+> +       pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
+> +       if (!pd)
+> +               return -ENOMEM;
+>
+> -               pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+> -               if (!pd) {
+> -                       of_node_put(np);
+> -                       return -ENOMEM;
+> -               }
+> -               pd->pd.name = exynos_get_domain_name(np);
+> -               if (!pd->pd.name) {
+> -                       kfree(pd);
+> -                       of_node_put(np);
+> -                       return -ENOMEM;
+> -               }
+> +       pd->pd.name = exynos_get_domain_name(np);
+> +       if (!pd->pd.name)
+> +               return -ENOMEM;
+>
+> -               pd->base = of_iomap(np, 0);
+> -               if (!pd->base) {
+> -                       pr_warn("%s: failed to map memory\n", __func__);
+> -                       kfree_const(pd->pd.name);
+> -                       kfree(pd);
+> -                       continue;
+> -               }
+> -
+> -               pd->pd.power_off = exynos_pd_power_off;
+> -               pd->pd.power_on = exynos_pd_power_on;
+> -               pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
+> +       pd->base = of_iomap(np, 0);
+> +       if (!pd->base) {
+> +               kfree_const(pd->pd.name);
+> +               return -ENODEV;
+> +       }
+>
+> -               on = readl_relaxed(pd->base + 0x4) & pd->local_pwr_cfg;
+> +       pd->pd.power_off = exynos_pd_power_off;
+> +       pd->pd.power_on = exynos_pd_power_on;
+> +       pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
+>
+> -               pm_genpd_init(&pd->pd, NULL, !on);
+> -               of_genpd_add_provider_simple(np, &pd->pd);
+> -       }
+> +       on = readl_relaxed(pd->base + 0x4) & pd->local_pwr_cfg;
+>
+> -       /* Assign the child power domains to their parents */
+> -       for_each_matching_node(np, exynos_pm_domain_of_match) {
+> -               struct of_phandle_args child, parent;
+> +       pm_genpd_init(&pd->pd, NULL, !on);
+> +       ret = of_genpd_add_provider_simple(np, &pd->pd);
+>
+> +       if (ret == 0 && of_parse_phandle_with_args(np, "power-domains",
+> +                                     "#power-domain-cells", 0, &parent) == 0) {
+>                 child.np = np;
+>                 child.args_count = 0;
+>
+> -               if (of_parse_phandle_with_args(np, "power-domains",
+> -                                              "#power-domain-cells", 0,
+> -                                              &parent) != 0)
+> -                       continue;
+> -
+>                 if (of_genpd_add_subdomain(&parent, &child))
+>                         pr_warn("%pOF failed to add subdomain: %pOF\n",
+>                                 parent.np, child.np);
+> @@ -163,6 +147,21 @@ static __init int exynos4_pm_init_power_domain(void)
+>                                 parent.np, child.np);
+>         }
+>
+> -       return 0;
+> +       pm_runtime_enable(dev);
+> +       return ret;
+> +}
+> +
+> +static struct platform_driver exynos_pd_driver = {
+> +       .probe  = exynos_pd_probe,
+> +       .driver = {
+> +               .name           = "exynos-pd",
+> +               .of_match_table = exynos_pm_domain_of_match,
+> +               .suppress_bind_attrs = true,
+> +       }
+> +};
+> +
+> +static __init int exynos4_pm_init_power_domain(void)
+> +{
+> +       return platform_driver_register(&exynos_pd_driver);
+>  }
+>  core_initcall(exynos4_pm_init_power_domain);
+> --
+> 2.17.1
+>
 
-Sweet! I wasn't aware of this file at all.
+Skimmed through this patch and at a high level, it looks good for what
+it's trying to do. Thanks for doing this!
 
-However, on a side note, one of my TODO items is to not add devices to
-the deferred probe list if they'll never probe yet (due to suppliers
-not having probed). On a board I tested on, it cut down really_probe()
-calls by 75%! So the probe attempt itself effectively happens in graph
-order (which I think is pretty cool). So that's going to conflict with
-this file. I'll have to see what to do about that.
-
-Thanks for this pointer. Let me sit on this for 2 weeks and see how I
-can incorporate your suggestion while allowing for the above. And then
-I'll send out a patch. Does that work?
+Btw, I assume that this won't work with fw_devlink=off/permissive
+(default since 5.10 or earlier)? My concern is that we might
+temporarily set fw_devlink=permissive by default if the other
+breakages aren't fixed in time for 5.12? How do you want to handle that?
 
 -Saravana
-
-> sound
-> 13620000.sysmmu platform: probe deferral - supplier
-> 10023c40.power-domain not ready
-> 13630000.sysmmu platform: probe deferral - supplier
-> 10023c40.power-domain not ready
-> 12e20000.sysmmu platform: probe deferral - supplier
-> 10023c20.power-domain not ready
-> 11a20000.sysmmu platform: probe deferral - supplier
-> 10023c00.power-domain not ready
-> 11a30000.sysmmu platform: probe deferral - supplier
-> 10023c00.power-domain not ready
-> 11a40000.sysmmu platform: probe deferral - supplier
-> 10023c00.power-domain not ready
-> 11a50000.sysmmu platform: probe deferral - supplier
-> 10023c00.power-domain not ready
-> 11a60000.sysmmu platform: probe deferral - supplier
-> 10023c00.power-domain not ready
-> 11e20000.sysmmu platform: probe deferral - supplier
-> 10023c80.power-domain not ready
-> 12d00000.hdmi   platform: probe deferral - supplier
-> 10023c20.power-domain not ready
-> 10048000.clock-controller       platform: probe deferral - supplier
-> 10023ca0.power-domain not ready
-> 12260000.sysmmu platform: probe deferral - supplier
-> 10048000.clock-controller not ready
-> 12270000.sysmmu platform: probe deferral - supplier
-> 10048000.clock-controller not ready
-> 122a0000.sysmmu platform: probe deferral - supplier
-> 10048000.clock-controller not ready
-> 122b0000.sysmmu platform: probe deferral - supplier
-> 10048000.clock-controller not ready
-> 123b0000.sysmmu platform: probe deferral - supplier
-> 10048000.clock-controller not ready
-> 123c0000.sysmmu platform: probe deferral - supplier
-> 10048000.clock-controller not ready
-> 12c10000.mixer  platform: probe deferral - supplier
-> 10023c20.power-domain not ready
-> 13000000.gpu    platform: probe deferral - supplier
-> 10023c60.power-domain not ready
->
-> Probably the message can be adjusted a bit, this would significantly
-> help me finding that is the source of the problem.
->
-> Best regards
->
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
