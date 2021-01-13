@@ -2,533 +2,179 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7535FC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jan 2021 21:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0623BC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 05:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C03420720
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jan 2021 21:50:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9ED7230FC
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 05:21:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729281AbhALVuQ (ORCPT
+        id S1725883AbhAMFVc convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 Jan 2021 16:50:16 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:57714 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727213AbhALVfJ (ORCPT
+        Wed, 13 Jan 2021 00:21:32 -0500
+Received: from mail-wr1-f43.google.com ([209.85.221.43]:36055 "EHLO
+        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbhAMFVc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Jan 2021 16:35:09 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210112213421euoutp025ed204943af3a4644e17b1a268391950~ZmaGsVyVY0484204842euoutp022
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jan 2021 21:34:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210112213421euoutp025ed204943af3a4644e17b1a268391950~ZmaGsVyVY0484204842euoutp022
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1610487261;
-        bh=oXdva/fWwYF5r4uA7T00QBbpGyoI3CqqsZp7pxJj1qU=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=QnzLYq01bIgHQfxtwqcbkNDq89W4UL1jdZBOo7lW8HPnJJrMNDpPDERDunsvMHAyS
-         6+k65wRNy5tFjda1ss98FRwXEmU74+Idm5hLdyjOsUJI5EsnLZfz0CS0ds5l8E53ME
-         RVxUGiXC8Gz+jZ8knvMYtq2+hKSu2MaXzyT7913c=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210112213420eucas1p152fea143540c1b2afe9163a0a16431b1~ZmaFnFEWl0691606916eucas1p1J;
-        Tue, 12 Jan 2021 21:34:20 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id F3.18.44805.CD51EFF5; Tue, 12
-        Jan 2021 21:34:20 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210112213419eucas1p24231e4d0ac11c31184f2f8f3f20cbd9d~ZmaFHC0g22119621196eucas1p2l;
-        Tue, 12 Jan 2021 21:34:19 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210112213419eusmtrp27281e73a9d82281603a5afc665caa771~ZmaFGYIje2034120341eusmtrp2V;
-        Tue, 12 Jan 2021 21:34:19 +0000 (GMT)
-X-AuditID: cbfec7f4-b37ff7000000af05-a5-5ffe15dc0fe4
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2B.8A.21957.BD51EFF5; Tue, 12
-        Jan 2021 21:34:19 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210112213419eusmtip2b29f4c20712384402d3d2e00f3c198a8~ZmaEkbqCm2880828808eusmtip2B;
-        Tue, 12 Jan 2021 21:34:19 +0000 (GMT)
-Subject: Re: [PATCH] regulator: core: avoid regulator_resolve_supply() race
- condition
-To:     David Collins <collinsd@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <e512ee85-7fa6-e5fe-eb30-f088bb83cf23@samsung.com>
-Date:   Tue, 12 Jan 2021 22:34:19 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.6.0
+        Wed, 13 Jan 2021 00:21:32 -0500
+Received: by mail-wr1-f43.google.com with SMTP id t16so728797wra.3;
+        Tue, 12 Jan 2021 21:21:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=ygvCn8fmZH80T0v+3u3CbzAAgsVPV7I6kSbF85AxYE8=;
+        b=jbE+s8Sx78HxPDXrtsukzSp6pvUQiSvWdAkKLiZgxNG7dyWhw8/qH8AY/Y2X+vljgW
+         aijdruuSY3sd69afkJyWDjFJJGncvkO3fgkUlQ9nYkdaousDoUCK6KHK4hgHmW5YvpKk
+         tUt0KzxPAmZz+ve5TbCuSMSY2/FqAh+zbs24j4aA2bxA2yVFb9pGAOO4O5oN4QotZ+k+
+         ByjthzY7GE5GFWViCoOE6lSNtxQryR1ThSxZctm6/5Sod+yyY4mm1Zwf+xP/sKUep6Im
+         pb8d7OBOpc1jqbJVt7nXyb5282l7YdQVjm3YSY0IO7eS4H7/lxNusDLnE0Dbxu2CD9rN
+         poqw==
+X-Gm-Message-State: AOAM532xBP+0t0Y3aN/mBTfAztnqhPICJzunQKIvll7Rz4iebTWyOjna
+        Gkcqz9mwZMnnjeUAftRm77w/qflDs14=
+X-Google-Smtp-Source: ABdhPJxhcefF2g4ghMWfcYGFz4p/mMcOTBXdkjHmHKC1b8cf1wmHKSyoSIrwjlD7D4mvHQU6xRhrZg==
+X-Received: by 2002:adf:fbc5:: with SMTP id d5mr587444wrs.82.1610515249819;
+        Tue, 12 Jan 2021 21:20:49 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id c11sm240840wmd.36.2021.01.12.21.20.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Jan 2021 21:20:48 -0800 (PST)
+Date:   Wed, 13 Jan 2021 06:20:47 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Danny Lin <danny@kdrag0n.dev>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: exynos: Add energy model for Exynos 5250
+Message-ID: <20210113052047.GC6486@kozik-lap>
+References: <20210111235717.321153-1-danny@kdrag0n.dev>
 MIME-Version: 1.0
-In-Reply-To: <1610068562-4410-1-git-send-email-collinsd@codeaurora.org>
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRmVeSWpSXmKPExsWy7djPc7p3RP/FG3Qd4rTYOGM9q8XUh0/Y
-        LLrahCzOn9/AbvHtSgeTxcT9Z9ktLu+aw2Yx4/w+JgcOj8t9vUweO2fdZffYtKqTzaNvyypG
-        j8+b5AJYo7hsUlJzMstSi/TtErgy9n/5ylLQ0MhY8frhKeYGxn95XYycHBICJhKbpjYzdjFy
-        cQgJrGCUmLP+PhOE84VRonvDIRYI5zOjxJqGD6wwLfOWzIBKLGeUWN98ix3C+cgosWD1ZXaQ
-        KmGBcIm1/36ygNgiAlcYJR6fiACxmQWqJDp6ZjCC2GwChhJdb7vYQGxeATuJdbNngdksAqoS
-        c6ZOBOsVFUiSOL6vmxmiRlDi5MwnYHFOAXeJdVu7WCBmyks0b53NDGGLS9x6Mh/sBwmBBxwS
-        HxquMUGc7SIxc/lNdghbWOLV8S1QtozE/50wDc2MEg/PrWWHcHoYJS43QZwqIWAtcefcL6Dz
-        OIBWaEqs36UPEXaUmLriKTNIWEKAT+LGW0GII/gkJm2bDhXmlehoE4KoVpOYdXwd3NqDFy4x
-        T2BUmoXktVlI3pmF5J1ZCHsXMLKsYhRPLS3OTU8tNspLLdcrTswtLs1L10vOz93ECExIp/8d
-        /7KDcfmrj3qHGJk4GA8xSnAwK4nwFnX/jRfiTUmsrEotyo8vKs1JLT7EKM3BoiTOm7RlTbyQ
-        QHpiSWp2ampBahFMlomDU6qBSbKJ/Vdn8ZRdnnceZnep/jR3Oj49uunn2epW2znpd/1WF/7+
-        8UFERlnN07nE4MKWE74LbENC3+SpByrEzOt/O+mGta2/gOzmBsctX3++OqnZ2rT9l9HR6TEh
-        m1btLGVV8l3093Pr5I55RxdvkxULqZTs3e7zND7jbEb/hgubnutc5Hvw8+G/zROu3Jv2U+xd
-        wkvLfRyM0WsPOCwpvHfnGHNVd+9f0Z3XHvx4Jmlw7Ff0lhb57CPHd69wO/Xxb+u328JMAYU7
-        md7wnZmtPfnRB9FvJ89JepwpWyap9EPm47dfJdPOddRKG5spbOYvDWhYevaS7Sbb+JvVV2dN
-        SpsYdTSq5YNxpGrA2UVMHBK9rH+VWIozEg21mIuKEwEhaIIntwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsVy+t/xe7q3Rf/FG/y6pmqxccZ6VoupD5+w
-        WXS1CVmcP7+B3eLblQ4mi4n7z7JbXN41h81ixvl9TA4cHpf7epk8ds66y+6xaVUnm0ffllWM
-        Hp83yQWwRunZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunb
-        Jehl7P/ylaWgoZGx4vXDU8wNjP/yuhg5OSQETCTmLZnB0sXIxSEksJRR4lVLFytEQkbi5LQG
-        KFtY4s+1LjaIoveMEpN7IBLCAuESa//9BOsWEbjEKHGqo5cJJMEsUCXR9rSfEcQWEnCT+PS1
-        gxnEZhMwlOh6CzKJk4NXwE5i3exZYDaLgKrEnKkTgQZxcIgKJEksfusEUSIocXLmExYQm1PA
-        XWLd1i4WiPFmEvM2P2SGsOUlmrfOhrLFJW49mc80gVFoFpL2WUhaZiFpmYWkZQEjyypGkdTS
-        4tz03GJDveLE3OLSvHS95PzcTYzA+Nt27OfmHYzzXn3UO8TIxMF4iFGCg1lJhLeo+2+8EG9K
-        YmVValF+fFFpTmrxIUZToHcmMkuJJucDE0BeSbyhmYGpoYmZpYGppZmxkjjv1rlr4oUE0hNL
-        UrNTUwtSi2D6mDg4pRqY6rM2XbpY+fBCXB6XkiHT3hdbd8fMsfwofoqjuTLxxsa0YgbTX/zZ
-        nWqhC2/wvE+v/6x3UKpq/r3mb4HyJduki9T2LF/szVJo9L5H8Ne78BnrHsbe3PvC13LJI0aV
-        1QtCpT4xtwnJXrxlHcq/T+e+VvrXF9PKrp/XjJpRpOTs/eJKsELEe5dXS5fukWI9e86cV2PP
-        wvYlco9n91V47fzV21ZpzR/XuJI5602MjJTauZM3DzKfjFt8XkPj8A5hz39JMcaJNRNfewfF
-        LlpiUx9aGqNozG3zh3+i5Cw7i00eAk+KJVe/kuWxFetP3vi+bp/aXk6v/2ybfaas5xdfxPVx
-        RWea+5utMWtdpO4udzZWYinOSDTUYi4qTgQAH2DXFkgDAAA=
-X-CMS-MailID: 20210112213419eucas1p24231e4d0ac11c31184f2f8f3f20cbd9d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210112213419eucas1p24231e4d0ac11c31184f2f8f3f20cbd9d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210112213419eucas1p24231e4d0ac11c31184f2f8f3f20cbd9d
-References: <1610068562-4410-1-git-send-email-collinsd@codeaurora.org>
-        <CGME20210112213419eucas1p24231e4d0ac11c31184f2f8f3f20cbd9d@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20210111235717.321153-1-danny@kdrag0n.dev>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Mon, Jan 11, 2021 at 03:57:16PM -0800, Danny Lin wrote:
+> This energy model enables the use of energy- and capacity-aware CPU
+> frequency scaling.
+> 
+> Power and performance measurements were made using my freqbench [1]
+> benchmark coordinator, which uses EEMBC CoreMark [2] as the workload
+> and measures power usage using the integrated PMIC's fuel gauge (DS2784
+> in this case).
 
-On 08.01.2021 02:16, David Collins wrote:
-> The final step in regulator_register() is to call
-> regulator_resolve_supply() for each registered regulator
-> (including the one in the process of being registered).  The
-> regulator_resolve_supply() function first checks if rdev->supply
-> is NULL, then it performs various steps to try to find the supply.
-> If successful, rdev->supply is set inside of set_supply().
->
-> This procedure can encounter a race condition if two concurrent
-> tasks call regulator_register() near to each other on separate CPUs
-> and one of the regulators has rdev->supply_name specified.  There
-> is currently nothing guaranteeing atomicity between the rdev->supply
-> check and set steps.  Thus, both tasks can observe rdev->supply==NULL
-> in their regulator_resolve_supply() calls.  This then results in
-> both creating a struct regulator for the supply.  One ends up
-> actually stored in rdev->supply and the other is lost (though still
-> present in the supply's consumer_list).
->
-> Here is a kernel log snippet showing the issue:
->
-> [   12.421768] gpu_cc_gx_gdsc: supplied by pm8350_s5_level
-> [   12.425854] gpu_cc_gx_gdsc: supplied by pm8350_s5_level
-> [   12.429064] debugfs: Directory 'regulator.4-SUPPLY' with parent
->                 '17a00000.rsc:rpmh-regulator-gfxlvl-pm8350_s5_level'
->                 already present!
->
-> Avoid this race condition by holding the rdev->mutex lock inside
-> of regulator_resolve_supply() while checking and setting
-> rdev->supply.
->
-> Signed-off-by: David Collins <collinsd@codeaurora.org>
+Thanks for the patch.
 
-This patch landed in linux next-20210112 as commit eaa7995c529b 
-("regulator: core: avoid regulator_resolve_supply() race condition"). I 
-found that it triggers a following lockdep warning during the DWC3 
-driver registration on some Exynos based boards (this log is from 
-Samsung Exynos5420-based Peach-Pit board):
+The tested setup is not representative here. The Nexus 10 is not
+supported by mainline and it might use specific revision of Exynos5250,
+different than present on other mainlined boards. One could assume that
+ratio of dynamic power coefficient of the cores should be similar... but
+there is no ratio here, as this is not a big.LITTLE platform.
 
-======================================================
-WARNING: possible circular locking dependency detected
-5.11.0-rc1-00008-geaa7995c529b #10095 Not tainted
-------------------------------------------------------
-swapper/0/1 is trying to acquire lock:
-c12e1b80 (regulator_list_mutex){+.+.}-{3:3}, at: 
-regulator_lock_dependent+0x4c/0x2b0
+Another problem is the v3.4 vendor kernel with a lot of out-of-tree
+code. This means it might use some different scheduler, different
+drivers, different voltages and a lot more of unknown differences.
+Vendor kernel should not matter that much in measurement of DPC but it
+makes the results not possible to reproduce.
 
-but task is already holding lock:
-df7190c0 (regulator_ww_class_mutex){+.+.}-{3:3}, at: 
-regulator_resolve_supply+0x44/0x318
+You were also measuring the power delivered to entire system, no to CPUs,
+so you included static power in the data. Static power of CPUs and of
+the entire system.
 
-which lock already depends on the new lock.
+> The energy model dynamic-power-coefficient values were calculated with
+>     DPC = µW / MHz / V^2
+> for each OPP, and averaged across all OPPs within each cluster for the
+> final coefficient.
+> 
+> A Google Nexus 10 device running a downstream 3.4 kernel was used for
+> benchmarking to ensure proper frequency scaling and other low-level
+> controls.
+> 
+> Raw benchmark results can be found in the freqbench repository [3].
+> Below is a human-readable summary:
+> 
+> ===== CPU 1 =====
+> Frequencies: 200 300 400 500 600 700 800 900 1000 1100 1200 1300 1400 1500 1600 1700
+>  200:   909     4.5 C/MHz    132 mW   36.2 J    6.9 I/mJ   275.0 s
 
+What are the columns here? I would expect that fuel gauge gives you the
+current, but it's not here.
 
-the existing dependency chain (in reverse order) is:
-
--> #2 (regulator_ww_class_mutex){+.+.}-{3:3}:
-        ww_mutex_lock+0x48/0x88
-        regulator_lock_recursive+0x84/0x1f4
-        regulator_lock_dependent+0x184/0x2b0
-        regulator_enable+0x30/0xe4
-        dwc3_exynos_probe+0x17c/0x2c0
-        platform_probe+0x80/0xc0
-        really_probe+0x1c4/0x4e4
-        driver_probe_device+0x78/0x1d8
-        device_driver_attach+0x58/0x60
-        __driver_attach+0xfc/0x160
-        bus_for_each_dev+0x6c/0xb8
-        bus_add_driver+0x170/0x20c
-        driver_register+0x78/0x10c
-        do_one_initcall+0x88/0x438
-        kernel_init_freeable+0x18c/0x1dc
-        kernel_init+0x8/0x118
-        ret_from_fork+0x14/0x38
-        0x0
-
--> #1 (regulator_ww_class_acquire){+.+.}-{0:0}:
-        regulator_enable+0x30/0xe4
-        dwc3_exynos_probe+0x17c/0x2c0
-        platform_probe+0x80/0xc0
-        really_probe+0x1c4/0x4e4
-        driver_probe_device+0x78/0x1d8
-        device_driver_attach+0x58/0x60
-        __driver_attach+0xfc/0x160
-        bus_for_each_dev+0x6c/0xb8
-        bus_add_driver+0x170/0x20c
-        driver_register+0x78/0x10c
-        do_one_initcall+0x88/0x438
-        kernel_init_freeable+0x18c/0x1dc
-        kernel_init+0x8/0x118
-        ret_from_fork+0x14/0x38
-        0x0
-
--> #0 (regulator_list_mutex){+.+.}-{3:3}:
-        lock_acquire+0x2e4/0x5dc
-        __mutex_lock+0xa4/0xb60
-        mutex_lock_nested+0x1c/0x24
-        regulator_lock_dependent+0x4c/0x2b0
-        regulator_enable+0x30/0xe4
-        regulator_resolve_supply+0x1cc/0x318
-        regulator_register_resolve_supply+0x14/0x78
-        class_for_each_device+0x68/0xe8
-        regulator_register+0xa2c/0xc9c
-        devm_regulator_register+0x40/0x70
-        tps65090_regulator_probe+0x150/0x648
-        platform_probe+0x80/0xc0
-        really_probe+0x1c4/0x4e4
-        driver_probe_device+0x78/0x1d8
-        bus_for_each_drv+0x78/0xbc
-        __device_attach+0xe8/0x180
-        bus_probe_device+0x88/0x90
-        device_add+0x4c4/0x7e8
-        platform_device_add+0x120/0x25c
-        mfd_add_devices+0x580/0x60c
-        tps65090_i2c_probe+0xb8/0x184
-        i2c_device_probe+0x234/0x2a4
-        really_probe+0x1c4/0x4e4
-        driver_probe_device+0x78/0x1d8
-        bus_for_each_drv+0x78/0xbc
-        __device_attach+0xe8/0x180
-        bus_probe_device+0x88/0x90
-        device_add+0x4c4/0x7e8
-        i2c_new_client_device+0x15c/0x27c
-        of_i2c_register_devices+0x114/0x184
-        i2c_register_adapter+0x1d8/0x6dc
-        ec_i2c_probe+0xc8/0x124
-        platform_probe+0x80/0xc0
-        really_probe+0x1c4/0x4e4
-        driver_probe_device+0x78/0x1d8
-        bus_for_each_drv+0x78/0xbc
-        __device_attach+0xe8/0x180
-        bus_probe_device+0x88/0x90
-        device_add+0x4c4/0x7e8
-        of_platform_device_create_pdata+0x90/0xc8
-        of_platform_bus_create+0x1a0/0x4ec
-        of_platform_populate+0x88/0x120
-        devm_of_platform_populate+0x40/0x80
-        cros_ec_register+0x174/0x308
-        cros_ec_spi_probe+0x16c/0x1ec
-        spi_probe+0x88/0xac
-        really_probe+0x1c4/0x4e4
-        driver_probe_device+0x78/0x1d8
-        device_driver_attach+0x58/0x60
-        __driver_attach+0xfc/0x160
-        bus_for_each_dev+0x6c/0xb8
-        bus_add_driver+0x170/0x20c
-        driver_register+0x78/0x10c
-        do_one_initcall+0x88/0x438
-        kernel_init_freeable+0x18c/0x1dc
-        kernel_init+0x8/0x118
-        ret_from_fork+0x14/0x38
-        0x0
-
-other info that might help us debug this:
-
-Chain exists of:
-   regulator_list_mutex --> regulator_ww_class_acquire --> 
-regulator_ww_class_mutex
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(regulator_ww_class_mutex);
-                                lock(regulator_ww_class_acquire);
-                                lock(regulator_ww_class_mutex);
-   lock(regulator_list_mutex);
-
-  *** DEADLOCK ***
-
-5 locks held by swapper/0/1:
-  #0: dfb6e4c8 (&dev->mutex){....}-{3:3}, at: device_driver_attach+0x18/0x60
-  #1: c1fedcd8 (&dev->mutex){....}-{3:3}, at: __device_attach+0x34/0x180
-  #2: df53a4e8 (&dev->mutex){....}-{3:3}, at: __device_attach+0x34/0x180
-  #3: df5224d8 (&dev->mutex){....}-{3:3}, at: __device_attach+0x34/0x180
-  #4: df7190c0 (regulator_ww_class_mutex){+.+.}-{3:3}, at: 
-regulator_resolve_supply+0x44/0x318
-
-stack backtrace:
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.11.0-rc1-00008-geaa7995c529b 
-#10095
-Hardware name: Samsung Exynos (Flattened Device Tree)
-[<c01116e8>] (unwind_backtrace) from [<c010cf58>] (show_stack+0x10/0x14)
-[<c010cf58>] (show_stack) from [<c0b38ffc>] (dump_stack+0xa4/0xc4)
-[<c0b38ffc>] (dump_stack) from [<c0193458>] (check_noncircular+0x14c/0x164)
-[<c0193458>] (check_noncircular) from [<c0196b90>] 
-(__lock_acquire+0x1830/0x31cc)
-[<c0196b90>] (__lock_acquire) from [<c01991e4>] (lock_acquire+0x2e4/0x5dc)
-[<c01991e4>] (lock_acquire) from [<c0b4043c>] (__mutex_lock+0xa4/0xb60)
-[<c0b4043c>] (__mutex_lock) from [<c0b40f14>] (mutex_lock_nested+0x1c/0x24)
-[<c0b40f14>] (mutex_lock_nested) from [<c05ccd94>] 
-(regulator_lock_dependent+0x4c/0x2b0)
-[<c05ccd94>] (regulator_lock_dependent) from [<c05d220c>] 
-(regulator_enable+0x30/0xe4)
-[<c05d220c>] (regulator_enable) from [<c05d248c>] 
-(regulator_resolve_supply+0x1cc/0x318)
-[<c05d248c>] (regulator_resolve_supply) from [<c05d2974>] 
-(regulator_register_resolve_supply+0x14/0x78)
-[<c05d2974>] (regulator_register_resolve_supply) from [<c06a3000>] 
-(class_for_each_device+0x68/0xe8)
-[<c06a3000>] (class_for_each_device) from [<c05d3e20>] 
-(regulator_register+0xa2c/0xc9c)
-[<c05d3e20>] (regulator_register) from [<c05d5c70>] 
-(devm_regulator_register+0x40/0x70)
-[<c05d5c70>] (devm_regulator_register) from [<c05dea58>] 
-(tps65090_regulator_probe+0x150/0x648)
-[<c05dea58>] (tps65090_regulator_probe) from [<c06a3fe8>] 
-(platform_probe+0x80/0xc0)
-[<c06a3fe8>] (platform_probe) from [<c06a1114>] (really_probe+0x1c4/0x4e4)
-[<c06a1114>] (really_probe) from [<c06a14ac>] 
-(driver_probe_device+0x78/0x1d8)
-[<c06a14ac>] (driver_probe_device) from [<c069f1a4>] 
-(bus_for_each_drv+0x78/0xbc)
-[<c069f1a4>] (bus_for_each_drv) from [<c06a0eb0>] 
-(__device_attach+0xe8/0x180)
-[<c06a0eb0>] (__device_attach) from [<c069ff50>] 
-(bus_probe_device+0x88/0x90)
-[<c069ff50>] (bus_probe_device) from [<c069dbac>] (device_add+0x4c4/0x7e8)
-[<c069dbac>] (device_add) from [<c06a3bac>] 
-(platform_device_add+0x120/0x25c)
-[<c06a3bac>] (platform_device_add) from [<c06d5c7c>] 
-(mfd_add_devices+0x580/0x60c)
-[<c06d5c7c>] (mfd_add_devices) from [<c06d80e8>] 
-(tps65090_i2c_probe+0xb8/0x184)
-[<c06d80e8>] (tps65090_i2c_probe) from [<c0822520>] 
-(i2c_device_probe+0x234/0x2a4)
-[<c0822520>] (i2c_device_probe) from [<c06a1114>] (really_probe+0x1c4/0x4e4)
-[<c06a1114>] (really_probe) from [<c06a14ac>] 
-(driver_probe_device+0x78/0x1d8)
-[<c06a14ac>] (driver_probe_device) from [<c069f1a4>] 
-(bus_for_each_drv+0x78/0xbc)
-[<c069f1a4>] (bus_for_each_drv) from [<c06a0eb0>] 
-(__device_attach+0xe8/0x180)
-[<c06a0eb0>] (__device_attach) from [<c069ff50>] 
-(bus_probe_device+0x88/0x90)
-[<c069ff50>] (bus_probe_device) from [<c069dbac>] (device_add+0x4c4/0x7e8)
-[<c069dbac>] (device_add) from [<c0824aec>] 
-(i2c_new_client_device+0x15c/0x27c)
-[<c0824aec>] (i2c_new_client_device) from [<c08285e0>] 
-(of_i2c_register_devices+0x114/0x184)
-[<c08285e0>] (of_i2c_register_devices) from [<c08254b8>] 
-(i2c_register_adapter+0x1d8/0x6dc)
-[<c08254b8>] (i2c_register_adapter) from [<c082dd1c>] 
-(ec_i2c_probe+0xc8/0x124)
-[<c082dd1c>] (ec_i2c_probe) from [<c06a3fe8>] (platform_probe+0x80/0xc0)
-[<c06a3fe8>] (platform_probe) from [<c06a1114>] (really_probe+0x1c4/0x4e4)
-[<c06a1114>] (really_probe) from [<c06a14ac>] 
-(driver_probe_device+0x78/0x1d8)
-[<c06a14ac>] (driver_probe_device) from [<c069f1a4>] 
-(bus_for_each_drv+0x78/0xbc)
-[<c069f1a4>] (bus_for_each_drv) from [<c06a0eb0>] 
-(__device_attach+0xe8/0x180)
-[<c06a0eb0>] (__device_attach) from [<c069ff50>] 
-(bus_probe_device+0x88/0x90)
-[<c069ff50>] (bus_probe_device) from [<c069dbac>] (device_add+0x4c4/0x7e8)
-[<c069dbac>] (device_add) from [<c08b140c>] 
-(of_platform_device_create_pdata+0x90/0xc8)
-[<c08b140c>] (of_platform_device_create_pdata) from [<c08b15f0>] 
-(of_platform_bus_create+0x1a0/0x4ec)
-[<c08b15f0>] (of_platform_bus_create) from [<c08b1af0>] 
-(of_platform_populate+0x88/0x120)
-[<c08b1af0>] (of_platform_populate) from [<c08b1bdc>] 
-(devm_of_platform_populate+0x40/0x80)
-[<c08b1bdc>] (devm_of_platform_populate) from [<c08b72fc>] 
-(cros_ec_register+0x174/0x308)
-[<c08b72fc>] (cros_ec_register) from [<c08b868c>] 
-(cros_ec_spi_probe+0x16c/0x1ec)
-[<c08b868c>] (cros_ec_spi_probe) from [<c071b2f4>] (spi_probe+0x88/0xac)
-[<c071b2f4>] (spi_probe) from [<c06a1114>] (really_probe+0x1c4/0x4e4)
-[<c06a1114>] (really_probe) from [<c06a14ac>] 
-(driver_probe_device+0x78/0x1d8)
-[<c06a14ac>] (driver_probe_device) from [<c06a19c4>] 
-(device_driver_attach+0x58/0x60)
-[<c06a19c4>] (device_driver_attach) from [<c06a1ac8>] 
-(__driver_attach+0xfc/0x160)
-[<c06a1ac8>] (__driver_attach) from [<c069f0cc>] 
-(bus_for_each_dev+0x6c/0xb8)
-[<c069f0cc>] (bus_for_each_dev) from [<c06a0204>] 
-(bus_add_driver+0x170/0x20c)
-[<c06a0204>] (bus_add_driver) from [<c06a2968>] (driver_register+0x78/0x10c)
-[<c06a2968>] (driver_register) from [<c0102428>] 
-(do_one_initcall+0x88/0x438)
-[<c0102428>] (do_one_initcall) from [<c1101104>] 
-(kernel_init_freeable+0x18c/0x1dc)
-[<c1101104>] (kernel_init_freeable) from [<c0b3c65c>] 
-(kernel_init+0x8/0x118)
-[<c0b3c65c>] (kernel_init) from [<c010011c>] (ret_from_fork+0x14/0x38)
-Exception stack(0xc1ce3fb0 to 0xc1ce3ff8)
-3fa0:                                     00000000 00000000 00000000 
-00000000
-3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
-00000000
-3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-
-I didn't analyze it yet if this warning is really an issue or just a 
-false positive. If you have any hints or comments let me know.
-
+>  300:  1366     4.6 C/MHz    212 mW   38.7 J    6.5 I/mJ   183.0 s
+>  400:  1821     4.6 C/MHz    286 mW   39.3 J    6.4 I/mJ   137.3 s
+>  500:  2253     4.5 C/MHz    375 mW   41.7 J    6.0 I/mJ   111.0 s
+>  600:  2740     4.6 C/MHz    446 mW   40.7 J    6.1 I/mJ    91.2 s
+>  700:  3199     4.6 C/MHz    513 mW   40.1 J    6.2 I/mJ    78.2 s
+>  800:  3673     4.6 C/MHz    678 mW   46.1 J    5.4 I/mJ    68.1 s
+>  900:  4090     4.5 C/MHz    764 mW   46.7 J    5.4 I/mJ    61.1 s
+> 1000:  4586     4.6 C/MHz    878 mW   47.9 J    5.2 I/mJ    54.5 s
+> 1100:  5060     4.6 C/MHz   1084 mW   53.6 J    4.7 I/mJ    49.4 s
+> 1200:  5515     4.6 C/MHz   1225 mW   55.5 J    4.5 I/mJ    45.3 s
+> 1300:  5933     4.6 C/MHz   1396 mW   58.9 J    4.2 I/mJ    42.1 s
+> 1400:  6395     4.6 C/MHz   1662 mW   65.0 J    3.8 I/mJ    39.1 s
+> 1500:  6897     4.6 C/MHz   1895 mW   68.7 J    3.6 I/mJ    36.3 s
+> 1600:  7332     4.6 C/MHz   2198 mW   75.0 J    3.3 I/mJ    34.1 s
+> 1700:  7826     4.6 C/MHz   2497 mW   79.8 J    3.1 I/mJ    31.9 s
+> 
+> [1] https://github.com/kdrag0n/freqbench
+> [2] https://www.eembc.org/coremark/
+> [3] https://github.com/kdrag0n/freqbench/tree/master/results/exynos5250/main
+> 
+> Signed-off-by: Danny Lin <danny@kdrag0n.dev>
 > ---
->   drivers/regulator/core.c | 39 ++++++++++++++++++++++++++++-----------
->   1 file changed, 28 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-> index fee9241..3ae5ccd 100644
-> --- a/drivers/regulator/core.c
-> +++ b/drivers/regulator/core.c
-> @@ -1813,23 +1813,34 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
->   {
->   	struct regulator_dev *r;
->   	struct device *dev = rdev->dev.parent;
-> -	int ret;
-> +	int ret = 0;
->   
->   	/* No supply to resolve? */
->   	if (!rdev->supply_name)
->   		return 0;
->   
-> -	/* Supply already resolved? */
-> +	/* Supply already resolved? (fast-path without locking contention) */
->   	if (rdev->supply)
->   		return 0;
->   
-> +	/*
-> +	 * Recheck rdev->supply with rdev->mutex lock held to avoid a race
-> +	 * between rdev->supply null check and setting rdev->supply in
-> +	 * set_supply() from concurrent tasks.
-> +	 */
-> +	regulator_lock(rdev);
-> +
-> +	/* Supply just resolved by a concurrent task? */
-> +	if (rdev->supply)
-> +		goto out;
-> +
->   	r = regulator_dev_lookup(dev, rdev->supply_name);
->   	if (IS_ERR(r)) {
->   		ret = PTR_ERR(r);
->   
->   		/* Did the lookup explicitly defer for us? */
->   		if (ret == -EPROBE_DEFER)
-> -			return ret;
-> +			goto out;
->   
->   		if (have_full_constraints()) {
->   			r = dummy_regulator_rdev;
-> @@ -1837,15 +1848,18 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
->   		} else {
->   			dev_err(dev, "Failed to resolve %s-supply for %s\n",
->   				rdev->supply_name, rdev->desc->name);
-> -			return -EPROBE_DEFER;
-> +			ret = -EPROBE_DEFER;
-> +			goto out;
->   		}
->   	}
->   
->   	if (r == rdev) {
->   		dev_err(dev, "Supply for %s (%s) resolved to itself\n",
->   			rdev->desc->name, rdev->supply_name);
-> -		if (!have_full_constraints())
-> -			return -EINVAL;
-> +		if (!have_full_constraints()) {
-> +			ret = -EINVAL;
-> +			goto out;
-> +		}
->   		r = dummy_regulator_rdev;
->   		get_device(&r->dev);
->   	}
-> @@ -1859,7 +1873,8 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
->   	if (r->dev.parent && r->dev.parent != rdev->dev.parent) {
->   		if (!device_is_bound(r->dev.parent)) {
->   			put_device(&r->dev);
-> -			return -EPROBE_DEFER;
-> +			ret = -EPROBE_DEFER;
-> +			goto out;
->   		}
->   	}
->   
-> @@ -1867,13 +1882,13 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
->   	ret = regulator_resolve_supply(r);
->   	if (ret < 0) {
->   		put_device(&r->dev);
-> -		return ret;
-> +		goto out;
->   	}
->   
->   	ret = set_supply(rdev, r);
->   	if (ret < 0) {
->   		put_device(&r->dev);
-> -		return ret;
-> +		goto out;
->   	}
->   
->   	/*
-> @@ -1886,11 +1901,13 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
->   		if (ret < 0) {
->   			_regulator_put(rdev->supply);
->   			rdev->supply = NULL;
-> -			return ret;
-> +			goto out;
->   		}
->   	}
->   
-> -	return 0;
-> +out:
-> +	regulator_unlock(rdev);
-> +	return ret;
->   }
->   
->   /* Internal regulator request function */
+>  arch/arm/boot/dts/exynos5250.dtsi | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 2ea2caaca4e2..cc2fe0afcfc7 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -58,6 +58,8 @@ cpu0: cpu@0 {
+>  			clock-names = "cpu";
+>  			operating-points-v2 = <&cpu0_opp_table>;
+>  			#cooling-cells = <2>; /* min followed by max */
+> +			capacity-dmips-mhz = <1024>;
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+The origin of this 1024 value should be explained.
 
+> +			dynamic-power-coefficient = <800>;
+>  		};
+>  		cpu1: cpu@1 {
+>  			device_type = "cpu";
+> @@ -67,6 +69,20 @@ cpu1: cpu@1 {
+>  			clock-names = "cpu";
+>  			operating-points-v2 = <&cpu0_opp_table>;
+>  			#cooling-cells = <2>; /* min followed by max */
+> +			capacity-dmips-mhz = <1024>;
+> +			dynamic-power-coefficient = <800>;
+> +		};
+> +
+> +		cpu-map {
+
+That's a second patch.
+
+Best regards,
+Krzysztof
+
+> +			cluster0 {
+> +				core0 {
+> +					cpu = <&cpu0>;
+> +				};
+> +
+> +				core1 {
+> +					cpu = <&cpu1>;
+> +				};
+> +			};
+>  		};
+>  	};
+>  
+> -- 
+> 2.29.2
+> 
