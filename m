@@ -2,179 +2,289 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0623BC433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 05:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3019FC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 07:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9ED7230FC
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 05:21:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D883C2312E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jan 2021 07:05:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725883AbhAMFVc convert rfc822-to-8bit (ORCPT
+        id S1726011AbhAMHEw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Jan 2021 00:21:32 -0500
-Received: from mail-wr1-f43.google.com ([209.85.221.43]:36055 "EHLO
-        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbhAMFVc (ORCPT
+        Wed, 13 Jan 2021 02:04:52 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34079 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbhAMHEt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Jan 2021 00:21:32 -0500
-Received: by mail-wr1-f43.google.com with SMTP id t16so728797wra.3;
-        Tue, 12 Jan 2021 21:21:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=ygvCn8fmZH80T0v+3u3CbzAAgsVPV7I6kSbF85AxYE8=;
-        b=jbE+s8Sx78HxPDXrtsukzSp6pvUQiSvWdAkKLiZgxNG7dyWhw8/qH8AY/Y2X+vljgW
-         aijdruuSY3sd69afkJyWDjFJJGncvkO3fgkUlQ9nYkdaousDoUCK6KHK4hgHmW5YvpKk
-         tUt0KzxPAmZz+ve5TbCuSMSY2/FqAh+zbs24j4aA2bxA2yVFb9pGAOO4O5oN4QotZ+k+
-         ByjthzY7GE5GFWViCoOE6lSNtxQryR1ThSxZctm6/5Sod+yyY4mm1Zwf+xP/sKUep6Im
-         pb8d7OBOpc1jqbJVt7nXyb5282l7YdQVjm3YSY0IO7eS4H7/lxNusDLnE0Dbxu2CD9rN
-         poqw==
-X-Gm-Message-State: AOAM532xBP+0t0Y3aN/mBTfAztnqhPICJzunQKIvll7Rz4iebTWyOjna
-        Gkcqz9mwZMnnjeUAftRm77w/qflDs14=
-X-Google-Smtp-Source: ABdhPJxhcefF2g4ghMWfcYGFz4p/mMcOTBXdkjHmHKC1b8cf1wmHKSyoSIrwjlD7D4mvHQU6xRhrZg==
-X-Received: by 2002:adf:fbc5:: with SMTP id d5mr587444wrs.82.1610515249819;
-        Tue, 12 Jan 2021 21:20:49 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id c11sm240840wmd.36.2021.01.12.21.20.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jan 2021 21:20:48 -0800 (PST)
-Date:   Wed, 13 Jan 2021 06:20:47 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Danny Lin <danny@kdrag0n.dev>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: exynos: Add energy model for Exynos 5250
-Message-ID: <20210113052047.GC6486@kozik-lap>
-References: <20210111235717.321153-1-danny@kdrag0n.dev>
+        Wed, 13 Jan 2021 02:04:49 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210113070405euoutp02b083cae4b4c54084a8aea635488547bb~ZuLjRIMGb2157821578euoutp020
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Jan 2021 07:04:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210113070405euoutp02b083cae4b4c54084a8aea635488547bb~ZuLjRIMGb2157821578euoutp020
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1610521445;
+        bh=XyOhINqIAjlKeyzqaH6QdfsikSvA26GQXGomvuh25nA=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=TdIGgyPoVQBg2WngElLIPaQkC7PpyXEXQKs++rcf0t+aDYHnlJUTjP1Ao+ClKkKB1
+         YNRUIyyV0aOjWqtfRVDXf7+2ANOSxPcx5CHmCyJPRIsSvpcdkh5jxr79POxEBfwFNm
+         6cRk6NAV8qpzI8xxPzzMPwIPvsrLDp6Lbd8cRG+c=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20210113070405eucas1p116f9b474e92948df2d0479b686a22302~ZuLi9vMw_2776127761eucas1p1x;
+        Wed, 13 Jan 2021 07:04:05 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 8D.80.27958.56B9EFF5; Wed, 13
+        Jan 2021 07:04:05 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210113070404eucas1p13e3439afd5de299b047a85aaa53d896e~ZuLii2ihu2775927759eucas1p1h;
+        Wed, 13 Jan 2021 07:04:04 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210113070404eusmtrp205348b539eb1a9ca984e28358bc8310a~ZuLiiGPoT0636706367eusmtrp2x;
+        Wed, 13 Jan 2021 07:04:04 +0000 (GMT)
+X-AuditID: cbfec7f2-f15ff70000006d36-a3-5ffe9b6505a8
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 27.B7.21957.46B9EFF5; Wed, 13
+        Jan 2021 07:04:04 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20210113070404eusmtip29b328805faf4b46bdb114cc6bcff6519~ZuLhu8Pax2109021090eusmtip2W;
+        Wed, 13 Jan 2021 07:04:03 +0000 (GMT)
+Subject: Re: [PATCH v1 5/5] driver core: Set fw_devlink=on by default
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <ed32b9c7-b6d6-bf86-5e43-fd0c4aa75dd6@samsung.com>
+Date:   Wed, 13 Jan 2021 08:04:03 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20210111235717.321153-1-danny@kdrag0n.dev>
+In-Reply-To: <CAGETcx_QY3h83q1fSr=h_vMQdH-TMhVYPozPuSr=q4uv2Lr48w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTdxTH+fXe3t7WlF0LyhEWNxpnookgoviLD0Sjy50ucy76h48IFW8A
+        pcXcWhHNnBFRKMgWdAXLq46xklJeBao8xFjUCiIlUgwQlqG4R8i0QxsjEHyUC5P/Puec73l8
+        k0MTCpc4mE7SHOd4jSpZSclI+71x1wqu8G3sSnetP64rqBHj9LIaChsGzCTumlyBb1wPxOMX
+        G0TY5aqV4N7mIgoXuNpEuKmoQ4ztRjOFi70/E1jvmKJi5Ky9xS5mPf0ZEtZk07E2SxbFDj1u
+        pdhbxVYJm9tgQWz9g9NsnrubYF/ZFn8r2yfbcJhLTjrB8eHRcbLE3Nxb1LGe6JP5mSWis6hj
+        jR5JaWBWQ9+vjcjHCqYCwQX3AT2SfWAvgsnxLokQvEJgqq6TzHacq++fKZgR5LVnUEIwhiBj
+        +AqpRzQdwGwDr/NrX0Mgsxxsj0dIHxOMkYT/crCPKSYC9M/1lI/lTDRU/tE6rSGZL6C25bfp
+        ZQuYQ+BsyyYEzXzouPpsWiNldkHTj4OUMPMzSG8sJAQOgsFnpSLfPcBUSmHgRd/M1VvhjbdL
+        LHAAjDobZvKfwrum2YZ0BE+6qyRCkIOg91wBElTrYah7gvI5I5hlUNMc7kNgNkP76EkB/aH/
+        +XzhBn/Is+cTQloOmRcUwoylYHRW/7/1ds8j4iekNM5xZpzjxjjHjfHjWhMiLSiI02nVCZw2
+        QsOlhmlVaq1OkxAWn6K2oQ8/9+Ct8+UNVDw6FuZAIho5ENCEMlDOZ0/FKuSHVWmnOD4lltcl
+        c1oHCqFJZZDcUmiNVTAJquPcUY47xvGzVREtDT4rKvJD91OSy488/IS96q7s/cETHyVj10YO
+        1T7cY/I0w/kTI0hVmnhN9Xnpl1bNvoO/hzJbAvqlKyPnFXSqi8Jtjr0GQ06JdJhCmk7Us1iy
+        e+Cbu0vu4dVDl8808jez+izdrf/elZlKEnB9nN2qi5+sG9v4+kWlMo9/apBVV3y3v82SMZKa
+        NBETsvdprs6zc+SMX3tZecVA8Ly0vx1HpxTqzZt6lbfbzNvLvr9UsiA0O39XOX2+pi5yZ9Rr
+        /nTDYFZUfL503V/0RMydwRDxL2+uLzxitXs3BGQflKaqXZlmcWhc2o5/Oj040HDZLG5JrXLf
+        7xmtWrV/eL3fV4te/unIOqUktYmqiOUEr1W9B+dD8sviAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsVy+t/xe7ops//FG1x5qWOxccZ6VovmxevZ
+        LKbdXM5icea3rsWO7SIWP9u3MFmcP7+B3eLyrjlsFjPO72Oy2DnnJKvFtlnL2SzmfpnKbNF1
+        6C+bA6/Htt3bWD3e32hl91iwqdRj06pONo871/aweeyfu4bdo2/LKkaPzaerPSZdOcfs8XmT
+        XABXlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl5G
+        X99+toILdhXTO+YxNTCeNO1i5OSQEDCRaNp8g72LkYtDSGApo8TR2ddZIRIyEienNUDZwhJ/
+        rnWxQRS9Byp6vpypi5GDQ1jAVeLLcR+QGhEBLYlN1x6zgNQwCyxgkeiYdpgJouEds8T7nccZ
+        QarYBAwlut6CTOLk4BWwk1h9fw8LiM0ioCqxYfcydpChogJJEovfOkGUCEqcnPkErIRTIFBi
+        Z/8tsFZmATOJeZsfMkPY8hLNW2dD2eISt57MZ5rAKDQLSfssJC2zkLTMQtKygJFlFaNIamlx
+        bnpusaFecWJucWleul5yfu4mRmBsbzv2c/MOxnmvPuodYmTiYDzEKMHBrCTCW9T9N16INyWx
+        siq1KD++qDQntfgQoynQOxOZpUST84HJJa8k3tDMwNTQxMzSwNTSzFhJnHfr3DXxQgLpiSWp
+        2ampBalFMH1MHJxSDUzHH75/9eziqoVGs69UnnVTO6CWEstfGcFqqeImxtbTNu2n1hZXfoWy
+        SsEZ+544HWwJSmZ1P39wUewh0Vsr183ob0jZfbqY94nZx8ioq17Xr6qKvc//sf76xKzKdlnh
+        Dz5sBt/i4sU7NkZEHo1Zl9QiX35PZ0owu/ybU+sN84XyTJrkeKcbLiq7weksGHrAWnim16+b
+        G5doybNHqlt4n35svnHlk51bprSc+xrpdCA6ffZNtYVLf6txcP7er1rmqrxy1/lX91NqZPaF
+        cyXkn/cQYL1bHs9lFGNncOq4+J9PQhm/PTOb78xWuBlmeuLgU63u7MjXUUyHJ0jqfDePubHt
+        2OWFBc61UuHTFnxQdlFiKc5INNRiLipOBADb70cfdgMAAA==
+X-CMS-MailID: 20210113070404eucas1p13e3439afd5de299b047a85aaa53d896e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210111141814eucas1p1f388df07b789693a999042b27f0d8c2a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210111141814eucas1p1f388df07b789693a999042b27f0d8c2a
+References: <20201218031703.3053753-1-saravanak@google.com>
+        <20201218031703.3053753-6-saravanak@google.com>
+        <CGME20210111141814eucas1p1f388df07b789693a999042b27f0d8c2a@eucas1p1.samsung.com>
+        <5484316b-0f27-6c36-9259-5c765bb6b96c@samsung.com>
+        <2556a69b-5da5-bf80-e051-df2d02fbc40f@samsung.com>
+        <CAGETcx8-1YzF2Br0sszJROLAWo3DSm27K071Md9wY5SOwUeLdw@mail.gmail.com>
+        <fde65185-fd00-1f79-0f80-245eaa6c95cb@samsung.com>
+        <CAGETcx_QY3h83q1fSr=h_vMQdH-TMhVYPozPuSr=q4uv2Lr48w@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 11, 2021 at 03:57:16PM -0800, Danny Lin wrote:
-> This energy model enables the use of energy- and capacity-aware CPU
-> frequency scaling.
-> 
-> Power and performance measurements were made using my freqbench [1]
-> benchmark coordinator, which uses EEMBC CoreMark [2] as the workload
-> and measures power usage using the integrated PMIC's fuel gauge (DS2784
-> in this case).
+Hi Saravana,
 
-Thanks for the patch.
+On 12.01.2021 21:51, Saravana Kannan wrote:
+> On Mon, Jan 11, 2021 at 11:11 PM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> On 11.01.2021 22:47, Saravana Kannan wrote:
+>>> On Mon, Jan 11, 2021 at 6:18 AM Marek Szyprowski
+>>> <m.szyprowski@samsung.com> wrote:
+>>>> On 11.01.2021 12:12, Marek Szyprowski wrote:
+>>>>> On 18.12.2020 04:17, Saravana Kannan wrote:
+>>>>>> Cyclic dependencies in some firmware was one of the last remaining
+>>>>>> reasons fw_devlink=on couldn't be set by default. Now that cyclic
+>>>>>> dependencies don't block probing, set fw_devlink=on by default.
+>>>>>>
+>>>>>> Setting fw_devlink=on by default brings a bunch of benefits (currently,
+>>>>>> only for systems with device tree firmware):
+>>>>>> * Significantly cuts down deferred probes.
+>>>>>> * Device probe is effectively attempted in graph order.
+>>>>>> * Makes it much easier to load drivers as modules without having to
+>>>>>>      worry about functional dependencies between modules (depmod is still
+>>>>>>      needed for symbol dependencies).
+>>>>>>
+>>>>>> If this patch prevents some devices from probing, it's very likely due
+>>>>>> to the system having one or more device drivers that "probe"/set up a
+>>>>>> device (DT node with compatible property) without creating a struct
+>>>>>> device for it.  If we hit such cases, the device drivers need to be
+>>>>>> fixed so that they populate struct devices and probe them like normal
+>>>>>> device drivers so that the driver core is aware of the devices and their
+>>>>>> status. See [1] for an example of such a case.
+>>>>>>
+>>>>>> [1] -
+>>>>>> https://lore.kernel.org/lkml/CAGETcx9PiX==mLxB9PO8Myyk6u2vhPVwTMsA5NkD-ywH5xhusw@mail.gmail.com/
+>>>>>> Signed-off-by: Saravana Kannan <saravanak@google.com>
+>>>>> This patch landed recently in linux next-20210111 as commit
+>>>>> e590474768f1 ("driver core: Set fw_devlink=on by default"). Sadly it
+>>>>> breaks Exynos IOMMU operation, what causes lots of devices being
+>>>>> deferred and not probed at all. I've briefly checked and noticed that
+>>>>> exynos_sysmmu_probe() is never called after this patch. This is really
+>>>>> strange for me, as the SYSMMU controllers on Exynos platform are
+>>>>> regular platform devices registered by the OF code. The driver code is
+>>>>> here: drivers/iommu/exynos-iommu.c, example dts:
+>>>>> arch/arm/boot/dts/exynos3250.dtsi (compatible = "samsung,exynos-sysmmu").
+>>>> Okay, I found the source of this problem. It is caused by Exynos power
+>>>> domain driver, which is not platform driver yet. I will post a patch,
+>>>> which converts it to the platform driver.
+>>> Thanks Marek! Hopefully the debug logs I added were sufficient to
+>>> figure out the reason.
+>> Frankly, it took me a while to figure out that device core waits for the
+>> power domain devices. Maybe it would be possible to add some more debug
+>> messages or hints? Like the reason of the deferred probe in
+>> /sys/kernel/debug/devices_deferred ?
+> There's already a /sys/devices/.../<device>/waiting_for_supplier file
+> that tells you if the device is waiting for a supplier device to be
+> added. That file goes away once the device probes. If the file has 1,
+> then it's waiting for the supplier device to be added (like your
+> case). If it's 0, then the device is just waiting on one of the
+> existing suppliers to probe. You can find the existing suppliers
+> through /sys/devices/.../<device>/supplier:*/supplier. Also, flip
+> these dev_dbg() to dev_info() if you need more details about deferred
+> probing.
 
-The tested setup is not representative here. The Nexus 10 is not
-supported by mainline and it might use specific revision of Exynos5250,
-different than present on other mainlined boards. One could assume that
-ratio of dynamic power coefficient of the cores should be similar... but
-there is no ratio here, as this is not a big.LITTLE platform.
+Frankly speaking I doubt that anyone will find those. Even experienced 
+developer might need some time to figure it out.
 
-Another problem is the v3.4 vendor kernel with a lot of out-of-tree
-code. This means it might use some different scheduler, different
-drivers, different voltages and a lot more of unknown differences.
-Vendor kernel should not matter that much in measurement of DPC but it
-makes the results not possible to reproduce.
+I expect that such information will be at least in the mentioned 
+/sys/kernel/debug/devices_deferred file. We already have infrastructure 
+for putting the deferred probe reason there, see dev_err_probe() 
+function. Even such a simple change makes the debugging this issue much 
+easier:
 
-You were also measuring the power delivered to entire system, no to CPUs,
-so you included static power in the data. Static power of CPUs and of
-the entire system.
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index cd8e518fadd6..ceb5aed5a84c 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -937,12 +937,13 @@ int device_links_check_suppliers(struct device *dev)
+         mutex_lock(&fwnode_link_lock);
+         if (dev->fwnode && !list_empty(&dev->fwnode->suppliers) &&
+             !fw_devlink_is_permissive()) {
+-               dev_dbg(dev, "probe deferral - wait for supplier %pfwP\n",
++               ret = dev_err_probe(dev, -EPROBE_DEFER,
++                       "probe deferral - wait for supplier %pfwP\n",
+list_first_entry(&dev->fwnode->suppliers,
+                         struct fwnode_link,
+                         c_hook)->supplier);
+                 mutex_unlock(&fwnode_link_lock);
+-               return -EPROBE_DEFER;
++               return ret;
+         }
+         mutex_unlock(&fwnode_link_lock);
 
-> The energy model dynamic-power-coefficient values were calculated with
->     DPC = µW / MHz / V^2
-> for each OPP, and averaged across all OPPs within each cluster for the
-> final coefficient.
-> 
-> A Google Nexus 10 device running a downstream 3.4 kernel was used for
-> benchmarking to ensure proper frequency scaling and other low-level
-> controls.
-> 
-> Raw benchmark results can be found in the freqbench repository [3].
-> Below is a human-readable summary:
-> 
-> ===== CPU 1 =====
-> Frequencies: 200 300 400 500 600 700 800 900 1000 1100 1200 1300 1400 1500 1600 1700
->  200:   909     4.5 C/MHz    132 mW   36.2 J    6.9 I/mJ   275.0 s
+@@ -955,9 +956,9 @@ int device_links_check_suppliers(struct device *dev)
+                 if (link->status != DL_STATE_AVAILABLE &&
+                     !(link->flags & DL_FLAG_SYNC_STATE_ONLY)) {
+                         device_links_missing_supplier(dev);
+-                       dev_dbg(dev, "probe deferral - supplier %s not 
+ready\n",
++                       ret = dev_err_probe(dev, -EPROBE_DEFER,
++                               "probe deferral - supplier %s not ready\n",
+                                 dev_name(link->supplier));
+-                       ret = -EPROBE_DEFER;
+                         break;
+                 }
+                 WRITE_ONCE(link->status, DL_STATE_CONSUMER_PROBE);
 
-What are the columns here? I would expect that fuel gauge gives you the
-current, but it's not here.
 
->  300:  1366     4.6 C/MHz    212 mW   38.7 J    6.5 I/mJ   183.0 s
->  400:  1821     4.6 C/MHz    286 mW   39.3 J    6.4 I/mJ   137.3 s
->  500:  2253     4.5 C/MHz    375 mW   41.7 J    6.0 I/mJ   111.0 s
->  600:  2740     4.6 C/MHz    446 mW   40.7 J    6.1 I/mJ    91.2 s
->  700:  3199     4.6 C/MHz    513 mW   40.1 J    6.2 I/mJ    78.2 s
->  800:  3673     4.6 C/MHz    678 mW   46.1 J    5.4 I/mJ    68.1 s
->  900:  4090     4.5 C/MHz    764 mW   46.7 J    5.4 I/mJ    61.1 s
-> 1000:  4586     4.6 C/MHz    878 mW   47.9 J    5.2 I/mJ    54.5 s
-> 1100:  5060     4.6 C/MHz   1084 mW   53.6 J    4.7 I/mJ    49.4 s
-> 1200:  5515     4.6 C/MHz   1225 mW   55.5 J    4.5 I/mJ    45.3 s
-> 1300:  5933     4.6 C/MHz   1396 mW   58.9 J    4.2 I/mJ    42.1 s
-> 1400:  6395     4.6 C/MHz   1662 mW   65.0 J    3.8 I/mJ    39.1 s
-> 1500:  6897     4.6 C/MHz   1895 mW   68.7 J    3.6 I/mJ    36.3 s
-> 1600:  7332     4.6 C/MHz   2198 mW   75.0 J    3.3 I/mJ    34.1 s
-> 1700:  7826     4.6 C/MHz   2497 mW   79.8 J    3.1 I/mJ    31.9 s
-> 
-> [1] https://github.com/kdrag0n/freqbench
-> [2] https://www.eembc.org/coremark/
-> [3] https://github.com/kdrag0n/freqbench/tree/master/results/exynos5250/main
-> 
-> Signed-off-by: Danny Lin <danny@kdrag0n.dev>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 2ea2caaca4e2..cc2fe0afcfc7 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -58,6 +58,8 @@ cpu0: cpu@0 {
->  			clock-names = "cpu";
->  			operating-points-v2 = <&cpu0_opp_table>;
->  			#cooling-cells = <2>; /* min followed by max */
-> +			capacity-dmips-mhz = <1024>;
+After such change:
 
-The origin of this 1024 value should be explained.
+# cat /sys/kernet/debug/devices_deferred
+sound
+13620000.sysmmu platform: probe deferral - supplier 
+10023c40.power-domain not ready
+13630000.sysmmu platform: probe deferral - supplier 
+10023c40.power-domain not ready
+12e20000.sysmmu platform: probe deferral - supplier 
+10023c20.power-domain not ready
+11a20000.sysmmu platform: probe deferral - supplier 
+10023c00.power-domain not ready
+11a30000.sysmmu platform: probe deferral - supplier 
+10023c00.power-domain not ready
+11a40000.sysmmu platform: probe deferral - supplier 
+10023c00.power-domain not ready
+11a50000.sysmmu platform: probe deferral - supplier 
+10023c00.power-domain not ready
+11a60000.sysmmu platform: probe deferral - supplier 
+10023c00.power-domain not ready
+11e20000.sysmmu platform: probe deferral - supplier 
+10023c80.power-domain not ready
+12d00000.hdmi   platform: probe deferral - supplier 
+10023c20.power-domain not ready
+10048000.clock-controller       platform: probe deferral - supplier 
+10023ca0.power-domain not ready
+12260000.sysmmu platform: probe deferral - supplier 
+10048000.clock-controller not ready
+12270000.sysmmu platform: probe deferral - supplier 
+10048000.clock-controller not ready
+122a0000.sysmmu platform: probe deferral - supplier 
+10048000.clock-controller not ready
+122b0000.sysmmu platform: probe deferral - supplier 
+10048000.clock-controller not ready
+123b0000.sysmmu platform: probe deferral - supplier 
+10048000.clock-controller not ready
+123c0000.sysmmu platform: probe deferral - supplier 
+10048000.clock-controller not ready
+12c10000.mixer  platform: probe deferral - supplier 
+10023c20.power-domain not ready
+13000000.gpu    platform: probe deferral - supplier 
+10023c60.power-domain not ready
 
-> +			dynamic-power-coefficient = <800>;
->  		};
->  		cpu1: cpu@1 {
->  			device_type = "cpu";
-> @@ -67,6 +69,20 @@ cpu1: cpu@1 {
->  			clock-names = "cpu";
->  			operating-points-v2 = <&cpu0_opp_table>;
->  			#cooling-cells = <2>; /* min followed by max */
-> +			capacity-dmips-mhz = <1024>;
-> +			dynamic-power-coefficient = <800>;
-> +		};
-> +
-> +		cpu-map {
+Probably the message can be adjusted a bit, this would significantly 
+help me finding that is the source of the problem.
 
-That's a second patch.
+Best regards
 
-Best regards,
-Krzysztof
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-> +			cluster0 {
-> +				core0 {
-> +					cpu = <&cpu0>;
-> +				};
-> +
-> +				core1 {
-> +					cpu = <&cpu1>;
-> +				};
-> +			};
->  		};
->  	};
->  
-> -- 
-> 2.29.2
-> 
