@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF55EC433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Jan 2021 10:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D5ECC433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Jan 2021 10:24:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CEAF23A3A
+	by mail.kernel.org (Postfix) with ESMTP id EA63C23A52
 	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Jan 2021 10:24:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbhANKXq (ORCPT
+        id S1728146AbhANKXq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
         Thu, 14 Jan 2021 05:23:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40108 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbhANKXo (ORCPT
+        with ESMTP id S1727437AbhANKXo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Thu, 14 Jan 2021 05:23:44 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7C1DC0613D3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jan 2021 02:22:24 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id m4so5152685wrx.9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jan 2021 02:22:24 -0800 (PST)
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BEE8C061793
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jan 2021 02:22:27 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id i63so4045380wma.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jan 2021 02:22:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hXpzk7OffqSrHKLaiatk3ajUz4KlXJ/8J4lT5+GFR1I=;
-        b=cWyvmtck+Ru9tLEC4AUdUbsEbLrYRwRdybsVkqPeCM2TUIIjtN3OHHDW3IdyMudlYj
-         5f2VFMwVgFP6SSaYv5z1jl2LZaiRZjVJ2k8DtX6P3hdDyKjFVK6q8hu379tYgf021QB5
-         kswXTpkzhVU3ZKCbX0+krkA9oAiiAxEnDg7iPptBxcEROkJrpxV21vZnLH9Pje/eOUKB
-         CT8SzZftfVBQi2Mo3LCIekP9hfjc1D2UDeafyPA2/pVp7zIjGU0ITBMaJ60RG2AoowoB
-         lbrqpKeHqvhIvOfwMlV8Ph8uFput3brC3y6nCOAMFQWfryZl9PYBfU5qcXvGTD+Kt864
-         V0Mw==
+        bh=kuQJlHeIpWuiXs634c2G5t39x/XMLzJOuHHOGIxib1k=;
+        b=ZuNFTFgmeZ3uVGqeCtbEb1qyYgwTDek5nE0ZqD8PeZAiJoMcRjR4MslFEsfrFwC3og
+         zE1KlRytS992d+G+PBShFOjgJB8eRWzxII/SYlQ0RhDVoYLtKYp/vaJJsgAi5xOBTFc9
+         yR7VLXozp7BhFRrfsCaPqmJ8Lcwaj2Zh1Zvn9MV3yukP74kx2XYPlLjMbU/lqwZcgxDL
+         1HauxgSEcAHHOpgcBX5pa7LQv1FV6eWxRxCNwhf1K2ib4RPd7OgPci+fQTLFTwobATFc
+         lXGT4A14TY6dq115Ib/sEMvBD0D4JIaTJUETLUo51QW7s483hKQjCFqTfw/WP733gkcY
+         6O9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hXpzk7OffqSrHKLaiatk3ajUz4KlXJ/8J4lT5+GFR1I=;
-        b=YDA1PSQvZ31kN4kWxXS+nO380WVubbdmco4dfEsRXeqijBcHQI+yuzEO8073IxYfGi
-         Tk3yWk1nRMICbzoWo1Pom0Pty8d29TGOJv0AEVsyGJQvaQpU5u9xcW+tgDdou/7LqNXd
-         rpS9Oi4aNUNvib1wB23oS6ZZ63vnwqL9ibsZw8aSOsEhVd0FBUqwOY75uy/Q33+TBycv
-         /vNsjEqbLZ6vqY5ipEM5uPeT33B79FpnASN0N5+epiLWMPrKJry44flSR765K7HHgEDL
-         w3LyECvx4By2h/Pu+OsBi2lPS88oqH7qJmyBv7+N4M4uQk+NXwxubUBjgvAvwkZPF1oU
-         yUkw==
-X-Gm-Message-State: AOAM530BClcSe2sh6Vzqb5hDdxf/Ns7wDFc4806zrMPf/zNG38rs0Xp/
-        LqOnmiu8dEwLur6qtG+JZGtnfA==
-X-Google-Smtp-Source: ABdhPJy9v8GD2EuiKN4Wxze5S5VeDveDx+zR3Z0+C06KqZtUssyCPZ/2SPqRiLUhxyOD++aqmszTDA==
-X-Received: by 2002:a5d:6045:: with SMTP id j5mr6863125wrt.223.1610619743596;
-        Thu, 14 Jan 2021 02:22:23 -0800 (PST)
+        bh=kuQJlHeIpWuiXs634c2G5t39x/XMLzJOuHHOGIxib1k=;
+        b=R02W8amxnPUbXNdvVpnrHF6f7QCsg9TB5VH7L/3/TKRD2U5GIj527yIryma0iwyVRu
+         Ups4tQxxwGLatTBUHCsWAc8W/b6Ft/E1lV/IVdKMio4OGOI8yeAxd2QORSULUGSe9Wuq
+         rsEAP4DwYZkFQsoNqsvyo0E34Po9ioKLDCNi6pKWEEtViXK8vVKE/UEIacyQAXcqXKlz
+         HhYXRIeasY+WEyGBPmeQi7LG/KA7LPhNSFCuVvdI4InYmFFP1gaCefB9p+L+S8z99BJW
+         vnVZOKlzZuuvTpLq3fev2HacIwBFFHhnCgpxYsTkpNZl2MR58sT62jPYQgmwU+9qQvKh
+         1uXw==
+X-Gm-Message-State: AOAM533sUcdrkWuhplcfoOtsK9x2PCJXVVsGJEBMpVAhqpqHwN3XlcdO
+        1IxtxX5g2jcz5M3ExVXnRiJk6w==
+X-Google-Smtp-Source: ABdhPJw0VY3l74mN0Ah9IUZk7JMLhszhCcIpAR2nnaH38umPC9B1cjSGBeU4YhhUoS4bpVkOVDh3rA==
+X-Received: by 2002:a1c:f302:: with SMTP id q2mr3127800wmq.15.1610619745952;
+        Thu, 14 Jan 2021 02:22:25 -0800 (PST)
 Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
-        by smtp.gmail.com with ESMTPSA id l7sm2468467wmg.41.2021.01.14.02.22.22
+        by smtp.gmail.com with ESMTPSA id l7sm2468467wmg.41.2021.01.14.02.22.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Jan 2021 02:22:23 -0800 (PST)
+        Thu, 14 Jan 2021 02:22:25 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
@@ -65,9 +65,9 @@ To:     Krzysztof Kozlowski <krzk@kernel.org>,
 Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-rtc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v5 1/3] rtc: s5m: select REGMAP_I2C
-Date:   Thu, 14 Jan 2021 11:22:17 +0100
-Message-Id: <20210114102219.23682-2-brgl@bgdev.pl>
+Subject: [PATCH v5 3/3] rtc: s5m: check the return value of s5m8767_rtc_init_reg()
+Date:   Thu, 14 Jan 2021 11:22:19 +0100
+Message-Id: <20210114102219.23682-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20210114102219.23682-1-brgl@bgdev.pl>
 References: <20210114102219.23682-1-brgl@bgdev.pl>
@@ -79,28 +79,27 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The rtc-s5m uses the I2C regmap but doesn't select it in Kconfig so
-depending on the configuration the build may fail. Fix it.
+This function can fail if regmap operations fail so check its return
+value in probe().
 
-Fixes: 959df7778bbd ("rtc: Enable compile testing for Maxim and Samsung drivers")
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/rtc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/rtc/rtc-s5m.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 6123f9f4fbc9..e4bef40831c7 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -692,6 +692,7 @@ config RTC_DRV_S5M
- 	tristate "Samsung S2M/S5M series"
- 	depends on MFD_SEC_CORE || COMPILE_TEST
- 	select REGMAP_IRQ
-+	select REGMAP_I2C
- 	help
- 	  If you say yes here you will get support for the
- 	  RTC of Samsung S2MPS14 and S5M PMIC series.
+diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+index 858d5f0e860f..80b66f16db89 100644
+--- a/drivers/rtc/rtc-s5m.c
++++ b/drivers/rtc/rtc-s5m.c
+@@ -791,6 +791,8 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, info);
+ 
+ 	ret = s5m8767_rtc_init_reg(info);
++	if (ret)
++		return ret;
+ 
+ 	device_init_wakeup(&pdev->dev, 1);
+ 
 -- 
 2.29.1
 
