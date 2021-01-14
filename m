@@ -2,100 +2,107 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB09C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Jan 2021 09:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED43C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Jan 2021 10:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DEE1F2242A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Jan 2021 09:17:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E18F823A3B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Jan 2021 10:23:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbhANJQ6 (ORCPT
+        id S1726559AbhANKXE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 14 Jan 2021 04:16:58 -0500
-Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:37543 "EHLO
-        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726478AbhANJQ5 (ORCPT
+        Thu, 14 Jan 2021 05:23:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39960 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725954AbhANKXD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 14 Jan 2021 04:16:57 -0500
-X-Greylist: delayed 526 seconds by postgrey-1.27 at vger.kernel.org; Thu, 14 Jan 2021 04:16:57 EST
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id 224F01404;
-        Thu, 14 Jan 2021 04:07:24 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 14 Jan 2021 04:07:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=MzQEL5nXPUgFtFul0I81bz1aKr8
-        E0pkihlMDkujhjtg=; b=iEIRil5QccyTB2U1KiSTyB9IsBq3GdM4AwzcU1TN63T
-        N7QwuI4Xbg3wfEBWYWDDGJribIcnM79kKrtdZAjQ/fdwd7nzrwEhc0h2foJogVpJ
-        326FXMJLnYBkycmONREjinhLoTI3MJEFbZQ1oTvtsjgDY0jB7h6aTrAiAXR4X1Gc
-        zG+E2KkD1k568dXhRA9xQF14EYdL5tMZ5TVJmzZqI7aI+VhYVn42j6cDPEXKhVKH
-        TJUYYRrnNKt6tM/MB4QJVNw3faRhGzKkmFJ7VsWOfOgUD3YCvuE0b8kX+oHwtJYS
-        JrVZ88tqjrvPTDDSAC7OGHTFY4ulY7KmBdegl/3FPKg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=MzQEL5
-        nXPUgFtFul0I81bz1aKr8E0pkihlMDkujhjtg=; b=rpqMXhMGxw6Py1R8f81/ut
-        sBc1OsjdMG+huqSrg6NQFKWvPFOUbA82dCsux2X6XNPKFWF7nJY1SLmtM44TDEGU
-        WXaWailSY1nOxKQrwYYqkJIGdM36QAVf7FzjKqsYMcsy2SbZVrN4WnZLRXX2POTY
-        Kr/CtL+YyWe6hVRQKFLWUH/K9vk8ybeQfAb4R4L+ORvLKsvg3DGX5ZzKX/y/G3+n
-        TzLzr0IBsc4aZsV1NhblwAbSrYUXlJZB+WMBhgf2tC2BvLUIWvGESK3MBQyKP9E5
-        IEx+fV2BjLsWuOJtpNGUUGc+A82yYcuMEXsYffYCx3H7xkuvSRN3o+qKVXi2ehaA
-        ==
-X-ME-Sender: <xms:yQkAYP2guwVB_L-aYscfh-MPwPu7bVNilMjWjnVqEXZ4-_mOWiEDDw>
-    <xme:yQkAYOH1uBrFvnjbHvLTv5tVwO4Giy8hyV5Vwxgm6L5pJJ3RTrKslA6Ni1J5s8Kd5
-    BZfwknDhOAO7Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedukedrtdeggdduvdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeevueehje
-    fgfffgiedvudekvdektdelleelgefhleejieeugeegveeuuddukedvteenucfkphepkeef
-    rdekiedrjeegrdeigeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomh
-X-ME-Proxy: <xmx:yQkAYP4udU49hQGNBy8LavGDX7d2QCO-AsZzcPeBVvDMnsmmeW00wA>
-    <xmx:yQkAYE2iKIs5UkZer54VwWLaYOyhohCYo10V1vfK5nctLZXjgMDMLQ>
-    <xmx:yQkAYCENXmO62xzm0HlBW2_aFl97LrBSD0kgHYA81hbVgDrcJsiweQ>
-    <xmx:ywkAYFDwji62qW9MMc2jq5tLkfXQvG2KqkO4lIYB197uDQjCtHtSHQXCDVU>
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B0A1D1080057;
-        Thu, 14 Jan 2021 04:07:20 -0500 (EST)
-Date:   Thu, 14 Jan 2021 10:08:26 +0100
-From:   Greg KH <greg@kroah.com>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 0/3] Fix broken  references at next-20210114 due to yaml
- conversion
-Message-ID: <YAAKCjARs6JZrknd@kroah.com>
-References: <cover.1610605373.git.mchehab+huawei@kernel.org>
+        Thu, 14 Jan 2021 05:23:03 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B3DFC061575
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jan 2021 02:22:24 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id r4so4168236wmh.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jan 2021 02:22:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TDBOHLIzbUobbB/H8vBPt1OXjZemmTv6BVFzaBtUnnA=;
+        b=vkadCAqk5+2FVW0RSnQ2RReuN+Ncfp0p3LHyEsMIxgG1AG6L38MculRERwD8h1JBXq
+         x4bL1kIScSX0vyT8Slp72d2Up1UezdewatH4h5bYtmii6h1FIJR0RwgNjm27m2EK/JC+
+         QsiMYxXBYsv6QEgjr2vdw0ffmjkm6eWNU5Aksn7Kv9bLQChG3/RfphR3ygJr8+1ovFiC
+         nFPpOTyZY7u755QXnvn8FlX3GwDnvZ1Q5YnJisOcPF4l2FceSPNabB/7JK9lSJrjj+aC
+         cLFBlp86yVyvSY2v3s9cjKpj/vkPe96/Tw198/KM2CLax+6ICjmFL3fJ3LX8sEd9BRE2
+         ba6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TDBOHLIzbUobbB/H8vBPt1OXjZemmTv6BVFzaBtUnnA=;
+        b=Uu+TDnQukZ8z4/r7zpqgvJUlZQDF5Nd2x5c7yzTy3X3Ut/oHeo8IWgf190Akibwnaw
+         ooIeYCXSP0ylyTZJohiSvcNiwKxfskZvDKvvm0/+RsezHYZajG/BKUpbxPEPMJStnxsx
+         7uUcdMDoxV+5JLnJ9Bn0mACR+gTiRRay2N004Znkn4Q5Hmb2bMmRwgIBan1uO9/mebm0
+         pEd59IefQg553NjoGICOF6hNvUCq2ADwuOk/ZeVNyJXVP1GHNHHBXmQOAn2WV4k2t7l8
+         OkS/DmJ3xlgB7Jm9pSuEZmPnDjCw3Vz48wOboe9mD0wRWDiH2/Wj5QM4BJ+46Ni5KZZZ
+         HNDw==
+X-Gm-Message-State: AOAM5325jPb79aNLU46xeo9DCEfxulLHVngEetneDT68BzziQepqlIpu
+        qGsj8UwXfZ2vSU0K+BjRC+zDGg==
+X-Google-Smtp-Source: ABdhPJz/Us+lTCzL6I6kTkiPk48eVv4ZkplclXvz1XWx01j9qMAig1MBrV4LTxMJ0NefnEK47i24QQ==
+X-Received: by 2002:a7b:c85a:: with SMTP id c26mr3152510wml.160.1610619742692;
+        Thu, 14 Jan 2021 02:22:22 -0800 (PST)
+Received: from debian-brgl.home (amarseille-656-1-4-167.w90-8.abo.wanadoo.fr. [90.8.158.167])
+        by smtp.gmail.com with ESMTPSA id l7sm2468467wmg.41.2021.01.14.02.22.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Jan 2021 02:22:22 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-rtc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v5 0/3] rtc: s5m: driver improvements
+Date:   Thu, 14 Jan 2021 11:22:16 +0100
+Message-Id: <20210114102219.23682-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.29.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1610605373.git.mchehab+huawei@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 14, 2021 at 07:25:57AM +0100, Mauro Carvalho Chehab wrote:
-> Three new broken references were added between next-20210113 and
-> next-20210114, due to yaml conversion. 
-> 
-> Address them.
-> 
-> Please add those patches  at the same tree as the respective
-> conversion changesets were added.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-I've taken the USB patches here, thanks.
+This is a set of improvements for the rtc-s5m driver. The first patch
+is new in v4: I noticed the I2C regmap is not selected by this driver's
+Kconfig. Two subsequent patches were already submitted separately.
 
-greg k-h
+v1 -> v2:
+- remove the remove() callback
+
+v2 -> v3:
+- fix an error pointed out by the build robot
+
+v3 -> v4:
+- add patch 1/3: ("rtc: s5m: select REGMAP_I2C")
+- fix issues raised by the kernel bot
+
+v4 -> v5:
+- change the order of the patches to keep them bisectable
+
+Bartosz Golaszewski (3):
+  rtc: s5m: select REGMAP_I2C
+  rtc: s5m: use devm_i2c_new_dummy_device()
+  rtc: s5m: check the return value of s5m8767_rtc_init_reg()
+
+ drivers/rtc/Kconfig   |  1 +
+ drivers/rtc/rtc-s5m.c | 33 +++++++++------------------------
+ 2 files changed, 10 insertions(+), 24 deletions(-)
+
+-- 
+2.29.1
+
