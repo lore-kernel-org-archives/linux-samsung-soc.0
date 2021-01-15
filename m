@@ -2,213 +2,132 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47429C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Jan 2021 14:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EB4C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Jan 2021 15:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14AE622473
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Jan 2021 14:15:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE7BB23884
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Jan 2021 15:16:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733078AbhAOOOn (ORCPT
+        id S1732152AbhAOPQH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 15 Jan 2021 09:14:43 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:55073 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731651AbhAOOOm (ORCPT
+        Fri, 15 Jan 2021 10:16:07 -0500
+Received: from mail-wm1-f43.google.com ([209.85.128.43]:38207 "EHLO
+        mail-wm1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730136AbhAOPQF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 15 Jan 2021 09:14:42 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id CDECC580732;
-        Fri, 15 Jan 2021 09:13:55 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Fri, 15 Jan 2021 09:13:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=tj2SxXoSa96FfDtLrh9IpSrjSWA
-        c9uYGz+Dn9iyVoAo=; b=B7b719RQYKeJsatdvoMfftPaZ7yza1XeB2tdCt+EfXJ
-        lyEobF8ynRrdN7pxtUoPCNN3dfilyUknC7aTjyaF4oJihyfecKY12lq6IgiU5Cz1
-        Vra/Uwe7W13TjbG6KqN24oHHPrC1/88iYYfOg2wCPjrXLB0GDaNS3PDyATP1pXej
-        5HHLRWc0r29gZRdE1uLJv6pc5aMOPi8ZjLC6JAnQxX87d99PTR+kZ/k9Z6nQNm9V
-        x0WGFJchuLQni4XDfFsGtGRZ9mYyCjTdEq5nOBG8T+RIbswMnhUDy8bhLPUdPJvI
-        Ni7wAgdzO3zMr5uZO/F7sboexu5D3QU0T8Ed3vI5MfA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=tj2SxX
-        oSa96FfDtLrh9IpSrjSWAc9uYGz+Dn9iyVoAo=; b=kkT3T4zeweqWXIX/CZ1B6z
-        DqGsjahZcO/cZPAU9BLCMla6ymzdiSZ7ZJ35RgoZIA7tkknGLbm7K6HkmmyEtuM9
-        m7U9NkEy3eA3CEOyqx8bRrsvRBhizLBqsv+hShK8YQ8uMeerxHTPnHWmrZT6W0es
-        FCpGNCGdJWhmmOt1yxhfqpCXhhbQS7V+qp+UB1aKlqBuwhXYiNCI8VJ5DguNziG3
-        sV4dimLDsXpkSnoUlQhIt7Z0//+muuUO0gvpOjviJZQXUhsCiK2Npriy+Aj61tE8
-        4BgkQVmB0W+Y7dCtAftP+KRmtIM2szcqlPcQnNOYCpPvzfL+Flf5dJQZ2A0g6cMw
-        ==
-X-ME-Sender: <xms:H6MBYD0GSlkzCPJVYGpbR_ZNI06sWvUNPMDdZ6_eJm43rVMA2MrEXQ>
-    <xme:H6MBYCGSUXTu3NWdcNYsemiQeKDPcqwh30OHx6Fp4t9vJ_J6k4zoRtURvSopDsY2K
-    kZ4YOo4yGkimvhGq54>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrtddvgdefjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
-    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:IKMBYD420Ru-_AznpbGVzQ0jU5qBuPPsrrNPdOFYs-JrU-4D9wCSAQ>
-    <xmx:IKMBYI0429guPeHHyjc0jgU-OS7U10edc0et5onZ_6Las_n_TZYJYQ>
-    <xmx:IKMBYGGGZe6Wkc688GCwHAOskyhRtgv4uvUdI5qJ4DXevueC4Uhobw>
-    <xmx:I6MBYFbypYhb5YdRA0eaNNYJaUXLGsvZhXSUB8usLISCNOSUVzP1ug>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 869AA1080059;
-        Fri, 15 Jan 2021 09:13:51 -0500 (EST)
-Date:   Fri, 15 Jan 2021 15:13:49 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "James (Qian) Wang" <james.qian.wang@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Dave Airlie <airlied@redhat.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Alison Wang <alison.wang@nxp.com>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Edmund Dea <edmund.j.dea@intel.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jyri Sarha <jyri.sarha@iki.fi>, Eric Anholt <eric@anholt.net>,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Melissa Wen <melissa.srw@gmail.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Roland Scheidegger <sroland@vmware.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        spice-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 02/10] drm: Rename plane atomic_check state names
-Message-ID: <20210115141349.7oq5hwsj37qcpk5j@gilmour>
-References: <20210115125703.1315064-1-maxime@cerno.tech>
- <20210115125703.1315064-2-maxime@cerno.tech>
- <221e5626-d97c-9d4e-07cc-e696c92ceb65@suse.de>
+        Fri, 15 Jan 2021 10:16:05 -0500
+Received: by mail-wm1-f43.google.com with SMTP id y187so7917960wmd.3;
+        Fri, 15 Jan 2021 07:15:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=euDAszylF/ga+ziDscAVs0cSlmh+mJLUqDd+OrH+iq4=;
+        b=iti7b1AtIxmQLGyges4XcHNyfGe6jCSyW4ku4yqYezqJO/tpZ0wD09RzV0cUSwchxJ
+         AYrEFpV/MfZjqhcZnqrlQnCmVig6R+M+tfRXOB0AC6SD0Z5SAybtyualgdw/cWPCOX1g
+         f68HYmRaS4hXuypXC+T+vKKV4/R9nHNP2LUltPcmBtFf7NwZ20UptoIZ/sZKdTkzagDO
+         +jIuUgMMYwMbm+OpSle0Ag1a87f/y94j+hRDL8JHNCcfPkfbId0L6XxFwKajpqyTwjBE
+         zepQpKiM6OJV7ysICSwg1mxTCb6W2IYxk55zTVFN0Ms/FIoQ6gcK8UssmR7UCZm4RStD
+         XgpA==
+X-Gm-Message-State: AOAM533zr7oARGwnBp7TcxxK5svTKkk7S74Ac71hN65xZ1iuxQv1A8K0
+        Rn1u6vw3lcDukkr5kcvTC0E=
+X-Google-Smtp-Source: ABdhPJwqRU7rsnknKCUNz6a1Xv7V6y3ZTg7CJUZpCOk4twBGjvRFV4/51R4z7epuQoNSw1eZq+cm0g==
+X-Received: by 2002:a7b:c18d:: with SMTP id y13mr1369845wmi.22.1610723723238;
+        Fri, 15 Jan 2021 07:15:23 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id p15sm15309614wrt.15.2021.01.15.07.15.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Jan 2021 07:15:22 -0800 (PST)
+Date:   Fri, 15 Jan 2021 16:15:20 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] soc: samsung: pm_domains: Convert to regular platform
+ driver
+Message-ID: <20210115151520.GA43049@kozik-lap>
+References: <CGME20210113110330eucas1p1e7efa719b5db55ccf3774450a8c1e452@eucas1p1.samsung.com>
+ <20210113110320.13149-1-m.szyprowski@samsung.com>
+ <CAGETcx9wJVnBAe6mKxfi9DC9YFf6DLzAyxBC8DxhQUqpfTDR3A@mail.gmail.com>
+ <58e1cfb2-cd35-badf-0238-7c62122e2d05@samsung.com>
+ <CAGETcx_Q_FvdL7ghC9Z7p9RcoBRYHeyTB1PRYk==HMv+NzJBzw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pc7g53zcvckyysz5"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <221e5626-d97c-9d4e-07cc-e696c92ceb65@suse.de>
+In-Reply-To: <CAGETcx_Q_FvdL7ghC9Z7p9RcoBRYHeyTB1PRYk==HMv+NzJBzw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Thu, Jan 14, 2021 at 11:07:30AM -0800, Saravana Kannan wrote:
+> On Thu, Jan 14, 2021 at 11:03 AM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+> >
+> > Hi Saravana,
+> >
+> > On 13.01.2021 21:27, Saravana Kannan wrote:
+> > > On Wed, Jan 13, 2021 at 3:03 AM Marek Szyprowski
+> > > <m.szyprowski@samsung.com> wrote:
+> > >> When Exynos power domain driver was introduced, the only way to ensure
+> > >> that power domains will be instantiated before the devices which belongs
+> > >> to them was to initialize them early enough, before the devices are
+> > >> instantiated in the system. This in turn required not to use any platform
+> > >> device infrastructure at all, as there have been no way to ensure proper
+> > >> probe order between devices.
+> > >>
+> > >> This has been finally changed and patch e590474768f1 ("driver core: Set
+> > >> fw_devlink=on by default") ensures that each device will be probbed only
+> > >> when its resource providers are ready. This allows to convert Exynos
+> > >> power domain driver to regular platform driver.
+> > >>
+> > >> This is also required by the mentioned commit to enable probing any
+> > >> device which belongs to the Exynos power domains, as otherwise the core
+> > >> won't notice that the power domains are in fact available.
+> > >>
+> > >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > >> ---
+> > >> Some more comments are in the following thread:
+> > >> https://protect2.fireeye.com/v1/url?k=8ac052ac-d55b6ba4-8ac1d9e3-0cc47a31c8b4-9068b559b0fd155d&q=1&e=b393c3ff-16ba-48a4-9d72-6805d02971d5&u=https%3A%2F%2Flore.kernel.org%2Flkml%2F2556a69b-5da5-bf80-e051-df2d02fbc40f%40samsung.com%2F
+> > >> ---
+> > >> ...
+> > > Skimmed through this patch and at a high level, it looks good for what
+> > > it's trying to do. Thanks for doing this!
+> > >
+> > > Btw, I assume that this won't work with fw_devlink=off/permissive
+> > > (default since 5.10 or earlier)? My concern is that we might
+> > > temporarily set fw_devlink=permissive by default if the other
+> > > breakages aren't fixed in time for 5.12? How do you want to handle that?
+> >
+> > I've applied my patch on top of vanilla v5.10 and checked on my test
+> > boards. Surprisingly everything works fine, so something must have been
+> > changed during the last few years as the power domain driver in the
+> > current form has been written long time ago. I remember that the moment
+> > when platform devices are created from the of nodes has been change at
+> > some point, so maybe this is somehow related. Anyway, the platform
+> > driver for Exynos power domains registered from core_initcall works fine
+> > with v5.10 kernel.
+> >
+> > I have no strong opinion on the way of merging this fix. It can go via
+> > Samsung tree, so in the end the v5.12-rc1 will have both my fix and your
+> > change, but won't be fully bisectable in-between. Krzysztof, what's your
+> > opinion?
+> 
+> If it doesn't break anything without my changes, then let's try to get
+> it merged independent of my series. This is a good change even without
+> my changes.
 
---pc7g53zcvckyysz5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I agree, I'll take it via Samsung SoC. It's not the perfect solution -
+as Marek said, the tree won't be bisectable. Have in mind that some
+other boards/architectures might be broken where no one reported it yet,
+so fw_devlink=off/permissive might still be good choice for v5.12.
 
-Hi,
+Best regards,
+Krzysztof
 
-On Fri, Jan 15, 2021 at 02:46:36PM +0100, Thomas Zimmermann wrote:
-> Hi
->=20
-> Am 15.01.21 um 13:56 schrieb Maxime Ripard:
-> > diff --git a/drivers/gpu/drm/imx/ipuv3-plane.c b/drivers/gpu/drm/imx/ip=
-uv3-plane.c
-> > index 8a4235d9d9f1..2cb09e9d9306 100644
-> > --- a/drivers/gpu/drm/imx/ipuv3-plane.c
-> > +++ b/drivers/gpu/drm/imx/ipuv3-plane.c
-> > @@ -344,12 +344,12 @@ static const struct drm_plane_funcs ipu_plane_fun=
-cs =3D {
-> >   };
-> >   static int ipu_plane_atomic_check(struct drm_plane *plane,
-> > -				  struct drm_plane_state *state)
-> > +				  struct drm_plane_state *new_state)
->=20
-> It's not 'new_plane_state' ?
-
-That function is using old_state for plane->state:
-
-> >   {
-> >   	struct drm_plane_state *old_state =3D plane->state;
-
-Here ^
-
-So it felt more natural to keep the convention in use in that driver
-
-Maxime
-
---pc7g53zcvckyysz5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYAGjHQAKCRDj7w1vZxhR
-xRyQAP9z6jgYoVLN5O08Gfa2bipU5kwBoAnOqoWm5tZt0atb8QEA9iY4poTgz6cv
-u2lw2ErmnQLG6Rt10lvZcTmjIdOF5QI=
-=AOj1
------END PGP SIGNATURE-----
-
---pc7g53zcvckyysz5--
