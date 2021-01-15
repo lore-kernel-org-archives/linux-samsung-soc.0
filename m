@@ -2,80 +2,72 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08481C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Jan 2021 15:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B10C433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Jan 2021 17:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE5C3238A1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Jan 2021 15:22:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAC2423136
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Jan 2021 17:05:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbhAOPVr (ORCPT
+        id S1726309AbhAORFk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 15 Jan 2021 10:21:47 -0500
-Received: from mail-wm1-f47.google.com ([209.85.128.47]:37150 "EHLO
-        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725946AbhAOPVr (ORCPT
+        Fri, 15 Jan 2021 12:05:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45410 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726019AbhAORFk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 15 Jan 2021 10:21:47 -0500
-Received: by mail-wm1-f47.google.com with SMTP id g10so7917913wmh.2;
-        Fri, 15 Jan 2021 07:21:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3uR+I0h5etCdkQ5pxMl4CzHqVZjl3PDrBNz6MGPKJ9c=;
-        b=Ty/Z3Dyj0Z5ylylvNvbdFedWlQU2H+eFjLzp50bF0JDHLQmLUN/ztZzjeLVKPVGR7G
-         6mzHx+lzhNFMDS7jvjq848R+i0lNMqva5Q0UrLsC29vytDmYorornhuAWrXqxCKapu62
-         7bQ9F4VkB1Y5FxILWlEPpsJn/GLcIadredNBdfwEtHd8ZF6Chxm/74dyS70wQS4rV+0Y
-         CToRH2HCkYVX52AfCRsHFZNPwBbPhMNqZWIKWb5oHcmyQEwW3IPRwT3ysuCl2IVfFMeT
-         j4YmQHOYpgQ3hAXf57vWf3QZQPIh7jVirdvCk29SQTpQtrb/Dp/ytknsT9y+CTESD3nI
-         bkdw==
-X-Gm-Message-State: AOAM530e5VSQ2dQIg0aqYP9+DB/RlUwQH5Fil1UqNlTVqyLutzK8lc+V
-        22UYp0TSz+0X+Fb0APC6oLw=
-X-Google-Smtp-Source: ABdhPJynzWkOvAzy/5TJgCVbNYondgjXc+qBmzPgNDJIqw21EEi1gfQGFc/fz5xg97fnwA9cw9P74g==
-X-Received: by 2002:a7b:c31a:: with SMTP id k26mr9072341wmj.72.1610724064898;
-        Fri, 15 Jan 2021 07:21:04 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id v6sm2531535wrx.32.2021.01.15.07.21.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Jan 2021 07:21:03 -0800 (PST)
-Date:   Fri, 15 Jan 2021 16:21:02 +0100
+        Fri, 15 Jan 2021 12:05:40 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E5730222B3;
+        Fri, 15 Jan 2021 17:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610730299;
+        bh=laXPhcCLkTeAZvgHcd+qu4Tf9HBUf2C/0t1VIxtEP24=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=LC8Bzjyq6TsVcEcqEylU8ea/ctTXiXblbBKrDepV1Jtd8p/TI32bXx7zlFxujX6CB
+         klKjTlVOvvhQSijoFemAesM4mbV0gvQHgP38FOsAb0PIHG4uup5jVWBJEgRb/+JfJ6
+         Md7tA/+bf6z8kuZiF9NT94NYnjN8TZcZeV6uIVZGVF/9wZdPnOWJkmS43Mb1HnXmXV
+         siXWWP2rcYI/dyyh/U23d2K1bgXfilPh6Kw63pHxFwGEvP4ILE87C0V9PSqRh3MjCV
+         m4rYkfCh9fahfGBg1GYpuNvwuZ6IU0Q8LZe+t7YShMEGZmQ+i67yGdOTCZGvLrPlqX
+         IxP+/r8NXJQBw==
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-rtc@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v5 3/3] rtc: s5m: check the return value of
- s5m8767_rtc_init_reg()
-Message-ID: <20210115152102.GA43368@kozik-lap>
-References: <20210114102219.23682-1-brgl@bgdev.pl>
- <20210114102219.23682-4-brgl@bgdev.pl>
+To:     linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Saravana Kannan <saravanak@google.com>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>
+Subject: Re: (subset) [PATCH] soc: samsung: pm_domains: Convert to regular platform driver
+Date:   Fri, 15 Jan 2021 18:04:54 +0100
+Message-Id: <161073026111.45158.8527116652734964268.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210113110320.13149-1-m.szyprowski@samsung.com>
+References: <CGME20210113110330eucas1p1e7efa719b5db55ccf3774450a8c1e452@eucas1p1.samsung.com> <20210113110320.13149-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210114102219.23682-4-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 14, 2021 at 11:22:19AM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Wed, 13 Jan 2021 12:03:20 +0100, Marek Szyprowski wrote:
+> When Exynos power domain driver was introduced, the only way to ensure
+> that power domains will be instantiated before the devices which belongs
+> to them was to initialize them early enough, before the devices are
+> instantiated in the system. This in turn required not to use any platform
+> device infrastructure at all, as there have been no way to ensure proper
+> probe order between devices.
 > 
-> This function can fail if regmap operations fail so check its return
-> value in probe().
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/rtc/rtc-s5m.c | 2 ++
->  1 file changed, 2 insertions(+)
+> [...]
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Applied, thanks!
+
+[1/1] soc: samsung: pm_domains: Convert to regular platform driver
+      commit: 9fcdb21857cf42c0da7b9a929e6781eca557a2f5
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
