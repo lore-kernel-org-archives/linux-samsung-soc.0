@@ -2,94 +2,103 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5176C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 07:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C43BCC43381
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 12:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D56A223DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 07:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86378223DB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 12:52:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730433AbhARHMa (ORCPT
+        id S2390416AbhARMvT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 18 Jan 2021 02:12:30 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:54366 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbhARHM3 (ORCPT
+        Mon, 18 Jan 2021 07:51:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54384 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391933AbhARMqX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Jan 2021 02:12:29 -0500
-Received: from [192.168.0.114] (unknown [49.207.196.48])
-        by linux.microsoft.com (Postfix) with ESMTPSA id C164420B7192;
-        Sun, 17 Jan 2021 23:11:39 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C164420B7192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1610953908;
-        bh=V0aE8EFUyP+cRHKEGBZKB3N9pQMGLB+GauNbKYpryGM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=onZZkLEwbqcSVkIiu80wnBdOjg1oMz34fTyp9AadBIPBFOlkNmZhdqzZOoew0UWUB
-         1MDe14FYNWYBi2KB6keTBrIjQKe/GbUIeDDEe4fawYqZyxTnheYg1iYqTEcNqkT1kh
-         hs9yeHxcILe9+i/L5pi6dsakpJvF01uEaVqAYrX8=
-Subject: Re: [PATCH v3 14/19] crypto: qat: convert tasklets to use new
- tasklet_setup() API
-To:     Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Allen Pais <allen.lkml@gmail.com>
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        ludovic.desroches@microchip.com, jesper.nilsson@axis.com,
-        lars.persson@axis.com, horia.geanta@nxp.com, aymen.sghaier@nxp.com,
-        gcherian@marvell.com, thomas.lendacky@amd.com, john.allen@amd.com,
-        gilad@benyossef.com, bbrezillon@kernel.org, arno@natisbad.org,
-        schalla@marvell.com, matthias.bgg@gmail.com, jamie@jamieiles.com,
-        heiko@sntech.de, krzk@kernel.org, vz@mleia.com,
-        k.konieczny@samsung.com, linux-crypto@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, qat-linux@intel.com,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Romain Perier <romain.perier@gmail.com>
-References: <20210112014650.10887-1-allen.lkml@gmail.com>
- <20210112014650.10887-15-allen.lkml@gmail.com>
- <20210114175109.GA8629@silpixa00400314>
-From:   Allen Pais <apais@linux.microsoft.com>
-Message-ID: <94926b18-2e1e-0b85-41b2-a7e894d21998@linux.microsoft.com>
-Date:   Mon, 18 Jan 2021 12:41:36 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 18 Jan 2021 07:46:23 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2F855222B3;
+        Mon, 18 Jan 2021 12:45:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610973942;
+        bh=LNff0UBizKktpvktRVvs3pjfNMwgUksevEkhf0JcYwI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=abJnP8jAPPSr3/4Q485xn7McL6jqFW/7C/W5qSPLFxokl/1c1a2K5By3XkDw0etT8
+         K12Z/7Yyu4vrsvwpAsmktLjpopz/JhcVmStVgQASYlcp41i9HN+L1CBUR1H7g1fMc2
+         0ldAN/dGZGzHfOPI78CWC2d3MVNN8JGzVYXj25rEkOoJfStPfETspU1qw+gXATl6QO
+         MXcOgBA9b9POSx8wMWdgBC3oKDEfmlEo0LdynkWzl3L/YH8RWJJ0KrjSNyU6cfqiVM
+         i+BY+3nXUrxSX1nHMCmGzt5kfdqR5RMxWJq9PhgdQYgKICTm9oSbNkVP4FmZPA2njQ
+         15teiqit6t1zg==
+Date:   Mon, 18 Jan 2021 12:45:05 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Timon Baetz <timon.baetz@protonmail.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v6 2/8] regulator: dt-bindings: Document max8997-pmic
+ nodes
+Message-ID: <20210118124505.GG4455@sirena.org.uk>
+References: <20201230205139.1812366-1-timon.baetz@protonmail.com>
+ <20210104183821.GA29033@kozik-lap>
+ <20210104212449.GJ5645@sirena.org.uk>
+ <20210105165529.GB20401@kozik-lap>
+ <20210106145931.GE4752@sirena.org.uk>
+ <20210108161635.1b9303c8.timon.baetz@protonmail.com>
+ <20210108161653.GA4554@sirena.org.uk>
+ <20210115071914.0407a928.timon.baetz@protonmail.com>
+ <20210115134213.GB4384@sirena.org.uk>
+ <20210116090306.7c3d8023.timon.baetz@protonmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20210114175109.GA8629@silpixa00400314>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="V32M1hWVjliPHW+c"
+Content-Disposition: inline
+In-Reply-To: <20210116090306.7c3d8023.timon.baetz@protonmail.com>
+X-Cookie: Huh?
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
+--V32M1hWVjliPHW+c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->>
->> In preparation for unconditionally passing the
->> struct tasklet_struct pointer to all tasklet
->> callbacks, switch to using the new tasklet_setup()
->> and from_tasklet() to pass the tasklet pointer explicitly.
-> 
-> I have two minor comments:
->    * Patches to the qat driver have the following headline
->          crypto: qat -
->    * Checkpatch reports two alignment checks when it is run with --strict:
->          CHECK: Alignment should match open parenthesis
->          #33: FILE: drivers/crypto/qat/qat_common/adf_isr.c:248:
->          +               tasklet_setup(&priv_data->banks[i].resp_handler,
->          +                            adf_response_handler);
-> 
->          CHECK: Alignment should match open parenthesis
->          #62: FILE: drivers/crypto/qat/qat_common/adf_sriov.c:57:
->          +               tasklet_setup(&vf_info->vf2pf_bh_tasklet,
->          +                            adf_vf2pf_bh_handler);
-> 
->          total: 0 errors, 0 warnings, 2 checks, 83 lines checked
-> 
-> If you prefer I can resubmit this patch with these two changes.
+On Sat, Jan 16, 2021 at 08:03:25AM +0000, Timon Baetz wrote:
 
-Thank you. I will fix them and re-submit.
+> I could use extcon_get_extcon_dev("max8997-muic") and basically hard
+> code the extcon device name in the charger driver. Then I only need
+> charger-supply in DTS which could be added to the parent device's node.
+
+> Would that be acceptable for everyone?
+
+Sounds reasonable to me.
+
+--V32M1hWVjliPHW+c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmAFgtAACgkQJNaLcl1U
+h9CpQwf/fIRDXKLWQlexshrS3nrpFq9wDSuen/Ofo0KT9QJTAemn2/WJXtmbZK9Z
+zZYiaapSLaOCjzqLmc0DgqttqYDjcNMUaOAe79kdHlFq69zSywqbgo2yPrBtDfLr
+8r7oiv10U6BS9p79q+ww4Ohnhc1WpRhWLlh+XUZUAhLw60+1nvZPSkX65TcNvGK6
+oYgk7/E4NFDc3QWf/6qbOFdqj9u2+TwF98PYOs1QXcF6XbBhesD47iew0ITwWYm3
+lIAPmaUpCAryiWDrQap/HvlbA9cvU1v3kHrXj9g96mxZfj/NULTEQPks3LSYqPRZ
+QozKbT6eTl+qq11mVKN4jgB3gHYOew==
+=xJlP
+-----END PGP SIGNATURE-----
+
+--V32M1hWVjliPHW+c--
