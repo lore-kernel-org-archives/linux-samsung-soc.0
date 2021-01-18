@@ -2,103 +2,198 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C43BCC43381
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 12:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4788FC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 15:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86378223DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 12:52:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A04122BF3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 15:06:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390416AbhARMvT (ORCPT
+        id S2405443AbhARPGp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 18 Jan 2021 07:51:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391933AbhARMqX (ORCPT
+        Mon, 18 Jan 2021 10:06:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46168 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390776AbhARLl7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Jan 2021 07:46:23 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2F855222B3;
-        Mon, 18 Jan 2021 12:45:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610973942;
-        bh=LNff0UBizKktpvktRVvs3pjfNMwgUksevEkhf0JcYwI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=abJnP8jAPPSr3/4Q485xn7McL6jqFW/7C/W5qSPLFxokl/1c1a2K5By3XkDw0etT8
-         K12Z/7Yyu4vrsvwpAsmktLjpopz/JhcVmStVgQASYlcp41i9HN+L1CBUR1H7g1fMc2
-         0ldAN/dGZGzHfOPI78CWC2d3MVNN8JGzVYXj25rEkOoJfStPfETspU1qw+gXATl6QO
-         MXcOgBA9b9POSx8wMWdgBC3oKDEfmlEo0LdynkWzl3L/YH8RWJJ0KrjSNyU6cfqiVM
-         i+BY+3nXUrxSX1nHMCmGzt5kfdqR5RMxWJq9PhgdQYgKICTm9oSbNkVP4FmZPA2njQ
-         15teiqit6t1zg==
-Date:   Mon, 18 Jan 2021 12:45:05 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Timon Baetz <timon.baetz@protonmail.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v6 2/8] regulator: dt-bindings: Document max8997-pmic
- nodes
-Message-ID: <20210118124505.GG4455@sirena.org.uk>
-References: <20201230205139.1812366-1-timon.baetz@protonmail.com>
- <20210104183821.GA29033@kozik-lap>
- <20210104212449.GJ5645@sirena.org.uk>
- <20210105165529.GB20401@kozik-lap>
- <20210106145931.GE4752@sirena.org.uk>
- <20210108161635.1b9303c8.timon.baetz@protonmail.com>
- <20210108161653.GA4554@sirena.org.uk>
- <20210115071914.0407a928.timon.baetz@protonmail.com>
- <20210115134213.GB4384@sirena.org.uk>
- <20210116090306.7c3d8023.timon.baetz@protonmail.com>
+        Mon, 18 Jan 2021 06:41:59 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA611C061575
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Jan 2021 03:41:18 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id h16so17199771edt.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Jan 2021 03:41:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d3ptOak+AELUZB9s6w6tuF0IncOrQPH0R3O9p4CLZp8=;
+        b=l7wrJh+27RmK7NbYpcRk3BYStSoXEw89bgm4bUPJxP2VOoeIkFvh/CwgtOJZ9419zo
+         8rHPMyxEy5Y+4WzXYN4zBSrQT8lBDTVHPVA4GWgk8FSBrDZwju5Sd4JNGuYEBlenYjmH
+         52qcGdfI6p6wZvWrsT5r6c/UlkPFA64AkPPl2YGix2ArI8VfeVQOs/ln/MrV1UZNFofY
+         BLer8IegQc/68FO1Soawez7DNXcCCxJfjIRm6yi3aqBLWUoDXPrx4uAA52D+l48Facri
+         ce8EmytVHYtSyD5d3p5cCiuB/lUBZZK62G0LzR+mlosBvM9kEp9g9y2mbQ9cNIgLi1m8
+         SEPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d3ptOak+AELUZB9s6w6tuF0IncOrQPH0R3O9p4CLZp8=;
+        b=NON/WQtWYGMfum7Xd/OYbQ1YHEeDUhuSWZ+k5wak/ct7+6Hb+Hy7NvTq5SJ/pw69zO
+         v+dSldrYchPmu1/JvX6gcjPMUcPWYYXFkYOzUO4Yot+i0DUb33qeJu0iFvbSEjsnGu57
+         FqAD5cDEWvL5sPXmCkllNzT1SplPT2/oTsBIZiJkyIgFo3yz4xA2In1gQt/hMd8f4cT3
+         ejxeIvpEaV7jr2EkBJtTpvAtLVUHUjOkh2R9caIAmH7OMo1vD30YHtuFGnAamcYAhLVq
+         1d+aWNXOpaN42XUDPI05SMvyBRtRmKpL1KbqlaM9yD8oY4+eFWk9OUAGCPYX/oapg7ZW
+         WkdQ==
+X-Gm-Message-State: AOAM5329CowafLNgzQdeHq4mzHepS8x7Ugl1CtLQpxqKZ4trkVB87JQw
+        K8JgqXY/rnDCdbS53Lfgy5364JaNZDg8JvDIaYV6TA==
+X-Google-Smtp-Source: ABdhPJxirIE2MUS3/dv66F9WhAVPCqtApL4yNkVTY1/ANtCBjeTUHL/d3MRzpJBKindD8Tgj7PhQyaPL1/73t+PiqIE=
+X-Received: by 2002:a05:6402:26c9:: with SMTP id x9mr5878233edd.365.1610970077216;
+ Mon, 18 Jan 2021 03:41:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="V32M1hWVjliPHW+c"
-Content-Disposition: inline
-In-Reply-To: <20210116090306.7c3d8023.timon.baetz@protonmail.com>
-X-Cookie: Huh?
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CGME20210112213419eucas1p24231e4d0ac11c31184f2f8f3f20cbd9d@eucas1p2.samsung.com>
+ <1610068562-4410-1-git-send-email-collinsd@codeaurora.org> <e512ee85-7fa6-e5fe-eb30-f088bb83cf23@samsung.com>
+In-Reply-To: <e512ee85-7fa6-e5fe-eb30-f088bb83cf23@samsung.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Mon, 18 Jan 2021 17:11:05 +0530
+Message-ID: <CA+G9fYunK_2h3-pHtZT_+56Xf8b=M-8Q9GnTsCJ3KxVaJULorA@mail.gmail.com>
+Subject: Re: [PATCH] regulator: core: avoid regulator_resolve_supply() race condition
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     David Collins <collinsd@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        lkft-triage@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi,
 
---V32M1hWVjliPHW+c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, 13 Jan 2021 at 03:21, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> Hi,
+>
 
-On Sat, Jan 16, 2021 at 08:03:25AM +0000, Timon Baetz wrote:
+<trim>
 
-> I could use extcon_get_extcon_dev("max8997-muic") and basically hard
-> code the extcon device name in the charger driver. Then I only need
-> charger-supply in DTS which could be added to the parent device's node.
+>
+> This patch landed in linux next-20210112 as commit eaa7995c529b
+> ("regulator: core: avoid regulator_resolve_supply() race condition"). I
+> found that it triggers a following lockdep warning during the DWC3
+> driver registration on some Exynos based boards (this log is from
+> Samsung Exynos5420-based Peach-Pit board):
+>
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 5.11.0-rc1-00008-geaa7995c529b #10095 Not tainted
+> ------------------------------------------------------
+> swapper/0/1 is trying to acquire lock:
+> c12e1b80 (regulator_list_mutex){+.+.}-{3:3}, at:
+> regulator_lock_dependent+0x4c/0x2b0
+>
+> but task is already holding lock:
+> df7190c0 (regulator_ww_class_mutex){+.+.}-{3:3}, at:
+> regulator_resolve_supply+0x44/0x318
 
-> Would that be acceptable for everyone?
+LKFT testing also found this lockdep warning on
+arm64 - hi6220-hikey while booting.
 
-Sounds reasonable to me.
+[    0.635532] WARNING: possible recursive locking detected
+[    0.635558] 5.11.0-rc3-next-20210118 #1 Not tainted
+[    0.635585] --------------------------------------------
+[    0.635611] swapper/0/1 is trying to acquire lock:
+[    0.635636] ffff000000a13158
+(regulator_ww_class_mutex){+.+.}-{3:3}, at:
+regulator_lock_recursive+0x9c/0x1e8
+[    0.635721]
+[    0.635721] but task is already holding lock:
+[    0.635749] ffff000000a13958
+(regulator_ww_class_mutex){+.+.}-{3:3}, at:
+regulator_resolve_supply+0x70/0x2f0
+[    0.635817]
+[    0.635817] other info that might help us debug this:
+[    0.635847]  Possible unsafe locking scenario:
+[    0.635847]
+[    0.635875]        CPU0
+[    0.635892]        ----
+[    0.635909]   lock(regulator_ww_class_mutex);
+[    0.635942]   lock(regulator_ww_class_mutex);
+[    0.635974]
+[    0.635974]  *** DEADLOCK ***
+[    0.635974]
+[    0.636002]  May be due to missing lock nesting notation
+[    0.636002]
+[    0.636033] 4 locks held by swapper/0/1:
+[    0.636057]  #0: ffff000000a02988 (&dev->mutex){....}-{3:3}, at:
+__device_driver_lock+0x38/0x70
+[    0.636131]  #1: ffff000000a13958
+(regulator_ww_class_mutex){+.+.}-{3:3}, at:
+regulator_resolve_supply+0x70/0x2f0
+[    0.636205]  #2: ffff800012b102c0
+(regulator_list_mutex){+.+.}-{3:3}, at:
+regulator_lock_dependent+0x5c/0x290
+[    0.636280]  #3: ffff8000137e3918
+(regulator_ww_class_acquire){+.+.}-{0:0}, at:
+regulator_enable+0x40/0xe0
+[    0.636352]
+[    0.636352] stack backtrace:
+[    0.636378] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+5.11.0-rc3-next-20210118 #1
+[    0.636415] Hardware name: HiKey Development Board (DT)
+[    0.636443] Call trace:
+[    0.636460]  dump_backtrace+0x0/0x1f0
+[    0.636490]  show_stack+0x2c/0x80
+[    0.636516]  dump_stack+0xf8/0x160
+[    0.636543]  __lock_acquire+0xa3c/0x1718
+[    0.636571]  lock_acquire+0x3d8/0x4f0
+[    0.636596]  __ww_mutex_lock.constprop.14+0xbc/0xf68
+[    0.636628]  ww_mutex_lock+0x6c/0x3e8
+[    0.636653]  regulator_lock_recursive+0x9c/0x1e8
+[    0.636683]  regulator_lock_dependent+0x198/0x290
+[    0.636713]  regulator_enable+0x40/0xe0
+[    0.636739]  regulator_resolve_supply+0x1e8/0x2f0
+[    0.636767]  regulator_register_resolve_supply+0x24/0x80
+[    0.636797]  class_for_each_device+0x78/0xf8
+[    0.636825]  regulator_register+0x840/0xbb0
+[    0.636851]  devm_regulator_register+0x50/0xa8
+[    0.636879]  reg_fixed_voltage_probe+0x224/0x410
+[    0.636908]  platform_probe+0x6c/0xd8
+[    0.636932]  really_probe+0x2b8/0x520
+[    0.636960]  driver_probe_device+0xf4/0x168
+[    0.636988]  device_driver_attach+0x74/0x98
+[    0.637014]  __driver_attach+0xc4/0x178
+[    0.637039]  bus_for_each_dev+0x84/0xd8
+[    0.637066]  driver_attach+0x30/0x40
+[    0.637092]  bus_add_driver+0x170/0x258
+[    0.637119]  driver_register+0x64/0x118
+[    0.637144]  __platform_driver_register+0x34/0x40
+[    0.637172]  regulator_fixed_voltage_init+0x20/0x28
+[    0.637205]  do_one_initcall+0x94/0x4a0
+[    0.637231]  kernel_init_freeable+0x2f0/0x344
+[    0.637261]  kernel_init+0x18/0x120
 
---V32M1hWVjliPHW+c
-Content-Type: application/pgp-signature; name="signature.asc"
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
 
------BEGIN PGP SIGNATURE-----
+Full boot log here:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20210118/testrun/3771538/suite/linux-log-parser/test/check-kernel-warning-2159912/log
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmAFgtAACgkQJNaLcl1U
-h9CpQwf/fIRDXKLWQlexshrS3nrpFq9wDSuen/Ofo0KT9QJTAemn2/WJXtmbZK9Z
-zZYiaapSLaOCjzqLmc0DgqttqYDjcNMUaOAe79kdHlFq69zSywqbgo2yPrBtDfLr
-8r7oiv10U6BS9p79q+ww4Ohnhc1WpRhWLlh+XUZUAhLw60+1nvZPSkX65TcNvGK6
-oYgk7/E4NFDc3QWf/6qbOFdqj9u2+TwF98PYOs1QXcF6XbBhesD47iew0ITwWYm3
-lIAPmaUpCAryiWDrQap/HvlbA9cvU1v3kHrXj9g96mxZfj/NULTEQPks3LSYqPRZ
-QozKbT6eTl+qq11mVKN4jgB3gHYOew==
-=xJlP
------END PGP SIGNATURE-----
+metadata:
+  git branch: master
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+  git describe: next-20210112
+  kernel-config:
+http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/hikey/lkft/linux-next/935/config
 
---V32M1hWVjliPHW+c--
+
+-- 
+Linaro LKFT
+https://lkft.linaro.org
