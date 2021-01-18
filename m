@@ -2,152 +2,172 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C60E1C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 17:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2C5C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 20:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8180622CA1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 17:45:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76AF422DFB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 20:53:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436641AbhARRoq (ORCPT
+        id S2390390AbhARUva (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 18 Jan 2021 12:44:46 -0500
-Received: from mail-ot1-f49.google.com ([209.85.210.49]:41105 "EHLO
-        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436662AbhARRoh (ORCPT
+        Mon, 18 Jan 2021 15:51:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57256 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2394500AbhARUvQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Jan 2021 12:44:37 -0500
-Received: by mail-ot1-f49.google.com with SMTP id x13so17040518oto.8;
-        Mon, 18 Jan 2021 09:44:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WshXhzkH2XfopRbzIV2UWEt8m4y4wNSaw59qJ5tNr3s=;
-        b=WbGcpXN8RaF1eQdmWJM8Snw6piKSTLoArDTOSKWe1bS7HzMOjxJAx8yKlLPKDG3HBt
-         ScE0eRTdEdU7/8OSoIXJ7dK4eKLGauMOIcQqvqk0W4+P3WvY/iVAHDIFBwNzc/Tuu3zO
-         XBweaNkatyPpGetiH2S6iX8YPNjTWqql7yA4IRGjlwcEwVXdOqVu4okPKkhvqdUS1Rpr
-         tCRvY44SG+DW/48O6lZNHMleczJBqxD2x8vb9mQYYOS8zjzlSEaxK+lGHI50yGZNqXKi
-         urJ0XhSNhZeAlKbxoI3zc8runt9kNWjo2rUHA+7cNWIEAWg2Yt4rqiItGeJRqgprrwLt
-         b1lA==
-X-Gm-Message-State: AOAM530fgFAOxGSZw56PgUFKbUJU0xVQcwu+1MdXc+dJZZFTB/iVTpUh
-        Tv6noJ65+LaZptDiOWjaxtyReakH0DXgLKJT+cA=
-X-Google-Smtp-Source: ABdhPJw0LIEAGkysll8noaB/WB7jpQwACbfeXdYGkzXxJDZ+grPUIPJqWdg7nE5TVyJy9M1rdgL6SSu1lwZ184oBLsE=
-X-Received: by 2002:a9d:c01:: with SMTP id 1mr465551otr.107.1610991835791;
- Mon, 18 Jan 2021 09:43:55 -0800 (PST)
-MIME-Version: 1.0
-References: <20201218031703.3053753-1-saravanak@google.com>
- <20201218031703.3053753-6-saravanak@google.com> <CGME20210111141814eucas1p1f388df07b789693a999042b27f0d8c2a@eucas1p1.samsung.com>
- <5484316b-0f27-6c36-9259-5c765bb6b96c@samsung.com> <2556a69b-5da5-bf80-e051-df2d02fbc40f@samsung.com>
- <CAGETcx8-1YzF2Br0sszJROLAWo3DSm27K071Md9wY5SOwUeLdw@mail.gmail.com>
- <fde65185-fd00-1f79-0f80-245eaa6c95cb@samsung.com> <CAGETcx_QY3h83q1fSr=h_vMQdH-TMhVYPozPuSr=q4uv2Lr48w@mail.gmail.com>
-In-Reply-To: <CAGETcx_QY3h83q1fSr=h_vMQdH-TMhVYPozPuSr=q4uv2Lr48w@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Jan 2021 18:43:44 +0100
-Message-ID: <CAMuHMdV6v52RxCqkk8AjMiED5WGWAu4DvBcW3_oM638f29V4Pg@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] driver core: Set fw_devlink=on by default
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Mon, 18 Jan 2021 15:51:16 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 514F922472;
+        Mon, 18 Jan 2021 20:50:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611003035;
+        bh=H6UA6H2/Zi55Qt8ytYHm/E7q9Vp1onaV0E/AF6oYJYQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CkmLWexmoNM7iPlrtWvRf55xgaUNPBhx7/k2XhbW86TVkljF2qhTHgM3VDUndPL8r
+         LdkZ++eR/I/JL9F9EcfLTTyBuW3i+La/Wvru/ZbrT69zddCz9sHZKnvm3RSUFLJf9C
+         SC2lF4H/ouOBMX1DaaiWYEsenI7YulPX7ZWig6XQ+26CsNr6olDtXRyRHo4Qe1101U
+         7TN95vCrEI+2e4HUD62ZzDmkIiM1RRIPsDq0v5AEx4Q1WoIAxDkgsLrsaOdBmSQChV
+         ypDJHmdWeN/9Hs8bS9Hvcz5MIlcyjSR/zXpBAkxswhBpHqYDGTMO6hUKrccRdPBFjH
+         CevvUYW+zIzVw==
+Date:   Mon, 18 Jan 2021 20:49:58 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     David Collins <collinsd@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [PATCH] regulator: core: avoid regulator_resolve_supply() race
+ condition
+Message-ID: <20210118204958.GS4455@sirena.org.uk>
+References: <1610068562-4410-1-git-send-email-collinsd@codeaurora.org>
+ <CGME20210112213419eucas1p24231e4d0ac11c31184f2f8f3f20cbd9d@eucas1p2.samsung.com>
+ <e512ee85-7fa6-e5fe-eb30-f088bb83cf23@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GIP5y49pbaVPin6k"
+Content-Disposition: inline
+In-Reply-To: <e512ee85-7fa6-e5fe-eb30-f088bb83cf23@samsung.com>
+X-Cookie: Huh?
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Saravana,
 
-On Wed, Jan 13, 2021 at 3:34 AM Saravana Kannan <saravanak@google.com> wrote:
-> On Mon, Jan 11, 2021 at 11:11 PM Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
-> > On 11.01.2021 22:47, Saravana Kannan wrote:
-> > > On Mon, Jan 11, 2021 at 6:18 AM Marek Szyprowski
-> > > <m.szyprowski@samsung.com> wrote:
-> > >> On 11.01.2021 12:12, Marek Szyprowski wrote:
-> > >>> On 18.12.2020 04:17, Saravana Kannan wrote:
-> > >>>> Cyclic dependencies in some firmware was one of the last remaining
-> > >>>> reasons fw_devlink=on couldn't be set by default. Now that cyclic
-> > >>>> dependencies don't block probing, set fw_devlink=on by default.
-> > >>>>
-> > >>>> Setting fw_devlink=on by default brings a bunch of benefits (currently,
-> > >>>> only for systems with device tree firmware):
-> > >>>> * Significantly cuts down deferred probes.
-> > >>>> * Device probe is effectively attempted in graph order.
-> > >>>> * Makes it much easier to load drivers as modules without having to
-> > >>>>     worry about functional dependencies between modules (depmod is still
-> > >>>>     needed for symbol dependencies).
-> > >>>>
-> > >>>> If this patch prevents some devices from probing, it's very likely due
-> > >>>> to the system having one or more device drivers that "probe"/set up a
-> > >>>> device (DT node with compatible property) without creating a struct
-> > >>>> device for it.  If we hit such cases, the device drivers need to be
-> > >>>> fixed so that they populate struct devices and probe them like normal
-> > >>>> device drivers so that the driver core is aware of the devices and their
-> > >>>> status. See [1] for an example of such a case.
-> > >>>>
-> > >>>> [1] -
-> > >>>> https://lore.kernel.org/lkml/CAGETcx9PiX==mLxB9PO8Myyk6u2vhPVwTMsA5NkD-ywH5xhusw@mail.gmail.com/
-> > >>>> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > >>> This patch landed recently in linux next-20210111 as commit
-> > >>> e590474768f1 ("driver core: Set fw_devlink=on by default"). Sadly it
-> > >>> breaks Exynos IOMMU operation, what causes lots of devices being
-> > >>> deferred and not probed at all. I've briefly checked and noticed that
-> > >>> exynos_sysmmu_probe() is never called after this patch. This is really
-> > >>> strange for me, as the SYSMMU controllers on Exynos platform are
-> > >>> regular platform devices registered by the OF code. The driver code is
-> > >>> here: drivers/iommu/exynos-iommu.c, example dts:
-> > >>> arch/arm/boot/dts/exynos3250.dtsi (compatible = "samsung,exynos-sysmmu").
-> > >> Okay, I found the source of this problem. It is caused by Exynos power
-> > >> domain driver, which is not platform driver yet. I will post a patch,
-> > >> which converts it to the platform driver.
-> > > Thanks Marek! Hopefully the debug logs I added were sufficient to
-> > > figure out the reason.
-> >
-> > Frankly, it took me a while to figure out that device core waits for the
-> > power domain devices. Maybe it would be possible to add some more debug
-> > messages or hints? Like the reason of the deferred probe in
-> > /sys/kernel/debug/devices_deferred ?
->
-> There's already a /sys/devices/.../<device>/waiting_for_supplier file
-> that tells you if the device is waiting for a supplier device to be
-> added. That file goes away once the device probes. If the file has 1,
-> then it's waiting for the supplier device to be added (like your
-> case). If it's 0, then the device is just waiting on one of the
-> existing suppliers to probe. You can find the existing suppliers
-> through /sys/devices/.../<device>/supplier:*/supplier. Also, flip
-> these dev_dbg() to dev_info() if you need more details about deferred
-> probing.
+--GIP5y49pbaVPin6k
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-How are we supposed to check the contents of that file, if the system
-doesn't even boot into userspace with a ramdisk? All hardware drivers
-fail to probe. The only thing that works is "earlycon keep_bootcon",
-and kernel output just stops after a while.
+On Tue, Jan 12, 2021 at 10:34:19PM +0100, Marek Szyprowski wrote:
 
-Thanks for your suggestions!
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> WARNING: possible circular locking dependency detected
+> 5.11.0-rc1-00008-geaa7995c529b #10095 Not tainted
+> ------------------------------------------------------
+> swapper/0/1 is trying to acquire lock:
+> c12e1b80 (regulator_list_mutex){+.+.}-{3:3}, at:=20
+> regulator_lock_dependent+0x4c/0x2b0
 
-Gr{oetje,eeting}s,
+If you're sending backtraces or other enormous reports like this please
+run them through addr2line first so that things are a bit more leigible.
 
-                        Geert
+> but task is already holding lock:
+> df7190c0 (regulator_ww_class_mutex){+.+.}-{3:3}, at:=20
+> regulator_resolve_supply+0x44/0x318
+>=20
+> which lock already depends on the new lock.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Does this help (completely untested):
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 3ae5ccd9277d..7d1422b00974 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -1823,17 +1823,6 @@ static int regulator_resolve_supply(struct regulator=
+_dev *rdev)
+ 	if (rdev->supply)
+ 		return 0;
+=20
+-	/*
+-	 * Recheck rdev->supply with rdev->mutex lock held to avoid a race
+-	 * between rdev->supply null check and setting rdev->supply in
+-	 * set_supply() from concurrent tasks.
+-	 */
+-	regulator_lock(rdev);
+-
+-	/* Supply just resolved by a concurrent task? */
+-	if (rdev->supply)
+-		goto out;
+-
+ 	r =3D regulator_dev_lookup(dev, rdev->supply_name);
+ 	if (IS_ERR(r)) {
+ 		ret =3D PTR_ERR(r);
+@@ -1885,10 +1874,23 @@ static int regulator_resolve_supply(struct regulato=
+r_dev *rdev)
+ 		goto out;
+ 	}
+=20
++	/*
++	 * Recheck rdev->supply with rdev->mutex lock held to avoid a race
++	 * between rdev->supply null check and setting rdev->supply in
++	 * set_supply() from concurrent tasks.
++	 */
++	regulator_lock(rdev);
++
++	/* Supply just resolved by a concurrent task? */
++	if (rdev->supply) {
++		put_device(&r->dev);
++		goto out_rdev_lock;
++	}
++
+ 	ret =3D set_supply(rdev, r);
+ 	if (ret < 0) {
+ 		put_device(&r->dev);
+-		goto out;
++		goto out_rdev_lock;
+ 	}
+=20
+ 	/*
+@@ -1901,12 +1903,13 @@ static int regulator_resolve_supply(struct regulato=
+r_dev *rdev)
+ 		if (ret < 0) {
+ 			_regulator_put(rdev->supply);
+ 			rdev->supply =3D NULL;
+-			goto out;
++			goto out_rdev_lock;
+ 		}
+ 	}
+=20
+-out:
++out_rdev_lock:
+ 	regulator_unlock(rdev);
++out:
+ 	return ret;
+ }
+=20
+
+--GIP5y49pbaVPin6k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmAF9HUACgkQJNaLcl1U
+h9CSgQf/WxGUC0HwPneU+4CSzLkNnmCkeRj+XD5gX0Z/KEo/1EnY6cg10Cq3ZqBY
+/OSiMjeamYYf8cALIMT8h5CGcOGiBtQL7AtDP8jtH7+F1hj382DT3wCQQDfjXFgq
+Wl/NY99d44dNioksuJtz0nGrSOysUmk6UZPLUHSNE4yTZpa6H2m46JMYJ5iBeW44
+pF1xsyxsrnPPuuYIY0yZw4CsNmxDAGo/83DWLV+UV9dmjWoL06l9yPWhynCdzcgL
+LPVM45ZU4+De5CcRlFIH9oAaqzsKHV/Si57rxfdX57GoI/9VYmA2NQXmy0PnNI2h
+zhUqUHMq71tzxt8AXknhhSk54oVjYw==
+=1Wmm
+-----END PGP SIGNATURE-----
+
+--GIP5y49pbaVPin6k--
