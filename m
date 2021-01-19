@@ -2,172 +2,222 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_RED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2C5C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 20:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 184FCC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Jan 2021 08:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76AF422DFB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Jan 2021 20:53:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC1CE2311C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Jan 2021 08:22:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390390AbhARUva (ORCPT
+        id S1727969AbhASIUy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 18 Jan 2021 15:51:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57256 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394500AbhARUvQ (ORCPT
+        Tue, 19 Jan 2021 03:20:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57620 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728030AbhASISs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Jan 2021 15:51:16 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 514F922472;
-        Mon, 18 Jan 2021 20:50:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611003035;
-        bh=H6UA6H2/Zi55Qt8ytYHm/E7q9Vp1onaV0E/AF6oYJYQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CkmLWexmoNM7iPlrtWvRf55xgaUNPBhx7/k2XhbW86TVkljF2qhTHgM3VDUndPL8r
-         LdkZ++eR/I/JL9F9EcfLTTyBuW3i+La/Wvru/ZbrT69zddCz9sHZKnvm3RSUFLJf9C
-         SC2lF4H/ouOBMX1DaaiWYEsenI7YulPX7ZWig6XQ+26CsNr6olDtXRyRHo4Qe1101U
-         7TN95vCrEI+2e4HUD62ZzDmkIiM1RRIPsDq0v5AEx4Q1WoIAxDkgsLrsaOdBmSQChV
-         ypDJHmdWeN/9Hs8bS9Hvcz5MIlcyjSR/zXpBAkxswhBpHqYDGTMO6hUKrccRdPBFjH
-         CevvUYW+zIzVw==
-Date:   Mon, 18 Jan 2021 20:49:58 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     David Collins <collinsd@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH] regulator: core: avoid regulator_resolve_supply() race
- condition
-Message-ID: <20210118204958.GS4455@sirena.org.uk>
-References: <1610068562-4410-1-git-send-email-collinsd@codeaurora.org>
- <CGME20210112213419eucas1p24231e4d0ac11c31184f2f8f3f20cbd9d@eucas1p2.samsung.com>
- <e512ee85-7fa6-e5fe-eb30-f088bb83cf23@samsung.com>
+        Tue, 19 Jan 2021 03:18:48 -0500
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D007C061575
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Jan 2021 00:18:07 -0800 (PST)
+Received: by mail-ot1-x331.google.com with SMTP id x13so18980932oto.8
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Jan 2021 00:18:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=WfFJuLm0JWFKIZSr35gVwj0xg2AYZzNEcuLqFUXW2+8=;
+        b=PbkKRo7SNg95R94SiZevOw2BEtiFlTjvdHUYcZPMAnSrGIckYOkeHga/KY6+b/RNEu
+         RQKckLdL5MSMzGFd7lJcRzJqnGxbYjtG1EOrlYplFzb90mxOoz3o6SCb0Xws/78s2/JW
+         OCW0F7fS42A6taX0chOn4gczjDBvyZIQbF25k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WfFJuLm0JWFKIZSr35gVwj0xg2AYZzNEcuLqFUXW2+8=;
+        b=noT82PmsgzFSM7BapA9zkzIGEeWHfVUWiwd0MoeIo5lg6BdMqSWqRcA28aoWgo9ZSJ
+         S17o+HLJVrCFjce0tioYV1LM1xDrSxqyMiYX+N71QYlwUmIknNtCrSjMqPIwkgQ5F4me
+         engkvi+/iOkqPHkR/SM31mzHCPvOqP3AnbsKvu7R6Y/ygpCNAFYhULh9wLAVEIz+KDOZ
+         QvHnqTiUy2Y3Bkabnnuc/88MHc/E7uy0CQ63HxNCpRczu17aHDTYk5KFBGoD/7pNve5M
+         RqrjZ2gmQ0WFucuAXVUspE19u2X35Wl/To8cmxZN41K5Va6kTRkbBfspMJaeQYSr7Mya
+         3Y7Q==
+X-Gm-Message-State: AOAM531kgLLQuByfMjhxJSxR0VlTYwkOSX+SjLOCKehDMSHxq4wWwCxV
+        mzL1e3hVDXC6RvEFkl3R4jXJOEbV6EqE1/YP46NXdA==
+X-Google-Smtp-Source: ABdhPJzaeODA4sJQGtFnmlEJhEIejHm5tUfJ6WBUJaaM4JSKW7UsD8q5H1JPOzhq7vW/xPspCH7j/ySdSzg97qcaAUI=
+X-Received: by 2002:a9d:23ca:: with SMTP id t68mr2659337otb.281.1611044286607;
+ Tue, 19 Jan 2021 00:18:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GIP5y49pbaVPin6k"
-Content-Disposition: inline
-In-Reply-To: <e512ee85-7fa6-e5fe-eb30-f088bb83cf23@samsung.com>
-X-Cookie: Huh?
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20201127164131.2244124-1-daniel.vetter@ffwll.ch> <20201127164131.2244124-13-daniel.vetter@ffwll.ch>
+In-Reply-To: <20201127164131.2244124-13-daniel.vetter@ffwll.ch>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Tue, 19 Jan 2021 09:17:55 +0100
+Message-ID: <CAKMK7uGrdDrbtj0OyzqQc0CGrQwc2F3tFJU9vLfm2jjufAZ5YQ@mail.gmail.com>
+Subject: Re: [PATCH v7 12/17] PCI: Revoke mappings like devmem
+To:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     KVM list <kvm@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PCI <linux-pci@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Fri, Nov 27, 2020 at 5:42 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrot=
+e:
+>
+> Since 3234ac664a87 ("/dev/mem: Revoke mappings when a driver claims
+> the region") /dev/kmem zaps ptes when the kernel requests exclusive
+> acccess to an iomem region. And with CONFIG_IO_STRICT_DEVMEM, this is
+> the default for all driver uses.
+>
+> Except there's two more ways to access PCI BARs: sysfs and proc mmap
+> support. Let's plug that hole.
+>
+> For revoke_devmem() to work we need to link our vma into the same
+> address_space, with consistent vma->vm_pgoff. ->pgoff is already
+> adjusted, because that's how (io_)remap_pfn_range works, but for the
+> mapping we need to adjust vma->vm_file->f_mapping. The cleanest way is
+> to adjust this at at ->open time:
+>
+> - for sysfs this is easy, now that binary attributes support this. We
+>   just set bin_attr->mapping when mmap is supported
+> - for procfs it's a bit more tricky, since procfs pci access has only
+>   one file per device, and access to a specific resources first needs
+>   to be set up with some ioctl calls. But mmap is only supported for
+>   the same resources as sysfs exposes with mmap support, and otherwise
+>   rejected, so we can set the mapping unconditionally at open time
+>   without harm.
+>
+> A special consideration is for arch_can_pci_mmap_io() - we need to
+> make sure that the ->f_mapping doesn't alias between ioport and iomem
+> space. There's only 2 ways in-tree to support mmap of ioports: generic
+> pci mmap (ARCH_GENERIC_PCI_MMAP_RESOURCE), and sparc as the single
+> architecture hand-rolling. Both approach support ioport mmap through a
+> special pfn range and not through magic pte attributes. Aliasing is
+> therefore not a problem.
+>
+> The only difference in access checks left is that sysfs PCI mmap does
+> not check for CAP_RAWIO. I'm not really sure whether that should be
+> added or not.
+>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-mm@kvack.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: linux-pci@vger.kernel.org
+> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> --
+> v2:
+> - Totally new approach: Adjust filp->f_mapping at open time. Note that
+>   this now works on all architectures, not just those support
+>   ARCH_GENERIC_PCI_MMAP_RESOURCE
+> ---
+>  drivers/pci/pci-sysfs.c | 4 ++++
+>  drivers/pci/proc.c      | 1 +
+>  2 files changed, 5 insertions(+)
+>
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index d15c881e2e7e..3f1c31bc0b7c 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -929,6 +929,7 @@ void pci_create_legacy_files(struct pci_bus *b)
+>         b->legacy_io->read =3D pci_read_legacy_io;
+>         b->legacy_io->write =3D pci_write_legacy_io;
+>         b->legacy_io->mmap =3D pci_mmap_legacy_io;
+> +       b->legacy_io->mapping =3D iomem_get_mapping();
+>         pci_adjust_legacy_attr(b, pci_mmap_io);
+>         error =3D device_create_bin_file(&b->dev, b->legacy_io);
+>         if (error)
+> @@ -941,6 +942,7 @@ void pci_create_legacy_files(struct pci_bus *b)
+>         b->legacy_mem->size =3D 1024*1024;
+>         b->legacy_mem->attr.mode =3D 0600;
+>         b->legacy_mem->mmap =3D pci_mmap_legacy_mem;
+> +       b->legacy_io->mapping =3D iomem_get_mapping();
 
---GIP5y49pbaVPin6k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Unlike the normal pci stuff below, the legacy files here go boom
+because they're set up much earlier in the boot sequence. This only
+affects HAVE_PCI_LEGACY architectures, which aren't that many. So what
+should we do here now:
+- drop the devmem revoke for these
+- rework the init sequence somehow to set up these files a lot later
+- redo the sysfs patch so that it doesn't take an address_space
+pointer, but instead a callback to get at that (since at open time
+everything is set up). Imo rather ugly
+- ditch this part of the series (since there's not really any takers
+for the latter parts it might just not make sense to push for this)
+- something else?
 
-On Tue, Jan 12, 2021 at 10:34:19PM +0100, Marek Szyprowski wrote:
+Bjorn, Greg, thoughts?
 
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> WARNING: possible circular locking dependency detected
-> 5.11.0-rc1-00008-geaa7995c529b #10095 Not tainted
-> ------------------------------------------------------
-> swapper/0/1 is trying to acquire lock:
-> c12e1b80 (regulator_list_mutex){+.+.}-{3:3}, at:=20
-> regulator_lock_dependent+0x4c/0x2b0
+Issuge got reported by Stephen on a powerpc when trying to build
+linux-next with this patch included.
 
-If you're sending backtraces or other enormous reports like this please
-run them through addr2line first so that things are a bit more leigible.
+Thanks, Daniel
 
-> but task is already holding lock:
-> df7190c0 (regulator_ww_class_mutex){+.+.}-{3:3}, at:=20
-> regulator_resolve_supply+0x44/0x318
->=20
-> which lock already depends on the new lock.
+>         pci_adjust_legacy_attr(b, pci_mmap_mem);
+>         error =3D device_create_bin_file(&b->dev, b->legacy_mem);
+>         if (error)
+> @@ -1156,6 +1158,8 @@ static int pci_create_attr(struct pci_dev *pdev, in=
+t num, int write_combine)
+>                         res_attr->mmap =3D pci_mmap_resource_uc;
+>                 }
+>         }
+> +       if (res_attr->mmap)
+> +               res_attr->mapping =3D iomem_get_mapping();
+>         res_attr->attr.name =3D res_attr_name;
+>         res_attr->attr.mode =3D 0600;
+>         res_attr->size =3D pci_resource_len(pdev, num);
+> diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
+> index 3a2f90beb4cb..9bab07302bbf 100644
+> --- a/drivers/pci/proc.c
+> +++ b/drivers/pci/proc.c
+> @@ -298,6 +298,7 @@ static int proc_bus_pci_open(struct inode *inode, str=
+uct file *file)
+>         fpriv->write_combine =3D 0;
+>
+>         file->private_data =3D fpriv;
+> +       file->f_mapping =3D iomem_get_mapping();
+>
+>         return 0;
+>  }
+> --
+> 2.29.2
+>
 
-Does this help (completely untested):
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 3ae5ccd9277d..7d1422b00974 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -1823,17 +1823,6 @@ static int regulator_resolve_supply(struct regulator=
-_dev *rdev)
- 	if (rdev->supply)
- 		return 0;
-=20
--	/*
--	 * Recheck rdev->supply with rdev->mutex lock held to avoid a race
--	 * between rdev->supply null check and setting rdev->supply in
--	 * set_supply() from concurrent tasks.
--	 */
--	regulator_lock(rdev);
--
--	/* Supply just resolved by a concurrent task? */
--	if (rdev->supply)
--		goto out;
--
- 	r =3D regulator_dev_lookup(dev, rdev->supply_name);
- 	if (IS_ERR(r)) {
- 		ret =3D PTR_ERR(r);
-@@ -1885,10 +1874,23 @@ static int regulator_resolve_supply(struct regulato=
-r_dev *rdev)
- 		goto out;
- 	}
-=20
-+	/*
-+	 * Recheck rdev->supply with rdev->mutex lock held to avoid a race
-+	 * between rdev->supply null check and setting rdev->supply in
-+	 * set_supply() from concurrent tasks.
-+	 */
-+	regulator_lock(rdev);
-+
-+	/* Supply just resolved by a concurrent task? */
-+	if (rdev->supply) {
-+		put_device(&r->dev);
-+		goto out_rdev_lock;
-+	}
-+
- 	ret =3D set_supply(rdev, r);
- 	if (ret < 0) {
- 		put_device(&r->dev);
--		goto out;
-+		goto out_rdev_lock;
- 	}
-=20
- 	/*
-@@ -1901,12 +1903,13 @@ static int regulator_resolve_supply(struct regulato=
-r_dev *rdev)
- 		if (ret < 0) {
- 			_regulator_put(rdev->supply);
- 			rdev->supply =3D NULL;
--			goto out;
-+			goto out_rdev_lock;
- 		}
- 	}
-=20
--out:
-+out_rdev_lock:
- 	regulator_unlock(rdev);
-+out:
- 	return ret;
- }
-=20
-
---GIP5y49pbaVPin6k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmAF9HUACgkQJNaLcl1U
-h9CSgQf/WxGUC0HwPneU+4CSzLkNnmCkeRj+XD5gX0Z/KEo/1EnY6cg10Cq3ZqBY
-/OSiMjeamYYf8cALIMT8h5CGcOGiBtQL7AtDP8jtH7+F1hj382DT3wCQQDfjXFgq
-Wl/NY99d44dNioksuJtz0nGrSOysUmk6UZPLUHSNE4yTZpa6H2m46JMYJ5iBeW44
-pF1xsyxsrnPPuuYIY0yZw4CsNmxDAGo/83DWLV+UV9dmjWoL06l9yPWhynCdzcgL
-LPVM45ZU4+De5CcRlFIH9oAaqzsKHV/Si57rxfdX57GoI/9VYmA2NQXmy0PnNI2h
-zhUqUHMq71tzxt8AXknhhSk54oVjYw==
-=1Wmm
------END PGP SIGNATURE-----
-
---GIP5y49pbaVPin6k--
+--=20
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
