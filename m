@@ -2,101 +2,124 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D31BC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Jan 2021 08:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9965C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Jan 2021 15:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 136332313A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Jan 2021 08:20:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 834F423381
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Jan 2021 15:54:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729524AbhATIBr (ORCPT
+        id S1732743AbhATPyk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 Jan 2021 03:01:47 -0500
-Received: from mail-wm1-f47.google.com ([209.85.128.47]:52069 "EHLO
-        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730253AbhATH7s (ORCPT
+        Wed, 20 Jan 2021 10:54:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42886 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390562AbhATPx3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Jan 2021 02:59:48 -0500
-Received: by mail-wm1-f47.google.com with SMTP id m2so1978310wmm.1;
-        Tue, 19 Jan 2021 23:59:31 -0800 (PST)
+        Wed, 20 Jan 2021 10:53:29 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38FE4C061575;
+        Wed, 20 Jan 2021 07:52:49 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id o17so34757590lfg.4;
+        Wed, 20 Jan 2021 07:52:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/KIgJpukkTUseLKOL+nfTNs+iHfOcLiaf/sA4jMSc7o=;
+        b=b2NLVokQPZCUuJAyv3kiWNUb/D7/YvKoWfUJcCHR1heKGaiZjLpcSwBstX7Q3YX8MD
+         0VSL3nGarP20z1Z7t1EQA7XA2H4vpXyhlGms2qwFGmlN5vFPCkNOEwhXvgcl2dX2OHl0
+         Fk8lwe7s8eUZ2wwS5RMH6/mUWuXSRNmTjNvQCAwK5Dd3NdzmkpZHt4llHrw8Ni5khkmn
+         myMjJRhAiEUeq/sHdT1yh60NnMmGAROPatvIjJ8mP6HQeV19cvk6YGXY87IpFAtncwaV
+         v00shKKr9e/yxCXAB3jbsK18rnr4dn0SL3OuJ8SyDsoqZnywmH2zxXJFRB0YEqFQqi04
+         OP8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=T2Nxi0UAJrvG7QfcIV+5/q/cjGRwozwlTwF0B5esfbc=;
-        b=Rfr2tI195C+boZT9fQBqJ/SkWxEylbagQ8XfbghIfSK6lC16evvJ8H//QRRdSuXIkb
-         RwAwQ4RQ1advODC4OZM90ymrHvEPB1N1NH/8fsh0m/qNdOf5gF3xyqcdm0JycVtoE+UN
-         s0auMgSFokXdNjhNrQ7QXjlm9q8A4bo67BTYKnNQEz/C2doNdUuEffjsmOFsQ/wH69ry
-         fZp9qiOQwZqzWxKjGt8y686MAMpQi6vCk/IM0L0fxrVYVbDFQamh9utVKqtwwEbQepxL
-         9rhh5eePqZHDWEEoe3d8Abf/PfD0NfxQTAM7AQmxoozSeywnIgSBeHpsV/ybbNObpvfl
-         oYvA==
-X-Gm-Message-State: AOAM532mI6JKtS3lgk5Xm1XFStCHNeItyt7+UTBAk5rcTyrpcmIpL86R
-        8azMTU28o+4BPZ47uyjlONs=
-X-Google-Smtp-Source: ABdhPJwuoZx+7uPQvYpmVvSuwJYlxmIyZp4gj80Fm1xV/LqPgvhq9RJ1+mS9bs4zh22yQ0TDjyuX6g==
-X-Received: by 2002:a05:600c:2601:: with SMTP id h1mr3086639wma.31.1611129545414;
-        Tue, 19 Jan 2021 23:59:05 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id l8sm2355643wmi.8.2021.01.19.23.59.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 23:59:04 -0800 (PST)
-Date:   Wed, 20 Jan 2021 08:59:02 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [BUG] NULL pointer in dev_pm_opp_put_regulators
-Message-ID: <20210120075902.lfz6cw4jgqg6e7c3@kozik-lap>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/KIgJpukkTUseLKOL+nfTNs+iHfOcLiaf/sA4jMSc7o=;
+        b=nbGUUFMp2tvkeX6XBsXTytoIiQPoz2eDIbHMmu4obTt01NoNLbaj2f9zx3wVyrCp4j
+         XIEjmjHhN6R1F1fnjSKUn9LIH2fe1HWXJOARadqqsVIByKni7NkJOPdLj+5chmh06SoZ
+         6TH9b14hriqgE1+ThonVV1NND8L1OGT9qf8dXWsrbFRjvgVWZ0Hv2ANhdQP7Pp0rUInH
+         DdyJhS2vnOcnkWMdS4WMk+TAwt6OmI0ezULfIAVj4iUL3FbjIeIkwceqBm8ZxGEFnVmy
+         1k1exhCfw1zlHcU/HC6vF73fyQJL7udqR/YCzWTZyBsWL6xCKgckEZ+apslDjtXdNUTt
+         jDZQ==
+X-Gm-Message-State: AOAM5338hi7aA1pHPOm9dFhgTGZXp4CKCcQIfKiU3dvNwEKhL+T6Bgjo
+        K/NSxyBc5oPD2aA5LNiSlbJh8+WQmjY=
+X-Google-Smtp-Source: ABdhPJz54jp4p6N7ro9OB4UGTlGLwMbj9w9A1NhmVFwuW25RiB7kgYemoqd4C3nN1Esa+ddCNU5GUA==
+X-Received: by 2002:a19:ac45:: with SMTP id r5mr4942869lfc.305.1611157967504;
+        Wed, 20 Jan 2021 07:52:47 -0800 (PST)
+Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
+        by smtp.googlemail.com with ESMTPSA id b4sm74228ljp.53.2021.01.20.07.52.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Jan 2021 07:52:46 -0800 (PST)
+Subject: Re: [PATCH 02/31] opp: Add devres wrapper for
+ dev_pm_opp_set_regulators and dev_pm_opp_put_regulators
+To:     Yangtao Li <tiny.windzz@gmail.com>, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, cw00.choi@samsung.com, krzk@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, yuq825@gmail.com, airlied@linux.ie,
+        daniel@ffwll.ch, robdclark@gmail.com, sean@poorly.run,
+        robh@kernel.org, tomeu.vizoso@collabora.com, steven.price@arm.com,
+        alyssa.rosenzweig@collabora.com, stanimir.varbanov@linaro.org,
+        agross@kernel.org, bjorn.andersson@linaro.org, mchehab@kernel.org,
+        lukasz.luba@arm.com, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org, vireshk@kernel.org, nm@ti.com,
+        sboyd@kernel.org, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, rjw@rjwysocki.net, jcrouse@codeaurora.org,
+        hoegsberg@google.com, eric@anholt.net, tzimmermann@suse.de,
+        marijn.suijten@somainline.org, gustavoars@kernel.org,
+        emil.velikov@collabora.com, jonathan@marek.ca,
+        akhilpo@codeaurora.org, smasetty@codeaurora.org,
+        airlied@redhat.com, masneyb@onstation.org, kalyan_t@codeaurora.org,
+        tanmay@codeaurora.org, ddavenport@chromium.org,
+        jsanka@codeaurora.org, rnayak@codeaurora.org,
+        tongtiangen@huawei.com, miaoqinglang@huawei.com,
+        khsieh@codeaurora.org, abhinavk@codeaurora.org,
+        chandanu@codeaurora.org, groeck@chromium.org, varar@codeaurora.org,
+        mka@chromium.org, harigovi@codeaurora.org,
+        rikard.falkeborn@gmail.com, natechancellor@gmail.com,
+        georgi.djakov@linaro.org, akashast@codeaurora.org,
+        parashar@codeaurora.org, dianders@chromium.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20210101165507.19486-1-tiny.windzz@gmail.com>
+ <20210101165507.19486-3-tiny.windzz@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <43c251a2-430a-040c-4152-94cf10c884e0@gmail.com>
+Date:   Wed, 20 Jan 2021 18:52:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
+In-Reply-To: <20210101165507.19486-3-tiny.windzz@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+01.01.2021 19:54, Yangtao Li пишет:
+> Add devres wrapper for dev_pm_opp_set_regulators()
+> dev_pm_opp_put_regulators () to simplify driver code.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/opp/core.c     | 50 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/pm_opp.h |  9 ++++++++
+>  2 files changed, 59 insertions(+)
 
-Today's next fails to boot on Exynos5422 Odroid HC1 board:
-
-[    6.409023] Unable to handle kernel NULL pointer dereference at virtual address 00000004
-[    6.417199] pgd = (ptrval)
-[    6.419748] [00000004] *pgd=00000000
-[    6.423499] Internal error: Oops: 805 [#1] PREEMPT SMP ARM
-[    6.428724] Modules linked in:
-[    6.431752] CPU: 5 PID: 1 Comm: swapper/0 Not tainted 5.11.0-rc4-next-20210120 #2
-[    6.439209] Hardware name: Samsung Exynos (Flattened Device Tree)
-[    6.445273] PC is at dev_pm_opp_put_regulators+0xb4/0x114
-...
-[    6.680370] [<c086f51c>] (dev_pm_opp_put_regulators) from [<c08d5d48>] (exynos_bus_probe+0x45c/0x620)
-[    6.689556] [<c08d5d48>] (exynos_bus_probe) from [<c06b49a8>] (platform_probe+0x80/0xc0)
-[    6.697614] [<c06b49a8>] (platform_probe) from [<c06b1ab4>] (really_probe+0x1d4/0x500)
-[    6.705499] [<c06b1ab4>] (really_probe) from [<c06b1e58>] (driver_probe_device+0x78/0x1dc)
-[    6.713731] [<c06b1e58>] (driver_probe_device) from [<c06b236c>] (device_driver_attach+0x58/0x60)
-[    6.722571] [<c06b236c>] (device_driver_attach) from [<c06b2470>] (__driver_attach+0xfc/0x160)
-[    6.731149] [<c06b2470>] (__driver_attach) from [<c06af85c>] (bus_for_each_dev+0x68/0xb4)
-[    6.739294] [<c06af85c>] (bus_for_each_dev) from [<c06b0b5c>] (bus_add_driver+0x158/0x214)
-[    6.747526] [<c06b0b5c>] (bus_add_driver) from [<c06b3314>] (driver_register+0x78/0x110)
-[    6.755585] [<c06b3314>] (driver_register) from [<c0102464>] (do_one_initcall+0x8c/0x430)
-[    6.763731] [<c0102464>] (do_one_initcall) from [<c11010e4>] (kernel_init_freeable+0x190/0x1e0)
-[    6.772397] [<c11010e4>] (kernel_init_freeable) from [<c0b4fc50>] (kernel_init+0x8/0x120)
-[    6.780542] [<c0b4fc50>] (kernel_init) from [<c010011c>] (ret_from_fork+0x14/0x38)
-
-https://krzk.eu/#/builders/21/builds/2862/steps/15/logs/serial0
-
-I did not do a bisect but the last commit touching these parts was:
-
-commit 302c014726dbd9fcde852985528c139d2214a1f2
-Author: Viresh Kumar <viresh.kumar@linaro.org>
-Date:   Tue Jan 19 11:58:58 2021 +0530
-    opp: Prepare for ->set_opp() helper to work without regulators
-
-Maybe you have some idea of cause?
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
