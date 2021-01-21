@@ -6,42 +6,44 @@ X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 630A8C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jan 2021 19:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5FBC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jan 2021 19:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25DCB23A56
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jan 2021 19:43:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1189F23A5F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jan 2021 19:43:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbhAUTmn (ORCPT
+        id S1727425AbhAUTnF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Jan 2021 14:42:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47112 "EHLO mail.kernel.org"
+        Thu, 21 Jan 2021 14:43:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726802AbhAUTmT (ORCPT
+        id S1726374AbhAUTmT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Thu, 21 Jan 2021 14:42:19 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A53A823A3A;
-        Thu, 21 Jan 2021 19:41:10 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BC1CD23A5C;
+        Thu, 21 Jan 2021 19:41:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611258071;
-        bh=IbLWzH/iOhLsKIux1Zif0jmq0CGDxzFYvlX77B3nwu8=;
+        s=k20201202; t=1611258087;
+        bh=mU37xmaWVsYmEyXUA/R0/Rg9UFy1EWNpO+H9A0Xrad8=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=ghDlBtltbE7YvyOHCs9FmanZsL/lhysjQ4Me4sqydh00FMjgjC0ZTfdFqXVRT3E2v
-         Xc9u1vNr/C5x/NjF0q8DwK9yfqaf6HqbANhsUURaZQwVXatLbubGcbuWKZrtF88dt5
-         L77IZDR/r3nEE0d/Ixmo2dsOPBERcJc4Ii9w3YJp5DghRWZaftPL1veNYsMhpeeoaq
-         qW17gfAfwwB7q1xlMCIrdk5XlDmmrSHHNQFQ7Qfd1qdN1H2b3mDvPj3FlJlz4zPmOq
-         obSlVvCvpQnqmFCbdqQNq/FfOGEo2wHEHj4apO7L8/5lXwVsu1pZzMDHfhkCuIXq3J
-         YaDzov7zingZw==
+        b=GworRcHB2aPCq59uEq9X24TIJVieY7eoe70t/N9h9AN8ErV5J6xq2ts4vNHxemVVw
+         gJwTD2P7HgP8RSKsb3/YpUEGPWIBXEolwXsvnENF/aVU9XaPtTP+5msZ0Lxavhtpn8
+         525oCnnLD0Hy6d1qU2PDdD+9pjG2r0mSsZ66vOlDJx3BmNuYyzEFYw6WLyZpfwRsyR
+         gpRp2wCNhzAsK8bkdfj36DXUDWBe72ECc////H0SmSpiVl1UG4+gWSNKtmeaY8lvem
+         L9Fa9/sk+I767dbPTeyn0gAu+az6/5cM2Us5FB/FkPlvfNZdScwLQgHqc5SZT5+u+W
+         z89KXZiXJT8rw==
 From:   Mark Brown <broonie@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Pan Bian <bianpan2016@163.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Pan Bian <bianpan2016@163.com>
-In-Reply-To: <20210121155914.48034-1-krzk@kernel.org>
-References: <20210121155914.48034-1-krzk@kernel.org>
-Subject: Re: [PATCH] regulator: s5m8767: Drop regulators OF node reference
-Message-Id: <161125803282.35944.14669065064148445723.b4-ty@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20210121032756.49501-1-bianpan2016@163.com>
+References: <20210121032756.49501-1-bianpan2016@163.com>
+Subject: Re: [PATCH] regulator: s5m8767: Fix reference count leak
+Message-Id: <161125803282.35944.8538521264425095601.b4-ty@kernel.org>
 Date:   Thu, 21 Jan 2021 19:40:32 +0000
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -50,9 +52,9 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 21 Jan 2021 16:59:14 +0100, Krzysztof Kozlowski wrote:
-> The device node reference obtained with of_get_child_by_name() should be
-> dropped on error paths.
+On Wed, 20 Jan 2021 19:27:56 -0800, Pan Bian wrote:
+> Call of_node_put() to drop references of regulators_np and reg_np before
+> returning error code.
 
 Applied to
 
@@ -60,8 +62,8 @@ Applied to
 
 Thanks!
 
-[1/1] regulator: s5m8767: Drop regulators OF node reference
-      commit: a5872bd3398d0ff2ce4c77794bc7837899c69024
+[1/1] regulator: s5m8767: Fix reference count leak
+      commit: dea6dd2ba63f8c8532addb8f32daf7b89a368a42
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
