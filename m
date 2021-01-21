@@ -2,164 +2,78 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA20BC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jan 2021 15:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 631C3C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jan 2021 15:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9805D20897
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jan 2021 15:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2103C22C9F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jan 2021 15:56:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733036AbhAUPqi (ORCPT
+        id S1730552AbhAUP4J (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Jan 2021 10:46:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49252 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387493AbhAUPpi (ORCPT
+        Thu, 21 Jan 2021 10:56:09 -0500
+Received: from mail-ed1-f41.google.com ([209.85.208.41]:46784 "EHLO
+        mail-ed1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730017AbhAUPzy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Jan 2021 10:45:38 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 99D1E2073C;
-        Thu, 21 Jan 2021 15:44:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611243897;
-        bh=+5gRibZkC6bk1wv39tmFyPEKELorKhefP3ySjz4oV7Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=paOfH3uVrTWvohDqTqpIdqpX2ef5Ki07Df+QI0JomD1Z3Sd6xIxEgnbyPqqdPwJB2
-         +IsZnsl++3nCaiS9+JmHzVWBZsGBW5bywW/LxtPgNH8XH0vAT8Safno/b6NBN6E0Pu
-         3RFh3H11gbKk1X54ZMfmDYtW3lCbvtMx6HbWMA77zA8OhJmr5gBpJ3BCKLIyKOAPWr
-         V4Vq+3HCiyYzwISCgV4voRb76fhGfBuNWNohRdmxqDyiBsTbs0JTXRWOcBhQEUO//d
-         /rf7ynQ9XyTlPclKhATceuAqbZyWlfXTI5vFuZXKAjXpBDPP5IJTDu6xg/hfsg50R0
-         er2sWL3RYnLAA==
-Date:   Thu, 21 Jan 2021 15:44:18 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     David Collins <collinsd@codeaurora.org>,
+        Thu, 21 Jan 2021 10:55:54 -0500
+Received: by mail-ed1-f41.google.com with SMTP id dj23so3023122edb.13;
+        Thu, 21 Jan 2021 07:55:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7cfwWzcxKAkrfbqLS31dTG25iiqLlFnIt2NCXBcjsGU=;
+        b=UqzBqawGGkZ3vHFAqpmHqr66KLks2t+mDlUfhCCnoueTB8IlyvQPPB4mnHCKB4gXWR
+         2dPt6O3KUqiRn4u5ZeQQTyHjuBxQqOIFhHYI73QWWU1U2nozia1NVfSo3R43X+o9+skq
+         w1e9rVxdeoVlgplOGyRcCNwa7k6OVncqPzfckQV+JSrBfli4NqAZ9U3RQZVe58GwFA3B
+         KjrblOSLIHv//aa7BOBZWB2Xi8cew1SRUttEf1Awn2jR0+l8Q32kBT7Lx3DchD7kkb/1
+         dvLok6GlKRaKpM7jHqFMI0Mm0BkWK6fvhHYDbrXSx1hq7q2/XfynhPAnguuFEo/hDUNd
+         A+Aw==
+X-Gm-Message-State: AOAM5324IFVCoiuUynxdrosqmgtayTM0SFs6/JQa++dnxDfGD25y7Bmf
+        6FHEWnNyI0RVxPSXehrMQDw=
+X-Google-Smtp-Source: ABdhPJzL+2yPmE8VsTyymmmEUJBAhrdYSaEoS1rKwWL41e3WgjNz9TZAQhzjQ13fQMTCu5+1phJd4A==
+X-Received: by 2002:a05:6402:94f:: with SMTP id h15mr8442507edz.106.1611244491261;
+        Thu, 21 Jan 2021 07:54:51 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id k2sm2411216ejp.6.2021.01.21.07.54.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Jan 2021 07:54:49 -0800 (PST)
+Date:   Thu, 21 Jan 2021 16:54:47 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Pan Bian <bianpan2016@163.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH] regulator: core: avoid regulator_resolve_supply() race
- condition
-Message-ID: <20210121154418.GE4588@sirena.org.uk>
-References: <1610068562-4410-1-git-send-email-collinsd@codeaurora.org>
- <CGME20210112213419eucas1p24231e4d0ac11c31184f2f8f3f20cbd9d@eucas1p2.samsung.com>
- <e512ee85-7fa6-e5fe-eb30-f088bb83cf23@samsung.com>
- <20210118204958.GS4455@sirena.org.uk>
- <5f37ae96-c5f9-6619-d88f-21c5e483ff8e@samsung.com>
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] regulator: s5m8767: Fix reference count leak
+Message-ID: <20210121155447.m75vmrxllotlmc2w@kozik-lap>
+References: <20210121032756.49501-1-bianpan2016@163.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="orO6xySwJI16pVnm"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5f37ae96-c5f9-6619-d88f-21c5e483ff8e@samsung.com>
-X-Cookie: Generic Fortune.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210121032756.49501-1-bianpan2016@163.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Wed, Jan 20, 2021 at 07:27:56PM -0800, Pan Bian wrote:
+> Call of_node_put() to drop references of regulators_np and reg_np before
+> returning error code.
+> 
+> Fixes: 9ae5cc75ceaa ("regulator: s5m8767: Pass descriptor instead of GPIO number")
+> Signed-off-by: Pan Bian <bianpan2016@163.com>
+> ---
+>  drivers/regulator/s5m8767.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
 
---orO6xySwJI16pVnm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-On Thu, Jan 21, 2021 at 10:41:59AM +0100, Marek Szyprowski wrote:
-> On 18.01.2021 21:49, Mark Brown wrote:
-
-> > Does this help (completely untested):
-
-> Sadly nope. I get same warning:
-
-Try this instead:
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 3ae5ccd9277d..31503776dbd7 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -1823,17 +1823,6 @@ static int regulator_resolve_supply(struct regulator=
-_dev *rdev)
- 	if (rdev->supply)
- 		return 0;
-=20
--	/*
--	 * Recheck rdev->supply with rdev->mutex lock held to avoid a race
--	 * between rdev->supply null check and setting rdev->supply in
--	 * set_supply() from concurrent tasks.
--	 */
--	regulator_lock(rdev);
--
--	/* Supply just resolved by a concurrent task? */
--	if (rdev->supply)
--		goto out;
--
- 	r =3D regulator_dev_lookup(dev, rdev->supply_name);
- 	if (IS_ERR(r)) {
- 		ret =3D PTR_ERR(r);
-@@ -1885,12 +1874,29 @@ static int regulator_resolve_supply(struct regulato=
-r_dev *rdev)
- 		goto out;
- 	}
-=20
-+	/*
-+	 * Recheck rdev->supply with rdev->mutex lock held to avoid a race
-+	 * between rdev->supply null check and setting rdev->supply in
-+	 * set_supply() from concurrent tasks.
-+	 */
-+	regulator_lock(rdev);
-+
-+	/* Supply just resolved by a concurrent task? */
-+	if (rdev->supply) {
-+		regulator_unlock(rdev);
-+		put_device(&r->dev);
-+		return ret;
-+	}
-+
- 	ret =3D set_supply(rdev, r);
- 	if (ret < 0) {
-+		regulator_unlock(rdev);
- 		put_device(&r->dev);
--		goto out;
-+		return ret;
- 	}
-=20
-+	regulator_unlock(rdev);
-+
- 	/*
- 	 * In set_machine_constraints() we may have turned this regulator on
- 	 * but we couldn't propagate to the supply if it hadn't been resolved
-@@ -1901,12 +1907,11 @@ static int regulator_resolve_supply(struct regulato=
-r_dev *rdev)
- 		if (ret < 0) {
- 			_regulator_put(rdev->supply);
- 			rdev->supply =3D NULL;
--			goto out;
-+			goto out_rdev_lock;
- 		}
- 	}
-=20
- out:
--	regulator_unlock(rdev);
- 	return ret;
- }
-=20
-
---orO6xySwJI16pVnm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmAJoVEACgkQJNaLcl1U
-h9Cf8wf/XDuOH0gnqkdF8ahweAnC2dYaUGZyEUY+81aGMyOlfAOg28Xm6qM0Epf5
-eoNso/xFUG9If6M7wjFbidSEW8R9GuGvw6MqNEtW56Fi/OyvXQ79zvNaOkDoHxcT
-n+Cc1p5XvjNpwo//JCrJklmdYT3qTB5Lk0hY05p3LTw+Q+soTwcUqYB5NieEhySA
-v1XdrRZnCdiYw/usO05C2pdERQmt9YDem9oj8yfu2PcKza2zE1g3Eu8EJQcfQe9I
-/3XeE2sLvLcjusTcH9DaiUOeOCFL4YWgnK5mB46dAuIE/fPqv48fUFMuyZ52PlN9
-VQTkUxDM2/BrCf1GRByt4G5hRIhkvQ==
-=Jbpl
------END PGP SIGNATURE-----
-
---orO6xySwJI16pVnm--
+Best regards,
+Krzysztof
