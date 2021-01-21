@@ -2,336 +2,407 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29821C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jan 2021 06:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EDDC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jan 2021 09:44:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3A0C2389B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jan 2021 06:04:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8771223975
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jan 2021 09:44:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbhAUGDu (ORCPT
+        id S1727290AbhAUJnb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Jan 2021 01:03:50 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:61836 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391097AbhAUDBF (ORCPT
+        Thu, 21 Jan 2021 04:43:31 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51664 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728800AbhAUJmp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Jan 2021 22:01:05 -0500
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210121030013epoutp035635cab5ad228bbcefaf6d436759411f~cIA5uO8Q00738907389epoutp03c
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jan 2021 03:00:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210121030013epoutp035635cab5ad228bbcefaf6d436759411f~cIA5uO8Q00738907389epoutp03c
+        Thu, 21 Jan 2021 04:42:45 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210121094200euoutp018f2b7125c6eca98983dfdf7f6e27ec98~cNftks0C20800208002euoutp01-
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jan 2021 09:42:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210121094200euoutp018f2b7125c6eca98983dfdf7f6e27ec98~cNftks0C20800208002euoutp01-
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1611198013;
-        bh=/K8/fjM/acf5faTBjH/xLQTxUnBXrcSiqnrdMVPPNzI=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=MrXEQ46XqIfBpP0zBCHqlfYoHHj1ySkiZmK06wHBoro92vuGkbUWMj9FsxV566j4G
-         9l37C71IYRPM6D82KRG5pmaO4pzY3+9aKq6f1FYFR+W1uX7p7PrkSXi37pLvKd72AC
-         mSYBY2m6W8MFuOGSWLdg7QrURx3i+STQyef43nwY=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20210121030011epcas2p4816065c3856aafbd9edf654c9d3c737e~cIA4Du3721234912349epcas2p4f;
-        Thu, 21 Jan 2021 03:00:11 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.40.184]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4DLnF44f45z4x9Pq; Thu, 21 Jan
-        2021 03:00:08 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        23.4C.05262.83EE8006; Thu, 21 Jan 2021 12:00:08 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20210121030006epcas2p40fd4e30ae5bf514b7891a464462db7be~cIAzm4NK-0610606106epcas2p47;
-        Thu, 21 Jan 2021 03:00:06 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210121030006epsmtrp2bdcddf256f460113d566700ce9cb3177~cIAzmJIGj0238102381epsmtrp2f;
-        Thu, 21 Jan 2021 03:00:06 +0000 (GMT)
-X-AuditID: b6c32a47-b97ff7000000148e-b0-6008ee387b02
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2A.0D.08745.63EE8006; Thu, 21 Jan 2021 12:00:06 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.51]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210121030006epsmtip1e470b2d270c480b21b6fd77be83f3738~cIAzZ1Jgt1896918969epsmtip1h;
-        Thu, 21 Jan 2021 03:00:06 +0000 (GMT)
-From:   Chanho Park <chanho61.park@samsung.com>
-To:     Tomasz Figa <tomasz.figa@gmail.com>,
+        s=mail20170921; t=1611222120;
+        bh=syOn29PkVNKXEYzwcSgzjQDLWH7DGQmNV5Xz1eCMYTM=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=SEWd0Y6YnJPNhgo3snx1/3hQTkCWE0zBt+mZag2928+baCCUkngHgZzYsJ+OQcJBg
+         zvOXaePRdkmZuUdig/C0FL3mKOQLGiYmaHsAPcCuv7YmRgVhTDiRh91NApdItobyHO
+         LMbLOi87nK1SgsWQnSBUpQmbVCF8DBc9oIvQqxWQ=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210121094200eucas1p2d2fb282f86a55772a0a91cd5f79318fd~cNftK63nn2041720417eucas1p2p;
+        Thu, 21 Jan 2021 09:42:00 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 4C.AF.44805.76C49006; Thu, 21
+        Jan 2021 09:41:59 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210121094159eucas1p2fc9dab217ede409c4cbef118ce479789~cNfsia0zo2041720417eucas1p2n;
+        Thu, 21 Jan 2021 09:41:59 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210121094159eusmtrp1c0c5532da77db0bd4367c3d7e82cdf32~cNfshvka02556825568eusmtrp1W;
+        Thu, 21 Jan 2021 09:41:59 +0000 (GMT)
+X-AuditID: cbfec7f4-b37ff7000000af05-a1-60094c6746d1
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id E9.FD.21957.76C49006; Thu, 21
+        Jan 2021 09:41:59 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210121094158eusmtip123c650e278bde0262e8eef828d16d96e~cNfsEHZr40639806398eusmtip1E;
+        Thu, 21 Jan 2021 09:41:58 +0000 (GMT)
+Subject: Re: [PATCH] regulator: core: avoid regulator_resolve_supply() race
+ condition
+To:     Mark Brown <broonie@kernel.org>
+Cc:     David Collins <collinsd@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH] pinctrl: samsung: use raw_spinlock for locking
-Date:   Thu, 21 Jan 2021 12:00:09 +0900
-Message-Id: <20210121030009.25673-1-chanho61.park@samsung.com>
-X-Mailer: git-send-email 2.30.0
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <5f37ae96-c5f9-6619-d88f-21c5e483ff8e@samsung.com>
+Date:   Thu, 21 Jan 2021 10:41:59 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.6.1
 MIME-Version: 1.0
+In-Reply-To: <20210118204958.GS4455@sirena.org.uk>
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphk+LIzCtJLcpLzFFi42LZdljTXNfiHUeCQecyNovL+7Utzp/fwG4x
-        5c9yJotNj6+xWsw4v4/J4vCbdlaLVbv+MDqwe+ycdZfdY9OqTjaPO9f2sHlsXlLv0bdlFaPH
-        501yAWxROTYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5
-        QJcoKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgoMDQv0ihNzi0vz0vWS83OtDA0M
-        jEyBKhNyMp61xhW8t6uYvWIeawPjZdMuRk4OCQETid0Hj7F3MXJxCAnsYJT4t/w8G4TziVFi
-        +8R3UM5nRok7W6ezwbQ8+jEDqmUXo0T31+esEM5HRonpp46xgFSxCehKbHn+ihEkISKwklFi
-        +fOFTCAJZoEyiR93HjKD2MIC9hJzPm8Ha2ARUJV4PPUFWA2vgJ3E/60zGCHWyUucXHsYKi4o
-        cXLmExaIOfISzVtnM4MskBC4xi7xftYaVogGF4lFf7awQNjCEq+Ob2GHsKUkPr/bywbR0M0o
-        0froP1RiNaNEZ6MPhG0v8Wv6FqBBHEAbNCXW79IHMSUElCWO3ILayyfRcfgvO0SYV6KjTQii
-        UV3iwPbpUFtlJbrnfIa6xkPi8aW9YIuEBGIlNi45wTiBUX4Wkm9mIflmFsLeBYzMqxjFUguK
-        c9NTi40KjJFjdRMjODlque9gnPH2g94hRiYOxkOMEhzMSiK8jyw5EoR4UxIrq1KL8uOLSnNS
-        iw8xmgLDdyKzlGhyPjA955XEG5oamZkZWJpamJoZWSiJ8xYbPIgXEkhPLEnNTk0tSC2C6WPi
-        4JRqYFLa5ywb1WaWbV/fnSFlM+O2CMPzd9YLFiy8u8Ssr/RFdrHSNP/3+nHLNEok+85ySRa6
-        PHDcvrgm1lzjtKrfz5wUtdw5Yu4rl/vY2YVW2hY9W3/AT+PB0uK7038bdmlLfXma3LDQpUV7
-        foKdvIR4x6nAuJPTeyTVN0yfytWafTs87IERV8PeD2tTLMw07ersN/3dLHfYdKq3xH9tW6X+
-        nvkh13OTN3b7rX6z2fHpPuYPjMZKyd8un8l6Fzwpo/rQDKt6C5bKtp33H9+5rqi3Lfq2zO/D
-        b9KWS5yp/GP0SOjrgjeld75r93l9f20geG9BeaDp7YupXLFTOr7tsam+53d74f7pyWsWStl8
-        VhK7osRSnJFoqMVcVJwIAEjt94cXBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrILMWRmVeSWpSXmKPExsWy7bCSnK7ZO44Eg3dLJSwu79e2OH9+A7vF
-        lD/LmSw2Pb7GajHj/D4mi8Nv2lktVu36w+jA7rFz1l12j02rOtk87lzbw+axeUm9R9+WVYwe
-        nzfJBbBFcdmkpOZklqUW6dslcGU8a40reG9XMXvFPNYGxsumXYycHBICJhKPfsxg72Lk4hAS
-        2MEocXnmA1aIhKzEs3c72CFsYYn7LUfA4kIC7xklrlzJA7HZBHQltjx/xQjSLCKwmlFi24Qp
-        jCAJZoEKiXX7/4E1CwvYS8z5vJ0FxGYRUJV4PPUFE4jNK2An8X/rDEaIBfISJ9cehooLSpyc
-        +YQFYo68RPPW2cwTGPlmIUnNQpJawMi0ilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMj
-        OFS1tHYw7ln1Qe8QIxMH4yFGCQ5mJRHeR5YcCUK8KYmVValF+fFFpTmpxYcYpTlYlMR5L3Sd
-        jBcSSE8sSc1OTS1ILYLJMnFwSjUw5Zt/Mey8eLDQ/kPd09c6bOE2epcnbP7Z9KA9p6Ii4B6D
-        UMbO4jWfvsVlqd0pfGTw/tCHxJd13AuUnubk6HMLbH7/9AZ3Y0Lc/LUBznkqt3s/Gx1f/+/c
-        5IiJ2+8FFJs3LvjEl7CPO7dvstkzp1u3pVe9uv7YtuL6ZdfWnpk39xwKf/s0N97rkev03Bm3
-        Chs5XJzczyyXsnZxWN7n6ZN6wvv5/M1Zk38u8RVJdZF2XnN0zg3D20a5aiteLVDIn50d0jb5
-        r3ch1/TFr14tefp/mc26+ct5VSKPqLsHfm6Tn1Dz98gD+7LA7MdFzaymSxhebtzHwJbIdrbj
-        /r9Mm3UcM+7tuPz+lGbyhifi6+5O+KfEUpyRaKjFXFScCACOxUrhxAIAAA==
-X-CMS-MailID: 20210121030006epcas2p40fd4e30ae5bf514b7891a464462db7be
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIKsWRmVeSWpSXmKPExsWy7djPc7rpPpwJBg9/2VhsnLGe1WLqwyds
+        Fl1tQhbnz29gt/h2pYPJYuL+s+wWl3fNYbOYcX4fkwOHx+W+XiaPnbPusntsWtXJ5tG3ZRWj
+        x+dNcgGsUVw2Kak5mWWpRfp2CVwZP/99ZS64nlDR3X2QpYHxbFgXIyeHhICJxMzDk9i7GLk4
+        hARWMEo8/PefBSQhJPCFUWL6cnYI+zOjRPP/TJiGU91TGCHiyxklnt+ohmj+yCjxafE7sAZh
+        gXCJtf9+gg0SEVCWuPp9LwtIEbPAaiaJC1e62EASbAKGEl1vIWxeATuJD1c+gk1lEVCV2Dvt
+        GSuILSqQJHH3zmEmiBpBiZMzn4AN5RQwkriz8jNYL7OAvETz1tnMELa4xK0n85lAlkkIPOCQ
+        uPPlCgvE2S4SnS/fQdnCEq+Ob2GHsGUkTk/uYYFoaAb6/9xadginh1HictMMRogqa4k7534B
+        reMAWqEpsX6XPkTYUWLqiqfMIGEJAT6JG28FIY7gk5i0bTpUmFeio00IolpNYtbxdXBrD164
+        xDyBUWkWktdmIXlnFpJ3ZiHsXcDIsopRPLW0ODc9tdgoL7Vcrzgxt7g0L10vOT93EyMwFZ3+
+        d/zLDsblrz7qHWJk4mA8xCjBwawkwvvIkiNBiDclsbIqtSg/vqg0J7X4EKM0B4uSOG/SljXx
+        QgLpiSWp2ampBalFMFkmDk6pBqb8njsq/3KKv96cqCWuHfb+orHEvbJ+px7hOYzzJ9z4dfjN
+        whTP7qRrN+M0sks/fVMo72kR79iiG5/vY6Hrnz0znX3BD9+udyJXZueGPf3kIfegYv2htL91
+        s2Wf/7FvCrleriJYEGlUwHNXbfJCaf1fcz13KfToxSTdlz+QvvLIxxo+zujkd3UnOYXO7zg/
+        +/da0ejXl7NNWtez336uqnMkZuLEsCMvt5mcX5V7S+zLavXeNOM3rN+fqnncUE7q3rPlO9cX
+        Sc8ew33ZWsqfGlijsrfru1ya2tUozXDhidSi73rZu44X9kYy76jpeHi3J3iy2OJF9+brWngz
+        LNppcujB7ouah5Vm3ZnmmWYRnaDEUpyRaKjFXFScCABJezH4tAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsVy+t/xu7rpPpwJBvP/iVhsnLGe1WLqwyds
+        Fl1tQhbnz29gt/h2pYPJYuL+s+wWl3fNYbOYcX4fkwOHx+W+XiaPnbPusntsWtXJ5tG3ZRWj
+        x+dNcgGsUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2
+        CXoZP/99ZS64nlDR3X2QpYHxbFgXIyeHhICJxKnuKYwgtpDAUkaJ1TttIeIyEienNbBC2MIS
+        f651sXUxcgHVvGeUWDTzITNIQlggXGLtv58sILaIgLLE1e97WUCKmAVWM0l8fDWJFaLjO6PE
+        nB/L2UCq2AQMJbredoHZvAJ2Eh+ufARbzSKgKrF32jOwdaICSRInZn1ihqgRlDg58wnYBk4B
+        I4k7Kz+D9TILmEnM2wxxBbOAvETz1tlQtrjErSfzmSYwCs1C0j4LScssJC2zkLQsYGRZxSiS
+        Wlqcm55bbKhXnJhbXJqXrpecn7uJERh/24793LyDcd6rj3qHGJk4GA8xSnAwK4nwPrLkSBDi
+        TUmsrEotyo8vKs1JLT7EaAr0z0RmKdHkfGACyCuJNzQzMDU0MbM0MLU0M1YS5906d028kEB6
+        YklqdmpqQWoRTB8TB6dUA9Piz7t5UjY/P+z+fVMqz/6uxrCYOXOEDvqnFBeEWhxaN/vZO8dv
+        S/cFflm2JWXiPG/z7etnzxIu79shwfTngdvpXO+7jpva8qxKI7OlU8L/+HCk9zjtNSjgEAxc
+        53goRrE72awyYpnQA9bOBi4xxciFh8yWpUcZqB9yPL2ua06KI8vy6cdr1kUdKpzgGv3yG/ub
+        W9W1oVeUuD+wXNCV385fpcUu788csrZdRLlKOCzntfkxvZNNfTM6Jm8v5l0+6yLLi0NR8osL
+        S42n7Y20k3mus/zqyxWNb+6t/Lm9uLTK+dpWAT2X+o3BZ5iVTf4900zuCRX+EWctfsbh/ufG
+        5ezA9BoX8K+Go8ZF6X2HEktxRqKhFnNRcSIAOIuM9kgDAAA=
+X-CMS-MailID: 20210121094159eucas1p2fc9dab217ede409c4cbef118ce479789
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210121030006epcas2p40fd4e30ae5bf514b7891a464462db7be
-References: <CGME20210121030006epcas2p40fd4e30ae5bf514b7891a464462db7be@epcas2p4.samsung.com>
+X-RootMTR: 20210112213419eucas1p24231e4d0ac11c31184f2f8f3f20cbd9d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210112213419eucas1p24231e4d0ac11c31184f2f8f3f20cbd9d
+References: <1610068562-4410-1-git-send-email-collinsd@codeaurora.org>
+        <CGME20210112213419eucas1p24231e4d0ac11c31184f2f8f3f20cbd9d@eucas1p2.samsung.com>
+        <e512ee85-7fa6-e5fe-eb30-f088bb83cf23@samsung.com>
+        <20210118204958.GS4455@sirena.org.uk>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch converts spin_[lock|unlock] functions of pin bank to
-raw_spinlock to support preempt-rt. This can avoid BUG() assertion when
-irqchip callbacks are triggerred. Spinlocks can be converted rt_mutex
-which is preemptible when we apply preempt-rt patches.
+Hi Mark,
 
-According to "Documentation/driver-api/gpio/driver.rst",
+On 18.01.2021 21:49, Mark Brown wrote:
+> On Tue, Jan 12, 2021 at 10:34:19PM +0100, Marek Szyprowski wrote:
+>> ======================================================
+>> WARNING: possible circular locking dependency detected
+>> 5.11.0-rc1-00008-geaa7995c529b #10095 Not tainted
+>> ------------------------------------------------------
+>> swapper/0/1 is trying to acquire lock:
+>> c12e1b80 (regulator_list_mutex){+.+.}-{3:3}, at:
+>> regulator_lock_dependent+0x4c/0x2b0
+> If you're sending backtraces or other enormous reports like this please
+> run them through addr2line first so that things are a bit more leigible.
 
-"Realtime considerations: a realtime compliant GPIO driver should not
-use spinlock_t or any sleepable APIs (like PM runtime) as part of its
-irqchip implementation.
+Well, I had a little time to process that issue, so I just copy-pasted 
+the kernel log with the hope it will be useful. The trace is really 
+long, but the function call stack is imho readable.
 
-- spinlock_t should be replaced with raw_spinlock_t.[1]
-"
+If you need more details about any specific trace, just ask. I don't 
+know any good method of processing the raw kernel logs with addr2line 
+and keeping things readable.
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c  | 16 ++++++++--------
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c |  4 ++--
- drivers/pinctrl/samsung/pinctrl-samsung.c | 22 +++++++++++-----------
- drivers/pinctrl/samsung/pinctrl-samsung.h |  2 +-
- 4 files changed, 22 insertions(+), 22 deletions(-)
+>> but task is already holding lock:
+>> df7190c0 (regulator_ww_class_mutex){+.+.}-{3:3}, at:
+>> regulator_resolve_supply+0x44/0x318
+>>
+>> which lock already depends on the new lock.
+> Does this help (completely untested):
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index b9ea09fabf84..0cd7f33cdf25 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -58,13 +58,13 @@ static void exynos_irq_mask(struct irq_data *irqd)
- 	unsigned long mask;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&bank->slock, flags);
-+	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	mask = readl(bank->eint_base + reg_mask);
- 	mask |= 1 << irqd->hwirq;
- 	writel(mask, bank->eint_base + reg_mask);
- 
--	spin_unlock_irqrestore(&bank->slock, flags);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
- }
- 
- static void exynos_irq_ack(struct irq_data *irqd)
-@@ -97,13 +97,13 @@ static void exynos_irq_unmask(struct irq_data *irqd)
- 	if (irqd_get_trigger_type(irqd) & IRQ_TYPE_LEVEL_MASK)
- 		exynos_irq_ack(irqd);
- 
--	spin_lock_irqsave(&bank->slock, flags);
-+	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	mask = readl(bank->eint_base + reg_mask);
- 	mask &= ~(1 << irqd->hwirq);
- 	writel(mask, bank->eint_base + reg_mask);
- 
--	spin_unlock_irqrestore(&bank->slock, flags);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
- }
- 
- static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
-@@ -169,14 +169,14 @@ static int exynos_irq_request_resources(struct irq_data *irqd)
- 	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
- 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
- 
--	spin_lock_irqsave(&bank->slock, flags);
-+	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	con = readl(bank->pctl_base + reg_con);
- 	con &= ~(mask << shift);
- 	con |= EXYNOS_PIN_FUNC_EINT << shift;
- 	writel(con, bank->pctl_base + reg_con);
- 
--	spin_unlock_irqrestore(&bank->slock, flags);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
- 	return 0;
- }
-@@ -192,14 +192,14 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
- 	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
- 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
- 
--	spin_lock_irqsave(&bank->slock, flags);
-+	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	con = readl(bank->pctl_base + reg_con);
- 	con &= ~(mask << shift);
- 	con |= EXYNOS_PIN_FUNC_INPUT << shift;
- 	writel(con, bank->pctl_base + reg_con);
- 
--	spin_unlock_irqrestore(&bank->slock, flags);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
- 	gpiochip_unlock_as_irq(&bank->gpio_chip, irqd->hwirq);
- }
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-index 2223ead5bd72..00d77d6946b5 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-@@ -145,14 +145,14 @@ static void s3c24xx_eint_set_function(struct samsung_pinctrl_drv_data *d,
- 	shift = pin * bank_type->fld_width[PINCFG_TYPE_FUNC];
- 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
- 
--	spin_lock_irqsave(&bank->slock, flags);
-+	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	val = readl(reg);
- 	val &= ~(mask << shift);
- 	val |= bank->eint_func << shift;
- 	writel(val, reg);
- 
--	spin_unlock_irqrestore(&bank->slock, flags);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
- }
- 
- static int s3c24xx_eint_type(struct irq_data *data, unsigned int type)
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 608eb5a07248..376876bd6605 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -400,14 +400,14 @@ static void samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
- 		reg += 4;
- 	}
- 
--	spin_lock_irqsave(&bank->slock, flags);
-+	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	data = readl(reg + type->reg_offset[PINCFG_TYPE_FUNC]);
- 	data &= ~(mask << shift);
- 	data |= func->val << shift;
- 	writel(data, reg + type->reg_offset[PINCFG_TYPE_FUNC]);
- 
--	spin_unlock_irqrestore(&bank->slock, flags);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
- }
- 
- /* enable a specified pinmux by writing to registers */
-@@ -451,7 +451,7 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pctldev, unsigned int pin,
- 	width = type->fld_width[cfg_type];
- 	cfg_reg = type->reg_offset[cfg_type];
- 
--	spin_lock_irqsave(&bank->slock, flags);
-+	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	mask = (1 << width) - 1;
- 	shift = pin_offset * width;
-@@ -468,7 +468,7 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pctldev, unsigned int pin,
- 		*config = PINCFG_PACK(cfg_type, data);
- 	}
- 
--	spin_unlock_irqrestore(&bank->slock, flags);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
- 	return 0;
- }
-@@ -561,9 +561,9 @@ static void samsung_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
- 	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&bank->slock, flags);
-+	raw_spin_lock_irqsave(&bank->slock, flags);
- 	samsung_gpio_set_value(gc, offset, value);
--	spin_unlock_irqrestore(&bank->slock, flags);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
- }
- 
- /* gpiolib gpio_get callback function */
-@@ -626,9 +626,9 @@ static int samsung_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
- 	unsigned long flags;
- 	int ret;
- 
--	spin_lock_irqsave(&bank->slock, flags);
-+	raw_spin_lock_irqsave(&bank->slock, flags);
- 	ret = samsung_gpio_set_direction(gc, offset, true);
--	spin_unlock_irqrestore(&bank->slock, flags);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 	return ret;
- }
- 
-@@ -640,10 +640,10 @@ static int samsung_gpio_direction_output(struct gpio_chip *gc, unsigned offset,
- 	unsigned long flags;
- 	int ret;
- 
--	spin_lock_irqsave(&bank->slock, flags);
-+	raw_spin_lock_irqsave(&bank->slock, flags);
- 	samsung_gpio_set_value(gc, offset, value);
- 	ret = samsung_gpio_set_direction(gc, offset, false);
--	spin_unlock_irqrestore(&bank->slock, flags);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
- 	return ret;
- }
-@@ -1057,7 +1057,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
- 		bank->eint_offset = bdata->eint_offset;
- 		bank->name = bdata->name;
- 
--		spin_lock_init(&bank->slock);
-+		raw_spin_lock_init(&bank->slock);
- 		bank->drvdata = d;
- 		bank->pin_base = d->nr_pins;
- 		d->nr_pins += bank->nr_pins;
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index 379f34a9a482..de44f8ec330b 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -171,7 +171,7 @@ struct samsung_pin_bank {
- 	struct gpio_chip gpio_chip;
- 	struct pinctrl_gpio_range grange;
- 	struct exynos_irq_chip *irq_chip;
--	spinlock_t slock;
-+	raw_spinlock_t slock;
- 
- 	u32 pm_save[PINCFG_TYPE_NUM + 1]; /* +1 to handle double CON registers*/
- };
+Sadly nope. I get same warning:
+
+======================================================
+WARNING: possible circular locking dependency detected
+5.11.0-rc3-next-20210118-00005-g56a65ff7ca8b #10162 Not tainted
+------------------------------------------------------
+swapper/0/1 is trying to acquire lock:
+c12e1e40 (regulator_list_mutex){+.+.}-{3:3}, at: 
+regulator_lock_dependent+0x4c/0x2b4
+
+but task is already holding lock:
+df4fe8c0 (regulator_ww_class_mutex){+.+.}-{3:3}, at: 
+regulator_resolve_supply+0x98/0x320
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (regulator_ww_class_mutex){+.+.}-{3:3}:
+        ww_mutex_lock+0x48/0x88
+        regulator_lock_recursive+0x84/0x1f4
+        regulator_lock_dependent+0x188/0x2b4
+        regulator_enable+0x30/0xe4
+        dwc3_exynos_probe+0x17c/0x2c0
+        platform_probe+0x80/0xc0
+        really_probe+0x1d4/0x4ec
+        driver_probe_device+0x78/0x1d8
+        device_driver_attach+0x58/0x60
+        __driver_attach+0xfc/0x160
+        bus_for_each_dev+0x6c/0xb8
+        bus_add_driver+0x170/0x20c
+        driver_register+0x78/0x10c
+        do_one_initcall+0x88/0x438
+        kernel_init_freeable+0x190/0x1e0
+        kernel_init+0x8/0x118
+        ret_from_fork+0x14/0x38
+        0x0
+
+-> #1 (regulator_ww_class_acquire){+.+.}-{0:0}:
+        regulator_enable+0x30/0xe4
+        dwc3_exynos_probe+0x17c/0x2c0
+        platform_probe+0x80/0xc0
+        really_probe+0x1d4/0x4ec
+        driver_probe_device+0x78/0x1d8
+        device_driver_attach+0x58/0x60
+        __driver_attach+0xfc/0x160
+        bus_for_each_dev+0x6c/0xb8
+        bus_add_driver+0x170/0x20c
+        driver_register+0x78/0x10c
+        do_one_initcall+0x88/0x438
+        kernel_init_freeable+0x190/0x1e0
+        kernel_init+0x8/0x118
+        ret_from_fork+0x14/0x38
+        0x0
+
+-> #0 (regulator_list_mutex){+.+.}-{3:3}:
+        lock_acquire+0x314/0x5d0
+        __mutex_lock+0xa4/0xb60
+        mutex_lock_nested+0x1c/0x24
+        regulator_lock_dependent+0x4c/0x2b4
+        regulator_enable+0x30/0xe4
+        regulator_resolve_supply+0x1d0/0x320
+        regulator_register_resolve_supply+0x14/0x78
+        class_for_each_device+0x68/0xe8
+        regulator_register+0xa30/0xca0
+        devm_regulator_register+0x40/0x70
+        tps65090_regulator_probe+0x150/0x648
+        platform_probe+0x80/0xc0
+        really_probe+0x1d4/0x4ec
+        driver_probe_device+0x78/0x1d8
+        bus_for_each_drv+0x78/0xbc
+        __device_attach+0xe8/0x180
+        bus_probe_device+0x88/0x90
+        device_add+0x4c8/0x7ec
+        platform_device_add+0x120/0x25c
+        mfd_add_devices+0x580/0x60c
+        tps65090_i2c_probe+0xb8/0x184
+        i2c_device_probe+0x234/0x2a4
+        really_probe+0x1d4/0x4ec
+        driver_probe_device+0x78/0x1d8
+        bus_for_each_drv+0x78/0xbc
+        __device_attach+0xe8/0x180
+        bus_probe_device+0x88/0x90
+        device_add+0x4c8/0x7ec
+        i2c_new_client_device+0x15c/0x27c
+        of_i2c_register_devices+0x114/0x184
+        i2c_register_adapter+0x1d8/0x6dc
+        ec_i2c_probe+0xc8/0x124
+        platform_probe+0x80/0xc0
+        really_probe+0x1d4/0x4ec
+        driver_probe_device+0x78/0x1d8
+        bus_for_each_drv+0x78/0xbc
+        __device_attach+0xe8/0x180
+        bus_probe_device+0x88/0x90
+        device_add+0x4c8/0x7ec
+        of_platform_device_create_pdata+0x90/0xc8
+        of_platform_bus_create+0x1a0/0x4ec
+        of_platform_populate+0x88/0x120
+        devm_of_platform_populate+0x40/0x80
+        cros_ec_register+0x174/0x308
+        cros_ec_spi_probe+0x16c/0x1ec
+        spi_probe+0x88/0xac
+        really_probe+0x1d4/0x4ec
+        driver_probe_device+0x78/0x1d8
+        device_driver_attach+0x58/0x60
+        __driver_attach+0xfc/0x160
+        bus_for_each_dev+0x6c/0xb8
+        bus_add_driver+0x170/0x20c
+        driver_register+0x78/0x10c
+        do_one_initcall+0x88/0x438
+        kernel_init_freeable+0x190/0x1e0
+        kernel_init+0x8/0x118
+        ret_from_fork+0x14/0x38
+        0x0
+
+other info that might help us debug this:
+
+Chain exists of:
+   regulator_list_mutex --> regulator_ww_class_acquire --> 
+regulator_ww_class_mutex
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(regulator_ww_class_mutex);
+                                lock(regulator_ww_class_acquire);
+                                lock(regulator_ww_class_mutex);
+   lock(regulator_list_mutex);
+
+  *** DEADLOCK ***
+
+5 locks held by swapper/0/1:
+  #0: dfbef0c8 (&dev->mutex){....}-{3:3}, at: device_driver_attach+0x18/0x60
+  #1: df4f84d8 (&dev->mutex){....}-{3:3}, at: __device_attach+0x34/0x180
+  #2: df4f98e8 (&dev->mutex){....}-{3:3}, at: __device_attach+0x34/0x180
+  #3: df509cd8 (&dev->mutex){....}-{3:3}, at: __device_attach+0x34/0x180
+  #4: df4fe8c0 (regulator_ww_class_mutex){+.+.}-{3:3}, at: 
+regulator_resolve_supply+0x98/0x320
+
+stack backtrace:
+CPU: 3 PID: 1 Comm: swapper/0 Not tainted 
+5.11.0-rc3-next-20210118-00005-g56a65ff7ca8b #10162
+Hardware name: Samsung Exynos (Flattened Device Tree)
+[<c01116e8>] (unwind_backtrace) from [<c010cf58>] (show_stack+0x10/0x14)
+[<c010cf58>] (show_stack) from [<c0b443c0>] (dump_stack+0xa4/0xc4)
+[<c0b443c0>] (dump_stack) from [<c01932e0>] (check_noncircular+0x14c/0x164)
+[<c01932e0>] (check_noncircular) from [<c0196a08>] 
+(__lock_acquire+0x181c/0x3204)
+[<c0196a08>] (__lock_acquire) from [<c01990cc>] (lock_acquire+0x314/0x5d0)
+[<c01990cc>] (lock_acquire) from [<c0b4bd54>] (__mutex_lock+0xa4/0xb60)
+[<c0b4bd54>] (__mutex_lock) from [<c0b4c82c>] (mutex_lock_nested+0x1c/0x24)
+[<c0b4c82c>] (mutex_lock_nested) from [<c05d4544>] 
+(regulator_lock_dependent+0x4c/0x2b4)
+[<c05d4544>] (regulator_lock_dependent) from [<c05d99c0>] 
+(regulator_enable+0x30/0xe4)
+[<c05d99c0>] (regulator_enable) from [<c05d9c44>] 
+(regulator_resolve_supply+0x1d0/0x320)
+[<c05d9c44>] (regulator_resolve_supply) from [<c05da130>] 
+(regulator_register_resolve_supply+0x14/0x78)
+[<c05da130>] (regulator_register_resolve_supply) from [<c06aba80>] 
+(class_for_each_device+0x68/0xe8)
+[<c06aba80>] (class_for_each_device) from [<c05db5e0>] 
+(regulator_register+0xa30/0xca0)
+[<c05db5e0>] (regulator_register) from [<c05dd430>] 
+(devm_regulator_register+0x40/0x70)
+[<c05dd430>] (devm_regulator_register) from [<c05e6218>] 
+(tps65090_regulator_probe+0x150/0x648)
+[<c05e6218>] (tps65090_regulator_probe) from [<c06aca70>] 
+(platform_probe+0x80/0xc0)
+[<c06aca70>] (platform_probe) from [<c06a9b9c>] (really_probe+0x1d4/0x4ec)
+[<c06a9b9c>] (really_probe) from [<c06a9f2c>] 
+(driver_probe_device+0x78/0x1d8)
+[<c06a9f2c>] (driver_probe_device) from [<c06a7c24>] 
+(bus_for_each_drv+0x78/0xbc)
+[<c06a7c24>] (bus_for_each_drv) from [<c06a9928>] 
+(__device_attach+0xe8/0x180)
+[<c06a9928>] (__device_attach) from [<c06a89d0>] 
+(bus_probe_device+0x88/0x90)
+[<c06a89d0>] (bus_probe_device) from [<c06a662c>] (device_add+0x4c8/0x7ec)
+[<c06a662c>] (device_add) from [<c06ac634>] 
+(platform_device_add+0x120/0x25c)
+[<c06ac634>] (platform_device_add) from [<c06de87c>] 
+(mfd_add_devices+0x580/0x60c)
+[<c06de87c>] (mfd_add_devices) from [<c06e0ce8>] 
+(tps65090_i2c_probe+0xb8/0x184)
+[<c06e0ce8>] (tps65090_i2c_probe) from [<c082d2b8>] 
+(i2c_device_probe+0x234/0x2a4)
+[<c082d2b8>] (i2c_device_probe) from [<c06a9b9c>] (really_probe+0x1d4/0x4ec)
+[<c06a9b9c>] (really_probe) from [<c06a9f2c>] 
+(driver_probe_device+0x78/0x1d8)
+[<c06a9f2c>] (driver_probe_device) from [<c06a7c24>] 
+(bus_for_each_drv+0x78/0xbc)
+[<c06a7c24>] (bus_for_each_drv) from [<c06a9928>] 
+(__device_attach+0xe8/0x180)
+[<c06a9928>] (__device_attach) from [<c06a89d0>] 
+(bus_probe_device+0x88/0x90)
+[<c06a89d0>] (bus_probe_device) from [<c06a662c>] (device_add+0x4c8/0x7ec)
+[<c06a662c>] (device_add) from [<c082f884>] 
+(i2c_new_client_device+0x15c/0x27c)
+[<c082f884>] (i2c_new_client_device) from [<c08332dc>] 
+(of_i2c_register_devices+0x114/0x184)
+[<c08332dc>] (of_i2c_register_devices) from [<c0830250>] 
+(i2c_register_adapter+0x1d8/0x6dc)
+[<c0830250>] (i2c_register_adapter) from [<c0838a1c>] 
+(ec_i2c_probe+0xc8/0x124)
+[<c0838a1c>] (ec_i2c_probe) from [<c06aca70>] (platform_probe+0x80/0xc0)
+[<c06aca70>] (platform_probe) from [<c06a9b9c>] (really_probe+0x1d4/0x4ec)
+[<c06a9b9c>] (really_probe) from [<c06a9f2c>] 
+(driver_probe_device+0x78/0x1d8)
+[<c06a9f2c>] (driver_probe_device) from [<c06a7c24>] 
+(bus_for_each_drv+0x78/0xbc)
+[<c06a7c24>] (bus_for_each_drv) from [<c06a9928>] 
+(__device_attach+0xe8/0x180)
+[<c06a9928>] (__device_attach) from [<c06a89d0>] 
+(bus_probe_device+0x88/0x90)
+[<c06a89d0>] (bus_probe_device) from [<c06a662c>] (device_add+0x4c8/0x7ec)
+[<c06a662c>] (device_add) from [<c08bba20>] 
+(of_platform_device_create_pdata+0x90/0xc8)
+[<c08bba20>] (of_platform_device_create_pdata) from [<c08bbc04>] 
+(of_platform_bus_create+0x1a0/0x4ec)
+[<c08bbc04>] (of_platform_bus_create) from [<c08bc104>] 
+(of_platform_populate+0x88/0x120)
+[<c08bc104>] (of_platform_populate) from [<c08bc1f0>] 
+(devm_of_platform_populate+0x40/0x80)
+[<c08bc1f0>] (devm_of_platform_populate) from [<c08c1910>] 
+(cros_ec_register+0x174/0x308)
+[<c08c1910>] (cros_ec_register) from [<c08c2ca0>] 
+(cros_ec_spi_probe+0x16c/0x1ec)
+[<c08c2ca0>] (cros_ec_spi_probe) from [<c07240fc>] (spi_probe+0x88/0xac)
+[<c07240fc>] (spi_probe) from [<c06a9b9c>] (really_probe+0x1d4/0x4ec)
+[<c06a9b9c>] (really_probe) from [<c06a9f2c>] 
+(driver_probe_device+0x78/0x1d8)
+[<c06a9f2c>] (driver_probe_device) from [<c06aa444>] 
+(device_driver_attach+0x58/0x60)
+[<c06aa444>] (device_driver_attach) from [<c06aa548>] 
+(__driver_attach+0xfc/0x160)
+[<c06aa548>] (__driver_attach) from [<c06a7b4c>] 
+(bus_for_each_dev+0x6c/0xb8)
+[<c06a7b4c>] (bus_for_each_dev) from [<c06a8c84>] 
+(bus_add_driver+0x170/0x20c)
+[<c06a8c84>] (bus_add_driver) from [<c06ab3e8>] (driver_register+0x78/0x10c)
+[<c06ab3e8>] (driver_register) from [<c0102428>] 
+(do_one_initcall+0x88/0x438)
+[<c0102428>] (do_one_initcall) from [<c11010d4>] 
+(kernel_init_freeable+0x190/0x1e0)
+[<c11010d4>] (kernel_init_freeable) from [<c0b47db0>] 
+(kernel_init+0x8/0x118)
+[<c0b47db0>] (kernel_init) from [<c010011c>] (ret_from_fork+0x14/0x38)
+Exception stack(0xc1ce3fb0 to 0xc1ce3ff8)
+
+Best regards
+
 -- 
-2.30.0
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
