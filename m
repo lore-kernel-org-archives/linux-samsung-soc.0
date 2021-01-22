@@ -2,121 +2,103 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B238FC07EBC
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B37CC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 Jan 2021 13:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 895CA20739
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:55:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B98CB23444
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 Jan 2021 13:16:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbhAVJ1N (ORCPT
+        id S1727256AbhAVNQQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 22 Jan 2021 04:27:13 -0500
-Received: from www.zeus03.de ([194.117.254.33]:50346 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727321AbhAVJKO (ORCPT
+        Fri, 22 Jan 2021 08:16:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36264 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726997AbhAVNQL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 22 Jan 2021 04:10:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=yYGvRI5vU3fWCM5zTsEM9UPJW0uU
-        gsJKQhaglDaenrM=; b=kJqgN858MMfySUKcQZaPyYhlmhOPyH0C5Fa4MrjCB99y
-        GEgZH833rd0HaPgDTAtvOR789ZFd5DCNOz3s8WzRbxkxhuI6ZxwuEug3uvIMZKYt
-        Fcx84FSTMSAsvty5YUZIfvL3rvuIgSqbA+q7ELlR1Z21PYH3ja1PtSxVS/w6FTo=
-Received: (qmail 2271039 invoked from network); 22 Jan 2021 10:02:34 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Jan 2021 10:02:34 +0100
-X-UD-Smtp-Session: l3s3148p1@Itjzcnm5iOkgAwDPXwqqAP3nWBA3ETDu
-Date:   Fri, 22 Jan 2021 10:02:34 +0100
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 0/8] i2c: improve RECV_LEN documentation & usage
-Message-ID: <20210122090234.GE858@kunai>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20210109124314.27466-1-wsa+renesas@sang-engineering.com>
+        Fri, 22 Jan 2021 08:16:11 -0500
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BE29C06174A
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jan 2021 05:15:31 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id f11so6443476ljm.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jan 2021 05:15:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XPOjidGOoz6G849r0XktZlM350N7naajoXOO2w5nwCI=;
+        b=FkNuR0pa++Cezk9GaW6HZnS/zZJ6J/6o2Tn/LzPmBo75x+PwTAbHFGWcS0OcozlGpt
+         YA79jVcGdWYZBFhYa5ZN/SD9DFgQS3KhorU7QPSx6QSyOcSg1WFq63PyLUNLROusP11h
+         MyGLarBcDR83HCx3ROGxToURYaLbH8TW+bk/wTdmW2c9tlU1ELpjD3ruUnQWCvWQaFQH
+         X6Z5XtP4ZcV9yu8aRlZh/bkCjaLODi0kbnv3w3q2448bXQa8vyz3kRVGgfO2xkP8lN4S
+         BWmj8LAGpcALdRrxFpLFaobstCwurOyZcITDleUNtYrjknWd9JqTXMlzgXTltmlbwGBs
+         ngew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XPOjidGOoz6G849r0XktZlM350N7naajoXOO2w5nwCI=;
+        b=PGSe6E2YkRABXrEfb3Ef9viytgmOScw47fQlw7+mPHQUxaj/2vdojqdywG6Du+B8pH
+         b6jDUw+ZHg6cXuaJUy1W1AkQVRbaeOmt/BVrNTlhXpeZF1xlm014REeLUAOraiZqIP3W
+         NLw9HmN51mQ+gK6WyxhNvPSQYwsr8I9n51cqlFe2EkuDeV3ZwfB5P7uyztARQQDu/RPR
+         OB4W6W083yOwNeePaw08rkvdBAnVb+VN6ytBg8N6NizEI/qv6RBLJGAeXLPXUEnxAnyV
+         NQvZF5YKCyJgtQAzk6Zofv/lkGv9WjtL0QSfF+Bk9bPRKeqUgPDyI830NQBvrOOmj9VN
+         39bw==
+X-Gm-Message-State: AOAM532BQWFs71WqBgoqM1NTOzfSHi6GDAK6V2GkesnNt8JM8N7Xt9dN
+        44/yIh6eL4Mmky9qfq4NxHQVqc5L0mxAc3mlv5PczA==
+X-Google-Smtp-Source: ABdhPJyR4LVnBW4RY9iZkqhMh090DRIFoHPlq+WdeBLHMiG0h0B55OsiSe/VpBs2qHa3ry9L5vYsZ7IANch8ByyfGx8=
+X-Received: by 2002:a2e:9dc3:: with SMTP id x3mr771911ljj.326.1611321329706;
+ Fri, 22 Jan 2021 05:15:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mR8QP4gmHujQHb1c"
-Content-Disposition: inline
-In-Reply-To: <20210109124314.27466-1-wsa+renesas@sang-engineering.com>
+References: <CGME20210121030006epcas2p40fd4e30ae5bf514b7891a464462db7be@epcas2p4.samsung.com>
+ <20210121030009.25673-1-chanho61.park@samsung.com>
+In-Reply-To: <20210121030009.25673-1-chanho61.park@samsung.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 22 Jan 2021 14:15:18 +0100
+Message-ID: <CACRpkdZ26sNR+oZy_f6JR4ZuNWS9PoVAm-OuNwgzCAuhEBGTeQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: use raw_spinlock for locking
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Thu, Jan 21, 2021 at 4:00 AM Chanho Park <chanho61.park@samsung.com> wrote:
 
---mR8QP4gmHujQHb1c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> This patch converts spin_[lock|unlock] functions of pin bank to
+> raw_spinlock to support preempt-rt. This can avoid BUG() assertion when
+> irqchip callbacks are triggerred. Spinlocks can be converted rt_mutex
+> which is preemptible when we apply preempt-rt patches.
+>
+> According to "Documentation/driver-api/gpio/driver.rst",
+>
+> "Realtime considerations: a realtime compliant GPIO driver should not
+> use spinlock_t or any sleepable APIs (like PM runtime) as part of its
+> irqchip implementation.
+>
+> - spinlock_t should be replaced with raw_spinlock_t.[1]
+> "
+>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 
-On Sat, Jan 09, 2021 at 01:43:04PM +0100, Wolfram Sang wrote:
-> Because I want to clarify I2C_M_RECV len usage, this series updates the
-> documentation and some of its users. Patch 1 refactors the whole
-> documentation of 'i2c_msg', so all usage of I2C_M_* flags and their
-> conditions hopefully become clearer. Patch 2+3 remove some obvious
-> boilerplate in the UAPI headers while here. Patch 4 is a driver fix I
-> found while working on this series. Patch 5 introduces a new convenience
-> macro to enable SMBus transfers which need I2C_M_RECV_LEN. Then, some
-> drivers use the new macro, sometimes to remove boilerplate, sometimes
-> because these SMBus transfers have been forgotten before.
->=20
-> This series is the first part of a larger work to extend I2C_M_RECV_LEN
-> to allow larger transfer sizes (as specified in the SMBus 3.0 standard)
-> and to enable this on Renesas R-Car hardware.
->=20
-> Looking forward to comments and/or reviews; the driver patches are only
-> build-tested.
->=20
-> Happy hacking,
->=20
->    Wolfram
->=20
->=20
-> Wolfram Sang (8):
->   i2c: refactor documentation of struct i2c_msg
->   i2c: remove licence boilerplate from main UAPI header
->   i2c: remove licence boilerplate from i2c-dev UAPI header
->   i2c: octeon: check correct size of maximum RECV_LEN packet
->   i2c: uapi: add macro to describe support for all SMBus transfers
->   i2c: algo: bit: use new macro to specifiy capabilities
->   i2c: qup: advertise SMBus transfers using RECV_LEN
->   i2c: s3c2410: advertise SMBus transfers using RECV_LEN
->=20
->  drivers/i2c/algos/i2c-algo-bit.c     |   4 +-
->  drivers/i2c/busses/i2c-octeon-core.c |   2 +-
->  drivers/i2c/busses/i2c-qup.c         |   2 +-
->  drivers/i2c/busses/i2c-s3c2410.c     |   2 +-
+Looks correct to me.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Applied to for-next, thanks!
+Krzysztof, will you collect Samsung patches for this merge window or
+shall I apply it directly?
 
-
---mR8QP4gmHujQHb1c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmAKlKoACgkQFA3kzBSg
-KbadmxAAgAsFpg45B6cfikhrtCMoQ9WUcg8TTipybmy33IOSiLZCrJ8DpzxkuWr4
-P4AirjpXtJuE/ibNXHGYhBr1AeXqL4jkKjkYkgNvXhvb77XEGwOThF/AVCOUS2Gf
-r0mgLfwF0zs1DTPtFKhX6yrANTmjriMY5uyAaBCIgd5zmo72cH2k8ozasBwQztrc
-rt39OTTt8ZDJonrCfVLUoj6p2YyuYQUNkBDtbQG/v/jxTw2G7CJErFUUXiu7W4R2
-kIJh5pH/aK5NqrUAGS86hmDUoIM6XXyIU5ddtLVBySB558yIWXZ9lgXKnvsw1JGs
-CyyV7x5almZQCSM8jVzSyz8aYpxJluACdJ4cdPojFODwG88cblfime/6olQGDWRF
-cG1LYLFyPpWYQjHi2LMX3YojJZBPFSFhOJF1hM8NjZpqEpS+9ZBWgy3uB+plXcUB
-Hlg9g0RrfufrDAzEomzASaQpYkbCxk6OAyXE50QieOJc5K6mYCSdANrdcQDgdTFR
-q6bv0MaG0xKbbRmTX7idzpstAvdj5mh0aPC13WVY0P5W8qRTsuY8j8splZffaOad
-4vcC3CWlHz/vfisQnCt4TwzqYYI4K0jYW7N+giOW9drP/hstaZXqFwYZnlo53ZV3
-XoisBWQA9qkTrhbvQA+b7E7NJzm4q8ZX+xfi20VlaVZgxg4voEY=
-=H1I2
------END PGP SIGNATURE-----
-
---mR8QP4gmHujQHb1c--
+Yours,
+Linus Walleij
