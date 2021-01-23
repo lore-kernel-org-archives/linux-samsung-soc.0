@@ -2,100 +2,181 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 678DEC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 Jan 2021 13:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2B0C433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 Jan 2021 01:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3892E239D1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 Jan 2021 13:23:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 779CE23B55
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 Jan 2021 01:56:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbhAVNWk (ORCPT
+        id S1726048AbhAWB4D (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 22 Jan 2021 08:22:40 -0500
-Received: from mail-wm1-f51.google.com ([209.85.128.51]:53341 "EHLO
-        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727820AbhAVNW0 (ORCPT
+        Fri, 22 Jan 2021 20:56:03 -0500
+Received: from a1.mail.mailgun.net ([198.61.254.60]:41282 "EHLO
+        a1.mail.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726287AbhAWBz7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 22 Jan 2021 08:22:26 -0500
-Received: by mail-wm1-f51.google.com with SMTP id j18so4296964wmi.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jan 2021 05:22:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=e94xpvHI68qewB3epNIKMs2mX0bh71LFJru0+VzFv6E=;
-        b=uJ/g5867KzO09Obpprkl1SNTrzbLsROhtwXCtYRE4nNcoxcbttlhtWKrN71RHV+qy9
-         Emdu4scmYQYXUAzxVFRxV+p1l7UZ5mcWs5kKKAxc+lDIgr8OOPCxuAKhNo9DGLlDfYXa
-         HlGNEKlsKRcnkgF29vrH8VlyWU3bpzSkajAYWOpHtRupKWS12AOHR6lAUuXUWSBWdd8N
-         Ppbo4jlfVvGjW2tqLaDxsoX2/nhP19p3iuJIie5gdEqCaXlI7xhY07Oodzqkqb/UY093
-         d5c28iPAg71CAOzzjLCVDTOT3ep6nQItpnvIyDGFVUjxgC1XZQq0zecLjHXikH6Uj8Z1
-         qdQw==
-X-Gm-Message-State: AOAM533vFZ3uMBWnzJ6VYteha6XkdTXHd45Vj0gwL/Fu9fyprFGjcghk
-        jqn47S+qKfK9oLHUzpG3ds/QRbQ3xtY=
-X-Google-Smtp-Source: ABdhPJz3G+usrphZflUrpzU6OpgfYcInlZR8VWtTfm5wlnDAslStKxKPVKblJ437icGx1f5iTgLXLQ==
-X-Received: by 2002:a05:600c:214d:: with SMTP id v13mr4021568wml.186.1611321702432;
-        Fri, 22 Jan 2021 05:21:42 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id l1sm4981111wrp.40.2021.01.22.05.21.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Jan 2021 05:21:41 -0800 (PST)
-Date:   Fri, 22 Jan 2021 14:21:39 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Chanho Park <chanho61.park@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH] pinctrl: samsung: use raw_spinlock for locking
-Message-ID: <20210122132139.cowdrtjhdoicdsvv@kozik-lap>
-References: <CGME20210121030006epcas2p40fd4e30ae5bf514b7891a464462db7be@epcas2p4.samsung.com>
- <20210121030009.25673-1-chanho61.park@samsung.com>
- <CACRpkdZ26sNR+oZy_f6JR4ZuNWS9PoVAm-OuNwgzCAuhEBGTeQ@mail.gmail.com>
+        Fri, 22 Jan 2021 20:55:59 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1611366935; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=PSuBZhuZUbMXWczL8TbyXTEbtdPcTovEfVwdjNUqKUs=; b=C5fLy4FxsEIZWO64M7L8gtbRcsTp48S7HZRsRbe89F4Ttq8oaF/KIPPWUdcxT3zo0zF2lC6z
+ V6+OU0lOrerFS+SXat7oD0/bNUlGeCKnEzf397Am035jwgt9gK9F5WCLtV4OOGYzg32UQvsD
+ 5REVkhoJ/0lJRY7yu/mcR5kDHaM=
+X-Mailgun-Sending-Ip: 198.61.254.60
+X-Mailgun-Sid: WyJhY2Q3MCIsICJsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
+ 600b81f8beacd1a2525bd860 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 23 Jan 2021 01:55:04
+ GMT
+Sender: collinsd=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 4671BC43461; Sat, 23 Jan 2021 01:55:03 +0000 (UTC)
+Received: from [10.46.160.165] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: collinsd)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4F7ECC433CA;
+        Sat, 23 Jan 2021 01:54:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F7ECC433CA
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH] regulator: core: avoid regulator_resolve_supply() race
+ condition
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+References: <1610068562-4410-1-git-send-email-collinsd@codeaurora.org>
+ <CGME20210112213419eucas1p24231e4d0ac11c31184f2f8f3f20cbd9d@eucas1p2.samsung.com>
+ <e512ee85-7fa6-e5fe-eb30-f088bb83cf23@samsung.com>
+ <20210118204958.GS4455@sirena.org.uk>
+ <5f37ae96-c5f9-6619-d88f-21c5e483ff8e@samsung.com>
+ <20210121154418.GE4588@sirena.org.uk>
+ <e7e4b633-21cb-54e6-f75c-fac28147396c@samsung.com>
+From:   David Collins <collinsd@codeaurora.org>
+Message-ID: <5d02de1f-a6f4-c564-6738-2ca46b5d5cc0@codeaurora.org>
+Date:   Fri, 22 Jan 2021 17:54:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZ26sNR+oZy_f6JR4ZuNWS9PoVAm-OuNwgzCAuhEBGTeQ@mail.gmail.com>
+In-Reply-To: <e7e4b633-21cb-54e6-f75c-fac28147396c@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jan 22, 2021 at 02:15:18PM +0100, Linus Walleij wrote:
-> On Thu, Jan 21, 2021 at 4:00 AM Chanho Park <chanho61.park@samsung.com> wrote:
-> 
-> > This patch converts spin_[lock|unlock] functions of pin bank to
-> > raw_spinlock to support preempt-rt. This can avoid BUG() assertion when
-> > irqchip callbacks are triggerred. Spinlocks can be converted rt_mutex
-> > which is preemptible when we apply preempt-rt patches.
-> >
-> > According to "Documentation/driver-api/gpio/driver.rst",
-> >
-> > "Realtime considerations: a realtime compliant GPIO driver should not
-> > use spinlock_t or any sleepable APIs (like PM runtime) as part of its
-> > irqchip implementation.
-> >
-> > - spinlock_t should be replaced with raw_spinlock_t.[1]
-> > "
-> >
-> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> > Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> > Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> 
-> Looks correct to me.
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Krzysztof, will you collect Samsung patches for this merge window or
-> shall I apply it directly?
+Hello Mark,
 
-I don't have anything in the queue so far and I don't see any patches
-incomming, so maybe take it directly?
+On 1/21/21 12:30 PM, Marek Szyprowski wrote:
+> Hi Mark,
+> 
+> On 21.01.2021 16:44, Mark Brown wrote:
+>> On Thu, Jan 21, 2021 at 10:41:59AM +0100, Marek Szyprowski wrote:
+>>> On 18.01.2021 21:49, Mark Brown wrote:
+>>>> Does this help (completely untested):
+>>> Sadly nope. I get same warning:
+>> Try this instead:
+>>
+>> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+>> index 3ae5ccd9277d..31503776dbd7 100644
+>> --- a/drivers/regulator/core.c
+>> +++ b/drivers/regulator/core.c
+>> @@ -1823,17 +1823,6 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
+>>    	if (rdev->supply)
+>>    		return 0;
+>>    
+>> -	/*
+>> -	 * Recheck rdev->supply with rdev->mutex lock held to avoid a race
+>> -	 * between rdev->supply null check and setting rdev->supply in
+>> -	 * set_supply() from concurrent tasks.
+>> -	 */
+>> -	regulator_lock(rdev);
+>> -
+>> -	/* Supply just resolved by a concurrent task? */
+>> -	if (rdev->supply)
+>> -		goto out;
+>> -
+>>    	r = regulator_dev_lookup(dev, rdev->supply_name);
+>>    	if (IS_ERR(r)) {
+>>    		ret = PTR_ERR(r);
+>> @@ -1885,12 +1874,29 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
+>>    		goto out;
+>>    	}
+>>    
+>> +	/*
+>> +	 * Recheck rdev->supply with rdev->mutex lock held to avoid a race
+>> +	 * between rdev->supply null check and setting rdev->supply in
+>> +	 * set_supply() from concurrent tasks.
+>> +	 */
+>> +	regulator_lock(rdev);
+>> +
+>> +	/* Supply just resolved by a concurrent task? */
+>> +	if (rdev->supply) {
+>> +		regulator_unlock(rdev);
+>> +		put_device(&r->dev);
+>> +		return ret;
+>> +	}
+>> +
+>>    	ret = set_supply(rdev, r);
+>>    	if (ret < 0) {
+>> +		regulator_unlock(rdev);
+>>    		put_device(&r->dev);
+>> -		goto out;
+>> +		return ret;
+>>    	}
+>>    
+>> +	regulator_unlock(rdev);
+>> +
+>>    	/*
+>>    	 * In set_machine_constraints() we may have turned this regulator on
+>>    	 * but we couldn't propagate to the supply if it hadn't been resolved
+>> @@ -1901,12 +1907,11 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
+>>    		if (ret < 0) {
+>>    			_regulator_put(rdev->supply);
+>>    			rdev->supply = NULL;
+>> -			goto out;
+>> +			goto out_rdev_lock;
+> 
+> drivers/regulator/core.c:1910:4: error: label ‘out_rdev_lock’ used but
+> not defined
+> 
+>>    		}
+>>    	}
+>>    
+>>    out:
+>> -	regulator_unlock(rdev);
+>>    	return ret;
+>>    }
+>>    
+> 
+> It looks that it finally fixes the locking issue, with the above goto
+> removed completely to fix build. Feel free to add:
+> 
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Thank you for making this fix.  I'm sorry that I missed the potential 
+deadlock issue resulting from the regulator_enable() call inside 
+regulator_resolve_supply() with rdev->mutex locked.  Your fix avoids 
+deadlock while still ensuring that the there isn't a set supply race 
+condition.
 
-Best regards,
-Krzysztof
+Take care,
+David
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
