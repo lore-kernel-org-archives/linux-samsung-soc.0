@@ -2,193 +2,222 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C20F9C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Jan 2021 05:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6409BC433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Jan 2021 05:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA10207B1
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Jan 2021 05:57:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D702223D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Jan 2021 05:57:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbhAZF5K (ORCPT
+        id S1731946AbhAZF5M (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 26 Jan 2021 00:57:10 -0500
-Received: from mga02.intel.com ([134.134.136.20]:47122 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727837AbhAYMLv (ORCPT
+        Tue, 26 Jan 2021 00:57:12 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:56604 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729123AbhAYQzV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 25 Jan 2021 07:11:51 -0500
-IronPort-SDR: fqz5a1tn3qhlMUlkY76XwQXck4G6XKSaQOGwObuDQINO2RFZplUNFUZ0mza3zGyUSkwAAvW5Ko
- mN5FdGqLc2gg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9874"; a="166812576"
-X-IronPort-AV: E=Sophos;i="5.79,373,1602572400"; 
-   d="scan'208";a="166812576"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2021 03:52:51 -0800
-IronPort-SDR: 48DaYsnvHv+gYU3iB0lIM7aytVWrCoDavD2mjf0kyTM07tuyUD4vfRcB0epq/cCvtOYMGfxoLJ
- ZQzg2k7suibA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.79,373,1602572400"; 
-   d="scan'208";a="472167193"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga001.fm.intel.com with SMTP; 25 Jan 2021 03:52:39 -0800
-Received: by stinkbox (sSMTP sendmail emulation); Mon, 25 Jan 2021 13:52:38 +0200
-Date:   Mon, 25 Jan 2021 13:52:38 +0200
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Marek Vasut <marex@denx.de>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-mediatek@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>,
+        Mon, 25 Jan 2021 11:55:21 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210125165423euoutp026a227f73bb1d2e43bf5e5e326b2a0210~dh_Xkz4k21234712347euoutp02R
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jan 2021 16:54:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210125165423euoutp026a227f73bb1d2e43bf5e5e326b2a0210~dh_Xkz4k21234712347euoutp02R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1611593663;
+        bh=27homzhxtOgQquKIw/0+3LoypE6+9O9g4fIKMDgjxBE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iIf7UYTIH5IDCW+fbwT4b49jWJVb2q6Xa34mLdc0Hrr0bwihhdcR/AY4SmHO5x4vG
+         0BYLGOkBqUlnk7OS3QabvVVDygLucPZ/Xc5jZpBTYXiAOxT4qFwB64sF+anAFzSra/
+         fu//+o0cbSXzu/hkoJFYHRnTKQQdCnaiiOsUogOY=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210125165422eucas1p297009fa0b2a769716bde6b409b0c6cd8~dh_W1YjJ41974219742eucas1p2i;
+        Mon, 25 Jan 2021 16:54:22 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id F7.BF.45488.EB7FE006; Mon, 25
+        Jan 2021 16:54:22 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210125165421eucas1p16dc1839cfabb66a1049b92daf0c7d483~dh_Wefovo2390323903eucas1p1H;
+        Mon, 25 Jan 2021 16:54:21 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210125165421eusmtrp2ae4537855e94205cf444148ac71d11ad~dh_WdzYlC0209902099eusmtrp2E;
+        Mon, 25 Jan 2021 16:54:21 +0000 (GMT)
+X-AuditID: cbfec7f5-c5fff7000000b1b0-35-600ef7bee532
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 0D.D5.21957.DB7FE006; Mon, 25
+        Jan 2021 16:54:21 +0000 (GMT)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210125165421eusmtip2b1638da4f06d38dfd36bb10f31a1c214~dh_WM4J3Q2870728707eusmtip2B;
+        Mon, 25 Jan 2021 16:54:21 +0000 (GMT)
+From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-msm@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
-        linux-mips@vger.kernel.org,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Alison Wang <alison.wang@nxp.com>,
-        dri-devel@lists.freedesktop.org,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-amlogic@lists.infradead.org, freedreno@lists.freedesktop.org,
-        Sean Paul <sean@poorly.run>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Tomi Valkeinen <tomba@kernel.org>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Sandy Huang <hjc@rock-chips.com>, linux-kernel@vger.kernel.org,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Tian Tao <tiantao6@hisilicon.com>
-Subject: Re: [PATCH v2 08/11] drm: Rename plane->state variables in atomic
- update and disable
-Message-ID: <YA6xBuECFjzjY7gG@intel.com>
-References: <20210121163537.1466118-1-maxime@cerno.tech>
- <20210121163537.1466118-8-maxime@cerno.tech>
- <YArBy2DKdCct5cYW@intel.com>
- <20210125105218.kv63vjbxz5b35hdo@gilmour>
+        linux-samsung-soc@vger.kernel.org
+Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v11 2/3] dt-bindings: net: Add bindings for AX88796C SPI
+ Ethernet Adapter
+Date:   Mon, 25 Jan 2021 17:54:05 +0100
+Message-Id: <20210125165406.9692-3-l.stelmach@samsung.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20210125165406.9692-1-l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Organization: Samsung R&D Institute Poland
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210125105218.kv63vjbxz5b35hdo@gilmour>
-X-Patchwork-Hint: comment
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKKsWRmVeSWpSXmKPExsWy7djP87r7vvMlGFzr57c4f/cQs8XGGetZ
+        Leacb2GxmH/kHKvFovczWC2uvb3DatH/+DWzxfnzG9gtLmzrY7W4eWgFo8Wmx9dYLS7vmsNm
+        MeP8PiaLQ1P3MlqsPXKX3eLYAjGL1r1H2C3+79nB7iDkcfnaRWaPLStvMnnsnHWX3WPTqk42
+        j81L6j127vjM5NG3ZRWjx+dNcgEcUVw2Kak5mWWpRfp2CVwZV4+ZFZwXrljQ+5OpgXEKfxcj
+        J4eEgInEgSOrGLsYuTiEBFYwSuw4cYgFwvnCKHFr5mo2COczo8SpF6tZYFo2PloDZgsJLGeU
+        WD3DDqLoOaPE3Jt3mEESbAKOEv1LT7CCJEQE7jFLrG9/ALaEWeA+o8S956vBqoQFoiX+9rcz
+        gdgsAqoSJ9qvsILYvAJWEg/eb2SGWCcv0b58OxuIzSlgLfHk8HwmiBpBiZMzn4CdwS+gJbGm
+        6TqYzQxU37x1NjPIMgmBU5wS6z71MkIMcpH48mEG1A/CEq+Ob2GHsGUk/u8EGcoBZNdLTJ5k
+        BtHbwyixbc4PqHpriTvnfrGB1DALaEqs36UPEXaUOLOpmxGilU/ixltBiBP4JCZtm84MEeaV
+        6GgTgqhWkVjXvwdqoJRE76sVjBMYlWYheWYWkgdmIexawMi8ilE8tbQ4Nz212DgvtVyvODG3
+        uDQvXS85P3cTIzDlnf53/OsOxhWvPuodYmTiYDzEKMHBrCTCu1uPJ0GINyWxsiq1KD++qDQn
+        tfgQozQHi5I4766ta+KFBNITS1KzU1MLUotgskwcnFINTB0Rx/XnZRQz+ThvYo2wl/qZMu+c
+        wqTsJNmnz5gOJ96JrlyVE2DVecg9pZ9fIEX/9Kb3JmlurZL9ThPiF2Te7LbdLCFRuWOfm3+e
+        LbPvtp9umXIik36ISZSdeVTXs++e17+0fP6zeSZPLiV32b7s39ttWTxpbVqOQ2PDVi6RWnGF
+        1xs9D/4MnucvXhJ5ZOust4t8V17xj2Jxe5HzQPQsQ0L2RsalR9yUnmz8vEFKJmPJguOfL4cv
+        O2HrtEBg25Gd0hMz2t+f82f5vLveOTxLbfmZPe/7hSuDH2t6bVZTE3vCfkSCNUbWzsbtc78M
+        X+/XG1b/hO8t+8XUNM1UiXenqdpX5QJv3qDy5N69KoFKLMUZiYZazEXFiQDnJIRQ6AMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsVy+t/xe7p7v/MlGCz7om9x/u4hZouNM9az
+        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2px89AKRotNj6+xWlzeNYfN
+        Ysb5fUwWh6buZbRYe+Quu8WxBWIWrXuPsFv837OD3UHI4/K1i8weW1beZPLYOesuu8emVZ1s
+        HpuX1Hvs3PGZyaNvyypGj8+b5AI4ovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOt
+        jEyV9O1sUlJzMstSi/TtEvQyrh4zKzgvXLGg9ydTA+MU/i5GTg4JAROJjY/WsHQxcnEICSxl
+        lDix/xdTFyMHUEJKYuXcdIgaYYk/17rYIGqeMkpsfP2BHSTBJuAo0b/0BCtIQkTgDbNE0723
+        7CAOs8B9Rolfn14wglQJC0RKbD/zlRnEZhFQlTjRfoUVxOYVsJJ48H4jM8QKeYn25dvZQGxO
+        AWuJJ4fnM4HYQkA1519+Y4OoF5Q4OfMJC8h1zALqEuvnCYGE+QW0JNY0XWcBsZmBxjRvnc08
+        gVFoFpKOWQgds5BULWBkXsUoklpanJueW2yoV5yYW1yal66XnJ+7iREY4duO/dy8g3Heq496
+        hxiZOBgPMUpwMCuJ8O7W40kQ4k1JrKxKLcqPLyrNSS0+xGgK9NlEZinR5HxgiskriTc0MzA1
+        NDGzNDC1NDNWEufdOndNvJBAemJJanZqakFqEUwfEwenVAPToq/PL976f+9T2i1rZlerJ+J3
+        JNgZdt45tXy7+uXNDyTcbqxZJSvcFFSr5B7IbbP86xyfwpo/Ek+u3wjwLytRXcv1ZaL/Zpa7
+        Zbne89f/mOWdW1V6wLrxudCenw8qfYynKDXo1ihYcNRra029GH77j8z/N4y8czK1X0xqb9uU
+        4Kp7TOPnQ9N/X69qmalWiSqmCpqav5rBeeHU0myRiYZPnxVrnWxbn5xt+cf5jPTc1a3fOefG
+        pDG63m+5wfE1dd+DcNYZU6NO7zoe8LjN2zKXSTv7tvCDt4nKsz5eP1TpdXzRo2v725LvKXAz
+        XDQ8Pz9CjClJ9SBfJteteWnPl6zcc/XSvk2ci/SDY9IPGwZ3KrEUZyQaajEXFScCAJitDCF5
+        AwAA
+X-CMS-MailID: 20210125165421eucas1p16dc1839cfabb66a1049b92daf0c7d483
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210125165421eucas1p16dc1839cfabb66a1049b92daf0c7d483
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210125165421eucas1p16dc1839cfabb66a1049b92daf0c7d483
+References: <20210125165406.9692-1-l.stelmach@samsung.com>
+        <CGME20210125165421eucas1p16dc1839cfabb66a1049b92daf0c7d483@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 11:52:18AM +0100, Maxime Ripard wrote:
-> Hi Ville,
-> 
-> On Fri, Jan 22, 2021 at 02:15:07PM +0200, Ville Syrj‰l‰ wrote:
-> > On Thu, Jan 21, 2021 at 05:35:33PM +0100, Maxime Ripard wrote:
-> > > Some drivers are storing the plane->state pointer in atomic_update and
-> > > atomic_disable in a variable simply called state, while the state passed
-> > > as an argument is called old_state.
-> > > 
-> > > In order to ease subsequent reworks and to avoid confusing or
-> > > inconsistent names, let's rename those variables to new_state.
-> > > 
-> > > This was done using the following coccinelle script, plus some manual
-> > > changes for mtk and tegra.
-> > > 
-> > > @ plane_atomic_func @
-> > > identifier helpers;
-> > > identifier func;
-> > > @@
-> > > 
-> > > (
-> > >  static const struct drm_plane_helper_funcs helpers = {
-> > >  	...,
-> > >  	.atomic_disable = func,
-> > > 	...,
-> > >  };
-> > > |
-> > >  static const struct drm_plane_helper_funcs helpers = {
-> > >  	...,
-> > >  	.atomic_update = func,
-> > > 	...,
-> > >  };
-> > > )
-> > > 
-> > > @ moves_new_state_old_state @
-> > > identifier plane_atomic_func.func;
-> > > identifier plane;
-> > > symbol old_state;
-> > > symbol state;
-> > > @@
-> > > 
-> > >  func(struct drm_plane *plane, struct drm_plane_state *old_state)
-> > >  {
-> > >  	...
-> > > -	struct drm_plane_state *state = plane->state;
-> > > +	struct drm_plane_state *new_state = plane->state;
-> > > 	...
-> > >  }
-> > > 
-> > > @ depends on moves_new_state_old_state @
-> > > identifier plane_atomic_func.func;
-> > > identifier plane;
-> > > identifier old_state;
-> > > symbol state;
-> > > @@
-> > > 
-> > >  func(struct drm_plane *plane, struct drm_plane_state *old_state)
-> > >  {
-> > >  	<...
-> > > -	state
-> > > +	new_state
-> > > 	...>
-> > 
-> > Was going to say that this migh eat something else, but I guess
-> > the dependency prevents that?
-> 
-> Yeah, the dependency takes care of this
-> 
-> > Another way to avoid that I suppose would be to declare 'state'
-> > as
-> > symbol moves_new_state_old_state.state;
-> > 
-> > That would probably make the intent a bit more obvious, even with
-> > the dependency. Or does a dependency somehow automagically imply
-> > that?
-> 
-> I'm not sure if it does, but it's a symbol here not an identifier or an
-> expression, so here moves_new_state_old_state.state would always resolve
-> to state (and only state) anyway
+Add bindings for AX88796C SPI Ethernet Adapter.
 
-Hm. Right. OK, cocci bits look good to me. Variable naming
-bikeshed I'll leave to others :)
+Signed-off-by: ≈Åukasz Stelmach <l.stelmach@samsung.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ .../bindings/net/asix,ax88796c.yaml           | 73 +++++++++++++++++++
+ 1 file changed, 73 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/asix,ax88796c.yaml
 
-Reviewed-by: Ville Syrj‰l‰ <ville.syrjala@linux.intel.com>
-
+diff --git a/Documentation/devicetree/bindings/net/asix,ax88796c.yaml b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
+new file mode 100644
+index 000000000000..699ebf452479
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
+@@ -0,0 +1,73 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/asix,ax88796c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ASIX AX88796C SPI Ethernet Adapter
++
++maintainers:
++  - ≈Åukasz Stelmach <l.stelmach@samsung.com>
++
++description: |
++  ASIX AX88796C is an Ethernet controller with a built in PHY. This
++  describes SPI mode of the chip.
++
++  The node for this driver must be a child node of an SPI controller,
++  hence all mandatory properties described in
++  ../spi/spi-controller.yaml must be specified.
++
++allOf:
++  - $ref: ethernet-controller.yaml#
++
++properties:
++  compatible:
++    const: asix,ax88796c
++
++  reg:
++    maxItems: 1
++
++  spi-max-frequency:
++    maximum: 40000000
++
++  interrupts:
++    maxItems: 1
++
++  reset-gpios:
++    description:
++      A GPIO line handling reset of the chip. As the line is active low,
++      it should be marked GPIO_ACTIVE_LOW.
++    maxItems: 1
++
++  local-mac-address: true
++
++  mac-address: true
++
++required:
++  - compatible
++  - reg
++  - spi-max-frequency
++  - interrupts
++  - reset-gpios
++
++additionalProperties: false
++
++examples:
++  # Artik5 eval board
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/gpio/gpio.h>
++    spi0 {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        ethernet@0 {
++            compatible = "asix,ax88796c";
++            reg = <0x0>;
++            local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
++            interrupt-parent = <&gpx2>;
++            interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++            spi-max-frequency = <40000000>;
++            reset-gpios = <&gpe0 2 GPIO_ACTIVE_LOW>;
++        };
++    };
 -- 
-Ville Syrj‰l‰
-Intel
+2.26.2
+
