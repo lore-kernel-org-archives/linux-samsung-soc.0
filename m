@@ -2,99 +2,153 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B00DCC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 Jan 2021 22:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0B8C43381
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Jan 2021 17:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 720DA22CAF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 Jan 2021 22:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C4282251E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Jan 2021 17:09:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725932AbhAWWe6 (ORCPT
+        id S1729504AbhAYRJO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 23 Jan 2021 17:34:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41566 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbhAWWe6 (ORCPT
+        Mon, 25 Jan 2021 12:09:14 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40537 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728765AbhAYQ4L (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 23 Jan 2021 17:34:58 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BEC6C0613D6
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 23 Jan 2021 14:34:17 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id u11so10748745ljo.13
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 23 Jan 2021 14:34:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FwLmBssihYQ3sM43xaxZMzI3mK5zHOf2/GNKEjEjQ3I=;
-        b=J4IxoW32jijj81ByT036j1rgZzXNrYkLnY9ou/P+C7DZA6AC7cbOo0lmER+4o+o52t
-         IIcbXDys7aGCwLOQjgD/UaK4NKMtiV2xLjrtGDHtx91NTGmj0611Y4psagih9f4xO1B9
-         BwnAbVaEdzqqYeNC1C246GoMWs88Wy86VDZqZebM0Iz1gVvHhYImJAIXoZS1PEuJ/fES
-         3m7gmVXTkE332Fbntr6t3tizzqMRAbBqk9DXPGIkgx/s2Dw0Ms1DMif04brnPm6leHxR
-         +HH7qXoIFDiigggvcYcdow0y+CpSZ0HL/Sddcu6MrCtkCnxwjo0b4tw4KWji108HLlKK
-         tv9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FwLmBssihYQ3sM43xaxZMzI3mK5zHOf2/GNKEjEjQ3I=;
-        b=t4pQWqQQtqT1Uh+aUzVAf0xQkI8+XdgjE7rJe8Un6EPG9oxWuF7h/fAGZ74DJTXnhG
-         aKb7MmFNNwxgqI4tQjdNbnW76l2yqGeN7zHLFyQEfBAt8G2jXZwzDt8WuUtasYTaJe1a
-         k9+8f/Wl7wCG1oTH5tMRsBP0vABX0msBGHTnLMmKs/fGWGBVN3f8rIVHcolpyvfg+muN
-         ReR3sbdKHlZSn7Iz00Zw0RIDGV5PrOeOqAgal6VvOOXJiHGEObsG14saV20W9G5Ed8of
-         Opb5ghYCNdIT1mSImYHPEKnCYZi5ORZUWECgn7n+UnweLpflPbDDjThhEQ5swwWpjlLb
-         +u4Q==
-X-Gm-Message-State: AOAM532TqkXBn+G3T0Vzt4nUF3Bpx8tT5dGcrMZ7hxsXMptRk2XWKDX2
-        STe21Rbu+p+63MuXfXjKuHMiyCVBgJQkQk8AmQv2Dg==
-X-Google-Smtp-Source: ABdhPJyuQvbjRKHMK2HtlyghHFKLDIS5oNQ65PxEf25qUJaEc+JVkFmKTrxFlP2NYQHG38EuMhU2FEdVcDA2Wxm0J4k=
-X-Received: by 2002:a2e:b047:: with SMTP id d7mr7975ljl.467.1611441255771;
- Sat, 23 Jan 2021 14:34:15 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20210121030006epcas2p40fd4e30ae5bf514b7891a464462db7be@epcas2p4.samsung.com>
- <20210121030009.25673-1-chanho61.park@samsung.com>
-In-Reply-To: <20210121030009.25673-1-chanho61.park@samsung.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 23 Jan 2021 23:34:05 +0100
-Message-ID: <CACRpkdYJHf7z+E2DeQb1TmmQnh0jysCjw+Vs=518GnYOqLH2_A@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: use raw_spinlock for locking
-To:     Chanho Park <chanho61.park@samsung.com>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Mon, 25 Jan 2021 11:56:11 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210125165423euoutp011e0db7fcd200a72d888d1466899a6d86~dh_XvD6Vm1682716827euoutp01a
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jan 2021 16:54:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210125165423euoutp011e0db7fcd200a72d888d1466899a6d86~dh_XvD6Vm1682716827euoutp01a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1611593663;
+        bh=1G3u1jT+Nh0xSBwzdrr/0Z5HtSD8zq/pIwITlYIiVC4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=S36j5tna5mkcowOcAym83NH98VIh4MkaeziBzu4lL8uSr7LRh3rb/q36A0/3M4Qqn
+         8biK19PRR3h6h146VtX2g1dkw7UgiEcIiEruVCkxEJvByuiXeNsnmFwQeO7FyIdU6M
+         dIeV8W5WDeh/0seMmeq4mBB+zUri3up4hRI1R8G8=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210125165422eucas1p2dbe4fea61410bc343a30c4d1e16d586b~dh_W5vDDh0474404744eucas1p2N;
+        Mon, 25 Jan 2021 16:54:22 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id BC.BF.44805.EB7FE006; Mon, 25
+        Jan 2021 16:54:22 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210125165421eucas1p1e35b229fc823c74088e9be55bec36ec7~dh_WAiZEw2390323903eucas1p1G;
+        Mon, 25 Jan 2021 16:54:21 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210125165421eusmtrp2fe836402e78b3afc63d76ca859b2cd86~dh_V-xwq90209902099eusmtrp2D;
+        Mon, 25 Jan 2021 16:54:21 +0000 (GMT)
+X-AuditID: cbfec7f4-b37ff7000000af05-d3-600ef7beaae6
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id DB.D5.21957.DB7FE006; Mon, 25
+        Jan 2021 16:54:21 +0000 (GMT)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210125165421eusmtip1e1e6752f319d2aed8e53cfac40e43d15~dh_Vx5KSK0626706267eusmtip1W;
+        Mon, 25 Jan 2021 16:54:21 +0000 (GMT)
+From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v11 1/3] dt-bindings: vendor-prefixes: Add asix prefix
+Date:   Mon, 25 Jan 2021 17:54:04 +0100
+Message-Id: <20210125165406.9692-2-l.stelmach@samsung.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20210125165406.9692-1-l.stelmach@samsung.com>
+MIME-Version: 1.0
+Organization: Samsung R&D Institute Poland
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOKsWRmVeSWpSXmKPExsWy7djP87r7vvMlGBxawWdx/u4hZouNM9az
+        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2px89AKRotNj6+xWlzeNYfN
+        Ysb5fUwWh6buZbRYe+Quu8WxBWIWrXuPsFv837OD3UHI4/K1i8weW1beZPLYOesuu8emVZ1s
+        HpuX1Hvs3PGZyaNvyypGj8+b5AI4orhsUlJzMstSi/TtErgyVt86zlzwk63i8u7n7A2MP1m7
+        GDk5JARMJD4sPcDUxcjFISSwglFi94EprBDOF0aJ6Qc2skA4nxklTh5fCddyaOpzqKrljBKN
+        Z/oYIZznjBIrZlxlBKliE3CU6F96AqxKROAes8T69gdgVcwC9xkl7j1fzQxSJSzgJjHjxhc2
+        EJtFQFXi5tmDYDt4Bawk5qyYwAaxT16iffl2MJtTwFriyeH5TBA1ghInZz5hAbH5BbQk1jRd
+        B7OZgeqbt85mBlkmIXCYU+LO351MEINcJJ6d2Qj1hLDEq+Nb2CFsGYn/O0GGcgDZ9RKTJ5lB
+        9PYwSmyb84MFosZa4s65X2wgNcwCmhLrd+lDhB0lnt3+A9XKJ3HjrSDECXwSk7ZNZ4YI80p0
+        tAlBVKtIrOvfAzVQSqL31QrGCYxKs5A8MwvJA7MQdi1gZF7FKJ5aWpybnlpslJdarlecmFtc
+        mpeul5yfu4kRmPZO/zv+ZQfj8lcf9Q4xMnEwHmKU4GBWEuHdrceTIMSbklhZlVqUH19UmpNa
+        fIhRmoNFSZw3acuaeCGB9MSS1OzU1ILUIpgsEwenVAOTkah26+sz+sZObqlBXIvsnGIWMSjv
+        lfq8zvn1vCmH7p3+PlPp+c5J9r8OufUatv2P/VQS4qR78e2iXCn56vSAHR+YjPv8+J2X3xTg
+        tjjqe8Zb4r/auWX3Ds3deFuw57l/xsT49qWtcQu+691JfGMvw6ObUzv9RPWj9UdPLakw0l60
+        Y52W/oTnNocmKF0M3COZxCRgWLi3l6OuMEzM/G7ipXJefUuBOEnLxQdjHhcG7nizL3xV0rS0
+        xJcLehUZvYub9s1izdHq3je/+bpCI+cj9W3GV3U4XzrO3Oev/yf2/nz7Pf8avKdM3ra2SzI2
+        /PqZy3OvWq58dv1nxua1NsYbPcXKfz7ZrFqaUZKwSiJIiaU4I9FQi7moOBEAo9QfEuoDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRmVeSWpSXmKPExsVy+t/xu7p7v/MlGMxdI2Jx/u4hZouNM9az
+        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2px89AKRotNj6+xWlzeNYfN
+        Ysb5fUwWh6buZbRYe+Quu8WxBWIWrXuPsFv837OD3UHI4/K1i8weW1beZPLYOesuu8emVZ1s
+        HpuX1Hvs3PGZyaNvyypGj8+b5AI4ovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOt
+        jEyV9O1sUlJzMstSi/TtEvQyVt86zlzwk63i8u7n7A2MP1m7GDk5JARMJA5NfQ5kc3EICSxl
+        lDh2cjpLFyMHUEJKYuXcdIgaYYk/17rYIGqeMkqs2XuTESTBJuAo0b/0BFiziMAbZomme2/Z
+        QRxmgfuMEr8+vQCrEhZwk5hx4wsbiM0ioCpx8+xBsNW8AlYSc1ZMYINYIS/Rvnw7mM0pYC3x
+        5PB8JhBbCKjm/MtvbBD1ghInZz4Bu45ZQF1i/TwhkDC/gJbEmqbrLCA2M9CY5q2zmScwCs1C
+        0jELoWMWkqoFjMyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAmN827Gfm3cwznv1Ue8QIxMH
+        4yFGCQ5mJRHe3Xo8CUK8KYmVValF+fFFpTmpxYcYTYE+m8gsJZqcD0wyeSXxhmYGpoYmZpYG
+        ppZmxkrivFvnrokXEkhPLEnNTk0tSC2C6WPi4JRqYEpiuZo/KV2nZSnv1jDRzqA1rXuOX5fb
+        lVggsXdThcwae9knxRJyeXqXYr7bP5p6d+FbiVWr9x8pv7E4RKXh05l3k+ZPDCqZFC6uvL+3
+        gOPzot6J/qXGMyslO06fu9N1vdZJYFnutjueXyqyQnepbFm8rXjKxpYTT2/UhAtZeXedPsR8
+        XGpywpec4phDNxdU7jz0/pEzf/H1qFXWMxqYtFNLSv3E//qlX/L+dmh1e26Gt/M9z38Lju5a
+        O3F38GoZ3zc3NgtZ9VwP2id1/PuqgNcGZ33jd7Iq3GibpKb2Q1N71eldtcV1u/r6TDadq5Ze
+        2bL52NOeXz8UXiY1dEdosEs6WT9/zLJ19knbgLpF1nuVWIozEg21mIuKEwE6dyoWegMAAA==
+X-CMS-MailID: 20210125165421eucas1p1e35b229fc823c74088e9be55bec36ec7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210125165421eucas1p1e35b229fc823c74088e9be55bec36ec7
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210125165421eucas1p1e35b229fc823c74088e9be55bec36ec7
+References: <20210125165406.9692-1-l.stelmach@samsung.com>
+        <CGME20210125165421eucas1p1e35b229fc823c74088e9be55bec36ec7@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 4:00 AM Chanho Park <chanho61.park@samsung.com> wrote:
+Add the prefix for ASIX Electronics Corporation.
 
-> This patch converts spin_[lock|unlock] functions of pin bank to
-> raw_spinlock to support preempt-rt. This can avoid BUG() assertion when
-> irqchip callbacks are triggerred. Spinlocks can be converted rt_mutex
-> which is preemptible when we apply preempt-rt patches.
->
-> According to "Documentation/driver-api/gpio/driver.rst",
->
-> "Realtime considerations: a realtime compliant GPIO driver should not
-> use spinlock_t or any sleepable APIs (like PM runtime) as part of its
-> irqchip implementation.
->
-> - spinlock_t should be replaced with raw_spinlock_t.[1]
-> "
->
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Patch applied!
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index e8c773478f54..b962f852ccaf 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -125,6 +125,8 @@ patternProperties:
+     description: Asahi Kasei Corp.
+   "^asc,.*":
+     description: All Sensors Corporation
++  "^asix,.*":
++    description: ASIX Electronics Corporation
+   "^aspeed,.*":
+     description: ASPEED Technology Inc.
+   "^asus,.*":
+-- 
+2.26.2
 
-Yours,
-Linus Walleij
