@@ -2,155 +2,229 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B38CFC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Jan 2021 18:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA8CC43381
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Jan 2021 19:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81DE52223D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Jan 2021 18:35:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7706822A85
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Jan 2021 19:12:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389461AbhAZRYC (ORCPT
+        id S1731552AbhAZF46 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 26 Jan 2021 12:24:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730672AbhAZHf4 (ORCPT
+        Tue, 26 Jan 2021 00:56:58 -0500
+Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:43407 "EHLO
+        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727649AbhAYLCS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 26 Jan 2021 02:35:56 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 121D9230FE;
-        Tue, 26 Jan 2021 07:35:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611646515;
-        bh=+VAs2ymsR3wvwxQFkon4/lt3ON1FUNprV+UepWushio=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DH2Lp/8Ef0k9WGN0ll9FmubItN0Z4unrWnNQS2pyl2CUBL7o4QsLZbVTFfKsobAFJ
-         rqis4X+XbAgqsLOIi2xs0N9LOezi8R1B3MJRlaAf+t5K7louVm5tILOwBOPekx54Dp
-         gxGYVH9sPqyKT9rTqpWuBYCY/4Ml/MC0cOYw5dSCTJwQMG0iNcMSQJWPiMJQGz01Ki
-         A22EreErsNsWRT1n182mAs2KUT0HFIOn49DPq47GwhpEw133zKoi2C3eSrEIDvRSro
-         yals0i+X72Z5A+lrvA7iUlU3O1m7Ebf/8Fx9SxxtUcGSuay+HFsCn+KXGiyEhuM4Q0
-         ot6GUJlxXOVnw==
-Received: by mail.kernel.org with local (Exim 4.94)
-        (envelope-from <mchehab@kernel.org>)
-        id 1l4Isa-00BqrJ-FX; Tue, 26 Jan 2021 08:35:12 +0100
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
+        Mon, 25 Jan 2021 06:02:18 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id EC985C61;
+        Mon, 25 Jan 2021 05:52:20 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Mon, 25 Jan 2021 05:52:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=7Q7Nv0bqu4rlGBtYQ+gbUns0wJu
+        h6GuAiFJdP+cGZnE=; b=SvMo/+4j2yNGhwp07OIeEeAwIPd3uLOkCRwQa21lHhP
+        uBTNRs15VHVc0Wnm9juBrZh1WRoUfbAjl6OGg+3BMqWfLxbqr0GfnnNKvhRLv6z8
+        Ht3Sogfq/tair/mlm5M0Ws4IhMxyYJJ5aB3ZMTsXfj7rPgB4UyKFB1tZPz0DRliK
+        BHwi/farpZU9725kMRANiZjHMFssH8S/rOxF64POXubAjGC5dTdmZE9SM5r6LpI6
+        3qeQ+jTkTpu2F1mx8CbaWl09kJjYGCSK7wcAudZIvP/ea20jayJYzTRZs3bFHtVl
+        zCtbT3ZRCuxdI95cj5o9sQvZsw9/YnQhvwNRcBsm0nQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=7Q7Nv0
+        bqu4rlGBtYQ+gbUns0wJuh6GuAiFJdP+cGZnE=; b=fEJcfh6LuWFusJalBc0IHL
+        oM90CK7rxfcpNOeXstdIxmYMPHzMYE6khfMVoT1zpF5eRm+VX+zcTwp4JBny717c
+        9Y2koyzqD8yyBJ+7hVHnNhv2wjSjoLlU+XFsv0OS1Uf4zdWZbUpWkJpiBuphyxhw
+        tZ5ThIaCngtnp6bEeD6B053yJycEyaVQOBMlyXFvmjjklINaVGS+jJGOsDmX4leo
+        jjDsNcjM5AIa898z7mV8wRAPF4UIjeFoBz6lnaPLRttSw7u4NXJJtOKMfbT+gUBM
+        Pf+a1/6ugSQjfsuv+GYci9gobrfqs93junPXm6MMD8HtIH7U76HZwYN5nqFg3h7w
+        ==
+X-ME-Sender: <xms:5KIOYGnBrVAbqYV2lVXaa3LU1SJCmBAzgVeBkPBkIC0DD8NF4uzNgg>
+    <xme:5KIOYN3LgRjjRioBmdOuewwlEe-PSMkup2N8PJ6s00QTMkX7EcBb02Zccnv25d9AZ
+    TJuRWw2yaOLGsNdXlc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdefgddukecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtudenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeduvdduhfekkeehgffftefflefgffdtheffudffgeevteffheeuiedvvdejvdfg
+    veenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:5KIOYEqziJnhiVdbCp7SodP5yBDVw-O3xaAeJG3x8HLs2KCXSb8ffg>
+    <xmx:5KIOYKk-ZOmQv3sqskQCN10QaneA3yB6UVviNZc0unhNkBqh7_kKQA>
+    <xmx:5KIOYE1ICv6FwpUSGvbn2sal11y4J-hJUuNI_S2D2idsVAs-Qh8_xQ>
+    <xmx:5KIOYFi9DvCVCpQ3VzVTaUXT_bhnqlEzpe4eRv0E7lZ9wDn5nOfpxQ>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id E512724005A;
+        Mon, 25 Jan 2021 05:52:19 -0500 (EST)
+Date:   Mon, 25 Jan 2021 11:52:18 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
         Neil Armstrong <narmstrong@baylibre.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        linux-tegra@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH RFC 0/2] Convert designware-pcie and kirin-pcie to yaml
-Date:   Tue, 26 Jan 2021 08:35:05 +0100
-Message-Id: <cover.1611645945.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.29.2
+        linux-stm32@st-md-mailman.stormreply.com,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Marek Vasut <marex@denx.de>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-mediatek@lists.infradead.org,
+        Russell King <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-rockchip@lists.infradead.org,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-msm@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
+        linux-mips@vger.kernel.org,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Alison Wang <alison.wang@nxp.com>,
+        dri-devel@lists.freedesktop.org,
+        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-amlogic@lists.infradead.org, freedreno@lists.freedesktop.org,
+        Sean Paul <sean@poorly.run>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Jyri Sarha <jyri.sarha@iki.fi>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Sandy Huang <hjc@rock-chips.com>, linux-kernel@vger.kernel.org,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tian Tao <tiantao6@hisilicon.com>
+Subject: Re: [PATCH v2 08/11] drm: Rename plane->state variables in atomic
+ update and disable
+Message-ID: <20210125105218.kv63vjbxz5b35hdo@gilmour>
+References: <20210121163537.1466118-1-maxime@cerno.tech>
+ <20210121163537.1466118-8-maxime@cerno.tech>
+ <YArBy2DKdCct5cYW@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="aovqw5rvxy3ynmws"
+Content-Disposition: inline
+In-Reply-To: <YArBy2DKdCct5cYW@intel.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Rob,
 
-As I'm preparing some upstream patches for kirin-pcie driver to support
-Hikey 970, I opted to try first to convert the existing schema to yaml.
+--aovqw5rvxy3ynmws
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It should be noticed that those two patches currently won't pass
-cleanly with dtbs_check/dt_binding_check.
+Hi Ville,
 
-I'm out of ideas about how to fix. It sounds to me that the checking
-tools are trying to enforce different types of reference types than
-the ones used by designware drivers.:
+On Fri, Jan 22, 2021 at 02:15:07PM +0200, Ville Syrj=E4l=E4 wrote:
+> On Thu, Jan 21, 2021 at 05:35:33PM +0100, Maxime Ripard wrote:
+> > Some drivers are storing the plane->state pointer in atomic_update and
+> > atomic_disable in a variable simply called state, while the state passed
+> > as an argument is called old_state.
+> >=20
+> > In order to ease subsequent reworks and to avoid confusing or
+> > inconsistent names, let's rename those variables to new_state.
+> >=20
+> > This was done using the following coccinelle script, plus some manual
+> > changes for mtk and tegra.
+> >=20
+> > @ plane_atomic_func @
+> > identifier helpers;
+> > identifier func;
+> > @@
+> >=20
+> > (
+> >  static const struct drm_plane_helper_funcs helpers =3D {
+> >  	...,
+> >  	.atomic_disable =3D func,
+> > 	...,
+> >  };
+> > |
+> >  static const struct drm_plane_helper_funcs helpers =3D {
+> >  	...,
+> >  	.atomic_update =3D func,
+> > 	...,
+> >  };
+> > )
+> >=20
+> > @ moves_new_state_old_state @
+> > identifier plane_atomic_func.func;
+> > identifier plane;
+> > symbol old_state;
+> > symbol state;
+> > @@
+> >=20
+> >  func(struct drm_plane *plane, struct drm_plane_state *old_state)
+> >  {
+> >  	...
+> > -	struct drm_plane_state *state =3D plane->state;
+> > +	struct drm_plane_state *new_state =3D plane->state;
+> > 	...
+> >  }
+> >=20
+> > @ depends on moves_new_state_old_state @
+> > identifier plane_atomic_func.func;
+> > identifier plane;
+> > identifier old_state;
+> > symbol state;
+> > @@
+> >=20
+> >  func(struct drm_plane *plane, struct drm_plane_state *old_state)
+> >  {
+> >  	<...
+> > -	state
+> > +	new_state
+> > 	...>
+>=20
+> Was going to say that this migh eat something else, but I guess
+> the dependency prevents that?
 
-$ make CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm64 DT_SCHEMA_FILES=Documentation/devicetree/bindings/pci/designware,pcie.yaml dt_binding_check
-  LINT    Documentation/devicetree/bindings
-  DTEX    Documentation/devicetree/bindings/pci/designware,pcie.example.dts
-  CHKDT   Documentation/devicetree/bindings/processed-schema-examples.json
-  SCHEMA  Documentation/devicetree/bindings/processed-schema-examples.json
-  DTC     Documentation/devicetree/bindings/pci/designware,pcie.example.dt.yaml
-  CHECK   Documentation/devicetree/bindings/pci/designware,pcie.example.dt.yaml
+Yeah, the dependency takes care of this
 
+> Another way to avoid that I suppose would be to declare 'state'
+> as
+> symbol moves_new_state_old_state.state;
+>=20
+> That would probably make the intent a bit more obvious, even with
+> the dependency. Or does a dependency somehow automagically imply
+> that?
 
-		[[2164260864, 0, 0, 3724541952, 0, 65536, 2181038080, 0, 3493855232, 3493855232, 0, 218103808]] is not of type 'boolean'
-		True was expected
-		[[2164260864, 0, 0, 3724541952, 0, 65536, 2181038080, 0, 3493855232, 3493855232, 0, 218103808]] is not of type 'null'
-	[2164260864, 0, 0, 3724541952, 0, 65536, 2181038080, 0, 3493855232, 3493855232, 0, 218103808] is too long
-	From schema: /home/mchehab/.local/lib/python3.9/site-packages/dtschema/schemas/pci/pci-bus.yaml
+I'm not sure if it does, but it's a symbol here not an identifier or an
+expression, so here moves_new_state_old_state.state would always resolve
+to state (and only state) anyway
 
-$ make CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm64 DT_SCHEMA_FILES=Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml dt_binding_check
-  DTEX    Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.example.dts
-  DTC     Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.example.dt.yaml
-  CHECK   Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.example.dt.yaml
-/devel/v4l/hikey970/Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.example.dt.yaml: pcie@f4000000: 'reset-gpios' does not match any of the regexes: 'pinctrl-[0-9]+'
-	From schema: /devel/v4l/hikey970/Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml
-/devel/v4l/hikey970/Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.example.dt.yaml: pcie@f4000000: '#interrupt-cells', 'bus-range', 'clock-names', 'clocks', 'device_type', 'interrupt-map', 'interrupt-map-mask', 'num-lanes', 'ranges' do not match any of the regexes: 'pinctrl-[0-9]+'
-	From schema: /devel/v4l/hikey970/Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml
+Maxime
 
-I ran out of ideas about how to solve that. So, I'm posting it as a RFC.
+--aovqw5rvxy3ynmws
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Mauro Carvalho Chehab (2):
-  dt: pci: designware-pcie.txt: convert it to yaml
-  dt: pci: kirin-pcie.txt: convert it to yaml
+-----BEGIN PGP SIGNATURE-----
 
- .../bindings/pci/amlogic,meson-pcie.txt       |   4 +-
- .../bindings/pci/axis,artpec6-pcie.txt        |   2 +-
- .../bindings/pci/designware,pcie.yaml         | 194 ++++++++++++++++++
- .../bindings/pci/designware-pcie.txt          |  77 -------
- .../bindings/pci/fsl,imx6q-pcie.txt           |   2 +-
- .../bindings/pci/hisilicon,kirin-pcie.yaml    |  98 +++++++++
- .../bindings/pci/hisilicon-histb-pcie.txt     |   2 +-
- .../bindings/pci/hisilicon-pcie.txt           |   2 +-
- .../devicetree/bindings/pci/kirin-pcie.txt    |  50 -----
- .../bindings/pci/layerscape-pci.txt           |   2 +-
- .../bindings/pci/nvidia,tegra194-pcie.txt     |   4 +-
- .../devicetree/bindings/pci/pci-armada8k.txt  |   2 +-
- .../devicetree/bindings/pci/pci-keystone.txt  |  10 +-
- .../devicetree/bindings/pci/pcie-al.txt       |   2 +-
- .../devicetree/bindings/pci/qcom,pcie.txt     |  14 +-
- .../bindings/pci/samsung,exynos5440-pcie.txt  |   4 +-
- .../pci/socionext,uniphier-pcie-ep.yaml       |   2 +-
- .../devicetree/bindings/pci/ti-pci.txt        |   4 +-
- .../devicetree/bindings/pci/uniphier-pcie.txt |   2 +-
- MAINTAINERS                                   |   4 +-
- 20 files changed, 323 insertions(+), 158 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pci/designware,pcie.yaml
- delete mode 100644 Documentation/devicetree/bindings/pci/designware-pcie.txt
- create mode 100644 Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml
- delete mode 100644 Documentation/devicetree/bindings/pci/kirin-pcie.txt
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYA6i4gAKCRDj7w1vZxhR
+xXQfAQCpHFLAgzbOGuPHlUIw6srwonDWlJwZ5pDLwhp1/pTOIgEAwAm6K8CkMgzh
+mwxW8RrOr5SMiQknGuS5OfDWZlYZBwo=
+=AjKT
+-----END PGP SIGNATURE-----
 
--- 
-2.29.2
-
-
+--aovqw5rvxy3ynmws--
