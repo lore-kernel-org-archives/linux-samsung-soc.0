@@ -2,157 +2,124 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-22.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4B0C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Jan 2021 02:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B0FC433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Jan 2021 07:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E98072064C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Jan 2021 02:58:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABB8A20724
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Jan 2021 07:52:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231164AbhA0C4C (ORCPT
+        id S234522AbhA0HwF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 26 Jan 2021 21:56:02 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:31561 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403921AbhA0ARj (ORCPT
+        Wed, 27 Jan 2021 02:52:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52312 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234070AbhA0Hte (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 26 Jan 2021 19:17:39 -0500
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210127001655epoutp03e85d11b5e606c4c6e7a58b93281bcf55~d7qCmhGaC0427304273epoutp03g
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Jan 2021 00:16:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210127001655epoutp03e85d11b5e606c4c6e7a58b93281bcf55~d7qCmhGaC0427304273epoutp03g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1611706615;
-        bh=bsKjPI8dJEliK0xVfo3u1qjuGRVdT83SjJXrgzobAhk=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=bkoYM76cpO6L4P/pWhPY9Ca+DSTazzIZKu5rXLZId+dUJ8tG8ehSQ8sTZCjXTUOhs
-         K3F8h5IJYzUsd2m6mbzCzc83EZo8v5EdFlw9IFWQseczE5MHDfNXDkRnydrCOFDxPk
-         /vNq1RRPjctYPGuVbkAhcNGWlQstSzYxsd5mP0DY=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20210127001654epcas2p40ab53364d8dbfa334113819602416d9d~d7qB2zdrw2030920309epcas2p4I;
-        Wed, 27 Jan 2021 00:16:54 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.40.184]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4DQPKw3j8pz4x9Pv; Wed, 27 Jan
-        2021 00:16:52 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        31.29.10621.DE0B0106; Wed, 27 Jan 2021 09:16:45 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210127001644epcas2p13cbc984fecc3ac7700a422488b488135~d7p4hp67R1532715327epcas2p1M;
-        Wed, 27 Jan 2021 00:16:44 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210127001644epsmtrp23221aaacf2ec3df5371d340ce85df2ff~d7p4g0YFi1792817928epsmtrp27;
-        Wed, 27 Jan 2021 00:16:44 +0000 (GMT)
-X-AuditID: b6c32a45-34dff7000001297d-4f-6010b0ed90af
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A1.79.13470.CE0B0106; Wed, 27 Jan 2021 09:16:44 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.51]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210127001644epsmtip1e5a8bccb2f11d5199af35c81f076d940~d7p4TpERh1392513925epsmtip1Z;
-        Wed, 27 Jan 2021 00:16:44 +0000 (GMT)
-From:   Chanho Park <chanho61.park@samsung.com>
-To:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Wed, 27 Jan 2021 02:49:34 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BF76B2074A;
+        Wed, 27 Jan 2021 07:48:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611733728;
+        bh=Nro3vfQTCFtmv98iajZ/Tld6vSBtHkyWqkV/zj14XFw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SHMBfSfTtkKbBZei+R26dC4Lsa2N+suQiJ9H3LZMp1MaKa5JjGt+4QjAdFsyIyLUT
+         tQmzXXgXxEdLQ2XzmFzAyIzEDH80xOrFrwsQDYWFBcKKnne9TgiIilSEhMFajPzLcb
+         WKlppAIzlGh3Fdk7NfvaI8omlrDmEFva/CSsY1cFN2joSSKZRYRcFT7U90A+CfEknv
+         NgBhXEjQyytURjwbuv1CbEWSI5z02gPfxp9eYDmJnFUBTAyEZEGvdNF+R6c9qOt6Gv
+         k1vZRXX2j4SYiZQErTdX1uQdkl0rrqMB5kZzlCHOYRGKTz5ie1ZeE0UWWrrB+E8xPk
+         07s+G/JFyQ1kw==
+Date:   Wed, 27 Jan 2021 08:48:37 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH] pinctrl: samsung: use raw_spinlock for s3c64xx
-Date:   Wed, 27 Jan 2021 09:16:31 +0900
-Message-Id: <20210127001631.91209-1-chanho61.park@samsung.com>
-X-Mailer: git-send-email 2.30.0
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH RFC 1/2] dt: pci: designware-pcie.txt: convert it to
+ yaml
+Message-ID: <20210127084837.39d68850@coco.lan>
+In-Reply-To: <b6ab7110-fc87-85d7-d591-dffad32985ec@samsung.com>
+References: <cover.1611645945.git.mchehab+huawei@kernel.org>
+        <CGME20210126074127eucas1p1dd8f2d1704d708d64458922566b934f1@eucas1p1.samsung.com>
+        <55f479324098b66d7dba89c8f9c3e455731df4f7.1611645945.git.mchehab+huawei@kernel.org>
+        <b6ab7110-fc87-85d7-d591-dffad32985ec@samsung.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgk+LIzCtJLcpLzFFi42LZdljTVPftBoEEg5YlShaX92tbnD+/gd1i
-        yp/lTBabHl9jtdg8/w+jxYzz+5gsDr9pZ7VYtesPowOHx85Zd9k9Nq3qZPO4c20Pm8fmJfUe
-        fVtWMXp83iQXwBaVY5ORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+Ti
-        E6DrlpkDdI6SQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8DQsECvODG3uDQvXS85
-        P9fK0MDAyBSoMiEnY+Lv9+wFU7krbn3cyN7AeJazi5GTQ0LAROJk817mLkYuDiGBHYwS7d9u
-        MUI4nxglHrf8Y4JwvjFKHGo6xw7TMu/dcXaIxF5GicuTJ0H1f2SUmLRxHzNIFZuArsSW56/A
-        ZokIrGSUWP58IdgsZoFJjBLvnj9nBakSFrCXuHpyH5jNIqAq8WvCXLBuXgE7iS/HV0Ptk5c4
-        ufYwE0RcUOLkzCcsIDYzULx562xmiJpb7BKdsxy6GDmAbBeJDT9zIcLCEq+Ob4EaIyXx+d1e
-        NpAbJAS6GSVaH/2HSqxmlOhs9IGw7SV+Td/CCjKHWUBTYv0ufYiRyhJHbkFt5ZPoOPyXHSLM
-        K9HRJgTRqC5xYPt0FghbVqJ7zmdWiBIPiQt3y0DCQgKxEqe2TmOcwCg/C8krs5C8Mgth7QJG
-        5lWMYqkFxbnpqcVGBYbIkbqJEZwktVx3ME5++0HvECMTB+MhRgkOZiUR3vfKAglCvCmJlVWp
-        RfnxRaU5qcWHGE2BgTuRWUo0OR+YpvNK4g1NjczMDCxNLUzNjCyUxHmLDR7ECwmkJ5akZqem
-        FqQWwfQxcXBKNTBt3azQdtWuuubv/erpt/y/SuV/zJUP2Hli1RPdukUX578/cuntxwWn0tXN
-        pz5vPTz9mdHUc7vMvNXqati6d+UwfH44yzxPuOZV1oxwy8lZsvFOkxUfG6w5tSnotkaN9+8j
-        Psl3a3Y3tgfuU53zRfqf0B/Tp9vuvdXJskzZ9sJkerLCok8aJwyDf+VL32W7Pse/0zpfNf9L
-        mUx8QJrDRP/LTW/jEw0nqxXMs/i/ufbVNSWm1pa5WzyPfdfIuTz/2t5Gv2/Jmfl5pVYv5vuW
-        ffi+NSvvrMN+/Z8bZQqXGWTrrn6Yc2jCTlfphVc+dq4Qnaf4ipHlI+/Pay1exUFb/dTezwh6
-        E3S21PXhuRmPLm4PVmIpzkg01GIuKk4EAK8JZsIbBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJLMWRmVeSWpSXmKPExsWy7bCSnO6bDQIJBm9OyVhc3q9tcf78BnaL
-        KX+WM1lsenyN1WLz/D+MFjPO72OyOPymndVi1a4/jA4cHjtn3WX32LSqk83jzrU9bB6bl9R7
-        9G1ZxejxeZNcAFsUl01Kak5mWWqRvl0CV8bE3+/ZC6ZyV9z6uJG9gfEsZxcjJ4eEgInEvHfH
-        2bsYuTiEBHYzSly68psdIiEr8ezdDihbWOJ+yxFWiKL3jBL3VjcwgiTYBHQltjx/xQiSEBFY
-        zSixbcIUMIdZYBqjxKp9bSwgVcIC9hJXT+5jBbFZBFQlfk2Yywxi8wrYSXw5vhpqhbzEybWH
-        mSDighInZz4B62UGijdvnc08gZFvFpLULCSpBYxMqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS
-        9ZLzczcxgkNXS3MH4/ZVH/QOMTJxMB5ilOBgVhLhfa8skCDEm5JYWZValB9fVJqTWnyIUZqD
-        RUmc90LXyXghgfTEktTs1NSC1CKYLBMHp1QD0/ZXMRsDLN5nlN15e+ts+iGJicKRLk0/Pe6e
-        M+zo6F/yXtAoJOLBhflfsp/vLWtafUU+0OlWh6DISvbHlSb83SETVkSt+ur9ozpectmZjSxc
-        C54H1riWf3HZs7VkqWey71MV6+ft1TIPTUU8y06cdN22pXm7auPpTxF+95uk2a57Oc3PTcnc
-        mL3lh1ei2Z6Ov6oaLx4lS018vCisSndtBEclN4OwY0MRf+0XHVsfI+3aFNPrl6e86TBXe5pp
-        rumr+TL/ipOTfLeycDfzp3Wqd4vaD1dGr7u8YdoM6aii1JYFDX+tFbQKsz8c3OvxJKQpZL9d
-        m3zOfZYP38O53qY19Z/3Om+V8v/mk653hrpKLMUZiYZazEXFiQD0EZWuzAIAAA==
-X-CMS-MailID: 20210127001644epcas2p13cbc984fecc3ac7700a422488b488135
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210127001644epcas2p13cbc984fecc3ac7700a422488b488135
-References: <CGME20210127001644epcas2p13cbc984fecc3ac7700a422488b488135@epcas2p1.samsung.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch converts spin_[lock|unlock] functions of pin bank to
-raw_spinlock to support preempt-rt for pinctrl-s3c64xx. Below patch
-converted spinlock_t to raw_spinlock_t but it didn't convert the
-s3c64xx's spinlock.
+Hi Marek,
 
-Fixes: 1f306ecbe0f6 ("pinctrl: samsung: use raw_spinlock for locking")
+Em Tue, 26 Jan 2021 11:13:20 +0100
+Marek Szyprowski <m.szyprowski@samsung.com> escreveu:
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
----
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Hi Mauro,
+> 
+> On 26.01.2021 08:35, Mauro Carvalho Chehab wrote:
+> > Convert the file into a JSON description at the yaml format.
+> >
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >   .../bindings/pci/amlogic,meson-pcie.txt       |   4 +-
+> >   .../bindings/pci/axis,artpec6-pcie.txt        |   2 +-
+> >   .../bindings/pci/designware,pcie.yaml         | 194 ++++++++++++++++++
+> >   .../bindings/pci/designware-pcie.txt          |  77 -------
+> >   .../bindings/pci/fsl,imx6q-pcie.txt           |   2 +-
+> >   .../bindings/pci/hisilicon-histb-pcie.txt     |   2 +-
+> >   .../bindings/pci/hisilicon-pcie.txt           |   2 +-
+> >   .../devicetree/bindings/pci/kirin-pcie.txt    |   2 +-
+> >   .../bindings/pci/layerscape-pci.txt           |   2 +-
+> >   .../bindings/pci/nvidia,tegra194-pcie.txt     |   4 +-
+> >   .../devicetree/bindings/pci/pci-armada8k.txt  |   2 +-
+> >   .../devicetree/bindings/pci/pci-keystone.txt  |  10 +-
+> >   .../devicetree/bindings/pci/pcie-al.txt       |   2 +-
+> >   .../devicetree/bindings/pci/qcom,pcie.txt     |  14 +-
+> >   .../bindings/pci/samsung,exynos5440-pcie.txt  |   4 +-  
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-index b8166e3fe4ce..53e2a6412add 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-@@ -286,14 +286,14 @@ static void s3c64xx_irq_set_function(struct samsung_pinctrl_drv_data *d,
- 	shift = shift * bank_type->fld_width[PINCFG_TYPE_FUNC];
- 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
- 
--	spin_lock_irqsave(&bank->slock, flags);
-+	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	val = readl(reg);
- 	val &= ~(mask << shift);
- 	val |= bank->eint_func << shift;
- 	writel(val, reg);
- 
--	spin_unlock_irqrestore(&bank->slock, flags);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
- }
- 
- /*
--- 
-2.30.0
+> You must have used an old tree for preparing this patchset. The above 
+> file is gone in v5.11-rc1 and there is 
+> Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml instead.
 
+Yeah, this series was generated against v5.10, as part of my efforts
+to have Hikey 970 properly supported upstream:
+
+	https://github.com/mchehab/linux/commits/devel/hikey970
+
+For the next version, I'll rebase on the top of linux-next. 
+
+Thanks,
+Mauro
