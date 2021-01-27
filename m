@@ -2,135 +2,161 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C65FC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Jan 2021 08:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F29C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Jan 2021 08:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 41C6D2074F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Jan 2021 08:26:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 512952073C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Jan 2021 08:32:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234386AbhA0I0o (ORCPT
+        id S231368AbhA0IbR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 27 Jan 2021 03:26:44 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:37152 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233079AbhA0IYe (ORCPT
+        Wed, 27 Jan 2021 03:31:17 -0500
+Received: from mail-wr1-f45.google.com ([209.85.221.45]:41824 "EHLO
+        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232904AbhA0I3G (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 27 Jan 2021 03:24:34 -0500
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210127082331epoutp01a99d4c13d8cc42324ee93efdc62aa465~eCS5VvtKy0701007010epoutp01h
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Jan 2021 08:23:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210127082331epoutp01a99d4c13d8cc42324ee93efdc62aa465~eCS5VvtKy0701007010epoutp01h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1611735811;
-        bh=9/YGMF2wG22cImHwtFDTscKexxHVW5JRkUankPaW6k8=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=YkoHB4i16lRU0DjTiwGgIrsxYOxkLvn4pgAcH2Xxt8oItlw8WEv1mXLd5Ca42n5tQ
-         zRPibcXPIRMQkx0fbccyub3u+jWKhnYxk4Vtu9dVnOswakf7YFc9dH+gulCAYVFVx0
-         lFlVxQelSrywUkPhMxxQRoiDuAS2EAkMgSjw1oOI=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20210127082330epcas2p3a4ed2c5197c68d21b0978876004db26e~eCS4cWg501787117871epcas2p3M;
-        Wed, 27 Jan 2021 08:23:30 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.40.191]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4DQc7N3YyBz4x9Pt; Wed, 27 Jan
-        2021 08:23:28 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8D.B4.05262.CF221106; Wed, 27 Jan 2021 17:23:24 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20210127082324epcas2p33221fff84d78dcffb9765b32972d05c6~eCSy3PtiP1883018830epcas2p3G;
-        Wed, 27 Jan 2021 08:23:24 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210127082324epsmtrp111af1488d87c9e606e061f1302b3d53a~eCSy2amEp0867208672epsmtrp18;
-        Wed, 27 Jan 2021 08:23:24 +0000 (GMT)
-X-AuditID: b6c32a47-b97ff7000000148e-46-601122fc975d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        60.48.08745.CF221106; Wed, 27 Jan 2021 17:23:24 +0900 (KST)
-Received: from KORCO039056 (unknown [10.229.8.156]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210127082324epsmtip2d4af3c79081714db798c8f4dab2fad60~eCSyt_b-W2800228002epsmtip2M;
-        Wed, 27 Jan 2021 08:23:24 +0000 (GMT)
-From:   "Chanho Park" <chanho61.park@samsung.com>
-To:     "'Linus Walleij'" <linus.walleij@linaro.org>
-Cc:     "'Tomasz Figa'" <tomasz.figa@gmail.com>,
-        "'Krzysztof Kozlowski'" <krzk@kernel.org>,
-        "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-        "'Linux ARM'" <linux-arm-kernel@lists.infradead.org>,
-        "'linux-samsung-soc'" <linux-samsung-soc@vger.kernel.org>,
-        "'open list:GPIO SUBSYSTEM'" <linux-gpio@vger.kernel.org>
-In-Reply-To: <CACRpkdZhZP9uJ7Wm6vLQYCCZN3=g_Rfrbap9cmwUREPeuWFGUA@mail.gmail.com>
-Subject: RE: [PATCH] pinctrl: samsung: use raw_spinlock for s3c64xx
-Date:   Wed, 27 Jan 2021 17:23:24 +0900
-Message-ID: <018901d6f485$ae109b80$0a31d280$@samsung.com>
+        Wed, 27 Jan 2021 03:29:06 -0500
+Received: by mail-wr1-f45.google.com with SMTP id p15so948965wrq.8;
+        Wed, 27 Jan 2021 00:28:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=41gl6Fnhj03Hx5/M76IkgYSS5orNB1WxIO0IASZAjIY=;
+        b=BEBN2iPimf0QjzEgLFvBBAqFrRwQuzXz8ji4wLqAVA4N84DOeohHPhShjPMFyakHNL
+         f7DdgjjOGa+1shV6b/Mtf4MKcTAsw0bSO5Kvt/q2XQ50jEKqu/aG8rMdUK6LP5B4f21Q
+         r7kD8G31U/BSap5lsHsdRQFUoIQC1UPysgUQ+dPw9cPLv67NBWNVwgcCWEiJuKeltIVM
+         nl9T6cLdaMMnG55KEfvpsgSfaZUZ3ajfTpinpckYpD3DRmAR2YnXE1DR8dq0nZsKtcMi
+         ysDTTTUyGj40ql/yfAXEzSJUcMOB8M1VXA/CYE/dE7T7pWxyE5NY8Hc9Fy8qgR23t94W
+         plJg==
+X-Gm-Message-State: AOAM530Mm5/VDEn5rXPrwlOOB2XxvbAaNEODozrEUkcLjfDpL/2ZVHRC
+        J8IwyJZ8VFzO+mzYJdsVkBJByitVUw4=
+X-Google-Smtp-Source: ABdhPJxb4U0L1sIeKJeqRz+W1+pCOhcnSQc3orVK5+DnjTLjuQVSPObkbdpVsqllDqizUGdzjWLPKw==
+X-Received: by 2002:a5d:4f87:: with SMTP id d7mr9627439wru.385.1611734344838;
+        Tue, 26 Jan 2021 23:59:04 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id u5sm1657992wmg.9.2021.01.26.23.59.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Jan 2021 23:59:03 -0800 (PST)
+Date:   Wed, 27 Jan 2021 08:59:02 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Willy Wolff <willy.mh.wolff.ml@gmail.com>,
+        Marian Mihailescu <mihailescu2m@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: exynos: use Exynos5420 dedicated USB2 PHY
+ compatible
+Message-ID: <20210127075902.esm3tukq4pwmdf3j@kozik-lap>
+References: <20201120085637.7299-1-m.szyprowski@samsung.com>
+ <CGME20201120085652eucas1p1da360ab03f5b5b02a197d0f1ee435737@eucas1p1.samsung.com>
+ <20201120085637.7299-3-m.szyprowski@samsung.com>
+ <20201120110503.GB26836@kozik-lap>
+ <14102bab-33a1-45e0-0faf-883c7b1133a5@samsung.com>
+ <CAK8P3a3QvbfYe5d_X4YcaRZaO4rykqoM_hm7nF-jwJGn0AQaug@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQE2icd3O+rtEwzwFlocWNI1WHVyrgEm2ClKAT5BgamraM5kAA==
-Content-Language: ko
-x-msg-type: PERSONAL
-x-drm-type: PERSONAL
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmqe4fJcEEg8WTrSzOn9/AbjHlz3Im
-        i02Pr7FabJ7/h9Fixvl9TBaH37SzWqza9YfRgd1j56y77B6bVnWyedy5tofNY/OSeo++LasY
-        PT5vkgtgi8qxyUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXL
-        zAE6RUmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYGhYoFecmFtcmpeul5yfa2Vo
-        YGBkClSZkJPR23qNreAeY8WxbW3MDYyrGLsYOTgkBEwkFl2s72Lk4hAS2MEo0b/4GjOE84lR
-        YktjDyuE85lRouXpc5YuRk6wjmv3rjFBJHYxSpz4cgPKecEosfH0OVaQKjYBfYmXHdvAbBEB
-        A4n756exgxQxC+xmkji99DPYKE6BQIkbH1+AFQkLOEvs3twIFmcRUJVYs/0gE4jNK2ApMfPv
-        F2YIW1Di5MwnYDXMAvIS29/OYYY4SUHi59NlUMucJDauPcEMUSMiMbuzDapGRKJ7y20miKdF
-        JO7sSQG5R0LgCIdE295GVogaF4k5995BvSks8er4FnYIW0riZX8bO0RDN6NE66P/UInVjBKd
-        jT4Qtr3Er+lbWEEWMAtoSqzfpQ+xS1niyC2ok/kkOg7/ZYcI80p0tAlNYFSZheSxWUgem4Xk
-        gVkIMxcwsqxiFEstKM5NTy02KjBGjuxNjOBkquW+g3HG2w96hxiZOBgPMUpwMCuJ8NopCCYI
-        8aYkVlalFuXHF5XmpBYfYjQFBvVEZinR5HxgOs8riTc0NTIzM7A0tTA1M7JQEuctNngQLySQ
-        nliSmp2aWpBaBNPHxMEp1cA0cfniizY2yby5m8J2ZK1h2DjLuzDu4cxfhZ9XFIh8qZh7W2f1
-        43bGNOuQG3b8PctUOxIF+vMK1+3OqO/12eJww7Cq1+/2jafaXws3v82/W1IZ5v3i/R0BPZaM
-        eKM1/4K7j8fzOItwh9xpc3y/zcNDskkxf2nf58sLDAseMh/JbXpl62Hy/Hic76YJr/Q0vRf4
-        JCl7nJKuU4su0pnhdSms88TOa+uWLhNtSTy2LaYuw+HO9ortv5ja+m+FXXu79+DFh7Fn2W6l
-        zDp653aWrJFl882iqw5+nC+5jyaLb5U4vkfQxIG5Scbsn3lmxtXV4rPylrGWmN/Yahs9Ken7
-        9YU3GQRDat/fevvPcTfjrqtKLMUZiYZazEXFiQCjrF2sLwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOIsWRmVeSWpSXmKPExsWy7bCSvO4fJcEEg0vf+CzOn9/AbjHlz3Im
-        i02Pr7FabJ7/h9Fixvl9TBaH37SzWqza9YfRgd1j56y77B6bVnWyedy5tofNY/OSeo++LasY
-        PT5vkgtgi+KySUnNySxLLdK3S+DK6G29xlZwj7Hi2LY25gbGVYxdjJwcEgImEtfuXWMCsYUE
-        djBK/O6NhIjLSjx7t4MdwhaWuN9yhLWLkQuo5hmjxK/Zy8Ga2QT0JV52bGMFsUUEDCTun5/G
-        DlLELLCXSeLp0uXMEB1XGSW+Lt0E1sEpEChx4+MLsA5hAWeJ3ZsbWUBsFgFViTXbD4KdwStg
-        KTHz7xdmCFtQ4uTMJ2A1zALaEr0PWxkhbHmJ7W/nMEOcpyDx8+kyVphTXx3fAnW2qcSFryuY
-        IK5zkti49gQzRK+IxOzONqheEYnuLbeBajjA7Dt7UiYwis9CsnkWks2zkGyehWTSAkaWVYyS
-        qQXFuem5xYYFRnmp5XrFibnFpXnpesn5uZsYwXGrpbWDcc+qD3qHGJk4GA8xSnAwK4nw2ikI
-        JgjxpiRWVqUW5ccXleakFh9ilOZgURLnvdB1Ml5IID2xJDU7NbUgtQgmy8TBKdXAFG51dPP0
-        7Sndd6+6PHItS1YvVjKedW4G092M8KPTXtbfZNjeepSX7ZyTZVLPrY1vnSzaf5zuqFjNEZd7
-        0+Ks8+ZZ0Y3V8ubhOad23qpkaVr96lCDoObuAOdvUcrZr/cdnfhixkfFM4zfgi3jcwM2OZxg
-        Dl2ry+o0/6/D3R1eX+bf//jzUklM/ouzUlYC+2TD0heslg/ff64xizWvvYzxTvhrsXYJj/dy
-        iuri03bvNJ7T8uit7Cs37sX/BUszF3+5+/Rv/DbHW+Uya1ecEhBwtSvzLdY4b5dyUKtZdYLg
-        2Zvl9obH1/BOUnl1k8HI/Fnpmej2/uh7Pz9ONPhuFii9e0noDpnFs02ZDtcrTnB/qcRSnJFo
-        qMVcVJwIAN7nB5BKAwAA
-X-CMS-MailID: 20210127082324epcas2p33221fff84d78dcffb9765b32972d05c6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210127001644epcas2p13cbc984fecc3ac7700a422488b488135
-References: <CGME20210127001644epcas2p13cbc984fecc3ac7700a422488b488135@epcas2p1.samsung.com>
-        <20210127001631.91209-1-chanho61.park@samsung.com>
-        <CACRpkdZhZP9uJ7Wm6vLQYCCZN3=g_Rfrbap9cmwUREPeuWFGUA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3QvbfYe5d_X4YcaRZaO4rykqoM_hm7nF-jwJGn0AQaug@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> Fixed up the patch commit text a bit as indicated by Krzysztof and applied
-> so the tree compiles again.
-> Thanks for fixing!
+On Tue, Jan 26, 2021 at 11:44:26PM +0100, Arnd Bergmann wrote:
+> On Fri, Nov 20, 2020 at 12:10 PM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+> > On 20.11.2020 12:05, Krzysztof Kozlowski wrote:
+> > > On Fri, Nov 20, 2020 at 09:56:37AM +0100, Marek Szyprowski wrote:
+> > >> USB2.0 PHY in Exynos5420 differs from Exynos5250 variant a bit, so use the
+> > >> recently introduced dedicated compatible for Exynos5420.
+> > >>
+> > >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > >> ---
+> > >>   arch/arm/boot/dts/exynos54xx.dtsi | 6 +++---
+> > >>   1 file changed, 3 insertions(+), 3 deletions(-)
+> > >>
+> > >> diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+> > >> index fe9d34c23374..2ddb7a5f12b3 100644
+> > >> --- a/arch/arm/boot/dts/exynos54xx.dtsi
+> > >> +++ b/arch/arm/boot/dts/exynos54xx.dtsi
+> > >> @@ -188,7 +188,7 @@
+> > >>                      compatible = "samsung,exynos4210-ehci";
+> > >>                      reg = <0x12110000 0x100>;
+> > >>                      interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+> > >> -                    phys = <&usb2_phy 1>;
+> > >> +                    phys = <&usb2_phy 0>;
+> > >>                      phy-names = "host";
+> > >>              };
+> > >>
+> > >> @@ -196,12 +196,12 @@
+> > >>                      compatible = "samsung,exynos4210-ohci";
+> > >>                      reg = <0x12120000 0x100>;
+> > >>                      interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+> > >> -                    phys = <&usb2_phy 1>;
+> > >> +                    phys = <&usb2_phy 0>;
+> > >>                      phy-names = "host";
+> > >>              };
+> > >>
+> > >>              usb2_phy: phy@12130000 {
+> > >> -                    compatible = "samsung,exynos5250-usb2-phy";
+> > >> +                    compatible = "samsung,exynos5420-usb2-phy";
+> > > The DTS change will wait till PHY driver adjustements get merged... or
+> > > if the difference is not critical, maybe using both compatibles (5420
+> > > and 5250) would have sense?
+> >
+> > It won't work easily with both compatibles, because in the 5420 variant
+> > I've also changed the PHY indices (5420 has no device and second hsic
+> > phy). IMHO the dts change can wait for the next release.
+> 
+> I see this made it into the pull request now, but I had not been aware
+> of the change earlier, and I'm slightly annoyed to have received it this
+> way:
+> 
+> - This is clearly an incompatible change to the dtb, and you all
+>    noticed that because it would cause a bisection problem. As
+>    a general rule, if a dts change does not work across bisection,
+>    we should not merge it at all, because it causes problems for
+>    anyone with external dts or dtb files.
 
-Thanks a lot. I'll check them up carefully next time :)
+Hi Arnd,
 
-Best Regards,
-Chanho Park
+No, it does not create a bisection problem. The driver change adding new
+compatible is already in v5.11-rc1.
+
+> 
+> - It would likely have been possible to define the new binding in
+>   a backward-compatible way. I don't see a reason why the index
+>   values in the binding had to change here, other than a slight
+>   inconvenience for the driver.
+
+It does not matter since it's a new compatible and old one is not
+affected. Nothing got broken before this patch, nothing got broken after
+applying it via samsung-soc. No backwards compatibility is affected.
+
+> 
+> - If the change was really unavoidable, I would have expected
+>   a long explanation about why it had to be done in both the
+>   commit message and in the tag description for the pull
+>   request.
+> 
+> I've dropped the pull request for now, maybe this can still
+> be sorted out with another driver change that makes the
+> new compatible string backward-compatible.
+
+It's a different hardware. New hardware does not have to be compatible
+with old hardware. However old DTB is still doing fine (although with
+the original issue not fixed).
+
+Best regards,
+Krzysztof
 
