@@ -2,111 +2,76 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 477BBC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Feb 2021 14:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 425A2C4332D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Feb 2021 15:20:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1969F64EA1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Feb 2021 14:03:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E9F364EA0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Feb 2021 15:20:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232361AbhBAODA (ORCPT
+        id S230091AbhBAPT4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 1 Feb 2021 09:03:00 -0500
-Received: from mail-oi1-f174.google.com ([209.85.167.174]:35338 "EHLO
-        mail-oi1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231916AbhBAOC7 (ORCPT
+        Mon, 1 Feb 2021 10:19:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39904 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230192AbhBAPTW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 1 Feb 2021 09:02:59 -0500
-Received: by mail-oi1-f174.google.com with SMTP id w8so18862534oie.2;
-        Mon, 01 Feb 2021 06:02:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PjQ2aAipDSaq5oC4lmBya+0Rk1klXjpSSVN7GA5y3Ng=;
-        b=tx1hsv+UOTZdkmkVsqprjcwNkmce1Z7Kmpr6pVGux/5cntzJ2+koInp0Of+ZT8GbbJ
-         f3no2hLMfDxlojDrrdwgtfwFA6sAas2+nDMYMC546L4Z8+f92+XKR22Qlb3hW1/+2BAv
-         76dK4TmaINCX7ABBvHZg24xqVRXC8AD2P/utJ7FAE8L6wkIbLHagITuqyVexyf86y4F/
-         Va/7SNL6sHQ8wCtMJ9e1gKNSkdXTCPiB6beau2M09LDn6m9XuoLgwrbtD4FpLGHzZGNN
-         s3knvojLv0oj72LR3mYLtGCf5T3JEUq9yYXkAIIDbByxu581gckufiBS4DsT+Z8bYH61
-         JAaA==
-X-Gm-Message-State: AOAM530BfBbSKtSkkefXKOXXPVRSEzvV8tY62vmTkcJsCkEFM4iAsNdQ
-        kaJtlvfZA5wjvJZfRLdbuv3h08tQCLymoFSMxXWOs7q1
-X-Google-Smtp-Source: ABdhPJw1DQOtXQiOfLob/rMGpYwphh6HqBDyeQVpm2HarfCzjirlfFQpNkL8KnEPZ6WvYaJWPQuOJUtbJQHKhwp2iUI=
-X-Received: by 2002:aca:fc84:: with SMTP id a126mr11038406oii.71.1612188138028;
- Mon, 01 Feb 2021 06:02:18 -0800 (PST)
+        Mon, 1 Feb 2021 10:19:22 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7ADC764E97;
+        Mon,  1 Feb 2021 15:18:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612192720;
+        bh=M6Pq1vR46oimtjF7/euCfQOikq+Mmgpo47GOSu/7s0A=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dbv1bOGZdMDmoS0j+W9Kb7EwQBky5Bhf7NxF4bXaWR8ntocEFL5D0VF4TaVLKM6SP
+         D7vi5UL7r8Da82ln3jbF24Wkdxlbn8IeRbMdNUjKqJiLTH9zqEFjsDr24fyu61XIR+
+         Q4F8kOTm0AL5aPJHq/atgSEFftUh98dtdJu9LYK2gtNK+bsaetyP/EIKco4wF5cfuP
+         OMgm/xQq0tbYAiXVzZprYn4ZUvvPdQjUwCF3a4Sy5mVxS4HFix6uNHVcFIfOHqoNBM
+         Nf+BhYKCZEf2kJkrulEmBdTDuRYu89wXJR2nMhh4E13sYFiDVc3+LcEqGhZHbp4Ioh
+         ZRNMO2AwWDeZg==
+Subject: Re: [PATCH v3] clk: exynos7: Keep aclk_fsys1_200 enabled
+To:     =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        mturquette@baylibre.com, sboyd@kernel.org
+Cc:     kgene@kernel.org, krzk@kernel.org,
+        linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com,
+        linux-kernel@vger.kernel.org, cw00.choi@samsung.com,
+        s.nawrocki@samsung.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20210131170428.3290-1-pawel.mikolaj.chmiel@gmail.com>
+From:   Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <273b996a-8551-8383-5f9d-61ff5bd9663c@kernel.org>
+Date:   Mon, 1 Feb 2021 16:18:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <377d2e2d328276070ae2f26c65daa1497bb3c3cf.1612166647.git.viresh.kumar@linaro.org>
- <YBfNb91psVcf3TAS@light.dominikbrodowski.net> <20210201100502.xluaj5rpqosqsq7b@vireshk-i7>
-In-Reply-To: <20210201100502.xluaj5rpqosqsq7b@vireshk-i7>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 1 Feb 2021 15:02:06 +0100
-Message-ID: <CAJZ5v0iowSHeie2HLPjHUftBDVBQXi30O1Kfk3Kxchc0K=gYag@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: Remove CPUFREQ_STICKY flag
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Keguang Zhang <keguang.zhang@gmail.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mips@vger.kernel.org,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC..." 
-        <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210131170428.3290-1-pawel.mikolaj.chmiel@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 1, 2021 at 11:06 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 01-02-21, 10:44, Dominik Brodowski wrote:
-> > IIRC, it was required on various ARM systems,[*] as CPUs were registered as
-> > subsys_initcall(), while cpufreq used to be initialized only later, as an
->
-> s/later/earlier ? arch happens before subsys not at least and that is
-> the only way we can break cpufreq here, i.e. when the driver comes up
-> before the CPUs are registered.
->
-> > arch_initcall(). If the ordering is opposite now on all architectures (it
-> > wasn't on ARM back then), we should be fine.
-> >
-> > [*] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/arch/arm/mach-sa1100/cpu-sa1100.c?id=f59d3bbe35f6268d729f51be82af8325d62f20f5
->
-> Thanks for your reply, it made me look at that aspect in some more
-> detail to confirm I don't end up breaking anything. Unless I am making
-> a mistake in reading the code, this is the code flow that we have
-> right now:
->
-> start_kernel()
-> -> kernel_init()
->    -> kernel_init_freeable()
->       -> do_basic_setup()
->          -> driver_init()
->             -> cpu_dev_init()
->                -> subsys_system_register(for-CPUs)
->
->          -> do_initcalls()
->             -> register-cpufreq-driver from any level
->
-> And so CPUs should always be there for a cpufreq driver.
->
-> Makes sense ?
+On 1/31/21 18:04, Paweł Chmiel wrote:
+> This clock must be always enabled to allow access to any registers in
+> fsys1 CMU. Until proper solution based on runtime PM is applied
+> (similar to what was done for Exynos5433), fix this by calling
+> clk_prepare_enable() directly from clock provider driver.
+> 
+> It was observed on Samsung Galaxy S6 device (based on Exynos7420), where
+> UFS module is probed before pmic used to power that device.
+> In this case defer probe was happening and that clock was disabled by
+> UFS driver, causing whole boot to hang on next CMU access.
+> 
+> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+> Changes from v2:
+>    - Avoid __clk_lookup() call when enabling clock
+> Changes from v1:
+>    - Instead of marking clock as critical, enable it manually in driver.
 
-It does to me, but can you update the changelog, please?
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
