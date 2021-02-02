@@ -2,410 +2,649 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	TVD_PH_BODY_ACCOUNTS_PRE,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6F6C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Feb 2021 04:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 812D5C433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Feb 2021 13:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC9FB60295
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Feb 2021 04:56:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CF3D64F51
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Feb 2021 13:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231856AbhBBE4B (ORCPT
+        id S232501AbhBBNdN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 1 Feb 2021 23:56:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45508 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231748AbhBBE4A (ORCPT
+        Tue, 2 Feb 2021 08:33:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59628 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232369AbhBBNbg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 1 Feb 2021 23:56:00 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E05DAC0613ED
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Feb 2021 20:55:19 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id a20so1506340pjs.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Feb 2021 20:55:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KnjYJhpsvi+EI6uh+V9emtTk5rRYy/hy1WxcaaGRj88=;
-        b=jMCQvOrib39iuufOoGnShhg7/M0QlLhgoR/DzvJuyYtnVlkdshCDsPRDtE/0jgK5k5
-         8aMyNcmbhs8BDR+1UNY05IUJIYrCvtXEVFL/6HNtEQlTwpxRbWt88F1EtwOZ9MxLQfyb
-         DTNRKEzt4tnv9/2gVzxaMgFW+eo6yqLUy2gm6ZI8O7r1C+HdaJy0zFMT1s9WTtQtJYU2
-         1P3i1Ab8BqjM566cK4qfFZdO69Xb4RzEMAHOIGIz36rUvN0mBoX/UyA4W5qvitshuPCr
-         BmfUrJDFbatH0Zfvc/D/1ftB2GWy9u/W70MmT6r5Owh7rLlxipN4VEyMXLt5CZbl8hj8
-         DQxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KnjYJhpsvi+EI6uh+V9emtTk5rRYy/hy1WxcaaGRj88=;
-        b=In0gfu5HnxVBR1voJjtN2PPllapBeiOmkcDNzaAyACTejaxvxqMPLGNZbi0wKjcHvs
-         estdd1iQAQhdWxpVxy/xSYTugG1IeoSK7YipCKqsDnqhpXgyaLoRn8HjR/HA76l3SLUs
-         tbaLvAG1hZX12G5DEtq2bxVi9Y4XUvKlpntgtVUuWh5rmcYmPbqcBrzSg6IgOB5Ho7Ny
-         wb4Ou7WsQVe/rB6KN3SCXO5Hm76GyZXRcpSdCILZgHyr4vvgVX/9WE0x1F05Efho0xc7
-         aJNUUFAXQ4f/0GMPt0KKv6Xfe3kkOAqK6qr0icXh1XKPBhw0F+4eYl14XRNYVhdoLDEV
-         BzuQ==
-X-Gm-Message-State: AOAM530h059tkihCWEWeaUroFXTVEgdAhutdZzW56uVpX8vN20OdZ+1F
-        xK+ywFDszP+SZQuhFz13mPh9HA==
-X-Google-Smtp-Source: ABdhPJwS93fNsUH31dYgXN8xBzZ5bkht/DGUPiwXokd8KJoRuC/YLfOQ67hcBaOskP59AiVUpErNJg==
-X-Received: by 2002:a17:903:22c2:b029:de:45c0:69f2 with SMTP id y2-20020a17090322c2b02900de45c069f2mr20804008plg.26.1612241719095;
-        Mon, 01 Feb 2021 20:55:19 -0800 (PST)
-Received: from localhost ([122.172.59.240])
-        by smtp.gmail.com with ESMTPSA id i3sm20044312pfq.194.2021.02.01.20.55.17
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Feb 2021 20:55:18 -0800 (PST)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rafael Wysocki <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Keguang Zhang <keguang.zhang@gmail.com>,
-        Kevin Hilman <khilman@kernel.org>,
+        Tue, 2 Feb 2021 08:31:36 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2310764F76;
+        Tue,  2 Feb 2021 13:30:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612272602;
+        bh=nJFVkFVcxLt04mnBQIBfm4IXRi2ERW4Q1DqINzouepk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PPTE7k8kTk+XXzwTslQP0Ritd+T4aPUY8VCOztRnA7mqy4ZhQaU13lMM9J+EHkc0b
+         yHwbrU5KYbfnq7JwpONZhJCQD/Di55pgcdQKKTe1A1eH6OI/ZwrRwUhK3UBmPyXzDC
+         W4Xpyu5c2qmm8psfC/oPx0S9HEzxNZBhGCMmHnPs/RB7YKB0JX4AR4RwxUvZdTkn8i
+         tSD6s1rzTdzE75rWsXszeu9TLr8mzm4G9X5mH7xiIfRuVg7+2ZuLQ4T2h3CcQljtK/
+         4UBVJP+WXDZnacBS1vF+DGD8+gZ1M5qSrMEKnOzmksi1K9bu2AUlO4BAKSOTtNlWyw
+         T4oAWoVR/1HPQ==
+Received: by mail.kernel.org with local (Exim 4.94)
+        (envelope-from <mchehab@kernel.org>)
+        id 1l6vkl-0011yn-Db; Tue, 02 Feb 2021 14:29:59 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH V2] cpufreq: Remove CPUFREQ_STICKY flag
-Date:   Tue,  2 Feb 2021 10:25:11 +0530
-Message-Id: <a59bb322b22c247d570b70a8e94067804287623b.1612241683.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.25.0.rc1.19.g042ed3e048af
+        Kevin Hilman <khilman@baylibre.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH 01/13] doc: bindings: pci: designware-pcie.txt: convert it to yaml
+Date:   Tue,  2 Feb 2021 14:29:46 +0100
+Message-Id: <706e684f571e142362d7be74eb1dcee2c8558052.1612271903.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <cover.1612271903.git.mchehab+huawei@kernel.org>
+References: <cover.1612271903.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-During cpufreq driver's registration, if the ->init() callback for all
-the CPUs fail then there is not much point in keeping the driver around
-as it will only account for more of unnecessary noise, for example
-cpufreq core will try to suspend/resume the driver which never got
-registered properly.
+Convert the file into a DT schema.
 
-The removal of such a driver is avoided if the driver carries the
-CPUFREQ_STICKY flag. This was added way back [1] in 2004 and perhaps no
-one should ever need it now. A lot of drivers do set this flag, probably
-because they just copied it from other drivers.
-
-This was added earlier for some platforms [2] because their cpufreq
-drivers were getting registered before the CPUs were registered with
-subsys framework. And hence they used to fail.
-
-The same isn't true anymore though. The current code flow in the kernel
-is:
-
-start_kernel()
--> kernel_init()
-   -> kernel_init_freeable()
-      -> do_basic_setup()
-         -> driver_init()
-            -> cpu_dev_init()
-               -> subsys_system_register() //For CPUs
-
-         -> do_initcalls()
-            -> cpufreq_register_driver()
-
-Clearly, the CPUs will always get registered with subsys framework
-before any cpufreq driver can get probed. Remove the flag and update the
-relevant drivers.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/include/linux/cpufreq.h?id=7cc9f0d9a1ab04cedc60d64fd8dcf7df224a3b4d
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/arch/arm/mach-sa1100/cpu-sa1100.c?id=f59d3bbe35f6268d729f51be82af8325d62f20f5
-
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
-V2: Detailed commit log.
+ .../bindings/pci/amlogic,meson-pcie.txt       |   4 +-
+ .../bindings/pci/axis,artpec6-pcie.txt        |   2 +-
+ .../bindings/pci/designware-pcie.txt          |  77 ----------
+ .../bindings/pci/fsl,imx6q-pcie.txt           |   2 +-
+ .../bindings/pci/hisilicon-histb-pcie.txt     |   2 +-
+ .../bindings/pci/hisilicon-pcie.txt           |   2 +-
+ .../devicetree/bindings/pci/kirin-pcie.txt    |   2 +-
+ .../bindings/pci/layerscape-pci.txt           |   2 +-
+ .../bindings/pci/nvidia,tegra194-pcie.txt     |   4 +-
+ .../devicetree/bindings/pci/pci-armada8k.txt  |   2 +-
+ .../devicetree/bindings/pci/pci-keystone.txt  |  10 +-
+ .../devicetree/bindings/pci/pcie-al.txt       |   2 +-
+ .../devicetree/bindings/pci/qcom,pcie.txt     |  14 +-
+ .../bindings/pci/samsung,exynos-pcie.yaml     |   2 +-
+ .../devicetree/bindings/pci/snps,pcie.yaml    | 139 ++++++++++++++++++
+ .../pci/socionext,uniphier-pcie-ep.yaml       |   2 +-
+ .../devicetree/bindings/pci/ti-pci.txt        |   4 +-
+ .../devicetree/bindings/pci/uniphier-pcie.txt |   2 +-
+ MAINTAINERS                                   |   2 +-
+ 19 files changed, 169 insertions(+), 107 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pci/designware-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/pci/snps,pcie.yaml
 
- drivers/cpufreq/cpufreq-dt.c           |  2 +-
- drivers/cpufreq/cpufreq.c              |  3 +--
- drivers/cpufreq/davinci-cpufreq.c      |  2 +-
- drivers/cpufreq/loongson1-cpufreq.c    |  2 +-
- drivers/cpufreq/mediatek-cpufreq.c     |  2 +-
- drivers/cpufreq/omap-cpufreq.c         |  2 +-
- drivers/cpufreq/qcom-cpufreq-hw.c      |  2 +-
- drivers/cpufreq/s3c24xx-cpufreq.c      |  2 +-
- drivers/cpufreq/s5pv210-cpufreq.c      |  2 +-
- drivers/cpufreq/sa1100-cpufreq.c       |  2 +-
- drivers/cpufreq/sa1110-cpufreq.c       |  2 +-
- drivers/cpufreq/scmi-cpufreq.c         |  2 +-
- drivers/cpufreq/scpi-cpufreq.c         |  2 +-
- drivers/cpufreq/spear-cpufreq.c        |  2 +-
- drivers/cpufreq/tegra186-cpufreq.c     |  2 +-
- drivers/cpufreq/tegra194-cpufreq.c     |  3 +--
- drivers/cpufreq/vexpress-spc-cpufreq.c |  3 +--
- include/linux/cpufreq.h                | 17 +++++++----------
- 18 files changed, 24 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index ad4234518ef6..b1e1bdc63b01 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -175,7 +175,7 @@ static int cpufreq_exit(struct cpufreq_policy *policy)
- }
+diff --git a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+index b6acbe694ffb..da9253d43550 100644
+--- a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+@@ -3,7 +3,7 @@ Amlogic Meson AXG DWC PCIE SoC controller
+ Amlogic Meson PCIe host controller is based on the Synopsys DesignWare PCI core.
+ It shares common functions with the PCIe DesignWare core driver and
+ inherits common properties defined in
+-Documentation/devicetree/bindings/pci/designware-pcie.txt.
++Documentation/devicetree/bindings/pci/snps,pcie.yaml.
  
- static struct cpufreq_driver dt_cpufreq_driver = {
--	.flags = CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-+	.flags = CPUFREQ_NEED_INITIAL_FREQ_CHECK |
- 		 CPUFREQ_IS_COOLING_DEV,
- 	.verify = cpufreq_generic_frequency_table_verify,
- 	.target_index = set_target,
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index d0a3525ce27f..7d0ae968def7 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -2810,8 +2810,7 @@ int cpufreq_register_driver(struct cpufreq_driver *driver_data)
- 	if (ret)
- 		goto err_boost_unreg;
+ Additional properties are described here:
  
--	if (!(cpufreq_driver->flags & CPUFREQ_STICKY) &&
--	    list_empty(&cpufreq_policy_list)) {
-+	if (unlikely(list_empty(&cpufreq_policy_list))) {
- 		/* if all ->init() calls failed, unregister */
- 		ret = -ENODEV;
- 		pr_debug("%s: No CPU initialized for driver %s\n", __func__,
-diff --git a/drivers/cpufreq/davinci-cpufreq.c b/drivers/cpufreq/davinci-cpufreq.c
-index 91f477a6cbc4..9e97f60f8199 100644
---- a/drivers/cpufreq/davinci-cpufreq.c
-+++ b/drivers/cpufreq/davinci-cpufreq.c
-@@ -95,7 +95,7 @@ static int davinci_cpu_init(struct cpufreq_policy *policy)
- }
+@@ -33,7 +33,7 @@ Required properties:
+ - phy-names: must contain "pcie"
  
- static struct cpufreq_driver davinci_driver = {
--	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK,
-+	.flags		= CPUFREQ_NEED_INITIAL_FREQ_CHECK,
- 	.verify		= cpufreq_generic_frequency_table_verify,
- 	.target_index	= davinci_target,
- 	.get		= cpufreq_generic_get,
-diff --git a/drivers/cpufreq/loongson1-cpufreq.c b/drivers/cpufreq/loongson1-cpufreq.c
-index 86f612593e49..fb72d709db56 100644
---- a/drivers/cpufreq/loongson1-cpufreq.c
-+++ b/drivers/cpufreq/loongson1-cpufreq.c
-@@ -116,7 +116,7 @@ static int ls1x_cpufreq_exit(struct cpufreq_policy *policy)
+ - device_type:
+-	should be "pci". As specified in designware-pcie.txt
++	should be "pci". As specified in snps,pcie.yaml
  
- static struct cpufreq_driver ls1x_cpufreq_driver = {
- 	.name		= "cpufreq-ls1x",
--	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK,
-+	.flags		= CPUFREQ_NEED_INITIAL_FREQ_CHECK,
- 	.verify		= cpufreq_generic_frequency_table_verify,
- 	.target_index	= ls1x_cpufreq_target,
- 	.get		= cpufreq_generic_get,
-diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
-index 022e3e966e71..f2e491b25b07 100644
---- a/drivers/cpufreq/mediatek-cpufreq.c
-+++ b/drivers/cpufreq/mediatek-cpufreq.c
-@@ -463,7 +463,7 @@ static int mtk_cpufreq_exit(struct cpufreq_policy *policy)
- }
  
- static struct cpufreq_driver mtk_cpufreq_driver = {
--	.flags = CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-+	.flags = CPUFREQ_NEED_INITIAL_FREQ_CHECK |
- 		 CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
- 		 CPUFREQ_IS_COOLING_DEV,
- 	.verify = cpufreq_generic_frequency_table_verify,
-diff --git a/drivers/cpufreq/omap-cpufreq.c b/drivers/cpufreq/omap-cpufreq.c
-index 3694bb030df3..e035ee216b0f 100644
---- a/drivers/cpufreq/omap-cpufreq.c
-+++ b/drivers/cpufreq/omap-cpufreq.c
-@@ -144,7 +144,7 @@ static int omap_cpu_exit(struct cpufreq_policy *policy)
- }
+ Example configuration:
+diff --git a/Documentation/devicetree/bindings/pci/axis,artpec6-pcie.txt b/Documentation/devicetree/bindings/pci/axis,artpec6-pcie.txt
+index 979dc7b6cfe8..84b53ae2c376 100644
+--- a/Documentation/devicetree/bindings/pci/axis,artpec6-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/axis,artpec6-pcie.txt
+@@ -1,7 +1,7 @@
+ * Axis ARTPEC-6 PCIe interface
  
- static struct cpufreq_driver omap_driver = {
--	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK,
-+	.flags		= CPUFREQ_NEED_INITIAL_FREQ_CHECK,
- 	.verify		= cpufreq_generic_frequency_table_verify,
- 	.target_index	= omap_target,
- 	.get		= cpufreq_generic_get,
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-index 9ed5341dc515..2a3b4f44488b 100644
---- a/drivers/cpufreq/qcom-cpufreq-hw.c
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -374,7 +374,7 @@ static struct freq_attr *qcom_cpufreq_hw_attr[] = {
- };
+ This PCIe host controller is based on the Synopsys DesignWare PCIe IP
+-and thus inherits all the common properties defined in designware-pcie.txt.
++and thus inherits all the common properties defined in snps,pcie.yaml.
  
- static struct cpufreq_driver cpufreq_qcom_hw_driver = {
--	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-+	.flags		= CPUFREQ_NEED_INITIAL_FREQ_CHECK |
- 			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
- 			  CPUFREQ_IS_COOLING_DEV,
- 	.verify		= cpufreq_generic_frequency_table_verify,
-diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
-index 37efc0dc3f91..7380c32b238e 100644
---- a/drivers/cpufreq/s3c24xx-cpufreq.c
-+++ b/drivers/cpufreq/s3c24xx-cpufreq.c
-@@ -420,7 +420,7 @@ static int s3c_cpufreq_resume(struct cpufreq_policy *policy)
- #endif
- 
- static struct cpufreq_driver s3c24xx_driver = {
--	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK,
-+	.flags		= CPUFREQ_NEED_INITIAL_FREQ_CHECK,
- 	.target		= s3c_cpufreq_target,
- 	.get		= cpufreq_generic_get,
- 	.init		= s3c_cpufreq_init,
-diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index bed496cf8d24..69786e5bbf05 100644
---- a/drivers/cpufreq/s5pv210-cpufreq.c
-+++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -574,7 +574,7 @@ static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
- }
- 
- static struct cpufreq_driver s5pv210_driver = {
--	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK,
-+	.flags		= CPUFREQ_NEED_INITIAL_FREQ_CHECK,
- 	.verify		= cpufreq_generic_frequency_table_verify,
- 	.target_index	= s5pv210_target,
- 	.get		= cpufreq_generic_get,
-diff --git a/drivers/cpufreq/sa1100-cpufreq.c b/drivers/cpufreq/sa1100-cpufreq.c
-index 5c075ef6adc0..252b9fc26124 100644
---- a/drivers/cpufreq/sa1100-cpufreq.c
-+++ b/drivers/cpufreq/sa1100-cpufreq.c
-@@ -186,7 +186,7 @@ static int __init sa1100_cpu_init(struct cpufreq_policy *policy)
- }
- 
- static struct cpufreq_driver sa1100_driver __refdata = {
--	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-+	.flags		= CPUFREQ_NEED_INITIAL_FREQ_CHECK |
- 			  CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING,
- 	.verify		= cpufreq_generic_frequency_table_verify,
- 	.target_index	= sa1100_target,
-diff --git a/drivers/cpufreq/sa1110-cpufreq.c b/drivers/cpufreq/sa1110-cpufreq.c
-index d9d04d935b3a..1a83c8678a63 100644
---- a/drivers/cpufreq/sa1110-cpufreq.c
-+++ b/drivers/cpufreq/sa1110-cpufreq.c
-@@ -310,7 +310,7 @@ static int __init sa1110_cpu_init(struct cpufreq_policy *policy)
- /* sa1110_driver needs __refdata because it must remain after init registers
-  * it with cpufreq_register_driver() */
- static struct cpufreq_driver sa1110_driver __refdata = {
--	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-+	.flags		= CPUFREQ_NEED_INITIAL_FREQ_CHECK |
- 			  CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING,
- 	.verify		= cpufreq_generic_frequency_table_verify,
- 	.target_index	= sa1110_target,
-diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-index 491a0a24fb1e..5bd03b59887f 100644
---- a/drivers/cpufreq/scmi-cpufreq.c
-+++ b/drivers/cpufreq/scmi-cpufreq.c
-@@ -217,7 +217,7 @@ static int scmi_cpufreq_exit(struct cpufreq_policy *policy)
- 
- static struct cpufreq_driver scmi_cpufreq_driver = {
- 	.name	= "scmi",
--	.flags	= CPUFREQ_STICKY | CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
-+	.flags	= CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
- 		  CPUFREQ_NEED_INITIAL_FREQ_CHECK |
- 		  CPUFREQ_IS_COOLING_DEV,
- 	.verify	= cpufreq_generic_frequency_table_verify,
-diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
-index e5140ad63db8..d6a698a1b5d1 100644
---- a/drivers/cpufreq/scpi-cpufreq.c
-+++ b/drivers/cpufreq/scpi-cpufreq.c
-@@ -191,7 +191,7 @@ static int scpi_cpufreq_exit(struct cpufreq_policy *policy)
- 
- static struct cpufreq_driver scpi_cpufreq_driver = {
- 	.name	= "scpi-cpufreq",
--	.flags	= CPUFREQ_STICKY | CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
-+	.flags	= CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
- 		  CPUFREQ_NEED_INITIAL_FREQ_CHECK |
- 		  CPUFREQ_IS_COOLING_DEV,
- 	.verify	= cpufreq_generic_frequency_table_verify,
-diff --git a/drivers/cpufreq/spear-cpufreq.c b/drivers/cpufreq/spear-cpufreq.c
-index 73bd8dc47074..7d0d62a06bf3 100644
---- a/drivers/cpufreq/spear-cpufreq.c
-+++ b/drivers/cpufreq/spear-cpufreq.c
-@@ -160,7 +160,7 @@ static int spear_cpufreq_init(struct cpufreq_policy *policy)
- 
- static struct cpufreq_driver spear_cpufreq_driver = {
- 	.name		= "cpufreq-spear",
--	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK,
-+	.flags		= CPUFREQ_NEED_INITIAL_FREQ_CHECK,
- 	.verify		= cpufreq_generic_frequency_table_verify,
- 	.target_index	= spear_cpufreq_target,
- 	.get		= cpufreq_generic_get,
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-index e566ea298b59..5d1943e787b0 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -117,7 +117,7 @@ static unsigned int tegra186_cpufreq_get(unsigned int cpu)
- 
- static struct cpufreq_driver tegra186_cpufreq_driver = {
- 	.name = "tegra186",
--	.flags = CPUFREQ_STICKY | CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
-+	.flags = CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
- 			CPUFREQ_NEED_INITIAL_FREQ_CHECK,
- 	.get = tegra186_cpufreq_get,
- 	.verify = cpufreq_generic_frequency_table_verify,
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-index 6a67f36f3b80..a9620e4489ae 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -272,8 +272,7 @@ static int tegra194_cpufreq_set_target(struct cpufreq_policy *policy,
- 
- static struct cpufreq_driver tegra194_cpufreq_driver = {
- 	.name = "tegra194",
--	.flags = CPUFREQ_STICKY | CPUFREQ_CONST_LOOPS |
--		CPUFREQ_NEED_INITIAL_FREQ_CHECK,
-+	.flags = CPUFREQ_CONST_LOOPS | CPUFREQ_NEED_INITIAL_FREQ_CHECK,
- 	.verify = cpufreq_generic_frequency_table_verify,
- 	.target_index = tegra194_cpufreq_set_target,
- 	.get = tegra194_get_speed,
-diff --git a/drivers/cpufreq/vexpress-spc-cpufreq.c b/drivers/cpufreq/vexpress-spc-cpufreq.c
-index f711d8eaea6a..51dfa9ae6cf5 100644
---- a/drivers/cpufreq/vexpress-spc-cpufreq.c
-+++ b/drivers/cpufreq/vexpress-spc-cpufreq.c
-@@ -486,8 +486,7 @@ static void ve_spc_cpufreq_ready(struct cpufreq_policy *policy)
- 
- static struct cpufreq_driver ve_spc_cpufreq_driver = {
- 	.name			= "vexpress-spc",
--	.flags			= CPUFREQ_STICKY |
--					CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
-+	.flags			= CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
- 					CPUFREQ_NEED_INITIAL_FREQ_CHECK,
- 	.verify			= cpufreq_generic_frequency_table_verify,
- 	.target_index		= ve_spc_cpufreq_set_target,
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 9c8b7437b6cd..c8e40e91fe9b 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -387,8 +387,13 @@ struct cpufreq_driver {
- 
- /* flags */
- 
--/* driver isn't removed even if all ->init() calls failed */
--#define CPUFREQ_STICKY				BIT(0)
-+/*
-+ * Set by drivers that need to update internale upper and lower boundaries along
-+ * with the target frequency and so the core and governors should also invoke
-+ * the diver if the target frequency does not change, but the policy min or max
-+ * may have changed.
-+ */
-+#define CPUFREQ_NEED_UPDATE_LIMITS		BIT(0)
- 
- /* loops_per_jiffy or other kernel "constants" aren't affected by frequency transitions */
- #define CPUFREQ_CONST_LOOPS			BIT(1)
-@@ -432,14 +437,6 @@ struct cpufreq_driver {
-  */
- #define CPUFREQ_IS_COOLING_DEV			BIT(7)
- 
--/*
-- * Set by drivers that need to update internale upper and lower boundaries along
-- * with the target frequency and so the core and governors should also invoke
-- * the diver if the target frequency does not change, but the policy min or max
-- * may have changed.
-- */
--#define CPUFREQ_NEED_UPDATE_LIMITS		BIT(8)
+ Required properties:
+ - compatible: "axis,artpec6-pcie", "snps,dw-pcie" for ARTPEC-6 in RC mode;
+diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+deleted file mode 100644
+index 78494c4050f7..000000000000
+--- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
++++ /dev/null
+@@ -1,77 +0,0 @@
+-* Synopsys DesignWare PCIe interface
 -
- int cpufreq_register_driver(struct cpufreq_driver *driver_data);
- int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
+-Required properties:
+-- compatible:
+-	"snps,dw-pcie" for RC mode;
+-	"snps,dw-pcie-ep" for EP mode;
+-- reg: For designware cores version < 4.80 contains the configuration
+-       address space. For designware core version >= 4.80, contains
+-       the configuration and ATU address space
+-- reg-names: Must be "config" for the PCIe configuration space and "atu" for
+-	     the ATU address space.
+-    (The old way of getting the configuration address space from "ranges"
+-    is deprecated and should be avoided.)
+-RC mode:
+-- #address-cells: set to <3>
+-- #size-cells: set to <2>
+-- device_type: set to "pci"
+-- ranges: ranges for the PCI memory and I/O regions
+-- #interrupt-cells: set to <1>
+-- interrupt-map-mask and interrupt-map: standard PCI
+-	properties to define the mapping of the PCIe interface to interrupt
+-	numbers.
+-EP mode:
+-- num-ib-windows: number of inbound address translation windows
+-- num-ob-windows: number of outbound address translation windows
+-
+-Optional properties:
+-- num-lanes: number of lanes to use (this property should be specified unless
+-  the link is brought already up in BIOS)
+-- reset-gpio: GPIO pin number of power good signal
+-- clocks: Must contain an entry for each entry in clock-names.
+-	See ../clocks/clock-bindings.txt for details.
+-- clock-names: Must include the following entries:
+-	- "pcie"
+-	- "pcie_bus"
+-- snps,enable-cdm-check: This is a boolean property and if present enables
+-   automatic checking of CDM (Configuration Dependent Module) registers
+-   for data corruption. CDM registers include standard PCIe configuration
+-   space registers, Port Logic registers, DMA and iATU (internal Address
+-   Translation Unit) registers.
+-RC mode:
+-- num-viewport: number of view ports configured in hardware. If a platform
+-  does not specify it, the driver assumes 2.
+-- bus-range: PCI bus numbers covered (it is recommended for new devicetrees
+-  to specify this property, to keep backwards compatibility a range of
+-  0x00-0xff is assumed if not present)
+-
+-EP mode:
+-- max-functions: maximum number of functions that can be configured
+-
+-Example configuration:
+-
+-	pcie: pcie@dfc00000 {
+-		compatible = "snps,dw-pcie";
+-		reg = <0xdfc00000 0x0001000>, /* IP registers */
+-		      <0xd0000000 0x0002000>; /* Configuration space */
+-		reg-names = "dbi", "config";
+-		#address-cells = <3>;
+-		#size-cells = <2>;
+-		device_type = "pci";
+-		ranges = <0x81000000 0 0x00000000 0xde000000 0 0x00010000
+-			  0x82000000 0 0xd0400000 0xd0400000 0 0x0d000000>;
+-		interrupts = <25>, <24>;
+-		#interrupt-cells = <1>;
+-		num-lanes = <1>;
+-	};
+-or
+-	pcie: pcie@dfc00000 {
+-		compatible = "snps,dw-pcie-ep";
+-		reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
+-		      <0xdfc01000 0x0001000>, /* IP registers 2 */
+-		      <0xd0000000 0x2000000>; /* Configuration space */
+-		reg-names = "dbi", "dbi2", "addr_space";
+-		num-ib-windows = <6>;
+-		num-ob-windows = <2>;
+-		num-lanes = <1>;
+-	};
+diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+index de4b2baf91e8..9470b279e3e4 100644
+--- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+@@ -1,7 +1,7 @@
+ * Freescale i.MX6 PCIe interface
  
+ This PCIe host controller is based on the Synopsys DesignWare PCIe IP
+-and thus inherits all the common properties defined in designware-pcie.txt.
++and thus inherits all the common properties defined in snps,pcie.yaml.
+ 
+ Required properties:
+ - compatible:
+diff --git a/Documentation/devicetree/bindings/pci/hisilicon-histb-pcie.txt b/Documentation/devicetree/bindings/pci/hisilicon-histb-pcie.txt
+index 760b4d740616..2f62119d97b9 100644
+--- a/Documentation/devicetree/bindings/pci/hisilicon-histb-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/hisilicon-histb-pcie.txt
+@@ -3,7 +3,7 @@ HiSilicon STB PCIe host bridge DT description
+ The HiSilicon STB PCIe host controller is based on the DesignWare PCIe core.
+ It shares common functions with the DesignWare PCIe core driver and inherits
+ common properties defined in
+-Documentation/devicetree/bindings/pci/designware-pcie.txt.
++Documentation/devicetree/bindings/pci/snps,pcie.yaml.
+ 
+ Additional properties are described here:
+ 
+diff --git a/Documentation/devicetree/bindings/pci/hisilicon-pcie.txt b/Documentation/devicetree/bindings/pci/hisilicon-pcie.txt
+index d6796ef54ea1..4d243bfb9709 100644
+--- a/Documentation/devicetree/bindings/pci/hisilicon-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/hisilicon-pcie.txt
+@@ -3,7 +3,7 @@ HiSilicon Hip05 and Hip06 PCIe host bridge DT description
+ HiSilicon PCIe host controller is based on the Synopsys DesignWare PCI core.
+ It shares common functions with the PCIe DesignWare core driver and inherits
+ common properties defined in
+-Documentation/devicetree/bindings/pci/designware-pcie.txt.
++Documentation/devicetree/bindings/pci/snps,pcie.yaml.
+ 
+ Additional properties are described here:
+ 
+diff --git a/Documentation/devicetree/bindings/pci/kirin-pcie.txt b/Documentation/devicetree/bindings/pci/kirin-pcie.txt
+index 6bbe43818ad5..a38f8e38a67b 100644
+--- a/Documentation/devicetree/bindings/pci/kirin-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/kirin-pcie.txt
+@@ -3,7 +3,7 @@ HiSilicon Kirin SoCs PCIe host DT description
+ Kirin PCIe host controller is based on the Synopsys DesignWare PCI core.
+ It shares common functions with the PCIe DesignWare core driver and
+ inherits common properties defined in
+-Documentation/devicetree/bindings/pci/designware-pcie.txt.
++Documentation/devicetree/bindings/pci/snps,pcie.yaml.
+ 
+ Additional properties are described here:
+ 
+diff --git a/Documentation/devicetree/bindings/pci/layerscape-pci.txt b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+index daa99f7d4c3f..8070adfc1746 100644
+--- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
++++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+@@ -1,7 +1,7 @@
+ Freescale Layerscape PCIe controller
+ 
+ This PCIe host controller is based on the Synopsys DesignWare PCIe IP
+-and thus inherits all the common properties defined in designware-pcie.txt.
++and thus inherits all the common properties defined in snps,pcie.yaml.
+ 
+ This controller derives its clocks from the Reset Configuration Word (RCW)
+ which is used to describe the PLL settings at the time of chip-reset.
+diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+index bd43f3c3ece4..4644d79e0e0c 100644
+--- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+@@ -1,7 +1,7 @@
+ NVIDIA Tegra PCIe controller (Synopsys DesignWare Core based)
+ 
+ This PCIe controller is based on the Synopsis Designware PCIe IP
+-and thus inherits all the common properties defined in designware-pcie.txt.
++and thus inherits all the common properties defined in snps,pcie.yaml.
+ Some of the controller instances are dual mode where in they can work either
+ in root port mode or endpoint mode but one at a time.
+ 
+@@ -22,7 +22,7 @@ Required properties:
+   property.
+ - reg-names: Must include the following entries:
+   "appl": Controller's application logic registers
+-  "config": As per the definition in designware-pcie.txt
++  "config": As per the definition in snps,pcie.yaml
+   "atu_dma": iATU and DMA registers. This is where the iATU (internal Address
+              Translation Unit) registers of the PCIe core are made available
+              for SW access.
+diff --git a/Documentation/devicetree/bindings/pci/pci-armada8k.txt b/Documentation/devicetree/bindings/pci/pci-armada8k.txt
+index 7a813d0e6d63..4531b895e9ea 100644
+--- a/Documentation/devicetree/bindings/pci/pci-armada8k.txt
++++ b/Documentation/devicetree/bindings/pci/pci-armada8k.txt
+@@ -1,7 +1,7 @@
+ * Marvell Armada 7K/8K PCIe interface
+ 
+ This PCIe host controller is based on the Synopsys DesignWare PCIe IP
+-and thus inherits all the common properties defined in designware-pcie.txt.
++and thus inherits all the common properties defined in snps,pcie.yaml.
+ 
+ Required properties:
+ - compatible: "marvell,armada8k-pcie"
+diff --git a/Documentation/devicetree/bindings/pci/pci-keystone.txt b/Documentation/devicetree/bindings/pci/pci-keystone.txt
+index 47202a2938f2..ac271a0ca078 100644
+--- a/Documentation/devicetree/bindings/pci/pci-keystone.txt
++++ b/Documentation/devicetree/bindings/pci/pci-keystone.txt
+@@ -3,9 +3,9 @@ TI Keystone PCIe interface
+ Keystone PCI host Controller is based on the Synopsys DesignWare PCI
+ hardware version 3.65.  It shares common functions with the PCIe DesignWare
+ core driver and inherits common properties defined in
+-Documentation/devicetree/bindings/pci/designware-pcie.txt
++Documentation/devicetree/bindings/pci/snps,pcie.yaml
+ 
+-Please refer to Documentation/devicetree/bindings/pci/designware-pcie.txt
++Please refer to Documentation/devicetree/bindings/pci/snps,pcie.yaml
+ for the details of DesignWare DT bindings.  Additional properties are
+ described here as well as properties that are not applicable.
+ 
+@@ -82,11 +82,11 @@ reg-names: "dbics" for the DesignWare PCIe registers, "app" for the
+ 	   Address Translation Unit configuration registers and
+ 	   "addr_space" used to map remote RC address space
+ num-ib-windows: As specified in
+-		Documentation/devicetree/bindings/pci/designware-pcie.txt
++		Documentation/devicetree/bindings/pci/snps,pcie.yaml
+ num-ob-windows: As specified in
+-		Documentation/devicetree/bindings/pci/designware-pcie.txt
++		Documentation/devicetree/bindings/pci/snps,pcie.yaml
+ num-lanes: As specified in
+-	   Documentation/devicetree/bindings/pci/designware-pcie.txt
++	   Documentation/devicetree/bindings/pci/snps,pcie.yaml
+ power-domains: As documented by the generic PM domain bindings in
+ 	       Documentation/devicetree/bindings/power/power_domain.txt.
+ ti,syscon-pcie-mode: phandle to the device control module required to configure
+diff --git a/Documentation/devicetree/bindings/pci/pcie-al.txt b/Documentation/devicetree/bindings/pci/pcie-al.txt
+index 557a5089229d..6e1e20e15ae9 100644
+--- a/Documentation/devicetree/bindings/pci/pcie-al.txt
++++ b/Documentation/devicetree/bindings/pci/pcie-al.txt
+@@ -2,7 +2,7 @@
+ 
+ Amazon's Annapurna Labs PCIe Host Controller is based on the Synopsys DesignWare
+ PCI core. It inherits common properties defined in
+-Documentation/devicetree/bindings/pci/designware-pcie.txt.
++Documentation/devicetree/bindings/pci/snps,pcie.yaml.
+ 
+ Properties of the host controller node that differ from it are:
+ 
+diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.txt b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
+index 3b55310390a0..43c3086cf6ea 100644
+--- a/Documentation/devicetree/bindings/pci/qcom,pcie.txt
++++ b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
+@@ -33,22 +33,22 @@
+ - device_type:
+ 	Usage: required
+ 	Value type: <string>
+-	Definition: Should be "pci". As specified in designware-pcie.txt
++	Definition: Should be "pci". As specified in snps,pcie.yaml
+ 
+ - #address-cells:
+ 	Usage: required
+ 	Value type: <u32>
+-	Definition: Should be 3. As specified in designware-pcie.txt
++	Definition: Should be 3. As specified in snps,pcie.yaml
+ 
+ - #size-cells:
+ 	Usage: required
+ 	Value type: <u32>
+-	Definition: Should be 2. As specified in designware-pcie.txt
++	Definition: Should be 2. As specified in snps,pcie.yaml
+ 
+ - ranges:
+ 	Usage: required
+ 	Value type: <prop-encoded-array>
+-	Definition: As specified in designware-pcie.txt
++	Definition: As specified in snps,pcie.yaml
+ 
+ - interrupts:
+ 	Usage: required
+@@ -63,17 +63,17 @@
+ - #interrupt-cells:
+ 	Usage: required
+ 	Value type: <u32>
+-	Definition: Should be 1. As specified in designware-pcie.txt
++	Definition: Should be 1. As specified in snps,pcie.yaml
+ 
+ - interrupt-map-mask:
+ 	Usage: required
+ 	Value type: <prop-encoded-array>
+-	Definition: As specified in designware-pcie.txt
++	Definition: As specified in snps,pcie.yaml
+ 
+ - interrupt-map:
+ 	Usage: required
+ 	Value type: <prop-encoded-array>
+-	Definition: As specified in designware-pcie.txt
++	Definition: As specified in snps,pcie.yaml
+ 
+ - clocks:
+ 	Usage: required
+diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+index 1810bf722350..8a4fe2d021ed 100644
+--- a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+@@ -13,7 +13,7 @@ maintainers:
+ description: |+
+   Exynos5433 SoC PCIe host controller is based on the Synopsys DesignWare
+   PCIe IP and thus inherits all the common properties defined in
+-  designware-pcie.txt.
++  snps,pcie.yaml.
+ 
+ allOf:
+   - $ref: /schemas/pci/pci-bus.yaml#
+diff --git a/Documentation/devicetree/bindings/pci/snps,pcie.yaml b/Documentation/devicetree/bindings/pci/snps,pcie.yaml
+new file mode 100644
+index 000000000000..eeb5dad6937d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/snps,pcie.yaml
+@@ -0,0 +1,139 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pci/snps,pcie.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Synopsys DesignWare PCIe interface
++
++maintainers:
++  - Jingoo Han <jingoohan1@gmail.com>
++  - Gustavo Pimentel <gustavo.pimentel@synopsys.com>
++
++description: |
++  Synopsys DesignWare PCIe host controller
++
++anyOf:
++  - {}
++  - items:
++      contains:
++        enum:
++          - snps,dw-pcie
++          - snps,dw-pcie-ep
++
++properties:
++  compatible:
++    description: |
++      The compatible can be either:
++      - snps,dw-pcie       # for RC mode
++      - snps,dw-pcie-ep    # For EP mode
++      or some other value, when there's a host-specific driver
++
++  reg:
++    description: |
++      Contains DBI and the configuration address space for all
++      Designware versions.
++      For Designware core version >= 4.80, should also contain the
++      ATU address space.
++    minItems: 2
++    maxItems: 4
++
++  reset-gpio:
++    description: GPIO pin number for the PERST# signal
++    maxItems: 1
++
++  clocks:
++    minItems: 2
++    maxItems: 8
++
++  clock-names:
++    items:
++      contains:
++        enum: [ pcie, pcie_bus ]
++    minItems: 2
++    maxItems: 8
++
++  "snps,enable-cdm-check":
++    $ref: /schemas/types.yaml#definitions/flag
++    description: |
++      This is a boolean property and if present enables
++      automatic checking of CDM (Configuration Dependent Module) registers
++      for data corruption. CDM registers include standard PCIe configuration
++      space registers, Port Logic registers, DMA and iATU (internal Address
++      Translation Unit) registers.
++
++  # The following are optional properties for RC mode
++
++  num-viewport:
++    description: |
++      number of view ports configured in hardware. If a platform
++      does not specify it, the driver assumes 2.
++    deprecated: true
++
++  # The following are mandatory properties for EP Mode
++
++  num-ib-windows:
++    description: number of inbound address translation windows
++    maxItems: 1
++    deprecated: true
++
++  num-ob-windows:
++    description: number of outbound address translation windows
++    maxItems: 1
++    deprecated: true
++
++  # The following are optional properties for EP mode
++
++  max-functions:
++    description: maximum number of functions that can be configured
++
++required:
++  - reg
++  - reg-names
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: snps,dw-pcie
++    then:
++      allOf:
++        - $ref: /schemas/pci/pci-bus.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: snps,dw-pcie-ep
++    then:
++      required:
++        - compatible
++
++additionalProperties: false
++
++examples:
++  - |
++    pcie: pcie@dfc00000 {
++      compatible = "snps,dw-pcie";
++      reg = <0xdfc00000 0x0001000>, /* IP registers */
++            <0xd0000000 0x0002000>; /* Configuration space */
++      reg-names = "dbi", "config";
++      #address-cells = <3>;
++      #size-cells = <2>;
++      device_type = "pci";
++      ranges = <0x81000000 0 0x00000000 0xde000000 0 0x00010000>,
++               <0x82000000 0 0xd0400000 0xd0400000 0 0x0d000000>;
++      interrupts = <25>, <24>;
++      #interrupt-cells = <1>;
++      num-lanes = <1>;
++    };
++    pcie_ep: pcie_ep@dfd00000 {
++      compatible = "snps,dw-pcie-ep";
++      reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
++            <0xdfc01000 0x0001000>, /* IP registers 2 */
++            <0xd0000000 0x2000000>; /* Configuration space */
++      reg-names = "dbi", "dbi2", "addr_space";
++      num-ib-windows = <6>;
++      num-ob-windows = <2>;
++      num-lanes = <1>;
++    };
+diff --git a/Documentation/devicetree/bindings/pci/socionext,uniphier-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/socionext,uniphier-pcie-ep.yaml
+index d6cf8a560ef0..9c8733d21de4 100644
+--- a/Documentation/devicetree/bindings/pci/socionext,uniphier-pcie-ep.yaml
++++ b/Documentation/devicetree/bindings/pci/socionext,uniphier-pcie-ep.yaml
+@@ -10,7 +10,7 @@ description: |
+   UniPhier PCIe endpoint controller is based on the Synopsys DesignWare
+   PCI core. It shares common features with the PCIe DesignWare core and
+   inherits common properties defined in
+-  Documentation/devicetree/bindings/pci/designware-pcie.txt.
++  Documentation/devicetree/bindings/pci/snps,pcie.yaml.
+ 
+ maintainers:
+   - Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+diff --git a/Documentation/devicetree/bindings/pci/ti-pci.txt b/Documentation/devicetree/bindings/pci/ti-pci.txt
+index d5cbfe6b0d89..dfebfdb9b819 100644
+--- a/Documentation/devicetree/bindings/pci/ti-pci.txt
++++ b/Documentation/devicetree/bindings/pci/ti-pci.txt
+@@ -12,7 +12,7 @@ PCIe DesignWare Controller
+ 	       number of PHYs as specified in *phys* property.
+  - ti,hwmods : Name of the hwmod associated to the pcie, "pcie<X>",
+ 	       where <X> is the instance number of the pcie from the HW spec.
+- - num-lanes as specified in ../designware-pcie.txt
++ - num-lanes as specified in ../snps,pcie.yaml
+  - ti,syscon-lane-sel : phandle/offset pair. Phandle to the system control
+ 			module and the register offset to specify lane
+ 			selection.
+@@ -32,7 +32,7 @@ HOST MODE
+    device_type,
+    ranges,
+    interrupt-map-mask,
+-   interrupt-map : as specified in ../designware-pcie.txt
++   interrupt-map : as specified in ../snps,pcie.yaml
+  - ti,syscon-unaligned-access: phandle to the syscon DT node. The 1st argument
+ 			       should contain the register offset within syscon
+ 			       and the 2nd argument should contain the bit field
+diff --git a/Documentation/devicetree/bindings/pci/uniphier-pcie.txt b/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
+index c4b7381733a0..17cfe504d800 100644
+--- a/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
+@@ -6,7 +6,7 @@ on Socionext UniPhier SoCs.
+ UniPhier PCIe host controller is based on the Synopsys DesignWare PCI core.
+ It shares common functions with the PCIe DesignWare core driver and inherits
+ common properties defined in
+-Documentation/devicetree/bindings/pci/designware-pcie.txt.
++Documentation/devicetree/bindings/pci/snps,pcie.yaml.
+ 
+ Required properties:
+ - compatible: Should be "socionext,uniphier-pcie".
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2dd0a662d931..0bcba0d4994c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13673,7 +13673,7 @@ M:	Jingoo Han <jingoohan1@gmail.com>
+ M:	Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+ L:	linux-pci@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/pci/designware-pcie.txt
++F:	Documentation/devicetree/bindings/pci/snps,pcie.yaml
+ F:	drivers/pci/controller/dwc/*designware*
+ 
+ PCI DRIVER FOR TI DRA7XX/J721E
 -- 
-2.25.0.rc1.19.g042ed3e048af
+2.29.2
 
