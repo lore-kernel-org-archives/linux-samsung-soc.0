@@ -2,208 +2,177 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 392E3C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Feb 2021 18:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 661EDC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Feb 2021 18:12:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E08F164F4D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Feb 2021 18:03:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E14564F65
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Feb 2021 18:12:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238860AbhBDSDa (ORCPT
+        id S238378AbhBDSMX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 4 Feb 2021 13:03:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43664 "EHLO
+        Thu, 4 Feb 2021 13:12:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238759AbhBDSDU (ORCPT
+        with ESMTP id S238928AbhBDSMP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 4 Feb 2021 13:03:20 -0500
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C479C06121D
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Feb 2021 10:02:35 -0800 (PST)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by michel.telenet-ops.be with bizsmtp
-        id R62Q240044C55Sk0662QyJ; Thu, 04 Feb 2021 19:02:34 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1l7im7-003Fgj-G8; Thu, 04 Feb 2021 18:50:39 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1l7eCF-006uET-Ge; Thu, 04 Feb 2021 13:57:19 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sean Wang <sean.wang@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: pinctrl: Group tuples in pin control properties
-Date:   Thu,  4 Feb 2021 13:57:18 +0100
-Message-Id: <20210204125718.1646082-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Thu, 4 Feb 2021 13:12:15 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A8CC0613D6
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Feb 2021 10:11:34 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id x9so2193655plb.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Feb 2021 10:11:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RtK9mH1gkT4tly0aUjleqbTCqo0H1GWRGkm+wgQLcKQ=;
+        b=VzWx0dK0F/0P0JbZEaZ7yNuVnXXvvlUt6ZWlIUVzcsmzxQwK0QWShtSdZaJu0SAXdC
+         qWQJBu7pYT8MOSGQqxyJ2S6cqveiHyEIfFl0YqmvohE0/IRuuafPGXHtRtswtVSP24As
+         v3KylExv9pXuIP1YcK9XeVzoFn9ILZl2JMUb1viSplB3gBRf1sWfjAui3Sn7yGqI5Zso
+         NAYvod40+nciWJ+9lcotHZQPdlsyqrzFAcHZU3gRiYrku1qg/3wAxpvtREXsNv4d/Iee
+         Sb0MApJzgAMp9CUhnXOhsBd1OgJMoJgOExqhaoHmv4kh30yQHQ2snSw0+3Aq+2R16SYE
+         icKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RtK9mH1gkT4tly0aUjleqbTCqo0H1GWRGkm+wgQLcKQ=;
+        b=kXRuvBm1k9IkzUEHUhgHkLNq6F1aYsTPbUPKtNWGd/aTUDeXymrPyOKPPvQPhvPKEr
+         5xvg/Qve5uaNlrHZUKoXS6RuoW94gBucupezGX7vk4lbqXwZMnyAAMji3fAvMQz4J8qJ
+         9uJ1HdoCKbkR97E2j6ImfUjx9Gd5zzoFqUGaHqZKCxMoOk4i+n7vLloLmN5+/MMQJsp/
+         71cUsoaYL9ew+3tWEXj61wS6Jyo4rgG9hQCW4GzSmcPmoKmx77Dx3l5b/Ojif+RMlGdL
+         MnOiJWUejnn/9X/eDguoHtzA6u1eIBzVGCIWEw2keXmDwyPVtOGTcSp35fO7GHTya5E+
+         UD/g==
+X-Gm-Message-State: AOAM531l4P4o7ds39FXtE8aZqUy+UVwNxMnWmvPNldUN+2GxN6E2c5sp
+        MKhzc6kYJMALBvmcSwkrRST7F9hHO/OUphIAlNnhvg==
+X-Google-Smtp-Source: ABdhPJwM9n11EzR6QjrdGwIT7tXe7o6IvZV4XBcsjcTX9FIJNuwD9dfLJji0WYIC63nh1Z206CveXNSVwbNVcyALRBI=
+X-Received: by 2002:a17:90a:8b82:: with SMTP id z2mr190576pjn.25.1612462294295;
+ Thu, 04 Feb 2021 10:11:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210204162416.3030114-1-arnd@kernel.org>
+In-Reply-To: <20210204162416.3030114-1-arnd@kernel.org>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 4 Feb 2021 10:11:23 -0800
+Message-ID: <CAKwvOd=1Cs75KdVU5Fa9W+wYmjo=5fFNBb6m6PnHUp=eoM-H5g@mail.gmail.com>
+Subject: Re: [PATCH] ARM: s3c: fix fiq for clang IAS
+To:     Arnd Bergmann <arnd@kernel.org>
+List-Id: <soc.lore.kernel.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Ben Dooks <ben-linux@fluff.org>, soc@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-To improve human readability and enable automatic validation, the tuples
-in "pinctrl-*" properties should be grouped using angle brackets.
+On Thu, Feb 4, 2021 at 8:24 AM Arnd Bergmann <arnd@kernel.org> wrote:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Building with the clang integrated assembler produces a couple of
+> errors for the s3c24xx fiq support:
+>
+> arch/arm/mach-s3c/irq-s3c24xx-fiq.S:52:2: error: instruction 'subne' can not set flags, but 's' suffix specified
+>  subnes pc, lr, #4 @@ return, still have work to do
+>  ^
+> arch/arm/mach-s3c/irq-s3c24xx-fiq.S:64:1: error: invalid symbol redefinition
+> s3c24xx_spi_fiq_txrx:
+> ^
+> arch/arm/mach-s3c/irq-s3c24xx-fiq.S:79:2: error: instruction 'subne' can not set flags, but 's' suffix specified
+>  subnes pc, lr, #4 @@ return, still have work to do
+>  ^
+> arch/arm/mach-s3c/irq-s3c24xx-fiq.S:104:2: error: instruction 'subne' can not set flags, but 's' suffix specified
+>  subnes pc, lr, #4 @@ return, still have work to do
+>
+> There are apparently two problems: one with extraneous or duplicate
+> labels, and one with old-style opcode mnemonics. Stefan Agner has
+> previously fixed other problems like this, but missed this particular
+> file.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- .../devicetree/bindings/pinctrl/brcm,ns2-pinmux.txt    |  2 +-
- .../devicetree/bindings/pinctrl/brcm,nsp-pinmux.txt    |  2 +-
- .../devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt  |  2 +-
- .../devicetree/bindings/pinctrl/pinctrl-bindings.txt   |  4 ++--
- .../devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt   |  2 +-
- .../devicetree/bindings/pinctrl/pinctrl-mt65xx.txt     |  2 +-
- .../devicetree/bindings/pinctrl/pinctrl-single.txt     | 10 +++++-----
- .../devicetree/bindings/pinctrl/samsung-pinctrl.txt    |  2 +-
- 8 files changed, 13 insertions(+), 13 deletions(-)
+Thanks for the patch.  Pre-UAL syntax
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,ns2-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/brcm,ns2-pinmux.txt
-index e295dda4bbbab958..40e0a9a19525b40d 100644
---- a/Documentation/devicetree/bindings/pinctrl/brcm,ns2-pinmux.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/brcm,ns2-pinmux.txt
-@@ -39,7 +39,7 @@ For example:
- 		      <0x660009b0 0x40>;
- 
- 		pinctrl-names = "default";
--		pinctrl-0 = <&nand_sel &uart3_rx &sdio0_d4>;
-+		pinctrl-0 = <&nand_sel>, <&uart3_rx>, <&sdio0_d4>;
- 
- 		/* Select nand function */
- 		nand_sel: nand_sel {
-diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,nsp-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/brcm,nsp-pinmux.txt
-index 603564e5fe6f0e54..dede11e4ef78087f 100644
---- a/Documentation/devicetree/bindings/pinctrl/brcm,nsp-pinmux.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/brcm,nsp-pinmux.txt
-@@ -30,7 +30,7 @@ For example:
- 		      <0x1803f408 0x04>;
- 
- 		pinctrl-names = "default";
--		pinctrl-0 = <&pwm &gpio_b &nand_sel>;
-+		pinctrl-0 = <&pwm>, <&gpio_b>, <&nand_sel>;
- 
- 		pwm: pwm {
- 			function = "pwm";
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-index 8ac1d0851a0f8f0a..bfab5ca49fd1211a 100644
---- a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-@@ -60,7 +60,7 @@ iomuxc-lpsr controller and SDA pad from iomuxc controller as:
- 
- i2c1: i2c@30a20000 {
- 	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_i2c1_1 &pinctrl_i2c1_2>;
-+	pinctrl-0 = <&pinctrl_i2c1_1>, <&pinctrl_i2c1_2>;
- };
- 
- iomuxc-lpsr@302c0000 {
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-index 4613bb17ace3f6e1..9dae60acf950641d 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-@@ -77,13 +77,13 @@ For example:
- 	device {
- 		pinctrl-names = "active", "idle";
- 		pinctrl-0 = <&state_0_node_a>;
--		pinctrl-1 = <&state_1_node_a &state_1_node_b>;
-+		pinctrl-1 = <&state_1_node_a>, <&state_1_node_b>;
- 	};
- 
- 	/* For the same device if using state IDs */
- 	device {
- 		pinctrl-0 = <&state_0_node_a>;
--		pinctrl-1 = <&state_1_node_a &state_1_node_b>;
-+		pinctrl-1 = <&state_1_node_a>, <&state_1_node_b>;
- 	};
- 
- 	/*
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
-index 8b94aa8f5971ceb7..6ec3c8d79f496b52 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
-@@ -134,7 +134,7 @@ gpio21: gpio@21 {
- 	#interrupt-cells = <0x2>;
- 	microchip,irq-mirror;
- 	pinctrl-names = "default";
--	pinctrl-0 = <&i2cgpio0irq &gpio21pullups>;
-+	pinctrl-0 = <&i2cgpio0irq>, <&gpio21pullups>;
- 
- 	gpio21pullups: pinmux {
- 		pins =	"gpio0", "gpio1", "gpio2", "gpio3",
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-index 931a18cd1e238e6c..360e59c9301a93a8 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-@@ -91,7 +91,7 @@ Examples:
- 	pinctrl@1c20800 {
- 		compatible = "mediatek,mt8135-pinctrl";
- 		reg = <0 0x1000B000 0 0x1000>;
--		mediatek,pctl-regmap = <&syscfg_pctl_a &syscfg_pctl_b>;
-+		mediatek,pctl-regmap = <&syscfg_pctl_a>, <&syscfg_pctl_b>;
- 		pins-are-numbered;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt
-index bb99991193148cb2..bfd222b0549569df 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt
-@@ -80,7 +80,7 @@ Optional properties:
-   property.
- 
- 		/* pin base, nr pins & gpio function */
--		pinctrl-single,gpio-range = <&range 0 3 0 &range 3 9 1>;
-+		pinctrl-single,gpio-range = <&range 0 3 0>, <&range 3 9 1>;
- 
- - interrupt-controller : standard interrupt controller binding if using
-   interrupts for wake-up events for example. In this case pinctrl-single
-@@ -185,10 +185,10 @@ pmx_gpio: pinmux@d401e000 {
- 	pinctrl-single,function-mask = <7>;
- 
- 	/* sparse GPIO range could be supported */
--	pinctrl-single,gpio-range = <&range 0 3 0 &range 3 9 1
--				&range 12 1 0 &range 13 29 1
--				&range 43 1 0 &range 44 49 1
--				&range 94 1 1 &range 96 2 1>;
-+	pinctrl-single,gpio-range = <&range 0 3 0>, <&range 3 9 1>,
-+				    <&range 12 1 0>, <&range 13 29 1>,
-+				    <&range 43 1 0>, <&range 44 49 1>,
-+				    <&range 94 1 1>, <&range 96 2 1>;
- 
- 	range: gpio-range {
- 		#pinctrl-single,gpio-range-cells = <3>;
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-index 7734ab6fec449471..38a1416fd2cd8e1a 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-@@ -336,7 +336,7 @@ Example 3: A uart client node that supports 'default' and 'flow-control' states.
- 		interrupts = <0 52 0>;
- 		pinctrl-names = "default", "flow-control;
- 		pinctrl-0 = <&uart0_data>;
--		pinctrl-1 = <&uart0_data &uart0_fctl>;
-+		pinctrl-1 = <&uart0_data>, <&uart0_fctl>;
- 	};
- 
- Example 4: Set up the default pin state for uart controller.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+
+>
+> Fixes: bec0806cfec6 ("spi_s3c24xx: add FIQ pseudo-DMA support")
+> Cc: Stefan Agner <stefan@agner.ch>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm/mach-s3c/irq-s3c24xx-fiq.S | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm/mach-s3c/irq-s3c24xx-fiq.S b/arch/arm/mach-s3c/irq-s3c24xx-fiq.S
+> index b54cbd012241..5d238d9a798e 100644
+> --- a/arch/arm/mach-s3c/irq-s3c24xx-fiq.S
+> +++ b/arch/arm/mach-s3c/irq-s3c24xx-fiq.S
+> @@ -35,7 +35,6 @@
+>         @ and an offset to the irq acknowledgment word
+>
+>  ENTRY(s3c24xx_spi_fiq_rx)
+> -s3c24xx_spi_fix_rx:
+>         .word   fiq_rx_end - fiq_rx_start
+>         .word   fiq_rx_irq_ack - fiq_rx_start
+>  fiq_rx_start:
+> @@ -49,7 +48,7 @@ fiq_rx_start:
+>         strb    fiq_rtmp, [ fiq_rspi, # S3C2410_SPTDAT ]
+>
+>         subs    fiq_rcount, fiq_rcount, #1
+> -       subnes  pc, lr, #4              @@ return, still have work to do
+> +       subsne  pc, lr, #4              @@ return, still have work to do
+>
+>         @@ set IRQ controller so that next op will trigger IRQ
+>         mov     fiq_rtmp, #0
+> @@ -61,7 +60,6 @@ fiq_rx_irq_ack:
+>  fiq_rx_end:
+>
+>  ENTRY(s3c24xx_spi_fiq_txrx)
+> -s3c24xx_spi_fiq_txrx:
+>         .word   fiq_txrx_end - fiq_txrx_start
+>         .word   fiq_txrx_irq_ack - fiq_txrx_start
+>  fiq_txrx_start:
+> @@ -76,7 +74,7 @@ fiq_txrx_start:
+>         strb    fiq_rtmp, [ fiq_rspi, # S3C2410_SPTDAT ]
+>
+>         subs    fiq_rcount, fiq_rcount, #1
+> -       subnes  pc, lr, #4              @@ return, still have work to do
+> +       subsne  pc, lr, #4              @@ return, still have work to do
+>
+>         mov     fiq_rtmp, #0
+>         str     fiq_rtmp, [ fiq_rirq, # S3C2410_INTMOD  - S3C24XX_VA_IRQ ]
+> @@ -88,7 +86,6 @@ fiq_txrx_irq_ack:
+>  fiq_txrx_end:
+>
+>  ENTRY(s3c24xx_spi_fiq_tx)
+> -s3c24xx_spi_fix_tx:
+>         .word   fiq_tx_end - fiq_tx_start
+>         .word   fiq_tx_irq_ack - fiq_tx_start
+>  fiq_tx_start:
+> @@ -101,7 +98,7 @@ fiq_tx_start:
+>         strb    fiq_rtmp, [ fiq_rspi, # S3C2410_SPTDAT ]
+>
+>         subs    fiq_rcount, fiq_rcount, #1
+> -       subnes  pc, lr, #4              @@ return, still have work to do
+> +       subsne  pc, lr, #4              @@ return, still have work to do
+>
+>         mov     fiq_rtmp, #0
+>         str     fiq_rtmp, [ fiq_rirq, # S3C2410_INTMOD  - S3C24XX_VA_IRQ ]
+> --
+> 2.29.2
+>
+
+
 -- 
-2.25.1
-
+Thanks,
+~Nick Desaulniers
