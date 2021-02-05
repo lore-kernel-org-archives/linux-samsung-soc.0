@@ -2,177 +2,93 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2041C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Feb 2021 22:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0384C433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Feb 2021 07:12:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6184364FAD
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Feb 2021 22:25:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB9FD64FB9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Feb 2021 07:12:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229736AbhBDWYw (ORCPT
+        id S231538AbhBEHMW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 4 Feb 2021 17:24:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33222 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229534AbhBDWYv (ORCPT
+        Fri, 5 Feb 2021 02:12:22 -0500
+Received: from mail-ed1-f48.google.com ([209.85.208.48]:34461 "EHLO
+        mail-ed1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231476AbhBEHMC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 4 Feb 2021 17:24:51 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A10F664FAA;
-        Thu,  4 Feb 2021 22:24:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612477449;
-        bh=JutpsfoRnwZiwX9WSRX+9vPCxj9lG7YuiARSCN/pfb8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R4EZehMHVo5fn0vaQZAo7gB2GbIMgL9Qiush/t7IxMNPcsOg65YtqQLWvt4bMJG5r
-         9lA0cGGOXqj2x+6Sp6C+nsCP9UpoVG7H2Kxadl5eCcGEWjM0L1VWnTD+yhLy8bbnsj
-         U4aqcqXxREXCmyDZNMlany8b0SXougiBRi6sN4iQGcB5bfs1R3oWkHK+yVzaMfmSXq
-         rZsWXNB+48T84kW+wWsLjJRqtCcgMiozGaAzlgcOvMHWIqJm9nQDeLygHVBngpqhMd
-         m0VgANBrq/FqFnSDuQpzpaQ4th8XfYs1SbCzwN0SE6+YWLxM1aHUhPjKLibKF95OFJ
-         oFe7uv9RQ7SFw==
-Received: by pali.im (Postfix)
-        id 42B99736; Thu,  4 Feb 2021 23:24:07 +0100 (CET)
-Date:   Thu, 4 Feb 2021 23:24:07 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pci@vger.kernel.org, linux-mm@kvack.org,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-Subject: Re: [PATCH 1/2] PCI: also set up legacy files only after sysfs init
-Message-ID: <20210204222407.pkx7wvmcvugdwqdd@pali>
-References: <20210204165831.2703772-2-daniel.vetter@ffwll.ch>
- <20210204215019.GA104698@bjorn-Precision-5520>
+        Fri, 5 Feb 2021 02:12:02 -0500
+Received: by mail-ed1-f48.google.com with SMTP id df22so7616633edb.1;
+        Thu, 04 Feb 2021 23:11:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=c6300FPJgdNhEYdiFOY4v3mF7KUoaPzekcF12DCQngw=;
+        b=hdFWJBMgnYjS+npkASqdNs4Mjy+usqtZ+wYzYFN/iYHou/F6DcA/RAhUEEggqA9UR5
+         g2MKG5zxzR+ytdjKEoPJjRL7mTku+4v8C8K1HCpsBS4rWF5Dc0wThOgEl4Td6GPtRzMy
+         DDc6Y4oB4Tsrnn5IeRSOVcJdMp9OAGn4cWQtCyM8XTnPN4m5jNk5yEBYcklegTyeaCQQ
+         IJiav7nVW9Ope+ypg9BfNGQxpkrME5xjXbPyaJXWPRTA3AtPZoNwwPVzysI2R3OwRfJl
+         DLCluZAWVcH+SMi/6BpLXgix7B1xZgI3CmmtLOTdKwVMBCE8w/sLPLQWpChiYuQspivO
+         x76w==
+X-Gm-Message-State: AOAM532kojfKtDfQ1EKmKe2G8iZzJjvpm3QHDETfLhKgg53f21o7KEKV
+        es7xhEOro3qMhDWVHnHokeo=
+X-Google-Smtp-Source: ABdhPJzMsS7GJ3tNPHi18Tl9yXVfbJrYFFNhnZea/BS4TtA/CfEwjxcggsZUsuEjnlIp7/Nj3dKCog==
+X-Received: by 2002:aa7:dc17:: with SMTP id b23mr2263816edu.139.1612509080553;
+        Thu, 04 Feb 2021 23:11:20 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id e6sm3746713edv.46.2021.02.04.23.11.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Feb 2021 23:11:19 -0800 (PST)
+Date:   Fri, 5 Feb 2021 08:11:18 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sean Wang <sean.wang@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pinctrl: Group tuples in pin control
+ properties
+Message-ID: <20210205071118.obqsdlu64udsp5b2@kozik-lap>
+References: <20210204125718.1646082-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210204215019.GA104698@bjorn-Precision-5520>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20210204125718.1646082-1-geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thursday 04 February 2021 15:50:19 Bjorn Helgaas wrote:
-> [+cc Oliver, Pali, Krzysztof]
+On Thu, Feb 04, 2021 at 01:57:18PM +0100, Geert Uytterhoeven wrote:
+> To improve human readability and enable automatic validation, the tuples
+> in "pinctrl-*" properties should be grouped using angle brackets.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  .../devicetree/bindings/pinctrl/brcm,ns2-pinmux.txt    |  2 +-
+>  .../devicetree/bindings/pinctrl/brcm,nsp-pinmux.txt    |  2 +-
+>  .../devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt  |  2 +-
+>  .../devicetree/bindings/pinctrl/pinctrl-bindings.txt   |  4 ++--
+>  .../devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt   |  2 +-
+>  .../devicetree/bindings/pinctrl/pinctrl-mt65xx.txt     |  2 +-
+>  .../devicetree/bindings/pinctrl/pinctrl-single.txt     | 10 +++++-----
+>  .../devicetree/bindings/pinctrl/samsung-pinctrl.txt    |  2 +-
+>  8 files changed, 13 insertions(+), 13 deletions(-)
 
-Just to note that extending or using sysfs_initialized introduces
-another race condition into kernel code which results in PCI fatal
-errors. Details are in email discussion which Bjorn already sent.
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-> s/also/Also/ in subject
-> 
-> On Thu, Feb 04, 2021 at 05:58:30PM +0100, Daniel Vetter wrote:
-> > We are already doing this for all the regular sysfs files on PCI
-> > devices, but not yet on the legacy io files on the PCI buses. Thus far
-> > now problem, but in the next patch I want to wire up iomem revoke
-> > support. That needs the vfs up an running already to make so that
-> > iomem_get_mapping() works.
-> 
-> s/now problem/no problem/
-> s/an running/and running/
-> s/so that/sure that/ ?
-> 
-> iomem_get_mapping() doesn't exist; I don't know what that should be.
-> 
-> > Wire it up exactly like the existing code. Note that
-> > pci_remove_legacy_files() doesn't need a check since the one for
-> > pci_bus->legacy_io is sufficient.
-> 
-> I'm not sure exactly what you mean by "the existing code."  I could
-> probably figure it out, but it would save time to mention the existing
-> function here.
-> 
-> This looks like another instance where we should really apply Oliver's
-> idea of converting these to attribute_groups [1].
-> 
-> The cover letter mentions options discussed with Greg in [2], but I
-> don't think the "sysfs_initialized" hack vs attribute_groups was part
-> of that discussion.
-> 
-> It's not absolutely a show-stopper, but it *is* a shame to extend the
-> sysfs_initialized hack if attribute_groups could do this more cleanly
-> and help solve more than one issue.
-> 
-> Bjorn
-> 
-> [1] https://lore.kernel.org/r/CAOSf1CHss03DBSDO4PmTtMp0tCEu5kScn704ZEwLKGXQzBfqaA@mail.gmail.com
-> [2] https://lore.kernel.org/dri-devel/CAKMK7uGrdDrbtj0OyzqQc0CGrQwc2F3tFJU9vLfm2jjufAZ5YQ@mail.gmail.com/
-> 
-> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: John Hubbard <jhubbard@nvidia.com>
-> > Cc: Jérôme Glisse <jglisse@redhat.com>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: linux-mm@kvack.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Cc: linux-media@vger.kernel.org
-> > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > Cc: linux-pci@vger.kernel.org
-> > ---
-> >  drivers/pci/pci-sysfs.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> > index fb072f4b3176..0c45b4f7b214 100644
-> > --- a/drivers/pci/pci-sysfs.c
-> > +++ b/drivers/pci/pci-sysfs.c
-> > @@ -927,6 +927,9 @@ void pci_create_legacy_files(struct pci_bus *b)
-> >  {
-> >  	int error;
-> >  
-> > +	if (!sysfs_initialized)
-> > +		return;
-> > +
-> >  	b->legacy_io = kcalloc(2, sizeof(struct bin_attribute),
-> >  			       GFP_ATOMIC);
-> >  	if (!b->legacy_io)
-> > @@ -1448,6 +1451,7 @@ void pci_remove_sysfs_dev_files(struct pci_dev *pdev)
-> >  static int __init pci_sysfs_init(void)
-> >  {
-> >  	struct pci_dev *pdev = NULL;
-> > +	struct pci_bus *pbus = NULL;
-> >  	int retval;
-> >  
-> >  	sysfs_initialized = 1;
-> > @@ -1459,6 +1463,9 @@ static int __init pci_sysfs_init(void)
-> >  		}
-> >  	}
-> >  
-> > +	while ((pbus = pci_find_next_bus(pbus)))
-> > +		pci_create_legacy_files(pbus);
-> > +
-> >  	return 0;
-> >  }
-> >  late_initcall(pci_sysfs_init);
-> > -- 
-> > 2.30.0
-> > 
-> > 
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Best regards,
+Krzysztof
