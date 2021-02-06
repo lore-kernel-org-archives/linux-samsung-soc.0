@@ -2,86 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C2FC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Feb 2021 11:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F1BFC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Feb 2021 13:13:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B49164EE8
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Feb 2021 11:18:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 566BB64EB9
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Feb 2021 13:13:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229651AbhBFLSB (ORCPT
+        id S229651AbhBFNNq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 6 Feb 2021 06:18:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49168 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229529AbhBFLSB (ORCPT
+        Sat, 6 Feb 2021 08:13:46 -0500
+Received: from mail-wm1-f53.google.com ([209.85.128.53]:54958 "EHLO
+        mail-wm1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229529AbhBFNNo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 6 Feb 2021 06:18:01 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5771964E5F;
-        Sat,  6 Feb 2021 11:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612610240;
-        bh=UVaykrGaFKk8Qu59885F5o+xsLHdmSO/46BUYOQ0qEA=;
-        h=From:To:Subject:Date:From;
-        b=I62NUtL4JWss4jsAvfFWFY7ZXStwhvIvzaz+VE+CglgYfMe135VmYUkQ35s56UBoG
-         Ds0gwh2112rF/dijl6t1wcl5hzWLRqeyaP682CNfa7cpNnztIgCHwbtfHGdkuAss0i
-         8y6uky+xcLJl8MpzIMaTItr13+YFEyTfkEHVSlp3uTkSfnd2OLaPEwMskIDTGcBwNV
-         90DcEceyDwZvZWL+7U/p1hRS83dk+lo3KcBrjt22qRQyFYVcQsuefU/sUNPNWggpOs
-         /BqrnMtE+igGmRPRNn5NOMDR9lyKUM4aA1BxvBxzaDSInnMv4Bj/Bfl0x3AGbOYPSU
-         I7Yo9QiBRwL+g==
+        Sat, 6 Feb 2021 08:13:44 -0500
+Received: by mail-wm1-f53.google.com with SMTP id w4so8268319wmi.4;
+        Sat, 06 Feb 2021 05:13:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TcWqlo7340ClwaNrU2G13HH3PdkJ5tma+WdPpB6m4uk=;
+        b=kiLPS0fBWrXABWkf9W8amF/tSRA9L5ezlYqOIW1ARd6Bg4IRUlINzhJADnlLdA1hjC
+         7Ln/DXMiEaccsKY4+5KKzMkC0cIwGi+Qx8k7nMIQpiJzsSG9qPElshRHKkoczroU8Sw7
+         9F+GCEn41NAA3/9mA7Xz9m182Gm0lX6Qlj270SmuLCB58BkH6rVutFUHfbBFSqSAy8ty
+         DZujFkIZo9rN4Zdo0EPqi/KDv6EQGHpU2/GQlgOzviyIBOf9P2mPLcZehbggpkuCPC2G
+         0cgHHPAFVb5KAwqFEXJ2bJO7W+EeguBOKwYTKRR40lmd82BIGsMfLsCD9k6rT23NDOjg
+         ANBw==
+X-Gm-Message-State: AOAM5335Mx+D3HtOweSVAhSX11jIpOzddZ3A+VWKh75zAjYMHFf0Y2HR
+        pkY6WkMKEL7TkUw2lUSz1oc=
+X-Google-Smtp-Source: ABdhPJxmmMbmWj5ntspZOudiviLyA/AkKCV1/oa2n4cSkwvyp024Ie1So4/dPvxLTHW2DQ2K5hFNrQ==
+X-Received: by 2002:a1c:a707:: with SMTP id q7mr7476875wme.15.1612617182491;
+        Sat, 06 Feb 2021 05:13:02 -0800 (PST)
+Received: from kozik-lap (194-95-143-94.dyn.cable.fcom.ch. [94.143.95.194])
+        by smtp.googlemail.com with ESMTPSA id 67sm11724509wmz.46.2021.02.06.05.13.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Feb 2021 05:13:01 -0800 (PST)
+Date:   Sat, 6 Feb 2021 14:12:58 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Luba <lukasz.luba@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] memory: samsung: exynos5422-dmc: Correct function names in kerneldoc
-Date:   Sat,  6 Feb 2021 12:17:15 +0100
-Message-Id: <20210206111715.20774-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.25.1
+To:     Arnd Bergmann <arnd@kernel.org>
+List-Id: <soc.lore.kernel.org>
+Cc:     Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Ben Dooks <ben-linux@fluff.org>, soc@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] ARM: s3c: fix fiq for clang IAS
+Message-ID: <20210206131258.du6tmx7lda35rg5l@kozik-lap>
+References: <20210204162416.3030114-1-arnd@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210204162416.3030114-1-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Correct kerneldoc to fix W=1 warnings:
+On Thu, Feb 04, 2021 at 05:23:42PM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Building with the clang integrated assembler produces a couple of
+> errors for the s3c24xx fiq support:
+> 
+> arch/arm/mach-s3c/irq-s3c24xx-fiq.S:52:2: error: instruction 'subne' can not set flags, but 's' suffix specified
+>  subnes pc, lr, #4 @@ return, still have work to do
+>  ^
+> arch/arm/mach-s3c/irq-s3c24xx-fiq.S:64:1: error: invalid symbol redefinition
+> s3c24xx_spi_fiq_txrx:
+> ^
+> arch/arm/mach-s3c/irq-s3c24xx-fiq.S:79:2: error: instruction 'subne' can not set flags, but 's' suffix specified
+>  subnes pc, lr, #4 @@ return, still have work to do
+>  ^
+> arch/arm/mach-s3c/irq-s3c24xx-fiq.S:104:2: error: instruction 'subne' can not set flags, but 's' suffix specified
+>  subnes pc, lr, #4 @@ return, still have work to do
+> 
+> There are apparently two problems: one with extraneous or duplicate
+> labels, and one with old-style opcode mnemonics. Stefan Agner has
+> previously fixed other problems like this, but missed this particular
+> file.
+> 
+> Fixes: bec0806cfec6 ("spi_s3c24xx: add FIQ pseudo-DMA support")
+> Cc: Stefan Agner <stefan@agner.ch>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm/mach-s3c/irq-s3c24xx-fiq.S | 9 +++------
 
-    drivers/memory/samsung/exynos5422-dmc.c:290: warning:
-        expecting prototype for find_target_freq_id(). Prototype was for find_target_freq_idx() instead
-    drivers/memory/samsung/exynos5422-dmc.c:1015: warning:
-        expecting prototype for exynos5_dmc_align_initial_frequency(). Prototype was for exynos5_dmc_align_init_freq() instead
+Thanks, applied.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/memory/samsung/exynos5422-dmc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
-index c5ee4121a4d2..1dabb509dec3 100644
---- a/drivers/memory/samsung/exynos5422-dmc.c
-+++ b/drivers/memory/samsung/exynos5422-dmc.c
-@@ -278,7 +278,7 @@ static int exynos5_counters_disable_edev(struct exynos5_dmc *dmc)
- }
- 
- /**
-- * find_target_freq_id() - Finds requested frequency in local DMC configuration
-+ * find_target_freq_idx() - Finds requested frequency in local DMC configuration
-  * @dmc:	device for which the information is checked
-  * @target_rate:	requested frequency in KHz
-  *
-@@ -998,7 +998,7 @@ static struct devfreq_dev_profile exynos5_dmc_df_profile = {
- };
- 
- /**
-- * exynos5_dmc_align_initial_frequency() - Align initial frequency value
-+ * exynos5_dmc_align_init_freq() - Align initial frequency value
-  * @dmc:	device for which the frequency is going to be set
-  * @bootloader_init_freq:	initial frequency set by the bootloader in KHz
-  *
--- 
-2.25.1
+Best regards,
+Krzysztof
 
