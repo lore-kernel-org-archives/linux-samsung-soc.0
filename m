@@ -2,50 +2,54 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E879C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Feb 2021 15:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 017CCC433E9
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Feb 2021 19:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07DDD64E22
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Feb 2021 15:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDAE164E0D
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Feb 2021 19:48:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229841AbhBFPHm (ORCPT
+        id S229707AbhBFTst (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 6 Feb 2021 10:07:42 -0500
-Received: from mail-wr1-f46.google.com ([209.85.221.46]:38216 "EHLO
-        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229711AbhBFPHl (ORCPT
+        Sat, 6 Feb 2021 14:48:49 -0500
+Received: from mail-ot1-f52.google.com ([209.85.210.52]:42955 "EHLO
+        mail-ot1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229508AbhBFTsl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 6 Feb 2021 10:07:41 -0500
-Received: by mail-wr1-f46.google.com with SMTP id b3so11231585wrj.5;
-        Sat, 06 Feb 2021 07:07:25 -0800 (PST)
+        Sat, 6 Feb 2021 14:48:41 -0500
+Received: by mail-ot1-f52.google.com with SMTP id q4so751111otm.9;
+        Sat, 06 Feb 2021 11:48:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fzMdGIncwXZccKuwFCYwYE/wDOhe7aap4KiSx77Zgp0=;
-        b=pdIcz/W1PBqtbpw0wgkx/6ZcXy3IDO/kagpnwpimr7pWfgeC9YThEosPh2SuyAhFrw
-         h0yUc63uM9JUgsN1/0az2lfL81Ih+f0P8rW+g6RPJjLvAWjyXQDBpfMe20hDaPnAZ6wP
-         +aJkR4RggzRjY1rq1DrrmfeF7eLMZvfRvvqPAsVMmyNPqHY5Ua8Wc1rROKvIXHB4b1AZ
-         fpvp3d6nZDdpHGcv3bsXH/kjdjfpYNn41gOAjdQw7yRIw8uktCCyVBcSo5jCVIpEJSHx
-         benLwJL97qXd/rSbJkOrz+RVIKhRXqRATh6iKPDA3FbahhRPRMfkuBmBgT8nPrJ8+/Vf
-         Yz7A==
-X-Gm-Message-State: AOAM53081ObSexktDeuuqp3QLYG/uNW8Ed4HHLRTegYgAivcSJzzKFv2
-        hTfseM2Kuva8v8lrW5m/OWk=
-X-Google-Smtp-Source: ABdhPJwbJn9PaV7uVVeptZSLdmOkDPGrrad13AK38DSA0rKn7zNGSVqVrGkydECDJ0UubdHLvPkEqQ==
-X-Received: by 2002:adf:cc8e:: with SMTP id p14mr10271797wrj.270.1612624019973;
-        Sat, 06 Feb 2021 07:06:59 -0800 (PST)
-Received: from kozik-lap (194-95-143-94.dyn.cable.fcom.ch. [94.143.95.194])
-        by smtp.googlemail.com with ESMTPSA id n9sm16781833wrq.41.2021.02.06.07.06.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Feb 2021 07:06:58 -0800 (PST)
-Date:   Sat, 6 Feb 2021 16:06:55 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8mVMNF4fRsyTZazYCsaAIH58/5IMUtcIzDAOPD4XiLo=;
+        b=R7AgR3EvwypHb0F2brBXz0ZAB82ZRwLdUFWS8Ipry1qAJ3JDp+1z5qC0iTb8eTUgeP
+         tQT6gKaCf7if3/qIjn+qOjGVx8MVBYivczGkt6RwHa2tZT4WGHyMCvv/4hXdBkSdAxe9
+         0jCjCibZwp4/WbveJqMoDKCHoOLuKD6TGGBjAegOKhshEwJF2HS3A8Nmj/RgZkqz4zTv
+         RUL2eBrqqjSDmScEA5iFWB6JRlBJ6PLZ3QnfYnSLMoXi5/BqPcKSMgzEikYRkOU2y2BY
+         s7NGkmnpPcQ/MFTHrLdAUSMaSzjKx0MnHPTRu7aK63Zajzill0Uy/lV8vr5Q1Ss0swXQ
+         rYQg==
+X-Gm-Message-State: AOAM531knbpEapYKzaHq0xJHR8ACxKkJY7uWgYhMDXigg66G7uFA9tha
+        T+cKnjPwdHLJNtm01TCX2JuH7pY4AzAHzDCRkDQ=
+X-Google-Smtp-Source: ABdhPJw745S8LM8O3h8fPOXwjE6gI72k4oPqS5/xYZ9eVQi+tWwpGN5S3rTWZsDTboMo0cSPFheifgB+2yBBK2ArvyU=
+X-Received: by 2002:a05:6830:15cc:: with SMTP id j12mr7710395otr.145.1612640880368;
+ Sat, 06 Feb 2021 11:48:00 -0800 (PST)
+MIME-Version: 1.0
+References: <20210125191240.11278-1-krzk@kernel.org> <20210125191240.11278-3-krzk@kernel.org>
+ <20210206134531.l5vpzlmev4v3f3uo@kozik-lap> <CAK8P3a0Kgn9PTHjsU7MbJPC8vatvb9KYJJKWxrx7zQzTNgK10g@mail.gmail.com>
+In-Reply-To: <CAK8P3a0Kgn9PTHjsU7MbJPC8vatvb9KYJJKWxrx7zQzTNgK10g@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sat, 6 Feb 2021 20:47:49 +0100
+Message-ID: <CAMuHMdWZ8QmiQCmiW9AvCpviNZeuaxThSo_4Xb2DGEs9hMTKMQ@mail.gmail.com>
+Subject: Re: [GIT PULL 2/3] ARM: dts: samsung: DTS for v5.12
 To:     Arnd Bergmann <arnd@kernel.org>
 List-Id: <soc.lore.kernel.org>
-Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
@@ -67,62 +71,25 @@ Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         Alexandre Torgue <alexandre.torgue@st.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Maxime Ripard <mripard@kernel.org>
-Subject: Re: [GIT PULL 2/3] ARM: dts: samsung: DTS for v5.12
-Message-ID: <20210206150655.nq2m4usyzg4rgvtt@kozik-lap>
-References: <20210125191240.11278-1-krzk@kernel.org>
- <20210125191240.11278-3-krzk@kernel.org>
- <20210206134531.l5vpzlmev4v3f3uo@kozik-lap>
- <CAK8P3a0Kgn9PTHjsU7MbJPC8vatvb9KYJJKWxrx7zQzTNgK10g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0Kgn9PTHjsU7MbJPC8vatvb9KYJJKWxrx7zQzTNgK10g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Feb 06, 2021 at 03:35:54PM +0100, Arnd Bergmann wrote:
-> On Sat, Feb 6, 2021 at 2:45 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > On Mon, Jan 25, 2021 at 08:12:39PM +0100, Krzysztof Kozlowski wrote:
-> > >
-> > > ----------------------------------------------------------------
-> > > Samsung DTS ARM changes for v5.12
-> > >
-> > > 1. Use new compatile to properly configure Exynos5420 USB2 PHY, fixing
-> > >    it suspend/resume cycle.
-> > > 2. Correct Samsung PMIC interrupt trigger levels on multiple boards.
-> > > 3. Correct the voltages of Samsung GT-I9100 charger and add top-off
-> > >    charger.
-> > >
-> >
-> > Hi everyone,
-> >
-> > Any progress or new comments about this pull request?
-> 
-> Hi Krzysztof,
-> 
-> Sorry for not getting back to you on this earlier. I discussed this with
-> Olof the other day and we decided to merge this, I just haven't
-> gone through the pull requests over the past few days. My plan is
-> to do the next round on Monday.
-> 
+Hi Arnd,
+
+On Sat, Feb 6, 2021 at 3:36 PM Arnd Bergmann <arnd@kernel.org> wrote:
 > That said, I'm still not happy about the patch we discussed in the
 > other email thread[1] and I'd like to handle it a little more strictly in
 > the future, but I agree this wasn't obvious and we have been rather
 > inconsistent about it in the past, with some platform maintainers
 > handling it way more strictly than others.
-
-Thank you for explanation. I would love to receive kind of guidance,
-best practices, guide for future patches. I will them write it down and
-try to follow during my review. However it made me a sad that a patch,
-adhering in my mind to all rules, was postponing the pull request.
-
-> 
+>
 > I've added the devicetree maintainers and a few other platform
 > maintainers to Cc here, maybe they can provide some further
 > opinions on the topic so we can come to an approach that
 > works for everyone.
-> 
+>
 > My summary of the thread in [1] is there was a driver bug that
 > required a DT binding change. Krzysztof and the other involved
 > parties made sure the driver handles it in a backward-compatible
@@ -134,7 +101,7 @@ adhering in my mind to all rules, was postponing the pull request.
 > or at the minimum be alerted about the binding break in the
 > pull request, with an explanation about why this had to be done,
 > even when we don't think anyone is going to be affected.
-> 
+>
 > What do others think about this? Should we generally assume
 > that breaking old kernels with new dtbs is acceptable, or should
 > we try to avoid it if possible, the same way we try to avoid
@@ -142,17 +109,24 @@ adhering in my mind to all rules, was postponing the pull request.
 > specific policy or should we try to handle all platforms the same
 > way?
 
-Good summary, thanks Arnd. I would like to add that the discussed change
-was bringing a new compatible. It was saying: hey, this hardware so far we
-treated as old one, but it's not, sorry, it is different, so here you
-have a new compatible with a change in few properties as well (and new
-bindings which appeared a release earlier).
+For Renesas SoCs, we typically only consider compatibility of new
+kernels with old DTBs, not the other way around.
+However, most DTB updates are due to new hardware support, so using the
+new DTB with an old kernel usually just means no newly documented
+hardware, or new feature, is being used by the old kernel.
 
-Best regards,
-Krzysztof
+In case there was a real issue fixed, and using the new DTB with the old
+kernel would cause a regression, and we're aware of it, we do make sure
+the DTS update is postponed until the corresponding driver update has
+hit upstream.
 
+Gr{oetje,eeting}s,
 
-> 
->           Arnd
-> 
-> [1] https://lore.kernel.org/lkml/20210130143949.aamac2724esupt7v@kozik-lap/
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
