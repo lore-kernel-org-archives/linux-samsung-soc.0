@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A137C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Feb 2021 17:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41544C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Feb 2021 17:18:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 465C264E42
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Feb 2021 17:13:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC42964E6E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Feb 2021 17:18:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232160AbhBHRMy (ORCPT
+        id S230080AbhBHRSP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 Feb 2021 12:12:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60862 "EHLO mail.kernel.org"
+        Mon, 8 Feb 2021 12:18:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233881AbhBHRKu (ORCPT
+        id S234671AbhBHRRr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 Feb 2021 12:10:50 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7D03364E42;
-        Mon,  8 Feb 2021 17:10:08 +0000 (UTC)
+        Mon, 8 Feb 2021 12:17:47 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 982F464E6E;
+        Mon,  8 Feb 2021 17:17:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612804209;
-        bh=7uUo3YXFXC5nIVh3LILzTBFaX9nJh+b3T5BtdbM4i2M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kuyutIsJgH8w6TgZ05o7oIfPDh+ARPFyLROTO01tzSYu05dfKIto9bXp7+vz+BrMd
-         bumh+c2VM+w5Jmumq93nolSRvipGpBMUFpFNXoqiRxXHC+AhheC7rtPXkRXVHJ12/p
-         FsaSgtkf/YzmRNZ/y1XGiZN20s1BPkH8VX6qf4kYFun0jTJuBSq+cPmdmmfaR4MZEp
-         Qk1nX1dLyu775WF43T1iE12XN0mCfP7gid0/zKSAuGdA8bl1hXEic9y8tsuSi8gAjx
-         WBtCZVuVoHpTcQJb7CNbleDo5wd+IKo0+vlp1HXSIWIixwwdAhN85VCJ/5Kpu8dLUI
-         y8VojSyrv9AGQ==
+        s=k20201202; t=1612804626;
+        bh=BfPVNPhD+Ba/YNfUfM7utwp0Nvw3QE+oOCX7q7XltPE=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=WZnrYnIqbli8bx4CGwsbi0lgpuo+Fh8NznXE5/0i6ZbR6B9ZOXqATxVjt8p+iTyjQ
+         9N6Eulwn0MOs9CPvPqdD1HOyD5Sejih+04flUiBHO8zwcnNqr3KVEqf7/Enxivoy83
+         e22Di1pxizbeIVyfC9XQaznR7jN4+yhPXyEBhW4bFxAiOWHEJ1YyLlC5UJai56ikHg
+         oGV6wacETKDJaiAKudZXTP4A/slOw2V2cKjo0jA/n7qqCulL7XbtmBl8NaJf7r6OYT
+         jXYz26e9FWCSY8OpjsrxxvEJLmmCYBB8SA9D3znWT7Sv0vvyATWnaHD/N10ORyC2jH
+         Knn1Ztt1NHMoA==
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
+To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>
-Cc:     kernel test robot <lkp@intel.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: (subset) [PATCH 1/2] ARM: s3c: irq-s3c24xx: include headers for missing declarations
-Date:   Mon,  8 Feb 2021 18:10:04 +0100
-Message-Id: <161280419391.2772.5165098009561753713.b4-ty@kernel.org>
+        Lukasz Luba <lukasz.luba@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: (subset) [PATCH] memory: samsung: exynos5422-dmc: Correct function names in kerneldoc
+Date:   Mon,  8 Feb 2021 18:16:54 +0100
+Message-Id: <161280460935.4459.2076677774296231794.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210206133615.119804-1-krzk@kernel.org>
-References: <20210206133615.119804-1-krzk@kernel.org>
+In-Reply-To: <20210206111715.20774-1-krzk@kernel.org>
+References: <20210206111715.20774-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -52,18 +51,18 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, 6 Feb 2021 14:36:14 +0100, Krzysztof Kozlowski wrote:
-> Include headers to fix W=1 build warnings:
+On Sat, 6 Feb 2021 12:17:15 +0100, Krzysztof Kozlowski wrote:
+> Correct kerneldoc to fix W=1 warnings:
 > 
->   arch/arm/mach-s3c/irq-s3c24xx.c:389:5: warning:
->     no previous prototype for ‘s3c24xx_set_fiq’ [-Wmissing-prototypes]
->   arch/arm/mach-s3c/irq-s3c24xx.c:683:13: warning:
->     no previous prototype for ‘s3c2410_init_irq’ [-Wmissing-prototypes]
+>     drivers/memory/samsung/exynos5422-dmc.c:290: warning:
+>         expecting prototype for find_target_freq_id(). Prototype was for find_target_freq_idx() instead
+>     drivers/memory/samsung/exynos5422-dmc.c:1015: warning:
+>         expecting prototype for exynos5_dmc_align_initial_frequency(). Prototype was for exynos5_dmc_align_init_freq() instead
 
 Applied, thanks!
 
-[1/2] ARM: s3c: irq-s3c24xx: include headers for missing declarations
-      commit: 49dc85ca3c78d938d9eb41e05efcd85c92626e84
+[1/1] memory: samsung: exynos5422-dmc: Correct function names in kerneldoc
+      commit: 0e9bc42089a7374d056745419c7a8f28016b4191
 
 Best regards,
 -- 
