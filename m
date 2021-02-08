@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8AA7C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Feb 2021 17:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A137C433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Feb 2021 17:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5617264E42
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Feb 2021 17:12:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 465C264E42
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Feb 2021 17:13:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234720AbhBHRMY (ORCPT
+        id S232160AbhBHRMy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 Feb 2021 12:12:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60942 "EHLO mail.kernel.org"
+        Mon, 8 Feb 2021 12:12:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231767AbhBHRLV (ORCPT
+        id S233881AbhBHRKu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 Feb 2021 12:11:21 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7C93764DF0;
-        Mon,  8 Feb 2021 17:10:39 +0000 (UTC)
+        Mon, 8 Feb 2021 12:10:50 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7D03364E42;
+        Mon,  8 Feb 2021 17:10:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612804240;
-        bh=EFHJFjVlW7evNX3AmpfrjZnumtm01qN8iH1oLl7Cyts=;
+        s=k20201202; t=1612804209;
+        bh=7uUo3YXFXC5nIVh3LILzTBFaX9nJh+b3T5BtdbM4i2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cs76pZATQeltceNZvhiytkk3S5AklTO+dEuTUwsQTr/8lzGv5NIqra33YPmJXYWx8
-         UsvUKsvjEsPnGQHQ1lKyuNkHPw57fyHRFOKQi4xiLKNZFaX0Ooa/UgFiC2TF5AjhwU
-         3BjSUQvv+uhDJKbxsx+tRht+cicgdH5PwNYYk57fvycOH2VHvCoDTH7/eXo/utBSbE
-         /wtrc/xb0ZJ9h5Em99VVEgNAXCLzJbO8wPspEmyVA0wirwajJJWWw2ySA8lZufNxc+
-         Af9IfoCAjyh9RVo3Qoxhl9d05RrRRreyDFwBBhCZoJWoO05WT2ePLuvXB8ztKCWEka
-         ZiyWCy64gx06w==
+        b=kuyutIsJgH8w6TgZ05o7oIfPDh+ARPFyLROTO01tzSYu05dfKIto9bXp7+vz+BrMd
+         bumh+c2VM+w5Jmumq93nolSRvipGpBMUFpFNXoqiRxXHC+AhheC7rtPXkRXVHJ12/p
+         FsaSgtkf/YzmRNZ/y1XGiZN20s1BPkH8VX6qf4kYFun0jTJuBSq+cPmdmmfaR4MZEp
+         Qk1nX1dLyu775WF43T1iE12XN0mCfP7gid0/zKSAuGdA8bl1hXEic9y8tsuSi8gAjx
+         WBtCZVuVoHpTcQJb7CNbleDo5wd+IKo0+vlp1HXSIWIixwwdAhN85VCJ/5Kpu8dLUI
+         y8VojSyrv9AGQ==
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
+To:     linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org
+        linux-samsung-soc@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>
 Cc:     kernel test robot <lkp@intel.com>, Arnd Bergmann <arnd@arndb.de>
 Subject: Re: (subset) [PATCH 1/2] ARM: s3c: irq-s3c24xx: include headers for missing declarations
-Date:   Mon,  8 Feb 2021 18:10:35 +0100
-Message-Id: <161280423197.2959.139633168233746502.b4-ty@kernel.org>
+Date:   Mon,  8 Feb 2021 18:10:04 +0100
+Message-Id: <161280419391.2772.5165098009561753713.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210206133615.119804-1-krzk@kernel.org>
 References: <20210206133615.119804-1-krzk@kernel.org>
@@ -62,8 +62,8 @@ On Sat, 6 Feb 2021 14:36:14 +0100, Krzysztof Kozlowski wrote:
 
 Applied, thanks!
 
-[2/2] ARM: s3c: irq-s3c24xx: staticize local functions
-      commit: f503878564f5e68c1aeb1ea01e437060bf905c50
+[1/2] ARM: s3c: irq-s3c24xx: include headers for missing declarations
+      commit: 49dc85ca3c78d938d9eb41e05efcd85c92626e84
 
 Best regards,
 -- 
