@@ -2,117 +2,91 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A656C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Feb 2021 08:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2810DC433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Feb 2021 14:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ABF0464EBD
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Feb 2021 08:26:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D67EC64E7C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Feb 2021 14:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229721AbhBII02 (ORCPT
+        id S232132AbhBIOqy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 9 Feb 2021 03:26:28 -0500
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:44031 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbhBII0X (ORCPT
+        Tue, 9 Feb 2021 09:46:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230043AbhBIOqw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 9 Feb 2021 03:26:23 -0500
-Received: by mail-ot1-f44.google.com with SMTP id l23so5094150otn.10;
-        Tue, 09 Feb 2021 00:26:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lNbh7LjdqrFqGa+5oSbQ+cwJwgupwerGD92n/ai+/tU=;
-        b=tDnkh+Z2uOKzpazeibINCPldl3NxomqdRafaJCaHyKcHP/ASGcsa/UJRP4bPSgxPfs
-         UzbzRghkBHcyk8clqIwwW+Je5Jk/FXbjmqElQJLNxqlcTVttQMniWLTKDGq/5qPCWj4L
-         8GQAp0CvRi6iyXI/NOboJF1iUl9aYy58b6eWtGV+YvjbxKE6h0TkP3KaCLi3xJRQY3in
-         vB2nJqyPfchZfSCRPFbzkxkrhz1VdcOv6cbNEnsC6Lvo6nBuOm4DsSelYMjg7+bPrekZ
-         fqqXMnsyKuNl+7xKgDvFLYrKZPYdfY6PUPz1PmeCJ+ahgiuFgIWJEsufIhr8pkxDSi4d
-         Ps+g==
-X-Gm-Message-State: AOAM5314QsdmSgnQECtNkpjnM4p0HH/mza5fehO+d7nN9yNukYHQtISG
-        W1Bh882f0TffhRFlhHeaibnTImioHfMAc3BPCbE=
-X-Google-Smtp-Source: ABdhPJyHYllDbGGarpfEfSMLq+6yFSlPIZ/1ViJwMsZFWXHFp6l5RgUa1BlE4L4SlzEI1vlM0qByA8Z7RtWYZngawdw=
-X-Received: by 2002:a9d:77d6:: with SMTP id w22mr4174886otl.145.1612859142032;
- Tue, 09 Feb 2021 00:25:42 -0800 (PST)
+        Tue, 9 Feb 2021 09:46:52 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4CDBB64EA6;
+        Tue,  9 Feb 2021 14:46:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612881971;
+        bh=4Khf3jf8NRBguYJQd4Zc23JbAoBPvE26k4AHm6gfAG0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=tfqnO+myZB8yGpVwF6eslagnVOOyx/sOF3oklhELMwZoV8pnflECBlZt9e/ID4fA4
+         urskZC+3joYri7bFpHyuxB0VbRwZfZqzs4f/ULh4OG3mRjBLcEYiOZiHOSLtBd2LL3
+         mLVXDYX3VNOJ1xb84yB1ut86GbAuMw+ccMry+QIA3Kls7OZLsvL8sw9DXg2X/RHPBl
+         Wa6N7rdaSdGyu9N8W5oDpYRKtRqeJNsu4xxmCbwsoUlsB4L85pPQHamn1HNGihFXgl
+         SffSOrXQJa8isDzPFn/L6hHczow1gzNN0+GlkiCkQiBqw8AAaOD/0U2cOm31EkNjX3
+         p0HhEpgxCgv2g==
+Subject: Re: [PATCH v3] clk: exynos7: Keep aclk_fsys1_200 enabled
+To:     Stephen Boyd <sboyd@kernel.org>, pawel.mikolaj.chmiel@gmail.com,
+        mturquette@baylibre.com
+Cc:     kgene@kernel.org, krzk@kernel.org,
+        linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com,
+        linux-kernel@vger.kernel.org, cw00.choi@samsung.com,
+        s.nawrocki@samsung.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20210131170428.3290-1-pawel.mikolaj.chmiel@gmail.com>
+ <161285690197.418021.15554726449883492168@swboyd.mtv.corp.google.com>
+From:   Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <fa918113-c20b-1867-7c32-b30fd09e185e@kernel.org>
+Date:   Tue, 9 Feb 2021 15:46:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20210125191240.11278-1-krzk@kernel.org> <20210125191240.11278-3-krzk@kernel.org>
- <20210206134531.l5vpzlmev4v3f3uo@kozik-lap> <CAK8P3a0Kgn9PTHjsU7MbJPC8vatvb9KYJJKWxrx7zQzTNgK10g@mail.gmail.com>
- <CAMuHMdWZ8QmiQCmiW9AvCpviNZeuaxThSo_4Xb2DGEs9hMTKMQ@mail.gmail.com>
- <YCGBIvRfoP0BeyrP@builder.lan> <20210208184230.onhlioflyylkx6xo@kozik-lap>
- <CAK8P3a3bsw8p2Geyo-vh1AJUfMQCCf3kpa_YB+tKmcvWHqRcEw@mail.gmail.com>
- <20210208213537.GA351084@piout.net> <CAK8P3a0QRcQM4rH9HgVMOHa_eATXsjRbGDXuMO7FgnA8OgPk0Q@mail.gmail.com>
- <20210208231040.GF351084@piout.net>
-In-Reply-To: <20210208231040.GF351084@piout.net>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 9 Feb 2021 09:25:31 +0100
-Message-ID: <CAMuHMdUSRZ+Fho4OG3xZayzOrFnJXxomT3q16vu_Jai6Lb7hxg@mail.gmail.com>
-Subject: Re: [GIT PULL 2/3] ARM: dts: samsung: DTS for v5.12
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     Arnd Bergmann <arnd@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Maxime Ripard <mripard@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <161285690197.418021.15554726449883492168@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Alexandre,
+On 09.02.2021 08:48, Stephen Boyd wrote:
+> Quoting (2021-01-31 09:04:28)
+>> This clock must be always enabled to allow access to any registers in
+>> fsys1 CMU. Until proper solution based on runtime PM is applied
+>> (similar to what was done for Exynos5433), fix this by calling
+>> clk_prepare_enable() directly from clock provider driver.
+>>
+>> It was observed on Samsung Galaxy S6 device (based on Exynos7420), where
+>> UFS module is probed before pmic used to power that device.
+>> In this case defer probe was happening and that clock was disabled by
+>> UFS driver, causing whole boot to hang on next CMU access.
+>>
+> 
+> Does this need a Fixes tag?
+ 
+That would be
 
-On Tue, Feb 9, 2021 at 12:10 AM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> On 08/02/2021 23:14:02+0100, Arnd Bergmann wrote:
-> > On Mon, Feb 8, 2021 at 10:35 PM Alexandre Belloni
-> > <alexandre.belloni@bootlin.com> wrote:
-> > > Are there really any platforms with the dtb built into the firmware?
-> > > I feel like this is a mythical creature used to scare people into keeping
-> > > the DTB ABI stable. Aren't all the distribution already able to cope
-> > > with keeping DTB and kernel in sync?
-> >
-> > I think most traditional PowerPC systems fall into this category, most
->
-> My understanding was that the traditional PPC systems had a small device
-> tree and usually are not affected by driver changes but I may be wrong.
+Fixes: 753195a749a6 ("clk: samsung: exynos7: Correct CMU_FSYS1 clocks names")
 
-They were much simpler than a modern SoC, with most functionality
-implemented by modularity (e.g. PCI devices, I still like 'compatible
-= "pci1186,100"'[1] ;-)
-And the bindings were simple and stable (i.e. they did exist before the
-platform was shipped).
+i.e. commit that introduced definition of the clock. But the fix cannot be 
+backported that far as build fails with an error:
 
-[1] http://users.telenet.be/geertu/Linux/PPC/pci/ethernetAT4/
+drivers/clk/samsung/clk-exynos7.c: In function ‘exynos7_clk_top1_init’:
+drivers/clk/samsung/clk-exynos7.c:554:21: error: ‘struct clk_onecell_data’ has no member named ‘hws’
+  554 |  hws = ctx->clk_data.hws;
 
-Gr{oetje,eeting}s,
+It could only by backported up to:
+ecb1f1f7311f ("clk: samsung: Convert common drivers to the new clk_hw API")
 
-                        Geert
+We need a different patch to fix it properly in stable kernels.
+And dts for board this bugfix patch was prepared is not upstream yet.
+    
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
