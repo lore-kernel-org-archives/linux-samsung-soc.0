@@ -4,82 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4199DC433E9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 17:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F77C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 17:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0515564EAA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 17:22:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD8B664ED7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 17:23:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232102AbhBJRV4 (ORCPT
+        id S232435AbhBJRW7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 10 Feb 2021 12:21:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43580 "EHLO mail.kernel.org"
+        Wed, 10 Feb 2021 12:22:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231695AbhBJRVy (ORCPT
+        id S232439AbhBJRWy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 10 Feb 2021 12:21:54 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5F2E064EAA;
-        Wed, 10 Feb 2021 17:21:14 +0000 (UTC)
+        Wed, 10 Feb 2021 12:22:54 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3D92164E7E;
+        Wed, 10 Feb 2021 17:22:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612977675;
-        bh=6gU2hr0ySWdL4EzqNvCcJ94uNlFU8d5EdszufVd6c+M=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=afHBZThxamSYcna41fA4y/Ug6lI480lRsUQyNIiSrnwf77jvPxidSjmgh1aEF3zao
-         Qbzb41Iga3anrTiXfpsvqPhthjB15GDvBU0SAidDD0a2P6t2uvUEtNHj6XRj9WHlId
-         N+wYl+BZgsPw9k4f2uuleM7Oao5igNYkkVGCYLfFjnqgUPa+PR+fGs4ySFtvol+392
-         4NGeks3IAljVqjOHF+Nj6AiRoV4OI4mSM51FsOBzp63W9xdyHhryx9NnjYuY+DL4b9
-         lT0Y1QNctV0JkEQXME/MQ+3URxCiadllDQycSna0udvhYRCACuRAll5I4mWHXCnKRp
-         XV778QfAsC2ZQ==
+        s=k20201202; t=1612977734;
+        bh=yw2XyAm2K8/xWuBIJ2NtL5vuJXnjpYH9iI0vb12aEP4=;
+        h=From:To:Subject:Date:From;
+        b=hahi1dY52NsLU0n4Hwlf18PcYZpDjPLLMrrccA24xF46GL6/cG5f8D3Q7r3sBhMzG
+         JiGfIYyJrd9fm5zUAWrninlaPHKGsLVBkArpKHK4bN6StulOlNEkFP+eh1hosda7Ug
+         f7bJ0Ca6vLQMfCLaUK8yurDuNLkP36uFW8YGjoLlKA66wEWFGaaAmf58uRvO14qmnj
+         3LKfoUHuGApByQTpUNRYz4H8A4eigI6lNI77YlD6Pz4SkgJDYgzsOy9fzKzjjUyKxS
+         +LfYVzEBtletd1SlMKC3Mm/EplKZzBDFkyeKKgIHMtJDtDsAPeJuTsQ8mB+M1nIaAe
+         nYhg3Uw0z6gDw==
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH 2/3] power: supply: s3c_adc_battery: add SPDX license identifier
-Date:   Wed, 10 Feb 2021 18:21:07 +0100
-Message-Id: <20210210172108.334896-2-krzk@kernel.org>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: cpuidle: exynos: include header in file pattern
+Date:   Wed, 10 Feb 2021 18:22:08 +0100
+Message-Id: <20210210172208.335048-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210210172108.334896-1-krzk@kernel.org>
-References: <20210210172108.334896-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add SPDX license identifier and replace license boilerplate.
+Inclue the platform data header in Exynos cpuidle maintainer entry.
 
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/power/supply/s3c_adc_battery.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/power/supply/s3c_adc_battery.c b/drivers/power/supply/s3c_adc_battery.c
-index a2addc24ee8b..de98aea53a24 100644
---- a/drivers/power/supply/s3c_adc_battery.c
-+++ b/drivers/power/supply/s3c_adc_battery.c
-@@ -1,13 +1,8 @@
--/*
-- *	iPAQ h1930/h1940/rx1950 battery controller driver
-- *	Copyright (c) Vasily Khoruzhick
-- *	Based on h1940_battery.c by Arnaud Patard
-- *
-- * This file is subject to the terms and conditions of the GNU General Public
-- * License.  See the file COPYING in the main directory of this archive for
-- * more details.
-- *
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// iPAQ h1930/h1940/rx1950 battery controller driver
-+// Copyright (c) Vasily Khoruzhick
-+// Based on h1940_battery.c by Arnaud Patard
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 674f42375acf..68e2b4cb4788 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4625,6 +4625,7 @@ L:	linux-samsung-soc@vger.kernel.org
+ S:	Supported
+ F:	arch/arm/mach-exynos/pm.c
+ F:	drivers/cpuidle/cpuidle-exynos.c
++F:	include/linux/platform_data/cpuidle-exynos.h
  
- #include <linux/interrupt.h>
- #include <linux/platform_device.h>
+ CPUIDLE DRIVER - ARM PSCI
+ M:	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 -- 
 2.25.1
 
