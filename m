@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7BEC433E9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 21:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF71C433E9
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 22:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4700460233
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 21:41:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E61C364EB9
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 22:21:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233310AbhBJVlh (ORCPT
+        id S232574AbhBJWVP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 10 Feb 2021 16:41:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59602 "EHLO mail.kernel.org"
+        Wed, 10 Feb 2021 17:21:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232031AbhBJVlf (ORCPT
+        id S232500AbhBJWVM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 10 Feb 2021 16:41:35 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 567E564EDF;
-        Wed, 10 Feb 2021 21:40:54 +0000 (UTC)
+        Wed, 10 Feb 2021 17:21:12 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CCCA564EAC;
+        Wed, 10 Feb 2021 22:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612993254;
-        bh=f44NPsIKdvVz4sgR73Jy/yomvy3TJguxverZulfIkv8=;
+        s=k20201202; t=1612995631;
+        bh=rsv3LzAKCAcMhkki6tOZYMJG5D9/R/RrDICI3ql5P1Y=;
         h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=LDqSvUKK/dUgih+SoexCs2NpBSymHqLD605AiZy5maqEI/6AXrW+0vdTCv29oBcMY
-         YCFOw/3wWb5caauRzNrqcxwD3sCdCJqnzWaAH63oGNWvDmcMwvcbp1ctcxDIx58LX3
-         uYloZZbhn4lEJKGkImgCuUFSGFdF/tLpU9VsdRNoacSf8dmHkmo0BKK7UNh4w4lkJu
-         /XENEBx69/iQ83muLFq1rWDQ9od8Owbknpii8zdqtmgbKMkvaJXWRb5syq+u/1u2rS
-         ZCC/XOr8dUuEvj/3xCBcOgyFQxtUgHARvza/bW3yo2UMR9/W7LVDY0BaJBHaMhQIgN
-         OY6ZR9sRLKOqg==
-Date:   Wed, 10 Feb 2021 15:40:53 -0600
+        b=Qn5OTpP1DRA6+35K5HFsRkFcYlbUfr+/TZTaDsSs0RjK81IhXm3IM6PQlwq7iHLqS
+         LxRLAYa8RDHH7bqkIicHBI5LhTyegpOiQVXc9pGqtqBrUNDuNqfl89SQb6Zg4fKv7J
+         qadgAju1vSvzqSxHUPXpYJTzl3pijXgZlpKegvwC236gTf0BDWTL4smht1hgFVxMdl
+         kDlEI3c6XK4q5mC3qB+5hSo0KMiiWQd8XtDwOdiOMyqKeXrfNzdwS2EYlm1vPUCNIj
+         E4f0Eme18dGIC8qCoI9HGyr0GF08i3m+/4GtKB7kDpiViYy1sZpg5u3UhpSlhZGSqd
+         zoVVDbXkO3hcQ==
+Date:   Wed, 10 Feb 2021 16:20:29 -0600
 From:   Bjorn Helgaas <helgaas@kernel.org>
 To:     Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -51,43 +51,72 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Dan Williams <dan.j.williams@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH] PCI: Also set up legacy files only after sysfs init
-Message-ID: <20210210214053.GA610964@bjorn-Precision-5520>
+Subject: Re: [PATCH 2/2] PCI: Revoke mappings like devmem
+Message-ID: <20210210222029.GA612769@bjorn-Precision-5520>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210205133632.2827730-1-daniel.vetter@ffwll.ch>
+In-Reply-To: <20210204165831.2703772-3-daniel.vetter@ffwll.ch>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 05, 2021 at 02:36:32PM +0100, Daniel Vetter wrote:
-> We are already doing this for all the regular sysfs files on PCI
-> devices, but not yet on the legacy io files on the PCI buses. Thus far
-> no problem, but in the next patch I want to wire up iomem revoke
-> support. That needs the vfs up and running already to make sure that
-> iomem_get_mapping() works.
+I see I already acked this, but if you haven't merged it yet there are
+a few typos in the commit log:
+
+On Thu, Feb 04, 2021 at 05:58:31PM +0100, Daniel Vetter wrote:
+> Since 3234ac664a87 ("/dev/mem: Revoke mappings when a driver claims
+> the region") /dev/kmem zaps ptes when the kernel requests exclusive
+> acccess to an iomem region. And with CONFIG_IO_STRICT_DEVMEM, this is
+> the default for all driver uses.
+
+s/ptes/PTEs/
+
+> Except there's two more ways to access PCI BARs: sysfs and proc mmap
+> support. Let's plug that hole.
+
+s/there's two/there are two/
+
+> For revoke_devmem() to work we need to link our vma into the same
+> address_space, with consistent vma->vm_pgoff. ->pgoff is already
+> adjusted, because that's how (io_)remap_pfn_range works, but for the
+> mapping we need to adjust vma->vm_file->f_mapping. The cleanest way is
+> to adjust this at at ->open time:
 > 
-> Wire it up exactly like the existing code in
-> pci_create_sysfs_dev_files(). Note that pci_remove_legacy_files()
-> doesn't need a check since the one for pci_bus->legacy_io is
-> sufficient.
+> - for sysfs this is easy, now that binary attributes support this. We
+>   just set bin_attr->mapping when mmap is supported
+> - for procfs it's a bit more tricky, since procfs pci access has only
+>   one file per device, and access to a specific resources first needs
+>   to be set up with some ioctl calls. But mmap is only supported for
+>   the same resources as sysfs exposes with mmap support, and otherwise
+>   rejected, so we can set the mapping unconditionally at open time
+>   without harm.
+
+s/pci access/PCI access/
+s/a specific resources/a specific resource/
+
+> A special consideration is for arch_can_pci_mmap_io() - we need to
+> make sure that the ->f_mapping doesn't alias between ioport and iomem
+> space. There's only 2 ways in-tree to support mmap of ioports: generic
+> pci mmap (ARCH_GENERIC_PCI_MMAP_RESOURCE), and sparc as the single
+> architecture hand-rolling. Both approach support ioport mmap through a
+> special pfn range and not through magic pte attributes. Aliasing is
+> therefore not a problem.
+
+s/There's only 2/There are only two/
+s/pci mmap/PCI mmap/
+s/Both approach/Both approaches/
+s/pfn/PFN/
+s/pte/PTE/
+
+> The only difference in access checks left is that sysfs PCI mmap does
+> not check for CAP_RAWIO. I'm not really sure whether that should be
+> added or not.
 > 
-> An alternative solution would be to implement a callback in sysfs to
-> set up the address space from iomem_get_mapping() when userspace calls
-> mmap(). This also works, but Greg didn't really like that just to work
-> around an ordering issue when the kernel loads initially.
-> 
-> v2: Improve commit message (Bjorn)
-> 
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-
-I wish we weren't extending a known-racy mechanism to do this, but at
-least we're not *adding* a brand new race.
-
 > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
 > Cc: Jason Gunthorpe <jgg@ziepe.ca>
 > Cc: Kees Cook <keescook@chromium.org>
@@ -105,41 +134,51 @@ least we're not *adding* a brand new race.
 > Cc: Bjorn Helgaas <bhelgaas@google.com>
 > Cc: linux-pci@vger.kernel.org
 > ---
->  drivers/pci/pci-sysfs.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  drivers/pci/pci-sysfs.c | 4 ++++
+>  drivers/pci/proc.c      | 1 +
+>  2 files changed, 5 insertions(+)
 > 
 > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index fb072f4b3176..0c45b4f7b214 100644
+> index 0c45b4f7b214..f8afd54ca3e1 100644
 > --- a/drivers/pci/pci-sysfs.c
 > +++ b/drivers/pci/pci-sysfs.c
-> @@ -927,6 +927,9 @@ void pci_create_legacy_files(struct pci_bus *b)
->  {
->  	int error;
->  
-> +	if (!sysfs_initialized)
-> +		return;
-> +
->  	b->legacy_io = kcalloc(2, sizeof(struct bin_attribute),
->  			       GFP_ATOMIC);
->  	if (!b->legacy_io)
-> @@ -1448,6 +1451,7 @@ void pci_remove_sysfs_dev_files(struct pci_dev *pdev)
->  static int __init pci_sysfs_init(void)
->  {
->  	struct pci_dev *pdev = NULL;
-> +	struct pci_bus *pbus = NULL;
->  	int retval;
->  
->  	sysfs_initialized = 1;
-> @@ -1459,6 +1463,9 @@ static int __init pci_sysfs_init(void)
+> @@ -942,6 +942,7 @@ void pci_create_legacy_files(struct pci_bus *b)
+>  	b->legacy_io->read = pci_read_legacy_io;
+>  	b->legacy_io->write = pci_write_legacy_io;
+>  	b->legacy_io->mmap = pci_mmap_legacy_io;
+> +	b->legacy_io->mapping = iomem_get_mapping();
+>  	pci_adjust_legacy_attr(b, pci_mmap_io);
+>  	error = device_create_bin_file(&b->dev, b->legacy_io);
+>  	if (error)
+> @@ -954,6 +955,7 @@ void pci_create_legacy_files(struct pci_bus *b)
+>  	b->legacy_mem->size = 1024*1024;
+>  	b->legacy_mem->attr.mode = 0600;
+>  	b->legacy_mem->mmap = pci_mmap_legacy_mem;
+> +	b->legacy_io->mapping = iomem_get_mapping();
+>  	pci_adjust_legacy_attr(b, pci_mmap_mem);
+>  	error = device_create_bin_file(&b->dev, b->legacy_mem);
+>  	if (error)
+> @@ -1169,6 +1171,8 @@ static int pci_create_attr(struct pci_dev *pdev, int num, int write_combine)
+>  			res_attr->mmap = pci_mmap_resource_uc;
 >  		}
 >  	}
+> +	if (res_attr->mmap)
+> +		res_attr->mapping = iomem_get_mapping();
+>  	res_attr->attr.name = res_attr_name;
+>  	res_attr->attr.mode = 0600;
+>  	res_attr->size = pci_resource_len(pdev, num);
+> diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
+> index 3a2f90beb4cb..9bab07302bbf 100644
+> --- a/drivers/pci/proc.c
+> +++ b/drivers/pci/proc.c
+> @@ -298,6 +298,7 @@ static int proc_bus_pci_open(struct inode *inode, struct file *file)
+>  	fpriv->write_combine = 0;
 >  
-> +	while ((pbus = pci_find_next_bus(pbus)))
-> +		pci_create_legacy_files(pbus);
-> +
+>  	file->private_data = fpriv;
+> +	file->f_mapping = iomem_get_mapping();
+>  
 >  	return 0;
 >  }
->  late_initcall(pci_sysfs_init);
 > -- 
 > 2.30.0
 > 
