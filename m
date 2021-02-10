@@ -7,87 +7,79 @@ X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC97C4332B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4199DC433E9
 	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 17:22:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CA5C64DE3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 17:22:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0515564EAA
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 17:22:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232132AbhBJRV5 (ORCPT
+        id S232102AbhBJRV4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 10 Feb 2021 12:21:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43590 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232097AbhBJRV4 (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
         Wed, 10 Feb 2021 12:21:56 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D5E8764EC7;
-        Wed, 10 Feb 2021 17:21:15 +0000 (UTC)
+Received: from mail.kernel.org ([198.145.29.99]:43580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231695AbhBJRVy (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Wed, 10 Feb 2021 12:21:54 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5F2E064EAA;
+        Wed, 10 Feb 2021 17:21:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612977677;
-        bh=3XsRZ7GaXx8P2kZhXGx8Nf98E9I8mJO0HBDDnM97tTI=;
+        s=k20201202; t=1612977675;
+        bh=6gU2hr0ySWdL4EzqNvCcJ94uNlFU8d5EdszufVd6c+M=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=fVMn/+wSlxJDfg8IIIAwSZ3aB/5/73hoMqc177Y6KIUTjK2aEvxqKbxFm1g8yxstH
-         SFfvtWT0YCA8iOxmhdBh4ZbbNexcYtiUx5KHG8sq5niB0nfC03/TZD9UCtU49bd7Xa
-         2PWr+uCLshusoY43a99IIflIONLDO9NoAvPN1rAS3ky9rPIfZniAZePooEuE4BzZ/j
-         pP5eCNNr/s5yCqECttj1H8tIjLE+WAnq7GlvTo2bGNHiTT4YTk4AHQIVHz7gbtwCe+
-         b+/OdeWdPdEyklKJXnYa5CJmPWkQsSZpoG2GiNr27Jfkj7SuCcmBsELRTagiYX6mu5
-         l3kwv2NzKSL/A==
+        b=afHBZThxamSYcna41fA4y/Ug6lI480lRsUQyNIiSrnwf77jvPxidSjmgh1aEF3zao
+         Qbzb41Iga3anrTiXfpsvqPhthjB15GDvBU0SAidDD0a2P6t2uvUEtNHj6XRj9WHlId
+         N+wYl+BZgsPw9k4f2uuleM7Oao5igNYkkVGCYLfFjnqgUPa+PR+fGs4ySFtvol+392
+         4NGeks3IAljVqjOHF+Nj6AiRoV4OI4mSM51FsOBzp63W9xdyHhryx9NnjYuY+DL4b9
+         lT0Y1QNctV0JkEQXME/MQ+3URxCiadllDQycSna0udvhYRCACuRAll5I4mWHXCnKRp
+         XV778QfAsC2ZQ==
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Sebastian Reichel <sre@kernel.org>,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH 3/3] power: supply: s3c_adc_battery: remove unused pdata in suspend/resume
-Date:   Wed, 10 Feb 2021 18:21:08 +0100
-Message-Id: <20210210172108.334896-3-krzk@kernel.org>
+Subject: [PATCH 2/3] power: supply: s3c_adc_battery: add SPDX license identifier
+Date:   Wed, 10 Feb 2021 18:21:07 +0100
+Message-Id: <20210210172108.334896-2-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210210172108.334896-1-krzk@kernel.org>
 References: <20210210172108.334896-1-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The "pdata" local variable is not used in suspend/resume handlers since
-commit 7776bcd241e0 ("power: supply: s3c-adc-battery: Convert to GPIO
-descriptors"):
-
-    drivers/power/supply/s3c_adc_battery.c: In function ‘s3c_adc_bat_suspend’:
-    drivers/power/supply/s3c_adc_battery.c:405:28: warning: unused variable ‘pdata’ [-Wunused-variable]
-
-    drivers/power/supply/s3c_adc_battery.c: In function ‘s3c_adc_bat_resume’:
-    drivers/power/supply/s3c_adc_battery.c:422:28: warning: unused variable ‘pdata’ [-Wunused-variable]
+Add SPDX license identifier and replace license boilerplate.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/power/supply/s3c_adc_battery.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/power/supply/s3c_adc_battery.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/power/supply/s3c_adc_battery.c b/drivers/power/supply/s3c_adc_battery.c
-index de98aea53a24..dc700066d7bc 100644
+index a2addc24ee8b..de98aea53a24 100644
 --- a/drivers/power/supply/s3c_adc_battery.c
 +++ b/drivers/power/supply/s3c_adc_battery.c
-@@ -402,8 +402,6 @@ static int s3c_adc_bat_remove(struct platform_device *pdev)
- static int s3c_adc_bat_suspend(struct platform_device *pdev,
- 	pm_message_t state)
- {
--	struct s3c_adc_bat_pdata *pdata = pdev->dev.platform_data;
--
- 	if (main_bat.charge_finished) {
- 		if (device_may_wakeup(&pdev->dev))
- 			enable_irq_wake(
-@@ -419,8 +417,6 @@ static int s3c_adc_bat_suspend(struct platform_device *pdev,
+@@ -1,13 +1,8 @@
+-/*
+- *	iPAQ h1930/h1940/rx1950 battery controller driver
+- *	Copyright (c) Vasily Khoruzhick
+- *	Based on h1940_battery.c by Arnaud Patard
+- *
+- * This file is subject to the terms and conditions of the GNU General Public
+- * License.  See the file COPYING in the main directory of this archive for
+- * more details.
+- *
+- */
++// SPDX-License-Identifier: GPL-2.0
++//
++// iPAQ h1930/h1940/rx1950 battery controller driver
++// Copyright (c) Vasily Khoruzhick
++// Based on h1940_battery.c by Arnaud Patard
  
- static int s3c_adc_bat_resume(struct platform_device *pdev)
- {
--	struct s3c_adc_bat_pdata *pdata = pdev->dev.platform_data;
--
- 	if (main_bat.charge_finished) {
- 		if (device_may_wakeup(&pdev->dev))
- 			disable_irq_wake(
+ #include <linux/interrupt.h>
+ #include <linux/platform_device.h>
 -- 
 2.25.1
 
