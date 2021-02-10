@@ -2,178 +2,271 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F265C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 17:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB1FC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 18:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10F0464ECF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 17:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E462964EE4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 18:25:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232936AbhBJRoL (ORCPT
+        id S234122AbhBJSZI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 10 Feb 2021 12:44:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55160 "EHLO
+        Wed, 10 Feb 2021 13:25:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232929AbhBJRnw (ORCPT
+        with ESMTP id S234112AbhBJSWy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 10 Feb 2021 12:43:52 -0500
-Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8654EC061786
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Feb 2021 09:43:12 -0800 (PST)
-Received: by mail-ot1-x336.google.com with SMTP id o12so2538336ote.12
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Feb 2021 09:43:12 -0800 (PST)
+        Wed, 10 Feb 2021 13:22:54 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 273A8C061786;
+        Wed, 10 Feb 2021 10:21:54 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id t26so1773496pgv.3;
+        Wed, 10 Feb 2021 10:21:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=LOwEXRdvVMZvfZEaxMVJf2OldGo/hEkLnws83/gy1v0=;
-        b=aSVQeyO4q1SyZ99Fx7g8reh4zcI1aH3PnMoub+qk1TikH0aJexvkhIzg4srOUi51Pr
-         b+AAPUlkcwrzbLD4NYqC4amBaspRGlM01Vo4Fkjax6nExQQ/Znn0hckIUG3tLzxeKD8V
-         xFUNFSxUmoaeOlJbCq1EzPzfPxhFV3+GCpZZo=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8TFcRC9iuBJ2WpmnaxpftbN969itbGQeYgO1bGjpcN0=;
+        b=MlwAqcU5lq3xtW4URVea9vtF+NPmlMi1NIgohMuFor/5HMe6Q+dSGhBhcE/uKNqa6T
+         XjqlXzROz+mS6IfsQi9vXuYvstpNRMEELxhe+akanQCRSUhu923h9dCg2S9edNC91+MB
+         l43SfYS0KJGrmnRluhIPKXiFhjfPhL9byHciPoj85cfkUOF8U5PLEjDUHtaGWYsv7Q5g
+         IdNMw1wILY0Jfo2l8Fvh0OLWFXrWAdh5P323A0l5xs9WVsSiATwS1VI3hUjrQrK7oPSo
+         uXoumYeHiHRhXg6u3J1Lcuv1cSHGVRz91tQPgF38Qhe6sM/4OaU80vL6bb/FEbvk5bSP
+         OvTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=LOwEXRdvVMZvfZEaxMVJf2OldGo/hEkLnws83/gy1v0=;
-        b=YXI945t2p9Ef+/LKC/MMh07fsmW/fslpOcxkBr/qeVqa7LRpOOhc96FSjLCMS6npw9
-         C6hFK+yuIF0+z4OZpB6V8MJIjbhuw/iRaaz2DG8Oq42cqQTXljAGlF3Q90+b4ZfOjesj
-         yKjGlamA5GgK37YGLCXekCwtYZnsZ1HQJOWutI8l6sFudmIPhjR/NUbuOcSKk+7r6Jk8
-         hMKBdJTJU1gP6+i9SXUPNtJ3e6+91LN2XiqKSoEBOjrSpMhGEl3nOuR5BRmBWpYPjbgL
-         anXVXP3xhfhKLCmJ5xlLi9i+1pGNExQQ5m4nRk41Ex3cInMnbCGxpVXSHkd0+VOoUf8p
-         SYNw==
-X-Gm-Message-State: AOAM530QWK0succ99XhhUg2PbaAZ7cEbgL9KuPiE5M+31YvoF9UNhAC7
-        pzzDuIqxo+s09TPkI8Fols54TeC1sxm7t7fky7bPWQ==
-X-Google-Smtp-Source: ABdhPJyf0c/kQbPLFv9k7KYsyYq25CZR3JWicuNJgZ3n4s/yKoff44lu/fP6XuJ5GLjcgeB2grbmGucW3joUFNL7tbI=
-X-Received: by 2002:a9d:2270:: with SMTP id o103mr2896760ota.303.1612978991821;
- Wed, 10 Feb 2021 09:43:11 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=8TFcRC9iuBJ2WpmnaxpftbN969itbGQeYgO1bGjpcN0=;
+        b=ZROZmE88kCF+X75l2y5s6mcd8ZmTRSw+irzCuNmLR4rJkPVnfR3s2aseTqm840x1c+
+         ZxKFXH19V035F53SYm3jj+yfAkdbTSaXpTrjWJ36nIHdiBj3pSa19NGEJuZSCN0yNt+p
+         YtuOGvNht692MMEaJM6aWu6NTko0MPeRrFIUGKjPEE6aukjXFmooxtOIuu9Xfl7f7z0W
+         EO2ccHcpSQjgcbv9fswbm5d2SKjMKGR6IXjVFqDHfCfFTnw4GcRNge0Vy1uO7hUKs2XF
+         6JS5ljtjEHxzt/dk9j2w2dDLGuI6gihRNrT92wlQll6bxIrEaHEC/xdfxynwPyFf9sEg
+         vABQ==
+X-Gm-Message-State: AOAM533rCd/8o31KfkTB3fuz8nBfGlwck9RWBPsOTek1dE99qBh8YLe/
+        IRsA3pYR7jkxGtmTeFmVBliE4cyS5CqfDw==
+X-Google-Smtp-Source: ABdhPJwbFbmNRwzZ0b+9Bx+X9kBjmFcm6TR/x+3xdjpPtXHA2XZxLa3IvLiTK6U9ADFhs0f1Hg0cVQ==
+X-Received: by 2002:a63:eb42:: with SMTP id b2mr4296167pgk.284.1612981313120;
+        Wed, 10 Feb 2021 10:21:53 -0800 (PST)
+Received: from [10.67.49.228] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id r189sm3020845pgr.10.2021.02.10.10.21.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Feb 2021 10:21:52 -0800 (PST)
+Subject: Re: [PATCH RESEND v6 00/10] dt-bindings: usb: Harmonize
+ xHCI/EHCI/OHCI/DWC3 nodes name
+To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Felipe Balbi <balbi@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>,
+        Rafal Milecki <zajec5@gmail.com>,
+        Wei Xu <xuwei5@hisilicon.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Benoit Cousson <bcousson@baylibre.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Khuong Dinh <khuong@os.amperecomputing.com>,
+        Andy Gross <agross@kernel.org>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Tony Lindgren <tony@atomide.com>, Chen-Yu Tsai <wens@csie.org>,
+        Jun Li <lijun.kernel@gmail.com>,
+        linux-snps-arc@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210210172850.20849-1-Sergey.Semin@baikalelectronics.ru>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <e169630f-1255-7597-86f2-63ee8760cc8c@gmail.com>
+Date:   Wed, 10 Feb 2021 10:21:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20210205133632.2827730-1-daniel.vetter@ffwll.ch>
-In-Reply-To: <20210205133632.2827730-1-daniel.vetter@ffwll.ch>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Wed, 10 Feb 2021 18:43:00 +0100
-Message-ID: <CAKMK7uFdR=SGD+LwH4nES0afYzuxzKr0EbHQ=Ea03appvVwD9Q@mail.gmail.com>
-Subject: Re: [PATCH] PCI: Also set up legacy files only after sysfs init
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Kees Cook <keescook@chromium.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Linux PCI <linux-pci@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210210172850.20849-1-Sergey.Semin@baikalelectronics.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Bjorn,
+On 2/10/21 9:28 AM, Serge Semin wrote:
+> As the subject states this series is an attempt to harmonize the xHCI,
+> EHCI, OHCI and DWC USB3 DT nodes with the DT schema introduced in the
+> framework of the patchset [1].
+> 
+> Firstly as Krzysztof suggested we've deprecated a support of DWC USB3
+> controllers with "synopsys,"-vendor prefix compatible string in favor of
+> the ones with valid "snps,"-prefix. It's done in all the DTS files,
+> which have been unfortunate to define such nodes.
+> 
+> Secondly we suggest to fix the snps,quirk-frame-length-adjustment property
+> declaration in the Amlogic meson-g12-common.dtsi DTS file, since it has
+> been erroneously declared as boolean while having uint32 type. Neil said
+> it was ok to init that property with 0x20 value.
+> 
+> Thirdly the main part of the patchset concern fixing the xHCI, EHCI/OHCI
+> and DWC USB3 DT nodes name as in accordance with their DT schema the
+> corresponding node name is suppose to comply with the Generic USB HCD DT
+> schema, which requires the USB nodes to have the name acceptable by the
+> regexp: "^usb(@.*)?". Such requirement had been applicable even before we
+> introduced the new DT schema in [1], but as we can see it hasn't been
+> strictly implemented for a lot the DTS files. Since DT schema is now
+> available the automated DTS validation shall make sure that the rule isn't
+> violated.
+> 
+> Note most of these patches have been a part of the last three patches of
+> [1]. But since there is no way to have them merged in in a combined
+> manner, I had to move them to the dedicated series and split them up so to
+> be accepted by the corresponding subsystem maintainers one-by-one.
+> 
+> [1] Link: https://lore.kernel.org/linux-usb/20201014101402.18271-1-Sergey.Semin@baikalelectronics.ru/
+> Changelog v1:
+> - As Krzysztof suggested I've created a script which checked whether the
+>   node names had been also updated in all the depended dts files. As a
+>   result I found two more files which should have been also modified:
+>   arch/arc/boot/dts/{axc003.dtsi,axc003_idu.dtsi}
+> - Correct the USB DWC3 nodes name found in
+>   arch/arm64/boot/dts/apm/{apm-storm.dtsi,apm-shadowcat.dtsi} too.
+> 
+> Link: https://lore.kernel.org/linux-usb/20201020115959.2658-1-Sergey.Semin@baikalelectronics.ru
+> Changelog v2:
+> - Drop the patch:
+>   [PATCH 01/29] usb: dwc3: Discard synopsys,dwc3 compatibility string
+>   and get back the one which marks the "synopsys,dwc3" compatible string
+>   as deprecated into the DT schema related series.
+> - Drop the patches:
+>   [PATCH 03/29] arm: dts: am437x: Correct DWC USB3 compatible string
+>   [PATCH 04/29] arm: dts: exynos: Correct DWC USB3 compatible string
+>   [PATCH 07/29] arm: dts: bcm53x: Harmonize EHCI/OHCI DT nodes name
+>   [PATCH 08/29] arm: dts: stm32: Harmonize EHCI/OHCI DT nodes name
+>   [PATCH 16/29] arm: dts: bcm5301x: Harmonize xHCI DT nodes name
+>   [PATCH 19/29] arm: dts: exynos: Harmonize DWC USB3 DT nodes name
+>   [PATCH 21/29] arm: dts: ls1021a: Harmonize DWC USB3 DT nodes name
+>   [PATCH 22/29] arm: dts: omap5: Harmonize DWC USB3 DT nodes name
+>   [PATCH 24/29] arm64: dts: allwinner: h6: Harmonize DWC USB3 DT nodes name
+>   [PATCH 26/29] arm64: dts: exynos: Harmonize DWC USB3 DT nodes name
+>   [PATCH 27/29] arm64: dts: layerscape: Harmonize DWC USB3 DT nodes name
+>   since they have been applied to the corresponding maintainers repos.
+> - Fix drivers/usb/dwc3/dwc3-qcom.c to be looking for the "usb@"-prefixed
+>   sub-node and falling back to the "dwc3@"-prefixed one on failure.
+> 
+> Link: https://lore.kernel.org/linux-usb/20201111091552.15593-1-Sergey.Semin@baikalelectronics.ru
+> Changelog v3:
+> - Drop the patches:
+>   [PATCH v2 04/18] arm: dts: hisi-x5hd2: Harmonize EHCI/OHCI DT nodes name
+>   [PATCH v2 06/18] arm64: dts: hisi: Harmonize EHCI/OHCI DT nodes name
+>   [PATCH v2 07/18] mips: dts: jz47x: Harmonize EHCI/OHCI DT nodes name
+>   [PATCH v2 08/18] mips: dts: sead3: Harmonize EHCI/OHCI DT nodes name
+>   [PATCH v2 09/18] mips: dts: ralink: mt7628a: Harmonize EHCI/OHCI DT nodes name
+>   [PATCH v2 11/18] arm64: dts: marvell: cp11x: Harmonize xHCI DT nodes name
+>   [PATCH v2 12/18] arm: dts: marvell: armada-375: Harmonize DWC USB3 DT nodes name
+>   [PATCH v2 16/18] arm64: dts: hi3660: Harmonize DWC USB3 DT nodes name
+>   since they have been applied to the corresponding maintainers repos.
+> 
+> Link: https://lore.kernel.org/linux-usb/20201205155621.3045-1-Sergey.Semin@baikalelectronics.ru
+> Changelog v4:
+> - Just resend.
+> 
+> Link: https://lore.kernel.org/linux-usb/20201210091756.18057-1-Sergey.Semin@baikalelectronics.ru/
+> Changelog v5:
+> - Drop the patch:
+>   [PATCH v4 02/10] arm64: dts: amlogic: meson-g12: Set FL-adj property value
+>   since it has been applied to the corresponding maintainers repos.
+> - Get back the patch:
+>   [PATCH 21/29] arm: dts: ls1021a: Harmonize DWC USB3 DT nodes name
+>   as it has been missing in the kernel 5.11-rc7
+> - Rebase onto the kernel 5.11-rc7
+> 
+> Link: https://lore.kernel.org/lkml/20210208135154.6645-1-Sergey.Semin@baikalelectronics.ru/
+> Changelog v6:
+> - Just resend and add linux-usb.vger.kernel.org to the list of Ccecipients.
 
-Can you ack this for merging through my topic branch with the other
-follow_pfn/iomem revoke fixes for 5.12?
 
-If not, what's the plan for getting this (or equivalent functionality)
-in for 5.13? I have more of these follow_pfn/iomem revoke patches on
-top, so I'd like to get the first cut merged sooner than later if
-possible. And the other prep work has been in -next since -rc1.
-
-Thanks, Daniel
-
-On Fri, Feb 5, 2021 at 2:36 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote=
-:
->
-> We are already doing this for all the regular sysfs files on PCI
-> devices, but not yet on the legacy io files on the PCI buses. Thus far
-> no problem, but in the next patch I want to wire up iomem revoke
-> support. That needs the vfs up and running already to make sure that
-> iomem_get_mapping() works.
->
-> Wire it up exactly like the existing code in
-> pci_create_sysfs_dev_files(). Note that pci_remove_legacy_files()
-> doesn't need a check since the one for pci_bus->legacy_io is
-> sufficient.
->
-> An alternative solution would be to implement a callback in sysfs to
-> set up the address space from iomem_get_mapping() when userspace calls
-> mmap(). This also works, but Greg didn't really like that just to work
-> around an ordering issue when the kernel loads initially.
->
-> v2: Improve commit message (Bjorn)
->
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: linux-mm@kvack.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-media@vger.kernel.org
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-pci@vger.kernel.org
-> ---
->  drivers/pci/pci-sysfs.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index fb072f4b3176..0c45b4f7b214 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -927,6 +927,9 @@ void pci_create_legacy_files(struct pci_bus *b)
->  {
->         int error;
->
-> +       if (!sysfs_initialized)
-> +               return;
-> +
->         b->legacy_io =3D kcalloc(2, sizeof(struct bin_attribute),
->                                GFP_ATOMIC);
->         if (!b->legacy_io)
-> @@ -1448,6 +1451,7 @@ void pci_remove_sysfs_dev_files(struct pci_dev *pde=
-v)
->  static int __init pci_sysfs_init(void)
->  {
->         struct pci_dev *pdev =3D NULL;
-> +       struct pci_bus *pbus =3D NULL;
->         int retval;
->
->         sysfs_initialized =3D 1;
-> @@ -1459,6 +1463,9 @@ static int __init pci_sysfs_init(void)
->                 }
->         }
->
-> +       while ((pbus =3D pci_find_next_bus(pbus)))
-> +               pci_create_legacy_files(pbus);
-> +
->         return 0;
->  }
->  late_initcall(pci_sysfs_init);
-> --
-> 2.30.0
->
-
-
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+If this needs to go on, can you drop the people who already took your
+patches (trying to lower my email amount to something manageable).
+Thank you.
+-- 
+Florian
