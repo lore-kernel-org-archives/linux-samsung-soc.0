@@ -2,188 +2,149 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1DCC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 18:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7BEC433E9
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 21:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D553464E2A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 18:46:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4700460233
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Feb 2021 21:41:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234222AbhBJSqN (ORCPT
+        id S233310AbhBJVlh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 10 Feb 2021 13:46:13 -0500
-Received: from mail.baikalelectronics.com ([87.245.175.226]:35120 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234272AbhBJSoA (ORCPT
+        Wed, 10 Feb 2021 16:41:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59602 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232031AbhBJVlf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 10 Feb 2021 13:44:00 -0500
-Date:   Wed, 10 Feb 2021 21:43:11 +0300
-From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-CC:     Serge Semin <fancer.lancer@gmail.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Wed, 10 Feb 2021 16:41:35 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 567E564EDF;
+        Wed, 10 Feb 2021 21:40:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612993254;
+        bh=f44NPsIKdvVz4sgR73Jy/yomvy3TJguxverZulfIkv8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=LDqSvUKK/dUgih+SoexCs2NpBSymHqLD605AiZy5maqEI/6AXrW+0vdTCv29oBcMY
+         YCFOw/3wWb5caauRzNrqcxwD3sCdCJqnzWaAH63oGNWvDmcMwvcbp1ctcxDIx58LX3
+         uYloZZbhn4lEJKGkImgCuUFSGFdF/tLpU9VsdRNoacSf8dmHkmo0BKK7UNh4w4lkJu
+         /XENEBx69/iQ83muLFq1rWDQ9od8Owbknpii8zdqtmgbKMkvaJXWRb5syq+u/1u2rS
+         ZCC/XOr8dUuEvj/3xCBcOgyFQxtUgHARvza/bW3yo2UMR9/W7LVDY0BaJBHaMhQIgN
+         OY6ZR9sRLKOqg==
+Date:   Wed, 10 Feb 2021 15:40:53 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-samsung-soc@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Kees Cook <keescook@chromium.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, Vineet Gupta <vgupta@synopsys.com>,
-        Rafal Milecki <zajec5@gmail.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Benoit Cousson <bcousson@baylibre.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Andy Gross <agross@kernel.org>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Tony Lindgren <tony@atomide.com>, Chen-Yu Tsai <wens@csie.org>,
-        Jun Li <lijun.kernel@gmail.com>,
-        <linux-snps-arc@lists.infradead.org>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mips@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linuxppc-dev@lists.ozlabs.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND v6 00/10] dt-bindings: usb: Harmonize
- xHCI/EHCI/OHCI/DWC3 nodes name
-Message-ID: <20210210184311.ouc6zft675kybyjx@mobilestation>
-References: <20210210172850.20849-1-Sergey.Semin@baikalelectronics.ru>
- <e169630f-1255-7597-86f2-63ee8760cc8c@gmail.com>
+        linux-pci@vger.kernel.org,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH] PCI: Also set up legacy files only after sysfs init
+Message-ID: <20210210214053.GA610964@bjorn-Precision-5520>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <e169630f-1255-7597-86f2-63ee8760cc8c@gmail.com>
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210205133632.2827730-1-daniel.vetter@ffwll.ch>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 10, 2021 at 10:21:47AM -0800, Florian Fainelli wrote:
-> On 2/10/21 9:28 AM, Serge Semin wrote:
-> > As the subject states this series is an attempt to harmonize the xHCI,
-> > EHCI, OHCI and DWC USB3 DT nodes with the DT schema introduced in the
-> > framework of the patchset [1].
-> > 
-> > Firstly as Krzysztof suggested we've deprecated a support of DWC USB3
-> > controllers with "synopsys,"-vendor prefix compatible string in favor of
-> > the ones with valid "snps,"-prefix. It's done in all the DTS files,
-> > which have been unfortunate to define such nodes.
-> > 
-> > Secondly we suggest to fix the snps,quirk-frame-length-adjustment property
-> > declaration in the Amlogic meson-g12-common.dtsi DTS file, since it has
-> > been erroneously declared as boolean while having uint32 type. Neil said
-> > it was ok to init that property with 0x20 value.
-> > 
-> > Thirdly the main part of the patchset concern fixing the xHCI, EHCI/OHCI
-> > and DWC USB3 DT nodes name as in accordance with their DT schema the
-> > corresponding node name is suppose to comply with the Generic USB HCD DT
-> > schema, which requires the USB nodes to have the name acceptable by the
-> > regexp: "^usb(@.*)?". Such requirement had been applicable even before we
-> > introduced the new DT schema in [1], but as we can see it hasn't been
-> > strictly implemented for a lot the DTS files. Since DT schema is now
-> > available the automated DTS validation shall make sure that the rule isn't
-> > violated.
-> > 
-> > Note most of these patches have been a part of the last three patches of
-> > [1]. But since there is no way to have them merged in in a combined
-> > manner, I had to move them to the dedicated series and split them up so to
-> > be accepted by the corresponding subsystem maintainers one-by-one.
-> > 
-> > [1] Link: https://lore.kernel.org/linux-usb/20201014101402.18271-1-Sergey.Semin@baikalelectronics.ru/
-> > Changelog v1:
-> > - As Krzysztof suggested I've created a script which checked whether the
-> >   node names had been also updated in all the depended dts files. As a
-> >   result I found two more files which should have been also modified:
-> >   arch/arc/boot/dts/{axc003.dtsi,axc003_idu.dtsi}
-> > - Correct the USB DWC3 nodes name found in
-> >   arch/arm64/boot/dts/apm/{apm-storm.dtsi,apm-shadowcat.dtsi} too.
-> > 
-> > Link: https://lore.kernel.org/linux-usb/20201020115959.2658-1-Sergey.Semin@baikalelectronics.ru
-> > Changelog v2:
-> > - Drop the patch:
-> >   [PATCH 01/29] usb: dwc3: Discard synopsys,dwc3 compatibility string
-> >   and get back the one which marks the "synopsys,dwc3" compatible string
-> >   as deprecated into the DT schema related series.
-> > - Drop the patches:
-> >   [PATCH 03/29] arm: dts: am437x: Correct DWC USB3 compatible string
-> >   [PATCH 04/29] arm: dts: exynos: Correct DWC USB3 compatible string
-> >   [PATCH 07/29] arm: dts: bcm53x: Harmonize EHCI/OHCI DT nodes name
-> >   [PATCH 08/29] arm: dts: stm32: Harmonize EHCI/OHCI DT nodes name
-> >   [PATCH 16/29] arm: dts: bcm5301x: Harmonize xHCI DT nodes name
-> >   [PATCH 19/29] arm: dts: exynos: Harmonize DWC USB3 DT nodes name
-> >   [PATCH 21/29] arm: dts: ls1021a: Harmonize DWC USB3 DT nodes name
-> >   [PATCH 22/29] arm: dts: omap5: Harmonize DWC USB3 DT nodes name
-> >   [PATCH 24/29] arm64: dts: allwinner: h6: Harmonize DWC USB3 DT nodes name
-> >   [PATCH 26/29] arm64: dts: exynos: Harmonize DWC USB3 DT nodes name
-> >   [PATCH 27/29] arm64: dts: layerscape: Harmonize DWC USB3 DT nodes name
-> >   since they have been applied to the corresponding maintainers repos.
-> > - Fix drivers/usb/dwc3/dwc3-qcom.c to be looking for the "usb@"-prefixed
-> >   sub-node and falling back to the "dwc3@"-prefixed one on failure.
-> > 
-> > Link: https://lore.kernel.org/linux-usb/20201111091552.15593-1-Sergey.Semin@baikalelectronics.ru
-> > Changelog v3:
-> > - Drop the patches:
-> >   [PATCH v2 04/18] arm: dts: hisi-x5hd2: Harmonize EHCI/OHCI DT nodes name
-> >   [PATCH v2 06/18] arm64: dts: hisi: Harmonize EHCI/OHCI DT nodes name
-> >   [PATCH v2 07/18] mips: dts: jz47x: Harmonize EHCI/OHCI DT nodes name
-> >   [PATCH v2 08/18] mips: dts: sead3: Harmonize EHCI/OHCI DT nodes name
-> >   [PATCH v2 09/18] mips: dts: ralink: mt7628a: Harmonize EHCI/OHCI DT nodes name
-> >   [PATCH v2 11/18] arm64: dts: marvell: cp11x: Harmonize xHCI DT nodes name
-> >   [PATCH v2 12/18] arm: dts: marvell: armada-375: Harmonize DWC USB3 DT nodes name
-> >   [PATCH v2 16/18] arm64: dts: hi3660: Harmonize DWC USB3 DT nodes name
-> >   since they have been applied to the corresponding maintainers repos.
-> > 
-> > Link: https://lore.kernel.org/linux-usb/20201205155621.3045-1-Sergey.Semin@baikalelectronics.ru
-> > Changelog v4:
-> > - Just resend.
-> > 
-> > Link: https://lore.kernel.org/linux-usb/20201210091756.18057-1-Sergey.Semin@baikalelectronics.ru/
-> > Changelog v5:
-> > - Drop the patch:
-> >   [PATCH v4 02/10] arm64: dts: amlogic: meson-g12: Set FL-adj property value
-> >   since it has been applied to the corresponding maintainers repos.
-> > - Get back the patch:
-> >   [PATCH 21/29] arm: dts: ls1021a: Harmonize DWC USB3 DT nodes name
-> >   as it has been missing in the kernel 5.11-rc7
-> > - Rebase onto the kernel 5.11-rc7
-> > 
-> > Link: https://lore.kernel.org/lkml/20210208135154.6645-1-Sergey.Semin@baikalelectronics.ru/
-> > Changelog v6:
-> > - Just resend and add linux-usb.vger.kernel.org to the list of Ccecipients.
+On Fri, Feb 05, 2021 at 02:36:32PM +0100, Daniel Vetter wrote:
+> We are already doing this for all the regular sysfs files on PCI
+> devices, but not yet on the legacy io files on the PCI buses. Thus far
+> no problem, but in the next patch I want to wire up iomem revoke
+> support. That needs the vfs up and running already to make sure that
+> iomem_get_mapping() works.
 > 
+> Wire it up exactly like the existing code in
+> pci_create_sysfs_dev_files(). Note that pci_remove_legacy_files()
+> doesn't need a check since the one for pci_bus->legacy_io is
+> sufficient.
 > 
+> An alternative solution would be to implement a callback in sysfs to
+> set up the address space from iomem_get_mapping() when userspace calls
+> mmap(). This also works, but Greg didn't really like that just to work
+> around an ordering issue when the kernel loads initially.
+> 
+> v2: Improve commit message (Bjorn)
+> 
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 
-> If this needs to go on, can you drop the people who already took your
-> patches (trying to lower my email amount to something manageable).
-> Thank you.
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Ah, sorry for the noise. I'll clean the Cc-list up in the next attempt
-to have this finally fully accepted.
+I wish we weren't extending a known-racy mechanism to do this, but at
+least we're not *adding* a brand new race.
 
--Sergey
-
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: Jérôme Glisse <jglisse@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-mm@kvack.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: linux-pci@vger.kernel.org
+> ---
+>  drivers/pci/pci-sysfs.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index fb072f4b3176..0c45b4f7b214 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -927,6 +927,9 @@ void pci_create_legacy_files(struct pci_bus *b)
+>  {
+>  	int error;
+>  
+> +	if (!sysfs_initialized)
+> +		return;
+> +
+>  	b->legacy_io = kcalloc(2, sizeof(struct bin_attribute),
+>  			       GFP_ATOMIC);
+>  	if (!b->legacy_io)
+> @@ -1448,6 +1451,7 @@ void pci_remove_sysfs_dev_files(struct pci_dev *pdev)
+>  static int __init pci_sysfs_init(void)
+>  {
+>  	struct pci_dev *pdev = NULL;
+> +	struct pci_bus *pbus = NULL;
+>  	int retval;
+>  
+>  	sysfs_initialized = 1;
+> @@ -1459,6 +1463,9 @@ static int __init pci_sysfs_init(void)
+>  		}
+>  	}
+>  
+> +	while ((pbus = pci_find_next_bus(pbus)))
+> +		pci_create_legacy_files(pbus);
+> +
+>  	return 0;
+>  }
+>  late_initcall(pci_sysfs_init);
 > -- 
-> Florian
+> 2.30.0
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
