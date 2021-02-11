@@ -2,184 +2,82 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 043CBC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Feb 2021 15:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AA8C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Feb 2021 21:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C723364F37
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Feb 2021 15:07:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B64C664E3E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Feb 2021 21:12:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229712AbhBKPFU (ORCPT
+        id S230233AbhBKVMp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 11 Feb 2021 10:05:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45896 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230499AbhBKO50 (ORCPT
+        Thu, 11 Feb 2021 16:12:45 -0500
+Received: from mail-40134.protonmail.ch ([185.70.40.134]:22271 "EHLO
+        mail-40134.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230158AbhBKVMm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 11 Feb 2021 09:57:26 -0500
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D413EC061574
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Feb 2021 06:56:43 -0800 (PST)
-Received: by mail-ot1-x334.google.com with SMTP id k10so5379043otl.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Feb 2021 06:56:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=RmVDQyx+Ndcv5SeblotXpQRe27Egv2RqGDvlo6R5U8w=;
-        b=E2yi8Dzo7qq3E3/flljC3xH7tiHdegmynb0SA7JlYIz5EM1sj6y32R7tM/aX9DYRic
-         K+hqQA0/ECrgtm5QdSQmTLpcu8HZWUSLZuquZhonvDmxHXsor2V3Ekd730+4qyLBylcH
-         5EHSAuBOoS1VnBHeezqtR3TIZEBKmUAZXQNaQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=RmVDQyx+Ndcv5SeblotXpQRe27Egv2RqGDvlo6R5U8w=;
-        b=tnPpkztp2KTOZjKlYmKeHbC+XisH+YRFuQXNIxR/Btdm1wdrZMZUbjidO5O8FdO7Rq
-         OL73mYaJMMlXL7DhlhCNQ+I4yrMMEh/w3y5ksYdHDEi/RZ/mhzAYbcArGviRUUxKr0YX
-         oAS9VbxQdvBEf1QYvVwT/mW6kbyTvJTSM0rCB2p8HFFdzoaQvpkbA3zu2dug8oeDUnTg
-         VUw23iE6xQRKiy7TBXsRUYc2iLE/FuCMN/Uragka4F2o0sJNR6pN1vAwwUPiIRa4vZe3
-         5wbmz/mqqheFRbc6BISVMz2lVmeCNDCTJLmbVrX/mPNH2gO00bQE+GHpgb6Dn9OjUbcY
-         bX2g==
-X-Gm-Message-State: AOAM531hlf8kLYLTR5TgQAl6zJeU4CbeeMDlm74MaZFyzeq6WZRdQkCU
-        LVvq7wJgQ6TujC/A+Q2QIbBqQaJZ0sQFXcwTZtcuxw==
-X-Google-Smtp-Source: ABdhPJw3fjkRP9gLP7q/RDjMJ5TKsouRdxxZLHu0I2VLcTiQg1aD1zxxpNTCk8c6mMpxWvFuDBl3KNzaOyf4zVs07lM=
-X-Received: by 2002:a9d:2270:: with SMTP id o103mr5794245ota.303.1613055403311;
- Thu, 11 Feb 2021 06:56:43 -0800 (PST)
+        Thu, 11 Feb 2021 16:12:42 -0500
+Date:   Thu, 11 Feb 2021 21:11:52 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail; t=1613077915;
+        bh=4VV/HM9KaFjIhM38yB9PwprOcTWzMzKSjBUn6r4t3EY=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=hHzE7DRXwMp8sYAYTIeA6IhCsyU0dqZNyaAU4OyLnMgWTSDRkYNHtj7MswuN7zhIS
+         ebZZNDjxL2etJzLlEaJZIgknbzmqe53Qu7lk0AaqqOaykFCCgZwUTIXpZnEGemuEQS
+         65mbAtY3u3+1kqF7PKD+blLDiBljl2NwTIha3RsM=
+To:     Lee Jones <lee.jones@linaro.org>
+From:   Timon Baetz <timon.baetz@protonmail.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Reply-To: Timon Baetz <timon.baetz@protonmail.com>
+Subject: Re: [PATCH v3 3/7] mfd: max8997: Add of_compatible to extcon and charger mfd_cell
+Message-ID: <20210211221132.5e8d156c.timon.baetz@protonmail.com>
+In-Reply-To: <20201222095522.GC53991@dell>
+References: <20201222070520.710096-1-timon.baetz@protonmail.com> <20201222070520.710096-3-timon.baetz@protonmail.com> <20201222095522.GC53991@dell>
 MIME-Version: 1.0
-References: <20210205133632.2827730-1-daniel.vetter@ffwll.ch> <20210210214053.GA610964@bjorn-Precision-5520>
-In-Reply-To: <20210210214053.GA610964@bjorn-Precision-5520>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Thu, 11 Feb 2021 15:56:30 +0100
-Message-ID: <CAKMK7uHi3Uvze3epTPC4613UzbT24LSO2GP8EkU8nxaKxOQBSA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: Also set up legacy files only after sysfs init
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux MM <linux-mm@kvack.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 10, 2021 at 10:40 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> On Fri, Feb 05, 2021 at 02:36:32PM +0100, Daniel Vetter wrote:
-> > We are already doing this for all the regular sysfs files on PCI
-> > devices, but not yet on the legacy io files on the PCI buses. Thus far
-> > no problem, but in the next patch I want to wire up iomem revoke
-> > support. That needs the vfs up and running already to make sure that
-> > iomem_get_mapping() works.
+On Tue, 22 Dec 2020 09:55:22 +0000, Lee Jones wrote:
+> On Tue, 22 Dec 2020, Timon Baetz wrote:
+>=20
+> > Add of_compatible ("maxim,max8997-muic") to the mfd_cell to have a
+> > of_node set in the extcon driver.
 > >
-> > Wire it up exactly like the existing code in
-> > pci_create_sysfs_dev_files(). Note that pci_remove_legacy_files()
-> > doesn't need a check since the one for pci_bus->legacy_io is
-> > sufficient.
+> > Add of_compatible ("maxim,max8997-battery") to the mfd_cell to configur=
+e
+> > the charger driver.
 > >
-> > An alternative solution would be to implement a callback in sysfs to
-> > set up the address space from iomem_get_mapping() when userspace calls
-> > mmap(). This also works, but Greg didn't really like that just to work
-> > around an ordering issue when the kernel loads initially.
-> >
-> > v2: Improve commit message (Bjorn)
-> >
-> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
->
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
->
-> I wish we weren't extending a known-racy mechanism to do this, but at
-> least we're not *adding* a brand new race.
-
-Yeah it's not great. Thanks for looking at both again, I'll fix up the
-typos on the 2nd one and merge them both.
-
-Cheers, Daniel
-
->
-> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: John Hubbard <jhubbard@nvidia.com>
-> > Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: linux-mm@kvack.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Cc: linux-media@vger.kernel.org
-> > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > Cc: linux-pci@vger.kernel.org
+> > Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
 > > ---
-> >  drivers/pci/pci-sysfs.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> > index fb072f4b3176..0c45b4f7b214 100644
-> > --- a/drivers/pci/pci-sysfs.c
-> > +++ b/drivers/pci/pci-sysfs.c
-> > @@ -927,6 +927,9 @@ void pci_create_legacy_files(struct pci_bus *b)
-> >  {
-> >       int error;
-> >
-> > +     if (!sysfs_initialized)
-> > +             return;
-> > +
-> >       b->legacy_io =3D kcalloc(2, sizeof(struct bin_attribute),
-> >                              GFP_ATOMIC);
-> >       if (!b->legacy_io)
-> > @@ -1448,6 +1451,7 @@ void pci_remove_sysfs_dev_files(struct pci_dev *p=
-dev)
-> >  static int __init pci_sysfs_init(void)
-> >  {
-> >       struct pci_dev *pdev =3D NULL;
-> > +     struct pci_bus *pbus =3D NULL;
-> >       int retval;
-> >
-> >       sysfs_initialized =3D 1;
-> > @@ -1459,6 +1463,9 @@ static int __init pci_sysfs_init(void)
-> >               }
-> >       }
-> >
-> > +     while ((pbus =3D pci_find_next_bus(pbus)))
-> > +             pci_create_legacy_files(pbus);
-> > +
-> >       return 0;
-> >  }
-> >  late_initcall(pci_sysfs_init);
-> > --
-> > 2.30.0
-> >
-> >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> >  drivers/mfd/max8997.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-) =20
+>=20
+> Applied, thanks.
+
+Once https://lore.kernel.org/lkml/20210130172747.2022977-1-timon.baetz@prot=
+onmail.com/
+gets accepted, this is not needed anymore. Can this be reverted or
+should I create a new patch?
+
+Thanks,
+Timon=20
 
 
-
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
