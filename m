@@ -2,87 +2,90 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37590C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Feb 2021 15:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9FCC433E9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Feb 2021 16:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F06F064E70
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Feb 2021 15:58:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6A4A64E7D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Feb 2021 16:38:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230515AbhBLP5u (ORCPT
+        id S230327AbhBLQiW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 12 Feb 2021 10:57:50 -0500
-Received: from mail-ot1-f52.google.com ([209.85.210.52]:35786 "EHLO
-        mail-ot1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232196AbhBLP5q (ORCPT
+        Fri, 12 Feb 2021 11:38:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37308 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231139AbhBLQgP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 12 Feb 2021 10:57:46 -0500
-Received: by mail-ot1-f52.google.com with SMTP id k10so8813487otl.2;
-        Fri, 12 Feb 2021 07:57:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CSjbbaNIKklsxIEn5AtJtdKG7TrM5/PAZ+RSicaxCII=;
-        b=ZjhczgzlBu32CW9IXKhdQHoiEuEA0GIEUzkLJf8jM7bb+1F0t31e+FGPt61BOZZDf2
-         vYyeQLoKMhDIrcKKbDtsCc3bLdVTH4axH7t8cmKYNSmoBVwM/qPLl4ZPptkB6tMpRspP
-         hxQoHEREQkid6faG4XSv+PIitHP2WcRQe3tUZRItibneRBpDsJfdxymU5ybFJEPU5ku6
-         5EIBMd4ynseudM4UoUbARpTCnLft6eKEjzNd+CNEb8C6kNmos4e/iHqVdKH3X4QlGqpy
-         eziupAnZTwBj8zS50ZWl1ZNq7UMI8WEjQNxEZZLM515t7e7EhxbJfucvk0x1QkbeY4Te
-         Tfug==
-X-Gm-Message-State: AOAM533FHWOEEzN6kH1b3w/HmcHhCbNcPfEMNiPJdK+6LdL6ne3ICQsu
-        zhbOEtiGnQxBAzy2dKdV7dGHRCEClPbfHOLA7Ig=
-X-Google-Smtp-Source: ABdhPJxrlmCpx7RQESMcBTpnckct/6GjNtdVIpA6+Hidss2QWym3ldzjlUJBrwRvvFayvCsrgkx/8UfBqoJJSTryaG8=
-X-Received: by 2002:a05:6830:2106:: with SMTP id i6mr2397056otc.260.1613145424507;
- Fri, 12 Feb 2021 07:57:04 -0800 (PST)
+        Fri, 12 Feb 2021 11:36:15 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1C5846186A;
+        Fri, 12 Feb 2021 16:35:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613147733;
+        bh=dsE/PR09Yy1lTaGcykGZP72nwOIqpU7wlx9keyjzDYg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tkcEEQgiQE87ZcAn5GYgtYaegaB5Olia7uq3lwJF6ahLQRHgvFgQ04gYHWzoIAdeP
+         Hv1h9U0uH7576Wd5gBNfyRI+mLHKlBc0VhYGNMt6tfWlWrjZlgyMZkwknuNcaM0rjP
+         Ui4CU8gtrVG8F8wIso+WjW1au9ls9bhbYBMOUDFX2gtqY9gDNhzs71rP6Xkbgjz05s
+         ybFYa3+gnIsudj5IwZ/sgtYq5YYKpcCTvNeUW/UoVIcGmV8SC58sG/4vlWq8XVs4zt
+         nBag+np+4Z20TojQ87mP55fR0vjFLKrNRht9aiPLDpCloqWZX198VNpq0tRcQiq/Lr
+         ABV2PzbhIMuuQ==
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [RFT PATCH] crypto: s5p-sss - initialize APB clock after the AXI bus clock for SlimSSS
+Date:   Fri, 12 Feb 2021 17:35:26 +0100
+Message-Id: <20210212163526.69422-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210210172208.335048-1-krzk@kernel.org>
-In-Reply-To: <20210210172208.335048-1-krzk@kernel.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 12 Feb 2021 16:56:53 +0100
-Message-ID: <CAJZ5v0jnb__EpZxMSSk5Aop3+=FXXt5+0jNfTy9G1ac4s+xTaQ@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: cpuidle: exynos: include header in file pattern
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 10, 2021 at 6:23 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Inclue the platform data header in Exynos cpuidle maintainer entry.
->
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 674f42375acf..68e2b4cb4788 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4625,6 +4625,7 @@ L:        linux-samsung-soc@vger.kernel.org
->  S:     Supported
->  F:     arch/arm/mach-exynos/pm.c
->  F:     drivers/cpuidle/cpuidle-exynos.c
-> +F:     include/linux/platform_data/cpuidle-exynos.h
->
->  CPUIDLE DRIVER - ARM PSCI
->  M:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> --
+The driver for Slim Security Subsystem (SlimSSS) on Exynos5433 takes two
+clocks - aclk (AXI/AHB clock) and pclk (APB/Advanced Peripheral Bus
+clock).  The "aclk", as main high speed bus clock, is enabled first.  Then
+the "pclk" is enabled.
 
-Do you want me to apply this?
+However the driver assigned reversed names for lookup of these clocks
+from devicetree, so effectively the "pclk" was enabled first.
+
+Although it might not matter in reality, the correct order is to enable
+first main/high speed bus clock - "aclk".  Also this was the intention
+of the actual code.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+---
+
+Not tested, please kindly test on Exynos5433 hardware.
+---
+ drivers/crypto/s5p-sss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index 682c8a450a57..8ed08130196f 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -401,7 +401,7 @@ static const struct samsung_aes_variant exynos_aes_data = {
+ static const struct samsung_aes_variant exynos5433_slim_aes_data = {
+ 	.aes_offset	= 0x400,
+ 	.hash_offset	= 0x800,
+-	.clk_names	= { "pclk", "aclk", },
++	.clk_names	= { "aclk", "pclk", },
+ };
+ 
+ static const struct of_device_id s5p_sss_dt_match[] = {
+-- 
+2.25.1
+
