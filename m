@@ -2,98 +2,87 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B0BC433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Feb 2021 09:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37590C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Feb 2021 15:58:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45D6864E38
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Feb 2021 09:47:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F06F064E70
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Feb 2021 15:58:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229983AbhBLJrM (ORCPT
+        id S230515AbhBLP5u (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 12 Feb 2021 04:47:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33892 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229905AbhBLJrJ (ORCPT
+        Fri, 12 Feb 2021 10:57:50 -0500
+Received: from mail-ot1-f52.google.com ([209.85.210.52]:35786 "EHLO
+        mail-ot1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232196AbhBLP5q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 12 Feb 2021 04:47:09 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28495C061574
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Feb 2021 01:46:27 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id b2so12268940lfq.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Feb 2021 01:46:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i4ca59SdGEVnFSofi3ZXoX6JlgB2eaV3/YrXqwVKM8w=;
-        b=Yy351HLBZUge4sG9PBG2oLCjXOrReyEUMGZdK7mNji7JwMOZqqljspFEyf0HEKVnDc
-         ZkyxPuWz5lXXja33P/NlPIJ1NSZGsATcWJKqtMtded81fkJO3ebDhCrDsWb5Np3hwtGL
-         WBzhe6ZboL8lBI0ymtSQTMaQfMpmzV+MRwTEOEQw8uCiUwDC3woGumorSBeK6WiQzcoU
-         8YwJhBQQKfJAF8+Np3v/9GniuaaJm68pfN/arA/yqwy2xeQnxLIpWNjngsbpUYPWpiqs
-         m4EXb4OfhBGb/HP4e9Iql22pw0jzeap/xgK6NHLr6KTupqokL+Wywa/xLc6IOUUmmRDd
-         mBlg==
+        Fri, 12 Feb 2021 10:57:46 -0500
+Received: by mail-ot1-f52.google.com with SMTP id k10so8813487otl.2;
+        Fri, 12 Feb 2021 07:57:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=i4ca59SdGEVnFSofi3ZXoX6JlgB2eaV3/YrXqwVKM8w=;
-        b=QRBithsc8AKMpjkqauiApEh7csfRu8rn9UBb4+MBSLVeyNCRaMuulbEyfK/F7E19QI
-         fzQhvtpe08U4CEZm8XLcX/e45kluIfWN/JS7h4cWkxo/79RQ4y37Kh+/0ZfNbzdBnfRk
-         pqUqWLwCHSsVL9fQC9zCuB/TfHVXUXYqYHkpeX0dmNsCdl0cC0ROtG5ofm8bIuk71yMJ
-         h6pBjH7F+Y0bgiJb8DFhzCYhS3DdYxAH2A7WoEQ85NFOqefucu9T54zhRoHH5Gxrkh1s
-         BfY5XT8Va/x8G+iHpbkSjmVuqVKuj+IFMm6npau9e/GOFAkxk0yVCYrMYHxveVlDc03G
-         mn9w==
-X-Gm-Message-State: AOAM532zMCHHgK6gAwOr4Zc7MOReZHloG0LHiZupNlvngp70ZWrGrqXN
-        106b+TJzN6gfjq/z2th/6blRqN+E/oLkskxj/rk5Gg==
-X-Google-Smtp-Source: ABdhPJwIYedS7M45SGCJ9oNwPA/7hLc3LJLJFqoY2yYENbG6825pEXbq5JXjPw2/Djuva+5uHhN7aTJfuFaSNzpMinQ=
-X-Received: by 2002:a19:70e:: with SMTP id 14mr1094188lfh.157.1613123185577;
- Fri, 12 Feb 2021 01:46:25 -0800 (PST)
+        bh=CSjbbaNIKklsxIEn5AtJtdKG7TrM5/PAZ+RSicaxCII=;
+        b=ZjhczgzlBu32CW9IXKhdQHoiEuEA0GIEUzkLJf8jM7bb+1F0t31e+FGPt61BOZZDf2
+         vYyeQLoKMhDIrcKKbDtsCc3bLdVTH4axH7t8cmKYNSmoBVwM/qPLl4ZPptkB6tMpRspP
+         hxQoHEREQkid6faG4XSv+PIitHP2WcRQe3tUZRItibneRBpDsJfdxymU5ybFJEPU5ku6
+         5EIBMd4ynseudM4UoUbARpTCnLft6eKEjzNd+CNEb8C6kNmos4e/iHqVdKH3X4QlGqpy
+         eziupAnZTwBj8zS50ZWl1ZNq7UMI8WEjQNxEZZLM515t7e7EhxbJfucvk0x1QkbeY4Te
+         Tfug==
+X-Gm-Message-State: AOAM533FHWOEEzN6kH1b3w/HmcHhCbNcPfEMNiPJdK+6LdL6ne3ICQsu
+        zhbOEtiGnQxBAzy2dKdV7dGHRCEClPbfHOLA7Ig=
+X-Google-Smtp-Source: ABdhPJxrlmCpx7RQESMcBTpnckct/6GjNtdVIpA6+Hidss2QWym3ldzjlUJBrwRvvFayvCsrgkx/8UfBqoJJSTryaG8=
+X-Received: by 2002:a05:6830:2106:: with SMTP id i6mr2397056otc.260.1613145424507;
+ Fri, 12 Feb 2021 07:57:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20210204125718.1646082-1-geert+renesas@glider.be>
-In-Reply-To: <20210204125718.1646082-1-geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 12 Feb 2021 10:46:14 +0100
-Message-ID: <CACRpkdadDRXa=Hv7dkaTL5pU5hYANQicKgTUhE7jEu6m81Hqvw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: Group tuples in pin control properties
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sean Wang <sean.wang@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
+References: <20210210172208.335048-1-krzk@kernel.org>
+In-Reply-To: <20210210172208.335048-1-krzk@kernel.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 12 Feb 2021 16:56:53 +0100
+Message-ID: <CAJZ5v0jnb__EpZxMSSk5Aop3+=FXXt5+0jNfTy9G1ac4s+xTaQ@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: cpuidle: exynos: include header in file pattern
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Feb 4, 2021 at 7:02 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-
-> To improve human readability and enable automatic validation, the tuples
-> in "pinctrl-*" properties should be grouped using angle brackets.
+On Wed, Feb 10, 2021 at 6:23 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Inclue the platform data header in Exynos cpuidle maintainer entry.
+>
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 674f42375acf..68e2b4cb4788 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4625,6 +4625,7 @@ L:        linux-samsung-soc@vger.kernel.org
+>  S:     Supported
+>  F:     arch/arm/mach-exynos/pm.c
+>  F:     drivers/cpuidle/cpuidle-exynos.c
+> +F:     include/linux/platform_data/cpuidle-exynos.h
+>
+>  CPUIDLE DRIVER - ARM PSCI
+>  M:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> --
 
-Patch applied.
-
-Yours,
-Linus Walleij
+Do you want me to apply this?
