@@ -2,92 +2,97 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76392C43381
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Feb 2021 09:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874B8C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Feb 2021 19:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38ED464E72
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Feb 2021 09:30:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E81664DA5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Feb 2021 19:13:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230094AbhBOJaC (ORCPT
+        id S230376AbhBOTNT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 15 Feb 2021 04:30:02 -0500
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:35842 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230054AbhBOJaA (ORCPT
+        Mon, 15 Feb 2021 14:13:19 -0500
+Received: from smtp1.axis.com ([195.60.68.17]:5355 "EHLO smtp1.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230048AbhBOTNR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 Feb 2021 04:30:00 -0500
-Received: by mail-wr1-f48.google.com with SMTP id u14so8055775wri.3;
-        Mon, 15 Feb 2021 01:29:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fRqFz3esH44SGfi+ymnjqHi85o47gVCreOzoNzv9tXs=;
-        b=sm3kFCh5yOQgegmKw77vwgLEA/9lwgMvi2+Hq//XUYDGST5P0KpkFEHOeJOFQ4BIwA
-         YQq1J4IHjDtGfwrMXR7plNTI6uEzLTWXkm41Qu7llqaQ03tkaS/NRLNcwvPzXUqZyZK4
-         efJtlG2Z0P/2o/Y4S4HG5hn2EDnKJpDhpfm/xwQSIR6esTz/dklF00A+yFnGYGJ2ASgp
-         zKA8DVl3VBXW4oGmCKNgN2/d1velalfzJWsBZ5JeCmZqEzlzS39LS3ksi1nMkE/mTDwS
-         bLxXpp+HtVwJkecZB9y9xBkpLn4ZyuTb81T6qblmFU82ZT2AKYqFggfYAQWSigOENWgs
-         xmEA==
-X-Gm-Message-State: AOAM532dDB8tpz9UCXhLqCDmvaR7O+nk2RBLMo9OF/zvOVJZkbQSZy+8
-        pPLdWmSVePhTJDPHRUuY4NJKZSotvyU=
-X-Google-Smtp-Source: ABdhPJzVXw9V6t8gFVUjOGIH9f4ikltgVKe3BcG21N4vs+98yPEvVuwpVBwmcjmeKvNAERsM0qMv3Q==
-X-Received: by 2002:a5d:6783:: with SMTP id v3mr17772258wru.394.1613381357788;
-        Mon, 15 Feb 2021 01:29:17 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id h12sm30224267wru.18.2021.02.15.01.29.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Feb 2021 01:29:16 -0800 (PST)
-Date:   Mon, 15 Feb 2021 10:29:15 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iio: samsung,exynos-adc: add common clock
- properties
-Message-ID: <20210215092915.7khog24shtzjzd6g@kozik-lap>
-References: <CGME20210212164148eucas1p2ab09436a82d50161ff1a9fc1a169f7d7@eucas1p2.samsung.com>
- <20210212163816.70058-1-krzk@kernel.org>
- <85ed4a70-5cd8-3bce-100f-33a1fba7f3fa@samsung.com>
+        Mon, 15 Feb 2021 14:13:17 -0500
+X-Greylist: delayed 509 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Feb 2021 14:13:15 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=axis.com; q=dns/txt; s=axis-central1; t=1613416396;
+  x=1644952396;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wFNT4rSQCM8LHPCDltTRqOCKD9W6vi98OPConvKvLXY=;
+  b=MQ4bh4Ox9dnYXEryFOKVd5d9KjEAu+73/+YTglVvwMUQ1xUAkVVuFZ5O
+   bZPZIjyqES0kLONLIoApks/CKaa81TXpg/SIXaPPx/WZXG8toVuTfL5aL
+   noy2jm0evg/Jo35Qkmw+ZNEXHxB188oeiTDakCo3lz3wD+E9H0EX8hafm
+   zV1FoBpm891YNi/XVaZrfS+2LMQCez6NXevcmAkakoY06k2lY2VBx8h+H
+   7J8xgSm16VMoX0OsVXUy3hl2wxwazb9j8LhbuBwwv7n/jeD9D34KTuEgW
+   1v+vu6oFjYN5h4PF4uKHfxiGteO+UvR90h0O9UWowa5oq+uInE1x9cu+a
+   A==;
+From:   =?UTF-8?q?M=C3=A5rten=20Lindahl?= <marten.lindahl@axis.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+CC:     <kernel@axis.com>,
+        =?UTF-8?q?M=C3=A5rten=20Lindahl?= <martenli@axis.com>,
+        <linux-i2c@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] i2c: exynos5: Preserve high speed master code
+Date:   Mon, 15 Feb 2021 20:03:21 +0100
+Message-ID: <20210215190322.22094-1-marten.lindahl@axis.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <85ed4a70-5cd8-3bce-100f-33a1fba7f3fa@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 15, 2021 at 10:01:48AM +0100, Marek Szyprowski wrote:
-> Hi Krzysztof,
-> 
-> On 12.02.2021 17:38, Krzysztof Kozlowski wrote:
-> > Add common properties appearing in DTSes (assigned-clocks and similar)
-> > to fix dtbs_check warnings like:
-> >
-> >    arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml:
-> >      adc@126c0000: assigned-clock-rates: [[6000000]] is not of type 'object'
-> >    arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml:
-> >      adc@126c0000: assigned-clocks: [[7, 238]] is not of type 'object'
-> 
-> Does it mean that assigned-clocks related properties have to be added to 
-> almost all bindings?
+From: Mårten Lindahl <martenli@axis.com>
 
-To my understanding: yes, and we already added it to multiple schemas.
+When the controller starts to send a message with the MASTER_ID field
+set (high speed), the whole I2C_ADDR register is overwritten including
+MASTER_ID as the SLV_ADDR_MAS field is set.
 
-> IMHO this is an over-engineering and this has to be 
-> handled somewhere else...
+This patch preserves already written fields in I2C_ADDR when writing
+SLV_ADDR_MAS.
 
-Would have to be made a part of the core schema (just like pinctrl nodes
-etc).
+Signed-off-by: Mårten Lindahl <martenli@axis.com>
+---
+ drivers/i2c/busses/i2c-exynos5.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index 20a9881a0d6c..f2d04c241299 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -606,6 +606,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+ 	u32 i2c_ctl;
+ 	u32 int_en = 0;
+ 	u32 i2c_auto_conf = 0;
++	u32 i2c_addr = 0;
+ 	u32 fifo_ctl;
+ 	unsigned long flags;
+ 	unsigned short trig_lvl;
+@@ -640,7 +641,12 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+ 		int_en |= HSI2C_INT_TX_ALMOSTEMPTY_EN;
+ 	}
+ 
+-	writel(HSI2C_SLV_ADDR_MAS(i2c->msg->addr), i2c->regs + HSI2C_ADDR);
++	i2c_addr = HSI2C_SLV_ADDR_MAS(i2c->msg->addr);
++
++	if (i2c->op_clock >= I2C_MAX_FAST_MODE_PLUS_FREQ)
++		i2c_addr |= readl(i2c->regs + HSI2C_ADDR);
++
++	writel(i2c_addr, i2c->regs + HSI2C_ADDR);
+ 
+ 	writel(fifo_ctl, i2c->regs + HSI2C_FIFO_CTL);
+ 	writel(i2c_ctl, i2c->regs + HSI2C_CTL);
+-- 
+2.11.0
+
