@@ -2,82 +2,89 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E934C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Feb 2021 08:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAE1C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Feb 2021 08:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE77264E04
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Feb 2021 08:08:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 514CB64E2E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Feb 2021 08:36:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231913AbhBQIIe (ORCPT
+        id S231703AbhBQIgF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 17 Feb 2021 03:08:34 -0500
-Received: from mail-wr1-f49.google.com ([209.85.221.49]:36860 "EHLO
-        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231732AbhBQIIc (ORCPT
+        Wed, 17 Feb 2021 03:36:05 -0500
+Received: from mail-ej1-f54.google.com ([209.85.218.54]:35645 "EHLO
+        mail-ej1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231462AbhBQIgA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 17 Feb 2021 03:08:32 -0500
-Received: by mail-wr1-f49.google.com with SMTP id u14so16361850wri.3;
-        Wed, 17 Feb 2021 00:08:15 -0800 (PST)
+        Wed, 17 Feb 2021 03:36:00 -0500
+Received: by mail-ej1-f54.google.com with SMTP id g5so17262357ejt.2;
+        Wed, 17 Feb 2021 00:35:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=U+fDZ975xL8Hj6o7r3HYdRzIxYB9Qn2UcitDVPde2lk=;
-        b=b0XHsg4Sy7LuD0AEwuE5fcZsGgAhoklAKupmZTb/VXaWVzo4sHc82WDqY6OphSc7TX
-         r598VzNsoErV0oS97fe6ZpTe6HmXH9V1bUwS5pyif7+YDA4t07QuMOR0r2cLluotFudO
-         vSATl3gjq8cFlsVwYKgptaPXk36RsYIqcxYu2DPSbd6wLCBterwLEbCfROc03+wWwFp3
-         IZ7027HYrXkSlRK08L46i+/FVx2fnJLc/nmM8eBhW6uFz7U+cam2tug4RzezV0bhWfXZ
-         Zw0ideHQw292l58bGW992U4WlMsh9qZPmOBdaNF1lCWn75jMN7MHSed6xqaxkda4fA5+
-         1LVg==
-X-Gm-Message-State: AOAM531jjXHnaxKI0z7tnmL0nuTL0rELY3BVNQbQMhGksEqk/WG/MXbJ
-        pTm42VFLorywXzCuCmgTrgk=
-X-Google-Smtp-Source: ABdhPJwNT+lcJ8Ykcqd/E88u6ALDtw/JWkUv3IEXbdQLstE1LEVNDwPI3r2r7w5nhQbEelsQ5+QVYw==
-X-Received: by 2002:adf:cf06:: with SMTP id o6mr27655581wrj.169.1613549269872;
-        Wed, 17 Feb 2021 00:07:49 -0800 (PST)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=9YGc/AkEmrmvh3rYxNMRJNk+zbFkuGcoCi3dyG2K5wQ=;
+        b=fCBpYFZkw5kLxtcWF5IASW7xHhj0vcaKXpEvmfY0OexfmP371keiGquObRyOYb2xwA
+         aZLn8bdlx3+BshYb5P0QAzVLNPkm4sva0rPBtDGCD5IMJl2jbiggtLfNMiNuJZzV+dVR
+         APP5UR9W6wk5OFtoHftWLQkgKAdA1hMUJPg4ghFXVkAZJVBWS7VhkhEY+rszAg82+HJB
+         P3j2bumbRQQe8iKO+vVmT+a1ZB7NQ8Br/PAIOnG5/Cmoghnod6z3J4qejjQBNUOiYNbl
+         oyY/FL0jDk1VHBwDYHkIL73/wyJbVa1yMocFsj6R9ivBh2ZvLajEl3Q2fl03MEO8bzke
+         9mNw==
+X-Gm-Message-State: AOAM533pdqRd87Ae4j6JLkkjVyD5dPS0zFQFnJOBSGqwCODNm33yBzNh
+        aGghGdRhjrxl20HvfKMe6YU=
+X-Google-Smtp-Source: ABdhPJwEw9XICl6WlTWbG6n9gcJnfoCj4IdJREq+D8UV1QLDJQaZ1WW/n3Uv9WVjsIlSArdj3d1avA==
+X-Received: by 2002:a17:907:9483:: with SMTP id dm3mr24482144ejc.120.1613550917882;
+        Wed, 17 Feb 2021 00:35:17 -0800 (PST)
 Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id y6sm1847778wma.10.2021.02.17.00.07.48
+        by smtp.googlemail.com with ESMTPSA id z2sm649259ejd.44.2021.02.17.00.35.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Feb 2021 00:07:48 -0800 (PST)
-Date:   Wed, 17 Feb 2021 09:07:47 +0100
+        Wed, 17 Feb 2021 00:35:16 -0800 (PST)
+Date:   Wed, 17 Feb 2021 09:35:15 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marten Lindahl <martenli@axis.com>
-Cc:     linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@axis.com
-Subject: Re: [PATCH] i2c: exynos5: Preserve high speed master code
-Message-ID: <20210217080747.a7nqzbotszwlb3dd@kozik-lap>
-References: <20210215190322.22094-1-marten.lindahl@axis.com>
- <20210216075141.o4wjnwmmjze2p3cn@kozik-lap>
- <20210216220933.2wzmft72bhjptzl3@axis.com>
+To:     =?utf-8?Q?M=C3=A5rten?= Lindahl <marten.lindahl@axis.com>
+Cc:     kernel@axis.com,
+        =?utf-8?Q?M=C3=A5rten?= Lindahl <martenli@axis.com>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] i2c: exynos5: Preserve high speed master code
+Message-ID: <20210217083515.n5mgzgsddsks4aaw@kozik-lap>
+References: <20210216222538.6427-1-marten.lindahl@axis.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210216220933.2wzmft72bhjptzl3@axis.com>
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20210216222538.6427-1-marten.lindahl@axis.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Feb 16, 2021 at 11:09:33PM +0100, Marten Lindahl wrote:
-> > Any reason why not "|= MASTER_ID(i2c->adap.nr)" here instead of more
-> > expensive IO read? It's quite important because your current code will
-> > bitwise-or old I2C slave address with a new one... This should break
-> > during tests with multiple I2C slave devices, shouldn't it?
-> > 
+On Tue, Feb 16, 2021 at 11:25:38PM +0100, Mårten Lindahl wrote:
+> From: Mårten Lindahl <martenli@axis.com>
 > 
-> You are correct. It is better to use the macro instead, and yes,
-> safer too. I only have one device that supports high speed i2c, but
-> I get your point. It could potentially break.
+> When the driver starts to send a message with the MASTER_ID field
+> set (high speed), the whole I2C_ADDR register is overwritten including
+> MASTER_ID as the SLV_ADDR_MAS field is set.
 > 
-> > On which HW did you test it?
+> This patch preserves already written fields in I2C_ADDR when writing
+> SLV_ADDR_MAS.
 > 
-> I used an Artpec development board as master and INA230EVM board
-> as slave.
+> Signed-off-by: Mårten Lindahl <martenli@axis.com>
+> ---
+> v2:
+> - Change commit message as the problem is not in the controller but in
+>   the driver.
+> - Use MASTER_ID macro instead of reading back register contents.
+> 
+>  drivers/i2c/busses/i2c-exynos5.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
 
-Artpec development board with? What SoC?
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
-
