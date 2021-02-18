@@ -2,537 +2,575 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B224C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Feb 2021 17:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AF6C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Feb 2021 19:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7BAE64EC7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Feb 2021 17:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D33506148E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Feb 2021 19:51:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232008AbhBRRQF (ORCPT
+        id S230241AbhBRTum (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 18 Feb 2021 12:16:05 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:53706 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233018AbhBRQDY (ORCPT
+        Thu, 18 Feb 2021 14:50:42 -0500
+Received: from z11.mailgun.us ([104.130.96.11]:64281 "EHLO z11.mailgun.us"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230456AbhBRTgx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 18 Feb 2021 11:03:24 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210218160218euoutp01de14ad5b1c8932a475c549076cb9e894~k4vwaLLPn2638726387euoutp013
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Feb 2021 16:02:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210218160218euoutp01de14ad5b1c8932a475c549076cb9e894~k4vwaLLPn2638726387euoutp013
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1613664138;
-        bh=6Cn4wg1/JkCFDwEM2CdsbpFYKoP6sVDHZkIT70EW/Mk=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=h00SDA/l4BEeP/iacxUCuqVFkqWMhae+QR0Vk9n2UrVDBEgw1zsL/x8vUSTD6TA8P
-         /kceHeC9mjil6rewNwOGlnBGXIV7NmLSTMvmenxmhqcG9TaDkX+If3xuvihfd4xZ0t
-         d/tjmeDTigz2ZrB6MyI5axQpQcG91ag1Vz3KzP1E=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210218160211eucas1p2a8089a0790a23eae475695a1a018f665~k4vpk1Br41871018710eucas1p2o;
-        Thu, 18 Feb 2021 16:02:11 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id D3.74.45488.38F8E206; Thu, 18
-        Feb 2021 16:02:11 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210218160211eucas1p24bb1b15cc5a369c0a249adf78cb63911~k4vpLAqj81871018710eucas1p2n;
-        Thu, 18 Feb 2021 16:02:11 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210218160211eusmtrp118573e8ba17c9fdf3c95acbee15e37f4~k4vpJjg-x2767727677eusmtrp1G;
-        Thu, 18 Feb 2021 16:02:11 +0000 (GMT)
-X-AuditID: cbfec7f5-c5fff7000000b1b0-8e-602e8f834d99
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 87.4A.16282.28F8E206; Thu, 18
-        Feb 2021 16:02:10 +0000 (GMT)
-Received: from [106.210.131.79] (unknown [106.210.131.79]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210218160209eusmtip112c427fa64b5a9b0589ab5682fa8fa54~k4vnymFMs2042120421eusmtip1J;
-        Thu, 18 Feb 2021 16:02:09 +0000 (GMT)
-Message-ID: <d40bf461-ef25-a1c5-deab-72c5c3ffbdeb@samsung.com>
-Date:   Thu, 18 Feb 2021 17:02:09 +0100
+        Thu, 18 Feb 2021 14:36:53 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1613676990; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=vxi/zdS6Z/ELKd/8pzfkzZ8Lu20JccrUqYhWNPx+Rd8=;
+ b=IFYN2G9eDZPIzmbCDE5k3Jg46pbabwNo+vFEZePcBzhVMG7FDmLjHcfr9Q/YjQw+ZxE6gz2M
+ RCgN7DvaMg3FG1/lrDoORcrCKN/gUTua//XLSCIpS+sTXGLRLKccpNM41BdtbFgkSy+ef029
+ 7XcjiyFRrseda0QgTnOTXGsqYzE=
+X-Mailgun-Sending-Ip: 104.130.96.11
+X-Mailgun-Sid: WyJhY2Q3MCIsICJsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
+ 602ec1a2e87943df30512b2a (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 18 Feb 2021 19:36:02
+ GMT
+Sender: abhinavk=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 975DBC43463; Thu, 18 Feb 2021 19:36:01 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: abhinavk)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 16056C43461;
+        Thu, 18 Feb 2021 19:35:53 +0000 (UTC)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0)
-        Gecko/20100101 Thunderbird/86.0
-Subject: Re: [PATCH v2 10/16] drm/exynos: implement a drm bridge
-Content-Language: en-GB
-To:     Michael Tretter <m.tretter@pengutronix.de>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>
-Cc:     ch@denx.de, Neil Armstrong <narmstrong@baylibre.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Marek Vasut <marex@denx.de>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        abel.vesa@nxp.com, Krzysztof Kozlowski <krzk@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        sylvester.nawrocki@gmail.com, aford173@gmail.com,
-        Joonyoung Shim <jy0922.shim@samsung.com>, aisheng.dong@nxp.com,
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 18 Feb 2021 11:35:52 -0800
+From:   abhinavk@codeaurora.org
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        David Airlie <airlied@linux.ie>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        dri-devel@lists.freedesktop.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jonas Karlman <jonas@kwiboo.se>, linux-arm-msm@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Paul <sean@poorly.run>, Xin Ji <xji@analogixsemi.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
-        kyungmin.park@samsung.com, Shawn Guo <shawnguo@kernel.org>
-From:   Andrzej Hajda <a.hajda@samsung.com>
-In-Reply-To: <20210218080418.GA21469@pengutronix.de>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPKsWRmVeSWpSXmKPExsWy7djPc7rN/XoJBl/XSlksu3SU0eLO7dPM
-        Fl+m7mK22DhjPavFpZfXGC2ufH3PZtG79ByrxYt7F1ksVk3dyWJx/vwGdouzTW/YLTonLmG3
-        6Pq1ktlixvl9TBZrj9xlt9i2Aqj4TVsjo8WhvmiLF1vELWZMfslmMe/zTiYHUY/3N1rZPebN
-        OsHisXPWXXaP2R0zWT02repk8zhydTGrx/3u40weG9/tYPLo/2vg0bdlFaPH501yAdxRXDYp
-        qTmZZalF+nYJXBnfz19lLTi8nrHix65TrA2MN6cydjFyckgImEj8OzyPqYuRi0NIYAWjxPyO
-        LlYI5wujxLvnv6Ccz4wSLxYdZIFpmXN6LlTLckaJjXM+s4IkhATeM0psa0sGsXkF7CSeTl3O
-        BmKzCKhK9N5azQYRF5Q4OfMJ2CBRgQSJDZ2bmUBsYQEHiTObToDVMAuISzR9WQk2UwSo5sfD
-        6+wgy5gF9rFKPNm6E6yZTUBT4u/mm0ANHBycQBe9fR4F0Ssv0bx1NjPEoe84JboXCUPYLhKr
-        Du9ng7CFJV4d38IOYctInJ7cA/VYvcT9FS3MILskBDoYJbZu2Ak1yFrizrlfYLuYgfau36UP
-        EXaU+PvxFzNIWEKAT+LGW0GIE/gkJm2bDhXmlehoE4KoVpS4f3Yr1EBxiaUXvrJNYFSahRQo
-        s5A8PwvJM7MQ9i5gZFnFKJ5aWpybnlpsnJdarlecmFtcmpeul5yfu4kRmEZP/zv+dQfjilcf
-        9Q4xMnEwHmKU4GBWEuFl/6yVIMSbklhZlVqUH19UmpNafIhRmoNFSZx319Y18UIC6Yklqdmp
-        qQWpRTBZJg5OqQamSG+GmdtyJ3l1KWg0MVWneUnOXsGS8JRJnyt7fQ9bXoOksvITLp0Wrxel
-        UY2/tqhc3VF67I/tm69MUd9PW3YELebj9Xl+O3GDqnyTbub2e+mzmqUXrHLy+6mRcWnmrsMn
-        /Kd6fd742MWvVIW7VZnhlaGubsK9NKY4LZuFh1aniOU/0d5Zst3rq/pUrzsPzv5+ezzzbnfB
-        BdG1YndNzvT9azrCte2zXpAIq1SlmkZ523lRh5+rGe/3zefSO5+28TpbxHbbs/f2zLp6Q/SV
-        24x1nH3+v228HA9+WZegprIn4MfLWdFV1R9q5iVKqSy6ElN2SmbpzO8L+5LiIzP8Of+3Rzko
-        e0k9uqVsYepSc0qJpTgj0VCLuag4EQCPLGViEgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCKsWRmVeSWpSXmKPExsVy+t/xu7pN/XoJBo//W1ssu3SU0eLO7dPM
-        Fl+m7mK22DhjPavFpZfXGC2ufH3PZtG79ByrxYt7F1ksVk3dyWJx/vwGdouzTW/YLTonLmG3
-        6Pq1ktlixvl9TBZrj9xlt9i2Aqj4TVsjo8WhvmiLF1vELWZMfslmMe/zTiYHUY/3N1rZPebN
-        OsHisXPWXXaP2R0zWT02repk8zhydTGrx/3u40weG9/tYPLo/2vg0bdlFaPH501yAdxRejZF
-        +aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehnfz19lLTi8
-        nrHix65TrA2MN6cydjFyckgImEjMOT2XqYuRi0NIYCmjxLdbP5kgEuISu+e/ZYawhSX+XOti
-        gyh6yyhx69I+sASvgJ3E06nL2UBsFgFVid5bq9kg4oISJ2c+YQGxRQUSJCb3vwaLCws4SJzZ
-        dALMZgZa0PRlJSuILQJUs/L4GbArmAUOsErM2fKeHWLbRxaJayc/gd3KJqAp8XfzTaBuDg5O
-        oLvfPo+CGGQm0bW1ixHClpdo3jqbeQKj0Cwkd8xCsm8WkpZZSFoWMLKsYhRJLS3OTc8tNtIr
-        TswtLs1L10vOz93ECEwe24793LKDceWrj3qHGJk4GA8xSnAwK4nwsn/WShDiTUmsrEotyo8v
-        Ks1JLT7EaAoMjInMUqLJ+cD0lVcSb2hmYGpoYmZpYGppZqwkzmtyZE28kEB6YklqdmpqQWoR
-        TB8TB6dUAxO3nsTHpVf2nkrJPV2t5CSvlfnO816Blt3pn5fsZrfOn7vpJk++kNMrC5+exbsm
-        f3pYuVslLKt/W9MK4QmRNUIry+QkRNn/5kRvNp5Qb/5Z4mT7D7Pnxwt5vS3jn87Vn9DZ+GKV
-        gX1hTO/Ug+aPby49zVfEcuD4f9UTC/8pHz6adjbfQeamu6Dqq7/fDj1Wjf/gUnKScTPPlxf7
-        /8p4OV9bM0NIIbS4cvXppv/P+Z2bz19U0G7bcqrrd2xSURCrTHLR8qxvTU5PxZQbuwREz0ec
-        6UgQ4ve8u/NqzWqNn6Zxv9/Mab15+kK5yATjFr1J0T5SvVdVH4uGbug68qw1qK71T/i0u/tP
-        7TQWOXPm3iQlluKMREMt5qLiRACIZ4c5pwMAAA==
-X-CMS-MailID: 20210218160211eucas1p24bb1b15cc5a369c0a249adf78cb63911
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210204160524eucas1p1dba5e4d75dddbc65feaeaf8918e468d4
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210204160524eucas1p1dba5e4d75dddbc65feaeaf8918e468d4
-References: <20210203203148.GA29287@pengutronix.de>
-        <CAKMK7uGO+hUBzR5H0yZdaKg_fNsv7d=tKVZNwozdvG=9GA2FBQ@mail.gmail.com>
-        <20210204105632.GB29287@pengutronix.de>
-        <CGME20210204160524eucas1p1dba5e4d75dddbc65feaeaf8918e468d4@eucas1p1.samsung.com>
-        <YBwbNeoMhTE7fIOb@phenom.ffwll.local>
-        <e9a01089-8374-5b1a-0d80-17b83013ad44@samsung.com>
-        <CAKMK7uHFVY7fGNv=nGik4u2WPrpHaXM1miGWvTSV7+EGOvnedg@mail.gmail.com>
-        <YBwuPYZA5mIGMRWG@pendragon.ideasonboard.com>
-        <CAKMK7uHnq20AJ-3KC7mrxT3ZmpQ24gnH+QS0V_b52380z+P12g@mail.gmail.com>
-        <e227d43f-d727-f7f8-4424-8a79144ba77a@kontron.de>
-        <20210218080418.GA21469@pengutronix.de>
+        linux-kernel@vger.kernel.org, Robert Foss <robert.foss@linaro.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        freedreno@lists.freedesktop.org
+Subject: Re: [Freedreno] [PATCH] drm/dsi: Add _NO_ to MIPI_DSI_* flags
+ disabling features
+In-Reply-To: <20210211113309.1.I629b2366a6591410359c7fcf6d385b474b705ca2@changeid>
+References: <20210211113309.1.I629b2366a6591410359c7fcf6d385b474b705ca2@changeid>
+Message-ID: <a5f7e6e1da69a2bcf5c98bd4c78e5267@codeaurora.org>
+X-Sender: abhinavk@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Michael,
+Hi Nicolas
 
-W dniu 18.02.2021 o 09:04, Michael Tretter pisze:
-> On Wed, 10 Feb 2021 10:10:37 +0100, Frieder Schrempf wrote:
->> On 04.02.21 18:46, Daniel Vetter wrote:
->>> On Thu, Feb 4, 2021 at 6:26 PM Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
->>>> On Thu, Feb 04, 2021 at 06:19:22PM +0100, Daniel Vetter wrote:
->>>>> On Thu, Feb 4, 2021 at 5:28 PM Andrzej Hajda wrote:
->>>>>> W dniu 04.02.2021 o 17:05, Daniel Vetter pisze:
->>>>>>> On Thu, Feb 04, 2021 at 11:56:32AM +0100, Michael Tretter wrote:
->>>>>>>> On Thu, 04 Feb 2021 11:17:49 +0100, Daniel Vetter wrote:
->>>>>>>>> On Wed, Feb 3, 2021 at 9:32 PM Michael Tretter wrote:
->>>>>>>>>> On Mon, 01 Feb 2021 17:33:14 +0100, Michael Tretter wrote:
->>>>>>>>>>> On Tue, 15 Sep 2020 21:40:40 +0200, Andrzej Hajda wrote:
->>>>>>>>>>>> W dniu 14.09.2020 o 23:19, Andrzej Hajda pisze:
->>>>>>>>>>>>> On 14.09.2020 22:01, Michael Tretter wrote:
->>>>>>>>>>>>>> On Mon, 14 Sep 2020 14:31:19 +0200, Marek Szyprowski wrote:
->>>>>>>>>>>>>>> On 14.09.2020 10:29, Marek Szyprowski wrote:
->>>>>>>>>>>>>>>> On 11.09.2020 15:54, Michael Tretter wrote:
->>>>>>>>>>>>>>>>> Make the exynos_dsi driver a full drm bridge that can be found and
->>>>>>>>>>>>>>>>> used
->>>>>>>>>>>>>>>>> from other drivers.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> Other drivers can only attach to the bridge, if a mipi dsi device
->>>>>>>>>>>>>>>>> already attached to the bridge. This allows to defer the probe of the
->>>>>>>>>>>>>>>>> display pipe until the downstream bridges are available, too.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
->>>>>>>>>>>>>>>> This one (and the whole series applied) still fails on Exynos boards:
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> [drm] Exynos DRM: using 11c00000.fimd device for DMA mapping
->>>>>>>>>>>>>>>> operations
->>>>>>>>>>>>>>>> exynos-drm exynos-drm: bound 11c00000.fimd (ops fimd_component_ops)
->>>>>>>>>>>>>>>> OF: graph: no port node found in /soc/dsi@11c80000
->>>>>>>>>>>>>>>> 8<--- cut here ---
->>>>>>>>>>>>>>>> Unable to handle kernel NULL pointer dereference at virtual address
->>>>>>>>>>>>>>>> 00000084
->>>>>>>>>>>>>>>> pgd = (ptrval)
->>>>>>>>>>>>>>>> [00000084] *pgd=00000000
->>>>>>>>>>>>>>>> Internal error: Oops: 5 [#1] PREEMPT SMP ARM
->>>>>>>>>>>>>>>> Modules linked in:
->>>>>>>>>>>>>>>> CPU: 1 PID: 1 Comm: swapper/0 Not tainted
->>>>>>>>>>>>>>>> 5.9.0-rc4-next-20200911-00010-g417dc70d70ec #1608
->>>>>>>>>>>>>>>> Hardware name: Samsung Exynos (Flattened Device Tree)
->>>>>>>>>>>>>>>> PC is at drm_bridge_attach+0x18/0x164
->>>>>>>>>>>>>>>> LR is at exynos_dsi_bind+0x88/0xa8
->>>>>>>>>>>>>>>> pc : [<c0628c08>]    lr : [<c064d560>]    psr: 20000013
->>>>>>>>>>>>>>>> sp : ef0dfca8  ip : 00000002  fp : c13190e0
->>>>>>>>>>>>>>>> r10: 00000000  r9 : ee46d580  r8 : c13190e0
->>>>>>>>>>>>>>>> r7 : ee438800  r6 : 00000018  r5 : ef253810  r4 : ef39e840
->>>>>>>>>>>>>>>> r3 : 00000000  r2 : 00000018  r1 : ef39e888  r0 : ef39e840
->>>>>>>>>>>>>>>> Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
->>>>>>>>>>>>>>>> Control: 10c5387d  Table: 4000404a  DAC: 00000051
->>>>>>>>>>>>>>>> Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
->>>>>>>>>>>>>>>> Stack: (0xef0dfca8 to 0xef0e0000)
->>>>>>>>>>>>>>>> ...
->>>>>>>>>>>>>>>> [<c0628c08>] (drm_bridge_attach) from [<c064d560>]
->>>>>>>>>>>>>>>> (exynos_dsi_bind+0x88/0xa8)
->>>>>>>>>>>>>>>> [<c064d560>] (exynos_dsi_bind) from [<c066a800>]
->>>>>>>>>>>>>>>> (component_bind_all+0xfc/0x290)
->>>>>>>>>>>>>>>> [<c066a800>] (component_bind_all) from [<c0649dc0>]
->>>>>>>>>>>>>>>> (exynos_drm_bind+0xe4/0x19c)
->>>>>>>>>>>>>>>> [<c0649dc0>] (exynos_drm_bind) from [<c066ad74>]
->>>>>>>>>>>>>>>> (try_to_bring_up_master+0x1e4/0x2c4)
->>>>>>>>>>>>>>>> [<c066ad74>] (try_to_bring_up_master) from [<c066b2b4>]
->>>>>>>>>>>>>>>> (component_master_add_with_match+0xd4/0x108)
->>>>>>>>>>>>>>>> [<c066b2b4>] (component_master_add_with_match) from [<c0649ae8>]
->>>>>>>>>>>>>>>> (exynos_drm_platform_probe+0xe4/0x110)
->>>>>>>>>>>>>>>> [<c0649ae8>] (exynos_drm_platform_probe) from [<c0674e6c>]
->>>>>>>>>>>>>>>> (platform_drv_probe+0x6c/0xa4)
->>>>>>>>>>>>>>>> [<c0674e6c>] (platform_drv_probe) from [<c067242c>]
->>>>>>>>>>>>>>>> (really_probe+0x200/0x4fc)
->>>>>>>>>>>>>>>> [<c067242c>] (really_probe) from [<c06728f0>]
->>>>>>>>>>>>>>>> (driver_probe_device+0x78/0x1fc)
->>>>>>>>>>>>>>>> [<c06728f0>] (driver_probe_device) from [<c0672cd8>]
->>>>>>>>>>>>>>>> (device_driver_attach+0x58/0x60)
->>>>>>>>>>>>>>>> [<c0672cd8>] (device_driver_attach) from [<c0672dbc>]
->>>>>>>>>>>>>>>> (__driver_attach+0xdc/0x174)
->>>>>>>>>>>>>>>> [<c0672dbc>] (__driver_attach) from [<c06701b4>]
->>>>>>>>>>>>>>>> (bus_for_each_dev+0x68/0xb4)
->>>>>>>>>>>>>>>> [<c06701b4>] (bus_for_each_dev) from [<c06714e8>]
->>>>>>>>>>>>>>>> (bus_add_driver+0x158/0x214)
->>>>>>>>>>>>>>>> [<c06714e8>] (bus_add_driver) from [<c0673c1c>]
->>>>>>>>>>>>>>>> (driver_register+0x78/0x110)
->>>>>>>>>>>>>>>> [<c0673c1c>] (driver_register) from [<c0649ca8>]
->>>>>>>>>>>>>>>> (exynos_drm_init+0xe4/0x118)
->>>>>>>>>>>>>>>> [<c0649ca8>] (exynos_drm_init) from [<c0102484>]
->>>>>>>>>>>>>>>> (do_one_initcall+0x8c/0x42c)
->>>>>>>>>>>>>>>> [<c0102484>] (do_one_initcall) from [<c11011c0>]
->>>>>>>>>>>>>>>> (kernel_init_freeable+0x190/0x1dc)
->>>>>>>>>>>>>>>> [<c11011c0>] (kernel_init_freeable) from [<c0af7880>]
->>>>>>>>>>>>>>>> (kernel_init+0x8/0x118)
->>>>>>>>>>>>>>>> [<c0af7880>] (kernel_init) from [<c0100114>] (ret_from_fork+0x14/0x20)
->>>>>>>>>>>>>>>> Exception stack(0xef0dffb0 to 0xef0dfff8)
->>>>>>>>>>>>>>>> ...
->>>>>>>>>>>>>>>> ---[ end trace ee27f313f9ed9da1 ]---
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> # arm-linux-gnueabi-addr2line -e vmlinux c0628c08
->>>>>>>>>>>>>>>> drivers/gpu/drm/drm_bridge.c:184 (discriminator 1)
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> I will try to debug it a bit more today.
->>>>>>>>>>>>>>> The above crash has been caused by lack of in_bridge initialization to
->>>>>>>>>>>>>>> NULL in exynos_dsi_bind() in this patch. However, fixing it reveals
->>>>>>>>>>>>>>> another issue:
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> [drm] Exynos DRM: using 11c00000.fimd device for DMA mapping operations
->>>>>>>>>>>>>>> exynos-drm exynos-drm: bound 11c00000.fimd (ops fimd_component_ops)
->>>>>>>>>>>>>>> OF: graph: no port node found in /soc/dsi@11c80000
->>>>>>>>>>>>>>> 8<--- cut here ---
->>>>>>>>>>>>>>> Unable to handle kernel NULL pointer dereference at virtual address
->>>>>>>>>>>>>>> 00000280
->>>>>>>>>>>>>>> pgd = (ptrval)
->>>>>>>>>>>>>>> [00000280] *pgd=00000000
->>>>>>>>>>>>>>> Internal error: Oops: 5 [#1] PREEMPT SMP ARM
->>>>>>>>>>>>>>> Modules linked in:
->>>>>>>>>>>>>>> CPU: 0 PID: 1 Comm: swapper/0 Not tainted
->>>>>>>>>>>>>>> 5.9.0-rc4-next-20200911-00010-g417dc70d70ec-dirty #1613
->>>>>>>>>>>>>>> Hardware name: Samsung Exynos (Flattened Device Tree)
->>>>>>>>>>>>>>> PC is at __mutex_lock+0x54/0xb18
->>>>>>>>>>>>>>> LR is at lock_is_held_type+0x80/0x138
->>>>>>>>>>>>>>> pc : [<c0afc920>]    lr : [<c0af63e8>]    psr: 60000013
->>>>>>>>>>>>>>> sp : ef0dfd30  ip : 33937b74  fp : c13193c8
->>>>>>>>>>>>>>> r10: c1208eec  r9 : 00000000  r8 : ee45f808
->>>>>>>>>>>>>>> r7 : c19561a4  r6 : 00000000  r5 : 00000000  r4 : 0000024c
->>>>>>>>>>>>>>> r3 : 00000000  r2 : 00204140  r1 : c124f13c  r0 : 00000000
->>>>>>>>>>>>>>> Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
->>>>>>>>>>>>>>> Control: 10c5387d  Table: 4000404a  DAC: 00000051
->>>>>>>>>>>>>>> Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
->>>>>>>>>>>>>>> Stack: (0xef0dfd30 to 0xef0e0000)
->>>>>>>>>>>>>>> ...
->>>>>>>>>>>>>>> [<c0afc920>] (__mutex_lock) from [<c0afd400>]
->>>>>>>>>>>>>>> (mutex_lock_nested+0x1c/0x24)
->>>>>>>>>>>>>>> [<c0afd400>] (mutex_lock_nested) from [<c064d4b8>]
->>>>>>>>>>>>>>> (__exynos_dsi_host_attach+0x20/0x6c)
->>>>>>>>>>>>>>> [<c064d4b8>] (__exynos_dsi_host_attach) from [<c064d914>]
->>>>>>>>>>>>>>> (exynos_dsi_host_attach+0x70/0x194)
->>>>>>>>>>>>>>> [<c064d914>] (exynos_dsi_host_attach) from [<c0656b64>]
->>>>>>>>>>>>>>> (s6e8aa0_probe+0x1b0/0x218)
->>>>>>>>>>>>>>> [<c0656b64>] (s6e8aa0_probe) from [<c0672530>]
->>>>>>>>>>>>>>> (really_probe+0x200/0x4fc)
->>>>>>>>>>>>>>> [<c0672530>] (really_probe) from [<c06729f4>]
->>>>>>>>>>>>>>> (driver_probe_device+0x78/0x1fc)
->>>>>>>>>>>>>>> [<c06729f4>] (driver_probe_device) from [<c0672ddc>]
->>>>>>>>>>>>>>> (device_driver_attach+0x58/0x60)
->>>>>>>>>>>>>>> [<c0672ddc>] (device_driver_attach) from [<c0672ec0>]
->>>>>>>>>>>>>>> (__driver_attach+0xdc/0x174)
->>>>>>>>>>>>>>> [<c0672ec0>] (__driver_attach) from [<c06702b8>]
->>>>>>>>>>>>>>> (bus_for_each_dev+0x68/0xb4)
->>>>>>>>>>>>>>> [<c06702b8>] (bus_for_each_dev) from [<c06715ec>]
->>>>>>>>>>>>>>> (bus_add_driver+0x158/0x214)
->>>>>>>>>>>>>>> [<c06715ec>] (bus_add_driver) from [<c0673d20>]
->>>>>>>>>>>>>>> (driver_register+0x78/0x110)
->>>>>>>>>>>>>>> [<c0673d20>] (driver_register) from [<c0102484>]
->>>>>>>>>>>>>>> (do_one_initcall+0x8c/0x42c)
->>>>>>>>>>>>>>> [<c0102484>] (do_one_initcall) from [<c11011c0>]
->>>>>>>>>>>>>>> (kernel_init_freeable+0x190/0x1dc)
->>>>>>>>>>>>>>> [<c11011c0>] (kernel_init_freeable) from [<c0af7988>]
->>>>>>>>>>>>>>> (kernel_init+0x8/0x118)
->>>>>>>>>>>>>>> [<c0af7988>] (kernel_init) from [<c0100114>] (ret_from_fork+0x14/0x20)
->>>>>>>>>>>>>>> Exception stack(0xef0dffb0 to 0xef0dfff8)
->>>>>>>>>>>>>>> ...
->>>>>>>>>>>>>>> ---[ end trace c06e996ec2e8234d ]---
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> This means that dsi->encoder.dev is not initialized in
->>>>>>>>>>>>>>> __exynos_dsi_host_attach().
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> This happens, because drm_bridge_attach() in exynos_dsi_bind() returned
->>>>>>>>>>>>>>> earlier -517 (deferred probe), what causes cleanup of encoder and
->>>>>>>>>>>>>>> release of all drm resources.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Then however, the panel tries to register itself and
->>>>>>>>>>>>>>> exynos_dsi_host_attach() tries to access the released encoder (which is
->>>>>>>>>>>>>>> zeroed in drm_encoder_release) and rest of resources, what causes
->>>>>>>>>>>>>>> failure.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> It looks that something is missing. Maybe mipi host has to be
->>>>>>>>>>>>>>> registered
->>>>>>>>>>>>>>> later, when bridge is ready? I have no idea how it is handled before
->>>>>>>>>>>>>>> this patch. Andrzej, could you comment it a bit?
->>>>>>>>>>>>>> I intentionally changed the order, because if another bridge follows
->>>>>>>>>>>>>> in the
->>>>>>>>>>>>>> pipeline, the probe of the drm driver has to be deferred until some
->>>>>>>>>>>>>> bridge
->>>>>>>>>>>>>> provides a connector. The next bridge registers itself via the
->>>>>>>>>>>>>> host_attach
->>>>>>>>>>>>>> function and the deferral is ensured via the bind for the bind/unbind
->>>>>>>>>>>>>> API or
->>>>>>>>>>>>>> the bridge_attach function otherwise.
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> On the other hand, the bridge does not have an encoder until the mipi
->>>>>>>>>>>>>> device
->>>>>>>>>>>>>> has been attached.
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> As a solution, the exynos dsi driver must initialize the encoder in
->>>>>>>>>>>>>> exynos_dsi_probe instead of in exynos_dsi_bind and access the encoder
->>>>>>>>>>>>>> via
->>>>>>>>>>>>>> exynos_dsi instead of the bridge.
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> Can you try to move everything except samsung_dsim_bind from
->>>>>>>>>>>>>> exynos_dsi_bind
->>>>>>>>>>>>>> to exynos_dsi_probe (respectively for unbind) and report if it fixes the
->>>>>>>>>>>>>> crash.
->>>>>>>>>>>>> The original behaviour is that encoder (exynos_dsi) is registered
->>>>>>>>>>>>> regardless of sink presence (initially panel, later also bridge) - it
->>>>>>>>>>>>> avoids multiple issues with deferred probe, device driver bind/unbind
->>>>>>>>>>>>> and module load/unload. Appearance or disappearance of sink is
->>>>>>>>>>>>> reported to host nicely via DSI attach/detach callbacks - and it is
->>>>>>>>>>>>> reflected in drm world as change state of the connector.
->>>>>>>>>>>>>
->>>>>>>>>>>>> Registering DSI host in bind and unregistering in unbind assures that
->>>>>>>>>>>>> if mipi_dsi device is attached/detached the drm device is always
->>>>>>>>>>>>> present - it makes device/driver binding race free and allows to avoid
->>>>>>>>>>>>> additional locking.
->>>>>>>>>>>>>
->>>>>>>>>>>>> Moving DSI host registration to probe changes everything, for sure it
->>>>>>>>>>>>> breaks the nice feature of DSI attach/detach callbacks and apparently
->>>>>>>>>>>>> can cause different issues depending on device bind order.
->>>>>>>>>>>>>
->>>>>>>>>>>>> I will try to look at the patches tomorrow and maybe I can find more
->>>>>>>>>>>>> constructive comments :)
->>>>>>>>>>>> As I said yesterday, exynos_dsi driver uses dsi host attach/detach
->>>>>>>>>>>> callbacks to control appearance/disappearance of downstream device. It
->>>>>>>>>>>> allows to:
->>>>>>>>>>>>
->>>>>>>>>>>> 1. Safely bind/unbind different device drivers at any time and at any
->>>>>>>>>>>> order, without killing exynos_drm and/or crashing system.
->>>>>>>>>>>>
->>>>>>>>>>>> 2. Avoid issues with late drm init - on some platforms exynos_drm device
->>>>>>>>>>>> appeared too late, due to deferred probe, and resulted in black screen
->>>>>>>>>>>> in userspace.
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> Now if we want to convert exynos_dsi to drm_bridge I see following options:
->>>>>>>>>>>>
->>>>>>>>>>>> A. Forgot about callbacks and make the exynos_drm to defer probing until
->>>>>>>>>>>> exynos_dsi bridge is available, probably it will cause later exynos_drm
->>>>>>>>>>>> appearance, thus probably black screen on some targets. So for sure it
->>>>>>>>>>>> will be suboptimal. Making it bridge unbind safe would be another
->>>>>>>>>>>> problem, but most developers do not care about it so why should we? :)
->>>>>>>>>>>>
->>>>>>>>>>>> B. Try to mimic current behaviour - exynos_dsi register bridge ASAP,
->>>>>>>>>>>> even if downstream devices are not yet attached, on attach/detach notify
->>>>>>>>>>>> drm about it via connector status change, for this dsi_host registration
->>>>>>>>>>>> should be performed from drm_bridge attach, I guess.
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> Option A is more standard, but is unsafe and causes other issues.
->>>>>>>>>>>>
->>>>>>>>>>>> Option B keeps current behaviour.
->>>>>>>>>>> Maybe we can have both, but I am not sure, if I am missing something:
->>>>>>>>>>>
->>>>>>>>>>> I still prefer option A for the samsung-dsim driver, because it is more
->>>>>>>>>>> standard, simpler and avoids issues with encoders, connectors or handling
->>>>>>>>>>> hotplug.
->>>>>>>>>>>
->>>>>>>>>>> The idea is to use two bridges in the exynos-dsi driver: One bridge in the
->>>>>>>>>>> samsung-dsim driver which implements option A and defers probing of the drm
->>>>>>>>>>> driver until the next bridge is attached. And a second bridge in the
->>>>>>>>>>> exynos_dsi that attaches to the first bridge (thus, allowing the exynos_drm
->>>>>>>>>>> device to appear) and implements the hotplug handling for notifying drm via
->>>>>>>>>>> connector status change.
->>>>>>>>>>>
->>>>>>>>>>> The driver for the i.MX8M would use the samsung-dsim bridge without an
->>>>>>>>>>> additional bridge.
->>>>>>>>>>>
->>>>>>>>>>> This allows the samsung-dsim driver to expose the standard behavior while the
->>>>>>>>>>> exynos_dsi may stick to the existing behavior for the exynos_drm driver.
->>>>>>>>>>>
->>>>>>>>>>> I hope this makes sense and does not sound too crazy. It might be difficult to
->>>>>>>>>>> get the probing and mipi host/device registration correct, but I will try, if
->>>>>>>>>>> this can work.
->>>>>>>>>> Adding two bridges for being able to support hotplugging adds many special
->>>>>>>>>> cases to the bridge driver and still requires more custom API to correctly add
->>>>>>>>>> the second bridge. I don't think that this a viable path to go.
->>>>>>>>> Just jumping in here: You cannot hotplug/hotremove anything from a
->>>>>>>>> drm_device after drm_dev_register has been called, except
->>>>>>>>> drm_connector. I didn't dig into details here so not sure whether you
->>>>>>>>> want to late-bind your bridge after drm_dev_register is called or not,
->>>>>>>>> so might just be fyi and not relevant to the discussion.
->>>>>>>> Thanks. AFAIC that is exactly what is currently implemented in the exynos_drm
->>>>>>>> driver (i.e. Option B)
->>>>>>>>
->>>>>>>> exynos_dsi_bind configures the encoder and registers a DSI host. Afterwards,
->>>>>>>> exynos_drm_bind (as component_master_ops) calls drm_dev_register. Later, a DSI
->>>>>>>> device might attach to the DSI host and call exynos_dsi_host_attach. In
->>>>>>>> exynos_dsi_host_attach, the driver finds the drm_bridge for the DSI device and
->>>>>>>> attaches this bridge to the encoder _after_ drm_dev_register has been called.
->>>>>>>> This is invalid behavior, right?
->>>>>>> Definitely not supported, I don't think we have the right locks in place
->>>>>>> to make sure this works.
->>>>>>>
->>>>>>> Now if your _only_ adding a drm_bridge (and not an encoder or anything
->>>>>>> like that), and you are adding the drm_connector correctly (like a
->>>>>>> hotplugged DP MST sink), then that would at least work from a uapi pov.
->>>>>>> Because drm_bridge isn't exposed as an uapi object.
->>>>>>>
->>>>>>> But yeah, as-is, don't :-)
->>>>>>>
->>>>>>> The solution here is a bunch of EPROBE_DEFER handling until all your
->>>>>>> bridges are loaded, with or without the assistance of component.c
->>>>>>> framework. Only then call drm_dev_register.
->>>>>> I have impression we have similar conversation already.
->>>>>>
->>>>>> As you stated drm_bridge and drm_panel are not exposed to userspace so
->>>>>> there shouldn't be problem with them from uapi PoV.
->>>>>>
->>>>>> On the other side drm_panel or drm_bridge are not used until pipeline
->>>>>> enters connected state (at least they were not some time ago :) ). The
->>>>>> issue is that bridge exposes drm_connector, but as you stated (again :)
->>>>>> ) connectors can be hotplugged, so in theory it should work. Practical
->>>>>> tests shows that it also works, but bugs can be still there.
->>>>>>
->>>>>> Bunch of EPROBE_DEFER was very slow (as a result userspace timeouted and
->>>>>> decided there is no display), and does not handle unbinding/re-binding
->>>>>> drivers.
->>>>> Rebinding drivers should be fixed now, with a bunch of fixes in driver
->>>>> core. If not, we need to fix this more.
->>>>>
->>>>> Also, EPROBE_DEFER is how this is supposed to work. If it's too slow,
->>>>> we need to fix EPROBE_DEFER (there's ideas for pre-sorting that never
->>>>> seem to go anywhere), not paper over it with bad architecture in
->>>>> drivers.
->>>> I've heard this argument multiple times, but it sounds more like an
->>>> attempt to ignore the problem and hope it will fall on someone else's
->>>> plate :-) Improvement in the probe deferral mechanism are certainly an
->>>> option to explore, but as far as I can tell nobody has proven that this
->>>> mechanism is or will be able to solve all problems related to probe
->>>> ordering dependencies. I wouldn't rule out the need for different
->>>> solutions for some of the issues.
->>> Then build another one. But adding hotplug for stuff that is there,
->>> and shouldn't be hotplugged, just because it's easier on driver
->>> writers and harder on userspace isn't really a good approach.
->>> -Daniel
->> I think it is quite clear that replacing or reworking the deferral mechanism
->> is out of scope for this discussion, which is why I would like to come back
->> to the original issue and sum this up as far as I understand it (which is
->> not really far when it comes to the details):
->>
->> We have the existing exynos driver that avoids the standard deferral
->> mechanism in favor of something that works but Daniel describes as
->> "definitely not supported".
->>
->> We have a proposal from Michael for converting the driver to the standard
->> drm_bridge behavior and more work from Michael and Marek based on this to
->> implement the platform specific parts for i.MX8MM.
->>
->>  From the i.MX8MM POV this approach already received some testing and looks
->> good as far as I can judge. Upstreaming this solution is blocked because of
->> objections from the Samsung maintainers.
->>
->> Sorry if I'm being blunt or naive, but where to go from here?
->>
-> Maybe some more information by the Samsung maintainers would help:
->
-> If I understand correctly, the main reason for the non-standard behavior is a
-> userspace application that runs into a timeout if the drm-device does not
-> appear in time. Correct? Is there something we can do about that?
->
-> The other reason is the convenience of binding and unbinding a bridge driver,
-> while the drm device is kept available. Correct? Is this used in development,
-> testing, or production?
->
-> Is there anything else that prevents the exynos drm from switching to the
-> standard behavior?
->
-> Would a exynos drm specific wrapper, which uses a standard bridge driver but
-> exposes the non-standard behavior, be acceptable? (Unfortunately, my first try
-> on something like that felt really awkward and didn't really work.)
+On 2021-02-10 19:33, Nicolas Boichat wrote:
+> Many of the DSI flags have names opposite to their actual effects,
+> e.g. MIPI_DSI_MODE_EOT_PACKET means that EoT packets will actually
+> be disabled. Fix this by including _NO_ in the flag names, e.g.
+> MIPI_DSI_MODE_NO_EOT_PACKET.
+> 
+> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
 
-Even if we drop this 'non-standard' behaviour, your task will be still 
-quite difficult to fulfil - you are trying to completely rewrite core 
-component of Exynos display pipeline without hardware to test.
-
-ExynosDSI is used in almost all Exynos platforms supported mainline (ls 
--1 arch/arm*/boot/dts/exynos*.dts | wc shows 35). It has different hw 
-versions (4 compatibles) and is used in different configurations (video 
-mode, command mode, with hw/sw trigger, connected to panels/bridges) and 
-for sure with big heritage, since it was one of the 1st DSI drivers.
-
-Rewriting such driver is challenging, even with access to hw.
-
-So maybe it would be better to move common parts in your and exynos 
-driver to 'shared library' and use it in both drivers - this way you 
-have bigger chances to avoid traps.
-
-
-Regards
-
-Andrzej
-
-
->
-> Michael
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://protect2.fireeye.com/v1/url?k=08365e03-57ad66fe-0837d54c-000babff317b-bdb6592fde86cf24&q=1&e=db1ed315-991b-408c-827a-4b6cbf2b4e3e&u=https%3A%2F%2Flists.freedesktop.org%2Fmailman%2Flistinfo%2Fdri-devel
->
+For the msm/dsi/ part, please feel free to add :
+Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
+> ---
+> I considered adding _DISABLE_ instead, but that'd make the
+> flag names a big too long.
+> 
+> Generated with:
+> flag=MIPI_DSI_MODE_VIDEO_HFP; git grep $flag | cut -f1 -d':' | \
+>   xargs -I{} sed -i -e "s/$flag/MIPI_DSI_MODE_VIDEO_NO_HFP/" {}
+> flag=MIPI_DSI_MODE_VIDEO_HBP; git grep $flag | cut -f1 -d':' | \
+>   xargs -I{} sed -i -e "s/$flag/MIPI_DSI_MODE_VIDEO_NO_HBP/" {}
+> flag=MIPI_DSI_MODE_VIDEO_HSA; git grep $flag | cut -f1 -d':' | \
+>   xargs -I{} sed -i -e "s/$flag/MIPI_DSI_MODE_VIDEO_NO_HSA/" {}
+> flag=MIPI_DSI_MODE_EOT_PACKET; git grep $flag | cut -f1 -d':' | \
+>   xargs -I{} sed -i -e "s/$flag/MIPI_DSI_MODE_NO_EOT_PACKET/" {}
+> (then minor format changes)
+> 
+>  drivers/gpu/drm/bridge/adv7511/adv7533.c             | 2 +-
+>  drivers/gpu/drm/bridge/analogix/anx7625.c            | 2 +-
+>  drivers/gpu/drm/bridge/cdns-dsi.c                    | 4 ++--
+>  drivers/gpu/drm/bridge/tc358768.c                    | 2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c              | 8 ++++----
+>  drivers/gpu/drm/mcde/mcde_dsi.c                      | 2 +-
+>  drivers/gpu/drm/mediatek/mtk_dsi.c                   | 2 +-
+>  drivers/gpu/drm/msm/dsi/dsi_host.c                   | 8 ++++----
+>  drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c | 2 +-
+>  drivers/gpu/drm/panel/panel-dsi-cm.c                 | 2 +-
+>  drivers/gpu/drm/panel/panel-elida-kd35t133.c         | 2 +-
+>  drivers/gpu/drm/panel/panel-khadas-ts050.c           | 2 +-
+>  drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c   | 2 +-
+>  drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c   | 2 +-
+>  drivers/gpu/drm/panel/panel-novatek-nt35510.c        | 2 +-
+>  drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c   | 2 +-
+>  drivers/gpu/drm/panel/panel-samsung-s6d16d0.c        | 2 +-
+>  drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c     | 2 +-
+>  drivers/gpu/drm/panel/panel-samsung-s6e63m0-dsi.c    | 2 +-
+>  drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c        | 4 ++--
+>  drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c      | 2 +-
+>  drivers/gpu/drm/panel/panel-simple.c                 | 2 +-
+>  drivers/gpu/drm/panel/panel-sony-acx424akp.c         | 2 +-
+>  drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c     | 2 +-
+>  include/drm/drm_mipi_dsi.h                           | 8 ++++----
+>  25 files changed, 36 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7533.c
+> b/drivers/gpu/drm/bridge/adv7511/adv7533.c
+> index aa19d5a40e31..59d718bde8c4 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7533.c
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7533.c
+> @@ -165,7 +165,7 @@ int adv7533_attach_dsi(struct adv7511 *adv)
+>  	dsi->lanes = adv->num_dsi_lanes;
+>  	dsi->format = MIPI_DSI_FMT_RGB888;
+>  	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | 
+> MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
+> -			  MIPI_DSI_MODE_EOT_PACKET | MIPI_DSI_MODE_VIDEO_HSE;
+> +			  MIPI_DSI_MODE_NO_EOT_PACKET | MIPI_DSI_MODE_VIDEO_HSE;
+> 
+>  	ret = mipi_dsi_attach(dsi);
+>  	if (ret < 0) {
+> diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c
+> b/drivers/gpu/drm/bridge/analogix/anx7625.c
+> index 65cc05982f82..beecfe6bf359 100644
+> --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
+> +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
+> @@ -1334,7 +1334,7 @@ static int anx7625_attach_dsi(struct anx7625_data 
+> *ctx)
+>  	dsi->format = MIPI_DSI_FMT_RGB888;
+>  	dsi->mode_flags = MIPI_DSI_MODE_VIDEO	|
+>  		MIPI_DSI_MODE_VIDEO_SYNC_PULSE	|
+> -		MIPI_DSI_MODE_EOT_PACKET	|
+> +		MIPI_DSI_MODE_NO_EOT_PACKET	|
+>  		MIPI_DSI_MODE_VIDEO_HSE;
+> 
+>  	if (mipi_dsi_attach(dsi) < 0) {
+> diff --git a/drivers/gpu/drm/bridge/cdns-dsi.c
+> b/drivers/gpu/drm/bridge/cdns-dsi.c
+> index 76373e31df92..34aa24269a57 100644
+> --- a/drivers/gpu/drm/bridge/cdns-dsi.c
+> +++ b/drivers/gpu/drm/bridge/cdns-dsi.c
+> @@ -829,7 +829,7 @@ static void cdns_dsi_bridge_enable(struct
+> drm_bridge *bridge)
+>  	tmp = DIV_ROUND_UP(dsi_cfg.htotal, nlanes) -
+>  	      DIV_ROUND_UP(dsi_cfg.hsa, nlanes);
+> 
+> -	if (!(output->dev->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
+> +	if (!(output->dev->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET))
+>  		tmp -= DIV_ROUND_UP(DSI_EOT_PKT_SIZE, nlanes);
+> 
+>  	tx_byte_period = DIV_ROUND_DOWN_ULL((u64)NSEC_PER_SEC * 8,
+> @@ -902,7 +902,7 @@ static void cdns_dsi_bridge_enable(struct
+> drm_bridge *bridge)
+>  	tmp = readl(dsi->regs + MCTL_MAIN_DATA_CTL);
+>  	tmp &= ~(IF_VID_SELECT_MASK | HOST_EOT_GEN | IF_VID_MODE);
+> 
+> -	if (!(output->dev->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
+> +	if (!(output->dev->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET))
+>  		tmp |= HOST_EOT_GEN;
+> 
+>  	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO)
+> diff --git a/drivers/gpu/drm/bridge/tc358768.c
+> b/drivers/gpu/drm/bridge/tc358768.c
+> index 8ed8302d6bbb..320f95ae6077 100644
+> --- a/drivers/gpu/drm/bridge/tc358768.c
+> +++ b/drivers/gpu/drm/bridge/tc358768.c
+> @@ -825,7 +825,7 @@ static void tc358768_bridge_pre_enable(struct
+> drm_bridge *bridge)
+>  	if (!(dsi_dev->mode_flags & MIPI_DSI_CLOCK_NON_CONTINUOUS))
+>  		val |= TC358768_DSI_CONTROL_HSCKMD;
+> 
+> -	if (dsi_dev->mode_flags & MIPI_DSI_MODE_EOT_PACKET)
+> +	if (dsi_dev->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET)
+>  		val |= TC358768_DSI_CONTROL_EOTDIS;
+> 
+>  	tc358768_write(priv, TC358768_DSI_CONFW, val);
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> index 83ab6b343f51..99249d0da330 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -809,15 +809,15 @@ static int exynos_dsi_init_link(struct exynos_dsi 
+> *dsi)
+>  			reg |= DSIM_AUTO_MODE;
+>  		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_HSE)
+>  			reg |= DSIM_HSE_MODE;
+> -		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_HFP))
+> +		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HFP))
+>  			reg |= DSIM_HFP_MODE;
+> -		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_HBP))
+> +		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HBP))
+>  			reg |= DSIM_HBP_MODE;
+> -		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_HSA))
+> +		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HSA))
+>  			reg |= DSIM_HSA_MODE;
+>  	}
+> 
+> -	if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
+> +	if (!(dsi->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET))
+>  		reg |= DSIM_EOT_DISABLE;
+> 
+>  	switch (dsi->format) {
+> diff --git a/drivers/gpu/drm/mcde/mcde_dsi.c 
+> b/drivers/gpu/drm/mcde/mcde_dsi.c
+> index 2314c8122992..f4cdc3cfd7d0 100644
+> --- a/drivers/gpu/drm/mcde/mcde_dsi.c
+> +++ b/drivers/gpu/drm/mcde/mcde_dsi.c
+> @@ -760,7 +760,7 @@ static void mcde_dsi_start(struct mcde_dsi *d)
+>  		DSI_MCTL_MAIN_DATA_CTL_BTA_EN |
+>  		DSI_MCTL_MAIN_DATA_CTL_READ_EN |
+>  		DSI_MCTL_MAIN_DATA_CTL_REG_TE_EN;
+> -	if (d->mdsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET)
+> +	if (d->mdsi->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET)
+>  		val |= DSI_MCTL_MAIN_DATA_CTL_HOST_EOT_GEN;
+>  	writel(val, d->regs + DSI_MCTL_MAIN_DATA_CTL);
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c
+> b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> index a1ff152ef468..5c0c9180273a 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> @@ -402,7 +402,7 @@ static void mtk_dsi_rxtx_control(struct mtk_dsi 
+> *dsi)
+>  	}
+> 
+>  	tmp_reg |= (dsi->mode_flags & MIPI_DSI_CLOCK_NON_CONTINUOUS) << 6;
+> -	tmp_reg |= (dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET) >> 3;
+> +	tmp_reg |= (dsi->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET) >> 3;
+> 
+>  	writel(tmp_reg, dsi->regs + DSI_TXRX_CTRL);
+>  }
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c
+> b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> index ab281cba0f08..a97a7822e596 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> @@ -850,11 +850,11 @@ static void dsi_ctrl_config(struct msm_dsi_host
+> *msm_host, bool enable,
+>  	if (flags & MIPI_DSI_MODE_VIDEO) {
+>  		if (flags & MIPI_DSI_MODE_VIDEO_HSE)
+>  			data |= DSI_VID_CFG0_PULSE_MODE_HSA_HE;
+> -		if (flags & MIPI_DSI_MODE_VIDEO_HFP)
+> +		if (flags & MIPI_DSI_MODE_VIDEO_NO_HFP)
+>  			data |= DSI_VID_CFG0_HFP_POWER_STOP;
+> -		if (flags & MIPI_DSI_MODE_VIDEO_HBP)
+> +		if (flags & MIPI_DSI_MODE_VIDEO_NO_HBP)
+>  			data |= DSI_VID_CFG0_HBP_POWER_STOP;
+> -		if (flags & MIPI_DSI_MODE_VIDEO_HSA)
+> +		if (flags & MIPI_DSI_MODE_VIDEO_NO_HSA)
+>  			data |= DSI_VID_CFG0_HSA_POWER_STOP;
+>  		/* Always set low power stop mode for BLLP
+>  		 * to let command engine send packets
+> @@ -909,7 +909,7 @@ static void dsi_ctrl_config(struct msm_dsi_host
+> *msm_host, bool enable,
+>  			  DSI_T_CLK_PRE_EXTEND_INC_BY_2_BYTECLK);
+> 
+>  	data = 0;
+> -	if (!(flags & MIPI_DSI_MODE_EOT_PACKET))
+> +	if (!(flags & MIPI_DSI_MODE_NO_EOT_PACKET))
+>  		data |= DSI_EOT_PACKET_CTRL_TX_EOT_APPEND;
+>  	dsi_write(msm_host, REG_DSI_EOT_PACKET_CTRL, data);
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
+> b/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
+> index e95bc9f60b3f..44674ebedf59 100644
+> --- a/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
+> +++ b/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
+> @@ -302,7 +302,7 @@ static int tm5p5_nt35596_probe(struct 
+> mipi_dsi_device *dsi)
+>  	dsi->lanes = 4;
+>  	dsi->format = MIPI_DSI_FMT_RGB888;
+>  	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+> -			  MIPI_DSI_MODE_VIDEO_HSE | MIPI_DSI_MODE_EOT_PACKET |
+> +			  MIPI_DSI_MODE_VIDEO_HSE | MIPI_DSI_MODE_NO_EOT_PACKET |
+>  			  MIPI_DSI_CLOCK_NON_CONTINUOUS | MIPI_DSI_MODE_LPM;
+> 
+>  	drm_panel_init(&ctx->panel, dev, &tm5p5_nt35596_panel_funcs,
+> diff --git a/drivers/gpu/drm/panel/panel-dsi-cm.c
+> b/drivers/gpu/drm/panel/panel-dsi-cm.c
+> index af381d756ac1..178abfb1737c 100644
+> --- a/drivers/gpu/drm/panel/panel-dsi-cm.c
+> +++ b/drivers/gpu/drm/panel/panel-dsi-cm.c
+> @@ -571,7 +571,7 @@ static int dsicm_probe(struct mipi_dsi_device *dsi)
+>  	dsi->lanes = 2;
+>  	dsi->format = MIPI_DSI_FMT_RGB888;
+>  	dsi->mode_flags = MIPI_DSI_CLOCK_NON_CONTINUOUS |
+> -			  MIPI_DSI_MODE_EOT_PACKET;
+> +			  MIPI_DSI_MODE_NO_EOT_PACKET;
+>  	dsi->hs_rate = ddata->panel_data->max_hs_rate;
+>  	dsi->lp_rate = ddata->panel_data->max_lp_rate;
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+> b/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+> index bc36aa3c1123..ae3361ccccd5 100644
+> --- a/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+> +++ b/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+> @@ -265,7 +265,7 @@ static int kd35t133_probe(struct mipi_dsi_device 
+> *dsi)
+>  	dsi->lanes = 1;
+>  	dsi->format = MIPI_DSI_FMT_RGB888;
+>  	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+> -			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_EOT_PACKET;
+> +			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET;
+> 
+>  	drm_panel_init(&ctx->panel, &dsi->dev, &kd35t133_funcs,
+>  		       DRM_MODE_CONNECTOR_DSI);
+> diff --git a/drivers/gpu/drm/panel/panel-khadas-ts050.c
+> b/drivers/gpu/drm/panel/panel-khadas-ts050.c
+> index 8f6ac1a40c31..a3ec4cbdbf7a 100644
+> --- a/drivers/gpu/drm/panel/panel-khadas-ts050.c
+> +++ b/drivers/gpu/drm/panel/panel-khadas-ts050.c
+> @@ -809,7 +809,7 @@ static int khadas_ts050_panel_probe(struct
+> mipi_dsi_device *dsi)
+>  	dsi->lanes = 4;
+>  	dsi->format = MIPI_DSI_FMT_RGB888;
+>  	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+> -			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_EOT_PACKET;
+> +			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET;
+> 
+>  	khadas_ts050 = devm_kzalloc(&dsi->dev, sizeof(*khadas_ts050),
+>  				    GFP_KERNEL);
+> diff --git a/drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c
+> b/drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c
+> index ed0d5f959037..a5a414920430 100644
+> --- a/drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c
+> +++ b/drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c
+> @@ -593,7 +593,7 @@ static int ltk050h3146w_probe(struct 
+> mipi_dsi_device *dsi)
+>  	dsi->lanes = 4;
+>  	dsi->format = MIPI_DSI_FMT_RGB888;
+>  	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+> -			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_EOT_PACKET;
+> +			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET;
+> 
+>  	drm_panel_init(&ctx->panel, &dsi->dev, &ltk050h3146w_funcs,
+>  		       DRM_MODE_CONNECTOR_DSI);
+> diff --git a/drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c
+> b/drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c
+> index 3c00e4f8f803..21e48923836d 100644
+> --- a/drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c
+> +++ b/drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c
+> @@ -442,7 +442,7 @@ static int ltk500hd1829_probe(struct 
+> mipi_dsi_device *dsi)
+>  	dsi->lanes = 4;
+>  	dsi->format = MIPI_DSI_FMT_RGB888;
+>  	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+> -			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_EOT_PACKET;
+> +			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET;
+> 
+>  	drm_panel_init(&ctx->panel, &dsi->dev, &ltk500hd1829_funcs,
+>  		       DRM_MODE_CONNECTOR_DSI);
+> diff --git a/drivers/gpu/drm/panel/panel-novatek-nt35510.c
+> b/drivers/gpu/drm/panel/panel-novatek-nt35510.c
+> index b9a0e56f33e2..9d9334656803 100644
+> --- a/drivers/gpu/drm/panel/panel-novatek-nt35510.c
+> +++ b/drivers/gpu/drm/panel/panel-novatek-nt35510.c
+> @@ -899,7 +899,7 @@ static int nt35510_probe(struct mipi_dsi_device 
+> *dsi)
+>  	dsi->hs_rate = 349440000;
+>  	dsi->lp_rate = 9600000;
+>  	dsi->mode_flags = MIPI_DSI_CLOCK_NON_CONTINUOUS |
+> -		MIPI_DSI_MODE_EOT_PACKET;
+> +		MIPI_DSI_MODE_NO_EOT_PACKET;
+> 
+>  	/*
+>  	 * Every new incarnation of this display must have a unique
+> diff --git a/drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c
+> b/drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c
+> index 45b975dee587..198493a6eb6a 100644
+> --- a/drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c
+> +++ b/drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c
+> @@ -184,7 +184,7 @@ static int osd101t2587_panel_probe(struct
+> mipi_dsi_device *dsi)
+>  	dsi->mode_flags = MIPI_DSI_MODE_VIDEO |
+>  			  MIPI_DSI_MODE_VIDEO_BURST |
+>  			  MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
+> -			  MIPI_DSI_MODE_EOT_PACKET;
+> +			  MIPI_DSI_MODE_NO_EOT_PACKET;
+> 
+>  	osd101t2587 = devm_kzalloc(&dsi->dev, sizeof(*osd101t2587), 
+> GFP_KERNEL);
+>  	if (!osd101t2587)
+> diff --git a/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c
+> b/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c
+> index 4aac0d1573dd..b04b9975e9b2 100644
+> --- a/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c
+> +++ b/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c
+> @@ -186,7 +186,7 @@ static int s6d16d0_probe(struct mipi_dsi_device 
+> *dsi)
+>  	 */
+>  	dsi->mode_flags =
+>  		MIPI_DSI_CLOCK_NON_CONTINUOUS |
+> -		MIPI_DSI_MODE_EOT_PACKET;
+> +		MIPI_DSI_MODE_NO_EOT_PACKET;
+> 
+>  	s6->supply = devm_regulator_get(dev, "vdd1");
+>  	if (IS_ERR(s6->supply))
+> diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c
+> b/drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c
+> index b962c817fb30..ccc8ed6fe3ae 100644
+> --- a/drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c
+> +++ b/drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c
+> @@ -446,7 +446,7 @@ static int s6e63j0x03_probe(struct mipi_dsi_device 
+> *dsi)
+> 
+>  	dsi->lanes = 1;
+>  	dsi->format = MIPI_DSI_FMT_RGB888;
+> -	dsi->mode_flags = MIPI_DSI_MODE_EOT_PACKET;
+> +	dsi->mode_flags = MIPI_DSI_MODE_NO_EOT_PACKET;
+> 
+>  	ctx->supplies[0].supply = "vdd3";
+>  	ctx->supplies[1].supply = "vci";
+> diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e63m0-dsi.c
+> b/drivers/gpu/drm/panel/panel-samsung-s6e63m0-dsi.c
+> index eec74c10ddda..77289967d3e5 100644
+> --- a/drivers/gpu/drm/panel/panel-samsung-s6e63m0-dsi.c
+> +++ b/drivers/gpu/drm/panel/panel-samsung-s6e63m0-dsi.c
+> @@ -97,7 +97,7 @@ static int s6e63m0_dsi_probe(struct mipi_dsi_device 
+> *dsi)
+>  	dsi->hs_rate = 349440000;
+>  	dsi->lp_rate = 9600000;
+>  	dsi->mode_flags = MIPI_DSI_MODE_VIDEO |
+> -		MIPI_DSI_MODE_EOT_PACKET |
+> +		MIPI_DSI_MODE_NO_EOT_PACKET |
+>  		MIPI_DSI_MODE_VIDEO_BURST;
+> 
+>  	ret = s6e63m0_probe(dev, s6e63m0_dsi_dcs_read, s6e63m0_dsi_dcs_write,
+> diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c
+> b/drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c
+> index 527371120266..9b3599d6d2de 100644
+> --- a/drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c
+> +++ b/drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c
+> @@ -990,8 +990,8 @@ static int s6e8aa0_probe(struct mipi_dsi_device 
+> *dsi)
+>  	dsi->lanes = 4;
+>  	dsi->format = MIPI_DSI_FMT_RGB888;
+>  	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST
+> -		| MIPI_DSI_MODE_VIDEO_HFP | MIPI_DSI_MODE_VIDEO_HBP
+> -		| MIPI_DSI_MODE_VIDEO_HSA | MIPI_DSI_MODE_EOT_PACKET
+> +		| MIPI_DSI_MODE_VIDEO_NO_HFP | MIPI_DSI_MODE_VIDEO_NO_HBP
+> +		| MIPI_DSI_MODE_VIDEO_NO_HSA | MIPI_DSI_MODE_NO_EOT_PACKET
+>  		| MIPI_DSI_MODE_VSYNC_FLUSH | MIPI_DSI_MODE_VIDEO_AUTO_VERT;
+> 
+>  	ret = s6e8aa0_parse_dt(ctx);
+> diff --git a/drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c
+> b/drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c
+> index 16dbf0f353ed..b937e24dac8e 100644
+> --- a/drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c
+> +++ b/drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c
+> @@ -282,7 +282,7 @@ static int sharp_nt_panel_probe(struct 
+> mipi_dsi_device *dsi)
+>  	dsi->mode_flags = MIPI_DSI_MODE_VIDEO |
+>  			MIPI_DSI_MODE_VIDEO_HSE |
+>  			MIPI_DSI_CLOCK_NON_CONTINUOUS |
+> -			MIPI_DSI_MODE_EOT_PACKET;
+> +			MIPI_DSI_MODE_NO_EOT_PACKET;
+> 
+>  	sharp_nt = devm_kzalloc(&dsi->dev, sizeof(*sharp_nt), GFP_KERNEL);
+>  	if (!sharp_nt)
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c
+> b/drivers/gpu/drm/panel/panel-simple.c
+> index 4e2dad314c79..babc7a7f6844 100644
+> --- a/drivers/gpu/drm/panel/panel-simple.c
+> +++ b/drivers/gpu/drm/panel/panel-simple.c
+> @@ -4745,7 +4745,7 @@ static const struct panel_desc_dsi 
+> osd101t2045_53ts = {
+>  	},
+>  	.flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+>  		 MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
+> -		 MIPI_DSI_MODE_EOT_PACKET,
+> +		 MIPI_DSI_MODE_NO_EOT_PACKET,
+>  	.format = MIPI_DSI_FMT_RGB888,
+>  	.lanes = 4,
+>  };
+> diff --git a/drivers/gpu/drm/panel/panel-sony-acx424akp.c
+> b/drivers/gpu/drm/panel/panel-sony-acx424akp.c
+> index 065efae213f5..6b706cbf2f9c 100644
+> --- a/drivers/gpu/drm/panel/panel-sony-acx424akp.c
+> +++ b/drivers/gpu/drm/panel/panel-sony-acx424akp.c
+> @@ -450,7 +450,7 @@ static int acx424akp_probe(struct mipi_dsi_device 
+> *dsi)
+>  	else
+>  		dsi->mode_flags =
+>  			MIPI_DSI_CLOCK_NON_CONTINUOUS |
+> -			MIPI_DSI_MODE_EOT_PACKET;
+> +			MIPI_DSI_MODE_NO_EOT_PACKET;
+> 
+>  	acx->supply = devm_regulator_get(dev, "vddi");
+>  	if (IS_ERR(acx->supply))
+> diff --git a/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c
+> b/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c
+> index 55172d63a922..d17aae8b71d7 100644
+> --- a/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c
+> +++ b/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c
+> @@ -311,7 +311,7 @@ static int xpp055c272_probe(struct mipi_dsi_device 
+> *dsi)
+>  	dsi->lanes = 4;
+>  	dsi->format = MIPI_DSI_FMT_RGB888;
+>  	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+> -			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_EOT_PACKET;
+> +			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET;
+> 
+>  	drm_panel_init(&ctx->panel, &dsi->dev, &xpp055c272_funcs,
+>  		       DRM_MODE_CONNECTOR_DSI);
+> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+> index 360e6377e84b..ba91cf22af51 100644
+> --- a/include/drm/drm_mipi_dsi.h
+> +++ b/include/drm/drm_mipi_dsi.h
+> @@ -119,15 +119,15 @@ struct mipi_dsi_host
+> *of_find_mipi_dsi_host_by_node(struct device_node *node);
+>  /* enable hsync-end packets in vsync-pulse and v-porch area */
+>  #define MIPI_DSI_MODE_VIDEO_HSE		BIT(4)
+>  /* disable hfront-porch area */
+> -#define MIPI_DSI_MODE_VIDEO_HFP		BIT(5)
+> +#define MIPI_DSI_MODE_VIDEO_NO_HFP	BIT(5)
+>  /* disable hback-porch area */
+> -#define MIPI_DSI_MODE_VIDEO_HBP		BIT(6)
+> +#define MIPI_DSI_MODE_VIDEO_NO_HBP	BIT(6)
+>  /* disable hsync-active area */
+> -#define MIPI_DSI_MODE_VIDEO_HSA		BIT(7)
+> +#define MIPI_DSI_MODE_VIDEO_NO_HSA	BIT(7)
+>  /* flush display FIFO on vsync pulse */
+>  #define MIPI_DSI_MODE_VSYNC_FLUSH	BIT(8)
+>  /* disable EoT packets in HS mode */
+> -#define MIPI_DSI_MODE_EOT_PACKET	BIT(9)
+> +#define MIPI_DSI_MODE_NO_EOT_PACKET	BIT(9)
+>  /* device supports non-continuous clock behavior (DSI spec 5.6.1) */
+>  #define MIPI_DSI_CLOCK_NON_CONTINUOUS	BIT(10)
+>  /* transmit data in low power */
