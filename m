@@ -2,266 +2,87 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B744C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Feb 2021 11:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 584F4C433E9
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Feb 2021 04:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB77364E3F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Feb 2021 11:02:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E68DA64DF3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Feb 2021 04:30:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230224AbhBVLBy (ORCPT
+        id S230267AbhBWEai (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 22 Feb 2021 06:01:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42496 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230315AbhBVLBk (ORCPT
+        Mon, 22 Feb 2021 23:30:38 -0500
+Received: from m12-15.163.com ([220.181.12.15]:37608 "EHLO m12-15.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229886AbhBWEag (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Feb 2021 06:01:40 -0500
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 583CCC06174A
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Feb 2021 03:01:00 -0800 (PST)
-Received: by mail-vs1-xe31.google.com with SMTP id u142so3876668vsu.7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Feb 2021 03:01:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bgFHY4hV1gsz8pgEmyxYxqT5LdN1M6Rn37TYsGGZMr0=;
-        b=QGOfC1OxJtyzhn/Dqh9x46vUR0wedl0F6e2YLebzF7a2LSj9jBLLI0PtMzqfOTNvY2
-         1zISBI7qQJRWsEByoOWAsCA5uT/NmuX1iJutbxhkjBxxCMp5FaU1olopGZcY/zpbiVb7
-         5aTe64cskNMRi/sSIcu/D8s1yj6PVS08su5Es=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bgFHY4hV1gsz8pgEmyxYxqT5LdN1M6Rn37TYsGGZMr0=;
-        b=qR8K2CJum7s5AIPVn1otL6SgdGwRDr6MRnoY7xF1cwzI9/RjAtU64yzDah9r8A6XHI
-         LoK8r+PbQeVkL8WS9O4asz5SgrbZpdzPrJuIyIQA8vIbDQ6VDD/8cQuGJLUhwX28qfuI
-         IyiH8mJ/Z4iKlMZ8N6RGbmwVhQ0ojAsCHwWzMrhyMD3JTua24dEH9339ZnaRASiEgFkb
-         Y+GkP0SidHbkYCyVhLjqnkphR3TtvTTbvy00mkUQcmE4GdojsuBX+bveOSWI9GvhLqf1
-         dhJ0oiZxTPV90pCTOJz70LgdyXQLsUkZfT3jrOeGX6sjewtOXTn5Z8UcVCX5hh0wXvj+
-         lx+w==
-X-Gm-Message-State: AOAM531XJGRwgyqrjMptCEruaRUqffuiTOLjlsxDUZXFvKOr8FMDtxmp
-        kfoY8+C8SigylF/FVp2h9gkrdbwyrEiH2KToEY2Wig==
-X-Google-Smtp-Source: ABdhPJxtvbO7yc7JIxcXC+vdsfZmlOTELtCIG4dyQr0KPt0s8Qz9jqkc/ShnqA459sEHTxSt78vabRBPoAMMyMx2ZKQ=
-X-Received: by 2002:a67:8945:: with SMTP id l66mr12716289vsd.48.1613991659266;
- Mon, 22 Feb 2021 03:00:59 -0800 (PST)
+        Mon, 22 Feb 2021 23:30:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=4Q8G+
+        thhSes14HOGuyk5bkywj7djiYy6NknykskR6dc=; b=XV0qr8Z5pe0s2lV8uad7/
+        ayLRALERfFFCvXuoeAoQ4mq8fUGOFIOJl+v80d7W8q7G/kpuIA33rEjn9ulSieiu
+        uTsbAq08awmtJnZOuFSl+wbqgZzAsnfCny73zV++U/ExBaPdQQbmjxXu05So/m86
+        xQ552Ol6EYVUz7jjWrzgRE=
+Received: from COOL-20201222LC.ccdomain.com (unknown [218.94.48.178])
+        by smtp11 (Coremail) with SMTP id D8CowACHOxztbTRgAmF8Cg--.10S2;
+        Tue, 23 Feb 2021 10:52:38 +0800 (CST)
+From:   dingsenjie@163.com
+To:     krzk@kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dingsenjie <dingsenjie@yulong.com>
+Subject: [PATCH] i2c/busses:remove unneeded "ret" variables in the i2c-s3c2410.c
+Date:   Tue, 23 Feb 2021 10:52:21 +0800
+Message-Id: <20210223025221.18028-1-dingsenjie@163.com>
+X-Mailer: git-send-email 2.21.0.windows.1
 MIME-Version: 1.0
-References: <20210211113309.1.I629b2366a6591410359c7fcf6d385b474b705ca2@changeid>
- <YDKvm1QmdJtJbaN6@pendragon.ideasonboard.com> <CGME20210222053139eucas1p2661f94e218ae4c553e031ffa2e7b0cb3@eucas1p2.samsung.com>
- <CANMq1KALq+C2GD2uRohKpwvkDC05-fHyo=_WoHwnsKNjgcSfEQ@mail.gmail.com> <a804b8eb-3c79-4753-670c-cd5c2dfbc3a4@samsung.com>
-In-Reply-To: <a804b8eb-3c79-4753-670c-cd5c2dfbc3a4@samsung.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Mon, 22 Feb 2021 19:00:48 +0800
-Message-ID: <CANMq1KCUX-8FXb+3WH=dHOU6C0YAMPsMCsH3DLGdiJKdvpHShQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/dsi: Add _NO_ to MIPI_DSI_* flags disabling features
-To:     Andrzej Hajda <a.hajda@samsung.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Jonas Karlman <jonas@kwiboo.se>, linux-arm-msm@vger.kernel.org,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sean Paul <sean@poorly.run>, Xin Ji <xji@analogixsemi.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        freedreno@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: D8CowACHOxztbTRgAmF8Cg--.10S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtFy8uFWrZF13CFWxXry8uFg_yoWfXwc_Kw
+        n2gwn7Gr1qkwn5Jr1UCrW3ZryrKay8WF1kW3ZYv343CF15Zw17WF4DCryfGrZ7Wr43ZFyj
+        9340gFsIyw1xtjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnmjg7UUUUU==
+X-Originating-IP: [218.94.48.178]
+X-CM-SenderInfo: 5glqw25hqmxvi6rwjhhfrp/1tbiThZCyFUDH1OW1AAAsK
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 22, 2021 at 3:21 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
->
-> Hi Nicolas,
->
-> W dniu 22.02.2021 o 06:31, Nicolas Boichat pisze:
-> > On Mon, Feb 22, 2021 at 3:08 AM Laurent Pinchart
-> > <laurent.pinchart@ideasonboard.com> wrote:
-> >> Hi Nicolas,
-> >>
-> >> Thank you for the patch.
-> >>
-> >> On Thu, Feb 11, 2021 at 11:33:55AM +0800, Nicolas Boichat wrote:
-> >>> Many of the DSI flags have names opposite to their actual effects,
-> >>> e.g. MIPI_DSI_MODE_EOT_PACKET means that EoT packets will actually
-> >>> be disabled. Fix this by including _NO_ in the flag names, e.g.
-> >>> MIPI_DSI_MODE_NO_EOT_PACKET.
-> >>>
-> >>> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-> >> This looks good to me, it increases readability.
-> >>
-> >> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>
-> >> Please however see the end of the mail for a comment.
->
->
-> Reviewed-by: Andrzej Hajda <andrzej.hajda@samsung.com>
->
-> And comment at the end.
->
-> >>
-> >>> ---
-> >>> I considered adding _DISABLE_ instead, but that'd make the
-> >>> flag names a big too long.
-> >>>
-> >>> Generated with:
-> >>> flag=MIPI_DSI_MODE_VIDEO_HFP; git grep $flag | cut -f1 -d':' | \
-> >>>    xargs -I{} sed -i -e "s/$flag/MIPI_DSI_MODE_VIDEO_NO_HFP/" {}
-> >>> flag=MIPI_DSI_MODE_VIDEO_HBP; git grep $flag | cut -f1 -d':' | \
-> >>>    xargs -I{} sed -i -e "s/$flag/MIPI_DSI_MODE_VIDEO_NO_HBP/" {}
-> >>> flag=MIPI_DSI_MODE_VIDEO_HSA; git grep $flag | cut -f1 -d':' | \
-> >>>    xargs -I{} sed -i -e "s/$flag/MIPI_DSI_MODE_VIDEO_NO_HSA/" {}
-> >>> flag=MIPI_DSI_MODE_EOT_PACKET; git grep $flag | cut -f1 -d':' | \
-> >>>    xargs -I{} sed -i -e "s/$flag/MIPI_DSI_MODE_NO_EOT_PACKET/" {}
-> >>> (then minor format changes)
-> >> Ever tried coccinelle ? :-)
-> > Fun project for next time ,-)
-> >
-> >>>   drivers/gpu/drm/bridge/adv7511/adv7533.c             | 2 +-
-> >>>   drivers/gpu/drm/bridge/analogix/anx7625.c            | 2 +-
-> >>>   drivers/gpu/drm/bridge/cdns-dsi.c                    | 4 ++--
-> >>>   drivers/gpu/drm/bridge/tc358768.c                    | 2 +-
-> >>>   drivers/gpu/drm/exynos/exynos_drm_dsi.c              | 8 ++++----
-> >>>   drivers/gpu/drm/mcde/mcde_dsi.c                      | 2 +-
-> >>>   drivers/gpu/drm/mediatek/mtk_dsi.c                   | 2 +-
-> >>>   drivers/gpu/drm/msm/dsi/dsi_host.c                   | 8 ++++----
-> >>>   drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-dsi-cm.c                 | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-elida-kd35t133.c         | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-khadas-ts050.c           | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c   | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c   | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-novatek-nt35510.c        | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c   | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-samsung-s6d16d0.c        | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c     | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-samsung-s6e63m0-dsi.c    | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c        | 4 ++--
-> >>>   drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c      | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-simple.c                 | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-sony-acx424akp.c         | 2 +-
-> >>>   drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c     | 2 +-
-> >>>   include/drm/drm_mipi_dsi.h                           | 8 ++++----
-> >>>   25 files changed, 36 insertions(+), 36 deletions(-)
-> >>>
-> >>> []
-> >>> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-> >>> index 360e6377e84b..ba91cf22af51 100644
-> >>> --- a/include/drm/drm_mipi_dsi.h
-> >>> +++ b/include/drm/drm_mipi_dsi.h
-> >>> @@ -119,15 +119,15 @@ struct mipi_dsi_host *of_find_mipi_dsi_host_by_node(struct device_node *node);
-> >>>   /* enable hsync-end packets in vsync-pulse and v-porch area */
-> >>>   #define MIPI_DSI_MODE_VIDEO_HSE              BIT(4)
-> >> We're mixing bits that enable a feature and bits that disable a feature.
-> >> Are these bits defined in the DSI spec, or internal to DRM ? In the
-> >> latter case, would it make sense to standardize on one "polarity" ? That
-> >> would be a more intrusive change in drivers though.
-> > Yes, that'd require auditing every single code path and reverse the
-> > logic as needed. I'm not volunteering for that ,-P (hopefully the
-> > current change is still an improvement).
-> >
-> > Hopefully real DSI experts can comment (Andrzej?), I think the default
-> > are sensible settings?
->
-> Hehe, "real DSI expert" :), ok I've read spec few times :)
->
-> If I remember correctly the spec did not prioritizes these modes, specs
-> are publicly available if somebody want to check it feel free.
->
-> These values were taken from defaults for Exynos DSI, as nobody at the
-> time has better idea.
->
-> We could try to optimize it by looking for example in different dsi
-> hosts defaults, or maybe dsi devices, but I am not sure if it is worth time.
+From: dingsenjie <dingsenjie@yulong.com>
 
-Little git grep experiment:
-# git grep compatible -- drivers/gpu/drm/panel | wc -l
-219 panels in total
+remove unneeded "ret" variables in the i2c-s3c2410.c.
 
-# sed -n 's/.*\(MIPI_DSI[^ \t]*\).*/\1/p' include/drm/drm_mipi_dsi.h |
-xargs -I{} sh -c 'echo -n {}:; git grep {} | wc -l'
-MIPI_DSI_MODE_VIDEO:68
-MIPI_DSI_MODE_VIDEO_BURST:23
-MIPI_DSI_MODE_VIDEO_SYNC_PULSE:20
-MIPI_DSI_MODE_VIDEO_AUTO_VERT:1
-MIPI_DSI_MODE_VIDEO_HSE:6
-MIPI_DSI_MODE_VIDEO_NO_HFP:1
-MIPI_DSI_MODE_VIDEO_NO_HBP:1
-MIPI_DSI_MODE_VIDEO_NO_HSA:1
-MIPI_DSI_MODE_VSYNC_FLUSH:1
-MIPI_DSI_MODE_NO_EOT_PACKET:16
-MIPI_DSI_CLOCK_NON_CONTINUOUS:19
-MIPI_DSI_MODE_LPM:54
+Signed-off-by: dingsenjie <dingsenjie@yulong.com>
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-At least, there is no regret flipping the polarity for
-MIPI_DSI_MODE_VIDEO_NO_HFP/HBP/HSA.
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 3eafe0e..be8f2da 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -388,7 +388,6 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
+ {
+ 	unsigned long tmp;
+ 	unsigned char byte;
+-	int ret = 0;
+ 
+ 	switch (i2c->state) {
+ 
+@@ -548,7 +547,7 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
+ 	tmp &= ~S3C2410_IICCON_IRQPEND;
+ 	writel(tmp, i2c->regs + S3C2410_IICCON);
+  out:
+-	return ret;
++	return 0;
+ }
+ 
+ /*
+-- 
+1.9.1
 
-I guess we could consider flipping the default for MIPI_DSI_MODE_VIDEO
-and MIPI_DSI_MODE_LPM (some drivers set the flags in code, instead of
-a structure, so I think MIPI_DSI_MODE_VIDEO is almost always set).
 
-Still not volunteering ,-P
-
->
-> This solution is good for me.
->
->
-> Regards
->
-> Andrzej
->
->
-> >
-> >
-> >>>   /* disable hfront-porch area */
-> >>> -#define MIPI_DSI_MODE_VIDEO_HFP              BIT(5)
-> >>> +#define MIPI_DSI_MODE_VIDEO_NO_HFP   BIT(5)
-> >>>   /* disable hback-porch area */
-> >>> -#define MIPI_DSI_MODE_VIDEO_HBP              BIT(6)
-> >>> +#define MIPI_DSI_MODE_VIDEO_NO_HBP   BIT(6)
-> >>>   /* disable hsync-active area */
-> >>> -#define MIPI_DSI_MODE_VIDEO_HSA              BIT(7)
-> >>> +#define MIPI_DSI_MODE_VIDEO_NO_HSA   BIT(7)
-> >>>   /* flush display FIFO on vsync pulse */
-> >>>   #define MIPI_DSI_MODE_VSYNC_FLUSH    BIT(8)
-> >>>   /* disable EoT packets in HS mode */
-> >>> -#define MIPI_DSI_MODE_EOT_PACKET     BIT(9)
-> >>> +#define MIPI_DSI_MODE_NO_EOT_PACKET  BIT(9)
-> >>>   /* device supports non-continuous clock behavior (DSI spec 5.6.1) */
-> >>>   #define MIPI_DSI_CLOCK_NON_CONTINUOUS        BIT(10)
-> >>>   /* transmit data in low power */
-> >> --
-> >> Regards,
-> >>
-> >> Laurent Pinchart
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://protect2.fireeye.com/v1/url?k=e6f0d6d2-b96befef-e6f15d9d-0cc47a31309a-f4be6a0935319c2d&q=1&e=5e175166-1972-4f28-a483-e9a65c07e25f&u=https%3A%2F%2Flists.freedesktop.org%2Fmailman%2Flistinfo%2Fdri-devel
-> >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
