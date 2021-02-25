@@ -7,35 +7,34 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A796CC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Feb 2021 20:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE332C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Feb 2021 03:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59CC864E6C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Feb 2021 20:32:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA14664E83
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Feb 2021 03:01:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235182AbhBXUca (ORCPT
+        id S236915AbhBYDBp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 24 Feb 2021 15:32:30 -0500
-Received: from labrats.qualcomm.com ([199.106.110.90]:13345 "EHLO
+        Wed, 24 Feb 2021 22:01:45 -0500
+Received: from labrats.qualcomm.com ([199.106.110.90]:22187 "EHLO
         labrats.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235366AbhBXUc2 (ORCPT
+        with ESMTP id S236898AbhBYDBm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 24 Feb 2021 15:32:28 -0500
-X-Greylist: delayed 449 seconds by postgrey-1.27 at vger.kernel.org; Wed, 24 Feb 2021 15:32:26 EST
-IronPort-SDR: 4bb+10uSXxtFnu/Ka7YcUHhS+bmo0U41dB8hiCqksSXt4jf/0HQ6NaXiShj4YFcxTButUo5XwP
- ziIxsS3ulxW51Y//uVysvelT3M+TVZvwHAvkAVRwjWzYvLeQ+RsLLeDldUhQ2F8D0DZ/1Ohwjv
- 8pII0nD0hTylUrrCDo+fas+vyuFs5oabnYeaevJyK2soosbujdjqM2/xPnzDj/IfBHnWybPzWv
- vToxj88K1K4ExQStH5tYTW2Fyf35jzFl4+Ice0YCwv5rxlFBbl15PhEcoLPMfN2BGE2+nDSYN4
- JdE=
+        Wed, 24 Feb 2021 22:01:42 -0500
+IronPort-SDR: iCue1bsOcFzn/oGot/wBQ2kNojRivgaEHKmuR3f3qA2d7SHL2G+ZOLFGhKXERt+A5CX0jX3D/t
+ VoBq1Ohq5s87Oe5X/qxbXaqjIj+icpKhbUq0wWvIrS3YVnWReYQOkEGQfTOhClI5Ahgp656zIp
+ cIzxmlQuWnlZFFYOUtWKdZSsYq1ypQvYi5IPtEiJRSx9cG7JPiM1I/mLNGkRq6K+vbiXjBdBk+
+ uozSqWUPkENJhDU4MzDLrCcMH2fxPdMQSPuCk1TkQFvetII7SU9BNUSI8mYcoIZ5T0W4XM1ByT
+ jCM=
 X-IronPort-AV: E=Sophos;i="5.81,203,1610438400"; 
-   d="scan'208";a="29674732"
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by labrats.qualcomm.com with ESMTP; 24 Feb 2021 12:24:15 -0800
+   d="scan'208";a="47789822"
+Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
+  by labrats.qualcomm.com with ESMTP; 24 Feb 2021 19:00:41 -0800
 X-QCInternal: smtphost
 Received: from stor-presley.qualcomm.com ([192.168.140.85])
-  by ironmsg05-sd.qualcomm.com with ESMTP; 24 Feb 2021 12:24:13 -0800
+  by ironmsg04-sd.qualcomm.com with ESMTP; 24 Feb 2021 19:00:37 -0800
 Received: by stor-presley.qualcomm.com (Postfix, from userid 92687)
-        id AC595219CE; Wed, 24 Feb 2021 12:24:13 -0800 (PST)
+        id 11308219F0; Wed, 24 Feb 2021 19:00:36 -0800 (PST)
 From:   Asutosh Das <asutoshd@codeaurora.org>
 To:     cang@codeaurora.org, martin.petersen@oracle.com,
         adrian.hunter@intel.com, linux-scsi@vger.kernel.org
@@ -54,7 +53,6 @@ Cc:     Asutosh Das <asutoshd@codeaurora.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Kiwoong Kim <kwmad.kim@samsung.com>,
         Bean Huo <beanhuo@micron.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
         Lee Jones <lee.jones@linaro.org>,
         Wei Yongjun <weiyongjun1@huawei.com>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
@@ -66,14 +64,14 @@ Cc:     Asutosh Das <asutoshd@codeaurora.org>,
         EXYNOS ARM ARCHITECTURES),
         linux-mediatek@lists.infradead.org (moderated list:UNIVERSAL FLASH
         STORAGE HOST CONTROLLER DRIVER...)
-Subject: [PATCH v6 1/2] scsi: ufs: Enable power management for wlun
-Date:   Wed, 24 Feb 2021 12:23:04 -0800
-Message-Id: <b87d3cf5b9f1439522c4afc7aac5b1669a69d253.1614198015.git.asutoshd@codeaurora.org>
+Subject: [PATCH v7 1/2] scsi: ufs: Enable power management for wlun
+Date:   Wed, 24 Feb 2021 19:00:14 -0800
+Message-Id: <1e223f7beb74ca1ba5b35ce211b0079a27d5ff12.1614221843.git.asutoshd@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1614198015.git.asutoshd@codeaurora.org>
-References: <cover.1614198015.git.asutoshd@codeaurora.org>
-In-Reply-To: <cover.1614198015.git.asutoshd@codeaurora.org>
-References: <cover.1614198015.git.asutoshd@codeaurora.org>
+In-Reply-To: <cover.1614221843.git.asutoshd@codeaurora.org>
+References: <cover.1614221843.git.asutoshd@codeaurora.org>
+In-Reply-To: <cover.1614221843.git.asutoshd@codeaurora.org>
+References: <cover.1614221843.git.asutoshd@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -127,10 +125,10 @@ Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
  drivers/scsi/ufs/ufs-mediatek.c    |   2 +
  drivers/scsi/ufs/ufs-qcom.c        |   2 +
  drivers/scsi/ufs/ufshcd-pci.c      |  26 +-
- drivers/scsi/ufs/ufshcd.c          | 530 ++++++++++++++++++++++++++++++-------
+ drivers/scsi/ufs/ufshcd.c          | 532 ++++++++++++++++++++++++++++++-------
  drivers/scsi/ufs/ufshcd.h          |   7 +
  include/trace/events/ufs.h         |  20 ++
- 10 files changed, 474 insertions(+), 121 deletions(-)
+ 10 files changed, 476 insertions(+), 121 deletions(-)
 
 diff --git a/drivers/scsi/ufs/cdns-pltfrm.c b/drivers/scsi/ufs/cdns-pltfrm.c
 index 149391f..3e70c23 100644
@@ -256,7 +254,7 @@ index fadd566..fef1ee4 100644
  	SET_RUNTIME_PM_OPS(ufshcd_pci_runtime_suspend,
  			   ufshcd_pci_runtime_resume,
 diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 45624c7..9ff465c 100644
+index 45624c7..f5c12fe 100644
 --- a/drivers/scsi/ufs/ufshcd.c
 +++ b/drivers/scsi/ufs/ufshcd.c
 @@ -16,6 +16,7 @@
@@ -545,7 +543,7 @@ index 45624c7..9ff465c 100644
  		} else {
  			/* make sure that auto bkops is disabled */
  			ufshcd_disable_auto_bkops(hba);
-@@ -8746,10 +8783,206 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+@@ -8746,10 +8783,208 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
  
  		if (!hba->dev_info.b_rpm_dev_flush_capable) {
  			ret = ufshcd_set_dev_pwr_mode(hba, req_dev_pwr_mode);
@@ -703,6 +701,8 @@ index 45624c7..9ff465c 100644
 +	struct ufs_hba *hba;
 +
 +	hba = shost_priv(sdev->host);
++	/* Turn on everything while shutting down */
++	scsi_autopm_get_sync(sdev);
 +	scsi_device_quiesce(sdev);
 +	shost_for_each_device(sdev, hba->host) {
 +		if (sdev == hba->sdev_ufs_device)
@@ -754,7 +754,7 @@ index 45624c7..9ff465c 100644
  
  	/*
  	 * In the case of DeepSleep, the device is expected to remain powered
-@@ -8758,9 +8991,8 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+@@ -8758,9 +8993,8 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
  	check_for_bkops = !ufshcd_is_ufs_dev_deepsleep(hba);
  	ret = ufshcd_link_state_transition(hba, req_link_state, check_for_bkops);
  	if (ret)
@@ -765,7 +765,7 @@ index 45624c7..9ff465c 100644
  	/*
  	 * Call vendor specific suspend callback. As these callbacks may access
  	 * vendor specific host controller register space call them before the
-@@ -8790,7 +9022,6 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+@@ -8790,7 +9024,6 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
  	goto out;
  
  set_link_active:
@@ -773,7 +773,7 @@ index 45624c7..9ff465c 100644
  	/*
  	 * Device hardware reset is required to exit DeepSleep. Also, for
  	 * DeepSleep, the link is off so host reset and restore will be done
-@@ -8804,28 +9035,15 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+@@ -8804,28 +9037,15 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
  		ufshcd_set_link_active(hba);
  	else if (ufshcd_is_link_off(hba))
  		ufshcd_host_reset_and_restore(hba);
@@ -802,7 +802,7 @@ index 45624c7..9ff465c 100644
  	hba->pm_op_in_progress = 0;
  
  	if (ret)
-@@ -8846,10 +9064,8 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+@@ -8846,10 +9066,8 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
  static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
  {
  	int ret;
@@ -813,7 +813,7 @@ index 45624c7..9ff465c 100644
  
  	ufshcd_hba_vreg_set_hpm(hba);
  	ret = ufshcd_vreg_set_hpm(hba);
-@@ -8901,43 +9117,14 @@ static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+@@ -8901,43 +9119,14 @@ static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
  			goto vendor_suspend;
  	}
  
@@ -857,7 +857,7 @@ index 45624c7..9ff465c 100644
  vendor_suspend:
  	ufshcd_vops_suspend(hba, pm_op);
  disable_irq_and_vops_clks:
-@@ -9477,15 +9664,164 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+@@ -9477,15 +9666,164 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
  }
  EXPORT_SYMBOL_GPL(ufshcd_init);
  
