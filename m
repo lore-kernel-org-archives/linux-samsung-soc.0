@@ -2,80 +2,95 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D704C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Feb 2021 10:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7E3C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Feb 2021 10:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BC9A64DE0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Feb 2021 10:30:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 449B864F13
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Feb 2021 10:37:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230140AbhBZKaW (ORCPT
+        id S231153AbhBZKg4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 26 Feb 2021 05:30:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47184 "EHLO mail.kernel.org"
+        Fri, 26 Feb 2021 05:36:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230139AbhBZKaV (ORCPT
+        id S230209AbhBZKew (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 26 Feb 2021 05:30:21 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B41F964EE2;
-        Fri, 26 Feb 2021 10:29:36 +0000 (UTC)
+        Fri, 26 Feb 2021 05:34:52 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DBC2964EF3;
+        Fri, 26 Feb 2021 10:34:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614335377;
-        bh=YNWSUpBBEtxB4i+CJpuo5l2fb40VGQVshhznjKLxP/8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=o5YM32uniY8JGmhdU2mfkWTfNTmgARB+SFtM4x+jSOvD++I4WFNm2UbirQ8aFyOpG
-         bwoZgpv6LOq1mi1z/gIDVTyj3eZ6j/WLKoyK/la5rUIlPGXT048TC9X1GQVSkQ4d0v
-         ULWHuf8nEsc4NwgepmYgGO+IJPJTP0MYztgVd9BeE0vkaDUkCu2wSx+rntN4QOZOct
-         Q5CY0wxd4DU1+K51NkxrF+tlk+5bZKeetn/ANusAnmCmIa1MIYT1jUQ5bI0j6sP9xR
-         Kr8oz1Psy+9Smpd6vBYtdnY+YAQTvCM9HrduwgxaH9PeWBbcOEjVqRb1w9HZfSzbuU
-         3l/TDreckHeXQ==
-Received: by mail-ej1-f44.google.com with SMTP id g5so13957637ejt.2;
-        Fri, 26 Feb 2021 02:29:36 -0800 (PST)
-X-Gm-Message-State: AOAM5312LpBx7tbaIBJK5BRc0Ibf/q8RLedSn9bjWqxJPT9gQCPeVjiu
-        6rBq0USRs9HzAM5DF4t989cJkYAd1LdaO4b1R5A=
-X-Google-Smtp-Source: ABdhPJw6j1MeqTqnvIznLmkp9C+b/BZM5vgzxywTeZDDKXiREVY8JIiGwzwmpM/kNtkC39EdkWsuS/sfffdaO3zcHNU=
-X-Received: by 2002:a17:906:a896:: with SMTP id ha22mr2522464ejb.503.1614335375164;
- Fri, 26 Feb 2021 02:29:35 -0800 (PST)
+        s=k20201202; t=1614335650;
+        bh=SIuXvoyqUYnr8BUATfL804vOgzeqKEzaYbFmE6A/AGo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=A77r2pQdIXPQLrVw961zech2JCWrRQEFPnXK1ileQ14G59V8oD4zrgn2NLW9kw4kB
+         hbvrmNVAiP1kALZVg/ClUDcZ4EC6HqTuCnnCn4SVh29X9my4hruff29O+ia0n7+1hW
+         qiewnpk9OrfMdSFJ9LJ5NWMYoH4bMjo/JvRCVhExp5RbZdltaSxdmT8u88G5WTxIHT
+         QmKXdtJrjjUiPaAah5o2jt/ucCbyhz1TlmeIE1pTCw5zxQuAGfEmAftPSWTI3/rIiV
+         Go5Q9YI0L2gzmKNaWu7UVtUNHVnLOLNe9x4KDLXcljSVemta8PrxV4/8vnxUJW2z9U
+         pAP4t7dzIrAhA==
+Date:   Fri, 26 Feb 2021 11:34:07 +0100
+From:   Wolfram Sang <wsa@kernel.org>
+To:     =?utf-8?Q?M=C3=A5rten?= Lindahl <marten.lindahl@axis.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>, kernel@axis.com,
+        =?utf-8?Q?M=C3=A5rten?= Lindahl <martenli@axis.com>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] i2c: exynos5: Preserve high speed master code
+Message-ID: <20210226103407.GF1014@ninjato>
+References: <20210216222538.6427-1-marten.lindahl@axis.com>
 MIME-Version: 1.0
-References: <1614302920-19505-1-git-send-email-yang.lee@linux.alibaba.com>
-In-Reply-To: <1614302920-19505-1-git-send-email-yang.lee@linux.alibaba.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 26 Feb 2021 11:29:23 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPf9kqOSng5XULJ8qTADfk3VB273dTqY2qoUA3b+MUPJ+g@mail.gmail.com>
-Message-ID: <CAJKOXPf9kqOSng5XULJ8qTADfk3VB273dTqY2qoUA3b+MUPJ+g@mail.gmail.com>
-Subject: Re: [PATCH v2] media: exynos4-is: add missing call to of_node_put()
-To:     Yang Li <yang.lee@linux.alibaba.com>
-Cc:     mchehab@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GV0iVqYguTV4Q9ER"
+Content-Disposition: inline
+In-Reply-To: <20210216222538.6427-1-marten.lindahl@axis.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 26 Feb 2021 at 02:28, Yang Li <yang.lee@linux.alibaba.com> wrote:
->
-> In one of the error paths of the for_each_child_of_node() loop in
-> fimc_md_parse_one_endpoint, add missing call to of_node_put().
->
-> Fix the following coccicheck warning:
-> ./drivers/media/platform/exynos4-is/media-dev.c:489:1-23: WARNING:
-> Function "for_each_child_of_node" should have of_node_put() before
-> return around line 492.
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
 
-You ignored the comment for this. Anyone can run Coccinelle and it
-does not equal "Reported-by" credit. Reported by is for reported bugs,
-but I asked three times to you guys to share the reports. This is not
-an open way of working.
+--GV0iVqYguTV4Q9ER
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This should be removed.
+On Tue, Feb 16, 2021 at 11:25:38PM +0100, M=C3=A5rten Lindahl wrote:
+> From: M=C3=A5rten Lindahl <martenli@axis.com>
+>=20
+> When the driver starts to send a message with the MASTER_ID field
+> set (high speed), the whole I2C_ADDR register is overwritten including
+> MASTER_ID as the SLV_ADDR_MAS field is set.
+>=20
+> This patch preserves already written fields in I2C_ADDR when writing
+> SLV_ADDR_MAS.
+>=20
+> Signed-off-by: M=C3=A5rten Lindahl <martenli@axis.com>
 
-Best regards,
-Krzysztof
+Looks good. Is there a Fixes-tag we could apply?
+
+
+--GV0iVqYguTV4Q9ER
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmA4zp8ACgkQFA3kzBSg
+KbauHA/+NmyLBf76UbCWT/9RhQNRyWbVeXT6kyynoPUq9Y4RwM9nCnEK++X2gmyB
+8X64UrUUBImMu9zmWS4rKcqYP2GN7dxEyfxuhTALpcC5kvA3FvukIgmtT+8ZsZID
+ZkO/zF4z3jm8BMC0hHE8DHah60JQF4o2opItiFEaz7hN9na83dWzyF0OM15h6xh6
+k39IkoMgN2ZgzwahqTGA5ohUnakuD4qQdbGDudLyR3+J4KF53WhmTtX8xk3WTr6I
+FtWFxr0KjidHMed4tXYJt09vUacjpx4bPSTRe6AcHH8y3uRkzS2Q5OCinytDzN0y
+5/yXFUPZ63cDzp9HA/CB0qgSCDrRprpabjlD+sTSC5NWQNqMh7MlgEdVKJJS9Dy7
+0QEzi1BUGP5BO6fOZgdti8PAKH+8sUkFJ2Yd+jsxJmG2Z+cutwwN6irNXb1GK8iI
+XHss4SYNua5XzDrkuNzOO6Mg/RQ/1wUUJnXrDiDPpX8c394olae4AiSRk4GZJrFf
+vys3dBz3MxuAaRNFkNnWg9L3mrfiVagat8Acei3lmlTAlwFMgeIkNh27peFkc/tY
+rE/U8uLf4nxOuQcwhw00/RILz4kHNOn4RvIeBVV7wi6B1X4lOeNPBVQKi2Z5YWBR
+MsfZcdeydPYjjvTT9UplaMy3HEnUWfOzhALD2Sb8ioFHYtV56DU=
+=LEVv
+-----END PGP SIGNATURE-----
+
+--GV0iVqYguTV4Q9ER--
