@@ -2,201 +2,1141 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED99C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Mar 2021 09:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE46EC433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Mar 2021 13:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D17764E01
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Mar 2021 09:04:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87FA864DA1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Mar 2021 13:24:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233747AbhCAJBz (ORCPT
+        id S235640AbhCANYQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 1 Mar 2021 04:01:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53204 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233606AbhCAJA2 (ORCPT
+        Mon, 1 Mar 2021 08:24:16 -0500
+Received: from mga18.intel.com ([134.134.136.126]:4073 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235577AbhCANYJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 1 Mar 2021 04:00:28 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25026C061788
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Mar 2021 00:59:48 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id m11so17610858lji.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Mar 2021 00:59:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AYs79IPnRt3qtzNnShKWZ7vyowWc2VUelHvdooVHnZg=;
-        b=kcf6kcitYZpg70CypoUp8KXILwBgfW62DpbNjWslqlp4qw62fI7tzmXjPZQCmQxMc8
-         y7E4AtX2Fmm4bNLcfXcEPW4KygtdDIAQoh7/Gppn2wuQW/GKYs0Umn4Wm46XccGHSmBe
-         jy7uA45XkN8GMGoDoJDciHZsVQhSFIR5XDAoh0rW972s2s04adtjid+35nHXnoln8MA8
-         FxCO26S/5xLKeLnx947E7nXZn0Rnap1zKbmn2OkkQ+VOi8uxBgu0gE1sSxomW3gthjJM
-         ufu7iyDDX3VZgWZtHNc17YGxcgin7Xk21+hnZeVkHrui+fqknKWQ+8YcQvAzXeWUB5vl
-         a9WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AYs79IPnRt3qtzNnShKWZ7vyowWc2VUelHvdooVHnZg=;
-        b=WF+VLew4HH+x+ccurte62UC+BcCqVIQPMCWbDEr/wOku4O1QoTNGKQKRXtzEsuXfgj
-         s03VcDDitQVqrioiAgZf/z5a9STz1OSN4O0QJDXLjhSPqvBvn/1N5pZKZ+mlw/mdRViD
-         v7cYfp0idkeSfuqEf8jcJuhEhx8UzvfB0ysGWLiZlYo/5/vdvnA/7Y57QW7eHQuUz0jb
-         /w4ytDC/PqH16S9VoZFlK+vSXjzCFvGz9sBMq1mkvErq4fTvl0taLZecZjqi2SoYRUDX
-         GceSF6kM15Tm/inH3GlonjM0tJa15gcEjYIrX3BgrC4NRqh8bCssi5SvvvfSFy+JbxrC
-         M2Lg==
-X-Gm-Message-State: AOAM530IDSfACyf1xQ8ceN9EXJUwNNKAG+JNejNoXscBLDtntZ5/Z2rm
-        jCfWUclxh14yOPbOcJa3+H7xIcubp1/N0SlTzXm8/A==
-X-Google-Smtp-Source: ABdhPJyj3pw+C0NXHPjoJdDWHXn0vLK/WBMS4zWE5j9GGEZHyMLzxq+OeogebxlDuBb2zgJuFq1OMvgpJB8dxst6o6c=
-X-Received: by 2002:a2e:9754:: with SMTP id f20mr6463797ljj.200.1614589186573;
- Mon, 01 Mar 2021 00:59:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20210211113309.1.I629b2366a6591410359c7fcf6d385b474b705ca2@changeid>
-In-Reply-To: <20210211113309.1.I629b2366a6591410359c7fcf6d385b474b705ca2@changeid>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 1 Mar 2021 09:59:35 +0100
-Message-ID: <CACRpkdbQa3BZwgtp3=061cu+y+4qkMqtXQhXH_VuHB3KcLyDCA@mail.gmail.com>
-Subject: Re: [PATCH] drm/dsi: Add _NO_ to MIPI_DSI_* flags disabling features
-To:     Nicolas Boichat <drinkcat@chromium.org>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
+        Mon, 1 Mar 2021 08:24:09 -0500
+IronPort-SDR: Q3IvjkHEd0GYgv3IH+Def/zCfczyemQYaFHx/G6fguPfLnMHyJG+KbY+UH52O5FgcLAYwq8YhE
+ QPv5sZCL+TjQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="174094049"
+X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
+   d="scan'208";a="174094049"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 05:23:21 -0800
+IronPort-SDR: nLstYPW9NnyO6DOBUUdLArm9JkqDMehtASrq1rDqk/7PMiJsioFoIDPxGmyZlOTjwAMbpMnaGm
+ niTM9BQ0qgyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,215,1610438400"; 
+   d="scan'208";a="585492068"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.76]) ([10.237.72.76])
+  by orsmga005.jf.intel.com with ESMTP; 01 Mar 2021 05:23:14 -0800
+Subject: Re: [PATCH v8 1/2] scsi: ufs: Enable power management for wlun
+To:     Asutosh Das <asutoshd@codeaurora.org>, cang@codeaurora.org,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>, Sean Paul <sean@poorly.run>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Xin Ji <xji@analogixsemi.com>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Kiwoong Kim <kwmad.kim@samsung.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Satya Tangirala <satyat@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
+        <linux-mediatek@lists.infradead.org>
+References: <cover.1614295674.git.asutoshd@codeaurora.org>
+ <c861385023f8592a63e3edf8119af89511741c9a.1614295674.git.asutoshd@codeaurora.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <e10cd03d-12cd-3d73-b9ed-a542e0b2b83c@intel.com>
+Date:   Mon, 1 Mar 2021 15:23:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
+MIME-Version: 1.0
+In-Reply-To: <c861385023f8592a63e3edf8119af89511741c9a.1614295674.git.asutoshd@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Feb 11, 2021 at 4:34 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
+Hi
 
-> Many of the DSI flags have names opposite to their actual effects,
-> e.g. MIPI_DSI_MODE_EOT_PACKET means that EoT packets will actually
-> be disabled. Fix this by including _NO_ in the flag names, e.g.
-> MIPI_DSI_MODE_NO_EOT_PACKET.
+A couple of minor things, but also a potential issue with when link state
+transitions are done.  Please see comments below.
 
-Unless someone like me interpreted it literally...
+On 26/02/21 1:37 am, Asutosh Das wrote:
+> During runtime-suspend of ufs host, the scsi devices are
+> already suspended and so are the queues associated with them.
+> But the ufs host sends SSU to wlun during its runtime-suspend.
+> During the process blk_queue_enter checks if the queue is not in
+> suspended state. If so, it waits for the queue to resume, and never
+> comes out of it.
+> The commit
+> (d55d15a33: scsi: block: Do not accept any requests while suspended)
+> adds the check if the queue is in suspended state in blk_queue_enter().
+> 
+> Call trace:
+>  __switch_to+0x174/0x2c4
+>  __schedule+0x478/0x764
+>  schedule+0x9c/0xe0
+>  blk_queue_enter+0x158/0x228
+>  blk_mq_alloc_request+0x40/0xa4
+>  blk_get_request+0x2c/0x70
+>  __scsi_execute+0x60/0x1c4
+>  ufshcd_set_dev_pwr_mode+0x124/0x1e4
+>  ufshcd_suspend+0x208/0x83c
+>  ufshcd_runtime_suspend+0x40/0x154
+>  ufshcd_pltfrm_runtime_suspend+0x14/0x20
+>  pm_generic_runtime_suspend+0x28/0x3c
+>  __rpm_callback+0x80/0x2a4
+>  rpm_suspend+0x308/0x614
+>  rpm_idle+0x158/0x228
+>  pm_runtime_work+0x84/0xac
+>  process_one_work+0x1f0/0x470
+>  worker_thread+0x26c/0x4c8
+>  kthread+0x13c/0x320
+>  ret_from_fork+0x10/0x18
+> 
+> Fix this by registering ufs device wlun as a scsi driver and
+> registering it for block runtime-pm. Also make this as a
+> supplier for all other luns. That way, this device wlun
+> suspends after all the consumers and resumes after
+> hba resumes.
+> 
+> Co-developed-by: Can Guo <cang@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/cdns-pltfrm.c     |   2 +
+>  drivers/scsi/ufs/tc-dwc-g210-pci.c |   2 +
+>  drivers/scsi/ufs/ufs-exynos.c      |   2 +
+>  drivers/scsi/ufs/ufs-hisi.c        |   2 +
+>  drivers/scsi/ufs/ufs-mediatek.c    |   2 +
+>  drivers/scsi/ufs/ufs-qcom.c        |   2 +
+>  drivers/scsi/ufs/ufshcd-pci.c      |  26 +-
+>  drivers/scsi/ufs/ufshcd.c          | 540 ++++++++++++++++++++++++++++++-------
+>  drivers/scsi/ufs/ufshcd.h          |   7 +
+>  include/trace/events/ufs.h         |  20 ++
+>  10 files changed, 483 insertions(+), 122 deletions(-)
+> 
+> diff --git a/drivers/scsi/ufs/cdns-pltfrm.c b/drivers/scsi/ufs/cdns-pltfrm.c
+> index 149391f..3e70c23 100644
+> --- a/drivers/scsi/ufs/cdns-pltfrm.c
+> +++ b/drivers/scsi/ufs/cdns-pltfrm.c
+> @@ -319,6 +319,8 @@ static const struct dev_pm_ops cdns_ufs_dev_pm_ops = {
+>  	.runtime_suspend = ufshcd_pltfrm_runtime_suspend,
+>  	.runtime_resume  = ufshcd_pltfrm_runtime_resume,
+>  	.runtime_idle    = ufshcd_pltfrm_runtime_idle,
+> +	.prepare	 = ufshcd_suspend_prepare,
+> +	.complete	= ufshcd_resume_complete,
+>  };
+>  
+>  static struct platform_driver cdns_ufs_pltfrm_driver = {
+> diff --git a/drivers/scsi/ufs/tc-dwc-g210-pci.c b/drivers/scsi/ufs/tc-dwc-g210-pci.c
+> index 67a6a61..b01db12 100644
+> --- a/drivers/scsi/ufs/tc-dwc-g210-pci.c
+> +++ b/drivers/scsi/ufs/tc-dwc-g210-pci.c
+> @@ -148,6 +148,8 @@ static const struct dev_pm_ops tc_dwc_g210_pci_pm_ops = {
+>  	.runtime_suspend = tc_dwc_g210_pci_runtime_suspend,
+>  	.runtime_resume  = tc_dwc_g210_pci_runtime_resume,
+>  	.runtime_idle    = tc_dwc_g210_pci_runtime_idle,
+> +	.prepare	 = ufshcd_suspend_prepare,
+> +	.complete	= ufshcd_resume_complete,
+>  };
+>  
+>  static const struct pci_device_id tc_dwc_g210_pci_tbl[] = {
+> diff --git a/drivers/scsi/ufs/ufs-exynos.c b/drivers/scsi/ufs/ufs-exynos.c
+> index 267943a1..45c0b02 100644
+> --- a/drivers/scsi/ufs/ufs-exynos.c
+> +++ b/drivers/scsi/ufs/ufs-exynos.c
+> @@ -1268,6 +1268,8 @@ static const struct dev_pm_ops exynos_ufs_pm_ops = {
+>  	.runtime_suspend = ufshcd_pltfrm_runtime_suspend,
+>  	.runtime_resume  = ufshcd_pltfrm_runtime_resume,
+>  	.runtime_idle    = ufshcd_pltfrm_runtime_idle,
+> +	.prepare	 = ufshcd_suspend_prepare,
+> +	.complete	= ufshcd_resume_complete,
+>  };
+>  
+>  static struct platform_driver exynos_ufs_pltform = {
+> diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
+> index 0aa5813..d463b44 100644
+> --- a/drivers/scsi/ufs/ufs-hisi.c
+> +++ b/drivers/scsi/ufs/ufs-hisi.c
+> @@ -574,6 +574,8 @@ static const struct dev_pm_ops ufs_hisi_pm_ops = {
+>  	.runtime_suspend = ufshcd_pltfrm_runtime_suspend,
+>  	.runtime_resume  = ufshcd_pltfrm_runtime_resume,
+>  	.runtime_idle    = ufshcd_pltfrm_runtime_idle,
+> +	.prepare	 = ufshcd_suspend_prepare,
+> +	.complete	= ufshcd_resume_complete,
+>  };
+>  
+>  static struct platform_driver ufs_hisi_pltform = {
+> diff --git a/drivers/scsi/ufs/ufs-mediatek.c b/drivers/scsi/ufs/ufs-mediatek.c
+> index c55202b..df1eabb 100644
+> --- a/drivers/scsi/ufs/ufs-mediatek.c
+> +++ b/drivers/scsi/ufs/ufs-mediatek.c
+> @@ -1097,6 +1097,8 @@ static const struct dev_pm_ops ufs_mtk_pm_ops = {
+>  	.runtime_suspend = ufshcd_pltfrm_runtime_suspend,
+>  	.runtime_resume  = ufshcd_pltfrm_runtime_resume,
+>  	.runtime_idle    = ufshcd_pltfrm_runtime_idle,
+> +	.prepare	 = ufshcd_suspend_prepare,
+> +	.complete	= ufshcd_resume_complete,
+>  };
+>  
+>  static struct platform_driver ufs_mtk_pltform = {
+> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+> index f97d7b0..9aa098a 100644
+> --- a/drivers/scsi/ufs/ufs-qcom.c
+> +++ b/drivers/scsi/ufs/ufs-qcom.c
+> @@ -1546,6 +1546,8 @@ static const struct dev_pm_ops ufs_qcom_pm_ops = {
+>  	.runtime_suspend = ufshcd_pltfrm_runtime_suspend,
+>  	.runtime_resume  = ufshcd_pltfrm_runtime_resume,
+>  	.runtime_idle    = ufshcd_pltfrm_runtime_idle,
+> +	.prepare	 = ufshcd_suspend_prepare,
+> +	.complete	= ufshcd_resume_complete,
+>  };
+>  
+>  static struct platform_driver ufs_qcom_pltform = {
+> diff --git a/drivers/scsi/ufs/ufshcd-pci.c b/drivers/scsi/ufs/ufshcd-pci.c
+> index fadd566..fef1ee4 100644
+> --- a/drivers/scsi/ufs/ufshcd-pci.c
+> +++ b/drivers/scsi/ufs/ufshcd-pci.c
+> @@ -247,29 +247,6 @@ static int ufshcd_pci_resume(struct device *dev)
+>  	return ufshcd_system_resume(dev_get_drvdata(dev));
+>  }
+>  
+> -/**
+> - * ufshcd_pci_poweroff - suspend-to-disk poweroff function
+> - * @dev: pointer to PCI device handle
+> - *
+> - * Returns 0 if successful
+> - * Returns non-zero otherwise
+> - */
+> -static int ufshcd_pci_poweroff(struct device *dev)
+> -{
+> -	struct ufs_hba *hba = dev_get_drvdata(dev);
+> -	int spm_lvl = hba->spm_lvl;
+> -	int ret;
+> -
+> -	/*
+> -	 * For poweroff we need to set the UFS device to PowerDown mode.
+> -	 * Force spm_lvl to ensure that.
+> -	 */
+> -	hba->spm_lvl = 5;
+> -	ret = ufshcd_system_suspend(hba);
+> -	hba->spm_lvl = spm_lvl;
+> -	return ret;
+> -}
+> -
+>  #endif /* !CONFIG_PM_SLEEP */
+>  
+>  #ifdef CONFIG_PM
+> @@ -370,8 +347,9 @@ static const struct dev_pm_ops ufshcd_pci_pm_ops = {
+>  	.resume		= ufshcd_pci_resume,
+>  	.freeze		= ufshcd_pci_suspend,
+>  	.thaw		= ufshcd_pci_resume,
+> -	.poweroff	= ufshcd_pci_poweroff,
+>  	.restore	= ufshcd_pci_resume,
 
-Like in these:
+Can use SET_SYSTEM_SLEEP_PM_OPS(ufshcd_pci_suspend, ufshcd_pci_resume) for
+the ones above.
 
->  drivers/gpu/drm/mcde/mcde_dsi.c                      | 2 +-
->  drivers/gpu/drm/panel/panel-novatek-nt35510.c        | 2 +-
->  drivers/gpu/drm/panel/panel-samsung-s6d16d0.c        | 2 +-
->  drivers/gpu/drm/panel/panel-sony-acx424akp.c         | 2 +-
+> +	.prepare	 = ufshcd_suspend_prepare,
+> +	.complete	= ufshcd_resume_complete,
+>  #endif
+>  	SET_RUNTIME_PM_OPS(ufshcd_pci_runtime_suspend,
+>  			   ufshcd_pci_runtime_resume,
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 45624c7..0e8e76a 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/bitfield.h>
+>  #include <linux/blk-pm.h>
+>  #include <linux/blkdev.h>
+> +#include <scsi/scsi_driver.h>
+>  #include "ufshcd.h"
+>  #include "ufs_quirks.h"
+>  #include "unipro.h"
+> @@ -78,6 +79,8 @@
+>  /* Polling time to wait for fDeviceInit */
+>  #define FDEVICEINIT_COMPL_TIMEOUT 1500 /* millisecs */
+>  
+> +#define wlun_dev_to_hba(dv) shost_priv(to_scsi_device(dv)->host)
+> +
+>  #define ufshcd_toggle_vreg(_dev, _vreg, _on)				\
+>  	({                                                              \
+>  		int _ret;                                               \
+> @@ -1556,7 +1559,7 @@ static ssize_t ufshcd_clkscale_enable_store(struct device *dev,
+>  	if (value == hba->clk_scaling.is_enabled)
+>  		goto out;
+>  
+> -	pm_runtime_get_sync(hba->dev);
+> +	scsi_autopm_get_device(hba->sdev_ufs_device);
+>  	ufshcd_hold(hba, false);
+>  
+>  	hba->clk_scaling.is_enabled = value;
+> @@ -1572,7 +1575,7 @@ static ssize_t ufshcd_clkscale_enable_store(struct device *dev,
+>  	}
+>  
+>  	ufshcd_release(hba);
+> -	pm_runtime_put_sync(hba->dev);
+> +	scsi_autopm_put_device(hba->sdev_ufs_device);
+>  out:
+>  	up(&hba->host_sem);
+>  	return err ? err : count;
+> @@ -2572,6 +2575,17 @@ static inline u16 ufshcd_upiu_wlun_to_scsi_wlun(u8 upiu_wlun_id)
+>  	return (upiu_wlun_id & ~UFS_UPIU_WLUN_ID) | SCSI_W_LUN_BASE;
+>  }
+>  
+> +static inline bool is_rpmb_wlun(struct scsi_device *sdev)
+> +{
+> +	return (sdev->lun == ufshcd_upiu_wlun_to_scsi_wlun(UFS_UPIU_RPMB_WLUN));
+> +}
+> +
+> +static inline bool is_device_wlun(struct scsi_device *sdev)
+> +{
+> +	return (sdev->lun ==
+> +		ufshcd_upiu_wlun_to_scsi_wlun(UFS_UPIU_UFS_DEVICE_WLUN));
+> +}
+> +
+>  static void ufshcd_init_lrb(struct ufs_hba *hba, struct ufshcd_lrb *lrb, int i)
+>  {
+>  	struct utp_transfer_cmd_desc *cmd_descp = hba->ucdl_base_addr;
+> @@ -4808,6 +4822,41 @@ static inline void ufshcd_get_lu_power_on_wp_status(struct ufs_hba *hba,
+>  }
+>  
+>  /**
+> + * ufshcd_setup_links - associate link b/w device wlun and other luns
+> + * @sdev: pointer to SCSI device
+> + * @hba: pointer to ufs hba
+> + */
+> +static void ufshcd_setup_links(struct ufs_hba *hba, struct scsi_device *sdev)
+> +{
+> +	struct device_link *link;
+> +
+> +	/*
+> +	 * device wlun is the supplier & rest of the luns are consumers
+> +	 * This ensures that device wlun suspends after all other luns.
+> +	 */
+> +	if (hba->sdev_ufs_device) {
+> +		link = device_link_add(&sdev->sdev_gendev,
+> +				       &hba->sdev_ufs_device->sdev_gendev,
+> +				       DL_FLAG_PM_RUNTIME);
+> +		if (!link) {
+> +			dev_err(&sdev->sdev_gendev, "Failed establishing link - %s\n",
+> +				dev_name(&hba->sdev_ufs_device->sdev_gendev));
+> +			return;
+> +		}
+> +		hba->luns_avail--;
+> +		/* Ignore REPORT_LUN wlun probing */
+> +		if (hba->luns_avail != 1)
+> +			return;
+> +
+> +		pm_runtime_put_noidle(&hba->sdev_ufs_device->sdev_gendev);
+> +		pm_runtime_mark_last_busy(&hba->sdev_ufs_device->sdev_gendev);
+> +	} else {
+> +		/* device wlun is probed */
+> +		hba->luns_avail--;
+> +	}
+> +}
+> +
+> +/**
+>   * ufshcd_slave_alloc - handle initial SCSI device configurations
+>   * @sdev: pointer to SCSI device
+>   *
+> @@ -4838,6 +4887,8 @@ static int ufshcd_slave_alloc(struct scsi_device *sdev)
+>  
+>  	ufshcd_get_lu_power_on_wp_status(hba, sdev);
+>  
+> +	ufshcd_setup_links(hba, sdev);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -4985,15 +5036,9 @@ ufshcd_transfer_rsp_status(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
+>  			 * UFS device needs urgent BKOPs.
+>  			 */
+>  			if (!hba->pm_op_in_progress &&
+> -			    ufshcd_is_exception_event(lrbp->ucd_rsp_ptr) &&
+> -			    schedule_work(&hba->eeh_work)) {
+> -				/*
+> -				 * Prevent suspend once eeh_work is scheduled
+> -				 * to avoid deadlock between ufshcd_suspend
+> -				 * and exception event handler.
+> -				 */
+> -				pm_runtime_get_noresume(hba->dev);
+> -			}
+> +			    ufshcd_is_exception_event(lrbp->ucd_rsp_ptr))
+> +				/* Flushed in suspend */
+> +				schedule_work(&hba->eeh_work);
+>  			break;
+>  		case UPIU_TRANSACTION_REJECT_UPIU:
+>  			/* TODO: handle Reject UPIU Response */
+> @@ -5589,8 +5634,8 @@ static void ufshcd_rpm_dev_flush_recheck_work(struct work_struct *work)
+>  	 * after a certain delay to recheck the threshold by next runtime
+>  	 * suspend.
+>  	 */
+> -	pm_runtime_get_sync(hba->dev);
+> -	pm_runtime_put_sync(hba->dev);
+> +	scsi_autopm_get_device(hba->sdev_ufs_device);
+> +	scsi_autopm_put_device(hba->sdev_ufs_device);
+>  }
+>  
+>  /**
+> @@ -5607,7 +5652,6 @@ static void ufshcd_exception_event_handler(struct work_struct *work)
+>  	u32 status = 0;
+>  	hba = container_of(work, struct ufs_hba, eeh_work);
+>  
+> -	pm_runtime_get_sync(hba->dev);
+>  	ufshcd_scsi_block_requests(hba);
+>  	err = ufshcd_get_ee_status(hba, &status);
+>  	if (err) {
+> @@ -5623,14 +5667,6 @@ static void ufshcd_exception_event_handler(struct work_struct *work)
+>  
+>  out:
+>  	ufshcd_scsi_unblock_requests(hba);
+> -	/*
+> -	 * pm_runtime_get_noresume is called while scheduling
+> -	 * eeh_work to avoid suspend racing with exception work.
+> -	 * Hence decrement usage counter using pm_runtime_put_noidle
+> -	 * to allow suspend on completion of exception event handler.
+> -	 */
+> -	pm_runtime_put_noidle(hba->dev);
+> -	pm_runtime_put(hba->dev);
+>  	return;
+>  }
+>  
+> @@ -7210,8 +7246,7 @@ static inline void ufshcd_blk_pm_runtime_init(struct scsi_device *sdev)
+>  	scsi_autopm_get_device(sdev);
+>  	blk_pm_runtime_init(sdev->request_queue, &sdev->sdev_gendev);
+>  	if (sdev->rpm_autosuspend)
+> -		pm_runtime_set_autosuspend_delay(&sdev->sdev_gendev,
+> -						 RPM_AUTOSUSPEND_DELAY_MS);
+> +		pm_runtime_set_autosuspend_delay(&sdev->sdev_gendev, 0);
+>  	scsi_autopm_put_device(sdev);
+>  }
+>  
+> @@ -7254,6 +7289,15 @@ static int ufshcd_scsi_add_wlus(struct ufs_hba *hba)
+>  		goto out;
+>  	}
+>  	ufshcd_blk_pm_runtime_init(hba->sdev_ufs_device);
+> +	/*
+> +	 * A pm_runtime_put_sync is invoked when this device enables blk_pm_runtime
+> +	 * & would suspend the device-wlun upon timer expiry.
+> +	 * But suspending device wlun _may_ put the ufs device in the pre-defined
+> +	 * low power mode (SSU <rpm_lvl>). Probing of other luns may fail then.
+> +	 * Don't allow this suspend until all the luns have been probed.
+> +	 * See pm_runtime_mark_last_busy in ufshcd_setup_links.
+> +	 */
+> +	pm_runtime_get_noresume(&hba->sdev_ufs_device->sdev_gendev);
+>  	scsi_device_put(hba->sdev_ufs_device);
+>  
+>  	hba->sdev_rpmb = __scsi_add_device(hba->host, 0, 0,
+> @@ -7417,6 +7461,9 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
+>  		goto out;
+>  	}
+>  
+> +	hba->luns_avail = desc_buf[DEVICE_DESC_PARAM_NUM_LU] +
+> +		desc_buf[DEVICE_DESC_PARAM_NUM_WLU];
+> +
+>  	ufs_fixup_device_setup(hba);
+>  
+>  	ufshcd_wb_probe(hba, desc_buf);
+> @@ -7892,6 +7939,7 @@ static int ufshcd_probe_hba(struct ufs_hba *hba, bool async)
+>  	ufshcd_set_ufs_dev_active(hba);
+>  	ufshcd_force_reset_auto_bkops(hba);
+>  	hba->wlun_dev_clr_ua = true;
+> +	hba->wlun_rpmb_clr_ua = true;
+>  
+>  	/* Gear up to HS gear if supported */
+>  	if (hba->max_pwr_info.is_valid) {
+> @@ -7964,6 +8012,7 @@ static void ufshcd_async_scan(void *data, async_cookie_t cookie)
+>  		pm_runtime_put_sync(hba->dev);
+>  		ufshcd_hba_exit(hba);
+>  	}
+> +	hba->init_done = true;
+>  }
+>  
+>  static const struct attribute_group *ufshcd_driver_groups[] = {
+> @@ -8475,7 +8524,8 @@ static int ufshcd_set_dev_pwr_mode(struct ufs_hba *hba,
+>  	 * handling context.
+>  	 */
+>  	hba->host->eh_noresume = 1;
+> -	ufshcd_clear_ua_wluns(hba);
+> +	if (hba->wlun_dev_clr_ua)
+> +		ufshcd_clear_ua_wlun(hba, UFS_UPIU_UFS_DEVICE_WLUN);
+>  
+>  	cmd[4] = pwr_mode << 4;
+>  
+> @@ -8650,31 +8700,20 @@ static void ufshcd_hba_vreg_set_hpm(struct ufs_hba *hba)
+>  		ufshcd_setup_hba_vreg(hba, true);
+>  }
+>  
+> -/**
+> - * ufshcd_suspend - helper function for suspend operations
+> - * @hba: per adapter instance
+> - * @pm_op: desired low power operation type
+> - *
+> - * This function will try to put the UFS device and link into low power
+> - * mode based on the "rpm_lvl" (Runtime PM level) or "spm_lvl"
+> - * (System PM level).
+> - *
+> - * If this function is called during shutdown, it will make sure that
+> - * both UFS device and UFS link is powered off.
+> - *
+> - * NOTE: UFS device & link must be active before we enter in this function.
+> - *
+> - * Returns 0 for success and non-zero for failure
+> - */
+> -static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+> +static int __ufshcd_wl_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  {
+>  	int ret = 0;
+> -	int check_for_bkops;
+>  	enum ufs_pm_level pm_lvl;
+>  	enum ufs_dev_pwr_mode req_dev_pwr_mode;
+>  	enum uic_link_state req_link_state;
+>  
+> -	hba->pm_op_in_progress = 1;
+> +	/*
+> +	 * Is invoked when the device wlun is added to sysfs
+> +	 * But by then hba->sdev_ufs_device may not be initialized.
+> +	 */
+> +	if (!hba->init_done)
+> +		return 0;
+> +	hba->pm_op_in_progress = true;
+>  	if (!ufshcd_is_shutdown_pm(pm_op)) {
+>  		pm_lvl = ufshcd_is_runtime_pm(pm_op) ?
+>  			 hba->rpm_lvl : hba->spm_lvl;
+> @@ -8690,24 +8729,23 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  	 * just gate the clocks.
+>  	 */
+>  	ufshcd_hold(hba, false);
+> -	hba->clk_gating.is_suspended = true;
+>  
+>  	if (ufshcd_is_clkscaling_supported(hba))
+>  		ufshcd_clk_scaling_suspend(hba, true);
+>  
+>  	if (req_dev_pwr_mode == UFS_ACTIVE_PWR_MODE &&
+>  			req_link_state == UIC_LINK_ACTIVE_STATE) {
+> -		goto disable_clks;
+> +		goto enable_scaling;
+>  	}
+>  
+>  	if ((req_dev_pwr_mode == hba->curr_dev_pwr_mode) &&
+>  	    (req_link_state == hba->uic_link_state))
+> -		goto enable_gating;
+> +		goto enable_scaling;
+>  
+>  	/* UFS device & link must be active before we enter in this function */
+>  	if (!ufshcd_is_ufs_dev_active(hba) || !ufshcd_is_link_active(hba)) {
+>  		ret = -EINVAL;
+> -		goto enable_gating;
+> +		goto enable_scaling;
+>  	}
+>  
+>  	if (ufshcd_is_runtime_pm(pm_op)) {
+> @@ -8719,7 +8757,7 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  			 */
+>  			ret = ufshcd_urgent_bkops(hba);
+>  			if (ret)
+> -				goto enable_gating;
+> +				goto enable_scaling;
+>  		} else {
+>  			/* make sure that auto bkops is disabled */
+>  			ufshcd_disable_auto_bkops(hba);
+> @@ -8746,10 +8784,213 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  
+>  		if (!hba->dev_info.b_rpm_dev_flush_capable) {
+>  			ret = ufshcd_set_dev_pwr_mode(hba, req_dev_pwr_mode);
+> -			if (ret)
+> -				goto enable_gating;
+> +			if (!ret)
+> +				goto out;
+>  		}
+>  	}
+> +enable_scaling:
+> +	if (ufshcd_is_clkscaling_supported(hba))
+> +		ufshcd_clk_scaling_suspend(hba, false);
+> +
+> +	hba->dev_info.b_rpm_dev_flush_capable = false;
+> +out:
+> +	if (hba->dev_info.b_rpm_dev_flush_capable) {
+> +		schedule_delayed_work(&hba->rpm_dev_flush_recheck_work,
+> +			msecs_to_jiffies(RPM_DEV_FLUSH_RECHECK_WORK_DELAY_MS));
+> +	}
+> +	if (ret)
+> +		ufshcd_update_evt_hist(hba, UFS_EVT_WL_SUSP_ERR, (u32)ret);
+> +	ufshcd_release(hba);
+> +	hba->pm_op_in_progress = false;
+> +	return ret;
+> +}
+> +
+> +static int __ufshcd_wl_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+> +{
+> +	int ret = 0;
+> +
+> +	if (!hba->init_done)
+> +		return 0;
+> +
+> +	hba->pm_op_in_progress = true;
+> +	ufshcd_hold(hba, false);
+> +	if (ufshcd_is_ufs_dev_deepsleep(hba)) {
+> +		/* The device is in DeepSleep but hba was not suspended */
+> +		ret = ufshcd_reset_and_restore(hba);
+> +		if (ret)
+> +			goto out;
+> +	}
+> +
+> +	if (!ufshcd_is_ufs_dev_active(hba)) {
+> +		ret = ufshcd_set_dev_pwr_mode(hba, UFS_ACTIVE_PWR_MODE);
+> +		if (ret)
+> +			goto out;
+> +	}
+> +
+> +	if (ufshcd_keep_autobkops_enabled_except_suspend(hba))
+> +		ufshcd_enable_auto_bkops(hba);
+> +	else
+> +		/*
+> +		 * If BKOPs operations are urgently needed at this moment then
+> +		 * keep auto-bkops enabled or else disable it.
+> +		 */
+> +		ufshcd_urgent_bkops(hba);
+> +
+> +	if (hba->clk_scaling.is_allowed)
+> +		ufshcd_resume_clkscaling(hba);
+> +
+> +	if (hba->dev_info.b_rpm_dev_flush_capable) {
+> +		hba->dev_info.b_rpm_dev_flush_capable = false;
+> +		cancel_delayed_work(&hba->rpm_dev_flush_recheck_work);
+> +	}
+> +
+> +out:
+> +	if (ret)
+> +		ufshcd_update_evt_hist(hba, UFS_EVT_WL_RES_ERR, (u32)ret);
+> +	ufshcd_release(hba);
+> +	hba->pm_op_in_progress = false;
+> +	return ret;
+> +}
+> +
+> +static int ufshcd_wl_runtime_suspend(struct device *dev)
+> +{
+> +	struct scsi_device *sdev = to_scsi_device(dev);
+> +	struct ufs_hba *hba;
+> +	int ret;
+> +	ktime_t start = ktime_get();
+> +
+> +	hba = shost_priv(sdev->host);
+> +
+> +	ret = __ufshcd_wl_suspend(hba, UFS_RUNTIME_PM);
+> +	if (ret)
+> +		dev_err(&sdev->sdev_gendev, "%s failed: %d\n", __func__, ret);
+> +
+> +	trace_ufshcd_wl_runtime_suspend(dev_name(dev), ret,
+> +		ktime_to_us(ktime_sub(ktime_get(), start)),
+> +		hba->curr_dev_pwr_mode, hba->uic_link_state);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ufshcd_wl_runtime_resume(struct device *dev)
+> +{
+> +	struct scsi_device *sdev = to_scsi_device(dev);
+> +	struct ufs_hba *hba;
+> +	int ret = 0;
+> +	ktime_t start = ktime_get();
+> +
+> +	hba = shost_priv(sdev->host);
+> +
+> +	ret = __ufshcd_wl_resume(hba, UFS_RUNTIME_PM);
+> +	if (ret)
+> +		dev_err(&sdev->sdev_gendev, "%s failed: %d\n", __func__, ret);
+> +
+> +	trace_ufshcd_wl_runtime_resume(dev_name(dev), ret,
+> +		ktime_to_us(ktime_sub(ktime_get(), start)),
+> +		hba->curr_dev_pwr_mode, hba->uic_link_state);
+> +
+> +	return ret;
+> +}
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int ufshcd_wl_suspend(struct device *dev)
+> +{
+> +	struct scsi_device *sdev = to_scsi_device(dev);
+> +	struct ufs_hba *hba;
+> +	int ret;
+> +	ktime_t start = ktime_get();
+> +
+> +	hba = shost_priv(sdev->host);
+> +	ret = __ufshcd_wl_suspend(hba, UFS_SYSTEM_PM);
+> +	if (ret)
+> +		dev_err(&sdev->sdev_gendev, "%s failed: %d\n", __func__,  ret);
+> +
+> +	trace_ufshcd_wl_suspend(dev_name(dev), ret,
+> +		ktime_to_us(ktime_sub(ktime_get(), start)),
+> +		hba->curr_dev_pwr_mode, hba->uic_link_state);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ufshcd_wl_resume(struct device *dev)
+> +{
+> +	struct scsi_device *sdev = to_scsi_device(dev);
+> +	struct ufs_hba *hba;
+> +	int ret = 0;
+> +	ktime_t start = ktime_get();
+> +
+> +	if (pm_runtime_suspended(dev))
+> +		return 0;
+> +	hba = shost_priv(sdev->host);
+> +
+> +	ret = __ufshcd_wl_resume(hba, UFS_SYSTEM_PM);
+> +	if (ret)
+> +		dev_err(&sdev->sdev_gendev, "%s failed: %d\n", __func__, ret);
+> +
+> +	trace_ufshcd_wl_resume(dev_name(dev), ret,
+> +		ktime_to_us(ktime_sub(ktime_get(), start)),
+> +		hba->curr_dev_pwr_mode, hba->uic_link_state);
+> +
+> +	return ret;
+> +}
+> +#endif
+> +
+> +static void ufshcd_wl_shutdown(struct device *dev)
+> +{
+> +	struct scsi_device *sdev = to_scsi_device(dev);
+> +	struct ufs_hba *hba;
+> +
+> +	hba = shost_priv(sdev->host);
+> +	/* Turn on everything while shutting down */
+> +	scsi_autopm_get_device(sdev);
+> +	scsi_device_quiesce(sdev);
+> +	shost_for_each_device(sdev, hba->host) {
+> +		if (sdev == hba->sdev_ufs_device)
+> +			continue;
+> +		scsi_device_quiesce(sdev);
+> +	}
+> +	__ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM);
+> +}
+> +
+> +/**
+> + * ufshcd_suspend - helper function for suspend operations
+> + * @hba: per adapter instance
+> + * @pm_op: desired low power operation type
+> + *
+> + * This function will try to put the UFS link into low power
+> + * mode based on the "rpm_lvl" (Runtime PM level) or "spm_lvl"
+> + * (System PM level).
+> + *
+> + * If this function is called during shutdown, it will make sure that
+> + * link is powered off.
+> + *
+> + * Returns 0 for success and non-zero for failure
+> + */
+> +static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+> +{
+> +	int ret = 0;
+> +	int check_for_bkops;
+> +	enum ufs_pm_level pm_lvl;
+> +	enum ufs_dev_pwr_mode req_dev_pwr_mode;
+> +	enum uic_link_state req_link_state;
+> +
+> +	hba->pm_op_in_progress = 1;
+> +	if (!ufshcd_is_shutdown_pm(pm_op)) {
+> +		pm_lvl = ufshcd_is_runtime_pm(pm_op) ?
+> +			 hba->rpm_lvl : hba->spm_lvl;
+> +		req_dev_pwr_mode = ufs_get_pm_lvl_to_dev_pwr_mode(pm_lvl);
+> +		req_link_state = ufs_get_pm_lvl_to_link_pwr_state(pm_lvl);
+> +	} else {
+> +		req_dev_pwr_mode = UFS_POWERDOWN_PWR_MODE;
+> +		req_link_state = UIC_LINK_OFF_STATE;
+> +	}
+> +
+> +	/*
+> +	 * If we can't transition into any of the low power modes
+> +	 * just gate the clocks.
+> +	 */
+> +	ufshcd_hold(hba, false);
+> +	hba->clk_gating.is_suspended = true;
+>  
+>  	/*
+>  	 * In the case of DeepSleep, the device is expected to remain powered
+> @@ -8758,9 +8999,8 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  	check_for_bkops = !ufshcd_is_ufs_dev_deepsleep(hba);
+>  	ret = ufshcd_link_state_transition(hba, req_link_state, check_for_bkops);
+>  	if (ret)
+> -		goto set_dev_active;
+> +		goto enable_gating;
+>  
+> -disable_clks:
+>  	/*
+>  	 * Call vendor specific suspend callback. As these callbacks may access
+>  	 * vendor specific host controller register space call them before the
+> @@ -8790,7 +9030,6 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  	goto out;
+>  
+>  set_link_active:
+> -	ufshcd_vreg_set_hpm(hba);
+>  	/*
+>  	 * Device hardware reset is required to exit DeepSleep. Also, for
+>  	 * DeepSleep, the link is off so host reset and restore will be done
+> @@ -8804,28 +9043,15 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  		ufshcd_set_link_active(hba);
+>  	else if (ufshcd_is_link_off(hba))
+>  		ufshcd_host_reset_and_restore(hba);
+> -set_dev_active:
+>  	/* Can also get here needing to exit DeepSleep */
+>  	if (ufshcd_is_ufs_dev_deepsleep(hba)) {
+>  		ufshcd_device_reset(hba);
+>  		ufshcd_host_reset_and_restore(hba);
+>  	}
+> -	if (!ufshcd_set_dev_pwr_mode(hba, UFS_ACTIVE_PWR_MODE))
+> -		ufshcd_disable_auto_bkops(hba);
+>  enable_gating:
+> -	if (ufshcd_is_clkscaling_supported(hba))
+> -		ufshcd_clk_scaling_suspend(hba, false);
+> -
+>  	hba->clk_gating.is_suspended = false;
+> -	hba->dev_info.b_rpm_dev_flush_capable = false;
+> -	ufshcd_clear_ua_wluns(hba);
+>  	ufshcd_release(hba);
+>  out:
+> -	if (hba->dev_info.b_rpm_dev_flush_capable) {
+> -		schedule_delayed_work(&hba->rpm_dev_flush_recheck_work,
+> -			msecs_to_jiffies(RPM_DEV_FLUSH_RECHECK_WORK_DELAY_MS));
+> -	}
+> -
+>  	hba->pm_op_in_progress = 0;
+>  
+>  	if (ret)
+> @@ -8846,10 +9072,8 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  {
+>  	int ret;
+> -	enum uic_link_state old_link_state;
+>  
+>  	hba->pm_op_in_progress = 1;
+> -	old_link_state = hba->uic_link_state;
+>  
+>  	ufshcd_hba_vreg_set_hpm(hba);
+>  	ret = ufshcd_vreg_set_hpm(hba);
+> @@ -8901,43 +9125,14 @@ static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  			goto vendor_suspend;
+>  	}
 
-> diff --git a/drivers/gpu/drm/mcde/mcde_dsi.c b/drivers/gpu/drm/mcde/mcde_dsi.c
-> index 2314c8122992..f4cdc3cfd7d0 100644
-> --- a/drivers/gpu/drm/mcde/mcde_dsi.c
-> +++ b/drivers/gpu/drm/mcde/mcde_dsi.c
-> @@ -760,7 +760,7 @@ static void mcde_dsi_start(struct mcde_dsi *d)
->                 DSI_MCTL_MAIN_DATA_CTL_BTA_EN |
->                 DSI_MCTL_MAIN_DATA_CTL_READ_EN |
->                 DSI_MCTL_MAIN_DATA_CTL_REG_TE_EN;
-> -       if (d->mdsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET)
-> +       if (d->mdsi->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET)
->                 val |= DSI_MCTL_MAIN_DATA_CTL_HOST_EOT_GEN;
+The ufshcd_reset_and_restore() in ufshcd_resume() will also change the power
+mode of the UFS device to active.  Until the UFS device is also resumed and
+then suspended, it will not return to a low power mode.
 
-If you read the code you can see that this is interpreted as inserting
-an EOT packet, so here you need to change the logic such:
+It looks like the link state transations should also be moved to
+__ufshcd_wl_suspend / resume ?
 
-if (!d->mdsi->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET)
-    val |= DSI_MCTL_MAIN_DATA_CTL_HOST_EOT_GEN;
+>  
+> -	if (!ufshcd_is_ufs_dev_active(hba)) {
+> -		ret = ufshcd_set_dev_pwr_mode(hba, UFS_ACTIVE_PWR_MODE);
+> -		if (ret)
+> -			goto set_old_link_state;
+> -	}
+> -
+> -	if (ufshcd_keep_autobkops_enabled_except_suspend(hba))
+> -		ufshcd_enable_auto_bkops(hba);
+> -	else
+> -		/*
+> -		 * If BKOPs operations are urgently needed at this moment then
+> -		 * keep auto-bkops enabled or else disable it.
+> -		 */
+> -		ufshcd_urgent_bkops(hba);
+> -
+> -	hba->clk_gating.is_suspended = false;
+> -
+> -	if (ufshcd_is_clkscaling_supported(hba))
+> -		ufshcd_clk_scaling_suspend(hba, false);
+> -
+>  	/* Enable Auto-Hibernate if configured */
+>  	ufshcd_auto_hibern8_enable(hba);
+>  
+> -	if (hba->dev_info.b_rpm_dev_flush_capable) {
+> -		hba->dev_info.b_rpm_dev_flush_capable = false;
+> -		cancel_delayed_work(&hba->rpm_dev_flush_recheck_work);
+> -	}
+> -
+> -	ufshcd_clear_ua_wluns(hba);
+> -
+>  	/* Schedule clock gating in case of no access to UFS device yet */
+>  	ufshcd_release(hba);
+>  
+>  	goto out;
+>  
+> -set_old_link_state:
+> -	ufshcd_link_state_transition(hba, old_link_state, 0);
+>  vendor_suspend:
+>  	ufshcd_vops_suspend(hba, pm_op);
+>  disable_irq_and_vops_clks:
+> @@ -9477,15 +9672,164 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+>  }
+>  EXPORT_SYMBOL_GPL(ufshcd_init);
+>  
+> +void ufshcd_resume_complete(struct device *dev)
+> +{
+> +	struct ufs_hba *hba = dev_get_drvdata(dev);
+> +
+> +	pm_runtime_put_noidle(&hba->sdev_ufs_device->sdev_gendev);
+> +}
+> +EXPORT_SYMBOL_GPL(ufshcd_resume_complete);
+> +
+> +int ufshcd_suspend_prepare(struct device *dev)
+> +{
+> +	struct ufs_hba *hba = dev_get_drvdata(dev);
+> +
+> +	/*
+> +	 * SCSI assumes that runtime-pm and system-pm for scsi drivers
+> +	 * are same. And it doesn't wake up the device for system-suspend
+> +	 * if it's runtime suspended. But ufs doesn't follow that.
+> +	 * The rpm-lvl and spm-lvl can be different in ufs.
+> +	 * Force it to honor system-suspend.
+> +	 */
+> +	scsi_autopm_get_device(hba->sdev_ufs_device);
+> +	/* Refer ufshcd_resume_complete() */
+> +	pm_runtime_get_noresume(&hba->sdev_ufs_device->sdev_gendev);
+> +	scsi_autopm_put_device(hba->sdev_ufs_device);
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(ufshcd_suspend_prepare);
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int ufshcd_wl_poweroff(struct device *dev)
+> +{
+> +	ufshcd_wl_shutdown(dev);
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static int ufshcd_wl_probe(struct device *dev)
+> +{
+> +	return is_device_wlun(to_scsi_device(dev)) ? 0 : -ENODEV;
+> +}
+> +
+> +static int ufshcd_wl_remove(struct device *dev)
+> +{
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops ufshcd_wl_pm_ops = {
+> +#ifdef CONFIG_PM_SLEEP
+> +	.suspend = ufshcd_wl_suspend,
+> +	.resume = ufshcd_wl_resume,
+> +	.freeze = ufshcd_wl_suspend,
+> +	.thaw = ufshcd_wl_resume,
+> +	.poweroff = ufshcd_wl_poweroff,
+> +	.restore = ufshcd_wl_resume,
+> +#endif
+> +	SET_RUNTIME_PM_OPS(ufshcd_wl_runtime_suspend, ufshcd_wl_runtime_resume, NULL)
+> +};
+> +
+> +/**
+> + * ufs_dev_wlun_template - describes ufs device wlun
+> + * ufs-device wlun - used to send pm commands
+> + * All luns are consumers of ufs-device wlun.
+> + *
+> + * Currently, no sd driver is present for wluns.
+> + * Hence the no specific pm operations are performed.
+> + * With ufs design, SSU should be sent to ufs-device wlun.
+> + * Hence register a scsi driver for ufs wluns only.
+> + */
+> +static struct scsi_driver ufs_dev_wlun_template = {
+> +	.gendrv = {
+> +		.name = "ufs_device_wlun",
+> +		.owner = THIS_MODULE,
+> +		.probe = ufshcd_wl_probe,
+> +		.remove = ufshcd_wl_remove,
+> +		.pm = &ufshcd_wl_pm_ops,
+> +		.shutdown = ufshcd_wl_shutdown,
+> +	},
+> +};
+> +
+> +static int ufshcd_rpmb_probe(struct device *dev)
+> +{
+> +	return is_rpmb_wlun(to_scsi_device(dev)) ? 0 : -ENODEV;
+> +}
+> +
+> +static inline int ufshcd_clear_rpmb_uac(struct ufs_hba *hba)
+> +{
+> +	int ret = 0;
+> +
+> +	if (!hba->wlun_rpmb_clr_ua)
+> +		return 0;
+> +	ret = ufshcd_clear_ua_wlun(hba, UFS_UPIU_RPMB_WLUN);
+> +	if (!ret)
+> +		hba->wlun_rpmb_clr_ua = 0;
+> +	return ret;
+> +}
+> +
+> +static int ufshcd_rpmb_runtime_resume(struct device *dev)
+> +{
+> +	struct ufs_hba *hba = wlun_dev_to_hba(dev);
+> +
+> +	if (hba->sdev_rpmb)
+> +		return ufshcd_clear_rpmb_uac(hba);
+> +	return 0;
+> +}
+> +
+> +static int ufshcd_rpmb_resume(struct device *dev)
+> +{
+> +	struct ufs_hba *hba = wlun_dev_to_hba(dev);
+> +
+> +	if (hba->sdev_rpmb && !pm_runtime_suspended(dev))
+> +		return ufshcd_clear_rpmb_uac(hba);
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops ufs_rpmb_pm_ops = {
+> +	SET_RUNTIME_PM_OPS(NULL, ufshcd_rpmb_runtime_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(NULL, ufshcd_rpmb_resume)
+> +};
+> +
+> +/**
+> + * Describes the ufs rpmb wlun.
+> + * Used only to send uac.
+> + */
+> +static struct scsi_driver ufs_rpmb_wlun_template = {
+> +	.gendrv = {
+> +		.name = "ufs_rpmb_wlun",
+> +		.owner = THIS_MODULE,
+> +		.probe = ufshcd_rpmb_probe,
+> +		.pm = &ufs_rpmb_pm_ops,
+> +	},
+> +};
+> +
+>  static int __init ufshcd_core_init(void)
+>  {
+> +	int ret;
+> +
+>  	ufs_debugfs_init();
+> +
+> +	ret = scsi_register_driver(&ufs_dev_wlun_template.gendrv);
+> +	if (ret) {
+> +		pr_err("Register device wlun driver failed: %d\n",
+> +			ret);
 
-This will make sure the host generates the EOT packet in HS mode
-*unless* the flag is set.
+The driver_register has some error messages, so I am not sure we need this
+message.
 
-(I checked the data sheet.)
+> +		return ret;
+> +	}
+> +
+> +	ret = scsi_register_driver(&ufs_rpmb_wlun_template.gendrv);
+> +	if (ret) {
+> +		pr_err("Register rpmb wlun driver failed: %d\n",
+> +			ret);
 
-> diff --git a/drivers/gpu/drm/panel/panel-novatek-nt35510.c b/drivers/gpu/drm/panel/panel-novatek-nt35510.c
-> index b9a0e56f33e2..9d9334656803 100644
-> --- a/drivers/gpu/drm/panel/panel-novatek-nt35510.c
-> +++ b/drivers/gpu/drm/panel/panel-novatek-nt35510.c
-> @@ -899,7 +899,7 @@ static int nt35510_probe(struct mipi_dsi_device *dsi)
->         dsi->hs_rate = 349440000;
->         dsi->lp_rate = 9600000;
->         dsi->mode_flags = MIPI_DSI_CLOCK_NON_CONTINUOUS |
-> -               MIPI_DSI_MODE_EOT_PACKET;
-> +               MIPI_DSI_MODE_NO_EOT_PACKET;
+Ditto the message, but also need to unregister &ufs_dev_wlun_template.gendrv
 
-Here you should just delete the MIPI_DSI_MODE_EOT_PACKET
-flag because this was used with the MCDE driver which interpret the
-flag literally.
+> +		return ret;
+> +	}
+>  	return 0;
+>  }
+>  
+>  static void __exit ufshcd_core_exit(void)
+>  {
+>  	ufs_debugfs_exit();
+> +	scsi_unregister_driver(&ufs_dev_wlun_template.gendrv);
+> +	scsi_unregister_driver(&ufs_rpmb_wlun_template.gendrv);
+>  }
+>  
+>  module_init(ufshcd_core_init);
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index ee61f82..e246ec3 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -72,6 +72,8 @@ enum ufs_event_type {
+>  	UFS_EVT_LINK_STARTUP_FAIL,
+>  	UFS_EVT_RESUME_ERR,
+>  	UFS_EVT_SUSPEND_ERR,
+> +	UFS_EVT_WL_SUSP_ERR,
+> +	UFS_EVT_WL_RES_ERR,
+>  
+>  	/* abnormal events */
+>  	UFS_EVT_DEV_RESET,
+> @@ -804,6 +806,7 @@ struct ufs_hba {
+>  	struct list_head clk_list_head;
+>  
+>  	bool wlun_dev_clr_ua;
+> +	bool wlun_rpmb_clr_ua;
+>  
+>  	/* Number of requests aborts */
+>  	int req_abort_count;
+> @@ -841,6 +844,8 @@ struct ufs_hba {
+>  #ifdef CONFIG_DEBUG_FS
+>  	struct dentry *debugfs_root;
+>  #endif
+> +	bool init_done;
+> +	u32 luns_avail;
+>  };
+>  
+>  /* Returns true if clocks can be gated. Otherwise false */
+> @@ -1100,6 +1105,8 @@ int ufshcd_exec_raw_upiu_cmd(struct ufs_hba *hba,
+>  			     enum query_opcode desc_op);
+>  
+>  int ufshcd_wb_ctrl(struct ufs_hba *hba, bool enable);
+> +int ufshcd_suspend_prepare(struct device *dev);
+> +void ufshcd_resume_complete(struct device *dev);
+>  
+>  /* Wrapper functions for safely calling variant operations */
+>  static inline const char *ufshcd_get_var_name(struct ufs_hba *hba)
+> diff --git a/include/trace/events/ufs.h b/include/trace/events/ufs.h
+> index e151477..d9d233b 100644
+> --- a/include/trace/events/ufs.h
+> +++ b/include/trace/events/ufs.h
+> @@ -246,6 +246,26 @@ DEFINE_EVENT(ufshcd_template, ufshcd_init,
+>  		      int dev_state, int link_state),
+>  	     TP_ARGS(dev_name, err, usecs, dev_state, link_state));
+>  
+> +DEFINE_EVENT(ufshcd_template, ufshcd_wl_suspend,
+> +	     TP_PROTO(const char *dev_name, int err, s64 usecs,
+> +		      int dev_state, int link_state),
+> +	     TP_ARGS(dev_name, err, usecs, dev_state, link_state));
+> +
+> +DEFINE_EVENT(ufshcd_template, ufshcd_wl_resume,
+> +	     TP_PROTO(const char *dev_name, int err, s64 usecs,
+> +		      int dev_state, int link_state),
+> +	     TP_ARGS(dev_name, err, usecs, dev_state, link_state));
+> +
+> +DEFINE_EVENT(ufshcd_template, ufshcd_wl_runtime_suspend,
+> +	     TP_PROTO(const char *dev_name, int err, s64 usecs,
+> +		      int dev_state, int link_state),
+> +	     TP_ARGS(dev_name, err, usecs, dev_state, link_state));
+> +
+> +DEFINE_EVENT(ufshcd_template, ufshcd_wl_runtime_resume,
+> +	     TP_PROTO(const char *dev_name, int err, s64 usecs,
+> +		      int dev_state, int link_state),
+> +	     TP_ARGS(dev_name, err, usecs, dev_state, link_state));
+> +
+>  TRACE_EVENT(ufshcd_command,
+>  	TP_PROTO(const char *dev_name, enum ufs_trace_str_t str_t,
+>  		 unsigned int tag, u32 doorbell, int transfer_len, u32 intr,
+> 
 
-> diff --git a/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c b/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c
-> index 4aac0d1573dd..b04b9975e9b2 100644
-> --- a/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c
-> +++ b/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c
-> @@ -186,7 +186,7 @@ static int s6d16d0_probe(struct mipi_dsi_device *dsi)
->          */
->         dsi->mode_flags =
->                 MIPI_DSI_CLOCK_NON_CONTINUOUS |
-> -               MIPI_DSI_MODE_EOT_PACKET;
-> +               MIPI_DSI_MODE_NO_EOT_PACKET;
-
-Same, just delete the flag.
-
-> --- a/drivers/gpu/drm/panel/panel-samsung-s6e63m0-dsi.c
-> +++ b/drivers/gpu/drm/panel/panel-samsung-s6e63m0-dsi.c
-> @@ -97,7 +97,7 @@ static int s6e63m0_dsi_probe(struct mipi_dsi_device *dsi)
->         dsi->hs_rate = 349440000;
->         dsi->lp_rate = 9600000;
->         dsi->mode_flags = MIPI_DSI_MODE_VIDEO |
-> -               MIPI_DSI_MODE_EOT_PACKET |
-> +               MIPI_DSI_MODE_NO_EOT_PACKET |
->                 MIPI_DSI_MODE_VIDEO_BURST;
-
-Same, just delete the flag.
-
-> diff --git a/drivers/gpu/drm/panel/panel-sony-acx424akp.c b/drivers/gpu/drm/panel/panel-sony-acx424akp.c
-> index 065efae213f5..6b706cbf2f9c 100644
-> --- a/drivers/gpu/drm/panel/panel-sony-acx424akp.c
-> +++ b/drivers/gpu/drm/panel/panel-sony-acx424akp.c
-> @@ -450,7 +450,7 @@ static int acx424akp_probe(struct mipi_dsi_device *dsi)
->         else
->                 dsi->mode_flags =
->                         MIPI_DSI_CLOCK_NON_CONTINUOUS |
-> -                       MIPI_DSI_MODE_EOT_PACKET;
-> +                       MIPI_DSI_MODE_NO_EOT_PACKET;
-
-Same, just delete the flag.
-
-These are all just semantic bugs due to the ambiguity of the flags, it is
-possible to provide a Fixes: flag for each file using this flag the wrong way
-but I dunno if it's worth it.
-
-Yours,
-Linus Walleij
