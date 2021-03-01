@@ -2,108 +2,201 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F419C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Feb 2021 10:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED99C433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Mar 2021 09:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02A7D64EF0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Feb 2021 10:49:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D17764E01
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Mar 2021 09:04:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229835AbhBZKs7 (ORCPT
+        id S233747AbhCAJBz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 26 Feb 2021 05:48:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54652 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229550AbhBZKs5 (ORCPT
+        Mon, 1 Mar 2021 04:01:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53204 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233606AbhCAJA2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 26 Feb 2021 05:48:57 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 190A264EAF;
-        Fri, 26 Feb 2021 10:48:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614336496;
-        bh=Esz1NQAGOdP7jefY/y2XPXh2Htwlap/EqjLQH7vn1nk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BF7oVUWkuBHJWTvvQKy4mdaH4N5HrVYlbfmvrsouwZRWEmefSFJbYzNGNX72JjQ/z
-         s5YL20UotY75gvNAsyflzGZThDYkIgzeNUplfLKCxAkd4p5Uh7Qv6WrD3Tf9nWafq6
-         qSf7sRRdsVZ1WIkqYWH8k3vTAmrjJLUJrJZ6VCNdmzhQnvbYbHGVvFZ00a+Esz/yZ4
-         fTcO69TJJ4nzwNoPizcs5LDT7fcb4mPx2ZFwW4nkxK/sbuUcKRRj+BhkiyU8guHHjN
-         xMBvXMltQYuStEcwEua/nlpFZxfPo6sxoiqNQY6LPw1u4sGyE1QSCbMn/Uu+l+YM0u
-         A2VGejDgCMnpQ==
-Date:   Fri, 26 Feb 2021 11:48:12 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     =?utf-8?Q?M=C3=A5rten?= Lindahl <marten.lindahl@axis.com>,
-        kernel@axis.com,
-        =?utf-8?Q?M=C3=A5rten?= Lindahl <martenli@axis.com>,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] i2c: exynos5: Preserve high speed master code
-Message-ID: <20210226104812.GG1014@ninjato>
-References: <20210216222538.6427-1-marten.lindahl@axis.com>
- <20210226103407.GF1014@ninjato>
- <CAJKOXPcx5a7m0ChqA8BimK=JhnzSgm0cx07RhSu+P8D-2YsfWw@mail.gmail.com>
+        Mon, 1 Mar 2021 04:00:28 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25026C061788
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Mar 2021 00:59:48 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id m11so17610858lji.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Mar 2021 00:59:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AYs79IPnRt3qtzNnShKWZ7vyowWc2VUelHvdooVHnZg=;
+        b=kcf6kcitYZpg70CypoUp8KXILwBgfW62DpbNjWslqlp4qw62fI7tzmXjPZQCmQxMc8
+         y7E4AtX2Fmm4bNLcfXcEPW4KygtdDIAQoh7/Gppn2wuQW/GKYs0Umn4Wm46XccGHSmBe
+         jy7uA45XkN8GMGoDoJDciHZsVQhSFIR5XDAoh0rW972s2s04adtjid+35nHXnoln8MA8
+         FxCO26S/5xLKeLnx947E7nXZn0Rnap1zKbmn2OkkQ+VOi8uxBgu0gE1sSxomW3gthjJM
+         ufu7iyDDX3VZgWZtHNc17YGxcgin7Xk21+hnZeVkHrui+fqknKWQ+8YcQvAzXeWUB5vl
+         a9WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AYs79IPnRt3qtzNnShKWZ7vyowWc2VUelHvdooVHnZg=;
+        b=WF+VLew4HH+x+ccurte62UC+BcCqVIQPMCWbDEr/wOku4O1QoTNGKQKRXtzEsuXfgj
+         s03VcDDitQVqrioiAgZf/z5a9STz1OSN4O0QJDXLjhSPqvBvn/1N5pZKZ+mlw/mdRViD
+         v7cYfp0idkeSfuqEf8jcJuhEhx8UzvfB0ysGWLiZlYo/5/vdvnA/7Y57QW7eHQuUz0jb
+         /w4ytDC/PqH16S9VoZFlK+vSXjzCFvGz9sBMq1mkvErq4fTvl0taLZecZjqi2SoYRUDX
+         GceSF6kM15Tm/inH3GlonjM0tJa15gcEjYIrX3BgrC4NRqh8bCssi5SvvvfSFy+JbxrC
+         M2Lg==
+X-Gm-Message-State: AOAM530IDSfACyf1xQ8ceN9EXJUwNNKAG+JNejNoXscBLDtntZ5/Z2rm
+        jCfWUclxh14yOPbOcJa3+H7xIcubp1/N0SlTzXm8/A==
+X-Google-Smtp-Source: ABdhPJyj3pw+C0NXHPjoJdDWHXn0vLK/WBMS4zWE5j9GGEZHyMLzxq+OeogebxlDuBb2zgJuFq1OMvgpJB8dxst6o6c=
+X-Received: by 2002:a2e:9754:: with SMTP id f20mr6463797ljj.200.1614589186573;
+ Mon, 01 Mar 2021 00:59:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="m972NQjnE83KvVa/"
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPcx5a7m0ChqA8BimK=JhnzSgm0cx07RhSu+P8D-2YsfWw@mail.gmail.com>
+References: <20210211113309.1.I629b2366a6591410359c7fcf6d385b474b705ca2@changeid>
+In-Reply-To: <20210211113309.1.I629b2366a6591410359c7fcf6d385b474b705ca2@changeid>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 1 Mar 2021 09:59:35 +0100
+Message-ID: <CACRpkdbQa3BZwgtp3=061cu+y+4qkMqtXQhXH_VuHB3KcLyDCA@mail.gmail.com>
+Subject: Re: [PATCH] drm/dsi: Add _NO_ to MIPI_DSI_* flags disabling features
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Sean Paul <sean@poorly.run>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Xin Ji <xji@analogixsemi.com>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Thu, Feb 11, 2021 at 4:34 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
 
---m972NQjnE83KvVa/
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Many of the DSI flags have names opposite to their actual effects,
+> e.g. MIPI_DSI_MODE_EOT_PACKET means that EoT packets will actually
+> be disabled. Fix this by including _NO_ in the flag names, e.g.
+> MIPI_DSI_MODE_NO_EOT_PACKET.
 
-On Fri, Feb 26, 2021 at 11:40:00AM +0100, Krzysztof Kozlowski wrote:
-> On Fri, 26 Feb 2021 at 11:34, Wolfram Sang <wsa@kernel.org> wrote:
-> >
-> > On Tue, Feb 16, 2021 at 11:25:38PM +0100, M=C3=A5rten Lindahl wrote:
-> > > From: M=C3=A5rten Lindahl <martenli@axis.com>
-> > >
-> > > When the driver starts to send a message with the MASTER_ID field
-> > > set (high speed), the whole I2C_ADDR register is overwritten including
-> > > MASTER_ID as the SLV_ADDR_MAS field is set.
-> > >
-> > > This patch preserves already written fields in I2C_ADDR when writing
-> > > SLV_ADDR_MAS.
-> > >
-> > > Signed-off-by: M=C3=A5rten Lindahl <martenli@axis.com>
-> >
-> > Looks good. Is there a Fixes-tag we could apply?
->=20
-> The first commit, 2013 :)
-> Fixes: 8a73cd4cfa15 ("i2c: exynos5: add High Speed I2C controller driver")
+Unless someone like me interpreted it literally...
 
-Thanks! Applied to for-current.
+Like in these:
 
+>  drivers/gpu/drm/mcde/mcde_dsi.c                      | 2 +-
+>  drivers/gpu/drm/panel/panel-novatek-nt35510.c        | 2 +-
+>  drivers/gpu/drm/panel/panel-samsung-s6d16d0.c        | 2 +-
+>  drivers/gpu/drm/panel/panel-sony-acx424akp.c         | 2 +-
 
---m972NQjnE83KvVa/
-Content-Type: application/pgp-signature; name="signature.asc"
+> diff --git a/drivers/gpu/drm/mcde/mcde_dsi.c b/drivers/gpu/drm/mcde/mcde_dsi.c
+> index 2314c8122992..f4cdc3cfd7d0 100644
+> --- a/drivers/gpu/drm/mcde/mcde_dsi.c
+> +++ b/drivers/gpu/drm/mcde/mcde_dsi.c
+> @@ -760,7 +760,7 @@ static void mcde_dsi_start(struct mcde_dsi *d)
+>                 DSI_MCTL_MAIN_DATA_CTL_BTA_EN |
+>                 DSI_MCTL_MAIN_DATA_CTL_READ_EN |
+>                 DSI_MCTL_MAIN_DATA_CTL_REG_TE_EN;
+> -       if (d->mdsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET)
+> +       if (d->mdsi->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET)
+>                 val |= DSI_MCTL_MAIN_DATA_CTL_HOST_EOT_GEN;
 
------BEGIN PGP SIGNATURE-----
+If you read the code you can see that this is interpreted as inserting
+an EOT packet, so here you need to change the logic such:
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmA40ewACgkQFA3kzBSg
-KbZ5/A//dK4Fcf91UDaJiEgIWcUB3p2nnKBUi5bIC0XVA6NYbDVffZPr/ESa3WyB
-6ihTfgEdgPy+6zpErE4K/Od7JX94RsSKlo8MmT9WaPk/kfzlWhc10nCZJHFYLuLE
-+BqtWour4TTqHcRg/ncjnNicm+etMedSWsgUJ/O3GZEK0SUO+UbQESK4qCLGKH3W
-uIuuRUdXASdC4YvUIT4WWWjP8vzeOb/9CAfrQcnz2DTOFqqpp/nFFjifYHFO2Ab4
-KbHYYHvJzqZGEpKgf+B7VscQk51oWO9KnzVYeN32z6zuwJxo+i9sKvLXfH1Ebpah
-In/IEjVxamd1KZmBzW5gBr/h8IEp5DzEG1aNyvX0itrxr8T69sMxBRQLoDvJI/lW
-URGN7tMRypj+FddKvmExyzOwTKzrkl9QVJggf4jF+7ghbKg+HUMN/SZhXHtTrzSI
-FQ+1RGuvhqSrBIuKL+XGjtir+qdAu7m6UJk//IWcajWI+V96rSZ4C/F+BXiZ9I7A
-G18Zjuh2YGX2oe6V7kAwX/FqlBHPWMUgY82HQurcMJP01HoO3tsyzX9crB1XqVpn
-nQ2w8jxrE6cj7PBm3X0HtHg15pd018wzToYOyMoBp7fEOq+WHHiYhvjrQbI7iIMp
-3cFQZzSqETfBYT6uag49Knr//csR7gZrEyJEc/Dn0lR4Ws1LxNk=
-=S4ZO
------END PGP SIGNATURE-----
+if (!d->mdsi->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET)
+    val |= DSI_MCTL_MAIN_DATA_CTL_HOST_EOT_GEN;
 
---m972NQjnE83KvVa/--
+This will make sure the host generates the EOT packet in HS mode
+*unless* the flag is set.
+
+(I checked the data sheet.)
+
+> diff --git a/drivers/gpu/drm/panel/panel-novatek-nt35510.c b/drivers/gpu/drm/panel/panel-novatek-nt35510.c
+> index b9a0e56f33e2..9d9334656803 100644
+> --- a/drivers/gpu/drm/panel/panel-novatek-nt35510.c
+> +++ b/drivers/gpu/drm/panel/panel-novatek-nt35510.c
+> @@ -899,7 +899,7 @@ static int nt35510_probe(struct mipi_dsi_device *dsi)
+>         dsi->hs_rate = 349440000;
+>         dsi->lp_rate = 9600000;
+>         dsi->mode_flags = MIPI_DSI_CLOCK_NON_CONTINUOUS |
+> -               MIPI_DSI_MODE_EOT_PACKET;
+> +               MIPI_DSI_MODE_NO_EOT_PACKET;
+
+Here you should just delete the MIPI_DSI_MODE_EOT_PACKET
+flag because this was used with the MCDE driver which interpret the
+flag literally.
+
+> diff --git a/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c b/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c
+> index 4aac0d1573dd..b04b9975e9b2 100644
+> --- a/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c
+> +++ b/drivers/gpu/drm/panel/panel-samsung-s6d16d0.c
+> @@ -186,7 +186,7 @@ static int s6d16d0_probe(struct mipi_dsi_device *dsi)
+>          */
+>         dsi->mode_flags =
+>                 MIPI_DSI_CLOCK_NON_CONTINUOUS |
+> -               MIPI_DSI_MODE_EOT_PACKET;
+> +               MIPI_DSI_MODE_NO_EOT_PACKET;
+
+Same, just delete the flag.
+
+> --- a/drivers/gpu/drm/panel/panel-samsung-s6e63m0-dsi.c
+> +++ b/drivers/gpu/drm/panel/panel-samsung-s6e63m0-dsi.c
+> @@ -97,7 +97,7 @@ static int s6e63m0_dsi_probe(struct mipi_dsi_device *dsi)
+>         dsi->hs_rate = 349440000;
+>         dsi->lp_rate = 9600000;
+>         dsi->mode_flags = MIPI_DSI_MODE_VIDEO |
+> -               MIPI_DSI_MODE_EOT_PACKET |
+> +               MIPI_DSI_MODE_NO_EOT_PACKET |
+>                 MIPI_DSI_MODE_VIDEO_BURST;
+
+Same, just delete the flag.
+
+> diff --git a/drivers/gpu/drm/panel/panel-sony-acx424akp.c b/drivers/gpu/drm/panel/panel-sony-acx424akp.c
+> index 065efae213f5..6b706cbf2f9c 100644
+> --- a/drivers/gpu/drm/panel/panel-sony-acx424akp.c
+> +++ b/drivers/gpu/drm/panel/panel-sony-acx424akp.c
+> @@ -450,7 +450,7 @@ static int acx424akp_probe(struct mipi_dsi_device *dsi)
+>         else
+>                 dsi->mode_flags =
+>                         MIPI_DSI_CLOCK_NON_CONTINUOUS |
+> -                       MIPI_DSI_MODE_EOT_PACKET;
+> +                       MIPI_DSI_MODE_NO_EOT_PACKET;
+
+Same, just delete the flag.
+
+These are all just semantic bugs due to the ambiguity of the flags, it is
+possible to provide a Fixes: flag for each file using this flag the wrong way
+but I dunno if it's worth it.
+
+Yours,
+Linus Walleij
