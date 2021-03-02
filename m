@@ -2,143 +2,153 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 185D5C4321A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 01:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E85C43142
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 01:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3CBD64FA9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 01:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 497AF64FA9
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 01:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233300AbhCCBJv (ORCPT
+        id S241383AbhCCBMQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 2 Mar 2021 20:09:51 -0500
-Received: from mga02.intel.com ([134.134.136.20]:44265 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1351349AbhCBORT (ORCPT
+        Tue, 2 Mar 2021 20:12:16 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:56324 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1575684AbhCBPYN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 2 Mar 2021 09:17:19 -0500
-IronPort-SDR: pMHKt0AAko+IUB3LODBkcdV1Kj17ZuZz3QB2U6Q/VlxuZy+MyFW16N8jRhTKWlUo/Kfb1Eaht7
- PJEbDI915WSQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9910"; a="173964363"
-X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
-   d="scan'208";a="173964363"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2021 06:14:19 -0800
-IronPort-SDR: XsTTl1bvinkrhr7HkvJW8Mx35RMJU4Z9LNHPZV1ptjWnpLJg2E517DX3NDo03/LbzpRIqg94RZ
- tEFORZFpH4ZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
-   d="scan'208";a="399037378"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.76]) ([10.237.72.76])
-  by fmsmga008.fm.intel.com with ESMTP; 02 Mar 2021 06:14:10 -0800
-Subject: Re: [PATCH v9 1/2] scsi: ufs: Enable power management for wlun
-To:     Asutosh Das <asutoshd@codeaurora.org>, cang@codeaurora.org,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Tue, 2 Mar 2021 10:24:13 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210302152253euoutp0290617864b85f2c3746d0219f78afb9c9~oj8wc0Aqe0237602376euoutp02C
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Mar 2021 15:22:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210302152253euoutp0290617864b85f2c3746d0219f78afb9c9~oj8wc0Aqe0237602376euoutp02C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1614698573;
+        bh=IFlB1ws4LuM5ICN3XgQN08EPvMv0h5PpaL58WYOIcAU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=taaGFCK5gTFlMSKHWQJDuRc1UdIvlCeUZiXi7LiZrm7RZb9XgLjBi8tvQRZKpd1UW
+         BpghItdIZxMPGf/Wslt3pmWXGbTDqeBJ2OAOU0FL6aq/BrYPOF31Vv8jRQOg9eLvXK
+         olA7YUyBJSg2zTLz1W0YLg9y+GB+xVXZ4xUQKzvI=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210302152252eucas1p25a88641ce102984d7e192fe5416f780b~oj8v-xKmw2148221482eucas1p2E;
+        Tue,  2 Mar 2021 15:22:52 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 91.DE.27958.C485E306; Tue,  2
+        Mar 2021 15:22:52 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210302152252eucas1p15eb47b959fe36190286668071250d580~oj8vff3Yo2321123211eucas1p1Y;
+        Tue,  2 Mar 2021 15:22:52 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210302152252eusmtrp19741e546b115c72cb5649e0d2923a6f5~oj8veu6ku1781717817eusmtrp10;
+        Tue,  2 Mar 2021 15:22:52 +0000 (GMT)
+X-AuditID: cbfec7f2-f15ff70000006d36-0f-603e584c1b11
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 69.25.16282.C485E306; Tue,  2
+        Mar 2021 15:22:52 +0000 (GMT)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210302152251eusmtip29ed4fb134b54fdd73d6d075c9d321158~oj8vRMZ2N1864418644eusmtip2y;
+        Tue,  2 Mar 2021 15:22:51 +0000 (GMT)
+From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Kiwoong Kim <kwmad.kim@samsung.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Satya Tangirala <satyat@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
-        <linux-mediatek@lists.infradead.org>
-References: <cover.1614655058.git.asutoshd@codeaurora.org>
- <b291bb65fadc9c828cbcb4ffb81cfa1ee47b82be.1614655058.git.asutoshd@codeaurora.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <d17e52e0-cb50-50ee-accb-458b318014e5@intel.com>
-Date:   Tue, 2 Mar 2021 16:14:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [RESEND PATCH v11 1/3] dt-bindings: vendor-prefixes: Add asix
+ prefix
+Date:   Tue,  2 Mar 2021 16:22:48 +0100
+Message-Id: <20210302152250.27113-2-l.stelmach@samsung.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20210302152250.27113-1-l.stelmach@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <b291bb65fadc9c828cbcb4ffb81cfa1ee47b82be.1614655058.git.asutoshd@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Organization: Samsung R&D Institute Poland
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKKsWRmVeSWpSXmKPExsWy7djP87o+EXYJBku/a1icv3uI2WLjjPWs
+        FnPOt7BYzD9yjtVi0fsZrBbX3t5hteh//JrZ4vz5DewWF7b1sVrcPLSC0WLT42usFpd3zWGz
+        mHF+H5PFoal7GS3WHrnLbnFsgZhF694j7Bb/9+xgdxDyuHztIrPHlpU3mTx2zrrL7rFpVSeb
+        x+Yl9R47d3xm8ujbsorR4/MmuQCOKC6blNSczLLUIn27BK6MGT8eMxb8ZKto7/7N1MD4k7WL
+        kZNDQsBEYs/uD4xdjFwcQgIrGCWe/zrBBOF8YZRo2jqdBcL5zCix7tQ/dpiWX/P+QLUsZ5TY
+        8XslWEJI4DmjxNLnSiA2m4CjRP/SE6wgRSIC95gl1rc/AOtgFrjPKHHv+WpmkCphAX+J7avO
+        s4DYLAKqEoeXnASL8wpYSyx+e4cFYp28RPvy7WwgNqeAjcSGk+tYIGoEJU7OfAJm8wtoSaxp
+        ug5mMwPVN2+dzQyyTELgMKfEi0NvgZo5gBwXiaVbNSBmCku8Or4F6h0ZidOTe1ggSuolJk8y
+        g2jtYZTYNucH1A3WEnfO/QIbwyygKbF+lz5E2FHi2IVedohWPokbbwUhLuCTmLRtOjNEmFei
+        o00IolpFYl3/HqiBUhK9r1YwTmBUmoXkl1lI7p+FsGsBI/MqRvHU0uLc9NRiw7zUcr3ixNzi
+        0rx0veT83E2MwJR3+t/xTzsY5776qHeIkYmD8RCjBAezkgiv+EvbBCHelMTKqtSi/Pii0pzU
+        4kOM0hwsSuK8q2aviRcSSE8sSc1OTS1ILYLJMnFwSjUwKU2rXMjQsKVbb9pF6Wu3Pj+Z9i/x
+        18ZwxzsTvdRSjZkaCqdM445Ob9m72HZNfHGA9G25xRO0z1uxnLjSWfvvs1cy22WD/1oLpwr2
+        npn530Hq5swkwV+7LwRzhcQbiH37kBDAW210rUXu5vcmw9zoXI9PatG73nSkWf/+dlxa8dSM
+        vfOFPp/kKXxozxKQmsXt/1547+qdAs3e12ZHZy3qt1y7OWK/3IbzN5ZxiBY/vmCr5ZO4QPB9
+        wdtfhdx2l3LmKDzLneHlvea//d9HJw+1vmHcdT7k5cmTxlz/JIMTarlCcxI+63X9/ZxzM+LQ
+        jRfF3KKcbOKlB3lS/DauP5wbY9P0XLNh12OmbYfE7G3fKLEUZyQaajEXFScCANBIz17oAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRmVeSWpSXmKPExsVy+t/xe7o+EXYJBjcXslmcv3uI2WLjjPWs
+        FnPOt7BYzD9yjtVi0fsZrBbX3t5hteh//JrZ4vz5DewWF7b1sVrcPLSC0WLT42usFpd3zWGz
+        mHF+H5PFoal7GS3WHrnLbnFsgZhF694j7Bb/9+xgdxDyuHztIrPHlpU3mTx2zrrL7rFpVSeb
+        x+Yl9R47d3xm8ujbsorR4/MmuQCOKD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81gr
+        I1MlfTublNSczLLUIn27BL2MGT8eMxb8ZKto7/7N1MD4k7WLkZNDQsBE4te8P4xdjFwcQgJL
+        GSWOv/gLlOAASkhJrJybDlEjLPHnWhcbRM1TRokt646CNbMJOEr0Lz3BCpIQEXjDLNF07y07
+        iMMscJ9R4tenF4wgVcICvhKLZ8xlArFZBFQlDi85yQxi8wpYSyx+e4cFYoW8RPvy7WwgNqeA
+        jcSGk+vA4kJANYvur2SHqBeUODnzCQvIdcwC6hLr5wmBhPkFtCTWNF0HK2cGGtO8dTbzBEah
+        WUg6ZiF0zEJStYCReRWjSGppcW56brGRXnFibnFpXrpecn7uJkZgjG879nPLDsaVrz7qHWJk
+        4mA8xCjBwawkwiv+0jZBiDclsbIqtSg/vqg0J7X4EKMp0GcTmaVEk/OBSSavJN7QzMDU0MTM
+        0sDU0sxYSZzX5MiaeCGB9MSS1OzU1ILUIpg+Jg5OqQamxROnx6tGz7h548i7Lf2+qhFmtZPF
+        5Roteiw+Ork7O/DwSPk8P9u2fQr/VdfjWww004NzD81m2XP2ZWr/DCOvZL6fG45t0RNKNpbl
+        KTsoJz49QWB6iXVlb0Ja5oWSzyf4ApvKOPJb+jq97lqLfTRZqqRy2cdynozdinlMV1Sy2ooj
+        Ha3n/1hoovElxJvjwDVXB+0NtxwtH143nzTjV5fcon8pBxdPa/Cd4WmU99jUL+tU22GtwKvT
+        Vr5u5v1z65Y46xRpAwn1RYlGSiVKCR8UFdZwfjadnnU0JHsvyxrz/IBbJ9MmXOe6MNly3lPF
+        1xe0Qmbq6S2cZWl3pe3t0i1xqYYHNZjZ/vLVcmw0MVViKc5INNRiLipOBADUfBqSegMAAA==
+X-CMS-MailID: 20210302152252eucas1p15eb47b959fe36190286668071250d580
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210302152252eucas1p15eb47b959fe36190286668071250d580
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210302152252eucas1p15eb47b959fe36190286668071250d580
+References: <20210302152250.27113-1-l.stelmach@samsung.com>
+        <CGME20210302152252eucas1p15eb47b959fe36190286668071250d580@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2/03/21 5:21 am, Asutosh Das wrote:
-> During runtime-suspend of ufs host, the scsi devices are
-> already suspended and so are the queues associated with them.
-> But the ufs host sends SSU to wlun during its runtime-suspend.
-> During the process blk_queue_enter checks if the queue is not in
-> suspended state. If so, it waits for the queue to resume, and never
-> comes out of it.
-> The commit
-> (d55d15a33: scsi: block: Do not accept any requests while suspended)
-> adds the check if the queue is in suspended state in blk_queue_enter().
-> 
-> Call trace:
->  __switch_to+0x174/0x2c4
->  __schedule+0x478/0x764
->  schedule+0x9c/0xe0
->  blk_queue_enter+0x158/0x228
->  blk_mq_alloc_request+0x40/0xa4
->  blk_get_request+0x2c/0x70
->  __scsi_execute+0x60/0x1c4
->  ufshcd_set_dev_pwr_mode+0x124/0x1e4
->  ufshcd_suspend+0x208/0x83c
->  ufshcd_runtime_suspend+0x40/0x154
->  ufshcd_pltfrm_runtime_suspend+0x14/0x20
->  pm_generic_runtime_suspend+0x28/0x3c
->  __rpm_callback+0x80/0x2a4
->  rpm_suspend+0x308/0x614
->  rpm_idle+0x158/0x228
->  pm_runtime_work+0x84/0xac
->  process_one_work+0x1f0/0x470
->  worker_thread+0x26c/0x4c8
->  kthread+0x13c/0x320
->  ret_from_fork+0x10/0x18
-> 
-> Fix this by registering ufs device wlun as a scsi driver and
-> registering it for block runtime-pm. Also make this as a
-> supplier for all other luns. That way, this device wlun
-> suspends after all the consumers and resumes after
-> hba resumes.
-> 
-> Co-developed-by: Can Guo <cang@codeaurora.org>
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
-> ---
+Add the prefix for ASIX Electronics Corporation.
 
-Now we need either to move the suspend/resume vops from
-ufshcd_suspend/resume to __ufshcd_wl_suspend/resume, assuming that
-would work for existing implementations of those callbacks,
-or otherwise create new vops ->wl_suspend() / ->wl_resume(), and
-then split the existing implementations of those callbacks.
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-ufs_intel_resume() now needs to be invoked from __ufshcd_wl_resume().
-I am not sure about the others:
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index f3134f44c80c..cd1712660b98 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -127,6 +127,8 @@ patternProperties:
+     description: Asahi Kasei Corp.
+   "^asc,.*":
+     description: All Sensors Corporation
++  "^asix,.*":
++    description: ASIX Electronics Corporation
+   "^aspeed,.*":
+     description: ASPEED Technology Inc.
+   "^asus,.*":
+-- 
+2.26.2
 
-	exynos_ufs_suspend()
-	exynos_ufs_resume()
-	ufs_hisi_suspend()
-	ufs_hisi_resume()
-	ufs_mtk_suspend()
-	ufs_mtk_resume()
-	ufs_qcom_suspend()
-	ufs_qcom_resume()
