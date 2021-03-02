@@ -2,1306 +2,2469 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D385CC28D15
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 01:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8157DC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 01:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80A3564FA9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 01:20:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 414FC64FB2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 01:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241945AbhCCBOs (ORCPT
+        id S241784AbhCCBOB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 2 Mar 2021 20:14:48 -0500
-Received: from labrats.qualcomm.com ([199.106.110.90]:21524 "EHLO
-        labrats.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2360910AbhCBWxk (ORCPT
+        Tue, 2 Mar 2021 20:14:01 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57495 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1578716AbhCBP0x (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 2 Mar 2021 17:53:40 -0500
-IronPort-SDR: 6jZITElIaQatDlA4jTIT5Kleyfy9HCYf+qx3hIYQh2S0RRiV2KBV0j1a2UUXP93KsOAP9G1bzM
- 2d+NN57NW3BNFDpxgxlCSDoPdn2cX+cbAzJ0M02gA1CpRZ0i7zQmpgI/m+ZxORMpSBfy/PoJ+b
- ycEkVDu7ncJS9ZEbb5QErRwGHUiKVrJc3ESXIg7VuOk4j5Xz2Mh6/06II1SG97SkrYd3LP+558
- bERhxtdbJY3xeDwpwhXQQjl416IAgX3u4EgCs/eWrHrC09l9K1vgaDUJ2Cdya32fP5QtwL9rPs
- lB4=
-X-IronPort-AV: E=Sophos;i="5.81,218,1610438400"; 
-   d="scan'208";a="29681798"
-Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
-  by labrats.qualcomm.com with ESMTP; 02 Mar 2021 14:53:00 -0800
-X-QCInternal: smtphost
-Received: from stor-presley.qualcomm.com ([192.168.140.85])
-  by ironmsg04-sd.qualcomm.com with ESMTP; 02 Mar 2021 14:52:59 -0800
-Received: by stor-presley.qualcomm.com (Postfix, from userid 92687)
-        id CDDA821A50; Tue,  2 Mar 2021 14:52:59 -0800 (PST)
-From:   Asutosh Das <asutoshd@codeaurora.org>
-To:     cang@codeaurora.org, martin.petersen@oracle.com,
-        adrian.hunter@intel.com, linux-scsi@vger.kernel.org
-Cc:     Asutosh Das <asutoshd@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Tue, 2 Mar 2021 10:26:53 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210302152253euoutp023de17e3c77fc499788839a38ca7e4dc7~oj8xHxdZY0237402374euoutp02H
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Mar 2021 15:22:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210302152253euoutp023de17e3c77fc499788839a38ca7e4dc7~oj8xHxdZY0237402374euoutp02H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1614698573;
+        bh=Bz6UnSMb1p5ENnyae4+0nJgd0cb1lxwgS5VjZjMsBW0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XtuaIKcv/H4cz1Ie7tMryfYBTKBfI8tkadkWaTbZaJ5QFEoVAtR23NjOVTXHbpJaH
+         qlrVQNzTY66JVnC6P2YubvAn68aIW5xaoIZ+hy1v2dMnNzsuyGFHs93JJzhdapuCHU
+         dD9wVxN25ee0OnP+WkMsocHSR9xvxFzUAlkhqF/0=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20210302152253eucas1p1c4e0c62124f95acfebafd2f2d630b67a~oj8wyO-1P2321123211eucas1p1c;
+        Tue,  2 Mar 2021 15:22:53 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 1C.BF.44805.D485E306; Tue,  2
+        Mar 2021 15:22:53 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210302152253eucas1p1bfb694963a9cbaf563e28607abeea59d~oj8wTFOWq0129701297eucas1p16;
+        Tue,  2 Mar 2021 15:22:53 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210302152252eusmtrp15b8311485123f1b714dbc7667c82bd84~oj8wOryf_1781617816eusmtrp19;
+        Tue,  2 Mar 2021 15:22:52 +0000 (GMT)
+X-AuditID: cbfec7f4-b4fff7000000af05-e4-603e584da998
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 08.A2.21957.C485E306; Tue,  2
+        Mar 2021 15:22:52 +0000 (GMT)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210302152252eusmtip1bedbe0e4f29563d6088a88001d171489~oj8v51Ysk0968209682eusmtip1G;
+        Tue,  2 Mar 2021 15:22:52 +0000 (GMT)
+From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Kiwoong Kim <kwmad.kim@samsung.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Dinghao Liu <dinghao.liu@zju.edu.cn>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Satya Tangirala <satyat@google.com>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C,
-        S5P AND EXYNOS ARM ARCHITECTURES),
-        linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND
-        EXYNOS ARM ARCHITECTURES),
-        linux-mediatek@lists.infradead.org (moderated list:UNIVERSAL FLASH
-        STORAGE HOST CONTROLLER DRIVER...)
-Subject: [PATCH v10 1/2] scsi: ufs: Enable power management for wlun
-Date:   Tue,  2 Mar 2021 14:52:34 -0800
-Message-Id: <0576d6eae15486740c25767e2d8805f7e94eb79d.1614725302.git.asutoshd@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1614725302.git.asutoshd@codeaurora.org>
-References: <cover.1614725302.git.asutoshd@codeaurora.org>
-In-Reply-To: <cover.1614725302.git.asutoshd@codeaurora.org>
-References: <cover.1614725302.git.asutoshd@codeaurora.org>
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [RESEND PATCH v11 3/3] net: ax88796c: ASIX AX88796C SPI Ethernet
+ Adapter Driver
+Date:   Tue,  2 Mar 2021 16:22:50 +0100
+Message-Id: <20210302152250.27113-4-l.stelmach@samsung.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20210302152250.27113-1-l.stelmach@samsung.com>
+MIME-Version: 1.0
+Organization: Samsung R&D Institute Poland
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMKsWRmVeSWpSXmKPExsWy7djP87q+EXYJBmsPyFucv3uI2WLjjPWs
+        FnPOt7BYzD9yjtVi0fsZrBbX3t5hteh//JrZ4vz5DewWF7b1sVrcPLSC0WLT42usFpd3zWGz
+        mHF+H5PFoal7GS3WHrnLbnFsgZhF694j7A6CHpevXWT22LLyJpPHzll32T02repk89i8pN5j
+        547PTB59W1YxenzeJBfAEcVlk5Kak1mWWqRvl8CVcWbvJKaCdVNZKro372FuYOzbwdzFyMkh
+        IWAi8f3OPMYuRi4OIYEVjBLbO9YwQzhfGCXWtUxng3A+M0qsvDuJCaal/fEhdojEckaJq7t/
+        skA4zxklfny6zAhSxSbgKNG/9AQrSEJE4B6zxPr2B2BbmAX2MUrsvDcFbL2wQJTEh87LYHNZ
+        BFQlPq49BhTn4OAVsJb4cSQXYp28RPvy7WwgNqeAjcSGk+tYQGxeAUGJkzOfgNn8AloSa5qu
+        g9nMQPXNW2eDPSEhsJ9TomvOQ6i7XSS2nT7LBmELS7w6voUdwpaROD25hwVkr4RAvcTkSWYQ
+        vT2MEtvm/GCBqLGWuHPuFxtIDbOApsT6XfoQYUeJPetes0O08knceCsIcQKfxKRt05khwrwS
+        HW1CENUqEuv690ANlJLofbWCcQKj0iwkz8xC8sAshF0LGJlXMYqnlhbnpqcWG+WllusVJ+YW
+        l+al6yXn525iBKa70/+Of9nBuPzVR71DjEwcjIcYJTiYlUR4xV/aJgjxpiRWVqUW5ccXleak
+        Fh9ilOZgURLnTdqyJl5IID2xJDU7NbUgtQgmy8TBKdXA1OYfUf6N4d9M2ZlPFxh+kzCf3GSy
+        0fOvffm1T1kCalPXb9aRcZ/uudspRSgy3jrxgsaHqvJL8/j/SfmVRu4O4wz4NNdtiW6wL2P9
+        Lfadc6/zqTcGxX279lf+6uriT7OeCBvw7duy41PHT5Nfs45wve2JuVu1Y1nB5f6ftwMSJi22
+        vZV7jCmkayuLRsP1zz/kb4rsnz7vdbUsi9fhPeWWE4ItL346YrLA27e8xz04bdkKGVXFCrnU
+        1T6O3Q9bfrFODjol+yiHbcoF32MfdDqW/w5I3C64Pmzend8xgpn79DL29f0+eWspv8SK3e9q
+        Muda5d47uFtLY4+1TMnqf2tuHvTdOGWb3TPV/tzYczldfEosxRmJhlrMRcWJAPHTAeTmAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsVy+t/xu7o+EXYJBicuGVucv3uI2WLjjPWs
+        FnPOt7BYzD9yjtVi0fsZrBbX3t5hteh//JrZ4vz5DewWF7b1sVrcPLSC0WLT42usFpd3zWGz
+        mHF+H5PFoal7GS3WHrnLbnFsgZhF694j7A6CHpevXWT22LLyJpPHzll32T02repk89i8pN5j
+        547PTB59W1YxenzeJBfAEaVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9n
+        k5Kak1mWWqRvl6CXcWbvJKaCdVNZKro372FuYOzbwdzFyMkhIWAi0f74EHsXIxeHkMBSRomr
+        t+cDORxACSmJlXPTIWqEJf5c62KDqHnKKPH31wtGkASbgKNE/9ITrCAJEYE3zBJN996CTWIW
+        2Mcosf/oYnaQKmGBCIntv9cygdgsAqoSH9ceYwbZwCtgLfHjSC7EBnmJ9uXb2UBsTgEbiQ0n
+        17GA2EJAJYvurwQbwysgKHFy5hMWkFZmAXWJ9fOEQML8AloSa5qug5UzA41p3jqbeQKj0Cwk
+        HbMQOmYhqVrAyLyKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMjMLa3Hfu5eQfjvFcf9Q4xMnEw
+        HmKU4GBWEuEVf2mbIMSbklhZlVqUH19UmpNafIjRFOixicxSosn5wOSSVxJvaGZgamhiZmlg
+        amlmrCTOu3XumnghgfTEktTs1NSC1CKYPiYOTqkGJqu1IX0XXDdfPqjPk3/09/KlvmaHr/AG
+        h7/pd9Gc+/G3mLysu1uCwIZ5C8raYivuTrdvWZcv+PPwmU0bg/i9OmNOS+s3O6bNePJKrzFU
+        Vu7v2qsCr56yFk+LYtOJf3vhVN3K0MSDM8z+7xZhObGF997/WbMnPk9byDdvZQtThKrdc9tq
+        xeLMFTdXN7PnZvGdv/h7pfMRl+aNppVX7Ww/2FxWmbh502HR6HXPel+Wt7bc2DOz4EpRmcw8
+        t0338ldY+z9cWhjow13IfJ3vT+27CRtbHGcxHNx29qhzlP2Rkky3jg2+KzZX1H1Ji63w6f9y
+        vaH8X+Lmi4duVUwRe+dSocgfvPNrgk6i7cbLExJzZZVYijMSDbWYi4oTAX+GE/F2AwAA
+X-CMS-MailID: 20210302152253eucas1p1bfb694963a9cbaf563e28607abeea59d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210302152253eucas1p1bfb694963a9cbaf563e28607abeea59d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210302152253eucas1p1bfb694963a9cbaf563e28607abeea59d
+References: <20210302152250.27113-1-l.stelmach@samsung.com>
+        <CGME20210302152253eucas1p1bfb694963a9cbaf563e28607abeea59d@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-During runtime-suspend of ufs host, the scsi devices are
-already suspended and so are the queues associated with them.
-But the ufs host sends SSU to wlun during its runtime-suspend.
-During the process blk_queue_enter checks if the queue is not in
-suspended state. If so, it waits for the queue to resume, and never
-comes out of it.
-The commit
-(d55d15a33: scsi: block: Do not accept any requests while suspended)
-adds the check if the queue is in suspended state in blk_queue_enter().
+ASIX AX88796[1] is a versatile ethernet adapter chip, that can be
+connected to a CPU with a 8/16-bit bus or with an SPI. This driver
+supports SPI connection.
 
-Call trace:
- __switch_to+0x174/0x2c4
- __schedule+0x478/0x764
- schedule+0x9c/0xe0
- blk_queue_enter+0x158/0x228
- blk_mq_alloc_request+0x40/0xa4
- blk_get_request+0x2c/0x70
- __scsi_execute+0x60/0x1c4
- ufshcd_set_dev_pwr_mode+0x124/0x1e4
- ufshcd_suspend+0x208/0x83c
- ufshcd_runtime_suspend+0x40/0x154
- ufshcd_pltfrm_runtime_suspend+0x14/0x20
- pm_generic_runtime_suspend+0x28/0x3c
- __rpm_callback+0x80/0x2a4
- rpm_suspend+0x308/0x614
- rpm_idle+0x158/0x228
- pm_runtime_work+0x84/0xac
- process_one_work+0x1f0/0x470
- worker_thread+0x26c/0x4c8
- kthread+0x13c/0x320
- ret_from_fork+0x10/0x18
+The driver has been ported from the vendor kernel for ARTIK5[2]
+boards. Several changes were made to adapt it to the current kernel
+which include:
 
-Fix this by registering ufs device wlun as a scsi driver and
-registering it for block runtime-pm. Also make this as a
-supplier for all other luns. That way, this device wlun
-suspends after all the consumers and resumes after
-hba resumes.
++ updated DT configuration,
++ clock configuration moved to DT,
++ new timer, ethtool and gpio APIs,
++ dev_* instead of pr_* and custom printk() wrappers,
++ removed awkward vendor power managemtn.
++ introduced ethtool tunable to control SPI compression
 
-Co-developed-by: Can Guo <cang@codeaurora.org>
-Signed-off-by: Can Guo <cang@codeaurora.org>
-Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+[1] https://www.asix.com.tw/products.php?op=pItemdetail&PItemID=104;65;86&PLine=65
+[2] https://git.tizen.org/cgit/profile/common/platform/kernel/linux-3.10-artik/
+
+The other ax88796 driver is for NE2000 compatible AX88796L chip. These
+chips are not compatible. Hence, two separate drivers are required.
+
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- drivers/scsi/ufs/cdns-pltfrm.c     |   2 +
- drivers/scsi/ufs/tc-dwc-g210-pci.c |   2 +
- drivers/scsi/ufs/ufs-exynos.c      |   2 +
- drivers/scsi/ufs/ufs-hisi.c        |   2 +
- drivers/scsi/ufs/ufs-mediatek.c    |   2 +
- drivers/scsi/ufs/ufs-qcom.c        |   2 +
- drivers/scsi/ufs/ufs_bsg.c         |   6 +-
- drivers/scsi/ufs/ufshcd-pci.c      |  32 +-
- drivers/scsi/ufs/ufshcd.c          | 583 +++++++++++++++++++++++++++----------
- drivers/scsi/ufs/ufshcd.h          |   7 +
- include/trace/events/ufs.h         |  20 ++
- 11 files changed, 478 insertions(+), 182 deletions(-)
+ MAINTAINERS                                |    6 +
+ drivers/net/ethernet/Kconfig               |    1 +
+ drivers/net/ethernet/Makefile              |    1 +
+ drivers/net/ethernet/asix/Kconfig          |   35 +
+ drivers/net/ethernet/asix/Makefile         |    6 +
+ drivers/net/ethernet/asix/ax88796c_ioctl.c |  239 ++++
+ drivers/net/ethernet/asix/ax88796c_ioctl.h |   26 +
+ drivers/net/ethernet/asix/ax88796c_main.c  | 1146 ++++++++++++++++++++
+ drivers/net/ethernet/asix/ax88796c_main.h  |  568 ++++++++++
+ drivers/net/ethernet/asix/ax88796c_spi.c   |  115 ++
+ drivers/net/ethernet/asix/ax88796c_spi.h   |   69 ++
+ 11 files changed, 2212 insertions(+)
+ create mode 100644 drivers/net/ethernet/asix/Kconfig
+ create mode 100644 drivers/net/ethernet/asix/Makefile
+ create mode 100644 drivers/net/ethernet/asix/ax88796c_ioctl.c
+ create mode 100644 drivers/net/ethernet/asix/ax88796c_ioctl.h
+ create mode 100644 drivers/net/ethernet/asix/ax88796c_main.c
+ create mode 100644 drivers/net/ethernet/asix/ax88796c_main.h
+ create mode 100644 drivers/net/ethernet/asix/ax88796c_spi.c
+ create mode 100644 drivers/net/ethernet/asix/ax88796c_spi.h
 
-diff --git a/drivers/scsi/ufs/cdns-pltfrm.c b/drivers/scsi/ufs/cdns-pltfrm.c
-index 149391f..3e70c23 100644
---- a/drivers/scsi/ufs/cdns-pltfrm.c
-+++ b/drivers/scsi/ufs/cdns-pltfrm.c
-@@ -319,6 +319,8 @@ static const struct dev_pm_ops cdns_ufs_dev_pm_ops = {
- 	.runtime_suspend = ufshcd_pltfrm_runtime_suspend,
- 	.runtime_resume  = ufshcd_pltfrm_runtime_resume,
- 	.runtime_idle    = ufshcd_pltfrm_runtime_idle,
-+	.prepare	 = ufshcd_suspend_prepare,
-+	.complete	= ufshcd_resume_complete,
- };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a50a543e3c81..e029fa37df5e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2757,6 +2757,12 @@ S:	Maintained
+ F:	Documentation/hwmon/asc7621.rst
+ F:	drivers/hwmon/asc7621.c
  
- static struct platform_driver cdns_ufs_pltfrm_driver = {
-diff --git a/drivers/scsi/ufs/tc-dwc-g210-pci.c b/drivers/scsi/ufs/tc-dwc-g210-pci.c
-index 67a6a61..b01db12 100644
---- a/drivers/scsi/ufs/tc-dwc-g210-pci.c
-+++ b/drivers/scsi/ufs/tc-dwc-g210-pci.c
-@@ -148,6 +148,8 @@ static const struct dev_pm_ops tc_dwc_g210_pci_pm_ops = {
- 	.runtime_suspend = tc_dwc_g210_pci_runtime_suspend,
- 	.runtime_resume  = tc_dwc_g210_pci_runtime_resume,
- 	.runtime_idle    = tc_dwc_g210_pci_runtime_idle,
-+	.prepare	 = ufshcd_suspend_prepare,
-+	.complete	= ufshcd_resume_complete,
- };
- 
- static const struct pci_device_id tc_dwc_g210_pci_tbl[] = {
-diff --git a/drivers/scsi/ufs/ufs-exynos.c b/drivers/scsi/ufs/ufs-exynos.c
-index 267943a1..45c0b02 100644
---- a/drivers/scsi/ufs/ufs-exynos.c
-+++ b/drivers/scsi/ufs/ufs-exynos.c
-@@ -1268,6 +1268,8 @@ static const struct dev_pm_ops exynos_ufs_pm_ops = {
- 	.runtime_suspend = ufshcd_pltfrm_runtime_suspend,
- 	.runtime_resume  = ufshcd_pltfrm_runtime_resume,
- 	.runtime_idle    = ufshcd_pltfrm_runtime_idle,
-+	.prepare	 = ufshcd_suspend_prepare,
-+	.complete	= ufshcd_resume_complete,
- };
- 
- static struct platform_driver exynos_ufs_pltform = {
-diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
-index 0aa5813..d463b44 100644
---- a/drivers/scsi/ufs/ufs-hisi.c
-+++ b/drivers/scsi/ufs/ufs-hisi.c
-@@ -574,6 +574,8 @@ static const struct dev_pm_ops ufs_hisi_pm_ops = {
- 	.runtime_suspend = ufshcd_pltfrm_runtime_suspend,
- 	.runtime_resume  = ufshcd_pltfrm_runtime_resume,
- 	.runtime_idle    = ufshcd_pltfrm_runtime_idle,
-+	.prepare	 = ufshcd_suspend_prepare,
-+	.complete	= ufshcd_resume_complete,
- };
- 
- static struct platform_driver ufs_hisi_pltform = {
-diff --git a/drivers/scsi/ufs/ufs-mediatek.c b/drivers/scsi/ufs/ufs-mediatek.c
-index c55202b..df1eabb 100644
---- a/drivers/scsi/ufs/ufs-mediatek.c
-+++ b/drivers/scsi/ufs/ufs-mediatek.c
-@@ -1097,6 +1097,8 @@ static const struct dev_pm_ops ufs_mtk_pm_ops = {
- 	.runtime_suspend = ufshcd_pltfrm_runtime_suspend,
- 	.runtime_resume  = ufshcd_pltfrm_runtime_resume,
- 	.runtime_idle    = ufshcd_pltfrm_runtime_idle,
-+	.prepare	 = ufshcd_suspend_prepare,
-+	.complete	= ufshcd_resume_complete,
- };
- 
- static struct platform_driver ufs_mtk_pltform = {
-diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-index f97d7b0..9aa098a 100644
---- a/drivers/scsi/ufs/ufs-qcom.c
-+++ b/drivers/scsi/ufs/ufs-qcom.c
-@@ -1546,6 +1546,8 @@ static const struct dev_pm_ops ufs_qcom_pm_ops = {
- 	.runtime_suspend = ufshcd_pltfrm_runtime_suspend,
- 	.runtime_resume  = ufshcd_pltfrm_runtime_resume,
- 	.runtime_idle    = ufshcd_pltfrm_runtime_idle,
-+	.prepare	 = ufshcd_suspend_prepare,
-+	.complete	= ufshcd_resume_complete,
- };
- 
- static struct platform_driver ufs_qcom_pltform = {
-diff --git a/drivers/scsi/ufs/ufs_bsg.c b/drivers/scsi/ufs/ufs_bsg.c
-index 5b2bc1a..cbb5a90 100644
---- a/drivers/scsi/ufs/ufs_bsg.c
-+++ b/drivers/scsi/ufs/ufs_bsg.c
-@@ -97,7 +97,7 @@ static int ufs_bsg_request(struct bsg_job *job)
- 
- 	bsg_reply->reply_payload_rcv_len = 0;
- 
--	pm_runtime_get_sync(hba->dev);
-+	scsi_autopm_get_device(hba->sdev_ufs_device);
- 
- 	msgcode = bsg_request->msgcode;
- 	switch (msgcode) {
-@@ -106,7 +106,7 @@ static int ufs_bsg_request(struct bsg_job *job)
- 		ret = ufs_bsg_alloc_desc_buffer(hba, job, &desc_buff,
- 						&desc_len, desc_op);
- 		if (ret) {
--			pm_runtime_put_sync(hba->dev);
-+			scsi_autopm_put_device(hba->sdev_ufs_device);
- 			goto out;
- 		}
- 
-@@ -138,7 +138,7 @@ static int ufs_bsg_request(struct bsg_job *job)
- 		break;
- 	}
- 
--	pm_runtime_put_sync(hba->dev);
-+	scsi_autopm_put_device(hba->sdev_ufs_device);
- 
- 	if (!desc_buff)
- 		goto out;
-diff --git a/drivers/scsi/ufs/ufshcd-pci.c b/drivers/scsi/ufs/ufshcd-pci.c
-index fadd566..50f84bf 100644
---- a/drivers/scsi/ufs/ufshcd-pci.c
-+++ b/drivers/scsi/ufs/ufshcd-pci.c
-@@ -247,29 +247,6 @@ static int ufshcd_pci_resume(struct device *dev)
- 	return ufshcd_system_resume(dev_get_drvdata(dev));
- }
- 
--/**
-- * ufshcd_pci_poweroff - suspend-to-disk poweroff function
-- * @dev: pointer to PCI device handle
-- *
-- * Returns 0 if successful
-- * Returns non-zero otherwise
-- */
--static int ufshcd_pci_poweroff(struct device *dev)
--{
--	struct ufs_hba *hba = dev_get_drvdata(dev);
--	int spm_lvl = hba->spm_lvl;
--	int ret;
--
--	/*
--	 * For poweroff we need to set the UFS device to PowerDown mode.
--	 * Force spm_lvl to ensure that.
--	 */
--	hba->spm_lvl = 5;
--	ret = ufshcd_system_suspend(hba);
--	hba->spm_lvl = spm_lvl;
--	return ret;
--}
--
- #endif /* !CONFIG_PM_SLEEP */
- 
- #ifdef CONFIG_PM
-@@ -366,12 +343,9 @@ ufshcd_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- static const struct dev_pm_ops ufshcd_pci_pm_ops = {
- #ifdef CONFIG_PM_SLEEP
--	.suspend	= ufshcd_pci_suspend,
--	.resume		= ufshcd_pci_resume,
--	.freeze		= ufshcd_pci_suspend,
--	.thaw		= ufshcd_pci_resume,
--	.poweroff	= ufshcd_pci_poweroff,
--	.restore	= ufshcd_pci_resume,
-+	.prepare	 = ufshcd_suspend_prepare,
-+	.complete	= ufshcd_resume_complete,
-+	SET_SYSTEM_SLEEP_PM_OPS(ufshcd_pci_suspend, ufshcd_pci_resume)
- #endif
- 	SET_RUNTIME_PM_OPS(ufshcd_pci_runtime_suspend,
- 			   ufshcd_pci_runtime_resume,
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 45624c7..32139dd 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -16,6 +16,7 @@
- #include <linux/bitfield.h>
- #include <linux/blk-pm.h>
- #include <linux/blkdev.h>
-+#include <scsi/scsi_driver.h>
- #include "ufshcd.h"
- #include "ufs_quirks.h"
- #include "unipro.h"
-@@ -78,6 +79,8 @@
- /* Polling time to wait for fDeviceInit */
- #define FDEVICEINIT_COMPL_TIMEOUT 1500 /* millisecs */
- 
-+#define wlun_dev_to_hba(dv) shost_priv(to_scsi_device(dv)->host)
++ASIX AX88796C SPI ETHERNET ADAPTER
++M:	Łukasz Stelmach <l.stelmach@samsung.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/net/asix,ax88796c.yaml
++F:	drivers/net/ethernet/asix/ax88796c_*
 +
- #define ufshcd_toggle_vreg(_dev, _vreg, _on)				\
- 	({                                                              \
- 		int _ret;                                               \
-@@ -1556,7 +1559,7 @@ static ssize_t ufshcd_clkscale_enable_store(struct device *dev,
- 	if (value == hba->clk_scaling.is_enabled)
- 		goto out;
- 
--	pm_runtime_get_sync(hba->dev);
-+	scsi_autopm_get_device(hba->sdev_ufs_device);
- 	ufshcd_hold(hba, false);
- 
- 	hba->clk_scaling.is_enabled = value;
-@@ -1572,7 +1575,7 @@ static ssize_t ufshcd_clkscale_enable_store(struct device *dev,
- 	}
- 
- 	ufshcd_release(hba);
--	pm_runtime_put_sync(hba->dev);
-+	scsi_autopm_put_device(hba->sdev_ufs_device);
- out:
- 	up(&hba->host_sem);
- 	return err ? err : count;
-@@ -2572,6 +2575,17 @@ static inline u16 ufshcd_upiu_wlun_to_scsi_wlun(u8 upiu_wlun_id)
- 	return (upiu_wlun_id & ~UFS_UPIU_WLUN_ID) | SCSI_W_LUN_BASE;
- }
- 
-+static inline bool is_rpmb_wlun(struct scsi_device *sdev)
-+{
-+	return (sdev->lun == ufshcd_upiu_wlun_to_scsi_wlun(UFS_UPIU_RPMB_WLUN));
-+}
+ ASPEED PINCTRL DRIVERS
+ M:	Andrew Jeffery <andrew@aj.id.au>
+ L:	linux-aspeed@lists.ozlabs.org (moderated for non-subscribers)
+diff --git a/drivers/net/ethernet/Kconfig b/drivers/net/ethernet/Kconfig
+index ad04660b97b8..ca556a2b6bba 100644
+--- a/drivers/net/ethernet/Kconfig
++++ b/drivers/net/ethernet/Kconfig
+@@ -32,6 +32,7 @@ source "drivers/net/ethernet/apm/Kconfig"
+ source "drivers/net/ethernet/apple/Kconfig"
+ source "drivers/net/ethernet/aquantia/Kconfig"
+ source "drivers/net/ethernet/arc/Kconfig"
++source "drivers/net/ethernet/asix/Kconfig"
+ source "drivers/net/ethernet/atheros/Kconfig"
+ source "drivers/net/ethernet/broadcom/Kconfig"
+ source "drivers/net/ethernet/brocade/Kconfig"
+diff --git a/drivers/net/ethernet/Makefile b/drivers/net/ethernet/Makefile
+index 1e7dc8a7762d..a393eb9f9fe5 100644
+--- a/drivers/net/ethernet/Makefile
++++ b/drivers/net/ethernet/Makefile
+@@ -18,6 +18,7 @@ obj-$(CONFIG_NET_XGENE) += apm/
+ obj-$(CONFIG_NET_VENDOR_APPLE) += apple/
+ obj-$(CONFIG_NET_VENDOR_AQUANTIA) += aquantia/
+ obj-$(CONFIG_NET_VENDOR_ARC) += arc/
++obj-$(CONFIG_NET_VENDOR_ASIX) += asix/
+ obj-$(CONFIG_NET_VENDOR_ATHEROS) += atheros/
+ obj-$(CONFIG_NET_VENDOR_CADENCE) += cadence/
+ obj-$(CONFIG_NET_VENDOR_BROADCOM) += broadcom/
+diff --git a/drivers/net/ethernet/asix/Kconfig b/drivers/net/ethernet/asix/Kconfig
+new file mode 100644
+index 000000000000..eed02453314c
+--- /dev/null
++++ b/drivers/net/ethernet/asix/Kconfig
+@@ -0,0 +1,35 @@
++#
++# Asix network device configuration
++#
 +
-+static inline bool is_device_wlun(struct scsi_device *sdev)
-+{
-+	return (sdev->lun ==
-+		ufshcd_upiu_wlun_to_scsi_wlun(UFS_UPIU_UFS_DEVICE_WLUN));
-+}
++config NET_VENDOR_ASIX
++	bool "Asix devices"
++	default y
++	help
++	  If you have a network (Ethernet, non-USB, not NE2000 compatible)
++	  interface based on a chip from ASIX, say Y.
 +
- static void ufshcd_init_lrb(struct ufs_hba *hba, struct ufshcd_lrb *lrb, int i)
- {
- 	struct utp_transfer_cmd_desc *cmd_descp = hba->ucdl_base_addr;
-@@ -4808,6 +4822,41 @@ static inline void ufshcd_get_lu_power_on_wp_status(struct ufs_hba *hba,
- }
- 
- /**
-+ * ufshcd_setup_links - associate link b/w device wlun and other luns
-+ * @sdev: pointer to SCSI device
-+ * @hba: pointer to ufs hba
++if NET_VENDOR_ASIX
++
++config SPI_AX88796C
++	tristate "Asix AX88796C-SPI support"
++	select PHYLIB
++	depends on SPI
++	depends on GPIOLIB
++	help
++	  Say Y here if you intend to use ASIX AX88796C attached in SPI mode.
++
++config SPI_AX88796C_COMPRESSION
++	bool "SPI transfer compression"
++	default n
++	depends on SPI_AX88796C
++	help
++	  Say Y here to enable SPI transfer compression. It saves up
++	  to 24 dummy cycles during each transfer which may noticeably
++	  speed up short transfers. This sets the default value that is
++	  inherited by network interfaces during probe. It can be
++	  changed at run time via spi-compression ethtool tunable.
++
++	  If unsure say N.
++
++endif # NET_VENDOR_ASIX
+diff --git a/drivers/net/ethernet/asix/Makefile b/drivers/net/ethernet/asix/Makefile
+new file mode 100644
+index 000000000000..0bfbbb042634
+--- /dev/null
++++ b/drivers/net/ethernet/asix/Makefile
+@@ -0,0 +1,6 @@
++#
++# Makefile for the Asix network device drivers.
++#
++
++obj-$(CONFIG_SPI_AX88796C) += ax88796c.o
++ax88796c-y := ax88796c_main.o ax88796c_ioctl.o ax88796c_spi.o
+diff --git a/drivers/net/ethernet/asix/ax88796c_ioctl.c b/drivers/net/ethernet/asix/ax88796c_ioctl.c
+new file mode 100644
+index 000000000000..916ae380a004
+--- /dev/null
++++ b/drivers/net/ethernet/asix/ax88796c_ioctl.c
+@@ -0,0 +1,239 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2010 ASIX Electronics Corporation
++ * Copyright (c) 2020 Samsung Electronics Co., Ltd.
++ *
++ * ASIX AX88796C SPI Fast Ethernet Linux driver
 + */
-+static void ufshcd_setup_links(struct ufs_hba *hba, struct scsi_device *sdev)
++
++#define pr_fmt(fmt)	"ax88796c: " fmt
++
++#include <linux/bitmap.h>
++#include <linux/iopoll.h>
++#include <linux/phy.h>
++#include <linux/netdevice.h>
++
++#include "ax88796c_main.h"
++#include "ax88796c_ioctl.h"
++
++static const char ax88796c_priv_flag_names[][ETH_GSTRING_LEN] = {
++	"SPICompression",
++};
++
++static void
++ax88796c_get_drvinfo(struct net_device *ndev, struct ethtool_drvinfo *info)
 +{
-+	struct device_link *link;
++	/* Inherit standard device info */
++	strncpy(info->driver, DRV_NAME, sizeof(info->driver));
++}
 +
-+	/*
-+	 * device wlun is the supplier & rest of the luns are consumers
-+	 * This ensures that device wlun suspends after all other luns.
-+	 */
-+	if (hba->sdev_ufs_device) {
-+		link = device_link_add(&sdev->sdev_gendev,
-+				       &hba->sdev_ufs_device->sdev_gendev,
-+				       DL_FLAG_PM_RUNTIME);
-+		if (!link) {
-+			dev_err(&sdev->sdev_gendev, "Failed establishing link - %s\n",
-+				dev_name(&hba->sdev_ufs_device->sdev_gendev));
-+			return;
-+		}
-+		hba->luns_avail--;
-+		/* Ignore REPORT_LUN wlun probing */
-+		if (hba->luns_avail != 1)
-+			return;
++static u32 ax88796c_get_msglevel(struct net_device *ndev)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
 +
-+		pm_runtime_put_noidle(&hba->sdev_ufs_device->sdev_gendev);
-+		pm_runtime_mark_last_busy(&hba->sdev_ufs_device->sdev_gendev);
++	return ax_local->msg_enable;
++}
++
++static void ax88796c_set_msglevel(struct net_device *ndev, u32 level)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++
++	ax_local->msg_enable = level;
++}
++
++static void
++ax88796c_get_pauseparam(struct net_device *ndev, struct ethtool_pauseparam *pause)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++
++	pause->tx_pause = !!(ax_local->flowctrl & AX_FC_TX);
++	pause->rx_pause = !!(ax_local->flowctrl & AX_FC_RX);
++	pause->autoneg = (ax_local->flowctrl & AX_FC_ANEG) ?
++		AUTONEG_ENABLE :
++		AUTONEG_DISABLE;
++}
++
++static int
++ax88796c_set_pauseparam(struct net_device *ndev, struct ethtool_pauseparam *pause)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++	int fc;
++
++	/* The following logic comes from phylink_ethtool_set_pauseparam() */
++	fc = pause->tx_pause ? AX_FC_TX : 0;
++	fc |= pause->rx_pause ? AX_FC_RX : 0;
++	fc |= pause->autoneg ? AX_FC_ANEG : 0;
++
++	ax_local->flowctrl = fc;
++
++	if (pause->autoneg) {
++		phy_set_asym_pause(ax_local->phydev, pause->tx_pause,
++				   pause->rx_pause);
 +	} else {
-+		/* device wlun is probed */
-+		hba->luns_avail--;
++		int maccr = 0;
++
++		phy_set_asym_pause(ax_local->phydev, 0, 0);
++		maccr |= (ax_local->flowctrl & AX_FC_RX) ? MACCR_RXFC_ENABLE : 0;
++		maccr |= (ax_local->flowctrl & AX_FC_TX) ? MACCR_TXFC_ENABLE : 0;
++
++		mutex_lock(&ax_local->spi_lock);
++
++		maccr |= AX_READ(&ax_local->ax_spi, P0_MACCR) &
++			~(MACCR_TXFC_ENABLE | MACCR_RXFC_ENABLE);
++		AX_WRITE(&ax_local->ax_spi, maccr, P0_MACCR);
++
++		mutex_unlock(&ax_local->spi_lock);
++	}
++
++	return 0;
++}
++
++static int ax88796c_get_regs_len(struct net_device *ndev)
++{
++	return AX88796C_REGDUMP_LEN + AX88796C_PHY_REGDUMP_LEN;
++}
++
++static void
++ax88796c_get_regs(struct net_device *ndev, struct ethtool_regs *regs, void *_p)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++	int offset, i;
++	u16 *p = _p;
++
++	memset(p, 0, ax88796c_get_regs_len(ndev));
++
++	mutex_lock(&ax_local->spi_lock);
++
++	for (offset = 0; offset < AX88796C_REGDUMP_LEN; offset += 2) {
++		if (!test_bit(offset / 2, ax88796c_no_regs_mask))
++			*p = AX_READ(&ax_local->ax_spi, offset);
++		p++;
++	}
++
++	mutex_unlock(&ax_local->spi_lock);
++
++	for (i = 0; i < AX88796C_PHY_REGDUMP_LEN / 2; i++) {
++		*p = phy_read(ax_local->phydev, i);
++		p++;
 +	}
 +}
 +
-+/**
-  * ufshcd_slave_alloc - handle initial SCSI device configurations
-  * @sdev: pointer to SCSI device
-  *
-@@ -4838,6 +4887,8 @@ static int ufshcd_slave_alloc(struct scsi_device *sdev)
- 
- 	ufshcd_get_lu_power_on_wp_status(hba, sdev);
- 
-+	ufshcd_setup_links(hba, sdev);
-+
- 	return 0;
- }
- 
-@@ -4985,15 +5036,9 @@ ufshcd_transfer_rsp_status(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
- 			 * UFS device needs urgent BKOPs.
- 			 */
- 			if (!hba->pm_op_in_progress &&
--			    ufshcd_is_exception_event(lrbp->ucd_rsp_ptr) &&
--			    schedule_work(&hba->eeh_work)) {
--				/*
--				 * Prevent suspend once eeh_work is scheduled
--				 * to avoid deadlock between ufshcd_suspend
--				 * and exception event handler.
--				 */
--				pm_runtime_get_noresume(hba->dev);
--			}
-+			    ufshcd_is_exception_event(lrbp->ucd_rsp_ptr))
-+				/* Flushed in suspend */
-+				schedule_work(&hba->eeh_work);
- 			break;
- 		case UPIU_TRANSACTION_REJECT_UPIU:
- 			/* TODO: handle Reject UPIU Response */
-@@ -5589,8 +5634,8 @@ static void ufshcd_rpm_dev_flush_recheck_work(struct work_struct *work)
- 	 * after a certain delay to recheck the threshold by next runtime
- 	 * suspend.
- 	 */
--	pm_runtime_get_sync(hba->dev);
--	pm_runtime_put_sync(hba->dev);
-+	scsi_autopm_get_device(hba->sdev_ufs_device);
-+	scsi_autopm_put_device(hba->sdev_ufs_device);
- }
- 
- /**
-@@ -5607,7 +5652,6 @@ static void ufshcd_exception_event_handler(struct work_struct *work)
- 	u32 status = 0;
- 	hba = container_of(work, struct ufs_hba, eeh_work);
- 
--	pm_runtime_get_sync(hba->dev);
- 	ufshcd_scsi_block_requests(hba);
- 	err = ufshcd_get_ee_status(hba, &status);
- 	if (err) {
-@@ -5623,14 +5667,6 @@ static void ufshcd_exception_event_handler(struct work_struct *work)
- 
- out:
- 	ufshcd_scsi_unblock_requests(hba);
--	/*
--	 * pm_runtime_get_noresume is called while scheduling
--	 * eeh_work to avoid suspend racing with exception work.
--	 * Hence decrement usage counter using pm_runtime_put_noidle
--	 * to allow suspend on completion of exception event handler.
--	 */
--	pm_runtime_put_noidle(hba->dev);
--	pm_runtime_put(hba->dev);
- 	return;
- }
- 
-@@ -7207,11 +7243,12 @@ static void ufshcd_set_active_icc_lvl(struct ufs_hba *hba)
- 
- static inline void ufshcd_blk_pm_runtime_init(struct scsi_device *sdev)
- {
-+	int dly = is_device_wlun(sdev) ? 0:RPM_AUTOSUSPEND_DELAY_MS;
-+
- 	scsi_autopm_get_device(sdev);
- 	blk_pm_runtime_init(sdev->request_queue, &sdev->sdev_gendev);
- 	if (sdev->rpm_autosuspend)
--		pm_runtime_set_autosuspend_delay(&sdev->sdev_gendev,
--						 RPM_AUTOSUSPEND_DELAY_MS);
-+		pm_runtime_set_autosuspend_delay(&sdev->sdev_gendev, dly);
- 	scsi_autopm_put_device(sdev);
- }
- 
-@@ -7254,6 +7291,15 @@ static int ufshcd_scsi_add_wlus(struct ufs_hba *hba)
- 		goto out;
- 	}
- 	ufshcd_blk_pm_runtime_init(hba->sdev_ufs_device);
-+	/*
-+	 * A pm_runtime_put_sync is invoked when this device enables blk_pm_runtime
-+	 * & would suspend the device-wlun upon timer expiry.
-+	 * But suspending device wlun _may_ put the ufs device in the pre-defined
-+	 * low power mode (SSU <rpm_lvl>). Probing of other luns may fail then.
-+	 * Don't allow this suspend until all the luns have been probed.
-+	 * See pm_runtime_mark_last_busy in ufshcd_setup_links.
-+	 */
-+	pm_runtime_get_noresume(&hba->sdev_ufs_device->sdev_gendev);
- 	scsi_device_put(hba->sdev_ufs_device);
- 
- 	hba->sdev_rpmb = __scsi_add_device(hba->host, 0, 0,
-@@ -7417,6 +7463,9 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
- 		goto out;
- 	}
- 
-+	hba->luns_avail = desc_buf[DEVICE_DESC_PARAM_NUM_LU] +
-+		desc_buf[DEVICE_DESC_PARAM_NUM_WLU];
-+
- 	ufs_fixup_device_setup(hba);
- 
- 	ufshcd_wb_probe(hba, desc_buf);
-@@ -7892,6 +7941,7 @@ static int ufshcd_probe_hba(struct ufs_hba *hba, bool async)
- 	ufshcd_set_ufs_dev_active(hba);
- 	ufshcd_force_reset_auto_bkops(hba);
- 	hba->wlun_dev_clr_ua = true;
-+	hba->wlun_rpmb_clr_ua = true;
- 
- 	/* Gear up to HS gear if supported */
- 	if (hba->max_pwr_info.is_valid) {
-@@ -7964,6 +8014,7 @@ static void ufshcd_async_scan(void *data, async_cookie_t cookie)
- 		pm_runtime_put_sync(hba->dev);
- 		ufshcd_hba_exit(hba);
- 	}
-+	hba->init_done = true;
- }
- 
- static const struct attribute_group *ufshcd_driver_groups[] = {
-@@ -8475,7 +8526,8 @@ static int ufshcd_set_dev_pwr_mode(struct ufs_hba *hba,
- 	 * handling context.
- 	 */
- 	hba->host->eh_noresume = 1;
--	ufshcd_clear_ua_wluns(hba);
-+	if (hba->wlun_dev_clr_ua)
-+		ufshcd_clear_ua_wlun(hba, UFS_UPIU_UFS_DEVICE_WLUN);
- 
- 	cmd[4] = pwr_mode << 4;
- 
-@@ -8650,23 +8702,7 @@ static void ufshcd_hba_vreg_set_hpm(struct ufs_hba *hba)
- 		ufshcd_setup_hba_vreg(hba, true);
- }
- 
--/**
-- * ufshcd_suspend - helper function for suspend operations
-- * @hba: per adapter instance
-- * @pm_op: desired low power operation type
-- *
-- * This function will try to put the UFS device and link into low power
-- * mode based on the "rpm_lvl" (Runtime PM level) or "spm_lvl"
-- * (System PM level).
-- *
-- * If this function is called during shutdown, it will make sure that
-- * both UFS device and UFS link is powered off.
-- *
-- * NOTE: UFS device & link must be active before we enter in this function.
-- *
-- * Returns 0 for success and non-zero for failure
-- */
--static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
-+static int __ufshcd_wl_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- {
- 	int ret = 0;
- 	int check_for_bkops;
-@@ -8674,7 +8710,13 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 	enum ufs_dev_pwr_mode req_dev_pwr_mode;
- 	enum uic_link_state req_link_state;
- 
--	hba->pm_op_in_progress = 1;
-+	/*
-+	 * Is invoked when the device wlun is added to sysfs
-+	 * But by then hba->sdev_ufs_device may not be initialized.
-+	 */
-+	if (!hba->init_done)
-+		return 0;
-+	hba->pm_op_in_progress = true;
- 	if (!ufshcd_is_shutdown_pm(pm_op)) {
- 		pm_lvl = ufshcd_is_runtime_pm(pm_op) ?
- 			 hba->rpm_lvl : hba->spm_lvl;
-@@ -8697,17 +8739,17 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 
- 	if (req_dev_pwr_mode == UFS_ACTIVE_PWR_MODE &&
- 			req_link_state == UIC_LINK_ACTIVE_STATE) {
--		goto disable_clks;
-+		goto enable_scaling;
- 	}
- 
- 	if ((req_dev_pwr_mode == hba->curr_dev_pwr_mode) &&
- 	    (req_link_state == hba->uic_link_state))
--		goto enable_gating;
-+		goto enable_scaling;
- 
- 	/* UFS device & link must be active before we enter in this function */
- 	if (!ufshcd_is_ufs_dev_active(hba) || !ufshcd_is_link_active(hba)) {
- 		ret = -EINVAL;
--		goto enable_gating;
-+		goto enable_scaling;
- 	}
- 
- 	if (ufshcd_is_runtime_pm(pm_op)) {
-@@ -8719,7 +8761,7 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 			 */
- 			ret = ufshcd_urgent_bkops(hba);
- 			if (ret)
--				goto enable_gating;
-+				goto enable_scaling;
- 		} else {
- 			/* make sure that auto bkops is disabled */
- 			ufshcd_disable_auto_bkops(hba);
-@@ -8747,7 +8789,7 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 		if (!hba->dev_info.b_rpm_dev_flush_capable) {
- 			ret = ufshcd_set_dev_pwr_mode(hba, req_dev_pwr_mode);
- 			if (ret)
--				goto enable_gating;
-+				goto enable_scaling;
- 		}
- 	}
- 
-@@ -8760,7 +8802,6 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 	if (ret)
- 		goto set_dev_active;
- 
--disable_clks:
- 	/*
- 	 * Call vendor specific suspend callback. As these callbacks may access
- 	 * vendor specific host controller register space call them before the
-@@ -8769,28 +8810,9 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 	ret = ufshcd_vops_suspend(hba, pm_op);
- 	if (ret)
- 		goto set_link_active;
--	/*
--	 * Disable the host irq as host controller as there won't be any
--	 * host controller transaction expected till resume.
--	 */
--	ufshcd_disable_irq(hba);
--
--	ufshcd_setup_clocks(hba, false);
--
--	if (ufshcd_is_clkgating_allowed(hba)) {
--		hba->clk_gating.state = CLKS_OFF;
--		trace_ufshcd_clk_gating(dev_name(hba->dev),
--					hba->clk_gating.state);
--	}
--
--	ufshcd_vreg_set_lpm(hba);
--
--	/* Put the host controller in low power mode if possible */
--	ufshcd_hba_vreg_set_lpm(hba);
- 	goto out;
- 
- set_link_active:
--	ufshcd_vreg_set_hpm(hba);
- 	/*
- 	 * Device hardware reset is required to exit DeepSleep. Also, for
- 	 * DeepSleep, the link is off so host reset and restore will be done
-@@ -8812,57 +8834,35 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 	}
- 	if (!ufshcd_set_dev_pwr_mode(hba, UFS_ACTIVE_PWR_MODE))
- 		ufshcd_disable_auto_bkops(hba);
--enable_gating:
-+enable_scaling:
- 	if (ufshcd_is_clkscaling_supported(hba))
- 		ufshcd_clk_scaling_suspend(hba, false);
- 
--	hba->clk_gating.is_suspended = false;
- 	hba->dev_info.b_rpm_dev_flush_capable = false;
--	ufshcd_clear_ua_wluns(hba);
--	ufshcd_release(hba);
- out:
- 	if (hba->dev_info.b_rpm_dev_flush_capable) {
- 		schedule_delayed_work(&hba->rpm_dev_flush_recheck_work,
- 			msecs_to_jiffies(RPM_DEV_FLUSH_RECHECK_WORK_DELAY_MS));
- 	}
- 
--	hba->pm_op_in_progress = 0;
--
--	if (ret)
--		ufshcd_update_evt_hist(hba, UFS_EVT_SUSPEND_ERR, (u32)ret);
-+	if (ret) {
-+		ufshcd_update_evt_hist(hba, UFS_EVT_WL_SUSP_ERR, (u32)ret);
-+		hba->clk_gating.is_suspended = false;
-+		ufshcd_release(hba);
++static void
++ax88796c_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
++{
++	switch (stringset) {
++	case ETH_SS_PRIV_FLAGS:
++		memcpy(data, ax88796c_priv_flag_names,
++		       sizeof(ax88796c_priv_flag_names));
++		break;
 +	}
-+	hba->pm_op_in_progress = false;
- 	return ret;
- }
- 
--/**
-- * ufshcd_resume - helper function for resume operations
-- * @hba: per adapter instance
-- * @pm_op: runtime PM or system PM
-- *
-- * This function basically brings the UFS device, UniPro link and controller
-- * to active state.
-- *
-- * Returns 0 for success and non-zero for failure
-- */
--static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
-+static int __ufshcd_wl_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- {
- 	int ret;
--	enum uic_link_state old_link_state;
--
--	hba->pm_op_in_progress = 1;
--	old_link_state = hba->uic_link_state;
--
--	ufshcd_hba_vreg_set_hpm(hba);
--	ret = ufshcd_vreg_set_hpm(hba);
--	if (ret)
--		goto out;
-+	enum uic_link_state old_link_state = hba->uic_link_state;
- 
--	/* Make sure clocks are enabled before accessing controller */
--	ret = ufshcd_setup_clocks(hba, true);
--	if (ret)
--		goto disable_vreg;
-+	if (!hba->init_done)
-+		return 0;
- 
--	/* enable the host irq as host controller would be active soon */
--	ufshcd_enable_irq(hba);
-+	hba->pm_op_in_progress = true;
- 
- 	/*
- 	 * Call vendor specific resume callback. As these callbacks may access
-@@ -8871,7 +8871,7 @@ static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 	 */
- 	ret = ufshcd_vops_resume(hba, pm_op);
- 	if (ret)
--		goto disable_irq_and_vops_clks;
-+		goto out;
- 
- 	/* For DeepSleep, the only supported option is to have the link off */
- 	WARN_ON(ufshcd_is_ufs_dev_deepsleep(hba) && !ufshcd_is_link_off(hba));
-@@ -8916,31 +8916,147 @@ static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 		 */
- 		ufshcd_urgent_bkops(hba);
- 
--	hba->clk_gating.is_suspended = false;
--
--	if (ufshcd_is_clkscaling_supported(hba))
--		ufshcd_clk_scaling_suspend(hba, false);
--
--	/* Enable Auto-Hibernate if configured */
--	ufshcd_auto_hibern8_enable(hba);
-+	if (hba->clk_scaling.is_allowed)
-+		ufshcd_resume_clkscaling(hba);
- 
- 	if (hba->dev_info.b_rpm_dev_flush_capable) {
- 		hba->dev_info.b_rpm_dev_flush_capable = false;
- 		cancel_delayed_work(&hba->rpm_dev_flush_recheck_work);
- 	}
- 
--	ufshcd_clear_ua_wluns(hba);
--
--	/* Schedule clock gating in case of no access to UFS device yet */
--	ufshcd_release(hba);
--
-+	/* Enable Auto-Hibernate if configured */
-+	ufshcd_auto_hibern8_enable(hba);
- 	goto out;
- 
- set_old_link_state:
- 	ufshcd_link_state_transition(hba, old_link_state, 0);
- vendor_suspend:
- 	ufshcd_vops_suspend(hba, pm_op);
--disable_irq_and_vops_clks:
-+out:
-+	if (ret)
-+		ufshcd_update_evt_hist(hba, UFS_EVT_WL_RES_ERR, (u32)ret);
-+	hba->clk_gating.is_suspended = false;
-+	ufshcd_release(hba);
-+	hba->pm_op_in_progress = false;
-+	return ret;
 +}
 +
-+static int ufshcd_wl_runtime_suspend(struct device *dev)
++static int
++ax88796c_get_sset_count(struct net_device *ndev, int stringset)
 +{
-+	struct scsi_device *sdev = to_scsi_device(dev);
-+	struct ufs_hba *hba;
-+	int ret;
-+	ktime_t start = ktime_get();
-+
-+	hba = shost_priv(sdev->host);
-+
-+	ret = __ufshcd_wl_suspend(hba, UFS_RUNTIME_PM);
-+	if (ret)
-+		dev_err(&sdev->sdev_gendev, "%s failed: %d\n", __func__, ret);
-+
-+	trace_ufshcd_wl_runtime_suspend(dev_name(dev), ret,
-+		ktime_to_us(ktime_sub(ktime_get(), start)),
-+		hba->curr_dev_pwr_mode, hba->uic_link_state);
-+
-+	return ret;
-+}
-+
-+static int ufshcd_wl_runtime_resume(struct device *dev)
-+{
-+	struct scsi_device *sdev = to_scsi_device(dev);
-+	struct ufs_hba *hba;
 +	int ret = 0;
-+	ktime_t start = ktime_get();
 +
-+	hba = shost_priv(sdev->host);
-+
-+	ret = __ufshcd_wl_resume(hba, UFS_RUNTIME_PM);
-+	if (ret)
-+		dev_err(&sdev->sdev_gendev, "%s failed: %d\n", __func__, ret);
-+
-+	trace_ufshcd_wl_runtime_resume(dev_name(dev), ret,
-+		ktime_to_us(ktime_sub(ktime_get(), start)),
-+		hba->curr_dev_pwr_mode, hba->uic_link_state);
-+
-+	return ret;
-+}
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int ufshcd_wl_suspend(struct device *dev)
-+{
-+	struct scsi_device *sdev = to_scsi_device(dev);
-+	struct ufs_hba *hba;
-+	int ret;
-+	ktime_t start = ktime_get();
-+
-+	hba = shost_priv(sdev->host);
-+	ret = __ufshcd_wl_suspend(hba, UFS_SYSTEM_PM);
-+	if (ret)
-+		dev_err(&sdev->sdev_gendev, "%s failed: %d\n", __func__,  ret);
-+
-+	trace_ufshcd_wl_suspend(dev_name(dev), ret,
-+		ktime_to_us(ktime_sub(ktime_get(), start)),
-+		hba->curr_dev_pwr_mode, hba->uic_link_state);
-+
-+	return ret;
-+}
-+
-+static int ufshcd_wl_resume(struct device *dev)
-+{
-+	struct scsi_device *sdev = to_scsi_device(dev);
-+	struct ufs_hba *hba;
-+	int ret = 0;
-+	ktime_t start = ktime_get();
-+
-+	if (pm_runtime_suspended(dev))
-+		return 0;
-+	hba = shost_priv(sdev->host);
-+
-+	ret = __ufshcd_wl_resume(hba, UFS_SYSTEM_PM);
-+	if (ret)
-+		dev_err(&sdev->sdev_gendev, "%s failed: %d\n", __func__, ret);
-+
-+	trace_ufshcd_wl_resume(dev_name(dev), ret,
-+		ktime_to_us(ktime_sub(ktime_get(), start)),
-+		hba->curr_dev_pwr_mode, hba->uic_link_state);
-+
-+	return ret;
-+}
-+#endif
-+
-+static void ufshcd_wl_shutdown(struct device *dev)
-+{
-+	struct scsi_device *sdev = to_scsi_device(dev);
-+	struct ufs_hba *hba;
-+
-+	hba = shost_priv(sdev->host);
-+	/* Turn on everything while shutting down */
-+	scsi_autopm_get_device(sdev);
-+	scsi_device_quiesce(sdev);
-+	shost_for_each_device(sdev, hba->host) {
-+		if (sdev == hba->sdev_ufs_device)
-+			continue;
-+		scsi_device_quiesce(sdev);
++	switch (stringset) {
++	case ETH_SS_PRIV_FLAGS:
++		ret = ARRAY_SIZE(ax88796c_priv_flag_names);
++		break;
++	default:
++		ret = -EOPNOTSUPP;
 +	}
-+	__ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM);
++
++	return ret;
 +}
 +
-+/**
-+ * ufshcd_suspend - helper function for suspend operations
-+ * @hba: per adapter instance
-+ *
-+ * This function will put disable irqs, turn off clocks
-+ * and set vreg and hba-vreg in lpm mode.
-+ * Also check the description of __ufshcd_wl_suspend().
-+ */
-+static void ufshcd_suspend(struct ufs_hba *hba)
++static int ax88796c_set_priv_flags(struct net_device *ndev, u32 flags)
 +{
-+	hba->pm_op_in_progress = 1;
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
 +
-+	/*
-+	 * Disable the host irq as host controller as there won't be any
-+	 * host controller transaction expected till resume.
-+	 */
- 	ufshcd_disable_irq(hba);
- 	ufshcd_setup_clocks(hba, false);
- 	if (ufshcd_is_clkgating_allowed(hba)) {
-@@ -8948,6 +9064,43 @@ static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 		trace_ufshcd_clk_gating(dev_name(hba->dev),
- 					hba->clk_gating.state);
- 	}
++	if (flags & ~AX_PRIV_FLAGS_MASK)
++		return -EOPNOTSUPP;
 +
-+	ufshcd_vreg_set_lpm(hba);
-+	/* Put the host controller in low power mode if possible */
-+	ufshcd_hba_vreg_set_lpm(hba);
-+	hba->pm_op_in_progress = 0;
++	if ((ax_local->priv_flags ^ flags) & AX_CAP_COMP)
++		if (netif_running(ndev))
++			return -EBUSY;
++
++	ax_local->priv_flags = flags;
++
++	return 0;
 +}
 +
-+/**
-+ * ufshcd_resume - helper function for resume operations
-+ * @hba: per adapter instance
-+ *
-+ * This function basically turns on the regulators, clocks and
-+ * irqs of the hba.
-+ * Also check the description of __ufshcd_wl_resume().
-+ *
-+ * Returns 0 for success and non-zero for failure
-+ */
-+static int ufshcd_resume(struct ufs_hba *hba)
++static u32 ax88796c_get_priv_flags(struct net_device *ndev)
 +{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++
++	return ax_local->priv_flags;
++}
++
++int ax88796c_mdio_read(struct mii_bus *mdiobus, int phy_id, int loc)
++{
++	struct ax88796c_device *ax_local = mdiobus->priv;
 +	int ret;
 +
-+	hba->pm_op_in_progress = 1;
++	mutex_lock(&ax_local->spi_lock);
++	AX_WRITE(&ax_local->ax_spi, MDIOCR_RADDR(loc)
++			| MDIOCR_FADDR(phy_id) | MDIOCR_READ, P2_MDIOCR);
 +
-+	ufshcd_hba_vreg_set_hpm(hba);
-+	ret = ufshcd_vreg_set_hpm(hba);
-+	if (ret)
-+		goto out;
-+
-+	/* Make sure clocks are enabled before accessing controller */
-+	ret = ufshcd_setup_clocks(hba, true);
-+	if (ret)
-+		goto disable_vreg;
-+
-+	/* enable the host irq as host controller would be active soon */
-+	ufshcd_enable_irq(hba);
-+	goto out;
-+
- disable_vreg:
- 	ufshcd_vreg_set_lpm(hba);
- out:
-@@ -8962,6 +9115,7 @@ static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
-  * @hba: per adapter instance
-  *
-  * Check the description of ufshcd_suspend() function for more details.
-+ * Also check the description of __ufshcd_wl_suspend().
-  *
-  * Returns 0 for success and non-zero for failure
-  */
-@@ -9001,7 +9155,7 @@ int ufshcd_system_suspend(struct ufs_hba *hba)
- 			goto out;
- 	}
- 
--	ret = ufshcd_suspend(hba, UFS_SYSTEM_PM);
-+	ufshcd_suspend(hba);
- out:
- 	trace_ufshcd_system_suspend(dev_name(hba->dev), ret,
- 		ktime_to_us(ktime_sub(ktime_get(), start)),
-@@ -9023,7 +9177,6 @@ EXPORT_SYMBOL(ufshcd_system_suspend);
- 
- int ufshcd_system_resume(struct ufs_hba *hba)
- {
--	int ret = 0;
- 	ktime_t start = ktime_get();
- 
- 	if (!hba)
-@@ -9041,15 +9194,15 @@ int ufshcd_system_resume(struct ufs_hba *hba)
- 		 */
- 		goto out;
- 	else
--		ret = ufshcd_resume(hba, UFS_SYSTEM_PM);
-+		ufshcd_resume(hba);
- out:
--	trace_ufshcd_system_resume(dev_name(hba->dev), ret,
-+	trace_ufshcd_system_resume(dev_name(hba->dev), 0,
- 		ktime_to_us(ktime_sub(ktime_get(), start)),
- 		hba->curr_dev_pwr_mode, hba->uic_link_state);
--	if (!ret)
--		hba->is_sys_suspended = false;
-+
-+	hba->is_sys_suspended = false;
- 	up(&hba->host_sem);
--	return ret;
-+	return 0;
- }
- EXPORT_SYMBOL(ufshcd_system_resume);
- 
-@@ -9058,12 +9211,12 @@ EXPORT_SYMBOL(ufshcd_system_resume);
-  * @hba: per adapter instance
-  *
-  * Check the description of ufshcd_suspend() function for more details.
-+ * Also check the description of __ufshcd_wl_suspend().
-  *
-  * Returns 0 for success and non-zero for failure
-  */
- int ufshcd_runtime_suspend(struct ufs_hba *hba)
- {
--	int ret = 0;
- 	ktime_t start = ktime_get();
- 
- 	if (!hba)
-@@ -9072,12 +9225,12 @@ int ufshcd_runtime_suspend(struct ufs_hba *hba)
- 	if (!hba->is_powered)
- 		goto out;
- 	else
--		ret = ufshcd_suspend(hba, UFS_RUNTIME_PM);
-+		ufshcd_suspend(hba);
- out:
--	trace_ufshcd_runtime_suspend(dev_name(hba->dev), ret,
-+	trace_ufshcd_runtime_suspend(dev_name(hba->dev), 0,
- 		ktime_to_us(ktime_sub(ktime_get(), start)),
- 		hba->curr_dev_pwr_mode, hba->uic_link_state);
--	return ret;
-+	return 0;
- }
- EXPORT_SYMBOL(ufshcd_runtime_suspend);
- 
-@@ -9085,26 +9238,14 @@ EXPORT_SYMBOL(ufshcd_runtime_suspend);
-  * ufshcd_runtime_resume - runtime resume routine
-  * @hba: per adapter instance
-  *
-- * This function basically brings the UFS device, UniPro link and controller
-+ * This function basically brings controller
-  * to active state. Following operations are done in this function:
-  *
-  * 1. Turn on all the controller related clocks
-- * 2. Bring the UniPro link out of Hibernate state
-- * 3. If UFS device is in sleep state, turn ON VCC rail and bring the UFS device
-- *    to active state.
-- * 4. If auto-bkops is enabled on the device, disable it.
-- *
-- * So following would be the possible power state after this function return
-- * successfully:
-- *	S1: UFS device in Active state with VCC rail ON
-- *	    UniPro link in Active state
-- *	    All the UFS/UniPro controller clocks are ON
-- *
-- * Returns 0 for success and non-zero for failure
-+ * 2. Turn ON VCC rail
-  */
- int ufshcd_runtime_resume(struct ufs_hba *hba)
- {
--	int ret = 0;
- 	ktime_t start = ktime_get();
- 
- 	if (!hba)
-@@ -9113,12 +9254,12 @@ int ufshcd_runtime_resume(struct ufs_hba *hba)
- 	if (!hba->is_powered)
- 		goto out;
- 	else
--		ret = ufshcd_resume(hba, UFS_RUNTIME_PM);
-+		ufshcd_resume(hba);
- out:
--	trace_ufshcd_runtime_resume(dev_name(hba->dev), ret,
-+	trace_ufshcd_runtime_resume(dev_name(hba->dev), 0,
- 		ktime_to_us(ktime_sub(ktime_get(), start)),
- 		hba->curr_dev_pwr_mode, hba->uic_link_state);
--	return ret;
-+	return 0;
- }
- EXPORT_SYMBOL(ufshcd_runtime_resume);
- 
-@@ -9132,14 +9273,13 @@ EXPORT_SYMBOL(ufshcd_runtime_idle);
-  * ufshcd_shutdown - shutdown routine
-  * @hba: per adapter instance
-  *
-- * This function would power off both UFS device and UFS link.
-+ * This function would turn off both UFS device and UFS hba
-+ * regulators. It would also disable clocks.
-  *
-  * Returns 0 always to allow force shutdown even in case of errors.
-  */
- int ufshcd_shutdown(struct ufs_hba *hba)
- {
--	int ret = 0;
--
- 	down(&hba->host_sem);
- 	hba->shutting_down = true;
- 	up(&hba->host_sem);
-@@ -9152,10 +9292,8 @@ int ufshcd_shutdown(struct ufs_hba *hba)
- 
- 	pm_runtime_get_sync(hba->dev);
- 
--	ret = ufshcd_suspend(hba, UFS_SHUTDOWN_PM);
-+	ufshcd_suspend(hba);
- out:
--	if (ret)
--		dev_err(hba->dev, "%s failed, err %d\n", __func__, ret);
- 	hba->is_powered = false;
- 	/* allow force shutdown even in case of errors */
- 	return 0;
-@@ -9477,15 +9615,160 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- }
- EXPORT_SYMBOL_GPL(ufshcd_init);
- 
-+void ufshcd_resume_complete(struct device *dev)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	pm_runtime_put_noidle(&hba->sdev_ufs_device->sdev_gendev);
-+}
-+EXPORT_SYMBOL_GPL(ufshcd_resume_complete);
-+
-+int ufshcd_suspend_prepare(struct device *dev)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	/*
-+	 * SCSI assumes that runtime-pm and system-pm for scsi drivers
-+	 * are same. And it doesn't wake up the device for system-suspend
-+	 * if it's runtime suspended. But ufs doesn't follow that.
-+	 * The rpm-lvl and spm-lvl can be different in ufs.
-+	 * Force it to honor system-suspend.
-+	 */
-+	scsi_autopm_get_device(hba->sdev_ufs_device);
-+	/* Refer ufshcd_resume_complete() */
-+	pm_runtime_get_noresume(&hba->sdev_ufs_device->sdev_gendev);
-+	scsi_autopm_put_device(hba->sdev_ufs_device);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(ufshcd_suspend_prepare);
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int ufshcd_wl_poweroff(struct device *dev)
-+{
-+	ufshcd_wl_shutdown(dev);
-+	return 0;
-+}
-+#endif
-+
-+static int ufshcd_wl_probe(struct device *dev)
-+{
-+	return is_device_wlun(to_scsi_device(dev)) ? 0 : -ENODEV;
-+}
-+
-+static int ufshcd_wl_remove(struct device *dev)
-+{
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops ufshcd_wl_pm_ops = {
-+#ifdef CONFIG_PM_SLEEP
-+	.suspend = ufshcd_wl_suspend,
-+	.resume = ufshcd_wl_resume,
-+	.freeze = ufshcd_wl_suspend,
-+	.thaw = ufshcd_wl_resume,
-+	.poweroff = ufshcd_wl_poweroff,
-+	.restore = ufshcd_wl_resume,
-+#endif
-+	SET_RUNTIME_PM_OPS(ufshcd_wl_runtime_suspend, ufshcd_wl_runtime_resume, NULL)
-+};
-+
-+/**
-+ * ufs_dev_wlun_template - describes ufs device wlun
-+ * ufs-device wlun - used to send pm commands
-+ * All luns are consumers of ufs-device wlun.
-+ *
-+ * Currently, no sd driver is present for wluns.
-+ * Hence the no specific pm operations are performed.
-+ * With ufs design, SSU should be sent to ufs-device wlun.
-+ * Hence register a scsi driver for ufs wluns only.
-+ */
-+static struct scsi_driver ufs_dev_wlun_template = {
-+	.gendrv = {
-+		.name = "ufs_device_wlun",
-+		.owner = THIS_MODULE,
-+		.probe = ufshcd_wl_probe,
-+		.remove = ufshcd_wl_remove,
-+		.pm = &ufshcd_wl_pm_ops,
-+		.shutdown = ufshcd_wl_shutdown,
-+	},
-+};
-+
-+static int ufshcd_rpmb_probe(struct device *dev)
-+{
-+	return is_rpmb_wlun(to_scsi_device(dev)) ? 0 : -ENODEV;
-+}
-+
-+static inline int ufshcd_clear_rpmb_uac(struct ufs_hba *hba)
-+{
-+	int ret = 0;
-+
-+	if (!hba->wlun_rpmb_clr_ua)
-+		return 0;
-+	ret = ufshcd_clear_ua_wlun(hba, UFS_UPIU_RPMB_WLUN);
++	ret = read_poll_timeout(AX_READ, ret,
++				(ret != 0),
++				0, jiffies_to_usecs(HZ / 100), false,
++				&ax_local->ax_spi, P2_MDIOCR);
 +	if (!ret)
-+		hba->wlun_rpmb_clr_ua = 0;
++		ret = AX_READ(&ax_local->ax_spi, P2_MDIODR);
++
++	mutex_unlock(&ax_local->spi_lock);
++
 +	return ret;
 +}
 +
-+static int ufshcd_rpmb_runtime_resume(struct device *dev)
++int
++ax88796c_mdio_write(struct mii_bus *mdiobus, int phy_id, int loc, u16 val)
 +{
-+	struct ufs_hba *hba = wlun_dev_to_hba(dev);
-+
-+	if (hba->sdev_rpmb)
-+		return ufshcd_clear_rpmb_uac(hba);
-+	return 0;
-+}
-+
-+static int ufshcd_rpmb_resume(struct device *dev)
-+{
-+	struct ufs_hba *hba = wlun_dev_to_hba(dev);
-+
-+	if (hba->sdev_rpmb && !pm_runtime_suspended(dev))
-+		return ufshcd_clear_rpmb_uac(hba);
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops ufs_rpmb_pm_ops = {
-+	SET_RUNTIME_PM_OPS(NULL, ufshcd_rpmb_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(NULL, ufshcd_rpmb_resume)
-+};
-+
-+/**
-+ * Describes the ufs rpmb wlun.
-+ * Used only to send uac.
-+ */
-+static struct scsi_driver ufs_rpmb_wlun_template = {
-+	.gendrv = {
-+		.name = "ufs_rpmb_wlun",
-+		.owner = THIS_MODULE,
-+		.probe = ufshcd_rpmb_probe,
-+		.pm = &ufs_rpmb_pm_ops,
-+	},
-+};
-+
- static int __init ufshcd_core_init(void)
- {
++	struct ax88796c_device *ax_local = mdiobus->priv;
 +	int ret;
 +
- 	ufs_debugfs_init();
++	mutex_lock(&ax_local->spi_lock);
++	AX_WRITE(&ax_local->ax_spi, val, P2_MDIODR);
 +
-+	ret = scsi_register_driver(&ufs_dev_wlun_template.gendrv);
++	AX_WRITE(&ax_local->ax_spi,
++		 MDIOCR_RADDR(loc) | MDIOCR_FADDR(phy_id)
++		 | MDIOCR_WRITE, P2_MDIOCR);
++
++	ret = read_poll_timeout(AX_READ, ret,
++				((ret & MDIOCR_VALID) != 0), 0,
++				jiffies_to_usecs(HZ / 100), false,
++				&ax_local->ax_spi, P2_MDIOCR);
++	mutex_unlock(&ax_local->spi_lock);
++
++	return ret;
++}
++
++const struct ethtool_ops ax88796c_ethtool_ops = {
++	.get_drvinfo		= ax88796c_get_drvinfo,
++	.get_link		= ethtool_op_get_link,
++	.get_msglevel		= ax88796c_get_msglevel,
++	.set_msglevel		= ax88796c_set_msglevel,
++	.get_link_ksettings	= phy_ethtool_get_link_ksettings,
++	.set_link_ksettings	= phy_ethtool_set_link_ksettings,
++	.nway_reset		= phy_ethtool_nway_reset,
++	.get_pauseparam		= ax88796c_get_pauseparam,
++	.set_pauseparam		= ax88796c_set_pauseparam,
++	.get_regs_len		= ax88796c_get_regs_len,
++	.get_regs		= ax88796c_get_regs,
++	.get_strings		= ax88796c_get_strings,
++	.get_sset_count		= ax88796c_get_sset_count,
++	.get_priv_flags		= ax88796c_get_priv_flags,
++	.set_priv_flags		= ax88796c_set_priv_flags,
++};
++
++int ax88796c_ioctl(struct net_device *ndev, struct ifreq *ifr, int cmd)
++{
++	int ret;
++
++	ret = phy_mii_ioctl(ndev->phydev, ifr, cmd);
++
++	return ret;
++}
+diff --git a/drivers/net/ethernet/asix/ax88796c_ioctl.h b/drivers/net/ethernet/asix/ax88796c_ioctl.h
+new file mode 100644
+index 000000000000..34d2a7dcc5ef
+--- /dev/null
++++ b/drivers/net/ethernet/asix/ax88796c_ioctl.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2010 ASIX Electronics Corporation
++ * Copyright (c) 2020 Samsung Electronics Co., Ltd.
++ *
++ * ASIX AX88796C SPI Fast Ethernet Linux driver
++ */
++
++#ifndef _AX88796C_IOCTL_H
++#define _AX88796C_IOCTL_H
++
++#include <linux/ethtool.h>
++#include <linux/netdevice.h>
++
++#include "ax88796c_main.h"
++
++extern const struct ethtool_ops ax88796c_ethtool_ops;
++
++bool ax88796c_check_power(const struct ax88796c_device *ax_local);
++bool ax88796c_check_power_and_wake(struct ax88796c_device *ax_local);
++void ax88796c_set_power_saving(struct ax88796c_device *ax_local, u8 ps_level);
++int ax88796c_mdio_read(struct mii_bus *mdiobus, int phy_id, int loc);
++int ax88796c_mdio_write(struct mii_bus *mdiobus, int phy_id, int loc, u16 val);
++int ax88796c_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd);
++
++#endif
+diff --git a/drivers/net/ethernet/asix/ax88796c_main.c b/drivers/net/ethernet/asix/ax88796c_main.c
+new file mode 100644
+index 000000000000..743a28c92473
+--- /dev/null
++++ b/drivers/net/ethernet/asix/ax88796c_main.c
+@@ -0,0 +1,1146 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2010 ASIX Electronics Corporation
++ * Copyright (c) 2020 Samsung Electronics Co., Ltd.
++ *
++ * ASIX AX88796C SPI Fast Ethernet Linux driver
++ */
++
++#define pr_fmt(fmt)	"ax88796c: " fmt
++
++#include "ax88796c_main.h"
++#include "ax88796c_ioctl.h"
++
++#include <linux/bitmap.h>
++#include <linux/etherdevice.h>
++#include <linux/iopoll.h>
++#include <linux/lockdep.h>
++#include <linux/mdio.h>
++#include <linux/minmax.h>
++#include <linux/module.h>
++#include <linux/netdevice.h>
++#include <linux/of.h>
++#include <linux/phy.h>
++#include <linux/skbuff.h>
++#include <linux/spi/spi.h>
++
++static int comp = IS_ENABLED(CONFIG_SPI_AX88796C_COMPRESSION);
++static int msg_enable = NETIF_MSG_PROBE |
++			NETIF_MSG_LINK |
++			NETIF_MSG_RX_ERR |
++			NETIF_MSG_TX_ERR;
++
++static char *no_regs_list = "80018001,e1918001,8001a001,fc0d0000";
++unsigned long ax88796c_no_regs_mask[AX88796C_REGDUMP_LEN / (sizeof(unsigned long) * 8)];
++
++module_param(msg_enable, int, 0444);
++MODULE_PARM_DESC(msg_enable, "Message mask (see linux/netdevice.h for bitmap)");
++
++static int ax88796c_soft_reset(struct ax88796c_device *ax_local)
++{
++	u16 temp;
++	int ret;
++
++	lockdep_assert_held(&ax_local->spi_lock);
++
++	AX_WRITE(&ax_local->ax_spi, PSR_RESET, P0_PSR);
++	AX_WRITE(&ax_local->ax_spi, PSR_RESET_CLR, P0_PSR);
++
++	ret = read_poll_timeout(AX_READ, ret,
++				(ret & PSR_DEV_READY),
++				0, jiffies_to_usecs(160 * HZ / 1000), false,
++				&ax_local->ax_spi, P0_PSR);
 +	if (ret)
 +		return ret;
 +
-+	ret = scsi_register_driver(&ufs_rpmb_wlun_template.gendrv);
++	temp = AX_READ(&ax_local->ax_spi, P4_SPICR);
++	if (ax_local->priv_flags & AX_CAP_COMP) {
++		AX_WRITE(&ax_local->ax_spi,
++			 (temp | SPICR_RCEN | SPICR_QCEN), P4_SPICR);
++		ax_local->ax_spi.comp = 1;
++	} else {
++		AX_WRITE(&ax_local->ax_spi,
++			 (temp & ~(SPICR_RCEN | SPICR_QCEN)), P4_SPICR);
++		ax_local->ax_spi.comp = 0;
++	}
++
++	return 0;
++}
++
++static int ax88796c_reload_eeprom(struct ax88796c_device *ax_local)
++{
++	int ret;
++
++	lockdep_assert_held(&ax_local->spi_lock);
++
++	AX_WRITE(&ax_local->ax_spi, EECR_RELOAD, P3_EECR);
++
++	ret = read_poll_timeout(AX_READ, ret,
++				(ret & PSR_DEV_READY),
++				0, jiffies_to_usecs(2 * HZ / 1000), false,
++				&ax_local->ax_spi, P0_PSR);
 +	if (ret) {
-+		scsi_unregister_driver(&ufs_dev_wlun_template.gendrv);
++		dev_err(&ax_local->spi->dev,
++			"timeout waiting for reload eeprom\n");
 +		return ret;
 +	}
- 	return 0;
- }
- 
- static void __exit ufshcd_core_exit(void)
- {
- 	ufs_debugfs_exit();
-+	scsi_unregister_driver(&ufs_dev_wlun_template.gendrv);
-+	scsi_unregister_driver(&ufs_rpmb_wlun_template.gendrv);
- }
- 
- module_init(ufshcd_core_init);
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index ee61f82..e246ec3 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -72,6 +72,8 @@ enum ufs_event_type {
- 	UFS_EVT_LINK_STARTUP_FAIL,
- 	UFS_EVT_RESUME_ERR,
- 	UFS_EVT_SUSPEND_ERR,
-+	UFS_EVT_WL_SUSP_ERR,
-+	UFS_EVT_WL_RES_ERR,
- 
- 	/* abnormal events */
- 	UFS_EVT_DEV_RESET,
-@@ -804,6 +806,7 @@ struct ufs_hba {
- 	struct list_head clk_list_head;
- 
- 	bool wlun_dev_clr_ua;
-+	bool wlun_rpmb_clr_ua;
- 
- 	/* Number of requests aborts */
- 	int req_abort_count;
-@@ -841,6 +844,8 @@ struct ufs_hba {
- #ifdef CONFIG_DEBUG_FS
- 	struct dentry *debugfs_root;
- #endif
-+	bool init_done;
-+	u32 luns_avail;
- };
- 
- /* Returns true if clocks can be gated. Otherwise false */
-@@ -1100,6 +1105,8 @@ int ufshcd_exec_raw_upiu_cmd(struct ufs_hba *hba,
- 			     enum query_opcode desc_op);
- 
- int ufshcd_wb_ctrl(struct ufs_hba *hba, bool enable);
-+int ufshcd_suspend_prepare(struct device *dev);
-+void ufshcd_resume_complete(struct device *dev);
- 
- /* Wrapper functions for safely calling variant operations */
- static inline const char *ufshcd_get_var_name(struct ufs_hba *hba)
-diff --git a/include/trace/events/ufs.h b/include/trace/events/ufs.h
-index e151477..d9d233b 100644
---- a/include/trace/events/ufs.h
-+++ b/include/trace/events/ufs.h
-@@ -246,6 +246,26 @@ DEFINE_EVENT(ufshcd_template, ufshcd_init,
- 		      int dev_state, int link_state),
- 	     TP_ARGS(dev_name, err, usecs, dev_state, link_state));
- 
-+DEFINE_EVENT(ufshcd_template, ufshcd_wl_suspend,
-+	     TP_PROTO(const char *dev_name, int err, s64 usecs,
-+		      int dev_state, int link_state),
-+	     TP_ARGS(dev_name, err, usecs, dev_state, link_state));
 +
-+DEFINE_EVENT(ufshcd_template, ufshcd_wl_resume,
-+	     TP_PROTO(const char *dev_name, int err, s64 usecs,
-+		      int dev_state, int link_state),
-+	     TP_ARGS(dev_name, err, usecs, dev_state, link_state));
++	return 0;
++}
 +
-+DEFINE_EVENT(ufshcd_template, ufshcd_wl_runtime_suspend,
-+	     TP_PROTO(const char *dev_name, int err, s64 usecs,
-+		      int dev_state, int link_state),
-+	     TP_ARGS(dev_name, err, usecs, dev_state, link_state));
++static void ax88796c_set_hw_multicast(struct net_device *ndev)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++	int mc_count = netdev_mc_count(ndev);
++	u16 rx_ctl = RXCR_AB;
 +
-+DEFINE_EVENT(ufshcd_template, ufshcd_wl_runtime_resume,
-+	     TP_PROTO(const char *dev_name, int err, s64 usecs,
-+		      int dev_state, int link_state),
-+	     TP_ARGS(dev_name, err, usecs, dev_state, link_state));
++	lockdep_assert_held(&ax_local->spi_lock);
 +
- TRACE_EVENT(ufshcd_command,
- 	TP_PROTO(const char *dev_name, enum ufs_trace_str_t str_t,
- 		 unsigned int tag, u32 doorbell, int transfer_len, u32 intr,
++	memset(ax_local->multi_filter, 0, AX_MCAST_FILTER_SIZE);
++
++	if (ndev->flags & IFF_PROMISC) {
++		rx_ctl |= RXCR_PRO;
++
++	} else if (ndev->flags & IFF_ALLMULTI || mc_count > AX_MAX_MCAST) {
++		rx_ctl |= RXCR_AMALL;
++
++	} else if (mc_count == 0) {
++		/* just broadcast and directed */
++	} else {
++		u32 crc_bits;
++		int i;
++		struct netdev_hw_addr *ha;
++
++		netdev_for_each_mc_addr(ha, ndev) {
++			crc_bits = ether_crc(ETH_ALEN, ha->addr);
++			ax_local->multi_filter[crc_bits >> 29] |=
++						(1 << ((crc_bits >> 26) & 7));
++		}
++
++		for (i = 0; i < 4; i++) {
++			AX_WRITE(&ax_local->ax_spi,
++				 ((ax_local->multi_filter[i * 2 + 1] << 8) |
++				  ax_local->multi_filter[i * 2]), P3_MFAR(i));
++		}
++	}
++
++	AX_WRITE(&ax_local->ax_spi, rx_ctl, P2_RXCR);
++}
++
++static void ax88796c_set_mac_addr(struct net_device *ndev)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++
++	lockdep_assert_held(&ax_local->spi_lock);
++
++	AX_WRITE(&ax_local->ax_spi, ((u16)(ndev->dev_addr[4] << 8) |
++			(u16)ndev->dev_addr[5]), P3_MACASR0);
++	AX_WRITE(&ax_local->ax_spi, ((u16)(ndev->dev_addr[2] << 8) |
++			(u16)ndev->dev_addr[3]), P3_MACASR1);
++	AX_WRITE(&ax_local->ax_spi, ((u16)(ndev->dev_addr[0] << 8) |
++			(u16)ndev->dev_addr[1]), P3_MACASR2);
++}
++
++static void ax88796c_load_mac_addr(struct net_device *ndev)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++	u16 temp;
++
++	lockdep_assert_held(&ax_local->spi_lock);
++
++	/* Try the device tree first */
++	if (!eth_platform_get_mac_address(&ax_local->spi->dev, ndev->dev_addr) &&
++	    is_valid_ether_addr(ndev->dev_addr)) {
++		if (netif_msg_probe(ax_local))
++			dev_info(&ax_local->spi->dev,
++				 "MAC address read from device tree\n");
++		return;
++	}
++
++	/* Read the MAC address from AX88796C */
++	temp = AX_READ(&ax_local->ax_spi, P3_MACASR0);
++	ndev->dev_addr[5] = (u8)temp;
++	ndev->dev_addr[4] = (u8)(temp >> 8);
++
++	temp = AX_READ(&ax_local->ax_spi, P3_MACASR1);
++	ndev->dev_addr[3] = (u8)temp;
++	ndev->dev_addr[2] = (u8)(temp >> 8);
++
++	temp = AX_READ(&ax_local->ax_spi, P3_MACASR2);
++	ndev->dev_addr[1] = (u8)temp;
++	ndev->dev_addr[0] = (u8)(temp >> 8);
++
++	if (is_valid_ether_addr(ndev->dev_addr)) {
++		if (netif_msg_probe(ax_local))
++			dev_info(&ax_local->spi->dev,
++				 "MAC address read from ASIX chip\n");
++		return;
++	}
++
++	/* Use random address if none found */
++	if (netif_msg_probe(ax_local))
++		dev_info(&ax_local->spi->dev, "Use random MAC address\n");
++	eth_hw_addr_random(ndev);
++}
++
++static void ax88796c_proc_tx_hdr(struct tx_pkt_info *info, u8 ip_summed)
++{
++	u16 pkt_len_bar = (~info->pkt_len & TX_HDR_SOP_PKTLENBAR);
++
++	/* Prepare SOP header */
++	info->sop.flags_len = info->pkt_len |
++		((ip_summed == CHECKSUM_NONE) ||
++		 (ip_summed == CHECKSUM_UNNECESSARY) ? TX_HDR_SOP_DICF : 0);
++
++	info->sop.seq_lenbar = ((info->seq_num << 11) & TX_HDR_SOP_SEQNUM)
++				| pkt_len_bar;
++	cpu_to_be16s(&info->sop.flags_len);
++	cpu_to_be16s(&info->sop.seq_lenbar);
++
++	/* Prepare Segment header */
++	info->seg.flags_seqnum_seglen = TX_HDR_SEG_FS | TX_HDR_SEG_LS
++						| info->pkt_len;
++
++	info->seg.eo_so_seglenbar = pkt_len_bar;
++
++	cpu_to_be16s(&info->seg.flags_seqnum_seglen);
++	cpu_to_be16s(&info->seg.eo_so_seglenbar);
++
++	/* Prepare EOP header */
++	info->eop.seq_len = ((info->seq_num << 11) &
++			     TX_HDR_EOP_SEQNUM) | info->pkt_len;
++	info->eop.seqbar_lenbar = ((~info->seq_num << 11) &
++				   TX_HDR_EOP_SEQNUMBAR) | pkt_len_bar;
++
++	cpu_to_be16s(&info->eop.seq_len);
++	cpu_to_be16s(&info->eop.seqbar_lenbar);
++}
++
++static int
++ax88796c_check_free_pages(struct ax88796c_device *ax_local, u8 need_pages)
++{
++	u8 free_pages;
++	u16 tmp;
++
++	lockdep_assert_held(&ax_local->spi_lock);
++
++	free_pages = AX_READ(&ax_local->ax_spi, P0_TFBFCR) & TX_FREEBUF_MASK;
++	if (free_pages < need_pages) {
++		/* schedule free page interrupt */
++		tmp = AX_READ(&ax_local->ax_spi, P0_TFBFCR)
++				& TFBFCR_SCHE_FREE_PAGE;
++		AX_WRITE(&ax_local->ax_spi, tmp | TFBFCR_TX_PAGE_SET |
++				TFBFCR_SET_FREE_PAGE(need_pages),
++				P0_TFBFCR);
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
++static struct sk_buff *
++ax88796c_tx_fixup(struct net_device *ndev, struct sk_buff_head *q)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++	u8 spi_len = ax_local->ax_spi.comp ? 1 : 4;
++	struct sk_buff *skb;
++	struct tx_pkt_info info;
++	struct skb_data *entry;
++	u16 pkt_len;
++	u8 padlen, seq_num;
++	u8 need_pages;
++	int headroom;
++	int tailroom;
++
++	if (skb_queue_empty(q))
++		return NULL;
++
++	skb = skb_peek(q);
++	pkt_len = skb->len;
++	need_pages = (pkt_len + TX_OVERHEAD + 127) >> 7;
++	if (ax88796c_check_free_pages(ax_local, need_pages) != 0)
++		return NULL;
++
++	headroom = skb_headroom(skb);
++	tailroom = skb_tailroom(skb);
++	padlen = round_up(pkt_len, 4) - pkt_len;
++	seq_num = ++ax_local->seq_num & 0x1F;
++
++	info.pkt_len = pkt_len;
++
++	if (skb_cloned(skb) ||
++	    (headroom < (TX_OVERHEAD + spi_len)) ||
++	    (tailroom < (padlen + TX_EOP_SIZE))) {
++		size_t h = max((TX_OVERHEAD + spi_len) - headroom,0);
++		size_t t = max((padlen + TX_EOP_SIZE) - tailroom,0);
++
++		if (pskb_expand_head(skb, h, t, GFP_KERNEL))
++			return NULL;
++	}
++
++	info.seq_num = seq_num;
++	ax88796c_proc_tx_hdr(&info, skb->ip_summed);
++
++	/* SOP and SEG header */
++	memcpy(skb_push(skb, TX_OVERHEAD), &info.sop, TX_OVERHEAD);
++
++	/* Write SPI TXQ header */
++	memcpy(skb_push(skb, spi_len), ax88796c_tx_cmd_buf, spi_len);
++
++	/* Make 32-bit alignment */
++	skb_put(skb, padlen);
++
++	/* EOP header */
++	memcpy(skb_put(skb, TX_EOP_SIZE), &info.eop, TX_EOP_SIZE);
++
++	skb_unlink(skb, q);
++
++	entry = (struct skb_data *)skb->cb;
++	memset(entry, 0, sizeof(*entry));
++	entry->len = pkt_len;
++
++	if (netif_msg_pktdata(ax_local)) {
++		char pfx[IFNAMSIZ + 7];
++
++		snprintf(pfx, sizeof(pfx), "%s:     ", ndev->name);
++
++		netdev_info(ndev, "TX packet len %d, total len %d, seq %d\n",
++			    pkt_len, skb->len, seq_num);
++
++		netdev_info(ndev, "  SPI Header:\n");
++		print_hex_dump(KERN_INFO, pfx, DUMP_PREFIX_OFFSET, 16, 1,
++			       skb->data, 4, 0);
++
++		netdev_info(ndev, "  TX SOP:\n");
++		print_hex_dump(KERN_INFO, pfx, DUMP_PREFIX_OFFSET, 16, 1,
++			       skb->data + 4, TX_OVERHEAD, 0);
++
++		netdev_info(ndev, "  TX packet:\n");
++		print_hex_dump(KERN_INFO, pfx, DUMP_PREFIX_OFFSET, 16, 1,
++			       skb->data + 4 + TX_OVERHEAD,
++			       skb->len - TX_EOP_SIZE - 4 - TX_OVERHEAD, 0);
++
++		netdev_info(ndev, "  TX EOP:\n");
++		print_hex_dump(KERN_INFO, pfx, DUMP_PREFIX_OFFSET, 16, 1,
++			       skb->data + skb->len - 4, 4, 0);
++	}
++
++	return skb;
++}
++
++static int ax88796c_hard_xmit(struct ax88796c_device *ax_local)
++{
++	struct ax88796c_pcpu_stats *stats;
++	struct sk_buff *tx_skb;
++	struct skb_data *entry;
++
++	lockdep_assert_held(&ax_local->spi_lock);
++
++	stats = this_cpu_ptr(ax_local->stats);
++	tx_skb = ax88796c_tx_fixup(ax_local->ndev, &ax_local->tx_wait_q);
++
++	if (!tx_skb) {
++		this_cpu_inc(ax_local->stats->tx_dropped);
++		return 0;
++	}
++	entry = (struct skb_data *)tx_skb->cb;
++
++	AX_WRITE(&ax_local->ax_spi,
++		 (TSNR_TXB_START | TSNR_PKT_CNT(1)), P0_TSNR);
++
++	axspi_write_txq(&ax_local->ax_spi, tx_skb->data, tx_skb->len);
++
++	if (((AX_READ(&ax_local->ax_spi, P0_TSNR) & TXNR_TXB_IDLE) == 0) ||
++	    ((ISR_TXERR & AX_READ(&ax_local->ax_spi, P0_ISR)) != 0)) {
++		/* Ack tx error int */
++		AX_WRITE(&ax_local->ax_spi, ISR_TXERR, P0_ISR);
++
++		this_cpu_inc(ax_local->stats->tx_dropped);
++
++		if (net_ratelimit())
++			netif_err(ax_local, tx_err, ax_local->ndev,
++				  "TX FIFO error, re-initialize the TX bridge\n");
++
++		/* Reinitial tx bridge */
++		AX_WRITE(&ax_local->ax_spi, TXNR_TXB_REINIT |
++			AX_READ(&ax_local->ax_spi, P0_TSNR), P0_TSNR);
++		ax_local->seq_num = 0;
++	} else {
++		u64_stats_update_begin(&stats->syncp);
++		u64_stats_inc(&stats->tx_packets);
++		u64_stats_add(&stats->tx_bytes, entry->len);
++		u64_stats_update_end(&stats->syncp);
++	}
++
++	entry->state = tx_done;
++	dev_kfree_skb(tx_skb);
++
++	return 1;
++}
++
++static int
++ax88796c_start_xmit(struct sk_buff *skb, struct net_device *ndev)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++
++	skb_queue_tail(&ax_local->tx_wait_q, skb);
++	if (skb_queue_len(&ax_local->tx_wait_q) > TX_QUEUE_HIGH_WATER)
++		netif_stop_queue(ndev);
++
++	set_bit(EVENT_TX, &ax_local->flags);
++	schedule_work(&ax_local->ax_work);
++
++	return NETDEV_TX_OK;
++}
++
++static void
++ax88796c_skb_return(struct ax88796c_device *ax_local,
++		    struct sk_buff *skb, struct rx_header *rxhdr)
++{
++	struct net_device *ndev = ax_local->ndev;
++	struct ax88796c_pcpu_stats *stats;
++	int status;
++
++	stats = this_cpu_ptr(ax_local->stats);
++
++	do {
++		if (!(ndev->features & NETIF_F_RXCSUM))
++			break;
++
++		/* checksum error bit is set */
++		if ((rxhdr->flags & RX_HDR3_L3_ERR) ||
++		    (rxhdr->flags & RX_HDR3_L4_ERR))
++			break;
++
++		/* Other types may be indicated by more than one bit. */
++		if ((rxhdr->flags & RX_HDR3_L4_TYPE_TCP) ||
++		    (rxhdr->flags & RX_HDR3_L4_TYPE_UDP))
++			skb->ip_summed = CHECKSUM_UNNECESSARY;
++	} while (0);
++
++	u64_stats_update_begin(&stats->syncp);
++	u64_stats_inc(&stats->rx_packets);
++	u64_stats_add(&stats->rx_bytes, skb->len);
++	u64_stats_update_end(&stats->syncp);
++
++	skb->dev = ndev;
++	skb->protocol = eth_type_trans(skb, ax_local->ndev);
++
++	netif_info(ax_local, rx_status, ndev, "< rx, len %zu, type 0x%x\n",
++		   skb->len + sizeof(struct ethhdr), skb->protocol);
++
++	status = netif_rx_ni(skb);
++	if (status != NET_RX_SUCCESS && net_ratelimit())
++		netif_info(ax_local, rx_err, ndev,
++			   "netif_rx status %d\n", status);
++}
++
++static void
++ax88796c_rx_fixup(struct ax88796c_device *ax_local, struct sk_buff *rx_skb)
++{
++	struct rx_header *rxhdr = (struct rx_header *)rx_skb->data;
++	struct net_device *ndev = ax_local->ndev;
++	u16 len;
++
++	be16_to_cpus(&rxhdr->flags_len);
++	be16_to_cpus(&rxhdr->seq_lenbar);
++	be16_to_cpus(&rxhdr->flags);
++
++	if ((rxhdr->flags_len & RX_HDR1_PKT_LEN) !=
++			 (~rxhdr->seq_lenbar & 0x7FF)) {
++		netif_err(ax_local, rx_err, ndev, "Header error\n");
++
++		this_cpu_inc(ax_local->stats->rx_frame_errors);
++		kfree_skb(rx_skb);
++		return;
++	}
++
++	if ((rxhdr->flags_len & RX_HDR1_MII_ERR) ||
++	    (rxhdr->flags_len & RX_HDR1_CRC_ERR)) {
++		netif_err(ax_local, rx_err, ndev, "CRC or MII error\n");
++
++		this_cpu_inc(ax_local->stats->rx_crc_errors);
++		kfree_skb(rx_skb);
++		return;
++	}
++
++	len = rxhdr->flags_len & RX_HDR1_PKT_LEN;
++	if (netif_msg_pktdata(ax_local)) {
++		char pfx[IFNAMSIZ + 7];
++
++		snprintf(pfx, sizeof(pfx), "%s:     ", ndev->name);
++		netdev_info(ndev, "RX data, total len %d, packet len %d\n",
++			    rx_skb->len, len);
++
++		netdev_info(ndev, "  Dump RX packet header:");
++		print_hex_dump(KERN_INFO, pfx, DUMP_PREFIX_OFFSET, 16, 1,
++			       rx_skb->data, sizeof(*rxhdr), 0);
++
++		netdev_info(ndev, "  Dump RX packet:");
++		print_hex_dump(KERN_INFO, pfx, DUMP_PREFIX_OFFSET, 16, 1,
++			       rx_skb->data + sizeof(*rxhdr), len, 0);
++	}
++
++	skb_pull(rx_skb, sizeof(*rxhdr));
++	pskb_trim(rx_skb, len);
++
++	ax88796c_skb_return(ax_local, rx_skb, rxhdr);
++}
++
++static int ax88796c_receive(struct net_device *ndev)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++	struct skb_data *entry;
++	u16 w_count, pkt_len;
++	struct sk_buff *skb;
++	u8 pkt_cnt;
++
++	lockdep_assert_held(&ax_local->spi_lock);
++
++	/* check rx packet and total word count */
++	AX_WRITE(&ax_local->ax_spi, AX_READ(&ax_local->ax_spi, P0_RTWCR)
++		  | RTWCR_RX_LATCH, P0_RTWCR);
++
++	pkt_cnt = AX_READ(&ax_local->ax_spi, P0_RXBCR2) & RXBCR2_PKT_MASK;
++	if (!pkt_cnt)
++		return 0;
++
++	pkt_len = AX_READ(&ax_local->ax_spi, P0_RCPHR) & 0x7FF;
++
++	w_count = round_up(pkt_len + 6, 4) >> 1;
++
++	skb = netdev_alloc_skb(ndev, w_count * 2);
++	if (!skb) {
++		AX_WRITE(&ax_local->ax_spi, RXBCR1_RXB_DISCARD, P0_RXBCR1);
++		this_cpu_inc(ax_local->stats->rx_dropped);
++		return 0;
++	}
++	entry = (struct skb_data *)skb->cb;
++
++	AX_WRITE(&ax_local->ax_spi, RXBCR1_RXB_START | w_count, P0_RXBCR1);
++
++	axspi_read_rxq(&ax_local->ax_spi,
++		       skb_put(skb, w_count * 2), skb->len);
++
++	/* Check if rx bridge is idle */
++	if ((AX_READ(&ax_local->ax_spi, P0_RXBCR2) & RXBCR2_RXB_IDLE) == 0) {
++		if (net_ratelimit())
++			netif_err(ax_local, rx_err, ndev,
++				  "Rx Bridge is not idle\n");
++		AX_WRITE(&ax_local->ax_spi, RXBCR2_RXB_REINIT, P0_RXBCR2);
++
++		entry->state = rx_err;
++	} else {
++		entry->state = rx_done;
++	}
++
++	AX_WRITE(&ax_local->ax_spi, ISR_RXPKT, P0_ISR);
++
++	ax88796c_rx_fixup(ax_local, skb);
++
++	return 1;
++}
++
++static int ax88796c_process_isr(struct ax88796c_device *ax_local)
++{
++	struct net_device *ndev = ax_local->ndev;
++	int todo = 0;
++	u16 isr;
++
++	lockdep_assert_held(&ax_local->spi_lock);
++
++	isr = AX_READ(&ax_local->ax_spi, P0_ISR);
++	AX_WRITE(&ax_local->ax_spi, isr, P0_ISR);
++
++	netif_dbg(ax_local, intr, ndev, "  ISR 0x%04x\n", isr);
++
++	if (isr & ISR_TXERR) {
++		netif_dbg(ax_local, intr, ndev, "  TXERR interrupt\n");
++		AX_WRITE(&ax_local->ax_spi, TXNR_TXB_REINIT, P0_TSNR);
++		ax_local->seq_num = 0x1f;
++	}
++
++	if (isr & ISR_TXPAGES) {
++		netif_dbg(ax_local, intr, ndev, "  TXPAGES interrupt\n");
++		set_bit(EVENT_TX, &ax_local->flags);
++	}
++
++	if (isr & ISR_LINK) {
++		netif_dbg(ax_local, intr, ndev, "  Link change interrupt\n");
++		phy_mac_interrupt(ax_local->ndev->phydev);
++	}
++
++	if (isr & ISR_RXPKT) {
++		netif_dbg(ax_local, intr, ndev, "  RX interrupt\n");
++		todo = ax88796c_receive(ax_local->ndev);
++	}
++
++	return todo;
++}
++
++static irqreturn_t ax88796c_interrupt(int irq, void *dev_instance)
++{
++	struct ax88796c_device *ax_local;
++	struct net_device *ndev;
++
++	ndev = dev_instance;
++	if (!ndev) {
++		pr_err("irq %d for unknown device.\n", irq);
++		return IRQ_RETVAL(0);
++	}
++	ax_local = to_ax88796c_device(ndev);
++
++	disable_irq_nosync(irq);
++
++	netif_dbg(ax_local, intr, ndev, "Interrupt occurred\n");
++
++	set_bit(EVENT_INTR, &ax_local->flags);
++	schedule_work(&ax_local->ax_work);
++
++	return IRQ_HANDLED;
++}
++
++static void ax88796c_work(struct work_struct *work)
++{
++	struct ax88796c_device *ax_local =
++			container_of(work, struct ax88796c_device, ax_work);
++
++	mutex_lock(&ax_local->spi_lock);
++
++	if (test_bit(EVENT_SET_MULTI, &ax_local->flags)) {
++		ax88796c_set_hw_multicast(ax_local->ndev);
++		clear_bit(EVENT_SET_MULTI, &ax_local->flags);
++	}
++
++	if (test_bit(EVENT_INTR, &ax_local->flags)) {
++		AX_WRITE(&ax_local->ax_spi, IMR_MASKALL, P0_IMR);
++
++		while (ax88796c_process_isr(ax_local))
++			/* nothing */;
++
++		clear_bit(EVENT_INTR, &ax_local->flags);
++
++		AX_WRITE(&ax_local->ax_spi, IMR_DEFAULT, P0_IMR);
++
++		enable_irq(ax_local->ndev->irq);
++	}
++
++	if (test_bit(EVENT_TX, &ax_local->flags)) {
++		while (skb_queue_len(&ax_local->tx_wait_q)) {
++			if (!ax88796c_hard_xmit(ax_local))
++				break;
++		}
++
++		clear_bit(EVENT_TX, &ax_local->flags);
++
++		if (netif_queue_stopped(ax_local->ndev) &&
++		    (skb_queue_len(&ax_local->tx_wait_q) < TX_QUEUE_LOW_WATER))
++			netif_wake_queue(ax_local->ndev);
++	}
++
++	mutex_unlock(&ax_local->spi_lock);
++}
++
++static void ax88796c_get_stats64(struct net_device *ndev,
++					struct rtnl_link_stats64 *stats)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++	u32 rx_frame_errors = 0, rx_crc_errors = 0;
++	u32 rx_dropped = 0, tx_dropped = 0;
++	unsigned int start;
++	int cpu;
++
++	for_each_possible_cpu(cpu) {
++		struct ax88796c_pcpu_stats *s;
++		u64 rx_packets, rx_bytes;
++		u64 tx_packets, tx_bytes;
++
++		s = per_cpu_ptr(ax_local->stats, cpu);
++
++		do {
++			start = u64_stats_fetch_begin_irq(&s->syncp);
++			rx_packets = u64_stats_read(&s->rx_packets);
++			rx_bytes   = u64_stats_read(&s->rx_bytes);
++			tx_packets = u64_stats_read(&s->tx_packets);
++			tx_bytes   = u64_stats_read(&s->tx_bytes);
++		} while (u64_stats_fetch_retry_irq(&s->syncp, start));
++
++		stats->rx_packets += rx_packets;
++		stats->rx_bytes   += rx_bytes;
++		stats->tx_packets += tx_packets;
++		stats->tx_bytes   += tx_bytes;
++
++		rx_dropped      += stats->rx_dropped;
++		tx_dropped      += stats->tx_dropped;
++		rx_frame_errors += stats->rx_frame_errors;
++		rx_crc_errors   += stats->rx_crc_errors;
++	}
++
++	stats->rx_dropped = rx_dropped;
++	stats->tx_dropped = tx_dropped;
++	stats->rx_frame_errors = rx_frame_errors;
++	stats->rx_crc_errors = rx_crc_errors;
++}
++
++static void ax88796c_set_mac(struct  ax88796c_device *ax_local)
++{
++	u16 maccr;
++
++	maccr = (ax_local->link) ? MACCR_RXEN : 0;
++
++	switch (ax_local->speed) {
++	case SPEED_100:
++		maccr |= MACCR_SPEED_100;
++	case SPEED_10:
++	case SPEED_UNKNOWN:
++		break;
++	default:
++		return;
++	}
++
++	switch (ax_local->duplex) {
++	case DUPLEX_FULL:
++		maccr |= MACCR_SPEED_100;
++	case DUPLEX_HALF:
++	case DUPLEX_UNKNOWN:
++		break;
++	default:
++		return;
++	}
++
++	if (ax_local->flowctrl & AX_FC_ANEG &&
++	    ax_local->phydev->autoneg) {
++		maccr |= ax_local->pause ? MACCR_RXFC_ENABLE : 0;
++		maccr |= !ax_local->pause != !ax_local->asym_pause ?
++			MACCR_TXFC_ENABLE : 0;
++	} else {
++		maccr |= (ax_local->flowctrl & AX_FC_RX) ? MACCR_RXFC_ENABLE : 0;
++		maccr |= (ax_local->flowctrl & AX_FC_TX) ? MACCR_TXFC_ENABLE : 0;
++	}
++
++	mutex_lock(&ax_local->spi_lock);
++
++	maccr |= AX_READ(&ax_local->ax_spi, P0_MACCR) &
++		~(MACCR_DUPLEX_FULL | MACCR_SPEED_100 |
++		  MACCR_TXFC_ENABLE | MACCR_RXFC_ENABLE);
++	AX_WRITE(&ax_local->ax_spi, maccr, P0_MACCR);
++
++	mutex_unlock(&ax_local->spi_lock);
++}
++
++static void ax88796c_handle_link_change(struct net_device *ndev)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++	struct phy_device *phydev = ndev->phydev;
++	bool update = false;
++
++	if (phydev->link && (ax_local->speed != phydev->speed ||
++			     ax_local->duplex != phydev->duplex ||
++			     ax_local->pause != phydev->pause ||
++			     ax_local->asym_pause != phydev->asym_pause)) {
++		ax_local->speed = phydev->speed;
++		ax_local->duplex = phydev->duplex;
++		ax_local->pause = phydev->pause;
++		ax_local->asym_pause = phydev->asym_pause;
++		update = true;
++	}
++
++	if (phydev->link != ax_local->link) {
++		if (!phydev->link) {
++			ax_local->speed = SPEED_UNKNOWN;
++			ax_local->duplex = DUPLEX_UNKNOWN;
++		}
++
++		ax_local->link = phydev->link;
++		update = true;
++	}
++
++	if (update)
++		ax88796c_set_mac(ax_local);
++
++	if (net_ratelimit())
++		phy_print_status(ndev->phydev);
++}
++
++static void ax88796c_set_csums(struct ax88796c_device *ax_local)
++{
++	struct net_device *ndev = ax_local->ndev;
++
++	lockdep_assert_held(&ax_local->spi_lock);
++
++	if (ndev->features & NETIF_F_RXCSUM) {
++		AX_WRITE(&ax_local->ax_spi, COERCR0_DEFAULT, P4_COERCR0);
++		AX_WRITE(&ax_local->ax_spi, COERCR1_DEFAULT, P4_COERCR1);
++	} else {
++		AX_WRITE(&ax_local->ax_spi, 0, P4_COERCR0);
++		AX_WRITE(&ax_local->ax_spi, 0, P4_COERCR1);
++	}
++
++	if (ndev->features & NETIF_F_HW_CSUM) {
++		AX_WRITE(&ax_local->ax_spi, COETCR0_DEFAULT, P4_COETCR0);
++		AX_WRITE(&ax_local->ax_spi, COETCR1_TXPPPE, P4_COETCR1);
++	} else {
++		AX_WRITE(&ax_local->ax_spi, 0, P4_COETCR0);
++		AX_WRITE(&ax_local->ax_spi, 0, P4_COETCR1);
++	}
++}
++
++static int
++ax88796c_open(struct net_device *ndev)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++	unsigned long irq_flag = 0;
++	int fc = AX_FC_NONE;
++	int ret;
++	u16 t;
++
++	ret = request_irq(ndev->irq, ax88796c_interrupt,
++			  irq_flag, ndev->name, ndev);
++	if (ret) {
++		netdev_err(ndev, "unable to get IRQ %d (errno=%d).\n",
++			   ndev->irq, ret);
++		return ret;
++	}
++
++	mutex_lock(&ax_local->spi_lock);
++
++	ret = ax88796c_soft_reset(ax_local);
++	if (ret < 0) {
++		free_irq(ndev->irq, ndev);
++		mutex_unlock(&ax_local->spi_lock);
++		return ret;
++	}
++	ax_local->seq_num = 0x1f;
++
++	ax88796c_set_mac_addr(ndev);
++	ax88796c_set_csums(ax_local);
++
++	/* Disable stuffing packet */
++	t = AX_READ(&ax_local->ax_spi, P1_RXBSPCR);
++	t &= ~RXBSPCR_STUF_ENABLE;
++	AX_WRITE(&ax_local->ax_spi, t, P1_RXBSPCR);
++
++	/* Enable RX packet process */
++	AX_WRITE(&ax_local->ax_spi, RPPER_RXEN, P1_RPPER);
++
++	t = AX_READ(&ax_local->ax_spi, P0_FER);
++	t |= FER_RXEN | FER_TXEN | FER_BSWAP | FER_IRQ_PULL;
++	AX_WRITE(&ax_local->ax_spi, t, P0_FER);
++
++	/* Setup LED mode */
++	AX_WRITE(&ax_local->ax_spi,
++		 (LCR_LED0_EN | LCR_LED0_DUPLEX | LCR_LED1_EN |
++		 LCR_LED1_100MODE), P2_LCR0);
++	AX_WRITE(&ax_local->ax_spi,
++		 (AX_READ(&ax_local->ax_spi, P2_LCR1) & LCR_LED2_MASK) |
++		 LCR_LED2_EN | LCR_LED2_LINK, P2_LCR1);
++
++	/* Disable PHY auto-polling */
++	AX_WRITE(&ax_local->ax_spi, PCR_PHYID(AX88796C_PHY_ID), P2_PCR);
++
++	/* Enable MAC interrupts */
++	AX_WRITE(&ax_local->ax_spi, IMR_DEFAULT, P0_IMR);
++
++	mutex_unlock(&ax_local->spi_lock);
++
++	/* Setup flow-control configuration */
++	phy_support_asym_pause(ax_local->phydev);
++
++	if (ax_local->phydev->advertising &&
++	    (linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT,
++			       ax_local->phydev->advertising) ||
++	     linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
++			       ax_local->phydev->advertising)))
++		fc |= AX_FC_ANEG;
++
++	fc |= linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT,
++				ax_local->phydev->advertising) ? AX_FC_RX : 0;
++	fc |= (linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT,
++				 ax_local->phydev->advertising) !=
++	       linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
++				 ax_local->phydev->advertising)) ? AX_FC_TX : 0;
++	ax_local->flowctrl = fc;
++
++	phy_start(ax_local->ndev->phydev);
++
++	netif_start_queue(ndev);
++
++	spi_message_init(&ax_local->ax_spi.rx_msg);
++
++	return 0;
++}
++
++static int
++ax88796c_close(struct net_device *ndev)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++
++	netif_stop_queue(ndev);
++	phy_stop(ndev->phydev);
++
++	mutex_lock(&ax_local->spi_lock);
++
++	/* Disable MAC interrupts */
++	AX_WRITE(&ax_local->ax_spi, IMR_MASKALL, P0_IMR);
++	__skb_queue_purge(&ax_local->tx_wait_q);
++	ax88796c_soft_reset(ax_local);
++
++	mutex_unlock(&ax_local->spi_lock);
++
++	free_irq(ndev->irq, ndev);
++
++	return 0;
++}
++
++static int
++ax88796c_set_features(struct net_device *ndev, netdev_features_t features)
++{
++	struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
++	netdev_features_t changed = features ^ ndev->features;
++
++	if (!(changed & (NETIF_F_RXCSUM | NETIF_F_HW_CSUM)))
++		return 0;
++
++	ndev->features = features;
++
++	if (changed & (NETIF_F_RXCSUM | NETIF_F_HW_CSUM))
++		ax88796c_set_csums(ax_local);
++
++	return 0;
++}
++
++static const struct net_device_ops ax88796c_netdev_ops = {
++	.ndo_open		= ax88796c_open,
++	.ndo_stop		= ax88796c_close,
++	.ndo_start_xmit		= ax88796c_start_xmit,
++	.ndo_get_stats64	= ax88796c_get_stats64,
++	.ndo_do_ioctl		= ax88796c_ioctl,
++	.ndo_set_mac_address	= eth_mac_addr,
++	.ndo_set_features	= ax88796c_set_features,
++};
++
++static int ax88796c_hard_reset(struct ax88796c_device *ax_local)
++{
++	struct device *dev = (struct device *)&ax_local->spi->dev;
++	struct gpio_desc *reset_gpio;
++
++	/* reset info */
++	reset_gpio = gpiod_get(dev, "reset", 0);
++	if (IS_ERR(reset_gpio)) {
++		dev_err(dev, "Could not get 'reset' GPIO: %ld", PTR_ERR(reset_gpio));
++		return PTR_ERR(reset_gpio);
++	}
++
++	/* set reset */
++	gpiod_direction_output(reset_gpio, 1);
++	msleep(100);
++	gpiod_direction_output(reset_gpio, 0);
++	gpiod_put(reset_gpio);
++	msleep(20);
++
++	return 0;
++}
++
++static int ax88796c_probe(struct spi_device *spi)
++{
++	char phy_id[MII_BUS_ID_SIZE + 3];
++	struct ax88796c_device *ax_local;
++	struct net_device *ndev;
++	u16 temp;
++	int ret;
++
++	ndev = devm_alloc_etherdev(&spi->dev, sizeof(*ax_local));
++	if (!ndev)
++		return -ENOMEM;
++
++	SET_NETDEV_DEV(ndev, &spi->dev);
++
++	ax_local = to_ax88796c_device(ndev);
++
++	dev_set_drvdata(&spi->dev, ax_local);
++	ax_local->spi = spi;
++	ax_local->ax_spi.spi = spi;
++
++	ax_local->stats =
++		devm_netdev_alloc_pcpu_stats(&spi->dev,
++					     struct ax88796c_pcpu_stats);
++	if (!ax_local->stats)
++		return -ENOMEM;
++
++	ax_local->ndev = ndev;
++	ax_local->priv_flags |= comp ? AX_CAP_COMP : 0;
++	ax_local->msg_enable = msg_enable;
++	mutex_init(&ax_local->spi_lock);
++
++	ax_local->mdiobus = devm_mdiobus_alloc(&spi->dev);
++	if (!ax_local->mdiobus)
++		return -ENOMEM;
++
++	ax_local->mdiobus->priv = ax_local;
++	ax_local->mdiobus->read = ax88796c_mdio_read;
++	ax_local->mdiobus->write = ax88796c_mdio_write;
++	ax_local->mdiobus->name = "ax88976c-mdiobus";
++	ax_local->mdiobus->phy_mask = (u32)~BIT(AX88796C_PHY_ID);
++	ax_local->mdiobus->parent = &spi->dev;
++
++	snprintf(ax_local->mdiobus->id, MII_BUS_ID_SIZE,
++		 "ax88796c-%s.%u", dev_name(&spi->dev), spi->chip_select);
++
++	ret = devm_mdiobus_register(&spi->dev, ax_local->mdiobus);
++	if (ret < 0) {
++		dev_err(&spi->dev, "Could not register MDIO bus\n");
++		return ret;
++	}
++
++	if (netif_msg_probe(ax_local)) {
++		dev_info(&spi->dev, "AX88796C-SPI Configuration:\n");
++		dev_info(&spi->dev, "    Compression : %s\n",
++			 ax_local->priv_flags & AX_CAP_COMP ? "ON" : "OFF");
++	}
++
++	ndev->irq = spi->irq;
++	ndev->netdev_ops = &ax88796c_netdev_ops;
++	ndev->ethtool_ops = &ax88796c_ethtool_ops;
++	ndev->hw_features |= NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
++	ndev->features |= NETIF_F_HW_CSUM | NETIF_F_RXCSUM;
++	ndev->needed_headroom = TX_OVERHEAD;
++	ndev->needed_tailroom = TX_EOP_SIZE;
++
++	mutex_lock(&ax_local->spi_lock);
++
++	/* ax88796c gpio reset */
++	ax88796c_hard_reset(ax_local);
++
++	/* Reset AX88796C */
++	ret = ax88796c_soft_reset(ax_local);
++	if (ret < 0) {
++		ret = -ENODEV;
++		mutex_unlock(&ax_local->spi_lock);
++		goto err;
++	}
++	/* Check board revision */
++	temp = AX_READ(&ax_local->ax_spi, P2_CRIR);
++	if ((temp & 0xF) != 0x0) {
++		dev_err(&spi->dev, "spi read failed: %d\n", temp);
++		ret = -ENODEV;
++		mutex_unlock(&ax_local->spi_lock);
++		goto err;
++	}
++
++	/*Reload EEPROM*/
++	ax88796c_reload_eeprom(ax_local);
++
++	ax88796c_load_mac_addr(ndev);
++
++	if (netif_msg_probe(ax_local))
++		dev_info(&spi->dev,
++			 "irq %d, MAC addr %02X:%02X:%02X:%02X:%02X:%02X\n",
++			 ndev->irq,
++			 ndev->dev_addr[0], ndev->dev_addr[1],
++			 ndev->dev_addr[2], ndev->dev_addr[3],
++			 ndev->dev_addr[4], ndev->dev_addr[5]);
++
++	/* Disable power saving */
++	AX_WRITE(&ax_local->ax_spi, (AX_READ(&ax_local->ax_spi, P0_PSCR)
++				     & PSCR_PS_MASK) | PSCR_PS_D0, P0_PSCR);
++
++	mutex_unlock(&ax_local->spi_lock);
++
++	INIT_WORK(&ax_local->ax_work, ax88796c_work);
++
++	skb_queue_head_init(&ax_local->tx_wait_q);
++
++	snprintf(phy_id, MII_BUS_ID_SIZE + 3, PHY_ID_FMT,
++		 ax_local->mdiobus->id, AX88796C_PHY_ID);
++	ax_local->phydev = phy_connect(ax_local->ndev, phy_id,
++				       ax88796c_handle_link_change,
++				       PHY_INTERFACE_MODE_MII);
++	if (IS_ERR(ax_local->phydev)) {
++		ret = PTR_ERR(ax_local->phydev);
++		goto err;
++	}
++	ax_local->phydev->irq = PHY_POLL;
++
++	ret = devm_register_netdev(&spi->dev, ndev);
++	if (ret) {
++		dev_err(&spi->dev, "failed to register a network device\n");
++		goto err_phy_dis;
++	}
++
++	netif_info(ax_local, probe, ndev, "%s %s registered\n",
++		   dev_driver_string(&spi->dev),
++		   dev_name(&spi->dev));
++	phy_attached_info(ax_local->phydev);
++
++	return 0;
++
++err_phy_dis:
++	phy_disconnect(ax_local->phydev);
++err:
++	return ret;
++}
++
++static int ax88796c_remove(struct spi_device *spi)
++{
++	struct ax88796c_device *ax_local = dev_get_drvdata(&spi->dev);
++	struct net_device *ndev = ax_local->ndev;
++
++	phy_disconnect(ndev->phydev);
++
++	cancel_work_sync(&ax_local->ax_work);
++
++	netif_info(ax_local, probe, ndev, "removing network device %s %s\n",
++		   dev_driver_string(&spi->dev),
++		   dev_name(&spi->dev));
++
++	return 0;
++}
++
++static const struct of_device_id ax88796c_dt_ids[] = {
++	{ .compatible = "asix,ax88796c" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, ax88796c_dt_ids);
++
++static const struct spi_device_id asix_id[] = {
++	{ "ax88796c", 0 },
++	{ }
++};
++MODULE_DEVICE_TABLE(spi, asix_id);
++
++static struct spi_driver ax88796c_spi_driver = {
++	.driver = {
++		.name = DRV_NAME,
++		.of_match_table = of_match_ptr(ax88796c_dt_ids),
++	},
++	.probe = ax88796c_probe,
++	.remove = ax88796c_remove,
++	.id_table = asix_id,
++};
++
++static __init int ax88796c_spi_init(void)
++{
++	int ret;
++
++	bitmap_zero(ax88796c_no_regs_mask, AX88796C_REGDUMP_LEN);
++	ret = bitmap_parse(no_regs_list, 35,
++			   ax88796c_no_regs_mask, AX88796C_REGDUMP_LEN);
++	if (ret) {
++		bitmap_fill(ax88796c_no_regs_mask, AX88796C_REGDUMP_LEN);
++		pr_err("Invalid bitmap description, masking all registers\n");
++	}
++
++	return spi_register_driver(&ax88796c_spi_driver);
++}
++
++static __exit void ax88796c_spi_exit(void)
++{
++	spi_unregister_driver(&ax88796c_spi_driver);
++}
++
++module_init(ax88796c_spi_init);
++module_exit(ax88796c_spi_exit);
++
++MODULE_AUTHOR("ASIX");
++MODULE_DESCRIPTION("ASIX AX88796C SPI Ethernet driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/net/ethernet/asix/ax88796c_main.h b/drivers/net/ethernet/asix/ax88796c_main.h
+new file mode 100644
+index 000000000000..80263c3cef75
+--- /dev/null
++++ b/drivers/net/ethernet/asix/ax88796c_main.h
+@@ -0,0 +1,568 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2010 ASIX Electronics Corporation
++ * Copyright (c) 2020 Samsung Electronics
++ *
++ * ASIX AX88796C SPI Fast Ethernet Linux driver
++ */
++
++#ifndef _AX88796C_MAIN_H
++#define _AX88796C_MAIN_H
++
++#include <linux/netdevice.h>
++#include <linux/mii.h>
++
++#include "ax88796c_spi.h"
++
++/* These identify the driver base version and may not be removed. */
++#define DRV_NAME	"ax88796c"
++#define ADP_NAME	"ASIX AX88796C SPI Ethernet Adapter"
++
++#define TX_QUEUE_HIGH_WATER		45	/* Tx queue high water mark */
++#define TX_QUEUE_LOW_WATER		20	/* Tx queue low water mark */
++
++#define AX88796C_REGDUMP_LEN		256
++#define AX88796C_PHY_REGDUMP_LEN	14
++#define AX88796C_PHY_ID			0x10
++
++#define TX_OVERHEAD			8
++#define TX_EOP_SIZE			4
++
++#define AX_MCAST_FILTER_SIZE		8
++#define AX_MAX_MCAST			64
++#define AX_MAX_CLK                      80000000
++#define TX_HDR_SOP_DICF			0x8000
++#define TX_HDR_SOP_CPHI			0x4000
++#define TX_HDR_SOP_INT			0x2000
++#define TX_HDR_SOP_MDEQ			0x1000
++#define TX_HDR_SOP_PKTLEN		0x07FF
++#define TX_HDR_SOP_SEQNUM		0xF800
++#define TX_HDR_SOP_PKTLENBAR		0x07FF
++
++#define TX_HDR_SEG_FS			0x8000
++#define TX_HDR_SEG_LS			0x4000
++#define TX_HDR_SEG_SEGNUM		0x3800
++#define TX_HDR_SEG_SEGLEN		0x0700
++#define TX_HDR_SEG_EOFST		0xC000
++#define TX_HDR_SEG_SOFST		0x3800
++#define TX_HDR_SEG_SEGLENBAR		0x07FF
++
++#define TX_HDR_EOP_SEQNUM		0xF800
++#define TX_HDR_EOP_PKTLEN		0x07FF
++#define TX_HDR_EOP_SEQNUMBAR		0xF800
++#define TX_HDR_EOP_PKTLENBAR		0x07FF
++
++/* Rx header fields mask */
++#define RX_HDR1_MCBC			0x8000
++#define RX_HDR1_STUFF_PKT		0x4000
++#define RX_HDR1_MII_ERR			0x2000
++#define RX_HDR1_CRC_ERR			0x1000
++#define RX_HDR1_PKT_LEN			0x07FF
++
++#define RX_HDR2_SEQ_NUM			0xF800
++#define RX_HDR2_PKT_LEN_BAR		0x7FFF
++
++#define RX_HDR3_PE			0x8000
++#define RX_HDR3_L3_TYPE_IPV4V6		0x6000
++#define RX_HDR3_L3_TYPE_IP		0x4000
++#define RX_HDR3_L3_TYPE_IPV6		0x2000
++#define RX_HDR3_L4_TYPE_ICMPV6		0x1400
++#define RX_HDR3_L4_TYPE_TCP		0x1000
++#define RX_HDR3_L4_TYPE_IGMP		0x0c00
++#define RX_HDR3_L4_TYPE_ICMP		0x0800
++#define RX_HDR3_L4_TYPE_UDP		0x0400
++#define RX_HDR3_L3_ERR			0x0200
++#define RX_HDR3_L4_ERR			0x0100
++#define RX_HDR3_PRIORITY(x)		((x) << 4)
++#define RX_HDR3_STRIP			0x0008
++#define RX_HDR3_VLAN_ID			0x0007
++
++struct ax88796c_pcpu_stats {
++	u64_stats_t rx_packets;
++	u64_stats_t rx_bytes;
++	u64_stats_t tx_packets;
++	u64_stats_t tx_bytes;
++	struct u64_stats_sync syncp;
++	u32 rx_dropped;
++	u32 tx_dropped;
++	u32 rx_frame_errors;
++	u32 rx_crc_errors;
++};
++
++struct ax88796c_device {
++	struct spi_device	*spi;
++	struct net_device	*ndev;
++	struct ax88796c_pcpu_stats __percpu *stats;
++
++	struct work_struct	ax_work;
++
++	struct mutex		spi_lock; /* device access */
++
++	struct sk_buff_head	tx_wait_q;
++
++	struct axspi_data	ax_spi;
++
++	struct mii_bus		*mdiobus;
++	struct phy_device	*phydev;
++
++	int			msg_enable;
++
++	u16			seq_num;
++
++	u8			multi_filter[AX_MCAST_FILTER_SIZE];
++
++	int			link;
++	int			speed;
++	int			duplex;
++	int			pause;
++	int			asym_pause;
++	int			flowctrl;
++		#define AX_FC_NONE		0
++		#define AX_FC_RX		BIT(0)
++		#define AX_FC_TX		BIT(1)
++		#define AX_FC_ANEG		BIT(2)
++
++	u32			priv_flags;
++		#define AX_CAP_COMP		BIT(0)
++		#define AX_PRIV_FLAGS_MASK	(AX_CAP_COMP)
++
++	unsigned long		flags;
++		#define EVENT_INTR		BIT(0)
++		#define EVENT_TX		BIT(1)
++		#define EVENT_SET_MULTI		BIT(2)
++
++};
++
++#define to_ax88796c_device(ndev) ((struct ax88796c_device *)netdev_priv(ndev))
++
++enum skb_state {
++	illegal = 0,
++	tx_done,
++	rx_done,
++	rx_err,
++};
++
++struct skb_data {
++	enum skb_state state;
++	size_t len;
++};
++
++/* A88796C register definition */
++	/* Definition of PAGE0 */
++#define P0_PSR		(0x00)
++	#define PSR_DEV_READY		BIT(7)
++	#define PSR_RESET		(0 << 15)
++	#define PSR_RESET_CLR		BIT(15)
++#define P0_BOR		(0x02)
++#define P0_FER		(0x04)
++	#define FER_IPALM		BIT(0)
++	#define FER_DCRC		BIT(1)
++	#define FER_RH3M		BIT(2)
++	#define FER_HEADERSWAP		BIT(7)
++	#define FER_WSWAP		BIT(8)
++	#define FER_BSWAP		BIT(9)
++	#define FER_INTHI		BIT(10)
++	#define FER_INTLO		(0 << 10)
++	#define FER_IRQ_PULL		BIT(11)
++	#define FER_RXEN		BIT(14)
++	#define FER_TXEN		BIT(15)
++#define P0_ISR		(0x06)
++	#define ISR_RXPKT		BIT(0)
++	#define ISR_MDQ			BIT(4)
++	#define ISR_TXT			BIT(5)
++	#define ISR_TXPAGES		BIT(6)
++	#define ISR_TXERR		BIT(8)
++	#define ISR_LINK		BIT(9)
++#define P0_IMR		(0x08)
++	#define IMR_RXPKT		BIT(0)
++	#define IMR_MDQ			BIT(4)
++	#define IMR_TXT			BIT(5)
++	#define IMR_TXPAGES		BIT(6)
++	#define IMR_TXERR		BIT(8)
++	#define IMR_LINK		BIT(9)
++	#define IMR_MASKALL		(0xFFFF)
++	#define IMR_DEFAULT		(IMR_TXERR)
++#define P0_WFCR		(0x0A)
++	#define WFCR_PMEIND		BIT(0) /* PME indication */
++	#define WFCR_PMETYPE		BIT(1) /* PME I/O type */
++	#define WFCR_PMEPOL		BIT(2) /* PME polarity */
++	#define WFCR_PMERST		BIT(3) /* Reset PME */
++	#define WFCR_SLEEP		BIT(4) /* Enable sleep mode */
++	#define WFCR_WAKEUP		BIT(5) /* Enable wakeup mode */
++	#define WFCR_WAITEVENT		BIT(6) /* Reserved */
++	#define WFCR_CLRWAKE		BIT(7) /* Clear wakeup */
++	#define WFCR_LINKCH		BIT(8) /* Enable link change */
++	#define WFCR_MAGICP		BIT(9) /* Enable magic packet */
++	#define WFCR_WAKEF		BIT(10) /* Enable wakeup frame */
++	#define WFCR_PMEEN		BIT(11) /* Enable PME pin */
++	#define WFCR_LINKCHS		BIT(12) /* Link change status */
++	#define WFCR_MAGICPS		BIT(13) /* Magic packet status */
++	#define WFCR_WAKEFS		BIT(14) /* Wakeup frame status */
++	#define WFCR_PMES		BIT(15) /* PME pin status */
++#define P0_PSCR		(0x0C)
++	#define PSCR_PS_MASK		(0xFFF0)
++	#define PSCR_PS_D0		(0)
++	#define PSCR_PS_D1		BIT(0)
++	#define PSCR_PS_D2		BIT(1)
++	#define PSCR_FPS		BIT(3) /* Enable fiber mode PS */
++	#define PSCR_SWPS		BIT(4) /* Enable software */
++						 /* PS control */
++	#define PSCR_WOLPS		BIT(5) /* Enable WOL PS */
++	#define PSCR_SWWOL		BIT(6) /* Enable software select */
++						 /* WOL PS */
++	#define PSCR_PHYOSC		BIT(7) /* Internal PHY OSC control */
++	#define PSCR_FOFEF		BIT(8) /* Force PHY generate FEF */
++	#define PSCR_FOF		BIT(9) /* Force PHY in fiber mode */
++	#define PSCR_PHYPD		BIT(10) /* PHY power down. */
++						  /* Active high */
++	#define PSCR_PHYRST		BIT(11) /* PHY reset signal. */
++						  /* Active low */
++	#define PSCR_PHYCSIL		BIT(12) /* PHY cable energy detect */
++	#define PSCR_PHYCOFF		BIT(13) /* PHY cable off */
++	#define PSCR_PHYLINK		BIT(14) /* PHY link status */
++	#define PSCR_EEPOK		BIT(15) /* EEPROM load complete */
++#define P0_MACCR	(0x0E)
++	#define MACCR_RXEN		BIT(0) /* Enable RX */
++	#define MACCR_DUPLEX_FULL	BIT(1) /* 1: Full, 0: Half */
++	#define MACCR_SPEED_100		BIT(2) /* 1: 100Mbps, 0: 10Mbps */
++	#define MACCR_RXFC_ENABLE	BIT(3)
++	#define MACCR_RXFC_MASK		0xFFF7
++	#define MACCR_TXFC_ENABLE	BIT(4)
++	#define MACCR_TXFC_MASK		0xFFEF
++	#define MACCR_PSI		BIT(6) /* Software Cable-Off */
++					       /* Power Saving Interrupt */
++	#define MACCR_PF		BIT(7)
++	#define MACCR_PMM_BITS		8
++	#define MACCR_PMM_MASK		(0x1F00)
++	#define MACCR_PMM_RESET		BIT(8)
++	#define MACCR_PMM_WAIT		(2 << 8)
++	#define MACCR_PMM_READY		(3 << 8)
++	#define MACCR_PMM_D1		(4 << 8)
++	#define MACCR_PMM_D2		(5 << 8)
++	#define MACCR_PMM_WAKE		(7 << 8)
++	#define MACCR_PMM_D1_WAKE	(8 << 8)
++	#define MACCR_PMM_D2_WAKE	(9 << 8)
++	#define MACCR_PMM_SLEEP		(10 << 8)
++	#define MACCR_PMM_PHY_RESET	(11 << 8)
++	#define MACCR_PMM_SOFT_D1	(16 << 8)
++	#define MACCR_PMM_SOFT_D2	(17 << 8)
++#define P0_TFBFCR	(0x10)
++	#define TFBFCR_SCHE_FREE_PAGE	0xE07F
++	#define TFBFCR_FREE_PAGE_BITS	0x07
++	#define TFBFCR_FREE_PAGE_LATCH	BIT(6)
++	#define TFBFCR_SET_FREE_PAGE(x)	(((x) & 0x3F) << TFBFCR_FREE_PAGE_BITS)
++	#define TFBFCR_TX_PAGE_SET	BIT(13)
++	#define TFBFCR_MANU_ENTX	BIT(15)
++	#define TX_FREEBUF_MASK		0x003F
++	#define TX_DPTSTART		0x4000
++
++#define P0_TSNR		(0x12)
++	#define TXNR_TXB_ERR		BIT(5)
++	#define TXNR_TXB_IDLE		BIT(6)
++	#define TSNR_PKT_CNT(x)		(((x) & 0x3F) << 8)
++	#define TXNR_TXB_REINIT		BIT(14)
++	#define TSNR_TXB_START		BIT(15)
++#define P0_RTDPR	(0x14)
++#define P0_RXBCR1	(0x16)
++	#define RXBCR1_RXB_DISCARD	BIT(14)
++	#define RXBCR1_RXB_START	BIT(15)
++#define P0_RXBCR2	(0x18)
++	#define RXBCR2_PKT_MASK		(0xFF)
++	#define RXBCR2_RXPC_MASK	(0x7F)
++	#define RXBCR2_RXB_READY	BIT(13)
++	#define RXBCR2_RXB_IDLE		BIT(14)
++	#define RXBCR2_RXB_REINIT	BIT(15)
++#define P0_RTWCR	(0x1A)
++	#define RTWCR_RXWC_MASK		(0x3FFF)
++	#define RTWCR_RX_LATCH		BIT(15)
++#define P0_RCPHR	(0x1C)
++
++	/* Definition of PAGE1 */
++#define P1_RPPER	(0x22)
++	#define RPPER_RXEN		BIT(0)
++#define P1_MRCR		(0x28)
++#define P1_MDR		(0x2A)
++#define P1_RMPR		(0x2C)
++#define P1_TMPR		(0x2E)
++#define P1_RXBSPCR	(0x30)
++	#define RXBSPCR_STUF_WORD_CNT(x)	(((x) & 0x7000) >> 12)
++	#define RXBSPCR_STUF_ENABLE		BIT(15)
++#define P1_MCR		(0x32)
++	#define MCR_SBP			BIT(8)
++	#define MCR_SM			BIT(9)
++	#define MCR_CRCENLAN		BIT(11)
++	#define MCR_STP			BIT(12)
++	/* Definition of PAGE2 */
++#define P2_CIR		(0x42)
++#define P2_PCR		(0x44)
++	#define PCR_POLL_EN		BIT(0)
++	#define PCR_POLL_FLOWCTRL	BIT(1)
++	#define PCR_POLL_BMCR		BIT(2)
++	#define PCR_PHYID(x)		((x) << 8)
++#define P2_PHYSR	(0x46)
++#define P2_MDIODR	(0x48)
++#define P2_MDIOCR	(0x4A)
++	#define MDIOCR_RADDR(x)		((x) & 0x1F)
++	#define MDIOCR_FADDR(x)		(((x) & 0x1F) << 8)
++	#define MDIOCR_VALID		BIT(13)
++	#define MDIOCR_READ		BIT(14)
++	#define MDIOCR_WRITE		BIT(15)
++#define P2_LCR0		(0x4C)
++	#define LCR_LED0_EN		BIT(0)
++	#define LCR_LED0_100MODE	BIT(1)
++	#define LCR_LED0_DUPLEX		BIT(2)
++	#define LCR_LED0_LINK		BIT(3)
++	#define LCR_LED0_ACT		BIT(4)
++	#define LCR_LED0_COL		BIT(5)
++	#define LCR_LED0_10MODE		BIT(6)
++	#define LCR_LED0_DUPCOL		BIT(7)
++	#define LCR_LED1_EN		BIT(8)
++	#define LCR_LED1_100MODE	BIT(9)
++	#define LCR_LED1_DUPLEX		BIT(10)
++	#define LCR_LED1_LINK		BIT(11)
++	#define LCR_LED1_ACT		BIT(12)
++	#define LCR_LED1_COL		BIT(13)
++	#define LCR_LED1_10MODE		BIT(14)
++	#define LCR_LED1_DUPCOL		BIT(15)
++#define P2_LCR1		(0x4E)
++	#define LCR_LED2_MASK		(0xFF00)
++	#define LCR_LED2_EN		BIT(0)
++	#define LCR_LED2_100MODE	BIT(1)
++	#define LCR_LED2_DUPLEX		BIT(2)
++	#define LCR_LED2_LINK		BIT(3)
++	#define LCR_LED2_ACT		BIT(4)
++	#define LCR_LED2_COL		BIT(5)
++	#define LCR_LED2_10MODE		BIT(6)
++	#define LCR_LED2_DUPCOL		BIT(7)
++#define P2_IPGCR	(0x50)
++#define P2_CRIR		(0x52)
++#define P2_FLHWCR	(0x54)
++#define P2_RXCR		(0x56)
++	#define RXCR_PRO		BIT(0)
++	#define RXCR_AMALL		BIT(1)
++	#define RXCR_SEP		BIT(2)
++	#define RXCR_AB			BIT(3)
++	#define RXCR_AM			BIT(4)
++	#define RXCR_AP			BIT(5)
++	#define RXCR_ARP		BIT(6)
++#define P2_JLCR		(0x58)
++#define P2_MPLR		(0x5C)
++
++	/* Definition of PAGE3 */
++#define P3_MACASR0	(0x62)
++	#define P3_MACASR(x)		(P3_MACASR0 + 2 * (x))
++	#define MACASR_LOWBYTE_MASK	0x00FF
++	#define MACASR_HIGH_BITS	0x08
++#define P3_MACASR1	(0x64)
++#define P3_MACASR2	(0x66)
++#define P3_MFAR01	(0x68)
++#define P3_MFAR_BASE	(0x68)
++	#define P3_MFAR(x)		(P3_MFAR_BASE + 2 * (x))
++
++#define P3_MFAR23	(0x6A)
++#define P3_MFAR45	(0x6C)
++#define P3_MFAR67	(0x6E)
++#define P3_VID0FR	(0x70)
++#define P3_VID1FR	(0x72)
++#define P3_EECSR	(0x74)
++#define P3_EEDR		(0x76)
++#define P3_EECR		(0x78)
++	#define EECR_ADDR_MASK		(0x00FF)
++	#define EECR_READ_ACT		BIT(8)
++	#define EECR_WRITE_ACT		BIT(9)
++	#define EECR_WRITE_DISABLE	BIT(10)
++	#define EECR_WRITE_ENABLE	BIT(11)
++	#define EECR_EE_READY		BIT(13)
++	#define EECR_RELOAD		BIT(14)
++	#define EECR_RESET		BIT(15)
++#define P3_TPCR		(0x7A)
++	#define TPCR_PATT_MASK		(0xFF)
++	#define TPCR_RAND_PKT_EN	BIT(14)
++	#define TPCR_FIXED_PKT_EN	BIT(15)
++#define P3_TPLR		(0x7C)
++	/* Definition of PAGE4 */
++#define P4_SPICR	(0x8A)
++	#define SPICR_RCEN		BIT(0)
++	#define SPICR_QCEN		BIT(1)
++	#define SPICR_RBRE		BIT(3)
++	#define SPICR_PMM		BIT(4)
++	#define SPICR_LOOPBACK		BIT(8)
++	#define SPICR_CORE_RES_CLR	BIT(10)
++	#define SPICR_SPI_RES_CLR	BIT(11)
++#define P4_SPIISMR	(0x8C)
++
++#define P4_COERCR0	(0x92)
++	#define COERCR0_RXIPCE		BIT(0)
++	#define COERCR0_RXIPVE		BIT(1)
++	#define COERCR0_RXV6PE		BIT(2)
++	#define COERCR0_RXTCPE		BIT(3)
++	#define COERCR0_RXUDPE		BIT(4)
++	#define COERCR0_RXICMP		BIT(5)
++	#define COERCR0_RXIGMP		BIT(6)
++	#define COERCR0_RXICV6		BIT(7)
++
++	#define COERCR0_RXTCPV6		BIT(8)
++	#define COERCR0_RXUDPV6		BIT(9)
++	#define COERCR0_RXICMV6		BIT(10)
++	#define COERCR0_RXIGMV6		BIT(11)
++	#define COERCR0_RXICV6V6	BIT(12)
++
++	#define COERCR0_DEFAULT		(COERCR0_RXIPCE | COERCR0_RXV6PE | \
++					 COERCR0_RXTCPE | COERCR0_RXUDPE | \
++					 COERCR0_RXTCPV6 | COERCR0_RXUDPV6)
++#define P4_COERCR1	(0x94)
++	#define COERCR1_IPCEDP		BIT(0)
++	#define COERCR1_IPVEDP		BIT(1)
++	#define COERCR1_V6VEDP		BIT(2)
++	#define COERCR1_TCPEDP		BIT(3)
++	#define COERCR1_UDPEDP		BIT(4)
++	#define COERCR1_ICMPDP		BIT(5)
++	#define COERCR1_IGMPDP		BIT(6)
++	#define COERCR1_ICV6DP		BIT(7)
++	#define COERCR1_RX64TE		BIT(8)
++	#define COERCR1_RXPPPE		BIT(9)
++	#define COERCR1_TCP6DP		BIT(10)
++	#define COERCR1_UDP6DP		BIT(11)
++	#define COERCR1_IC6DP		BIT(12)
++	#define COERCR1_IG6DP		BIT(13)
++	#define COERCR1_ICV66DP		BIT(14)
++	#define COERCR1_RPCE		BIT(15)
++
++	#define COERCR1_DEFAULT		(COERCR1_RXPPPE)
++
++#define P4_COETCR0	(0x96)
++	#define COETCR0_TXIP		BIT(0)
++	#define COETCR0_TXTCP		BIT(1)
++	#define COETCR0_TXUDP		BIT(2)
++	#define COETCR0_TXICMP		BIT(3)
++	#define COETCR0_TXIGMP		BIT(4)
++	#define COETCR0_TXICV6		BIT(5)
++	#define COETCR0_TXTCPV6		BIT(8)
++	#define COETCR0_TXUDPV6		BIT(9)
++	#define COETCR0_TXICMV6		BIT(10)
++	#define COETCR0_TXIGMV6		BIT(11)
++	#define COETCR0_TXICV6V6	BIT(12)
++
++	#define COETCR0_DEFAULT		(COETCR0_TXIP | COETCR0_TXTCP | \
++					 COETCR0_TXUDP | COETCR0_TXTCPV6 | \
++					 COETCR0_TXUDPV6)
++#define P4_COETCR1	(0x98)
++	#define COETCR1_TX64TE		BIT(0)
++	#define COETCR1_TXPPPE		BIT(1)
++
++#define P4_COECEDR	(0x9A)
++#define P4_L2CECR	(0x9C)
++
++	/* Definition of PAGE5 */
++#define P5_WFTR		(0xA2)
++	#define WFTR_2MS		(0x01)
++	#define WFTR_4MS		(0x02)
++	#define WFTR_8MS		(0x03)
++	#define WFTR_16MS		(0x04)
++	#define WFTR_32MS		(0x05)
++	#define WFTR_64MS		(0x06)
++	#define WFTR_128MS		(0x07)
++	#define WFTR_256MS		(0x08)
++	#define WFTR_512MS		(0x09)
++	#define WFTR_1024MS		(0x0A)
++	#define WFTR_2048MS		(0x0B)
++	#define WFTR_4096MS		(0x0C)
++	#define WFTR_8192MS		(0x0D)
++	#define WFTR_16384MS		(0x0E)
++	#define WFTR_32768MS		(0x0F)
++#define P5_WFCCR	(0xA4)
++#define P5_WFCR03	(0xA6)
++	#define WFCR03_F0_EN		BIT(0)
++	#define WFCR03_F1_EN		BIT(4)
++	#define WFCR03_F2_EN		BIT(8)
++	#define WFCR03_F3_EN		BIT(12)
++#define P5_WFCR47	(0xA8)
++	#define WFCR47_F4_EN		BIT(0)
++	#define WFCR47_F5_EN		BIT(4)
++	#define WFCR47_F6_EN		BIT(8)
++	#define WFCR47_F7_EN		BIT(12)
++#define P5_WF0BMR0	(0xAA)
++#define P5_WF0BMR1	(0xAC)
++#define P5_WF0CR	(0xAE)
++#define P5_WF0OBR	(0xB0)
++#define P5_WF1BMR0	(0xB2)
++#define P5_WF1BMR1	(0xB4)
++#define P5_WF1CR	(0xB6)
++#define P5_WF1OBR	(0xB8)
++#define P5_WF2BMR0	(0xBA)
++#define P5_WF2BMR1	(0xBC)
++
++	/* Definition of PAGE6 */
++#define P6_WF2CR	(0xC2)
++#define P6_WF2OBR	(0xC4)
++#define P6_WF3BMR0	(0xC6)
++#define P6_WF3BMR1	(0xC8)
++#define P6_WF3CR	(0xCA)
++#define P6_WF3OBR	(0xCC)
++#define P6_WF4BMR0	(0xCE)
++#define P6_WF4BMR1	(0xD0)
++#define P6_WF4CR	(0xD2)
++#define P6_WF4OBR	(0xD4)
++#define P6_WF5BMR0	(0xD6)
++#define P6_WF5BMR1	(0xD8)
++#define P6_WF5CR	(0xDA)
++#define P6_WF5OBR	(0xDC)
++
++/* Definition of PAGE7 */
++#define P7_WF6BMR0	(0xE2)
++#define P7_WF6BMR1	(0xE4)
++#define P7_WF6CR	(0xE6)
++#define P7_WF6OBR	(0xE8)
++#define P7_WF7BMR0	(0xEA)
++#define P7_WF7BMR1	(0xEC)
++#define P7_WF7CR	(0xEE)
++#define P7_WF7OBR	(0xF0)
++#define P7_WFR01	(0xF2)
++#define P7_WFR23	(0xF4)
++#define P7_WFR45	(0xF6)
++#define P7_WFR67	(0xF8)
++#define P7_WFPC0	(0xFA)
++#define P7_WFPC1	(0xFC)
++
++/* Tx headers structure */
++struct tx_sop_header {
++	/* bit 15-11: flags, bit 10-0: packet length */
++	u16 flags_len;
++	/* bit 15-11: sequence number, bit 11-0: packet length bar */
++	u16 seq_lenbar;
++};
++
++struct tx_segment_header {
++	/* bit 15-14: flags, bit 13-11: segment number */
++	/* bit 10-0: segment length */
++	u16 flags_seqnum_seglen;
++	/* bit 15-14: end offset, bit 13-11: start offset */
++	/* bit 10-0: segment length bar */
++	u16 eo_so_seglenbar;
++};
++
++struct tx_eop_header {
++	/* bit 15-11: sequence number, bit 10-0: packet length */
++	u16 seq_len;
++	/* bit 15-11: sequence number bar, bit 10-0: packet length bar */
++	u16 seqbar_lenbar;
++};
++
++struct tx_pkt_info {
++	struct tx_sop_header sop;
++	struct tx_segment_header seg;
++	struct tx_eop_header eop;
++	u16 pkt_len;
++	u16 seq_num;
++};
++
++/* Rx headers structure */
++struct rx_header {
++	u16 flags_len;
++	u16 seq_lenbar;
++	u16 flags;
++};
++
++extern unsigned long ax88796c_no_regs_mask[];
++
++#endif /* #ifndef _AX88796C_MAIN_H */
+diff --git a/drivers/net/ethernet/asix/ax88796c_spi.c b/drivers/net/ethernet/asix/ax88796c_spi.c
+new file mode 100644
+index 000000000000..1252a97d1c52
+--- /dev/null
++++ b/drivers/net/ethernet/asix/ax88796c_spi.c
+@@ -0,0 +1,115 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2010 ASIX Electronics Corporation
++ * Copyright (c) 2020 Samsung Electronics Co., Ltd.
++ *
++ * ASIX AX88796C SPI Fast Ethernet Linux driver
++ */
++
++#define pr_fmt(fmt)	"ax88796c: " fmt
++
++#include <linux/string.h>
++#include <linux/spi/spi.h>
++
++#include "ax88796c_spi.h"
++
++const u8 ax88796c_rx_cmd_buf[5] = {AX_SPICMD_READ_RXQ, 0xFF, 0xFF, 0xFF, 0xFF};
++const u8 ax88796c_tx_cmd_buf[4] = {AX_SPICMD_WRITE_TXQ, 0xFF, 0xFF, 0xFF};
++
++/* driver bus management functions */
++int axspi_wakeup(struct axspi_data *ax_spi)
++{
++	int ret;
++
++	ax_spi->cmd_buf[0] = AX_SPICMD_EXIT_PWD;	/* OP */
++	ret = spi_write(ax_spi->spi, ax_spi->cmd_buf, 1);
++	if (ret)
++		dev_err(&ax_spi->spi->dev, "%s() failed: ret = %d\n", __func__, ret);
++	return ret;
++}
++
++int axspi_read_status(struct axspi_data *ax_spi, struct spi_status *status)
++{
++	int ret;
++
++	/* OP */
++	ax_spi->cmd_buf[0] = AX_SPICMD_READ_STATUS;
++	ret = spi_write_then_read(ax_spi->spi, ax_spi->cmd_buf, 1, (u8 *)&status, 3);
++	if (ret)
++		dev_err(&ax_spi->spi->dev, "%s() failed: ret = %d\n", __func__, ret);
++	else
++		le16_to_cpus(&status->isr);
++
++	return ret;
++}
++
++int axspi_read_rxq(struct axspi_data *ax_spi, void *data, int len)
++{
++	struct spi_transfer *xfer = ax_spi->spi_rx_xfer;
++	int ret;
++
++	memcpy(ax_spi->cmd_buf, ax88796c_rx_cmd_buf, 5);
++
++	xfer->tx_buf = ax_spi->cmd_buf;
++	xfer->rx_buf = NULL;
++	xfer->len = ax_spi->comp ? 2 : 5;
++	xfer->bits_per_word = 8;
++	spi_message_add_tail(xfer, &ax_spi->rx_msg);
++
++	xfer++;
++	xfer->rx_buf = data;
++	xfer->tx_buf = NULL;
++	xfer->len = len;
++	xfer->bits_per_word = 8;
++	spi_message_add_tail(xfer, &ax_spi->rx_msg);
++	ret = spi_sync(ax_spi->spi, &ax_spi->rx_msg);
++	if (ret)
++		dev_err(&ax_spi->spi->dev, "%s() failed: ret = %d\n", __func__, ret);
++
++	return ret;
++}
++
++int axspi_write_txq(const struct axspi_data *ax_spi, void *data, int len)
++{
++	return spi_write(ax_spi->spi, data, len);
++}
++
++u16 axspi_read_reg(struct axspi_data *ax_spi, u8 reg)
++{
++	int ret;
++	int len = ax_spi->comp ? 3 : 4;
++
++	ax_spi->cmd_buf[0] = 0x03;	/* OP code read register */
++	ax_spi->cmd_buf[1] = reg;	/* register address */
++	ax_spi->cmd_buf[2] = 0xFF;	/* dumy cycle */
++	ax_spi->cmd_buf[3] = 0xFF;	/* dumy cycle */
++	ret = spi_write_then_read(ax_spi->spi,
++				  ax_spi->cmd_buf, len,
++				  ax_spi->rx_buf, 2);
++	if (ret) {
++		dev_err(&ax_spi->spi->dev,
++			"%s() failed: ret = %d\n", __func__, ret);
++		return 0xFFFF;
++	}
++
++	le16_to_cpus(ax_spi->rx_buf);
++
++	return *(u16 *)ax_spi->rx_buf;
++}
++
++int axspi_write_reg(struct axspi_data *ax_spi, u8 reg, u16 value)
++{
++	int ret;
++
++	memset(ax_spi->cmd_buf, 0, sizeof(ax_spi->cmd_buf));
++	ax_spi->cmd_buf[0] = AX_SPICMD_WRITE_REG;	/* OP code read register */
++	ax_spi->cmd_buf[1] = reg;			/* register address */
++	ax_spi->cmd_buf[2] = value;
++	ax_spi->cmd_buf[3] = value >> 8;
++
++	ret = spi_write(ax_spi->spi, ax_spi->cmd_buf, 4);
++	if (ret)
++		dev_err(&ax_spi->spi->dev, "%s() failed: ret = %d\n", __func__, ret);
++	return ret;
++}
++
+diff --git a/drivers/net/ethernet/asix/ax88796c_spi.h b/drivers/net/ethernet/asix/ax88796c_spi.h
+new file mode 100644
+index 000000000000..5bcf91f603fb
+--- /dev/null
++++ b/drivers/net/ethernet/asix/ax88796c_spi.h
+@@ -0,0 +1,69 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2010 ASIX Electronics Corporation
++ * Copyright (c) 2020 Samsung Electronics Co., Ltd.
++ *
++ * ASIX AX88796C SPI Fast Ethernet Linux driver
++ */
++
++#ifndef _AX88796C_SPI_H
++#define _AX88796C_SPI_H
++
++#include <linux/spi/spi.h>
++#include <linux/types.h>
++
++/* Definition of SPI command */
++#define AX_SPICMD_WRITE_TXQ		0x02
++#define AX_SPICMD_READ_REG		0x03
++#define AX_SPICMD_READ_STATUS		0x05
++#define AX_SPICMD_READ_RXQ		0x0B
++#define AX_SPICMD_BIDIR_WRQ		0xB2
++#define AX_SPICMD_WRITE_REG		0xD8
++#define AX_SPICMD_EXIT_PWD		0xAB
++
++extern const u8 ax88796c_rx_cmd_buf[];
++extern const u8 ax88796c_tx_cmd_buf[];
++
++struct axspi_data {
++	struct spi_device	*spi;
++	struct spi_message	rx_msg;
++	struct spi_transfer	spi_rx_xfer[2];
++	u8			cmd_buf[6];
++	u8			rx_buf[6];
++	u8			comp;
++};
++
++struct spi_status {
++	u16 isr;
++	u8 status;
++#	define AX_STATUS_READY		0x80
++};
++
++int axspi_read_rxq(struct axspi_data *ax_spi, void *data, int len);
++int axspi_write_txq(const struct axspi_data *ax_spi, void *data, int len);
++u16 axspi_read_reg(struct axspi_data *ax_spi, u8 reg);
++int axspi_write_reg(struct axspi_data *ax_spi, u8 reg, u16 value);
++int axspi_read_status(struct axspi_data *ax_spi, struct spi_status *status);
++int axspi_wakeup(struct axspi_data *ax_spi);
++
++static inline u16 AX_READ(struct axspi_data *ax_spi, u8 offset)
++{
++	return axspi_read_reg(ax_spi, offset);
++}
++
++static inline int AX_WRITE(struct axspi_data *ax_spi, u16 value, u8 offset)
++{
++	return axspi_write_reg(ax_spi, offset, value);
++}
++
++static inline int AX_READ_STATUS(struct axspi_data *ax_spi,
++				 struct spi_status *status)
++{
++	return axspi_read_status(ax_spi, status);
++}
++
++static inline int AX_WAKEUP(struct axspi_data *ax_spi)
++{
++	return axspi_wakeup(ax_spi);
++}
++#endif
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.26.2
 
