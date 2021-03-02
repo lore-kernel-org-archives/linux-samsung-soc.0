@@ -2,221 +2,158 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B80BC28CBC
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 01:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B27C43381
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 01:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7023364FA6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 01:19:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CEEF64FA9
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 01:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241674AbhCCBMy (ORCPT
+        id S241916AbhCCBOk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 2 Mar 2021 20:12:54 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:57497 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1578717AbhCBP0w (ORCPT
+        Tue, 2 Mar 2021 20:14:40 -0500
+Received: from z11.mailgun.us ([104.130.96.11]:56575 "EHLO z11.mailgun.us"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1580066AbhCBRWz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 2 Mar 2021 10:26:52 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210302152253euoutp02c1e46538473d0313f3926aeb75464f1e~oj8wzi9xs0151001510euoutp02A
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Mar 2021 15:22:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210302152253euoutp02c1e46538473d0313f3926aeb75464f1e~oj8wzi9xs0151001510euoutp02A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1614698573;
-        bh=27homzhxtOgQquKIw/0+3LoypE6+9O9g4fIKMDgjxBE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kKrASF8mr7FyME5BukZRfEkUN1h6Nb3AbNnBKFX3nUiVvt8EMvAybkZ6sa5961S/2
-         HokxsR1ruLvtBB4zIRLAKfu7MEGoJkL1h3EoFDgIddJBhjkjWkj7KbeXF6SsrcyaP2
-         h74ja/ZoDLi9Yffq5P8Pawrf9NuVFtBoMFEGrKoA=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210302152253eucas1p28c187f3999b16bcc2632fdd687320b84~oj8wRkgUT0597105971eucas1p2E;
-        Tue,  2 Mar 2021 15:22:53 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id A3.DE.27958.C485E306; Tue,  2
-        Mar 2021 15:22:52 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210302152252eucas1p2cebd13f124e03ccd69f5d150fe144a64~oj8v1cbfr0565805658eucas1p2i;
-        Tue,  2 Mar 2021 15:22:52 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210302152252eusmtrp1f512ea88fa8a07e859d530ebed1e74d2~oj8v0oPor1781617816eusmtrp17;
-        Tue,  2 Mar 2021 15:22:52 +0000 (GMT)
-X-AuditID: cbfec7f2-efdff70000006d36-12-603e584ccfef
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 9A.25.16282.C485E306; Tue,  2
-        Mar 2021 15:22:52 +0000 (GMT)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210302152252eusmtip11cf14f6772e85ba51f862133eaa7fe9c~oj8vlaIJp1399713997eusmtip18;
-        Tue,  2 Mar 2021 15:22:52 +0000 (GMT)
-From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-To:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
+        Tue, 2 Mar 2021 12:22:55 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1614705721; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=i6HWitAvfuibUOrEhE9hWqjcYM7rHuJywCh3nQMG6cA=; b=EGCbm8UCwEsuRVRI4XSzPh9wWyjKADrOYpALoZJnDqfb6MpEzCw8wFT4nhtZvaX1Kbk21F4H
+ CIrlKwk+U1/sNWnhDsDiNgQYHSyrskrcvAIYupb3pV20dE7byBB/rs2obQMYwWoNHsypJGBN
+ bcajdDlNxtKsX5zazTqotc/IYA4=
+X-Mailgun-Sending-Ip: 104.130.96.11
+X-Mailgun-Sid: WyJhY2Q3MCIsICJsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
+ 603e65bf4fd7814d5f8c7567 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 02 Mar 2021 16:20:15
+ GMT
+Sender: asutoshd=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id BC0CCC4346F; Tue,  2 Mar 2021 16:20:14 +0000 (UTC)
+Received: from stor-presley.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: asutoshd)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1E9ACC433C6;
+        Tue,  2 Mar 2021 16:20:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1E9ACC433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=asutoshd@codeaurora.org
+Date:   Tue, 2 Mar 2021 08:20:10 -0800
+From:   Asutosh Das <asutoshd@codeaurora.org>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     cang@codeaurora.org, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [RESEND PATCH v11 2/3] dt-bindings: net: Add bindings for AX88796C
- SPI Ethernet Adapter
-Date:   Tue,  2 Mar 2021 16:22:49 +0100
-Message-Id: <20210302152250.27113-3-l.stelmach@samsung.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210302152250.27113-1-l.stelmach@samsung.com>
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Kiwoong Kim <kwmad.kim@samsung.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Satya Tangirala <satyat@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
+        <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH v9 1/2] scsi: ufs: Enable power management for wlun
+Message-ID: <20210302162010.GH12147@stor-presley.qualcomm.com>
+References: <cover.1614655058.git.asutoshd@codeaurora.org>
+ <b291bb65fadc9c828cbcb4ffb81cfa1ee47b82be.1614655058.git.asutoshd@codeaurora.org>
+ <d17e52e0-cb50-50ee-accb-458b318014e5@intel.com>
 MIME-Version: 1.0
-Organization: Samsung R&D Institute Poland
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKKsWRmVeSWpSXmKPExsWy7djPc7o+EXYJBnNOWVmcv3uI2WLjjPWs
-        FnPOt7BYzD9yjtVi0fsZrBbX3t5hteh//JrZ4vz5DewWF7b1sVrcPLSC0WLT42usFpd3zWGz
-        mHF+H5PFoal7GS3WHrnLbnFsgZhF694j7Bb/9+xgdxDyuHztIrPHlpU3mTx2zrrL7rFpVSeb
-        x+Yl9R47d3xm8ujbsorR4/MmuQCOKC6blNSczLLUIn27BK6Mq8fMCs4LVyzo/cnUwDiFv4uR
-        k0NCwESi484sZhBbSGAFo8TJh4pdjFxA9hdGiQt939kgnM+MEtNfLGeE6fix/h8zRGI5o8TK
-        ngdMEM5zRol5S6+CzWITcJToX3qCFSQhInCPWWJ9+wNGEIdZ4D6jxL3nq8GqhAWSJJ4un8wC
-        YrMIqEpcWbyWDcTmFbCWONT8hglin7xE+/LtYHFOARuJDSfXsUDUCEqcnPkEzOYX0JJY03Qd
-        zGYGqm/eOhvsPgmBw5wSs5YfYocY5CKx7H4jK4QtLPHq+BaouIzE6ck9QM0cQHa9xORJZhC9
-        PYwS2+b8YIGosZa4c+4XG0gNs4CmxPpd+hBhR4kvpyewQbTySdx4KwhxAp/EpG3TmSHCvBId
-        bUIQ1SoS6/r3QA2Ukuh9tYJxAqPSLCTPzELywCyEXQsYmVcxiqeWFuempxYb5qWW6xUn5haX
-        5qXrJefnbmIEprzT/45/2sE499VHvUOMTByMhxglOJiVRHjFX9omCPGmJFZWpRblxxeV5qQW
-        H2KU5mBREuddNXtNvJBAemJJanZqakFqEUyWiYNTqoEpu0rp/LsLE/8tjbrjJq6W8bvww6nJ
-        +dtD2BhLon4e0Uw+ZnaxSEllRenaz/YqX7aYTntbmrHYq15kqwH/jhsb9fwep1hH937lPdnb
-        IaZaq3WxOPRa1x6TsIs7BQTYtB9ovrzObOH76a7jF+8JQZN6dSfnSN52rJ6g3zYnbReHlPmC
-        nE1Zc92+Z6gVLXztL3vX9FG61XyHQmV7RQ/t1U4SRRzRvAyytYbckWZJT3atvqtq/MFwzp49
-        r09kz86exLRJuO7jG8dM3viT61VSCmUZQuYlCU4GJmle62c7U7fwfav/v3piw03pQIYpt4w6
-        FmizrI2+IqudmmxyUs7sqeq9hMZcHu6vvE92P3nySImlOCPRUIu5qDgRAEjbxc/oAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsVy+t/xu7o+EXYJBit7pS3O3z3EbLFxxnpW
-        iznnW1gs5h85x2qx6P0MVotrb++wWvQ/fs1scf78BnaLC9v6WC1uHlrBaLHp8TVWi8u75rBZ
-        zDi/j8ni0NS9jBZrj9xltzi2QMyide8Rdov/e3awOwh5XL52kdljy8qbTB47Z91l99i0qpPN
-        Y/OSeo+dOz4zefRtWcXo8XmTXABHlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayV
-        kamSvp1NSmpOZllqkb5dgl7G1WNmBeeFKxb0/mRqYJzC38XIySEhYCLxY/0/5i5GLg4hgaWM
-        Ent2vWHsYuQASkhJrJybDlEjLPHnWhcbRM1TRonZa+YwgSTYBBwl+peeYAVJiAi8YZZouveW
-        HcRhFrjPKPHr0wtGkCphgQSJ04vPg3WwCKhKXFm8lg3E5hWwljjU/IYJYoW8RPvy7WBxTgEb
-        iQ0n17GA2EJANYvur2SHqBeUODnzCQvIdcwC6hLr5wmBhPkFtCTWNF0HK2cGGtO8dTbzBEah
-        WUg6ZiF0zEJStYCReRWjSGppcW56brGRXnFibnFpXrpecn7uJkZghG879nPLDsaVrz7qHWJk
-        4mA8xCjBwawkwiv+0jZBiDclsbIqtSg/vqg0J7X4EKMp0GcTmaVEk/OBKSavJN7QzMDU0MTM
-        0sDU0sxYSZzX5MiaeCGB9MSS1OzU1ILUIpg+Jg5OqQamqJAwcR/HgMoXCn0ztKKbUmaueviI
-        sSDpwuL9q86/2/uLd+rxpJ0v2FcWLj5xhTvqa8vTi7vN1iXuNpSIiF30SE7suoK8V0JY6POl
-        1zzVNh+Q4C0sf6Cntr3Ate8++xab5oNWSfNV5P8cXbWl/aNkhJO8nqHvSQfmt9uXJFwzi5J9
-        UF7Ar674cn7X3/L//+XO3d+8tNfoTtHT3l3ND7fvcuSSu5J07Sf7Fbt+l/sv7/jJbwi9f+b0
-        LicX1Ydyu7i3JTOtbRJ0EjkeF/ebY9ekc7eBaZ39qIz7Ns4Q7beSrn/yJDbw+/lNXPtCPifh
-        xX+rtZe/ezPtFguet7fz9rvc1Qvy3IyuurEkMp8R3PFGiaU4I9FQi7moOBEAnviY5HkDAAA=
-X-CMS-MailID: 20210302152252eucas1p2cebd13f124e03ccd69f5d150fe144a64
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210302152252eucas1p2cebd13f124e03ccd69f5d150fe144a64
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210302152252eucas1p2cebd13f124e03ccd69f5d150fe144a64
-References: <20210302152250.27113-1-l.stelmach@samsung.com>
-        <CGME20210302152252eucas1p2cebd13f124e03ccd69f5d150fe144a64@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <d17e52e0-cb50-50ee-accb-458b318014e5@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add bindings for AX88796C SPI Ethernet Adapter.
+On Tue, Mar 02 2021 at 06:14 -0800, Adrian Hunter wrote:
+>On 2/03/21 5:21 am, Asutosh Das wrote:
+>> During runtime-suspend of ufs host, the scsi devices are
+>> already suspended and so are the queues associated with them.
+>> But the ufs host sends SSU to wlun during its runtime-suspend.
+>> During the process blk_queue_enter checks if the queue is not in
+>> suspended state. If so, it waits for the queue to resume, and never
+>> comes out of it.
+>> The commit
+>> (d55d15a33: scsi: block: Do not accept any requests while suspended)
+>> adds the check if the queue is in suspended state in blk_queue_enter().
+>>
+>> Call trace:
+>>  __switch_to+0x174/0x2c4
+>>  __schedule+0x478/0x764
+>>  schedule+0x9c/0xe0
+>>  blk_queue_enter+0x158/0x228
+>>  blk_mq_alloc_request+0x40/0xa4
+>>  blk_get_request+0x2c/0x70
+>>  __scsi_execute+0x60/0x1c4
+>>  ufshcd_set_dev_pwr_mode+0x124/0x1e4
+>>  ufshcd_suspend+0x208/0x83c
+>>  ufshcd_runtime_suspend+0x40/0x154
+>>  ufshcd_pltfrm_runtime_suspend+0x14/0x20
+>>  pm_generic_runtime_suspend+0x28/0x3c
+>>  __rpm_callback+0x80/0x2a4
+>>  rpm_suspend+0x308/0x614
+>>  rpm_idle+0x158/0x228
+>>  pm_runtime_work+0x84/0xac
+>>  process_one_work+0x1f0/0x470
+>>  worker_thread+0x26c/0x4c8
+>>  kthread+0x13c/0x320
+>>  ret_from_fork+0x10/0x18
+>>
+>> Fix this by registering ufs device wlun as a scsi driver and
+>> registering it for block runtime-pm. Also make this as a
+>> supplier for all other luns. That way, this device wlun
+>> suspends after all the consumers and resumes after
+>> hba resumes.
+>>
+>> Co-developed-by: Can Guo <cang@codeaurora.org>
+>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+>> ---
+>
+>Now we need either to move the suspend/resume vops from
+>ufshcd_suspend/resume to __ufshcd_wl_suspend/resume, assuming that
+>would work for existing implementations of those callbacks,
+>or otherwise create new vops ->wl_suspend() / ->wl_resume(), and
+>then split the existing implementations of those callbacks.
+>
+>ufs_intel_resume() now needs to be invoked from __ufshcd_wl_resume().
+>I am not sure about the others:
+>
+>	exynos_ufs_suspend()
+>	exynos_ufs_resume()
+>	ufs_hisi_suspend()
+>	ufs_hisi_resume()
+>	ufs_mtk_suspend()
+>	ufs_mtk_resume()
+>	ufs_qcom_suspend()
+>	ufs_qcom_resume()
+>
 
-Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../bindings/net/asix,ax88796c.yaml           | 73 +++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/asix,ax88796c.yaml
+Thanks. I'll change this in the next version.
 
-diff --git a/Documentation/devicetree/bindings/net/asix,ax88796c.yaml b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
-new file mode 100644
-index 000000000000..699ebf452479
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
-@@ -0,0 +1,73 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/asix,ax88796c.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ASIX AX88796C SPI Ethernet Adapter
-+
-+maintainers:
-+  - Łukasz Stelmach <l.stelmach@samsung.com>
-+
-+description: |
-+  ASIX AX88796C is an Ethernet controller with a built in PHY. This
-+  describes SPI mode of the chip.
-+
-+  The node for this driver must be a child node of an SPI controller,
-+  hence all mandatory properties described in
-+  ../spi/spi-controller.yaml must be specified.
-+
-+allOf:
-+  - $ref: ethernet-controller.yaml#
-+
-+properties:
-+  compatible:
-+    const: asix,ax88796c
-+
-+  reg:
-+    maxItems: 1
-+
-+  spi-max-frequency:
-+    maximum: 40000000
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reset-gpios:
-+    description:
-+      A GPIO line handling reset of the chip. As the line is active low,
-+      it should be marked GPIO_ACTIVE_LOW.
-+    maxItems: 1
-+
-+  local-mac-address: true
-+
-+  mac-address: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - spi-max-frequency
-+  - interrupts
-+  - reset-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  # Artik5 eval board
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+    spi0 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        ethernet@0 {
-+            compatible = "asix,ax88796c";
-+            reg = <0x0>;
-+            local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
-+            interrupt-parent = <&gpx2>;
-+            interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+            spi-max-frequency = <40000000>;
-+            reset-gpios = <&gpe0 2 GPIO_ACTIVE_LOW>;
-+        };
-+    };
--- 
-2.26.2
-
+-asd
