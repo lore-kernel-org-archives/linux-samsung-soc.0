@@ -2,96 +2,78 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89478C43331
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 21:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0F7C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Mar 2021 06:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6AC5564ECF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Mar 2021 21:22:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6315F64F09
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Mar 2021 06:29:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238292AbhCCU4C (ORCPT
+        id S232753AbhCDG2s (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 3 Mar 2021 15:56:02 -0500
-Received: from mail-wr1-f49.google.com ([209.85.221.49]:39321 "EHLO
-        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234010AbhCCSU4 (ORCPT
+        Thu, 4 Mar 2021 01:28:48 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:52116 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235216AbhCDG2i (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 3 Mar 2021 13:20:56 -0500
-Received: by mail-wr1-f49.google.com with SMTP id b18so18272964wrn.6;
-        Wed, 03 Mar 2021 10:20:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=i+wsmGB3nPUNErG75HhRRgO2R+I8z7au1VtRNGbI3kU=;
-        b=tACU2r9Qr/yQalW1sJ/XoLgRpjQNlEjGY/Dji8fLuye4Ex1LBOBMjHiZPdtCRzLATh
-         sGtwukYrlgNtTLBnMibk0ppeW2kc7LWfP9D4uJMljMYqhbsto1Yhn5CEzdC1vmQq3duR
-         kST8AHql9cFDsu1crjrXBKgLR9qpNeluno7v6Lyp6jjSMZPSqkDI1ncovdjh+FOmbQ46
-         fNvcdqIJ8IlWf5vNIEM2sosRmWjWye2EW0Omzr0/9EJdWo3dlmGQDpcnSNm+Vpf7Fx9a
-         mWQioOxSkdYEfCugU1utKTYyDam3MOpI5caXF7dVmyp401Ge+a+/qZV39AfZauAQJebN
-         eYuA==
-X-Gm-Message-State: AOAM5309HLLO4xfjNz4kRBHXBtWlqWIykH3YNAVgsXgDQVky73CdwaM/
-        CWTefaDIe647MfrG6W6wznFBrECeEE4=
-X-Google-Smtp-Source: ABdhPJzXlIPSof8TuEU/xmd9uwKvcnqjSaqVZ9KBEX0z0xFsdcZ3JuEcemsbVzh06mpoU6nkjncGFQ==
-X-Received: by 2002:adf:c40b:: with SMTP id v11mr28144512wrf.320.1614795584154;
-        Wed, 03 Mar 2021 10:19:44 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id m14sm6511797wmi.27.2021.03.03.10.19.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Mar 2021 10:19:43 -0800 (PST)
-Date:   Wed, 3 Mar 2021 19:19:41 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Cc:     Iskren Chernev <iskren.chernev@gmail.com>,
-        Matheus Castello <matheus@castello.eng.br>,
-        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
-        Angus Ainslie <angus@akkea.ca>,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH 01/18] ARM: dts: exynos: correct fuel gauge interrupt
- trigger level on GT-I9100
-Message-ID: <20210303181941.yercebdxswdetf3q@kozik-lap>
-References: <20201210212534.216197-1-krzk@kernel.org>
+        Thu, 4 Mar 2021 01:28:38 -0500
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
+        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
+        id 1lHhRd-0007I3-Am; Thu, 04 Mar 2021 17:26:46 +1100
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Thu, 04 Mar 2021 17:26:44 +1100
+Date:   Thu, 4 Mar 2021 17:26:44 +1100
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Allen Pais <allen.lkml@gmail.com>
+Cc:     davem@davemloft.net, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
+        jesper.nilsson@axis.com, lars.persson@axis.com,
+        horia.geanta@nxp.com, aymen.sghaier@nxp.com, gcherian@marvell.com,
+        thomas.lendacky@amd.com, john.allen@amd.com, gilad@benyossef.com,
+        bbrezillon@kernel.org, arno@natisbad.org, schalla@marvell.com,
+        matthias.bgg@gmail.com, jamie@jamieiles.com,
+        giovanni.cabiddu@intel.com, heiko@sntech.de, krzk@kernel.org,
+        vz@mleia.com, k.konieczny@samsung.com,
+        linux-crypto@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        qat-linux@intel.com, linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Allen Pais <apais@linux.microsoft.com>,
+        Romain Perier <romain.perier@gmail.com>
+Subject: Re: [PATCH v5 01/19] crypto: amcc: convert tasklets to use new
+ tasklet_setup() API
+Message-ID: <20210304062644.GA5107@gondor.apana.org.au>
+References: <20210208094238.571015-1-allen.lkml@gmail.com>
+ <20210208094238.571015-2-allen.lkml@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201210212534.216197-1-krzk@kernel.org>
+In-Reply-To: <20210208094238.571015-2-allen.lkml@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 10:25:17PM +0100, Krzysztof Kozlowski wrote:
-> The Maxim fuel gauge datasheets describe the interrupt line as active
-> low with a requirement of acknowledge from the CPU.  The falling edge
-> interrupt will mostly work but it's not correct.
+On Mon, Feb 08, 2021 at 03:12:20PM +0530, Allen Pais wrote:
+> From: Allen Pais <apais@linux.microsoft.com>
 > 
-> Fixes: 8620cc2f99b7 ("ARM: dts: exynos: Add devicetree file for the Galaxy S2")
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> In preparation for unconditionally passing the
+> struct tasklet_struct pointer to all tasklet
+> callbacks, switch to using the new tasklet_setup()
+> and from_tasklet() to pass the tasklet pointer explicitly.
+> 
+> Signed-off-by: Romain Perier <romain.perier@gmail.com>
+> Signed-off-by: Allen Pais <apais@linux.microsoft.com>
 > ---
->  arch/arm/boot/dts/exynos4210-i9100.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+>  drivers/crypto/amcc/crypto4xx_core.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
-Applied 1-10 (Exynos and S5P dts patches).
+This introduces a compiler warning with C=1 W=1.
 
-Best regards,
-Krzysztof
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
