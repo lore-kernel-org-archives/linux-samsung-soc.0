@@ -2,97 +2,93 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E2C2C433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C32EC43381
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5A5A6501B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:11:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1999964F5B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:12:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230023AbhCEKK7 (ORCPT
+        id S230126AbhCEKLa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 5 Mar 2021 05:10:59 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:49543 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbhCEKKy (ORCPT
+        Fri, 5 Mar 2021 05:11:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35458 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229899AbhCEKLR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 5 Mar 2021 05:10:54 -0500
-Received: from mail-wm1-f70.google.com ([209.85.128.70])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lI7Q5-0005wP-EC
-        for linux-samsung-soc@vger.kernel.org; Fri, 05 Mar 2021 10:10:53 +0000
-Received: by mail-wm1-f70.google.com with SMTP id s192so573423wme.6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Mar 2021 02:10:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Dc1X7XD8sIPk/f9CtULIHpjeF451ceoNr0To1nwZ7Rk=;
-        b=K7ooRia39XcZwHhb8MH473DJgVlnHDLT3M+uMYaV/Np1c3okQUeOE+FoF+n8ECX3A/
-         gdk6WYkyjLEGkVuyJdxNASUFEZOgxp6tNZoLA1ty8sMi68nyEiH54mCg9fv4jMMCIkxd
-         0ITVHfhRMvAR/xh/foCAwSGrM0qFc7o72oVTaUAERhdFV1bKp5/QXQZG2lZZSQOTV3xD
-         iP9WlNI7tJQXmRS5odUvri33bTH0qAg17bH0Nsl98B4S9tBu712yOqRHpxV9BO4mZ1DY
-         2ezr3BlfhRrU0vesa+Wullx+WzALi5pD7VjL5r3z+v7DUz1o9HCrAip7TiIXl3N6acfn
-         6RSQ==
-X-Gm-Message-State: AOAM532/392XwamDE3wFXMO8DM4MECM3kTqmKsOZe4pPntYmToE45i6f
-        D6FvQyoRFZJsfthQXJVSYJFYW4zXXEH25Xkwn7JDQOu4RvCg0X/0wTxJF4ReAVpl0X098gcBXLD
-        EvIEM8qsjCfhCOn+AOl5o4tYuuswuqI7W6tVYWtCbxykv1J3F
-X-Received: by 2002:a1c:7312:: with SMTP id d18mr8029198wmb.155.1614939053086;
-        Fri, 05 Mar 2021 02:10:53 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxJTFUqM4RWURTdZMPFSaLPGO6A85/2AN+p8IFVvZ8Jnf1yZlTvGqR63lFecZvTKp5HVZ2Rlg==
-X-Received: by 2002:a1c:7312:: with SMTP id d18mr8029170wmb.155.1614939052859;
-        Fri, 05 Mar 2021 02:10:52 -0800 (PST)
-Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.gmail.com with ESMTPSA id o14sm3527991wri.48.2021.03.05.02.10.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Mar 2021 02:10:52 -0800 (PST)
-Subject: Re: [PATCH -next] USB: gadget: udc: s3c2410_udc: fix return value
- check in s3c2410_udc_probe()
-To:     'Wei Yongjun <weiyongjun1@huawei.com>,
-        Felipe Balbi <balbi@kernel.org>,
+        Fri, 5 Mar 2021 05:11:17 -0500
+Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6788C061574;
+        Fri,  5 Mar 2021 02:11:16 -0800 (PST)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: marcan@marcan.st)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id 2953542450;
+        Fri,  5 Mar 2021 10:11:08 +0000 (UTC)
+Subject: Re: [RFT PATCH v3 00/27] Apple M1 SoC platform bring-up
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
+        Arnd Bergmann <arnd@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Tony Lindgren <tony@atomide.com>,
+        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
+        Stan Skowronek <stan@corellium.com>,
+        Alexander Graf <graf@amazon.com>,
+        Will Deacon <will@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-References: <20210305034927.3232386-1-weiyongjun1@huawei.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <3cf7abbf-0dc8-495f-4737-2d84bbea8158@canonical.com>
-Date:   Fri, 5 Mar 2021 11:10:51 +0100
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210304213902.83903-1-marcan@marcan.st>
+From:   Hector Martin <marcan@marcan.st>
+Message-ID: <7ab042aa-7969-a7d4-6ed1-23dc3428a271@marcan.st>
+Date:   Fri, 5 Mar 2021 19:11:07 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <20210305034927.3232386-1-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20210304213902.83903-1-marcan@marcan.st>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: es-ES
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 05/03/2021 04:49, 'Wei Yongjun wrote:
-> From: Wei Yongjun <weiyongjun1@huawei.com>
+On 05/03/2021 06.38, Hector Martin wrote:
+> == Merge notes ==
 > 
-> In case of error, the function devm_platform_ioremap_resource()
-> returns ERR_PTR() and never returns NULL. The NULL test in the
-> return value check should be replaced with IS_ERR().
-> 
-> Fixes: 188db4435ac6 ("usb: gadget: s3c: use platform resources")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> This patchset depends on both the nVHE changes that are already in
+> 5.12-rc1, as well as the FIQ support work currently being reviewed
+> at [1]. A tree containing this patchset on top of the required
+> dependencies is available at [2][3]. Alternatively, you may apply
+> this series on top of Mark's tree at the arm64-fiq-20210302 tag [4][5].
 
+Important warning: these trees are all based on v5.12-rc1, which has a 
+bad bug that causes your filesystems to go kaboom if you use a swap file 
+[1].
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+This doesn't affect M1 since we don't *have* storage, but for folks 
+testing for regressions on on e.g. Samsung or other ARM boards, please 
+make sure you don't use swap files.
 
-Best regards,
-Krzysztof
+[1] 
+https://lore.kernel.org/lkml/CAHk-=wjnzdLSP3oDxhf9eMTYo7GF-QjaNLBUH1Zk3c4A7X75YA@mail.gmail.com/
+
+-- 
+Hector Martin (marcan@marcan.st)
+Public Key: https://mrcn.st/pub
