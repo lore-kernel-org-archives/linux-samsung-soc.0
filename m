@@ -2,86 +2,109 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-20.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5BFC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 08:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0428AC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 192DB64FEA
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 08:07:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4BB564F45
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229599AbhCEIHj (ORCPT
+        id S229608AbhCEKGE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 5 Mar 2021 03:07:39 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:42201 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbhCEIH1 (ORCPT
+        Fri, 5 Mar 2021 05:06:04 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49129 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229562AbhCEKFy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 5 Mar 2021 03:07:27 -0500
-Received: from mail-ot1-f51.google.com ([209.85.210.51]) by
- mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1N2E9Y-1lm63n2Iuc-013cng; Fri, 05 Mar 2021 09:07:25 +0100
-Received: by mail-ot1-f51.google.com with SMTP id a17so1005485oto.5;
-        Fri, 05 Mar 2021 00:07:25 -0800 (PST)
-X-Gm-Message-State: AOAM533vRXAxoUPaBgl0HS7R4QeB7HkjE4SSbsD5JQGn+Ai7Q32FV/Jr
-        VTKktjB1597AN30P4meFPhnnclGiSeaf6scfXj8=
-X-Google-Smtp-Source: ABdhPJxqYuCXgKHG79cARIlIIknf25ifduq2VjGAMPfck87tlTFpc5wPGypB2miMGioSDWeCxnxnQNvQKnonMZbh/Ag=
-X-Received: by 2002:a9d:7f11:: with SMTP id j17mr7135133otq.251.1614931644090;
- Fri, 05 Mar 2021 00:07:24 -0800 (PST)
+        Fri, 5 Mar 2021 05:05:54 -0500
+Received: from mail-wr1-f69.google.com ([209.85.221.69])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lI7LF-0005MN-2z
+        for linux-samsung-soc@vger.kernel.org; Fri, 05 Mar 2021 10:05:53 +0000
+Received: by mail-wr1-f69.google.com with SMTP id r12so836683wro.15
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Mar 2021 02:05:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PGmg5dV7hVfKn04C67/ajk1oG+EyMbudwGnFqSTHrxs=;
+        b=UVRhUuzH5lXM0q5WzURUnzyKKGtcThA3+lbrfcWS7ucNF2SI9JtquLDgHPdTAw+Q6u
+         Nw+6ki0GBo5c5lHyhU8DoIKgDyBbZ83S9WjloctiBxVGr2hyIbJXDyGEhoEZTpxzL1P9
+         Zf/5JjKPyJrmKlY++1pVoft1D2ATO7dnmYyI9AOpuuLnf+Qme6HNbP7cSveLZKtXb9xO
+         vhEvGS0quUGBvglT9ohcb5KW8CzImV+MchSFpmsy7+wIc4g4GakcBoiT8XHOBYoKNS+d
+         Q8hucmUo6StzYGxTNheawYrLDiNO4CyKQ67zTbR1X5iyVii1ttXpSO85s+WPSfYzVQkh
+         etMA==
+X-Gm-Message-State: AOAM533ZQads8kMd5ZG8HOxTgxqgRbY+yRY3pRyrQ06VG+fj8UuqJP0J
+        7dkNp10WRN3lSDzFuToEpaCSXEJFAVK8QpSAjrh5y+I/f64Oxu6lENp9WlcTTazBSUgaBlAx/E/
+        y/sPOFLQMRhCfpMzbNwP7SSvo9Pm5e6EWxviJY0rqB1o390fV
+X-Received: by 2002:a05:6000:1081:: with SMTP id y1mr8313814wrw.347.1614938752890;
+        Fri, 05 Mar 2021 02:05:52 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyGQBsfEHk5+RMowmVgMf1LBys7tnSPKD2v5PbIRXo+DrvJkDFUeI/t+g3t3bBx2KsrWxtLFQ==
+X-Received: by 2002:a05:6000:1081:: with SMTP id y1mr8313799wrw.347.1614938752771;
+        Fri, 05 Mar 2021 02:05:52 -0800 (PST)
+Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.gmail.com with ESMTPSA id p16sm4197316wrt.54.2021.03.05.02.05.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Mar 2021 02:05:52 -0800 (PST)
+Subject: Re: [PATCH 1/2] usb: gadget: s3c: Fix incorrect resources releasing
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        balbi@kernel.org, gregkh@linuxfoundation.org, nathan@kernel.org,
+        ndesaulniers@google.com, arnd@arndb.de, gustavoars@kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20210221074117.937965-1-christophe.jaillet@wanadoo.fr>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <f63496f6-f894-2a86-0328-0f8dadbd28cc@canonical.com>
+Date:   Fri, 5 Mar 2021 11:05:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-References: <20210305034927.3232386-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210305034927.3232386-1-weiyongjun1@huawei.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 5 Mar 2021 09:07:07 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a23Ww39hxmhTCwgZUr1LWO1trj_Dijq1YXGyg0Z1mOCcQ@mail.gmail.com>
-Message-ID: <CAK8P3a23Ww39hxmhTCwgZUr1LWO1trj_Dijq1YXGyg0Z1mOCcQ@mail.gmail.com>
-Subject: Re: [PATCH -next] USB: gadget: udc: s3c2410_udc: fix return value
- check in s3c2410_udc_probe()
-To:     "'Wei Yongjun" <weiyongjun1@huawei.com>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:CHaEdIqKwG3T/zUOLoGwZ+zqo2NWAkLmBho1rTOPqdisV4PiNP+
- p2BGL6Q3j4YElrJqtgJ0o+1tGRMu8oUgm/3q2ZwfdvGNdm1Je991tSuA6vtAXxLadkSn3+n
- TDeIbKI8GghsJ8E+CASotghhBdxVV5DNk25IdsXCY0Gy7eMWszfT/87jIszIV5Q4ddxxJfr
- Of4cRQmKPi1MOkGbYkZ+A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:7k9th40rb8E=:MQtw6gUY57uOyLuH0qWkNF
- dPl9Agm9R6lbXDEFuWukb4gGg2zYEOJCSJe4cNKq/9oB9N0y8i/o1OZi0TK+4sZT2al0ka9my
- /nfWdxpRpiclWz/usb14gkbBtKnsqezHe1W44tMlE7a48LPokBpWeQz2Upr2pLslsujrWEEgz
- AOJMqvujkTBkOluSxrVLw1Cu6IDTTAJq5wgFaY6b0+jOHs2gu0ZXzy/6JrCkWHYZWuOnOT8J+
- 8KbfLEwdoy/9XaC//8J6RkWlqYTsSJwkDUduksZn0oX+C1AaXmgzq/dOl85KjEpiXLdb/3kWL
- unlMUMg/TZKp9LCsVoqxxc6BtGOZXlT/G+zdhTa3o8/1zPaFV6xPodN8O8o4pCcAmXmOQGGsg
- fKM21bYLumKTLw2F1tPcn3obW2HlES2Qay5peToR1P3NbZ4kOwCbk4Kg/tmrKTAYuxA7/CuXT
- ynRj/JyD1Hh5oize37vVhh4m4LVla0yiomQwL1GyK1udOn2P5+YCHqaIQQLran5SDafm76VyV
- M5Vjcp06TwEaplNVrcI8SgAfP1cFkgM6NwUTBBxrRQi
+In-Reply-To: <20210221074117.937965-1-christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 5, 2021 at 4:49 AM 'Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> From: Wei Yongjun <weiyongjun1@huawei.com>
->
-> In case of error, the function devm_platform_ioremap_resource()
-> returns ERR_PTR() and never returns NULL. The NULL test in the
-> return value check should be replaced with IS_ERR().
->
-> Fixes: 188db4435ac6 ("usb: gadget: s3c: use platform resources")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+On 21/02/2021 08:41, Christophe JAILLET wrote:
+> Since commit fe0f8e5c9ba8 ("usb: gadget: s3c: use platform resources"),
+> 'request_mem_region()' and 'ioremap()' are no more used, so they don't need
+> to be undone in the error handling path of the probe and in the removre
 
-Nice find, thanks for fixing it!
+s/removre/remove/
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> function.
+> 
+> Remove these calls and the unneeded 'rsrc_start' and 'rsrc_len' global
+> variables.
+> 
+> Fixes: fe0f8e5c9ba8 ("usb: gadget: s3c: use platform resources")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> the 'err' label is used only to reduce the diff size of this patch. It is
+> removed in the following patch.
+> 
+> checkpatch reports:
+> WARNING: Unknown commit id 'fe0f8e5c9ba8', maybe rebased or not pulled?
+> According to https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/usb/gadget/udc/s3c2410_udc.c?id=188db4435ac64f0918def7ba0593d408700ecc4b
+> the commit ID looks correct to me. Maybe something should be tweaked somewhere
+> before applying, but I don't know what!
+> ---
+>  drivers/usb/gadget/udc/s3c2410_udc.c | 14 +++-----------
+>  1 file changed, 3 insertions(+), 11 deletions(-)
+
+With fixing of commit sha:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+
+
+Best regards,
+Krzysztof
