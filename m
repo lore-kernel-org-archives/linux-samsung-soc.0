@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF554C4332B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FFAC4332B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:20:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E7ED65017
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:17:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8BF26501D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:20:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229865AbhCEKQw (ORCPT
+        id S229756AbhCEKTf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 5 Mar 2021 05:16:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36606 "EHLO
+        Fri, 5 Mar 2021 05:19:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229843AbhCEKQk (ORCPT
+        with ESMTP id S229668AbhCEKTA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 5 Mar 2021 05:16:40 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6AB4C061756
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Mar 2021 02:16:39 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id m11so2036993lji.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Mar 2021 02:16:39 -0800 (PST)
+        Fri, 5 Mar 2021 05:19:00 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09E04C061574
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Mar 2021 02:18:59 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id n16so2724930lfb.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Mar 2021 02:18:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qbH2XnLnL+zeqgwenkERgBp6OdMalagNgmjddUY2upo=;
-        b=oosQD1k0ihuNWvZd/OBh3mc8nkdjesc2ilrBKyxU54uLyH7RvMV3qxaKGuxGmyTP9w
-         7caTG2bAlHb4RIuwWBoXXdwLHI1wuF1UhzSYqvKKVuPJo2A4M4tpwRjXeJj+xZVUonDX
-         UdSpwPE1UpnxNlqFw+lq4Gu6zhZBXm/vANy7gThzJHkn3fTMng4OD0VcMKLNGAbJ8n7Z
-         W0DkubhzB0Y3TdGjmmV7fLpOP0x3K5jmP4uOJi8LKa53fUQqinUuitoq9vPbc6ObUogr
-         0YzEgMGg0uCnBgL74LwDVEecmp+20X7oEJNr4U+Q+ONNvPT2dwJ+XUWBfEzrflscGCAS
-         3YRw==
+        bh=xwNLb2P2LVN8VWnFdZc+rwNuJ+QqAA27JjkB8JsHwdE=;
+        b=ASt1IVQLPzb9L80bE8m9f6kqqabCk7u0JOhy1MzrBL/Y2CJ0Dk+b11puVpKMC0/6Ns
+         ie9feACUA5VpTHep8VxEOVnrNzCWCNw0ghuzbPl2o2TA6BQKPyu2TvpIsSl+n7WOXxhJ
+         GnbpuvsdvzZ3lgB/WInil0/rAKCDEgOYM/BQIW1fnTNNKCc9Fub2YSSwCjDghaAsgXLx
+         evXri9xJW+v/yVU6UBVsQBMa4XNp4xWamt9MADq5BSFM8ZPLmV2Xkc7NScHS74SmE1hH
+         NVzcQFja3IFFj/naH4Ke4fa2zCfotjNhZsI0D7r4QpvMHpkV+H8RGn9fq5IQFSj0RD1D
+         yI4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qbH2XnLnL+zeqgwenkERgBp6OdMalagNgmjddUY2upo=;
-        b=QD1P35dmf3yDkgsCDAVbOKUV00rpGdK0DNyL03NIhP6CiSa+O203KuppMJXcj2QOOG
-         QP0lqLcDROBHXNt4uqPy8FM2W0bH3MqHTf8D7sq4XGnVHTa7EEV36PqVEG1O574rNnEa
-         CeBJqA5A4WLmTtge9oCIOi6nEsa56BUWswVZkN/33CXpfrDkB5XcnSj4So4HWeQiVxY7
-         qjiQbH+aysp2r23fbzy4SQQbSUhrS+qua7fekCVLqyX96/1L4NL7lusFe/vQMXtXfSRx
-         W9NIHUjDqKp5RDD5hN/Ccvy0yWX3MfwPc+c3K2DqfRaytYOdbfv0FFj9hWqMfCbJbxZo
-         UFzA==
-X-Gm-Message-State: AOAM5327TlMnYB3StjWTXtfqtUJuB+CTNGTEQKD3KatakN3qyAWdS+mJ
-        RBSSruS9lxakwK1Roykc4JFVOGkxTMdCRXDapNVtUw==
-X-Google-Smtp-Source: ABdhPJxEx/lpierUGPxwT0L2+ZEtm4VbumUeVdUGn8v87RY30yCJpt4gIIgfdrlbQP0GGfAVxM0ky6MFjfiSwQhsyRg=
-X-Received: by 2002:a2e:1649:: with SMTP id 9mr4991292ljw.74.1614939398241;
- Fri, 05 Mar 2021 02:16:38 -0800 (PST)
+        bh=xwNLb2P2LVN8VWnFdZc+rwNuJ+QqAA27JjkB8JsHwdE=;
+        b=PUole1G/fZRO+UTR42DlywgNGskwdlcEfWl9PvfhX4LuNjUs3W0b9SqAGOemjLsUfj
+         Sm+wJPtOHi1EKlg3Uz4FSUsIC5/xS1xMpJWxMXLIvMmzGf4m99CxRAnyXQ8Ri0/P9+lu
+         53sBLcYn8GC+tBls+2A/Xh1mMvvN+SXC2LtPN7i2YcwuA7RUxhKISRTT+VgmlcmozLn9
+         J6sUbSLBDIn+x/vVt7kSFyveMfV6HPKdywwwPaHfhgBcE9ElMV2PO+GKLqB72sFOtmxl
+         XMqi6KApXepanXY0GuWpLyRSwmaX62A+A9s42cj8mqatFKsE9oWzdGvaejYk5UgE5Orh
+         M3jA==
+X-Gm-Message-State: AOAM530U11FSquow41TjYh2jpJsVExdzTnohxX/yufPmy3RWDbhVr8HB
+        IV5xgvBhlCbjVBNIgR6O1MoWkDWoym8JqkdnZv9RJQ==
+X-Google-Smtp-Source: ABdhPJxA/IN9FI+YATqXHoTLFT+UsL1VJiDBv807dBmpi79MIpih6Nv69+jErWGhJ3E/idF9JDF05vISQLysXpmYRtw=
+X-Received: by 2002:a19:6b13:: with SMTP id d19mr5000896lfa.291.1614939537603;
+ Fri, 05 Mar 2021 02:18:57 -0800 (PST)
 MIME-Version: 1.0
-References: <20210304213902.83903-1-marcan@marcan.st> <20210304213902.83903-4-marcan@marcan.st>
-In-Reply-To: <20210304213902.83903-4-marcan@marcan.st>
+References: <20210304213902.83903-1-marcan@marcan.st> <20210304213902.83903-7-marcan@marcan.st>
+In-Reply-To: <20210304213902.83903-7-marcan@marcan.st>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 5 Mar 2021 11:16:26 +0100
-Message-ID: <CACRpkdbrEch04BFE+suqmmUHtgHrRBoUtS4_cv8gackqbDYoQQ@mail.gmail.com>
-Subject: Re: [RFT PATCH v3 03/27] dt-bindings: arm: apple: Add bindings for
- Apple ARM platforms
+Date:   Fri, 5 Mar 2021 11:18:46 +0100
+Message-ID: <CACRpkdYZX81vEivv331OOsaRUr65aLza3-Au-by5OL+w1D0RPA@mail.gmail.com>
+Subject: Re: [RFT PATCH v3 06/27] dt-bindings: timer: arm,arch_timer: Add
+ interrupt-names support
 To:     Hector Martin <marcan@marcan.st>
 Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -92,17 +92,20 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 4, 2021 at 10:39 PM Hector Martin <marcan@marcan.st> wrote:
+On Thu, Mar 4, 2021 at 10:40 PM Hector Martin <marcan@marcan.st> wrote:
 
-> This introduces bindings for all three 2020 Apple M1 devices:
+> Not all platforms provide the same set of timers/interrupts, and Linux
+> only needs one (plus kvm/guest ones); some platforms are working around
+> this by using dummy fake interrupts. Implementing interrupt-names allows
+> the devicetree to specify an arbitrary set of available interrupts, so
+> the timer code can pick the right one.
 >
-> * apple,j274 - Mac mini (M1, 2020)
-> * apple,j293 - MacBook Pro (13-inch, M1, 2020)
-> * apple,j313 - MacBook Air (M1, 2020)
+> This also adds the hyp-virt timer/interrupt, which was previously not
+> expressed in the fixed 4-interrupt form.
 >
 > Signed-off-by: Hector Martin <marcan@marcan.st>
 
-This way of specifying the SoC makes sense to me.
+This looks good to me.
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
