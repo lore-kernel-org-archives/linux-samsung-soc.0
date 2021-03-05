@@ -2,129 +2,98 @@ Return-Path: <SRS0=j6Uv=ID=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E851C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 18:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B44EC433E9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 20:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D16E650A3
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 18:19:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4D7D650A9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 20:42:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229723AbhCESSt (ORCPT
+        id S229629AbhCEUmP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 5 Mar 2021 13:18:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55458 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229693AbhCESS2 (ORCPT
+        Fri, 5 Mar 2021 15:42:15 -0500
+Received: from mail-ot1-f43.google.com ([209.85.210.43]:37451 "EHLO
+        mail-ot1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229465AbhCEUlz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 5 Mar 2021 13:18:28 -0500
-Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF153C061574;
-        Fri,  5 Mar 2021 10:18:27 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: marcan@marcan.st)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 44CF842037;
-        Fri,  5 Mar 2021 18:18:18 +0000 (UTC)
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Marc Zyngier <maz@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Tony Lindgren <tony@atomide.com>,
-        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
-        Stan Skowronek <stan@corellium.com>,
-        Alexander Graf <graf@amazon.com>,
-        Will Deacon <will@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
-        <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20210304213902.83903-1-marcan@marcan.st>
- <20210304213902.83903-13-marcan@marcan.st>
- <CAL_JsqJF2Hz=4U7FR_GOSjCxqt3dpf-CAWFNfsSrDjDLpHqgCA@mail.gmail.com>
-From:   Hector Martin <marcan@marcan.st>
-Subject: Re: [RFT PATCH v3 12/27] of/address: Add infrastructure to declare
- MMIO as non-posted
-Message-ID: <6e4880b3-1fb6-0cbf-c1a5-7a46fd9ccf62@marcan.st>
-Date:   Sat, 6 Mar 2021 03:18:16 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        Fri, 5 Mar 2021 15:41:55 -0500
+Received: by mail-ot1-f43.google.com with SMTP id g8so3089368otk.4;
+        Fri, 05 Mar 2021 12:41:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CxiBMaUjkdtGVk/8ZQ2/CYCEccRT7hzqM4cRaA/Ie4I=;
+        b=nKqhybF6NyqvuAG/vRV609nDFsCtKllf6b/d12vG4qNM786D/Ta89sf2n3CW66vsTm
+         YkVUEke6WFVJnndAtM/Ka/xhG2aj6YCMEGfcftODbxbbD3QtxEHw439vRDEBQjAzy5QB
+         OC9Q0saKJtNSNScRueX+nUrGDAn6fArY6H6uJ0l1/G/At7w4/7Gvj9eZpO1dhGM51FLC
+         qwEFS0XanV+IsbUFtcgaWO4AxkdoZyWXK0ufO/+u1DYZPT8+nkAYGcefm3zrp+FrqEpb
+         BU7DojYTG/Y6O5/0piDzDwReKsqh5Bb0Z4dlCw+qMkpjo9FpYBcSt08aLdBg0TTmFl1d
+         4FRA==
+X-Gm-Message-State: AOAM530Ymt4BZJct6nWuAG+pDmvDSGBpdJpbSp2cUdPBSzwB0lxBNSke
+        PMgsnkEviBSC36/Frxn4+Q==
+X-Google-Smtp-Source: ABdhPJwxaJOR7D3U0NW/HQGmeMlbGsOpv8rrmZSuGtCzvVOT1WvYaH5DKSdC3EG+d+HghUDEgniTUg==
+X-Received: by 2002:a05:6830:1d41:: with SMTP id p1mr9351418oth.126.1614976914498;
+        Fri, 05 Mar 2021 12:41:54 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id z17sm789528oto.58.2021.03.05.12.41.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Mar 2021 12:41:53 -0800 (PST)
+Received: (nullmailer pid 610653 invoked by uid 1000);
+        Fri, 05 Mar 2021 20:41:52 -0000
+Date:   Fri, 5 Mar 2021 14:41:52 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: iio: samsung,exynos-adc: add common clock
+ properties
+Message-ID: <20210305204152.GA607635@robh.at.kernel.org>
+References: <CGME20210212164148eucas1p2ab09436a82d50161ff1a9fc1a169f7d7@eucas1p2.samsung.com>
+ <20210212163816.70058-1-krzk@kernel.org>
+ <85ed4a70-5cd8-3bce-100f-33a1fba7f3fa@samsung.com>
+ <20210215092915.7khog24shtzjzd6g@kozik-lap>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJF2Hz=4U7FR_GOSjCxqt3dpf-CAWFNfsSrDjDLpHqgCA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: es-ES
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210215092915.7khog24shtzjzd6g@kozik-lap>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/03/2021 02.39, Rob Herring wrote:
-> I'm still a little hesitant to add these properties and having some
-> default. I worry about a similar situation as 'dma-coherent' where the
-> assumed default on non-coherent on Arm doesn't work for PowerPC which
-> defaults coherent. More below on this.
-
-The intent of the default here is that it matches what ioremap() does on 
-other platforms already (where it does not make any claims of being 
-posted, though it could be on some platforms). It could be per-platform 
-what that means... but either way it should be what drivers get today 
-without asking for anything special.
-
->> -       return ioremap(res.start, resource_size(&res));
->> +       if (res.flags & IORESOURCE_MEM_NONPOSTED)
->> +               return ioremap_np(res.start, resource_size(&res));
->> +       else
->> +               return ioremap(res.start, resource_size(&res));
+On Mon, Feb 15, 2021 at 10:29:15AM +0100, Krzysztof Kozlowski wrote:
+> On Mon, Feb 15, 2021 at 10:01:48AM +0100, Marek Szyprowski wrote:
+> > Hi Krzysztof,
+> > 
+> > On 12.02.2021 17:38, Krzysztof Kozlowski wrote:
+> > > Add common properties appearing in DTSes (assigned-clocks and similar)
+> > > to fix dtbs_check warnings like:
+> > >
+> > >    arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml:
+> > >      adc@126c0000: assigned-clock-rates: [[6000000]] is not of type 'object'
+> > >    arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml:
+> > >      adc@126c0000: assigned-clocks: [[7, 238]] is not of type 'object'
+> > 
+> > Does it mean that assigned-clocks related properties have to be added to 
+> > almost all bindings?
 > 
-> This and the devm variants all scream for a ioremap_extended()
-> function. IOW, it would be better if the ioremap flavor was a
-> parameter. Unless we could implement that just for arm64 first, that's
-> a lot of refactoring...
-
-I agree, but yeah... that's one big refactor to try to do now...
-
-> What's the code path using these functions on the M1 where we need to
-> return 'posted'? It's just downstream PCI mappings (PCI memory space),
-> right? Those would never hit these paths because they don't have a DT
-> node or if they do the memory space is not part of it. So can't the
-> check just be:
+> To my understanding: yes, and we already added it to multiple schemas.
 > 
-> bool of_mmio_is_nonposted(struct device_node *np)
-> {
->      return np && of_machine_is_compatible("apple,arm-platform");
-> }
+> > IMHO this is an over-engineering and this has to be 
+> > handled somewhere else...
+> 
+> Would have to be made a part of the core schema (just like pinctrl nodes
+> etc).
 
-Yes; the implementation was trying to be generic, but AIUI we don't need 
-this on M1 because the PCI mappings don't go through this codepath, and 
-nothing else needs posted mode. My first hack was something not too 
-unlike this, then I was going to get rid of apple,arm-platform and just 
-have this be a generic mechanism with the properties, but then we added 
-the optimization to not do the lookups on other platforms, and now we're 
-coming full circle... :-)
+That's the case now. It's contingent on having a 'clocks' property in 
+the node.
 
-If you prefer to handle it this way for now I can do it like this. I 
-think we should still have the DT bindings and properties though (even 
-if not used), as they do describe the hardware properly, and in the 
-future we might want to use them instead of having a quirk.
-
--- 
-Hector Martin (marcan@marcan.st)
-Public Key: https://mrcn.st/pub
+Rob
