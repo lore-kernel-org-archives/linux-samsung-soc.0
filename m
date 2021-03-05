@@ -2,98 +2,130 @@ Return-Path: <SRS0=j6Uv=ID=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B44EC433E9
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 20:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E5CC4332E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 21:18:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4D7D650A9
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 20:42:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26CB2650A6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 21:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229629AbhCEUmP (ORCPT
+        id S229938AbhCEVRe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 5 Mar 2021 15:42:15 -0500
-Received: from mail-ot1-f43.google.com ([209.85.210.43]:37451 "EHLO
-        mail-ot1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229465AbhCEUlz (ORCPT
+        Fri, 5 Mar 2021 16:17:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229716AbhCEVRb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 5 Mar 2021 15:41:55 -0500
-Received: by mail-ot1-f43.google.com with SMTP id g8so3089368otk.4;
-        Fri, 05 Mar 2021 12:41:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CxiBMaUjkdtGVk/8ZQ2/CYCEccRT7hzqM4cRaA/Ie4I=;
-        b=nKqhybF6NyqvuAG/vRV609nDFsCtKllf6b/d12vG4qNM786D/Ta89sf2n3CW66vsTm
-         YkVUEke6WFVJnndAtM/Ka/xhG2aj6YCMEGfcftODbxbbD3QtxEHw439vRDEBQjAzy5QB
-         OC9Q0saKJtNSNScRueX+nUrGDAn6fArY6H6uJ0l1/G/At7w4/7Gvj9eZpO1dhGM51FLC
-         qwEFS0XanV+IsbUFtcgaWO4AxkdoZyWXK0ufO/+u1DYZPT8+nkAYGcefm3zrp+FrqEpb
-         BU7DojYTG/Y6O5/0piDzDwReKsqh5Bb0Z4dlCw+qMkpjo9FpYBcSt08aLdBg0TTmFl1d
-         4FRA==
-X-Gm-Message-State: AOAM530Ymt4BZJct6nWuAG+pDmvDSGBpdJpbSp2cUdPBSzwB0lxBNSke
-        PMgsnkEviBSC36/Frxn4+Q==
-X-Google-Smtp-Source: ABdhPJwxaJOR7D3U0NW/HQGmeMlbGsOpv8rrmZSuGtCzvVOT1WvYaH5DKSdC3EG+d+HghUDEgniTUg==
-X-Received: by 2002:a05:6830:1d41:: with SMTP id p1mr9351418oth.126.1614976914498;
-        Fri, 05 Mar 2021 12:41:54 -0800 (PST)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z17sm789528oto.58.2021.03.05.12.41.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Mar 2021 12:41:53 -0800 (PST)
-Received: (nullmailer pid 610653 invoked by uid 1000);
-        Fri, 05 Mar 2021 20:41:52 -0000
-Date:   Fri, 5 Mar 2021 14:41:52 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iio: samsung,exynos-adc: add common clock
- properties
-Message-ID: <20210305204152.GA607635@robh.at.kernel.org>
-References: <CGME20210212164148eucas1p2ab09436a82d50161ff1a9fc1a169f7d7@eucas1p2.samsung.com>
- <20210212163816.70058-1-krzk@kernel.org>
- <85ed4a70-5cd8-3bce-100f-33a1fba7f3fa@samsung.com>
- <20210215092915.7khog24shtzjzd6g@kozik-lap>
+        Fri, 5 Mar 2021 16:17:31 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BD21A650A3;
+        Fri,  5 Mar 2021 21:17:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614979050;
+        bh=Uq2IgJr9kfuVZlHKajDc//q6GSI/XAvfSiCyKzo1V8Y=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lRdKSARLHY86Mf+trKqlx5nDF6gUxXjau8jUulM0OvPHJnGHI+M8ySKktY8XXjiyh
+         gPgeYM/hOkWA4pMjlJBG1uE3K67vpVrBNMG/PLuFLxreBluK7TN771IUBPk0n+Q+8m
+         5aB2L2Fm24Sb5y0llCK3eB4e9semIXGj8Gk5B9jGiSxqIgHAk5WWHM5WV9BqyYS7ka
+         U5jPmZBMU21t0Kk5r//0EHI6e0rxIvN2x05/oinlGGebESgDGGUGa8aU+z8zYR8O/G
+         eYaEoUL45CG6w7DeJ8XM1Orfk3FuygeAiRz8Fm/I6OvluvPaW88PVV95UXoj8xQ6ER
+         XAa1IhBeRCPng==
+Received: by mail-oi1-f174.google.com with SMTP id j1so4052533oiw.3;
+        Fri, 05 Mar 2021 13:17:30 -0800 (PST)
+X-Gm-Message-State: AOAM530dA6UOr9jnM5OrYtXqtNf0U7+CGMl5YFfkHAHPYsXgeWGLrxmR
+        5dY6TKh2vJd1VFqHzAZCHCRd/KqEHL3/rlrzzOs=
+X-Google-Smtp-Source: ABdhPJxuxTnyW6QlTJAPT3FkZfYcbHpraEjPrLMerJHage2MvI0443wfkGa8phS23+Oq983m1NS18jdBnjhB5h3CRcA=
+X-Received: by 2002:aca:5e85:: with SMTP id s127mr8198762oib.67.1614979049957;
+ Fri, 05 Mar 2021 13:17:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210215092915.7khog24shtzjzd6g@kozik-lap>
+References: <20210304213902.83903-1-marcan@marcan.st> <20210304213902.83903-13-marcan@marcan.st>
+ <CAL_JsqJF2Hz=4U7FR_GOSjCxqt3dpf-CAWFNfsSrDjDLpHqgCA@mail.gmail.com> <6e4880b3-1fb6-0cbf-c1a5-7a46fd9ccf62@marcan.st>
+In-Reply-To: <6e4880b3-1fb6-0cbf-c1a5-7a46fd9ccf62@marcan.st>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Fri, 5 Mar 2021 22:17:13 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0Hmwt-ywzS-2eEmqyQ0v2SxLsLxFwfTUoWwbzCrBNhsQ@mail.gmail.com>
+Message-ID: <CAK8P3a0Hmwt-ywzS-2eEmqyQ0v2SxLsLxFwfTUoWwbzCrBNhsQ@mail.gmail.com>
+Subject: Re: [RFT PATCH v3 12/27] of/address: Add infrastructure to declare
+ MMIO as non-posted
+To:     Hector Martin <marcan@marcan.st>
+Cc:     Rob Herring <robh@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <maz@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Tony Lindgren <tony@atomide.com>,
+        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
+        Stan Skowronek <stan@corellium.com>,
+        Alexander Graf <graf@amazon.com>,
+        Will Deacon <will@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        DTML <devicetree@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 15, 2021 at 10:29:15AM +0100, Krzysztof Kozlowski wrote:
-> On Mon, Feb 15, 2021 at 10:01:48AM +0100, Marek Szyprowski wrote:
-> > Hi Krzysztof,
-> > 
-> > On 12.02.2021 17:38, Krzysztof Kozlowski wrote:
-> > > Add common properties appearing in DTSes (assigned-clocks and similar)
-> > > to fix dtbs_check warnings like:
-> > >
-> > >    arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml:
-> > >      adc@126c0000: assigned-clock-rates: [[6000000]] is not of type 'object'
-> > >    arch/arm/boot/dts/exynos3250-artik5-eval.dt.yaml:
-> > >      adc@126c0000: assigned-clocks: [[7, 238]] is not of type 'object'
-> > 
-> > Does it mean that assigned-clocks related properties have to be added to 
-> > almost all bindings?
-> 
-> To my understanding: yes, and we already added it to multiple schemas.
-> 
-> > IMHO this is an over-engineering and this has to be 
-> > handled somewhere else...
-> 
-> Would have to be made a part of the core schema (just like pinctrl nodes
-> etc).
+On Fri, Mar 5, 2021 at 7:18 PM Hector Martin <marcan@marcan.st> wrote:
+>
+> On 06/03/2021 02.39, Rob Herring wrote:
+> >> -       return ioremap(res.start, resource_size(&res));
+> >> +       if (res.flags & IORESOURCE_MEM_NONPOSTED)
+> >> +               return ioremap_np(res.start, resource_size(&res));
+> >> +       else
+> >> +               return ioremap(res.start, resource_size(&res));
+> >
+> > This and the devm variants all scream for a ioremap_extended()
+> > function. IOW, it would be better if the ioremap flavor was a
+> > parameter. Unless we could implement that just for arm64 first, that's
+> > a lot of refactoring...
+>
+> I agree, but yeah... that's one big refactor to try to do now...
 
-That's the case now. It's contingent on having a 'clocks' property in 
-the node.
+FWIW, there is ioremap_prot() that Christoph introduced in 2019
+for a few architectures.  I suppose it would be nice to lift
+that out architecture specific code and completely replace the
+unusual variants, leaving only ioremap(), ioremap_prot() and
+memremap() but dropping the _nc, _cached, _wc, _wt and _np
+versions in favor of an extensible set of flags.
 
-Rob
+Then again, I would not make that a prerequisite for the merge
+of the M1 support.
+
+> > What's the code path using these functions on the M1 where we need to
+> > return 'posted'? It's just downstream PCI mappings (PCI memory space),
+> > right? Those would never hit these paths because they don't have a DT
+> > node or if they do the memory space is not part of it. So can't the
+> > check just be:
+> >
+> > bool of_mmio_is_nonposted(struct device_node *np)
+> > {
+> >      return np && of_machine_is_compatible("apple,arm-platform");
+> > }
+>
+> Yes; the implementation was trying to be generic, but AIUI we don't need
+> this on M1 because the PCI mappings don't go through this codepath, and
+> nothing else needs posted mode. My first hack was something not too
+> unlike this, then I was going to get rid of apple,arm-platform and just
+> have this be a generic mechanism with the properties, but then we added
+> the optimization to not do the lookups on other platforms, and now we're
+> coming full circle... :-)
+
+I never liked the idea of having a list of platforms that need a
+special hack, please let's not go back to that.
+
+         Arnd
