@@ -5,56 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7196C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5357FC433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89B8D64FD4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:36:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18CEF64FD2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Mar 2021 10:50:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229558AbhCEKgZ (ORCPT
+        id S229464AbhCEKtn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 5 Mar 2021 05:36:25 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:50194 "EHLO
+        Fri, 5 Mar 2021 05:49:43 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:50763 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229666AbhCEKgK (ORCPT
+        with ESMTP id S229599AbhCEKta (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 5 Mar 2021 05:36:10 -0500
-Received: from mail-wr1-f72.google.com ([209.85.221.72])
+        Fri, 5 Mar 2021 05:49:30 -0500
+Received: from mail-wr1-f69.google.com ([209.85.221.69])
         by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lI7n5-0007Z8-6E
-        for linux-samsung-soc@vger.kernel.org; Fri, 05 Mar 2021 10:34:39 +0000
-Received: by mail-wr1-f72.google.com with SMTP id h30so874806wrh.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Mar 2021 02:34:39 -0800 (PST)
+        id 1lI81R-0000YU-6I
+        for linux-samsung-soc@vger.kernel.org; Fri, 05 Mar 2021 10:49:29 +0000
+Received: by mail-wr1-f69.google.com with SMTP id b15so901005wrm.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Mar 2021 02:49:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=RWwbwcqn7+V68bGLU4ZDn1q+MKGqnLhOEC9uAVuE8zc=;
-        b=ZTe22EeZ+5CVll4mnsNTg6Dm9Lkb95yvegaHDsq6HqGGy2klF+shssoOst7oQwJzBn
-         2LgtQJWtPQE0Z2egFVx+1JuoMyaU9GLmj7eeeP0NJqZc02oXdLIhj2U/b11Ab/wHXKOz
-         NIkNL/VW4H1Z3AseP7S4+4X7l3zwXXZHf36JL+GSYXrB0pJNjg1Mrz+OBvDzd/LNMwA7
-         Ikf4r/z8M5GD0v7dHsl8PT1SFVfrqWCtgxShmGp5NCHbd59Gk5rs2e6YFx+Gb4H9tuS3
-         uBKI2JGelvD+YWO+FUPnhbWZHCyBViA3fAfkma47Nu1NlN2Z6tMNKc8YRWoJ2VVyiYJL
-         GXIQ==
-X-Gm-Message-State: AOAM532gzEPuWi7O/gJCcRw2kR3nEFXeqsftAgOXcIlFgfUlRV2rngKQ
-        TnL/jC3N0WjMu1BEDOE0CIC7MC0n/VtwZRd5ZxBmjGV4Wp2Zx8y7zRnBPuDlVmydLRT+sqitrvH
-        GoZhae9jkqVxAFrS2kOJ7eRk6WgW87ePfnI0v0t5FU/qdEsOS
-X-Received: by 2002:adf:fe01:: with SMTP id n1mr8647728wrr.341.1614940478802;
-        Fri, 05 Mar 2021 02:34:38 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxL/xW+AO3OBrJBdGRjyMx7XXgn/DcEVAjw6nrX4rZjq/i98eqo/Tr07xkBjjsbwJ/68iC9lg==
-X-Received: by 2002:adf:fe01:: with SMTP id n1mr8647714wrr.341.1614940478678;
-        Fri, 05 Mar 2021 02:34:38 -0800 (PST)
+        bh=x355s57mqby7JDxFCF0HuhCS/cEaB4YomcQNrg8OfjI=;
+        b=d+uvuSzxC4mWbsLPl9iZCfOlEkuVfyFXaO5IrMGV8L0trDX2H5smBuOs50Khn82s7Q
+         2y3u74tmi6IDLjZ/wsP/hJ7rEVFqUJrUcOMqWRhcWmzt1vcxBzxkYgMKu5UEqgHm+1tW
+         MN2hu1Jj/nbySJ2kvbYVf4zVp3i4oUxkiaquWBhEo9qOHOU1KrY3z9vfBmkoLz5bVLyu
+         DMzOme+H4yVU1Y4PTzGuja/9oqXrD3EcQxgn7P5p171BQox+3sUi7K3ZMhJhubMCjBJ/
+         +KDUNz/hbrqxPjUzCD2qcbfk1hr28H1rBT9PiO27zByogXu/FTnVTblwmnuStqIR5vT9
+         TDpw==
+X-Gm-Message-State: AOAM533mEWYvsegl60nrl5xxl4hjzsUkWS9bzw59GYfToPNo1hFSUseO
+        Llhl3mK1JX8HFZ5M5n9ftmZEQwmWrJ3VmzLPwLf0Kh362zfgQ1O6baXOob5dZ8+5XfTXHR6Qbq+
+        JiM/ftG+gimOhKseK8G3E0LyNk/rsST11K7UD3M7A/PadPeUt
+X-Received: by 2002:adf:b609:: with SMTP id f9mr8296381wre.223.1614941368891;
+        Fri, 05 Mar 2021 02:49:28 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwYz6bNl1iPPftQcYDplqdzOSjyJy6jsc5Nui7+7tYXrGSPIMpQb+uLEy89c759e4pgLKfP3w==
+X-Received: by 2002:adf:b609:: with SMTP id f9mr8296353wre.223.1614941368730;
+        Fri, 05 Mar 2021 02:49:28 -0800 (PST)
 Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.gmail.com with ESMTPSA id p6sm3759537wru.2.2021.03.05.02.34.37
+        by smtp.gmail.com with ESMTPSA id u4sm4084003wrm.24.2021.03.05.02.49.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Mar 2021 02:34:38 -0800 (PST)
-Subject: Re: [RFT PATCH v3 19/27] tty: serial: samsung_tty: Add ucon_mask
- parameter
+        Fri, 05 Mar 2021 02:49:28 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: Re: [RFT PATCH v3 20/27] tty: serial: samsung_tty: Add
+ s3c24xx_port_type
 To:     Hector Martin <marcan@marcan.st>,
         linux-arm-kernel@lists.infradead.org
 Cc:     Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -78,14 +79,13 @@ Cc:     Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
         linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20210304213902.83903-1-marcan@marcan.st>
- <20210304213902.83903-20-marcan@marcan.st>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <1e665346-15eb-3a9f-6dc3-7494a8050972@canonical.com>
-Date:   Fri, 5 Mar 2021 11:34:37 +0100
+ <20210304213902.83903-21-marcan@marcan.st>
+Message-ID: <079d64da-0e36-d626-fc45-0973519e0ee3@canonical.com>
+Date:   Fri, 5 Mar 2021 11:49:27 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <20210304213902.83903-20-marcan@marcan.st>
+In-Reply-To: <20210304213902.83903-21-marcan@marcan.st>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -93,50 +93,31 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+
 On 04/03/2021 22:38, Hector Martin wrote:
-> This simplifies the code by removing the only distinction between the
-> S3C2410 and S3C2440 codepaths.
+> This decouples the TTY layer PORT_ types, which are exposed to
+> userspace, from the driver-internal flag of what kind of port this is.
+
+s/This decouples/Decouple
+
+> 
+> This removes s3c24xx_serial_has_interrupt_mask, which was just checking
+
+s/This removes/Remove/
+
+https://elixir.bootlin.com/linux/latest/source/Documentation/process/submitting-patches.rst#L89
+
+This actually also applies to your patch 19 and 21... and maybe more.
+
+> for a specific type anyway.
 > 
 > Signed-off-by: Hector Martin <marcan@marcan.st>
 > ---
->  drivers/tty/serial/samsung_tty.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
+>  drivers/tty/serial/samsung_tty.c | 112 +++++++++++++++++++------------
+>  1 file changed, 70 insertions(+), 42 deletions(-)
 > 
-> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> index 78dc6e9240fb..33b421dbeb83 100644
-> --- a/drivers/tty/serial/samsung_tty.c
-> +++ b/drivers/tty/serial/samsung_tty.c
-> @@ -70,6 +70,7 @@ struct s3c24xx_uart_info {
->  	unsigned long		num_clks;
->  	unsigned long		clksel_mask;
->  	unsigned long		clksel_shift;
-> +	unsigned long		ucon_mask;
->  
->  	/* uart port features */
->  
-> @@ -1736,14 +1737,9 @@ static void s3c24xx_serial_resetport(struct uart_port *port,
->  {
->  	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
->  	unsigned long ucon = rd_regl(port, S3C2410_UCON);
-> -	unsigned int ucon_mask;
->  
-> -	ucon_mask = info->clksel_mask;
-> -	if (info->type == PORT_S3C2440)
-> -		ucon_mask |= S3C2440_UCON0_DIVMASK;
-> -
-> -	ucon &= ucon_mask;
-> -	wr_regl(port, S3C2410_UCON,  ucon | cfg->ucon);
-> +	ucon &= (info->clksel_mask | info->ucon_mask);
-> +	wr_regl(port, S3C2410_UCON, ucon | cfg->ucon);
-
-This line (wr_regl()) is not related, please split it to separate
-white-space cleanups.
-
-With the change:
-
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Tested-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
 
 Best regards,
 Krzysztof
