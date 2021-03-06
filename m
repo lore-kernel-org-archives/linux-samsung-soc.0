@@ -2,88 +2,151 @@ Return-Path: <SRS0=po1K=IE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D375C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Mar 2021 16:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 514FBC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Mar 2021 16:16:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CFE665005
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Mar 2021 16:14:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C47864FAD
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Mar 2021 16:16:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230466AbhCFQNp (ORCPT
+        id S231135AbhCFQQ0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 6 Mar 2021 11:13:45 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:59161 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231197AbhCFQNl (ORCPT
+        Sat, 6 Mar 2021 11:16:26 -0500
+Received: from netrider.rowland.org ([192.131.102.5]:54367 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S230519AbhCFQQT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 6 Mar 2021 11:13:41 -0500
-Received: from mail-ed1-f70.google.com ([209.85.208.70])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lIZYh-0004al-W2
-        for linux-samsung-soc@vger.kernel.org; Sat, 06 Mar 2021 16:13:40 +0000
-Received: by mail-ed1-f70.google.com with SMTP id l23so2628982edt.23
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 06 Mar 2021 08:13:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kSOpPvwteB7OgdggMYlflHqoFNnAak/wbdk3zQ46jYs=;
-        b=WgL/J5kEU+l7KJG+ZPNihLf/MU/hEzbQKJjL+3I24ADvd7QNxfD7Z0pg9Ck3fRHDEm
-         jBZdBmWmJ4Yp06C8A2QNqazFUxVbZ56wG4HzxRLoS7+ASqSHtFGnqNUTMDtuCRuM90sN
-         V0v8PsqilJTwVNk1VbnTqQpAGQOXx+yNDH9f/c1/rZC8tIzJcUcn4+aUNYd6pmdtyc+P
-         5Y5HIaycu0Jrmkr4gmPFIwZvkMFfcTmQ3JVKO/3/uhDIZGj6kVKx8A9IhefzuQkIGll7
-         Meg+d5CFB6W3NKekUvf+A7MyojaGPDqX83kZg1yKvrUDkVK/CPYlZ3SkHSqadJXLTQRB
-         NHtg==
-X-Gm-Message-State: AOAM533IsL5vZLB4IK8emeM+CBa2psFJ0/Uea247ZalnTneQTUYmtXRY
-        iTA468Okq6/uz/OFQEPkaONmepmtO66UpJAs4IjNEy+xSO19Q3+m8clloZeNbeSTKakSaJa//H9
-        RUeSTZsHl0gfs1GvRNdc6cwL8CxhiPlC6M+kVzvwUmNXrlWXS
-X-Received: by 2002:a05:6402:704:: with SMTP id w4mr15006220edx.175.1615047219682;
-        Sat, 06 Mar 2021 08:13:39 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxdAGCIq65lZYlyAxqCZzWAm3VpQnb3VqeFecUkSHeg10URY0/jp2c3aXPC8lt9nQB63KGrWg==
-X-Received: by 2002:a05:6402:704:: with SMTP id w4mr15006200edx.175.1615047219456;
-        Sat, 06 Mar 2021 08:13:39 -0800 (PST)
-Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.gmail.com with ESMTPSA id k5sm3487412eja.70.2021.03.06.08.13.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Mar 2021 08:13:39 -0800 (PST)
-Subject: Re: [PATCH 1/2 V2] usb: gadget: s3c: Fix incorrect resources
- releasing
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        balbi@kernel.org, gregkh@linuxfoundation.org, nathan@kernel.org,
-        gustavoars@kernel.org, arnd@arndb.de, ben-linux@fluff.org
-Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20210306142108.3429-1-christophe.jaillet@wanadoo.fr>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <4ef30769-91c2-031e-8e19-af25d26c848c@canonical.com>
-Date:   Sat, 6 Mar 2021 17:13:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        Sat, 6 Mar 2021 11:16:19 -0500
+Received: (qmail 74844 invoked by uid 1000); 6 Mar 2021 11:16:16 -0500
+Date:   Sat, 6 Mar 2021 11:16:16 -0500
+From:   Alan Stern <stern@rowland.harvard.edu>
+To:     "Asutosh Das \(asd\)" <asutoshd@codeaurora.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>, cang@codeaurora.org,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        Bart Van Assche <bvanassche@acm.org>,
+        linux-arm-msm@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Kiwoong Kim <kwmad.kim@samsung.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Satya Tangirala <satyat@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
+        <linux-mediatek@lists.infradead.org>,
+        Linux-PM mailing list <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v10 1/2] scsi: ufs: Enable power management for wlun
+Message-ID: <20210306161616.GC74411@rowland.harvard.edu>
+References: <cover.1614725302.git.asutoshd@codeaurora.org>
+ <0576d6eae15486740c25767e2d8805f7e94eb79d.1614725302.git.asutoshd@codeaurora.org>
+ <85086647-7292-b0a2-d842-290818bd2858@intel.com>
+ <6e98724d-2e75-d1fe-188f-a7010f86c509@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20210306142108.3429-1-christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6e98724d-2e75-d1fe-188f-a7010f86c509@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/03/2021 15:21, Christophe JAILLET wrote:
-> Since commit 188db4435ac6 ("usb: gadget: s3c: use platform resources"),
-> 'request_mem_region()' and 'ioremap()' are no more used, so they don't need
-> to be undone in the error handling path of the probe and in the removre
+On Fri, Mar 05, 2021 at 06:54:24PM -0800, Asutosh Das (asd) wrote:
 
-You ignored my comment about typo here and did not add my review tags.
-Did my emails missed you? The made to the mailing list...
+> Now during my testing I see a weird issue sometimes (1 in 7).
+> Scenario - bootups
+> 
+> Issue:
+> The supplier 'ufs_device_wlun 0:0:0:49488' goes into runtime suspend even
+> when one/more of its consumers are in RPM_ACTIVE state.
+> 
+> *Log:
+> [   10.056379][  T206] sd 0:0:0:1: [sdb] Synchronizing SCSI cache
+> [   10.062497][  T113] sd 0:0:0:5: [sdf] Synchronizing SCSI cache
+> [   10.356600][   T32] sd 0:0:0:7: [sdh] Synchronizing SCSI cache
+> [   10.362944][  T174] sd 0:0:0:3: [sdd] Synchronizing SCSI cache
+> [   10.696627][   T83] sd 0:0:0:2: [sdc] Synchronizing SCSI cache
+> [   10.704562][  T170] sd 0:0:0:6: [sdg] Synchronizing SCSI cache
+> [   10.980602][    T5] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+> 
+> /** Printing all the consumer nodes of supplier **/
+> [   10.987327][    T5] ufs_device_wlun 0:0:0:49488: usage-count @ suspend: 0
+> <-- this is the usage_count
+> [   10.994440][    T5] ufs_rpmb_wlun 0:0:0:49476: PM state - 2
+> [   11.000402][    T5] scsi 0:0:0:49456: PM state - 2
+> [   11.005453][    T5] sd 0:0:0:0: PM state - 2
+> [   11.009958][    T5] sd 0:0:0:1: PM state - 2
+> [   11.014469][    T5] sd 0:0:0:2: PM state - 2
+> [   11.019072][    T5] sd 0:0:0:3: PM state - 2
+> [   11.023595][    T5] sd 0:0:0:4: PM state - 0 << RPM_ACTIVE
+> [   11.353298][    T5] sd 0:0:0:5: PM state - 2
+> [   11.357726][    T5] sd 0:0:0:6: PM state - 2
+> [   11.362155][    T5] sd 0:0:0:7: PM state - 2
+> [   11.366584][    T5] ufshcd-qcom 1d84000.ufshc: __ufshcd_wl_suspend - 8709
+> [   11.374366][    T5] ufs_device_wlun 0:0:0:49488: __ufshcd_wl_suspend -
+> (0) has rpm_active flags
+> [   11.383376][    T5] ufs_device_wlun 0:0:0:49488:
+> ufshcd_wl_runtime_suspend <-- Supplier suspends fine.
+> [   12.977318][  T174] sd 0:0:0:4: [sde] Synchronizing SCSI cache
+> 
+> And the the suspend of sde is stuck now:
+> schedule+0x9c/0xe0
+> schedule_timeout+0x40/0x128
+> io_schedule_timeout+0x44/0x68
+> wait_for_common_io+0x7c/0x100
+> wait_for_completion_io+0x14/0x20
+> blk_execute_rq+0x90/0xcc
+> __scsi_execute+0x104/0x1c4
+> sd_sync_cache+0xf8/0x2a0
+> sd_suspend_common+0x74/0x11c
+> sd_suspend_runtime+0x14/0x20
+> scsi_runtime_suspend+0x64/0x94
+> __rpm_callback+0x80/0x2a4
+> rpm_suspend+0x308/0x614
+> pm_runtime_work+0x98/0xa8
+> 
+> I added 'DL_FLAG_RPM_ACTIVE' while creating links.
+>       if (hba->sdev_ufs_device) {
+>               link = device_link_add(&sdev->sdev_gendev,
+>                                   &hba->sdev_ufs_device->sdev_gendev,
+>                                  DL_FLAG_PM_RUNTIME|DL_FLAG_RPM_ACTIVE);
+> I didn't expect this to resolve the issue anyway and it didn't.
+> 
+> Another interesting point here is when I resume any of the above suspended
+> consumers, it all goes back to normal, which is kind of expected. I tried
+> resuming the consumer and the supplier is resumed and the supplier is
+> suspended when all the consumers are suspended.
+> 
+> Any pointers on this issue please?
+> 
+> @Bart/@Alan - Do you've any pointers please?
 
-https://lore.kernel.org/linux-samsung-soc/f63496f6-f894-2a86-0328-0f8dadbd28cc@canonical.com/
+It's very noticeable that although you seem to have isolated a bug in
+the power management subsystem (supplier goes into runtime suspend
+even when one of its consumers is still active), you did not CC the
+power management maintainer or mailing list.
 
-Best regards,
-Krzysztof
+I have added the appropriate CC's.
+
+Alan Stern
