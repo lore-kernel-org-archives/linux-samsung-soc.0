@@ -1,128 +1,120 @@
-Return-Path: <SRS0=po1K=IE=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=VDBE=IF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E63ECC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Mar 2021 18:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC839C433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Mar 2021 11:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A86E164FF2
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  6 Mar 2021 18:18:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E45C650FD
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Mar 2021 11:36:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbhCFSR7 (ORCPT
+        id S229950AbhCGLf3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 6 Mar 2021 13:17:59 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:60957 "EHLO
+        Sun, 7 Mar 2021 06:35:29 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49503 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231259AbhCFSRm (ORCPT
+        with ESMTP id S230118AbhCGLe7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 6 Mar 2021 13:17:42 -0500
-Received: from mail-ed1-f69.google.com ([209.85.208.69])
+        Sun, 7 Mar 2021 06:34:59 -0500
+Received: from mail-ed1-f71.google.com ([209.85.208.71])
         by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lIbUi-0005gd-Mi
-        for linux-samsung-soc@vger.kernel.org; Sat, 06 Mar 2021 18:17:40 +0000
-Received: by mail-ed1-f69.google.com with SMTP id v27so2751227edx.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 06 Mar 2021 10:17:40 -0800 (PST)
+        id 1lIrgX-0001px-U3
+        for linux-samsung-soc@vger.kernel.org; Sun, 07 Mar 2021 11:34:58 +0000
+Received: by mail-ed1-f71.google.com with SMTP id i4so3585638edt.11
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Mar 2021 03:34:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=g6bMYZr4IYJb49CfbN85Rd9NqLc1iESc8dgtSRtoAGo=;
-        b=ith9h5B6um+h+RidhggwVTYEchUD1PsTukodqga124EKWN5s70hUCbKPFkgeBWmKE5
-         pdh14tFRn10F7qYlE9HXe/G7wn0mi2sVE1LLJsHw2PjenabayJ7LmqqvrN88h5dENOQO
-         mrln9ZtKntxIKARhl+gyWQRkTzuMQoE+Kh1hOheE+4xUD4NmfmgOpHXYKuYJi0F/81H1
-         4ITK/+SXCxs/ttiI16KLQkqQX6xa0bfJTBuVUJ64CjL8+2ZRoSKWrkkgyQ/nr12zuvwD
-         2MyFEaA/LRhE/BJeaZuRmEhriucTi8PVoQrIZVfG0G/x/WLRjbzzEu3b2AvYcMhbpzfP
-         F8fA==
-X-Gm-Message-State: AOAM533lPWOFk/1yEXKRNZ+4r3kM+DfIgt0J5EmGuSI8qLCmTVT8MaWt
-        HEmgJQxONGqfesxX0AWLnhMcntKckW7GhmFXrNSHycTgRb5US6gtCV0cF3Iqe5sBKEtZ0uYP/ua
-        imRVyUY8qAI0yMyahaNuRqsvKUd5WvWAjLr3UjO/gSW85N3Ya
-X-Received: by 2002:a17:906:ae96:: with SMTP id md22mr7580986ejb.409.1615054660382;
-        Sat, 06 Mar 2021 10:17:40 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwzyGs+Nxo2sFfxp1gHm5M91NoaPL/OtuRamdi2dx6jcRPRH0A02SzA8eLG1btGURV9Y6QD4A==
-X-Received: by 2002:a17:906:ae96:: with SMTP id md22mr7580976ejb.409.1615054660202;
-        Sat, 06 Mar 2021 10:17:40 -0800 (PST)
+        bh=Op5mu56rLKVeXZ5BYHLLFs3XBf2gdeKehd8++u/6LDA=;
+        b=MCNkt26t2YRVq2101mNao3OQ7jWjIUfqCcYWSO1xYHa+8uf0t0femZlCt9ITqyzcNM
+         4AiNFSBe8g3bJuXYCFQ/Lds/VQJ9UZD7zelZdvg/mnjfBxryJvTvL/PMec7L24Yf826c
+         0ApVzr0M89T3vKGneIQTGiPTowy8XQ9u1N6kld+wmD3IC4BBXoYgW+paf7o/Ne8SJ85u
+         YEw2Hte51+MFXt7bBT386toXHyvIE1/g7WHMT+Id3/UsGrRJtCJ7PZO1pnRecQmm9xb6
+         xdxiuL3IQ7vOztsNjFxaHnkF/Tc66Pf9XKZ109prhere5hYM6KktjqWcYBSItMnNUn6m
+         Qrew==
+X-Gm-Message-State: AOAM533mq48TvMwyocf9oy/EhHZd8AWn5HVyl8l5rIbd/A+6/gURxAjS
+        quxgQtkWWpp1sUh4gbH/VSuCCytAk6fpg51SpQ6pFwsF3yyjSU6xvhzPMvMSdnHZ27YaNVYF5I8
+        JcRxddFJ8u8ZGPFqZE88/mZWFM/G6mV5K2vfPirnLd9OANT8A
+X-Received: by 2002:a50:fa04:: with SMTP id b4mr17812451edq.293.1615116896808;
+        Sun, 07 Mar 2021 03:34:56 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwN50SNAvRJvyv1TTGSoHps9ZM3d2RwZosjPBjKJrezHq2PpQu4f0MDG5tTUROmsW8Jne4o4A==
+X-Received: by 2002:a50:fa04:: with SMTP id b4mr17812435edq.293.1615116896694;
+        Sun, 07 Mar 2021 03:34:56 -0800 (PST)
 Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.gmail.com with ESMTPSA id m7sm3696800ejk.52.2021.03.06.10.17.39
+        by smtp.gmail.com with ESMTPSA id g25sm5016167edp.95.2021.03.07.03.34.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Mar 2021 10:17:39 -0800 (PST)
-Subject: Re: [PATCH 2/2 v2] usb: gadget: s3c: Fix the error handling path in
- 's3c2410_udc_probe()'
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        balbi@kernel.org, gregkh@linuxfoundation.org, nathan@kernel.org,
-        gustavoars@kernel.org, arnd@arndb.de, ben-linux@fluff.org
-Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20210306142145.3490-1-christophe.jaillet@wanadoo.fr>
- <64c3ca58-639f-95af-35e1-7d5ba240a7c9@canonical.com>
- <1fb088c0-c94c-908e-e607-796f834f45f3@wanadoo.fr>
+        Sun, 07 Mar 2021 03:34:56 -0800 (PST)
+Subject: Re: [RFT PATCH v3 21/27] tty: serial: samsung_tty: IRQ rework
+To:     Hector Martin <marcan@marcan.st>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
+        Arnd Bergmann <arnd@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Tony Lindgren <tony@atomide.com>,
+        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
+        Stan Skowronek <stan@corellium.com>,
+        Alexander Graf <graf@amazon.com>,
+        Will Deacon <will@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20210304213902.83903-1-marcan@marcan.st>
+ <20210304213902.83903-22-marcan@marcan.st>
+ <CAHp75Vc+t9_FNHZ0xYNaJ1+Ny+FFeZKA79abxV2NAsZvpBh3Bg@mail.gmail.com>
+ <535ff48e-160e-4ba4-23ac-54e478a2f3ee@marcan.st>
+ <CAHp75Vd_kwdjbus3iq_39+p_xRk3rum2ek3nLLFbBDzMwggnKA@mail.gmail.com>
+ <05ccc09f-ffea-71cd-4288-beed3020bd45@marcan.st>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <6b73a1cd-b4b7-baec-1062-b9f1a1634cbd@canonical.com>
-Date:   Sat, 6 Mar 2021 19:17:39 +0100
+Message-ID: <d33fffec-28bd-99b2-a8b1-cc83b628e4b3@canonical.com>
+Date:   Sun, 7 Mar 2021 12:34:55 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <1fb088c0-c94c-908e-e607-796f834f45f3@wanadoo.fr>
+In-Reply-To: <05ccc09f-ffea-71cd-4288-beed3020bd45@marcan.st>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/03/2021 18:22, Christophe JAILLET wrote:
-> Le 06/03/2021 à 17:16, Krzysztof Kozlowski a écrit :
->> On 06/03/2021 15:21, Christophe JAILLET wrote:
->>> Some 'clk_prepare_enable()' and 'clk_get()' must be undone in the error
->>> handling path of the probe function, as already done in the remove
->>> function.
->>>
->>> Fixes: 3fc154b6b813 ("USB Gadget driver for Samsung s3c2410 ARM SoC")
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> ---
->>> v2: Fix a stupid error in the hash in Fixes:
->>> ---
->>>   drivers/usb/gadget/udc/s3c2410_udc.c | 16 ++++++++++++----
->>>   1 file changed, 12 insertions(+), 4 deletions(-)
->>>
+On 05/03/2021 17:29, Hector Martin wrote:
+> On 06/03/2021 01.20, Andy Shevchenko wrote:
+>>> I am just splitting an
+>>> existing function into two, where one takes the lock and the other does
+>>> the work. Do you mean using a different locking function? I'm not
+>>> entirely sure what you're suggesting.
 >>
->> Do not ignore received tags but add them before sending a new version of patch.
->> https://lore.kernel.org/linux-samsung-soc/36ef897b-aedc-fcc3-89c8-c602d9733a9b@canonical.com/T/#t
+>> Yes, as a prerequisite
 >>
->> Also somehow your 2nd patch is not in-reply to first one. Don't change
->> the settings of sending patches. git format-patch and
->> git send-email default settings are correct. Look here:
->> https://lore.kernel.org/linux-samsung-soc/
->> Only your patches are not threaded.
->>
->> Best regards,
->> Krzysztof
->>
-> Hi,
+>> spin_lock_irqsave -> spin_lock().
 > 
-> sorry for missing the typo in the first patch.
-> 
-> For your other comments above, however, I use standard settings only.
-> My patches are generated by commands like:
->     git format-patch -2
-> 
-> I use cover letter only if it looks useful. In such a case, I use:
->     git format-patch --thread --cover-letter -2
-> 
-> I've never seen that threading series was the rule and/or that cover 
-> letters were a must have. If I'm wrong, sorry, I was not aware of that.
+> Krzysztof, is this something you want in this series? I was trying to 
+> avoid logic changes to the non-Apple paths.
 
-The cover letter is not needed. The threading was missing which is a
-default so you had to configure it to that.
-
+I don't quite get the need for such change (the code will be still
+called in interrupt handler, right?), but assuming the "why?" is
+properly documented, it can be a separate patch here.
 
 Best regards,
 Krzysztof
