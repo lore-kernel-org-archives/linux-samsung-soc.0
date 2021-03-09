@@ -2,133 +2,86 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-24.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2F2C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Mar 2021 07:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E03C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Mar 2021 09:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E3EA64F73
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Mar 2021 07:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D92E65147
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Mar 2021 09:30:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229481AbhCIHrd (ORCPT
+        id S229553AbhCIJaZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 9 Mar 2021 02:47:33 -0500
-Received: from mail-40136.protonmail.ch ([185.70.40.136]:61866 "EHLO
-        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229546AbhCIHrT (ORCPT
+        Tue, 9 Mar 2021 04:30:25 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:57906 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229691AbhCIJaD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 9 Mar 2021 02:47:19 -0500
-Date:   Tue, 09 Mar 2021 07:47:07 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1615276032;
-        bh=+ZlcTZnrhrZ8o7M1JrptlxBInGQYHsPbgf1Nr0uMsQ0=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
-        b=TxKn1Jcnp1F8jZez32EQsOrCPDgvTGtkRoJCDS1vmcYP8iX4xUP5r12Mf323ZS9re
-         uZQS704MUiB1voO6Gn4s/ELYUmkOa5o5uXmSkQ+Q/Omc8gy0yb6MB800FMdSa3dSBv
-         Za0jyyJxQK/td48v87cqCAZOUCd7oqnV49DUDD7w=
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-From:   Timon Baetz <timon.baetz@protonmail.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Reply-To: Timon Baetz <timon.baetz@protonmail.com>
-Subject: Re: [PATCH 3/3] power: supply: max8997_charger: Switch to new binding
-Message-ID: <20210309084658.4a140b92@focal-fossa>
-In-Reply-To: <20210201180335.rrsqfvbcmxvx64gf@kozik-lap>
-References: <20210130172747.2022977-1-timon.baetz@protonmail.com> <20210130172747.2022977-4-timon.baetz@protonmail.com> <20210131172840.fxaadhhsafa4aeex@kozik-lap> <20210201083128.18499ffd.timon.baetz@protonmail.com> <20210201180335.rrsqfvbcmxvx64gf@kozik-lap>
+        Tue, 9 Mar 2021 04:30:03 -0500
+Received: from [192.168.0.114] (unknown [49.207.210.77])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 0CE1B20B26C5;
+        Tue,  9 Mar 2021 01:29:53 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0CE1B20B26C5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1615282202;
+        bh=CDYqG2GIuZVR5z0oqm1GZmaheRjDizkca+UJHZd+0GI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NVeEjgcK9BRcMfN+1DWoFPF7F0iWQG11DSKd1RS7RpOgd96fzaUGJsKVno8QnpaQh
+         A/m2/byHvmbLabts1yxTAYtkMEDvIRO8cGdyLneaxrB82B6YrMMlcZwAuAVn2++s2j
+         aD8AJWIqe1JXOP7k7Vxz9IhcBEcfAUYNFaPJZwbs=
+Subject: Re: [PATCH v5 01/19] crypto: amcc: convert tasklets to use new
+ tasklet_setup() API
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Allen Pais <allen.lkml@gmail.com>
+Cc:     davem@davemloft.net, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
+        jesper.nilsson@axis.com, lars.persson@axis.com,
+        horia.geanta@nxp.com, aymen.sghaier@nxp.com, gcherian@marvell.com,
+        thomas.lendacky@amd.com, john.allen@amd.com, gilad@benyossef.com,
+        bbrezillon@kernel.org, arno@natisbad.org, schalla@marvell.com,
+        matthias.bgg@gmail.com, jamie@jamieiles.com,
+        giovanni.cabiddu@intel.com, heiko@sntech.de, krzk@kernel.org,
+        vz@mleia.com, k.konieczny@samsung.com,
+        linux-crypto@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        qat-linux@intel.com, linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Romain Perier <romain.perier@gmail.com>
+References: <20210208094238.571015-1-allen.lkml@gmail.com>
+ <20210208094238.571015-2-allen.lkml@gmail.com>
+ <20210304062644.GA5107@gondor.apana.org.au>
+From:   Allen Pais <apais@linux.microsoft.com>
+Message-ID: <2e2604a3-b0b1-92f2-aa7b-f413fae4cb51@linux.microsoft.com>
+Date:   Tue, 9 Mar 2021 14:59:51 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210304062644.GA5107@gondor.apana.org.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 1 Feb 2021 19:03:35 +0100, Krzysztof Kozlowski wrote:
-> On Mon, Feb 01, 2021 at 09:26:42AM +0000, Timon Baetz wrote:
-> > On Sun, 31 Jan 2021 18:28:40 +0100, Krzysztof Kozlowski wrote:
-> > > On Sat, Jan 30, 2021 at 05:30:14PM +0000, Timon Baetz wrote:
-> > > > Get regulator from parent device's node and extcon by name.
-> > > >
-> > > > Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
-> > > > ---
-> > > >  drivers/power/supply/max8997_charger.c | 12 ++++++++----
-> > > >  1 file changed, 8 insertions(+), 4 deletions(-)
-> > > >
-> > > > diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power=
-/supply/max8997_charger.c
-> > > > index 321bd6b8ee41..625d8cc4312a 100644
-> > > > --- a/drivers/power/supply/max8997_charger.c
-> > > > +++ b/drivers/power/supply/max8997_charger.c
-> > > > @@ -168,6 +168,7 @@ static int max8997_battery_probe(struct platfor=
-m_device *pdev)
-> > > >  =09int ret =3D 0;
-> > > >  =09struct charger_data *charger;
-> > > >  =09struct max8997_dev *iodev =3D dev_get_drvdata(pdev->dev.parent)=
-;
-> > > > +=09struct device_node *np =3D pdev->dev.of_node;
-> > > >  =09struct i2c_client *i2c =3D iodev->i2c;
-> > > >  =09struct max8997_platform_data *pdata =3D iodev->pdata;
-> > > >  =09struct power_supply_config psy_cfg =3D {};
-> > > > @@ -237,20 +238,23 @@ static int max8997_battery_probe(struct platf=
-orm_device *pdev)
-> > > >  =09=09return PTR_ERR(charger->battery);
-> > > >  =09}
-> > > >
-> > > > +=09// grab regulator from parent device's node
-> > > > +=09pdev->dev.of_node =3D iodev->dev->of_node;
-> > > >  =09charger->reg =3D devm_regulator_get_optional(&pdev->dev, "charg=
-er");
-> > > > +=09pdev->dev.of_node =3D np;
-> > >
-> > > I think the device does not have its own node anymore. Or did I miss
-> > > something?
-> >
-> > The idea is to reset of_node to whatever it was before (NULL) and basic=
-ally
-> > leave the device unchanged. Probe might run again because of deferral.
->
-> Good point.
->
-> >
-> > > >  =09if (IS_ERR(charger->reg)) {
-> > > >  =09=09if (PTR_ERR(charger->reg) =3D=3D -EPROBE_DEFER)
-> > > >  =09=09=09return -EPROBE_DEFER;
-> > > >  =09=09dev_info(&pdev->dev, "couldn't get charger regulator\n");
-> > > >  =09}
-> > > > -=09charger->edev =3D extcon_get_edev_by_phandle(&pdev->dev, 0);
-> > > > -=09if (IS_ERR(charger->edev)) {
-> > > > -=09=09if (PTR_ERR(charger->edev) =3D=3D -EPROBE_DEFER)
-> > > > +=09charger->edev =3D extcon_get_extcon_dev("max8997-muic");
-> > > > +=09if (IS_ERR_OR_NULL(charger->edev)) {
-> > > > +=09=09if (!charger->edev)
-> > >
-> > > Isn't NULL returned when there is simply no extcon? It's different th=
-an
-> > > deferred probe. Returning here EPROBE_DEFER might lead to infinite pr=
-obe
-> > > tries (on every new device probe) instead of just failing it.
-> >
-> > extcon_get_extcon_dev() just loops through all registered extcon device=
-s
-> > and compared names. It will return NULL when "max8997-muic" isn't
-> > registered yet. extcon_get_extcon_dev() never returns EPROBE_DEFER so
-> > checking for NULL seems to be the only way. Other drivers using that
-> > function also do NULL check and return EPROBE_DEFER.
->
-> Indeed, thanks for clarification. Looks good:
->
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Is something blocking this from being accepted?
+>>
+>> In preparation for unconditionally passing the
+>> struct tasklet_struct pointer to all tasklet
+>> callbacks, switch to using the new tasklet_setup()
+>> and from_tasklet() to pass the tasklet pointer explicitly.
+>>
+>> Signed-off-by: Romain Perier <romain.perier@gmail.com>
+>> Signed-off-by: Allen Pais <apais@linux.microsoft.com>
+>> ---
+>>   drivers/crypto/amcc/crypto4xx_core.c | 10 +++++-----
+>>   1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> This introduces a compiler warning with C=1 W=1.
 
-Timon
+Okay. I will check and send out a fix.
 
-
+Thanks.
