@@ -2,179 +2,133 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DBDC433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Mar 2021 22:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2F2C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Mar 2021 07:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD5D765299
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Mar 2021 22:43:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E3EA64F73
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Mar 2021 07:48:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230404AbhCHWnD (ORCPT
+        id S229481AbhCIHrd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 Mar 2021 17:43:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59702 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230343AbhCHWmv (ORCPT
+        Tue, 9 Mar 2021 02:47:33 -0500
+Received: from mail-40136.protonmail.ch ([185.70.40.136]:61866 "EHLO
+        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229546AbhCIHrT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 Mar 2021 17:42:51 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B728465287;
-        Mon,  8 Mar 2021 22:42:50 +0000 (UTC)
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=wait-a-minute.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94)
-        (envelope-from <maz@kernel.org>)
-        id 1lJOaO-000R26-JZ; Mon, 08 Mar 2021 22:42:48 +0000
-Date:   Mon, 08 Mar 2021 22:42:47 +0000
-Message-ID: <87zgzdqnbs.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Hector Martin <marcan@marcan.st>,
+        Tue, 9 Mar 2021 02:47:19 -0500
+Date:   Tue, 09 Mar 2021 07:47:07 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail; t=1615276032;
+        bh=+ZlcTZnrhrZ8o7M1JrptlxBInGQYHsPbgf1Nr0uMsQ0=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=TxKn1Jcnp1F8jZez32EQsOrCPDgvTGtkRoJCDS1vmcYP8iX4xUP5r12Mf323ZS9re
+         uZQS704MUiB1voO6Gn4s/ELYUmkOa5o5uXmSkQ+Q/Omc8gy0yb6MB800FMdSa3dSBv
+         Za0jyyJxQK/td48v87cqCAZOUCd7oqnV49DUDD7w=
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+From:   Timon Baetz <timon.baetz@protonmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Arnd Bergmann <arnd@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Tony Lindgren <tony@atomide.com>,
-        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
-        Stan Skowronek <stan@corellium.com>,
-        Alexander Graf <graf@amazon.com>,
-        Will Deacon <will@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFT PATCH v3 06/27] dt-bindings: timer: arm,arch_timer: Add interrupt-names support
-In-Reply-To: <20210308203841.GA2906683@robh.at.kernel.org>
-References: <20210304213902.83903-1-marcan@marcan.st>
-        <20210304213902.83903-7-marcan@marcan.st>
-        <20210308203841.GA2906683@robh.at.kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: robh@kernel.org, marcan@marcan.st, linux-arm-kernel@lists.infradead.org, arnd@kernel.org, olof@lixom.net, krzk@kernel.org, mark.kettenis@xs4all.nl, tony@atomide.com, mohamed.mediouni@caramail.com, stan@corellium.com, graf@amazon.com, will@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com, andy.shevchenko@gmail.com, gregkh@linuxfoundation.org, corbet@lwn.net, catalin.marinas@arm.com, hch@infradead.org, davem@davemloft.net, devicetree@vger.kernel.org, linux-serial@vger.kernel.org, linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Reply-To: Timon Baetz <timon.baetz@protonmail.com>
+Subject: Re: [PATCH 3/3] power: supply: max8997_charger: Switch to new binding
+Message-ID: <20210309084658.4a140b92@focal-fossa>
+In-Reply-To: <20210201180335.rrsqfvbcmxvx64gf@kozik-lap>
+References: <20210130172747.2022977-1-timon.baetz@protonmail.com> <20210130172747.2022977-4-timon.baetz@protonmail.com> <20210131172840.fxaadhhsafa4aeex@kozik-lap> <20210201083128.18499ffd.timon.baetz@protonmail.com> <20210201180335.rrsqfvbcmxvx64gf@kozik-lap>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 08 Mar 2021 20:38:41 +0000,
-Rob Herring <robh@kernel.org> wrote:
-> 
-> On Fri, Mar 05, 2021 at 06:38:41AM +0900, Hector Martin wrote:
-> > Not all platforms provide the same set of timers/interrupts, and Linux
-> > only needs one (plus kvm/guest ones); some platforms are working around
-> > this by using dummy fake interrupts. Implementing interrupt-names allows
-> > the devicetree to specify an arbitrary set of available interrupts, so
-> > the timer code can pick the right one.
-> > 
-> > This also adds the hyp-virt timer/interrupt, which was previously not
-> > expressed in the fixed 4-interrupt form.
-> > 
-> > Signed-off-by: Hector Martin <marcan@marcan.st>
-> > ---
-> >  .../devicetree/bindings/timer/arm,arch_timer.yaml  | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml b/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
-> > index 2c75105c1398..ebe9b0bebe41 100644
-> > --- a/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
-> > +++ b/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
-> > @@ -34,11 +34,25 @@ properties:
-> >                - arm,armv8-timer
-> >  
-> >    interrupts:
-> > +    minItems: 1
-> > +    maxItems: 5
-> >      items:
-> >        - description: secure timer irq
-> >        - description: non-secure timer irq
-> >        - description: virtual timer irq
-> >        - description: hypervisor timer irq
-> > +      - description: hypervisor virtual timer irq
-> > +
-> > +  interrupt-names:
-> > +    minItems: 1
-> > +    maxItems: 5
-> > +    items:
-> > +      enum:
-> > +        - phys-secure
-> > +        - phys
-> > +        - virt
-> > +        - hyp-phys
-> > +        - hyp-virt
-> 
-> phys-secure and hyp-phys is not very consistent. secure-phys or sec-phys 
-> instead?
-> 
-> This allows any order which is not ideal (unfortunately json-schema 
-> doesn't have a way to define order with optional entries in the middle). 
-> How many possible combinations are there which make sense? If that's a 
-> reasonable number, I'd rather see them listed out.
+On Mon, 1 Feb 2021 19:03:35 +0100, Krzysztof Kozlowski wrote:
+> On Mon, Feb 01, 2021 at 09:26:42AM +0000, Timon Baetz wrote:
+> > On Sun, 31 Jan 2021 18:28:40 +0100, Krzysztof Kozlowski wrote:
+> > > On Sat, Jan 30, 2021 at 05:30:14PM +0000, Timon Baetz wrote:
+> > > > Get regulator from parent device's node and extcon by name.
+> > > >
+> > > > Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
+> > > > ---
+> > > >  drivers/power/supply/max8997_charger.c | 12 ++++++++----
+> > > >  1 file changed, 8 insertions(+), 4 deletions(-)
+> > > >
+> > > > diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power=
+/supply/max8997_charger.c
+> > > > index 321bd6b8ee41..625d8cc4312a 100644
+> > > > --- a/drivers/power/supply/max8997_charger.c
+> > > > +++ b/drivers/power/supply/max8997_charger.c
+> > > > @@ -168,6 +168,7 @@ static int max8997_battery_probe(struct platfor=
+m_device *pdev)
+> > > >  =09int ret =3D 0;
+> > > >  =09struct charger_data *charger;
+> > > >  =09struct max8997_dev *iodev =3D dev_get_drvdata(pdev->dev.parent)=
+;
+> > > > +=09struct device_node *np =3D pdev->dev.of_node;
+> > > >  =09struct i2c_client *i2c =3D iodev->i2c;
+> > > >  =09struct max8997_platform_data *pdata =3D iodev->pdata;
+> > > >  =09struct power_supply_config psy_cfg =3D {};
+> > > > @@ -237,20 +238,23 @@ static int max8997_battery_probe(struct platf=
+orm_device *pdev)
+> > > >  =09=09return PTR_ERR(charger->battery);
+> > > >  =09}
+> > > >
+> > > > +=09// grab regulator from parent device's node
+> > > > +=09pdev->dev.of_node =3D iodev->dev->of_node;
+> > > >  =09charger->reg =3D devm_regulator_get_optional(&pdev->dev, "charg=
+er");
+> > > > +=09pdev->dev.of_node =3D np;
+> > >
+> > > I think the device does not have its own node anymore. Or did I miss
+> > > something?
+> >
+> > The idea is to reset of_node to whatever it was before (NULL) and basic=
+ally
+> > leave the device unchanged. Probe might run again because of deferral.
+>
+> Good point.
+>
+> >
+> > > >  =09if (IS_ERR(charger->reg)) {
+> > > >  =09=09if (PTR_ERR(charger->reg) =3D=3D -EPROBE_DEFER)
+> > > >  =09=09=09return -EPROBE_DEFER;
+> > > >  =09=09dev_info(&pdev->dev, "couldn't get charger regulator\n");
+> > > >  =09}
+> > > > -=09charger->edev =3D extcon_get_edev_by_phandle(&pdev->dev, 0);
+> > > > -=09if (IS_ERR(charger->edev)) {
+> > > > -=09=09if (PTR_ERR(charger->edev) =3D=3D -EPROBE_DEFER)
+> > > > +=09charger->edev =3D extcon_get_extcon_dev("max8997-muic");
+> > > > +=09if (IS_ERR_OR_NULL(charger->edev)) {
+> > > > +=09=09if (!charger->edev)
+> > >
+> > > Isn't NULL returned when there is simply no extcon? It's different th=
+an
+> > > deferred probe. Returning here EPROBE_DEFER might lead to infinite pr=
+obe
+> > > tries (on every new device probe) instead of just failing it.
+> >
+> > extcon_get_extcon_dev() just loops through all registered extcon device=
+s
+> > and compared names. It will return NULL when "max8997-muic" isn't
+> > registered yet. extcon_get_extcon_dev() never returns EPROBE_DEFER so
+> > checking for NULL seems to be the only way. Other drivers using that
+> > function also do NULL check and return EPROBE_DEFER.
+>
+> Indeed, thanks for clarification. Looks good:
+>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-The available of interrupts are a function of the number of security
-states, privileged exception levels and architecture revisions, as
-described in D11.1.1:
+Is something blocking this from being accepted?
 
-<quote>
-- An EL1 physical timer.
-- A Non-secure EL2 physical timer.
-- An EL3 physical timer.
-- An EL1 virtual timer.
-- A Non-secure EL2 virtual timer.
-- A Secure EL2 virtual timer.
-- A Secure EL2 physical timer.
-</quote>
+Timon
 
-* Single security state, EL1 only, ARMv7 & ARMv8.0+ (assumed NS):
-  - physical, virtual
 
-* Single security state, EL1 + EL2, ARMv7 & ARMv8.0 (assumed NS)
-  - physical, virtual, hyp physical
-
-* Single security state, EL1 + EL2, ARMv8.1+ (assumed NS)
-  - physical, virtual, hyp physical, hyp virtual
-
-* Two security states, EL1 + EL3, ARMv7 & ARMv8.0+:
-  - secure physical, physical, virtual
-
-* Two security states, EL1 + EL2 + EL3, ARMv7 & ARMv8.0
-  - secure physical, physical, virtual, hyp physical
-
-* Two security states, EL1 + EL2 + EL3, ARMv8.1+
-  - secure physical, physical, virtual, hyp physical, hyp virtual
-
-* Two security states, EL1 + EL2 + S-EL2 + EL3, ARMv8.4+
-  - secure physical, physical, virtual, hyp physical, hyp virtual,
-    secure hyp physical, secure hyp virtual
-
-Nobody has seen the last combination in the wild (that is, outside of
-a SW model).
-
-I'm really not convinced we want to express this kind of complexity in
-the binding (each of the 7 cases), specially given that we don't
-encode the underlying HW architecture level or number of exception
-levels anywhere, and have ho way to validate such information.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
