@@ -2,173 +2,117 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1FDC4321A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Mar 2021 04:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9902C43381
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Mar 2021 08:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8637A64FF1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Mar 2021 04:06:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DC9F64FFA
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Mar 2021 08:28:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232299AbhCJEF3 (ORCPT
+        id S229900AbhCJI1h (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 9 Mar 2021 23:05:29 -0500
-Received: from z11.mailgun.us ([104.130.96.11]:14671 "EHLO z11.mailgun.us"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232278AbhCJEE7 (ORCPT
+        Wed, 10 Mar 2021 03:27:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37332 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229516AbhCJI1F (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 9 Mar 2021 23:04:59 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1615349099; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=ZHa7iIF6f1BAN5sS7dr1WZt2PGRaGrl4ziVtXJN3He8=; b=FbXvLrKEpvj+QjN0dQnt5JwkX0wpV+AiimYBND9XpH5wSWBoXYUsnnU8kmAgvTGNdXmndWho
- TaqVqrw7MB9IxuNMz8RtijEG5tQjHkCFASbd+T5tVi1rj9rmk5wSbx22SBrmGJywKYY3K1qm
- QAt9kz6VsUzJObgLR2vmfDRL1RA=
-X-Mailgun-Sending-Ip: 104.130.96.11
-X-Mailgun-Sid: WyJhY2Q3MCIsICJsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
- 6048456ad3a53bc38fedb79c (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 10 Mar 2021 04:04:58
- GMT
-Sender: asutoshd=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 8C4B0C4346D; Wed, 10 Mar 2021 04:04:57 +0000 (UTC)
-Received: from [192.168.8.168] (cpe-70-95-149-85.san.res.rr.com [70.95.149.85])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Wed, 10 Mar 2021 03:27:05 -0500
+Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FCC2C06174A;
+        Wed, 10 Mar 2021 00:27:05 -0800 (PST)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: asutoshd)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 79864C433C6;
-        Wed, 10 Mar 2021 04:04:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 79864C433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=asutoshd@codeaurora.org
-Subject: Re: [PATCH v10 1/2] scsi: ufs: Enable power management for wlun
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Bart Van Assche <bvanassche@acm.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, cang@codeaurora.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        (Authenticated sender: marcan@marcan.st)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id 1091B3FA1B;
+        Wed, 10 Mar 2021 08:26:56 +0000 (UTC)
+Subject: Re: [RFT PATCH v3 12/27] of/address: Add infrastructure to declare
+ MMIO as non-posted
+To:     Rob Herring <robh@kernel.org>
+Cc:     Arnd Bergmann <arnd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <maz@kernel.org>, Olof Johansson <olof@lixom.net>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Kiwoong Kim <kwmad.kim@samsung.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Dinghao Liu <dinghao.liu@zju.edu.cn>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Satya Tangirala <satyat@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
-        <linux-mediatek@lists.infradead.org>,
-        Linux-PM mailing list <linux-pm@vger.kernel.org>
-References: <cover.1614725302.git.asutoshd@codeaurora.org>
- <0576d6eae15486740c25767e2d8805f7e94eb79d.1614725302.git.asutoshd@codeaurora.org>
- <85086647-7292-b0a2-d842-290818bd2858@intel.com>
- <6e98724d-2e75-d1fe-188f-a7010f86c509@codeaurora.org>
- <20210306161616.GC74411@rowland.harvard.edu>
- <CAJZ5v0ihJe8rNjWRwNic_BQUvKbALNcjx8iiPAh5nxLhOV9duw@mail.gmail.com>
- <CAJZ5v0iJ4yqRTt=mTCC930HULNFNTgvO4f9ToVO6pNz53kxFkw@mail.gmail.com>
- <f1e9b21d-1722-d20b-4bae-df7e6ce50bbc@codeaurora.org>
- <2bd90336-18a9-9acd-5abb-5b52b27fc535@codeaurora.org>
- <20210310031438.GB203516@rowland.harvard.edu>
-From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
-Message-ID: <6b985880-f23a-adb3-8b7a-7ee1b56e6fa7@codeaurora.org>
-Date:   Tue, 9 Mar 2021 20:04:53 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Tony Lindgren <tony@atomide.com>,
+        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
+        Stan Skowronek <stan@corellium.com>,
+        Alexander Graf <graf@amazon.com>,
+        Will Deacon <will@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        DTML <devicetree@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20210304213902.83903-1-marcan@marcan.st>
+ <20210304213902.83903-13-marcan@marcan.st>
+ <CAL_JsqJF2Hz=4U7FR_GOSjCxqt3dpf-CAWFNfsSrDjDLpHqgCA@mail.gmail.com>
+ <6e4880b3-1fb6-0cbf-c1a5-7a46fd9ccf62@marcan.st>
+ <CAK8P3a0Hmwt-ywzS-2eEmqyQ0v2SxLsLxFwfTUoWwbzCrBNhsQ@mail.gmail.com>
+ <CAL_JsqJHRM59GC3FjvaGLCELemy1uspnGvTEFH6q0OdyBPVSjA@mail.gmail.com>
+ <CAK8P3a0_GBB-VYFO5NaySyBJDN2Ra-WMH4WfFrnzgOejmJVG8g@mail.gmail.com>
+ <20210308211306.GA2920998@robh.at.kernel.org>
+ <CAK8P3a2GfzUevuQNZeQarJ4GNFsuDj0g7oFuN940Hdaw06YJbA@mail.gmail.com>
+ <CAL_JsqK8FagJyQVyG5DAocUjLGZT91b6NzDm_DNMW1hdCz51Xg@mail.gmail.com>
+ <c5693760-3b18-e8f1-18b6-bae42c05d329@marcan.st>
+ <CAL_Jsq+VLLPa98iaTvOkK-tjuBH4qY7FNEGtufYGv7rXAbwegQ@mail.gmail.com>
+From:   Hector Martin <marcan@marcan.st>
+Message-ID: <332c0b9a-dcfd-4c3b-9038-47cbda90eb3f@marcan.st>
+Date:   Wed, 10 Mar 2021 17:26:54 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <20210310031438.GB203516@rowland.harvard.edu>
+In-Reply-To: <CAL_Jsq+VLLPa98iaTvOkK-tjuBH4qY7FNEGtufYGv7rXAbwegQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Language: es-ES
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 3/9/2021 7:14 PM, Alan Stern wrote:
-> On Tue, Mar 09, 2021 at 07:04:34PM -0800, Asutosh Das (asd) wrote:
->> Hello
->> I & Can (thanks CanG) debugged this further:
->>
->> Looks like this issue can occur if the sd probe is asynchronous.
->>
->> Essentially, the sd_probe() is done asynchronously and driver_probe_device()
->> invokes pm_runtime_get_suppliers() before invoking sd_probe().
->>
->> But scsi_probe_and_add_lun() runs in a separate context.
->> So the scsi_autopm_put_device() invoked from scsi_scan_host() context
->> reduces the link->rpm_active to 1. And sd_probe() invokes
->> scsi_autopm_put_device() and starts a timer. And then driver_probe_device()
->> invoked from __device_attach_async_helper context reduces the
->> link->rpm_active to 1 thus enabling the supplier to suspend before the
->> consumer suspends.
+On 10/03/2021 07.06, Rob Herring wrote:
+>> My main concern here is that this creates an inconsistency in the device
+>> tree representation that only works because PCI drivers happen not to
+>> use these code paths. Logically, having "nonposted-mmio" above the PCI
+>> controller would imply that it applies to that bus too. Sure, it doesn't
+>> matter for Linux since it is ignored, but this creates an implicit
+>> exception that PCI buses always use posted modes.
 > 
->> I don't see a way around this. Please let me know if you
->> (@Alan/@Bart/@Adrian) have any thoughts on this.
+> We could be stricter that "nonposted-mmio" must be in the immediate
+> parent. That's kind of in line with how addressing already works.
+> Every level has to have 'ranges' to be an MMIO address, and the
+> address cell size is set by the immediate parent.
 > 
-> How about changing the SCSI core so that it does a runtime_get before
-> starting an async probe, and the async probe routine does a
-> runtime_put when it is finished?  In other words, don't allow a device
-> to go into runtime suspend while it is waiting to be probed.
+>> Then if a device comes along that due to some twisted fabric logic needs
+>> nonposted nGnRnE mappings for PCIe (even though the actual PCIe ops will
+>> end up posted at the bus anyway)... how do we represent that? Declare
+>> that another "nonposted-mmio" on the PCIe bus means "no, really, use
+>> nonposted mmio for this"?
 > 
-> I don't think that would be too intrusive.
-> 
-> Alan Stern
-> 
+> If we're strict, yes. The PCI host bridge would have to have "nonposted-mmio".
 
-Hi Alan
-Thanks for the suggestion.
+Works for me; then let's just make it non-recursive.
 
-Am trying to understand:
-
-Do you mean something like this:
-
-int scsi_sysfs_add_sdev(struct scsi_device *sdev)
-{
-	
-	scsi_autopm_get_device(sdev);
-	pm_runtime_get_noresume(&sdev->sdev_gendev);
-	[...]
-	scsi_autopm_put_device(sdev);
-	[...]
-}
-
-static int sd_probe(struct device *dev)
-{
-	[...]
-	pm_runtime_put_noidle(dev);
-	scsi_autopm_put_device(sdp);
-	[...]
-}
-
-This may work (I'm limited by my imagination in scsi layer :) ).
-
-But the pm_runtime_put_noidle() would have to be added to all registered 
-scsi_driver{}, perhaps? Or may be I can check for sdp->type?
-
--asd
+Do you think we can get rid of the Apple-only optimization if we do 
+this? It would mean only looking at the parent during address 
+resolution, not recursing all the way to the top, so presumably the 
+performance impact would be quite minimal.
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-Linux Foundation Collaborative Project
+Hector Martin (marcan@marcan.st)
+Public Key: https://mrcn.st/pub
