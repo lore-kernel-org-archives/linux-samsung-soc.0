@@ -2,213 +2,122 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D9FDC433E9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Mar 2021 16:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB5CC43381
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Mar 2021 17:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5001864FCC
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Mar 2021 16:40:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD6A264FD4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Mar 2021 17:02:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbhCJQkY (ORCPT
+        id S231689AbhCJRCT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 10 Mar 2021 11:40:24 -0500
-Received: from m42-2.mailgun.net ([69.72.42.2]:14335 "EHLO m42-2.mailgun.net"
+        Wed, 10 Mar 2021 12:02:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230477AbhCJQj7 (ORCPT
+        id S233655AbhCJRB6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 10 Mar 2021 11:39:59 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1615394398; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=A3hXmK2V9BzYBLeUgSG9YZi0trl61aWRPGcB/gnH5c4=; b=XqNceepVsnX7zh1RiKMWlz5XYceZwYqTeH1IhY/VynihkC6diXdsjyXzWzr5FIznMjD8a5Eb
- tOneAd+cPwEf4cAuD2n83aUHhcqg5lRyzHUgz2ZUqens8FFiDAFm3O70sia2uILkXQbtMSfD
- Z++Mdaln02PIFeb6rYzttAZgfEU=
-X-Mailgun-Sending-Ip: 69.72.42.2
-X-Mailgun-Sid: WyJhY2Q3MCIsICJsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
- 6048f65c0c7cf0f56c76696b (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 10 Mar 2021 16:39:56
- GMT
-Sender: asutoshd=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 899ABC4346D; Wed, 10 Mar 2021 16:39:55 +0000 (UTC)
-Received: from [192.168.8.168] (cpe-70-95-149-85.san.res.rr.com [70.95.149.85])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: asutoshd)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 10C6EC433C6;
-        Wed, 10 Mar 2021 16:39:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 10C6EC433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=asutoshd@codeaurora.org
-Subject: Re: [PATCH v10 1/2] scsi: ufs: Enable power management for wlun
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Bart Van Assche <bvanassche@acm.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, cang@codeaurora.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Kiwoong Kim <kwmad.kim@samsung.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Dinghao Liu <dinghao.liu@zju.edu.cn>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Satya Tangirala <satyat@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
-        <linux-mediatek@lists.infradead.org>,
-        Linux-PM mailing list <linux-pm@vger.kernel.org>
-References: <0576d6eae15486740c25767e2d8805f7e94eb79d.1614725302.git.asutoshd@codeaurora.org>
- <85086647-7292-b0a2-d842-290818bd2858@intel.com>
- <6e98724d-2e75-d1fe-188f-a7010f86c509@codeaurora.org>
- <20210306161616.GC74411@rowland.harvard.edu>
- <CAJZ5v0ihJe8rNjWRwNic_BQUvKbALNcjx8iiPAh5nxLhOV9duw@mail.gmail.com>
- <CAJZ5v0iJ4yqRTt=mTCC930HULNFNTgvO4f9ToVO6pNz53kxFkw@mail.gmail.com>
- <f1e9b21d-1722-d20b-4bae-df7e6ce50bbc@codeaurora.org>
- <2bd90336-18a9-9acd-5abb-5b52b27fc535@codeaurora.org>
- <20210310031438.GB203516@rowland.harvard.edu>
- <6b985880-f23a-adb3-8b7a-7ee1b56e6fa7@codeaurora.org>
- <20210310162730.GB221857@rowland.harvard.edu>
-From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
-Message-ID: <a89ad647-6c0c-b45e-cff3-a205bed034cf@codeaurora.org>
-Date:   Wed, 10 Mar 2021 08:39:51 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Wed, 10 Mar 2021 12:01:58 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6A5FA64FCA;
+        Wed, 10 Mar 2021 17:01:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615395717;
+        bh=5LZ7c4U4IAUXXoygU0w5CR3jOKIDBj1RXMdFN86MevM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=b5q13A9vKkWPc/S2db+xOtVll5VS6u+2t6fCOQtiIUBFLLDdzVTyOI+P3UeGL+LqJ
+         7Elkm2kmhr5CpRnO2X65A+H6fhh08GnA/WZocXK+qekvB2TMURd3J8UgsqR1NfmFxy
+         fDonUJ45jhqpGSvmkgJUFSjgA6p0MSXOK2M6hq+6iVQgE7ghxEkPMetdhH7pMmlX+o
+         cOjW0m8/LKBPl6s3lctW6O2TtGutJaNWf1VaOiJ33Nq8iQxmlrU/PpR2RsOIZkmy0D
+         GyUobzwlzzFIqj7QIzHuu+VDiWYgi4SVCChUfIiVW79wRLAtbqMDYlXwptMkpZAMVn
+         lloGmQa4FN/LQ==
+Received: by mail-ed1-f48.google.com with SMTP id w9so29022145edt.13;
+        Wed, 10 Mar 2021 09:01:57 -0800 (PST)
+X-Gm-Message-State: AOAM530KCNGOc9UWduhTNmkxpbxEUUcZnZx2dKf1QRq8pCP7eaYalsLB
+        e8zsS1z9pKqpMVuOCDEDipti2ju9lBMiBqrhUQ==
+X-Google-Smtp-Source: ABdhPJyyjiOqDNU+GsRsusWQw6pd7IjZqC3Hzchz/EIeuYg4YBLw4UApJuUQRJ4ZYOdJ7x1nylPn+YQBn+IB+ohTiOE=
+X-Received: by 2002:aa7:d3d8:: with SMTP id o24mr4394042edr.165.1615395715853;
+ Wed, 10 Mar 2021 09:01:55 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210310162730.GB221857@rowland.harvard.edu>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210304213902.83903-1-marcan@marcan.st> <20210304213902.83903-13-marcan@marcan.st>
+ <CAL_JsqJF2Hz=4U7FR_GOSjCxqt3dpf-CAWFNfsSrDjDLpHqgCA@mail.gmail.com>
+ <6e4880b3-1fb6-0cbf-c1a5-7a46fd9ccf62@marcan.st> <CAK8P3a0Hmwt-ywzS-2eEmqyQ0v2SxLsLxFwfTUoWwbzCrBNhsQ@mail.gmail.com>
+ <CAL_JsqJHRM59GC3FjvaGLCELemy1uspnGvTEFH6q0OdyBPVSjA@mail.gmail.com>
+ <CAK8P3a0_GBB-VYFO5NaySyBJDN2Ra-WMH4WfFrnzgOejmJVG8g@mail.gmail.com>
+ <20210308211306.GA2920998@robh.at.kernel.org> <CAK8P3a2GfzUevuQNZeQarJ4GNFsuDj0g7oFuN940Hdaw06YJbA@mail.gmail.com>
+ <CAL_JsqK8FagJyQVyG5DAocUjLGZT91b6NzDm_DNMW1hdCz51Xg@mail.gmail.com>
+ <c5693760-3b18-e8f1-18b6-bae42c05d329@marcan.st> <CAL_Jsq+VLLPa98iaTvOkK-tjuBH4qY7FNEGtufYGv7rXAbwegQ@mail.gmail.com>
+ <332c0b9a-dcfd-4c3b-9038-47cbda90eb3f@marcan.st>
+In-Reply-To: <332c0b9a-dcfd-4c3b-9038-47cbda90eb3f@marcan.st>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 10 Mar 2021 10:01:43 -0700
+X-Gmail-Original-Message-ID: <CAL_Jsq+X7JPm-xrxmy5bGKSuLO59yk6S=EuXmdMn0FwhpZAD7A@mail.gmail.com>
+Message-ID: <CAL_Jsq+X7JPm-xrxmy5bGKSuLO59yk6S=EuXmdMn0FwhpZAD7A@mail.gmail.com>
+Subject: Re: [RFT PATCH v3 12/27] of/address: Add infrastructure to declare
+ MMIO as non-posted
+To:     Hector Martin <marcan@marcan.st>
+Cc:     Arnd Bergmann <arnd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <maz@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Tony Lindgren <tony@atomide.com>,
+        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
+        Stan Skowronek <stan@corellium.com>,
+        Alexander Graf <graf@amazon.com>,
+        Will Deacon <will@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        DTML <devicetree@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 3/10/2021 8:27 AM, Alan Stern wrote:
-> On Tue, Mar 09, 2021 at 08:04:53PM -0800, Asutosh Das (asd) wrote:
->> On 3/9/2021 7:14 PM, Alan Stern wrote:
->>> On Tue, Mar 09, 2021 at 07:04:34PM -0800, Asutosh Das (asd) wrote:
->>>> Hello
->>>> I & Can (thanks CanG) debugged this further:
->>>>
->>>> Looks like this issue can occur if the sd probe is asynchronous.
->>>>
->>>> Essentially, the sd_probe() is done asynchronously and driver_probe_device()
->>>> invokes pm_runtime_get_suppliers() before invoking sd_probe().
->>>>
->>>> But scsi_probe_and_add_lun() runs in a separate context.
->>>> So the scsi_autopm_put_device() invoked from scsi_scan_host() context
->>>> reduces the link->rpm_active to 1. And sd_probe() invokes
->>>> scsi_autopm_put_device() and starts a timer. And then driver_probe_device()
->>>> invoked from __device_attach_async_helper context reduces the
->>>> link->rpm_active to 1 thus enabling the supplier to suspend before the
->>>> consumer suspends.
->>>
->>>> I don't see a way around this. Please let me know if you
->>>> (@Alan/@Bart/@Adrian) have any thoughts on this.
->>>
->>> How about changing the SCSI core so that it does a runtime_get before
->>> starting an async probe, and the async probe routine does a
->>> runtime_put when it is finished?  In other words, don't allow a device
->>> to go into runtime suspend while it is waiting to be probed.
->>>
->>> I don't think that would be too intrusive.
->>>
->>> Alan Stern
->>>
->>
->> Hi Alan
->> Thanks for the suggestion.
->>
->> Am trying to understand:
->>
->> Do you mean something like this:
->>
->> int scsi_sysfs_add_sdev(struct scsi_device *sdev)
->> {
->> 	
->> 	scsi_autopm_get_device(sdev);
->> 	pm_runtime_get_noresume(&sdev->sdev_gendev);
->> 	[...]
->> 	scsi_autopm_put_device(sdev);
->> 	[...]
->> }
->>
->> static int sd_probe(struct device *dev)
->> {
->> 	[...]
->> 	pm_runtime_put_noidle(dev);
->> 	scsi_autopm_put_device(sdp);
->> 	[...]
->> }
->>
->> This may work (I'm limited by my imagination in scsi layer :) ).
-> 
-> I'm not sure about this.  To be honest, I did not read the entirety of
-> your last message; it had way too much detail.  THere's a time and place
-> for that, but when you're brainstorming to figure out the underlying
-> cause of a problem and come up with a strategy to fix it, you want to
-> concentrate on the overall picture, not the details.
-> 
-> As I understand the situation, you've get a SCSI target with multiple
-> logical units, let's say A and B, and you need to make sure that A never
-> goes into runtime suspend unless B is already suspended.  In other
-> words, B always has to suspend before A and resume after A.
-> 
-> To do this, you register a device link with A as the supplier and B as
-> the consumer.  Then the PM core takes care of the ordering for you.
-> 
-> But I don't understand when you set up the device link.  If the timing
-> is wrong then, thanks to async SCSI probing, you may have a situation
-> where A is registered before B and before the link is set up.  Then
-> there's temporarily nothing to stop A from suspending before B.
-> 
-> You also need to prevent each device from suspending before it is
-> probed.  That's the easy part I was trying to address before (although
-> it may not be so easy if the drivers are in loadable modules and not
-> present in the kernel).
-> 
-> You need to think through these issues before proposing actual changes.
-> 
->> But the pm_runtime_put_noidle() would have to be added to all registered
->> scsi_driver{}, perhaps? Or may be I can check for sdp->type?
-> 
-> Like this; it's too early to worry about this sort of thing.
-> 
-> Alan Stern
-> 
-Hi Alan
-Thanks. Understood.
+On Wed, Mar 10, 2021 at 1:27 AM Hector Martin <marcan@marcan.st> wrote:
+>
+> On 10/03/2021 07.06, Rob Herring wrote:
+> >> My main concern here is that this creates an inconsistency in the device
+> >> tree representation that only works because PCI drivers happen not to
+> >> use these code paths. Logically, having "nonposted-mmio" above the PCI
+> >> controller would imply that it applies to that bus too. Sure, it doesn't
+> >> matter for Linux since it is ignored, but this creates an implicit
+> >> exception that PCI buses always use posted modes.
+> >
+> > We could be stricter that "nonposted-mmio" must be in the immediate
+> > parent. That's kind of in line with how addressing already works.
+> > Every level has to have 'ranges' to be an MMIO address, and the
+> > address cell size is set by the immediate parent.
+> >
+> >> Then if a device comes along that due to some twisted fabric logic needs
+> >> nonposted nGnRnE mappings for PCIe (even though the actual PCIe ops will
+> >> end up posted at the bus anyway)... how do we represent that? Declare
+> >> that another "nonposted-mmio" on the PCIe bus means "no, really, use
+> >> nonposted mmio for this"?
+> >
+> > If we're strict, yes. The PCI host bridge would have to have "nonposted-mmio".
+>
+> Works for me; then let's just make it non-recursive.
+>
+> Do you think we can get rid of the Apple-only optimization if we do
+> this? It would mean only looking at the parent during address
+> resolution, not recursing all the way to the top, so presumably the
+> performance impact would be quite minimal.
 
-I will check the details and see if I can come up with something.
-I'll propose an alternate fix otherwise and drop this change altogether.
+Yeah, that should be fine. I'd keep an IS_ENABLED() config check
+though. Then I'll also know if anyone else needs this.
 
-Thanks!
--asd
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-Linux Foundation Collaborative Project
+Rob
