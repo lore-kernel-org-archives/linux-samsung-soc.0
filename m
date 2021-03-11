@@ -2,191 +2,138 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5401EC4332B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Mar 2021 06:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DDBC4332D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Mar 2021 09:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 303DA64FDF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Mar 2021 06:51:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B2F364DE7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Mar 2021 09:13:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231393AbhCKGvE (ORCPT
+        id S231920AbhCKJMq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 11 Mar 2021 01:51:04 -0500
-Received: from mail-co1nam11on2047.outbound.protection.outlook.com ([40.107.220.47]:38311
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231328AbhCKGu4 (ORCPT
+        Thu, 11 Mar 2021 04:12:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46640 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231960AbhCKJMV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 11 Mar 2021 01:50:56 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JXaHlJA6xy8BbMBzrH72C4TY4xe9Z58itqAzAmoSUj63MRGOs08XVaulDPQLLBWAF/UVVeFoXFfU41/Biiy6VKSlvsiwDdB+DHL8Al2lreMMTsA1WteNgzBzn8L3K5S222V9WyOQ7P3kRvGiOcldzbdmzKhbNSTcwYFupiW145GmWg/uN9EhiNLTVh+/73U9vy/Qo8jN637SbBMA5ISKnw1XNpVyFUwxwGTxI8I4UcA7Q81IuNgq75xq3mtYr9/bSN/v8S2Y/y873AvydMHBaHWTHJJRPQ6UShMMgRMxTNXoML4CXZYSrQ2j+4iFDd1xR9K3ygzHzP0aseGFJQ6e0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AXZBm8Ahpu6/AXps41NEnsLlvP7ufeJ4B5ghnHg6ap4=;
- b=VkqpDGHIbRI0xtQrdY2MWJC+eWc7VO+MBEWmethr8QJ2aPxHisHf1Du64/hOqNMHjbNiyYVuy3VOSs6VDeXnAFj9vgd6GhWznh9RUplElb96BjaoesmvUTembn2veVszkqo86dXviuRqEWMb+0aSeLk/wLKJgM8uDCIodppz11vTbdFHvIqAw8w7oQLms6kIlaRY3CWocKkFt+0s+5+2vI0zagvoFyHFOqIzuHtvymoXNpLBnwaB5adJMSTkhpvw50f2IJZa1eR/52vzsckIQgnsTVoDdQzGKG2Kya1BG8NrRcuN1CcXl6U0X9N1hoKdoiYbo2LgF70GseOeOdsETA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synaptics.com; dmarc=pass action=none
- header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AXZBm8Ahpu6/AXps41NEnsLlvP7ufeJ4B5ghnHg6ap4=;
- b=OGlbhRFspa9YmfkWs6FrW5rBrOZB1BopBAY5IehAAO2b05vvL5sW7xdUL0eFZ5wj4cKFTo08qo/6zwyluqCxlukQNJt0IktWokjGJZ3A6U57l21R1kOhuK3zjLAQ2J8yzV5v3g+d3L3/rSnlKM7IIBexd7n6HylzI6AhrMs7kpA=
-Authentication-Results: linux.com; dkim=none (message not signed)
- header.d=none;linux.com; dmarc=none action=none header.from=synaptics.com;
-Received: from BN3PR03MB2307.namprd03.prod.outlook.com
- (2a01:111:e400:7bb1::16) by BN8PR03MB4755.namprd03.prod.outlook.com
- (2603:10b6:408:6a::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.30; Thu, 11 Mar
- 2021 06:50:51 +0000
-Received: from BN3PR03MB2307.namprd03.prod.outlook.com
- ([fe80::246d:2f3d:93bf:ee56]) by BN3PR03MB2307.namprd03.prod.outlook.com
- ([fe80::246d:2f3d:93bf:ee56%4]) with mapi id 15.20.3912.030; Thu, 11 Mar 2021
- 06:50:50 +0000
-Date:   Thu, 11 Mar 2021 14:50:27 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Yue Wang <yue.wang@Amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] PCI: dwc: Move dw_pcie_msi_init() from each
- users to designware host
-Message-ID: <20210311145027.58f3955e@xhacker.debian>
-In-Reply-To: <YEVPRDt1By8TG9O5@rocinante>
-References: <20200924190421.549cb8fc@xhacker.debian>
-        <20200924190742.76939458@xhacker.debian>
-        <YEVPRDt1By8TG9O5@rocinante>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [192.147.44.204]
-X-ClientProxiedBy: SJ0PR03CA0136.namprd03.prod.outlook.com
- (2603:10b6:a03:33c::21) To BN3PR03MB2307.namprd03.prod.outlook.com
- (2a01:111:e400:7bb1::16)
+        Thu, 11 Mar 2021 04:12:21 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6E02B64FD3;
+        Thu, 11 Mar 2021 09:12:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615453940;
+        bh=UNAIXrkfTNShut/I3gLeR6MyhyTRWg+W8FSgOB8eYQ4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=DI4pa8FmJBv1+nb41cqRzZo7Hptz7QQQzvlRjcJTBIw0e/bhAXWQ7W/gwVc+jd0k9
+         ZhqqzIBC7e8rnatmT33kA0ARL5vzlopH0zM+MiiCEFAq49oH9QUGlrZhDDZ9HowwEy
+         lrFjsqsuQtlzhtCZWchRd9MeM8YeCZe0xYbzjGaWZf+kyrzeZ0vM7VHhwB5ReoXTvT
+         e0QH/bJZxd66iwjZbtaqAuumCK8Xo5edq0Kim+f5qYxrZ+QJHZefURHKQ5iK9hMsKl
+         YzNhCe3+7KZ+eKoEl/RBKaSAA+e1J4B+4QeR+cRu3cQSFA7S2n8+W3egWk1uEsn7G1
+         xl69qAw6Tm39g==
+Received: by mail-oo1-f52.google.com with SMTP id e19-20020a4a73530000b02901b62c0e1bb6so511976oof.11;
+        Thu, 11 Mar 2021 01:12:20 -0800 (PST)
+X-Gm-Message-State: AOAM530a8gom26bMc/UCqdtbMuFQLu0HhU4qH5U5jPPwOAtgQHdFOqgY
+        cssk5aZXoZppqGwhxvF5z2j/AxQJlgHyE2imuN4=
+X-Google-Smtp-Source: ABdhPJygUghNxY2XSM2ghWokFwLHqZ3nZ8W75yDA/iVYNJIzeGBm7t3OFNlQOYjAFsneiZxfCa4ihGnIYWF71hoNWi4=
+X-Received: by 2002:a4a:8ed2:: with SMTP id c18mr5911583ool.66.1615453939509;
+ Thu, 11 Mar 2021 01:12:19 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from xhacker.debian (192.147.44.204) by SJ0PR03CA0136.namprd03.prod.outlook.com (2603:10b6:a03:33c::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17 via Frontend Transport; Thu, 11 Mar 2021 06:50:39 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bdf97653-b3c2-4657-c850-08d8e45a0201
-X-MS-TrafficTypeDiagnostic: BN8PR03MB4755:
-X-Microsoft-Antispam-PRVS: <BN8PR03MB47552C5D4FDDFC79B66D68B9ED909@BN8PR03MB4755.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: CVCP7/lF/iqP97om8cFjn3zGh8BZYPQ3HTFOm4juYjzx23azX8BqHADHU5j0MWyRudsCS7+y75aGQzxURx5fbZsrAu46RIIBKHfPLacCh6uunGSERGghy1ASScDFl2TCKmhx2YGl35bMPWad0OLfQLnu9RUctQAFfMCbbGbBdZq+Koo69MZi+5S4b78miOqmltr3EG92i4MgnDF7XthtPwi8hlj8tj2vUbjxv9dH51A/b/cjKkZcf7bC4qEw9FetEyBYRWyQC5gVl+w9QtsUh26LYzUNu1ksPuQv9miUiCs/p3FRz/A4zWTv3TWUBY9k47XWGBE+djh8uZ69L0hlBAIkKIs9A5FKs1RgdzElFP+oQpD/ws7RzRv7jKoXP7zIh8GCSBz4lU2xIe+unCjIRtG3WLazCMUJgnFmOAATU5mzegWi/kTfz/bXmcxqiwzI8pU+cEF9ljg8bVZldm5kUNeTRQnLw7VZ9Y2EQ3Io2lroeSfPtmJ4XT/EmLUJSjTli88UsiprPVLkdbbYkhoxpA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN3PR03MB2307.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(366004)(376002)(136003)(39850400004)(396003)(2906002)(8936002)(86362001)(66476007)(66574015)(83380400001)(6666004)(316002)(54906003)(66556008)(4326008)(8676002)(7696005)(186003)(7406005)(55016002)(478600001)(6506007)(7416002)(5660300002)(1076003)(956004)(26005)(6916009)(66946007)(16526019)(9686003)(52116002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?OVdIVE1JYXEzRm94UEJObFZXd0V3ejNxTWxEeXlITEJwd05FZFdWL2ZlcGJL?=
- =?utf-8?B?SkNNWTVPb1dueEFUcHdaVjk5ZVREN0pKbFM2eklHY0F4cVBabFVMRTJWTWZ1?=
- =?utf-8?B?M1Z2bXVmVmxCcjAxaU5VM0t0TlhYdHVxQTJqSmptWFRuYTY4bk50S1BMQjhM?=
- =?utf-8?B?OHJnOW9XdWNXQjBVZC9WZUtiZkk4ejBNRVBJcEFBY0NXbHVHWEhkRHAvTnha?=
- =?utf-8?B?ekZrTEFjUkR4ZjJYd2ZteXF0K3djbkFDb0pXd2tZTDdNdm9acEY0TjNqUkZQ?=
- =?utf-8?B?Rk5xdmpNdDBPVFUwcWdxR3BNUGhhMHdMMytRTk9nVnZDMkRmTEZIS2VBaUVz?=
- =?utf-8?B?V0M0RHd0b2hOYlR6Mk9USGVEeEFLd1M4aUc5enJpVWxlVFI4dktWTEdVTkRF?=
- =?utf-8?B?cmdGdkpLTHN5M3p1dnE5d2JrZjVsT3R1NzJ4anoydDYyT0ZRRkp0QTB2U2xL?=
- =?utf-8?B?LzR2NFVxVFExN1JtNXhCdUNGTGJYaWRHMnBoNEd6NFhFK3h2ZFYvNlpNY1lV?=
- =?utf-8?B?S1FXVURjRFh0TVVFazdmMFIvV0ViNitCN3JZR1p1Ri9YUlU3blpOY096UG03?=
- =?utf-8?B?d3VETmgwdi83emVtMTFZMVp2WHk5MzdCaitlMXd1eWpRMWY1L0NDVm93VkVx?=
- =?utf-8?B?dWEycnBXazArQ1hWTkVmMUczVWlnV1JzMFdIUy80SlpCL29SQVRjakZ5RTJC?=
- =?utf-8?B?aXArZDMvYmxHYmJlQnk1em11NmxVTDhiY09reUxvaEcwRjZ1VUVVL0V4NVZP?=
- =?utf-8?B?ZjBkaFpla09ueWY0N0lrckhXaXBweVEzYk1ZQUVCdm1tZzZvYis0YWFuc3Br?=
- =?utf-8?B?Tm9YWFVEUERvc0ZLcjByOFZ6a041ZFE2VGFMZWQxTnh1UHBLU2t5N1B3VUJz?=
- =?utf-8?B?cHRZMWQvaVE4VDltd3FoZU5raXBmeUxFNDQ3N2cwNDQ0RkNTQ2RRQ0xmVFUz?=
- =?utf-8?B?VEI0ekF3Mk4wd3JUbDhOYldPaFlaOFVKY0Z1bWJkN1Z6OHhHL2Q4SmFIbDVQ?=
- =?utf-8?B?RnZHNDZDSk0rc0JjelhkTWcxc0MzL3JNdkE0N05qTFFuWlNkVnR2c0RMa0l5?=
- =?utf-8?B?eUYxWkJzYUUxZGIrZzhYN2FLZ3ViKzBrSWVySC9MODZnTFBKSjkxMUhBQUgr?=
- =?utf-8?B?R3MyM2FkVk9iWWR5WVYwbXE0cUZyVk05M0lhZUVsV2VUdVlkRWIzVzZqNjJt?=
- =?utf-8?B?TXNkVG9ZVDNUM3U4WHRVUlhaay9Id2t2V29sYjE2V0syOVZkWTYvcGlSbmxB?=
- =?utf-8?B?eFhxdUF4VEZ6NkdGaWE0OHFjTWpoVXBMZE83cjhNZHJaTVJMV1luZ0ExMTNy?=
- =?utf-8?B?Ukk4OWQ3MG5RbHhSN3hNMEVPN0JKcHphckptUHhOYlN5aHllVEhTTVNGZ0pD?=
- =?utf-8?B?V0ZHSlM2QjJXcXNZaHl1NExTZlJqOXRCN0tkRHExNWFDUkRCZ2NRVCtCL3JP?=
- =?utf-8?B?VHhEZVFMVTdhOTltYWNtdkxTcXNZWjRlKzFYTm5Pd0tsaGlXaGVuQ1VFVnFD?=
- =?utf-8?B?MXdMN2FxTWVhMnFFZ2ZHdTBKY1ovUk5TUlVHVWYrMkhYWW45NWozN0l5THdW?=
- =?utf-8?B?N3pZYVc3Sm1vajdBYnRTTVprY3lkSVdDWkp0Lytwa0d4SHMzSlZCaldpZUtj?=
- =?utf-8?B?eGhLUUhGQ1hEbkc2bWlKUmJrOW52N3dVTElJSmxVbmxwTklJTmQwV3FjeVZQ?=
- =?utf-8?B?ZE9TNVBzeTJGWlpPNjRYVGRIRS80NFBtUUtmbFJ1ZUF4dXNFQ2JKVkZSbm1h?=
- =?utf-8?Q?xKAMHqzH8xliUpCajwSr2wIzuaXJw52pmby4v5A?=
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bdf97653-b3c2-4657-c850-08d8e45a0201
-X-MS-Exchange-CrossTenant-AuthSource: BN3PR03MB2307.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2021 06:50:50.6635
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XWJ4ofTe++Lcvd8ZMOK4s6RAJrCG13IXWiA6aUdT/FkU38y1lLYSzy9L+HL+ZGGLwK1c/0n6r9RNO7A9ZXbrSw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR03MB4755
+References: <20210304213902.83903-1-marcan@marcan.st> <20210304213902.83903-13-marcan@marcan.st>
+ <CAL_JsqJF2Hz=4U7FR_GOSjCxqt3dpf-CAWFNfsSrDjDLpHqgCA@mail.gmail.com>
+ <6e4880b3-1fb6-0cbf-c1a5-7a46fd9ccf62@marcan.st> <CAK8P3a0Hmwt-ywzS-2eEmqyQ0v2SxLsLxFwfTUoWwbzCrBNhsQ@mail.gmail.com>
+ <CAL_JsqJHRM59GC3FjvaGLCELemy1uspnGvTEFH6q0OdyBPVSjA@mail.gmail.com>
+ <CAK8P3a0_GBB-VYFO5NaySyBJDN2Ra-WMH4WfFrnzgOejmJVG8g@mail.gmail.com>
+ <20210308211306.GA2920998@robh.at.kernel.org> <CAK8P3a2GfzUevuQNZeQarJ4GNFsuDj0g7oFuN940Hdaw06YJbA@mail.gmail.com>
+ <CAL_JsqK8FagJyQVyG5DAocUjLGZT91b6NzDm_DNMW1hdCz51Xg@mail.gmail.com>
+ <c5693760-3b18-e8f1-18b6-bae42c05d329@marcan.st> <CAL_Jsq+VLLPa98iaTvOkK-tjuBH4qY7FNEGtufYGv7rXAbwegQ@mail.gmail.com>
+ <332c0b9a-dcfd-4c3b-9038-47cbda90eb3f@marcan.st> <CAL_Jsq+X7JPm-xrxmy5bGKSuLO59yk6S=EuXmdMn0FwhpZAD7A@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+X7JPm-xrxmy5bGKSuLO59yk6S=EuXmdMn0FwhpZAD7A@mail.gmail.com>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Thu, 11 Mar 2021 10:12:02 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2HWbHc-aGHk792TVh6ea2j+aKswYrB6EBsjPA6fH1=xA@mail.gmail.com>
+Message-ID: <CAK8P3a2HWbHc-aGHk792TVh6ea2j+aKswYrB6EBsjPA6fH1=xA@mail.gmail.com>
+Subject: Re: [RFT PATCH v3 12/27] of/address: Add infrastructure to declare
+ MMIO as non-posted
+To:     Rob Herring <robh@kernel.org>
+Cc:     Hector Martin <marcan@marcan.st>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <maz@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Tony Lindgren <tony@atomide.com>,
+        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
+        Stan Skowronek <stan@corellium.com>,
+        Alexander Graf <graf@amazon.com>,
+        Will Deacon <will@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        DTML <devicetree@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 7 Mar 2021 23:10:12 +0100 Krzysztof Wilczy=C5=84ski  wrote:
+On Wed, Mar 10, 2021 at 6:01 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, Mar 10, 2021 at 1:27 AM Hector Martin <marcan@marcan.st> wrote:
+> >
+> > On 10/03/2021 07.06, Rob Herring wrote:
+> > >> My main concern here is that this creates an inconsistency in the device
+> > >> tree representation that only works because PCI drivers happen not to
+> > >> use these code paths. Logically, having "nonposted-mmio" above the PCI
+> > >> controller would imply that it applies to that bus too. Sure, it doesn't
+> > >> matter for Linux since it is ignored, but this creates an implicit
+> > >> exception that PCI buses always use posted modes.
+> > >
+> > > We could be stricter that "nonposted-mmio" must be in the immediate
+> > > parent. That's kind of in line with how addressing already works.
+> > > Every level has to have 'ranges' to be an MMIO address, and the
+> > > address cell size is set by the immediate parent.
+> > >
+> > >> Then if a device comes along that due to some twisted fabric logic needs
+> > >> nonposted nGnRnE mappings for PCIe (even though the actual PCIe ops will
+> > >> end up posted at the bus anyway)... how do we represent that? Declare
+> > >> that another "nonposted-mmio" on the PCIe bus means "no, really, use
+> > >> nonposted mmio for this"?
+> > >
+> > > If we're strict, yes. The PCI host bridge would have to have "nonposted-mmio".
+> >
+> > Works for me; then let's just make it non-recursive.
+> >
+> > Do you think we can get rid of the Apple-only optimization if we do
+> > this? It would mean only looking at the parent during address
+> > resolution, not recursing all the way to the top, so presumably the
+> > performance impact would be quite minimal.
 
->=20
->=20
-> Hi,
->=20
-> > Currently, dw_pcie_msi_init() allocates and maps page for msi, then
-> > program the PCIE_MSI_ADDR_LO and PCIE_MSI_ADDR_HI. The Root Complex
-> > may lose power during suspend-to-RAM, so when we resume, we want to
-> > redo the latter but not the former. If designware based driver (for
-> > example, pcie-tegra194.c) calls dw_pcie_msi_init() in resume path, the
-> > previous msi page will be leaked. From another side, except
-> > pci-dra7xx.c we can move the dw_pcie_msi_init() from each users to
-> > designware host, I.E move the msi page allocation and mapping to
-> > dw_pcie_host_init() and move the PCIE_MSI_ADDR_* programming to
-> > dw_pcie_setup_rc(). After this moving, we solve the msi page leakage
-> > as well. =20
-> [...]
->=20
-> A small nitpick.  All the "designware" should be "DesignWare" both in
-> the commit message and the subject.  Similarly, "msi" would be "MSI",
-> and "I.E" would become "i.e.,".  If you ever sent another version of the
-> patch, that is.
->=20
+Works for me.
 
-Hi
+> Yeah, that should be fine. I'd keep an IS_ENABLED() config check
+> though. Then I'll also know if anyone else needs this.
 
-This series was dropped and useless after Rob's excellent dw pcie code clea=
-n
-up.
+Ok, makes sense.
 
-Thanks
+Conceptually, I'd like to then see a check that verifies that the
+property is only set for nodes whose parent also has it set, since
+that is how AXI defines it: A bus can wait for the ack from its
+child node, or it can acknowledge the write to its parent early.
+However, this breaks down as soon as a bus does the early ack:
+all its children by definition use posted writes (as seen by the
+CPU), even if they wait for stores that come from other masters.
+
+Does this make sense to you?
+
+       Arnd
