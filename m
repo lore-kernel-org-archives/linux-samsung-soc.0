@@ -2,61 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E52A8C2BB53
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Mar 2021 19:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11699C47254
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Mar 2021 19:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEE3B64F18
+	by mail.kernel.org (Postfix) with ESMTP id DF45864F34
 	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Mar 2021 19:22:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231157AbhCKTWN (ORCPT
+        id S231284AbhCKTWY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 11 Mar 2021 14:22:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38024 "EHLO
+        Thu, 11 Mar 2021 14:22:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbhCKTVi (ORCPT
+        with ESMTP id S230154AbhCKTVv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 11 Mar 2021 14:21:38 -0500
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFDC0C061574;
-        Thu, 11 Mar 2021 11:21:37 -0800 (PST)
-Received: by mail-lj1-x230.google.com with SMTP id z25so3607014lja.3;
-        Thu, 11 Mar 2021 11:21:37 -0800 (PST)
+        Thu, 11 Mar 2021 14:21:51 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A72F6C061574;
+        Thu, 11 Mar 2021 11:21:50 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id p21so41572428lfu.11;
+        Thu, 11 Mar 2021 11:21:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nr3MMopQK2U9fHQgnqesF0TFAIQZjafir6ZJocCIzyI=;
-        b=MyIkaSeXkIuqBbDFC2RZN06Z7+tiTtAyEFnuG6JcB8fVDc/Sps5Y/4lD3XbsyeO4ae
-         TVru7tnsGRkHH9T+lqIfziLi24bGn4Y8kTsTE9yDA1ltlFtHAtJpiks0QkaZ9aRplxPS
-         5gaASxaSxYV09M2FNYhkdvW8CF+zEtfZisqi7xVpZXA/1IPDNlhxHt6m05FCcOY89lyR
-         2GdG2+f4JHdOC1hDD3wwJPE/7krkXhXW5bP+CHhYBHdm3OpOYonPaVP1OLWWZ9Kwv+eU
-         27iTZCIS1IVBb33goI5qAl9/7f1WShlaTr+5bUuPY/hADp7/1yeTfOzDA3lIhMeLMcrB
-         kshg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=F42wbfm9swQcWjHqQZGPfWt+ITu4UeiWzX43fB3h42w=;
+        b=FZsWC7BKKifar8O3yvIsOn3Dy58tUR1dyY5JxWE+AGwDLPphnXiuAUbw8l0/kxO0vd
+         mknhXB+QRwJWyPCWfGP2fTmOGniVI1gS+T5xYiBOXFLVx2ENN+klo/3KSvx9RZ+2tK07
+         cEeVB+iDjynOqDqvpiDApDV6LbOm1jY+mh0Tqh2pKoa3F/o0D3CDtESJkKcVLxnsm2j2
+         a7SCatk6fQ3opuO64zgoILxbkscbUSphhBGPaDyYCE8nYGj/pijC1Cc7+1/c0vYZkUdW
+         m4mG5u48zENhrEuHY22GPz2Io+T4JWF587sFxbNkOH4s0m2tRtr0MJxPL7AP9AjzWQSq
+         etIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nr3MMopQK2U9fHQgnqesF0TFAIQZjafir6ZJocCIzyI=;
-        b=SU8oCQXPSZuT7rjtLz2JzEq3yTH5DnZthgvl/KK2CbcWvCrUzxrVqM/XgZ0WkQM8xc
-         8Whk3xb+TsUHQ5B0ypA7ggtbf6fg09csUXCxlgTUE6Tvb2rG+7SZwjxxfsrfd6A9fkKq
-         vqdzH9bjMCS+FoZJPuPwsI9aOo6+XpV8hug0/U8JX3XYbMvKa0xTAuSjWH9o8vELuO+z
-         /fdLEiRyStdDusvSisJLu6b0K56RCUwR46y/nCVBSNZk74ItkbACKu8k1HgvIeI9rCg1
-         dYOaPc8CqjaaUIieYQPkVFyk6LqRZ2cj4MRQ7Zp/OirJ/M99AkJeZQRM2eQrmSD8b2fd
-         kAXA==
-X-Gm-Message-State: AOAM531iMjIci2L41j8DNaDVAOeo8UKHtywdRyRdYwcLEbgR0eVcPIcL
-        Vv0mrzTpiq8ZdyQvKILWDB0=
-X-Google-Smtp-Source: ABdhPJwV50MJdowwGjHNgx6AtXCWhwuCfX9B+Ri0kWRJuRnNED/9RtxV4BcKLyAa4veO0GRq4JAp4w==
-X-Received: by 2002:a2e:9f45:: with SMTP id v5mr215188ljk.183.1615490496374;
-        Thu, 11 Mar 2021 11:21:36 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=F42wbfm9swQcWjHqQZGPfWt+ITu4UeiWzX43fB3h42w=;
+        b=e7eIdFR4ORUpQusO9SqTjcOKudGKRqcqhnlsnhicUHoXzjFwkN3xHNZEiIaWvF/8+S
+         MnNpVtJfi2y2OlHP48H358mLZBLnXvcFmAFbvHlqR/HUfNVoBagcQpvhbPvR5pBIj+5F
+         +sL19efgCV3IO8ho1WC1TR58uebFfp1ajJR5hqxtUFcBB21y+eZbX61OeCIuyJsUyFFF
+         dZb+75PpXfVkuwQ3einUxWTS4NncGTFCB1JstOzcoVIx4RpX+F1P+3hlNusmIP1ufAMW
+         f6TPPARFIJ3ohxcCKyMSk3yI7nskzPgw8RoD3i2BcVdgN7aJagM8iSJS58FaSsuYnKWh
+         mLGw==
+X-Gm-Message-State: AOAM5329ggTUitoNgMCDMx7yrb6jUo4S40T5AF3kMDEugjMDlS1I5uYR
+        wtK48FfXCqm2d3SDgJAK4Bg=
+X-Google-Smtp-Source: ABdhPJwb3YRI7OWwFyZVKmS9BPsHp7f+Ro2/iQYI4vQe+wbTXlFub3JGwR5x2n7wphwDra4zQSSyUg==
+X-Received: by 2002:a05:6512:3582:: with SMTP id m2mr3201372lfr.10.1615490509044;
+        Thu, 11 Mar 2021 11:21:49 -0800 (PST)
 Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id u14sm1121153lfl.40.2021.03.11.11.21.34
+        by smtp.gmail.com with ESMTPSA id u14sm1121153lfl.40.2021.03.11.11.21.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Mar 2021 11:21:35 -0800 (PST)
+        Thu, 11 Mar 2021 11:21:48 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
         Sean Paul <sean@poorly.run>, Rob Herring <robh@kernel.org>,
@@ -84,81 +85,311 @@ Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
         linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v2 00/14] Introduce devm_pm_opp_* API
-Date:   Thu, 11 Mar 2021 22:20:51 +0300
-Message-Id: <20210311192105.14998-1-digetx@gmail.com>
+Subject: [PATCH v2 10/14] drm/msm: Convert to use resource-managed OPP API
+Date:   Thu, 11 Mar 2021 22:21:01 +0300
+Message-Id: <20210311192105.14998-11-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210311192105.14998-1-digetx@gmail.com>
+References: <20210311192105.14998-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This series adds resource-managed OPP API helpers and makes drivers
-to use them.
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-Changelog:
+Use resource-managed OPP API to simplify code.
 
-v2: - This is a continuation of the work that was started by Yangtao Li.
-      Apparently Yangtao doesn't have time to finish it, so I
-      (Dmitry Osipenko) picked up the effort since these patches are
-      wanted by the NVIDIA Tegra voltage-scaling series that I'm
-      working on.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c   |  2 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c   |  2 +-
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c |  2 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c | 24 +++++++------------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h |  2 --
+ drivers/gpu/drm/msm/dp/dp_ctrl.c        | 31 ++++++-------------------
+ drivers/gpu/drm/msm/dp/dp_ctrl.h        |  1 -
+ drivers/gpu/drm/msm/dp/dp_display.c     |  5 +---
+ drivers/gpu/drm/msm/dsi/dsi_host.c      | 14 ++++-------
+ 9 files changed, 25 insertions(+), 58 deletions(-)
 
-    - Fixed the double put of OPP resources.
-
-    - Dropped all patches that are unrelated to OPP API. I also dropped
-      the Tegra memory patch since it doesn't apply now and because I plan
-      to switch all Tegra drivers soon to a common tegra-specific OPP helper
-      that will use the resource-managed OPP API anyways.
-
-    - Squashed couple patches into a single ones since there was no
-      good reason to separate them.
-
-    - Added acks that were given to a couple of v1 patches.
-
-Yangtao Li (14):
-  opp: Add devres wrapper for dev_pm_opp_set_clkname
-  opp: Add devres wrapper for dev_pm_opp_set_regulators
-  opp: Add devres wrapper for dev_pm_opp_set_supported_hw
-  opp: Add devres wrapper for dev_pm_opp_of_add_table
-  opp: Add devres wrapper for dev_pm_opp_register_notifier
-  serial: qcom_geni_serial: Convert to use resource-managed OPP API
-  spi: spi-geni-qcom: Convert to use resource-managed OPP API
-  spi: spi-qcom-qspi: Convert to use resource-managed OPP API
-  mmc: sdhci-msm: Convert to use resource-managed OPP API
-  drm/msm: Convert to use resource-managed OPP API
-  drm/lima: Convert to use resource-managed OPP API
-  drm/panfrost: Convert to use resource-managed OPP API
-  media: venus: Convert to use resource-managed OPP API
-  memory: samsung: exynos5422-dmc: Convert to use resource-managed OPP
-    API
-
- drivers/gpu/drm/lima/lima_devfreq.c           |  43 ++---
- drivers/gpu/drm/lima/lima_devfreq.h           |   2 -
- drivers/gpu/drm/msm/adreno/a5xx_gpu.c         |   2 +-
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c         |   2 +-
- drivers/gpu/drm/msm/adreno/adreno_gpu.c       |   2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |  24 ++-
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h       |   2 -
- drivers/gpu/drm/msm/dp/dp_ctrl.c              |  31 +---
- drivers/gpu/drm/msm/dp/dp_ctrl.h              |   1 -
- drivers/gpu/drm/msm/dp/dp_display.c           |   5 +-
- drivers/gpu/drm/msm/dsi/dsi_host.c            |  14 +-
- drivers/gpu/drm/panfrost/panfrost_devfreq.c   |  33 +---
- drivers/gpu/drm/panfrost/panfrost_devfreq.h   |   1 -
- .../media/platform/qcom/venus/pm_helpers.c    |  18 +--
- drivers/memory/samsung/exynos5422-dmc.c       |  13 +-
- drivers/mmc/host/sdhci-msm.c                  |  20 +--
- drivers/opp/core.c                            | 151 ++++++++++++++++++
- drivers/opp/of.c                              |  36 +++++
- drivers/spi/spi-geni-qcom.c                   |  17 +-
- drivers/spi/spi-qcom-qspi.c                   |  19 +--
- drivers/tty/serial/qcom_geni_serial.c         |  24 ++-
- include/linux/pm_opp.h                        |  34 ++++
- include/linux/qcom-geni-se.h                  |   2 -
- 23 files changed, 300 insertions(+), 196 deletions(-)
-
+diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+index 7e553d3efeb2..caf747ba8d5b 100644
+--- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+@@ -1705,7 +1705,7 @@ static void check_speed_bin(struct device *dev)
+ 		nvmem_cell_put(cell);
+ 	}
+ 
+-	dev_pm_opp_set_supported_hw(dev, &val, 1);
++	devm_pm_opp_set_supported_hw(dev, &val, 1);
+ }
+ 
+ struct msm_gpu *a5xx_gpu_init(struct drm_device *dev)
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+index 91cf46f84025..232940b41720 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -1340,7 +1340,7 @@ static int a6xx_gmu_pwrlevels_probe(struct a6xx_gmu *gmu)
+ 	 * The GMU handles its own frequency switching so build a list of
+ 	 * available frequencies to send during initialization
+ 	 */
+-	ret = dev_pm_opp_of_add_table(gmu->dev);
++	ret = devm_pm_opp_of_add_table(gmu->dev);
+ 	if (ret) {
+ 		DRM_DEV_ERROR(gmu->dev, "Unable to set the OPP table for the GMU\n");
+ 		return ret;
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+index 0f184c3dd9d9..dfd3cac50f7f 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+@@ -841,7 +841,7 @@ static void adreno_get_pwrlevels(struct device *dev,
+ 	if (!of_find_property(dev->of_node, "operating-points-v2", NULL))
+ 		ret = adreno_get_legacy_pwrlevels(dev);
+ 	else {
+-		ret = dev_pm_opp_of_add_table(dev);
++		ret = devm_pm_opp_of_add_table(dev);
+ 		if (ret)
+ 			DRM_DEV_ERROR(dev, "Unable to set the OPP table\n");
+ 	}
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+index 5a8e3e1fc48c..8344a3314133 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+@@ -1082,27 +1082,28 @@ static int dpu_bind(struct device *dev, struct device *master, void *data)
+ 	struct msm_drm_private *priv = ddev->dev_private;
+ 	struct dpu_kms *dpu_kms;
+ 	struct dss_module_power *mp;
++	struct opp_table *opp_table;
+ 	int ret = 0;
+ 
+ 	dpu_kms = devm_kzalloc(&pdev->dev, sizeof(*dpu_kms), GFP_KERNEL);
+ 	if (!dpu_kms)
+ 		return -ENOMEM;
+ 
+-	dpu_kms->opp_table = dev_pm_opp_set_clkname(dev, "core");
+-	if (IS_ERR(dpu_kms->opp_table))
+-		return PTR_ERR(dpu_kms->opp_table);
++	opp_table = devm_pm_opp_set_clkname(dev, "core");
++	if (IS_ERR(opp_table))
++		return PTR_ERR(opp_table);
+ 	/* OPP table is optional */
+-	ret = dev_pm_opp_of_add_table(dev);
++	ret = devm_pm_opp_of_add_table(dev);
+ 	if (ret && ret != -ENODEV) {
+ 		dev_err(dev, "invalid OPP table in device tree\n");
+-		goto put_clkname;
++		return ret;
+ 	}
+ 
+ 	mp = &dpu_kms->mp;
+ 	ret = msm_dss_parse_clock(pdev, mp);
+ 	if (ret) {
+ 		DPU_ERROR("failed to parse clocks, ret=%d\n", ret);
+-		goto err;
++		return ret;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, dpu_kms);
+@@ -1110,7 +1111,7 @@ static int dpu_bind(struct device *dev, struct device *master, void *data)
+ 	ret = msm_kms_init(&dpu_kms->base, &kms_funcs);
+ 	if (ret) {
+ 		DPU_ERROR("failed to init kms, ret=%d\n", ret);
+-		goto err;
++		return ret;
+ 	}
+ 	dpu_kms->dev = ddev;
+ 	dpu_kms->pdev = pdev;
+@@ -1119,11 +1120,7 @@ static int dpu_bind(struct device *dev, struct device *master, void *data)
+ 	dpu_kms->rpm_enabled = true;
+ 
+ 	priv->kms = &dpu_kms->base;
+-	return ret;
+-err:
+-	dev_pm_opp_of_remove_table(dev);
+-put_clkname:
+-	dev_pm_opp_put_clkname(dpu_kms->opp_table);
++
+ 	return ret;
+ }
+ 
+@@ -1139,9 +1136,6 @@ static void dpu_unbind(struct device *dev, struct device *master, void *data)
+ 
+ 	if (dpu_kms->rpm_enabled)
+ 		pm_runtime_disable(&pdev->dev);
+-
+-	dev_pm_opp_of_remove_table(dev);
+-	dev_pm_opp_put_clkname(dpu_kms->opp_table);
+ }
+ 
+ static const struct component_ops dpu_ops = {
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+index d6717d6672f7..1483995a94d9 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+@@ -130,8 +130,6 @@ struct dpu_kms {
+ 	struct platform_device *pdev;
+ 	bool rpm_enabled;
+ 
+-	struct opp_table *opp_table;
+-
+ 	struct dss_module_power mp;
+ 
+ 	/* reference count bandwidth requests, so we know when we can
+diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.c b/drivers/gpu/drm/msm/dp/dp_ctrl.c
+index 1390f3547fde..b186bd8d43ab 100644
+--- a/drivers/gpu/drm/msm/dp/dp_ctrl.c
++++ b/drivers/gpu/drm/msm/dp/dp_ctrl.c
+@@ -77,8 +77,6 @@ struct dp_ctrl_private {
+ 	struct dp_parser *parser;
+ 	struct dp_catalog *catalog;
+ 
+-	struct opp_table *opp_table;
+-
+ 	struct completion idle_comp;
+ 	struct completion video_comp;
+ };
+@@ -1872,6 +1870,7 @@ struct dp_ctrl *dp_ctrl_get(struct device *dev, struct dp_link *link,
+ 			struct dp_parser *parser)
+ {
+ 	struct dp_ctrl_private *ctrl;
++	struct opp_table *opp_table;
+ 	int ret;
+ 
+ 	if (!dev || !panel || !aux ||
+@@ -1886,20 +1885,17 @@ struct dp_ctrl *dp_ctrl_get(struct device *dev, struct dp_link *link,
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+-	ctrl->opp_table = dev_pm_opp_set_clkname(dev, "ctrl_link");
+-	if (IS_ERR(ctrl->opp_table)) {
++	opp_table = devm_pm_opp_set_clkname(dev, "ctrl_link");
++	if (IS_ERR(opp_table)) {
+ 		dev_err(dev, "invalid DP OPP table in device tree\n");
+-		/* caller do PTR_ERR(ctrl->opp_table) */
+-		return (struct dp_ctrl *)ctrl->opp_table;
++		/* caller do PTR_ERR(opp_table) */
++		return (struct dp_ctrl *)opp_table;
+ 	}
+ 
+ 	/* OPP table is optional */
+-	ret = dev_pm_opp_of_add_table(dev);
+-	if (ret) {
++	ret = devm_pm_opp_of_add_table(dev);
++	if (ret)
+ 		dev_err(dev, "failed to add DP OPP table\n");
+-		dev_pm_opp_put_clkname(ctrl->opp_table);
+-		ctrl->opp_table = NULL;
+-	}
+ 
+ 	init_completion(&ctrl->idle_comp);
+ 	init_completion(&ctrl->video_comp);
+@@ -1915,16 +1911,3 @@ struct dp_ctrl *dp_ctrl_get(struct device *dev, struct dp_link *link,
+ 
+ 	return &ctrl->dp_ctrl;
+ }
+-
+-void dp_ctrl_put(struct dp_ctrl *dp_ctrl)
+-{
+-	struct dp_ctrl_private *ctrl;
+-
+-	ctrl = container_of(dp_ctrl, struct dp_ctrl_private, dp_ctrl);
+-
+-	if (ctrl->opp_table) {
+-		dev_pm_opp_of_remove_table(ctrl->dev);
+-		dev_pm_opp_put_clkname(ctrl->opp_table);
+-		ctrl->opp_table = NULL;
+-	}
+-}
+diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.h b/drivers/gpu/drm/msm/dp/dp_ctrl.h
+index a836bd358447..a6f6fa2c2aef 100644
+--- a/drivers/gpu/drm/msm/dp/dp_ctrl.h
++++ b/drivers/gpu/drm/msm/dp/dp_ctrl.h
+@@ -31,6 +31,5 @@ struct dp_ctrl *dp_ctrl_get(struct device *dev, struct dp_link *link,
+ 			struct dp_panel *panel,	struct drm_dp_aux *aux,
+ 			struct dp_power *power, struct dp_catalog *catalog,
+ 			struct dp_parser *parser);
+-void dp_ctrl_put(struct dp_ctrl *dp_ctrl);
+ 
+ #endif /* _DP_CTRL_H_ */
+diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+index 5a39da6e1eaf..6dde09c0c52e 100644
+--- a/drivers/gpu/drm/msm/dp/dp_display.c
++++ b/drivers/gpu/drm/msm/dp/dp_display.c
+@@ -720,7 +720,6 @@ static int dp_irq_hpd_handle(struct dp_display_private *dp, u32 data)
+ static void dp_display_deinit_sub_modules(struct dp_display_private *dp)
+ {
+ 	dp_debug_put(dp->debug);
+-	dp_ctrl_put(dp->ctrl);
+ 	dp_panel_put(dp->panel);
+ 	dp_aux_put(dp->aux);
+ 	dp_audio_put(dp->audio);
+@@ -814,13 +813,11 @@ static int dp_init_sub_modules(struct dp_display_private *dp)
+ 		rc = PTR_ERR(dp->audio);
+ 		pr_err("failed to initialize audio, rc = %d\n", rc);
+ 		dp->audio = NULL;
+-		goto error_audio;
++		goto error_ctrl;
+ 	}
+ 
+ 	return rc;
+ 
+-error_audio:
+-	dp_ctrl_put(dp->ctrl);
+ error_ctrl:
+ 	dp_panel_put(dp->panel);
+ error_link:
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+index ab281cba0f08..6bfc4baddde3 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_host.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+@@ -113,8 +113,6 @@ struct msm_dsi_host {
+ 	struct clk *pixel_clk_src;
+ 	struct clk *byte_intf_clk;
+ 
+-	struct opp_table *opp_table;
+-
+ 	u32 byte_clk_rate;
+ 	u32 pixel_clk_rate;
+ 	u32 esc_clk_rate;
+@@ -1822,6 +1820,7 @@ int msm_dsi_host_init(struct msm_dsi *msm_dsi)
+ {
+ 	struct msm_dsi_host *msm_host = NULL;
+ 	struct platform_device *pdev = msm_dsi->pdev;
++	struct opp_table *opp_table;
+ 	int ret;
+ 
+ 	msm_host = devm_kzalloc(&pdev->dev, sizeof(*msm_host), GFP_KERNEL);
+@@ -1886,14 +1885,13 @@ int msm_dsi_host_init(struct msm_dsi *msm_dsi)
+ 		goto fail;
+ 	}
+ 
+-	msm_host->opp_table = dev_pm_opp_set_clkname(&pdev->dev, "byte");
+-	if (IS_ERR(msm_host->opp_table))
+-		return PTR_ERR(msm_host->opp_table);
++	opp_table = devm_pm_opp_set_clkname(&pdev->dev, "byte");
++	if (IS_ERR(opp_table))
++		return PTR_ERR(opp_table);
+ 	/* OPP table is optional */
+-	ret = dev_pm_opp_of_add_table(&pdev->dev);
++	ret = devm_pm_opp_of_add_table(&pdev->dev);
+ 	if (ret && ret != -ENODEV) {
+ 		dev_err(&pdev->dev, "invalid OPP table in device tree\n");
+-		dev_pm_opp_put_clkname(msm_host->opp_table);
+ 		return ret;
+ 	}
+ 
+@@ -1932,8 +1930,6 @@ void msm_dsi_host_destroy(struct mipi_dsi_host *host)
+ 	mutex_destroy(&msm_host->cmd_mutex);
+ 	mutex_destroy(&msm_host->dev_mutex);
+ 
+-	dev_pm_opp_of_remove_table(&msm_host->pdev->dev);
+-	dev_pm_opp_put_clkname(msm_host->opp_table);
+ 	pm_runtime_disable(&msm_host->pdev->dev);
+ }
+ 
 -- 
 2.29.2
 
