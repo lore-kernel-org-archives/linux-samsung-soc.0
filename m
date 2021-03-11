@@ -2,113 +2,108 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B0AC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Mar 2021 23:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C859DC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Mar 2021 04:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88F6664FCD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Mar 2021 23:12:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85F0364FA7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Mar 2021 04:32:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233767AbhCJXMG (ORCPT
+        id S230478AbhCKEbg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 10 Mar 2021 18:12:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60046 "EHLO
+        Wed, 10 Mar 2021 23:31:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231919AbhCJXLf (ORCPT
+        with ESMTP id S230231AbhCKEbM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 10 Mar 2021 18:11:35 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ABF9C061760
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Mar 2021 15:11:34 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id c19so19546163ljn.12
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Mar 2021 15:11:34 -0800 (PST)
+        Wed, 10 Mar 2021 23:31:12 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB3E1C061574;
+        Wed, 10 Mar 2021 20:31:12 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id kr3-20020a17090b4903b02900c096fc01deso8710994pjb.4;
+        Wed, 10 Mar 2021 20:31:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fsUvZGKYC5fgx4oei9Q5/ic2uEIxVNyjDNMh2AgyO6I=;
-        b=YFJ7SMDaL74sPgY4t2M2TveLoai2GpxFH7T+w02cY0yAPfz4d7STzMXwN2LMQ2iEoZ
-         AC3wFDsX/B+jYJXVNzs+y4D9tGf/wEA3njzRA4m7PPgqfVi486jFs5jC4rjhpItvLjMl
-         feX0SL4sSjFQxxMpaHtUG3m/yP5ZsWGY2bHZ1JzjeRWLuH3LgTM/weeATOW14t4za+lM
-         0oejehpKlmlwaemoSaXKHgvkv/wgRR/MCed4z76h2TRaPLDfBO1rpazJRuqEpn9HXUuZ
-         gZsRlyCIDNbKHWfuIFLOxVswPmSPuq2apnjiVRCSHJ7mbVzB2AtDRB2jPCfVazu7Yozu
-         i7/Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mEjDV/O8l5hDdxOQbn3qkabPboaV3CHH0IKXvxVr6bQ=;
+        b=q+n8E4ae/oeU7oMJJFh+ctPIJwKYKPutmyWF2dw16K4RUeCfZxA6VsQdMvsJBBf8FS
+         Tw0ukLPQQJxbYlR0ghOC04QH147x4xbNWl69fi9fibBgo564zzo3pOA1jCLV1fonFHox
+         OkV+COdD/dVxpAWF8E6yAct8YqrDbN+Bz3vVMhu05EtIN025Q0mq2J+LTzTX8dvxzm0z
+         MXeex5Z9b5gB4vF/54B3MpUOjG3ocyua7NvOzxrHi+q27zgGvOCinGubwsT8n3SNdCle
+         GIAtHpVSrccOYo0hHjqUE8AIadKMA7/UP3ruQlcAs7Tg5D32/FogpS4Uy4gEiWS5JJ0m
+         DkBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fsUvZGKYC5fgx4oei9Q5/ic2uEIxVNyjDNMh2AgyO6I=;
-        b=UwdvIQxKpjxUbR/YL4+6g6eeDXhIXmEAWCavjfNrLKPllUzVVIctBmMGLABrlt8Bam
-         CWvq2VINO91H3GGG2N3x1JSidrgPiMWvAuA0WT6ud2qbnMtZQ7z7S0ORTsilsxRyzOF5
-         FY/MPHpDZrWFqzZLbeoux9ucAMXhtqziE9GtIoap/IgDElbv5DUqFi/HXJuf6mnSinIo
-         7MyT8DFEsR5+o6USWyWPO/O6HA8OyMKQ41ULWTIW9o7iPK1TICwqjWIUFLSbHc2HPpIR
-         rElNtRlzFVAidZ1kuBrSJxd1v5ayu7atCaDwsQq75c/wmnhbPWibM2iqGsvnMpS/IcSs
-         hB9Q==
-X-Gm-Message-State: AOAM5302/67dticqFzxEUyH6+FhToyeY4k0ryRtm0fz+eJelu2ZIzo9+
-        730QNasCD5DPH8W87THstTZdzHTAZjQ6fC1ynS7v+g==
-X-Google-Smtp-Source: ABdhPJzmo5G8NylnSmgEyDfdbat9eWDptGx3+8/H3Ywrq5Z5I67GtCUd0mY3fRoJZXOwQZI5bSexUvc4wSg5BOhWX4M=
-X-Received: by 2002:a2e:7001:: with SMTP id l1mr3125411ljc.200.1615417892988;
- Wed, 10 Mar 2021 15:11:32 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mEjDV/O8l5hDdxOQbn3qkabPboaV3CHH0IKXvxVr6bQ=;
+        b=T2H1bF1EN8wZJSum/HTytwQGFldo8RFNdy7T+2zVbOSY+DU4YugY4sJlRppRoq4o0n
+         ONP6aEf/4TxnBiHASi20xp45XiSxl36KUD5rpQSeUHEM+M/dnpWHX0zSfKdxhJ9Vi60M
+         /e85f7LAsBYW/nUHz2ERbMh1gMOIushkF4xZ59tTxtZgehc1T/jskGJeZTCtdpLggiRV
+         6Knz7sBdgual4FYNOrT/U6dIkCLPvSI9z13sQ8EBm9fykJkg1iw648cQBmkqGgVgTo2a
+         DnxzqSC6lVGb9OFJ21SCSqitioqPiOW5/FHKBAJ6Q/6hvGscFqiZLPswb9TWOe04m4ZD
+         BvmQ==
+X-Gm-Message-State: AOAM532nXipdSBdr7RGEfyVnEfVM6P9k/NSWT4m7vnzDgJsk8Zb+77HY
+        5l+EHcBkFTC92l1HVAi3FSY=
+X-Google-Smtp-Source: ABdhPJyKkGBhUvNBvON2p54DRI54gv3FLdFP3S4fEfbnek3untuPtrLF4y8ZWzT5FygwuKLmN4KSkw==
+X-Received: by 2002:a17:902:7407:b029:e4:9b2c:528b with SMTP id g7-20020a1709027407b02900e49b2c528bmr6441234pll.6.1615437072252;
+        Wed, 10 Mar 2021 20:31:12 -0800 (PST)
+Received: from tj.ccdomain.com ([103.220.76.197])
+        by smtp.gmail.com with ESMTPSA id a19sm886923pff.186.2021.03.10.20.31.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Mar 2021 20:31:11 -0800 (PST)
+From:   Yue Hu <zbestahu@gmail.com>
+To:     martin.petersen@oracle.com, krzk@kernel.org, kwmad.kim@samsung.com,
+        alim.akhtar@samsung.com, avri.altman@wdc.com,
+        linux-samsung-soc@vger.kernel.org
+Cc:     linux-scsi@vger.kernel.org, huyue2@yulong.com, zbestahu@163.com,
+        zhangwen@yulong.com
+Subject: [PATCH] scsi: ufs: ufs-exynos: Remove pwr_max from parameters list of exynos_ufs_post_pwr_mode()
+Date:   Thu, 11 Mar 2021 12:28:33 +0800
+Message-Id: <20210311042833.1381-1-zbestahu@gmail.com>
+X-Mailer: git-send-email 2.29.2.windows.3
 MIME-Version: 1.0
-References: <20210304213902.83903-1-marcan@marcan.st> <20210304213902.83903-26-marcan@marcan.st>
-In-Reply-To: <20210304213902.83903-26-marcan@marcan.st>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 11 Mar 2021 00:11:22 +0100
-Message-ID: <CACRpkdZrFfP3nx=eU-hKKVUfxHHX2J2-__6tjV8hTPgX3qtBDA@mail.gmail.com>
-Subject: Re: [RFT PATCH v3 25/27] tty: serial: samsung_tty: Add earlycon
- support for Apple UARTs
-To:     Hector Martin <marcan@marcan.st>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Tony Lindgren <tony@atomide.com>,
-        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
-        Stan Skowronek <stan@corellium.com>,
-        Alexander Graf <graf@amazon.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 4, 2021 at 10:42 PM Hector Martin <marcan@marcan.st> wrote:
+From: Yue Hu <huyue2@yulong.com>
 
-> Earlycon support is identical to S3C2410, but Apple SoCs also need
-> MMIO mapped as nGnRnE. This is handled generically for normal drivers
-> including the normal UART path here, but earlycon uses fixmap and
-> runs before that scaffolding is ready.
->
-> Since this is the only case where we need this fix, it makes more
-> sense to do it here in the UART driver instead of introducing a
-> whole fdt nonposted-mmio resolver just for earlycon/fixmap.
->
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Hector Martin <marcan@marcan.st>
+We don't care pwr_max for post change of power mode.
 
-This is as elegant as it gets!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Yue Hu <huyue2@yulong.com>
+---
+ drivers/scsi/ufs/ufs-exynos.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/scsi/ufs/ufs-exynos.c b/drivers/scsi/ufs/ufs-exynos.c
+index 267943a1..70647ea 100644
+--- a/drivers/scsi/ufs/ufs-exynos.c
++++ b/drivers/scsi/ufs/ufs-exynos.c
+@@ -652,7 +652,6 @@ static int exynos_ufs_pre_pwr_mode(struct ufs_hba *hba,
+ 
+ #define PWR_MODE_STR_LEN	64
+ static int exynos_ufs_post_pwr_mode(struct ufs_hba *hba,
+-				struct ufs_pa_layer_attr *pwr_max,
+ 				struct ufs_pa_layer_attr *pwr_req)
+ {
+ 	struct exynos_ufs *ufs = ufshcd_get_variant(hba);
+@@ -1155,7 +1154,7 @@ static int exynos_ufs_pwr_change_notify(struct ufs_hba *hba,
+ 					      dev_req_params);
+ 		break;
+ 	case POST_CHANGE:
+-		ret = exynos_ufs_post_pwr_mode(hba, NULL, dev_req_params);
++		ret = exynos_ufs_post_pwr_mode(hba, dev_req_params);
+ 		break;
+ 	}
+ 
+-- 
+1.9.1
+
