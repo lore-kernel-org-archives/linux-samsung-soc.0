@@ -2,118 +2,125 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5DDC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Mar 2021 12:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C38C4332B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Mar 2021 13:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E94364FFE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Mar 2021 12:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7BFA65005
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Mar 2021 13:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229505AbhCLMLD (ORCPT
+        id S231232AbhCLNRf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 12 Mar 2021 07:11:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57344 "EHLO
+        Fri, 12 Mar 2021 08:17:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230064AbhCLMKh (ORCPT
+        with ESMTP id S230302AbhCLNRY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 12 Mar 2021 07:10:37 -0500
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ABACC061574;
-        Fri, 12 Mar 2021 04:10:37 -0800 (PST)
-Received: by mail-qk1-x72d.google.com with SMTP id x10so23941540qkm.8;
-        Fri, 12 Mar 2021 04:10:37 -0800 (PST)
+        Fri, 12 Mar 2021 08:17:24 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD956C061574;
+        Fri, 12 Mar 2021 05:17:23 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id u4so45734764lfs.0;
+        Fri, 12 Mar 2021 05:17:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZoVnp0DkBC7jB2MiPXZW3s9oPZeAX8j9xE9dtxYukcY=;
-        b=V/USh5P8hlz71luyJffL4QRDlR3TU5yZO3+csN4iFScvbrvoUDCzg676xEUIc9OjwY
-         G4islVP0N38OenyXfuqi80C3J2Bh/dY6ukbZx0741Zg1Psc5JC6vN0tCgfIMPXiXjKSg
-         1K4+GPWlFyCqFKgOXE62PNfqLjw7bYnvTgLTUS5Wb1kHnUDeryXxKGD4AflnsT9O1zqN
-         eT15sVXe8ZBfb73hX2jVZ3nZYa5HQlbpsV/rYsg5GTJ1O+WHKWeJVaoCJ5mAEy3oCQml
-         PEAEDxrEXjMcp8JGz5bML2ME6ZntrQOvgGfnYpNDadTH1CjMmdJUmjSDv72vNP4uMH9v
-         Mw+Q==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kKylRMS171DSUAUGLyXWsq2Tz6pdoiZRigFrFZwqxVY=;
+        b=eUHZSSaI5vPFgCHKI71eDK0ms124Rbgs1AggoS8af2xSFxsDK5SvDdHRqKZcudOXj/
+         P7eWD2DuQ5pSSwttIk03LP1GI7IELva1IQj4teSCKjz3NCQwiCFLuZMBEceMFlJ/Q1xY
+         fAI3aAvftZ2OHaAcIFUk7dDlK2lrsGn1EcjsP+1W8S29zE8n11MaBaYGTkBsM9mRoPay
+         RgR6eXgSRUoKyXx8TzB+ivVIhA/LkIC/9w9Y0n02pjNGA5d2nv8si4OmOFrXBQWnb8s0
+         +cr8J/K96dWe6Y8YAwMIUDn+/X+fQ0+L/LRGlc77yg5sWB3K8cC4YDGz6y4OjHy6cSh0
+         Tv6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ZoVnp0DkBC7jB2MiPXZW3s9oPZeAX8j9xE9dtxYukcY=;
-        b=ot8AWP9JfLdrsi28nwBvJ6gUAMUxPcdtdBK9vuz5Wo2003wriozcFqu9+MLWGtyNUU
-         CztT/s/B4HS6svGn1PoXMyLzdLaTWbvUNLG5o0ZZEot6JK1SwxFslax8OkuzsiIjXtUP
-         m15Ve87/ZVBZhpZKqk8rpOfIepetkipUFis0Y1NR8aqz9auvZgpyLhxfOvPe62NzF0Ky
-         ZgstOhRvXqNszW5tIY+TvRsJBuXPtQsjZKjzh9Jnk9D7nyNz90GPEG3gAUKLaQT4GLHP
-         qSUnxEEsa/Bg4KK9DcQX+k5g83JC6ROtv/1XWhZyGZ5oal+4iSQ8VJ/XxH/aFD2jYzlV
-         5ckw==
-X-Gm-Message-State: AOAM531jR+8OKzlYrDh9HaxQp2p7kRTmvc3l0VM/M8zzCLpf4VZ+zEu+
-        0H3vl7EL9zkqsv42zPU5Wlg=
-X-Google-Smtp-Source: ABdhPJyL8pPZ72zIkZa2rO6toFwR6cVRQAZSI9tOJgrXT6VRTFWiNEApeODostsAsP8XmLac6AC2VA==
-X-Received: by 2002:a05:620a:16ad:: with SMTP id s13mr12232028qkj.68.1615551036578;
-        Fri, 12 Mar 2021 04:10:36 -0800 (PST)
-Received: from localhost.localdomain ([37.19.198.63])
-        by smtp.gmail.com with ESMTPSA id i89sm2227154qtb.95.2021.03.12.04.10.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Mar 2021 04:10:36 -0800 (PST)
-From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
-To:     rjw@rjwysocki.net, viresh.kumar@linaro.org, krzk@kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     rdunlap@infradead.org, Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Subject: [PATCH] cpufreq: Rudimentary typos fix in the file s5pv210-cpufreq.c
-Date:   Fri, 12 Mar 2021 17:38:17 +0530
-Message-Id: <20210312120817.12604-1-unixbhaskar@gmail.com>
-X-Mailer: git-send-email 2.26.2
+        bh=kKylRMS171DSUAUGLyXWsq2Tz6pdoiZRigFrFZwqxVY=;
+        b=YHgox1TxUbIyzP/V39oDzT+cU2hLJEQjq4ye5xytBMQE0BLiEw+ySHecF5rHFjQu5v
+         tqLXoX8dTOgRoSixTGDTpEfNX/sByZGotsXT82EYmDj0BwfDisRi1do0ot5N0i3CnCkl
+         IJQSSAhxdqlN4cZoD0oI2jMtpSEokbtR0VlVcf3uyb1wn5nrL7IGYqihOp2qQs0iUjh+
+         S10Sv2ZF2Psx4Yr2aE/BNxk57HHSRPw5AyDk9WWSI/hpRdfhkzmt0EHxCALxXS0Koad1
+         qzxdyBDnZgpisPHTd1+FDYMuSCFgBg1C6R2HOdBZBalm+BGrxXpjxTe3IsITqjoIaVwS
+         mDkQ==
+X-Gm-Message-State: AOAM53178vLO7o/ryNY5SFFGhQux3LIHZIi4rL0LGSsNEP5V9E99uXrr
+        HW39Oruo262L6JdAkHi7IsUzJ7T8qFM=
+X-Google-Smtp-Source: ABdhPJyyXw4QXGPCVy0ERilhNXqz3whUGsc8C9NeIrl8gS+TKEhNS13UCZoBdLhL/YqNG5x1dPt40w==
+X-Received: by 2002:ac2:5603:: with SMTP id v3mr5617629lfd.67.1615555042189;
+        Fri, 12 Mar 2021 05:17:22 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.googlemail.com with ESMTPSA id k6sm1959405ljb.110.2021.03.12.05.17.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Mar 2021 05:17:21 -0800 (PST)
+Subject: Re: [PATCH v2 05/14] opp: Add devres wrapper for
+ dev_pm_opp_register_notifier
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
+        Sean Paul <sean@poorly.run>, Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20210311192105.14998-1-digetx@gmail.com>
+ <20210311192105.14998-6-digetx@gmail.com>
+ <20210312052659.uih7ikjdnkc5kl4j@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <7c288641-99ad-c938-1e5e-8c1ca19c9ea4@gmail.com>
+Date:   Fri, 12 Mar 2021 16:17:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
+In-Reply-To: <20210312052659.uih7ikjdnkc5kl4j@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+12.03.2021 08:26, Viresh Kumar пишет:
+> On 11-03-21, 22:20, Dmitry Osipenko wrote:
+>> From: Yangtao Li <tiny.windzz@gmail.com>
+>>
+>> Add devres wrapper for dev_pm_opp_register_notifier() to simplify driver
+>> code.
+>>
+>> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/opp/core.c     | 38 ++++++++++++++++++++++++++++++++++++++
+>>  include/linux/pm_opp.h |  6 ++++++
+>>  2 files changed, 44 insertions(+)
+> 
+> As I said in the previous version, I am not sure if we need this patch
+> at all. This has only one user.
+> 
 
-s/untile/until/
-s/souce/source/
-s/divier/divider/
-
-Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
----
- drivers/cpufreq/s5pv210-cpufreq.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index bed496cf8d24..1cfea5339beb 100644
---- a/drivers/cpufreq/s5pv210-cpufreq.c
-+++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -378,7 +378,7 @@ static int s5pv210_target(struct cpufreq_policy *policy, unsigned int index)
- 		/*
- 		 * 6. Turn on APLL
- 		 * 6-1. Set PMS values
--		 * 6-2. Wait untile the PLL is locked
-+		 * 6-2. Wait until the PLL is locked
- 		 */
- 		if (index == L0)
- 			writel_relaxed(APLL_VAL_1000, S5P_APLL_CON);
-@@ -390,7 +390,7 @@ static int s5pv210_target(struct cpufreq_policy *policy, unsigned int index)
- 		} while (!(reg & (0x1 << 29)));
-
- 		/*
--		 * 7. Change souce clock from SCLKMPLL(667Mhz)
-+		 * 7. Change source clock from SCLKMPLL(667Mhz)
- 		 * to SCLKA2M(200Mhz) in MFC_MUX and G3D MUX
- 		 * (667/4=166)->(200/4=50)Mhz
- 		 */
-@@ -439,7 +439,7 @@ static int s5pv210_target(struct cpufreq_policy *policy, unsigned int index)
- 	}
-
- 	/*
--	 * L4 level need to change memory bus speed, hence onedram clock divier
-+	 * L4 level need to change memory bus speed, hence onedram clock divider
- 	 * and memory refresh parameter should be changed
- 	 */
- 	if (bus_speed_changing) {
---
-2.26.2
-
+I'll drop this patch in v3, thanks.
