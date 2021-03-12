@@ -2,128 +2,146 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE44C4332E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Mar 2021 05:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC51CC4332E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Mar 2021 10:21:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C30B464F23
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Mar 2021 05:34:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1DDC64FE2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Mar 2021 10:21:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231708AbhCLFdh (ORCPT
+        id S233338AbhCLKUe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 12 Mar 2021 00:33:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56414 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231726AbhCLFdP (ORCPT
+        Fri, 12 Mar 2021 05:20:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59092 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233158AbhCLKUU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 12 Mar 2021 00:33:15 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42E3FC0613D7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Mar 2021 21:33:15 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id q12so922246plr.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Mar 2021 21:33:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Yn9um0RUV5qS6ZDS+XmJIEF5UruSaGYqcCAn+8nlwK0=;
-        b=AsT0a31K/s61Ur3ZyBxZIWuCMUPx2OBLJZtWxZ9I7oct+ejDM6jX9oK7HtwlYiPt7T
-         dQjLuYCZAG8rAuj79j6RFrwqsCBWIHl1zZxIxaGWyL3wXzAFxfvOrg1KVUKkCisdS34d
-         5unwD/W+yvGr48R+MEJBx6+vSiF9GuC3bTT6PSiuioz6uxAswGWKYpDGRzTepzNoAdRP
-         3zIxwnJJsHmQdX+JNQmt3cWaVTgrPnJuzFDEUWUoCjL87wnD0EeFgsqOudsTwbftnhUq
-         yCyR5d02IREhzNavc0wn85MY5VtSWg6BNEHGcN1VNCOVrtgMOvXZX1TUN4TzPyMcy21z
-         fhqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Yn9um0RUV5qS6ZDS+XmJIEF5UruSaGYqcCAn+8nlwK0=;
-        b=nQ3YQC/6AdyEGB5hV06goms4Hx2P+RF+pSybfAyATHxU97KoV4IUDgZkZzuZYHFdgH
-         tM82BMZftGeF7y59HPKDb7LuwLHl8vGBmYqVVA4FlHL1IcoXT28JGOtNsm2x3lFgsBk9
-         rZUyyWlgkYC2SvGCR7XTm0J8ocbKEh4xxTpvoWnu93GW/OIt0EA73TextSTYqdJs1l/F
-         tsatGr+LV14Qj8Wj9VXDgP+Gk41raYT6Py90nQ7WcZkbj+jjdtmAAGpgak6Ty57UsK+o
-         s/ogerqX1Y3ViviF/MNwitcfY7wFvdilJ4MeM2G5slrZxo6tX1WWxxq/YRJbejD8Kexh
-         ZBsQ==
-X-Gm-Message-State: AOAM531DZZBCNrTaCIi+Od2NxOL/cqOu3ZwOMD7fI2wOEG89zeJSxER6
-        97EY8X54ReFMZ8RKfsMNVf9v9g==
-X-Google-Smtp-Source: ABdhPJyDxvuOHwV2kjRNLGoR8RcX493onMZPdYf0HajVty4Da/2VfFbEKgGgJtSunQpX+xy+QefzoQ==
-X-Received: by 2002:a17:902:e78e:b029:e4:84c1:51ce with SMTP id cp14-20020a170902e78eb02900e484c151cemr11595726plb.25.1615527194476;
-        Thu, 11 Mar 2021 21:33:14 -0800 (PST)
-Received: from localhost ([122.171.124.15])
-        by smtp.gmail.com with ESMTPSA id z2sm4059367pfq.198.2021.03.11.21.33.13
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Mar 2021 21:33:13 -0800 (PST)
-Date:   Fri, 12 Mar 2021 11:03:12 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 01/14] opp: Add devres wrapper for
- dev_pm_opp_set_clkname
-Message-ID: <20210312053312.zgke2mzjkqmwn67i@vireshk-i7>
-References: <20210311192105.14998-1-digetx@gmail.com>
- <20210311192105.14998-2-digetx@gmail.com>
+        Fri, 12 Mar 2021 05:20:20 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 36AA265014;
+        Fri, 12 Mar 2021 10:20:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615544420;
+        bh=Ifsr9yM9IkQPwSwMx+ywHOlUP37f5ulHyfp022mvO2A=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=OeFAX9kP3QepFXQNlgoNBt/rCJK6ttlPb2z66g1Fm9rBpVgFrq/J8kdQjGgUsInD4
+         gufTH3sTe9dQr7Dv3m1+s38h6IxRmnl+E95aqXEnsDLBUvAp6tR8rtqUgKcqpjxqp2
+         /PLNgpAvUkhC6Nro80THrKr0uqEtcFagUQuiAA0MxjNvaSxWM5vILNol9qLy+s28F6
+         J+T1KgsOG6jMO3vUye9dOowxxCxt5qUUjvK/5fFSPtD4TT0Oc8cjHH1n0ypjxeC82d
+         7Bak7Zg5DjTXfZcRczfdSQNNgm2GdpCsxPAV6Z1gx+V3gwNXNzj3L7oBFGUwlhPO3w
+         6fsJIXl0X2yqA==
+Received: by mail-oo1-f43.google.com with SMTP id i25-20020a4aa1190000b02901bbd9429832so1042119ool.0;
+        Fri, 12 Mar 2021 02:20:20 -0800 (PST)
+X-Gm-Message-State: AOAM533k97eGVayFQI6keYBO7LQKA/Fe9Aiu0lnA2lImthZVNwReb6d2
+        edS4zM+Glo2wjHxtQLGRnW6k0jzghbcXCLlQ/9k=
+X-Google-Smtp-Source: ABdhPJyxJbTVd+9o1L3Cm7RfyBDoKQYmHOnVheMTVTvF/CCztalbxCtJGX/FPRh6wEI0bbDfWUx947MungyzyrTvGEI=
+X-Received: by 2002:a4a:e9a2:: with SMTP id t2mr2692533ood.15.1615544419338;
+ Fri, 12 Mar 2021 02:20:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210311192105.14998-2-digetx@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+References: <20210304213902.83903-1-marcan@marcan.st> <20210304213902.83903-13-marcan@marcan.st>
+ <CAL_JsqJF2Hz=4U7FR_GOSjCxqt3dpf-CAWFNfsSrDjDLpHqgCA@mail.gmail.com>
+ <6e4880b3-1fb6-0cbf-c1a5-7a46fd9ccf62@marcan.st> <CAK8P3a0Hmwt-ywzS-2eEmqyQ0v2SxLsLxFwfTUoWwbzCrBNhsQ@mail.gmail.com>
+ <CAL_JsqJHRM59GC3FjvaGLCELemy1uspnGvTEFH6q0OdyBPVSjA@mail.gmail.com>
+ <CAK8P3a0_GBB-VYFO5NaySyBJDN2Ra-WMH4WfFrnzgOejmJVG8g@mail.gmail.com>
+ <20210308211306.GA2920998@robh.at.kernel.org> <CAK8P3a2GfzUevuQNZeQarJ4GNFsuDj0g7oFuN940Hdaw06YJbA@mail.gmail.com>
+ <CAL_JsqK8FagJyQVyG5DAocUjLGZT91b6NzDm_DNMW1hdCz51Xg@mail.gmail.com>
+ <c5693760-3b18-e8f1-18b6-bae42c05d329@marcan.st> <CAL_Jsq+VLLPa98iaTvOkK-tjuBH4qY7FNEGtufYGv7rXAbwegQ@mail.gmail.com>
+ <332c0b9a-dcfd-4c3b-9038-47cbda90eb3f@marcan.st> <CAL_Jsq+X7JPm-xrxmy5bGKSuLO59yk6S=EuXmdMn0FwhpZAD7A@mail.gmail.com>
+ <CAK8P3a2HWbHc-aGHk792TVh6ea2j+aKswYrB6EBsjPA6fH1=xA@mail.gmail.com>
+ <CAL_JsqKYpsXKvcw7xbbYx6z7Cg3P9DxcpLUnOG+m0xeSRO7v_g@mail.gmail.com>
+ <CAK8P3a2iASEZf-YRh2SHYhNdUtpo8sdkuoxfk_MonXpXBk1kbg@mail.gmail.com> <CAL_JsqK200WcxD3PP1FToc5w2dyF3b6TYnf2oNd9Mpz77g68og@mail.gmail.com>
+In-Reply-To: <CAL_JsqK200WcxD3PP1FToc5w2dyF3b6TYnf2oNd9Mpz77g68og@mail.gmail.com>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Fri, 12 Mar 2021 11:20:03 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3-aLCzWnGv0LPb3KPs_cUy6DXrz3QV5x7aNOU2Zi_48g@mail.gmail.com>
+Message-ID: <CAK8P3a3-aLCzWnGv0LPb3KPs_cUy6DXrz3QV5x7aNOU2Zi_48g@mail.gmail.com>
+Subject: Re: [RFT PATCH v3 12/27] of/address: Add infrastructure to declare
+ MMIO as non-posted
+To:     Rob Herring <robh@kernel.org>
+Cc:     Hector Martin <marcan@marcan.st>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <maz@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Tony Lindgren <tony@atomide.com>,
+        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
+        Stan Skowronek <stan@corellium.com>,
+        Alexander Graf <graf@amazon.com>,
+        Will Deacon <will@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        DTML <devicetree@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11-03-21, 22:20, Dmitry Osipenko wrote:
-> +struct opp_table *devm_pm_opp_set_clkname(struct device *dev, const char *name)
-> +{
-> +	struct opp_table *opp_table;
-> +	int err;
-> +
-> +	opp_table = dev_pm_opp_set_clkname(dev, name);
-> +	if (IS_ERR(opp_table))
-> +		return opp_table;
-> +
-> +	err = devm_add_action_or_reset(dev, devm_pm_opp_clkname_release, opp_table);
-> +	if (err)
-> +		opp_table = ERR_PTR(err);
-> +
-> +	return opp_table;
-> +}
+On Thu, Mar 11, 2021 at 7:10 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Thu, Mar 11, 2021 at 9:48 AM Arnd Bergmann <arnd@kernel.org> wrote:
+> >
+> > On Thu, Mar 11, 2021 at 5:10 PM Rob Herring <robh@kernel.org> wrote:
+> > > On Thu, Mar 11, 2021 at 2:12 AM Arnd Bergmann <arnd@kernel.org> wrote:
+> > > > On Wed, Mar 10, 2021 at 6:01 PM Rob Herring <robh@kernel.org> wrote:
+> > > > Ok, makes sense.
+> > > >
+> > > > Conceptually, I'd like to then see a check that verifies that the
+> > > > property is only set for nodes whose parent also has it set, since
+> > > > that is how AXI defines it: A bus can wait for the ack from its
+> > > > child node, or it can acknowledge the write to its parent early.
+> > > > However, this breaks down as soon as a bus does the early ack:
+> > > > all its children by definition use posted writes (as seen by the
+> > > > CPU), even if they wait for stores that come from other masters.
+> > > >
+> > > > Does this make sense to you?
+> > >
+> > > BTW, I don't think it's clear in this thread, but the current
+> > > definition proposed for the spec[1] and schema is 'nonposted-mmio' is
+> > > specific to 'simple-bus'. I like this restriction and we can expand
+> > > where 'nonposted-mmio' is allowed later if needed.
+> >
+> > That sounds ok, as long as we can express everything for the mac
+> > at the moment. Do we need to explicitly add a description to allow
+> > the property in the root node in addition to simple-bus to be able
+> > to enforce the rule about parent buses also having it?
+>
+> IMO it should not be allowed in the root node. That's a failure to
+> define a bus node.
 
-I wonder if we still need to return opp_table from here, or a simple
-integer is fine.. The callers shouldn't be required to use the OPP
-table directly anymore I believe and so better simplify the return
-part of this and all other routines you are adding here..
+My interpretation would be that the root node defines the first bus
+connected to the CPU(s) themselves, which may already have
+posted writes. If writes on that bus are posted, then no child could
+be non-posted.
 
-If there is a user which needs the opp_table, let it use the regular
-non-devm variant.
+I suppose it depends a bit on the mental model of what the nodes
+refer to. If you say that there cannot be a device with registers
+directly on the root node, but every bus defines its own space,
+then we don't need this, but I think a lot of machines would break
+if you try to enforce the rule that there cannot be devices on
+the root node.
 
--- 
-viresh
+> Also, would that mean your memory has to be non-posted!?
+
+Good question. You could argue that this should not be because you
+don't want to use ioremap_np() flags but instead want this to be
+normal cacheable memory instead of device memory.
+
+On the other hand, you definitely don't want memory stores to be
+posted, as that would break coherency between the CPUs when
+a wmb() no longer has an effect.
+
+       Arnd
