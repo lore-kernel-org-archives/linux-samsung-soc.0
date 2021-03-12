@@ -2,146 +2,110 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD58AC433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Mar 2021 13:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3245EC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Mar 2021 14:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99FB264FB8
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Mar 2021 13:20:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F310264FB9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Mar 2021 14:02:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230447AbhCLNTo (ORCPT
+        id S231294AbhCLOBj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 12 Mar 2021 08:19:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43988 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229959AbhCLNTS (ORCPT
+        Fri, 12 Mar 2021 09:01:39 -0500
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:36416 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230136AbhCLOBW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 12 Mar 2021 08:19:18 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F676C061574;
-        Fri, 12 Mar 2021 05:19:17 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id p21so45635927lfu.11;
-        Fri, 12 Mar 2021 05:19:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eRvXvpISF4IBOtvYHqIw0A7WGfnjimCkRZ9ja9m0ckM=;
-        b=Ut4qFXpcbkXJ22fKP6ZhuibyOgP96LyuXM/q1+jciXezVPuz/jxw6QKj6NuFX+A8sM
-         Z24vGAlcKIxP07ikydnjBeYEye0+2Q7JDXOPU6lIX+XaRsFrKKr3um681kRjPJZrSRUp
-         eq1JM3cs50lT4lyB9Q4dkTEpyA8USDUYlpj5qmZUY4MXfcP95ewRNJy9Nr+9JEy4KOQL
-         o5kGwjT7Ha1fQEK2V8Fgv9whnKvDILXVU/mNw9cisfDHr5RHMcZm1P090BCHyKsItgDK
-         8pK2wrIS0v0jwm1Gfa9g5rcIlLK4s9gS9RXRX3GlZzQf2Hm2p0knhCQeC4spgT4WR+3f
-         cXDg==
+        Fri, 12 Mar 2021 09:01:22 -0500
+Received: by mail-wm1-f52.google.com with SMTP id r15-20020a05600c35cfb029010e639ca09eso15865511wmq.1;
+        Fri, 12 Mar 2021 06:01:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=eRvXvpISF4IBOtvYHqIw0A7WGfnjimCkRZ9ja9m0ckM=;
-        b=kBuIn02rpveGaikYuHrX6s4rnbf1BF+YBsoywZdBicBFvUSlnEarGg/pLTi1huQA0n
-         g2sDyAnWtIj4zkjLndYTfDlIB0ruV0Oo6mZ9sIfr2C921ZmU10n5qfQllKZML0igmH/m
-         xjCaOFrBE8dSXwrFYOSl0m5U33wyzwQjB//diZz6dmIDifrD4Rop2xOLySKip70q0KES
-         iixaZZEYz/drUh67wtHZEXFSzJnSTryYPHcjq334qKw8vQhnkHIzRPoA34vCY1/znu0j
-         qt/DxEkPn1x5yEewYRxjpDVdBNfp1q0zM1/jy0nuy+/+FGFYkznkVVZLFBcE3P57izuD
-         bJSA==
-X-Gm-Message-State: AOAM533nk3N755Ef3jyxp5Lv0oenauyv5yht4fUGyTXJXqIKrHMICFEk
-        +71nJfYj+iHbTVjFoimn5E7nAwVrzTg=
-X-Google-Smtp-Source: ABdhPJyGS6708sF0bdyf6iWMHpkhy9JBsuOZ8wSAehH9LCLLnfAoUBl4FILaQoGRMgX23tFnvBnr5g==
-X-Received: by 2002:a19:a409:: with SMTP id q9mr5244748lfc.654.1615555155774;
-        Fri, 12 Mar 2021 05:19:15 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.googlemail.com with ESMTPSA id x4sm1950915ljj.91.2021.03.12.05.19.14
+        bh=dSgPlkTo0bSewDX1VN5wr7O5veJFSznpHWcEpbI4QKM=;
+        b=H5wckEC1Syf3wGHcBxgHmkYON/e8XPwf3RV3SoH6hNyv0vXkaNxPhlziTGBNZo/rsE
+         xS10zraOqCPt0l9zWgmzMpIKMuDpwC8mjgKqcDtzi2OA8Yh+lM5YvMIq3R1KsxLH77Qd
+         KBYGk5E/3zfWF3FNVzb2xROS4crMGLQT/YxgOM0GAOZlvSJyKqgAgTT33NWcA+HRfpzt
+         PZwHEco577fhBiYJVx66LsdWoE/gKZWHDGc6e6hoqQJRUJhkrWovudBQ7QZOmZ0Dh8e6
+         1WgTriiGHB60yhrdR4rMRAcBmrMRkr1hWOURRD4kJekquLfeMtWC5kr2CnZ/UG+V+KOD
+         WI5A==
+X-Gm-Message-State: AOAM530i9uwwxRopeAg42D9dllDp727QFKyjhlHc+sjY4f+L1THf4gZN
+        fgak9I+oJg+4lN/VHqBLDQY=
+X-Google-Smtp-Source: ABdhPJwiZEetYlMeeisQXsl4kW/wbXmh4k53PtOmwkq0FytsdghJcrC1Stammny/+lC5OhGuLfZizQ==
+X-Received: by 2002:a1c:f406:: with SMTP id z6mr13529356wma.24.1615557679040;
+        Fri, 12 Mar 2021 06:01:19 -0800 (PST)
+Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id l9sm2170676wmq.2.2021.03.12.06.01.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Mar 2021 05:19:15 -0800 (PST)
-Subject: Re: [PATCH v2 01/14] opp: Add devres wrapper for
- dev_pm_opp_set_clkname
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        lima@lists.freedesktop.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20210311192105.14998-1-digetx@gmail.com>
- <20210311192105.14998-2-digetx@gmail.com>
- <20210312053312.zgke2mzjkqmwn67i@vireshk-i7>
- <CAPDyKFqrUCjTfrNqZ4gFfQS6LpoQCevGc-tv4WVOwuGhx5iiBg@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c9cb7a53-ece7-d71d-7ee2-abb959076954@gmail.com>
-Date:   Fri, 12 Mar 2021 16:19:14 +0300
+        Fri, 12 Mar 2021 06:01:17 -0800 (PST)
+Subject: Re: [PATCH] cpufreq: Rudimentary typos fix in the file
+ s5pv210-cpufreq.c
+To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     rdunlap@infradead.org
+References: <20210312120817.12604-1-unixbhaskar@gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Message-ID: <4c0c0738-72c3-7704-500a-28cb1a068aa1@kernel.org>
+Date:   Fri, 12 Mar 2021 15:01:16 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFqrUCjTfrNqZ4gFfQS6LpoQCevGc-tv4WVOwuGhx5iiBg@mail.gmail.com>
+In-Reply-To: <20210312120817.12604-1-unixbhaskar@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-12.03.2021 13:36, Ulf Hansson пишет:
-> On Fri, 12 Mar 2021 at 06:33, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->>
->> On 11-03-21, 22:20, Dmitry Osipenko wrote:
->>> +struct opp_table *devm_pm_opp_set_clkname(struct device *dev, const char *name)
->>> +{
->>> +     struct opp_table *opp_table;
->>> +     int err;
->>> +
->>> +     opp_table = dev_pm_opp_set_clkname(dev, name);
->>> +     if (IS_ERR(opp_table))
->>> +             return opp_table;
->>> +
->>> +     err = devm_add_action_or_reset(dev, devm_pm_opp_clkname_release, opp_table);
->>> +     if (err)
->>> +             opp_table = ERR_PTR(err);
->>> +
->>> +     return opp_table;
->>> +}
->>
->> I wonder if we still need to return opp_table from here, or a simple
->> integer is fine.. The callers shouldn't be required to use the OPP
->> table directly anymore I believe and so better simplify the return
->> part of this and all other routines you are adding here..
+On 12/03/2021 13:08, Bhaskar Chowdhury wrote:
 > 
-> Yes, please. I was thinking along the same lines, when I reviewed the
-> mmc patch (patch9).
+> s/untile/until/
+> s/souce/source/
+> s/divier/divider/
 > 
->>
->> If there is a user which needs the opp_table, let it use the regular
->> non-devm variant.
+> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+> ---
+>  drivers/cpufreq/s5pv210-cpufreq.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+> index bed496cf8d24..1cfea5339beb 100644
+> --- a/drivers/cpufreq/s5pv210-cpufreq.c
+> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
+> @@ -378,7 +378,7 @@ static int s5pv210_target(struct cpufreq_policy *policy, unsigned int index)
+>  		/*
+>  		 * 6. Turn on APLL
+>  		 * 6-1. Set PMS values
+> -		 * 6-2. Wait untile the PLL is locked
+> +		 * 6-2. Wait until the PLL is locked
+>  		 */
+>  		if (index == L0)
+>  			writel_relaxed(APLL_VAL_1000, S5P_APLL_CON);
+> @@ -390,7 +390,7 @@ static int s5pv210_target(struct cpufreq_policy *policy, unsigned int index)
+>  		} while (!(reg & (0x1 << 29)));
+> 
+>  		/*
+> -		 * 7. Change souce clock from SCLKMPLL(667Mhz)
+> +		 * 7. Change source clock from SCLKMPLL(667Mhz)
+>  		 * to SCLKA2M(200Mhz) in MFC_MUX and G3D MUX
+>  		 * (667/4=166)->(200/4=50)Mhz
+>  		 */
+> @@ -439,7 +439,7 @@ static int s5pv210_target(struct cpufreq_policy *policy, unsigned int index)
+>  	}
+> 
+>  	/*
+> -	 * L4 level need to change memory bus speed, hence onedram clock divier
+> +	 * L4 level need to change memory bus speed, hence onedram clock divider
 
-Indeed, that's a very good suggestion! The opp_table isn't needed by the
-devm users, I'll change it in v3, thanks!
+Also grammar fix: need/needs.
+
+Best regards,
+Krzysztof
