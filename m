@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1459C2BB4D
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Mar 2021 16:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E16C2BA1E
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Mar 2021 16:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9EF4F64EC8
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Mar 2021 16:35:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E6F264E25
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Mar 2021 16:35:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234429AbhCNQfL (ORCPT
+        id S234666AbhCNQfl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 14 Mar 2021 12:35:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51972 "EHLO
+        Sun, 14 Mar 2021 12:35:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234033AbhCNQeq (ORCPT
+        with ESMTP id S234064AbhCNQev (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 14 Mar 2021 12:34:46 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE370C061574;
-        Sun, 14 Mar 2021 09:34:45 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id y124-20020a1c32820000b029010c93864955so18824918wmy.5;
-        Sun, 14 Mar 2021 09:34:45 -0700 (PDT)
+        Sun, 14 Mar 2021 12:34:51 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1302DC061762;
+        Sun, 14 Mar 2021 09:34:50 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id e18so4488457wrt.6;
+        Sun, 14 Mar 2021 09:34:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sWkE1WsTkUBL6nZDojhWUmQnQSjSLYp0gyDUfjHX3tw=;
-        b=cSRN2y/tFestNZrESCS+KzkQ57FoXybXRzZLeRHuPVB2i3UPQ3T0LMt8IYTS1MtSw3
-         k7WXzZh1XLATuVEVwbHL7djV2gSVBx++Z5JLAS3gAfGoDt0sYVs8MWg+HYvgYjsyn6T4
-         tI1eoDiYa61+/CCL8pvSFBl/wqpe3xS7UYtoMbT2jJJvGqkbAnTqdbC73psUVGasoTI9
-         OJNkYM0JrO83EBXuM/zzwgNM2RCf2VjL8h4Q+hqyqJWvsnSrADr4kBW0ZGVTdTcrzbgv
-         p00a9xQNc7hrR27z/yJrIEyCSpUsg9iO4FoUiGw7EON9ZgIM2LqG7bsd0oWFd90pRO6P
-         X8xg==
+        bh=gbw+Rc1RCI0Y3s+TLqxAUCfojdebzXyiUkV92Pla9uQ=;
+        b=CHUhQMOY8SZwVo+F0SA+pV7IE73Qkpv8I/oDmA+M+JXPvxhX0I2Lqqalwp5dK5Lt9n
+         gaZfSV1O+Y4fpf85zBne8oRYD6GkwYLbrJ45NWodBwl4AFVr2LMpO+x8yVGyIyuVCNtF
+         +A1v5n4HpGv5RRk7BdZ8RBMYBFXByzBufZgdi1jxHkklbuSg88u0ARfbehoXBd6pcmfB
+         Ush5FdcBnb5tOT92D9Oqq7xLdP9B3iqWHgwTSsKf/FMPHzKAKQ4JVJcjkOmcb/pJeMMO
+         vFujXneJiegHG7hgBx1vGaEWvCOvope9ET/4XbVs0Jn1BZ1j8y94BDwZ16FL3LVFhLGX
+         8sVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sWkE1WsTkUBL6nZDojhWUmQnQSjSLYp0gyDUfjHX3tw=;
-        b=kDs4qFsdMUet7yuSrYl4qDIG4KJlIAmRym3XOdm1O07gxuVOB6UlwXF8jDAD9e1IiG
-         V5hlQkomnx49fJbVVZ/iCdXyEi/KZ+EfpReGxaTxs4dY/AOr38jE2IbI5a634REXob9b
-         dw9kIAkujdcTSL+auuS9flffvteeRIqORqGiy15rl69iOsJ8mMuo/2ot3NxVQBLivseh
-         n9MaPlD8YKna8QWawX0te3bMCe5L6vpnrW4hhSOCIkSJEL12P9uFuLqpnBKfG98PFEMO
-         oDwZWs5ZObzPkQwXS44KTb+PdR+3Ef5CNsy/v6aTrLeaS4I0tl141YbUrzlcm+I7D+Hc
-         GiRA==
-X-Gm-Message-State: AOAM532k1L5hWjrQqwH92P8DUMXoaMJuFlGiiYdSzyTyskBjxiZK6OKZ
-        fctm5k3Gv8wBclVaphf0UdY=
-X-Google-Smtp-Source: ABdhPJzytN+oHophUDTCGClKZO9DIbz4gbFiuvi8oNRIXU4bqMoNeMMCp+cq4eL36pRbJLjGGBYMcg==
-X-Received: by 2002:a1c:7715:: with SMTP id t21mr22166814wmi.132.1615739684501;
-        Sun, 14 Mar 2021 09:34:44 -0700 (PDT)
+        bh=gbw+Rc1RCI0Y3s+TLqxAUCfojdebzXyiUkV92Pla9uQ=;
+        b=k549ymkx7z6yo/W3daxmGYC8yxpXwXVuwshGJlVkLQXRDAN7pqCYzdCnTnNuNkx85C
+         Q6jFHlJjbmAl3ku3fywIt5IB/G5yJZX5xZYyAf4tn5z0IDwgX3BV2xhIN4TEHQVULzDd
+         ncK1z5fLaKWuHBo+IqzDHxwcY9b6+4rxQmDz+ihO1aKJgxDsYHZu8tXW19H+0CNQKlFj
+         JJpHn5gWNO80jd7CanXEgPBUtjZCeR3bF5z5hFQgET1s4kmbQq4bQ+WixAdqW6pElmTl
+         KBDt2aL3Z07OWo+Z9cFhhNlgrH8GJvtGbD17gnJNX8+puWHdy6GzPy8tL1NsMeaCiW22
+         Sdnw==
+X-Gm-Message-State: AOAM532Oi6j9Qgf9jqLvDgUQS3mse82c3/nUjMKlujSyGKP9wqCa2xtI
+        7CRpdOA0p+BfsFkPeNZyVG8=
+X-Google-Smtp-Source: ABdhPJwittQM+2OpIIzVYUjKc3KCiZLlqN1EcIvKXJnc7fVVXF8K+vQIz9r147YJ8DNuoBWWHq/6Bw==
+X-Received: by 2002:a5d:43c5:: with SMTP id v5mr18951856wrr.265.1615739688805;
+        Sun, 14 Mar 2021 09:34:48 -0700 (PDT)
 Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id o7sm15723239wrs.16.2021.03.14.09.34.42
+        by smtp.gmail.com with ESMTPSA id o7sm15723239wrs.16.2021.03.14.09.34.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Mar 2021 09:34:44 -0700 (PDT)
+        Sun, 14 Mar 2021 09:34:48 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
         Sean Paul <sean@poorly.run>, Rob Herring <robh@kernel.org>,
@@ -85,9 +85,9 @@ Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
         linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v3 07/15] serial: qcom_geni_serial: Convert to use resource-managed OPP API
-Date:   Sun, 14 Mar 2021 19:34:00 +0300
-Message-Id: <20210314163408.22292-8-digetx@gmail.com>
+Subject: [PATCH v3 09/15] spi: spi-qcom-qspi: Convert to use resource-managed OPP API
+Date:   Sun, 14 Mar 2021 19:34:02 +0300
+Message-Id: <20210314163408.22292-10-digetx@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210314163408.22292-1-digetx@gmail.com>
 References: <20210314163408.22292-1-digetx@gmail.com>
@@ -102,23 +102,32 @@ From: Yangtao Li <tiny.windzz@gmail.com>
 Use resource-managed OPP API to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Acked-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/tty/serial/qcom_geni_serial.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+ drivers/spi/spi-qcom-qspi.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index 291649f02821..3872bbfac24b 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -1433,14 +1433,14 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
- 	if (of_property_read_bool(pdev->dev.of_node, "cts-rts-swap"))
- 		port->cts_rts_swap = true;
+diff --git a/drivers/spi/spi-qcom-qspi.c b/drivers/spi/spi-qcom-qspi.c
+index 1dbcc410cd35..c334dfec4117 100644
+--- a/drivers/spi/spi-qcom-qspi.c
++++ b/drivers/spi/spi-qcom-qspi.c
+@@ -142,7 +142,6 @@ struct qcom_qspi {
+ 	struct clk_bulk_data *clks;
+ 	struct qspi_xfer xfer;
+ 	struct icc_path *icc_path_cpu_to_qspi;
+-	struct opp_table *opp_table;
+ 	unsigned long last_speed;
+ 	/* Lock to protect data accessed by IRQs */
+ 	spinlock_t lock;
+@@ -530,14 +529,14 @@ static int qcom_qspi_probe(struct platform_device *pdev)
+ 	master->handle_err = qcom_qspi_handle_err;
+ 	master->auto_runtime_pm = true;
  
--	port->se.opp_table = dev_pm_opp_set_clkname(&pdev->dev, "se");
--	if (IS_ERR(port->se.opp_table))
--		return PTR_ERR(port->se.opp_table);
-+	ret = devm_pm_opp_set_clkname(&pdev->dev, "se");
+-	ctrl->opp_table = dev_pm_opp_set_clkname(&pdev->dev, "core");
+-	if (IS_ERR(ctrl->opp_table))
+-		return PTR_ERR(ctrl->opp_table);
++	ret = devm_pm_opp_set_clkname(&pdev->dev, "core");
 +	if (ret)
 +		return ret;
  	/* OPP table is optional */
@@ -126,56 +135,37 @@ index 291649f02821..3872bbfac24b 100644
 +	ret = devm_pm_opp_of_add_table(&pdev->dev);
  	if (ret && ret != -ENODEV) {
  		dev_err(&pdev->dev, "invalid OPP table in device tree\n");
--		goto put_clkname;
+-		goto exit_probe_put_clkname;
 +		return ret;
  	}
  
- 	port->private_data.drv = drv;
-@@ -1450,7 +1450,7 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
+ 	pm_runtime_use_autosuspend(dev);
+@@ -549,10 +548,6 @@ static int qcom_qspi_probe(struct platform_device *pdev)
+ 		return 0;
  
- 	ret = uart_add_one_port(drv, uport);
- 	if (ret)
--		goto err;
-+		return ret;
+ 	pm_runtime_disable(dev);
+-	dev_pm_opp_of_remove_table(&pdev->dev);
+-
+-exit_probe_put_clkname:
+-	dev_pm_opp_put_clkname(ctrl->opp_table);
  
- 	irq_set_status_flags(uport->irq, IRQ_NOAUTOEN);
- 	ret = devm_request_irq(uport->dev, uport->irq, qcom_geni_serial_isr,
-@@ -1458,7 +1458,7 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(uport->dev, "Failed to get IRQ ret %d\n", ret);
- 		uart_remove_one_port(drv, uport);
--		goto err;
-+		return ret;
- 	}
+ 	return ret;
+ }
+@@ -560,14 +555,11 @@ static int qcom_qspi_probe(struct platform_device *pdev)
+ static int qcom_qspi_remove(struct platform_device *pdev)
+ {
+ 	struct spi_master *master = platform_get_drvdata(pdev);
+-	struct qcom_qspi *ctrl = spi_master_get_devdata(master);
  
- 	/*
-@@ -1475,16 +1475,11 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
- 		if (ret) {
- 			device_init_wakeup(&pdev->dev, false);
- 			uart_remove_one_port(drv, uport);
--			goto err;
-+			return ret;
- 		}
- 	}
+ 	/* Unregister _before_ disabling pm_runtime() so we stop transfers */
+ 	spi_unregister_master(master);
+ 
+ 	pm_runtime_disable(&pdev->dev);
+-	dev_pm_opp_of_remove_table(&pdev->dev);
+-	dev_pm_opp_put_clkname(ctrl->opp_table);
  
  	return 0;
--err:
--	dev_pm_opp_of_remove_table(&pdev->dev);
--put_clkname:
--	dev_pm_opp_put_clkname(port->se.opp_table);
--	return ret;
  }
- 
- static int qcom_geni_serial_remove(struct platform_device *pdev)
-@@ -1492,8 +1487,6 @@ static int qcom_geni_serial_remove(struct platform_device *pdev)
- 	struct qcom_geni_serial_port *port = platform_get_drvdata(pdev);
- 	struct uart_driver *drv = port->private_data.drv;
- 
--	dev_pm_opp_of_remove_table(&pdev->dev);
--	dev_pm_opp_put_clkname(port->se.opp_table);
- 	dev_pm_clear_wake_irq(&pdev->dev);
- 	device_init_wakeup(&pdev->dev, false);
- 	uart_remove_one_port(drv, &port->uport);
 -- 
 2.30.2
 
