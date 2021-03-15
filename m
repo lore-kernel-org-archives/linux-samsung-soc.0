@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4EEBC433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 06:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0FAEC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 06:46:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74CB861481
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 06:44:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89F4264E40
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 06:46:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229952AbhCOGoG (ORCPT
+        id S229742AbhCOGpp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 15 Mar 2021 02:44:06 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:14336 "EHLO
+        Mon, 15 Mar 2021 02:45:45 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:14337 "EHLO
         szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbhCOGng (ORCPT
+        with ESMTP id S229607AbhCOGpO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 Mar 2021 02:43:36 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4DzRfH4Pg9z8xlQ;
-        Mon, 15 Mar 2021 14:41:43 +0800 (CST)
-Received: from [127.0.0.1] (10.40.188.144) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.498.0; Mon, 15 Mar 2021
- 14:43:27 +0800
+        Mon, 15 Mar 2021 02:45:14 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4DzRh76trGz8x2B;
+        Mon, 15 Mar 2021 14:43:19 +0800 (CST)
+Received: from [127.0.0.1] (10.40.188.144) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.498.0; Mon, 15 Mar 2021
+ 14:45:02 +0800
 Subject: Re: [PATCH] drm/exynos/decon5433: Clean up GPIO includes
 To:     Inki Dae <inki.dae@samsung.com>, Tian Tao <tiantao6@hisilicon.com>,
         <airlied@linux.ie>, <daniel@ffwll.ch>, <krzk@kernel.org>
@@ -37,8 +37,8 @@ References: <CGME20210303014433epcas1p4fefd6787c74d86d6f11f93318c3833fd@epcas1p4
  <1614654193-40203-1-git-send-email-tiantao6@hisilicon.com>
  <3fb21326-8e4a-51bf-4f7c-7a3215f08803@samsung.com>
 From:   "tiantao (H)" <tiantao6@huawei.com>
-Message-ID: <bb8f7bae-6621-b149-b41e-363b34bd2428@huawei.com>
-Date:   Mon, 15 Mar 2021 14:43:27 +0800
+Message-ID: <1e83f1d7-20c7-0ab3-0d8d-e331e7e5d09c@huawei.com>
+Date:   Mon, 15 Mar 2021 14:45:01 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
@@ -60,8 +60,34 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 >> uses is <linux/gpio/consumer.h> since only gpio_desc structs are ever
 >> referenced.
 > This driver doesn't reference even linux/gpio/consumer.h so could you drop only of_gpio.h inclusion?
-Thanks for helping to review patch, If you can give me review-by, I can 
-help push to drm-misc.
+
+Thanks for helping to review patch,I've posted a new patch to fix this 
+problem  If you can give me review-by, I can help push to drm-misc.
+
+Subject: [PATCH] drm/exynos/decon5433: Remove the unused include statements
+
+This driver doesn't reference of_gpio.h, so drop it.
+
+Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
+---
+  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 1 -
+  1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c 
+b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 1f79bc2..1510e4e 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -13,7 +13,6 @@
+  #include <linux/irq.h>
+  #include <linux/mfd/syscon.h>
+  #include <linux/of_device.h>
+-#include <linux/of_gpio.h>
+  #include <linux/platform_device.h>
+  #include <linux/pm_runtime.h>
+  #include <linux/regmap.h>
+
+>
 > Thanks,
 > Inki Dae
 >
