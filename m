@@ -2,62 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5361C433E9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 04:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B250BC4332E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 04:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 850F764E4A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 04:04:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 937BE64E67
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 04:07:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229672AbhCOEDg (ORCPT
+        id S229851AbhCOEGz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 15 Mar 2021 00:03:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57514 "EHLO
+        Mon, 15 Mar 2021 00:06:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbhCOEDb (ORCPT
+        with ESMTP id S229672AbhCOEGp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 Mar 2021 00:03:31 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1DB7C061574
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Mar 2021 21:03:30 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id bt4so8060876pjb.5
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Mar 2021 21:03:30 -0700 (PDT)
+        Mon, 15 Mar 2021 00:06:45 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44E64C061762
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Mar 2021 21:06:45 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id t37so8891639pga.11
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Mar 2021 21:06:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=c7OJnHCRmwFk8fofgO7P2TCmA9anENj2NKzvbROCVrw=;
-        b=hqFTPqznnNTRx313WjH/Y3rQxyT1qRk2tsjcNVxk6Hrjol4OfsLVJAACk5S5GCeBIN
-         DUPZ/2/BGxScEjnruZkDvsVu7pnsFXZ7N4zstn9qEl8Fgh/HQaGB5JV/pkl9Br3HoCOi
-         i64U4nBnHPt+1Xi5F2gQwMxITwYJMb1Um+iYOQ6ojSR1WU9DezeWcNfnJiJ8w11ERSEr
-         UChVNzm6vqvXvOO1iZ7xVRBakAg/WIocWyURqM6EHJjAujbHTyE6NgBKuUb+t/F7avLm
-         rWQq2i6tEhG/s1AIiG+/WUpZhYbj36Vuiav5Pq8c+WaDHPXcR8LK3WT+pRJ2r6gMw6bd
-         ep6g==
+        bh=eI7ImkOM7sKEYOwpNZ2uQyL8ht6ELC4KAuDJxGH26WM=;
+        b=TsLroBKaOE0Ndal3uYSavlIbCvocBVruTCmOQbtWNCTqZn34fuCTFqFvPlo8zLD9fM
+         IO6v4CAcDC/jXHA7xn0roPtBnzHafVGRYUD8lfwBtTMxKxCleNiFo9fJ8rFHjAAcLLRG
+         n0IBxgxySYh/5P9qNs36aern3PGV0Kb7uyoKAm7WyekwifeK1ct2o4JPyQ1IQo4HlwZ+
+         40l1RBYIIqEDnveIIc7V/s/pxU7Eti6u2Sl5TecW4wLjWWQTpWhk9UCZrL8vgho1h49/
+         F2BmsDsOvuWGdJf6nM5P+UwNGUZyT5QM3C9s++AMz77q/FQEl28vDvRZAA/JnZ/kvkbJ
+         LAKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c7OJnHCRmwFk8fofgO7P2TCmA9anENj2NKzvbROCVrw=;
-        b=n5mq3UN3XFgpHI/7WZuLVc4SCOaW+96bxJxtdXWRozjP/Xctqt3rFZvX99Y28XlHHp
-         cN0oQh+b6l+mthZXHF/j+ngHMSIPeozacx8xaZoEK7wx+B3G3JaCrLLx0A2rPea7yG+0
-         YukwHdupMnrGtU+sHUkG1YJwMIgEomK7iSwZgE9ygbSVmzhCrRUSWiaKTbQWun5CXHlw
-         F3keVqX6TMbl8YLp0a17J9ev5xSR+PrmT4CAqlHcFee3eCfhTk8XDODoa3+1s3+6aeOT
-         49gnF1YGKyhY77veHW9Xg+2mwpIYEg7z5vtmiD8bNi1ouHrXF7YuzU+CSVVpQHM+qEYh
-         5SnA==
-X-Gm-Message-State: AOAM533JRXRMzP1Bao57xvcXFAFxWY4+jPst9qFZejvSW1bX7E0syuWj
-        75uIDnBaL6KANUKCoiTQq9xilQ==
-X-Google-Smtp-Source: ABdhPJxRDau7gIDAmMsnWR7FCOk4vgRj39P8KqGrKbOykRijnyhWvAXlMXcpaXxZjPuzVl/GOTJ9CQ==
-X-Received: by 2002:a17:902:7889:b029:e6:b9c3:bc0d with SMTP id q9-20020a1709027889b02900e6b9c3bc0dmr5992pll.23.1615781010271;
-        Sun, 14 Mar 2021 21:03:30 -0700 (PDT)
+        bh=eI7ImkOM7sKEYOwpNZ2uQyL8ht6ELC4KAuDJxGH26WM=;
+        b=mOBJNCwfZjNJb61OPAlv6S11GueVjPpwzMU/B86XqgeXgh5QKOD1C+XY9x9wFkWA0a
+         TGhb3/Aod6JSO+rYHv6ej23WOvRdDG5I6xwBP4VPaRC5W6XEeSp1h/S1qbB/352r80pK
+         6M5zZIky0C2JrhS2MUzRDztQmwTjf5zM0AS196CtcshwqUX4+1kB7eMUe3+Xx7NshMtG
+         2ZXPx2RFb3lekHH3v3FafHU/QvvOhzagAYBBwv6qmCKJ3/QZM6VLeKwEdlCCorFMoedh
+         3QuQeB6y3UxYHVsiRkjnj6HNNrhWygRoKOUYHu9IKtQMpYmpjjwdpEzNjykF3N4qdPUG
+         PPJw==
+X-Gm-Message-State: AOAM531MoeOgQWxUMWBumsdwlyqntTlra8O9+vKpWpNHsV0q8UkL0791
+        2dsgSzzCIwyp886wOYpDgTxjNg==
+X-Google-Smtp-Source: ABdhPJzvcR9VDnxHyvgDVLMJYlxMP0Ms95A2JMyXTXyYfG5+umOTG/XVCk6roapJ92EyCnrv/2+ArQ==
+X-Received: by 2002:a63:1957:: with SMTP id 23mr3255166pgz.196.1615781204730;
+        Sun, 14 Mar 2021 21:06:44 -0700 (PDT)
 Received: from localhost ([122.171.124.15])
-        by smtp.gmail.com with ESMTPSA id r23sm9182422pje.38.2021.03.14.21.03.28
+        by smtp.gmail.com with ESMTPSA id l20sm12327033pfd.82.2021.03.14.21.06.43
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 14 Mar 2021 21:03:29 -0700 (PDT)
-Date:   Mon, 15 Mar 2021 09:33:27 +0530
+        Sun, 14 Mar 2021 21:06:44 -0700 (PDT)
+Date:   Mon, 15 Mar 2021 09:36:42 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
@@ -86,44 +86,38 @@ Cc:     Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
         linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
         linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 11/15] drm/msm: Convert to use resource-managed OPP API
-Message-ID: <20210315040327.qwn4rt75yqs5datl@vireshk-i7>
+Subject: Re: [PATCH v3 00/15] Introduce devm_pm_opp_* API
+Message-ID: <20210315040642.mw6jz7nalhthbwlr@vireshk-i7>
 References: <20210314163408.22292-1-digetx@gmail.com>
- <20210314163408.22292-12-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210314163408.22292-12-digetx@gmail.com>
+In-Reply-To: <20210314163408.22292-1-digetx@gmail.com>
 User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14-03-21, 19:34, Dmitry Osipenko wrote:
-> From: Yangtao Li <tiny.windzz@gmail.com>
+On 14-03-21, 19:33, Dmitry Osipenko wrote:
+> This series adds resource-managed OPP API helpers and makes drivers
+> to use them.
 > 
-> Use resource-managed OPP API to simplify code.
+> Changelog:
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/gpu/drm/msm/adreno/a5xx_gpu.c   |  2 +-
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c   |  2 +-
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c   | 11 +++------
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.h   |  2 --
->  drivers/gpu/drm/msm/adreno/adreno_gpu.c |  2 +-
->  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c | 23 +++++++------------
->  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h |  2 --
->  drivers/gpu/drm/msm/dp/dp_ctrl.c        | 30 +++++--------------------
->  drivers/gpu/drm/msm/dp/dp_ctrl.h        |  1 -
->  drivers/gpu/drm/msm/dp/dp_display.c     |  5 +----
->  drivers/gpu/drm/msm/dsi/dsi_host.c      | 13 ++++-------
->  11 files changed, 25 insertions(+), 68 deletions(-)
+> v3: - Dropped dev_pm_opp_register_notifier().
+> 
+>     - Changed return type of the devm helpers from opp_table pointer
+>       to errno.
+> 
+>     - Corrected drm/msm patch which missed to remove opp_put_supported_hw()
+>       from a6xx_gpu. Note that the a5xx_gpu driver was missing the
+>       opp_put_supported_hw() at all.
+> 
+>     - Corrected spelling of the ack from Mark Brown.
 
-This patch has some updates in linux-next, which I don't have. Please
-get this merged with the drm tree over 5.13-rc1 later.
+Applied all patches except 11/15.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Thanks.
 
 -- 
 viresh
