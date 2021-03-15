@@ -2,122 +2,155 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B250BC4332E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 04:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F28EC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 06:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 937BE64E67
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 04:07:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A88F64E33
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 06:28:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbhCOEGz (ORCPT
+        id S229607AbhCOG2S (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 15 Mar 2021 00:06:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58220 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbhCOEGp (ORCPT
+        Mon, 15 Mar 2021 02:28:18 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:56450 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229748AbhCOG2B (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 Mar 2021 00:06:45 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44E64C061762
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Mar 2021 21:06:45 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id t37so8891639pga.11
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Mar 2021 21:06:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eI7ImkOM7sKEYOwpNZ2uQyL8ht6ELC4KAuDJxGH26WM=;
-        b=TsLroBKaOE0Ndal3uYSavlIbCvocBVruTCmOQbtWNCTqZn34fuCTFqFvPlo8zLD9fM
-         IO6v4CAcDC/jXHA7xn0roPtBnzHafVGRYUD8lfwBtTMxKxCleNiFo9fJ8rFHjAAcLLRG
-         n0IBxgxySYh/5P9qNs36aern3PGV0Kb7uyoKAm7WyekwifeK1ct2o4JPyQ1IQo4HlwZ+
-         40l1RBYIIqEDnveIIc7V/s/pxU7Eti6u2Sl5TecW4wLjWWQTpWhk9UCZrL8vgho1h49/
-         F2BmsDsOvuWGdJf6nM5P+UwNGUZyT5QM3C9s++AMz77q/FQEl28vDvRZAA/JnZ/kvkbJ
-         LAKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eI7ImkOM7sKEYOwpNZ2uQyL8ht6ELC4KAuDJxGH26WM=;
-        b=mOBJNCwfZjNJb61OPAlv6S11GueVjPpwzMU/B86XqgeXgh5QKOD1C+XY9x9wFkWA0a
-         TGhb3/Aod6JSO+rYHv6ej23WOvRdDG5I6xwBP4VPaRC5W6XEeSp1h/S1qbB/352r80pK
-         6M5zZIky0C2JrhS2MUzRDztQmwTjf5zM0AS196CtcshwqUX4+1kB7eMUe3+Xx7NshMtG
-         2ZXPx2RFb3lekHH3v3FafHU/QvvOhzagAYBBwv6qmCKJ3/QZM6VLeKwEdlCCorFMoedh
-         3QuQeB6y3UxYHVsiRkjnj6HNNrhWygRoKOUYHu9IKtQMpYmpjjwdpEzNjykF3N4qdPUG
-         PPJw==
-X-Gm-Message-State: AOAM531MoeOgQWxUMWBumsdwlyqntTlra8O9+vKpWpNHsV0q8UkL0791
-        2dsgSzzCIwyp886wOYpDgTxjNg==
-X-Google-Smtp-Source: ABdhPJzvcR9VDnxHyvgDVLMJYlxMP0Ms95A2JMyXTXyYfG5+umOTG/XVCk6roapJ92EyCnrv/2+ArQ==
-X-Received: by 2002:a63:1957:: with SMTP id 23mr3255166pgz.196.1615781204730;
-        Sun, 14 Mar 2021 21:06:44 -0700 (PDT)
-Received: from localhost ([122.171.124.15])
-        by smtp.gmail.com with ESMTPSA id l20sm12327033pfd.82.2021.03.14.21.06.43
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 14 Mar 2021 21:06:44 -0700 (PDT)
-Date:   Mon, 15 Mar 2021 09:36:42 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 00/15] Introduce devm_pm_opp_* API
-Message-ID: <20210315040642.mw6jz7nalhthbwlr@vireshk-i7>
-References: <20210314163408.22292-1-digetx@gmail.com>
+        Mon, 15 Mar 2021 02:28:01 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210315062759epoutp02b1e38f1a1dd8290481e923484eadb8ca~scCclX8gX2528425284epoutp02v
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Mar 2021 06:27:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210315062759epoutp02b1e38f1a1dd8290481e923484eadb8ca~scCclX8gX2528425284epoutp02v
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1615789679;
+        bh=ljwtFnDGAhGeIvjmwPJhEq+BYeIDRG8xkcQeTsi0flo=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=cGuLDiuj1u3EqVcSscVhp5FAiBAZsB3tdhY6QehJUZIY1Lokb+b/AN0qu6z496ePQ
+         ZngeNUO6bpF27ThNLp0pmlyGM6gd0WU+LDcikJx9EcQwxir6VENzHXwJdFq2yVoMiV
+         yshJQs2H22eBOVjz/d6O3daLBjvIoUjakPduUKdE=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20210315062759epcas1p3fea5cacc10879f163b1ecd2ea7ce753e~scCcGHLRO2823628236epcas1p3R;
+        Mon, 15 Mar 2021 06:27:59 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4DzRLJ6tZSz4x9Q8; Mon, 15 Mar
+        2021 06:27:52 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B2.A2.09582.F3EFE406; Mon, 15 Mar 2021 15:27:11 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210315062710epcas1p107e8186b2138c671620dabf3abd4aea4~scBvFGPtC0400404004epcas1p1y;
+        Mon, 15 Mar 2021 06:27:10 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210315062710epsmtrp1669c5c8954c1feb813ba1366d2645dbf~scBvETO8-0391803918epsmtrp1g;
+        Mon, 15 Mar 2021 06:27:10 +0000 (GMT)
+X-AuditID: b6c32a37-899ff7000000256e-d5-604efe3fa6bd
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B5.A7.08745.E3EFE406; Mon, 15 Mar 2021 15:27:10 +0900 (KST)
+Received: from [10.113.221.211] (unknown [10.113.221.211]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210315062710epsmtip147767b205d7b4af420928428e985dc26~scBu2Fifa2860828608epsmtip1S;
+        Mon, 15 Mar 2021 06:27:10 +0000 (GMT)
+Subject: Re: [PATCH] drm/exynos/decon5433: Clean up GPIO includes
+To:     Tian Tao <tiantao6@hisilicon.com>, airlied@linux.ie,
+        daniel@ffwll.ch, krzk@kernel.org
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+From:   Inki Dae <inki.dae@samsung.com>
+Message-ID: <3fb21326-8e4a-51bf-4f7c-7a3215f08803@samsung.com>
+Date:   Mon, 15 Mar 2021 15:35:48 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+        Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210314163408.22292-1-digetx@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <1614654193-40203-1-git-send-email-tiantao6@hisilicon.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEJsWRmVeSWpSXmKPExsWy7bCmvq79P78Eg76dwha9504yWfzfNpHZ
+        4srX92wW589vYLfY9Pgaq8WM8/uYLFa/3sfuwO6x99sCFo/Hczeye2xa1cnmsf3bA1aP+93H
+        mTw2L6n3+LxJLoA9KtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJ
+        xSdA1y0zB+geJYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BZYFecWJucWleul5y
+        fq6VoYGBkSlQYUJ2xqMHf9kLPnBUrHm0kLGB8QB7FyMnh4SAicTcKftYuxi5OIQEdjBKvL0M
+        kgBxPjFKbG3fA+V8ZpR4ueIeM0xL2463UIldjBKbZ/cwQTjvGSUa294yglQJCzhKvFv8B2yJ
+        iEC0xKLPr1hBbGaBPImLv56C2WwCqhITV9xnA7F5BewkjpxvB6tnAYqv+PAAzBYViJA43j2Z
+        HaJGUOLkzCcsIDangLvEkzVL2CFmikvcejKfCcKWl2jeOpsZ5CAJgakcEpO+vANaxgHkuEis
+        XWUC8YGwxKvjW6ABICXxsr+NHaK+mVFi4ozTTBBOB6PE3cfXWSCqjCX2L53MBDKIWUBTYv0u
+        fYiwosTO33MZIRbzSbz72gO1i1eio00IokRJ4tjFG4wQtoTEhSUT2SBsD4kZR5rYJjAqzkLy
+        2iwk78xC8s4shMULGFlWMYqlFhTnpqcWGxYYI0f3JkZwYtUy38E47e0HvUOMTByMhxglOJiV
+        RHg/6/gmCPGmJFZWpRblxxeV5qQWH2I0BQb2RGYp0eR8YGrPK4k3NDUyNja2MDE0MzU0VBLn
+        TTJ4EC8kkJ5YkpqdmlqQWgTTx8TBKdXA5K9yQiW/Wj186g/7r3Ncbya///pP/Iv68QM/mp9E
+        9O4WvPzq94RDN5Y+i9ye+9146prT+9N8JI3vfxCdqZAq5lRjtcNXseJXuaxD6bvrb01etGzY
+        Xv5T6q6lXOpxGV+mFfyRE4N2ruvfOmmpGYNHCXNaXGXjhY1XJvq5HZ4RuD/o/jID8Q/Nhh0M
+        r/KWCX28ot8al1e36c6+wi+Nt8U+Vd3VrZTLfiQirVl9L6CAZXLi1N6VPuJVTrr7GSN7bfvz
+        o8TEN3kJ/ko/+txkZ8/VIuO94YtXMu/tqq3PLP+6ISNh91f7XX2HK57Fnrz/QVlAI1UraN75
+        HxcNE58f4Z/Jqvwj+NSpwkn2h95Pf28Xp8RSnJFoqMVcVJwIAGi3VRM1BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPLMWRmVeSWpSXmKPExsWy7bCSnK7dP78Eg7P9eha9504yWfzfNpHZ
+        4srX92wW589vYLfY9Pgaq8WM8/uYLFa/3sfuwO6x99sCFo/Hczeye2xa1cnmsf3bA1aP+93H
+        mTw2L6n3+LxJLoA9issmJTUnsyy1SN8ugSvj0YO/7AUfOCrWPFrI2MB4gL2LkZNDQsBEom3H
+        WyCbi0NIYAejxKV1F4EcDqCEhMSWrRwQprDE4cPFECVvGSXe3p7BCtIrLOAo8W7xH7A5IgLR
+        Ej+7t7CA2MwCeRKTty9ggmiYxShx6P4XJpAEm4CqxMQV99lAbF4BO4kj59vBmlmA4is+PACz
+        RQUiJFruQwzlFRCUODnzCdhQTgF3iSdrlrBDLFCX+DPvEjOELS5x68l8JghbXqJ562zmCYxC
+        s5C0z0LSMgtJyywkLQsYWVYxSqYWFOem5xYbFhjlpZbrFSfmFpfmpesl5+duYgTHkZbWDsY9
+        qz7oHWJk4mA8xCjBwawkwvtZxzdBiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+FrpPxQgLpiSWp
+        2ampBalFMFkmDk6pBia+JZNXBnmfl/RIOneL6YynrNLfN6cn9TOW/H3DoLO7y/BbyfILj43j
+        N3zfqH5+p5zlAqNnN7Zten7F7lLaxbjOYBWfxX/W9K37vz/NL4NRZ/OxnIY3K1ceCfl23WDn
+        YYNnrmW7/qj29mbNi3SZFDWxWmC75us003LzR/cSSnym97tEnL/tzmRzK/YW740ITovl2Qvu
+        aojc+/Jzwirbc14aXrd2y7ocf6Rkl+BUFheZnnfGj8fWccc8oTvqFy/W2Ngtns/pw9iSOknp
+        q4lF5c0/b66ue+vNpTzPv9v7dbf5dafvaZfeyzy239ax5c69pecqjH7dj/u0X+zYyzMOSzmu
+        RzI9qTPe6GHua+BQpXJTiaU4I9FQi7moOBEAd9nFbBIDAAA=
+X-CMS-MailID: 20210315062710epcas1p107e8186b2138c671620dabf3abd4aea4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210303014433epcas1p4fefd6787c74d86d6f11f93318c3833fd
+References: <CGME20210303014433epcas1p4fefd6787c74d86d6f11f93318c3833fd@epcas1p4.samsung.com>
+        <1614654193-40203-1-git-send-email-tiantao6@hisilicon.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14-03-21, 19:33, Dmitry Osipenko wrote:
-> This series adds resource-managed OPP API helpers and makes drivers
-> to use them.
-> 
-> Changelog:
-> 
-> v3: - Dropped dev_pm_opp_register_notifier().
-> 
->     - Changed return type of the devm helpers from opp_table pointer
->       to errno.
-> 
->     - Corrected drm/msm patch which missed to remove opp_put_supported_hw()
->       from a6xx_gpu. Note that the a5xx_gpu driver was missing the
->       opp_put_supported_hw() at all.
-> 
->     - Corrected spelling of the ack from Mark Brown.
+Hi Tian Tao,
 
-Applied all patches except 11/15.
+21. 3. 2. 오후 12:03에 Tian Tao 이(가) 쓴 글:
+> remove the legacy GPIO headers <linux/of_gpio.h> but what it really
+> uses is <linux/gpio/consumer.h> since only gpio_desc structs are ever
+> referenced.
 
-Thanks.
+This driver doesn't reference even linux/gpio/consumer.h so could you drop only of_gpio.h inclusion?
 
--- 
-viresh
+Thanks,
+Inki Dae
+
+> 
+> Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> index 1f79bc2..9fc51a6 100644
+> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> @@ -11,9 +11,9 @@
+>  #include <linux/component.h>
+>  #include <linux/iopoll.h>
+>  #include <linux/irq.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/of_device.h>
+> -#include <linux/of_gpio.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regmap.h>
+> 
