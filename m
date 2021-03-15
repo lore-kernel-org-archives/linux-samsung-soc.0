@@ -7,104 +7,91 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B474EC433E6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 11:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B63C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 12:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7983664E45
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 11:49:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83F0D64EE1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Mar 2021 12:44:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230057AbhCOLtO (ORCPT
+        id S229804AbhCOMns (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 15 Mar 2021 07:49:14 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13606 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229956AbhCOLtC (ORCPT
+        Mon, 15 Mar 2021 08:43:48 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33273 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229793AbhCOMnW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 Mar 2021 07:49:02 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DzZQh055qz17LYr;
-        Mon, 15 Mar 2021 19:47:08 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.498.0; Mon, 15 Mar 2021 19:48:55 +0800
-From:   Tian Tao <tiantao6@hisilicon.com>
-To:     <inki.dae@samsung.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <krzk@kernel.org>
-CC:     <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>
-Subject: [PATCH v2] drm/exynos: move to use request_irq by IRQF_NO_AUTOEN flag
-Date:   Mon, 15 Mar 2021 19:49:37 +0800
-Message-ID: <1615808977-36044-1-git-send-email-tiantao6@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 15 Mar 2021 08:43:22 -0400
+Received: from mail-wr1-f70.google.com ([209.85.221.70])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lLmZ7-0004i4-2w
+        for linux-samsung-soc@vger.kernel.org; Mon, 15 Mar 2021 12:43:21 +0000
+Received: by mail-wr1-f70.google.com with SMTP id m23so10028823wrh.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Mar 2021 05:43:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rxaIjR1J//5PkyRZXm0+xJCkI6bQEZtH1ohc21euivs=;
+        b=PUHC8jqQzehFj7Pz6npkr1iJp/V8BoPGY4ljFRJT8RoswpCRYtY4Nx3eChe8g2DQw7
+         a/DqHwESboXm7y+ueJ3JA+Tzk+++XKv1/GgEhzGHemtgh9GtvzNTBr4uN3tnNjl/RlMV
+         6Juo06Bmp5kkVpr2ddNVwP180pFolnmyZ2R69HtS7211B0X5KjZw3zk1+xLUe/c86xG/
+         PFcFsoBW8ewEu4xKPtcdFRSXdlP6+LFSPc1T18xsmEObUXPzIccRCTvo8KvVhzfx3BQg
+         FRpZtajrog0MFt+Dw5OiNnyvB78JcTH0BY4o6pIv34xoHcVJy7REI0ffPa419ZtmQ5DN
+         aNKg==
+X-Gm-Message-State: AOAM5328S39dHP7tO3USq2slcZEaDscQv2ybFycyrzA1jqniR36hTGnT
+        h2OpvTPbtM/nZ7v30OKp+4a6XlVNoS6fIWnR3ahb8ufoY45D4cb2kLnEIJoHkZ+Y1nWXGV+JE/F
+        zZuK2bsydEV+8uHFT52xCYFuYdc5oCme/fdtvGZ8h1IeD7AV5
+X-Received: by 2002:a05:6000:1546:: with SMTP id 6mr27051361wry.398.1615812200828;
+        Mon, 15 Mar 2021 05:43:20 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx19SoVoAAQrYf7moALON3Fv15zBfY8pJOsEEAAhFpyMpxvBF4bD3zbUHBRa65h38JIQJV97g==
+X-Received: by 2002:a05:6000:1546:: with SMTP id 6mr27051353wry.398.1615812200719;
+        Mon, 15 Mar 2021 05:43:20 -0700 (PDT)
+Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.gmail.com with ESMTPSA id r10sm14410094wmh.45.2021.03.15.05.43.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Mar 2021 05:43:20 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 3/3] arm64: dts: exynos: white-space cleanups
+Date:   Mon, 15 Mar 2021 13:43:13 +0100
+Message-Id: <20210315124313.114842-3-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210315124313.114842-1-krzysztof.kozlowski@canonical.com>
+References: <20210315124313.114842-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.56]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-After this patch cbe16f35bee68 genirq: Add IRQF_NO_AUTOEN for
-request_irq/nmi() is merged. request_irq() after setting
-IRQ_NOAUTOEN as below
+Fixup white-space issue:
 
-irq_set_status_flags(irq, IRQ_NOAUTOEN);
-request_irq(dev, irq...);
-can be replaced by request_irq() with IRQF_NO_AUTOEN flag.
+  WARNING: please, no spaces at the start of a line
 
-v2:
-Fix the problem of using wrong flags
-
-Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 4 ++--
- drivers/gpu/drm/exynos/exynos_drm_dsi.c       | 7 +++----
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 1f79bc2..c277d2f 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -775,8 +775,8 @@ static int decon_conf_irq(struct decon_context *ctx, const char *name,
- 			return irq;
- 		}
- 	}
--	irq_set_status_flags(irq, IRQ_NOAUTOEN);
--	ret = devm_request_irq(ctx->dev, irq, handler, flags, "drm_decon", ctx);
-+	ret = devm_request_irq(ctx->dev, irq, handler,
-+			       flags | IRQF_NO_AUTOEN, "drm_decon", ctx);
- 	if (ret < 0) {
- 		dev_err(ctx->dev, "IRQ %s request failed\n", name);
- 		return ret;
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 83ab6b3..44e402b 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1352,10 +1352,9 @@ static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi,
- 	}
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+index 413cac63a1cb..773d9abe3a44 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+@@ -1002,7 +1002,7 @@ events {
+ 		ppmu_event0_d1_general: ppmu-event0-d1-general {
+ 		       event-name = "ppmu-event0-d1-general";
+ 	       };
+-       };
++	};
+ };
  
- 	te_gpio_irq = gpio_to_irq(dsi->te_gpio);
--	irq_set_status_flags(te_gpio_irq, IRQ_NOAUTOEN);
- 
- 	ret = request_threaded_irq(te_gpio_irq, exynos_dsi_te_irq_handler, NULL,
--					IRQF_TRIGGER_RISING, "TE", dsi);
-+				   IRQF_TRIGGER_RISING | IRQF_NO_AUTOEN, "TE", dsi);
- 	if (ret) {
- 		dev_err(dsi->dev, "request interrupt failed with %d\n", ret);
- 		gpio_free(dsi->te_gpio);
-@@ -1802,9 +1801,9 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 	if (dsi->irq < 0)
- 		return dsi->irq;
- 
--	irq_set_status_flags(dsi->irq, IRQ_NOAUTOEN);
- 	ret = devm_request_threaded_irq(dev, dsi->irq, NULL,
--					exynos_dsi_irq, IRQF_ONESHOT,
-+					exynos_dsi_irq,
-+					IRQF_ONESHOT | IRQF_NO_AUTOEN,
- 					dev_name(dev), dsi);
- 	if (ret) {
- 		dev_err(dev, "failed to request dsi irq\n");
+ &pinctrl_alive {
 -- 
-2.7.4
+2.25.1
 
