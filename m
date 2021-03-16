@@ -2,112 +2,117 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F1AFC433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Mar 2021 13:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6FCC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Mar 2021 13:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E941E6505E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Mar 2021 13:26:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E5F265053
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Mar 2021 13:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234950AbhCPNZ5 (ORCPT
+        id S232817AbhCPN2g (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 16 Mar 2021 09:25:57 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47003 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232098AbhCPNZZ (ORCPT
+        Tue, 16 Mar 2021 09:28:36 -0400
+Received: from mail-ej1-f41.google.com ([209.85.218.41]:40978 "EHLO
+        mail-ej1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232908AbhCPN2W (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 16 Mar 2021 09:25:25 -0400
-Received: from mail-ej1-f70.google.com ([209.85.218.70])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lM9hJ-0001GU-Us
-        for linux-samsung-soc@vger.kernel.org; Tue, 16 Mar 2021 13:25:21 +0000
-Received: by mail-ej1-f70.google.com with SMTP id v10so13561023ejh.15
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Mar 2021 06:25:21 -0700 (PDT)
+        Tue, 16 Mar 2021 09:28:22 -0400
+Received: by mail-ej1-f41.google.com with SMTP id lr13so72194307ejb.8;
+        Tue, 16 Mar 2021 06:28:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=83ZIZm2jxLoXrgqf2w4Pq9GXA0XBAVNJX5oJ88+rGxI=;
-        b=UddezZxlEQewO980f/3Q68TR4RhHhXCyBeXA0UIemasvudFXaDiIcH4f0I/qo0JN4S
-         HRhVqtX6BGBbJLaxur+yQeiQ2qhpQDxfZrC+k0+ss0sjMf7oEScjk+q8eyqnTNwgGnVV
-         U1/i65LSqQOhmmDaTVPK+7aWa/W7vJQIxbymlfYaxNhtbCrgTt5Ivxm9kGkzgjiPoK5Z
-         dio4yUhzVwpOEhUFZf0v2rA7Wu4LhsnwrxEwDYEdQvJXul+bKfHq5cv5Suk6crYdDcGh
-         kzALXsK5vRHZZckU7fVoPLQg1VNndKps+OfwrgfJ7VCOiRIQRzdE0PVy9oVI+Fa4vcq/
-         Ypdg==
-X-Gm-Message-State: AOAM532DMjsB4Z62eyYozCBRHIedULpJVxgN4PpWTm2jtCSOK+TjIKBy
-        kkCgSUv7lSAdta+EOGCmARWOMQRfOYdbOmun1uoNeXNRB7/9OeC2wecwSwpHx1RaOCe94RV7SJj
-        NwlGuWU2F4lSIQZCXpu+whjQ0kXct+Ub7Wd1xDpw7sbF+vffr
-X-Received: by 2002:a17:906:4705:: with SMTP id y5mr29994534ejq.119.1615901121364;
-        Tue, 16 Mar 2021 06:25:21 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwUVysx7ycFc90Jo/jv+3/QyA7CJAJ1yVRgIm54vcSiVdhofTbTH8E+xznhLUPZrQ6xZzFWwQ==
-X-Received: by 2002:a17:906:4705:: with SMTP id y5mr29994516ejq.119.1615901121183;
-        Tue, 16 Mar 2021 06:25:21 -0700 (PDT)
-Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.gmail.com with ESMTPSA id sb4sm9450217ejb.71.2021.03.16.06.25.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Mar 2021 06:25:20 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        bh=bwzBKawa8QrzF0WVxsZqARsh6y5l0ULdbTOzlAVvjf8=;
+        b=c6FcqB/BMTGnio5EhqINUa6dr81ZOtBHnGTha8ev9PzAm1BCjpA4gE/s9dkhkPMUjE
+         VByO1AV+LKyJhAcmRyxthP5XJTt3J+ObZn7nsIBoq4IrRbCfmdHHaQJ16sMKXf/sfBKp
+         DF2evqBibK0DPylLazoO9Zi8/hECakJ3Ll+Ij86uZ3G0E13tXyqgtRZPsMjdn5JX0GA8
+         KJuwaOpfmHQOZua/wNk59rAFs3ApyoO+RKq2AgZE4GPCrJpi3g8dwE+1UtaGwUFpTMBG
+         TosodGLku0CFvUyFhjiUIqLMlG2WCLGXukcxUjlQBURIEznXvppmpdI1BwuS0r7IWki3
+         02xg==
+X-Gm-Message-State: AOAM533uATYPWa0Nf12jJk/vicK6TKLvAF+0c7TZ2jSTECK3+yuiorVR
+        w0Lm28AmhLVWwUFKE7AHADK6CtWCUu8=
+X-Google-Smtp-Source: ABdhPJzNg7/QZMDxSK8P598pTy7ITIHHfnxE3zgDqUEJxHNVIRtOoSDXPTVAWjgwwKFx39he+ZbJ8A==
+X-Received: by 2002:a17:906:a44f:: with SMTP id cb15mr29191920ejb.420.1615901300059;
+        Tue, 16 Mar 2021 06:28:20 -0700 (PDT)
+Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id r4sm9463218ejd.125.2021.03.16.06.28.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Mar 2021 06:28:19 -0700 (PDT)
+Subject: Re: [RESEND PATCH 01/42] mfd: arizona: use PLATFORM_DEVID_NONE
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andy Shevchenko <andy@kernel.org>, Milo Kim <milo.kim@ti.com>,
+        Tony Lindgren <tony@atomide.com>, Ray Jui <rjui@broadcom.com>,
+        Support Opensource <support.opensource@diasemi.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [RESEND PATCH] mfd: sec: initialize driver via module_platform_driver
-Date:   Tue, 16 Mar 2021 14:25:15 +0100
-Message-Id: <20210316132515.50588-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.25.1
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Chen-Yu Tsai <wens@csie.org>, patches@opensource.cirrus.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+References: <20201028223009.369824-1-krzk@kernel.org>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Message-ID: <fcee4721-1d91-d909-8a03-1c1b0b0ad83b@kernel.org>
+Date:   Tue, 16 Mar 2021 14:28:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201028223009.369824-1-krzk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+On 28/10/2020 23:29, Krzysztof Kozlowski wrote:
+> Use PLATFORM_DEVID_NONE define instead of "-1" value because:
+>  - it brings some meaning,
+>  - it might point attention why auto device ID was not used.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-The driver was using subsys_initcall() because in old times deferred
-probe was not supported everywhere and specific ordering was needed.
-Since probe deferral works fine and specific ordering is discouraged
-(hides dependencies between drivers and couples their boot order), the
-driver can be converted to regular module_platform_driver.
+Hi Lee,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/mfd/sec-core.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+I sent this patchset some time ago, then made a resend. I did not get
+any feedback from you so I just wonder - are you still considering this
+patchset and shall I resend?
 
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 95473ff9bb4b..8d55992da19e 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -549,19 +549,7 @@ static struct i2c_driver sec_pmic_driver = {
- 	.shutdown = sec_pmic_shutdown,
- 	.id_table = sec_pmic_id,
- };
--
--static int __init sec_pmic_init(void)
--{
--	return i2c_add_driver(&sec_pmic_driver);
--}
--
--subsys_initcall(sec_pmic_init);
--
--static void __exit sec_pmic_exit(void)
--{
--	i2c_del_driver(&sec_pmic_driver);
--}
--module_exit(sec_pmic_exit);
-+module_i2c_driver(sec_pmic_driver);
- 
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
- MODULE_DESCRIPTION("Core support for the S5M MFD");
--- 
-2.25.1
+Best regards,
+Krzysztof
 
+> ---
+>  drivers/mfd/arizona-core.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
+> index 000cb82023e3..bf48372db605 100644
+> --- a/drivers/mfd/arizona-core.c
+> +++ b/drivers/mfd/arizona-core.c
+> @@ -1043,8 +1043,9 @@ int arizona_dev_init(struct arizona *arizona)
+>  	case CS47L24:
+>  		break; /* No LDO1 regulator */
+>  	default:
+> -		ret = mfd_add_devices(arizona->dev, -1, early_devs,
+> -				      ARRAY_SIZE(early_devs), NULL, 0, NULL);
+> +		ret = mfd_add_devices(arizona->dev, PLATFORM_DEVID_NONE,
+> +				      early_devs, ARRAY_SIZE(early_devs),
+> +				      NULL, 0, NULL);
+>  		if (ret != 0) {
+>  			dev_err(dev, "Failed to add early children: %d\n", ret);
+>  			return ret;
+> 
