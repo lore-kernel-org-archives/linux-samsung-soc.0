@@ -2,171 +2,115 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0093C433E9
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 Mar 2021 03:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA73C433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 Mar 2021 06:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B79FC64EEC
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 Mar 2021 03:13:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A58A164F70
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 Mar 2021 06:37:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233358AbhCSDMy (ORCPT
+        id S233934AbhCSGhL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 18 Mar 2021 23:12:54 -0400
-Received: from mail-pg1-f173.google.com ([209.85.215.173]:42830 "EHLO
-        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231848AbhCSDMZ (ORCPT
+        Fri, 19 Mar 2021 02:37:11 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:3372 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233970AbhCSGgo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 18 Mar 2021 23:12:25 -0400
-Received: by mail-pg1-f173.google.com with SMTP id y27so2749956pga.9;
-        Thu, 18 Mar 2021 20:12:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QPnNt2Q5gwIGxq8YNJSmsWgPXb6d+RK8/YXCxxPJffM=;
-        b=qGKX9eMYZhJkmsFhWq2fhycavW3iW86NAA/k8IVvsKOGqcgvSrufOdmHMM7Kj19sgZ
-         Tvo3tcxJZ9P5OSb+MebaG18RRqItnSNmR+fUu+Xri9kVt+nvgeBsWLsuHp/o+UXwQxTc
-         AYSBnjM0367Ea08DYpq6YkG0jRaQaa7BHuMY2hMFsfFNgeMOYiVKqXMQLjAcoPUCXpwt
-         7SB6JoSHISdYM/047cJBzKhObZfcJe3TX43+ckVjFpoCwVyazizC0HQ8ZpDR+EAFUhGU
-         nH4j/RGBjAWtZT+E9sTImTbvK4oT2zAx6q68OoqlapKfcATelWSv0qgDMlBONBfB46J7
-         6CrA==
-X-Gm-Message-State: AOAM533kYdw6PJIJ3SRYTRMB7eyyRQ2YI1S3miT4iBsSU+srOjjZIzN+
-        bHKhx0glR60JB4LK8D3C4yOWRwQKMuJFOg==
-X-Google-Smtp-Source: ABdhPJwfFHQEQwnjE1zKW9cAw1O9qK8JUiS4pOAOpm6vvbl1t/JC568LJtBSzb7hPf2kaVpgpisIZw==
-X-Received: by 2002:aa7:96c9:0:b029:200:503d:19df with SMTP id h9-20020aa796c90000b0290200503d19dfmr7208817pfq.46.1616123544961;
-        Thu, 18 Mar 2021 20:12:24 -0700 (PDT)
-Received: from ?IPv6:2601:647:4000:d7:14ae:768b:f663:b4db? ([2601:647:4000:d7:14ae:768b:f663:b4db])
-        by smtp.gmail.com with ESMTPSA id s194sm3752836pfs.57.2021.03.18.20.12.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Mar 2021 20:12:24 -0700 (PDT)
-Subject: Re: [PATCH v12 1/2] scsi: ufs: Enable power management for wlun
-To:     Asutosh Das <asutoshd@codeaurora.org>, cang@codeaurora.org,
-        martin.petersen@oracle.com, adrian.hunter@intel.com,
-        linux-scsi@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Kiwoong Kim <kwmad.kim@samsung.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Dinghao Liu <dinghao.liu@zju.edu.cn>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Satya Tangirala <satyat@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
-        <linux-mediatek@lists.infradead.org>
-References: <cover.1616113283.git.asutoshd@codeaurora.org>
- <56662082b6a17b448f40d87df7e52b45a5998c2a.1616113283.git.asutoshd@codeaurora.org>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <e9dc046d-3a88-9802-df58-60209ea8484f@acm.org>
-Date:   Thu, 18 Mar 2021 20:12:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
-MIME-Version: 1.0
-In-Reply-To: <56662082b6a17b448f40d87df7e52b45a5998c2a.1616113283.git.asutoshd@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+        Fri, 19 Mar 2021 02:36:44 -0400
+Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.57])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4F1vHp3mMXz5db6;
+        Fri, 19 Mar 2021 14:34:14 +0800 (CST)
+Received: from dggemi712-chm.china.huawei.com (10.3.20.111) by
+ DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
+ id 14.3.498.0; Fri, 19 Mar 2021 14:36:39 +0800
+Received: from dggemi761-chm.china.huawei.com (10.1.198.147) by
+ dggemi712-chm.china.huawei.com (10.3.20.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2106.2; Fri, 19 Mar 2021 14:36:39 +0800
+Received: from dggemi761-chm.china.huawei.com ([10.9.49.202]) by
+ dggemi761-chm.china.huawei.com ([10.9.49.202]) with mapi id 15.01.2106.013;
+ Fri, 19 Mar 2021 14:36:39 +0800
+From:   "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Finn Thain <fthain@telegraphics.com.au>
+CC:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hector Martin <marcan@marcan.st>,
+        "Arnd Bergmann" <arnd@kernel.org>
+Subject: RE: [PATCH] tty: serial: samsung_tty: remove spinlock flags in
+ interrupt handlers
+Thread-Topic: [PATCH] tty: serial: samsung_tty: remove spinlock flags in
+ interrupt handlers
+Thread-Index: AQHXGcbz+WrshjNySUOLBee938cMg6qFzJyAgAAKqICABQXQgA==
+Date:   Fri, 19 Mar 2021 06:36:39 +0000
+Message-ID: <4771468d968a44789518bc547acf5f93@hisilicon.com>
+References: <20210315181212.113217-1-krzysztof.kozlowski@canonical.com>
+ <YFB0OcBg3Vj555eA@hovoldconsulting.com>
+ <CAHp75VfcbC63t_eZeBOA0NY28BtGBD0YyLR6nSNuKAnKhXTSzA@mail.gmail.com>
+In-Reply-To: <CAHp75VfcbC63t_eZeBOA0NY28BtGBD0YyLR6nSNuKAnKhXTSzA@mail.gmail.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.126.203.211]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 3/18/21 5:35 PM, Asutosh Das wrote:
-> During runtime-suspend of ufs host, the scsi devices are
-> already suspended and so are the queues associated with them.
-> But the ufs host sends SSU to wlun during its runtime-suspend.
-> During the process blk_queue_enter checks if the queue is not in
-> suspended state. If so, it waits for the queue to resume, and never
-> comes out of it.
-> The commit
-> (d55d15a33: scsi: block: Do not accept any requests while suspended)
-> adds the check if the queue is in suspended state in blk_queue_enter().
-
-What is the role of the WLUN during runtime suspend and why does a
-command need to be sent to the WLUN during runtime suspend? Although it
-is possible to derive this from the source code, please explain this in
-the patch description.
-
-What does the acronym SSU stand for? This doesn't seem like a commonly
-used kernel acronym to me so please expand that acronym.
-
-> Fix this by registering ufs device wlun as a scsi driver and
-> registering it for block runtime-pm. Also make this as a
-> supplier for all other luns. That way, this device wlun
-> suspends after all the consumers and resumes after
-> hba resumes.
-
-That's an interesting solution.
-
-> -void __exit ufs_debugfs_exit(void)
-> +void ufs_debugfs_exit(void)
-
-Is the above change related to the rest of this patch?
-
->  static struct platform_driver ufs_qcom_pltform = {
-> diff --git a/drivers/scsi/ufs/ufs_bsg.c b/drivers/scsi/ufs/ufs_bsg.c
-> index 5b2bc1a..cbb5a90 100644
-> --- a/drivers/scsi/ufs/ufs_bsg.c
-> +++ b/drivers/scsi/ufs/ufs_bsg.c
-> @@ -97,7 +97,7 @@ static int ufs_bsg_request(struct bsg_job *job)
->  
->  	bsg_reply->reply_payload_rcv_len = 0;
->  
-> -	pm_runtime_get_sync(hba->dev);
-> +	scsi_autopm_get_device(hba->sdev_ufs_device);
-
-Can the pm_runtime_get_sync() to scsi_autopm_get_device() changes be
-moved into a separate patch?
-
-> +static inline bool is_rpmb_wlun(struct scsi_device *sdev)
-> +{
-> +	return (sdev->lun == ufshcd_upiu_wlun_to_scsi_wlun(UFS_UPIU_RPMB_WLUN));
-> +}
-
-Has this patch been verified with checkpatch? Checkpatch should have
-reported the following for the above code:
-
-	return is not a function, parentheses are not required
-
-> +static inline bool is_device_wlun(struct scsi_device *sdev)
-> +{
-> +	return (sdev->lun ==
-> +		ufshcd_upiu_wlun_to_scsi_wlun(UFS_UPIU_UFS_DEVICE_WLUN));
-> +}
-
-Same comment here.
-
->  		/*
-> -		 * Don't assume anything of pm_runtime_get_sync(), if
-> +		 * Don't assume anything of resume, if
->  		 * resume fails, irq and clocks can be OFF, and powers
->  		 * can be OFF or in LPM.
->  		 */
-
-Please make better use of the horizontal space in the above comment by
-making comment lines longer.
-
-Thanks,
-
-Bart.
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5keSBTaGV2Y2hlbmtv
+IFttYWlsdG86YW5keS5zaGV2Y2hlbmtvQGdtYWlsLmNvbV0NCj4gU2VudDogVHVlc2RheSwgTWFy
+Y2ggMTYsIDIwMjEgMTA6NDEgUE0NCj4gVG86IEpvaGFuIEhvdm9sZCA8am9oYW5Aa2VybmVsLm9y
+Zz47IEZpbm4gVGhhaW4gPGZ0aGFpbkB0ZWxlZ3JhcGhpY3MuY29tLmF1PjsNCj4gU29uZyBCYW8g
+SHVhIChCYXJyeSBTb25nKSA8c29uZy5iYW8uaHVhQGhpc2lsaWNvbi5jb20+DQo+IENjOiBLcnp5
+c3p0b2YgS296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGNhbm9uaWNhbC5jb20+OyBHcmVn
+DQo+IEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPjsgSmlyaSBTbGFi
+eSA8amlyaXNsYWJ5QGtlcm5lbC5vcmc+Ow0KPiBsaW51eC1hcm0gTWFpbGluZyBMaXN0IDxsaW51
+eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc+OyBMaW51eCBTYW1zdW5nDQo+IFNPQyA8
+bGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3JnPjsgb3BlbiBsaXN0OlNFUklBTCBEUklW
+RVJTDQo+IDxsaW51eC1zZXJpYWxAdmdlci5rZXJuZWwub3JnPjsgTGludXggS2VybmVsIE1haWxp
+bmcgTGlzdA0KPiA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IEhlY3RvciBNYXJ0aW4g
+PG1hcmNhbkBtYXJjYW4uc3Q+OyBBcm5kDQo+IEJlcmdtYW5uIDxhcm5kQGtlcm5lbC5vcmc+DQo+
+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIHR0eTogc2VyaWFsOiBzYW1zdW5nX3R0eTogcmVtb3ZlIHNw
+aW5sb2NrIGZsYWdzIGluDQo+IGludGVycnVwdCBoYW5kbGVycw0KPiANCj4gT24gVHVlLCBNYXIg
+MTYsIDIwMjEgYXQgMTE6MDIgQU0gSm9oYW4gSG92b2xkIDxqb2hhbkBrZXJuZWwub3JnPiB3cm90
+ZToNCj4gPg0KPiA+IE9uIE1vbiwgTWFyIDE1LCAyMDIxIGF0IDA3OjEyOjEyUE0gKzAxMDAsIEty
+enlzenRvZiBLb3psb3dza2kgd3JvdGU6DQo+ID4gPiBTaW5jZSBpbnRlcnJ1cHQgaGFuZGxlciBp
+cyBjYWxsZWQgd2l0aCBkaXNhYmxlZCBsb2NhbCBpbnRlcnJ1cHRzLCB0aGVyZQ0KPiA+ID4gaXMg
+bm8gbmVlZCB0byB1c2UgdGhlIHNwaW5sb2NrIHByaW1pdGl2ZXMgZGlzYWJsaW5nIGludGVycnVw
+dHMgYXMgd2VsbC4NCj4gPg0KPiA+IFRoaXMgaXNuJ3QgZ2VuZXJhbGx5IHRydWUgZHVlIHRvICJ0
+aHJlYWRpcnFzIiBhbmQgdGhhdCBjYW4gbGVhZCB0bw0KPiA+IGRlYWRsb2NrcyBpZiB0aGUgY29u
+c29sZSBjb2RlIGlzIGNhbGxlZCBmcm9tIGhhcmQgaXJxIGNvbnRleHQuDQo+ID4NCj4gPiBOb3cs
+IHRoaXMgaXMgKm5vdCogdGhlIGNhc2UgZm9yIHRoaXMgcGFydGljdWxhciBkcml2ZXIgc2luY2Ug
+aXQgZG9lc24ndA0KPiA+IGV2ZW4gYm90aGVyIHRvIHRha2UgdGhlIHBvcnQgbG9jayBpbiBjb25z
+b2xlX3dyaXRlKCkuIFRoYXQgc2hvdWxkDQo+ID4gcHJvYmFibHkgYmUgZml4ZWQgaW5zdGVhZC4N
+Cj4gPg0KPiA+IFNlZSBodHRwczovL2xvcmUua2VybmVsLm9yZy9yL1g3a3ZpaVJ3dXh2UHhDOE9A
+bG9jYWxob3N0Lg0KPiANCj4gRmlubiwgQmFycnksIHNvbWV0aGluZyB0byBjaGVjayBJIHRoaW5r
+Pw0KDQpNeSB1bmRlcnN0YW5kaW5nIGlzIHRoYXQgc3Bpbl9sb2NrX2lycXNhdmUgY2FuJ3QgcHJv
+dGVjdCB0aGUgY29udGV4dA0KdGhlIGNvbnNvbGVfd3JpdGUoKSBpcyBjYWxsZWQgaW4gaGFyZGly
+cSBmb3IgdGhyZWFkZWRfaXJxIGNhc2UgbWFpbmx5DQpmb3IgcHJlZW1wdC1ydCBzY2VuYXJpb3Mg
+YXMgc3Bpbl9sb2NrX2lycXNhdmUgZG9lc24ndCBkaXNhYmxlIGlycSBpbg0KdGhhdCBjYXNlIGF0
+IGFsbC4NClNlZToNCmh0dHBzOi8vd3d3Lmtlcm5lbC5vcmcvZG9jL2h0bWwvbGF0ZXN0L2xvY2tp
+bmcvbG9ja3R5cGVzLmh0bWwNCnNwaW5sb2NrX3QgYW5kIFBSRUVNUFRfUlQNCk9uIGEgUFJFRU1Q
+VF9SVCBrZXJuZWwgc3BpbmxvY2tfdCBpcyBtYXBwZWQgdG8gYSBzZXBhcmF0ZSBpbXBsZW1lbnRh
+dGlvbg0KYmFzZWQgb24gcnRfbXV0ZXggd2hpY2ggY2hhbmdlcyB0aGUgc2VtYW50aWNzOg0KUHJl
+ZW1wdGlvbiBpcyBub3QgZGlzYWJsZWQuDQpUaGUgaGFyZCBpbnRlcnJ1cHQgcmVsYXRlZCBzdWZm
+aXhlcyBmb3Igc3Bpbl9sb2NrIC8gc3Bpbl91bmxvY2sgb3BlcmF0aW9ucw0KKF9pcnEsIF9pcnFz
+YXZlIC8gX2lycXJlc3RvcmUpIGRvIG5vdCBhZmZlY3QgdGhlIENQVeKAmXMgaW50ZXJydXB0IGRp
+c2FibGVkDQpzdGF0ZS4NCg0KU28gaWYgY29uc29sZV93cml0ZSgpIGNhbiBpbnRlcnJ1cHQgb3Vy
+IGNvZGUgaW4gaGFyZGlycSwgd2Ugc2hvdWxkDQptb3ZlIHRvIHJhd19zcGluX2xvY2tfaXJxc2F2
+ZSBmb3IgdGhpcyBkcml2ZXIuDQoNCkkgdGhpbmsgaXQgaXMgYWxtb3N0IGFsd2F5cyB3cm9uZyB0
+byBjYWxsIHNwaW5fbG9ja19pcnFzYXZlIGluIGhhcmRpcnEuDQoNCj4gDQo+IC0tDQo+IFdpdGgg
+QmVzdCBSZWdhcmRzLA0KPiBBbmR5IFNoZXZjaGVua28NCg0KVGhhbmtzDQpCYXJyeQ0K
