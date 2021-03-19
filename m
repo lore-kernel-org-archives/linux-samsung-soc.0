@@ -2,88 +2,237 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F65C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 Mar 2021 15:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67384C433C1
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 Mar 2021 15:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28EAE6191E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 Mar 2021 15:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40DB66191E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 Mar 2021 15:10:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230406AbhCSPFa (ORCPT
+        id S229941AbhCSPJr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 19 Mar 2021 11:05:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44804 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230224AbhCSPFI (ORCPT
+        Fri, 19 Mar 2021 11:09:47 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:27160 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231196AbhCSPJQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 19 Mar 2021 11:05:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C5FCF6191A;
-        Fri, 19 Mar 2021 15:05:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616166307;
-        bh=Jpyg1aRj2xrunboT1i35yraE5HMpPPlzSno+6EE70Z0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dqdONhO25lJw7lATZ7aW9sLvHqX7cjABakXKej3SxsUYqxOlUnC+xW/oFbCI98da5
-         bbYvkLwykwSb188+8+wkvUuNXkSuMKdtSO0DT0lO8FsQV5iCqNIMeH8HT/xv1J/iWD
-         6f4vOw87EwjhwdQBYDt1AmU3grJUcy8kWJANkUJ6qYsIEBb2rSxrtODn2le1pOBe7/
-         yRUIq5VikeKrn5DkZKDf16vnTeTwOIErz7me/lK9UXm8SAHUz6wPozoo8udQcfFh36
-         2EyMktDT3CobPoajsknVOG9EypTc7HyUyl/BOYST6FcnhO2lhSt6ufO1IaXb44SYR4
-         resbEsRbRk4gw==
-Received: from johan by xi.lan with local (Exim 4.93.0.4)
-        (envelope-from <johan@kernel.org>)
-        id 1lNGgq-0005df-Fi; Fri, 19 Mar 2021 16:05:28 +0100
-Date:   Fri, 19 Mar 2021 16:05:28 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     =?utf-8?B?RGXDoWss?= Imre <imre.deak@gmail.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hector Martin <marcan@marcan.st>,
-        Arnd Bergmann <arnd@kernel.org>
-Subject: Re: [PATCH] tty: serial: samsung_tty: remove spinlock flags in
- interrupt handlers
-Message-ID: <YFS9uBe1v28DL18r@hovoldconsulting.com>
-References: <20210315181212.113217-1-krzysztof.kozlowski@canonical.com>
- <YFB0OcBg3Vj555eA@hovoldconsulting.com>
- <CAHp75VfcbC63t_eZeBOA0NY28BtGBD0YyLR6nSNuKAnKhXTSzA@mail.gmail.com>
- <4771468d968a44789518bc547acf5f93@hisilicon.com>
- <YFRcYCMQrPXUG6ZU@hovoldconsulting.com>
- <CAHp75VfAEj1X9-aOUxFYW52F2FeTxetPHA0KenAjCB49KXbx3A@mail.gmail.com>
+        Fri, 19 Mar 2021 11:09:16 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1616166556; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=er9VP5xtbj1RcZoesk+6RSiuR+svOzZFsLimRNPx0Ig=; b=FDxQ0mcGPKdLOrpGXBykFWUG4/Iy7+S75bPXJEtkuwr/INlLOEVbs8ZC3D/jvw6JyijKTqkc
+ sCnvJbqKhvwKlbHxlNjUqsyHfxazPxqpp5j5MplkkAHIYLMRlNZgsOFkI2JXSKV2EqyBxf44
+ T0qCsOt/XDjMfRSVVOUTRtOMyUA=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyJhY2Q3MCIsICJsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
+ 6054be78c32ceb3a91998f7d (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 19 Mar 2021 15:08:40
+ GMT
+Sender: asutoshd=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 564C2C4346A; Fri, 19 Mar 2021 15:08:40 +0000 (UTC)
+Received: from [192.168.8.168] (cpe-70-95-149-85.san.res.rr.com [70.95.149.85])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: asutoshd)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8A7E5C433C6;
+        Fri, 19 Mar 2021 15:08:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8A7E5C433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=asutoshd@codeaurora.org
+Subject: Re: [PATCH v12 1/2] scsi: ufs: Enable power management for wlun
+To:     Bart Van Assche <bvanassche@acm.org>, cang@codeaurora.org,
+        martin.petersen@oracle.com, adrian.hunter@intel.com,
+        linux-scsi@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Kiwoong Kim <kwmad.kim@samsung.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Satya Tangirala <satyat@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
+        <linux-mediatek@lists.infradead.org>
+References: <cover.1616113283.git.asutoshd@codeaurora.org>
+ <56662082b6a17b448f40d87df7e52b45a5998c2a.1616113283.git.asutoshd@codeaurora.org>
+ <e9dc046d-3a88-9802-df58-60209ea8484f@acm.org>
+From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
+Message-ID: <45101050-83de-6488-7b17-271e0acea87b@codeaurora.org>
+Date:   Fri, 19 Mar 2021 08:08:35 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VfAEj1X9-aOUxFYW52F2FeTxetPHA0KenAjCB49KXbx3A@mail.gmail.com>
+In-Reply-To: <e9dc046d-3a88-9802-df58-60209ea8484f@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 19, 2021 at 12:09:34PM +0200, Andy Shevchenko wrote:
-> On Fri, Mar 19, 2021 at 10:09 AM Johan Hovold <johan@kernel.org> wrote:
-
-> > > I think it is almost always wrong to call spin_lock_irqsave in
-> > > hardirq.
-> >
-> > Again, no. It's even been a requirement due to "threadirqs" in some
-> > cases (e.g. hrtimers) up until now (or rather until the above patch is
-> > in mainline).
+On 3/18/2021 8:12 PM, Bart Van Assche wrote:
+> On 3/18/21 5:35 PM, Asutosh Das wrote:
+>> During runtime-suspend of ufs host, the scsi devices are
+>> already suspended and so are the queues associated with them.
+>> But the ufs host sends SSU to wlun during its runtime-suspend.
+>> During the process blk_queue_enter checks if the queue is not in
+>> suspended state. If so, it waits for the queue to resume, and never
+>> comes out of it.
+>> The commit
+>> (d55d15a33: scsi: block: Do not accept any requests while suspended)
+>> adds the check if the queue is in suspended state in blk_queue_enter().
 > 
-> By the way, a good question Imre (Cc'ed) and I have discussed is the
-> in-kernel documentation, i.e.
-> https://www.kernel.org/doc/html/latest/kernel-hacking/locking.html.
-> Should it be adjusted to reality?
+Hi Bart,
+Thanks for the review comments.
 
-Once forced threading disables interrupts (as it should have all along)
-we don't need to worry about this anymore. But yeah, otherwise it should
-be documented.
+> What is the role of the WLUN during runtime suspend and why does a
+> command need to be sent to the WLUN during runtime suspend? Although it
+> is possible to derive this from the source code, please explain this in
+> the patch description.
+> 
+Ok. Will explain it in the next version.
 
-Johan
+> What does the acronym SSU stand for? This doesn't seem like a commonly
+> used kernel acronym to me so please expand that acronym.
+>
+START STOP UNIT.
+Anyway, I'll expand it in the next version.
+
+>> Fix this by registering ufs device wlun as a scsi driver and
+>> registering it for block runtime-pm. Also make this as a
+>> supplier for all other luns. That way, this device wlun
+>> suspends after all the consumers and resumes after
+>> hba resumes.
+> 
+> That's an interesting solution.
+> 
+>> -void __exit ufs_debugfs_exit(void)
+>> +void ufs_debugfs_exit(void)
+> 
+> Is the above change related to the rest of this patch?
+> 
+Yes, it's used to handle an error in ufshcd_core_init() function.
+
+>>   static struct platform_driver ufs_qcom_pltform = {
+>> diff --git a/drivers/scsi/ufs/ufs_bsg.c b/drivers/scsi/ufs/ufs_bsg.c
+>> index 5b2bc1a..cbb5a90 100644
+>> --- a/drivers/scsi/ufs/ufs_bsg.c
+>> +++ b/drivers/scsi/ufs/ufs_bsg.c
+>> @@ -97,7 +97,7 @@ static int ufs_bsg_request(struct bsg_job *job)
+>>   
+>>   	bsg_reply->reply_payload_rcv_len = 0;
+>>   
+>> -	pm_runtime_get_sync(hba->dev);
+>> +	scsi_autopm_get_device(hba->sdev_ufs_device);
+> 
+> Can the pm_runtime_get_sync() to scsi_autopm_get_device() changes be
+> moved into a separate patch?
+>
+I guess so. But then this patch would have issues when used independently.
+
+>> +static inline bool is_rpmb_wlun(struct scsi_device *sdev)
+>> +{
+>> +	return (sdev->lun == ufshcd_upiu_wlun_to_scsi_wlun(UFS_UPIU_RPMB_WLUN));
+>> +}
+> 
+> Has this patch been verified with checkpatch? Checkpatch should have
+> reported the following for the above code:
+> 
+> 	return is not a function, parentheses are not required
+> 
+Yes, it has been verified. But I didn't see any error reports.
+Below is the o/p of checkpatch:
+
+$ ./scripts/checkpatch.pl /tmp/up/ufs-pm-v12/*
+------------------------------------------
+/tmp/up/ufs-pm-v12/0000-cover-letter.patch
+------------------------------------------
+WARNING: Possible unwrapped commit description (prefer a maximum 75 
+chars per line)
+#107:
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project.
+
+total: 0 errors, 1 warnings, 0 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+/tmp/up/ufs-pm-v12/0000-cover-letter.patch has style problems, please 
+review.
+-----------------------------------------------------------------------
+/tmp/up/ufs-pm-v12/0001-scsi-ufs-Enable-power-management-for-wlun.patch
+-----------------------------------------------------------------------
+total: 0 errors, 0 warnings, 1180 lines checked
+
+/tmp/up/ufs-pm-v12/0001-scsi-ufs-Enable-power-management-for-wlun.patch 
+has no obvious style problems and is ready for submission.
+---------------------------------------------------------------------
+/tmp/up/ufs-pm-v12/0002-ufs-sysfs-Resume-the-proper-scsi-device.patch
+---------------------------------------------------------------------
+total: 0 errors, 0 warnings, 91 lines checked
+
+/tmp/up/ufs-pm-v12/0002-ufs-sysfs-Resume-the-proper-scsi-device.patch 
+has no obvious style problems and is ready for submission.
+
+NOTE: If any of the errors are false positives, please report
+       them to the maintainer, see CHECKPATCH in MAINTAINERS.
+
+
+>> +static inline bool is_device_wlun(struct scsi_device *sdev)
+>> +{
+>> +	return (sdev->lun ==
+>> +		ufshcd_upiu_wlun_to_scsi_wlun(UFS_UPIU_UFS_DEVICE_WLUN));
+>> +}
+> 
+> Same comment here.
+> 
+>>   		/*
+>> -		 * Don't assume anything of pm_runtime_get_sync(), if
+>> +		 * Don't assume anything of resume, if
+>>   		 * resume fails, irq and clocks can be OFF, and powers
+>>   		 * can be OFF or in LPM.
+>>   		 */
+> 
+> Please make better use of the horizontal space in the above comment by
+> making comment lines longer.
+> 
+Ok Sure.
+
+> Thanks,
+> 
+> Bart.
+> 
+
+-asd
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Linux Foundation Collaborative Project
