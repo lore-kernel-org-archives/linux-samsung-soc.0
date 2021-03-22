@@ -2,105 +2,72 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C7FC433C1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 Mar 2021 18:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BEC8C433C1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Mar 2021 11:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8562661981
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 Mar 2021 18:36:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 057C16191A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Mar 2021 11:24:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230049AbhCSSfl (ORCPT
+        id S230012AbhCVLXf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 19 Mar 2021 14:35:41 -0400
-Received: from mail-pl1-f177.google.com ([209.85.214.177]:46852 "EHLO
-        mail-pl1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229990AbhCSSfX (ORCPT
+        Mon, 22 Mar 2021 07:23:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229993AbhCVLXd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 19 Mar 2021 14:35:23 -0400
-Received: by mail-pl1-f177.google.com with SMTP id t20so3360039plr.13;
-        Fri, 19 Mar 2021 11:35:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xQw+L3RNfqCsT579pHnTD6SwVA6plQagWHOVeC6fOqA=;
-        b=qrRj85sHI4RbxPKvJBa+lwy0egeYrg2g2vsT5Ee5bt0+cSIG7+GwfTqK7mRRjxiqAP
-         3wrRWNUEo0mPGaUNIw/v+kXBsTkEeQkF77ALTHljxNb24QZEtMDjR2T89qId4ea67SvJ
-         LPNnJrldmEExOcBO7/J8VvfqEIx+M0jogVkzFD7Ox5I80CJ/kTFLQ/cNNELT/OWPTPYD
-         I7wX9gKLwzr9ceo315gx9LPj2/ulrsxPWvkBQGLCPYMydR0qvkN61AazMK2oJ2P0Nxo9
-         GBrtUc/wVPdkoklCNt2zquHFEj36S3V4oJGCyqvoFPdxBSm1k08mZLi6PQ2UP/5hdVPz
-         2fCQ==
-X-Gm-Message-State: AOAM531mDsI4jRm9jhpHDInoPAsZ9UmeIUqwlrPbchgdCwsn92+el/Xb
-        E6k6pBf5YdzlD813T7m4QZ4=
-X-Google-Smtp-Source: ABdhPJzFo7QHStjFhBxDOIaDuwYNxhKN1zCo26bd0Gn29vucjEp7hfSfrzJVXYZuNWDn7lAuUVKFfQ==
-X-Received: by 2002:a17:90a:c201:: with SMTP id e1mr10961474pjt.30.1616178922687;
-        Fri, 19 Mar 2021 11:35:22 -0700 (PDT)
-Received: from [192.168.51.110] (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
-        by smtp.gmail.com with ESMTPSA id f20sm6380016pfa.10.2021.03.19.11.35.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Mar 2021 11:35:22 -0700 (PDT)
-Subject: Re: [PATCH v12 1/2] scsi: ufs: Enable power management for wlun
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Asutosh Das <asutoshd@codeaurora.org>, cang@codeaurora.org,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Kiwoong Kim <kwmad.kim@samsung.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Dinghao Liu <dinghao.liu@zju.edu.cn>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Satya Tangirala <satyat@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
-        <linux-mediatek@lists.infradead.org>
-References: <cover.1616113283.git.asutoshd@codeaurora.org>
- <56662082b6a17b448f40d87df7e52b45a5998c2a.1616113283.git.asutoshd@codeaurora.org>
- <88730ac9-d9c5-d758-d761-8c549c488aab@intel.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <ed3b5ad6-4396-d861-9bb2-40c05f4a8ece@acm.org>
-Date:   Fri, 19 Mar 2021 11:35:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        Mon, 22 Mar 2021 07:23:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EE59E6191F;
+        Mon, 22 Mar 2021 11:23:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616412213;
+        bh=82zLdo1yFJpr6pZvArjJ8Qc8IXTnk3s3Wc2YLiwo6TM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IUOH6WHkIqZKfFDkBumYj6cU7V0acb3XSc6IEtt6h4BXow+9ZUPXu/EsXU978tTjf
+         YovOuh6Cv37A6fthgk+bLvxNhGQ6lv+Yn/zM8lLJh8rVDHs0q+0Vj0igy7fgJZSR7l
+         OdM54GDLMwIEfO0Q8EsKEm4oeMFDp9E0CWoEDiY8CNKMmP6OsIiTv/SSbjVc5h8p0T
+         C8LoS1MrM1aufoJ4xw3T50vurzkg0AttIJ1SGzhoc+HJTLaLE1R/SqVv9UhFwMSUay
+         N7wNdMvv8pdgCjBIymPfzQ/YqUDFkazZ1IF367JljjEw2vgXOfBNqEHcibX2geov5X
+         Hjo0K/5zeXKtw==
+Received: from johan by xi with local (Exim 4.93.0.4)
+        (envelope-from <johan@kernel.org>)
+        id 1lOIez-0008Or-CG; Mon, 22 Mar 2021 12:23:50 +0100
+Date:   Mon, 22 Mar 2021 12:23:49 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, marcan@marcan.st, arnd@kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] tty: serial: samsung_tty: remove spinlock flags in
+ interrupt handlers
+Message-ID: <YFh+RZGGvBaUJpqq@hovoldconsulting.com>
+References: <20210315181212.113217-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <88730ac9-d9c5-d758-d761-8c549c488aab@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210315181212.113217-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 3/19/21 10:47 AM, Adrian Hunter wrote:
-> It would also be good if you could re-base on linux-next.
+On Mon, Mar 15, 2021 at 07:12:12PM +0100, Krzysztof Kozlowski wrote:
+> Since interrupt handler is called with disabled local interrupts, there
+> is no need to use the spinlock primitives disabling interrupts as well.
+> 
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-Hmm ... my understanding is that patches should be prepared on top of 
-the for-next branch of the maintainer a patch is sent to, in this case 
-the for-next branch of 
-git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git.
+Interrupts are now disabled also with forced interrupt threading even if
+this never was an issue for this driver which currently doesn't take the
+port lock in the console paths.
 
-Thanks,
+Reviewed-by: Johan Hovold <johan@kernel.org>
 
-Bart.
+Johan
