@@ -2,126 +2,79 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7C3C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Mar 2021 09:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B49C433C1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Mar 2021 09:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7829C61A0E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Mar 2021 09:10:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78E9661A23
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Mar 2021 09:31:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229629AbhCYJJk (ORCPT
+        id S229716AbhCYJaj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 25 Mar 2021 05:09:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37810 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229590AbhCYJJM (ORCPT
+        Thu, 25 Mar 2021 05:30:39 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14532 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229626AbhCYJaW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 25 Mar 2021 05:09:12 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B275C06175F
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Mar 2021 02:09:12 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id e33so1119015pgm.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Mar 2021 02:09:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VWsn6esj8imf1uae7i0PYfEIqahCeH1CMSkS7p/mVYk=;
-        b=HIBYhMJ3tP1aKPSwg0gUFOAmtXGabKSCvtt0vxq0cKr4wnvUWwGpH5l0/daMM0gb/q
-         eIwN1cktfuMgY07XYtnR4aTFv6SgzyJlgqyBDscikKf+wOHVSMQVAuIXcbyikkFclA/K
-         MuGM/06m6QL2fjldeVmJVaoJ/1ivyC1rsOIPx9oWGRx1XrxxHELz9ghFbUAAZcItYjAX
-         62xPTBRZVJzPGGYRrt1LTVxDKe/NVKOQ3EyxKwXzDRmp9/8Q35XveLxwWjLE3b4jWTiY
-         TguamkqvVDR4TQ+2YgOyTpHcp1WGhmTN0kndzst7ijFQqpPPyH+K2OR8r/0QkVhkChQD
-         PfFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VWsn6esj8imf1uae7i0PYfEIqahCeH1CMSkS7p/mVYk=;
-        b=q004sqOXS30S9Hz38u1/X1nWMlxVonX3RaGS1N8w9WQPTCeHirq7zFirFQ8VM8aGzD
-         Fywqy7OQClXLG/TcSSTH8KiSwcu8sUhk9X7ZklEynsW+7X76OA7WRH0fGC4/nHjZbwbh
-         07jZMATIg6t/CppdxZa5x2EASmvuDE9VcoyZ9tP9RdLo0ljN0w7gwTXNKxRNcfVEBH/u
-         /CfypazQ9YTUU6LGxAaqN1qZNXFidABbwiVDsepU475hg4knYIEwJSjkvQnEddEkpIS+
-         KkXN+zhbhHJOhMshcl03EaiIWi33n+u8/pEAkYr/Sd46KwjRkHmDhrzowyhT2auuyKVf
-         hf1Q==
-X-Gm-Message-State: AOAM5325C8nmDFviDtET91QFaQUwHm+nPqLOmXAyB99ExmRNgPjvoa+f
-        vpqEErSBQpyeKDobK85YAuomOg==
-X-Google-Smtp-Source: ABdhPJx75YaqoIXZKRzV6JNv+rXXkBOJ5fO88bVSyJdWvRiD9Mrig/3TUZdgxk+pZ1DK2jZHu6G8NA==
-X-Received: by 2002:a63:e44a:: with SMTP id i10mr6546829pgk.404.1616663351651;
-        Thu, 25 Mar 2021 02:09:11 -0700 (PDT)
-Received: from localhost ([122.172.6.13])
-        by smtp.gmail.com with ESMTPSA id s184sm5341831pgb.63.2021.03.25.02.09.10
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Mar 2021 02:09:10 -0700 (PDT)
-Date:   Thu, 25 Mar 2021 14:39:09 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>, Qiang Yu <yuq825@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 14/15] media: venus: Convert to use resource-managed
- OPP API
-Message-ID: <20210325090909.pyzyt3xds2ajvm7i@vireshk-i7>
-References: <20210314163408.22292-1-digetx@gmail.com>
- <20210314163408.22292-15-digetx@gmail.com>
- <b780c19f-7f5d-5453-dec1-062fa7c1dc07@linaro.org>
+        Thu, 25 Mar 2021 05:30:22 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F5fsJ4Xn2zPlJ7;
+        Thu, 25 Mar 2021 17:27:48 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.56) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.498.0; Thu, 25 Mar 2021 17:30:18 +0800
+From:   Tian Tao <tiantao6@hisilicon.com>
+To:     <krzysztof.kozlowski@canonical.com>
+CC:     <linux-i2c@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>
+Subject: [PATCH] i2c: s3c2410: Remove unneeded variable "ret"
+Date:   Thu, 25 Mar 2021 17:30:51 +0800
+Message-ID: <1616664651-26617-1-git-send-email-tiantao6@hisilicon.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b780c19f-7f5d-5453-dec1-062fa7c1dc07@linaro.org>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.56]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 25-03-21, 10:13, Stanimir Varbanov wrote:
-> Hi,
-> 
-> On 3/14/21 6:34 PM, Dmitry Osipenko wrote:
-> > From: Yangtao Li <tiny.windzz@gmail.com>
-> > 
-> > Use resource-managed OPP API to simplify code.
-> > 
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > ---
-> >  drivers/media/platform/qcom/venus/core.h      |  1 -
-> >  .../media/platform/qcom/venus/pm_helpers.c    | 35 +++++--------------
-> >  2 files changed, 8 insertions(+), 28 deletions(-)
-> 
-> 
-> I'll take this through media-tree once OPP API changes are merged.
+Fix the following coccicheck warning:
+drivers/i2c/busses/i2c-s3c2410.c:391:5-8:
+Unneeded variable : returnvar : "ret". Return "0" on line 551
 
-Okay, dropped from my tree.
+Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
+Signed-off-by: Zihao Tang <tangzihao1@hisilicon.com>
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks.
-
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 62a903f..22474e6 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -388,7 +388,6 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
+ {
+ 	unsigned long tmp;
+ 	unsigned char byte;
+-	int ret = 0;
+ 
+ 	switch (i2c->state) {
+ 
+@@ -548,7 +547,7 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
+ 	tmp &= ~S3C2410_IICCON_IRQPEND;
+ 	writel(tmp, i2c->regs + S3C2410_IICCON);
+  out:
+-	return ret;
++	return 0;
+ }
+ 
+ /*
 -- 
-viresh
+2.7.4
+
