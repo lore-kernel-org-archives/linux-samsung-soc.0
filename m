@@ -2,119 +2,145 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2E7C433E3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Mar 2021 14:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BD2C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Mar 2021 21:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B39A561A02
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Mar 2021 14:50:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF33861A41
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Mar 2021 21:34:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231131AbhCYOtb (ORCPT
+        id S230505AbhCYVeA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 25 Mar 2021 10:49:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53440 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230078AbhCYOtO (ORCPT
+        Thu, 25 Mar 2021 17:34:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230497AbhCYVd6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 25 Mar 2021 10:49:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 837F7619F9;
-        Thu, 25 Mar 2021 14:49:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616683753;
-        bh=g2ZlXDmeEeZxEkxEnqAn7onjv8xh5BForWiFk2ex04U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=B7AXfE4jFRrobfpRw2FaAYKC6MvyXtU6obWFBYkN0lGwjbQiFaLragEzkHbZItBws
-         QBand/1dIuqMlS8nHo0I+YXxuG4FUSBqCuL4lSjtB1KNR8ZC5A0dHPTgjp6C4Oj477
-         YGYoQaHRwjTqkyAUy9nju41KQckd840sj7rAx2b0qbeWS73PVSRLi5XxftNFChRgBj
-         A74iOhWJ7Z2hED2cBG6LJSpp0VhA5RVDGFxCz/bh5Feg/yMuNLIKAvIJSpdBVn+DEc
-         g38Q/XF19LYytoglY1yJyqNca2iKkNPAL5ceWnMOmYHNen+O1Ivl6iLodMdhA7We0k
-         rrMK1jKks2Uxg==
-Date:   Thu, 25 Mar 2021 14:49:06 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Hector Martin <marcan@marcan.st>
-Cc:     Arnd Bergmann <arnd@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Tony Lindgren <tony@atomide.com>,
-        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
-        Stan Skowronek <stan@corellium.com>,
-        Alexander Graf <graf@amazon.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        DTML <devicetree@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFT PATCH v3 08/27] asm-generic/io.h: Add a non-posted variant
- of ioremap()
-Message-ID: <20210325144905.GA15109@willie-the-truck>
-References: <20210304213902.83903-1-marcan@marcan.st>
- <20210304213902.83903-9-marcan@marcan.st>
- <20210324181210.GB13181@willie-the-truck>
- <CAK8P3a0913Hs4VfHjdDY1WTAQvMzC83LJcP=9zeE0C-terfBhA@mail.gmail.com>
- <9e510158-551a-3feb-bdba-17e070f12a8e@marcan.st>
+        Thu, 25 Mar 2021 17:33:58 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F310C06175F
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Mar 2021 14:33:57 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id b9so3707685wrt.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Mar 2021 14:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TXHI1OxX+D4iSzKCuoMMss3yjiQz/+KLKVrP99q3G2I=;
+        b=frvH/QuNUnODqvtDdusaUFppblhOygLUWsC1ixB43GNG2Cc+yxM2WFbRWpgjN4Ju8Y
+         95PeIsuDNMn98oqagJ3ef1Nu2yOkiL1vvMi/6inWwQyeTtLH5DD3GrBLCXNufjRYGMCK
+         r/gFSHALeS9GIhicmr/nrrhcB3MijIi/RQZtU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=TXHI1OxX+D4iSzKCuoMMss3yjiQz/+KLKVrP99q3G2I=;
+        b=U+K9KSQRNUAlRpK5/nfvzpAT7+rSgSBr3iALhwtHCs74KjxgqgACYrTCrQqtFUfbC5
+         6SzdYRspKY5hlzTaZvIQX/9uETXsW25U2U8Zta1jTgxBNTxXvZNN7OWdesmIrxTgc7fi
+         YjzVPnMSUKetTh6SGWe8dLcwbFkpwhVPO/lDm1oNrzOvx+BOHoQc+QGjFHQ7/NtB9ZJj
+         10PB2yOo2MrrUtnWDEn6AUNw3leWICb1PzfaN2LFSezRZ9lS3E2rOoPcXQpJppgm7DeD
+         cxrvPTOPmPLjTk9byipcOPSPoChPpYl87fqPPNVxtkoxfvHg4gop1h9AdTxvvds9EPzI
+         zAuQ==
+X-Gm-Message-State: AOAM533RneHAkoAXHgx7z/VqD9oOENsttqAskBrzc4NeCnPXNBlkHdEH
+        gTs+KvmxRH4N+TlIyqPnaiWnGg==
+X-Google-Smtp-Source: ABdhPJwn8UAApYENGs0EsRiOl6kaa4IOv1NsIwYwvHs5ZhbA+T+EIOa3Ak0sCs/YbuNvp+I4gerYDg==
+X-Received: by 2002:adf:e8c9:: with SMTP id k9mr10992298wrn.315.1616708036367;
+        Thu, 25 Mar 2021 14:33:56 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id x13sm1115693wmp.39.2021.03.25.14.33.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Mar 2021 14:33:55 -0700 (PDT)
+Date:   Thu, 25 Mar 2021 22:33:53 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Jason Gunthorpe <jgg@nvidia.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        3pvd@google.com, Jann Horn <jannh@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 3/3] mm: unexport follow_pfn
+Message-ID: <YF0BwfzqpPLuFTw+@phenom.ffwll.local>
+Mail-Followup-To: Jason Gunthorpe <jgg@nvidia.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        3pvd@google.com, Jann Horn <jannh@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>, Peter Xu <peterx@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+References: <20210316153303.3216674-1-daniel.vetter@ffwll.ch>
+ <20210316153303.3216674-4-daniel.vetter@ffwll.ch>
+ <20210324125211.GA2356281@nvidia.com>
+ <YFuQNj10P+uUHD4G@phenom.ffwll.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9e510158-551a-3feb-bdba-17e070f12a8e@marcan.st>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <YFuQNj10P+uUHD4G@phenom.ffwll.local>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 25, 2021 at 11:07:40PM +0900, Hector Martin wrote:
-> On 25/03/2021 04.09, Arnd Bergmann wrote:
-> > On Wed, Mar 24, 2021 at 7:12 PM Will Deacon <will@kernel.org> wrote:
+On Wed, Mar 24, 2021 at 08:17:10PM +0100, Daniel Vetter wrote:
+> On Wed, Mar 24, 2021 at 09:52:11AM -0300, Jason Gunthorpe wrote:
+> > On Tue, Mar 16, 2021 at 04:33:03PM +0100, Daniel Vetter wrote:
+> > > Both kvm (in bd2fae8da794 ("KVM: do not assume PTE is writable after
+> > > follow_pfn")) and vfio (in 07956b6269d3 ("vfio/type1: Use
+> > > follow_pte()")) have lost their callsites of follow_pfn(). All the
+> > > other ones have been switched over to unsafe_follow_pfn because they
+> > > cannot be fixed without breaking userspace api.
 > > > 
-> > > > +/*
-> > > > + * ioremap_np needs an explicit architecture implementation, as it
-> > > > + * requests stronger semantics than regular ioremap(). Portable drivers
-> > > > + * should instead use one of the higher-level abstractions, like
-> > > > + * devm_ioremap_resource(), to choose the correct variant for any given
-> > > > + * device and bus. Portable drivers with a good reason to want non-posted
-> > > > + * write semantics should always provide an ioremap() fallback in case
-> > > > + * ioremap_np() is not available.
-> > > > + */
-> > > > +#ifndef ioremap_np
-> > > > +#define ioremap_np ioremap_np
-> > > > +static inline void __iomem *ioremap_np(phys_addr_t offset, size_t size)
-> > > > +{
-> > > > +     return NULL;
-> > > > +}
-> > > > +#endif
+> > > Argueably the vfio code is still racy, but that's kinda a bigger
+> > > picture. But since it does leak the pte beyond where it drops the pt
+> > > lock, without anything else like an mmu notifier guaranteeing
+> > > coherence, the problem is at least clearly visible in the vfio code.
+> > > So good enough with me.
 > > > 
-> > > Can we implement the generic pci_remap_cfgspace() in terms of ioremap_np()
-> > > if it is supported by the architecture? That way, we could avoid defining
-> > > both on arm64.
+> > > I've decided to keep the explanation that after dropping the pt lock
+> > > you must have an mmu notifier if you keep using the pte somehow by
+> > > adjusting it and moving it into the kerneldoc for the new follow_pte()
+> > > function.
+> > > 
+> > > Cc: 3pvd@google.com
+> > > Cc: Jann Horn <jannh@google.com>
+> > > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > > Cc: Jason Gunthorpe <jgg@nvidia.com>
+> > > Cc: Cornelia Huck <cohuck@redhat.com>
+> > > Cc: Peter Xu <peterx@redhat.com>
+> > > Cc: Alex Williamson <alex.williamson@redhat.com>
+> > > Cc: linux-mm@kvack.org
+> > > Cc: linux-arm-kernel@lists.infradead.org
+> > > Cc: linux-samsung-soc@vger.kernel.org
+> > > Cc: linux-media@vger.kernel.org
+> > > Cc: kvm@vger.kernel.org
+> > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > > ---
+> > >  include/linux/mm.h |  2 --
+> > >  mm/memory.c        | 26 +++++---------------------
+> > >  mm/nommu.c         | 13 +------------
+> > >  3 files changed, 6 insertions(+), 35 deletions(-)
 > > 
-> > Good idea. It needs a fallback in case the ioremap_np() fails on most
-> > architectures, but that sounds easy enough.
-> > 
-> > Since pci_remap_cfgspace() only has custom implementations, it sounds like
-> > we can actually make the generic implementation unconditional in the end,
-> > but that requires adding ioremap_np() on 32-bit as well, and I would keep
-> > that separate from this series.
+> > I think this is the right thing to do.
 > 
-> Sounds good; I'm adding a patch to adjust the generic implementation and
-> remove the arm64 one in v4, and we can then complete the cleanup for other
-> arches later.
+> Was just about to smash this into the topic branch for testing in
+> linux-next. Feel like an ack on the series, or at least the two mm
+> patches?
 
-Cheers. Don't forget to update the comment in the generic code which
-complains about the lack of an ioremap() API for non-posted writes ;)
-
-Will
+Pushed them to my topic branch for a bit of testing in linux-next,
+hopefully goes all fine for a pull for 5.13.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
