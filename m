@@ -2,136 +2,114 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBF9C433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Mar 2021 16:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C4FC433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Mar 2021 16:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D76B61A2D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Mar 2021 16:26:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AD3761A18
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Mar 2021 16:41:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229945AbhCZQ0M (ORCPT
+        id S230076AbhCZQkw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 26 Mar 2021 12:26:12 -0400
-Received: from mail-40131.protonmail.ch ([185.70.40.131]:18812 "EHLO
-        mail-40131.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbhCZQZs (ORCPT
+        Fri, 26 Mar 2021 12:40:52 -0400
+Received: from mail-wm1-f49.google.com ([209.85.128.49]:46755 "EHLO
+        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229871AbhCZQki (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 26 Mar 2021 12:25:48 -0400
-Date:   Fri, 26 Mar 2021 16:25:38 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1616775946;
-        bh=pQ+vt7TEwkVFjuPaqUXdXY+mkJ60wA6Dkm0jGsuU5Tc=;
-        h=Date:To:From:Cc:Reply-To:Subject:From;
-        b=TjQLbgJtLEqjTpCyyOOsgR1QuX3sLn11PrC3OJI7NsHRkeUGQUI/FIbO7Pzp3F8gg
-         xTkth6WnT3oj62yBNNDkEj7F2+TGuXzSP2F/r2EymU3/oSp1kVEWmPDLpo+rQh5p3J
-         0QWIWZXv89ly96DbZPChSMOntwj1KJ/t9xDsio9k=
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-From:   Timon Baetz <timon.baetz@protonmail.com>
+        Fri, 26 Mar 2021 12:40:38 -0400
+Received: by mail-wm1-f49.google.com with SMTP id z6-20020a1c4c060000b029010f13694ba2so3314485wmf.5;
+        Fri, 26 Mar 2021 09:40:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pk/5UKNO88VEsaxaSJL6OfiLNZz47MnFtkb7BXkXp/o=;
+        b=TxoD+zLvizVjXMlyuXySn+gXN3yrFa8hV9PYg3LkDqqw+GETgiIIFuEGmcdwVe6dGU
+         dj70PhVDuhugdvaKSfkjbQP2QAzfGXbbSOExmFJhaccxuPSafweRgRknYrzrk/EeD/av
+         rEgcxTru48CFm4hZU65SKtX+b3RAZJxmXYxRaVI7tAGr105xA633z2Z0q4qcSKnq0xBX
+         TfoGx4uz8z9tbTHBLtN5F9oWJCoIayruRsMk8/olQF1qciTRZ6ngupv7+zxij7OEMgem
+         Gha3UxvUyTyHygrHO+mIJQNLbx03z11tqIE2TQKVXXOSUB3j9dQxLDBQfjCbROYv7XJr
+         3r7Q==
+X-Gm-Message-State: AOAM533e/coBdZiUv386PbgGjcGrtWna+nm1NOny9kCXIoXxuboxoc10
+        7RPL2zbCFlV+CNIqh8Vjy0E=
+X-Google-Smtp-Source: ABdhPJzQPcCPbUx9hgnmB/XItfMqBozcGPkCmxgGm+kYCoWozgc53vmI57T8/JVWX33AGp5WlBb/kA==
+X-Received: by 2002:a1c:3954:: with SMTP id g81mr13819443wma.170.1616776836836;
+        Fri, 26 Mar 2021 09:40:36 -0700 (PDT)
+Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id h12sm7320219wrv.58.2021.03.26.09.40.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Mar 2021 09:40:36 -0700 (PDT)
+Subject: Re: [PATCH] ARM: dts: exynos: Add front camera support to I9100
+To:     Timon Baetz <timon.baetz@protonmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Timon Baetz <timon.baetz@protonmail.com>
-Reply-To: Timon Baetz <timon.baetz@protonmail.com>
-Subject: [PATCH] ARM: dts: exynos: Add front camera support to I9100
-Message-ID: <20210326162501.355292-1-timon.baetz@protonmail.com>
+        ~postmarketos/upstreaming@lists.sr.ht
+References: <20210326162501.355292-1-timon.baetz@protonmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Message-ID: <7864559f-f406-647d-0500-741aae3f8e1a@kernel.org>
+Date:   Fri, 26 Mar 2021 17:40:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
+In-Reply-To: <20210326162501.355292-1-timon.baetz@protonmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add node for Samsung S5K5BAF CMOS image sensor and
-enable the associated MIPI CSI-2 receiver node.
+On 26/03/2021 17:25, Timon Baetz wrote:
+> Add node for Samsung S5K5BAF CMOS image sensor and
+> enable the associated MIPI CSI-2 receiver node.
+> 
+> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
+> ---
+>  arch/arm/boot/dts/exynos4210-i9100.dts | 52 ++++++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
+> index 228de6d8c9d1..d31146c08b84 100644
+> --- a/arch/arm/boot/dts/exynos4210-i9100.dts
+> +++ b/arch/arm/boot/dts/exynos4210-i9100.dts
+> @@ -147,6 +147,36 @@ battery@36 {
+>  		};
+>  	};
+> 
+> +	i2c_s5k5baf: i2c-gpio-1 {
+> +		compatible = "i2c-gpio";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		sda-gpios = <&gpc1 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> +		scl-gpios = <&gpc1 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> +		i2c-gpio,delay-us = <2>;
+> +
+> +		s5k5bafx@2d {
 
-Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
----
- arch/arm/boot/dts/exynos4210-i9100.dts | 52 ++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+The node name should be generic, so "image-sensor".
 
-diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exy=
-nos4210-i9100.dts
-index 228de6d8c9d1..d31146c08b84 100644
---- a/arch/arm/boot/dts/exynos4210-i9100.dts
-+++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -147,6 +147,36 @@ battery@36 {
- =09=09};
- =09};
+> +			compatible = "samsung,s5k5baf";
+> +			reg = <0x2d>;
+> +			vdda-supply = <&cam_io_en_reg>;
+> +			vddreg-supply = <&vt_core_15v_reg>;
+> +			vddio-supply = <&vtcam_reg>;
+> +			clocks = <&camera 0>;
+> +			clock-names = "mclk";
+> +			stbyn-gpios = <&gpl2 0 1>;
 
-+=09i2c_s5k5baf: i2c-gpio-1 {
-+=09=09compatible =3D "i2c-gpio";
-+=09=09#address-cells =3D <1>;
-+=09=09#size-cells =3D <0>;
-+
-+=09=09sda-gpios =3D <&gpc1 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+=09=09scl-gpios =3D <&gpc1 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+=09=09i2c-gpio,delay-us =3D <2>;
-+
-+=09=09s5k5bafx@2d {
-+=09=09=09compatible =3D "samsung,s5k5baf";
-+=09=09=09reg =3D <0x2d>;
-+=09=09=09vdda-supply =3D <&cam_io_en_reg>;
-+=09=09=09vddreg-supply =3D <&vt_core_15v_reg>;
-+=09=09=09vddio-supply =3D <&vtcam_reg>;
-+=09=09=09clocks =3D <&camera 0>;
-+=09=09=09clock-names =3D "mclk";
-+=09=09=09stbyn-gpios =3D <&gpl2 0 1>;
-+=09=09=09rstn-gpios =3D <&gpl2 1 1>;
-+=09=09=09clock-frequency =3D <24000000>;
-+
-+=09=09=09port {
-+=09=09=09=09s5k5bafx_ep: endpoint {
-+=09=09=09=09=09remote-endpoint =3D <&csis1_ep>;
-+=09=09=09=09=09data-lanes =3D <1>;
-+=09=09=09=09};
-+=09=09=09};
-+=09=09};
-+=09};
-+
- =09spi-3 {
- =09=09compatible =3D "spi-gpio";
- =09=09#address-cells =3D <1>;
-@@ -220,7 +250,11 @@ pmic_ap_clk: pmic-ap-clk {
- };
+GPIO_ACTIVE_LOW
 
- &camera {
-+=09pinctrl-0 =3D <&cam_port_a_clk_active>;
-+=09pinctrl-names =3D "default";
- =09status =3D "okay";
-+=09assigned-clocks =3D <&clock CLK_MOUT_CAM0>, <&clock CLK_MOUT_CAM1>;
-+=09assigned-clock-parents =3D <&clock CLK_XUSBXTI>, <&clock CLK_XUSBXTI>;
- };
-
- &cpu0 {
-@@ -794,3 +828,21 @@ &serial_3 {
- &tmu {
- =09status =3D "okay";
- };
-+
-+&csis_1 {
-+=09status =3D "okay";
-+=09vddcore-supply =3D <&vusb_reg>;
-+=09vddio-supply =3D <&vmipi_reg>;
-+=09clock-frequency =3D <160000000>;
-+=09#address-cells =3D <1>;
-+=09#size-cells =3D <0>;
-+
-+=09port@4 {
-+=09=09reg =3D <4>;
-+=09=09csis1_ep: endpoint {
-+=09=09=09remote-endpoint =3D <&s5k5bafx_ep>;
-+=09=09=09data-lanes =3D <1>;
-+=09=09=09samsung,csis-hs-settle =3D <6>;
-+=09=09};
-+=09};
-+};
---
-2.25.1
+> +			rstn-gpios = <&gpl2 1 1>;
+> +			clock-frequency = <24000000>;
+> +
 
 
+Best regards,
+Krzysztof
