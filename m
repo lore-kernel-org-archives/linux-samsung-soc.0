@@ -2,123 +2,115 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D41D5C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Mar 2021 13:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DAEC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Mar 2021 16:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93BD461A0D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Mar 2021 13:41:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 457DB61A27
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Mar 2021 16:20:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230187AbhCZNkx (ORCPT
+        id S230392AbhCZQUR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 26 Mar 2021 09:40:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40950 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230046AbhCZNko (ORCPT
+        Fri, 26 Mar 2021 12:20:17 -0400
+Received: from mail-40133.protonmail.ch ([185.70.40.133]:42447 "EHLO
+        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230361AbhCZQUP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 26 Mar 2021 09:40:44 -0400
-Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB44DC0613AA;
-        Fri, 26 Mar 2021 06:40:37 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: marcan@marcan.st)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 481D83FA15;
-        Fri, 26 Mar 2021 13:40:29 +0000 (UTC)
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
+        Fri, 26 Mar 2021 12:20:15 -0400
+Date:   Fri, 26 Mar 2021 16:20:10 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail; t=1616775613;
+        bh=CcH0rrv6ICKSLNLF1sxiChOceJEI2Qlg0grV7Totep8=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=c30bEGTy62ExKen3AwiddvrcXMRkPby5SCVlQBmzNqKMCUKyX2XHVrobyX3fdRzpk
+         8XrzAlXWPqyinIgRvmJyRi0NzWml17hMFA7SAXV/rmB532ZoUVLTt5L50m3imh/WnX
+         Cs4uV6zPDC+r9uXUKjVtTmvROyM/EKJskPyPcq40=
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Tony Lindgren <tony@atomide.com>,
-        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
-        Stan Skowronek <stan@corellium.com>,
-        Alexander Graf <graf@amazon.com>,
-        Will Deacon <will@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20210304213902.83903-1-marcan@marcan.st>
- <20210304213902.83903-17-marcan@marcan.st>
- <CAHp75Vco_rcjHJ4THLZ8CJP=yX2fesfAo_tOY8zohfSmTLEVgw@mail.gmail.com>
-From:   Hector Martin <marcan@marcan.st>
-Subject: Re: [RFT PATCH v3 16/27] irqchip/apple-aic: Add support for the Apple
- Interrupt Controller
-Message-ID: <8d7aced9-4aac-0821-a4b7-d27cb73be301@marcan.st>
-Date:   Fri, 26 Mar 2021 22:40:26 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>
+From:   Timon Baetz <timon.baetz@protonmail.com>
+Cc:     Timon Baetz <timon.baetz@protonmail.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Reply-To: Timon Baetz <timon.baetz@protonmail.com>
+Subject: Re: [PATCH 3/3] power: supply: max8997_charger: Switch to new binding
+Message-ID: <20210326171956.7d1d9624@focal-fossa>
+In-Reply-To: <20210130172747.2022977-4-timon.baetz@protonmail.com>
+References: <20210130172747.2022977-1-timon.baetz@protonmail.com> <20210130172747.2022977-4-timon.baetz@protonmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vco_rcjHJ4THLZ8CJP=yX2fesfAo_tOY8zohfSmTLEVgw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: es-ES
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/03/2021 00.05, Andy Shevchenko wrote:
->> +#define pr_fmt(fmt) "%s: " fmt, __func__
-> 
-> This is not needed, really, if you have unique / distinguishable
-> messages in the first place.
-> Rather people include module names, which may be useful.
+On Sat, 30 Jan 2021 17:30:14 +0000, Timon Baetz wrote:
+> Get regulator from parent device's node and extcon by name.
+>
+> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
+> ---
+>  drivers/power/supply/max8997_charger.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/suppl=
+y/max8997_charger.c
+> index 321bd6b8ee41..625d8cc4312a 100644
+> --- a/drivers/power/supply/max8997_charger.c
+> +++ b/drivers/power/supply/max8997_charger.c
+> @@ -168,6 +168,7 @@ static int max8997_battery_probe(struct platform_devi=
+ce *pdev)
+>  =09int ret =3D 0;
+>  =09struct charger_data *charger;
+>  =09struct max8997_dev *iodev =3D dev_get_drvdata(pdev->dev.parent);
+> +=09struct device_node *np =3D pdev->dev.of_node;
+>  =09struct i2c_client *i2c =3D iodev->i2c;
+>  =09struct max8997_platform_data *pdata =3D iodev->pdata;
+>  =09struct power_supply_config psy_cfg =3D {};
+> @@ -237,20 +238,23 @@ static int max8997_battery_probe(struct platform_de=
+vice *pdev)
+>  =09=09return PTR_ERR(charger->battery);
+>  =09}
+>
+> +=09// grab regulator from parent device's node
+> +=09pdev->dev.of_node =3D iodev->dev->of_node;
+>  =09charger->reg =3D devm_regulator_get_optional(&pdev->dev, "charger");
+> +=09pdev->dev.of_node =3D np;
+>  =09if (IS_ERR(charger->reg)) {
+>  =09=09if (PTR_ERR(charger->reg) =3D=3D -EPROBE_DEFER)
+>  =09=09=09return -EPROBE_DEFER;
+>  =09=09dev_info(&pdev->dev, "couldn't get charger regulator\n");
+>  =09}
+> -=09charger->edev =3D extcon_get_edev_by_phandle(&pdev->dev, 0);
+> -=09if (IS_ERR(charger->edev)) {
+> -=09=09if (PTR_ERR(charger->edev) =3D=3D -EPROBE_DEFER)
+> +=09charger->edev =3D extcon_get_extcon_dev("max8997-muic");
+> +=09if (IS_ERR_OR_NULL(charger->edev)) {
+> +=09=09if (!charger->edev)
+>  =09=09=09return -EPROBE_DEFER;
+>  =09=09dev_info(charger->dev, "couldn't get extcon device\n");
+>  =09}
+>
+> -=09if (!IS_ERR(charger->reg) && !IS_ERR(charger->edev)) {
+> +=09if (!IS_ERR(charger->reg) && !IS_ERR_OR_NULL(charger->edev)) {
+>  =09=09INIT_WORK(&charger->extcon_work, max8997_battery_extcon_evt_worker=
+);
+>  =09=09ret =3D devm_add_action(&pdev->dev, max8997_battery_extcon_evt_sto=
+p_work, charger);
+>  =09=09if (ret) {
 
-Makes sense, I'll switch to KBUILD_MODNAME.
 
->> +#define MASK_BIT(x)            BIT((x) & 0x1f)
-> 
-> GENMASK(4,0)
+Hello, I am not sure if I am missing something here. The other 2
+patches of the series already made it into linux-next but this is still
+pending. Do I have to resubmit? The patch still applies without
+conflicts. Any help would be appreciated.
 
-It's not really a register bitmask, but rather extracting the low bits 
-of an index... but sure, GENMASK also expresses that. Changed.
+Thanks, Timon
 
->> +static atomic_t aic_vipi_flag[AIC_MAX_CPUS];
->> +static atomic_t aic_vipi_enable[AIC_MAX_CPUS];
-> 
-> Isn't it easier to handle these when they are full width, i.e. 32
-> items per the array?
-
-I don't think so, it doesn't really buy us anything. It's just a maximum 
-beyond which the driver doesn't work in its current state anyway (if the 
-number were much larger it'd make sense to dynamically allocate these, 
-but not at this point).
-
->> +static int aic_irq_set_affinity(struct irq_data *d,
->> +                               const struct cpumask *mask_val, bool force)
->> +{
->> +       irq_hw_number_t hwirq = irqd_to_hwirq(d);
->> +       struct aic_irq_chip *ic = irq_data_get_irq_chip_data(d);
->> +       int cpu;
->> +
->> +       if (hwirq > ic->nr_hw)
-> 
-> >= ?
-
-Good catch, but this is actually obsolete. Higher IRQs go into the FIQ 
-irqchip, so this should never happen (it's a leftover from when they 
-were a single one). I'll remove it.
-
-Ack on the other comments, thanks!
-
--- 
-Hector Martin (marcan@marcan.st)
-Public Key: https://mrcn.st/pub
