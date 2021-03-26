@@ -2,145 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BD2C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Mar 2021 21:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA4DEC433E6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Mar 2021 06:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF33861A41
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Mar 2021 21:34:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD2BE61A4A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Mar 2021 06:24:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230505AbhCYVeA (ORCPT
+        id S229812AbhCZGYB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 25 Mar 2021 17:34:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58672 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230497AbhCYVd6 (ORCPT
+        Fri, 26 Mar 2021 02:24:01 -0400
+Received: from [212.63.208.185] ([212.63.208.185]:44310 "EHLO
+        mail.marcansoft.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229782AbhCZGXs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 25 Mar 2021 17:33:58 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F310C06175F
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Mar 2021 14:33:57 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id b9so3707685wrt.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Mar 2021 14:33:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=TXHI1OxX+D4iSzKCuoMMss3yjiQz/+KLKVrP99q3G2I=;
-        b=frvH/QuNUnODqvtDdusaUFppblhOygLUWsC1ixB43GNG2Cc+yxM2WFbRWpgjN4Ju8Y
-         95PeIsuDNMn98oqagJ3ef1Nu2yOkiL1vvMi/6inWwQyeTtLH5DD3GrBLCXNufjRYGMCK
-         r/gFSHALeS9GIhicmr/nrrhcB3MijIi/RQZtU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=TXHI1OxX+D4iSzKCuoMMss3yjiQz/+KLKVrP99q3G2I=;
-        b=U+K9KSQRNUAlRpK5/nfvzpAT7+rSgSBr3iALhwtHCs74KjxgqgACYrTCrQqtFUfbC5
-         6SzdYRspKY5hlzTaZvIQX/9uETXsW25U2U8Zta1jTgxBNTxXvZNN7OWdesmIrxTgc7fi
-         YjzVPnMSUKetTh6SGWe8dLcwbFkpwhVPO/lDm1oNrzOvx+BOHoQc+QGjFHQ7/NtB9ZJj
-         10PB2yOo2MrrUtnWDEn6AUNw3leWICb1PzfaN2LFSezRZ9lS3E2rOoPcXQpJppgm7DeD
-         cxrvPTOPmPLjTk9byipcOPSPoChPpYl87fqPPNVxtkoxfvHg4gop1h9AdTxvvds9EPzI
-         zAuQ==
-X-Gm-Message-State: AOAM533RneHAkoAXHgx7z/VqD9oOENsttqAskBrzc4NeCnPXNBlkHdEH
-        gTs+KvmxRH4N+TlIyqPnaiWnGg==
-X-Google-Smtp-Source: ABdhPJwn8UAApYENGs0EsRiOl6kaa4IOv1NsIwYwvHs5ZhbA+T+EIOa3Ak0sCs/YbuNvp+I4gerYDg==
-X-Received: by 2002:adf:e8c9:: with SMTP id k9mr10992298wrn.315.1616708036367;
-        Thu, 25 Mar 2021 14:33:56 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id x13sm1115693wmp.39.2021.03.25.14.33.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 14:33:55 -0700 (PDT)
-Date:   Thu, 25 Mar 2021 22:33:53 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Jason Gunthorpe <jgg@nvidia.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        3pvd@google.com, Jann Horn <jannh@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 3/3] mm: unexport follow_pfn
-Message-ID: <YF0BwfzqpPLuFTw+@phenom.ffwll.local>
-Mail-Followup-To: Jason Gunthorpe <jgg@nvidia.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        3pvd@google.com, Jann Horn <jannh@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>, Peter Xu <peterx@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-References: <20210316153303.3216674-1-daniel.vetter@ffwll.ch>
- <20210316153303.3216674-4-daniel.vetter@ffwll.ch>
- <20210324125211.GA2356281@nvidia.com>
- <YFuQNj10P+uUHD4G@phenom.ffwll.local>
+        Fri, 26 Mar 2021 02:23:48 -0400
+X-Greylist: delayed 58547 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Mar 2021 02:23:46 EDT
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: marcan@marcan.st)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id EA5CA425DF;
+        Fri, 26 Mar 2021 06:23:32 +0000 (UTC)
+Subject: Re: [RFT PATCH v3 13/27] arm64: Add Apple vendor-specific system
+ registers
+To:     Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
+        Arnd Bergmann <arnd@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Tony Lindgren <tony@atomide.com>,
+        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
+        Stan Skowronek <stan@corellium.com>,
+        Alexander Graf <graf@amazon.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210304213902.83903-1-marcan@marcan.st>
+ <20210304213902.83903-14-marcan@marcan.st>
+ <20210324183818.GF13181@willie-the-truck>
+ <20210324185921.GA27297@C02TD0UTHF1T.local>
+ <20210324190428.GG13181@willie-the-truck>
+From:   Hector Martin <marcan@marcan.st>
+Message-ID: <00d7b1ea-b455-c443-d350-d71a432573e5@marcan.st>
+Date:   Fri, 26 Mar 2021 15:23:30 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YFuQNj10P+uUHD4G@phenom.ffwll.local>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+In-Reply-To: <20210324190428.GG13181@willie-the-truck>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: es-ES
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Mar 24, 2021 at 08:17:10PM +0100, Daniel Vetter wrote:
-> On Wed, Mar 24, 2021 at 09:52:11AM -0300, Jason Gunthorpe wrote:
-> > On Tue, Mar 16, 2021 at 04:33:03PM +0100, Daniel Vetter wrote:
-> > > Both kvm (in bd2fae8da794 ("KVM: do not assume PTE is writable after
-> > > follow_pfn")) and vfio (in 07956b6269d3 ("vfio/type1: Use
-> > > follow_pte()")) have lost their callsites of follow_pfn(). All the
-> > > other ones have been switched over to unsafe_follow_pfn because they
-> > > cannot be fixed without breaking userspace api.
-> > > 
-> > > Argueably the vfio code is still racy, but that's kinda a bigger
-> > > picture. But since it does leak the pte beyond where it drops the pt
-> > > lock, without anything else like an mmu notifier guaranteeing
-> > > coherence, the problem is at least clearly visible in the vfio code.
-> > > So good enough with me.
-> > > 
-> > > I've decided to keep the explanation that after dropping the pt lock
-> > > you must have an mmu notifier if you keep using the pte somehow by
-> > > adjusting it and moving it into the kerneldoc for the new follow_pte()
-> > > function.
-> > > 
-> > > Cc: 3pvd@google.com
-> > > Cc: Jann Horn <jannh@google.com>
-> > > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > > Cc: Jason Gunthorpe <jgg@nvidia.com>
-> > > Cc: Cornelia Huck <cohuck@redhat.com>
-> > > Cc: Peter Xu <peterx@redhat.com>
-> > > Cc: Alex Williamson <alex.williamson@redhat.com>
-> > > Cc: linux-mm@kvack.org
-> > > Cc: linux-arm-kernel@lists.infradead.org
-> > > Cc: linux-samsung-soc@vger.kernel.org
-> > > Cc: linux-media@vger.kernel.org
-> > > Cc: kvm@vger.kernel.org
-> > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > > ---
-> > >  include/linux/mm.h |  2 --
-> > >  mm/memory.c        | 26 +++++---------------------
-> > >  mm/nommu.c         | 13 +------------
-> > >  3 files changed, 6 insertions(+), 35 deletions(-)
-> > 
-> > I think this is the right thing to do.
+On 25/03/2021 04.04, Will Deacon wrote:
+> On Wed, Mar 24, 2021 at 06:59:21PM +0000, Mark Rutland wrote:
+>> So far we've kept arch/arm64/ largely devoid of IMP-DEF bits, and it
+>> seems a shame to add something with the sole purpose of collating that,
+>> especially given arch code shouldn't need to touch these if FW and
+>> bootloader have done their jobs right.
+>>
+>> Can we put the definitions in the relevant drivers? That would sidestep
+>> any pain with MAINTAINERS, too.
 > 
-> Was just about to smash this into the topic branch for testing in
-> linux-next. Feel like an ack on the series, or at least the two mm
-> patches?
+> If we can genuinely ignore these in arch code, then sure. I just don't know
+> how long that is going to be the case, and ending up in a situation where
+> these are scattered randomly throughout the tree sounds horrible to me.
 
-Pushed them to my topic branch for a bit of testing in linux-next,
-hopefully goes all fine for a pull for 5.13.
--Daniel
+I thought we would need some in KVM code, but given the direction Marc's 
+series ended up in, it seems we won't. So I'm happy keeping these in the 
+respective drivers; if this ends up being messy in the future it 
+shouldn't be a big deal to refactor it all into one file again.
+
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Hector Martin (marcan@marcan.st)
+Public Key: https://mrcn.st/pub
