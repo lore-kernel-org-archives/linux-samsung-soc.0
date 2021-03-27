@@ -2,114 +2,125 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C4FC433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Mar 2021 16:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E236C433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 27 Mar 2021 07:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AD3761A18
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Mar 2021 16:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23CD5619A9
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 27 Mar 2021 07:37:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230076AbhCZQkw (ORCPT
+        id S231332AbhC0Hh0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 26 Mar 2021 12:40:52 -0400
-Received: from mail-wm1-f49.google.com ([209.85.128.49]:46755 "EHLO
-        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229871AbhCZQki (ORCPT
+        Sat, 27 Mar 2021 03:37:26 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:41406 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230471AbhC0Hg6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 26 Mar 2021 12:40:38 -0400
-Received: by mail-wm1-f49.google.com with SMTP id z6-20020a1c4c060000b029010f13694ba2so3314485wmf.5;
-        Fri, 26 Mar 2021 09:40:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pk/5UKNO88VEsaxaSJL6OfiLNZz47MnFtkb7BXkXp/o=;
-        b=TxoD+zLvizVjXMlyuXySn+gXN3yrFa8hV9PYg3LkDqqw+GETgiIIFuEGmcdwVe6dGU
-         dj70PhVDuhugdvaKSfkjbQP2QAzfGXbbSOExmFJhaccxuPSafweRgRknYrzrk/EeD/av
-         rEgcxTru48CFm4hZU65SKtX+b3RAZJxmXYxRaVI7tAGr105xA633z2Z0q4qcSKnq0xBX
-         TfoGx4uz8z9tbTHBLtN5F9oWJCoIayruRsMk8/olQF1qciTRZ6ngupv7+zxij7OEMgem
-         Gha3UxvUyTyHygrHO+mIJQNLbx03z11tqIE2TQKVXXOSUB3j9dQxLDBQfjCbROYv7XJr
-         3r7Q==
-X-Gm-Message-State: AOAM533e/coBdZiUv386PbgGjcGrtWna+nm1NOny9kCXIoXxuboxoc10
-        7RPL2zbCFlV+CNIqh8Vjy0E=
-X-Google-Smtp-Source: ABdhPJzQPcCPbUx9hgnmB/XItfMqBozcGPkCmxgGm+kYCoWozgc53vmI57T8/JVWX33AGp5WlBb/kA==
-X-Received: by 2002:a1c:3954:: with SMTP id g81mr13819443wma.170.1616776836836;
-        Fri, 26 Mar 2021 09:40:36 -0700 (PDT)
-Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id h12sm7320219wrv.58.2021.03.26.09.40.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Mar 2021 09:40:36 -0700 (PDT)
-Subject: Re: [PATCH] ARM: dts: exynos: Add front camera support to I9100
-To:     Timon Baetz <timon.baetz@protonmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Sat, 27 Mar 2021 03:36:58 -0400
+Received: from localhost.localdomain ([90.126.11.170])
+        by mwinf5d29 with ME
+        id lKcs2400F3g7mfN03Kcs99; Sat, 27 Mar 2021 08:36:56 +0100
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 27 Mar 2021 08:36:56 +0100
+X-ME-IP: 90.126.11.170
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     balbi@kernel.org, gregkh@linuxfoundation.org,
+        krzysztof.kozlowski@canonical.com, nathan@kernel.org,
+        arnd@arndb.de, gustavoars@kernel.org, weiyongjun1@huawei.com
+Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-References: <20210326162501.355292-1-timon.baetz@protonmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Message-ID: <7864559f-f406-647d-0500-741aae3f8e1a@kernel.org>
-Date:   Fri, 26 Mar 2021 17:40:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v3 1/2] usb: gadget: s3c: Fix incorrect resources releasing
+Date:   Sat, 27 Mar 2021 08:36:50 +0100
+Message-Id: <b317638464f188159bd8eea44427dd359e480625.1616830026.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <20210326162501.355292-1-timon.baetz@protonmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 26/03/2021 17:25, Timon Baetz wrote:
-> Add node for Samsung S5K5BAF CMOS image sensor and
-> enable the associated MIPI CSI-2 receiver node.
-> 
-> Signed-off-by: Timon Baetz <timon.baetz@protonmail.com>
-> ---
->  arch/arm/boot/dts/exynos4210-i9100.dts | 52 ++++++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
-> index 228de6d8c9d1..d31146c08b84 100644
-> --- a/arch/arm/boot/dts/exynos4210-i9100.dts
-> +++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-> @@ -147,6 +147,36 @@ battery@36 {
->  		};
->  	};
-> 
-> +	i2c_s5k5baf: i2c-gpio-1 {
-> +		compatible = "i2c-gpio";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		sda-gpios = <&gpc1 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios = <&gpc1 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		i2c-gpio,delay-us = <2>;
-> +
-> +		s5k5bafx@2d {
+Since commit 188db4435ac6 ("usb: gadget: s3c: use platform resources"),
+'request_mem_region()' and 'ioremap()' are no more used, so they don't need
+to be undone in the error handling path of the probe and in the remove
+function.
 
-The node name should be generic, so "image-sensor".
+Remove these calls and the unneeded 'rsrc_start' and 'rsrc_len' global
+variables.
 
-> +			compatible = "samsung,s5k5baf";
-> +			reg = <0x2d>;
-> +			vdda-supply = <&cam_io_en_reg>;
-> +			vddreg-supply = <&vt_core_15v_reg>;
-> +			vddio-supply = <&vtcam_reg>;
-> +			clocks = <&camera 0>;
-> +			clock-names = "mclk";
-> +			stbyn-gpios = <&gpl2 0 1>;
+Fixes: 188db4435ac6 ("usb: gadget: s3c: use platform resources")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+the 'err' label is used only to reduce the diff size of this patch. It is
+removed in the following patch.
 
-GPIO_ACTIVE_LOW
+v2: Fix a stupid error in the hash in Fixes:
+v3: s/removre/remove/
+    Add Reviewed-by:
+---
+ drivers/usb/gadget/udc/s3c2410_udc.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-> +			rstn-gpios = <&gpl2 1 1>;
-> +			clock-frequency = <24000000>;
-> +
+diff --git a/drivers/usb/gadget/udc/s3c2410_udc.c b/drivers/usb/gadget/udc/s3c2410_udc.c
+index 1d3ebb07ccd4..b81979b3bdb6 100644
+--- a/drivers/usb/gadget/udc/s3c2410_udc.c
++++ b/drivers/usb/gadget/udc/s3c2410_udc.c
+@@ -54,8 +54,6 @@ static struct clk		*udc_clock;
+ static struct clk		*usb_bus_clock;
+ static void __iomem		*base_addr;
+ static int			irq_usbd;
+-static u64			rsrc_start;
+-static u64			rsrc_len;
+ static struct dentry		*s3c2410_udc_debugfs_root;
+ 
+ static inline u32 udc_read(u32 reg)
+@@ -1775,7 +1773,7 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
+ 	base_addr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base_addr)) {
+ 		retval = PTR_ERR(base_addr);
+-		goto err_mem;
++		goto err;
+ 	}
+ 
+ 	the_controller = udc;
+@@ -1793,7 +1791,7 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
+ 	if (retval != 0) {
+ 		dev_err(dev, "cannot get irq %i, err %d\n", irq_usbd, retval);
+ 		retval = -EBUSY;
+-		goto err_map;
++		goto err;
+ 	}
+ 
+ 	dev_dbg(dev, "got irq %i\n", irq_usbd);
+@@ -1864,10 +1862,7 @@ static int s3c2410_udc_probe(struct platform_device *pdev)
+ 		gpio_free(udc_info->vbus_pin);
+ err_int:
+ 	free_irq(irq_usbd, udc);
+-err_map:
+-	iounmap(base_addr);
+-err_mem:
+-	release_mem_region(rsrc_start, rsrc_len);
++err:
+ 
+ 	return retval;
+ }
+@@ -1899,9 +1894,6 @@ static int s3c2410_udc_remove(struct platform_device *pdev)
+ 
+ 	free_irq(irq_usbd, udc);
+ 
+-	iounmap(base_addr);
+-	release_mem_region(rsrc_start, rsrc_len);
+-
+ 	if (!IS_ERR(udc_clock) && udc_clock != NULL) {
+ 		clk_disable_unprepare(udc_clock);
+ 		clk_put(udc_clock);
+-- 
+2.27.0
 
-
-Best regards,
-Krzysztof
