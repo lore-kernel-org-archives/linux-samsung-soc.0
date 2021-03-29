@@ -2,140 +2,265 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE5DC433DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Mar 2021 11:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9E5C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Mar 2021 12:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4CEB460C3D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Mar 2021 11:13:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9334761934
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Mar 2021 12:05:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230432AbhC2LMj (ORCPT
+        id S231473AbhC2MFC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 29 Mar 2021 07:12:39 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:43673 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231944AbhC2LMH (ORCPT
+        Mon, 29 Mar 2021 08:05:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44356 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231205AbhC2MEy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Mar 2021 07:12:07 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210329111204epoutp022037230d2b1e7cd57405179532f98aaa~wy8elvKKV2989329893epoutp02z
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Mar 2021 11:12:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210329111204epoutp022037230d2b1e7cd57405179532f98aaa~wy8elvKKV2989329893epoutp02z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1617016324;
-        bh=0QTRaLezXnErvFBx021G+5f/kXn5UVUw2raon7KYOq8=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=HEW20b/pOvVNUOOITgcXJWod8zlSFYK1lTXUSz3zK9OMgubM6ookydFZSuTM1bXy2
-         uzRAXrzWUri6fhiqXH++j/8UFu9uyiBbP31suFm314LKAcSreJ2ciWD3d1t29zBHsi
-         ZAM1HYis1Djr8ZMy7tMwRkIcUmG6MhwmhrydI6bQ=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210329111204epcas1p2095e3d7c9cfbe584a7e2ec4a1250b4f2~wy8eV6qKk2188721887epcas1p21;
-        Mon, 29 Mar 2021 11:12:04 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.153]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4F88zl0hZ1z4x9Py; Mon, 29 Mar
-        2021 11:12:03 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D5.35.22618.206B1606; Mon, 29 Mar 2021 20:12:02 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210329111202epcas1p265fd87320ede9688b4d80b408159a8ce~wy8cQvGIF2151921519epcas1p2s;
-        Mon, 29 Mar 2021 11:12:02 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210329111202epsmtrp2040a89a88c989872a0fd16383f6e817a~wy8cP66-U0304303043epsmtrp2B;
-        Mon, 29 Mar 2021 11:12:02 +0000 (GMT)
-X-AuditID: b6c32a38-e63ff7000001585a-f2-6061b6021d9e
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4D.C4.33967.106B1606; Mon, 29 Mar 2021 20:12:01 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.211]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210329111201epsmtip240fce3b6a93a898271cffa1593e24b11~wy8cA7YUN0769107691epsmtip2g;
-        Mon, 29 Mar 2021 11:12:01 +0000 (GMT)
-From:   Inki Dae <inki.dae@samsung.com>
-To:     airlied@linux.ie
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-fixes
-Date:   Mon, 29 Mar 2021 20:20:58 +0900
-Message-Id: <1617016858-14081-1-git-send-email-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMKsWRmVeSWpSXmKPExsWy7bCmri7TtsQEg1dLrS16z51ksrjy9T2b
-        xYzz+5gcmD22f3vA6nG/+ziTx+dNcgHMUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6
-        hpYW5koKeYm5qbZKLj4Bum6ZOUCLlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkF
-        lgV6xYm5xaV56XrJ+blWhgYGRqZAhQnZGS/Pb2Av2MxRcbdrIlMDYx97FyMnh4SAicSkXQuY
-        uxi5OIQEdjBKvHx0nh3C+cQo0bJwBSOE841R4sWBjcwwLefnL4ZK7GWU+PbnJ1T/F0aJL/+X
-        gQ1mE1CVmLjiPhuILSIgInF82V8wm1nATeLP0rMsXYwcHMICKhIHJvKBhFlAym+8ZQWxeQVc
-        JO492cECsUxO4ua5TrD5EgL/2SRu3+lghEi4SExtfQplC0u8Or4F6iEpic/v9rJBNDQzSkyc
-        cZoJwulglLj7+DrUWGOJ/UsnM4FcwSygKbF+lz5EWFFi5++5jBCH8km8+9rDClIiIcAr0dEm
-        BFGiJHHs4g2ovRISF5ZMZIOwPSTWnPnABGILCcRK3O+/xDSBUXYWwoIFjIyrGMVSC4pz01OL
-        DQtMkKNpEyM49WhZ7GCc+/aD3iFGJg7GQ4wSHMxKIrysp2MThHhTEiurUovy44tKc1KLDzGa
-        AkNsIrOUaHI+MPnllcQbmhoZGxtbmBiamRoaKonzJhk8iBcSSE8sSc1OTS1ILYLpY+LglGpg
-        4vPWC1ic2MoaVaqSon736awEZffi2Larby8qNz//3zNhYvr+g/F8zU4r1828JLVK/MKsDWfb
-        9hnVvXq1c9K7y6qsLdIrWSTeXszndprwXObJ8bOdu2RWivtZy/zmEf77bZIT/+PcN5snCGr8
-        cW2+LTt/6ty793Offbs6d+6lmSUdtsLXnGOmCIYfDlh9+UiPe6jV6l393+c+Klu5tdCqn/NI
-        4mX9Rae3VkZ4OGTFLdj87bhBRttRm+D7dYdMr5znvvMjZU0xy0Ndvpa6278Ff17onfR2ZeL2
-        /zH+a+ZuvPXCqufdE+f3DgdvXcrqvWfgruf6aYGIbHpxa3FZ1zJf9oAly7mOxha19stLm9lm
-        LlBiKc5INNRiLipOBAA/zyRpxgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHJMWRmVeSWpSXmKPExsWy7bCSvC7jtsQEg4MfLCx6z51ksrjy9T2b
-        xYzz+5gcmD22f3vA6nG/+ziTx+dNcgHMUVw2Kak5mWWpRfp2CVwZL89vYC/YzFFxt2siUwNj
-        H3sXIyeHhICJxPn5ixm7GLk4hAR2M0r8PXkVyOEASkhIbNnKAWEKSxw+XAxR8olRYmfTUmaQ
-        XjYBVYmJK+6zgdgiAiISx5f9BbOZBTwk3u9ZzQ7SKyygInFgIh9ImAWk/MZbVhCbV8BF4t6T
-        HSwQJ8hJ3DzXyTyBkWcBI8MqRsnUguLc9NxiwwLDvNRyveLE3OLSvHS95PzcTYzgINDS3MG4
-        fdUHvUOMTByMhxglOJiVRHhZT8cmCPGmJFZWpRblxxeV5qQWH2KU5mBREue90HUyXkggPbEk
-        NTs1tSC1CCbLxMEp1cDEdWcO76W2G2UMCk47nG58n3Th4a+e4Cmndz1T6Qy7veTzpe61v73T
-        /2fYnu2bwLPtmsSV98zHp2/emtNxi6Wi414hq/xO/gnW1ya3r3/Vwda2+2yDu8XxuAWyGX26
-        zz4+6Odty+8QbbjhVnD3ldXGh189vgU0Tp24ss63uOnIoTtrL+hE/KtiOWUryL64YM2iT//i
-        rrWbum/q1Hn9wkm0UqLBnzvCvPDvGSlT1q09K98J/W69l6WhUVR90Ml4wekT/fMX8zsfWcpb
-        /EpQx8+amV/yQIyfqU7bHN6JelsWczsevLVLzU6h4vxeN6YLonL3Xq0T+f+SpZCnUsrk2WOv
-        m90cswMKBJelvbtqI+egxFKckWioxVxUnAgA9jbjanECAAA=
-X-CMS-MailID: 20210329111202epcas1p265fd87320ede9688b4d80b408159a8ce
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210329111202epcas1p265fd87320ede9688b4d80b408159a8ce
-References: <CGME20210329111202epcas1p265fd87320ede9688b4d80b408159a8ce@epcas1p2.samsung.com>
+        Mon, 29 Mar 2021 08:04:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C1DFC61930;
+        Mon, 29 Mar 2021 12:04:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617019493;
+        bh=ffh6M924/rxjUnoRUIqHYy/8ZaEz5qQCxPUEUO6zW3Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IAUE3LeaIbErQXuzlruAMJF7ezMe0XDisUWq9SRIaSenVGYdOqQsPb6DXmeutd+4B
+         RVsaWw6RpULtuZ19QtA62lEwIRmRef8XA+nzEAVmQGV5R6l12mzXPWJk5+P1NSaVqR
+         mKRaNnam9qez0chbfC+YALm13d+YdOA0BhHKmnYALroYW9QgIxoBrl1Q4JTIVyVhXd
+         Ap5K7h3uzHNl6OE/Gc00gMsmpKGiHzvpeis2JfAxK9Ir+R4mV9MTROlEYtAsR0T14Z
+         B+CtwNl77R52lEUcBB6Bmve2Chm5UyJrrmORJiXURwA1lfewXKseHYHq1RYTdOGFCe
+         M4fkzlyiLhykA==
+Date:   Mon, 29 Mar 2021 13:04:42 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Hector Martin <marcan@marcan.st>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
+        Arnd Bergmann <arnd@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Tony Lindgren <tony@atomide.com>,
+        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
+        Stan Skowronek <stan@corellium.com>,
+        Alexander Graf <graf@amazon.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFT PATCH v3 16/27] irqchip/apple-aic: Add support for the
+ Apple Interrupt Controller
+Message-ID: <20210329120442.GA3636@willie-the-truck>
+References: <20210304213902.83903-1-marcan@marcan.st>
+ <20210304213902.83903-17-marcan@marcan.st>
+ <20210324195742.GA13474@willie-the-truck>
+ <3564ed98-6ad6-7ddd-01d2-36d7f5af90e0@marcan.st>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3564ed98-6ad6-7ddd-01d2-36d7f5af90e0@marcan.st>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Dave,
+Hi Hector,
 
-   Just one cleanup to drop unused header inclusion.
+On Fri, Mar 26, 2021 at 05:58:15PM +0900, Hector Martin wrote:
+> On 25/03/2021 04.57, Will Deacon wrote:
+> > > +		event = readl(ic->base + AIC_EVENT);
+> > > +		type = FIELD_GET(AIC_EVENT_TYPE, event);
+> > > +		irq = FIELD_GET(AIC_EVENT_NUM, event);
+> > > +
+> > > +		if (type == AIC_EVENT_TYPE_HW)
+> > > +			handle_domain_irq(aic_irqc->hw_domain, irq, regs);
+> > > +		else if (type == AIC_EVENT_TYPE_IPI && irq == 1)
+> > > +			aic_handle_ipi(regs);
+> > > +		else if (event != 0)
+> > > +			pr_err("Unknown IRQ event %d, %d\n", type, irq);
+> > > +	} while (event);
+> > > +
+> > > +	/*
+> > > +	 * vGIC maintenance interrupts end up here too, so we need to check
+> > > +	 * for them separately. Just report and disable vGIC for now, until
+> > > +	 * we implement this properly.
+> > > +	 */
+> > > +	if ((read_sysreg_s(SYS_ICH_HCR_EL2) & ICH_HCR_EN) &&
+> > > +		read_sysreg_s(SYS_ICH_MISR_EL2) != 0) {
+> > > +		pr_err("vGIC IRQ fired, disabling.\n");
+> > > +		sysreg_clear_set_s(SYS_ICH_HCR_EL2, ICH_HCR_EN, 0);
+> > > +	}
+> > 
+> > What prevents all these system register accesses being speculated up before
+> > the handler?
+> 
+> Nothing, but that's not a problem, is it? If the condition is met, it means
+> the vGIC IRQ *is* firing and needs clearing. We don't particularly care if
+> this happens before, after, or during the rest of the IRQ handling.
+> 
+> I changed the message to this, because we actually should never hit this
+> path with correctly-working KVM code (it takes care of it before this
+> handler runs):
+> 
+> pr_err_ratelimited("vGIC IRQ fired and not handled by KVM, disabling.\n");
 
-   Please kindly let me know if there is any problem.
+Looks good.
 
-Thanks,
-Inki Dae
+> > > +static struct irq_chip aic_chip = {
+> > > +	.name = "AIC",
+> > > +	.irq_mask = aic_irq_mask,
+> > > +	.irq_unmask = aic_irq_unmask,
+> > 
+> > I know these are driven by the higher-level irq chip code, but I'm a bit
+> > confused as to what provides ordering if, e.g. something ends up calling:
+> > 
+> > 	aic_chip.irq_mask(d);
+> > 	...
+> > 	aic_chip.irq_unmask(d);
+> > 
+> > I can't see any ISBs in here and they're writing to two different registers,
+> > so can we end up with the IRQ masked after this sequence?
+> 
+> Wait, aren't MMIO writes to the same peripheral using device-nGnRnE memory
+> modes always ordered with respect to each other? I thought the _relaxed
+> versions were only trouble when mixed with memory/DMA buffers, and MMIO for
+> any given peripheral always takes effect in program order.
 
-The following changes since commit 09d78dde88ef95a27b54a6e450ee700ccabdf39d:
+Sorry, this was my mistake -- I seem to have mixed up the MMIO parts with
+the system register parts. In this case, aic_irq_[un]mask() are MMIO writes,
+so things work out. It's the FIQ mask/unmask code that needs the ISBs.
 
-  Merge tag 'drm-msm-fixes-2021-02-25' of https://gitlab.freedesktop.org/drm/msm into drm-fixes (2021-03-26 13:04:17 +1000)
+> > > +static void aic_ipi_mask(struct irq_data *d)
+> > > +{
+> > > +	u32 irq_bit = BIT(irqd_to_hwirq(d));
+> > > +	int this_cpu = smp_processor_id();
+> > > +
+> > > +	/* No specific ordering requirements needed here. */
+> > > +	atomic_andnot(irq_bit, &aic_vipi_enable[this_cpu]);
+> > > +}
+> > 
+> > Why not use a per-cpu variable here instead of an array of atomics? The pcpu
+> > API has things for atomic updates (e.g. or, and, xchg).
+> 
+> One CPU still needs to be able to mutate the flags of another CPU to fire an
+> IPI; AIUI the per-cpu ops are *not* atomic for concurrent access by multiple
+> CPUs, and in fact there is no API for that, only for "this CPU".
 
-are available in the git repository at:
+Huh, I really thought we had an API for that, but you're right. Oh well! But
+I'd still suggest a per-cpu atomic_t in that case, rather than the array.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v5.12-rc6
+> > > +static void aic_ipi_unmask(struct irq_data *d)
+> > > +{
+> > > +	struct aic_irq_chip *ic = irq_data_get_irq_chip_data(d);
+> > > +	u32 irq_bit = BIT(irqd_to_hwirq(d));
+> > > +	int this_cpu = smp_processor_id();
+> > > +
+> > > +	/*
+> > > +	 * This must complete before the atomic_read_acquire() below to avoid
+> > > +	 * racing aic_ipi_send_mask(). Use a dummy fetch op with release
+> > > +	 * semantics for this. This is arch-specific: ARMv8 B2.3.3 specifies
+> > > +	 * that writes with Release semantics are Barrier-ordered-before reads
+> > > +	 * with Acquire semantics, even though the Linux arch-independent
+> > > +	 * definition of these atomic ops does not.
+> > > +	 */
+> > 
+> > I think a more idiomatic (and portable) way to do this would be to use
+> > the relaxed accessors, but with smp_mb__after_atomic() between them. Do you
+> > have a good reason for _not_ doing it like that?
+> 
+> Not particularly, other than symmetry with the case below.
 
-for you to fetch changes up to 6161a435c1910d07ee00cc25af010889010e1f08:
+I think it would be better not to rely on arm64-specific ordering unless
+there's a good reason to.
 
-  drm/exynos/decon5433: Remove the unused include statements (2021-03-29 19:53:23 +0900)
+> > > +		/*
+> > > +		 * This sequence is the mirror of the one in aic_ipi_unmask();
+> > > +		 * see the comment there. Additionally, release semantics
+> > > +		 * ensure that the vIPI flag set is ordered after any shared
+> > > +		 * memory accesses that precede it. This therefore also pairs
+> > > +		 * with the atomic_fetch_andnot in aic_handle_ipi().
+> > > +		 */
+> > > +		pending = atomic_fetch_or_release(irq_bit, &aic_vipi_flag[cpu]);
+> 
+> We do need the return data here, and the release semantics (or another
+> barrier before it). But the read below can be made relaxed and a barrier
+> used instead, and then the same patern above except with a plain
+> atomic_or().
 
-----------------------------------------------------------------
-Just one cleanup which drops of_gpio.h inclusion.
-- This header file isn't used anymore so drop it.
+Yes, I think using atomic_fetch_or() followed by atomic_read() would be
+best (obviously with the relevant comments!)
 
-----------------------------------------------------------------
-Tian Tao (1):
-      drm/exynos/decon5433: Remove the unused include statements
+> 
+> > > +		if (!(pending & irq_bit) && (atomic_read_acquire(&aic_vipi_enable[cpu]) & irq_bit))
+> > > +			send |= AIC_IPI_SEND_CPU(cpu);
+> > > +	}
+> 
+> [...]
+> 
+> > > +	/*
+> > > +	 * Clear the IPIs we are about to handle. This pairs with the
+> > > +	 * atomic_fetch_or_release() in aic_ipi_send_mask(), and needs to be
+> > > +	 * ordered after the aic_ic_write() above (to avoid dropping vIPIs) and
+> > > +	 * before IPI handling code (to avoid races handling vIPIs before they
+> > > +	 * are signaled). The former is taken care of by the release semantics
+> > > +	 * of the write portion, while the latter is taken care of by the
+> > > +	 * acquire semantics of the read portion.
+> > > +	 */
+> > > +	firing = atomic_fetch_andnot(enabled, &aic_vipi_flag[this_cpu]) & enabled;
+> > 
+> > Does this also need to be ordered after the Ack? For example, if we have
+> > something like:
+> > 
+> > CPU 0						CPU 1
+> > 						<some other IPI>
+> > aic_ipi_send_mask()
+> > 						atomic_fetch_andnot(flag)
+> > 	atomic_fetch_or_release(flag)
+> > 	aic_ic_write(AIC_IPI_SEND)
+> > 						aic_ic_write(AIC_IPI_ACK)
+> > 
+> > sorry if it's a stupid question, I'm just not sure about the cases in which
+> > the hardware will pend things for you.
+> 
+> It is ordered, right? As the comment says, it "needs to be ordered after the
+> aic_ic_write() above". atomic_fetch_andnot() is *supposed* to be fully
+> ordered and that should include against the writel_relaxed() on
+> AIC_IPI_FLAG. On ARM it turns out it's not quite fully ordered, but the
+> acquire semantics of the read half are sufficient for this case, as they
+> guarantee the flags are always read after the FIQ has been ACKed.
 
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 1 -
- 1 file changed, 1 deletion(-)
+Sorry, I missed that the answer to my question was already written in the
+comment. However, I'm still a bit unsure about whether the memory barriers
+give you what you need here. The barrier in atomic_fetch_andnot() will
+order the previous aic_ic_write(AIC_IPI_ACK) for the purposes of other
+CPUs reading those locations, but it doesn't say anything about when the
+interrupt controller actually changes state after the Ack.
+
+Given that the AIC is mapped Device-nGnRnE, the Arm ARM offers:
+
+  | Additionally, for Device-nGnRnE memory, a read or write of a Location
+  | in a Memory-mapped peripheral that exhibits side-effects is complete
+  | only when the read or write both:
+  |
+  | * Can begin to affect the state of the Memory-mapped peripheral.
+  | * Can trigger all associated side-effects, whether they affect other
+  |   peripheral devices, PEs, or memory.
+
+so without AIC documentation I can't tell whether completion of the Ack write
+just begins the process of an Ack (in which case we might need something like
+a read-back), or whether the write response back from the AIC only occurs once
+the Ack has taken effect. Any ideas?
+
+> Cheeers,
+
+No prooblem :)
+
+Will
