@@ -2,265 +2,198 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9E5C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Mar 2021 12:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A72C433DB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Mar 2021 13:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9334761934
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Mar 2021 12:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81ABB61938
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Mar 2021 13:30:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231473AbhC2MFC (ORCPT
+        id S231185AbhC2NaB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 29 Mar 2021 08:05:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44356 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231205AbhC2MEy (ORCPT
+        Mon, 29 Mar 2021 09:30:01 -0400
+Received: from mail-dm6nam12on2051.outbound.protection.outlook.com ([40.107.243.51]:31489
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231219AbhC2N3o (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Mar 2021 08:04:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C1DFC61930;
-        Mon, 29 Mar 2021 12:04:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617019493;
-        bh=ffh6M924/rxjUnoRUIqHYy/8ZaEz5qQCxPUEUO6zW3Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IAUE3LeaIbErQXuzlruAMJF7ezMe0XDisUWq9SRIaSenVGYdOqQsPb6DXmeutd+4B
-         RVsaWw6RpULtuZ19QtA62lEwIRmRef8XA+nzEAVmQGV5R6l12mzXPWJk5+P1NSaVqR
-         mKRaNnam9qez0chbfC+YALm13d+YdOA0BhHKmnYALroYW9QgIxoBrl1Q4JTIVyVhXd
-         Ap5K7h3uzHNl6OE/Gc00gMsmpKGiHzvpeis2JfAxK9Ir+R4mV9MTROlEYtAsR0T14Z
-         B+CtwNl77R52lEUcBB6Bmve2Chm5UyJrrmORJiXURwA1lfewXKseHYHq1RYTdOGFCe
-         M4fkzlyiLhykA==
-Date:   Mon, 29 Mar 2021 13:04:42 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Hector Martin <marcan@marcan.st>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Tony Lindgren <tony@atomide.com>,
-        Mohamed Mediouni <mohamed.mediouni@caramail.com>,
-        Stan Skowronek <stan@corellium.com>,
-        Alexander Graf <graf@amazon.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        Mon, 29 Mar 2021 09:29:44 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hzqoqRLa5LkFcUV6uv3fGlS+/foSAGw3G8aEB0pRQ4ACZrMGuEQ9FC1eIZvAbgEA4A/pi6ro4vOTzO2KXroWzrRaICiKc2WErHLYLfIJjFSV+g0zJm2iezZ1kPoQggUoY0UkQQYjfky8ArFVEr1KV6Pdhxdl1smc1f8wTfrSfAwOjT9Y6d2VCTDnK2uSueGl8zbP+YwmGN4ZxW50WDSBROjltnHP7LVTWEyy/AH2PsZeanRFsTF/2B2P5CB4s1zSnHSxX2AhfAKX6y3lXIw3/+q0m/zYH55YWDLNQMaLZf09u8jPU8goEjI97eOGfWhLX9DWkFfsa0KQ7ftNqI9wfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=729qrDSQ9IEErNxVk5ewoli8SlnFr5eZUF7zON8xjyI=;
+ b=ofQV84pIc+qhc0CZCbkSOjKneEFQQjayLaoRxUGjrX7g7/2KiWQyWWj6xwOidxP1S9Jg9UOnReTA4xwcvRWC7HgJ7luXEhsvfKxvIzhvMIBjRS3hFkoXsAGmynHgGG35nV1gOvozbVzAzY7I09orC/RjbUMS6TmoK2myTDreuuFUQ4/9ol3R2FQIaqcUwjOFfM8C5l3AzstBy/ejXBE5Zr2QBJ8n01TPFb6PtY8repzG5TlaepobJHioJr/a3rFR2/SH1AOdHReSnammXtz7+IoZ/QB7SW14Mxg1T+Br75rXMJ0V3uKj54G+EtHw8dcUDekwrLM0fC1Av8SQ/UsqEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=729qrDSQ9IEErNxVk5ewoli8SlnFr5eZUF7zON8xjyI=;
+ b=VSc0h2Bfbz5jCVrPyZLZWwgyg3dDFYA6J0AlLm/CzXLkr4zD1ZT+Rt1/V0SbCziRhSyBmmZqdtC6TSL6tD0EvtuM7rlNPIri/t/1VHEy19vcjvaXFkzuUIFeQC2GA5FSgJ5Ax2BUxXCYT0VibhvOIfMIFzayc1pJgzT/pD257xyVW+UIoqVYI+AdVQRofe/aUVicXifHoAivnVynduBsUJL6CIxwP878pz5zoBc+7kpTo0XlWssDNDDYBj2eoIdwgSOUpmiAtDHwysKoxWjCVl13ocHfc+I6El88nSmon9n+PUdHnhi9jWF+WuwFNjMDoEW3VthhFMNgeh30rHBJSA==
+Authentication-Results: ffwll.ch; dkim=none (message not signed)
+ header.d=none;ffwll.ch; dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3834.namprd12.prod.outlook.com (2603:10b6:5:14a::12)
+ by DM6PR12MB3514.namprd12.prod.outlook.com (2603:10b6:5:183::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.24; Mon, 29 Mar
+ 2021 13:29:42 +0000
+Received: from DM6PR12MB3834.namprd12.prod.outlook.com
+ ([fe80::1c62:7fa3:617b:ab87]) by DM6PR12MB3834.namprd12.prod.outlook.com
+ ([fe80::1c62:7fa3:617b:ab87%6]) with mapi id 15.20.3977.033; Mon, 29 Mar 2021
+ 13:29:42 +0000
+Date:   Mon, 29 Mar 2021 10:29:39 -0300
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@intel.com>,
         Christoph Hellwig <hch@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFT PATCH v3 16/27] irqchip/apple-aic: Add support for the
- Apple Interrupt Controller
-Message-ID: <20210329120442.GA3636@willie-the-truck>
-References: <20210304213902.83903-1-marcan@marcan.st>
- <20210304213902.83903-17-marcan@marcan.st>
- <20210324195742.GA13474@willie-the-truck>
- <3564ed98-6ad6-7ddd-01d2-36d7f5af90e0@marcan.st>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Kees Cook <keescook@chromium.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 1/3] mm: Add unsafe_follow_pfn
+Message-ID: <20210329132939.GA1168773@nvidia.com>
+References: <20210316153303.3216674-1-daniel.vetter@ffwll.ch>
+ <20210316153303.3216674-2-daniel.vetter@ffwll.ch>
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3564ed98-6ad6-7ddd-01d2-36d7f5af90e0@marcan.st>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210316153303.3216674-2-daniel.vetter@ffwll.ch>
+X-Originating-IP: [142.162.115.133]
+X-ClientProxiedBy: BL1PR13CA0081.namprd13.prod.outlook.com
+ (2603:10b6:208:2b8::26) To DM6PR12MB3834.namprd12.prod.outlook.com
+ (2603:10b6:5:14a::12)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from mlx.ziepe.ca (142.162.115.133) by BL1PR13CA0081.namprd13.prod.outlook.com (2603:10b6:208:2b8::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3999.16 via Frontend Transport; Mon, 29 Mar 2021 13:29:41 +0000
+Received: from jgg by mlx with local (Exim 4.94)        (envelope-from <jgg@nvidia.com>)        id 1lQrxb-004u4f-U4; Mon, 29 Mar 2021 10:29:39 -0300
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8e84875c-1522-4706-6b60-08d8f2b6b578
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3514:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DM6PR12MB3514105C66A9516B629D6A24C27E9@DM6PR12MB3514.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3383;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 6I89oTpVCFgoeCQdG6nQu7k8Y1TitSzTwFzUD03mWssD5Vd0/AnQRPp4vtZjT3cPuEyPNMD0bB93FtpiGRkbrR6ViqYmNMnXNGxCJBqilZtTUT6z/QFOmjGs3vogFqlSIqmkbclKhZS2LL3wqoBpOk1G20szal4illaTkD25JOerAxRz6TERce3EmaBvYwHpvDeZMwNqe+ZaKoZGhknbPg80Up7VZdyliIBrFBn1QT3G9mGizOO7dBSsKmqozfto9AbU2stzubo0LIn97mZ7xMXkJRKca/Nzo+vRVGUXun01cMmc/IJT5Mwq61MlnWQxyMb1VmAU85//khozhti6Ww/M9NkYiBUXl/9+eqqpkgxuC/38MNTzZlT3aL48BhLXLnzlNP+iSf4EviPWj8sEu1GLuF5zEqZAP/5RHcOnFToSvXUp++ytimUY8FDLmm+LSh0YU7/nVlGyJvE1VAvDwx8zWTlh36TUF0ggikJAwStWS1bnLYypOVQom3K2eFT/K/EOEkb1CyRZ6UXagS6dUjt+X4S8II4J2GOhJ7ofvyKdPXSjyH0lCpUNkO1kjANtEf7gywnVTSPRwr7mPzJTjQRT1axci/yB6O0GdV2DstFLq2VRutLx3aBIALMGM1LSMjljvcDKFxfLicG6NwX4ciYR+nEEFwtdggufB1i5zK8=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3834.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(39860400002)(396003)(136003)(376002)(346002)(4326008)(33656002)(7416002)(54906003)(2906002)(38100700001)(26005)(478600001)(6916009)(36756003)(83380400001)(8676002)(66574015)(316002)(8936002)(9786002)(9746002)(5660300002)(86362001)(66556008)(66476007)(2616005)(186003)(426003)(1076003)(66946007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?ZnlFc3lNQTVPUEdlbFBnZ1N1Vzg4dmMwM2o3TUwvOVcvaEh3Tml3ek1HSlFR?=
+ =?utf-8?B?dDBSQzJKS3lxaVgydHVIRzJkaUd1T011QzlLYjlmaUhoVStCTTg4aHM0bmtO?=
+ =?utf-8?B?L0FWTlZoN0NsOU1INDByZlEvQk0vcyt5Z2ZhTmFpNWRtUFJtMDY5QzgweWtX?=
+ =?utf-8?B?UUNua0luODIrT29kVVN5cEVpRFg4SzdGNVZHekp1VytVRTZraVlZM1pxd3FD?=
+ =?utf-8?B?ZDNaeThDdzY4M1RYcmJROFhuNWZmc2YySlJ0c1ZEME13TXJSOGF2UVVqTTNG?=
+ =?utf-8?B?K1M5c1B0bmtTTThodmM0Sm0rRDVKTXJUQWlwTUlLeWQ3MFF2VStxeFl2S3FR?=
+ =?utf-8?B?MnYxR2xDUXl2UFdJT0Z2aVFzSE1xNE54S1Y4aFBIUU10SHk4dkJyTzI4aGND?=
+ =?utf-8?B?eUt1R0h5QnhlcE9HbUM3SDloWVdqMHZyakwyZC9YZnpqTDVuaFMrQU84YU1J?=
+ =?utf-8?B?UnYvTFdjZ0NKejMzSHpSUmNIRk4wTjB4NEk4VDdLcEE3L2I0VHQ5ZmpXTFJQ?=
+ =?utf-8?B?ZFlldGI3dDJlMWdCM2FOZzcvWm80VkduYjZvbVhDUW9DbFBiaFN4MU9Rdld4?=
+ =?utf-8?B?RHhmbHJCLzVQdlU2akRYQS9FSkpEVDdsMVc5SXpRMWpUUm9pcjl0SDFNR3Bp?=
+ =?utf-8?B?TWxld3EwbnIyTjhkZ3hBSXRteDBxRlFiSVRwVllnUngxczFHcEVta0g3NHF2?=
+ =?utf-8?B?Y0I5aFFid28wOHI3RWRTUnNCVWxtdCt6aWpQVHdWSTV6WkNBS0lNT1l0SlRY?=
+ =?utf-8?B?YjVQU25XSjJIamwveS9EQmFZWUN0eG0rbFVDa0dCb0tPUmhHdnZNNFNROEU5?=
+ =?utf-8?B?VStqejRMVkhIVzVkSkdtcmFhN2pTMHg1UGRXa1dUTmxhekFiOE5QQ3lpSnN1?=
+ =?utf-8?B?NWZNQXliNGU5SzdoUWt1MXlXY0xIb2tkMndaT2dxS0lOUVU2eC90NXhIMzBI?=
+ =?utf-8?B?aDdnNDFqd0haeWR2YUkyeHdNWm1GeWJmU2FyK2NsMEoxYVZDSXhvaUdlUGo2?=
+ =?utf-8?B?T3N3ZnBaY1RhdWpmRlRUVzB6di9Gck5Uci9LOFZJQ1lpQ2s1TFVVR2EyTmFK?=
+ =?utf-8?B?NkNoOThZMm44U2RQdUd2NGl5bnFabitmdHhVTkR2OERTTFBEeDhEZk5GNW5D?=
+ =?utf-8?B?K044Z01rSUY0Sk91T3YwMitBQm5tYVlmbEs3SFRCUEpKVldTTlhtWTd0bHVB?=
+ =?utf-8?B?a3dxUndmZkpkNmZkK3pWZ3hhY1c1em9keU5WU0V6azBsZ0x2a3I4ektWM1F4?=
+ =?utf-8?B?YmEwVkU0VExydEplV0dyOExjNVBwWkJnRU10YzZoZ3RTMm0ydE5nSHVMaGw4?=
+ =?utf-8?B?eEtIR1lBd1VKRmVSVDVaVWR3Y3AyR01ENFk1R3RwR1FhUTVlMGVTZUF3Zzcw?=
+ =?utf-8?B?WDhBTEpKUFZ3SEdramhVM2tYaVBselB2L2FubTRybVpIQS9tK050Q3h6My9K?=
+ =?utf-8?B?YktaOVJDUkJBVi9YdklXVTRHQnRnbTZYS3lmNUhHQzRaSFAyNXp1T0t3Y1NC?=
+ =?utf-8?B?Y0IzUUo5TlJiSU0vNXBTL29rRGZjTGRlTHVVTlJmcXFiNFdYbzlweHdrb3Y3?=
+ =?utf-8?B?VDVXYkdaeDQ2cE45TzN4bkVNVkg2MTZjbEdwdDlKUGpqc1llMldoWmo4bG9m?=
+ =?utf-8?B?ODMzZ1pCWnVlQTdqUS9FYVo5eE05QVBxZVIvaUFSZU0za0ZHajlabjlhUzc2?=
+ =?utf-8?B?aWhLN1NkVU5yajZaY0t5TWMyalNKbktRVGY0dVJNOUlIaCtzaDRlbkdSblNw?=
+ =?utf-8?Q?UQXiITZZYz6tU8FZl4AlgxGueCpz3WtS/HUHmoS?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e84875c-1522-4706-6b60-08d8f2b6b578
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3834.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Mar 2021 13:29:42.0809
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IsG1ZgaZN4VriPnotgDifhDjwtODr+Sv2l3nKXn58smn2UpLfJ5mjA5PAodrSIko
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3514
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Hector,
-
-On Fri, Mar 26, 2021 at 05:58:15PM +0900, Hector Martin wrote:
-> On 25/03/2021 04.57, Will Deacon wrote:
-> > > +		event = readl(ic->base + AIC_EVENT);
-> > > +		type = FIELD_GET(AIC_EVENT_TYPE, event);
-> > > +		irq = FIELD_GET(AIC_EVENT_NUM, event);
-> > > +
-> > > +		if (type == AIC_EVENT_TYPE_HW)
-> > > +			handle_domain_irq(aic_irqc->hw_domain, irq, regs);
-> > > +		else if (type == AIC_EVENT_TYPE_IPI && irq == 1)
-> > > +			aic_handle_ipi(regs);
-> > > +		else if (event != 0)
-> > > +			pr_err("Unknown IRQ event %d, %d\n", type, irq);
-> > > +	} while (event);
-> > > +
-> > > +	/*
-> > > +	 * vGIC maintenance interrupts end up here too, so we need to check
-> > > +	 * for them separately. Just report and disable vGIC for now, until
-> > > +	 * we implement this properly.
-> > > +	 */
-> > > +	if ((read_sysreg_s(SYS_ICH_HCR_EL2) & ICH_HCR_EN) &&
-> > > +		read_sysreg_s(SYS_ICH_MISR_EL2) != 0) {
-> > > +		pr_err("vGIC IRQ fired, disabling.\n");
-> > > +		sysreg_clear_set_s(SYS_ICH_HCR_EL2, ICH_HCR_EN, 0);
-> > > +	}
-> > 
-> > What prevents all these system register accesses being speculated up before
-> > the handler?
+On Tue, Mar 16, 2021 at 04:33:01PM +0100, Daniel Vetter wrote:
+> Way back it was a reasonable assumptions that iomem mappings never
+> change the pfn range they point at. But this has changed:
 > 
-> Nothing, but that's not a problem, is it? If the condition is met, it means
-> the vGIC IRQ *is* firing and needs clearing. We don't particularly care if
-> this happens before, after, or during the rest of the IRQ handling.
+> - gpu drivers dynamically manage their memory nowadays, invalidating
+> ptes with unmap_mapping_range when buffers get moved
 > 
-> I changed the message to this, because we actually should never hit this
-> path with correctly-working KVM code (it takes care of it before this
-> handler runs):
+> - contiguous dma allocations have moved from dedicated carvetouts to
+> cma regions. This means if we miss the unmap the pfn might contain
+> pagecache or anon memory (well anything allocated with GFP_MOVEABLE)
 > 
-> pr_err_ratelimited("vGIC IRQ fired and not handled by KVM, disabling.\n");
-
-Looks good.
-
-> > > +static struct irq_chip aic_chip = {
-> > > +	.name = "AIC",
-> > > +	.irq_mask = aic_irq_mask,
-> > > +	.irq_unmask = aic_irq_unmask,
-> > 
-> > I know these are driven by the higher-level irq chip code, but I'm a bit
-> > confused as to what provides ordering if, e.g. something ends up calling:
-> > 
-> > 	aic_chip.irq_mask(d);
-> > 	...
-> > 	aic_chip.irq_unmask(d);
-> > 
-> > I can't see any ISBs in here and they're writing to two different registers,
-> > so can we end up with the IRQ masked after this sequence?
+> - even /dev/mem now invalidates mappings when the kernel requests that
+> iomem region when CONFIG_IO_STRICT_DEVMEM is set, see 3234ac664a87
+> ("/dev/mem: Revoke mappings when a driver claims the region")
 > 
-> Wait, aren't MMIO writes to the same peripheral using device-nGnRnE memory
-> modes always ordered with respect to each other? I thought the _relaxed
-> versions were only trouble when mixed with memory/DMA buffers, and MMIO for
-> any given peripheral always takes effect in program order.
-
-Sorry, this was my mistake -- I seem to have mixed up the MMIO parts with
-the system register parts. In this case, aic_irq_[un]mask() are MMIO writes,
-so things work out. It's the FIQ mask/unmask code that needs the ISBs.
-
-> > > +static void aic_ipi_mask(struct irq_data *d)
-> > > +{
-> > > +	u32 irq_bit = BIT(irqd_to_hwirq(d));
-> > > +	int this_cpu = smp_processor_id();
-> > > +
-> > > +	/* No specific ordering requirements needed here. */
-> > > +	atomic_andnot(irq_bit, &aic_vipi_enable[this_cpu]);
-> > > +}
-> > 
-> > Why not use a per-cpu variable here instead of an array of atomics? The pcpu
-> > API has things for atomic updates (e.g. or, and, xchg).
+> Accessing pfns obtained from ptes without holding all the locks is
+> therefore no longer a good idea.
 > 
-> One CPU still needs to be able to mutate the flags of another CPU to fire an
-> IPI; AIUI the per-cpu ops are *not* atomic for concurrent access by multiple
-> CPUs, and in fact there is no API for that, only for "this CPU".
-
-Huh, I really thought we had an API for that, but you're right. Oh well! But
-I'd still suggest a per-cpu atomic_t in that case, rather than the array.
-
-> > > +static void aic_ipi_unmask(struct irq_data *d)
-> > > +{
-> > > +	struct aic_irq_chip *ic = irq_data_get_irq_chip_data(d);
-> > > +	u32 irq_bit = BIT(irqd_to_hwirq(d));
-> > > +	int this_cpu = smp_processor_id();
-> > > +
-> > > +	/*
-> > > +	 * This must complete before the atomic_read_acquire() below to avoid
-> > > +	 * racing aic_ipi_send_mask(). Use a dummy fetch op with release
-> > > +	 * semantics for this. This is arch-specific: ARMv8 B2.3.3 specifies
-> > > +	 * that writes with Release semantics are Barrier-ordered-before reads
-> > > +	 * with Acquire semantics, even though the Linux arch-independent
-> > > +	 * definition of these atomic ops does not.
-> > > +	 */
-> > 
-> > I think a more idiomatic (and portable) way to do this would be to use
-> > the relaxed accessors, but with smp_mb__after_atomic() between them. Do you
-> > have a good reason for _not_ doing it like that?
+> Unfortunately there's some users where this is not fixable (like v4l
+> userptr of iomem mappings) or involves a pile of work (vfio type1
+> iommu). For now annotate these as unsafe and splat appropriately.
 > 
-> Not particularly, other than symmetry with the case below.
-
-I think it would be better not to rely on arm64-specific ordering unless
-there's a good reason to.
-
-> > > +		/*
-> > > +		 * This sequence is the mirror of the one in aic_ipi_unmask();
-> > > +		 * see the comment there. Additionally, release semantics
-> > > +		 * ensure that the vIPI flag set is ordered after any shared
-> > > +		 * memory accesses that precede it. This therefore also pairs
-> > > +		 * with the atomic_fetch_andnot in aic_handle_ipi().
-> > > +		 */
-> > > +		pending = atomic_fetch_or_release(irq_bit, &aic_vipi_flag[cpu]);
+> This patch adds an unsafe_follow_pfn, which later patches will then
+> roll out to all appropriate places.
 > 
-> We do need the return data here, and the release semantics (or another
-> barrier before it). But the read below can be made relaxed and a barrier
-> used instead, and then the same patern above except with a plain
-> atomic_or().
-
-Yes, I think using atomic_fetch_or() followed by atomic_read() would be
-best (obviously with the relevant comments!)
-
+> Also mark up follow_pfn as EXPORT_SYMBOL_GPL. The only safe way to use
+> that by drivers/modules is together with an mmu_notifier, and that's
+> all _GPL stuff.
 > 
-> > > +		if (!(pending & irq_bit) && (atomic_read_acquire(&aic_vipi_enable[cpu]) & irq_bit))
-> > > +			send |= AIC_IPI_SEND_CPU(cpu);
-> > > +	}
-> 
-> [...]
-> 
-> > > +	/*
-> > > +	 * Clear the IPIs we are about to handle. This pairs with the
-> > > +	 * atomic_fetch_or_release() in aic_ipi_send_mask(), and needs to be
-> > > +	 * ordered after the aic_ic_write() above (to avoid dropping vIPIs) and
-> > > +	 * before IPI handling code (to avoid races handling vIPIs before they
-> > > +	 * are signaled). The former is taken care of by the release semantics
-> > > +	 * of the write portion, while the latter is taken care of by the
-> > > +	 * acquire semantics of the read portion.
-> > > +	 */
-> > > +	firing = atomic_fetch_andnot(enabled, &aic_vipi_flag[this_cpu]) & enabled;
-> > 
-> > Does this also need to be ordered after the Ack? For example, if we have
-> > something like:
-> > 
-> > CPU 0						CPU 1
-> > 						<some other IPI>
-> > aic_ipi_send_mask()
-> > 						atomic_fetch_andnot(flag)
-> > 	atomic_fetch_or_release(flag)
-> > 	aic_ic_write(AIC_IPI_SEND)
-> > 						aic_ic_write(AIC_IPI_ACK)
-> > 
-> > sorry if it's a stupid question, I'm just not sure about the cases in which
-> > the hardware will pend things for you.
-> 
-> It is ordered, right? As the comment says, it "needs to be ordered after the
-> aic_ic_write() above". atomic_fetch_andnot() is *supposed* to be fully
-> ordered and that should include against the writel_relaxed() on
-> AIC_IPI_FLAG. On ARM it turns out it's not quite fully ordered, but the
-> acquire semantics of the read half are sufficient for this case, as they
-> guarantee the flags are always read after the FIQ has been ACKed.
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: Jérôme Glisse <jglisse@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: kvm@vger.kernel.org
+> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> --
+> v5: Suggestions from Christoph
+> - reindent for less weirdness
+> - use IS_ENABLED instead of #ifdef
+> - same checks for nommu, for consistency
+> - EXPORT_SYMBOL_GPL for follow_pfn.
+> - kerneldoc was already updated in previous versions to explain when
+>   follow_pfn can be used safely
+> ---
+>  include/linux/mm.h |  2 ++
+>  mm/memory.c        | 34 ++++++++++++++++++++++++++++++++--
+>  mm/nommu.c         | 27 ++++++++++++++++++++++++++-
+>  security/Kconfig   | 13 +++++++++++++
+>  4 files changed, 73 insertions(+), 3 deletions(-)
 
-Sorry, I missed that the answer to my question was already written in the
-comment. However, I'm still a bit unsure about whether the memory barriers
-give you what you need here. The barrier in atomic_fetch_andnot() will
-order the previous aic_ic_write(AIC_IPI_ACK) for the purposes of other
-CPUs reading those locations, but it doesn't say anything about when the
-interrupt controller actually changes state after the Ack.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Given that the AIC is mapped Device-nGnRnE, the Arm ARM offers:
-
-  | Additionally, for Device-nGnRnE memory, a read or write of a Location
-  | in a Memory-mapped peripheral that exhibits side-effects is complete
-  | only when the read or write both:
-  |
-  | * Can begin to affect the state of the Memory-mapped peripheral.
-  | * Can trigger all associated side-effects, whether they affect other
-  |   peripheral devices, PEs, or memory.
-
-so without AIC documentation I can't tell whether completion of the Ack write
-just begins the process of an Ack (in which case we might need something like
-a read-back), or whether the write response back from the AIC only occurs once
-the Ack has taken effect. Any ideas?
-
-> Cheeers,
-
-No prooblem :)
-
-Will
+Jason
