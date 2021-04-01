@@ -2,54 +2,41 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE992C43462
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Apr 2021 01:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25494C433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Apr 2021 07:45:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B95436108E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Apr 2021 01:41:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2A0560BBB
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  1 Apr 2021 07:45:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232634AbhDABk1 (ORCPT
+        id S233465AbhDAHpZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 31 Mar 2021 21:40:27 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:53165 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbhDABkN (ORCPT
+        Thu, 1 Apr 2021 03:45:25 -0400
+Received: from mga07.intel.com ([134.134.136.100]:2550 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230284AbhDAHpK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 31 Mar 2021 21:40:13 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1617241212; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=188ScI7IN9TQ0IjdtTR3Qyp8g6FQy45LVuXM62ZjqjU=; b=ibkrNR0zKeZHFfaqs9BSDoHGvaQyL2AEAXYqj6PFChxqLhV/8h8lQSRiwEdUaOTBVl4QTSms
- xMLRB7+9VoP3dDQ3+69G/yNBz5vQlLmlEETokzNz7bhkolXQAy38kCAyznwmQLGIXcZDgkm9
- KDmPHz2moAaJAWldwrMrurLlgdo=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyJhY2Q3MCIsICJsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
- 6065247c0a4a07ffdaf061f1 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 01 Apr 2021 01:40:12
- GMT
-Sender: asutoshd=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id ACCEFC43461; Thu,  1 Apr 2021 01:40:11 +0000 (UTC)
-Received: from [192.168.8.168] (cpe-70-95-149-85.san.res.rr.com [70.95.149.85])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: asutoshd)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 661EAC433CA;
-        Thu,  1 Apr 2021 01:40:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 661EAC433CA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=asutoshd@codeaurora.org
+        Thu, 1 Apr 2021 03:45:10 -0400
+IronPort-SDR: AozoHmkV2Kuj+SszmoaH6YXXMfIzJA/FuY+l0a7przeTicEXJZvrqRkd8WN52X6FhSm4Ms9Ir5
+ nBKnyh3W3xqA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9940"; a="256160553"
+X-IronPort-AV: E=Sophos;i="5.81,296,1610438400"; 
+   d="scan'208";a="256160553"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2021 00:45:07 -0700
+IronPort-SDR: lsbWgO8aRTgEJJiGUMpmyaRbtmcauxhMmNapB9ei3jfvohdyrNPtGYFBZQe67fxtzdYtxYWhU7
+ 9g+tDZ9olIrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,296,1610438400"; 
+   d="scan'208";a="377598402"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.174]) ([10.237.72.174])
+  by orsmga003.jf.intel.com with ESMTP; 01 Apr 2021 00:45:00 -0700
 Subject: Re: [PATCH v14 1/2] scsi: ufs: Enable power management for wlun
-To:     Adrian Hunter <adrian.hunter@intel.com>, cang@codeaurora.org,
+To:     "Asutosh Das (asd)" <asutoshd@codeaurora.org>, cang@codeaurora.org,
         martin.petersen@oracle.com, linux-scsi@vger.kernel.org
 Cc:     linux-arm-msm@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -84,97 +71,110 @@ Cc:     linux-arm-msm@vger.kernel.org,
 References: <cover.1617143113.git.asutoshd@codeaurora.org>
  <16f1bcf76ff411c70fe0e3e13f84e4b0fa7d9063.1617143113.git.asutoshd@codeaurora.org>
  <a385141d-324b-680e-a19c-ab6121bd6c5d@intel.com>
-From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
-Message-ID: <dbac8ce8-83c6-49a5-9f4d-f5ea19d7a883@codeaurora.org>
-Date:   Wed, 31 Mar 2021 18:40:06 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+ <dbac8ce8-83c6-49a5-9f4d-f5ea19d7a883@codeaurora.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <612d0f35-89a2-947b-9fa4-608624c4c032@intel.com>
+Date:   Thu, 1 Apr 2021 10:45:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <a385141d-324b-680e-a19c-ab6121bd6c5d@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <dbac8ce8-83c6-49a5-9f4d-f5ea19d7a883@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 3/31/2021 11:19 AM, Adrian Hunter wrote:
-> On 31/03/21 1:31 am, Asutosh Das wrote:
->> During runtime-suspend of ufs host, the scsi devices are
->> already suspended and so are the queues associated with them.
->> But the ufs host sends SSU (START_STOP_UNIT) to wlun
->> during its runtime-suspend.
->> During the process blk_queue_enter checks if the queue is not in
->> suspended state. If so, it waits for the queue to resume, and never
->> comes out of it.
->> The commit
->> (d55d15a33: scsi: block: Do not accept any requests while suspended)
->> adds the check if the queue is in suspended state in blk_queue_enter().
+On 1/04/21 4:40 am, Asutosh Das (asd) wrote:
+> On 3/31/2021 11:19 AM, Adrian Hunter wrote:
+>> On 31/03/21 1:31 am, Asutosh Das wrote:
+>>> During runtime-suspend of ufs host, the scsi devices are
+>>> already suspended and so are the queues associated with them.
+>>> But the ufs host sends SSU (START_STOP_UNIT) to wlun
+>>> during its runtime-suspend.
+>>> During the process blk_queue_enter checks if the queue is not in
+>>> suspended state. If so, it waits for the queue to resume, and never
+>>> comes out of it.
+>>> The commit
+>>> (d55d15a33: scsi: block: Do not accept any requests while suspended)
+>>> adds the check if the queue is in suspended state in blk_queue_enter().
+>>>
+>>> Call trace:
+>>>   __switch_to+0x174/0x2c4
+>>>   __schedule+0x478/0x764
+>>>   schedule+0x9c/0xe0
+>>>   blk_queue_enter+0x158/0x228
+>>>   blk_mq_alloc_request+0x40/0xa4
+>>>   blk_get_request+0x2c/0x70
+>>>   __scsi_execute+0x60/0x1c4
+>>>   ufshcd_set_dev_pwr_mode+0x124/0x1e4
+>>>   ufshcd_suspend+0x208/0x83c
+>>>   ufshcd_runtime_suspend+0x40/0x154
+>>>   ufshcd_pltfrm_runtime_suspend+0x14/0x20
+>>>   pm_generic_runtime_suspend+0x28/0x3c
+>>>   __rpm_callback+0x80/0x2a4
+>>>   rpm_suspend+0x308/0x614
+>>>   rpm_idle+0x158/0x228
+>>>   pm_runtime_work+0x84/0xac
+>>>   process_one_work+0x1f0/0x470
+>>>   worker_thread+0x26c/0x4c8
+>>>   kthread+0x13c/0x320
+>>>   ret_from_fork+0x10/0x18
+>>>
+>>> Fix this by registering ufs device wlun as a scsi driver and
+>>> registering it for block runtime-pm. Also make this as a
+>>> supplier for all other luns. That way, this device wlun
+>>> suspends after all the consumers and resumes after
+>>> hba resumes.
+>>>
+>>> Co-developed-by: Can Guo <cang@codeaurora.org>
+>>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>>> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+>>> ---
 >>
->> Call trace:
->>   __switch_to+0x174/0x2c4
->>   __schedule+0x478/0x764
->>   schedule+0x9c/0xe0
->>   blk_queue_enter+0x158/0x228
->>   blk_mq_alloc_request+0x40/0xa4
->>   blk_get_request+0x2c/0x70
->>   __scsi_execute+0x60/0x1c4
->>   ufshcd_set_dev_pwr_mode+0x124/0x1e4
->>   ufshcd_suspend+0x208/0x83c
->>   ufshcd_runtime_suspend+0x40/0x154
->>   ufshcd_pltfrm_runtime_suspend+0x14/0x20
->>   pm_generic_runtime_suspend+0x28/0x3c
->>   __rpm_callback+0x80/0x2a4
->>   rpm_suspend+0x308/0x614
->>   rpm_idle+0x158/0x228
->>   pm_runtime_work+0x84/0xac
->>   process_one_work+0x1f0/0x470
->>   worker_thread+0x26c/0x4c8
->>   kthread+0x13c/0x320
->>   ret_from_fork+0x10/0x18
+> Hi Adrian
+> Thanks for the comments.
+>> Looks good but still doesn't seem to based on the latest tree.
 >>
->> Fix this by registering ufs device wlun as a scsi driver and
->> registering it for block runtime-pm. Also make this as a
->> supplier for all other luns. That way, this device wlun
->> suspends after all the consumers and resumes after
->> hba resumes.
+> Umm, it's based on the below:
+> git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git
+> Branch: refs/heads/for-next
+> 
+> The top most change is e27f3c8 on 27th March'21.
+> Which tree are you referring to that'd be latest?
+
+Dunno, but that seems to be missing:
+
+  commit aa53f580e67b49ec5f4d9bd1de81eb9eb0dc079f
+  Author: Can Guo <cang@codeaurora.org>
+  Date:   Tue Feb 23 21:36:47 2021 -0800
+
+    scsi: ufs: Minor adjustments to error handling
+
+which is in v5.12-rc3
+
+> 
+>> Also came across the issue below:
 >>
->> Co-developed-by: Can Guo <cang@codeaurora.org>
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
->> ---
+>> <SNIP>
+>>
+>>> +#ifdef CONFIG_PM_SLEEP
+>>> +static int ufshcd_wl_poweroff(struct device *dev)
+>>> +{
+>>> +    ufshcd_wl_shutdown(dev);
+>>
+>> This turned out to be wrong.  This is a PM op and SCSI has already
+>> quiesced the sdev's.  All that is needed isOk. I'll fix it in the next version.
 > 
-Hi Adrian
-Thanks for the comments.
-> Looks good but still doesn't seem to based on the latest tree.
+>>
+>>     __ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM);
+>>
+>>> +    return 0;
+>>> +}
+>>> +#endif
 > 
-Umm, it's based on the below:
-git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git
-Branch: refs/heads/for-next
+> 
 
-The top most change is e27f3c8 on 27th March'21.
-Which tree are you referring to that'd be latest?
-
-> Also came across the issue below:
-> 
-> <SNIP>
-> 
->> +#ifdef CONFIG_PM_SLEEP
->> +static int ufshcd_wl_poweroff(struct device *dev)
->> +{
->> +	ufshcd_wl_shutdown(dev);
-> 
-> This turned out to be wrong.  This is a PM op and SCSI has already
-> quiesced the sdev's.  All that is needed isOk. I'll fix it in the next version.
-
-> 
-> 	__ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM);
-> 
->> +	return 0;
->> +}
->> +#endif
-
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-Linux Foundation Collaborative Project
