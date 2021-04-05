@@ -2,124 +2,92 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0229AC433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Apr 2021 10:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F6CC433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Apr 2021 18:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA2BD613AE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Apr 2021 10:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2AAF613B4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Apr 2021 18:14:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238736AbhDEKUC (ORCPT
+        id S233400AbhDESOS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Apr 2021 06:20:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42980 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232530AbhDEKUB (ORCPT
+        Mon, 5 Apr 2021 14:14:18 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33036 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232597AbhDESOR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Apr 2021 06:20:01 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EAC3C061756;
-        Mon,  5 Apr 2021 03:19:56 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 0E9DB1F449BA
-Received: by earth.universe (Postfix, from userid 1000)
-        id A3B813C0C96; Mon,  5 Apr 2021 12:19:52 +0200 (CEST)
-Date:   Mon, 5 Apr 2021 12:19:52 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH 1/3] MAINTAINERS: power: supply: add entry for S3C ADC
- battery driver
-Message-ID: <20210405101952.itm5xxthn4qphj3u@earth.universe>
-References: <20210210172108.334896-1-krzk@kernel.org>
+        Mon, 5 Apr 2021 14:14:17 -0400
+Received: from mail-wr1-f70.google.com ([209.85.221.70])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lTTjm-0004jC-H8
+        for linux-samsung-soc@vger.kernel.org; Mon, 05 Apr 2021 18:14:10 +0000
+Received: by mail-wr1-f70.google.com with SMTP id f3so8645838wrt.14
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Apr 2021 11:14:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gG8foTXIek76KK7nrOQoCVDJLrfCMKqkVOw6WNO7XaE=;
+        b=cc74Jyelfn2vwSnqdl2+bcBzJN/t3/UCPj6XsO2l7iPqZnUfQkOGHLSABY+ChYzKbc
+         XGTcHTd0s+crf9w3fjb4sQjKgJ315xB9W/EP33AT+TgsgL2WBWn0HYfvKfKz0eEseU7u
+         mrW44X+6PPuh7fHSavYJCDJ24v/Vrhrt6z8N6NkI7xYm/PBT+jOu0L2czm7Db5i04H0q
+         o2G9fWZDd6UMgwJqFag8EMMrtWJTewti3bgWryV/G/QhW8PhuWW6hE5xGlwaN1a37NtU
+         r5zrWC4Zs57OhC46WSh5fhTAhAj55avNs4zzATVmznafq+CnCquvgFXIOn/9RlQF9ODw
+         E+Pg==
+X-Gm-Message-State: AOAM532PUG3XVGoEr/VTWJIxLIIGOAGv0fPAZy3JoVgqdOX/ffw5NHlG
+        GofWT1SR/163Oca+OL0sWvdjP/ajon3PEV77hBHfOTN3qJObXLUfjmbXHRbknsW79m9dfk4faEp
+        ToIoMHarb0d1C/TVIyBETUhEczuBT+ibr4BF0ivvia+BGjI8C
+X-Received: by 2002:adf:f682:: with SMTP id v2mr6608046wrp.263.1617646450236;
+        Mon, 05 Apr 2021 11:14:10 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzN3QoJP7AbUP2fJpUtZvnPoTvp8sPGHtOVCpQs4vwVbulMlz7NKWTIrPsFa5QmNowx6rn/Dw==
+X-Received: by 2002:adf:f682:: with SMTP id v2mr6608037wrp.263.1617646450126;
+        Mon, 05 Apr 2021 11:14:10 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-192-147.adslplus.ch. [188.155.192.147])
+        by smtp.gmail.com with ESMTPSA id h62sm374140wmf.37.2021.04.05.11.14.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Apr 2021 11:14:09 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: exynos5: correct top kerneldoc
+Date:   Mon,  5 Apr 2021 20:14:05 +0200
+Message-Id: <20210405181405.52189-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="royifewygga4fejm"
-Content-Disposition: inline
-In-Reply-To: <20210210172108.334896-1-krzk@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+The top comment is not a kerneldoc, as W=1 build reports:
 
---royifewygga4fejm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  drivers/i2c/busses/i2c-exynos5.c:39: warning:
+    expecting prototype for i2c(). Prototype was for HSI2C_CTL() instead
 
-Hi,
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ drivers/i2c/busses/i2c-exynos5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, Feb 10, 2021 at 06:21:06PM +0100, Krzysztof Kozlowski wrote:
-> The S3C ADC battery driver is a very old piece of code but still used by
-> (very old as well) S3C24xx platforms (iPAQ h1930/h1940/rx1950).
-> Currently the header file is not covered by maintainers file, so it
-> might look abandoned.  Add a new entry for entire S3C ADC battery driver
-> with Krzysztof Kozlowski as maintainer (as Krzysztof maintains still
-> Samsung S3C24xx platform) to indicate that some basic review can take
-> place.
->=20
-> However considering that the S3C24xx platform is quite old with only few
-> users currently and Krzysztof does not have the actual hardware, let's
-> mark the driver as "Odd fixes".
->=20
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index 5ac30d95650c..97d4f3ac0abd 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -1,5 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+-/**
++/*
+  * i2c-exynos5.c - Samsung Exynos5 I2C Controller Driver
+  *
+  * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+-- 
+2.25.1
 
-Thanks, much appreciated. I queued this series some time ago, but
-forgot to send a notification.
-
--- Sebastian
-
->  MAINTAINERS | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 5f7aa507b812..6abf7cc513df 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15614,6 +15614,13 @@ S:	Supported
->  W:	http://www.ibm.com/developerworks/linux/linux390/
->  F:	drivers/s390/scsi/zfcp_*
-> =20
-> +S3C ADC BATTERY DRIVER
-> +M:	Krzysztof Kozlowski <krzk@kernel.org>
-> +L:	linux-samsung-soc@vger.kernel.org
-> +S:	Odd Fixes
-> +F:	drivers/power/supply/s3c_adc_battery.c
-> +F:	include/linux/s3c_adc_battery.h
-> +
->  S3C24XX SD/MMC Driver
->  M:	Ben Dooks <ben-linux@fluff.org>
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> --=20
-> 2.25.1
->=20
-
---royifewygga4fejm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmBq5EgACgkQ2O7X88g7
-+pouPA/+JJt47wBPf5nSss12X06nU0PBmJqvJI2u7ft7BX1GDlO/r06M6dJJGbI+
-B8+H3tFh1usN7HMxY4u4un2VsnF69q3TQNzQIXRWmrnDU+VTDidEnl82L9g6oIFR
-nCSQLvyiZQJjQJL7F8C4gjwwDslKvhXnKQg9dIP2kUMA/aMAThkx9M8QBJuPLezZ
-sc4VqZyZyuIo1tVRwojHjbNV2i4gUlbYSO8ugnc0uPUxoc4RWGiAwvAaWj/AXovI
-eT9I9uPDV57uu+jYUg8HxFxvYxZxUSw2x8pEAfhBp1mlt7Ih4I6jCDfhw/efgXQw
-DDahWmSXtTUkBgf05QTikIH5zquG9P7KiNr3Vq0aOyOLTwj4aHZ8N82W9i/PnpKv
-EDeye+3nF51UfNPvc5pdePrQBWEAqcneiG61F7oGDRsdQJ40wh8s8QchN2RAO1uJ
-FEyHLpliJ0wK4aLOGcT4Y2C//VcPaJHh7UP/ugzaCMkJBVXHwo2af9S+pvUVGZHX
-drKQt7ymEumPhkRG+xietbH3mg9vRlIR/9YJpLbhYZyqP5mIIRKJRfGhu3VevlEc
-EaLra3B9MggIp2D5pS7h/ViZ3PMp25EFJZFc78mP/IIDwOIafnRvLdKJunQyfDO6
-oOPkYqmb8g5/hdeOY5FxtlRHiq1gCGITnbLdgd3/XFdcFF9MSew=
-=q3bO
------END PGP SIGNATURE-----
-
---royifewygga4fejm--
