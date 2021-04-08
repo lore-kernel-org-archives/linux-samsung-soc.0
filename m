@@ -2,135 +2,141 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A1FC433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 17:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ECCDC433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 19:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1612E610E5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 17:38:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F02A0610FC
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 19:50:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232549AbhDHRiN (ORCPT
+        id S232678AbhDHTut (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 8 Apr 2021 13:38:13 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:63521 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232477AbhDHRiN (ORCPT
+        Thu, 8 Apr 2021 15:50:49 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:41553 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232504AbhDHTus (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Apr 2021 13:38:13 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210408173800euoutp02c76fe6c2a4661005f01f8934c2a97142~z8qS8ueWD2394223942euoutp027
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Apr 2021 17:38:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210408173800euoutp02c76fe6c2a4661005f01f8934c2a97142~z8qS8ueWD2394223942euoutp027
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1617903480;
-        bh=vquHiqaALnuuLU6zMICX31IWiyI0/05OP6X0GBydTlk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=MGRAtYVW0j6/0X2mW/xxeM4RIR6MMKiroE+yiHCeDWYb+MxPJJiVcPpvfGAblgUAZ
-         FFZHDkuekUr95yLEWVcvUEfAlvX7hU0IBBCXVpCXQpvOLGugHUi8mTMq0lFxAyS9Yc
-         7wWHiNy1RAjRfkK0UPiCRR7yf0f4UzjLpS8xm7QU=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210408173759eucas1p247ccd7fcfbd34e45ed128b7e9404c239~z8qSJCIYW2437624376eucas1p25;
-        Thu,  8 Apr 2021 17:37:59 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id BF.33.09444.77F3F606; Thu,  8
-        Apr 2021 18:37:59 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210408173758eucas1p135532a2db61e8b5ad8467a7d6b6343aa~z8qRfokOn0576305763eucas1p1K;
-        Thu,  8 Apr 2021 17:37:58 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210408173758eusmtrp15df24cb7c6e7a26fb3cdd59c52de7d33~z8qRe6BWe0555405554eusmtrp1_;
-        Thu,  8 Apr 2021 17:37:58 +0000 (GMT)
-X-AuditID: cbfec7f4-dd5ff700000024e4-b7-606f3f77c881
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id FC.39.08696.67F3F606; Thu,  8
-        Apr 2021 18:37:58 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210408173758eusmtip227bbb5404894f496ec51c839c46bd187~z8qQwcq6v1122911229eusmtip2L;
-        Thu,  8 Apr 2021 17:37:58 +0000 (GMT)
-Subject: Re: [PATCH -next] clk: samsung: Remove redundant dev_err calls
-To:     Chen Hui <clare.chenhui@huawei.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, cw00.choi@samsung.com,
-        tomasz.figa@gmail.com
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <e8ac725b-b1f5-1631-53bb-fcd0e6c44a96@samsung.com>
-Date:   Thu, 8 Apr 2021 19:37:57 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.9.0
+        Thu, 8 Apr 2021 15:50:48 -0400
+Received: from mail-wm1-f69.google.com ([209.85.128.69])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lUafk-00042b-8z
+        for linux-samsung-soc@vger.kernel.org; Thu, 08 Apr 2021 19:50:36 +0000
+Received: by mail-wm1-f69.google.com with SMTP id h7so283318wmm.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Apr 2021 12:50:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/I3rxjojN2v/kK7LxnxTnuoS/24IOjJzT+k5Y2qcQ58=;
+        b=kxMxM48TC6z8SY5m7cZvRNalwLMDd7vHKR/xhfjL9ArQmlBhfT7SrtqhHl1lVf9AOg
+         kLjG71zgALQfedQQu1ikua+E6EJ2Xp7qudEMRJflUiJjCicyiKF/wzh8wY6DcLbKMsXh
+         X3m42dgVHCCt7LzI0BQei2D/Aeu85roB1N3xA8/8c+rm8MALcXEaIK6vsh2FRLqlCyRF
+         Dxt/FlI2gBbaysSjU57fhVDHwZqhkRFtSnKYIKrlPYpg42guKB2OZKEyotsahg96GUsI
+         /mB9iXtFFZkpAkzZ0P8HzZzSE5HE2/8iGAOp1J6IpGimOUgdD7uzti7wUgwyXE1KFRo0
+         XAkw==
+X-Gm-Message-State: AOAM532tAPlRGeoOfA/nG5JOWtEaj+uAeW4q1YnRXqLf2OgLSl2R45LB
+        CIspxosN75eCd3vlA+bmWjwR0anZUqFr+SSEpNynG+z1YWnl5zDerWF3szD2LllJyUdPsfbW4OH
+        r5JDg2HRB4Dx/rOO9EsICWABM7G2uo9zPFA25/QWLtFNyw3a/
+X-Received: by 2002:adf:ea46:: with SMTP id j6mr13632661wrn.34.1617911436045;
+        Thu, 08 Apr 2021 12:50:36 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzylv5JuU33P7EpPdff1gvFG44EL00KZzjjJZBKpQNPh3ZDEbsa5BmwCFBD7BAoFjC2rPb72g==
+X-Received: by 2002:adf:ea46:: with SMTP id j6mr13632640wrn.34.1617911435854;
+        Thu, 08 Apr 2021 12:50:35 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-192-147.adslplus.ch. [188.155.192.147])
+        by smtp.gmail.com with ESMTPSA id f20sm312022wmg.36.2021.04.08.12.50.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Apr 2021 12:50:35 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] pinctrl: samsung: use 'int' for register masks in Exynos
+Date:   Thu,  8 Apr 2021 21:50:29 +0200
+Message-Id: <20210408195029.69974-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <38c703df-2bfc-6492-ab2f-344ffc2647a1@canonical.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFKsWRmVeSWpSXmKPExsWy7djP87rl9vkJBgsfy1mcaDvEaHH9y3NW
-        i41vfzBZbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4t/1zayWKza9YfRgcvj/Y1Wdo9ZDb1s
-        Hjtn3WX3aDnyltVj06pONo/NS+o9+rasYvT4vEkugCOKyyYlNSezLLVI3y6BK+Pv1n2MBRtZ
-        Kg4ffcLWwHiduYuRk0NCwETi54nFbF2MXBxCAisYJQ7uXMoE4XxhlNh3+z47hPOZUWLGrWZ2
-        mJYNLXOhWpYzSkza1Q3lfGSU+Lz7IBtIlbCAu8SDtx0sILaIQJLEp91vwRYyCzxmlFhyQRDE
-        ZhMwlOg92scIYvMK2ElMuP8NrJ5FQEVi7sSNYHFRoN6lj/5B1QhKnJz5BKyGU8BRYvr6+6wQ
-        M8Ulbj2ZzwRhy0tsfzuHGeQgCYFuTonJTxqgznaReHe+EeprYYlXx7dAxWUkTk/uYYFoaGaU
-        6Nl9mx3CmcAocf/4AkaIKmuJO+d+Ab3GAbRCU2L9Ln0QUwLoissPxSBMPokbbwUhbuCTmLRt
-        OjNEmFeio00IYoaKxO9V05kgbCmJ7if/WSYwKs1C8tksJN/MQvLNLIS1CxhZVjGKp5YW56an
-        FhvlpZbrFSfmFpfmpesl5+duYgQmr9P/jn/Zwbj81Ue9Q4xMHIyHGCU4mJVEeHf0ZicI8aYk
-        VlalFuXHF5XmpBYfYpTmYFES503asiZeSCA9sSQ1OzW1ILUIJsvEwSnVwOT157p5w+3i3KfM
-        kyLDPtkv8sntbp+1sLrc+fQMaaZa9dpJGtmfzhw/Lcep93/Bwaf2T5WevZs+K+++leaEnG+z
-        DKetf2KRw/Bh9ipfObP8DNG7lziWZviVxpYv4L2yYWFhx95eZRXundlF0tv2vW/dx80YuFDE
-        6tvKkw0lWy46r7l0/+iyg7FsQqufS6/R0DSK81z1f01G99YiB7blPNweF70j9FdovFwoqjNj
-        r/wxp/L6N4GtSx/W6xquj+F4YCx/tNCVW2GtyrldPu0XLl8xZpBM9rgzyUOk3Z1dasWe/fdy
-        7zxv9wsyv9a7Y8H8nT9C2L/8K/nx+OtetmlrSoUN01srZ13Ruvzs5ITLid+UWIozEg21mIuK
-        EwEuDvLJzQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsVy+t/xe7pl9vkJBpeO6FucaDvEaHH9y3NW
-        i41vfzBZbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4t/1zayWKza9YfRgcvj/Y1Wdo9ZDb1s
-        Hjtn3WX3aDnyltVj06pONo/NS+o9+rasYvT4vEkugCNKz6Yov7QkVSEjv7jEVina0MJIz9DS
-        Qs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL+Pv1n2MBRtZKg4ffcLWwHiduYuRk0NCwERi
-        Q8tcti5GLg4hgaWMEtc+vgByOIASUhLzW5QgaoQl/lzrgqp5zyhx/+R0NpCEsIC7xIO3HSwg
-        tohAksT0ZdPZQYqYBR4zSjQePsUM0XGSUeLG/FlMIFVsAoYSvUf7GEFsXgE7iQn3v4F1swio
-        SMyduBEsLgo0qW33THaIGkGJkzOfgNVwCjhKTF9/nxXEZhZQl/gz7xIzhC0ucevJfCYIW15i
-        +9s5zBMYhWYhaZ+FpGUWkpZZSFoWMLKsYhRJLS3OTc8tNtIrTswtLs1L10vOz93ECIzXbcd+
-        btnBuPLVR71DjEwcjIcYJTiYlUR4d/RmJwjxpiRWVqUW5ccXleakFh9iNAX6ZyKzlGhyPjBh
-        5JXEG5oZmBqamFkamFqaGSuJ85ocWRMvJJCeWJKanZpakFoE08fEwSnVwOQUy108VzP+RU+C
-        z9QE8w2GHjtZXpzbvev6i792SsnNl1ZFXM9sdXbbuibD1Lv7vJrgbqFbp7T1GDNmKgd9q06K
-        Md7o96Jh72vL+8UHj2luWLB43wa39deFVBeHrWheeCq1vqq2NuXwkwm1d53zI03mZsztc68W
-        qnpzTeHHKc3Cd0Zb1z4vq1Q7vrKk+9mrbRzTX307tPHNvO/XN1nziE8rnOCiu7P+ctfLWWe1
-        Y4tv2qsW1/4U6/h4qd7+t/Y7nnWtr3J2Ms0pfCt2Sm737adBedzdCQqTkzL5vij8nabuvvlN
-        n63plvQTMbpTtrk+3h9ptnfi2gnlS9sDeZy3X7pr9ElX93TW9ilPkr5WKX9XYinOSDTUYi4q
-        TgQAWqjXzWADAAA=
-X-CMS-MailID: 20210408173758eucas1p135532a2db61e8b5ad8467a7d6b6343aa
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210408162200eucas1p2054f6241f2bad360e52ec09dd112583d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210408162200eucas1p2054f6241f2bad360e52ec09dd112583d
-References: <20210408134856.207305-1-clare.chenhui@huawei.com>
-        <CGME20210408162200eucas1p2054f6241f2bad360e52ec09dd112583d@eucas1p2.samsung.com>
-        <38c703df-2bfc-6492-ab2f-344ffc2647a1@canonical.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08.04.2021 18:21, Krzysztof Kozlowski wrote:
-> On 08/04/2021 15:48, Chen Hui wrote:
->> There is error message within devm_ioremap_resource
->> already, so remove the dev_err calls to avoid redundant
->> error messages.
->>
->> Signed-off-by: Chen Hui <clare.chenhui@huawei.com>
->> ---
->>  drivers/clk/samsung/clk-exynos4412-isp.c | 4 +---
->>  drivers/clk/samsung/clk-s5pv210-audss.c  | 4 +---
->>  2 files changed, 2 insertions(+), 6 deletions(-)
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+The Special Function Registers on all Exynos SoC, including ARM64, are
+32-bit wide, so entire driver uses matching functions like readl() or
+writel().  On 64-bit ARM using unsigned long for register masks:
+1. makes little sense as immediately after bitwise operation it will be
+   cast to 32-bit value when calling writel(),
+2. is actually error-prone because it might promote other operands to
+   64-bit.
 
-Thank you, patch applied.
+Addresses-Coverity: Unintentional integer overflow
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+
+---
+
+Not tested on ARM64.
+
+Dear Linus,
+
+Please apply it directly, I don't have any patches for Samsung pinctrl
+in my tree.
+---
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index 0cd7f33cdf25..2b99f4130e1e 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -55,7 +55,7 @@ static void exynos_irq_mask(struct irq_data *irqd)
+ 	struct exynos_irq_chip *our_chip = to_exynos_irq_chip(chip);
+ 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+ 	unsigned long reg_mask = our_chip->eint_mask + bank->eint_offset;
+-	unsigned long mask;
++	unsigned int mask;
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&bank->slock, flags);
+@@ -83,7 +83,7 @@ static void exynos_irq_unmask(struct irq_data *irqd)
+ 	struct exynos_irq_chip *our_chip = to_exynos_irq_chip(chip);
+ 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+ 	unsigned long reg_mask = our_chip->eint_mask + bank->eint_offset;
+-	unsigned long mask;
++	unsigned int mask;
+ 	unsigned long flags;
+ 
+ 	/*
+@@ -483,7 +483,7 @@ static void exynos_irq_eint0_15(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
+-static inline void exynos_irq_demux_eint(unsigned long pend,
++static inline void exynos_irq_demux_eint(unsigned int pend,
+ 						struct irq_domain *domain)
+ {
+ 	unsigned int irq;
+@@ -500,8 +500,8 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
+ {
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	struct exynos_muxed_weint_data *eintd = irq_desc_get_handler_data(desc);
+-	unsigned long pend;
+-	unsigned long mask;
++	unsigned int pend;
++	unsigned int mask;
+ 	int i;
+ 
+ 	chained_irq_enter(chip, desc);
+-- 
+2.25.1
+
