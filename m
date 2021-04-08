@@ -2,105 +2,92 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A81C433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 12:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC327C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 13:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 923EA610FB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 12:39:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2569610E5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 13:48:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231293AbhDHMj2 (ORCPT
+        id S231371AbhDHNtH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 8 Apr 2021 08:39:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55766 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229751AbhDHMj1 (ORCPT
+        Thu, 8 Apr 2021 09:49:07 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:16053 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229964AbhDHNtH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Apr 2021 08:39:27 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB5B3C061760;
-        Thu,  8 Apr 2021 05:39:16 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id BE0721F45CCB
-Received: by earth.universe (Postfix, from userid 1000)
-        id 981E63C0C96; Thu,  8 Apr 2021 14:39:13 +0200 (CEST)
-Date:   Thu, 8 Apr 2021 14:39:13 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Yang Yingliang <yangyingliang@huawei.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH -next] power: supply: s3c_adc_battery: fix possible
- use-after-free in s3c_adc_bat_remove()
-Message-ID: <20210408123913.f22o2k6qrjte5q2z@earth.universe>
-References: <20210407091903.3268399-1-yangyingliang@huawei.com>
- <59bbbad2-a82b-e08d-5225-267fee168ed1@canonical.com>
+        Thu, 8 Apr 2021 09:49:07 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FGMwt6pc2zNty5;
+        Thu,  8 Apr 2021 21:46:06 +0800 (CST)
+Received: from huawei.com (10.67.174.37) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.498.0; Thu, 8 Apr 2021
+ 21:48:51 +0800
+From:   Chen Hui <clare.chenhui@huawei.com>
+To:     <s.nawrocki@samsung.com>, <tomasz.figa@gmail.com>,
+        <cw00.choi@samsung.com>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <krzysztof.kozlowski@canonical.com>
+CC:     <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] clk: samsung: Remove redundant dev_err calls
+Date:   Thu, 8 Apr 2021 21:48:56 +0800
+Message-ID: <20210408134856.207305-1-clare.chenhui@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4ov2bduo2d4jp6it"
-Content-Disposition: inline
-In-Reply-To: <59bbbad2-a82b-e08d-5225-267fee168ed1@canonical.com>
+Content-Type: text/plain
+X-Originating-IP: [10.67.174.37]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+There is error message within devm_ioremap_resource
+already, so remove the dev_err calls to avoid redundant
+error messages.
 
---4ov2bduo2d4jp6it
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Chen Hui <clare.chenhui@huawei.com>
+---
+ drivers/clk/samsung/clk-exynos4412-isp.c | 4 +---
+ drivers/clk/samsung/clk-s5pv210-audss.c  | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-Hi,
+diff --git a/drivers/clk/samsung/clk-exynos4412-isp.c b/drivers/clk/samsung/clk-exynos4412-isp.c
+index 4b9e73608c21..b69e381b8c0c 100644
+--- a/drivers/clk/samsung/clk-exynos4412-isp.c
++++ b/drivers/clk/samsung/clk-exynos4412-isp.c
+@@ -115,10 +115,8 @@ static int __init exynos4x12_isp_clk_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg_base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(reg_base)) {
+-		dev_err(dev, "failed to map registers\n");
++	if (IS_ERR(reg_base))
+ 		return PTR_ERR(reg_base);
+-	}
+ 
+ 	exynos4x12_save_isp = samsung_clk_alloc_reg_dump(exynos4x12_clk_isp_save,
+ 					ARRAY_SIZE(exynos4x12_clk_isp_save));
+diff --git a/drivers/clk/samsung/clk-s5pv210-audss.c b/drivers/clk/samsung/clk-s5pv210-audss.c
+index 14985ebd043b..a7827a120695 100644
+--- a/drivers/clk/samsung/clk-s5pv210-audss.c
++++ b/drivers/clk/samsung/clk-s5pv210-audss.c
+@@ -72,10 +72,8 @@ static int s5pv210_audss_clk_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(reg_base)) {
+-		dev_err(&pdev->dev, "failed to map audss registers\n");
++	if (IS_ERR(reg_base))
+ 		return PTR_ERR(reg_base);
+-	}
+ 
+ 	clk_data = devm_kzalloc(&pdev->dev,
+ 				struct_size(clk_data, hws, AUDSS_MAX_CLKS),
+-- 
+2.17.1
 
-On Wed, Apr 07, 2021 at 01:15:11PM +0200, Krzysztof Kozlowski wrote:
-> On 07/04/2021 11:19, Yang Yingliang wrote:
-> > This driver's remove path calls cancel_delayed_work(). However, that
-> > function does not wait until the work function finishes. This means
-> > that the callback function may still be running after the driver's
-> > remove function has finished, which would result in a use-after-free.
-> >=20
-> > Fix by calling cancel_delayed_work_sync(), which ensures that
-> > the work is properly cancelled, no longer running, and unable
-> > to re-schedule itself.
-> >=20
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> > ---
-> >  drivers/power/supply/s3c_adc_battery.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
->=20
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
-Thanks,
-
-queued.
-
--- Sebastian
-
---4ov2bduo2d4jp6it
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmBu+XEACgkQ2O7X88g7
-+pooDQ//Z8jExWiRhnEDHZR4OgqQ/5ThXfA1xef1QUpBGf6WzMqx+xzQau27Jz6o
-O6WzK0yvhtB8OAJgblUHO8jRLO7ECncyilyJ5RpYoYIM0U5FnKwrglCzUDef5GsQ
-hp5XbtojYvU7rYPepl02VPgjyesDdbfAYjxVMZPLjwT69hxqwjPuFCGV9lCQN8/E
-wg2IVNd2mUz0yxLuC9or6HbQ5RJK34g+RXE/iCHMVN/4T34PaJBHifE/qkIisZGp
-VxEY030YtyGX/SQ941OezdnTkAi4YyKvC7idUkKwfrg2E87EoiF9Hw7HKB81gC3r
-G/FsZZ0651lXyk28tje6kPEPvSjayorXGlbBkYsEYHC1JJg2Z27ZyxEM01Rbn6Ch
-aWM6I8ZHXHtsOVwi9/Ti1xaTDSLI0joJzrrLpD0nA4JlefXWrXRGSe7tnH7fjFoy
-xvVtLB2gYBF1X1NYDgIgno4euHdJ9wd9VjVh+LNO4g2ttoT1HeGRHuTTXGrvmm90
-+wKAvoAogh3O/MsGylW4/1enmG8fuqix97T4b1E/syOSqHxWecY2dYVRLvKV6PCw
-oeTMofNHpvi783idu7rgzL3QBhPp/oRodSo45gSjD/jQboMmUvTJRRYaXmfH0hL3
-NaWhRjP9GyKbP96EicsMjPz3M0QLxIjMIYoz9jOwzp3whtLxX9M=
-=XxXJ
------END PGP SIGNATURE-----
-
---4ov2bduo2d4jp6it--
