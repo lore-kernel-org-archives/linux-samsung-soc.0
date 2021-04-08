@@ -2,67 +2,63 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF163C433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 11:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83710C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 11:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83F8961155
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 11:41:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5983061178
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 11:44:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231342AbhDHLlR (ORCPT
+        id S231465AbhDHLoW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 8 Apr 2021 07:41:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:31290 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229921AbhDHLlQ (ORCPT
+        Thu, 8 Apr 2021 07:44:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43682 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231400AbhDHLoW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Apr 2021 07:41:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617882065;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=s9XSwEEi1zJXTpbPUBOMu9HhV0dFlRjs6EwHYbE6+e4=;
-        b=iUZ1fzyD/9JtmUQF2tDt3fQPioZ/XZoUMP4Zc7GlRpWEP0zcpVHCX658CroFFlybrgHB44
-        3yceAsIUsG5TK54+ct8Ml8PNz3sgj0nUJp6eP1H6RSF37uWeRcFEftjpGxRZ66XWFBvgvm
-        P2TsrWV1fnk8S3Hjf5bm5u0aG/ZU7Yk=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-180-wIvXvqcbOgOjA-UyJdsthw-1; Thu, 08 Apr 2021 07:41:01 -0400
-X-MC-Unique: wIvXvqcbOgOjA-UyJdsthw-1
-Received: by mail-ej1-f70.google.com with SMTP id gj5so52698ejb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Apr 2021 04:41:01 -0700 (PDT)
+        Thu, 8 Apr 2021 07:44:22 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CD13C061761
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Apr 2021 04:44:10 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id j5so821127wrn.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Apr 2021 04:44:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+bIMHjM8IkWGQ9w2UhAWL6nad3z/nsAAXwfEZIX9lWc=;
+        b=HzLW9PAKd4D2FBBBl8PCr0y3Kw+mUxzAfMkhunUFy5g084vTc3tR3FgCZULEQo0aRJ
+         70RJkyKfjoUXms2whB0E+fWJOI2bfvz4DeQho9AoZyPY+Fi8PJLOMkNvY/vNEMPUQWqq
+         eGGIn6Fb7N4Gn6wTADCQI6woEj7GonRXHLLvE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=s9XSwEEi1zJXTpbPUBOMu9HhV0dFlRjs6EwHYbE6+e4=;
-        b=ZyDtpKsoeU7NJl52MT7c63mm/dqKGXdwiCSlggdbAblBJL0UO3p1TG/k7O82x94eEw
-         i9fIrjnLV+CWSSFZlmBjDEHWpYhj6mc+1I6qbtw84O99ilZXr2Exm+G0M9AHyK9djlpG
-         0t3EHUvE5Srd2uSUSyBNSA/qPro6eSbpHFKGAjjV1cBfAa/+yoRjaKHE2CYL2LA8ORQg
-         p2fFP45jWyWSPbOMrkCGMZGolezosg8BhT1O43bej2CXL+oQuxjFRYYD/ZWD9KgVW/ZS
-         d3zovIoGkJXwqxwgtqbqvqSbqz9zLWdDEz/cvXrIgaVzQD0/OyHgasat1cr/bTODCvpv
-         M0ew==
-X-Gm-Message-State: AOAM532SN4uYqux91ysXnyTvQ/KeWUhSOroG7d2mxDH9VXziMEAEq2+N
-        mQhI5s0C0uwLGpM0SpJBcVp2ctBbItFdcaBlDT0p6wYq4VEJ3U9rVM8OgzE9AEkO5PpHtpqGdKU
-        wbeetscgwj1en5kPOWmbQ3pdKfea+miw=
-X-Received: by 2002:aa7:cf90:: with SMTP id z16mr10682026edx.273.1617882060783;
-        Thu, 08 Apr 2021 04:41:00 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzUNwVjPU6LZkoTiJz3z03af3SU7UKs6cSUJv0KPBteAvMvZy2H6osTmzxUIJoPNr0/d/3eYQ==
-X-Received: by 2002:aa7:cf90:: with SMTP id z16mr10682002edx.273.1617882060615;
-        Thu, 08 Apr 2021 04:41:00 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
-        by smtp.gmail.com with ESMTPSA id t1sm4680038eds.53.2021.04.08.04.40.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Apr 2021 04:41:00 -0700 (PDT)
-To:     Jason Gunthorpe <jgg@nvidia.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=+bIMHjM8IkWGQ9w2UhAWL6nad3z/nsAAXwfEZIX9lWc=;
+        b=SkahM/Imo+0VMvz3C5pg5KVqOrkF/s+xjPeUQe00RHvt9faZm8SOJguC6mOpZxFrxR
+         7rqWva0q6kXizRYf3B6WwORRVDeJ3RVp6KQmkL6FxoRaV6Iv0uYwEWWIXNECHRUp9WRk
+         k4nim4YYdBw5oeemhpR5XXOXX8EAytVAUlCjMV183aA6b8kwmGzujeLDBoouGQy6EXvY
+         A8bftYMdfcn3Rk8HRJA+Ux2Dz+sTRLv/0ewW4BeLBE222uDQcDBRPxYPOJ90aVP3K41L
+         nBoEQB3eMnnLO1oZUl52abfnMStzVE4crCuWzdnZmdjNARRquOTwf71BlD9Q2fFvBnSl
+         BJZw==
+X-Gm-Message-State: AOAM532XEYPtm/XkLCE96EanMQzyP5ilIfZpuRIXtdPkkSNu8TSGPHF8
+        NrDrmqa4zLxCrarAyPTNurrNHw==
+X-Google-Smtp-Source: ABdhPJx7T3RCQlE5ua8yXfZvWLP1S80e0mDHoUGS7ErWGxP0VUT/3ngstw02CFjw7tqjgD8X14d31A==
+X-Received: by 2002:adf:e743:: with SMTP id c3mr7764889wrn.408.1617882248844;
+        Thu, 08 Apr 2021 04:44:08 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id f7sm11692950wmq.11.2021.04.08.04.44.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Apr 2021 04:44:08 -0700 (PDT)
+Date:   Thu, 8 Apr 2021 13:44:06 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Jason Gunthorpe <jgg@nvidia.com>,
         DRI Development <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
         linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
@@ -72,80 +68,105 @@ To:     Jason Gunthorpe <jgg@nvidia.com>,
         Peter Xu <peterx@redhat.com>,
         Alex Williamson <alex.williamson@redhat.com>,
         Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 3/3] mm: unexport follow_pfn
+Message-ID: <YG7shmP1WdfguDQf@phenom.ffwll.local>
+Mail-Followup-To: Paolo Bonzini <pbonzini@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        3pvd@google.com, Jann Horn <jannh@google.com>,
+        Cornelia Huck <cohuck@redhat.com>, Peter Xu <peterx@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
 References: <20210316153303.3216674-1-daniel.vetter@ffwll.ch>
  <20210316153303.3216674-4-daniel.vetter@ffwll.ch>
- <20210329133101.GA1168973@nvidia.com> <YG7VWWkvnv2IPEXt@phenom.ffwll.local>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH 3/3] mm: unexport follow_pfn
-Message-ID: <5f956a46-da38-e72a-edaa-3b746a275f1e@redhat.com>
-Date:   Thu, 8 Apr 2021 13:40:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+ <20210329133101.GA1168973@nvidia.com>
+ <YG7VWWkvnv2IPEXt@phenom.ffwll.local>
+ <5f956a46-da38-e72a-edaa-3b746a275f1e@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <YG7VWWkvnv2IPEXt@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5f956a46-da38-e72a-edaa-3b746a275f1e@redhat.com>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08/04/21 12:05, Daniel Vetter wrote:
-> On Mon, Mar 29, 2021 at 10:31:01AM -0300, Jason Gunthorpe wrote:
->> On Tue, Mar 16, 2021 at 04:33:03PM +0100, Daniel Vetter wrote:
->>> Both kvm (in bd2fae8da794 ("KVM: do not assume PTE is writable after
->>> follow_pfn")) and vfio (in 07956b6269d3 ("vfio/type1: Use
->>> follow_pte()")) have lost their callsites of follow_pfn(). All the
->>> other ones have been switched over to unsafe_follow_pfn because they
->>> cannot be fixed without breaking userspace api.
->>>
->>> Argueably the vfio code is still racy, but that's kinda a bigger
->>
->> vfio and kvm
+On Thu, Apr 08, 2021 at 01:40:59PM +0200, Paolo Bonzini wrote:
+> On 08/04/21 12:05, Daniel Vetter wrote:
+> > On Mon, Mar 29, 2021 at 10:31:01AM -0300, Jason Gunthorpe wrote:
+> > > On Tue, Mar 16, 2021 at 04:33:03PM +0100, Daniel Vetter wrote:
+> > > > Both kvm (in bd2fae8da794 ("KVM: do not assume PTE is writable after
+> > > > follow_pfn")) and vfio (in 07956b6269d3 ("vfio/type1: Use
+> > > > follow_pte()")) have lost their callsites of follow_pfn(). All the
+> > > > other ones have been switched over to unsafe_follow_pfn because they
+> > > > cannot be fixed without breaking userspace api.
+> > > > 
+> > > > Argueably the vfio code is still racy, but that's kinda a bigger
+> > > 
+> > > vfio and kvm
+> > 
+> > Hm I thought kvm is non-racy due to the mmu notifier catch races?
 > 
-> Hm I thought kvm is non-racy due to the mmu notifier catch races?
+> No, but the plan is indeed to have some struct for each page that uses
+> follow_pfn and update it from the MMU notifiers.
 
-No, but the plan is indeed to have some struct for each page that uses 
-follow_pfn and update it from the MMU notifiers.
+Thanks for clarifying, I've fixed the commit message to mention both vfio
+and kvm as Jason suggested. I didn't know that the follow_pte usage in kvm
+still has some gaps wrt what's invalidated with mmu notifiers.
 
-Paolo
+Thanks, Daniel
 
->>
->>> picture. But since it does leak the pte beyond where it drops the pt
->>> lock, without anything else like an mmu notifier guaranteeing
->>> coherence, the problem is at least clearly visible in the vfio code.
->>> So good enough with me.
->>>
->>> I've decided to keep the explanation that after dropping the pt lock
->>> you must have an mmu notifier if you keep using the pte somehow by
->>> adjusting it and moving it into the kerneldoc for the new follow_pte()
->>> function.
->>>
->>> Cc: 3pvd@google.com
->>> Cc: Jann Horn <jannh@google.com>
->>> Cc: Paolo Bonzini <pbonzini@redhat.com>
->>> Cc: Jason Gunthorpe <jgg@nvidia.com>
->>> Cc: Cornelia Huck <cohuck@redhat.com>
->>> Cc: Peter Xu <peterx@redhat.com>
->>> Cc: Alex Williamson <alex.williamson@redhat.com>
->>> Cc: linux-mm@kvack.org
->>> Cc: linux-arm-kernel@lists.infradead.org
->>> Cc: linux-samsung-soc@vger.kernel.org
->>> Cc: linux-media@vger.kernel.org
->>> Cc: kvm@vger.kernel.org
->>> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
->>> ---
->>>   include/linux/mm.h |  2 --
->>>   mm/memory.c        | 26 +++++---------------------
->>>   mm/nommu.c         | 13 +------------
->>>   3 files changed, 6 insertions(+), 35 deletions(-)
->>
->> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 > 
-> Thanks for your r-b tags, I'll add them.
-> -Daniel
+> Paolo
 > 
->>
->> Jason
+> > > 
+> > > > picture. But since it does leak the pte beyond where it drops the pt
+> > > > lock, without anything else like an mmu notifier guaranteeing
+> > > > coherence, the problem is at least clearly visible in the vfio code.
+> > > > So good enough with me.
+> > > > 
+> > > > I've decided to keep the explanation that after dropping the pt lock
+> > > > you must have an mmu notifier if you keep using the pte somehow by
+> > > > adjusting it and moving it into the kerneldoc for the new follow_pte()
+> > > > function.
+> > > > 
+> > > > Cc: 3pvd@google.com
+> > > > Cc: Jann Horn <jannh@google.com>
+> > > > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > > > Cc: Jason Gunthorpe <jgg@nvidia.com>
+> > > > Cc: Cornelia Huck <cohuck@redhat.com>
+> > > > Cc: Peter Xu <peterx@redhat.com>
+> > > > Cc: Alex Williamson <alex.williamson@redhat.com>
+> > > > Cc: linux-mm@kvack.org
+> > > > Cc: linux-arm-kernel@lists.infradead.org
+> > > > Cc: linux-samsung-soc@vger.kernel.org
+> > > > Cc: linux-media@vger.kernel.org
+> > > > Cc: kvm@vger.kernel.org
+> > > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > > > ---
+> > > >   include/linux/mm.h |  2 --
+> > > >   mm/memory.c        | 26 +++++---------------------
+> > > >   mm/nommu.c         | 13 +------------
+> > > >   3 files changed, 6 insertions(+), 35 deletions(-)
+> > > 
+> > > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> > 
+> > Thanks for your r-b tags, I'll add them.
+> > -Daniel
+> > 
+> > > 
+> > > Jason
+> > 
 > 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
