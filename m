@@ -2,91 +2,135 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 027D3C433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 16:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A1FC433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 17:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEDD1610CF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 16:22:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1612E610E5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 17:38:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232218AbhDHQWK (ORCPT
+        id S232549AbhDHRiN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 8 Apr 2021 12:22:10 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35955 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231875AbhDHQWI (ORCPT
+        Thu, 8 Apr 2021 13:38:13 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:63521 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232477AbhDHRiN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Apr 2021 12:22:08 -0400
-Received: from mail-wr1-f70.google.com ([209.85.221.70])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lUXPn-00055N-Li
-        for linux-samsung-soc@vger.kernel.org; Thu, 08 Apr 2021 16:21:55 +0000
-Received: by mail-wr1-f70.google.com with SMTP id 75so1205686wrl.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Apr 2021 09:21:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=n9mniXimsxRbXR5uC0L5WVy4JZkTyuKDjQ5Fp74xwm0=;
-        b=gNsjog3zt/zUBscworyqQYf7YZaP71d8O7HtQtHx5GbE5mlRBS48xUyLjTgyJZb8Aa
-         IwdqZnKooW3y3O3Y5hBIQN4aRFwauNjlmH8jyMUjH1gmIuPVJVp7ABLSX4hwMGwd1HaH
-         TUxNpkaMygIIUAPUyT9C9HpGlNEO1AAQ7c9z03SgrCx+7gASKRvZ+fzA/QCfrdkXgZ1x
-         v7mFxXucyuR8Ubcxw9+UuLs0153vt/2XhKLyDXzHB13SWMiOUrzODZF306pv7T/+8InV
-         gRX6inT7BT8ELN9t2VlnngdsFekMNocRkrTn9HJhbBZJMO6AgsP0f5YnVCV2ss1IqJHm
-         jFNw==
-X-Gm-Message-State: AOAM5338OvnJY81IsePKrYrm1K00LqC2qYq8ZjNrgMv5RPoSv4GrOgdi
-        LYoZK/jDQSC18HZSzHW8u5PIIEQ3qTsD/BfsnG4XYUoKzXWTGeWyBX2fXy3CrcWH8YHXZ21bM2s
-        QyxY3AtlO+enYVz1tJ3lD6iwKWSIjwZmJikv9woG1Nbj80ses
-X-Received: by 2002:adf:a703:: with SMTP id c3mr12682390wrd.72.1617898915302;
-        Thu, 08 Apr 2021 09:21:55 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJx85JGaBfMcW8iSqNB+8yrW6b15Le1JKi24IwDgmyt4YYURPyZi/eFCaTQYOx8+u6H0Y9nHAQ==
-X-Received: by 2002:adf:a703:: with SMTP id c3mr12682357wrd.72.1617898915096;
-        Thu, 08 Apr 2021 09:21:55 -0700 (PDT)
-Received: from [192.168.1.115] (xdsl-188-155-192-147.adslplus.ch. [188.155.192.147])
-        by smtp.gmail.com with ESMTPSA id r5sm10950737wrx.87.2021.04.08.09.21.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Apr 2021 09:21:54 -0700 (PDT)
+        Thu, 8 Apr 2021 13:38:13 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210408173800euoutp02c76fe6c2a4661005f01f8934c2a97142~z8qS8ueWD2394223942euoutp027
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Apr 2021 17:38:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210408173800euoutp02c76fe6c2a4661005f01f8934c2a97142~z8qS8ueWD2394223942euoutp027
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1617903480;
+        bh=vquHiqaALnuuLU6zMICX31IWiyI0/05OP6X0GBydTlk=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=MGRAtYVW0j6/0X2mW/xxeM4RIR6MMKiroE+yiHCeDWYb+MxPJJiVcPpvfGAblgUAZ
+         FFZHDkuekUr95yLEWVcvUEfAlvX7hU0IBBCXVpCXQpvOLGugHUi8mTMq0lFxAyS9Yc
+         7wWHiNy1RAjRfkK0UPiCRR7yf0f4UzjLpS8xm7QU=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210408173759eucas1p247ccd7fcfbd34e45ed128b7e9404c239~z8qSJCIYW2437624376eucas1p25;
+        Thu,  8 Apr 2021 17:37:59 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id BF.33.09444.77F3F606; Thu,  8
+        Apr 2021 18:37:59 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210408173758eucas1p135532a2db61e8b5ad8467a7d6b6343aa~z8qRfokOn0576305763eucas1p1K;
+        Thu,  8 Apr 2021 17:37:58 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210408173758eusmtrp15df24cb7c6e7a26fb3cdd59c52de7d33~z8qRe6BWe0555405554eusmtrp1_;
+        Thu,  8 Apr 2021 17:37:58 +0000 (GMT)
+X-AuditID: cbfec7f4-dd5ff700000024e4-b7-606f3f77c881
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id FC.39.08696.67F3F606; Thu,  8
+        Apr 2021 18:37:58 +0100 (BST)
+Received: from [106.210.134.141] (unknown [106.210.134.141]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20210408173758eusmtip227bbb5404894f496ec51c839c46bd187~z8qQwcq6v1122911229eusmtip2L;
+        Thu,  8 Apr 2021 17:37:58 +0000 (GMT)
 Subject: Re: [PATCH -next] clk: samsung: Remove redundant dev_err calls
-To:     Chen Hui <clare.chenhui@huawei.com>, s.nawrocki@samsung.com,
-        tomasz.figa@gmail.com, cw00.choi@samsung.com,
-        mturquette@baylibre.com, sboyd@kernel.org
+To:     Chen Hui <clare.chenhui@huawei.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20210408134856.207305-1-clare.chenhui@huawei.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <38c703df-2bfc-6492-ab2f-344ffc2647a1@canonical.com>
-Date:   Thu, 8 Apr 2021 18:21:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, cw00.choi@samsung.com,
+        tomasz.figa@gmail.com
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <e8ac725b-b1f5-1631-53bb-fcd0e6c44a96@samsung.com>
+Date:   Thu, 8 Apr 2021 19:37:57 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.9.0
 MIME-Version: 1.0
-In-Reply-To: <20210408134856.207305-1-clare.chenhui@huawei.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <38c703df-2bfc-6492-ab2f-344ffc2647a1@canonical.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFKsWRmVeSWpSXmKPExsWy7djP87rl9vkJBgsfy1mcaDvEaHH9y3NW
+        i41vfzBZbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4t/1zayWKza9YfRgcvj/Y1Wdo9ZDb1s
+        Hjtn3WX3aDnyltVj06pONo/NS+o9+rasYvT4vEkugCOKyyYlNSezLLVI3y6BK+Pv1n2MBRtZ
+        Kg4ffcLWwHiduYuRk0NCwETi54nFbF2MXBxCAisYJQ7uXMoE4XxhlNh3+z47hPOZUWLGrWZ2
+        mJYNLXOhWpYzSkza1Q3lfGSU+Lz7IBtIlbCAu8SDtx0sILaIQJLEp91vwRYyCzxmlFhyQRDE
+        ZhMwlOg92scIYvMK2ElMuP8NrJ5FQEVi7sSNYHFRoN6lj/5B1QhKnJz5BKyGU8BRYvr6+6wQ
+        M8Ulbj2ZzwRhy0tsfzuHGeQgCYFuTonJTxqgznaReHe+EeprYYlXx7dAxWUkTk/uYYFoaGaU
+        6Nl9mx3CmcAocf/4AkaIKmuJO+d+Ab3GAbRCU2L9Ln0QUwLoissPxSBMPokbbwUhbuCTmLRt
+        OjNEmFeio00IYoaKxO9V05kgbCmJ7if/WSYwKs1C8tksJN/MQvLNLIS1CxhZVjGKp5YW56an
+        FhvlpZbrFSfmFpfmpesl5+duYgQmr9P/jn/Zwbj81Ue9Q4xMHIyHGCU4mJVEeHf0ZicI8aYk
+        VlalFuXHF5XmpBYfYpTmYFES503asiZeSCA9sSQ1OzW1ILUIJsvEwSnVwOT157p5w+3i3KfM
+        kyLDPtkv8sntbp+1sLrc+fQMaaZa9dpJGtmfzhw/Lcep93/Bwaf2T5WevZs+K+++leaEnG+z
+        DKetf2KRw/Bh9ipfObP8DNG7lziWZviVxpYv4L2yYWFhx95eZRXundlF0tv2vW/dx80YuFDE
+        6tvKkw0lWy46r7l0/+iyg7FsQqufS6/R0DSK81z1f01G99YiB7blPNweF70j9FdovFwoqjNj
+        r/wxp/L6N4GtSx/W6xquj+F4YCx/tNCVW2GtyrldPu0XLl8xZpBM9rgzyUOk3Z1dasWe/fdy
+        7zxv9wsyv9a7Y8H8nT9C2L/8K/nx+OtetmlrSoUN01srZ13Ruvzs5ITLid+UWIozEg21mIuK
+        EwEuDvLJzQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsVy+t/xe7pl9vkJBpeO6FucaDvEaHH9y3NW
+        i41vfzBZbHp8jdXiY889VovLu+awWcw4v4/J4uIpV4t/1zayWKza9YfRgcvj/Y1Wdo9ZDb1s
+        Hjtn3WX3aDnyltVj06pONo/NS+o9+rasYvT4vEkugCNKz6Yov7QkVSEjv7jEVina0MJIz9DS
+        Qs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL+Pv1n2MBRtZKg4ffcLWwHiduYuRk0NCwERi
+        Q8tcti5GLg4hgaWMEtc+vgByOIASUhLzW5QgaoQl/lzrgqp5zyhx/+R0NpCEsIC7xIO3HSwg
+        tohAksT0ZdPZQYqYBR4zSjQePsUM0XGSUeLG/FlMIFVsAoYSvUf7GEFsXgE7iQn3v4F1swio
+        SMyduBEsLgo0qW33THaIGkGJkzOfgNVwCjhKTF9/nxXEZhZQl/gz7xIzhC0ucevJfCYIW15i
+        +9s5zBMYhWYhaZ+FpGUWkpZZSFoWMLKsYhRJLS3OTc8tNtIrTswtLs1L10vOz93ECIzXbcd+
+        btnBuPLVR71DjEwcjIcYJTiYlUR4d/RmJwjxpiRWVqUW5ccXleakFh9iNAX6ZyKzlGhyPjBh
+        5JXEG5oZmBqamFkamFqaGSuJ85ocWRMvJJCeWJKanZpakFoE08fEwSnVwOQUy108VzP+RU+C
+        z9QE8w2GHjtZXpzbvev6i792SsnNl1ZFXM9sdXbbuibD1Lv7vJrgbqFbp7T1GDNmKgd9q06K
+        Md7o96Jh72vL+8UHj2luWLB43wa39deFVBeHrWheeCq1vqq2NuXwkwm1d53zI03mZsztc68W
+        qnpzTeHHKc3Cd0Zb1z4vq1Q7vrKk+9mrbRzTX307tPHNvO/XN1nziE8rnOCiu7P+ctfLWWe1
+        Y4tv2qsW1/4U6/h4qd7+t/Y7nnWtr3J2Ms0pfCt2Sm737adBedzdCQqTkzL5vij8nabuvvlN
+        n63plvQTMbpTtrk+3h9ptnfi2gnlS9sDeZy3X7pr9ElX93TW9ilPkr5WKX9XYinOSDTUYi4q
+        TgQAWqjXzWADAAA=
+X-CMS-MailID: 20210408173758eucas1p135532a2db61e8b5ad8467a7d6b6343aa
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210408162200eucas1p2054f6241f2bad360e52ec09dd112583d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210408162200eucas1p2054f6241f2bad360e52ec09dd112583d
+References: <20210408134856.207305-1-clare.chenhui@huawei.com>
+        <CGME20210408162200eucas1p2054f6241f2bad360e52ec09dd112583d@eucas1p2.samsung.com>
+        <38c703df-2bfc-6492-ab2f-344ffc2647a1@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08/04/2021 15:48, Chen Hui wrote:
-> There is error message within devm_ioremap_resource
-> already, so remove the dev_err calls to avoid redundant
-> error messages.
+On 08.04.2021 18:21, Krzysztof Kozlowski wrote:
+> On 08/04/2021 15:48, Chen Hui wrote:
+>> There is error message within devm_ioremap_resource
+>> already, so remove the dev_err calls to avoid redundant
+>> error messages.
+>>
+>> Signed-off-by: Chen Hui <clare.chenhui@huawei.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos4412-isp.c | 4 +---
+>>  drivers/clk/samsung/clk-s5pv210-audss.c  | 4 +---
+>>  2 files changed, 2 insertions(+), 6 deletions(-)
 > 
-> Signed-off-by: Chen Hui <clare.chenhui@huawei.com>
-> ---
->  drivers/clk/samsung/clk-exynos4412-isp.c | 4 +---
->  drivers/clk/samsung/clk-s5pv210-audss.c  | 4 +---
->  2 files changed, 2 insertions(+), 6 deletions(-)
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
-Best regards,
-Krzysztof
+Thank you, patch applied.
