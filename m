@@ -2,147 +2,150 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD68C433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 09:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28441C43460
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 10:05:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DB1461175
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 09:37:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2F8361175
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 10:05:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229831AbhDHJiA (ORCPT
+        id S231309AbhDHKFa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 8 Apr 2021 05:38:00 -0400
-Received: from mga03.intel.com ([134.134.136.65]:32279 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229640AbhDHJiA (ORCPT
+        Thu, 8 Apr 2021 06:05:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50296 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231305AbhDHKFa (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Apr 2021 05:38:00 -0400
-IronPort-SDR: PHOHjWaTwQxnYoNMfngO473e1wU5NJYAOYjE9cxopWxg+Wbxjiv/be5oKrour3Vsnkg2eLG8S8
- w6lS3Z14qjNw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9947"; a="193543909"
-X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
-   d="scan'208";a="193543909"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2021 02:37:48 -0700
-IronPort-SDR: BFpXzI0RXUfZATcKxM7hFx64JBR7Vk2GquUS4EhpRUOdB/vQoJXx3E7ConT8Lwt/z83n9oxCQn
- yC8CBijdMkrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.82,206,1613462400"; 
-   d="scan'208";a="458753841"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.174]) ([10.237.72.174])
-  by orsmga001.jf.intel.com with ESMTP; 08 Apr 2021 02:37:42 -0700
-Subject: Re: [PATCH v16 1/2] scsi: ufs: Enable power management for wlun
-To:     Asutosh Das <asutoshd@codeaurora.org>, cang@codeaurora.org,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Bean Huo <beanhuo@micron.com>,
-        Kiwoong Kim <kwmad.kim@samsung.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Yue Hu <huyue2@yulong.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Dinghao Liu <dinghao.liu@zju.edu.cn>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Satya Tangirala <satyat@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
-        <linux-mediatek@lists.infradead.org>
-References: <cover.1617818557.git.asutoshd@codeaurora.org>
- <7be92c0bc3e5f07d5e17bd3b78c01496686ef31e.1617818557.git.asutoshd@codeaurora.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <d30c2dc2-6334-1515-b548-a898939ec9ee@intel.com>
-Date:   Thu, 8 Apr 2021 12:38:00 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Thu, 8 Apr 2021 06:05:30 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 934E2C061761
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Apr 2021 03:05:17 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id s7so1348112wru.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Apr 2021 03:05:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=36bvTqcToGLAmD+a9gwi7UztJJlmmlryLAr2BU8KQ8s=;
+        b=lIdZTKCpObM4Wmr4t/JuIwVigP9bm6yi8C5UN+QUf40InjOtA1Jdt5+tp80w3zNnQo
+         VlSZtKdBmzi+ZwGrhGIMLGEyI3q+id+HoCUH4Q4tHYGMh2RoGkmAJXhHhZHaecvlKMmC
+         QlFz7G/ND8mE2P823Sob9sGXYc3DtI/97X/D0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=36bvTqcToGLAmD+a9gwi7UztJJlmmlryLAr2BU8KQ8s=;
+        b=Pc3QRWJ657Kfo+BuodrE3DnBI6PGiE0ZwSnnY0ZN+xcAs2becFeftY1TdTKgK/7829
+         8N9ELCXaRiNoDyFzvnTdTWLoEO13x2aRiHC5Hd0neAkENzITmm0njD7ufLJ53IZ62GJE
+         CfV3wYm8+1B/pjdJ6hx8n0TR3xPyrAK6ZtmJSj41sU4Ll3JY2dHWlnt3+/Bp+uSIXKVQ
+         TjAE25DDNcvnB0M0j7M/TV1Sj/JVvDvw8M3SQXcgdysUKHr5wjn5OphPLQP3xEfvVK4a
+         SsI4/8S7loqcwqOAU0/1aASn/pAYTFkOClDwpogfLOdWMfY2r20y6ERTU6HoyJqwPQxk
+         MeTw==
+X-Gm-Message-State: AOAM531VbPKE+P3NUo4Ww8t9myB5yNE/irSSuaZZJw6i1GB4vijd0DRv
+        uBuXjfTpOipc4jn+cRHI5cwW9A==
+X-Google-Smtp-Source: ABdhPJzpwqYXCVUB+8r0nQC2/W7H7J7o+XDWVlyU4mTtGNJrkB+UEdkDLgvXZNrPAgIv0wJQsQSfww==
+X-Received: by 2002:adf:f692:: with SMTP id v18mr713305wrp.206.1617876316263;
+        Thu, 08 Apr 2021 03:05:16 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id l4sm12802446wmh.8.2021.04.08.03.05.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Apr 2021 03:05:15 -0700 (PDT)
+Date:   Thu, 8 Apr 2021 12:05:13 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        3pvd@google.com, Jann Horn <jannh@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 3/3] mm: unexport follow_pfn
+Message-ID: <YG7VWWkvnv2IPEXt@phenom.ffwll.local>
+Mail-Followup-To: Jason Gunthorpe <jgg@nvidia.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        3pvd@google.com, Jann Horn <jannh@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>, Peter Xu <peterx@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+References: <20210316153303.3216674-1-daniel.vetter@ffwll.ch>
+ <20210316153303.3216674-4-daniel.vetter@ffwll.ch>
+ <20210329133101.GA1168973@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <7be92c0bc3e5f07d5e17bd3b78c01496686ef31e.1617818557.git.asutoshd@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210329133101.GA1168973@nvidia.com>
+X-Operating-System: Linux phenom 5.7.0-1-amd64 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 7/04/21 9:08 pm, Asutosh Das wrote:
-> During runtime-suspend of ufs host, the scsi devices are
-> already suspended and so are the queues associated with them.
-> But the ufs host sends SSU (START_STOP_UNIT) to wlun
-> during its runtime-suspend.
-> During the process blk_queue_enter checks if the queue is not in
-> suspended state. If so, it waits for the queue to resume, and never
-> comes out of it.
-> The commit
-> (d55d15a33: scsi: block: Do not accept any requests while suspended)
-> adds the check if the queue is in suspended state in blk_queue_enter().
+On Mon, Mar 29, 2021 at 10:31:01AM -0300, Jason Gunthorpe wrote:
+> On Tue, Mar 16, 2021 at 04:33:03PM +0100, Daniel Vetter wrote:
+> > Both kvm (in bd2fae8da794 ("KVM: do not assume PTE is writable after
+> > follow_pfn")) and vfio (in 07956b6269d3 ("vfio/type1: Use
+> > follow_pte()")) have lost their callsites of follow_pfn(). All the
+> > other ones have been switched over to unsafe_follow_pfn because they
+> > cannot be fixed without breaking userspace api.
+> > 
+> > Argueably the vfio code is still racy, but that's kinda a bigger
 > 
-> Call trace:
->  __switch_to+0x174/0x2c4
->  __schedule+0x478/0x764
->  schedule+0x9c/0xe0
->  blk_queue_enter+0x158/0x228
->  blk_mq_alloc_request+0x40/0xa4
->  blk_get_request+0x2c/0x70
->  __scsi_execute+0x60/0x1c4
->  ufshcd_set_dev_pwr_mode+0x124/0x1e4
->  ufshcd_suspend+0x208/0x83c
->  ufshcd_runtime_suspend+0x40/0x154
->  ufshcd_pltfrm_runtime_suspend+0x14/0x20
->  pm_generic_runtime_suspend+0x28/0x3c
->  __rpm_callback+0x80/0x2a4
->  rpm_suspend+0x308/0x614
->  rpm_idle+0x158/0x228
->  pm_runtime_work+0x84/0xac
->  process_one_work+0x1f0/0x470
->  worker_thread+0x26c/0x4c8
->  kthread+0x13c/0x320
->  ret_from_fork+0x10/0x18
+> vfio and kvm
+
+Hm I thought kvm is non-racy due to the mmu notifier catch races?
+
 > 
-> Fix this by registering ufs device wlun as a scsi driver and
-> registering it for block runtime-pm. Also make this as a
-> supplier for all other luns. That way, this device wlun
-> suspends after all the consumers and resumes after
-> hba resumes.
+> > picture. But since it does leak the pte beyond where it drops the pt
+> > lock, without anything else like an mmu notifier guaranteeing
+> > coherence, the problem is at least clearly visible in the vfio code.
+> > So good enough with me.
+> > 
+> > I've decided to keep the explanation that after dropping the pt lock
+> > you must have an mmu notifier if you keep using the pte somehow by
+> > adjusting it and moving it into the kerneldoc for the new follow_pte()
+> > function.
+> > 
+> > Cc: 3pvd@google.com
+> > Cc: Jann Horn <jannh@google.com>
+> > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > Cc: Jason Gunthorpe <jgg@nvidia.com>
+> > Cc: Cornelia Huck <cohuck@redhat.com>
+> > Cc: Peter Xu <peterx@redhat.com>
+> > Cc: Alex Williamson <alex.williamson@redhat.com>
+> > Cc: linux-mm@kvack.org
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: linux-samsung-soc@vger.kernel.org
+> > Cc: linux-media@vger.kernel.org
+> > Cc: kvm@vger.kernel.org
+> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > --- 
+> >  include/linux/mm.h |  2 --
+> >  mm/memory.c        | 26 +++++---------------------
+> >  mm/nommu.c         | 13 +------------
+> >  3 files changed, 6 insertions(+), 35 deletions(-)
 > 
-> Co-developed-by: Can Guo <cang@codeaurora.org>
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
-> ---
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-<SNIP>
+Thanks for your r-b tags, I'll add them.
+-Daniel
 
-> +#ifdef CONFIG_PM_SLEEP
-> +static int ufshcd_wl_poweroff(struct device *dev)
-> +{
-> +	struct ufs_hba *hba = dev_get_drvdata(dev);
+> 
+> Jason
 
-Should be:
-
-	struct scsi_device *sdev = to_scsi_device(dev);
-	struct ufs_hba *hba = shost_priv(sdev->host);
-
-> +
-> +	__ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM);
-> +	return 0;
-> +}
-> +#endif
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
