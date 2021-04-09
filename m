@@ -5,92 +5,74 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 818A0C433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 20:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96963C433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Apr 2021 02:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E4D561151
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Apr 2021 20:16:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54443610F7
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Apr 2021 02:57:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232206AbhDHUQj (ORCPT
+        id S232960AbhDIC5b (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 8 Apr 2021 16:16:39 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42279 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231451AbhDHUQi (ORCPT
+        Thu, 8 Apr 2021 22:57:31 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16104 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232662AbhDIC53 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Apr 2021 16:16:38 -0400
-Received: from mail-wr1-f70.google.com ([209.85.221.70])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lUb4k-0005de-8E
-        for linux-samsung-soc@vger.kernel.org; Thu, 08 Apr 2021 20:16:26 +0000
-Received: by mail-wr1-f70.google.com with SMTP id r12so615315wrw.18
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Apr 2021 13:16:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jMABrCg2yQSz0NJfTRJiCfa17aCfiZuFRJh5dj2jnZI=;
-        b=NNiO48jWuxJZbaYvVtPEs4RzjFvAcdTAezBRSBXZINna4EYl+68ePI5TMVtfxBtlK+
-         qO7tBux9Evfpv1JfH9SzIH7hpYUWjOV+ezHe6xq5avL0Hwau0hifsSlByuojzKhuZzrr
-         IiEUkHnMTOEW26cGqFMEtzjyOLr7pC+z5mjUKtUyetreI8GXdvmNlqbnFUeN7iHlFVMS
-         8kSLbXaSF7wizhx1pQOXYugCsTtKEfspcAUU1KBhoVF4Md116rFsnt98pcmI6DDzMRk5
-         jFe7EIR/xbUonBt1Z4ptQW0rdBYWBO33Lkl4OUVQWbsZWceawEyyk3+5DiFfDBfbMZYg
-         0XiA==
-X-Gm-Message-State: AOAM532XdHk8QJ4AjraDxcSsarqnjAxk8j2ACj2BtT1IyYVbRuf2fb6V
-        vtt36zkxYu5YhgRnvgTQUnFNWJ31j7TFnYtNoCez9bpS/obomcZ2h6YxJ6q0bhe4A7Q7d8MottX
-        K0uecTP1HIQpkAWh89XowZrjBqasQT5+yB+5qE2eFEvOhUrxo
-X-Received: by 2002:adf:fb0e:: with SMTP id c14mr14429555wrr.140.1617912985403;
-        Thu, 08 Apr 2021 13:16:25 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyIwIaAo5oCPu118XWrKhGbQi+Nic/eanTaCnDGq7QIZYT+he+8z9GdaAve8WhKurUn3nUuoA==
-X-Received: by 2002:adf:fb0e:: with SMTP id c14mr14429534wrr.140.1617912985197;
-        Thu, 08 Apr 2021 13:16:25 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-192-147.adslplus.ch. [188.155.192.147])
-        by smtp.gmail.com with ESMTPSA id o62sm22690337wmo.3.2021.04.08.13.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Apr 2021 13:16:24 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iommu: exynos: remove unneeded local variable initialization
-Date:   Thu,  8 Apr 2021 22:16:22 +0200
-Message-Id: <20210408201622.78009-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 8 Apr 2021 22:57:29 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGjRC5GNLz1BGNM;
+        Fri,  9 Apr 2021 10:55:03 +0800 (CST)
+Received: from ubuntu1804.huawei.com (10.67.174.175) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 9 Apr 2021 10:57:05 +0800
+From:   Lu Jialin <lujialin4@huawei.com>
+To:     <lujialin4@huawei.com>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC:     <linux-media@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Xiu Jianfeng" <xiujianfeng@huawei.com>,
+        Xiang Yang <xiangyang3@huawei.com>,
+        "Wang Weiyang" <wangweiyang2@huawei.com>,
+        Cui GaoSheng <cuigaosheng1@huawei.com>,
+        Gong Ruiqi <gongruiqi1@huawei.com>
+Subject: [PATCH -next] media: s3c-camif: fix PM reference leak in s3c_camif_open()
+Date:   Fri, 9 Apr 2021 10:57:09 +0800
+Message-ID: <20210409025709.181908-1-lujialin4@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.174.175]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The initialization of 'fault_addr' local variable is not needed as it is
-shortly after overwritten.
+pm_runtime_get_sync will increment pm usage counter even it failed.
+Forgetting to putting operation will result in reference leak here.
+Fix it by replacing it with pm_runtime_resume_and_get to keep usage
+counter balanced.
 
-Addresses-Coverity: Unused value
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Lu Jialin <lujialin4@huawei.com>
 ---
- drivers/iommu/exynos-iommu.c | 2 +-
+ drivers/media/platform/s3c-camif/camif-capture.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index de324b4eedfe..8fa9a591fb96 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -407,7 +407,7 @@ static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
- 	struct sysmmu_drvdata *data = dev_id;
- 	const struct sysmmu_fault_info *finfo;
- 	unsigned int i, n, itype;
--	sysmmu_iova_t fault_addr = -1;
-+	sysmmu_iova_t fault_addr;
- 	unsigned short reg_status, reg_clear;
- 	int ret = -ENOSYS;
+diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
+index 9ca49af29542..62241ec3b978 100644
+--- a/drivers/media/platform/s3c-camif/camif-capture.c
++++ b/drivers/media/platform/s3c-camif/camif-capture.c
+@@ -547,7 +547,7 @@ static int s3c_camif_open(struct file *file)
+ 	if (ret < 0)
+ 		goto unlock;
  
--- 
-2.25.1
+-	ret = pm_runtime_get_sync(camif->dev);
++	ret = pm_runtime_resume_and_get(camif->dev);
+ 	if (ret < 0)
+ 		goto err_pm;
+ 
 
