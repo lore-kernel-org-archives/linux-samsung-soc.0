@@ -2,109 +2,80 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB3EC433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 11 Apr 2021 12:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C98C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 11 Apr 2021 14:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B4A3611CE
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 11 Apr 2021 12:56:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0D85611CE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 11 Apr 2021 14:00:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235281AbhDKM4w (ORCPT
+        id S235484AbhDKOAf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 11 Apr 2021 08:56:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33758 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232223AbhDKM4v (ORCPT
+        Sun, 11 Apr 2021 10:00:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38684 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233514AbhDKOAe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 11 Apr 2021 08:56:51 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A71BFC061574;
-        Sun, 11 Apr 2021 05:56:35 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id u17so15787923ejk.2;
-        Sun, 11 Apr 2021 05:56:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oynzuJfbEuJy5CAi4BYsSwCXKoAbx8chkskNNbIaZUc=;
-        b=dYSca6rnYbBivsWCz89w9cmwPA+/gQbdvnRkH3LP3Xt2PG8vA1nrwTlWSgtiHVp54y
-         MuBnlmeDmAPYAxsSyYXkF5qP1pm44CXfehQ7rq5ISNpGeAfHAyiUOMijiySqRbNihyoz
-         jpi49GGstN9GOQD/2DoU6tDk73dv288XLHVbHJEYGxr7BLcHSl6gC4whCBg8n3ZmAjKf
-         9bzVEP2sSqfxPtNx34Pe3DO1haBVbWCvZZBKhXQbyWH3pZq4ubMWix4hn/V+qfmPk4lJ
-         /+2EPirL3RzucUsgpgh8yp0W5fOUvPoYcnaWNy8tMDLRcHgZkN0nCB2ozFnyp+N4sp4/
-         QfMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oynzuJfbEuJy5CAi4BYsSwCXKoAbx8chkskNNbIaZUc=;
-        b=PaP475A2FOIDZV5PeTvYUiqmlz7x4AGpiV+awnGcRSWQ9U/5zH6KFp1MrmCEBAzeTs
-         1BOdTLu0eT/wazySED3t94rUnb5Ei3W/SF7+T1nVU24qwH10AXAfdQMo59dcwMvh6kl1
-         EQzIy5tsuMBHU9jtR7ZgkPfKKwCqqDcJMB77u3SgC9fJso16ix2HYAMbYBdmW6HxAjz2
-         65r9wAvrNRZ+Z9RFKCPpARY+iOTcCddKx5s7ahlJaCXKikaNkJcAEH2o6d48aVow5I42
-         zwear2+lmQqlD/HlTSOXGPC4/Pu85Io/CCymEEVj3Le9nBOhwMrq9fewCXoVgmn+NdB+
-         t1gw==
-X-Gm-Message-State: AOAM533p7uh0uiFsFpAD0aKcEtg/Mhxk/0jQMoiwvlapL7n5YizFk0Yc
-        yksMyjpOUA+t9jvW5Bk/AxBHKFCM7n4J+VX4dKg=
-X-Google-Smtp-Source: ABdhPJyCOx9h49w/ftcNHVbJ1EjPrtcZALSk0GTjju9d0oD0Y7686M5S3XPPhhPuxC/hhK2BNPGaA3pratg46098AMs=
-X-Received: by 2002:a17:906:b104:: with SMTP id u4mr23214266ejy.211.1618145794324;
- Sun, 11 Apr 2021 05:56:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210410164728.8096-1-krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20210410164728.8096-1-krzysztof.kozlowski@canonical.com>
-From:   Alim Akhtar <alim.akhtar@gmail.com>
-Date:   Sun, 11 Apr 2021 18:25:58 +0530
-Message-ID: <CAGOxZ51PKMZoPyk-kidGRr7zNvADfjAJG8LtMMBOi0vn-KBsLA@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: exynos: drop unneeded variable assignment
+        Sun, 11 Apr 2021 10:00:34 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55A8B611AD;
+        Sun, 11 Apr 2021 14:00:15 +0000 (UTC)
+Date:   Sun, 11 Apr 2021 15:00:39 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH]  iio: adc: exynos: drop unneeded variable assignment
+Message-ID: <20210411150039.1dcc76b8@jic23-huawei>
+In-Reply-To: <20210410164728.8096-1-krzysztof.kozlowski@canonical.com>
+References: <20210410164728.8096-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Apr 10, 2021 at 10:18 PM Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
+On Sat, 10 Apr 2021 18:47:28 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
+
 > The initialization of 'ret' variable in probe function is shortly after
 > overwritten.  This initialization is simply not used.
->
+> 
 > Addresses-Coverity: Unused value
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
-Thanks Krzysztof,
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
+Too late for this cycle, but I've queued it up for the next one.
+
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to see if we missed anything.
+
+Thanks,
+
+Jonathan
+
+> ---
 >  drivers/iio/adc/exynos_adc.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->
+> 
 > diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
 > index 784c10deeb1a..2d8e36408f0e 100644
 > --- a/drivers/iio/adc/exynos_adc.c
 > +++ b/drivers/iio/adc/exynos_adc.c
 > @@ -794,7 +794,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
->         struct s3c2410_ts_mach_info *pdata = dev_get_platdata(&pdev->dev);
->         struct iio_dev *indio_dev = NULL;
->         bool has_ts = false;
-> -       int ret = -ENODEV;
-> +       int ret;
->         int irq;
->
->         indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(struct exynos_adc));
-> --
-> 2.25.1
->
+>  	struct s3c2410_ts_mach_info *pdata = dev_get_platdata(&pdev->dev);
+>  	struct iio_dev *indio_dev = NULL;
+>  	bool has_ts = false;
+> -	int ret = -ENODEV;
+> +	int ret;
+>  	int irq;
+>  
+>  	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(struct exynos_adc));
 
-
--- 
-Regards,
-Alim
