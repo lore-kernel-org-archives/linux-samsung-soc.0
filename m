@@ -5,50 +5,49 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
 	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B10FC433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Apr 2021 09:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEEAC433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Apr 2021 09:48:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB84160FD8
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Apr 2021 09:45:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FA9761249
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Apr 2021 09:48:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231791AbhDOJpy (ORCPT
+        id S230202AbhDOJse (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 15 Apr 2021 05:45:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35246 "EHLO mail.kernel.org"
+        Thu, 15 Apr 2021 05:48:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231614AbhDOJpx (ORCPT
+        id S229457AbhDOJse (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 15 Apr 2021 05:45:53 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5EB0D61166;
-        Thu, 15 Apr 2021 09:45:28 +0000 (UTC)
+        Thu, 15 Apr 2021 05:48:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 768D561166;
+        Thu, 15 Apr 2021 09:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618479929;
-        bh=mHUO7q4YvF+53ZYq0pQFLbZx8vFSz2zouLM+2LlidfU=;
+        s=k20201202; t=1618480091;
+        bh=taNxFBIaMeF22Rc2Jy32dPdUib9hWs26znqsqrdM/b8=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=YPEm9qCqJC4JDRH/aghhEkUciuEY6MwfRW9090WGKTseKblzftczluysGbJHsALvt
-         44N/Am9hdQZrxt6Ulyb7av6c/XGbVEFgQGt4wlWiaqR3Y6NSNYt32p+eIg84SXt6uK
-         f0wQVGC/ZtYPE7XuCo51SSIfUzttu4UnqZxqBktzBobKAt7PB2wpMDmcaQtg9vY+G5
-         uvC1cexTsf5ffMhFf3XdVU0OKAlK16MlpD9zuVztOxTBkHz++J3cKxqWmQmJPzrhHu
-         e/bJF3bHO05b9Pq0vP5M2c7EFnRUtSSZdR3leJlXmB11L7d4swfGraXMRXmu29QIEH
-         tZnTGFCme3dlw==
-Subject: Re: [PATCH 1/2] i2c: s3c2410: simplify getting of_device_id match
+        b=fF+LoOWC3UdfA9/DrlHtSzH8Yf+UP3ojQFn2AqXbRUNU0miuWGoOtIct+37C6cd8W
+         wGMGTNVGBJJeiHSZRawqcUZYKKiv3xP/HxuR/9M3YULeciASLWIYA3YYBjsDkQSWPY
+         v+9LLffebKRLGTCiVKAayG8rfKmZtsjdYIaeWjUWXa8IWDaN6JH9iEYpwpNN5uVjOn
+         ISFsnt98gg5/fXSUJL23UAbHFbTYayhvTmEdobpGeNZQOu6vDKgLRbG58C1ODysU4Z
+         DfN6u+9f+ZLo0u3zvguJK17gKtwLlT7mENi3Rj2XJKgBddA7S39SR0IumXQRXltuDf
+         pARg84ktttapw==
+Subject: Re: [PATCH 1/3] spi: s3c64xx: simplify getting of_device_id match
  data
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-References: <20210415093803.162673-1-krzysztof.kozlowski@canonical.com>
+        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20210414203343.203119-1-krzysztof.kozlowski@canonical.com>
 From:   Sylwester Nawrocki <snawrocki@kernel.org>
-Message-ID: <acb1c39f-8098-1457-c996-05f647bfa25f@kernel.org>
-Date:   Thu, 15 Apr 2021 11:45:26 +0200
+Message-ID: <74b0de2c-1ef0-1dbe-318f-dd238d81c0ce@kernel.org>
+Date:   Thu, 15 Apr 2021 11:48:08 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <20210415093803.162673-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20210414203343.203119-1-krzysztof.kozlowski@canonical.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -57,8 +56,10 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
-On 15.04.2021 11:38, Krzysztof Kozlowski wrote:
-> Use of_device_get_match_data() to make the code slightly smaller.
+
+On 14.04.2021 22:33, Krzysztof Kozlowski wrote:
+> Use of_device_get_match_data() to make the code slightly smaller and to
+> remove the of_device_id table forward declaration.
 > 
 > Signed-off-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
 
