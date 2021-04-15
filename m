@@ -2,51 +2,91 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C13C4C433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Apr 2021 13:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17574C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Apr 2021 18:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DDAB613A9
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Apr 2021 13:36:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F10B26124B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 15 Apr 2021 18:34:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232774AbhDONgm (ORCPT
+        id S234404AbhDOSel (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 15 Apr 2021 09:36:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55048 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232642AbhDONgm (ORCPT
+        Thu, 15 Apr 2021 14:34:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42052 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233052AbhDOSej (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 15 Apr 2021 09:36:42 -0400
-Received: from theia.8bytes.org (8bytes.org [IPv6:2a01:238:4383:600:38bc:a715:4b6d:a889])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A016C061574;
-        Thu, 15 Apr 2021 06:36:19 -0700 (PDT)
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id DC95B387; Thu, 15 Apr 2021 15:36:17 +0200 (CEST)
-Date:   Thu, 15 Apr 2021 15:36:16 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Will Deacon <will@kernel.org>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu: exynos: remove unneeded local variable
- initialization
-Message-ID: <YHhBUBe9ZT+P9TfJ@8bytes.org>
-References: <20210408201622.78009-1-krzysztof.kozlowski@canonical.com>
+        Thu, 15 Apr 2021 14:34:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9867A60E09;
+        Thu, 15 Apr 2021 18:34:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618511656;
+        bh=S88v+VZf+BdfcMDAyihmpF50TX9fEfuj3CgNgpOZGlI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VQsRlKBMIwlHb0GMTa7GdzXZ9+x66UXBBfu3ScL/vLhao36Tl297OKSCrKI5pUIrt
+         BmlBScK4q+7Pzq7DfynTbd+GEjIx2sKrkYKd44/y5lqvz+t6WnOH9/4fFIpKeNDuag
+         WWP/rBiBkwjyYDvimlN05fY7iYMRUGut3CNFPHZppz6M3IL2mXGh2S8E5sglUh0xc8
+         iXyrdksAo56YzKapBxiSjd4I0UyGyB82doiXQOCoJBAwMfUZqW3+PQg+y+J0uqzAhQ
+         TS3MmDe9APBuOZ+gyPgiBIbY1zJDI6Qt9yTwyt4pKBFbExs5vEPStqrhBFcZf0cK2/
+         2gUi+akPq2NNg==
+From:   Mark Brown <broonie@kernel.org>
+To:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andi Shyti <andi@etezian.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/3] spi: s3c64xx: simplify getting of_device_id match data
+Date:   Thu, 15 Apr 2021 19:33:42 +0100
+Message-Id: <161851161879.23304.6673914019585638025.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210414203343.203119-1-krzysztof.kozlowski@canonical.com>
+References: <20210414203343.203119-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210408201622.78009-1-krzysztof.kozlowski@canonical.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 08, 2021 at 10:16:22PM +0200, Krzysztof Kozlowski wrote:
->  drivers/iommu/exynos-iommu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 14 Apr 2021 22:33:41 +0200, Krzysztof Kozlowski wrote:
+> Use of_device_get_match_data() to make the code slightly smaller and to
+> remove the of_device_id table forward declaration.
 
-Applied, thanks.
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/3] spi: s3c64xx: simplify getting of_device_id match data
+      commit: 609a2f9529d3d3e627776614b6cff34b21f64144
+[2/3] spi: s3c64xx: correct kerneldoc of s3c64xx_spi_port_config
+      commit: 7d712f799a938b37d24359ea836f58866be5e0bb
+[3/3] spi: s3c64xx: constify driver/match data
+      commit: d6371415517700ae225dd1aaa8a35a86a659ada6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
