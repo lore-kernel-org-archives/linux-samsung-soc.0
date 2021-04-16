@@ -2,316 +2,108 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF4C8C43460
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Apr 2021 10:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2711EC433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Apr 2021 12:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A297D61166
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Apr 2021 10:08:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9048611AE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Apr 2021 12:23:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240131AbhDPKIv (ORCPT
+        id S243391AbhDPMXl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 16 Apr 2021 06:08:51 -0400
-Received: from mga12.intel.com ([192.55.52.136]:59087 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235180AbhDPKIu (ORCPT
+        Fri, 16 Apr 2021 08:23:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36168 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235577AbhDPMXk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Apr 2021 06:08:50 -0400
-IronPort-SDR: e8jSt6xVZKGURDaabAEKpwTgs8nyvgKDh9VpH56q0MCSx5jGNzGEZmyQQKw4WPdQISi83GwHBq
- HHKy2DkF2nNg==
-X-IronPort-AV: E=McAfee;i="6200,9189,9955"; a="174513459"
-X-IronPort-AV: E=Sophos;i="5.82,226,1613462400"; 
-   d="scan'208";a="174513459"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2021 03:08:22 -0700
-IronPort-SDR: 2NHE6dFPoJopDNLgjraxVzoPpmdNQMZLwLirE3tGsqdB6ozwshofsDuNR9CgQon8++q2DhWaeH
- lut7yczl1yzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.82,226,1613462400"; 
-   d="scan'208";a="461924450"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.174]) ([10.237.72.174])
-  by orsmga001.jf.intel.com with ESMTP; 16 Apr 2021 03:08:15 -0700
-Subject: Re: [PATCH v19 1/2] scsi: ufs: Enable power management for wlun
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Asutosh Das <asutoshd@codeaurora.org>, cang@codeaurora.org,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Bean Huo <beanhuo@micron.com>,
-        Kiwoong Kim <kwmad.kim@samsung.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Yue Hu <huyue2@yulong.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Dinghao Liu <dinghao.liu@zju.edu.cn>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Satya Tangirala <satyat@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
-        <linux-mediatek@lists.infradead.org>
-References: <cover.1618529652.git.asutoshd@codeaurora.org>
- <48ab92db5b0d3c11b8357f0faa99a4473465099d.1618529652.git.asutoshd@codeaurora.org>
- <d28cb2d4-8f24-c2c4-e87e-bb51ac73af6e@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <9ea33def-e2c0-7899-5d47-f9ade59a0dcd@intel.com>
-Date:   Fri, 16 Apr 2021 13:08:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Fri, 16 Apr 2021 08:23:40 -0400
+Received: from mail-ej1-f72.google.com ([209.85.218.72])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lXNVD-0006mS-Dt
+        for linux-samsung-soc@vger.kernel.org; Fri, 16 Apr 2021 12:23:15 +0000
+Received: by mail-ej1-f72.google.com with SMTP id i10-20020a1709067a4ab029037c5dba8400so1963984ejo.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Apr 2021 05:23:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zyiHnszFk290pFE9xQFpSwJqvg0B5IFpzGvGacwtYN4=;
+        b=ZpjpSxw2cMe1wEixYNJfxG5mUrnGHDk8RhhES+O8cKDQbLD34acOhsKlBP1RzGDplJ
+         TxYJesmI+CDLM3LEH5RJ+igsNzL4APIGsfDZu1AqmTFSN/pZZ/Uj9g+VgkUVh3J7zw71
+         /PVnhhZJ/r6sBwICBU5EJRE+yI1+AkYlGtET2IDPuD4bgKRdqwvOVVF1WPy3IuNp7XI5
+         okMEszzxZMNSx5f0WXVY0tjZlHZHudQ0sjYqKiMZBOSRY71au2MSQwe5Zhex6q7Ug5ty
+         6cJMQZuW8siTMVunoPyeq06UNs1lKaDAEX6J7GrWucgY8YxigpWUIuQH10zocuDIgipp
+         Dkqw==
+X-Gm-Message-State: AOAM530dJI1X9EI/NhIbaDLigNEEEHg3iN2xN0aiXa9bKCTOV2pQILJG
+        JeWF2GmZgrvxbDqbVVz+pzdB4sKreLpMM5eIM5YEEbZc9PLzI7LUCdpMItQsklhL8kwMODvcmew
+        4PRAt09D9ToOFhQeYQzyHRQckyWmZrSFmsFZFL91vMu7ZD1ay
+X-Received: by 2002:a17:906:cc88:: with SMTP id oq8mr3697680ejb.66.1618575794966;
+        Fri, 16 Apr 2021 05:23:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx3zbjnd4HQkCSJYV28UfiRyMLheJIB6t7IsbXsF8yk+dO9xyseBRuNJFTx+2VFeWEOHhu4hw==
+X-Received: by 2002:a17:906:cc88:: with SMTP id oq8mr3697662ejb.66.1618575794849;
+        Fri, 16 Apr 2021 05:23:14 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-192-147.adslplus.ch. [188.155.192.147])
+        by smtp.gmail.com with ESMTPSA id i25sm2328924edr.68.2021.04.16.05.23.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Apr 2021 05:23:14 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] crypto: s5p-sss - simplify getting of_device_id match data
+Date:   Fri, 16 Apr 2021 14:23:09 +0200
+Message-Id: <20210416122311.223076-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <d28cb2d4-8f24-c2c4-e87e-bb51ac73af6e@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 16/04/21 12:22 pm, Adrian Hunter wrote:
-> On 16/04/21 2:36 am, Asutosh Das wrote:
->> During runtime-suspend of ufs host, the scsi devices are
->> already suspended and so are the queues associated with them.
->> But the ufs host sends SSU (START_STOP_UNIT) to wlun
->> during its runtime-suspend.
->> During the process blk_queue_enter checks if the queue is not in
->> suspended state. If so, it waits for the queue to resume, and never
->> comes out of it.
->> The commit
->> (d55d15a33: scsi: block: Do not accept any requests while suspended)
->> adds the check if the queue is in suspended state in blk_queue_enter().
->>
->> Call trace:
->>  __switch_to+0x174/0x2c4
->>  __schedule+0x478/0x764
->>  schedule+0x9c/0xe0
->>  blk_queue_enter+0x158/0x228
->>  blk_mq_alloc_request+0x40/0xa4
->>  blk_get_request+0x2c/0x70
->>  __scsi_execute+0x60/0x1c4
->>  ufshcd_set_dev_pwr_mode+0x124/0x1e4
->>  ufshcd_suspend+0x208/0x83c
->>  ufshcd_runtime_suspend+0x40/0x154
->>  ufshcd_pltfrm_runtime_suspend+0x14/0x20
->>  pm_generic_runtime_suspend+0x28/0x3c
->>  __rpm_callback+0x80/0x2a4
->>  rpm_suspend+0x308/0x614
->>  rpm_idle+0x158/0x228
->>  pm_runtime_work+0x84/0xac
->>  process_one_work+0x1f0/0x470
->>  worker_thread+0x26c/0x4c8
->>  kthread+0x13c/0x320
->>  ret_from_fork+0x10/0x18
->>
->> Fix this by registering ufs device wlun as a scsi driver and
->> registering it for block runtime-pm. Also make this as a
->> supplier for all other luns. That way, this device wlun
->> suspends after all the consumers and resumes after
->> hba resumes.
->> This also registers a new scsi driver for rpmb wlun.
->> This new driver is mostly used to clear rpmb uac.
->> With this design, the driver would always be runtime resumed
->> before system suspend.
-> 
-> I thought some more about that and I think we can still support
-> allowing runtime suspend to work with system suspend, without
-> too much difficulty. See ufshcd_suspend_prepare() below.
-> 
->>
->> Fixed smatch warnings:
->> Reported-by: kernel test robot <lkp@intel.com>
->> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> Co-developed-by: Can Guo <cang@codeaurora.org>
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
->> ---
-> 
-> <SNIP>
-> 
->> -static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
->> +static int __ufshcd_wl_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
->>  {
->>  	int ret;
->> -	enum uic_link_state old_link_state;
->> +	enum uic_link_state old_link_state = hba->uic_link_state;
->>  
->> -	hba->pm_op_in_progress = 1;
->> -	old_link_state = hba->uic_link_state;
->> -
->> -	ufshcd_hba_vreg_set_hpm(hba);
->> -	ret = ufshcd_vreg_set_hpm(hba);
->> -	if (ret)
->> -		goto out;
->> -
->> -	/* Make sure clocks are enabled before accessing controller */
->> -	ret = ufshcd_setup_clocks(hba, true);
->> -	if (ret)
->> -		goto disable_vreg;
->> -
->> -	/* enable the host irq as host controller would be active soon */
->> -	ufshcd_enable_irq(hba);
->> +	hba->pm_op_in_progress = true;
->>  
->>  	/*
->>  	 * Call vendor specific resume callback. As these callbacks may access
->> @@ -8868,7 +8858,7 @@ static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
->>  	 */
->>  	ret = ufshcd_vops_resume(hba, pm_op);
->>  	if (ret)
->> -		goto disable_irq_and_vops_clks;
->> +		goto out;
->>  
->>  	/* For DeepSleep, the only supported option is to have the link off */
->>  	WARN_ON(ufshcd_is_ufs_dev_deepsleep(hba) && !ufshcd_is_link_off(hba));
->> @@ -8916,42 +8906,219 @@ static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
->>  	if (hba->ee_usr_mask)
->>  		ufshcd_write_ee_control(hba);
->>  
->> -	hba->clk_gating.is_suspended = false;
->> -
->>  	if (ufshcd_is_clkscaling_supported(hba))
->> -		ufshcd_clk_scaling_suspend(hba, false);
->> -
->> -	/* Enable Auto-Hibernate if configured */
->> -	ufshcd_auto_hibern8_enable(hba);
->> +		ufshcd_resume_clkscaling(hba);
-> 
-> This still doesn't look right. ufshcd_resume_clkscaling()
-> doesn't update hba->clk_scaling.is_allowed whereas
-> ufshcd_clk_scaling_suspend() does.
-> 
->>  
->>  	if (hba->dev_info.b_rpm_dev_flush_capable) {
->>  		hba->dev_info.b_rpm_dev_flush_capable = false;
->>  		cancel_delayed_work(&hba->rpm_dev_flush_recheck_work);
->>  	}
->>  
->> -	ufshcd_clear_ua_wluns(hba);
->> -
->> -	/* Schedule clock gating in case of no access to UFS device yet */
->> -	ufshcd_release(hba);
->> -
->> +	/* Enable Auto-Hibernate if configured */
->> +	ufshcd_auto_hibern8_enable(hba);
->>  	goto out;
->>  
->>  set_old_link_state:
->>  	ufshcd_link_state_transition(hba, old_link_state, 0);
->>  vendor_suspend:
->>  	ufshcd_vops_suspend(hba, pm_op);
->> -disable_irq_and_vops_clks:
->> +out:
->> +	if (ret)
->> +		ufshcd_update_evt_hist(hba, UFS_EVT_WL_RES_ERR, (u32)ret);
->> +	hba->clk_gating.is_suspended = false;
->> +	ufshcd_release(hba);
->> +	hba->pm_op_in_progress = false;
->> +	return ret;
->> +}
-> 
-> <SNIP>
-> 
->> +void ufshcd_resume_complete(struct device *dev)
->> +{
->> +	struct ufs_hba *hba = dev_get_drvdata(dev);
->> +
->> +	ufshcd_rpm_put(hba);
->> +}
->> +EXPORT_SYMBOL_GPL(ufshcd_resume_complete);
->> +
->> +int ufshcd_suspend_prepare(struct device *dev)
->> +{
->> +	struct ufs_hba *hba = dev_get_drvdata(dev);
->> +
->> +	/*
->> +	 * SCSI assumes that runtime-pm and system-pm for scsi drivers
->> +	 * are same. And it doesn't wake up the device for system-suspend
->> +	 * if it's runtime suspended. But ufs doesn't follow that.
->> +	 * The rpm-lvl and spm-lvl can be different in ufs.
->> +	 * Force it to honor system-suspend.
->> +	 * Refer ufshcd_resume_complete()
->> +	 */
->> +	ufshcd_rpm_get_sync(hba);
->> +
->> +	return 0;
->> +}
-> 
-> I think we can support allowing runtime suspend to work with
-> system suspend.  ufshcd_resume_complete() remains the same,
-> and ufshcd_suspend_prepare() is like this:
-> 
-> 
-> /*
->  * SCSI assumes that runtime-pm and system-pm for scsi drivers are same, and it
->  * doesn't wake up the device for system-suspend if it's runtime suspended.
->  * However UFS doesn't follow that. The rpm-lvl and spm-lvl can be different in
->  * UFS, so special care is needed.
->  * Refer also ufshcd_resume_complete()
->  */
-> int ufshcd_suspend_prepare(struct device *dev)
-> {
-> 	struct ufs_hba *hba = dev_get_drvdata(dev);
-> 	struct device *ufs_dev = &hba->sdev_ufs_device->sdev_gendev;
-> 	enum ufs_dev_pwr_mode spm_pwr_mode;
-> 	enum uic_link_state spm_link_state;
-> 	unsigned long flags;
-> 	bool rpm_state_ok;
-> 
-> 	/*
-> 	 * First prevent runtime suspend. Note this does not prevent runtime
-> 	 * resume e.g. pm_runtime_get_sync() will still do the right thing.
-> 	 */
-> 	pm_runtime_get_noresume(ufs_dev);
-> 
-> 	/* Now check if the rpm state is ok to use for spm */
-> 	spin_lock_irqsave(&ufs_dev->power.lock, flags);
-> 
-> 	spm_pwr_mode = ufs_get_pm_lvl_to_dev_pwr_mode(hba->spm_lvl);
-> 	spm_link_state = ufs_get_pm_lvl_to_link_pwr_state(hba->spm_lvl);
-> 
-> 	rpm_state_ok = pm_runtime_suspended(ufs_dev) &&
-> 		       hba->curr_dev_pwr_mode == spm_pwr_mode &&
-> 		       hba->uic_link_state == spm_link_state &&
-> 		       !hba->dev_info.b_rpm_dev_flush_capable;
-> 
-> 	spin_unlock_irqrestore(&ufs_dev->power.lock, flags);
-> 
-> 	/* If is isn't, do a runtime resume */
-> 	if (!rpm_state_ok)
-> 		pm_runtime_resume(ufs_dev);
+Use of_device_get_match_data() to make the code slightly smaller.
 
-But we should return an error if runtime resume
-fails.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ drivers/crypto/s5p-sss.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
- 	if (!rpm_state_ok) {
- 		int ret = pm_runtime_resume(ufs_dev);
-
-		if (ret < 0 && ret != EACCES) {
-			pm_runtime_put(ufs_dev);
-			return ret;
-		}
-	}
-
-> 
-> 	return 0;
-> }
-> 
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index 8ed08130196f..d613bd557016 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -20,6 +20,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/scatterlist.h>
+ 
+@@ -424,13 +425,9 @@ MODULE_DEVICE_TABLE(of, s5p_sss_dt_match);
+ static inline const struct samsung_aes_variant *find_s5p_sss_version
+ 				   (const struct platform_device *pdev)
+ {
+-	if (IS_ENABLED(CONFIG_OF) && (pdev->dev.of_node)) {
+-		const struct of_device_id *match;
++	if (IS_ENABLED(CONFIG_OF) && (pdev->dev.of_node))
++		return of_device_get_match_data(&pdev->dev);
+ 
+-		match = of_match_node(s5p_sss_dt_match,
+-					pdev->dev.of_node);
+-		return (const struct samsung_aes_variant *)match->data;
+-	}
+ 	return (const struct samsung_aes_variant *)
+ 			platform_get_device_id(pdev)->driver_data;
+ }
+-- 
+2.25.1
 
