@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D5FC43460
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Apr 2021 14:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA10EC43470
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Apr 2021 14:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3500C6121E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Apr 2021 14:38:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9712860FE5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Apr 2021 14:38:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244828AbhDPOi6 (ORCPT
+        id S244547AbhDPOjB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 16 Apr 2021 10:38:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45228 "EHLO
+        Fri, 16 Apr 2021 10:39:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244722AbhDPOik (ORCPT
+        with ESMTP id S244306AbhDPOio (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Apr 2021 10:38:40 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B7E8C06134D
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Apr 2021 07:38:09 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id e14so42447522ejz.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Apr 2021 07:38:09 -0700 (PDT)
+        Fri, 16 Apr 2021 10:38:44 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A64FBC061357
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Apr 2021 07:38:11 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id sd23so33835417ejb.12
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Apr 2021 07:38:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JrproNEUMCgSjmh/8B0I/rNyBQoaOU4LantvG8VttuY=;
-        b=AbhwF2o8lWGjI+FDsAThxXdYjTFw6ntHJ+FjLaceNvJgOS2Y7pl+JkE3/1i576V58B
-         YvDUmpqhZuyg4ON7XYVatcqM580H8JN3lJS9HLyvlLYjuXBs5xAjEta/3co9QOEIr43v
-         XLrqP7juFl6LHY7r+NdZVb0uIbH4dibSpJu6wGgmMky1EuVOjhAXtvsFFHpR0y46mchQ
-         rNSYZwaCr8ePffvLwn7sdYpMKrD+vBBEloIRYGDJwzMvm6Upd6Mr0PlQYUiNkmTcHqFp
-         eVdmSNrJHUvjzz7h9vB9PlsqKdu6rTezQq6HeQ7z78UZtM0LGOPupSB1p9WxIUVHznWW
-         Y/hA==
+        bh=41LgwOuoq22rGgsCktNaBese4amMVfNYLTWP6zyN98Q=;
+        b=SdxKlv+fNXg5L8kGoNDlYldYsqKcpPLAo7SNh4UKeExvT+lzMSwwhYTQgAkyNW9XV1
+         63a1JDzirzFBEbKuUKIuNOxi9MSJjlGxn4M3fV3HctPcinrNVovY6FlDNzSTVZ92KF+o
+         XIk3NOOnT5B91RxZoU8MtBX+p3GuXccPlgOW5xfBBnG3UrYm0xApChnqyq6w3iu3Oe9j
+         lE1286wLw82FuzX9IBZjoe3AXA+PeNjmQTiulNd5wH2OOPghylJzXQcb1Xu6CSnNgEHC
+         dsZisdfzr5StyHwyG5CNaHmFfL+M9iwvAx32Z/rwAWgZDEmk+ytaEasqOsL58RLMkWX3
+         zsLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JrproNEUMCgSjmh/8B0I/rNyBQoaOU4LantvG8VttuY=;
-        b=n/ZfGvtVlPdp/cS07tACpPTmrMW3eXPhH/l+/e77QAx3iduGGBBFzS5dfmQmMFRy07
-         rz6uizwTlPxPLNBDEAycMr8RKbUZqWszQXWy5alh1w48sJzRhjRC5ZW6l4Ryhc9mkGuR
-         oBgucJDAEq04DnttM08QuysCU4AwC31iFOshmU32jVVtqzXWyN1jjf3e04n73GZ1Q3fU
-         qbnvGC1xQmmWi9C8UmEMSgawS/eXARAIeJii4YwTbW/dGCed/KMSL4ksDMjcZ8IPDAzH
-         qQK1W9mDOax1N06D4u6qSXN3Qqhwa4llylMMvX6TU9/yPs3kTMzKX3LLPKDvK4AFby4/
-         eneg==
-X-Gm-Message-State: AOAM531+ylLPPffUnycUJVuYuVScDH/+dnSDXM0fe9p1Sa4EHd8kjP3W
-        hB6ulCSi7+zDfkjB6Xg7LxGFIQ==
-X-Google-Smtp-Source: ABdhPJxRohIyR/YCoUD5YI/XkzLdyuPidmXlmk0d8AmwuQ7/5UcOVVluw10vUFCBA6T3eZAmMx7dlA==
-X-Received: by 2002:a17:906:dbcd:: with SMTP id yc13mr8165471ejb.99.1618583888233;
-        Fri, 16 Apr 2021 07:38:08 -0700 (PDT)
+        bh=41LgwOuoq22rGgsCktNaBese4amMVfNYLTWP6zyN98Q=;
+        b=FBvw8nYLTjPZ34kCL1ND3aYq2Yq6bXPWzeUbLdFZybbB+/SGYyGrwIbjbM4D3PXnQ5
+         M8WQZT37m9GMPqh47wAIqz8uFnIGurE7w9wXLmLQ15/ZZPEhPdLtikWsxEFAB5mXiK/p
+         K8fbmYpSP/U6jlUwnQTb+i+maaMN7PcSa35i8VrA1ahEgMQ4qtvdaRFhR1hDKF1eD/2j
+         G46uadT6wzRHohsYnVly8ejcvLGkAJE5qfPi9OJdO0+lJajhQcLdR27gzcPOi/biq18k
+         Oa/aYaB1/D1TkSJKoD3w3WLsMqjdNRVXsNtJ1AATDFNrzq0CWMZnWHpAaE38wOMAR/qV
+         I29Q==
+X-Gm-Message-State: AOAM530lzZJNMkhy3JOtIR8mbfPgjTysolGdFE35U0ohj3m+HiDl1sXr
+        czpbnpafwj4ncKMOcpmQqs6x6w==
+X-Google-Smtp-Source: ABdhPJxvfI/125JkkMmqblbXT2TRLpBJYLh7O+FA3oUYUCfjmPOCcTm/RwOmqUq72nMdaj0sKo9gcg==
+X-Received: by 2002:a17:906:b52:: with SMTP id v18mr8565368ejg.485.1618583890433;
+        Fri, 16 Apr 2021 07:38:10 -0700 (PDT)
 Received: from dell.default ([91.110.221.215])
-        by smtp.gmail.com with ESMTPSA id j10sm1326523ejk.93.2021.04.16.07.38.07
+        by smtp.gmail.com with ESMTPSA id j10sm1326523ejk.93.2021.04.16.07.38.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Apr 2021 07:38:07 -0700 (PDT)
+        Fri, 16 Apr 2021 07:38:09 -0700 (PDT)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
 Cc:     linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
@@ -66,14 +66,13 @@ Cc:     linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Akshu Agarwal <akshua@gmail.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 36/40] drm/exynos/exynos7_drm_decon: Realign function name with its header
-Date:   Fri, 16 Apr 2021 15:37:21 +0100
-Message-Id: <20210416143725.2769053-37-lee.jones@linaro.org>
+Subject: [PATCH 38/40] drm/exynos/exynos_drm_ipp: Fix some function name disparity issues
+Date:   Fri, 16 Apr 2021 15:37:23 +0100
+Message-Id: <20210416143725.2769053-39-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20210416143725.2769053-1-lee.jones@linaro.org>
 References: <20210416143725.2769053-1-lee.jones@linaro.org>
@@ -85,7 +84,8 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Fixes the following W=1 kernel build warning(s):
 
- drivers/gpu/drm/exynos/exynos7_drm_decon.c:355: warning: expecting prototype for shadow_protect_win(). Prototype was for decon_shadow_protect_win() instead
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c:105: warning: expecting prototype for exynos_drm_ipp_ioctl_get_res_ioctl(). Prototype was for exynos_drm_ipp_get_res_ioctl() instead
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c:153: warning: expecting prototype for exynos_drm_ipp_ioctl_get_caps(). Prototype was for exynos_drm_ipp_get_caps_ioctl() instead
 
 Cc: Inki Dae <inki.dae@samsung.com>
 Cc: Joonyoung Shim <jy0922.shim@samsung.com>
@@ -94,29 +94,37 @@ Cc: Kyungmin Park <kyungmin.park@samsung.com>
 Cc: David Airlie <airlied@linux.ie>
 Cc: Daniel Vetter <daniel@ffwll.ch>
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc: Akshu Agarwal <akshua@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: dri-devel@lists.freedesktop.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/gpu/drm/exynos/exynos7_drm_decon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index 431c5d32f9a47..9b5e6f94e5585 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -344,7 +344,7 @@ static void decon_win_set_colkey(struct decon_context *ctx, unsigned int win)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+index 4f2b7551b2515..9ae8689353579 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+@@ -88,7 +88,7 @@ void exynos_drm_ipp_unregister(struct device *dev,
  }
  
  /**
-- * shadow_protect_win() - disable updating values from shadow registers at vsync
-+ * decon_shadow_protect_win() - disable updating values from shadow registers at vsync
-  *
-  * @ctx: display and enhancement controller context
-  * @win: window to protect registers for
+- * exynos_drm_ipp_ioctl_get_res_ioctl - enumerate all ipp modules
++ * exynos_drm_ipp_get_res_ioctl - enumerate all ipp modules
+  * @dev: DRM device
+  * @data: ioctl data
+  * @file_priv: DRM file info
+@@ -136,7 +136,7 @@ static inline struct exynos_drm_ipp *__ipp_get(uint32_t id)
+ }
+ 
+ /**
+- * exynos_drm_ipp_ioctl_get_caps - get ipp module capabilities and formats
++ * exynos_drm_ipp_get_caps_ioctl - get ipp module capabilities and formats
+  * @dev: DRM device
+  * @data: ioctl data
+  * @file_priv: DRM file info
 -- 
 2.27.0
 
