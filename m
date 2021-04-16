@@ -2,120 +2,153 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B6EC433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Apr 2021 14:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E605BC43460
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Apr 2021 18:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EECBF61107
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Apr 2021 14:47:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4C3D6137D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Apr 2021 18:22:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245293AbhDPOrz (ORCPT
+        id S244718AbhDPSWY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 16 Apr 2021 10:47:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47500 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244897AbhDPOrz (ORCPT
+        Fri, 16 Apr 2021 14:22:24 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:56644 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235750AbhDPSWY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Apr 2021 10:47:55 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B95BC061756
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Apr 2021 07:47:29 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id r9so42529453ejj.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Apr 2021 07:47:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=g0XKUS1TlHQQdNyUmvZMzlYJbLqAhGmFHXulH+uYRNc=;
-        b=f2ZDTmiEuxYYa86N6C2qnat3M3pM2bVpaAu8VGRFYHaK2P0DpmovNk6o3hjJWiPUlD
-         o7G+UY8ZoobPKwIv1mPIMzcC6jIIsrQnz9MmvkFQQDbJESSFCCtp4DI555jrRDVsnAFq
-         lqLTXtBHIRmFIPOJr469vpYRjut7wS7s5Z2I4UdSPsC0JOoF/6nihD0rAqCQGONxFceB
-         aIPTbvELdUWV3srRx4qBjZklNeztXm++7k5YcAGOiVoe72zUDwYVB2GZTRtq9cEUzK3R
-         h8MDLgKeQtLVZ5EnMn6IxlNxQSD/CSrHJA7qWSnvUh/SU/CIxia85W7Vv0HRuI15Pc9q
-         w9IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=g0XKUS1TlHQQdNyUmvZMzlYJbLqAhGmFHXulH+uYRNc=;
-        b=Tcu1Qd5BumCn2BYoOHhJX5E+AhOnKpSbYCuw9krlcVU3v592jBKRxB5EpPOuditat1
-         K9YNEQ4UMzb4TqLE8n0riLU0E8PG+VZkyfb7l/4b7smb8ucP4CliJD6M/K7aSYkBI2OV
-         XK9ZNLwdRgRTTvev1m5+sLXyrddp1icSiN16Ey/4+Y4U0pLZuQl2lJkxKZxy9E7GlHTl
-         /73V42OMVmBUs+5BHgOQyiQ5vKrJ30czFHHaBlViXrz2TtAS65P/X5TxbgfumRuJ+5tM
-         IVLmC1I/A23vY+/eOhERjRTtHdGJOLPON1hEnTyJGXnOH1iK0sk0fgwEK5KX5v7miovG
-         chIQ==
-X-Gm-Message-State: AOAM533e8oOytVuMPyTYLW4r9UK7u5w2UNIGJU256RamYdr8BzmxDfCx
-        q4pN6+pmrDN1MrIqKjz0YBXcnQ==
-X-Google-Smtp-Source: ABdhPJwK7OS5GZ6fsGB4Jf+dnVda/NwOxPrNHCrgw7AUMQ4UAFFNFcBcXSU20uxtVOc2TeiOy2SjEg==
-X-Received: by 2002:a17:906:1c17:: with SMTP id k23mr8876981ejg.266.1618584448071;
-        Fri, 16 Apr 2021 07:47:28 -0700 (PDT)
-Received: from dell ([91.110.221.215])
-        by smtp.gmail.com with ESMTPSA id o6sm5646765edw.24.2021.04.16.07.47.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Apr 2021 07:47:27 -0700 (PDT)
-Date:   Fri, 16 Apr 2021 15:47:21 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 34/40] drm/exynos/exynos_drm_fimd: Realign function name
- with its header
-Message-ID: <20210416144721.GZ4869@dell>
-References: <20210416143725.2769053-1-lee.jones@linaro.org>
- <20210416143725.2769053-35-lee.jones@linaro.org>
- <f871839d-6b1b-84b4-19d1-860d209ef193@canonical.com>
+        Fri, 16 Apr 2021 14:22:24 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1618597319; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=kVxxHWGXgfHGZWYXemFNetuQ9QkDGOKq4KF+Razehig=; b=GD1Jh4rIZ20pgrmw1hDn47zqXQhgrltKEqsZy4nQIR+KNbqz2ui5VzKMjCkSWd0Ed5e50azy
+ SJZoA4dI9h2uCQYu3cH+cEaD/w/Xz3tPXDNx7Nh8ttk7y3CcAKdBzZNYr2iKrzRBnv6fzE2y
+ elb3M9x+Si1/G3Of3ovjiBNKc9g=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyJhY2Q3MCIsICJsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
+ 6079d5c12cc44d3aeadb8f5a (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 16 Apr 2021 18:21:53
+ GMT
+Sender: asutoshd=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 2E69BC43465; Fri, 16 Apr 2021 18:21:52 +0000 (UTC)
+Received: from [192.168.8.168] (cpe-70-95-149-85.san.res.rr.com [70.95.149.85])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: asutoshd)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3F772C433CA;
+        Fri, 16 Apr 2021 18:21:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3F772C433CA
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=asutoshd@codeaurora.org
+Subject: Re: [PATCH v18 1/2] scsi: ufs: Enable power management for wlun
+To:     Bart Van Assche <bvanassche@acm.org>, cang@codeaurora.org,
+        martin.petersen@oracle.com, adrian.hunter@intel.com,
+        linux-scsi@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Bean Huo <beanhuo@micron.com>,
+        Kiwoong Kim <kwmad.kim@samsung.com>,
+        Yue Hu <huyue2@yulong.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Satya Tangirala <satyat@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
+        <linux-mediatek@lists.infradead.org>
+References: <cover.1618426513.git.asutoshd@codeaurora.org>
+ <d1a6af736730b9d79f977100286c5d9325546ac2.1618426513.git.asutoshd@codeaurora.org>
+ <f111e363-c709-fe3c-65da-450c9e9e3408@acm.org>
+From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
+Message-ID: <9ae35c14-f8aa-a181-2259-2d32bd2c1f07@codeaurora.org>
+Date:   Fri, 16 Apr 2021 11:21:48 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f871839d-6b1b-84b4-19d1-860d209ef193@canonical.com>
+In-Reply-To: <f111e363-c709-fe3c-65da-450c9e9e3408@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 16 Apr 2021, Krzysztof Kozlowski wrote:
-
-> On 16/04/2021 16:37, Lee Jones wrote:
-> > Fixes the following W=1 kernel build warning(s):
-> > 
-> >  drivers/gpu/drm/exynos/exynos_drm_fimd.c:734: warning: expecting prototype for shadow_protect_win(). Prototype was for fimd_shadow_protect_win() instead
-> > 
-> > Cc: Inki Dae <inki.dae@samsung.com>
-> > Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-> > Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-> > Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> > Cc: David Airlie <airlied@linux.ie>
-> > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> > Cc: dri-devel@lists.freedesktop.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+On 4/15/2021 4:11 PM, Bart Van Assche wrote:
+> On 4/14/21 11:58 AM, Asutosh Das wrote:
+>> [ ... ]
 > 
-> Hi Lee,
-> 
-> I already sent a fix for this one on 5th of April:
-> https://lore.kernel.org/lkml/20210405181524.52426-1-krzysztof.kozlowski@canonical.com/
+Hi Bart,
+Thanks for the comments. I will fix the comments in the next version.
 
-No problem.  Thanks for letting me know.
+> The following code is executed before ufshcd_async_scan() is called:
+> 
+> 	dev = hba->dev;
+> 	[ ... ]
+> 	/* Hold auto suspend until async scan completes */
+> 	pm_runtime_get_sync(dev);
+> 
+That would only keep the hba runtime resumed. At this point of time the 
+luns are not detected yet.
+> and the following code occurs in ufshcd_add_lus():
+> 
+> 	pm_runtime_put_sync(hba->dev);
+> 
+> Isn't that sufficient to postpone enabling of runtime PM until LUN
+> scanning has finished? Or in other words, is adding a
+> pm_runtime_get_noresume() call in ufshcd_slave_configure() really necessary?
+> 
+Yes, because the supplier (device wlun) may be suspended otherwise in 
+scsi_sysfs_add_sdev().
+>> @@ -4979,15 +5035,9 @@ ufshcd_transfer_rsp_status(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
+>>   			 */
+>>   			if (!hba->pm_op_in_progress &&
+>>   			    !ufshcd_eh_in_progress(hba) &&
+>> -			    ufshcd_is_exception_event(lrbp->ucd_rsp_ptr) &&
+>> -			    schedule_work(&hba->eeh_work)) {
+>> -				/*
+>> -				 * Prevent suspend once eeh_work is scheduled
+>> -				 * to avoid deadlock between ufshcd_suspend
+>> -				 * and exception event handler.
+>> -				 */
+>> -				pm_runtime_get_noresume(hba->dev);
+>> -			}
+>> +			    ufshcd_is_exception_event(lrbp->ucd_rsp_ptr))
+>> +				/* Flushed in suspend */
+>> +				schedule_work(&hba->eeh_work);
+> 
+> What makes it safe to leave out the above pm_runtime_get_noresume() call?
+> 
+The __ufshcd_wl_suspend() would flush this work so that it doesn't run 
+after suspend.
+> Thanks,
+> 
+> Bart.
+> 
+
 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Linux Foundation Collaborative Project
