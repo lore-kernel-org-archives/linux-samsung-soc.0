@@ -7,140 +7,187 @@ X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9946FC433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Apr 2021 07:25:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F94C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Apr 2021 07:42:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64BD160FEA
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Apr 2021 07:25:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C8F5613B0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Apr 2021 07:42:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229503AbhDTHZd (ORCPT
+        id S229620AbhDTHmg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 20 Apr 2021 03:25:33 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60284 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbhDTHZd (ORCPT
+        Tue, 20 Apr 2021 03:42:36 -0400
+Received: from mga17.intel.com ([192.55.52.151]:21110 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229471AbhDTHmg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Apr 2021 03:25:33 -0400
-Received: from mail-ej1-f72.google.com ([209.85.218.72])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lYkkn-00070x-Cm
-        for linux-samsung-soc@vger.kernel.org; Tue, 20 Apr 2021 07:25:01 +0000
-Received: by mail-ej1-f72.google.com with SMTP id g7-20020a1709065d07b029037c872d9cdcso4434179ejt.11
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Apr 2021 00:25:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QlkzODqs3de/2r7bFY21pvtdX8g0owN/7v3UKLodqFM=;
-        b=BqR/0vJSf3ZTgfWWQnjAguMGXiElQtEtjSMBr9M0AULNcylV6dVIF7+NjnIHAG78La
-         JNZk+ofQL6F8TUqyxb7C80AwTD3/Aiozfzt0fU8FIUKVLgnLAQuNh0Zg33VDm2ysy9Im
-         oZQQdixB+Vv+f7lo8yf/oYJdPK1NMWrdkOrimNCQs29WwzgZgGfo1sHorg34O1wUTl0m
-         t8/SfqBL78dPwAx/MWqbS9+O2tk58EQH/0LiRnPHCFKq0oCq0ZHf8q/ojZqAgmVtgQ0U
-         RusgYGJm5Ek0316EW2YfcYLIZ3MRzO9h4NQqZko1MTZ6QHZzANa/x0Jk/MQUtO7MlLtx
-         ZJdw==
-X-Gm-Message-State: AOAM531D5J5AajM1aGL+o8/CE6pdXggsTX6fF4csSJeiUbJbI2PXBgiW
-        4UDlipjWbMmsKBM2s4K0qPo6LFulwf+4eaiRz1eNrp5AERxolrizeaQKfbsR2uT9s7JInuSkuTd
-        xA9BpPY2GuPVw7b9VUZtwl35gfXESelzZT8KcUlcgLZ4eSceH
-X-Received: by 2002:a05:6402:4242:: with SMTP id g2mr30143966edb.329.1618903501149;
-        Tue, 20 Apr 2021 00:25:01 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxR0xQR3SxmpcZ02bhOq0nxAtZaxu1UiEvZpH8gjyloyiAJbhjG9+cavdaccyCaffHvyXDN5g==
-X-Received: by 2002:a05:6402:4242:: with SMTP id g2mr30143954edb.329.1618903501005;
-        Tue, 20 Apr 2021 00:25:01 -0700 (PDT)
-Received: from [192.168.1.115] (xdsl-188-155-180-75.adslplus.ch. [188.155.180.75])
-        by smtp.gmail.com with ESMTPSA id ca1sm15147826edb.76.2021.04.20.00.25.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Apr 2021 00:25:00 -0700 (PDT)
-Subject: Re: [PATCH 5/7] mfd: sec: Simplify getting of_device_id match data
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Support Opensource <support.opensource@diasemi.com>,
+        Tue, 20 Apr 2021 03:42:36 -0400
+IronPort-SDR: 0JiMYGbegb0EzC2jbahOQsGwpY89gWqSehfmkDpbEp7Wx23MUuGW37aBQaV3TFxNlQ79sAdt4v
+ X8PwhzSMgFnQ==
+X-IronPort-AV: E=McAfee;i="6200,9189,9959"; a="175569116"
+X-IronPort-AV: E=Sophos;i="5.82,236,1613462400"; 
+   d="scan'208";a="175569116"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Apr 2021 00:42:05 -0700
+IronPort-SDR: 630eycZorH3K8PN4kq3rhhrk9E4j2rPjNnDU6tsH/ECPJJuZQCjRasfUswTdXrRAyZCb5RXNvR
+ nmxqLdK//Ofw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.82,236,1613462400"; 
+   d="scan'208";a="420306465"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.174]) ([10.237.72.174])
+  by fmsmga008.fm.intel.com with ESMTP; 20 Apr 2021 00:41:55 -0700
+Subject: Re: [PATCH v20 1/2] scsi: ufs: Enable power management for wlun
+From:   Adrian Hunter <adrian.hunter@intel.com>
+To:     "Asutosh Das (asd)" <asutoshd@codeaurora.org>, cang@codeaurora.org,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         Lee Jones <lee.jones@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        patches@opensource.cirrus.com
-References: <20210419081726.67867-1-krzysztof.kozlowski@canonical.com>
- <CGME20210419081852eucas1p29d7904aa73d6621feb03cb24a91ed95d@eucas1p2.samsung.com>
- <20210419081726.67867-5-krzysztof.kozlowski@canonical.com>
- <64fb91ae-c754-fb25-0ef7-17b2f1b8a1e4@samsung.com>
- <4a5e80c0-653e-a4d6-630e-0d75e3779f6d@canonical.com>
- <a65318f6-1465-a35c-a987-8b833311ef3a@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <cb24912d-1d5d-089b-2cfa-d0c3c3a8b2b6@canonical.com>
-Date:   Tue, 20 Apr 2021 09:25:00 +0200
+        Bean Huo <beanhuo@micron.com>,
+        Kiwoong Kim <kwmad.kim@samsung.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Yue Hu <huyue2@yulong.com>,
+        Bart van Assche <bvanassche@acm.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Satya Tangirala <satyat@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
+        <linux-mediatek@lists.infradead.org>
+References: <cover.1618600985.git.asutoshd@codeaurora.org>
+ <d660b8d4e1fb192810abd09a8ff0ef4d9f6b96cd.1618600985.git.asutoshd@codeaurora.org>
+ <fdadd467-b613-d800-18c5-be064396fd10@intel.com>
+ <07e3ea07-e1c3-7b8c-e398-8b008f873e6d@codeaurora.org>
+ <90809796-1c32-3709-13d3-65e4d5c387cc@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <1bc4a73e-b22a-6bad-2583-3a0ffa979414@intel.com>
+Date:   Tue, 20 Apr 2021 10:42:09 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-In-Reply-To: <a65318f6-1465-a35c-a987-8b833311ef3a@samsung.com>
+In-Reply-To: <90809796-1c32-3709-13d3-65e4d5c387cc@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20/04/2021 09:12, Marek Szyprowski wrote:
-> On 20.04.2021 09:03, Krzysztof Kozlowski wrote:
->> On 20/04/2021 07:25, Marek Szyprowski wrote:
->>> On 19.04.2021 10:17, Krzysztof Kozlowski wrote:
->>>> Use of_device_get_match_data() to make the code slightly smaller.
+On 20/04/21 7:15 am, Adrian Hunter wrote:
+> On 20/04/21 12:53 am, Asutosh Das (asd) wrote:
+>> On 4/19/2021 11:37 AM, Adrian Hunter wrote:
+>>> On 16/04/21 10:49 pm, Asutosh Das wrote:
 >>>>
->>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>>>> Co-developed-by: Can Guo <cang@codeaurora.org>
+>>>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>>>> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
 >>>> ---
->>>>    drivers/mfd/sec-core.c | 9 +++------
->>>>    1 file changed, 3 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
->>>> index 8d55992da19e..3126c39f3203 100644
->>>> --- a/drivers/mfd/sec-core.c
->>>> +++ b/drivers/mfd/sec-core.c
->>>> @@ -10,6 +10,7 @@
->>>>    #include <linux/slab.h>
->>>>    #include <linux/i2c.h>
->>>>    #include <linux/of.h>
->>>> +#include <linux/of_device.h>
->>>>    #include <linux/of_irq.h>
->>>>    #include <linux/interrupt.h>
->>>>    #include <linux/pm_runtime.h>
->>>> @@ -324,12 +325,8 @@ static inline unsigned long sec_i2c_get_driver_data(struct i2c_client *i2c,
->>>>    						const struct i2c_device_id *id)
->>>>    {
->>>>    #ifdef CONFIG_OF
->>>> -	if (i2c->dev.of_node) {
->>>> -		const struct of_device_id *match;
->>>> -
->>>> -		match = of_match_node(sec_dt_match, i2c->dev.of_node);
->>>> -		return (unsigned long)match->data;
->>>> -	}
->>>> +	if (i2c->dev.of_node)
->>>> +		return (unsigned long)of_device_get_match_data(&i2c->dev);
->>>>    #endif
->>> Does it make any sense to keep the #ifdef CONFIG_OF after this change?
->> Good point, it was only to hide usage of of_device_id table.
+>>>
+>>> I came across 3 issues while testing.  See comments below.
+>>>
+>> Hi Adrian
+>> Thanks for the comments.
+>>> <SNIP>
+>>>
+>>>> @@ -5794,7 +5839,7 @@ static void ufshcd_err_handling_unprepare(struct ufs_hba *hba)
+>>>>       if (ufshcd_is_clkscaling_supported(hba))
+>>>>           ufshcd_clk_scaling_suspend(hba, false);
+>>>>       ufshcd_clear_ua_wluns(hba);
+>>>
+>>> ufshcd_clear_ua_wluns() deadlocks trying to clear UFS_UPIU_RPMB_WLUN
+>>> if sdev_rpmb is suspended and sdev_ufs_device is suspending.
+>>> e.g. ufshcd_wl_suspend() is waiting on host_sem while ufshcd_err_handler()
+>>> is running, at which point sdev_rpmb has already suspended.
+>>>
+>> Umm, I didn't understand this deadlock.
+>> When you say, sdev_rpmb is suspended, does it mean runtime_suspended?
+>> sdev_ufs_device is suspending - this can't be runtime_suspending, while ufshcd_err_handling_unprepare is running.
 >>
->>> I would also skip (i2c->dev.of_node) check, because
->>> of_device_get_match_data() already does that (although indirectly).
->> First, the enum sec_device_type would need to be changed so it starts
->> from 1, not 0. It's because the value returned by this function is later
->> assigned to that enum and there is no way currently to differentiate
->> between NULL and S5M8767X.
->>
->> Second, it wouldn't make the code smaller;
->>
->> unsigned long data;
->> data = of_device_get_match_data(&i2c->dev);
->> if (data)
->> 	return data;
+>> If you've a call-stack of this deadlock, please can you share it with me. I'll also try to reproduce this.
 > 
-> Then maybe one should go further and remove legacy, non-of based 
-> initialization, because it is not used at all. This will simplify it 
-> even more.
+> Yes it is system suspend. sdev_rpmb has suspended, sdev_ufs_device is waiting on host_sem.
+> ufshcd_err_handler() holds host_sem. ufshcd_clear_ua_wlun(UFS_UPIU_RPMB_WLUN) gets stuck.
+> I will get some call-stacks.
 
-Indeed maybe it's the time to get rid of board-file support...
+Here are the call stacks
 
-Thanks for the feedback!
+[   34.094321] Workqueue: ufs_eh_wq_0 ufshcd_err_handler
+[   34.094788] Call Trace:
+[   34.095281]  __schedule+0x275/0x6c0
+[   34.095743]  schedule+0x41/0xa0
+[   34.096240]  blk_queue_enter+0x10d/0x230
+[   34.096693]  ? wait_woken+0x70/0x70
+[   34.097167]  blk_mq_alloc_request+0x53/0xc0
+[   34.097610]  blk_get_request+0x1e/0x60
+[   34.098053]  __scsi_execute+0x3c/0x260
+[   34.098529]  ufshcd_clear_ua_wlun.cold+0xa6/0x14b
+[   34.098977]  ufshcd_clear_ua_wluns.part.0+0x4d/0x92
+[   34.099456]  ufshcd_err_handler+0x97a/0x9ff
+[   34.099902]  process_one_work+0x1cc/0x360
+[   34.100384]  worker_thread+0x45/0x3b0
+[   34.100851]  ? process_one_work+0x360/0x360
+[   34.101308]  kthread+0xf6/0x130
+[   34.101728]  ? kthread_park+0x80/0x80
+[   34.102186]  ret_from_fork+0x1f/0x30
 
-Best regards,
-Krzysztof
+[   34.640751] task:kworker/u10:9   state:D stack:14528 pid:  255 ppid:     2 flags:0x00004000
+[   34.641253] Workqueue: events_unbound async_run_entry_fn
+[   34.641722] Call Trace:
+[   34.642217]  __schedule+0x275/0x6c0
+[   34.642683]  schedule+0x41/0xa0
+[   34.643179]  schedule_timeout+0x18b/0x290
+[   34.643645]  ? del_timer_sync+0x30/0x30
+[   34.644131]  __down_timeout+0x6b/0xc0
+[   34.644568]  ? ufshcd_clkscale_enable_show+0x20/0x20
+[   34.645014]  ? async_schedule_node_domain+0x17d/0x190
+[   34.645496]  down_timeout+0x42/0x50
+[   34.645947]  ufshcd_wl_suspend+0x79/0xa0
+[   34.646432]  ? scmd_printk+0x100/0x100
+[   34.646917]  scsi_bus_suspend_common+0x56/0xc0
+[   34.647405]  ? scsi_bus_freeze+0x10/0x10
+[   34.647858]  dpm_run_callback+0x45/0x110
+[   34.648347]  __device_suspend+0x117/0x460
+[   34.648788]  async_suspend+0x16/0x90
+[   34.649251]  async_run_entry_fn+0x26/0x110
+[   34.649676]  process_one_work+0x1cc/0x360
+[   34.650137]  worker_thread+0x45/0x3b0
+[   34.650563]  ? process_one_work+0x360/0x360
+[   34.650994]  kthread+0xf6/0x130
+[   34.651455]  ? kthread_park+0x80/0x80
+[   34.651882]  ret_from_fork+0x1f/0x30
+
+
+
+> 
+>>
+>> I'll address the other comments in the next version.
+>>
+>>
+>> Thank you!
+>>
+>>>> -    pm_runtime_put(hba->dev);
+>>>> +    ufshcd_rpm_put(hba);
+>>>>   }
+>>>
+>>> <SNIP>
+>>>
+>>>> +void ufshcd_resume_complete(struct device *dev)
+>>>> +{
+>>
+> 
+
