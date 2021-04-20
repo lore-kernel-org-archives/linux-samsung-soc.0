@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61578C43460
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Apr 2021 11:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC911C433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Apr 2021 11:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AAA0613AB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Apr 2021 11:39:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7277613AB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Apr 2021 11:39:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232030AbhDTLkO (ORCPT
+        id S231978AbhDTLkQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 20 Apr 2021 07:40:14 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39129 "EHLO
+        Tue, 20 Apr 2021 07:40:16 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39149 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231894AbhDTLkK (ORCPT
+        with ESMTP id S231994AbhDTLkM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Apr 2021 07:40:10 -0400
-Received: from mail-ej1-f72.google.com ([209.85.218.72])
+        Tue, 20 Apr 2021 07:40:12 -0400
+Received: from mail-ed1-f70.google.com ([209.85.208.70])
         by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lYojC-0005Vq-C6
-        for linux-samsung-soc@vger.kernel.org; Tue, 20 Apr 2021 11:39:38 +0000
-Received: by mail-ej1-f72.google.com with SMTP id n10-20020a1709061d0ab029037caa96b8c5so4687687ejh.23
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Apr 2021 04:39:38 -0700 (PDT)
+        id 1lYojD-0005Wp-Ri
+        for linux-samsung-soc@vger.kernel.org; Tue, 20 Apr 2021 11:39:40 +0000
+Received: by mail-ed1-f70.google.com with SMTP id y10-20020a50f1ca0000b0290382d654f75eso12947618edl.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Apr 2021 04:39:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uA4zMXERcZERRFVtvNG5BrrsNQ88clv/v46eOD0pR5M=;
-        b=EbVHhYcsMRZmvL2uHad1/MZJ89SN7fpZ4ZWg5ev17RAd5K57w8NwxVHjlrkgK27JC+
-         ZWhgesMnN+aLKn+hhLqgJp7sC817wNJLrtBqqZ1RVxDmEo5z8Ki0O83EbpXKG4xxx8c/
-         ZabHS2w6S4e/IdRuMa7PyjLruF0yDwsc+TXpiJv1mV9jGJeA/42Ho/OPzLOGTG75GeNc
-         3slvhuMaBuMQFAA5TwYfngybMa3mOoJhvvSQch3vHQ2A+K2PgsqAZ7woSDAzwjMG06dQ
-         v3gkNPsHj/Ehq6kwCTFcy0CWW5P4dUPEjui6fSje5nYkSbB7Trrj1OlDH9Mhw8Y2PdcV
-         tF8Q==
-X-Gm-Message-State: AOAM530ZZw+cVLoz22uSe7G7Hd1mVPYIbD1BPE7rkovpwt9ZeHjBhUnA
-        +NWlpzhLuG09wKSeUaG8pHxRmsH2q8b94Q99AgodNwuGXdCwfVTEs33yOBEjM4r6RkvImk/nvUp
-        IR4sYorn4LRIqmIexL7LVZpGbqMfsgP5GzEGanYdpsH/V3eCG
-X-Received: by 2002:a05:6402:3ce:: with SMTP id t14mr15486437edw.142.1618918778135;
-        Tue, 20 Apr 2021 04:39:38 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwAd4zKG30DBWanjfBjytY6/YSWvfxCxt0tF6VGi/LLUDA2FbF6zidPnO/1qnhDujdnL0Nc+A==
-X-Received: by 2002:a05:6402:3ce:: with SMTP id t14mr15486421edw.142.1618918778034;
-        Tue, 20 Apr 2021 04:39:38 -0700 (PDT)
+        bh=nq4Jf1F7QpCUtSWxlU+CaxhBrA9IV/0TddbI2jzDURU=;
+        b=kr6w3eLGWShhyJTaZfD2afi2438zXRyZpbzAHctgpRtn0wv4KWqzafHXIeNZGQL3NU
+         JTLdk0Bt5SNt/dDF+vr5q1+d7hXMD5+/678Sj/7P6iBHOmOqHZ2B0nziC4gv65ZRphFC
+         cvqk+yAiBhf1bfgItZehEmXdaZU8o9U6UcDqYXPmgkvoYZvTvpGluUPoA0zY1VovPTP7
+         b5UUO+oi4X/KYXYCY6cSHB5CnY/X/P72TOOtdw35J3PymZYhiifTjri9jkHl18DxCgv5
+         h33zsUjqyB1hHZwuvRH3Hj6ZhTIRX3mveuPtOswfNLw4uIe0wsaB+yQQKnv76QveCh7A
+         LsJw==
+X-Gm-Message-State: AOAM530enGUmgaVJKDVkebook0dq99fkdYGc4+Vj+rKgdd9CIsMnHkuf
+        RJB2Kb7dO00LeWwkNr2fOvnE1lde5QNTEAkbuprrhsb41v3PoMc+N/KkO4dHwMJLN/n3L74ooYd
+        qR9zpCafj19AFoMtqs2AouDQSbiQ8BUz7znuHAZoEpDpl6DJK
+X-Received: by 2002:a17:906:a20c:: with SMTP id r12mr26633991ejy.554.1618918779365;
+        Tue, 20 Apr 2021 04:39:39 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyj66eOrcvi2YX4tMopSyiC5EDZvHf8zPXH8NgNMphzXRuWMeYLO+VDG3ozJ9NT6dLeU7BnNw==
+X-Received: by 2002:a17:906:a20c:: with SMTP id r12mr26633982ejy.554.1618918779231;
+        Tue, 20 Apr 2021 04:39:39 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-180-75.adslplus.ch. [188.155.180.75])
-        by smtp.gmail.com with ESMTPSA id bw26sm10109007ejb.119.2021.04.20.04.39.37
+        by smtp.gmail.com with ESMTPSA id bw26sm10109007ejb.119.2021.04.20.04.39.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Apr 2021 04:39:37 -0700 (PDT)
+        Tue, 20 Apr 2021 04:39:38 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Support Opensource <support.opensource@diasemi.com>,
         Lee Jones <lee.jones@linaro.org>,
@@ -61,10 +61,11 @@ To:     Support Opensource <support.opensource@diasemi.com>,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         patches@opensource.cirrus.com
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH v2 5/7] mfd: sec: Simplify getting of_device_id match data
-Date:   Tue, 20 Apr 2021 13:39:27 +0200
-Message-Id: <20210420113929.278082-5-krzysztof.kozlowski@canonical.com>
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: [PATCH v2 6/7] mfd: wm831x: Correct kerneldoc
+Date:   Tue, 20 Apr 2021 13:39:28 +0200
+Message-Id: <20210420113929.278082-6-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210420113929.278082-1-krzysztof.kozlowski@canonical.com>
 References: <20210420113929.278082-1-krzysztof.kozlowski@canonical.com>
@@ -74,49 +75,35 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use of_device_get_match_data() to make the code slightly smaller.  There
-is also no need to wrap it in a check for CONFIG_OF, because dev.of_node
-will be set only with OF support.
+Correct kerneldoc function name to fix W=1 warning:
+
+  drivers/mfd/wm831x-core.c:121: warning:
+    expecting prototype for wm831x_reg_unlock(). Prototype was for wm831x_reg_lock() instead
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
 ---
 
 Changes since v1:
-1. Remove check for CONFIG_OF as suggested by Marek
+1. Add Ack
 ---
- drivers/mfd/sec-core.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/mfd/wm831x-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 8d55992da19e..15dd4c579937 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -10,6 +10,7 @@
- #include <linux/slab.h>
- #include <linux/i2c.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/of_irq.h>
- #include <linux/interrupt.h>
- #include <linux/pm_runtime.h>
-@@ -323,14 +324,9 @@ sec_pmic_i2c_parse_dt_pdata(struct device *dev)
- static inline unsigned long sec_i2c_get_driver_data(struct i2c_client *i2c,
- 						const struct i2c_device_id *id)
- {
--#ifdef CONFIG_OF
--	if (i2c->dev.of_node) {
--		const struct of_device_id *match;
-+	if (i2c->dev.of_node)
-+		return (unsigned long)of_device_get_match_data(&i2c->dev);
- 
--		match = of_match_node(sec_dt_match, i2c->dev.of_node);
--		return (unsigned long)match->data;
--	}
--#endif
- 	return id->driver_data;
+diff --git a/drivers/mfd/wm831x-core.c b/drivers/mfd/wm831x-core.c
+index bcef08f58fb3..c31809b17547 100644
+--- a/drivers/mfd/wm831x-core.c
++++ b/drivers/mfd/wm831x-core.c
+@@ -109,7 +109,7 @@ static int wm831x_reg_locked(struct wm831x *wm831x, unsigned short reg)
  }
  
+ /**
+- * wm831x_reg_unlock: Unlock user keyed registers
++ * wm831x_reg_lock: Unlock user keyed registers
+  *
+  * The WM831x has a user key preventing writes to particularly
+  * critical registers.  This function locks those registers,
 -- 
 2.25.1
 
