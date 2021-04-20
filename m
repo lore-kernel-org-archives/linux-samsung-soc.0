@@ -2,55 +2,56 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F580C433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Apr 2021 17:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFC2C43470
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Apr 2021 17:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 00369613D1
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Apr 2021 17:01:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 511E3613D1
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Apr 2021 17:01:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232767AbhDTRCG (ORCPT
+        id S232901AbhDTRCH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 20 Apr 2021 13:02:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50053 "EHLO
+        Tue, 20 Apr 2021 13:02:07 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50078 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232473AbhDTRCE (ORCPT
+        with ESMTP id S233239AbhDTRCF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Apr 2021 13:02:04 -0400
-Received: from mail-ej1-f70.google.com ([209.85.218.70])
+        Tue, 20 Apr 2021 13:02:05 -0400
+Received: from mail-ed1-f72.google.com ([209.85.208.72])
         by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lYtkh-0004Rv-1a
-        for linux-samsung-soc@vger.kernel.org; Tue, 20 Apr 2021 17:01:31 +0000
-Received: by mail-ej1-f70.google.com with SMTP id j25-20020a1709060519b029037cb8ca241aso5025570eja.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Apr 2021 10:01:31 -0700 (PDT)
+        id 1lYtkj-0004TT-9u
+        for linux-samsung-soc@vger.kernel.org; Tue, 20 Apr 2021 17:01:33 +0000
+Received: by mail-ed1-f72.google.com with SMTP id w15-20020a056402268fb02903828f878ec5so13466633edd.5
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Apr 2021 10:01:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CHsQSEUOmORiTB8Zkf0mC2OREpdRoRDZ4OLN4iMgWKc=;
-        b=OjE2LJY5MIiMhdmQzM6LZ4BsqDVF9FUM8JmQqgTNALlHgp/EXncEBYZ31VMXEQrFdZ
-         rn0REaM2GPTa7HJ8G4Dl4h3VtaJ6NtO5DuNNU6H3nohjZAe6+RlRuZn/4XJA55Nn9vsL
-         GTq7uM7yiTYxsQZKunkKScQ1n0mj5vyAnDbSyldyzEHxVmVYk5L6IGAbwJxBEpE4whYJ
-         /vWu7R5Ih/+3CxckucSFU217thv+Mzp5M/qZdCpXiJQ+IYG7/BknYK4Eb97RXHNj5hc5
-         uBN4+r3BB+IBAV+RBWRWHw+r6eGrciLvKYhb5JtHO000PmFwhy+RkL6mUjtnmSaNkkTM
-         +JEg==
-X-Gm-Message-State: AOAM532Xb12SqxXjaJdc0Ehf41Rofp72M1IxPcOJ81SufY/5qzIcNk2e
-        Wv1BYhPeT7OhDlo8rBuTVE1QfKljDS9v3lSKL4lotzk0oMDN3dOBLAzVm9f0QuG76qPGoc/vCCq
-        hD2LrRQSXVtqmLba8ieh1++lf9NPnP43EeWt5UcJvKOTLxBLq
-X-Received: by 2002:a17:906:b353:: with SMTP id cd19mr28801318ejb.253.1618938090397;
-        Tue, 20 Apr 2021 10:01:30 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyWCjFUTB+i+AWDnumgO9r4qpi2r6FWXN4Xy3B0T5zjsqdLAfvrora74Xl3gg1bViJWFcX6bQ==
-X-Received: by 2002:a17:906:b353:: with SMTP id cd19mr28801300ejb.253.1618938090234;
-        Tue, 20 Apr 2021 10:01:30 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=cK2ReUjBLXXBh4lxBc6DTRo7cWOdEm7mAeUsBKVXSvQ=;
+        b=sAso0+VYMrOpAPgqPQkbEbeUs8dtG8vnOuHmMPcyfqfCgmoYJnHr5u+9f0zuseQoka
+         CbkJ8zcggUqOrR6JTyQc6VBa50JeEZKi0dV7qlC6upgOMsbNc4q2lDiPLOWLEGkCwkhE
+         /StxsZ1/v+oyx9nFTKbZ0Os7EY3WGv9LwLEQyal02S4ugmzQ9d71dDhQThLHdBezNcwv
+         TCU0iZGNh2rq65u2S0TPwbRVNBTA9fHzWVpitmB+oO/4FQRIdx3kE3s5LSAMZSggbLVb
+         VeByxn6oXde/8lcdzLaCR3yV8ktIAvYUC0QyxN3kv5iTvnj40hMr2axuOsznPuYLWVVm
+         TMtQ==
+X-Gm-Message-State: AOAM5337vVn6dW0dx7G5sbljUCyNZiduGhCw8JUGO+OgbkvZlmjRnLUP
+        eD+AwBlPcfgpIHT94hHQhlM9CZXYSuhHEofvoDgdaOihir0PevvUIlekcaaoTZZIssZKx1bq2VJ
+        iHndTxkPa3R8mgulwNYGf5xmtZJeYlsQSTMnEm3MtWTk95PRr
+X-Received: by 2002:a05:6402:1393:: with SMTP id b19mr33272130edv.333.1618938092888;
+        Tue, 20 Apr 2021 10:01:32 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzsfo95Qfe4xzN04pErckPsV4xUg8gCjdkg5/kz+p8rSAzf6rBygGzRUjfOHfAKmqHyncJAFA==
+X-Received: by 2002:a05:6402:1393:: with SMTP id b19mr33272118edv.333.1618938092757;
+        Tue, 20 Apr 2021 10:01:32 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-180-75.adslplus.ch. [188.155.180.75])
-        by smtp.gmail.com with ESMTPSA id x7sm16334441eds.67.2021.04.20.10.01.29
+        by smtp.gmail.com with ESMTPSA id x7sm16334441eds.67.2021.04.20.10.01.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Apr 2021 10:01:29 -0700 (PDT)
+        Tue, 20 Apr 2021 10:01:32 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Lee Jones <lee.jones@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -63,62 +64,53 @@ To:     Lee Jones <lee.jones@linaro.org>,
         linux-rtc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 0/9] mfd/rtc/regulator: Drop board file support for Samsung PMIC
-Date:   Tue, 20 Apr 2021 19:01:09 +0200
-Message-Id: <20210420170118.12788-1-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 2/9] mfd: sec: Remove unused cfg_pmic_irq in platform data
+Date:   Tue, 20 Apr 2021 19:01:11 +0200
+Message-Id: <20210420170118.12788-3-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210420170118.12788-1-krzysztof.kozlowski@canonical.com>
+References: <20210420170118.12788-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+The 'cfg_pmic_irq' field of platform data structure is not used and can
+be safely dropped.
 
-The Samsung PMIC drivers since long time are used only on devicetree
-platforms (Samsung Exynos) and there are no users with board files.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ drivers/mfd/sec-core.c           | 3 ---
+ include/linux/mfd/samsung/core.h | 1 -
+ 2 files changed, 4 deletions(-)
 
-Drop the support for board files entirely and depend on OF for matching.
-
-This makes the code smaller and simpler.
-
-Dependencies
-============
-The MFD pieces are rebased on my previous sec-core dirver changes:
-mfd: sec: Simplify getting of_device_id match data
-https://lore.kernel.org/linux-samsung-soc/20210420113929.278082-1-krzysztof.kozlowski@canonical.com/T/#t
-
-Applying - can be independent
-=============================
-The last RTC and regulator patches can be picked up independently via
-regulator and rtc trees.  There are no board files currently, so the
-code in these drivers is basically dead code and feature-bisection is
-preserved.
-
-Best regards,
-Krzysztof
-
-
-Krzysztof Kozlowski (9):
-  mfd: sec: Drop support for board files and require devicetree
-  mfd: sec: Remove unused cfg_pmic_irq in platform data
-  mfd: sec: Remove unused device_type in platform data
-  mfd: sec: Remove unused irq_base in platform data
-  mfd: sec: Enable wakeup from suspend via devicetree property
-  mfd: sec: Remove unused platform data members
-  rtc: s5m: Remove reference to parent's device pdata
-  regulator: s2mpa01: Drop initialization via platform data
-  regulator: s2mps11: Drop initialization via platform data
-
- drivers/mfd/Kconfig              |  1 +
- drivers/mfd/sec-core.c           | 64 +++++---------------------------
- drivers/mfd/sec-irq.c            |  4 +-
- drivers/regulator/s2mpa01.c      |  4 --
- drivers/regulator/s2mps11.c      | 22 +----------
- drivers/rtc/rtc-s5m.c            |  6 ---
- include/linux/mfd/samsung/core.h | 33 ----------------
- 7 files changed, 14 insertions(+), 120 deletions(-)
-
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index c61c1fc62165..653d02b98d53 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -382,9 +382,6 @@ static int sec_pmic_probe(struct i2c_client *i2c,
+ 		return ret;
+ 	}
+ 
+-	if (pdata->cfg_pmic_irq)
+-		pdata->cfg_pmic_irq();
+-
+ 	sec_irq_init(sec_pmic);
+ 
+ 	pm_runtime_set_active(sec_pmic->dev);
+diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+index f1631a39acfc..68afc2b97a41 100644
+--- a/include/linux/mfd/samsung/core.h
++++ b/include/linux/mfd/samsung/core.h
+@@ -85,7 +85,6 @@ struct sec_platform_data {
+ 	int				num_regulators;
+ 
+ 	int				irq_base;
+-	int				(*cfg_pmic_irq)(void);
+ 
+ 	bool				wakeup;
+ 	bool				buck_voltage_lock;
 -- 
 2.25.1
 
