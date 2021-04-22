@@ -2,102 +2,233 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C752FC433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Apr 2021 16:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA79C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Apr 2021 16:39:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E34C6121E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Apr 2021 16:31:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44BE161409
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Apr 2021 16:39:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236594AbhDVQb7 (ORCPT
+        id S236485AbhDVQjq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 22 Apr 2021 12:31:59 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43006 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236341AbhDVQb7 (ORCPT
+        Thu, 22 Apr 2021 12:39:46 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:31945 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232670AbhDVQjp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 22 Apr 2021 12:31:59 -0400
-Received: from mail-wr1-f69.google.com ([209.85.221.69])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lZcEd-0002xQ-3u
-        for linux-samsung-soc@vger.kernel.org; Thu, 22 Apr 2021 16:31:23 +0000
-Received: by mail-wr1-f69.google.com with SMTP id y13-20020adfdf0d0000b02901029a3bf796so14068722wrl.15
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Apr 2021 09:31:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ppnGNxh0eFn8x7BCY1HCM1XkgXlS39iBEur/NFl3YdQ=;
-        b=QKrI6uuUv7/xBODxiWCsxGNTWvbUD0+9JI2Si8WClUmI6HgkvnNsRsQriquMby78M1
-         1GpNUNbMdmI4mmnomtaLZ7dH20MFQtkSipuAb0cQPmOIWdiE/iWl7lyqBBQ3DsK9pcCu
-         2iFF6DL9Qw4UYVLb4eIQdO7TOrhDDeP/YClNqdVdOhqNjAoCMKhBjmpuoPyzIJS7Wf9E
-         8ZIToyvcJtu7j7R7DBSJipYumlXtAiKCeALIW1sZsJUfD4xPCMkSb8dutKRUtnETIDEg
-         1V7SCedBPUj5L+QLKukuT4HVlSDo4CIhnfwfygyXQ6AHh7vnidTrUT2WF0kJSN6ppwhd
-         +HGA==
-X-Gm-Message-State: AOAM533jGMUbJ3hpkoWzzaK7fsv6q8bdwSaZ/kfxpbC61ttc+okiMJRU
-        PQ0OZ2X1CkdLJ/W6DJ/QA0+5pByHy5P8AqMICHdZlvQ2GwwSnaJ20YlKUFV8zj6vY4MsnF53+Cw
-        xOZjTc3cCFQHT4u2fK1o+nRsxAt0b7NL9zLL5UzK/aUr110oD
-X-Received: by 2002:adf:f742:: with SMTP id z2mr5238203wrp.82.1619109082870;
-        Thu, 22 Apr 2021 09:31:22 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxao2x5CTffFeKvHNJlZUIC/sEATzkPF7ctqWq6WVRjowmOIGA4pJ6bPUOEevnIjYM+2LP2fw==
-X-Received: by 2002:adf:f742:: with SMTP id z2mr5238180wrp.82.1619109082726;
-        Thu, 22 Apr 2021 09:31:22 -0700 (PDT)
-Received: from [192.168.1.115] (xdsl-188-155-180-75.adslplus.ch. [188.155.180.75])
-        by smtp.gmail.com with ESMTPSA id g12sm4569107wru.47.2021.04.22.09.31.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Apr 2021 09:31:22 -0700 (PDT)
-Subject: Re: [PATCH v2] hwrng: exynos - Fix runtime PM imbalance on error
-To:     =?UTF-8?Q?=c5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Bart=c5=82omiej_=c5=bbolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <bc20ae4c-3e62-7b07-506c-ce8d90f65754@canonical.com>
- <CGME20210422112224eucas1p283ca7aeaa25ab514b9743a11e63a76e0@eucas1p2.samsung.com>
- <dleftj35vi7ee0.fsf%l.stelmach@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <a8bdb9e0-cbe3-85d5-c9ac-619445471b41@canonical.com>
-Date:   Thu, 22 Apr 2021 18:31:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        Thu, 22 Apr 2021 12:39:45 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1619109551; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=/mm9WV2bjsZbhbPwSCfsNxlMTHiCooMD2kmhdaXn4IY=; b=Rqbmp1k4Z1E6A7NHuiq4pZfVIWmP8JzaxZirgpyTeoA7VT3QpH1OYhnPQ3cYxxYpAA8kIq3v
+ 0T9cdzcXrIkf9rqRBsIt0auGcqqyjsxonvdDbz4QGJi+TVgwT3Tf73n5xrqRPoHHoGFg2CSl
+ ArKow1lTlm8uZ3QaWT2eV5RSv9U=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyJhY2Q3MCIsICJsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
+ 6081a6a9c39407c3270294fb (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 22 Apr 2021 16:39:05
+ GMT
+Sender: asutoshd=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 40B86C43146; Thu, 22 Apr 2021 16:39:04 +0000 (UTC)
+Received: from [192.168.8.168] (cpe-70-95-149-85.san.res.rr.com [70.95.149.85])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: asutoshd)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 71B2FC433F1;
+        Thu, 22 Apr 2021 16:38:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 71B2FC433F1
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=asutoshd@codeaurora.org
+Subject: Re: [PATCH v20 1/2] scsi: ufs: Enable power management for wlun
+To:     Adrian Hunter <adrian.hunter@intel.com>, cang@codeaurora.org,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Bean Huo <beanhuo@micron.com>,
+        Kiwoong Kim <kwmad.kim@samsung.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Yue Hu <huyue2@yulong.com>,
+        Bart van Assche <bvanassche@acm.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Satya Tangirala <satyat@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
+        <linux-mediatek@lists.infradead.org>
+References: <cover.1618600985.git.asutoshd@codeaurora.org>
+ <d660b8d4e1fb192810abd09a8ff0ef4d9f6b96cd.1618600985.git.asutoshd@codeaurora.org>
+ <fdadd467-b613-d800-18c5-be064396fd10@intel.com>
+ <07e3ea07-e1c3-7b8c-e398-8b008f873e6d@codeaurora.org>
+ <90809796-1c32-3709-13d3-65e4d5c387cc@intel.com>
+ <1bc4a73e-b22a-6bad-2583-3a0ffa979414@intel.com>
+From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
+Message-ID: <651f5d8a-5ab7-77dd-3fed-05feb3fd3e1a@codeaurora.org>
+Date:   Thu, 22 Apr 2021 09:38:58 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-In-Reply-To: <dleftj35vi7ee0.fsf%l.stelmach@samsung.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1bc4a73e-b22a-6bad-2583-3a0ffa979414@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 22/04/2021 13:22, Łukasz Stelmach wrote:
-> It was <2021-04-22 czw 12:46>, when Krzysztof Kozlowski wrote:
->> On 22/04/2021 12:41, Łukasz Stelmach wrote:
->>> pm_runtime_get_sync() increments the runtime PM usage counter even
->>> the call returns an error code. Thus a pairing decrement is needed
->>> on the error handling path to keep the counter balanced.
+On 4/20/2021 12:42 AM, Adrian Hunter wrote:
+> On 20/04/21 7:15 am, Adrian Hunter wrote:
+>> On 20/04/21 12:53 am, Asutosh Das (asd) wrote:
+>>> On 4/19/2021 11:37 AM, Adrian Hunter wrote:
+>>>> On 16/04/21 10:49 pm, Asutosh Das wrote:
+>>>>>
+>>>>> Co-developed-by: Can Guo <cang@codeaurora.org>
+>>>>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>>>>> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+>>>>> ---
+>>>>
+>>>> I came across 3 issues while testing.  See comments below.
+>>>>
+>>> Hi Adrian
+>>> Thanks for the comments.
+>>>> <SNIP>
+>>>>
+>>>>> @@ -5794,7 +5839,7 @@ static void ufshcd_err_handling_unprepare(struct ufs_hba *hba)
+>>>>>        if (ufshcd_is_clkscaling_supported(hba))
+>>>>>            ufshcd_clk_scaling_suspend(hba, false);
+>>>>>        ufshcd_clear_ua_wluns(hba);
+>>>>
+>>>> ufshcd_clear_ua_wluns() deadlocks trying to clear UFS_UPIU_RPMB_WLUN
+>>>> if sdev_rpmb is suspended and sdev_ufs_device is suspending.
+>>>> e.g. ufshcd_wl_suspend() is waiting on host_sem while ufshcd_err_handler()
+>>>> is running, at which point sdev_rpmb has already suspended.
+>>>>
+>>> Umm, I didn't understand this deadlock.
+>>> When you say, sdev_rpmb is suspended, does it mean runtime_suspended?
+>>> sdev_ufs_device is suspending - this can't be runtime_suspending, while ufshcd_err_handling_unprepare is running.
+>>>
+>>> If you've a call-stack of this deadlock, please can you share it with me. I'll also try to reproduce this.
 >>
->> It's exactly the same as Dinghao's patch:
->> https://lore.kernel.org/linux-samsung-soc/20200522011659.26727-1-dinghao.liu@zju.edu.cn/
->> which you reviewed. It has even the same commit msg
->> (although it's difficult to be creative here).
->>
->> I think it's better to resend his patch instead.
+>> Yes it is system suspend. sdev_rpmb has suspended, sdev_ufs_device is waiting on host_sem.
+>> ufshcd_err_handler() holds host_sem. ufshcd_clear_ua_wlun(UFS_UPIU_RPMB_WLUN) gets stuck.
+>> I will get some call-stacks.
 > 
-> It isn't the same because it uses pm_runtime_put_noidle() as discussed
-> here[1], applied here[2] and advised here[2]. Dinghao didn't prepare
-> v3[4] for exynos.
+Hi Adrian,
 
-Thanks, makes sense but then I would prefer Marek's approach of
-pm_runtime_resume_and_get().
+Thanks for the call stacks.
+ From the current information, I can't say for sure why it'd get stuck 
+in blk_queue_enter().
 
-Best regards,
-Krzysztof
+I tried reproducing this issue on my setup yesterday but couldn't.
+Here's what I did:
+1. sdev_rpmb is RPM_SUSPENDED, checked before initiating system suspend
+2. sdev_ufs_device is RPM_RESUMED
+3. I triggered system suspend (echo mem > /sys/power/state) and 
+scheduled the error handler from ufshcd_wl_suspend().
+4. Waited until error handler ran and then ufshcd_wl_suspend() blocks on 
+host_sem.
+5. The ufshcd_clear_wa_wlun(UFS_UPIU_RPMB_WLUN) went through fine.
+
+Do you've some specific steps to reproduce this or a script, perhaps? If 
+so, please can you share it with me. I will try again.
+My test environment is in 5.10 kernel with Android, I suppose that 
+should be ok though.
+
+Thanks
+-asd
+
+> Here are the call stacks
+> 
+> [   34.094321] Workqueue: ufs_eh_wq_0 ufshcd_err_handler
+> [   34.094788] Call Trace:
+> [   34.095281]  __schedule+0x275/0x6c0
+> [   34.095743]  schedule+0x41/0xa0
+> [   34.096240]  blk_queue_enter+0x10d/0x230
+> [   34.096693]  ? wait_woken+0x70/0x70
+> [   34.097167]  blk_mq_alloc_request+0x53/0xc0
+> [   34.097610]  blk_get_request+0x1e/0x60
+> [   34.098053]  __scsi_execute+0x3c/0x260
+> [   34.098529]  ufshcd_clear_ua_wlun.cold+0xa6/0x14b
+> [   34.098977]  ufshcd_clear_ua_wluns.part.0+0x4d/0x92
+> [   34.099456]  ufshcd_err_handler+0x97a/0x9ff
+> [   34.099902]  process_one_work+0x1cc/0x360
+> [   34.100384]  worker_thread+0x45/0x3b0
+> [   34.100851]  ? process_one_work+0x360/0x360
+> [   34.101308]  kthread+0xf6/0x130
+> [   34.101728]  ? kthread_park+0x80/0x80
+> [   34.102186]  ret_from_fork+0x1f/0x30
+> 
+> [   34.640751] task:kworker/u10:9   state:D stack:14528 pid:  255 ppid:     2 flags:0x00004000
+> [   34.641253] Workqueue: events_unbound async_run_entry_fn
+> [   34.641722] Call Trace:
+> [   34.642217]  __schedule+0x275/0x6c0
+> [   34.642683]  schedule+0x41/0xa0
+> [   34.643179]  schedule_timeout+0x18b/0x290
+> [   34.643645]  ? del_timer_sync+0x30/0x30
+> [   34.644131]  __down_timeout+0x6b/0xc0
+> [   34.644568]  ? ufshcd_clkscale_enable_show+0x20/0x20
+> [   34.645014]  ? async_schedule_node_domain+0x17d/0x190
+> [   34.645496]  down_timeout+0x42/0x50
+> [   34.645947]  ufshcd_wl_suspend+0x79/0xa0
+> [   34.646432]  ? scmd_printk+0x100/0x100
+> [   34.646917]  scsi_bus_suspend_common+0x56/0xc0
+> [   34.647405]  ? scsi_bus_freeze+0x10/0x10
+> [   34.647858]  dpm_run_callback+0x45/0x110
+> [   34.648347]  __device_suspend+0x117/0x460
+> [   34.648788]  async_suspend+0x16/0x90
+> [   34.649251]  async_run_entry_fn+0x26/0x110
+> [   34.649676]  process_one_work+0x1cc/0x360
+> [   34.650137]  worker_thread+0x45/0x3b0
+> [   34.650563]  ? process_one_work+0x360/0x360
+> [   34.650994]  kthread+0xf6/0x130
+> [   34.651455]  ? kthread_park+0x80/0x80
+> [   34.651882]  ret_from_fork+0x1f/0x30
+> 
+> 
+> 
+>>
+>>>
+>>> I'll address the other comments in the next version.
+>>>
+>>>
+>>> Thank you!
+>>>
+>>>>> -    pm_runtime_put(hba->dev);
+>>>>> +    ufshcd_rpm_put(hba);
+>>>>>    }
+>>>>
+>>>> <SNIP>
+>>>>
+>>>>> +void ufshcd_resume_complete(struct device *dev)
+>>>>> +{
+>>>
+>>
+> 
+
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Linux Foundation Collaborative Project
