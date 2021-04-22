@@ -2,98 +2,59 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A71C433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Apr 2021 19:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FA8C433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Apr 2021 07:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16C3261460
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Apr 2021 19:04:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3A1561409
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 22 Apr 2021 07:47:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245404AbhDUTFG (ORCPT
+        id S235180AbhDVHs2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 21 Apr 2021 15:05:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35698 "EHLO mail.kernel.org"
+        Thu, 22 Apr 2021 03:48:28 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:48796 "EHLO fornost.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S245410AbhDUTE4 (ORCPT
+        id S235118AbhDVHs2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 21 Apr 2021 15:04:56 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2797061453;
-        Wed, 21 Apr 2021 19:04:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619031862;
-        bh=SWgXMApMR68Fclqu0OruhI1qHub4rgqG9GwJHk4QtdI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V0QwZOn0w9ANYMCAQFlzqUvbYJvsfPsTnwoDJR7byvvRWCv+fm1JAb2NXfMPoc82U
-         TNGEZ/Tac217tTZBW+JC1gvb95y6BxP6pEM/3biGRtZ5TXtZzarDuAbCP6OMjFJHY4
-         myqMOaryWsoerKTuIv3ezXGPdEzyUSOnUP0dcF7/8+C42PEBOUJDsbdfVqqjFCJgE4
-         yKCIoMaX4do9LxMqgCsRj0Q8rjAUR4bOzBFLVnlh9gWyyXXGNrVpiI5SpbVoZxVj1g
-         prPXGk/tNM+YmWlO1fIPAQd4L3K4TahK6fgKOvU8SCDu1yolF9mj6v2k9EApp5g6Sk
-         HyAeBGk7vgGkw==
-From:   Mark Brown <broonie@kernel.org>
-To:     linux-rtc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: (subset) [PATCH 0/9] mfd/rtc/regulator: Drop board file support for Samsung PMIC
-Date:   Wed, 21 Apr 2021 20:03:30 +0100
-Message-Id: <161903035951.13561.16176843830665401857.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210420170118.12788-1-krzysztof.kozlowski@canonical.com>
-References: <20210420170118.12788-1-krzysztof.kozlowski@canonical.com>
+        Thu, 22 Apr 2021 03:48:28 -0400
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
+        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
+        id 1lZU3t-00037L-SB; Thu, 22 Apr 2021 17:47:46 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Thu, 22 Apr 2021 17:47:45 +1000
+Date:   Thu, 22 Apr 2021 17:47:45 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Vladimir Zapolskiy <vz@mleia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] crypto: s5p-sss - simplify getting of_device_id
+ match data
+Message-ID: <20210422074745.GJ14354@gondor.apana.org.au>
+References: <20210416122311.223076-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210416122311.223076-1-krzysztof.kozlowski@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 20 Apr 2021 19:01:09 +0200, Krzysztof Kozlowski wrote:
-> The Samsung PMIC drivers since long time are used only on devicetree
-> platforms (Samsung Exynos) and there are no users with board files.
+On Fri, Apr 16, 2021 at 02:23:09PM +0200, Krzysztof Kozlowski wrote:
+> Use of_device_get_match_data() to make the code slightly smaller.
 > 
-> Drop the support for board files entirely and depend on OF for matching.
-> 
-> This makes the code smaller and simpler.
-> 
-> [...]
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>  drivers/crypto/s5p-sss.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[8/9] regulator: s2mpa01: Drop initialization via platform data
-      commit: 378b40ae1a8639f03192711573e478a367ccb6e1
-[9/9] regulator: s2mps11: Drop initialization via platform data
-      commit: beeab9bc8e85de6cacbbb2124a464166f2f5043d
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
