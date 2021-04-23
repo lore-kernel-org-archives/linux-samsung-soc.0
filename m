@@ -2,137 +2,193 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F1BC433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Apr 2021 20:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F53C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Apr 2021 23:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 545926144A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Apr 2021 20:45:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8D06611CD
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 23 Apr 2021 23:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244003AbhDWUpx (ORCPT
+        id S235740AbhDWXpM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 23 Apr 2021 16:45:53 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58982 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231721AbhDWUpu (ORCPT
+        Fri, 23 Apr 2021 19:45:12 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:46579 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232101AbhDWXpK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 23 Apr 2021 16:45:50 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210423204511euoutp0162262e32dcc1136f641f2166fe488a15~4l5AR4tbM2289922899euoutp01n
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Apr 2021 20:45:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210423204511euoutp0162262e32dcc1136f641f2166fe488a15~4l5AR4tbM2289922899euoutp01n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1619210711;
-        bh=NBm0xRecla9MrLRvQiuvQHIGm/beN9+oBu9WKwOwc1U=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=hTn83j/KJh2sfkt7KpJWQ2bGZYXIhZsuBmAg8sxMP2LMKARObYfkrUmIGwyOJSeLS
-         uAnK1rTcj2/TyWtOC2sJioyhOZ5z61out003Rdxgp/ldFwsQQI1nvyxyX/doK4tvsX
-         OTHRQOpTVMzVxxgo2rnzpWYS2Q9U4aewo8DbcgeE=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210423204510eucas1p2841fd539a5ceed73caef5a1436021e7a~4l4-VRtsE0622106221eucas1p2h;
-        Fri, 23 Apr 2021 20:45:10 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id F5.3A.09444.5D133806; Fri, 23
-        Apr 2021 21:45:09 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210423204509eucas1p16ed651b17a096e10e8beb71d26614f66~4l4_pmVn60215802158eucas1p1k;
-        Fri, 23 Apr 2021 20:45:09 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210423204509eusmtrp2338228e64b0bc4763a8503bf2307c408~4l4_o3iJV2289222892eusmtrp2U;
-        Fri, 23 Apr 2021 20:45:09 +0000 (GMT)
-X-AuditID: cbfec7f4-dd5ff700000024e4-71-608331d5b4aa
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id A5.1F.08705.5D133806; Fri, 23
-        Apr 2021 21:45:09 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210423204508eusmtip111f37c746fcfdb11535809812d283bea~4l4_IyWHf1797917979eusmtip1L;
-        Fri, 23 Apr 2021 20:45:08 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
+        Fri, 23 Apr 2021 19:45:10 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1619221472; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=1rAl4/SGpigHk/EP46KWRcz1cpKU6hDAhQ42+J5NZgM=; b=AM2+gIq8vSPxCgpWDjC0NRVHT2Hgv2zNf5cBhI7rOimIHtpau/uoGcqOezGH2UD1DSMpJGlD
+ XQPeZr7rZYdORMWI1SccDOdk5kESOac6UKo205bWkovZGPp42QeSbPZlNBl62ojlLi0BMWt9
+ CjDZoog6n/AV3LGRaePqPTKBlf8=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyJhY2Q3MCIsICJsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n02.prod.us-west-2.postgun.com with SMTP id
+ 60835bde215b831afb965f6b (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 23 Apr 2021 23:44:30
+ GMT
+Sender: asutoshd=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 27212C43145; Fri, 23 Apr 2021 23:44:29 +0000 (UTC)
+Received: from [192.168.8.168] (cpe-70-95-149-85.san.res.rr.com [70.95.149.85])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: asutoshd)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 40434C433D3;
+        Fri, 23 Apr 2021 23:44:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 40434C433D3
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=asutoshd@codeaurora.org
+Subject: Re: [PATCH v20 1/2] scsi: ufs: Enable power management for wlun
+To:     Adrian Hunter <adrian.hunter@intel.com>, cang@codeaurora.org,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH] media: s5p-mfc: Fix display delay control creation
-Date:   Fri, 23 Apr 2021 22:44:57 +0200
-Message-Id: <20210423204457.10300-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsWy7djP87pXDZsTDPa9trK4te4cq8XGGetZ
-        LU5NfsZkcf78BnaLng1bWS1mnN/HZLH2yF12i2Wb/jBZtLQdYXLg9Ni0qpPN4861PWwefVtW
-        MXp83iTncerrZ/YA1igum5TUnMyy1CJ9uwSujOd/3zIV/GCrWLllK2MD42vWLkZODgkBE4mJ
-        F/+zdzFycQgJrGCUWHv2BCuE84VR4smFhcwQzmdGiTlNK4AcDrCWwwfKQLqFBJYzSjSeN4Nr
-        WPukmQkkwSZgKNH1tosNxBYRcJJYOOsv2ApmgV1MEn8eXwUrEhZwlug5dZkZxGYRUJU4fHMF
-        O4jNK2Ar8e/HbjaI++QlVm84AHaFhMBUDokVc3eyQyRcJNr+n2OEsIUlXh3fAhWXkfi/cz4T
-        REMzo8TDc2vZIZweRonLTTOgOqwl7pz7xQbyD7OApsT6XfoQrzlKdD/0gzD5JG68FQQpZgYy
-        J22bDvU8r0RHmxDEDDWJWcfXwW09eOESM4TtIfHu00NmSADFStw9vYxlAqPcLIRVCxgZVzGK
-        p5YW56anFhvlpZbrFSfmFpfmpesl5+duYgSmh9P/jn/Zwbj81Ue9Q4xMHIyHGCU4mJVEeL2O
-        NiYI8aYkVlalFuXHF5XmpBYfYpTmYFES503asiZeSCA9sSQ1OzW1ILUIJsvEwSnVwLTo954z
-        Cw8lZdYITbT/PGn+m1j+lboOM9Tl5bL0Zi/mW77OSXN1U9nfitX7NDtY9wlW/j23dOO9lLfT
-        Lkp/8rmxdnmH/e6ZGeHTNi+wyrpeG98rFZzfGye+QDGj7Ma9+4devq81nr70QIL8qxktzleb
-        ok7pzHo4UVPoi8xsBn8zXo9erb4dn9PkH9ncsg4IUf/6YN/R5Y7vdZr3W9dOcn7nds3y9WRu
-        mbP36ne9WvTmhOlCA2meXc4pz56fmdr95Euj9+3/FbnTtWtV2Q5On+GkpKzySZcnrfCR43x7
-        zcNVS91nWm98yXvvklvdr+rTe4NdlzrmVJ95/62l7mKmpraWr+rf9al/O5ms3n/cfmuPEktx
-        RqKhFnNRcSIAplmhv34DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrELMWRmVeSWpSXmKPExsVy+t/xu7pXDZsTDObu4rW4te4cq8XGGetZ
-        LU5NfsZkcf78BnaLng1bWS1mnN/HZLH2yF12i2Wb/jBZtLQdYXLg9Ni0qpPN4861PWwefVtW
-        MXp83iTncerrZ/YA1ig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TU
-        nMyy1CJ9uwS9jOd/3zIV/GCrWLllK2MD42vWLkYODgkBE4nDB8q6GLk4hASWMkr8+9XB3MXI
-        CRSXkTg5rYEVwhaW+HOtiw2i6BOjxJ6uTWAJNgFDia63IAlODhEBF4n9e54ygxQxC+xjkmg5
-        2cYOkhAWcJboOXUZbCqLgKrE4ZsrwOK8ArYS/37sZoPYIC+xesMB5gmMPAsYGVYxiqSWFuem
-        5xYb6hUn5haX5qXrJefnbmIEBua2Yz8372Cc9+qj3iFGJg7GQ4wSHMxKIrxeRxsThHhTEiur
-        Uovy44tKc1KLDzGaAu2byCwlmpwPjI28knhDMwNTQxMzSwNTSzNjJXHerXPXxAsJpCeWpGan
-        phakFsH0MXFwSjUwefyQklj6fpGTJYfFkZiJjQsel+yd0r3WUHW30Ub+bQdtujzTnKvE5rzY
-        7Fu8wCXp2Kb3YrlLz4Y8yt7CW7do280ZDTKX4/+pzlGb7Mv06sq/UslZuSstbY6rnQjKXHfQ
-        qdKFI/xK2OZ7C1a5zZ2xg33+3yeX8y2FH5VcXPO68vSqgxULniSyVh+6vjTcS2VTlm6cicu+
-        A3OEfsUIzZZXN2ybeWqiiuqcwA5DntTzGpkr1vnNuHPqVdNR5fqyM6lPD1yfabMyfvNVrdzC
-        xmPMBzd/fWdzYWVmRNKLmVfeHq2/vnferID6mpI1N2bFnc8ItPXR9npXc+nYpYS27QoCOxdq
-        9lx8f8X5w5difn3zhkNKLMUZiYZazEXFiQDDzgX41QIAAA==
-X-CMS-MailID: 20210423204509eucas1p16ed651b17a096e10e8beb71d26614f66
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210423204509eucas1p16ed651b17a096e10e8beb71d26614f66
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210423204509eucas1p16ed651b17a096e10e8beb71d26614f66
-References: <CGME20210423204509eucas1p16ed651b17a096e10e8beb71d26614f66@eucas1p1.samsung.com>
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Bean Huo <beanhuo@micron.com>,
+        Kiwoong Kim <kwmad.kim@samsung.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Yue Hu <huyue2@yulong.com>,
+        Bart van Assche <bvanassche@acm.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Satya Tangirala <satyat@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..." 
+        <linux-mediatek@lists.infradead.org>
+References: <cover.1618600985.git.asutoshd@codeaurora.org>
+ <d660b8d4e1fb192810abd09a8ff0ef4d9f6b96cd.1618600985.git.asutoshd@codeaurora.org>
+ <fdadd467-b613-d800-18c5-be064396fd10@intel.com>
+ <07e3ea07-e1c3-7b8c-e398-8b008f873e6d@codeaurora.org>
+ <90809796-1c32-3709-13d3-65e4d5c387cc@intel.com>
+ <1bc4a73e-b22a-6bad-2583-3a0ffa979414@intel.com>
+ <651f5d8a-5ab7-77dd-3fed-05feb3fd3e1a@codeaurora.org>
+ <efe71230-5b6a-22a8-1aef-f1cae046df22@intel.com>
+ <e6f3946a-dbe7-6b42-e43c-d3f8d705c732@intel.com>
+ <973e0bbb-ac2d-7196-2e25-37aee2b77b46@intel.com>
+From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
+Message-ID: <a71d6ac3-0dc6-4fa8-3643-6d3473d08797@codeaurora.org>
+Date:   Fri, 23 Apr 2021 16:44:26 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
+MIME-Version: 1.0
+In-Reply-To: <973e0bbb-ac2d-7196-2e25-37aee2b77b46@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-v4l2_ctrl_new_std() fails if the caller provides no 'step' parameter for
-integer control, so define it to fix following error:
+On 4/23/2021 1:01 AM, Adrian Hunter wrote:
+>>
+>>
+> 
 
-s5p_mfc_dec_ctrls_setup:1166: Adding control (1) failed
+Hi Adrian,
+Thanks for the help.
+I made the changes and tried to reproduce it.
+My setup becomes non-responsive and resets.
+I don't think it's related to this issue though.
 
-Fixes: c3042bff918a ("media: s5p-mfc: Use display delay and display enable std controls")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc_dec.c | 1 +
- 1 file changed, 1 insertion(+)
+I hadn't set rpm_lvl and spm_lvl to 0 while testing the other day.
+Setting those to 0, it proceeds further and now it becomes unresponsive. 
+So I still don't clearly see the issue that you're seeing. However, I'd 
+make the suggested changes and push it in next version.
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-index a92a9ca6e87e..c1d3bda8385b 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-@@ -172,6 +172,7 @@ static struct mfc_control controls[] = {
- 		.type = V4L2_CTRL_TYPE_INTEGER,
- 		.minimum = 0,
- 		.maximum = 16383,
-+		.step = 1,
- 		.default_value = 0,
- 	},
- 	{
+> I think we also need to runtime resume RPMB WLUN before system suspend.
+> e.g.
+> 
+> +static int ufshcd_rpmb_rpm_get_sync(struct ufs_hba *hba)
+> +{
+> +	return pm_runtime_get_sync(&hba->sdev_rpmb->sdev_gendev);
+> +}
+> +
+> +static int ufshcd_rpmb_rpm_put(struct ufs_hba *hba)
+> +{
+> +	return pm_runtime_put(&hba->sdev_rpmb->sdev_gendev);
+> +}
+> +
+>   void ufshcd_resume_complete(struct device *dev)
+>   {
+>   	struct ufs_hba *hba = dev_get_drvdata(dev);
+>   
+> +	if (hba->rpmb_complete_put) {
+> +		hba->rpmb_complete_put = false;
+> +		ufshcd_rpmb_rpm_put(hba);
+> +	}
+>   	if (hba->complete_put) {
+>   		hba->complete_put = false;
+>   		ufshcd_rpm_put(hba);
+> @@ -9611,6 +9625,11 @@ int ufshcd_suspend_prepare(struct device *dev)
+>   		return ret;
+>   	}
+>   	hba->complete_put = true;
+> +
+> +	if (hba->sdev_rpmb) {
+> +		ufshcd_rpmb_rpm_get_sync(hba);
+> +		hba->rpmb_complete_put = true;
+> +	}
+>   	return 0;
+>   }
+> 
+> That also avoids another issue: if RPMB WLUN is runtime suspended at system resume, we have to skip clearing UAC, but SCSI PM will force the runtime status to RPM_ACTIVE after system resume, so the UAC never gets cleared in that case.
+> 
+> Furthermore, it seems better not to report errors from RPMB resume and instead let the error handler sort it out.
+> So, with the above change, we can simplify a bit:
+> 
+> -static int ufshcd_rpmb_runtime_resume(struct device *dev)
+> -{
+> -	struct ufs_hba *hba = wlun_dev_to_hba(dev);
+> -
+> -	if (hba->sdev_rpmb)
+> -		return ufshcd_clear_rpmb_uac(hba);
+> -	return 0;
+> -}
+> -
+>   static int ufshcd_rpmb_resume(struct device *dev)
+>   {
+>   	struct ufs_hba *hba = wlun_dev_to_hba(dev);
+>   
+> -	if (hba->sdev_rpmb && !pm_runtime_suspended(dev))
+> -		return ufshcd_clear_rpmb_uac(hba);
+> +	if (hba->sdev_rpmb)
+> +		ufshcd_clear_rpmb_uac(hba);
+>   	return 0;
+>   }
+>   
+>   static const struct dev_pm_ops ufs_rpmb_pm_ops = {
+> -	SET_RUNTIME_PM_OPS(NULL, ufshcd_rpmb_runtime_resume, NULL)
+> +	SET_RUNTIME_PM_OPS(NULL, ufshcd_rpmb_resume, NULL)
+>   	SET_SYSTEM_SLEEP_PM_OPS(NULL, ufshcd_rpmb_resume)
+>   };
+> 
+> 
+
+
 -- 
-2.17.1
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Linux Foundation Collaborative Project
