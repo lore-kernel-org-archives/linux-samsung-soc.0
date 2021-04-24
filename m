@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_NONE,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1C7C43462
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Apr 2021 06:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D378C43460
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Apr 2021 06:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4BCD61462
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Apr 2021 06:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 107F761554
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 24 Apr 2021 06:45:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232090AbhDXGqM (ORCPT
+        id S233994AbhDXGqV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 24 Apr 2021 02:46:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35590 "EHLO mail.kernel.org"
+        Sat, 24 Apr 2021 02:46:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230174AbhDXGqL (ORCPT
+        id S233122AbhDXGqO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 24 Apr 2021 02:46:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E9C3E61483;
-        Sat, 24 Apr 2021 06:45:32 +0000 (UTC)
+        Sat, 24 Apr 2021 02:46:14 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 576E661625;
+        Sat, 24 Apr 2021 06:45:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1619246733;
-        bh=HLe4KX/Ouhc4/WYApYd3CynqFlO8CSujJDb9/8qfwSU=;
+        bh=29dlXhk6dfH+e+FLSh4QvzO2Qlv5HDysHp3akNDzvhw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GBL4bWOnVTK1kJcRfLdnm0x7AaZqDixllJExz1LOznP0I/P4vYOO3De43EBSeUOqx
-         /6MF86gghR2iamcgjhxxnkW9CGyD+Ur1ZWVSEJF1WBi7WLPKVX2wqeztFx+PJ6gj8R
-         JY4PdMMMbGoSqoGHhmWsqqNrMGEF3yfXEhlcYPoZTBCdEn4/LOTwJ7dNGSCfR0zDIz
-         VgWWB4Bk0+XPmJkZ46eKeN3kZpoaTmzGsa0qXsD2sRL/G8u+S2XqGWLVYbvPpZ8lQ7
-         RGf87MupwMkPEh1KN+nTgYizLR/1huqaFbQk1pf4/KsDDG7Xfxxzyx1Yth6pG6UBzu
-         UtAfZgFl0dYlg==
+        b=JZ1lJmlV0lfb+3SDV2UTpmqQfyU5LTjhoRqwNsbEBA7AdIM1Gyob1SF+7GxmJhpeM
+         ydJ6WcwDhwlGascRxGQJ8KKnkt4ARlpzYwOrHfCUNtEXJRGlAucjxOk9wbCH9c8IWr
+         cUe1/Fgw+gE0+MwJrVxSWalhH7gam4x5o9CDsmXLiw6yMcMhK7Nrete+lsK/+GF7io
+         fFwEHSfzHy3PLKJlO9AUto6pmgIgRa0470RiQjHeCvlFHbAe+1SCvgpzOpPj3HY3m2
+         554i6Bsa79mo/Tcd1qlc670t35mW30ewMTGx45YYgdciBxwyoa6BI2foONKhi3VJyN
+         dHrT9iK1n1nzQ==
 Received: by mail.kernel.org with local (Exim 4.94)
         (envelope-from <mchehab@kernel.org>)
-        id 1laC2l-004Je3-2U; Sat, 24 Apr 2021 08:45:31 +0200
+        id 1laC2m-004JgT-He; Sat, 24 Apr 2021 08:45:32 +0200
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 07/78] media: s5p: fix pm_runtime_get_sync() usage count
-Date:   Sat, 24 Apr 2021 08:44:17 +0200
-Message-Id: <fa58c9a2230058116a30f682a03e496c732b9255.1619191723.git.mchehab+huawei@kernel.org>
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 57/78] media: exynos4-is: use pm_runtime_resume_and_get()
+Date:   Sat, 24 Apr 2021 08:45:07 +0200
+Message-Id: <091915bb1cbec13b566d129f85ae229fcb92e2e4.1619191723.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <cover.1619191723.git.mchehab+huawei@kernel.org>
 References: <cover.1619191723.git.mchehab+huawei@kernel.org>
@@ -58,40 +58,191 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The pm_runtime_get_sync() internally increments the
-dev->power.usage_count without decrementing it, even on errors.
-replace it by the new pm_runtime_resume_and_get(), introduced by:
-commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
-in order to properly decrement the usage counter and avoid memory
-leaks.
+Commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
+added pm_runtime_resume_and_get() in order to automatically handle
+dev->power.usage_count decrement on errors.
 
-While here, check if the PM runtime was caught at
-s5p_cec_adap_enable().
+Use the new API, in order to cleanup the error check logic.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/media/cec/platform/s5p/s5p_cec.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/media/platform/exynos4-is/fimc-capture.c   | 6 ++----
+ drivers/media/platform/exynos4-is/fimc-is.c        | 3 ++-
+ drivers/media/platform/exynos4-is/fimc-isp-video.c | 3 +--
+ drivers/media/platform/exynos4-is/fimc-isp.c       | 7 +++----
+ drivers/media/platform/exynos4-is/fimc-lite.c      | 5 +++--
+ drivers/media/platform/exynos4-is/fimc-m2m.c       | 2 +-
+ drivers/media/platform/exynos4-is/media-dev.c      | 8 +++-----
+ drivers/media/platform/exynos4-is/mipi-csis.c      | 5 ++---
+ 8 files changed, 17 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
-index 2a3e7ffefe0a..2250c1cbc64e 100644
---- a/drivers/media/cec/platform/s5p/s5p_cec.c
-+++ b/drivers/media/cec/platform/s5p/s5p_cec.c
-@@ -35,10 +35,13 @@ MODULE_PARM_DESC(debug, "debug level (0-2)");
+diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
+index 13c838d3f947..0da36443173c 100644
+--- a/drivers/media/platform/exynos4-is/fimc-capture.c
++++ b/drivers/media/platform/exynos4-is/fimc-capture.c
+@@ -478,11 +478,9 @@ static int fimc_capture_open(struct file *file)
+ 		goto unlock;
  
- static int s5p_cec_adap_enable(struct cec_adapter *adap, bool enable)
- {
-+	int ret;
- 	struct s5p_cec_dev *cec = cec_get_drvdata(adap);
+ 	set_bit(ST_CAPT_BUSY, &fimc->state);
+-	ret = pm_runtime_get_sync(&fimc->pdev->dev);
+-	if (ret < 0) {
+-		pm_runtime_put_sync(&fimc->pdev->dev);
++	ret = pm_runtime_resume_and_get(&fimc->pdev->dev);
++	if (ret < 0)
+ 		goto unlock;
+-	}
+ 
+ 	ret = v4l2_fh_open(file);
+ 	if (ret) {
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index 972d9601d236..bca35866cc74 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -828,7 +828,7 @@ static int fimc_is_probe(struct platform_device *pdev)
+ 			goto err_irq;
+ 	}
+ 
+-	ret = pm_runtime_get_sync(dev);
++	ret = pm_runtime_resume_and_get(dev);
+ 	if (ret < 0)
+ 		goto err_pm;
+ 
+@@ -862,6 +862,7 @@ static int fimc_is_probe(struct platform_device *pdev)
+ 	fimc_is_unregister_subdevs(is);
+ err_pm:
+ 	pm_runtime_put_noidle(dev);
++err_suspend:
+ 	if (!pm_runtime_enabled(dev))
+ 		fimc_is_runtime_suspend(dev);
+ err_irq:
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+index 612b9872afc8..8d9dc597deaa 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -275,7 +275,7 @@ static int isp_video_open(struct file *file)
+ 	if (ret < 0)
+ 		goto unlock;
+ 
+-	ret = pm_runtime_get_sync(&isp->pdev->dev);
++	ret = pm_runtime_resume_and_get(&isp->pdev->dev);
+ 	if (ret < 0)
+ 		goto rel_fh;
+ 
+@@ -293,7 +293,6 @@ static int isp_video_open(struct file *file)
+ 	if (!ret)
+ 		goto unlock;
+ rel_fh:
+-	pm_runtime_put_noidle(&isp->pdev->dev);
+ 	v4l2_fh_release(file);
+ unlock:
+ 	mutex_unlock(&isp->video_lock);
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp.c b/drivers/media/platform/exynos4-is/fimc-isp.c
+index a77c49b18511..74b49d30901e 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp.c
+@@ -304,11 +304,10 @@ static int fimc_isp_subdev_s_power(struct v4l2_subdev *sd, int on)
+ 	pr_debug("on: %d\n", on);
+ 
+ 	if (on) {
+-		ret = pm_runtime_get_sync(&is->pdev->dev);
+-		if (ret < 0) {
+-			pm_runtime_put(&is->pdev->dev);
++		ret = pm_runtime_resume_and_get(&is->pdev->dev);
++		if (ret < 0)
+ 			return ret;
+-		}
++
+ 		set_bit(IS_ST_PWR_ON, &is->state);
+ 
+ 		ret = fimc_is_start_firmware(is);
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+index fe20af3a7178..4d8b18078ff3 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+@@ -469,9 +469,9 @@ static int fimc_lite_open(struct file *file)
+ 	}
+ 
+ 	set_bit(ST_FLITE_IN_USE, &fimc->state);
+-	ret = pm_runtime_get_sync(&fimc->pdev->dev);
++	ret = pm_runtime_resume_and_get(&fimc->pdev->dev);
+ 	if (ret < 0)
+-		goto err_pm;
++		goto err_in_use;
+ 
+ 	ret = v4l2_fh_open(file);
+ 	if (ret < 0)
+@@ -499,6 +499,7 @@ static int fimc_lite_open(struct file *file)
+ 	v4l2_fh_release(file);
+ err_pm:
+ 	pm_runtime_put_sync(&fimc->pdev->dev);
++err_in_use:
+ 	clear_bit(ST_FLITE_IN_USE, &fimc->state);
+ unlock:
+ 	mutex_unlock(&fimc->lock);
+diff --git a/drivers/media/platform/exynos4-is/fimc-m2m.c b/drivers/media/platform/exynos4-is/fimc-m2m.c
+index c9704a147e5c..7c1eb05c508f 100644
+--- a/drivers/media/platform/exynos4-is/fimc-m2m.c
++++ b/drivers/media/platform/exynos4-is/fimc-m2m.c
+@@ -75,7 +75,7 @@ static int start_streaming(struct vb2_queue *q, unsigned int count)
+ 	struct fimc_ctx *ctx = q->drv_priv;
+ 	int ret;
+ 
+-	ret = pm_runtime_get_sync(&ctx->fimc_dev->pdev->dev);
++	ret = pm_runtime_resume_and_get(&ctx->fimc_dev->pdev->dev);
+ 	return ret > 0 ? 0 : ret;
+ }
+ 
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index 13d192ba4aa6..9346d44a06c2 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -512,11 +512,9 @@ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
+ 	if (!fmd->pmf)
+ 		return -ENXIO;
+ 
+-	ret = pm_runtime_get_sync(fmd->pmf);
+-	if (ret < 0) {
+-		pm_runtime_put(fmd->pmf);
++	ret = pm_runtime_resume_and_get(fmd->pmf);
++	if (ret < 0)
+ 		return ret;
+-	}
+ 
+ 	fmd->num_sensors = 0;
+ 
+@@ -1291,7 +1289,7 @@ static int cam_clk_prepare(struct clk_hw *hw)
+ 	if (camclk->fmd->pmf == NULL)
+ 		return -ENODEV;
+ 
+-	ret = pm_runtime_get_sync(camclk->fmd->pmf);
++	ret = pm_runtime_resume_and_get(camclk->fmd->pmf);
+ 	return ret < 0 ? ret : 0;
+ }
+ 
+diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
+index 1aac167abb17..a0218237d66b 100644
+--- a/drivers/media/platform/exynos4-is/mipi-csis.c
++++ b/drivers/media/platform/exynos4-is/mipi-csis.c
+@@ -494,7 +494,7 @@ static int s5pcsis_s_power(struct v4l2_subdev *sd, int on)
+ 	struct device *dev = &state->pdev->dev;
+ 
+ 	if (on)
+-		return pm_runtime_get_sync(dev);
++		return pm_runtime_resume_and_get(dev);
+ 
+ 	return pm_runtime_put_sync(dev);
+ }
+@@ -509,9 +509,8 @@ static int s5pcsis_s_stream(struct v4l2_subdev *sd, int enable)
  
  	if (enable) {
--		pm_runtime_get_sync(cec->dev);
-+		ret = pm_runtime_resume_and_get(cec->dev);
-+		if (ret < 0)
-+			return ret;
- 
- 		s5p_cec_reset(cec);
- 
+ 		s5pcsis_clear_counters(state);
+-		ret = pm_runtime_get_sync(&state->pdev->dev);
++		ret = pm_runtime_resume_and_get(&state->pdev->dev);
+ 		if (ret && ret != 1) {
+-			pm_runtime_put_noidle(&state->pdev->dev);
+ 			return ret;
+ 		}
+ 	}
 -- 
 2.30.2
 
