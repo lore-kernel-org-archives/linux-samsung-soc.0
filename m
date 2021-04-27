@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED18C43470
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 10:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB1BC43460
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 10:27:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3DC760FDC
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 10:27:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E69F613C3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 10:27:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235849AbhD0K2N (ORCPT
+        id S237860AbhD0K22 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Apr 2021 06:28:13 -0400
+        Tue, 27 Apr 2021 06:28:28 -0400
 Received: from mail.kernel.org ([198.145.29.99]:48150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230341AbhD0K2F (ORCPT
+        id S235801AbhD0K2N (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Apr 2021 06:28:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 26551613DC;
+        Tue, 27 Apr 2021 06:28:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 879436141A;
         Tue, 27 Apr 2021 10:27:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1619519236;
-        bh=f7qp1inQpFhzLXGKfN6L+okBW8R7Adck1d72J+XCiZM=;
+        bh=ORhYQV8MaIIM9QGoq0fv1DmSrG26N8/lfMtTN/XnDlY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nk63xs/U5+H50yDNDVtINBdbnbVjdI0k1ER0vB6Hueg8zEeM20wKRYFpCgZB6IzI6
-         4DgCSqWfQuKbb+nAiQOEuJi+2A4CAVyRS+61A0W7pDU4zZmZaMOZg2ld/q0xsLEd5E
-         A6PnPJqgPN/61bhxJgGkIJ/mmX4qVJNpH0hSlCDv2hvWNvtwEqBz6IDuhcyYs+h8/p
-         mkwJQ+WEp427ZpNOk1w6SEqZtGBTTkf82tdvOKiU4Dtrg+5m24F+LgZIGUdVSqzfrt
-         5HLBeRQfWE3CYhPOGIep8lw7SSmxc6CTu56a0PI0XPkjlG37DtPhmlQy2QWc+FKR7V
-         oH1idtQg/J8dQ==
+        b=pWhEtfBuU+iaPtnpecEP0/LI/jxA0WIo9UTWcclJRH0K/NYiL0rpx0ZCJqAqEidOh
+         A8g8d/0AYZ7JTWk+F2JB1pRmu1V6S/XCVwBB7Ttx7+6jszFrpe4ayC1iFofaxBHdfO
+         Z+x4SQrf4i3+kzw8Y3EtBzSXkErF+7Xc0bGFa0h2WON+lrYp4KFfiwPNCFqidCIEkf
+         /8iWl6LHQyyHyp0amqj/ybGl4nY3XMQ75Evnv8GdnZVT03GZflQAedFi4Aq9+9dnXx
+         nIjn8sDYBGCIHzaTp9P56yId5WtHuboG5ppVXJiooSS1eS+YwvVY5FgACQcUGYvx+a
+         MEYFMd08CI9Eg==
 Received: by mail.kernel.org with local (Exim 4.94)
         (envelope-from <mchehab@kernel.org>)
-        id 1lbKvv-000nzV-3G; Tue, 27 Apr 2021 12:27:11 +0200
+        id 1lbKvz-000o2e-Ae; Tue, 27 Apr 2021 12:27:15 +0200
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v3 06/79] media: exynos-gsc: don't resume at remove time
-Date:   Tue, 27 Apr 2021 12:25:56 +0200
-Message-Id: <a561d9eb253076cbcb9debe5fcbd3c949d5023d2.1619519080.git.mchehab+huawei@kernel.org>
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v3 71/79] media: s3c-camif: use pm_runtime_resume_and_get()
+Date:   Tue, 27 Apr 2021 12:27:01 +0200
+Message-Id: <a002bcaa2096cac125469b0188e5967d0e1892a0.1619519080.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <cover.1619519080.git.mchehab+huawei@kernel.org>
 References: <cover.1619519080.git.mchehab+huawei@kernel.org>
@@ -59,39 +57,55 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Calling pm_runtime_get_sync() at driver's removal time is not
-needed, as this will resume PM runtime. Also, the PM runtime
-code at pm_runtime_disable() already calls it, if it detects
-the need.
+Commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
+added pm_runtime_resume_and_get() in order to automatically handle
+dev->power.usage_count decrement on errors.
 
-So, simplify the code by getting rid of that.
+Use the new API, in order to cleanup the error check logic.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/media/platform/exynos-gsc/gsc-core.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/media/platform/s3c-camif/camif-capture.c | 2 +-
+ drivers/media/platform/s3c-camif/camif-core.c    | 5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index 9f41c2e7097a..70e86cdc1012 100644
---- a/drivers/media/platform/exynos-gsc/gsc-core.c
-+++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -1210,8 +1210,6 @@ static int gsc_remove(struct platform_device *pdev)
- 	struct gsc_dev *gsc = platform_get_drvdata(pdev);
- 	int i;
+diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
+index 9ca49af29542..62241ec3b978 100644
+--- a/drivers/media/platform/s3c-camif/camif-capture.c
++++ b/drivers/media/platform/s3c-camif/camif-capture.c
+@@ -547,7 +547,7 @@ static int s3c_camif_open(struct file *file)
+ 	if (ret < 0)
+ 		goto unlock;
  
--	pm_runtime_get_sync(&pdev->dev);
--
- 	gsc_unregister_m2m_device(gsc);
- 	v4l2_device_unregister(&gsc->v4l2_dev);
+-	ret = pm_runtime_get_sync(camif->dev);
++	ret = pm_runtime_resume_and_get(camif->dev);
+ 	if (ret < 0)
+ 		goto err_pm;
  
-@@ -1219,7 +1217,6 @@ static int gsc_remove(struct platform_device *pdev)
- 	for (i = 0; i < gsc->num_clocks; i++)
- 		clk_disable_unprepare(gsc->clock[i]);
+diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
+index 4c3c00d59c92..e1d51fd3e700 100644
+--- a/drivers/media/platform/s3c-camif/camif-core.c
++++ b/drivers/media/platform/s3c-camif/camif-core.c
+@@ -460,9 +460,9 @@ static int s3c_camif_probe(struct platform_device *pdev)
  
--	pm_runtime_put_noidle(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_enable(dev);
  
- 	dev_dbg(&pdev->dev, "%s driver unloaded\n", pdev->name);
+-	ret = pm_runtime_get_sync(dev);
++	ret = pm_runtime_resume_and_get(dev);
+ 	if (ret < 0)
+-		goto err_pm;
++		goto err_disable;
+ 
+ 	ret = camif_media_dev_init(camif);
+ 	if (ret < 0)
+@@ -502,6 +502,7 @@ static int s3c_camif_probe(struct platform_device *pdev)
+ 	camif_unregister_media_entities(camif);
+ err_pm:
+ 	pm_runtime_put(dev);
++err_disable:
+ 	pm_runtime_disable(dev);
+ 	camif_clk_put(camif);
+ err_clk:
 -- 
 2.30.2
 
