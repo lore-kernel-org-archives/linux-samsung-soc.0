@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7187DC433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 10:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED18C43470
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 10:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3734960FDC
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 10:27:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3DC760FDC
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 10:27:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235807AbhD0K2M (ORCPT
+        id S235849AbhD0K2N (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Apr 2021 06:28:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48260 "EHLO mail.kernel.org"
+        Tue, 27 Apr 2021 06:28:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235591AbhD0K2E (ORCPT
+        id S230341AbhD0K2F (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Apr 2021 06:28:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 43D9B613DE;
+        Tue, 27 Apr 2021 06:28:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 26551613DC;
         Tue, 27 Apr 2021 10:27:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1619519236;
-        bh=ozAIBQhBgl4hYvo20eM4TXq01azS0FPBmDKGIed3VZ0=;
+        bh=f7qp1inQpFhzLXGKfN6L+okBW8R7Adck1d72J+XCiZM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NPFqTqlF0IRcLPyr2Ilr5D2UJxj3wLjzDYr76u1PZYkzaOq5/IF4mOisDPuuR105T
-         qLhqhekZIwQnU5zjSXmHr7idtL8IvsVr+ijI1LxbiQH5ukUIWK+UP9GEPch/UUSclP
-         jBjyGfHKGth/taeozqLBjp7KPjOHxoz1vibewc3KjvA3QN1tlQe6wWxNaZvPkXeavA
-         Xw0IDm/iwg/UBf8waunwhotlBGLNIyZvuY/14AExk76TZutDnK6ocfEqDp0BKheeNF
-         Get/pHMAku6R/4qisRFU3V3MCKAflo2KO2c7d/mUxh/e+utQ6C5Iodl2Vk/BA3zsEj
-         +v/n1J1SIWHCQ==
+        b=Nk63xs/U5+H50yDNDVtINBdbnbVjdI0k1ER0vB6Hueg8zEeM20wKRYFpCgZB6IzI6
+         4DgCSqWfQuKbb+nAiQOEuJi+2A4CAVyRS+61A0W7pDU4zZmZaMOZg2ld/q0xsLEd5E
+         A6PnPJqgPN/61bhxJgGkIJ/mmX4qVJNpH0hSlCDv2hvWNvtwEqBz6IDuhcyYs+h8/p
+         mkwJQ+WEp427ZpNOk1w6SEqZtGBTTkf82tdvOKiU4Dtrg+5m24F+LgZIGUdVSqzfrt
+         5HLBeRQfWE3CYhPOGIep8lw7SSmxc6CTu56a0PI0XPkjlG37DtPhmlQy2QWc+FKR7V
+         oH1idtQg/J8dQ==
 Received: by mail.kernel.org with local (Exim 4.94)
         (envelope-from <mchehab@kernel.org>)
-        id 1lbKvv-000nzq-HS; Tue, 27 Apr 2021 12:27:11 +0200
+        id 1lbKvv-000nzV-3G; Tue, 27 Apr 2021 12:27:11 +0200
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v3 13/79] media: s5p: fix pm_runtime_get_sync() usage count
-Date:   Tue, 27 Apr 2021 12:26:03 +0200
-Message-Id: <fd173b0ac00a31630bc60edaf47c2231970a87ed.1619519080.git.mchehab+huawei@kernel.org>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v3 06/79] media: exynos-gsc: don't resume at remove time
+Date:   Tue, 27 Apr 2021 12:25:56 +0200
+Message-Id: <a561d9eb253076cbcb9debe5fcbd3c949d5023d2.1619519080.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <cover.1619519080.git.mchehab+huawei@kernel.org>
 References: <cover.1619519080.git.mchehab+huawei@kernel.org>
@@ -58,40 +59,39 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The pm_runtime_get_sync() internally increments the
-dev->power.usage_count without decrementing it, even on errors.
-Replace it by the new pm_runtime_resume_and_get(), introduced by:
-commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
-in order to properly decrement the usage counter and avoid memory
-leaks.
+Calling pm_runtime_get_sync() at driver's removal time is not
+needed, as this will resume PM runtime. Also, the PM runtime
+code at pm_runtime_disable() already calls it, if it detects
+the need.
 
-While here, check if the PM runtime error was caught at
-s5p_cec_adap_enable().
+So, simplify the code by getting rid of that.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/media/cec/platform/s5p/s5p_cec.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/media/platform/exynos-gsc/gsc-core.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
-index 2a3e7ffefe0a..2250c1cbc64e 100644
---- a/drivers/media/cec/platform/s5p/s5p_cec.c
-+++ b/drivers/media/cec/platform/s5p/s5p_cec.c
-@@ -35,10 +35,13 @@ MODULE_PARM_DESC(debug, "debug level (0-2)");
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+index 9f41c2e7097a..70e86cdc1012 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+@@ -1210,8 +1210,6 @@ static int gsc_remove(struct platform_device *pdev)
+ 	struct gsc_dev *gsc = platform_get_drvdata(pdev);
+ 	int i;
  
- static int s5p_cec_adap_enable(struct cec_adapter *adap, bool enable)
- {
-+	int ret;
- 	struct s5p_cec_dev *cec = cec_get_drvdata(adap);
+-	pm_runtime_get_sync(&pdev->dev);
+-
+ 	gsc_unregister_m2m_device(gsc);
+ 	v4l2_device_unregister(&gsc->v4l2_dev);
  
- 	if (enable) {
--		pm_runtime_get_sync(cec->dev);
-+		ret = pm_runtime_resume_and_get(cec->dev);
-+		if (ret < 0)
-+			return ret;
+@@ -1219,7 +1217,6 @@ static int gsc_remove(struct platform_device *pdev)
+ 	for (i = 0; i < gsc->num_clocks; i++)
+ 		clk_disable_unprepare(gsc->clock[i]);
  
- 		s5p_cec_reset(cec);
+-	pm_runtime_put_noidle(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
  
+ 	dev_dbg(&pdev->dev, "%s driver unloaded\n", pdev->name);
 -- 
 2.30.2
 
