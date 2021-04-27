@@ -2,123 +2,132 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52870C433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 13:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EEBC433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 13:48:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E521613D0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 13:30:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D02316127A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 13:48:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236240AbhD0Nas (ORCPT
+        id S238229AbhD0NtN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Apr 2021 09:30:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41566 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235875AbhD0Nas (ORCPT
+        Tue, 27 Apr 2021 09:49:13 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:60308 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234429AbhD0NtC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Apr 2021 09:30:48 -0400
-Received: from ustc.edu.cn (email6.ustc.edu.cn [IPv6:2001:da8:d800::8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2346DC061574;
-        Tue, 27 Apr 2021 06:30:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mail.ustc.edu.cn; s=dkim; h=Received:Date:From:To:Cc:Subject:
-        In-Reply-To:References:Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-ID; bh=ALd7aUrx9C59XSdS79bV6IteDhqku7qQ78rk
-        F6VYWmo=; b=ZtGI+BiP9cZdhgHxtn3nU3w+pZZAPv/FQC4xqrheGqhpB28nV6O1
-        EDwJCkmFo1Pn3cQZk2Eg2xosVhN2ZkwBZDav34aMRXq1E3HFGxpX1QjPW14WZOQW
-        ZOQG9xIgEnNHE6cHhd5wjAGBDIaLBv1oDkR1/k2LIl3B45FVAuuDugY=
-Received: by ajax-webmail-newmailweb.ustc.edu.cn (Coremail) ; Tue, 27 Apr
- 2021 21:29:57 +0800 (GMT+08:00)
-X-Originating-IP: [104.245.96.151]
-Date:   Tue, 27 Apr 2021 21:29:57 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From:   lyl2019@mail.ustc.edu.cn
-To:     "Sylwester Nawrocki" <snawrocki@kernel.org>
+        Tue, 27 Apr 2021 09:49:02 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210427134817euoutp02f62a8379c020e0081b1326ea16ca8bae~5uyJjHJmn1110611106euoutp02k
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Apr 2021 13:48:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210427134817euoutp02f62a8379c020e0081b1326ea16ca8bae~5uyJjHJmn1110611106euoutp02k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1619531297;
+        bh=+aMkihQAegdyYigDg5mTKEVlkZ0cCX26e295FbA7/c4=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=luzNfxdmq97U7KOg8p8w5ASR/axvNyf2feBt95AhaJ6OhgTcMj8g9ok+WcY5hXAfx
+         soEyeW7EbX4TAAKFrWHdkVIxOBUvbA5Wqy9jbw8z85KFyfS36araVVSnJVA4uKRI2u
+         YhftITChGSOkGxFqnqRKGL9Z8ZXWQ66T/v+o71Yk=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20210427134817eucas1p14b7bfd014b63c7b594cace4fa0ee0cef~5uyJbN-xJ1269612696eucas1p1_;
+        Tue, 27 Apr 2021 13:48:17 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 8D.3A.09452.12618806; Tue, 27
+        Apr 2021 14:48:17 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210427134816eucas1p124e5a78b5beb7a70ca8090cdc6fdae5d~5uyI8tOvA1709117091eucas1p1j;
+        Tue, 27 Apr 2021 13:48:16 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210427134816eusmtrp14b957a6c7bef52e5fb24cd7239c97fe5~5uyI8Ap2B0501305013eusmtrp17;
+        Tue, 27 Apr 2021 13:48:16 +0000 (GMT)
+X-AuditID: cbfec7f2-a9fff700000024ec-b6-608816212bb8
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id F7.2C.08705.02618806; Tue, 27
+        Apr 2021 14:48:16 +0100 (BST)
+Received: from [106.210.134.141] (unknown [106.210.134.141]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210427134816eusmtip12b5181d017d7d87d37fdb46567de99be~5uyITggT02529925299eusmtip1Q;
+        Tue, 27 Apr 2021 13:48:15 +0000 (GMT)
+Subject: Re: [PATCH v3] media:exynos4-is: Fix a use after free in
+ isp_video_release
+To:     Lv Yunlong <lyl2019@mail.ustc.edu.cn>
 Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        s.nawrocki@samsung.com, mchehab@kernel.org, krzk@kernel.org
-Subject: Re: Re: [PATCH v2] media:exynos4-is: Fix a use after free in
- isp_video_release
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT3.0.8 dev build
- 20190610(cb3344cf) Copyright (c) 2002-2021 www.mailtech.cn ustc-xl
-In-Reply-To: <a56d14d8-5be6-24ff-24f1-80274320dfe5@kernel.org>
-References: <20210427060255.3318-1-lyl2019@mail.ustc.edu.cn>
- <a56d14d8-5be6-24ff-24f1-80274320dfe5@kernel.org>
-X-SendMailWithSms: false
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+        mchehab@kernel.org, krzk@kernel.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <ed80a3f0-048a-17df-4dff-e9d52b777699@samsung.com>
+Date:   Tue, 27 Apr 2021 15:48:15 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.10.0
 MIME-Version: 1.0
-Message-ID: <5233bec4.64281.1791385ab97.Coremail.lyl2019@mail.ustc.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: LkAmygB3L1TWEYhgeF1TAA--.11W
-X-CM-SenderInfo: ho1ojiyrz6zt1loo32lwfovvfxof0/1tbiAQsEBlQhn6cqjwAIso
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-        daVFxhVjvjDU=
+In-Reply-To: <20210427132734.5212-1-lyl2019@mail.ustc.edu.cn>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsWy7djPc7qKYh0JBntfclmcP7+B3WLT42us
+        Fpd3zWGz6NmwldVixvl9TBb737ezWCzb9IfJgd1j06pONo/NS+o93i/4zezxeZNcAEsUl01K
+        ak5mWWqRvl0CV8aanxtZCg6yVixq2cncwHiVpYuRk0NCwERi9fPHzF2MXBxCAisYJU5N2cII
+        4XxhlPgy6zMbhPOZUeLl3busXYwcYC2fljhCxJczSjz6NBWq4yOjRO+R2WBzhQVCJfbM2MkI
+        YosIaEpM+drJBFLELLCeUaLp8GQmkASbgKFE79E+sCJeATuJe8+fgNksAqoSM7ZdZwWxRQWS
+        Jc4/vsoOUSMocXLmE7AFnAK2EhdefAezmQXEJW49mc8EYctLbH87B+whCYEbHBJ7Hr9ghDjb
+        RaL5cjDE08ISr45vYYewZSROT+5hgahvZpTo2X2bHcKZwChx//gCRogqa4k7536xgQxiBnpn
+        /S59iLCjxJnusywQ8/kkbrwVhLiBT2LStunMEGFeiY42IYhqFYnfq6YzQdhSEt1P/rNMYFSa
+        heSzWUi+mYXkm1kIexcwsqxiFE8tLc5NTy02zEst1ytOzC0uzUvXS87P3cQITDyn/x3/tINx
+        7quPeocYmTgYDzFKcDArifCy7WpNEOJNSaysSi3Kjy8qzUktPsQozcGiJM67avaaeCGB9MSS
+        1OzU1ILUIpgsEwenVANTUub0Ys1X/OtebvkQUyjOcOz0ztOMBgvcFKI/PKhtmpRn/qJL3z5j
+        +h+mv3uOei67XaLx+mnyq+YDO87p+xxuzKvNuCUo75h4RYCrOuLUIwXplwHvo5PiWk5eK1nx
+        wD/5peWrAqG5S/IqnVw3ZGsy+3zW/SukYiqkNbmiQnzFrM1Ht+85tpNp6vHtip/OzVzRdKHu
+        6LcJSy7t//Dm9Tbe7dseMpnqen823JBe+SFfc2deSdFaue+xjZ78XrzrbbMiXny9ciatbb+v
+        5Plj1+YLzX20Jt31kkEDSxqfEqfmH+Ofjmd8POc72TL5FnBXyXDNLz+4XSH7ysyvlTa7uTc2
+        xv48aFy01/5CFBN/YuU5JZbijERDLeai4kQAruGl0qsDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsVy+t/xu7oKYh0JBh9XqFicP7+B3WLT42us
+        Fpd3zWGz6NmwldVixvl9TBb737ezWCzb9IfJgd1j06pONo/NS+o93i/4zezxeZNcAEuUnk1R
+        fmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsaanxtZCg6y
+        Vixq2cncwHiVpYuRg0NCwETi0xLHLkYuDiGBpYwSD3t/sELEpSTmtyh1MXICmcISf651sUHU
+        vGeUeNW1gQUkISwQKrFnxk5GEFtEQFNiytdOJpAiZoH1jBL9O44xgySEBCYwSix8LQliswkY
+        SvQe7QNr4BWwk7j3/AmYzSKgKjFj23VWEFtUIFli9e/NrBA1ghInZz4BW8YpYCtx4cV3MJtZ
+        QF3iz7xLzBC2uMStJ/OZIGx5ie1v5zBPYBSahaR9FpKWWUhaZiFpWcDIsopRJLW0ODc9t9hQ
+        rzgxt7g0L10vOT93EyMwzrYd+7l5B+O8Vx/1DjEycTAeYpTgYFYS4WXb1ZogxJuSWFmVWpQf
+        X1Sak1p8iNEU6J+JzFKiyfnASM8riTc0MzA1NDGzNDC1NDNWEufdOndNvJBAemJJanZqakFq
+        EUwfEwenVAMT4wGBRoZSEctbN3LbC8sN3Xy99V2/3/YU9wgSPlr7e8GkqhyWbXHRcx4f//uo
+        b/fzD5q1B95cDJze6LldoHxlgLjL28/7lWcUXpjT32nSLjhnSdmzSL9VIutLSi6bLSkOvHu7
+        wPa7/Y4KruyAr5FWwrKemhfiF9w+8shZ8OZqG+2E7bZVlwodXCNueWwP4lNmdLleJLbS/uu/
+        jM/Z0kzGKml35X5HH5nHHlmbb3QpPPGnU5hs5rLdjxc/tf0fZWd1uL+Arf7H7RnTLfKnaGus
+        ma60/Fmlxyu7X2/komwYX32N+7D64AedgOSpi+d8mmRqGynvmxi+WX77YbMGQ3EP5u+l7id2
+        51T1lsr4piqxFGckGmoxFxUnAgCSgdzLPAMAAA==
+X-CMS-MailID: 20210427134816eucas1p124e5a78b5beb7a70ca8090cdc6fdae5d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210427132754eucas1p21042e4e176135e7b3f7b540dc9aadfbb
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210427132754eucas1p21042e4e176135e7b3f7b540dc9aadfbb
+References: <CGME20210427132754eucas1p21042e4e176135e7b3f7b540dc9aadfbb@eucas1p2.samsung.com>
+        <20210427132734.5212-1-lyl2019@mail.ustc.edu.cn>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-DQoNCg0KPiAtLS0tLeWOn+Wni+mCruS7ti0tLS0tDQo+IOWPkeS7tuS6ujogIlN5bHdlc3RlciBO
-YXdyb2NraSIgPHNuYXdyb2NraUBrZXJuZWwub3JnPg0KPiDlj5HpgIHml7bpl7Q6IDIwMjEtMDQt
-MjcgMTg6MzY6NDggKOaYn+acn+S6jCkNCj4g5pS25Lu25Lq6OiAiTHYgWXVubG9uZyIgPGx5bDIw
-MTlAbWFpbC51c3RjLmVkdS5jbj4NCj4g5oqE6YCBOiBsaW51eC1tZWRpYUB2Z2VyLmtlcm5lbC5v
-cmcsIGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZywgbGludXgtc2Ftc3VuZy1z
-b2NAdmdlci5rZXJuZWwub3JnLCBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnLCBzLm5hd3Jv
-Y2tpQHNhbXN1bmcuY29tLCBtY2hlaGFiQGtlcm5lbC5vcmcsIGtyemtAa2VybmVsLm9yZw0KPiDk
-uLvpopg6IFJlOiBbUEFUQ0ggdjJdIG1lZGlhOmV4eW5vczQtaXM6IEZpeCBhIHVzZSBhZnRlciBm
-cmVlIGluIGlzcF92aWRlb19yZWxlYXNlDQo+IA0KPiBPbiAyNy4wNC4yMDIxIDA4OjAyLCBMdiBZ
-dW5sb25nIHdyb3RlOg0KPiA+IEluIGlzcF92aWRlb19yZWxlYXNlLCBmaWxlLT5wcml2YXRlX2Rh
-dGEgaXMgZnJlZWQgdmlhDQo+ID4gX3ZiMl9mb3BfcmVsZWFzZSgpLT52NGwyX2ZoX3JlbGVhc2Uo
-KS4gQnV0IHRoZSBmcmVlZA0KPiA+IGZpbGUtPnByaXZhdGVfZGF0YSBpcyBzdGlsbCB1c2VkIGlu
-IHY0bDJfZmhfaXNfc2luZ3VsYXJfZmlsZSgpDQo+ID4gLT52NGwyX2ZoX2lzX3Npbmd1bGFyKGZp
-bGUtPnByaXZhdGVfZGF0YSksIHdoaWNoIGlzIGEgdXNlDQo+ID4gYWZ0ZXIgZnJlZSBidWcuDQo+
-ID4gDQo+ID4gTXkgcGF0Y2ggc2V0IGZpbGUtPnByaXZhdGVfZGF0YSB0byBOVUxMIGFmdGVyIF92
-YjJfZm9wX3JlbGVhc2UoKQ0KPiA+IHRvIGF2b2lkIHRoZSB1c2UgYWZ0ZXIgZnJlZS4NCj4gPiAN
-Cj4gPiBGaXhlczogMzQ5NDdiOGFlYmUzZiAoIlttZWRpYV0gZXh5bm9zNC1pczogQWRkIHRoZSBG
-SU1DLUlTIElTUCBjYXB0dXJlIERNQSBkcml2ZXIiKQ0KPiA+IFNpZ25lZC1vZmYtYnk6IEx2IFl1
-bmxvbmcgPGx5bDIwMTlAbWFpbC51c3RjLmVkdS5jbj4NCj4gPiAtLS0NCj4gPiAgIGRyaXZlcnMv
-bWVkaWEvcGxhdGZvcm0vZXh5bm9zNC1pcy9maW1jLWlzcC12aWRlby5jIHwgMyArKy0NCj4gPiAg
-IDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPiANCj4g
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9leHlub3M0LWlzL2ZpbWMtaXNw
-LXZpZGVvLmMgYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2V4eW5vczQtaXMvZmltYy1pc3Atdmlk
-ZW8uYw0KPiA+IGluZGV4IDYxMmI5ODcyYWZjOC4uMmUwNDU4OTA2OGI0IDEwMDY0NA0KPiA+IC0t
-LSBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vZXh5bm9zNC1pcy9maW1jLWlzcC12aWRlby5jDQo+
-ID4gKysrIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9leHlub3M0LWlzL2ZpbWMtaXNwLXZpZGVv
-LmMNCj4gPiBAQCAtMzE1LDcgKzMxNSw4IEBAIHN0YXRpYyBpbnQgaXNwX3ZpZGVvX3JlbGVhc2Uo
-c3RydWN0IGZpbGUgKmZpbGUpDQo+ID4gICAJfQ0KPiA+ICAgDQo+ID4gICAJX3ZiMl9mb3BfcmVs
-ZWFzZShmaWxlLCBOVUxMKTsNCj4gPiAtDQo+ID4gKwlmaWxlLT5wcml2YXRlX2RhdGEgPSBOVUxM
-Ow0KPiANCj4gPiAgIAlpZiAodjRsMl9maF9pc19zaW5ndWxhcl9maWxlKGZpbGUpKSB7DQo+ID4g
-ICAJCWZpbWNfcGlwZWxpbmVfY2FsbCgmaXZjLT52ZSwgY2xvc2UpOw0KPiA+ICAgDQo+IA0KPiBU
-aGFuayB5b3UgZm9yIHRoZSBwYXRjaC4gVG8gZW5zdXJlIHRoZSBwaXBlbGluZSBzdG9wIGNhbGwg
-aXMgZG9uZQ0KPiBvbmx5IHdoZW4gdGhlIGxhc3QgZmlsZSBoYW5kbGUgaXMgcmVsZWFzZWQgd2Ug
-d291bGQgbmVlZCBzb21ldGhpbmcNCj4gYXMgYmVsb3cuDQo+IA0KPiAtLS0tLS0tLTg8LS0tLS0t
-LS0tDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2V4eW5vczQtaXMvZmlt
-Yy1pc3AtdmlkZW8uYyANCj4gYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2V4eW5vczQtaXMvZmlt
-Yy1pc3AtdmlkZW8uYw0KPiBpbmRleCA2MTJiOTg3MmFmYzguLjMzMzVmZWM1MDljYiAxMDA2NDQN
-Cj4gLS0tIGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9leHlub3M0LWlzL2ZpbWMtaXNwLXZpZGVv
-LmMNCj4gKysrIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9leHlub3M0LWlzL2ZpbWMtaXNwLXZp
-ZGVvLmMNCj4gQEAgLTMwNiwxNyArMzA2LDIwIEBAIHN0YXRpYyBpbnQgaXNwX3ZpZGVvX3JlbGVh
-c2Uoc3RydWN0IGZpbGUgKmZpbGUpDQo+ICAgICAgICAgIHN0cnVjdCBmaW1jX2lzX3ZpZGVvICpp
-dmMgPSAmaXNwLT52aWRlb19jYXB0dXJlOw0KPiAgICAgICAgICBzdHJ1Y3QgbWVkaWFfZW50aXR5
-ICplbnRpdHkgPSAmaXZjLT52ZS52ZGV2LmVudGl0eTsNCj4gICAgICAgICAgc3RydWN0IG1lZGlh
-X2RldmljZSAqbWRldiA9IGVudGl0eS0+Z3JhcGhfb2JqLm1kZXY7DQo+ICsgICAgICAgYm9vbCBp
-c19zaW5ndWxhcl9maWxlOw0KPiANCj4gICAgICAgICAgbXV0ZXhfbG9jaygmaXNwLT52aWRlb19s
-b2NrKTsNCj4gDQo+IC0gICAgICAgaWYgKHY0bDJfZmhfaXNfc2luZ3VsYXJfZmlsZShmaWxlKSAm
-JiBpdmMtPnN0cmVhbWluZykgew0KPiArICAgICAgIGlzX3Npbmd1bGFyX2ZpbGUgPSB2NGwyX2Zo
-X2lzX3Npbmd1bGFyX2ZpbGUoZmlsZSk7DQo+ICsNCj4gKyAgICAgICBpZiAoaXNfc2luZ3VsYXJf
-ZmlsZSAmJiBpdmMtPnN0cmVhbWluZykgew0KPiAgICAgICAgICAgICAgICAgIG1lZGlhX3BpcGVs
-aW5lX3N0b3AoZW50aXR5KTsNCj4gICAgICAgICAgICAgICAgICBpdmMtPnN0cmVhbWluZyA9IDA7
-DQo+ICAgICAgICAgIH0NCj4gDQo+ICAgICAgICAgIF92YjJfZm9wX3JlbGVhc2UoZmlsZSwgTlVM
-TCk7DQo+IA0KPiAtICAgICAgIGlmICh2NGwyX2ZoX2lzX3Npbmd1bGFyX2ZpbGUoZmlsZSkpIHsN
-Cj4gKyAgICAgICBpZiAoaXNfc2luZ3VsYXJfZmlsZSkgew0KPiAgICAgICAgICAgICAgICAgIGZp
-bWNfcGlwZWxpbmVfY2FsbCgmaXZjLT52ZSwgY2xvc2UpOw0KPiANCj4gICAgICAgICAgICAgICAg
-ICBtdXRleF9sb2NrKCZtZGV2LT5ncmFwaF9tdXRleCk7DQo+IC0tLS0tLS0tODwtLS0tLS0tLS0N
-Cj4gDQo+IFJlZ2FyZHMsDQo+IFN5bHdlc3Rlcg0KDQpPaywgdGhhbmtzIGZvciB5b3VyIHJldmll
-dyBhbmQgaGVscC4NCkkgaGF2ZSBjb3JyZWN0ZWQgbXkgcGF0Y2ggYW5kIHNlbnQgdGhlIFBBVENI
-IHYzIGZvciB5b3UgcmV2aWV3IGFnYWluLg0KDQpUaGFua3MuDQo=
+On 27.04.2021 15:27, Lv Yunlong wrote:
+> In isp_video_release, file->private_data is freed via
+> _vb2_fop_release()->v4l2_fh_release(). But the freed
+> file->private_data is still used in v4l2_fh_is_singular_file()
+> ->v4l2_fh_is_singular(file->private_data), which is a use
+> after free bug.
+> 
+> My patch sets file->private_data to NULL after _vb2_fop_release()
+> to avoid the use after free, and uses a variable 'is_singular_file'
+> to keep the original function unchanged.
+> 
+> Fixes: 34947b8aebe3f ("[media] exynos4-is: Add the FIMC-IS ISP capture DMA driver")
+> Signed-off-by: Lv Yunlong <lyl2019@mail.ustc.edu.cn>
+
+Thanks,
+
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
