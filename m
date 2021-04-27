@@ -2,101 +2,124 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC6AC433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 06:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D261C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 08:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 612EF613B2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 06:03:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32B26613BC
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 08:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231303AbhD0GDx (ORCPT
+        id S231262AbhD0IHT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Apr 2021 02:03:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55420 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbhD0GDw (ORCPT
+        Tue, 27 Apr 2021 04:07:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48506 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230348AbhD0IHS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Apr 2021 02:03:52 -0400
-Received: from ustc.edu.cn (email6.ustc.edu.cn [IPv6:2001:da8:d800::8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ADB6AC061574;
-        Mon, 26 Apr 2021 23:03:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mail.ustc.edu.cn; s=dkim; h=Received:From:To:Cc:Subject:Date:
-        Message-Id:MIME-Version:Content-Transfer-Encoding; bh=v7OI+JeiSL
-        NOWCbMsyFE1LhROWob97JvYTX1veuCAAU=; b=ZWfrAn0f2Fhph6gtaTWDkhOFOM
-        ySQ67mX//jP5+bixOfxos2EB/JBehAvPUrRuyAWGRt2RqpqDGaSpsFFBA3/KJuUW
-        EbzF1JBtKyxpLO9aPjYXVGPDTMpSp2Er7gBNHVFfWK0SNieQefIa/N5nxQNEZjRW
-        SN74mnNbxUzG5ngqY=
-Received: from ubuntu.localdomain (unknown [202.38.69.14])
-        by newmailweb.ustc.edu.cn (Coremail) with SMTP id LkAmygDHz68RqYdgrVNQAA--.2285S4;
-        Tue, 27 Apr 2021 14:02:57 +0800 (CST)
-From:   Lv Yunlong <lyl2019@mail.ustc.edu.cn>
-To:     s.nawrocki@samsung.com, mchehab@kernel.org, krzk@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lv Yunlong <lyl2019@mail.ustc.edu.cn>
-Subject: [PATCH v2] media:exynos4-is: Fix a use after free in isp_video_release
-Date:   Mon, 26 Apr 2021 23:02:55 -0700
-Message-Id: <20210427060255.3318-1-lyl2019@mail.ustc.edu.cn>
-X-Mailer: git-send-email 2.25.1
+        Tue, 27 Apr 2021 04:07:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A56B261289;
+        Tue, 27 Apr 2021 08:06:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619510795;
+        bh=uDqPXc72hL4aKi2U6+mtvOcmn5lhmGyP0bhksbuvE9Y=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ayD8QkQDQGRBR36w01ROgZE2eWW1yO3dh7mBaWtwJnt+PFf1oheG6EwMvqdxdbOhT
+         cJ3g8Ok6jFCFhHJidRZmX3PuF/k/ZR5unL1eJ2ILyL/96nWqq7yh3VQaOu3Q0ek1Rt
+         WGJx2vOpRQQ1iZL6/iIpKcFj5onx4WtX+4ngNLu+GFqxMRz1AW/Dyo9bnSxBainHa+
+         2rErKGsFVd44GwLCxAHSVCly+83Vd/3iSxUXVkQhmQV70yyPPOVaLCcGMR44AbGHja
+         /LEMlMhJdQDXbMkE9NPg8XG4tQoaYqiTmKqYFroVSre3NaQyo6562hL/ynCIpruE3p
+         8PVbUMJ5oeMnA==
+Subject: Re: [PATCH 57/78] media: exynos4-is: use pm_runtime_resume_and_get()
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+References: <cover.1619191723.git.mchehab+huawei@kernel.org>
+ <091915bb1cbec13b566d129f85ae229fcb92e2e4.1619191723.git.mchehab+huawei@kernel.org>
+ <45068e81-8f9b-fea8-b7bc-bdd0443ba7e6@kernel.org>
+ <20210426151224.2b677d1b@coco.lan>
+From:   Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <1a98b4b7-78c2-810d-a4ba-762c1a9576b3@kernel.org>
+Date:   Tue, 27 Apr 2021 10:06:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LkAmygDHz68RqYdgrVNQAA--.2285S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gw1UXFWfZF4rtF13tr4ktFb_yoWkurX_Z3
-        48KFn7Xry5tr4jy3WqyFn5ZrW0yrZ8Xa93CanagFW2y3yUAFWxtF4qkrWfu3ZrGa17GFZ8
-        Jrs8XF4UCr93CjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbsAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-        Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-        0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-        YxC7MxkIecxEwVAFwVW8AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
-        C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
-        wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
-        v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2
-        z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-        UI43ZEXa7VUjylk7UUUUU==
-X-CM-SenderInfo: ho1ojiyrz6zt1loo32lwfovvfxof0/
+In-Reply-To: <20210426151224.2b677d1b@coco.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-In isp_video_release, file->private_data is freed via
-_vb2_fop_release()->v4l2_fh_release(). But the freed
-file->private_data is still used in v4l2_fh_is_singular_file()
-->v4l2_fh_is_singular(file->private_data), which is a use
-after free bug.
+On 26.04.2021 15:12, Mauro Carvalho Chehab wrote:
+> Em Sun, 25 Apr 2021 22:57:25 +0200
+> Sylwester Nawrocki <snawrocki@kernel.org> escreveu:
+> 
+>> On 24.04.2021 08:45, Mauro Carvalho Chehab wrote:
+>>> Commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
+>>> added pm_runtime_resume_and_get() in order to automatically handle
+>>> dev->power.usage_count decrement on errors.
+>>>
+>>> Use the new API, in order to cleanup the error check logic.
+>>>
+>>> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-My patch set file->private_data to NULL after _vb2_fop_release()
-to avoid the use after free.
+>>> diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+>>> index 972d9601d236..bca35866cc74 100644
+>>> --- a/drivers/media/platform/exynos4-is/fimc-is.c
+>>> +++ b/drivers/media/platform/exynos4-is/fimc-is.c
+>>> @@ -828,7 +828,7 @@ static int fimc_is_probe(struct platform_device *pdev)
+>>>    			goto err_irq;
+>>>    	}
+>>>    
+>>> -	ret = pm_runtime_get_sync(dev);
+>>> +	ret = pm_runtime_resume_and_get(dev);
+>>>    	if (ret < 0)
+>>>    		goto err_pm;
+>>
+>> It seems you intended to use err_suspend label here. We don't need
+>> a new label though, instead of err_pm we can jump to err_irq when
+>> pm_runtime_resume_and_get() fails.
+> 
+> Thanks! Will fix at the next version.
+> 
+>> Note that when runtime PM is
+>> disabled pm_runtime_resume_and_get() always returns 0.
+> 
+> Ok, but there are a couple of conditions at rpm_resume() function
+> at drivers/base/power/runtime.c (which is the code that actually
+> handles those PM macros) that could make it to return errors,
+> which are independent on the PM callbacks, like those:
+> 
+>          if (dev->power.runtime_error)
+>                  retval = -EINVAL;
+>          else if (dev->power.disable_depth > 0)
+>                  retval = -EACCES;
+> 
+> and more might be added as the PM core changes.
 
-Fixes: 34947b8aebe3f ("[media] exynos4-is: Add the FIMC-IS ISP capture DMA driver")
-Signed-off-by: Lv Yunlong <lyl2019@mail.ustc.edu.cn>
----
- drivers/media/platform/exynos4-is/fimc-isp-video.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Right, I looked only at !CONFIG_PM case, this is what the "if (!pm_runtime_enabled(dev))"
+test and explicit fimc_is_runtime_{resume,suspend} calls were originally for.
+Agreed, better not to rely too much on internal implementation as there is
+no specific guarantees about return value at the API documentation.
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-index 612b9872afc8..2e04589068b4 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -315,7 +315,8 @@ static int isp_video_release(struct file *file)
- 	}
- 
- 	_vb2_fop_release(file, NULL);
--
-+	file->private_data = NULL;
-+
- 	if (v4l2_fh_is_singular_file(file)) {
- 		fimc_pipeline_call(&ivc->ve, close);
- 
--- 
-2.25.1
+Regards,
+Sylwester
 
-
+>>> @@ -862,6 +862,7 @@ static int fimc_is_probe(struct platform_device *pdev)
+>>>    	fimc_is_unregister_subdevs(is);
+>>>    err_pm:
+>>>    	pm_runtime_put_noidle(dev);
+>>> +err_suspend:
+>>>    	if (!pm_runtime_enabled(dev))
+>>>    		fimc_is_runtime_suspend(dev);
+>>>    err_irq:
+>>
