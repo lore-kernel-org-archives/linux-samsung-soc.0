@@ -2,113 +2,103 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E5DC43461
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 07:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2CAC433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 08:27:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF137613F3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 07:41:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 498E761429
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 08:27:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236833AbhD1Hmn (ORCPT
+        id S231555AbhD1I2T (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Apr 2021 03:42:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47288 "EHLO mail.kernel.org"
+        Wed, 28 Apr 2021 04:28:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236816AbhD1Hmm (ORCPT
+        id S229643AbhD1I2T (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Apr 2021 03:42:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C2E67613F8;
-        Wed, 28 Apr 2021 07:41:55 +0000 (UTC)
+        Wed, 28 Apr 2021 04:28:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D023061428;
+        Wed, 28 Apr 2021 08:27:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619595718;
-        bh=k2BZ9xZikA1qiwskEWEetLqBAKCp0Z9oJXFgxTUYmtw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Vi8Q41F1HdlBeYMrlKgVG2j609ljUqp7dOT+lug12/AGgDYNLVVa5LAIGQq4UN6qQ
-         gypWfjQczW66W9iirusrFuTv6SQ6MmRRqf6sDs/KIVveWLpKorA4BtJr8CdFlxScQL
-         mb3MszHz9ctWoPXXxLTqUua0QBFkJMNN/XgyRkkosY3K5dg1lpuSO5DrPYioom0LFv
-         9AQbNagmHL488T5TYbi2UXalXNcC+BrwSP2Frms+Q910aJoY8tlJ0pdiV6ZvevycU1
-         OdLILcanhaXgJzGGyu+huT70QFJgbL3T3ZsjtkvaVj/egYr23D+HilhkbOxiKznIL0
-         qz+UtpG9PSqAQ==
-Date:   Wed, 28 Apr 2021 09:41:52 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+        s=k20201202; t=1619598454;
+        bh=MMdojTNsABdHbx90yhpxY/qSAQ0sMQ1zeneARF2DHr4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dx+sIiSpWRqddOtUTc+JhzpKDPpbLGDkvs06tkwI7Yw8y3HamdWE5plk9jwEs5j2z
+         Tm/1DpIKdz/3GH/LhLtT0pLNxVQPRCoLmPgBNJScH69Emi3IWiqMF4NEMKM3fjwBC9
+         BqjJeCTbPR9hZczow28fzc92gFyeQkvkWnq8+mZsr08lPJ5SDQu3yOxDRHe88cxQO8
+         252VpD1qJM58PgiiPzqtk0kLyNPHH96i8tmxmWnlVdgicI0Qqw2MBPZ+LngZaozBsv
+         qt+puDwUSSzTYbu1SUoQ6pG5e9ITDmsOSFio8Uw8uTz/pEb7z7g2j33u14HI1IgIkK
+         k2f+4ZFQ+vvCA==
+Subject: Re: [PATCH 58/78] media: exynos-gsc: use pm_runtime_resume_and_get()
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        Ezequiel Garcia <ezequiel@collabora.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 13/79] media: s5p: fix pm_runtime_get_sync() usage
- count
-Message-ID: <20210428094152.0fbf3f15@coco.lan>
-In-Reply-To: <ae9e751a-be29-4ff8-b566-73c4f258d5b8@samsung.com>
-References: <cover.1619519080.git.mchehab+huawei@kernel.org>
-        <CGME20210427102755eucas1p2a4dd2a52b8bebd76c6a8fac9fa17c284@eucas1p2.samsung.com>
-        <fd173b0ac00a31630bc60edaf47c2231970a87ed.1619519080.git.mchehab+huawei@kernel.org>
-        <ae9e751a-be29-4ff8-b566-73c4f258d5b8@samsung.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+References: <cover.1619191723.git.mchehab+huawei@kernel.org>
+ <CGME20210424064556eucas1p1e89378837c377168c9782b4172e70482@eucas1p1.samsung.com>
+ <9c7d683907b9f9cf4a99f57f978671ec7f5a1dbc.1619191723.git.mchehab+huawei@kernel.org>
+ <ee7b580a-d5bc-bdbf-3efc-c9d8f43316db@samsung.com>
+ <20210427113055.745d0560@coco.lan> <20210427114235.45a7b2a4@coco.lan>
+ <5f6088c7-c839-f097-737f-b4234c413eac@samsung.com>
+ <20210428091302.64af1e5d@coco.lan> <20210428091707.3c99d124@coco.lan>
+From:   Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <01a14e06-b7f2-7246-ad12-4a13a96622a0@kernel.org>
+Date:   Wed, 28 Apr 2021 10:27:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20210428091707.3c99d124@coco.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Em Tue, 27 Apr 2021 12:51:45 +0200
-Sylwester Nawrocki <s.nawrocki@samsung.com> escreveu:
-
-> On 27.04.2021 12:26, Mauro Carvalho Chehab wrote:
-> > The pm_runtime_get_sync() internally increments the
-> > dev->power.usage_count without decrementing it, even on errors.
-> > Replace it by the new pm_runtime_resume_and_get(), introduced by:
-> > commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
-> > in order to properly decrement the usage counter and avoid memory
-> > leaks.
-> > 
-> > While here, check if the PM runtime error was caught at
-> > s5p_cec_adap_enable().
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > ---
-> >  drivers/media/cec/platform/s5p/s5p_cec.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
-> > index 2a3e7ffefe0a..2250c1cbc64e 100644
-> > --- a/drivers/media/cec/platform/s5p/s5p_cec.c
-> > +++ b/drivers/media/cec/platform/s5p/s5p_cec.c
-> > @@ -35,10 +35,13 @@ MODULE_PARM_DESC(debug, "debug level (0-2)");
-> >  
-> >  static int s5p_cec_adap_enable(struct cec_adapter *adap, bool enable)
-> >  {
-> > +	int ret;
-> >  	struct s5p_cec_dev *cec = cec_get_drvdata(adap);
-> >  
-> >  	if (enable) {
-> > -		pm_runtime_get_sync(cec->dev);
-> > +		ret = pm_runtime_resume_and_get(cec->dev);
-> > +		if (ret < 0)
-> > +			return ret;
-> >  
-> >  		s5p_cec_reset(cec);  
+On 28.04.2021 09:17, Mauro Carvalho Chehab wrote:
+> Em Wed, 28 Apr 2021 09:13:02 +0200
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
 > 
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
-> Not related to this patch, it seems there is bug in the second
-> 'if (enable)' branch, where pm_runtime_disable() is used
-> instead of pm_runtime_put(_sync)().
+>> Em Tue, 27 Apr 2021 13:50:44 +0200
+>> Sylwester Nawrocki <s.nawrocki@samsung.com> escreveu:
+>>
+>>> On 27.04.2021 11:42, Mauro Carvalho Chehab wrote:
 
-Yeah. I'll add an additional patch before this series in order to
-fix the bug. Thanks!
+>>> I think if the device is brought into suspended state (e.g. by
+>>> disabling clocks as above) the pm_runtime_set_suspended() call
+>>> should be there. IOW a following sequence:
+>>>
+>>> 	pm_runtime_disable(dev);
+>>> 	if (!pm_runtime_status_suspended(dev))
+>>> 		/* put device into suspended state (disable clocks,
+>>> 		  voltage regulators, assert GPIOs, etc. */
+>>> 	pm_runtime_set_suspended(dev);
+>>
+>> Not sure if this would work, as the clock framework would try
+>> to do things like calling clk_pm_runtime_put().
+
+It's done in multiple drivers this way. clk_pm_runtime_put() operates
+on different device - the clock supplier, not the consumer device.
+We just need to disable runtime PM for GSC as the last step, to avoid
+any possible v4l2 m2m device_run() call with runtime PM disabled.
+
+>> Perhaps an alternative would be to just return an error if it
+>> can't resume PM runtime, e. g.:
+[...]
+> Nah, forget about that. Despite the platform driver having a return code,
+> support for it bogus:
+
+Yes, we can't really stop remove() from driver level so as much complete
+resource release is being done as possible.
+
 
 Regards,
-Mauro
-
-
-
-Thanks,
-Mauro
+Sylwester
