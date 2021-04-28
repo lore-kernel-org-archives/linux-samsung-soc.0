@@ -2,132 +2,187 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EEBC433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 13:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7390AC433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 07:13:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D02316127A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Apr 2021 13:48:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D156613E8
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 07:13:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238229AbhD0NtN (ORCPT
+        id S236370AbhD1HNy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Apr 2021 09:49:13 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:60308 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234429AbhD0NtC (ORCPT
+        Wed, 28 Apr 2021 03:13:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229643AbhD1HNx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Apr 2021 09:49:02 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210427134817euoutp02f62a8379c020e0081b1326ea16ca8bae~5uyJjHJmn1110611106euoutp02k
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Apr 2021 13:48:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210427134817euoutp02f62a8379c020e0081b1326ea16ca8bae~5uyJjHJmn1110611106euoutp02k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1619531297;
-        bh=+aMkihQAegdyYigDg5mTKEVlkZ0cCX26e295FbA7/c4=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=luzNfxdmq97U7KOg8p8w5ASR/axvNyf2feBt95AhaJ6OhgTcMj8g9ok+WcY5hXAfx
-         soEyeW7EbX4TAAKFrWHdkVIxOBUvbA5Wqy9jbw8z85KFyfS36araVVSnJVA4uKRI2u
-         YhftITChGSOkGxFqnqRKGL9Z8ZXWQ66T/v+o71Yk=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210427134817eucas1p14b7bfd014b63c7b594cace4fa0ee0cef~5uyJbN-xJ1269612696eucas1p1_;
-        Tue, 27 Apr 2021 13:48:17 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 8D.3A.09452.12618806; Tue, 27
-        Apr 2021 14:48:17 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210427134816eucas1p124e5a78b5beb7a70ca8090cdc6fdae5d~5uyI8tOvA1709117091eucas1p1j;
-        Tue, 27 Apr 2021 13:48:16 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210427134816eusmtrp14b957a6c7bef52e5fb24cd7239c97fe5~5uyI8Ap2B0501305013eusmtrp17;
-        Tue, 27 Apr 2021 13:48:16 +0000 (GMT)
-X-AuditID: cbfec7f2-a9fff700000024ec-b6-608816212bb8
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id F7.2C.08705.02618806; Tue, 27
-        Apr 2021 14:48:16 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210427134816eusmtip12b5181d017d7d87d37fdb46567de99be~5uyITggT02529925299eusmtip1Q;
-        Tue, 27 Apr 2021 13:48:15 +0000 (GMT)
-Subject: Re: [PATCH v3] media:exynos4-is: Fix a use after free in
- isp_video_release
-To:     Lv Yunlong <lyl2019@mail.ustc.edu.cn>
-Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mchehab@kernel.org, krzk@kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <ed80a3f0-048a-17df-4dff-e9d52b777699@samsung.com>
-Date:   Tue, 27 Apr 2021 15:48:15 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.10.0
+        Wed, 28 Apr 2021 03:13:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 235D4601FC;
+        Wed, 28 Apr 2021 07:13:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619593988;
+        bh=vtrlu5NLjbjl/L0tLDBVhlFvjRnFBvLZFZImEEWL/Kk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ASBSV4p3ulPv6GeE1EBbPsFhZFJ1rt+T2/fgFgVHaSSfDBmaXJ6jMnj4uIXzWZAif
+         52hCdOB9hI0jNZcosW6vQuQSbJHgqaXCtBhEreWRKeBCo+DgiGEeJpwRgwaiGKuPm0
+         iXkKeSc3++o0Zec4DrZuAjSsLmhPqysBNEeYT291HbxWt6zxxetc/7aeKcnQeD+BEs
+         MJolRy7Vb3GItE3x/agrXCYfFL/R/iYOLARwkY4nYjI2eAWvNSfiz1t6OieD5dZQ6H
+         E4vgkcykWfEKqRkIbSuQu2fRPgj0s9+E0RG1GEiT2Vb14Gz5vTM3ksc4H0KD6gsyRn
+         ClKUXZOd+KNbA==
+Date:   Wed, 28 Apr 2021 09:13:02 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 58/78] media: exynos-gsc: use
+ pm_runtime_resume_and_get()
+Message-ID: <20210428091302.64af1e5d@coco.lan>
+In-Reply-To: <5f6088c7-c839-f097-737f-b4234c413eac@samsung.com>
+References: <cover.1619191723.git.mchehab+huawei@kernel.org>
+        <CGME20210424064556eucas1p1e89378837c377168c9782b4172e70482@eucas1p1.samsung.com>
+        <9c7d683907b9f9cf4a99f57f978671ec7f5a1dbc.1619191723.git.mchehab+huawei@kernel.org>
+        <ee7b580a-d5bc-bdbf-3efc-c9d8f43316db@samsung.com>
+        <20210427113055.745d0560@coco.lan>
+        <20210427114235.45a7b2a4@coco.lan>
+        <5f6088c7-c839-f097-737f-b4234c413eac@samsung.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20210427132734.5212-1-lyl2019@mail.ustc.edu.cn>
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsWy7djPc7qKYh0JBntfclmcP7+B3WLT42us
-        Fpd3zWGz6NmwldVixvl9TBb737ezWCzb9IfJgd1j06pONo/NS+o93i/4zezxeZNcAEsUl01K
-        ak5mWWqRvl0CV8aanxtZCg6yVixq2cncwHiVpYuRk0NCwERi9fPHzF2MXBxCAisYJU5N2cII
-        4XxhlPgy6zMbhPOZUeLl3busXYwcYC2fljhCxJczSjz6NBWq4yOjRO+R2WBzhQVCJfbM2MkI
-        YosIaEpM+drJBFLELLCeUaLp8GQmkASbgKFE79E+sCJeATuJe8+fgNksAqoSM7ZdZwWxRQWS
-        Jc4/vsoOUSMocXLmE7AFnAK2EhdefAezmQXEJW49mc8EYctLbH87B+whCYEbHBJ7Hr9ghDjb
-        RaL5cjDE08ISr45vYYewZSROT+5hgahvZpTo2X2bHcKZwChx//gCRogqa4k7536xgQxiBnpn
-        /S59iLCjxJnusywQ8/kkbrwVhLiBT2LStunMEGFeiY42IYhqFYnfq6YzQdhSEt1P/rNMYFSa
-        heSzWUi+mYXkm1kIexcwsqxiFE8tLc5NTy02zEst1ytOzC0uzUvXS87P3cQITDyn/x3/tINx
-        7quPeocYmTgYDzFKcDArifCy7WpNEOJNSaysSi3Kjy8qzUktPsQozcGiJM67avaaeCGB9MSS
-        1OzU1ILUIpgsEwenVANTUub0Ys1X/OtebvkQUyjOcOz0ztOMBgvcFKI/PKhtmpRn/qJL3z5j
-        +h+mv3uOei67XaLx+mnyq+YDO87p+xxuzKvNuCUo75h4RYCrOuLUIwXplwHvo5PiWk5eK1nx
-        wD/5peWrAqG5S/IqnVw3ZGsy+3zW/SukYiqkNbmiQnzFrM1Ht+85tpNp6vHtip/OzVzRdKHu
-        6LcJSy7t//Dm9Tbe7dseMpnqen823JBe+SFfc2deSdFaue+xjZ78XrzrbbMiXny9ciatbb+v
-        5Plj1+YLzX20Jt31kkEDSxqfEqfmH+Ofjmd8POc72TL5FnBXyXDNLz+4XSH7ysyvlTa7uTc2
-        xv48aFy01/5CFBN/YuU5JZbijERDLeai4kQAruGl0qsDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsVy+t/xu7oKYh0JBh9XqFicP7+B3WLT42us
-        Fpd3zWGz6NmwldVixvl9TBb737ezWCzb9IfJgd1j06pONo/NS+o93i/4zezxeZNcAEuUnk1R
-        fmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsaanxtZCg6y
-        Vixq2cncwHiVpYuRg0NCwETi0xLHLkYuDiGBpYwSD3t/sELEpSTmtyh1MXICmcISf651sUHU
-        vGeUeNW1gQUkISwQKrFnxk5GEFtEQFNiytdOJpAiZoH1jBL9O44xgySEBCYwSix8LQliswkY
-        SvQe7QNr4BWwk7j3/AmYzSKgKjFj23VWEFtUIFli9e/NrBA1ghInZz4BW8YpYCtx4cV3MJtZ
-        QF3iz7xLzBC2uMStJ/OZIGx5ie1v5zBPYBSahaR9FpKWWUhaZiFpWcDIsopRJLW0ODc9t9hQ
-        rzgxt7g0L10vOT93EyMwzrYd+7l5B+O8Vx/1DjEycTAeYpTgYFYS4WXb1ZogxJuSWFmVWpQf
-        X1Sak1p8iNEU6J+JzFKiyfnASM8riTc0MzA1NDGzNDC1NDNWEufdOndNvJBAemJJanZqakFq
-        EUwfEwenVAMT4wGBRoZSEctbN3LbC8sN3Xy99V2/3/YU9wgSPlr7e8GkqhyWbXHRcx4f//uo
-        b/fzD5q1B95cDJze6LldoHxlgLjL28/7lWcUXpjT32nSLjhnSdmzSL9VIutLSi6bLSkOvHu7
-        wPa7/Y4KruyAr5FWwrKemhfiF9w+8shZ8OZqG+2E7bZVlwodXCNueWwP4lNmdLleJLbS/uu/
-        jM/Z0kzGKml35X5HH5nHHlmbb3QpPPGnU5hs5rLdjxc/tf0fZWd1uL+Arf7H7RnTLfKnaGus
-        ma60/Fmlxyu7X2/komwYX32N+7D64AedgOSpi+d8mmRqGynvmxi+WX77YbMGQ3EP5u+l7id2
-        51T1lsr4piqxFGckGmoxFxUnAgCSgdzLPAMAAA==
-X-CMS-MailID: 20210427134816eucas1p124e5a78b5beb7a70ca8090cdc6fdae5d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210427132754eucas1p21042e4e176135e7b3f7b540dc9aadfbb
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210427132754eucas1p21042e4e176135e7b3f7b540dc9aadfbb
-References: <CGME20210427132754eucas1p21042e4e176135e7b3f7b540dc9aadfbb@eucas1p2.samsung.com>
-        <20210427132734.5212-1-lyl2019@mail.ustc.edu.cn>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 27.04.2021 15:27, Lv Yunlong wrote:
-> In isp_video_release, file->private_data is freed via
-> _vb2_fop_release()->v4l2_fh_release(). But the freed
-> file->private_data is still used in v4l2_fh_is_singular_file()
-> ->v4l2_fh_is_singular(file->private_data), which is a use
-> after free bug.
+Em Tue, 27 Apr 2021 13:50:44 +0200
+Sylwester Nawrocki <s.nawrocki@samsung.com> escreveu:
+
+> On 27.04.2021 11:42, Mauro Carvalho Chehab wrote:
+> > Em Tue, 27 Apr 2021 11:30:55 +0200
+> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
+> >   
+> >> Em Tue, 27 Apr 2021 10:18:12 +0200
+> >> Sylwester Nawrocki <s.nawrocki@samsung.com> escreveu:
+> >>  
+> >>> On 24.04.2021 08:45, Mauro Carvalho Chehab wrote:    
+> >>>> Commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
+> >>>> added pm_runtime_resume_and_get() in order to automatically handle
+> >>>> dev->power.usage_count decrement on errors.
+> >>>>
+> >>>> Use the new API, in order to cleanup the error check logic.
+> >>>>
+> >>>> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> >>>> ---
+> >>>>  drivers/media/platform/exynos-gsc/gsc-core.c | 3 +--
+> >>>>  drivers/media/platform/exynos-gsc/gsc-m2m.c  | 2 +-
+> >>>>  2 files changed, 2 insertions(+), 3 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+> >>>> index 9f41c2e7097a..9d5841194f6b 100644
+> >>>> --- a/drivers/media/platform/exynos-gsc/gsc-core.c
+> >>>> +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+> >>>> @@ -1210,7 +1210,7 @@ static int gsc_remove(struct platform_device *pdev)
+> >>>>  	struct gsc_dev *gsc = platform_get_drvdata(pdev);
+> >>>>  	int i;
+> >>>>  
+> >>>> -	pm_runtime_get_sync(&pdev->dev);
+> >>>> +	pm_runtime_resume_and_get(&pdev->dev);
+> >>>>  
+> >>>>  	gsc_unregister_m2m_device(gsc);
+> >>>>  	v4l2_device_unregister(&gsc->v4l2_dev);
+> >>>> @@ -1219,7 +1219,6 @@ static int gsc_remove(struct platform_device *pdev)
+> >>>>  	for (i = 0; i < gsc->num_clocks; i++)
+> >>>>  		clk_disable_unprepare(gsc->clock[i]);
+> >>>>  
+> >>>> -	pm_runtime_put_noidle(&pdev->dev);      
+> >>>
+> >>> If we do this then the device usage count will not get decremented
+> >>> after the pm_runtime_resume_and_get() call above and after driver
+> >>> unload/load cycle it will not be possible to suspend the device.
+> >>> I wouldn't be changing anything in gsc_remove(), pm_runtime_get_sync()
+> >>> works better in that case.    
+> >>
+> >> Good point.
+> >>
+> >> Actually, I don't see any reason why to call a PM resume
+> >> function - either being pm_runtime_get_sync() or
+> >> pm_runtime_resume_and_get().
+> >>
+> >> The code there could simply be:
+> >>
+> >>     static int gsc_remove(struct platform_device *pdev)
+> >>     {
+> >>         struct gsc_dev *gsc = platform_get_drvdata(pdev);
+> >>         int i;
+> >>
+> >>         gsc_unregister_m2m_device(gsc);
+> >>         v4l2_device_unregister(&gsc->v4l2_dev);
+> >>
+> >>         vb2_dma_contig_clear_max_seg_size(&pdev->dev);
+> >>         for (i = 0; i < gsc->num_clocks; i++)
+> >>                 clk_disable_unprepare(gsc->clock[i]);
+> >>
+> >>         pm_runtime_disable(&pdev->dev);
+> >>
+> >>         dev_dbg(&pdev->dev, "%s driver unloaded\n", pdev->name);
+> >>         return 0;
+> >>     }
+> >>
+> >> Eventually also adding:
+> >> 	pm_runtime_suspended(&pdev->dev);  
+> > 
+> > In time: I actually meant:
+> > 
+> > 	pm_runtime_set_suspended(&pdev->dev);
+> > 
+> > but after double-checking the PM runtime code, it sounds to me that
+> > just calling pm_runtime_disable() would be enough. Not 100% sure
+> > here. Btw, some media drivers call it after pm_runtime_disable(),
+> > while others don't do.  
 > 
-> My patch sets file->private_data to NULL after _vb2_fop_release()
-> to avoid the use after free, and uses a variable 'is_singular_file'
-> to keep the original function unchanged.
+> I think if the device is brought into suspended state (e.g. by
+> disabling clocks as above) the pm_runtime_set_suspended() call
+> should be there. IOW a following sequence: 
 > 
-> Fixes: 34947b8aebe3f ("[media] exynos4-is: Add the FIMC-IS ISP capture DMA driver")
-> Signed-off-by: Lv Yunlong <lyl2019@mail.ustc.edu.cn>
+> 	pm_runtime_disable(dev);
+> 	if (!pm_runtime_status_suspended(dev))
+> 		/* put device into suspended state (disable clocks, 
+> 		  voltage regulators, assert GPIOs, etc. */
+> 	pm_runtime_set_suspended(dev);
+
+Not sure if this would work, as the clock framework would try
+to do things like calling clk_pm_runtime_put().
+
+Perhaps an alternative would be to just return an error if it
+can't resume PM runtime, e. g.:
+
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+index 9f41c2e7097a..d47d02c75484 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+@@ -1208,9 +1208,11 @@ static int gsc_probe(struct platform_device *pdev)
+ static int gsc_remove(struct platform_device *pdev)
+ {
+        struct gsc_dev *gsc = platform_get_drvdata(pdev);
+-       int i;
++       int ret, i;
+ 
+-       pm_runtime_get_sync(&pdev->dev);
++       ret = pm_runtime_resume_and_get(&pdev->dev);
++       if (ret < 0)
++               return ret;
+ 
+        gsc_unregister_m2m_device(gsc);
+        v4l2_device_unregister(&gsc->v4l2_dev);
+
 
 Thanks,
-
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Mauro
