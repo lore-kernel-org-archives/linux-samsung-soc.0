@@ -2,145 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5905C433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 10:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4281AC43460
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 14:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA9616141B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 10:15:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B182C61008
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 14:52:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239114AbhD1KPp (ORCPT
+        id S240288AbhD1Oxa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Apr 2021 06:15:45 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:7032 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239073AbhD1KPn (ORCPT
+        Wed, 28 Apr 2021 10:53:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35918 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240271AbhD1Ox3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Apr 2021 06:15:43 -0400
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13SACgG9012679;
-        Wed, 28 Apr 2021 10:14:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=I+MVSz17rMFhUANJ9vAyQofowEWDVcDjmcFL0J5BcrE=;
- b=uaOHEwiNVwraQynnCPG2JzUVkXn9TRJB98bwFw0nuDEWf2bDE8FmmhWwy27Gv5J3VgGA
- uewrbjmbZEziXm8mvrKV3ViaWtSgLiYoaaF42HTk3qioV7dpMwQvSgxqhLbQCkVd/3Fw
- LVJdAJMwZzS019v20hv+Fmbni5XnEu+n0Zh32LH6VtypyYkOVAkTHzHoCZo9BAHC59iD
- 2k+gys9jMuwtzx/BQy+ly/lwxGeCA/WDfXiZIQN9VANI6J5sGWPFV0QM9JmSbGHuQcE6
- i6y9ZOrDpCpOAddMtZl/IOGGZmYnYPEWSyqoK+WyRvAh0cOfYCsePDN3Gw1Qw/s/HJKR fg== 
-Received: from oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 385s92h72h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Apr 2021 10:14:17 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 13SACmXR045815;
-        Wed, 28 Apr 2021 10:14:16 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 384b5884ge-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Apr 2021 10:14:16 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 13SAA2xH035177;
-        Wed, 28 Apr 2021 10:14:15 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 384b5884e6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Apr 2021 10:14:15 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 13SADmYk022121;
-        Wed, 28 Apr 2021 10:13:48 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 28 Apr 2021 03:13:47 -0700
-Date:   Wed, 28 Apr 2021 13:13:25 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Shawn Tu <shawnx.tu@intel.com>,
-        Ricardo Ribalda <ribalda@kernel.org>,
-        Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
-        Heiko Stuebner <heiko@sntech.de>, linuxarm@huawei.com,
-        Todor Tomov <todor.too@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Matt Ranostay <matt.ranostay@konsulko.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
-        Andy Gross <agross@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Dongchun Zhu <dongchun.zhu@mediatek.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Bingbu Cao <bingbu.cao@intel.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Shunqian Zheng <zhengsq@rock-chips.com>,
-        Tianshu Qiu <tian.shu.qiu@intel.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        devel@driverdev.osuosl.org, Jacopo Mondi <jacopo@jmondi.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-tegra@vger.kernel.org,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Wenyou Yang <wenyou.yang@microchip.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        linux-media@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Benoit Parrot <bparrot@ti.com>,
-        Helen Koike <helen.koike@collabora.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        mauro.chehab@huawei.com,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        "Paul J. Murphy" <paul.j.murphy@intel.com>,
+        Wed, 28 Apr 2021 10:53:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C8FBF6144B;
+        Wed, 28 Apr 2021 14:52:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619621563;
+        bh=gtR1SkTiYJ9WApgVEIkptCtIXyrWDvbS/bAOqzd9AhE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gui+r5mJheRBaT22aO45UqdlZpSqT3zQNryWIJ3tgxQsIurCryHjrbsq/jbdeGMs0
+         023zuja4D3XR8G280J5skQNG/R3/UneayZ0i/1mdelWGommQEvO+7uNuPLCYV0PcZt
+         bJ+OME3IvhFDTZlsy2/+Unz3JxPpyv1gixe0930RqL5dB4bA3lidAbyXDsC/o4+9Y5
+         NzqOEeyHarutwxhTJcGPCVObkCgs1lJUpSxJPIHPUYKMIBqnFsgnOmyBKAs/w5Ave4
+         OxHisHh8zhy1bGGNpC0edJXgfLrysSEh7D3j3Bzk4hfi7r2tzmoHEvuAU4vxhqR6c3
+         ycWEI0B0NRP+w==
+Received: by mail.kernel.org with local (Exim 4.94)
+        (envelope-from <mchehab@kernel.org>)
+        id 1lblYP-001Dpv-OZ; Wed, 28 Apr 2021 16:52:41 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Ezequiel Garcia <ezequiel@collabora.com>,
-        Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
-        Chiranjeevi Rapolu <chiranjeevi.rapolu@intel.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Hyungwoo Yang <hyungwoo.yang@intel.com>,
-        linux-kernel@vger.kernel.org, Robert Foss <robert.foss@linaro.org>,
-        Dan Scally <djrscally@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, Yong Zhi <yong.zhi@intel.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 00/78] media: use pm_runtime_resume_and_get() instead of
- pm_runtime_get_sync()
-Message-ID: <20210428101325.GS1981@kadam>
-References: <cover.1619191723.git.mchehab+huawei@kernel.org>
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v4 07/79] media: exynos-gsc: don't resume at remove time
+Date:   Wed, 28 Apr 2021 16:51:28 +0200
+Message-Id: <210a2eee928d2ae7aee65e177f20cfb3f00e29ee.1619621413.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <cover.1619621413.git.mchehab+huawei@kernel.org>
+References: <cover.1619621413.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1619191723.git.mchehab+huawei@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-ORIG-GUID: PoS6K8hnvvMeqfO7ySCrEgnWsFEWRPaW
-X-Proofpoint-GUID: PoS6K8hnvvMeqfO7ySCrEgnWsFEWRPaW
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-There was a Smatch check for these bugs.  This was a good source of
-recurring Reported-by tags for me.  ;)  Thanks for doing this.
+Calling pm_runtime_get_sync() at driver's removal time is not
+needed, as this will resume PM runtime. Also, the PM runtime
+code at pm_runtime_disable() already calls it, if it detects
+the need.
 
-regards,
-dan carpenter
+So, change the logic in order to disable PM runtime earlier.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ drivers/media/platform/exynos-gsc/gsc-core.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+index 9f41c2e7097a..8b943075c503 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+@@ -1210,18 +1210,19 @@ static int gsc_remove(struct platform_device *pdev)
+ 	struct gsc_dev *gsc = platform_get_drvdata(pdev);
+ 	int i;
+ 
+-	pm_runtime_get_sync(&pdev->dev);
+-
+ 	gsc_unregister_m2m_device(gsc);
+ 	v4l2_device_unregister(&gsc->v4l2_dev);
+ 
+ 	vb2_dma_contig_clear_max_seg_size(&pdev->dev);
+-	for (i = 0; i < gsc->num_clocks; i++)
+-		clk_disable_unprepare(gsc->clock[i]);
+ 
+-	pm_runtime_put_noidle(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 
++	if (!pm_runtime_status_suspended(dev))
++		for (i = 0; i < gsc->num_clocks; i++)
++			clk_disable_unprepare(gsc->clock[i]);
++
++	pm_runtime_set_suspended(dev);
++
+ 	dev_dbg(&pdev->dev, "%s driver unloaded\n", pdev->name);
+ 	return 0;
+ }
+-- 
+2.30.2
 
