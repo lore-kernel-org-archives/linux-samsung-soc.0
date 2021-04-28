@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A95C433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 14:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EF4C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 14:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 598E861435
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 14:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 732B361441
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Apr 2021 14:54:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240339AbhD1Oxl (ORCPT
+        id S240361AbhD1OzL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 28 Apr 2021 10:53:41 -0400
+        Wed, 28 Apr 2021 10:55:11 -0400
 Received: from mail.kernel.org ([198.145.29.99]:36654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240300AbhD1Oxd (ORCPT
+        id S240390AbhD1Oxr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 28 Apr 2021 10:53:33 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1E12861462;
-        Wed, 28 Apr 2021 14:52:43 +0000 (UTC)
+        Wed, 28 Apr 2021 10:53:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AD41A6193D;
+        Wed, 28 Apr 2021 14:52:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1619621564;
-        bh=WV8b6oOgk6igZlBf+lkpGwuIqLCl3BXqwFF8R5SKg9o=;
+        bh=EG1Xkz5icS6rCKpEKVZN/X2JADr2Ee/ss00sHCZahe0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UufPod8BGuQ6F4M2J03kiOvacCzHOy9+rXB8FIMudlZJiHaNgckG8NEYJ+rnI+pZk
-         r3Wt5kG3gwQUPJGyghvtSjMhVMxvFtw0nEsFz1Bi0oS2XWN++YdssWifl4tsROENhs
-         DHbhbLVzxfrKi/ciE/I8VyLGg+CKVmZEicdwrt6scAGtKIGP6StdjMCTa4KNnnRdGw
-         a8+AfoFLsGhwbPCMFQWx0hXVQ2Jt9CpTknZea2BXzrHwBsRMU1STu6CoXV9pS3jm9T
-         hH7W0M93zQ4vJ9lPP6CmxdIxw5TfGWD1oKoVfaHVqwdRYE6rRY4UBxrFU3kempcnEp
-         9+VOkCY9tt9EQ==
+        b=oCHpn+fmwGV/kArmNSoUSn/jMNhaV6E/cELb1239AFp7tEHpXStLvOGkkClPlKqHs
+         S7Qm6nNL7QYa6ulOnG4byCCfTYEem7BFawbiEPTRfzL7bx/AnCwg77yK0FW7b2ZG25
+         OuBvkfQq1VMaaAzRwwV2KPZqEWGdoYalLtmAiKFIjXcFNilFv4IQA+gljSNBPDmclI
+         Fp9MWk+QZqamavqShzSNyVX15Gt7jXrKM5+jwLX5Bb+QL7MSA1f13GVKKe1Dd3ziD/
+         qufSXKj3aJNvEcWVz+MZc5fJCke6X8fF7Yrlott+4MqITcC6qdWAXSq0h3sPOIM/5W
+         NTnDpyOaC0YSg==
 Received: by mail.kernel.org with local (Exim 4.94)
         (envelope-from <mchehab@kernel.org>)
-        id 1lblYP-001DqD-UJ; Wed, 28 Apr 2021 16:52:41 +0200
+        id 1lblYP-001Dpf-JZ; Wed, 28 Apr 2021 16:52:41 +0200
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Kamil Debski <kamil@wypas.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
         Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v4 13/79] media: s5p: fix pm_runtime_get_sync() usage count
-Date:   Wed, 28 Apr 2021 16:51:34 +0200
-Message-Id: <372eda285a78a43edc865372c560b60d86872742.1619621413.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v4 02/79] media: s6p_cec: decrement usage count if disabled
+Date:   Wed, 28 Apr 2021 16:51:23 +0200
+Message-Id: <2c52c48533f6eafdb7b9c72ee2f02747e851a983.1619621413.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <cover.1619621413.git.mchehab+huawei@kernel.org>
 References: <cover.1619621413.git.mchehab+huawei@kernel.org>
@@ -59,42 +60,31 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The pm_runtime_get_sync() internally increments the
-dev->power.usage_count without decrementing it, even on errors.
-Replace it by the new pm_runtime_resume_and_get(), introduced by:
-commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
-in order to properly decrement the usage counter and avoid memory
-leaks.
+There's a bug at s5p_cec_adap_enable(): if called to
+disable the device, it should call pm_runtime_put()
+instead of pm_runtime_disable(), as the goal here is to
+decrement the usage_count and not to disable PM runtime.
 
-While here, check if the PM runtime error was caught at
-s5p_cec_adap_enable().
-
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reported-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Fixes: 1bcbf6f4b6b0 ("[media] cec: s5p-cec: Add s5p-cec driver")
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/media/cec/platform/s5p/s5p_cec.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/media/cec/platform/s5p/s5p_cec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
-index 3c7c4c3c798c..028a09a7531e 100644
+index 2a3e7ffefe0a..3c7c4c3c798c 100644
 --- a/drivers/media/cec/platform/s5p/s5p_cec.c
 +++ b/drivers/media/cec/platform/s5p/s5p_cec.c
-@@ -35,10 +35,13 @@ MODULE_PARM_DESC(debug, "debug level (0-2)");
+@@ -51,7 +51,7 @@ static int s5p_cec_adap_enable(struct cec_adapter *adap, bool enable)
+ 	} else {
+ 		s5p_cec_mask_tx_interrupts(cec);
+ 		s5p_cec_mask_rx_interrupts(cec);
+-		pm_runtime_disable(cec->dev);
++		pm_runtime_put(cec->dev);
+ 	}
  
- static int s5p_cec_adap_enable(struct cec_adapter *adap, bool enable)
- {
-+	int ret;
- 	struct s5p_cec_dev *cec = cec_get_drvdata(adap);
- 
- 	if (enable) {
--		pm_runtime_get_sync(cec->dev);
-+		ret = pm_runtime_resume_and_get(cec->dev);
-+		if (ret < 0)
-+			return ret;
- 
- 		s5p_cec_reset(cec);
- 
+ 	return 0;
 -- 
 2.30.2
 
