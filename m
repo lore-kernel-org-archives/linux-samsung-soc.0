@@ -2,66 +2,42 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54271C433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Apr 2021 12:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ECD1C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Apr 2021 15:17:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FB3B6101C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Apr 2021 12:34:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 076F46144B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Apr 2021 15:17:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234080AbhD2Meu (ORCPT
+        id S233486AbhD2PRv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 29 Apr 2021 08:34:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42942 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231490AbhD2Met (ORCPT
+        Thu, 29 Apr 2021 11:17:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36092 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233420AbhD2PRs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Apr 2021 08:34:49 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 213A2C06138B;
-        Thu, 29 Apr 2021 05:34:03 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id z13so23555854lft.1;
-        Thu, 29 Apr 2021 05:34:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+fbOj539U7JlJxKx94jCmhZjY1EaeG6hVLe/OeyW9BA=;
-        b=pSAPQilu7n+6xTr9GdEG0tb6PJM12QM070qCxvHnWCIze3Gcr+Y1X+IbvGDtRxTUgM
-         EyOOFTxf9hWQBlaRIuLofOaQebEe5v0gWxDauGIRIaLBxzQZQULJfZHJUKxGdkb10gkc
-         nD1wHPGKwDBP5o9agABg3XnIArwOCYPQSKMjVhR3w59xhvXls6FFml/j10Pwe9czFo6Z
-         T7faf5Qfz88VW86L60gbzCGia3II+upwMhl4urxCbGztadHzxAw5ZUEZZpuSIrEqgrti
-         aMKp0DRksQp+N/9uThNAeaKzsoGRnRjp6oHq0CgRtj1ykP9X5KS4ubBguxOUwo/dtsF4
-         c+pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+fbOj539U7JlJxKx94jCmhZjY1EaeG6hVLe/OeyW9BA=;
-        b=NBZ6qrisZK+r/r0egW/szwjs5QHeDlkgBqldSV+slLEvVkjSX8aJY3H28isfeDdx7T
-         njZDSLltdHIQZiiKnI5TVd0FYOfsYXFhgYF34BRq52KQe+BXh9DfjIF4wHGjjUvewOAs
-         iiD4Zdnaai7T01uAJ2+UGcdqtItK14M7tY79FTH+Kj6yaRbyzKYEZ39J6y+X5jfsVK/S
-         RjIgNfbFJImG7targ4SJT81Bqvu358EYtIA67eYZvHUpXUOi/7hL/ZPE8bUUwcUKWS8X
-         ZAMOrl6/yMI0DUv+EAxqXZxzItEaYbiAJ4cO1PdADeqeRwMUQnjj37TltuTkgPshtP7l
-         /wCQ==
-X-Gm-Message-State: AOAM530QECKQsA7rIOeBVAEGH00SJbcCpLFv/Lw5CO0pZkGEUFMSllkv
-        0/WZEkA87ftyUlHrDUIqVMo=
-X-Google-Smtp-Source: ABdhPJxNUnx9qkfhLC3V1HtbXkiFpJiCYsEDSOon3AoeX+SG0EchdE86xX8g0E/VEPlskxpayZqx+w==
-X-Received: by 2002:a19:ad41:: with SMTP id s1mr24627108lfd.306.1619699641558;
-        Thu, 29 Apr 2021 05:34:01 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-193-102.dynamic.spd-mgts.ru. [109.252.193.102])
-        by smtp.googlemail.com with ESMTPSA id n7sm515001lft.65.2021.04.29.05.33.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Apr 2021 05:34:01 -0700 (PDT)
-Subject: Re: [PATCH v4 00/79] Address some issues with PM runtime at media
- subsystem
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Johan Hovold <johan@kernel.org>
+        Thu, 29 Apr 2021 11:17:48 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DADC8613F8;
+        Thu, 29 Apr 2021 15:17:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619709421;
+        bh=0TF/rgI+kIrUM4ucLgyoRQVNDZwjwMCttPCbdF1J2ts=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TNblwH+As0w11JRNen3DEa/sKtquJO7N/ed+Wi2cPt5DPo/pzApjHeB4CYlT9czKN
+         RFJnIUjSlU/iXNkujkJ9GfUIBpZYvUPaxBLDLGXBQdVlv5qb6mSpE1DcETxlBJLjdH
+         3g63qgtE3JXAaoo4Aq3ZJQdiRo/RBYWmOp0+Glxzsc1YjsicyiOaSi7GIhQYDFx0Ss
+         xxX7tIodOuoDf+uK3PdOkr9EHdavuGSGLxTjoqehEjaUHaupkr1YkvsH7C4pSmGQvt
+         kJLY88R3n7qjm+eBETbZXRLROLJk7BZhgXtoeO/pKC8+dHkhcGgjRgK0xEL1TOs1c0
+         knRtXQpP0PexA==
+Received: from johan by xi.lan with local (Exim 4.93.0.4)
+        (envelope-from <johan@kernel.org>)
+        id 1lc8Ph-0006kM-4M; Thu, 29 Apr 2021 17:17:13 +0200
+Date:   Thu, 29 Apr 2021 17:17:13 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Cc:     Shawn Tu <shawnx.tu@intel.com>,
         Ricardo Ribalda <ribalda@kernel.org>,
         Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
@@ -72,6 +48,7 @@ Cc:     Shawn Tu <shawnx.tu@intel.com>,
         "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Dmitry Osipenko <digetx@gmail.com>,
         linux-stm32@st-md-mailman.stormreply.com,
         Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
         Leon Luo <leonl@leopardimaging.com>,
@@ -124,34 +101,49 @@ Cc:     Shawn Tu <shawnx.tu@intel.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         linux-renesas-soc@vger.kernel.org, Yong Zhi <yong.zhi@intel.com>,
         Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v4 00/79] Address some issues with PM runtime at media
+ subsystem
+Message-ID: <YIrN+VEY9Sf+eztR@hovoldconsulting.com>
 References: <cover.1619621413.git.mchehab+huawei@kernel.org>
- <YImEMN/POW5C8lG7@hovoldconsulting.com> <20210429121215.64a7cbdb@coco.lan>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <de636a0a-3fd7-d61e-c361-fa50a6d34f17@gmail.com>
-Date:   Thu, 29 Apr 2021 15:33:59 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+ <YImEMN/POW5C8lG7@hovoldconsulting.com>
+ <20210429121215.64a7cbdb@coco.lan>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20210429121215.64a7cbdb@coco.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-29.04.2021 13:18, Mauro Carvalho Chehab пишет:
->> This is perfectly alright. Take a look at ov7740_remove() for example:
->>
->> 	pm_runtime_get_sync(&client->dev);
->> 	pm_runtime_disable(&client->dev);
->> 	pm_runtime_set_suspended(&client->dev);
->> 	pm_runtime_put_noidle(&client->dev);
->> 	
->> 	ov7740_set_power(ov7740, 0);
->>
->> There's an explicit power-off after balancing the PM count and this will
->> work regardless of the power state when entering this function.
+On Thu, Apr 29, 2021 at 12:18:16PM +0200, Mauro Carvalho Chehab wrote:
+> Em Wed, 28 Apr 2021 17:50:08 +0200
+> Johan Hovold <johan@kernel.org> escreveu:
+> 
+> > On Wed, Apr 28, 2021 at 04:51:21PM +0200, Mauro Carvalho Chehab wrote:
+> 
+> > > 1. despite its name, this is actually a PM runtime resume call,
+> > >    but some developers didn't seem to realize that, as I got this
+> > >    pattern on some drivers:
+> > > 
+> > >         pm_runtime_get_sync(&client->dev);
+> > >         pm_runtime_disable(&client->dev);
+> > >         pm_runtime_set_suspended(&client->dev);
+> > >         pm_runtime_put_noidle(&client->dev);
+> > > 
+> > >    It makes no sense to resume PM just to suspend it again ;-)  
+> > 
+> > This is perfectly alright. Take a look at ov7740_remove() for example:
+> > 
+> > 	pm_runtime_get_sync(&client->dev);
+> > 	pm_runtime_disable(&client->dev);
+> > 	pm_runtime_set_suspended(&client->dev);
+> > 	pm_runtime_put_noidle(&client->dev);
+> > 	
+> > 	ov7740_set_power(ov7740, 0);
+> > 
+> > There's an explicit power-off after balancing the PM count and this will
+> > work regardless of the power state when entering this function.
+> 
 > Ok, but this should equally work:
 > 
 >  	pm_runtime_disable(&client->dev);
@@ -161,13 +153,112 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 > 
 > as there's no additional cleanup made on this particular driver
 > between pm_runtime_get_sync() and pm_runtime_put_noidle().
+
+No, that would break the driver as I pointed out to you yesterday:
+
+	https://lore.kernel.org/r/YImG1klSPkFSaS3a@hovoldconsulting.com
+
+If the device is already suspended when remove is called then you'll
+end up with an unbalanced call to ov7740_set_power() that will try to
+disable an already disabled clock.
+
+> > So this has nothing to do with pm_runtime_get_sync() per se.
 > 
+> Yes, but some patches on this series are cleaning up the driver release
+> logic.
 
-The pm_runtime_get_sync() turns hardware ON by invoking
-ov7740_set_power(ov7740, 1), and thus, the ON->OFF is kept balanced in
-both RPM-available and RPM-unavailable cases. The RPM state of device
-should be reset after driver removal.
+You mentioned this example as an argument against using
+pm_runtime_get_sync(), which I don't think makes sense.
 
-It doesn't look like any additional cleanups are needed by that ov7740
-driver. The driver removal is opposite to the probe, hence it should be
-correct as-is.
+> > > 2. Usual *_get() methods only increment their use count on success,
+> > >    but pm_runtime_get_sync() increments it unconditionally. Due to
+> > >    that, several drivers were mistakenly not calling
+> > >    pm_runtime_put_noidle() when it fails;  
+> > 
+> > Sure, but pm_runtime_get_async() also works this way. You just won't be
+> > notified if the async resume fails.
+> 
+> Granted, it makes sense along the pm_runtime kAPI.
+> 
+> It is inconsistent with the behavior of kobject_get*() and other
+> *_get*() methods that are based or inspired on it, as, on those, the
+> operations are atomic: either everything succeeds and it doesn't return
+> an error, or the usage counter is not incremented and the object
+> state doesn't change after the call.
+
+Right, and I'm aware that some people have overlooked this. But its not
+the end of the world since hardly any driver can handle resume failures
+properly anyway. 
+
+This is mostly just an exercise to shut up static checkers.
+
+> > > 3. The name of the new variant is a lot clearer:
+> > > 	pm_runtime_resume_and_get()
+> > >     As its same clearly says that this is a PM runtime resume function,
+> > >     that also increments the usage counter on success;  
+> > 
+> > It also introduced an inconsistency in the API and does not pair as well
+> > with the pm_runtime_put variants.
+> 
+> Agreed. A name that would be more consistent with PM runtime would
+> probably be:
+> 
+> 	pm_runtime_resume_if_get()
+
+Naw, since the get part always succeeds.
+
+It should start with pm_runtime_get, but pm_runtime_get_sync() is
+unfortunately taken.
+
+> as there are already:
+> 
+> 	pm_runtime_get_if_in_use()
+> 	pm_runtime_get_if_active()
+> 
+> But any such discussions are out of the scope of this patchset ;-)
+
+Right.
+
+> > > 4. Consistency: we did similar changes subsystem wide with
+> > >    for instance strlcpy() and strcpy() that got replaced by
+> > >    strscpy(). Having all drivers using the same known-to-be-safe
+> > >    methods is a good thing;  
+> > 
+> > It's not known to be safe; there are ways to get also this interface
+> > wrong as for example this series has shown.
+> 
+> Very true. Yet, it is a lot simpler to use functions that won't change
+> the state of the objects when returning an error, as this is by far
+> the most common pattern within the Kernel.
+
+A resume failure does change the state (and needs to be recovered from),
+but I get what you're saying.
+
+> Human brains are trained to identify certain patterns. When there's
+> something using a similar pattern, but with a different behavior, 
+> our brains are more subject to fail identifying problems.
+
+Sure. But I'm not sure that having two interfaces with different
+semantics to do the job is doing us any favours here. But again, that
+discussion has already been had.
+
+And I realise that this is partly also your motive here (even if the old
+interface isn't going to go away).
+
+> > > compile-tested only.
+> > > Patches 1 to 7 fix some issues that already exists at the current
+> > > PM runtime code;
+> > > 
+> > > patches 8 to 20 fix some usage_count problems that still exists
+> > > at the media subsystem;
+> > > 
+> > > patches 21 to 78 repaces pm_runtime_get_sync() by 
+> > > pm_runtime_resume_and_get();
+> > > 
+> > > Patch 79 (and a hunk on patch 78) documents the two exceptions
+> > > where pm_runtime_get_sync() will still be used for now.
+
+80 patches in one series (posted to lkml) is a bit excessive. Perhaps
+you can break it up in a fixes part and one or more cleanups parts?
+
+Johan
