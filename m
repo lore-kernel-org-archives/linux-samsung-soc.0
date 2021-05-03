@@ -2,111 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE9D7C433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Apr 2021 17:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C48C43618
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 May 2021 16:51:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 985CB611CB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Apr 2021 17:51:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A112613B3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 May 2021 16:51:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231314AbhD3Rw1 (ORCPT
+        id S232930AbhECQwG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 30 Apr 2021 13:52:27 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2976 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230229AbhD3Rw0 (ORCPT
+        Mon, 3 May 2021 12:52:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234295AbhECQuD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Apr 2021 13:52:26 -0400
-Received: from fraeml715-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FX05f3ND9z6896y;
-        Sat,  1 May 2021 01:40:54 +0800 (CST)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- fraeml715-chm.china.huawei.com (10.206.15.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 30 Apr 2021 19:51:36 +0200
-Received: from localhost (10.52.125.96) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Fri, 30 Apr
- 2021 18:51:35 +0100
-Date:   Fri, 30 Apr 2021 18:50:01 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC:     <linuxarm@huawei.com>, <mauro.chehab@huawei.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        "Krzysztof Kozlowski" <krzk@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH v4 63/79] media: exynos-gsc: use
- pm_runtime_resume_and_get()
-Message-ID: <20210430185001.00005e76@Huawei.com>
-In-Reply-To: <31bdadf2f59e86c6a315ec390b44c6c681af6647.1619621413.git.mchehab+huawei@kernel.org>
-References: <cover.1619621413.git.mchehab+huawei@kernel.org>
-        <31bdadf2f59e86c6a315ec390b44c6c681af6647.1619621413.git.mchehab+huawei@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
+        Mon, 3 May 2021 12:50:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 732E86191C;
+        Mon,  3 May 2021 16:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620060038;
+        bh=79pK7TmZDHM2zM9KunmO+9dPd6s23JE8ac9oGGBUk24=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=vCl/XyT5TFYbdZ4FkzNHtxmHkA87fvRy8dUbCsJjnFlIixEFB0J7GnO9AWGLyeqCE
+         5qS3Xm9V5yNuSY1EjKfEySw29UXTqMVkmqGBK51GWmQX10EOJ/AaHKBQ1MeJCORRvo
+         aDoxxbSFh520LeL/pimkOXVGFpvxx9b+7qne9NBP7/W4PmyeiZI2BoRGQFwfZZPzrK
+         F4pJKNJR+fmxOfYYgbbDBNsR3U/xApMX4iU9GeZdbwfhM7QJCA6Q6plECE4zm4iwSD
+         dQzISH0CgpusM0r2IxDUyqEyiGZ2rvEFoojp3KYiU3nC/h4TJWYouBA1BiWTa4zvr2
+         thd85DYbxWwuw==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Yang Yingliang <yangyingliang@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 37/57] power: supply: s3c_adc_battery: fix possible use-after-free in s3c_adc_bat_remove()
+Date:   Mon,  3 May 2021 12:39:21 -0400
+Message-Id: <20210503163941.2853291-37-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210503163941.2853291-1-sashal@kernel.org>
+References: <20210503163941.2853291-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.52.125.96]
-X-ClientProxiedBy: lhreml721-chm.china.huawei.com (10.201.108.72) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 28 Apr 2021 16:52:24 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+From: Yang Yingliang <yangyingliang@huawei.com>
 
-> Commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
-> added pm_runtime_resume_and_get() in order to automatically handle
-> dev->power.usage_count decrement on errors.
-> 
-> Use the new API, in order to cleanup the error check logic.
-> 
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  drivers/media/platform/exynos-gsc/gsc-m2m.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> index 27a3c92c73bc..09551e96ac15 100644
-> --- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> +++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-> @@ -58,7 +58,7 @@ static int gsc_m2m_start_streaming(struct vb2_queue *q, unsigned int count)
->  	struct gsc_ctx *ctx = q->drv_priv;
->  	int ret;
->  
-> -	ret = pm_runtime_get_sync(&ctx->gsc_dev->pdev->dev);
-> +	ret = pm_runtime_resume_and_get(&ctx->gsc_dev->pdev->dev);
->  	return ret > 0 ? 0 : ret;
-return pm_runtime_resume_and_get()
+[ Upstream commit 68ae256945d2abe9036a7b68af4cc65aff79d5b7 ]
 
-as
-static inline int pm_runtime_resume_and_get(struct device *dev)
-{
-	int ret;
+This driver's remove path calls cancel_delayed_work(). However, that
+function does not wait until the work function finishes. This means
+that the callback function may still be running after the driver's
+remove function has finished, which would result in a use-after-free.
 
-	ret = __pm_runtime_resume(dev, RPM_GET_PUT);
-	if (ret < 0) {
-		pm_runtime_put_noidle(dev);
-		return ret;
-	}
+Fix by calling cancel_delayed_work_sync(), which ensures that
+the work is properly cancelled, no longer running, and unable
+to re-schedule itself.
 
-	return 0;
-}
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/power/supply/s3c_adc_battery.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Can't return >= 0
-
->  }
->  
+diff --git a/drivers/power/supply/s3c_adc_battery.c b/drivers/power/supply/s3c_adc_battery.c
+index 3d00b35cafc9..8be31f80035c 100644
+--- a/drivers/power/supply/s3c_adc_battery.c
++++ b/drivers/power/supply/s3c_adc_battery.c
+@@ -394,7 +394,7 @@ static int s3c_adc_bat_remove(struct platform_device *pdev)
+ 		gpio_free(pdata->gpio_charge_finished);
+ 	}
+ 
+-	cancel_delayed_work(&bat_work);
++	cancel_delayed_work_sync(&bat_work);
+ 
+ 	if (pdata->exit)
+ 		pdata->exit();
+-- 
+2.30.2
 
