@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6189BC43470
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 May 2021 16:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E918C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 May 2021 16:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C8C261078
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 May 2021 16:56:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44CD261041
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 May 2021 16:56:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233135AbhECQ5C (ORCPT
+        id S232788AbhECQ47 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 May 2021 12:57:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44504 "EHLO mail.kernel.org"
+        Mon, 3 May 2021 12:56:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234940AbhECQzN (ORCPT
+        id S233976AbhECQws (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 May 2021 12:55:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3514061944;
-        Mon,  3 May 2021 16:42:35 +0000 (UTC)
+        Mon, 3 May 2021 12:52:48 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 39114611AE;
+        Mon,  3 May 2021 16:41:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620060156;
-        bh=hereJ0RyJy+lofiGg9BMhXrGaktzxvAE3AhkPHBnmZk=;
+        s=k20201202; t=1620060103;
+        bh=79pK7TmZDHM2zM9KunmO+9dPd6s23JE8ac9oGGBUk24=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PXjcLS7VAhkKZa1PATTzdbvcYKuDz/eDTupEEOZusuMOaJz7Inhg0nxYrSRETa49g
-         ObngHHtTM7uJnggkZGFwZHwuPvxLaga8kv70YghLYMCZ2wKHFe20GztJpLqfYoBpfr
-         jBw0eHzuOs3mI4HV6N1JexQ6+smFMonBsZY4pIocyWzKmoWC3kQ3Wb6JCKrMqI6Bg+
-         j1vYvZIOCWfl5fYZsYqBEL9TPzmtb3FJ1XnjCQrJlWDiVtzt0VXVAVQvwsEA4foCCl
-         uQM4keNs7qCSEqdFV0M0Bo2RoYFFgHScAGfsZnA1N074Ynh/emshjaD1pFk0+sDGPW
-         2MTo4aje5FzRQ==
+        b=sEUyADQ7rNIxQmYdmNEgNlJWIOfMUy3ydfEgmHPZhFpZAppsAWurQY1+oJrLnoQ9U
+         nYHqMbZzyl9qZaHYVfNIGnp7c3G1ewCuNwjRV8faUjP1oulyZPpGX17yvwMPntlcuP
+         tazHS9X9uNI7rmFcoapn45qw2EDbkBjy45TZDxR0YzkxR2xPga/ydwRkHXNgsaH0L2
+         GYf7AiDurhIpu+63N0U63iMiDSTBll1MEdy7VHYK7tpAkou5X2w2mnM3irjMshb4kb
+         kMJ46L+HdV6HYzz+1CQlz8MMzhriUSJ0uvKu29tcSejDR1Cyv8o3faqL8NURPollkc
+         zfOvwrxBdPe3g==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Yang Yingliang <yangyingliang@huawei.com>,
@@ -41,12 +41,12 @@ Cc:     Yang Yingliang <yangyingliang@huawei.com>,
         Sebastian Reichel <sebastian.reichel@collabora.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 21/31] power: supply: s3c_adc_battery: fix possible use-after-free in s3c_adc_bat_remove()
-Date:   Mon,  3 May 2021 12:41:54 -0400
-Message-Id: <20210503164204.2854178-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 22/35] power: supply: s3c_adc_battery: fix possible use-after-free in s3c_adc_bat_remove()
+Date:   Mon,  3 May 2021 12:40:56 -0400
+Message-Id: <20210503164109.2853838-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210503164204.2854178-1-sashal@kernel.org>
-References: <20210503164204.2854178-1-sashal@kernel.org>
+In-Reply-To: <20210503164109.2853838-1-sashal@kernel.org>
+References: <20210503164109.2853838-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -78,10 +78,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/power/supply/s3c_adc_battery.c b/drivers/power/supply/s3c_adc_battery.c
-index 0ffe5cd3abf6..06b412c43aa7 100644
+index 3d00b35cafc9..8be31f80035c 100644
 --- a/drivers/power/supply/s3c_adc_battery.c
 +++ b/drivers/power/supply/s3c_adc_battery.c
-@@ -392,7 +392,7 @@ static int s3c_adc_bat_remove(struct platform_device *pdev)
+@@ -394,7 +394,7 @@ static int s3c_adc_bat_remove(struct platform_device *pdev)
  		gpio_free(pdata->gpio_charge_finished);
  	}
  
