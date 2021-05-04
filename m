@@ -2,140 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 607C7C433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 May 2021 19:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C80C433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 May 2021 12:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34918613B3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 May 2021 19:15:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5639D6105A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 May 2021 12:14:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229660AbhECTQK (ORCPT
+        id S230271AbhEDMPj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 May 2021 15:16:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57838 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbhECTQK (ORCPT
+        Tue, 4 May 2021 08:15:39 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:41494 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230188AbhEDMPi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 May 2021 15:16:10 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5233BC06138C
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 May 2021 12:15:16 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id g14so7605181edy.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 May 2021 12:15:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:mime-version
-         :content-disposition;
-        bh=fyFJP735XQXj4LkTnGwzm4qSEE25PUlvsZ5m+5XoeTg=;
-        b=R5TKedJKe8jFlf9lMHC2G4AqVWRJE0dTCT/4m3gzvsre1icWgKAlqnQ/n8OCP5qBu6
-         OD201KjlWSPNGB7YCWZ0BEgT0iiYzJnMY8R9kBq7QxnWO5Ec69yWP5imZDzfjfI87Icq
-         Vu9mz6P83IjWi+hHed0zvq1mo7iSp7BFBiuFo=
+        Tue, 4 May 2021 08:15:38 -0400
+Received: from mail-qt1-f199.google.com ([209.85.160.199])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1ldtwo-000149-Pj
+        for linux-samsung-soc@vger.kernel.org; Tue, 04 May 2021 12:14:42 +0000
+Received: by mail-qt1-f199.google.com with SMTP id s4-20020ac85cc40000b02901b59d9c0986so3399188qta.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 May 2021 05:14:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:mime-version:content-disposition;
-        bh=fyFJP735XQXj4LkTnGwzm4qSEE25PUlvsZ5m+5XoeTg=;
-        b=J8x0qSlCN3ejQUOWW9DJEvNi334jhywJnoI4svvxZX8faGFxQEGOohCqj6RUD+BkaR
-         2b61LQaRw8gKmrminP7ySh/3plhApRFShnoUVmD1mQ9M48tDOV8+F8RHLgXb6q1O0U3w
-         IDrSzY4VuAJIKRHWAH2Q3bNyQHDpFNBqDaGjGWEU0IlPqG1hZK8Wu8kfDDuFb6NppGa8
-         BaO8DrXpASb4v8CL4gy4xDqhXCjX2O4YOO2D0H+9KuHNJU+KWtKINZHKg2r81sRd9MZN
-         7t9vQVCmEEmBp8D96HUU/x8RwublOL+7ioIY5N+SAGN0lu3+J0Q9LQBeUIduAmwejyAC
-         kLYQ==
-X-Gm-Message-State: AOAM530OFiVxEwG8N549jm2IigOXVaIg+tlyhxvDUJ4R527kqup4GnUP
-        q6CeTh2YDqxUthxz78RrA3p3NxcSTB/a6Q==
-X-Google-Smtp-Source: ABdhPJwHjMUFJwM40ARD1fhW9cBMZs1N9ixtJyT4oagDjJlQdPziQznBELdraes2Gu2qzngLQrV4Pw==
-X-Received: by 2002:a05:6402:c8:: with SMTP id i8mr22275371edu.57.1620069315093;
-        Mon, 03 May 2021 12:15:15 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id sb20sm255703ejb.100.2021.05.03.12.15.14
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2jrHuSrwRsSBaANh1fW2x8t+NrzkJf+pmPZRwAI6hhI=;
+        b=dVg5Y1cu8GKDTPWZnsDqFBjOui/d6vltFSpGRSVN/onKvOUIVwhmEbedHvcCCNw/qd
+         oGPdxCujGtzDA0wAgePjPzh6BKDTXB71448su1hm2fRzjz0xptLCknIY7mZerM2MW1k7
+         04pxVxGRTiWX/datgaqjRi9IHsnquYi0Fmf5rVTJzdOURR9gRsm207Yxv8d23nD2ZVgv
+         3o+VN/q5Sbhj5+HA+CU3f7UboXuM6xdJ3Jqu7LDGPvpr0SXRgqWHw98g0xUmKFcIGZNe
+         pexEQYf6ae/S9mn6yGZuZ2abSU4Klfv2cfQdQyFOdpxH2E1vgfnshWdS9Wwmp5GJd67z
+         b+zw==
+X-Gm-Message-State: AOAM5306qZ4mxiFqLZa/3B9RBh4ZtALNrRvpVsGu62Zx7KZm7Lk175l/
+        q7JEtKLzWm6oq5qp2kd5wJUAu9ZOBRphpO+phJnlUsgbanZmCQeu4pGxeG/epdRUyt5bM72i99m
+        i0ct1mZQFX5Zw5KOqHgLnza65RFLEukrKbEIW0V1HViby+zoO
+X-Received: by 2002:a05:6214:a62:: with SMTP id ef2mr19916174qvb.31.1620130482023;
+        Tue, 04 May 2021 05:14:42 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyfTe7sTJl6AKixtSfV1yALubwrsCN0jqdi8R0pr10kYahin2lK2I1QmOQq1q4omwSb3OIA7g==
+X-Received: by 2002:a05:6214:a62:: with SMTP id ef2mr19916162qvb.31.1620130481914;
+        Tue, 04 May 2021 05:14:41 -0700 (PDT)
+Received: from localhost.localdomain ([45.237.49.5])
+        by smtp.gmail.com with ESMTPSA id v66sm10743990qkd.113.2021.05.04.05.14.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 May 2021 12:15:14 -0700 (PDT)
-Date:   Mon, 3 May 2021 21:15:08 +0200
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PULL] topic/iomem-mmap-vs-gup
-Message-ID: <YJBHiRiCGzojk25U@phenom.ffwll.local>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
+        Tue, 04 May 2021 05:14:41 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] MAINTAINERS: power: supply: use Krzysztof Kozlowski's Canonical address
+Date:   Tue,  4 May 2021 08:14:37 -0400
+Message-Id: <20210504121437.13424-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Operating-System: Linux phenom 5.10.32scarlett+ 
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Linus,
+Switch to Canonical address in S3C power supply driver, just like in
+other entries.
 
-It's still the same topic branch as last merge window, but the name isn't
-fitting all that well anymore :-)
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Anyway here's a small pull for you to ponder, now that the big ones are
-all through. It's been in -next almost the entire cycle, I've only done
-some non-code rebases due to the -rc1 fumble and to fix some commit
-message typos.
-
-Christoph Hellwig also looked at these and aside from wanting to outright
-remove it all didn't have objections.
-
-topic/iomem-mmap-vs-gup-2021-05-03:
-unexport follow_pfn
-
-Follow-up to my pull from last merge window: kvm and vfio lost their
-very unsafe use of follow_pfn, this appropriately marks up the very
-last user for some userptr-as-buffer use-cases in media. There was
-some resistance to outright removing it, maybe we can do this in a few
-releases.
-
-Cheers, Daniel
-
-The following changes since commit 0d02ec6b3136c73c09e7859f0d0e4e2c4c07b49b:
-
-  Linux 5.12-rc4 (2021-03-21 14:56:43 -0700)
-
-are available in the Git repository at:
-
-  git://anongit.freedesktop.org/drm/drm tags/topic/iomem-mmap-vs-gup-2021-05-03
-
-for you to fetch changes up to ac8b8400620a4b0d9ca903ee9ad440bec736f5fa:
-
-  mm: unexport follow_pfn (2021-04-08 16:54:38 +0200)
-
-----------------------------------------------------------------
-unexport follow_pfn
-
-Follow-up to my pull from last merge window: kvm and vfio lost their
-very unsafe use of follow_pfn, this appropriately marks up the very
-last user for some userptr-as-buffer use-cases in media. There was
-some resistance to outright removing it, maybe we can do this in a few
-releases.
-
-----------------------------------------------------------------
-Daniel Vetter (3):
-      mm: Add unsafe_follow_pfn
-      media/videobuf1|2: Mark follow_pfn usage as unsafe
-      mm: unexport follow_pfn
-
- drivers/media/common/videobuf2/frame_vector.c |  2 +-
- drivers/media/v4l2-core/videobuf-dma-contig.c |  2 +-
- include/linux/mm.h                            |  4 +--
- mm/memory.c                                   | 46 +++++++++++++++++----------
- mm/nommu.c                                    | 28 ++++++++++++----
- security/Kconfig                              | 13 ++++++++
- 6 files changed, 68 insertions(+), 27 deletions(-)
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1783372a608a..ccb9823fb77f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16021,7 +16021,7 @@ W:	http://www.ibm.com/developerworks/linux/linux390/
+ F:	drivers/s390/scsi/zfcp_*
+ 
+ S3C ADC BATTERY DRIVER
+-M:	Krzysztof Kozlowski <krzk@kernel.org>
++M:	Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Odd Fixes
+ F:	drivers/power/supply/s3c_adc_battery.c
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.25.1
+
