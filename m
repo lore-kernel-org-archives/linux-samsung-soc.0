@@ -2,94 +2,123 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C80C433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 May 2021 12:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1233C433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 09:38:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5639D6105A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 May 2021 12:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62D96613CD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 09:38:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230271AbhEDMPj (ORCPT
+        id S232409AbhEEJjT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 4 May 2021 08:15:39 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41494 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230188AbhEDMPi (ORCPT
+        Wed, 5 May 2021 05:39:19 -0400
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:45303 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232376AbhEEJjS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 May 2021 08:15:38 -0400
-Received: from mail-qt1-f199.google.com ([209.85.160.199])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1ldtwo-000149-Pj
-        for linux-samsung-soc@vger.kernel.org; Tue, 04 May 2021 12:14:42 +0000
-Received: by mail-qt1-f199.google.com with SMTP id s4-20020ac85cc40000b02901b59d9c0986so3399188qta.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 May 2021 05:14:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2jrHuSrwRsSBaANh1fW2x8t+NrzkJf+pmPZRwAI6hhI=;
-        b=dVg5Y1cu8GKDTPWZnsDqFBjOui/d6vltFSpGRSVN/onKvOUIVwhmEbedHvcCCNw/qd
-         oGPdxCujGtzDA0wAgePjPzh6BKDTXB71448su1hm2fRzjz0xptLCknIY7mZerM2MW1k7
-         04pxVxGRTiWX/datgaqjRi9IHsnquYi0Fmf5rVTJzdOURR9gRsm207Yxv8d23nD2ZVgv
-         3o+VN/q5Sbhj5+HA+CU3f7UboXuM6xdJ3Jqu7LDGPvpr0SXRgqWHw98g0xUmKFcIGZNe
-         pexEQYf6ae/S9mn6yGZuZ2abSU4Klfv2cfQdQyFOdpxH2E1vgfnshWdS9Wwmp5GJd67z
-         b+zw==
-X-Gm-Message-State: AOAM5306qZ4mxiFqLZa/3B9RBh4ZtALNrRvpVsGu62Zx7KZm7Lk175l/
-        q7JEtKLzWm6oq5qp2kd5wJUAu9ZOBRphpO+phJnlUsgbanZmCQeu4pGxeG/epdRUyt5bM72i99m
-        i0ct1mZQFX5Zw5KOqHgLnza65RFLEukrKbEIW0V1HViby+zoO
-X-Received: by 2002:a05:6214:a62:: with SMTP id ef2mr19916174qvb.31.1620130482023;
-        Tue, 04 May 2021 05:14:42 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyfTe7sTJl6AKixtSfV1yALubwrsCN0jqdi8R0pr10kYahin2lK2I1QmOQq1q4omwSb3OIA7g==
-X-Received: by 2002:a05:6214:a62:: with SMTP id ef2mr19916162qvb.31.1620130481914;
-        Tue, 04 May 2021 05:14:41 -0700 (PDT)
-Received: from localhost.localdomain ([45.237.49.5])
-        by smtp.gmail.com with ESMTPSA id v66sm10743990qkd.113.2021.05.04.05.14.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 May 2021 05:14:41 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] MAINTAINERS: power: supply: use Krzysztof Kozlowski's Canonical address
-Date:   Tue,  4 May 2021 08:14:37 -0400
-Message-Id: <20210504121437.13424-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 5 May 2021 05:39:18 -0400
+X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 May 2021 05:39:18 EDT
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id eDs0lkg6lyEWweDs3lupll; Wed, 05 May 2021 11:31:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
+        t=1620207074; bh=1f2m7EYMttRsQnXbEhfemDohFdPiPwDAM81ywOimWUo=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=UpLNkD2W8VUOtGSl5shiX4yuPXA0FjY552bHDeayXXJ3caN/njoWO3i24ZqKUoQ8V
+         4C55dfqvBdOyXSR2XHk8woIKVgmVRmJvEclx0cgRMPjKt3eqld6Xg3yJw3fVIeiiO7
+         lWDTTnthGim5DcvltKy/paUSJG7i+EWSpyl+M13uHXJpvcZg97dZnfwzOVdudWaS+3
+         uIKmF+QRREUN0XStCcjKSJgN7RlO+z/FkgxdwWu1haLHswZy89QL7YXzgufeCq3vcQ
+         qaEfAr7BZ5h8/hKyMiSNE5i7FNeInPd8FbqDMs10eoB58WStywZZ8CaH4aVReqzoUY
+         KGfgCxR1nrb+w==
+Subject: Re: [PATCH v3] media:exynos4-is: Fix a use after free in
+ isp_video_release
+To:     Lv Yunlong <lyl2019@mail.ustc.edu.cn>, s.nawrocki@samsung.com,
+        mchehab@kernel.org, krzk@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210427132734.5212-1-lyl2019@mail.ustc.edu.cn>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <44f264d9-e039-66b6-6e4b-1a5b3c386aa4@xs4all.nl>
+Date:   Wed, 5 May 2021 11:31:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210427132734.5212-1-lyl2019@mail.ustc.edu.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfBUyQI064gF4n7oUEovx3XiNBp/e9PzY0hj0Lc/zTjmgz1NsUparW1XpjD4P/9bfkAy2U1EmrVbxjKrdXDC0Z0MTg937lbs2QDPtutWYJCvvl46rkHYr
+ fIN3YjCzyhLXAD/57J2rV2YQ1EOdCiToNxcGcur35RsIIVAZW25TXzE6za5DytSGVvsyqtYaQvfntzHb3nxI8wKbt8SKgR//emp7Ph2B51dlEoA2jzC3BiG4
+ Csf+FjxuRSlEc4HE9uy65x34UWjhva3UzRQC1gz2OzmssN6a5VeN3P6Pu0NpE3VgC4aLpqLg3mvG1UtcpQUIfIRTObhUGSbhpz4HFRvPTscgWcTI2erqR7R6
+ oRLbhGM31if61UpPUzJAhN0yPX9ta703jdZy2hl3/KJS5FuIcODwCd+fOgAjLoouNXxMRu8o9WhLGVLoaOZFiO/MlmPNI+TfetsJDsX4QkmewDSAOZg=
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Switch to Canonical address in S3C power supply driver, just like in
-other entries.
+Hi Lv Yunlong,
 
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 27/04/2021 15:27, Lv Yunlong wrote:
+> In isp_video_release, file->private_data is freed via
+> _vb2_fop_release()->v4l2_fh_release(). But the freed
+> file->private_data is still used in v4l2_fh_is_singular_file()
+> ->v4l2_fh_is_singular(file->private_data), which is a use
+> after free bug.
+> 
+> My patch sets file->private_data to NULL after _vb2_fop_release()
+> to avoid the use after free, and uses a variable 'is_singular_file'
+> to keep the original function unchanged.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1783372a608a..ccb9823fb77f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16021,7 +16021,7 @@ W:	http://www.ibm.com/developerworks/linux/linux390/
- F:	drivers/s390/scsi/zfcp_*
- 
- S3C ADC BATTERY DRIVER
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
- L:	linux-samsung-soc@vger.kernel.org
- S:	Odd Fixes
- F:	drivers/power/supply/s3c_adc_battery.c
--- 
-2.25.1
+Actually, it is the use of 'is_singular_file' that fixes the bug,
+the 'file->private_data = NULL;' is unnecessary here.
+
+That said, it would be a really good idea if in a separate patch you
+make v4l2_fh_release() more robust by setting filp->private_data to
+NULL after the kfree(fh).
+
+Regards,
+
+	Hans
+
+> 
+> Fixes: 34947b8aebe3f ("[media] exynos4-is: Add the FIMC-IS ISP capture DMA driver")
+> Signed-off-by: Lv Yunlong <lyl2019@mail.ustc.edu.cn>
+> ---
+>  drivers/media/platform/exynos4-is/fimc-isp-video.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+> index 612b9872afc8..c07dcb0bccc2 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+> @@ -306,17 +306,21 @@ static int isp_video_release(struct file *file)
+>  	struct fimc_is_video *ivc = &isp->video_capture;
+>  	struct media_entity *entity = &ivc->ve.vdev.entity;
+>  	struct media_device *mdev = entity->graph_obj.mdev;
+> +	bool is_singular_file;
+>  
+>  	mutex_lock(&isp->video_lock);
+>  
+> -	if (v4l2_fh_is_singular_file(file) && ivc->streaming) {
+> +	is_singular_file = v4l2_fh_is_singular_file(file);
+> +
+> +	if (is_singular_file && ivc->streaming) {
+>  		media_pipeline_stop(entity);
+>  		ivc->streaming = 0;
+>  	}
+>  
+>  	_vb2_fop_release(file, NULL);
+> +	file->private_data = NULL;
+>  
+> -	if (v4l2_fh_is_singular_file(file)) {
+> +	if (is_singular_file) {
+>  		fimc_pipeline_call(&ivc->ve, close);
+>  
+>  		mutex_lock(&mdev->graph_mutex);
+> 
 
