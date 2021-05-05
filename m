@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6589C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 12:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 263C3C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 12:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76E42613BF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 12:25:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCD22613B3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 12:28:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233311AbhEEM0o (ORCPT
+        id S232605AbhEEM3v (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 May 2021 08:26:44 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3020 "EHLO
+        Wed, 5 May 2021 08:29:51 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3023 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233167AbhEEM0o (ORCPT
+        with ESMTP id S231633AbhEEM3v (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 May 2021 08:26:44 -0400
-Received: from fraeml709-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FZwhS2R9Nz6rlbj;
-        Wed,  5 May 2021 20:17:44 +0800 (CST)
+        Wed, 5 May 2021 08:29:51 -0400
+Received: from fraeml735-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FZwm33Mzmz6rlcW;
+        Wed,  5 May 2021 20:20:51 +0800 (CST)
 Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- fraeml709-chm.china.huawei.com (10.206.15.37) with Microsoft SMTP Server
+ fraeml735-chm.china.huawei.com (10.206.15.216) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 5 May 2021 14:25:46 +0200
+ 15.1.2176.2; Wed, 5 May 2021 14:28:53 +0200
 Received: from localhost (10.52.120.138) by lhreml710-chm.china.huawei.com
  (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Wed, 5 May 2021
- 13:25:45 +0100
-Date:   Wed, 5 May 2021 13:24:06 +0100
+ 13:28:52 +0100
+Date:   Wed, 5 May 2021 13:27:13 +0100
 From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
 To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 CC:     <linuxarm@huawei.com>, <mauro.chehab@huawei.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Kamil Debski <kamil@wypas.org>,
-        "Marek Szyprowski" <m.szyprowski@samsung.com>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@canonical.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        "Sylwester Nawrocki" <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 04/25] media: s5p_cec: decrement usage count if disabled
-Message-ID: <20210505132406.00003050@Huawei.com>
-In-Reply-To: <a1c4c8a65061897f66ef119ddfd8ae858eec8a6d.1620207353.git.mchehab+huawei@kernel.org>
+        <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [PATCH 07/25] media: exynos-gsc: don't resume at remove time
+Message-ID: <20210505132713.000000ba@Huawei.com>
+In-Reply-To: <f90e4f9b1dbc71f2a598f057a93dffc69fa3850d.1620207353.git.mchehab+huawei@kernel.org>
 References: <cover.1620207353.git.mchehab+huawei@kernel.org>
-        <a1c4c8a65061897f66ef119ddfd8ae858eec8a6d.1620207353.git.mchehab+huawei@kernel.org>
+        <f90e4f9b1dbc71f2a598f057a93dffc69fa3850d.1620207353.git.mchehab+huawei@kernel.org>
 Organization: Huawei Technologies Research and Development (UK) Ltd.
 X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
 MIME-Version: 1.0
@@ -61,34 +62,54 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 5 May 2021 11:41:54 +0200
+On Wed, 5 May 2021 11:41:57 +0200
 Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-> There's a bug at s5p_cec_adap_enable(): if called to
-> disable the device, it should call pm_runtime_put()
-> instead of pm_runtime_disable(), as the goal here is to
-> decrement the usage_count and not to disable PM runtime.
+> Calling pm_runtime_get_sync() at driver's removal time is not
+> needed, as this will resume PM runtime. Also, the PM runtime
+> code at pm_runtime_disable() already calls it, if it detects
+> the need.
 > 
-> Reported-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Fixes: 1bcbf6f4b6b0 ("[media] cec: s5p-cec: Add s5p-cec driver")
+> So, change the logic in order to disable PM runtime earlier.
+> 
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Seems sensible and a lot more along the lines of what I'd expect
+to see than was originally here.
+
 Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
 > ---
->  drivers/media/cec/platform/s5p/s5p_cec.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/media/platform/exynos-gsc/gsc-core.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
-> index 2a3e7ffefe0a..3c7c4c3c798c 100644
-> --- a/drivers/media/cec/platform/s5p/s5p_cec.c
-> +++ b/drivers/media/cec/platform/s5p/s5p_cec.c
-> @@ -51,7 +51,7 @@ static int s5p_cec_adap_enable(struct cec_adapter *adap, bool enable)
->  	} else {
->  		s5p_cec_mask_tx_interrupts(cec);
->  		s5p_cec_mask_rx_interrupts(cec);
-> -		pm_runtime_disable(cec->dev);
-> +		pm_runtime_put(cec->dev);
->  	}
+> diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+> index 9f41c2e7097a..f49f3322f835 100644
+> --- a/drivers/media/platform/exynos-gsc/gsc-core.c
+> +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+> @@ -1210,18 +1210,19 @@ static int gsc_remove(struct platform_device *pdev)
+>  	struct gsc_dev *gsc = platform_get_drvdata(pdev);
+>  	int i;
 >  
+> -	pm_runtime_get_sync(&pdev->dev);
+> -
+>  	gsc_unregister_m2m_device(gsc);
+>  	v4l2_device_unregister(&gsc->v4l2_dev);
+>  
+>  	vb2_dma_contig_clear_max_seg_size(&pdev->dev);
+> -	for (i = 0; i < gsc->num_clocks; i++)
+> -		clk_disable_unprepare(gsc->clock[i]);
+>  
+> -	pm_runtime_put_noidle(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+>  
+> +	if (!pm_runtime_status_suspended(&pdev->dev))
+> +		for (i = 0; i < gsc->num_clocks; i++)
+> +			clk_disable_unprepare(gsc->clock[i]);
+> +
+> +	pm_runtime_set_suspended(&pdev->dev);
+> +
+>  	dev_dbg(&pdev->dev, "%s driver unloaded\n", pdev->name);
 >  	return 0;
+>  }
 
