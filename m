@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E891BC4361B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 09:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D06C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 09:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8B9C613ED
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 09:42:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04C9561106
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 09:42:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232553AbhEEJnT (ORCPT
+        id S232625AbhEEJnW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 May 2021 05:43:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48636 "EHLO mail.kernel.org"
+        Wed, 5 May 2021 05:43:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232413AbhEEJnQ (ORCPT
+        id S232495AbhEEJnR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 May 2021 05:43:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 440076141C;
+        Wed, 5 May 2021 05:43:17 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9E07561574;
         Wed,  5 May 2021 09:42:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1620207739;
-        bh=e6cg3vt5gdRSnzuWDjBWlr3jZ9qzDtzBe//Hw9aDZms=;
+        bh=YXL+gA4goxj5s7MMwTgNIwMfazgaE4VAbN8eHBvZ4x4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UTRFnfuFAjc8bTsLJzXYCs7bJJiLrJT4aQkq1wE9ELZ6bKZpIV6DU2/2WkfulFbcY
-         cPj0VkZ3DAStETq7XrOAHya7zoBwOUAHf+uBYsaugIK2BUoPEEe3EIZiCXKxs/H3PY
-         S1h4gng4dzYhzkIbwKC4FdNUn5hhX/jlvDXh1hQ2fZlbOI1zLz5ag+IGIh73Y2393A
-         tHkNN1cFwcAc2/pPzizSb1l8tNLjGGzGmumw9eyhWgCrXvEmc52XZSyALnDEbkMIhF
-         AOHskWLYGBMnAxEGxWrWYKHX9r+giFf3kl/zSllgbc8vInNM8g3KVFaa0jolGb1PLT
-         nu9zA4ms+MRMA==
+        b=uOp+Ty69wRZVl3P+vvXIUlGYDh3ay+6S+YyfcKN1CT3Jme/0sPsvIppoJDG83Ju8R
+         8xYian6y1N4CZxugY3gFZJbOoyS0leNUBXNYaws9CSN8nc8wzyAjmlJS5E/4BaecLP
+         6+7NnEgLJrYAd4E/vIZF1lqkOYW2A2IDBy4RtoVjNxejWauNkwc0YbOS3NtcI5KJba
+         vnIB7fVnDhzE9bdEVsVQYJtcakBROkoOhTXOTFQSpI8hCUbnPKXkZ8liJpfnCqqtqS
+         fCoSll02cfuw87x5iK/Nhwaey5Oiw27cL09Plyan79ObHMLRlUJXbqLptv0Hm4niUw
+         IPv5nnCUdmdTw==
 Received: by mail.kernel.org with local (Exim 4.94)
         (envelope-from <mchehab@kernel.org>)
-        id 1leE2r-00AHwX-8H; Wed, 05 May 2021 11:42:17 +0200
+        id 1leE2r-00AHwy-KJ; Wed, 05 May 2021 11:42:17 +0200
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 15/25] media: s5p: fix pm_runtime_get_sync() usage count
-Date:   Wed,  5 May 2021 11:42:05 +0200
-Message-Id: <57a141a2c538b253f1c9502a790c370007d2ed83.1620207353.git.mchehab+huawei@kernel.org>
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 24/25] media: exynos-gsc: fix pm_runtime_get_sync() usage count
+Date:   Wed,  5 May 2021 11:42:14 +0200
+Message-Id: <d73f24e33fb9b1cc0ff968bec833184c6510b9ec.1620207353.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <cover.1620207353.git.mchehab+huawei@kernel.org>
 References: <cover.1620207353.git.mchehab+huawei@kernel.org>
@@ -66,35 +67,31 @@ commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with us
 in order to properly decrement the usage counter, avoiding
 a potential PM usage counter leak.
 
-While here, check if the PM runtime error was caught at
-s5p_cec_adap_enable().
+As a bonus, as pm_runtime_get_sync() always return 0 on
+success, the logic can be simplified.
 
 Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/media/cec/platform/s5p/s5p_cec.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/media/platform/exynos-gsc/gsc-m2m.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
-index 3c7c4c3c798c..028a09a7531e 100644
---- a/drivers/media/cec/platform/s5p/s5p_cec.c
-+++ b/drivers/media/cec/platform/s5p/s5p_cec.c
-@@ -35,10 +35,13 @@ MODULE_PARM_DESC(debug, "debug level (0-2)");
- 
- static int s5p_cec_adap_enable(struct cec_adapter *adap, bool enable)
+diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+index 27a3c92c73bc..f1cf847d1cc2 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
++++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+@@ -56,10 +56,8 @@ static void __gsc_m2m_job_abort(struct gsc_ctx *ctx)
+ static int gsc_m2m_start_streaming(struct vb2_queue *q, unsigned int count)
  {
-+	int ret;
- 	struct s5p_cec_dev *cec = cec_get_drvdata(adap);
+ 	struct gsc_ctx *ctx = q->drv_priv;
+-	int ret;
  
- 	if (enable) {
--		pm_runtime_get_sync(cec->dev);
-+		ret = pm_runtime_resume_and_get(cec->dev);
-+		if (ret < 0)
-+			return ret;
+-	ret = pm_runtime_get_sync(&ctx->gsc_dev->pdev->dev);
+-	return ret > 0 ? 0 : ret;
++	return pm_runtime_resume_and_get(&ctx->gsc_dev->pdev->dev);
+ }
  
- 		s5p_cec_reset(cec);
- 
+ static void __gsc_m2m_cleanup_queue(struct gsc_ctx *ctx)
 -- 
 2.30.2
 
