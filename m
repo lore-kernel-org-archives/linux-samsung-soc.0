@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5914C433B4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB31BC43460
 	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 17:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B872611AC
+	by mail.kernel.org (Postfix) with ESMTP id A2554613C9
 	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 17:12:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237336AbhEERM4 (ORCPT
+        id S238191AbhEERM7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 May 2021 13:12:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60882 "EHLO mail.kernel.org"
+        Wed, 5 May 2021 13:12:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237779AbhEERBL (ORCPT
+        id S237078AbhEERBp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 May 2021 13:01:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id ECCBE619D2;
-        Wed,  5 May 2021 16:40:29 +0000 (UTC)
+        Wed, 5 May 2021 13:01:45 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D45CC61613;
+        Wed,  5 May 2021 16:41:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620232831;
-        bh=lRWOFZZdFcXJHZioD0M718stWo9ko2E+ZUUFumUjtZQ=;
+        s=k20201202; t=1620232872;
+        bh=6Y5i4m5xCXTHXcjcTm1/tQMuYDcrC7o+ggBgjbU9qFg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A4C+LINtdAXkKKxHNdw3Il+3KURqtSUWv99oXkZZIHnaRc8JmACEjJixvUveVVL7F
-         161kzzSCOMrrOujR2iRTTiPPMxyfmk4r9jsAkI+K2lFKklEit5wIAn4OiyMup0rFNo
-         0GkJGOZm6iSDvVR3LDc8tLyd/VGDl5BKYIzlkvzAT8ueZh1wqXj+uflwHBkWXDOss+
-         pqQr1j/wyRwO8JAhOB1afXZIi8V/qU8pKZ6RARkcvUnry5sxGauFOlTeKJ2bLjkBiP
-         w3DM46mlZ4XAgY9VCnBA0ugaSvv5Ztbo4cMSfRXVNQRSo8HAgcs/8eJpSeJN8HzF+P
-         TaFZrgsLGuNEA==
+        b=kkYwLMkSrCINW6bmUb3KsmZDr9Ei4FMDkgdgF19292O5lSKthH9ag8tlgECvj4AT/
+         DVtQ+CpDbgjaRhH4ephUrv3zZE/s+JvtG/AU5OocVEB+NbdfEgauzCoQfhm/AvYrD5
+         BXSS8qR3Qsdxnxv7InLgV7Gv6dNTd/PI73OhocSYfV+0EwpoMH+Lo0KRYixNW2cIY/
+         cqfWWsIGZzBP4YLiTpgqqbcm1p3JLiWi/MKJWb1KFqoCugzAHIv24s9XhCUSSnp12S
+         Z+dCCkO4ViZ+L0RsLqsnU5auL30v3seLLhbwd6MiKlJz6c5eNlA5ufoLWgPu8uFqsI
+         lnDMWgKoQNgKQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -41,12 +41,12 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 18/32] pinctrl: samsung: use 'int' for register masks in Exynos
-Date:   Wed,  5 May 2021 12:39:50 -0400
-Message-Id: <20210505164004.3463707-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 13/25] pinctrl: samsung: use 'int' for register masks in Exynos
+Date:   Wed,  5 May 2021 12:40:39 -0400
+Message-Id: <20210505164051.3464020-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210505164004.3463707-1-sashal@kernel.org>
-References: <20210505164004.3463707-1-sashal@kernel.org>
+In-Reply-To: <20210505164051.3464020-1-sashal@kernel.org>
+References: <20210505164051.3464020-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -78,7 +78,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 24956f6c6324..7f764f751c4f 100644
+index 6925a3d969e2..13d6a50ca96c 100644
 --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
 +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
 @@ -55,7 +55,7 @@ static void exynos_irq_mask(struct irq_data *irqd)
@@ -99,7 +99,7 @@ index 24956f6c6324..7f764f751c4f 100644
  	unsigned long flags;
  
  	/*
-@@ -482,7 +482,7 @@ static void exynos_irq_eint0_15(struct irq_desc *desc)
+@@ -409,7 +409,7 @@ static void exynos_irq_eint0_15(struct irq_desc *desc)
  	chained_irq_exit(chip, desc);
  }
  
@@ -108,7 +108,7 @@ index 24956f6c6324..7f764f751c4f 100644
  						struct irq_domain *domain)
  {
  	unsigned int irq;
-@@ -499,8 +499,8 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
+@@ -426,8 +426,8 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
  {
  	struct irq_chip *chip = irq_desc_get_chip(desc);
  	struct exynos_muxed_weint_data *eintd = irq_desc_get_handler_data(desc);
