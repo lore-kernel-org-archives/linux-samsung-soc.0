@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5256C43462
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 16:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43614C4363F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 16:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9EA296142D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 16:35:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1415D613C3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 16:46:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234944AbhEEQgL (ORCPT
+        id S235839AbhEEQrK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 May 2021 12:36:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53084 "EHLO mail.kernel.org"
+        Wed, 5 May 2021 12:47:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234675AbhEEQeR (ORCPT
+        id S235646AbhEEQoY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 May 2021 12:34:17 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8454461432;
-        Wed,  5 May 2021 16:32:38 +0000 (UTC)
+        Wed, 5 May 2021 12:44:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 270696188B;
+        Wed,  5 May 2021 16:35:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620232359;
-        bh=B+EMqvSUBUldqZ6ClL7veoudJmVUUSPY1yhJymXxLwk=;
+        s=k20201202; t=1620232524;
+        bh=bXR9zrYF/jS7VUoMPXUgazrfG/zyt/AibQaEBDojonw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ci+VNHpbMLyOjkOt+WN3mkr/R0g2c2j/crp9bQP62qH2dsfu/bhMItFH/rHU2Nk2P
-         A20xhFMuQW1h65AqNjKD2/nyDWmOp1u7azsw/orLHpKYzydQ6p58ExURfalj8QLNG1
-         Ah3eWeqbN03e20e0A8i8mYWehujz/7mY2+vKapmtCYP3F4fw5tHmUs9n3yGImvVs2L
-         CNntwrKvr83HYoO5lmZr3j4XqMQIGthAZGRR0bCWVvGSKNAKJLDZwegg43tKrlc+/R
-         dRj2RzXgnUzkSlE7rFIn2Pgy7GxqmcRbiILBzEMETgLYvUHG7R+2FzUidTk/yThN9E
-         4QUXSzJ0pcq3A==
+        b=kZOnmyzjC7oLyKbRENMB1KnxYOVo8wHyQChPS9KkbPySfxNcjot0enARJkIZ+f8mU
+         SRYD2amaFr4oAwb7HjWU6nPuW4cY7v62l6/HccUbKIRMacD57vweDnamyiPajVUZ0P
+         NRX/vchW5CdVd6RsRqX0esPImowfvs9RJDro6YLag6O/rJtkyPukiNH870xIcvzI2X
+         e3f0gklFsdwK0BMrSn7GV+2Yvd2a5rHa5dTIge5uCpaM9dZTVEZJsYB5VLmOxodhwL
+         dR6VMq1RHAvR4LRjh3KdIUt20UAzYBcl9xOFzWmNuImq6jDNYf9JOdL1H8xePkap6o
+         jXCLylvkDyURw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -41,12 +41,12 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.12 054/116] pinctrl: samsung: use 'int' for register masks in Exynos
-Date:   Wed,  5 May 2021 12:30:22 -0400
-Message-Id: <20210505163125.3460440-54-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.11 049/104] pinctrl: samsung: use 'int' for register masks in Exynos
+Date:   Wed,  5 May 2021 12:33:18 -0400
+Message-Id: <20210505163413.3461611-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210505163125.3460440-1-sashal@kernel.org>
-References: <20210505163125.3460440-1-sashal@kernel.org>
+In-Reply-To: <20210505163413.3461611-1-sashal@kernel.org>
+References: <20210505163413.3461611-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -78,7 +78,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 0cd7f33cdf25..2b99f4130e1e 100644
+index b9ea09fabf84..493079a47d05 100644
 --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
 +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
 @@ -55,7 +55,7 @@ static void exynos_irq_mask(struct irq_data *irqd)
@@ -89,7 +89,7 @@ index 0cd7f33cdf25..2b99f4130e1e 100644
 +	unsigned int mask;
  	unsigned long flags;
  
- 	raw_spin_lock_irqsave(&bank->slock, flags);
+ 	spin_lock_irqsave(&bank->slock, flags);
 @@ -83,7 +83,7 @@ static void exynos_irq_unmask(struct irq_data *irqd)
  	struct exynos_irq_chip *our_chip = to_exynos_irq_chip(chip);
  	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
