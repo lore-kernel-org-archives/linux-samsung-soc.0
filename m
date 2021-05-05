@@ -5,48 +5,51 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AEE0C433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 12:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF7AC433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 12:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB7C6613AA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 12:33:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7614F608FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 12:36:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233204AbhEEMeb (ORCPT
+        id S233155AbhEEMhb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 May 2021 08:34:31 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3025 "EHLO
+        Wed, 5 May 2021 08:37:31 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3031 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229793AbhEEMe3 (ORCPT
+        with ESMTP id S229793AbhEEMh2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 May 2021 08:34:29 -0400
-Received: from fraeml711-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FZwvz13Gpz72f1w;
-        Wed,  5 May 2021 20:27:43 +0800 (CST)
+        Wed, 5 May 2021 08:37:28 -0400
+Received: from fraeml701-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FZwwq3HLLz6rlcd;
+        Wed,  5 May 2021 20:28:27 +0800 (CST)
 Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- fraeml711-chm.china.huawei.com (10.206.15.60) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 5 May 2021 14:33:31 +0200
+ fraeml701-chm.china.huawei.com (10.206.15.50) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Wed, 5 May 2021 14:36:29 +0200
 Received: from localhost (10.52.120.138) by lhreml710-chm.china.huawei.com
  (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Wed, 5 May 2021
- 13:33:30 +0100
-Date:   Wed, 5 May 2021 13:31:52 +0100
+ 13:36:28 +0100
+Date:   Wed, 5 May 2021 13:34:50 +0100
 From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
 To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 CC:     <linuxarm@huawei.com>, <mauro.chehab@huawei.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@canonical.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        "Sylwester Nawrocki" <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 15/25] media: s5p: fix pm_runtime_get_sync() usage count
-Message-ID: <20210505133152.000017ff@Huawei.com>
-In-Reply-To: <57a141a2c538b253f1c9502a790c370007d2ed83.1620207353.git.mchehab+huawei@kernel.org>
+        <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [PATCH 24/25] media: exynos-gsc: fix pm_runtime_get_sync()
+ usage count
+Message-ID: <20210505133450.00001fda@Huawei.com>
+In-Reply-To: <d73f24e33fb9b1cc0ff968bec833184c6510b9ec.1620207353.git.mchehab+huawei@kernel.org>
 References: <cover.1620207353.git.mchehab+huawei@kernel.org>
-        <57a141a2c538b253f1c9502a790c370007d2ed83.1620207353.git.mchehab+huawei@kernel.org>
+        <d73f24e33fb9b1cc0ff968bec833184c6510b9ec.1620207353.git.mchehab+huawei@kernel.org>
 Organization: Huawei Technologies Research and Development (UK) Ltd.
 X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
 MIME-Version: 1.0
@@ -60,7 +63,7 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 5 May 2021 11:42:05 +0200
+On Wed, 5 May 2021 11:42:14 +0200
 Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
 > The pm_runtime_get_sync() internally increments the
@@ -70,35 +73,31 @@ Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 > in order to properly decrement the usage counter, avoiding
 > a potential PM usage counter leak.
 > 
-> While here, check if the PM runtime error was caught at
-> s5p_cec_adap_enable().
+> As a bonus, as pm_runtime_get_sync() always return 0 on
+> success, the logic can be simplified.
 > 
 > Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
 > ---
->  drivers/media/cec/platform/s5p/s5p_cec.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  drivers/media/platform/exynos-gsc/gsc-m2m.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
-> index 3c7c4c3c798c..028a09a7531e 100644
-> --- a/drivers/media/cec/platform/s5p/s5p_cec.c
-> +++ b/drivers/media/cec/platform/s5p/s5p_cec.c
-> @@ -35,10 +35,13 @@ MODULE_PARM_DESC(debug, "debug level (0-2)");
->  
->  static int s5p_cec_adap_enable(struct cec_adapter *adap, bool enable)
+> diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+> index 27a3c92c73bc..f1cf847d1cc2 100644
+> --- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
+> +++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+> @@ -56,10 +56,8 @@ static void __gsc_m2m_job_abort(struct gsc_ctx *ctx)
+>  static int gsc_m2m_start_streaming(struct vb2_queue *q, unsigned int count)
 >  {
-> +	int ret;
->  	struct s5p_cec_dev *cec = cec_get_drvdata(adap);
+>  	struct gsc_ctx *ctx = q->drv_priv;
+> -	int ret;
 >  
->  	if (enable) {
-> -		pm_runtime_get_sync(cec->dev);
-> +		ret = pm_runtime_resume_and_get(cec->dev);
-> +		if (ret < 0)
-> +			return ret;
+> -	ret = pm_runtime_get_sync(&ctx->gsc_dev->pdev->dev);
+> -	return ret > 0 ? 0 : ret;
+> +	return pm_runtime_resume_and_get(&ctx->gsc_dev->pdev->dev);
+>  }
 >  
->  		s5p_cec_reset(cec);
->  
+>  static void __gsc_m2m_cleanup_queue(struct gsc_ctx *ctx)
 
