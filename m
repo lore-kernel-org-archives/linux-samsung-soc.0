@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93473C433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 14:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F2DC43460
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 14:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 631DE610A1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 14:02:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57001613BE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 14:02:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233754AbhEEODW (ORCPT
+        id S233718AbhEEODc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 May 2021 10:03:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54845 "EHLO
+        Wed, 5 May 2021 10:03:32 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54851 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233721AbhEEODO (ORCPT
+        with ESMTP id S233706AbhEEODU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 May 2021 10:03:14 -0400
-Received: from mail-qv1-f72.google.com ([209.85.219.72])
+        Wed, 5 May 2021 10:03:20 -0400
+Received: from mail-qk1-f199.google.com ([209.85.222.199])
         by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1leI6S-0008TA-Ik
-        for linux-samsung-soc@vger.kernel.org; Wed, 05 May 2021 14:02:16 +0000
-Received: by mail-qv1-f72.google.com with SMTP id b1-20020a0c9b010000b02901c4bcfbaa53so1701606qve.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 May 2021 07:02:16 -0700 (PDT)
+        id 1leI6X-0008Ul-RD
+        for linux-samsung-soc@vger.kernel.org; Wed, 05 May 2021 14:02:21 +0000
+Received: by mail-qk1-f199.google.com with SMTP id s10-20020a05620a030ab02902e061a1661fso1181640qkm.12
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 May 2021 07:02:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Q9OdBSHulNH5gFLHkIOCDv8QntRXx2/eXhHIjzSoClg=;
-        b=BLkbQtnXTGt7uyN4ejK7gADbZ8qHo7TUuuWAhevkUEkPbWUwWlFYFky9nqZtSkKcDe
-         gRelLabwTfp9045k+tOeQ3O+c48n4ECFBrxFNL+nqML0mPx41IzCPELpM98FVO9qD5qd
-         /zoEr/20z46dovIAonTA5JVGZC6RNJj10ixxIbO4vej36Why/WUV0nF4PjeLp8qfhos/
-         gmwLKB9HC8zmrXTmMbaFpS8GqCz+n+XD1xt1zYzLEC1lvbNnozaJB2kV8sHcFv2bUBc6
-         p4rcAg1n55b5MDDXgPoYly5o/QcT9QZtYXGiaZ0yryl1PHVdMC4vnQ1Bi3iC1ROICktC
-         bIig==
-X-Gm-Message-State: AOAM531Ak2PLazwiO+namnufFZQs6SBQ+mY7SSLywPWJL55I9mJzkitm
-        QStKMogxy87sMmfHqNJIJhW+paPSdu45++2OH9m9rO2xo1V+9z1V+Z2Z2A+Y6ZOTMO4GqgJXo+l
-        xiUkQqV7JIkdX2EP7d2QssaHHVxCV+GWUGAtjeDApGxim0dL2
-X-Received: by 2002:a05:620a:2081:: with SMTP id e1mr18232287qka.44.1620223335448;
-        Wed, 05 May 2021 07:02:15 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwFRA7bKadLLvqEd32kd6vTBdINVWvP6c1I10p6p624rchszik9cN6XscoMa8hghI9bn7rsqQ==
-X-Received: by 2002:a05:620a:2081:: with SMTP id e1mr18232273qka.44.1620223335283;
-        Wed, 05 May 2021 07:02:15 -0700 (PDT)
+        bh=aFybNoYvXXuMhUMueJoFGIOzsnT8VCCuO9x/0O6WW3Q=;
+        b=krNDotDwST7V/ElRceM6afu3UPJ2P/UX4c76dgVdvRq6kMx2yK2RLg3L6ngvVn6wAQ
+         dAfO09Fd3xzbORu8QX7d1nCs/rmZXWiswlJOGquFNAsa1+Fd9QyRuk0F3qT0CD4ovj2n
+         ezBsffs1eVc5sraoybPw8lZ1kj5OwuKN67431rARzDDmp+V4zNaCT2jyCQswak1Ptcai
+         JD7LpujNdCpKIlZwqRiHyhr0ryIe81EvPk/eIBbyhzHYn2BWTmkPu8W+LdDB6QemBszO
+         kA9+4W+wmrwEgAlEmEK/NGnH7d+QPluyuKMZYPs8LQ0F5F5en4oMXAWyU6+HLLeaPX+E
+         ABuA==
+X-Gm-Message-State: AOAM533TpzNntS09g8VB2EBqjCjvOUPV9rrPqW7hpnDds2xRTRitQIOB
+        ijZ2n6iRdsK2yUkLyyQz7knomOsSsHEdoiN+R7FidAzWX2RYXiLstNdYzI+r2JcWpB+owv/zbY+
+        CPnEMZp42BdTsDaQw0RzcdTbjOBxC+SVe6tyYtCouzSUH675K
+X-Received: by 2002:a05:620a:4008:: with SMTP id h8mr30402467qko.366.1620223339202;
+        Wed, 05 May 2021 07:02:19 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxIh64S24rt8pIj4QLk85n1rPZ1rAb4wDfcLPTkMNb4AjA8b8DYcHICmN8fDtMnm0CAKo0PHQ==
+X-Received: by 2002:a05:620a:4008:: with SMTP id h8mr30402338qko.366.1620223337602;
+        Wed, 05 May 2021 07:02:17 -0700 (PDT)
 Received: from localhost.localdomain ([45.237.49.2])
-        by smtp.gmail.com with ESMTPSA id 97sm5016632qte.20.2021.05.05.07.02.13
+        by smtp.gmail.com with ESMTPSA id 97sm5016632qte.20.2021.05.05.07.02.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 May 2021 07:02:14 -0700 (PDT)
+        Wed, 05 May 2021 07:02:16 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] ARM: dts: exynos: fix PWM LED max brightness on Odroid HC1
-Date:   Wed,  5 May 2021 09:59:40 -0400
-Message-Id: <20210505135941.59898-4-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 5/5] ARM: dts: exynos: fix PWM LED max brightness on Odroid XU4
+Date:   Wed,  5 May 2021 09:59:41 -0400
+Message-Id: <20210505135941.59898-5-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210505135941.59898-1-krzysztof.kozlowski@canonical.com>
 References: <20210505135941.59898-1-krzysztof.kozlowski@canonical.com>
@@ -71,19 +71,19 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 There is no "max_brightness" property as pointed out by dtschema:
 
-  arch/arm/boot/dts/exynos5422-odroidhc1.dt.yaml: led-controller: led-1: 'max-brightness' is a required property
+  arch/arm/boot/dts/exynos5422-odroidxu4.dt.yaml: led-controller: led-1: 'max-brightness' is a required property
 
-Fixes: 1ac49427b566 ("ARM: dts: exynos: Add support for Hardkernel's Odroid HC1 board")
+Fixes: 6658356014cb ("ARM: dts: Add support Odroid XU4 board for exynos5422-odroidxu4")
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- arch/arm/boot/dts/exynos5422-odroidhc1.dts | 2 +-
+ arch/arm/boot/dts/exynos5422-odroidxu4.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidhc1.dts b/arch/arm/boot/dts/exynos5422-odroidhc1.dts
-index 20c222b33f98..d91f7fa2cf80 100644
---- a/arch/arm/boot/dts/exynos5422-odroidhc1.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidhc1.dts
-@@ -22,7 +22,7 @@ led-1 {
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+index ede782257643..1c24f9b35973 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+@@ -24,7 +24,7 @@ led-1 {
  			label = "blue:heartbeat";
  			pwms = <&pwm 2 2000000 0>;
  			pwm-names = "pwm2";
