@@ -2,94 +2,117 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F8CC433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 19:49:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE633C433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 May 2021 07:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F7DC613AA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 May 2021 19:49:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7246B61077
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 May 2021 07:19:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233192AbhEETuu (ORCPT
+        id S232908AbhEFHUT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 May 2021 15:50:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36887 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233114AbhEETut (ORCPT
+        Thu, 6 May 2021 03:20:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35734 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229640AbhEFHUS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 May 2021 15:50:49 -0400
-Received: from cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net ([80.193.200.194] helo=[192.168.0.210])
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <colin.king@canonical.com>)
-        id 1leNWp-0003ku-NP; Wed, 05 May 2021 19:49:51 +0000
-Subject: Re: [PATCH] scsi: ufs: ufs-exynos: make a const array static, makes
- object smaller
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210505190104.70112-1-colin.king@canonical.com>
- <0e90b057-3a87-bec5-c0b2-46c49b191651@canonical.com>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <a9fafdd2-6625-18dc-62f4-7b4a8c9fd9c2@canonical.com>
-Date:   Wed, 5 May 2021 20:49:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Thu, 6 May 2021 03:20:18 -0400
+Received: from ustc.edu.cn (email6.ustc.edu.cn [IPv6:2001:da8:d800::8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BE833C061574;
+        Thu,  6 May 2021 00:19:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mail.ustc.edu.cn; s=dkim; h=Received:Date:From:To:Cc:Subject:
+        In-Reply-To:References:Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-ID; bh=FBOZ4Wnj05nzGETLo6GOsoIxerikGh7kei6G
+        4HU8i9A=; b=RscCmcbR6lVf4NOo87d/vCwLTBFJe7I3M9RDVDWIYauQ1WdQzkPB
+        FnAGVz93PGpOrAJ50TFY3r3sPCTUlHLzXrgifeOliXMQKev4JgppKYX86xUsf+vw
+        KPSdL1pRsR4WsKfOLYzZhPctWCjBZMvXZpGjxqaRr1jnAaeQkLBM9+g=
+Received: by ajax-webmail-newmailweb.ustc.edu.cn (Coremail) ; Thu, 6 May
+ 2021 15:19:09 +0800 (GMT+08:00)
+X-Originating-IP: [202.38.69.14]
+Date:   Thu, 6 May 2021 15:19:09 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From:   lyl2019@mail.ustc.edu.cn
+To:     "Hans Verkuil" <hverkuil@xs4all.nl>
+Cc:     s.nawrocki@samsung.com, mchehab@kernel.org, krzk@kernel.org,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH v3] media:exynos4-is: Fix a use after free in
+ isp_video_release
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT3.0.8 dev build
+ 20190610(cb3344cf) Copyright (c) 2002-2021 www.mailtech.cn ustc-xl
+In-Reply-To: <44f264d9-e039-66b6-6e4b-1a5b3c386aa4@xs4all.nl>
+References: <20210427132734.5212-1-lyl2019@mail.ustc.edu.cn>
+ <44f264d9-e039-66b6-6e4b-1a5b3c386aa4@xs4all.nl>
+X-SendMailWithSms: false
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-In-Reply-To: <0e90b057-3a87-bec5-c0b2-46c49b191651@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Message-ID: <3f2f155c.72fa7.179408b6b2e.Coremail.lyl2019@mail.ustc.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: LkAmygAnLJxtmJNgpDWSAA--.3W
+X-CM-SenderInfo: ho1ojiyrz6zt1loo32lwfovvfxof0/1tbiAQsNBlQhn6tCNwAAs1
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+        daVFxhVjvjDU=
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 05/05/2021 20:41, Krzysztof Kozlowski wrote:
-> On 05/05/2021 15:01, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Don't populate the const array granularity_tbl on the stack but instead it
->> static. Makes the object code smaller by 190 bytes:
->>
->> Before:
->>    text    data     bss     dec     hex filename
->>   25563    6908       0   32471    7ed7 ./drivers/scsi/ufs/ufs-exynos.o
->>
->> After:
->>    text    data     bss     dec     hex filename
->>   25213    7068       0   32281    7e19 ./drivers/scsi/ufs/ufs-exynos.o
->>
->> (gcc version 10.3.0)
-> 
-> I am not sure what's the benefit here - you moved the code from text to
-> data. In total you decreased the size for this compilation settings
-> (e.g. compiler + optimizations) but that might not be always true, right?
-
-It is a marginal saving, but for arrays this size it makes sense to not
-have to populate the data into the stack before using it and then
-discarding it. This change essentially replaces quite a lot of
-instructions that put the data onto the stack so I think it's worth while.
-
-> 
-> This has effect on the code readability - line is longer and reader
-> would think "why this was made static since it is simple one-time const?".
->
-
-Not sure how to respond to this. If they wonder why it is static const
-and don't know why then one would hope they look it up in K&R and
-familiarize themselves with C.  It's not so subtle.
-
-Colin
-> 
-> Best regards,
-> Krzysztof
-> 
-
+DQoNCg0KPiAtLS0tLeWOn+Wni+mCruS7ti0tLS0tDQo+IOWPkeS7tuS6ujogIkhhbnMgVmVya3Vp
+bCIgPGh2ZXJrdWlsQHhzNGFsbC5ubD4NCj4g5Y+R6YCB5pe26Ze0OiAyMDIxLTA1LTA1IDE3OjMx
+OjA0ICjmmJ/mnJ/kuIkpDQo+IOaUtuS7tuS6ujogIkx2IFl1bmxvbmciIDxseWwyMDE5QG1haWwu
+dXN0Yy5lZHUuY24+LCBzLm5hd3JvY2tpQHNhbXN1bmcuY29tLCBtY2hlaGFiQGtlcm5lbC5vcmcs
+IGtyemtAa2VybmVsLm9yZw0KPiDmioTpgIE6IGxpbnV4LW1lZGlhQHZnZXIua2VybmVsLm9yZywg
+bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnLCBsaW51eC1zYW1zdW5nLXNvY0B2
+Z2VyLmtlcm5lbC5vcmcsIGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4g5Li76aKYOiBS
+ZTogW1BBVENIIHYzXSBtZWRpYTpleHlub3M0LWlzOiBGaXggYSB1c2UgYWZ0ZXIgZnJlZSBpbiBp
+c3BfdmlkZW9fcmVsZWFzZQ0KPiANCj4gSGkgTHYgWXVubG9uZywNCj4gDQo+IE9uIDI3LzA0LzIw
+MjEgMTU6MjcsIEx2IFl1bmxvbmcgd3JvdGU6DQo+ID4gSW4gaXNwX3ZpZGVvX3JlbGVhc2UsIGZp
+bGUtPnByaXZhdGVfZGF0YSBpcyBmcmVlZCB2aWENCj4gPiBfdmIyX2ZvcF9yZWxlYXNlKCktPnY0
+bDJfZmhfcmVsZWFzZSgpLiBCdXQgdGhlIGZyZWVkDQo+ID4gZmlsZS0+cHJpdmF0ZV9kYXRhIGlz
+IHN0aWxsIHVzZWQgaW4gdjRsMl9maF9pc19zaW5ndWxhcl9maWxlKCkNCj4gPiAtPnY0bDJfZmhf
+aXNfc2luZ3VsYXIoZmlsZS0+cHJpdmF0ZV9kYXRhKSwgd2hpY2ggaXMgYSB1c2UNCj4gPiBhZnRl
+ciBmcmVlIGJ1Zy4NCj4gPiANCj4gPiBNeSBwYXRjaCBzZXRzIGZpbGUtPnByaXZhdGVfZGF0YSB0
+byBOVUxMIGFmdGVyIF92YjJfZm9wX3JlbGVhc2UoKQ0KPiA+IHRvIGF2b2lkIHRoZSB1c2UgYWZ0
+ZXIgZnJlZSwgYW5kIHVzZXMgYSB2YXJpYWJsZSAnaXNfc2luZ3VsYXJfZmlsZScNCj4gPiB0byBr
+ZWVwIHRoZSBvcmlnaW5hbCBmdW5jdGlvbiB1bmNoYW5nZWQuDQo+IA0KPiBBY3R1YWxseSwgaXQg
+aXMgdGhlIHVzZSBvZiAnaXNfc2luZ3VsYXJfZmlsZScgdGhhdCBmaXhlcyB0aGUgYnVnLA0KPiB0
+aGUgJ2ZpbGUtPnByaXZhdGVfZGF0YSA9IE5VTEw7JyBpcyB1bm5lY2Vzc2FyeSBoZXJlLg0KPiAN
+Cj4gVGhhdCBzYWlkLCBpdCB3b3VsZCBiZSBhIHJlYWxseSBnb29kIGlkZWEgaWYgaW4gYSBzZXBh
+cmF0ZSBwYXRjaCB5b3UNCj4gbWFrZSB2NGwyX2ZoX3JlbGVhc2UoKSBtb3JlIHJvYnVzdCBieSBz
+ZXR0aW5nIGZpbHAtPnByaXZhdGVfZGF0YSB0bw0KPiBOVUxMIGFmdGVyIHRoZSBrZnJlZShmaCku
+DQo+IA0KPiBSZWdhcmRzLA0KPiANCj4gCUhhbnMNCj4gDQo+ID4gDQo+ID4gRml4ZXM6IDM0OTQ3
+YjhhZWJlM2YgKCJbbWVkaWFdIGV4eW5vczQtaXM6IEFkZCB0aGUgRklNQy1JUyBJU1AgY2FwdHVy
+ZSBETUEgZHJpdmVyIikNCj4gPiBTaWduZWQtb2ZmLWJ5OiBMdiBZdW5sb25nIDxseWwyMDE5QG1h
+aWwudXN0Yy5lZHUuY24+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vZXh5
+bm9zNC1pcy9maW1jLWlzcC12aWRlby5jIHwgOCArKysrKystLQ0KPiA+ICAxIGZpbGUgY2hhbmdl
+ZCwgNiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiA+IA0KPiA+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2V4eW5vczQtaXMvZmltYy1pc3AtdmlkZW8uYyBiL2Ry
+aXZlcnMvbWVkaWEvcGxhdGZvcm0vZXh5bm9zNC1pcy9maW1jLWlzcC12aWRlby5jDQo+ID4gaW5k
+ZXggNjEyYjk4NzJhZmM4Li5jMDdkY2IwYmNjYzIgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9t
+ZWRpYS9wbGF0Zm9ybS9leHlub3M0LWlzL2ZpbWMtaXNwLXZpZGVvLmMNCj4gPiArKysgYi9kcml2
+ZXJzL21lZGlhL3BsYXRmb3JtL2V4eW5vczQtaXMvZmltYy1pc3AtdmlkZW8uYw0KPiA+IEBAIC0z
+MDYsMTcgKzMwNiwyMSBAQCBzdGF0aWMgaW50IGlzcF92aWRlb19yZWxlYXNlKHN0cnVjdCBmaWxl
+ICpmaWxlKQ0KPiA+ICAJc3RydWN0IGZpbWNfaXNfdmlkZW8gKml2YyA9ICZpc3AtPnZpZGVvX2Nh
+cHR1cmU7DQo+ID4gIAlzdHJ1Y3QgbWVkaWFfZW50aXR5ICplbnRpdHkgPSAmaXZjLT52ZS52ZGV2
+LmVudGl0eTsNCj4gPiAgCXN0cnVjdCBtZWRpYV9kZXZpY2UgKm1kZXYgPSBlbnRpdHktPmdyYXBo
+X29iai5tZGV2Ow0KPiA+ICsJYm9vbCBpc19zaW5ndWxhcl9maWxlOw0KPiA+ICANCj4gPiAgCW11
+dGV4X2xvY2soJmlzcC0+dmlkZW9fbG9jayk7DQo+ID4gIA0KPiA+IC0JaWYgKHY0bDJfZmhfaXNf
+c2luZ3VsYXJfZmlsZShmaWxlKSAmJiBpdmMtPnN0cmVhbWluZykgew0KPiA+ICsJaXNfc2luZ3Vs
+YXJfZmlsZSA9IHY0bDJfZmhfaXNfc2luZ3VsYXJfZmlsZShmaWxlKTsNCj4gPiArDQo+ID4gKwlp
+ZiAoaXNfc2luZ3VsYXJfZmlsZSAmJiBpdmMtPnN0cmVhbWluZykgew0KPiA+ICAJCW1lZGlhX3Bp
+cGVsaW5lX3N0b3AoZW50aXR5KTsNCj4gPiAgCQlpdmMtPnN0cmVhbWluZyA9IDA7DQo+ID4gIAl9
+DQo+ID4gIA0KPiA+ICAJX3ZiMl9mb3BfcmVsZWFzZShmaWxlLCBOVUxMKTsNCj4gPiArCWZpbGUt
+PnByaXZhdGVfZGF0YSA9IE5VTEw7DQo+ID4gIA0KPiA+IC0JaWYgKHY0bDJfZmhfaXNfc2luZ3Vs
+YXJfZmlsZShmaWxlKSkgew0KPiA+ICsJaWYgKGlzX3Npbmd1bGFyX2ZpbGUpIHsNCj4gPiAgCQlm
+aW1jX3BpcGVsaW5lX2NhbGwoJml2Yy0+dmUsIGNsb3NlKTsNCj4gPiAgDQo+ID4gIAkJbXV0ZXhf
+bG9jaygmbWRldi0+Z3JhcGhfbXV0ZXgpOw0KPiA+IA0KPiANCg0KDQpPaywgdGhhbmtzIGZvciB5
+b3VyIHN1Z2dlc3Rpb24uDQoNCkRvIHlvdSBtZWFucyBpIG5lZWQgc3VibWl0IGEgbmV3IHBhdGgg
+dG8gc2V0IGZpbHAtPnByaXZhdGVfZGF0YSA9IE5VTEwNCmFmdGVyIGtmcmVlKGZoKSBpbiB2NGwy
+X2ZoX3JlbGVhc2UoKSA/DQoNCkx2IFl1bmxvbmc=
