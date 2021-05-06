@@ -2,151 +2,190 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88484C433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 May 2021 07:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF22AC433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 May 2021 15:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43F1861164
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 May 2021 07:23:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C19CA613C5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 May 2021 15:12:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233257AbhEFHY0 (ORCPT
+        id S234961AbhEFPNH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 May 2021 03:24:26 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:56117 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233163AbhEFHY0 (ORCPT
+        Thu, 6 May 2021 11:13:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234888AbhEFPNH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 May 2021 03:24:26 -0400
-Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id eYLwlT8KlWztCeYLzlNQhC; Thu, 06 May 2021 09:23:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
-        t=1620285806; bh=LR3clUHjVBftDzFCX3LyxLbFvneYwPcjG1houGAXXzI=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=kBTbvO1LoW285EE9kFRPCPIp2VGwBeQN6DoGePMofuj/wVXD+IrNkiE8cOrYzRAIr
-         8LEwXzscpCO+ChGSFb1JYHa8z2rMvBrjBOU55fRU31HYfDVThi5dT4HCGgizwHcLoA
-         AEFWvQVisvgtWJMXmnn5OCc97t/IjthSzMmp0H7UmDq1LDvezmns6lvI5z/b8Xb3WC
-         fH/JZiSjz7WxR/pEwD0VqOxTifHc8/IaEoLUeampOdDrM3TSJuIzJADhzoNvewKNYD
-         Q15PV1gPqo+gAc0ISpdcoiKYhr8C6qJSZOJyC96GbaVeXY7xapdvcEnjHiWN52mKk4
-         6Dxv4kyLfVM3w==
-Subject: Re: [PATCH v3] media:exynos4-is: Fix a use after free in
- isp_video_release
-To:     lyl2019@mail.ustc.edu.cn
-Cc:     s.nawrocki@samsung.com, mchehab@kernel.org, krzk@kernel.org,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210427132734.5212-1-lyl2019@mail.ustc.edu.cn>
- <44f264d9-e039-66b6-6e4b-1a5b3c386aa4@xs4all.nl>
- <3f2f155c.72fa7.179408b6b2e.Coremail.lyl2019@mail.ustc.edu.cn>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <c3f03430-e595-38a8-b60d-4a338c751c04@xs4all.nl>
-Date:   Thu, 6 May 2021 09:23:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.9.0
+        Thu, 6 May 2021 11:13:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7452D61041;
+        Thu,  6 May 2021 15:12:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620313928;
+        bh=5pyBiTEHvMxAj8e/yO3yGgrWonLAEYO6vTvkoiWBA6I=;
+        h=Date:From:Cc:Subject:In-Reply-To:References:From;
+        b=gCHwiMQxRg/34kpnWeUtVHGRkYuqPEOIQkZjVTbPZZPFy2jqZ6oslJA4TOQa+gcHd
+         Z0NptbjOm1CDOQB3ZQKMyntN6xQ5y7grAgI5pG3HJhrWpTilFGoxYfvmb6EoYj445K
+         CQ0uc3Z4NuK9pz7n4SC/EZcPlSxDibZYfzeHq83K3HcpNS0SlwJvX6wThXiW6AEk2u
+         hMwzEy9DylBCX+jg+CvlvqsbQ2ABQrFVf8X1Vi88Uh4ZWYq9UGScRPv8ih+Dd5UE7z
+         mmJ11YeiM3YEzKEgUBlxxi6W4vsOo94Lj61ii0dn8Sbwu0SCHHobKO2iHWqCOgTTiV
+         lZpsKjD8tnxqw==
+Date:   Thu, 6 May 2021 17:11:57 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        "Paul J. Murphy" <paul.j.murphy@intel.com>,
+        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 00/25] Fix some PM runtime issues at the media subsystem
+Message-ID: <20210506171157.678f5c15@coco.lan>
+In-Reply-To: <cover.1620207353.git.mchehab+huawei@kernel.org>
+References: <cover.1620207353.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <3f2f155c.72fa7.179408b6b2e.Coremail.lyl2019@mail.ustc.edu.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfHt/vWvFyV4O9vViaNtKEIB+ZQgCzc42RFxLaPmLWlVwc0FvmH08rP/GLz1Hcvk0MDzzy6YSdmg7lisLd5PgYlcTRjEw9Qwir8P1krPMzTpgzcEsT114
- VcxCcnCxGaHlG91sLQsZrS3NLPFfSrMMq66jycMcDxSqu8b/UTJOeIF4WHDVBetrhPUknqYNqYrkI4UpkY9L254yUX0tnSVYF4CCVpFDueJKvBTBVCKtoAXh
- 7ROtKCvkU/dCXv5aqJVePDCkXD+RC3RPfad2muFwHdaw5S1o8/IS5a1TOmaHwWBl5ea5wrtNQX30wNyBMyBh8tx11IFiNRiOFC1x8mLSPNKwu5TC1qOMDmN1
- qERT7wUK5lczgbDr6njpyg6J4TLsrCxok/EB4qIs5ssvPs2lk+D4ok9boOaS3tjy/3bvz9H05TI5WMRmI12fOt4S04G5Wl4l69FbDZtt0p8A/YLc+Wo=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/05/2021 09:19, lyl2019@mail.ustc.edu.cn wrote:
-> 
-> 
-> 
->> -----原始邮件-----
->> 发件人: "Hans Verkuil" <hverkuil@xs4all.nl>
->> 发送时间: 2021-05-05 17:31:04 (星期三)
->> 收件人: "Lv Yunlong" <lyl2019@mail.ustc.edu.cn>, s.nawrocki@samsung.com, mchehab@kernel.org, krzk@kernel.org
->> 抄送: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
->> 主题: Re: [PATCH v3] media:exynos4-is: Fix a use after free in isp_video_release
->>
->> Hi Lv Yunlong,
->>
->> On 27/04/2021 15:27, Lv Yunlong wrote:
->>> In isp_video_release, file->private_data is freed via
->>> _vb2_fop_release()->v4l2_fh_release(). But the freed
->>> file->private_data is still used in v4l2_fh_is_singular_file()
->>> ->v4l2_fh_is_singular(file->private_data), which is a use
->>> after free bug.
->>>
->>> My patch sets file->private_data to NULL after _vb2_fop_release()
->>> to avoid the use after free, and uses a variable 'is_singular_file'
->>> to keep the original function unchanged.
->>
->> Actually, it is the use of 'is_singular_file' that fixes the bug,
->> the 'file->private_data = NULL;' is unnecessary here.
->>
->> That said, it would be a really good idea if in a separate patch you
->> make v4l2_fh_release() more robust by setting filp->private_data to
->> NULL after the kfree(fh).
->>
->> Regards,
->>
->> 	Hans
->>
->>>
->>> Fixes: 34947b8aebe3f ("[media] exynos4-is: Add the FIMC-IS ISP capture DMA driver")
->>> Signed-off-by: Lv Yunlong <lyl2019@mail.ustc.edu.cn>
->>> ---
->>>  drivers/media/platform/exynos4-is/fimc-isp-video.c | 8 ++++++--
->>>  1 file changed, 6 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
->>> index 612b9872afc8..c07dcb0bccc2 100644
->>> --- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
->>> +++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
->>> @@ -306,17 +306,21 @@ static int isp_video_release(struct file *file)
->>>  	struct fimc_is_video *ivc = &isp->video_capture;
->>>  	struct media_entity *entity = &ivc->ve.vdev.entity;
->>>  	struct media_device *mdev = entity->graph_obj.mdev;
->>> +	bool is_singular_file;
->>>  
->>>  	mutex_lock(&isp->video_lock);
->>>  
->>> -	if (v4l2_fh_is_singular_file(file) && ivc->streaming) {
->>> +	is_singular_file = v4l2_fh_is_singular_file(file);
->>> +
->>> +	if (is_singular_file && ivc->streaming) {
->>>  		media_pipeline_stop(entity);
->>>  		ivc->streaming = 0;
->>>  	}
->>>  
->>>  	_vb2_fop_release(file, NULL);
->>> +	file->private_data = NULL;
->>>  
->>> -	if (v4l2_fh_is_singular_file(file)) {
->>> +	if (is_singular_file) {
->>>  		fimc_pipeline_call(&ivc->ve, close);
->>>  
->>>  		mutex_lock(&mdev->graph_mutex);
->>>
->>
-> 
-> 
-> Ok, thanks for your suggestion.
-> 
-> Do you means i need submit a new path to set filp->private_data = NULL
-> after kfree(fh) in v4l2_fh_release() ?
+Em Wed,  5 May 2021 11:41:50 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
 
-Yes, so one updated patch for fimc-isp-video.c and a second patch for v4l2-fh.c.
+> As part of an effort to cleanup pm_runtime*get* calls, I detected a number
+> of issues at the media subsystem.
+> 
+> Most of the patches here were submitted previously at:
+> 
+> 	https://lore.kernel.org/linux-media/cover.1619621413.git.mchehab+huawei@kernel.org/
+> 
+> This series contain just the bug fixes and other related issues that are
+> present with the current code on media.
+
+Series merged on my stage tree, at:
+	https://git.linuxtv.org/media_stage.git/log/
+
+I'll be merging it at media_tree (either for 5.13 or 5.14) after the
+end of the merge window (likely next week).
+
+Please let me know if you find any problems on it.
+
+PS.: please notice that my stage tree can be rebased.
 
 Regards,
-
-	Hans
+Mauro
 
 > 
-> Lv Yunlong
+> It address the points from the existing reviews. I also did my own
+> set of reviews, in order to avoid regressions.
+> 
+> Changes from v4 of the previous changeset:
+> 
+> - reworked i2c/css RPM get logic;
+> - dropped two patches that could cause regressions;
+> - am437x: keep using pm_runtime_get_sync on suspend/resume;
+> - atmel: fix the returned code and add a print on failures at start streaming;
+> - simplify some checks for return code > 0;
+> - mdk-vcodec: properly handle RPM errors at device on logic;
+> - venus: rework venus_sys_error_handler() logic;
+> - sti/delta: fix an issue at the error checking logic.
+> 
+> Mauro Carvalho Chehab (25):
+>   staging: media: rkvdec: fix pm_runtime_get_sync() usage count
+>   staging: media: imx7-mipi-csis: fix pm_runtime_get_sync() usage count
+>   media: venus: Rework error fail recover logic
+>   media: s5p_cec: decrement usage count if disabled
+>   media: i2c: ccs-core: return the right error code at suspend
+>   media: i2c: imx334: fix the pm runtime get logic
+>   media: exynos-gsc: don't resume at remove time
+>   media: atmel: properly get pm_runtime
+>   media: hantro: do a PM resume earlier
+>   media: marvel-ccic: fix some issues when getting pm_runtime
+>   media: mdk-mdp: fix pm_runtime_get_sync() usage count
+>   media: rcar_fdp1: simplify error check logic at fdp_open()
+>   media: rcar_fdp1: fix pm_runtime_get_sync() usage count
+>   media: renesas-ceu: Properly check for PM errors
+>   media: s5p: fix pm_runtime_get_sync() usage count
+>   media: am437x: fix pm_runtime_get_sync() usage count
+>   media: sh_vou: fix pm_runtime_get_sync() usage count
+>   media: mtk-vcodec: fix PM runtime get logic
+>   media: s5p-jpeg: fix pm_runtime_get_sync() usage count
+>   media: sti/delta: use pm_runtime_resume_and_get()
+>   media: sunxi: fix pm_runtime_get_sync() usage count
+>   media: sti/bdisp: fix pm_runtime_get_sync() usage count
+>   media: exynos4-is: fix pm_runtime_get_sync() usage count
+>   media: exynos-gsc: fix pm_runtime_get_sync() usage count
+>   media: i2c: ccs-core: fix pm_runtime_get_sync() usage count
+> 
+>  drivers/media/cec/platform/s5p/s5p_cec.c      |  7 ++-
+>  drivers/media/i2c/ccs/ccs-core.c              | 41 ++++++++-----
+>  drivers/media/i2c/imx334.c                    |  7 ++-
+>  drivers/media/platform/am437x/am437x-vpfe.c   | 15 ++++-
+>  drivers/media/platform/atmel/atmel-isc-base.c | 30 +++++++---
+>  drivers/media/platform/atmel/atmel-isi.c      | 19 ++++--
+>  drivers/media/platform/exynos-gsc/gsc-core.c  | 11 ++--
+>  drivers/media/platform/exynos-gsc/gsc-m2m.c   |  4 +-
+>  .../media/platform/exynos4-is/fimc-capture.c  |  6 +-
+>  drivers/media/platform/exynos4-is/fimc-is.c   |  4 +-
+>  .../platform/exynos4-is/fimc-isp-video.c      |  3 +-
+>  drivers/media/platform/exynos4-is/fimc-isp.c  |  7 +--
+>  drivers/media/platform/exynos4-is/fimc-lite.c |  5 +-
+>  drivers/media/platform/exynos4-is/fimc-m2m.c  |  5 +-
+>  drivers/media/platform/exynos4-is/media-dev.c |  9 +--
+>  drivers/media/platform/exynos4-is/mipi-csis.c | 10 ++--
+>  .../media/platform/marvell-ccic/mcam-core.c   |  9 ++-
+>  drivers/media/platform/mtk-mdp/mtk_mdp_m2m.c  |  6 +-
+>  .../platform/mtk-vcodec/mtk_vcodec_dec_drv.c  |  4 +-
+>  .../platform/mtk-vcodec/mtk_vcodec_dec_pm.c   |  8 ++-
+>  .../platform/mtk-vcodec/mtk_vcodec_dec_pm.h   |  2 +-
+>  drivers/media/platform/qcom/venus/core.c      | 59 +++++++++++++++----
+>  drivers/media/platform/rcar_fdp1.c            | 28 ++++++---
+>  drivers/media/platform/renesas-ceu.c          |  4 +-
+>  drivers/media/platform/s5p-jpeg/jpeg-core.c   |  5 +-
+>  drivers/media/platform/sh_vou.c               |  6 +-
+>  drivers/media/platform/sti/bdisp/bdisp-v4l2.c |  7 ++-
+>  drivers/media/platform/sti/delta/delta-v4l2.c |  8 +--
+>  .../sunxi/sun8i-rotate/sun8i_rotate.c         |  2 +-
+>  drivers/staging/media/hantro/hantro_drv.c     |  7 ++-
+>  drivers/staging/media/imx/imx7-mipi-csis.c    |  7 +--
+>  drivers/staging/media/rkvdec/rkvdec.c         |  2 +-
+>  32 files changed, 220 insertions(+), 127 deletions(-)
 > 
 
+
+
+Thanks,
+Mauro
