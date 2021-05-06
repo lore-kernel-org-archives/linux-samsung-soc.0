@@ -2,105 +2,112 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0423C433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 May 2021 15:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F632C43461
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 May 2021 15:26:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8791261177
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 May 2021 15:20:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31F2E6142F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 May 2021 15:26:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235144AbhEFPVu (ORCPT
+        id S235204AbhEFP1z (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 May 2021 11:21:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41502 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235036AbhEFPVs (ORCPT
+        Thu, 6 May 2021 11:27:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40888 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235326AbhEFP1m (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 May 2021 11:21:48 -0400
-Received: from mail-qk1-f199.google.com ([209.85.222.199])
-        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lefo1-00037v-SH
-        for linux-samsung-soc@vger.kernel.org; Thu, 06 May 2021 15:20:49 +0000
-Received: by mail-qk1-f199.google.com with SMTP id p17-20020a05620a1131b02902e45c6e4d33so3722100qkk.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 May 2021 08:20:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cQf4MjiqPeV3cfZrYpEWKZORZH0m9Y7Wed5/vpwhH/8=;
-        b=sqkWOXb5fkKM/CK8qPZu6LbsMGcS2kjQvhCYdHg3++x/x2AH2f0PWVAk82F2a22JOY
-         CHyj30bjZfotEaI7nv6T1FA7QLALKazJCFxKfiVVsZ0UadTRCqUBY8rI37X7aL7YL82e
-         27PilNP/y+yb2EqFzE8qLt5qJq46EQGGf1tdqfRmTRYeh6cZ2DtlFK5IGVdS5pXbDsmf
-         X0+BrjwpzZfdeCBwYOU5rzdlazK9lcxodzzvt6b3mTgMmSPDsZZmZjvpWT4JggBaniii
-         Psya2pWAEXFPyfphVyBb8u3AYuSewA405bS+DDsihtGKVQgJyfpP3SYbhdTd+Utro3SC
-         hvZg==
-X-Gm-Message-State: AOAM531sgNd8t88WXhQy5QSJAU8zI4c21EaQco5DHcJvKDg99oqz6ExE
-        maEfKQRyrvMSOhNnvBzgAoa3TNzl/VF/LtOU5x0KiTaHWCjY1B0PIVl5G+NQiJ1AR1cz8gw0mCo
-        R/eaStzfQDnauxLWu4FSUbie9LMJ7uLRm2r7C2BX1Mcy6yo2t
-X-Received: by 2002:a37:6850:: with SMTP id d77mr4605619qkc.57.1620314448557;
-        Thu, 06 May 2021 08:20:48 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwiaCcE9k/KLZzFM/F0Z3mcERK+7wGrNRw+WINMCIvWA+NLoEI5nNx/djusvRAdAwLVIH/T7g==
-X-Received: by 2002:a37:6850:: with SMTP id d77mr4605603qkc.57.1620314448407;
-        Thu, 06 May 2021 08:20:48 -0700 (PDT)
-Received: from localhost.localdomain ([45.237.49.3])
-        by smtp.gmail.com with ESMTPSA id 19sm2115882qkn.111.2021.05.06.08.20.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 May 2021 08:20:47 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: s5pv210: remove unused Atmel touchscreen properties in Goni
-Date:   Thu,  6 May 2021 11:20:44 -0400
-Message-Id: <20210506152044.37579-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 6 May 2021 11:27:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AC77561943;
+        Thu,  6 May 2021 15:26:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620314783;
+        bh=jFh5VbnuBrXc2tgtFwOIhvEafKERvRJMCTg4uhxmLFA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gQ+EcUNziXJldC44cpFfwrxjpi3vgg891yyIz1m2ZwRSEjOUjKbObc7e9Btk8f/MR
+         DxJ4XFGfBGrkQsXYvtBhnjaxT7DjbiHPJiFmKnmKmWn2WQn/FqKFYOMO3VkLe/a9a8
+         KU5xdawuNarZygF7ewP+L6Eddsy2qf17fUBz0WVNduBZLYAh7ZR8X+KVqKZz3xqpho
+         Cj32oT3oXqvalfuGHW1YIKkD1ue30rHLHo9CDaDu23KU5wkVnKrIaI5iP/wzGnPbvX
+         7dq9aNlSL/jbrmn6RM/8EcCsVUyDHKHQmv7ONcw8WX3nMJAMt1rInW9jy7V0CprGBj
+         RRUFayVciaTFg==
+Received: by mail.kernel.org with local (Exim 4.94.2)
+        (envelope-from <mchehab@kernel.org>)
+        id 1left8-000SCB-82; Thu, 06 May 2021 17:26:06 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: [PATCH v5 18/25] media: s3c-camif: use pm_runtime_resume_and_get()
+Date:   Thu,  6 May 2021 17:25:56 +0200
+Message-Id: <40b44b0945e39b7633b31c6c6e27c7d701dc2691.1620314616.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <cover.1620314616.git.mchehab+huawei@kernel.org>
+References: <cover.1620314616.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Atmel bindings and driver do not use custom properties like
-x/y-size, burst length, threshold and so on.  The driver gets necessary
-data from the device directly.  Remove unused properties to fix
-dtbs_check warning:
+Commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
+added pm_runtime_resume_and_get() in order to automatically handle
+dev->power.usage_count decrement on errors.
 
-  arch/arm/boot/dts/s5pv210-goni.dt.yaml: touchscreen@4a:
-    'atmel,burst-length', 'atmel,orientation', 'atmel,threshold', 'atmel,x-line', 'atmel,x-size',
-    'atmel,y-line', 'atmel,y-size' do not match any of the regexes
+Use the new API, in order to cleanup the error check logic.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Reviewed-by: Sylwester Nawrocki <snawrocki@kernel.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- arch/arm/boot/dts/s5pv210-goni.dts | 9 ---------
- 1 file changed, 9 deletions(-)
+ drivers/media/platform/s3c-camif/camif-capture.c | 2 +-
+ drivers/media/platform/s3c-camif/camif-core.c    | 5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/s5pv210-goni.dts b/arch/arm/boot/dts/s5pv210-goni.dts
-index 5c1e12d39747..c6f39147cb96 100644
---- a/arch/arm/boot/dts/s5pv210-goni.dts
-+++ b/arch/arm/boot/dts/s5pv210-goni.dts
-@@ -358,15 +358,6 @@ touchscreen@4a {
- 		reg = <0x4a>;
- 		interrupt-parent = <&gpj0>;
- 		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
--
--		atmel,x-line = <17>;
--		atmel,y-line = <11>;
--		atmel,x-size = <800>;
--		atmel,y-size = <480>;
--		atmel,burst-length = <0x21>;
--		atmel,threshold = <0x28>;
--		atmel,orientation = <1>;
--
- 		vdd-supply = <&tsp_reg>;
- 	};
- };
+diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/media/platform/s3c-camif/camif-capture.c
+index 9ca49af29542..62241ec3b978 100644
+--- a/drivers/media/platform/s3c-camif/camif-capture.c
++++ b/drivers/media/platform/s3c-camif/camif-capture.c
+@@ -547,7 +547,7 @@ static int s3c_camif_open(struct file *file)
+ 	if (ret < 0)
+ 		goto unlock;
+ 
+-	ret = pm_runtime_get_sync(camif->dev);
++	ret = pm_runtime_resume_and_get(camif->dev);
+ 	if (ret < 0)
+ 		goto err_pm;
+ 
+diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
+index 4c3c00d59c92..e1d51fd3e700 100644
+--- a/drivers/media/platform/s3c-camif/camif-core.c
++++ b/drivers/media/platform/s3c-camif/camif-core.c
+@@ -460,9 +460,9 @@ static int s3c_camif_probe(struct platform_device *pdev)
+ 
+ 	pm_runtime_enable(dev);
+ 
+-	ret = pm_runtime_get_sync(dev);
++	ret = pm_runtime_resume_and_get(dev);
+ 	if (ret < 0)
+-		goto err_pm;
++		goto err_disable;
+ 
+ 	ret = camif_media_dev_init(camif);
+ 	if (ret < 0)
+@@ -502,6 +502,7 @@ static int s3c_camif_probe(struct platform_device *pdev)
+ 	camif_unregister_media_entities(camif);
+ err_pm:
+ 	pm_runtime_put(dev);
++err_disable:
+ 	pm_runtime_disable(dev);
+ 	camif_clk_put(camif);
+ err_clk:
 -- 
-2.25.1
+2.30.2
 
