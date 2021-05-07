@@ -2,109 +2,89 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7267C43461
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 May 2021 22:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E823C433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 May 2021 00:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8358F613C8
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 May 2021 22:31:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C038613C9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 May 2021 00:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230149AbhEFWcF (ORCPT
+        id S233223AbhEGAC6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 May 2021 18:32:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42210 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230428AbhEFWcF (ORCPT
+        Thu, 6 May 2021 20:02:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44852 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232375AbhEGAC6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 May 2021 18:32:05 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30D95C061763
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  6 May 2021 15:31:06 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id z13so10081090lft.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 May 2021 15:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=htNAnGunm2mFYSv2XzhlQsCDD0LeBwjAb0MYMtun6cM=;
-        b=BORPcZuE9+rrQQNFUoJnt6f4FpTDIRpdNZeTdxMdbIECzBdY5oiwCD0JpZedlSNZ+7
-         bix+fDrgKkNKxnNlizSFTjxEzgqSzLtT6D02CJDWAGt9oBFGQ4VHrgxc6tYB6CmAeE2+
-         8YQ9a8BVm4oo8k7TJnGL+6WsOCsGhg6VQJj04=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=htNAnGunm2mFYSv2XzhlQsCDD0LeBwjAb0MYMtun6cM=;
-        b=e1hFMN1LPx+4nr8GHLlT2HpyVXUvC3N9SetikaWzaG+abqZL4++zhADmKC/RsvM6/y
-         oebNdgyAQhG8Kt1EwYxq9Lknyb2/4GuFmbAVtaKQjotkM3Fs3nPww8impExaMvRBY51f
-         zsxF28rQFOUNYcSpjBuotWsagi+u/5qCfMXvO1jmgk/Y6dBzxwWINKz3lBayEb4zN6lr
-         bWH8Jq9B095wE3GheMt/MXn9M5DxyKa9QgDg9qiI5LfMLiplDm1t7dvWeog2ePRD/4JV
-         dBBIKm274ea66IdATzqsLfYxeAoRtvHMjbbMXVwh1Ozj2UFaC6WotEvykL4vzs+TMLGd
-         wqdQ==
-X-Gm-Message-State: AOAM532ezsLpvmQboa6a17JeCVXXWxuXk3RPQpPGk6+XQp8azB0pxIH8
-        GrES3KRGky/5ZtucNSbSB/hdTQPvniFjhcRF
-X-Google-Smtp-Source: ABdhPJx/NjjytPGqrdB7ALpQ2D2UN1y3beEFQHQQ6lq6X+0v1w+skEFOdcQ7IGvC94wcmpu75nuqEQ==
-X-Received: by 2002:a05:6512:61c:: with SMTP id b28mr4518188lfe.140.1620340263193;
-        Thu, 06 May 2021 15:31:03 -0700 (PDT)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id f18sm965402lft.98.2021.05.06.15.31.02
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 May 2021 15:31:02 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id t11so10003581lfl.11
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 May 2021 15:31:02 -0700 (PDT)
-X-Received: by 2002:a05:6512:1095:: with SMTP id j21mr4272160lfg.40.1620340261797;
- Thu, 06 May 2021 15:31:01 -0700 (PDT)
+        Thu, 6 May 2021 20:02:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 98D0F61164;
+        Fri,  7 May 2021 00:01:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620345719;
+        bh=OnZ8E8ucGobRrYWP6K56v9dvJ/+sAsK5BzaPSU1d9Hw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=qrq87rGu4EWRk54rAiG8OLLqbwFB/dWuNDBn62M5RZNh3UJCJI1Q59HJ3pkcVgyXD
+         cDFRZ1qM3AMzx6C7gNZa8L4/eBy3KNBeTxsbZbUABpmWrelr8bK+YfdKtpE8va3Zbr
+         cpdtOpVPLGHsQp3UXfts6yiYW2e1DCGSoe3cK+o800KztRvgb4X3ReGtU3+iXepEfD
+         XCxKkXLFNUXYEO2+X0vhgLvgPmBSQBvWItsnmtwQal2imL5tWAEnO6dt7tdLB1bjgb
+         gdOJqRCShFO9vsirw1I0nFHO8bFeXO2DhArIaCQFclNfxiV9i8LstLgk0jVdlMIYoo
+         mAG1OpKJMfGnw==
+Date:   Thu, 6 May 2021 17:01:57 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     =?UTF-8?B?xYF1a2Fzeg==?= Stelmach <l.stelmach@samsung.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvbG5pZXJr?= =?UTF-8?B?aWV3aWN6?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [RESEND PATCH v11 0/3] AX88796C SPI Ethernet Adapter
+Message-ID: <20210506170157.6deb1b6d@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <dleftjim3x2jhw.fsf%l.stelmach@samsung.com>
+References: <20210302152250.27113-1-l.stelmach@samsung.com>
+        <CGME20210505171151eucas1p15785129622c00205d1d071a2fcaa30e8@eucas1p1.samsung.com>
+        <dleftjim3x2jhw.fsf%l.stelmach@samsung.com>
 MIME-Version: 1.0
-References: <YJBHiRiCGzojk25U@phenom.ffwll.local>
-In-Reply-To: <YJBHiRiCGzojk25U@phenom.ffwll.local>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 6 May 2021 15:30:45 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiwgOPQ+4Eaf0GD5P_GveE6vUHsKxAT=pMsjk1v_kh4ig@mail.gmail.com>
-Message-ID: <CAHk-=wiwgOPQ+4Eaf0GD5P_GveE6vUHsKxAT=pMsjk1v_kh4ig@mail.gmail.com>
-Subject: Re: [PULL] topic/iomem-mmap-vs-gup
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-[ You had a really odd Reply-to on this one ]
+On Wed, 05 May 2021 19:11:39 +0200 =C5=81ukasz Stelmach wrote:
+> It was <2021-03-02 wto 16:22>, when =C5=81ukasz Stelmach wrote:
+> > This is a driver for AX88796C Ethernet Adapter connected in SPI mode as
+> > found on ARTIK5 evaluation board. The driver has been ported from a
+> > v3.10.9 vendor kernel for ARTIK5 board.
+> >
+> > Changes in v11:
+> >   - changed stat counters to 64-bit
+> >   - replaced WARN_ON(!mutex_is_locked()) with lockdep_assert_held()
+> >   - replaced ax88796c_free_skb_queue() with __skb_queue_purge()
+> >   - added cancel_work_sync() for ax_work
+> >   - removed unused fields of struct skb_data
+> >   - replaced MAX() with max() from minmax.h
+> >   - rebased to net-next (resend) =20
+>=20
+> Hi,
+>=20
+> What is current status? Should I rebase once more?
 
-On Mon, May 3, 2021 at 12:15 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->
-> Anyway here's a small pull for you to ponder, now that the big ones are
-> all through.
+Unfortunately it seems so :( The patches got marked as Not Applicable
+in patchwork. And now we are once again in the merge window period.
+Please repost late next week, and make sure to prefix the subjects with
+[PATCH net-next v12], this will hopefully prevent mis-categorization.
 
-Well, _now_ I'm all caught up. Knock wood. Anyway, time to look at it:
-
-> Follow-up to my pull from last merge window: kvm and vfio lost their
-> very unsafe use of follow_pfn, this appropriately marks up the very
-> last user for some userptr-as-buffer use-cases in media. There was
-> some resistance to outright removing it, maybe we can do this in a few
-> releases.
-
-Hmm. So this looks mostly ok to me, although I think the change to the
-nommu case is pretty ridiculous.
-
-On nommu, unsafe_follow_pfn() should just be a wrapper around
-follow_pfn(). There's no races when you can't remap anything. No?
-
-Do the two media cases even work on nommu?
-
-Finally - did you intend fo this to be a real pull request? Because
-the email read to me like "think about this and tell me what you
-think" rather than "please pull"..
-
-And I have now fulfilled that "think about and tell me" part ;)
-
-              Linus
+Looking at the code again is the use of netif_stop_queue(ndev) in
+ax88796c_close() not a little racy? The work may be running in parallel=20
+and immediately re-enable the queue.
