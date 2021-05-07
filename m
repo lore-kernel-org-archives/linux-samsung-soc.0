@@ -2,89 +2,154 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E823C433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 May 2021 00:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8720C433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 May 2021 14:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C038613C9
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 May 2021 00:02:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94B946141B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 May 2021 14:01:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233223AbhEGAC6 (ORCPT
+        id S237380AbhEGOCX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 May 2021 20:02:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232375AbhEGAC6 (ORCPT
+        Fri, 7 May 2021 10:02:23 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:28874 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237364AbhEGOCQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 May 2021 20:02:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 98D0F61164;
-        Fri,  7 May 2021 00:01:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620345719;
-        bh=OnZ8E8ucGobRrYWP6K56v9dvJ/+sAsK5BzaPSU1d9Hw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=qrq87rGu4EWRk54rAiG8OLLqbwFB/dWuNDBn62M5RZNh3UJCJI1Q59HJ3pkcVgyXD
-         cDFRZ1qM3AMzx6C7gNZa8L4/eBy3KNBeTxsbZbUABpmWrelr8bK+YfdKtpE8va3Zbr
-         cpdtOpVPLGHsQp3UXfts6yiYW2e1DCGSoe3cK+o800KztRvgb4X3ReGtU3+iXepEfD
-         XCxKkXLFNUXYEO2+X0vhgLvgPmBSQBvWItsnmtwQal2imL5tWAEnO6dt7tdLB1bjgb
-         gdOJqRCShFO9vsirw1I0nFHO8bFeXO2DhArIaCQFclNfxiV9i8LstLgk0jVdlMIYoo
-         mAG1OpKJMfGnw==
-Date:   Thu, 6 May 2021 17:01:57 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     =?UTF-8?B?xYF1a2Fzeg==?= Stelmach <l.stelmach@samsung.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
+        Fri, 7 May 2021 10:02:16 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210507140114euoutp013720e83847d67831f1e26ae36f4464f8~8zaULxIZC1062010620euoutp01_
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 May 2021 14:01:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210507140114euoutp013720e83847d67831f1e26ae36f4464f8~8zaULxIZC1062010620euoutp01_
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1620396074;
+        bh=w5Gqb7BvvRqY4m23FGJR7afb4SpYR8lKibM76Y7ezp4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=aw5vk52c7z9pLQiiTQ4mlRKEekhUsmGTRgzQpkBInDIpWIpM9xGLNOYPaDxuiL++o
+         92nzi4/HwuPu5yhHNUsAxuGGjmIPAye5R63UWCL7hdV9LoyO2Fwfm8qQEkwOftp0ct
+         9fctFMFihZLDyqArzUesbHCKokXtbuNzA/YSNSRU=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210507140114eucas1p285a6ad2380d7418ba21a1c21a8f68ca4~8zaTs3TaP2197721977eucas1p2i;
+        Fri,  7 May 2021 14:01:14 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id D0.8B.09439.A2845906; Fri,  7
+        May 2021 15:01:14 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210507140113eucas1p13dc9798741a7ecad721f07efe543b56d~8zaTKkjs31878618786eucas1p1u;
+        Fri,  7 May 2021 14:01:13 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210507140113eusmtrp13055df521d5f448f9c44ea1cdae0b74b~8zaTJlxRk3079830798eusmtrp1a;
+        Fri,  7 May 2021 14:01:13 +0000 (GMT)
+X-AuditID: cbfec7f5-c03ff700000024df-20-6095482a822a
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 52.49.08696.92845906; Fri,  7
+        May 2021 15:01:13 +0100 (BST)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210507140113eusmtip1276118451be30072731a98b2f327ad83~8zaS5v88o3070530705eusmtip1H;
+        Fri,  7 May 2021 14:01:13 +0000 (GMT)
+From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
         Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvbG5pZXJr?= =?UTF-8?B?aWV3aWN6?= 
+        linux-samsung-soc@vger.kernel.org
+Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
         <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [RESEND PATCH v11 0/3] AX88796C SPI Ethernet Adapter
-Message-ID: <20210506170157.6deb1b6d@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <dleftjim3x2jhw.fsf%l.stelmach@samsung.com>
-References: <20210302152250.27113-1-l.stelmach@samsung.com>
-        <CGME20210505171151eucas1p15785129622c00205d1d071a2fcaa30e8@eucas1p1.samsung.com>
-        <dleftjim3x2jhw.fsf%l.stelmach@samsung.com>
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH net-next v12 1/3] dt-bindings: vendor-prefixes: Add asix
+ prefix
+Date:   Fri,  7 May 2021 16:01:08 +0200
+Message-Id: <20210507140110.6323-2-l.stelmach@samsung.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20210507140110.6323-1-l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Organization: Samsung R&D Institute Poland
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTdxTH/d1He8usuxQzT3DBrMFMWaROjftNiEJmlpssPrYsm4+oVHpH
+        dYCmlcl8BASljvCYPGLXNoEq8pIJthRrg3PpirhUW17WR+SRlEECM8B4BDChs71d5n/ne87n
+        +zvfk/wYUtZLRzPHMk/xmkxlulwUQbU9WPBsiOMqUza2TFHY2+8k8W19M41N3osUrnJ5aHxt
+        Qk9j36uXNC71j5PY620R4662Eho/d9YjbPH7aNzrMImw3vsbgZ2V9xD+1dUvxg+q38OX7rnE
+        ONBuFyfJuF5fN8m1NjwnuLuGfjFnafxJxFlrcri79mmCK2ltRNy0JWYvcyAiUcWnH/uB1yi2
+        p0Son5jyiZMLouy/Z2uIXLRAFyKGAXYL9D6OKkQRjIytR5A/00EIYgZB4JY1LKYRWOf6xIVI
+        EnLYKszhQR2CYYeRFsQoAmNtbogSsclQeuNhaLCSHSChWTeEgoJkBxEMjN4kg1QU+yXkuRdD
+        DopdC0UvdKJgKim7DQL2b4V1a0BXd0cUrCVsAgz90x/CpWwk/PnLMBWs32XjoCnvaagm3/D5
+        NiMpeD0ScLkThEN3Qk33GaEdBWOdreFr3gd3eRElIDlQXrY1mBLYIgRtpnlKYBLgpWcxlIxk
+        10OzQyG0k6FnwEoK1hXw7FWkEGAFlLVdDbelcLlAJtCxcKu0PfxgNBSP1aOfkdzw1imGt+Ib
+        /t9VjchGtIrP0mak8drNmfzpeK0yQ5uVmRafeiLDgt78O/dS56wd1Y9NxTsRwSAnAoaUr5S6
+        r5WnyKQq5Y9neM2JI5qsdF7rRKsZSr5K6rA1HZGxacpT/Pc8f5LX/DclGEl0LoEGU8926kRH
+        z37+6MN9I68n7hdUH/4ryXwuupLTDi9vSqq4GLt04T6wxzfZaMXh6x8U537qN+YE9t/+TLWG
+        Y+zE8iR1QuwOxdNDQw3S/eRXfv5h+uZDRDX3otVsmi9zFrvaF1/LPjo33rH9a7v55o3s7+ZK
+        LlypargTUE04RnYrVDNVHXu7Y3yfjHyz6zQ6r6+Y7dFbkeXKzrmpAs3S5Hz7MMru+2KPkVud
+        cbDndwXsMvtdqCVxIPJ88iWWrrU1PKotmBpctizHFGNfO351fnSyx3Ncui7xYFfqdftinXXQ
+        4dvwx+6j6r7USFeVQf2E2vKObpskr2xp8nKRaodmY5ec0qqVH8eRGq3yX64rVODmAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsVy+t/xu7qaHlMTDL7PkbU4f/cQs8XGGetZ
+        Leacb2GxmH/kHKvFovczWC2uvb3DatH/+DWzxfnzG9gtLmzrY7W4eWgFo8Wmx9dYLS7vmsNm
+        MeP8PiaLQ1P3MlqsPXKX3eLYAjGL1r1H2C3+79nB7iDkcfnaRWaPLStvMnnsnHWX3WPTqk42
+        j81L6j127vjM5NG3ZRWjx+dNcgEcUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFW
+        RqZK+nY2Kak5mWWpRfp2CXoZV+c0MxX8ZKt483UJUwPjT9YuRk4OCQETia1TFjJ1MXJxCAks
+        ZZRYd3MtkMMBlJCSWDk3HaJGWOLPtS42iJqnjBLbpxxhBkmwCThK9C89wQqSEBF4wyzRdO8t
+        O4jDLHCfUeLXpxeMIFXCAv4Sb+5OYAGxWQRUJXputbOBbOAVsJL4vyMcYoO8RPvy7WwgNqeA
+        tcSDT3fZQWwhoJKJmzqZQGxeAUGJkzOfsIC0MguoS6yfJwQS5hfQkljTdB1sOjPQmOats5kn
+        MArNQtIxC6FjFpKqBYzMqxhFUkuLc9Nzi430ihNzi0vz0vWS83M3MQIjfNuxn1t2MK589VHv
+        ECMTB+MhRgkOZiUR3tOLJicI8aYkVlalFuXHF5XmpBYfYjQFemwis5Rocj4wxeSVxBuaGZga
+        mphZGphamhkrifOaHFkTLySQnliSmp2aWpBaBNPHxMEp1cAkwCG445pTp1K2j0LZnok3FqTF
+        njBee3O2C+O33/WNezc2XNLeeMl83Y2ZLy8XTtp+5WXxjjd5c9tOnuKf+WPby41XXkhN7u/9
+        PblbcvIlkZXp4Q/OzbPcuvOd28+EB33xb8Q/mizpfDWv5glrit3JbQcn7P928tH6Y6pRfzsv
+        Gx/clh1vePnDqpA7M00fOS5nWDUvedmjvW7HxDTFNF9675l5nD//Qqrz3u3f5yw40cb2mpU/
+        SftUlOvR631alz9UrheX2/Bsqif31YWGh/U3PPLUZc4+qPwza98zaafFU5+WrBLj25O8+OXC
+        i4JsXOpaTJK5zxXDr375elzCxZO/t0xC/IJsT6lOukrG/4MZ1leVWIozEg21mIuKEwEwghdX
+        eQMAAA==
+X-CMS-MailID: 20210507140113eucas1p13dc9798741a7ecad721f07efe543b56d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210507140113eucas1p13dc9798741a7ecad721f07efe543b56d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210507140113eucas1p13dc9798741a7ecad721f07efe543b56d
+References: <20210507140110.6323-1-l.stelmach@samsung.com>
+        <CGME20210507140113eucas1p13dc9798741a7ecad721f07efe543b56d@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 05 May 2021 19:11:39 +0200 =C5=81ukasz Stelmach wrote:
-> It was <2021-03-02 wto 16:22>, when =C5=81ukasz Stelmach wrote:
-> > This is a driver for AX88796C Ethernet Adapter connected in SPI mode as
-> > found on ARTIK5 evaluation board. The driver has been ported from a
-> > v3.10.9 vendor kernel for ARTIK5 board.
-> >
-> > Changes in v11:
-> >   - changed stat counters to 64-bit
-> >   - replaced WARN_ON(!mutex_is_locked()) with lockdep_assert_held()
-> >   - replaced ax88796c_free_skb_queue() with __skb_queue_purge()
-> >   - added cancel_work_sync() for ax_work
-> >   - removed unused fields of struct skb_data
-> >   - replaced MAX() with max() from minmax.h
-> >   - rebased to net-next (resend) =20
->=20
-> Hi,
->=20
-> What is current status? Should I rebase once more?
+Add the prefix for ASIX Electronics Corporation.
 
-Unfortunately it seems so :( The patches got marked as Not Applicable
-in patchwork. And now we are once again in the merge window period.
-Please repost late next week, and make sure to prefix the subjects with
-[PATCH net-next v12], this will hopefully prevent mis-categorization.
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Looking at the code again is the use of netif_stop_queue(ndev) in
-ax88796c_close() not a little racy? The work may be running in parallel=20
-and immediately re-enable the queue.
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 99a72a480d32..06c32644a9c8 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -131,6 +131,8 @@ patternProperties:
+     description: Asahi Kasei Corp.
+   "^asc,.*":
+     description: All Sensors Corporation
++  "^asix,.*":
++    description: ASIX Electronics Corporation
+   "^aspeed,.*":
+     description: ASPEED Technology Inc.
+   "^asus,.*":
+-- 
+2.26.2
+
