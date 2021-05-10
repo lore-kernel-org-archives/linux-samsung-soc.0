@@ -6,39 +6,63 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E929FC433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 May 2021 07:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09269C43460
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 May 2021 14:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B43AF60241
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 May 2021 07:31:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD9AD61108
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 May 2021 14:12:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229863AbhEJHcG (ORCPT
+        id S233641AbhEJONN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 May 2021 03:32:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54450 "EHLO
+        Mon, 10 May 2021 10:13:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbhEJHcG (ORCPT
+        with ESMTP id S233706AbhEJOKF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 May 2021 03:32:06 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A5D9C061573;
-        Mon, 10 May 2021 00:31:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=RlPDTnrGP7VrkHHDZaeu5siASFXrL/7DV46d02KfOg8=; b=jVtYg1DpIhoMALo/8L1gTQX3ww
-        71nqSsTYByFChENtDDk7rl0AnbqCNYwo4kIyhxfdTGMVo2WSUaokSu6XHznVNC+zNG6w1+ZT7teAE
-        U3xD//EkLHc4hnRNpZgrlDLhKr0c4uniH4OXlSCvuWDEqpbXAyJEuvBrmJwwjpntITYYjTHgWxP8+
-        TEhIsYdtK717BX+ucCD6EA1Ro67VHN9V61suNwsknLSPRw3z/gYot7uhl/qDZsHvzb9XvRvJ3WxY7
-        MYKLsyXSwII3NUgCBauC/Y3gs/9XnATB/PvFMAq+mU7jEsLMIynM0ji0AW3may0sqatghH7sRC3gx
-        nZxczo9Q==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lg0M8-005oIH-AU; Mon, 10 May 2021 07:29:37 +0000
-Date:   Mon, 10 May 2021 08:29:32 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Mon, 10 May 2021 10:10:05 -0400
+Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 876C1C0610E5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 May 2021 06:50:34 -0700 (PDT)
+Received: by mail-qk1-x733.google.com with SMTP id 76so15312426qkn.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 May 2021 06:50:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=+2U891pcT5PFaAL7+dZJNGYBFLIb+qctBvykRURXgBY=;
+        b=dACYFzmZp5FCubbaz661EkjXMEr4yIw8M3uTK3Kyf9WGXPYwdZw+Te0aQwLTIgwwC2
+         IcIyUfISzla30F1Y5z5YNyfFMSuvpPToFEKyFwyWyzNO8J90FAq4FSLctkLmbUnqXieu
+         lMQ7sIa6zzDWNW+3ZAA/Ywi2wnST8RvZfOXC1jXTR/nDU/u1OUAIwV5METsf0kVOPHrk
+         PIuKStNqOQCBo7BK5+duLO5e2wBIi32E+Rgu2kNOG2SYryYXUN5IAmaJPspud5x7d6Vf
+         5XGHOc/1cpdW83EDoXATbw25gMJUpTl30B68jCIFcCNIzm8fMivAz/aG2nH3kKyIFqz2
+         KzIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+2U891pcT5PFaAL7+dZJNGYBFLIb+qctBvykRURXgBY=;
+        b=ULX/m6m2L9FnspI6oJEUxKcg/eLD9D9YJE6pkQKDYaF/XysJUJt5PH0J9PRlGcsH8x
+         dMK2u3n5BLxkrNZqzskeOmm1uf3ChZi+1NsEbMDdmHyUiA61H4RUzgbc3xwClAGXScOE
+         NBkJ+9DPk6EYpyCJh/4DICkFIkef0AE4glQLc3kYEEWW+plKGde/1gHO23ScXUgjn+02
+         gInNN709kGJZg14n2x15YREYitPgQygyDBdtTV79ecqUFxi+7ehCnKpe/h9xOkoFEw1n
+         jzV5pCXOqwvp31TS3Amc01pAiC2wTP/0YMiR6mbHDpbBu8dIQJRJaKybL3iM3W7VXdIp
+         hW1g==
+X-Gm-Message-State: AOAM530kKcqxF0INy8+NBfwGLK9S3uOmUdI564cQdJ+TnIZVG6cHnHzt
+        5ZZVtoY9Mx0bTMiajiIT5Oq2Hg==
+X-Google-Smtp-Source: ABdhPJzBvEXIq3ZKj83MNPLUEszsweYjMFeVQA7SyU/yis3HOqTzVmEhu9DH0fP04ViEgC4gr5a3yA==
+X-Received: by 2002:a05:620a:4543:: with SMTP id u3mr22610464qkp.118.1620654633736;
+        Mon, 10 May 2021 06:50:33 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-113-94.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.113.94])
+        by smtp.gmail.com with ESMTPSA id e7sm11644631qth.27.2021.05.10.06.50.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 May 2021 06:50:32 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1lg6Ip-004ZFk-QY; Mon, 10 May 2021 10:50:31 -0300
+Date:   Mon, 10 May 2021 10:50:31 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
         Tomasz Figa <tfiga@chromium.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -47,35 +71,54 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Linux-MM <linux-mm@kvack.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+        linux-samsung-soc@vger.kernel.org
 Subject: Re: [PULL] topic/iomem-mmap-vs-gup
-Message-ID: <YJjg3DRnG1RG6VDK@infradead.org>
+Message-ID: <20210510135031.GF2047089@ziepe.ca>
 References: <YJBHiRiCGzojk25U@phenom.ffwll.local>
  <CAHk-=wiwgOPQ+4Eaf0GD5P_GveE6vUHsKxAT=pMsjk1v_kh4ig@mail.gmail.com>
  <YJVijmznt1xnsCxc@phenom.ffwll.local>
  <CAHk-=wgjO8-f1bUwQB=5HGzkvSS+aGACR9+H5CkkDhRgud+3MA@mail.gmail.com>
- <CAKMK7uELBbkhFBQoSfvMx+AKnbk-fgbamBm3sC20-dJwMq3Xmg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKMK7uELBbkhFBQoSfvMx+AKnbk-fgbamBm3sC20-dJwMq3Xmg@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAHk-=wgjO8-f1bUwQB=5HGzkvSS+aGACR9+H5CkkDhRgud+3MA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, May 10, 2021 at 09:16:58AM +0200, Daniel Vetter wrote:
-> > End result: not pulling it, unless somebody can explain to me in small
-> > words why I'm wrong and have the mental capacity of a damaged rodent.
-> 
-> No rodents I think, just more backstory of how this all fits. tldr;
-> pin_user_pages is the only safe use of this vb2 userptr thing.
+On Sat, May 08, 2021 at 09:46:41AM -0700, Linus Torvalds wrote:
 
-Yes, which is why I advocate for just ripping the follow_pfn path
-out entirely.  It could have been used for crazy ad dangerous peer to
-peer transfers outside of any infrastructure making it safe, or for
-pre-CMA kernel memory carveouts for lage contiguous memory allocations
-(which are pretty broken by design as well).  So IMHO the only sensible
-thing is to remove this cruft entirely, and if it breaks a currently
-working setup (which I think is unlikely) we'll have to make sure it
-can work the proper way.
+> I think follow_pfn() is ok for the actual "this is not a 'struct page'
+> backed area", and disabling that case is wrong even going forward.
+
+Every place we've audited using follow_pfn() has been shown to have
+some use-after-free bugs like Daniel describes, and a failure to check
+permissions bug too.
+
+All the other follow_pfn() users were moved to follow_pte() to fix the
+permissions check and this shifts the use-after-free bug away from
+being inside an MM API and into the caller mis-using the API by, say,
+extracting and using the PFN outside the pte lock.
+
+eg look at how VFIO wrongly uses follow_pte():
+
+static int follow_fault_pfn()
+        ret = follow_pte(vma->vm_mm, vaddr, &ptep, &ptl);
+                *pfn = pte_pfn(*ptep);
+        pte_unmap_unlock(ptep, ptl);
+
+        // no protection that pte_pfn() is still valid!
+        use_pfn(*pfn)
+
+v4l is the only user that still has the missing permissions check
+security bug too - so there is no outcome that should keep
+follow_pfn() in the tree.
+
+At worst v4l should change to follow_pte() and use it wrongly like
+VFIO. At best we should delete all the v4l stuff.
+
+Daniel I suppose we missed this relation to follow_pte(), so I agree
+that keeping a unsafe_follow_pfn() around is not good.
+
+Regards,
+Jason
