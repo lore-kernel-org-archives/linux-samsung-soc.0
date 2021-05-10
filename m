@@ -2,112 +2,127 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC32C43460
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 May 2021 15:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F03C43460
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 May 2021 16:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF4516157E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 May 2021 15:34:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BF2A610F7
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 May 2021 16:20:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234429AbhEJPfV (ORCPT
+        id S231470AbhEJQVd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 May 2021 11:35:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49880 "EHLO
+        Mon, 10 May 2021 12:21:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232384AbhEJPfU (ORCPT
+        with ESMTP id S231467AbhEJQVb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 May 2021 11:35:20 -0400
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 309D1C06175F
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 May 2021 08:34:15 -0700 (PDT)
-Received: by mail-qv1-xf2d.google.com with SMTP id w9so8516990qvi.13
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 May 2021 08:34:15 -0700 (PDT)
+        Mon, 10 May 2021 12:21:31 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F98AC06175F
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 May 2021 09:20:26 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id 69so4777241plc.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 May 2021 09:20:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Kbo2+rSch+wM5JArQf3gDIi84RZdBPSju4RgHGRm0v8=;
-        b=jInoHJDR26ARTH6tGpwVeeJogGk+P6na2ViO2DUIC+bGbMTDUi+8QZzkitdl3HzqhO
-         qhzxVKEpk3y84tIr+YEon8WcnwbvCYIcrIg25Aj/b7Aw/UGidjezNDFr5jegnVEzomGc
-         4efhSEvakB8sIdWnv6WdpTzrvm1E0Gx8lRr9GLBLLiIA4Ukwc+AzQ9ZD3NCYX5hM1Sd/
-         ccEc+Vt5pnW3H8LiiDb5+QVBE1suwmzlBV6rdcmBxTtb5gWnK/b/QGiuyH818XA3RJ/w
-         eI2Btdv2pxaao9VxPBbC4GWZvh6jQaHr7aGphsI2afnyj+BjF4p6gyMYvMUkwP1w7Elb
-         RnQg==
+        d=gateworks-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0fWnbepkZzpOXZd5Aej2WwUh93xVx+Nhqui+NqMG42w=;
+        b=eJUsSClChBveOTjxjQQ+bmWoecQYo3UAy1n/6GJMl++HeGQLcRlhEyapA7XW4zlZdQ
+         YcsqGGsw4lOSRL5K0tBy+ZOjY6aWUCsv0iw92e9cdh0phgkSpdLoZrEsREIIlmd3KDzf
+         2tY6aRxMKHQuS/YZL//pd5Yv2E+N09/DaIb7ZM5BngZDdxGQnJOTF75kHn8S0wfrs72J
+         Y85sJ/cSWK+HNJUsrpydfTgc/bTTDFFnEK86hwnKi3P10Zj3GkIxq0RFclaq2orhjr8O
+         BI/BLnaeXl1XcgJwHC5QB35X55iE8cdnkbfuFDbPvpny53P6kpfhSCGJigsq0Y6yKJVG
+         Pv4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Kbo2+rSch+wM5JArQf3gDIi84RZdBPSju4RgHGRm0v8=;
-        b=MMKpnfQQVLC8NqsdRmnkep+kRVYKr039G5cm+q69i1lE+JSG02+vNDi1eA7jyyA05V
-         SKcxa+LCWDdFUALaPbfFL+yN/TVjaDHH+8AHafF/EEVk6LVOGcH46Az+kXCiMpju0ObO
-         07Dxkv3eKuYTCzVfGIqFDGaU4gQ3Kyyvah+h94NE/lvkyLUg4YIhIBZjuUU4n87XondQ
-         dfzdDY5FucEVnvMr0eC/kpzjVrl4OEUT08d7siDO8wEWjCeCPSqvN0d1+AlWTwuTnVAB
-         kckn4v4bxCizRGmmKiAN5dVqfCs8OBa8CwYBSHUTslMwXzOKsjk7CFY4RveEAcP0ztYM
-         9PLw==
-X-Gm-Message-State: AOAM5334j/5z83bTFNc38tRsegROcwG68aAGIzr7W7t9Jt6cjYBHOOjj
-        kPomWpARBBDtMoKx5xkF1vyQrQ==
-X-Google-Smtp-Source: ABdhPJyla2vALn9Ej+6umiMQDx3D5VWVB5hGHAU2fINWGaZnoagvIFv9v7XEtwXflVpOpTyJSRO84Q==
-X-Received: by 2002:a05:6214:9aa:: with SMTP id du10mr24525830qvb.37.1620660853797;
-        Mon, 10 May 2021 08:34:13 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-113-94.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.113.94])
-        by smtp.gmail.com with ESMTPSA id t128sm11479176qkh.50.2021.05.10.08.34.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 May 2021 08:34:13 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1lg7vA-004b0w-PZ; Mon, 10 May 2021 12:34:12 -0300
-Date:   Mon, 10 May 2021 12:34:12 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PULL] topic/iomem-mmap-vs-gup
-Message-ID: <20210510153412.GG2047089@ziepe.ca>
-References: <YJBHiRiCGzojk25U@phenom.ffwll.local>
- <CAHk-=wiwgOPQ+4Eaf0GD5P_GveE6vUHsKxAT=pMsjk1v_kh4ig@mail.gmail.com>
- <YJVijmznt1xnsCxc@phenom.ffwll.local>
- <CAHk-=wgjO8-f1bUwQB=5HGzkvSS+aGACR9+H5CkkDhRgud+3MA@mail.gmail.com>
- <20210510135031.GF2047089@ziepe.ca>
- <CAKMK7uFfN3p2fE1Xq47nOTtkPY2vm10GMvBaupQ9hgK0rS8sgQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0fWnbepkZzpOXZd5Aej2WwUh93xVx+Nhqui+NqMG42w=;
+        b=YITFu0g2k47xdpyJuwTz1yniuZ+ixJZpy3Of/YOFqbTYREcx2922dg6nF16xbaDu/s
+         MzIZUMFnvpqiGkbZzid2dmAZdcLUdxCksHZgOR3pfOPmzZ/AAohufI0iz/Ywttkyuno0
+         tZYVBNlfiNx1RYSkTbM/kzrVjw5wtLCV0Ed2wZUiZfkiEnSc5S9A/A1PBt0Ktujts/jh
+         qFiN0tbokvAcfeMWbjk2ixz7ygGDgVu+fxySMIT4cFHPCKcNbn8Byja31SNG8sjeAkX1
+         aFgjckydVPxZou1zXJ4yE/j8AzsUC0fPZqYEz3UAghTm7IAgaqOnA4+dyTcIfqShuAKm
+         q2qA==
+X-Gm-Message-State: AOAM5334TqBbaQzvzmlPq4wZ3re7jAyDU0jOKZoOBEvS6OEV9HZDrG3v
+        S2HS7LzlWglDKRnFM/yUpfvO6l3adIIeLTZ/ebUa2w==
+X-Google-Smtp-Source: ABdhPJxUc61uV0PzwOO5GQyXabJ7EkGoObQ6Q+wiAfx+OxvyUE0V+UlwJ9niWyall6JkUFyEFsvYwXMSThRrfKTSX40=
+X-Received: by 2002:a17:902:d2d2:b029:ee:fb71:c05e with SMTP id
+ n18-20020a170902d2d2b02900eefb71c05emr25806031plc.13.1620663625728; Mon, 10
+ May 2021 09:20:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uFfN3p2fE1Xq47nOTtkPY2vm10GMvBaupQ9hgK0rS8sgQ@mail.gmail.com>
+References: <20201005134250.527153-1-marex@denx.de> <20201005134250.527153-3-marex@denx.de>
+ <CAHCN7xJtnYHvLWkawYpi=BYbtfSrvHnNzqp767rOZjOGsAJV=g@mail.gmail.com>
+In-Reply-To: <CAHCN7xJtnYHvLWkawYpi=BYbtfSrvHnNzqp767rOZjOGsAJV=g@mail.gmail.com>
+From:   Tim Harvey <tharvey@gateworks.com>
+Date:   Mon, 10 May 2021 09:20:14 -0700
+Message-ID: <CAJ+vNU2GU=dYznHjYvhWqS9fFssesj_Bg8HBW0891mcBB6WhvQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] [RFC] drm/exynos: Add basic i.MX8MM support code
+To:     Adam Ford <aford173@gmail.com>
+Cc:     Marek Vasut <marex@denx.de>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, May 10, 2021 at 04:55:39PM +0200, Daniel Vetter wrote:
+On Mon, May 10, 2021 at 7:12 AM Adam Ford <aford173@gmail.com> wrote:
+>
+> On Mon, Oct 5, 2020 at 8:48 AM Marek Vasut <marex@denx.de> wrote:
+> >
+> > This adds basic i.MX8MM glue code for the Samsung DSIM PHY.
+> > There are still a couple of items which need to be sorted out
+> > in drivers/gpu/drm/bridge/samsung-dsim.c before this can even
+> > be merged, specifically:
+> >
+> > - The dsi->out_bridge is not populated until samsung_dsim_host_attach()
+> >   is called, however samsung_dsim_host_attach() is not called until the
+> >   next bridge attaches and calls mipi_dsi_attach(), and that only happens
+> >   after the DSIM calls drm_bridge_attach() on that next bridge.
+> >
+> > - The samsung_dsim_bridge_mode_fixup() is needed for iMX8MM LCDIF to set
+> >   the correct sync flags. This likely needs to be done in the glue code.
+>
+> Since you asked for an RFC, I
+> I applied Michael's series and this series to 5.12 since we are so
+> close on having the blk-clk and the power domain stuff working.  I
+> also tried your patch for the ti-sn65dsi83 and the adv7511 on the
+> Beacon imx8mm development kit.
+>
+> In both the HDMI bridge and LVDS bridge, I am able to get the modetest
+> and drmdevice to return data that looks valid.  The resolution and
+> refresh look correct, but I am not able to can an actual image to
+> generate out to either the LVDS or the HDMI.  I am able to get the
+> image to appear using the NXP kernel with the ADV7511 HDMI bridge, so
+> that leads me to believe there might be something wrong with either
+> LCDIF or the Samsung DSIM layer code.  I am guess it's the Samsung
+> DSIM stuff since the LCDIF has been around for a while.
+>
+> I am not particularly well versed in the video world, but if you have
+> something you'd like me to try, i am willing to try it.
+>
 
-> yeah vfio is still broken for the case I care about. I think there's
-> also some questions open still about whether kvm really uses
-> mmu_notifier in all cases correctly, 
+Adam,
 
-IIRC kvm doesn't either.
+Try the patches Frieder had to make for his display from his git here:
+https://github.com/fschrempf/linux/commits/v5.10-mx8mm-graphics.
 
-> > Daniel I suppose we missed this relation to follow_pte(), so I agree
-> > that keeping a unsafe_follow_pfn() around is not good.
-> 
-> tbh I never really got the additional issue with the missing write
-> checks. That users of follow_pfn (or well follow_pte + immediate lock
-> dropping like vfio) don't subscribe to the pte updates in general is
-> the bug I'm seeing. That v4l also glosses over the read/write access
-> stuff is kinda just the icing on the cake :-) It's pretty well broken
-> even if it would check that.
+I found I needed these for the display I have:
+drm/exynos: Fix DE polarity for usage with LCDIF encoder
+drm/exynos: Fix PLL PMS offset for P value bitfield
 
-It is just severity. Exploiting the use after free bug is somewhat
-harder, exploiting the 'you can write to non-page write protected
-memory' bug is not so hard.
+Best regards,
 
-Jason
+Tim
