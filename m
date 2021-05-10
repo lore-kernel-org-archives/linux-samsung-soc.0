@@ -4,61 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_RED autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB7DC43460
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 May 2021 07:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E929FC433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 May 2021 07:31:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4B0B61433
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 May 2021 07:17:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B43AF60241
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 May 2021 07:31:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230071AbhEJHSS (ORCPT
+        id S229863AbhEJHcG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 May 2021 03:18:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51454 "EHLO
+        Mon, 10 May 2021 03:32:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230002AbhEJHSR (ORCPT
+        with ESMTP id S229684AbhEJHcG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 May 2021 03:18:17 -0400
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1309C061574
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 May 2021 00:17:11 -0700 (PDT)
-Received: by mail-ot1-x335.google.com with SMTP id f75-20020a9d03d10000b0290280def9ab76so13566068otf.12
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 May 2021 00:17:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IhB0bIAA6mNgVJcfwc6pFjtsYpHcwnidnUaVEALfzAI=;
-        b=DcFxeuviLqMJK1VOxpDP7iKBaegJNE1XYPxwsKMaFGAj2NpdrLkRhT55H9GQaygVNx
-         1SeTBY16BF7gKnMhIIf5DxtvTinhP3GCxq0PqcebcKDPInrlBoPk1ZZ7Fb2/tF6E/Tfo
-         sWFhuo66q0s83TApmLbvzpQXU+w4YFKi9Wxwg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IhB0bIAA6mNgVJcfwc6pFjtsYpHcwnidnUaVEALfzAI=;
-        b=T/k5ntVwZdoLWh8x+HUvPt1QZcssedszZndaYvlPt0ZVKRL/kWT8Qx2drm72J9lBCs
-         dLcJyvFYylwk/Ppywe528j5w1Z04LhCa9LjdhNwvB01dAq9zLbLG7iEO/Hy2Ms5Kos1o
-         kogpnbBbxQ0diAp2IaE+DwR6Sw44p/xjZLdCrsnMCHT/aWMX8AC5uW5UIPy3sFjAoNOm
-         tLdKiE8Vfg1eHcBkopYsp/FWITwhQX6VrFejmjkQWM8P3QCaLOuyAURCMEkgc+Z+X/D3
-         zMic6xydemj+T9oJsDdLKC6gWCZrX2dCs3G6wMajBbw7AlRAIybj0XHKw4Ef012hMKxd
-         BFJA==
-X-Gm-Message-State: AOAM531YimgjVQR9E4oh/Vrfa+csuM6nOoXCzi5BT8sUSApGjYSLjCQ5
-        O9RB6pdMTrE4QbKaz1xgeOsdGkz6+T9gYYE+ErrECQ==
-X-Google-Smtp-Source: ABdhPJy/Xn4t/rhcrM6b4Fmi2Q5ua128it2ybIXLDlJVUoo+FC6OFAIP58ZQupclu11lfKm/OHcj6XvNHUBJyL5LVmA=
-X-Received: by 2002:a05:6830:1398:: with SMTP id d24mr20409398otq.281.1620631030232;
- Mon, 10 May 2021 00:17:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <YJBHiRiCGzojk25U@phenom.ffwll.local> <CAHk-=wiwgOPQ+4Eaf0GD5P_GveE6vUHsKxAT=pMsjk1v_kh4ig@mail.gmail.com>
- <YJVijmznt1xnsCxc@phenom.ffwll.local> <CAHk-=wgjO8-f1bUwQB=5HGzkvSS+aGACR9+H5CkkDhRgud+3MA@mail.gmail.com>
-In-Reply-To: <CAHk-=wgjO8-f1bUwQB=5HGzkvSS+aGACR9+H5CkkDhRgud+3MA@mail.gmail.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Mon, 10 May 2021 09:16:58 +0200
-Message-ID: <CAKMK7uELBbkhFBQoSfvMx+AKnbk-fgbamBm3sC20-dJwMq3Xmg@mail.gmail.com>
-Subject: Re: [PULL] topic/iomem-mmap-vs-gup
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Tomasz Figa <tfiga@chromium.org>,
+        Mon, 10 May 2021 03:32:06 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A5D9C061573;
+        Mon, 10 May 2021 00:31:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=RlPDTnrGP7VrkHHDZaeu5siASFXrL/7DV46d02KfOg8=; b=jVtYg1DpIhoMALo/8L1gTQX3ww
+        71nqSsTYByFChENtDDk7rl0AnbqCNYwo4kIyhxfdTGMVo2WSUaokSu6XHznVNC+zNG6w1+ZT7teAE
+        U3xD//EkLHc4hnRNpZgrlDLhKr0c4uniH4OXlSCvuWDEqpbXAyJEuvBrmJwwjpntITYYjTHgWxP8+
+        TEhIsYdtK717BX+ucCD6EA1Ro67VHN9V61suNwsknLSPRw3z/gYot7uhl/qDZsHvzb9XvRvJ3WxY7
+        MYKLsyXSwII3NUgCBauC/Y3gs/9XnATB/PvFMAq+mU7jEsLMIynM0ji0AW3may0sqatghH7sRC3gx
+        nZxczo9Q==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lg0M8-005oIH-AU; Mon, 10 May 2021 07:29:37 +0000
+Date:   Mon, 10 May 2021 08:29:32 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Tomasz Figa <tfiga@chromium.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         DRI Development <dri-devel@lists.freedesktop.org>,
@@ -67,130 +48,34 @@ Cc:     Tomasz Figa <tfiga@chromium.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PULL] topic/iomem-mmap-vs-gup
+Message-ID: <YJjg3DRnG1RG6VDK@infradead.org>
+References: <YJBHiRiCGzojk25U@phenom.ffwll.local>
+ <CAHk-=wiwgOPQ+4Eaf0GD5P_GveE6vUHsKxAT=pMsjk1v_kh4ig@mail.gmail.com>
+ <YJVijmznt1xnsCxc@phenom.ffwll.local>
+ <CAHk-=wgjO8-f1bUwQB=5HGzkvSS+aGACR9+H5CkkDhRgud+3MA@mail.gmail.com>
+ <CAKMK7uELBbkhFBQoSfvMx+AKnbk-fgbamBm3sC20-dJwMq3Xmg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uELBbkhFBQoSfvMx+AKnbk-fgbamBm3sC20-dJwMq3Xmg@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, May 8, 2021 at 6:47 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> [ Daniel, please fix your broken email setup. You have this insane
-> "Reply-to" list that just duplicates all the participants. Very
-> broken, very annoying ]
->
-> On Fri, May 7, 2021 at 8:53 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> >
-> > So personally I think the entire thing should just be thrown out, it's all
-> > levels of scary and we have zero-copy buffer sharing done properly with
-> > dma-buf since years in v4l.
->
-> So I've been looking at this more, and the more I look at it, the less
-> I like this series.
->
-> I think the proper fix is to just fix things.
->
-> For example, I'm looking at the v4l users of follow_pfn(), and I find
-> get_vaddr_frames(), which is just broken.
->
-> Fine, we know users are broken, but look at what appears to be the
-> main user of get_vaddr_frames(): vb2_dc_get_userptr().
->
-> What does that function do? Immediately after doing
-> get_vaddr_frames(), it tries to turn those pfn's into page pointers,
-> and then do sg_alloc_table_from_pages() on the end result.
->
-> Yes, yes, it also has that "ok, that failed, let's try to see if it's
-> some physically contiguous mapping" and do DMA directly to those
-> physical pages, but the point there is that that only happens when
-> they weren't normal pages to begin with.
->
-> So thew *fix* for at least that path is to
->
->  (a) just use the regular pin_user_pages() for normal pages
+On Mon, May 10, 2021 at 09:16:58AM +0200, Daniel Vetter wrote:
+> > End result: not pulling it, unless somebody can explain to me in small
+> > words why I'm wrong and have the mental capacity of a damaged rodent.
+> 
+> No rodents I think, just more backstory of how this all fits. tldr;
+> pin_user_pages is the only safe use of this vb2 userptr thing.
 
-Yup, the "rip it all out" solution amounts to replacing this all,
-including frame_vector helper code, with pin_user_pages.
-
->  (b) perhaps keep the follow_pfn() case, but then limit it to that "no
-> page backing" and that physical pages case.
->
-> And honestly, the "struct frame_vector" thing already *has* support
-> for this, and the problem is simply that the v4l code has decided to
-> have the callers ask for pfn's rather than have the callers just ask
-> for a frame-vector that is either "pfn's with no paeg backing" _or_
-> "page list with proper page reference counting".
->
-> So this series of yours that just disables follow_pfn() actually seems
-> very wrong.
->
-> I think follow_pfn() is ok for the actual "this is not a 'struct page'
-> backed area", and disabling that case is wrong even going forward.
-
-I think this is where you miss a bit: We very much also want to stop
-pinned userptr to physcial addresses that aren't page backed. This
-might very well be some gpu pci bar, backed by vram, and vram is
-managed as dynamically as struct page backed stuff (and there's all
-the hmm dreams to make it actually use struct page, but that's another
-story).
-
-So by the time the media hw access that vb2 userptr buffer there's
-good chances someone else's data is now there. If vb2 would have a
-mmu_notifier subscription or similar to follow pte updates the gpu
-driver does, then it would be all fine. But this vb2 model is a pinned
-one, hence not fixable.
-
-The other more practical issue is that peer2peer dma on modern hw
-needs quite some setup. Just taking a cpu pfn and hoping that matches
-the bus addr your device would need is a bit optimistic.
-
-One theoretical & proper fix I discussed with Jason Gunthrope would be
-to replace the pfn lookup with a lookup for a struct dma_buf. Which
-has proper interfaces for pinning gpu buffers, figuring out p2p dma or
-just figuring out the right dma mapping and all that. Idea was to make
-a direct vma->dma_buf lookup or something like that. But consensus is
-also that outside of gpus and very closely related things using
-dma_buf is not a great idea, because there's a few too many silly
-rules involved. For everyone else it's better to make the struct page
-managed device memory stuff work most likely.
-
-> End result, I think the proper model is:
->
->  - keep follow_pfn(), but limit it to the "not vm_normal_page()" case,
-> and return error for some real page mapping
->
->  - make the get_vaddr_frames() first try "pin_user_pages()" (and
-> create a page array) and fall back to "follow_pfn()" if that fails (or
-> the other way around). Set the
->
-> IOW, get_vaddr_frames() would just do
->
->         vec->got_ref = is_pages;
->         vec->is_pfns = !is_pages;
->
-> and everything would just work out - the v4l code seems to already
-> have all the support for "it's a ofn array" vs "it's properly
-> refcounted pages".
->
-> So the only case we should disallow is the mixed case, that the v4l
-> code already seems to not be able to handle anyway (and honestly, it
-> looks like "got_ref/is_pfns" should be just one flag - they always
-> have to have the opposite values).
->
-> So I think this "unsafe_follow_pfn()" halfway step is actively wrong.
-> It doesn't move us forward. Quite the reverse. It just makes the
-> proper fix harder.
->
-> End result: not pulling it, unless somebody can explain to me in small
-> words why I'm wrong and have the mental capacity of a damaged rodent.
-
-No rodents I think, just more backstory of how this all fits. tldr;
-pin_user_pages is the only safe use of this vb2 userptr thing.
--Daniel
-
-
-Cheers, Daniel
---
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Yes, which is why I advocate for just ripping the follow_pfn path
+out entirely.  It could have been used for crazy ad dangerous peer to
+peer transfers outside of any infrastructure making it safe, or for
+pre-CMA kernel memory carveouts for lage contiguous memory allocations
+(which are pretty broken by design as well).  So IMHO the only sensible
+thing is to remove this cruft entirely, and if it breaks a currently
+working setup (which I think is unlikely) we'll have to make sure it
+can work the proper way.
