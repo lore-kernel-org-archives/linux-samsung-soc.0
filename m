@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D26F5C43460
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 May 2021 12:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3817CC433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 May 2021 12:40:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A5FC86191C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 May 2021 12:38:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB5486191A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 May 2021 12:40:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231538AbhEKMjH (ORCPT
+        id S231537AbhEKMly (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 May 2021 08:39:07 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51166 "EHLO
+        Tue, 11 May 2021 08:41:54 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51219 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231646AbhEKMjG (ORCPT
+        with ESMTP id S230436AbhEKMlx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 May 2021 08:39:06 -0400
-Received: from mail-ua1-f72.google.com ([209.85.222.72])
+        Tue, 11 May 2021 08:41:53 -0400
+Received: from mail-vk1-f197.google.com ([209.85.221.197])
         by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lgReB-0002kw-BA
-        for linux-samsung-soc@vger.kernel.org; Tue, 11 May 2021 12:37:59 +0000
-Received: by mail-ua1-f72.google.com with SMTP id y47-20020ab048f20000b02901f8bb2a8695so2435924uac.14
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 May 2021 05:37:59 -0700 (PDT)
+        id 1lgRgs-0002wg-V7
+        for linux-samsung-soc@vger.kernel.org; Tue, 11 May 2021 12:40:47 +0000
+Received: by mail-vk1-f197.google.com with SMTP id s80-20020a1f45530000b02901f936535cf4so1421568vka.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 May 2021 05:40:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WcE5bq5wNwB/It9SUbvJNqFIhta1GVHKu5RzbulM91k=;
-        b=SklANkTa1CcQJQRVFLe/NoFLwn/udj30qIK6KjoCJNnQ4Tp29QySZDvU7R6a7OAZW7
-         Jjm1y5jKJ3TE+6v5wRMwf9MgLGBzKYIYoNv+7IQ1zliw5WB9FMoUI3Td2QEFtKZ+l6OR
-         9O6AQOrIqj6a8iQexBaBC1SW6UPU9G6FA8mkpC1yj0FLrShAXyUlgXktZxMkPepQOxxW
-         d3876eZcjI7Q5jS4bmFGmN5vkfFFkvLtV/qZgtmaYuSeruloPXmraC4U/DzyFqJ6SVsR
-         RWmIybhTFo9KVGxKP8TzzS9jzlCtLLcAUGGi3CTXcqJsQHYxTsW3NgCJaXorGj0aM4Dp
-         nZ/Q==
-X-Gm-Message-State: AOAM532M4lQ1CQOvfWyT9Dk97LInVgly/1h+0X8OIH4ZZahj9e9vtVs8
-        DwVRpgQjqBQyNS2xMY/J7h3zFqoEkGckSTju66DNrpeTWBiqk+tXxni8hLCWtn/Nnf4AIs54uTG
-        Nu3oL4ZWLOIPgtfmFp0QslD8U71dUo+v1Ux4WVU6JergFOAcT
-X-Received: by 2002:a05:6102:124d:: with SMTP id p13mr24169910vsg.21.1620736678129;
-        Tue, 11 May 2021 05:37:58 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxRLAGfnI9L0po9Bb5C8gz/134T5moqEUU0jXhpN/br1HUWCJqo8M1FCeaGmyr4qyowqsn1lg==
-X-Received: by 2002:a05:6102:124d:: with SMTP id p13mr24169881vsg.21.1620736677988;
-        Tue, 11 May 2021 05:37:57 -0700 (PDT)
+        bh=PrBBhJGbjsmhZDFF8O0bml8Qz0d11xqc/seGdEasPHw=;
+        b=TNliyC3Fpwbi8jd418kvVwLUl5iRsQMkAaN3EaImtpx4RSWv9HA9tKwbGKVOHFnM6v
+         Fic+Ls+10qLCSN7zcTLOkRJLWtMp6Ef7S9PNhshH6Fjo/TKjsGgXt4S1miO7nh5EsLNq
+         8Gc9HiUQSSAmc3i+YUKHn0pUjgXCMSQR+cJ4tJRrVk/JG0w0kbYA6s8/APrZjz3rstOK
+         hGI7ZPuWAyVE/F9NPVpPYraXdj16fVfY2CjiT9ti3nEmmadnsTvdcJ/s/35aFvIFjMFo
+         gYZRBSVh8Rs/Z1fAxYVArIIm8fntzSyy0PI5ID06EJzaZ2WYw0Y0cKlb5x4GOz+Ux4xC
+         Z18g==
+X-Gm-Message-State: AOAM53088ELTr2IpIdEAb3rYN0vyLfaiDh6Q7Gw5dkcGHUCrItzlKaNh
+        cqWK+KAb4PL6rJ5ULlA5rfdS77QEAj5O6L/NIetNuZbBJFbZ6RBx+5UoQFTZcu9S2i/p28QB6cC
+        fm3vFdioUOor3SC954wBwLfF6E614os02/86cfBXesb/v9swZ
+X-Received: by 2002:a67:bc5:: with SMTP id 188mr23940529vsl.50.1620736845801;
+        Tue, 11 May 2021 05:40:45 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzpsSzE8+yaLV7z21WTm61RVHBgd5GIuSd1bUacFjdwJg53yKaDkNu4i27PfGrQ9TJS39xBtQ==
+X-Received: by 2002:a67:bc5:: with SMTP id 188mr23940505vsl.50.1620736845580;
+        Tue, 11 May 2021 05:40:45 -0700 (PDT)
 Received: from localhost.localdomain ([45.237.48.2])
-        by smtp.gmail.com with ESMTPSA id c69sm823434vke.48.2021.05.11.05.37.56
+        by smtp.gmail.com with ESMTPSA id t18sm2204204vke.3.2021.05.11.05.40.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 May 2021 05:37:57 -0700 (PDT)
+        Tue, 11 May 2021 05:40:44 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: exynos: add missing of_node_put for loop iteration
-Date:   Tue, 11 May 2021 08:37:43 -0400
-Message-Id: <162073661213.12308.10055643507451347667.b4-ty@canonical.com>
+To:     linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] ARM: dts: exynos: enable PMIC wakeup from suspend on Itop Core
+Date:   Tue, 11 May 2021 08:40:35 -0400
+Message-Id: <162073682206.13221.757844834039243258.b4-ty@canonical.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210425174945.164612-1-krzysztof.kozlowski@canonical.com>
-References: <20210425174945.164612-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20210420164943.11152-1-krzysztof.kozlowski@canonical.com>
+References: <20210420164943.11152-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -69,17 +69,34 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 25 Apr 2021 19:49:45 +0200, Krzysztof Kozlowski wrote:
-> Early exits from for_each_compatible_node() should decrement the
-> node reference counter.  Reported by Coccinelle:
-> 
->   arch/arm/mach-exynos/exynos.c:52:1-25: WARNING:
->     Function "for_each_compatible_node" should have of_node_put() before break around line 58.
+On Tue, 20 Apr 2021 18:49:33 +0200, Krzysztof Kozlowski wrote:
+> The RTC on S5M8767 PMIC can wakeup the system from suspend to RAM.
+> Add a generic property for this.
 
 Applied, thanks!
 
-[1/1] ARM: exynos: add missing of_node_put for loop iteration
-      commit: 48d551bf20858240f38a0276be3016ff379918ac
+[01/11] ARM: dts: exynos: enable PMIC wakeup from suspend on Itop Core
+        commit: a1972739c01612adee6bb0a0306ea29be0bb4955
+[02/11] ARM: dts: exynos: enable PMIC wakeup from suspend on Origen4412
+        commit: 765210e19859fcd83dad26441a5c499c0fe27e28
+[03/11] ARM: dts: exynos: enable PMIC wakeup from suspend on Arndale
+        commit: 0272619bde229386edf9f1358470e265628d1653
+[04/11] ARM: dts: exynos: enable PMIC wakeup from suspend on Odroid XU
+        commit: 760ebb8a2529f92f772424c7ddc385a07a9e90a0
+[05/11] ARM: dts: exynos: enable PMIC wakeup from suspend on Midas
+        commit: 7f23ea1265c3dc2cd5824f67498078fa23ede782
+[06/11] ARM: dts: exynos: enable PMIC wakeup from suspend on Odroid X/U3
+        commit: 1178f7127a4679db9b70eb16737627f764d7a9c5
+[07/11] ARM: dts: exynos: enable PMIC wakeup from suspend on P4 Note
+        commit: 9614ae53753003e7a4ecf800db3da189c0f0acd5
+[08/11] ARM: dts: exynos: enable PMIC wakeup from suspend on Arndale Octa
+        commit: 1d4203b1fa02fca97ca97484f2a43da187112ad1
+[09/11] ARM: dts: exynos: enable PMIC wakeup from suspend on SMDK5420
+        commit: a145cc05cb2ccbdde2621c91c7d56c3435d3a125
+[10/11] ARM: dts: exynos: enable PMIC wakeup from suspend on Odroid XU3/XU4 family
+        commit: e4c9b60b271ce428d97577502be9393bdc46dd94
+[11/11] arm64: dts: exynos: enable PMIC wakeup from suspend on TM2
+        commit: d3f713e6b3ccb1bf8306aaff8b11fd30844db0cf
 
 Best regards,
 -- 
