@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F40C433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 May 2021 09:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD11C433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 May 2021 11:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 634646192A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 May 2021 09:40:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C607616E9
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 May 2021 11:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231290AbhEKJl3 (ORCPT
+        id S230441AbhEKL3C (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 May 2021 05:41:29 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2561 "EHLO
+        Tue, 11 May 2021 07:29:02 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2630 "EHLO
         szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231332AbhEKJl0 (ORCPT
+        with ESMTP id S231446AbhEKL3B (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 May 2021 05:41:26 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FfXrz1SzBzkWQQ;
-        Tue, 11 May 2021 17:37:39 +0800 (CST)
+        Tue, 11 May 2021 07:29:01 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FfbDJ4wRvzPwvH;
+        Tue, 11 May 2021 19:24:32 +0800 (CST)
 Received: from thunder-town.china.huawei.com (10.174.177.72) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 11 May 2021 17:40:09 +0800
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.498.0; Tue, 11 May 2021 19:27:45 +0800
 From:   Zhen Lei <thunder.leizhen@huawei.com>
 To:     Inki Dae <inki.dae@samsung.com>,
         Joonyoung Shim <jy0922.shim@samsung.com>,
@@ -36,12 +36,12 @@ To:     Inki Dae <inki.dae@samsung.com>,
         Daniel Vetter <daniel@ffwll.ch>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 CC:     Zhen Lei <thunder.leizhen@huawei.com>
-Subject: [PATCH 1/1] drm/exynos: Remove redundant error printing in exynos_dsi_probe()
-Date:   Tue, 11 May 2021 17:40:04 +0800
-Message-ID: <20210511094004.4726-1-thunder.leizhen@huawei.com>
+Subject: [PATCH 1/1] drm/exynos/decon5433: Remove redundant error printing in exynos5433_decon_probe()
+Date:   Tue, 11 May 2021 19:27:33 +0800
+Message-ID: <20210511112733.5383-1-thunder.leizhen@huawei.com>
 X-Mailer: git-send-email 2.26.0.windows.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
@@ -63,25 +63,25 @@ binary size.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 4 +---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 44e402b7cdfb6e3..2d2fe5ab26e7030 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1786,10 +1786,8 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index b9a4b7670a899a1..197b97341cad26c 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -815,10 +815,8 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
  
  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	dsi->reg_base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(dsi->reg_base)) {
--		dev_err(dev, "failed to remap io region\n");
-+	if (IS_ERR(dsi->reg_base))
- 		return PTR_ERR(dsi->reg_base);
+ 	ctx->addr = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(ctx->addr)) {
+-		dev_err(dev, "ioremap failed\n");
++	if (IS_ERR(ctx->addr))
+ 		return PTR_ERR(ctx->addr);
 -	}
  
- 	dsi->phy = devm_phy_get(dev, "dsim");
- 	if (IS_ERR(dsi->phy)) {
+ 	ret = decon_conf_irq(ctx, "vsync", decon_irq_handler, 0);
+ 	if (ret < 0)
 -- 
 2.26.0.106.g9fadedd
 
