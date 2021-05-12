@@ -2,67 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 036C3C433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 May 2021 15:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 682D1C433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 May 2021 03:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC845613C1
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 May 2021 15:04:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A10E61433
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 May 2021 03:35:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231740AbhEKPFx (ORCPT
+        id S229973AbhELDhE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 May 2021 11:05:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37394 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231461AbhEKPFw (ORCPT
+        Tue, 11 May 2021 23:37:04 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2786 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229848AbhELDhE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 May 2021 11:05:52 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BBAED61396;
-        Tue, 11 May 2021 15:04:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620745485;
-        bh=QN33XNL4eU4wfIvNKbVPaGGaRPresFBOIcGCOpOsiYc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=pO0wreEAr5IngwB3qFnJeEzTE5D5lQfQm188kdLrwLyruwH9AvHxU8fDMOaeGgJtd
-         Bb+snQ4uoKnntAWnOjEruRSl5olljR3mGFo96rs04OxJZpxGFMI7B17CjR2+r8QZtv
-         /hj2RUUVKshRVK5O8W0HCDfdPw+7/RtlPvwWNJ/YNsGPCJCM6Gv34b/atmVzk8q3c2
-         XKPs0WbCO7dDUYTusE2RRgEwZ3FSpFo1CXHVgwAV1vdkitCQqxB3GLL6ywYIUA/qYX
-         rImQGfJo8zSR4ndqonZsDCGdpAa4uYZlrjwHTypWn1A/UdFzB1QnTOrgKdjTNbT/N9
-         qjXv2gNYs79+Q==
-Received: by mail.kernel.org with local (Exim 4.94.2)
-        (envelope-from <mchehab@kernel.org>)
-        id 1lgTwB-000k6n-A1; Tue, 11 May 2021 17:04:43 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] media: exynos4-is: remove a now unused integer
-Date:   Tue, 11 May 2021 17:04:42 +0200
-Message-Id: <29dd19e3ac7b2a8671ebeac02859232ce0e34f58.1620745479.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.30.2
+        Tue, 11 May 2021 23:37:04 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Fg0jF1nVHzmg9Y;
+        Wed, 12 May 2021 11:32:33 +0800 (CST)
+Received: from ubuntu1804.huawei.com (10.67.174.98) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 12 May 2021 11:35:45 +0800
+From:   Pu Lehui <pulehui@huawei.com>
+To:     <s.nawrocki@samsung.com>, <mchehab@kernel.org>,
+        <krzysztof.kozlowski@canonical.com>
+CC:     <linux-media@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <pulehui@huawei.com>
+Subject: [PATCH -next] media: exynos4-is: Fix unused variable warning
+Date:   Wed, 12 May 2021 11:36:12 +0800
+Message-ID: <20210512033612.39982-1-pulehui@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     unlisted-recipients:; (no To-header on input)
+X-Originating-IP: [10.67.174.98]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The usage of pm_runtime_resume_and_get() removed the need of a
-temporary integer. So, drop it.
+GCC reports the following warning with W=1:
 
-Fixes: 59f96244af94 ("media: exynos4-is: fix pm_runtime_get_sync() usage count")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+drivers/media/platform/exynos4-is/media-dev.c:1284:6: warning:
+ unused variable ‘ret’ [-Wunused-variable]
+ 1284 |  int ret;
+      |      ^~~
+
+This variable is not used in function , this commit
+remove it to fix the warning.
+
+Signed-off-by: Pu Lehui <pulehui@huawei.com>
 ---
  drivers/media/platform/exynos4-is/media-dev.c | 1 -
  1 file changed, 1 deletion(-)
@@ -80,5 +75,5 @@ index e025178db06c..3b8a24bb724c 100644
  	if (camclk->fmd->pmf == NULL)
  		return -ENODEV;
 -- 
-2.30.2
+2.17.1
 
