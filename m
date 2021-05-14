@@ -2,107 +2,73 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9345C433ED
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 May 2021 16:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73938C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 May 2021 11:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B55A061442
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 May 2021 16:24:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FFE8613DE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 May 2021 11:35:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235116AbhEMQZr (ORCPT
+        id S232062AbhENLgz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 May 2021 12:25:47 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42126 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235110AbhEMQZr (ORCPT
+        Fri, 14 May 2021 07:36:55 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:37260 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231989AbhENLgz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 May 2021 12:25:47 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id B0DF51F42DEC
-Received: by earth.universe (Postfix, from userid 1000)
-        id C8CA43C0C95; Thu, 13 May 2021 18:24:33 +0200 (CEST)
-Date:   Thu, 13 May 2021 18:24:33 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: power: supply: use Krzysztof Kozlowski's
- Canonical address
-Message-ID: <20210513162433.7dnf5mesqgetp6lp@earth.universe>
-References: <20210504121437.13424-1-krzysztof.kozlowski@canonical.com>
+        Fri, 14 May 2021 07:36:55 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtp (Exim 4.89 #2 (Debian))
+        id 1lhW6W-0002zo-9Y; Fri, 14 May 2021 19:35:40 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1lhW6V-0002YK-I6; Fri, 14 May 2021 19:35:39 +0800
+Date:   Fri, 14 May 2021 19:35:39 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
+Cc:     Matt Mackall <mpm@selenic.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3] hwrng: exynos - Fix runtime PM imbalance on error
+Message-ID: <20210514113539.2zgidvassvrnq3ig@gondor.apana.org.au>
+References: <CGME20210505182918eucas1p18a11263e5d214e3356ac65d79504e430@eucas1p1.samsung.com>
+ <20210505182914.13394-1-l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="y5uu6cbm5tlibfv6"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210504121437.13424-1-krzysztof.kozlowski@canonical.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210505182914.13394-1-l.stelmach@samsung.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
---y5uu6cbm5tlibfv6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Tue, May 04, 2021 at 08:14:37AM -0400, Krzysztof Kozlowski wrote:
-> Switch to Canonical address in S3C power supply driver, just like in
-> other entries.
->=20
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+On Wed, May 05, 2021 at 08:29:14PM +0200, Łukasz Stelmach wrote:
+> pm_runtime_resume_and_get() wraps around pm_runtime_get_sync() and
+> decrements the runtime PM usage counter in case the latter function
+> fails and keeps the counter balanced.
+> 
+> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
 > ---
+> Changes in v3:
+>   - use pm_runtime_resume_and_get()
+> 
+> Changes in v2:
+>   - removed Change-Id from the commit message
+> 
+>  drivers/char/hw_random/exynos-trng.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks, queued.
-
--- Sebastian
-
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 1783372a608a..ccb9823fb77f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -16021,7 +16021,7 @@ W:	http://www.ibm.com/developerworks/linux/linux3=
-90/
->  F:	drivers/s390/scsi/zfcp_*
-> =20
->  S3C ADC BATTERY DRIVER
-> -M:	Krzysztof Kozlowski <krzk@kernel.org>
-> +M:	Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->  L:	linux-samsung-soc@vger.kernel.org
->  S:	Odd Fixes
->  F:	drivers/power/supply/s3c_adc_battery.c
-> --=20
-> 2.25.1
->=20
-
---y5uu6cbm5tlibfv6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmCdUsEACgkQ2O7X88g7
-+pqrmBAAmxItoc7gAdBW1fS5FmGhlJiJmNtKSRZSnHQt25JcBoh9n83j87IvAHb4
-4dwiv16ayl8VkK/WPv7aaH8VSF9W9MtpluKwm12cispyrEXtcAwsq/idpDsuVt/I
-DR3ituJuufnvyyF88euFTL96bl1iGUdjDpl4NCyzV15XuZXC281mr9ET3H7FvPO1
-1ViZJX8EKaawXJnNiHGGTrbP76wNbUOK2Oi/7Ed/LOiocjGmlalolwFEAkUAMR+R
-sw3IxZm9RSuNW/kj9fYxS7AzX/YGpSdpwk1xGmZPOax0Ip46E3HRnB/AlE2oeRkq
-jK5Mnw3XVX9NjN0RkyaUrKpwPaGGhHYG3N5siz3jIKyn/W1dlK9YAnG7Wv1T2sQK
-P1aq59kGjRFRQ09OpGISVC/a0WYi2LmCYnNAv4MmOc27KQGSFpQ49GrCcCZT3MU5
-AjEsQh9ntEadijvoIY2oaa1npx+Eh9ToWZXKwsw+R23iUU2p7EIi1kuF0Unq8Zfm
-6gAtXU4yI74j9vhO36CIe/JHisUmKWZH6P3vUKxI2mys0tz6EoSNgsOiQLS66VQv
-BnQZ2F03erC9hC+5FS9s9G3mrY3vIUAWDWxv6pFds4DnWkBVJMZhP71QrbZhCxcU
-L7AxugZ7hjlSK6agDcJtoy/xSNemAAG9rI6bnltP8PuYCsSbg0E=
-=rLNg
------END PGP SIGNATURE-----
-
---y5uu6cbm5tlibfv6--
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
