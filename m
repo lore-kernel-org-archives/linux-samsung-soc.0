@@ -2,92 +2,110 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8602DC433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 May 2021 14:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E46C433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 May 2021 16:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 696C8616E9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 May 2021 14:14:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66305610E9
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 May 2021 16:34:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238629AbhEQOQK (ORCPT
+        id S235388AbhEQQfp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 May 2021 10:16:10 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41761 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238835AbhEQOOM (ORCPT
+        Mon, 17 May 2021 12:35:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39522 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245182AbhEQQfd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 May 2021 10:14:12 -0400
-Received: from mail-qk1-f198.google.com ([209.85.222.198])
-        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lidzK-0005R1-Sa
-        for linux-samsung-soc@vger.kernel.org; Mon, 17 May 2021 14:12:54 +0000
-Received: by mail-qk1-f198.google.com with SMTP id n2-20020a37a4020000b02902e9aef597f7so4779701qke.21
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 May 2021 07:12:54 -0700 (PDT)
+        Mon, 17 May 2021 12:35:33 -0400
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 928C5C0610FB
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 May 2021 08:29:47 -0700 (PDT)
+Received: by mail-ot1-x333.google.com with SMTP id t10-20020a05683022eab0290304ed8bc759so5855721otc.12
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 May 2021 08:29:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LHuA8eHjuppTIJ75R7cv3VweFNbwB4dqcEtg7HA60qg=;
+        b=RMks6CV9lAVCFBcqyvaL15OwQDYYydA46ie8ERZRUW9bdz6Ss2d63nvntdd2ppylbj
+         TT1hoAtcrCR7P1QUgAoKu41mbQqWIXoRN7jJxyGntT0uCWz/IiczJZV24UwIWC7mZW89
+         iDl7tmzK3OcYBBXrYUDYJ/OJrz6o9/5h4ij88=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zAZsnEd2I8dmVTyQC9mn90iTZNFb90By5nrttFT+170=;
-        b=h2emRf5+zK6xDbzL/Wh1f4rSY8Tjv2X84H5XSLNAm0PMtRHOv8KwDMhIkfUr6SnBHE
-         aXY3yhvgGLxzsvXfHCxhofC0799CPTu1Wo/V5WdZnzYaLDG4XxJZbv7slOZKAbGchKz0
-         GoEw7YLh7J60lqfU8Az7qjkeA55797jcIK7Q51hgPPbnIFHEzNY8crdGgLsSYTOBk6Gi
-         zq6w0G7MQXvy3Nrb3SL9hhsclGTDnDygsDuiQIOA+2osM6xmKFFFoach+WNn/OzLJrzA
-         Rft4jJGxmMRJIwNSItGno9h02Ey4j9mqmYNa/XCfcRQOS3j572e3JKbYQGfjjKJLvXxb
-         09lQ==
-X-Gm-Message-State: AOAM533f49y/1l4cYIWTnmggGM5wkumh9lwmxt7vkY1W21Uj/G1wNDeA
-        Hz2hIvpHwxyCE1GJBVAZL8flxzwNqy2AWGUPcmbQnN/i+OAlhXJSk5BVMusWFDfhJwp9/0+0wY4
-        5TCCo6sqQAzpezSnbW3iVMOvn91Sc3FiR/iF9bMleVf44VuWt
-X-Received: by 2002:ac8:7303:: with SMTP id x3mr57042166qto.271.1621260774057;
-        Mon, 17 May 2021 07:12:54 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyYjs9gmXg+QZtFzveAdjVILbpJtsmY19SLw8BW1TsYwHE9JtfKQXjGtTtcQi3H+Qixwtg/IQ==
-X-Received: by 2002:ac8:7303:: with SMTP id x3mr57042150qto.271.1621260773888;
-        Mon, 17 May 2021 07:12:53 -0700 (PDT)
-Received: from localhost.localdomain ([45.237.48.5])
-        by smtp.gmail.com with ESMTPSA id r9sm10440990qtf.62.2021.05.17.07.12.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 May 2021 07:12:53 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: samsung: pmu: fix BUT->BIT macro typo
-Date:   Mon, 17 May 2021 10:12:50 -0400
-Message-Id: <20210517141250.55655-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.27.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LHuA8eHjuppTIJ75R7cv3VweFNbwB4dqcEtg7HA60qg=;
+        b=tftXcm6Z3aOwbxDdfBM6hgKVYjnnlkZNvfDst0ixLpUo9rWe3aJPxOpW7bcV0ogXXc
+         hMAUa1luTSeecksdDeJXrsq60abnxMQMXt35LGA1Lxx6Q2u9IUdmUwTYZvFDOSFvNjV+
+         6LUkongzuxBgcJWEmkgqScdXf7/ijr/VOUK9D4kApiRm0iaiQQQ3NrByoU7XY0mCxBHP
+         GZfxJIIRSzXLthCzJSfp6GybmvycBfE8jidoh8MdzM4y0rRxlYlBCc2eBj4pHwbmir7Y
+         4XE8nsihm8WB0Myr/TOPIEll85GYOulTQkhacg5b4VPgvXRfAu3kIoQB0rF4tFYoviwY
+         1fQQ==
+X-Gm-Message-State: AOAM530jzSu1UpbhE4wn1ezS0BfpBfQeryQwTOvTPe0+PjuErYlAAdLw
+        GMsvyXTAiwmuYhHFnlYJ0c0yZGcACX22dbiMoYC3JA==
+X-Google-Smtp-Source: ABdhPJyx4VgXyr7sHxhLzHJfU08wfDCFYrZOk1+l9hfQuvBlJV+AtL3GicGrv7/C44z5A3YFPk7MxSeP6Ot3b+xUVts=
+X-Received: by 2002:a05:6830:1155:: with SMTP id x21mr88425otq.303.1621265387064;
+ Mon, 17 May 2021 08:29:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <YJBHiRiCGzojk25U@phenom.ffwll.local> <CAHk-=wiwgOPQ+4Eaf0GD5P_GveE6vUHsKxAT=pMsjk1v_kh4ig@mail.gmail.com>
+ <YJVijmznt1xnsCxc@phenom.ffwll.local> <CAHk-=wgjO8-f1bUwQB=5HGzkvSS+aGACR9+H5CkkDhRgud+3MA@mail.gmail.com>
+ <CAKMK7uELBbkhFBQoSfvMx+AKnbk-fgbamBm3sC20-dJwMq3Xmg@mail.gmail.com> <YJjg3DRnG1RG6VDK@infradead.org>
+In-Reply-To: <YJjg3DRnG1RG6VDK@infradead.org>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Mon, 17 May 2021 17:29:35 +0200
+Message-ID: <CAKMK7uFsRPod-tAJ8ZrzXM6B_+5VgvRs-U0_TiG75da62cnVnw@mail.gmail.com>
+Subject: Re: [PULL] topic/iomem-mmap-vs-gup
+To:     Christoph Hellwig <hch@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The macro EXYNOS5_USE_STANDBYWFI_ARM_CORE1 should use BIT, not BUT.  Fix
-does not have real effect as the macro is not used in the code.
+On Mon, May 10, 2021 at 9:30 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Mon, May 10, 2021 at 09:16:58AM +0200, Daniel Vetter wrote:
+> > > End result: not pulling it, unless somebody can explain to me in small
+> > > words why I'm wrong and have the mental capacity of a damaged rodent.
+> >
+> > No rodents I think, just more backstory of how this all fits. tldr;
+> > pin_user_pages is the only safe use of this vb2 userptr thing.
+>
+> Yes, which is why I advocate for just ripping the follow_pfn path
+> out entirely.  It could have been used for crazy ad dangerous peer to
+> peer transfers outside of any infrastructure making it safe, or for
+> pre-CMA kernel memory carveouts for lage contiguous memory allocations
+> (which are pretty broken by design as well).  So IMHO the only sensible
+> thing is to remove this cruft entirely, and if it breaks a currently
+> working setup (which I think is unlikely) we'll have to make sure it
+> can work the proper way.
 
-Fixes: af2e0a0754ac ("ARM: EXYNOS: Add PMU support for exynos5420")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- include/linux/soc/samsung/exynos-regs-pmu.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Since I'm not getting any cozy consenus vibes here on any option I
+think I'll just drop this.
 
-diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
-index fc9250fb3133..4bfd9a210da2 100644
---- a/include/linux/soc/samsung/exynos-regs-pmu.h
-+++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-@@ -613,7 +613,7 @@
- 
- /* For EXYNOS_CENTRAL_SEQ_OPTION */
- #define EXYNOS5_USE_STANDBYWFI_ARM_CORE0			BIT(16)
--#define EXYNOS5_USE_STANDBYWFI_ARM_CORE1			BUT(17)
-+#define EXYNOS5_USE_STANDBYWFI_ARM_CORE1			BIT(17)
- #define EXYNOS5_USE_STANDBYWFE_ARM_CORE0			BIT(24)
- #define EXYNOS5_USE_STANDBYWFE_ARM_CORE1			BIT(25)
- 
+Stephen, can you pls drop
+
+git://anongit.freedesktop.org/drm/drm topic/iomem-mmap-vs-gup
+
+from linux-next? It's not going anywhere. I'll also go ahead and
+delete the branch, to make sure you catch this update :-)
+
+Thanks, Daniel
 -- 
-2.27.0
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
