@@ -2,66 +2,48 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E46C433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 May 2021 16:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CC6C433B4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 May 2021 22:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66305610E9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 May 2021 16:34:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9CC1611B0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 May 2021 22:13:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235388AbhEQQfp (ORCPT
+        id S238119AbhEQWPM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 May 2021 12:35:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39522 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245182AbhEQQfd (ORCPT
+        Mon, 17 May 2021 18:15:12 -0400
+Received: from gimli.rothwell.id.au ([103.230.158.156]:36655 "EHLO
+        gimli.rothwell.id.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233512AbhEQWPL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 May 2021 12:35:33 -0400
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 928C5C0610FB
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 May 2021 08:29:47 -0700 (PDT)
-Received: by mail-ot1-x333.google.com with SMTP id t10-20020a05683022eab0290304ed8bc759so5855721otc.12
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 May 2021 08:29:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LHuA8eHjuppTIJ75R7cv3VweFNbwB4dqcEtg7HA60qg=;
-        b=RMks6CV9lAVCFBcqyvaL15OwQDYYydA46ie8ERZRUW9bdz6Ss2d63nvntdd2ppylbj
-         TT1hoAtcrCR7P1QUgAoKu41mbQqWIXoRN7jJxyGntT0uCWz/IiczJZV24UwIWC7mZW89
-         iDl7tmzK3OcYBBXrYUDYJ/OJrz6o9/5h4ij88=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LHuA8eHjuppTIJ75R7cv3VweFNbwB4dqcEtg7HA60qg=;
-        b=tftXcm6Z3aOwbxDdfBM6hgKVYjnnlkZNvfDst0ixLpUo9rWe3aJPxOpW7bcV0ogXXc
-         hMAUa1luTSeecksdDeJXrsq60abnxMQMXt35LGA1Lxx6Q2u9IUdmUwTYZvFDOSFvNjV+
-         6LUkongzuxBgcJWEmkgqScdXf7/ijr/VOUK9D4kApiRm0iaiQQQ3NrByoU7XY0mCxBHP
-         GZfxJIIRSzXLthCzJSfp6GybmvycBfE8jidoh8MdzM4y0rRxlYlBCc2eBj4pHwbmir7Y
-         4XE8nsihm8WB0Myr/TOPIEll85GYOulTQkhacg5b4VPgvXRfAu3kIoQB0rF4tFYoviwY
-         1fQQ==
-X-Gm-Message-State: AOAM530jzSu1UpbhE4wn1ezS0BfpBfQeryQwTOvTPe0+PjuErYlAAdLw
-        GMsvyXTAiwmuYhHFnlYJ0c0yZGcACX22dbiMoYC3JA==
-X-Google-Smtp-Source: ABdhPJyx4VgXyr7sHxhLzHJfU08wfDCFYrZOk1+l9hfQuvBlJV+AtL3GicGrv7/C44z5A3YFPk7MxSeP6Ot3b+xUVts=
-X-Received: by 2002:a05:6830:1155:: with SMTP id x21mr88425otq.303.1621265387064;
- Mon, 17 May 2021 08:29:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <YJBHiRiCGzojk25U@phenom.ffwll.local> <CAHk-=wiwgOPQ+4Eaf0GD5P_GveE6vUHsKxAT=pMsjk1v_kh4ig@mail.gmail.com>
- <YJVijmznt1xnsCxc@phenom.ffwll.local> <CAHk-=wgjO8-f1bUwQB=5HGzkvSS+aGACR9+H5CkkDhRgud+3MA@mail.gmail.com>
- <CAKMK7uELBbkhFBQoSfvMx+AKnbk-fgbamBm3sC20-dJwMq3Xmg@mail.gmail.com> <YJjg3DRnG1RG6VDK@infradead.org>
-In-Reply-To: <YJjg3DRnG1RG6VDK@infradead.org>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Mon, 17 May 2021 17:29:35 +0200
-Message-ID: <CAKMK7uFsRPod-tAJ8ZrzXM6B_+5VgvRs-U0_TiG75da62cnVnw@mail.gmail.com>
-Subject: Re: [PULL] topic/iomem-mmap-vs-gup
-To:     Christoph Hellwig <hch@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Mon, 17 May 2021 18:15:11 -0400
+X-Greylist: delayed 537 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 May 2021 18:15:10 EDT
+Received: from authenticated.rothwell.id.au (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.rothwell.id.au (Postfix) with ESMTPSA id 4FkY8L0S1vzyQJ;
+        Tue, 18 May 2021 08:04:49 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rothwell.id.au;
+        s=201702; t=1621289095;
+        bh=3zQXipN+5rOCvuSWYiWEGaHiIwQkUt3DbG1nZj86/GA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HR05GDKDWir9rgKkNqrsP3gB9XDLsEcqyIvUHVkqm/81SVLRh95UaKWlAzs1Sv6FS
+         EdvTZ8ePSqaUgMoCtJCdWuOxNjbJmVGI/qoV1ZtToTpr7LyBtOkCSmwQWJNLB1FxbS
+         xNnTzmmQMrtA4DtMnGhNGAiHbbBLeNAGOEU/cyfS97qKdCVfXGRHy5wqGsG6rUZXQw
+         YK79e1iKJTXf5ReYrjvWE3sClmplCce00k8aYXkPKYKAgDp44J2EI76SN2V7aApLp+
+         J7h8ZC+kEmV6Ye048s2mUco9cIxyfmgfOdrsuXWrSuhKR1oSXX9qdoN0b7AYBFGXb8
+         giw94aHB87aDg==
+Date:   Tue, 18 May 2021 08:04:42 +1000
+From:   Stephen Rothwell <sfr@rothwell.id.au>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Tomasz Figa <tfiga@chromium.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -71,41 +53,84 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PULL] topic/iomem-mmap-vs-gup
+Message-ID: <20210518080442.28080686@elm.ozlabs.ibm.com>
+In-Reply-To: <CAKMK7uFsRPod-tAJ8ZrzXM6B_+5VgvRs-U0_TiG75da62cnVnw@mail.gmail.com>
+References: <YJBHiRiCGzojk25U@phenom.ffwll.local>
+        <CAHk-=wiwgOPQ+4Eaf0GD5P_GveE6vUHsKxAT=pMsjk1v_kh4ig@mail.gmail.com>
+        <YJVijmznt1xnsCxc@phenom.ffwll.local>
+        <CAHk-=wgjO8-f1bUwQB=5HGzkvSS+aGACR9+H5CkkDhRgud+3MA@mail.gmail.com>
+        <CAKMK7uELBbkhFBQoSfvMx+AKnbk-fgbamBm3sC20-dJwMq3Xmg@mail.gmail.com>
+        <YJjg3DRnG1RG6VDK@infradead.org>
+        <CAKMK7uFsRPod-tAJ8ZrzXM6B_+5VgvRs-U0_TiG75da62cnVnw@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/aggeSpPGRwf/ibiafiFMPrw";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, May 10, 2021 at 9:30 AM Christoph Hellwig <hch@infradead.org> wrote:
+--Sig_/aggeSpPGRwf/ibiafiFMPrw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Daniel,
+
+On Mon, 17 May 2021 17:29:35 +0200 Daniel Vetter <daniel.vetter@ffwll.ch> w=
+rote:
 >
-> On Mon, May 10, 2021 at 09:16:58AM +0200, Daniel Vetter wrote:
-> > > End result: not pulling it, unless somebody can explain to me in small
-> > > words why I'm wrong and have the mental capacity of a damaged rodent.
+> On Mon, May 10, 2021 at 9:30 AM Christoph Hellwig <hch@infradead.org> wro=
+te:
 > >
-> > No rodents I think, just more backstory of how this all fits. tldr;
-> > pin_user_pages is the only safe use of this vb2 userptr thing.
->
-> Yes, which is why I advocate for just ripping the follow_pfn path
-> out entirely.  It could have been used for crazy ad dangerous peer to
-> peer transfers outside of any infrastructure making it safe, or for
-> pre-CMA kernel memory carveouts for lage contiguous memory allocations
-> (which are pretty broken by design as well).  So IMHO the only sensible
-> thing is to remove this cruft entirely, and if it breaks a currently
-> working setup (which I think is unlikely) we'll have to make sure it
-> can work the proper way.
+> > On Mon, May 10, 2021 at 09:16:58AM +0200, Daniel Vetter wrote: =20
+> > > > End result: not pulling it, unless somebody can explain to me in sm=
+all
+> > > > words why I'm wrong and have the mental capacity of a damaged roden=
+t. =20
+> > >
+> > > No rodents I think, just more backstory of how this all fits. tldr;
+> > > pin_user_pages is the only safe use of this vb2 userptr thing. =20
+> >
+> > Yes, which is why I advocate for just ripping the follow_pfn path
+> > out entirely.  It could have been used for crazy ad dangerous peer to
+> > peer transfers outside of any infrastructure making it safe, or for
+> > pre-CMA kernel memory carveouts for lage contiguous memory allocations
+> > (which are pretty broken by design as well).  So IMHO the only sensible
+> > thing is to remove this cruft entirely, and if it breaks a currently
+> > working setup (which I think is unlikely) we'll have to make sure it
+> > can work the proper way. =20
+>=20
+> Since I'm not getting any cozy consenus vibes here on any option I
+> think I'll just drop this.
+>=20
+> Stephen, can you pls drop
+>=20
+> git://anongit.freedesktop.org/drm/drm topic/iomem-mmap-vs-gup
+>=20
+> from linux-next? It's not going anywhere. I'll also go ahead and
+> delete the branch, to make sure you catch this update :-)
 
-Since I'm not getting any cozy consenus vibes here on any option I
-think I'll just drop this.
+I have dropped this now.  Thanks for letting me know.
 
-Stephen, can you pls drop
+--=20
+Cheers,
+Stephen Rothwell
 
-git://anongit.freedesktop.org/drm/drm topic/iomem-mmap-vs-gup
+--Sig_/aggeSpPGRwf/ibiafiFMPrw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-from linux-next? It's not going anywhere. I'll also go ahead and
-delete the branch, to make sure you catch this update :-)
+-----BEGIN PGP SIGNATURE-----
 
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmCi6HoACgkQAVBC80lX
+0GyNzAf+PsJKuLMSyGdrI9Eb1SKOtnkBb4Phs9Z2XAd9Ch2v94oPoiB9Q+2fMR3X
+YDjZPndyD/LzF1qIRGWDZLhcf8FBU80ZXRNxTfw+yjoH9wcj+cQl5Nlw/qTdINnZ
+FI/aXekpdIFmzXYWl3+6h2RCq/C/+/fl3hIDqRyNgSRWIx+oqk97eSB4WEnynGLB
+ng3poVuFFymwD/y9fDhCyEKfwjEDZqu+fiaYS0Jvl+e9nx19iScrMtm9jVmS7F4Y
+yHItNAj7wnhP+UqJ4Xs2LoQv+AfX0amYwjVqen/f4mEY5cVwBgMmTiVi/7I9nQVe
+5nXKiM/GXzrpZDuYnZelmd+uAsn+Gw==
+=3/Jz
+-----END PGP SIGNATURE-----
+
+--Sig_/aggeSpPGRwf/ibiafiFMPrw--
