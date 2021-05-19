@@ -2,135 +2,111 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CC6C433B4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 May 2021 22:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2D6C433ED
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 May 2021 14:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9CC1611B0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 May 2021 22:13:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8C35611C2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 May 2021 14:36:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238119AbhEQWPM (ORCPT
+        id S1348075AbhESOiG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 May 2021 18:15:12 -0400
-Received: from gimli.rothwell.id.au ([103.230.158.156]:36655 "EHLO
-        gimli.rothwell.id.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233512AbhEQWPL (ORCPT
+        Wed, 19 May 2021 10:38:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43020 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348055AbhESOiG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 May 2021 18:15:11 -0400
-X-Greylist: delayed 537 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 May 2021 18:15:10 EDT
-Received: from authenticated.rothwell.id.au (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.rothwell.id.au (Postfix) with ESMTPSA id 4FkY8L0S1vzyQJ;
-        Tue, 18 May 2021 08:04:49 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rothwell.id.au;
-        s=201702; t=1621289095;
-        bh=3zQXipN+5rOCvuSWYiWEGaHiIwQkUt3DbG1nZj86/GA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HR05GDKDWir9rgKkNqrsP3gB9XDLsEcqyIvUHVkqm/81SVLRh95UaKWlAzs1Sv6FS
-         EdvTZ8ePSqaUgMoCtJCdWuOxNjbJmVGI/qoV1ZtToTpr7LyBtOkCSmwQWJNLB1FxbS
-         xNnTzmmQMrtA4DtMnGhNGAiHbbBLeNAGOEU/cyfS97qKdCVfXGRHy5wqGsG6rUZXQw
-         YK79e1iKJTXf5ReYrjvWE3sClmplCce00k8aYXkPKYKAgDp44J2EI76SN2V7aApLp+
-         J7h8ZC+kEmV6Ye048s2mUco9cIxyfmgfOdrsuXWrSuhKR1oSXX9qdoN0b7AYBFGXb8
-         giw94aHB87aDg==
-Date:   Tue, 18 May 2021 08:04:42 +1000
-From:   Stephen Rothwell <sfr@rothwell.id.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PULL] topic/iomem-mmap-vs-gup
-Message-ID: <20210518080442.28080686@elm.ozlabs.ibm.com>
-In-Reply-To: <CAKMK7uFsRPod-tAJ8ZrzXM6B_+5VgvRs-U0_TiG75da62cnVnw@mail.gmail.com>
-References: <YJBHiRiCGzojk25U@phenom.ffwll.local>
-        <CAHk-=wiwgOPQ+4Eaf0GD5P_GveE6vUHsKxAT=pMsjk1v_kh4ig@mail.gmail.com>
-        <YJVijmznt1xnsCxc@phenom.ffwll.local>
-        <CAHk-=wgjO8-f1bUwQB=5HGzkvSS+aGACR9+H5CkkDhRgud+3MA@mail.gmail.com>
-        <CAKMK7uELBbkhFBQoSfvMx+AKnbk-fgbamBm3sC20-dJwMq3Xmg@mail.gmail.com>
-        <YJjg3DRnG1RG6VDK@infradead.org>
-        <CAKMK7uFsRPod-tAJ8ZrzXM6B_+5VgvRs-U0_TiG75da62cnVnw@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Wed, 19 May 2021 10:38:06 -0400
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5861FC06175F;
+        Wed, 19 May 2021 07:36:46 -0700 (PDT)
+Received: by mail-il1-x130.google.com with SMTP id k4so8726641ili.4;
+        Wed, 19 May 2021 07:36:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uDAFEEzvC0GMNw2+sRgzLq7AM8Ry0p0VtseioN3JgBw=;
+        b=HJY7pYpY+CZGqyohBnzZrSYjIxma7o1SWQKjak/BF9q27IVx940a4DxjjzYrJYVaiN
+         r66VAb89UPun6CBe17/HtDYZZeZGTaDe9EgludyZf/LiK9GNK81M6T1igRE+/5XJ3gji
+         6+a5eVmOBYnlcen++VG6aw9WESGI4VlvklcovfDUHyCVxwfhssczWnyoJnphOcn/5jrE
+         Or8pdz0NEWp0O43Sy6OTEdheRTm0DvQ0JGrtvhsa9WxQ6Iw1G8q7JBxlcYP7oZt0k57n
+         AQy2eMHgsGIA1sLIZ8JOPB+zbd6TWLkTiQ2Ytx5x4H6DDZvLhenxscsyCHiqc0BhUCko
+         6xFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uDAFEEzvC0GMNw2+sRgzLq7AM8Ry0p0VtseioN3JgBw=;
+        b=RkXZZV9OZvrWBPj1D27Rav8CG34CQGGujRPBCm+Iqgmx5nCDAXzH95po9tZ6bTsMd3
+         f2BvfLenDJIv4CqMKq+MFhq6h993iJhB7ZMgUwiTBrOf1f/W/dRCtI3G1zKD1o3EFF1o
+         R4Q0jg7QtPkDqevdEfKtCEWhSQ6UL5fejpkdyZqOGZCRuEBOqxIFpJRFQIYdcUAsGt/N
+         I3hBJw9YqhA5heGydOlqxHWP4Ltc8K+cWynP+s7vhzDDfAo7QRmPmkhF+TNKSlczK98D
+         X8MYUrTaG3dV8H4HjyKu5K+MY8kSIG3t8wGn4pE7CXPSui1OGCvuy9Xq1szyMT+xE9QT
+         oH0w==
+X-Gm-Message-State: AOAM532/l1ssASBRUuvNtGrJDZBzCEpxZ5rQ/F1qFQOKoVhV2owPEl3a
+        RAiDyPqkHBJWjcSlDLe1mOEna6bwgc8RCjaFdZK3D8Yo
+X-Google-Smtp-Source: ABdhPJygUotjLagydKprqOXosGKm1YtHQhsptK/ZWsH6PbwWZqJsXqIrH8j0U0FBUjxgEKaLhqfmH+QjkPZdpaZw9Q0=
+X-Received: by 2002:a05:6e02:1bce:: with SMTP id x14mr6898550ilv.287.1621435005534;
+ Wed, 19 May 2021 07:36:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/aggeSpPGRwf/ibiafiFMPrw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20210517141250.55655-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20210517141250.55655-1-krzysztof.kozlowski@canonical.com>
+From:   Alim Akhtar <alim.akhtar@gmail.com>
+Date:   Wed, 19 May 2021 20:06:02 +0530
+Message-ID: <CAGOxZ524m0tYy2Y8xnkfoSg9PQj7uA6PohYC9u23Je3F+gHjDA@mail.gmail.com>
+Subject: Re: [PATCH] soc: samsung: pmu: fix BUT->BIT macro typo
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
---Sig_/aggeSpPGRwf/ibiafiFMPrw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello Krzysztof
 
-Hi Daniel,
-
-On Mon, 17 May 2021 17:29:35 +0200 Daniel Vetter <daniel.vetter@ffwll.ch> w=
-rote:
+On Mon, May 17, 2021 at 7:59 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
 >
-> On Mon, May 10, 2021 at 9:30 AM Christoph Hellwig <hch@infradead.org> wro=
-te:
-> >
-> > On Mon, May 10, 2021 at 09:16:58AM +0200, Daniel Vetter wrote: =20
-> > > > End result: not pulling it, unless somebody can explain to me in sm=
-all
-> > > > words why I'm wrong and have the mental capacity of a damaged roden=
-t. =20
-> > >
-> > > No rodents I think, just more backstory of how this all fits. tldr;
-> > > pin_user_pages is the only safe use of this vb2 userptr thing. =20
-> >
-> > Yes, which is why I advocate for just ripping the follow_pfn path
-> > out entirely.  It could have been used for crazy ad dangerous peer to
-> > peer transfers outside of any infrastructure making it safe, or for
-> > pre-CMA kernel memory carveouts for lage contiguous memory allocations
-> > (which are pretty broken by design as well).  So IMHO the only sensible
-> > thing is to remove this cruft entirely, and if it breaks a currently
-> > working setup (which I think is unlikely) we'll have to make sure it
-> > can work the proper way. =20
->=20
-> Since I'm not getting any cozy consenus vibes here on any option I
-> think I'll just drop this.
->=20
-> Stephen, can you pls drop
->=20
-> git://anongit.freedesktop.org/drm/drm topic/iomem-mmap-vs-gup
->=20
-> from linux-next? It's not going anywhere. I'll also go ahead and
-> delete the branch, to make sure you catch this update :-)
+> The macro EXYNOS5_USE_STANDBYWFI_ARM_CORE1 should use BIT, not BUT.  Fix
+> does not have real effect as the macro is not used in the code.
+>
+Can we consider removing this? As this is not used in code.
 
-I have dropped this now.  Thanks for letting me know.
+> Fixes: af2e0a0754ac ("ARM: EXYNOS: Add PMU support for exynos5420")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/aggeSpPGRwf/ibiafiFMPrw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+>  include/linux/soc/samsung/exynos-regs-pmu.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+> index fc9250fb3133..4bfd9a210da2 100644
+> --- a/include/linux/soc/samsung/exynos-regs-pmu.h
+> +++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+> @@ -613,7 +613,7 @@
+>
+>  /* For EXYNOS_CENTRAL_SEQ_OPTION */
+>  #define EXYNOS5_USE_STANDBYWFI_ARM_CORE0                       BIT(16)
+> -#define EXYNOS5_USE_STANDBYWFI_ARM_CORE1                       BUT(17)
+> +#define EXYNOS5_USE_STANDBYWFI_ARM_CORE1                       BIT(17)
+>  #define EXYNOS5_USE_STANDBYWFE_ARM_CORE0                       BIT(24)
+>  #define EXYNOS5_USE_STANDBYWFE_ARM_CORE1                       BIT(25)
+>
+> --
+> 2.27.0
+>
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmCi6HoACgkQAVBC80lX
-0GyNzAf+PsJKuLMSyGdrI9Eb1SKOtnkBb4Phs9Z2XAd9Ch2v94oPoiB9Q+2fMR3X
-YDjZPndyD/LzF1qIRGWDZLhcf8FBU80ZXRNxTfw+yjoH9wcj+cQl5Nlw/qTdINnZ
-FI/aXekpdIFmzXYWl3+6h2RCq/C/+/fl3hIDqRyNgSRWIx+oqk97eSB4WEnynGLB
-ng3poVuFFymwD/y9fDhCyEKfwjEDZqu+fiaYS0Jvl+e9nx19iScrMtm9jVmS7F4Y
-yHItNAj7wnhP+UqJ4Xs2LoQv+AfX0amYwjVqen/f4mEY5cVwBgMmTiVi/7I9nQVe
-5nXKiM/GXzrpZDuYnZelmd+uAsn+Gw==
-=3/Jz
------END PGP SIGNATURE-----
-
---Sig_/aggeSpPGRwf/ibiafiFMPrw--
+-- 
+Regards,
+Alim
