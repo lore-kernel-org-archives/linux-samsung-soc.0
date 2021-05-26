@@ -2,171 +2,411 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55849C47082
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 May 2021 05:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52235C2B9F7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 May 2021 08:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38549613F4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 May 2021 05:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35A48613CC
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 May 2021 08:28:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232363AbhEZFzj (ORCPT
+        id S231993AbhEZI3b (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 May 2021 01:55:39 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:56456 "EHLO
+        Wed, 26 May 2021 04:29:31 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:16974 "EHLO
         mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232187AbhEZFzi (ORCPT
+        with ESMTP id S231410AbhEZI3a (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 May 2021 01:55:38 -0400
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210526055404epoutp047898d18b4dcf33f53f833165164c0a12~CiBYOZUB92318023180epoutp04p
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 May 2021 05:54:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210526055404epoutp047898d18b4dcf33f53f833165164c0a12~CiBYOZUB92318023180epoutp04p
+        Wed, 26 May 2021 04:29:30 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210526082758epoutp046b380a1791b36eee0544aae4e0983bf0~CkHv92SfX2180221802epoutp046
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 May 2021 08:27:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210526082758epoutp046b380a1791b36eee0544aae4e0983bf0~CkHv92SfX2180221802epoutp046
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1622008444;
-        bh=fv1JWZVtdz+8RIndfB1/eFHIAMxTy+LbQABTozTqxT0=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=QC/0x8gYzaljmQ1KVrxMqoTarR6SrbIWOKXXh/dHb1Ziut4xuPvatnVllLVhUy5gJ
-         rCvjz5JZAayCiQjKaCGLrVzfKrvjvLjz5ue+JCTlMhSi07AsMVXQ1qAJ9Au20xvmYT
-         CTOhj3VTwT2AplOLQXyeQT22tR2tQlX8BdCveyAA=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20210526055403epcas5p389b06b7974b4a85c4e2339b212a76bb7~CiBYCI5Ye1364613646epcas5p3y;
-        Wed, 26 May 2021 05:54:03 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        1A.4C.09697.B72EDA06; Wed, 26 May 2021 14:54:03 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210526051301epcas5p1ce9b9655d7e2d777906599088509f056~Chdi0M2jq1696716967epcas5p11;
-        Wed, 26 May 2021 05:13:01 +0000 (GMT)
+        s=mail20170921; t=1622017678;
+        bh=RktK4PAHzSb5HI9eRj2vF9pU4SSaz/E4FtE/NrGactY=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=oeI80M4gHQ5yGQ+ZPqWKGGgjk8HADol94CArXObgjZ8CMfC8EvBU3L6NqxZAjCH+v
+         UXB5susYdUlr8W5BZgcCqmxmN5W/Y2Cj/f3RS2KIRuOp5fsmGB+c9ErE85lAbje8PA
+         Jg00Gwx8mcnLeD+SHUxUBFz9+knCl223w7Db42Bg=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20210526082757epcas1p46b3d2f9508b729535548a8c1ba80c59c~CkHvtJBx_0977609776epcas1p4c;
+        Wed, 26 May 2021 08:27:57 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.152]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4FqkbZ5yb8z4x9QQ; Wed, 26 May
+        2021 08:27:54 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5C.98.09824.5760EA06; Wed, 26 May 2021 17:27:33 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210526082732epcas1p189154b27b71df8bd063b5ac1ceb0b3d7~CkHYeaOkj1215112151epcas1p12;
+        Wed, 26 May 2021 08:27:32 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210526051301epsmtrp27e6a2e50cdb1113b9cc754468717f598~Chdizbt0M0328003280epsmtrp2X;
-        Wed, 26 May 2021 05:13:01 +0000 (GMT)
-X-AuditID: b6c32a4a-639ff700000025e1-c6-60ade27b7c80
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210526082732epsmtrp1ad4cde2bbf4dba4daf92833d3d54db10~CkHYdq2pf2708127081epsmtrp1M;
+        Wed, 26 May 2021 08:27:32 +0000 (GMT)
+X-AuditID: b6c32a37-04bff70000002660-10-60ae06752e97
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8E.F6.08163.DD8DDA06; Wed, 26 May 2021 14:13:01 +0900 (KST)
-Received: from alimakhtar02 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210526051300epsmtip1f5dd657ab96a37d8444921ee422a5236~Chdh5JT8J2623326233epsmtip1c;
-        Wed, 26 May 2021 05:13:00 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc:     "'Alim Akhtar'" <alim.akhtar@gmail.com>
-In-Reply-To: <20210525184716.119663-1-krzysztof.kozlowski@canonical.com>
-Subject: RE: [PATCH v2] soc: samsung: pmu: drop EXYNOS_CENTRAL_SEQ_OPTION
- defines
-Date:   Wed, 26 May 2021 10:42:58 +0530
-Message-ID: <33f701d751ed$cca98640$65fc92c0$@samsung.com>
+        B3.40.08163.4760EA06; Wed, 26 May 2021 17:27:32 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.211]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20210526082732epsmtip26a2deb9ac9fb7e1ef7909c4d98af6eb0~CkHYOquV40967409674epsmtip2q;
+        Wed, 26 May 2021 08:27:32 +0000 (GMT)
+From:   Inki Dae <inki.dae@samsung.com>
+To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc:     airlied@linux.ie, Inki Dae <inki.dae@samsung.com>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH v2] drm/exynos: use pm_runtime_resume_and_get()
+Date:   Wed, 26 May 2021 17:37:03 +0900
+Message-Id: <20210526083703.323886-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGLKzlHEtYW08yvc3oVFZUGsEBF/gJki6A5q3pf9cA=
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmleLIzCtJLcpLzFFi42LZdlhTQ7f60doEg1krTSyW3qq22Pj2B5PF
-        psfXWC0u75rDZjHj/D4mB1aPWQ29bB47Z91l99i8pN7j8ya5AJYoLpuU1JzMstQifbsEroxt
-        s9+zFpznrfi2vJWxgfEkdxcjJ4eEgInEyqmvGbsYuTiEBHYzSuw+3cQE4XxilPj29BiU85lR
-        4v2ePexdjBxgLV8mRYN0CwnsYpSYcF0VouYlo8SZ53MZQRJsAroSOxa3sYEkRAQ2MEpcXncJ
-        LMEsoC2x58JUNpBBnAIeEo3TlUDCwgLBEufeTWcFsVkEVCX67j8HK+EVsJS4NU0ZJMwrIChx
-        cuYTFogp8hLb385hhvhAQeLn02VgrSICVhIXJq5ggqgRlzj6sweqppND4skxfgjbRaJ/RjNU
-        XFji1fEt7BC2lMTnd3vZIF7MlujZZQwRrpFYOu8YC4RtL3HgyhwWkBJmAU2J9bv0IcKyElNP
-        rYPayifR+/sJE0ScV2LHPBhbVaL53VWoMdISE7u7WScwKs1C8tgsJI/NQvLALIRtCxhZVjFK
-        phYU56anFpsWGOWllusVJ+YWl+al6yXn525iBKcXLa8djA8ffNA7xMjEwXiIUYKDWUmE92Dz
-        2gQh3pTEyqrUovz4otKc1OJDjNIcLErivCseTk4QEkhPLEnNTk0tSC2CyTJxcEo1MIUv4zfS
-        WXCUeae3nhlbsgpH+BEXFvXd3pz13wxWWu4N59AKuXNG3Uf9yPXHRUd/L7Vbr+q7+C1rt0m/
-        ZdvrT1dXKf5auG3f6bXfS2tmRCxpCS5RXHPSSXjltcqQpluXcl/Xmc7z/aujZ1ra9TR/fdL9
-        yqP2VoHKs8LMDjnunPgo99nVLA3Ve9ft2hRDuPuXfHzlvc645HWL+bJmfsPiVrvorVf3H8yY
-        abj2Zw9jxdmZh7bXyVV5aBX9/+y2K2/yv28xSlrlTzrndNzcdC/WYtK9zrqO7ZZxFfsKV+SU
-        s93rTFFvNj6hxLhd4tEBlR2eTanlUbUK8Z6Gr6tf/f9/6ugybSmLgyflNnXX616/osRSnJFo
-        qMVcVJwIAHPg19WeAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsWy7bCSnO7dG2sTDF7dkrNYeqvaYuPbH0wW
-        mx5fY7W4vGsOm8WM8/uYHFg9ZjX0snnsnHWX3WPzknqPz5vkAliiuGxSUnMyy1KL9O0SuDK2
-        zX7PWnCet+Lb8lbGBsaT3F2MHBwSAiYSXyZFdzFycQgJ7GCUODpjGlMXIydQXFri+sYJ7BC2
-        sMTKf8/ZIYqeM0p8XT6fFSTBJqArsWNxGxtIQkRgE6NEx40JzCAJZgFtiT0XprJBdMxklJg8
-        4zEjyDpOAQ+JxulKIKawQKDElYfaIOUsAqoSffefs4GEeQUsJW5NUwYJ8woISpyc+YQFJMws
-        oCfRtpERYri8xPa3c5ghTlOQ+Pl0Gdg1IgJWEhcmrmCCqBGXOPqzh3kCo/AsJJNmIUyahWTS
-        LCQdCxhZVjFKphYU56bnFhsWGOWllusVJ+YWl+al6yXn525iBEeJltYOxj2rPugdYmTiYDzE
-        KMHBrCTCe7B5bYIQb0piZVVqUX58UWlOavEhRmkOFiVx3gtdJ+OFBNITS1KzU1MLUotgskwc
-        nFINTLuqD35KsRd5dF1FOLz3tnhNjIb5loC6c9avd8v03Xk/g++Y51zOW1lH7WZ8k168XPuE
-        3I5fP99uvWm/60qwyZeYHfIirOzRhqpif986rre9fvzF/2kLz+tt//5/7v+/n9c9q5PTku/M
-        MDVvVn5TwLLz1MGuK2dOzV6r5blxxrP1i757KNbvX+88Y9Kq5S33pj57cYA1XSbm0NK9rAV/
-        uP4Xro0//LFi54TKbZHlqrKS/kdCrs1OfnLH5vBXRqnm/lm5TZrcLkzBGpO6r5vc/+D0Ku74
-        HRep9IaLh8VrpCxMK9fkX2I3tFnyQVD/8M3W5sCVdvzupamzr+1K0rWdUBB4RnrFTv8bohFV
-        xhffZJorsRRnJBpqMRcVJwIAPouuVgEDAAA=
-X-CMS-MailID: 20210526051301epcas5p1ce9b9655d7e2d777906599088509f056
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGKsWRmVeSWpSXmKPExsWy7bCmrm4p27oEg8XPJCx6z51ksrjy9T2b
+        xaT7E1gsZpzfx2TxqvkRmwOrx+I9L5k8tn97wOpxv/s4k0ffllWMHp83yQWwRmXbZKQmpqQW
+        KaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gAtV1IoS8wpBQoFJBYX
+        K+nb2RTll5akKmTkF5fYKqUWpOQUWBboFSfmFpfmpesl5+daGRoYGJkCFSZkZ3TObmMv6A+o
+        +PHlFnsD4xXnLkZODgkBE4lP69eydzFycQgJ7GCU2LBoOROE84lR4kHTeijnM6PE00tvWLoY
+        OcBaTp2KhojvYpS40zqFEWSUkMAXRomDD2RBbDYBVYmJK+6zgdgiAm4STYdnsoLYzAJREm+W
+        zgOLCwvYS5z7vpMdxGYBql+8cx1YDa+AlcSPb69YIM6Tl5h56Ts7RFxQ4uTMJywQc+QlmrfO
+        ZgY5QkJgH7vE7NYNrBANLhL3/m9gh7CFJV4d3wJlS0m87G9jh2hoZpSYOOM0E4TTwShx9/F1
+        qHXGEvuXTmYCeZNZQFNi/S59iLCixM7fcxkhNvNJvPvawwoJCV6JjjYhiBIliWMXbzBC2BIS
+        F5ZMZIOwPST2fFvHBgmgWInOBVeYJjDKz0Lyzywk/8xCWLyAkXkVo1hqQXFuemqxYYExcqxu
+        YgQnQC3zHYzT3n7QO8TIxMF4iFGCg1lJhPdg89oEId6UxMqq1KL8+KLSnNTiQ4ymwBCeyCwl
+        mpwPTMF5JfGGpkbGxsYWJoZmpoaGSuK86c7VCUIC6YklqdmpqQWpRTB9TBycUg1Ml8/f6rd9
+        9DlA/njUfq0CiSPLap905jE3mp26LnRCwbb9YYcdy6b/GzdFqws2Kv1+uE87nXW19avGSyUL
+        pxwRUJLdYPpENCAgcIb0OqOqy2by9nYMEa8SHZc+yVh+KqfWOVDW6XG037HA4NUn+q9ueMKd
+        fjZTprg7MkZv82UpV9/nX2tuLti1fm6shUrLXp27Tw/s5J2e9l2PS31b14O8WjXFoyvD1opo
+        KEpGchzQYv/Hf9tW/+f2t5M/Znd7J/MIWLY1X95+4cX3vTVaErnp5S0nTEVOfSqPV9/9fE3w
+        vHNz/55Q1dU5aH+jIqnIaXOxGcvcVxONZ37TuxDV+1ng8cyoveeT9jwzEG/Jm3BOiaU4I9FQ
+        i7moOBEASTbgswkEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrELMWRmVeSWpSXmKPExsWy7bCSvG4J27oEg/ZZ6ha9504yWVz5+p7N
+        YtL9CSwWM87vY7J41fyIzYHVY/Gel0we2789YPW4332cyaNvyypGj8+b5AJYo7hsUlJzMstS
+        i/TtErgyOme3sRf0B1T8+HKLvYHxinMXIweHhICJxKlT0V2MXBxCAjsYJdbP7GKFiEtIbNnK
+        AWEKSxw+XAxR8olR4tSW9SxdjJwcbAKqEhNX3GcDsUUEPCSavx1nB7GZBWIkXr1fCxYXFrCX
+        OPd9J1icBah+8c51rCA2r4CVxI9vr8DmSAjIS8y89J0dIi4ocXLmExaIOfISzVtnM09g5JuF
+        JDULSWoBI9MqRsnUguLc9NxiwwKjvNRyveLE3OLSvHS95PzcTYzgYNTS2sG4Z9UHvUOMTByM
+        hxglOJiVRHgPNq9NEOJNSaysSi3Kjy8qzUktPsQozcGiJM57oetkvJBAemJJanZqakFqEUyW
+        iYNTqoGphW17eK1cxbvK93yblYzFCyS3/bU+rNu3Kzfl5s4X3gu+H2W6XCd++NaX8ozfHC/v
+        6R3+9JpfcKmc9r9Sz4ryV58bZ0d+Pjdr5afy9KelbhfuFUzfUDBP5kawsk71huD11QXnj+TM
+        LftrOz9047M/xefzT0/m39V2M/2FcH1k4U7+/nxdh317nh4JZ/yTeH2f+vFl20qLJiv5/WoS
+        9Sm8L92dqfPA/sWO+oNTTix9mpnCsv300cLGf883T1tZPPW3yb3MyxLN9+Rd3gvlhlYInXSd
+        XOm4919OQm+TFb/NXCO7vpdcv2OOWD877PUvxDGiIeb6jCxjibLF9w492JmSOmu1hAhr7L0T
+        O97JG4iJKrEUZyQaajEXFScCAP5eXIa1AgAA
+X-CMS-MailID: 20210526082732epcas1p189154b27b71df8bd063b5ac1ceb0b3d7
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20210525184731epcas5p492729224fc5477481138e03df3da6cfe
-References: <CGME20210525184731epcas5p492729224fc5477481138e03df3da6cfe@epcas5p4.samsung.com>
-        <20210525184716.119663-1-krzysztof.kozlowski@canonical.com>
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210526082732epcas1p189154b27b71df8bd063b5ac1ceb0b3d7
+References: <CGME20210526082732epcas1p189154b27b71df8bd063b5ac1ceb0b3d7@epcas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof
+Use pm_runtime_resume_and_get() instead of pm_runtime_get_sync()
+to deal with usage counter. pm_runtime_get_sync() increases the
+usage counter even when it failed, which makes callers to forget
+to decrease the usage counter and resulted in reference leak.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Sent: 26 May 2021 00:17
-> To: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>; linux-arm-
-> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
-> kernel@vger.kernel.org
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>; Alim Akhtar
-> <alim.akhtar@gmail.com>
-> Subject: [PATCH v2] soc: samsung: pmu: drop
-> EXYNOS_CENTRAL_SEQ_OPTION defines
-> 
-> The defines for Exynos5 CENTRAL_SEQ_OPTION (e.g.
-> EXYNOS5_USE_STANDBYWFI_ARM_CORE1) are not used.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
-> 
-> Changes since v1:
-> 1. Drop defines instead of fixing typo.
-> ---
->  include/linux/soc/samsung/exynos-regs-pmu.h | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h
-> b/include/linux/soc/samsung/exynos-regs-pmu.h
-> index fc9250fb3133..aa840ed043e1 100644
-> --- a/include/linux/soc/samsung/exynos-regs-pmu.h
-> +++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-> @@ -611,12 +611,6 @@
->  #define EXYNOS5420_FSYS2_OPTION
-> 	0x4168
->  #define EXYNOS5420_PSGEN_OPTION
-> 	0x4188
-> 
-> -/* For EXYNOS_CENTRAL_SEQ_OPTION */
-> -#define EXYNOS5_USE_STANDBYWFI_ARM_CORE0
-> 	BIT(16)
-> -#define EXYNOS5_USE_STANDBYWFI_ARM_CORE1
-> 	BUT(17)
-> -#define EXYNOS5_USE_STANDBYWFE_ARM_CORE0
-> 	BIT(24)
-> -#define EXYNOS5_USE_STANDBYWFE_ARM_CORE1
-> 	BIT(25)
-> -
->  #define EXYNOS5420_ARM_USE_STANDBY_WFI0
-> 	BIT(4)
->  #define EXYNOS5420_ARM_USE_STANDBY_WFI1
-> 	BIT(5)
->  #define EXYNOS5420_ARM_USE_STANDBY_WFI2
-> 	BIT(6)
-> --
-> 2.27.0
+pm_runtime_resume_and_get() function decreases the usage counter
+when it failed internally so it can avoid the reference leak.
 
+Changelog v1:
+- Fix an build error reported by kernel test robot of Intel.
+
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Reported-by: kernel test robot <lkp@intel.com>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  7 +++++-
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  7 +++++-
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c       |  7 +++++-
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c      |  8 +++++-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 25 +++++++++++++++----
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  9 ++++++-
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c       |  7 +++++-
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c   |  7 +++++-
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c    | 10 +++++---
+ drivers/gpu/drm/exynos/exynos_hdmi.c          |  8 +++++-
+ drivers/gpu/drm/exynos/exynos_mixer.c         |  7 +++++-
+ 11 files changed, 84 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index b9a4b7670a89..63dd85af13f2 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -513,8 +513,13 @@ static void decon_swreset(struct decon_context *ctx)
+ static void decon_atomic_enable(struct exynos_drm_crtc *crtc)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
++	int ret;
+ 
+-	pm_runtime_get_sync(ctx->dev);
++	ret = pm_runtime_resume_and_get(ctx->dev);
++	if (ret < 0) {
++		DRM_DEV_ERROR(ctx->dev, "failed to enable DECON device.\n");
++		return;
++	}
+ 
+ 	exynos_drm_pipe_clk_enable(crtc, true);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 431c5d32f9a4..b61edc54e66f 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -531,11 +531,16 @@ static void decon_init(struct decon_context *ctx)
+ static void decon_atomic_enable(struct exynos_drm_crtc *crtc)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
++	int ret;
+ 
+ 	if (!ctx->suspended)
+ 		return;
+ 
+-	pm_runtime_get_sync(ctx->dev);
++	ret = pm_runtime_resume_and_get(ctx->dev);
++	if (ret < 0) {
++		DRM_DEV_ERROR(ctx->dev, "failed to enable DECON device.\n");
++		return;
++	}
+ 
+ 	decon_init(ctx);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 44e402b7cdfb..5bb1388a8b18 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1383,7 +1383,12 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
+ 	if (dsi->state & DSIM_STATE_ENABLED)
+ 		return;
+ 
+-	pm_runtime_get_sync(dsi->dev);
++	ret = pm_runtime_resume_and_get(dsi->dev);
++	if (ret < 0) {
++		dev_err(dsi->dev, "failed to enable DSI device.\n");
++		return;
++	}
++
+ 	dsi->state |= DSIM_STATE_ENABLED;
+ 
+ 	if (dsi->panel) {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+index 29ab8be8604c..a3c718148c45 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -1085,8 +1085,14 @@ static int fimc_commit(struct exynos_drm_ipp *ipp,
+ {
+ 	struct fimc_context *ctx =
+ 			container_of(ipp, struct fimc_context, ipp);
++	int ret;
++
++	ret = pm_runtime_resume_and_get(ctx->dev);
++	if (ret < 0) {
++		dev_err(ctx->dev, "failed to enable FIMC device.\n");
++		return ret;
++	}
+ 
+-	pm_runtime_get_sync(ctx->dev);
+ 	ctx->task = task;
+ 
+ 	fimc_src_set_fmt(ctx, task->src.buf.fourcc, task->src.buf.modifier);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 49a2e0c53918..5955bd90accb 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -343,13 +343,18 @@ static void fimd_enable_shadow_channel_path(struct fimd_context *ctx,
+ 	writel(val, ctx->regs + SHADOWCON);
+ }
+ 
+-static void fimd_clear_channels(struct exynos_drm_crtc *crtc)
++static int fimd_clear_channels(struct exynos_drm_crtc *crtc)
+ {
+ 	struct fimd_context *ctx = crtc->ctx;
+ 	unsigned int win, ch_enabled = 0;
++	int ret;
+ 
+ 	/* Hardware is in unknown state, so ensure it gets enabled properly */
+-	pm_runtime_get_sync(ctx->dev);
++	ret = pm_runtime_resume_and_get(ctx->dev);
++	if (ret < 0) {
++		dev_err(ctx->dev, "failed to enable FIMD device.\n");
++		return ret;
++	}
+ 
+ 	clk_prepare_enable(ctx->bus_clk);
+ 	clk_prepare_enable(ctx->lcd_clk);
+@@ -384,6 +389,8 @@ static void fimd_clear_channels(struct exynos_drm_crtc *crtc)
+ 	clk_disable_unprepare(ctx->bus_clk);
+ 
+ 	pm_runtime_put(ctx->dev);
++
++	return 0;
+ }
+ 
+ 
+@@ -905,7 +912,10 @@ static void fimd_atomic_enable(struct exynos_drm_crtc *crtc)
+ 
+ 	ctx->suspended = false;
+ 
+-	pm_runtime_get_sync(ctx->dev);
++	if (pm_runtime_resume_and_get(ctx->dev) < 0) {
++		dev_warn(ctx->dev, "failed to enable FIMD device.\n");
++		return;
++	}
+ 
+ 	/* if vblank was enabled status, enable it again. */
+ 	if (test_and_clear_bit(0, &ctx->irq_flags))
+@@ -1089,8 +1099,13 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+ 	if (ctx->encoder)
+ 		exynos_dpi_bind(drm_dev, ctx->encoder);
+ 
+-	if (is_drm_iommu_supported(drm_dev))
+-		fimd_clear_channels(ctx->crtc);
++	if (is_drm_iommu_supported(drm_dev)) {
++		int ret;
++
++		ret = fimd_clear_channels(ctx->crtc);
++		if (ret < 0)
++			return ret;
++	}
+ 
+ 	return exynos_drm_register_dma(drm_dev, dev, &ctx->dma_priv);
+ }
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+index 1e0c5a7f206e..cab4d2c370a7 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -892,7 +892,14 @@ static void g2d_runqueue_worker(struct work_struct *work)
+ 		g2d->runqueue_node = g2d_get_runqueue_node(g2d);
+ 
+ 		if (g2d->runqueue_node) {
+-			pm_runtime_get_sync(g2d->dev);
++			int ret;
++
++			ret = pm_runtime_resume_and_get(g2d->dev);
++			if (ret < 0) {
++				dev_err(g2d->dev, "failed to enable G2D device.\n");
++				return;
++			}
++
+ 			g2d_dma_start(g2d, g2d->runqueue_node);
+ 		}
+ 	}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+index b01f36e76eaf..90d7bf906885 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+@@ -1118,7 +1118,12 @@ static int gsc_commit(struct exynos_drm_ipp *ipp,
+ 	struct gsc_context *ctx = container_of(ipp, struct gsc_context, ipp);
+ 	int ret;
+ 
+-	pm_runtime_get_sync(ctx->dev);
++	ret = pm_runtime_resume_and_get(ctx->dev);
++	if (ret < 0) {
++		dev_err(ctx->dev, "failed to enable GScaler device.\n");
++		return ret;
++	}
++
+ 	ctx->task = task;
+ 
+ 	ret = gsc_reset(ctx);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+index 2d94afba031e..ee61be4cf152 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+@@ -219,8 +219,13 @@ static int rotator_commit(struct exynos_drm_ipp *ipp,
+ {
+ 	struct rot_context *rot =
+ 			container_of(ipp, struct rot_context, ipp);
++	int ret;
+ 
+-	pm_runtime_get_sync(rot->dev);
++	ret = pm_runtime_resume_and_get(rot->dev);
++	if (ret < 0) {
++		dev_err(rot->dev, "failed to enable ROTATOR device.\n");
++		return ret;
++	}
+ 	rot->task = task;
+ 
+ 	rotator_src_set_fmt(rot, task->src.buf.fourcc);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+index ce1857138f89..f9ae5b038d59 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+@@ -362,15 +362,17 @@ static int scaler_commit(struct exynos_drm_ipp *ipp,
+ 	struct drm_exynos_ipp_task_rect *src_pos = &task->src.rect;
+ 	struct drm_exynos_ipp_task_rect *dst_pos = &task->dst.rect;
+ 	const struct scaler_format *src_fmt, *dst_fmt;
++	int ret = 0;
+ 
+ 	src_fmt = scaler_get_format(task->src.buf.fourcc);
+ 	dst_fmt = scaler_get_format(task->dst.buf.fourcc);
+ 
+-	pm_runtime_get_sync(scaler->dev);
+-	if (scaler_reset(scaler)) {
+-		pm_runtime_put(scaler->dev);
++	ret = pm_runtime_resume_and_get(scaler->dev);
++	if (ret < 0)
++		return ret;
++
++	if (scaler_reset(scaler))
+ 		return -EIO;
+-	}
+ 
+ 	scaler->task = task;
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 39fa5d3b01ef..f893731d6021 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1483,10 +1483,16 @@ static void hdmi_set_refclk(struct hdmi_context *hdata, bool on)
+ /* Should be called with hdata->mutex mutex held. */
+ static void hdmiphy_enable(struct hdmi_context *hdata)
+ {
++	int ret;
++
+ 	if (hdata->powered)
+ 		return;
+ 
+-	pm_runtime_get_sync(hdata->dev);
++	ret = pm_runtime_resume_and_get(hdata->dev);
++	if (ret < 0) {
++		dev_err(hdata->dev, "failed to enable HDMIPHY device.\n");
++		return;
++	}
+ 
+ 	if (regulator_bulk_enable(ARRAY_SIZE(supply), hdata->regul_bulk))
+ 		DRM_DEV_DEBUG_KMS(hdata->dev,
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index af192e5a16ef..41c54f1f60bc 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -992,11 +992,16 @@ static void mixer_atomic_flush(struct exynos_drm_crtc *crtc)
+ static void mixer_atomic_enable(struct exynos_drm_crtc *crtc)
+ {
+ 	struct mixer_context *ctx = crtc->ctx;
++	int ret;
+ 
+ 	if (test_bit(MXR_BIT_POWERED, &ctx->flags))
+ 		return;
+ 
+-	pm_runtime_get_sync(ctx->dev);
++	ret = pm_runtime_resume_and_get(ctx->dev);
++	if (ret < 0) {
++		dev_err(ctx->dev, "failed to enable MIXER device.\n");
++		return;
++	}
+ 
+ 	exynos_drm_pipe_clk_enable(crtc, true);
+ 
+-- 
+2.25.1
 
