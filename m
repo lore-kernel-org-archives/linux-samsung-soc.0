@@ -2,67 +2,66 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 990C2C47082
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 May 2021 12:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1552C47082
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 May 2021 12:49:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E250613DC
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 May 2021 12:39:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83C6E613F4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 May 2021 12:49:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233941AbhEZMlU (ORCPT
+        id S230366AbhEZMuR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 May 2021 08:41:20 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56618 "EHLO
+        Wed, 26 May 2021 08:50:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56840 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234532AbhEZMlR (ORCPT
+        with ESMTP id S234853AbhEZMsx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 May 2021 08:41:17 -0400
-Received: from mail-vs1-f69.google.com ([209.85.217.69])
+        Wed, 26 May 2021 08:48:53 -0400
+Received: from mail-ua1-f71.google.com ([209.85.222.71])
         by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1llsp6-00007g-Fb
-        for linux-samsung-soc@vger.kernel.org; Wed, 26 May 2021 12:39:44 +0000
-Received: by mail-vs1-f69.google.com with SMTP id d19-20020a0561020413b029023877d74e72so183127vsq.15
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 May 2021 05:39:44 -0700 (PDT)
+        id 1llswT-0000u1-LI
+        for linux-samsung-soc@vger.kernel.org; Wed, 26 May 2021 12:47:21 +0000
+Received: by mail-ua1-f71.google.com with SMTP id k17-20020ab071510000b02902351d1972d8so696048uao.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 May 2021 05:47:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=gN2u9zXldM21EHt67+sMR5HlACJwh4tvgZXmS6a8P94=;
-        b=tk8kqYOh0cuYpvHyalaw0AxEK0DALTA4lU01yEfkl2r4UJqvuXLUxny3N8HJ1Nj1xP
-         nytKoGlgOywcSbX5VQqbir+ykPpovTOaFGlB3tIPb5H9LQ+qUGMEA8xKFUVwT/u7iXKI
-         bDsMNQw+WPoGvzAJUd95cIuuK6sva4/tlbzb3AmGE4keRcMpXy+cgcPlqnhf5/J+6zoQ
-         u+Q/2Y1KeVDhXdTmUKRVF87re89jYnGQwHPqPZcjgVI2VU+rGJSFzVm61scgOlTPTPET
-         2ptE9vsmJ5bcgSTrf5se0xE18MwY70xexODmJ4BlVO7XWyI9OO+wcj0eR8S1XjSU9VTs
-         p3Yw==
-X-Gm-Message-State: AOAM532SQyOWN55Bvw8p0BFhQPwd3gAtD/IreSepQAH5crFpHjIbp39Y
-        wsyFGsaaDcWQpnXarivibV+/ZIiL5WHWADrtk/7C5YkNNszNRCyJ5ysseP/GfFe4DGNUNwe2DbC
-        wnlFL64dOca5DJYu9HPwnUQqPXft5lXcwd+UPF+Gv51MRVyfG
-X-Received: by 2002:ab0:5acf:: with SMTP id x15mr32137319uae.132.1622032783582;
-        Wed, 26 May 2021 05:39:43 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw/SfZLr/bmF5flVczWQ9oLy5YTXK6WvySQPDkCj5uV/aFtLdOjVhbvV6qeYmmthiflkK7Q7Q==
-X-Received: by 2002:ab0:5acf:: with SMTP id x15mr32137298uae.132.1622032783424;
-        Wed, 26 May 2021 05:39:43 -0700 (PDT)
-Received: from localhost.localdomain ([45.237.48.4])
-        by smtp.gmail.com with ESMTPSA id n77sm1693475vke.24.2021.05.26.05.39.41
+        bh=O/UCsmH3hl4IpqKUJA4a+70Zw+Sf6AD7w/Z6UKUd60g=;
+        b=r4PTVP/I7CxfVsTPSVhsFAp3yQt9/mTHd9PyqCJHqX+ixluFy6P9xzkqYf/01zx/k5
+         4i+qX5t4CDojNr7KwUZVRpycEneLuQChLmvoMo1u+Ie9McEhrB3yPFgTZbflof8hkEdy
+         WCjxHthJaQftulvBP817oBSuBxda+7EVZ690+FBK6kELZaL5io51vNHpDJVkvDuZcv4A
+         vsz6xK536BYAVj6gglo/7d6Db4+KJotpJghQBRj8BGMsLJeIb/fhrYXxamee1mMhxFJm
+         Oj6lQ/ZbNDC3ho9tGXRAtxS4kzjhFmpCS64gZoIX42dGh/Vb1d6rBTlsJpJdEKvL5m6h
+         ehiw==
+X-Gm-Message-State: AOAM531yylKMOmhEY31Bb3xh+ByIOvNkORwPUu4WkwWbvz6RzEx33CKn
+        StmBFI4rXTEBJLAY/eNQLAj6/Uo4eLGfMDCXaWLWW4T8uRfeT1D8SMVviNSs4Y9Je6J509VA/Sy
+        OqZAzyFbHCB3kNWMVe4bJqR+K8i3OJL77jS9fDFiq6FdlL5UH
+X-Received: by 2002:a67:ea98:: with SMTP id f24mr32326332vso.58.1622033240417;
+        Wed, 26 May 2021 05:47:20 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzncV7KUF7nlI+xDOZ2Hh0jrvt9tlTaxUB/9/ZQ88phvVB/gpuC8OhttWrjIE2/mvfwYc6tAw==
+X-Received: by 2002:a67:ea98:: with SMTP id f24mr32326315vso.58.1622033240219;
+        Wed, 26 May 2021 05:47:20 -0700 (PDT)
+Received: from localhost.localdomain ([45.237.48.3])
+        by smtp.gmail.com with ESMTPSA id c126sm875817vkh.47.2021.05.26.05.47.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 May 2021 05:39:42 -0700 (PDT)
+        Wed, 26 May 2021 05:47:19 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
+To:     Lee Jones <lee.jones@linaro.org>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [RESEND PATCH] i2c: s3c2410: fix possible NULL pointer deref on read message after write
-Date:   Wed, 26 May 2021 08:39:37 -0400
-Message-Id: <20210526123937.22958-1-krzysztof.kozlowski@canonical.com>
+        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        patches@opensource.cirrus.com
+Subject: [RESEND PATCH v2 00/13] Simplify + drop board file support for Samsung PMIC
+Date:   Wed, 26 May 2021 08:46:58 -0400
+Message-Id: <20210526124711.33223-1-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -70,69 +69,55 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Interrupt handler processes multiple message write requests one after
-another, till the driver message queue is drained.  However if driver
-encounters a read message without preceding START, it stops the I2C
-transfer as it is an invalid condition for the controller.  At least the
-comment describes a requirement "the controller forces us to send a new
-START when we change direction".  This stop results in clearing the
-message queue (i2c->msg = NULL).
+Hi Lee,
 
-The code however immediately jumped back to label "retry_write" which
-dereferenced the "i2c->msg" making it a possible NULL pointer
-dereference.
+This is the resend of two previous series, combined together as the
+latter depends on the first:
+https://lore.kernel.org/lkml/20210420113929.278082-1-krzysztof.kozlowski@canonical.com/
+https://lore.kernel.org/lkml/20210420170118.12788-1-krzysztof.kozlowski@canonical.com/
 
-The Coverity analysis:
-1. Condition !is_msgend(i2c), taking false branch.
-   if (!is_msgend(i2c)) {
+Everything rebased on latest next.
 
-2. Condition !is_lastmsg(i2c), taking true branch.
-   } else if (!is_lastmsg(i2c)) {
+This also includes two MFD "Correct kerneldoc" patches which seems to be
+still valid, even though you mentioned they were fixed.
 
-3. Condition i2c->msg->flags & 1, taking true branch.
-   if (i2c->msg->flags & I2C_M_RD) {
 
-4. write_zero_model: Passing i2c to s3c24xx_i2c_stop, which sets i2c->msg to NULL.
-   s3c24xx_i2c_stop(i2c, -EINVAL);
+The Samsung PMIC drivers since long time are used only on devicetree
+platforms (Samsung Exynos) and there are no users with board files.
 
-5. Jumping to label retry_write.
-   goto retry_write;
+Drop the support for board files entirely and depend on OF for matching.
+This makes the code smaller and simpler.
 
-6. var_deref_model: Passing i2c to is_msgend, which dereferences null i2c->msg.
-   if (!is_msgend(i2c)) {"
+Best regards,
+Krzysztof
 
-All previous calls to s3c24xx_i2c_stop() in this interrupt service
-routine are followed by jumping to end of function (acknowledging
-the interrupt and returning).  This seems a reasonable choice also here
-since message buffer was entirely emptied.
+Krzysztof Kozlowski (13):
+  mfd: max8997: Simplify getting of_device_id match data
+  mfd: max8998: Simplify getting of_device_id match data
+  mfd: da9052: Simplify getting of_device_id match data
+  mfd: da9062: Simplify getting of_device_id match data
+  mfd: sec: Simplify getting of_device_id match data
+  mfd: wm831x: Correct kerneldoc
+  mfd: twl: Correct kerneldoc
+  mfd: sec: Drop support for board files and require devicetree
+  mfd: sec: Remove unused cfg_pmic_irq in platform data
+  mfd: sec: Remove unused device_type in platform data
+  mfd: sec: Remove unused irq_base in platform data
+  mfd: sec: Enable wakeup from suspend via devicetree property
+  mfd: sec: Remove unused platform data members
 
-Addresses-Coverity: Explicit null dereferenced
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+ drivers/mfd/Kconfig              |  1 +
+ drivers/mfd/da9052-i2c.c         |  9 +---
+ drivers/mfd/da9062-core.c        | 13 ++----
+ drivers/mfd/max8997.c            |  9 ++--
+ drivers/mfd/max8998.c            |  8 ++--
+ drivers/mfd/sec-core.c           | 70 +++++---------------------------
+ drivers/mfd/sec-irq.c            |  4 +-
+ drivers/mfd/twl-core.c           |  4 +-
+ drivers/mfd/wm831x-core.c        |  2 +-
+ include/linux/mfd/samsung/core.h | 33 ---------------
+ 10 files changed, 29 insertions(+), 124 deletions(-)
 
----
-
-Reason for resend - the patch did not get necessary testing however I
-think it is correct, therefore resending without "RFT".
----
- drivers/i2c/busses/i2c-s3c2410.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index ab928613afba..4d82761e1585 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -480,7 +480,10 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
- 					 * forces us to send a new START
- 					 * when we change direction
- 					 */
-+					dev_dbg(i2c->dev,
-+						"missing START before write->read\n");
- 					s3c24xx_i2c_stop(i2c, -EINVAL);
-+					break;
- 				}
- 
- 				goto retry_write;
 -- 
 2.27.0
 
