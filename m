@@ -2,100 +2,137 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D716C47087
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 May 2021 07:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DA8C4708C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 May 2021 08:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 818386135F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 May 2021 07:22:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EDEC613E3
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 May 2021 08:17:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235179AbhE1HXw (ORCPT
+        id S235991AbhE1ITY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 May 2021 03:23:52 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2445 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235763AbhE1HXp (ORCPT
+        Fri, 28 May 2021 04:19:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45216 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235827AbhE1ITY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 May 2021 03:23:45 -0400
-Received: from dggeml766-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4FrwzR576Zz66WK;
-        Fri, 28 May 2021 15:19:15 +0800 (CST)
-Received: from dggema769-chm.china.huawei.com (10.1.198.211) by
- dggeml766-chm.china.huawei.com (10.1.199.176) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Fri, 28 May 2021 15:22:09 +0800
-Received: from localhost (10.174.179.215) by dggema769-chm.china.huawei.com
- (10.1.198.211) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Fri, 28
- May 2021 15:22:08 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <inki.dae@samsung.com>, <jy0922.shim@samsung.com>,
-        <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>,
-        <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <krzysztof.kozlowski@canonical.com>, <yuehaibing@huawei.com>
-CC:     <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] drm/exynos-vidi: use DEVICE_ATTR_RW macro
-Date:   Fri, 28 May 2021 15:21:20 +0800
-Message-ID: <20210528072120.21332-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Fri, 28 May 2021 04:19:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7B2AA613E3;
+        Fri, 28 May 2021 08:17:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622189866;
+        bh=+DN1ThzyYacOd78DdXId0ReCsSm1yKrKrqXQsuX6Tgg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=E7I7n353qAm5esYh8/ZWh9FVS6zyc2KHDgqVr0Q7ikH+FFKSkKP8O4hhvW0kY4VN9
+         8Y9yDtVXVExLeqa5A/hs6+xXK4xEk16+5klHk31nkPhE6/LMxFts0aULHkrqjF3HTj
+         hCnIzpjnzs2BSjcop/qd+/SpyQi6qQv06rOsVrDmP9fu8qbbBMiYLdPAvQuzqbnP/s
+         /YAO47trusAn3KDv7MHDoj/s3ew4001csQ7fHidCSK8QAEPYZObshLmlV+RMggsdyx
+         Ko0HZmsslk9Z/NzP4Op3/z5TIFGv0xIog5ksrT475PXQIpjUd88W8OPxeFjDWyGbvy
+         RaA7pUQ0sJUxw==
+Date:   Fri, 28 May 2021 10:17:42 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RESEND PATCH] i2c: s3c2410: fix possible NULL pointer deref on
+ read message after write
+Message-ID: <YLCnJgjVmJ7uMBxz@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+References: <20210526123937.22958-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.174.179.215]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggema769-chm.china.huawei.com (10.1.198.211)
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="9VHmpeKQ8kPImJHj"
+Content-Disposition: inline
+In-Reply-To: <20210526123937.22958-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use DEVICE_ATTR_RW() helper instead of plain DEVICE_ATTR(),
-which makes the code a bit shorter and easier to read.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+--9VHmpeKQ8kPImJHj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index e5662bdcbbde..a3a95a2c0bae 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -165,8 +165,8 @@ static void vidi_fake_vblank_timer(struct timer_list *t)
- 			jiffies + msecs_to_jiffies(VIDI_REFRESH_TIME) - 1);
- }
- 
--static ssize_t vidi_show_connection(struct device *dev,
--				struct device_attribute *attr, char *buf)
-+static ssize_t connection_show(struct device *dev,
-+			       struct device_attribute *attr, char *buf)
- {
- 	struct vidi_context *ctx = dev_get_drvdata(dev);
- 	int rc;
-@@ -180,7 +180,7 @@ static ssize_t vidi_show_connection(struct device *dev,
- 	return rc;
- }
- 
--static ssize_t vidi_store_connection(struct device *dev,
-+static ssize_t connection_store(struct device *dev,
- 				struct device_attribute *attr,
- 				const char *buf, size_t len)
- {
-@@ -211,8 +211,7 @@ static ssize_t vidi_store_connection(struct device *dev,
- 	return len;
- }
- 
--static DEVICE_ATTR(connection, 0644, vidi_show_connection,
--			vidi_store_connection);
-+static DEVICE_ATTR_RW(connection);
- 
- static struct attribute *vidi_attrs[] = {
- 	&dev_attr_connection.attr,
--- 
-2.17.1
+On Wed, May 26, 2021 at 08:39:37AM -0400, Krzysztof Kozlowski wrote:
+> Interrupt handler processes multiple message write requests one after
+> another, till the driver message queue is drained.  However if driver
+> encounters a read message without preceding START, it stops the I2C
+> transfer as it is an invalid condition for the controller.  At least the
+> comment describes a requirement "the controller forces us to send a new
+> START when we change direction".  This stop results in clearing the
+> message queue (i2c->msg =3D NULL).
+>=20
+> The code however immediately jumped back to label "retry_write" which
+> dereferenced the "i2c->msg" making it a possible NULL pointer
+> dereference.
+>=20
+> The Coverity analysis:
+> 1. Condition !is_msgend(i2c), taking false branch.
+>    if (!is_msgend(i2c)) {
+>=20
+> 2. Condition !is_lastmsg(i2c), taking true branch.
+>    } else if (!is_lastmsg(i2c)) {
+>=20
+> 3. Condition i2c->msg->flags & 1, taking true branch.
+>    if (i2c->msg->flags & I2C_M_RD) {
+>=20
+> 4. write_zero_model: Passing i2c to s3c24xx_i2c_stop, which sets i2c->msg=
+ to NULL.
+>    s3c24xx_i2c_stop(i2c, -EINVAL);
+>=20
+> 5. Jumping to label retry_write.
+>    goto retry_write;
+>=20
+> 6. var_deref_model: Passing i2c to is_msgend, which dereferences null i2c=
+->msg.
+>    if (!is_msgend(i2c)) {"
+>=20
+> All previous calls to s3c24xx_i2c_stop() in this interrupt service
+> routine are followed by jumping to end of function (acknowledging
+> the interrupt and returning).  This seems a reasonable choice also here
+> since message buffer was entirely emptied.
+>=20
+> Addresses-Coverity: Explicit null dereferenced
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>=20
 
+Applied to for-current, thanks!
+
+
+--9VHmpeKQ8kPImJHj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmCwpyYACgkQFA3kzBSg
+Kbb/kw//T7waTI2rTUt3EK3y5G8OPDqTTBlZL+EwZjchuocWvogNJDub/VtuFZ4C
+Ky4IGJgkNL+7yEK5SkA26/WfqjEFHELY3SdVODfpEkSM2wz2obgZKTBAEzsZgsP4
+hyWqTV73FyvUhwloeHmZf+9/PNYakcYY/ZPDDnPNZ7vwVHR5uQ+IvFDwepg3GYHg
+Opbke1DZdG4jwe/lpo9yy03CcTUFIF0MlbiaNLb7/HsVqmvGeX4xlVi4hzRSAUM4
+H4PiVTYANU8mOFmkg7Z70n3vF2aQaz+9hfbjC5xUtrpGRWgdR+0AewTOVx3RtslU
+X+uyvEP8uNqML96b1OTZ6vSD3g4HsM26ViXfXR7dXhs/p7vM95OvUeYl7G+7W1u9
+nKl7PjYqzJQvNbWPmi4qb7Jsb+WjOM3l9KvrlKiX7TVZA6re+hBh/Pr9lqwrHYD9
+PGDzJJ2pHVKHuhlh2W23XYE0qqwtgwh8mQJiRQsz1WVIe2HOu0bAZ0fmAmFTvshy
+JAipX0NPQqEv2AAwsbckGhgJfwIcKTAadleGpgJXh98G+/dMPKRuI+dhfpvf2FTm
+7git6e9EUXCtqee72GKSlGa9iAOlDOi3J8UkpZpUh7+aELr1MAG2pixHctwPE7l/
+yI2V5kW2cGW7tCtLG2MoIHmRkT0lSd/yixPHxQezVmKPB5iYZ7w=
+=B7Ab
+-----END PGP SIGNATURE-----
+
+--9VHmpeKQ8kPImJHj--
