@@ -2,88 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C36F9C4707F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 May 2021 16:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D716C47087
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 May 2021 07:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7285613C5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 27 May 2021 16:01:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 818386135F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 May 2021 07:22:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235089AbhE0QDQ (ORCPT
+        id S235179AbhE1HXw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 27 May 2021 12:03:16 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41835 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236736AbhE0QDN (ORCPT
+        Fri, 28 May 2021 03:23:52 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:2445 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235763AbhE1HXp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 May 2021 12:03:13 -0400
-Received: from mail-vs1-f70.google.com ([209.85.217.70])
-        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lmIS3-0003BS-Om
-        for linux-samsung-soc@vger.kernel.org; Thu, 27 May 2021 16:01:39 +0000
-Received: by mail-vs1-f70.google.com with SMTP id f26-20020a67e09a0000b0290235a378d2f1so357356vsl.17
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 May 2021 09:01:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VT2B96LV3Sud6lFqUqI11ryilsp1126vHCKGDpUyUJM=;
-        b=LIza+UJ11oK0d8Mgz5xg/imGpAuBZwebakKDkWDQLNBk66XeySfuNwbN/SCjTdMX2U
-         E8h/HFjSlQ3MQ3U2E8xdgnE5XH45ttlgIlWpQaalSIU3m8z+2nZYS0Vwoo0R8dSAAteF
-         0JV408BbqF0nHOeuN8hyiO4A1L3SOZGogscGvJdjyq9fb+fkdje1tO2nCLp28PDBxYoB
-         +ihhdv4w0av0uevz8Su6lPbwqEic9QJVJWUyW7MTe9U/2mrGI87o+VJaYpXmhrDSLi9m
-         GHc+Sy80gAoMzaqlV+wfguzbBXJ/dwB8qZiE5POvWKqqD8dMk5MbGBGcy3HfiMccuZCF
-         IOag==
-X-Gm-Message-State: AOAM533z8Mj46NRqAd+b4umxrNxs0I3qjrl/xd9BXCh2h+GEn23LKiKO
-        YE3YWDwLVEu9GpwC8gpWWQ1BI9oQj7CwAuhBJykmj7Ax06ilvpnoD3YTAPohVT4l+I/10I5TsGv
-        A1erRHcdx2hLkvEcLsG1O/aCQOGf0u3bA8n1F8dG/FY8SQ6Br
-X-Received: by 2002:ab0:4507:: with SMTP id r7mr3173271uar.28.1622131298298;
-        Thu, 27 May 2021 09:01:38 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzsgj2B5pbbVzbAMrL6Yx0irK7rICPVdIXuyTA9xUcByUWQGFiKYpETQbEAAtWdKJLaTMrsjQ==
-X-Received: by 2002:ab0:4507:: with SMTP id r7mr3173252uar.28.1622131298122;
-        Thu, 27 May 2021 09:01:38 -0700 (PDT)
-Received: from localhost.localdomain ([45.237.48.3])
-        by smtp.gmail.com with ESMTPSA id i13sm368094vkp.45.2021.05.27.09.01.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 May 2021 09:01:37 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: (subset) [PATCH 1/5] clocksource/drivers/samsung_pwm: Minor whitespace cleanup
-Date:   Thu, 27 May 2021 12:01:30 -0400
-Message-Id: <162213127799.85759.10470691755359057532.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210506202729.157260-1-krzysztof.kozlowski@canonical.com>
-References: <20210506202729.157260-1-krzysztof.kozlowski@canonical.com>
+        Fri, 28 May 2021 03:23:45 -0400
+Received: from dggeml766-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4FrwzR576Zz66WK;
+        Fri, 28 May 2021 15:19:15 +0800 (CST)
+Received: from dggema769-chm.china.huawei.com (10.1.198.211) by
+ dggeml766-chm.china.huawei.com (10.1.199.176) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Fri, 28 May 2021 15:22:09 +0800
+Received: from localhost (10.174.179.215) by dggema769-chm.china.huawei.com
+ (10.1.198.211) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Fri, 28
+ May 2021 15:22:08 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <inki.dae@samsung.com>, <jy0922.shim@samsung.com>,
+        <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>,
+        <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <krzysztof.kozlowski@canonical.com>, <yuehaibing@huawei.com>
+CC:     <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] drm/exynos-vidi: use DEVICE_ATTR_RW macro
+Date:   Fri, 28 May 2021 15:21:20 +0800
+Message-ID: <20210528072120.21332-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.174.179.215]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggema769-chm.china.huawei.com (10.1.198.211)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 6 May 2021 16:27:25 -0400, Krzysztof Kozlowski wrote:
-> Cleanup the code to be slightly more readable and follow coding
-> convention - only whitespace.  This fixes checkpatch warnings:
-> 
->   WARNING: Block comments should align the * on each line
->   WARNING: please, no space before tabs
->   WARNING: Missing a blank line after declarations
->   CHECK: Alignment should match open parenthesis
+Use DEVICE_ATTR_RW() helper instead of plain DEVICE_ATTR(),
+which makes the code a bit shorter and easier to read.
 
-Applied, thanks!
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-[5/5] MAINTAINERS: Include Samsung PWM in Samsung SoC entry
-      commit: a6419e53c779302f8d5dd409eccf5b41ffa184a4
-
-Best regards,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index e5662bdcbbde..a3a95a2c0bae 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -165,8 +165,8 @@ static void vidi_fake_vblank_timer(struct timer_list *t)
+ 			jiffies + msecs_to_jiffies(VIDI_REFRESH_TIME) - 1);
+ }
+ 
+-static ssize_t vidi_show_connection(struct device *dev,
+-				struct device_attribute *attr, char *buf)
++static ssize_t connection_show(struct device *dev,
++			       struct device_attribute *attr, char *buf)
+ {
+ 	struct vidi_context *ctx = dev_get_drvdata(dev);
+ 	int rc;
+@@ -180,7 +180,7 @@ static ssize_t vidi_show_connection(struct device *dev,
+ 	return rc;
+ }
+ 
+-static ssize_t vidi_store_connection(struct device *dev,
++static ssize_t connection_store(struct device *dev,
+ 				struct device_attribute *attr,
+ 				const char *buf, size_t len)
+ {
+@@ -211,8 +211,7 @@ static ssize_t vidi_store_connection(struct device *dev,
+ 	return len;
+ }
+ 
+-static DEVICE_ATTR(connection, 0644, vidi_show_connection,
+-			vidi_store_connection);
++static DEVICE_ATTR_RW(connection);
+ 
+ static struct attribute *vidi_attrs[] = {
+ 	&dev_attr_connection.attr,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+2.17.1
+
